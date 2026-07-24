@@ -577,6 +577,7 @@ def build_first_estimates_artifact(
     *,
     configuration_echo: Mapping[str, Any],
     environment_sidecar_sha256: str,
+    prior_incidents: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Assemble and validate the immutable post-compute report object."""
 
@@ -671,11 +672,13 @@ def build_first_estimates_artifact(
             "benefit_measure": BENEFIT_MEASURE_LABEL,
             "revenue_population_basis": "unsplit projection.slices",
         },
+        "prior_incidents": list(prior_incidents),
         "gap_block": [dict(row) for row in GAP_BLOCK],
         "certifies_nothing": list(CERTIFIES_NOTHING),
     }
     validate_first_estimates_artifact(
         artifact,
         expected_configuration_echo=configuration_echo,
+        expected_prior_incidents=prior_incidents,
     )
     return artifact

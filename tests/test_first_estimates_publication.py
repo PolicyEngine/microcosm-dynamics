@@ -10,18 +10,14 @@ from pathlib import Path
 
 import pytest
 
-from populace_dynamics.estimates import publication
+from populace_dynamics.estimates import publication, runner
 
 
 def _configuration() -> dict:
-    return {
-        "registration_reference": "issue-42-comment-1234567",
-        "projection": {
-            "draw_indices": list(range(20)),
-            "root_seeds": list(range(5200, 5220)),
-        },
-        "parameters": {"bundle_sha256": "c" * 64},
-    }
+    return runner.registered_configuration_echo(
+        registration_reference="issue-42-comment-1234567",
+        parameter_bundle={"bundle_sha256": "c" * 64},
+    )
 
 
 def _sidecar() -> bytes:
@@ -32,7 +28,18 @@ def _sidecar() -> bytes:
                 "head_sha": "b" * 40,
                 "path": "gates.yaml",
             },
-            "environment": {"python": "fixture"},
+            "environment": {
+                "python": "3.14.0",
+                "numpy": "2.0.0",
+                "pandas": "3.0.0",
+                "sklearn": "1.9.0",
+                "scipy": "1.18.0",
+                "platform": "fixture-platform",
+                "fitting_stack": {
+                    "populace_fit": "absent",
+                    "populace_frame": "absent",
+                },
+            },
         }
     )
 
@@ -391,6 +398,7 @@ def _artifact(sidecar: bytes | None = None) -> dict:
             ),
             "revenue_population_basis": "unsplit projection.slices",
         },
+        "prior_incidents": [],
         "gap_block": list(publication.GAP_BLOCK),
         "certifies_nothing": list(publication.CERTIFIES_NOTHING),
     }
@@ -399,11 +407,13 @@ def _artifact(sidecar: bytes | None = None) -> dict:
 def test__artifact_writer__binds_and_writes_exact_sidecar_once(tmp_path):
     sidecar = _sidecar()
     artifact = _artifact(sidecar)
-    destination = tmp_path / "first_estimates_v1.json"
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    destination = root / publication.DEFAULT_ARTIFACT_PATH
 
-    publication.write_first_estimates_artifact(
-        destination,
-        artifact,
+    publication._write_first_estimates_artifact_for_test(
+        repository_root=root,
+        artifact=artifact,
         expected_configuration_echo=_configuration(),
         sidecar_payload=sidecar,
     )
@@ -415,12 +425,48 @@ def test__artifact_writer__binds_and_writes_exact_sidecar_once(tmp_path):
         expected_configuration_echo=_configuration(),
     )
     assert Path(f"{destination}.env.json").read_bytes() == sidecar
+    assert not (root / "first_estimates_v1.json").exists()
     with pytest.raises(FileExistsError, match="one-shot rule"):
-        publication.write_first_estimates_artifact(
-            destination,
-            artifact,
+        publication._write_first_estimates_artifact_for_test(
+            repository_root=root,
+            artifact=artifact,
             expected_configuration_echo=_configuration(),
             sidecar_payload=sidecar,
+        )
+
+
+def test__artifact_writer__rejects_empty_sidecar_schema(tmp_path):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    sidecar = publication.canonical_json_bytes({})
+    with pytest.raises(ValueError, match="environment sidecar keys"):
+        publication._write_first_estimates_artifact_for_test(
+            repository_root=root,
+            artifact=_artifact(sidecar),
+            expected_configuration_echo=_configuration(),
+            sidecar_payload=sidecar,
+        )
+
+
+def test__artifact_validator__pins_complete_prior_incident_history():
+    artifact = _artifact()
+    artifact["prior_incidents"] = [
+        "runs/first_estimates_incident_1.json",
+    ]
+    publication.validate_first_estimates_artifact(
+        artifact,
+        expected_configuration_echo=_configuration(),
+        expected_prior_incidents=artifact["prior_incidents"],
+    )
+
+    artifact["prior_incidents"] = [
+        "runs/first_estimates_incident_2.json",
+    ]
+    with pytest.raises(ValueError, match="complete ordered history"):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+            expected_prior_incidents=artifact["prior_incidents"],
         )
 
 
@@ -689,7 +735,7 @@ def test__incident_writer__uses_exact_schema_and_retry_class(tmp_path):
     (root / "runs").mkdir(parents=True)
     configuration = _configuration()
 
-    path = publication.write_first_estimates_incident(
+    path = publication._write_first_estimates_incident_for_test(
         repository_root=root,
         phase="preparation",
         reason="external_parameter_checkout_unavailable",
@@ -730,7 +776,7 @@ def test__incident_validator__enforces_publication_partial_iff_rule(tmp_path):
     partial.write_text('{"partial": true}\n')
     configuration = _configuration()
 
-    path = publication.write_first_estimates_incident(
+    path = publication._write_first_estimates_incident_for_test(
         repository_root=root,
         phase="publication",
         reason="sidecar_hash_mismatch",

@@ -16,6 +16,7 @@ from typing import Any
 
 from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.engine.rng import DRAW_SEED_BASE
+from populace_dynamics.estimates.publication import canonical_json_bytes
 from populace_dynamics.harness import m6_candidate3_runner, m6_runner
 from populace_dynamics.harness.m6_candidate3_runner import (
     M6Candidate3InputPlan,
@@ -169,8 +170,16 @@ def registered_configuration_echo(
 
 def validate_registered_configuration_echo(
     configuration: Mapping[str, Any],
+    *,
+    registered_configuration_bytes: bytes,
 ) -> None:
-    """Fail closed if any executable registered constant changed."""
+    """Require the exact canonical bytes and every registered constant."""
+    if not isinstance(registered_configuration_bytes, bytes):
+        raise TypeError("registered configuration must be supplied as bytes")
+    if canonical_json_bytes(configuration) != registered_configuration_bytes:
+        raise ValueError(
+            "configuration differs from the exact registered bytes"
+        )
     projection = configuration.get("projection")
     if not isinstance(projection, Mapping):
         raise ValueError("configuration has no projection block")
@@ -227,6 +236,14 @@ def validate_registered_configuration_echo(
         or any(character not in "0123456789abcdef" for character in digest)
     ):
         raise ValueError("configuration parameter-bundle sha256 is invalid")
+    expected = registered_configuration_echo(
+        registration_reference=registration_reference,
+        parameter_bundle=parameters,
+    )
+    if dict(configuration) != expected:
+        raise ValueError(
+            "configuration does not have the exact registered structure"
+        )
 
 
 def _assert_identity_hashes(identity: Any) -> None:
@@ -264,6 +281,7 @@ def execute_first_report_projection(
     *,
     resolved: M6ResolvedContract,
     configuration_echo: Mapping[str, Any],
+    registered_configuration_bytes: bytes,
     operations: FirstReportProjectionOperations | None = None,
 ) -> FirstReportProjectionBatch:
     """Replay the frozen prefix and project twenty unsplit draws.
@@ -278,7 +296,10 @@ def execute_first_report_projection(
         )
     if not isinstance(resolved, M6ResolvedContract):
         raise TypeError("first-estimates driver requires M6ResolvedContract")
-    validate_registered_configuration_echo(configuration_echo)
+    validate_registered_configuration_echo(
+        configuration_echo,
+        registered_configuration_bytes=registered_configuration_bytes,
+    )
     ops = operations or default_projection_operations()
 
     # Spec assertions occur before fit, materialization, or any projection draw.

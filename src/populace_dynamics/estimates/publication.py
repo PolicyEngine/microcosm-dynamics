@@ -14,7 +14,7 @@ import json
 import math
 import re
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from numbers import Integral, Real
 from pathlib import Path
@@ -274,6 +274,7 @@ _ARTIFACT_KEYS = frozenset(
         "tables",
         "counts",
         "diagnostics",
+        "prior_incidents",
         "gap_block",
         "certifies_nothing",
     }
@@ -461,6 +462,39 @@ _CAREER_DIAGNOSTIC_KEYS = frozenset(
 _CAREER_PROVENANCE_KEYS = frozenset(
     {"observed", "gap_imputed", "boundary_2014", "projected", "unknown"}
 )
+_ENVIRONMENT_KEYS = frozenset(
+    {
+        "python",
+        "numpy",
+        "pandas",
+        "sklearn",
+        "scipy",
+        "platform",
+        "fitting_stack",
+    }
+)
+_FITTING_STACK_KEYS = frozenset({"populace_fit", "populace_frame"})
+_CONTRACT_KEYS = frozenset({"blob_sha", "head_sha", "path"})
+_GIT_SHA = re.compile(r"[0-9a-f]{40}")
+
+
+@dataclass(frozen=True)
+class _RegisteredConfigurationToken:
+    """Opaque canonical registration bytes available before preparation."""
+
+    _repository_root: Path
+    _registration_reference: str
+    _configuration_bytes: bytes
+
+
+@dataclass(frozen=True)
+class _PrecomputeToken:
+    """Opaque configuration, sidecar, and history frozen before compute."""
+
+    _registration: _RegisteredConfigurationToken
+    _sidecar_payload: bytes
+    _sidecar_sha256: str
+    _prior_incidents: tuple[str, ...]
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -476,6 +510,103 @@ def canonical_json_bytes(value: Any) -> bytes:
     ).encode("utf-8")
 
 
+def _configuration_echo(
+    token: _RegisteredConfigurationToken | _PrecomputeToken,
+) -> Mapping[str, Any]:
+    registration = (
+        token._registration if isinstance(token, _PrecomputeToken) else token
+    )
+    value = json.loads(registration._configuration_bytes)
+    if not isinstance(value, Mapping):  # guarded when the token is created
+        raise AssertionError("registered configuration token is not a mapping")
+    return value
+
+
+def _parse_registered_configuration(
+    *,
+    repository_root: str | Path,
+    registration_reference: str,
+    registered_configuration_bytes: bytes,
+) -> _RegisteredConfigurationToken:
+    """Create the incident-safe token from exact canonical registered bytes."""
+    if not isinstance(registered_configuration_bytes, bytes):
+        raise TypeError("registered configuration must be supplied as bytes")
+    try:
+        configuration = json.loads(registered_configuration_bytes)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(
+            "registered configuration is not valid JSON"
+        ) from error
+    if not isinstance(configuration, Mapping):
+        raise TypeError("registered configuration root must be a mapping")
+    if canonical_json_bytes(configuration) != registered_configuration_bytes:
+        raise ValueError("registered configuration bytes are not canonical")
+    if (
+        not isinstance(registration_reference, str)
+        or not registration_reference
+    ):
+        raise ValueError("registration_reference must be a nonempty string")
+    if configuration.get("registration_reference") != registration_reference:
+        raise ValueError(
+            "registration reference differs from the registered configuration"
+        )
+    return _RegisteredConfigurationToken(
+        _repository_root=Path(repository_root).resolve(),
+        _registration_reference=registration_reference,
+        _configuration_bytes=bytes(registered_configuration_bytes),
+    )
+
+
+def _validate_prior_incident_paths(
+    prior_incidents: Sequence[str],
+) -> tuple[str, ...]:
+    paths = tuple(prior_incidents)
+    if not all(isinstance(path, str) for path in paths):
+        raise TypeError("prior incident paths must be strings")
+    expected = tuple(
+        f"runs/first_estimates_incident_{index}.json"
+        for index in range(1, len(paths) + 1)
+    )
+    if paths != expected:
+        raise ValueError(
+            "prior incidents must be the complete ordered history"
+        )
+    return paths
+
+
+def _freeze_precompute(
+    registration: _RegisteredConfigurationToken,
+    *,
+    expected_configuration_echo: Mapping[str, Any],
+    sidecar_payload: bytes,
+    prior_incidents: Sequence[str],
+) -> _PrecomputeToken:
+    """Complete the opaque token after all pre-compute inputs are resolved."""
+    if not isinstance(registration, _RegisteredConfigurationToken):
+        raise TypeError("precompute requires a registered-configuration token")
+    if canonical_json_bytes(expected_configuration_echo) != (
+        registration._configuration_bytes
+    ):
+        raise ValueError(
+            "resolved configuration differs from the exact registered bytes"
+        )
+    expected_sidecar = {
+        "environment": environment_block(),
+        "contract": asdict(ContractRef.current(registration._repository_root)),
+    }
+    validate_environment_sidecar_payload(
+        sidecar_payload,
+        expected_record=expected_sidecar,
+    )
+    paths = _validate_prior_incident_paths(prior_incidents)
+    return _PrecomputeToken(
+        _registration=registration,
+        _sidecar_payload=bytes(sidecar_payload),
+        _sidecar_sha256=hashlib.sha256(sidecar_payload).hexdigest(),
+        _prior_incidents=paths,
+    )
+
+
 def prepare_environment_sidecar(
     root: str | Path | None = None,
 ) -> tuple[bytes, str]:
@@ -485,7 +616,84 @@ def prepare_environment_sidecar(
         "contract": asdict(ContractRef.current(root)),
     }
     payload = canonical_json_bytes(record)
+    validate_environment_sidecar_payload(payload, expected_record=record)
     return payload, hashlib.sha256(payload).hexdigest()
+
+
+def validate_environment_sidecar_payload(
+    payload: bytes,
+    *,
+    expected_record: Mapping[str, Any] | None = None,
+) -> Mapping[str, Any]:
+    """Validate canonical environment and contract provenance bytes."""
+    if not isinstance(payload, bytes):
+        raise TypeError("environment sidecar payload must be bytes")
+    try:
+        record = json.loads(payload)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("environment sidecar is not valid JSON") from error
+    if not isinstance(record, Mapping):
+        raise TypeError("environment sidecar root must be a mapping")
+    if canonical_json_bytes(record) != payload:
+        raise ValueError("environment sidecar bytes are not canonical JSON")
+    _require_exact_keys(
+        record,
+        frozenset({"environment", "contract"}),
+        "environment sidecar",
+    )
+
+    environment = record["environment"]
+    if not isinstance(environment, Mapping):
+        raise TypeError("environment sidecar environment must be a mapping")
+    _require_exact_keys(environment, _ENVIRONMENT_KEYS, "sidecar environment")
+    for key in _ENVIRONMENT_KEYS - {"fitting_stack"}:
+        if not isinstance(environment[key], str) or not environment[key]:
+            raise TypeError(f"sidecar environment {key} must be a string")
+    fitting_stack = environment["fitting_stack"]
+    if not isinstance(fitting_stack, Mapping):
+        raise TypeError("sidecar fitting_stack must be a mapping")
+    _require_exact_keys(
+        fitting_stack,
+        _FITTING_STACK_KEYS,
+        "sidecar fitting_stack",
+    )
+    for key, value in fitting_stack.items():
+        if value == "absent":
+            continue
+        if not isinstance(value, Mapping):
+            raise TypeError(
+                f"sidecar fitting_stack {key} must be absent or a mapping"
+            )
+        _require_exact_keys(
+            value,
+            frozenset({"version", "git_rev"}),
+            f"sidecar fitting_stack {key}",
+        )
+        if not all(
+            isinstance(value[field], str) and value[field]
+            for field in ("version", "git_rev")
+        ):
+            raise TypeError(
+                f"sidecar fitting_stack {key} values must be strings"
+            )
+
+    contract = record["contract"]
+    if not isinstance(contract, Mapping):
+        raise TypeError("environment sidecar contract must be a mapping")
+    _require_exact_keys(contract, _CONTRACT_KEYS, "sidecar contract")
+    for key in ("blob_sha", "head_sha"):
+        if (
+            not isinstance(contract[key], str)
+            or _GIT_SHA.fullmatch(contract[key]) is None
+        ):
+            raise ValueError(f"sidecar contract {key} must be a Git sha")
+    if contract["path"] != "gates.yaml":
+        raise ValueError("sidecar contract path must be gates.yaml")
+    if expected_record is not None and record != expected_record:
+        raise ValueError(
+            "environment sidecar differs from the frozen pre-compute record"
+        )
+    return record
 
 
 def _require_exact_keys(
@@ -1289,6 +1497,7 @@ def validate_first_estimates_artifact(
     artifact: Mapping[str, Any],
     *,
     expected_configuration_echo: Mapping[str, Any],
+    expected_prior_incidents: Sequence[str] = (),
 ) -> None:
     """Validate the complete publication object before its one-shot write."""
     _require_exact_keys(artifact, _ARTIFACT_KEYS, "artifact")
@@ -1362,6 +1571,24 @@ def validate_first_estimates_artifact(
     if artifact["parameters"] != expected_configuration_echo.get("parameters"):
         raise ValueError(
             "artifact parameters differ from the registered configuration"
+        )
+    prior_incidents = artifact["prior_incidents"]
+    if not isinstance(prior_incidents, list) or not all(
+        isinstance(path, str) for path in prior_incidents
+    ):
+        raise TypeError("artifact prior_incidents must be a JSON string list")
+    expected_paths = list(expected_prior_incidents)
+    if prior_incidents != expected_paths:
+        raise ValueError(
+            "artifact prior_incidents differ from the pre-compute history"
+        )
+    canonical_prior_paths = [
+        f"runs/first_estimates_incident_{index}.json"
+        for index in range(1, len(prior_incidents) + 1)
+    ]
+    if prior_incidents != canonical_prior_paths:
+        raise ValueError(
+            "artifact prior_incidents must be the complete ordered history"
         )
     counts = artifact["counts"]
     if not isinstance(counts, Mapping):
@@ -1440,19 +1667,17 @@ def validate_first_estimates_artifact(
     canonical_json_bytes(artifact)
 
 
-def write_first_estimates_artifact(
-    path: str | Path,
-    artifact: Mapping[str, Any],
+def _write_first_estimates_artifact_for_test(
     *,
+    repository_root: str | Path,
+    artifact: Mapping[str, Any],
     expected_configuration_echo: Mapping[str, Any],
     sidecar_payload: bytes,
+    expected_prior_incidents: Sequence[str] = (),
 ) -> None:
     """Validate and exclusively write the integrity-bound report pair."""
-    destination = Path(path)
-    if destination.name != DEFAULT_ARTIFACT_PATH.name:
-        raise ValueError(
-            "the first-estimates writer requires first_estimates_v1.json"
-        )
+    root = Path(repository_root).resolve()
+    destination = root / DEFAULT_ARTIFACT_PATH
     expected_hash = hashlib.sha256(sidecar_payload).hexdigest()
     integrity = artifact.get("integrity")
     sidecar = (
@@ -1468,15 +1693,11 @@ def write_first_estimates_artifact(
         )
     if sidecar.get("path") != f"{destination.name}.env.json":
         raise ValueError("primary artifact records the wrong sidecar path")
-    try:
-        parsed_sidecar = json.loads(sidecar_payload)
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError("environment sidecar is not valid JSON") from error
-    if canonical_json_bytes(parsed_sidecar) != sidecar_payload:
-        raise ValueError("environment sidecar bytes are not canonical JSON")
+    validate_environment_sidecar_payload(sidecar_payload)
     validate_first_estimates_artifact(
         artifact,
         expected_configuration_echo=expected_configuration_echo,
+        expected_prior_incidents=expected_prior_incidents,
     )
     artifacts.write_new(
         destination,
@@ -1484,6 +1705,27 @@ def write_first_estimates_artifact(
         sidecar=True,
         sidecar_payload=sidecar_payload,
     )
+
+
+def write_first_estimates_artifact(
+    token: _PrecomputeToken,
+    artifact: Mapping[str, Any],
+) -> Path:
+    """Publish only through the opaque, pre-compute-frozen ceremony token."""
+    if not isinstance(token, _PrecomputeToken):
+        raise TypeError(
+            "production artifact publication requires a precompute token"
+        )
+    root = token._registration._repository_root
+    configuration = _configuration_echo(token)
+    _write_first_estimates_artifact_for_test(
+        repository_root=root,
+        artifact=artifact,
+        expected_configuration_echo=configuration,
+        sidecar_payload=token._sidecar_payload,
+        expected_prior_incidents=token._prior_incidents,
+    )
+    return root / DEFAULT_ARTIFACT_PATH
 
 
 def _parse_utc_timestamp(value: Any) -> datetime:
@@ -1519,6 +1761,7 @@ def validate_first_estimates_incident(
     path: str | Path,
     expected_configuration_echo: Mapping[str, Any],
     repository_root: str | Path,
+    validate_artifact_existence: bool = True,
 ) -> None:
     """Enforce the exact frozen incident schema and no-output-value rule."""
     _require_exact_keys(record, _INCIDENT_KEYS, "incident")
@@ -1567,14 +1810,20 @@ def validate_first_estimates_incident(
             raise ValueError(
                 "artifact_path must identify runs/first_estimates_v1.json"
             )
-    expected_artifact_path = (
-        DEFAULT_ARTIFACT_PATH.as_posix()
-        if phase == "publication" and partial_exists
-        else None
-    )
-    if artifact_path != expected_artifact_path:
+    if validate_artifact_existence:
+        expected_artifact_path = (
+            DEFAULT_ARTIFACT_PATH.as_posix()
+            if phase == "publication" and partial_exists
+            else None
+        )
+        if artifact_path != expected_artifact_path:
+            raise ValueError(
+                "artifact_path must be non-null iff a publication partial "
+                "exists"
+            )
+    elif artifact_path is not None and phase != "publication":
         raise ValueError(
-            "artifact_path must be non-null iff a publication partial exists"
+            "artifact_path is only valid for a publication incident"
         )
     outside_echo = {
         key: value
@@ -1614,7 +1863,7 @@ def _next_incident_path(repository_root: Path) -> tuple[Path, int]:
     return runs / f"first_estimates_incident_{index}.json", index
 
 
-def write_first_estimates_incident(
+def _write_first_estimates_incident_for_test(
     *,
     repository_root: str | Path,
     phase: str,
@@ -1667,6 +1916,42 @@ def write_first_estimates_incident(
     )
     artifacts.write_new(path, record)
     return path
+
+
+def write_first_estimates_incident(
+    token: _RegisteredConfigurationToken | _PrecomputeToken,
+    *,
+    phase: str,
+    reason: str,
+    reason_detail: str,
+    timestamp_utc: str | None = None,
+) -> Path:
+    """Publish an incident from frozen configuration, never caller echo data."""
+    if isinstance(token, _PrecomputeToken):
+        registration = token._registration
+    elif isinstance(token, _RegisteredConfigurationToken):
+        registration = token
+    else:
+        raise TypeError(
+            "production incident publication requires a registration token"
+        )
+    root = registration._repository_root
+    partial = root / DEFAULT_ARTIFACT_PATH
+    partial_artifact = (
+        DEFAULT_ARTIFACT_PATH
+        if phase == "publication" and partial.is_file()
+        else None
+    )
+    return _write_first_estimates_incident_for_test(
+        repository_root=root,
+        phase=phase,
+        reason=reason,
+        reason_detail=reason_detail,
+        registration_reference=registration._registration_reference,
+        configuration_echo=_configuration_echo(registration),
+        partial_artifact_path=partial_artifact,
+        timestamp_utc=timestamp_utc,
+    )
 
 
 def table_record(

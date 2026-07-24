@@ -290,7 +290,7 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     monkeypatch.setattr(preparation, "build_benefit_ledger", benefits)
     monkeypatch.setattr(preparation, "build_revenue_ledger", revenues)
 
-    prepared = preparation.prepare_first_report_draw(
+    prepared = preparation._prepare_first_report_draw_for_test(
         batch,
         batch.draws[0],
         parameters=parameters,
@@ -354,7 +354,7 @@ def test_batch_preparation_requires_exact_registered_draw_sequence(
         prepare_draw,
     )
 
-    prepared = preparation.prepare_first_report_batch(
+    prepared = preparation._prepare_first_report_batch(
         batch,
         parameters=parameters,
     )
@@ -367,7 +367,7 @@ def test_batch_preparation_requires_exact_registered_draw_sequence(
 
     missing = replace(batch, draws=batch.draws[:-1])
     with pytest.raises(ValueError, match="0 through 19"):
-        preparation.prepare_first_report_batch(
+        preparation._prepare_first_report_batch(
             missing,
             parameters=parameters,
         )
@@ -378,7 +378,7 @@ def test_batch_preparation_requires_exact_registered_draw_sequence(
         draws=(*batch.draws[:-1], wrong_root_draw),
     )
     with pytest.raises(ValueError, match="root seeds changed"):
-        preparation.prepare_first_report_batch(
+        preparation._prepare_first_report_batch(
             wrong_root,
             parameters=parameters,
         )
@@ -431,7 +431,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
 
     monkeypatch.setattr(preparation, "build_first_estimates_artifact", build)
     configuration = {"parameters": dict(parameters.provenance)}
-    observed = preparation.build_prepared_first_estimates_artifact(
+    observed = preparation._build_prepared_first_estimates_artifact(
         prepared,
         configuration_echo=configuration,
         environment_sidecar_sha256="a" * 64,
@@ -442,6 +442,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
     assert calls[0][1] == {
         "configuration_echo": configuration,
         "environment_sidecar_sha256": "a" * 64,
+        "prior_incidents": (),
     }
 
     mismatched_configuration = {
@@ -451,7 +452,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
         }
     }
     with pytest.raises(ValueError, match="parameter provenance differs"):
-        preparation.build_prepared_first_estimates_artifact(
+        preparation._build_prepared_first_estimates_artifact(
             prepared,
             configuration_echo=mismatched_configuration,
             environment_sidecar_sha256="a" * 64,

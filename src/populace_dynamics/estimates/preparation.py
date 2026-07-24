@@ -56,12 +56,9 @@ from populace_dynamics.estimates.runner import (
 __all__ = [
     "PreparedFirstReportBatch",
     "PreparedFirstReportDraw",
-    "build_prepared_first_estimates_artifact",
     "concatenate_realized_trajectory",
     "derive_synthetic_birth_years",
     "first_report_draw_bundles",
-    "prepare_first_report_batch",
-    "prepare_first_report_draw",
     "reconstruct_claiming_schedule",
     "validate_full_actual_report_parameters",
 ]
@@ -129,11 +126,12 @@ def first_report_draw_bundles(
     )
 
 
-def build_prepared_first_estimates_artifact(
+def _build_prepared_first_estimates_artifact(
     prepared: PreparedFirstReportBatch,
     *,
     configuration_echo: Mapping[str, Any],
     environment_sidecar_sha256: str,
+    prior_incidents: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Assemble an artifact only under the parameters used for its ledgers."""
 
@@ -151,6 +149,7 @@ def build_prepared_first_estimates_artifact(
         first_report_draw_bundles(prepared),
         configuration_echo=configuration_echo,
         environment_sidecar_sha256=environment_sidecar_sha256,
+        prior_incidents=prior_incidents,
     )
 
 
@@ -447,7 +446,7 @@ def _prepare_first_report_draw(
     )
 
 
-def prepare_first_report_draw(
+def _prepare_first_report_draw_for_test(
     batch: FirstReportProjectionBatch,
     draw: FirstReportProjectionDraw,
     *,
@@ -469,7 +468,7 @@ def prepare_first_report_draw(
     )
 
 
-def prepare_first_report_batch(
+def _prepare_first_report_batch(
     batch: FirstReportProjectionBatch,
     *,
     parameters: ReportParameters,

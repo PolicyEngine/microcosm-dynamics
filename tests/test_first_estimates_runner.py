@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -12,12 +13,26 @@ from populace_dynamics.harness.m6_candidate3_runner import (
 )
 from populace_dynamics.harness.m6_runner import M6ResolvedContract
 
+FAMILY_SPEC_SHA256 = (
+    "734a5b04f347c5d4904bbc6d5ab9a1c2876272d35284eedd2f450518acf1cec5"
+)
+ENGINE_SPEC_SHA256 = (
+    "c9be28a28d6fcc3911723872386906af559f6d0e0d5c89a87f741a5b2c3eacd6"
+)
+
 
 def _configuration() -> dict:
     return runner.registered_configuration_echo(
         registration_reference="issue-42-comment-1234567",
         parameter_bundle={"bundle_sha256": "a" * 64},
     )
+
+
+def _configuration_bytes(configuration: dict | None = None) -> bytes:
+    value = configuration if configuration is not None else _configuration()
+    return (
+        json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
 
 
 def _resolved() -> M6ResolvedContract:
@@ -33,16 +48,16 @@ def _operations(calls: list[str], *, bad_family_hash: bool = False):
     population = object()
     identity = SimpleNamespace(
         family_spec_sha256=(
-            "0" * 64 if bad_family_hash else runner.FAMILY_SPEC_SHA256
+            "0" * 64 if bad_family_hash else FAMILY_SPEC_SHA256
         ),
-        engine_spec_sha256=runner.ENGINE_SPEC_SHA256,
+        engine_spec_sha256=ENGINE_SPEC_SHA256,
     )
     phase = SimpleNamespace(
         population=population,
         lineage={
             "resolved_spec_sha256s": {
-                "family_transitions": runner.FAMILY_SPEC_SHA256,
-                "engine_candidate": runner.ENGINE_SPEC_SHA256,
+                "family_transitions": FAMILY_SPEC_SHA256,
+                "engine_candidate": ENGINE_SPEC_SHA256,
             },
             "engine_candidate_id": "m6_candidate3_engine_v1",
         },
@@ -95,6 +110,7 @@ def test__driver__replays_prefix_then_projects_twenty_unsplit_draws():
         plan,
         resolved=_resolved(),
         configuration_echo=_configuration(),
+        registered_configuration_bytes=_configuration_bytes(),
         operations=_operations(calls),
     )
 
@@ -135,6 +151,7 @@ def test__driver__rejects_spec_drift_before_fit_or_projection():
             plan,
             resolved=_resolved(),
             configuration_echo=_configuration(),
+            registered_configuration_bytes=_configuration_bytes(),
             operations=_operations(calls, bad_family_hash=True),
         )
 
@@ -156,7 +173,32 @@ def test__driver__rejects_draw_configuration_drift_before_operations():
             plan,
             resolved=_resolved(),
             configuration_echo=configuration,
+            registered_configuration_bytes=_configuration_bytes(configuration),
             operations=_operations(calls),
         )
 
     assert calls == []
+
+
+def test__driver__pins_literal_spec_hashes_independently():
+    assert runner.FAMILY_SPEC_SHA256 == FAMILY_SPEC_SHA256
+    assert runner.ENGINE_SPEC_SHA256 == ENGINE_SPEC_SHA256
+
+
+def test__driver__rejects_nonexact_registered_configuration_bytes():
+    configuration = _configuration()
+    with pytest.raises(ValueError, match="exact registered bytes"):
+        runner.validate_registered_configuration_echo(
+            configuration,
+            registered_configuration_bytes=json.dumps(
+                configuration,
+                indent=2,
+            ).encode(),
+        )
+
+    configuration["unregistered"] = True
+    with pytest.raises(ValueError, match="exact registered structure"):
+        runner.validate_registered_configuration_echo(
+            configuration,
+            registered_configuration_bytes=_configuration_bytes(configuration),
+        )
