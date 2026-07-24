@@ -2,8 +2,8 @@
 
 ## State
 
-The official determination-year COLA correction is implemented and under
-focused verification. No projection has been run.
+The official determination-year COLA correction and SSA stepwise benefit
+rounding are implemented and focused-tested. No projection has been run.
 
 ## Done
 
@@ -15,11 +15,12 @@ focused verification. No projection has been run.
   determination-year values for 1975-2022, ending at 2022=8.7.
 - Removed the year-plus-one loader translation, regenerated provenance and
   hashes, and added an independent scattered-year official literal vector.
+- Corrected benefit arithmetic to dime-floor each COLA-increased PIA before
+  applying and independently dime-flooring the claim-age factor.
 
 ## Next
 
 - Trace the affected implementation and frozen design requirements.
-- Correct stepwise benefit rounding and its worked-example expectation.
 - Add the nonpersistent production coordinator and harden publication inputs.
 - Add the adjudicated mutation coverage and verbatim gap-block fixture.
 - Run formatting, lint, and fast tests; push the branch and write the final

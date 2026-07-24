@@ -147,7 +147,7 @@ def test_benefit_cutoff_cola_dime_presence_and_no_recomputation(monkeypatch):
     assert person.eligibility_pia == 90.0
     assert person.claim_age_factor == pytest.approx(0.75)
     assert person.adjusted_pia_at_eligibility == 67.5
-    assert person.payment_monthly_by_year == {2015: 67.5, 2017: 71.3}
+    assert person.payment_monthly_by_year == {2015: 67.5, 2017: 71.4}
     assert person.positive_post_claim_earnings is True
     assert person.award_formula_computation_count == 1
     assert person.post_claim_recomputation_count == 0
@@ -163,7 +163,7 @@ def test_benefit_cutoff_cola_dime_presence_and_no_recomputation(monkeypatch):
     )
     assert _benefit_row(
         result, "modeled_award", 2017
-    ).frame_annualized_benefit == pytest.approx(2.0 * 12 * 71.3)
+    ).frame_annualized_benefit == pytest.approx(2.0 * 12 * 71.4)
     assert result.diagnostics["positive_post_claim_earnings_unweighted"] == 1
     assert result.diagnostics["award_formula_computation_count"] == 1
     assert result.diagnostics["post_claim_recomputation_count"] == 0

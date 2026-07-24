@@ -501,25 +501,27 @@ def _normalize_claimant(record: Any) -> BenefitClaimant:
 
 def _monthly_benefit_path(
     *,
-    adjusted_pia: float,
+    eligibility_pia: float,
+    claim_age_factor: float,
     eligibility_year: int,
     cola: COLASeries,
 ) -> dict[int, float]:
-    """Apply determination-year COLAs through each payment year.
+    """Increase the PIA stepwise, then apply the claim-age factor.
 
-    The caller has already dime-floored the claim-age-adjusted
-    eligibility-year PIA.  Each subsequent COLA operation is independently
-    dime-floored.  The loader performs the explicit determination-to-payment
-    year conversion around the 1983 transition.
+    SSA floors the increased PIA to the lower dime after each
+    determination-year COLA.  The claim-age factor then applies to that
+    increased PIA and receives its own lower-dime floor for each payment year.
     """
 
-    amount = floor_to_dime(adjusted_pia)
-    result = {eligibility_year: amount}
+    increased_pia = floor_to_dime(eligibility_pia)
+    result = {
+        eligibility_year: floor_to_dime(increased_pia * claim_age_factor)
+    }
     for payment_year in range(eligibility_year + 1, REPORT_YEARS[-1] + 1):
         determination_year = payment_year - 1
         rate = cola.rate_for_determination_year(determination_year)
-        amount = floor_to_dime(amount * (1.0 + rate))
-        result[payment_year] = amount
+        increased_pia = floor_to_dime(increased_pia * (1.0 + rate))
+        result[payment_year] = floor_to_dime(increased_pia * claim_age_factor)
     return result
 
 
@@ -546,7 +548,8 @@ def _compute_benefit_person(
     )
     adjusted_pia = floor_to_dime(pia_value * factor)
     monthly_path = _monthly_benefit_path(
-        adjusted_pia=adjusted_pia,
+        eligibility_pia=pia_value,
+        claim_age_factor=factor,
         eligibility_year=eligibility_year,
         cola=parameters.cola,
     )
