@@ -47,6 +47,9 @@ been run.
 - Verified the publication/driver milestone with 18 focused tests (including
   the existing artifact contract tests), Black (79 columns), Ruff, and
   `git diff --check`.
+- Tightened table-schema validation so every table must carry all registered
+  draw indices, nonempty mean/sample-SD aggregate rows, and a nonempty
+  biennial companion for annual output.
 
 ## Next
 

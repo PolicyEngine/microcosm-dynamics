@@ -342,15 +342,41 @@ def _require_json_finite(value: Any, path: str = "$") -> None:
             _require_json_finite(child, f"{path}[{index}]")
 
 
-def _validate_table(name: str, table: Any) -> None:
+def _validate_table(
+    name: str,
+    table: Any,
+    *,
+    expected_draw_indices: Sequence[int],
+) -> None:
     if not isinstance(table, Mapping):
         raise TypeError(f"table {name!r} must be a mapping")
     if tuple(table.get("labels", ())) != EVIDENCE_LABELS:
         raise ValueError(f"table {name!r} does not carry all evidence labels")
-    if not isinstance(table.get("per_draw"), list):
+    per_draw = table.get("per_draw")
+    if not isinstance(per_draw, list):
         raise TypeError(f"table {name!r} per_draw must be a list")
-    if not isinstance(table.get("aggregate"), list):
+    if not per_draw or not all(isinstance(row, Mapping) for row in per_draw):
+        raise ValueError(f"table {name!r} per_draw rows must be nonempty")
+    observed_draws = {
+        row.get("draw_index")
+        for row in per_draw
+        if isinstance(row.get("draw_index"), int)
+        and not isinstance(row.get("draw_index"), bool)
+    }
+    if observed_draws != set(expected_draw_indices):
+        raise ValueError(
+            f"table {name!r} does not publish every registered draw"
+        )
+    aggregate = table.get("aggregate")
+    if not isinstance(aggregate, list):
         raise TypeError(f"table {name!r} aggregate must be a list")
+    if not aggregate or not all(isinstance(row, Mapping) for row in aggregate):
+        raise ValueError(f"table {name!r} aggregate rows must be nonempty")
+    for row in aggregate:
+        if "mean" not in row or "sample_sd" not in row:
+            raise ValueError(
+                f"table {name!r} aggregate row omits mean/sample_sd"
+            )
     if table.get("annual") is True:
         if table.get("odd_year_carry_disclosure") != (
             ODD_YEAR_CARRY_DISCLOSURE
@@ -358,7 +384,12 @@ def _validate_table(name: str, table: Any) -> None:
             raise ValueError(
                 f"annual table {name!r} omits the odd-year carry disclosure"
             )
-        if "biennial_companion" not in table:
+        companion = table.get("biennial_companion")
+        if (
+            not isinstance(companion, list)
+            or not companion
+            or not all(isinstance(row, Mapping) for row in companion)
+        ):
             raise ValueError(
                 f"annual table {name!r} omits its biennial companion"
             )
@@ -418,8 +449,23 @@ def validate_first_estimates_artifact(
     tables = artifact["tables"]
     if not isinstance(tables, Mapping) or not tables:
         raise ValueError("artifact tables must be a nonempty mapping")
+    projection = expected_configuration_echo.get("projection")
+    expected_draw_indices = (
+        projection.get("draw_indices")
+        if isinstance(projection, Mapping)
+        else None
+    )
+    if not isinstance(expected_draw_indices, list) or not all(
+        isinstance(index, int) and not isinstance(index, bool)
+        for index in expected_draw_indices
+    ):
+        raise ValueError("configuration has no integer draw-index list")
     for name, table in tables.items():
-        _validate_table(str(name), table)
+        _validate_table(
+            str(name),
+            table,
+            expected_draw_indices=expected_draw_indices,
+        )
     if artifact["gap_block"] != list(GAP_BLOCK):
         raise ValueError("artifact gap block differs from the frozen design")
     if artifact["certifies_nothing"] != list(CERTIFIES_NOTHING):

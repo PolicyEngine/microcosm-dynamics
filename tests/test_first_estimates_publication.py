@@ -38,14 +38,29 @@ def _sidecar() -> bytes:
 def _artifact(sidecar: bytes | None = None) -> dict:
     payload = sidecar if sidecar is not None else _sidecar()
     annual = publication.table_record(
-        per_draw=[],
-        aggregate=[],
+        per_draw=[
+            {"draw_index": draw_index, "year": 2015, "value": 0.0}
+            for draw_index in range(20)
+        ],
+        aggregate=[
+            {
+                "year": 2015,
+                "mean": 0.0,
+                "sample_sd": 0.0,
+            }
+        ],
         unit_label=(
             "annualized statutory benefit, eligibility-PIA with COLA, "
             "no recomputation"
         ),
         annual=True,
-        biennial_companion=[],
+        biennial_companion=[
+            {
+                "year": 2016,
+                "mean": 0.0,
+                "sample_sd": 0.0,
+            }
+        ],
     )
     return {
         "schema_version": publication.ARTIFACT_SCHEMA_VERSION,
