@@ -1,8 +1,8 @@
 # The first estimates report: statutory-formula benefit and revenue estimates on the candidate-3 reproduction panel
 
-- **Status:** `DRAFT_NOT_OPERATIVE`, revision 5 — hardened through
-  four adversarial referee rounds (PR #285 record: rounds 1-4, every
-  finding accepted). Submitted for round 5. Nothing here authorizes a
+- **Status:** `DRAFT_NOT_OPERATIVE`, revision 7 — hardened through
+  six adversarial referee rounds (PR #285 record: rounds 1-6, every
+  finding accepted). Submitted for round 7. Nothing here authorizes a
   run.
 - **Resolves:** forecast ledger entry 8 — "end-to-end benefit and
   revenue estimates computed on projected earnings/demographic histories
@@ -160,40 +160,51 @@ domain laws frozen per round 4:
   the rule exists as a fail-safe and sits at precedence position 4 of
   the canonical inclusion law.)
 
-**The canonical inclusion law** (round-5 consolidation — one rule, all
-predicates, evaluated in this precedence order; the FIRST failing
-predicate is the person's single published exclusion reason):
+**The canonical inclusion law — the ONLY inclusion rule in this
+document** (round-6 unification; any other passage describing benefit
+inclusion is subsumed by and defers to this law):
 
-1. non-DI under §5 (else excluded as `di_conversion` / `di_unknown`);
-2. earnings-domain state complete;
-3. eligibility era: birth + 62 ≥ 1979;
-4. nonempty span: max(1968, birth + 22) ≤ min(claim year, 2022);
-5. **chronology invariant** (round-5 fresh finding 1): birth + 62 ≤
-   claim year, asserted with the report's own §3.1 birth year against
-   the operative claim year (engine-stamped for modeled awards, imputed
-   for opening stock) — violations excluded-and-counted as
-   `chronology_inconsistent`, which also closes the COLA span at
-   1979-2022 from both ends;
-6. coverage ratio ≥ 0.80.
+**Predicate 0 — the candidate universe**: the benefit candidate
+universe is the set of persons whose final-slice state carries a
+non-null operative claim year (engine-stamped for `modeled_award`;
+§6-imputed for `opening_backfill`). A person with a drawn `claim_age`
+but null `claim_year` (never claimed in-window, `steps.py:409`) is a
+non-claimant, counted as such, and is not a candidate — no exclusion
+record is created. Predicates 1-6 are evaluated only over candidates,
+so every quantity they reference exists.
 
-Restated for clarity, the earlier prose predicates are subsumed: a
-person is included iff
+Then, in this precedence order — the FIRST failing predicate is the
+candidate's single published exclusion reason (exactly one reason per
+excluded person; the reason keys are frozen here):
 
-- their earnings-domain state is complete (the no-earnings-state
-  persons are excluded-and-counted; **one entrant law** per round 3:
-  the operative counts are the §10 re-derived explicit-row counts —
-  the candidate-3 artifact's 6,698 figure is cited as context only,
-  never as an operative rule), and
-- their career **coverage ratio** — years classed `observed`,
-  `gap_imputed`, `boundary_2014`, or `projected` within the inclusive
-  span, divided by the span from max(1968, birth+22) through
-  min(claim year, 2022) — is **≥ 0.80** (frozen prospectively;
-  numerator years are counted only inside the denominator interval,
-  and the implementation asserts 0 ≤ ratio ≤ 1).
+1. non-DI under §5 — else `excluded_di_conversion` /
+   `excluded_di_unknown`;
+2. earnings-domain state complete — the executable predicate is
+   membership in the initialization's earnings-domain support set (the
+   person carries the earnings-domain marker set at population
+   initialization, `m6_population.py:238-337`); else
+   `excluded_domain_incomplete`;
+3. eligibility era: birth + 62 ≥ 1979 — else
+   `excluded_pre1979_eligibility`;
+4. nonempty span: max(1968, birth + 22) ≤ min(claim year, 2022) — else
+   `excluded_empty_span`;
+5. chronology invariant: birth + 62 ≤ claim year, with the report's
+   §3.1 birth year against the operative claim year — else
+   `excluded_chronology_inconsistent` (this predicate also closes the
+   COLA span at 1979-2022 from both ends);
+6. coverage ratio ≥ 0.80 — years classed `observed`, `gap_imputed`,
+   `boundary_2014`, or `projected` within the inclusive span, divided
+   by the span from max(1968, birth + 22) through min(claim year,
+   2022); numerator years counted only inside the denominator
+   interval; the implementation asserts 0 ≤ ratio ≤ 1 — else
+   `excluded_low_coverage`.
 
-Excluded persons are published as weighted and unweighted counts by
-exclusion reason. Revenue tables include every person with projected
-in-window earnings (no career completeness needed).
+Excluded candidates are published as weighted and unweighted counts by
+their single reason key. (One entrant law per round 3: the operative
+domain counts are the §10 re-derived explicit-row counts; the
+candidate-3 artifact's 6,698 figure is context only.) Revenue tables
+include every person with projected in-window earnings (no career
+completeness needed).
 
 ### 3.4 Covered-earnings interpretation
 
@@ -262,7 +273,9 @@ carried a concrete value, `assembly.py:174-192,380-388`):
    one ever appearing — excluded from benefit tables and counted
    separately. Excluded persons need no `claim_origin`.
 3. **non-DI**: otherwise (including 2014-seed structural absence with
-   concrete non-True values throughout the projection) — included.
+   concrete non-True values throughout the projection) — passes the DI
+   screen (canonical-law predicate 1); inclusion is decided by the
+   remaining predicates.
 
 The implementation asserts that this partition is complete: every
 person maps to exactly one class, and every benefit-table person is
@@ -457,8 +470,10 @@ candidate-3 artifact's 6,698 later-entrant figure is computed as later
 anchor plus outside-domain, overlaps the 16,231 no-state count, and
 includes persons with no earnings row (`m6_runner.py:1144-1160`). The
 report derives its own entrant count from explicit 2016/2018 earnings
-rows and publishes mutually exclusive exclusion counts (or the
-overlap, stated).
+rows as a diagnostic; operative exclusion counting is single-reason by
+the canonical law's precedence, so exclusion classes are mutually
+exclusive by construction (the entrant diagnostic may overlap them and
+says so).
 
 ## 11. Artifact, tests, publication, ceremony (round-1 finding 10)
 
@@ -491,14 +506,22 @@ overlap, stated).
   `phase` (one of `"preparation" | "invariant" | "compute" |
   "publication"`), `reason` (a machine string), `reason_detail` (free
   text), `registration_reference` (issue/comment id), and
-  `configuration_echo` (the same object the artifact would carry);
-  `registration_reference` is a JSON string. A **publication abort**
-  (failure after compute, before or during artifact write) also
-  triggers an incident record, with `phase: "publication"` and, if a
-  partial artifact exists, its path referenced. The record carries
-  **no estimate-bearing value of any kind**; the schema-validation
-  test enforces the exact key set, the types, and that no key outside
-  the schema and no numeric array or table of any kind is present. Incident records never occupy the `v1` path and are
+  `configuration_echo` (the same object the artifact would carry), and
+  `artifact_path` (JSON string or null — non-null only when `phase`
+  is `"publication"` and a partial artifact file exists, holding its
+  repo-relative path); `registration_reference` is a JSON string. A
+  **publication abort** (failure after compute, before or during
+  artifact write) also triggers an incident record with
+  `phase: "publication"`. The §11 canonical rule's retry-eligible
+  class maps to records whose `reason` begins with `external_` and
+  whose phase is `"preparation"` or `"compute"` — any other record is
+  not retry-eligible. The record carries **no estimate-bearing value
+  of any kind**; the schema-validation test enforces the exact
+  nine-key set, each declared type, the `schema_version` constant, the
+  `phase` enum, ISO-8601-Z `timestamp_utc`, the index-filename
+  correspondence, the `artifact_path` nullability rule, and that no
+  key outside the schema and no numeric array or table of any kind is
+  present. Incident records never occupy the `v1` path and are
   cross-referenced by any later artifact or fresh registration.
 - **Execution topology — the complete launcher contract** (round-4
   completion; the launchd user-domain lineage adjudicated and verified
