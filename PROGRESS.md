@@ -9,8 +9,9 @@ worktree. The COLA extraction and independent full-actual parameter loaders
 are complete and locally validated. The one-shot publication contracts,
 non-executed candidate-3 projection driver, and both statutory ledgers are
 also implemented. The person-level statutory join and pure artifact assembly
-are complete; the production adapter and committed-fixture rebuild are in
-progress. No projection has been run.
+are complete. The production-output adapter is also complete; standalone
+schema hardening and the committed-fixture rebuild are in progress. No
+projection has been run.
 
 ## Done
 
@@ -88,10 +89,20 @@ progress. No projection has been run.
 - Verified artifact assembly together with the statutory ledgers and
   publication contracts using 18 focused tests, Black (79 columns), Ruff, and
   `git diff --check`.
+- Added the pure adapter from the exact twenty unsplit candidate-3 projection
+  outputs to the population roster, returned-slice trajectory, synthetic
+  birth-year map, independently reconstructed claiming schedule, inclusion
+  result, and both statutory ledgers.
+- Required the adapter to consume hash-bound full-actual report parameters,
+  never `phase.bundle`, and bound the artifact configuration's parameter
+  provenance back to the exact bundle used for its ledger computations.
+- Verified the complete parameter/career/ledger/preparation/assembly path with
+  41 focused tests, Black (79 columns), Ruff, and `git diff --check`.
 
 ## Next
 
-- Complete the production-output adapter and committed-fixture rebuild.
+- Complete standalone artifact-schema hardening and the committed-fixture
+  rebuild.
 - Run the required quality checks, push, and open the draft PR.
 
 ## Design question for the PR
