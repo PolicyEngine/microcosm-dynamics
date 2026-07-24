@@ -8,9 +8,9 @@ created because the execution sandbox does not permit writes outside the
 worktree. The COLA extraction and independent full-actual parameter loaders
 are complete and locally validated. The one-shot publication contracts,
 non-executed candidate-3 projection driver, and both statutory ledgers are
-also implemented. The person-level statutory join is complete; artifact
-assembly and its production adapter are in progress. No projection has been
-run.
+also implemented. The person-level statutory join and pure artifact assembly
+are complete; the production adapter and committed-fixture rebuild are in
+progress. No projection has been run.
 
 ## Done
 
@@ -75,10 +75,23 @@ run.
   entrant diagnostics, and verified the career milestone together with its
   ledger adapter using 21 focused tests, Black (79 columns), Ruff, and
   `git diff --check`.
+- Added exact twenty-draw post-compute assembly for the modeled-award flow,
+  imputed opening stock, and nominal payroll-revenue tables, including wide
+  per-draw rows, flattened means/sample SDs, and per-draw plus aggregate
+  biennial companions.
+- Added comprehensive inclusion, origin, birth-source, endpoint, entrant,
+  career-provenance, odd-year, positive-post-claim, and no-recomputation
+  diagnostics to the immutable artifact envelope.
+- Kept the unregistered SSA award context ratio explicitly `not_computed`
+  rather than fabricating a level series; the missing statistic/source/vintage
+  is recorded as a design question in the artifact.
+- Verified artifact assembly together with the statutory ledgers and
+  publication contracts using 18 focused tests, Black (79 columns), Ruff, and
+  `git diff --check`.
 
 ## Next
 
-- Implement artifact assembly from the statutory ledgers.
+- Complete the production-output adapter and committed-fixture rebuild.
 - Run the required quality checks, push, and open the draft PR.
 
 ## Design question for the PR
