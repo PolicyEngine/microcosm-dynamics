@@ -6,8 +6,10 @@ Implementation started from design commit `6586b92` on branch
 `sol/entry8-impl`. The required external lane status file could not be
 created because the execution sandbox does not permit writes outside the
 worktree. The COLA extraction and independent full-actual parameter loaders
-are complete and locally validated. Statutory-pipeline implementation is in
-progress; no projection has been run.
+are complete and locally validated. The one-shot publication contracts and
+non-executed candidate-3 projection driver are also implemented. The
+person-level statutory join and ledgers are in progress; no projection has
+been run.
 
 ## Done
 
@@ -32,11 +34,24 @@ progress; no projection has been run.
 - Verified the parameter milestone together with the COLA extraction: 19
   focused tests passed; Black (79 columns), Ruff, and `git diff --check`
   passed.
+- Added the candidate-3 driver with pre-fit CandidateSpec hash assertions,
+  the full fit/preflight/materialization prefix, unsplit population, and exact
+  draw indices 0-19 mapped to frozen root seeds 5200-5219.
+- Extended the exclusive artifact helper to accept exact precomputed sidecar
+  bytes, then added the integrity-bound `first_estimates_v1` writer and
+  validator with the frozen evidence labels, gap block, scope statements, and
+  execution rule.
+- Added the append-only exact-nine-key incident writer/validator, including
+  filename/index, ISO-8601-Z, partial-artifact iff, configuration-identity,
+  numeric-array, and retry-class rules.
+- Verified the publication/driver milestone with 18 focused tests (including
+  the existing artifact contract tests), Black (79 columns), Ruff, and
+  `git diff --check`.
 
 ## Next
 
 - Implement the career join and four-stage inclusion law.
-- Implement both ledgers, artifact/incident writers, and projection driver.
+- Implement both statutory ledgers and artifact assembly from their results.
 - Run the required quality checks, push, and open the draft PR.
 
 ## Design question for the PR
