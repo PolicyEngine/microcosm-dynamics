@@ -1,8 +1,8 @@
 # The first estimates report: statutory-formula benefit and revenue estimates on the candidate-3 reproduction panel
 
-- **Status:** `DRAFT_NOT_OPERATIVE`, revision 8 — hardened through
-  seven adversarial referee rounds (PR #285 record: rounds 1-7, every
-  finding accepted). Submitted for round 8. Nothing here authorizes a
+- **Status:** `DRAFT_NOT_OPERATIVE`, revision 9 — hardened through
+  eight adversarial referee rounds (PR #285 record: rounds 1-8, every
+  finding accepted). Submitted for round 9. Nothing here authorizes a
   run.
 - **Resolves:** forecast ledger entry 8 — "end-to-end benefit and
   revenue estimates computed on projected earnings/demographic histories
@@ -157,8 +157,8 @@ domain laws frozen per round 4:
   the exact predicate is max(1968, birth + 22) > min(claim year, 2022)
   — is excluded-and-counted, a defined exclusion reason, not an abort.
   (The eligibility-era bound makes this vacuous for included persons;
-  the rule exists as a fail-safe and sits at precedence position 4 of
-  the canonical inclusion law.)
+  the rule exists as a fail-safe and is Stage-D predicate 3 of the
+  §3.3 staged law.)
 
 **The canonical inclusion law — the ONLY inclusion rule in this
 document** (round-6 unification; any other passage describing benefit
@@ -183,7 +183,10 @@ carries a non-null `claim_year` in **any slice of their trajectory**
 2022 remains a candidate through their last-present year,
 `steps.py:113-134`). A non-DI person with a drawn `claim_age` but null
 `claim_year` in every slice (never claimed in-window, `steps.py:409`)
-is a non-claimant, counted as such, with no exclusion record.
+is a non-claimant, counted as such, with no exclusion record; non-DI
+persons who never receive a drawn `claim_age` at all are counted in
+the same non-claimant class (one class, two entry paths, both
+published).
 
 **Stage C — origin and the operative claim year.** §4's origin law
 assigns each candidate exactly one origin; `opening_backfill`
@@ -249,7 +252,8 @@ claim age with the person's age in that slice:
   the claim, whenever stamped, corresponds to an age the person
   reaches during the window (equality means the crossing occurs in the
   first exposure year and is a genuine modeled award, not a
-  fabrication — round-2 correction). These and only these populate the
+  fabrication — round-2 correction). Of these, those that additionally
+  pass every Stage-D predicate — and only those — populate the
   new-awards flow table, with claim year = the engine's stamped year.
 - **`opening_backfill`**: drawn claim age **<** age at first exposure —
   the engine's stamped claim year is fabricated. These persons join
@@ -290,9 +294,9 @@ carried a concrete value, `assembly.py:174-192,380-388`):
    one ever appearing — excluded from benefit tables and counted
    separately. Excluded persons need no `claim_origin`.
 3. **non-DI**: otherwise (including 2014-seed structural absence with
-   concrete non-True values throughout the projection) — passes the DI
-   screen (canonical-law predicate 1); inclusion is decided by the
-   remaining predicates.
+   concrete non-True values throughout the projection) — passes Stage A
+   of the §3.3 staged law; inclusion is decided by Stages B-D in full,
+   beginning with the Stage-D domain predicate.
 
 The implementation asserts that this partition is complete: every
 person maps to exactly one class, and every benefit-table person is
