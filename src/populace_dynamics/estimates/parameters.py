@@ -169,6 +169,10 @@ class ReportParameters:
     provenance: dict[str, Any]
 
 
+class ParameterDependencyUnavailable(RuntimeError):
+    """The pinned external parameter installation cannot be read."""
+
+
 def _sha256(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
@@ -220,7 +224,7 @@ def _installed_distribution() -> importlib.metadata.Distribution:
     try:
         return importlib.metadata.distribution("policyengine-us")
     except importlib.metadata.PackageNotFoundError as error:
-        raise RuntimeError(
+        raise ParameterDependencyUnavailable(
             "policyengine-us is not installed; the first-estimates report "
             "requires policyengine-us==1.752.2."
         ) from error
@@ -509,21 +513,26 @@ def load_report_parameters(
     Raw file hashes remain mandatory in either mode.
     """
 
-    root, resolved_version, version_source = _resolve_pinned_root(
-        pe_us_dir,
-        pe_us_version,
-    )
-
-    ssa_records, ssa_actual = _verify_files(
-        root,
-        SSA_PARAMETER_SHA256,
-        expected_bundle_sha256=SSA_PARAMETER_BUNDLE_SHA256,
-    )
-    rate_records, rate_actual = _verify_files(
-        root,
-        RATE_LEG_SHA256,
-        expected_bundle_sha256=RATE_LEG_BUNDLE_SHA256,
-    )
+    try:
+        root, resolved_version, version_source = _resolve_pinned_root(
+            pe_us_dir,
+            pe_us_version,
+        )
+        ssa_records, ssa_actual = _verify_files(
+            root,
+            SSA_PARAMETER_SHA256,
+            expected_bundle_sha256=SSA_PARAMETER_BUNDLE_SHA256,
+        )
+        rate_records, rate_actual = _verify_files(
+            root,
+            RATE_LEG_SHA256,
+            expected_bundle_sha256=RATE_LEG_BUNDLE_SHA256,
+        )
+        ssa = ss_params.load_ssa_parameters(root)
+    except OSError as error:
+        raise ParameterDependencyUnavailable(
+            "The pinned policyengine-us parameter installation is unavailable."
+        ) from error
     all_actual = {**ssa_actual, **rate_actual}
     all_bundle_sha256 = _canonical_mapping_sha256(all_actual)
     if all_bundle_sha256 != PE_US_CONSUMED_BUNDLE_SHA256:
@@ -533,7 +542,6 @@ def load_report_parameters(
             f"{PE_US_CONSUMED_BUNDLE_SHA256}."
         )
 
-    ssa = ss_params.load_ssa_parameters(root)
     if ssa.nawi.get(2020) != 55_628.60:
         raise ValueError(
             f"Full-actual NAWI(2020) is {ssa.nawi.get(2020)!r}, "

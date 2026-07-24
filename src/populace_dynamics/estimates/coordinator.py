@@ -20,7 +20,10 @@ from types import ModuleType
 from typing import Any, Literal
 
 from populace_dynamics.estimates import publication
-from populace_dynamics.estimates.parameters import load_report_parameters
+from populace_dynamics.estimates.parameters import (
+    ParameterDependencyUnavailable,
+    load_report_parameters,
+)
 from populace_dynamics.estimates.preparation import (
     _build_prepared_first_estimates_artifact,
     _prepare_first_report_batch,
@@ -104,6 +107,31 @@ class _CoordinatorOperations:
     publish_incident: Callable[..., Path]
 
 
+def _exception_chain_contains(
+    error: Exception,
+    classes: tuple[type[BaseException], ...],
+) -> bool:
+    current: BaseException | None = error
+    seen: set[int] = set()
+    while current is not None and id(current) not in seen:
+        if isinstance(current, classes):
+            return True
+        seen.add(id(current))
+        current = current.__cause__ or current.__context__
+    return False
+
+
+def _load_production_parameters() -> Any:
+    """Translate only unavailable external parameter dependencies."""
+    try:
+        return load_report_parameters()
+    except ParameterDependencyUnavailable as error:
+        raise ExternalPreOutputFailure(
+            "external_parameter_bundle_unavailable",
+            "Registered parameter dependency unavailable before output.",
+        ) from error
+
+
 def _git_bytes(repository: Path, *arguments: str) -> bytes:
     try:
         return subprocess.run(
@@ -152,17 +180,40 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
     factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
     if not callable(factory):
         raise RuntimeError("registered input factory callable is absent")
-    plan = factory()
+    try:
+        plan = factory()
+    except Exception as error:
+        if _exception_chain_contains(error, (OSError,)):
+            raise ExternalPreOutputFailure(
+                "external_registered_input_unavailable",
+                "Registered input dependency unavailable before output.",
+            ) from error
+        raise
     if not isinstance(plan, M6Candidate3InputPlan):
         raise TypeError(
             "registered input factory did not return M6Candidate3InputPlan"
         )
-    return plan
+
+    def load_full_inputs() -> Any:
+        try:
+            return plan.load_full_inputs()
+        except Exception as error:
+            if _exception_chain_contains(error, (OSError,)):
+                raise ExternalPreOutputFailure(
+                    "external_registered_input_unavailable",
+                    "Registered input dependency unavailable before output.",
+                ) from error
+            raise
+
+    return M6Candidate3InputPlan(
+        fit_inputs=plan.fit_inputs,
+        load_full_inputs=load_full_inputs,
+    )
 
 
 def _default_operations() -> _CoordinatorOperations:
     return _CoordinatorOperations(
-        load_parameters=lambda: load_report_parameters(),
+        load_parameters=_load_production_parameters,
         load_input_plan=_load_registered_input_plan,
         resolve_contract=resolve_report_contract,
         prepare_sidecar=publication.prepare_environment_sidecar,

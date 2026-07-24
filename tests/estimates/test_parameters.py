@@ -294,3 +294,30 @@ def test__report_loader__rejects_wrong_policyengine_version(tmp_path: Path):
             tmp_path,
             pe_us_version="1.752.1",
         )
+
+
+def test__report_loader__classifies_unavailable_external_installation(
+    tmp_path,
+):
+    with pytest.raises(parameters.ParameterDependencyUnavailable) as caught:
+        parameters.load_report_parameters(
+            tmp_path,
+            pe_us_version="1.752.2",
+        )
+
+    assert isinstance(caught.value.__cause__, FileNotFoundError)
+
+
+def test__report_loader__does_not_classify_missing_committed_cola_as_external(
+    tmp_path,
+    monkeypatch,
+):
+    hashes = _write_synthetic_pe_us(tmp_path)
+    _install_synthetic_hash_pins(monkeypatch, hashes)
+
+    with pytest.raises(FileNotFoundError):
+        parameters.load_report_parameters(
+            tmp_path,
+            pe_us_version="1.752.2",
+            cola_path=tmp_path / "missing-cola.json",
+        )

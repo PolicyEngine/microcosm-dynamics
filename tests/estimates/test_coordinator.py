@@ -12,6 +12,9 @@ import pytest
 
 from populace_dynamics.contract import ContractRef
 from populace_dynamics.estimates import coordinator, publication, runner
+from populace_dynamics.estimates.parameters import (
+    ParameterDependencyUnavailable,
+)
 from populace_dynamics.harness.m6_candidate3_runner import (
     M6Candidate3InputPlan,
 )
@@ -412,9 +415,10 @@ def test__registered_input_factory__binds_committed_file_and_exact_type(
     path = root / "scripts" / "registered_m6_candidate3_inputs.py"
     path.parent.mkdir(parents=True)
     path.write_bytes(b"registered factory\n")
+    full_inputs = object()
     plan = M6Candidate3InputPlan(
         fit_inputs=object(),
-        load_full_inputs=lambda: object(),
+        load_full_inputs=lambda: full_inputs,
     )
     monkeypatch.setattr(
         coordinator,
@@ -427,7 +431,81 @@ def test__registered_input_factory__binds_committed_file_and_exact_type(
         lambda *_args: SimpleNamespace(build_input_plan=lambda: plan),
     )
 
-    assert coordinator._load_registered_input_plan(root) is plan
+    observed = coordinator._load_registered_input_plan(root)
+    assert observed.fit_inputs is plan.fit_inputs
+    assert observed.load_full_inputs() is full_inputs
     path.write_bytes(b"drifted factory\n")
     with pytest.raises(RuntimeError, match="committed HEAD blob"):
         coordinator._load_registered_input_plan(root)
+
+
+def test__default_operations__classify_external_parameter_dependency(
+    monkeypatch,
+):
+    def unavailable():
+        raise ParameterDependencyUnavailable("private dependency path")
+
+    monkeypatch.setattr(coordinator, "load_report_parameters", unavailable)
+
+    with pytest.raises(coordinator.ExternalPreOutputFailure) as caught:
+        coordinator._default_operations().load_parameters()
+
+    assert caught.value.reason == "external_parameter_bundle_unavailable"
+    assert caught.value.safe_detail == (
+        "Registered parameter dependency unavailable before output."
+    )
+    assert "private dependency path" not in caught.value.safe_detail
+
+
+def test__default_operations__do_not_retry_internal_parameter_failure(
+    monkeypatch,
+):
+    def invalid_internal_file():
+        raise FileNotFoundError("tracked COLA path")
+
+    monkeypatch.setattr(
+        coordinator,
+        "load_report_parameters",
+        invalid_internal_file,
+    )
+
+    with pytest.raises(FileNotFoundError, match="tracked COLA path"):
+        coordinator._default_operations().load_parameters()
+
+
+def test__registered_input_factory__classifies_lazy_external_dependency(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "repo"
+    path = root / "scripts" / "registered_m6_candidate3_inputs.py"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"registered factory\n")
+
+    def unavailable():
+        raise FileNotFoundError("private input path")
+
+    plan = M6Candidate3InputPlan(
+        fit_inputs=object(),
+        load_full_inputs=unavailable,
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_git_bytes",
+        lambda *_args: b"registered factory\n",
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_load_module",
+        lambda *_args: SimpleNamespace(build_input_plan=lambda: plan),
+    )
+
+    observed = coordinator._load_registered_input_plan(root)
+    with pytest.raises(coordinator.ExternalPreOutputFailure) as caught:
+        observed.load_full_inputs()
+
+    assert caught.value.reason == "external_registered_input_unavailable"
+    assert caught.value.safe_detail == (
+        "Registered input dependency unavailable before output."
+    )
+    assert "private input path" not in caught.value.safe_detail

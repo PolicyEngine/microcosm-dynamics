@@ -28,6 +28,9 @@ focused-tested. No projection has been run.
 - Enforced one initial run plus only one explicit retry for an eligible
   external pre-output incident, with changed bytes, publication, and any
   second failure requiring a fresh registration.
+- Added narrow production classification for unavailable policyengine-us and
+  registered-input dependencies, so the single external pre-output retry is
+  reachable without making hash, schema, or other internal failures eligible.
 - Added independent mutation tests for Stage-D predicate ordering, empty PMFs,
   RNG namespace, future-earnings exclusion, the birth-plus-62 PIA year,
   pre-claim payment exclusion, and positive post-claim earnings counts.
