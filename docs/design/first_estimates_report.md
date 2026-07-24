@@ -136,8 +136,8 @@ Nominal labor income by calendar year assembled as:
 ### 3.3 Zero semantics and the coverage rule
 
 `ss.benefits.aime` treats absent years as zero and makes coverage the
-caller's responsibility (`ss/benefits.py:100-117`). Two ordering and
-domain laws frozen per round 4:
+caller's responsibility (`ss/benefits.py:100-117`). Three ordering and
+domain laws frozen per rounds 4-5:
 
 - **Cutoff before imputation** (the information-as-of principle
   extends to imputation itself): the as-of restriction to income years
