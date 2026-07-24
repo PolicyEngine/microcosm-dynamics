@@ -8,8 +8,9 @@ created because the execution sandbox does not permit writes outside the
 worktree. The COLA extraction and independent full-actual parameter loaders
 are complete and locally validated. The one-shot publication contracts,
 non-executed candidate-3 projection driver, and both statutory ledgers are
-also implemented. The person-level statutory join and artifact assembly are
-in progress; no projection has been run.
+also implemented. The person-level statutory join is complete; artifact
+assembly and its production adapter are in progress. No projection has been
+run.
 
 ## Done
 
@@ -60,10 +61,23 @@ in progress; no projection has been run.
 - Added exact registered-draw aggregation with arithmetic means and sample
   standard deviations, and verified the ledger milestone with 7 focused
   tests, Black (79 columns), Ruff, and `git diff --check`.
+- Added the all-person population roster and exact/inferred/synthetic-native
+  birth-year precedence with fully reconciled weighted and unweighted source
+  counts.
+- Added annual career construction with the information cutoff before
+  imputation, post-biennial gap law, corrected 2013/2014 seam, exhaustive
+  provenance, coverage diagnostics, and pre-1968 top-35 warnings.
+- Added the canonical Stage A-D inclusion pipeline: whole-trajectory DI
+  precedence; any-slice claimant detection and both nonclaimant paths;
+  disjoint modeled/opening origins; person-keyed, strictly truncated opening
+  imputation; and first-failure-only ordered exclusions.
+- Added actual-presence, post-claim-earnings, endpoint-snap, and explicit-row
+  entrant diagnostics, and verified the career milestone together with its
+  ledger adapter using 21 focused tests, Black (79 columns), Ruff, and
+  `git diff --check`.
 
 ## Next
 
-- Implement the career join and four-stage inclusion law.
 - Implement artifact assembly from the statutory ledgers.
 - Run the required quality checks, push, and open the draft PR.
 
