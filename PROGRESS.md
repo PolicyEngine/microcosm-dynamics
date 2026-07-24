@@ -31,11 +31,12 @@ focused-tested. No projection has been run.
 - Added independent mutation tests for Stage-D predicate ordering, empty PMFs,
   RNG namespace, future-earnings exclusion, the birth-plus-62 PIA year,
   pre-claim payment exclusion, and positive post-claim earnings counts.
+- Corrected the three semantic gap-block paraphrases against the current
+  frozen section 10 text and pinned the complete Markdown table as a
+  byte-exact fixture with an independent literal SHA-256.
 
 ## Next
 
-- Add the verbatim frozen gap-block fixture and correct its three current
-  section 10 paraphrases.
 - Complete the frozen incident-schema mutation battery.
 - Run formatting, lint, and fast tests; push the branch and write the final
   report to the requested output file.

@@ -130,7 +130,7 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
             "(pinned: carried di_converted=True read as no-conversion)"
         ),
         "classification": (
-            "material — directly motivates the DI precedence law and the "
+            "material — directly motivates the §5 precedence law and the "
             "di_unknown class"
         ),
     },
@@ -172,7 +172,8 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
             "not reconcile mortality-thinned members or newborns)"
         ),
         "classification": (
-            "inapplicable — household composition fields are not consumed"
+            "inapplicable — household composition fields are not consumed "
+            "by this report"
         ),
     },
     {
@@ -235,7 +236,7 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     },
     {
         "disclosure": "M4 is not DI adjudication",
-        "classification": "material — DI is out of scope",
+        "classification": "material — DI out of scope",
     },
     {
         "disclosure": "Alignment `not_computed`; scored path unaligned",
