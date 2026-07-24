@@ -6,10 +6,10 @@ Implementation started from design commit `6586b92` on branch
 `sol/entry8-impl`. The required external lane status file could not be
 created because the execution sandbox does not permit writes outside the
 worktree. The COLA extraction and independent full-actual parameter loaders
-are complete and locally validated. The one-shot publication contracts and
-non-executed candidate-3 projection driver are also implemented. The
-person-level statutory join and ledgers are in progress; no projection has
-been run.
+are complete and locally validated. The one-shot publication contracts,
+non-executed candidate-3 projection driver, and both statutory ledgers are
+also implemented. The person-level statutory join and artifact assembly are
+in progress; no projection has been run.
 
 ## Done
 
@@ -50,11 +50,21 @@ been run.
 - Tightened table-schema validation so every table must carry all registered
   draw indices, nonempty mean/sample-SD aggregate rows, and a nonempty
   biennial companion for annual output.
+- Added the statutory benefit ledger with claim-year information cutoffs,
+  AIME/PIA/claim-age adjustment, stepwise dime-floored COLAs, actual-presence
+  payments, separate modeled-flow and opening-stock rows, and an explicit
+  no-recomputation diagnostic.
+- Added the nominal payroll-revenue ledger over every realized in-window
+  projection person-year, using the actual wage base and separate employee
+  and employer rate legs, plus annual and biennial presentations.
+- Added exact registered-draw aggregation with arithmetic means and sample
+  standard deviations, and verified the ledger milestone with 7 focused
+  tests, Black (79 columns), Ruff, and `git diff --check`.
 
 ## Next
 
 - Implement the career join and four-stage inclusion law.
-- Implement both statutory ledgers and artifact assembly from their results.
+- Implement artifact assembly from the statutory ledgers.
 - Run the required quality checks, push, and open the draft PR.
 
 ## Design question for the PR
