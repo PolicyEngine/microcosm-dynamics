@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 from populace_dynamics.engine.steps import ClaimingSchedule
+from populace_dynamics.estimates import career as career_module
 from populace_dynamics.estimates.career import (
     BirthSource,
     CareerProvenance,
@@ -478,10 +479,50 @@ def test_opening_draw_is_strict_and_person_keyed_under_reordering():
     ]
 
 
+def test_opening_draw_fails_closed_when_strict_truncation_is_empty():
+    trajectory = pd.DataFrame(
+        _trajectory_rows(1, 1952, claim_age=62, claim_year=2015)
+    )
+    roster = _roster([(1, "female", 1.0)])
+    observed = pd.DataFrame(_observed_rows(1, 1952))
+    marriage = pd.DataFrame({"person_id": [1], "birth_year": [1952]})
+
+    with pytest.raises(
+        ValueError,
+        match="empty strictly-below exposure-age claiming mass",
+    ):
+        build_career_inclusion(
+            trajectory,
+            roster,
+            observed,
+            marriage,
+            {},
+            _schedule({63: 1.0}),
+            {1},
+            stock_imputation_root_seed=8108,
+        )
+
+
+def test_opening_draw_rng_namespace_is_exact_literal(monkeypatch):
+    hashed_values: list[bytes] = []
+    real_sha256 = career_module.hashlib.sha256
+
+    def recording_sha256(value: bytes):
+        hashed_values.append(value)
+        return real_sha256(value)
+
+    monkeypatch.setattr(career_module.hashlib, "sha256", recording_sha256)
+
+    career_module._stable_person_rng(8108, 314159)
+
+    assert hashed_values == [b"first_estimates.opening_stock.person.v1|314159"]
+
+
 def test_stage_d_first_failure_order_and_exact_coverage_boundary():
     specs = {
         10: (1900, 120, 2015),
-        11: (1916, 100, 2016),
+        # Person 11 fails both predicates 2 and 3. Predicate 2 must win.
+        11: (1916, 100, 1967),
         12: (2000, 62, 2015),
         13: (1950, 65, 2000),
         14: (1940, 62, 2015),

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import statistics
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pandas as pd
@@ -170,6 +171,120 @@ def test_benefit_cutoff_cola_dime_presence_and_no_recomputation(monkeypatch):
     assert person.career_provenance_counts["projected"] == 1
     assert person.odd_year_carried_year_share == 0.5
     assert person.post_claim_earnings_years_examined == (2016,)
+
+
+def test_aime_excludes_future_years_from_career_mapping(monkeypatch):
+    calls: list[dict[int, float]] = []
+    real_aime = ledgers.benefits.aime
+
+    def recording_aime(history, birth_year, ssa):
+        calls.append(dict(history))
+        return real_aime(history, birth_year, ssa)
+
+    monkeypatch.setattr(ledgers.benefits, "aime", recording_aime)
+    claimant = replace(
+        _claimant(),
+        earnings_by_year={
+            2010: 42_000.0,
+            2015: 0.0,
+            2022: 9_999_999.0,
+        },
+    )
+
+    result = ledgers.build_benefit_ledger(
+        [claimant],
+        _parameters(),
+        draw_index=0,
+    )
+
+    assert calls == [{2010: 42_000.0, 2015: 0.0}]
+    assert result.people[0].aime_history_years == (2010, 2015)
+
+
+def test_pia_uses_literal_birth_plus_62_year(monkeypatch):
+    pia_years: list[int] = []
+    real_pia = ledgers.benefits.pia
+
+    def recording_pia(aime_value, year, ssa):
+        pia_years.append(year)
+        return real_pia(aime_value, year, ssa)
+
+    monkeypatch.setattr(ledgers.benefits, "pia", recording_pia)
+    claimant = replace(
+        _claimant(),
+        birth_year=1950,
+        claim_age=65,
+        claim_year=2015,
+    )
+
+    result = ledgers.build_benefit_ledger(
+        [claimant],
+        _parameters(),
+        draw_index=0,
+    )
+
+    assert pia_years == [2012]
+    assert result.people[0].eligibility_year == 2012
+
+
+def test_preclaim_presence_is_not_a_payment_year():
+    claimant = replace(
+        _claimant(),
+        claim_age=64,
+        claim_year=2017,
+        presence_years=frozenset({2015, 2017}),
+        post_claim_earnings_by_year={2018: 1.0},
+    )
+
+    result = ledgers.build_benefit_ledger(
+        [claimant],
+        _parameters(),
+        draw_index=0,
+    )
+
+    assert set(result.people[0].payment_monthly_by_year) == {2017}
+    assert (
+        _benefit_row(
+            result,
+            "modeled_award",
+            2015,
+        ).unweighted_beneficiary_count
+        == 0
+    )
+    assert (
+        _benefit_row(
+            result,
+            "modeled_award",
+            2017,
+        ).unweighted_beneficiary_count
+        == 1
+    )
+
+
+def test_positive_postclaim_diagnostic_uses_people_and_their_weights():
+    positive = _claimant(person_id=1, weight=2.0)
+    nonpositive = replace(
+        _claimant(person_id=2, weight=7.0),
+        post_claim_earnings_by_year={
+            2016: 0.0,
+            2018: -1.0,
+        },
+    )
+
+    result = ledgers.build_benefit_ledger(
+        [positive, nonpositive],
+        _parameters(),
+        draw_index=0,
+    )
+
+    assert {
+        person.person_id: person.positive_post_claim_earnings
+        for person in result.people
+    } == {1: True, 2: False}
+    assert result.diagnostics["included_claimants_unweighted"] == 2
+    assert result.diagnostics["included_claimants_weighted"] == 9.0
+    assert result.diagnostics["positive_post_claim_earnings_unweighted"] == 1
+    assert result.diagnostics["positive_post_claim_earnings_weighted"] == 2.0
 
 
 def test_opening_stock_pays_only_during_actual_presence():
