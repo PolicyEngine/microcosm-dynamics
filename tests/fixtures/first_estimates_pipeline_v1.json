@@ -1,0 +1,190 @@
+{
+  "schema_version": "first_estimates_pipeline_fixture.v1",
+  "stock_imputation_root_seed": 8108,
+  "initial_population": [
+    {"person_id": 1, "year": 2014, "sex": "female", "weight": 2.0},
+    {"person_id": 2, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 3, "year": 2014, "sex": "male", "weight": 3.0},
+    {"person_id": 4, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 5, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 6, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 7, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 9, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 10, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 11, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 12, "year": 2014, "sex": "female", "weight": 1.0},
+    {"person_id": 13, "year": 2014, "sex": "female", "weight": 1.0}
+  ],
+  "scheduled_entries_by_year": {
+    "2017": [
+      {"person_id": 8, "year": 2016, "sex": "male", "weight": 4.0}
+    ]
+  },
+  "marriage_history": [
+    {"person_id": 1, "birth_year": 1953},
+    {"person_id": 4, "birth_year": 1950},
+    {"person_id": 5, "birth_year": 1950},
+    {"person_id": 6, "birth_year": 1950},
+    {"person_id": 7, "birth_year": 1950},
+    {"person_id": 8, "birth_year": 1950},
+    {"person_id": 9, "birth_year": 1900},
+    {"person_id": 10, "birth_year": 1916},
+    {"person_id": 11, "birth_year": 2000},
+    {"person_id": 12, "birth_year": 1950},
+    {"person_id": 13, "birth_year": 1940}
+  ],
+  "synthetic_birth_years": {"3": 1952},
+  "observed_series": [
+    {
+      "person_id": 1,
+      "birth_year_for_age": 1952,
+      "earnings": 100.0,
+      "years": [1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012]
+    },
+    {
+      "person_id": 2,
+      "birth_year_for_age": 1917,
+      "earnings": 100.0,
+      "years": [1968, 1969, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979]
+    },
+    {
+      "person_id": 3,
+      "birth_year_for_age": null,
+      "earnings": 100.0,
+      "years": [1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012]
+    },
+    {
+      "person_id": 9,
+      "birth_year_for_age": 1900,
+      "earnings": 1.0,
+      "years": [2016]
+    },
+    {
+      "person_id": 13,
+      "birth_year_for_age": 1940,
+      "earnings": 100.0,
+      "years": [1968]
+    }
+  ],
+  "trajectory_specs": [
+    {"person_id": 1, "birth_year": 1953, "years": [2014, 2015, 2016], "earnings": 150.0, "claim_age": 62, "claim_year": 2015},
+    {"person_id": 2, "birth_year": 1917, "years": [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022], "earnings": -10.0, "claim_age": 62, "claim_year": 2015},
+    {"person_id": 3, "birth_year": 1952, "native_birth_year": 1952, "years": [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022], "earnings": 0.0, "claim_age": 62, "claim_year": 2015},
+    {"person_id": 4, "birth_year": 1950, "years": [2014, 2015, 2016], "earnings": 0.0, "di_by_year": {"2015": true}},
+    {"person_id": 5, "birth_year": 1950, "years": [2014, 2015, 2016], "earnings": 0.0, "di_by_year": {"2016": null}},
+    {"person_id": 6, "birth_year": 1950, "years": [2014, 2015, 2016], "earnings": 0.0, "claim_age": 70},
+    {"person_id": 7, "birth_year": 1950, "years": [2014, 2015, 2016], "earnings": 0.0},
+    {"person_id": 9, "birth_year": 1900, "years": [2014, 2015, 2016], "earnings": 0.0, "claim_age": 120, "claim_year": 2015},
+    {"person_id": 10, "birth_year": 1916, "years": [2014, 2015, 2016], "earnings": 0.0, "claim_age": 100, "claim_year": 2016},
+    {"person_id": 11, "birth_year": 2000, "years": [2014, 2015, 2016], "earnings": 0.0, "claim_age": 62, "claim_year": 2015},
+    {"person_id": 12, "birth_year": 1950, "years": [2014, 2015, 2016], "earnings": 0.0, "claim_age": 65, "claim_year": 2000},
+    {"person_id": 13, "birth_year": 1940, "years": [2014, 2015, 2016], "earnings": 0.0, "claim_age": 75, "claim_year": 2015}
+  ],
+  "claiming_schedule": {
+    "years": [2000],
+    "female": {"62": 0.2, "63": 0.3, "98": 0.5},
+    "male": {"62": 0.2, "63": 0.3, "98": 0.5}
+  },
+  "earnings_domain_ids": [1, 2, 3, 10, 11, 12, 13],
+  "parameters": {
+    "wage_base": 100.0,
+    "employee_rate": 0.062,
+    "employer_rate": 0.062,
+    "cola_by_payment_year": {"2016": 0.1}
+  },
+  "expected": {
+    "birth_sources": {
+      "1": "exact_marriage",
+      "2": "inferred_period_age",
+      "3": "synthetic_native"
+    },
+    "di_partition": {
+      "4": "di_conversion",
+      "5": "di_unknown",
+      "8": "non_di"
+    },
+    "nonclaimants": {
+      "6": "drawn_never_claimed",
+      "7": "never_drawn",
+      "8": "never_drawn"
+    },
+    "included_ids": [1, 2, 3],
+    "opening_imputation": {
+      "2": {
+        "operative_claim_age": 63,
+        "operative_claim_year": 1980,
+        "schedule_year": 2000,
+        "schedule_snap": "lower"
+      },
+      "3": {
+        "operative_claim_age": 62,
+        "operative_claim_year": 2014,
+        "schedule_year": 2000,
+        "schedule_snap": "upper"
+      }
+    },
+    "exclusions": {
+      "9": "excluded_domain_incomplete",
+      "10": "excluded_pre1979_eligibility",
+      "11": "excluded_empty_span",
+      "12": "excluded_chronology_inconsistent",
+      "13": "excluded_low_coverage"
+    },
+    "stage_counts_unweighted": {
+      "excluded_di_conversion": 1,
+      "excluded_di_unknown": 1,
+      "nonclaimant": 3,
+      "excluded_domain_incomplete": 1,
+      "excluded_pre1979_eligibility": 1,
+      "excluded_empty_span": 1,
+      "excluded_chronology_inconsistent": 1,
+      "excluded_low_coverage": 1,
+      "included": 3
+    },
+    "benefit_people": {
+      "1": {
+        "aime": 8.0,
+        "monthly_benefit_at_award": 5.4,
+        "payment_2015": 5.4,
+        "payment_2016": 5.9
+      },
+      "2": {
+        "aime": 2.0,
+        "monthly_benefit_at_award": 1.4,
+        "payment_2015": 1.4,
+        "payment_2016": 1.5
+      },
+      "3": {
+        "aime": 8.0,
+        "monthly_benefit_at_award": 5.4,
+        "payment_2015": 5.4,
+        "payment_2016": 5.9
+      }
+    },
+    "opening_benefit_2015": {
+      "unweighted_beneficiary_count": 2,
+      "weighted_beneficiary_count": 4.0,
+      "frame_annualized_benefit": 211.2
+    },
+    "revenue_2015": {
+      "unweighted_person_year_count": 12,
+      "weighted_person_year_count": 15.0,
+      "unweighted_covered_earner_count": 1,
+      "weighted_covered_earner_count": 2.0,
+      "weighted_taxable_payroll": 190.0,
+      "employee_contributions": 11.78,
+      "employer_contributions": 11.78,
+      "combined_contributions": 23.56
+    },
+    "revenue_2017": {
+      "unweighted_person_year_count": 2,
+      "weighted_person_year_count": 4.0,
+      "unweighted_covered_earner_count": 0,
+      "weighted_covered_earner_count": 0.0,
+      "weighted_taxable_payroll": -10.0,
+      "employee_contributions": -0.62,
+      "employer_contributions": -0.62,
+      "combined_contributions": -1.24
+    }
+  }
+}

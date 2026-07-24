@@ -9,9 +9,9 @@ worktree. The COLA extraction and independent full-actual parameter loaders
 are complete and locally validated. The one-shot publication contracts,
 non-executed candidate-3 projection driver, and both statutory ledgers are
 also implemented. The person-level statutory join and pure artifact assembly
-are complete. The production-output adapter is also complete; standalone
-schema hardening and the committed-fixture rebuild are in progress. No
-projection has been run.
+are complete. The production-output adapter and committed-fixture rebuild are
+also complete; standalone schema hardening and final repository validation
+are in progress. No projection has been run.
 
 ## Done
 
@@ -98,11 +98,22 @@ projection has been run.
   provenance back to the exact bundle used for its ledger computations.
 - Verified the complete parameter/career/ledger/preparation/assembly path with
   41 focused tests, Black (79 columns), Ruff, and `git diff --check`.
+- Added a committed raw-input fixture that rebuilds the full roster and all
+  birth sources, Stage-A classes, Stage-B paths, claim origins, opening-stock
+  endpoint snaps, ordered Stage-D reasons, career provenance, and both
+  statutory ledgers without PSID or a projection run.
+- Pinned golden benefit and payroll-revenue arithmetic, including an
+  any-slice claimant removed before the final slice, scheduled seed metadata
+  that is never treated as presence, strict opening-PMF truncation,
+  odd-year diagnostics, and the no-recomputation invariant.
+- Verified the fixture together with the career and ledger suites using 22
+  focused tests, Black (79 columns), Ruff, JSON parsing, and
+  `git diff --check`.
 
 ## Next
 
-- Complete standalone artifact-schema hardening and the committed-fixture
-  rebuild.
+- Complete standalone artifact-schema hardening and final repository
+  validation.
 - Run the required quality checks, push, and open the draft PR.
 
 ## Design question for the PR
