@@ -236,7 +236,19 @@ def test__incident_mutation__rejects_configuration_echo_drift(tmp_path):
         )
 
 
-def test__incident_mutation__numeric_arrays_are_echo_only(tmp_path):
+def test__incident_mutation__numeric_array_predicate_is_nested_and_literal():
+    assert publication._contains_numeric_array(
+        {"outer": {"inner": ["label", 1.0]}}
+    )
+    assert not publication._contains_numeric_array(
+        {"outer": {"inner": ["label", True]}}
+    )
+
+
+def test__incident_mutation__validator_invokes_outside_echo_array_guard(
+    tmp_path,
+    monkeypatch,
+):
     root = _repository(tmp_path)
     record = _record()
 
@@ -244,16 +256,8 @@ def test__incident_mutation__numeric_arrays_are_echo_only(tmp_path):
     _validate(record, root=root)
     assert record["configuration_echo"]["projection"]["draw_indices"]
 
-    # The same shape in any outer field is both a declared-type mutation and
-    # a direct hit on the no-estimate-bearing-array rule.
-    record["reason_detail"] = ["projected totals", 1.0]
-    outside_echo = {
-        key: value
-        for key, value in record.items()
-        if key != "configuration_echo"
-    }
-    assert publication._contains_numeric_array(outside_echo)
-    with pytest.raises((TypeError, ValueError)):
+    monkeypatch.setattr(publication, "_contains_numeric_array", lambda _: True)
+    with pytest.raises(ValueError, match="numeric array outside"):
         _validate(record, root=root)
 
 
