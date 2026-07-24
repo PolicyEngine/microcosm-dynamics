@@ -257,8 +257,9 @@ claim age with the person's age in that slice:
   new-awards flow table, with claim year = the engine's stamped year.
 - **`opening_backfill`**: drawn claim age **<** age at first exposure —
   the engine's stamped claim year is fabricated. These persons join
-  the opening stock only, with claim age AND claim year re-imputed
-  under §6; both engine-stamped values are discarded.
+  the opening stock only — and only after passing every Stage-D
+  predicate — with claim age AND claim year re-imputed under §6; both
+  engine-stamped values are discarded.
 - **DI-excluded persons carry no origin** (round-4 consistency fix):
   the §5 precedence law runs FIRST; `di_conversion` and `di_unknown`
   persons are excluded before origin assignment. They may carry engine
