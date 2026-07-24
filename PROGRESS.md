@@ -118,11 +118,14 @@ final repository validation is in progress. No projection has been run.
 - Verified validation both before writing and after a JSON round trip,
   including all-null benefit means and valid all-zero included-career draws,
   with 18 focused tests, Black (79 columns), Ruff, and `git diff --check`.
+- Recovered and verified the final tier-manifest update: the complete suite
+  collects 3,496 tests, and its manifest-policy check passes with the new
+  entry-8 tests classified.
 
 ## Next
 
-- Complete final repository validation, push, and open the draft PR.
-- Run the required quality checks, push, and open the draft PR.
+- Complete the design-conformance audit and final repository validation, then
+  push and open the draft PR.
 
 ## Design question for the PR
 
