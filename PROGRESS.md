@@ -31,6 +31,10 @@ focused-tested. No projection has been run.
 - Added narrow production classification for unavailable policyengine-us and
   registered-input dependencies, so the single external pre-output retry is
   reachable without making hash, schema, or other internal failures eligible.
+- Serialized the complete production ceremony with a transient kernel lock on
+  the existing `runs` directory (no state file), bound the full registered
+  input-source chain to committed HEAD bytes, and revalidated both that chain
+  and the frozen environment/contract identity before publication.
 - Added independent mutation tests for Stage-D predicate ordering, empty PMFs,
   RNG namespace, future-earnings exclusion, the birth-plus-62 PIA year,
   pre-claim payment exclusion, and positive post-claim earnings counts.

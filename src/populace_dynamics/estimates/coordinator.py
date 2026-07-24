@@ -8,13 +8,16 @@ append-only incident record prescribed by the design.
 
 from __future__ import annotations
 
+import fcntl
 import importlib.util
 import json
+import os
 import re
 import subprocess
 import sys
-from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from collections.abc import Callable, Iterator, Mapping
+from contextlib import contextmanager
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Literal
@@ -45,6 +48,17 @@ __all__ = [
 ]
 
 _INPUT_FACTORY_PATH = Path("scripts/registered_m6_candidate3_inputs.py")
+_INPUT_FACTORY_SOURCES = (
+    _INPUT_FACTORY_PATH,
+    Path("scripts/registered_m6_candidate2_inputs.py"),
+    Path("scripts/registered_m6_inputs.py"),
+    Path("scripts/build_mortality_floors.py"),
+)
+_INPUT_FACTORY_MODULES = (
+    "registered_m6_candidate2_inputs",
+    "registered_m6_inputs",
+    "build_mortality_floors",
+)
 _INPUT_FACTORY_CALLABLE = "build_input_plan"
 _SAFE_EXTERNAL_REASON = re.compile(r"external_[a-z0-9_]+")
 _SAFE_EXTERNAL_DETAIL = re.compile(r"[A-Za-z0-9 .,:;()_/\-]+")
@@ -98,6 +112,7 @@ class _CoordinatorOperations:
 
     load_parameters: Callable[[], Any]
     load_input_plan: Callable[[Path], M6Candidate3InputPlan]
+    validate_input_sources: Callable[[Path], None]
     resolve_contract: Callable[[Path], Any]
     prepare_sidecar: Callable[[Path], tuple[bytes, str]]
     execute_projection: Callable[..., Any]
@@ -147,6 +162,25 @@ def _git_bytes(repository: Path, *arguments: str) -> bytes:
         ) from error
 
 
+def _assert_registered_input_sources(repository: Path) -> None:
+    """Bind the wrapper and every sibling module it imports to HEAD bytes."""
+    for relative_path in _INPUT_FACTORY_SOURCES:
+        relative = relative_path.as_posix()
+        path = repository / relative_path
+        committed = _git_bytes(repository, "show", f"HEAD:{relative}")
+        try:
+            working = path.read_bytes()
+        except FileNotFoundError as error:
+            raise RuntimeError(
+                f"registered input source {relative} is absent"
+            ) from error
+        if working != committed:
+            raise RuntimeError(
+                f"registered input source {relative} differs from its "
+                "committed HEAD blob"
+            )
+
+
 def _load_module(path: Path, scripts: Path) -> ModuleType:
     module_name = "_first_estimates_registered_input_factory"
     spec = importlib.util.spec_from_file_location(module_name, path)
@@ -165,17 +199,10 @@ def _load_module(path: Path, scripts: Path) -> ModuleType:
 
 def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
     """Load only the tracked, byte-clean registered candidate-3 factory."""
-    relative = _INPUT_FACTORY_PATH.as_posix()
+    _assert_registered_input_sources(repository)
     path = repository / _INPUT_FACTORY_PATH
-    committed = _git_bytes(repository, "show", f"HEAD:{relative}")
-    try:
-        working = path.read_bytes()
-    except FileNotFoundError as error:
-        raise RuntimeError("registered input factory is absent") from error
-    if working != committed:
-        raise RuntimeError(
-            "registered input factory differs from its committed HEAD blob"
-        )
+    for module_name in _INPUT_FACTORY_MODULES:
+        sys.modules.pop(module_name, None)
     module = _load_module(path, path.parent)
     factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
     if not callable(factory):
@@ -215,6 +242,7 @@ def _default_operations() -> _CoordinatorOperations:
     return _CoordinatorOperations(
         load_parameters=_load_production_parameters,
         load_input_plan=_load_registered_input_plan,
+        validate_input_sources=_assert_registered_input_sources,
         resolve_contract=resolve_report_contract,
         prepare_sidecar=publication.prepare_environment_sidecar,
         execute_projection=execute_first_report_projection,
@@ -222,6 +250,43 @@ def _default_operations() -> _CoordinatorOperations:
         build_artifact=_build_prepared_first_estimates_artifact,
         publish_artifact=publication.write_first_estimates_artifact,
         publish_incident=publication.write_first_estimates_incident,
+    )
+
+
+@contextmanager
+def _exclusive_ceremony_lock(repository_root: Path) -> Iterator[None]:
+    """Serialize the hours-scale ceremony with no persistent state file."""
+    runs = repository_root / "runs"
+    descriptor = os.open(
+        runs,
+        os.O_RDONLY | getattr(os, "O_DIRECTORY", 0),
+    )
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX)
+        yield
+    finally:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        os.close(descriptor)
+
+
+def _assert_precompute_identity(
+    token: publication._PrecomputeToken,
+    *,
+    expected_contract: Any,
+) -> None:
+    """Recheck that the frozen environment/contract still names this checkout."""
+    root = token._registration._repository_root
+    current_contract = publication.ContractRef.current(root)
+    if current_contract != expected_contract:
+        raise RuntimeError(
+            "repository contract identity changed during the ceremony"
+        )
+    publication.validate_environment_sidecar_payload(
+        token._sidecar_payload,
+        expected_record={
+            "environment": publication.environment_block(),
+            "contract": asdict(current_contract),
+        },
     )
 
 
@@ -418,7 +483,17 @@ def _run_registered_first_estimates_for_test(
             history,
             retry_after_incident=retry_after_incident,
         )
+        contract_ref = publication.ContractRef.current(
+            registration._repository_root
+        )
         resolved = operations.resolve_contract(registration._repository_root)
+        if (
+            publication.ContractRef.current(registration._repository_root)
+            != contract_ref
+        ):
+            raise RuntimeError(
+                "repository contract identity changed while resolving it"
+            )
         parameters = operations.load_parameters()
         expected_configuration = registered_configuration_echo(
             registration_reference=registration_reference,
@@ -441,6 +516,10 @@ def _run_registered_first_estimates_for_test(
             raise ValueError(
                 "prepared sidecar digest differs from its frozen bytes"
             )
+        _assert_precompute_identity(
+            precompute,
+            expected_contract=contract_ref,
+        )
         input_plan = operations.load_input_plan(registration._repository_root)
     except Exception as error:
         return _publish_abort(
@@ -485,6 +564,13 @@ def _run_registered_first_estimates_for_test(
         )
 
     try:
+        _assert_precompute_identity(
+            precompute,
+            expected_contract=contract_ref,
+        )
+        operations.validate_input_sources(
+            registration._repository_root,
+        )
         path = operations.publish_artifact(precompute, artifact)
     except Exception as error:
         return _publish_abort(
@@ -509,10 +595,12 @@ def run_registered_first_estimates(
     retry_after_incident: int | None = None,
 ) -> CoordinatorResult:
     """Run the one-shot production ceremony with no persistent coordinator."""
-    return _run_registered_first_estimates_for_test(
-        repository_root=repository_root,
-        registration_reference=registration_reference,
-        registered_configuration_bytes=registered_configuration_bytes,
-        retry_after_incident=retry_after_incident,
-        operations=_default_operations(),
-    )
+    root = Path(repository_root).resolve()
+    with _exclusive_ceremony_lock(root):
+        return _run_registered_first_estimates_for_test(
+            repository_root=root,
+            registration_reference=registration_reference,
+            registered_configuration_bytes=registered_configuration_bytes,
+            retry_after_incident=retry_after_incident,
+            operations=_default_operations(),
+        )
