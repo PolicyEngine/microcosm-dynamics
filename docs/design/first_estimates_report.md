@@ -1,9 +1,11 @@
 # The first estimates report: statutory-formula benefit and revenue estimates on the candidate-3 reproduction panel
 
-- **Status:** `DRAFT_NOT_OPERATIVE`, revision 9 — hardened through
-  eight adversarial referee rounds (PR #285 record: rounds 1-8, every
-  finding accepted). Submitted for round 9. Nothing here authorizes a
-  run.
+- **Status:** RATIFIED at `6586b92` (PR #285, nine referee rounds);
+  **amendment 1** (this revision) resolves the two design-side items
+  the implementation review surfaced: the unpinned §7 context-ratio
+  source (now deferred to the anchor-extraction successor) and the
+  §7.5/§10 gap-table omission (the no-recomputation row added).
+  Amendment 1 is itself referee-gated; nothing here authorizes a run.
 - **Resolves:** forecast ledger entry 8 — "end-to-end benefit and
   revenue estimates computed on projected earnings/demographic histories
   from the certified engine, published in-repo with disclosed gaps (no
@@ -391,10 +393,17 @@ Per included claimant, the ledger is year-by-year:
 Primary table: `modeled_award` flow — weighted award counts by year,
 average monthly benefit at award, aggregate frame-relative annualized
 benefits by calendar year, per-draw with mean/SD. Secondary
-(report-only): the §6 stock analogue. Context ratio (report-only): the
-simulated average monthly benefit at award beside the published SSA
-average for the corresponding years, source pinned, explicitly not an
-anchor.
+(report-only): the §6 stock analogue. **Context ratio — deferred by
+amendment 1** (the implementation review found this clause named no
+pinned statistic, inviting a source choice inside implementation code,
+which §8's own philosophy forbids): the simulated-vs-published average
+monthly benefit comparison moves to the ratified anchor-extraction
+successor step (§12), where the SSA statistic, vintage, and
+transcription arrive through a committed, provenance-pinned,
+referee-checked extraction. The v1 artifact publishes the simulated
+average monthly benefit at award and an explicit
+`context_ratio: {"status": "deferred_to_anchor_extraction"}` field —
+no invented comparison and no implementation-chosen source.
 
 ## 8. Parameters: the full-actuals oracle bundle (round-1 finding 6)
 
@@ -484,6 +493,8 @@ promised for later), with each item's classification:
 | Alignment `not_computed`; scored path unaligned | material |
 | Domain and coverage exclusions (§3.3) | material; counts published |
 | Odd-year earnings carry law (§3.2) | material — annual tables |
+| No post-claim recomputation (§7.5, registered simplification) | material — benefits of post-claim workers understated; affected count published |
+| Context ratio deferred to the anchor-extraction successor (§7, amendment 1) | material — no published-average comparison in v1 |
 | Spouse/survivor benefits out of scope | material |
 | Levels unanchored — no committed annual SSA level series | material; the registered anchor extraction is the successor step |
 
