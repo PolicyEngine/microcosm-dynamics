@@ -10,8 +10,8 @@ are complete and locally validated. The one-shot publication contracts,
 non-executed candidate-3 projection driver, and both statutory ledgers are
 also implemented. The person-level statutory join and pure artifact assembly
 are complete. The production-output adapter and committed-fixture rebuild are
-also complete; standalone schema hardening and final repository validation
-are in progress. No projection has been run.
+also complete. Standalone artifact-schema and invariant hardening is complete;
+final repository validation is in progress. No projection has been run.
 
 ## Done
 
@@ -109,11 +109,19 @@ are in progress. No projection has been run.
 - Verified the fixture together with the career and ledger suites using 22
   focused tests, Black (79 columns), Ruff, JSON parsing, and
   `git diff --check`.
+- Hardened standalone artifact validation around the exact three-table schema,
+  annual and biennial draw grids, origins, identity, sidecar path, count and
+  diagnostic shapes, and included-career correspondence.
+- Added reader-side recomputation of every table/count/diagnostic mean,
+  observation count, and sample SD, plus population, origin, Stage-D,
+  opening-stock denominator, and endpoint weighted-share reconciliations.
+- Verified validation both before writing and after a JSON round trip,
+  including all-null benefit means and valid all-zero included-career draws,
+  with 18 focused tests, Black (79 columns), Ruff, and `git diff --check`.
 
 ## Next
 
-- Complete standalone artifact-schema hardening and final repository
-  validation.
+- Complete final repository validation, push, and open the draft PR.
 - Run the required quality checks, push, and open the draft PR.
 
 ## Design question for the PR
