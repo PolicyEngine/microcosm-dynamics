@@ -293,7 +293,7 @@ _INCIDENT_KEYS = frozenset(
         "artifact_path",
     }
 )
-_INCIDENT_FILENAME = re.compile(r"first_estimates_incident_(\d+)\.json")
+_INCIDENT_FILENAME = re.compile(r"first_estimates_incident_([1-9]\d*)\.json")
 _UTC_TIMESTAMP = re.compile(
     r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}" r"(?:\.\d{1,6})?Z"
 )
@@ -1771,7 +1771,16 @@ def validate_first_estimates_incident(
     index = record["incident_index"]
     if isinstance(index, bool) or not isinstance(index, int) or index < 1:
         raise TypeError("incident_index must be a positive integer")
-    match = _INCIDENT_FILENAME.fullmatch(Path(path).name)
+    root = Path(repository_root).resolve()
+    incident_path = Path(path)
+    if not incident_path.is_absolute():
+        incident_path = root / incident_path
+    incident_path = incident_path.resolve()
+    if incident_path.parent != (root / "runs").resolve():
+        raise ValueError(
+            "incident path must be in the canonical runs directory"
+        )
+    match = _INCIDENT_FILENAME.fullmatch(incident_path.name)
     if match is None or int(match.group(1)) != index:
         raise ValueError("incident index does not match its filename")
     _parse_utc_timestamp(record["timestamp_utc"])
@@ -1798,7 +1807,6 @@ def validate_first_estimates_incident(
     artifact_path = record["artifact_path"]
     if artifact_path is not None and not isinstance(artifact_path, str):
         raise TypeError("artifact_path must be a JSON string or null")
-    root = Path(repository_root).resolve()
     default_partial = root / DEFAULT_ARTIFACT_PATH
     partial_exists = default_partial.is_file()
     if artifact_path is not None:

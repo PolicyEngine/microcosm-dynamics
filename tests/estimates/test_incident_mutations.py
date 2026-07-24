@@ -128,6 +128,7 @@ def test__incident_mutation__pins_literal_schema_version(tmp_path):
         (0, "first_estimates_incident_1.json", TypeError, "positive"),
         ("1", "first_estimates_incident_1.json", TypeError, "positive"),
         (1, "first_estimates_incident_2.json", ValueError, "filename"),
+        (1, "first_estimates_incident_01.json", ValueError, "filename"),
     ],
 )
 def test__incident_mutation__rejects_invalid_index_and_filename_pairs(
@@ -143,6 +144,19 @@ def test__incident_mutation__rejects_invalid_index_and_filename_pairs(
 
     with pytest.raises(error_type, match=message):
         _validate(record, root=root, filename=filename)
+
+
+def test__incident_mutation__rejects_noncanonical_parent_directory(tmp_path):
+    root = _repository(tmp_path)
+    record = _record()
+
+    with pytest.raises(ValueError, match="canonical runs directory"):
+        publication.validate_first_estimates_incident(
+            record,
+            path=root / "elsewhere" / "first_estimates_incident_1.json",
+            expected_configuration_echo=_configuration(),
+            repository_root=root,
+        )
 
 
 @pytest.mark.parametrize(
