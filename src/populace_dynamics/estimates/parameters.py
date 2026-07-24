@@ -37,17 +37,17 @@ __all__ = [
 
 PINNED_PE_US_VERSION = "1.752.2"
 REPORT_YEARS = tuple(range(2015, 2023))
-REQUIRED_COLA_PAYMENT_YEARS = tuple(range(1979, 2023))
+REQUIRED_COLA_DETERMINATION_YEARS = tuple(range(1979, 2023))
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 COLA_HISTORY_PATH = (
     _PROJECT_ROOT / "data" / "external" / "ssa_cola_history.json"
 )
 COLA_FILE_SHA256 = (
-    "e8ffa0e51e08a7917904a959e6918f10cbdd3a554f975e3e1211f93aaa1aca29"
+    "12da7f0e0d33fc53eaa31567d86c3cc035a49feefc2e4695bceea3379c2a38db"
 )
 COLA_CONTENT_SHA256 = (
-    "488618df8a8ea05f929d0f8ecc7eb79d240bee39adaea0572e9d73d339a54d69"
+    "8f1d75cab8bd1dba226c83bdff28a0ca1b21167e803eb65ff1d13d5cbe2255e0"
 )
 
 SSA_PARAMETER_SHA256 = {
@@ -139,55 +139,24 @@ class PayrollRateLegs:
 
 @dataclass(frozen=True)
 class COLASeries(Mapping[int, float]):
-    """COLA fractions keyed honestly by first payment year.
+    """COLA fractions keyed by SSA automatic-determination year."""
 
-    The committed artifact is payment-year keyed.  Mapping access preserves
-    that basis.  ``rate_for_determination_year`` performs the explicit
-    historical timing conversion required by the design's determination-year
-    compounding loop.
-    """
-
-    by_payment_year: dict[int, float]
+    by_determination_year: dict[int, float]
     provenance: dict[str, Any]
 
-    def __getitem__(self, payment_year: int) -> float:
-        return self.by_payment_year[payment_year]
+    def __getitem__(self, determination_year: int) -> float:
+        return self.by_determination_year[determination_year]
 
     def __iter__(self) -> Iterator[int]:
-        return iter(self.by_payment_year)
+        return iter(self.by_determination_year)
 
     def __len__(self) -> int:
-        return len(self.by_payment_year)
-
-    @staticmethod
-    def payment_year_for_determination_year(
-        determination_year: int,
-    ) -> int:
-        """Translate an SSA determination year to its first payment year.
-
-        The 1975-1982 adjustments first appeared in July payments of the
-        named year.  From the December 1983 determination onward, an
-        adjustment first appears in January payments of the next year.
-        """
-
-        if determination_year <= 1982:
-            return determination_year
-        return determination_year + 1
+        return len(self.by_determination_year)
 
     def rate_for_determination_year(self, determination_year: int) -> float:
         """Return the fraction for an adjustment's determination year."""
 
-        payment_year = self.payment_year_for_determination_year(
-            determination_year
-        )
-        try:
-            return self[payment_year]
-        except KeyError as error:
-            raise KeyError(
-                f"COLA determination year {determination_year} maps to "
-                f"first payment year {payment_year}, which is outside the "
-                "committed 1979-2022 payment-year runtime span."
-            ) from error
+        return self[determination_year]
 
 
 @dataclass(frozen=True)
@@ -424,7 +393,7 @@ def load_cola_history(
     expected_sha256: str = COLA_FILE_SHA256,
     expected_content_sha256: str = COLA_CONTENT_SHA256,
 ) -> COLASeries:
-    """Load and integrity-check the committed payment-year COLA history."""
+    """Load the committed determination-year COLA history."""
 
     path = Path(path)
     raw = path.read_bytes()
@@ -447,9 +416,9 @@ def load_cola_history(
         )
     if document.get("unit") != "percent":
         raise ValueError("COLA history unit must be 'percent'.")
-    if document.get("year_basis") != "first_payment_year":
+    if document.get("year_basis") != "determination_year":
         raise ValueError(
-            "COLA history must be explicitly keyed by first payment year."
+            "COLA history must be explicitly keyed by determination year."
         )
 
     data = _require_mapping(document, "data")
@@ -482,28 +451,30 @@ def load_cola_history(
     }:
         raise ValueError(
             "COLA history required_coverage is not the frozen 1979-2022 "
-            "payment-year span."
+            "determination-year span."
         )
 
     rates: dict[int, float] = {}
-    for payment_year in REQUIRED_COLA_PAYMENT_YEARS:
-        raw_percent = data.get(str(payment_year))
+    for determination_year in REQUIRED_COLA_DETERMINATION_YEARS:
+        raw_percent = data.get(str(determination_year))
         if isinstance(raw_percent, bool) or not isinstance(
             raw_percent, (int, float)
         ):
             raise ValueError(
-                f"COLA history lacks numeric payment year {payment_year}."
+                "COLA history lacks numeric determination year "
+                f"{determination_year}."
             )
         rate = float(raw_percent) / 100.0
         if not 0.0 <= rate < 1.0:
             raise ValueError(
-                f"COLA payment-year rate for {payment_year} is invalid: "
+                "COLA determination-year rate for "
+                f"{determination_year} is invalid: "
                 f"{rate!r}."
             )
-        rates[payment_year] = rate
-    if tuple(rates) != REQUIRED_COLA_PAYMENT_YEARS:
+        rates[determination_year] = rate
+    if tuple(rates) != REQUIRED_COLA_DETERMINATION_YEARS:
         raise ValueError(
-            "Runtime COLA keys are not exactly payment years 1979-2022."
+            "Runtime COLA keys are not exactly determination years 1979-2022."
         )
 
     source_provenance: dict[str, Any] = {
@@ -513,17 +484,13 @@ def load_cola_history(
         "schema_version": "ssa_cola_history.v1",
         "source_unit": "percent",
         "runtime_unit": "fraction",
-        "year_basis": "first_payment_year",
-        "runtime_first_payment_year": 1979,
-        "runtime_last_payment_year": 2022,
+        "year_basis": "determination_year",
+        "runtime_first_determination_year": 1979,
+        "runtime_last_determination_year": 2022,
         "runtime_n_years": len(rates),
-        "determination_year_conversion": (
-            "payment year equals determination year through 1982; "
-            "payment year equals determination year plus one from 1983"
-        ),
     }
     return COLASeries(
-        by_payment_year=rates,
+        by_determination_year=rates,
         provenance=source_provenance,
     )
 

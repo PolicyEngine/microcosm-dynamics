@@ -90,7 +90,7 @@
     "wage_base": 100.0,
     "employee_rate": 0.062,
     "employer_rate": 0.062,
-    "cola_by_payment_year": {"2016": 0.1}
+    "cola_by_determination_year": {"2015": 0.1}
   },
   "expected": {
     "birth_sources": {

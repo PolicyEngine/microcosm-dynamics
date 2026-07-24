@@ -43,7 +43,7 @@ def _parameters(
         ssa=ssa,
         rates=rates,
         cola=COLASeries(
-            by_payment_year=cola,
+            by_determination_year=cola,
             provenance={"fixture": True},
         ),
         provenance={"fixture": True},
@@ -121,9 +121,9 @@ def test_benefit_cutoff_cola_dime_presence_and_no_recomputation(monkeypatch):
     parameters = _parameters(
         cola_updates={
             # Determination 2015 -> first payment 2016.
-            2016: 0.031,
+            2015: 0.031,
             # Determination 2016 -> first payment 2017.
-            2017: 0.027,
+            2016: 0.027,
         }
     )
     calls: list[dict[int, float]] = []

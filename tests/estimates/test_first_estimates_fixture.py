@@ -131,7 +131,7 @@ def _parameters(document: dict) -> ReportParameters:
     cola.update(
         {
             int(year): float(rate)
-            for year, rate in raw["cola_by_payment_year"].items()
+            for year, rate in raw["cola_by_determination_year"].items()
         }
     )
     return ReportParameters(
@@ -151,7 +151,7 @@ def _parameters(document: dict) -> ReportParameters:
             provenance={"source": "committed-fixture"},
         ),
         cola=COLASeries(
-            by_payment_year=cola,
+            by_determination_year=cola,
             provenance={"source": "committed-fixture"},
         ),
         provenance={"source": "committed-fixture"},

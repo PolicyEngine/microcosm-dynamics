@@ -145,11 +145,12 @@ def test__cola_loader__verifies_committed_anchor_and_converts_to_fraction():
     assert tuple(cola) == tuple(range(1979, 2023))
     assert cola[1979] == pytest.approx(0.099)
     assert cola[1980] == pytest.approx(0.143)
-    assert cola[2009] == pytest.approx(0.058)
+    assert cola[1983] == pytest.approx(0.035)
+    assert cola[2008] == pytest.approx(0.058)
+    assert cola[2009] == 0.0
     assert cola[2010] == 0.0
-    assert cola[2011] == 0.0
-    assert cola[2016] == 0.0
-    assert cola[2022] == pytest.approx(0.059)
+    assert cola[2015] == 0.0
+    assert cola[2022] == pytest.approx(0.087)
     assert cola.provenance == {
         "path": str(parameters.COLA_HISTORY_PATH.resolve()),
         "sha256": parameters.COLA_FILE_SHA256,
@@ -157,34 +158,29 @@ def test__cola_loader__verifies_committed_anchor_and_converts_to_fraction():
         "schema_version": "ssa_cola_history.v1",
         "source_unit": "percent",
         "runtime_unit": "fraction",
-        "year_basis": "first_payment_year",
-        "runtime_first_payment_year": 1979,
-        "runtime_last_payment_year": 2022,
+        "year_basis": "determination_year",
+        "runtime_first_determination_year": 1979,
+        "runtime_last_determination_year": 2022,
         "runtime_n_years": 44,
-        "determination_year_conversion": (
-            "payment year equals determination year through 1982; "
-            "payment year equals determination year plus one from 1983"
-        ),
     }
 
 
-def test__cola_loader__keeps_payment_and_determination_years_distinct():
+def test__cola_loader__uses_direct_determination_year_lookup():
     cola = parameters.load_cola_history()
 
     assert cola.rate_for_determination_year(1982) == pytest.approx(0.074)
     assert cola.rate_for_determination_year(1983) == pytest.approx(0.035)
     assert cola.rate_for_determination_year(2021) == pytest.approx(0.059)
-    with pytest.raises(KeyError, match="first payment year 2023"):
-        cola.rate_for_determination_year(2022)
+    assert cola.rate_for_determination_year(2022) == pytest.approx(0.087)
 
 
 def test__cola_loader__rejects_rehashed_schema_drift(tmp_path: Path):
     document = json.loads(parameters.COLA_HISTORY_PATH.read_text())
-    document["year_basis"] = "determination_year"
+    document["year_basis"] = "first_payment_year"
     drifted = tmp_path / "cola.json"
     drifted.write_text(json.dumps(document))
 
-    with pytest.raises(ValueError, match="first payment year"):
+    with pytest.raises(ValueError, match="determination year"):
         parameters.load_cola_history(
             drifted,
             expected_sha256=_sha256(drifted),
@@ -209,7 +205,7 @@ def test__report_loader__loads_full_actuals_rates_and_json_provenance(
         assert bundle.rates.employee_for(year) == 0.062
         assert bundle.rates.employer_for(year) == 0.062
         assert bundle.rates.combined_for(year) == 0.124
-    assert bundle.cola[2022] == pytest.approx(0.059)
+    assert bundle.cola[2022] == pytest.approx(0.087)
     assert bundle.provenance["schema_version"] == (
         "first_estimates.parameters.v1"
     )
