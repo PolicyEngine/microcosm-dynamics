@@ -351,6 +351,9 @@ def _run_registered_first_estimates_for_test(
         registration_reference=registration_reference,
         registered_configuration_bytes=registered_configuration_bytes,
     )
+    # This is the boundary of the ceremony.  Before the full frozen structure
+    # is proved, caller bytes cannot safely populate an incident's
+    # numeric-array-exempt configuration_echo.
     validate_registered_configuration_echo(
         publication._configuration_echo(registration),
         registered_configuration_bytes=registered_configuration_bytes,

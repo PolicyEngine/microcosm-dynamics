@@ -34,9 +34,12 @@ focused-tested. No projection has been run.
 - Corrected the three semantic gap-block paraphrases against the current
   frozen section 10 text and pinned the complete Markdown table as a
   byte-exact fixture with an independent literal SHA-256.
+- Completed the section 11 incident mutation battery: exact schema keys and
+  types, literal schema and phase values, filename/index and partial-path
+  rules, precompute-echo drift, outside-echo numeric arrays, retry truth
+  table, and contiguous append behavior.
 
 ## Next
 
-- Complete the frozen incident-schema mutation battery.
 - Run formatting, lint, and fast tests; push the branch and write the final
   report to the requested output file.
