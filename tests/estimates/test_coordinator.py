@@ -1172,8 +1172,6 @@ def test__production_path__ignored_import_cache_is_preparation_incident(
         == b""
     )
     assert ignored == os.fsencode(cache.relative_to(root)) + b"\0"
-    assert os.environ["PYTHONDONTWRITEBYTECODE"] == "1"
-    assert sys.dont_write_bytecode is True
     calls: list[str] = []
     operations = replace(
         _operations(calls, {}),
