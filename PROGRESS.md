@@ -2,8 +2,8 @@
 
 ## State
 
-The production scripts-path fix and focused unit regressions are complete.
-The sealed-interpreter class-closing regression is in progress.
+The production scripts-path fix, focused unit regressions, and sealed-process
+class closer are implemented. Full execution and tier verification remain.
 
 ## Done
 
@@ -16,8 +16,13 @@ The sealed-interpreter class-closing regression is in progress.
   failure.
 - Added lazy sibling-import and failure-restoration regressions.
 - Verified all 67 coordinator tests pass.
+- Added a private post-preparation boundary operation that production leaves
+  as a no-op and the sealed regression replaces with an uncaught sentinel.
+- Added a detached clean-worktree fixture and temporary-venv subprocess test
+  using the actual `-I -B -X pycache_prefix=...` interpreter contract.
 
 ## Next
 
-- Add the sealed-interpreter, real-preparation regression.
+- Execute the committed sealed-worktree regression.
+- Update the tier inventory for the three new tests.
 - Run the fast suites, Black, and Ruff; then publish the non-draft PR.

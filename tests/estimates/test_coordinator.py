@@ -1007,9 +1007,9 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
 
     observed = coordinator._load_registered_input_plan(root)
 
-    assert observed.fit_inputs is sys.modules[
-        "incident3_lazy_helper"
-    ].FIT_INPUTS
+    assert (
+        observed.fit_inputs is sys.modules["incident3_lazy_helper"].FIT_INPUTS
+    )
     assert sys.path == original_path
 
 

@@ -128,6 +128,10 @@ class _IncidentHistory:
     records: tuple[Mapping[str, Any], ...]
 
 
+def _continue_after_preparation() -> None:
+    """Production no-op for the test-private preparation boundary."""
+
+
 @dataclass(frozen=True)
 class _CoordinatorOperations:
     """Test-private seams; the public production entry point never accepts it."""
@@ -143,6 +147,7 @@ class _CoordinatorOperations:
     build_artifact: Callable[..., Mapping[str, Any]]
     publish_artifact: Callable[..., Path]
     publish_incident: Callable[..., Path]
+    after_preparation: Callable[[], None] = _continue_after_preparation
 
 
 def _exception_chain_contains(
@@ -1023,6 +1028,8 @@ def _run_registered_first_estimates_for_test(
             error=error,
             operations=operations,
         )
+
+    operations.after_preparation()
 
     try:
         batch = operations.execute_projection(
