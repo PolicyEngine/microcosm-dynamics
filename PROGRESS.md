@@ -2,9 +2,10 @@
 
 ## State
 
-Implementation is in progress on `sol/entry8-impl`. The round-2 referee review
-and coordinator adjudication are the controlling instructions. `origin/master`
-has been merged, bringing design amendment `ee1221d`.
+Implementation and local verification are complete on `sol/entry8-impl`. No
+projection was run and no launcher or process-persistence mechanism was
+installed; the adjudicated durable attempt claim is the only new persistent
+state. Push is blocked only because this sandbox cannot resolve `github.com`.
 
 ## Done
 
@@ -34,15 +35,17 @@ has been merged, bringing design amendment `ee1221d`.
 - Added cross-root direct/symlink mutations, a symlinked-`runs` escape test,
   invalid/changed/noncanonical registration incidents, exact surface pins, CLI
   raw-path enforcement, fixed-claim refusals, and interrupt/claim lifecycle
-  tests. The combined enforcement scope passes 99 tests; all estimator tests
-  pass 130 tests; scoped Black, Ruff, and diff checks pass.
+  tests.
 - Required the package-derived root to equal Git's checkout top level, closing
   the nested-source-copy alternate-lock escape found in final review.
 - Recounted 3,590 tests: 829 unit, 1,278 artifact, 804 integration-PSID,
   520 reproduction-legacy, and 159 oracle-policyengine.
+- Passed the complete entry-8 focused scope (163), unit tier (824 plus 5
+  skips), artifact tier (1,238 plus 40 skips), repository-wide Black (486
+  files), Ruff, and `git diff --check`.
+- Wrote the final handoff report to `FINAL_REPORT.md`.
 
 ## Next
 
-- Run repository-wide Black, Ruff, focused, unit, and artifact fast suites.
-- Finalize this file, write `FINAL_REPORT.md`, and push the branch if network
-  access permits.
+- Push `sol/entry8-impl` from a network-enabled environment.
+- Request PR #286 round-2 re-review.
