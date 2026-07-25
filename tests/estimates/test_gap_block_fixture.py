@@ -13,16 +13,18 @@ FIXTURE_PATH = (
     REPOSITORY_ROOT / "tests/fixtures/first_estimates_gap_block_v1.md"
 )
 EXPECTED_FIXTURE_SHA256 = (
-    "5dc9544fc2ef6a06e55562ebbb4317ec237d3c5bf791ba25513ca509977cf93b"
+    "a279095c4f72c6cb7e4ed91efb2c6baff68fae928a4c437f02d8b7342db0c69e"
 )
 TABLE_START = (
     b"| Disclosure (certified-record source) | Classification here |\n"
 )
 TABLE_END = (
-    b"| **Birth-timing sensitivity (amendment 2, frozen)** \xe2\x80\x94 "
-    b"91% of candidates and 1,440 of 1,514 baseline included claimants "
-    b"carry age-derived birth years; coherent \xc2\xb11 stress scenarios "
-    b"through the production ledger: births\xe2\x88\x921 \xe2\x86\x92 "
+    b"| **Birth-timing sensitivity (amendment 2, frozen; revision 10.1 "
+    b"corrects the candidate share)** \xe2\x80\x94 2,892 of 3,083 "
+    b"candidates (93.8%) and 1,440 of 1,514 baseline included claimants "
+    b"carry age-derived birth years (\xc2\xa73.1 clauses 2 and 3: 2,806 "
+    b"inferred + 86 derived); coherent \xc2\xb11 stress scenarios through "
+    b"the production ledger: births\xe2\x88\x921 \xe2\x86\x92 "
     b"\xe2\x88\x92$30.3B (\xe2\x88\x920.92%), births+1 \xe2\x86\x92 "
     b"\xe2\x88\x92$312.6B (\xe2\x88\x929.47%) of the $3,301.7B baseline, "
     b"dominated by 278 modeled-award chronology movers; adversarial "

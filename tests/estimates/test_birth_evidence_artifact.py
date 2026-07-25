@@ -16,7 +16,10 @@ import pandas as pd
 import pytest
 
 from populace_dynamics.estimates import career
-from populace_dynamics.estimates.publication import COMMON_SUPPORT_AGREEMENT
+from populace_dynamics.estimates.publication import (
+    COMMON_SUPPORT_AGREEMENT,
+    GAP_BLOCK,
+)
 from scripts import first_estimates_birth_evidence as reducer
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -85,6 +88,28 @@ def test_replay_mode_production_birth_preparation_matches_frozen_rows():
     observed_rows = Counter(record.source.value for record in records)
 
     assert dict(observed_rows) == frozen_rows
+
+
+def test_revision_10_1_candidate_share_recomputes_from_artifact_counts():
+    candidates = _artifact()["candidate_funnel"]["canonical_candidates"]
+    by_source = candidates["counts_by_birth_source"]
+    age_derived = (
+        by_source["inferred_period_age"] + by_source["derived_projection_age"]
+    )
+    candidate_count = candidates["count"]
+    share = age_derived / candidate_count
+
+    assert (age_derived, candidate_count) == (2_892, 3_083)
+    assert share == pytest.approx(0.938047356471)
+    published = next(
+        row["disclosure"]
+        for row in GAP_BLOCK
+        if row["disclosure"].startswith("**Birth-timing sensitivity")
+    )
+    assert (
+        f"{age_derived:,} of {candidate_count:,} candidates ({share:.1%})"
+        in published
+    )
 
 
 def test_birth_evidence_artifact_byte_schema_and_execution_pin():

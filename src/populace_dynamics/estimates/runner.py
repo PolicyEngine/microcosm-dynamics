@@ -25,7 +25,7 @@ from populace_dynamics.harness.m6_candidate3_runner import (
 from populace_dynamics.harness.m6_runner import M6ResolvedContract
 
 DESIGN_COMMIT = "6586b92"
-DESIGN_AMENDMENT_COMMIT = "4104d3d"
+DESIGN_AMENDMENT_COMMIT = "f771b49"
 FAMILY_SPEC_SHA256 = (
     "734a5b04f347c5d4904bbc6d5ab9a1c2876272d35284eedd2f450518acf1cec5"
 )

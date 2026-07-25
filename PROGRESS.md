@@ -4,18 +4,25 @@
 
 - Branch: `sol/entry8-birth-impl`
 - Referee verdict read in full.
-- PR #304 is open, so the branch remains on revision 10 and does not yet
-  receive the revision-10.1 `GAP_BLOCK` correction.
+- PR #304 merged as `f771b49e5a38aa25cd676f2a37b7683c964a3f2d`
+  while verification was running, activating the revision-10.1 path.
+- Direct fetch is temporarily DNS-blocked. The branch is rebased onto local
+  PR-head `c38dcb7`, whose tree is byte-identical to the merged master tree
+  `5c8a10a164ae7c5bdb802e7ee257475099518a80`; exact-master ancestry remains
+  required before push.
 
 ## Done
 
 - Confirmed the requested branch and existing branch head.
 - Read the accepted PR #303 disposition and confirmed that all ten referee
   findings were accepted, including dropping the unratified preflight.
-- Confirmed through the GitHub connector that PR #304 is open, not merged.
+- Initially confirmed through the GitHub connector that PR #304 was open,
+  then rechecked after verification and observed its merge.
 - Confirmed local `origin/master` is the canonical amendment squash
   `4104d3d`, and that commit is an ancestor of itself.
-- Pinned the runner and literal test to `4104d3d`.
+- Initially pinned the runner and literal test to `4104d3d`; after revision
+  10.1 merged, advanced the current normative amendment identity to
+  `f771b49`.
 - Deleted the preflight script/tests and removed their seven unit tests from
   the tier manifest.
 - Restructured Stage C into candidate-total origin classification, global
@@ -44,9 +51,9 @@
   preparation, and all three complete-set sensitivity scenarios. The
   unresolved opening-stock candidate is asserted to stop at C.5.
 - Split the reducer's historical cache-input identity from its reviewed
-  implementation identity, pinned the latter to the final production-source
-  commit `9cb4b2a8bb95a3e636d225fe96b2030967043a02`, and adapted both absent
-  legacy and explicit-unresolved upstream records.
+  implementation identity, made the latter advance with the final reviewed
+  production-source commit, and adapted both absent legacy and
+  explicit-unresolved upstream records.
 - Added a no-write `--implementation-replay` mode that runs current production
   preparation on the pinned draw-0 cache and compares six frozen artifact
   rows.
@@ -57,20 +64,33 @@
   collection check: `1 passed, 3652 deselected`.
 - Draw-0 implementation replay: status `matched`, with 4,077 derived, 2,315
   unresolved, 3,083 candidates, and included sets 1,514 / 1,520 / 1,240.
-- Full focused suite: `85 passed in 5.40s`; the six named referee regressions
-  passed individually in `4.78s`.
-- Full unit tier: `843 passed, 5 skipped, 2805 deselected` in `62.25s`;
+- Pre-revision-10.1 full focused suite: `85 passed in 5.40s`; the six named
+  referee regressions passed individually in `4.78s`.
+- Pre-revision-10.1 full unit tier: `843 passed, 5 skipped, 2805 deselected`
+  in `62.25s`;
   the only warning was the existing joblib physical-core fallback.
-- Full artifact tier: `1284 passed, 38 skipped, 2331 deselected` in `68.49s`.
+- Pre-revision-10.1 full artifact tier: `1284 passed, 38 skipped, 2331
+  deselected` in `68.49s`.
 - Applied Black's sole requested mechanical wrap in the seed assertion and
   advanced the reviewed production-source pin to that formatting commit.
+- Updated `GAP_BLOCK` and its byte/SHA fixture to revision 10.1's exact
+  corrected sentence.
+- Added an artifact-derived test recomputing
+  `(2,806 + 86) / 3,083 = 2,892 / 3,083 = 93.8%` and matching the published
+  statement.
+- Revision-10.1 runner/GAP/artifact focused suite: `44 passed in 1.11s`;
+  tier policy: `1 passed, 3653 deselected`.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.
 
 ## Next
 
-- Run the full focused/unit/artifact, formatting, lint, tier-policy, bytecode,
-  and repository-integrity verification matrix.
+- Commit the revision-10.1 source/fixture step, then advance the reducer's
+  reviewed implementation pin to that production-source commit.
+- Replace the content-identical temporary base with exact fetched
+  `origin/master` ancestry once DNS is available.
+- Rerun the full focused/unit/artifact, formatting, lint, tier-policy,
+  bytecode, replay, and repository-integrity verification matrix.
 - Finalize this ledger and report, commit each coherent step, and push
   `sol/entry8-birth-impl`.

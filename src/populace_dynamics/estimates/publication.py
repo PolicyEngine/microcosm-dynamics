@@ -465,10 +465,12 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     },
     {
         "disclosure": (
-            "**Birth-timing sensitivity (amendment 2, frozen)** — 91% of "
-            "candidates and 1,440 of 1,514 baseline included claimants carry "
-            "age-derived birth years; coherent ±1 stress scenarios through "
-            "the production ledger: births−1 → −$30.3B (−0.92%), births+1 → "
+            "**Birth-timing sensitivity (amendment 2, frozen; revision 10.1 "
+            "corrects the candidate share)** — 2,892 of 3,083 candidates "
+            "(93.8%) and 1,440 of 1,514 baseline included claimants carry "
+            "age-derived birth years (§3.1 clauses 2 and 3: 2,806 inferred + "
+            "86 derived); coherent ±1 stress scenarios through the "
+            "production ledger: births−1 → −$30.3B (−0.92%), births+1 → "
             "−$312.6B (−9.47%) of the $3,301.7B baseline, dominated by 278 "
             "modeled-award chronology movers; adversarial per-person range "
             "≈[−$408.2B, +$65.2B]. Stress scenarios, not bounds. v1 "
