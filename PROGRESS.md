@@ -5,7 +5,9 @@
 - Branch: `sol/entry8-impl`
 - Review anchor: `d2b94b6`
 - Latest review/adjudication: round-4 FIX-FIRST and all three dispositions confirmed
-- Active task: commit verification bookkeeping, seal the final tree, and push
+- Local implementation and verification: complete
+- Push state: attempted and blocked by DNS (`Could not resolve host: github.com`)
+- Final report: `scratch/pr286-round4-final-report.md`
 
 ## Done
 
@@ -28,9 +30,11 @@
 - Unit tier passes: 824 passed, 5 skipped.
 - Artifact tier passes: 1,250 passed, 40 skipped.
 - Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
+- Two final full `git status --porcelain` source seals are empty repo-wide.
+- Attempted to push `sol/entry8-impl`; the host could not resolve `github.com`.
+- Wrote the requested final report outside tracked repository state.
 
 ## Next
 
-1. Commit the final tier recount, formatting, and this progress ledger.
-2. Confirm two empty full-porcelain repository seals.
-3. Push if DNS permits and write the final report to the requested output file.
+1. Retry `git push origin sol/entry8-impl` when DNS is available.
+2. No local implementation or verification work remains.
