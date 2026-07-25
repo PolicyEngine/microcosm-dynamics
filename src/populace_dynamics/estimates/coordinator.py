@@ -128,6 +128,10 @@ class _IncidentHistory:
     records: tuple[Mapping[str, Any], ...]
 
 
+def _continue_after_preparation() -> None:
+    """Production no-op for the test-private preparation boundary."""
+
+
 @dataclass(frozen=True)
 class _CoordinatorOperations:
     """Test-private seams; the public production entry point never accepts it."""
@@ -143,6 +147,7 @@ class _CoordinatorOperations:
     build_artifact: Callable[..., Mapping[str, Any]]
     publish_artifact: Callable[..., Path]
     publish_incident: Callable[..., Path]
+    after_preparation: Callable[[], None] = _continue_after_preparation
 
 
 def _exception_chain_contains(
@@ -351,18 +356,52 @@ def _assert_registered_sources(repository: Path) -> None:
     _assert_registered_input_sources(repository)
 
 
-def _load_module(path: Path, scripts: Path) -> ModuleType:
-    module_name = "_first_estimates_registered_input_factory"
+@contextmanager
+def _registered_scripts_path(scripts: Path) -> Iterator[None]:
+    """Expose registered sibling modules for the complete factory chain.
+
+    Both ``sys.path`` and ``sys.modules`` are restored exactly: any
+    pre-existing binding for a registered factory module returns, and
+    every module the chain imported (including transitive lazy imports)
+    is removed, leaving interpreter state byte-identical.
+    """
+    original_path = sys.path.copy()
+    guarded_names = (*_INPUT_FACTORY_MODULES, _FACTORY_SYNTHETIC_NAME)
+    preexisting = {
+        name: sys.modules[name]
+        for name in guarded_names
+        if name in sys.modules
+    }
+    for name in guarded_names:
+        sys.modules.pop(name, None)
+    before = set(sys.modules)
+    sys.path.insert(0, str(scripts))
+    try:
+        yield
+    finally:
+        sys.path[:] = original_path
+        for name in set(sys.modules) - before:
+            sys.modules.pop(name, None)
+        for name in guarded_names:
+            if name in preexisting:
+                sys.modules[name] = preexisting[name]
+            else:
+                sys.modules.pop(name, None)
+
+
+_FACTORY_SYNTHETIC_NAME = "_first_estimates_registered_input_factory"
+
+
+def _load_module(path: Path) -> ModuleType:
+    module_name = _FACTORY_SYNTHETIC_NAME
     spec = importlib.util.spec_from_file_location(module_name, path)
     if spec is None or spec.loader is None:
         raise RuntimeError("registered input factory cannot be imported")
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
-    sys.path.insert(0, str(scripts))
     try:
         spec.loader.exec_module(module)
     finally:
-        sys.path.remove(str(scripts))
         sys.modules.pop(module_name, None)
     return module
 
@@ -371,29 +410,29 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
     """Load only the tracked, byte-clean registered candidate-3 factory."""
     _assert_registered_input_sources(repository)
     path = repository / _INPUT_FACTORY_PATH
-    for module_name in _INPUT_FACTORY_MODULES:
-        sys.modules.pop(module_name, None)
-    module = _load_module(path, path.parent)
-    factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
-    if not callable(factory):
-        raise RuntimeError("registered input factory callable is absent")
-    try:
-        plan = factory()
-    except BaseException as error:
-        if _exception_chain_contains(error, (OSError,)):
-            raise ExternalPreOutputFailure(
-                "external_registered_input_unavailable",
-                "Registered input dependency unavailable before output.",
-            ) from error
-        raise
-    if not isinstance(plan, M6Candidate3InputPlan):
-        raise TypeError(
-            "registered input factory did not return M6Candidate3InputPlan"
-        )
+    with _registered_scripts_path(path.parent):
+        module = _load_module(path)
+        factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
+        if not callable(factory):
+            raise RuntimeError("registered input factory callable is absent")
+        try:
+            plan = factory()
+        except BaseException as error:
+            if _exception_chain_contains(error, (OSError,)):
+                raise ExternalPreOutputFailure(
+                    "external_registered_input_unavailable",
+                    "Registered input dependency unavailable before output.",
+                ) from error
+            raise
+        if not isinstance(plan, M6Candidate3InputPlan):
+            raise TypeError(
+                "registered input factory did not return M6Candidate3InputPlan"
+            )
 
     def load_full_inputs() -> Any:
         try:
-            return plan.load_full_inputs()
+            with _registered_scripts_path(path.parent):
+                return plan.load_full_inputs()
         except BaseException as error:
             if _exception_chain_contains(error, (OSError,)):
                 raise ExternalPreOutputFailure(
@@ -1013,6 +1052,8 @@ def _run_registered_first_estimates_for_test(
             error=error,
             operations=operations,
         )
+
+    operations.after_preparation()
 
     try:
         batch = operations.execute_projection(
