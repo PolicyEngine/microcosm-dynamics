@@ -35,8 +35,12 @@
 - Verified both regressions refuse before repository import, emit exactly one
   structured stderr record, create no claim or incident, execute neither
   hostile payload, and leave the sealed cache sentinel empty.
+- Verified all 58 coordinator tests pass.
+- Recounted the enforced tiers after the two artifact-class regressions: unit
+  829, artifact 1,297, integration 804, reproduction 520, and oracle 159;
+  full collection is 3,609 tests.
 
 ## Next
 
-1. Run focused and full verification and recount the test tiers.
+1. Run the focused scope, executable unit/artifact tiers, and tier policy.
 2. Finalize progress, push if DNS permits, and write the final report.
