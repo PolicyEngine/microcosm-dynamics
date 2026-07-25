@@ -551,6 +551,8 @@ def derive_birth_years(
     marriage_history: pd.DataFrame,
     observed_earnings: pd.DataFrame,
     synthetic_birth_years: Mapping[int, int] | None = None,
+    *,
+    required_person_ids: Collection[int] | None = None,
 ) -> tuple[BirthYearRecord, ...]:
     """Resolve birth years under the exact registered precedence.
 
@@ -558,6 +560,9 @@ def derive_birth_years(
     median of ``period - age`` over the same age-14--90 support used by
     ``person_earnings_histories``.  Native synthetic birth years are last.
     Conflicting exact years fail closed rather than silently selecting one.
+    When ``required_person_ids`` is ``None``, that law applies to every
+    person.  When supplied, required conflicts still fail closed and
+    conflicting nonmembers receive no birth-year record from any source.
     """
     _require_columns(
         marriage_history,
@@ -575,18 +580,30 @@ def derive_birth_years(
         )
         for person_id, year in (synthetic_birth_years or {}).items()
     }
+    required = (
+        None
+        if required_person_ids is None
+        else {
+            _as_int(person_id, "required person_id")
+            for person_id in required_person_ids
+        }
+    )
 
     exact: dict[int, int] = {}
+    excluded_conflicts: set[int] = set()
     for raw_person_id, rows in marriage_history.groupby(
         "person_id", sort=False
     ):
         person_id = _as_int(raw_person_id, "marriage person_id")
         years = _person_values(rows, "birth_year", person_id)
         if len(years) > 1:
-            raise ValueError(
-                f"conflicting exact birth years for person {person_id}: "
-                f"{list(years)}"
-            )
+            if required is None or person_id in required:
+                raise ValueError(
+                    f"conflicting exact birth years for person {person_id}: "
+                    f"{list(years)}"
+                )
+            excluded_conflicts.add(person_id)
+            continue
         if years:
             exact[person_id] = years[0]
 
@@ -608,7 +625,9 @@ def derive_birth_years(
                 )
             inferred[person_id] = int(round(median))
 
-    people = sorted(set(exact) | set(inferred) | set(synthetic))
+    people = sorted(
+        (set(exact) | set(inferred) | set(synthetic)) - excluded_conflicts
+    )
     records = []
     for person_id in people:
         if person_id in exact:
@@ -1126,6 +1145,7 @@ def build_career_inclusion(
         marriage_history,
         observed_earnings,
         synthetic_birth_years,
+        required_person_ids=people,
     )
     population_set = set(people)
     birth_records = tuple(

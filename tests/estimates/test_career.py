@@ -162,6 +162,93 @@ def test_conflicting_exact_birth_years_fail_closed():
         derive_birth_years(marriage, observed)
 
 
+def test_outside_required_birth_conflict_is_omitted():
+    marriage = pd.DataFrame(
+        {
+            "person_id": [1, 4, 4],
+            "birth_year": [1950, 1951, 1952],
+        }
+    )
+    observed = pd.DataFrame(
+        [
+            {"person_id": 2, "period": 2000, "age": 48},
+            {"person_id": 4, "period": 2000, "age": 50},
+        ]
+    )
+
+    records = {
+        record.person_id: (record.birth_year, record.source)
+        for record in derive_birth_years(
+            marriage,
+            observed,
+            {3: 1960, 4: 1949},
+            required_person_ids={1, 2, 3},
+        )
+    }
+
+    assert records == {
+        1: (1950, BirthSource.EXACT_MARRIAGE),
+        2: (1952, BirthSource.INFERRED_PERIOD_AGE),
+        3: (1960, BirthSource.SYNTHETIC_NATIVE),
+    }
+
+
+def test_required_birth_conflict_still_fails_closed():
+    marriage = pd.DataFrame({"person_id": [1, 1], "birth_year": [1950, 1951]})
+    observed = pd.DataFrame(columns=["person_id", "period", "age"])
+
+    with pytest.raises(ValueError) as error:
+        derive_birth_years(
+            marriage,
+            observed,
+            required_person_ids={1},
+        )
+
+    assert str(error.value) == (
+        "conflicting exact birth years for person 1: [1950, 1951]"
+    )
+
+
+def test_required_person_ids_normalize_like_marriage_ids():
+    marriage = pd.DataFrame({"person_id": [1, 1], "birth_year": [1950, 1951]})
+    observed = pd.DataFrame(columns=["person_id", "period", "age"])
+
+    with pytest.raises(ValueError, match="conflicting exact birth"):
+        derive_birth_years(
+            marriage,
+            observed,
+            required_person_ids={"1"},
+        )
+
+
+def test_required_birth_scope_preserves_conflict_free_resolutions():
+    marriage = pd.DataFrame({"person_id": [1], "birth_year": [1950]})
+    observed = pd.DataFrame(
+        [
+            {"person_id": 1, "period": 2000, "age": 49},
+            {"person_id": 2, "period": 2000, "age": 48},
+            {"person_id": 4, "period": 2001, "age": 50},
+        ]
+    )
+    synthetic = {1: 1949, 2: 1949, 3: 1960}
+
+    unscoped = derive_birth_years(marriage, observed, synthetic)
+    scoped = derive_birth_years(
+        marriage,
+        observed,
+        synthetic,
+        required_person_ids={1, 2, 3},
+    )
+
+    assert scoped == unscoped
+    assert [(record.birth_year, record.source) for record in scoped] == [
+        (1950, BirthSource.EXACT_MARRIAGE),
+        (1952, BirthSource.INFERRED_PERIOD_AGE),
+        (1960, BirthSource.SYNTHETIC_NATIVE),
+        (1951, BirthSource.INFERRED_PERIOD_AGE),
+    ]
+
+
 def test_cutoff_runs_before_gap_imputation():
     observed = pd.DataFrame(
         [
@@ -314,6 +401,34 @@ def test_population_roster_retains_never_returned_scheduled_person():
 
     assert roster["person_id"].tolist() == [1, 2]
     assert roster.set_index("person_id").loc[2, "weight"] == 2.0
+
+
+def test_inclusion_ignores_conflicting_birth_years_outside_population():
+    trajectory = pd.DataFrame(_trajectory_rows(1, 1952))
+    roster = _roster([(1, "female", 1.0)])
+    observed = pd.DataFrame(_observed_rows(1, 1952))
+    marriage = pd.DataFrame(
+        {
+            "person_id": [1, 99, 99],
+            "birth_year": [1952, 1900, 1901],
+        }
+    )
+
+    result = build_career_inclusion(
+        trajectory,
+        roster,
+        observed,
+        marriage,
+        {},
+        _schedule(),
+        {1},
+        stock_imputation_root_seed=8108,
+    )
+
+    assert [
+        (record.person_id, record.birth_year, record.source)
+        for record in result.births
+    ] == [(1, 1952, BirthSource.EXACT_MARRIAGE)]
 
 
 def test_four_stage_partition_origin_and_snap_diagnostics():
