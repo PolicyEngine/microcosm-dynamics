@@ -1,51 +1,31 @@
-# PR #286 Fix Round 6 Progress
+# PR #286 Fix Round 7 Progress
 
 ## State
 
 - Branch: `sol/entry8-impl`
-- Review anchor: `0c12e85`
-- Latest review/adjudication: round-6 FIX-FIRST with two confirmed items
-- Local implementation: complete
-- Verification: complete
-- Push state: attempted and blocked by DNS (`Could not resolve host: github.com`)
-- Final report: final response
+- Review anchor: `cd22ea2`
+- Latest review/adjudication: round-7 FIX-FIRST with one confirmed item
+- Local implementation: in progress
+- Verification: pending
+- Push state: pending
+- Final report: pending
 
 ## Done
 
-- Confirmed the requested worktree, branch, and review anchor.
+- Confirmed the requested worktree, branch, and clean starting tree.
 - Retrieved and read the latest two PR #286 comments.
-- Confirmed the two required changes: a pre-import self-re-exec seal and a
-  canonical-serialized 1,024-byte registration-reference bound.
-- Added the pre-import launcher self-re-exec under `-I -B -X
-  pycache_prefix=<fresh-empty-directory>` with an explicit sentinel and
-  worktree-local source resolution.
-- Added the coordinator-entry runtime assertion as a preparation incident and
-  retained the durable attempt claim before refusal.
-- Added exact exec-argument, unsealed-refusal, and crafted unchecked-cache miss
-  tests; all 56 coordinator tests pass.
-- Restated the sealed invocation in the launcher procedure and future
-  registration text.
-- Replaced the character limit with a shared 1,024-byte bound over the
-  canonical serialized registration-reference string.
-- Applied the byte validator before both attempt- and retry-claim payload
-  construction, leaving the 4,096-byte claim cap unchanged but unreachable.
-- Added multibyte boundary assertions at exactly 1,024 and 1,025 bytes; the
-  largest valid reference produces a 1,097-byte attempt claim.
-- Verified all 56 coordinator tests, including sealed acceptance from the
-  worktree-local coordinator source.
-- Verified the full focused first-estimates scope: 180 passed.
-- Recounted the enforced tiers: unit 829, artifact 1,295, integration 804,
-  reproduction 520, and oracle 159; full collection is 3,607 tests.
-- Verified the executable tiers: unit 824 passed and 5 skipped; artifact 1,255
-  passed and 40 skipped. The tier-policy assertion passes.
-- Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
-- Removed generated executable caches under `src` and `scripts`; the ignored
-  executable inventory is empty.
-- Verified the production source guards from the committed-clean worktree under
-  the real isolated, no-bytecode, empty-prefix interpreter.
-- Attempted to push `sol/entry8-impl`; DNS could not resolve `github.com`.
+- Confirmed the single required change: run the tracked-drift and ignored
+  executable guards inside the sealed launcher before adding `src` to
+  `sys.path` or importing any `populace_dynamics` module.
+- Confirmed the coordinator's post-import recheck must remain.
+- Confirmed the two required regressions: an ignored coordinator ABI-extension
+  shadow and a direct sourceless `src/subprocess.pyc` shadow must both be
+  refused pre-import.
 
 ## Next
 
-1. Retry `git push origin sol/entry8-impl` when DNS is available.
-2. No local implementation or verification work remains.
+1. Inspect the launcher, coordinator guard, registration wording, and focused
+   tests.
+2. Implement the stdlib-only pre-import refusal and procedural documentation.
+3. Add and run the two shadow regressions plus the focused/full verification.
+4. Commit each coherent step, push if DNS permits, and write the final report.
