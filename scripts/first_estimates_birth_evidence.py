@@ -5,20 +5,24 @@ This is manual, read-only evidence tooling, not a sealed ceremony entry point.
 It does not mutate registered inputs or projection state.  Its sole write is
 the canonical JSON path selected by ``--output``.
 
-The fast path reads the optional draw cache created by the diagnostic probe.
-With no cache (or with ``--regenerate``), the script uses
+The fast path reads the sha256-pinned draw cache created by the unregistered
+diagnostic probe.  With ``--regenerate``, the script instead uses
 ``coordinator._load_registered_input_plan`` and holds the registered scripts
-path context over the production candidate-3 prefix.  That path runs one real
-draw and clones it only to satisfy the production driver's twenty-wrapper
-contract; on the reference machine it takes about 55 minutes.
+path context over the production candidate-3 prefix.  That cache-independent
+path runs one real draw and clones it only to satisfy the production driver's
+twenty-wrapper contract; on the reference machine it takes about 55 minutes.
 
-Run from this worktree, never from the sealed runner worktree:
+Regenerate the canonical artifact from the pinned diagnostic cache, from this
+worktree and never from the sealed runner worktree:
 
     POPULACE_DYNAMICS_PE_US_DIR=/Users/maxghenis/PolicyEngine/\
 social-security-model-worktrees/sol-c3-runner/.venv/lib/python3.14/site-packages \
     /Users/maxghenis/PolicyEngine/social-security-model-worktrees/\
 sol-c3-runner/.venv/bin/python \
     scripts/first_estimates_birth_evidence.py
+
+Replay the cache-independent registered-input path with the same command plus
+``--regenerate``.
 """
 
 from __future__ import annotations
@@ -65,7 +69,7 @@ from populace_dynamics.harness.m6_cells import (  # noqa: E402
     SEED_WAVE,
 )
 
-SCHEMA_VERSION = "first_estimates_birth_evidence.v1"
+SCHEMA_VERSION = "first_estimates_birth_evidence.v2"
 EXPECTED_MASTER_SHA = "daf3ff5978de5137ba50490f78ac52890291a399"
 EXPECTED_PE_US_VERSION = "1.752.2"
 EXPECTED_INTERPRETER = Path(
@@ -86,7 +90,7 @@ DEFAULT_CACHE_SHA256 = (
     "3ba147f7666ad77d8f7735969e4329fa7180cef091ad4ee326f35b2834a72068"
 )
 DERIVED_BIRTH_MIN = 1889
-DERIVED_BIRTH_MAX = 2022
+DERIVED_BIRTH_MAX = 2016
 SOURCE_CLASSES = (
     "exact_marriage",
     "inferred_period_age",
@@ -186,7 +190,7 @@ class SensitivityEvidence:
 
 @dataclass(frozen=True)
 class LedgerEvidence:
-    """Fixed-baseline-cohort benefit-ledger sensitivity."""
+    """Coherent-shift ledgers and the personwise adversarial range."""
 
     result: Mapping[str, Any]
 
@@ -294,6 +298,17 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _reducer_command(*arguments: str) -> str:
+    return " ".join(
+        (
+            f"POPULACE_DYNAMICS_PE_US_DIR={EXPECTED_PE_US_DIR}",
+            str(EXPECTED_INTERPRETER),
+            "scripts/first_estimates_birth_evidence.py",
+            *arguments,
+        )
+    )
+
+
 def _validate_loaded_draw(
     *,
     inputs: Any,
@@ -349,11 +364,19 @@ def _load_cached_draw(path: Path, draw_index: int) -> LoadedDraw:
         draw=draw,
         execution={
             "data_path": "diagnostic_pickle_cache",
+            "artifact_source": "sha256_pinned_diagnostic_pickle",
             "cache": {
                 "path": str(resolved),
                 "sha256": digest,
                 "size_bytes": resolved.stat().st_size,
             },
+            "canonical_artifact_command": _reducer_command(
+                "--cache",
+                str(resolved),
+            ),
+            "cache_independent_regeneration_command": _reducer_command(
+                "--regenerate"
+            ),
             "regeneration_path": (
                 "coordinator._load_registered_input_plan plus the registered "
                 "scripts path context and the production candidate-3 prefix; "
@@ -425,7 +448,12 @@ def _regenerate_draw(
         draw=draw,
         execution={
             "data_path": "regenerated_registered_single_draw",
+            "artifact_source": "cache_independent_registered_input_replay",
             "cache": None,
+            "canonical_artifact_command": _reducer_command("--regenerate"),
+            "cache_independent_regeneration_command": _reducer_command(
+                "--regenerate"
+            ),
             "regeneration_path": (
                 "coordinator._load_registered_input_plan plus the registered "
                 "scripts path context and the production candidate-3 prefix; "
@@ -544,6 +572,11 @@ def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
                     f"person {person_id} violates the seed coordinate"
                 )
             birth_year = seed_year - age
+            if not seed_year - 125 <= birth_year <= seed_year - 2:
+                raise AssertionError(
+                    f"derived birth year {birth_year} for person {person_id} "
+                    "violates its seed-year/age support"
+                )
             if not DERIVED_BIRTH_MIN <= birth_year <= DERIVED_BIRTH_MAX:
                 raise AssertionError(
                     f"derived birth year {birth_year} for person {person_id} "
@@ -624,6 +657,11 @@ def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
                 min(derived_years),
                 max(derived_years),
             ],
+            "derived_birth_per_row_assertion": {
+                "asserted_rows": len(derived_ids),
+                "rule": ("seed_year - 125 <= birth_year <= seed_year - 2"),
+                "passed": True,
+            },
         },
         "seed_population": {
             "initial_slice": len(population.initial_slice),
@@ -673,6 +711,276 @@ def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
         sentinel_ids=frozenset(sentinel_ids),
         result=result,
     )
+
+
+def _mcnemar_tests(
+    clause2_only: int,
+    clause3_only: int,
+) -> Mapping[str, Any]:
+    discordant = clause2_only + clause3_only
+    if discordant:
+        smaller = min(clause2_only, clause3_only)
+        exact_tail = sum(
+            math.comb(discordant, value) for value in range(smaller + 1)
+        )
+        exact_p = min(1.0, 2.0 * exact_tail / (2**discordant))
+        corrected_difference = max(
+            abs(clause2_only - clause3_only) - 1,
+            0,
+        )
+        corrected_statistic = corrected_difference**2 / discordant
+        corrected_p = math.erfc(math.sqrt(corrected_statistic / 2.0))
+    else:
+        exact_p = 1.0
+        corrected_statistic = 0.0
+        corrected_p = 1.0
+    return {
+        "exact_two_sided_binomial": {
+            "method": (
+                "Two-sided exact McNemar test: binomial test on discordant "
+                "pairs with null probability 0.5."
+            ),
+            "p_value": exact_p,
+        },
+        "chi_square_continuity_corrected": {
+            "method": (
+                "McNemar chi-square test with Edwards continuity correction "
+                "and one degree of freedom."
+            ),
+            "statistic": corrected_statistic,
+            "p_value": corrected_p,
+        },
+    }
+
+
+def _agreement_table(
+    *,
+    people: Collection[int],
+    exact_by_person: Mapping[int, int],
+    clause2_by_person: Mapping[int, int],
+    clause3_by_person: Mapping[int, int],
+    tolerance: int,
+) -> Mapping[str, Any]:
+    person_ids = tuple(sorted(people))
+    clause2_matches = {
+        person_id
+        for person_id in person_ids
+        if (
+            abs(clause2_by_person[person_id] - exact_by_person[person_id])
+            <= tolerance
+        )
+    }
+    clause3_matches = {
+        person_id
+        for person_id in person_ids
+        if (
+            abs(clause3_by_person[person_id] - exact_by_person[person_id])
+            <= tolerance
+        )
+    }
+    both = clause2_matches & clause3_matches
+    clause2_only = clause2_matches - clause3_matches
+    clause3_only = clause3_matches - clause2_matches
+    neither = set(person_ids) - clause2_matches - clause3_matches
+    cells = {
+        "clause2_match__clause3_match": len(both),
+        "clause2_match__clause3_mismatch": len(clause2_only),
+        "clause2_mismatch__clause3_match": len(clause3_only),
+        "clause2_mismatch__clause3_mismatch": len(neither),
+    }
+    if sum(cells.values()) != len(person_ids):
+        raise AssertionError("agreement cells do not cover common support")
+    return {
+        "denominator": len(person_ids),
+        "clause2_inferred_period_age": {
+            "match_count": len(clause2_matches),
+            "match_share": (
+                len(clause2_matches) / len(person_ids) if person_ids else 0.0
+            ),
+        },
+        "clause3_seed_age": {
+            "match_count": len(clause3_matches),
+            "match_share": (
+                len(clause3_matches) / len(person_ids) if person_ids else 0.0
+            ),
+        },
+        "mcnemar_2x2_cells": cells,
+        "discordant_pairs": {
+            "clause2_only": len(clause2_only),
+            "clause3_only": len(clause3_only),
+        },
+        "paired_tests": _mcnemar_tests(
+            len(clause2_only),
+            len(clause3_only),
+        ),
+    }
+
+
+def _derive_common_support_agreement(
+    loaded: LoadedDraw,
+    births: BirthEvidence,
+) -> Mapping[str, Any]:
+    marriage = loaded.inputs.refit_inputs.family_context.marriage_records
+    earnings = loaded.inputs.earnings_panel
+    exact_records = career.derive_birth_years(
+        marriage,
+        earnings.iloc[0:0].copy(),
+        {},
+        required_person_ids=births.population_ids,
+    )
+    clause2_records = career.derive_birth_years(
+        marriage.iloc[0:0].copy(),
+        earnings,
+        {},
+        required_person_ids=births.population_ids,
+    )
+    exact_by_person = {
+        record.person_id: record.birth_year
+        for record in exact_records
+        if record.person_id in births.population_ids
+    }
+    clause2_by_person = {
+        record.person_id: record.birth_year
+        for record in clause2_records
+        if record.person_id in births.population_ids
+    }
+    clause3_by_person: dict[int, int] = {}
+    anchor_wave_by_person: dict[int, int] = {}
+    for row in births.seed.itertuples():
+        if pd.isna(row.age):
+            continue
+        age = int(row.age)
+        if not 2 <= age <= 125:
+            continue
+        person_id = int(row.person_id)
+        seed_year = int(row.year)
+        anchor_wave = int(row.anchor_wave)
+        if seed_year != anchor_wave - 1:
+            raise AssertionError(
+                f"agreement seed coordinate differs for {person_id}"
+            )
+        clause3_by_person[person_id] = seed_year - age
+        anchor_wave_by_person[person_id] = anchor_wave
+
+    common_support = frozenset(
+        set(exact_by_person) & set(clause2_by_person) & set(clause3_by_person)
+    )
+    exact = _agreement_table(
+        people=common_support,
+        exact_by_person=exact_by_person,
+        clause2_by_person=clause2_by_person,
+        clause3_by_person=clause3_by_person,
+        tolerance=0,
+    )
+    within_one = _agreement_table(
+        people=common_support,
+        exact_by_person=exact_by_person,
+        clause2_by_person=clause2_by_person,
+        clause3_by_person=clause3_by_person,
+        tolerance=1,
+    )
+    by_anchor_wave = {
+        str(anchor_wave): _agreement_table(
+            people={
+                person_id
+                for person_id in common_support
+                if anchor_wave_by_person[person_id] == anchor_wave
+            },
+            exact_by_person=exact_by_person,
+            clause2_by_person=clause2_by_person,
+            clause3_by_person=clause3_by_person,
+            tolerance=0,
+        )
+        for anchor_wave in sorted(
+            {anchor_wave_by_person[person_id] for person_id in common_support}
+        )
+    }
+    anchor_total = sum(
+        table["denominator"] for table in by_anchor_wave.values()
+    )
+    if anchor_total != len(common_support):
+        raise AssertionError("anchor strata do not cover common support")
+    return {
+        "construction": "seed_triple_overlap",
+        "common_support_definition": (
+            "Real report-population people with an exact marriage-record "
+            "birth year, a clause-2 median(period-age) estimate on age "
+            "14-90 earnings support, and a valid clause-3 seed age 2-125."
+        ),
+        "truth_source": "exact_marriage",
+        "common_support_count": len(common_support),
+        "endpoints": {
+            "exact": exact,
+            "within_plus_or_minus_1": within_one,
+        },
+        "exact_endpoint_by_anchor_wave": by_anchor_wave,
+        "anchor_strata_reconciliation": {
+            "sum": anchor_total,
+            "common_support_count": len(common_support),
+            "passed": anchor_total == len(common_support),
+        },
+    }
+
+
+def _derive_revenue_person_year_evidence(
+    births: BirthEvidence,
+) -> Mapping[str, Any]:
+    if births.derived_ids & births.unresolved_ids:
+        raise AssertionError("revenue birth-source groups overlap")
+    window = births.trajectory[
+        births.trajectory["year"].isin(ledgers.REPORT_YEARS)
+    ].copy()
+    if window.duplicated(["person_id", "year"]).any():
+        raise AssertionError("revenue evidence has duplicate person-years")
+
+    def group(person_ids: frozenset[int]) -> Mapping[str, Any]:
+        rows = window[window["person_id"].isin(person_ids)]
+        zero_rows = rows["earnings"].notna() & rows["earnings"].eq(0)
+        if not bool(zero_rows.all()):
+            raise AssertionError(
+                "birth-source revenue rows are not all explicit zero earnings"
+            )
+        return {
+            "people": len(person_ids),
+            "in_window_rows": len(rows),
+            "zero_earnings_rows": int(zero_rows.sum()),
+        }
+
+    derived = group(births.derived_ids)
+    unresolved = group(births.unresolved_ids)
+    combined_ids = births.derived_ids | births.unresolved_ids
+    combined = group(combined_ids)
+    people_sum = derived["people"] + unresolved["people"]
+    row_sum = derived["in_window_rows"] + unresolved["in_window_rows"]
+    zero_sum = derived["zero_earnings_rows"] + unresolved["zero_earnings_rows"]
+    passed = (
+        people_sum == combined["people"]
+        and row_sum == combined["in_window_rows"]
+        and zero_sum == combined["zero_earnings_rows"]
+    )
+    if not passed:
+        raise AssertionError(
+            "revenue person-year partition does not reconcile"
+        )
+    return {
+        "production_semantics": (
+            "Revenue is birth-independent: ledgers.build_revenue_ledger "
+            "consumes the unsplit projection directly and does not consume "
+            "birth-year classifications."
+        ),
+        "report_years": list(ledgers.REPORT_YEARS),
+        "groups": {
+            "derived_projection_age": derived,
+            "unresolved": unresolved,
+            "combined": combined,
+        },
+        "reconciliation": {
+            "people_sum": people_sum,
+            "in_window_rows_sum": row_sum,
+            "zero_earnings_rows_sum": zero_sum,
+            "passed": passed,
+        },
+    }
 
 
 def _production_candidate_inclusion(
@@ -899,6 +1207,71 @@ def _source_split(
         source_by_person[int(person_id)] for person_id in person_ids
     )
     return _zero_filled_counts(counts, SOURCE_CLASSES)
+
+
+def _origin_split(
+    person_ids: Collection[int],
+    origins_by_person: Mapping[int, career.CandidateOriginRecord],
+) -> dict[str, int]:
+    counts = Counter(
+        origins_by_person[int(person_id)].origin.value
+        for person_id in person_ids
+    )
+    return _zero_filled_counts(
+        counts,
+        tuple(origin.value for origin in career.ClaimOrigin),
+    )
+
+
+def _neutral_inclusion_changes(
+    person_ids: Collection[int],
+    baseline: CandidateStageState,
+    alternative: CandidateStageState,
+) -> Mapping[str, Any]:
+    inbound = [
+        person_id
+        for person_id in person_ids
+        if (
+            person_id not in baseline.included_ids
+            and person_id in alternative.included_ids
+        )
+    ]
+    outbound = [
+        person_id
+        for person_id in person_ids
+        if (
+            person_id in baseline.included_ids
+            and person_id not in alternative.included_ids
+        )
+    ]
+    if len(inbound) + len(outbound) != len(person_ids):
+        raise AssertionError(
+            "neutral inclusion-change split does not cover changed people"
+        )
+    return {
+        "inbound_to_included": {
+            "count": len(inbound),
+            "baseline_outcomes": dict(
+                sorted(
+                    Counter(
+                        baseline.outcome_by_person[person_id]
+                        for person_id in inbound
+                    ).items()
+                )
+            ),
+        },
+        "outbound_from_included": {
+            "count": len(outbound),
+            "alternative_outcomes": dict(
+                sorted(
+                    Counter(
+                        alternative.outcome_by_person[person_id]
+                        for person_id in outbound
+                    ).items()
+                )
+            ),
+        },
+    }
 
 
 def _stage_d_source_split(
@@ -1187,12 +1560,25 @@ def _derive_sensitivity_evidence(
                     flipped,
                     births.source_by_person,
                 ),
+                "flip_count_by_origin": _origin_split(
+                    flipped,
+                    baseline_origins,
+                ),
                 "inclusion_changing_flip_count": len(inclusion_flipped),
                 "inclusion_changing_flip_count_by_birth_source": (
                     _source_split(
                         inclusion_flipped,
                         births.source_by_person,
                     )
+                ),
+                "inclusion_changing_flip_count_by_origin": _origin_split(
+                    inclusion_flipped,
+                    baseline_origins,
+                ),
+                "neutral_inclusion_changes": _neutral_inclusion_changes(
+                    inclusion_flipped,
+                    baseline_state,
+                    alternative,
                 ),
             }
         distinct = frozenset(aggregate_flips)
@@ -1227,6 +1613,46 @@ def _derive_sensitivity_evidence(
             ),
         }
 
+    chronology_flip_ids = [
+        person_id
+        for shift in (-1, 1)
+        for person_id in sorted(funnel.candidate_ids)
+        if (
+            baseline_state.predicate_reached_by_person[person_id]["chronology"]
+            and states[shift].predicate_reached_by_person[person_id][
+                "chronology"
+            ]
+            and (
+                baseline_state.predicate_value_by_person[person_id][
+                    "chronology"
+                ]
+                != states[shift].predicate_value_by_person[person_id][
+                    "chronology"
+                ]
+            )
+        )
+    ]
+    chronology_origin_counts = _origin_split(
+        chronology_flip_ids,
+        baseline_origins,
+    )
+    chronology_origin_assertion_passed = (
+        chronology_origin_counts[career.ClaimOrigin.MODELED_AWARD.value]
+        == len(chronology_flip_ids)
+        and chronology_origin_counts[career.ClaimOrigin.OPENING_BACKFILL.value]
+        == 0
+    )
+    if not chronology_origin_assertion_passed:
+        raise AssertionError(
+            "a chronology predicate flip has a non-modeled-award origin"
+        )
+    predicate_results["chronology"]["origin_assertion"] = {
+        "assertion": "Every measured chronology predicate flip is modeled_award.",
+        "asserted_flip_directions": len(chronology_flip_ids),
+        "observed_counts_by_origin": chronology_origin_counts,
+        "passed": chronology_origin_assertion_passed,
+    }
+
     overall_direction_ids: dict[int, list[int]] = {}
     all_overall_directions: list[int] = []
     for shift in (-1, 1):
@@ -1249,6 +1675,11 @@ def _derive_sensitivity_evidence(
                 "inclusion_flip_count_by_birth_source": _source_split(
                     person_ids,
                     births.source_by_person,
+                ),
+                "neutral_inclusion_changes": _neutral_inclusion_changes(
+                    person_ids,
+                    baseline_state,
+                    states[shift],
                 ),
             }
             for shift, person_ids in overall_direction_ids.items()
@@ -1315,6 +1746,18 @@ def _annualized_benefits_by_year(
     return result
 
 
+def _benefit_amount_by_person(
+    benefit_ledger: ledgers.BenefitLedger,
+) -> dict[int, float]:
+    return {
+        int(row.person_id): math.fsum(
+            12.0 * row.weight * row.payment_monthly_by_year[year]
+            for year in sorted(row.payment_monthly_by_year)
+        )
+        for row in benefit_ledger.people
+    }
+
+
 def _derive_ledger_evidence(
     *,
     report_parameters: parameter_module.ReportParameters,
@@ -1322,7 +1765,146 @@ def _derive_ledger_evidence(
     births: BirthEvidence,
     sensitivity: SensitivityEvidence,
 ) -> LedgerEvidence:
-    """Recompute ledgers for the fixed baseline clause-2 claimant cohort."""
+    """Price coherent shifts and independent personwise adversarial choices."""
+
+    full_ledgers = {
+        shift: ledgers.build_benefit_ledger(
+            sensitivity.inclusions[shift].included,
+            report_parameters,
+            draw_index=draw_index,
+        )
+        for shift in (0, -1, 1)
+    }
+    full_annual_by_shift = {
+        shift: _annualized_benefits_by_year(full_ledgers[shift])
+        for shift in (0, -1, 1)
+    }
+    full_people_by_shift = {
+        shift: _benefit_amount_by_person(full_ledgers[shift])
+        for shift in (0, -1, 1)
+    }
+    full_included_ids = {
+        shift: frozenset(int(row.person_id) for row in ledger.people)
+        for shift, ledger in full_ledgers.items()
+    }
+    for shift in (0, -1, 1):
+        expected_ids = frozenset(
+            int(row.person_id)
+            for row in sensitivity.inclusions[shift].included
+        )
+        if full_included_ids[shift] != expected_ids:
+            raise AssertionError(
+                "full scenario ledger differs from its complete included set"
+            )
+
+    baseline_full_annual = full_annual_by_shift[0]
+    baseline_full_total = math.fsum(baseline_full_annual.values())
+    full_scenarios: dict[str, Any] = {}
+    for shift in (0, -1, 1):
+        annual = full_annual_by_shift[shift]
+        total = math.fsum(annual.values())
+        delta_by_year = {
+            year: annual[year] - baseline_full_annual[year]
+            for year in ledgers.REPORT_YEARS
+        }
+        delta = total - baseline_full_total
+        inbound = full_included_ids[shift] - full_included_ids[0]
+        outbound = full_included_ids[0] - full_included_ids[shift]
+        reconciled_count = (
+            len(full_included_ids[0]) + len(inbound) - len(outbound)
+        )
+        if reconciled_count != len(full_included_ids[shift]):
+            raise AssertionError(
+                "full scenario included-set changes do not reconcile"
+            )
+        person_sum = math.fsum(full_people_by_shift[shift].values())
+        full_scenarios[_direction_name(shift)] = {
+            "complete_included_set_count": len(full_included_ids[shift]),
+            "included_set_changes_from_baseline": {
+                "inbound_to_included": len(inbound),
+                "outbound_from_included": len(outbound),
+                "reconciled_count": reconciled_count,
+            },
+            "weighted_annualized_benefit_by_year": {
+                str(year): {
+                    "amount": annual[year],
+                    "delta_from_baseline": delta_by_year[year],
+                }
+                for year in ledgers.REPORT_YEARS
+            },
+            "weighted_annualized_benefit_total": {
+                "amount": total,
+                "delta_from_baseline": delta,
+                "delta_share_of_baseline": (
+                    delta / baseline_full_total if baseline_full_total else 0.0
+                ),
+                "sum_of_per_year_deltas": math.fsum(delta_by_year.values()),
+                "person_contribution_sum": person_sum,
+                "person_minus_annual_reconciliation_residual": (
+                    person_sum - total
+                ),
+            },
+        }
+
+    all_ledger_person_ids = frozenset().union(
+        *(set(values) for values in full_people_by_shift.values())
+    )
+    baseline_person_sum = math.fsum(
+        full_people_by_shift[0].get(person_id, 0.0)
+        for person_id in sorted(all_ledger_person_ids)
+    )
+    personwise_minimum = math.fsum(
+        min(
+            full_people_by_shift[-1].get(person_id, 0.0),
+            full_people_by_shift[1].get(person_id, 0.0),
+        )
+        for person_id in sorted(all_ledger_person_ids)
+    )
+    personwise_maximum = math.fsum(
+        max(
+            full_people_by_shift[-1].get(person_id, 0.0),
+            full_people_by_shift[1].get(person_id, 0.0),
+        )
+        for person_id in sorted(all_ledger_person_ids)
+    )
+    personwise = {
+        "semantics": {
+            "allowed_person_birth_shifts": [-1, 1],
+            "baseline_shift_zero_is_reference_only": True,
+            "shift_scope": sorted(IMPRECISE_BIRTH_SOURCES),
+            "fixed_sources": sorted(
+                set(SOURCE_CLASSES)
+                - set(IMPRECISE_BIRTH_SOURCES)
+                - {"unresolved"}
+            ),
+            "excluded_person_contribution": 0.0,
+            "construction": (
+                "For each person independently, select the smaller or larger "
+                "complete-ledger contribution from birth-minus-1 and "
+                "birth-plus-1. Person-keyed production draws and additive "
+                "ledger rows make the selections separable."
+            ),
+        },
+        "baseline_reference": {
+            "person_contribution_sum": baseline_person_sum,
+            "full_scenario_ledger_total": baseline_full_total,
+            "person_minus_annual_reconciliation_residual": (
+                baseline_person_sum - baseline_full_total
+            ),
+        },
+        "minimum": {
+            "amount": personwise_minimum,
+            "delta_from_baseline_person_contribution_sum": (
+                personwise_minimum - baseline_person_sum
+            ),
+        },
+        "maximum": {
+            "amount": personwise_maximum,
+            "delta_from_baseline_person_contribution_sum": (
+                personwise_maximum - baseline_person_sum
+            ),
+        },
+    }
 
     baseline_included = {
         row.person_id: row for row in sensitivity.inclusions[0].included
@@ -1486,7 +2068,7 @@ def _derive_ledger_evidence(
 
     distinct_payment_changes = frozenset().union(*payment_change_ids.values())
     distinct_factor_changes = frozenset().union(*factor_change_ids.values())
-    result = {
+    fixed_clause2_cohort = {
         "cohort": {
             "definition": (
                 "Unperturbed Stage-D-included claimants whose corrected "
@@ -1499,6 +2081,20 @@ def _derive_ledger_evidence(
             ),
         },
         "semantics": {
+            "membership": (
+                "The cohort is exactly the baseline-included clause-2 set. "
+                "It excludes baseline-included exact-dated claimants and "
+                "does not add scenario-only inbound claimants."
+            ),
+            "baseline_included_non_clause2_not_priced": len(
+                full_included_ids[0] - cohort_ids
+            ),
+            "scenario_inbound_not_priced": {
+                _direction_name(shift): len(
+                    full_included_ids[shift] - full_included_ids[0]
+                )
+                for shift in (-1, 1)
+            },
             "production_path": (
                 "Reuse each scenario's production career-inclusion rerun, "
                 "filter to the fixed baseline cohort, then call "
@@ -1534,6 +2130,39 @@ def _derive_ledger_evidence(
             ),
         },
     }
+    result = {
+        "coherent_shift_stress_scenarios": {
+            "semantics": (
+                "All shift-eligible birth coordinates move coherently in "
+                "one direction. These are deterministic stress scenarios."
+            ),
+            "fixed_clause2_cohort": fixed_clause2_cohort,
+            "full_scenario_ledger": {
+                "semantics": {
+                    "included_set": (
+                        "Each scenario prices its complete production "
+                        "Stage-D-included set; inbound and outbound changes "
+                        "are both reflected."
+                    ),
+                    "production_path": (
+                        "Call ledgers.build_benefit_ledger on every included "
+                        "claimant from that scenario's production "
+                        "career-inclusion rerun."
+                    ),
+                    "weighted_benefit_measure": (
+                        ledgers.BENEFIT_MEASURE_LABEL
+                    ),
+                    "weighted_benefit_units": (
+                        "frame-annualized nominal dollars: 12 * person "
+                        "weight * monthly payment, summed over both "
+                        "production origin rows"
+                    ),
+                },
+                "scenarios": full_scenarios,
+            },
+        },
+        "personwise_adversarial_range": personwise,
+    }
     return LedgerEvidence(result=result)
 
 
@@ -1541,7 +2170,9 @@ def _oracle_reconciliation(
     *,
     draw_index: int,
     births: BirthEvidence,
+    common_support: Mapping[str, Any],
     funnel: FunnelEvidence,
+    revenue: Mapping[str, Any],
     sensitivity: SensitivityEvidence,
     ledger: LedgerEvidence,
 ) -> Mapping[str, Any]:
@@ -1685,8 +2316,114 @@ def _oracle_reconciliation(
         ),
         (
             "baseline_included_clause_2_claimants",
-            ledger.result["cohort"]["count"],
+            ledger.result["coherent_shift_stress_scenarios"][
+                "fixed_clause2_cohort"
+            ]["cohort"]["count"],
             1440,
+        ),
+        (
+            "full_ledger_baseline_included",
+            ledger.result["coherent_shift_stress_scenarios"][
+                "full_scenario_ledger"
+            ]["scenarios"]["baseline"]["complete_included_set_count"],
+            1514,
+        ),
+        (
+            "full_ledger_birth_minus_1_included",
+            ledger.result["coherent_shift_stress_scenarios"][
+                "full_scenario_ledger"
+            ]["scenarios"]["birth_minus_1"]["complete_included_set_count"],
+            1520,
+        ),
+        (
+            "full_ledger_birth_plus_1_included",
+            ledger.result["coherent_shift_stress_scenarios"][
+                "full_scenario_ledger"
+            ]["scenarios"]["birth_plus_1"]["complete_included_set_count"],
+            1240,
+        ),
+        (
+            "birth_minus_1_chronology_inbound",
+            sensitivity.result["predicates"]["chronology"]["directions"][
+                "birth_minus_1"
+            ]["neutral_inclusion_changes"]["inbound_to_included"]["count"],
+            16,
+        ),
+        (
+            "birth_plus_1_chronology_outbound",
+            sensitivity.result["predicates"]["chronology"]["directions"][
+                "birth_plus_1"
+            ]["neutral_inclusion_changes"]["outbound_from_included"]["count"],
+            278,
+        ),
+        (
+            "birth_plus_1_low_coverage_outbound",
+            sensitivity.result["predicates"]["coverage"]["directions"][
+                "birth_plus_1"
+            ]["neutral_inclusion_changes"]["outbound_from_included"]["count"],
+            1,
+        ),
+        (
+            "chronology_flip_directions_modeled_award",
+            sensitivity.result["predicates"]["chronology"]["origin_assertion"][
+                "observed_counts_by_origin"
+            ]["modeled_award"],
+            600,
+        ),
+        (
+            "chronology_flip_directions_opening_backfill",
+            sensitivity.result["predicates"]["chronology"]["origin_assertion"][
+                "observed_counts_by_origin"
+            ]["opening_backfill"],
+            0,
+        ),
+        (
+            "common_support_people",
+            common_support["common_support_count"],
+            4518,
+        ),
+        (
+            "common_support_clause2_exact",
+            common_support["endpoints"]["exact"][
+                "clause2_inferred_period_age"
+            ]["match_count"],
+            2307,
+        ),
+        (
+            "common_support_clause3_exact",
+            common_support["endpoints"]["exact"]["clause3_seed_age"][
+                "match_count"
+            ],
+            2299,
+        ),
+        (
+            "common_support_clause2_within_1",
+            common_support["endpoints"]["within_plus_or_minus_1"][
+                "clause2_inferred_period_age"
+            ]["match_count"],
+            4516,
+        ),
+        (
+            "common_support_clause3_within_1",
+            common_support["endpoints"]["within_plus_or_minus_1"][
+                "clause3_seed_age"
+            ]["match_count"],
+            4508,
+        ),
+        (
+            "revenue_derived_zero_rows",
+            revenue["groups"]["derived_projection_age"]["zero_earnings_rows"],
+            28978,
+        ),
+        (
+            "revenue_unresolved_zero_rows",
+            revenue["groups"]["unresolved"]["zero_earnings_rows"],
+            14066,
+        ),
+        (
+            "revenue_combined_zero_rows",
+            revenue["groups"]["combined"]["zero_earnings_rows"],
+            43044,
         ),
     )
     reconciled = [
@@ -1706,6 +2443,10 @@ def _oracle_reconciliation(
         )
     return {
         "status": "matched",
+        "scope": (
+            "Hardcoded unweighted count values only; dollar totals, shares, "
+            "paired-test p-values, and float arithmetic are excluded."
+        ),
         "matched_rows": len(reconciled),
         "rows": reconciled,
     }
@@ -1792,6 +2533,8 @@ def main() -> int:
     else:
         loaded = _load_cached_draw(args.cache, args.draw_index)
     births = _derive_birth_evidence(loaded)
+    common_support = _derive_common_support_agreement(loaded, births)
+    revenue = _derive_revenue_person_year_evidence(births)
     funnel = _derive_funnel_evidence(loaded, births)
     sensitivity = _derive_sensitivity_evidence(
         loaded=loaded,
@@ -1807,7 +2550,9 @@ def main() -> int:
     oracle = _oracle_reconciliation(
         draw_index=args.draw_index,
         births=births,
+        common_support=common_support,
         funnel=funnel,
+        revenue=revenue,
         sensitivity=sensitivity,
         ledger=ledger,
     )
@@ -1815,6 +2560,7 @@ def main() -> int:
         "benefit_ledger_sensitivity": ledger.result,
         "birth_source_law": births.result,
         "candidate_funnel": funnel.result,
+        "common_support_agreement": common_support,
         "execution": {
             **loaded.execution,
             "parameters": _parameter_identity(report_parameters),
@@ -1827,6 +2573,7 @@ def main() -> int:
             "root_seed": loaded.draw.root_seed,
         },
         "oracle_reconciliation": oracle,
+        "revenue_person_year_evidence": revenue,
         "schema_version": SCHEMA_VERSION,
     }
     encoded = (
@@ -1842,12 +2589,14 @@ def main() -> int:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(encoded)
     relative_output = output_path.relative_to(ROOT)
-    minus_total = ledger.result["scenarios"]["birth_minus_1"][
+    coherent = ledger.result["coherent_shift_stress_scenarios"]
+    full_ledger = coherent["full_scenario_ledger"]
+    minus_total = full_ledger["scenarios"]["birth_minus_1"][
         "weighted_annualized_benefit_total"
-    ]["delta"]
-    plus_total = ledger.result["scenarios"]["birth_plus_1"][
+    ]["delta_from_baseline"]
+    plus_total = full_ledger["scenarios"]["birth_plus_1"][
         "weighted_annualized_benefit_total"
-    ]["delta"]
+    ]["delta_from_baseline"]
     initially_unresolved = births.result["initially_unresolved"]
     canonical_candidates = funnel.result["canonical_candidates"]
     raw_carriers = funnel.result[
@@ -1876,7 +2625,10 @@ def main() -> int:
         "overall_directions="
         f"{overall_inclusion['inclusion_flip_directions']} "
         f"distinct_people={overall_inclusion['distinct_people_affected']}\n"
-        f"D cohort={ledger.result['cohort']['count']} "
+        "D fixed_cohort="
+        f"{coherent['fixed_clause2_cohort']['cohort']['count']} "
+        "full_baseline="
+        f"{full_ledger['scenarios']['baseline']['complete_included_set_count']} "
         f"birth_minus_1_delta={minus_total:.17g} "
         f"birth_plus_1_delta={plus_total:.17g}"
     )
