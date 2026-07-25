@@ -80,14 +80,14 @@
   statement.
 - Revision-10.1 runner/GAP/artifact focused suite: `44 passed in 1.11s`;
   tier policy: `1 passed, 3653 deselected`.
+- The current reviewed production-source identity is
+  `634baabff7966057ac4eea13c95f23844564b7eb`.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.
 
 ## Next
 
-- Commit the revision-10.1 source/fixture step, then advance the reducer's
-  reviewed implementation pin to that production-source commit.
 - Replace the content-identical temporary base with exact fetched
   `origin/master` ancestry once DNS is available.
 - Rerun the full focused/unit/artifact, formatting, lint, tier-policy,
