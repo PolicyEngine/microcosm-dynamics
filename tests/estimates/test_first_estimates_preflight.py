@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -154,13 +156,13 @@ def test_population_loader_uses_all_holdouts_without_fit(
         return population
 
     monkeypatch.setattr(
-        preflight.coordinator,
+        preflight,
         "_load_registered_input_plan",
         load_plan,
     )
     monkeypatch.setattr(
-        preflight.m6_population,
-        "build_realized_population",
+        preflight,
+        "_build_realized_population",
         build_population,
     )
 
@@ -177,6 +179,23 @@ def test_population_loader_uses_all_holdouts_without_fit(
     kwargs = events[2][1]
     assert kwargs["earnings_domain_ids"] == frozenset({11, 12})
     assert kwargs["reserved_real_ids"] == frozenset({11, 12})
+
+
+def test_import_does_not_load_projection_fit_surface():
+    code = (
+        "import runpy, sys; "
+        f"runpy.run_path({str(SCRIPT_PATH)!r}, run_name='preflight_import'); "
+        "assert 'populace.fit' not in sys.modules"
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
 
 
 def test_run_preflight_threads_seed_coordinates_and_all_holdout_ids(

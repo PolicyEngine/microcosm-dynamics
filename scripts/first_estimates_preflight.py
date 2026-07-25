@@ -31,8 +31,7 @@ SOURCE = ROOT / "src"
 if str(SOURCE) not in sys.path:
     sys.path.insert(0, str(SOURCE))
 
-from populace_dynamics.estimates import career, coordinator  # noqa: E402
-from populace_dynamics.harness import m6_population  # noqa: E402
+from populace_dynamics.estimates import career  # noqa: E402
 
 SOURCE_KEYS = tuple(source.value for source in career.BirthSource)
 DERIVED_SOURCE = career.BirthSource.DERIVED_PROJECTION_AGE.value
@@ -55,9 +54,25 @@ def _integer_ids(values: Collection[Any], label: str) -> frozenset[int]:
     return frozenset(_integer(value, label) for value in values)
 
 
+def _load_registered_input_plan(repository: Path) -> Any:
+    """Import the sealed coordinator only when the advisory command runs."""
+
+    from populace_dynamics.estimates import coordinator
+
+    return coordinator._load_registered_input_plan(repository)
+
+
+def _build_realized_population(**kwargs: Any) -> Any:
+    """Import seed materialization lazily; importing this tool stays no-fit."""
+
+    from populace_dynamics.harness import m6_population
+
+    return m6_population.build_realized_population(**kwargs)
+
+
 def _load_candidate_possible_population(
     repository: Path,
-) -> tuple[Any, m6_population.M6RealizedPopulation]:
+) -> tuple[Any, Any]:
     """Load registered sources and build seed frames without fitting.
 
     ``build_realized_population`` requires an earnings-domain marker set even
@@ -66,7 +81,7 @@ def _load_candidate_possible_population(
     earnings model solely to recover its narrower domain.
     """
 
-    plan = coordinator._load_registered_input_plan(repository)
+    plan = _load_registered_input_plan(repository)
     inputs = plan.load_full_inputs()
     if getattr(inputs, "refit_inputs", None) is not plan.fit_inputs:
         raise RuntimeError(
@@ -76,7 +91,7 @@ def _load_candidate_possible_population(
         inputs.truth.anchor["person_id"],
         "registered anchor person_id",
     )
-    population = m6_population.build_realized_population(
+    population = _build_realized_population(
         demographic_panel=inputs.demographic_panel,
         death_records=inputs.death_records,
         earnings_panel=inputs.earnings_panel,

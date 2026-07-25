@@ -4,8 +4,8 @@
 
 Clause 3, Stage C.5, the production artifact/publication path, and the
 advisory birth-completeness preflight are implemented. Draw 0 reproduces every
-supplied amendment oracle; final tier and sealed-preparation verification
-remain.
+supplied amendment oracle; final verification is substantially complete, with
+the PSID tier rerun remaining.
 
 ## Done
 
@@ -45,11 +45,21 @@ remain.
   registered inputs, materializes seed frames without fit or projection, audits
   total five-class dispositions over every holdout person, and independently
   checks clause-3 coordinates and bounds.
-- Added six focused preflight tests; the preflight/career suite passed 34 tests.
+- Added seven focused preflight tests; the preflight/career suite passed 35
+  tests.
 - Ran the advisory tool over the registered sources: 29,792 dispositions,
   4,077 clause-3 derivations, 2,315 unresolved, and zero missing, duplicate,
   invalid, or bounds-violating records.
+- Kept advisory imports no-fit at test collection time by loading the sealed
+  coordinator and seed materializer only when the command runs; the isolated
+  import guard and the existing disability no-fit reproduction guard pass.
+- Reconciled the tier manifest to 849 unit, 1,318 artifact, 804 PSID
+  integration, 520 legacy reproduction, and 159 PolicyEngine oracle tests.
+- Ran the sealed-preparation test (1 passed), full unit tier (843 passed, 5
+  skipped before the final import-only test was added), and full artifact tier
+  (1,280 passed, 38 skipped).
 
 ## Next
 
-- Run focused, sealed-preparation, tier-policy, and feasible real-data checks.
+- Rerun the PSID integration tier, then finish lint/diff/full focused checks and
+  the report.
