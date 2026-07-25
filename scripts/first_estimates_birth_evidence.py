@@ -734,7 +734,7 @@ def _mcnemar_tests(
         exact_p = 1.0
         corrected_statistic = 0.0
         corrected_p = 1.0
-    return {
+    tests = {
         "exact_two_sided_binomial": {
             "method": (
                 "Two-sided exact McNemar test: binomial test on discordant "
@@ -749,6 +749,25 @@ def _mcnemar_tests(
             ),
             "statistic": corrected_statistic,
             "p_value": corrected_p,
+        },
+    }
+    reported_key = (
+        "exact_two_sided_binomial"
+        if discordant < 25
+        else "chi_square_continuity_corrected"
+    )
+    reported = tests[reported_key]
+    return {
+        **tests,
+        "reported_test": {
+            "selection_rule": (
+                "Use the exact two-sided binomial McNemar test with fewer "
+                "than 25 discordant pairs; otherwise use the one-degree-of-"
+                "freedom chi-square test with Edwards continuity correction."
+            ),
+            "method_key": reported_key,
+            "method": reported["method"],
+            "p_value": reported["p_value"],
         },
     }
 
