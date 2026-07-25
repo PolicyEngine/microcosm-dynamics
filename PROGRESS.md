@@ -89,16 +89,17 @@
   tier policy: `1 passed, 3653 deselected`.
 - The current reviewed production-source identity is
   `634baabff7966057ac4eea13c95f23844564b7eb`.
-- Post-revision-10.1 draw-0 replay: status `matched` for all six frozen
-  rows.
-- Post-revision-10.1 focused suite: `86 passed in 5.59s`.
-- Post-revision-10.1 unit tier: `843 passed, 5 skipped, 2806 deselected`
-  in `53.54s`; only the existing joblib physical-core warning.
-- Post-revision-10.1 artifact tier: `1285 passed, 38 skipped, 2331
-  deselected` in `66.06s`.
+- Final post-audit draw-0 replay: status `matched` for all six frozen rows.
+- Final focused suite: `87 passed in 6.09s`; the seven named referee
+  regressions pass individually in `6.15s`.
+- Final unit tier: `843 passed, 5 skipped, 2807 deselected, 58 warnings`
+  in `99.17s`.
+- Final artifact tier: `1284 passed, 40 skipped, 2331 deselected, 106
+  warnings` in `73.92s`; all 1,324 inventoried artifact tests are accounted
+  for.
 - All 15 changed Python files pass Black and Ruff; compilation succeeds,
   `git diff --check` passes, and `src/`/`scripts/` remain bytecode-free.
-- Final tier-policy inventory check: `1 passed, 3653 deselected`.
+- Final tier-policy inventory check: `1 passed, 3654 deselected`.
 - Repeated the prior integration-tier attempt: `169 passed, 3 skipped`,
   then the known order-dependent `populace.fit` import assertion failed.
   The affected module passes alone: `13 passed in 3.92s`.
@@ -115,7 +116,7 @@
   policy passes with `1 passed, 3654 deselected in 1.32s`.
 - Confirmed PR #303 remains open and GitHub currently reports it mergeable;
   its remote head remains `efa5e662d60d885c654419871b002987dc2f3ac5`.
-- Verified all 21 local commit subjects, `git fsck --no-dangling`,
+- Verified all local commit subjects, `git fsck --no-dangling`,
   `git diff --check`, and a clean tracked worktree.
 - Retried `git fetch origin master` after all implementation and verification
   work; it still failed at DNS resolution.
