@@ -2,9 +2,8 @@
 
 ## State
 
-The coordinator now compares only stable registered provenance, freezes the
-separate run-time record before compute, and publishes both as distinctly
-labeled artifact blocks. The requested later-checkout regression passes.
+Implementation and the one-sentence §11 amendment are complete. Formatting,
+lint, and fast-suite verification remain before publication.
 
 ## Done
 
@@ -24,8 +23,9 @@ labeled artifact blocks. The requested later-checkout regression passes.
   changed nested parameter-file hash aborts before compute.
 - Updated the unit-tier count from 829 to 830.
 - Verified 132 coordinator/artifact/preparation tests pass.
+- Amended the single §11 artifact-content sentence to distinguish the stable
+  registered echo from the top-level run-time provenance block.
 
 ## Next
 
-- Update the one §11 artifact-content sentence as an amendment-class change.
 - Run formatting, lint, and fast tests; push and open the requested PR.

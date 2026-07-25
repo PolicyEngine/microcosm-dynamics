@@ -516,8 +516,12 @@ says so).
   requires BOTH `v1` and `v1.env.json` to be absent,
   `artifacts.py:45-79`; the primary artifact records the sidecar's
   content hash so the pair is integrity-bound): identity, schema
-  version, registration reference, the full configuration echo (spec
-  shas, seeds, draw indices, parameter-bundle hashes), per-draw and
+  version, registration reference, the registered-configuration echo
+  containing only stable pre-committable identity (spec shas, seeds,
+  draw indices, versions, relative parameter-directory names,
+  parameter-file content hashes, asserted actuals, and the COLA
+  extraction hash), a distinctly labeled run-time provenance block
+  containing the git revision and every absolute path, per-draw and
   aggregate tables, origin-class and exclusion counts, endpoint-snap
   counts, the §10 gap block, and `certifies_nothing` scope statements.
 - **The canonical execution rule — the sole normative wording,
