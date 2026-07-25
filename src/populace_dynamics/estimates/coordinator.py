@@ -351,18 +351,27 @@ def _assert_registered_sources(repository: Path) -> None:
     _assert_registered_input_sources(repository)
 
 
-def _load_module(path: Path, scripts: Path) -> ModuleType:
+@contextmanager
+def _registered_scripts_path(scripts: Path) -> Iterator[None]:
+    """Expose registered sibling modules for the complete factory chain."""
+    original = sys.path.copy()
+    sys.path.insert(0, str(scripts))
+    try:
+        yield
+    finally:
+        sys.path[:] = original
+
+
+def _load_module(path: Path) -> ModuleType:
     module_name = "_first_estimates_registered_input_factory"
     spec = importlib.util.spec_from_file_location(module_name, path)
     if spec is None or spec.loader is None:
         raise RuntimeError("registered input factory cannot be imported")
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
-    sys.path.insert(0, str(scripts))
     try:
         spec.loader.exec_module(module)
     finally:
-        sys.path.remove(str(scripts))
         sys.modules.pop(module_name, None)
     return module
 
@@ -373,23 +382,24 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
     path = repository / _INPUT_FACTORY_PATH
     for module_name in _INPUT_FACTORY_MODULES:
         sys.modules.pop(module_name, None)
-    module = _load_module(path, path.parent)
-    factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
-    if not callable(factory):
-        raise RuntimeError("registered input factory callable is absent")
-    try:
-        plan = factory()
-    except BaseException as error:
-        if _exception_chain_contains(error, (OSError,)):
-            raise ExternalPreOutputFailure(
-                "external_registered_input_unavailable",
-                "Registered input dependency unavailable before output.",
-            ) from error
-        raise
-    if not isinstance(plan, M6Candidate3InputPlan):
-        raise TypeError(
-            "registered input factory did not return M6Candidate3InputPlan"
-        )
+    with _registered_scripts_path(path.parent):
+        module = _load_module(path)
+        factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
+        if not callable(factory):
+            raise RuntimeError("registered input factory callable is absent")
+        try:
+            plan = factory()
+        except BaseException as error:
+            if _exception_chain_contains(error, (OSError,)):
+                raise ExternalPreOutputFailure(
+                    "external_registered_input_unavailable",
+                    "Registered input dependency unavailable before output.",
+                ) from error
+            raise
+        if not isinstance(plan, M6Candidate3InputPlan):
+            raise TypeError(
+                "registered input factory did not return M6Candidate3InputPlan"
+            )
 
     def load_full_inputs() -> Any:
         try:

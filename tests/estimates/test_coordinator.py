@@ -959,6 +959,99 @@ def test__registered_input_factory__binds_committed_file_and_exact_type(
         coordinator._load_registered_input_plan(root)
 
 
+def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "repo"
+    scripts = root / "scripts"
+    scripts.mkdir(parents=True)
+    factory_source = (
+        b"from populace_dynamics.harness.m6_candidate3_runner import "
+        b"M6Candidate3InputPlan\n"
+        b"\n"
+        b"def build_input_plan():\n"
+        b"    import incident3_lazy_helper\n"
+        b"    return M6Candidate3InputPlan(\n"
+        b"        fit_inputs=incident3_lazy_helper.FIT_INPUTS,\n"
+        b"        load_full_inputs=lambda: None,\n"
+        b"    )\n"
+    )
+    helper_source = b"FIT_INPUTS = object()\n"
+    factory_path = root / coordinator._INPUT_FACTORY_PATH
+    helper_path = scripts / "incident3_lazy_helper.py"
+    factory_path.write_bytes(factory_source)
+    helper_path.write_bytes(helper_source)
+    sources = (
+        coordinator._INPUT_FACTORY_PATH,
+        Path("scripts/incident3_lazy_helper.py"),
+    )
+    committed = {
+        sources[0].as_posix(): factory_source,
+        sources[1].as_posix(): helper_source,
+    }
+    monkeypatch.setattr(coordinator, "_INPUT_FACTORY_SOURCES", sources)
+    monkeypatch.setattr(
+        coordinator,
+        "_git_bytes",
+        lambda _root, *arguments: committed[
+            arguments[-1].removeprefix("HEAD:")
+        ],
+    )
+    monkeypatch.delitem(
+        sys.modules,
+        "incident3_lazy_helper",
+        raising=False,
+    )
+    original_path = sys.path.copy()
+
+    observed = coordinator._load_registered_input_plan(root)
+
+    assert observed.fit_inputs is sys.modules[
+        "incident3_lazy_helper"
+    ].FIT_INPUTS
+    assert sys.path == original_path
+
+
+def test__registered_input_factory__restores_scripts_path_after_failure(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "repo"
+    path = root / coordinator._INPUT_FACTORY_PATH
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"registered factory\n")
+    monkeypatch.setattr(
+        coordinator,
+        "_INPUT_FACTORY_SOURCES",
+        (coordinator._INPUT_FACTORY_PATH,),
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_git_bytes",
+        lambda *_args: b"registered factory\n",
+    )
+    original_path = sys.path.copy()
+
+    def fail_after_mutating_path():
+        assert sys.path[0] == str(path.parent)
+        sys.path.append("factory-path-mutation")
+        raise RuntimeError("factory sentinel")
+
+    monkeypatch.setattr(
+        coordinator,
+        "_load_module",
+        lambda *_args: SimpleNamespace(
+            build_input_plan=fail_after_mutating_path
+        ),
+    )
+
+    with pytest.raises(RuntimeError, match="factory sentinel"):
+        coordinator._load_registered_input_plan(root)
+
+    assert sys.path == original_path
+
+
 def test__registered_input_factory__binds_imported_dependency_chain(
     tmp_path,
     monkeypatch,
