@@ -13,14 +13,27 @@ FIXTURE_PATH = (
     REPOSITORY_ROOT / "tests/fixtures/first_estimates_gap_block_v1.md"
 )
 EXPECTED_FIXTURE_SHA256 = (
-    "b2330953bf4b517b1bc8f113c596fda0a5d6c60ca240a5cfd232a58346227977"
+    "5dc9544fc2ef6a06e55562ebbb4317ec237d3c5bf791ba25513ca509977cf93b"
 )
 TABLE_START = (
     b"| Disclosure (certified-record source) | Classification here |\n"
 )
 TABLE_END = (
-    b"| Levels unanchored \xe2\x80\x94 no committed annual SSA level series | "
-    b"material; the registered anchor extraction is the successor step |\n"
+    b"| **Birth-timing sensitivity (amendment 2, frozen)** \xe2\x80\x94 "
+    b"91% of candidates and 1,440 of 1,514 baseline included claimants "
+    b"carry age-derived birth years; coherent \xc2\xb11 stress scenarios "
+    b"through the production ledger: births\xe2\x88\x921 \xe2\x86\x92 "
+    b"\xe2\x88\x92$30.3B (\xe2\x88\x920.92%), births+1 \xe2\x86\x92 "
+    b"\xe2\x88\x92$312.6B (\xe2\x88\x929.47%) of the $3,301.7B baseline, "
+    b"dominated by 278 modeled-award chronology movers; adversarial "
+    b"per-person range \xe2\x89\x88[\xe2\x88\x92$408.2B, +$65.2B]. Stress "
+    b"scenarios, not bounds. v1 recomputes them per draw (reduction-stage "
+    b"arithmetic) and publishes across-draw mean and SD; **this row travels "
+    b"with every publication of these numbers until a ratified birth-timing "
+    b"resolution retires it by amendment** | material \xe2\x80\x94 the "
+    b"report's largest quantified sensitivity; every underlying flip is "
+    b"`modeled_award` (the artifact measures `opening_backfill` immunity: "
+    b"the birth year cancels in the chronology predicate) |\n"
 )
 
 
@@ -34,7 +47,7 @@ def test__gap_block_fixture__is_literal_and_matches_frozen_design_bytes():
     fixture = FIXTURE_PATH.read_bytes()
 
     assert hashlib.sha256(fixture).hexdigest() == EXPECTED_FIXTURE_SHA256
-    assert len(fixture.splitlines()) == 33
+    assert len(fixture.splitlines()) == 34
     assert fixture == _gap_table_bytes(DESIGN_PATH.read_bytes())
     rows = tuple(
         dict(

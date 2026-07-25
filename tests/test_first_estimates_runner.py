@@ -189,8 +189,8 @@ def test__driver__pins_ratified_design_and_amendment_identities():
     assert _configuration()["design"] == {
         "path": "docs/design/first_estimates_report.md",
         "ratification_commit": "6586b92",
-        "amendment_commit": "ee1221d",
-        "revision": 9,
+        "amendment_commit": "f543597",
+        "revision": 10,
     }
 
 

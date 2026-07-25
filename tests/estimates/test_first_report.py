@@ -24,9 +24,12 @@ from populace_dynamics.estimates.career import (
     WeightedShare,
 )
 from populace_dynamics.estimates.first_report import (
+    BIRTH_TIMING_SENSITIVITY_LABEL,
     CONTEXT_RATIO_DISCLOSURE,
+    BirthTimingSensitivity,
     FirstReportDrawBundle,
     build_first_estimates_artifact,
+    reduce_birth_timing_sensitivity,
 )
 from populace_dynamics.estimates.ledgers import (
     BENEFIT_MEASURE_LABEL,
@@ -49,6 +52,7 @@ _INCLUSION_KEYS = (
     "excluded_di_conversion",
     "excluded_di_unknown",
     "nonclaimant",
+    "excluded_birth_year_unresolved",
     "excluded_domain_incomplete",
     "excluded_pre1979_eligibility",
     "excluded_empty_span",
@@ -120,7 +124,7 @@ def _included() -> tuple[IncludedClaimant, IncludedClaimant]:
         IncludedClaimant(
             person_id=2,
             birth_year=1938,
-            birth_source=BirthSource.INFERRED_PERIOD_AGE,
+            birth_source=BirthSource.DERIVED_PROJECTION_AGE,
             sex="female",
             weight=2.0,
             origin=ClaimOrigin.OPENING_BACKFILL,
@@ -155,7 +159,7 @@ def _inclusion() -> InclusionResult:
     return InclusionResult(
         births=(
             BirthYearRecord(1, 1953, BirthSource.EXACT_MARRIAGE),
-            BirthYearRecord(2, 1938, BirthSource.INFERRED_PERIOD_AGE),
+            BirthYearRecord(2, 1938, BirthSource.DERIVED_PROJECTION_AGE),
         ),
         di_partition=(
             DIRecord(1, DIClass.NON_DI),
@@ -193,8 +197,10 @@ def _inclusion() -> InclusionResult:
         counts=tuple(counts),
         birth_source_counts=(
             _count("exact_marriage", 1, 1.0),
-            _count("inferred_period_age", 1, 2.0),
+            _count("inferred_period_age", 0, 0.0),
+            _count("derived_projection_age", 1, 2.0),
             _count("synthetic_native", 0, 0.0),
+            _count("unresolved", 0, 0.0),
         ),
         opening_stock_snap_counts=(
             _count("lower_endpoint", 1, 2.0),
@@ -386,12 +392,59 @@ def _revenue(draw_index: int) -> RevenueLedger:
     )
 
 
+def _birth_timing_sensitivity(draw_index: int) -> BirthTimingSensitivity:
+    baseline_annual = 6_000.0 + 2.0 * draw_index
+    baseline_people = 6_000.0 + 36.0 * draw_index
+    minus_amount = baseline_annual - 100.0 - draw_index
+    plus_amount = baseline_annual + 200.0 + 2.0 * draw_index
+    minimum = baseline_people - 50.0 - draw_index
+    maximum = baseline_people + 80.0 + 2.0 * draw_index
+
+    def scenario(count: int, amount: float) -> dict[str, int | float]:
+        delta = amount - baseline_annual
+        return {
+            "complete_included_set_count": count,
+            "amount": amount,
+            "delta_from_baseline": delta,
+            "delta_share_of_baseline": delta / baseline_annual,
+        }
+
+    return BirthTimingSensitivity(
+        draw_index=draw_index,
+        scenarios={
+            "baseline": scenario(2, baseline_annual),
+            "birth_minus_1": scenario(1, minus_amount),
+            "birth_plus_1": scenario(3, plus_amount),
+        },
+        baseline_reference={
+            "person_contribution_sum": baseline_people,
+            "full_scenario_ledger_total": baseline_annual,
+            "person_minus_annual_reconciliation_residual": (
+                baseline_people - baseline_annual
+            ),
+        },
+        minimum={
+            "amount": minimum,
+            "delta_from_baseline_person_contribution_sum": (
+                minimum - baseline_people
+            ),
+        },
+        maximum={
+            "amount": maximum,
+            "delta_from_baseline_person_contribution_sum": (
+                maximum - baseline_people
+            ),
+        },
+    )
+
+
 def _bundle(draw_index: int) -> FirstReportDrawBundle:
     return FirstReportDrawBundle(
         draw_index=draw_index,
         inclusion=_inclusion(),
         benefits=_benefits(draw_index),
         revenue=_revenue(draw_index),
+        birth_timing_sensitivity=_birth_timing_sensitivity(draw_index),
     )
 
 
@@ -483,7 +536,136 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
     )
     assert included["mean"] == 2.0
     assert included["sample_sd"] == 0.0
+    first_counts = artifact["counts"]["per_draw"][0]
+    assert (
+        first_counts["inclusion__excluded_birth_year_unresolved__unweighted"]
+        == 0
+    )
+    assert {
+        source: first_counts[f"birth_source__{source}__unweighted"]
+        for source in (
+            "exact_marriage",
+            "inferred_period_age",
+            "derived_projection_age",
+            "synthetic_native",
+            "unresolved",
+        )
+    } == {
+        "exact_marriage": 1,
+        "inferred_period_age": 0,
+        "derived_projection_age": 1,
+        "synthetic_native": 0,
+        "unresolved": 0,
+    }
+    assert {
+        source: first_counts[f"included_birth_source__{source}__unweighted"]
+        for source in (
+            "exact_marriage",
+            "inferred_period_age",
+            "derived_projection_age",
+            "synthetic_native",
+            "unresolved",
+        )
+    } == {
+        "exact_marriage": 1,
+        "inferred_period_age": 0,
+        "derived_projection_age": 1,
+        "synthetic_native": 0,
+        "unresolved": 0,
+    }
+    inferred = _find_aggregate(
+        artifact["diagnostics"]["aggregate"],
+        metric="career__birth_year_inferred__weighted",
+    )
+    assert inferred["mean"] == 2.0
+    assert inferred["sample_sd"] == 0.0
     assert len(artifact["diagnostics"]["included_career_per_draw"]) == 40
+    derived_rows = [
+        row
+        for row in artifact["diagnostics"]["included_career_per_draw"]
+        if row["birth_source"] == "derived_projection_age"
+    ]
+    assert len(derived_rows) == 20
+    assert all(row["birth_year_inferred"] is True for row in derived_rows)
+    sensitivity = artifact["diagnostics"]["birth_timing_sensitivity"]
+    assert sensitivity["label"] == BIRTH_TIMING_SENSITIVITY_LABEL
+    assert sensitivity["semantics"]["scenario_display_labels"] == {
+        "baseline": "baseline",
+        "birth_minus_1": "births−1",
+        "birth_plus_1": "births+1",
+    }
+    assert (
+        sensitivity["semantics"]["personwise_range_display_label"]
+        == "adversarial per-person range"
+    )
+    assert {
+        artifact["tables"][name]["birth_timing_reference"]
+        for name in ("modeled_award_flow", "opening_stock")
+    } == {BIRTH_TIMING_SENSITIVITY_LABEL}
+    first_sensitivity = sensitivity["per_draw"][0]
+    first_scenarios = first_sensitivity["coherent_shift_stress_scenarios"][
+        "full_scenario_ledger"
+    ]["scenarios"]
+    assert first_scenarios == {
+        "baseline": {
+            "complete_included_set_count": 2,
+            "weighted_annualized_benefit_total": {
+                "amount": 6_000.0,
+                "delta_from_baseline": 0.0,
+                "delta_share_of_baseline": 0.0,
+            },
+        },
+        "birth_minus_1": {
+            "complete_included_set_count": 1,
+            "weighted_annualized_benefit_total": {
+                "amount": 5_900.0,
+                "delta_from_baseline": -100.0,
+                "delta_share_of_baseline": -100.0 / 6_000.0,
+            },
+        },
+        "birth_plus_1": {
+            "complete_included_set_count": 3,
+            "weighted_annualized_benefit_total": {
+                "amount": 6_200.0,
+                "delta_from_baseline": 200.0,
+                "delta_share_of_baseline": 200.0 / 6_000.0,
+            },
+        },
+    }
+    assert first_sensitivity["personwise_adversarial_range"] == {
+        "baseline_reference": {
+            "person_contribution_sum": 6_000.0,
+            "full_scenario_ledger_total": 6_000.0,
+            "person_minus_annual_reconciliation_residual": 0.0,
+        },
+        "minimum": {
+            "amount": 5_950.0,
+            "delta_from_baseline_person_contribution_sum": -50.0,
+        },
+        "maximum": {
+            "amount": 6_080.0,
+            "delta_from_baseline_person_contribution_sum": 80.0,
+        },
+    }
+    baseline_amount = _find_aggregate(
+        sensitivity["aggregate"],
+        metric=(
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "baseline__weighted_annualized_benefit_total__amount"
+        ),
+    )
+    assert baseline_amount["mean"] == 6_019.0
+    assert baseline_amount["sample_sd"] == pytest.approx(
+        statistics.stdev(6_000.0 + 2.0 * draw for draw in range(20))
+    )
+    minimum_amount = _find_aggregate(
+        sensitivity["aggregate"],
+        metric="personwise_adversarial_range__minimum__amount",
+    )
+    assert minimum_amount["mean"] == 6_282.5
+    assert minimum_amount["sample_sd"] == pytest.approx(
+        statistics.stdev(5_950.0 + 35.0 * draw for draw in range(20))
+    )
     assert artifact["diagnostics"]["context_ratio"] == (
         CONTEXT_RATIO_DISCLOSURE
     )
@@ -496,6 +678,92 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
         artifact,
         expected_configuration_echo=configuration,
     )
+
+
+def test_reduces_coherent_birth_shifts_and_personwise_range():
+    baseline_inclusion = _inclusion()
+    baseline_ledger = _benefits(0)
+
+    def one_person_scenario(
+        person_index: int,
+        annual_total: float,
+    ) -> tuple[InclusionResult, BenefitLedger]:
+        person_id = baseline_inclusion.included[person_index].person_id
+        inclusion = replace(
+            baseline_inclusion,
+            included=(baseline_inclusion.included[person_index],),
+        )
+        annual_rows = tuple(
+            replace(
+                row,
+                frame_annualized_benefit=(
+                    annual_total
+                    if row.claim_origin == "modeled_award" and row.year == 2015
+                    else 0.0
+                ),
+            )
+            for row in baseline_ledger.annual_rows
+        )
+        ledger = replace(
+            baseline_ledger,
+            people=tuple(
+                row
+                for row in baseline_ledger.people
+                if row.person_id == person_id
+            ),
+            annual_rows=annual_rows,
+        )
+        return inclusion, ledger
+
+    minus_inclusion, minus_ledger = one_person_scenario(0, 1_200.0)
+    plus_inclusion, plus_ledger = one_person_scenario(1, 4_800.0)
+    reduced = reduce_birth_timing_sensitivity(
+        draw_index=0,
+        inclusions={
+            -1: minus_inclusion,
+            0: baseline_inclusion,
+            1: plus_inclusion,
+        },
+        ledgers={
+            -1: minus_ledger,
+            0: baseline_ledger,
+            1: plus_ledger,
+        },
+    )
+
+    assert reduced.scenarios == {
+        "baseline": {
+            "complete_included_set_count": 2,
+            "amount": 6_000.0,
+            "delta_from_baseline": 0.0,
+            "delta_share_of_baseline": 0.0,
+        },
+        "birth_minus_1": {
+            "complete_included_set_count": 1,
+            "amount": 1_200.0,
+            "delta_from_baseline": -4_800.0,
+            "delta_share_of_baseline": -0.8,
+        },
+        "birth_plus_1": {
+            "complete_included_set_count": 1,
+            "amount": 4_800.0,
+            "delta_from_baseline": -1_200.0,
+            "delta_share_of_baseline": -0.2,
+        },
+    }
+    assert reduced.baseline_reference == {
+        "person_contribution_sum": 6_000.0,
+        "full_scenario_ledger_total": 6_000.0,
+        "person_minus_annual_reconciliation_residual": 0.0,
+    }
+    assert reduced.minimum == {
+        "amount": 0.0,
+        "delta_from_baseline_person_contribution_sum": -6_000.0,
+    }
+    assert reduced.maximum == {
+        "amount": 6_000.0,
+        "delta_from_baseline_person_contribution_sum": 0.0,
+    }
 
 
 @pytest.mark.parametrize(

@@ -2,8 +2,9 @@
 
 ## State
 
-Clause 3 and Stage C.5 are implemented and focused tests pass. Artifact,
-publication, sensitivity, and advisory-preflight work remains.
+Clause 3, Stage C.5, and the production artifact/publication path are
+implemented. Draw 0 reproduces every supplied amendment oracle; the advisory
+preflight and final verification remain.
 
 ## Done
 
@@ -26,9 +27,21 @@ publication, sensitivity, and advisory-preflight work remains.
   origin-reconciliation, and fully-dated regression tests.
 - Ran focused career/preparation tests: 35 passed.
 - Ran Ruff on the changed production and test files: all checks passed.
+- Added enum-derived five-class artifact inventories, the Stage-C.5 exclusion,
+  included-claimant birth-source metrics, and clauses-2-and-3
+  `birth_year_inferred` semantics.
+- Recompute both coherent birth-timing shifts from every prepared draw through
+  the production inclusion and benefit-ledger reducers, with complete-set
+  counts, amounts/deltas/shares, the personwise range, and across-draw mean/SD.
+- Added the frozen §10 disclosure row and benefit-table reference; advanced
+  the registered design binding to amendment commit `f543597`, revision 10.
+- Added strict artifact validation and focused report/publication/reducer tests;
+  the combined focused suite passed 78 tests.
+- Ran the pinned fast-pickle draw-0 path. All supplied population, candidate,
+  source, exclusion, inclusion, scenario-total, and personwise-range oracle
+  values matched exactly.
 
 ## Next
 
-- Implement the five-class metrics and per-draw birth-timing sensitivity row.
-- Add the advisory registered-input preflight.
+- Review and commit the advisory registered-input preflight.
 - Run focused, sealed-preparation, tier-policy, and feasible real-data checks.

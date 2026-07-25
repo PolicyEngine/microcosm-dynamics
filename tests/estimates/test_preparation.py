@@ -277,6 +277,7 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     inclusion = SimpleNamespace(included=("included claimant",))
     benefit = object()
     revenue = object()
+    birth_timing_sensitivity = object()
 
     def include(**kwargs):
         calls["inclusion"] = kwargs
@@ -293,6 +294,11 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     monkeypatch.setattr(preparation, "build_career_inclusion", include)
     monkeypatch.setattr(preparation, "build_benefit_ledger", benefits)
     monkeypatch.setattr(preparation, "build_revenue_ledger", revenues)
+    monkeypatch.setattr(
+        preparation,
+        "_build_birth_timing_sensitivity",
+        lambda **_kwargs: birth_timing_sensitivity,
+    )
 
     prepared = preparation._prepare_first_report_draw_for_test(
         batch,
@@ -342,6 +348,7 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     assert prepared.inclusion is inclusion
     assert prepared.benefit_ledger is benefit
     assert prepared.revenue_ledger is revenue
+    assert prepared.birth_timing_sensitivity is birth_timing_sensitivity
 
 
 def test_batch_preparation_requires_exact_registered_draw_sequence(
@@ -404,6 +411,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
     inclusions = [object() for _ in DRAW_INDICES]
     benefits = [object() for _ in DRAW_INDICES]
     revenues = [object() for _ in DRAW_INDICES]
+    birth_timing_sensitivities = [object() for _ in DRAW_INDICES]
     prepared_draws = tuple(
         preparation.PreparedFirstReportDraw(
             draw_index=draw_index,
@@ -415,6 +423,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
             inclusion=inclusions[draw_index],  # type: ignore[arg-type]
             benefits=benefits[draw_index],  # type: ignore[arg-type]
             revenue=revenues[draw_index],  # type: ignore[arg-type]
+            birth_timing_sensitivity=birth_timing_sensitivities[draw_index],  # type: ignore[arg-type]
         )
         for draw_index in DRAW_INDICES
     )
@@ -432,6 +441,10 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
         assert bundle.inclusion is inclusions[draw_index]
         assert bundle.benefits is benefits[draw_index]
         assert bundle.revenue is revenues[draw_index]
+        assert (
+            bundle.birth_timing_sensitivity
+            is birth_timing_sensitivities[draw_index]
+        )
 
     incomplete = replace(prepared, draws=prepared.draws[:-1])
     with pytest.raises(ValueError, match="0 through 19"):

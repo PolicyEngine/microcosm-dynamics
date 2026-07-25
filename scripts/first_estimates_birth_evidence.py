@@ -279,8 +279,7 @@ def _assert_runtime() -> Mapping[str, str]:
     version = importlib.metadata.version("policyengine-us")
     if version != EXPECTED_PE_US_VERSION:
         raise RuntimeError(
-            f"policyengine-us {version!r} != pinned "
-            f"{EXPECTED_PE_US_VERSION!r}"
+            f"policyengine-us {version!r} != pinned {EXPECTED_PE_US_VERSION!r}"
         )
     return {
         "interpreter": str(EXPECTED_INTERPRETER),
@@ -532,7 +531,9 @@ def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
         required_person_ids=population_ids,
     )
     existing = tuple(
-        record for record in existing if record.person_id in population_ids
+        record
+        for record in existing
+        if record.person_id in population_ids and record.birth_year is not None
     )
     birth_year_by_person = {
         record.person_id: record.birth_year for record in existing
@@ -588,9 +589,7 @@ def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
             continue
         invalid.append((person_id, raw_age))
     if invalid:
-        raise ValueError(
-            "unrecognized PSID seed-age codes: " f"{invalid[:10]}"
-        )
+        raise ValueError(f"unrecognized PSID seed-age codes: {invalid[:10]}")
     unresolved_ids = set(initially_unresolved) - derived_ids
     if unresolved_ids != infant_ids | sentinel_ids:
         raise AssertionError("unresolved age-code disposition is incomplete")
@@ -857,11 +856,13 @@ def _derive_common_support_agreement(
         record.person_id: record.birth_year
         for record in exact_records
         if record.person_id in births.population_ids
+        and record.birth_year is not None
     }
     clause2_by_person = {
         record.person_id: record.birth_year
         for record in clause2_records
         if record.person_id in births.population_ids
+        and record.birth_year is not None
     }
     clause3_by_person: dict[int, int] = {}
     anchor_wave_by_person: dict[int, int] = {}
