@@ -2,9 +2,9 @@
 
 ## State
 
-The reducer's reproducible loader, corrected source law, Stage-A/B funnel, and
-production Stage-C/D birth sensitivity are implemented and exercised
-successfully against the cached draw-0 object.
+The reducer and canonical draw-0 artifact are complete. Sections A-D match
+the referee oracle where supplied, and the artifact has been reproduced
+byte-for-byte from the validated cache.
 
 ## Done
 
@@ -49,11 +49,24 @@ successfully against the cached draw-0 object.
   clause-2 dated.
 - Asserted that the extracted ordered predicates reproduce the unperturbed
   production result exactly before using them for flip accounting.
+- Recomputed the production benefit ledger for the fixed 1,440-person
+  baseline-included clause-2 cohort under both birth perturbations using the
+  pinned policyengine-us 1.752.2 parameter stack.
+- Measured weighted benefit deltas of -$48,719,150,245.199707 for birth-minus
+  one and -$318,199,228,631.99951 for birth-plus one; 10/285 payment windows
+  and 489/523 fixed-claim-age factors change, respectively.
+- Wrote canonical compact, sorted-key JSON with a trailing newline, input and
+  execution identities, parameter hashes, and an in-artifact 21-row oracle
+  reconciliation.
+- Re-ran the final reducer and observed byte-identical output. The canonical
+  artifact is 23,392 bytes with SHA-256
+  `d818a36ba6ed5d7dbb45e1f0a92f5d2c3ac6577744c0df35df22b2d11ca03cad`.
+- Ran the relevant career, ledger, and sealed-preparation tests from this
+  worktree: 33 passed.
 
 ## Next
 
-- Add the pinned-parameter benefit-ledger sensitivity and canonical writer.
-- Run draw 0 with the pinned runner interpreter, reconcile every oracle row,
-  and commit the canonical JSON.
+- Validate final canonical bytes and commit the completed reducer, JSON, and
+  this progress update.
 - Write and commit `FINAL_REPORT.md` with commands, outputs, reconciliation,
   and judgment calls.

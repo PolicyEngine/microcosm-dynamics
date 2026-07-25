@@ -27,6 +27,7 @@ import argparse
 import hashlib
 import importlib.metadata
 import json
+import math
 import os
 import pickle
 import subprocess
@@ -44,9 +45,11 @@ SOURCE = ROOT / "src"
 if str(SOURCE) not in sys.path:
     sys.path.insert(0, str(SOURCE))
 
+from populace_dynamics import claiming  # noqa: E402
 from populace_dynamics.estimates import (  # noqa: E402
     career,
     coordinator,
+    ledgers,
     preparation,
     publication,
     runner,
@@ -178,6 +181,13 @@ class SensitivityEvidence:
     inclusions: Mapping[int, career.InclusionResult]
     birth_maps: Mapping[int, Mapping[int, int]]
     states: Mapping[int, CandidateStageState]
+    result: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class LedgerEvidence:
+    """Fixed-baseline-cohort benefit-ledger sensitivity."""
+
     result: Mapping[str, Any]
 
 
@@ -1286,6 +1296,461 @@ def _derive_sensitivity_evidence(
     )
 
 
+def _annualized_benefits_by_year(
+    benefit_ledger: ledgers.BenefitLedger,
+) -> dict[int, float]:
+    result = {
+        year: math.fsum(
+            row.frame_annualized_benefit
+            for row in benefit_ledger.annual_rows
+            if row.year == year
+        )
+        for year in ledgers.REPORT_YEARS
+    }
+    observed_cells = Counter(row.year for row in benefit_ledger.annual_rows)
+    if observed_cells != Counter(
+        {year: len(ledgers.BENEFIT_ORIGINS) for year in ledgers.REPORT_YEARS}
+    ):
+        raise AssertionError("benefit ledger annual cells are incomplete")
+    return result
+
+
+def _derive_ledger_evidence(
+    *,
+    report_parameters: parameter_module.ReportParameters,
+    draw_index: int,
+    births: BirthEvidence,
+    sensitivity: SensitivityEvidence,
+) -> LedgerEvidence:
+    """Recompute ledgers for the fixed baseline clause-2 claimant cohort."""
+
+    baseline_included = {
+        row.person_id: row for row in sensitivity.inclusions[0].included
+    }
+    cohort_ids = frozenset(
+        person_id
+        for person_id in baseline_included
+        if (
+            births.source_by_person[person_id]
+            == career.BirthSource.INFERRED_PERIOD_AGE.value
+        )
+    )
+    if not cohort_ids:
+        raise AssertionError("baseline clause-2 included cohort is empty")
+    if any(
+        births.source_by_person[person_id]
+        != career.BirthSource.INFERRED_PERIOD_AGE.value
+        for person_id in cohort_ids
+    ):
+        raise AssertionError("dollar cohort includes a non-clause-2 source")
+
+    benefit_ledgers: dict[int, ledgers.BenefitLedger] = {}
+    retained_ids: dict[int, frozenset[int]] = {}
+    for shift in (0, -1, 1):
+        included_by_person = {
+            row.person_id: row
+            for row in sensitivity.inclusions[shift].included
+        }
+        retained = cohort_ids & set(included_by_person)
+        retained_ids[shift] = frozenset(retained)
+        benefit_ledgers[shift] = ledgers.build_benefit_ledger(
+            (included_by_person[person_id] for person_id in sorted(retained)),
+            report_parameters,
+            draw_index=draw_index,
+        )
+        ledger_ids = {
+            int(row.person_id) for row in benefit_ledgers[shift].people
+        }
+        if ledger_ids != retained:
+            raise AssertionError(
+                "benefit ledger does not contain the retained fixed cohort"
+            )
+    if retained_ids[0] != cohort_ids:
+        raise AssertionError("baseline benefit ledger dropped cohort members")
+
+    annual_by_shift = {
+        shift: _annualized_benefits_by_year(benefit_ledgers[shift])
+        for shift in (0, -1, 1)
+    }
+    people_by_shift = {
+        shift: {
+            int(row.person_id): row for row in benefit_ledgers[shift].people
+        }
+        for shift in (0, -1, 1)
+    }
+    baseline_people = people_by_shift[0]
+    for person_id, row in baseline_people.items():
+        expected_factor = claiming.benefit_factor(
+            row.claim_age * 12,
+            row.birth_year,
+            report_parameters.ssa,
+        )
+        if expected_factor != row.claim_age_factor:
+            raise AssertionError(
+                "direct baseline benefit factor differs from the ledger for "
+                f"{person_id}"
+            )
+
+    payment_change_ids: dict[int, frozenset[int]] = {}
+    factor_change_ids: dict[int, frozenset[int]] = {}
+    scenarios: dict[str, Any] = {}
+    baseline_annual = annual_by_shift[0]
+    baseline_total = math.fsum(baseline_annual.values())
+    for shift in (-1, 1):
+        alternative_people = people_by_shift[shift]
+        changed_payment_windows: set[int] = set()
+        lost_payment_years: set[int] = set()
+        gained_payment_years: set[int] = set()
+        fixed_age_factor_changes: set[int] = set()
+        for person_id in sorted(cohort_ids):
+            baseline_person = baseline_people[person_id]
+            baseline_window = frozenset(
+                baseline_person.payment_monthly_by_year
+            )
+            alternative_person = alternative_people.get(person_id)
+            alternative_window = (
+                frozenset(alternative_person.payment_monthly_by_year)
+                if alternative_person is not None
+                else frozenset()
+            )
+            if baseline_window != alternative_window:
+                changed_payment_windows.add(person_id)
+            if baseline_window - alternative_window:
+                lost_payment_years.add(person_id)
+            if alternative_window - baseline_window:
+                gained_payment_years.add(person_id)
+
+            perturbed_birth_year = sensitivity.birth_maps[shift][person_id]
+            if perturbed_birth_year != baseline_person.birth_year + shift:
+                raise AssertionError(
+                    "clause-2 cohort birth coordinate did not move by "
+                    f"{shift:+d} for {person_id}"
+                )
+            alternative_factor = claiming.benefit_factor(
+                baseline_person.claim_age * 12,
+                perturbed_birth_year,
+                report_parameters.ssa,
+            )
+            if alternative_factor != baseline_person.claim_age_factor:
+                fixed_age_factor_changes.add(person_id)
+
+        payment_change_ids[shift] = frozenset(changed_payment_windows)
+        factor_change_ids[shift] = frozenset(fixed_age_factor_changes)
+        alternative_annual = annual_by_shift[shift]
+        alternative_total = math.fsum(alternative_annual.values())
+        delta_by_year = {
+            year: alternative_annual[year] - baseline_annual[year]
+            for year in ledgers.REPORT_YEARS
+        }
+        total_delta = alternative_total - baseline_total
+        sum_of_per_year_deltas = math.fsum(delta_by_year.values())
+        scenarios[_direction_name(shift)] = {
+            "retained_after_inclusion_rerun": len(retained_ids[shift]),
+            "excluded_after_inclusion_rerun": len(
+                cohort_ids - retained_ids[shift]
+            ),
+            "weighted_annualized_benefit_by_year": {
+                str(year): {
+                    "baseline": baseline_annual[year],
+                    "perturbed": alternative_annual[year],
+                    "delta": delta_by_year[year],
+                }
+                for year in ledgers.REPORT_YEARS
+            },
+            "weighted_annualized_benefit_total": {
+                "baseline": baseline_total,
+                "perturbed": alternative_total,
+                "delta": total_delta,
+                "sum_of_per_year_deltas": sum_of_per_year_deltas,
+                "floating_reconciliation_residual": (
+                    sum_of_per_year_deltas - total_delta
+                ),
+            },
+            "payment_window_membership": {
+                "changed_count": len(changed_payment_windows),
+                "changed_weighted_count": math.fsum(
+                    baseline_people[person_id].weight
+                    for person_id in changed_payment_windows
+                ),
+                "lost_any_payment_year_count": len(lost_payment_years),
+                "gained_any_payment_year_count": len(gained_payment_years),
+            },
+            "benefit_factor_at_fixed_baseline_claim_age": {
+                "changed_count": len(fixed_age_factor_changes),
+                "changed_weighted_count": math.fsum(
+                    baseline_people[person_id].weight
+                    for person_id in fixed_age_factor_changes
+                ),
+            },
+        }
+
+    distinct_payment_changes = frozenset().union(*payment_change_ids.values())
+    distinct_factor_changes = frozenset().union(*factor_change_ids.values())
+    result = {
+        "cohort": {
+            "definition": (
+                "Unperturbed Stage-D-included claimants whose corrected "
+                "birth source is clause 2 (inferred_period_age). The cohort "
+                "is fixed across perturbations."
+            ),
+            "count": len(cohort_ids),
+            "weighted_count": math.fsum(
+                baseline_people[person_id].weight for person_id in cohort_ids
+            ),
+        },
+        "semantics": {
+            "production_path": (
+                "Reuse each scenario's production career-inclusion rerun, "
+                "filter to the fixed baseline cohort, then call "
+                "ledgers.build_benefit_ledger with the pinned full-actual "
+                "ReportParameters."
+            ),
+            "excluded_cohort_member_payment_window": (
+                "empty; the perturbed ledger receives only claimants that "
+                "remain included"
+            ),
+            "weighted_benefit_measure": ledgers.BENEFIT_MEASURE_LABEL,
+            "weighted_benefit_units": (
+                "frame-annualized nominal dollars: 12 * person weight * "
+                "monthly payment, summed over both production origin rows"
+            ),
+            "fixed_claim_age_factor_definition": (
+                "Re-evaluate claiming.benefit_factor at the baseline "
+                "integer claim age and perturbed birth year; do not use a "
+                "scenario-specific opening-stock claim-age redraw."
+            ),
+            "total_delta_definition": (
+                "The reported total delta is perturbed aggregate total minus "
+                "baseline aggregate total. The separately reported sum of "
+                "the eight annual deltas and binary-float residual expose "
+                "the sub-mill summation-order difference."
+            ),
+        },
+        "scenarios": scenarios,
+        "distinct_people": {
+            "payment_window_membership_changed": len(distinct_payment_changes),
+            "benefit_factor_changed_at_fixed_claim_age": len(
+                distinct_factor_changes
+            ),
+        },
+    }
+    return LedgerEvidence(result=result)
+
+
+def _oracle_reconciliation(
+    *,
+    draw_index: int,
+    births: BirthEvidence,
+    funnel: FunnelEvidence,
+    sensitivity: SensitivityEvidence,
+    ledger: LedgerEvidence,
+) -> Mapping[str, Any]:
+    if draw_index != 0:
+        return {
+            "status": "not_applicable",
+            "reason": "The independent referee oracle is pinned to draw 0.",
+            "rows": [],
+        }
+
+    rows = (
+        (
+            "clauses_1_2_synthetic_unresolved",
+            births.result["initially_unresolved"]["count"],
+            6392,
+        ),
+        (
+            "seed_age_code_2_125",
+            births.result["initially_unresolved"]["age_code_counts"][
+                "actual_age_2_125"
+            ],
+            4077,
+        ),
+        (
+            "seed_age_code_1",
+            births.result["initially_unresolved"]["age_code_counts"][
+                "unresolved_infant_code"
+            ],
+            2298,
+        ),
+        (
+            "seed_age_999_or_missing",
+            births.result["initially_unresolved"]["age_code_counts"][
+                "unresolved_sentinel"
+            ],
+            17,
+        ),
+        (
+            "corrected_derived_projection_age",
+            births.result["initially_unresolved"]["corrected_counts_by_class"][
+                "derived_projection_age"
+            ],
+            4077,
+        ),
+        (
+            "corrected_unresolved",
+            births.result["initially_unresolved"]["corrected_counts_by_class"][
+                "unresolved"
+            ],
+            2315,
+        ),
+        (
+            "raw_claim_year_carriers",
+            funnel.result["initially_unresolved_raw_claim_year_carriers"][
+                "count"
+            ],
+            276,
+        ),
+        (
+            "raw_carrier_di_unknown",
+            funnel.result["initially_unresolved_raw_claim_year_carriers"][
+                "di_partition"
+            ]["di_unknown"],
+            190,
+        ),
+        (
+            "new_true_stage_b_candidates",
+            funnel.result["initially_unresolved_raw_claim_year_carriers"][
+                "true_stage_b_candidates"
+            ],
+            86,
+        ),
+        (
+            "new_candidate_opening_backfill",
+            funnel.result["newly_dated_stage_b_candidates"]["origin_counts"][
+                "opening_backfill"
+            ],
+            69,
+        ),
+        (
+            "new_candidate_modeled_award",
+            funnel.result["newly_dated_stage_b_candidates"]["origin_counts"][
+                "modeled_award"
+            ],
+            17,
+        ),
+        (
+            "canonical_candidates",
+            funnel.result["canonical_candidates"]["count"],
+            3083,
+        ),
+        (
+            "canonical_domain_resident",
+            funnel.result["canonical_candidates"]["domain_resident"],
+            2784,
+        ),
+        (
+            "era_flip_directions",
+            sensitivity.result["predicates"]["eligibility_era"][
+                "flip_directions"
+            ],
+            1,
+        ),
+        (
+            "empty_span_flip_directions",
+            sensitivity.result["predicates"]["nonempty_span"][
+                "flip_directions"
+            ],
+            0,
+        ),
+        (
+            "chronology_flip_directions",
+            sensitivity.result["predicates"]["chronology"]["flip_directions"],
+            600,
+        ),
+        (
+            "chronology_inclusion_changing_flip_directions",
+            sensitivity.result["predicates"]["chronology"][
+                "inclusion_changing_flip_directions"
+            ],
+            294,
+        ),
+        (
+            "coverage_flip_directions",
+            sensitivity.result["predicates"]["coverage"]["flip_directions"],
+            15,
+        ),
+        (
+            "overall_inclusion_flip_directions",
+            sensitivity.result["overall_inclusion"][
+                "inclusion_flip_directions"
+            ],
+            310,
+        ),
+        (
+            "overall_distinct_people_affected",
+            sensitivity.result["overall_inclusion"][
+                "distinct_people_affected"
+            ],
+            304,
+        ),
+        (
+            "baseline_included_clause_2_claimants",
+            ledger.result["cohort"]["count"],
+            1440,
+        ),
+    )
+    reconciled = [
+        {
+            "key": key,
+            "ours": int(ours),
+            "oracle": oracle,
+            "match": int(ours) == oracle,
+        }
+        for key, ours, oracle in rows
+    ]
+    mismatches = [row for row in reconciled if not row["match"]]
+    if mismatches:
+        raise AssertionError(
+            "draw-0 evidence differs from the referee oracle: "
+            + json.dumps(mismatches, sort_keys=True, separators=(",", ":"))
+        )
+    return {
+        "status": "matched",
+        "matched_rows": len(reconciled),
+        "rows": reconciled,
+    }
+
+
+def _parameter_identity(
+    report_parameters: parameter_module.ReportParameters,
+) -> Mapping[str, Any]:
+    provenance = report_parameters.provenance
+    policyengine = provenance["policyengine_us"]
+    runtime_policyengine = report_parameters.runtime_provenance["parameters"][
+        "policyengine_us"
+    ]
+    return {
+        "schema_version": provenance["schema_version"],
+        "bundle_sha256": provenance["bundle_sha256"],
+        "policyengine_us_version": policyengine["version"],
+        "policyengine_us_ssa_parameter_bundle_sha256": policyengine[
+            "ssa_parameter_bundle_sha256"
+        ],
+        "policyengine_us_all_consumed_files_sha256": policyengine[
+            "all_consumed_files_sha256"
+        ],
+        "policyengine_us_git_revision": runtime_policyengine["git_revision"],
+    }
+
+
+def _resolve_output_path(argument: Path | None, draw_index: int) -> Path:
+    if argument is None:
+        return (
+            ROOT
+            / "runs"
+            / f"first_estimates_birth_evidence_draw{draw_index}.json"
+        )
+    path = argument if argument.is_absolute() else ROOT / argument
+    resolved = path.resolve()
+    try:
+        resolved.relative_to(ROOT)
+    except ValueError as error:
+        raise ValueError(
+            "output path must remain inside this worktree"
+        ) from error
+    return resolved
+
+
 def _arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -1333,24 +1798,67 @@ def main() -> int:
         births=births,
         funnel=funnel,
     )
-    # Section D and canonical output are added in the next coherent step.
-    print(
+    ledger = _derive_ledger_evidence(
+        report_parameters=report_parameters,
+        draw_index=args.draw_index,
+        births=births,
+        sensitivity=sensitivity,
+    )
+    oracle = _oracle_reconciliation(
+        draw_index=args.draw_index,
+        births=births,
+        funnel=funnel,
+        sensitivity=sensitivity,
+        ledger=ledger,
+    )
+    document = {
+        "benefit_ledger_sensitivity": ledger.result,
+        "birth_source_law": births.result,
+        "candidate_funnel": funnel.result,
+        "execution": {
+            **loaded.execution,
+            "parameters": _parameter_identity(report_parameters),
+            "runtime": runtime_identity,
+        },
+        "inclusion_sensitivity": sensitivity.result,
+        "input_identity": {
+            "master_sha": EXPECTED_MASTER_SHA,
+            "draw_index": args.draw_index,
+            "root_seed": loaded.draw.root_seed,
+        },
+        "oracle_reconciliation": oracle,
+        "schema_version": SCHEMA_VERSION,
+    }
+    encoded = (
         json.dumps(
-            {
-                "birth_source_law": births.result,
-                "candidate_funnel": funnel.result,
-                "inclusion_sensitivity": sensitivity.result,
-                "input_identity": {
-                    "master_sha": EXPECTED_MASTER_SHA,
-                    "draw_index": args.draw_index,
-                    "root_seed": loaded.draw.root_seed,
-                },
-                "runtime": runtime_identity,
-                "status": "implementation_in_progress",
-            },
-            indent=2,
+            document,
+            allow_nan=False,
+            separators=(",", ":"),
             sort_keys=True,
         )
+        + "\n"
+    )
+    output_path = _resolve_output_path(args.output, args.draw_index)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(encoded)
+    relative_output = output_path.relative_to(ROOT)
+    minus_total = ledger.result["scenarios"]["birth_minus_1"][
+        "weighted_annualized_benefit_total"
+    ]["delta"]
+    plus_total = ledger.result["scenarios"]["birth_plus_1"][
+        "weighted_annualized_benefit_total"
+    ]["delta"]
+    print(
+        f"WROTE {relative_output} bytes={len(encoded.encode())}\n"
+        f"DATA_PATH {loaded.execution['data_path']}\n"
+        f"ORACLE {oracle['status']} rows={oracle.get('matched_rows', 0)}\n"
+        "A unresolved=6392 derived=4077 residual=2315\n"
+        "B raw_carriers=276 stage_b=86 canonical=3083 domain=2784\n"
+        "C chronology_flips=600 chronology_inclusion=294 "
+        "coverage_flips=15 overall_directions=310 distinct_people=304\n"
+        f"D cohort={ledger.result['cohort']['count']} "
+        f"birth_minus_1_delta={minus_total:.17g} "
+        f"birth_plus_1_delta={plus_total:.17g}"
     )
     return 0
 
