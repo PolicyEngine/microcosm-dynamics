@@ -91,7 +91,25 @@ SOURCE_CLASSES = (
     "derived_projection_age",
     "unresolved",
 )
+IMPRECISE_BIRTH_SOURCES = frozenset(
+    {"inferred_period_age", "derived_projection_age"}
+)
 DI_CLASSES = ("di_conversion", "di_unknown", "non_di")
+STAGE_D_PREDICATES = (
+    "domain_complete",
+    "eligibility_era",
+    "nonempty_span",
+    "chronology",
+    "coverage",
+)
+STAGE_D_OUTCOMES = (
+    "excluded_domain_incomplete",
+    "excluded_pre1979_eligibility",
+    "excluded_empty_span",
+    "excluded_chronology_inconsistent",
+    "excluded_low_coverage",
+    "included",
+)
 PRODUCTION_SOURCE_PATHS = (
     Path("src/populace_dynamics"),
     Path("scripts/registered_m6_candidate3_inputs.py"),
@@ -140,6 +158,26 @@ class FunnelEvidence:
     domain_ids: frozenset[int]
     claiming_schedule: Any
     baseline_inclusion: career.InclusionResult
+    result: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class CandidateStageState:
+    """One scenario's production coordinates and ordered predicates."""
+
+    outcome_by_person: Mapping[int, str]
+    included_ids: frozenset[int]
+    predicate_value_by_person: Mapping[int, Mapping[str, bool]]
+    predicate_reached_by_person: Mapping[int, Mapping[str, bool]]
+
+
+@dataclass(frozen=True)
+class SensitivityEvidence:
+    """Baseline and both production birth-coordinate perturbations."""
+
+    inclusions: Mapping[int, career.InclusionResult]
+    birth_maps: Mapping[int, Mapping[int, int]]
+    states: Mapping[int, CandidateStageState]
     result: Mapping[str, Any]
 
 
@@ -833,6 +871,421 @@ def _derive_funnel_evidence(
     )
 
 
+def _outcome_counts(
+    inclusion: career.InclusionResult,
+) -> Counter[str]:
+    counts: Counter[str] = Counter(
+        record.reason for record in inclusion.exclusions
+    )
+    counts["included"] = len(inclusion.included)
+    return counts
+
+
+def _source_split(
+    person_ids: Collection[int],
+    source_by_person: Mapping[int, str],
+) -> dict[str, int]:
+    counts = Counter(
+        source_by_person[int(person_id)] for person_id in person_ids
+    )
+    return _zero_filled_counts(counts, SOURCE_CLASSES)
+
+
+def _stage_d_source_split(
+    inclusion: career.InclusionResult,
+    source_by_person: Mapping[int, str],
+) -> dict[str, dict[str, int]]:
+    outcome_by_person = {
+        **{record.person_id: record.reason for record in inclusion.exclusions},
+        **{record.person_id: "included" for record in inclusion.included},
+    }
+    return {
+        source: _zero_filled_counts(
+            Counter(
+                outcome
+                for person_id, outcome in outcome_by_person.items()
+                if source_by_person[person_id] == source
+            ),
+            STAGE_D_OUTCOMES,
+        )
+        for source in SOURCE_CLASSES
+    }
+
+
+def _candidate_stage_state(
+    *,
+    inclusion: career.InclusionResult,
+    birth_year_by_person: Mapping[int, int],
+    domain_ids: frozenset[int],
+) -> CandidateStageState:
+    """Extract predicates and prove they reproduce production's first failure."""
+
+    origins = {record.person_id: record for record in inclusion.origins}
+    included = {record.person_id: record for record in inclusion.included}
+    exclusions = {record.person_id: record for record in inclusion.exclusions}
+    people = set(origins)
+    if set(birth_year_by_person) != people:
+        raise AssertionError("candidate state birth map is incomplete")
+    if set(included) | set(exclusions) != people:
+        raise AssertionError("candidate state outcomes are incomplete")
+    if set(included) & set(exclusions):
+        raise AssertionError("candidate state outcomes overlap")
+
+    outcome_by_person: dict[int, str] = {}
+    predicate_values: dict[int, dict[str, bool]] = {}
+    predicate_reached: dict[int, dict[str, bool]] = {}
+    for person_id in sorted(people):
+        birth_year = int(birth_year_by_person[person_id])
+        origin = origins[person_id]
+        eligibility_year = birth_year + 62
+        coverage_start = max(
+            career.OBSERVED_START_YEAR,
+            birth_year + 22,
+        )
+        coverage_end = min(
+            origin.operative_claim_year,
+            career.PROJECTED_END_YEAR,
+        )
+        domain_complete = person_id in domain_ids
+        era = eligibility_year >= career.MIN_ELIGIBILITY_YEAR
+        nonempty_span = coverage_start <= coverage_end
+        chronology = eligibility_year <= origin.operative_claim_year
+
+        coverage_ratio: float | None
+        if person_id in included:
+            coverage_ratio = included[person_id].career.coverage_ratio
+        else:
+            coverage_ratio = exclusions[person_id].coverage_ratio
+        coverage = bool(
+            coverage_ratio is not None
+            and coverage_ratio >= career.COVERAGE_THRESHOLD
+        )
+        reached = {
+            "domain_complete": True,
+            "eligibility_era": domain_complete,
+            "nonempty_span": domain_complete and era,
+            "chronology": domain_complete and era and nonempty_span,
+            "coverage": (
+                domain_complete and era and nonempty_span and chronology
+            ),
+        }
+        values = {
+            "domain_complete": domain_complete,
+            "eligibility_era": era,
+            "nonempty_span": nonempty_span,
+            "chronology": chronology,
+            "coverage": coverage,
+        }
+        if reached["coverage"] and coverage_ratio is None:
+            raise AssertionError(
+                f"production did not evaluate coverage for {person_id}"
+            )
+
+        if not domain_complete:
+            reconstructed = "excluded_domain_incomplete"
+        elif not era:
+            reconstructed = "excluded_pre1979_eligibility"
+        elif not nonempty_span:
+            reconstructed = "excluded_empty_span"
+        elif not chronology:
+            reconstructed = "excluded_chronology_inconsistent"
+        elif not coverage:
+            reconstructed = "excluded_low_coverage"
+        else:
+            reconstructed = "included"
+        observed = (
+            "included"
+            if person_id in included
+            else exclusions[person_id].reason
+        )
+        if reconstructed != observed:
+            raise AssertionError(
+                "predicate extraction differs from production for "
+                f"{person_id}: {reconstructed} != {observed}"
+            )
+        outcome_by_person[person_id] = observed
+        predicate_values[person_id] = values
+        predicate_reached[person_id] = reached
+
+    return CandidateStageState(
+        outcome_by_person=outcome_by_person,
+        included_ids=frozenset(included),
+        predicate_value_by_person=predicate_values,
+        predicate_reached_by_person=predicate_reached,
+    )
+
+
+def _direction_name(shift: int) -> str:
+    return {
+        -1: "birth_minus_1",
+        0: "baseline",
+        1: "birth_plus_1",
+    }[shift]
+
+
+def _transition_counts(
+    baseline: CandidateStageState,
+    alternative: CandidateStageState,
+) -> dict[str, int]:
+    counts = Counter(
+        (
+            f"{baseline.outcome_by_person[person_id]}"
+            f"__to__{alternative.outcome_by_person[person_id]}"
+        )
+        for person_id in baseline.outcome_by_person
+        if (
+            baseline.outcome_by_person[person_id]
+            != alternative.outcome_by_person[person_id]
+        )
+    )
+    return dict(sorted(counts.items()))
+
+
+def _derive_sensitivity_evidence(
+    *,
+    loaded: LoadedDraw,
+    births: BirthEvidence,
+    funnel: FunnelEvidence,
+) -> SensitivityEvidence:
+    baseline_births = {
+        person_id: int(births.birth_year_by_person[person_id])
+        for person_id in funnel.candidate_ids
+    }
+    birth_maps: dict[int, dict[int, int]] = {0: baseline_births}
+    inclusions: dict[int, career.InclusionResult] = {
+        0: funnel.baseline_inclusion
+    }
+    for shift in (-1, 1):
+        shifted = {
+            person_id: (
+                birth_year + shift
+                if births.source_by_person[person_id]
+                in IMPRECISE_BIRTH_SOURCES
+                else birth_year
+            )
+            for person_id, birth_year in baseline_births.items()
+        }
+        birth_maps[shift] = shifted
+        inclusions[shift] = _production_candidate_inclusion(
+            loaded=loaded,
+            births=births,
+            candidate_ids=funnel.candidate_ids,
+            birth_year_by_person=shifted,
+            claiming_schedule=funnel.claiming_schedule,
+        )
+
+    states = {
+        shift: _candidate_stage_state(
+            inclusion=inclusion,
+            birth_year_by_person=birth_maps[shift],
+            domain_ids=funnel.domain_ids,
+        )
+        for shift, inclusion in inclusions.items()
+    }
+    baseline_state = states[0]
+    baseline_origins = {
+        record.person_id: record for record in inclusions[0].origins
+    }
+
+    scenario_results: dict[str, Any] = {}
+    for shift in (0, -1, 1):
+        name = _direction_name(shift)
+        inclusion = inclusions[shift]
+        state = states[shift]
+        origins = {record.person_id: record for record in inclusion.origins}
+        if {
+            person_id: record.origin for person_id, record in origins.items()
+        } != {
+            person_id: record.origin
+            for person_id, record in baseline_origins.items()
+        }:
+            raise AssertionError("birth perturbation changed the origin class")
+        coordinate_changes = {
+            "operative_claim_age": sum(
+                origins[person_id].operative_claim_age
+                != baseline_origins[person_id].operative_claim_age
+                for person_id in origins
+            ),
+            "operative_claim_year": sum(
+                origins[person_id].operative_claim_year
+                != baseline_origins[person_id].operative_claim_year
+                for person_id in origins
+            ),
+            "schedule_year": sum(
+                origins[person_id].schedule_year
+                != baseline_origins[person_id].schedule_year
+                for person_id in origins
+            ),
+        }
+        scenario_results[name] = {
+            "ordered_stage_d_counts": _zero_filled_counts(
+                _outcome_counts(inclusion),
+                STAGE_D_OUTCOMES,
+            ),
+            "ordered_stage_d_counts_by_birth_source": (
+                _stage_d_source_split(
+                    inclusion,
+                    births.source_by_person,
+                )
+            ),
+            "stage_c_coordinate_changes_from_baseline": coordinate_changes,
+            "ordered_outcome_transitions_from_baseline": (
+                {} if shift == 0 else _transition_counts(baseline_state, state)
+            ),
+        }
+
+    predicate_results: dict[str, Any] = {}
+    for predicate in STAGE_D_PREDICATES:
+        aggregate_flips: list[int] = []
+        aggregate_inclusion_flips: list[int] = []
+        by_direction: dict[str, Any] = {}
+        for shift in (-1, 1):
+            alternative = states[shift]
+            flipped = [
+                person_id
+                for person_id in sorted(funnel.candidate_ids)
+                if (
+                    baseline_state.predicate_reached_by_person[person_id][
+                        predicate
+                    ]
+                    and alternative.predicate_reached_by_person[person_id][
+                        predicate
+                    ]
+                    and (
+                        baseline_state.predicate_value_by_person[person_id][
+                            predicate
+                        ]
+                        != alternative.predicate_value_by_person[person_id][
+                            predicate
+                        ]
+                    )
+                )
+            ]
+            inclusion_flipped = [
+                person_id
+                for person_id in flipped
+                if (
+                    (person_id in baseline_state.included_ids)
+                    != (person_id in alternative.included_ids)
+                )
+            ]
+            aggregate_flips.extend(flipped)
+            aggregate_inclusion_flips.extend(inclusion_flipped)
+            by_direction[_direction_name(shift)] = {
+                "flip_count": len(flipped),
+                "flip_count_by_birth_source": _source_split(
+                    flipped,
+                    births.source_by_person,
+                ),
+                "inclusion_changing_flip_count": len(inclusion_flipped),
+                "inclusion_changing_flip_count_by_birth_source": (
+                    _source_split(
+                        inclusion_flipped,
+                        births.source_by_person,
+                    )
+                ),
+            }
+        distinct = frozenset(aggregate_flips)
+        distinct_inclusion = frozenset(aggregate_inclusion_flips)
+        predicate_results[predicate] = {
+            "directions": by_direction,
+            "flip_directions": len(aggregate_flips),
+            "flip_directions_by_birth_source": _source_split(
+                aggregate_flips,
+                births.source_by_person,
+            ),
+            "inclusion_changing_flip_directions": len(
+                aggregate_inclusion_flips
+            ),
+            "inclusion_changing_flip_directions_by_birth_source": (
+                _source_split(
+                    aggregate_inclusion_flips,
+                    births.source_by_person,
+                )
+            ),
+            "distinct_people_affected": len(distinct),
+            "distinct_people_affected_by_birth_source": _source_split(
+                distinct,
+                births.source_by_person,
+            ),
+            "distinct_people_with_inclusion_change": len(distinct_inclusion),
+            "distinct_people_with_inclusion_change_by_birth_source": (
+                _source_split(
+                    distinct_inclusion,
+                    births.source_by_person,
+                )
+            ),
+        }
+
+    overall_direction_ids: dict[int, list[int]] = {}
+    all_overall_directions: list[int] = []
+    for shift in (-1, 1):
+        alternative = states[shift]
+        changed = [
+            person_id
+            for person_id in sorted(funnel.candidate_ids)
+            if (
+                (person_id in baseline_state.included_ids)
+                != (person_id in alternative.included_ids)
+            )
+        ]
+        overall_direction_ids[shift] = changed
+        all_overall_directions.extend(changed)
+    distinct_overall = frozenset(all_overall_directions)
+    overall = {
+        "directions": {
+            _direction_name(shift): {
+                "inclusion_flip_count": len(person_ids),
+                "inclusion_flip_count_by_birth_source": _source_split(
+                    person_ids,
+                    births.source_by_person,
+                ),
+            }
+            for shift, person_ids in overall_direction_ids.items()
+        },
+        "inclusion_flip_directions": len(all_overall_directions),
+        "inclusion_flip_directions_by_birth_source": _source_split(
+            all_overall_directions,
+            births.source_by_person,
+        ),
+        "distinct_people_affected": len(distinct_overall),
+        "distinct_people_affected_by_birth_source": _source_split(
+            distinct_overall,
+            births.source_by_person,
+        ),
+    }
+    result = {
+        "perturbation": {
+            "values": [-1, 1],
+            "scope": sorted(IMPRECISE_BIRTH_SOURCES),
+            "fixed_sources": sorted(
+                set(SOURCE_CLASSES)
+                - set(IMPRECISE_BIRTH_SOURCES)
+                - {"unresolved"}
+            ),
+            "production_path": (
+                "Each coordinate re-runs career.build_career_inclusion, "
+                "including the opening-stock PMF lookup at birth+62, the "
+                "person-keyed draw, operative claim year, career build, and "
+                "ordered Stage D."
+            ),
+            "predicate_flip_definition": (
+                "Compare a predicate only when both baseline and alternative "
+                "coordinates reach it under ordered Stage D."
+            ),
+        },
+        "scenarios": scenario_results,
+        "predicates": predicate_results,
+        "overall_inclusion": overall,
+    }
+    return SensitivityEvidence(
+        inclusions=inclusions,
+        birth_maps=birth_maps,
+        states=states,
+        result=result,
+    )
+
+
 def _arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -875,12 +1328,18 @@ def main() -> int:
         loaded = _load_cached_draw(args.cache, args.draw_index)
     births = _derive_birth_evidence(loaded)
     funnel = _derive_funnel_evidence(loaded, births)
-    # Sections C/D and canonical output are added in the next coherent step.
+    sensitivity = _derive_sensitivity_evidence(
+        loaded=loaded,
+        births=births,
+        funnel=funnel,
+    )
+    # Section D and canonical output are added in the next coherent step.
     print(
         json.dumps(
             {
                 "birth_source_law": births.result,
                 "candidate_funnel": funnel.result,
+                "inclusion_sensitivity": sensitivity.result,
                 "input_identity": {
                     "master_sha": EXPECTED_MASTER_SHA,
                     "draw_index": args.draw_index,

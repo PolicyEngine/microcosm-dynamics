@@ -2,8 +2,9 @@
 
 ## State
 
-The reducer's reproducible loader, corrected source law, and Stage-A/B funnel
-are implemented and exercised successfully against the cached draw-0 object.
+The reducer's reproducible loader, corrected source law, Stage-A/B funnel, and
+production Stage-C/D birth sensitivity are implemented and exercised
+successfully against the cached draw-0 object.
 
 ## Done
 
@@ -39,11 +40,18 @@ are implemented and exercised successfully against the cached draw-0 object.
   partitioning, Stage B, and production Stage-C/D baseline transport.
 - Exercised the implementation: all section A/B counts match the referee
   oracle, and all 86 newly dated candidates land at the first domain predicate.
+- Re-ran the production Stage-C opening-stock draw and ordered Stage D under
+  birth-minus-one and birth-plus-one for every canonical candidate, perturbing
+  only imprecise age-derived sources.
+- Reconciled the sensitivity oracle exactly: one era flip, no empty-span
+  flips, 600 chronology flips (294 inclusion-changing), 15 coverage flips,
+  and 310 inclusion-changing directions across 304 distinct people, all
+  clause-2 dated.
+- Asserted that the extracted ordered predicates reproduce the unperturbed
+  production result exactly before using them for flip accounting.
 
 ## Next
 
-- Add exact production birth-minus/plus-one Stage-C/D reruns and ordered
-  predicate flip accounting.
 - Add the pinned-parameter benefit-ledger sensitivity and canonical writer.
 - Run draw 0 with the pinned runner interpreter, reconcile every oracle row,
   and commit the canonical JSON.
