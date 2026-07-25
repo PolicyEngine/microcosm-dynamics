@@ -1,4 +1,4 @@
-"""Class-closing sealed-process regression for first-estimates preparation."""
+"""Sealed-process regression for first-estimates preparation and compute."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ import json
 import sys
 from dataclasses import replace
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
 root = Path(sys.argv[1]).resolve()
 sys.path.insert(0, str(root / "src"))
@@ -93,10 +93,6 @@ _sp.run(
 )
 
 
-class PreparationComplete(BaseException):
-    pass
-
-
 def load_registered_parameters():
     return SimpleNamespace(
         provenance=configuration["parameters"],
@@ -107,32 +103,70 @@ def load_registered_parameters():
     )
 
 
-def stop_after_preparation():
-    raise PreparationComplete
+original_path = sys.path.copy()
+poisoned = ModuleType("build_m4_gate_floors")
+sys.modules["build_m4_gate_floors"] = poisoned
+observed = {}
 
 
-def refuse_compute(*_args, **_kwargs):
-    raise AssertionError("projection compute started")
+def execute_projection(*_args, **_kwargs):
+    import build_m4_gate_floors
+
+    expected = (root / "scripts/build_m4_gate_floors.py").resolve()
+    if Path(build_m4_gate_floors.__file__).resolve() != expected:
+        raise AssertionError("compute imported an unregistered scripts module")
+    observed["compute_module"] = build_m4_gate_floors
+    return "stubbed-projection-batch"
+
+
+def prepare_batch(batch, *, parameters):
+    if batch != "stubbed-projection-batch":
+        raise AssertionError("stubbed projection batch changed")
+    if parameters.provenance != configuration["parameters"]:
+        raise AssertionError("prepared parameters changed")
+    return "stubbed-prepared-batch"
+
+
+def build_artifact(prepared, **_kwargs):
+    import build_m4_gate_floors
+
+    if prepared != "stubbed-prepared-batch":
+        raise AssertionError("stubbed prepared batch changed")
+    if sys.path[0] != str(root / "scripts"):
+        raise AssertionError("scripts scope ended before artifact build")
+    if build_m4_gate_floors is not observed["compute_module"]:
+        raise AssertionError("compute scripts module was not held through build")
+    return {"sealed_compute_surface": True}
+
+
+def publish_artifact(_token, artifact):
+    if artifact != {"sealed_compute_surface": True}:
+        raise AssertionError("stubbed artifact changed")
+    return root / "runs/first_estimates_v1.json"
 
 
 operations = replace(
     coordinator._default_operations(),
     load_parameters=load_registered_parameters,
-    execute_projection=refuse_compute,
-    after_preparation=stop_after_preparation,
+    execute_projection=execute_projection,
+    prepare_batch=prepare_batch,
+    build_artifact=build_artifact,
+    publish_artifact=publish_artifact,
 )
-try:
-    result = coordinator._run_registered_first_estimates_from_path_for_test(
-        repository_root=root,
-        registration_reference=sealed_reference,
-        registered_configuration_path=configuration_path,
-        retry_after_incident=None,
-        operations=operations,
-    )
-except PreparationComplete:
-    print("PREPARATION_COMPLETE")
-else:
-    raise AssertionError(f"preparation sentinel was not reached: {result!r}")
+result = coordinator._run_registered_first_estimates_from_path_for_test(
+    repository_root=root,
+    registration_reference=sealed_reference,
+    registered_configuration_path=configuration_path,
+    retry_after_incident=None,
+    operations=operations,
+)
+if result.status != "published":
+    raise AssertionError(f"stubbed compute did not complete: {result!r}")
+if sys.modules["build_m4_gate_floors"] is not poisoned:
+    raise AssertionError("preexisting scripts module was not restored")
+if sys.path != original_path:
+    raise AssertionError("interpreter path was not restored")
+print("COMPUTE_SURFACE_COMPLETE")
 """
 
 
@@ -289,7 +323,7 @@ def _sealed_venv_python(tmp_path: Path) -> Path:
     return executable
 
 
-def test__sealed_interpreter__completes_real_preparation_before_compute(
+def test__sealed_interpreter__prepares_and_smokes_compute_import_surface(
     tmp_path: Path,
     _sealed_preparation_worktree: Path,
 ):
@@ -321,7 +355,7 @@ def test__sealed_interpreter__completes_real_preparation_before_compute(
     assert (
         completed.returncode == 0
     ), f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
-    assert completed.stdout == "PREPARATION_COMPLETE\n"
+    assert completed.stdout == "COMPUTE_SURFACE_COMPLETE\n"
     assert completed.stderr == ""
     committed_incidents = sorted(
         line

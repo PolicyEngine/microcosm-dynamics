@@ -959,6 +959,58 @@ def test__registered_input_factory__binds_committed_file_and_exact_type(
         coordinator._load_registered_input_plan(root)
 
 
+def test__coordinator__holds_globbed_scripts_scope_through_artifact_build(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    scripts = root / "scripts"
+    scripts.mkdir()
+    module_name = "incident4_compute_helper"
+    (scripts / f"{module_name}.py").write_text(
+        'VALUE = "tracked-compute-sentinel"\n'
+    )
+    assert module_name not in coordinator._INPUT_FACTORY_MODULES
+
+    original_path = sys.path.copy()
+    poisoned = ModuleType(module_name)
+    poisoned.VALUE = "poisoned"
+    monkeypatch.setitem(sys.modules, module_name, poisoned)
+
+    calls: list[str] = []
+    captured: dict = {}
+    operations = _operations(calls, captured)
+    execute_projection = operations.execute_projection
+    build_artifact = operations.build_artifact
+    observed: dict[str, ModuleType] = {}
+
+    def execute(*args, **kwargs):
+        assert sys.path[0] == str(scripts)
+        imported = __import__(module_name)
+        assert imported.VALUE == "tracked-compute-sentinel"
+        observed["compute"] = imported
+        return execute_projection(*args, **kwargs)
+
+    def build(*args, **kwargs):
+        assert sys.path[0] == str(scripts)
+        imported = __import__(module_name)
+        assert imported is observed["compute"]
+        return build_artifact(*args, **kwargs)
+
+    result = _run(
+        root,
+        replace(
+            operations,
+            execute_projection=execute,
+            build_artifact=build,
+        ),
+    )
+
+    assert result.status == "published"
+    assert sys.modules[module_name] is poisoned
+    assert sys.path == original_path
+
+
 def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
     tmp_path,
     monkeypatch,
@@ -999,11 +1051,6 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
         sources[1].as_posix(): helper_source,
     }
     monkeypatch.setattr(coordinator, "_INPUT_FACTORY_SOURCES", sources)
-    monkeypatch.setattr(
-        coordinator,
-        "_INPUT_FACTORY_MODULES",
-        (*coordinator._INPUT_FACTORY_MODULES, "incident3_lazy_helper"),
-    )
     monkeypatch.setattr(
         coordinator,
         "_git_bytes",
