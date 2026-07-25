@@ -7,7 +7,7 @@
 - Review/adjudication: read and reconciled
 - Implementation: complete
 - Verification: required local suites complete and green
-- Push: pending
+- Push: attempted and blocked by DNS (`Could not resolve host: github.com`)
 - Final report: this file
 
 ## Done
@@ -66,11 +66,12 @@
 - Verified the real launcher pre-import guard and coordinator source recheck
   both accept the committed-clean linked worktree under the isolated,
   no-bytecode, fresh-empty-sentinel interpreter; the sentinel remained empty.
+- Attempted to push `sol/entry8-impl`; DNS could not resolve `github.com`.
 
 ## Next
 
-1. Attempt to push `sol/entry8-impl`.
-2. Record the push outcome and remove this lane progress file as required.
+1. Retry `git push origin sol/entry8-impl` when DNS is available.
+2. Remove this lane progress file from the final tree as required.
 
 ## Final report
 
