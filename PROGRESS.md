@@ -4,9 +4,8 @@
 
 Clause 3, Stage C.5, the production artifact/publication path, and the
 advisory birth-completeness preflight are implemented. Draw 0 reproduces every
-supplied amendment oracle; final verification is substantially complete, with
-the final audit findings resolved. One final unit rerun and report assembly
-remain.
+supplied amendment oracle, all audit findings are resolved, and verification
+is complete. Only report assembly remains.
 
 ## Done
 
@@ -80,7 +79,10 @@ remain.
   disposition aborts as a code bug; all 29 career tests pass.
 - Re-ran the final artifact tier (1,281 passed, 38 skipped) and the tier-policy
   test against all 3,654 collected tests (passed).
+- Re-ran the final unit tier: 847 passed, 5 skipped.
+- Re-ran the final committed advisory preflight over registered sources:
+  status pass; 29,792/29,792 dispositions and zero clause-3 violations.
 
 ## Next
 
-- Run the final unit tier, then finish the report.
+- Write the final report output file.
