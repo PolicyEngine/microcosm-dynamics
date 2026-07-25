@@ -39,8 +39,13 @@
 - Recounted the enforced tiers after the two artifact-class regressions: unit
   829, artifact 1,297, integration 804, reproduction 520, and oracle 159;
   full collection is 3,609 tests.
+- Verified the full focused first-estimates scope: 182 passed.
+- Verified the executable tiers: unit 824 passed and 5 skipped; artifact 1,257
+  passed and 40 skipped. The tier-policy assertion passes in the full unit-tier
+  collection.
 
 ## Next
 
-1. Run the focused scope, executable unit/artifact tiers, and tier policy.
+1. Run repository-wide formatting/lint checks and the clean-tree production
+   guard.
 2. Finalize progress, push if DNS permits, and write the final report.
