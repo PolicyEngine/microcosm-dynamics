@@ -6,7 +6,7 @@
 - Starting tip: `8172e7c`
 - Review/adjudication: read and reconciled
 - Implementation: complete
-- Verification: focused guard tests pass; full suites pending
+- Verification: required local suites complete and green
 - Push: pending
 - Final report: this file
 
@@ -51,9 +51,19 @@
   test under ordinary pytest settings.
 - Recounted 3,615 tests: unit 829, artifact 1,303, integration 804,
   reproduction 520, and oracle 159.
+- Verified the complete focused first-estimates scope: 188 passed.
+- Verified the complete executable fast tiers:
+  - unit: 824 passed and 5 skipped;
+  - artifact: 1,263 passed and 40 skipped.
+- Verified repository-wide Black leaves all 486 Python files unchanged, Ruff
+  accepts the repository, and `git diff --check` is clean.
+- Confirmed an ordinary all-tier pytest run no longer fails at the repaired CLI
+  success test. Its remaining failure is the pre-round-7 import-time
+  `PYTHONDONTWRITEBYTECODE` assertion that the round-8 review explicitly
+  identified as pre-existing and excluded from this fix round.
 
 ## Next
 
-1. Run the focused scope and full unit/artifact fast suites.
-2. Run repository-wide formatting, lint, diff, and clean production guards.
-3. Update this final report, commit every coherent step, and push if DNS allows.
+1. Remove generated ignored caches and run both production guards on the clean
+   committed tree.
+2. Finalize this report, remove lane notes as required, and push if DNS allows.
