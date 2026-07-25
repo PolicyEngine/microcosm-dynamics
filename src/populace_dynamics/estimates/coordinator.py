@@ -197,6 +197,21 @@ def _assert_registered_input_sources(repository: Path) -> None:
             )
 
 
+def _assert_no_tracked_repository_drift(repository: Path) -> None:
+    """Refuse any tracked index or worktree drift in the sealed checkout."""
+    status = _git_bytes(
+        repository,
+        "status",
+        "--porcelain",
+        "--untracked-files=no",
+    )
+    if status:
+        raise RuntimeError(
+            "registered first estimates refuses tracked index/worktree drift "
+            "in the sealed checkout"
+        )
+
+
 def _assert_estimator_surface_sources(repository: Path) -> None:
     """Bind every estimator module executed by the ceremony to HEAD bytes."""
     for relative_path in _ESTIMATOR_SURFACE_SOURCES:
@@ -217,7 +232,8 @@ def _assert_estimator_surface_sources(repository: Path) -> None:
 
 
 def _assert_registered_sources(repository: Path) -> None:
-    """Bind both the estimator package and registered input factory to HEAD."""
+    """Seal all tracked files while retaining the recorded HEAD source tuple."""
+    _assert_no_tracked_repository_drift(repository)
     _assert_estimator_surface_sources(repository)
     _assert_registered_input_sources(repository)
 

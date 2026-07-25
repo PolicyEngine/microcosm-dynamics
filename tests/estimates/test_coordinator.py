@@ -789,6 +789,59 @@ def test__estimator_surface__binds_every_module_to_committed_head(
         coordinator._assert_estimator_surface_sources(root)
 
 
+@pytest.mark.parametrize("staged", [False, True], ids=["worktree", "index"])
+def test__production_path__tracked_drift_anywhere_is_preparation_incident(
+    tmp_path,
+    monkeypatch,
+    staged,
+):
+    root = _repository(tmp_path)
+    tracked = root / "src" / "populace_dynamics" / "artifacts.py"
+    tracked.parent.mkdir(parents=True)
+    tracked.write_bytes(b'"""committed writer"""\n')
+    coordinator._git_bytes(root, "init", "--quiet")
+    coordinator._git_bytes(root, "add", tracked.relative_to(root).as_posix())
+    coordinator._git_bytes(
+        root,
+        "-c",
+        "user.name=Fixture",
+        "-c",
+        "user.email=fixture@example.test",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--quiet",
+        "-m",
+        "fixture",
+    )
+    tracked.write_bytes(b'"""drifted writer"""\n')
+    if staged:
+        coordinator._git_bytes(
+            root, "add", tracked.relative_to(root).as_posix()
+        )
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    calls: list[str] = []
+    operations = replace(
+        _operations(calls, {}),
+        validate_input_sources=coordinator._assert_registered_sources,
+    )
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator, "_default_operations", lambda: operations)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_abort"
+    assert calls == []
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+
 def test__estimator_surface__pins_complete_module_tuple():
     expected = (
         Path("src/populace_dynamics/estimates/__init__.py"),
