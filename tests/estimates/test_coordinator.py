@@ -869,9 +869,7 @@ def test__production_path__untracked_import_package_is_preparation_incident(
     ignore.write_text("runs/first_estimates_attempt.claim\n")
     configuration_path = root / "registration.json"
     configuration_path.write_bytes(_configuration_bytes())
-    tracked_sibling = (
-        root / "scripts" / "registered_m6_candidate2_inputs.py"
-    )
+    tracked_sibling = root / "scripts" / "registered_m6_candidate2_inputs.py"
     tracked_sibling.parent.mkdir(parents=True)
     tracked_sibling.write_text('"""Tracked input adapter."""\n')
     coordinator._git_bytes(root, "init", "--quiet")
@@ -896,16 +894,14 @@ def test__production_path__untracked_import_package_is_preparation_incident(
         "fixture",
     )
     shadow = (
-        root
-        / "scripts"
-        / "registered_m6_candidate2_inputs"
-        / "__init__.py"
+        root / "scripts" / "registered_m6_candidate2_inputs" / "__init__.py"
     )
     shadow.parent.mkdir(parents=True)
     shadow.write_text('"""Untracked import shadow."""\n')
-    assert coordinator._git_bytes(
-        root, "status", "--porcelain"
-    ) == b"?? scripts/registered_m6_candidate2_inputs/\n"
+    assert (
+        coordinator._git_bytes(root, "status", "--porcelain")
+        == b"?? scripts/registered_m6_candidate2_inputs/\n"
+    )
     calls: list[str] = []
     operations = replace(
         _operations(calls, {}),
@@ -1310,8 +1306,7 @@ def test__production_path__symlinked_matching_claim_requires_fresh_adjudication(
 
 @pytest.mark.skipif(
     not all(
-        hasattr(os, name)
-        for name in ("mkfifo", "O_NOFOLLOW", "O_NONBLOCK")
+        hasattr(os, name) for name in ("mkfifo", "O_NOFOLLOW", "O_NONBLOCK")
     ),
     reason="platform has no nonblocking no-follow FIFO support",
 )

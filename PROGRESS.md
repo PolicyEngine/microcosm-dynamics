@@ -5,7 +5,7 @@
 - Branch: `sol/entry8-impl`
 - Review anchor: `d2b94b6`
 - Latest review/adjudication: round-4 FIX-FIRST and all three dispositions confirmed
-- Active task: run complete round-4 verification
+- Active task: commit verification bookkeeping, seal the final tree, and push
 
 ## Done
 
@@ -22,9 +22,15 @@
 - Replaced path-level claim reads with `O_NOFOLLOW | O_NONBLOCK` descriptor reads, `fstat`/`S_ISREG` validation, and a 4 KiB payload bound.
 - Added the platform-gated production FIFO mutation and pinned the safe open flags, special-file refusal, and unchanged fresh-adjudication reason.
 - Focused coordinator verification passes: 51 tests.
+- Recounted the three new coordinator tests in the enforced artifact tier: 1,290 collected.
+- Full collection passes: 3,602 tests collected.
+- Full focused first-estimates verification passes: 175 tests.
+- Unit tier passes: 824 passed, 5 skipped.
+- Artifact tier passes: 1,250 passed, 40 skipped.
+- Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
 
 ## Next
 
-1. Run focused, unit, artifact, formatting, and source-cleanliness verification.
-2. Finalize and commit this progress ledger.
+1. Commit the final tier recount, formatting, and this progress ledger.
+2. Confirm two empty full-porcelain repository seals.
 3. Push if DNS permits and write the final report to the requested output file.
