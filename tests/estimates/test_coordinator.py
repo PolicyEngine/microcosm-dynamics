@@ -972,12 +972,20 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
         b"\n"
         b"def build_input_plan():\n"
         b"    import incident3_lazy_helper\n"
+        b"\n"
+        b"    def load_full_inputs():\n"
+        b"        import incident3_lazy_helper as deferred\n"
+        b"        return deferred.FULL_INPUTS\n"
+        b"\n"
         b"    return M6Candidate3InputPlan(\n"
         b"        fit_inputs=incident3_lazy_helper.FIT_INPUTS,\n"
-        b"        load_full_inputs=lambda: None,\n"
+        b"        load_full_inputs=load_full_inputs,\n"
         b"    )\n"
     )
-    helper_source = b'FIT_INPUTS = "incident3-lazy-sentinel"\n'
+    helper_source = (
+        b'FIT_INPUTS = "incident3-lazy-sentinel"\n'
+        b'FULL_INPUTS = "incident3-deferred-sentinel"\n'
+    )
     factory_path = root / coordinator._INPUT_FACTORY_PATH
     helper_path = scripts / "incident3_lazy_helper.py"
     factory_path.write_bytes(factory_source)
@@ -993,15 +1001,15 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
     monkeypatch.setattr(coordinator, "_INPUT_FACTORY_SOURCES", sources)
     monkeypatch.setattr(
         coordinator,
+        "_INPUT_FACTORY_MODULES",
+        (*coordinator._INPUT_FACTORY_MODULES, "incident3_lazy_helper"),
+    )
+    monkeypatch.setattr(
+        coordinator,
         "_git_bytes",
         lambda _root, *arguments: committed[
             arguments[-1].removeprefix("HEAD:")
         ],
-    )
-    monkeypatch.delitem(
-        sys.modules,
-        "incident3_lazy_helper",
-        raising=False,
     )
     original_path = sys.path.copy()
 
@@ -1011,12 +1019,17 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
         coordinator._INPUT_FACTORY_MODULES[0],
         preexisting,
     )
+    poisoned = ModuleType("incident3_lazy_helper")
+    poisoned.FIT_INPUTS = "poisoned"
+    poisoned.FULL_INPUTS = "poisoned"
+    monkeypatch.setitem(sys.modules, "incident3_lazy_helper", poisoned)
 
     observed = coordinator._load_registered_input_plan(root)
-    observed.load_full_inputs()
+    deferred_value = observed.load_full_inputs()
 
     assert observed.fit_inputs == "incident3-lazy-sentinel"
-    assert "incident3_lazy_helper" not in sys.modules
+    assert deferred_value == "incident3-deferred-sentinel"
+    assert sys.modules["incident3_lazy_helper"] is poisoned
     assert sys.modules[coordinator._INPUT_FACTORY_MODULES[0]] is preexisting
     assert sys.path == original_path
 
