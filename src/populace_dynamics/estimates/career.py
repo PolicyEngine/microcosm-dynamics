@@ -581,7 +581,12 @@ def derive_birth_years(
         for person_id, year in (synthetic_birth_years or {}).items()
     }
     required = (
-        None if required_person_ids is None else set(required_person_ids)
+        None
+        if required_person_ids is None
+        else {
+            _as_int(person_id, "required person_id")
+            for person_id in required_person_ids
+        }
     )
 
     exact: dict[int, int] = {}

@@ -209,6 +209,18 @@ def test_required_birth_conflict_still_fails_closed():
     )
 
 
+def test_required_person_ids_normalize_like_marriage_ids():
+    marriage = pd.DataFrame({"person_id": [1, 1], "birth_year": [1950, 1951]})
+    observed = pd.DataFrame(columns=["person_id", "period", "age"])
+
+    with pytest.raises(ValueError, match="conflicting exact birth"):
+        derive_birth_years(
+            marriage,
+            observed,
+            required_person_ids={"1"},
+        )
+
+
 def test_required_birth_scope_preserves_conflict_free_resolutions():
     marriage = pd.DataFrame({"person_id": [1], "birth_year": [1950]})
     observed = pd.DataFrame(
