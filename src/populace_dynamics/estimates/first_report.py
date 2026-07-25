@@ -43,6 +43,7 @@ from populace_dynamics.estimates.publication import (
     BIRTH_TIMING_SENSITIVITY_SEMANTICS,
     CANONICAL_EXECUTION_RULE,
     CERTIFIES_NOTHING,
+    COMMON_SUPPORT_AGREEMENT,
     GAP_BLOCK,
     table_record,
     validate_first_estimates_artifact,
@@ -951,6 +952,9 @@ def build_first_estimates_artifact(
             "aggregate": _numeric_aggregate(diagnostic_rows),
             "included_career_per_draw": _career_diagnostic_rows(draws),
             "birth_timing_sensitivity": _birth_timing_section(draws),
+            "common_support_agreement": copy.deepcopy(
+                COMMON_SUPPORT_AGREEMENT
+            ),
             "context_ratio": copy.deepcopy(CONTEXT_RATIO_DISCLOSURE),
             "payment_year_convention": (
                 "Twelve annualized monthly payments only in realized "

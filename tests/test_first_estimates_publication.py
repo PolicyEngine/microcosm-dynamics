@@ -473,6 +473,9 @@ def _artifact(sidecar: bytes | None = None) -> dict:
                     [_birth_timing_values(row) for row in birth_timing_rows]
                 ),
             },
+            "common_support_agreement": copy.deepcopy(
+                publication.COMMON_SUPPORT_AGREEMENT
+            ),
             "context_ratio": {
                 "status": "deferred_to_anchor_extraction",
             },
@@ -668,9 +671,9 @@ def test__artifact_validator__limits_birth_reference_to_benefit_tables():
         )
 
     artifact = _artifact()
-    artifact["tables"]["revenue"]["birth_timing_reference"] = (
-        publication.BIRTH_TIMING_SENSITIVITY_LABEL
-    )
+    artifact["tables"]["revenue"][
+        "birth_timing_reference"
+    ] = publication.BIRTH_TIMING_SENSITIVITY_LABEL
     with pytest.raises(ValueError, match="table 'revenue' keys"):
         publication.validate_first_estimates_artifact(
             artifact,
@@ -919,12 +922,59 @@ def test__artifact_validator__reconciles_nested_birth_timing_values():
             expected_configuration_echo=_configuration(),
         )
 
+    artifact = _artifact()
+    sensitivity = artifact["diagnostics"]["birth_timing_sensitivity"]
+    personwise = sensitivity["per_draw"][0]["personwise_adversarial_range"]
+    minus_total = sensitivity["per_draw"][0][
+        "coherent_shift_stress_scenarios"
+    ]["full_scenario_ledger"]["scenarios"]["birth_minus_1"][
+        "weighted_annualized_benefit_total"
+    ][
+        "amount"
+    ]
+    personwise["minimum"]["amount"] = minus_total + 1.0
+    personwise["minimum"]["delta_from_baseline_person_contribution_sum"] = (
+        personwise["minimum"]["amount"]
+        - personwise["baseline_reference"]["person_contribution_sum"]
+    )
+    with pytest.raises(
+        ValueError,
+        match="personwise minimum exceeds a coherent alternative",
+    ):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+        )
+
+
+def test__artifact_validator__pins_common_support_agreement():
+    artifact = _artifact()
+    agreement = artifact["diagnostics"]["common_support_agreement"]
+    assert agreement["common_support_count"] == 4_518
+    assert agreement["endpoints"]["exact"]["discordant_pairs"] == {
+        "clause2_only": 391,
+        "clause3_only": 383,
+    }
+    assert agreement["endpoints"]["within_plus_or_minus_1"]["paired_tests"][
+        "reported_test"
+    ]["p_value"] == pytest.approx(0.021484375)
+    assert agreement["exact_endpoint_by_anchor_wave"]["2017"]["paired_tests"][
+        "reported_test"
+    ]["p_value"] == pytest.approx(4.6206995513884114e-05)
+
+    agreement["endpoints"]["exact"]["discordant_pairs"]["clause2_only"] = 390
+    with pytest.raises(ValueError, match="common-support agreement changed"):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+        )
+
 
 def test__artifact_validator__freezes_year_origin_and_disclosures():
     artifact = _artifact()
-    artifact["tables"]["modeled_award_flow"]["per_draw"][0]["claim_origin"] = (
-        "opening_backfill"
-    )
+    artifact["tables"]["modeled_award_flow"]["per_draw"][0][
+        "claim_origin"
+    ] = "opening_backfill"
     with pytest.raises(ValueError, match="wrong claim origin"):
         publication.validate_first_estimates_artifact(
             artifact,

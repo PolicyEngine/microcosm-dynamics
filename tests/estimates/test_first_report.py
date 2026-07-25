@@ -397,8 +397,8 @@ def _birth_timing_sensitivity(draw_index: int) -> BirthTimingSensitivity:
     baseline_people = 6_000.0 + 36.0 * draw_index
     minus_amount = baseline_annual - 100.0 - draw_index
     plus_amount = baseline_annual + 200.0 + 2.0 * draw_index
-    minimum = baseline_people - 50.0 - draw_index
-    maximum = baseline_people + 80.0 + 2.0 * draw_index
+    minimum = minus_amount - 10.0
+    maximum = plus_amount + 10.0
 
     def scenario(count: int, amount: float) -> dict[str, int | float]:
         delta = amount - baseline_annual
@@ -632,6 +632,38 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
             },
         },
     }
+    agreement = artifact["diagnostics"]["common_support_agreement"]
+    evidence_reference = agreement["evidence_reference"]
+    assert evidence_reference["path"].endswith(
+        "first_estimates_birth_evidence_draw0.json"
+    )
+    assert {
+        key: value
+        for key, value in evidence_reference.items()
+        if key != "path"
+    } == {
+        "sha256": (
+            "92c6319bdeb2b02681a7c6ab700fc8df47b43de703054450040dba053ac309a5"
+        ),
+        "schema_version": "first_estimates_birth_evidence.v2",
+        "section": "common_support_agreement",
+    }
+    assert (
+        agreement["endpoints"]["exact"]["clause2_inferred_period_age"][
+            "match_count"
+        ]
+        == 2_307
+    )
+    assert (
+        agreement["endpoints"]["exact"]["clause3_seed_age"]["match_count"]
+        == 2_299
+    )
+    assert (
+        agreement["exact_endpoint_by_anchor_wave"]["2017"]["clause3_seed_age"][
+            "match_count"
+        ]
+        == 215
+    )
     assert first_sensitivity["personwise_adversarial_range"] == {
         "baseline_reference": {
             "person_contribution_sum": 6_000.0,
@@ -639,12 +671,12 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
             "person_minus_annual_reconciliation_residual": 0.0,
         },
         "minimum": {
-            "amount": 5_950.0,
-            "delta_from_baseline_person_contribution_sum": -50.0,
+            "amount": 5_890.0,
+            "delta_from_baseline_person_contribution_sum": -110.0,
         },
         "maximum": {
-            "amount": 6_080.0,
-            "delta_from_baseline_person_contribution_sum": 80.0,
+            "amount": 6_210.0,
+            "delta_from_baseline_person_contribution_sum": 210.0,
         },
     }
     baseline_amount = _find_aggregate(
@@ -662,9 +694,9 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
         sensitivity["aggregate"],
         metric="personwise_adversarial_range__minimum__amount",
     )
-    assert minimum_amount["mean"] == 6_282.5
+    assert minimum_amount["mean"] == 5_899.5
     assert minimum_amount["sample_sd"] == pytest.approx(
-        statistics.stdev(5_950.0 + 35.0 * draw for draw in range(20))
+        statistics.stdev(5_890.0 + draw for draw in range(20))
     )
     assert artifact["diagnostics"]["context_ratio"] == (
         CONTEXT_RATIO_DISCLOSURE

@@ -5,7 +5,8 @@
 Clause 3, Stage C.5, the production artifact/publication path, and the
 advisory birth-completeness preflight are implemented. Draw 0 reproduces every
 supplied amendment oracle; final verification is substantially complete, with
-the PSID tier rerun remaining.
+the final audit findings resolved. Broad post-audit checks and report assembly
+remain.
 
 ## Done
 
@@ -31,7 +32,7 @@ the PSID tier rerun remaining.
 - Added enum-derived five-class artifact inventories, the Stage-C.5 exclusion,
   included-claimant birth-source metrics, and clauses-2-and-3
   `birth_year_inferred` semantics.
-- Recompute both coherent birth-timing shifts from every prepared draw through
+- Recomputed both coherent birth-timing shifts from every prepared draw through
   the production inclusion and benefit-ledger reducers, with complete-set
   counts, amounts/deltas/shares, the personwise range, and across-draw mean/SD.
 - Added the frozen §10 disclosure row and benefit-table reference; advanced
@@ -53,13 +54,29 @@ the PSID tier rerun remaining.
 - Kept advisory imports no-fit at test collection time by loading the sealed
   coordinator and seed materializer only when the command runs; the isolated
   import guard and the existing disability no-fit reproduction guard pass.
-- Reconciled the tier manifest to 849 unit, 1,318 artifact, 804 PSID
+- Reconciled the tier manifest to 851 unit, 1,319 artifact, 804 PSID
   integration, 520 legacy reproduction, and 159 PolicyEngine oracle tests.
 - Ran the sealed-preparation test (1 passed), full unit tier (843 passed, 5
   skipped before the final import-only test was added), and full artifact tier
   (1,280 passed, 38 skipped).
+- Re-ran the current full unit tier after the import guard: 844 passed and 5
+  skipped, including the tier-policy manifest check.
+- Attempted the full PSID integration tier. Its first failure is an unrelated
+  existing order conflict: the preceding C10 seed-5 reproduction deliberately
+  imports `populace.fit`, then the historical disability reproduction asserts
+  global non-import (169 passed, 3 skipped before fail-fast).
+- Restored the committed evidence reducer byte-for-byte; its pinned-master
+  fail-closed guard remains evidence, while the real oracle check used only
+  its SHA-pinned cache loader with the new production reducers.
+- Closed the §3.1 publication ambiguity conservatively: production diagnostics
+  now carry the complete common-support endpoint, McNemar, and anchor-wave
+  tables, exactly matching their SHA-pinned evidence-artifact section, plus
+  explicit provenance and the required interpretation.
+- Added direct ±1 transport tests proving both age-derived sources shift,
+  exact/synthetic stay fixed, and unresolved candidates remain in the rerun;
+  strengthened range validation against both coherent scenario totals.
+- Ran the expanded focused suite: 85 passed.
 
 ## Next
 
-- Rerun the PSID integration tier, then finish lint/diff/full focused checks and
-  the report.
+- Run broad post-audit checks, then finish the report.

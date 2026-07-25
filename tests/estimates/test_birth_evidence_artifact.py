@@ -14,6 +14,8 @@ from typing import Any
 
 import pytest
 
+from populace_dynamics.estimates.publication import COMMON_SUPPORT_AGREEMENT
+
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = ROOT / "runs" / "first_estimates_birth_evidence_draw0.json"
 ARTIFACT_SHA256 = (
@@ -247,6 +249,18 @@ def test_birth_evidence_artifact_count_tables_reconcile():
         )
 
     agreement = artifact["common_support_agreement"]
+    production_copy = {
+        key: value
+        for key, value in COMMON_SUPPORT_AGREEMENT.items()
+        if key not in {"evidence_reference", "interpretation"}
+    }
+    assert production_copy == agreement
+    assert COMMON_SUPPORT_AGREEMENT["evidence_reference"] == {
+        "path": "runs/first_estimates_birth_evidence_draw0.json",
+        "sha256": ARTIFACT_SHA256,
+        "schema_version": "first_estimates_birth_evidence.v2",
+        "section": "common_support_agreement",
+    }
     assert agreement["common_support_count"] == 4_518
     endpoint_expectations = {
         "exact": {

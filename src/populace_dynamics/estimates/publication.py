@@ -66,6 +66,155 @@ BIRTH_TIMING_SENSITIVITY_SEMANTICS = {
         "until a ratified birth-timing resolution retires it by amendment"
     ),
 }
+_MCNEMAR_CHI_METHOD = (
+    "McNemar chi-square test with Edwards continuity correction and one "
+    "degree of freedom."
+)
+_MCNEMAR_EXACT_METHOD = (
+    "Two-sided exact McNemar test: binomial test on discordant pairs with "
+    "null probability 0.5."
+)
+_MCNEMAR_SELECTION_RULE = (
+    "Use the exact two-sided binomial McNemar test with fewer than 25 "
+    "discordant pairs; otherwise use the one-degree-of-freedom chi-square "
+    "test with Edwards continuity correction."
+)
+
+
+def _mcnemar_agreement_table(
+    *,
+    denominator: int,
+    cells: tuple[int, int, int, int],
+    chi_square_statistic: float,
+    chi_square_p_value: float,
+    exact_p_value: float,
+    reported_method: str,
+) -> dict[str, Any]:
+    """Construct one byte-stable table from the committed evidence cells."""
+
+    both, clause2_only, clause3_only, neither = cells
+    if sum(cells) != denominator:
+        raise AssertionError("committed McNemar cells do not reconcile")
+    tests = {
+        "chi_square_continuity_corrected": {
+            "method": _MCNEMAR_CHI_METHOD,
+            "p_value": chi_square_p_value,
+            "statistic": chi_square_statistic,
+        },
+        "exact_two_sided_binomial": {
+            "method": _MCNEMAR_EXACT_METHOD,
+            "p_value": exact_p_value,
+        },
+    }
+    return {
+        "denominator": denominator,
+        "clause2_inferred_period_age": {
+            "match_count": both + clause2_only,
+            "match_share": (both + clause2_only) / denominator,
+        },
+        "clause3_seed_age": {
+            "match_count": both + clause3_only,
+            "match_share": (both + clause3_only) / denominator,
+        },
+        "mcnemar_2x2_cells": {
+            "clause2_match__clause3_match": both,
+            "clause2_match__clause3_mismatch": clause2_only,
+            "clause2_mismatch__clause3_match": clause3_only,
+            "clause2_mismatch__clause3_mismatch": neither,
+        },
+        "discordant_pairs": {
+            "clause2_only": clause2_only,
+            "clause3_only": clause3_only,
+        },
+        "paired_tests": {
+            **tests,
+            "reported_test": {
+                "method": tests[reported_method]["method"],
+                "method_key": reported_method,
+                "p_value": tests[reported_method]["p_value"],
+                "selection_rule": _MCNEMAR_SELECTION_RULE,
+            },
+        },
+    }
+
+
+COMMON_SUPPORT_AGREEMENT = {
+    "evidence_reference": {
+        "path": "runs/first_estimates_birth_evidence_draw0.json",
+        "sha256": (
+            "92c6319bdeb2b02681a7c6ab700fc8df47b43de703054450040dba053ac309a5"
+        ),
+        "schema_version": "first_estimates_birth_evidence.v2",
+        "section": "common_support_agreement",
+    },
+    "common_support_definition": (
+        "Real report-population people with an exact marriage-record birth "
+        "year, a clause-2 median(period-age) estimate on age 14-90 earnings "
+        "support, and a valid clause-3 seed age 2-125."
+    ),
+    "truth_source": "exact_marriage",
+    "construction": "seed_triple_overlap",
+    "common_support_count": 4_518,
+    "endpoints": {
+        "exact": _mcnemar_agreement_table(
+            denominator=4_518,
+            cells=(1_916, 391, 383, 1_828),
+            chi_square_statistic=0.06330749354005168,
+            chi_square_p_value=0.8013426797762091,
+            exact_p_value=0.8013623340541564,
+            reported_method="chi_square_continuity_corrected",
+        ),
+        "within_plus_or_minus_1": _mcnemar_agreement_table(
+            denominator=4_518,
+            cells=(4_507, 9, 1, 1),
+            chi_square_statistic=4.9,
+            chi_square_p_value=0.026856695507524418,
+            exact_p_value=0.021484375,
+            reported_method="exact_two_sided_binomial",
+        ),
+    },
+    "exact_endpoint_by_anchor_wave": {
+        "2015": _mcnemar_agreement_table(
+            denominator=3_645,
+            cells=(1_599, 309, 333, 1_404),
+            chi_square_statistic=0.82398753894081,
+            chi_square_p_value=0.36401687681601563,
+            exact_p_value=0.364027970030365,
+            reported_method="chi_square_continuity_corrected",
+        ),
+        "2017": _mcnemar_agreement_table(
+            denominator=601,
+            cells=(191, 63, 24, 323),
+            chi_square_statistic=16.597701149425287,
+            chi_square_p_value=4.6206995513884114e-05,
+            exact_p_value=3.4799669459257334e-05,
+            reported_method="chi_square_continuity_corrected",
+        ),
+        "2019": _mcnemar_agreement_table(
+            denominator=272,
+            cells=(126, 19, 26, 101),
+            chi_square_statistic=0.8,
+            chi_square_p_value=0.37109336952269756,
+            exact_p_value=0.3712980344710104,
+            reported_method="chi_square_continuity_corrected",
+        ),
+    },
+    "anchor_strata_reconciliation": {
+        "common_support_count": 4_518,
+        "sum": 4_518,
+        "passed": True,
+    },
+    "interpretation": {
+        "birthday_timing_ambiguity_years": 1,
+        "aggregate_exact_match": (
+            "Failure to reject equality; not a demonstration of equivalence."
+        ),
+        "detectable_differences": [
+            "within_plus_or_minus_1",
+            "2017_anchor_wave_exact",
+        ],
+    },
+}
 ODD_YEAR_CARRY_DISCLOSURE = (
     "The engine draws even-year earnings and carries the prior even-year "
     "value into odd years (2015 repeats 2014, 2017 repeats 2016, and so on)."
@@ -507,6 +656,7 @@ _DIAGNOSTICS_KEYS = frozenset(
         "aggregate",
         "included_career_per_draw",
         "birth_timing_sensitivity",
+        "common_support_agreement",
         "context_ratio",
         "payment_year_convention",
         "benefit_measure",
@@ -1577,6 +1727,18 @@ def _birth_timing_row_values(
         ] = delta
     if endpoint_amounts["minimum"] > endpoint_amounts["maximum"]:
         raise ValueError(f"{label} personwise range is reversed")
+    coherent_alternatives = (
+        scenario_values["birth_minus_1"]["amount"],
+        scenario_values["birth_plus_1"]["amount"],
+    )
+    if endpoint_amounts["minimum"] > min(coherent_alternatives) + 1e-6:
+        raise ValueError(
+            f"{label} personwise minimum exceeds a coherent alternative"
+        )
+    if endpoint_amounts["maximum"] < max(coherent_alternatives) - 1e-6:
+        raise ValueError(
+            f"{label} personwise maximum is below a coherent alternative"
+        )
     if set(values) != _BIRTH_TIMING_METRICS:
         raise AssertionError("birth-timing metric inventory changed")
     return draw, values
@@ -2114,6 +2276,8 @@ def validate_first_estimates_artifact(
         _DIAGNOSTICS_KEYS,
         "artifact diagnostics",
     )
+    if diagnostics["common_support_agreement"] != COMMON_SUPPORT_AGREEMENT:
+        raise ValueError("committed common-support agreement changed")
     tables = artifact["tables"]
     if not isinstance(tables, Mapping):
         raise TypeError("artifact tables must be a mapping")

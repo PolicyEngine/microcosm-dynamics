@@ -11,6 +11,7 @@ import pytest
 import populace_dynamics.estimates.preparation as preparation
 from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.estimates import parameters as parameter_module
+from populace_dynamics.estimates.career import BirthSource, DIClass
 from populace_dynamics.estimates.first_report import FirstReportDrawBundle
 from populace_dynamics.estimates.parameters import ReportParameters
 from populace_dynamics.estimates.runner import (
@@ -349,6 +350,74 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     assert prepared.benefit_ledger is benefit
     assert prepared.revenue_ledger is revenue
     assert prepared.birth_timing_sensitivity is birth_timing_sensitivity
+
+
+@pytest.mark.parametrize("shift", [-1, 1])
+def test_shifted_candidate_inclusion_transports_only_age_derived_births(
+    monkeypatch,
+    shift,
+):
+    sources = (
+        BirthSource.INFERRED_PERIOD_AGE,
+        BirthSource.DERIVED_PROJECTION_AGE,
+        BirthSource.EXACT_MARRIAGE,
+        BirthSource.SYNTHETIC_NATIVE,
+        BirthSource.UNRESOLVED,
+    )
+    baseline = SimpleNamespace(
+        births=tuple(
+            SimpleNamespace(
+                person_id=person_id,
+                birth_year=None if source is BirthSource.UNRESOLVED else 1950,
+                source=source,
+            )
+            for person_id, source in enumerate(sources, start=1)
+        ),
+        origins=tuple(
+            SimpleNamespace(person_id=person_id) for person_id in range(1, 6)
+        ),
+    )
+    trajectory = pd.DataFrame(
+        {"person_id": [*range(1, 6), 99], "year": [2015] * 6}
+    )
+    roster = pd.DataFrame({"person_id": [*range(1, 6), 99]})
+    calls = {}
+
+    def include(**kwargs):
+        calls.update(kwargs)
+        return SimpleNamespace(
+            origins=baseline.origins,
+            nonclaimants=(),
+            di_partition=tuple(
+                SimpleNamespace(classification=DIClass.NON_DI)
+                for _ in baseline.origins
+            ),
+        )
+
+    monkeypatch.setattr(preparation, "build_career_inclusion", include)
+
+    result = preparation._shifted_candidate_inclusion(
+        baseline=baseline,
+        shift=shift,
+        trajectory=trajectory,
+        population_roster=roster,
+        observed_earnings=pd.DataFrame(),
+        claiming_schedule=SimpleNamespace(),
+        earnings_domain_ids={1, 2, 3},
+    )
+
+    assert result.origins == baseline.origins
+    assert set(calls["trajectory"]["person_id"]) == set(range(1, 6))
+    assert set(calls["population_roster"]["person_id"]) == set(range(1, 6))
+    assert calls["synthetic_birth_years"] == {}
+    assert calls["stock_imputation_root_seed"] == STOCK_IMPUTATION_ROOT_SEED
+    assert "seed_coordinates" not in calls
+    assert calls["marriage_history"].to_dict("records") == [
+        {"person_id": 1, "birth_year": 1950 + shift},
+        {"person_id": 2, "birth_year": 1950 + shift},
+        {"person_id": 3, "birth_year": 1950},
+        {"person_id": 4, "birth_year": 1950},
+    ]
 
 
 def test_batch_preparation_requires_exact_registered_draw_sequence(
