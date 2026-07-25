@@ -1,0 +1,357 @@
+"""Byte and arithmetic pins for the committed birth-evidence artifact.
+
+These artifact-only tests do not import the reducer or replay its diagnostic
+cache.  The cache and cache-independent recomputation paths are documented in
+the reducer docstring and the artifact execution block.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+ARTIFACT_PATH = ROOT / "runs" / "first_estimates_birth_evidence_draw0.json"
+ARTIFACT_SHA256 = (
+    "92c6319bdeb2b02681a7c6ab700fc8df47b43de703054450040dba053ac309a5"
+)
+CACHE_SHA256 = (
+    "3ba147f7666ad77d8f7735969e4329fa7180cef091ad4ee326f35b2834a72068"
+)
+
+
+def _artifact() -> dict[str, Any]:
+    return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
+
+
+def test_birth_evidence_artifact_byte_schema_and_execution_pin():
+    raw = ARTIFACT_PATH.read_bytes()
+    artifact = json.loads(raw)
+    canonical = (
+        json.dumps(
+            artifact,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode()
+
+    assert raw == canonical
+    assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
+    assert artifact["schema_version"] == "first_estimates_birth_evidence.v2"
+    assert set(artifact) == {
+        "benefit_ledger_sensitivity",
+        "birth_source_law",
+        "candidate_funnel",
+        "common_support_agreement",
+        "execution",
+        "inclusion_sensitivity",
+        "input_identity",
+        "oracle_reconciliation",
+        "revenue_person_year_evidence",
+        "schema_version",
+    }
+
+    execution = artifact["execution"]
+    assert execution["artifact_source"] == "sha256_pinned_diagnostic_pickle"
+    assert execution["data_path"] == "diagnostic_pickle_cache"
+    assert execution["cache"]["sha256"] == CACHE_SHA256
+    assert execution["cache"]["size_bytes"] == 7_133_539_989
+    assert execution["canonical_artifact_command"].endswith(
+        execution["cache"]["path"]
+    )
+    assert execution["cache_independent_regeneration_command"].endswith(
+        "--regenerate"
+    )
+
+
+def test_birth_evidence_artifact_count_tables_reconcile():
+    artifact = _artifact()
+    birth = artifact["birth_source_law"]
+    whole = birth["whole_population"]
+    unresolved = birth["initially_unresolved"]
+
+    assert sum(whole["counts_by_class"].values()) == whole["count"] == 30_482
+    assert (
+        sum(unresolved["corrected_counts_by_class"].values())
+        == unresolved["count"]
+        == 6_392
+    )
+    assert sum(unresolved["age_code_counts"].values()) == unresolved["count"]
+    assert birth["seed_coordinate"]["derived_birth_asserted_bounds"] == [
+        1889,
+        2016,
+    ]
+    assert birth["seed_coordinate"]["derived_birth_observed_range"] == [
+        1914,
+        2016,
+    ]
+    assert birth["seed_coordinate"]["derived_birth_per_row_assertion"] == {
+        "asserted_rows": 4_077,
+        "passed": True,
+        "rule": "seed_year - 125 <= birth_year <= seed_year - 2",
+    }
+
+    candidate_count = artifact["candidate_funnel"]["canonical_candidates"][
+        "count"
+    ]
+    sensitivity = artifact["inclusion_sensitivity"]
+    coherent = artifact["benefit_ledger_sensitivity"][
+        "coherent_shift_stress_scenarios"
+    ]
+    full_scenarios = coherent["full_scenario_ledger"]["scenarios"]
+    expected_included = {
+        "baseline": 1_514,
+        "birth_minus_1": 1_520,
+        "birth_plus_1": 1_240,
+    }
+    for name, scenario in sensitivity["scenarios"].items():
+        counts = scenario["ordered_stage_d_counts"]
+        by_source = scenario["ordered_stage_d_counts_by_birth_source"]
+        assert sum(counts.values()) == candidate_count == 3_083
+        for source_counts in by_source.values():
+            assert sum(source_counts.values()) >= 0
+        for outcome, count in counts.items():
+            assert (
+                sum(
+                    source_counts[outcome]
+                    for source_counts in by_source.values()
+                )
+                == count
+            )
+        assert counts["included"] == expected_included[name]
+        assert (
+            full_scenarios[name]["complete_included_set_count"]
+            == counts["included"]
+        )
+
+    overall = sensitivity["overall_inclusion"]
+    expected_flows = {
+        "birth_minus_1": (16, 10),
+        "birth_plus_1": (5, 279),
+    }
+    baseline_included = expected_included["baseline"]
+    for name, (expected_inbound, expected_outbound) in expected_flows.items():
+        direction = overall["directions"][name]
+        changes = direction["neutral_inclusion_changes"]
+        inbound = changes["inbound_to_included"]["count"]
+        outbound = changes["outbound_from_included"]["count"]
+        assert (inbound, outbound) == (
+            expected_inbound,
+            expected_outbound,
+        )
+        assert inbound + outbound == direction["inclusion_flip_count"]
+        assert (
+            baseline_included + inbound - outbound == expected_included[name]
+        )
+        ledger_changes = full_scenarios[name][
+            "included_set_changes_from_baseline"
+        ]
+        assert ledger_changes["inbound_to_included"] == inbound
+        assert ledger_changes["outbound_from_included"] == outbound
+        assert ledger_changes["reconciled_count"] == expected_included[name]
+
+    predicates = sensitivity["predicates"]
+    for predicate in predicates.values():
+        for direction in predicate["directions"].values():
+            assert (
+                sum(direction["flip_count_by_origin"].values())
+                == direction["flip_count"]
+            )
+            assert (
+                sum(
+                    direction[
+                        "inclusion_changing_flip_count_by_origin"
+                    ].values()
+                )
+                == direction["inclusion_changing_flip_count"]
+            )
+            changes = direction["neutral_inclusion_changes"]
+            assert (
+                changes["inbound_to_included"]["count"]
+                + changes["outbound_from_included"]["count"]
+                == direction["inclusion_changing_flip_count"]
+            )
+    chronology = predicates["chronology"]
+    assert (
+        chronology["directions"]["birth_minus_1"]["neutral_inclusion_changes"][
+            "inbound_to_included"
+        ]["count"]
+        == 16
+    )
+    assert (
+        chronology["directions"]["birth_plus_1"]["neutral_inclusion_changes"][
+            "outbound_from_included"
+        ]["count"]
+        == 278
+    )
+    assert chronology["origin_assertion"] == {
+        "asserted_flip_directions": 600,
+        "assertion": (
+            "Every measured chronology predicate flip is modeled_award."
+        ),
+        "observed_counts_by_origin": {
+            "modeled_award": 600,
+            "opening_backfill": 0,
+        },
+        "passed": True,
+    }
+    assert (
+        predicates["coverage"]["directions"]["birth_plus_1"][
+            "neutral_inclusion_changes"
+        ]["outbound_from_included"]["count"]
+        == 1
+    )
+
+    fixed = coherent["fixed_clause2_cohort"]
+    assert fixed["cohort"]["count"] == 1_440
+    assert fixed["semantics"]["baseline_included_non_clause2_not_priced"] == 74
+    assert fixed["cohort"]["count"] + 74 == baseline_included
+    assert fixed["semantics"]["scenario_inbound_not_priced"] == {
+        "birth_minus_1": 16,
+        "birth_plus_1": 5,
+    }
+    for scenario in fixed["scenarios"].values():
+        assert (
+            scenario["retained_after_inclusion_rerun"]
+            + scenario["excluded_after_inclusion_rerun"]
+            == fixed["cohort"]["count"]
+        )
+
+    baseline_total = full_scenarios["baseline"][
+        "weighted_annualized_benefit_total"
+    ]["amount"]
+    for scenario in full_scenarios.values():
+        annual = scenario["weighted_annualized_benefit_by_year"]
+        total = scenario["weighted_annualized_benefit_total"]
+        assert total["amount"] == pytest.approx(
+            sum(row["amount"] for row in annual.values()),
+            abs=0.001,
+        )
+        assert total["delta_from_baseline"] == pytest.approx(
+            total["amount"] - baseline_total,
+            abs=0.001,
+        )
+        assert total["sum_of_per_year_deltas"] == pytest.approx(
+            sum(row["delta_from_baseline"] for row in annual.values()),
+            abs=0.001,
+        )
+        assert total["person_contribution_sum"] == pytest.approx(
+            total["amount"],
+            abs=0.001,
+        )
+
+    agreement = artifact["common_support_agreement"]
+    assert agreement["common_support_count"] == 4_518
+    endpoint_expectations = {
+        "exact": {
+            "clause2": 2_307,
+            "clause3": 2_299,
+            "cells": (1_916, 391, 383, 1_828),
+            "method": "chi_square_continuity_corrected",
+            "p_value": 0.8013426797762091,
+        },
+        "within_plus_or_minus_1": {
+            "clause2": 4_516,
+            "clause3": 4_508,
+            "cells": (4_507, 9, 1, 1),
+            "method": "exact_two_sided_binomial",
+            "p_value": 0.021484375,
+        },
+    }
+    cell_keys = (
+        "clause2_match__clause3_match",
+        "clause2_match__clause3_mismatch",
+        "clause2_mismatch__clause3_match",
+        "clause2_mismatch__clause3_mismatch",
+    )
+    for name, expected in endpoint_expectations.items():
+        table = agreement["endpoints"][name]
+        cells = table["mcnemar_2x2_cells"]
+        assert tuple(cells[key] for key in cell_keys) == expected["cells"]
+        assert sum(cells.values()) == table["denominator"] == 4_518
+        assert (
+            cells[cell_keys[0]] + cells[cell_keys[1]]
+            == table["clause2_inferred_period_age"]["match_count"]
+            == expected["clause2"]
+        )
+        assert (
+            cells[cell_keys[0]] + cells[cell_keys[2]]
+            == table["clause3_seed_age"]["match_count"]
+            == expected["clause3"]
+        )
+        assert table["discordant_pairs"] == {
+            "clause2_only": cells[cell_keys[1]],
+            "clause3_only": cells[cell_keys[2]],
+        }
+        reported = table["paired_tests"]["reported_test"]
+        assert reported["method_key"] == expected["method"]
+        assert reported["p_value"] == pytest.approx(expected["p_value"])
+
+    anchor_expected = {
+        "2015": (3_645, 1_908, 1_932),
+        "2017": (601, 254, 215),
+        "2019": (272, 145, 152),
+    }
+    anchor_tables = agreement["exact_endpoint_by_anchor_wave"]
+    for wave, (
+        denominator,
+        clause2_count,
+        clause3_count,
+    ) in anchor_expected.items():
+        table = anchor_tables[wave]
+        cells = table["mcnemar_2x2_cells"]
+        assert sum(cells.values()) == table["denominator"] == denominator
+        assert (
+            cells[cell_keys[0]] + cells[cell_keys[1]]
+            == table["clause2_inferred_period_age"]["match_count"]
+            == clause2_count
+        )
+        assert (
+            cells[cell_keys[0]] + cells[cell_keys[2]]
+            == table["clause3_seed_age"]["match_count"]
+            == clause3_count
+        )
+    assert (
+        sum(table["denominator"] for table in anchor_tables.values())
+        == agreement["common_support_count"]
+    )
+    reported_2017 = anchor_tables["2017"]["paired_tests"]["reported_test"]
+    assert reported_2017["method_key"] == "chi_square_continuity_corrected"
+    assert reported_2017["p_value"] == pytest.approx(0.000046206995513884114)
+
+    revenue = artifact["revenue_person_year_evidence"]
+    assert revenue["groups"] == {
+        "combined": {
+            "in_window_rows": 43_044,
+            "people": 6_392,
+            "zero_earnings_rows": 43_044,
+        },
+        "derived_projection_age": {
+            "in_window_rows": 28_978,
+            "people": 4_077,
+            "zero_earnings_rows": 28_978,
+        },
+        "unresolved": {
+            "in_window_rows": 14_066,
+            "people": 2_315,
+            "zero_earnings_rows": 14_066,
+        },
+    }
+    assert revenue["reconciliation"] == {
+        "in_window_rows_sum": 28_978 + 14_066,
+        "passed": True,
+        "people_sum": 4_077 + 2_315,
+        "zero_earnings_rows_sum": 28_978 + 14_066,
+    }
+
+    oracle = artifact["oracle_reconciliation"]
+    assert oracle["matched_rows"] == len(oracle["rows"]) == 37
+    assert all(
+        row["match"] and row["ours"] == row["oracle"] for row in oracle["rows"]
+    )
