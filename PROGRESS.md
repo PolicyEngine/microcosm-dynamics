@@ -2,8 +2,8 @@
 
 ## State
 
-The production fix and all three regressions are implemented and passing.
-Fast-tier and repository-wide style verification remain.
+The implementation, class closer, both fast tiers, formatting, and lint are
+green. Final source-guard verification and publication remain.
 
 ## Done
 
@@ -23,7 +23,14 @@ Fast-tier and repository-wide style verification remain.
 - Verified the class closer reaches the preparation sentinel without an
   incident or compute in 4.58 seconds.
 - Updated the artifact-tier inventory from 1,304 to 1,307.
+- Verified the complete unit tier: 824 passed and 5 skipped.
+- Verified the complete artifact tier: 1,267 passed and 40 skipped.
+- Verified Black leaves all 487 Python files unchanged and Ruff is clean
+  repository-wide.
+- Removed generated ignored bytecode from `src/` and `scripts/`; both sealed
+  code roots now contain zero ignored files.
 
 ## Next
 
-- Run the fast suites, Black, and Ruff; then publish the non-draft PR.
+- Run both production source guards on the clean committed tree.
+- Remove this lane progress file, push, and open the requested non-draft PR.
