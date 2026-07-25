@@ -43,6 +43,10 @@ BIRTH_TIMING_SENSITIVITY_LABEL = (
 )
 BIRTH_TIMING_SENSITIVITY_SEMANTICS = {
     "interpretation": "Stress scenarios, not bounds.",
+    "included_set": (
+        "Each scenario prices its complete production Stage-D-included set; "
+        "inbound and outbound changes are both reflected."
+    ),
     "scenario_display_labels": {
         "baseline": "baseline",
         "birth_minus_1": "births−1",
@@ -1842,6 +1846,10 @@ def _validate_career_diagnostics(
     )
     grid: set[tuple[int, int | str]] = set()
     observed_counts = {draw: 0 for draw in expected_draw_indices}
+    observed_sources = {
+        draw: {source: 0 for source in _BIRTH_SOURCE_KEYS}
+        for draw in expected_draw_indices
+    }
     for index, row in enumerate(records):
         _require_exact_keys(
             row,
@@ -1869,6 +1877,7 @@ def _validate_career_diagnostics(
             raise ValueError("career diagnostic has an unknown claim origin")
         if row["birth_source"] not in _BIRTH_SOURCE_KEYS:
             raise ValueError("career diagnostic has an unknown birth source")
+        observed_sources[draw][row["birth_source"]] += 1
         for boolean_key in (
             "birth_year_inferred",
             "top35_reaches_pre_1968",
@@ -1953,6 +1962,24 @@ def _validate_career_diagnostics(
             raise ValueError(
                 "career diagnostics do not match included claimant counts"
             )
+        for source in _BIRTH_SOURCE_KEYS:
+            expected_source_count = count_rows[draw][
+                f"included_birth_source__{source}__unweighted"
+            ]
+            if (
+                expected_source_count is None
+                or not expected_source_count.is_integer()
+                or expected_source_count < 0
+            ):
+                raise ValueError(
+                    "included birth-source unweighted count must be a "
+                    "nonnegative integer"
+                )
+            if observed_sources[draw][source] != int(expected_source_count):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "birth-source counts"
+                )
 
 
 def _validate_count_invariants(

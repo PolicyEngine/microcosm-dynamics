@@ -594,6 +594,10 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
         "birth_minus_1": "births−1",
         "birth_plus_1": "births+1",
     }
+    assert sensitivity["semantics"]["included_set"] == (
+        "Each scenario prices its complete production Stage-D-included set; "
+        "inbound and outbound changes are both reflected."
+    )
     assert (
         sensitivity["semantics"]["personwise_range_display_label"]
         == "adversarial per-person range"

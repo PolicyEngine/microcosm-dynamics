@@ -28,6 +28,17 @@
 - Added tests for both seed aborts and integer-like holdout normalization.
 - Career/preparation focused suite: `41 passed in 0.98s`.
 - Tier-policy collection check after this step: `1 passed, 3649 deselected`.
+- Publication validation now reconciles every draw's unweighted career rows
+  by birth source against the included-source count surface.
+- Added the referee's exact source-forgery regression and literal,
+  test-owned 66-key count and 19-key sensitivity inventories.
+- Made the one-claimant publication fixture internally coherent and removed
+  its contradictory all-zero acceptance branch.
+- Published the evidence artifact's exact complete-scenario pricing sentence
+  under the evidence-matching `included_set` semantics key.
+- Publication/first-report focused suite: `31 passed in 1.02s`.
+- Black check and Ruff pass for the publication step; tier-policy collection
+  check: `1 passed, 3650 deselected`.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.

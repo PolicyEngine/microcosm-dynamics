@@ -13,6 +13,162 @@ import pytest
 from populace_dynamics.estimates import publication, runner
 from populace_dynamics.estimates.career import BirthSource
 
+_FROZEN_BIRTH_SOURCES = (
+    "exact_marriage",
+    "inferred_period_age",
+    "derived_projection_age",
+    "synthetic_native",
+    "unresolved",
+)
+_FROZEN_COUNT_METRICS = frozenset(
+    {
+        "birth_source__derived_projection_age__unweighted",
+        "birth_source__derived_projection_age__weighted",
+        "birth_source__exact_marriage__unweighted",
+        "birth_source__exact_marriage__weighted",
+        "birth_source__inferred_period_age__unweighted",
+        "birth_source__inferred_period_age__weighted",
+        "birth_source__synthetic_native__unweighted",
+        "birth_source__synthetic_native__weighted",
+        "birth_source__unresolved__unweighted",
+        "birth_source__unresolved__weighted",
+        "entrant__explicit_2016_2018_row_entrant__unweighted",
+        "entrant__explicit_2016_2018_row_entrant__weighted",
+        "included_birth_source__derived_projection_age__unweighted",
+        "included_birth_source__derived_projection_age__weighted",
+        "included_birth_source__exact_marriage__unweighted",
+        "included_birth_source__exact_marriage__weighted",
+        "included_birth_source__inferred_period_age__unweighted",
+        "included_birth_source__inferred_period_age__weighted",
+        "included_birth_source__synthetic_native__unweighted",
+        "included_birth_source__synthetic_native__weighted",
+        "included_birth_source__unresolved__unweighted",
+        "included_birth_source__unresolved__weighted",
+        "included_origin__modeled_award__unweighted",
+        "included_origin__modeled_award__weighted",
+        "included_origin__opening_backfill__unweighted",
+        "included_origin__opening_backfill__weighted",
+        "inclusion__drawn_never_claimed__unweighted",
+        "inclusion__drawn_never_claimed__weighted",
+        "inclusion__excluded_birth_year_unresolved__unweighted",
+        "inclusion__excluded_birth_year_unresolved__weighted",
+        "inclusion__excluded_chronology_inconsistent__unweighted",
+        "inclusion__excluded_chronology_inconsistent__weighted",
+        "inclusion__excluded_di_conversion__unweighted",
+        "inclusion__excluded_di_conversion__weighted",
+        "inclusion__excluded_di_unknown__unweighted",
+        "inclusion__excluded_di_unknown__weighted",
+        "inclusion__excluded_domain_incomplete__unweighted",
+        "inclusion__excluded_domain_incomplete__weighted",
+        "inclusion__excluded_empty_span__unweighted",
+        "inclusion__excluded_empty_span__weighted",
+        "inclusion__excluded_low_coverage__unweighted",
+        "inclusion__excluded_low_coverage__weighted",
+        "inclusion__excluded_pre1979_eligibility__unweighted",
+        "inclusion__excluded_pre1979_eligibility__weighted",
+        "inclusion__included__unweighted",
+        "inclusion__included__weighted",
+        "inclusion__never_drawn__unweighted",
+        "inclusion__never_drawn__weighted",
+        "inclusion__nonclaimant__unweighted",
+        "inclusion__nonclaimant__weighted",
+        "inclusion__origin_modeled_award__unweighted",
+        "inclusion__origin_modeled_award__weighted",
+        "inclusion__origin_opening_backfill__unweighted",
+        "inclusion__origin_opening_backfill__weighted",
+        "opening_stock_snap__included_opening_backfill__unweighted",
+        "opening_stock_snap__included_opening_backfill__weighted",
+        "opening_stock_snap__lower_endpoint__denominator_weight",
+        "opening_stock_snap__lower_endpoint__numerator_weight",
+        "opening_stock_snap__lower_endpoint__unweighted",
+        "opening_stock_snap__lower_endpoint__weighted",
+        "opening_stock_snap__lower_endpoint__weighted_share",
+        "opening_stock_snap__upper_endpoint__denominator_weight",
+        "opening_stock_snap__upper_endpoint__numerator_weight",
+        "opening_stock_snap__upper_endpoint__unweighted",
+        "opening_stock_snap__upper_endpoint__weighted",
+        "opening_stock_snap__upper_endpoint__weighted_share",
+    }
+)
+_FROZEN_BIRTH_TIMING_METRICS = frozenset(
+    {
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "baseline__complete_included_set_count"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "baseline__weighted_annualized_benefit_total__amount"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "baseline__weighted_annualized_benefit_total__delta_from_baseline"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__baseline__"
+            "weighted_annualized_benefit_total__delta_share_of_baseline"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_minus_1__complete_included_set_count"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_minus_1__weighted_annualized_benefit_total__amount"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_minus_1__weighted_annualized_benefit_total__"
+            "delta_from_baseline"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_minus_1__weighted_annualized_benefit_total__"
+            "delta_share_of_baseline"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_plus_1__complete_included_set_count"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_plus_1__weighted_annualized_benefit_total__amount"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_plus_1__weighted_annualized_benefit_total__"
+            "delta_from_baseline"
+        ),
+        (
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "birth_plus_1__weighted_annualized_benefit_total__"
+            "delta_share_of_baseline"
+        ),
+        (
+            "personwise_adversarial_range__baseline_reference__"
+            "full_scenario_ledger_total"
+        ),
+        (
+            "personwise_adversarial_range__baseline_reference__"
+            "person_contribution_sum"
+        ),
+        (
+            "personwise_adversarial_range__baseline_reference__"
+            "person_minus_annual_reconciliation_residual"
+        ),
+        "personwise_adversarial_range__maximum__amount",
+        (
+            "personwise_adversarial_range__maximum__"
+            "delta_from_baseline_person_contribution_sum"
+        ),
+        "personwise_adversarial_range__minimum__amount",
+        (
+            "personwise_adversarial_range__minimum__"
+            "delta_from_baseline_person_contribution_sum"
+        ),
+    }
+)
+
 
 def _configuration() -> dict:
     return runner.registered_configuration_echo(
@@ -123,7 +279,7 @@ def _benefit_table(origin: str) -> dict:
     for draw_index in range(20):
         for year in range(2015, 2023):
             awarded = origin == "modeled_award" and year == 2015
-            beneficiary = year <= 2016
+            beneficiary = origin == "modeled_award" and year <= 2016
             per_draw.append(
                 {
                     "draw_index": draw_index,
@@ -145,7 +301,7 @@ def _benefit_table(origin: str) -> dict:
     for draw_index in range(20):
         for end_year in (2016, 2018, 2020, 2022):
             awarded = origin == "modeled_award" and end_year == 2016
-            beneficiary = end_year == 2016
+            beneficiary = origin == "modeled_award" and end_year == 2016
             per_draw_biennial.append(
                 {
                     "row_basis": "per_draw",
@@ -161,7 +317,7 @@ def _benefit_table(origin: str) -> dict:
                     "unweighted_beneficiary_count": 2 * int(beneficiary),
                     "weighted_beneficiary_count": 2.0 * beneficiary,
                     "frame_annualized_benefit": (
-                        2_400.0 + draw_index if beneficiary else 0.0
+                        2_400.0 + 2.0 * draw_index if beneficiary else 0.0
                     ),
                     "odd_year_carry_disclosure": (
                         publication.ODD_YEAR_CARRY_DISCLOSURE
@@ -287,7 +443,7 @@ def _wide_aggregate(rows: list[dict]) -> list[dict]:
 
 
 def _birth_timing_row(draw_index: int) -> dict:
-    baseline_amount = 4_800.0 + 4.0 * draw_index
+    baseline_amount = 2_400.0 + 2.0 * draw_index
     scenario_amounts = {
         "baseline": baseline_amount,
         "birth_minus_1": baseline_amount - 100.0,
@@ -387,7 +543,7 @@ def _artifact(sidecar: bytes | None = None) -> dict:
                         if metric in one_count_metrics
                         else (0 if metric.endswith("__unweighted") else 0.0)
                     )
-                    for metric in publication._COUNT_METRICS
+                    for metric in _FROZEN_COUNT_METRICS
                 },
             }
         )
@@ -562,13 +718,8 @@ def test__artifact_validator__pins_amendment_2_birth_contract():
     )
 
     birth_sources = tuple(source.value for source in BirthSource)
-    assert birth_sources == (
-        "exact_marriage",
-        "inferred_period_age",
-        "derived_projection_age",
-        "synthetic_native",
-        "unresolved",
-    )
+    assert birth_sources == _FROZEN_BIRTH_SOURCES
+    assert publication._COUNT_METRICS == _FROZEN_COUNT_METRICS
     count_row = artifact["counts"]["per_draw"][0]
     for category in ("birth_source", "included_birth_source"):
         expected = {
@@ -613,8 +764,9 @@ def test__artifact_validator__pins_amendment_2_birth_contract():
         "birth_plus_1",
     }
     assert {row["metric"] for row in sensitivity["aggregate"]} == set(
-        publication._BIRTH_TIMING_METRICS
+        _FROZEN_BIRTH_TIMING_METRICS
     )
+    assert publication._BIRTH_TIMING_METRICS == _FROZEN_BIRTH_TIMING_METRICS
     assert all(
         row["n_draws"] == 20 and row["n_observations"] == 20
         for row in sensitivity["aggregate"]
@@ -755,6 +907,29 @@ def test__artifact_validator__reconciles_c5_and_included_birth_sources():
         birth_year_inferred=False,
     )
     with pytest.raises(ValueError, match="unresolved"):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+        )
+
+
+def test__artifact_validator__rejects_referee_birth_source_forgery():
+    artifact = _artifact()
+    for count_row in artifact["counts"]["per_draw"]:
+        for category in ("birth_source", "included_birth_source"):
+            for measure, value in (("unweighted", 1), ("weighted", 1.0)):
+                count_row[f"{category}__exact_marriage__{measure}"] = 0
+                count_row[f"{category}__derived_projection_age__{measure}"] = (
+                    value
+                )
+    artifact["counts"]["aggregate"] = _wide_aggregate(
+        artifact["counts"]["per_draw"]
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="included claimant birth-source counts",
+    ):
         publication.validate_first_estimates_artifact(
             artifact,
             expected_configuration_echo=_configuration(),
@@ -1027,31 +1202,6 @@ def test__artifact_validator__binds_career_rows_to_included_counts():
             artifact,
             expected_configuration_echo=_configuration(),
         )
-
-    artifact = _artifact()
-    for row in artifact["counts"]["per_draw"]:
-        for metric in set(row) - {"draw_index"}:
-            row[metric] = 0
-    for row in artifact["counts"]["aggregate"]:
-        row.update(
-            n_draws=20,
-            n_observations=20,
-            mean=0.0,
-            sample_sd=0.0,
-        )
-    artifact["diagnostics"]["included_career_per_draw"] = []
-    sensitivity = artifact["diagnostics"]["birth_timing_sensitivity"]
-    for row in sensitivity["per_draw"]:
-        row["coherent_shift_stress_scenarios"]["full_scenario_ledger"][
-            "scenarios"
-        ]["baseline"]["complete_included_set_count"] = 0
-    sensitivity["aggregate"] = _wide_aggregate(
-        [_birth_timing_values(row) for row in sensitivity["per_draw"]]
-    )
-    publication.validate_first_estimates_artifact(
-        artifact,
-        expected_configuration_echo=_configuration(),
-    )
 
 
 @pytest.mark.parametrize(
