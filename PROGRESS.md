@@ -102,6 +102,17 @@
 - Repeated the prior integration-tier attempt: `169 passed, 3 skipped`,
   then the known order-dependent `populace.fit` import assertion failed.
   The affected module passes alone: `13 passed in 3.92s`.
+- An independent final audit found that the cheap replay test exercised only
+  clause-3 birth derivation, not the reducer's production-preparation replay
+  boundary.
+- Added a separate replay-mode regression that calls
+  `_run_implementation_replay`, proves real
+  `_prepare_first_report_draw_for_test` execution, and matches six literal
+  rows from a small committed pipeline fixture: derived/unresolved `0 / 0`,
+  candidates `8`, and included sets `3 / 2 / 3`.
+- The corrected replay regression passes in `0.88s`; its Black and Ruff checks
+  pass. Updated the artifact tier inventory from 1,323 to 1,324 tests; tier
+  policy passes with `1 passed, 3654 deselected in 1.32s`.
 - Confirmed PR #303 remains open and GitHub currently reports it mergeable;
   its remote head remains `efa5e662d60d885c654419871b002987dc2f3ac5`.
 - Verified all 21 local commit subjects, `git fsck --no-dangling`,
