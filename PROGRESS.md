@@ -5,7 +5,7 @@
 Clause 3, Stage C.5, the production artifact/publication path, and the
 advisory birth-completeness preflight are implemented. Draw 0 reproduces every
 supplied amendment oracle, all audit findings are resolved, and verification
-is complete. Only report assembly remains.
+is complete. The final report is written to the requested output file.
 
 ## Done
 
@@ -82,7 +82,10 @@ is complete. Only report assembly remains.
 - Re-ran the final unit tier: 847 passed, 5 skipped.
 - Re-ran the final committed advisory preflight over registered sources:
   status pass; 29,792/29,792 dispositions and zero clause-3 violations.
+- Wrote `FINAL_REPORT.md` with the diff, commands/output, signature rationale,
+  referee-facing ambiguities, and sandbox limitations; kept it untracked under
+  the no-scaffolding instruction.
 
 ## Next
 
-- Write the final report output file.
+- None.
