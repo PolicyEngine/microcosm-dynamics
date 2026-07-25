@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import fcntl
+import importlib.util
 import inspect
 import json
 import os
+import sys
 from dataclasses import asdict, replace
 from pathlib import Path
 from types import SimpleNamespace
@@ -75,7 +77,7 @@ def _operations(
     captured: dict,
     *,
     failure_phase: str | None = None,
-    failure: Exception | None = None,
+    failure: BaseException | None = None,
     provenance: dict | None = None,
     sidecar_payload: bytes | None = None,
 ) -> coordinator._CoordinatorOperations:
@@ -441,9 +443,13 @@ def test__coordinator__revalidates_frozen_identity_before_publication(
 def test__coordinator__revalidates_input_sources_before_publication(tmp_path):
     root = _repository(tmp_path)
     operations = _operations([], {})
+    checks = 0
 
     def drifted(_root):
-        raise RuntimeError("registered input source drift")
+        nonlocal checks
+        checks += 1
+        if checks == 2:
+            raise RuntimeError("registered input source drift")
 
     result = _run(
         root,
@@ -453,6 +459,7 @@ def test__coordinator__revalidates_input_sources_before_publication(tmp_path):
     assert result.status == "incident"
     assert result.phase == "publication"
     assert result.reason == "publication_abort"
+    assert checks == 2
     assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
 
 
@@ -487,31 +494,205 @@ def test__coordinator__production_surface_has_no_injected_bundle_or_output():
             coordinator.run_registered_first_estimates
         ).parameters
     ) == {
-        "repository_root",
         "registration_reference",
-        "registered_configuration_bytes",
+        "registered_configuration_path",
         "retry_after_incident",
     }
     with pytest.raises(TypeError, match="precompute token"):
         publication.write_first_estimates_artifact({}, {})
 
 
-def test__coordinator__rejects_invalid_registration_before_ceremony(tmp_path):
+def test__coordinator__invalid_registration_publishes_incident(tmp_path):
     root = _repository(tmp_path)
     calls: list[str] = []
     invalid = publication.canonical_json_bytes(
         {"registration_reference": REGISTRATION}
     )
 
-    with pytest.raises(ValueError, match="projection block"):
-        _run(
-            root,
-            _operations(calls, {}),
-            configuration_bytes=invalid,
+    result = _run(
+        root,
+        _operations(calls, {}),
+        configuration_bytes=invalid,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_abort"
+    record = json.loads(result.path.read_text())
+    assert record["configuration_echo"] == json.loads(invalid)
+    assert calls == []
+    assert list((root / "runs").iterdir()) == [result.path]
+
+
+def test__coordinator__malformed_json_publishes_bootstrap_incident(tmp_path):
+    root = _repository(tmp_path)
+    result = _run(
+        root,
+        _operations([], {}),
+        configuration_bytes=b"{not-json",
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    record = json.loads(result.path.read_text())
+    assert record["registration_reference"] == REGISTRATION
+    assert record["configuration_echo"] == {
+        "registration_reference": REGISTRATION
+    }
+
+
+def test__production_path__malformed_bytes_incident_keeps_claim(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(b"{not-json")
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    claim = root / "runs" / "first_estimates_attempt.claim"
+    assert claim.is_file()
+    assert json.loads(claim.read_text())["registration_reference"] == (
+        REGISTRATION
+    )
+
+
+def test__production_path__empty_registration_reference_is_incident_accounted(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference="",
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    record = json.loads(result.path.read_text())
+    assert record["registration_reference"] == ""
+    assert record["configuration_echo"] == {"registration_reference": ""}
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+
+
+def test__coordinator__changed_registered_byte_publishes_incident(tmp_path):
+    root = _repository(tmp_path)
+    configuration = json.loads(_configuration_bytes())
+    configuration["projection"]["root_seeds"][0] += 1
+    changed = publication.canonical_json_bytes(configuration)
+
+    result = _run(
+        root,
+        _operations([], {}),
+        configuration_bytes=changed,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_abort"
+    assert json.loads(result.path.read_text())["configuration_echo"] == (
+        configuration
+    )
+    corrected = _run(root, _operations([], {}))
+    assert corrected.reason == (
+        "preparation_fresh_registration_required_configuration_drift"
+    )
+
+
+def test__coordinator__noncanonical_same_json_bytes_publish_incident(tmp_path):
+    root = _repository(tmp_path)
+    noncanonical = _configuration_bytes().removesuffix(b"\n")
+
+    result = _run(
+        root,
+        _operations([], {}),
+        configuration_bytes=noncanonical,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_abort"
+    record = json.loads(result.path.read_text())
+    assert record["configuration_echo"] == json.loads(_configuration_bytes())
+
+
+def test__coordinator__cross_root_configuration_path_is_refused(tmp_path):
+    root = _repository(tmp_path)
+    outside = tmp_path / "outside" / "registration.json"
+    outside.parent.mkdir()
+    outside.write_bytes(_configuration_bytes())
+
+    result = coordinator._run_registered_first_estimates_from_path_for_test(
+        repository_root=root,
+        registration_reference=REGISTRATION,
+        registered_configuration_path=outside,
+        retry_after_incident=None,
+        operations=_operations([], {}),
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == (
+        "preparation_cross_root_registered_configuration_refused"
+    )
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+
+def test__production_path__in_root_symlink_to_external_config_is_refused(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    outside = tmp_path / "outside-registration.json"
+    outside.write_bytes(_configuration_bytes())
+    linked = root / "registration.json"
+    linked.symlink_to(outside)
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=linked,
+    )
+
+    assert result.status == "incident"
+    assert result.reason == (
+        "preparation_cross_root_registered_configuration_refused"
+    )
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+    assert not list(outside.parent.glob("first_estimates_incident_*.json"))
+
+
+def test__sealed_runs__symlink_refuses_lock_claim_and_outside_writes(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "repo"
+    root.mkdir()
+    outside_runs = tmp_path / "outside-runs"
+    outside_runs.mkdir()
+    (root / "runs").symlink_to(outside_runs, target_is_directory=True)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+
+    with pytest.raises(coordinator._CeremonyAbort) as caught:
+        coordinator.run_registered_first_estimates(
+            registration_reference=REGISTRATION,
+            registered_configuration_path=configuration_path,
         )
 
-    assert calls == []
-    assert list((root / "runs").iterdir()) == []
+    assert caught.value.reason == "preparation_cross_root_runs_refused"
+    assert list(outside_runs.iterdir()) == []
 
 
 def test__registered_input_factory__binds_committed_file_and_exact_type(
@@ -582,6 +763,58 @@ def test__registered_input_factory__binds_imported_dependency_chain(
         coordinator._assert_registered_input_sources(root)
 
 
+def test__estimator_surface__binds_every_module_to_committed_head(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "repo"
+    relative = Path("src/populace_dynamics/estimates/coordinator.py")
+    path = root / relative
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"committed coordinator\n")
+    monkeypatch.setattr(
+        coordinator,
+        "_ESTIMATOR_SURFACE_SOURCES",
+        (relative,),
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_git_bytes",
+        lambda *_args: b"committed coordinator\n",
+    )
+
+    coordinator._assert_estimator_surface_sources(root)
+    path.write_bytes(b"changed coordinator\n")
+    with pytest.raises(RuntimeError, match="estimator.*committed HEAD"):
+        coordinator._assert_estimator_surface_sources(root)
+
+
+def test__estimator_surface__pins_complete_module_tuple():
+    expected = (
+        Path("src/populace_dynamics/estimates/__init__.py"),
+        Path("src/populace_dynamics/estimates/career.py"),
+        Path("src/populace_dynamics/estimates/coordinator.py"),
+        Path("src/populace_dynamics/estimates/first_report.py"),
+        Path("src/populace_dynamics/estimates/ledgers.py"),
+        Path("src/populace_dynamics/estimates/parameters.py"),
+        Path("src/populace_dynamics/estimates/preparation.py"),
+        Path("src/populace_dynamics/estimates/publication.py"),
+        Path("src/populace_dynamics/estimates/runner.py"),
+    )
+    root = Path(__file__).parents[2]
+    observed = tuple(
+        sorted(
+            path.relative_to(root)
+            for path in (
+                root / "src" / "populace_dynamics" / "estimates"
+            ).glob("*.py")
+        )
+    )
+
+    assert coordinator._ESTIMATOR_SURFACE_SOURCES == expected
+    assert observed == expected
+
+
 def test__registered_input_factory__pins_complete_production_source_chain():
     expected = (
         Path("scripts/registered_m6_candidate3_inputs.py"),
@@ -592,6 +825,10 @@ def test__registered_input_factory__pins_complete_production_source_chain():
 
     assert coordinator._INPUT_FACTORY_SOURCES == expected
     coordinator._assert_registered_input_sources(Path(__file__).parents[2])
+
+
+def test__sealed_root__comes_from_imported_estimates_package():
+    assert coordinator._sealed_repository_root() == Path(__file__).parents[2]
 
 
 def test__ceremony_lock__is_exclusive_and_creates_no_state_file(tmp_path):
@@ -646,18 +883,202 @@ def test__production_entry__holds_lock_for_complete_coordinator_call(
 
     monkeypatch.setattr(
         coordinator,
-        "_run_registered_first_estimates_for_test",
+        "_sealed_repository_root",
+        lambda: root,
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_create_attempt_claim",
+        lambda observed_root, registration: events.append(
+            f"claim:{observed_root}:{registration}"
+        ),
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_run_registered_first_estimates_from_path_for_test",
         run,
     )
 
     observed = coordinator.run_registered_first_estimates(
-        repository_root=root,
         registration_reference=REGISTRATION,
-        registered_configuration_bytes=_configuration_bytes(),
+        registered_configuration_path=root / "registration.json",
     )
 
     assert observed == expected
-    assert events == [f"root:{root.resolve()}", "lock", "run", "unlock"]
+    assert events == [
+        f"root:{root.resolve()}",
+        "lock",
+        f"claim:{root}:{REGISTRATION}",
+        "run",
+        "unlock",
+    ]
+
+
+def test__cli__passes_raw_path_and_has_no_root_override(
+    tmp_path,
+    monkeypatch,
+    capsys,
+):
+    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    spec = importlib.util.spec_from_file_location(
+        "_test_run_first_estimates_cli",
+        script,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    raw_path = tmp_path / "not-read-by-cli.json"
+    captured: dict = {}
+    parse_arguments = module._arguments
+    monkeypatch.setattr(
+        module,
+        "_arguments",
+        lambda: SimpleNamespace(
+            registration_reference=REGISTRATION,
+            registered_configuration=raw_path,
+            retry_after_incident=None,
+        ),
+    )
+
+    def run(**kwargs):
+        captured.update(kwargs)
+        return coordinator.CoordinatorResult(
+            status="published",
+            path=tmp_path / "runs" / "first_estimates_v1.json",
+            phase="publication",
+            reason=None,
+        )
+
+    monkeypatch.setattr(module, "run_registered_first_estimates", run)
+    assert module.main() == 0
+    assert captured == {
+        "registration_reference": REGISTRATION,
+        "registered_configuration_path": raw_path,
+        "retry_after_incident": None,
+    }
+    assert not raw_path.exists()
+    capsys.readouterr()
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            script.name,
+            "--registration-reference",
+            REGISTRATION,
+            "--registered-configuration",
+            str(raw_path),
+            "--repository-root",
+            str(tmp_path),
+        ],
+    )
+    with pytest.raises(SystemExit):
+        parse_arguments()
+    assert (
+        "unrecognized arguments: --repository-root" in capsys.readouterr().err
+    )
+
+
+def test__attempt_claim__is_durable_and_blocks_same_registration(tmp_path):
+    root = _repository(tmp_path)
+    path = coordinator._create_attempt_claim(root, REGISTRATION)
+    original = path.read_bytes()
+
+    assert path == root / "runs" / "first_estimates_attempt.claim"
+    assert json.loads(original) == {
+        "schema_version": "first_estimates_attempt.v1",
+        "registration_reference": REGISTRATION,
+    }
+    with pytest.raises(
+        coordinator._CeremonyAbort,
+        match="fresh-registration adjudication",
+    ) as same:
+        coordinator._create_attempt_claim(root, REGISTRATION)
+    assert same.value.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    with pytest.raises(
+        coordinator._CeremonyAbort,
+        match="fresh-registration adjudication",
+    ) as fresh:
+        coordinator._create_attempt_claim(
+            root,
+            "issue-42-comment-7654321",
+        )
+    assert fresh.value.reason == same.value.reason
+    assert path.read_bytes() == original
+
+
+def test__production_path__successful_publication_keeps_claim(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations([], {}),
+    )
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "published"
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+    assert result.path.is_file()
+
+
+def test__production_path__keyboard_interrupt_incident_keeps_claim(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations(
+            [],
+            {},
+            failure_phase="compute",
+            failure=KeyboardInterrupt(),
+        ),
+    )
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "compute"
+    assert result.reason == "compute_abort"
+    record = json.loads(result.path.read_text())
+    assert "KeyboardInterrupt" in record["reason_detail"]
+    claim = root / "runs" / "first_estimates_attempt.claim"
+    assert claim.is_file()
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+    with pytest.raises(coordinator._CeremonyAbort) as blocked:
+        coordinator.run_registered_first_estimates(
+            registration_reference=REGISTRATION,
+            registered_configuration_path=configuration_path,
+            retry_after_incident=1,
+        )
+    assert blocked.value.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    assert sorted((root / "runs").glob("first_estimates_incident_*.json")) == [
+        result.path
+    ]
+    assert claim.is_file()
 
 
 def test__default_operations__classify_external_parameter_dependency(

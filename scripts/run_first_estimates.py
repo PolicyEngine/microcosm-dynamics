@@ -10,8 +10,6 @@ from populace_dynamics.estimates.coordinator import (
     run_registered_first_estimates,
 )
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-
 
 def _arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -32,12 +30,6 @@ def _arguments() -> argparse.Namespace:
         help="File containing the exact canonical registered JSON bytes.",
     )
     parser.add_argument(
-        "--repository-root",
-        type=Path,
-        default=REPOSITORY_ROOT,
-        help=argparse.SUPPRESS,
-    )
-    parser.add_argument(
         "--retry-after-incident",
         type=int,
         help="Explicit sole retry-eligible incident index.",
@@ -48,11 +40,8 @@ def _arguments() -> argparse.Namespace:
 def main() -> int:
     args = _arguments()
     result = run_registered_first_estimates(
-        repository_root=args.repository_root,
         registration_reference=args.registration_reference,
-        registered_configuration_bytes=(
-            args.registered_configuration.read_bytes()
-        ),
+        registered_configuration_path=args.registered_configuration,
         retry_after_incident=args.retry_after_incident,
     )
     print(
