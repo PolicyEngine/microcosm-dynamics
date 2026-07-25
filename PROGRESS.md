@@ -2,8 +2,8 @@
 
 ## State
 
-The production scripts-path fix, focused unit regressions, and sealed-process
-class closer are implemented. Full execution and tier verification remain.
+The production fix and all three regressions are implemented and passing.
+Fast-tier and repository-wide style verification remain.
 
 ## Done
 
@@ -20,9 +20,10 @@ class closer are implemented. Full execution and tier verification remain.
   as a no-op and the sealed regression replaces with an uncaught sentinel.
 - Added a detached clean-worktree fixture and temporary-venv subprocess test
   using the actual `-I -B -X pycache_prefix=...` interpreter contract.
+- Verified the class closer reaches the preparation sentinel without an
+  incident or compute in 4.58 seconds.
+- Updated the artifact-tier inventory from 1,304 to 1,307.
 
 ## Next
 
-- Execute the committed sealed-worktree regression.
-- Update the tier inventory for the three new tests.
 - Run the fast suites, Black, and Ruff; then publish the non-draft PR.
