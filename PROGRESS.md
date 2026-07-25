@@ -2,9 +2,10 @@
 
 ## State
 
-Clause 3, Stage C.5, and the production artifact/publication path are
-implemented. Draw 0 reproduces every supplied amendment oracle; the advisory
-preflight and final verification remain.
+Clause 3, Stage C.5, the production artifact/publication path, and the
+advisory birth-completeness preflight are implemented. Draw 0 reproduces every
+supplied amendment oracle; final tier and sealed-preparation verification
+remain.
 
 ## Done
 
@@ -40,8 +41,15 @@ preflight and final verification remain.
 - Ran the pinned fast-pickle draw-0 path. All supplied population, candidate,
   source, exclusion, inclusion, scenario-total, and personwise-range oracle
   values matched exactly.
+- Added the advisory, pre-registration birth-completeness preflight. It loads
+  registered inputs, materializes seed frames without fit or projection, audits
+  total five-class dispositions over every holdout person, and independently
+  checks clause-3 coordinates and bounds.
+- Added six focused preflight tests; the preflight/career suite passed 34 tests.
+- Ran the advisory tool over the registered sources: 29,792 dispositions,
+  4,077 clause-3 derivations, 2,315 unresolved, and zero missing, duplicate,
+  invalid, or bounds-violating records.
 
 ## Next
 
-- Review and commit the advisory registered-input preflight.
 - Run focused, sealed-preparation, tier-policy, and feasible real-data checks.
