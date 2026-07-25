@@ -1336,7 +1336,8 @@ def test__cli__unsealed_launcher_reexecs_with_exact_seal(
 
 
 def test__sealed_interpreter__misses_crafted_scripts_cache(tmp_path):
-    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    repository = Path(__file__).parents[2]
+    script = repository / "scripts" / "run_first_estimates.py"
     scripts = tmp_path / "repo" / "scripts"
     scripts.mkdir(parents=True)
     source = scripts / "seal_probe.py"
@@ -1381,10 +1382,16 @@ def test__sealed_interpreter__misses_crafted_scripts_cache(tmp_path):
             "launcher = importlib.util.module_from_spec(spec)",
             "spec.loader.exec_module(launcher)",
             "sealed = launcher._sealed_pycache_sentinel()",
+            f"sys.path.insert(0, {str(repository / 'src')!r})",
+            "from populace_dynamics.estimates import "
+            "coordinator as sealed_coordinator",
+            "sealed_coordinator._assert_sealed_interpreter()",
             f"sys.path.insert(0, {str(scripts)!r})",
             "import seal_probe",
             "print(json.dumps({",
             "    'cached': seal_probe.__spec__.cached,",
+            "    'coordinator_cached': sealed_coordinator.__spec__.cached,",
+            "    'coordinator_origin': sealed_coordinator.__spec__.origin,",
             "    'isolated': sys.flags.isolated,",
             "    'no_bytecode': sys.flags.dont_write_bytecode,",
             "    'origin': seal_probe.__spec__.origin,",
@@ -1416,6 +1423,10 @@ def test__sealed_interpreter__misses_crafted_scripts_cache(tmp_path):
     assert observed["no_bytecode"] == 1
     assert observed["prefix"] == str(sentinel)
     assert observed["sealed"] == str(sentinel)
+    assert observed["coordinator_origin"] == str(
+        repository / "src/populace_dynamics/estimates/coordinator.py"
+    )
+    assert Path(observed["coordinator_cached"]).is_relative_to(sentinel)
     assert observed["origin"] == str(source)
     assert Path(observed["cached"]).is_relative_to(sentinel)
     assert observed["value"] == "source-loaded"

@@ -6,7 +6,7 @@
 - Review anchor: `0c12e85`
 - Latest review/adjudication: round-6 FIX-FIRST with two confirmed items
 - Local implementation: in progress
-- Verification: seal-focused checks pass
+- Verification: complete
 - Push state: pending
 - Final report: pending
 
@@ -31,7 +31,19 @@
   construction, leaving the 4,096-byte claim cap unchanged but unreachable.
 - Added multibyte boundary assertions at exactly 1,024 and 1,025 bytes; the
   largest valid reference produces a 1,097-byte attempt claim.
+- Verified all 56 coordinator tests, including sealed acceptance from the
+  worktree-local coordinator source.
+- Verified the full focused first-estimates scope: 180 passed.
+- Recounted the enforced tiers: unit 829, artifact 1,295, integration 804,
+  reproduction 520, and oracle 159; full collection is 3,607 tests.
+- Verified the executable tiers: unit 824 passed and 5 skipped; artifact 1,255
+  passed and 40 skipped. The tier-policy assertion passes.
+- Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
+- Removed generated executable caches under `src` and `scripts`; the ignored
+  executable inventory is empty.
 
 ## Next
 
-1. Run focused and tiered verification, update counts, and push if DNS allows.
+1. Commit the verification ledger and tier recount.
+2. Re-run the production source guards on the committed-clean tree.
+3. Push `sol/entry8-impl` if DNS allows and write the final response.
