@@ -34,6 +34,9 @@ from populace_dynamics.estimates.ledgers import (
     aggregate_benefit_draws,
     aggregate_revenue_draws,
 )
+from populace_dynamics.estimates.parameters import (
+    RUNTIME_PROVENANCE_SCHEMA_VERSION,
+)
 from populace_dynamics.estimates.publication import (
     ARTIFACT_SCHEMA_VERSION,
     CANONICAL_EXECUTION_RULE,
@@ -566,6 +569,7 @@ def build_first_estimates_artifact(
     *,
     configuration_echo: Mapping[str, Any],
     environment_sidecar_sha256: str,
+    runtime_provenance: Mapping[str, Any] | None = None,
     prior_incidents: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Assemble and validate the immutable post-compute report object."""
@@ -581,6 +585,13 @@ def build_first_estimates_artifact(
     parameters = configuration_echo.get("parameters")
     if not isinstance(parameters, Mapping):
         raise ValueError("configuration has no parameter provenance")
+    if runtime_provenance is None:
+        runtime_provenance = {
+            "schema_version": RUNTIME_PROVENANCE_SCHEMA_VERSION,
+            "parameters": {},
+        }
+    if not isinstance(runtime_provenance, Mapping):
+        raise TypeError("runtime_provenance must be a mapping")
 
     draws = _ordered_draws(bundles, configuration_echo)
     benefit_aggregate = aggregate_benefit_draws(
@@ -605,6 +616,7 @@ def build_first_estimates_artifact(
             }
         },
         "parameters": copy.deepcopy(dict(parameters)),
+        "runtime_provenance": copy.deepcopy(dict(runtime_provenance)),
         "execution": {
             "canonical_rule": copy.deepcopy(CANONICAL_EXECUTION_RULE),
             "completed_draw_indices": list(DRAW_INDICES),
@@ -668,6 +680,7 @@ def build_first_estimates_artifact(
     validate_first_estimates_artifact(
         artifact,
         expected_configuration_echo=configuration_echo,
+        expected_runtime_provenance=runtime_provenance,
         expected_prior_incidents=prior_incidents,
     )
     return artifact

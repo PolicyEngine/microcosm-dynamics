@@ -993,6 +993,7 @@ def _run_registered_first_estimates_for_test(
         precompute = publication._freeze_precompute(
             registration,
             expected_configuration_echo=expected_configuration,
+            runtime_provenance=parameters.runtime_provenance,
             sidecar_payload=sidecar_payload,
             prior_incidents=history.paths,
         )
@@ -1036,6 +1037,7 @@ def _run_registered_first_estimates_for_test(
         artifact = operations.build_artifact(
             prepared,
             configuration_echo=expected_configuration,
+            runtime_provenance=publication._runtime_provenance(precompute),
             environment_sidecar_sha256=precompute._sidecar_sha256,
             prior_incidents=precompute._prior_incidents,
         )

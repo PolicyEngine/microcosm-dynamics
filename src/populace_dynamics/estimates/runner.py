@@ -9,9 +9,10 @@ performing a projection.
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 from populace_dynamics.engine.loop import ProjectionResult
@@ -135,6 +136,7 @@ def registered_configuration_echo(
         or not registration_reference
     ):
         raise ValueError("registration_reference must be a nonempty string")
+    _assert_registered_parameter_bundle_is_stable(parameter_bundle)
     return {
         "registration_reference": registration_reference,
         "design": {
@@ -166,8 +168,45 @@ def registered_configuration_echo(
             "namespace": "first_estimates.opening_stock.person.v1",
             "person_keyed": True,
         },
-        "parameters": dict(parameter_bundle),
+        "parameters": copy.deepcopy(dict(parameter_bundle)),
     }
+
+
+def _assert_registered_parameter_bundle_is_stable(
+    parameter_bundle: Mapping[str, Any],
+) -> None:
+    """Exclude run-time identity from the byte-compared parameter record."""
+
+    def walk(value: Any, path: tuple[str, ...]) -> None:
+        if isinstance(value, Mapping):
+            for key, nested in value.items():
+                if not isinstance(key, str):
+                    raise ValueError(
+                        "registered parameter keys must be JSON strings"
+                    )
+                if key in {"git_revision", "path", "root"}:
+                    location = ".".join((*path, key))
+                    raise ValueError(
+                        f"run-time parameter identity {location} is not "
+                        "registerable"
+                    )
+                walk(nested, (*path, key))
+            return
+        if isinstance(value, (list, tuple)):
+            for index, nested in enumerate(value):
+                walk(nested, (*path, str(index)))
+            return
+        if isinstance(value, str) and (
+            Path(value).is_absolute() or PureWindowsPath(value).is_absolute()
+        ):
+            location = ".".join(path)
+            raise ValueError(
+                f"absolute run-time path at {location} is not registerable"
+            )
+
+    if not isinstance(parameter_bundle, Mapping):
+        raise TypeError("parameter_bundle must be a mapping")
+    walk(parameter_bundle, ("parameters",))
 
 
 def validate_registered_configuration_echo(

@@ -434,6 +434,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
     observed = preparation._build_prepared_first_estimates_artifact(
         prepared,
         configuration_echo=configuration,
+        runtime_provenance=parameters.runtime_provenance,
         environment_sidecar_sha256="a" * 64,
     )
 
@@ -441,6 +442,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
     assert tuple(bundle.draw_index for bundle in calls[0][0]) == DRAW_INDICES
     assert calls[0][1] == {
         "configuration_echo": configuration,
+        "runtime_provenance": parameters.runtime_provenance,
         "environment_sidecar_sha256": "a" * 64,
         "prior_incidents": (),
     }
@@ -455,6 +457,18 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
         preparation._build_prepared_first_estimates_artifact(
             prepared,
             configuration_echo=mismatched_configuration,
+            runtime_provenance=parameters.runtime_provenance,
+            environment_sidecar_sha256="a" * 64,
+        )
+    mismatched_runtime = {
+        **parameters.runtime_provenance,
+        "parameters": {"policyengine_us": {"git_revision": "later"}},
+    }
+    with pytest.raises(ValueError, match="run-time parameter provenance"):
+        preparation._build_prepared_first_estimates_artifact(
+            prepared,
+            configuration_echo=configuration,
+            runtime_provenance=mismatched_runtime,
             environment_sidecar_sha256="a" * 64,
         )
     assert len(calls) == 1

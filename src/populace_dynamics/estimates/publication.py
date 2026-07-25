@@ -17,11 +17,14 @@ from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from numbers import Integral, Real
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 from populace_dynamics import artifacts
 from populace_dynamics.contract import ContractRef, environment_block
+from populace_dynamics.estimates.parameters import (
+    RUNTIME_PROVENANCE_SCHEMA_VERSION,
+)
 
 ARTIFACT_SCHEMA_VERSION = "first_estimates.v1"
 INCIDENT_SCHEMA_VERSION = "first_estimates_incident.v1"
@@ -287,6 +290,7 @@ _ARTIFACT_KEYS = frozenset(
         "configuration_echo",
         "integrity",
         "parameters",
+        "runtime_provenance",
         "execution",
         "tables",
         "counts",
@@ -496,9 +500,10 @@ class _RegisteredConfigurationToken:
 
 @dataclass(frozen=True)
 class _PrecomputeToken:
-    """Opaque configuration, sidecar, and history frozen before compute."""
+    """Opaque pre-compute identity frozen before projection begins."""
 
     _registration: _RegisteredConfigurationToken
+    _runtime_provenance_bytes: bytes
     _sidecar_payload: bytes
     _sidecar_sha256: str
     _prior_incidents: tuple[str, ...]
@@ -542,6 +547,13 @@ def _configuration_echo(
     value = json.loads(registration._configuration_bytes)
     if not isinstance(value, Mapping):  # guarded when the token is created
         raise AssertionError("registered configuration token is not a mapping")
+    return value
+
+
+def _runtime_provenance(token: _PrecomputeToken) -> Mapping[str, Any]:
+    value = json.loads(token._runtime_provenance_bytes)
+    if not isinstance(value, Mapping):  # guarded when the token is created
+        raise AssertionError("run-time provenance token is not a mapping")
     return value
 
 
@@ -602,6 +614,7 @@ def _freeze_precompute(
     registration: _RegisteredConfigurationToken,
     *,
     expected_configuration_echo: Mapping[str, Any],
+    runtime_provenance: Mapping[str, Any],
     sidecar_payload: bytes,
     prior_incidents: Sequence[str],
 ) -> _PrecomputeToken:
@@ -614,6 +627,7 @@ def _freeze_precompute(
         raise ValueError(
             "resolved configuration differs from the exact registered bytes"
         )
+    _validate_runtime_provenance(runtime_provenance)
     expected_sidecar = {
         "environment": environment_block(),
         "contract": asdict(ContractRef.current(registration._repository_root)),
@@ -625,6 +639,7 @@ def _freeze_precompute(
     paths = _validate_prior_incident_paths(prior_incidents)
     return _PrecomputeToken(
         _registration=registration,
+        _runtime_provenance_bytes=canonical_json_bytes(runtime_provenance),
         _sidecar_payload=bytes(sidecar_payload),
         _sidecar_sha256=hashlib.sha256(sidecar_payload).hexdigest(),
         _prior_incidents=paths,
@@ -1521,6 +1536,7 @@ def validate_first_estimates_artifact(
     artifact: Mapping[str, Any],
     *,
     expected_configuration_echo: Mapping[str, Any],
+    expected_runtime_provenance: Mapping[str, Any] | None = None,
     expected_prior_incidents: Sequence[str] = (),
 ) -> None:
     """Validate the complete publication object before its one-shot write."""
@@ -1530,6 +1546,15 @@ def validate_first_estimates_artifact(
     if artifact["configuration_echo"] != expected_configuration_echo:
         raise ValueError(
             "configuration_echo differs from the pre-compute configuration"
+        )
+    runtime_provenance = artifact["runtime_provenance"]
+    _validate_runtime_provenance(runtime_provenance)
+    if (
+        expected_runtime_provenance is not None
+        and runtime_provenance != expected_runtime_provenance
+    ):
+        raise ValueError(
+            "runtime_provenance differs from the pre-compute run-time identity"
         )
     identity = artifact["identity"]
     if not isinstance(identity, Mapping):
@@ -1692,12 +1717,64 @@ def validate_first_estimates_artifact(
     canonical_json_bytes(artifact)
 
 
+def _validate_runtime_provenance(provenance: Any) -> None:
+    """Validate the separately labeled, non-registered run-time identity."""
+
+    if not isinstance(provenance, Mapping):
+        raise TypeError("artifact runtime_provenance must be a mapping")
+    _require_exact_keys(
+        provenance,
+        frozenset({"schema_version", "parameters"}),
+        "artifact runtime_provenance",
+    )
+    if provenance["schema_version"] != RUNTIME_PROVENANCE_SCHEMA_VERSION:
+        raise ValueError("artifact run-time provenance schema changed")
+    parameters = provenance["parameters"]
+    if not isinstance(parameters, Mapping):
+        raise TypeError("run-time parameter provenance must be a mapping")
+
+    def walk(value: Any, trail: tuple[str, ...]) -> None:
+        if isinstance(value, Mapping):
+            for key, nested in value.items():
+                if not isinstance(key, str):
+                    raise TypeError(
+                        "run-time provenance keys must be JSON strings"
+                    )
+                location = (*trail, key)
+                if key == "git_revision" and (
+                    not isinstance(nested, str) or not nested
+                ):
+                    raise ValueError(
+                        "run-time parameter git_revision must be nonempty"
+                    )
+                if key in {"path", "root", "ssa_parameter_directory"}:
+                    if not isinstance(nested, str) or not (
+                        Path(nested).is_absolute()
+                        or PureWindowsPath(nested).is_absolute()
+                    ):
+                        dotted = ".".join(location)
+                        raise ValueError(
+                            f"run-time parameter path {dotted} "
+                            "must be absolute"
+                        )
+                walk(nested, location)
+            return
+        if isinstance(value, (list, tuple)):
+            for index, nested in enumerate(value):
+                walk(nested, (*trail, str(index)))
+
+    walk(parameters, ("parameters",))
+    _require_json_finite(provenance)
+    canonical_json_bytes(provenance)
+
+
 def _write_first_estimates_artifact_for_test(
     *,
     repository_root: str | Path,
     artifact: Mapping[str, Any],
     expected_configuration_echo: Mapping[str, Any],
     sidecar_payload: bytes,
+    expected_runtime_provenance: Mapping[str, Any] | None = None,
     expected_prior_incidents: Sequence[str] = (),
 ) -> None:
     """Validate and exclusively write the integrity-bound report pair."""
@@ -1722,6 +1799,7 @@ def _write_first_estimates_artifact_for_test(
     validate_first_estimates_artifact(
         artifact,
         expected_configuration_echo=expected_configuration_echo,
+        expected_runtime_provenance=expected_runtime_provenance,
         expected_prior_incidents=expected_prior_incidents,
     )
     artifacts.write_new(
@@ -1743,10 +1821,12 @@ def write_first_estimates_artifact(
         )
     root = token._registration._repository_root
     configuration = _configuration_echo(token)
+    runtime_provenance = _runtime_provenance(token)
     _write_first_estimates_artifact_for_test(
         repository_root=root,
         artifact=artifact,
         expected_configuration_echo=configuration,
+        expected_runtime_provenance=runtime_provenance,
         sidecar_payload=token._sidecar_payload,
         expected_prior_incidents=token._prior_incidents,
     )

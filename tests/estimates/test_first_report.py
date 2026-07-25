@@ -468,6 +468,10 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
     assert artifact["tables"]["revenue"]["unit_label"].endswith(
         "labor-income proxy"
     )
+    assert artifact["runtime_provenance"] == {
+        "schema_version": "first_estimates.runtime_provenance.v1",
+        "parameters": {},
+    }
     assert artifact["counts"]["entrant_diagnostic"] == {
         "source_income_years": [2016, 2018],
         "may_overlap_inclusion_classes": True,
