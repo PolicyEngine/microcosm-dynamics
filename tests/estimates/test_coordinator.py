@@ -869,6 +869,94 @@ def test__estimator_surface__binds_every_module_to_committed_head(
         coordinator._assert_estimator_surface_sources(root)
 
 
+def test__git_helpers__scrub_environment_and_route_to_explicit_root(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "sealed"
+    root.mkdir()
+    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    spec = importlib.util.spec_from_file_location(
+        "_test_run_first_estimates_git_helper",
+        script,
+    )
+    assert spec is not None and spec.loader is not None
+    launcher = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(launcher)
+    observed: list[tuple[list[str], dict]] = []
+
+    def run(command, **kwargs):
+        observed.append((command, kwargs))
+        return SimpleNamespace(stdout=b"fixture\n")
+
+    for name, value in {
+        "GIT_DIR": str(tmp_path / "redirect.git"),
+        "GIT_WORK_TREE": str(tmp_path / "redirect-worktree"),
+        "GIT_INDEX_FILE": str(tmp_path / "redirect.index"),
+        "GIT_COMMON_DIR": str(tmp_path / "redirect-common"),
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "status.showUntrackedFiles",
+        "GIT_CONFIG_VALUE_0": "no",
+    }.items():
+        monkeypatch.setenv(name, value)
+    monkeypatch.setenv("ROUND8_NON_GIT_SENTINEL", "preserved")
+    monkeypatch.setattr(subprocess, "run", run)
+
+    assert coordinator._git_bytes(root, "status") == b"fixture\n"
+    assert launcher._git_bytes(root, "status") == b"fixture\n"
+
+    expected_command = [
+        "git",
+        "-C",
+        str(root),
+        f"--git-dir={root / '.git'}",
+        "status",
+    ]
+    assert len(observed) == 2
+    for command, kwargs in observed:
+        assert command == expected_command
+        assert kwargs["check"] is True
+        assert kwargs["capture_output"] is True
+        assert "cwd" not in kwargs
+        assert kwargs["env"]["ROUND8_NON_GIT_SENTINEL"] == "preserved"
+        assert not any(name.startswith("GIT_") for name in kwargs["env"])
+    assert os.environ["GIT_DIR"] == str(tmp_path / "redirect.git")
+
+
+def test__repository_guards__refuse_mismatched_git_toplevel_before_status(
+    tmp_path,
+    monkeypatch,
+):
+    root = tmp_path / "sealed"
+    other = tmp_path / "other"
+    root.mkdir()
+    other.mkdir()
+    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    spec = importlib.util.spec_from_file_location(
+        "_test_run_first_estimates_git_root",
+        script,
+    )
+    assert spec is not None and spec.loader is not None
+    launcher = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(launcher)
+
+    monkeypatch.setattr(
+        coordinator,
+        "_git_bytes",
+        lambda *_args: f"{other}\n".encode(),
+    )
+    monkeypatch.setattr(
+        launcher,
+        "_git_bytes",
+        lambda *_args: f"{other}\n".encode(),
+    )
+
+    with pytest.raises(RuntimeError, match="differs from the Git checkout"):
+        coordinator._assert_no_repository_drift(root)
+    with pytest.raises(RuntimeError, match="differs from the Git checkout"):
+        launcher._assert_pre_import_repository_guard(root)
+
+
 @pytest.mark.parametrize("staged", [False, True], ids=["worktree", "index"])
 def test__production_path__tracked_drift_anywhere_is_preparation_incident(
     tmp_path,
@@ -1498,10 +1586,14 @@ def _pre_import_guard_repository(tmp_path: Path) -> tuple[Path, Path]:
 def _run_pre_import_shadow_probe(
     repository: Path,
     sentinel: Path,
+    *,
+    environment_overrides: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     sentinel.mkdir()
     environment = os.environ.copy()
     environment[coordinator._PYCACHE_SENTINEL_ENV] = str(sentinel)
+    if environment_overrides:
+        environment.update(environment_overrides)
     return subprocess.run(
         [
             sys.executable,
@@ -1520,6 +1612,29 @@ def _run_pre_import_shadow_probe(
         text=True,
         env=environment,
     )
+
+
+def _assert_pre_import_procedural_refusal(
+    repository: Path,
+    import_marker: Path,
+    completed: subprocess.CompletedProcess[str],
+    sentinel: Path,
+    *,
+    reason_detail: str,
+) -> None:
+    assert completed.returncode == 1
+    assert completed.stdout == ""
+    assert json.loads(completed.stderr) == {
+        "path": None,
+        "phase": "preparation",
+        "reason": "preparation_pre_import_repository_guard_refused",
+        "reason_detail": reason_detail,
+        "status": "procedural_refusal",
+    }
+    assert completed.stderr.count("\n") == 1
+    assert not import_marker.exists()
+    assert not (repository / "runs").exists()
+    assert not any(sentinel.iterdir())
 
 
 def _assert_pre_import_shadow_refusal(
@@ -1562,28 +1677,23 @@ def _assert_pre_import_shadow_refusal(
         shadow.relative_to(repository).as_posix().encode(),
         b"",
     ]
-    assert completed.returncode == 1
-    assert completed.stdout == ""
-    assert json.loads(completed.stderr) == {
-        "path": None,
-        "phase": "preparation",
-        "reason": "preparation_pre_import_repository_guard_refused",
-        "reason_detail": (
+    _assert_pre_import_procedural_refusal(
+        repository,
+        import_marker,
+        completed,
+        sentinel,
+        reason_detail=(
             "registered first estimates requires sealed code roots without "
             "ignored executable artifacts"
         ),
-        "status": "procedural_refusal",
-    }
-    assert completed.stderr.count("\n") == 1
-    assert not import_marker.exists()
-    assert not (repository / "runs").exists()
-    assert not any(sentinel.iterdir())
+    )
 
 
-def test__sealed_launcher__refuses_coordinator_abi_shadow_pre_import(
+def test__sealed_launcher__refuses_abi_shadow_despite_git_dir_redirection(
     tmp_path,
 ):
     repository, import_marker = _pre_import_guard_repository(tmp_path)
+    redirect, _ = _pre_import_guard_repository(tmp_path / "redirect")
     suffix = importlib.machinery.EXTENSION_SUFFIXES[0]
     shadow = (
         repository
@@ -1594,8 +1704,30 @@ def test__sealed_launcher__refuses_coordinator_abi_shadow_pre_import(
     )
     shadow.write_bytes(b"ignored extension shadow must never be loaded\n")
     sentinel = tmp_path / "extension-shadow-sentinel"
+    redirected_environment = {
+        "GIT_DIR": str(redirect / ".git"),
+        "GIT_WORK_TREE": str(redirect),
+        "GIT_INDEX_FILE": str(redirect / ".git" / "index"),
+    }
+    redirected_status = subprocess.run(
+        [
+            "git",
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+        env={**os.environ, **redirected_environment},
+    )
+    assert redirected_status.stdout == b""
 
-    completed = _run_pre_import_shadow_probe(repository, sentinel)
+    completed = _run_pre_import_shadow_probe(
+        repository,
+        sentinel,
+        environment_overrides=redirected_environment,
+    )
 
     _assert_pre_import_shadow_refusal(
         repository,
@@ -1639,19 +1771,156 @@ def test__sealed_launcher__refuses_direct_sourceless_stdlib_shadow_pre_import(
     assert not shadow_marker.exists()
 
 
+def test__sealed_launcher__refuses_assume_unchanged_tracked_edit_pre_import(
+    tmp_path,
+):
+    repository, import_marker = _pre_import_guard_repository(tmp_path)
+    relative = Path("src/populace_dynamics/estimates/coordinator.py")
+    tracked = repository / relative
+    subprocess.run(
+        [
+            "git",
+            "update-index",
+            "--assume-unchanged",
+            "--",
+            relative.as_posix(),
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    tracked.write_text(
+        "raise RuntimeError('assume-unchanged coordinator executed')\n"
+    )
+    status = subprocess.run(
+        [
+            "git",
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    flags = subprocess.run(
+        ["git", "ls-files", "-v", "-z", "--", relative.as_posix()],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    assert status.stdout == b""
+    assert flags.stdout == b"h " + os.fsencode(relative) + b"\0"
+    sentinel = tmp_path / "assume-unchanged-sentinel"
+
+    completed = _run_pre_import_shadow_probe(repository, sentinel)
+
+    _assert_pre_import_procedural_refusal(
+        repository,
+        import_marker,
+        completed,
+        sentinel,
+        reason_detail=(
+            "registered first estimates requires tracked files without "
+            "assume-unchanged or skip-worktree flags"
+        ),
+    )
+
+
+def test__coordinator_recheck__refuses_dirty_root_despite_git_dir_redirection(
+    tmp_path,
+    monkeypatch,
+):
+    repository, _ = _pre_import_guard_repository(tmp_path)
+    redirect, _ = _pre_import_guard_repository(tmp_path / "redirect")
+    tracked = repository / "src/populace_dynamics/estimates/coordinator.py"
+    tracked.write_text("drift hidden by redirected Git state\n")
+    monkeypatch.setenv("GIT_DIR", str(redirect / ".git"))
+    monkeypatch.setenv("GIT_WORK_TREE", str(redirect))
+    redirected_status = subprocess.run(
+        [
+            "git",
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    assert redirected_status.stdout == b""
+
+    with pytest.raises(RuntimeError, match="entirely clean"):
+        coordinator._assert_no_repository_drift(repository)
+
+
+@pytest.mark.parametrize(
+    ("index_option", "expected_tag"),
+    [
+        ("--assume-unchanged", b"h "),
+        ("--skip-worktree", b"S "),
+    ],
+    ids=["assume-unchanged", "skip-worktree"],
+)
+def test__coordinator_recheck__refuses_hidden_tracked_edit(
+    tmp_path,
+    index_option,
+    expected_tag,
+):
+    repository, _ = _pre_import_guard_repository(tmp_path)
+    relative = Path("src/populace_dynamics/estimates/coordinator.py")
+    tracked = repository / relative
+    subprocess.run(
+        ["git", "update-index", index_option, "--", relative.as_posix()],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    tracked.write_text("tracked drift hidden by index flag\n")
+    status = subprocess.run(
+        [
+            "git",
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    flags = subprocess.run(
+        ["git", "ls-files", "-v", "-z", "--", relative.as_posix()],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    assert status.stdout == b""
+    assert flags.stdout == expected_tag + os.fsencode(relative) + b"\0"
+
+    with pytest.raises(
+        RuntimeError, match="assume-unchanged or skip-worktree"
+    ):
+        coordinator._assert_no_repository_drift(repository)
+
+
 def test__cli__passes_raw_path_and_has_no_root_override(
     tmp_path,
     monkeypatch,
     capsys,
 ):
-    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    repository, _ = _pre_import_guard_repository(tmp_path)
+    live_script = (
+        Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    )
+    script = repository / "scripts" / "run_first_estimates.py"
     spec = importlib.util.spec_from_file_location(
         "_test_run_first_estimates_cli",
-        script,
+        live_script,
     )
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "__file__", str(script))
     raw_path = tmp_path / "not-read-by-cli.json"
     captured: dict = {}
     parse_arguments = module._arguments

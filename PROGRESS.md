@@ -5,8 +5,8 @@
 - Branch: `sol/entry8-impl`
 - Starting tip: `8172e7c`
 - Review/adjudication: read and reconciled
-- Implementation: Git guards hardened; regressions pending
-- Verification: pending
+- Implementation: complete
+- Verification: focused guard tests pass; full suites pending
 - Push: pending
 - Final report: this file
 
@@ -29,10 +29,31 @@
   uppercase `S` tag that Git uses for skip-worktree alone.
 - Confirmed the explicit Git route accepts this linked worktree's `.git`
   gitfile and both hardened helpers accept its ordinary index flags.
+- Added an exact subprocess contract test proving both helpers use explicit
+  root/git-dir arguments, preserve non-Git environment, omit `cwd`, and pass
+  no `GIT_*` variable to Git.
+- Added root-mismatch coverage for both the launcher guard and coordinator
+  recheck.
+- Strengthened the ABI-shadow sealed-process regression with a real clean-repo
+  `GIT_DIR`/`GIT_WORK_TREE`/`GIT_INDEX_FILE` redirection attempt; the sealed
+  repository is still refused before import.
+- Added a sealed-process regression proving an assume-unchanged tracked
+  coordinator edit is absent from porcelain status but refused before import.
+- Added coordinator recheck regressions for redirected Git state,
+  assume-unchanged (`h`), and skip-worktree (`S`) tracked edits.
+- Moved the CLI success test's guard target to the established committed
+  temporary-repository fixture while continuing to load the live launcher
+  code, so ordinary pytest cache minting cannot affect the guarded root.
+- Audited every launcher test: only the repaired CLI success test previously
+  ran the full guard against the live checkout; the two intentional live Git
+  tests perform read-only `show`/`rev-parse` queries, not cleanliness guards.
+- Verified all 64 coordinator tests pass and re-ran the repaired CLI success
+  test under ordinary pytest settings.
+- Recounted 3,615 tests: unit 829, artifact 1,303, integration 804,
+  reproduction 520, and oracle 159.
 
 ## Next
 
-1. Add the Git-routing and hidden-index regressions.
-2. Fix the CLI success test and finish the live-guard test audit.
-3. Run the full local fast suites and repository quality checks.
-4. Update this final report, commit every coherent step, and push if DNS allows.
+1. Run the focused scope and full unit/artifact fast suites.
+2. Run repository-wide formatting, lint, diff, and clean production guards.
+3. Update this final report, commit every coherent step, and push if DNS allows.
