@@ -6,10 +6,16 @@
 - Referee verdict read in full.
 - PR #304 merged as `f771b49e5a38aa25cd676f2a37b7683c964a3f2d`
   while verification was running, activating the revision-10.1 path.
-- Direct fetch is temporarily DNS-blocked. The branch is rebased onto local
+- The implementation and requested verification are complete.
+- Exact-master synchronization and push are externally blocked: every direct
+  fetch fails with `Could not resolve host: github.com`, while the connected
+  GitHub API does not expose the signed Git object needed to import the merge
+  commit locally.
+- The branch is therefore rebased onto local
   PR-head `c38dcb7`, whose tree is byte-identical to the merged master tree
   `5c8a10a164ae7c5bdb802e7ee257475099518a80`; exact-master ancestry remains
-  required before push.
+  required before push. This is a content-equivalent temporary base, not an
+  exact rebase onto `origin/master`.
 
 ## Done
 
@@ -95,14 +101,21 @@
 - Repeated the prior integration-tier attempt: `169 passed, 3 skipped`,
   then the known order-dependent `populace.fit` import assertion failed.
   The affected module passes alone: `13 passed in 3.92s`.
+- Confirmed PR #303 remains open and GitHub currently reports it mergeable;
+  its remote head remains `efa5e662d60d885c654419871b002987dc2f3ac5`.
+- Verified all 21 local commit subjects, `git fsck --no-dangling`,
+  `git diff --check`, and a clean tracked worktree.
+- Retried `git fetch origin master` after all implementation and verification
+  work; it still failed at DNS resolution.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
-- Preserved the pre-existing untracked `FINAL_REPORT.md`.
 
 ## Next
 
-- Replace the content-identical temporary base with exact fetched
-  `origin/master` ancestry once DNS is available.
-- Reconfirm commit messages and repository integrity after the exact rebase.
-- Finalize this ledger and report, commit each coherent step, and push
-  `sol/entry8-birth-impl`.
+- From a network-enabled environment, fetch `origin/master`, replace
+  `c38dcb7` with exact `f771b49` ancestry, and advance
+  `REVIEWED_IMPLEMENTATION_COMMIT` to the rewritten production-source commit.
+- Rerun the draw-0 replay plus focused/static checks, commit the pin and final
+  ledger update, then push the rebased `sol/entry8-birth-impl` branch (using
+  lease protection because the required rebase rewrites the existing PR
+  branch).
