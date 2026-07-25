@@ -313,7 +313,7 @@ _INCIDENT_FILENAME = re.compile(r"first_estimates_incident_([1-9]\d*)\.json")
 _UTC_TIMESTAMP = re.compile(
     r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}" r"(?:\.\d{1,6})?Z"
 )
-_REGISTRATION_REFERENCE_MAX_CHARACTERS = 1024
+_REGISTRATION_REFERENCE_MAX_BYTES = 1024
 _REGISTERED_DRAW_INDICES = tuple(range(20))
 _REPORT_YEARS = tuple(range(2015, 2023))
 _BIENNIAL_END_YEARS = (2016, 2018, 2020, 2022)
@@ -517,6 +517,22 @@ def canonical_json_bytes(value: Any) -> bytes:
     ).encode("utf-8")
 
 
+def _validate_registration_reference_byte_bound(
+    registration_reference: str,
+) -> None:
+    """Bound the complete canonical JSON string representation in bytes."""
+    if not isinstance(registration_reference, str):
+        raise TypeError("registration_reference must be a string")
+    if (
+        len(canonical_json_bytes(registration_reference))
+        > _REGISTRATION_REFERENCE_MAX_BYTES
+    ):
+        raise ValueError(
+            "registration_reference must serialize to at most "
+            f"{_REGISTRATION_REFERENCE_MAX_BYTES:,} canonical JSON bytes"
+        )
+
+
 def _configuration_echo(
     token: _RegisteredConfigurationToken | _PrecomputeToken,
 ) -> Mapping[str, Any]:
@@ -553,11 +569,7 @@ def _parse_registered_configuration(
         or not registration_reference
     ):
         raise ValueError("registration_reference must be a nonempty string")
-    if len(registration_reference) > _REGISTRATION_REFERENCE_MAX_CHARACTERS:
-        raise ValueError(
-            "registration_reference must contain at most "
-            f"{_REGISTRATION_REFERENCE_MAX_CHARACTERS} characters"
-        )
+    _validate_registration_reference_byte_bound(registration_reference)
     if configuration.get("registration_reference") != registration_reference:
         raise ValueError(
             "registration reference differs from the registered configuration"

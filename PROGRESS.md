@@ -25,9 +25,13 @@
   tests; all 56 coordinator tests pass.
 - Restated the sealed invocation in the launcher procedure and future
   registration text.
+- Replaced the character limit with a shared 1,024-byte bound over the
+  canonical serialized registration-reference string.
+- Applied the byte validator before both attempt- and retry-claim payload
+  construction, leaving the 4,096-byte claim cap unchanged but unreachable.
+- Added multibyte boundary assertions at exactly 1,024 and 1,025 bytes; the
+  largest valid reference produces a 1,097-byte attempt claim.
 
 ## Next
 
-1. Convert the registration-reference limit to canonical serialized bytes and
-   add exact multibyte boundary coverage.
-2. Run focused and tiered verification, update counts, and push if DNS allows.
+1. Run focused and tiered verification, update counts, and push if DNS allows.

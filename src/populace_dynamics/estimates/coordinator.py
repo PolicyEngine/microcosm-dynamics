@@ -457,6 +457,9 @@ def _path_within_root(
 
 
 def _attempt_claim_payload(registration_reference: str) -> bytes:
+    publication._validate_registration_reference_byte_bound(
+        registration_reference
+    )
     return publication.canonical_json_bytes(
         {
             "schema_version": _ATTEMPT_CLAIM_SCHEMA,
@@ -595,6 +598,9 @@ def _retry_claim_payload(
     registration_reference: str,
     retry_after_incident: int,
 ) -> bytes:
+    publication._validate_registration_reference_byte_bound(
+        registration_reference
+    )
     return publication.canonical_json_bytes(
         {
             "schema_version": _RETRY_CLAIM_SCHEMA,

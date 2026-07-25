@@ -593,8 +593,19 @@ def test__production_path__registration_reference_length_boundary(
     tmp_path,
     monkeypatch,
 ):
-    maximum = "r" * publication._REGISTRATION_REFERENCE_MAX_CHARACTERS
+    maximum = "😀" * 85 + "r"
     overlong = maximum + "r"
+    assert (
+        len(publication.canonical_json_bytes(maximum))
+        == publication._REGISTRATION_REFERENCE_MAX_BYTES
+        == 1024
+    )
+    assert len(publication.canonical_json_bytes(overlong)) == 1025
+    assert len(maximum) == 86
+    assert len(maximum.encode("utf-8")) == 341
+    with pytest.raises(ValueError, match="1,024 canonical JSON bytes"):
+        coordinator._attempt_claim_payload(overlong)
+
     overlong_root = _repository(tmp_path / "overlong")
     overlong_configuration = overlong_root / "registration.json"
     overlong_configuration.write_bytes(
@@ -618,6 +629,9 @@ def test__production_path__registration_reference_length_boundary(
     assert refused.phase == "preparation"
     assert refused.reason == "preparation_abort"
     assert calls == []
+    assert not (
+        overlong_root / "runs" / "first_estimates_attempt.claim"
+    ).exists()
     assert not (overlong_root / publication.DEFAULT_ARTIFACT_PATH).exists()
 
     maximum_root = _repository(tmp_path / "maximum")
@@ -640,7 +654,9 @@ def test__production_path__registration_reference_length_boundary(
     claim_bytes = claim.read_bytes()
     assert published.status == "published"
     assert json.loads(claim_bytes)["registration_reference"] == maximum
-    assert len(claim_bytes) <= coordinator._ATTEMPT_CLAIM_MAX_BYTES == 4096
+    assert (
+        len(claim_bytes) == 1097 < coordinator._ATTEMPT_CLAIM_MAX_BYTES == 4096
+    )
 
 
 def test__coordinator__changed_registered_byte_publishes_incident(tmp_path):
