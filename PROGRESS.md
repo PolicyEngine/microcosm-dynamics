@@ -10,7 +10,8 @@
 - Exact-master synchronization and push are externally blocked: every direct
   fetch fails with `Could not resolve host: github.com`, while the connected
   GitHub API does not expose the signed Git object needed to import the merge
-  commit locally.
+  commit locally. The installed `gh` client also reports that its active
+  `MaxGhenis` credential is invalid.
 - The branch is therefore rebased onto local
   PR-head `c38dcb7`, whose tree is byte-identical to the merged master tree
   `5c8a10a164ae7c5bdb802e7ee257475099518a80`; exact-master ancestry remains
@@ -107,6 +108,9 @@
   `git diff --check`, and a clean tracked worktree.
 - Retried `git fetch origin master` after all implementation and verification
   work; it still failed at DNS resolution.
+- Ran the publishing prerequisite checks: `gh` 2.96.0 is installed, but
+  `gh auth status` reports an invalid active token, so the publishing workflow
+  correctly stopped before any remote mutation.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 
