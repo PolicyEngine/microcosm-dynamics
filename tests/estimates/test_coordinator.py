@@ -587,6 +587,60 @@ def test__production_path__empty_registration_reference_is_incident_accounted(
     assert (root / "runs" / "first_estimates_attempt.claim").is_file()
 
 
+def test__production_path__registration_reference_length_boundary(
+    tmp_path,
+    monkeypatch,
+):
+    maximum = "r" * publication._REGISTRATION_REFERENCE_MAX_CHARACTERS
+    overlong = maximum + "r"
+    overlong_root = _repository(tmp_path / "overlong")
+    overlong_configuration = overlong_root / "registration.json"
+    overlong_configuration.write_bytes(
+        _configuration_bytes(registration=overlong)
+    )
+    calls: list[str] = []
+    operations = _operations(calls, {})
+    monkeypatch.setattr(
+        coordinator,
+        "_sealed_repository_root",
+        lambda: overlong_root,
+    )
+    monkeypatch.setattr(coordinator, "_default_operations", lambda: operations)
+
+    refused = coordinator.run_registered_first_estimates(
+        registration_reference=overlong,
+        registered_configuration_path=overlong_configuration,
+    )
+
+    assert refused.status == "incident"
+    assert refused.phase == "preparation"
+    assert refused.reason == "preparation_abort"
+    assert calls == []
+    assert not (overlong_root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+    maximum_root = _repository(tmp_path / "maximum")
+    maximum_configuration = maximum_root / "registration.json"
+    maximum_configuration.write_bytes(
+        _configuration_bytes(registration=maximum)
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_sealed_repository_root",
+        lambda: maximum_root,
+    )
+
+    published = coordinator.run_registered_first_estimates(
+        registration_reference=maximum,
+        registered_configuration_path=maximum_configuration,
+    )
+
+    claim = maximum_root / "runs" / "first_estimates_attempt.claim"
+    claim_bytes = claim.read_bytes()
+    assert published.status == "published"
+    assert json.loads(claim_bytes)["registration_reference"] == maximum
+    assert len(claim_bytes) <= coordinator._ATTEMPT_CLAIM_MAX_BYTES == 4096
+
+
 def test__coordinator__changed_registered_byte_publishes_incident(tmp_path):
     root = _repository(tmp_path)
     configuration = json.loads(_configuration_bytes())

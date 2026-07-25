@@ -25,11 +25,15 @@
   from a temporary source and placed under `scripts/__pycache__`; it produces
   a preparation incident before any compute operation.
 - Verified all 52 coordinator tests after the ignored-executable change.
+- Bounded registration references at 1,024 characters in the canonical
+  structural parser inside the preparation incident boundary.
+- Added a production-path boundary test proving that 1,025 characters refuse
+  before compute while 1,024 characters mint a sub-4-KiB claim and publish.
+- Verified all 53 coordinator tests after both round-5 changes.
 
 ## Next
 
-1. Bound registration references to 1,024 characters in structural validation
-   inside the preparation incident boundary, then test rejection at 1,025 and
-   claim creation at 1,024.
-2. Run focused and full validation, write the final report, commit each
-   coherent step, and push if DNS permits.
+1. Run focused and full validation, update enforced tier counts, and confirm
+   two clean source seals.
+2. Write the final report, commit the completed progress state, and push if
+   DNS permits.
