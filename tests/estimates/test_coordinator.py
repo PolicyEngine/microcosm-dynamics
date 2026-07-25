@@ -977,7 +977,7 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
         b"        load_full_inputs=lambda: None,\n"
         b"    )\n"
     )
-    helper_source = b"FIT_INPUTS = object()\n"
+    helper_source = b'FIT_INPUTS = "incident3-lazy-sentinel"\n'
     factory_path = root / coordinator._INPUT_FACTORY_PATH
     helper_path = scripts / "incident3_lazy_helper.py"
     factory_path.write_bytes(factory_source)
@@ -1007,9 +1007,8 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
 
     observed = coordinator._load_registered_input_plan(root)
 
-    assert (
-        observed.fit_inputs is sys.modules["incident3_lazy_helper"].FIT_INPUTS
-    )
+    assert observed.fit_inputs == "incident3-lazy-sentinel"
+    assert "incident3_lazy_helper" not in sys.modules
     assert sys.path == original_path
 
 

@@ -358,13 +358,32 @@ def _assert_registered_sources(repository: Path) -> None:
 
 @contextmanager
 def _registered_scripts_path(scripts: Path) -> Iterator[None]:
-    """Expose registered sibling modules for the complete factory chain."""
-    original = sys.path.copy()
+    """Expose registered sibling modules for the complete factory chain.
+
+    Both ``sys.path`` and ``sys.modules`` are restored exactly: any
+    pre-existing binding for a registered factory module returns, and
+    every module the chain imported (including transitive lazy imports)
+    is removed, leaving interpreter state byte-identical.
+    """
+    original_path = sys.path.copy()
+    preexisting = {
+        name: sys.modules[name]
+        for name in _INPUT_FACTORY_MODULES
+        if name in sys.modules
+    }
+    before = set(sys.modules)
     sys.path.insert(0, str(scripts))
     try:
         yield
     finally:
-        sys.path[:] = original
+        sys.path[:] = original_path
+        for name in set(sys.modules) - before:
+            sys.modules.pop(name, None)
+        for name in _INPUT_FACTORY_MODULES:
+            if name in preexisting:
+                sys.modules[name] = preexisting[name]
+            else:
+                sys.modules.pop(name, None)
 
 
 def _load_module(path: Path) -> ModuleType:
@@ -408,7 +427,8 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
 
     def load_full_inputs() -> Any:
         try:
-            return plan.load_full_inputs()
+            with _registered_scripts_path(path.parent):
+                return plan.load_full_inputs()
         except BaseException as error:
             if _exception_chain_contains(error, (OSError,)):
                 raise ExternalPreOutputFailure(
