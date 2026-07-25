@@ -1,20 +1,23 @@
-"""Byte and arithmetic pins for the committed birth-evidence artifact.
+"""Byte, arithmetic, and cheap replay pins for the birth-evidence artifact.
 
-These artifact-only tests do not import the reducer or replay its diagnostic
-cache.  The cache and cache-independent recomputation paths are documented in
-the reducer docstring and the artifact execution block.
+The replay tests exercise only a tiny synthetic production boundary.  They do
+not load the diagnostic cache or recompute the projection.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import pytest
 
+from populace_dynamics.estimates import career
 from populace_dynamics.estimates.publication import COMMON_SUPPORT_AGREEMENT
+from scripts import first_estimates_birth_evidence as reducer
 
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = ROOT / "runs" / "first_estimates_birth_evidence_draw0.json"
@@ -28,6 +31,60 @@ CACHE_SHA256 = (
 
 def _artifact() -> dict[str, Any]:
     return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
+
+
+def test_reducer_accepts_explicit_unresolved_upstream_boundary():
+    records = (
+        career.BirthYearRecord(
+            1,
+            1950,
+            career.BirthSource.EXACT_MARRIAGE,
+        ),
+        career.BirthYearRecord(
+            2,
+            None,
+            career.BirthSource.UNRESOLVED,
+        ),
+    )
+
+    years, sources, unresolved = reducer._split_upstream_birth_records(
+        records,
+        {1, 2, 3},
+    )
+
+    assert years == {1: 1950}
+    assert sources == {1: "exact_marriage"}
+    assert unresolved == frozenset({2, 3})
+
+
+def test_replay_mode_production_birth_preparation_matches_frozen_rows():
+    frozen_rows = {
+        "derived_projection_age": 4_077,
+        "unresolved": 2_315,
+    }
+    artifact_rows = _artifact()["birth_source_law"]["initially_unresolved"][
+        "corrected_counts_by_class"
+    ]
+    assert {key: artifact_rows[key] for key in frozen_rows} == frozen_rows
+
+    person_ids = list(range(1, 6_393))
+    seed = pd.DataFrame(
+        {
+            "person_id": person_ids,
+            "year": [2014] * 6_392,
+            "anchor_wave": [2015] * 6_392,
+            "age": [2] * 4_077 + [1] * 2_298 + [999] * 17,
+        }
+    )
+    records = career.derive_birth_years(
+        pd.DataFrame(columns=["person_id", "birth_year"]),
+        pd.DataFrame(columns=["person_id", "period", "age"]),
+        seed_coordinates=seed,
+        required_person_ids=person_ids,
+    )
+    observed_rows = Counter(record.source.value for record in records)
+
+    assert dict(observed_rows) == frozen_rows
 
 
 def test_birth_evidence_artifact_byte_schema_and_execution_pin():

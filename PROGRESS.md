@@ -39,15 +39,31 @@
 - Publication/first-report focused suite: `31 passed in 1.02s`.
 - Black check and Ruff pass for the publication step; tier-policy collection
   check: `1 passed, 3650 deselected`.
+- Replaced the sealed preparation stub with a three-person, twenty-wrapper
+  batch that runs real seed construction, real C.5, real benefit/revenue
+  preparation, and all three complete-set sensitivity scenarios. The
+  unresolved opening-stock candidate is asserted to stop at C.5.
+- Split the reducer's historical cache-input identity from its reviewed
+  implementation identity, pinned the latter to the final production-source
+  commit `cfe2f1e351611227bbfb6dfba300f01745c01d67`, and adapted both absent
+  legacy and explicit-unresolved upstream records.
+- Added a no-write `--implementation-replay` mode that runs current production
+  preparation on the pinned draw-0 cache and compares six frozen artifact
+  rows.
+- Added cheap CI replay coverage for the explicit-unresolved adapter and for
+  production clause-3 preparation of the artifact's 4,077 derived plus 2,315
+  unresolved rows without loading the 7 GB cache.
+- Sealed/replay artifact tests: `5 passed in 4.78s`; updated tier-policy
+  collection check: `1 passed, 3652 deselected`.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.
 
 ## Next
 
-- Implement findings 2 through 10, plus finding 1 when revision 10.1 is
-  available; finding 1 is currently deferred by the explicit open-PR path.
-- Run focused, formatting, lint, tier-policy, unit, artifact, replay, and
-  draw-0 oracle checks.
-- Update this ledger, write the final report, commit each coherent step, and
-  push `sol/entry8-birth-impl`.
+- Commit the sealed-preparation and replay-boundary step.
+- Run the pinned-cache draw-0 implementation replay.
+- Run the full focused/unit/artifact, formatting, lint, tier-policy, bytecode,
+  and repository-integrity verification matrix.
+- Finalize this ledger and report, commit each coherent step, and push
+  `sol/entry8-birth-impl`.
