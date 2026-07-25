@@ -329,9 +329,9 @@ def _load_cached_draw(path: Path, draw_index: int) -> LoadedDraw:
     if not resolved.is_file():
         raise FileNotFoundError(f"draw cache is absent: {resolved}")
     digest = _sha256(resolved)
-    if resolved == DEFAULT_CACHE.resolve() and digest != DEFAULT_CACHE_SHA256:
+    if digest != DEFAULT_CACHE_SHA256:
         raise RuntimeError(
-            f"default draw cache sha256 {digest} != {DEFAULT_CACHE_SHA256}"
+            f"draw cache sha256 {digest} != pinned {DEFAULT_CACHE_SHA256}"
         )
     with resolved.open("rb") as stream:
         blob = pickle.load(stream)
@@ -1848,14 +1848,34 @@ def main() -> int:
     plus_total = ledger.result["scenarios"]["birth_plus_1"][
         "weighted_annualized_benefit_total"
     ]["delta"]
+    initially_unresolved = births.result["initially_unresolved"]
+    canonical_candidates = funnel.result["canonical_candidates"]
+    raw_carriers = funnel.result[
+        "initially_unresolved_raw_claim_year_carriers"
+    ]
+    predicates = sensitivity.result["predicates"]
+    overall_inclusion = sensitivity.result["overall_inclusion"]
     print(
         f"WROTE {relative_output} bytes={len(encoded.encode())}\n"
         f"DATA_PATH {loaded.execution['data_path']}\n"
         f"ORACLE {oracle['status']} rows={oracle.get('matched_rows', 0)}\n"
-        "A unresolved=6392 derived=4077 residual=2315\n"
-        "B raw_carriers=276 stage_b=86 canonical=3083 domain=2784\n"
-        "C chronology_flips=600 chronology_inclusion=294 "
-        "coverage_flips=15 overall_directions=310 distinct_people=304\n"
+        f"A unresolved={initially_unresolved['count']} "
+        "derived="
+        f"{initially_unresolved['corrected_counts_by_class']['derived_projection_age']} "
+        "residual="
+        f"{initially_unresolved['corrected_counts_by_class']['unresolved']}\n"
+        f"B raw_carriers={raw_carriers['count']} "
+        f"stage_b={raw_carriers['true_stage_b_candidates']} "
+        f"canonical={canonical_candidates['count']} "
+        f"domain={canonical_candidates['domain_resident']}\n"
+        "C chronology_flips="
+        f"{predicates['chronology']['flip_directions']} "
+        "chronology_inclusion="
+        f"{predicates['chronology']['inclusion_changing_flip_directions']} "
+        f"coverage_flips={predicates['coverage']['flip_directions']} "
+        "overall_directions="
+        f"{overall_inclusion['inclusion_flip_directions']} "
+        f"distinct_people={overall_inclusion['distinct_people_affected']}\n"
         f"D cohort={ledger.result['cohort']['count']} "
         f"birth_minus_1_delta={minus_total:.17g} "
         f"birth_plus_1_delta={plus_total:.17g}"

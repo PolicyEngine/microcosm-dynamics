@@ -253,6 +253,7 @@ fatal: unable to access 'https://github.com/PolicyEngine/populace-dynamics.git/'
 The cached reference and starting commit were then verified:
 
 ```text
+$ git -C /Users/maxghenis/PolicyEngine/social-security-model-worktrees/sol-entry8-impl checkout -B sol/entry8-birth-evidence origin/master
 $ git rev-parse origin/master
 daf3ff5978de5137ba50490f78ac52890291a399
 ```
@@ -301,7 +302,7 @@ source tree, as its traceback showed
 test of this branch:
 
 ```text
-$ POPULACE_DYNAMICS_PE_US_DIR=... /Users/maxghenis/PolicyEngine/social-security-model-worktrees/sol-c3-runner/.venv/bin/python -m pytest -q tests/estimates/test_career.py tests/estimates/test_ledgers.py tests/estimates/test_sealed_preparation.py
+$ POPULACE_DYNAMICS_PE_US_DIR=/Users/maxghenis/PolicyEngine/social-security-model-worktrees/sol-c3-runner/.venv/lib/python3.14/site-packages /Users/maxghenis/PolicyEngine/social-security-model-worktrees/sol-c3-runner/.venv/bin/python -m pytest -q tests/estimates/test_career.py tests/estimates/test_ledgers.py tests/estimates/test_sealed_preparation.py
 5 failed, 28 passed in 5.79s
 ```
 

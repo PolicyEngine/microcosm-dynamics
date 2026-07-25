@@ -65,6 +65,10 @@ been reproduced byte-for-byte from the validated cache.
   worktree: 33 passed.
 - Wrote `FINAL_REPORT.md` with the reconciliation table, exact commands and
   outputs, source-law rationale, dollar measurements, and judgment calls.
+- Hardened `--cache` so any cache location must match the pinned diagnostic
+  pickle SHA-256, rather than trusting an alternate path.
+- Removed draw-0 literals from the console summary so regenerated nonzero
+  draws print only their computed A/B/C/D measurements.
 
 ## Next
 
