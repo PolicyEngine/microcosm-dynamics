@@ -26,6 +26,7 @@ from populace_dynamics.estimates.career import (
     InclusionResult,
     build_career_inclusion,
     build_population_roster,
+    build_seed_coordinates,
 )
 from populace_dynamics.estimates.first_report import (
     FirstReportDrawBundle,
@@ -423,6 +424,10 @@ def _prepare_first_report_draw(
         trajectory,
         reserved_real_ids,
     )
+    seed_coordinates = build_seed_coordinates(
+        initial_slice,
+        scheduled_entries,
+    )
     inclusion = build_career_inclusion(
         trajectory=trajectory,
         population_roster=roster,
@@ -432,6 +437,7 @@ def _prepare_first_report_draw(
         claiming_schedule=claiming_schedule,
         earnings_domain_ids=earnings_domain_ids,
         stock_imputation_root_seed=STOCK_IMPUTATION_ROOT_SEED,
+        seed_coordinates=seed_coordinates,
         projection_start_year=PROJECTION_START_YEAR,
     )
     benefit_ledger = build_benefit_ledger(

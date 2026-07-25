@@ -27,6 +27,10 @@ PROJECTED_END_YEAR = 2022
 MIN_ELIGIBILITY_YEAR = 1979
 COVERAGE_THRESHOLD = 0.80
 COMPUTATION_YEARS = 35
+DERIVED_BIRTH_MIN = 1889
+DERIVED_BIRTH_MAX = 2016
+SEED_ANCHOR_WAVE = 2015
+SEED_REFERENCE_YEAR = 2014
 
 _STRUCTURAL_GAP_YEARS = tuple(range(1997, 2013, 2))
 _KNOWN_PROVENANCE = frozenset(
@@ -42,6 +46,7 @@ _DI_COUNT_KEYS = {
     "di_unknown": "excluded_di_unknown",
 }
 _EXCLUSION_REASONS = (
+    "excluded_birth_year_unresolved",
     "excluded_domain_incomplete",
     "excluded_pre1979_eligibility",
     "excluded_empty_span",
@@ -55,7 +60,18 @@ class BirthSource(str, Enum):
 
     EXACT_MARRIAGE = "exact_marriage"
     INFERRED_PERIOD_AGE = "inferred_period_age"
+    DERIVED_PROJECTION_AGE = "derived_projection_age"
     SYNTHETIC_NATIVE = "synthetic_native"
+    UNRESOLVED = "unresolved"
+
+    @property
+    def age_derived(self) -> bool:
+        """Whether the source derives a year from a reported age."""
+
+        return self in {
+            BirthSource.INFERRED_PERIOD_AGE,
+            BirthSource.DERIVED_PROJECTION_AGE,
+        }
 
 
 class CareerProvenance(str, Enum):
@@ -148,17 +164,17 @@ class EntrantDiagnostic:
 
 @dataclass(frozen=True)
 class BirthYearRecord:
-    """Resolved report birth year for one person."""
+    """Report birth-year disposition for one person."""
 
     person_id: int
-    birth_year: int
+    birth_year: int | None
     source: BirthSource
 
     @property
     def inferred(self) -> bool:
-        return self.source is BirthSource.INFERRED_PERIOD_AGE
+        return self.source.age_derived
 
-    def as_dict(self) -> dict[str, int | str | bool]:
+    def as_dict(self) -> dict[str, int | str | bool | None]:
         return {
             "person_id": self.person_id,
             "birth_year": self.birth_year,
@@ -284,7 +300,7 @@ class NonClaimantRecord:
 
 @dataclass(frozen=True)
 class CandidateOriginRecord:
-    """Stage-C origin and operative claim coordinates."""
+    """Stage-C origin and survivor-only operative claim coordinates."""
 
     person_id: int
     origin: ClaimOrigin
@@ -292,8 +308,8 @@ class CandidateOriginRecord:
     first_exposure_age: int
     engine_claim_age: int
     engine_claim_year: int
-    operative_claim_age: int
-    operative_claim_year: int
+    operative_claim_age: int | None
+    operative_claim_year: int | None
     schedule_year: int | None
     schedule_snap: str | None
 
@@ -381,9 +397,7 @@ class IncludedClaimant:
             "person_id": self.person_id,
             "birth_year": self.birth_year,
             "birth_source": self.birth_source.value,
-            "birth_year_inferred": (
-                self.birth_source is BirthSource.INFERRED_PERIOD_AGE
-            ),
+            "birth_year_inferred": self.birth_source.age_derived,
             "sex": self.sex,
             "weight": self.weight,
             "origin": self.origin.value,
@@ -547,22 +561,95 @@ def _person_values(
     return tuple(sorted(values))
 
 
+def build_seed_coordinates(
+    initial_slice: pd.DataFrame,
+    scheduled_entries_by_year: Mapping[int, pd.DataFrame],
+) -> pd.DataFrame:
+    """Return the validated, pre-draw coordinates consumed by clause 3.
+
+    The returned frame deliberately contains no trajectory state.  Its age is
+    the PSID collection-wave code while its year is the immediately preceding
+    reference year.
+    """
+
+    columns = ("person_id", "year", "anchor_wave", "age")
+    _require_columns(initial_slice, set(columns), "initial population slice")
+    initial = initial_slice[list(columns)].copy()
+    initial_anchor = {
+        _as_int(value, "initial anchor_wave")
+        for value in initial["anchor_wave"]
+    }
+    initial_year = {
+        _as_int(value, "initial seed year") for value in initial["year"]
+    }
+    if initial_anchor != {SEED_ANCHOR_WAVE}:
+        raise AssertionError(
+            f"initial slice is not entirely at anchor wave {SEED_ANCHOR_WAVE}"
+        )
+    if initial_year != {SEED_REFERENCE_YEAR}:
+        raise AssertionError(
+            "initial slice is not entirely at reference year "
+            f"{SEED_REFERENCE_YEAR}"
+        )
+
+    frames = [initial]
+    for raw_entry_year, frame in sorted(
+        scheduled_entries_by_year.items(), key=lambda item: int(item[0])
+    ):
+        entry_year = _as_int(raw_entry_year, "scheduled entry year")
+        _require_columns(frame, set(columns), "scheduled population slice")
+        copied = frame[list(columns)].copy()
+        anchor_waves = {
+            _as_int(value, f"scheduled {entry_year} anchor_wave")
+            for value in copied["anchor_wave"]
+        }
+        seed_years = {
+            _as_int(value, f"scheduled {entry_year} seed year")
+            for value in copied["year"]
+        }
+        if anchor_waves != {entry_year}:
+            raise AssertionError(
+                f"scheduled {entry_year} frame has another anchor_wave"
+            )
+        if seed_years != {entry_year - 1}:
+            raise AssertionError(
+                f"scheduled {entry_year} frame is not keyed at year-1"
+            )
+        frames.append(copied)
+
+    seed = pd.concat(frames, ignore_index=True, sort=False)
+    seed["person_id"] = seed["person_id"].map(
+        lambda value: _as_int(value, "seed person_id")
+    )
+    seed["year"] = seed["year"].map(lambda value: _as_int(value, "seed year"))
+    seed["anchor_wave"] = seed["anchor_wave"].map(
+        lambda value: _as_int(value, "seed anchor_wave")
+    )
+    if seed["person_id"].duplicated().any():
+        raise AssertionError("seed frames contain duplicate people")
+    if not (seed["year"] == seed["anchor_wave"] - 1).all():
+        raise AssertionError("seed year differs from anchor_wave - 1")
+    return seed.sort_values("person_id", kind="stable").reset_index(drop=True)
+
+
 def derive_birth_years(
     marriage_history: pd.DataFrame,
     observed_earnings: pd.DataFrame,
     synthetic_birth_years: Mapping[int, int] | None = None,
     *,
+    seed_coordinates: pd.DataFrame | None = None,
     required_person_ids: Collection[int] | None = None,
 ) -> tuple[BirthYearRecord, ...]:
-    """Resolve birth years under the exact registered precedence.
+    """Assign birth-year dispositions under the exact registered precedence.
 
     Marriage-history birth year wins.  Otherwise the source is the rounded
     median of ``period - age`` over the same age-14--90 support used by
-    ``person_earnings_histories``.  Native synthetic birth years are last.
+    ``person_earnings_histories``.  Native synthetic birth years retain their
+    own coordinate.  Remaining people use their pre-draw seed coordinate when
+    the PSID age code is 2--125; code 1, 999, or missing is unresolved.
     Conflicting exact years fail closed rather than silently selecting one.
-    When ``required_person_ids`` is ``None``, that law applies to every
-    person.  When supplied, required conflicts still fail closed and
-    conflicting nonmembers receive no birth-year record from any source.
+    ``required_person_ids`` makes the disposition inventory total over that
+    population, including explicit unresolved records.
     """
     _require_columns(
         marriage_history,
@@ -588,6 +675,30 @@ def derive_birth_years(
             for person_id in required_person_ids
         }
     )
+    seed_by_person: dict[int, pd.Series] = {}
+    if seed_coordinates is not None:
+        _require_columns(
+            seed_coordinates,
+            {"person_id", "year", "anchor_wave", "age"},
+            "seed coordinates",
+        )
+        seed = seed_coordinates.copy()
+        seed["person_id"] = seed["person_id"].map(
+            lambda value: _as_int(value, "seed person_id")
+        )
+        seed["year"] = seed["year"].map(
+            lambda value: _as_int(value, "seed year")
+        )
+        seed["anchor_wave"] = seed["anchor_wave"].map(
+            lambda value: _as_int(value, "seed anchor_wave")
+        )
+        if seed["person_id"].duplicated().any():
+            raise AssertionError("seed coordinates contain duplicate people")
+        if not (seed["year"] == seed["anchor_wave"] - 1).all():
+            raise AssertionError("seed year differs from anchor_wave - 1")
+        seed_by_person = {
+            int(row["person_id"]): row for _, row in seed.iterrows()
+        }
 
     exact: dict[int, int] = {}
     excluded_conflicts: set[int] = set()
@@ -625,10 +736,12 @@ def derive_birth_years(
                 )
             inferred[person_id] = int(round(median))
 
-    people = sorted(
-        (set(exact) | set(inferred) | set(synthetic)) - excluded_conflicts
-    )
-    records = []
+    people = set(exact) | set(inferred) | set(synthetic) | set(seed_by_person)
+    if required is not None:
+        people |= required
+    people = sorted(people - excluded_conflicts)
+    records: list[BirthYearRecord] = []
+    invalid_seed_ages: list[tuple[int, Any]] = []
     for person_id in people:
         if person_id in exact:
             year = exact[person_id]
@@ -636,10 +749,59 @@ def derive_birth_years(
         elif person_id in inferred:
             year = inferred[person_id]
             source = BirthSource.INFERRED_PERIOD_AGE
-        else:
+        elif person_id in synthetic:
             year = synthetic[person_id]
             source = BirthSource.SYNTHETIC_NATIVE
+        elif person_id in seed_by_person:
+            seed_row = seed_by_person[person_id]
+            raw_age = seed_row["age"]
+            if pd.isna(raw_age) or int(raw_age) == 999:
+                year = None
+                source = BirthSource.UNRESOLVED
+            else:
+                age = int(raw_age)
+                if age == 1:
+                    year = None
+                    source = BirthSource.UNRESOLVED
+                elif 2 <= age <= 125:
+                    seed_year = int(seed_row["year"])
+                    anchor_wave = int(seed_row["anchor_wave"])
+                    if seed_year != anchor_wave - 1:
+                        raise AssertionError(
+                            f"person {person_id} violates the seed coordinate"
+                        )
+                    year = seed_year - age
+                    if not seed_year - 125 <= year <= seed_year - 2:
+                        raise AssertionError(
+                            f"derived birth year {year} for person "
+                            f"{person_id} violates its seed-year/age support"
+                        )
+                    if not DERIVED_BIRTH_MIN <= year <= DERIVED_BIRTH_MAX:
+                        raise AssertionError(
+                            f"derived birth year {year} for person "
+                            f"{person_id} lies outside "
+                            f"[{DERIVED_BIRTH_MIN}, {DERIVED_BIRTH_MAX}]"
+                        )
+                    source = BirthSource.DERIVED_PROJECTION_AGE
+                else:
+                    invalid_seed_ages.append((person_id, raw_age))
+                    continue
+        else:
+            year = None
+            source = BirthSource.UNRESOLVED
         records.append(BirthYearRecord(person_id, year, source))
+    if invalid_seed_ages:
+        raise ValueError(
+            "unrecognized PSID seed-age codes: " f"{invalid_seed_ages[:10]}"
+        )
+    if any(
+        (record.source is BirthSource.UNRESOLVED)
+        != (record.birth_year is None)
+        for record in records
+    ):
+        raise AssertionError(
+            "birth-year source and numeric disposition differ"
+        )
     return tuple(records)
 
 
@@ -1036,9 +1198,10 @@ def build_career_inclusion(
     earnings_domain_ids: Collection[int],
     *,
     stock_imputation_root_seed: int,
+    seed_coordinates: pd.DataFrame | None = None,
     projection_start_year: int = BOUNDARY_YEAR,
 ) -> InclusionResult:
-    """Run the canonical Stage A--D benefit-inclusion law."""
+    """Run the canonical Stage A--C.5--D benefit-inclusion law."""
     _require_columns(
         trajectory,
         {
@@ -1077,7 +1240,7 @@ def build_career_inclusion(
         )
     )
     if not people:
-        zero = WeightedCount(
+        snap_zero = WeightedCount(
             key="included_opening_backfill",
             unweighted=0,
             weighted=0.0,
@@ -1094,8 +1257,54 @@ def build_career_inclusion(
                 weighted=0.0,
             ),
         )
+        counts = (
+            *_weighted_counts(
+                (),
+                {},
+                all_keys=(
+                    "excluded_di_conversion",
+                    "excluded_di_unknown",
+                    "nonclaimant",
+                    *_EXCLUSION_REASONS,
+                    "included",
+                ),
+            ),
+            *_weighted_counts(
+                (),
+                {},
+                all_keys=tuple(path.value for path in NonClaimantPath),
+            ),
+            *_weighted_counts(
+                (),
+                {},
+                all_keys=tuple(
+                    f"origin_{origin.value}" for origin in ClaimOrigin
+                ),
+            ),
+        )
+        birth_counts = _weighted_counts(
+            (),
+            {},
+            all_keys=tuple(source.value for source in BirthSource),
+        )
+        snap_counts = _weighted_counts(
+            (),
+            {},
+            all_keys=("lower_endpoint", "upper_endpoint"),
+        )
         return InclusionResult(
-            (), (), (), (), (), (), (), (), (), zero, shares, entrant
+            (),
+            (),
+            (),
+            (),
+            (),
+            (),
+            counts,
+            birth_counts,
+            snap_counts,
+            snap_zero,
+            shares,
+            entrant,
         )
 
     work = trajectory.copy()
@@ -1145,6 +1354,7 @@ def build_career_inclusion(
         marriage_history,
         observed_earnings,
         synthetic_birth_years,
+        seed_coordinates=seed_coordinates,
         required_person_ids=people,
     )
     population_set = set(people)
@@ -1190,20 +1400,19 @@ def build_career_inclusion(
                 NonClaimantRecord(person_id, NonClaimantPath.NEVER_DRAWN)
             )
 
-    missing_births = sorted(set(candidate_people) - set(births))
-    if missing_births:
-        raise ValueError(
-            "candidate birth year is unavailable for persons "
-            f"{missing_births[:10]}"
+    missing_dispositions = sorted(population_set - set(births))
+    if missing_dispositions:
+        missing_candidates = sorted(
+            set(candidate_people) & set(missing_dispositions)
         )
-    missing_population_births = sorted(population_set - set(births))
-    if missing_population_births:
-        raise ValueError(
-            "report-population birth year is unavailable for persons "
-            f"{missing_population_births[:10]}"
+        raise AssertionError(
+            "birth-source disposition is unavailable; candidate code bug "
+            f"{missing_candidates[:10]}, population code bug "
+            f"{missing_dispositions[:10]}"
         )
 
     origins: list[CandidateOriginRecord] = []
+    exclusions: list[ExclusionRecord] = []
     for person_id in candidate_people:
         rows = rows_by_person[person_id]
         post_start = rows[
@@ -1228,21 +1437,40 @@ def build_career_inclusion(
         engine_claim_year = claim_years[0]
         if engine_claim_age >= first_exposure_age:
             origin = ClaimOrigin.MODELED_AWARD
+        else:
+            origin = ClaimOrigin.OPENING_BACKFILL
+        birth = births[person_id]
+        if birth.source is BirthSource.UNRESOLVED:
+            operative_age = None
+            operative_year = None
+            schedule_year = None
+            schedule_snap = None
+            exclusions.append(
+                ExclusionRecord(
+                    person_id,
+                    "excluded_birth_year_unresolved",
+                    None,
+                )
+            )
+        elif birth.birth_year is None:
+            raise AssertionError(
+                f"dated birth disposition has no year for person {person_id}"
+            )
+        elif origin is ClaimOrigin.MODELED_AWARD:
             operative_age = engine_claim_age
             operative_year = engine_claim_year
             schedule_year = None
             schedule_snap = None
         else:
-            origin = ClaimOrigin.OPENING_BACKFILL
             operative_age, schedule_year, schedule_snap = _opening_stock_draw(
                 person_id=person_id,
-                birth_year=births[person_id].birth_year,
+                birth_year=birth.birth_year,
                 sex=sexes[person_id],
                 exposure_age=first_exposure_age,
                 schedule=claiming_schedule,
                 root_seed=stock_imputation_root_seed,
             )
-            operative_year = births[person_id].birth_year + operative_age
+            operative_year = birth.birth_year + operative_age
         origins.append(
             CandidateOriginRecord(
                 person_id=person_id,
@@ -1264,11 +1492,30 @@ def build_career_inclusion(
         _as_int(person_id, "earnings-domain person_id")
         for person_id in earnings_domain_ids
     }
-    exclusions: list[ExclusionRecord] = []
     included: list[IncludedClaimant] = []
     for origin in origins:
         person_id = origin.person_id
         birth = births[person_id]
+        if birth.source is BirthSource.UNRESOLVED:
+            if (
+                origin.operative_claim_age is not None
+                or origin.operative_claim_year is not None
+            ):
+                raise AssertionError(
+                    "unresolved candidate acquired operative coordinates"
+                )
+            continue
+        if birth.birth_year is None:
+            raise AssertionError(
+                f"Stage-D candidate {person_id} has no numeric birth year"
+            )
+        if (
+            origin.operative_claim_age is None
+            or origin.operative_claim_year is None
+        ):
+            raise AssertionError(
+                f"Stage-D candidate {person_id} has no operative claim state"
+            )
         eligibility_year = birth.birth_year + 62
         coverage_start = max(OBSERVED_START_YEAR, birth.birth_year + 22)
         coverage_end = min(origin.operative_claim_year, PROJECTED_END_YEAR)
@@ -1366,6 +1613,14 @@ def build_career_inclusion(
         all_keys=tuple(f"origin_{origin.value}" for origin in ClaimOrigin),
     )
     counts = tuple((*counts, *nonclaimant_path_counts, *origin_counts))
+    outcome_ids = {
+        *(record.person_id for record in exclusions),
+        *(record.person_id for record in included),
+    }
+    if outcome_ids != set(candidate_people):
+        raise AssertionError(
+            "candidate origins do not reconcile to C.5, Stage D, and included"
+        )
 
     birth_source_counts = _weighted_counts(
         [(record.source.value, record.person_id) for record in birth_records],

@@ -123,6 +123,8 @@ def _batch() -> FirstReportProjectionBatch:
         {
             "person_id": [1],
             "year": [2014],
+            "anchor_wave": [2015],
+            "age": [60],
             "sex": ["female"],
             "weight": [1.5],
             "birth_year": [1954],
@@ -132,6 +134,8 @@ def _batch() -> FirstReportProjectionBatch:
         {
             "person_id": [2],
             "year": [2016],
+            "anchor_wave": [2017],
+            "age": [67],
             "sex": ["male"],
             "weight": [2.5],
             "birth_year": [1950],
@@ -317,6 +321,17 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     }
     assert 2 not in set(inclusion_call["trajectory"]["person_id"])
     assert inclusion_call["synthetic_birth_years"] == {100: 2016}
+    pd.testing.assert_frame_equal(
+        inclusion_call["seed_coordinates"],
+        pd.DataFrame(
+            {
+                "person_id": [1, 2],
+                "year": [2014, 2016],
+                "anchor_wave": [2015, 2017],
+                "age": [60, 67],
+            }
+        ),
+    )
     assert inclusion_call["claiming_schedule"].pmf is schedule_pmf
     assert calls["benefit"] == (
         inclusion.included,
