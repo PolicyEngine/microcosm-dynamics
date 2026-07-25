@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fcntl
+import importlib.machinery
 import importlib.util
 import inspect
 import json
@@ -1432,6 +1433,210 @@ def test__sealed_interpreter__misses_crafted_scripts_cache(tmp_path):
     assert observed["value"] == "source-loaded"
     assert cache.is_file()
     assert not any(sentinel.iterdir())
+
+
+def _pre_import_guard_repository(tmp_path: Path) -> tuple[Path, Path]:
+    repository = tmp_path / "repo"
+    scripts = repository / "scripts"
+    estimates = repository / "src" / "populace_dynamics" / "estimates"
+    scripts.mkdir(parents=True)
+    estimates.mkdir(parents=True)
+    launcher = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    (scripts / launcher.name).write_bytes(launcher.read_bytes())
+    (repository / ".gitignore").write_text(
+        "__pycache__/\n*.py[cod]\n*.so\n"
+        "runs/first_estimates_attempt.claim\n"
+        "runs/first_estimates_incident_*.json\n"
+    )
+    import_marker = tmp_path / "populace-imported"
+    (estimates.parent / "__init__.py").write_text(
+        "from pathlib import Path\n"
+        f"Path({str(import_marker)!r}).write_text('imported\\n')\n"
+    )
+    (estimates / "__init__.py").write_text("")
+    (estimates / "coordinator.py").write_text(
+        "raise RuntimeError('coordinator imported before repository guard')\n"
+    )
+    subprocess.run(
+        ["git", "init", "-q"],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "config", "status.showUntrackedFiles", "no"],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "add", "."],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=First Estimates Test",
+            "-c",
+            "user.email=first-estimates@example.invalid",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "-qm",
+            "pre-import guard fixture",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    return repository, import_marker
+
+
+def _run_pre_import_shadow_probe(
+    repository: Path,
+    sentinel: Path,
+) -> subprocess.CompletedProcess[str]:
+    sentinel.mkdir()
+    environment = os.environ.copy()
+    environment[coordinator._PYCACHE_SENTINEL_ENV] = str(sentinel)
+    return subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-B",
+            "-X",
+            f"pycache_prefix={sentinel}",
+            str(repository / "scripts" / "run_first_estimates.py"),
+            "--registration-reference",
+            REGISTRATION,
+            "--registered-configuration",
+            str(repository / "registered.json"),
+        ],
+        cwd=repository,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
+
+
+def _assert_pre_import_shadow_refusal(
+    repository: Path,
+    shadow: Path,
+    import_marker: Path,
+    completed: subprocess.CompletedProcess[str],
+    sentinel: Path,
+) -> None:
+    status = subprocess.run(
+        [
+            "git",
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+    ignored = subprocess.run(
+        [
+            "git",
+            "ls-files",
+            "--others",
+            "--ignored",
+            "--exclude-standard",
+            "-z",
+            "--",
+            "src",
+            "scripts",
+        ],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+    )
+
+    assert status.stdout == b""
+    assert ignored.stdout.split(b"\0") == [
+        shadow.relative_to(repository).as_posix().encode(),
+        b"",
+    ]
+    assert completed.returncode == 1
+    assert completed.stdout == ""
+    assert json.loads(completed.stderr) == {
+        "path": None,
+        "phase": "preparation",
+        "reason": "preparation_pre_import_repository_guard_refused",
+        "reason_detail": (
+            "registered first estimates requires sealed code roots without "
+            "ignored executable artifacts"
+        ),
+        "status": "procedural_refusal",
+    }
+    assert completed.stderr.count("\n") == 1
+    assert not import_marker.exists()
+    assert not (repository / "runs").exists()
+    assert not any(sentinel.iterdir())
+
+
+def test__sealed_launcher__refuses_coordinator_abi_shadow_pre_import(
+    tmp_path,
+):
+    repository, import_marker = _pre_import_guard_repository(tmp_path)
+    suffix = importlib.machinery.EXTENSION_SUFFIXES[0]
+    shadow = (
+        repository
+        / "src"
+        / "populace_dynamics"
+        / "estimates"
+        / f"coordinator{suffix}"
+    )
+    shadow.write_bytes(b"ignored extension shadow must never be loaded\n")
+    sentinel = tmp_path / "extension-shadow-sentinel"
+
+    completed = _run_pre_import_shadow_probe(repository, sentinel)
+
+    _assert_pre_import_shadow_refusal(
+        repository,
+        shadow,
+        import_marker,
+        completed,
+        sentinel,
+    )
+
+
+def test__sealed_launcher__refuses_direct_sourceless_stdlib_shadow_pre_import(
+    tmp_path,
+):
+    repository, import_marker = _pre_import_guard_repository(tmp_path)
+    shadow_marker = tmp_path / "subprocess-shadow-imported"
+    shadow_source = tmp_path / "subprocess.py"
+    shadow_source.write_text(
+        "from pathlib import Path\n"
+        f"Path({str(shadow_marker)!r}).write_text('imported\\n')\n"
+        "raise RuntimeError('sourceless subprocess shadow executed')\n"
+    )
+    shadow = repository / "src" / "subprocess.pyc"
+    py_compile.compile(
+        str(shadow_source),
+        cfile=str(shadow),
+        doraise=True,
+        invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH,
+    )
+    sentinel = tmp_path / "sourceless-shadow-sentinel"
+
+    completed = _run_pre_import_shadow_probe(repository, sentinel)
+
+    _assert_pre_import_shadow_refusal(
+        repository,
+        shadow,
+        import_marker,
+        completed,
+        sentinel,
+    )
+    assert not (repository / "src" / "subprocess.py").exists()
+    assert not shadow_marker.exists()
 
 
 def test__cli__passes_raw_path_and_has_no_root_override(

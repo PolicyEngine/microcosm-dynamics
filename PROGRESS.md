@@ -29,9 +29,14 @@
 - Documented in the launcher that these pre-import refusals cannot be incident
   records and that the fresh registration must restate the checks and handling.
 - Left the coordinator's post-import source guard and rechecks unchanged.
+- Added isolated temporary-repository regressions for an ignored
+  `coordinator.<ABI>.so` extension shadow and a direct sourceless
+  `src/subprocess.pyc` shadow.
+- Verified both regressions refuse before repository import, emit exactly one
+  structured stderr record, create no claim or incident, execute neither
+  hostile payload, and leave the sealed cache sentinel empty.
 
 ## Next
 
-1. Add the two pre-import shadow regressions.
-2. Run focused and full verification and recount the test tiers.
-3. Finalize progress, push if DNS permits, and write the final report.
+1. Run focused and full verification and recount the test tiers.
+2. Finalize progress, push if DNS permits, and write the final report.
