@@ -9,6 +9,7 @@ import json
 import os
 import py_compile
 import stat
+import subprocess
 import sys
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -137,6 +138,7 @@ def _operations(
         return path
 
     return coordinator._CoordinatorOperations(
+        assert_interpreter=lambda: None,
         load_parameters=load_parameters,
         load_input_plan=lambda root: maybe_fail(
             "load_input_plan",
@@ -714,6 +716,11 @@ def test__production_path__in_root_symlink_to_external_config_is_refused(
     linked = root / "registration.json"
     linked.symlink_to(outside)
     monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations([], {}),
+    )
 
     result = coordinator.run_registered_first_estimates(
         registration_reference=REGISTRATION,
@@ -999,10 +1006,7 @@ def test__production_path__ignored_import_cache_is_preparation_incident(
     root = _repository(tmp_path)
     ignore = root / ".gitignore"
     ignore.write_text(
-        "__pycache__/\n"
-        "*.py[cod]\n"
-        "*.so\n"
-        "runs/first_estimates_attempt.claim\n"
+        "__pycache__/\n*.py[cod]\n*.so\nruns/first_estimates_attempt.claim\n"
     )
     configuration_path = root / "registration.json"
     configuration_path.write_bytes(_configuration_bytes())
@@ -1195,9 +1199,7 @@ def test__production_entry__holds_lock_for_complete_coordinator_call(
     monkeypatch.setattr(
         coordinator,
         "_exclusive_ceremony_lock",
-        lambda observed_root: (
-            events.append(f"root:{observed_root}") or Lock()
-        ),
+        lambda observed_root: events.append(f"root:{observed_root}") or Lock(),
     )
 
     def run(**_kwargs):
@@ -1227,6 +1229,182 @@ def test__production_entry__holds_lock_for_complete_coordinator_call(
         "run",
         "unlock",
     ]
+
+
+def test__production_entry__unsealed_interpreter_is_preparation_incident(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    calls: list[str] = []
+    operations = replace(
+        _operations(calls, {}),
+        assert_interpreter=coordinator._assert_sealed_interpreter,
+    )
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator, "_default_operations", lambda: operations)
+    monkeypatch.delenv(coordinator._PYCACHE_SENTINEL_ENV, raising=False)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_unsealed_interpreter_refused"
+    assert calls == []
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+
+def test__cli__unsealed_launcher_reexecs_with_exact_seal(
+    tmp_path,
+    monkeypatch,
+):
+    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    spec = importlib.util.spec_from_file_location(
+        "_test_run_first_estimates_reexec",
+        script,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sentinel = tmp_path / "fresh-empty-pycache"
+    sentinel.mkdir()
+    captured: dict = {}
+
+    class Replaced(RuntimeError):
+        pass
+
+    def execv(executable, arguments):
+        captured["executable"] = executable
+        captured["arguments"] = arguments
+        raise Replaced
+
+    monkeypatch.delenv(module._PYCACHE_SENTINEL_ENV, raising=False)
+    monkeypatch.setattr(
+        module.tempfile,
+        "mkdtemp",
+        lambda **_kwargs: str(sentinel),
+    )
+    monkeypatch.setattr(module.os, "execv", execv)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            script.name,
+            "--registration-reference",
+            REGISTRATION,
+        ],
+    )
+
+    with pytest.raises(Replaced):
+        module._seal_interpreter()
+
+    assert captured["executable"] == sys.executable
+    assert captured["arguments"] == [
+        sys.executable,
+        "-I",
+        "-B",
+        "-X",
+        f"pycache_prefix={sentinel}",
+        str(script.resolve()),
+        "--registration-reference",
+        REGISTRATION,
+    ]
+    assert os.environ[module._PYCACHE_SENTINEL_ENV] == str(sentinel)
+    assert not sentinel.exists()
+
+
+def test__sealed_interpreter__misses_crafted_scripts_cache(tmp_path):
+    script = Path(__file__).parents[2] / "scripts" / "run_first_estimates.py"
+    scripts = tmp_path / "repo" / "scripts"
+    scripts.mkdir(parents=True)
+    source = scripts / "seal_probe.py"
+    source.write_text("raise RuntimeError('crafted cache executed')\n")
+    cache = Path(importlib.util.cache_from_source(str(source)))
+    cache.parent.mkdir()
+    py_compile.compile(
+        str(source),
+        cfile=str(cache),
+        doraise=True,
+        invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH,
+    )
+    source.write_text("VALUE = 'source-loaded'\n")
+    control = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-B",
+            "-c",
+            f"import sys; sys.path.insert(0, {str(scripts)!r}); "
+            "import seal_probe",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert control.returncode != 0
+    assert "crafted cache executed" in control.stderr
+
+    sentinel = tmp_path / "populace-first-estimates-pycache-probe"
+    sentinel.mkdir()
+    environment = os.environ.copy()
+    environment[coordinator._PYCACHE_SENTINEL_ENV] = str(sentinel)
+    environment["PYTHONPYCACHEPREFIX"] = str(tmp_path / "hostile-prefix")
+    probe = "\n".join(
+        (
+            "import importlib.util",
+            "import json",
+            "import sys",
+            f"launcher_path = {str(script)!r}",
+            "spec = importlib.util.spec_from_file_location("
+            "'_sealed_launcher_probe', launcher_path)",
+            "launcher = importlib.util.module_from_spec(spec)",
+            "spec.loader.exec_module(launcher)",
+            "sealed = launcher._sealed_pycache_sentinel()",
+            f"sys.path.insert(0, {str(scripts)!r})",
+            "import seal_probe",
+            "print(json.dumps({",
+            "    'cached': seal_probe.__spec__.cached,",
+            "    'isolated': sys.flags.isolated,",
+            "    'no_bytecode': sys.flags.dont_write_bytecode,",
+            "    'origin': seal_probe.__spec__.origin,",
+            "    'prefix': sys.pycache_prefix,",
+            "    'sealed': str(sealed) if sealed else None,",
+            "    'value': seal_probe.VALUE,",
+            "}, sort_keys=True))",
+        )
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-B",
+            "-X",
+            f"pycache_prefix={sentinel}",
+            "-c",
+            probe,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
+
+    observed = json.loads(completed.stdout)
+    assert observed["isolated"] == 1
+    assert observed["no_bytecode"] == 1
+    assert observed["prefix"] == str(sentinel)
+    assert observed["sealed"] == str(sentinel)
+    assert observed["origin"] == str(source)
+    assert Path(observed["cached"]).is_relative_to(sentinel)
+    assert observed["value"] == "source-loaded"
+    assert cache.is_file()
+    assert not any(sentinel.iterdir())
 
 
 def test__cli__passes_raw_path_and_has_no_root_override(
@@ -1264,7 +1442,8 @@ def test__cli__passes_raw_path_and_has_no_root_override(
             reason=None,
         )
 
-    monkeypatch.setattr(module, "run_registered_first_estimates", run)
+    monkeypatch.setattr(module, "_seal_interpreter", lambda: tmp_path)
+    monkeypatch.setattr(module, "_run_coordinator", run)
     assert module.main() == 0
     assert captured == {
         "registration_reference": REGISTRATION,

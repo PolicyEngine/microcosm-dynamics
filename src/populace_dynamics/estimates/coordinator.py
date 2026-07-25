@@ -24,27 +24,23 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Literal
 
-# The ceremony must not mint ignored executable state between its two seals.
-os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
-sys.dont_write_bytecode = True
-
-import populace_dynamics.estimates as estimates_package  # noqa: E402
-from populace_dynamics.estimates import publication  # noqa: E402
-from populace_dynamics.estimates.parameters import (  # noqa: E402
+import populace_dynamics.estimates as estimates_package
+from populace_dynamics.estimates import publication
+from populace_dynamics.estimates.parameters import (
     ParameterDependencyUnavailable,
     load_report_parameters,
 )
-from populace_dynamics.estimates.preparation import (  # noqa: E402
+from populace_dynamics.estimates.preparation import (
     _build_prepared_first_estimates_artifact,
     _prepare_first_report_batch,
 )
-from populace_dynamics.estimates.runner import (  # noqa: E402
+from populace_dynamics.estimates.runner import (
     execute_first_report_projection,
     registered_configuration_echo,
     resolve_report_contract,
     validate_registered_configuration_echo,
 )
-from populace_dynamics.harness.m6_candidate3_runner import (  # noqa: E402
+from populace_dynamics.harness.m6_candidate3_runner import (
     M6Candidate3InputPlan,
 )
 
@@ -83,6 +79,7 @@ _ATTEMPT_CLAIM_SCHEMA = "first_estimates_attempt.v1"
 _ATTEMPT_CLAIM_MAX_BYTES = 4096
 _RETRY_CLAIM_PATH = Path("runs/first_estimates_retry.claim")
 _RETRY_CLAIM_SCHEMA = "first_estimates_retry.v1"
+_PYCACHE_SENTINEL_ENV = "POPULACE_DYNAMICS_FIRST_ESTIMATES_PYCACHE_SENTINEL"
 _IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _ESTIMATES_PACKAGE_PATH = Path("src/populace_dynamics/estimates/__init__.py")
 _SAFE_EXTERNAL_REASON = re.compile(r"external_[a-z0-9_]+")
@@ -135,6 +132,7 @@ class _IncidentHistory:
 class _CoordinatorOperations:
     """Test-private seams; the public production entry point never accepts it."""
 
+    assert_interpreter: Callable[[], None]
     load_parameters: Callable[[], Any]
     load_input_plan: Callable[[Path], M6Candidate3InputPlan]
     validate_input_sources: Callable[[Path], None]
@@ -170,6 +168,37 @@ def _load_production_parameters() -> Any:
             "external_parameter_bundle_unavailable",
             "Registered parameter dependency unavailable before output.",
         ) from error
+
+
+def _assert_sealed_interpreter() -> None:
+    """Require the isolated, no-write interpreter and its empty cache sentinel."""
+    sentinel = os.environ.get(_PYCACHE_SENTINEL_ENV)
+    prefix = sys.pycache_prefix
+    valid = bool(
+        sys.flags.isolated
+        and sys.flags.dont_write_bytecode
+        and sentinel
+        and prefix == sentinel
+    )
+    if valid:
+        path = Path(sentinel)
+        try:
+            valid = bool(
+                path.is_absolute()
+                and not path.is_symlink()
+                and path.is_dir()
+                and not any(path.iterdir())
+            )
+        except OSError:
+            valid = False
+    if not valid:
+        raise _CeremonyAbort(
+            "preparation_unsealed_interpreter_refused",
+            (
+                "The coordinator requires python -I -B -X "
+                "pycache_prefix=<fresh empty sentinel directory>."
+            ),
+        )
 
 
 def _git_bytes(repository: Path, *arguments: str) -> bytes:
@@ -331,6 +360,7 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
 
 def _default_operations() -> _CoordinatorOperations:
     return _CoordinatorOperations(
+        assert_interpreter=_assert_sealed_interpreter,
         load_parameters=_load_production_parameters,
         load_input_plan=_load_registered_input_plan,
         validate_input_sources=_assert_registered_sources,
@@ -1017,6 +1047,7 @@ def _run_registered_first_estimates_from_path_for_test(
             registration_reference,
             allow_matching_retry_claim=retry_after_incident is not None,
         )
+        operations.assert_interpreter()
         path = _path_within_root(
             root,
             registered_configuration_path,

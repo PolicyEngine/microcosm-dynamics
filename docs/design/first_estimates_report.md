@@ -569,12 +569,18 @@ says so).
   `nohup`-spawns the runner and **exits** (the spawned process must not
   be the agent's main process, or agent removal kills it); the runner
   command wraps itself in `caffeinate -sim` so the sleep assertion
-  belongs to the runner's own lifetime; the agent is bootstrapped once,
-  the runner verified healthy, and the agent booted out with its plist
-  deleted — persistence-object lifetime under two minutes; the runner
-  ends as a launchd-domain orphan (parent pid 1) in no application
-  coalition; no network-dependent parent; publication is performed by
-  the coordinator after exit.
+  belongs to the runner's own lifetime. Before any
+  `populace_dynamics` import, the runner self-re-executes the same
+  interpreter as `python -I -B -X
+  pycache_prefix=<fresh-empty-sentinel-directory>
+  scripts/run_first_estimates.py <registered-arguments>`; both the
+  launcher procedure and the fresh-registration text restate that exact
+  invocation. The agent is bootstrapped once, the runner verified
+  healthy, and the agent booted out with its plist deleted —
+  persistence-object lifetime under two minutes; the runner ends as a
+  launchd-domain orphan (parent pid 1) in no application coalition; no
+  network-dependent parent; publication is performed by the coordinator
+  after exit.
 - Tests: schema/invariant validation plus a committed-fixture rebuild
   test of the join, origin classification, and ledger arithmetic
   without re-running the projection (new work modeled on, not copied
@@ -584,9 +590,10 @@ says so).
 - Ceremony: this design ratified (referee rounds → fixes → verify →
   merge) → implementation PR (referee-gated; no run) → registration on
   a fresh issue (configuration frozen; §11's canonical execution rule
-  restated verbatim) → one registered run (hours-scale: twenty draws
-  of a 2014→2022 projection) → publication regardless → entry 8
-  resolves at the publication PR's merge.
+  and sealed `python -I -B -X pycache_prefix=<fresh-empty-sentinel-directory>`
+  invocation restated verbatim) → one registered run (hours-scale:
+  twenty draws of a 2014→2022 projection) → publication regardless →
+  entry 8 resolves at the publication PR's merge.
 
 ## 12. What this unlocks
 
