@@ -46,11 +46,49 @@ expected_coordinator = (
 if Path(coordinator.__file__).resolve() != expected_coordinator:
     raise AssertionError("coordinator did not load from the fixture worktree")
 
-configuration_path = root / (
+committed_path = root / (
     "docs/registrations/"
     "first_estimates_registration_3_configuration.json"
 )
-configuration = json.loads(configuration_path.read_bytes())
+committed = json.loads(committed_path.read_bytes())
+from populace_dynamics.estimates import publication, runner
+
+sealed_reference = "populace-dynamics#0-sealed-preparation-test"
+configuration = runner.registered_configuration_echo(
+    registration_reference=sealed_reference,
+    parameter_bundle=committed["parameters"],
+)
+configuration_path = root / (
+    "docs/registrations/first_estimates_sealed_test_configuration.json"
+)
+configuration_path.write_bytes(
+    publication.canonical_json_bytes(configuration)
+)
+import subprocess as _sp
+
+_sp.run(
+    ["git", "-C", str(root), "add", str(configuration_path)],
+    check=True,
+    capture_output=True,
+)
+_sp.run(
+    [
+        "git",
+        "-C",
+        str(root),
+        "-c",
+        "user.email=test@example.com",
+        "-c",
+        "user.name=Sealed Test",
+        "commit",
+        "-q",
+        "--no-verify",
+        "-m",
+        "sealed-test configuration",
+    ],
+    check=True,
+    capture_output=True,
+)
 
 
 class PreparationComplete(BaseException):
@@ -84,7 +122,7 @@ operations = replace(
 try:
     result = coordinator._run_registered_first_estimates_from_path_for_test(
         repository_root=root,
-        registration_reference="populace-dynamics#292",
+        registration_reference=sealed_reference,
         registered_configuration_path=configuration_path,
         retry_after_incident=None,
         operations=operations,
@@ -283,13 +321,25 @@ def test__sealed_interpreter__completes_real_preparation_before_compute(
     ), f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
     assert completed.stdout == "PREPARATION_COMPLETE\n"
     assert completed.stderr == ""
-    assert sorted(
-        path.name
-        for path in (worktree / "runs").glob("first_estimates_incident_*.json")
-    ) == [
-        "first_estimates_incident_1.json",
-        "first_estimates_incident_2.json",
-    ]
+    committed_incidents = sorted(
+        line
+        for line in subprocess.run(
+            ["git", "-C", str(worktree), "ls-files", "runs/"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        if line.startswith("runs/first_estimates_incident_")
+    )
+    assert (
+        sorted(
+            f"runs/{path.name}"
+            for path in (worktree / "runs").glob(
+                "first_estimates_incident_*.json"
+            )
+        )
+        == committed_incidents
+    )
     artifact = worktree / publication.DEFAULT_ARTIFACT_PATH
     assert not artifact.exists()
     assert not Path(f"{artifact}.env.json").exists()
