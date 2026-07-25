@@ -82,6 +82,19 @@
   tier policy: `1 passed, 3653 deselected`.
 - The current reviewed production-source identity is
   `634baabff7966057ac4eea13c95f23844564b7eb`.
+- Post-revision-10.1 draw-0 replay: status `matched` for all six frozen
+  rows.
+- Post-revision-10.1 focused suite: `86 passed in 5.59s`.
+- Post-revision-10.1 unit tier: `843 passed, 5 skipped, 2806 deselected`
+  in `53.54s`; only the existing joblib physical-core warning.
+- Post-revision-10.1 artifact tier: `1285 passed, 38 skipped, 2331
+  deselected` in `66.06s`.
+- All 15 changed Python files pass Black and Ruff; compilation succeeds,
+  `git diff --check` passes, and `src/`/`scripts/` remain bytecode-free.
+- Final tier-policy inventory check: `1 passed, 3653 deselected`.
+- Repeated the prior integration-tier attempt: `169 passed, 3 skipped`,
+  then the known order-dependent `populace.fit` import assertion failed.
+  The affected module passes alone: `13 passed in 3.92s`.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.
@@ -90,7 +103,6 @@
 
 - Replace the content-identical temporary base with exact fetched
   `origin/master` ancestry once DNS is available.
-- Rerun the full focused/unit/artifact, formatting, lint, tier-policy,
-  bytecode, replay, and repository-integrity verification matrix.
+- Reconfirm commit messages and repository integrity after the exact rebase.
 - Finalize this ledger and report, commit each coherent step, and push
   `sol/entry8-birth-impl`.
