@@ -75,6 +75,8 @@ _INPUT_FACTORY_MODULES = (
 _INPUT_FACTORY_CALLABLE = "build_input_plan"
 _ATTEMPT_CLAIM_PATH = Path("runs/first_estimates_attempt.claim")
 _ATTEMPT_CLAIM_SCHEMA = "first_estimates_attempt.v1"
+_RETRY_CLAIM_PATH = Path("runs/first_estimates_retry.claim")
+_RETRY_CLAIM_SCHEMA = "first_estimates_retry.v1"
 _ESTIMATES_PACKAGE_PATH = Path("src/populace_dynamics/estimates/__init__.py")
 _SAFE_EXTERNAL_REASON = re.compile(r"external_[a-z0-9_]+")
 _SAFE_EXTERNAL_DETAIL = re.compile(r"[A-Za-z0-9 .,:;()_/\-]+")
@@ -494,6 +496,74 @@ def _create_attempt_claim(
     return path
 
 
+def _retry_claim_payload(
+    registration_reference: str,
+    retry_after_incident: int,
+) -> bytes:
+    return publication.canonical_json_bytes(
+        {
+            "schema_version": _RETRY_CLAIM_SCHEMA,
+            "registration_reference": registration_reference,
+            "retry_after_incident": retry_after_incident,
+        }
+    )
+
+
+def _create_retry_claim(
+    repository_root: Path,
+    registration_reference: str,
+    retry_after_incident: int,
+) -> Path:
+    """Durably and exclusively consume the sole authorized retry."""
+    if not isinstance(registration_reference, str):
+        raise TypeError("registration_reference must be a string")
+    if (
+        isinstance(retry_after_incident, bool)
+        or not isinstance(retry_after_incident, int)
+        or retry_after_incident < 1
+    ):
+        raise TypeError("retry_after_incident must be a positive integer")
+    runs = _sealed_runs_directory(repository_root)
+    path = runs / _RETRY_CLAIM_PATH.name
+    payload = _retry_claim_payload(
+        registration_reference,
+        retry_after_incident,
+    )
+    try:
+        descriptor = os.open(
+            path,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+            0o444,
+        )
+    except FileExistsError:
+        raise _CeremonyAbort(
+            "preparation_fresh_registration_required_retry_claim",
+            (
+                "The canonical retry-claim path is already occupied; "
+                "the sole retry is consumed and fresh registration is "
+                "required."
+            ),
+        ) from None
+
+    try:
+        _write_attempt_claim_payload(descriptor, payload)
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+    directory = os.open(
+        path.parent,
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0),
+    )
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+    return path
+
+
 def _assert_precompute_identity(
     token: publication._PrecomputeToken,
     *,
@@ -750,6 +820,12 @@ def _run_registered_first_estimates_for_test(
             history,
             retry_after_incident=retry_after_incident,
         )
+        if retry_after_incident is not None:
+            _create_retry_claim(
+                registration._repository_root,
+                registration_reference,
+                retry_after_incident,
+            )
         operations.validate_input_sources(registration._repository_root)
         contract_ref = publication.ContractRef.current(
             registration._repository_root

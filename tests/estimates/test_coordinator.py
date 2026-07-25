@@ -1362,6 +1362,8 @@ def test__production_path__external_incident_retry_succeeds_with_same_claim(
     )
     claim = root / "runs" / "first_estimates_attempt.claim"
     claim_bytes = claim.read_bytes()
+    retry_claim = root / "runs" / "first_estimates_retry.claim"
+    assert not retry_claim.exists()
     second = coordinator.run_registered_first_estimates(
         registration_reference=REGISTRATION,
         registered_configuration_path=configuration_path,
@@ -1372,9 +1374,77 @@ def test__production_path__external_incident_retry_succeeds_with_same_claim(
     assert first.reason == "external_projection_host_unavailable"
     assert second.status == "published"
     assert claim.read_bytes() == claim_bytes
+    assert retry_claim.read_bytes() == coordinator._retry_claim_payload(
+        REGISTRATION,
+        1,
+    )
     assert captured["artifact_kwargs"]["prior_incidents"] == (
         "runs/first_estimates_incident_1.json",
     )
+
+
+def test__production_path__hard_crash_after_retry_claim_refuses_later_retry(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    external = coordinator.ExternalPreOutputFailure(
+        "external_projection_host_unavailable",
+        "Projection host unavailable before output.",
+    )
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations(
+            [],
+            {},
+            failure_phase="compute",
+            failure=external,
+        ),
+    )
+    first = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    retry_claim = coordinator._create_retry_claim(root, REGISTRATION, 1)
+    retry_claim_bytes = retry_claim.read_bytes()
+    assert first.status == "incident"
+    assert first.reason == "external_projection_host_unavailable"
+    assert sorted((root / "runs").glob("first_estimates_incident_*.json")) == [
+        first.path
+    ]
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+    sidecar = Path(f"{root / publication.DEFAULT_ARTIFACT_PATH}.env.json")
+    assert not sidecar.exists()
+
+    calls: list[str] = []
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations(calls, {}),
+    )
+    blocked = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+        retry_after_incident=1,
+    )
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert blocked.reason == (
+        "preparation_fresh_registration_required_retry_claim"
+    )
+    assert calls == []
+    assert retry_claim.read_bytes() == retry_claim_bytes
+    assert sorted((root / "runs").glob("first_estimates_incident_*.json")) == [
+        first.path,
+        blocked.path,
+    ]
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
 
 
 def test__production_path__second_external_failure_requires_fresh_registration(
