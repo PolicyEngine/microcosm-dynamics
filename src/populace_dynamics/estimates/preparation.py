@@ -130,6 +130,7 @@ def _build_prepared_first_estimates_artifact(
     prepared: PreparedFirstReportBatch,
     *,
     configuration_echo: Mapping[str, Any],
+    runtime_provenance: Mapping[str, Any],
     environment_sidecar_sha256: str,
     prior_incidents: tuple[str, ...] = (),
 ) -> dict[str, Any]:
@@ -145,9 +146,15 @@ def _build_prepared_first_estimates_artifact(
             "configuration parameter provenance differs from the bundle "
             "used to compute the prepared statutory ledgers"
         )
+    if runtime_provenance != prepared.parameters.runtime_provenance:
+        raise ValueError(
+            "run-time parameter provenance differs from the bundle "
+            "used to compute the prepared statutory ledgers"
+        )
     return build_first_estimates_artifact(
         first_report_draw_bundles(prepared),
         configuration_echo=configuration_echo,
+        runtime_provenance=runtime_provenance,
         environment_sidecar_sha256=environment_sidecar_sha256,
         prior_incidents=prior_incidents,
     )

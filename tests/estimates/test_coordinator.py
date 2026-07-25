@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import fcntl
 import importlib.machinery
 import importlib.util
@@ -29,6 +30,10 @@ from populace_dynamics.harness.m6_candidate3_runner import (
 
 REGISTRATION = "issue-42-comment-1234567"
 PARAMETER_PROVENANCE = {"bundle_sha256": "c" * 64}
+RUNTIME_PROVENANCE = {
+    "schema_version": "first_estimates.runtime_provenance.v1",
+    "parameters": {},
+}
 ENVIRONMENT = {
     "python": "3.14.0",
     "numpy": "2.0.0",
@@ -83,6 +88,7 @@ def _operations(
     failure_phase: str | None = None,
     failure: BaseException | None = None,
     provenance: dict | None = None,
+    runtime_provenance: dict | None = None,
     sidecar_payload: bytes | None = None,
 ) -> coordinator._CoordinatorOperations:
     error = failure or RuntimeError("estimate sentinel [1, 2, 3]")
@@ -96,7 +102,18 @@ def _operations(
     def load_parameters():
         return maybe_fail(
             "load_parameters",
-            SimpleNamespace(provenance=provenance or PARAMETER_PROVENANCE),
+            SimpleNamespace(
+                provenance=(
+                    provenance
+                    if provenance is not None
+                    else PARAMETER_PROVENANCE
+                ),
+                runtime_provenance=(
+                    runtime_provenance
+                    if runtime_provenance is not None
+                    else RUNTIME_PROVENANCE
+                ),
+            ),
         )
 
     def prepare_sidecar(_root: Path):
@@ -124,7 +141,12 @@ def _operations(
     def build_artifact(prepared, **kwargs):
         assert prepared == "prepared-batch"
         captured["artifact_kwargs"] = kwargs
-        return {"fixture": True, "prior_incidents": kwargs["prior_incidents"]}
+        return {
+            "fixture": True,
+            "configuration_echo": kwargs["configuration_echo"],
+            "runtime_provenance": kwargs["runtime_provenance"],
+            "prior_incidents": kwargs["prior_incidents"],
+        }
 
     def publish_artifact(token, artifact):
         calls.append("publication")
@@ -213,6 +235,131 @@ def test__coordinator__binds_every_phase_and_publishes_canonical_path(
         registration_reference=REGISTRATION,
         parameter_bundle=PARAMETER_PROVENANCE,
     )
+    assert (
+        captured["artifact_kwargs"]["runtime_provenance"] == RUNTIME_PROVENANCE
+    )
+
+
+def test__coordinator__compares_only_stable_registered_parameters(tmp_path):
+    relative_file = "policyengine_us/parameters/gov/ssa/nawi.yaml"
+    stable_parameters = {
+        "schema_version": "first_estimates.parameters.v1",
+        "bundle_sha256": "c" * 64,
+        "policyengine_us": {
+            "version": "1.752.2",
+            "parameter_directory": "policyengine_us/parameters",
+            "ssa_parameter_directory": ("policyengine_us/parameters/gov/ssa"),
+            "ssa_parameter_files": {
+                relative_file: {
+                    "relative_path": relative_file,
+                    "sha256": "a" * 64,
+                }
+            },
+            "actuals_asserted": {
+                "nawi_2020": 55_628.60,
+                "wage_base_2022": 147_000.0,
+            },
+        },
+        "cola": {
+            "relative_path": "data/external/ssa_cola_history.json",
+            "sha256": "b" * 64,
+        },
+    }
+
+    def runtime(checkout: str, revision: str) -> dict:
+        site_packages = f"/{checkout}/site-packages"
+        return {
+            "schema_version": "first_estimates.runtime_provenance.v1",
+            "parameters": {
+                "policyengine_us": {
+                    "root": site_packages,
+                    "ssa_parameter_directory": (
+                        f"{site_packages}/policyengine_us/parameters/gov/ssa"
+                    ),
+                    "git_revision": revision,
+                    "ssa_parameter_files": {
+                        relative_file: {
+                            "path": f"{site_packages}/{relative_file}",
+                        }
+                    },
+                },
+                "oasdi_rate_legs": {
+                    "employee": {
+                        "path": (
+                            f"{site_packages}/policyengine_us/parameters/gov/"
+                            "irs/payroll/social_security/rate/employee.yaml"
+                        )
+                    },
+                    "employer": {
+                        "path": (
+                            f"{site_packages}/policyengine_us/parameters/gov/"
+                            "irs/payroll/social_security/rate/employer.yaml"
+                        )
+                    },
+                },
+                "cola": {
+                    "path": (
+                        f"/{checkout}/data/external/ssa_cola_history.json"
+                    )
+                },
+            },
+        }
+
+    before_runtime = runtime("checkout-before", "070cbb7")
+    later_runtime = runtime("checkout-later", "a65e9ba")
+    registered_configuration = runner.registered_configuration_echo(
+        registration_reference=REGISTRATION,
+        parameter_bundle=stable_parameters,
+    )
+    registered_bytes = publication.canonical_json_bytes(
+        registered_configuration
+    )
+    registered_text = registered_bytes.decode()
+
+    assert before_runtime != later_runtime
+    assert "git_revision" not in registered_text
+    assert "/checkout-" not in registered_text
+
+    calls: list[str] = []
+    captured: dict = {}
+    result = _run(
+        _repository(tmp_path / "later"),
+        _operations(
+            calls,
+            captured,
+            provenance=stable_parameters,
+            runtime_provenance=later_runtime,
+        ),
+        configuration_bytes=registered_bytes,
+    )
+
+    assert result.status == "published"
+    assert captured["published_artifact"]["configuration_echo"] == (
+        registered_configuration
+    )
+    assert captured["published_artifact"]["runtime_provenance"] == (
+        later_runtime
+    )
+
+    mutated_parameters = copy.deepcopy(stable_parameters)
+    mutated_parameters["policyengine_us"]["ssa_parameter_files"][
+        relative_file
+    ]["sha256"] = ("d" * 64)
+    mutation_calls: list[str] = []
+    mutation = _run(
+        _repository(tmp_path / "mutation"),
+        _operations(
+            mutation_calls,
+            {},
+            provenance=mutated_parameters,
+            runtime_provenance=later_runtime,
+        ),
+        configuration_bytes=registered_bytes,
+    )
+
+    assert mutation.status == "incident"
+    assert mutation.phase == "preparation"
+    assert "compute" not in mutation_calls
 
 
 @pytest.mark.parametrize(

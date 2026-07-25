@@ -20,6 +20,13 @@ def _configuration() -> dict:
     )
 
 
+def _runtime_provenance() -> dict:
+    return {
+        "schema_version": "first_estimates.runtime_provenance.v1",
+        "parameters": {},
+    }
+
+
 def _sidecar() -> bytes:
     return publication.canonical_json_bytes(
         {
@@ -330,6 +337,7 @@ def _artifact(sidecar: bytes | None = None) -> dict:
             }
         },
         "parameters": {"bundle_sha256": "c" * 64},
+        "runtime_provenance": _runtime_provenance(),
         "execution": {
             "canonical_rule": publication.CANONICAL_EXECUTION_RULE,
             "completed_draw_indices": list(range(20)),
@@ -398,12 +406,24 @@ def test__artifact_writer__binds_and_writes_exact_sidecar_once(tmp_path):
     root = tmp_path / "repo"
     (root / "runs").mkdir(parents=True)
     destination = root / publication.DEFAULT_ARTIFACT_PATH
-
-    publication._write_first_estimates_artifact_for_test(
-        repository_root=root,
-        artifact=artifact,
-        expected_configuration_echo=_configuration(),
-        sidecar_payload=sidecar,
+    registration = publication._RegisteredConfigurationToken(
+        _repository_root=root.resolve(),
+        _registration_reference="issue-42-comment-1234567",
+        _configuration_bytes=publication.canonical_json_bytes(
+            _configuration()
+        ),
+    )
+    token = publication._PrecomputeToken(
+        _registration=registration,
+        _runtime_provenance_bytes=publication.canonical_json_bytes(
+            _runtime_provenance()
+        ),
+        _sidecar_payload=sidecar,
+        _sidecar_sha256=hashlib.sha256(sidecar).hexdigest(),
+        _prior_incidents=(),
+    )
+    assert publication.write_first_estimates_artifact(token, artifact) == (
+        destination
     )
 
     loaded = json.loads(destination.read_text())
@@ -411,6 +431,7 @@ def test__artifact_writer__binds_and_writes_exact_sidecar_once(tmp_path):
     publication.validate_first_estimates_artifact(
         loaded,
         expected_configuration_echo=_configuration(),
+        expected_runtime_provenance=_runtime_provenance(),
     )
     assert Path(f"{destination}.env.json").read_bytes() == sidecar
     assert not (root / "first_estimates_v1.json").exists()
@@ -419,6 +440,7 @@ def test__artifact_writer__binds_and_writes_exact_sidecar_once(tmp_path):
             repository_root=root,
             artifact=artifact,
             expected_configuration_echo=_configuration(),
+            expected_runtime_provenance=_runtime_provenance(),
             sidecar_payload=sidecar,
         )
 
@@ -715,6 +737,17 @@ def test__artifact_validator__freezes_identity_and_sidecar_path():
         publication.validate_first_estimates_artifact(
             artifact,
             expected_configuration_echo=_configuration(),
+        )
+
+    artifact = _artifact()
+    artifact["runtime_provenance"]["parameters"] = {
+        "policyengine_us": {"root": "/later/site-packages"}
+    }
+    with pytest.raises(ValueError, match="pre-compute run-time identity"):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+            expected_runtime_provenance=_runtime_provenance(),
         )
 
 

@@ -2,8 +2,9 @@
 
 ## State
 
-The parameter loader now separates stable registered provenance from
-run-time identity. Targeted loader and runner tests pass.
+The coordinator now compares only stable registered provenance, freezes the
+separate run-time record before compute, and publishes both as distinctly
+labeled artifact blocks. The requested later-checkout regression passes.
 
 ## Done
 
@@ -16,10 +17,15 @@ run-time identity. Targeted loader and runner tests pass.
 - Added a registered-parameter guard against run-time fields and absolute
   paths.
 - Verified 16 targeted tests pass in the main virtual environment.
+- Froze canonical run-time provenance bytes in the pre-compute token.
+- Added top-level artifact `runtime_provenance` while keeping the registered
+  configuration echo stable and byte-compared.
+- Added regression coverage showing changed revision/roots pass while a
+  changed nested parameter-file hash aborts before compute.
+- Updated the unit-tier count from 829 to 830.
+- Verified 132 coordinator/artifact/preparation tests pass.
 
 ## Next
 
-- Bind run-time provenance through the coordinator and artifact separately
-  from the compared configuration echo.
-- Add the later-commit/stable-hash regression and update §11.
+- Update the one §11 artifact-content sentence as an amendment-class change.
 - Run formatting, lint, and fast tests; push and open the requested PR.
