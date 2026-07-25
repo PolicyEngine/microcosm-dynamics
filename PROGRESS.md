@@ -36,11 +36,11 @@ has been merged, bringing design amendment `ee1221d`.
   raw-path enforcement, fixed-claim refusals, and interrupt/claim lifecycle
   tests. The combined enforcement scope passes 99 tests; all estimator tests
   pass 130 tests; scoped Black, Ruff, and diff checks pass.
+- Recounted 3,589 tests: 829 unit, 1,277 artifact, 804 integration-PSID,
+  520 reproduction-legacy, and 159 oracle-policyengine.
 
 ## Next
 
-- Commit the coordinator enforcement milestone.
-- Recount the test tiers and run repository-wide Black, Ruff, focused, unit,
-  and artifact fast suites.
+- Run repository-wide Black, Ruff, focused, unit, and artifact fast suites.
 - Finalize this file, write `FINAL_REPORT.md`, and push the branch if network
   access permits.
