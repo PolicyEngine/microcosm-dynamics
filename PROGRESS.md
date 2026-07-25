@@ -45,7 +45,7 @@
   unresolved opening-stock candidate is asserted to stop at C.5.
 - Split the reducer's historical cache-input identity from its reviewed
   implementation identity, pinned the latter to the final production-source
-  commit `cfe2f1e351611227bbfb6dfba300f01745c01d67`, and adapted both absent
+  commit `9cb4b2a8bb95a3e636d225fe96b2030967043a02`, and adapted both absent
   legacy and explicit-unresolved upstream records.
 - Added a no-write `--implementation-replay` mode that runs current production
   preparation on the pinned draw-0 cache and compares six frozen artifact
@@ -55,14 +55,21 @@
   unresolved rows without loading the 7 GB cache.
 - Sealed/replay artifact tests: `5 passed in 4.78s`; updated tier-policy
   collection check: `1 passed, 3652 deselected`.
+- Draw-0 implementation replay: status `matched`, with 4,077 derived, 2,315
+  unresolved, 3,083 candidates, and included sets 1,514 / 1,520 / 1,240.
+- Full focused suite: `85 passed in 5.40s`; the six named referee regressions
+  passed individually in `4.78s`.
+- Full unit tier: `843 passed, 5 skipped, 2805 deselected` in `62.25s`;
+  the only warning was the existing joblib physical-core fallback.
+- Full artifact tier: `1284 passed, 38 skipped, 2331 deselected` in `68.49s`.
+- Applied Black's sole requested mechanical wrap in the seed assertion and
+  advanced the reviewed production-source pin to that formatting commit.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.
 
 ## Next
 
-- Commit the sealed-preparation and replay-boundary step.
-- Run the pinned-cache draw-0 implementation replay.
 - Run the full focused/unit/artifact, formatting, lint, tier-policy, bytecode,
   and repository-integrity verification matrix.
 - Finalize this ledger and report, commit each coherent step, and push
