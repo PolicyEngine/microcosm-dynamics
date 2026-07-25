@@ -8,8 +8,9 @@ All adjudicated round-2 changes are implemented and locally verified on
 those remain run-time coordinator procedure under the scoped ruling. The
 adjudicated durable attempt claim is the only new persistent state.
 
-Push is the only blocker. `git push --dry-run origin sol/entry8-impl` failed
-because the sandbox could not resolve `github.com`.
+Push is the only blocker. Both `git push --dry-run origin sol/entry8-impl` and
+the final `git push origin sol/entry8-impl` failed because the sandbox could
+not resolve `github.com`.
 
 ## Per-item implementation
 
