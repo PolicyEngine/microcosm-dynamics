@@ -14,6 +14,7 @@ import importlib.util
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 from collections.abc import Callable, Iterator, Mapping
@@ -75,6 +76,7 @@ _INPUT_FACTORY_MODULES = (
 _INPUT_FACTORY_CALLABLE = "build_input_plan"
 _ATTEMPT_CLAIM_PATH = Path("runs/first_estimates_attempt.claim")
 _ATTEMPT_CLAIM_SCHEMA = "first_estimates_attempt.v1"
+_ATTEMPT_CLAIM_MAX_BYTES = 4096
 _RETRY_CLAIM_PATH = Path("runs/first_estimates_retry.claim")
 _RETRY_CLAIM_SCHEMA = "first_estimates_retry.v1"
 _ESTIMATES_PACKAGE_PATH = Path("src/populace_dynamics/estimates/__init__.py")
@@ -408,10 +410,36 @@ def _write_attempt_claim_payload(descriptor: int, payload: bytes) -> None:
 
 
 def _read_attempt_claim(path: Path) -> Mapping[str, Any] | None:
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    if no_follow is None or nonblocking is None:
+        return None
     try:
-        if path.is_symlink():
-            return None
-        payload = path.read_bytes()
+        descriptor = os.open(
+            path,
+            os.O_RDONLY | no_follow | nonblocking,
+        )
+        try:
+            metadata = os.fstat(descriptor)
+            if (
+                not stat.S_ISREG(metadata.st_mode)
+                or metadata.st_size > _ATTEMPT_CLAIM_MAX_BYTES
+            ):
+                return None
+            chunks = bytearray()
+            while len(chunks) <= _ATTEMPT_CLAIM_MAX_BYTES:
+                chunk = os.read(
+                    descriptor,
+                    _ATTEMPT_CLAIM_MAX_BYTES + 1 - len(chunks),
+                )
+                if not chunk:
+                    break
+                chunks.extend(chunk)
+            if len(chunks) > _ATTEMPT_CLAIM_MAX_BYTES:
+                return None
+            payload = bytes(chunks)
+        finally:
+            os.close(descriptor)
         value = json.loads(payload)
         canonical_payload = publication.canonical_json_bytes(value)
     except (
@@ -448,6 +476,8 @@ def _create_attempt_claim(
     runs = _sealed_runs_directory(repository_root)
     path = runs / _ATTEMPT_CLAIM_PATH.name
     payload = _attempt_claim_payload(registration_reference)
+    if len(payload) > _ATTEMPT_CLAIM_MAX_BYTES:
+        raise ValueError("attempt claim payload exceeds its read bound")
     try:
         descriptor = os.open(
             path,

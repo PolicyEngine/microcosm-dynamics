@@ -7,6 +7,7 @@ import importlib.util
 import inspect
 import json
 import os
+import stat
 import sys
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -1162,6 +1163,9 @@ def test__attempt_claim__is_durable_and_blocks_same_registration(tmp_path):
         )
     assert fresh.value.reason == same.value.reason
     assert path.read_bytes() == original
+    oversized = root / "runs" / "oversized.claim"
+    oversized.write_bytes(b"x" * (coordinator._ATTEMPT_CLAIM_MAX_BYTES + 1))
+    assert coordinator._read_attempt_claim(oversized) is None
 
 
 @pytest.mark.parametrize(
@@ -1302,6 +1306,65 @@ def test__production_path__symlinked_matching_claim_requires_fresh_adjudication(
     assert outside.read_bytes() == coordinator._attempt_claim_payload(
         REGISTRATION
     )
+
+
+@pytest.mark.skipif(
+    not all(
+        hasattr(os, name)
+        for name in ("mkfifo", "O_NOFOLLOW", "O_NONBLOCK")
+    ),
+    reason="platform has no nonblocking no-follow FIFO support",
+)
+def test__production_path__fifo_claim_requires_fresh_adjudication(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    claim = root / "runs" / "first_estimates_attempt.claim"
+    os.mkfifo(claim)
+    real_open = os.open
+    claim_open_flags: list[int] = []
+
+    def guarded_open(path, flags, *args, **kwargs):
+        if Path(path) == claim:
+            claim_open_flags.append(flags)
+            if not flags & os.O_WRONLY:
+                required = os.O_NOFOLLOW | os.O_NONBLOCK
+                if flags & required != required:
+                    raise OSError("claim reader omitted safe FIFO flags")
+        return real_open(path, flags, *args, **kwargs)
+
+    monkeypatch.setattr(coordinator.os, "open", guarded_open)
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    calls: list[str] = []
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations(calls, {}),
+    )
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+        retry_after_incident=1,
+    )
+
+    reader_flags = [
+        flags for flags in claim_open_flags if not flags & os.O_WRONLY
+    ]
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    assert result.path.name == "first_estimates_incident_1.json"
+    assert calls == []
+    assert len(reader_flags) == 1
+    assert reader_flags[0] & os.O_NOFOLLOW
+    assert reader_flags[0] & os.O_NONBLOCK
+    assert stat.S_ISFIFO(os.lstat(claim).st_mode)
 
 
 def test__production_path__successful_publication_keeps_claim(

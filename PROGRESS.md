@@ -5,7 +5,7 @@
 - Branch: `sol/entry8-impl`
 - Review anchor: `d2b94b6`
 - Latest review/adjudication: round-4 FIX-FIRST and all three dispositions confirmed
-- Active task: harden attempt-claim reads
+- Active task: run complete round-4 verification
 
 ## Done
 
@@ -19,9 +19,12 @@
 - Placed retry consumption after exact incident-history authorization and before source validation or any retry work, inside preparation incident accounting.
 - Added the requested production hard-crash-state test: a durable marker with no retry artifact/incident refuses the next retry to fresh registration.
 - Ignored only the ceremony-owned attempt/retry controls and incident records that can legitimately predate a seal; arbitrary untracked files remain visible to full porcelain status.
-- Focused coordinator verification passes: 50 tests.
+- Replaced path-level claim reads with `O_NOFOLLOW | O_NONBLOCK` descriptor reads, `fstat`/`S_ISREG` validation, and a 4 KiB payload bound.
+- Added the platform-gated production FIFO mutation and pinned the safe open flags, special-file refusal, and unchanged fresh-adjudication reason.
+- Focused coordinator verification passes: 51 tests.
 
 ## Next
 
-1. Harden attempt-claim reads and test special-file refusal where supported.
-2. Run final verification, push if DNS permits, and write the final report to the requested output file.
+1. Run focused, unit, artifact, formatting, and source-cleanliness verification.
+2. Finalize and commit this progress ledger.
+3. Push if DNS permits and write the final report to the requested output file.
