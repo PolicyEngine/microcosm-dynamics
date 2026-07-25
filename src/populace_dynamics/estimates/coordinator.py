@@ -358,15 +358,21 @@ def _assert_registered_sources(repository: Path) -> None:
 
 @contextmanager
 def _registered_scripts_path(scripts: Path) -> Iterator[None]:
-    """Expose registered sibling modules for the complete factory chain.
+    """Expose every registered scripts module for a bounded execution scope.
 
     Both ``sys.path`` and ``sys.modules`` are restored exactly: any
-    pre-existing binding for a registered factory module returns, and
-    every module the chain imported (including transitive lazy imports)
-    is removed, leaving interpreter state byte-identical.
+    pre-existing binding for a module represented by ``scripts/*.py``
+    returns, and every module the scope imported (including transitive
+    lazy imports) is removed, leaving interpreter state byte-identical.
     """
     original_path = sys.path.copy()
-    guarded_names = (*_INPUT_FACTORY_MODULES, _FACTORY_SYNTHETIC_NAME)
+    guarded_names = tuple(
+        sorted(
+            set(_INPUT_FACTORY_MODULES)
+            | {_FACTORY_SYNTHETIC_NAME}
+            | {path.stem for path in scripts.glob("*.py")}
+        )
+    )
     preexisting = {
         name: sys.modules[name]
         for name in guarded_names
@@ -1055,37 +1061,33 @@ def _run_registered_first_estimates_for_test(
 
     operations.after_preparation()
 
+    phase = "compute"
     try:
-        batch = operations.execute_projection(
-            input_plan,
-            resolved=resolved,
-            configuration_echo=expected_configuration,
-            registered_configuration_bytes=registered_configuration_bytes,
-        )
+        with _registered_scripts_path(
+            registration._repository_root / _INPUT_FACTORY_PATH.parent
+        ):
+            batch = operations.execute_projection(
+                input_plan,
+                resolved=resolved,
+                configuration_echo=expected_configuration,
+                registered_configuration_bytes=registered_configuration_bytes,
+            )
+            phase = "invariant"
+            prepared = operations.prepare_batch(
+                batch,
+                parameters=parameters,
+            )
+            artifact = operations.build_artifact(
+                prepared,
+                configuration_echo=expected_configuration,
+                runtime_provenance=publication._runtime_provenance(precompute),
+                environment_sidecar_sha256=precompute._sidecar_sha256,
+                prior_incidents=precompute._prior_incidents,
+            )
     except BaseException as error:
         return _publish_abort(
             precompute,
-            phase="compute",
-            error=error,
-            operations=operations,
-        )
-
-    try:
-        prepared = operations.prepare_batch(
-            batch,
-            parameters=parameters,
-        )
-        artifact = operations.build_artifact(
-            prepared,
-            configuration_echo=expected_configuration,
-            runtime_provenance=publication._runtime_provenance(precompute),
-            environment_sidecar_sha256=precompute._sidecar_sha256,
-            prior_incidents=precompute._prior_incidents,
-        )
-    except BaseException as error:
-        return _publish_abort(
-            precompute,
-            phase="invariant",
+            phase=phase,
             error=error,
             operations=operations,
         )
