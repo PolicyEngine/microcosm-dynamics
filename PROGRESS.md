@@ -1,40 +1,29 @@
-# PR #286 Fix Round 4 Progress
+# PR #286 Fix Round 5 Progress
 
 ## State
 
 - Branch: `sol/entry8-impl`
-- Review anchor: `d2b94b6`
-- Latest review/adjudication: round-4 FIX-FIRST and all three dispositions confirmed
-- Local implementation and verification: complete
-- Push state: attempted and blocked by DNS (`Could not resolve host: github.com`)
-- Final report: `scratch/pr286-round4-final-report.md`
+- Review anchor: `f6a986d`
+- Latest review/adjudication: round-5 FIX-FIRST with two confirmed items
+- Local implementation: in progress
+- Verification: pending
+- Push state: pending
+- Final report: `scratch/pr286-round5-final-report.md`
 
 ## Done
 
-- Confirmed the requested worktree, branch, and review-anchor commit.
-- Confirmed `git status --porcelain` is empty repo-wide.
-- Retrieved the latest two PR #286 comments and confirmed there are no inline review threads.
-- Changed the shared preparation/publication source guard to require exact, repo-wide `git status --porcelain` cleanliness, including untracked files.
-- Added the requested production-path mutation for an untracked `scripts/registered_m6_candidate2_inputs/__init__.py` import-shadow package.
-- Added the exact ignore rule required for the ceremony-created attempt claim so the seal does not reject its own durable control file.
-- Added `runs/first_estimates_retry.claim` with canonical registration/incident binding, exclusive creation, file fsync, and parent-directory fsync.
-- Placed retry consumption after exact incident-history authorization and before source validation or any retry work, inside preparation incident accounting.
-- Added the requested production hard-crash-state test: a durable marker with no retry artifact/incident refuses the next retry to fresh registration.
-- Ignored only the ceremony-owned attempt/retry controls and incident records that can legitimately predate a seal; arbitrary untracked files remain visible to full porcelain status.
-- Replaced path-level claim reads with `O_NOFOLLOW | O_NONBLOCK` descriptor reads, `fstat`/`S_ISREG` validation, and a 4 KiB payload bound.
-- Added the platform-gated production FIFO mutation and pinned the safe open flags, special-file refusal, and unchanged fresh-adjudication reason.
-- Focused coordinator verification passes: 51 tests.
-- Recounted the three new coordinator tests in the enforced artifact tier: 1,290 collected.
-- Full collection passes: 3,602 tests collected.
-- Full focused first-estimates verification passes: 175 tests.
-- Unit tier passes: 824 passed, 5 skipped.
-- Artifact tier passes: 1,250 passed, 40 skipped.
-- Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
-- Two final full `git status --porcelain` source seals are empty repo-wide.
-- Attempted to push `sol/entry8-impl`; the host could not resolve `github.com`.
-- Wrote the requested final report outside tracked repository state.
+- Confirmed the requested worktree, branch, and clean starting state.
+- Retrieved the latest two PR #286 comments.
+- Confirmed the required ignored-executable seal and registration-reference
+  structural bound without expanding scope.
 
 ## Next
 
-1. Retry `git push origin sol/entry8-impl` when DNS is available.
-2. No local implementation or verification work remains.
+1. Harden both source-seal checks against Git configuration and ignored
+   executable artifacts, disable coordinator bytecode writes, and add the
+   crafted-cache mutation test.
+2. Bound registration references to 1,024 characters in structural validation
+   inside the preparation incident boundary, then test rejection at 1,025 and
+   claim creation at 1,024.
+3. Run focused and full validation, write the final report, commit each
+   coherent step, and push if DNS permits.
