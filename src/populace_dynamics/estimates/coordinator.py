@@ -366,11 +366,14 @@ def _registered_scripts_path(scripts: Path) -> Iterator[None]:
     is removed, leaving interpreter state byte-identical.
     """
     original_path = sys.path.copy()
+    guarded_names = (*_INPUT_FACTORY_MODULES, _FACTORY_SYNTHETIC_NAME)
     preexisting = {
         name: sys.modules[name]
-        for name in _INPUT_FACTORY_MODULES
+        for name in guarded_names
         if name in sys.modules
     }
+    for name in guarded_names:
+        sys.modules.pop(name, None)
     before = set(sys.modules)
     sys.path.insert(0, str(scripts))
     try:
@@ -379,15 +382,18 @@ def _registered_scripts_path(scripts: Path) -> Iterator[None]:
         sys.path[:] = original_path
         for name in set(sys.modules) - before:
             sys.modules.pop(name, None)
-        for name in _INPUT_FACTORY_MODULES:
+        for name in guarded_names:
             if name in preexisting:
                 sys.modules[name] = preexisting[name]
             else:
                 sys.modules.pop(name, None)
 
 
+_FACTORY_SYNTHETIC_NAME = "_first_estimates_registered_input_factory"
+
+
 def _load_module(path: Path) -> ModuleType:
-    module_name = "_first_estimates_registered_input_factory"
+    module_name = _FACTORY_SYNTHETIC_NAME
     spec = importlib.util.spec_from_file_location(module_name, path)
     if spec is None or spec.loader is None:
         raise RuntimeError("registered input factory cannot be imported")
@@ -405,8 +411,6 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
     _assert_registered_input_sources(repository)
     path = repository / _INPUT_FACTORY_PATH
     with _registered_scripts_path(path.parent):
-        for module_name in _INPUT_FACTORY_MODULES:
-            sys.modules.pop(module_name, None)
         module = _load_module(path)
         factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
         if not callable(factory):
