@@ -2,9 +2,9 @@
 
 ## State
 
-The official determination-year COLA correction, SSA stepwise benefit
-rounding, and the nonpersistent production coordinator are implemented and
-focused-tested. No projection has been run.
+All adjudicated implementation fixes are complete and verified locally. The
+branch is ready for PR re-review; no projection has been run. Push is blocked
+only because this sandbox cannot resolve `github.com`.
 
 ## Done
 
@@ -45,8 +45,13 @@ focused-tested. No projection has been run.
   types, literal schema and phase values, filename/index and partial-path
   rules, precompute-echo drift, outside-echo numeric arrays, retry truth
   table, and contiguous append behavior.
+- Passed repository-wide Black (`486` files) and Ruff, the complete focused
+  fix-round suite (`146 passed`), unit tier (`824 passed, 5 skipped`), and
+  artifact tier (`1,221 passed, 40 skipped`); recounted all `3,573` tests.
+- Wrote the final handoff report to `FINAL_REPORT.md`.
 
 ## Next
 
-- Run formatting, lint, and fast tests; push the branch and write the final
-  report to the requested output file.
+- Push `sol/entry8-impl` from a network-enabled environment.
+- After the coordinator's finding-7 design amendment lands, refresh the
+  byte-exact gap-block fixture in the amendment's implementation pass.
