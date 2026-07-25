@@ -6,8 +6,8 @@
 - Review anchor: `f6a986d`
 - Latest review/adjudication: round-5 FIX-FIRST with two confirmed items
 - Local implementation: complete
-- Verification: complete except final committed-tree source seals
-- Push state: pending
+- Verification: complete
+- Push state: attempted and blocked by DNS (`Could not resolve host: github.com`)
 - Final report: `scratch/pr286-round5-final-report.md`
 
 ## Done
@@ -38,11 +38,14 @@
 - Artifact tier passes: 1,252 passed, 40 skipped.
 - The full-collection tier-policy assertion passes.
 - Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
+- Removed 382 generated ignored executable cache files under `src` and
+  `scripts`; no matching ignored artifacts remain.
+- Two final production source-guard invocations pass on an empty explicit
+  all-untracked porcelain state.
+- Attempted to push `sol/entry8-impl`; the host could not resolve `github.com`.
+- Wrote the requested final report outside tracked repository state.
 
 ## Next
 
-1. Commit verification bookkeeping.
-2. Remove only Git-enumerated ignored executable caches under `src` and
-   `scripts`, then confirm two clean production source seals.
-3. Write the final report, commit the completed progress state, and push if
-   DNS permits.
+1. Retry `git push origin sol/entry8-impl` when DNS is available.
+2. No local implementation or verification work remains.
