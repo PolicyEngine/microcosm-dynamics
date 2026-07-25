@@ -483,10 +483,9 @@ def test_builds_complete_three_table_artifact_with_flat_aggregates():
     assert artifact["diagnostics"]["context_ratio"] == (
         CONTEXT_RATIO_DISCLOSURE
     )
-    assert artifact["diagnostics"]["context_ratio"]["status"] == (
-        "not_computed"
-    )
-    assert "design_question" in artifact["diagnostics"]["context_ratio"]
+    assert artifact["diagnostics"]["context_ratio"] == {
+        "status": "deferred_to_anchor_extraction"
+    }
     assert BENEFIT_MEASURE_LABEL in artifact["diagnostics"]["benefit_measure"]
 
     validate_first_estimates_artifact(

@@ -185,6 +185,15 @@ def test__driver__pins_literal_spec_hashes_independently():
     assert runner.ENGINE_SPEC_SHA256 == ENGINE_SPEC_SHA256
 
 
+def test__driver__pins_ratified_design_and_amendment_identities():
+    assert _configuration()["design"] == {
+        "path": "docs/design/first_estimates_report.md",
+        "ratification_commit": "6586b92",
+        "amendment_commit": "ee1221d",
+        "revision": 9,
+    }
+
+
 def test__driver__rejects_nonexact_registered_configuration_bytes():
     configuration = _configuration()
     with pytest.raises(ValueError, match="exact registered bytes"):

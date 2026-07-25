@@ -373,19 +373,7 @@ def _artifact(sidecar: bytes | None = None) -> dict:
                 for draw_index in range(20)
             ],
             "context_ratio": {
-                "status": "not_computed",
-                "report_only": True,
-                "anchor": False,
-                "reason": (
-                    "No committed, hash-pinned annual SSA "
-                    "average-monthly-benefit-at-award series is registered, "
-                    "so no simulated-to-published ratio is computed."
-                ),
-                "design_question": (
-                    "Which exact SSA annual award statistic, source table, "
-                    "vintage, and calendar-year convention should a "
-                    "successor registration pin?"
-                ),
+                "status": "deferred_to_anchor_extraction",
             },
             "payment_year_convention": (
                 "Twelve annualized monthly payments only in realized "
@@ -665,7 +653,7 @@ def test__artifact_validator__freezes_year_origin_and_disclosures():
 
     artifact = _artifact()
     artifact["diagnostics"]["context_ratio"]["status"] = "computed"
-    with pytest.raises(ValueError, match="not_computed"):
+    with pytest.raises(ValueError, match="deferred_to_anchor_extraction"):
         publication.validate_first_estimates_artifact(
             artifact,
             expected_configuration_echo=_configuration(),

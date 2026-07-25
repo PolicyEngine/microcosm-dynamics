@@ -69,18 +69,7 @@ _SNAP_KEYS = ("lower_endpoint", "upper_endpoint")
 _HEX_DIGITS = frozenset("0123456789abcdef")
 
 CONTEXT_RATIO_DISCLOSURE = {
-    "status": "not_computed",
-    "report_only": True,
-    "anchor": False,
-    "reason": (
-        "No committed, hash-pinned annual SSA average-monthly-benefit-at-"
-        "award series is registered, so no simulated-to-published ratio is "
-        "computed."
-    ),
-    "design_question": (
-        "Which exact SSA annual award statistic, source table, vintage, and "
-        "calendar-year convention should a successor registration pin?"
-    ),
+    "status": "deferred_to_anchor_extraction",
 }
 
 

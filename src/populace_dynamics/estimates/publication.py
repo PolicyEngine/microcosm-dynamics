@@ -125,13 +125,13 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     },
     {
         "disclosure": (
-            "F4 — partial overlay: _merge_period_columns drops named columns "
-            "before left-merging, so unmatched live state becomes NaN "
-            "(pinned: carried di_converted=True read as no-conversion)"
+            "F4 — partial overlay: `_merge_period_columns` drops named "
+            "columns before left-merging, so unmatched live state becomes "
+            "`NaN` (pinned: carried `di_converted=True` read as no-conversion)"
         ),
         "classification": (
-            "material — directly motivates the §5 precedence law and the "
-            "di_unknown class"
+            "**material** — directly motivates the §5 precedence law and the "
+            "`di_unknown` class"
         ),
     },
     {
@@ -158,12 +158,12 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     },
     {
         "disclosure": (
-            "F8 — entrant classification (anchor_wave > 2015 & ~domain "
+            "F8 — entrant classification (`anchor_wave > 2015 & ~domain` "
             "treated as row existence)"
         ),
         "classification": (
-            "material — the reason §3.3/§10 re-derive the entrant count from "
-            "explicit earnings rows"
+            "**material** — the reason §3.3/§10 re-derive the entrant count "
+            "from explicit earnings rows"
         ),
     },
     {
@@ -178,7 +178,7 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     },
     {
         "disclosure": (
-            "F9 sub-item — coresident_spouse carried for a person whose "
+            "F9 sub-item — `coresident_spouse` carried for a person whose "
             "spouse was removed by simulated mortality"
         ),
         "classification": (
@@ -188,7 +188,7 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     },
     {
         "disclosure": (
-            "F10 — entrant schema NAs (synthetic_entry=NA inheritance; "
+            "F10 — entrant schema NAs (`synthetic_entry=NA` inheritance; "
             "certified surface: future panel/schema consumers)"
         ),
         "classification": (
@@ -200,7 +200,7 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     {
         "disclosure": (
             "F11 — fertility-domain coverage (births draw over "
-            "state.marital_ids only; certified surface: family-B birth "
+            "`state.marital_ids` only; certified surface: family-B birth "
             "counts, no gated cell)"
         ),
         "classification": (
@@ -249,6 +249,22 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
     {
         "disclosure": "Odd-year earnings carry law (§3.2)",
         "classification": "material — annual tables",
+    },
+    {
+        "disclosure": (
+            "No post-claim recomputation (§7.5, registered simplification)"
+        ),
+        "classification": (
+            "material — benefits of post-claim workers understated; affected "
+            "count published"
+        ),
+    },
+    {
+        "disclosure": (
+            "Context ratio deferred to the anchor-extraction successor "
+            "(§7, amendment 1)"
+        ),
+        "classification": ("material — no published-average comparison in v1"),
     },
     {
         "disclosure": "Spouse/survivor benefits out of scope",
@@ -424,18 +440,7 @@ _ENTRANT_DISCLOSURE = {
     "operative_exclusion_rule": False,
 }
 _CONTEXT_RATIO_DISCLOSURE = {
-    "status": "not_computed",
-    "report_only": True,
-    "anchor": False,
-    "reason": (
-        "No committed, hash-pinned annual SSA average-monthly-benefit-at-"
-        "award series is registered, so no simulated-to-published ratio is "
-        "computed."
-    ),
-    "design_question": (
-        "Which exact SSA annual award statistic, source table, vintage, and "
-        "calendar-year convention should a successor registration pin?"
-    ),
+    "status": "deferred_to_anchor_extraction",
 }
 _PAYMENT_YEAR_CONVENTION = (
     "Twelve annualized monthly payments only in realized presence years; "
@@ -1650,7 +1655,8 @@ def validate_first_estimates_artifact(
     )
     if diagnostics["context_ratio"] != _CONTEXT_RATIO_DISCLOSURE:
         raise ValueError(
-            "context ratio must retain its exact not_computed disclosure"
+            "context ratio must retain its exact "
+            "deferred_to_anchor_extraction disclosure"
         )
     if diagnostics["payment_year_convention"] != _PAYMENT_YEAR_CONVENTION:
         raise ValueError("payment-year convention disclosure changed")

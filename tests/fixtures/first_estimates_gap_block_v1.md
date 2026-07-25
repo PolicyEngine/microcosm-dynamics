@@ -27,5 +27,7 @@
 | Alignment `not_computed`; scored path unaligned | material |
 | Domain and coverage exclusions (§3.3) | material; counts published |
 | Odd-year earnings carry law (§3.2) | material — annual tables |
+| No post-claim recomputation (§7.5, registered simplification) | material — benefits of post-claim workers understated; affected count published |
+| Context ratio deferred to the anchor-extraction successor (§7, amendment 1) | material — no published-average comparison in v1 |
 | Spouse/survivor benefits out of scope | material |
 | Levels unanchored — no committed annual SSA level series | material; the registered anchor extraction is the successor step |

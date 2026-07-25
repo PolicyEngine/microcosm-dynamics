@@ -13,7 +13,7 @@ FIXTURE_PATH = (
     REPOSITORY_ROOT / "tests/fixtures/first_estimates_gap_block_v1.md"
 )
 EXPECTED_FIXTURE_SHA256 = (
-    "e499a338a6de3b92e8e795cb89dadabbeb23036064b5c642461d5a42a032ace0"
+    "b2330953bf4b517b1bc8f113c596fda0a5d6c60ca240a5cfd232a58346227977"
 )
 TABLE_START = (
     b"| Disclosure (certified-record source) | Classification here |\n"
@@ -34,7 +34,19 @@ def test__gap_block_fixture__is_literal_and_matches_frozen_design_bytes():
     fixture = FIXTURE_PATH.read_bytes()
 
     assert hashlib.sha256(fixture).hexdigest() == EXPECTED_FIXTURE_SHA256
+    assert len(fixture.splitlines()) == 33
     assert fixture == _gap_table_bytes(DESIGN_PATH.read_bytes())
+    rows = tuple(
+        dict(
+            zip(
+                ("disclosure", "classification"),
+                line.removeprefix("| ").removesuffix(" |").split(" | ", 1),
+                strict=True,
+            )
+        )
+        for line in fixture.decode().splitlines()[2:]
+    )
+    assert publication.GAP_BLOCK == rows
 
 
 def test__gap_block__matches_current_three_semantic_corrections():
@@ -54,8 +66,8 @@ def test__gap_block__matches_current_three_semantic_corrections():
         if disclosure.startswith("F9 —")
     )
     assert f4 == (
-        "material — directly motivates the §5 precedence law and the "
-        "di_unknown class"
+        "**material** — directly motivates the §5 precedence law and the "
+        "`di_unknown` class"
     )
     assert f9 == (
         "inapplicable — household composition fields are not consumed by "
