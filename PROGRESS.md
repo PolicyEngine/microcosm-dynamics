@@ -5,7 +5,7 @@
 - Branch: `sol/entry8-compute-scope`
 - Base: local `origin/master` at `955acfbbcc5c1ee1397e588bb5f1e3728a46ac11`
 - Incident: #295 incident 4, compute-time lazy imports from `scripts/`
-- Status: implementation and regressions complete; validation in progress
+- Status: implementation and validation complete; publication in progress
 
 ## Done
 
@@ -21,7 +21,12 @@
 - Extended the sealed-process preparation test with stubbed compute and
   artifact operations that import the real `build_m4_gate_floors` module
   without fitting or writing an artifact.
+- Passed focused coordinator and sealed-process regressions: 69 passed.
+- Passed the fast unit tier: 824 passed, 5 skipped.
+- Passed the fast artifact tier: 1,268 passed, 40 skipped.
+- Passed full-tree Black and Ruff checks.
 
 ## Next
 
-- Run fast tests, Black, and Ruff; push and open the requested pull request.
+- Review the final diff, push the branch, and open the requested pull request.
+- Record the final file/line summary, counts, and PR URL in the output file.
