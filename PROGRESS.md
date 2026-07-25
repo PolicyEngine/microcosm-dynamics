@@ -2,8 +2,8 @@
 
 ## State
 
-Production paths and the corrected source coordinate are traced. The cached
-draw-0 object has been validated enough to begin reducer implementation.
+The reducer's reproducible loader, corrected source law, and Stage-A/B funnel
+are implemented and exercised successfully against the cached draw-0 object.
 
 ## Done
 
@@ -31,11 +31,20 @@ draw-0 object has been validated enough to begin reducer implementation.
 - Verified the pinned runner environment loads policyengine-us 1.752.2 and the
   full report parameter bundle; baseline included clause-2 claimants total
   1,440.
+- Added `scripts/first_estimates_birth_evidence.py` with pinned repository and
+  interpreter guards, cache SHA validation, and the registered one-real-draw
+  regeneration path.
+- Implemented seed-frame invariants, PSID code dispositions, derived-birth
+  plausibility assertions, whole-population reconciliation, full Stage-A DI
+  partitioning, Stage B, and production Stage-C/D baseline transport.
+- Exercised the implementation: all section A/B counts match the referee
+  oracle, and all 86 newly dated candidates land at the first domain predicate.
 
 ## Next
 
-- Implement and format the read-only reducer, including exact production
-  Stage-C/D reruns and benefit-ledger sensitivity.
+- Add exact production birth-minus/plus-one Stage-C/D reruns and ordered
+  predicate flip accounting.
+- Add the pinned-parameter benefit-ledger sensitivity and canonical writer.
 - Run draw 0 with the pinned runner interpreter, reconcile every oracle row,
   and commit the canonical JSON.
 - Write and commit `FINAL_REPORT.md` with commands, outputs, reconciliation,

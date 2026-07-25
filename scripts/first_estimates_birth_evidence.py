@@ -1,0 +1,900 @@
+#!/usr/bin/env python3
+"""Reduce the registered first-estimates birth-year evidence for one draw.
+
+This is manual, read-only evidence tooling, not a sealed ceremony entry point.
+It does not mutate registered inputs or projection state.  Its sole write is
+the canonical JSON path selected by ``--output``.
+
+The fast path reads the optional draw cache created by the diagnostic probe.
+With no cache (or with ``--regenerate``), the script uses
+``coordinator._load_registered_input_plan`` and holds the registered scripts
+path context over the production candidate-3 prefix.  That path runs one real
+draw and clones it only to satisfy the production driver's twenty-wrapper
+contract; on the reference machine it takes about 55 minutes.
+
+Run from this worktree, never from the sealed runner worktree:
+
+    POPULACE_DYNAMICS_PE_US_DIR=/Users/maxghenis/PolicyEngine/\
+social-security-model-worktrees/sol-c3-runner/.venv/lib/python3.14/site-packages \
+    /Users/maxghenis/PolicyEngine/social-security-model-worktrees/\
+sol-c3-runner/.venv/bin/python \
+    scripts/first_estimates_birth_evidence.py
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.metadata
+import json
+import os
+import pickle
+import subprocess
+import sys
+from collections import Counter
+from collections.abc import Collection, Mapping
+from dataclasses import dataclass, replace
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "src"
+if str(SOURCE) not in sys.path:
+    sys.path.insert(0, str(SOURCE))
+
+from populace_dynamics.estimates import (  # noqa: E402
+    career,
+    coordinator,
+    preparation,
+    publication,
+    runner,
+)
+from populace_dynamics.estimates import (  # noqa: E402
+    parameters as parameter_module,
+)
+from populace_dynamics.estimates.runner import (  # noqa: E402
+    FirstReportProjectionDraw,
+)
+from populace_dynamics.harness.m6_cells import (  # noqa: E402
+    EARN_ANCHOR_YEAR,
+    SEED_WAVE,
+)
+
+SCHEMA_VERSION = "first_estimates_birth_evidence.v1"
+EXPECTED_MASTER_SHA = "daf3ff5978de5137ba50490f78ac52890291a399"
+EXPECTED_PE_US_VERSION = "1.752.2"
+EXPECTED_INTERPRETER = Path(
+    "/Users/maxghenis/PolicyEngine/social-security-model-worktrees/"
+    "sol-c3-runner/.venv/bin/python"
+)
+SEALED_RUN_ROOT = EXPECTED_INTERPRETER.parents[2]
+EXPECTED_PE_US_DIR = Path(
+    "/Users/maxghenis/PolicyEngine/social-security-model-worktrees/"
+    "sol-c3-runner/.venv/lib/python3.14/site-packages"
+)
+DEFAULT_CACHE = Path(
+    "/private/tmp/claude-501/-Users-maxghenis/"
+    "3a1c17cd-d932-4345-9056-960569766f0a/scratchpad/"
+    "e8_batch_draw0.pickle"
+)
+DEFAULT_CACHE_SHA256 = (
+    "3ba147f7666ad77d8f7735969e4329fa7180cef091ad4ee326f35b2834a72068"
+)
+DERIVED_BIRTH_MIN = 1889
+DERIVED_BIRTH_MAX = 2022
+SOURCE_CLASSES = (
+    "exact_marriage",
+    "inferred_period_age",
+    "synthetic_native",
+    "derived_projection_age",
+    "unresolved",
+)
+DI_CLASSES = ("di_conversion", "di_unknown", "non_di")
+PRODUCTION_SOURCE_PATHS = (
+    Path("src/populace_dynamics"),
+    Path("scripts/registered_m6_candidate3_inputs.py"),
+    Path("scripts/registered_m6_candidate2_inputs.py"),
+    Path("scripts/registered_m6_inputs.py"),
+    Path("scripts/build_mortality_floors.py"),
+)
+
+
+@dataclass(frozen=True)
+class LoadedDraw:
+    """The three cached/regenerated objects consumed by the reducer."""
+
+    inputs: Any
+    phase: Any
+    draw: FirstReportProjectionDraw
+    execution: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class BirthEvidence:
+    """Resolved source law and the frames needed downstream."""
+
+    trajectory: pd.DataFrame
+    roster: pd.DataFrame
+    synthetic_birth_years: Mapping[int, int]
+    population_ids: frozenset[int]
+    seed: pd.DataFrame
+    birth_year_by_person: Mapping[int, int]
+    source_by_person: Mapping[int, str]
+    initially_unresolved_ids: frozenset[int]
+    derived_ids: frozenset[int]
+    unresolved_ids: frozenset[int]
+    infant_code_ids: frozenset[int]
+    sentinel_ids: frozenset[int]
+    result: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class FunnelEvidence:
+    """Full Stage-A/B partition and production candidate baseline."""
+
+    di_by_person: Mapping[int, str]
+    raw_claim_year_carrier_ids: frozenset[int]
+    candidate_ids: frozenset[int]
+    domain_ids: frozenset[int]
+    claiming_schedule: Any
+    baseline_inclusion: career.InclusionResult
+    result: Mapping[str, Any]
+
+
+def _run_git(
+    *arguments: str, check: bool = True
+) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", "-C", str(ROOT), *arguments],
+        check=check,
+        capture_output=True,
+        text=True,
+    )
+
+
+def _assert_input_identity() -> None:
+    """Require the reducer branch to retain the pinned production bytes."""
+
+    observed_root = Path(
+        _run_git("rev-parse", "--show-toplevel").stdout.strip()
+    ).resolve()
+    if observed_root != ROOT:
+        raise RuntimeError(
+            f"Git root {observed_root} differs from reducer root {ROOT}"
+        )
+    _run_git("cat-file", "-e", f"{EXPECTED_MASTER_SHA}^{{commit}}")
+    ancestor = _run_git(
+        "merge-base",
+        "--is-ancestor",
+        EXPECTED_MASTER_SHA,
+        "HEAD",
+        check=False,
+    )
+    if ancestor.returncode != 0:
+        raise RuntimeError(
+            f"pinned master {EXPECTED_MASTER_SHA} is not an ancestor of HEAD"
+        )
+    paths = tuple(str(path) for path in PRODUCTION_SOURCE_PATHS)
+    committed = _run_git(
+        "diff",
+        "--quiet",
+        EXPECTED_MASTER_SHA,
+        "HEAD",
+        "--",
+        *paths,
+        check=False,
+    )
+    working = _run_git(
+        "diff",
+        "--quiet",
+        "--",
+        *paths,
+        check=False,
+    )
+    if committed.returncode != 0 or working.returncode != 0:
+        raise RuntimeError(
+            "production sources differ from the pinned master bytes"
+        )
+
+
+def _assert_runtime() -> Mapping[str, str]:
+    """Fail closed unless the requested parameter environment is active."""
+
+    observed_interpreter = Path(sys.executable).resolve()
+    if observed_interpreter != EXPECTED_INTERPRETER.resolve():
+        raise RuntimeError(
+            "evidence reducer requires the pinned runner interpreter: "
+            f"{EXPECTED_INTERPRETER}"
+        )
+    if ROOT == SEALED_RUN_ROOT or SEALED_RUN_ROOT in ROOT.parents:
+        raise RuntimeError(
+            "refusing to execute inside the sealed run worktree"
+        )
+    raw_parameter_root = os.environ.get("POPULACE_DYNAMICS_PE_US_DIR")
+    if raw_parameter_root is None:
+        raise RuntimeError(
+            "POPULACE_DYNAMICS_PE_US_DIR must point at the pinned runner "
+            f"site-packages directory {EXPECTED_PE_US_DIR}"
+        )
+    observed_parameter_root = Path(raw_parameter_root).resolve()
+    if observed_parameter_root != EXPECTED_PE_US_DIR.resolve():
+        raise RuntimeError(
+            "POPULACE_DYNAMICS_PE_US_DIR is not the pinned parameter stack: "
+            f"{observed_parameter_root}"
+        )
+    version = importlib.metadata.version("policyengine-us")
+    if version != EXPECTED_PE_US_VERSION:
+        raise RuntimeError(
+            f"policyengine-us {version!r} != pinned "
+            f"{EXPECTED_PE_US_VERSION!r}"
+        )
+    return {
+        "interpreter": str(EXPECTED_INTERPRETER),
+        "interpreter_resolved": str(observed_interpreter),
+        "policyengine_us_dir": str(observed_parameter_root),
+        "policyengine_us_version": version,
+    }
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(16 * 1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _validate_loaded_draw(
+    *,
+    inputs: Any,
+    phase: Any,
+    draw: Any,
+    draw_index: int,
+) -> FirstReportProjectionDraw:
+    if not isinstance(draw, FirstReportProjectionDraw):
+        raise TypeError(
+            "draw cache does not contain FirstReportProjectionDraw"
+        )
+    expected_root = runner.DRAW_ROOT_SEEDS[draw_index]
+    if draw.draw_index != draw_index or draw.root_seed != expected_root:
+        raise ValueError(
+            "draw identity mismatch: "
+            f"index/root={draw.draw_index}/{draw.root_seed}, "
+            f"expected={draw_index}/{expected_root}"
+        )
+    if getattr(draw.projection, "draw_index", None) != draw_index:
+        raise ValueError("projection carries the wrong draw index")
+    if getattr(phase, "population", None) is None:
+        raise TypeError("candidate-3 phase has no population")
+    if getattr(inputs, "refit_inputs", None) is None:
+        raise TypeError("cached inputs have no refit inputs")
+    runner._assert_phase_lineage(phase)
+    return draw
+
+
+def _load_cached_draw(path: Path, draw_index: int) -> LoadedDraw:
+    if draw_index != 0:
+        raise ValueError("the available diagnostic cache contains only draw 0")
+    resolved = path.expanduser().resolve()
+    if not resolved.is_file():
+        raise FileNotFoundError(f"draw cache is absent: {resolved}")
+    digest = _sha256(resolved)
+    if resolved == DEFAULT_CACHE.resolve() and digest != DEFAULT_CACHE_SHA256:
+        raise RuntimeError(
+            f"default draw cache sha256 {digest} != {DEFAULT_CACHE_SHA256}"
+        )
+    with resolved.open("rb") as stream:
+        blob = pickle.load(stream)
+    if not isinstance(blob, dict) or set(blob) != {"inputs", "phase", "draw0"}:
+        raise TypeError("draw cache must have exactly inputs/phase/draw0")
+    draw = _validate_loaded_draw(
+        inputs=blob["inputs"],
+        phase=blob["phase"],
+        draw=blob["draw0"],
+        draw_index=draw_index,
+    )
+    return LoadedDraw(
+        inputs=blob["inputs"],
+        phase=blob["phase"],
+        draw=draw,
+        execution={
+            "data_path": "diagnostic_pickle_cache",
+            "cache": {
+                "path": str(resolved),
+                "sha256": digest,
+                "size_bytes": resolved.stat().st_size,
+            },
+            "regeneration_path": (
+                "coordinator._load_registered_input_plan plus the registered "
+                "scripts path context and the production candidate-3 prefix; "
+                "one real draw with wrapper clones (~55 minutes)"
+            ),
+        },
+    )
+
+
+def _regenerate_draw(
+    draw_index: int,
+    report_parameters: Any,
+) -> LoadedDraw:
+    """Replay the probe's production driver with exactly one real draw."""
+
+    plan = coordinator._load_registered_input_plan(ROOT)
+    configuration = runner.registered_configuration_echo(
+        registration_reference=(
+            "manual:first_estimates_birth_evidence:"
+            f"{EXPECTED_MASTER_SHA}:draw{draw_index}"
+        ),
+        parameter_bundle=report_parameters.provenance,
+    )
+    configuration_bytes = publication.canonical_json_bytes(configuration)
+    resolved_contract = coordinator.resolve_report_contract(ROOT)
+    base_operations = runner.default_projection_operations()
+    real: dict[str, Any] = {}
+
+    def project_one_real_draw(
+        phase: Any,
+        population: Any,
+        wrapper_index: int,
+    ) -> tuple[Any, Any]:
+        if not real:
+            projection, collector = base_operations.project_draw(
+                phase,
+                population,
+                draw_index,
+            )
+            real["projection"] = projection
+            real["collector"] = collector
+        projection = real["projection"]
+        if getattr(projection, "draw_index", None) != wrapper_index:
+            projection = replace(projection, draw_index=wrapper_index)
+        return projection, real["collector"]
+
+    operations = replace(
+        base_operations,
+        project_draw=project_one_real_draw,
+    )
+    with coordinator._registered_scripts_path(ROOT / "scripts"):
+        batch = runner.execute_first_report_projection(
+            plan,
+            resolved=resolved_contract,
+            configuration_echo=configuration,
+            registered_configuration_bytes=configuration_bytes,
+            operations=operations,
+        )
+        draw = batch.draws[draw_index]
+    draw = _validate_loaded_draw(
+        inputs=batch.inputs,
+        phase=batch.phase,
+        draw=draw,
+        draw_index=draw_index,
+    )
+    return LoadedDraw(
+        inputs=batch.inputs,
+        phase=batch.phase,
+        draw=draw,
+        execution={
+            "data_path": "regenerated_registered_single_draw",
+            "cache": None,
+            "regeneration_path": (
+                "coordinator._load_registered_input_plan plus the registered "
+                "scripts path context and the production candidate-3 prefix; "
+                "one real draw with wrapper clones (~55 minutes)"
+            ),
+        },
+    )
+
+
+def _integer_ids(values: Collection[Any]) -> frozenset[int]:
+    return frozenset(int(value) for value in values)
+
+
+def _zero_filled_counts(
+    counts: Mapping[str, int],
+    keys: Collection[str],
+) -> dict[str, int]:
+    return {key: int(counts.get(key, 0)) for key in keys}
+
+
+def _seed_frame(population: Any) -> pd.DataFrame:
+    initial = population.initial_slice.copy()
+    if set(initial["anchor_wave"].astype(int)) != {SEED_WAVE}:
+        raise AssertionError("initial slice is not entirely at SEED_WAVE")
+    if set(initial["year"].astype(int)) != {EARN_ANCHOR_YEAR}:
+        raise AssertionError(
+            "initial slice is not entirely at EARN_ANCHOR_YEAR"
+        )
+    frames = [initial]
+    for entry_year, frame in sorted(
+        population.scheduled_entries_by_year.items()
+    ):
+        copied = frame.copy()
+        if set(copied["anchor_wave"].astype(int)) != {int(entry_year)}:
+            raise AssertionError(
+                f"scheduled {entry_year} frame has another anchor_wave"
+            )
+        if set(copied["year"].astype(int)) != {int(entry_year) - 1}:
+            raise AssertionError(
+                f"scheduled {entry_year} frame is not keyed at year-1"
+            )
+        frames.append(copied)
+    seed = pd.concat(frames, ignore_index=True, sort=False)
+    if seed["person_id"].duplicated().any():
+        raise AssertionError("seed frames contain duplicate people")
+    if not (
+        seed["year"].astype(int) == seed["anchor_wave"].astype(int) - 1
+    ).all():
+        raise AssertionError("seed year differs from anchor_wave - 1")
+    if _integer_ids(seed["person_id"]) != _integer_ids(population.holdout_ids):
+        raise AssertionError("seed frames do not reconcile to holdout IDs")
+    return seed
+
+
+def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
+    inputs = loaded.inputs
+    population = loaded.phase.population
+    trajectory = preparation.concatenate_realized_trajectory(
+        loaded.draw.projection
+    )
+    roster = career.build_population_roster(
+        population.initial_slice,
+        population.scheduled_entries_by_year,
+        trajectory,
+    )
+    population_ids = _integer_ids(roster["person_id"])
+    synthetic = preparation.derive_synthetic_birth_years(
+        trajectory,
+        population.reserved_real_ids,
+    )
+    marriage_history = inputs.refit_inputs.family_context.marriage_records
+    existing = career.derive_birth_years(
+        marriage_history,
+        inputs.earnings_panel,
+        synthetic,
+        required_person_ids=population_ids,
+    )
+    existing = tuple(
+        record for record in existing if record.person_id in population_ids
+    )
+    birth_year_by_person = {
+        record.person_id: record.birth_year for record in existing
+    }
+    source_by_person = {
+        record.person_id: record.source.value for record in existing
+    }
+    initially_unresolved = population_ids - set(birth_year_by_person)
+    seed = _seed_frame(population)
+    seed_by_person = seed.set_index("person_id")
+    if not seed_by_person.index.is_unique:
+        raise AssertionError("seed person index is not unique")
+    if not initially_unresolved <= _integer_ids(seed["person_id"]):
+        raise AssertionError(
+            "a clauses-1/2/synthetic unresolved person has no seed row"
+        )
+
+    derived_ids: set[int] = set()
+    infant_ids: set[int] = set()
+    sentinel_ids: set[int] = set()
+    invalid: list[tuple[int, Any]] = []
+    for person_id in sorted(initially_unresolved):
+        row = seed_by_person.loc[person_id]
+        raw_age = row["age"]
+        if pd.isna(raw_age) or int(raw_age) == 999:
+            sentinel_ids.add(person_id)
+            continue
+        age = int(raw_age)
+        if age == 1:
+            infant_ids.add(person_id)
+            continue
+        if 2 <= age <= 125:
+            seed_year = int(row["year"])
+            anchor_wave = int(row["anchor_wave"])
+            if seed_year != anchor_wave - 1:
+                raise AssertionError(
+                    f"person {person_id} violates the seed coordinate"
+                )
+            birth_year = seed_year - age
+            if not DERIVED_BIRTH_MIN <= birth_year <= DERIVED_BIRTH_MAX:
+                raise AssertionError(
+                    f"derived birth year {birth_year} for person {person_id} "
+                    f"lies outside [{DERIVED_BIRTH_MIN}, {DERIVED_BIRTH_MAX}]"
+                )
+            derived_ids.add(person_id)
+            birth_year_by_person[person_id] = birth_year
+            source_by_person[person_id] = "derived_projection_age"
+            continue
+        invalid.append((person_id, raw_age))
+    if invalid:
+        raise ValueError(
+            "unrecognized PSID seed-age codes: " f"{invalid[:10]}"
+        )
+    unresolved_ids = set(initially_unresolved) - derived_ids
+    if unresolved_ids != infant_ids | sentinel_ids:
+        raise AssertionError("unresolved age-code disposition is incomplete")
+    for person_id in unresolved_ids:
+        source_by_person[person_id] = "unresolved"
+    if set(source_by_person) != set(population_ids):
+        raise AssertionError(
+            "corrected source classes do not cover population"
+        )
+
+    initially_unresolved_counts = Counter(
+        source_by_person[person_id] for person_id in initially_unresolved
+    )
+    whole_counts = Counter(source_by_person.values())
+    derived_years = [
+        birth_year_by_person[person_id] for person_id in sorted(derived_ids)
+    ]
+    by_seed_part = {
+        "initial_slice": len(
+            initially_unresolved
+            & _integer_ids(population.initial_slice["person_id"])
+        ),
+        **{
+            f"scheduled_{year}": len(
+                initially_unresolved & _integer_ids(frame["person_id"])
+            )
+            for year, frame in sorted(
+                population.scheduled_entries_by_year.items()
+            )
+        },
+    }
+    result = {
+        "draw_invariant_by_construction": True,
+        "draw_invariance_reason": (
+            "Clause 3 reads only phase.population initial/scheduled seed "
+            "frames built before projection mortality and RNG; it reads no "
+            "trajectory row."
+        ),
+        "seed_coordinate": {
+            "formula": (
+                "birth_year = seed_year - seed_age = "
+                "(anchor_wave - 1) - collection_wave_age"
+            ),
+            "age_semantics": (
+                "Raw PSID age code from the person's collection-wave "
+                "anchor interview."
+            ),
+            "anchor_wave_semantics": (
+                "Earliest gated start-wave interview at which the person "
+                "is present with positive weight."
+            ),
+            "seed_year_semantics": (
+                "Reference year immediately before anchor_wave; initial "
+                "2015 anchors use EARN_ANCHOR_YEAR 2014, scheduled 2017/2019 "
+                "anchors use 2016/2018."
+            ),
+            "earn_anchor_year": EARN_ANCHOR_YEAR,
+            "seed_wave": SEED_WAVE,
+            "derived_birth_asserted_bounds": [
+                DERIVED_BIRTH_MIN,
+                DERIVED_BIRTH_MAX,
+            ],
+            "derived_birth_observed_range": [
+                min(derived_years),
+                max(derived_years),
+            ],
+        },
+        "seed_population": {
+            "initial_slice": len(population.initial_slice),
+            "scheduled_entries": {
+                str(year): len(frame)
+                for year, frame in sorted(
+                    population.scheduled_entries_by_year.items()
+                )
+            },
+            "real_seed_people": len(seed),
+            "synthetic_people": len(synthetic),
+            "whole_report_population": len(population_ids),
+        },
+        "initially_unresolved": {
+            "count": len(initially_unresolved),
+            "by_seed_part": by_seed_part,
+            "age_code_counts": {
+                "actual_age_2_125": len(derived_ids),
+                "unresolved_infant_code": len(infant_ids),
+                "unresolved_sentinel": len(sentinel_ids),
+            },
+            "corrected_counts_by_class": _zero_filled_counts(
+                initially_unresolved_counts,
+                SOURCE_CLASSES,
+            ),
+        },
+        "whole_population": {
+            "count": len(population_ids),
+            "counts_by_class": _zero_filled_counts(
+                whole_counts,
+                SOURCE_CLASSES,
+            ),
+        },
+    }
+    return BirthEvidence(
+        trajectory=trajectory,
+        roster=roster,
+        synthetic_birth_years=synthetic,
+        population_ids=population_ids,
+        seed=seed,
+        birth_year_by_person=dict(birth_year_by_person),
+        source_by_person=dict(source_by_person),
+        initially_unresolved_ids=frozenset(initially_unresolved),
+        derived_ids=frozenset(derived_ids),
+        unresolved_ids=frozenset(unresolved_ids),
+        infant_code_ids=frozenset(infant_ids),
+        sentinel_ids=frozenset(sentinel_ids),
+        result=result,
+    )
+
+
+def _production_candidate_inclusion(
+    *,
+    loaded: LoadedDraw,
+    births: BirthEvidence,
+    candidate_ids: frozenset[int],
+    birth_year_by_person: Mapping[int, int],
+    claiming_schedule: Any,
+) -> career.InclusionResult:
+    """Transport explicit births into the unmodified production Stage C/D."""
+
+    if set(birth_year_by_person) != set(candidate_ids):
+        raise AssertionError(
+            "production birth transport is not candidate-total"
+        )
+    transport = pd.DataFrame(
+        {
+            "person_id": sorted(candidate_ids),
+            "birth_year": [
+                int(birth_year_by_person[person_id])
+                for person_id in sorted(candidate_ids)
+            ],
+        }
+    )
+    candidate_trajectory = births.trajectory[
+        births.trajectory["person_id"].isin(candidate_ids)
+    ].copy()
+    candidate_roster = births.roster[
+        births.roster["person_id"].isin(candidate_ids)
+    ].copy()
+    result = career.build_career_inclusion(
+        trajectory=candidate_trajectory,
+        population_roster=candidate_roster,
+        observed_earnings=loaded.inputs.earnings_panel,
+        marriage_history=transport,
+        synthetic_birth_years={},
+        claiming_schedule=claiming_schedule,
+        earnings_domain_ids=loaded.phase.population.earnings_domain_ids,
+        stock_imputation_root_seed=runner.STOCK_IMPUTATION_ROOT_SEED,
+        projection_start_year=runner.PROJECTION_START_YEAR,
+    )
+    observed_origins = {record.person_id for record in result.origins}
+    if observed_origins != set(candidate_ids):
+        raise AssertionError(
+            "production origin partition is not candidate-total"
+        )
+    if result.nonclaimants:
+        raise AssertionError("candidate-only production run made nonclaimants")
+    if any(
+        record.classification is not career.DIClass.NON_DI
+        for record in result.di_partition
+    ):
+        raise AssertionError("candidate-only production run changed Stage A")
+    outcome_ids = {
+        *(record.person_id for record in result.exclusions),
+        *(record.person_id for record in result.included),
+    }
+    if outcome_ids != set(candidate_ids):
+        raise AssertionError("production Stage D is not candidate-total")
+    return result
+
+
+def _derive_funnel_evidence(
+    loaded: LoadedDraw,
+    births: BirthEvidence,
+) -> FunnelEvidence:
+    population = loaded.phase.population
+    di_records = career.classify_di_trajectory(
+        births.trajectory,
+        projection_start_year=runner.PROJECTION_START_YEAR,
+        population_ids=births.population_ids,
+    )
+    di_by_person = {
+        record.person_id: record.classification.value for record in di_records
+    }
+    if set(di_by_person) != set(births.population_ids):
+        raise AssertionError("full-population DI partition is incomplete")
+    raw_carriers = _integer_ids(
+        births.trajectory.loc[
+            births.trajectory["claim_year"].notna(),
+            "person_id",
+        ]
+    )
+    candidate_ids = frozenset(
+        person_id
+        for person_id in raw_carriers
+        if di_by_person[person_id] == career.DIClass.NON_DI.value
+    )
+    if candidate_ids & births.unresolved_ids:
+        raise RuntimeError(
+            "a Stage-B candidate remains unresolved after corrected clause 3"
+        )
+    domain_ids = _integer_ids(population.earnings_domain_ids)
+    claiming_schedule = preparation.reconstruct_claiming_schedule(
+        loaded.inputs
+    )
+    candidate_births = {
+        person_id: births.birth_year_by_person[person_id]
+        for person_id in candidate_ids
+    }
+    baseline = _production_candidate_inclusion(
+        loaded=loaded,
+        births=births,
+        candidate_ids=candidate_ids,
+        birth_year_by_person=candidate_births,
+        claiming_schedule=claiming_schedule,
+    )
+
+    initially_unresolved_carriers = (
+        raw_carriers & births.initially_unresolved_ids
+    )
+    initially_unresolved_di = Counter(
+        di_by_person[person_id] for person_id in initially_unresolved_carriers
+    )
+    newly_dated_candidates = candidate_ids & births.derived_ids
+    origins = {record.person_id: record for record in baseline.origins}
+    exclusion_reason = {
+        record.person_id: record.reason for record in baseline.exclusions
+    }
+    included_ids = {record.person_id for record in baseline.included}
+    new_origin_counts = Counter(
+        origins[person_id].origin.value for person_id in newly_dated_candidates
+    )
+    new_stage_d_counts = Counter(
+        (
+            "included"
+            if person_id in included_ids
+            else exclusion_reason[person_id]
+        )
+        for person_id in newly_dated_candidates
+    )
+    canonical_origin_counts = Counter(
+        record.origin.value for record in baseline.origins
+    )
+    candidate_source_counts = Counter(
+        births.source_by_person[person_id] for person_id in candidate_ids
+    )
+    result = {
+        "stage_a_rule": (
+            "Ever True di_converted; otherwise any missing extant "
+            "post-2014 DI observation; otherwise non-DI."
+        ),
+        "stage_b_rule": (
+            "Among non-DI people, any non-null claim_year in any extant "
+            "trajectory slice."
+        ),
+        "initially_unresolved_raw_claim_year_carriers": {
+            "count": len(initially_unresolved_carriers),
+            "di_partition": _zero_filled_counts(
+                initially_unresolved_di,
+                DI_CLASSES,
+            ),
+            "true_stage_b_candidates": len(
+                initially_unresolved_carriers & candidate_ids
+            ),
+            "still_unresolved_after_clause_3": len(
+                initially_unresolved_carriers & births.unresolved_ids
+            ),
+        },
+        "newly_dated_stage_b_candidates": {
+            "count": len(newly_dated_candidates),
+            "origin_counts": _zero_filled_counts(
+                new_origin_counts,
+                tuple(origin.value for origin in career.ClaimOrigin),
+            ),
+            "ordered_stage_d_landing": dict(
+                sorted(new_stage_d_counts.items())
+            ),
+        },
+        "canonical_candidates": {
+            "count": len(candidate_ids),
+            "domain_resident": len(candidate_ids & domain_ids),
+            "counts_by_birth_source": _zero_filled_counts(
+                candidate_source_counts,
+                SOURCE_CLASSES,
+            ),
+            "origin_counts": _zero_filled_counts(
+                canonical_origin_counts,
+                tuple(origin.value for origin in career.ClaimOrigin),
+            ),
+        },
+        "production_transport": {
+            "method": (
+                "Run career.build_career_inclusion on the canonical candidate "
+                "universe with an explicit one-row birth transport. This "
+                "exercises unmodified production Stage C, opening-stock draw, "
+                "career construction, and ordered Stage D. Original birth "
+                "source labels are retained externally."
+            ),
+            "why_candidate_universe_only": (
+                "The 2,315 residual unresolved people are noncandidates and "
+                "master's whole-population birth guard intentionally fails on "
+                "them; all 3,083 canonical candidates have corrected births."
+            ),
+        },
+    }
+    return FunnelEvidence(
+        di_by_person=di_by_person,
+        raw_claim_year_carrier_ids=raw_carriers,
+        candidate_ids=candidate_ids,
+        domain_ids=domain_ids,
+        claiming_schedule=claiming_schedule,
+        baseline_inclusion=baseline,
+        result=result,
+    )
+
+
+def _arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--draw-index",
+        type=int,
+        default=0,
+        choices=runner.DRAW_INDICES,
+    )
+    parser.add_argument(
+        "--cache",
+        type=Path,
+        default=DEFAULT_CACHE,
+        help="Optional diagnostic pickle cache (draw 0 only).",
+    )
+    parser.add_argument(
+        "--regenerate",
+        action="store_true",
+        help="Ignore the cache and run the registered one-real-draw path.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help=(
+            "Canonical JSON destination; defaults to "
+            "runs/first_estimates_birth_evidence_draw<index>.json."
+        ),
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = _arguments()
+    _assert_input_identity()
+    runtime_identity = _assert_runtime()
+    report_parameters = parameter_module.load_report_parameters()
+    preparation.validate_full_actual_report_parameters(report_parameters)
+    if args.regenerate or not args.cache.is_file():
+        loaded = _regenerate_draw(args.draw_index, report_parameters)
+    else:
+        loaded = _load_cached_draw(args.cache, args.draw_index)
+    births = _derive_birth_evidence(loaded)
+    funnel = _derive_funnel_evidence(loaded, births)
+    # Sections C/D and canonical output are added in the next coherent step.
+    print(
+        json.dumps(
+            {
+                "birth_source_law": births.result,
+                "candidate_funnel": funnel.result,
+                "input_identity": {
+                    "master_sha": EXPECTED_MASTER_SHA,
+                    "draw_index": args.draw_index,
+                    "root_seed": loaded.draw.root_seed,
+                },
+                "runtime": runtime_identity,
+                "status": "implementation_in_progress",
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
