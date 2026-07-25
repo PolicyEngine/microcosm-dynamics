@@ -1,11 +1,24 @@
 # The first estimates report: statutory-formula benefit and revenue estimates on the candidate-3 reproduction panel
 
 - **Status:** RATIFIED at `6586b92` (PR #285, nine referee rounds);
-  **amendment 1** (this revision) resolves the two design-side items
-  the implementation review surfaced: the unpinned §7 context-ratio
-  source (now deferred to the anchor-extraction successor) and the
-  §7.5/§10 gap-table omission (the no-recomputation row added).
-  Amendment 1 is itself referee-gated; nothing here authorizes a run.
+  amendment 1 resolved the two design-side items the implementation
+  review surfaced: the unpinned §7 context-ratio source (deferred to
+  the anchor-extraction successor) and the §7.5/§10 gap-table omission
+  (the no-recomputation row).
+  **Amendment 2** (this revision, revision 10) resolves the
+  birth-year-completeness executability failure that consumed
+  registration 5 and halted the post-#301 rehearsal (#299): §3.1 gains
+  the seed-coordinate clause 3 and the `unresolved` class, the
+  canonical inclusion law gains Stage C.5 with Stage C split around it,
+  both master numeric-birth guards are repealed in favor of the
+  counting law, and the birth-timing sensitivity of age-derived birth
+  years is frozen into §10 with its publication rules. Its evidence is
+  the committed reducer `scripts/first_estimates_birth_evidence.py`
+  and the test-pinned artifact
+  `runs/first_estimates_birth_evidence_draw0.json` (schema v2).
+  Amendment 2 passed a two-round cross-family ceremony (adversarial
+  referee and independent adjudication, then a joint round-diff
+  verification); nothing here authorizes a run.
 - **Resolves:** forecast ledger entry 8 — "end-to-end benefit and
   revenue estimates computed on projected earnings/demographic histories
   from the certified engine, published in-repo with disclosed gaps (no
@@ -79,16 +92,65 @@ Social Security pays and collects.
 
 ## 3. The statutory career join (registered laws; round-1 finding 2)
 
-### 3.1 Birth year — source precedence
+### 3.1 Birth year — source precedence (amendment 2)
 
 1. Exact birth year where the marriage-history support carries it;
 2. otherwise the inferred `median(period − age)` construction
-   (`data/couple_earnings.py:303-323`).
+   (`data/couple_earnings.py:303-323`);
+3. otherwise the **seed-coordinate age**: `birth_year = (anchor_wave −
+   1) − age`, from the person's own pre-mortality seed row (initial
+   slice or scheduled entry), accepting only PSID age codes 2-125;
+   codes 1 ("newborn up to second birthday"), 999 (DK/NA), or missing
+   resolve nothing; a conversion outside [1889, 2016] (per row:
+   `seed_year − 125 ≤ birth ≤ seed_year − 2`) is a hard failure.
+   Source class `derived_projection_age`. The source is
+   draw-invariant: it reads only the seed frames built before any
+   projection draw.
+4. A person whom no clause resolves carries the source class
+   **`unresolved`** and is assigned no birth year by any means.
 
-The artifact publishes weighted and unweighted counts by source, and
-the inferred-source rows are flagged person-level in the intermediate
-frame. Synthetic children carry native `birth_year`
-(`steps.py:485-503`).
+The published birth-source table carries **all five frozen keys**
+(`exact_marriage`, `inferred_period_age`, `derived_projection_age`,
+`synthetic_native`, `unresolved`) and reconciles to the full report
+population. The person-level `birth_year_inferred` flag is redefined
+as **age-derived birth year** — true for clauses 2 and 3, false for
+clause 1 and synthetic — so it keeps one meaning across the report.
+Synthetic children carry native `birth_year` (`steps.py:485-503`).
+
+**The counting law (amendment 2).** Every candidate must receive a
+source **disposition** — a dated class or `unresolved`; Stage C.5
+consumes the disposition, not a number. A non-candidate may be
+`unresolved` and is counted as such. Numeric-birth guards apply
+exactly where a computation consumes a birth year; the two former
+whole-file guards (`career.py:1193-1198` and `1199-1203` at `daf3ff5`)
+are repealed in favor of Stage C.5 and this counting law.
+
+**Disclosed imprecision (applies to clauses 2 and 3 alike; every item
+publishes in the artifact and the report).** A birth year derived from
+a reported age carries a one-year birthday-timing ambiguity. On the
+4,518-person common support with stated marriage-history years:
+clause 2 agrees exactly 51.06% (99.96% within ±1); clause 3 50.89%
+(99.78%). The aggregate exact-match rates are not distinguishable
+(McNemar on 391/383 discordant pairs, p≈0.801 — a failure to reject
+equality, not a demonstration of equivalence), while two differences
+are detectable and disclosed: the within-±1 endpoint (9/1 discordants,
+p≈0.0215) and the 2017-anchor stratum on exact matches (254 vs 215 of
+601, paired p≈4.6×10⁻⁵). The artifact publishes these tables, the
+per-class population counts, included claimants by birth source, and
+the §10 birth-timing sensitivity; the primary benefit tables carry the
+birth-timing reference alongside the three §1 labels.
+
+**Scope of the clause-3 admission.** Clause 3 is admitted on the
+conjunction of: an executability failure established blind to
+outcomes; the same formula over the same provenance class (a
+PSID-reported age at the person's own anchor interview); a committed
+like-for-like comparison on common support; code-verified
+draw-invariance; and demonstrated dollar-invariance of the admission
+itself on the registered data, including the per-person keying of the
+§6 imputation RNG (`_stable_person_rng(root_seed, person_id)`), which
+guarantees that assessing newly dated candidates cannot perturb any
+other claimant's drawn age. It is not a general license to admit
+sources that merely benchmark "no worse" than a ratified one.
 
 ### 3.2 Career reconstruction — the annual series
 
@@ -190,12 +252,29 @@ persons who never receive a drawn `claim_age` at all are counted in
 the same non-claimant class (one class, two entry paths, both
 published).
 
-**Stage C — origin and the operative claim year.** §4's origin law
-assigns each candidate exactly one origin; `opening_backfill`
-candidates receive their §6-imputed claim age and claim year
-(discarding the engine-stamped values), `modeled_award` candidates
-keep the engine-stamped year. Every candidate now has an operative
-claim year.
+**Stage C — origin classification, for every candidate (amendment 2
+split).** §4's origin law assigns each candidate exactly one origin.
+Origin assignment is birth-free (drawn claim age against first
+exposure age), so every non-DI claimed person receives an origin and
+the `origin_*` denominators keep their meaning: all Stage-B
+candidates.
+
+**Stage C.5 — birth-year resolvability (amendment 2).** A candidate
+whose §3.1 disposition is `unresolved` is excluded with the frozen key
+`excluded_birth_year_unresolved`, published as weighted and unweighted
+counts alongside the Stage-D keys **even when empty**. Reconciliation:
+origins = Stage-C.5 exclusions + Stage-D exclusions + included.
+`excluded_birth_year_unresolved` outranks the Stage-D keys for the
+persons it catches; on the registered data it catches nobody, and the
+precedence is decided here rather than on a future dataset.
+
+**Stage C, completed — the operative claim year, for C.5 survivors.**
+`opening_backfill` candidates receive their §6-imputed claim age and
+claim year (discarding the engine-stamped values; the imputation PMF
+key is `birth + 62`, well-defined for every C.5 survivor),
+`modeled_award` candidates keep the engine-stamped year. Every
+candidate reaching this point has an operative claim year. The
+imputation law itself is unchanged.
 
 **Stage D — the ordered predicates.** In this precedence order, the
 FIRST failing predicate is the candidate's single published exclusion
@@ -497,6 +576,7 @@ promised for later), with each item's classification:
 | Context ratio deferred to the anchor-extraction successor (§7, amendment 1) | material — no published-average comparison in v1 |
 | Spouse/survivor benefits out of scope | material |
 | Levels unanchored — no committed annual SSA level series | material; the registered anchor extraction is the successor step |
+| **Birth-timing sensitivity (amendment 2, frozen)** — 91% of candidates and 1,440 of 1,514 baseline included claimants carry age-derived birth years; coherent ±1 stress scenarios through the production ledger: births−1 → −$30.3B (−0.92%), births+1 → −$312.6B (−9.47%) of the $3,301.7B baseline, dominated by 278 modeled-award chronology movers; adversarial per-person range ≈[−$408.2B, +$65.2B]. Stress scenarios, not bounds. v1 recomputes them per draw (reduction-stage arithmetic) and publishes across-draw mean and SD; **this row travels with every publication of these numbers until a ratified birth-timing resolution retires it by amendment** | material — the report's largest quantified sensitivity; every underlying flip is `modeled_award` (the artifact measures `opening_backfill` immunity: the birth year cancels in the chronology predicate) |
 
 **Entrant-count re-derivation** (round-2 fresh finding 7): the
 candidate-3 artifact's 6,698 later-entrant figure is computed as later
@@ -608,3 +688,15 @@ SSA/Trustees level-anchor extraction; the covered-earnings correction
 that retires the proxy label; the W1 population bridge (frame-relative
 → national); the spouse/survivor entitlement adapter; behavioral
 claiming; the `FORWARD` production object.
+
+Amendment 2 adds three named successors, none presumed: the
+**birth-timing resolution** (the §10 envelope's sole retirement
+condition — the marriage file carries birth month MH5, and the
+chronology-flip population is measured and entirely `modeled_award`;
+until a resolution is ratified, the envelope stands); a **committed
+birth-completeness preflight** over the registered source domains, so
+a future registration fails in seconds rather than after an hour of
+compute; and the **infant cohort** — if a future report window ever
+makes a PSID code-1 person a candidate, a coarse-infant class with
+explicit two-year treatment becomes necessary, and it is deliberately
+not chartered now.
