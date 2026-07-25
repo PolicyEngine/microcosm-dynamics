@@ -4,9 +4,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
 from pathlib import Path
 
-from populace_dynamics.estimates.coordinator import (
+# Set both the inherited process environment and this interpreter before any
+# repository module is imported.
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+sys.dont_write_bytecode = True
+
+from populace_dynamics.estimates.coordinator import (  # noqa: E402
     run_registered_first_estimates,
 )
 

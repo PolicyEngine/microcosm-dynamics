@@ -24,23 +24,27 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Literal
 
-import populace_dynamics.estimates as estimates_package
-from populace_dynamics.estimates import publication
-from populace_dynamics.estimates.parameters import (
+# The ceremony must not mint ignored executable state between its two seals.
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+sys.dont_write_bytecode = True
+
+import populace_dynamics.estimates as estimates_package  # noqa: E402
+from populace_dynamics.estimates import publication  # noqa: E402
+from populace_dynamics.estimates.parameters import (  # noqa: E402
     ParameterDependencyUnavailable,
     load_report_parameters,
 )
-from populace_dynamics.estimates.preparation import (
+from populace_dynamics.estimates.preparation import (  # noqa: E402
     _build_prepared_first_estimates_artifact,
     _prepare_first_report_batch,
 )
-from populace_dynamics.estimates.runner import (
+from populace_dynamics.estimates.runner import (  # noqa: E402
     execute_first_report_projection,
     registered_configuration_echo,
     resolve_report_contract,
     validate_registered_configuration_echo,
 )
-from populace_dynamics.harness.m6_candidate3_runner import (
+from populace_dynamics.harness.m6_candidate3_runner import (  # noqa: E402
     M6Candidate3InputPlan,
 )
 
@@ -79,6 +83,7 @@ _ATTEMPT_CLAIM_SCHEMA = "first_estimates_attempt.v1"
 _ATTEMPT_CLAIM_MAX_BYTES = 4096
 _RETRY_CLAIM_PATH = Path("runs/first_estimates_retry.claim")
 _RETRY_CLAIM_SCHEMA = "first_estimates_retry.v1"
+_IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _ESTIMATES_PACKAGE_PATH = Path("src/populace_dynamics/estimates/__init__.py")
 _SAFE_EXTERNAL_REASON = re.compile(r"external_[a-z0-9_]+")
 _SAFE_EXTERNAL_DETAIL = re.compile(r"[A-Za-z0-9 .,:;()_/\-]+")
@@ -203,11 +208,41 @@ def _assert_registered_input_sources(repository: Path) -> None:
 
 def _assert_no_repository_drift(repository: Path) -> None:
     """Refuse any index or worktree entry in the sealed checkout."""
-    status = _git_bytes(repository, "status", "--porcelain")
+    status = _git_bytes(
+        repository,
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    )
     if status:
         raise RuntimeError(
             "registered first estimates requires an entirely clean "
             "index/worktree"
+        )
+    ignored = _git_bytes(
+        repository,
+        "ls-files",
+        "--others",
+        "--ignored",
+        "--exclude-standard",
+        "-z",
+        "--",
+        "src",
+        "scripts",
+    )
+    ignored_executables = tuple(
+        path
+        for path in ignored.split(b"\0")
+        if path
+        and (
+            b"__pycache__" in path.split(b"/")
+            or path.endswith(_IGNORED_EXECUTABLE_SUFFIXES)
+        )
+    )
+    if ignored_executables:
+        raise RuntimeError(
+            "registered first estimates requires sealed code roots without "
+            "ignored executable artifacts"
         )
 
 

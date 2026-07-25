@@ -7,6 +7,7 @@ import importlib.util
 import inspect
 import json
 import os
+import py_compile
 import stat
 import sys
 from dataclasses import asdict, replace
@@ -836,7 +837,12 @@ def test__production_path__tracked_drift_anywhere_is_preparation_incident(
         else b" M src/populace_dynamics/artifacts.py\n"
     )
     assert (
-        coordinator._git_bytes(root, "status", "--porcelain")
+        coordinator._git_bytes(
+            root,
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        )
         == expected_status
     )
     calls: list[str] = []
@@ -898,10 +904,113 @@ def test__production_path__untracked_import_package_is_preparation_incident(
     )
     shadow.parent.mkdir(parents=True)
     shadow.write_text('"""Untracked import shadow."""\n')
-    assert (
-        coordinator._git_bytes(root, "status", "--porcelain")
-        == b"?? scripts/registered_m6_candidate2_inputs/\n"
+    coordinator._git_bytes(
+        root,
+        "config",
+        "status.showUntrackedFiles",
+        "no",
     )
+    assert coordinator._git_bytes(root, "status", "--porcelain=v1") == b""
+    assert coordinator._git_bytes(
+        root,
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    ) == (b"?? scripts/registered_m6_candidate2_inputs/__init__.py\n")
+    calls: list[str] = []
+    operations = replace(
+        _operations(calls, {}),
+        validate_input_sources=coordinator._assert_registered_sources,
+    )
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator, "_default_operations", lambda: operations)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_abort"
+    assert calls == []
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+
+def test__production_path__ignored_import_cache_is_preparation_incident(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    ignore = root / ".gitignore"
+    ignore.write_text(
+        "__pycache__/\n"
+        "*.py[cod]\n"
+        "*.so\n"
+        "runs/first_estimates_attempt.claim\n"
+    )
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    tracked_sibling = root / "scripts" / "registered_m6_candidate2_inputs.py"
+    tracked_sibling.parent.mkdir(parents=True)
+    tracked_sibling.write_text('"""Tracked input adapter."""\n')
+    coordinator._git_bytes(root, "init", "--quiet")
+    coordinator._git_bytes(
+        root,
+        "add",
+        ignore.relative_to(root).as_posix(),
+        configuration_path.relative_to(root).as_posix(),
+        tracked_sibling.relative_to(root).as_posix(),
+    )
+    coordinator._git_bytes(
+        root,
+        "-c",
+        "user.name=Fixture",
+        "-c",
+        "user.email=fixture@example.test",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--quiet",
+        "-m",
+        "fixture",
+    )
+    source = tmp_path / "crafted_input.py"
+    source.write_text("raise RuntimeError('crafted cache executed')\n")
+    staged_cache = tmp_path / "crafted_input.pyc"
+    py_compile.compile(
+        str(source),
+        cfile=str(staged_cache),
+        doraise=True,
+        invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH,
+    )
+    cache = Path(importlib.util.cache_from_source(str(tracked_sibling)))
+    cache.parent.mkdir()
+    staged_cache.replace(cache)
+    ignored = coordinator._git_bytes(
+        root,
+        "ls-files",
+        "--others",
+        "--ignored",
+        "--exclude-standard",
+        "-z",
+        "--",
+        "src",
+        "scripts",
+    )
+    assert (
+        coordinator._git_bytes(
+            root,
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        )
+        == b""
+    )
+    assert ignored == os.fsencode(cache.relative_to(root)) + b"\0"
+    assert os.environ["PYTHONDONTWRITEBYTECODE"] == "1"
+    assert sys.dont_write_bytecode is True
     calls: list[str] = []
     operations = replace(
         _operations(calls, {}),
