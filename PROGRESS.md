@@ -5,7 +5,7 @@
 - Branch: `sol/entry8-compute-scope`
 - Base: local `origin/master` at `955acfbbcc5c1ee1397e588bb5f1e3728a46ac11`
 - Incident: #295 incident 4, compute-time lazy imports from `scripts/`
-- Status: implementation and validation complete; publication in progress
+- Status: implementation and validation complete; publication blocked
 
 ## Done
 
@@ -25,8 +25,14 @@
 - Passed the fast unit tier: 824 passed, 5 skipped.
 - Passed the fast artifact tier: 1,268 passed, 40 skipped.
 - Passed full-tree Black and Ruff checks.
+- Completed an independent final diff review with no findings.
+- Confirmed remote `master` is still the registered base commit.
+- Retried direct push, but the sandbox blocks GitHub network access; the
+  connected GitHub app also cancelled its branch-write approval.
 
 ## Next
 
-- Review the final diff, push the branch, and open the requested pull request.
+- Restore an authenticated GitHub write path by approving the connected app
+  branch write or providing a network-enabled, authenticated `gh` session.
+- Push the branch and open the requested non-draft pull request.
 - Record the final file/line summary, counts, and PR URL in the output file.
