@@ -423,8 +423,10 @@ def _read_attempt_claim(path: Path) -> Mapping[str, Any] | None:
 def _create_attempt_claim(
     repository_root: Path,
     registration_reference: str,
+    *,
+    allow_matching_retry_claim: bool = False,
 ) -> Path:
-    """Durably and exclusively consume one registered attempt."""
+    """Durably claim an attempt or retain its matching retry claim."""
     if not isinstance(registration_reference, str):
         raise TypeError("registration_reference must be a string")
     runs = _sealed_runs_directory(repository_root)
@@ -443,6 +445,8 @@ def _create_attempt_claim(
             and existing.get("registration_reference")
             == registration_reference
         ):
+            if allow_matching_retry_claim:
+                return path
             detail = (
                 "This registration already has a durable attempt claim; "
                 "fresh-registration adjudication is required."
@@ -889,7 +893,11 @@ def run_registered_first_estimates(
     """Run the one-shot ceremony from the imported package's sealed root."""
     root = _sealed_repository_root()
     with _exclusive_ceremony_lock(root):
-        _create_attempt_claim(root, registration_reference)
+        _create_attempt_claim(
+            root,
+            registration_reference,
+            allow_matching_retry_claim=retry_after_incident is not None,
+        )
         return _run_registered_first_estimates_from_path_for_test(
             repository_root=root,
             registration_reference=registration_reference,
