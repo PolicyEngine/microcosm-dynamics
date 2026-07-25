@@ -7,7 +7,7 @@
 - Latest review/adjudication: round-7 FIX-FIRST with one confirmed item
 - Local implementation: complete
 - Verification: complete
-- Push state: pending
+- Push state: attempted and blocked by DNS (`Could not resolve host: github.com`)
 - Final report: this file
 
 ## Done
@@ -51,10 +51,11 @@
   isolated/no-bytecode/empty-prefix interpreter.
 - Verified the retained coordinator post-import recheck accepts the same clean
   tree under that sealed interpreter.
+- Attempted to push `sol/entry8-impl`; DNS could not resolve `github.com`.
 
 ## Next
 
-1. Push `sol/entry8-impl` if DNS permits.
+1. Retry `git push origin sol/entry8-impl` when DNS is available.
 2. No local implementation or verification work remains.
 
 ## Final report
