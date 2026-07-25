@@ -18,7 +18,13 @@
   `runs/first_estimates_birth_evidence_draw0.json` (schema v2).
   Amendment 2 passed a two-round cross-family ceremony (adversarial
   referee and independent adjudication, then a joint round-diff
-  verification); nothing here authorizes a run.
+  verification). **Revision 10.1** corrects one number inside the §10
+  birth-timing row: the candidate share of age-derived birth years is
+  2,892/3,083 = 93.8% under §3.1's own clauses-2+3 definition (the
+  ratified row carried 91.0%, the clause-2-alone figure — the
+  implementation referee caught the inconsistency against the
+  committed artifact). Nothing else changes; nothing here authorizes a
+  run.
 - **Resolves:** forecast ledger entry 8 — "end-to-end benefit and
   revenue estimates computed on projected earnings/demographic histories
   from the certified engine, published in-repo with disclosed gaps (no
@@ -576,7 +582,7 @@ promised for later), with each item's classification:
 | Context ratio deferred to the anchor-extraction successor (§7, amendment 1) | material — no published-average comparison in v1 |
 | Spouse/survivor benefits out of scope | material |
 | Levels unanchored — no committed annual SSA level series | material; the registered anchor extraction is the successor step |
-| **Birth-timing sensitivity (amendment 2, frozen)** — 91% of candidates and 1,440 of 1,514 baseline included claimants carry age-derived birth years; coherent ±1 stress scenarios through the production ledger: births−1 → −$30.3B (−0.92%), births+1 → −$312.6B (−9.47%) of the $3,301.7B baseline, dominated by 278 modeled-award chronology movers; adversarial per-person range ≈[−$408.2B, +$65.2B]. Stress scenarios, not bounds. v1 recomputes them per draw (reduction-stage arithmetic) and publishes across-draw mean and SD; **this row travels with every publication of these numbers until a ratified birth-timing resolution retires it by amendment** | material — the report's largest quantified sensitivity; every underlying flip is `modeled_award` (the artifact measures `opening_backfill` immunity: the birth year cancels in the chronology predicate) |
+| **Birth-timing sensitivity (amendment 2, frozen; revision 10.1 corrects the candidate share)** — 2,892 of 3,083 candidates (93.8%) and 1,440 of 1,514 baseline included claimants carry age-derived birth years (§3.1 clauses 2 and 3: 2,806 inferred + 86 derived); coherent ±1 stress scenarios through the production ledger: births−1 → −$30.3B (−0.92%), births+1 → −$312.6B (−9.47%) of the $3,301.7B baseline, dominated by 278 modeled-award chronology movers; adversarial per-person range ≈[−$408.2B, +$65.2B]. Stress scenarios, not bounds. v1 recomputes them per draw (reduction-stage arithmetic) and publishes across-draw mean and SD; **this row travels with every publication of these numbers until a ratified birth-timing resolution retires it by amendment** | material — the report's largest quantified sensitivity; every underlying flip is `modeled_award` (the artifact measures `opening_backfill` immunity: the birth year cancels in the chronology predicate) |
 
 **Entrant-count re-derivation** (round-2 fresh finding 7): the
 candidate-3 artifact's 6,698 later-entrant figure is computed as later
