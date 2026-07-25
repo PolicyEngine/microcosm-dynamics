@@ -13,7 +13,7 @@ import hashlib
 import importlib.metadata
 import json
 from collections.abc import Iterator, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -30,12 +30,14 @@ __all__ = [
     "PINNED_PE_US_VERSION",
     "PayrollRateLegs",
     "ReportParameters",
+    "RUNTIME_PROVENANCE_SCHEMA_VERSION",
     "load_cola_history",
     "load_payroll_rate_legs",
     "load_report_parameters",
 ]
 
 PINNED_PE_US_VERSION = "1.752.2"
+RUNTIME_PROVENANCE_SCHEMA_VERSION = "first_estimates.runtime_provenance.v1"
 REPORT_YEARS = tuple(range(2015, 2023))
 REQUIRED_COLA_DETERMINATION_YEARS = tuple(range(1979, 2023))
 
@@ -106,6 +108,13 @@ _EMPLOYER_RATE_PATH = next(
 )
 
 
+def _empty_runtime_provenance() -> dict[str, Any]:
+    return {
+        "schema_version": RUNTIME_PROVENANCE_SCHEMA_VERSION,
+        "parameters": {},
+    }
+
+
 @dataclass(frozen=True)
 class PayrollRateLegs:
     """Employee and employer OASDI rate step functions."""
@@ -167,6 +176,9 @@ class ReportParameters:
     rates: PayrollRateLegs
     cola: COLASeries
     provenance: dict[str, Any]
+    runtime_provenance: dict[str, Any] = field(
+        default_factory=_empty_runtime_provenance
+    )
 
 
 class ParameterDependencyUnavailable(RuntimeError):
@@ -570,6 +582,45 @@ def load_report_parameters(
         "cola_content": cola.provenance["content_sha256"],
     }
     parameter_bundle_sha256 = _canonical_mapping_sha256(bundle_components)
+    registered_ssa_records = {
+        relative_path: {
+            "relative_path": relative_path,
+            "sha256": record["sha256"],
+        }
+        for relative_path, record in ssa_records.items()
+    }
+    registered_rate_legs = {
+        "employee": {
+            "relative_path": _EMPLOYEE_RATE_PATH,
+            "sha256": rates.provenance["employee"]["sha256"],
+            "effective_values": rates.provenance["employee"][
+                "effective_values"
+            ],
+        },
+        "employer": {
+            "relative_path": _EMPLOYER_RATE_PATH,
+            "sha256": rates.provenance["employer"]["sha256"],
+            "effective_values": rates.provenance["employer"][
+                "effective_values"
+            ],
+        },
+        "bundle_sha256": rates.provenance["bundle_sha256"],
+        "bundle_hash_basis": rates.provenance["bundle_hash_basis"],
+        "asserted_report_years": rates.provenance["asserted_report_years"],
+        "asserted_employee_rate": rates.provenance["asserted_employee_rate"],
+        "asserted_employer_rate": rates.provenance["asserted_employer_rate"],
+        "asserted_combined_rate": rates.provenance["asserted_combined_rate"],
+    }
+    registered_cola = {
+        "relative_path": COLA_HISTORY_PATH.relative_to(
+            _PROJECT_ROOT
+        ).as_posix(),
+        **{
+            key: value
+            for key, value in cola.provenance.items()
+            if key != "path"
+        },
+    }
     provenance: dict[str, Any] = {
         "schema_version": "first_estimates.parameters.v1",
         "bundle_sha256": parameter_bundle_sha256,
@@ -581,10 +632,9 @@ def load_report_parameters(
         "policyengine_us": {
             "version": resolved_version,
             "version_source": version_source,
-            "root": str(root),
-            "ssa_parameter_directory": str((root / ss_params._SSA).resolve()),
-            "git_revision": ssa.pe_us_revision,
-            "ssa_parameter_files": ssa_records,
+            "parameter_directory": ss_params._SSA.parents[1].as_posix(),
+            "ssa_parameter_directory": ss_params._SSA.as_posix(),
+            "ssa_parameter_files": registered_ssa_records,
             "ssa_parameter_bundle_sha256": SSA_PARAMETER_BUNDLE_SHA256,
             "all_consumed_files_sha256": all_bundle_sha256,
             "bundle_hash_basis": (
@@ -596,15 +646,42 @@ def load_report_parameters(
                 "wage_base_2022": 147_000.0,
             },
         },
-        "oasdi_rate_legs": rates.provenance,
-        "cola": cola.provenance,
+        "oasdi_rate_legs": registered_rate_legs,
+        "cola": registered_cola,
+    }
+    runtime_provenance: dict[str, Any] = {
+        "schema_version": RUNTIME_PROVENANCE_SCHEMA_VERSION,
+        "parameters": {
+            "policyengine_us": {
+                "root": str(root),
+                "ssa_parameter_directory": str(
+                    (root / ss_params._SSA).resolve()
+                ),
+                "git_revision": ssa.pe_us_revision,
+                "ssa_parameter_files": {
+                    relative_path: {"path": record["path"]}
+                    for relative_path, record in ssa_records.items()
+                },
+            },
+            "oasdi_rate_legs": {
+                "employee": {
+                    "path": rates.provenance["employee"]["path"],
+                },
+                "employer": {
+                    "path": rates.provenance["employer"]["path"],
+                },
+            },
+            "cola": {"path": cola.provenance["path"]},
+        },
     }
     # Fail here, before compute, if a future edit introduces a Path, int-keyed
     # mapping, or another value the artifact writer cannot serialize.
     json.dumps(provenance, sort_keys=True, separators=(",", ":"))
+    json.dumps(runtime_provenance, sort_keys=True, separators=(",", ":"))
     return ReportParameters(
         ssa=ssa,
         rates=rates,
         cola=cola,
         provenance=provenance,
+        runtime_provenance=runtime_provenance,
     )

@@ -211,3 +211,17 @@ def test__driver__rejects_nonexact_registered_configuration_bytes():
             configuration,
             registered_configuration_bytes=_configuration_bytes(configuration),
         )
+
+    for volatile in (
+        {"git_revision": "later"},
+        {"root": "/tmp/site-packages"},
+        {"file": {"path": "/tmp/parameter.yaml"}},
+    ):
+        with pytest.raises(ValueError, match="run-time parameter identity"):
+            runner.registered_configuration_echo(
+                registration_reference="issue-42-comment-1234567",
+                parameter_bundle={
+                    "bundle_sha256": "a" * 64,
+                    **volatile,
+                },
+            )

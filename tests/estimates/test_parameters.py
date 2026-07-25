@@ -223,9 +223,43 @@ def test__report_loader__loads_full_actuals_rates_and_json_provenance(
     file_records = bundle.provenance["policyengine_us"]["ssa_parameter_files"]
     assert len(file_records) == 7
     assert all(
-        set(record) == {"path", "sha256"} for record in file_records.values()
+        set(record) == {"relative_path", "sha256"}
+        for record in file_records.values()
+    )
+    assert bundle.provenance["policyengine_us"]["parameter_directory"] == (
+        "policyengine_us/parameters"
+    )
+    assert bundle.provenance["policyengine_us"]["ssa_parameter_directory"] == (
+        "policyengine_us/parameters/gov/ssa"
+    )
+    assert "git_revision" not in bundle.provenance["policyengine_us"]
+    assert all(
+        not Path(value["relative_path"]).is_absolute()
+        for value in file_records.values()
+    )
+    runtime = bundle.runtime_provenance["parameters"]
+    runtime_policyengine = runtime["policyengine_us"]
+    assert runtime_policyengine["root"] == str(tmp_path)
+    assert Path(runtime_policyengine["root"]).is_absolute()
+    assert Path(runtime_policyengine["ssa_parameter_directory"]).is_absolute()
+    assert runtime_policyengine["git_revision"]
+    assert all(
+        Path(record["path"]).is_absolute()
+        for record in runtime_policyengine["ssa_parameter_files"].values()
+    )
+    assert all(
+        Path(runtime["oasdi_rate_legs"][leg]["path"]).is_absolute()
+        for leg in ("employee", "employer")
+    )
+    assert Path(runtime["cola"]["path"]).is_absolute()
+    assert bundle.provenance["cola"]["relative_path"] == (
+        "data/external/ssa_cola_history.json"
     )
     assert json.loads(json.dumps(bundle.provenance)) == bundle.provenance
+    assert (
+        json.loads(json.dumps(bundle.runtime_provenance))
+        == bundle.runtime_provenance
+    )
 
 
 def test__rate_leg_loader__works_independently_without_fallback(
