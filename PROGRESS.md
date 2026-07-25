@@ -2,8 +2,8 @@
 
 ## State
 
-Implementation and the one-sentence §11 amendment are complete. Formatting,
-lint, and fast-suite verification remain before publication.
+Implementation, regression coverage, the §11 amendment, formatting, lint,
+and both fast tiers are green. The branch is ready to publish.
 
 ## Done
 
@@ -21,11 +21,15 @@ lint, and fast-suite verification remain before publication.
   configuration echo stable and byte-compared.
 - Added regression coverage showing changed revision/roots pass while a
   changed nested parameter-file hash aborts before compute.
-- Updated the unit-tier count from 829 to 830.
+- Updated the artifact-tier count from 1,303 to 1,304.
 - Verified 132 coordinator/artifact/preparation tests pass.
 - Amended the single §11 artifact-content sentence to distinguish the stable
   registered echo from the top-level run-time provenance block.
+- Verified the complete artifact tier: 1,264 passed, 40 skipped.
+- Verified Ruff repository-wide and Black across all 486 Python files.
+- Verified the complete unit tier: 824 passed, 5 skipped.
 
 ## Next
 
-- Run formatting, lint, and fast tests; push and open the requested PR.
+- Push `sol/entry8-echo-fix` and open the requested non-draft PR to `master`.
+- Write the final report with file/line references, counts, and the PR URL.
