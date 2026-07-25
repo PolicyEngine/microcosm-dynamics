@@ -796,11 +796,21 @@ def test__production_path__tracked_drift_anywhere_is_preparation_incident(
     staged,
 ):
     root = _repository(tmp_path)
+    ignore = root / ".gitignore"
+    ignore.write_text("runs/first_estimates_attempt.claim\n")
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
     tracked = root / "src" / "populace_dynamics" / "artifacts.py"
     tracked.parent.mkdir(parents=True)
     tracked.write_bytes(b'"""committed writer"""\n')
     coordinator._git_bytes(root, "init", "--quiet")
-    coordinator._git_bytes(root, "add", tracked.relative_to(root).as_posix())
+    coordinator._git_bytes(
+        root,
+        "add",
+        ignore.relative_to(root).as_posix(),
+        configuration_path.relative_to(root).as_posix(),
+        tracked.relative_to(root).as_posix(),
+    )
     coordinator._git_bytes(
         root,
         "-c",
@@ -819,8 +829,82 @@ def test__production_path__tracked_drift_anywhere_is_preparation_incident(
         coordinator._git_bytes(
             root, "add", tracked.relative_to(root).as_posix()
         )
+    expected_status = (
+        b"M  src/populace_dynamics/artifacts.py\n"
+        if staged
+        else b" M src/populace_dynamics/artifacts.py\n"
+    )
+    assert (
+        coordinator._git_bytes(root, "status", "--porcelain")
+        == expected_status
+    )
+    calls: list[str] = []
+    operations = replace(
+        _operations(calls, {}),
+        validate_input_sources=coordinator._assert_registered_sources,
+    )
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator, "_default_operations", lambda: operations)
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == "preparation_abort"
+    assert calls == []
+    assert (root / "runs" / "first_estimates_attempt.claim").is_file()
+    assert not (root / publication.DEFAULT_ARTIFACT_PATH).exists()
+
+
+def test__production_path__untracked_import_package_is_preparation_incident(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    ignore = root / ".gitignore"
+    ignore.write_text("runs/first_estimates_attempt.claim\n")
     configuration_path = root / "registration.json"
     configuration_path.write_bytes(_configuration_bytes())
+    tracked_sibling = (
+        root / "scripts" / "registered_m6_candidate2_inputs.py"
+    )
+    tracked_sibling.parent.mkdir(parents=True)
+    tracked_sibling.write_text('"""Tracked input adapter."""\n')
+    coordinator._git_bytes(root, "init", "--quiet")
+    coordinator._git_bytes(
+        root,
+        "add",
+        ignore.relative_to(root).as_posix(),
+        configuration_path.relative_to(root).as_posix(),
+        tracked_sibling.relative_to(root).as_posix(),
+    )
+    coordinator._git_bytes(
+        root,
+        "-c",
+        "user.name=Fixture",
+        "-c",
+        "user.email=fixture@example.test",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--quiet",
+        "-m",
+        "fixture",
+    )
+    shadow = (
+        root
+        / "scripts"
+        / "registered_m6_candidate2_inputs"
+        / "__init__.py"
+    )
+    shadow.parent.mkdir(parents=True)
+    shadow.write_text('"""Untracked import shadow."""\n')
+    assert coordinator._git_bytes(
+        root, "status", "--porcelain"
+    ) == b"?? scripts/registered_m6_candidate2_inputs/\n"
     calls: list[str] = []
     operations = replace(
         _operations(calls, {}),

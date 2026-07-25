@@ -112,3 +112,6 @@ paper/paper_files/
 .vercel/
 scratch/
 *.pkl
+
+# First-estimates durable ceremony controls.
+runs/first_estimates_attempt.claim

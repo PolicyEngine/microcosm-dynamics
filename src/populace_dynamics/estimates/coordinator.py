@@ -197,18 +197,13 @@ def _assert_registered_input_sources(repository: Path) -> None:
             )
 
 
-def _assert_no_tracked_repository_drift(repository: Path) -> None:
-    """Refuse any tracked index or worktree drift in the sealed checkout."""
-    status = _git_bytes(
-        repository,
-        "status",
-        "--porcelain",
-        "--untracked-files=no",
-    )
+def _assert_no_repository_drift(repository: Path) -> None:
+    """Refuse any index or worktree entry in the sealed checkout."""
+    status = _git_bytes(repository, "status", "--porcelain")
     if status:
         raise RuntimeError(
-            "registered first estimates refuses tracked index/worktree drift "
-            "in the sealed checkout"
+            "registered first estimates requires an entirely clean "
+            "index/worktree"
         )
 
 
@@ -233,7 +228,7 @@ def _assert_estimator_surface_sources(repository: Path) -> None:
 
 def _assert_registered_sources(repository: Path) -> None:
     """Seal all tracked files while retaining the recorded HEAD source tuple."""
-    _assert_no_tracked_repository_drift(repository)
+    _assert_no_repository_drift(repository)
     _assert_estimator_surface_sources(repository)
     _assert_registered_input_sources(repository)
 
