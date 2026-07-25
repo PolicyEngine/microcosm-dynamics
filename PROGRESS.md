@@ -5,7 +5,7 @@
 Clause 3, Stage C.5, the production artifact/publication path, and the
 advisory birth-completeness preflight are implemented. Draw 0 reproduces every
 supplied amendment oracle; final verification is substantially complete, with
-the final audit findings resolved. Broad post-audit checks and report assembly
+the final audit findings resolved. One final unit rerun and report assembly
 remain.
 
 ## Done
@@ -54,7 +54,7 @@ remain.
 - Kept advisory imports no-fit at test collection time by loading the sealed
   coordinator and seed materializer only when the command runs; the isolated
   import guard and the existing disability no-fit reproduction guard pass.
-- Reconciled the tier manifest to 851 unit, 1,319 artifact, 804 PSID
+- Reconciled the tier manifest to 852 unit, 1,319 artifact, 804 PSID
   integration, 520 legacy reproduction, and 159 PolicyEngine oracle tests.
 - Ran the sealed-preparation test (1 passed), full unit tier (843 passed, 5
   skipped before the final import-only test was added), and full artifact tier
@@ -76,7 +76,11 @@ remain.
   exact/synthetic stay fixed, and unresolved candidates remain in the rerun;
   strengthened range validation against both coherent scenario totals.
 - Ran the expanded focused suite: 85 passed.
+- Added a direct broken-producer regression proving that a candidate without a
+  disposition aborts as a code bug; all 29 career tests pass.
+- Re-ran the final artifact tier (1,281 passed, 38 skipped) and the tier-policy
+  test against all 3,654 collected tests (passed).
 
 ## Next
 
-- Run broad post-audit checks, then finish the report.
+- Run the final unit tier, then finish the report.

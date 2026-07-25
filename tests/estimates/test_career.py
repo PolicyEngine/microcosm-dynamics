@@ -905,6 +905,35 @@ def test_stage_c5_unresolved_backfill_precedes_stage_d_and_skips_imputation(
     assert counts["origin_opening_backfill"].unweighted == 1
 
 
+def test_missing_candidate_disposition_is_a_code_bug(monkeypatch):
+    trajectory = pd.DataFrame(
+        _trajectory_rows(1, 1952, claim_age=62, claim_year=2015)
+    )
+    roster = _roster([(1, "female", 1.0)])
+    observed = pd.DataFrame(_observed_rows(1, 1952))
+    marriage = pd.DataFrame({"person_id": [1], "birth_year": [1952]})
+    monkeypatch.setattr(
+        career_module,
+        "derive_birth_years",
+        lambda *_args, **_kwargs: (),
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match=r"birth-source disposition.*candidate code bug \[1\]",
+    ):
+        build_career_inclusion(
+            trajectory,
+            roster,
+            observed,
+            marriage,
+            {},
+            _schedule(),
+            {1},
+            stock_imputation_root_seed=8108,
+        )
+
+
 def test_fully_dated_inclusion_is_identical_with_seed_coordinates():
     trajectory = pd.DataFrame(
         _trajectory_rows(1, 1952, claim_age=63, claim_year=2015)
