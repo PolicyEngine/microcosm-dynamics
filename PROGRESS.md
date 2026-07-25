@@ -36,7 +36,9 @@ has been merged, bringing design amendment `ee1221d`.
   raw-path enforcement, fixed-claim refusals, and interrupt/claim lifecycle
   tests. The combined enforcement scope passes 99 tests; all estimator tests
   pass 130 tests; scoped Black, Ruff, and diff checks pass.
-- Recounted 3,589 tests: 829 unit, 1,277 artifact, 804 integration-PSID,
+- Required the package-derived root to equal Git's checkout top level, closing
+  the nested-source-copy alternate-lock escape found in final review.
+- Recounted 3,590 tests: 829 unit, 1,278 artifact, 804 integration-PSID,
   520 reproduction-legacy, and 159 oracle-policyengine.
 
 ## Next

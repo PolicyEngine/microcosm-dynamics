@@ -341,6 +341,17 @@ def _sealed_repository_root() -> Path:
         raise RuntimeError(
             "imported estimates package is outside the canonical src layout"
         )
+    git_root_bytes = _git_bytes(root, "rev-parse", "--show-toplevel")
+    try:
+        git_root = Path(os.fsdecode(git_root_bytes).strip()).resolve()
+    except (TypeError, ValueError) as error:
+        raise RuntimeError(
+            "Git returned an invalid checkout root for the estimates package"
+        ) from error
+    if git_root != root:
+        raise RuntimeError(
+            "imported estimates package root differs from the Git checkout root"
+        )
     return root
 
 

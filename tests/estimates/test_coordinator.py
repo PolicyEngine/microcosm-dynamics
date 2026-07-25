@@ -831,6 +831,32 @@ def test__sealed_root__comes_from_imported_estimates_package():
     assert coordinator._sealed_repository_root() == Path(__file__).parents[2]
 
 
+def test__sealed_root__refuses_nested_source_copy(
+    tmp_path,
+    monkeypatch,
+):
+    checkout = tmp_path / "checkout"
+    nested_root = checkout / "nested"
+    package_file = nested_root / (
+        "src/populace_dynamics/estimates/__init__.py"
+    )
+    package_file.parent.mkdir(parents=True)
+    package_file.write_bytes(b'"""nested copy"""\n')
+    monkeypatch.setattr(
+        coordinator.estimates_package,
+        "__file__",
+        str(package_file),
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_git_bytes",
+        lambda *_args: f"{checkout}\n".encode(),
+    )
+
+    with pytest.raises(RuntimeError, match="differs from the Git checkout"):
+        coordinator._sealed_repository_root()
+
+
 def test__ceremony_lock__is_exclusive_and_creates_no_state_file(tmp_path):
     root = _repository(tmp_path)
     before = set((root / "runs").iterdir())
