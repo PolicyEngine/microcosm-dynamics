@@ -113,6 +113,9 @@
   correctly stopped before any remote mutation.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
+- The filesystem policy rejected that out-of-worktree write. Wrote the full
+  report to untracked workspace `FINAL_REPORT.md` so no report scaffolding is
+  added to the branch.
 
 ## Next
 
@@ -123,3 +126,5 @@
   ledger update, then push the rebased `sol/entry8-birth-impl` branch (using
   lease protection because the required rebase rewrites the existing PR
   branch).
+- Copy `FINAL_REPORT.md` to the designated lane output from an environment
+  allowed to write `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
