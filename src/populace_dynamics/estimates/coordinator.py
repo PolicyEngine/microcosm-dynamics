@@ -404,9 +404,9 @@ def _load_registered_input_plan(repository: Path) -> M6Candidate3InputPlan:
     """Load only the tracked, byte-clean registered candidate-3 factory."""
     _assert_registered_input_sources(repository)
     path = repository / _INPUT_FACTORY_PATH
-    for module_name in _INPUT_FACTORY_MODULES:
-        sys.modules.pop(module_name, None)
     with _registered_scripts_path(path.parent):
+        for module_name in _INPUT_FACTORY_MODULES:
+            sys.modules.pop(module_name, None)
         module = _load_module(path)
         factory = getattr(module, _INPUT_FACTORY_CALLABLE, None)
         if not callable(factory):

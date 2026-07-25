@@ -15,7 +15,7 @@ import subprocess
 import sys
 from dataclasses import asdict, replace
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
 import pytest
 
@@ -1005,10 +1005,19 @@ def test__registered_input_factory__keeps_scripts_path_through_lazy_import(
     )
     original_path = sys.path.copy()
 
+    preexisting = ModuleType(coordinator._INPUT_FACTORY_MODULES[0])
+    monkeypatch.setitem(
+        sys.modules,
+        coordinator._INPUT_FACTORY_MODULES[0],
+        preexisting,
+    )
+
     observed = coordinator._load_registered_input_plan(root)
+    observed.load_full_inputs()
 
     assert observed.fit_inputs == "incident3-lazy-sentinel"
     assert "incident3_lazy_helper" not in sys.modules
+    assert sys.modules[coordinator._INPUT_FACTORY_MODULES[0]] is preexisting
     assert sys.path == original_path
 
 
