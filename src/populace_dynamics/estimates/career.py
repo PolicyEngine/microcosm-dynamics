@@ -747,9 +747,7 @@ def derive_birth_years(
         upstream_unresolved = (
             required - set(exact) - set(inferred) - set(synthetic)
         )
-        missing_seed_rows = sorted(
-            upstream_unresolved - set(seed_by_person)
-        )
+        missing_seed_rows = sorted(upstream_unresolved - set(seed_by_person))
         if missing_seed_rows:
             raise AssertionError(
                 "a clauses-1/2/synthetic unresolved person has no seed row: "
