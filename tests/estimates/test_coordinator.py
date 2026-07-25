@@ -967,17 +967,6 @@ def test__production_entry__holds_lock_for_complete_coordinator_call(
     )
     monkeypatch.setattr(
         coordinator,
-        "_create_attempt_claim",
-        lambda observed_root, registration, *, allow_matching_retry_claim: (
-            events.append(
-                "claim:"
-                f"{observed_root}:{registration}:"
-                f"{allow_matching_retry_claim}"
-            )
-        ),
-    )
-    monkeypatch.setattr(
-        coordinator,
         "_run_registered_first_estimates_from_path_for_test",
         run,
     )
@@ -991,7 +980,6 @@ def test__production_entry__holds_lock_for_complete_coordinator_call(
     assert events == [
         f"root:{root.resolve()}",
         "lock",
-        f"claim:{root}:{REGISTRATION}:False",
         "run",
         "unlock",
     ]
@@ -1090,6 +1078,68 @@ def test__attempt_claim__is_durable_and_blocks_same_registration(tmp_path):
         )
     assert fresh.value.reason == same.value.reason
     assert path.read_bytes() == original
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [
+        OSError("claim storage unavailable"),
+        KeyboardInterrupt(),
+    ],
+    ids=["io-error", "keyboard-interrupt"],
+)
+def test__production_path__partial_claim_failure_is_incident_accounted(
+    tmp_path,
+    monkeypatch,
+    failure,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    payload = coordinator._attempt_claim_payload(REGISTRATION)
+
+    def write_partial(descriptor, observed_payload):
+        assert observed_payload == payload
+        assert os.write(descriptor, observed_payload[:7]) == 7
+        raise failure
+
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_write_attempt_claim_payload",
+        write_partial,
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations([], {}),
+    )
+
+    first = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+    claim = root / "runs" / "first_estimates_attempt.claim"
+    partial = claim.read_bytes()
+    second = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert first.status == "incident"
+    assert first.phase == "preparation"
+    assert first.reason == "preparation_abort"
+    assert (
+        type(failure).__name__
+        in json.loads(first.path.read_text())["reason_detail"]
+    )
+    assert partial == payload[:7]
+    assert claim.read_bytes() == partial
+    assert second.status == "incident"
+    assert second.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    assert second.path.name == "first_estimates_incident_2.json"
 
 
 def test__production_path__successful_publication_keeps_claim(

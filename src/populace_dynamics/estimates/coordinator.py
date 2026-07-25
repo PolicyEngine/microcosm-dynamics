@@ -401,6 +401,15 @@ def _attempt_claim_payload(registration_reference: str) -> bytes:
     )
 
 
+def _write_attempt_claim_payload(descriptor: int, payload: bytes) -> None:
+    view = memoryview(payload)
+    while view:
+        written = os.write(descriptor, view)
+        if written == 0:
+            raise OSError("attempt claim write made no progress")
+        view = view[written:]
+
+
 def _read_attempt_claim(path: Path) -> Mapping[str, Any] | None:
     try:
         payload = path.read_bytes()
@@ -462,12 +471,7 @@ def _create_attempt_claim(
         ) from None
 
     try:
-        view = memoryview(payload)
-        while view:
-            written = os.write(descriptor, view)
-            if written == 0:
-                raise OSError("attempt claim write made no progress")
-            view = view[written:]
+        _write_attempt_claim_payload(descriptor, payload)
         os.fsync(descriptor)
     finally:
         os.close(descriptor)
@@ -862,6 +866,11 @@ def _run_registered_first_estimates_from_path_for_test(
         registration_reference=registration_reference,
     )
     try:
+        _create_attempt_claim(
+            root,
+            registration_reference,
+            allow_matching_retry_claim=retry_after_incident is not None,
+        )
         path = _path_within_root(
             root,
             registered_configuration_path,
@@ -893,11 +902,6 @@ def run_registered_first_estimates(
     """Run the one-shot ceremony from the imported package's sealed root."""
     root = _sealed_repository_root()
     with _exclusive_ceremony_lock(root):
-        _create_attempt_claim(
-            root,
-            registration_reference,
-            allow_matching_retry_claim=retry_after_incident is not None,
-        )
         return _run_registered_first_estimates_from_path_for_test(
             repository_root=root,
             registration_reference=registration_reference,
