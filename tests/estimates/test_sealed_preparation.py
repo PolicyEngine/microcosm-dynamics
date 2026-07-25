@@ -80,6 +80,8 @@ _sp.run(
         "user.email=test@example.com",
         "-c",
         "user.name=Sealed Test",
+        "-c",
+        "commit.gpgsign=false",
         "commit",
         "-q",
         "--no-verify",
