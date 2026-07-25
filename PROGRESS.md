@@ -5,8 +5,8 @@
 - Branch: `sol/entry8-impl`
 - Review anchor: `f6a986d`
 - Latest review/adjudication: round-5 FIX-FIRST with two confirmed items
-- Local implementation: in progress
-- Verification: pending
+- Local implementation: complete
+- Verification: complete except final committed-tree source seals
 - Push state: pending
 - Final report: `scratch/pr286-round5-final-report.md`
 
@@ -30,10 +30,19 @@
 - Added a production-path boundary test proving that 1,025 characters refuse
   before compute while 1,024 characters mint a sub-4-KiB claim and publish.
 - Verified all 53 coordinator tests after both round-5 changes.
+- Recounted the two new coordinator tests in the enforced artifact tier: 1,292
+  collected.
+- Full collection passes: 3,604 tests.
+- Full focused first-estimates verification passes: 177 tests.
+- Unit tier passes in the repository-main environment: 824 passed, 5 skipped.
+- Artifact tier passes: 1,252 passed, 40 skipped.
+- The full-collection tier-policy assertion passes.
+- Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
 
 ## Next
 
-1. Run focused and full validation, update enforced tier counts, and confirm
-   two clean source seals.
-2. Write the final report, commit the completed progress state, and push if
+1. Commit verification bookkeeping.
+2. Remove only Git-enumerated ignored executable caches under `src` and
+   `scripts`, then confirm two clean production source seals.
+3. Write the final report, commit the completed progress state, and push if
    DNS permits.
