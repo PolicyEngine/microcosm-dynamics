@@ -1,4 +1,14 @@
-"""One-shot CLI for the registered first-estimates coordinator."""
+"""One-shot CLI for the registered first-estimates coordinator.
+
+After self-re-execution seals the interpreter, this launcher uses only the
+standard library to require empty full-porcelain Git status and no ignored
+``__pycache__/``, ``*.pyc``, ``*.pyo``, or ``*.so`` executable artifacts under
+``src/`` or ``scripts/`` before adding ``src`` to ``sys.path``.  A failure at
+that pre-import boundary is procedural: the coordinator is not yet available
+to write an incident, so the launcher prints the documented structured
+refusal to stderr and exits nonzero.  The fresh registration must restate both
+pre-import checks and their procedural-refusal handling.
+"""
 
 from __future__ import annotations
 
@@ -11,6 +21,8 @@ from pathlib import Path
 
 _PYCACHE_SENTINEL_ENV = "POPULACE_DYNAMICS_FIRST_ESTIMATES_PYCACHE_SENTINEL"
 _PYCACHE_SENTINEL_PREFIX = "populace-first-estimates-pycache-"
+_IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
+_PRE_IMPORT_REFUSAL_REASON = "preparation_pre_import_repository_guard_refused"
 
 
 def _sealed_pycache_sentinel() -> Path | None:
@@ -68,6 +80,82 @@ def _seal_interpreter() -> Path:
     raise RuntimeError("sealed interpreter exec unexpectedly returned")
 
 
+def _git_bytes(repository: Path, *arguments: str) -> bytes:
+    """Run one pre-import Git query without importing repository code."""
+    import subprocess
+
+    try:
+        return subprocess.run(
+            ["git", *arguments],
+            cwd=repository,
+            check=True,
+            capture_output=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise RuntimeError(
+            "registered first estimates could not complete the pre-import "
+            "repository guard"
+        ) from error
+
+
+def _assert_pre_import_repository_guard(repository: Path) -> None:
+    """Refuse tracked drift, untracked files, and ignored executables."""
+    status = _git_bytes(
+        repository,
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    )
+    if status:
+        raise RuntimeError(
+            "registered first estimates requires an entirely clean "
+            "index/worktree"
+        )
+    ignored = _git_bytes(
+        repository,
+        "ls-files",
+        "--others",
+        "--ignored",
+        "--exclude-standard",
+        "-z",
+        "--",
+        "src",
+        "scripts",
+    )
+    ignored_executables = tuple(
+        path
+        for path in ignored.split(b"\0")
+        if path
+        and (
+            b"__pycache__" in path.split(b"/")
+            or path.endswith(_IGNORED_EXECUTABLE_SUFFIXES)
+        )
+    )
+    if ignored_executables:
+        raise RuntimeError(
+            "registered first estimates requires sealed code roots without "
+            "ignored executable artifacts"
+        )
+
+
+def _print_pre_import_refusal(error: RuntimeError) -> None:
+    """Emit the procedural refusal that substitutes for an incident."""
+    print(
+        json.dumps(
+            {
+                "path": None,
+                "phase": "preparation",
+                "reason": _PRE_IMPORT_REFUSAL_REASON,
+                "reason_detail": str(error),
+                "status": "procedural_refusal",
+            },
+            sort_keys=True,
+        ),
+        file=sys.stderr,
+        flush=True,
+    )
+
+
 def _run_coordinator(**arguments):
     """Import reviewed repository code only after the interpreter is sealed."""
     source = Path(__file__).resolve().parents[1] / "src"
@@ -108,6 +196,12 @@ def _arguments() -> argparse.Namespace:
 def main() -> int:
     _seal_interpreter()
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+    repository = Path(__file__).resolve().parents[1]
+    try:
+        _assert_pre_import_repository_guard(repository)
+    except RuntimeError as error:
+        _print_pre_import_refusal(error)
+        return 1
     args = _arguments()
     result = _run_coordinator(
         registration_reference=args.registration_reference,

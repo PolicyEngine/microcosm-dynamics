@@ -21,11 +21,17 @@
 - Confirmed the two required regressions: an ignored coordinator ABI-extension
   shadow and a direct sourceless `src/subprocess.pyc` shadow must both be
   refused pre-import.
+- Added the launcher-side full-porcelain and ignored-executable guard after the
+  interpreter seal and before argument parsing, `src` path insertion, or any
+  repository import.
+- Made the guard fail closed on Git invocation errors and emit a stable,
+  structured procedural refusal to stderr with no incident path.
+- Documented in the launcher that these pre-import refusals cannot be incident
+  records and that the fresh registration must restate the checks and handling.
+- Left the coordinator's post-import source guard and rechecks unchanged.
 
 ## Next
 
-1. Inspect the launcher, coordinator guard, registration wording, and focused
-   tests.
-2. Implement the stdlib-only pre-import refusal and procedural documentation.
-3. Add and run the two shadow regressions plus the focused/full verification.
-4. Commit each coherent step, push if DNS permits, and write the final report.
+1. Add the two pre-import shadow regressions.
+2. Run focused and full verification and recount the test tiers.
+3. Finalize progress, push if DNS permits, and write the final report.
