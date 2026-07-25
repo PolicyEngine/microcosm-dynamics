@@ -5,10 +5,10 @@
 - Branch: `sol/entry8-impl`
 - Review anchor: `cd22ea2`
 - Latest review/adjudication: round-7 FIX-FIRST with one confirmed item
-- Local implementation: in progress
-- Verification: pending
+- Local implementation: complete
+- Verification: complete
 - Push state: pending
-- Final report: pending
+- Final report: this file
 
 ## Done
 
@@ -43,9 +43,28 @@
 - Verified the executable tiers: unit 824 passed and 5 skipped; artifact 1,257
   passed and 40 skipped. The tier-policy assertion passes in the full unit-tier
   collection.
+- Ruff accepts the repository, Black leaves all 486 Python files unchanged,
+  and `git diff --check` is clean.
+- Verified the committed worktree has empty full porcelain and zero ignored
+  executable artifacts under `src/` and `scripts/`.
+- Verified the launcher-side guard accepts the clean tree under the real
+  isolated/no-bytecode/empty-prefix interpreter.
+- Verified the retained coordinator post-import recheck accepts the same clean
+  tree under that sealed interpreter.
 
 ## Next
 
-1. Run repository-wide formatting/lint checks and the clean-tree production
-   guard.
-2. Finalize progress, push if DNS permits, and write the final report.
+1. Push `sol/entry8-impl` if DNS permits.
+2. No local implementation or verification work remains.
+
+## Final report
+
+- `scripts/run_first_estimates.py`: the sealed launcher now runs the complete
+  tracked-drift and ignored-executable guard before argument parsing,
+  `sys.path` mutation, or repository import; violations produce the documented
+  procedural stderr refusal without an incident.
+- `tests/estimates/test_coordinator.py`: two real sealed-process regressions
+  prove pre-import refusal of an ABI-specific coordinator extension shadow and
+  a direct sourceless `src/subprocess.pyc`.
+- Counts: coordinator 58 passed; focused 182 passed; full collection 3,609;
+  unit 824 passed and 5 skipped; artifact 1,257 passed and 40 skipped.
