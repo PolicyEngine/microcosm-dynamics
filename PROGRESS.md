@@ -61,9 +61,34 @@
   success test. Its remaining failure is the pre-round-7 import-time
   `PYTHONDONTWRITEBYTECODE` assertion that the round-8 review explicitly
   identified as pre-existing and excluded from this fix round.
+- Removed all 182 generated ignored `.pyc` files under `src/` and `scripts`;
+  zero ignored files remain in either guarded code root.
+- Verified the real launcher pre-import guard and coordinator source recheck
+  both accept the committed-clean linked worktree under the isolated,
+  no-bytecode, fresh-empty-sentinel interpreter; the sentinel remained empty.
 
 ## Next
 
-1. Remove generated ignored caches and run both production guards on the clean
-   committed tree.
-2. Finalize this report, remove lane notes as required, and push if DNS allows.
+1. Attempt to push `sol/entry8-impl`.
+2. Record the push outcome and remove this lane progress file as required.
+
+## Final report
+
+- `scripts/run_first_estimates.py`: the pre-import guard now strips every
+  `GIT_*` child variable, supplies explicit `-C` and `--git-dir` routing,
+  verifies the sealed top-level, and refuses hidden index flags before checking
+  porcelain status or ignored executable artifacts.
+- `src/populace_dynamics/estimates/coordinator.py`: the post-import recheck uses
+  the same hardened Git route, top-level equality check, and lowercase/`S`
+  index-flag refusal; all HEAD-byte checks also use the sanitized route.
+- `tests/estimates/test_coordinator.py`: the sealed launcher refuses a
+  `GIT_DIR`-redirected ABI shadow and an assume-unchanged tracked coordinator
+  edit before import; coordinator coverage pins redirection,
+  assume-unchanged, skip-worktree, exact child environment/argv, and root
+  mismatch. The CLI success test guards a committed temporary repository.
+- Audit: no test now invokes either full cleanliness guard against the live
+  checkout. Two retained live Git tests are limited to read-only source/root
+  identity queries.
+- Counts: coordinator 64 passed; focused 188 passed; collection 3,615; unit
+  824 passed and 5 skipped; artifact 1,263 passed and 40 skipped; Black 486
+  files; zero ignored guarded-root files. The required local suites are green.
