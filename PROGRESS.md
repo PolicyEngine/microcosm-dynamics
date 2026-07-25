@@ -15,6 +15,19 @@
 - Confirmed through the GitHub connector that PR #304 is open, not merged.
 - Confirmed local `origin/master` is the canonical amendment squash
   `4104d3d`, and that commit is an ancestor of itself.
+- Pinned the runner and literal test to `4104d3d`.
+- Deleted the preflight script/tests and removed their seven unit tests from
+  the tier manifest.
+- Restructured Stage C into candidate-total origin classification, global
+  C.5, and survivor-only operative-state passes.
+- Added a two-candidate barrier regression. The former loop reaches candidate
+  1's source lookup before candidate 2's origin classification, so the new
+  test's first global-barrier assertion necessarily fails on that version.
+- Required exact normalized holdout/seed ID equality and retained the
+  separate missing-upstream-real-seed abort.
+- Added tests for both seed aborts and integer-like holdout normalization.
+- Career/preparation focused suite: `41 passed in 0.98s`.
+- Tier-policy collection check after this step: `1 passed, 3649 deselected`.
 - Identified the lane report target as
   `/Users/maxghenis/m6-sol-lanes/sol-impl-fix.out`.
 - Preserved the pre-existing untracked `FINAL_REPORT.md`.

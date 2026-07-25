@@ -564,6 +564,8 @@ def _person_values(
 def build_seed_coordinates(
     initial_slice: pd.DataFrame,
     scheduled_entries_by_year: Mapping[int, pd.DataFrame],
+    *,
+    holdout_ids: Collection[int],
 ) -> pd.DataFrame:
     """Return the validated, pre-draw coordinates consumed by clause 3.
 
@@ -629,6 +631,11 @@ def build_seed_coordinates(
         raise AssertionError("seed frames contain duplicate people")
     if not (seed["year"] == seed["anchor_wave"] - 1).all():
         raise AssertionError("seed year differs from anchor_wave - 1")
+    normalized_holdout_ids = {
+        _as_int(person_id, "holdout person_id") for person_id in holdout_ids
+    }
+    if set(seed["person_id"]) != normalized_holdout_ids:
+        raise AssertionError("seed frames do not reconcile to holdout IDs")
     return seed.sort_values("person_id", kind="stable").reset_index(drop=True)
 
 
@@ -735,6 +742,19 @@ def derive_birth_years(
                     f"invalid inferred birth year for person {person_id}"
                 )
             inferred[person_id] = int(round(median))
+
+    if required is not None and seed_coordinates is not None:
+        upstream_unresolved = (
+            required - set(exact) - set(inferred) - set(synthetic)
+        )
+        missing_seed_rows = sorted(
+            upstream_unresolved - set(seed_by_person)
+        )
+        if missing_seed_rows:
+            raise AssertionError(
+                "a clauses-1/2/synthetic unresolved person has no seed row: "
+                f"{missing_seed_rows[:10]}"
+            )
 
     people = set(exact) | set(inferred) | set(synthetic) | set(seed_by_person)
     if required is not None:
@@ -1411,8 +1431,8 @@ def build_career_inclusion(
             f"{missing_dispositions[:10]}"
         )
 
-    origins: list[CandidateOriginRecord] = []
-    exclusions: list[ExclusionRecord] = []
+    # Stage C is a candidate-total, birth-free origin-classification pass.
+    preliminary_origins: list[CandidateOriginRecord] = []
     for person_id in candidate_people:
         rows = rows_by_person[person_id]
         post_start = rows[
@@ -1439,12 +1459,33 @@ def build_career_inclusion(
             origin = ClaimOrigin.MODELED_AWARD
         else:
             origin = ClaimOrigin.OPENING_BACKFILL
+        preliminary_origins.append(
+            CandidateOriginRecord(
+                person_id=person_id,
+                origin=origin,
+                first_exposure_year=first_exposure_year,
+                first_exposure_age=first_exposure_age,
+                engine_claim_age=engine_claim_age,
+                engine_claim_year=engine_claim_year,
+                operative_claim_age=None,
+                operative_claim_year=None,
+                schedule_year=None,
+                schedule_snap=None,
+            )
+        )
+    if {record.person_id for record in preliminary_origins} != set(
+        candidate_people
+    ):
+        raise AssertionError("origin partition is incomplete")
+
+    # Stage C.5 is a second candidate-total pass.  No survivor receives
+    # operative coordinates until every candidate has crossed this barrier.
+    exclusions: list[ExclusionRecord] = []
+    c5_survivors: set[int] = set()
+    for preliminary in preliminary_origins:
+        person_id = preliminary.person_id
         birth = births[person_id]
         if birth.source is BirthSource.UNRESOLVED:
-            operative_age = None
-            operative_year = None
-            schedule_year = None
-            schedule_snap = None
             exclusions.append(
                 ExclusionRecord(
                     person_id,
@@ -1456,9 +1497,25 @@ def build_career_inclusion(
             raise AssertionError(
                 f"dated birth disposition has no year for person {person_id}"
             )
-        elif origin is ClaimOrigin.MODELED_AWARD:
-            operative_age = engine_claim_age
-            operative_year = engine_claim_year
+        else:
+            c5_survivors.add(person_id)
+
+    # Complete Stage C only after both global barriers.  C.5 exclusions stay
+    # in the candidate-total origin ledger with null operative coordinates.
+    origins: list[CandidateOriginRecord] = []
+    for preliminary in preliminary_origins:
+        person_id = preliminary.person_id
+        if person_id not in c5_survivors:
+            origins.append(preliminary)
+            continue
+        birth = births[person_id]
+        if birth.birth_year is None:
+            raise AssertionError(
+                f"Stage-C survivor {person_id} has no numeric birth year"
+            )
+        if preliminary.origin is ClaimOrigin.MODELED_AWARD:
+            operative_age = preliminary.engine_claim_age
+            operative_year = preliminary.engine_claim_year
             schedule_year = None
             schedule_snap = None
         else:
@@ -1466,7 +1523,7 @@ def build_career_inclusion(
                 person_id=person_id,
                 birth_year=birth.birth_year,
                 sex=sexes[person_id],
-                exposure_age=first_exposure_age,
+                exposure_age=preliminary.first_exposure_age,
                 schedule=claiming_schedule,
                 root_seed=stock_imputation_root_seed,
             )
@@ -1474,11 +1531,11 @@ def build_career_inclusion(
         origins.append(
             CandidateOriginRecord(
                 person_id=person_id,
-                origin=origin,
-                first_exposure_year=first_exposure_year,
-                first_exposure_age=first_exposure_age,
-                engine_claim_age=engine_claim_age,
-                engine_claim_year=engine_claim_year,
+                origin=preliminary.origin,
+                first_exposure_year=preliminary.first_exposure_year,
+                first_exposure_age=preliminary.first_exposure_age,
+                engine_claim_age=preliminary.engine_claim_age,
+                engine_claim_year=preliminary.engine_claim_year,
                 operative_claim_age=operative_age,
                 operative_claim_year=operative_year,
                 schedule_year=schedule_year,

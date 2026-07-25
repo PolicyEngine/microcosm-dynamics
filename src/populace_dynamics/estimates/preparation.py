@@ -516,6 +516,7 @@ def _prepare_first_report_draw(
         population = batch.phase.population
         initial_slice = population.initial_slice
         scheduled_entries = population.scheduled_entries_by_year
+        holdout_ids = population.holdout_ids
         reserved_real_ids = population.reserved_real_ids
         earnings_domain_ids = population.earnings_domain_ids
         observed_earnings = batch.inputs.earnings_panel
@@ -540,6 +541,7 @@ def _prepare_first_report_draw(
     seed_coordinates = build_seed_coordinates(
         initial_slice,
         scheduled_entries,
+        holdout_ids=holdout_ids,
     )
     inclusion = build_career_inclusion(
         trajectory=trajectory,

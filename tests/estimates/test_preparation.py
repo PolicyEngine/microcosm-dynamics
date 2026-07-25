@@ -145,6 +145,7 @@ def _batch() -> FirstReportProjectionBatch:
     population = SimpleNamespace(
         initial_slice=initial,
         scheduled_entries_by_year={2017: scheduled},
+        holdout_ids=frozenset({1, 2}),
         reserved_real_ids=frozenset({1, 2}),
         earnings_domain_ids=frozenset({1}),
     )

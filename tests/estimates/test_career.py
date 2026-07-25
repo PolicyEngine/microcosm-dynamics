@@ -269,7 +269,11 @@ def test_clause3_seed_age_codes_bounds_and_unresolved_dispositions():
             }
         )
     }
-    seed = build_seed_coordinates(initial, scheduled)
+    seed = build_seed_coordinates(
+        initial,
+        scheduled,
+        holdout_ids=range(1, 7),
+    )
 
     records = {
         record.person_id: record
@@ -310,6 +314,7 @@ def test_clause3_preserves_precedence_and_has_no_trajectory_input():
             }
         ),
         {},
+        holdout_ids={"1", "2", "3", "4"},
     )
     marriage = pd.DataFrame({"person_id": [1], "birth_year": [1950]})
     observed = pd.DataFrame([{"person_id": 2, "period": 2000, "age": 48}])
@@ -905,6 +910,79 @@ def test_stage_c5_unresolved_backfill_precedes_stage_d_and_skips_imputation(
     assert counts["origin_opening_backfill"].unweighted == 1
 
 
+def test_stage_c_global_origin_and_c5_barriers_precede_imputation(monkeypatch):
+    trajectory = pd.DataFrame(
+        [
+            *_trajectory_rows(1, 1952, claim_age=62, claim_year=2015),
+            *_trajectory_rows(2, 1952, claim_age=62, claim_year=2015),
+        ]
+    )
+    roster = _roster([(1, "female", 1.0), (2, "female", 1.0)])
+    observed = pd.DataFrame(
+        [
+            *_observed_rows(1, 1952),
+            *_observed_rows(2, 1952),
+        ]
+    )
+    origin_seen: set[int] = set()
+    c5_seen: set[int] = set()
+    real_person_values = career_module._person_values
+
+    def recording_person_values(frame, column, person_id):
+        if column == "claim_age":
+            origin_seen.add(person_id)
+        return real_person_values(frame, column, person_id)
+
+    class TrackingBirthRecord:
+        birth_year = 1952
+
+        def __init__(self, person_id):
+            self.person_id = person_id
+
+        @property
+        def source(self):
+            assert origin_seen == {1, 2}
+            c5_seen.add(self.person_id)
+            return BirthSource.EXACT_MARRIAGE
+
+    def guarded_opening_draw(**_kwargs):
+        assert c5_seen == {1, 2}
+        return 62, 2013, "upper_endpoint"
+
+    monkeypatch.setattr(
+        career_module,
+        "_person_values",
+        recording_person_values,
+    )
+    monkeypatch.setattr(
+        career_module,
+        "derive_birth_years",
+        lambda *_args, **_kwargs: (
+            TrackingBirthRecord(1),
+            TrackingBirthRecord(2),
+        ),
+    )
+    monkeypatch.setattr(
+        career_module,
+        "_opening_stock_draw",
+        guarded_opening_draw,
+    )
+
+    result = build_career_inclusion(
+        trajectory,
+        roster,
+        observed,
+        pd.DataFrame(columns=["person_id", "birth_year"]),
+        {},
+        _schedule(),
+        {1, 2},
+        stock_imputation_root_seed=8108,
+    )
+
+    assert origin_seen == c5_seen == {1, 2}
+    assert [row.person_id for row in result.origins] == [1, 2]
+
+
 def test_missing_candidate_disposition_is_a_code_bug(monkeypatch):
     trajectory = pd.DataFrame(
         _trajectory_rows(1, 1952, claim_age=62, claim_year=2015)
@@ -969,3 +1047,51 @@ def test_fully_dated_inclusion_is_identical_with_seed_coordinates():
     )
 
     assert seeded.as_dict() == pre_amendment_compatible.as_dict()
+
+
+def test_seed_coordinates_require_the_exact_normalized_holdout_universe():
+    initial = pd.DataFrame(
+        {
+            "person_id": [1],
+            "year": [2014],
+            "anchor_wave": [2015],
+            "age": [50],
+        }
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match="seed frames do not reconcile to holdout IDs",
+    ):
+        build_seed_coordinates(initial, {}, holdout_ids={1, 2})
+
+    normalized = build_seed_coordinates(
+        initial,
+        {},
+        holdout_ids={"1"},
+    )
+    assert normalized["person_id"].tolist() == [1]
+
+
+def test_clause3_aborts_when_upstream_unresolved_person_has_no_seed_row():
+    seed = pd.DataFrame(
+        {
+            "person_id": [1],
+            "year": [2014],
+            "anchor_wave": [2015],
+            "age": [50],
+        }
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match=(
+            "clauses-1/2/synthetic unresolved person has no seed row.*\\[2\\]"
+        ),
+    ):
+        derive_birth_years(
+            pd.DataFrame(columns=["person_id", "birth_year"]),
+            pd.DataFrame(columns=["person_id", "period", "age"]),
+            seed_coordinates=seed,
+            required_person_ids={1, 2},
+        )
