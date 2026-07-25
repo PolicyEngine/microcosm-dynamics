@@ -5,10 +5,10 @@
 - Branch: `sol/entry8-impl`
 - Review anchor: `0c12e85`
 - Latest review/adjudication: round-6 FIX-FIRST with two confirmed items
-- Local implementation: in progress
+- Local implementation: complete
 - Verification: complete
-- Push state: pending
-- Final report: pending
+- Push state: attempted and blocked by DNS (`Could not resolve host: github.com`)
+- Final report: final response
 
 ## Done
 
@@ -41,9 +41,11 @@
 - Black accepts all 486 Python files; Ruff and `git diff --check` are clean.
 - Removed generated executable caches under `src` and `scripts`; the ignored
   executable inventory is empty.
+- Verified the production source guards from the committed-clean worktree under
+  the real isolated, no-bytecode, empty-prefix interpreter.
+- Attempted to push `sol/entry8-impl`; DNS could not resolve `github.com`.
 
 ## Next
 
-1. Commit the verification ledger and tier recount.
-2. Re-run the production source guards on the committed-clean tree.
-3. Push `sol/entry8-impl` if DNS allows and write the final response.
+1. Retry `git push origin sol/entry8-impl` when DNS is available.
+2. No local implementation or verification work remains.
