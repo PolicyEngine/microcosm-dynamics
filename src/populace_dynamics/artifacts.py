@@ -47,13 +47,19 @@ def write_new(
     data: object,
     *,
     sidecar: bool = False,
+    sidecar_payload: object | None = None,
 ) -> None:
     """Write an artifact without permitting an existing file to be replaced.
 
     Strings and bytes are written verbatim. Other values are serialized as
     indented JSON with a trailing newline. If ``sidecar`` is true, an
     environment and contract reference is written to ``<path>.env.json``.
+    A caller that must bind the exact sidecar bytes from the primary artifact
+    may pass a precomputed ``sidecar_payload``; providing one without opting
+    into ``sidecar`` is an error.
     """
+    if sidecar_payload is not None and not sidecar:
+        raise ValueError("sidecar_payload requires sidecar=True")
     destination = Path(path)
     sidecar_destination = Path(f"{destination}.env.json")
     targets = (destination, sidecar_destination) if sidecar else (destination,)
@@ -62,10 +68,12 @@ def write_new(
             raise _already_exists(target)
 
     artifact_payload = _payload(data)
-    sidecar_payload = None
+    rendered_sidecar = None
     if sidecar:
-        sidecar_payload = _payload(
-            {
+        rendered_sidecar = _payload(
+            sidecar_payload
+            if sidecar_payload is not None
+            else {
                 "environment": environment_block(),
                 "contract": asdict(ContractRef.current()),
             }
@@ -75,8 +83,8 @@ def write_new(
     try:
         _write_exclusive(destination, artifact_payload)
         primary_written = True
-        if sidecar_payload is not None:
-            _write_exclusive(sidecar_destination, sidecar_payload)
+        if rendered_sidecar is not None:
+            _write_exclusive(sidecar_destination, rendered_sidecar)
     except BaseException:
         if primary_written:
             destination.unlink(missing_ok=True)

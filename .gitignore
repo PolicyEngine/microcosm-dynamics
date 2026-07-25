@@ -112,3 +112,8 @@ paper/paper_files/
 .vercel/
 scratch/
 *.pkl
+
+# First-estimates ceremony-owned pre-publication state.
+runs/first_estimates_attempt.claim
+runs/first_estimates_retry.claim
+runs/first_estimates_incident_*.json
