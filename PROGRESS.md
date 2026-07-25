@@ -2,9 +2,9 @@
 
 ## State
 
-The reducer and canonical draw-0 artifact are complete. Sections A-D match
-the referee oracle where supplied, and the artifact has been reproduced
-byte-for-byte from the validated cache.
+The reducer, canonical draw-0 artifact, and final report are complete.
+Sections A-D match the referee oracle where supplied, and the artifact has
+been reproduced byte-for-byte from the validated cache.
 
 ## Done
 
@@ -63,10 +63,10 @@ byte-for-byte from the validated cache.
   `d818a36ba6ed5d7dbb45e1f0a92f5d2c3ac6577744c0df35df22b2d11ca03cad`.
 - Ran the relevant career, ledger, and sealed-preparation tests from this
   worktree: 33 passed.
+- Wrote `FINAL_REPORT.md` with the reconciliation table, exact commands and
+  outputs, source-law rationale, dollar measurements, and judgment calls.
 
 ## Next
 
-- Validate final canonical bytes and commit the completed reducer, JSON, and
-  this progress update.
-- Write and commit `FINAL_REPORT.md` with commands, outputs, reconciliation,
-  and judgment calls.
+- No implementation work remains. Perform only the final read-only clean
+  branch and commit-message handoff checks.
