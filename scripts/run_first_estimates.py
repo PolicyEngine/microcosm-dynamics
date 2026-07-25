@@ -1,12 +1,13 @@
 """One-shot CLI for the registered first-estimates coordinator.
 
 After self-re-execution seals the interpreter, this launcher uses only the
-standard library to require empty full-porcelain Git status and no ignored
+standard library to bind Git to the launcher's repository, require ordinary
+tracked-index flags and empty full-porcelain status, and refuse ignored
 ``__pycache__/``, ``*.pyc``, ``*.pyo``, or ``*.so`` executable artifacts under
 ``src/`` or ``scripts/`` before adding ``src`` to ``sys.path``.  A failure at
 that pre-import boundary is procedural: the coordinator is not yet available
 to write an incident, so the launcher prints the documented structured
-refusal to stderr and exits nonzero.  The fresh registration must restate both
+refusal to stderr and exits nonzero.  The fresh registration must restate all
 pre-import checks and their procedural-refusal handling.
 """
 
@@ -84,12 +85,25 @@ def _git_bytes(repository: Path, *arguments: str) -> bytes:
     """Run one pre-import Git query without importing repository code."""
     import subprocess
 
+    root = repository.resolve()
+    command = [
+        "git",
+        "-C",
+        str(root),
+        f"--git-dir={root / '.git'}",
+        *arguments,
+    ]
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if not name.startswith("GIT_")
+    }
     try:
         return subprocess.run(
-            ["git", *arguments],
-            cwd=repository,
+            command,
             check=True,
             capture_output=True,
+            env=environment,
         ).stdout
     except (OSError, subprocess.CalledProcessError) as error:
         raise RuntimeError(
@@ -98,8 +112,45 @@ def _git_bytes(repository: Path, *arguments: str) -> bytes:
         ) from error
 
 
+def _assert_git_toplevel(repository: Path) -> Path:
+    """Return the canonical root only when Git reports that exact checkout."""
+    root = repository.resolve()
+    encoded = _git_bytes(root, "rev-parse", "--show-toplevel")
+    try:
+        reported = os.fsdecode(encoded).strip()
+        if not reported:
+            raise ValueError("empty Git checkout root")
+        git_root = Path(reported).resolve()
+    except (OSError, TypeError, ValueError) as error:
+        raise RuntimeError(
+            "Git returned an invalid checkout root for the pre-import guard"
+        ) from error
+    if git_root != root:
+        raise RuntimeError(
+            "launcher repository root differs from the Git checkout root"
+        )
+    return root
+
+
+def _assert_ordinary_index_flags(repository: Path) -> None:
+    """Refuse index entries hidden from ordinary worktree inspection."""
+    entries = _git_bytes(repository, "ls-files", "-v", "-z", "--")
+    hidden = tuple(
+        entry
+        for entry in entries.split(b"\0")
+        if entry and (entry[:1].islower() or entry.startswith(b"S "))
+    )
+    if hidden:
+        raise RuntimeError(
+            "registered first estimates requires tracked files without "
+            "assume-unchanged or skip-worktree flags"
+        )
+
+
 def _assert_pre_import_repository_guard(repository: Path) -> None:
     """Refuse tracked drift, untracked files, and ignored executables."""
+    repository = _assert_git_toplevel(repository)
+    _assert_ordinary_index_flags(repository)
     status = _git_bytes(
         repository,
         "status",

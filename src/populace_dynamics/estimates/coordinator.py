@@ -202,18 +202,66 @@ def _assert_sealed_interpreter() -> None:
 
 
 def _git_bytes(repository: Path, *arguments: str) -> bytes:
+    root = repository.resolve()
+    command = [
+        "git",
+        "-C",
+        str(root),
+        f"--git-dir={root / '.git'}",
+        *arguments,
+    ]
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if not name.startswith("GIT_")
+    }
     try:
         return subprocess.run(
-            ["git", *arguments],
-            cwd=repository,
+            command,
             check=True,
             capture_output=True,
+            env=environment,
         ).stdout
     except (OSError, subprocess.CalledProcessError) as error:
-        command = " ".join(("git", *arguments))
+        command_text = " ".join(command)
         raise RuntimeError(
-            f"unable to bind registered input factory with `{command}`"
+            f"unable to bind registered input factory with `{command_text}`"
         ) from error
+
+
+def _assert_git_toplevel(repository: Path) -> Path:
+    """Return the canonical root only when Git reports that exact checkout."""
+    root = repository.resolve()
+    encoded = _git_bytes(root, "rev-parse", "--show-toplevel")
+    try:
+        reported = os.fsdecode(encoded).strip()
+        if not reported:
+            raise ValueError("empty Git checkout root")
+        git_root = Path(reported).resolve()
+    except (OSError, TypeError, ValueError) as error:
+        raise RuntimeError(
+            "Git returned an invalid checkout root for the estimates package"
+        ) from error
+    if git_root != root:
+        raise RuntimeError(
+            "imported estimates package root differs from the Git checkout root"
+        )
+    return root
+
+
+def _assert_ordinary_index_flags(repository: Path) -> None:
+    """Refuse index entries hidden from ordinary worktree inspection."""
+    entries = _git_bytes(repository, "ls-files", "-v", "-z", "--")
+    hidden = tuple(
+        entry
+        for entry in entries.split(b"\0")
+        if entry and (entry[:1].islower() or entry.startswith(b"S "))
+    )
+    if hidden:
+        raise RuntimeError(
+            "registered first estimates requires tracked files without "
+            "assume-unchanged or skip-worktree flags"
+        )
 
 
 def _assert_registered_input_sources(repository: Path) -> None:
@@ -237,6 +285,8 @@ def _assert_registered_input_sources(repository: Path) -> None:
 
 def _assert_no_repository_drift(repository: Path) -> None:
     """Refuse any index or worktree entry in the sealed checkout."""
+    repository = _assert_git_toplevel(repository)
+    _assert_ordinary_index_flags(repository)
     status = _git_bytes(
         repository,
         "status",
@@ -421,18 +471,7 @@ def _sealed_repository_root() -> Path:
         raise RuntimeError(
             "imported estimates package is outside the canonical src layout"
         )
-    git_root_bytes = _git_bytes(root, "rev-parse", "--show-toplevel")
-    try:
-        git_root = Path(os.fsdecode(git_root_bytes).strip()).resolve()
-    except (TypeError, ValueError) as error:
-        raise RuntimeError(
-            "Git returned an invalid checkout root for the estimates package"
-        ) from error
-    if git_root != root:
-        raise RuntimeError(
-            "imported estimates package root differs from the Git checkout root"
-        )
-    return root
+    return _assert_git_toplevel(root)
 
 
 def _path_within_root(
