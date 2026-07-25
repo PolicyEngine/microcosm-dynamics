@@ -1142,6 +1142,84 @@ def test__production_path__partial_claim_failure_is_incident_accounted(
     assert second.path.name == "first_estimates_incident_2.json"
 
 
+@pytest.mark.parametrize(
+    "claim_payload",
+    [
+        (
+            b'{"registration_reference":NaN,'
+            b'"schema_version":"first_estimates_attempt.v1"}\n'
+        ),
+        (
+            b'{"registration_reference":1e1000000,'
+            b'"schema_version":"first_estimates_attempt.v1"}\n'
+        ),
+    ],
+    ids=["nan", "overflow"],
+)
+def test__production_path__nonfinite_claim_requires_fresh_adjudication(
+    tmp_path,
+    monkeypatch,
+    claim_payload,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    claim = root / "runs" / "first_estimates_attempt.claim"
+    claim.write_bytes(claim_payload)
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations([], {}),
+    )
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert result.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    assert claim.read_bytes() == claim_payload
+
+
+def test__production_path__symlinked_matching_claim_requires_fresh_adjudication(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration_path = root / "registration.json"
+    configuration_path.write_bytes(_configuration_bytes())
+    outside = tmp_path / "outside.claim"
+    outside.write_bytes(coordinator._attempt_claim_payload(REGISTRATION))
+    claim = root / "runs" / "first_estimates_attempt.claim"
+    claim.symlink_to(outside)
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_default_operations",
+        lambda: _operations([], {}),
+    )
+
+    result = coordinator.run_registered_first_estimates(
+        registration_reference=REGISTRATION,
+        registered_configuration_path=configuration_path,
+        retry_after_incident=1,
+    )
+
+    assert result.status == "incident"
+    assert result.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    assert claim.is_symlink()
+    assert outside.read_bytes() == coordinator._attempt_claim_payload(
+        REGISTRATION
+    )
+
+
 def test__production_path__successful_publication_keeps_claim(
     tmp_path,
     monkeypatch,

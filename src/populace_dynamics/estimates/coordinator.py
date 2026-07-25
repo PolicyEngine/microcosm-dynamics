@@ -412,13 +412,23 @@ def _write_attempt_claim_payload(descriptor: int, payload: bytes) -> None:
 
 def _read_attempt_claim(path: Path) -> Mapping[str, Any] | None:
     try:
+        if path.is_symlink():
+            return None
         payload = path.read_bytes()
         value = json.loads(payload)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        canonical_payload = publication.canonical_json_bytes(value)
+    except (
+        OSError,
+        UnicodeError,
+        TypeError,
+        ValueError,
+        OverflowError,
+        RecursionError,
+    ):
         return None
     if not isinstance(value, Mapping):
         return None
-    if publication.canonical_json_bytes(value) != payload:
+    if canonical_payload != payload:
         return None
     if set(value) != {"schema_version", "registration_reference"}:
         return None
