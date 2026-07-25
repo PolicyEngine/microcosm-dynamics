@@ -6,7 +6,7 @@ import os
 import shutil
 import site
 import subprocess
-import venv
+import sys
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -183,9 +183,22 @@ def _sealed_preparation_worktree(tmp_path: Path) -> Iterator[Path]:
 def _sealed_venv_python(tmp_path: Path) -> Path:
     environment = tmp_path / "venv"
     try:
-        venv.EnvBuilder(with_pip=False).create(environment)
-    except (OSError, subprocess.SubprocessError) as error:
+        created = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "venv",
+                "--without-pip",
+                str(environment),
+            ],
+            capture_output=True,
+            text=True,
+        )
+    except OSError as error:
         pytest.skip(f"venv is unavailable for the sealed subprocess: {error}")
+    if created.returncode != 0:
+        detail = (created.stderr or created.stdout).strip()
+        pytest.skip(f"venv is unavailable for the sealed subprocess: {detail}")
     executable = environment / (
         "Scripts/python.exe" if os.name == "nt" else "bin/python"
     )
