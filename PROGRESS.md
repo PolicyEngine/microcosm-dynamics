@@ -2,19 +2,24 @@
 
 ## State
 
-- Drafting the populace-dynamics paper's first-estimates results content on
-  `claude/entry8-paper`, based on the local `origin/master` ref at `8b031bc3`.
-- The required network fetch was attempted first but failed because the sandbox
-  could not resolve `github.com`.
-- The local clone does not contain object `7b1ee30c`, so ancestry against that
-  object cannot be verified locally. The source artifact is present at the
-  required SHA-256:
+- The first-estimates results draft is complete on `claude/entry8-paper`.
+- The required fetch was attempted twice. The sandbox first failed DNS
+  resolution and then, with a current address supplied through
+  `http.curloptResolve`, refused the outbound connection because network access
+  is disabled.
+- Read-only GitHub metadata confirms that remote `master` is
+  `7b1ee30c355749884522fb11ec25aa8bea6152e8`, with parent `8b031bc3`, and
+  changes only `docs/forecasts/timeline_ledger.json`. The remote file's blob
+  `6c7161e8` and full patch match local commit `0f246c4` exactly. Because the
+  sandbox cannot import the signed `7b1ee30c` commit object, the draft is
+  provisionally rebased on the tree-equivalent `0f246c4`; exact ancestry remains
+  for the coordinator to repair after a fetch.
+- The source artifact is present at the required SHA-256:
   `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`.
-- Read-only audits of the paper, design, execution record, and artifact now
-  agree on the target structure and all headline values.
-- The paper draft is committed at `c345754`: a new first-estimates subsection,
-  five labeled tables, the execution and limitation record, all nine
-  successors, the exact closing claim, and the matching status update.
+- The draft adds five labeled tables, the execution and limitation record, all
+  nine successors, the exact closing claim, and the matching status update.
+- A full HTML-and-PDF standalone render has succeeded, and all 37 focused
+  reproduction, publication, gap-block, and paper-figure tests pass.
 
 ## Done
 
@@ -37,10 +42,21 @@
   focused reproduction, publication, gap-block, and palette tests.
 - Recomputed every displayed table cell from the JSON after drafting and
   machine-checked the rendered strings before committing the paper.
+- Rendered `paper/paper.qmd` to HTML and PDF with task-scoped Quarto and TeX
+  caches; inspected the PDF birth-timing table and confirmed the approximation
+  marks render.
+- Ran the four focused test modules under Python 3.13 with `PYTHONPATH=src`: 37
+  passed with no warnings, skips, or failures.
+- Tightened the execution paragraph to state explicitly that the sixth incident
+  record was also committed append-only.
+- Rebased the draft commits onto local `0f246c4`, whose tree is identical to
+  remote `7b1ee30c`; no remote state was changed.
 
 ## Next
 
-- Render the standalone paper and run focused reproduction/publication/palette
-  tests, fixing and committing any failures.
+- Repeat the render and focused tests after the final prose adjustment.
 - Write and commit `FINAL_REPORT.md` with the diff, every numeric JSON source,
   and all judgment calls.
+- After network access is available, fetch and replace the provisional base
+  with exact remote ancestry:
+  `git rebase --onto 7b1ee30c 0f246c4 claude/entry8-paper`.
