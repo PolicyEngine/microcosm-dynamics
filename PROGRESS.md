@@ -51,11 +51,13 @@
 - Tier policy: `1 passed, 3657 deselected in 1.29s`; the three new tests are
   all artifact-tier and the manifest now records 1,327 artifact tests.
 - Black and Ruff pass for the origin-reconciliation files.
+- After first repinning the rebased reviewed tree to `b10e13c`, advanced the
+  identity to final production-source commit
+  `1057cf55d5fed6b69254bb5215a3978bfb5ec1bc`; it exists, is an ancestor of
+  HEAD, and exactly matches HEAD across every guarded production path.
 
 ## Next
 
-- Advance the reviewed implementation identity after the production-source
-  commits so the direct guard truthfully passes at final HEAD.
 - Run the three named new tests, full estimates and publication suites,
   tier policy, Black, Ruff, and the CI-cheap replay test.
 - Run the requested focused and full verification, update this ledger, push,
