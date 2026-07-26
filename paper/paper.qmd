@@ -2256,12 +2256,13 @@ Registration populace-dynamics#307 fixed the configuration before
 execution. The report class is verdictless: one registered run,
 `publishes_regardless`, `no_self_rescue`, and no gate, floor,
 threshold, or verdict. Its paired environment sidecar binds the
-execution record to the artifact. The sealed run reproduced the
-pre-registration rehearsal's inclusion funnel exactly — the four
-real-person birth-source classes were draw-invariant at sample SD
-0.0, unresolved-birth exclusions were zero in every draw, and draw 0
-included 1,514 claimants; across draws the included count was
-1,518.1 ± 16.8.
+execution record to the artifact. The sealed run matched every
+retained rehearsal spot-check — the four real-person birth-source
+classes draw-invariant at sample SD 0.0, unresolved-birth exclusions
+zero in every draw, and 1,514 included claimants in draw 0; the
+rehearsal's own artifact was discarded by design, so the retained
+checks are the comparison's full extent. Across draws the included
+count was 1,518.1 ± 16.8.
 
 The annual benefit aggregates keep the two claim origins separate
 (@tbl-first-estimates-benefits). Modeled awards are the primary
@@ -2389,11 +2390,13 @@ retires it by amendment. Source:
 The execution record stays on the page. Registrations 1–5 —
 populace-dynamics#288, #289, #292, #295, and #299 — ended in the
 first five ordered, append-only incident records. The registration-5
-diagnosis prompted a scoped guard fix; an out-of-ceremony full-pipeline
-dress rehearsal then exposed the separate birth-year-completeness
-failure before another registration was spent. Amendment 2, design
-revision 10, added the five source dispositions, the executable
-inclusion law, and the frozen sensitivity; revision 10.1 corrected
+diagnosis prompted a scoped guard fix; that fix's adversarial referee
+exposed the separate birth-year-completeness failure, and an
+out-of-ceremony full-pipeline dress rehearsal confirmed it before
+another registration was spent. Amendment 2, design
+revision 10, added two source dispositions and froze the five-key
+source table, made the inclusion law executable, and froze the
+sensitivity; revision 10.1 corrected
 only the age-derived candidate share to 2,892 of 3,083. Registration
 6, populace-dynamics#305, refused to start on a stale durable attempt
 claim and produced the sixth committed, append-only incident record.
