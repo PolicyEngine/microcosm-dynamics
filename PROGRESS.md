@@ -18,8 +18,8 @@
   `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`.
 - The draft adds five labeled tables, the execution and limitation record, all
   nine successors, the exact closing claim, and the matching status update.
-- A full HTML-and-PDF standalone render has succeeded, and all 37 focused
-  reproduction, publication, gap-block, and paper-figure tests pass.
+- The final draft has passed a full HTML-and-PDF standalone render and all 37
+  focused reproduction, publication, gap-block, and paper-figure tests.
 
 ## Done
 
@@ -51,10 +51,14 @@
   record was also committed append-only.
 - Rebased the draft commits onto local `0f246c4`, whose tree is identical to
   remote `7b1ee30c`; no remote state was changed.
+- Repeated the complete standalone render after the prose and base adjustments:
+  both formats completed, the PDF is 51 pages, and the only warning was the
+  sandbox's blocked fetch of an optional CDN polyfill.
+- Repeated the four focused test modules: 37 passed in 2.85 seconds with no
+  warnings, skips, or failures.
 
 ## Next
 
-- Repeat the render and focused tests after the final prose adjustment.
 - Write and commit `FINAL_REPORT.md` with the diff, every numeric JSON source,
   and all judgment calls.
 - After network access is available, fetch and replace the provisional base
