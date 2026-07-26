@@ -20,6 +20,8 @@
   nine successors, the exact closing claim, and the matching status update.
 - The final draft has passed a full HTML-and-PDF standalone render and all 37
   focused reproduction, publication, gap-block, and paper-figure tests.
+- `FINAL_REPORT.md` is committed with the complete diff, numerical provenance,
+  judgment log, verification record, and coordinator handoff.
 
 ## Done
 
@@ -56,11 +58,12 @@
   sandbox's blocked fetch of an optional CDN polyfill.
 - Repeated the four focused test modules: 37 passed in 2.85 seconds with no
   warnings, skips, or failures.
+- Wrote and committed the final draft report.
 
 ## Next
 
-- Write and commit `FINAL_REPORT.md` with the diff, every numeric JSON source,
-  and all judgment calls.
 - After network access is available, fetch and replace the provisional base
   with exact remote ancestry:
   `git rebase --onto 7b1ee30c 0f246c4 claude/entry8-paper`.
+- Coordinator content review, Fable voice pass, then the referee round. Do not
+  push this draft beforehand.
