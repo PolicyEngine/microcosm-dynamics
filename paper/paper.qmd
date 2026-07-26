@@ -2396,7 +2396,8 @@ revision 10, added the five source dispositions, the executable
 inclusion law, and the frozen sensitivity; revision 10.1 corrected
 only the age-derived candidate share to 2,892 of 3,083. Registration
 6, populace-dynamics#305, refused to start on a stale durable attempt
-claim and produced incident 6. Registration 7,
+claim and produced the sixth committed, append-only incident record.
+Registration 7,
 populace-dynamics#307, completed under the sealed interpreter and
 published the report, which cross-references all six incidents. The
 full-pipeline rehearsal before a fresh registration is now standing
