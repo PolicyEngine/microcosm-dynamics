@@ -130,10 +130,16 @@
       "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
       "p50": "2026-08-02",
       "p80": "2026-08-09",
-      "status": "open",
+      "status": "resolved",
       "supersedes": 3,
       "revision_reason": "Downstream of entry 7's certification shift (candidate-3-after-surface-ceremony now the modal certification path).",
-      "resolution": null
+      "resolution": {
+        "resolved_at": "2026-07-26T08:16:08Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/309 (merged 8b031bc3cfbe6247a155f54458ebd4f10dd6759a): runs/first_estimates_v1.json sha256 719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977, registration populace-dynamics#307; completion record https://github.com/PolicyEngine/populace-dynamics/issues/307#issuecomment-5082585716",
+        "error_days_p50": -7,
+        "within_p50": true,
+        "within_p80": true
+      }
     },
     {
       "id": 9,
