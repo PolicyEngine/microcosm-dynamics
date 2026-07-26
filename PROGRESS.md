@@ -12,6 +12,9 @@
   `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`.
 - Read-only audits of the paper, design, execution record, and artifact now
   agree on the target structure and all headline values.
+- The paper draft is committed at `c345754`: a new first-estimates subsection,
+  five labeled tables, the execution and limitation record, all nine
+  successors, the exact closing claim, and the matching status update.
 
 ## Done
 
@@ -32,11 +35,11 @@
   its figure tooling and palette test cover committed SVGs.
 - Identified `quarto render paper/paper.qmd` as the paper render command and the
   focused reproduction, publication, gap-block, and palette tests.
+- Recomputed every displayed table cell from the JSON after drafting and
+  machine-checked the rendered strings before committing the paper.
 
 ## Next
 
-- Draft and commit the results subsection, its labeled tables, and the status
-  update.
 - Render the standalone paper and run focused reproduction/publication/palette
   tests, fixing and committing any failures.
 - Write and commit `FINAL_REPORT.md` with the diff, every numeric JSON source,
