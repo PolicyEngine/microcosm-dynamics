@@ -22,6 +22,7 @@ from typing import Any
 
 from populace_dynamics import artifacts
 from populace_dynamics.contract import ContractRef, environment_block
+from populace_dynamics.estimates.career import BirthSource
 from populace_dynamics.estimates.parameters import (
     RUNTIME_PROVENANCE_SCHEMA_VERSION,
 )
@@ -37,6 +38,187 @@ EVIDENCE_LABELS = (
     "pre-alignment",
     "labor-income proxy",
 )
+BIRTH_TIMING_SENSITIVITY_LABEL = (
+    "Birth-timing sensitivity (amendment 2, frozen)"
+)
+BIRTH_TIMING_SENSITIVITY_SEMANTICS = {
+    "interpretation": "Stress scenarios, not bounds.",
+    "included_set": (
+        "Each scenario prices its complete production Stage-D-included set; "
+        "inbound and outbound changes are both reflected."
+    ),
+    "scenario_display_labels": {
+        "baseline": "baseline",
+        "birth_minus_1": "births−1",
+        "birth_plus_1": "births+1",
+    },
+    "shift_scope": [
+        BirthSource.INFERRED_PERIOD_AGE.value,
+        BirthSource.DERIVED_PROJECTION_AGE.value,
+    ],
+    "fixed_sources": [
+        BirthSource.EXACT_MARRIAGE.value,
+        BirthSource.SYNTHETIC_NATIVE.value,
+    ],
+    "personwise_range_display_label": "adversarial per-person range",
+    "personwise_construction": (
+        "For each person independently, select the smaller or larger "
+        "complete-ledger contribution from birth-minus-1 and birth-plus-1; "
+        "an excluded person contributes zero."
+    ),
+    "retirement_condition": (
+        "until a ratified birth-timing resolution retires it by amendment"
+    ),
+}
+_MCNEMAR_CHI_METHOD = (
+    "McNemar chi-square test with Edwards continuity correction and one "
+    "degree of freedom."
+)
+_MCNEMAR_EXACT_METHOD = (
+    "Two-sided exact McNemar test: binomial test on discordant pairs with "
+    "null probability 0.5."
+)
+_MCNEMAR_SELECTION_RULE = (
+    "Use the exact two-sided binomial McNemar test with fewer than 25 "
+    "discordant pairs; otherwise use the one-degree-of-freedom chi-square "
+    "test with Edwards continuity correction."
+)
+
+
+def _mcnemar_agreement_table(
+    *,
+    denominator: int,
+    cells: tuple[int, int, int, int],
+    chi_square_statistic: float,
+    chi_square_p_value: float,
+    exact_p_value: float,
+    reported_method: str,
+) -> dict[str, Any]:
+    """Construct one byte-stable table from the committed evidence cells."""
+
+    both, clause2_only, clause3_only, neither = cells
+    if sum(cells) != denominator:
+        raise AssertionError("committed McNemar cells do not reconcile")
+    tests = {
+        "chi_square_continuity_corrected": {
+            "method": _MCNEMAR_CHI_METHOD,
+            "p_value": chi_square_p_value,
+            "statistic": chi_square_statistic,
+        },
+        "exact_two_sided_binomial": {
+            "method": _MCNEMAR_EXACT_METHOD,
+            "p_value": exact_p_value,
+        },
+    }
+    return {
+        "denominator": denominator,
+        "clause2_inferred_period_age": {
+            "match_count": both + clause2_only,
+            "match_share": (both + clause2_only) / denominator,
+        },
+        "clause3_seed_age": {
+            "match_count": both + clause3_only,
+            "match_share": (both + clause3_only) / denominator,
+        },
+        "mcnemar_2x2_cells": {
+            "clause2_match__clause3_match": both,
+            "clause2_match__clause3_mismatch": clause2_only,
+            "clause2_mismatch__clause3_match": clause3_only,
+            "clause2_mismatch__clause3_mismatch": neither,
+        },
+        "discordant_pairs": {
+            "clause2_only": clause2_only,
+            "clause3_only": clause3_only,
+        },
+        "paired_tests": {
+            **tests,
+            "reported_test": {
+                "method": tests[reported_method]["method"],
+                "method_key": reported_method,
+                "p_value": tests[reported_method]["p_value"],
+                "selection_rule": _MCNEMAR_SELECTION_RULE,
+            },
+        },
+    }
+
+
+COMMON_SUPPORT_AGREEMENT = {
+    "evidence_reference": {
+        "path": "runs/first_estimates_birth_evidence_draw0.json",
+        "sha256": (
+            "92c6319bdeb2b02681a7c6ab700fc8df47b43de703054450040dba053ac309a5"
+        ),
+        "schema_version": "first_estimates_birth_evidence.v2",
+        "section": "common_support_agreement",
+    },
+    "common_support_definition": (
+        "Real report-population people with an exact marriage-record birth "
+        "year, a clause-2 median(period-age) estimate on age 14-90 earnings "
+        "support, and a valid clause-3 seed age 2-125."
+    ),
+    "truth_source": "exact_marriage",
+    "construction": "seed_triple_overlap",
+    "common_support_count": 4_518,
+    "endpoints": {
+        "exact": _mcnemar_agreement_table(
+            denominator=4_518,
+            cells=(1_916, 391, 383, 1_828),
+            chi_square_statistic=0.06330749354005168,
+            chi_square_p_value=0.8013426797762091,
+            exact_p_value=0.8013623340541564,
+            reported_method="chi_square_continuity_corrected",
+        ),
+        "within_plus_or_minus_1": _mcnemar_agreement_table(
+            denominator=4_518,
+            cells=(4_507, 9, 1, 1),
+            chi_square_statistic=4.9,
+            chi_square_p_value=0.026856695507524418,
+            exact_p_value=0.021484375,
+            reported_method="exact_two_sided_binomial",
+        ),
+    },
+    "exact_endpoint_by_anchor_wave": {
+        "2015": _mcnemar_agreement_table(
+            denominator=3_645,
+            cells=(1_599, 309, 333, 1_404),
+            chi_square_statistic=0.82398753894081,
+            chi_square_p_value=0.36401687681601563,
+            exact_p_value=0.364027970030365,
+            reported_method="chi_square_continuity_corrected",
+        ),
+        "2017": _mcnemar_agreement_table(
+            denominator=601,
+            cells=(191, 63, 24, 323),
+            chi_square_statistic=16.597701149425287,
+            chi_square_p_value=4.6206995513884114e-05,
+            exact_p_value=3.4799669459257334e-05,
+            reported_method="chi_square_continuity_corrected",
+        ),
+        "2019": _mcnemar_agreement_table(
+            denominator=272,
+            cells=(126, 19, 26, 101),
+            chi_square_statistic=0.8,
+            chi_square_p_value=0.37109336952269756,
+            exact_p_value=0.3712980344710104,
+            reported_method="chi_square_continuity_corrected",
+        ),
+    },
+    "anchor_strata_reconciliation": {
+        "common_support_count": 4_518,
+        "sum": 4_518,
+        "passed": True,
+    },
+    "interpretation": {
+        "birthday_timing_ambiguity_years": 1,
+        "aggregate_exact_match": (
+            "Failure to reject equality; not a demonstration of equivalence."
+        ),
+        "detectable_differences": [
+            "within_plus_or_minus_1",
+            "2017_anchor_wave_exact",
+        ],
+    },
+}
 ODD_YEAR_CARRY_DISCLOSURE = (
     "The engine draws even-year earnings and carries the prior even-year "
     "value into odd years (2015 repeats 2014, 2017 repeats 2016, and so on)."
@@ -281,6 +463,29 @@ GAP_BLOCK: tuple[dict[str, str], ...] = (
             "material; the registered anchor extraction is the successor step"
         ),
     },
+    {
+        "disclosure": (
+            "**Birth-timing sensitivity (amendment 2, frozen; revision 10.1 "
+            "corrects the candidate share)** — 2,892 of 3,083 candidates "
+            "(93.8%) and 1,440 of 1,514 baseline included claimants carry "
+            "age-derived birth years (§3.1 clauses 2 and 3: 2,806 inferred + "
+            "86 derived); coherent ±1 stress scenarios through the "
+            "production ledger: births−1 → −$30.3B (−0.92%), births+1 → "
+            "−$312.6B (−9.47%) of the $3,301.7B baseline, dominated by 278 "
+            "modeled-award chronology movers; adversarial per-person range "
+            "≈[−$408.2B, +$65.2B]. Stress scenarios, not bounds. v1 "
+            "recomputes them per draw (reduction-stage arithmetic) and "
+            "publishes across-draw mean and SD; **this row travels with every "
+            "publication of these numbers until a ratified birth-timing "
+            "resolution retires it by amendment**"
+        ),
+        "classification": (
+            "material — the report's largest quantified sensitivity; every "
+            "underlying flip is `modeled_award` (the artifact measures "
+            "`opening_backfill` immunity: the birth year cancels in the "
+            "chronology predicate)"
+        ),
+    },
 )
 
 _ARTIFACT_KEYS = frozenset(
@@ -334,6 +539,7 @@ _TABLE_KEYS = frozenset(
         "biennial_companion",
     }
 )
+_BENEFIT_TABLE_KEYS = frozenset({*_TABLE_KEYS, "birth_timing_reference"})
 _BENEFIT_METRICS = (
     "unweighted_award_count",
     "weighted_award_count",
@@ -353,13 +559,12 @@ _REVENUE_METRICS = (
     "combined_contributions",
 )
 _BENEFIT_MEASURE_LABEL = (
-    "annualized statutory benefit, eligibility-PIA with COLA, "
-    "no recomputation"
+    "annualized statutory benefit, eligibility-PIA with COLA, no recomputation"
 )
 _TABLE_UNIT_LABELS = {
     "modeled_award_flow": _BENEFIT_MEASURE_LABEL,
     "opening_stock": (
-        "report-only imputed opening stock; " f"{_BENEFIT_MEASURE_LABEL}"
+        f"report-only imputed opening stock; {_BENEFIT_MEASURE_LABEL}"
     ),
     "revenue": (
         "nominal frame-relative OASDI payroll contributions on "
@@ -370,6 +575,7 @@ _INCLUSION_COUNT_KEYS = (
     "excluded_di_conversion",
     "excluded_di_unknown",
     "nonclaimant",
+    "excluded_birth_year_unresolved",
     "excluded_domain_incomplete",
     "excluded_pre1979_eligibility",
     "excluded_empty_span",
@@ -381,10 +587,27 @@ _INCLUSION_COUNT_KEYS = (
     "origin_modeled_award",
     "origin_opening_backfill",
 )
-_BIRTH_SOURCE_KEYS = (
-    "exact_marriage",
-    "inferred_period_age",
-    "synthetic_native",
+_BIRTH_SOURCE_KEYS = tuple(source.value for source in BirthSource)
+_POPULATION_DISPOSITION_KEYS = (
+    "excluded_di_conversion",
+    "excluded_di_unknown",
+    "nonclaimant",
+    "excluded_birth_year_unresolved",
+    "excluded_domain_incomplete",
+    "excluded_pre1979_eligibility",
+    "excluded_empty_span",
+    "excluded_chronology_inconsistent",
+    "excluded_low_coverage",
+    "included",
+)
+_CANDIDATE_OUTCOME_KEYS = (
+    "excluded_birth_year_unresolved",
+    "excluded_domain_incomplete",
+    "excluded_pre1979_eligibility",
+    "excluded_empty_span",
+    "excluded_chronology_inconsistent",
+    "excluded_low_coverage",
+    "included",
 )
 _COUNT_METRICS = frozenset(
     [
@@ -404,7 +627,7 @@ _COUNT_METRICS = frozenset(
             for measure in ("unweighted", "weighted")
         ),
         *(
-            "opening_stock_snap__included_opening_backfill__" f"{measure}"
+            f"opening_stock_snap__included_opening_backfill__{measure}"
             for measure in ("unweighted", "weighted")
         ),
         *(
@@ -417,12 +640,17 @@ _COUNT_METRICS = frozenset(
             )
         ),
         *(
-            "entrant__explicit_2016_2018_row_entrant__" f"{measure}"
+            f"entrant__explicit_2016_2018_row_entrant__{measure}"
             for measure in ("unweighted", "weighted")
         ),
         *(
             f"included_origin__{origin}__{measure}"
             for origin in _BENEFIT_ORIGINS
+            for measure in ("unweighted", "weighted")
+        ),
+        *(
+            f"included_birth_source__{source}__{measure}"
+            for source in _BIRTH_SOURCE_KEYS
             for measure in ("unweighted", "weighted")
         ),
     ]
@@ -433,6 +661,8 @@ _DIAGNOSTICS_KEYS = frozenset(
         "per_draw",
         "aggregate",
         "included_career_per_draw",
+        "birth_timing_sensitivity",
+        "common_support_agreement",
         "context_ratio",
         "payment_year_convention",
         "benefit_measure",
@@ -447,6 +677,38 @@ _ENTRANT_DISCLOSURE = {
 _CONTEXT_RATIO_DISCLOSURE = {
     "status": "deferred_to_anchor_extraction",
 }
+_BIRTH_TIMING_SCENARIOS = ("baseline", "birth_minus_1", "birth_plus_1")
+_BIRTH_TIMING_METRICS = frozenset(
+    [
+        *(
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            f"{scenario}__{metric}"
+            for scenario in _BIRTH_TIMING_SCENARIOS
+            for metric in (
+                "complete_included_set_count",
+                "weighted_annualized_benefit_total__amount",
+                "weighted_annualized_benefit_total__delta_from_baseline",
+                "weighted_annualized_benefit_total__delta_share_of_baseline",
+            )
+        ),
+        *(
+            f"personwise_adversarial_range__baseline_reference__{metric}"
+            for metric in (
+                "person_contribution_sum",
+                "full_scenario_ledger_total",
+                "person_minus_annual_reconciliation_residual",
+            )
+        ),
+        *(
+            f"personwise_adversarial_range__{endpoint}__{metric}"
+            for endpoint in ("minimum", "maximum")
+            for metric in (
+                "amount",
+                "delta_from_baseline_person_contribution_sum",
+            )
+        ),
+    ]
+)
 _PAYMENT_YEAR_CONVENTION = (
     "Twelve annualized monthly payments only in realized presence years; "
     "partial first and last years are not modeled."
@@ -455,6 +717,7 @@ _CAREER_DIAGNOSTIC_KEYS = frozenset(
     {
         "draw_index",
         "person_id",
+        "weight",
         "claim_origin",
         "birth_source",
         "birth_year_inferred",
@@ -948,9 +1211,14 @@ def _validate_table(
 ) -> None:
     if not isinstance(table, Mapping):
         raise TypeError(f"table {name!r} must be a mapping")
-    _require_exact_keys(table, _TABLE_KEYS, f"table {name!r}")
+    expected_keys = _TABLE_KEYS if name == "revenue" else _BENEFIT_TABLE_KEYS
+    _require_exact_keys(table, expected_keys, f"table {name!r}")
     if tuple(table["labels"]) != EVIDENCE_LABELS:
         raise ValueError(f"table {name!r} does not carry all evidence labels")
+    if name != "revenue" and table["birth_timing_reference"] != (
+        BIRTH_TIMING_SENSITIVITY_LABEL
+    ):
+        raise ValueError(f"table {name!r} changed its birth-timing reference")
     if table["unit_label"] != _TABLE_UNIT_LABELS[name]:
         raise ValueError(f"table {name!r} changed its unit label")
     if table["annual"] is not True:
@@ -1229,6 +1497,345 @@ def _validate_wide_section(
     return by_draw
 
 
+def _birth_timing_row_values(
+    row: Mapping[str, Any],
+    *,
+    label: str,
+) -> tuple[int, dict[str, float]]:
+    _require_exact_keys(
+        row,
+        frozenset(
+            {
+                "draw_index",
+                "coherent_shift_stress_scenarios",
+                "personwise_adversarial_range",
+            }
+        ),
+        label,
+    )
+    draw = _integer(row["draw_index"], f"{label} draw_index")
+
+    def mapping(value: Any, nested_label: str) -> Mapping[str, Any]:
+        if not isinstance(value, Mapping):
+            raise TypeError(f"{nested_label} must be a mapping")
+        return value
+
+    def number(value: Any, nested_label: str) -> float:
+        result = _number(value, nested_label)
+        if result is None:
+            raise ValueError(f"{nested_label} cannot be null")
+        return result
+
+    coherent = mapping(
+        row["coherent_shift_stress_scenarios"],
+        f"{label} coherent shifts",
+    )
+    _require_exact_keys(
+        coherent,
+        frozenset({"full_scenario_ledger"}),
+        f"{label} coherent shifts",
+    )
+    full = mapping(
+        coherent["full_scenario_ledger"],
+        f"{label} full scenario ledger",
+    )
+    _require_exact_keys(
+        full,
+        frozenset({"scenarios"}),
+        f"{label} full scenario ledger",
+    )
+    scenarios = mapping(full["scenarios"], f"{label} scenarios")
+    _require_exact_keys(
+        scenarios,
+        frozenset(_BIRTH_TIMING_SCENARIOS),
+        f"{label} scenarios",
+    )
+    values: dict[str, float] = {}
+    scenario_values: dict[str, dict[str, float]] = {}
+    for scenario in _BIRTH_TIMING_SCENARIOS:
+        scenario_row = mapping(
+            scenarios[scenario],
+            f"{label} scenario {scenario}",
+        )
+        _require_exact_keys(
+            scenario_row,
+            frozenset(
+                {
+                    "complete_included_set_count",
+                    "weighted_annualized_benefit_total",
+                }
+            ),
+            f"{label} scenario {scenario}",
+        )
+        count = _integer(
+            scenario_row["complete_included_set_count"],
+            f"{label} scenario {scenario} included count",
+        )
+        if count < 0:
+            raise ValueError(
+                f"{label} scenario {scenario} included count is negative"
+            )
+        total = mapping(
+            scenario_row["weighted_annualized_benefit_total"],
+            f"{label} scenario {scenario} total",
+        )
+        _require_exact_keys(
+            total,
+            frozenset(
+                {
+                    "amount",
+                    "delta_from_baseline",
+                    "delta_share_of_baseline",
+                }
+            ),
+            f"{label} scenario {scenario} total",
+        )
+        prefix = (
+            "coherent_shift_stress_scenarios__"
+            f"full_scenario_ledger__{scenario}"
+        )
+        values[f"{prefix}__complete_included_set_count"] = float(count)
+        scenario_values[scenario] = {
+            metric: number(
+                total[metric],
+                f"{label} scenario {scenario} {metric}",
+            )
+            for metric in (
+                "amount",
+                "delta_from_baseline",
+                "delta_share_of_baseline",
+            )
+        }
+        for metric, metric_value in scenario_values[scenario].items():
+            values[
+                f"{prefix}__weighted_annualized_benefit_total__{metric}"
+            ] = metric_value
+
+    baseline_amount = scenario_values["baseline"]["amount"]
+    for scenario in _BIRTH_TIMING_SCENARIOS:
+        observed = scenario_values[scenario]
+        expected_delta = observed["amount"] - baseline_amount
+        expected_share = (
+            expected_delta / baseline_amount if baseline_amount else 0.0
+        )
+        if not math.isclose(
+            observed["delta_from_baseline"],
+            expected_delta,
+            rel_tol=1e-12,
+            abs_tol=1e-6,
+        ):
+            raise ValueError(
+                f"{label} scenario {scenario} delta does not reconcile"
+            )
+        if not math.isclose(
+            observed["delta_share_of_baseline"],
+            expected_share,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            raise ValueError(
+                f"{label} scenario {scenario} share does not reconcile"
+            )
+
+    personwise = mapping(
+        row["personwise_adversarial_range"],
+        f"{label} personwise range",
+    )
+    _require_exact_keys(
+        personwise,
+        frozenset({"baseline_reference", "minimum", "maximum"}),
+        f"{label} personwise range",
+    )
+    reference = mapping(
+        personwise["baseline_reference"],
+        f"{label} personwise baseline",
+    )
+    _require_exact_keys(
+        reference,
+        frozenset(
+            {
+                "person_contribution_sum",
+                "full_scenario_ledger_total",
+                "person_minus_annual_reconciliation_residual",
+            }
+        ),
+        f"{label} personwise baseline",
+    )
+    reference_values = {
+        metric: number(
+            reference[metric],
+            f"{label} personwise baseline {metric}",
+        )
+        for metric in reference
+    }
+    if not math.isclose(
+        reference_values["full_scenario_ledger_total"],
+        baseline_amount,
+        rel_tol=1e-12,
+        abs_tol=1e-6,
+    ):
+        raise ValueError(
+            f"{label} personwise baseline differs from scenario baseline"
+        )
+    expected_residual = (
+        reference_values["person_contribution_sum"] - baseline_amount
+    )
+    if not math.isclose(
+        reference_values["person_minus_annual_reconciliation_residual"],
+        expected_residual,
+        rel_tol=1e-12,
+        abs_tol=1e-6,
+    ):
+        raise ValueError(f"{label} personwise baseline does not reconcile")
+    for metric, metric_value in reference_values.items():
+        values[
+            f"personwise_adversarial_range__baseline_reference__{metric}"
+        ] = metric_value
+
+    endpoint_amounts: dict[str, float] = {}
+    for endpoint in ("minimum", "maximum"):
+        endpoint_row = mapping(
+            personwise[endpoint],
+            f"{label} personwise {endpoint}",
+        )
+        _require_exact_keys(
+            endpoint_row,
+            frozenset(
+                {
+                    "amount",
+                    "delta_from_baseline_person_contribution_sum",
+                }
+            ),
+            f"{label} personwise {endpoint}",
+        )
+        amount = number(
+            endpoint_row["amount"],
+            f"{label} personwise {endpoint} amount",
+        )
+        delta = number(
+            endpoint_row["delta_from_baseline_person_contribution_sum"],
+            f"{label} personwise {endpoint} delta",
+        )
+        expected_delta = amount - reference_values["person_contribution_sum"]
+        if not math.isclose(
+            delta,
+            expected_delta,
+            rel_tol=1e-12,
+            abs_tol=1e-6,
+        ):
+            raise ValueError(
+                f"{label} personwise {endpoint} does not reconcile"
+            )
+        endpoint_amounts[endpoint] = amount
+        values[f"personwise_adversarial_range__{endpoint}__amount"] = amount
+        values[
+            "personwise_adversarial_range__"
+            f"{endpoint}__delta_from_baseline_person_contribution_sum"
+        ] = delta
+    if endpoint_amounts["minimum"] > endpoint_amounts["maximum"]:
+        raise ValueError(f"{label} personwise range is reversed")
+    coherent_alternatives = (
+        scenario_values["birth_minus_1"]["amount"],
+        scenario_values["birth_plus_1"]["amount"],
+    )
+    if endpoint_amounts["minimum"] > min(coherent_alternatives) + 1e-6:
+        raise ValueError(
+            f"{label} personwise minimum exceeds a coherent alternative"
+        )
+    if endpoint_amounts["maximum"] < max(coherent_alternatives) - 1e-6:
+        raise ValueError(
+            f"{label} personwise maximum is below a coherent alternative"
+        )
+    if set(values) != _BIRTH_TIMING_METRICS:
+        raise AssertionError("birth-timing metric inventory changed")
+    return draw, values
+
+
+def _validate_birth_timing_sensitivity(
+    section: Any,
+    *,
+    expected_draw_indices: tuple[int, ...],
+    count_rows: Mapping[int, Mapping[str, float | None]],
+    tables: Mapping[str, Any],
+) -> None:
+    if not isinstance(section, Mapping):
+        raise TypeError("birth-timing sensitivity must be a mapping")
+    _require_exact_keys(
+        section,
+        frozenset({"label", "semantics", "per_draw", "aggregate"}),
+        "birth-timing sensitivity",
+    )
+    if section["label"] != BIRTH_TIMING_SENSITIVITY_LABEL:
+        raise ValueError("birth-timing sensitivity label changed")
+    if section["semantics"] != BIRTH_TIMING_SENSITIVITY_SEMANTICS:
+        raise ValueError("birth-timing sensitivity semantics changed")
+    rows = _rows(section["per_draw"], "birth-timing sensitivity per_draw")
+    flat_rows: list[dict[str, Any]] = []
+    seen: set[int] = set()
+    for index, row in enumerate(rows):
+        draw, values = _birth_timing_row_values(
+            row,
+            label=f"birth-timing row {index}",
+        )
+        if draw in seen:
+            raise ValueError("birth-timing sensitivity duplicates a draw")
+        if draw not in expected_draw_indices:
+            raise ValueError("birth-timing sensitivity has an unknown draw")
+        seen.add(draw)
+        included = count_rows[draw]["inclusion__included__unweighted"]
+        if included is None:
+            raise ValueError("included count cannot be null")
+        baseline_count = values[
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "baseline__complete_included_set_count"
+        ]
+        if baseline_count != included:
+            raise ValueError(
+                "birth-timing baseline count differs from inclusion count"
+            )
+        flat_rows.append({"draw_index": draw, **values})
+    if seen != set(expected_draw_indices):
+        raise ValueError("birth-timing sensitivity omits a registered draw")
+
+    table_totals = {
+        draw: math.fsum(
+            _number(
+                row["frame_annualized_benefit"],
+                "benefit table birth-timing reconciliation",
+            )
+            or 0.0
+            for name in ("modeled_award_flow", "opening_stock")
+            for row in tables[name]["per_draw"]
+            if row["draw_index"] == draw
+        )
+        for draw in expected_draw_indices
+    }
+    for row in flat_rows:
+        draw = int(row["draw_index"])
+        baseline_amount = row[
+            "coherent_shift_stress_scenarios__full_scenario_ledger__"
+            "baseline__weighted_annualized_benefit_total__amount"
+        ]
+        if not math.isclose(
+            baseline_amount,
+            table_totals[draw],
+            rel_tol=1e-12,
+            abs_tol=1e-6,
+        ):
+            raise ValueError(
+                "birth-timing baseline amount differs from benefit tables"
+            )
+    _validate_wide_section(
+        {
+            "per_draw": flat_rows,
+            "aggregate": section["aggregate"],
+        },
+        expected_draw_indices=expected_draw_indices,
+        label="birth-timing sensitivity",
+        expected_metrics=_BIRTH_TIMING_METRICS,
+    )
+
+
 def _validate_career_diagnostics(
     rows: Any,
     *,
@@ -1242,6 +1849,22 @@ def _validate_career_diagnostics(
     )
     grid: set[tuple[int, int | str]] = set()
     observed_counts = {draw: 0 for draw in expected_draw_indices}
+    observed_sources = {
+        draw: {source: 0 for source in _BIRTH_SOURCE_KEYS}
+        for draw in expected_draw_indices
+    }
+    observed_origins = {
+        draw: {origin: 0 for origin in _BENEFIT_ORIGINS}
+        for draw in expected_draw_indices
+    }
+    observed_source_weights = {
+        draw: {source: [] for source in _BIRTH_SOURCE_KEYS}
+        for draw in expected_draw_indices
+    }
+    observed_origin_weights = {
+        draw: {origin: [] for origin in _BENEFIT_ORIGINS}
+        for draw in expected_draw_indices
+    }
     for index, row in enumerate(records):
         _require_exact_keys(
             row,
@@ -1269,6 +1892,13 @@ def _validate_career_diagnostics(
             raise ValueError("career diagnostic has an unknown claim origin")
         if row["birth_source"] not in _BIRTH_SOURCE_KEYS:
             raise ValueError("career diagnostic has an unknown birth source")
+        weight = _number(row["weight"], "career diagnostic weight")
+        if weight is None or weight < 0:
+            raise ValueError("career diagnostic weight must be nonnegative")
+        observed_origins[draw][row["claim_origin"]] += 1
+        observed_origin_weights[draw][row["claim_origin"]].append(weight)
+        observed_sources[draw][row["birth_source"]] += 1
+        observed_source_weights[draw][row["birth_source"]].append(weight)
         for boolean_key in (
             "birth_year_inferred",
             "top35_reaches_pre_1968",
@@ -1278,9 +1908,11 @@ def _validate_career_diagnostics(
                 raise TypeError(
                     f"career diagnostic {boolean_key} must be boolean"
                 )
-        if row["birth_year_inferred"] is (
-            row["birth_source"] != "inferred_period_age"
-        ):
+        expected_inferred = row["birth_source"] in {
+            BirthSource.INFERRED_PERIOD_AGE.value,
+            BirthSource.DERIVED_PROJECTION_AGE.value,
+        }
+        if row["birth_year_inferred"] is not expected_inferred:
             raise ValueError(
                 "career diagnostic birth inference fields are inconsistent"
             )
@@ -1351,6 +1983,74 @@ def _validate_career_diagnostics(
             raise ValueError(
                 "career diagnostics do not match included claimant counts"
             )
+        for origin in _BENEFIT_ORIGINS:
+            expected_origin_count = count_rows[draw][
+                f"included_origin__{origin}__unweighted"
+            ]
+            if (
+                expected_origin_count is None
+                or not expected_origin_count.is_integer()
+                or expected_origin_count < 0
+            ):
+                raise ValueError(
+                    "included origin unweighted count must be a nonnegative "
+                    "integer"
+                )
+            if observed_origins[draw][origin] != int(expected_origin_count):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "origin counts"
+                )
+            expected_origin_weight = count_rows[draw][
+                f"included_origin__{origin}__weighted"
+            ]
+            if expected_origin_weight is None or expected_origin_weight < 0:
+                raise ValueError("included origin weight must be nonnegative")
+            if not math.isclose(
+                math.fsum(observed_origin_weights[draw][origin]),
+                expected_origin_weight,
+                rel_tol=1e-12,
+                abs_tol=1e-9,
+            ):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "origin weights"
+                )
+        for source in _BIRTH_SOURCE_KEYS:
+            expected_source_count = count_rows[draw][
+                f"included_birth_source__{source}__unweighted"
+            ]
+            if (
+                expected_source_count is None
+                or not expected_source_count.is_integer()
+                or expected_source_count < 0
+            ):
+                raise ValueError(
+                    "included birth-source unweighted count must be a "
+                    "nonnegative integer"
+                )
+            if observed_sources[draw][source] != int(expected_source_count):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "birth-source counts"
+                )
+            expected_source_weight = count_rows[draw][
+                f"included_birth_source__{source}__weighted"
+            ]
+            if expected_source_weight is None or expected_source_weight < 0:
+                raise ValueError(
+                    "included birth-source weight must be nonnegative"
+                )
+            if not math.isclose(
+                math.fsum(observed_source_weights[draw][source]),
+                expected_source_weight,
+                rel_tol=1e-12,
+                abs_tol=1e-9,
+            ):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "birth-source weights"
+                )
 
 
 def _validate_count_invariants(
@@ -1371,13 +2071,6 @@ def _validate_count_invariants(
         if not math.isclose(left, right, rel_tol=1e-12, abs_tol=1e-9):
             raise ValueError(f"count invariant failed: {label}")
 
-    stage_d_exclusions = (
-        "excluded_domain_incomplete",
-        "excluded_pre1979_eligibility",
-        "excluded_empty_span",
-        "excluded_chronology_inconsistent",
-        "excluded_low_coverage",
-    )
     for draw, row in count_rows.items():
         for metric, metric_value in row.items():
             if metric_value is None:
@@ -1401,7 +2094,7 @@ def _validate_count_invariants(
         for measure in ("unweighted", "weighted"):
             dispositions = math.fsum(
                 value(row, "inclusion", key, measure)
-                for key in _INCLUSION_COUNT_KEYS[:9]
+                for key in _POPULATION_DISPOSITION_KEYS
             )
             births = math.fsum(
                 value(row, "birth_source", key, measure)
@@ -1433,12 +2126,12 @@ def _validate_count_invariants(
             )
             stage_d = math.fsum(
                 value(row, "inclusion", key, measure)
-                for key in (*stage_d_exclusions, "included")
+                for key in _CANDIDATE_OUTCOME_KEYS
             )
             equal(
                 candidates,
                 stage_d,
-                f"draw {draw} Stage-D candidate origins ({measure})",
+                f"draw {draw} C.5/Stage-D candidate origins ({measure})",
             )
             included = value(row, "inclusion", "included", measure)
             included_origins = math.fsum(
@@ -1450,6 +2143,36 @@ def _validate_count_invariants(
                 included_origins,
                 f"draw {draw} included origins ({measure})",
             )
+            included_sources = math.fsum(
+                value(row, "included_birth_source", source, measure)
+                for source in _BIRTH_SOURCE_KEYS
+            )
+            equal(
+                included,
+                included_sources,
+                f"draw {draw} included birth sources ({measure})",
+            )
+            equal(
+                value(
+                    row,
+                    "included_birth_source",
+                    BirthSource.UNRESOLVED.value,
+                    measure,
+                ),
+                0.0,
+                f"draw {draw} unresolved source cannot be included ({measure})",
+            )
+            for source in _BIRTH_SOURCE_KEYS:
+                if value(
+                    row,
+                    "included_birth_source",
+                    source,
+                    measure,
+                ) > value(row, "birth_source", source, measure):
+                    raise ValueError(
+                        "count invariant failed: included birth source "
+                        f"exceeds population source in draw {draw} ({measure})"
+                    )
             opening = value(
                 row,
                 "included_origin",
@@ -1651,6 +2374,8 @@ def validate_first_estimates_artifact(
         _DIAGNOSTICS_KEYS,
         "artifact diagnostics",
     )
+    if diagnostics["common_support_agreement"] != COMMON_SUPPORT_AGREEMENT:
+        raise ValueError("committed common-support agreement changed")
     tables = artifact["tables"]
     if not isinstance(tables, Mapping):
         raise TypeError("artifact tables must be a mapping")
@@ -1690,6 +2415,12 @@ def validate_first_estimates_artifact(
         diagnostics,
         expected_draw_indices=normalized_draw_indices,
         label="diagnostics",
+    )
+    _validate_birth_timing_sensitivity(
+        diagnostics["birth_timing_sensitivity"],
+        expected_draw_indices=normalized_draw_indices,
+        count_rows=count_rows,
+        tables=tables,
     )
     _validate_career_diagnostics(
         diagnostics["included_career_per_draw"],
@@ -2073,6 +2804,7 @@ def table_record(
     aggregate: Sequence[Mapping[str, Any]],
     unit_label: str,
     annual: bool,
+    birth_timing_reference: str | None = None,
     biennial_companion: Sequence[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Wrap report rows with the repeated evidential labels and disclosures."""
@@ -2088,4 +2820,6 @@ def table_record(
         record["biennial_companion"] = [
             dict(row) for row in (biennial_companion or ())
         ]
+    if birth_timing_reference is not None:
+        record["birth_timing_reference"] = birth_timing_reference
     return record

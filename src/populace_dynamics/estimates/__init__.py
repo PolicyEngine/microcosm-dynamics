@@ -9,6 +9,7 @@ from populace_dynamics.estimates.career import (
     build_career,
     build_career_inclusion,
     build_population_roster,
+    build_seed_coordinates,
 )
 from populace_dynamics.estimates.parameters import (
     COLA_CONTENT_SHA256,
@@ -50,6 +51,7 @@ __all__ = [
     "build_career",
     "build_career_inclusion",
     "build_population_roster",
+    "build_seed_coordinates",
     "concatenate_realized_trajectory",
     "derive_synthetic_birth_years",
     "first_report_draw_bundles",

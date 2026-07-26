@@ -23,13 +23,17 @@ from populace_dynamics.engine.refit import (
 from populace_dynamics.engine.steps import ClaimingSchedule
 from populace_dynamics.estimates import parameters as parameter_module
 from populace_dynamics.estimates.career import (
+    DIClass,
     InclusionResult,
     build_career_inclusion,
     build_population_roster,
+    build_seed_coordinates,
 )
 from populace_dynamics.estimates.first_report import (
+    BirthTimingSensitivity,
     FirstReportDrawBundle,
     build_first_estimates_artifact,
+    reduce_birth_timing_sensitivity,
 )
 from populace_dynamics.estimates.ledgers import (
     BenefitLedger,
@@ -77,6 +81,7 @@ class PreparedFirstReportDraw:
     inclusion: InclusionResult
     benefits: BenefitLedger
     revenue: RevenueLedger
+    birth_timing_sensitivity: BirthTimingSensitivity
 
     @property
     def benefit_ledger(self) -> BenefitLedger:
@@ -121,6 +126,7 @@ def first_report_draw_bundles(
             inclusion=draw.inclusion,
             benefits=draw.benefits,
             revenue=draw.revenue,
+            birth_timing_sensitivity=draw.birth_timing_sensitivity,
         )
         for draw in prepared.draws
     )
@@ -369,6 +375,114 @@ def reconstruct_claiming_schedule(inputs: Any) -> ClaimingSchedule:
     return ClaimingSchedule(pmf)
 
 
+def _shifted_candidate_inclusion(
+    *,
+    baseline: InclusionResult,
+    shift: int,
+    trajectory: pd.DataFrame,
+    population_roster: pd.DataFrame,
+    observed_earnings: pd.DataFrame,
+    claiming_schedule: ClaimingSchedule,
+    earnings_domain_ids: Collection[int],
+) -> InclusionResult:
+    """Rerun production inclusion at one coherent age-derived birth shift."""
+
+    if shift not in (-1, 1):
+        raise ValueError("birth-timing shift must be -1 or 1")
+    dispositions = {row.person_id: row for row in baseline.births}
+    candidate_ids = {row.person_id for row in baseline.origins}
+    if not candidate_ids <= set(dispositions):
+        raise AssertionError("candidate birth dispositions are incomplete")
+    resolved_ids = {
+        person_id
+        for person_id in candidate_ids
+        if dispositions[person_id].birth_year is not None
+    }
+    ordered_ids = sorted(resolved_ids)
+    transport = pd.DataFrame(
+        {
+            "person_id": ordered_ids,
+            "birth_year": [
+                int(dispositions[person_id].birth_year)
+                + (shift if dispositions[person_id].source.age_derived else 0)
+                for person_id in ordered_ids
+            ],
+        }
+    )
+    shifted = build_career_inclusion(
+        trajectory=trajectory[
+            trajectory["person_id"].isin(candidate_ids)
+        ].copy(),
+        population_roster=population_roster[
+            population_roster["person_id"].isin(candidate_ids)
+        ].copy(),
+        observed_earnings=observed_earnings,
+        marriage_history=transport,
+        synthetic_birth_years={},
+        claiming_schedule=claiming_schedule,
+        earnings_domain_ids=earnings_domain_ids,
+        stock_imputation_root_seed=STOCK_IMPUTATION_ROOT_SEED,
+        projection_start_year=PROJECTION_START_YEAR,
+    )
+    if {row.person_id for row in shifted.origins} != candidate_ids:
+        raise AssertionError("shifted origin partition is not candidate-total")
+    if shifted.nonclaimants:
+        raise AssertionError("shifted candidate rerun made nonclaimants")
+    if any(
+        row.classification is not DIClass.NON_DI
+        for row in shifted.di_partition
+    ):
+        raise AssertionError("shifted candidate rerun changed Stage A")
+    return shifted
+
+
+def _build_birth_timing_sensitivity(
+    *,
+    draw_index: int,
+    baseline_inclusion: InclusionResult,
+    baseline_benefits: BenefitLedger,
+    trajectory: pd.DataFrame,
+    population_roster: pd.DataFrame,
+    observed_earnings: pd.DataFrame,
+    claiming_schedule: ClaimingSchedule,
+    earnings_domain_ids: Collection[int],
+    parameters: ReportParameters,
+) -> BirthTimingSensitivity:
+    """Recompute the amendment-2 stress row from one prepared draw."""
+
+    inclusions = {
+        0: baseline_inclusion,
+        **{
+            shift: _shifted_candidate_inclusion(
+                baseline=baseline_inclusion,
+                shift=shift,
+                trajectory=trajectory,
+                population_roster=population_roster,
+                observed_earnings=observed_earnings,
+                claiming_schedule=claiming_schedule,
+                earnings_domain_ids=earnings_domain_ids,
+            )
+            for shift in (-1, 1)
+        },
+    }
+    ledgers = {
+        0: baseline_benefits,
+        **{
+            shift: build_benefit_ledger(
+                inclusions[shift].included,
+                parameters,
+                draw_index=draw_index,
+            )
+            for shift in (-1, 1)
+        },
+    }
+    return reduce_birth_timing_sensitivity(
+        draw_index=draw_index,
+        inclusions=inclusions,
+        ledgers=ledgers,
+    )
+
+
 def _validate_draw(draw: FirstReportProjectionDraw) -> None:
     if not isinstance(draw, FirstReportProjectionDraw):
         raise TypeError(
@@ -402,6 +516,7 @@ def _prepare_first_report_draw(
         population = batch.phase.population
         initial_slice = population.initial_slice
         scheduled_entries = population.scheduled_entries_by_year
+        holdout_ids = population.holdout_ids
         reserved_real_ids = population.reserved_real_ids
         earnings_domain_ids = population.earnings_domain_ids
         observed_earnings = batch.inputs.earnings_panel
@@ -423,6 +538,11 @@ def _prepare_first_report_draw(
         trajectory,
         reserved_real_ids,
     )
+    seed_coordinates = build_seed_coordinates(
+        initial_slice,
+        scheduled_entries,
+        holdout_ids=holdout_ids,
+    )
     inclusion = build_career_inclusion(
         trajectory=trajectory,
         population_roster=roster,
@@ -432,12 +552,24 @@ def _prepare_first_report_draw(
         claiming_schedule=claiming_schedule,
         earnings_domain_ids=earnings_domain_ids,
         stock_imputation_root_seed=STOCK_IMPUTATION_ROOT_SEED,
+        seed_coordinates=seed_coordinates,
         projection_start_year=PROJECTION_START_YEAR,
     )
     benefit_ledger = build_benefit_ledger(
         inclusion.included,
         parameters,
         draw_index=draw.draw_index,
+    )
+    birth_timing_sensitivity = _build_birth_timing_sensitivity(
+        draw_index=draw.draw_index,
+        baseline_inclusion=inclusion,
+        baseline_benefits=benefit_ledger,
+        trajectory=trajectory,
+        population_roster=roster,
+        observed_earnings=observed_earnings,
+        claiming_schedule=claiming_schedule,
+        earnings_domain_ids=earnings_domain_ids,
+        parameters=parameters,
     )
     revenue_ledger = build_revenue_ledger(draw.projection, parameters)
     return PreparedFirstReportDraw(
@@ -450,6 +582,7 @@ def _prepare_first_report_draw(
         inclusion=inclusion,
         benefits=benefit_ledger,
         revenue=revenue_ledger,
+        birth_timing_sensitivity=birth_timing_sensitivity,
     )
 
 

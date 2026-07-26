@@ -25,7 +25,7 @@ from populace_dynamics.harness.m6_candidate3_runner import (
 from populace_dynamics.harness.m6_runner import M6ResolvedContract
 
 DESIGN_COMMIT = "6586b92"
-DESIGN_AMENDMENT_COMMIT = "ee1221d"
+DESIGN_AMENDMENT_COMMIT = "f771b49"
 FAMILY_SPEC_SHA256 = (
     "734a5b04f347c5d4904bbc6d5ab9a1c2876272d35284eedd2f450518acf1cec5"
 )
@@ -143,7 +143,7 @@ def registered_configuration_echo(
             "path": "docs/design/first_estimates_report.md",
             "ratification_commit": DESIGN_COMMIT,
             "amendment_commit": DESIGN_AMENDMENT_COMMIT,
-            "revision": 9,
+            "revision": 10,
         },
         "projection": {
             "object": PROJECTION_OBJECT,
@@ -241,7 +241,7 @@ def validate_registered_configuration_echo(
         "path": "docs/design/first_estimates_report.md",
         "ratification_commit": DESIGN_COMMIT,
         "amendment_commit": DESIGN_AMENDMENT_COMMIT,
-        "revision": 9,
+        "revision": 10,
     }:
         raise ValueError("configuration design binding changed")
     specs = configuration.get("candidate_specs")

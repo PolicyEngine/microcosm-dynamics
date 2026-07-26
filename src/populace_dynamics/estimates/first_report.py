@@ -39,17 +39,23 @@ from populace_dynamics.estimates.parameters import (
 )
 from populace_dynamics.estimates.publication import (
     ARTIFACT_SCHEMA_VERSION,
+    BIRTH_TIMING_SENSITIVITY_LABEL,
+    BIRTH_TIMING_SENSITIVITY_SEMANTICS,
     CANONICAL_EXECUTION_RULE,
     CERTIFIES_NOTHING,
+    COMMON_SUPPORT_AGREEMENT,
     GAP_BLOCK,
     table_record,
     validate_first_estimates_artifact,
 )
 
 __all__ = [
+    "BIRTH_TIMING_SENSITIVITY_LABEL",
+    "BirthTimingSensitivity",
     "CONTEXT_RATIO_DISCLOSURE",
     "FirstReportDrawBundle",
     "build_first_estimates_artifact",
+    "reduce_birth_timing_sensitivity",
 ]
 
 _BENEFIT_ORIGINS = tuple(origin.value for origin in ClaimOrigin)
@@ -58,6 +64,7 @@ _INCLUSION_COUNT_KEYS = (
     "excluded_di_conversion",
     "excluded_di_unknown",
     "nonclaimant",
+    "excluded_birth_year_unresolved",
     "excluded_domain_incomplete",
     "excluded_pre1979_eligibility",
     "excluded_empty_span",
@@ -68,12 +75,230 @@ _INCLUSION_COUNT_KEYS = (
     *(f"origin_{origin.value}" for origin in ClaimOrigin),
 )
 _BIRTH_SOURCE_KEYS = tuple(source.value for source in BirthSource)
+_POPULATION_DISPOSITION_KEYS = (
+    "excluded_di_conversion",
+    "excluded_di_unknown",
+    "nonclaimant",
+    "excluded_birth_year_unresolved",
+    "excluded_domain_incomplete",
+    "excluded_pre1979_eligibility",
+    "excluded_empty_span",
+    "excluded_chronology_inconsistent",
+    "excluded_low_coverage",
+    "included",
+)
+_CANDIDATE_OUTCOME_KEYS = (
+    "excluded_birth_year_unresolved",
+    "excluded_domain_incomplete",
+    "excluded_pre1979_eligibility",
+    "excluded_empty_span",
+    "excluded_chronology_inconsistent",
+    "excluded_low_coverage",
+    "included",
+)
 _SNAP_KEYS = ("lower_endpoint", "upper_endpoint")
 _HEX_DIGITS = frozenset("0123456789abcdef")
+_BIRTH_TIMING_SCENARIOS = ("baseline", "birth_minus_1", "birth_plus_1")
 
 CONTEXT_RATIO_DISCLOSURE = {
     "status": "deferred_to_anchor_extraction",
 }
+
+
+@dataclass(frozen=True)
+class BirthTimingSensitivity:
+    """One draw's coherent birth shifts and personwise adversarial range."""
+
+    draw_index: int
+    scenarios: Mapping[str, Mapping[str, int | float]]
+    baseline_reference: Mapping[str, float]
+    minimum: Mapping[str, float]
+    maximum: Mapping[str, float]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "draw_index": self.draw_index,
+            "coherent_shift_stress_scenarios": {
+                "full_scenario_ledger": {
+                    "scenarios": {
+                        name: {
+                            "complete_included_set_count": int(
+                                self.scenarios[name][
+                                    "complete_included_set_count"
+                                ]
+                            ),
+                            "weighted_annualized_benefit_total": {
+                                key: float(self.scenarios[name][key])
+                                for key in (
+                                    "amount",
+                                    "delta_from_baseline",
+                                    "delta_share_of_baseline",
+                                )
+                            },
+                        }
+                        for name in _BIRTH_TIMING_SCENARIOS
+                    }
+                }
+            },
+            "personwise_adversarial_range": {
+                "baseline_reference": dict(self.baseline_reference),
+                "minimum": dict(self.minimum),
+                "maximum": dict(self.maximum),
+            },
+        }
+
+    def metric_values(self) -> dict[str, int | float]:
+        values: dict[str, int | float] = {}
+        for name in _BIRTH_TIMING_SCENARIOS:
+            prefix = (
+                "coherent_shift_stress_scenarios__"
+                f"full_scenario_ledger__{name}"
+            )
+            values[f"{prefix}__complete_included_set_count"] = int(
+                self.scenarios[name]["complete_included_set_count"]
+            )
+            for metric in (
+                "amount",
+                "delta_from_baseline",
+                "delta_share_of_baseline",
+            ):
+                values[
+                    f"{prefix}__weighted_annualized_benefit_total__{metric}"
+                ] = float(self.scenarios[name][metric])
+        for metric, value in self.baseline_reference.items():
+            values[
+                f"personwise_adversarial_range__baseline_reference__{metric}"
+            ] = float(value)
+        for endpoint, fields in (
+            ("minimum", self.minimum),
+            ("maximum", self.maximum),
+        ):
+            for metric, value in fields.items():
+                values[
+                    f"personwise_adversarial_range__{endpoint}__{metric}"
+                ] = float(value)
+        return values
+
+
+def _annualized_benefit_total(ledger: BenefitLedger) -> float:
+    by_year = {
+        year: math.fsum(
+            row.frame_annualized_benefit
+            for row in ledger.annual_rows
+            if row.year == year
+        )
+        for year in REPORT_YEARS
+    }
+    observed = {
+        year: sum(row.year == year for row in ledger.annual_rows)
+        for year in REPORT_YEARS
+    }
+    if any(count != len(_BENEFIT_ORIGINS) for count in observed.values()):
+        raise AssertionError("birth-timing benefit grid is incomplete")
+    return math.fsum(by_year.values())
+
+
+def _benefit_amount_by_person(ledger: BenefitLedger) -> dict[int | str, float]:
+    return {
+        row.person_id: math.fsum(
+            12.0 * row.weight * row.payment_monthly_by_year[year]
+            for year in sorted(row.payment_monthly_by_year)
+        )
+        for row in ledger.people
+    }
+
+
+def reduce_birth_timing_sensitivity(
+    *,
+    draw_index: int,
+    inclusions: Mapping[int, InclusionResult],
+    ledgers: Mapping[int, BenefitLedger],
+) -> BirthTimingSensitivity:
+    """Reduce baseline and coherent ±1 reruns without a new projection."""
+
+    expected_shifts = {-1, 0, 1}
+    if set(inclusions) != expected_shifts or set(ledgers) != expected_shifts:
+        raise ValueError("birth-timing reduction requires shifts -1, 0, and 1")
+    included_ids: dict[int, frozenset[int | str]] = {}
+    totals: dict[int, float] = {}
+    people: dict[int, dict[int | str, float]] = {}
+    for shift in (0, -1, 1):
+        ledger = ledgers[shift]
+        if ledger.draw_index != draw_index:
+            raise ValueError("birth-timing ledger draw index changed")
+        inclusion_ids = frozenset(
+            row.person_id for row in inclusions[shift].included
+        )
+        ledger_ids = frozenset(row.person_id for row in ledger.people)
+        if inclusion_ids != ledger_ids:
+            raise AssertionError(
+                "birth-timing ledger differs from its complete included set"
+            )
+        included_ids[shift] = ledger_ids
+        totals[shift] = _annualized_benefit_total(ledger)
+        people[shift] = _benefit_amount_by_person(ledger)
+
+    baseline_total = totals[0]
+    scenarios: dict[str, dict[str, int | float]] = {}
+    for shift, name in (
+        (0, "baseline"),
+        (-1, "birth_minus_1"),
+        (1, "birth_plus_1"),
+    ):
+        delta = totals[shift] - baseline_total
+        scenarios[name] = {
+            "complete_included_set_count": len(included_ids[shift]),
+            "amount": totals[shift],
+            "delta_from_baseline": delta,
+            "delta_share_of_baseline": (
+                delta / baseline_total if baseline_total else 0.0
+            ),
+        }
+
+    all_person_ids = frozenset().union(
+        *(set(values) for values in people.values())
+    )
+    baseline_person_sum = math.fsum(
+        people[0].get(person_id, 0.0)
+        for person_id in sorted(all_person_ids, key=str)
+    )
+    minimum = math.fsum(
+        min(
+            people[-1].get(person_id, 0.0),
+            people[1].get(person_id, 0.0),
+        )
+        for person_id in sorted(all_person_ids, key=str)
+    )
+    maximum = math.fsum(
+        max(
+            people[-1].get(person_id, 0.0),
+            people[1].get(person_id, 0.0),
+        )
+        for person_id in sorted(all_person_ids, key=str)
+    )
+    return BirthTimingSensitivity(
+        draw_index=draw_index,
+        scenarios=scenarios,
+        baseline_reference={
+            "person_contribution_sum": baseline_person_sum,
+            "full_scenario_ledger_total": baseline_total,
+            "person_minus_annual_reconciliation_residual": (
+                baseline_person_sum - baseline_total
+            ),
+        },
+        minimum={
+            "amount": minimum,
+            "delta_from_baseline_person_contribution_sum": (
+                minimum - baseline_person_sum
+            ),
+        },
+        maximum={
+            "amount": maximum,
+            "delta_from_baseline_person_contribution_sum": (
+                maximum - baseline_person_sum
+            ),
+        },
+    )
 
 
 @dataclass(frozen=True)
@@ -84,6 +309,7 @@ class FirstReportDrawBundle:
     inclusion: InclusionResult
     benefits: BenefitLedger
     revenue: RevenueLedger
+    birth_timing_sensitivity: BirthTimingSensitivity
 
 
 def _draw_index(value: Any) -> int:
@@ -110,8 +336,7 @@ def _require_exact_keys(
         raise ValueError(f"{label} contains duplicate keys")
     if set(observed) != set(expected):
         raise ValueError(
-            f"{label} keys {sorted(observed)} != expected "
-            f"{sorted(expected)}"
+            f"{label} keys {sorted(observed)} != expected {sorted(expected)}"
         )
 
 
@@ -153,17 +378,27 @@ def _validate_inclusion(result: InclusionResult) -> None:
         raise ValueError("explicit-row entrant disclosure changed")
 
     counts = {row.key: row for row in result.counts}
-    stage_keys = _INCLUSION_COUNT_KEYS[:9]
-    if sum(counts[key].unweighted for key in stage_keys) != len(
+    if sum(
+        counts[key].unweighted for key in _POPULATION_DISPOSITION_KEYS
+    ) != len(result.di_partition):
+        raise ValueError("inclusion stages do not reconcile to the population")
+    birth_counts = {row.key: row for row in result.birth_source_counts}
+    if sum(birth_counts[key].unweighted for key in _BIRTH_SOURCE_KEYS) != len(
         result.di_partition
     ):
-        raise ValueError("inclusion stages do not reconcile to the population")
+        raise ValueError("birth sources do not reconcile to the population")
     if counts["included"].unweighted != len(result.included):
         raise ValueError("included count does not match included records")
     if sum(
         counts[f"origin_{origin}"].unweighted for origin in _BENEFIT_ORIGINS
     ) != len(result.origins):
         raise ValueError("origin counts do not match candidate records")
+    if sum(counts[key].unweighted for key in _CANDIDATE_OUTCOME_KEYS) != len(
+        result.origins
+    ):
+        raise ValueError(
+            "candidate origins do not reconcile to C.5 and Stage D"
+        )
 
 
 def _validate_benefit_grid(ledger: BenefitLedger) -> None:
@@ -224,6 +459,13 @@ def _validate_draw_bundle(bundle: FirstReportDrawBundle) -> None:
     draw = _draw_index(bundle.draw_index)
     if draw != bundle.benefits.draw_index or draw != bundle.revenue.draw_index:
         raise ValueError("draw bundle and ledger draw indices differ")
+    sensitivity = bundle.birth_timing_sensitivity
+    if not isinstance(sensitivity, BirthTimingSensitivity):
+        raise TypeError("draw bundle lacks birth-timing sensitivity")
+    if sensitivity.draw_index != draw:
+        raise ValueError("birth-timing sensitivity draw index differs")
+    if set(sensitivity.scenarios) != set(_BIRTH_TIMING_SCENARIOS):
+        raise ValueError("birth-timing scenario grid is incomplete")
     _validate_inclusion(bundle.inclusion)
     _validate_benefit_grid(bundle.benefits)
     _validate_revenue_grid(bundle.revenue)
@@ -242,6 +484,23 @@ def _validate_draw_bundle(bundle: FirstReportDrawBundle) -> None:
         raise ValueError(
             "benefit people and Stage-D included claimant origins differ"
         )
+    baseline = sensitivity.scenarios["baseline"]
+    if int(baseline["complete_included_set_count"]) != len(included):
+        raise ValueError(
+            "birth-timing baseline count differs from included claimants"
+        )
+    baseline_total = _annualized_benefit_total(bundle.benefits)
+    if not math.isclose(
+        float(baseline["amount"]),
+        baseline_total,
+        rel_tol=1e-12,
+        abs_tol=1e-9,
+    ):
+        raise ValueError(
+            "birth-timing baseline amount differs from benefit ledger"
+        )
+    for metric, value in sensitivity.metric_values().items():
+        _finite_number(value, f"birth-timing {metric}")
 
 
 def _ordered_draws(
@@ -253,8 +512,7 @@ def _ordered_draws(
         "draw_indices"
     ) != list(DRAW_INDICES):
         raise ValueError(
-            f"configuration must register exact draw indices "
-            f"{DRAW_INDICES}"
+            f"configuration must register exact draw indices {DRAW_INDICES}"
         )
     rows = tuple(bundles)
     observed = tuple(sorted(_draw_index(row.draw_index) for row in rows))
@@ -360,6 +618,11 @@ def _table(
         ),
         unit_label=unit_label,
         annual=True,
+        birth_timing_reference=(
+            BIRTH_TIMING_SENSITIVITY_LABEL
+            if ledger_attribute == "benefits"
+            else None
+        ),
         biennial_companion=_biennial_companion(
             bundles,
             aggregate,
@@ -398,6 +661,14 @@ def _count_values(result: InclusionResult) -> dict[str, float | int]:
         people = [row for row in result.included if row.claim_origin == origin]
         values[f"included_origin__{origin}__unweighted"] = len(people)
         values[f"included_origin__{origin}__weighted"] = math.fsum(
+            row.weight for row in people
+        )
+    for source in BirthSource:
+        people = [row for row in result.included if row.birth_source is source]
+        values[f"included_birth_source__{source.value}__unweighted"] = len(
+            people
+        )
+        values[f"included_birth_source__{source.value}__weighted"] = math.fsum(
             row.weight for row in people
         )
     return values
@@ -451,12 +722,10 @@ def _diagnostic_values(
         [(row.career.imputed_year_share, row.weight) for row in included]
     )
     values["career__birth_year_inferred__unweighted"] = sum(
-        row.birth_source is BirthSource.INFERRED_PERIOD_AGE for row in included
+        row.birth_source.age_derived for row in included
     )
     values["career__birth_year_inferred__weighted"] = math.fsum(
-        row.weight
-        for row in included
-        if row.birth_source is BirthSource.INFERRED_PERIOD_AGE
+        row.weight for row in included if row.birth_source.age_derived
     )
     return values
 
@@ -502,6 +771,27 @@ def _numeric_aggregate(
     return aggregates
 
 
+def _birth_timing_section(
+    bundles: Sequence[FirstReportDrawBundle],
+) -> dict[str, Any]:
+    per_draw = [
+        bundle.birth_timing_sensitivity.as_dict() for bundle in bundles
+    ]
+    wide = [
+        {
+            "draw_index": bundle.draw_index,
+            **bundle.birth_timing_sensitivity.metric_values(),
+        }
+        for bundle in bundles
+    ]
+    return {
+        "label": BIRTH_TIMING_SENSITIVITY_LABEL,
+        "semantics": copy.deepcopy(BIRTH_TIMING_SENSITIVITY_SEMANTICS),
+        "per_draw": per_draw,
+        "aggregate": _numeric_aggregate(wide),
+    }
+
+
 def _career_diagnostic_rows(
     bundles: Sequence[FirstReportDrawBundle],
 ) -> list[dict[str, Any]]:
@@ -519,12 +809,10 @@ def _career_diagnostic_rows(
                 {
                     "draw_index": bundle.draw_index,
                     "person_id": claimant.person_id,
+                    "weight": claimant.weight,
                     "claim_origin": claimant.claim_origin,
                     "birth_source": claimant.birth_source.value,
-                    "birth_year_inferred": (
-                        claimant.birth_source
-                        is BirthSource.INFERRED_PERIOD_AGE
-                    ),
+                    "birth_year_inferred": claimant.birth_source.age_derived,
                     "coverage_ratio": claimant.career.coverage_ratio,
                     "imputed_year_share": claimant.career.imputed_year_share,
                     "affected_odd_year_share": (
@@ -664,6 +952,10 @@ def build_first_estimates_artifact(
             "per_draw": diagnostic_rows,
             "aggregate": _numeric_aggregate(diagnostic_rows),
             "included_career_per_draw": _career_diagnostic_rows(draws),
+            "birth_timing_sensitivity": _birth_timing_section(draws),
+            "common_support_agreement": copy.deepcopy(
+                COMMON_SUPPORT_AGREEMENT
+            ),
             "context_ratio": copy.deepcopy(CONTEXT_RATIO_DISCLOSURE),
             "payment_year_convention": (
                 "Twelve annualized monthly payments only in realized "

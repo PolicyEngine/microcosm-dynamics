@@ -3,7 +3,10 @@
 
 This is manual, read-only evidence tooling, not a sealed ceremony entry point.
 It does not mutate registered inputs or projection state.  Its sole write is
-the canonical JSON path selected by ``--output``.
+the canonical JSON path selected by ``--output``.  ``--implementation-replay``
+is a no-write draw-0 spot check: it runs the current production preparation
+against the pinned cache and compares a small row inventory with the committed
+evidence artifact.
 
 The fast path reads the sha256-pinned draw cache created by the unregistered
 diagnostic probe.  With ``--regenerate``, the script instead uses
@@ -23,6 +26,9 @@ sol-c3-runner/.venv/bin/python \
 
 Replay the cache-independent registered-input path with the same command plus
 ``--regenerate``.
+
+Spot-check the current production preparation against the committed draw-0
+artifact with the same command plus ``--implementation-replay``.
 """
 
 from __future__ import annotations
@@ -62,6 +68,7 @@ from populace_dynamics.estimates import (  # noqa: E402
     parameters as parameter_module,
 )
 from populace_dynamics.estimates.runner import (  # noqa: E402
+    FirstReportProjectionBatch,
     FirstReportProjectionDraw,
 )
 from populace_dynamics.harness.m6_cells import (  # noqa: E402
@@ -70,7 +77,8 @@ from populace_dynamics.harness.m6_cells import (  # noqa: E402
 )
 
 SCHEMA_VERSION = "first_estimates_birth_evidence.v2"
-EXPECTED_MASTER_SHA = "daf3ff5978de5137ba50490f78ac52890291a399"
+CACHE_INPUT_MASTER_SHA = "daf3ff5978de5137ba50490f78ac52890291a399"
+REVIEWED_IMPLEMENTATION_COMMIT = "1057cf55d5fed6b69254bb5215a3978bfb5ec1bc"
 EXPECTED_PE_US_VERSION = "1.752.2"
 EXPECTED_INTERPRETER = Path(
     "/Users/maxghenis/PolicyEngine/social-security-model-worktrees/"
@@ -124,6 +132,14 @@ PRODUCTION_SOURCE_PATHS = (
     Path("scripts/registered_m6_inputs.py"),
     Path("scripts/build_mortality_floors.py"),
 )
+IMPLEMENTATION_REPLAY_ROWS = {
+    "birth_source.derived_projection_age": 4_077,
+    "birth_source.unresolved": 2_315,
+    "candidate_funnel.canonical_candidates": 3_083,
+    "inclusion.baseline": 1_514,
+    "inclusion.birth_minus_1": 1_520,
+    "inclusion.birth_plus_1": 1_240,
+}
 
 
 @dataclass(frozen=True)
@@ -207,7 +223,7 @@ def _run_git(
 
 
 def _assert_input_identity() -> None:
-    """Require the reducer branch to retain the pinned production bytes."""
+    """Require the historical cache and reviewed implementation identities."""
 
     observed_root = Path(
         _run_git("rev-parse", "--show-toplevel").stdout.strip()
@@ -216,23 +232,25 @@ def _assert_input_identity() -> None:
         raise RuntimeError(
             f"Git root {observed_root} differs from reducer root {ROOT}"
         )
-    _run_git("cat-file", "-e", f"{EXPECTED_MASTER_SHA}^{{commit}}")
-    ancestor = _run_git(
-        "merge-base",
-        "--is-ancestor",
-        EXPECTED_MASTER_SHA,
-        "HEAD",
-        check=False,
-    )
-    if ancestor.returncode != 0:
-        raise RuntimeError(
-            f"pinned master {EXPECTED_MASTER_SHA} is not an ancestor of HEAD"
+    for label, commit in (
+        ("cache-input master", CACHE_INPUT_MASTER_SHA),
+        ("reviewed implementation", REVIEWED_IMPLEMENTATION_COMMIT),
+    ):
+        _run_git("cat-file", "-e", f"{commit}^{{commit}}")
+        ancestor = _run_git(
+            "merge-base",
+            "--is-ancestor",
+            commit,
+            "HEAD",
+            check=False,
         )
+        if ancestor.returncode != 0:
+            raise RuntimeError(f"{label} {commit} is not an ancestor of HEAD")
     paths = tuple(str(path) for path in PRODUCTION_SOURCE_PATHS)
     committed = _run_git(
         "diff",
         "--quiet",
-        EXPECTED_MASTER_SHA,
+        REVIEWED_IMPLEMENTATION_COMMIT,
         "HEAD",
         "--",
         *paths,
@@ -247,7 +265,7 @@ def _assert_input_identity() -> None:
     )
     if committed.returncode != 0 or working.returncode != 0:
         raise RuntimeError(
-            "production sources differ from the pinned master bytes"
+            "production sources differ from the reviewed implementation"
         )
 
 
@@ -396,7 +414,7 @@ def _regenerate_draw(
     configuration = runner.registered_configuration_echo(
         registration_reference=(
             "manual:first_estimates_birth_evidence:"
-            f"{EXPECTED_MASTER_SHA}:draw{draw_index}"
+            f"{CACHE_INPUT_MASTER_SHA}:draw{draw_index}"
         ),
         parameter_bundle=report_parameters.provenance,
     )
@@ -508,6 +526,47 @@ def _seed_frame(population: Any) -> pd.DataFrame:
     return seed
 
 
+def _split_upstream_birth_records(
+    records: Collection[career.BirthYearRecord],
+    population_ids: Collection[int],
+) -> tuple[dict[int, int], dict[int, str], frozenset[int]]:
+    """Expose both legacy-absent and explicit unresolved upstream records."""
+
+    required = _integer_ids(population_ids)
+    record_ids: set[int] = set()
+    explicit_unresolved: set[int] = set()
+    birth_year_by_person: dict[int, int] = {}
+    source_by_person: dict[int, str] = {}
+    for record in records:
+        person_id = int(record.person_id)
+        if person_id not in required:
+            continue
+        if person_id in record_ids:
+            raise AssertionError(
+                f"duplicate upstream birth record for person {person_id}"
+            )
+        record_ids.add(person_id)
+        if record.source is career.BirthSource.UNRESOLVED:
+            if record.birth_year is not None:
+                raise AssertionError(
+                    "unresolved upstream birth record carries a numeric year"
+                )
+            explicit_unresolved.add(person_id)
+            continue
+        if record.birth_year is None:
+            raise AssertionError(
+                "resolved upstream birth record has no numeric year"
+            )
+        birth_year_by_person[person_id] = int(record.birth_year)
+        source_by_person[person_id] = record.source.value
+    initially_unresolved = (required - record_ids) | explicit_unresolved
+    return (
+        birth_year_by_person,
+        source_by_person,
+        frozenset(initially_unresolved),
+    )
+
+
 def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
     inputs = loaded.inputs
     population = loaded.phase.population
@@ -531,16 +590,14 @@ def _derive_birth_evidence(loaded: LoadedDraw) -> BirthEvidence:
         synthetic,
         required_person_ids=population_ids,
     )
-    existing = tuple(
-        record for record in existing if record.person_id in population_ids
+    (
+        birth_year_by_person,
+        source_by_person,
+        initially_unresolved,
+    ) = _split_upstream_birth_records(
+        existing,
+        population_ids,
     )
-    birth_year_by_person = {
-        record.person_id: record.birth_year for record in existing
-    }
-    source_by_person = {
-        record.person_id: record.source.value for record in existing
-    }
-    initially_unresolved = population_ids - set(birth_year_by_person)
     seed = _seed_frame(population)
     seed_by_person = seed.set_index("person_id")
     if not seed_by_person.index.is_unique:
@@ -2511,6 +2568,121 @@ def _resolve_output_path(argument: Path | None, draw_index: int) -> Path:
     return resolved
 
 
+def _artifact_implementation_replay_rows() -> dict[str, int]:
+    """Read the frozen draw-0 rows exercised by implementation replay."""
+
+    artifact_path = ROOT / "runs" / "first_estimates_birth_evidence_draw0.json"
+    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+    birth = artifact["birth_source_law"]["initially_unresolved"][
+        "corrected_counts_by_class"
+    ]
+    scenarios = artifact["benefit_ledger_sensitivity"][
+        "coherent_shift_stress_scenarios"
+    ]["full_scenario_ledger"]["scenarios"]
+    return {
+        "birth_source.derived_projection_age": int(
+            birth["derived_projection_age"]
+        ),
+        "birth_source.unresolved": int(birth["unresolved"]),
+        "candidate_funnel.canonical_candidates": int(
+            artifact["candidate_funnel"]["canonical_candidates"]["count"]
+        ),
+        "inclusion.baseline": int(
+            scenarios["baseline"]["complete_included_set_count"]
+        ),
+        "inclusion.birth_minus_1": int(
+            scenarios["birth_minus_1"]["complete_included_set_count"]
+        ),
+        "inclusion.birth_plus_1": int(
+            scenarios["birth_plus_1"]["complete_included_set_count"]
+        ),
+    }
+
+
+def _prepared_implementation_replay_rows(
+    prepared: preparation.PreparedFirstReportDraw,
+) -> dict[str, int]:
+    """Extract the same frozen rows from one production-prepared draw."""
+
+    birth_counts = Counter(
+        record.source.value for record in prepared.inclusion.births
+    )
+    scenarios = prepared.birth_timing_sensitivity.scenarios
+    return {
+        "birth_source.derived_projection_age": int(
+            birth_counts["derived_projection_age"]
+        ),
+        "birth_source.unresolved": int(birth_counts["unresolved"]),
+        "candidate_funnel.canonical_candidates": len(
+            prepared.inclusion.origins
+        ),
+        "inclusion.baseline": int(
+            scenarios["baseline"]["complete_included_set_count"]
+        ),
+        "inclusion.birth_minus_1": int(
+            scenarios["birth_minus_1"]["complete_included_set_count"]
+        ),
+        "inclusion.birth_plus_1": int(
+            scenarios["birth_plus_1"]["complete_included_set_count"]
+        ),
+    }
+
+
+def _run_implementation_replay(
+    loaded: LoadedDraw,
+    report_parameters: Any,
+) -> Mapping[str, Any]:
+    """Run current production preparation and match the frozen draw-0 rows."""
+
+    if loaded.draw.draw_index != 0:
+        raise ValueError("implementation replay is pinned to draw 0")
+    artifact_rows = _artifact_implementation_replay_rows()
+    if artifact_rows != IMPLEMENTATION_REPLAY_ROWS:
+        raise RuntimeError(
+            "committed replay rows differ from the frozen draw-0 inventory: "
+            + json.dumps(
+                artifact_rows,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+    batch = FirstReportProjectionBatch(
+        inputs=loaded.inputs,
+        phase=loaded.phase,
+        incumbent_phase=None,
+        fit_preflight={},
+        first_marriage_disclosure={},
+        preflight_1={},
+        preflight_2={},
+        draws=(loaded.draw,),
+    )
+    prepared = preparation._prepare_first_report_draw_for_test(
+        batch,
+        loaded.draw,
+        parameters=report_parameters,
+    )
+    observed_rows = _prepared_implementation_replay_rows(prepared)
+    if observed_rows != artifact_rows:
+        mismatches = {
+            key: {
+                "artifact": artifact_rows[key],
+                "production_preparation": observed_rows[key],
+            }
+            for key in IMPLEMENTATION_REPLAY_ROWS
+            if observed_rows[key] != artifact_rows[key]
+        }
+        raise RuntimeError(
+            "production preparation differs from the committed draw-0 rows: "
+            + json.dumps(mismatches, sort_keys=True, separators=(",", ":"))
+        )
+    return {
+        "draw_index": 0,
+        "reviewed_implementation_commit": REVIEWED_IMPLEMENTATION_COMMIT,
+        "rows": observed_rows,
+        "status": "matched",
+    }
+
+
 def _arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -2525,10 +2697,19 @@ def _arguments() -> argparse.Namespace:
         default=DEFAULT_CACHE,
         help="Optional diagnostic pickle cache (draw 0 only).",
     )
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--regenerate",
         action="store_true",
         help="Ignore the cache and run the registered one-real-draw path.",
+    )
+    mode.add_argument(
+        "--implementation-replay",
+        action="store_true",
+        help=(
+            "Run current production preparation on the pinned draw-0 cache "
+            "and compare frozen artifact rows without writing."
+        ),
     )
     parser.add_argument(
         "--output",
@@ -2538,7 +2719,10 @@ def _arguments() -> argparse.Namespace:
             "runs/first_estimates_birth_evidence_draw<index>.json."
         ),
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.implementation_replay and args.output is not None:
+        parser.error("--implementation-replay does not accept --output")
+    return args
 
 
 def main() -> int:
@@ -2547,6 +2731,18 @@ def main() -> int:
     runtime_identity = _assert_runtime()
     report_parameters = parameter_module.load_report_parameters()
     preparation.validate_full_actual_report_parameters(report_parameters)
+    if args.implementation_replay:
+        loaded = _load_cached_draw(args.cache, args.draw_index)
+        replay = _run_implementation_replay(loaded, report_parameters)
+        print(
+            json.dumps(
+                replay,
+                allow_nan=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        )
+        return 0
     if args.regenerate or not args.cache.is_file():
         loaded = _regenerate_draw(args.draw_index, report_parameters)
     else:
@@ -2587,7 +2783,7 @@ def main() -> int:
         },
         "inclusion_sensitivity": sensitivity.result,
         "input_identity": {
-            "master_sha": EXPECTED_MASTER_SHA,
+            "master_sha": CACHE_INPUT_MASTER_SHA,
             "draw_index": args.draw_index,
             "root_seed": loaded.draw.root_seed,
         },

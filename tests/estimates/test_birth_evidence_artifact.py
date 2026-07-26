@@ -1,18 +1,49 @@
-"""Byte and arithmetic pins for the committed birth-evidence artifact.
+"""Byte, arithmetic, and cheap replay pins for the birth-evidence artifact.
 
-These artifact-only tests do not import the reducer or replay its diagnostic
-cache.  The cache and cache-independent recomputation paths are documented in
-the reducer docstring and the artifact execution block.
+The replay tests exercise only a tiny synthetic production boundary.  They do
+not load the diagnostic cache or recompute the projection.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+from collections import Counter
+from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
+import pandas as pd
 import pytest
+
+from populace_dynamics.engine.loop import ProjectionResult
+from populace_dynamics.estimates import career, preparation
+from populace_dynamics.estimates.publication import (
+    COMMON_SUPPORT_AGREEMENT,
+    GAP_BLOCK,
+)
+from populace_dynamics.estimates.runner import (
+    DRAW_ROOT_SEEDS,
+    FirstReportProjectionDraw,
+)
+from scripts import first_estimates_birth_evidence as reducer
+from tests.estimates.test_first_estimates_fixture import (
+    _fixture as _pipeline_fixture,
+)
+from tests.estimates.test_first_estimates_fixture import (
+    _observed as _pipeline_observed,
+)
+from tests.estimates.test_first_estimates_fixture import (
+    _parameters as _pipeline_parameters,
+)
+from tests.estimates.test_first_estimates_fixture import (
+    _schedule as _pipeline_schedule,
+)
+from tests.estimates.test_first_estimates_fixture import (
+    _trajectory as _pipeline_trajectory,
+)
+from tests.estimates.test_preparation import _full_actual_parameters
 
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = ROOT / "runs" / "first_estimates_birth_evidence_draw0.json"
@@ -26,6 +57,208 @@ CACHE_SHA256 = (
 
 def _artifact() -> dict[str, Any]:
     return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
+
+
+def test_reducer_input_identity_matches_reviewed_branch():
+    reducer._assert_input_identity()
+
+
+def test_reducer_accepts_explicit_unresolved_upstream_boundary():
+    records = (
+        career.BirthYearRecord(
+            1,
+            1950,
+            career.BirthSource.EXACT_MARRIAGE,
+        ),
+        career.BirthYearRecord(
+            2,
+            None,
+            career.BirthSource.UNRESOLVED,
+        ),
+    )
+
+    years, sources, unresolved = reducer._split_upstream_birth_records(
+        records,
+        {1, 2, 3},
+    )
+
+    assert years == {1: 1950}
+    assert sources == {1: "exact_marriage"}
+    assert unresolved == frozenset({2, 3})
+
+
+def test_replay_adapter_matches_frozen_birth_source_rows():
+    frozen_rows = {
+        "derived_projection_age": 4_077,
+        "unresolved": 2_315,
+    }
+    artifact_rows = _artifact()["birth_source_law"]["initially_unresolved"][
+        "corrected_counts_by_class"
+    ]
+    assert {key: artifact_rows[key] for key in frozen_rows} == frozen_rows
+
+    person_ids = list(range(1, 6_393))
+    seed = pd.DataFrame(
+        {
+            "person_id": person_ids,
+            "year": [2014] * 6_392,
+            "anchor_wave": [2015] * 6_392,
+            "age": [2] * 4_077 + [1] * 2_298 + [999] * 17,
+        }
+    )
+    records = career.derive_birth_years(
+        pd.DataFrame(columns=["person_id", "birth_year"]),
+        pd.DataFrame(columns=["person_id", "period", "age"]),
+        seed_coordinates=seed,
+        required_person_ids=person_ids,
+    )
+    observed_rows = Counter(record.source.value for record in records)
+
+    assert dict(observed_rows) == frozen_rows
+
+
+def test_replay_mode_runs_production_preparation_for_frozen_row_subset(
+    monkeypatch,
+):
+    document = _pipeline_fixture()
+    trajectory = _pipeline_trajectory(document)
+    initial = pd.DataFrame(document["initial_population"])
+    initial["anchor_wave"] = 2015
+    age_at_start = trajectory.loc[trajectory["year"] == 2014].set_index(
+        "person_id"
+    )["age"]
+    initial["age"] = initial["person_id"].map(age_at_start)
+
+    marriage = pd.DataFrame(document["marriage_history"])
+    marriage_births = marriage.set_index("person_id")["birth_year"]
+    scheduled = {}
+    for anchor_wave, rows in document["scheduled_entries_by_year"].items():
+        frame = pd.DataFrame(rows)
+        frame["anchor_wave"] = int(anchor_wave)
+        frame["age"] = frame["year"] - frame["person_id"].map(marriage_births)
+        scheduled[int(anchor_wave)] = frame
+
+    holdout_ids = frozenset(
+        int(value)
+        for value in (
+            *initial["person_id"],
+            *(
+                person_id
+                for frame in scheduled.values()
+                for person_id in frame["person_id"]
+            ),
+        )
+    )
+    synthetic_ids = {
+        int(person_id) for person_id in document["synthetic_birth_years"]
+    }
+    population = SimpleNamespace(
+        initial_slice=initial,
+        scheduled_entries_by_year=scheduled,
+        holdout_ids=holdout_ids,
+        reserved_real_ids=holdout_ids - synthetic_ids,
+        earnings_domain_ids=frozenset(document["earnings_domain_ids"]),
+    )
+    projection = ProjectionResult(
+        slices=tuple(
+            trajectory.loc[trajectory["year"] == year].copy()
+            for year in range(2014, 2023)
+        ),
+        traces=(),
+        draw_index=0,
+    )
+    draw = FirstReportProjectionDraw(
+        draw_index=0,
+        root_seed=DRAW_ROOT_SEEDS[0],
+        projection=projection,
+        collector={},
+    )
+    inputs = SimpleNamespace(
+        earnings_panel=_pipeline_observed(document),
+        refit_inputs=SimpleNamespace(
+            claiming_reference=object(),
+            family_context=SimpleNamespace(marriage_records=marriage),
+        ),
+    )
+    loaded = reducer.LoadedDraw(
+        inputs=inputs,
+        phase=SimpleNamespace(population=population),
+        draw=draw,
+        execution={},
+    )
+    parameters = replace(
+        _pipeline_parameters(document),
+        provenance=_full_actual_parameters().provenance,
+    )
+    frozen_rows = {
+        "birth_source.derived_projection_age": 0,
+        "birth_source.unresolved": 0,
+        "candidate_funnel.canonical_candidates": 8,
+        "inclusion.baseline": 3,
+        "inclusion.birth_minus_1": 2,
+        "inclusion.birth_plus_1": 3,
+    }
+    preparation_calls = []
+    production_prepare = preparation._prepare_first_report_draw_for_test
+
+    def prepare(batch, replay_draw, *, parameters):
+        preparation_calls.append((replay_draw, parameters))
+        return production_prepare(
+            batch,
+            replay_draw,
+            parameters=parameters,
+        )
+
+    monkeypatch.setattr(
+        preparation,
+        "reconstruct_claiming_schedule",
+        lambda _inputs: _pipeline_schedule(document),
+    )
+    monkeypatch.setattr(
+        preparation,
+        "_prepare_first_report_draw_for_test",
+        prepare,
+    )
+    monkeypatch.setattr(
+        reducer,
+        "_artifact_implementation_replay_rows",
+        lambda: frozen_rows,
+    )
+    monkeypatch.setattr(reducer, "IMPLEMENTATION_REPLAY_ROWS", frozen_rows)
+
+    replay = reducer._run_implementation_replay(loaded, parameters)
+
+    assert preparation_calls == [(draw, parameters)]
+    assert replay == {
+        "draw_index": 0,
+        "reviewed_implementation_commit": (
+            reducer.REVIEWED_IMPLEMENTATION_COMMIT
+        ),
+        "rows": frozen_rows,
+        "status": "matched",
+    }
+
+
+def test_revision_10_1_candidate_share_recomputes_from_artifact_counts():
+    candidates = _artifact()["candidate_funnel"]["canonical_candidates"]
+    by_source = candidates["counts_by_birth_source"]
+    age_derived = (
+        by_source["inferred_period_age"] + by_source["derived_projection_age"]
+    )
+    candidate_count = candidates["count"]
+    share = age_derived / candidate_count
+
+    assert (age_derived, candidate_count) == (2_892, 3_083)
+    assert share == pytest.approx(0.938047356471)
+    published = next(
+        row["disclosure"]
+        for row in GAP_BLOCK
+        if row["disclosure"].startswith("**Birth-timing sensitivity")
+    )
+    assert (
+        f"{age_derived:,} of {candidate_count:,} candidates ({share:.1%})"
+        in published
+    )
 
 
 def test_birth_evidence_artifact_byte_schema_and_execution_pin():
@@ -247,6 +480,18 @@ def test_birth_evidence_artifact_count_tables_reconcile():
         )
 
     agreement = artifact["common_support_agreement"]
+    production_copy = {
+        key: value
+        for key, value in COMMON_SUPPORT_AGREEMENT.items()
+        if key not in {"evidence_reference", "interpretation"}
+    }
+    assert production_copy == agreement
+    assert COMMON_SUPPORT_AGREEMENT["evidence_reference"] == {
+        "path": "runs/first_estimates_birth_evidence_draw0.json",
+        "sha256": ARTIFACT_SHA256,
+        "schema_version": "first_estimates_birth_evidence.v2",
+        "section": "common_support_agreement",
+    }
     assert agreement["common_support_count"] == 4_518
     endpoint_expectations = {
         "exact": {

@@ -11,6 +11,7 @@ import pytest
 import populace_dynamics.estimates.preparation as preparation
 from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.estimates import parameters as parameter_module
+from populace_dynamics.estimates.career import BirthSource, DIClass
 from populace_dynamics.estimates.first_report import FirstReportDrawBundle
 from populace_dynamics.estimates.parameters import ReportParameters
 from populace_dynamics.estimates.runner import (
@@ -123,6 +124,8 @@ def _batch() -> FirstReportProjectionBatch:
         {
             "person_id": [1],
             "year": [2014],
+            "anchor_wave": [2015],
+            "age": [60],
             "sex": ["female"],
             "weight": [1.5],
             "birth_year": [1954],
@@ -132,6 +135,8 @@ def _batch() -> FirstReportProjectionBatch:
         {
             "person_id": [2],
             "year": [2016],
+            "anchor_wave": [2017],
+            "age": [67],
             "sex": ["male"],
             "weight": [2.5],
             "birth_year": [1950],
@@ -140,6 +145,7 @@ def _batch() -> FirstReportProjectionBatch:
     population = SimpleNamespace(
         initial_slice=initial,
         scheduled_entries_by_year={2017: scheduled},
+        holdout_ids=frozenset({1, 2}),
         reserved_real_ids=frozenset({1, 2}),
         earnings_domain_ids=frozenset({1}),
     )
@@ -273,6 +279,7 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     inclusion = SimpleNamespace(included=("included claimant",))
     benefit = object()
     revenue = object()
+    birth_timing_sensitivity = object()
 
     def include(**kwargs):
         calls["inclusion"] = kwargs
@@ -289,6 +296,11 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     monkeypatch.setattr(preparation, "build_career_inclusion", include)
     monkeypatch.setattr(preparation, "build_benefit_ledger", benefits)
     monkeypatch.setattr(preparation, "build_revenue_ledger", revenues)
+    monkeypatch.setattr(
+        preparation,
+        "_build_birth_timing_sensitivity",
+        lambda **_kwargs: birth_timing_sensitivity,
+    )
 
     prepared = preparation._prepare_first_report_draw_for_test(
         batch,
@@ -317,6 +329,17 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     }
     assert 2 not in set(inclusion_call["trajectory"]["person_id"])
     assert inclusion_call["synthetic_birth_years"] == {100: 2016}
+    pd.testing.assert_frame_equal(
+        inclusion_call["seed_coordinates"],
+        pd.DataFrame(
+            {
+                "person_id": [1, 2],
+                "year": [2014, 2016],
+                "anchor_wave": [2015, 2017],
+                "age": [60, 67],
+            }
+        ),
+    )
     assert inclusion_call["claiming_schedule"].pmf is schedule_pmf
     assert calls["benefit"] == (
         inclusion.included,
@@ -327,6 +350,75 @@ def test_draw_preparation_routes_only_downstream_objects(monkeypatch):
     assert prepared.inclusion is inclusion
     assert prepared.benefit_ledger is benefit
     assert prepared.revenue_ledger is revenue
+    assert prepared.birth_timing_sensitivity is birth_timing_sensitivity
+
+
+@pytest.mark.parametrize("shift", [-1, 1])
+def test_shifted_candidate_inclusion_transports_only_age_derived_births(
+    monkeypatch,
+    shift,
+):
+    sources = (
+        BirthSource.INFERRED_PERIOD_AGE,
+        BirthSource.DERIVED_PROJECTION_AGE,
+        BirthSource.EXACT_MARRIAGE,
+        BirthSource.SYNTHETIC_NATIVE,
+        BirthSource.UNRESOLVED,
+    )
+    baseline = SimpleNamespace(
+        births=tuple(
+            SimpleNamespace(
+                person_id=person_id,
+                birth_year=None if source is BirthSource.UNRESOLVED else 1950,
+                source=source,
+            )
+            for person_id, source in enumerate(sources, start=1)
+        ),
+        origins=tuple(
+            SimpleNamespace(person_id=person_id) for person_id in range(1, 6)
+        ),
+    )
+    trajectory = pd.DataFrame(
+        {"person_id": [*range(1, 6), 99], "year": [2015] * 6}
+    )
+    roster = pd.DataFrame({"person_id": [*range(1, 6), 99]})
+    calls = {}
+
+    def include(**kwargs):
+        calls.update(kwargs)
+        return SimpleNamespace(
+            origins=baseline.origins,
+            nonclaimants=(),
+            di_partition=tuple(
+                SimpleNamespace(classification=DIClass.NON_DI)
+                for _ in baseline.origins
+            ),
+        )
+
+    monkeypatch.setattr(preparation, "build_career_inclusion", include)
+
+    result = preparation._shifted_candidate_inclusion(
+        baseline=baseline,
+        shift=shift,
+        trajectory=trajectory,
+        population_roster=roster,
+        observed_earnings=pd.DataFrame(),
+        claiming_schedule=SimpleNamespace(),
+        earnings_domain_ids={1, 2, 3},
+    )
+
+    assert result.origins == baseline.origins
+    assert set(calls["trajectory"]["person_id"]) == set(range(1, 6))
+    assert set(calls["population_roster"]["person_id"]) == set(range(1, 6))
+    assert calls["synthetic_birth_years"] == {}
+    assert calls["stock_imputation_root_seed"] == STOCK_IMPUTATION_ROOT_SEED
+    assert "seed_coordinates" not in calls
+    assert calls["marriage_history"].to_dict("records") == [
+        {"person_id": 1, "birth_year": 1950 + shift},
+        {"person_id": 2, "birth_year": 1950 + shift},
+        {"person_id": 3, "birth_year": 1950},
+        {"person_id": 4, "birth_year": 1950},
+    ]
 
 
 def test_batch_preparation_requires_exact_registered_draw_sequence(
@@ -389,6 +481,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
     inclusions = [object() for _ in DRAW_INDICES]
     benefits = [object() for _ in DRAW_INDICES]
     revenues = [object() for _ in DRAW_INDICES]
+    birth_timing_sensitivities = [object() for _ in DRAW_INDICES]
     prepared_draws = tuple(
         preparation.PreparedFirstReportDraw(
             draw_index=draw_index,
@@ -400,6 +493,7 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
             inclusion=inclusions[draw_index],  # type: ignore[arg-type]
             benefits=benefits[draw_index],  # type: ignore[arg-type]
             revenue=revenues[draw_index],  # type: ignore[arg-type]
+            birth_timing_sensitivity=birth_timing_sensitivities[draw_index],  # type: ignore[arg-type]
         )
         for draw_index in DRAW_INDICES
     )
@@ -417,6 +511,10 @@ def test_prepared_batch_converts_and_binds_artifact_parameters(monkeypatch):
         assert bundle.inclusion is inclusions[draw_index]
         assert bundle.benefits is benefits[draw_index]
         assert bundle.revenue is revenues[draw_index]
+        assert (
+            bundle.birth_timing_sensitivity
+            is birth_timing_sensitivities[draw_index]
+        )
 
     incomplete = replace(prepared, draws=prepared.draws[:-1])
     with pytest.raises(ValueError, match="0 through 19"):
