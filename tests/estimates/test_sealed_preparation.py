@@ -421,6 +421,25 @@ def _sealed_preparation_worktree(tmp_path: Path) -> Iterator[Path]:
                 capture_output=True,
                 text=True,
             )
+            # The fixture simulates a pre-publication ceremony; once the
+            # real v1 pair is committed at HEAD, the coordinator's
+            # published-v1 guard would correctly refuse to start, so the
+            # fixture repository removes it from its own committed state.
+            published = [
+                path
+                for path in (
+                    "runs/first_estimates_v1.json",
+                    "runs/first_estimates_v1.json.env.json",
+                )
+                if (worktree / path).exists()
+            ]
+            if published:
+                subprocess.run(
+                    [git, "-C", str(worktree), "rm", "-q", "--", *published],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
             subprocess.run(
                 [
                     git,
