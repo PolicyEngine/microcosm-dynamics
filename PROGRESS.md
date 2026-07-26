@@ -7,7 +7,8 @@
 - The round-2 verdict was read in full.
 - The pre-existing untracked `FINAL_REPORT.md` is output scaffolding and remains
   outside the branch.
-- The replay identity finding is fixed and locally verified.
+- Replay identity and weighted birth-source reconciliation are implemented and
+  locally verified.
 
 ## Done
 
@@ -27,12 +28,25 @@
 - Tier policy after adding the artifact test:
   `1 passed, 3655 deselected in 4.69s`.
 - Black and Ruff pass for the reducer and guard-test changes.
+- Added claimant weight to every published career diagnostic row and to its
+  exact schema; validation requires the value to be finite and nonnegative.
+- Accumulated career-row weights per draw and birth source and reconciled all
+  weighted `included_birth_source` surfaces with `math.fsum` and the existing
+  count-invariant tolerance.
+- Added the referee's weighted-only forgery: unweighted surfaces and career
+  rows remain exact-marriage while weighted population/included mass moves to
+  derived-projection-age.
+- Weighted-only forgery regression: `1 passed in 1.60s`.
+- Publication plus first-report suites after the weighted fix:
+  `32 passed in 1.90s`.
+- Tier policy: `1 passed, 3656 deselected in 2.17s`.
+- Black and Ruff pass for the weighted-reconciliation files.
 
 ## Next
 
-- Add career weights and weighted birth-source reconciliation with a
-  weighted-only forgery regression.
 - Add claim-origin count and weight reconciliation with an origin-forgery
   regression.
+- Advance the reviewed implementation identity after the production-source
+  commits so the direct guard truthfully passes at final HEAD.
 - Run the requested focused and full verification, update this ledger, push,
   and write the final report to the output file.

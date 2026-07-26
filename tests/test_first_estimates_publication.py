@@ -603,6 +603,7 @@ def _artifact(sidecar: bytes | None = None) -> dict:
                 {
                     "draw_index": draw_index,
                     "person_id": f"person-{draw_index}",
+                    "weight": 1.0,
                     "claim_origin": "modeled_award",
                     "birth_source": "exact_marriage",
                     "birth_year_inferred": False,
@@ -929,6 +930,26 @@ def test__artifact_validator__rejects_referee_birth_source_forgery():
     with pytest.raises(
         ValueError,
         match="included claimant birth-source counts",
+    ):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+        )
+
+
+def test__artifact_validator__rejects_weighted_only_birth_source_forgery():
+    artifact = _artifact()
+    for count_row in artifact["counts"]["per_draw"]:
+        for category in ("birth_source", "included_birth_source"):
+            count_row[f"{category}__exact_marriage__weighted"] = 0.0
+            count_row[f"{category}__derived_projection_age__weighted"] = 1.0
+    artifact["counts"]["aggregate"] = _wide_aggregate(
+        artifact["counts"]["per_draw"]
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="included claimant birth-source weights",
     ):
         publication.validate_first_estimates_artifact(
             artifact,

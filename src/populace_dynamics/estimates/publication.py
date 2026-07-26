@@ -717,6 +717,7 @@ _CAREER_DIAGNOSTIC_KEYS = frozenset(
     {
         "draw_index",
         "person_id",
+        "weight",
         "claim_origin",
         "birth_source",
         "birth_year_inferred",
@@ -1852,6 +1853,10 @@ def _validate_career_diagnostics(
         draw: {source: 0 for source in _BIRTH_SOURCE_KEYS}
         for draw in expected_draw_indices
     }
+    observed_source_weights = {
+        draw: {source: [] for source in _BIRTH_SOURCE_KEYS}
+        for draw in expected_draw_indices
+    }
     for index, row in enumerate(records):
         _require_exact_keys(
             row,
@@ -1879,7 +1884,11 @@ def _validate_career_diagnostics(
             raise ValueError("career diagnostic has an unknown claim origin")
         if row["birth_source"] not in _BIRTH_SOURCE_KEYS:
             raise ValueError("career diagnostic has an unknown birth source")
+        weight = _number(row["weight"], "career diagnostic weight")
+        if weight is None or weight < 0:
+            raise ValueError("career diagnostic weight must be nonnegative")
         observed_sources[draw][row["birth_source"]] += 1
+        observed_source_weights[draw][row["birth_source"]].append(weight)
         for boolean_key in (
             "birth_year_inferred",
             "top35_reaches_pre_1968",
@@ -1981,6 +1990,23 @@ def _validate_career_diagnostics(
                 raise ValueError(
                     "career diagnostics do not match included claimant "
                     "birth-source counts"
+                )
+            expected_source_weight = count_rows[draw][
+                f"included_birth_source__{source}__weighted"
+            ]
+            if expected_source_weight is None or expected_source_weight < 0:
+                raise ValueError(
+                    "included birth-source weight must be nonnegative"
+                )
+            if not math.isclose(
+                math.fsum(observed_source_weights[draw][source]),
+                expected_source_weight,
+                rel_tol=1e-12,
+                abs_tol=1e-9,
+            ):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "birth-source weights"
                 )
 
 

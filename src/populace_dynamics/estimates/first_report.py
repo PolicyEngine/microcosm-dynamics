@@ -809,6 +809,7 @@ def _career_diagnostic_rows(
                 {
                     "draw_index": bundle.draw_index,
                     "person_id": claimant.person_id,
+                    "weight": claimant.weight,
                     "claim_origin": claimant.claim_origin,
                     "birth_source": claimant.birth_source.value,
                     "birth_year_inferred": claimant.birth_source.age_derived,
