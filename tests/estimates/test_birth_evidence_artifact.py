@@ -59,6 +59,10 @@ def _artifact() -> dict[str, Any]:
     return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
 
 
+def test_reducer_input_identity_matches_reviewed_branch():
+    reducer._assert_input_identity()
+
+
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
     records = (
         career.BirthYearRecord(

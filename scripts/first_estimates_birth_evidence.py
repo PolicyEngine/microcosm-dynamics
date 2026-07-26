@@ -78,7 +78,7 @@ from populace_dynamics.harness.m6_cells import (  # noqa: E402
 
 SCHEMA_VERSION = "first_estimates_birth_evidence.v2"
 CACHE_INPUT_MASTER_SHA = "daf3ff5978de5137ba50490f78ac52890291a399"
-REVIEWED_IMPLEMENTATION_COMMIT = "634baabff7966057ac4eea13c95f23844564b7eb"
+REVIEWED_IMPLEMENTATION_COMMIT = "b10e13c8dba21f314e3d50f693bd1a28f596ef95"
 EXPECTED_PE_US_VERSION = "1.752.2"
 EXPECTED_INTERPRETER = Path(
     "/Users/maxghenis/PolicyEngine/social-security-model-worktrees/"

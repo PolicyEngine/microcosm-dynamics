@@ -7,7 +7,7 @@
 - The round-2 verdict was read in full.
 - The pre-existing untracked `FINAL_REPORT.md` is output scaffolding and remains
   outside the branch.
-- Implementation changes have not started.
+- The replay identity finding is fixed and locally verified.
 
 ## Done
 
@@ -19,10 +19,17 @@
 - Identified the three narrow findings: replay identity guard coverage,
   weighted birth-source reconciliation, and count-plus-weight claim-origin
   reconciliation.
+- Repinned `REVIEWED_IMPLEMENTATION_COMMIT` from the pre-rebase SHA to the
+  verified tree-identical branch ancestor
+  `b10e13c8dba21f314e3d50f693bd1a28f596ef95`.
+- Added a CI-cheap test that directly invokes `_assert_input_identity`.
+- Guard regression: `1 passed in 1.43s`.
+- Tier policy after adding the artifact test:
+  `1 passed, 3655 deselected in 4.69s`.
+- Black and Ruff pass for the reducer and guard-test changes.
 
 ## Next
 
-- Repin the reviewed implementation identity and add a cheap direct guard test.
 - Add career weights and weighted birth-source reconciliation with a
   weighted-only forgery regression.
 - Add claim-origin count and weight reconciliation with an origin-forgery
