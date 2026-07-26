@@ -2369,8 +2369,8 @@ chronology movers are modeled awards.
 | baseline | \$3,301.7B | \$0.0B | 0.00% | 1,514 |
 | births−1 | \$3,271.3B | −\$30.3B | −0.92% | 1,520 |
 | births+1 | \$2,989.0B | −\$312.6B | −9.47% | 1,240 |
-| personwise adversarial minimum | \$2,893.5B | ≈−\$408.2B | — | — |
-| personwise adversarial maximum | \$3,366.9B | ≈+\$65.2B | — | — |
+| personwise adversarial minimum | \$2,893.5B | $\approx$−\$408.2B | — | — |
+| personwise adversarial maximum | \$3,366.9B | $\approx$+\$65.2B | — | — |
 
 : **Labels on every number: frame-relative; pre-alignment;
 labor-income proxy.** Draw-0 values from the frozen amendment-2
