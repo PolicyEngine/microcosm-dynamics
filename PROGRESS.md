@@ -7,8 +7,8 @@
 - The round-2 verdict was read in full.
 - The pre-existing untracked `FINAL_REPORT.md` is output scaffolding and remains
   outside the branch.
-- Replay identity and weighted birth-source reconciliation are implemented and
-  locally verified.
+- All three round-3 findings are implemented and locally verified; final
+  cross-suite verification and identity advancement remain.
 
 ## Done
 
@@ -41,12 +41,22 @@
   `32 passed in 1.90s`.
 - Tier policy: `1 passed, 3656 deselected in 2.17s`.
 - Black and Ruff pass for the weighted-reconciliation files.
+- Accumulated career-row counts and weights per draw and claim origin and
+  reconciled both unweighted and weighted `included_origin` surfaces.
+- Added the referee's origin forgery: every career row changes to
+  `opening_backfill` while count and table surfaces remain untouched.
+- Both new forgery regressions together: `2 passed in 0.71s`.
+- Publication plus first-report suites after origin reconciliation:
+  `33 passed in 1.01s`.
+- Tier policy: `1 passed, 3657 deselected in 1.29s`; the three new tests are
+  all artifact-tier and the manifest now records 1,327 artifact tests.
+- Black and Ruff pass for the origin-reconciliation files.
 
 ## Next
 
-- Add claim-origin count and weight reconciliation with an origin-forgery
-  regression.
 - Advance the reviewed implementation identity after the production-source
   commits so the direct guard truthfully passes at final HEAD.
+- Run the three named new tests, full estimates and publication suites,
+  tier policy, Black, Ruff, and the CI-cheap replay test.
 - Run the requested focused and full verification, update this ledger, push,
   and write the final report to the output file.

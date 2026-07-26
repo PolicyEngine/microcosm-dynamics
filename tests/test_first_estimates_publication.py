@@ -957,6 +957,21 @@ def test__artifact_validator__rejects_weighted_only_birth_source_forgery():
         )
 
 
+def test__artifact_validator__rejects_referee_claim_origin_forgery():
+    artifact = _artifact()
+    for row in artifact["diagnostics"]["included_career_per_draw"]:
+        row["claim_origin"] = "opening_backfill"
+
+    with pytest.raises(
+        ValueError,
+        match="included claimant origin counts",
+    ):
+        publication.validate_first_estimates_artifact(
+            artifact,
+            expected_configuration_echo=_configuration(),
+        )
+
+
 def test__artifact_validator__requires_exact_draw_grids():
     artifact = _artifact()
     artifact["tables"]["modeled_award_flow"]["per_draw"].pop()

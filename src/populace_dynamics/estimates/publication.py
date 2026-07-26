@@ -1853,8 +1853,16 @@ def _validate_career_diagnostics(
         draw: {source: 0 for source in _BIRTH_SOURCE_KEYS}
         for draw in expected_draw_indices
     }
+    observed_origins = {
+        draw: {origin: 0 for origin in _BENEFIT_ORIGINS}
+        for draw in expected_draw_indices
+    }
     observed_source_weights = {
         draw: {source: [] for source in _BIRTH_SOURCE_KEYS}
+        for draw in expected_draw_indices
+    }
+    observed_origin_weights = {
+        draw: {origin: [] for origin in _BENEFIT_ORIGINS}
         for draw in expected_draw_indices
     }
     for index, row in enumerate(records):
@@ -1887,6 +1895,8 @@ def _validate_career_diagnostics(
         weight = _number(row["weight"], "career diagnostic weight")
         if weight is None or weight < 0:
             raise ValueError("career diagnostic weight must be nonnegative")
+        observed_origins[draw][row["claim_origin"]] += 1
+        observed_origin_weights[draw][row["claim_origin"]].append(weight)
         observed_sources[draw][row["birth_source"]] += 1
         observed_source_weights[draw][row["birth_source"]].append(weight)
         for boolean_key in (
@@ -1973,6 +1983,39 @@ def _validate_career_diagnostics(
             raise ValueError(
                 "career diagnostics do not match included claimant counts"
             )
+        for origin in _BENEFIT_ORIGINS:
+            expected_origin_count = count_rows[draw][
+                f"included_origin__{origin}__unweighted"
+            ]
+            if (
+                expected_origin_count is None
+                or not expected_origin_count.is_integer()
+                or expected_origin_count < 0
+            ):
+                raise ValueError(
+                    "included origin unweighted count must be a nonnegative "
+                    "integer"
+                )
+            if observed_origins[draw][origin] != int(expected_origin_count):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "origin counts"
+                )
+            expected_origin_weight = count_rows[draw][
+                f"included_origin__{origin}__weighted"
+            ]
+            if expected_origin_weight is None or expected_origin_weight < 0:
+                raise ValueError("included origin weight must be nonnegative")
+            if not math.isclose(
+                math.fsum(observed_origin_weights[draw][origin]),
+                expected_origin_weight,
+                rel_tol=1e-12,
+                abs_tol=1e-9,
+            ):
+                raise ValueError(
+                    "career diagnostics do not match included claimant "
+                    "origin weights"
+                )
         for source in _BIRTH_SOURCE_KEYS:
             expected_source_count = count_rows[draw][
                 f"included_birth_source__{source}__unweighted"
