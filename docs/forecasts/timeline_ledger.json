@@ -1,164 +1,158 @@
 {
- "schema_version": "forecast_ledger.v1",
- "description": "Append-only schedule forecasts for the Populace dynamics DynaSim-replacement campaign. Rules in docs/forecasts/README.md. Not part of the gates.yaml evaluation contract.",
- "entries": [
-  {
-   "id": 1,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "registered_retroactively": true,
-   "retro_note": "Original tiered estimate was given in-session on 2026-07-16/17 before this ledger existed; entered here verbatim-in-substance at ledger creation and immediately superseded by entries 2-4. Kept so the revision trail starts at the true first estimate.",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Tiered: certified projection engine in days-to-a-week; policy-useful SS estimates in ~2-3 weeks; full DynaSim parity in 4-7 weeks (from ~2026-07-16).",
-   "resolution_criterion": "Superseded before resolution; graded via the criteria of entries 2-4.",
-   "p50": null,
-   "p80": null,
-   "status": "superseded",
-   "superseded_by": [
-    2,
-    3,
-    4
-   ],
-   "resolution": null
-  },
-  {
-   "id": 2,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
-   "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
-   "p50": "2026-07-22",
-   "p80": "2026-07-25",
-   "status": "superseded",
-   "supersedes": 1,
-   "revision_reason": "Evidence since entry 1: floors v4 locked (#237) and round-2 plan ratified (#234) same-day; 5/11 cells already passing with regression constraints; earnings fix fully designed (amendment 4) with q* selection ~7h into compute. Against that: the round-2 selector execution defect (#238) added a full amendment/refreeze/rerun loop (~1 day) on the blocking remarriage path, and machine contention cost ~half a day.",
-   "resolution": null,
-   "superseded_by": [
-    7
-   ]
-  },
-  {
-   "id": 3,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
-   "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
-   "p50": "2026-07-30",
-   "p80": "2026-08-06",
-   "status": "superseded",
-   "supersedes": 1,
-   "revision_reason": "Component inventory is stronger than entry 1 assumed: AIME/PIA oracle, claiming-age, differential mortality, disability, and the M2 revenue/balance analogue are already built and gated; remaining work after certification is assembly plus the M7 factory ceremony (~1 week).",
-   "resolution": null,
-   "superseded_by": [
-    8
-   ]
-  },
-  {
-   "id": 4,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Full-parity SS estimates: immigration and alignment integrated into the certified pipeline (pensions/wealth/LTSS explicitly out of scope pending a separate scoping decision).",
-   "resolution_criterion": "Merged PRs integrating an immigration module and target alignment into the estimate pipeline, with refreshed published estimates superseding the entry-3 gapped release.",
-   "p50": "2026-08-15",
-   "p80": "2026-08-29",
-   "status": "open",
-   "supersedes": 1,
-   "revision_reason": "Carried from entry 1's 4-7 week band, narrowed by observed ceremony velocity (three ratifications on 2026-07-17) and the existing immigration design brief.",
-   "resolution": null
-  },
-  {
-   "id": 5,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
-   "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
-   "p50": "2026-07-19",
-   "p80": "2026-07-21",
-   "status": "superseded",
-   "revision_reason": null,
-   "resolution": {
-    "resolved_at": "2026-07-19T12:09:10Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
-    "error_days_p50": 0,
-    "within_p50": true,
-    "within_p80": true,
-    "note": "Superseded entry graded against reality per the ledger rules: resolved exactly on its original p50 date. The revision (entry 6) moved p50 a day later on the governance-ladder discovery; reality landed on the original date."
-   },
-   "superseded_by": [
-    6
-   ]
-  },
-  {
-   "id": 6,
-   "registered_at": "2026-07-18T06:50:03Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
-   "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
-   "p50": "2026-07-20",
-   "p80": "2026-07-22",
-   "status": "resolved",
-   "supersedes": 5,
-   "revision_reason": "The remarriage train-only ladder completed as a RATIFIED no-op (#247, after the round-3..6 reducer ceremony chain), but the ratified plan's frozen no-op ladder (learning_plan_round2.md section 7) keeps the designed pause ACTIVE and the program's section 9.3 registration condition forbids registration under that disposition. Registration 8 now additionally requires either the decision-9 re-adjudication ceremony or the W1-style surface-question disposition (both proposals launched 07-18). qstar2 also slowed under host contention (uneven 17-64 min/rung). Net: p50 moves 07-19 -> 07-20.",
-   "resolution": {
-    "resolved_at": "2026-07-19T12:09:10Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
-    "error_days_p50": -1,
-    "within_p50": true,
-    "within_p80": true
-   }
-  },
-  {
-   "id": 7,
-   "registered_at": "2026-07-18T14:19:53Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
-   "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
-   "p50": "2026-07-25",
-   "p80": "2026-07-29",
-   "status": "superseded",
-   "supersedes": 2,
-   "revision_reason": "The ratified condition-5 conformance measurement (#251, merged e147fa7) puts the post-repair remarriage.18-64 residual transport at 111.5%/125.4%/192.7% of the unchanged 0.403 tolerance at train boundaries 2006/2008/2010 - decisively worse than the 105.8% band the R disposition was adjudicated on, and trending worse toward the scored window. Candidate 2 is therefore modal-FAIL on the 11-cell conjunction; its run (still proceeding under R, with the new numbers in the candid forecast) primarily buys scored validation of the two new deltas plus decisive surface-question evidence. A PASS most likely requires the remarriage surface ceremony (#249 lane) plus a candidate 3. p50 therefore moves 07-22 -> 07-25.",
-   "resolution": null,
-   "superseded_by": [
-    9
-   ]
-  },
-  {
-   "id": 8,
-   "registered_at": "2026-07-18T14:19:53Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
-   "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
-   "p50": "2026-08-02",
-   "p80": "2026-08-09",
-   "status": "resolved",
-   "supersedes": 3,
-   "revision_reason": "Downstream of entry 7's certification shift (candidate-3-after-surface-ceremony now the modal certification path).",
-   "resolution": {
-    "resolved_at": "2026-07-26T07:43:00Z",
-    "evidence": "runs/first_estimates_v1.json (sha256 719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977; registration populace-dynamics#307; registered run completed 03:39 ET 2026-07-26) published by the entry-8 publication PR; completion record https://github.com/PolicyEngine/populace-dynamics/issues/307#issuecomment-5082585716",
-    "error_days_p50": -7,
-    "within_p50": true,
-    "within_p80": true
-   }
-  },
-  {
-   "id": 9,
-   "registered_at": "2026-07-22T16:30:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
-   "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
-   "p50": "2026-07-26",
-   "p80": "2026-07-30",
-   "status": "resolved",
-   "supersedes": 7,
-   "revision_reason": "The candidate-3 pipeline advanced far faster than the entry-7 modal path assumed (program #270, diagnostic #271, amendment 6 #272 all ratified within ~30h of the candidate-2 verdict; prototype #273 implemented with all preflights green), but the rho-selection ladder consumed the schedule margin: measured pace is ~2h/rung x 17 rungs (~36h sealed run) vs the ~7h q*-ladder precedent, and the first attempt livelocked after 7h39m in an OpenMP join barrier (stack-sampled; permanent), with the restart then catching a fitting-stack HEAD drift from a concurrent lane (guard worked; resolved by a lane-local clone pinned at ee8f7fc1). Hardened attempt 2 launched 2026-07-22 ~12:20 ET puts the ledger at ~00:30 7/24, registration + 23h run on 7/24, verdict ~7/25, and refereed certification 7/25 only if every remaining step lands first-try. With ladder-recurrence risk and the amendment's F1-unresolved-by-design uncertainty, the median certification lands 7/26. p50 7/25 -> 7/26; p80 7/29 -> 7/30.",
-   "resolution": {
-    "resolved_at": "2026-07-24T11:25:00Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/283 (merged 65d151b0937c200f9bc86fae4a3856a1f04b6fbe); ratification note https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5069537907",
-    "error_days_p50": -2,
-    "within_p50": true,
-    "within_p80": true
-   }
-  }
- ]
+  "schema_version": "forecast_ledger.v1",
+  "description": "Append-only schedule forecasts for the Populace dynamics DynaSim-replacement campaign. Rules in docs/forecasts/README.md. Not part of the gates.yaml evaluation contract.",
+  "entries": [
+    {
+      "id": 1,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "registered_retroactively": true,
+      "retro_note": "Original tiered estimate was given in-session on 2026-07-16/17 before this ledger existed; entered here verbatim-in-substance at ledger creation and immediately superseded by entries 2-4. Kept so the revision trail starts at the true first estimate.",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Tiered: certified projection engine in days-to-a-week; policy-useful SS estimates in ~2-3 weeks; full DynaSim parity in 4-7 weeks (from ~2026-07-16).",
+      "resolution_criterion": "Superseded before resolution; graded via the criteria of entries 2-4.",
+      "p50": null,
+      "p80": null,
+      "status": "superseded",
+      "superseded_by": [
+        2,
+        3,
+        4
+      ],
+      "resolution": null
+    },
+    {
+      "id": 2,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
+      "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
+      "p50": "2026-07-22",
+      "p80": "2026-07-25",
+      "status": "superseded",
+      "supersedes": 1,
+      "revision_reason": "Evidence since entry 1: floors v4 locked (#237) and round-2 plan ratified (#234) same-day; 5/11 cells already passing with regression constraints; earnings fix fully designed (amendment 4) with q* selection ~7h into compute. Against that: the round-2 selector execution defect (#238) added a full amendment/refreeze/rerun loop (~1 day) on the blocking remarriage path, and machine contention cost ~half a day.",
+      "resolution": null,
+      "superseded_by": [
+        7
+      ]
+    },
+    {
+      "id": 3,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
+      "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
+      "p50": "2026-07-30",
+      "p80": "2026-08-06",
+      "status": "superseded",
+      "supersedes": 1,
+      "revision_reason": "Component inventory is stronger than entry 1 assumed: AIME/PIA oracle, claiming-age, differential mortality, disability, and the M2 revenue/balance analogue are already built and gated; remaining work after certification is assembly plus the M7 factory ceremony (~1 week).",
+      "resolution": null,
+      "superseded_by": [
+        8
+      ]
+    },
+    {
+      "id": 4,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Full-parity SS estimates: immigration and alignment integrated into the certified pipeline (pensions/wealth/LTSS explicitly out of scope pending a separate scoping decision).",
+      "resolution_criterion": "Merged PRs integrating an immigration module and target alignment into the estimate pipeline, with refreshed published estimates superseding the entry-3 gapped release.",
+      "p50": "2026-08-15",
+      "p80": "2026-08-29",
+      "status": "open",
+      "supersedes": 1,
+      "revision_reason": "Carried from entry 1's 4-7 week band, narrowed by observed ceremony velocity (three ratifications on 2026-07-17) and the existing immigration design brief.",
+      "resolution": null
+    },
+    {
+      "id": 5,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
+      "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
+      "p50": "2026-07-19",
+      "p80": "2026-07-21",
+      "status": "superseded",
+      "revision_reason": null,
+      "resolution": {
+        "resolved_at": "2026-07-19T12:09:10Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
+        "error_days_p50": 0,
+        "within_p50": true,
+        "within_p80": true,
+        "note": "Superseded entry graded against reality per the ledger rules: resolved exactly on its original p50 date. The revision (entry 6) moved p50 a day later on the governance-ladder discovery; reality landed on the original date."
+      },
+      "superseded_by": [
+        6
+      ]
+    },
+    {
+      "id": 6,
+      "registered_at": "2026-07-18T06:50:03Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
+      "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
+      "p50": "2026-07-20",
+      "p80": "2026-07-22",
+      "status": "resolved",
+      "supersedes": 5,
+      "revision_reason": "The remarriage train-only ladder completed as a RATIFIED no-op (#247, after the round-3..6 reducer ceremony chain), but the ratified plan's frozen no-op ladder (learning_plan_round2.md section 7) keeps the designed pause ACTIVE and the program's section 9.3 registration condition forbids registration under that disposition. Registration 8 now additionally requires either the decision-9 re-adjudication ceremony or the W1-style surface-question disposition (both proposals launched 07-18). qstar2 also slowed under host contention (uneven 17-64 min/rung). Net: p50 moves 07-19 -> 07-20.",
+      "resolution": {
+        "resolved_at": "2026-07-19T12:09:10Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
+        "error_days_p50": -1,
+        "within_p50": true,
+        "within_p80": true
+      }
+    },
+    {
+      "id": 7,
+      "registered_at": "2026-07-18T14:19:53Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
+      "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
+      "p50": "2026-07-25",
+      "p80": "2026-07-29",
+      "status": "superseded",
+      "supersedes": 2,
+      "revision_reason": "The ratified condition-5 conformance measurement (#251, merged e147fa7) puts the post-repair remarriage.18-64 residual transport at 111.5%/125.4%/192.7% of the unchanged 0.403 tolerance at train boundaries 2006/2008/2010 - decisively worse than the 105.8% band the R disposition was adjudicated on, and trending worse toward the scored window. Candidate 2 is therefore modal-FAIL on the 11-cell conjunction; its run (still proceeding under R, with the new numbers in the candid forecast) primarily buys scored validation of the two new deltas plus decisive surface-question evidence. A PASS most likely requires the remarriage surface ceremony (#249 lane) plus a candidate 3. p50 therefore moves 07-22 -> 07-25.",
+      "resolution": null,
+      "superseded_by": [
+        9
+      ]
+    },
+    {
+      "id": 8,
+      "registered_at": "2026-07-18T14:19:53Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
+      "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
+      "p50": "2026-08-02",
+      "p80": "2026-08-09",
+      "status": "open",
+      "supersedes": 3,
+      "revision_reason": "Downstream of entry 7's certification shift (candidate-3-after-surface-ceremony now the modal certification path).",
+      "resolution": null
+    },
+    {
+      "id": 9,
+      "registered_at": "2026-07-22T16:30:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
+      "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
+      "p50": "2026-07-26",
+      "p80": "2026-07-30",
+      "status": "resolved",
+      "supersedes": 7,
+      "revision_reason": "The candidate-3 pipeline advanced far faster than the entry-7 modal path assumed (program #270, diagnostic #271, amendment 6 #272 all ratified within ~30h of the candidate-2 verdict; prototype #273 implemented with all preflights green), but the rho-selection ladder consumed the schedule margin: measured pace is ~2h/rung x 17 rungs (~36h sealed run) vs the ~7h q*-ladder precedent, and the first attempt livelocked after 7h39m in an OpenMP join barrier (stack-sampled; permanent), with the restart then catching a fitting-stack HEAD drift from a concurrent lane (guard worked; resolved by a lane-local clone pinned at ee8f7fc1). Hardened attempt 2 launched 2026-07-22 ~12:20 ET puts the ledger at ~00:30 7/24, registration + 23h run on 7/24, verdict ~7/25, and refereed certification 7/25 only if every remaining step lands first-try. With ladder-recurrence risk and the amendment's F1-unresolved-by-design uncertainty, the median certification lands 7/26. p50 7/25 -> 7/26; p80 7/29 -> 7/30.",
+      "resolution": {
+        "resolved_at": "2026-07-24T11:25:00Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/283 (merged 65d151b0937c200f9bc86fae4a3856a1f04b6fbe); ratification note https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5069537907",
+        "error_days_p50": -2,
+        "within_p50": true,
+        "within_p80": true
+      }
+    }
+  ]
 }
