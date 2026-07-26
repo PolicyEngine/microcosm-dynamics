@@ -7,8 +7,8 @@
 - The round-2 verdict was read in full.
 - The pre-existing untracked `FINAL_REPORT.md` is output scaffolding and remains
   outside the branch.
-- All three round-3 findings are implemented and locally verified; final
-  cross-suite verification and identity advancement remain.
+- All three round-3 findings and the requested verification are complete.
+- The branch is ready for final scaffold removal and push.
 
 ## Done
 
@@ -55,10 +55,16 @@
   identity to final production-source commit
   `1057cf55d5fed6b69254bb5215a3978bfb5ec1bc`; it exists, is an ancestor of
   HEAD, and exactly matches HEAD across every guarded production path.
+- The three new guard/forgery tests: `3 passed in 0.87s`.
+- Full `tests/estimates`, publication, and first-estimates runner suites:
+  `220 passed in 11.51s`.
+- Final tier policy: `1 passed, 3657 deselected in 1.47s`.
+- Black and Ruff pass across all five changed Python files.
+- CI-cheap production replay boundary:
+  `1 passed in 0.84s`.
 
 ## Next
 
-- Run the three named new tests, full estimates and publication suites,
-  tier policy, Black, Ruff, and the CI-cheap replay test.
-- Run the requested focused and full verification, update this ledger, push,
-  and write the final report to the output file.
+- Commit this final verification record, remove the tracked progress scaffold,
+  audit the commit messages and clean tracked state, then push.
+- Write the final report with the real verification and push output.
