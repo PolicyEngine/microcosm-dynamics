@@ -59,11 +59,37 @@ reconnaissance is complete; no production input has been opened.
   tests cover clean sealed launch, unsealed/nonempty-cache refusal, dirty or
   hidden index state, ignored executable artifacts, structured refusal, the
   exact CLI surface, and terminal result serialization. All 13 pass.
+- Hardened the ceremony after independent review: reports now carry the
+  complete ordered prior-incident history; production artifact assembly
+  requires opaque hash-gated input authority; incident validation requires
+  an exact-complete production or fixture echo and contiguous suffix; and
+  durable attempt/retry claims close process-death replay windows.
+- Generalized the already-tested first-estimates durable-claim helpers with
+  report-specific path/schema arguments instead of duplicating that
+  machinery. Anchor-context claim and incident state is ignored only while
+  it is ceremony-owned prepublication state.
+- Expanded the fixture-only publication/coordinator coverage to 64 passing
+  tests, including false production provenance, malformed self-echo,
+  prior-incident carry-forward, and hard-death claim replay forgeries. The
+  sealed runner tests remain 13/13 green with the canonical relative script
+  path.
+- Added a no-argument, sealed fixture-rehearsal entry point. It admits only
+  the canonical committed fixture manifest and identities, rejects
+  production path/hash/vintage aliases and source or parent symlinks before
+  reads, runs success and typed-incident ceremonies in disposable private
+  Git roots, and emits pass/fail metadata without fixture statistics.
+- Added 14 rehearsal tests, including a real isolated subprocess through the
+  engine, both validators, append-only writer, sidecar, incident path, and
+  cleanup. The combined first-estimates coordinator, context publication,
+  context coordinator, sealed-runner, and rehearsal selection passes
+  159 tests.
+- Ran Black 25.11.0 at line length 79 and Ruff on the complete changed Python
+  surface; both pass.
 
 ## Next
 
-- Finish the standalone fixture-only end-to-end rehearsal and the
-  incident-history carry-forward audit.
+- Complete the final independent audit, update the tier manifest, and run
+  the full requested estimates/publication suites.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.

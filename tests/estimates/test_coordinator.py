@@ -1504,6 +1504,11 @@ def test__production_path__ignored_import_cache_is_preparation_incident(
 def test__estimator_surface__pins_complete_module_tuple():
     expected = (
         Path("src/populace_dynamics/estimates/__init__.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_report.py"),
         Path("src/populace_dynamics/estimates/career.py"),
         Path("src/populace_dynamics/estimates/coordinator.py"),
         Path("src/populace_dynamics/estimates/first_report.py"),

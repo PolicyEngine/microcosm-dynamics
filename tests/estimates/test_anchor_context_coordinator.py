@@ -146,7 +146,11 @@ def _operations(
             raise error
         return value
 
-    def load_inputs(root: Path, configuration_echo: dict[str, Any]):
+    def load_inputs(registration):
+        root = registration._repository_root
+        configuration_echo = publication.first_publication._configuration_echo(
+            registration
+        )
         loaded = publication.load_fixture_documents(
             root,
             first_estimates_input=configuration_echo["first_estimates_input"],
@@ -198,6 +202,28 @@ def _operations(
         captured["publication_kwargs"] = kwargs
         return publication.write_anchor_context_artifact(*args, **kwargs)
 
+    def publish_incident(token, **kwargs):
+        registration = (
+            token.registration
+            if isinstance(token, publication._AnchorContextPrecomputeToken)
+            else token
+        )
+        configuration_echo = publication.first_publication._configuration_echo(
+            registration
+        )
+        production_only = (
+            configuration_echo["first_estimates_input"]
+            == registry.first_estimates_input_identity()
+            and configuration_echo["anchor_input"]
+            == registry.anchor_input_identity()
+        )
+        return publication._write_anchor_context_incident_for_test(
+            repository_root=registration._repository_root,
+            configuration_echo=configuration_echo,
+            production_only=production_only,
+            **kwargs,
+        )
+
     return coordinator._CoordinatorOperations(
         assert_interpreter=lambda _configuration, _actual_invocation: None,
         validate_repository=lambda _root, _configuration: None,
@@ -210,7 +236,7 @@ def _operations(
         ),
         build_artifact=build_artifact,
         publish_artifact=publish_artifact,
-        publish_incident=publication.write_anchor_context_incident,
+        publish_incident=publish_incident,
         after_preparation=lambda: None,
     )
 
@@ -271,8 +297,14 @@ def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
         == registered_bytes
     )
     assert len(artifact["results"]["comparison_results"]) == 9
+    assert artifact["prior_incidents"] == []
     assert Path(f"{result.path}.env.json").is_file()
     assert captured["artifact_kwargs"]["configuration_echo"] == configuration
+    attempt_claim = root / "runs/anchor_context_report_attempt.claim"
+    assert json.loads(attempt_claim.read_bytes()) == {
+        "schema_version": "anchor_context_report_attempt.v1",
+        "registration_reference": REGISTRATION_REFERENCE,
+    }
 
 
 @pytest.mark.parametrize(
@@ -562,6 +594,10 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
 
     assert first.status == "incident"
     assert retry.status == "published"
+    assert json.loads(retry.path.read_bytes())["prior_incidents"] == [
+        "runs/anchor_context_report_incident_1.json"
+    ]
+    assert (root / "runs/anchor_context_report_retry.claim").is_file()
     assert (
         publication.canonical_json_bytes(
             captured["artifact_kwargs"]["configuration_echo"]
@@ -596,6 +632,72 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
     assert blocked.status == "incident"
     assert blocked.phase == "preparation"
     assert calls == []
+
+
+def test_durable_attempt_claim_blocks_reentry_after_process_death(tmp_path):
+    root = _repository(tmp_path)
+    first_coordinator._create_attempt_claim(
+        root,
+        REGISTRATION_REFERENCE,
+        claim_path=coordinator._ATTEMPT_CLAIM_PATH,
+        claim_schema=coordinator._ATTEMPT_CLAIM_SCHEMA,
+    )
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert blocked.reason == (
+        "preparation_fresh_registration_adjudication_required_attempt_claim"
+    )
+    assert calls == []
+
+
+def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
+    tmp_path,
+):
+    root = _repository(tmp_path)
+    external = coordinator.ExternalPreOutputFailure(
+        "external_fixture_storage_unavailable",
+        "Fixture storage unavailable before output.",
+    )
+    assert (
+        _run(
+            root,
+            _operations(
+                [],
+                {},
+                failure_phase="compute",
+                failure=external,
+            ),
+        ).status
+        == "incident"
+    )
+    first_coordinator._create_retry_claim(
+        root,
+        REGISTRATION_REFERENCE,
+        1,
+        claim_path=coordinator._RETRY_CLAIM_PATH,
+        claim_schema=coordinator._RETRY_CLAIM_SCHEMA,
+    )
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert blocked.reason == (
+        "preparation_fresh_registration_required_retry_claim"
+    )
+    assert calls == []
+    incidents = sorted(
+        (root / "runs").glob("anchor_context_report_incident_*.json")
+    )
+    assert [path.name for path in incidents] == [
+        "anchor_context_report_incident_1.json",
+        "anchor_context_report_incident_2.json",
+    ]
 
 
 def test_public_entry_point_exposes_only_registration_path():

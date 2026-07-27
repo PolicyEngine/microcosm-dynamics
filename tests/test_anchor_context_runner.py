@@ -112,7 +112,7 @@ def _sealed_run(
             "-B",
             "-X",
             f"pycache_prefix={sentinel}",
-            str(repository / "scripts" / LAUNCHER.name),
+            f"scripts/{LAUNCHER.name}",
             "--registration",
             registration,
         ],
@@ -296,7 +296,7 @@ def test_launcher_refuses_noncanonical_interpreter_before_coordinator_import(
         )
     command.extend(
         [
-            str(repository / "scripts" / LAUNCHER.name),
+            f"scripts/{LAUNCHER.name}",
             "--registration",
             REGISTRATION,
         ]

@@ -86,11 +86,22 @@ INCIDENT_KEYS = {
 }
 
 
-def _configuration() -> dict[str, Any]:
+def _production_configuration() -> dict[str, Any]:
     return anchor_context_publication.registered_configuration_echo(
         registration_reference=REGISTRATION_REFERENCE,
         implementation_commit=IMPLEMENTATION_COMMIT,
         invocation=INVOCATION,
+    )
+
+
+def _configuration() -> dict[str, Any]:
+    first_estimates_input, anchor_input = _fixture_identities()
+    return anchor_context_publication._registered_configuration_echo_for_test(
+        registration_reference=REGISTRATION_REFERENCE,
+        implementation_commit=IMPLEMENTATION_COMMIT,
+        invocation=INVOCATION,
+        first_estimates_input=first_estimates_input,
+        anchor_input=anchor_input,
     )
 
 
@@ -198,7 +209,7 @@ def _validate_incident(
     filename: str = "anchor_context_report_incident_1.json",
     expected_configuration: dict[str, Any] | None = None,
 ) -> None:
-    anchor_context_publication.validate_anchor_context_incident(
+    anchor_context_publication._validate_anchor_context_incident(
         record,
         path=root / "runs" / filename,
         expected_configuration_echo=(
@@ -207,11 +218,12 @@ def _validate_incident(
             else expected_configuration
         ),
         repository_root=root,
+        production_only=False,
     )
 
 
 def test_registered_configuration_is_exact_deep_and_canonical():
-    configuration = _configuration()
+    configuration = _production_configuration()
     registered_bytes = anchor_context_publication.canonical_json_bytes(
         configuration
     )
@@ -267,7 +279,7 @@ def test_registered_configuration_rejects_wrong_literals_and_types(
     field: str,
     mutant: Any,
 ):
-    configuration = _configuration()
+    configuration = _production_configuration()
     configuration[field] = mutant
 
     with pytest.raises((TypeError, ValueError)):
@@ -280,7 +292,7 @@ def test_registered_configuration_rejects_wrong_literals_and_types(
 
 
 def test_registered_configuration_rejects_bytes_keys_and_registry_drift():
-    configuration = _configuration()
+    configuration = _production_configuration()
     registered_bytes = anchor_context_publication.canonical_json_bytes(
         configuration
     )
@@ -401,6 +413,7 @@ def test_artifact_is_exact_complete_and_bound_to_fixture_results():
         "results",
         "labels",
         "evidential_statuses",
+        "prior_incidents",
         "integrity",
         "certifies_nothing",
     }
@@ -423,6 +436,7 @@ def test_artifact_is_exact_complete_and_bound_to_fixture_results():
     assert artifact["evidential_statuses"] == (
         anchor_context_publication.EVIDENTIAL_STATUSES
     )
+    assert artifact["prior_incidents"] == []
     assert artifact["integrity"] == {
         "environment_sidecar": {
             "path": "anchor_context_report_v1.json.env.json",
@@ -440,6 +454,22 @@ def test_artifact_is_exact_complete_and_bound_to_fixture_results():
         first_estimates=first_estimates,
         anchors=anchors,
     )
+
+
+def test_artifact_builder_rejects_production_echo_with_unverified_documents():
+    first_estimates, anchors = _fixture_inputs()
+    with pytest.raises(TypeError, match="hash-gated"):
+        anchor_context_publication.build_anchor_context_artifact(
+            configuration_echo=_production_configuration(),
+            runtime_provenance=RUNTIME_PROVENANCE,
+            results=anchor_context_report.build_results(
+                first_estimates,
+                anchors,
+            ),
+            first_estimates=first_estimates,
+            anchors=anchors,
+            environment_sidecar_sha256="0" * 64,
+        )
 
 
 @pytest.mark.parametrize(
@@ -650,9 +680,12 @@ def test_incident_rejects_keys_echo_index_location_and_noncontiguity(
         )
     with pytest.raises((TypeError, ValueError)):
         anchor_context_publication.validate_anchor_context_incident(
-            _incident(),
+            {
+                **_incident(),
+                "configuration_echo": _production_configuration(),
+            },
             path=root / "elsewhere" / "anchor_context_report_incident_1.json",
-            expected_configuration_echo=_configuration(),
+            expected_configuration_echo=_production_configuration(),
             repository_root=root,
         )
 
@@ -665,6 +698,32 @@ def test_incident_rejects_keys_echo_index_location_and_noncontiguity(
             reason_detail="synthetic",
             configuration_echo=_configuration(),
             timestamp_utc="2026-07-27T12:34:56Z",
+        )
+
+
+def test_production_incident_requires_the_exact_complete_configuration_echo(
+    tmp_path: Path,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    record = _incident()
+    record["configuration_echo"] = configuration
+    anchor_context_publication.validate_anchor_context_incident(
+        record,
+        path=root / "runs/anchor_context_report_incident_1.json",
+        expected_configuration_echo=configuration,
+        repository_root=root,
+    )
+
+    malformed_echo = {"registration_reference": REGISTRATION_REFERENCE}
+    malformed = copy.deepcopy(record)
+    malformed["configuration_echo"] = malformed_echo
+    with pytest.raises((TypeError, ValueError)):
+        anchor_context_publication.validate_anchor_context_incident(
+            malformed,
+            path=root / "runs/anchor_context_report_incident_1.json",
+            expected_configuration_echo=malformed_echo,
+            repository_root=root,
         )
 
 

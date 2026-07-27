@@ -117,3 +117,6 @@ scratch/
 runs/first_estimates_attempt.claim
 runs/first_estimates_retry.claim
 runs/first_estimates_incident_*.json
+runs/anchor_context_report_attempt.claim
+runs/anchor_context_report_retry.claim
+runs/anchor_context_report_incident_*.json

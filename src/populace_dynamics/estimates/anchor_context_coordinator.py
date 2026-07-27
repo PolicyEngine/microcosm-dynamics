@@ -49,6 +49,10 @@ PRELAUNCH_CHECK_NAMES = (
 _SCRIPT_PATH = "scripts/run_anchor_context_report.py"
 _IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _SAFE_REASON = first_coordinator._SAFE_EXTERNAL_REASON
+_ATTEMPT_CLAIM_PATH = Path("runs/anchor_context_report_attempt.claim")
+_ATTEMPT_CLAIM_SCHEMA = "anchor_context_report_attempt.v1"
+_RETRY_CLAIM_PATH = Path("runs/anchor_context_report_retry.claim")
+_RETRY_CLAIM_SCHEMA = "anchor_context_report_retry.v1"
 
 
 class _CeremonyAbort(RuntimeError):
@@ -60,6 +64,7 @@ class _CeremonyAbort(RuntimeError):
 
 @dataclass(frozen=True)
 class _IncidentHistory:
+    paths: tuple[str, ...]
     records: tuple[Mapping[str, Any], ...]
 
 
@@ -75,8 +80,7 @@ class _CoordinatorOperations:
     validate_repository: Callable[[Path, Mapping[str, Any]], None]
     prepare_sidecar: Callable[[Path], tuple[bytes, str]]
     load_inputs: Callable[
-        [Path, Mapping[str, Any]],
-        tuple[Mapping[str, Any], Mapping[str, Any]],
+        [first_publication._RegisteredConfigurationToken], Any
     ]
     build_results: Callable[..., Mapping[str, Any]]
     validate_results: Callable[..., None]
@@ -241,20 +245,9 @@ def _validate_repository(
 
 
 def _load_inputs(
-    repository_root: Path,
-    configuration: Mapping[str, Any],
-) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-    first = anchor_context_publication._load_verified_json(
-        repository_root,
-        configuration["first_estimates_input"],
-        role="first_estimates",
-    )
-    anchors = anchor_context_publication._load_verified_json(
-        repository_root,
-        configuration["anchor_input"],
-        role="anchor",
-    )
-    return first, anchors
+    registration: first_publication._RegisteredConfigurationToken,
+) -> anchor_context_publication._VerifiedProductionInputs:
+    return anchor_context_publication._load_production_documents(registration)
 
 
 def _publish_artifact(
@@ -263,12 +256,16 @@ def _publish_artifact(
     *,
     first_estimates: Mapping[str, Any],
     anchors: Mapping[str, Any],
+    verified_production_inputs: (
+        anchor_context_publication._VerifiedProductionInputs | None
+    ) = None,
 ) -> Path:
     return anchor_context_publication.write_anchor_context_artifact(
         token,
         artifact,
         first_estimates=first_estimates,
         anchors=anchors,
+        verified_production_inputs=verified_production_inputs,
     )
 
 
@@ -330,6 +327,8 @@ def _parse_configuration(
 
 def _read_incident_history(
     repository_root: Path,
+    *,
+    production_only: bool,
 ) -> _IncidentHistory:
     """Read and exact-validate the complete contiguous incident history."""
     runs = repository_root / "runs"
@@ -342,6 +341,7 @@ def _read_incident_history(
         if match is not None:
             indexed.append((int(match.group(1)), path))
     indexed.sort()
+    paths = []
     records = []
     for index, path in indexed:
         raw = path.read_bytes()
@@ -368,20 +368,21 @@ def _read_incident_history(
                 f"Incident {index} has no configuration echo.",
             )
         try:
-            anchor_context_publication.validate_anchor_context_incident(
+            anchor_context_publication._validate_anchor_context_incident(
                 record,
                 path=path,
                 expected_configuration_echo=configuration,
                 repository_root=repository_root,
-                validate_artifact_existence=False,
+                production_only=production_only,
             )
         except (TypeError, ValueError) as error:
             raise _CeremonyAbort(
                 "preparation_incident_history_invalid",
                 f"Incident {index} violates the typed schema.",
             ) from error
+        paths.append(path.relative_to(repository_root).as_posix())
         records.append(record)
-    return _IncidentHistory(records=tuple(records))
+    return _IncidentHistory(paths=tuple(paths), records=tuple(records))
 
 
 def _assert_outputs_absent(repository_root: Path) -> None:
@@ -399,7 +400,7 @@ def _assert_outputs_absent(repository_root: Path) -> None:
 def _authorize_invocation(
     configuration: Mapping[str, Any],
     history: _IncidentHistory,
-) -> None:
+) -> int | None:
     """Allow a fresh run or the sole unchanged eligible retry."""
     current = []
     expected_bytes = anchor_context_publication.canonical_json_bytes(
@@ -421,7 +422,7 @@ def _authorize_invocation(
             )
         current.append(record)
     if not current:
-        return
+        return None
     if len(current) != 1:
         raise _CeremonyAbort(
             "preparation_fresh_registration_required_second_failure",
@@ -432,6 +433,7 @@ def _authorize_invocation(
             "preparation_fresh_registration_required_nonretryable_incident",
             "The prior incident is not retry-eligible.",
         )
+    return current[0]["incident_index"]
 
 
 def _complete_prelaunch_checks(
@@ -439,8 +441,9 @@ def _complete_prelaunch_checks(
     repository_root: Path,
     configuration: Mapping[str, Any],
     actual_invocation: Sequence[str],
+    history: _IncidentHistory,
     operations: _CoordinatorOperations,
-) -> _IncidentHistory:
+) -> None:
     """Perform the six §5.3 checks without opening either input."""
     if configuration["design"] != registry.design_binding():
         raise _CeremonyAbort(
@@ -462,15 +465,14 @@ def _complete_prelaunch_checks(
             "A fixture identity aliases a production path.",
         )
     _assert_outputs_absent(repository_root)
-    history = _read_incident_history(repository_root)
+    if len(history.paths) != len(history.records):
+        raise AssertionError("incident history paths and records differ")
     operations.assert_interpreter(configuration, actual_invocation)
     if (
         CANONICAL_EXECUTION_RULE["publishes_regardless"] is not True
         or CANONICAL_EXECUTION_RULE["no_self_rescue"] is not True
     ):
         raise AssertionError("canonical execution acknowledgement changed")
-    _authorize_invocation(configuration, history)
-    return history
 
 
 def _safe_incident_fields(
@@ -489,7 +491,7 @@ def _safe_incident_fields(
                 "external reason was not constructor-validated"
             )
         return error.reason, error.safe_detail
-    if isinstance(error, _CeremonyAbort):
+    if isinstance(error, (_CeremonyAbort, first_coordinator._CeremonyAbort)):
         return error.reason, error.detail
     return (
         f"{phase}_abort",
@@ -552,10 +554,31 @@ def _run_registered_anchor_context_for_test(
         anchor_context_publication._AnchorContextPrecomputeToken | None
     ) = None
     try:
+        history = _read_incident_history(
+            root,
+            production_only=production_only,
+        )
+        retry_after_incident = _authorize_invocation(configuration, history)
+        first_coordinator._create_attempt_claim(
+            root,
+            configuration["registration_reference"],
+            allow_matching_retry_claim=retry_after_incident is not None,
+            claim_path=_ATTEMPT_CLAIM_PATH,
+            claim_schema=_ATTEMPT_CLAIM_SCHEMA,
+        )
+        if retry_after_incident is not None:
+            first_coordinator._create_retry_claim(
+                root,
+                configuration["registration_reference"],
+                retry_after_incident,
+                claim_path=_RETRY_CLAIM_PATH,
+                claim_schema=_RETRY_CLAIM_SCHEMA,
+            )
         _complete_prelaunch_checks(
             repository_root=root,
             configuration=configuration,
             actual_invocation=actual_invocation,
+            history=history,
             operations=operations,
         )
         sidecar_payload, reported_sidecar_hash = operations.prepare_sidecar(
@@ -568,12 +591,29 @@ def _run_registered_anchor_context_for_test(
             registration,
             runtime_provenance=runtime_provenance,
             sidecar_payload=sidecar_payload,
+            prior_incidents=history.paths,
         )
         if reported_sidecar_hash != precompute.sidecar_sha256:
             raise ValueError(
                 "prepared sidecar digest differs from frozen bytes"
             )
-        first_estimates, anchors = operations.load_inputs(root, configuration)
+        loaded_inputs = operations.load_inputs(registration)
+        if isinstance(
+            loaded_inputs,
+            anchor_context_publication._VerifiedProductionInputs,
+        ):
+            first_estimates = loaded_inputs.first_estimates
+            anchors = loaded_inputs.anchors
+            verified_production_inputs = loaded_inputs
+        else:
+            try:
+                first_estimates, anchors = loaded_inputs
+            except (TypeError, ValueError) as error:
+                raise TypeError(
+                    "input loader must return verified production inputs "
+                    "or a fixture document pair"
+                ) from error
+            verified_production_inputs = None
     except BaseException as error:
         return _publish_abort(
             precompute or registration,
@@ -609,6 +649,8 @@ def _run_registered_anchor_context_for_test(
             first_estimates=first_estimates,
             anchors=anchors,
             environment_sidecar_sha256=precompute.sidecar_sha256,
+            prior_incidents=precompute.prior_incidents,
+            verified_production_inputs=verified_production_inputs,
         )
     except BaseException as error:
         return _publish_abort(
@@ -628,6 +670,7 @@ def _run_registered_anchor_context_for_test(
             artifact,
             first_estimates=first_estimates,
             anchors=anchors,
+            verified_production_inputs=verified_production_inputs,
         )
     except BaseException as error:
         return _publish_abort(

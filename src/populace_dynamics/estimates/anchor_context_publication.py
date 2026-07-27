@@ -111,6 +111,7 @@ _ARTIFACT_KEYS = frozenset(
         "results",
         "labels",
         "evidential_statuses",
+        "prior_incidents",
         "integrity",
         "certifies_nothing",
     }
@@ -150,6 +151,35 @@ class _AnchorContextPrecomputeToken:
     runtime_provenance_bytes: bytes
     sidecar_payload: bytes
     sidecar_sha256: str
+    prior_incidents: tuple[str, ...]
+
+
+_VERIFIED_INPUT_AUTHORITY = object()
+
+
+@dataclass(frozen=True, init=False)
+class _VerifiedProductionInputs:
+    """Opaque result of both registered production hash gates."""
+
+    registration: first_publication._RegisteredConfigurationToken
+    first_estimates: Mapping[str, Any]
+    anchors: Mapping[str, Any]
+
+    def __init__(
+        self,
+        authority: object,
+        *,
+        registration: first_publication._RegisteredConfigurationToken,
+        first_estimates: Mapping[str, Any],
+        anchors: Mapping[str, Any],
+    ):
+        if authority is not _VERIFIED_INPUT_AUTHORITY:
+            raise TypeError(
+                "verified production inputs are created only by the hash gate"
+            )
+        object.__setattr__(self, "registration", registration)
+        object.__setattr__(self, "first_estimates", first_estimates)
+        object.__setattr__(self, "anchors", anchors)
 
 
 def _require_mapping(value: Any, label: str) -> Mapping[str, Any]:
@@ -496,10 +526,8 @@ def _load_verified_json(
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError(f"{role} input is not valid JSON") from error
     value = _require_mapping(document, f"{role} input")
-    if (
-        role == "anchor"
-        and value.get("artifact_vintage_id")
-        != (validated["artifact_vintage_id"])
+    if role == "anchor" and value.get("artifact_vintage_id") != (
+        validated["artifact_vintage_id"]
     ):
         raise ValueError("anchor input vintage differs from registration")
     return value
@@ -560,7 +588,7 @@ def load_fixture_documents(
 
 def _load_production_documents(
     token: first_publication._RegisteredConfigurationToken,
-) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+) -> _VerifiedProductionInputs:
     if not isinstance(token, first_publication._RegisteredConfigurationToken):
         raise TypeError(
             "production input loading requires a registration token"
@@ -580,11 +608,90 @@ def _load_production_documents(
         configuration["anchor_input"],
         role="anchor",
     )
-    return first, anchor
+    return _VerifiedProductionInputs(
+        _VERIFIED_INPUT_AUTHORITY,
+        registration=token,
+        first_estimates=first,
+        anchors=anchor,
+    )
 
 
 def _validate_environment_sidecar_hash(value: Any) -> str:
     return _sha256(value, "environment sidecar sha256")
+
+
+def _validate_artifact_input_binding(
+    configuration: Mapping[str, Any],
+    *,
+    first_estimates: Mapping[str, Any],
+    anchors: Mapping[str, Any],
+    verified_production_inputs: _VerifiedProductionInputs | None,
+) -> None:
+    production = (
+        configuration["first_estimates_input"]
+        == registry.first_estimates_input_identity()
+        and configuration["anchor_input"] == registry.anchor_input_identity()
+    )
+    if production:
+        if not isinstance(
+            verified_production_inputs,
+            _VerifiedProductionInputs,
+        ):
+            raise TypeError(
+                "production artifact validation requires hash-gated inputs"
+            )
+        registered_configuration = first_publication._configuration_echo(
+            verified_production_inputs.registration
+        )
+        _assert_exact_json(
+            registered_configuration,
+            configuration,
+            "verified_inputs.configuration_echo",
+        )
+        if (
+            first_estimates is not verified_production_inputs.first_estimates
+            or anchors is not verified_production_inputs.anchors
+        ):
+            raise ValueError(
+                "production artifact inputs differ from hash-gated documents"
+            )
+        return
+    if verified_production_inputs is not None:
+        raise TypeError("fixture artifacts cannot carry production authority")
+    first_input = _require_mapping(
+        configuration["first_estimates_input"],
+        "fixture artifact first_estimates_input",
+    )
+    anchor_input = _require_mapping(
+        configuration["anchor_input"],
+        "fixture artifact anchor_input",
+    )
+    _assert_fixture_identities(first_input, anchor_input)
+    if first_estimates.get("fixture_only") is not True:
+        raise ValueError(
+            "fixture artifact first-estimates input is not fixture"
+        )
+    if anchors.get("fixture_only") is not True:
+        raise ValueError("fixture artifact anchor input is not fixture")
+
+
+def _validate_prior_incident_paths(
+    prior_incidents: Sequence[str],
+) -> tuple[str, ...]:
+    if not isinstance(prior_incidents, (list, tuple)):
+        raise TypeError("prior incidents must be a JSON string array")
+    paths = tuple(prior_incidents)
+    if not all(isinstance(path, str) for path in paths):
+        raise TypeError("prior incident paths must be strings")
+    expected = tuple(
+        f"runs/anchor_context_report_incident_{index}.json"
+        for index in range(1, len(paths) + 1)
+    )
+    if paths != expected:
+        raise ValueError(
+            "prior incidents must be the complete ordered context history"
+        )
+    return paths
 
 
 def build_anchor_context_artifact(
@@ -595,10 +702,18 @@ def build_anchor_context_artifact(
     first_estimates: Mapping[str, Any],
     anchors: Mapping[str, Any],
     environment_sidecar_sha256: str,
+    prior_incidents: Sequence[str] = (),
+    verified_production_inputs: _VerifiedProductionInputs | None = None,
 ) -> dict[str, Any]:
     """Assemble the complete integrity-bound primary report."""
     configuration = copy.deepcopy(dict(configuration_echo))
     _validate_configuration_echo_for_execution(configuration)
+    _validate_artifact_input_binding(
+        configuration,
+        first_estimates=first_estimates,
+        anchors=anchors,
+        verified_production_inputs=verified_production_inputs,
+    )
     registration_reference = configuration["registration_reference"]
     artifact = {
         "schema_version": registry.REPORT_SCHEMA_VERSION,
@@ -618,6 +733,9 @@ def build_anchor_context_artifact(
         "results": copy.deepcopy(dict(results)),
         "labels": list(EVIDENCE_LABELS),
         "evidential_statuses": copy.deepcopy(EVIDENTIAL_STATUSES),
+        "prior_incidents": list(
+            _validate_prior_incident_paths(prior_incidents)
+        ),
         "integrity": {
             "environment_sidecar": {
                 "path": Path(registry.SIDECAR_OUTPUT_PATH).name,
@@ -632,6 +750,8 @@ def build_anchor_context_artifact(
         artifact,
         expected_configuration_echo=configuration,
         expected_runtime_provenance=runtime_provenance,
+        expected_prior_incidents=prior_incidents,
+        verified_production_inputs=verified_production_inputs,
         first_estimates=first_estimates,
         anchors=anchors,
     )
@@ -643,6 +763,8 @@ def validate_anchor_context_artifact(
     *,
     expected_configuration_echo: Mapping[str, Any],
     expected_runtime_provenance: Mapping[str, Any],
+    expected_prior_incidents: Sequence[str] = (),
+    verified_production_inputs: _VerifiedProductionInputs | None = None,
     first_estimates: Mapping[str, Any],
     anchors: Mapping[str, Any],
 ) -> None:
@@ -654,6 +776,12 @@ def validate_anchor_context_artifact(
     if value["configuration_echo"] != expected_configuration_echo:
         raise ValueError("artifact configuration echo changed")
     _validate_configuration_echo_for_execution(value["configuration_echo"])
+    _validate_artifact_input_binding(
+        value["configuration_echo"],
+        first_estimates=first_estimates,
+        anchors=anchors,
+        verified_production_inputs=verified_production_inputs,
+    )
     identity = _require_mapping(value["identity"], "artifact identity")
     _require_exact_keys(
         identity,
@@ -690,6 +818,14 @@ def validate_anchor_context_artifact(
         EVIDENTIAL_STATUSES,
         "artifact.evidential_statuses",
     )
+    expected_incidents = _validate_prior_incident_paths(
+        expected_prior_incidents
+    )
+    _assert_exact_json(
+        value["prior_incidents"],
+        list(expected_incidents),
+        "artifact.prior_incidents",
+    )
     if value["certifies_nothing"] != list(CERTIFIES_NOTHING):
         raise ValueError("artifact certifies_nothing statements changed")
     integrity = _require_mapping(value["integrity"], "artifact integrity")
@@ -724,6 +860,8 @@ def _write_anchor_context_artifact_for_test(
     artifact: Mapping[str, Any],
     expected_configuration_echo: Mapping[str, Any],
     expected_runtime_provenance: Mapping[str, Any],
+    expected_prior_incidents: Sequence[str] = (),
+    verified_production_inputs: _VerifiedProductionInputs | None = None,
     first_estimates: Mapping[str, Any],
     anchors: Mapping[str, Any],
     sidecar_payload: bytes,
@@ -747,6 +885,8 @@ def _write_anchor_context_artifact_for_test(
         artifact,
         expected_configuration_echo=expected_configuration_echo,
         expected_runtime_provenance=expected_runtime_provenance,
+        expected_prior_incidents=expected_prior_incidents,
+        verified_production_inputs=verified_production_inputs,
         first_estimates=first_estimates,
         anchors=anchors,
     )
@@ -793,6 +933,7 @@ def _freeze_precompute(
     *,
     runtime_provenance: Mapping[str, Any],
     sidecar_payload: bytes,
+    prior_incidents: Sequence[str] = (),
 ) -> _AnchorContextPrecomputeToken:
     if not isinstance(
         registration,
@@ -811,6 +952,7 @@ def _freeze_precompute(
         runtime_provenance_bytes=canonical_json_bytes(runtime_provenance),
         sidecar_payload=payload,
         sidecar_sha256=hashlib.sha256(payload).hexdigest(),
+        prior_incidents=_validate_prior_incident_paths(prior_incidents),
     )
 
 
@@ -827,6 +969,7 @@ def write_anchor_context_artifact(
     *,
     first_estimates: Mapping[str, Any],
     anchors: Mapping[str, Any],
+    verified_production_inputs: _VerifiedProductionInputs | None = None,
 ) -> Path:
     """Publish only through the opaque precompute token."""
     if not isinstance(token, _AnchorContextPrecomputeToken):
@@ -837,19 +980,22 @@ def write_anchor_context_artifact(
         artifact=artifact,
         expected_configuration_echo=configuration,
         expected_runtime_provenance=_runtime_provenance(token),
+        expected_prior_incidents=token.prior_incidents,
+        verified_production_inputs=verified_production_inputs,
         first_estimates=first_estimates,
         anchors=anchors,
         sidecar_payload=token.sidecar_payload,
     )
 
 
-def validate_anchor_context_incident(
+def _validate_anchor_context_incident(
     record: Mapping[str, Any],
     *,
     path: str | Path,
     expected_configuration_echo: Mapping[str, Any],
     repository_root: str | Path,
     validate_artifact_existence: bool = True,
+    production_only: bool,
 ) -> None:
     """Enforce the exact typed nine-key incident schema."""
     value = _require_mapping(record, "incident")
@@ -883,6 +1029,27 @@ def validate_anchor_context_incident(
         value["configuration_echo"],
         "incident configuration_echo",
     )
+    configuration_bytes = canonical_json_bytes(configuration)
+    if production_only:
+        validate_registered_configuration_echo(
+            configuration,
+            registered_configuration_bytes=configuration_bytes,
+        )
+    else:
+        first_estimates_input = _require_mapping(
+            configuration.get("first_estimates_input"),
+            "fixture incident first_estimates_input",
+        )
+        anchor_input = _require_mapping(
+            configuration.get("anchor_input"),
+            "fixture incident anchor_input",
+        )
+        _validate_fixture_configuration_echo(
+            configuration,
+            registered_configuration_bytes=configuration_bytes,
+            first_estimates_input=first_estimates_input,
+            anchor_input=anchor_input,
+        )
     _assert_exact_json(
         configuration,
         expected_configuration_echo,
@@ -918,7 +1085,32 @@ def validate_anchor_context_incident(
         or artifact_path != registry.PRIMARY_OUTPUT_PATH
     ):
         raise ValueError("artifact_path violates the publication iff rule")
+    _, next_index = _next_incident_path(root)
+    if incident_path.exists():
+        if index >= next_index:
+            raise ValueError("incident path is outside contiguous history")
+    elif index != next_index:
+        raise ValueError("incident index is not the next contiguous suffix")
     canonical_json_bytes(value)
+
+
+def validate_anchor_context_incident(
+    record: Mapping[str, Any],
+    *,
+    path: str | Path,
+    expected_configuration_echo: Mapping[str, Any],
+    repository_root: str | Path,
+    validate_artifact_existence: bool = True,
+) -> None:
+    """Validate one production incident and its exact registered echo."""
+    _validate_anchor_context_incident(
+        record,
+        path=path,
+        expected_configuration_echo=expected_configuration_echo,
+        repository_root=repository_root,
+        validate_artifact_existence=validate_artifact_existence,
+        production_only=True,
+    )
 
 
 def _next_incident_path(repository_root: Path) -> tuple[Path, int]:
@@ -946,6 +1138,7 @@ def _write_anchor_context_incident_for_test(
     reason_detail: str,
     configuration_echo: Mapping[str, Any],
     timestamp_utc: str | None = None,
+    production_only: bool = False,
 ) -> Path:
     """Append one canonical typed incident without a sidecar."""
     root = Path(repository_root).resolve()
@@ -972,11 +1165,12 @@ def _write_anchor_context_incident_for_test(
         "configuration_echo": copy.deepcopy(dict(configuration_echo)),
         "artifact_path": artifact_path,
     }
-    validate_anchor_context_incident(
+    _validate_anchor_context_incident(
         record,
         path=path,
         expected_configuration_echo=configuration_echo,
         repository_root=root,
+        production_only=production_only,
     )
     artifacts.write_new(path, canonical_json_bytes(record))
     return path
@@ -1003,12 +1197,18 @@ def write_anchor_context_incident(
         first_publication._RegisteredConfigurationToken,
     ):
         raise TypeError("incident publication requires a registration token")
+    configuration = first_publication._configuration_echo(registration)
+    validate_registered_configuration_echo(
+        configuration,
+        registered_configuration_bytes=registration._configuration_bytes,
+    )
     return _write_anchor_context_incident_for_test(
         repository_root=registration._repository_root,
         phase=phase,
         reason=reason,
         reason_detail=reason_detail,
-        configuration_echo=first_publication._configuration_echo(registration),
+        configuration_echo=configuration,
+        production_only=True,
     )
 
 
