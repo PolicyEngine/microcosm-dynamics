@@ -1,1 +1,26 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Python files
+*.py text diff=python
+*.pyx text diff=python
+*.pxd text diff=python
+
+# Markdown and documentation
+*.md text diff=markdown
+*.rst text
+*.yml text
+*.yaml text
+*.toml text
+
+# Jupyter notebooks
+*.ipynb text eol=lf
+
+# Preserve byte-pinned external HTML response bodies exactly.
+data/external/*.source.html binary
+
+# Use bd merge for beads JSONL files
+.beads/issues.jsonl merge=beads
+
+# Anchor snapshots: pinned bytes, never normalized
 data/external/snapshots/** -text
