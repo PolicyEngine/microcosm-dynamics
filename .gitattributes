@@ -23,4 +23,4 @@ data/external/*.source.html binary
 .beads/issues.jsonl merge=beads
 
 # Anchor snapshots: pinned bytes, never normalized
-data/external/snapshots/** -text
+data/external/snapshots/** binary
