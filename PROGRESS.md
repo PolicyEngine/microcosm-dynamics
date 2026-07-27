@@ -26,10 +26,14 @@ reconnaissance is complete; no production input has been opened.
   checks confirm exact 20-draw-by-8-year model grids, all 15 ordered
   8-year anchor series, normalized synthetic values, positive denominators,
   and pinned fixture hashes.
+- Encoded the frozen 15-series, 7-metric, 14-pairing, and 9-comparison
+  registries with deep-copy accessors and strict type-aware equality.
+  An independent parser confirmed exact equality to the four design
+  registries (15/7/14/9); ruff and diff checks pass.
 
 ## Next
 
-- Add fixture-first tests for the frozen context-report contract.
+- Complete fixture-first formula, selector, exact-results, and forgery tests.
 - Implement and validate the comparison engine and ceremony.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
