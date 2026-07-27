@@ -2,8 +2,8 @@
 
 ## State
 
-Fixture-first implementation is in progress. Repository and ceremony
-reconnaissance is complete; no production input has been opened.
+Implementation and fixture-only verification are complete. No production
+input has been opened and no production comparison value has been computed.
 
 ## Done
 
@@ -85,8 +85,8 @@ reconnaissance is complete; no production input has been opened.
   159 tests.
 - Ran Black 25.11.0 at line length 79 and Ruff on the complete changed Python
   surface; both pass.
-- Recollected all 3,794 tests by tier and updated the enforced manifest:
-  920 unit, 1,391 artifact, 804 integration-PSID, 520 legacy reproduction,
+- Recollected all 3,798 tests by tier and updated the enforced manifest:
+  920 unit, 1,395 artifact, 804 integration-PSID, 520 legacy reproduction,
   and 159 PolicyEngine-oracle tests.
 - The first complete suite run exposed one intended historical-identity
   guard: adding context-only modules and the opt-in writer mode changed the
@@ -106,11 +106,19 @@ reconnaissance is complete; no production input has been opened.
   pinning its exact post-review Git blob in both HEAD and the worktree; only
   the separately named context modules are excluded without a shared-source
   byte pin.
+- Received a clean final independent ceremony audit after the review fixes;
+  the audit found no remaining actionable issue in the §§4–5 scope.
+- Re-ran Black 25.11.0 at line length 79 and Ruff over all 17 changed Python
+  files; both pass.
+- Ran the complete estimates/publication selection: all 369 tests pass in
+  19.98 seconds.
+- Ran the sealed, no-argument fixture rehearsal as an isolated interpreter.
+  All five public checks pass: fixed fixture identity, success ceremony and
+  validators, canonical sidecar publication, typed incident publication,
+  and private-root cleanup.
+- Recollected the final tier manifest: all five selections match their
+  committed counts and sum to 3,798 tests.
 
 ## Next
 
-- Recollect tier counts after the added forgeries, rerun formatting/lint and
-  the full requested estimates/publication suites, then push.
-- Run formatting, lint, and the full estimates/publication suites.
-- Commit each coherent step, update this ledger, and push the completed
-  branch.
+- Commit this final verification record and push the completed branch.
