@@ -85,11 +85,14 @@ reconnaissance is complete; no production input has been opened.
   159 tests.
 - Ran Black 25.11.0 at line length 79 and Ruff on the complete changed Python
   surface; both pass.
+- Recollected all 3,794 tests by tier and updated the enforced manifest:
+  920 unit, 1,391 artifact, 804 integration-PSID, 520 legacy reproduction,
+  and 159 PolicyEngine-oracle tests.
 
 ## Next
 
-- Complete the final independent audit, update the tier manifest, and run
-  the full requested estimates/publication suites.
+- Complete the final independent audit and run the full requested
+  estimates/publication suites.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.
