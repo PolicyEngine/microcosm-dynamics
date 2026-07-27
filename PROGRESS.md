@@ -2,8 +2,9 @@
 
 ## State
 
-Round-3 referee revision 4 is in progress on
-`claude/anchor-extraction-design`; finding 1 is resolved in `f8bd3f9`.
+Round-3 referee revision 4 is implemented on
+`claude/anchor-extraction-design`; findings 1 and 2 are resolved in
+`f8bd3f9` and `d78ef43`.
 
 ## Done
 
@@ -18,10 +19,16 @@ Round-3 referee revision 4 is in progress on
   mandatory, including all eight level-only OASI cash rows.
 - Required fail-closed validation for missing, extra, duplicate, or reordered
   result IDs, years, panels, rows, shapes, types, units, and values.
+- Defined
+  `mechanical_claiming_vs_administrative_in_force_population` with the
+  model's claim-age crossings and clamped 1998-2013 opening-stock
+  re-imputation versus administrative entitlement and claiming histories,
+  citing first-estimates §§4, 6, and its material §10 gap row.
+- Added the code to exactly the seven benefit-dollar/beneficiary-stock
+  pairings and the B/(12N), N/W, and B/P comparison laws.
 
 ## Next
 
-- Add the mechanical-claiming population-generation mismatch code everywhere
-  required.
-- Validate, remove this temporary tracked ledger, push, and write the final
-  per-finding report.
+- Validate the exact registries, scope, links, diff, and commit dispositions.
+- Remove this temporary tracked ledger, push, and write the final per-finding
+  report.
