@@ -688,8 +688,7 @@ def test__builder__rejects_colspan_collapsed_value_cells(monkeypatch):
     document_id = "ssa_supplement_2025_6a"
     raw = attacked_raw_by_document_id[document_id]
     distinct_cells = (
-        b"        <td>5,440,023</td>\r\n"
-        b"        <td>2,838,988</td>"
+        b"        <td>5,440,023</td>\r\n" b"        <td>2,838,988</td>"
     )
     collapsed_cell = b'        <td colspan="2">2,838,988</td>'
     assert raw.count(distinct_cells) == 1
