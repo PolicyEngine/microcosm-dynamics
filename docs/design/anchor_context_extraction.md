@@ -1,6 +1,6 @@
 # The anchor context extraction: pinned official SSA series and the context report
 
-- **Status:** DRAFT revision 3 for referee rounds. Nothing here authorizes an
+- **Status:** DRAFT revision 4 for referee rounds. Nothing here authorizes an
   extraction commit, registration, or production report run.
 - **Resolves:** only the §12 annual SSA/Trustees level-anchor extraction
   successor named first in leverage order by the first estimates report.
@@ -721,17 +721,19 @@ the ratio is then computed independently for each draw; only then are its
 across-draw mean and sample SD published. Dividing aggregate means is
 forbidden.
 
-Official levels may appear descriptively only in an official-anchor panel,
-in official units. Model levels may appear descriptively only in a separate
-frame-relative model panel. Those panels have no shared gap axis or column,
-percentage-difference or percent-error column, "national level" axis, or
-level overlay. Direct model-total/official-total ratios, absolute
-model/official gaps, shares of official totals, coverage/capture rates,
-anchor-derived scale factors, rescaled model series, and any `aligned`,
-`calibrated`, `validated`, `matched`, `accuracy`, or `close to SSA` claim are
-forbidden before W1. Renaming a forbidden total ratio a "context ratio" does
-not admit it. Fabricated causal decompositions of a model/anchor difference
-are forbidden.
+Official levels appear descriptively only in the mandatory, complete
+official-anchor panel, in official units. Model levels appear descriptively
+only in the mandatory, complete, separate frame-relative model panel. The
+exact panel schemas and coverage law are frozen in §5.2; descriptive-only
+status never permits either panel, series, metric, or annual row to be
+omitted. Those panels have no shared gap axis or column, percentage-difference
+or percent-error column, "national level" axis, or level overlay. Direct
+model-total/official-total ratios, absolute model/official gaps, shares of
+official totals, coverage/capture rates, anchor-derived scale factors,
+rescaled model series, and any `aligned`, `calibrated`, `validated`,
+`matched`, `accuracy`, or `close to SSA` claim are forbidden before W1.
+Renaming a forbidden total ratio a "context ratio" does not admit it.
+Fabricated causal decompositions of a model/anchor difference are forbidden.
 
 ### 4.3 Revision-10.1 travel and evidential-status law
 
@@ -806,7 +808,7 @@ before execution with exactly these 11 keys and no others:
 - `registration_reference`: nonempty JSON string;
 - `design`: object with exactly `path` equal to
   `docs/design/anchor_context_extraction.md`, `ratification_commit` a
-  40-lowercase-hex JSON string, and `revision` the JSON integer `3`;
+  40-lowercase-hex JSON string, and `revision` the JSON integer `4`;
 - `implementation_commit`: 40-lowercase-hex JSON string;
 - `invocation`: ordered nonempty JSON string array containing every actual
   argument of the isolated invocation, including the actual fresh empty
@@ -835,6 +837,60 @@ launch. Incident validation requires exact object equality with that same
 echo. The sealed preparation phase then hashes the actual input bytes and
 requires equality with the registered hashes. The primary report records
 SHA-256 of the exact sidecar bytes.
+
+The primary report's `results` object has exactly the three keys
+`comparison_results`, `official_anchor_level_panel`, and
+`model_level_panel`, with no others. Their frozen schemas and coverage are:
+
+- `comparison_results` is an ordered nine-object array in exact
+  `comparison_specs` order. An available spec contributes one object with
+  exactly `comparison_id`, `availability`, `evaluated`, and `annual_rows`;
+  `comparison_id` equals the spec ID, `availability` is the literal
+  `available`, `evaluated` is the JSON boolean `true`, and `annual_rows`
+  contains exactly eight rows in year order 2015 through 2022. Each row has
+  exactly `year`, `model_statistic_mean`, `model_statistic_sample_sd`,
+  `official_statistic`, `comparison_mean`, and `comparison_sample_sd`.
+  `year` is the JSON integer for that position. Every other field is a finite
+  JSON number, excluding booleans; both sample SDs are nonnegative. The model
+  statistic fields reduce the spec's literal model formula across the 20
+  draws, `official_statistic` evaluates its literal official formula, and the
+  comparison fields are the mean and sample SD of the literal operation
+  evaluated separately within each draw as required by §4.2.
+- An unavailable spec instead contributes exactly one non-evaluated
+  disclosure object with exactly `comparison_id`, `availability`,
+  `evaluated`, and `reason`. Its ID equals the spec ID, `availability` is the
+  literal `unavailable`, `evaluated` is the JSON boolean `false`, and `reason`
+  exactly equals the spec's non-null availability reason. It has no
+  `annual_rows`, value, mean, SD, or other estimate-bearing field, and
+  attempting to evaluate it aborts. Thus the frozen registry produces exactly
+  56 evaluated annual rows—seven available specs times eight years—and
+  exactly two single-object unavailable disclosures.
+- `official_anchor_level_panel` is an ordered 15-object array in exact
+  `required_series_ids` order. Each object has exactly `series_id`,
+  `stored_unit`, and `annual_rows`; the ID and unit equal that determination's
+  registered values. `annual_rows` contains exactly eight objects, ordered
+  2015 through 2022, each with exactly `year` and `value`. `year` is the JSON
+  integer for that position and `value` is the finite JSON number, excluding
+  booleans, equal to the anchor observation normalized to `stored_unit`. All
+  120 rows are mandatory, expressly including all eight rows for the
+  level-only, unpaired `oasi_net_payroll_tax_contributions`.
+- `model_level_panel` is an ordered seven-object array in exact
+  `model_metric_specs` order. Each object has exactly `model_metric_id`,
+  `unit`, and `annual_rows`; the ID and unit exactly equal its metric spec.
+  `annual_rows` contains exactly eight objects, ordered 2015 through 2022,
+  each with exactly `year`, `mean`, and `sample_sd`. `year` is the JSON integer
+  for that position; `mean` and `sample_sd` are finite JSON numbers, excluding
+  booleans, reducing the metric's 20 draw values, and `sample_sd` is
+  nonnegative. All 56 model-level rows are mandatory.
+
+Results validation checks each array position directly and detects duplicate
+IDs and `(ID, year)` keys before constructing any lookup or index. A missing,
+extra, duplicate, or reordered comparison ID, official series ID, model
+metric ID, or year; a wrong tagged-union branch, object key set, literal,
+type, count, unit, reason, value, reduction, or nonfinite number; or any
+omitted or added panel or row aborts publication. Exact configuration-echo
+equality does not substitute for this independent, complete results
+validation, and an empty or cherry-picked `results` object is invalid.
 
 Any preparation, invariant, compute, or publication failure writes the next
 append-only `runs/anchor_context_report_incident_<n>.json`. Here `<n>` is
