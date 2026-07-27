@@ -2,8 +2,9 @@
 
 ## State
 
-Implementation and fixture-only verification are complete. No production
-input has been opened and no production comparison value has been computed.
+Implementation, fixture-only verification, and branch publication are
+complete. No production input has been opened and no production comparison
+value has been computed.
 
 ## Done
 
@@ -118,7 +119,9 @@ input has been opened and no production comparison value has been computed.
   and private-root cleanup.
 - Recollected the final tier manifest: all five selections match their
   committed counts and sum to 3,798 tests.
+- Pushed `claude/context-report-impl` to the upstream repository.
 
 ## Next
 
-- Commit this final verification record and push the completed branch.
+- No implementation work remains. The production comparison is reserved for
+  the registered ceremony.
