@@ -10,9 +10,7 @@ import copy
 from typing import Any
 
 DESIGN_PATH = "docs/design/anchor_context_extraction.md"
-DESIGN_RATIFICATION_COMMIT = (
-    "1ad337d3a3eaeba3369a3405469b1e74335e156a"
-)
+DESIGN_RATIFICATION_COMMIT = "1ad337d3a3eaeba3369a3405469b1e74335e156a"
 DESIGN_REVISION = 4
 
 REPORT_SCHEMA_VERSION = "anchor_context_report.v1"
@@ -24,8 +22,7 @@ FIRST_ESTIMATES_INPUT_SHA256 = (
     "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
 )
 ANCHOR_INPUT_PATH = (
-    "data/external/"
-    "ssa_level_anchors_supplement2025_trustees2026_vintage1.json"
+    "data/external/ssa_level_anchors_supplement2025_trustees2026_vintage1.json"
 )
 ANCHOR_ARTIFACT_VINTAGE_ID = (
     "ssa_level_anchors.supplement2025_trustees2026.vintage1"
@@ -191,8 +188,7 @@ _MODEL_METRIC_SPECS: list[dict[str, Any]] = [
             }
         ],
         "unit": (
-            "nominal_frame_relative_taxable_payroll_dollars_per_calendar_"
-            "year"
+            "nominal_frame_relative_taxable_payroll_dollars_per_calendar_year"
         ),
     },
     {
@@ -328,15 +324,11 @@ _PAIRINGS: list[dict[str, Any]] = [
         ],
     },
     {
-        "pairing_id": (
-            "pair_retired_worker_december_current_payment_stock"
-        ),
+        "pairing_id": ("pair_retired_worker_december_current_payment_stock"),
         "model_metric_id": (
             "combined_own_retirement.weighted_beneficiary_count"
         ),
-        "anchor_series_id": (
-            "retired_worker_december_current_payment_stock"
-        ),
+        "anchor_series_id": ("retired_worker_december_current_payment_stock"),
         "mismatch_codes": [
             "annual_presence_vs_december_current_payment_stock",
             "opening_backfill_imputation",
@@ -448,8 +440,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
         ),
         "model_denominator_metric_id": None,
         "model_formula": (
-            'metric("modeled_award_flow.'
-            'average_monthly_benefit_at_award",d,y)'
+            'metric("modeled_award_flow.average_monthly_benefit_at_award",d,y)'
         ),
         "official_numerator_series_id": None,
         "official_denominator_series_id": None,
@@ -511,10 +502,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
             "current_payment_amount"
         ),
         "mismatch_codes": [
-            (
-                "annualized_statutory_amount_vs_december_current_payment_"
-                "amount"
-            ),
+            ("annualized_statutory_amount_vs_december_current_payment_amount"),
             (
                 "psid_labor_income_proxy_history_vs_administrative_"
                 "covered_earnings_history"
@@ -537,9 +525,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
             'metric("revenue.weighted_taxable_payroll",d,y)/'
             'metric("revenue.weighted_covered_earner_count",d,y)'
         ),
-        "official_numerator_series_id": (
-            "oasdi_reported_taxable_earnings"
-        ),
+        "official_numerator_series_id": ("oasdi_reported_taxable_earnings"),
         "official_denominator_series_id": (
             "oasdi_workers_with_taxable_earnings"
         ),
@@ -562,9 +548,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "comparison_id": (
-            "cmp_adjusted_taxable_payroll_per_covered_worker"
-        ),
+        "comparison_id": ("cmp_adjusted_taxable_payroll_per_covered_worker"),
         "availability": {"status": "available", "reason": None},
         "model_numerator_metric_id": "revenue.weighted_taxable_payroll",
         "model_denominator_metric_id": (
@@ -574,9 +558,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
             'metric("revenue.weighted_taxable_payroll",d,y)/'
             'metric("revenue.weighted_covered_earner_count",d,y)'
         ),
-        "official_numerator_series_id": (
-            "oasdi_adjusted_taxable_payroll"
-        ),
+        "official_numerator_series_id": ("oasdi_adjusted_taxable_payroll"),
         "official_denominator_series_id": "oasdi_covered_workers",
         "official_formula": (
             'official("oasdi_adjusted_taxable_payroll",y)/'
@@ -587,8 +569,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
             "calendar_year_adjusted_payroll_flow_per_annual_covered_worker"
         ),
         "accounting_scope": (
-            "model_proxy_taxable_payroll_vs_trustees_adjusted_taxable_"
-            "payroll"
+            "model_proxy_taxable_payroll_vs_trustees_adjusted_taxable_payroll"
         ),
         "mismatch_codes": [
             "labor_income_proxy_vs_adjusted_taxable_payroll",
@@ -618,9 +599,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
             'official("oasdi_workers_with_taxable_earnings",y)'
         ),
         "operation": "model_intensity_over_official_intensity",
-        "timing_scope": (
-            "calendar_year_contribution_flow_per_annual_worker"
-        ),
+        "timing_scope": ("calendar_year_contribution_flow_per_annual_worker"),
         "accounting_scope": (
             "model_earnings_year_rate_arithmetic_vs_supplement_gross_"
             "contributions"
@@ -672,9 +651,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "comparison_id": (
-            "cmp_retired_worker_beneficiaries_per_worker"
-        ),
+        "comparison_id": ("cmp_retired_worker_beneficiaries_per_worker"),
         "availability": {"status": "available", "reason": None},
         "model_numerator_metric_id": (
             "combined_own_retirement.weighted_beneficiary_count"
@@ -764,9 +741,7 @@ _COMPARISON_SPECS: list[dict[str, Any]] = [
         "official_numerator_series_id": (
             "retired_worker_benefits_paid_estimated_allocation"
         ),
-        "official_denominator_series_id": (
-            "oasdi_reported_taxable_earnings"
-        ),
+        "official_denominator_series_id": ("oasdi_reported_taxable_earnings"),
         "official_formula": (
             'official("retired_worker_benefits_paid_estimated_allocation",'
             'y)/official("oasdi_reported_taxable_earnings",y)'
@@ -911,8 +886,7 @@ def _assert_exact_json(actual: object, expected: object, path: str) -> None:
     if isinstance(expected, list):
         if len(actual) != len(expected):
             raise RegistryValidationError(
-                f"{path} has length {len(actual)}; "
-                f"expected {len(expected)}"
+                f"{path} has length {len(actual)}; expected {len(expected)}"
             )
         for index, (actual_value, expected_value) in enumerate(
             zip(actual, expected, strict=True)

@@ -30,10 +30,19 @@ reconnaissance is complete; no production input has been opened.
   registries with deep-copy accessors and strict type-aware equality.
   An independent parser confirmed exact equality to the four design
   registries (15/7/14/9); ruff and diff checks pass.
+- Implemented the pure comparison engine and exact-complete results
+  validator. It resolves all nine operands, requires ordered 20x8 grids,
+  joins flow and opening stock within draw/year, reduces ratios only after
+  per-draw evaluation, and emits 56 evaluated comparison rows, two
+  unavailable disclosures, 120 official levels, and 56 model levels.
+- Added 21 fixture-only unit tests, including three independent formula
+  recomputations and omission, duplicate, reordering, extra-ID, wrong-value,
+  mismatch-array, and level-only OASI cash forgeries. All 21 pass.
 
 ## Next
 
-- Complete fixture-first formula, selector, exact-results, and forgery tests.
+- Add production hash gates and the exact registered configuration/report
+  publication contracts.
 - Implement and validate the comparison engine and ceremony.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
