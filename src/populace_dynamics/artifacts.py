@@ -48,6 +48,7 @@ def write_new(
     *,
     sidecar: bool = False,
     sidecar_payload: object | None = None,
+    preserve_primary_on_sidecar_failure: bool = False,
 ) -> None:
     """Write an artifact without permitting an existing file to be replaced.
 
@@ -56,10 +57,16 @@ def write_new(
     environment and contract reference is written to ``<path>.env.json``.
     A caller that must bind the exact sidecar bytes from the primary artifact
     may pass a precomputed ``sidecar_payload``; providing one without opting
-    into ``sidecar`` is an error.
+    into ``sidecar`` is an error. Registered ceremonies whose append-only law
+    permanently occupies a primary path may opt out of the default rollback
+    by setting ``preserve_primary_on_sidecar_failure``.
     """
     if sidecar_payload is not None and not sidecar:
         raise ValueError("sidecar_payload requires sidecar=True")
+    if preserve_primary_on_sidecar_failure and not sidecar:
+        raise ValueError(
+            "preserve_primary_on_sidecar_failure requires sidecar=True"
+        )
     destination = Path(path)
     sidecar_destination = Path(f"{destination}.env.json")
     targets = (destination, sidecar_destination) if sidecar else (destination,)
@@ -86,6 +93,6 @@ def write_new(
         if rendered_sidecar is not None:
             _write_exclusive(sidecar_destination, rendered_sidecar)
     except BaseException:
-        if primary_written:
+        if primary_written and not preserve_primary_on_sidecar_failure:
             destination.unlink(missing_ok=True)
         raise

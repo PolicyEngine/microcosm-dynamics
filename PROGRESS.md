@@ -19,11 +19,12 @@ reconnaissance is complete; no production input has been opened.
   coordinator, and incident machinery.
 - Added a red test for the §5.2 requirement that a sidecar publication
   failure permanently retain the partial primary report.
+- Extended the shared exclusive writer with an opt-in preserve-primary mode;
+  its existing rollback behavior remains the default. All 10 contract
+  identity/writer tests pass.
 
 ## Next
 
-- Add the opt-in shared writer behavior without changing the existing
-  first-estimates rollback default.
 - Add fixture-first tests for the frozen context-report contract.
 - Implement and validate the comparison engine and ceremony.
 - Run formatting, lint, and the full estimates/publication suites.
