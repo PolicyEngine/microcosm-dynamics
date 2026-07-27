@@ -1034,6 +1034,12 @@ def _extract_observations(
             )
         cell = row[column]
         assert cell is not None
+        if cell.rowspan != 1 or cell.colspan != 1:
+            raise ValueError(
+                f"{series.series_id} {year} locator did not resolve to a "
+                "unique physical 1x1 data cell "
+                f"(rowspan={cell.rowspan}, colspan={cell.colspan})"
+            )
         if cell.tag != "td" or not cell.text:
             raise ValueError(
                 f"{series.series_id} {year} locator selected "

@@ -713,11 +713,28 @@ def test__builder__rejects_colspan_collapsed_value_cells(monkeypatch):
         size_bytes=len(attacked_raw),
         literal_entry=attacked_literal_entry,
     )
+    attacked_manifest = (
+        "\n".join(
+            attacked_entries[source.document_id].literal_entry
+            for source in builder.SOURCE_DOCUMENT_SPECS
+        )
+        + "\n"
+    ).encode()
+    attacked_manifest_sha256 = hashlib.sha256(attacked_manifest).hexdigest()
+    assert len(attacked_manifest) == 698
+    assert attacked_manifest_sha256 == (
+        "fa9a2cdc8d77f6e397bd87cc59ec1e887bb7e3d02084c963ff2420480f2eeee3"
+    )
 
     monkeypatch.setattr(
         builder,
         "read_verified_snapshots",
         lambda: (attacked_entries, attacked_raw_by_document_id),
+    )
+    monkeypatch.setattr(
+        builder,
+        "CAPTURE_MANIFEST_SHA256",
+        attacked_manifest_sha256,
     )
     with pytest.raises(ValueError, match="unique physical 1x1 data cell"):
         builder.build()
