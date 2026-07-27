@@ -38,12 +38,18 @@ reconnaissance is complete; no production input has been opened.
 - Added 21 fixture-only unit tests, including three independent formula
   recomputations and omission, duplicate, reordering, extra-ID, wrong-value,
   mismatch-array, and level-only OASI cash forgeries. All 21 pass.
+- Added the canonical report configuration, artifact, input hash-gate, and
+  typed append-only incident contracts. The production loader is
+  registration-token gated; the fixture loader rejects either production
+  path, hash, or vintage before opening any input.
+- Added 43 fixture-only publication tests covering exact schemas and canonical
+  bytes, hash-gate aborts, sidecar publication semantics, incident validation,
+  and malformed or non-contiguous incident histories. All 43 pass.
 
 ## Next
 
-- Add production hash gates and the exact registered configuration/report
-  publication contracts.
-- Implement and validate the comparison engine and ceremony.
+- Finish the sealed coordinator and runner, including the fixture-only
+  end-to-end rehearsal.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.
