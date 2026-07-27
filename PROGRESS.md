@@ -2,8 +2,8 @@
 
 ## State
 
-The builder, canonical artifact, and 20-test reproduction/fail-closed suite
-are implemented; final repository-wide verification remains.
+The builder, canonical artifact, and 22-test reproduction/fail-closed suite
+are implemented; final broader verification and push remain.
 
 ## Done
 
@@ -30,10 +30,13 @@ are implemented; final repository-wide verification remains.
 - Added a full-file SHA/canonical rebuild pin, the independent 15-by-8 survey
   literal grid, unit/scale/status/locator/source assertions, and negative
   tests for every fail-closed requirement class.
-- Confirmed all 20 focused tests pass and updated the unit tier from 848 to
-  868; collection now reports the expected 3,678 total tests.
+- Strengthened the global pre-parse source-hash test by mutating the sixth
+  snapshot without changing its size, pinned the two reviewed status-evidence
+  literals, and exact-checked every manifest path and per-series table title.
+- Confirmed all 22 focused tests pass and updated the unit tier from 848 to
+  870; collection now reports the expected 3,680 total tests.
 
 ## Next
 
-- Run the focused and full checks, write the final report, and push the
-  completed branch.
+- Complete the independent implementation audit and broader checks, write the
+  final report, and push the completed branch.

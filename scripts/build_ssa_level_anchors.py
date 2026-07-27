@@ -1099,6 +1099,22 @@ def _validate_registry() -> None:
     if set(TABLE_SPECS) != {series.table_id for series in SERIES_SPECS}:
         raise ValueError("table registry does not equal registered table use")
 
+    expected_status_evidence = {
+        "4.A5": "NOTES: Amounts by type of benefit are estimated.",
+        "4.B11": "e. Preliminary data.",
+    }
+    actual_status_evidence = {
+        table_id: TABLE_SPECS[table_id].status_evidence
+        for table_id in expected_status_evidence
+    }
+    if actual_status_evidence != expected_status_evidence:
+        raise ValueError("status evidence differs from reviewed literals")
+    if TABLE_SPECS["4.B11"].footnoted_years != (
+        (2021, "e"),
+        (2022, "e"),
+    ):
+        raise ValueError("4.B11 preliminary-year markers differ from literals")
+
     # These exact reviewed pairs defend against pattern-generated Trustees
     # identities.
     trustees_literals = (

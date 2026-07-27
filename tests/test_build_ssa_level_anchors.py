@@ -587,12 +587,14 @@ def test__anchor_artifact__pins_exact_source_table_titles():
     observed_tables = {}
     for determination in artifact["determinations"].values():
         table = determination["source_table"]
-        observed_tables[table["table_id"]] = (
+        observed = (
             table["publication"],
             table["edition_or_report_year"],
             table["table_title"],
             table["source_document_id"],
         )
+        assert observed == EXPECTED_TABLES[table["table_id"]]
+        observed_tables[table["table_id"]] = observed
         assert table["publisher"] == "Social Security Administration"
     assert observed_tables == EXPECTED_TABLES
 
@@ -609,7 +611,16 @@ def test__anchor_artifact__binds_sources_to_capture_manifest():
         assert document["sha256"] == sha256
         assert document["size_bytes"] == size
         assert document["retrieval_timestamp"] == timestamp
-        assert document["committed_raw_snapshot_path"].endswith(filename)
+        assert document["committed_raw_snapshot_path"] == (
+            "data/external/snapshots/ssa_level_anchors_vintage1/" f"{filename}"
+        )
+        assert document["capture_manifest_path"] == (
+            "data/external/snapshots/ssa_level_anchors_vintage1/"
+            "capture_manifest.txt"
+        )
+        assert document["source_hash_basis"] == (
+            "sha256 of exact committed raw snapshot bytes"
+        )
         assert document["capture_manifest_entry"] == (
             f"{timestamp} {sha256} {size} {filename}"
         )
@@ -636,8 +647,10 @@ def test__anchor_artifact__verified_against_denies_concept_equivalence():
 
 def test__builder__rejects_source_drift_before_parsing(tmp_path, monkeypatch):
     copied = _copy_snapshots(tmp_path)
-    source = copied / "supplement2025_6a.html"
-    source.write_bytes(source.read_bytes() + b"<!-- drift -->")
+    source = copied / "trustees2026_lr6g1.html"
+    changed = bytearray(source.read_bytes())
+    changed[-1] ^= 1
+    source.write_bytes(changed)
     monkeypatch.setattr(builder, "SNAPSHOT_DIR", copied)
 
     def parse_must_not_run(*_args, **_kwargs):
@@ -647,6 +660,15 @@ def test__builder__rejects_source_drift_before_parsing(tmp_path, monkeypatch):
 
     monkeypatch.setattr(builder, "_parse_tables", parse_must_not_run)
     with pytest.raises(ValueError, match="source-byte drift"):
+        builder.build()
+
+
+@pytest.mark.parametrize("table_id", ("4.A5", "4.B11"))
+def test__builder__rejects_missing_status_evidence(table_id, monkeypatch):
+    tables = dict(builder.TABLE_SPECS)
+    tables[table_id] = replace(tables[table_id], status_evidence=None)
+    monkeypatch.setattr(builder, "TABLE_SPECS", tables)
+    with pytest.raises(ValueError, match="status evidence"):
         builder.build()
 
 
