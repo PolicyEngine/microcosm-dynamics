@@ -681,6 +681,48 @@ def test__builder__rejects_capture_manifest_drift(tmp_path, monkeypatch):
         builder.build()
 
 
+def test__builder__rejects_colspan_collapsed_value_cells(monkeypatch):
+    entries, raw_by_document_id = builder.read_verified_snapshots()
+    attacked_entries = dict(entries)
+    attacked_raw_by_document_id = dict(raw_by_document_id)
+    document_id = "ssa_supplement_2025_6a"
+    raw = attacked_raw_by_document_id[document_id]
+    distinct_cells = (
+        b"        <td>5,440,023</td>\r\n"
+        b"        <td>2,838,988</td>"
+    )
+    collapsed_cell = b'        <td colspan="2">2,838,988</td>'
+    assert raw.count(distinct_cells) == 1
+    attacked_raw = raw.replace(distinct_cells, collapsed_cell)
+    attacked_raw_by_document_id[document_id] = attacked_raw
+
+    # Model a prospective capture whose snapshot and manifest entry were
+    # deliberately re-pinned together, so the source hash gate has passed.
+    original_entry = attacked_entries[document_id]
+    attacked_sha256 = hashlib.sha256(attacked_raw).hexdigest()
+    assert attacked_sha256 == (
+        "94e78a97f7921391fbe77ef4616796f09345d546af320fee14e094c9360c0ac7"
+    )
+    attacked_literal_entry = (
+        f"{original_entry.retrieval_timestamp} {attacked_sha256} "
+        f"{len(attacked_raw)} {original_entry.filename}"
+    )
+    attacked_entries[document_id] = replace(
+        original_entry,
+        sha256=attacked_sha256,
+        size_bytes=len(attacked_raw),
+        literal_entry=attacked_literal_entry,
+    )
+
+    monkeypatch.setattr(
+        builder,
+        "read_verified_snapshots",
+        lambda: (attacked_entries, attacked_raw_by_document_id),
+    )
+    with pytest.raises(ValueError, match="unique physical 1x1 data cell"):
+        builder.build()
+
+
 def test__builder__rejects_required_series_reorder(monkeypatch):
     specs = builder.SERIES_SPECS
     monkeypatch.setattr(
