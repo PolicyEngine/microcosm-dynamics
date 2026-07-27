@@ -45,11 +45,19 @@ reconnaissance is complete; no production input has been opened.
 - Added 43 fixture-only publication tests covering exact schemas and canonical
   bytes, hash-gate aborts, sidecar publication semantics, incident validation,
   and malformed or non-contiguous incident histories. All 43 pass.
+- Implemented the fail-closed coordinator with six prelaunch checks, exact
+  registered-versus-actual invocation comparison, the four ceremony phases,
+  append-only incident publication, and the one-retry preparation/compute
+  rule. It reuses the first-estimates lock and result/failure types.
+- Added 17 fixture-only artifact-tier coordinator tests covering phase
+  routing, both invariant boundaries, hash failure before engine entry,
+  production-identity rejection before reads, output-absence gates,
+  canonical invocation matching, frozen incident echoes, and retry law.
+  All 17 pass.
 
 ## Next
 
-- Finish the sealed coordinator and runner, including the fixture-only
-  end-to-end rehearsal.
+- Finish and test the sealed runner and the fixture-only end-to-end rehearsal.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.
