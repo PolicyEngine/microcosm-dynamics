@@ -27,8 +27,8 @@ before execution.
 - Rebuilt the real artifact byte-identically: 87,432 bytes and SHA-256
   `adc782a1a11c50969103c125a82b1539a7017241662d545d86bc6fc9227730c1`,
   with no artifact diff.
-- Black leaves both changed Python files unchanged; repository-wide Ruff
-  passes.
+- The sandbox-safe sequential repository-wide Black check leaves all 491
+  Python files unchanged; repository-wide Ruff passes.
 - The complete anchor-builder module passes in the unit tier (`23 passed`);
   the full tier-policy inventory passes (`1 passed, 3680 deselected`).
 - The full unit tier passes with sandbox-safe explicit core limits:
