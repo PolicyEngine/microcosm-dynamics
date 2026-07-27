@@ -54,10 +54,16 @@ reconnaissance is complete; no production input has been opened.
   production-identity rejection before reads, output-absence gates,
   canonical invocation matching, frozen incident echoes, and retry law.
   All 17 pass.
+- Added the one-shot isolated runner with a standard-library pre-import Git
+  guard and exact `--registration` forwarding. Thirteen fixture-only unit
+  tests cover clean sealed launch, unsealed/nonempty-cache refusal, dirty or
+  hidden index state, ignored executable artifacts, structured refusal, the
+  exact CLI surface, and terminal result serialization. All 13 pass.
 
 ## Next
 
-- Finish and test the sealed runner and the fixture-only end-to-end rehearsal.
+- Finish the standalone fixture-only end-to-end rehearsal and the
+  incident-history carry-forward audit.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.
