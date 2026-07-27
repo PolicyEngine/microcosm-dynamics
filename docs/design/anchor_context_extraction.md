@@ -994,8 +994,13 @@ six checks and sealed invocation → one registered run → append-only report
 pair or incident record → publication regardless → publication PR. The only
 retry branch is: retry-eligible incident → publish that incident → coordinator
 adjudication → one unchanged-configuration retry → report pair or second
-incident → publication regardless. Forecast-ledger entry 10 resolves at the
-context report publication PR's merge, not at extraction alone.
+incident → publication regardless. Forecast-ledger entry 10 resolves only
+at the merge of a publication PR whose payload is the complete primary
+report pair — the exact-complete, validator-passing
+`anchor_context_report_v1` with its integrity-bound sidecar. An
+incident-only publication, a partial or validator-failing report, or the
+extraction alone resolves nothing; those merges keep entry 10 open and
+the fresh-registration law governs the next attempt.
 
 ## 6. What is unchanged
 
