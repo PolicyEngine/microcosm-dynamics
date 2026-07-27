@@ -2,8 +2,7 @@
 
 ## State
 
-- In progress: apply the completed finding-by-finding edit map to
-  `docs/design/anchor_context_extraction.md`.
+- Revision 3 is complete and committed locally as `e1e4b5e`.
 - Required branch `claude/anchor-extraction-design` is clean at requested
   starting HEAD `774e9549f69928b01223a65717e80bf807f80165`.
 - The full 77-line referee verdict has been read through its final checks.
@@ -27,10 +26,16 @@
 - Chose and documented the verdict's open implementation judgments:
   ratio-of-intensities operation, tagged nulls for unavailable official
   series, and Trustees covered workers as the OASDI cash denominator.
+- Applied all six finding dispositions, including the exact configuration
+  echo and incident schemas, in the document-only substantive commit.
+- Parsed all frozen JSON registries, exact-checked their key sets and
+  cross-references, revalidated every artifact pointer/value/unit label and
+  the 160-row grids, confirmed the pinned hash, and passed `git diff --check`.
+- Completed three independent read-only audits; their concrete unit,
+  net-cash mismatch, retry-law, sidecar-path, and partial-publication findings
+  were corrected before the substantive commit.
 
 ## Next
 
-- Edit the model metric and comparison registries, OACT sequencing, mismatch
-  inventory, schema-version law, and ceremony schemas.
-- Validate the revised document finding-by-finding, commit with dispositions,
-  remove this temporary ledger, push, and write the external handoff report.
+- Commit this final ledger state, remove the temporary ledger so no scaffold
+  remains, push the branch, and write the external handoff report.
