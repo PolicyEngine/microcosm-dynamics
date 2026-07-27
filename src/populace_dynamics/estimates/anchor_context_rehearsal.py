@@ -26,6 +26,7 @@ from populace_dynamics.estimates import (
     anchor_context_publication as publication,
 )
 from populace_dynamics.estimates import anchor_context_registry as registry
+from populace_dynamics.estimates import anchor_context_report as report
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 _SCRIPT_PATH = (
@@ -339,21 +340,63 @@ def _assert_rehearsal_interpreter(
 
 
 def _load_fixture_inputs(registration_token):
+    if not isinstance(
+        registration_token,
+        publication.first_publication._RegisteredConfigurationToken,
+    ):
+        raise TypeError("fixture rehearsal requires its registration token")
     configuration = publication.first_publication._configuration_echo(
         registration_token
     )
+    _assert_rehearsal_identities(
+        configuration["first_estimates_input"],
+        configuration["anchor_input"],
+    )
     return publication.load_fixture_documents(
-        registration_token._repository_root,
-        first_estimates_input=configuration["first_estimates_input"],
-        anchor_input=configuration["anchor_input"],
+        registration_token._repository_root
     )
 
 
 def _fixture_operations(*, incident_probe: bool):
     operations = coordinator._default_operations()
 
-    def fail_compute(_first_estimates, _anchors):
+    def build_fixture_results(_registration, loaded_inputs):
+        return report.build_results(loaded_inputs)
+
+    def validate_fixture_results(
+        _registration,
+        results,
+        loaded_inputs,
+    ):
+        report.validate_results(
+            results,
+            fixture_inputs=loaded_inputs,
+        )
+
+    def fail_compute(_registration, _loaded_inputs):
         raise _ExpectedIncidentProbe("typed incident rehearsal probe")
+
+    def publish_fixture_artifact(
+        token,
+        artifact,
+        *,
+        input_bundle,
+        ceremony_capability,
+    ):
+        if ceremony_capability is not None:
+            raise TypeError("fixture publication rejects production authority")
+        configuration = publication.first_publication._configuration_echo(
+            token.registration
+        )
+        return publication._write_anchor_context_artifact_for_test(
+            repository_root=token.registration._repository_root,
+            artifact=artifact,
+            expected_configuration_echo=configuration,
+            expected_runtime_provenance=publication._runtime_provenance(token),
+            expected_prior_incidents=token.prior_incidents,
+            input_bundle=input_bundle,
+            sidecar_payload=token.sidecar_payload,
+        )
 
     def publish_fixture_incident(
         token,
@@ -384,8 +427,10 @@ def _fixture_operations(*, incident_probe: bool):
         assert_interpreter=_assert_rehearsal_interpreter,
         load_inputs=_load_fixture_inputs,
         build_results=(
-            fail_compute if incident_probe else operations.build_results
+            fail_compute if incident_probe else build_fixture_results
         ),
+        validate_results=validate_fixture_results,
+        publish_artifact=publish_fixture_artifact,
         publish_incident=publish_fixture_incident,
     )
 
@@ -445,11 +490,7 @@ def _run_success_ceremony(
     ):
         raise FixtureRehearsalError("fixture success ceremony did not publish")
 
-    first_estimates, anchors = publication.load_fixture_documents(
-        root,
-        first_estimates_input=first_estimates_input,
-        anchor_input=anchor_input,
-    )
+    fixture_inputs = publication.load_fixture_documents(root)
     artifact_raw = expected_primary.read_bytes()
     sidecar_raw = expected_sidecar.read_bytes()
     artifact = json.loads(artifact_raw)
@@ -463,8 +504,7 @@ def _run_success_ceremony(
         artifact,
         expected_configuration_echo=configuration,
         expected_runtime_provenance=runtime_provenance,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        input_bundle=fixture_inputs,
     )
 
 

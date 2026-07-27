@@ -49,12 +49,14 @@ PRELAUNCH_CHECK_NAMES = (
 )
 
 _SCRIPT_PATH = "scripts/run_anchor_context_report.py"
+_REGISTRATION_DIRECTORY = Path("docs/registrations")
 _IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _SAFE_REASON = first_coordinator._SAFE_EXTERNAL_REASON
 _ATTEMPT_CLAIM_PATH = Path("runs/anchor_context_report_attempt.claim")
 _ATTEMPT_CLAIM_SCHEMA = "anchor_context_report_attempt.v1"
 _RETRY_CLAIM_PATH = Path("runs/anchor_context_report_retry.claim")
 _RETRY_CLAIM_SCHEMA = "anchor_context_report_retry.v1"
+_REGISTRATION_MAX_BYTES = 1024 * 1024
 
 
 class _CeremonyAbort(RuntimeError):
@@ -62,6 +64,20 @@ class _CeremonyAbort(RuntimeError):
         super().__init__(detail)
         self.reason = reason
         self.detail = detail
+
+
+@dataclass(frozen=True, init=False)
+class _CeremonyCapability:
+    """Unforgeable, live authority for production input I/O and compute."""
+
+    registration: first_publication._RegisteredConfigurationToken
+    prelaunch_record: _PrelaunchRecord
+    attempt_claim: Path
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError(
+            "ceremony capabilities are minted only by the coordinator"
+        )
 
 
 def _claim_payload(
@@ -268,6 +284,167 @@ class _PrelaunchRecord:
     next_incident_index: int
 
 
+def _ceremony_capability_protocol():
+    """Expose only the sealed runner and live-capability verifier."""
+    issued: dict[
+        int,
+        tuple[
+            _CeremonyCapability,
+            first_publication._RegisteredConfigurationToken,
+            _PrelaunchRecord,
+            Path,
+            bytes,
+            tuple[int, int],
+        ],
+    ] = {}
+
+    def mint(
+        registration: first_publication._RegisteredConfigurationToken,
+        prelaunch_record: _PrelaunchRecord,
+        attempt_claim: Path,
+    ) -> _CeremonyCapability:
+        caller = sys._getframe(1)
+        parent = caller.f_back
+        if (
+            caller.f_code is not _run_registered_anchor_context_core.__code__
+            or parent is None
+            or parent.f_code is not run.__code__
+            or caller.f_locals.get("mint_capability") is not mint
+            or caller.f_locals.get("production_only") is not True
+            or caller.f_locals.get("registration") is not registration
+            or caller.f_locals.get("prelaunch_record") is not prelaunch_record
+            or caller.f_locals.get("attempt_claim") != attempt_claim
+        ):
+            raise TypeError(
+                "ceremony capabilities can be minted only on the sealed "
+                "runner stack"
+            )
+        if not isinstance(
+            registration,
+            first_publication._RegisteredConfigurationToken,
+        ):
+            raise TypeError("ceremony capability requires registration")
+        if not isinstance(prelaunch_record, _PrelaunchRecord):
+            raise TypeError("ceremony capability requires all six checks")
+        expected_claim = registration._repository_root / _ATTEMPT_CLAIM_PATH
+        if attempt_claim != expected_claim:
+            raise RuntimeError("ceremony capability claim path changed")
+        claim = _read_claim(
+            attempt_claim,
+            schema_version=_ATTEMPT_CLAIM_SCHEMA,
+            retry=False,
+        )
+        if (
+            claim is None
+            or claim.get("registration_reference")
+            != registration._registration_reference
+        ):
+            raise RuntimeError(
+                "ceremony capability requires its canonical attempt claim"
+            )
+        claim_payload = _claim_payload(
+            schema_version=_ATTEMPT_CLAIM_SCHEMA,
+            registration_reference=registration._registration_reference,
+        )
+        claim_metadata = os.stat(attempt_claim, follow_symlinks=False)
+        claim_file_id = (claim_metadata.st_dev, claim_metadata.st_ino)
+        capability = object.__new__(_CeremonyCapability)
+        object.__setattr__(capability, "registration", registration)
+        object.__setattr__(
+            capability,
+            "prelaunch_record",
+            prelaunch_record,
+        )
+        object.__setattr__(capability, "attempt_claim", attempt_claim)
+        issued[id(capability)] = (
+            capability,
+            registration,
+            prelaunch_record,
+            attempt_claim,
+            claim_payload,
+            claim_file_id,
+        )
+        return capability
+
+    def require(
+        capability: object,
+    ) -> first_publication._RegisteredConfigurationToken:
+        state = issued.get(id(capability))
+        if (
+            state is None
+            or state[0] is not capability
+            or not isinstance(capability, _CeremonyCapability)
+        ):
+            raise TypeError(
+                "production operation requires a live ceremony capability"
+            )
+        (
+            _,
+            registration,
+            record,
+            attempt_claim,
+            claim_payload,
+            claim_file_id,
+        ) = state
+        current_claim = _read_claim(
+            attempt_claim,
+            schema_version=_ATTEMPT_CLAIM_SCHEMA,
+            retry=False,
+        )
+        try:
+            claim_metadata = os.stat(attempt_claim, follow_symlinks=False)
+        except OSError as error:
+            raise TypeError("ceremony attempt claim disappeared") from error
+        if (
+            capability.registration is not registration
+            or capability.prelaunch_record is not record
+            or capability.attempt_claim != attempt_claim
+            or current_claim is None
+            or anchor_context_publication.canonical_json_bytes(current_claim)
+            != claim_payload
+            or (claim_metadata.st_dev, claim_metadata.st_ino) != claim_file_id
+        ):
+            raise TypeError("ceremony capability state changed")
+        return registration
+
+    def revoke(capability: object) -> None:
+        state = issued.get(id(capability))
+        if state is not None and state[0] is capability:
+            issued.pop(id(capability), None)
+
+    def run(registration_path: str | Path) -> CoordinatorResult:
+        root = _sealed_repository_root()
+        actual_invocation = list(getattr(sys, "orig_argv", ()))
+        with first_coordinator._exclusive_ceremony_lock(root):
+            registered_configuration_bytes = (
+                _read_registered_configuration_bytes(
+                    root,
+                    registration_path,
+                )
+            )
+            return _run_registered_anchor_context_core(
+                repository_root=root,
+                registered_configuration_bytes=registered_configuration_bytes,
+                actual_invocation=actual_invocation,
+                operations=_default_operations(),
+                production_only=True,
+                mint_capability=mint,
+                revoke_capability=revoke,
+            )
+
+    run.__name__ = "run_registered_anchor_context"
+    run.__qualname__ = "run_registered_anchor_context"
+    run.__doc__ = (
+        "Run the production ceremony through the sealed registration gate."
+    )
+    return run, require
+
+
+run_registered_anchor_context, _require_ceremony_capability = (
+    _ceremony_capability_protocol()
+)
+
+
 @dataclass(frozen=True)
 class _CoordinatorOperations:
     """Injectable seams; the public production function accepts none."""
@@ -275,9 +452,7 @@ class _CoordinatorOperations:
     assert_interpreter: Callable[[Mapping[str, Any], Sequence[str]], None]
     validate_repository: Callable[[Path, Mapping[str, Any]], None]
     prepare_sidecar: Callable[[Path], tuple[bytes, str]]
-    load_inputs: Callable[
-        [first_publication._RegisteredConfigurationToken], Any
-    ]
+    load_inputs: Callable[[object], Any]
     build_results: Callable[..., Mapping[str, Any]]
     validate_results: Callable[..., None]
     build_runtime_provenance: Callable[[str], Mapping[str, Any]]
@@ -444,27 +619,47 @@ def _validate_repository(
 
 
 def _load_inputs(
-    registration: first_publication._RegisteredConfigurationToken,
+    ceremony_capability: _CeremonyCapability,
 ) -> anchor_context_publication._VerifiedProductionInputs:
-    return anchor_context_publication._load_production_documents(registration)
+    return anchor_context_publication._load_production_documents(
+        ceremony_capability
+    )
+
+
+def _build_results(
+    ceremony_capability: _CeremonyCapability,
+    loaded_inputs: anchor_context_publication._VerifiedProductionInputs,
+) -> Mapping[str, Any]:
+    return anchor_context_report._build_production_results(
+        ceremony_capability,
+        loaded_inputs,
+    )
+
+
+def _validate_results(
+    ceremony_capability: _CeremonyCapability,
+    results: Mapping[str, Any],
+    loaded_inputs: anchor_context_publication._VerifiedProductionInputs,
+) -> None:
+    anchor_context_report._validate_production_results(
+        ceremony_capability,
+        results,
+        loaded_inputs,
+    )
 
 
 def _publish_artifact(
     token: anchor_context_publication._AnchorContextPrecomputeToken,
     artifact: Mapping[str, Any],
     *,
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
-    verified_production_inputs: (
-        anchor_context_publication._VerifiedProductionInputs | None
-    ) = None,
+    input_bundle: object,
+    ceremony_capability: _CeremonyCapability,
 ) -> Path:
     return anchor_context_publication.write_anchor_context_artifact(
         token,
         artifact,
-        first_estimates=first_estimates,
-        anchors=anchors,
-        verified_production_inputs=verified_production_inputs,
+        input_bundle=input_bundle,
+        ceremony_capability=ceremony_capability,
     )
 
 
@@ -476,8 +671,8 @@ def _default_operations() -> _CoordinatorOperations:
             anchor_context_publication.prepare_environment_sidecar
         ),
         load_inputs=_load_inputs,
-        build_results=anchor_context_report.build_results,
-        validate_results=anchor_context_report.validate_results,
+        build_results=_build_results,
+        validate_results=_validate_results,
         build_runtime_provenance=(
             anchor_context_publication.build_runtime_provenance
         ),
@@ -742,15 +937,31 @@ def _publish_abort(
     )
 
 
-def _run_registered_anchor_context_for_test(
+def _run_registered_anchor_context_core(
     *,
     repository_root: str | Path,
     registered_configuration_bytes: bytes,
     actual_invocation: Sequence[str],
     operations: _CoordinatorOperations,
-    production_only: bool = False,
+    production_only: bool,
+    mint_capability: (
+        Callable[
+            [
+                first_publication._RegisteredConfigurationToken,
+                _PrelaunchRecord,
+                Path,
+            ],
+            _CeremonyCapability,
+        ]
+        | None
+    ),
+    revoke_capability: Callable[[object], None] | None,
 ) -> CoordinatorResult:
-    """Test-private ceremony implementation with injectable operations."""
+    """Shared ceremony state machine; only the sealed closure can mint."""
+    if production_only != (mint_capability is not None):
+        raise TypeError("production execution requires the sealed issuer")
+    if (mint_capability is None) != (revoke_capability is None):
+        raise TypeError("ceremony capability lifecycle is incomplete")
     root = Path(repository_root).resolve()
     registration = _parse_configuration(
         repository_root=root,
@@ -761,136 +972,165 @@ def _run_registered_anchor_context_for_test(
     precompute: (
         anchor_context_publication._AnchorContextPrecomputeToken | None
     ) = None
+    ceremony_capability: _CeremonyCapability | None = None
     try:
-        history = _read_incident_history(
-            root,
-            production_only=production_only,
-        )
-        retry_after_incident = _authorize_invocation(configuration, history)
-        _create_attempt_claim(
-            root,
-            configuration["registration_reference"],
-            allow_matching_retry_claim=retry_after_incident is not None,
-        )
-        if retry_after_incident is not None:
-            _create_retry_claim(
+        try:
+            history = _read_incident_history(
+                root,
+                production_only=production_only,
+            )
+            retry_after_incident = _authorize_invocation(
+                configuration,
+                history,
+            )
+            prelaunch_record = _complete_prelaunch_checks(
+                repository_root=root,
+                configuration=configuration,
+                actual_invocation=actual_invocation,
+                history=history,
+                operations=operations,
+            )
+            if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
+                raise AssertionError("prelaunch check record changed")
+            attempt_claim = _create_attempt_claim(
                 root,
                 configuration["registration_reference"],
-                retry_after_incident,
+                allow_matching_retry_claim=retry_after_incident is not None,
             )
-        prelaunch_record = _complete_prelaunch_checks(
-            repository_root=root,
-            configuration=configuration,
-            actual_invocation=actual_invocation,
-            history=history,
-            operations=operations,
-        )
-        if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
-            raise AssertionError("prelaunch check record changed")
-        sidecar_payload, reported_sidecar_hash = operations.prepare_sidecar(
-            root
-        )
-        runtime_provenance = operations.build_runtime_provenance(
-            configuration["implementation_commit"]
-        )
-        precompute = anchor_context_publication._freeze_precompute(
-            registration,
-            runtime_provenance=runtime_provenance,
-            sidecar_payload=sidecar_payload,
-            prior_incidents=history.paths,
-        )
-        if reported_sidecar_hash != precompute.sidecar_sha256:
-            raise ValueError(
-                "prepared sidecar digest differs from frozen bytes"
+            if retry_after_incident is not None:
+                _create_retry_claim(
+                    root,
+                    configuration["registration_reference"],
+                    retry_after_incident,
+                )
+            execution_authority: object = registration
+            if mint_capability is not None:
+                ceremony_capability = mint_capability(
+                    registration,
+                    prelaunch_record,
+                    attempt_claim,
+                )
+                execution_authority = ceremony_capability
+            sidecar_payload, reported_sidecar_hash = (
+                operations.prepare_sidecar(root)
             )
-        loaded_inputs = operations.load_inputs(registration)
-        if isinstance(
-            loaded_inputs,
-            anchor_context_publication._VerifiedProductionInputs,
-        ):
-            first_estimates = loaded_inputs.first_estimates
-            anchors = loaded_inputs.anchors
-            verified_production_inputs = loaded_inputs
-        else:
-            try:
-                first_estimates, anchors = loaded_inputs
-            except (TypeError, ValueError) as error:
-                raise TypeError(
-                    "input loader must return verified production inputs "
-                    "or a fixture document pair"
-                ) from error
-            verified_production_inputs = None
-    except BaseException as error:
-        return _publish_abort(
-            precompute or registration,
-            phase="preparation",
-            error=error,
-            estimate_bearing_information_yielded=False,
-            operations=operations,
-        )
+            runtime_provenance = operations.build_runtime_provenance(
+                configuration["implementation_commit"]
+            )
+            precompute = anchor_context_publication._freeze_precompute(
+                registration,
+                runtime_provenance=runtime_provenance,
+                sidecar_payload=sidecar_payload,
+                prior_incidents=history.paths,
+            )
+            if reported_sidecar_hash != precompute.sidecar_sha256:
+                raise ValueError(
+                    "prepared sidecar digest differs from frozen bytes"
+                )
+            loaded_inputs = operations.load_inputs(execution_authority)
+            if production_only:
+                anchor_context_publication._require_verified_production_inputs(
+                    loaded_inputs,
+                    ceremony_capability=ceremony_capability,
+                )
+            else:
+                anchor_context_publication._require_verified_fixture_inputs(
+                    loaded_inputs
+                )
+        except BaseException as error:
+            return _publish_abort(
+                precompute or registration,
+                phase="preparation",
+                error=error,
+                estimate_bearing_information_yielded=False,
+                operations=operations,
+            )
 
-    operations.after_preparation()
-    try:
-        results = operations.build_results(first_estimates, anchors)
-    except BaseException as error:
-        return _publish_abort(
-            precompute,
-            phase="compute",
-            error=error,
-            estimate_bearing_information_yielded=False,
-            operations=operations,
-        )
+        operations.after_preparation()
+        try:
+            results = operations.build_results(
+                execution_authority,
+                loaded_inputs,
+            )
+        except BaseException as error:
+            return _publish_abort(
+                precompute,
+                phase="compute",
+                error=error,
+                estimate_bearing_information_yielded=False,
+                operations=operations,
+            )
 
-    estimate_bearing_information_yielded = True
-    try:
-        operations.validate_results(
-            results,
-            first_estimates=first_estimates,
-            anchors=anchors,
-        )
-        artifact = operations.build_artifact(
-            configuration_echo=configuration,
-            runtime_provenance=runtime_provenance,
-            results=results,
-            first_estimates=first_estimates,
-            anchors=anchors,
-            environment_sidecar_sha256=precompute.sidecar_sha256,
-            prior_incidents=precompute.prior_incidents,
-            verified_production_inputs=verified_production_inputs,
-        )
-    except BaseException as error:
-        return _publish_abort(
-            precompute,
-            phase="invariant",
-            error=error,
-            estimate_bearing_information_yielded=(
-                estimate_bearing_information_yielded
-            ),
-            operations=operations,
-        )
+        estimate_bearing_information_yielded = True
+        try:
+            operations.validate_results(
+                execution_authority,
+                results,
+                loaded_inputs,
+            )
+            artifact = operations.build_artifact(
+                configuration_echo=configuration,
+                runtime_provenance=runtime_provenance,
+                results=results,
+                input_bundle=loaded_inputs,
+                environment_sidecar_sha256=precompute.sidecar_sha256,
+                prior_incidents=precompute.prior_incidents,
+                ceremony_capability=ceremony_capability,
+            )
+        except BaseException as error:
+            return _publish_abort(
+                precompute,
+                phase="invariant",
+                error=error,
+                estimate_bearing_information_yielded=(
+                    estimate_bearing_information_yielded
+                ),
+                operations=operations,
+            )
 
-    try:
-        operations.validate_repository(root, configuration)
-        path = operations.publish_artifact(
-            precompute,
-            artifact,
-            first_estimates=first_estimates,
-            anchors=anchors,
-            verified_production_inputs=verified_production_inputs,
-        )
-    except BaseException as error:
-        return _publish_abort(
-            precompute,
+        try:
+            operations.validate_repository(root, configuration)
+            path = operations.publish_artifact(
+                precompute,
+                artifact,
+                input_bundle=loaded_inputs,
+                ceremony_capability=ceremony_capability,
+            )
+        except BaseException as error:
+            return _publish_abort(
+                precompute,
+                phase="publication",
+                error=error,
+                estimate_bearing_information_yielded=True,
+                operations=operations,
+            )
+        return CoordinatorResult(
+            status="published",
+            path=path,
             phase="publication",
-            error=error,
-            estimate_bearing_information_yielded=True,
-            operations=operations,
+            reason=None,
         )
-    return CoordinatorResult(
-        status="published",
-        path=path,
-        phase="publication",
-        reason=None,
+    finally:
+        if ceremony_capability is not None and revoke_capability is not None:
+            revoke_capability(ceremony_capability)
+
+
+def _run_registered_anchor_context_for_test(
+    *,
+    repository_root: str | Path,
+    registered_configuration_bytes: bytes,
+    actual_invocation: Sequence[str],
+    operations: _CoordinatorOperations,
+) -> CoordinatorResult:
+    """Run only the fixed-fixture ceremony with injectable test operations."""
+    return _run_registered_anchor_context_core(
+        repository_root=repository_root,
+        registered_configuration_bytes=registered_configuration_bytes,
+        actual_invocation=actual_invocation,
+        operations=operations,
+        production_only=False,
+        mint_capability=None,
+        revoke_capability=None,
     )
 
 
@@ -905,29 +1145,139 @@ def _sealed_repository_root() -> Path:
     return root.resolve()
 
 
-def run_registered_anchor_context(
+def _read_registered_configuration_bytes(
+    repository_root: Path,
     registration_path: str | Path,
-) -> CoordinatorResult:
-    """Run the production ceremony with no input or output injection."""
-    root = _sealed_repository_root()
-    path = Path(registration_path)
-    if not path.is_absolute():
-        path = root / path
-    resolved = path.resolve()
-    try:
-        resolved.relative_to(root)
-    except ValueError as error:
-        raise ValueError("registration path escapes the repository") from error
-    registered_configuration_bytes = resolved.read_bytes()
-    actual_invocation = list(getattr(sys, "orig_argv", ()))
-    with first_coordinator._exclusive_ceremony_lock(root):
-        return _run_registered_anchor_context_for_test(
-            repository_root=root,
-            registered_configuration_bytes=registered_configuration_bytes,
-            actual_invocation=actual_invocation,
-            operations=_default_operations(),
-            production_only=True,
+) -> bytes:
+    """Validate and read registration through one pinned descriptor chain."""
+    root = repository_root.resolve()
+    candidate = Path(registration_path)
+    if candidate.is_absolute():
+        try:
+            relative = candidate.relative_to(root)
+        except ValueError as error:
+            raise ValueError(
+                "registration path escapes the repository"
+            ) from error
+    else:
+        relative = candidate
+    parts = relative.parts
+    if relative in {
+        Path(registry.FIRST_ESTIMATES_INPUT_PATH),
+        Path(registry.ANCHOR_INPUT_PATH),
+    }:
+        raise ValueError("registration path aliases protected ceremony data")
+    if (
+        len(parts) != 3
+        or parts[:2] != _REGISTRATION_DIRECTORY.parts
+        or parts[2] in {"", ".", ".."}
+        or not parts[2].endswith(".json")
+    ):
+        raise ValueError(
+            "registration must be a regular JSON file directly under "
+            "docs/registrations"
         )
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    close_on_exec = getattr(os, "O_CLOEXEC", None)
+    if (
+        no_follow is None
+        or directory_flag is None
+        or nonblocking is None
+        or close_on_exec is None
+    ):
+        raise RuntimeError("platform lacks sealed registration flags")
+
+    descriptors: list[int] = []
+    registration_descriptor: int | None = None
+    try:
+        root_descriptor = os.open(
+            root,
+            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+        )
+        descriptors.append(root_descriptor)
+        protected_file_ids: set[tuple[int, int]] = set()
+        for protected_path in (
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+            registry.ANCHOR_INPUT_PATH,
+        ):
+            try:
+                protected = os.stat(
+                    protected_path,
+                    dir_fd=root_descriptor,
+                    follow_symlinks=False,
+                )
+            except OSError:
+                continue
+            if not stat.S_ISREG(protected.st_mode):
+                raise ValueError(
+                    "canonical production input path is not regular"
+                )
+            protected_file_ids.add((protected.st_dev, protected.st_ino))
+        current = root_descriptor
+        for component in _REGISTRATION_DIRECTORY.parts:
+            current = os.open(
+                component,
+                os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+                dir_fd=current,
+            )
+            descriptors.append(current)
+        registration_descriptor = os.open(
+            parts[2],
+            os.O_RDONLY | no_follow | nonblocking | close_on_exec,
+            dir_fd=current,
+        )
+        before = os.fstat(registration_descriptor)
+        if (
+            not stat.S_ISREG(before.st_mode)
+            or before.st_nlink != 1
+            or before.st_size > _REGISTRATION_MAX_BYTES
+        ):
+            raise ValueError(
+                "registration must be one singly linked bounded regular file"
+            )
+        if (before.st_dev, before.st_ino) in protected_file_ids:
+            raise ValueError(
+                "registration path aliases protected ceremony data"
+            )
+        chunks: list[bytes] = []
+        observed = 0
+        while True:
+            chunk = os.read(
+                registration_descriptor,
+                min(64 * 1024, _REGISTRATION_MAX_BYTES + 1 - observed),
+            )
+            if not chunk:
+                break
+            chunks.append(chunk)
+            observed += len(chunk)
+            if observed > _REGISTRATION_MAX_BYTES:
+                raise ValueError(
+                    "registered configuration exceeds its byte bound"
+                )
+        payload = b"".join(chunks)
+        after = os.fstat(registration_descriptor)
+        stable_fields = (
+            "st_dev",
+            "st_ino",
+            "st_mode",
+            "st_nlink",
+            "st_size",
+            "st_mtime_ns",
+            "st_ctime_ns",
+        )
+        if any(
+            getattr(before, field) != getattr(after, field)
+            for field in stable_fields
+        ):
+            raise ValueError("registration changed during its sealed read")
+        return payload
+    finally:
+        if registration_descriptor is not None:
+            os.close(registration_descriptor)
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
 
 
 __all__ = [

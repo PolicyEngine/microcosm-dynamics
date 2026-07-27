@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,7 @@ import pytest
 from populace_dynamics import artifacts
 from populace_dynamics.contract import ContractRef
 from populace_dynamics.estimates import (
+    anchor_context_coordinator,
     anchor_context_publication,
     anchor_context_report,
 )
@@ -115,9 +117,12 @@ def _fixture_inputs() -> tuple[dict[str, Any], dict[str, Any]]:
     return first_estimates, anchors
 
 
+def _fixture_bundle():
+    return anchor_context_publication.load_fixture_documents(REPOSITORY_ROOT)
+
+
 def _results() -> dict[str, Any]:
-    first_estimates, anchors = _fixture_inputs()
-    return anchor_context_report.build_results(first_estimates, anchors)
+    return anchor_context_report.build_results(_fixture_bundle())
 
 
 def _sidecar_payload() -> bytes:
@@ -156,15 +161,19 @@ def _artifact() -> tuple[
     bytes,
 ]:
     configuration = _configuration()
-    first_estimates, anchors = _fixture_inputs()
-    results = anchor_context_report.build_results(first_estimates, anchors)
+    fixture_inputs = _fixture_bundle()
+    first_estimates, anchors = (
+        anchor_context_publication._require_verified_fixture_inputs(
+            fixture_inputs
+        )
+    )
+    results = anchor_context_report.build_results(fixture_inputs)
     sidecar_payload = _sidecar_payload()
     artifact = anchor_context_publication.build_anchor_context_artifact(
         configuration_echo=configuration,
         runtime_provenance=RUNTIME_PROVENANCE,
         results=results,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        input_bundle=fixture_inputs,
         environment_sidecar_sha256=hashlib.sha256(sidecar_payload).hexdigest(),
     )
     return (
@@ -177,8 +186,13 @@ def _artifact() -> tuple[
 
 
 def _repository(tmp_path: Path) -> Path:
-    root = tmp_path / "repo"
+    root = tmp_path / "anchor-context-fixture-rehearsal-test"
     (root / "runs").mkdir(parents=True)
+    for source in (FIRST_ESTIMATES_FIXTURE, ANCHOR_FIXTURE):
+        relative = source.relative_to(REPOSITORY_ROOT)
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
     return root
 
 
@@ -339,25 +353,28 @@ def test_registered_configuration_rejects_bytes_keys_and_registry_drift():
 def test_fixture_hash_loader_and_echo_use_only_fixture_identities():
     first_identity, anchor_identity = _fixture_identities()
 
-    loaded_first = anchor_context_publication._load_verified_json(
+    loaded_first, first_raw = anchor_context_publication._load_verified_json(
         REPOSITORY_ROOT,
         first_identity,
         role="first_estimates",
     )
-    loaded_anchor = anchor_context_publication._load_verified_json(
+    loaded_anchor, anchor_raw = anchor_context_publication._load_verified_json(
         REPOSITORY_ROOT,
         anchor_identity,
         role="anchor",
     )
+    fixture_bundle = anchor_context_publication.load_fixture_documents(
+        REPOSITORY_ROOT
+    )
     fixture_first, fixture_anchor = (
-        anchor_context_publication.load_fixture_documents(
-            REPOSITORY_ROOT,
-            first_estimates_input=first_identity,
-            anchor_input=anchor_identity,
+        anchor_context_publication._require_verified_fixture_inputs(
+            fixture_bundle
         )
     )
     assert loaded_first == fixture_first
     assert loaded_anchor == fixture_anchor
+    assert first_raw == FIRST_ESTIMATES_FIXTURE.read_bytes()
+    assert anchor_raw == ANCHOR_FIXTURE.read_bytes()
     assert fixture_first["fixture_only"] is True
     assert fixture_anchor["fixture_only"] is True
 
@@ -387,12 +404,196 @@ def test_fixture_hash_loader_and_echo_use_only_fixture_identities():
 
     wrong_hash = copy.deepcopy(first_identity)
     wrong_hash["sha256"] = "0" * 64
-    with pytest.raises(ValueError, match="sha256"):
+    with pytest.raises(ValueError, match="identity"):
         anchor_context_publication._load_verified_json(
             REPOSITORY_ROOT,
             wrong_hash,
             role="first_estimates",
         )
+
+
+def test_constructible_registration_token_cannot_open_production_inputs(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    configuration = _production_configuration()
+    registered_bytes = anchor_context_publication.canonical_json_bytes(
+        configuration
+    )
+    registration = anchor_context_publication.first_publication._parse_registered_configuration(
+        repository_root=REPOSITORY_ROOT,
+        registration_reference=REGISTRATION_REFERENCE,
+        registered_configuration_bytes=registered_bytes,
+    )
+    attempted_reads: list[str] = []
+
+    def forbidden_loader(*_args, **_kwargs):
+        attempted_reads.append("production")
+        raise AssertionError("production loader reached an input read")
+
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_load_verified_json",
+        forbidden_loader,
+    )
+
+    with pytest.raises(TypeError, match="live ceremony capability"):
+        anchor_context_publication._load_production_documents(registration)
+
+    assert attempted_reads == []
+
+
+def test_public_engine_rejects_raw_nonfixture_documents_before_compute(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    first_estimates, anchors = _fixture_inputs()
+    first_estimates["fixture_only"] = True
+    anchors["fixture_only"] = True
+    reached_core = False
+
+    def forbidden_extraction(*_args, **_kwargs):
+        nonlocal reached_core
+        reached_core = True
+        raise AssertionError("raw documents reached report computation")
+
+    monkeypatch.setattr(
+        anchor_context_report,
+        "_extract_model_metrics",
+        forbidden_extraction,
+    )
+
+    with pytest.raises(TypeError, match="loader-issued bundle"):
+        anchor_context_report.build_results((first_estimates, anchors))
+
+    assert reached_core is False
+
+
+def test_raw_fixture_marker_cannot_authorize_any_report_operation():
+    first_estimates, anchors = _fixture_inputs()
+    raw_pair = (first_estimates, anchors)
+    valid_results = anchor_context_report.build_results(_fixture_bundle())
+
+    with pytest.raises(TypeError, match="loader-issued bundle"):
+        anchor_context_report.extract_model_metrics(raw_pair)
+    with pytest.raises(TypeError, match="loader-issued bundle"):
+        anchor_context_report.extract_official_values(raw_pair)
+    with pytest.raises(TypeError, match="loader-issued bundle"):
+        anchor_context_report.validate_results(
+            valid_results,
+            fixture_inputs=raw_pair,
+        )
+    with pytest.raises(TypeError, match="loader-issued bundle"):
+        anchor_context_publication.build_anchor_context_artifact(
+            configuration_echo=_configuration(),
+            runtime_provenance=RUNTIME_PROVENANCE,
+            results=valid_results,
+            input_bundle=raw_pair,
+            environment_sidecar_sha256="0" * 64,
+        )
+
+
+@pytest.mark.parametrize(
+    ("role", "fixture_relative", "protected_relative"),
+    [
+        (
+            "first_estimates",
+            FIRST_ESTIMATES_FIXTURE.relative_to(REPOSITORY_ROOT).as_posix(),
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+        ),
+        (
+            "anchor",
+            ANCHOR_FIXTURE.relative_to(REPOSITORY_ROOT).as_posix(),
+            registry.ANCHOR_INPUT_PATH,
+        ),
+    ],
+)
+def test_fixture_loader_rejects_hardlinked_production_inode_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    role: str,
+    fixture_relative: str,
+    protected_relative: str,
+):
+    root = tmp_path / "repo"
+    protected = root / protected_relative
+    protected.parent.mkdir(parents=True)
+    protected.write_bytes(b"protected production bytes")
+    fixture_path = root / fixture_relative
+    fixture_path.parent.mkdir(parents=True, exist_ok=True)
+    os.link(protected, fixture_path)
+    reads = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal reads
+        reads += 1
+        raise AssertionError("aliased production bytes were read")
+
+    monkeypatch.setattr(anchor_context_publication.os, "read", forbidden_read)
+
+    with pytest.raises(ValueError, match="singly linked|aliases a production"):
+        anchor_context_publication._load_verified_json(
+            root,
+            anchor_context_publication._fixture_input_identity(role),
+            role=role,
+        )
+
+    assert reads == 0
+
+
+def test_fixture_loader_rejects_reverse_production_symlink_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    fixture_path = root / anchor_context_publication._FIXTURE_FIRST_PATH
+    fixture_path.parent.mkdir(parents=True)
+    fixture_path.write_bytes(FIRST_ESTIMATES_FIXTURE.read_bytes())
+    protected = root / registry.FIRST_ESTIMATES_INPUT_PATH
+    protected.parent.mkdir(parents=True, exist_ok=True)
+    protected.symlink_to(fixture_path)
+    reads = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal reads
+        reads += 1
+        raise AssertionError("reverse-aliased production bytes were read")
+
+    monkeypatch.setattr(anchor_context_publication.os, "read", forbidden_read)
+
+    with pytest.raises(
+        ValueError, match="production input path is not regular"
+    ):
+        anchor_context_publication._load_verified_json(
+            root,
+            anchor_context_publication._fixture_input_identity(
+                "first_estimates"
+            ),
+            role="first_estimates",
+        )
+
+    assert reads == 0
+
+
+def test_forged_ceremony_capability_cannot_reach_production_compute(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    reached_core = False
+
+    def forbidden_core(*_args, **_kwargs):
+        nonlocal reached_core
+        reached_core = True
+        raise AssertionError("forged authority reached report computation")
+
+    monkeypatch.setattr(
+        anchor_context_report,
+        "_build_results",
+        forbidden_core,
+    )
+    forged = object.__new__(anchor_context_coordinator._CeremonyCapability)
+
+    with pytest.raises(TypeError, match="live ceremony capability"):
+        anchor_context_report._build_production_results(forged, object())
+
+    assert reached_core is False
 
 
 def test_artifact_is_exact_complete_and_bound_to_fixture_results():
@@ -451,31 +652,23 @@ def test_artifact_is_exact_complete_and_bound_to_fixture_results():
         artifact,
         expected_configuration_echo=configuration,
         expected_runtime_provenance=RUNTIME_PROVENANCE,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        input_bundle=_fixture_bundle(),
     )
 
 
 def test_artifact_builder_rejects_production_echo_with_unverified_documents():
-    first_estimates, anchors = _fixture_inputs()
-    with pytest.raises(TypeError, match="hash-gated"):
+    fixture_inputs = _fixture_bundle()
+    with pytest.raises(TypeError, match="ceremony authority"):
         anchor_context_publication.build_anchor_context_artifact(
             configuration_echo=_production_configuration(),
             runtime_provenance=RUNTIME_PROVENANCE,
-            results=anchor_context_report.build_results(
-                first_estimates,
-                anchors,
-            ),
-            first_estimates=first_estimates,
-            anchors=anchors,
+            results=anchor_context_report.build_results(fixture_inputs),
+            input_bundle=fixture_inputs,
             environment_sidecar_sha256="0" * 64,
         )
 
 
-@pytest.mark.parametrize("mutated_input", ["first_estimates", "anchors"])
-def test_artifact_builder_rejects_mutation_after_production_hash_gate(
-    mutated_input: str,
-):
+def test_production_input_bundle_is_not_caller_constructible():
     configuration = _production_configuration()
     registered_bytes = anchor_context_publication.canonical_json_bytes(
         configuration
@@ -486,31 +679,12 @@ def test_artifact_builder_rejects_mutation_after_production_hash_gate(
         registered_configuration_bytes=registered_bytes,
     )
     first_estimates, anchors = _fixture_inputs()
-    results = anchor_context_report.build_results(first_estimates, anchors)
-    verified = anchor_context_publication._VerifiedProductionInputs(
-        anchor_context_publication._VERIFIED_INPUT_AUTHORITY,
-        registration=registration,
-        first_estimates=first_estimates,
-        anchors=anchors,
-    )
-    if mutated_input == "first_estimates":
-        first_estimates["tables"]["revenue"]["per_draw"][0][
-            "combined_contributions"
-        ] += 1
-    else:
-        anchors["determinations"]["retired_worker_awards"]["observations"][0][
-            "value"
-        ] += 1
-
-    with pytest.raises(ValueError, match="mutated after"):
-        anchor_context_publication.build_anchor_context_artifact(
-            configuration_echo=configuration,
-            runtime_provenance=RUNTIME_PROVENANCE,
-            results=results,
+    with pytest.raises(TypeError, match="minted only inside"):
+        anchor_context_publication._VerifiedProductionInputs(
+            registration=registration,
+            ceremony_capability=object(),
             first_estimates=first_estimates,
             anchors=anchors,
-            environment_sidecar_sha256="0" * 64,
-            verified_production_inputs=verified,
         )
 
 
@@ -529,7 +703,7 @@ def test_artifact_builder_rejects_mutation_after_production_hash_gate(
 def test_artifact_validator_rejects_schema_and_content_forgery(
     mutation: str,
 ):
-    artifact, configuration, first_estimates, anchors, _ = _artifact()
+    artifact, configuration, _first, _anchors, _ = _artifact()
     mutant = copy.deepcopy(artifact)
 
     if mutation == "extra_top_level":
@@ -559,8 +733,7 @@ def test_artifact_validator_rejects_schema_and_content_forgery(
             mutant,
             expected_configuration_echo=configuration,
             expected_runtime_provenance=RUNTIME_PROVENANCE,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            input_bundle=_fixture_bundle(),
         )
 
 
@@ -569,8 +742,16 @@ def test_artifact_writer_binds_sidecar_and_retains_primary_on_failure(
     monkeypatch: pytest.MonkeyPatch,
 ):
     root = _repository(tmp_path)
-    artifact, configuration, first_estimates, anchors, sidecar_payload = (
+    _source_artifact, configuration, _first, _anchors, sidecar_payload = (
         _artifact()
+    )
+    fixture_inputs = anchor_context_publication.load_fixture_documents(root)
+    artifact = anchor_context_publication.build_anchor_context_artifact(
+        configuration_echo=configuration,
+        runtime_provenance=RUNTIME_PROVENANCE,
+        results=anchor_context_report.build_results(fixture_inputs),
+        input_bundle=fixture_inputs,
+        environment_sidecar_sha256=hashlib.sha256(sidecar_payload).hexdigest(),
     )
     wrong_binding = copy.deepcopy(artifact)
     wrong_binding["integrity"]["environment_sidecar"]["sha256"] = "f" * 64
@@ -580,8 +761,7 @@ def test_artifact_writer_binds_sidecar_and_retains_primary_on_failure(
             artifact=wrong_binding,
             expected_configuration_echo=configuration,
             expected_runtime_provenance=RUNTIME_PROVENANCE,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            input_bundle=fixture_inputs,
             sidecar_payload=sidecar_payload,
         )
     assert not (root / "runs" / "anchor_context_report_v1.json").exists()
@@ -600,8 +780,7 @@ def test_artifact_writer_binds_sidecar_and_retains_primary_on_failure(
             artifact=artifact,
             expected_configuration_echo=configuration,
             expected_runtime_provenance=RUNTIME_PROVENANCE,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            input_bundle=fixture_inputs,
             sidecar_payload=sidecar_payload,
         )
 
@@ -618,10 +797,37 @@ def test_artifact_writer_binds_sidecar_and_retains_primary_on_failure(
             artifact=artifact,
             expected_configuration_echo=configuration,
             expected_runtime_provenance=RUNTIME_PROVENANCE,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            input_bundle=fixture_inputs,
             sidecar_payload=sidecar_payload,
         )
+
+
+def test_fixture_writer_rejects_alternate_root_and_mutated_bundle_root(
+    tmp_path: Path,
+):
+    root = tmp_path / "alternate-checkout"
+    (root / "runs").mkdir(parents=True)
+    artifact, configuration, _first, _anchors, sidecar_payload = _artifact()
+    fixture_inputs = _fixture_bundle()
+    kwargs = {
+        "repository_root": root,
+        "artifact": artifact,
+        "expected_configuration_echo": configuration,
+        "expected_runtime_provenance": RUNTIME_PROVENANCE,
+        "input_bundle": fixture_inputs,
+        "sidecar_payload": sidecar_payload,
+    }
+
+    with pytest.raises(TypeError, match="issued private rehearsal root"):
+        anchor_context_publication._write_anchor_context_artifact_for_test(
+            **kwargs
+        )
+    object.__setattr__(fixture_inputs, "repository_root", root)
+    with pytest.raises(ValueError, match="bundle bytes changed"):
+        anchor_context_publication._write_anchor_context_artifact_for_test(
+            **kwargs
+        )
+    assert not (root / registry.PRIMARY_OUTPUT_PATH).exists()
 
 
 def test_incident_schema_types_timestamp_and_canonical_bytes(tmp_path: Path):

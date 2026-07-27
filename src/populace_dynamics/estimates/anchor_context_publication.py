@@ -13,6 +13,8 @@ import json
 import os
 import platform
 import re
+import stat
+import tempfile
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -141,6 +143,20 @@ _SHA256 = re.compile(r"[0-9a-f]{64}")
 _RUNTIME_KEYS = frozenset(
     {"schema_version", "implementation_commit", "python", "platform"}
 )
+_FIXTURE_FIRST_PATH = (
+    "tests/fixtures/anchor_context/first_estimates_fixture_v1.json"
+)
+_FIXTURE_FIRST_SHA256 = (
+    "be95a6eef919d2cf46197467fd75463d2c94d607983674da9f2723b0391d1c61"
+)
+_FIXTURE_ANCHOR_PATH = (
+    "tests/fixtures/anchor_context/ssa_level_anchors_fixture_v1.json"
+)
+_FIXTURE_ANCHOR_SHA256 = (
+    "0a473202440878e66201f60fbd76a686d22b77a2b0fd64fefb3b88bcc55f2ac4"
+)
+_FIXTURE_ANCHOR_VINTAGE = "ssa_level_anchors.fixture_only.v1"
+_FILE_READ_CHUNK_SIZE = 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -154,43 +170,38 @@ class _AnchorContextPrecomputeToken:
     prior_incidents: tuple[str, ...]
 
 
-_VERIFIED_INPUT_AUTHORITY = object()
-
-
 @dataclass(frozen=True, init=False)
 class _VerifiedProductionInputs:
     """Opaque result of both registered production hash gates."""
 
+    ceremony_capability: object
     registration: first_publication._RegisteredConfigurationToken
     first_estimates: Mapping[str, Any]
     anchors: Mapping[str, Any]
     first_estimates_snapshot: bytes
     anchors_snapshot: bytes
 
-    def __init__(
-        self,
-        authority: object,
-        *,
-        registration: first_publication._RegisteredConfigurationToken,
-        first_estimates: Mapping[str, Any],
-        anchors: Mapping[str, Any],
-    ):
-        if authority is not _VERIFIED_INPUT_AUTHORITY:
-            raise TypeError(
-                "verified production inputs are created only by the hash gate"
-            )
-        object.__setattr__(self, "registration", registration)
-        object.__setattr__(self, "first_estimates", first_estimates)
-        object.__setattr__(self, "anchors", anchors)
-        object.__setattr__(
-            self,
-            "first_estimates_snapshot",
-            canonical_json_bytes(first_estimates),
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError(
+            "verified production inputs are minted only inside the ceremony"
         )
-        object.__setattr__(
-            self,
-            "anchors_snapshot",
-            canonical_json_bytes(anchors),
+
+
+@dataclass(frozen=True, init=False)
+class _VerifiedFixtureInputs:
+    """Opaque result of the one fixed nonproduction fixture hash gate."""
+
+    repository_root: Path
+    first_estimates_input: Mapping[str, Any]
+    anchor_input: Mapping[str, Any]
+    first_estimates: Mapping[str, Any]
+    anchors: Mapping[str, Any]
+    first_estimates_snapshot: bytes
+    anchors_snapshot: bytes
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError(
+            "verified fixture inputs are minted only by the fixed loader"
         )
 
 
@@ -512,24 +523,177 @@ def _validate_input_identity(
     return value
 
 
-def _load_verified_json(
+def _production_input_identity(role: str) -> Mapping[str, Any]:
+    if role == "first_estimates":
+        return registry.first_estimates_input_identity()
+    if role == "anchor":
+        return registry.anchor_input_identity()
+    raise ValueError("unknown input role")
+
+
+def _fixture_input_identity(role: str) -> Mapping[str, Any]:
+    if role == "first_estimates":
+        return {
+            "path": _FIXTURE_FIRST_PATH,
+            "sha256": _FIXTURE_FIRST_SHA256,
+        }
+    if role == "anchor":
+        return {
+            "path": _FIXTURE_ANCHOR_PATH,
+            "artifact_vintage_id": _FIXTURE_ANCHOR_VINTAGE,
+            "sha256": _FIXTURE_ANCHOR_SHA256,
+        }
+    raise ValueError("unknown input role")
+
+
+def _open_regular_relative(
+    io_authority: object,
+    repository_root: Path,
+    relative_path: str,
+) -> tuple[int, os.stat_result]:
+    """Open one regular file without following any path-component symlink."""
+    _require_input_io_authority(io_authority)
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    close_on_exec = getattr(os, "O_CLOEXEC", None)
+    if (
+        no_follow is None
+        or directory_flag is None
+        or nonblocking is None
+        or close_on_exec is None
+    ):
+        raise RuntimeError("platform lacks sealed descriptor flags")
+    parts = PurePosixPath(relative_path).parts
+    if not parts:
+        raise ValueError("input path is empty")
+    opened_directories: list[int] = []
+    try:
+        current = os.open(
+            repository_root,
+            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+        )
+        opened_directories.append(current)
+        for component in parts[:-1]:
+            current = os.open(
+                component,
+                os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+                dir_fd=current,
+            )
+            opened_directories.append(current)
+        descriptor = os.open(
+            parts[-1],
+            os.O_RDONLY | no_follow | nonblocking | close_on_exec,
+            dir_fd=current,
+        )
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode):
+            os.close(descriptor)
+            raise ValueError("input path is not a regular file")
+        return descriptor, metadata
+    finally:
+        for directory in reversed(opened_directories):
+            os.close(directory)
+
+
+def _protected_input_file_ids(
+    io_authority: object,
+    repository_root: Path,
+) -> frozenset[tuple[int, int]]:
+    _require_input_io_authority(io_authority)
+    protected: set[tuple[int, int]] = set()
+    for relative in (
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        registry.ANCHOR_INPUT_PATH,
+    ):
+        try:
+            metadata = os.stat(
+                repository_root / relative,
+                follow_symlinks=False,
+            )
+        except OSError:
+            continue
+        if not stat.S_ISREG(metadata.st_mode):
+            raise ValueError("canonical production input path is not regular")
+        protected.add((metadata.st_dev, metadata.st_ino))
+    return frozenset(protected)
+
+
+def _read_open_descriptor(io_authority: object, descriptor: int) -> bytes:
+    _require_input_io_authority(io_authority)
+    chunks: list[bytes] = []
+    while True:
+        chunk = os.read(descriptor, _FILE_READ_CHUNK_SIZE)
+        if not chunk:
+            return b"".join(chunks)
+        chunks.append(chunk)
+
+
+def _load_verified_json_with_authority(
+    io_authority: object,
     repository_root: str | Path,
     identity: Mapping[str, Any],
     *,
     role: str,
-) -> Mapping[str, Any]:
-    """Hash exact bytes before deserializing one registered JSON input."""
+    ceremony_capability: object | None = None,
+) -> tuple[Mapping[str, Any], bytes]:
+    """Load exactly one fixed fixture or capability-bound production input."""
+    _require_input_io_authority(io_authority)
     root = Path(repository_root).resolve()
     validated = _validate_input_identity(identity, role=role)
-    path = root / validated["path"]
-    if path.is_symlink():
-        raise ValueError(f"{role} input must not be a symlink")
-    resolved = path.resolve()
+    production_identity = _production_input_identity(role)
+    fixture_identity = _fixture_input_identity(role)
+    is_production = dict(validated) == dict(production_identity)
+    is_fixture = dict(validated) == dict(fixture_identity)
+    if not is_production and not is_fixture:
+        raise ValueError(
+            "input identity is neither fixed fixture nor production"
+        )
+
+    if is_production:
+        if ceremony_capability is None:
+            raise TypeError(
+                "production input I/O requires a live ceremony capability"
+            )
+        from populace_dynamics.estimates import anchor_context_coordinator
+
+        registration = anchor_context_coordinator._require_ceremony_capability(
+            ceremony_capability
+        )
+        configuration = first_publication._configuration_echo(registration)
+        configuration_key = (
+            "first_estimates_input"
+            if role == "first_estimates"
+            else "anchor_input"
+        )
+        if (
+            registration._repository_root != root
+            or configuration.get(configuration_key) != production_identity
+        ):
+            raise ValueError(
+                "ceremony capability is not bound to this production input"
+            )
+    elif ceremony_capability is not None:
+        raise TypeError("fixture input I/O rejects production authority")
+
+    descriptor, metadata = _open_regular_relative(
+        io_authority,
+        root,
+        validated["path"],
+    )
     try:
-        resolved.relative_to(root)
-    except ValueError as error:
-        raise ValueError(f"{role} input escapes the repository") from error
-    raw = resolved.read_bytes()
+        file_id = (metadata.st_dev, metadata.st_ino)
+        if metadata.st_nlink != 1:
+            raise ValueError("input must be a singly linked regular file")
+        if is_fixture and file_id in _protected_input_file_ids(
+            io_authority,
+            root,
+        ):
+            raise ValueError("fixture input aliases a production input")
+        raw = _read_open_descriptor(io_authority, descriptor)
+    finally:
+        os.close(descriptor)
+
     digest = hashlib.sha256(raw).hexdigest()
     if digest != validated["sha256"]:
         raise ValueError(f"{role} input sha256 differs from registration")
@@ -538,94 +702,313 @@ def _load_verified_json(
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError(f"{role} input is not valid JSON") from error
     value = _require_mapping(document, f"{role} input")
+    if canonical_json_bytes(value) != raw:
+        raise ValueError(f"{role} input is not canonical JSON")
     if role == "anchor" and value.get("artifact_vintage_id") != (
         validated["artifact_vintage_id"]
     ):
         raise ValueError("anchor input vintage differs from registration")
-    return value
+    return value, raw
+
+
+def _input_io_protocol():
+    authority = object()
+
+    def require(candidate: object) -> None:
+        if candidate is not authority:
+            raise TypeError("input I/O is internal to a verified loader")
+
+    def load(
+        repository_root: str | Path,
+        identity: Mapping[str, Any],
+        *,
+        role: str,
+        ceremony_capability: object | None = None,
+    ) -> tuple[Mapping[str, Any], bytes]:
+        return _load_verified_json_with_authority(
+            authority,
+            repository_root,
+            identity,
+            role=role,
+            ceremony_capability=ceremony_capability,
+        )
+
+    return load, require
+
+
+_load_verified_json, _require_input_io_authority = _input_io_protocol()
 
 
 def _assert_fixture_identities(
     first_estimates_input: Mapping[str, Any],
     anchor_input: Mapping[str, Any],
 ) -> None:
-    first = _validate_input_identity(
-        first_estimates_input,
-        role="first_estimates",
-    )
-    anchor = _validate_input_identity(anchor_input, role="anchor")
-    production_paths = {
-        registry.FIRST_ESTIMATES_INPUT_PATH,
-        registry.ANCHOR_INPUT_PATH,
-    }
-    production_hashes = {
-        registry.FIRST_ESTIMATES_INPUT_SHA256,
-        registry.ANCHOR_INPUT_SHA256,
-    }
-    if first["path"] in production_paths or anchor["path"] in production_paths:
-        raise ValueError("fixture rehearsal rejects production input paths")
-    if (
-        first["sha256"] in production_hashes
-        or anchor["sha256"] in production_hashes
-    ):
-        raise ValueError("fixture rehearsal rejects production input hashes")
-    if anchor["artifact_vintage_id"] == registry.ANCHOR_ARTIFACT_VINTAGE_ID:
-        raise ValueError("fixture rehearsal rejects the production vintage")
-
-
-def load_fixture_documents(
-    repository_root: str | Path,
-    *,
-    first_estimates_input: Mapping[str, Any],
-    anchor_input: Mapping[str, Any],
-) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-    """Load only identities structurally disjoint from both production inputs."""
-    _assert_fixture_identities(first_estimates_input, anchor_input)
-    first = _load_verified_json(
-        repository_root,
-        first_estimates_input,
-        role="first_estimates",
-    )
-    anchor = _load_verified_json(
-        repository_root,
-        anchor_input,
-        role="anchor",
-    )
-    if first.get("fixture_only") is not True:
-        raise ValueError("first-estimates rehearsal input is not fixture-only")
-    if anchor.get("fixture_only") is not True:
-        raise ValueError("anchor rehearsal input is not fixture-only")
-    return first, anchor
-
-
-def _load_production_documents(
-    token: first_publication._RegisteredConfigurationToken,
-) -> _VerifiedProductionInputs:
-    if not isinstance(token, first_publication._RegisteredConfigurationToken):
-        raise TypeError(
-            "production input loading requires a registration token"
+    first = dict(
+        _validate_input_identity(
+            first_estimates_input,
+            role="first_estimates",
         )
-    configuration = first_publication._configuration_echo(token)
-    validate_registered_configuration_echo(
-        configuration,
-        registered_configuration_bytes=token._configuration_bytes,
     )
-    first = _load_verified_json(
-        token._repository_root,
-        configuration["first_estimates_input"],
-        role="first_estimates",
-    )
-    anchor = _load_verified_json(
-        token._repository_root,
-        configuration["anchor_input"],
-        role="anchor",
-    )
-    return _VerifiedProductionInputs(
-        _VERIFIED_INPUT_AUTHORITY,
-        registration=token,
-        first_estimates=first,
-        anchors=anchor,
-    )
+    anchor = dict(_validate_input_identity(anchor_input, role="anchor"))
+    if first != _fixture_input_identity("first_estimates"):
+        raise ValueError("fixture first-estimates identity is not fixed")
+    if anchor != _fixture_input_identity("anchor"):
+        raise ValueError("fixture anchor identity is not fixed")
+
+
+def _fixture_input_protocol():
+    issued: dict[
+        int,
+        tuple[_VerifiedFixtureInputs, Path, bytes, bytes, bool],
+    ] = {}
+
+    def load(repository_root: str | Path) -> _VerifiedFixtureInputs:
+        """Load only the two immutable manifest-bound fixture files."""
+        root = Path(repository_root).resolve()
+        first_identity = _fixture_input_identity("first_estimates")
+        anchor_identity = _fixture_input_identity("anchor")
+        first, first_raw = _load_verified_json(
+            root,
+            first_identity,
+            role="first_estimates",
+        )
+        anchor, anchor_raw = _load_verified_json(
+            root,
+            anchor_identity,
+            role="anchor",
+        )
+        if first.get("fixture_only") is not True:
+            raise ValueError(
+                "first-estimates rehearsal input is not fixture-only"
+            )
+        if anchor.get("fixture_only") is not True:
+            raise ValueError("anchor rehearsal input is not fixture-only")
+        bundle = object.__new__(_VerifiedFixtureInputs)
+        object.__setattr__(bundle, "repository_root", root)
+        object.__setattr__(
+            bundle,
+            "first_estimates_input",
+            dict(first_identity),
+        )
+        object.__setattr__(bundle, "anchor_input", dict(anchor_identity))
+        object.__setattr__(bundle, "first_estimates", first)
+        object.__setattr__(bundle, "anchors", anchor)
+        object.__setattr__(
+            bundle,
+            "first_estimates_snapshot",
+            first_raw,
+        )
+        object.__setattr__(bundle, "anchors_snapshot", anchor_raw)
+        temporary_root = Path(tempfile.gettempdir()).resolve()
+        try:
+            root.relative_to(temporary_root)
+            under_temporary_root = True
+        except ValueError:
+            under_temporary_root = False
+        publishable = under_temporary_root and root.name.startswith(
+            "anchor-context-fixture-rehearsal-"
+        )
+        issued[id(bundle)] = (
+            bundle,
+            root,
+            first_raw,
+            anchor_raw,
+            publishable,
+        )
+        return bundle
+
+    def require(
+        bundle: object,
+    ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+        state = issued.get(id(bundle))
+        if (
+            state is None
+            or state[0] is not bundle
+            or not isinstance(bundle, _VerifiedFixtureInputs)
+        ):
+            raise TypeError(
+                "fixture computation requires a fixed loader-issued bundle"
+            )
+        _, issued_root, first_raw, anchor_raw, _publishable = state
+        if (
+            bundle.repository_root != issued_root
+            or bundle.first_estimates_snapshot != first_raw
+            or bundle.anchors_snapshot != anchor_raw
+            or hashlib.sha256(first_raw).hexdigest() != _FIXTURE_FIRST_SHA256
+            or hashlib.sha256(anchor_raw).hexdigest() != _FIXTURE_ANCHOR_SHA256
+        ):
+            raise ValueError("fixed fixture bundle bytes changed")
+        try:
+            first = _require_mapping(
+                json.loads(first_raw),
+                "first-estimates fixture",
+            )
+            anchor = _require_mapping(
+                json.loads(anchor_raw),
+                "anchor fixture",
+            )
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ValueError("fixed fixture bundle is invalid JSON") from error
+        if (
+            canonical_json_bytes(first) != first_raw
+            or canonical_json_bytes(anchor) != anchor_raw
+            or first.get("fixture_only") is not True
+            or anchor.get("fixture_only") is not True
+            or anchor.get("artifact_vintage_id") != _FIXTURE_ANCHOR_VINTAGE
+        ):
+            raise ValueError("fixed fixture bundle content changed")
+        return first, anchor
+
+    def require_publishable(
+        bundle: object,
+        repository_root: Path,
+    ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+        documents = require(bundle)
+        state = issued[id(bundle)]
+        _, issued_root, _first_raw, _anchor_raw, publishable = state
+        if not publishable or repository_root.resolve() != issued_root:
+            raise TypeError(
+                "fixture publication requires its issued private rehearsal root"
+            )
+        return documents
+
+    load.__name__ = "load_fixture_documents"
+    load.__qualname__ = "load_fixture_documents"
+    return load, require, require_publishable
+
+
+(
+    load_fixture_documents,
+    _require_verified_fixture_inputs,
+    _require_publishable_fixture_inputs,
+) = _fixture_input_protocol()
+
+
+def _production_input_protocol():
+    issued: dict[
+        int,
+        tuple[
+            _VerifiedProductionInputs,
+            object,
+            first_publication._RegisteredConfigurationToken,
+            bytes,
+            bytes,
+        ],
+    ] = {}
+
+    def load(ceremony_capability: object) -> _VerifiedProductionInputs:
+        from populace_dynamics.estimates import anchor_context_coordinator
+
+        token = anchor_context_coordinator._require_ceremony_capability(
+            ceremony_capability
+        )
+        configuration = first_publication._configuration_echo(token)
+        validate_registered_configuration_echo(
+            configuration,
+            registered_configuration_bytes=token._configuration_bytes,
+        )
+        first, first_raw = _load_verified_json(
+            token._repository_root,
+            configuration["first_estimates_input"],
+            role="first_estimates",
+            ceremony_capability=ceremony_capability,
+        )
+        anchor, anchor_raw = _load_verified_json(
+            token._repository_root,
+            configuration["anchor_input"],
+            role="anchor",
+            ceremony_capability=ceremony_capability,
+        )
+        verified = object.__new__(_VerifiedProductionInputs)
+        object.__setattr__(
+            verified,
+            "ceremony_capability",
+            ceremony_capability,
+        )
+        object.__setattr__(verified, "registration", token)
+        object.__setattr__(verified, "first_estimates", first)
+        object.__setattr__(verified, "anchors", anchor)
+        object.__setattr__(
+            verified,
+            "first_estimates_snapshot",
+            first_raw,
+        )
+        object.__setattr__(verified, "anchors_snapshot", anchor_raw)
+        issued[id(verified)] = (
+            verified,
+            ceremony_capability,
+            token,
+            first_raw,
+            anchor_raw,
+        )
+        return verified
+
+    def require(
+        verified_inputs: object,
+        *,
+        ceremony_capability: object,
+    ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+        from populace_dynamics.estimates import anchor_context_coordinator
+
+        registration = anchor_context_coordinator._require_ceremony_capability(
+            ceremony_capability
+        )
+        state = issued.get(id(verified_inputs))
+        if (
+            state is None
+            or state[0] is not verified_inputs
+            or not isinstance(
+                verified_inputs,
+                _VerifiedProductionInputs,
+            )
+        ):
+            raise TypeError(
+                "production computation requires hash-gated inputs"
+            )
+        (
+            _,
+            issued_capability,
+            issued_registration,
+            first_raw,
+            anchor_raw,
+        ) = state
+        if (
+            issued_capability is not ceremony_capability
+            or issued_registration is not registration
+            or verified_inputs.ceremony_capability is not ceremony_capability
+            or verified_inputs.registration is not registration
+            or verified_inputs.first_estimates_snapshot != first_raw
+            or verified_inputs.anchors_snapshot != anchor_raw
+        ):
+            raise TypeError(
+                "hash-gated inputs belong to a different ceremony capability"
+            )
+        try:
+            first = _require_mapping(
+                json.loads(first_raw),
+                "first-estimates production input",
+            )
+            anchor = _require_mapping(
+                json.loads(anchor_raw),
+                "anchor production input",
+            )
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ValueError("production input snapshot is invalid") from error
+        if (
+            canonical_json_bytes(first) != first_raw
+            or canonical_json_bytes(anchor) != anchor_raw
+        ):
+            raise ValueError("production input snapshot changed")
+        return first, anchor
+
+    load.__name__ = "_load_production_documents"
+    load.__qualname__ = "_load_production_documents"
+    return load, require
+
+
+_load_production_documents, _require_verified_production_inputs = (
+    _production_input_protocol()
+)
 
 
 def _validate_environment_sidecar_hash(value: Any) -> str:
@@ -635,53 +1018,34 @@ def _validate_environment_sidecar_hash(value: Any) -> str:
 def _validate_artifact_input_binding(
     configuration: Mapping[str, Any],
     *,
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
-    verified_production_inputs: _VerifiedProductionInputs | None,
-) -> None:
+    input_bundle: object,
+    ceremony_capability: object | None,
+) -> tuple[Mapping[str, Any], Mapping[str, Any], bool]:
     production = (
         configuration["first_estimates_input"]
         == registry.first_estimates_input_identity()
         and configuration["anchor_input"] == registry.anchor_input_identity()
     )
     if production:
-        if not isinstance(
-            verified_production_inputs,
-            _VerifiedProductionInputs,
-        ):
+        if ceremony_capability is None:
             raise TypeError(
-                "production artifact validation requires hash-gated inputs"
+                "production artifact validation requires ceremony authority"
             )
+        first_estimates, anchors = _require_verified_production_inputs(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
         registered_configuration = first_publication._configuration_echo(
-            verified_production_inputs.registration
+            input_bundle.registration
         )
         _assert_exact_json(
             registered_configuration,
             configuration,
             "verified_inputs.configuration_echo",
         )
-        if (
-            first_estimates is not verified_production_inputs.first_estimates
-            or anchors is not verified_production_inputs.anchors
-        ):
-            raise ValueError(
-                "production artifact inputs differ from hash-gated documents"
-            )
-        if canonical_json_bytes(first_estimates) != (
-            verified_production_inputs.first_estimates_snapshot
-        ):
-            raise ValueError(
-                "first-estimates input mutated after its production hash gate"
-            )
-        if canonical_json_bytes(anchors) != (
-            verified_production_inputs.anchors_snapshot
-        ):
-            raise ValueError(
-                "anchor input mutated after its production hash gate"
-            )
-        return
-    if verified_production_inputs is not None:
-        raise TypeError("fixture artifacts cannot carry production authority")
+        return first_estimates, anchors, True
+    if ceremony_capability is not None:
+        raise TypeError("fixture artifacts cannot carry ceremony authority")
     first_input = _require_mapping(
         configuration["first_estimates_input"],
         "fixture artifact first_estimates_input",
@@ -691,12 +1055,15 @@ def _validate_artifact_input_binding(
         "fixture artifact anchor_input",
     )
     _assert_fixture_identities(first_input, anchor_input)
-    if first_estimates.get("fixture_only") is not True:
+    first_estimates, anchors = _require_verified_fixture_inputs(input_bundle)
+    if (
+        input_bundle.first_estimates_input != first_input
+        or input_bundle.anchor_input != anchor_input
+    ):
         raise ValueError(
-            "fixture artifact first-estimates input is not fixture"
+            "fixture artifact identities differ from fixed bundle"
         )
-    if anchors.get("fixture_only") is not True:
-        raise ValueError("fixture artifact anchor input is not fixture")
+    return first_estimates, anchors, False
 
 
 def _validate_prior_incident_paths(
@@ -723,20 +1090,18 @@ def build_anchor_context_artifact(
     configuration_echo: Mapping[str, Any],
     runtime_provenance: Mapping[str, Any],
     results: Mapping[str, Any],
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
+    input_bundle: object,
     environment_sidecar_sha256: str,
     prior_incidents: Sequence[str] = (),
-    verified_production_inputs: _VerifiedProductionInputs | None = None,
+    ceremony_capability: object | None = None,
 ) -> dict[str, Any]:
     """Assemble the complete integrity-bound primary report."""
     configuration = copy.deepcopy(dict(configuration_echo))
     _validate_configuration_echo_for_execution(configuration)
-    _validate_artifact_input_binding(
+    _first_estimates, _anchors, _production = _validate_artifact_input_binding(
         configuration,
-        first_estimates=first_estimates,
-        anchors=anchors,
-        verified_production_inputs=verified_production_inputs,
+        input_bundle=input_bundle,
+        ceremony_capability=ceremony_capability,
     )
     registration_reference = configuration["registration_reference"]
     artifact = {
@@ -775,9 +1140,8 @@ def build_anchor_context_artifact(
         expected_configuration_echo=configuration,
         expected_runtime_provenance=runtime_provenance,
         expected_prior_incidents=prior_incidents,
-        verified_production_inputs=verified_production_inputs,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        input_bundle=input_bundle,
+        ceremony_capability=ceremony_capability,
     )
     return artifact
 
@@ -788,9 +1152,8 @@ def validate_anchor_context_artifact(
     expected_configuration_echo: Mapping[str, Any],
     expected_runtime_provenance: Mapping[str, Any],
     expected_prior_incidents: Sequence[str] = (),
-    verified_production_inputs: _VerifiedProductionInputs | None = None,
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
+    input_bundle: object,
+    ceremony_capability: object | None = None,
 ) -> None:
     """Validate every report field and independently recompute all results."""
     value = _require_mapping(artifact, "artifact")
@@ -800,11 +1163,10 @@ def validate_anchor_context_artifact(
     if value["configuration_echo"] != expected_configuration_echo:
         raise ValueError("artifact configuration echo changed")
     _validate_configuration_echo_for_execution(value["configuration_echo"])
-    _validate_artifact_input_binding(
+    _first_estimates, _anchors, production = _validate_artifact_input_binding(
         value["configuration_echo"],
-        first_estimates=first_estimates,
-        anchors=anchors,
-        verified_production_inputs=verified_production_inputs,
+        input_bundle=input_bundle,
+        ceremony_capability=ceremony_capability,
     )
     identity = _require_mapping(value["identity"], "artifact identity")
     _require_exact_keys(
@@ -870,11 +1232,17 @@ def validate_anchor_context_artifact(
     if sidecar["path"] != Path(registry.SIDECAR_OUTPUT_PATH).name:
         raise ValueError("artifact environment sidecar path changed")
     _validate_environment_sidecar_hash(sidecar["sha256"])
-    anchor_context_report.validate_results(
-        value["results"],
-        first_estimates=first_estimates,
-        anchors=anchors,
-    )
+    if not production:
+        anchor_context_report.validate_results(
+            value["results"],
+            fixture_inputs=input_bundle,
+        )
+    else:
+        anchor_context_report._validate_production_results(
+            ceremony_capability,
+            value["results"],
+            input_bundle,
+        )
     canonical_json_bytes(value)
 
 
@@ -885,9 +1253,8 @@ def _write_anchor_context_artifact_for_test(
     expected_configuration_echo: Mapping[str, Any],
     expected_runtime_provenance: Mapping[str, Any],
     expected_prior_incidents: Sequence[str] = (),
-    verified_production_inputs: _VerifiedProductionInputs | None = None,
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
+    input_bundle: object,
+    ceremony_capability: object | None = None,
     sidecar_payload: bytes,
 ) -> Path:
     """Validate and exclusively write primary then sidecar without rollback."""
@@ -910,10 +1277,12 @@ def _write_anchor_context_artifact_for_test(
         expected_configuration_echo=expected_configuration_echo,
         expected_runtime_provenance=expected_runtime_provenance,
         expected_prior_incidents=expected_prior_incidents,
-        verified_production_inputs=verified_production_inputs,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        input_bundle=input_bundle,
+        ceremony_capability=ceremony_capability,
     )
+    production = ceremony_capability is not None
+    if not production:
+        _require_publishable_fixture_inputs(input_bundle, root)
     artifacts.write_new(
         destination,
         canonical_json_bytes(artifact),
@@ -991,13 +1360,16 @@ def write_anchor_context_artifact(
     token: _AnchorContextPrecomputeToken,
     artifact: Mapping[str, Any],
     *,
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
-    verified_production_inputs: _VerifiedProductionInputs | None = None,
+    input_bundle: object,
+    ceremony_capability: object,
 ) -> Path:
-    """Publish only through the opaque precompute token."""
+    """Publish production only through the live ceremony capability."""
     if not isinstance(token, _AnchorContextPrecomputeToken):
         raise TypeError("publication requires an anchor precompute token")
+    _require_verified_production_inputs(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
     configuration = first_publication._configuration_echo(token.registration)
     return _write_anchor_context_artifact_for_test(
         repository_root=token.registration._repository_root,
@@ -1005,9 +1377,8 @@ def write_anchor_context_artifact(
         expected_configuration_echo=configuration,
         expected_runtime_provenance=_runtime_provenance(token),
         expected_prior_incidents=token.prior_incidents,
-        verified_production_inputs=verified_production_inputs,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        input_bundle=input_bundle,
+        ceremony_capability=ceremony_capability,
         sidecar_payload=token.sidecar_payload,
     )
 

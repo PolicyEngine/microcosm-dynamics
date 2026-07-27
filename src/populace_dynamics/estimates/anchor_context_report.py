@@ -1,9 +1,9 @@
-"""Pure comparison engine for the registered anchor-context report.
+"""Capability-gated comparison engine for the anchor-context report.
 
-The functions in this module accept already decoded mappings and never open
-files. Production byte hashing and deserialization belong to the sealed
-ceremony; fixture rehearsal can therefore exercise this complete engine
-without possessing a production-input path capability.
+The public helpers accept visibly nonproduction fixture documents only.
+Production computation consumes the opaque, hash-gated input bundle minted
+inside the sealed coordinator; raw production mappings are never a supported
+engine input.
 """
 
 from __future__ import annotations
@@ -149,6 +149,23 @@ def _string(value: Any, label: str) -> str:
     if not isinstance(value, str) or not value:
         raise TypeError(f"{label} must be a nonempty JSON string")
     return value
+
+
+def _authorized_documents(
+    input_bundle: object,
+    *,
+    ceremony_capability: object | None,
+) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+    from populace_dynamics.estimates import anchor_context_publication
+
+    if ceremony_capability is None:
+        return anchor_context_publication._require_verified_fixture_inputs(
+            input_bundle
+        )
+    return anchor_context_publication._require_verified_production_inputs(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
 
 
 def _pointer_tokens(pointer: Any) -> tuple[str, ...]:
@@ -337,10 +354,16 @@ def _operand_values(
     return values
 
 
-def extract_model_metrics(
-    first_estimates: Mapping[str, Any],
+def _extract_model_metrics(
+    input_bundle: object,
+    *,
+    ceremony_capability: object | None = None,
 ) -> dict[str, dict[tuple[int, int], int | float]]:
     """Resolve the exact seven model metrics on the frozen 20x8 grid."""
+    first_estimates, _anchors = _authorized_documents(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
     source = _require_mapping(first_estimates, "first-estimates input")
     registries = registry.frozen_registries()
     registry.validate_frozen_registries(
@@ -400,6 +423,13 @@ def extract_model_metrics(
     return extracted
 
 
+def extract_model_metrics(
+    fixture_inputs: object,
+) -> dict[str, dict[tuple[int, int], int | float]]:
+    """Resolve model metrics only from the fixed nonproduction bundle."""
+    return _extract_model_metrics(fixture_inputs)
+
+
 def _validated_anchor_determinations(
     anchors: Mapping[str, Any],
 ) -> Mapping[str, Any]:
@@ -422,12 +452,17 @@ def _validated_anchor_determinations(
     return determinations
 
 
-def extract_official_values(
-    anchors: Mapping[str, Any],
+def _extract_official_values(
+    input_bundle: object,
     *,
+    ceremony_capability: object | None = None,
     expected_vintage_id: str | None = None,
 ) -> dict[str, dict[int, int | float]]:
     """Resolve all 120 normalized official values in registered order."""
+    _first_estimates, anchors = _authorized_documents(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
     source = _require_mapping(anchors, "anchor input")
     vintage_id = _string(
         source.get("artifact_vintage_id"),
@@ -499,6 +534,18 @@ def extract_official_values(
             "official values are missing, extra, duplicated, or reordered"
         )
     return extracted
+
+
+def extract_official_values(
+    fixture_inputs: object,
+    *,
+    expected_vintage_id: str | None = None,
+) -> dict[str, dict[int, int | float]]:
+    """Resolve official values only from the fixed nonproduction bundle."""
+    return _extract_official_values(
+        fixture_inputs,
+        expected_vintage_id=expected_vintage_id,
+    )
 
 
 def _summarize(
@@ -623,13 +670,24 @@ def _available_comparison_rows(
     return rows
 
 
-def build_results(
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
+def _build_results(
+    input_bundle: object,
+    *,
+    ceremony_capability: object | None = None,
 ) -> dict[str, Any]:
     """Build the exact-complete three-panel results payload."""
-    metrics = extract_model_metrics(first_estimates)
-    official = extract_official_values(anchors)
+    _first_estimates, anchors = _authorized_documents(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
+    metrics = _extract_model_metrics(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
+    official = _extract_official_values(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
     comparison_results: list[dict[str, Any]] = []
     for spec in registry.comparison_specs():
         availability = spec["availability"]
@@ -705,6 +763,36 @@ def build_results(
     }
     _validate_results_structure(results)
     return results
+
+
+def build_results(
+    fixture_inputs: object,
+) -> dict[str, Any]:
+    """Build results only from the fixed nonproduction fixture bundle."""
+    return _build_results(fixture_inputs)
+
+
+def _build_production_results(
+    ceremony_capability: object,
+    verified_inputs: object,
+) -> dict[str, Any]:
+    """Build production results only through coordinator-issued authority."""
+    from populace_dynamics.estimates import (
+        anchor_context_coordinator,
+        anchor_context_publication,
+    )
+
+    anchor_context_coordinator._require_ceremony_capability(
+        ceremony_capability
+    )
+    anchor_context_publication._require_verified_production_inputs(
+        verified_inputs,
+        ceremony_capability=ceremony_capability,
+    )
+    return _build_results(
+        verified_inputs,
+        ceremony_capability=ceremony_capability,
+    )
 
 
 def _validate_year_rows(
@@ -917,17 +1005,57 @@ def _assert_result_values(
         )
 
 
-def validate_results(
+def _validate_results(
     results: Mapping[str, Any],
     *,
-    first_estimates: Mapping[str, Any],
-    anchors: Mapping[str, Any],
+    input_bundle: object,
+    ceremony_capability: object | None = None,
 ) -> None:
     """Validate schema, exact coverage, and every independently recomputed row."""
     supplied = _require_mapping(results, "results")
     _validate_results_structure(supplied)
-    expected = build_results(first_estimates, anchors)
+    expected = _build_results(
+        input_bundle,
+        ceremony_capability=ceremony_capability,
+    )
     _assert_result_values(supplied, expected, path="results")
+
+
+def validate_results(
+    results: Mapping[str, Any],
+    *,
+    fixture_inputs: object,
+) -> None:
+    """Validate results only against the fixed nonproduction bundle."""
+    _validate_results(
+        results,
+        input_bundle=fixture_inputs,
+    )
+
+
+def _validate_production_results(
+    ceremony_capability: object,
+    results: Mapping[str, Any],
+    verified_inputs: object,
+) -> None:
+    """Validate production results through the same live capability."""
+    from populace_dynamics.estimates import (
+        anchor_context_coordinator,
+        anchor_context_publication,
+    )
+
+    anchor_context_coordinator._require_ceremony_capability(
+        ceremony_capability
+    )
+    anchor_context_publication._require_verified_production_inputs(
+        verified_inputs,
+        ceremony_capability=ceremony_capability,
+    )
+    _validate_results(
+        results,
+        input_bundle=verified_inputs,
+        ceremony_capability=ceremony_capability,
+    )
 
 
 def copy_results(results: Mapping[str, Any]) -> dict[str, Any]:

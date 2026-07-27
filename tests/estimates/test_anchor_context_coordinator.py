@@ -6,6 +6,7 @@ import copy
 import hashlib
 import inspect
 import json
+import os
 from dataclasses import asdict, replace
 from pathlib import Path
 from types import SimpleNamespace
@@ -67,7 +68,7 @@ def _sha256(path: Path) -> str:
 
 
 def _repository(tmp_path: Path) -> Path:
-    root = tmp_path / "repo"
+    root = tmp_path / "anchor-context-fixture-rehearsal-test"
     (root / "runs").mkdir(parents=True)
     for source, relative in (
         (FIRST_ESTIMATES_FIXTURE, FIXTURE_FIRST_PATH),
@@ -147,36 +148,38 @@ def _operations(
         return value
 
     def load_inputs(registration):
+        assert isinstance(
+            registration,
+            publication.first_publication._RegisteredConfigurationToken,
+        )
         root = registration._repository_root
         configuration_echo = publication.first_publication._configuration_echo(
             registration
         )
-        loaded = publication.load_fixture_documents(
-            root,
-            first_estimates_input=configuration_echo["first_estimates_input"],
-            anchor_input=configuration_echo["anchor_input"],
+        publication._assert_fixture_identities(
+            configuration_echo["first_estimates_input"],
+            configuration_echo["anchor_input"],
         )
+        loaded = publication.load_fixture_documents(root)
         return maybe_fail("preparation", loaded)
 
     def build_results(
-        first_estimates: dict[str, Any],
-        anchors: dict[str, Any],
+        _registration,
+        loaded_inputs,
     ) -> dict[str, Any]:
         return maybe_fail(
             "compute",
-            report.build_results(first_estimates, anchors),
+            report.build_results(loaded_inputs),
         )
 
     def validate_results(
+        _registration,
         results: dict[str, Any],
-        *,
-        first_estimates: dict[str, Any],
-        anchors: dict[str, Any],
+        loaded_inputs,
     ) -> None:
         report.validate_results(
             results,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            fixture_inputs=loaded_inputs,
         )
         maybe_fail("invariant_results", None)
 
@@ -199,8 +202,22 @@ def _operations(
         if failure_phase == "publication":
             raise error
         captured["publication_args"] = args
-        captured["publication_kwargs"] = kwargs
-        return publication.write_anchor_context_artifact(*args, **kwargs)
+        captured["publication_kwargs"] = dict(kwargs)
+        token, artifact = args
+        assert kwargs.pop("ceremony_capability") is None
+        return publication._write_anchor_context_artifact_for_test(
+            repository_root=token.registration._repository_root,
+            artifact=artifact,
+            expected_configuration_echo=(
+                publication.first_publication._configuration_echo(
+                    token.registration
+                )
+            ),
+            expected_runtime_provenance=publication._runtime_provenance(token),
+            expected_prior_incidents=token.prior_incidents,
+            sidecar_payload=token.sidecar_payload,
+            **kwargs,
+        )
 
     def publish_incident(token, **kwargs):
         registration = (
@@ -347,15 +364,15 @@ def test_input_hash_failure_aborts_before_engine(tmp_path):
     configuration["first_estimates_input"]["sha256"] = "0" * 64
     calls: list[str] = []
 
-    result = _run(
-        root,
-        _operations(calls, {}),
-        configuration_bytes=publication.canonical_json_bytes(configuration),
-    )
+    with pytest.raises(ValueError, match="identity is not fixed"):
+        _run(
+            root,
+            _operations(calls, {}),
+            configuration_bytes=publication.canonical_json_bytes(
+                configuration
+            ),
+        )
 
-    assert result.status == "incident"
-    assert result.phase == "preparation"
-    assert result.reason == "preparation_abort"
     assert calls == []
     assert not (root / registry.PRIMARY_OUTPUT_PATH).exists()
 
@@ -475,6 +492,8 @@ def test_all_six_prelaunch_checks_are_recorded_before_input_loading(
     def load_after_record(registration):
         events.append("input_load")
         assert len(records) == 1
+        assert registration._repository_root == root
+        assert (root / "runs/anchor_context_report_attempt.claim").is_file()
         return original_load(registration)
 
     result = _run(
@@ -742,3 +761,374 @@ def test_public_entry_point_exposes_only_registration_path():
     assert set(
         inspect.signature(coordinator.run_registered_anchor_context).parameters
     ) == {"registration_path"}
+
+
+def test_ceremony_capability_is_not_caller_constructible():
+    with pytest.raises(TypeError, match="minted only by the coordinator"):
+        coordinator._CeremonyCapability()
+    assert not hasattr(coordinator, "_mint_ceremony_capability")
+
+
+def test_extracted_closure_mint_rejects_caller_created_prerequisites(
+    tmp_path: Path,
+):
+    root = _repository(tmp_path)
+    registration = coordinator._parse_configuration(
+        repository_root=root,
+        registered_configuration_bytes=_configuration_bytes(root),
+        production_only=False,
+    )
+    claim = coordinator._create_attempt_claim(
+        root,
+        REGISTRATION_REFERENCE,
+        allow_matching_retry_claim=False,
+    )
+    record = coordinator._PrelaunchRecord(
+        check_names=coordinator.PRELAUNCH_CHECK_NAMES,
+        configuration_sha256=hashlib.sha256(
+            _configuration_bytes(root)
+        ).hexdigest(),
+        next_incident_index=1,
+    )
+    closure = dict(
+        zip(
+            coordinator.run_registered_anchor_context.__code__.co_freevars,
+            coordinator.run_registered_anchor_context.__closure__,
+            strict=True,
+        )
+    )
+    extracted_mint = closure["mint"].cell_contents
+
+    with pytest.raises(TypeError, match="sealed runner stack"):
+        extracted_mint(registration, record, claim)
+
+
+def test_fixture_runner_authority_is_rejected_by_every_production_gate(
+    tmp_path: Path,
+):
+    root = _repository(tmp_path)
+    operations = _operations([], {})
+    original_load = operations.load_inputs
+
+    def probe_production_gates(registration):
+        assert isinstance(
+            registration,
+            publication.first_publication._RegisteredConfigurationToken,
+        )
+        with pytest.raises(TypeError, match="live ceremony capability"):
+            publication._load_production_documents(registration)
+        with pytest.raises(TypeError, match="live ceremony capability"):
+            report._build_production_results(registration, object())
+        with pytest.raises(TypeError, match="live ceremony capability"):
+            report._validate_production_results(
+                registration,
+                {},
+                object(),
+            )
+        with pytest.raises(TypeError, match="live ceremony capability"):
+            publication.build_anchor_context_artifact(
+                configuration_echo=publication.registered_configuration_echo(
+                    registration_reference=REGISTRATION_REFERENCE,
+                    implementation_commit=IMPLEMENTATION_COMMIT,
+                    invocation=_invocation(root),
+                ),
+                runtime_provenance=RUNTIME_PROVENANCE,
+                results={},
+                input_bundle=object(),
+                environment_sidecar_sha256="0" * 64,
+                ceremony_capability=registration,
+            )
+        return original_load(registration)
+
+    result = _run(
+        root,
+        replace(operations, load_inputs=probe_production_gates),
+    )
+
+    assert result.status == "published"
+
+
+def test_sealed_production_capability_is_live_only_during_full_chain(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    first_target = root / registry.FIRST_ESTIMATES_INPUT_PATH
+    first_target.write_bytes(FIRST_ESTIMATES_FIXTURE.read_bytes())
+    anchor_target = root / registry.ANCHOR_INPUT_PATH
+    anchor_target.parent.mkdir(parents=True)
+    anchor_target.write_bytes(ANCHOR_FIXTURE.read_bytes())
+    monkeypatch.setattr(
+        registry,
+        "FIRST_ESTIMATES_INPUT_SHA256",
+        _sha256(FIRST_ESTIMATES_FIXTURE),
+    )
+    monkeypatch.setattr(
+        registry,
+        "ANCHOR_INPUT_SHA256",
+        _sha256(ANCHOR_FIXTURE),
+    )
+    monkeypatch.setattr(
+        registry,
+        "ANCHOR_ARTIFACT_VINTAGE_ID",
+        "ssa_level_anchors.fixture_only.v1",
+    )
+    registration_path = root / "docs/registrations/context.json"
+    registration_path.parent.mkdir(parents=True)
+    sentinel = root / "fresh-empty-pycache"
+    sentinel.mkdir()
+    invocation = [
+        "python",
+        "-I",
+        "-B",
+        "-X",
+        f"pycache_prefix={sentinel}",
+        "scripts/run_anchor_context_report.py",
+        "--registration",
+        str(registration_path),
+    ]
+    configuration = publication.registered_configuration_echo(
+        registration_reference=REGISTRATION_REFERENCE,
+        implementation_commit=IMPLEMENTATION_COMMIT,
+        invocation=invocation,
+    )
+    registration_path.write_bytes(
+        publication.canonical_json_bytes(configuration)
+    )
+    captured_capabilities: list[object] = []
+    original_load = coordinator._load_inputs
+
+    def capture_capability(capability):
+        registration = coordinator._require_ceremony_capability(capability)
+        assert registration._repository_root == root
+        assert (root / "runs/anchor_context_report_attempt.claim").is_file()
+        captured_capabilities.append(capability)
+        claim = root / "runs/anchor_context_report_attempt.claim"
+        original_claim = claim.with_suffix(".original")
+        claim.rename(original_claim)
+        claim.write_bytes(original_claim.read_bytes())
+        with pytest.raises(TypeError, match="state changed"):
+            coordinator._require_ceremony_capability(capability)
+        claim.unlink()
+        original_claim.rename(claim)
+        assert (
+            coordinator._require_ceremony_capability(capability)
+            is registration
+        )
+        bundle = original_load(capability)
+        for field in (
+            "first_estimates_snapshot",
+            "anchors_snapshot",
+        ):
+            original_snapshot = getattr(bundle, field)
+            object.__setattr__(bundle, field, b"{}\n")
+            with pytest.raises((TypeError, ValueError)):
+                publication._require_verified_production_inputs(
+                    bundle,
+                    ceremony_capability=capability,
+                )
+            object.__setattr__(bundle, field, original_snapshot)
+        return bundle
+
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(
+        coordinator,
+        "_validate_repository",
+        lambda _root, _configuration: None,
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_assert_sealed_interpreter",
+        lambda _configuration, _invocation: None,
+    )
+    monkeypatch.setattr(coordinator, "_load_inputs", capture_capability)
+    monkeypatch.setattr(
+        coordinator.sys, "orig_argv", invocation, raising=False
+    )
+
+    result = coordinator.run_registered_anchor_context(registration_path)
+
+    assert result.status == "published"
+    assert len(captured_capabilities) == 1
+    with pytest.raises(TypeError, match="live ceremony capability"):
+        coordinator._require_ceremony_capability(captured_capabilities[0])
+
+
+@pytest.mark.parametrize(
+    "protected_path",
+    [
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        registry.ANCHOR_INPUT_PATH,
+    ],
+)
+def test_public_entry_rejects_production_input_as_registration_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    protected_path: str,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    attempted_reads: list[Path] = []
+
+    def forbidden_read(path: Path):
+        attempted_reads.append(path)
+        raise AssertionError("protected production input was read")
+
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(Path, "read_bytes", forbidden_read)
+
+    with pytest.raises(ValueError, match="protected ceremony data"):
+        coordinator.run_registered_anchor_context(protected_path)
+
+    assert attempted_reads == []
+
+
+@pytest.mark.parametrize(
+    "protected_path",
+    [
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        registry.ANCHOR_INPUT_PATH,
+    ],
+)
+def test_public_entry_rejects_hardlinked_production_registration_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    protected_path: str,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    protected = root / protected_path
+    protected.parent.mkdir(parents=True, exist_ok=True)
+    protected.write_bytes(b"protected production bytes")
+    registration = root / "docs/registrations/alias.json"
+    registration.parent.mkdir(parents=True)
+    os.link(protected, registration)
+    read_attempts = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal read_attempts
+        read_attempts += 1
+        raise AssertionError("hardlinked production bytes were read")
+
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator.os, "read", forbidden_read)
+
+    with pytest.raises(ValueError, match="singly linked|aliases protected"):
+        coordinator.run_registered_anchor_context(registration)
+
+    assert read_attempts == 0
+
+
+@pytest.mark.parametrize(
+    "symlink_component", ["docs", "registrations", "leaf"]
+)
+def test_registration_descriptor_gate_rejects_symlink_components_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    symlink_component: str,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    outside = tmp_path / "outside"
+    (outside / "registrations").mkdir(parents=True)
+    (outside / "registrations/registration.json").write_bytes(b"{}\n")
+    if symlink_component == "docs":
+        (root / "docs").symlink_to(outside, target_is_directory=True)
+    else:
+        (root / "docs").mkdir()
+        if symlink_component == "registrations":
+            (root / "docs/registrations").symlink_to(
+                outside / "registrations",
+                target_is_directory=True,
+            )
+        else:
+            (root / "docs/registrations").mkdir()
+            (root / "docs/registrations/registration.json").symlink_to(
+                outside / "registrations/registration.json"
+            )
+    read_attempts = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal read_attempts
+        read_attempts += 1
+        raise AssertionError("symlinked registration bytes were read")
+
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator.os, "read", forbidden_read)
+
+    with pytest.raises(OSError):
+        coordinator.run_registered_anchor_context(
+            "docs/registrations/registration.json"
+        )
+
+    assert read_attempts == 0
+
+
+def test_registration_gate_rejects_reverse_production_symlink_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    registration = root / "docs/registrations/registration.json"
+    registration.parent.mkdir(parents=True)
+    registration.write_bytes(b"{}\n")
+    protected = root / registry.FIRST_ESTIMATES_INPUT_PATH
+    protected.symlink_to(registration)
+    read_attempts = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal read_attempts
+        read_attempts += 1
+        raise AssertionError("reverse-aliased registration bytes were read")
+
+    monkeypatch.setattr(coordinator, "_sealed_repository_root", lambda: root)
+    monkeypatch.setattr(coordinator.os, "read", forbidden_read)
+
+    with pytest.raises(
+        ValueError, match="production input path is not regular"
+    ):
+        coordinator.run_registered_anchor_context(registration)
+
+    assert read_attempts == 0
+
+
+def test_registration_gate_rejects_preopen_inode_exchange_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    registration = root / "docs/registrations/registration.json"
+    registration.parent.mkdir(parents=True)
+    registration.write_bytes(b'{"safe":"registration"}\n')
+    protected = root / registry.FIRST_ESTIMATES_INPUT_PATH
+    protected.write_bytes(b"protected production bytes")
+    original_open = coordinator.os.open
+    exchanged = False
+    read_attempts = 0
+
+    def exchange_before_leaf_open(path, flags, *args, **kwargs):
+        nonlocal exchanged
+        if path == registration.name and not exchanged:
+            exchanged = True
+            temporary = root / "exchange.tmp"
+            registration.rename(temporary)
+            protected.rename(registration)
+            temporary.rename(protected)
+        return original_open(path, flags, *args, **kwargs)
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal read_attempts
+        read_attempts += 1
+        raise AssertionError("exchanged production bytes were read")
+
+    monkeypatch.setattr(coordinator.os, "open", exchange_before_leaf_open)
+    monkeypatch.setattr(coordinator.os, "read", forbidden_read)
+
+    with pytest.raises(ValueError, match="aliases protected ceremony data"):
+        coordinator._read_registered_configuration_bytes(root, registration)
+
+    assert exchanged is True
+    assert read_attempts == 0

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import math
 import statistics
@@ -12,9 +13,13 @@ from typing import Any
 
 import pytest
 
+from populace_dynamics.estimates import (
+    anchor_context_publication as publication,
+)
 from populace_dynamics.estimates import anchor_context_registry as registry
 from populace_dynamics.estimates import anchor_context_report as report
 
+REPOSITORY_ROOT = Path(__file__).parents[2]
 FIXTURE_ROOT = Path(__file__).parents[1] / "fixtures" / "anchor_context"
 FIRST_ESTIMATES_FIXTURE = FIXTURE_ROOT / "first_estimates_fixture_v1.json"
 ANCHOR_FIXTURE = FIXTURE_ROOT / "ssa_level_anchors_fixture_v1.json"
@@ -36,11 +41,15 @@ def fixture_inputs() -> tuple[dict[str, Any], dict[str, Any]]:
 
 
 @pytest.fixture(scope="module")
+def fixture_bundle():
+    return publication.load_fixture_documents(REPOSITORY_ROOT)
+
+
+@pytest.fixture(scope="module")
 def fixture_results(
-    fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    fixture_bundle,
 ) -> dict[str, Any]:
-    first_estimates, anchors = fixture_inputs
-    return report.build_results(first_estimates, anchors)
+    return report.build_results(fixture_bundle)
 
 
 def _resolve_pointer(document: Any, pointer: str) -> Any:
@@ -85,6 +94,35 @@ def _raw_official_value(
 
 def _mean_and_sample_sd(values: list[float]) -> tuple[float, float]:
     return statistics.fmean(values), statistics.stdev(values)
+
+
+def _bundle_from_documents(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    first_estimates: dict[str, Any],
+    anchors: dict[str, Any],
+):
+    root = tmp_path / "fixture-root"
+    first_raw = publication.canonical_json_bytes(first_estimates)
+    anchor_raw = publication.canonical_json_bytes(anchors)
+    monkeypatch.setattr(
+        publication,
+        "_FIXTURE_FIRST_SHA256",
+        hashlib.sha256(first_raw).hexdigest(),
+    )
+    monkeypatch.setattr(
+        publication,
+        "_FIXTURE_ANCHOR_SHA256",
+        hashlib.sha256(anchor_raw).hexdigest(),
+    )
+    for relative, payload in (
+        (publication._FIXTURE_FIRST_PATH, first_raw),
+        (publication._FIXTURE_ANCHOR_PATH, anchor_raw),
+    ):
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(payload)
+    return publication.load_fixture_documents(root)
 
 
 def _independent_statistics(
@@ -162,10 +200,9 @@ def _independent_statistics(
 
 
 def test_fixture_builds_exact_complete_results_shape(
-    fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    fixture_bundle,
     fixture_results: dict[str, Any],
 ):
-    first_estimates, anchors = fixture_inputs
     specs = registry.comparison_specs()
 
     assert set(fixture_results) == {
@@ -246,17 +283,17 @@ def test_fixture_builds_exact_complete_results_shape(
 
     report.validate_results(
         fixture_results,
-        first_estimates=first_estimates,
-        anchors=anchors,
+        fixture_inputs=fixture_bundle,
     )
 
 
 def test_all_nine_model_operands_resolve_to_the_exact_draw_year_grid(
     fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    fixture_bundle,
 ):
     first_estimates, _ = fixture_inputs
     specs = registry.model_metric_specs()
-    extracted = report.extract_model_metrics(first_estimates)
+    extracted = report.extract_model_metrics(fixture_bundle)
     operand_count = 0
 
     assert list(extracted) == [spec["model_metric_id"] for spec in specs]
@@ -294,9 +331,10 @@ def test_all_nine_model_operands_resolve_to_the_exact_draw_year_grid(
 
 def test_official_extraction_is_exact_complete_and_normalized(
     fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    fixture_bundle,
 ):
     _, anchors = fixture_inputs
-    extracted = report.extract_official_values(anchors)
+    extracted = report.extract_official_values(fixture_bundle)
 
     assert list(extracted) == list(registry.required_series_ids())
     for series_id in registry.required_series_ids():
@@ -356,8 +394,10 @@ def test_registered_formula_matches_independent_per_draw_recomputation(
 def test_model_input_grid_forgery_aborts(
     mutation: str,
     fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ):
-    first_estimates, _ = fixture_inputs
+    first_estimates, anchors = fixture_inputs
     mutant = copy.deepcopy(first_estimates)
     rows = mutant["tables"]["modeled_award_flow"]["per_draw"]
 
@@ -373,7 +413,14 @@ def test_model_input_grid_forgery_aborts(
         rows.append(extra)
 
     with pytest.raises((TypeError, ValueError)):
-        report.extract_model_metrics(mutant)
+        report.extract_model_metrics(
+            _bundle_from_documents(
+                tmp_path,
+                monkeypatch,
+                mutant,
+                anchors,
+            )
+        )
 
 
 @pytest.mark.parametrize(
@@ -389,8 +436,10 @@ def test_model_input_grid_forgery_aborts(
 def test_anchor_input_grid_or_registry_forgery_aborts(
     mutation: str,
     fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ):
-    _, anchors = fixture_inputs
+    first_estimates, anchors = fixture_inputs
     mutant = copy.deepcopy(anchors)
     first_id = mutant["required_series_ids"][0]
     observations = mutant["determinations"][first_id]["observations"]
@@ -415,7 +464,14 @@ def test_anchor_input_grid_or_registry_forgery_aborts(
         required[0], required[1] = required[1], required[0]
 
     with pytest.raises((TypeError, ValueError)):
-        report.extract_official_values(mutant)
+        report.extract_official_values(
+            _bundle_from_documents(
+                tmp_path,
+                monkeypatch,
+                first_estimates,
+                mutant,
+            )
+        )
 
 
 @pytest.mark.parametrize(
@@ -424,10 +480,9 @@ def test_anchor_input_grid_or_registry_forgery_aborts(
 )
 def test_results_forgery_aborts(
     mutation: str,
-    fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    fixture_bundle,
     fixture_results: dict[str, Any],
 ):
-    first_estimates, anchors = fixture_inputs
     mutant = copy.deepcopy(fixture_results)
     comparisons = mutant["comparison_results"]
 
@@ -446,8 +501,7 @@ def test_results_forgery_aborts(
     with pytest.raises((TypeError, ValueError)):
         report.validate_results(
             mutant,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            fixture_inputs=fixture_bundle,
         )
 
 
@@ -471,12 +525,11 @@ def test_wrong_ordered_mismatch_array_fails_registry_validation():
 
 
 def test_oasi_cash_series_is_complete_level_only_and_mandatory(
-    fixture_inputs: tuple[dict[str, Any], dict[str, Any]],
+    fixture_bundle,
     fixture_results: dict[str, Any],
 ):
-    first_estimates, anchors = fixture_inputs
     series_id = "oasi_net_payroll_tax_contributions"
-    official = report.extract_official_values(anchors)[series_id]
+    official = report.extract_official_values(fixture_bundle)[series_id]
     panel = next(
         row
         for row in fixture_results["official_anchor_level_panel"]
@@ -510,6 +563,5 @@ def test_oasi_cash_series_is_complete_level_only_and_mandatory(
     with pytest.raises((TypeError, ValueError)):
         report.validate_results(
             mutant,
-            first_estimates=first_estimates,
-            anchors=anchors,
+            fixture_inputs=fixture_bundle,
         )
