@@ -2,8 +2,10 @@
 
 ## State
 
-Complete. The builder, canonical artifact, and 22-test reproduction/
-fail-closed suite are committed and independently audited.
+Implementation and verification are complete. The builder, canonical
+artifact, and 22-test reproduction/fail-closed suite are committed and
+independently audited; push is blocked by the managed environment's disabled
+GitHub DNS/network path.
 
 ## Done
 
@@ -43,7 +45,11 @@ fail-closed suite are committed and independently audited.
 - Completed two independent current-HEAD compliance audits with no remaining
   correctness findings and reconfirmed the canonical artifact SHA-256 as
   `adc782a1a11c50969103c125a82b1539a7017241662d545d86bc6fc9227730c1`.
+- Attempted the requested push; Git failed with `Could not resolve host:
+  github.com`. The GitHub connector confirmed that the remote branch remains
+  at snapshot commit `130694b` and does not contain the local HEAD object, so
+  it cannot move the ref without replacing the committed local history.
 
 ## Next
 
-- None. The committed implementation is ready for final report and push.
+- Push `claude/anchor-extraction-v1` when GitHub network access is available.
