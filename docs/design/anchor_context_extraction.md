@@ -387,13 +387,13 @@ mismatch code.
 | `pairing_id` | `model_metric_id` | `anchor_series_id` | ordered `mismatch_codes` |
 |---|---|---|---|
 | `pair_retired_worker_awards` | `modeled_award_flow.weighted_award_count` | `retired_worker_awards` | [`administrative_award_vs_mechanical_claim_stamp`, `program_population_scope`] |
-| `pair_retired_worker_benefits_paid_estimated_allocation` | `combined_own_retirement.frame_annualized_benefit` | `retired_worker_benefits_paid_estimated_allocation` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `program_population_scope`, `official_estimated_allocation`, `odd_year_earnings_carry`] |
-| `pair_oasi_benefits_paid_estimated_allocation` | `combined_own_retirement.frame_annualized_benefit` | `oasi_benefits_paid_estimated_allocation` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `program_population_scope`, `official_estimated_allocation`, `odd_year_earnings_carry`] |
-| `pair_oasi_trust_fund_benefit_payments` | `combined_own_retirement.frame_annualized_benefit` | `oasi_trust_fund_benefit_payments` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `program_population_scope`, `odd_year_earnings_carry`] |
-| `pair_oasdi_trust_fund_benefit_payments` | `combined_own_retirement.frame_annualized_benefit` | `oasdi_trust_fund_benefit_payments` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `program_population_scope`, `odd_year_earnings_carry`] |
-| `pair_retired_worker_december_current_payment_stock` | `combined_own_retirement.weighted_beneficiary_count` | `retired_worker_december_current_payment_stock` | [`annual_presence_vs_december_current_payment_stock`, `opening_backfill_imputation`, `program_population_scope`] |
-| `pair_oasi_december_current_payment_stock` | `combined_own_retirement.weighted_beneficiary_count` | `oasi_december_current_payment_stock` | [`annual_presence_vs_december_current_payment_stock`, `opening_backfill_imputation`, `program_population_scope`] |
-| `pair_oasdi_december_current_payment_stock` | `combined_own_retirement.weighted_beneficiary_count` | `oasdi_december_current_payment_stock` | [`annual_presence_vs_december_current_payment_stock`, `opening_backfill_imputation`, `program_population_scope`] |
+| `pair_retired_worker_benefits_paid_estimated_allocation` | `combined_own_retirement.frame_annualized_benefit` | `retired_worker_benefits_paid_estimated_allocation` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`, `official_estimated_allocation`, `odd_year_earnings_carry`] |
+| `pair_oasi_benefits_paid_estimated_allocation` | `combined_own_retirement.frame_annualized_benefit` | `oasi_benefits_paid_estimated_allocation` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`, `official_estimated_allocation`, `odd_year_earnings_carry`] |
+| `pair_oasi_trust_fund_benefit_payments` | `combined_own_retirement.frame_annualized_benefit` | `oasi_trust_fund_benefit_payments` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`, `odd_year_earnings_carry`] |
+| `pair_oasdi_trust_fund_benefit_payments` | `combined_own_retirement.frame_annualized_benefit` | `oasdi_trust_fund_benefit_payments` | [`annualized_statutory_amount_vs_actual_outlay`, `psid_labor_income_proxy_history_vs_administrative_covered_earnings_history`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`, `odd_year_earnings_carry`] |
+| `pair_retired_worker_december_current_payment_stock` | `combined_own_retirement.weighted_beneficiary_count` | `retired_worker_december_current_payment_stock` | [`annual_presence_vs_december_current_payment_stock`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`] |
+| `pair_oasi_december_current_payment_stock` | `combined_own_retirement.weighted_beneficiary_count` | `oasi_december_current_payment_stock` | [`annual_presence_vs_december_current_payment_stock`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`] |
+| `pair_oasdi_december_current_payment_stock` | `combined_own_retirement.weighted_beneficiary_count` | `oasdi_december_current_payment_stock` | [`annual_presence_vs_december_current_payment_stock`, `opening_backfill_imputation`, `mechanical_claiming_vs_administrative_in_force_population`, `program_population_scope`] |
 | `pair_oasdi_workers_with_taxable_earnings` | `revenue.weighted_covered_earner_count` | `oasdi_workers_with_taxable_earnings` | [`positive_proxy_vs_workers_with_taxable_earnings`, `odd_year_earnings_carry`] |
 | `pair_oasdi_reported_taxable_earnings` | `revenue.weighted_taxable_payroll` | `oasdi_reported_taxable_earnings` | [`labor_income_proxy_vs_reported_taxable_earnings`, `negative_proxy_no_zero_floor`, `consolidated_person_cap_vs_reported_wages`, `odd_year_earnings_carry`] |
 | `pair_oasdi_gross_contributions` | `revenue.combined_contributions` | `oasdi_gross_contributions` | [`earnings_year_rate_arithmetic_vs_gross_contributions`, `labor_income_proxy_vs_taxable_earnings`, `negative_proxy_no_zero_floor`, `consolidated_person_cap_vs_reported_wages`, `odd_year_earnings_carry`] |
@@ -427,6 +427,19 @@ The frozen mismatch meanings are:
 - `opening_backfill_imputation`: the full own-retirement construction consumes
   the model's report-only imputed opening stock in addition to modeled-award
   flow; no SSA source class is a model `opening_backfill`.
+- `mechanical_claiming_vs_administrative_in_force_population`: the model's
+  benefit-dollar and beneficiary-stock populations arise from mechanical
+  claim-age crossings for modeled awards
+  ([first-estimates §4](first_estimates_report.md#4-claim-origin-and-cohort-disjointness-round-1-finding-3));
+  for opening stock, it discards the engine stamps and re-imputes claim age
+  and claim year from the sex-specific Table 6.B5.1 PMF keyed by
+  cohort-eligibility year and clamped to the table's 1998-2013 coverage
+  ([first-estimates §6](first_estimates_report.md#6-the-opening-stock-imputation-round-1-finding-7-report-only-table)).
+  Official benefit outlays and current-payment stocks instead reflect
+  administrative entitlement and claiming histories for their in-force
+  populations. The first-estimates
+  [§10 gap row](first_estimates_report.md#10-weights-labels-and-the-gap-block-round-1-finding-8)
+  classifies `Mechanical claiming, 1998-2013 table` as material.
 - `program_population_scope`: the row note names the model own-retirement
   population and the anchor's retired-worker, OASI, or OASDI scope. OASI adds
   auxiliaries and survivors; OASDI also adds DI.
@@ -537,6 +550,7 @@ Before W1, a comparison must be invariant to global model-weight rescaling
       "annualized_statutory_amount_vs_december_current_payment_amount",
       "psid_labor_income_proxy_history_vs_administrative_covered_earnings_history",
       "opening_backfill_imputation",
+      "mechanical_claiming_vs_administrative_in_force_population",
       "annual_presence_vs_december_current_payment_stock",
       "program_population_scope",
       "odd_year_earnings_carry"
@@ -639,6 +653,7 @@ Before W1, a comparison must be invariant to global model-weight rescaling
     "mismatch_codes": [
       "annual_presence_vs_december_current_payment_stock",
       "opening_backfill_imputation",
+      "mechanical_claiming_vs_administrative_in_force_population",
       "program_population_scope",
       "positive_proxy_vs_workers_with_taxable_earnings",
       "odd_year_earnings_carry"
@@ -679,6 +694,7 @@ Before W1, a comparison must be invariant to global model-weight rescaling
       "annualized_statutory_amount_vs_actual_outlay",
       "psid_labor_income_proxy_history_vs_administrative_covered_earnings_history",
       "opening_backfill_imputation",
+      "mechanical_claiming_vs_administrative_in_force_population",
       "program_population_scope",
       "official_estimated_allocation",
       "labor_income_proxy_vs_reported_taxable_earnings",
