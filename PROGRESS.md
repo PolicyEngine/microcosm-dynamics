@@ -2,8 +2,8 @@
 
 ## State
 
-- In progress: translate every round-2 referee finding into an exact,
-  executable revision of `docs/design/anchor_context_extraction.md`.
+- In progress: apply the completed finding-by-finding edit map to
+  `docs/design/anchor_context_extraction.md`.
 - Required branch `claude/anchor-extraction-design` is clean at requested
   starting HEAD `774e9549f69928b01223a65717e80bf807f80165`.
 - The full 77-line referee verdict has been read through its final checks.
@@ -18,11 +18,19 @@
   each with a 160-row `per_draw` grid over 20 draws × 8 years.
 - Identified the six ranked findings and the registered-estimates incident
   schema assertions that finding 6 requires.
+- Resolved the exact seven-entry model metric registry against the artifact's
+  literal `per_draw` arrays and verified all nine operand selectors across
+  160 rows.
+- Froze the intended nine-entry comparison registry, including the two
+  explicitly unavailable entries, the exact OACT five-code mismatch law, and
+  OASI cash's official-level-only status.
+- Chose and documented the verdict's open implementation judgments:
+  ratio-of-intensities operation, tagged nulls for unavailable official
+  series, and Trustees covered workers as the OASDI cash denominator.
 
 ## Next
 
-- Freeze and exact-validate the model metric and comparison registries.
-- Correct OACT sequencing, mismatch inventory, schema-version law, and
-  ceremony schemas.
+- Edit the model metric and comparison registries, OACT sequencing, mismatch
+  inventory, schema-version law, and ceremony schemas.
 - Validate the revised document finding-by-finding, commit with dispositions,
   remove this temporary ledger, push, and write the external handoff report.
