@@ -6,7 +6,9 @@ The resolver now aborts unless every selected value coordinate resolves to a
 physical 1x1 data cell. The exact re-pinned 6.A1 2015 colspan-collapse attack
 passes its fail-closed regression test after failing pre-fix with
 `Failed: DID NOT RAISE <class 'ValueError'>`. Implementation and scoped
-validation are complete; this final ledger commit is ready to push.
+validation are complete locally. Push is externally blocked: shell Git
+cannot resolve `github.com`, and direct GitHub connector writes are canceled
+before execution.
 
 ## Done
 
@@ -32,8 +34,12 @@ validation are complete; this final ledger commit is ready to push.
 - An additional repository-wide unit run reached `208 passed, 3 skipped`
   with no failures before the sandbox-slow pre-existing scikit-learn
   classifier test was interrupted after 11m51s.
+- Attempted `git push origin claude/anchor-extraction-v1`; it failed at DNS
+  resolution. GitHub connector upload attempts were canceled without remote
+  mutation, and remote comparison confirms the branch remains at `b3c51f4`.
 
 ## Next
 
-- Push `claude/anchor-extraction-v1` and hand the committed evidence back to
-  the extraction referee.
+- From a network-enabled coordinator environment, push the committed range
+  `b3c51f4..HEAD` on `claude/anchor-extraction-v1`, then hand the evidence
+  back to the extraction referee.
