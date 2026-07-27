@@ -2,7 +2,7 @@
 
 ## State
 
-Round-3 referee revision 4 is implemented on
+Round-3 referee revision 4 is implemented and validated on
 `claude/anchor-extraction-design`; findings 1 and 2 are resolved in
 `f8bd3f9` and `d78ef43`.
 
@@ -26,9 +26,16 @@ Round-3 referee revision 4 is implemented on
   citing first-estimates §§4, 6, and its material §10 gap row.
 - Added the code to exactly the seven benefit-dollar/beneficiary-stock
   pairings and the B/(12N), N/W, and B/P comparison laws.
+- Parsed all four frozen JSON blocks and confirmed 15 official series, seven
+  model metrics, nine comparisons split seven available/two unavailable, and
+  14 pairings.
+- Mechanically verified exact 7+3 placement of the new mismatch code, all
+  required results-schema literals and citations, and one definition.
+- Passed `git diff --check`; three independent read-only audits found no
+  remaining defect in either requested disposition or repository scope.
 
 ## Next
 
-- Validate the exact registries, scope, links, diff, and commit dispositions.
-- Remove this temporary tracked ledger, push, and write the final per-finding
-  report.
+- Commit this completed ledger state, remove the temporary ledger, perform
+  final clean-tree validation, push, verify the remote ref, and write the
+  two-line per-finding report.
