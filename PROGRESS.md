@@ -2,8 +2,8 @@
 
 ## State
 
-The builder, canonical artifact, and 22-test reproduction/fail-closed suite
-are implemented; final broader verification and push remain.
+Complete. The builder, canonical artifact, and 22-test reproduction/
+fail-closed suite are committed and independently audited.
 
 ## Done
 
@@ -35,8 +35,15 @@ are implemented; final broader verification and push remain.
   literals, and exact-checked every manifest path and per-series table title.
 - Confirmed all 22 focused tests pass and updated the unit tier from 848 to
   870; collection now reports the expected 3,680 total tests.
+- Confirmed the complete unit tier passes with 865 passed, 5 skipped, and
+  2,810 deselected; the tier-policy manifest test passes against the complete
+  collected inventory.
+- Confirmed repository-wide `black -l 79 --check` leaves all 491 Python files
+  unchanged, repository-wide Ruff passes, and `git diff --check` is clean.
+- Completed two independent current-HEAD compliance audits with no remaining
+  correctness findings and reconfirmed the canonical artifact SHA-256 as
+  `adc782a1a11c50969103c125a82b1539a7017241662d545d86bc6fc9227730c1`.
 
 ## Next
 
-- Complete the independent implementation audit and broader checks, write the
-  final report, and push the completed branch.
+- None. The committed implementation is ready for final report and push.
