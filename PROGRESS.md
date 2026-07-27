@@ -31,9 +31,8 @@ before execution.
   passes.
 - The complete anchor-builder module passes in the unit tier (`23 passed`);
   the full tier-policy inventory passes (`1 passed, 3680 deselected`).
-- An additional repository-wide unit run reached `208 passed, 3 skipped`
-  with no failures before the sandbox-slow pre-existing scikit-learn
-  classifier test was interrupted after 11m51s.
+- The full unit tier passes with sandbox-safe explicit core limits:
+  `866 passed, 5 skipped, 2810 deselected` in 215.15 seconds.
 - Attempted `git push origin claude/anchor-extraction-v1`; it failed at DNS
   resolution. GitHub connector upload attempts were canceled without remote
   mutation, and remote comparison confirms the branch remains at `b3c51f4`.
