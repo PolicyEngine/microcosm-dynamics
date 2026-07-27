@@ -2,9 +2,10 @@
 
 ## State
 
-Complete. Revision 2 is implemented, independently audited, and repository
-validated. This ledger records the final state published with the branch; the
-ten-line disposition report is prepared for lane output.
+Complete locally; external publication is blocked by the execution
+environment. Revision 2 is implemented, independently audited, repository
+validated, and ready at local HEAD. The ten-line disposition report is
+prepared for lane final-output capture.
 
 ## Done
 
@@ -29,7 +30,13 @@ ten-line disposition report is prepared for lane output.
 - Confirmed the substantive diff is confined to
   `docs/design/anchor_context_extraction.md`; `PROGRESS.md` is the standing
   tracking exception.
+- Attempted direct push; the sandbox cannot resolve `github.com`.
+- Attempted the connected GitHub write path; the environment cancelled the
+  write before execution.
+- Attempted the requested lane output path; workspace policy rejected writes
+  outside the project, so the report is emitted as the final response.
 
 ## Next
 
-None.
+- From a network-enabled checkout, push
+  `claude/anchor-extraction-design` at this final local HEAD.
