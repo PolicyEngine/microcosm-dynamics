@@ -22,6 +22,10 @@ reconnaissance is complete; no production input has been opened.
 - Extended the shared exclusive writer with an opt-in preserve-primary mode;
   its existing rollback behavior remains the default. All 10 contract
   identity/writer tests pass.
+- Added canonical, visibly fixture-only model and anchor inputs. Independent
+  checks confirm exact 20-draw-by-8-year model grids, all 15 ordered
+  8-year anchor series, normalized synthetic values, positive denominators,
+  and pinned fixture hashes.
 
 ## Next
 
