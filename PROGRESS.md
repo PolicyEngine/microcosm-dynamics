@@ -2,8 +2,8 @@
 
 ## State
 
-The builder and canonical artifact are implemented and independently
-reproducible across Python 3.10, 3.11, 3.13, and 3.14.
+The builder, canonical artifact, and 20-test reproduction/fail-closed suite
+are implemented; final repository-wide verification remains.
 
 ## Done
 
@@ -27,9 +27,13 @@ reproducible across Python 3.10, 3.11, 3.13, and 3.14.
 - Completed an independent builder audit; retained VI.G1's published caption
   subtitle in its exact title and bound source/build/validation metadata
   directly back to the verified manifest and frozen literals.
+- Added a full-file SHA/canonical rebuild pin, the independent 15-by-8 survey
+  literal grid, unit/scale/status/locator/source assertions, and negative
+  tests for every fail-closed requirement class.
+- Confirmed all 20 focused tests pass and updated the unit tier from 848 to
+  868; collection now reports the expected 3,678 total tests.
 
 ## Next
 
-- Add the reproduction test and update the tier manifest.
 - Run the focused and full checks, write the final report, and push the
   completed branch.
