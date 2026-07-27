@@ -2,9 +2,9 @@
 
 ## State
 
-Revision 2 is implemented and has passed independent schema, ceremony, and
-full-verdict audits. Final repository checks, publication, and reporting
-remain.
+Complete. Revision 2 is implemented, independently audited, and repository
+validated. This ledger records the final state published with the branch; the
+ten-line disposition report is prepared for lane output.
 
 ## Done
 
@@ -23,8 +23,13 @@ remain.
   crosswalk boundary, production-input preflight, and the canonical run law.
 - Received an independent PASS with no remaining blocker, high, or medium
   defect.
+- Committed the nine dispositions as `cea2d9f` with a nine-item message body.
+- Passed `git diff --check`, exact 15-ID/15-pair ordering, nonempty mismatch
+  array, defined-vocabulary, and benefit-dollar odd-year-carry checks.
+- Confirmed the substantive diff is confined to
+  `docs/design/anchor_context_extraction.md`; `PROGRESS.md` is the standing
+  tracking exception.
 
 ## Next
 
-- Run final diff and scope checks, commit the completed disposition, push the
-  branch, and write the one-line-per-finding report.
+None.
