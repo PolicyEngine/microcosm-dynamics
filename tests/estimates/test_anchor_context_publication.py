@@ -472,6 +472,48 @@ def test_artifact_builder_rejects_production_echo_with_unverified_documents():
         )
 
 
+@pytest.mark.parametrize("mutated_input", ["first_estimates", "anchors"])
+def test_artifact_builder_rejects_mutation_after_production_hash_gate(
+    mutated_input: str,
+):
+    configuration = _production_configuration()
+    registered_bytes = anchor_context_publication.canonical_json_bytes(
+        configuration
+    )
+    registration = anchor_context_publication.first_publication._parse_registered_configuration(
+        repository_root=REPOSITORY_ROOT,
+        registration_reference=REGISTRATION_REFERENCE,
+        registered_configuration_bytes=registered_bytes,
+    )
+    first_estimates, anchors = _fixture_inputs()
+    results = anchor_context_report.build_results(first_estimates, anchors)
+    verified = anchor_context_publication._VerifiedProductionInputs(
+        anchor_context_publication._VERIFIED_INPUT_AUTHORITY,
+        registration=registration,
+        first_estimates=first_estimates,
+        anchors=anchors,
+    )
+    if mutated_input == "first_estimates":
+        first_estimates["tables"]["revenue"]["per_draw"][0][
+            "combined_contributions"
+        ] += 1
+    else:
+        anchors["determinations"]["retired_worker_awards"]["observations"][0][
+            "value"
+        ] += 1
+
+    with pytest.raises(ValueError, match="mutated after"):
+        anchor_context_publication.build_anchor_context_artifact(
+            configuration_echo=configuration,
+            runtime_provenance=RUNTIME_PROVENANCE,
+            results=results,
+            first_estimates=first_estimates,
+            anchors=anchors,
+            environment_sidecar_sha256="0" * 64,
+            verified_production_inputs=verified,
+        )
+
+
 @pytest.mark.parametrize(
     "mutation",
     [

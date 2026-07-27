@@ -72,6 +72,11 @@ def test_context_report_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
     )
+    assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
+        Path(
+            "src/populace_dynamics/artifacts.py"
+        ): "c03afa29cbdaf722c2cf62608dbb01f061f6558d"
+    }
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():

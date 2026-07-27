@@ -97,11 +97,20 @@ reconnaissance is complete; no production input has been opened.
   canonical JSON, safe reason types, bounded write primitive, and sealed
   runs-directory guard without modifying the frozen first-estimates
   coordinator.
+- Closed the final independent-review findings: the opaque production-input
+  authority now freezes canonical snapshots and rejects either decoded
+  document if it mutates after the byte hash gate; the coordinator freezes
+  the ordered six-check prelaunch record and a test proves it exists before
+  input loading.
+- Kept the shared writer on the historical reducer's fail-closed surface by
+  pinning its exact post-review Git blob in both HEAD and the worktree; only
+  the separately named context modules are excluded without a shared-source
+  byte pin.
 
 ## Next
 
-- Close the final input-authority mutation and prelaunch-order review items,
-  then rerun the full requested estimates/publication suites.
+- Recollect tier counts after the added forgeries, rerun formatting/lint and
+  the full requested estimates/publication suites, then push.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.

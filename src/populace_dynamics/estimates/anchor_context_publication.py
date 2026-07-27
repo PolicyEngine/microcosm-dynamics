@@ -164,6 +164,8 @@ class _VerifiedProductionInputs:
     registration: first_publication._RegisteredConfigurationToken
     first_estimates: Mapping[str, Any]
     anchors: Mapping[str, Any]
+    first_estimates_snapshot: bytes
+    anchors_snapshot: bytes
 
     def __init__(
         self,
@@ -180,6 +182,16 @@ class _VerifiedProductionInputs:
         object.__setattr__(self, "registration", registration)
         object.__setattr__(self, "first_estimates", first_estimates)
         object.__setattr__(self, "anchors", anchors)
+        object.__setattr__(
+            self,
+            "first_estimates_snapshot",
+            canonical_json_bytes(first_estimates),
+        )
+        object.__setattr__(
+            self,
+            "anchors_snapshot",
+            canonical_json_bytes(anchors),
+        )
 
 
 def _require_mapping(value: Any, label: str) -> Mapping[str, Any]:
@@ -654,6 +666,18 @@ def _validate_artifact_input_binding(
         ):
             raise ValueError(
                 "production artifact inputs differ from hash-gated documents"
+            )
+        if canonical_json_bytes(first_estimates) != (
+            verified_production_inputs.first_estimates_snapshot
+        ):
+            raise ValueError(
+                "first-estimates input mutated after its production hash gate"
+            )
+        if canonical_json_bytes(anchors) != (
+            verified_production_inputs.anchors_snapshot
+        ):
+            raise ValueError(
+                "anchor input mutated after its production hash gate"
             )
         return
     if verified_production_inputs is not None:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import stat
@@ -254,6 +255,19 @@ def _continue_after_preparation() -> None:
     """Production no-op at the test-private preparation boundary."""
 
 
+def _retain_prelaunch_record(_record: _PrelaunchRecord) -> None:
+    """Production keeps the frozen record in the active call frame."""
+
+
+@dataclass(frozen=True)
+class _PrelaunchRecord:
+    """In-memory proof that all six registered checks preceded input load."""
+
+    check_names: tuple[str, ...]
+    configuration_sha256: str
+    next_incident_index: int
+
+
 @dataclass(frozen=True)
 class _CoordinatorOperations:
     """Injectable seams; the public production function accepts none."""
@@ -271,6 +285,9 @@ class _CoordinatorOperations:
     publish_artifact: Callable[..., Path]
     publish_incident: Callable[..., Path]
     after_preparation: Callable[[], None] = _continue_after_preparation
+    record_prelaunch: Callable[[_PrelaunchRecord], None] = (
+        _retain_prelaunch_record
+    )
 
 
 def _git_bytes(repository: Path, *arguments: str) -> bytes:
@@ -625,7 +642,7 @@ def _complete_prelaunch_checks(
     actual_invocation: Sequence[str],
     history: _IncidentHistory,
     operations: _CoordinatorOperations,
-) -> None:
+) -> _PrelaunchRecord:
     """Perform the six §5.3 checks without opening either input."""
     if configuration["design"] != registry.design_binding():
         raise _CeremonyAbort(
@@ -655,6 +672,15 @@ def _complete_prelaunch_checks(
         or CANONICAL_EXECUTION_RULE["no_self_rescue"] is not True
     ):
         raise AssertionError("canonical execution acknowledgement changed")
+    record = _PrelaunchRecord(
+        check_names=PRELAUNCH_CHECK_NAMES,
+        configuration_sha256=hashlib.sha256(
+            anchor_context_publication.canonical_json_bytes(configuration)
+        ).hexdigest(),
+        next_incident_index=len(history.paths) + 1,
+    )
+    operations.record_prelaunch(record)
+    return record
 
 
 def _safe_incident_fields(
@@ -752,13 +778,15 @@ def _run_registered_anchor_context_for_test(
                 configuration["registration_reference"],
                 retry_after_incident,
             )
-        _complete_prelaunch_checks(
+        prelaunch_record = _complete_prelaunch_checks(
             repository_root=root,
             configuration=configuration,
             actual_invocation=actual_invocation,
             history=history,
             operations=operations,
         )
+        if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
+            raise AssertionError("prelaunch check record changed")
         sidecar_payload, reported_sidecar_hash = operations.prepare_sidecar(
             root
         )

@@ -459,6 +459,46 @@ def test_configuration_keeps_exact_canonical_invocation_and_bytes(
     )
 
 
+def test_all_six_prelaunch_checks_are_recorded_before_input_loading(
+    tmp_path,
+):
+    root = _repository(tmp_path)
+    records: list[coordinator._PrelaunchRecord] = []
+    events: list[str] = []
+    operations = _operations([], {})
+    original_load = operations.load_inputs
+
+    def record_prelaunch(record):
+        events.append("prelaunch_record")
+        records.append(record)
+
+    def load_after_record(registration):
+        events.append("input_load")
+        assert len(records) == 1
+        return original_load(registration)
+
+    result = _run(
+        root,
+        replace(
+            operations,
+            record_prelaunch=record_prelaunch,
+            load_inputs=load_after_record,
+        ),
+    )
+
+    assert result.status == "published"
+    assert events == ["prelaunch_record", "input_load"]
+    assert records == [
+        coordinator._PrelaunchRecord(
+            check_names=coordinator.PRELAUNCH_CHECK_NAMES,
+            configuration_sha256=hashlib.sha256(
+                _configuration_bytes(root)
+            ).hexdigest(),
+            next_incident_index=1,
+        )
+    ]
+
+
 def test_canonical_invocation_is_exact_checked_before_input_load(
     tmp_path,
     monkeypatch,
