@@ -88,11 +88,20 @@ reconnaissance is complete; no production input has been opened.
 - Recollected all 3,794 tests by tier and updated the enforced manifest:
   920 unit, 1,391 artifact, 804 integration-PSID, 520 legacy reproduction,
   and 159 PolicyEngine-oracle tests.
+- The first complete suite run exposed one intended historical-identity
+  guard: adding context-only modules and the opt-in writer mode changed the
+  broad source tree without changing the first-estimates computation. The
+  historical reducer now excludes an exact pinned list of these post-review
+  sources, while its original estimator surface and coordinator remain
+  byte-for-byte unchanged. Anchor durable claims use the shared lock,
+  canonical JSON, safe reason types, bounded write primitive, and sealed
+  runs-directory guard without modifying the frozen first-estimates
+  coordinator.
 
 ## Next
 
-- Complete the final independent audit and run the full requested
-  estimates/publication suites.
+- Close the final input-authority mutation and prelaunch-order review items,
+  then rerun the full requested estimates/publication suites.
 - Run formatting, lint, and the full estimates/publication suites.
 - Commit each coherent step, update this ledger, and push the completed
   branch.

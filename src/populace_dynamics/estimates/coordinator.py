@@ -59,11 +59,6 @@ _INPUT_FACTORY_SOURCES = (
 )
 _ESTIMATOR_SURFACE_SOURCES = (
     Path("src/populace_dynamics/estimates/__init__.py"),
-    Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
-    Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
-    Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
-    Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
-    Path("src/populace_dynamics/estimates/anchor_context_report.py"),
     Path("src/populace_dynamics/estimates/career.py"),
     Path("src/populace_dynamics/estimates/coordinator.py"),
     Path("src/populace_dynamics/estimates/first_report.py"),
@@ -545,17 +540,13 @@ def _path_within_root(
     return resolved
 
 
-def _attempt_claim_payload(
-    registration_reference: str,
-    *,
-    claim_schema: str = _ATTEMPT_CLAIM_SCHEMA,
-) -> bytes:
+def _attempt_claim_payload(registration_reference: str) -> bytes:
     publication._validate_registration_reference_byte_bound(
         registration_reference
     )
     return publication.canonical_json_bytes(
         {
-            "schema_version": claim_schema,
+            "schema_version": _ATTEMPT_CLAIM_SCHEMA,
             "registration_reference": registration_reference,
         }
     )
@@ -570,11 +561,7 @@ def _write_attempt_claim_payload(descriptor: int, payload: bytes) -> None:
         view = view[written:]
 
 
-def _read_attempt_claim(
-    path: Path,
-    *,
-    claim_schema: str = _ATTEMPT_CLAIM_SCHEMA,
-) -> Mapping[str, Any] | None:
+def _read_attempt_claim(path: Path) -> Mapping[str, Any] | None:
     no_follow = getattr(os, "O_NOFOLLOW", None)
     nonblocking = getattr(os, "O_NONBLOCK", None)
     if no_follow is None or nonblocking is None:
@@ -622,7 +609,7 @@ def _read_attempt_claim(
         return None
     if set(value) != {"schema_version", "registration_reference"}:
         return None
-    if value.get("schema_version") != claim_schema:
+    if value.get("schema_version") != _ATTEMPT_CLAIM_SCHEMA:
         return None
     if not isinstance(value.get("registration_reference"), str):
         return None
@@ -634,24 +621,13 @@ def _create_attempt_claim(
     registration_reference: str,
     *,
     allow_matching_retry_claim: bool = False,
-    claim_path: Path = _ATTEMPT_CLAIM_PATH,
-    claim_schema: str = _ATTEMPT_CLAIM_SCHEMA,
 ) -> Path:
     """Durably claim an attempt or retain its matching retry claim."""
     if not isinstance(registration_reference, str):
         raise TypeError("registration_reference must be a string")
-    if (
-        claim_path.is_absolute()
-        or claim_path.parent != Path("runs")
-        or not claim_path.name
-    ):
-        raise ValueError("attempt claim path must be directly under runs")
     runs = _sealed_runs_directory(repository_root)
-    path = runs / claim_path.name
-    payload = _attempt_claim_payload(
-        registration_reference,
-        claim_schema=claim_schema,
-    )
+    path = runs / _ATTEMPT_CLAIM_PATH.name
+    payload = _attempt_claim_payload(registration_reference)
     if len(payload) > _ATTEMPT_CLAIM_MAX_BYTES:
         raise ValueError("attempt claim payload exceeds its read bound")
     try:
@@ -661,7 +637,7 @@ def _create_attempt_claim(
             0o444,
         )
     except FileExistsError:
-        existing = _read_attempt_claim(path, claim_schema=claim_schema)
+        existing = _read_attempt_claim(path)
         if (
             existing is not None
             and existing.get("registration_reference")
@@ -705,15 +681,13 @@ def _create_attempt_claim(
 def _retry_claim_payload(
     registration_reference: str,
     retry_after_incident: int,
-    *,
-    claim_schema: str = _RETRY_CLAIM_SCHEMA,
 ) -> bytes:
     publication._validate_registration_reference_byte_bound(
         registration_reference
     )
     return publication.canonical_json_bytes(
         {
-            "schema_version": claim_schema,
+            "schema_version": _RETRY_CLAIM_SCHEMA,
             "registration_reference": registration_reference,
             "retry_after_incident": retry_after_incident,
         }
@@ -724,9 +698,6 @@ def _create_retry_claim(
     repository_root: Path,
     registration_reference: str,
     retry_after_incident: int,
-    *,
-    claim_path: Path = _RETRY_CLAIM_PATH,
-    claim_schema: str = _RETRY_CLAIM_SCHEMA,
 ) -> Path:
     """Durably and exclusively consume the sole authorized retry."""
     if not isinstance(registration_reference, str):
@@ -737,18 +708,11 @@ def _create_retry_claim(
         or retry_after_incident < 1
     ):
         raise TypeError("retry_after_incident must be a positive integer")
-    if (
-        claim_path.is_absolute()
-        or claim_path.parent != Path("runs")
-        or not claim_path.name
-    ):
-        raise ValueError("retry claim path must be directly under runs")
     runs = _sealed_runs_directory(repository_root)
-    path = runs / claim_path.name
+    path = runs / _RETRY_CLAIM_PATH.name
     payload = _retry_claim_payload(
         registration_reference,
         retry_after_incident,
-        claim_schema=claim_schema,
     )
     try:
         descriptor = os.open(

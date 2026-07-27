@@ -636,11 +636,10 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
 
 def test_durable_attempt_claim_blocks_reentry_after_process_death(tmp_path):
     root = _repository(tmp_path)
-    first_coordinator._create_attempt_claim(
+    coordinator._create_attempt_claim(
         root,
         REGISTRATION_REFERENCE,
-        claim_path=coordinator._ATTEMPT_CLAIM_PATH,
-        claim_schema=coordinator._ATTEMPT_CLAIM_SCHEMA,
+        allow_matching_retry_claim=False,
     )
     calls: list[str] = []
 
@@ -674,12 +673,10 @@ def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
         ).status
         == "incident"
     )
-    first_coordinator._create_retry_claim(
+    coordinator._create_retry_claim(
         root,
         REGISTRATION_REFERENCE,
         1,
-        claim_path=coordinator._RETRY_CLAIM_PATH,
-        claim_schema=coordinator._RETRY_CLAIM_SCHEMA,
     )
     calls: list[str] = []
 

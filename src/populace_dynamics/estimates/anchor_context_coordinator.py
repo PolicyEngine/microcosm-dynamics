@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 import subprocess
 import sys
 from collections.abc import Callable, Mapping, Sequence
@@ -60,6 +61,187 @@ class _CeremonyAbort(RuntimeError):
         super().__init__(detail)
         self.reason = reason
         self.detail = detail
+
+
+def _claim_payload(
+    *,
+    schema_version: str,
+    registration_reference: str,
+    retry_after_incident: int | None = None,
+) -> bytes:
+    first_publication._validate_registration_reference_byte_bound(
+        registration_reference
+    )
+    value: dict[str, Any] = {
+        "schema_version": schema_version,
+        "registration_reference": registration_reference,
+    }
+    if retry_after_incident is not None:
+        if (
+            isinstance(retry_after_incident, bool)
+            or not isinstance(retry_after_incident, int)
+            or retry_after_incident < 1
+        ):
+            raise TypeError("retry_after_incident must be a positive integer")
+        value["retry_after_incident"] = retry_after_incident
+    return anchor_context_publication.canonical_json_bytes(value)
+
+
+def _read_claim(
+    path: Path,
+    *,
+    schema_version: str,
+    retry: bool,
+) -> Mapping[str, Any] | None:
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    if no_follow is None or nonblocking is None:
+        return None
+    try:
+        descriptor = os.open(path, os.O_RDONLY | no_follow | nonblocking)
+        try:
+            metadata = os.fstat(descriptor)
+            if (
+                not stat.S_ISREG(metadata.st_mode)
+                or metadata.st_size
+                > first_coordinator._ATTEMPT_CLAIM_MAX_BYTES
+            ):
+                return None
+            payload = os.read(
+                descriptor,
+                first_coordinator._ATTEMPT_CLAIM_MAX_BYTES + 1,
+            )
+            if len(
+                payload
+            ) > first_coordinator._ATTEMPT_CLAIM_MAX_BYTES or os.read(
+                descriptor, 1
+            ):
+                return None
+        finally:
+            os.close(descriptor)
+        value = json.loads(payload)
+        canonical = anchor_context_publication.canonical_json_bytes(value)
+    except (
+        OSError,
+        UnicodeError,
+        TypeError,
+        ValueError,
+        OverflowError,
+        RecursionError,
+    ):
+        return None
+    expected_keys = {
+        "schema_version",
+        "registration_reference",
+        *(("retry_after_incident",) if retry else ()),
+    }
+    if (
+        not isinstance(value, Mapping)
+        or canonical != payload
+        or set(value) != expected_keys
+        or value.get("schema_version") != schema_version
+        or not isinstance(value.get("registration_reference"), str)
+    ):
+        return None
+    retry_index = value.get("retry_after_incident")
+    if retry and (
+        isinstance(retry_index, bool)
+        or not isinstance(retry_index, int)
+        or retry_index < 1
+    ):
+        return None
+    return value
+
+
+def _write_claim(path: Path, payload: bytes) -> None:
+    if len(payload) > first_coordinator._ATTEMPT_CLAIM_MAX_BYTES:
+        raise ValueError("claim payload exceeds its read bound")
+    descriptor = os.open(
+        path,
+        os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0),
+        0o444,
+    )
+    try:
+        first_coordinator._write_attempt_claim_payload(descriptor, payload)
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+    directory = os.open(
+        path.parent,
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0),
+    )
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+
+
+def _create_attempt_claim(
+    repository_root: Path,
+    registration_reference: str,
+    *,
+    allow_matching_retry_claim: bool,
+) -> Path:
+    runs = first_coordinator._sealed_runs_directory(repository_root)
+    path = runs / _ATTEMPT_CLAIM_PATH.name
+    payload = _claim_payload(
+        schema_version=_ATTEMPT_CLAIM_SCHEMA,
+        registration_reference=registration_reference,
+    )
+    try:
+        _write_claim(path, payload)
+    except FileExistsError:
+        existing = _read_claim(
+            path,
+            schema_version=_ATTEMPT_CLAIM_SCHEMA,
+            retry=False,
+        )
+        if (
+            allow_matching_retry_claim
+            and existing is not None
+            and existing.get("registration_reference")
+            == registration_reference
+        ):
+            return path
+        raise _CeremonyAbort(
+            (
+                "preparation_fresh_registration_adjudication_required_"
+                "attempt_claim"
+            ),
+            (
+                "A durable anchor-context attempt claim already occupies "
+                "the canonical path; fresh-registration adjudication is "
+                "required."
+            ),
+        ) from None
+    return path
+
+
+def _create_retry_claim(
+    repository_root: Path,
+    registration_reference: str,
+    retry_after_incident: int,
+) -> Path:
+    runs = first_coordinator._sealed_runs_directory(repository_root)
+    path = runs / _RETRY_CLAIM_PATH.name
+    payload = _claim_payload(
+        schema_version=_RETRY_CLAIM_SCHEMA,
+        registration_reference=registration_reference,
+        retry_after_incident=retry_after_incident,
+    )
+    try:
+        _write_claim(path, payload)
+    except FileExistsError:
+        raise _CeremonyAbort(
+            "preparation_fresh_registration_required_retry_claim",
+            (
+                "The durable anchor-context retry claim is already "
+                "occupied; the sole retry is consumed."
+            ),
+        ) from None
+    return path
 
 
 @dataclass(frozen=True)
@@ -559,20 +741,16 @@ def _run_registered_anchor_context_for_test(
             production_only=production_only,
         )
         retry_after_incident = _authorize_invocation(configuration, history)
-        first_coordinator._create_attempt_claim(
+        _create_attempt_claim(
             root,
             configuration["registration_reference"],
             allow_matching_retry_claim=retry_after_incident is not None,
-            claim_path=_ATTEMPT_CLAIM_PATH,
-            claim_schema=_ATTEMPT_CLAIM_SCHEMA,
         )
         if retry_after_incident is not None:
-            first_coordinator._create_retry_claim(
+            _create_retry_claim(
                 root,
                 configuration["registration_reference"],
                 retry_after_incident,
-                claim_path=_RETRY_CLAIM_PATH,
-                claim_schema=_RETRY_CLAIM_SCHEMA,
             )
         _complete_prelaunch_checks(
             repository_root=root,
