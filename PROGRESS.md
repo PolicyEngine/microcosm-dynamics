@@ -5,8 +5,8 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: finding 5, extending the independent formula oracle to all
-  seven available comparisons.
+- Active work: final review, tier/full-suite verification, push, and
+  per-finding output report.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -113,11 +113,19 @@
     input load, and capability/retry checks bind their exact bytes and inodes;
   - the production observer validates rather than discards the record, and
     delete/reorder/evidence/echo/argv/index mutations fail before input load.
-- Focused launcher/report/publication/coordinator/rehearsal suite: 179 passed.
-- Black, Ruff, and `git diff --check` pass through finding 4b.
+- Finding 5 implemented:
+  - the raw-row independent oracle now hardcodes model and official formulas
+    for all seven available comparisons, including adjusted payroll, gross
+    contributions, net payroll-tax contributions, and awards per worker;
+  - an exact ordered coverage assertion pins the independent seven-ID tuple to
+    the available projection of the frozen registry;
+  - every comparison independently checks all 20 draws and eight annual rows,
+    including both sample standard deviations and all published statistics.
+- Focused launcher/report/publication/coordinator/rehearsal suite: 184 passed.
+- Black, Ruff, and `git diff --check` pass through finding 5.
 
 ## Next
 
-- Implement finding 5 in its own coherent commit with a disposition.
+- Complete independent review and address any actionable finding.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.

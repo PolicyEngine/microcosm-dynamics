@@ -27,6 +27,15 @@ YEARS = tuple(range(2015, 2023))
 DRAW_YEAR_KEYS = tuple(
     (draw_index, year) for draw_index in range(20) for year in YEARS
 )
+INDEPENDENT_AVAILABLE_COMPARISON_IDS = (
+    "cmp_reported_taxable_earnings_per_worker",
+    "cmp_adjusted_taxable_payroll_per_covered_worker",
+    "cmp_gross_contributions_per_worker",
+    "cmp_net_payroll_tax_contributions_per_covered_worker",
+    "cmp_retired_worker_beneficiaries_per_worker",
+    "cmp_retired_worker_awards_per_worker",
+    "cmp_retired_worker_benefits_per_reported_taxable_earnings",
+)
 
 
 @pytest.fixture(scope="module")
@@ -136,9 +145,20 @@ def _independent_statistics(
 
     for draw_index in range(20):
         key = (draw_index, year)
-        if comparison_id == "cmp_reported_taxable_earnings_per_worker":
+        if comparison_id in {
+            "cmp_reported_taxable_earnings_per_worker",
+            "cmp_adjusted_taxable_payroll_per_covered_worker",
+        }:
             model_value = (
                 revenue[key]["weighted_taxable_payroll"]
+                / revenue[key]["weighted_covered_earner_count"]
+            )
+        elif comparison_id in {
+            "cmp_gross_contributions_per_worker",
+            "cmp_net_payroll_tax_contributions_per_covered_worker",
+        }:
+            model_value = (
+                revenue[key]["combined_contributions"]
                 / revenue[key]["weighted_covered_earner_count"]
             )
         elif comparison_id == ("cmp_retired_worker_beneficiaries_per_worker"):
@@ -148,6 +168,11 @@ def _independent_statistics(
             )
             model_value = (
                 combined_beneficiaries
+                / revenue[key]["weighted_covered_earner_count"]
+            )
+        elif comparison_id == "cmp_retired_worker_awards_per_worker":
+            model_value = (
+                flow[key]["weighted_award_count"]
                 / revenue[key]["weighted_covered_earner_count"]
             )
         elif comparison_id == (
@@ -164,36 +189,53 @@ def _independent_statistics(
             raise AssertionError(f"unknown independent spec {comparison_id}")
         model_values.append(float(model_value))
 
-    if comparison_id == "cmp_reported_taxable_earnings_per_worker":
-        official_value = _raw_official_value(
-            anchors,
+    official_series = {
+        "cmp_reported_taxable_earnings_per_worker": (
             "oasdi_reported_taxable_earnings",
-            year,
-        ) / _raw_official_value(
-            anchors,
             "oasdi_workers_with_taxable_earnings",
-            year,
-        )
-    elif comparison_id == ("cmp_retired_worker_beneficiaries_per_worker"):
-        official_value = _raw_official_value(
-            anchors,
+        ),
+        "cmp_adjusted_taxable_payroll_per_covered_worker": (
+            "oasdi_adjusted_taxable_payroll",
+            "oasdi_covered_workers",
+        ),
+        "cmp_gross_contributions_per_worker": (
+            "oasdi_gross_contributions",
+            "oasdi_workers_with_taxable_earnings",
+        ),
+        "cmp_net_payroll_tax_contributions_per_covered_worker": (
+            "oasdi_net_payroll_tax_contributions",
+            "oasdi_covered_workers",
+        ),
+        "cmp_retired_worker_beneficiaries_per_worker": (
             "retired_worker_december_current_payment_stock",
-            year,
-        ) / _raw_official_value(
-            anchors,
             "oasdi_workers_with_taxable_earnings",
-            year,
-        )
-    else:
-        official_value = _raw_official_value(
-            anchors,
+        ),
+        "cmp_retired_worker_awards_per_worker": (
+            "retired_worker_awards",
+            "oasdi_workers_with_taxable_earnings",
+        ),
+        "cmp_retired_worker_benefits_per_reported_taxable_earnings": (
             "retired_worker_benefits_paid_estimated_allocation",
-            year,
-        ) / _raw_official_value(
-            anchors,
             "oasdi_reported_taxable_earnings",
-            year,
-        )
+        ),
+    }
+    try:
+        official_numerator, official_denominator = official_series[
+            comparison_id
+        ]
+    except KeyError as error:  # pragma: no cover - closed independent tuple
+        raise AssertionError(
+            f"unknown independent official spec {comparison_id}"
+        ) from error
+    official_value = _raw_official_value(
+        anchors,
+        official_numerator,
+        year,
+    ) / _raw_official_value(
+        anchors,
+        official_denominator,
+        year,
+    )
 
     comparisons = [value / official_value for value in model_values]
     return model_values, official_value, comparisons
@@ -347,13 +389,20 @@ def test_official_extraction_is_exact_complete_and_normalized(
             )
 
 
+def test_independent_formula_oracle_covers_every_available_comparison():
+    available = tuple(
+        spec["comparison_id"]
+        for spec in registry.comparison_specs()
+        if spec["availability"]["status"] == "available"
+    )
+
+    assert len(INDEPENDENT_AVAILABLE_COMPARISON_IDS) == 7
+    assert INDEPENDENT_AVAILABLE_COMPARISON_IDS == available
+
+
 @pytest.mark.parametrize(
     "comparison_id",
-    [
-        "cmp_reported_taxable_earnings_per_worker",
-        "cmp_retired_worker_beneficiaries_per_worker",
-        "cmp_retired_worker_benefits_per_reported_taxable_earnings",
-    ],
+    INDEPENDENT_AVAILABLE_COMPARISON_IDS,
 )
 def test_registered_formula_matches_independent_per_draw_recomputation(
     comparison_id: str,
@@ -367,6 +416,9 @@ def test_registered_formula_matches_independent_per_draw_recomputation(
         if row["comparison_id"] == comparison_id
     )
 
+    assert published["availability"] == "available"
+    assert published["evaluated"] is True
+    assert len(published["annual_rows"]) == len(YEARS) == 8
     for annual_row in published["annual_rows"]:
         model, official, comparison = _independent_statistics(
             comparison_id,
@@ -374,6 +426,7 @@ def test_registered_formula_matches_independent_per_draw_recomputation(
             anchors,
             annual_row["year"],
         )
+        assert len(model) == len(comparison) == 20
         model_mean, model_sd = _mean_and_sample_sd(model)
         comparison_mean, comparison_sd = _mean_and_sample_sd(comparison)
         assert annual_row["model_statistic_mean"] == pytest.approx(model_mean)
