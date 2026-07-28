@@ -76,6 +76,16 @@ class _CeremonyAbort(RuntimeError):
 
 
 @dataclass(frozen=True, init=False)
+class _CoordinatorInvocation:
+    """Opaque authority to enter the production ceremony state machine."""
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError(
+            "coordinator invocations are issued only by the coordinator"
+        )
+
+
+@dataclass(frozen=True, init=False)
 class _CeremonyCapability:
     """Unforgeable, live authority for production input I/O and compute."""
 
@@ -1213,7 +1223,91 @@ def _ceremony_capability_protocol():
     create_retry_claim = _create_retry_claim
     require_retry_authorization = _require_retry_authorization
     revoke_retry_authorization = _revoke_retry_authorization
+    invocations: dict[int, tuple[Any, ...]] = {}
     issued: dict[int, tuple[Any, ...]] = {}
+
+    def issue_invocation(
+        repository_root: Path,
+        registered_configuration_bytes: bytes,
+        actual_invocation: Sequence[str],
+        operations: _CoordinatorOperations,
+    ) -> _CoordinatorInvocation:
+        caller = getframe(1)
+        if (
+            caller.f_code is not run.__code__
+            or caller.f_locals.get("root") is not repository_root
+            or caller.f_locals.get("registered_configuration_bytes")
+            is not registered_configuration_bytes
+            or caller.f_locals.get("actual_invocation")
+            is not actual_invocation
+            or caller.f_locals.get("operations") is not operations
+        ):
+            raise TypeError(
+                "production invocation authority requires the sealed "
+                "runner stack"
+            )
+        if (
+            not isinstance(repository_root, Path)
+            or not isinstance(registered_configuration_bytes, bytes)
+            or not isinstance(operations, _CoordinatorOperations)
+        ):
+            raise TypeError("production invocation prerequisites changed")
+        invocation = object.__new__(_CoordinatorInvocation)
+        invocations[id(invocation)] = (
+            invocation,
+            repository_root,
+            registered_configuration_bytes,
+            actual_invocation,
+            tuple(actual_invocation),
+            operations,
+        )
+        return invocation
+
+    def require_invocation(
+        invocation: object,
+        repository_root: str | Path,
+        registered_configuration_bytes: bytes,
+        actual_invocation: Sequence[str],
+        operations: _CoordinatorOperations,
+    ) -> None:
+        caller = getframe(1)
+        parent = caller.f_back
+        state = invocations.get(id(invocation))
+        if (
+            state is None
+            or state[0] is not invocation
+            or not isinstance(invocation, _CoordinatorInvocation)
+            or caller.f_code
+            is not _run_registered_anchor_context_core.__code__
+            or parent is None
+            or parent.f_code is not run.__code__
+            or caller.f_locals.get("coordinator_invocation") is not invocation
+            or caller.f_locals.get("production_only") is not True
+        ):
+            raise TypeError(
+                "production execution requires a sealed production invocation"
+            )
+        (
+            _,
+            issued_root,
+            issued_configuration,
+            issued_actual_invocation,
+            frozen_actual_invocation,
+            issued_operations,
+        ) = state
+        if (
+            repository_root is not issued_root
+            or registered_configuration_bytes is not issued_configuration
+            or actual_invocation is not issued_actual_invocation
+            or tuple(actual_invocation) != frozen_actual_invocation
+            or operations is not issued_operations
+        ):
+            raise TypeError("sealed production invocation state changed")
+
+    def revoke_invocation(invocation: object) -> None:
+        state = invocations.get(id(invocation))
+        if state is not None and state[0] is invocation:
+            invocations.pop(id(invocation), None)
 
     def mint(
         registration: first_publication._RegisteredConfigurationToken,
@@ -1413,35 +1507,50 @@ def _ceremony_capability_protocol():
                     registration_path,
                 )
             )
-            return _run_registered_anchor_context_core(
-                repository_root=root,
-                registered_configuration_bytes=registered_configuration_bytes,
-                actual_invocation=actual_invocation,
-                operations=_default_operations(),
-                production_only=True,
-                mint_capability=mint,
-                revoke_capability=revoke,
-                issue_initial_attempt=issue_initial_attempt,
-                require_initial_attempt=require_initial_attempt,
-                seal_retry_authority=seal_retry_authority,
-                revoke_initial_attempt=revoke_initial_attempt,
-                authorize_invocation=authorize_invocation,
-                create_retry_claim=create_retry_claim,
-                require_retry_authorization=require_retry_authorization,
-                revoke_retry_authorization=revoke_retry_authorization,
+            operations = _default_operations()
+            coordinator_invocation = issue_invocation(
+                root,
+                registered_configuration_bytes,
+                actual_invocation,
+                operations,
             )
+            try:
+                return _run_registered_anchor_context_core(
+                    repository_root=root,
+                    registered_configuration_bytes=(
+                        registered_configuration_bytes
+                    ),
+                    actual_invocation=actual_invocation,
+                    operations=operations,
+                    production_only=True,
+                    coordinator_invocation=coordinator_invocation,
+                    mint_capability=mint,
+                    revoke_capability=revoke,
+                    issue_initial_attempt=issue_initial_attempt,
+                    require_initial_attempt=require_initial_attempt,
+                    seal_retry_authority=seal_retry_authority,
+                    revoke_initial_attempt=revoke_initial_attempt,
+                    authorize_invocation=authorize_invocation,
+                    create_retry_claim=create_retry_claim,
+                    require_retry_authorization=(require_retry_authorization),
+                    revoke_retry_authorization=revoke_retry_authorization,
+                )
+            finally:
+                revoke_invocation(coordinator_invocation)
 
     run.__name__ = "run_registered_anchor_context"
     run.__qualname__ = "run_registered_anchor_context"
     run.__doc__ = (
         "Run the production ceremony through the sealed registration gate."
     )
-    return run, require
+    return run, require, require_invocation
 
 
-run_registered_anchor_context, _require_ceremony_capability = (
-    _ceremony_capability_protocol()
-)
+(
+    run_registered_anchor_context,
+    _require_ceremony_capability,
+    _require_coordinator_invocation,
+) = _ceremony_capability_protocol()
 
 
 @dataclass(frozen=True)
@@ -1996,6 +2105,7 @@ def _run_registered_anchor_context_core(
     actual_invocation: Sequence[str],
     operations: _CoordinatorOperations,
     production_only: bool,
+    coordinator_invocation: _CoordinatorInvocation | None,
     mint_capability: (
         Callable[
             [
@@ -2044,6 +2154,16 @@ def _run_registered_anchor_context_core(
     revoke_retry_authorization: Callable[[object], None],
 ) -> CoordinatorResult:
     """Shared ceremony state machine; only the sealed closure can mint."""
+    if production_only:
+        _require_coordinator_invocation(
+            coordinator_invocation,
+            repository_root,
+            registered_configuration_bytes,
+            actual_invocation,
+            operations,
+        )
+    elif coordinator_invocation is not None:
+        raise TypeError("fixture execution cannot use production invocation")
     if production_only != (mint_capability is not None):
         raise TypeError("production execution requires the sealed issuer")
     if (mint_capability is None) != (revoke_capability is None):
@@ -2276,6 +2396,7 @@ def _run_registered_anchor_context_for_test(
         actual_invocation=actual_invocation,
         operations=operations,
         production_only=False,
+        coordinator_invocation=None,
         mint_capability=None,
         revoke_capability=None,
         issue_initial_attempt=_issue_initial_attempt,

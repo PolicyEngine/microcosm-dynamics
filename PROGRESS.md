@@ -123,9 +123,25 @@
     including both sample standard deviations and all published statistics.
 - Focused launcher/report/publication/coordinator/rehearsal suite: 184 passed.
 - Black, Ruff, and `git diff --check` pass through finding 5.
+- Before the final security probe was added, full collection assigned exactly
+  one tier to 3,867 tests: 912 unit, 1,472 artifact, 804 integration-PSID, 520
+  legacy reproduction, and 159 PolicyEngine-oracle tests. The tier manifest
+  will be refreshed after the probe count is collected.
+- An independent security review reproduced one residual direct-core bypass:
+  a caller could select production mode, inject no-op checks and a fake
+  capability mint, then use the real publisher/sealer to manufacture an
+  authenticated retry authority.
+- The production core now refuses entry before parsing or filesystem effects
+  unless a constructor-blocked invocation authority was issued by the public
+  runner closure and is live on the exact runner→core stack, with the original
+  root, descriptor-gated registration bytes, argv, and operation bundle.
+- The runner revokes invocation authority in a `finally` block. Regression
+  probes show that direct-core and extracted-issuer calls cannot reach a
+  mocked production input, capability mint, claim, incident, or retry
+  authority. The complete coordinator suite passes with 61 tests.
 
 ## Next
 
-- Complete independent review and address any actionable finding.
+- Obtain an independent clean re-review of the sealed production entry.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.

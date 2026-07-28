@@ -1293,10 +1293,76 @@ def test_public_entry_point_exposes_only_registration_path():
 def test_ceremony_capability_is_not_caller_constructible():
     with pytest.raises(TypeError, match="minted only by the coordinator"):
         coordinator._CeremonyCapability()
+    with pytest.raises(TypeError, match="issued only by the coordinator"):
+        coordinator._CoordinatorInvocation()
     assert not hasattr(coordinator, "_mint_ceremony_capability")
+    assert not hasattr(coordinator, "_issue_coordinator_invocation")
 
 
-def test_extracted_closure_mint_rejects_caller_created_prerequisites(
+def test_direct_production_core_cannot_forge_ceremony_or_retry_authority(
+    tmp_path: Path,
+):
+    root = tmp_path / "direct-production-core"
+    (root / "runs").mkdir(parents=True)
+    invocation = _invocation(root)
+    configuration = publication.registered_configuration_echo(
+        registration_reference=REGISTRATION_REFERENCE,
+        implementation_commit=IMPLEMENTATION_COMMIT,
+        invocation=invocation,
+    )
+    calls: list[str] = []
+    fake_mint_calls: list[object] = []
+
+    def fail_after_claim(_authority):
+        calls.append("production_input")
+        raise coordinator.ExternalPreOutputFailure(
+            "external_fixture_storage_unavailable",
+            "Fixture storage unavailable before output.",
+        )
+
+    def fake_mint(*_args):
+        fake_mint_calls.append(object())
+        return object()
+
+    operations = replace(
+        _operations(calls, {}),
+        assert_interpreter=lambda _configuration, _invocation: None,
+        validate_repository=lambda _root, _configuration: None,
+        load_inputs=fail_after_claim,
+    )
+    arguments = {
+        "repository_root": root,
+        "registered_configuration_bytes": (
+            publication.canonical_json_bytes(configuration)
+        ),
+        "actual_invocation": invocation,
+        "operations": operations,
+        "production_only": True,
+        "coordinator_invocation": object(),
+        "mint_capability": fake_mint,
+        "revoke_capability": lambda _capability: None,
+        "issue_initial_attempt": coordinator._issue_initial_attempt,
+        "require_initial_attempt": coordinator._require_initial_attempt,
+        "seal_retry_authority": coordinator._seal_retry_authority,
+        "revoke_initial_attempt": coordinator._revoke_initial_attempt,
+        "authorize_invocation": coordinator._authorize_invocation,
+        "create_retry_claim": coordinator._create_retry_claim,
+        "require_retry_authorization": (
+            coordinator._require_retry_authorization
+        ),
+        "revoke_retry_authorization": (
+            coordinator._revoke_retry_authorization
+        ),
+    }
+    with pytest.raises(TypeError, match="sealed production invocation"):
+        coordinator._run_registered_anchor_context_core(**arguments)
+
+    assert calls == []
+    assert fake_mint_calls == []
+    assert list((root / "runs").iterdir()) == []
+
+
+def test_extracted_closure_issuers_reject_caller_created_prerequisites(
     tmp_path: Path,
 ):
     root = _repository(tmp_path)
@@ -1322,6 +1388,7 @@ def test_extracted_closure_mint_rejects_caller_created_prerequisites(
         )
     )
     extracted_mint = closure["mint"].cell_contents
+    extracted_issue = closure["issue_invocation"].cell_contents
 
     with pytest.raises(TypeError, match="sealed runner stack"):
         extracted_mint(
@@ -1331,6 +1398,13 @@ def test_extracted_closure_mint_rejects_caller_created_prerequisites(
             None,
             None,
             None,
+        )
+    with pytest.raises(TypeError, match="sealed runner stack"):
+        extracted_issue(
+            root,
+            _configuration_bytes(root),
+            _invocation(root),
+            _operations([], {}),
         )
 
 
