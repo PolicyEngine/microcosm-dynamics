@@ -13,9 +13,14 @@ from types import SimpleNamespace
 
 import pytest
 
+from populace_dynamics.estimates import (
+    anchor_context_publication as publication,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = ROOT / "scripts" / "run_anchor_context_report.py"
-REGISTRATION = "registrations/fixture anchor context"
+REGISTRATION = "docs/registrations/fixture_anchor_context.json"
+REGISTRATION_REFERENCE = "anchor-context-runner-fixture"
 
 
 def _load_launcher():
@@ -44,15 +49,33 @@ def _guard_repository(
     repository = tmp_path / "repo"
     scripts = repository / "scripts"
     estimates = repository / "src/populace_dynamics/estimates"
+    registrations = repository / "docs/registrations"
+    runs = repository / "runs"
     scripts.mkdir(parents=True)
     estimates.mkdir(parents=True)
+    registrations.mkdir(parents=True)
+    runs.mkdir(parents=True)
     (scripts / LAUNCHER.name).write_bytes(LAUNCHER.read_bytes())
     (repository / ".gitignore").write_text(
-        "__pycache__/\n*.py[cod]\n*.so\n",
+        (
+            "__pycache__/\n"
+            "*.py[cod]\n"
+            "*.so\n"
+            "runs/anchor_context_report_incident_*.json\n"
+        ),
         encoding="utf-8",
     )
+    (runs / ".gitkeep").write_bytes(b"")
     (estimates.parent / "__init__.py").write_text("", encoding="utf-8")
     (estimates / "__init__.py").write_text("", encoding="utf-8")
+    configuration = publication.registered_configuration_echo(
+        registration_reference=REGISTRATION_REFERENCE,
+        implementation_commit="c" * 40,
+        invocation=["fixture anchor-context launcher invocation"],
+    )
+    (repository / REGISTRATION).write_bytes(
+        publication.canonical_json_bytes(configuration)
+    )
 
     import_marker = tmp_path / "coordinator-imported"
     call_marker = tmp_path / "coordinator-call"
@@ -123,12 +146,66 @@ def _sealed_run(
     )
 
 
-def _assert_refusal(
+def _assert_incident(
+    completed: subprocess.CompletedProcess[str],
+    *,
+    repository: Path,
+    reason_detail: str,
+    import_marker: Path,
+    sentinel: Path | None = None,
+    expected_index: int = 1,
+) -> None:
+    assert completed.returncode == 1
+    assert completed.stderr == ""
+    relative = f"runs/anchor_context_report_incident_{expected_index}.json"
+    path = repository / relative
+    assert json.loads(completed.stdout) == {
+        "path": path.as_posix(),
+        "phase": "preparation",
+        "reason": "preparation_pre_import_guard_refused",
+        "status": "incident",
+    }
+    assert completed.stdout.count("\n") == 1
+    payload = path.read_bytes()
+    record = json.loads(payload)
+    assert payload == publication.canonical_json_bytes(record)
+    assert set(record) == {
+        "schema_version",
+        "incident_index",
+        "timestamp_utc",
+        "phase",
+        "reason",
+        "reason_detail",
+        "registration_reference",
+        "configuration_echo",
+        "artifact_path",
+    }
+    assert record["schema_version"] == "anchor_context_report_incident.v1"
+    assert record["incident_index"] == expected_index
+    assert record["phase"] == "preparation"
+    assert record["reason"] == "preparation_pre_import_guard_refused"
+    assert record["reason_detail"] == reason_detail
+    assert record["registration_reference"] == REGISTRATION_REFERENCE
+    assert record["configuration_echo"] == json.loads(
+        (repository / REGISTRATION).read_bytes()
+    )
+    assert record["artifact_path"] is None
+    publication.validate_anchor_context_incident(
+        record,
+        path=path,
+        expected_configuration_echo=record["configuration_echo"],
+        repository_root=repository,
+    )
+    assert not import_marker.exists()
+    if sentinel is not None:
+        assert not any(sentinel.iterdir())
+
+
+def _assert_procedural_refusal(
     completed: subprocess.CompletedProcess[str],
     *,
     reason_detail: str,
     import_marker: Path,
-    sentinel: Path | None = None,
 ) -> None:
     assert completed.returncode == 1
     assert completed.stdout == ""
@@ -139,10 +216,7 @@ def _assert_refusal(
         "reason_detail": reason_detail,
         "status": "procedural_refusal",
     }
-    assert completed.stderr.count("\n") == 1
     assert not import_marker.exists()
-    if sentinel is not None:
-        assert not any(sentinel.iterdir())
 
 
 def test_canonical_sealed_invocation_passes_clean_pre_import_guard(
@@ -248,8 +322,9 @@ def test_pre_import_guard_refuses_unsealed_checkout_before_coordinator_import(
     sentinel = tmp_path / "refusal-pycache"
     completed = _sealed_run(repository, sentinel)
 
-    _assert_refusal(
+    _assert_incident(
         completed,
+        repository=repository,
         reason_detail=reason_detail,
         import_marker=import_marker,
         sentinel=sentinel,
@@ -309,11 +384,131 @@ def test_launcher_refuses_noncanonical_interpreter_before_coordinator_import(
         text=True,
     )
 
-    _assert_refusal(
+    _assert_incident(
         completed,
+        repository=repository,
         reason_detail=reason_detail,
         import_marker=import_marker,
     )
+
+
+def test_pre_import_incidents_append_contiguously_without_overwrite(tmp_path):
+    repository, import_marker, _call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    coordinator_path = (
+        repository
+        / "src/populace_dynamics/estimates/anchor_context_coordinator.py"
+    )
+    coordinator_path.write_text(
+        "raise RuntimeError('dirty coordinator imported')\n",
+        encoding="utf-8",
+    )
+    first = _sealed_run(repository, tmp_path / "first-sentinel")
+    first_path = repository / "runs/anchor_context_report_incident_1.json"
+    first_bytes = first_path.read_bytes()
+    second = _sealed_run(repository, tmp_path / "second-sentinel")
+
+    _assert_incident(
+        first,
+        repository=repository,
+        reason_detail="launcher requires an entirely clean checkout",
+        import_marker=import_marker,
+        expected_index=1,
+    )
+    _assert_incident(
+        second,
+        repository=repository,
+        reason_detail="launcher requires an entirely clean checkout",
+        import_marker=import_marker,
+        expected_index=2,
+    )
+    assert first_path.read_bytes() == first_bytes
+
+
+@pytest.mark.parametrize(
+    "registration",
+    [
+        "runs/first_estimates_v1.json",
+        (
+            "data/external/"
+            "ssa_level_anchors_supplement2025_trustees2026_vintage1.json"
+        ),
+    ],
+)
+def test_pre_import_refusal_rejects_production_input_as_registration(
+    tmp_path,
+    registration,
+):
+    repository, import_marker, _call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    coordinator_path = (
+        repository
+        / "src/populace_dynamics/estimates/anchor_context_coordinator.py"
+    )
+    coordinator_path.write_text(
+        "raise RuntimeError('dirty coordinator imported')\n",
+        encoding="utf-8",
+    )
+
+    completed = _sealed_run(
+        repository,
+        tmp_path / "protected-path-sentinel",
+        registration=registration,
+    )
+
+    _assert_procedural_refusal(
+        completed,
+        reason_detail="launcher requires an entirely clean checkout",
+        import_marker=import_marker,
+    )
+    assert not list(
+        (repository / "runs").glob("anchor_context_report_incident_*.json")
+    )
+
+
+@pytest.mark.parametrize(
+    "alias_kind",
+    ["hardlink", "symlink", "reverse_symlink"],
+)
+def test_bootstrap_registration_gate_rejects_production_alias_before_read(
+    tmp_path,
+    monkeypatch,
+    alias_kind,
+):
+    repository, _import_marker, _call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    launcher = _load_launcher()
+    registration = repository / REGISTRATION
+    protected = repository / "runs/first_estimates_v1.json"
+    original_registration = registration.read_bytes()
+    if alias_kind == "hardlink":
+        protected.write_bytes(b"protected production bytes")
+        registration.unlink()
+        os.link(protected, registration)
+    elif alias_kind == "symlink":
+        protected.write_bytes(b"protected production bytes")
+        registration.unlink()
+        registration.symlink_to(protected)
+    else:
+        protected.symlink_to(registration)
+    read_attempts = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal read_attempts
+        read_attempts += 1
+        raise AssertionError("protected production bytes were read")
+
+    monkeypatch.setattr(launcher.os, "read", forbidden_read)
+
+    with pytest.raises((OSError, ValueError)):
+        launcher._read_registered_configuration(repository, registration)
+
+    assert read_attempts == 0
+    if alias_kind == "reverse_symlink":
+        assert registration.read_bytes() == original_registration
 
 
 @pytest.mark.parametrize(

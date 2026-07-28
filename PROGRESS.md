@@ -5,8 +5,8 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: finding 3, making every valid-registration pre-import
-  preparation refusal publish the mandatory append-only typed incident.
+- Active work: finding 4, strengthening on-disk incident validation and
+  persisting concrete evidence for all six prelaunch determinations.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -76,11 +76,24 @@
     mutations of every authority field, attempt/incident mutation, raw
     integers/paths, and forged token objects all fail closed without creating
     a retry claim.
-- Focused report/publication/coordinator/rehearsal suite: 141 passed.
-- Black, Ruff, and `git diff --check` pass through finding 2.
+- Finding 3 implemented:
+  - the stdlib-only launcher descriptor-gates a single committed canonical
+    file under `docs/registrations`, rejects production paths and their
+    symlink/hardlink/reverse aliases before reading, and exact-checks the
+    production configuration including frozen-registry digests;
+  - checkout, interpreter, and pycache-sentinel guard failures with a valid
+    registration now append and fsync the next canonical nine-key
+    preparation incident before exit, without importing or calling the
+    coordinator;
+  - invalid or protected registration paths retain the reader-free procedural
+    refusal because no lawful registered echo exists;
+  - regression probes cover every reported pre-import refusal, contiguous
+    incident 1→2 publication without overwrite, and protected aliases.
+- Focused launcher/report/publication/coordinator/rehearsal suite: 160 passed.
+- Black, Ruff, and `git diff --check` pass through finding 3.
 
 ## Next
 
-- Implement findings 3–5 in separate coherent commits with dispositions.
+- Implement findings 4–5 in separate coherent commits with dispositions.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.
