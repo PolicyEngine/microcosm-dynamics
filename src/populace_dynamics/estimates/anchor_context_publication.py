@@ -11,6 +11,7 @@ import copy
 import hashlib
 import importlib
 import json
+import math
 import os
 import platform
 import re
@@ -222,6 +223,48 @@ def _require_mapping(value: Any, label: str) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
         raise TypeError(f"{label} must be a JSON object")
     return value
+
+
+def _strictly_parsed_document(
+    raw: bytes,
+    label: str,
+    *,
+    _json_loads: Callable[..., Any] = json.loads,
+    _float: Callable[[str], float] = float,
+    _isfinite: Callable[[float], bool] = math.isfinite,
+) -> Any:
+    """Parse JSON without ambiguous keys or non-finite numbers."""
+
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(
+                    f"{label} contains duplicate object key {key!r}"
+                )
+            result[key] = value
+        return result
+
+    def reject_constant(token: str) -> Any:
+        raise ValueError(f"{label} contains non-finite constant {token}")
+
+    def finite_float(token: str) -> float:
+        value = _float(token)
+        if not _isfinite(value):
+            raise ValueError(f"{label} contains non-finite number {token}")
+        return value
+
+    try:
+        return _json_loads(
+            raw,
+            object_pairs_hook=unique_object,
+            parse_constant=reject_constant,
+            parse_float=finite_float,
+        )
+    except (UnicodeError, ValueError, OverflowError, RecursionError) as error:
+        raise ValueError(
+            f"{label} is not a uniquely parseable JSON document"
+        ) from error
 
 
 def _require_list(value: Any, label: str) -> list[Any]:
@@ -845,10 +888,8 @@ def _input_io_protocol(
     close_on_exec = getattr(os, "O_CLOEXEC", None)
     is_regular = stat.S_ISREG
     sha256 = hashlib.sha256
-    json_loads = json.loads
-    json_decode_error = json.JSONDecodeError
+    strictly_parsed_document = _strictly_parsed_document
     require_mapping = _require_mapping
-    json_dumps = json.dumps
     file_read_chunk_size = _FILE_READ_CHUNK_SIZE
     input_max_bytes = _INPUT_MAX_BYTES
     protected_input_paths = (
@@ -859,17 +900,6 @@ def _input_io_protocol(
         int,
         tuple[_InputReadAuthority, Path, str, int | None],
     ] = {}
-
-    def canonical_bytes(value: Any) -> bytes:
-        return (
-            json_dumps(
-                value,
-                sort_keys=True,
-                separators=(",", ":"),
-                allow_nan=False,
-            )
-            + "\n"
-        ).encode("utf-8")
 
     def require(
         candidate: object,
@@ -1223,13 +1253,8 @@ def _input_io_protocol(
         digest = sha256(raw).hexdigest()
         if digest != validated["sha256"]:
             raise ValueError(f"{role} input sha256 differs from registration")
-        try:
-            document = json_loads(raw)
-        except (UnicodeDecodeError, json_decode_error) as error:
-            raise ValueError(f"{role} input is not valid JSON") from error
+        document = strictly_parsed_document(raw, f"{role} input")
         value = require_mapping(document, f"{role} input")
-        if canonical_bytes(value) != raw:
-            raise ValueError(f"{role} input is not canonical JSON")
         if role == "anchor" and value.get("artifact_vintage_id") != (
             validated["artifact_vintage_id"]
         ):
@@ -1261,10 +1286,8 @@ def _fixture_input_protocol(
     object_new = object.__new__
     object_setattr = object.__setattr__
     sha256 = hashlib.sha256
-    json_loads = json.loads
-    json_decode_error = json.JSONDecodeError
+    strictly_parsed_document = _strictly_parsed_document
     require_mapping = _require_mapping
-    json_dumps = json.dumps
     first_identity = MappingProxyType(
         dict(fixture_input_identity("first_estimates"))
     )
@@ -1280,11 +1303,9 @@ def _fixture_input_protocol(
             "_anchor_vintage",
             "_first_sha256",
             "_issued",
-            "_json_decode_error",
-            "_json_dumps",
-            "_json_loads",
             "_require_mapping",
             "_sha256",
+            "_strictly_parsed_document",
             "_verified_type",
         )
 
@@ -1294,43 +1315,27 @@ def _fixture_input_protocol(
         def __setattr__(self, _name: str, _value: Any) -> None:
             raise TypeError("fixture authority state is sealed")
 
-        def _canonical(self, value: Any) -> bytes:
-            return (
-                object.__getattribute__(self, "_json_dumps")(
-                    value,
-                    sort_keys=True,
-                    separators=(",", ":"),
-                    allow_nan=False,
-                )
-                + "\n"
-            ).encode("utf-8")
-
         def _documents(
             self,
             first_raw: bytes,
             anchor_raw: bytes,
         ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-            try:
-                first = object.__getattribute__(self, "_require_mapping")(
-                    object.__getattribute__(self, "_json_loads")(first_raw),
-                    "first-estimates fixture",
-                )
-                anchor = object.__getattribute__(self, "_require_mapping")(
-                    object.__getattribute__(self, "_json_loads")(anchor_raw),
-                    "anchor fixture",
-                )
-            except (
-                UnicodeDecodeError,
-                object.__getattribute__(self, "_json_decode_error"),
-            ) as error:
-                raise ValueError(
-                    "fixed fixture bundle is invalid JSON"
-                ) from error
+            first = object.__getattribute__(self, "_require_mapping")(
+                object.__getattribute__(
+                    self,
+                    "_strictly_parsed_document",
+                )(first_raw, "first-estimates fixture"),
+                "first-estimates fixture",
+            )
+            anchor = object.__getattribute__(self, "_require_mapping")(
+                object.__getattribute__(
+                    self,
+                    "_strictly_parsed_document",
+                )(anchor_raw, "anchor fixture"),
+                "anchor fixture",
+            )
             if (
-                object.__getattribute__(self, "_canonical")(first) != first_raw
-                or object.__getattribute__(self, "_canonical")(anchor)
-                != anchor_raw
-                or first.get("fixture_only") is not True
+                first.get("fixture_only") is not True
                 or anchor.get("fixture_only") is not True
                 or anchor.get("artifact_vintage_id")
                 != object.__getattribute__(self, "_anchor_vintage")
@@ -1423,11 +1428,13 @@ def _fixture_input_protocol(
     object_setattr(vault, "_anchor_vintage", anchor_vintage)
     object_setattr(vault, "_first_sha256", first_sha256)
     object_setattr(vault, "_issued", {})
-    object_setattr(vault, "_json_decode_error", json_decode_error)
-    object_setattr(vault, "_json_dumps", json_dumps)
-    object_setattr(vault, "_json_loads", json_loads)
     object_setattr(vault, "_require_mapping", require_mapping)
     object_setattr(vault, "_sha256", sha256)
+    object_setattr(
+        vault,
+        "_strictly_parsed_document",
+        strictly_parsed_document,
+    )
     object_setattr(vault, "_verified_type", verified_fixture_type)
     issue_bundle = object_getattribute(vault, "issue")
     require_bundle = object_getattribute(vault, "require")
@@ -1514,19 +1521,15 @@ def _production_input_protocol(
     verified_production_type = _VerifiedProductionInputs
     object_new = object.__new__
     object_setattr = object.__setattr__
-    json_loads = json.loads
-    json_decode_error = json.JSONDecodeError
+    strictly_parsed_document = _strictly_parsed_document
     require_mapping = _require_mapping
-    json_dumps = json.dumps
     object_getattribute = object.__getattribute__
 
     class ProductionAuthorityVault:
         __slots__ = (
             "_issued",
-            "_json_decode_error",
-            "_json_dumps",
-            "_json_loads",
             "_require_mapping",
+            "_strictly_parsed_document",
             "_verified_type",
             "_verify_coordinator_capability",
         )
@@ -1537,44 +1540,25 @@ def _production_input_protocol(
         def __setattr__(self, _name: str, _value: Any) -> None:
             raise TypeError("production authority state is sealed")
 
-        def _canonical(self, value: Any) -> bytes:
-            return (
-                object.__getattribute__(self, "_json_dumps")(
-                    value,
-                    sort_keys=True,
-                    separators=(",", ":"),
-                    allow_nan=False,
-                )
-                + "\n"
-            ).encode("utf-8")
-
         def _documents(
             self,
             first_raw: bytes,
             anchor_raw: bytes,
         ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-            try:
-                first = object.__getattribute__(self, "_require_mapping")(
-                    object.__getattribute__(self, "_json_loads")(first_raw),
-                    "first-estimates production input",
-                )
-                anchor = object.__getattribute__(self, "_require_mapping")(
-                    object.__getattribute__(self, "_json_loads")(anchor_raw),
-                    "anchor production input",
-                )
-            except (
-                UnicodeDecodeError,
-                object.__getattribute__(self, "_json_decode_error"),
-            ) as error:
-                raise ValueError(
-                    "production input snapshot is invalid"
-                ) from error
-            if (
-                object.__getattribute__(self, "_canonical")(first) != first_raw
-                or object.__getattribute__(self, "_canonical")(anchor)
-                != anchor_raw
-            ):
-                raise ValueError("production input snapshot changed")
+            first = object.__getattribute__(self, "_require_mapping")(
+                object.__getattribute__(
+                    self,
+                    "_strictly_parsed_document",
+                )(first_raw, "first-estimates production input"),
+                "first-estimates production input",
+            )
+            anchor = object.__getattribute__(self, "_require_mapping")(
+                object.__getattribute__(
+                    self,
+                    "_strictly_parsed_document",
+                )(anchor_raw, "anchor production input"),
+                "anchor production input",
+            )
             return first, anchor
 
         def verify(
@@ -1667,10 +1651,12 @@ def _production_input_protocol(
 
     vault = object_new(ProductionAuthorityVault)
     object_setattr(vault, "_issued", {})
-    object_setattr(vault, "_json_decode_error", json_decode_error)
-    object_setattr(vault, "_json_dumps", json_dumps)
-    object_setattr(vault, "_json_loads", json_loads)
     object_setattr(vault, "_require_mapping", require_mapping)
+    object_setattr(
+        vault,
+        "_strictly_parsed_document",
+        strictly_parsed_document,
+    )
     object_setattr(vault, "_verified_type", verified_production_type)
     object_setattr(
         vault,
