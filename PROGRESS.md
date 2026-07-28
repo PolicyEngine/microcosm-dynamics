@@ -139,9 +139,16 @@
   probes show that direct-core and extracted-issuer calls cannot reach a
   mocked production input, capability mint, claim, incident, or retry
   authority. The complete coordinator suite passes with 61 tests.
+- Follow-up audit found that the generic durable-record reader could be
+  pointed at a production input even though schema validation later rejected
+  its contents. Durable-record reads now require a fixed claim or incident
+  basename directly under `runs`, preflight the singly-linked regular inode,
+  and reject direct, hardlink, symlink, and reverse-symlink aliases of either
+  production input before `os.read`.
 
 ## Next
 
-- Obtain an independent clean re-review of the sealed production entry.
+- Closure-bind the production core/verifier and coordinator-origin retry
+  adjudication against the independent review's global-substitution probes.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.

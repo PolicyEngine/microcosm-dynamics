@@ -1112,6 +1112,76 @@ def test_retry_claim_requires_live_opaque_authorization(tmp_path):
     assert not (root / "runs/anchor_context_report_retry.claim").exists()
 
 
+@pytest.mark.parametrize(
+    ("reader_name", "claim_name"),
+    [
+        ("canonical", "anchor_context_report_attempt.claim"),
+        ("attempt", "anchor_context_report_attempt.claim"),
+        ("authority", "anchor_context_report_retry_authority.claim"),
+        ("retry", "anchor_context_report_retry.claim"),
+    ],
+)
+@pytest.mark.parametrize(
+    "protected_path",
+    [
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        registry.ANCHOR_INPUT_PATH,
+    ],
+)
+def test_claim_readers_reject_every_production_alias_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    reader_name: str,
+    claim_name: str,
+    protected_path: str,
+):
+    read_attempts = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal read_attempts
+        read_attempts += 1
+        raise AssertionError("production bytes reached os.read")
+
+    monkeypatch.setattr(coordinator.os, "read", forbidden_read)
+    for alias_kind in ("direct", "hardlink", "symlink", "reverse_symlink"):
+        root = tmp_path / alias_kind
+        (root / "runs").mkdir(parents=True)
+        protected = root / protected_path
+        protected.parent.mkdir(parents=True, exist_ok=True)
+        protected.write_bytes(b'{"estimate_bearing":true}\n')
+        claim = root / "runs" / claim_name
+        if alias_kind == "direct":
+            candidate = protected
+        elif alias_kind == "hardlink":
+            os.link(protected, claim)
+            candidate = claim
+        elif alias_kind == "symlink":
+            claim.symlink_to(protected)
+            candidate = claim
+        else:
+            payload = protected.read_bytes()
+            protected.unlink()
+            claim.write_bytes(payload)
+            protected.symlink_to(claim)
+            candidate = claim
+
+        if reader_name == "canonical":
+            result = coordinator._read_canonical_mapping(
+                candidate,
+                maximum_bytes=coordinator._CLAIM_MAX_BYTES,
+                expected_name=claim_name,
+            )
+        elif reader_name == "attempt":
+            result = coordinator._read_attempt_claim(candidate)
+        elif reader_name == "authority":
+            result = coordinator._read_retry_authority(candidate)
+        else:
+            result = coordinator._read_retry_claim(candidate)
+        assert result is None
+
+    assert read_attempts == 0
+
+
 def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
     root = _repository(tmp_path)
     registered_bytes = _configuration_bytes(root)

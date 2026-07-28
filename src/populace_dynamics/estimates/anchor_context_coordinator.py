@@ -136,20 +136,68 @@ def _read_canonical_mapping(
     path: Path,
     *,
     maximum_bytes: int,
+    expected_name: str,
 ) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
     """Read one singly-linked canonical mapping through a pinned descriptor."""
+    candidate = Path(path)
+    permitted_names = {
+        _ATTEMPT_CLAIM_PATH.name,
+        _RETRY_AUTHORITY_PATH.name,
+        _RETRY_CLAIM_PATH.name,
+    }
+    if (
+        expected_name != candidate.name
+        or candidate.parent.name != "runs"
+        or (
+            expected_name not in permitted_names
+            and anchor_context_publication._INCIDENT_FILENAME.fullmatch(
+                expected_name
+            )
+            is None
+        )
+    ):
+        return None
+    try:
+        candidate_before = os.stat(candidate, follow_symlinks=False)
+        if (
+            candidate.parent.is_symlink()
+            or not stat.S_ISREG(candidate_before.st_mode)
+            or candidate_before.st_nlink != 1
+        ):
+            return None
+        repository_root = candidate.parent.parent
+        protected_file_ids: set[tuple[int, int]] = set()
+        for protected_relative in (
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+            registry.ANCHOR_INPUT_PATH,
+        ):
+            try:
+                protected = os.stat(repository_root / protected_relative)
+            except OSError:
+                continue
+            protected_file_ids.add((protected.st_dev, protected.st_ino))
+        if (
+            candidate_before.st_dev,
+            candidate_before.st_ino,
+        ) in protected_file_ids:
+            return None
+    except OSError:
+        return None
     no_follow = getattr(os, "O_NOFOLLOW", None)
     nonblocking = getattr(os, "O_NONBLOCK", None)
     if no_follow is None or nonblocking is None:
         return None
     try:
-        descriptor = os.open(path, os.O_RDONLY | no_follow | nonblocking)
+        descriptor = os.open(candidate, os.O_RDONLY | no_follow | nonblocking)
         try:
             metadata = os.fstat(descriptor)
             if (
                 not stat.S_ISREG(metadata.st_mode)
                 or metadata.st_nlink != 1
                 or metadata.st_size > maximum_bytes
+                or (metadata.st_dev, metadata.st_ino)
+                != (candidate_before.st_dev, candidate_before.st_ino)
+                or (metadata.st_dev, metadata.st_ino) in protected_file_ids
             ):
                 return None
             chunks = bytearray()
@@ -251,7 +299,11 @@ def _attempt_claim_payload(
 def _read_attempt_claim(
     path: Path,
 ) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
-    loaded = _read_canonical_mapping(path, maximum_bytes=_CLAIM_MAX_BYTES)
+    loaded = _read_canonical_mapping(
+        path,
+        maximum_bytes=_CLAIM_MAX_BYTES,
+        expected_name=_ATTEMPT_CLAIM_PATH.name,
+    )
     if loaded is None:
         return None
     value, payload, file_id = loaded
@@ -329,7 +381,11 @@ def _retry_authority_payload(
 def _read_retry_authority(
     path: Path,
 ) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
-    loaded = _read_canonical_mapping(path, maximum_bytes=_CLAIM_MAX_BYTES)
+    loaded = _read_canonical_mapping(
+        path,
+        maximum_bytes=_CLAIM_MAX_BYTES,
+        expected_name=_RETRY_AUTHORITY_PATH.name,
+    )
     if loaded is None:
         return None
     value, payload, file_id = loaded
@@ -402,7 +458,11 @@ def _retry_claim_payload(
 def _read_retry_claim(
     path: Path,
 ) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
-    loaded = _read_canonical_mapping(path, maximum_bytes=_CLAIM_MAX_BYTES)
+    loaded = _read_canonical_mapping(
+        path,
+        maximum_bytes=_CLAIM_MAX_BYTES,
+        expected_name=_RETRY_CLAIM_PATH.name,
+    )
     if loaded is None:
         return None
     value, payload, file_id = loaded
@@ -1137,6 +1197,7 @@ def _retry_authority_protocol():
         incident = _read_canonical_mapping(
             state.incident_path,
             maximum_bytes=_INCIDENT_MAX_BYTES,
+            expected_name=state.incident_path.name,
         )
         if (
             attempt is None
