@@ -223,6 +223,14 @@
   names, and direct/reverse hardlink and symlink aliases. The focused launcher
   suite passes with 29 tests; per-file Black, Ruff, and `git diff --check`
   pass.
+- Independent launcher review then found that `SystemExit` could bypass the
+  entry-failure handler and that persisting an unexpected exception string
+  could copy estimate-bearing text into `reason_detail`. The handler now
+  catches every `BaseException` and uses one fixed non-estimate-bearing
+  detail for all unexpected coordinator import/entry failures. RuntimeError
+  and SystemExit probes with statistic-like messages confirm that neither the
+  incident nor stdout/stderr contains them; the launcher suite now passes 30
+  tests.
 
 ## Next
 

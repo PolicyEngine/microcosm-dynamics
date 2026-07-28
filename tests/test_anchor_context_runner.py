@@ -244,8 +244,23 @@ def test_canonical_sealed_invocation_passes_clean_pre_import_guard(
     assert not any(sentinel.iterdir())
 
 
+@pytest.mark.parametrize(
+    ("raise_statement", "sensitive_detail"),
+    [
+        (
+            "raise RuntimeError('official_statistic=123.45')",
+            "official_statistic=123.45",
+        ),
+        (
+            "raise SystemExit('official_statistic=678.90')",
+            "official_statistic=678.90",
+        ),
+    ],
+)
 def test_clean_committed_coordinator_import_failure_publishes_incident(
     tmp_path,
+    raise_statement,
+    sensitive_detail,
 ):
     repository, import_marker, call_marker, _published_path = (
         _guard_repository(tmp_path)
@@ -261,7 +276,7 @@ def test_clean_committed_coordinator_import_failure_publishes_incident(
                 f"Path({str(import_marker)!r}).write_text(",
                 "    'import attempted\\n', encoding='utf-8'",
                 ")",
-                "raise RuntimeError('committed coordinator import failed')",
+                raise_statement,
                 "",
             )
         ),
@@ -290,12 +305,19 @@ def test_clean_committed_coordinator_import_failure_publishes_incident(
     _assert_incident(
         completed,
         repository=repository,
-        reason_detail="committed coordinator import failed",
+        reason_detail=(
+            "Coordinator import or entry failed before returning a terminal "
+            "result."
+        ),
         import_marker=import_marker,
         sentinel=sentinel,
         expected_reason="preparation_coordinator_entry_failed",
         coordinator_imported=True,
     )
+    incident = repository / "runs/anchor_context_report_incident_1.json"
+    assert sensitive_detail not in incident.read_text(encoding="utf-8")
+    assert sensitive_detail not in completed.stdout
+    assert sensitive_detail not in completed.stderr
     assert import_marker.read_text(encoding="utf-8") == "import attempted\n"
     assert not call_marker.exists()
     assert (

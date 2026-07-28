@@ -18,6 +18,9 @@ from typing import Any
 _IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _PRE_IMPORT_REFUSAL_REASON = "preparation_pre_import_guard_refused"
 _COORDINATOR_ENTRY_FAILURE_REASON = "preparation_coordinator_entry_failed"
+_COORDINATOR_ENTRY_FAILURE_DETAIL = (
+    "Coordinator import or entry failed before returning a terminal result."
+)
 _CONFIGURATION_SCHEMA = "anchor_context_report_configuration.v1"
 _INCIDENT_SCHEMA = "anchor_context_report_incident.v1"
 _INCIDENT_PREFIX = "anchor_context_report_incident_"
@@ -546,7 +549,7 @@ def _write_all(descriptor: int, payload: bytes) -> None:
 def _publish_pre_import_incident(
     repository: Path,
     registration: str | Path,
-    error: Exception,
+    error: BaseException,
     *,
     reason: str = _PRE_IMPORT_REFUSAL_REASON,
     permit_unavailable_git: bool = False,
@@ -602,7 +605,11 @@ def _publish_pre_import_incident(
             ),
             "phase": "preparation",
             "reason": reason,
-            "reason_detail": str(error),
+            "reason_detail": (
+                _COORDINATOR_ENTRY_FAILURE_DETAIL
+                if reason == _COORDINATOR_ENTRY_FAILURE_REASON
+                else str(error)
+            ),
             "registration_reference": configuration["registration_reference"],
             "configuration_echo": configuration,
             "artifact_path": None,
@@ -701,7 +708,7 @@ def _assert_pre_import_guard(repository: Path) -> None:
 
 
 def _print_pre_import_refusal(
-    error: Exception,
+    error: BaseException,
     *,
     reason: str = _PRE_IMPORT_REFUSAL_REASON,
 ) -> None:
@@ -712,7 +719,11 @@ def _print_pre_import_refusal(
                 "path": None,
                 "phase": "preparation",
                 "reason": reason,
-                "reason_detail": str(error),
+                "reason_detail": (
+                    _COORDINATOR_ENTRY_FAILURE_DETAIL
+                    if reason == _COORDINATOR_ENTRY_FAILURE_REASON
+                    else str(error)
+                ),
             },
             sort_keys=True,
         ),
@@ -770,7 +781,7 @@ def main() -> int:
     try:
         incident_names_before = _incident_names(repository)
         result = _run_coordinator(args.registration)
-    except Exception as error:
+    except BaseException as error:
         try:
             path, record = _publish_pre_import_incident(
                 repository,
