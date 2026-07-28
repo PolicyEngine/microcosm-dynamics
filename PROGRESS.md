@@ -5,8 +5,10 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: independent clean re-review, tier/full-suite verification,
-  push, and per-finding output report.
+- Active work: closing the final adversarial review findings across the
+  launcher, publication authority, and coordinator, followed by a clean
+  re-review, tier/full-suite verification, push, and per-finding output
+  report.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -198,9 +200,34 @@
 - Unit tier: 919 passed, 5 skipped, with all 2,973 other-tier tests
   deselected; the full-collection tier policy accepted the refreshed
   manifest.
+- Artifact tier: 1,450 passed, 40 skipped, with all 2,407 other-tier tests
+  deselected.
+- The next adversarial pass found four contract-level residuals: a fake
+  coordinator module could pre-bind publication verifiers; the public runner
+  could be cloned with replacement closure cells; fixture and public
+  execution-law identities were mutable; and durable authority reads did not
+  yet reject every static hardlink before opening or detect every
+  same-inode rewrite.
+- The launcher half of that hardening is complete:
+  - canonical registration metadata, including link count and protected-inode
+    checks, is validated before the leaf descriptor is opened;
+  - coordinator import and entry failures publish exactly one append-only
+    preparation incident, while a coordinator-written incident is detected
+    and never duplicated;
+  - a Git-unavailable checkout can recover only the exact configuration echo
+    through the same descriptor-gated registration path, while a functioning
+    Git object database still enforces committed-byte equality; and
+  - malformed incident-prefixed names fail closed instead of being ignored.
+- Launcher regressions cover clean committed import failure, an entry point
+  that writes then raises, unavailable Git, live-Git mismatch, malformed
+  names, and direct/reverse hardlink and symlink aliases. The focused launcher
+  suite passes with 29 tests; per-file Black, Ruff, and `git diff --check`
+  pass.
 
 ## Next
 
+- Complete and integrate the transient publication-capability handshake and
+  one-shot coordinator retry receipt.
 - Obtain an independent clean re-review of every referee disposition.
 - Run Black, Ruff, each tier, and the full test suite.
 - Record per-finding dispositions, final verification, and push status.

@@ -154,6 +154,8 @@ def _assert_incident(
     import_marker: Path,
     sentinel: Path | None = None,
     expected_index: int = 1,
+    expected_reason: str = "preparation_pre_import_guard_refused",
+    coordinator_imported: bool = False,
 ) -> None:
     assert completed.returncode == 1
     assert completed.stderr == ""
@@ -162,7 +164,7 @@ def _assert_incident(
     assert json.loads(completed.stdout) == {
         "path": path.as_posix(),
         "phase": "preparation",
-        "reason": "preparation_pre_import_guard_refused",
+        "reason": expected_reason,
         "status": "incident",
     }
     assert completed.stdout.count("\n") == 1
@@ -183,7 +185,7 @@ def _assert_incident(
     assert record["schema_version"] == "anchor_context_report_incident.v1"
     assert record["incident_index"] == expected_index
     assert record["phase"] == "preparation"
-    assert record["reason"] == "preparation_pre_import_guard_refused"
+    assert record["reason"] == expected_reason
     assert record["reason_detail"] == reason_detail
     assert record["registration_reference"] == REGISTRATION_REFERENCE
     assert record["configuration_echo"] == json.loads(
@@ -195,7 +197,7 @@ def _assert_incident(
         expected_configuration_echo=record["configuration_echo"],
         repository_root=repository,
     )
-    assert not import_marker.exists()
+    assert import_marker.exists() is coordinator_imported
     if sentinel is not None:
         assert not any(sentinel.iterdir())
 
@@ -239,6 +241,167 @@ def test_canonical_sealed_invocation_passes_clean_pre_import_guard(
     assert completed.stdout.count("\n") == 1
     assert import_marker.read_text(encoding="utf-8") == "imported\n"
     assert call_marker.read_text(encoding="utf-8") == REGISTRATION
+    assert not any(sentinel.iterdir())
+
+
+def test_clean_committed_coordinator_import_failure_publishes_incident(
+    tmp_path,
+):
+    repository, import_marker, call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    coordinator_path = (
+        repository
+        / "src/populace_dynamics/estimates/anchor_context_coordinator.py"
+    )
+    coordinator_path.write_text(
+        "\n".join(
+            (
+                "from pathlib import Path",
+                f"Path({str(import_marker)!r}).write_text(",
+                "    'import attempted\\n', encoding='utf-8'",
+                ")",
+                "raise RuntimeError('committed coordinator import failed')",
+                "",
+            )
+        ),
+        encoding="utf-8",
+    )
+    _git(
+        repository, "add", coordinator_path.relative_to(repository).as_posix()
+    )
+    _git(
+        repository,
+        "-c",
+        "user.name=Anchor Context Runner Test",
+        "-c",
+        "user.email=anchor-context@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--quiet",
+        "-m",
+        "commit failing coordinator fixture",
+    )
+    sentinel = tmp_path / "import-failure-sentinel"
+
+    completed = _sealed_run(repository, sentinel)
+
+    _assert_incident(
+        completed,
+        repository=repository,
+        reason_detail="committed coordinator import failed",
+        import_marker=import_marker,
+        sentinel=sentinel,
+        expected_reason="preparation_coordinator_entry_failed",
+        coordinator_imported=True,
+    )
+    assert import_marker.read_text(encoding="utf-8") == "import attempted\n"
+    assert not call_marker.exists()
+    assert (
+        len(
+            list(
+                (repository / "runs").glob(
+                    "anchor_context_report_incident_*.json"
+                )
+            )
+        )
+        == 1
+    )
+
+
+def test_coordinator_exception_after_incident_does_not_publish_second(
+    tmp_path,
+):
+    repository, import_marker, _call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    coordinator_path = (
+        repository
+        / "src/populace_dynamics/estimates/anchor_context_coordinator.py"
+    )
+    coordinator_path.write_text(
+        "\n".join(
+            (
+                "import json",
+                "from pathlib import Path",
+                f"Path({str(import_marker)!r}).write_text(",
+                "    'imported\\n', encoding='utf-8'",
+                ")",
+                "",
+                "def run_registered_anchor_context(registration_path):",
+                "    root = Path(__file__).resolve().parents[3]",
+                "    configuration = json.loads(",
+                "        (root / registration_path).read_bytes()",
+                "    )",
+                "    record = {",
+                "        'schema_version': "
+                "'anchor_context_report_incident.v1',",
+                "        'incident_index': 1,",
+                "        'timestamp_utc': '2026-07-27T12:00:00Z',",
+                "        'phase': 'compute',",
+                "        'reason': 'external_fixture_failure',",
+                "        'reason_detail': 'published before raise',",
+                "        'registration_reference': "
+                "configuration['registration_reference'],",
+                "        'configuration_echo': configuration,",
+                "        'artifact_path': None,",
+                "    }",
+                "    payload = (json.dumps(",
+                "        record, sort_keys=True, separators=(',', ':'),",
+                "        ensure_ascii=True, allow_nan=False",
+                "    ) + '\\n').encode('utf-8')",
+                "    (root / 'runs/anchor_context_report_incident_1.json')"
+                ".write_bytes(payload)",
+                "    raise RuntimeError('raised after publishing incident')",
+                "",
+            )
+        ),
+        encoding="utf-8",
+    )
+    _git(
+        repository, "add", coordinator_path.relative_to(repository).as_posix()
+    )
+    _git(
+        repository,
+        "-c",
+        "user.name=Anchor Context Runner Test",
+        "-c",
+        "user.email=anchor-context@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--quiet",
+        "-m",
+        "commit incident then raise fixture",
+    )
+    sentinel = tmp_path / "incident-before-raise-sentinel"
+
+    completed = _sealed_run(repository, sentinel)
+
+    incident = repository / "runs/anchor_context_report_incident_1.json"
+    assert completed.returncode == 1
+    assert completed.stderr == ""
+    assert json.loads(completed.stdout) == {
+        "path": incident.as_posix(),
+        "phase": "compute",
+        "reason": "external_fixture_failure",
+        "status": "incident",
+    }
+    assert [
+        path.name
+        for path in (repository / "runs").glob(
+            "anchor_context_report_incident_*.json"
+        )
+    ] == [incident.name]
+    publication.validate_anchor_context_incident(
+        path=incident,
+        expected_configuration_echo=json.loads(
+            (repository / REGISTRATION).read_bytes()
+        ),
+        repository_root=repository,
+    )
+    assert import_marker.read_text(encoding="utf-8") == "imported\n"
     assert not any(sentinel.iterdir())
 
 
@@ -327,6 +490,52 @@ def test_pre_import_guard_refuses_unsealed_checkout_before_coordinator_import(
         reason_detail=reason_detail,
         import_marker=import_marker,
         sentinel=sentinel,
+    )
+
+
+def test_git_guard_failure_uses_lawful_descriptor_registration_echo(
+    tmp_path,
+):
+    repository, import_marker, _call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    (repository / ".git").rename(repository / "corrupt-git-directory")
+    sentinel = tmp_path / "git-failure-sentinel"
+
+    completed = _sealed_run(repository, sentinel)
+
+    _assert_incident(
+        completed,
+        repository=repository,
+        reason_detail="Git could not verify the pre-import report checkout",
+        import_marker=import_marker,
+        sentinel=sentinel,
+    )
+
+
+def test_git_fallback_does_not_accept_mismatched_committed_bytes(tmp_path):
+    repository, _import_marker, _call_marker, _published_path = (
+        _guard_repository(tmp_path)
+    )
+    launcher = _load_launcher()
+    registration = repository / REGISTRATION
+    configuration = json.loads(registration.read_bytes())
+    configuration["registration_reference"] = "changed-after-commit"
+    registration.write_bytes(publication.canonical_json_bytes(configuration))
+
+    with pytest.raises(
+        ValueError,
+        match="registration bytes differ from the committed record",
+    ):
+        launcher._publish_pre_import_incident(
+            repository,
+            registration,
+            launcher._GitVerificationUnavailable("guard Git failed"),
+            permit_unavailable_git=True,
+        )
+
+    assert not list(
+        (repository / "runs").glob("anchor_context_report_incident_*.json")
     )
 
 
@@ -426,6 +635,35 @@ def test_pre_import_incidents_append_contiguously_without_overwrite(tmp_path):
 
 
 @pytest.mark.parametrize(
+    "filename",
+    [
+        "anchor_context_report_incident_0.json",
+        "anchor_context_report_incident_01.json",
+        "anchor_context_report_incident_1",
+        "anchor_context_report_incident_1.json.tmp",
+        "anchor_context_report_incident_invalid.json",
+    ],
+)
+def test_next_incident_index_rejects_malformed_prefixed_name(
+    tmp_path,
+    filename,
+):
+    launcher = _load_launcher()
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    (runs / filename).write_bytes(b"malformed incident fixture\n")
+    descriptor = os.open(runs, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+    try:
+        with pytest.raises(
+            ValueError,
+            match="existing incident filename is malformed",
+        ):
+            launcher._next_incident_index(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+@pytest.mark.parametrize(
     "registration",
     [
         "runs/first_estimates_v1.json",
@@ -469,7 +707,7 @@ def test_pre_import_refusal_rejects_production_input_as_registration(
 
 @pytest.mark.parametrize(
     "alias_kind",
-    ["hardlink", "symlink", "reverse_symlink"],
+    ["hardlink", "reverse_hardlink", "symlink", "reverse_symlink"],
 )
 def test_bootstrap_registration_gate_rejects_production_alias_before_read(
     tmp_path,
@@ -487,6 +725,8 @@ def test_bootstrap_registration_gate_rejects_production_alias_before_read(
         protected.write_bytes(b"protected production bytes")
         registration.unlink()
         os.link(protected, registration)
+    elif alias_kind == "reverse_hardlink":
+        os.link(registration, protected)
     elif alias_kind == "symlink":
         protected.write_bytes(b"protected production bytes")
         registration.unlink()
@@ -494,18 +734,37 @@ def test_bootstrap_registration_gate_rejects_production_alias_before_read(
     else:
         protected.symlink_to(registration)
     read_attempts = 0
+    leaf_open_attempts = 0
+    successful_leaf_opens = 0
+    real_open = launcher.os.open
 
     def forbidden_read(*_args, **_kwargs):
         nonlocal read_attempts
         read_attempts += 1
         raise AssertionError("protected production bytes were read")
 
+    def monitored_open(path, *args, **kwargs):
+        nonlocal leaf_open_attempts, successful_leaf_opens
+        is_registration_leaf = (
+            os.fspath(path) == registration.name
+            and kwargs.get("dir_fd") is not None
+        )
+        if is_registration_leaf:
+            leaf_open_attempts += 1
+        descriptor = real_open(path, *args, **kwargs)
+        if is_registration_leaf:
+            successful_leaf_opens += 1
+        return descriptor
+
     monkeypatch.setattr(launcher.os, "read", forbidden_read)
+    monkeypatch.setattr(launcher.os, "open", monitored_open)
 
     with pytest.raises((OSError, ValueError)):
         launcher._read_registered_configuration(repository, registration)
 
     assert read_attempts == 0
+    assert leaf_open_attempts == 0
+    assert successful_leaf_opens == 0
     if alias_kind == "reverse_symlink":
         assert registration.read_bytes() == original_registration
 
