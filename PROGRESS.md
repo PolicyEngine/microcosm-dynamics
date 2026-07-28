@@ -145,6 +145,10 @@
   basename directly under `runs`, preflight the singly-linked regular inode,
   and reject direct, hardlink, symlink, and reverse-symlink aliases of either
   production input before `os.read`.
+- The incident descriptor gate now compares mode, link count, size, mtime,
+  and ctime as well as device/inode against both the open descriptor and the
+  canonical name after reading. An equal-length, same-inode rewrite during
+  `os.read` is rejected instead of validating stale bytes.
 
 ## Next
 

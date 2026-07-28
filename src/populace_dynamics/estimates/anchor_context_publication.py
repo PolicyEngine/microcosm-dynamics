@@ -1565,12 +1565,19 @@ def _read_incident_file(
             dir_fd=runs_descriptor,
             follow_symlinks=False,
         )
-        if (
-            (after.st_dev, after.st_ino) != file_id
-            or after.st_size != metadata.st_size
-            or (named.st_dev, named.st_ino) != file_id
-            or named.st_size != metadata.st_size
-            or named.st_nlink != 1
+        stable_fields = (
+            "st_dev",
+            "st_ino",
+            "st_mode",
+            "st_nlink",
+            "st_size",
+            "st_mtime_ns",
+            "st_ctime_ns",
+        )
+        if any(
+            getattr(metadata, field) != getattr(after, field)
+            or getattr(metadata, field) != getattr(named, field)
+            for field in stable_fields
         ):
             raise ValueError("incident identity changed during its read")
         payload = bytes(chunks)

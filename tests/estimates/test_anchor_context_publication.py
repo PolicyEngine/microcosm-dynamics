@@ -1149,6 +1149,52 @@ def test_public_incident_validator_rejects_inode_exchange_during_read(
     assert exchanged is True
 
 
+def test_public_incident_validator_rejects_equal_size_in_place_mutation(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    record = _incident()
+    record["configuration_echo"] = configuration
+    record["reason_detail"] = "AAAA"
+    replacement = copy.deepcopy(record)
+    replacement["reason_detail"] = "BBBB"
+    payload = anchor_context_publication.canonical_json_bytes(record)
+    replacement_payload = anchor_context_publication.canonical_json_bytes(
+        replacement
+    )
+    assert len(replacement_payload) == len(payload)
+    path = root / "runs/anchor_context_report_incident_1.json"
+    path.write_bytes(payload)
+    original_read = anchor_context_publication.os.read
+    mutated = False
+
+    def mutate_after_read(descriptor, count):
+        nonlocal mutated
+        chunk = original_read(descriptor, count)
+        if chunk and not mutated:
+            mutated = True
+            path.write_bytes(replacement_payload)
+        return chunk
+
+    monkeypatch.setattr(
+        anchor_context_publication.os,
+        "read",
+        mutate_after_read,
+    )
+
+    with pytest.raises(ValueError, match="identity changed"):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+
+    assert mutated is True
+    assert path.read_bytes() == replacement_payload
+
+
 def test_public_incident_validator_enforces_artifact_path_iff_on_disk(
     tmp_path,
 ):
