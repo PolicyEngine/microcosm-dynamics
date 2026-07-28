@@ -616,6 +616,11 @@ def _validate_prelaunch_record_value(
         or design["production_input_io_before_launch"] is not False
     ):
         raise ValueError("ratification and no-input evidence changed")
+    anchor_context_publication._assert_exact_json(
+        design["design"],
+        registry.design_binding(),
+        "prelaunch ratified design",
+    )
 
     registration = evidence_by_name[PRELAUNCH_CHECK_NAMES[1]]
     if set(registration) != {
@@ -662,6 +667,16 @@ def _validate_prelaunch_record_value(
         or inputs["production_inputs_opened"] is not False
     ):
         raise ValueError("registered input identity evidence changed")
+    anchor_context_publication._assert_exact_json(
+        inputs["first_estimates_input"],
+        configuration["first_estimates_input"],
+        "prelaunch first-estimates identity",
+    )
+    anchor_context_publication._assert_exact_json(
+        inputs["anchor_input"],
+        configuration["anchor_input"],
+        "prelaunch anchor identity",
+    )
 
     outputs = evidence_by_name[PRELAUNCH_CHECK_NAMES[3]]
     expected_absence = [
@@ -679,6 +694,16 @@ def _validate_prelaunch_record_value(
         or next_index != len(history) + 1
     ):
         raise ValueError("output and incident-contiguity evidence changed")
+    anchor_context_publication._assert_exact_json(
+        outputs["output_absence"],
+        expected_absence,
+        "prelaunch output absence",
+    )
+    anchor_context_publication._assert_exact_json(
+        outputs["next_incident_index"],
+        next_index,
+        "prelaunch next incident index",
+    )
     for position, path in enumerate(history, start=1):
         if path != f"runs/anchor_context_report_incident_{position}.json":
             raise ValueError("prelaunch incident history is not contiguous")
@@ -706,6 +731,16 @@ def _validate_prelaunch_record_value(
         or invocation["isolated_interpreter_verified"] is not True
     ):
         raise ValueError("isolated invocation evidence changed")
+    anchor_context_publication._assert_exact_json(
+        actual_invocation,
+        registered_invocation,
+        "prelaunch actual invocation",
+    )
+    anchor_context_publication._assert_exact_json(
+        registered_invocation,
+        configuration["invocation"],
+        "prelaunch registered invocation",
+    )
 
     execution = evidence_by_name[PRELAUNCH_CHECK_NAMES[5]]
     if (
@@ -714,6 +749,11 @@ def _validate_prelaunch_record_value(
         or execution["acknowledged"] is not True
     ):
         raise ValueError("execution-law evidence changed")
+    anchor_context_publication._assert_exact_json(
+        execution["execution_rule"],
+        CANONICAL_EXECUTION_RULE,
+        "prelaunch execution rule",
+    )
     return value
 
 
@@ -780,11 +820,42 @@ class _RetryAuthorizationState:
     authority_file_id: tuple[int, int]
 
 
+@dataclass(frozen=True)
+class _PublishedRetryProvenance:
+    """Exact retry evidence retained only after coordinator publication."""
+
+    repository_root: Path
+    registration_reference: str
+    configuration_sha256: str
+    incident_index: int
+    incident_path: Path
+    incident_payload: bytes
+    incident_file_id: tuple[int, int]
+    attempt_claim: Path
+    attempt_payload: bytes
+    attempt_file_id: tuple[int, int]
+    authority_path: Path
+    authority_payload: bytes
+    authority_file_id: tuple[int, int]
+
+
 def _retry_authority_protocol():
     """Issue only live initial/retry tokens backed by durable exact evidence."""
     getframe = sys._getframe
     initial_issued: dict[int, _InitialAttemptState] = {}
     retry_issued: dict[int, _RetryAuthorizationState] = {}
+    published: dict[tuple[Path, str, int], _PublishedRetryProvenance] = {}
+    sealed_core_code: Any = None
+    sealed_abort_code: Any = None
+
+    def bind_stack(
+        core: Callable[..., Any], abort: Callable[..., Any]
+    ) -> None:
+        nonlocal sealed_core_code, sealed_abort_code
+        if sealed_core_code is not None or sealed_abort_code is not None:
+            raise RuntimeError("retry authority stack is already sealed")
+        sealed_core_code = core.__code__
+        sealed_abort_code = abort.__code__
 
     def issue_initial(
         registration: first_publication._RegisteredConfigurationToken,
@@ -793,7 +864,7 @@ def _retry_authority_protocol():
     ) -> _InitialAttemptAuthority:
         caller = getframe(1)
         if (
-            caller.f_code is not _run_registered_anchor_context_core.__code__
+            caller.f_code is not sealed_core_code
             or caller.f_locals.get("registration") is not registration
             or caller.f_locals.get("prelaunch_record") is not prelaunch_record
             or caller.f_locals.get("production_only") is not production_only
@@ -958,7 +1029,7 @@ def _retry_authority_protocol():
             state is None
             or state.token is not token
             or not isinstance(token, _InitialAttemptAuthority)
-            or caller.f_code is not _publish_abort.__code__
+            or caller.f_code is not sealed_abort_code
             or caller.f_locals.get("attempt_authority") is not token
         ):
             raise TypeError(
@@ -980,7 +1051,7 @@ def _retry_authority_protocol():
         configuration = first_publication._configuration_echo(
             state.registration
         )
-        incident, incident_payload, _incident_file_id = (
+        incident, incident_payload, incident_file_id = (
             anchor_context_publication._validate_anchor_context_incident_file(
                 path=expected_path,
                 expected_configuration_echo=configuration,
@@ -1051,6 +1122,30 @@ def _retry_authority_protocol():
             or sealed[2] != state.authority_file_id
         ):
             raise RuntimeError("retry authority did not seal durably")
+        provenance_key = (
+            state.registration._repository_root,
+            state.registration._registration_reference,
+            state.prelaunch_record.next_incident_index,
+        )
+        if provenance_key in published:
+            raise RuntimeError("retry provenance was already retained")
+        published[provenance_key] = _PublishedRetryProvenance(
+            repository_root=state.registration._repository_root,
+            registration_reference=(
+                state.registration._registration_reference
+            ),
+            configuration_sha256=(state.prelaunch_record.configuration_sha256),
+            incident_index=state.prelaunch_record.next_incident_index,
+            incident_path=expected_path,
+            incident_payload=incident_payload,
+            incident_file_id=incident_file_id,
+            attempt_claim=state.attempt_claim,
+            attempt_payload=state.attempt_payload,
+            attempt_file_id=state.attempt_file_id,
+            authority_path=state.authority_path,
+            authority_payload=authority_payload,
+            authority_file_id=state.authority_file_id,
+        )
         return state.authority_path
 
     def revoke_initial(token: object) -> None:
@@ -1068,6 +1163,14 @@ def _retry_authority_protocol():
         history: _IncidentHistory,
     ) -> _RetryAuthorization | None:
         """Allow fresh execution or mint the sole authenticated retry."""
+        caller = getframe(1)
+        if (
+            caller.f_code is not sealed_core_code
+            or caller.f_locals.get("authorize_invocation") is not authorize
+        ):
+            raise TypeError(
+                "retry adjudication requires the sealed coordinator stack"
+            )
         current = []
         expected_bytes = anchor_context_publication.canonical_json_bytes(
             configuration
@@ -1112,6 +1215,15 @@ def _retry_authority_protocol():
             raise _CeremonyAbort(
                 "preparation_fresh_registration_required_nonretryable_incident",
                 "The prior incident is not retry-eligible.",
+            )
+        retry_claim = repository_root / _RETRY_CLAIM_PATH
+        if os.path.lexists(retry_claim):
+            raise _CeremonyAbort(
+                "preparation_fresh_registration_required_retry_claim",
+                (
+                    "The durable anchor-context retry claim is already "
+                    "occupied; the sole retry is consumed."
+                ),
             )
         attempt_claim = repository_root / _ATTEMPT_CLAIM_PATH
         authority_path = repository_root / _RETRY_AUTHORITY_PATH
@@ -1160,6 +1272,37 @@ def _retry_authority_protocol():
                     "attempt, incident, configuration, and no-yield state."
                 ),
             )
+        provenance_key = (
+            repository_root,
+            configuration["registration_reference"],
+            incident_index,
+        )
+        provenance = published.get(provenance_key)
+        if (
+            provenance is None
+            or provenance.repository_root != repository_root
+            or provenance.registration_reference
+            != configuration["registration_reference"]
+            or provenance.configuration_sha256 != configuration_sha256
+            or provenance.incident_index != incident_index
+            or provenance.incident_path != repository_root / incident_relative
+            or provenance.incident_payload != incident_payload
+            or provenance.incident_file_id != incident_file_id
+            or provenance.attempt_claim != attempt_claim
+            or provenance.attempt_payload != attempt_payload
+            or provenance.attempt_file_id != attempt_file_id
+            or provenance.authority_path != authority_path
+            or provenance.authority_payload != authority_payload
+            or provenance.authority_file_id != authority_file_id
+        ):
+            raise _CeremonyAbort(
+                "preparation_retry_provenance_not_coordinator_published",
+                (
+                    "The retry evidence was not retained from this "
+                    "coordinator's own incident publication."
+                ),
+            )
+        published.pop(provenance_key)
         token = object.__new__(_RetryAuthorization)
         object.__setattr__(token, "incident_index", incident_index)
         retry_issued[id(token)] = _RetryAuthorizationState(
@@ -1219,6 +1362,7 @@ def _retry_authority_protocol():
             retry_issued.pop(id(token), None)
 
     return (
+        bind_stack,
         issue_initial,
         require_initial,
         seal,
@@ -1230,6 +1374,7 @@ def _retry_authority_protocol():
 
 
 (
+    _bind_retry_authority_stack,
     _issue_initial_attempt,
     _require_initial_attempt,
     _seal_retry_authority,
@@ -1273,9 +1418,15 @@ def _create_retry_claim(
     return path
 
 
-def _ceremony_capability_protocol():
+def _ceremony_capability_protocol(
+    core_factory: Callable[
+        [Callable[..., None]],
+        Callable[..., CoordinatorResult],
+    ],
+):
     """Expose only the sealed runner and live-capability verifier."""
     getframe = sys._getframe
+    bind_retry_authority_stack = _bind_retry_authority_stack
     issue_initial_attempt = _issue_initial_attempt
     require_initial_attempt = _require_initial_attempt
     seal_retry_authority = _seal_retry_authority
@@ -1338,8 +1489,7 @@ def _ceremony_capability_protocol():
             state is None
             or state[0] is not invocation
             or not isinstance(invocation, _CoordinatorInvocation)
-            or caller.f_code
-            is not _run_registered_anchor_context_core.__code__
+            or caller.f_code is not core.__code__
             or parent is None
             or parent.f_code is not run.__code__
             or caller.f_locals.get("coordinator_invocation") is not invocation
@@ -1381,7 +1531,7 @@ def _ceremony_capability_protocol():
         caller = getframe(1)
         parent = caller.f_back
         if (
-            caller.f_code is not _run_registered_anchor_context_core.__code__
+            caller.f_code is not core.__code__
             or parent is None
             or parent.f_code is not run.__code__
             or caller.f_locals.get("mint_capability") is not mint
@@ -1576,7 +1726,7 @@ def _ceremony_capability_protocol():
                 operations,
             )
             try:
-                return _run_registered_anchor_context_core(
+                return core(
                     repository_root=root,
                     registered_configuration_bytes=(
                         registered_configuration_bytes
@@ -1604,14 +1754,9 @@ def _ceremony_capability_protocol():
     run.__doc__ = (
         "Run the production ceremony through the sealed registration gate."
     )
-    return run, require, require_invocation
-
-
-(
-    run_registered_anchor_context,
-    _require_ceremony_capability,
-    _require_coordinator_invocation,
-) = _ceremony_capability_protocol()
+    core = core_factory(require_invocation)
+    bind_retry_authority_stack(core, _publish_abort)
+    return run, require, require_invocation, core
 
 
 @dataclass(frozen=True)
@@ -2159,288 +2304,311 @@ def _publish_abort(
     )
 
 
-def _run_registered_anchor_context_core(
-    *,
-    repository_root: str | Path,
-    registered_configuration_bytes: bytes,
-    actual_invocation: Sequence[str],
-    operations: _CoordinatorOperations,
-    production_only: bool,
-    coordinator_invocation: _CoordinatorInvocation | None,
-    mint_capability: (
-        Callable[
+def _build_registered_anchor_context_core(
+    require_coordinator_invocation: Callable[..., None],
+) -> Callable[..., CoordinatorResult]:
+    def core(
+        *,
+        repository_root: str | Path,
+        registered_configuration_bytes: bytes,
+        actual_invocation: Sequence[str],
+        operations: _CoordinatorOperations,
+        production_only: bool,
+        coordinator_invocation: _CoordinatorInvocation | None,
+        mint_capability: (
+            Callable[
+                [
+                    first_publication._RegisteredConfigurationToken,
+                    _PrelaunchRecord,
+                    Path,
+                    _InitialAttemptAuthority | None,
+                    _RetryAuthorization | None,
+                    Path | None,
+                ],
+                _CeremonyCapability,
+            ]
+            | None
+        ),
+        revoke_capability: Callable[[object], None] | None,
+        issue_initial_attempt: Callable[
             [
                 first_publication._RegisteredConfigurationToken,
                 _PrelaunchRecord,
-                Path,
-                _InitialAttemptAuthority | None,
-                _RetryAuthorization | None,
-                Path | None,
+                bool,
             ],
-            _CeremonyCapability,
-        ]
-        | None
-    ),
-    revoke_capability: Callable[[object], None] | None,
-    issue_initial_attempt: Callable[
-        [
-            first_publication._RegisteredConfigurationToken,
-            _PrelaunchRecord,
-            bool,
+            _InitialAttemptAuthority,
         ],
-        _InitialAttemptAuthority,
-    ],
-    require_initial_attempt: Callable[
-        [
-            object,
-            first_publication._RegisteredConfigurationToken,
-            _PrelaunchRecord,
+        require_initial_attempt: Callable[
+            [
+                object,
+                first_publication._RegisteredConfigurationToken,
+                _PrelaunchRecord,
+            ],
+            Path,
         ],
-        Path,
-    ],
-    seal_retry_authority: Callable[..., Path],
-    revoke_initial_attempt: Callable[[object], None],
-    authorize_invocation: Callable[
-        [Path, Mapping[str, Any], _IncidentHistory],
-        _RetryAuthorization | None,
-    ],
-    create_retry_claim: Callable[
-        [Path, object, _PrelaunchRecord],
-        Path,
-    ],
-    require_retry_authorization: Callable[
-        [object, Path],
-        _RetryAuthorizationState,
-    ],
-    revoke_retry_authorization: Callable[[object], None],
-) -> CoordinatorResult:
-    """Shared ceremony state machine; only the sealed closure can mint."""
-    if production_only:
-        _require_coordinator_invocation(
-            coordinator_invocation,
-            repository_root,
-            registered_configuration_bytes,
-            actual_invocation,
-            operations,
+        seal_retry_authority: Callable[..., Path],
+        revoke_initial_attempt: Callable[[object], None],
+        authorize_invocation: Callable[
+            [Path, Mapping[str, Any], _IncidentHistory],
+            _RetryAuthorization | None,
+        ],
+        create_retry_claim: Callable[
+            [Path, object, _PrelaunchRecord],
+            Path,
+        ],
+        require_retry_authorization: Callable[
+            [object, Path],
+            _RetryAuthorizationState,
+        ],
+        revoke_retry_authorization: Callable[[object], None],
+    ) -> CoordinatorResult:
+        """Shared ceremony state machine; only the sealed closure can mint."""
+        if production_only:
+            require_coordinator_invocation(
+                coordinator_invocation,
+                repository_root,
+                registered_configuration_bytes,
+                actual_invocation,
+                operations,
+            )
+        elif coordinator_invocation is not None:
+            raise TypeError(
+                "fixture execution cannot use production invocation"
+            )
+        if production_only != (mint_capability is not None):
+            raise TypeError("production execution requires the sealed issuer")
+        if (mint_capability is None) != (revoke_capability is None):
+            raise TypeError("ceremony capability lifecycle is incomplete")
+        root = Path(repository_root).resolve()
+        registration = _parse_configuration(
+            repository_root=root,
+            registered_configuration_bytes=registered_configuration_bytes,
+            production_only=production_only,
         )
-    elif coordinator_invocation is not None:
-        raise TypeError("fixture execution cannot use production invocation")
-    if production_only != (mint_capability is not None):
-        raise TypeError("production execution requires the sealed issuer")
-    if (mint_capability is None) != (revoke_capability is None):
-        raise TypeError("ceremony capability lifecycle is incomplete")
-    root = Path(repository_root).resolve()
-    registration = _parse_configuration(
-        repository_root=root,
-        registered_configuration_bytes=registered_configuration_bytes,
-        production_only=production_only,
-    )
-    configuration = first_publication._configuration_echo(registration)
-    precompute: (
-        anchor_context_publication._AnchorContextPrecomputeToken | None
-    ) = None
-    ceremony_capability: _CeremonyCapability | None = None
-    initial_attempt_authority: _InitialAttemptAuthority | None = None
-    retry_authorization: _RetryAuthorization | None = None
-    retry_claim: Path | None = None
-    try:
+        configuration = first_publication._configuration_echo(registration)
+        precompute: (
+            anchor_context_publication._AnchorContextPrecomputeToken | None
+        ) = None
+        ceremony_capability: _CeremonyCapability | None = None
+        initial_attempt_authority: _InitialAttemptAuthority | None = None
+        retry_authorization: _RetryAuthorization | None = None
+        retry_claim: Path | None = None
         try:
-            history = _read_incident_history(
-                root,
-                production_only=production_only,
-            )
-            retry_authorization = authorize_invocation(
-                root,
-                configuration,
-                history,
-            )
-            if not production_only:
-                anchor_context_publication._assert_fixture_identities(
-                    configuration["first_estimates_input"],
-                    configuration["anchor_input"],
-                )
-            prelaunch_record = _complete_prelaunch_checks(
-                repository_root=root,
-                configuration=configuration,
-                actual_invocation=actual_invocation,
-                history=history,
-                operations=operations,
-            )
-            if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
-                raise AssertionError("prelaunch check record changed")
-            if retry_authorization is None:
-                initial_attempt_authority = issue_initial_attempt(
-                    registration,
-                    prelaunch_record,
-                    production_only,
-                )
-                attempt_claim = initial_attempt_authority.attempt_claim
-            else:
-                attempt_claim = root / _ATTEMPT_CLAIM_PATH
-                retry_claim = create_retry_claim(
+            try:
+                history = _read_incident_history(
                     root,
-                    retry_authorization,
-                    prelaunch_record,
+                    production_only=production_only,
                 )
-            operations.record_prelaunch(prelaunch_record)
-            if initial_attempt_authority is not None:
-                if (
-                    require_initial_attempt(
-                        initial_attempt_authority,
+                retry_authorization = authorize_invocation(
+                    root,
+                    configuration,
+                    history,
+                )
+                if not production_only:
+                    anchor_context_publication._assert_fixture_identities(
+                        configuration["first_estimates_input"],
+                        configuration["anchor_input"],
+                    )
+                prelaunch_record = _complete_prelaunch_checks(
+                    repository_root=root,
+                    configuration=configuration,
+                    actual_invocation=actual_invocation,
+                    history=history,
+                    operations=operations,
+                )
+                if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
+                    raise AssertionError("prelaunch check record changed")
+                if retry_authorization is None:
+                    initial_attempt_authority = issue_initial_attempt(
                         registration,
                         prelaunch_record,
+                        production_only,
                     )
-                    != attempt_claim
-                ):
-                    raise TypeError("initial prelaunch claim identity changed")
-            else:
-                retry_state = require_retry_authorization(
-                    retry_authorization,
-                    root,
+                    attempt_claim = initial_attempt_authority.attempt_claim
+                else:
+                    attempt_claim = root / _ATTEMPT_CLAIM_PATH
+                    retry_claim = create_retry_claim(
+                        root,
+                        retry_authorization,
+                        prelaunch_record,
+                    )
+                operations.record_prelaunch(prelaunch_record)
+                if initial_attempt_authority is not None:
+                    if (
+                        require_initial_attempt(
+                            initial_attempt_authority,
+                            registration,
+                            prelaunch_record,
+                        )
+                        != attempt_claim
+                    ):
+                        raise TypeError(
+                            "initial prelaunch claim identity changed"
+                        )
+                else:
+                    retry_state = require_retry_authorization(
+                        retry_authorization,
+                        root,
+                    )
+                    retry_loaded = (
+                        _read_retry_claim(retry_claim)
+                        if retry_claim is not None
+                        else None
+                    )
+                    expected_retry_payload = _retry_claim_payload(
+                        registration_reference=retry_state.registration_reference,
+                        retry_after_incident=retry_state.incident_index,
+                        retry_authority_sha256=hashlib.sha256(
+                            retry_state.authority_payload
+                        ).hexdigest(),
+                        prelaunch_record=prelaunch_record,
+                    )
+                    if (
+                        retry_loaded is None
+                        or retry_loaded[1] != expected_retry_payload
+                    ):
+                        raise TypeError("retry prelaunch claim changed")
+                execution_authority: object = registration
+                if mint_capability is not None:
+                    ceremony_capability = mint_capability(
+                        registration,
+                        prelaunch_record,
+                        attempt_claim,
+                        initial_attempt_authority,
+                        retry_authorization,
+                        retry_claim,
+                    )
+                    execution_authority = ceremony_capability
+                sidecar_payload, reported_sidecar_hash = (
+                    operations.prepare_sidecar(root)
                 )
-                retry_loaded = (
-                    _read_retry_claim(retry_claim)
-                    if retry_claim is not None
-                    else None
+                runtime_provenance = operations.build_runtime_provenance(
+                    configuration["implementation_commit"]
                 )
-                expected_retry_payload = _retry_claim_payload(
-                    registration_reference=retry_state.registration_reference,
-                    retry_after_incident=retry_state.incident_index,
-                    retry_authority_sha256=hashlib.sha256(
-                        retry_state.authority_payload
-                    ).hexdigest(),
-                    prelaunch_record=prelaunch_record,
-                )
-                if (
-                    retry_loaded is None
-                    or retry_loaded[1] != expected_retry_payload
-                ):
-                    raise TypeError("retry prelaunch claim changed")
-            execution_authority: object = registration
-            if mint_capability is not None:
-                ceremony_capability = mint_capability(
+                precompute = anchor_context_publication._freeze_precompute(
                     registration,
-                    prelaunch_record,
-                    attempt_claim,
-                    initial_attempt_authority,
-                    retry_authorization,
-                    retry_claim,
+                    runtime_provenance=runtime_provenance,
+                    sidecar_payload=sidecar_payload,
+                    prior_incidents=history.paths,
                 )
-                execution_authority = ceremony_capability
-            sidecar_payload, reported_sidecar_hash = (
-                operations.prepare_sidecar(root)
-            )
-            runtime_provenance = operations.build_runtime_provenance(
-                configuration["implementation_commit"]
-            )
-            precompute = anchor_context_publication._freeze_precompute(
-                registration,
-                runtime_provenance=runtime_provenance,
-                sidecar_payload=sidecar_payload,
-                prior_incidents=history.paths,
-            )
-            if reported_sidecar_hash != precompute.sidecar_sha256:
-                raise ValueError(
-                    "prepared sidecar digest differs from frozen bytes"
+                if reported_sidecar_hash != precompute.sidecar_sha256:
+                    raise ValueError(
+                        "prepared sidecar digest differs from frozen bytes"
+                    )
+                loaded_inputs = operations.load_inputs(execution_authority)
+                if production_only:
+                    anchor_context_publication._require_verified_production_inputs(
+                        loaded_inputs,
+                        ceremony_capability=ceremony_capability,
+                    )
+                else:
+                    anchor_context_publication._require_verified_fixture_inputs(
+                        loaded_inputs
+                    )
+            except BaseException as error:
+                return _publish_abort(
+                    precompute or registration,
+                    phase="preparation",
+                    error=error,
+                    estimate_bearing_information_yielded=False,
+                    operations=operations,
+                    attempt_authority=initial_attempt_authority,
+                    seal_retry_authority=seal_retry_authority,
                 )
-            loaded_inputs = operations.load_inputs(execution_authority)
-            if production_only:
-                anchor_context_publication._require_verified_production_inputs(
+
+            operations.after_preparation()
+            try:
+                results = operations.build_results(
+                    execution_authority,
                     loaded_inputs,
+                )
+            except BaseException as error:
+                return _publish_abort(
+                    precompute,
+                    phase="compute",
+                    error=error,
+                    estimate_bearing_information_yielded=False,
+                    operations=operations,
+                    attempt_authority=initial_attempt_authority,
+                    seal_retry_authority=seal_retry_authority,
+                )
+
+            estimate_bearing_information_yielded = True
+            try:
+                operations.validate_results(
+                    execution_authority,
+                    results,
+                    loaded_inputs,
+                )
+                artifact = operations.build_artifact(
+                    configuration_echo=configuration,
+                    runtime_provenance=runtime_provenance,
+                    results=results,
+                    input_bundle=loaded_inputs,
+                    environment_sidecar_sha256=precompute.sidecar_sha256,
+                    prior_incidents=precompute.prior_incidents,
                     ceremony_capability=ceremony_capability,
                 )
-            else:
-                anchor_context_publication._require_verified_fixture_inputs(
-                    loaded_inputs
+            except BaseException as error:
+                return _publish_abort(
+                    precompute,
+                    phase="invariant",
+                    error=error,
+                    estimate_bearing_information_yielded=(
+                        estimate_bearing_information_yielded
+                    ),
+                    operations=operations,
+                    attempt_authority=initial_attempt_authority,
+                    seal_retry_authority=seal_retry_authority,
                 )
-        except BaseException as error:
-            return _publish_abort(
-                precompute or registration,
-                phase="preparation",
-                error=error,
-                estimate_bearing_information_yielded=False,
-                operations=operations,
-                attempt_authority=initial_attempt_authority,
-                seal_retry_authority=seal_retry_authority,
-            )
 
-        operations.after_preparation()
-        try:
-            results = operations.build_results(
-                execution_authority,
-                loaded_inputs,
-            )
-        except BaseException as error:
-            return _publish_abort(
-                precompute,
-                phase="compute",
-                error=error,
-                estimate_bearing_information_yielded=False,
-                operations=operations,
-                attempt_authority=initial_attempt_authority,
-                seal_retry_authority=seal_retry_authority,
-            )
-
-        estimate_bearing_information_yielded = True
-        try:
-            operations.validate_results(
-                execution_authority,
-                results,
-                loaded_inputs,
-            )
-            artifact = operations.build_artifact(
-                configuration_echo=configuration,
-                runtime_provenance=runtime_provenance,
-                results=results,
-                input_bundle=loaded_inputs,
-                environment_sidecar_sha256=precompute.sidecar_sha256,
-                prior_incidents=precompute.prior_incidents,
-                ceremony_capability=ceremony_capability,
-            )
-        except BaseException as error:
-            return _publish_abort(
-                precompute,
-                phase="invariant",
-                error=error,
-                estimate_bearing_information_yielded=(
-                    estimate_bearing_information_yielded
-                ),
-                operations=operations,
-                attempt_authority=initial_attempt_authority,
-                seal_retry_authority=seal_retry_authority,
-            )
-
-        try:
-            operations.validate_repository(root, configuration)
-            path = operations.publish_artifact(
-                precompute,
-                artifact,
-                input_bundle=loaded_inputs,
-                ceremony_capability=ceremony_capability,
-            )
-        except BaseException as error:
-            return _publish_abort(
-                precompute,
+            try:
+                operations.validate_repository(root, configuration)
+                path = operations.publish_artifact(
+                    precompute,
+                    artifact,
+                    input_bundle=loaded_inputs,
+                    ceremony_capability=ceremony_capability,
+                )
+            except BaseException as error:
+                return _publish_abort(
+                    precompute,
+                    phase="publication",
+                    error=error,
+                    estimate_bearing_information_yielded=True,
+                    operations=operations,
+                    attempt_authority=initial_attempt_authority,
+                    seal_retry_authority=seal_retry_authority,
+                )
+            return CoordinatorResult(
+                status="published",
+                path=path,
                 phase="publication",
-                error=error,
-                estimate_bearing_information_yielded=True,
-                operations=operations,
-                attempt_authority=initial_attempt_authority,
-                seal_retry_authority=seal_retry_authority,
+                reason=None,
             )
-        return CoordinatorResult(
-            status="published",
-            path=path,
-            phase="publication",
-            reason=None,
-        )
-    finally:
-        if ceremony_capability is not None and revoke_capability is not None:
-            revoke_capability(ceremony_capability)
-        if initial_attempt_authority is not None:
-            revoke_initial_attempt(initial_attempt_authority)
-        if retry_authorization is not None:
-            revoke_retry_authorization(retry_authorization)
+        finally:
+            if (
+                ceremony_capability is not None
+                and revoke_capability is not None
+            ):
+                revoke_capability(ceremony_capability)
+            if initial_attempt_authority is not None:
+                revoke_initial_attempt(initial_attempt_authority)
+            if retry_authorization is not None:
+                revoke_retry_authorization(retry_authorization)
+
+    core.__name__ = "_run_registered_anchor_context_core"
+    core.__qualname__ = "_run_registered_anchor_context_core"
+    return core
+
+
+(
+    run_registered_anchor_context,
+    _require_ceremony_capability,
+    _require_coordinator_invocation,
+    _run_registered_anchor_context_core,
+) = _ceremony_capability_protocol(_build_registered_anchor_context_core)
+del _build_registered_anchor_context_core
 
 
 def _run_registered_anchor_context_for_test(

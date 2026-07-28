@@ -135,10 +135,10 @@
   unless a constructor-blocked invocation authority was issued by the public
   runner closure and is live on the exact runner→core stack, with the original
   root, descriptor-gated registration bytes, argv, and operation bundle.
-- The runner revokes invocation authority in a `finally` block. Regression
-  probes show that direct-core and extracted-issuer calls cannot reach a
-  mocked production input, capability mint, claim, incident, or retry
-  authority. The complete coordinator suite passes with 61 tests.
+- The runner revokes invocation authority in a `finally` block. Initial
+  regression probes showed that direct-core and extracted-issuer calls could
+  not reach a mocked production input, capability mint, claim, incident, or
+  retry authority.
 - Follow-up audit found that the generic durable-record reader could be
   pointed at a production input even though schema validation later rejected
   its contents. Durable-record reads now require a fixed claim or incident
@@ -149,10 +149,21 @@
   and ctime as well as device/inode against both the open descriptor and the
   canonical name after reading. An equal-length, same-inode rewrite during
   `os.read` is rejected instead of validating stale bytes.
+- Independent substitution probes found that the first entry fix still
+  resolved the core and invocation verifier through mutable module globals.
+  The protocol now constructs the core as a verifier-capturing closure; the
+  public runner, capability mint, invocation verifier, and retry stack all
+  bind that exact core/code rather than looking up a replaceable global.
+- Retry adjudication now requires exact retained coordinator-origin state
+  created only after the live initial authority publishes, reopens, and seals
+  its incident. A caller-fabricated but internally consistent attempt,
+  incident, nonce, and authority chain cannot mint a retry token or claim.
+- Frozen nested prelaunch evidence now uses type-exact JSON comparison, so
+  `true` cannot substitute for integer incident index or `registered_runs`.
+- The complete coordinator suite passes with 72 tests.
 
 ## Next
 
-- Closure-bind the production core/verifier and coordinator-origin retry
-  adjudication against the independent review's global-substitution probes.
+- Obtain an independent clean re-review of every referee disposition.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.

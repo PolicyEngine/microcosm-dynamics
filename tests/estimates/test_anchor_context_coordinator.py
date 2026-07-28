@@ -705,6 +705,38 @@ def test_prelaunch_claim_mutation_refuses_input_loading(tmp_path, mutation):
     assert calls == []
 
 
+@pytest.mark.parametrize(
+    "mutation",
+    ["nested_incident_index_bool", "registered_runs_bool"],
+)
+def test_prelaunch_evidence_rejects_bool_for_frozen_integer(
+    tmp_path,
+    mutation,
+):
+    root = _repository(tmp_path)
+    configuration = _configuration(root)
+    record = coordinator._complete_prelaunch_checks(
+        repository_root=root,
+        configuration=configuration,
+        actual_invocation=configuration["invocation"],
+        history=coordinator._read_incident_history(
+            root,
+            production_only=False,
+        ),
+        operations=_operations([], {}),
+    )
+    evidence = json.loads(record.evidence_bytes)
+    if mutation == "nested_incident_index_bool":
+        evidence["checks"][3]["evidence"]["next_incident_index"] = True
+    else:
+        evidence["checks"][5]["evidence"]["execution_rule"][
+            "registered_runs"
+        ] = True
+
+    with pytest.raises(ValueError):
+        coordinator._validate_prelaunch_record_value(evidence)
+
+
 def test_canonical_invocation_is_exact_checked_before_input_load(
     tmp_path,
     monkeypatch,
@@ -927,6 +959,81 @@ def test_hard_failure_then_forged_incident_cannot_claim_retry(tmp_path):
     assert attempt_path.read_bytes() == attempt_bytes
     assert authority_path.read_bytes() == b""
     assert not (root / "runs/anchor_context_report_retry.claim").exists()
+
+
+def test_self_consistent_forged_provenance_cannot_claim_retry(tmp_path):
+    root = _repository(tmp_path)
+    configuration_bytes = _configuration_bytes(root)
+    configuration = json.loads(configuration_bytes)
+    history = coordinator._read_incident_history(
+        root,
+        production_only=False,
+    )
+    prelaunch = coordinator._complete_prelaunch_checks(
+        repository_root=root,
+        configuration=configuration,
+        actual_invocation=configuration["invocation"],
+        history=history,
+        operations=_operations([], {}),
+    )
+    authority_path = root / coordinator._RETRY_AUTHORITY_PATH
+    descriptor = os.open(
+        authority_path,
+        os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+        0o400,
+    )
+    authority_metadata = os.fstat(descriptor)
+    os.close(descriptor)
+    nonce = "a" * 64
+    attempt_payload = coordinator._attempt_claim_payload(
+        registration_reference=REGISTRATION_REFERENCE,
+        configuration_sha256=hashlib.sha256(configuration_bytes).hexdigest(),
+        next_incident_index=1,
+        authority_file_id=(
+            authority_metadata.st_dev,
+            authority_metadata.st_ino,
+        ),
+        authority_nonce_sha256=hashlib.sha256(
+            nonce.encode("ascii")
+        ).hexdigest(),
+        prelaunch_record=prelaunch,
+    )
+    attempt_path = root / coordinator._ATTEMPT_CLAIM_PATH
+    coordinator._write_claim(attempt_path, attempt_payload)
+    incident_path = _publish_external_incident(root)
+    authority_payload = coordinator._retry_authority_payload(
+        registration_reference=REGISTRATION_REFERENCE,
+        configuration_sha256=hashlib.sha256(configuration_bytes).hexdigest(),
+        attempt_claim_sha256=hashlib.sha256(attempt_payload).hexdigest(),
+        authority_nonce=nonce,
+        incident_index=1,
+        incident_path=incident_path.relative_to(root).as_posix(),
+        incident_sha256=hashlib.sha256(incident_path.read_bytes()).hexdigest(),
+    )
+    authority_path.chmod(0o600)
+    authority_path.write_bytes(authority_payload)
+    authority_path.chmod(0o400)
+    forged_history = coordinator._read_incident_history(
+        root,
+        production_only=False,
+    )
+    with pytest.raises(TypeError, match="sealed coordinator stack"):
+        coordinator._authorize_invocation(
+            root,
+            configuration,
+            forged_history,
+        )
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert blocked.reason == (
+        "preparation_retry_provenance_not_coordinator_published"
+    )
+    assert calls == []
+    assert not (root / coordinator._RETRY_CLAIM_PATH).exists()
 
 
 @pytest.mark.parametrize(
@@ -1371,6 +1478,7 @@ def test_ceremony_capability_is_not_caller_constructible():
 
 def test_direct_production_core_cannot_forge_ceremony_or_retry_authority(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     root = tmp_path / "direct-production-core"
     (root / "runs").mkdir(parents=True)
@@ -1399,6 +1507,11 @@ def test_direct_production_core_cannot_forge_ceremony_or_retry_authority(
         assert_interpreter=lambda _configuration, _invocation: None,
         validate_repository=lambda _root, _configuration: None,
         load_inputs=fail_after_claim,
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_require_coordinator_invocation",
+        lambda *_args: None,
     )
     arguments = {
         "repository_root": root,
@@ -1572,7 +1685,12 @@ def test_sealed_production_capability_is_live_only_during_full_chain(
         publication.canonical_json_bytes(configuration)
     )
     captured_capabilities: list[object] = []
+    substituted_core_calls: list[object] = []
     original_load = coordinator._load_inputs
+
+    def substituted_core(**_kwargs):
+        substituted_core_calls.append(object())
+        raise AssertionError("module-global core substitution was reached")
 
     def capture_capability(capability):
         registration = coordinator._require_ceremony_capability(capability)
@@ -1632,12 +1750,18 @@ def test_sealed_production_capability_is_live_only_during_full_chain(
     )
     monkeypatch.setattr(coordinator, "_load_inputs", capture_capability)
     monkeypatch.setattr(
+        coordinator,
+        "_run_registered_anchor_context_core",
+        substituted_core,
+    )
+    monkeypatch.setattr(
         coordinator.sys, "orig_argv", invocation, raising=False
     )
 
     result = coordinator.run_registered_anchor_context(registration_path)
 
     assert result.status == "published"
+    assert substituted_core_calls == []
     assert len(captured_capabilities) == 1
     with pytest.raises(TypeError, match="live ceremony capability"):
         coordinator._require_ceremony_capability(captured_capabilities[0])
