@@ -2,8 +2,8 @@
 
 ## State
 
-Implementation and real-git regressions are complete; repository-wide
-verification is next.
+Implementation, regressions, and all requested verification gates are green.
+Final audit, report, cleanup, and push remain.
 
 ## Done
 
@@ -26,7 +26,13 @@ verification is next.
   policy `1 passed, 3927 deselected`.
 - Repository-wide Black (`503 files`) and Ruff checks pass. Black required a
   formatting-only cleanup in the related publication test module.
+- Tier collection passes at `924` unit, `1521` artifact, `804`
+  integration-PSID, `520` legacy reproduction, and `159` PolicyEngine-oracle
+  tests (`3928` total).
+- The full estimates suite passes: `401 passed in 19.83s`.
 
 ## Next
 
-- Run all tier collection smokes and the full estimates suite.
+- Audit the final diff and branch state.
+- Remove the branch-local progress ledger so no tracked scaffolding remains.
+- Write the final report and attempt the required push.
