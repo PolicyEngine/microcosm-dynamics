@@ -21,6 +21,20 @@ _COORDINATOR_ENTRY_FAILURE_REASON = "preparation_coordinator_entry_failed"
 _COORDINATOR_ENTRY_FAILURE_DETAIL = (
     "Coordinator import or entry failed before returning a terminal result."
 )
+_UNEXPECTED_PRE_IMPORT_FAILURE_DETAIL = (
+    "Pre-import preparation failed before coordinator import."
+)
+_SAFE_PRE_IMPORT_FAILURE_DETAILS = frozenset(
+    {
+        "Git could not verify the pre-import report checkout",
+        "runner requires python -I -B -X " "pycache_prefix=<fresh empty dir>",
+        "pycache prefix is not a fresh empty directory",
+        "launcher path differs from Git checkout root",
+        "tracked files use assume-unchanged or skip-worktree flags",
+        "launcher requires an entirely clean checkout",
+        "code roots contain ignored executable artifacts",
+    }
+)
 _CONFIGURATION_SCHEMA = "anchor_context_report_configuration.v1"
 _INCIDENT_SCHEMA = "anchor_context_report_incident.v1"
 _INCIDENT_PREFIX = "anchor_context_report_incident_"
@@ -546,6 +560,16 @@ def _write_all(descriptor: int, payload: bytes) -> None:
         view = view[written:]
 
 
+def _safe_failure_detail(error: BaseException, *, reason: str) -> str:
+    """Return only fixed or explicitly whitelisted preparation metadata."""
+    if reason == _COORDINATOR_ENTRY_FAILURE_REASON:
+        return _COORDINATOR_ENTRY_FAILURE_DETAIL
+    detail = str(error)
+    if detail in _SAFE_PRE_IMPORT_FAILURE_DETAILS:
+        return detail
+    return _UNEXPECTED_PRE_IMPORT_FAILURE_DETAIL
+
+
 def _publish_pre_import_incident(
     repository: Path,
     registration: str | Path,
@@ -605,11 +629,7 @@ def _publish_pre_import_incident(
             ),
             "phase": "preparation",
             "reason": reason,
-            "reason_detail": (
-                _COORDINATOR_ENTRY_FAILURE_DETAIL
-                if reason == _COORDINATOR_ENTRY_FAILURE_REASON
-                else str(error)
-            ),
+            "reason_detail": _safe_failure_detail(error, reason=reason),
             "registration_reference": configuration["registration_reference"],
             "configuration_echo": configuration,
             "artifact_path": None,
@@ -719,11 +739,7 @@ def _print_pre_import_refusal(
                 "path": None,
                 "phase": "preparation",
                 "reason": reason,
-                "reason_detail": (
-                    _COORDINATOR_ENTRY_FAILURE_DETAIL
-                    if reason == _COORDINATOR_ENTRY_FAILURE_REASON
-                    else str(error)
-                ),
+                "reason_detail": _safe_failure_detail(error, reason=reason),
             },
             sort_keys=True,
         ),
@@ -761,7 +777,7 @@ def main() -> int:
     repository = Path(__file__).resolve().parents[1]
     try:
         _assert_pre_import_guard(repository)
-    except RuntimeError as error:
+    except BaseException as error:
         try:
             path, record = _publish_pre_import_incident(
                 repository,

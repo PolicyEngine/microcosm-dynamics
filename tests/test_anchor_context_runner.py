@@ -847,6 +847,70 @@ def test_main_forwards_only_raw_registration_and_prints_result(
 
 
 @pytest.mark.parametrize(
+    "failure",
+    [
+        SystemExit("official_statistic=987.65"),
+        KeyboardInterrupt("official_statistic=543.21"),
+    ],
+)
+def test_main_publishes_safe_incident_for_every_pre_import_baseexception(
+    tmp_path,
+    monkeypatch,
+    capsys,
+    failure,
+):
+    launcher = _load_launcher()
+    sensitive_detail = str(failure)
+    incident_path = tmp_path / "anchor_context_report_incident_1.json"
+    publications = 0
+
+    monkeypatch.setattr(
+        launcher,
+        "_arguments",
+        lambda: SimpleNamespace(registration=REGISTRATION),
+    )
+
+    def fail_guard(_repository):
+        raise failure
+
+    def publish(_repository, _registration, error, **kwargs):
+        nonlocal publications
+        publications += 1
+        assert error is failure
+        assert kwargs["permit_unavailable_git"] is False
+        return incident_path, {
+            "phase": "preparation",
+            "reason": "preparation_pre_import_guard_refused",
+            "reason_detail": launcher._safe_failure_detail(
+                error,
+                reason="preparation_pre_import_guard_refused",
+            ),
+        }
+
+    monkeypatch.setattr(launcher, "_assert_pre_import_guard", fail_guard)
+    monkeypatch.setattr(launcher, "_publish_pre_import_incident", publish)
+
+    assert launcher.main() == 1
+    assert publications == 1
+    output = capsys.readouterr()
+    assert output.err == ""
+    assert sensitive_detail not in output.out
+    assert json.loads(output.out) == {
+        "path": incident_path.as_posix(),
+        "phase": "preparation",
+        "reason": "preparation_pre_import_guard_refused",
+        "status": "incident",
+    }
+    assert (
+        launcher._safe_failure_detail(
+            failure,
+            reason="preparation_pre_import_guard_refused",
+        )
+        == "Pre-import preparation failed before coordinator import."
+    )
+
+
+@pytest.mark.parametrize(
     "injected_arguments",
     [
         ["--repository-root", "/tmp/injected"],

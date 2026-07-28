@@ -307,6 +307,13 @@
 - Final collection assigns exactly one tier to 3,923 tests: 924 unit, 1,516
   artifact, 804 integration-PSID, 520 legacy reproduction, and 159
   PolicyEngine-oracle tests.
+- Remaining-finding review found that the launcher's first pre-import guard
+  caught only `RuntimeError`. It now catches every `BaseException`; known
+  guard failures retain only an exact safe-detail whitelist and every
+  unexpected failure uses one fixed non-estimate-bearing detail. SystemExit
+  and KeyboardInterrupt probes containing statistic-like text each publish
+  exactly one incident and leak that text to neither output stream. The
+  launcher suite passes 32 tests.
 
 ## Next
 
