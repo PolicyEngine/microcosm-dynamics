@@ -7,9 +7,13 @@ import hashlib
 import inspect
 import json
 import os
-from dataclasses import asdict, replace
+import shutil
+import subprocess
+import sys
+import textwrap
+from dataclasses import FrozenInstanceError, asdict, replace
 from pathlib import Path
-from types import SimpleNamespace
+from types import FunctionType, SimpleNamespace
 from typing import Any
 
 import pytest
@@ -280,6 +284,41 @@ def _run(
             else actual_invocation
         ),
         operations=operations,
+    )
+
+
+def _run_attempt(
+    root: Path,
+    operations: coordinator._CoordinatorOperations,
+    *,
+    retry_receipt: coordinator._RetryReceipt | None = None,
+    configuration_bytes: bytes | None = None,
+) -> coordinator._CoordinatorAttemptOutcome:
+    """Exercise one internal fixture attempt while preserving receipt handoff."""
+    payload = (
+        configuration_bytes
+        if configuration_bytes is not None
+        else _configuration_bytes(root)
+    )
+    configuration = json.loads(payload)
+    return coordinator._run_registered_anchor_context_core(
+        repository_root=root,
+        registered_configuration_bytes=payload,
+        actual_invocation=configuration["invocation"],
+        operations=operations,
+        production_only=False,
+        coordinator_invocation=None,
+        retry_receipt=retry_receipt,
+        mint_capability=None,
+        revoke_capability=None,
+        issue_initial_attempt=coordinator._issue_initial_attempt,
+        require_initial_attempt=coordinator._require_initial_attempt,
+        seal_retry_authority=coordinator._seal_retry_authority,
+        revoke_initial_attempt=coordinator._revoke_initial_attempt,
+        authorize_invocation=coordinator._authorize_invocation,
+        create_retry_claim=coordinator._create_retry_claim,
+        require_retry_authorization=(coordinator._require_retry_authorization),
+        revoke_retry_authorization=(coordinator._revoke_retry_authorization),
     )
 
 
@@ -1022,10 +1061,56 @@ def test_self_consistent_forged_provenance_cannot_claim_retry(tmp_path):
             root,
             configuration,
             forged_history,
+            None,
+            False,
         )
+    assert not any(
+        isinstance(cell.cell_contents, dict)
+        for cell in coordinator._authorize_invocation.__closure__
+    )
+    forged_receipt = object.__new__(coordinator._RetryReceipt)
+    incident_metadata = incident_path.stat()
+    attempt_metadata = attempt_path.stat()
+    authority_metadata = authority_path.stat()
+    forged_state = SimpleNamespace(
+        receipt=forged_receipt,
+        repository_root=root,
+        registration_reference=REGISTRATION_REFERENCE,
+        configuration_sha256=hashlib.sha256(configuration_bytes).hexdigest(),
+        incident_index=1,
+        incident_path=incident_path,
+        incident_payload=incident_path.read_bytes(),
+        incident_file_id=(
+            incident_metadata.st_dev,
+            incident_metadata.st_ino,
+        ),
+        incident_phase="compute",
+        incident_reason="external_fixture_storage_unavailable",
+        estimate_bearing_information_yielded=False,
+        attempt_claim=attempt_path,
+        attempt_payload=attempt_payload,
+        attempt_file_id=(
+            attempt_metadata.st_dev,
+            attempt_metadata.st_ino,
+        ),
+        authority_path=authority_path,
+        authority_payload=authority_payload,
+        authority_file_id=(
+            authority_metadata.st_dev,
+            authority_metadata.st_ino,
+        ),
+        production_only=False,
+        consumed=False,
+    )
+    object.__setattr__(forged_receipt, "_state", forged_state)
     calls: list[str] = []
 
-    blocked = _run(root, _operations(calls, {}))
+    blocked = _run_attempt(
+        root,
+        _operations(calls, {}),
+        retry_receipt=forged_receipt,
+        configuration_bytes=configuration_bytes,
+    ).result
 
     assert blocked.status == "incident"
     assert blocked.phase == "preparation"
@@ -1320,7 +1405,55 @@ def test_claim_readers_reject_every_production_alias_before_read(
     assert read_attempts == 0
 
 
-def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
+@pytest.mark.parametrize(
+    "mutation", ["same_inode_rewrite", "name_replacement"]
+)
+def test_canonical_mapping_rejects_equal_size_mutation_during_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+):
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    candidate = runs / "anchor_context_report_retry.claim"
+    candidate.write_bytes(b'{"value":"AAAA"}\n')
+    replacement = b'{"value":"BBBB"}\n'
+    original_read = coordinator.os.read
+    mutated = False
+
+    def mutate_after_read(descriptor, byte_count):
+        nonlocal mutated
+        chunk = original_read(descriptor, byte_count)
+        if chunk and not mutated:
+            mutated = True
+            if mutation == "same_inode_rewrite":
+                candidate.write_bytes(replacement)
+                metadata = candidate.stat()
+                os.utime(
+                    candidate,
+                    ns=(
+                        metadata.st_atime_ns,
+                        metadata.st_mtime_ns + 1_000_000,
+                    ),
+                )
+            else:
+                candidate.rename(candidate.with_suffix(".displaced"))
+                candidate.write_bytes(replacement)
+        return chunk
+
+    monkeypatch.setattr(coordinator.os, "read", mutate_after_read)
+
+    loaded = coordinator._read_canonical_mapping(
+        candidate,
+        maximum_bytes=coordinator._CLAIM_MAX_BYTES,
+        expected_name=candidate.name,
+    )
+
+    assert mutated is True
+    assert loaded is None
+
+
+def test_retry_receipt_never_escapes_to_a_later_fixture_invocation(tmp_path):
     root = _repository(tmp_path)
     registered_bytes = _configuration_bytes(root)
     external = coordinator.ExternalPreOutputFailure(
@@ -1342,77 +1475,82 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
     attempt_bytes = attempt_path.read_bytes()
     authority_bytes = authority_path.read_bytes()
 
-    captured: dict[str, Any] = {}
-    retry = _run(
+    calls: list[str] = []
+    blocked = _run(
         root,
-        _operations([], captured),
+        _operations(calls, {}),
         configuration_bytes=registered_bytes,
     )
 
     assert first.status == "incident"
-    assert retry.status == "published"
-    assert json.loads(retry.path.read_bytes())["prior_incidents"] == [
-        "runs/anchor_context_report_incident_1.json"
-    ]
-    assert (root / "runs/anchor_context_report_retry.claim").is_file()
+    assert blocked.status == "incident"
+    assert blocked.reason == (
+        "preparation_retry_provenance_not_coordinator_published"
+    )
+    assert calls == []
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
+    assert attempt_path.read_bytes() == attempt_bytes
+    assert authority_path.read_bytes() == authority_bytes
+
+
+def test_coordinator_owned_receipt_allows_exactly_one_report_first_retry(
+    tmp_path,
+):
+    root = _repository(tmp_path)
+    registered_bytes = _configuration_bytes(root)
+    external = coordinator.ExternalPreOutputFailure(
+        "external_fixture_storage_unavailable",
+        "Fixture storage unavailable before output.",
+    )
+    calls: list[str] = []
+    captured: dict[str, Any] = {}
+    successful = _operations(calls, captured)
+    original_build = successful.build_results
+    attempts = 0
+
+    def fail_once(authority, loaded_inputs):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            calls.append("compute")
+            raise external
+        return original_build(authority, loaded_inputs)
+
+    operations = replace(successful, build_results=fail_once)
+    first = _run_attempt(
+        root,
+        operations,
+        configuration_bytes=registered_bytes,
+    )
+
+    assert first.result.status == "incident"
+    assert isinstance(first.retry_receipt, coordinator._RetryReceipt)
+    assert first.retry_receipt._state.production_only is False
+    with pytest.raises(FrozenInstanceError):
+        first.retry_receipt._state.production_only = True
+    second = _run_attempt(
+        root,
+        operations,
+        retry_receipt=first.retry_receipt,
+        configuration_bytes=registered_bytes,
+    )
+
+    assert second.result.status == "published"
+    assert second.retry_receipt is None
+    assert attempts == 2
     retry_claim = json.loads(
         (root / "runs/anchor_context_report_retry.claim").read_bytes()
     )
-    assert set(retry_claim) == {
-        "schema_version",
-        "registration_reference",
-        "retry_after_incident",
-        "retry_authority_sha256",
-        "prelaunch_record",
-    }
-    assert retry_claim["schema_version"] == "anchor_context_report_retry.v3"
-    assert retry_claim["registration_reference"] == REGISTRATION_REFERENCE
     assert retry_claim["retry_after_incident"] == 1
-    assert (
-        retry_claim["retry_authority_sha256"]
-        == hashlib.sha256(authority_bytes).hexdigest()
-    )
-    retry_prelaunch = retry_claim["prelaunch_record"]
-    assert retry_prelaunch["next_incident_index"] == 2
-    assert retry_prelaunch["checks"][3]["evidence"]["incident_history"] == [
-        "runs/anchor_context_report_incident_1.json"
-    ]
-    assert attempt_path.read_bytes() == attempt_bytes
-    assert authority_path.read_bytes() == authority_bytes
-    assert (
-        publication.canonical_json_bytes(
-            captured["artifact_kwargs"]["configuration_echo"]
+    assert retry_claim["prelaunch_record"]["checks"][3]["evidence"][
+        "incident_history"
+    ] == ["runs/anchor_context_report_incident_1.json"]
+    with pytest.raises(TypeError, match="live authenticated authorization"):
+        coordinator._create_retry_claim(
+            root,
+            object.__new__(coordinator._RetryAuthorization),
+            second.result.path,
         )
-        == registered_bytes
-    )
-
-    drift_root = _repository(tmp_path / "drift")
-    drift_bytes = _configuration_bytes(drift_root)
-    assert (
-        _run(
-            drift_root,
-            _operations(
-                [],
-                {},
-                failure_phase="compute",
-                failure=external,
-            ),
-            configuration_bytes=drift_bytes,
-        ).status
-        == "incident"
-    )
-    changed = json.loads(drift_bytes)
-    changed["invocation"][-1] += ".changed"
-    calls: list[str] = []
-    blocked = _run(
-        drift_root,
-        _operations(calls, {}),
-        configuration_bytes=publication.canonical_json_bytes(changed),
-    )
-
-    assert blocked.status == "incident"
-    assert blocked.phase == "preparation"
-    assert calls == []
 
 
 def test_durable_attempt_claim_blocks_reentry_after_process_death(tmp_path):
@@ -1441,7 +1579,7 @@ def test_durable_attempt_claim_blocks_reentry_after_process_death(tmp_path):
     assert calls == []
 
 
-def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
+def test_lost_retry_receipt_blocks_retry_after_process_death(
     tmp_path,
 ):
     root = _repository(tmp_path)
@@ -1461,16 +1599,6 @@ def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
         ).status
         == "incident"
     )
-    operations = _operations([], {})
-
-    def hard_crash():
-        raise RuntimeError("simulated retry process death")
-
-    with pytest.raises(RuntimeError, match="retry process death"):
-        _run(root, replace(operations, after_preparation=hard_crash))
-
-    retry_claim = root / "runs/anchor_context_report_retry.claim"
-    retry_claim_bytes = retry_claim.read_bytes()
     calls: list[str] = []
 
     blocked = _run(root, _operations(calls, {}))
@@ -1478,10 +1606,10 @@ def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
     assert blocked.status == "incident"
     assert blocked.phase == "preparation"
     assert blocked.reason == (
-        "preparation_fresh_registration_required_retry_claim"
+        "preparation_retry_provenance_not_coordinator_published"
     )
     assert calls == []
-    assert retry_claim.read_bytes() == retry_claim_bytes
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
     incidents = sorted(
         (root / "runs").glob("anchor_context_report_incident_*.json")
     )
@@ -1498,13 +1626,238 @@ def test_public_entry_point_exposes_only_registration_path():
     ) == {"registration_path"}
 
 
+def test_public_execution_law_cannot_mutate_private_evidence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    with pytest.raises(TypeError):
+        coordinator.CANONICAL_EXECUTION_RULE["no_self_rescue"] = False
+
+    root = _repository(tmp_path)
+    attacker_rule = {
+        "registered_runs": 99,
+        "publishes_regardless": False,
+        "no_self_rescue": False,
+        "retry": "attacker selected",
+        "fresh_registration_required_if": "never",
+    }
+    monkeypatch.setattr(
+        coordinator,
+        "CANONICAL_EXECUTION_RULE",
+        attacker_rule,
+    )
+    configuration = _configuration(root)
+    record = coordinator._complete_prelaunch_checks(
+        repository_root=root,
+        configuration=configuration,
+        actual_invocation=configuration["invocation"],
+        history=coordinator._read_incident_history(
+            root,
+            production_only=False,
+        ),
+        operations=_operations([], {}),
+    )
+    evidence = json.loads(record.evidence_bytes)
+    execution_rule = evidence["checks"][5]["evidence"]["execution_rule"]
+
+    assert execution_rule["registered_runs"] == 1
+    assert execution_rule["publishes_regardless"] is True
+    assert execution_rule["no_self_rescue"] is True
+    coordinator._prelaunch_record_value(record)
+
+
+def test_public_runner_owns_fail_once_report_first_retry(
+    tmp_path: Path,
+):
+    """The exported one-argument runner retains and consumes the receipt."""
+    isolated = tmp_path / "isolated-public-runner"
+    shutil.copytree(Path(__file__).parents[2] / "src", isolated / "src")
+    publication_source = (
+        isolated
+        / "src/populace_dynamics/estimates/anchor_context_publication.py"
+    )
+    publication_source.write_text(
+        publication_source.read_text().replace(
+            "\n_seal_coordinator_authority_import()\n",
+            "\n# Delayed only in this isolated import-order fixture.\n",
+        )
+    )
+    script = isolated / "exercise_public_retry.py"
+    script.write_text(textwrap.dedent("""
+            import hashlib
+            import inspect
+            import json
+            from pathlib import Path
+            from types import SimpleNamespace
+
+            from populace_dynamics.estimates import (
+                anchor_context_publication as publication,
+            )
+            from populace_dynamics.estimates import (
+                anchor_context_registry as registry,
+            )
+            from populace_dynamics.estimates import (
+                anchor_context_report as report,
+            )
+            from populace_dynamics.estimates import coordinator as first
+
+            root = Path.cwd()
+            (root / "runs").mkdir()
+            registration = root / "docs/registrations/context.json"
+            registration.parent.mkdir(parents=True)
+            sentinel = root / "fresh-empty-pycache"
+            sentinel.mkdir()
+            invocation = [
+                "python",
+                "-I",
+                "-B",
+                "-X",
+                f"pycache_prefix={sentinel}",
+                "scripts/run_anchor_context_report.py",
+                "--registration",
+                str(registration),
+            ]
+            configuration = publication.registered_configuration_echo(
+                registration_reference="public-retry-ownership",
+                implementation_commit="c" * 40,
+                invocation=invocation,
+            )
+            registration.write_bytes(
+                publication.canonical_json_bytes(configuration)
+            )
+
+            publication.prepare_environment_sidecar = (
+                lambda _root: (b"{}\\n", hashlib.sha256(b"{}\\n").hexdigest())
+            )
+            publication.validate_environment_sidecar_payload = (
+                lambda _payload: {}
+            )
+            publication._validate_runtime_provenance = (
+                lambda _value, **_kwargs: None
+            )
+            publication._load_production_documents = lambda _authority: object()
+            publication._require_verified_production_inputs = (
+                lambda _bundle, **_kwargs: ({}, {})
+            )
+            publication.build_runtime_provenance = lambda commit: {
+                "schema_version": publication.RUNTIME_PROVENANCE_SCHEMA_VERSION,
+                "implementation_commit": commit,
+                "python": "fixture",
+                "platform": "fixture",
+            }
+            publication.build_anchor_context_artifact = (
+                lambda **kwargs: {
+                    "configuration_echo": kwargs["configuration_echo"],
+                    "prior_incidents": list(kwargs["prior_incidents"]),
+                }
+            )
+
+            attempts = 0
+
+            def fail_once(_authority, _inputs):
+                global attempts
+                attempts += 1
+                if attempts == 1:
+                    raise first.ExternalPreOutputFailure(
+                        "external_fixture_storage_unavailable",
+                        "Fixture storage unavailable before output.",
+                    )
+                return {"attempt": attempts}
+
+            report._build_production_results = fail_once
+            report._validate_production_results = (
+                lambda _authority, _results, _inputs: None
+            )
+
+            def publish(_token, artifact, **_kwargs):
+                path = root / registry.PRIMARY_OUTPUT_PATH
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(publication.canonical_json_bytes(artifact))
+                return path
+
+            publication.write_anchor_context_artifact = publish
+
+            from populace_dynamics.estimates import (
+                anchor_context_coordinator as coordinator,
+            )
+
+            coordinator.sys = SimpleNamespace(
+                orig_argv=invocation,
+                flags=SimpleNamespace(
+                    isolated=True,
+                    dont_write_bytecode=True,
+                ),
+                pycache_prefix=str(sentinel),
+            )
+
+            def git_bytes(_repository, *arguments):
+                if arguments == ("rev-parse", "--show-toplevel"):
+                    return f"{root}\\n".encode()
+                if arguments == ("rev-parse", "HEAD"):
+                    return b"cccccccccccccccccccccccccccccccccccccccc\\n"
+                return b""
+
+            coordinator._git_bytes = git_bytes
+            result = coordinator.run_registered_anchor_context(registration)
+
+            assert result.status == "published"
+            assert attempts == 2
+            assert not hasattr(result, "retry_receipt")
+            assert set(
+                inspect.signature(
+                    coordinator.run_registered_anchor_context
+                ).parameters
+            ) == {"registration_path"}
+            assert [
+                path.name
+                for path in (root / "runs").glob(
+                    "anchor_context_report_incident_*.json"
+                )
+            ] == ["anchor_context_report_incident_1.json"]
+            retry_claim = json.loads(
+                (
+                    root / "runs/anchor_context_report_retry.claim"
+                ).read_bytes()
+            )
+            assert retry_claim["retry_after_incident"] == 1
+            artifact = json.loads(result.path.read_bytes())
+            assert artifact["prior_incidents"] == [
+                "runs/anchor_context_report_incident_1.json"
+            ]
+            """))
+    completed = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=isolated,
+        env={
+            **os.environ,
+            "PYTHONPATH": str(isolated / "src"),
+        },
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+
+
 def test_ceremony_capability_is_not_caller_constructible():
     with pytest.raises(TypeError, match="minted only by the coordinator"):
         coordinator._CeremonyCapability()
     with pytest.raises(TypeError, match="issued only by the coordinator"):
         coordinator._CoordinatorInvocation()
+    with pytest.raises(TypeError, match="minted only by the coordinator"):
+        coordinator._RetryReceipt()
+    with pytest.raises(TypeError, match="created only by the coordinator"):
+        coordinator._CoordinatorAttemptOutcome()
     assert not hasattr(coordinator, "_mint_ceremony_capability")
     assert not hasattr(coordinator, "_issue_coordinator_invocation")
+    for protocol_factory in (
+        "_retry_authority_protocol",
+        "_retry_claim_protocol",
+        "_ceremony_capability_protocol",
+        "_build_registered_anchor_context_core",
+        "_execution_rule_protocol",
+    ):
+        assert not hasattr(coordinator, protocol_factory)
 
 
 def test_direct_production_core_cannot_forge_ceremony_or_retry_authority(
@@ -1553,6 +1906,7 @@ def test_direct_production_core_cannot_forge_ceremony_or_retry_authority(
         "operations": operations,
         "production_only": True,
         "coordinator_invocation": object(),
+        "retry_receipt": None,
         "mint_capability": fake_mint,
         "revoke_capability": lambda _capability: None,
         "issue_initial_attempt": coordinator._issue_initial_attempt,
@@ -1669,6 +2023,7 @@ def test_extracted_closure_issuers_reject_caller_created_prerequisites(
             _configuration_bytes(root),
             _invocation(root),
             _operations([], {}),
+            None,
         )
 
 
@@ -1761,6 +2116,64 @@ def test_public_runner_dependencies_cannot_be_rebound(
     assert attacker_calls == []
 
 
+def test_functiontype_clone_with_replacement_ceremony_dependencies_fails_closed(
+    tmp_path: Path,
+):
+    original = coordinator.run_registered_anchor_context
+    closure = dict(
+        zip(
+            original.__code__.co_freevars,
+            original.__closure__,
+            strict=True,
+        )
+    )
+    attacker_calls: list[str] = []
+
+    def reached(label):
+        def fail(*_args, **_kwargs):
+            attacker_calls.append(label)
+            raise AssertionError(f"replacement {label} was reached")
+
+        return fail
+
+    original_operations = closure["production_operations"].cell_contents
+    replacements = {
+        "sealed_repository_root": tmp_path / "replacement-root",
+        "read_registered_configuration_bytes": reached("reader"),
+        "exclusive_ceremony_lock": reached("lock"),
+        "production_operations": replace(
+            original_operations,
+            load_inputs=reached("production input"),
+            build_results=reached("production compute"),
+        ),
+    }
+
+    def cell(value):
+        def capture():
+            return value
+
+        return capture.__closure__[0]
+
+    cloned_closure = tuple(
+        cell(replacements[name]) if name in replacements else closure[name]
+        for name in original.__code__.co_freevars
+    )
+    clone = FunctionType(
+        original.__code__,
+        original.__globals__,
+        "cloned_run_registered_anchor_context",
+        original.__defaults__,
+        cloned_closure,
+    )
+    clone.__kwdefaults__ = original.__kwdefaults__
+
+    with pytest.raises(TypeError, match="runner provenance changed"):
+        clone(tmp_path / "docs/registrations/attacker.json")
+
+    assert attacker_calls == []
+    assert not (tmp_path / "runs").exists()
+
+
 @pytest.mark.parametrize(
     "protected_path",
     [
@@ -1811,18 +2224,29 @@ def test_public_entry_rejects_hardlinked_production_registration_before_read(
     registration.parent.mkdir(parents=True)
     os.link(protected, registration)
     read_attempts = 0
+    successful_leaf_opens = 0
+    original_open = coordinator.os.open
 
     def forbidden_read(*_args, **_kwargs):
         nonlocal read_attempts
         read_attempts += 1
         raise AssertionError("hardlinked production bytes were read")
 
+    def count_leaf_open(path, flags, *args, **kwargs):
+        nonlocal successful_leaf_opens
+        descriptor = original_open(path, flags, *args, **kwargs)
+        if path == registration.name:
+            successful_leaf_opens += 1
+        return descriptor
+
+    monkeypatch.setattr(coordinator.os, "open", count_leaf_open)
     monkeypatch.setattr(coordinator.os, "read", forbidden_read)
 
     with pytest.raises(ValueError, match="singly linked|aliases protected"):
         coordinator._read_registered_configuration_bytes(root, registration)
 
     assert read_attempts == 0
+    assert successful_leaf_opens == 0
 
 
 @pytest.mark.parametrize(

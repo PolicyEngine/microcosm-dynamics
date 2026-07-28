@@ -13,6 +13,7 @@ import sys
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import populace_dynamics.estimates as estimates_package
@@ -24,23 +25,44 @@ from populace_dynamics.estimates import anchor_context_registry as registry
 from populace_dynamics.estimates import coordinator as first_coordinator
 from populace_dynamics.estimates import publication as first_publication
 
+_bind_coordinator_capability_verifier = (
+    anchor_context_publication._take_coordinator_capability_verifier_binding()
+)
+
 CoordinatorResult = first_coordinator.CoordinatorResult
 ExternalPreOutputFailure = first_coordinator.ExternalPreOutputFailure
 
-CANONICAL_EXECUTION_RULE = {
-    "registered_runs": 1,
-    "publishes_regardless": True,
-    "no_self_rescue": True,
-    "retry": (
-        "At most one coordinator-adjudicated, report-first retry solely for "
-        "an external preparation or compute incident that yielded no "
-        "estimate-bearing information."
-    ),
-    "fresh_registration_required_if": (
-        "A published v1, any changed configuration byte, or a second failure "
-        "of any kind."
-    ),
-}
+
+def _execution_rule_protocol():
+    """Retain the execution law as private immutable canonical bytes."""
+    frozen = anchor_context_publication.canonical_json_bytes(
+        {
+            "registered_runs": 1,
+            "publishes_regardless": True,
+            "no_self_rescue": True,
+            "retry": (
+                "At most one coordinator-adjudicated, report-first retry "
+                "solely for an external preparation or compute incident that "
+                "yielded no estimate-bearing information."
+            ),
+            "fresh_registration_required_if": (
+                "A published v1, any changed configuration byte, or a second "
+                "failure of any kind."
+            ),
+        }
+    )
+
+    def value() -> Mapping[str, Any]:
+        decoded = json.loads(frozen)
+        if not isinstance(decoded, Mapping):
+            raise AssertionError("private execution law is not a mapping")
+        return decoded
+
+    return MappingProxyType(dict(value())), value
+
+
+CANONICAL_EXECUTION_RULE, _execution_rule_value = _execution_rule_protocol()
+del _execution_rule_protocol
 PRELAUNCH_CHECK_NAMES = (
     "ratified_design_and_implementation",
     "fresh_registration_and_canonical_configuration",
@@ -124,6 +146,25 @@ class _RetryAuthorization:
         )
 
 
+@dataclass(frozen=True, init=False)
+class _RetryReceipt:
+    """One-shot handoff retained only inside one coordinator invocation."""
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError("retry receipts are minted only by the coordinator")
+
+
+@dataclass(frozen=True, init=False)
+class _CoordinatorAttemptOutcome:
+    """Internal result plus the optional report-first retry handoff."""
+
+    result: CoordinatorResult
+    retry_receipt: _RetryReceipt | None
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError("attempt outcomes are created only by the coordinator")
+
+
 def _is_sha256(value: object) -> bool:
     return (
         isinstance(value, str)
@@ -139,6 +180,19 @@ def _read_canonical_mapping(
     expected_name: str,
 ) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
     """Read one singly-linked canonical mapping through a pinned descriptor."""
+    stable_fields = (
+        "st_mode",
+        "st_nlink",
+        "st_size",
+        "st_mtime_ns",
+        "st_ctime_ns",
+        "st_dev",
+        "st_ino",
+    )
+
+    def signature(metadata: os.stat_result) -> tuple[int, ...]:
+        return tuple(getattr(metadata, field) for field in stable_fields)
+
     candidate = Path(path)
     permitted_names = {
         _ATTEMPT_CLAIM_PATH.name,
@@ -195,8 +249,7 @@ def _read_canonical_mapping(
                 not stat.S_ISREG(metadata.st_mode)
                 or metadata.st_nlink != 1
                 or metadata.st_size > maximum_bytes
-                or (metadata.st_dev, metadata.st_ino)
-                != (candidate_before.st_dev, candidate_before.st_ino)
+                or signature(metadata) != signature(candidate_before)
                 or (metadata.st_dev, metadata.st_ino) in protected_file_ids
             ):
                 return None
@@ -213,10 +266,12 @@ def _read_canonical_mapping(
                 return None
             payload = bytes(chunks)
             after = os.fstat(descriptor)
-            if (after.st_dev, after.st_ino) != (
-                metadata.st_dev,
-                metadata.st_ino,
-            ) or after.st_size != metadata.st_size:
+            named_after = os.stat(candidate, follow_symlinks=False)
+            if (
+                len(payload) != metadata.st_size
+                or signature(after) != signature(metadata)
+                or signature(named_after) != signature(metadata)
+            ):
                 return None
         finally:
             os.close(descriptor)
@@ -743,15 +798,16 @@ def _validate_prelaunch_record_value(
     )
 
     execution = evidence_by_name[PRELAUNCH_CHECK_NAMES[5]]
+    execution_rule = _execution_rule_value()
     if (
         set(execution) != {"execution_rule", "acknowledged"}
-        or execution["execution_rule"] != CANONICAL_EXECUTION_RULE
+        or execution["execution_rule"] != execution_rule
         or execution["acknowledged"] is not True
     ):
         raise ValueError("execution-law evidence changed")
     anchor_context_publication._assert_exact_json(
         execution["execution_rule"],
-        CANONICAL_EXECUTION_RULE,
+        execution_rule,
         "prelaunch execution rule",
     )
     return value
@@ -802,51 +858,56 @@ class _InitialAttemptState:
     authority_descriptor: int
 
 
-@dataclass(frozen=True)
-class _RetryAuthorizationState:
-    token: _RetryAuthorization
-    repository_root: Path
-    registration_reference: str
-    configuration_sha256: str
-    incident_index: int
-    incident_path: Path
-    incident_payload: bytes
-    incident_file_id: tuple[int, int]
-    attempt_claim: Path
-    attempt_payload: bytes
-    attempt_file_id: tuple[int, int]
-    authority_path: Path
-    authority_payload: bytes
-    authority_file_id: tuple[int, int]
-
-
-@dataclass(frozen=True)
-class _PublishedRetryProvenance:
-    """Exact retry evidence retained only after coordinator publication."""
-
-    repository_root: Path
-    registration_reference: str
-    configuration_sha256: str
-    incident_index: int
-    incident_path: Path
-    incident_payload: bytes
-    incident_file_id: tuple[int, int]
-    attempt_claim: Path
-    attempt_payload: bytes
-    attempt_file_id: tuple[int, int]
-    authority_path: Path
-    authority_payload: bytes
-    authority_file_id: tuple[int, int]
-
-
 def _retry_authority_protocol():
     """Issue only live initial/retry tokens backed by durable exact evidence."""
     getframe = sys._getframe
     initial_issued: dict[int, _InitialAttemptState] = {}
-    retry_issued: dict[int, _RetryAuthorizationState] = {}
-    published: dict[tuple[Path, str, int], _PublishedRetryProvenance] = {}
     sealed_core_code: Any = None
     sealed_abort_code: Any = None
+
+    @dataclass(frozen=True)
+    class ReceiptState:
+        """Protocol-private state carried by, rather than indexed from, a receipt."""
+
+        receipt: _RetryReceipt
+        repository_root: Path
+        registration_reference: str
+        configuration_sha256: str
+        incident_index: int
+        incident_path: Path
+        incident_payload: bytes
+        incident_file_id: tuple[int, int]
+        incident_phase: str
+        incident_reason: str
+        estimate_bearing_information_yielded: bool
+        attempt_claim: Path
+        attempt_payload: bytes
+        attempt_file_id: tuple[int, int]
+        authority_path: Path
+        authority_payload: bytes
+        authority_file_id: tuple[int, int]
+        production_only: bool
+        consumed: bool = False
+
+    @dataclass(frozen=True)
+    class RetryState:
+        """Protocol-private live retry authorization state."""
+
+        token: _RetryAuthorization
+        repository_root: Path
+        registration_reference: str
+        configuration_sha256: str
+        incident_index: int
+        incident_path: Path
+        incident_payload: bytes
+        incident_file_id: tuple[int, int]
+        attempt_claim: Path
+        attempt_payload: bytes
+        attempt_file_id: tuple[int, int]
+        authority_path: Path
+        authority_payload: bytes
+        authority_file_id: tuple[int, int]
+        live: bool = True
 
     def bind_stack(
         core: Callable[..., Any], abort: Callable[..., Any]
@@ -1022,7 +1083,7 @@ def _retry_authority_protocol():
         phase: str,
         reason: str,
         estimate_bearing_information_yielded: bool,
-    ) -> Path:
+    ) -> _RetryReceipt:
         caller = getframe(1)
         state = initial_issued.get(id(token))
         if (
@@ -1122,14 +1183,9 @@ def _retry_authority_protocol():
             or sealed[2] != state.authority_file_id
         ):
             raise RuntimeError("retry authority did not seal durably")
-        provenance_key = (
-            state.registration._repository_root,
-            state.registration._registration_reference,
-            state.prelaunch_record.next_incident_index,
-        )
-        if provenance_key in published:
-            raise RuntimeError("retry provenance was already retained")
-        published[provenance_key] = _PublishedRetryProvenance(
+        receipt = object.__new__(_RetryReceipt)
+        receipt_state = ReceiptState(
+            receipt=receipt,
             repository_root=state.registration._repository_root,
             registration_reference=(
                 state.registration._registration_reference
@@ -1145,8 +1201,13 @@ def _retry_authority_protocol():
             authority_path=state.authority_path,
             authority_payload=authority_payload,
             authority_file_id=state.authority_file_id,
+            incident_phase=phase,
+            incident_reason=reason,
+            estimate_bearing_information_yielded=False,
+            production_only=state.production_only,
         )
-        return state.authority_path
+        object.__setattr__(receipt, "_state", receipt_state)
+        return receipt
 
     def revoke_initial(token: object) -> None:
         state = initial_issued.get(id(token))
@@ -1161,12 +1222,16 @@ def _retry_authority_protocol():
         repository_root: Path,
         configuration: Mapping[str, Any],
         history: _IncidentHistory,
+        retry_receipt: _RetryReceipt | None,
+        production_only: bool,
     ) -> _RetryAuthorization | None:
         """Allow fresh execution or mint the sole authenticated retry."""
         caller = getframe(1)
         if (
             caller.f_code is not sealed_core_code
             or caller.f_locals.get("authorize_invocation") is not authorize
+            or caller.f_locals.get("retry_receipt") is not retry_receipt
+            or caller.f_locals.get("production_only") is not production_only
         ):
             raise TypeError(
                 "retry adjudication requires the sealed coordinator stack"
@@ -1202,6 +1267,11 @@ def _retry_authority_protocol():
                 )
             )
         if not current:
+            if retry_receipt is not None:
+                raise _CeremonyAbort(
+                    "preparation_retry_receipt_without_prior_incident",
+                    "A retry receipt cannot authorize an initial attempt.",
+                )
             return None
         if len(current) != 1:
             raise _CeremonyAbort(
@@ -1272,28 +1342,31 @@ def _retry_authority_protocol():
                     "attempt, incident, configuration, and no-yield state."
                 ),
             )
-        provenance_key = (
-            repository_root,
-            configuration["registration_reference"],
-            incident_index,
-        )
-        provenance = published.get(provenance_key)
+        receipt_state = getattr(retry_receipt, "_state", None)
         if (
-            provenance is None
-            or provenance.repository_root != repository_root
-            or provenance.registration_reference
+            not isinstance(retry_receipt, _RetryReceipt)
+            or type(receipt_state) is not ReceiptState
+            or receipt_state.receipt is not retry_receipt
+            or receipt_state.consumed
+            or receipt_state.repository_root != repository_root
+            or receipt_state.registration_reference
             != configuration["registration_reference"]
-            or provenance.configuration_sha256 != configuration_sha256
-            or provenance.incident_index != incident_index
-            or provenance.incident_path != repository_root / incident_relative
-            or provenance.incident_payload != incident_payload
-            or provenance.incident_file_id != incident_file_id
-            or provenance.attempt_claim != attempt_claim
-            or provenance.attempt_payload != attempt_payload
-            or provenance.attempt_file_id != attempt_file_id
-            or provenance.authority_path != authority_path
-            or provenance.authority_payload != authority_payload
-            or provenance.authority_file_id != authority_file_id
+            or receipt_state.configuration_sha256 != configuration_sha256
+            or receipt_state.incident_index != incident_index
+            or receipt_state.incident_path
+            != repository_root / incident_relative
+            or receipt_state.incident_payload != incident_payload
+            or receipt_state.incident_file_id != incident_file_id
+            or receipt_state.incident_phase != incident["phase"]
+            or receipt_state.incident_reason != incident["reason"]
+            or receipt_state.estimate_bearing_information_yielded is not False
+            or receipt_state.attempt_claim != attempt_claim
+            or receipt_state.attempt_payload != attempt_payload
+            or receipt_state.attempt_file_id != attempt_file_id
+            or receipt_state.authority_path != authority_path
+            or receipt_state.authority_payload != authority_payload
+            or receipt_state.authority_file_id != authority_file_id
+            or receipt_state.production_only is not production_only
         ):
             raise _CeremonyAbort(
                 "preparation_retry_provenance_not_coordinator_published",
@@ -1302,10 +1375,10 @@ def _retry_authority_protocol():
                     "coordinator's own incident publication."
                 ),
             )
-        published.pop(provenance_key)
+        object.__setattr__(receipt_state, "consumed", True)
         token = object.__new__(_RetryAuthorization)
         object.__setattr__(token, "incident_index", incident_index)
-        retry_issued[id(token)] = _RetryAuthorizationState(
+        retry_state = RetryState(
             token=token,
             repository_root=repository_root,
             registration_reference=configuration["registration_reference"],
@@ -1321,16 +1394,18 @@ def _retry_authority_protocol():
             authority_payload=authority_payload,
             authority_file_id=authority_file_id,
         )
+        object.__setattr__(token, "_state", retry_state)
         return token
 
     def require_retry(
         token: object,
         repository_root: Path,
-    ) -> _RetryAuthorizationState:
-        state = retry_issued.get(id(token))
+    ) -> Any:
+        state = getattr(token, "_state", None)
         if (
-            state is None
+            type(state) is not RetryState
             or state.token is not token
+            or state.live is not True
             or not isinstance(token, _RetryAuthorization)
             or state.repository_root != repository_root
         ):
@@ -1357,19 +1432,9 @@ def _retry_authority_protocol():
         return state
 
     def revoke_retry(token: object) -> None:
-        state = retry_issued.get(id(token))
-        if state is not None and state.token is token:
-            retry_issued.pop(id(token), None)
-
-    def provenance_is_retained(
-        repository_root: Path,
-        incident_path: Path,
-    ) -> bool:
-        return any(
-            state.repository_root == repository_root
-            and state.incident_path == incident_path
-            for state in published.values()
-        )
+        state = getattr(token, "_state", None)
+        if type(state) is RetryState and state.token is token:
+            object.__setattr__(state, "live", False)
 
     return (
         bind_stack,
@@ -1380,7 +1445,6 @@ def _retry_authority_protocol():
         authorize,
         require_retry,
         revoke_retry,
-        provenance_is_retained,
     )
 
 
@@ -1393,12 +1457,12 @@ def _retry_authority_protocol():
     _authorize_invocation,
     _require_retry_authorization,
     _revoke_retry_authorization,
-    _retry_provenance_is_retained,
 ) = _retry_authority_protocol()
+del _retry_authority_protocol
 
 
 def _retry_claim_protocol(
-    require_authorization: Callable[[object, Path], _RetryAuthorizationState],
+    require_authorization: Callable[[object, Path], Any],
 ) -> Callable[[Path, object, _PrelaunchRecord], Path]:
     def create(
         repository_root: Path,
@@ -1438,8 +1502,9 @@ del _retry_claim_protocol
 def _ceremony_capability_protocol(
     core_factory: Callable[
         [Callable[..., None]],
-        Callable[..., CoordinatorResult],
+        Callable[..., _CoordinatorAttemptOutcome],
     ],
+    bind_capability_verifier: Callable[[Callable[..., Any]], None],
 ):
     """Expose only the sealed runner and live-capability verifier."""
     getframe = sys._getframe
@@ -1455,7 +1520,6 @@ def _ceremony_capability_protocol(
     create_retry_claim = _create_retry_claim
     require_retry_authorization = _require_retry_authorization
     revoke_retry_authorization = _revoke_retry_authorization
-    retry_provenance_is_retained = _retry_provenance_is_retained
     write_artifact = anchor_context_publication.write_anchor_context_artifact
 
     def publish_artifact(
@@ -1493,24 +1557,68 @@ def _ceremony_capability_protocol(
         ),
         record_prelaunch=_retain_prelaunch_record,
     )
+    operation_fields = tuple(_CoordinatorOperations.__dataclass_fields__)
+    sealed_operation_callables = tuple(
+        getattr(production_operations, field) for field in operation_fields
+    )
     invocations: dict[int, tuple[Any, ...]] = {}
     issued: dict[int, tuple[Any, ...]] = {}
+
+    def operations_are_exact(candidate: object) -> bool:
+        return candidate is production_operations and all(
+            getattr(candidate, field, None) is expected
+            for field, expected in zip(
+                operation_fields,
+                sealed_operation_callables,
+                strict=True,
+            )
+        )
+
+    def require_runner_provenance(run_function: object) -> None:
+        """Reject cloned runner code before it can acquire the ceremony lock."""
+        caller = getframe(1)
+        if (
+            caller.f_code is not run.__code__
+            or run_function is not run
+            or caller.f_locals.get("run_function") is not run
+            or caller.f_locals.get("sealed_repository_root")
+            is not sealed_repository_root
+            or caller.f_locals.get("exclusive_ceremony_lock")
+            is not exclusive_ceremony_lock
+            or caller.f_locals.get("read_registered_configuration_bytes")
+            is not read_registered_configuration_bytes
+            or caller.f_locals.get("production_operations")
+            is not production_operations
+            or not operations_are_exact(production_operations)
+        ):
+            raise TypeError("production runner provenance changed")
 
     def issue_invocation(
         repository_root: Path,
         registered_configuration_bytes: bytes,
         actual_invocation: Sequence[str],
         operations: _CoordinatorOperations,
+        retry_receipt: _RetryReceipt | None,
     ) -> _CoordinatorInvocation:
         caller = getframe(1)
         if (
             caller.f_code is not run.__code__
+            or caller.f_locals.get("run_function") is not run
             or caller.f_locals.get("root") is not repository_root
             or caller.f_locals.get("registered_configuration_bytes")
             is not registered_configuration_bytes
             or caller.f_locals.get("actual_invocation")
             is not actual_invocation
             or caller.f_locals.get("operations") is not operations
+            or caller.f_locals.get("retry_receipt") is not retry_receipt
+            or caller.f_locals.get("sealed_repository_root")
+            is not sealed_repository_root
+            or caller.f_locals.get("exclusive_ceremony_lock")
+            is not exclusive_ceremony_lock
+            or caller.f_locals.get("read_registered_configuration_bytes")
+            is not read_registered_configuration_bytes
+            or caller.f_locals.get("production_operations")
+            is not production_operations
         ):
             raise TypeError(
                 "production invocation authority requires the sealed "
@@ -1519,7 +1627,8 @@ def _ceremony_capability_protocol(
         if (
             not isinstance(repository_root, Path)
             or not isinstance(registered_configuration_bytes, bytes)
-            or not isinstance(operations, _CoordinatorOperations)
+            or repository_root is not sealed_repository_root
+            or not operations_are_exact(operations)
         ):
             raise TypeError("production invocation prerequisites changed")
         invocation = object.__new__(_CoordinatorInvocation)
@@ -1530,6 +1639,9 @@ def _ceremony_capability_protocol(
             actual_invocation,
             tuple(actual_invocation),
             operations,
+            retry_receipt,
+            caller,
+            run,
         )
         return invocation
 
@@ -1539,6 +1651,7 @@ def _ceremony_capability_protocol(
         registered_configuration_bytes: bytes,
         actual_invocation: Sequence[str],
         operations: _CoordinatorOperations,
+        retry_receipt: _RetryReceipt | None,
     ) -> None:
         caller = getframe(1)
         parent = caller.f_back
@@ -1563,6 +1676,9 @@ def _ceremony_capability_protocol(
             issued_actual_invocation,
             frozen_actual_invocation,
             issued_operations,
+            issued_retry_receipt,
+            issued_run_frame,
+            issued_run_function,
         ) = state
         if (
             repository_root is not issued_root
@@ -1570,6 +1686,16 @@ def _ceremony_capability_protocol(
             or actual_invocation is not issued_actual_invocation
             or tuple(actual_invocation) != frozen_actual_invocation
             or operations is not issued_operations
+            or retry_receipt is not issued_retry_receipt
+            or parent is not issued_run_frame
+            or issued_run_function is not run
+            or issued_root is not sealed_repository_root
+            or not operations_are_exact(issued_operations)
+            or parent.f_locals.get("run_function") is not run
+            or parent.f_locals.get("exclusive_ceremony_lock")
+            is not exclusive_ceremony_lock
+            or parent.f_locals.get("read_registered_configuration_bytes")
+            is not read_registered_configuration_bytes
         ):
             raise TypeError("sealed production invocation state changed")
 
@@ -1588,6 +1714,8 @@ def _ceremony_capability_protocol(
     ) -> _CeremonyCapability:
         caller = getframe(1)
         parent = caller.f_back
+        invocation = caller.f_locals.get("coordinator_invocation")
+        invocation_state = invocations.get(id(invocation))
         if (
             caller.f_code is not core.__code__
             or parent is None
@@ -1602,6 +1730,18 @@ def _ceremony_capability_protocol(
             or caller.f_locals.get("retry_authorization")
             is not retry_authorization
             or caller.f_locals.get("retry_claim") != retry_claim
+            or caller.f_locals.get("operations") is not production_operations
+            or caller.f_locals.get("root") is not sealed_repository_root
+            or invocation_state is None
+            or invocation_state[0] is not invocation
+            or invocation_state[-2] is not parent
+            or invocation_state[-1] is not run
+            or parent.f_locals.get("run_function") is not run
+            or parent.f_locals.get("exclusive_ceremony_lock")
+            is not exclusive_ceremony_lock
+            or parent.f_locals.get("read_registered_configuration_bytes")
+            is not read_registered_configuration_bytes
+            or not operations_are_exact(production_operations)
         ):
             raise TypeError(
                 "ceremony capabilities can be minted only on the sealed "
@@ -1767,6 +1907,8 @@ def _ceremony_capability_protocol(
             issued.pop(id(capability), None)
 
     def run(registration_path: str | Path) -> CoordinatorResult:
+        run_function = run
+        require_runner_provenance(run_function)
         root = sealed_repository_root
         actual_invocation = list(getattr(sys, "orig_argv", ()))
         with exclusive_ceremony_lock(root):
@@ -1777,15 +1919,17 @@ def _ceremony_capability_protocol(
                 )
             )
             operations = production_operations
+            retry_receipt: _RetryReceipt | None = None
             for attempt_index in range(2):
                 coordinator_invocation = issue_invocation(
                     root,
                     registered_configuration_bytes,
                     actual_invocation,
                     operations,
+                    retry_receipt,
                 )
                 try:
-                    result = core(
+                    outcome = core(
                         repository_root=root,
                         registered_configuration_bytes=(
                             registered_configuration_bytes
@@ -1794,6 +1938,7 @@ def _ceremony_capability_protocol(
                         operations=operations,
                         production_only=True,
                         coordinator_invocation=coordinator_invocation,
+                        retry_receipt=retry_receipt,
                         mint_capability=mint,
                         revoke_capability=revoke,
                         issue_initial_attempt=issue_initial_attempt,
@@ -1811,13 +1956,10 @@ def _ceremony_capability_protocol(
                     )
                 finally:
                     revoke_invocation(coordinator_invocation)
-                if (
-                    attempt_index == 0
-                    and result.status == "incident"
-                    and retry_provenance_is_retained(root, result.path)
-                ):
+                if attempt_index == 0 and outcome.retry_receipt is not None:
+                    retry_receipt = outcome.retry_receipt
                     continue
-                return result
+                return outcome.result
             raise AssertionError("coordinator retry loop did not terminate")
 
     run.__name__ = "run_registered_anchor_context"
@@ -1827,14 +1969,7 @@ def _ceremony_capability_protocol(
     )
     core = core_factory(require_invocation)
     bind_retry_authority_stack(core, _publish_abort)
-    anchor_context_publication._bind_input_io_capability_verifier(require)
-    anchor_context_publication._bind_production_input_capability_verifier(
-        require
-    )
-    anchor_context_report._bind_document_authority(
-        anchor_context_publication._require_verified_fixture_inputs,
-        anchor_context_publication._require_verified_production_inputs,
-    )
+    bind_capability_verifier(require)
     return run, require, require_invocation, core
 
 
@@ -2206,9 +2341,10 @@ def _complete_prelaunch_checks(
     if len(history.paths) != len(history.records):
         raise AssertionError("incident history paths and records differ")
     operations.assert_interpreter(configuration, actual_invocation)
+    execution_rule = _execution_rule_value()
     if (
-        CANONICAL_EXECUTION_RULE["publishes_regardless"] is not True
-        or CANONICAL_EXECUTION_RULE["no_self_rescue"] is not True
+        execution_rule["publishes_regardless"] is not True
+        or execution_rule["no_self_rescue"] is not True
     ):
         raise AssertionError("canonical execution acknowledgement changed")
     configuration_bytes = anchor_context_publication.canonical_json_bytes(
@@ -2292,7 +2428,7 @@ def _complete_prelaunch_checks(
                 "name": PRELAUNCH_CHECK_NAMES[5],
                 "passed": True,
                 "evidence": {
-                    "execution_rule": CANONICAL_EXECUTION_RULE,
+                    "execution_rule": execution_rule,
                     "acknowledged": True,
                 },
             },
@@ -2347,8 +2483,8 @@ def _publish_abort(
     estimate_bearing_information_yielded: bool,
     operations: _CoordinatorOperations,
     attempt_authority: _InitialAttemptAuthority | None,
-    seal_retry_authority: Callable[..., Path],
-) -> CoordinatorResult:
+    seal_retry_authority: Callable[..., _RetryReceipt],
+) -> _CoordinatorAttemptOutcome:
     reason, detail = _safe_incident_fields(
         phase,
         error,
@@ -2362,30 +2498,35 @@ def _publish_abort(
         reason=reason,
         reason_detail=detail,
     )
+    retry_receipt: _RetryReceipt | None = None
     if (
         attempt_authority is not None
         and isinstance(error, ExternalPreOutputFailure)
         and phase in {"preparation", "compute"}
         and estimate_bearing_information_yielded is False
     ):
-        seal_retry_authority(
+        retry_receipt = seal_retry_authority(
             attempt_authority,
             path,
             phase=phase,
             reason=reason,
             estimate_bearing_information_yielded=False,
         )
-    return CoordinatorResult(
+    result = CoordinatorResult(
         status="incident",
         path=path,
         phase=phase,
         reason=reason,
     )
+    outcome = object.__new__(_CoordinatorAttemptOutcome)
+    object.__setattr__(outcome, "result", result)
+    object.__setattr__(outcome, "retry_receipt", retry_receipt)
+    return outcome
 
 
 def _build_registered_anchor_context_core(
     require_coordinator_invocation: Callable[..., None],
-) -> Callable[..., CoordinatorResult]:
+) -> Callable[..., _CoordinatorAttemptOutcome]:
     parse_configuration = _parse_configuration
     configuration_echo = first_publication._configuration_echo
     read_incident_history = _read_incident_history
@@ -2414,6 +2555,7 @@ def _build_registered_anchor_context_core(
         operations: _CoordinatorOperations,
         production_only: bool,
         coordinator_invocation: _CoordinatorInvocation | None,
+        retry_receipt: _RetryReceipt | None,
         mint_capability: (
             Callable[
                 [
@@ -2445,10 +2587,16 @@ def _build_registered_anchor_context_core(
             ],
             Path,
         ],
-        seal_retry_authority: Callable[..., Path],
+        seal_retry_authority: Callable[..., _RetryReceipt],
         revoke_initial_attempt: Callable[[object], None],
         authorize_invocation: Callable[
-            [Path, Mapping[str, Any], _IncidentHistory],
+            [
+                Path,
+                Mapping[str, Any],
+                _IncidentHistory,
+                _RetryReceipt | None,
+                bool,
+            ],
             _RetryAuthorization | None,
         ],
         create_retry_claim: Callable[
@@ -2457,10 +2605,10 @@ def _build_registered_anchor_context_core(
         ],
         require_retry_authorization: Callable[
             [object, Path],
-            _RetryAuthorizationState,
+            Any,
         ],
         revoke_retry_authorization: Callable[[object], None],
-    ) -> CoordinatorResult:
+    ) -> _CoordinatorAttemptOutcome:
         """Shared ceremony state machine; only the sealed closure can mint."""
         if production_only:
             require_coordinator_invocation(
@@ -2469,6 +2617,7 @@ def _build_registered_anchor_context_core(
                 registered_configuration_bytes,
                 actual_invocation,
                 operations,
+                retry_receipt,
             )
         elif coordinator_invocation is not None:
             raise TypeError(
@@ -2478,7 +2627,11 @@ def _build_registered_anchor_context_core(
             raise TypeError("production execution requires the sealed issuer")
         if (mint_capability is None) != (revoke_capability is None):
             raise TypeError("ceremony capability lifecycle is incomplete")
-        root = Path(repository_root).resolve()
+        root = (
+            repository_root
+            if production_only and isinstance(repository_root, Path)
+            else Path(repository_root).resolve()
+        )
         registration = parse_configuration(
             repository_root=root,
             registered_configuration_bytes=registered_configuration_bytes,
@@ -2502,6 +2655,8 @@ def _build_registered_anchor_context_core(
                     root,
                     configuration,
                     history,
+                    retry_receipt,
+                    production_only,
                 )
                 if not production_only:
                     assert_fixture_identities(
@@ -2677,12 +2832,16 @@ def _build_registered_anchor_context_core(
                     attempt_authority=initial_attempt_authority,
                     seal_retry_authority=seal_retry_authority,
                 )
-            return result_type(
+            result = result_type(
                 status="published",
                 path=path,
                 phase="publication",
                 reason=None,
             )
+            outcome = object.__new__(_CoordinatorAttemptOutcome)
+            object.__setattr__(outcome, "result", result)
+            object.__setattr__(outcome, "retry_receipt", None)
+            return outcome
         finally:
             if (
                 ceremony_capability is not None
@@ -2707,13 +2866,14 @@ def _run_registered_anchor_context_for_test(
     operations: _CoordinatorOperations,
 ) -> CoordinatorResult:
     """Run only the fixed-fixture ceremony with injectable test operations."""
-    return _run_registered_anchor_context_core(
+    outcome = _run_registered_anchor_context_core(
         repository_root=repository_root,
         registered_configuration_bytes=registered_configuration_bytes,
         actual_invocation=actual_invocation,
         operations=operations,
         production_only=False,
         coordinator_invocation=None,
+        retry_receipt=None,
         mint_capability=None,
         revoke_capability=None,
         issue_initial_attempt=_issue_initial_attempt,
@@ -2725,6 +2885,7 @@ def _run_registered_anchor_context_for_test(
         require_retry_authorization=_require_retry_authorization,
         revoke_retry_authorization=_revoke_retry_authorization,
     )
+    return outcome.result
 
 
 def _sealed_repository_root() -> Path:
@@ -2784,6 +2945,19 @@ def _read_registered_configuration_bytes(
 
     descriptors: list[int] = []
     registration_descriptor: int | None = None
+    stable_fields = (
+        "st_mode",
+        "st_nlink",
+        "st_size",
+        "st_mtime_ns",
+        "st_ctime_ns",
+        "st_dev",
+        "st_ino",
+    )
+
+    def signature(metadata: os.stat_result) -> tuple[int, ...]:
+        return tuple(getattr(metadata, field) for field in stable_fields)
+
     try:
         root_descriptor = os.open(
             root,
@@ -2816,23 +2990,43 @@ def _read_registered_configuration_bytes(
                 dir_fd=current,
             )
             descriptors.append(current)
+        leaf_before = os.stat(
+            parts[2],
+            dir_fd=current,
+            follow_symlinks=False,
+        )
+        if stat.S_ISLNK(leaf_before.st_mode):
+            raise OSError("registration leaf must not be a symbolic link")
+        if (
+            not stat.S_ISREG(leaf_before.st_mode)
+            or leaf_before.st_nlink != 1
+            or leaf_before.st_size > _REGISTRATION_MAX_BYTES
+        ):
+            raise ValueError(
+                "registration must be one singly linked bounded regular file"
+            )
+        if (leaf_before.st_dev, leaf_before.st_ino) in protected_file_ids:
+            raise ValueError(
+                "registration path aliases protected ceremony data"
+            )
         registration_descriptor = os.open(
             parts[2],
             os.O_RDONLY | no_follow | nonblocking | close_on_exec,
             dir_fd=current,
         )
         before = os.fstat(registration_descriptor)
+        if (before.st_dev, before.st_ino) in protected_file_ids:
+            raise ValueError(
+                "registration path aliases protected ceremony data"
+            )
         if (
-            not stat.S_ISREG(before.st_mode)
+            signature(before) != signature(leaf_before)
+            or not stat.S_ISREG(before.st_mode)
             or before.st_nlink != 1
             or before.st_size > _REGISTRATION_MAX_BYTES
         ):
             raise ValueError(
                 "registration must be one singly linked bounded regular file"
-            )
-        if (before.st_dev, before.st_ino) in protected_file_ids:
-            raise ValueError(
-                "registration path aliases protected ceremony data"
             )
         chunks: list[bytes] = []
         observed = 0
@@ -2851,18 +3045,15 @@ def _read_registered_configuration_bytes(
                 )
         payload = b"".join(chunks)
         after = os.fstat(registration_descriptor)
-        stable_fields = (
-            "st_dev",
-            "st_ino",
-            "st_mode",
-            "st_nlink",
-            "st_size",
-            "st_mtime_ns",
-            "st_ctime_ns",
+        named_after = os.stat(
+            parts[2],
+            dir_fd=current,
+            follow_symlinks=False,
         )
-        if any(
-            getattr(before, field) != getattr(after, field)
-            for field in stable_fields
+        if (
+            len(payload) != before.st_size
+            or signature(after) != signature(before)
+            or signature(named_after) != signature(before)
         ):
             raise ValueError("registration changed during its sealed read")
         return payload
@@ -2878,7 +3069,11 @@ def _read_registered_configuration_bytes(
     _require_ceremony_capability,
     _require_coordinator_invocation,
     _run_registered_anchor_context_core,
-) = _ceremony_capability_protocol(_build_registered_anchor_context_core)
+) = _ceremony_capability_protocol(
+    _build_registered_anchor_context_core,
+    _bind_coordinator_capability_verifier,
+)
+del _bind_coordinator_capability_verifier
 del _build_registered_anchor_context_core
 del _ceremony_capability_protocol
 

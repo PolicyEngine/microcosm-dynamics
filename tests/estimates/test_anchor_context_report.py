@@ -332,10 +332,12 @@ def test_fixture_builds_exact_complete_results_shape(
     )
 
 
-def test_report_authority_binding_rejects_direct_callers():
-    with pytest.raises(TypeError, match="sealed coordinator initialization"):
-        report._bind_document_authority(lambda _bundle: (), lambda _bundle: ())
-
+def test_report_authority_binding_surface_is_consumed_during_import():
+    assert not hasattr(
+        report,
+        "_take_document_authority_verifier_binding",
+    )
+    assert not hasattr(report, "_bind_document_authority")
     assert not hasattr(coordinator, "_ceremony_capability_protocol")
 
 

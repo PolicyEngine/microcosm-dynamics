@@ -7,6 +7,9 @@ import hashlib
 import inspect
 import json
 import os
+import subprocess
+import sys
+import textwrap
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -443,16 +446,146 @@ def test_constructible_registration_token_cannot_open_production_inputs(
     assert attempted_reads == []
 
 
-@pytest.mark.parametrize(
-    "binder",
-    [
-        anchor_context_publication._bind_input_io_capability_verifier,
-        anchor_context_publication._bind_production_input_capability_verifier,
-    ],
-)
-def test_production_verifier_binding_rejects_direct_callers(binder):
-    with pytest.raises(TypeError, match="coordinator bootstrap"):
-        binder(lambda _candidate: object())
+def test_production_verifier_binding_surface_is_consumed_during_import():
+    assert not hasattr(
+        anchor_context_publication,
+        "_take_coordinator_capability_verifier_binding",
+    )
+    assert not hasattr(
+        anchor_context_publication,
+        "_bind_input_io_capability_verifier",
+    )
+    assert not hasattr(
+        anchor_context_publication,
+        "_bind_production_input_capability_verifier",
+    )
+
+
+def test_fake_coordinator_cannot_preempt_publication_bootstrap():
+    source_root = REPOSITORY_ROOT / "src"
+    script = textwrap.dedent(
+        f"""
+        import importlib
+        import sys
+        import types
+
+        sys.path.insert(0, {str(source_root)!r})
+        name = "populace_dynamics.estimates.anchor_context_coordinator"
+        fake = types.ModuleType(name)
+        sys.modules[name] = fake
+        try:
+            importlib.import_module(
+                "populace_dynamics.estimates.anchor_context_publication"
+            )
+        except RuntimeError as error:
+            assert "canonical coordinator import" in str(error)
+        else:
+            raise AssertionError("fake coordinator preempted the bootstrap")
+        """
+    )
+    completed = subprocess.run(
+        [sys.executable, "-I", "-B", "-c", script],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stderr
+
+
+def test_forged_canonical_filename_frame_cannot_preempt_bootstrap():
+    source_root = REPOSITORY_ROOT / "src"
+    coordinator_source = (
+        source_root
+        / "populace_dynamics"
+        / "estimates"
+        / "anchor_context_coordinator.py"
+    )
+    attack_source = (
+        "import importlib\n"
+        "p = importlib.import_module("
+        "'populace_dynamics.estimates.anchor_context_publication')\n"
+        "p._take_coordinator_capability_verifier_binding()\n"
+    )
+    script = textwrap.dedent(
+        f"""
+        import importlib.machinery
+        import sys
+        import types
+
+        sys.path.insert(0, {str(source_root)!r})
+        name = "populace_dynamics.estimates.anchor_context_coordinator"
+        fake = types.ModuleType(name)
+        fake.__spec__ = importlib.machinery.ModuleSpec(
+            name,
+            loader=None,
+            origin={str(coordinator_source)!r},
+        )
+        fake.__spec__._initializing = True
+        fake.__file__ = {str(coordinator_source)!r}
+        fake.__package__ = "populace_dynamics.estimates"
+        sys.modules[name] = fake
+        attack = compile(
+            {attack_source!r},
+            {str(coordinator_source)!r},
+            "exec",
+        )
+        try:
+            exec(attack, fake.__dict__)
+        except (RuntimeError, TypeError) as error:
+            assert "canonical coordinator import" in str(error) or (
+                "canonical coordinator" in str(error)
+            )
+        else:
+            raise AssertionError("forged canonical frame took the bootstrap")
+        """
+    )
+    completed = subprocess.run(
+        [sys.executable, "-I", "-B", "-c", script],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stderr
+
+
+def test_fake_coordinator_and_code_clone_cannot_rebind_after_import():
+    source_root = REPOSITORY_ROOT / "src"
+    script = textwrap.dedent(
+        f"""
+        import sys
+        import types
+
+        sys.path.insert(0, {str(source_root)!r})
+        from populace_dynamics.estimates import anchor_context_publication as p
+
+        name = "populace_dynamics.estimates.anchor_context_coordinator"
+        sys.modules[name] = types.ModuleType(name)
+        assert not hasattr(
+            p, "_take_coordinator_capability_verifier_binding"
+        )
+        verifier = p._require_coordinator_capability
+        clone = types.FunctionType(
+            verifier.__code__,
+            verifier.__globals__,
+            verifier.__name__,
+            verifier.__defaults__,
+            verifier.__closure__,
+        )
+        try:
+            clone(object())
+        except TypeError as error:
+            assert "live ceremony capability" in str(error)
+        else:
+            raise AssertionError("cloned verifier accepted fake authority")
+        """
+    )
+    completed = subprocess.run(
+        [sys.executable, "-I", "-B", "-c", script],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stderr
 
 
 def test_extracted_raw_io_helpers_reject_caller_minted_authority(
@@ -578,13 +711,23 @@ def test_fixture_loader_rejects_hardlinked_production_inode_before_read(
     fixture_path.parent.mkdir(parents=True, exist_ok=True)
     os.link(protected, fixture_path)
     reads = 0
+    leaf_opens = 0
+    real_open = anchor_context_publication.os.open
 
     def forbidden_read(*_args, **_kwargs):
         nonlocal reads
         reads += 1
         raise AssertionError("aliased production bytes were read")
 
+    def tracked_open(path, *args, **kwargs):
+        nonlocal leaf_opens
+        descriptor = real_open(path, *args, **kwargs)
+        if path == fixture_path.name and kwargs.get("dir_fd") is not None:
+            leaf_opens += 1
+        return descriptor
+
     monkeypatch.setattr(anchor_context_publication.os, "read", forbidden_read)
+    monkeypatch.setattr(anchor_context_publication.os, "open", tracked_open)
 
     with pytest.raises(ValueError, match="singly linked|aliases a production"):
         anchor_context_publication._load_verified_json(
@@ -594,6 +737,7 @@ def test_fixture_loader_rejects_hardlinked_production_inode_before_read(
         )
 
     assert reads == 0
+    assert leaf_opens == 0
 
 
 def test_fixture_loader_rejects_reverse_production_symlink_before_read(
@@ -628,6 +772,143 @@ def test_fixture_loader_rejects_reverse_production_symlink_before_read(
         )
 
     assert reads == 0
+
+
+def test_fixture_loader_captures_literal_identity_against_rebinding(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    committed_first = FIRST_ESTIMATES_FIXTURE.read_bytes()
+    committed_anchor = ANCHOR_FIXTURE.read_bytes()
+    for relative, payload in (
+        (
+            "tests/fixtures/anchor_context/" "first_estimates_fixture_v1.json",
+            committed_first,
+        ),
+        (
+            "tests/fixtures/anchor_context/"
+            "ssa_level_anchors_fixture_v1.json",
+            committed_anchor,
+        ),
+    ):
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(payload)
+
+    attacker_first = root / registry.FIRST_ESTIMATES_INPUT_PATH
+    attacker_anchor = root / registry.ANCHOR_INPUT_PATH
+    attacker_first.parent.mkdir(parents=True, exist_ok=True)
+    attacker_anchor.parent.mkdir(parents=True, exist_ok=True)
+    attacker_first.write_bytes(b"production-derived first-estimates bytes")
+    attacker_anchor.write_bytes(b"production-derived anchor bytes")
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_FIXTURE_FIRST_PATH",
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_FIXTURE_ANCHOR_PATH",
+        registry.ANCHOR_INPUT_PATH,
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_FIXTURE_FIRST_SHA256",
+        hashlib.sha256(attacker_first.read_bytes()).hexdigest(),
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_FIXTURE_ANCHOR_SHA256",
+        hashlib.sha256(attacker_anchor.read_bytes()).hexdigest(),
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_FIXTURE_ANCHOR_VINTAGE",
+        "production-derived-vintage",
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_fixture_input_identity",
+        lambda role: (
+            {
+                "path": registry.FIRST_ESTIMATES_INPUT_PATH,
+                "sha256": hashlib.sha256(
+                    attacker_first.read_bytes()
+                ).hexdigest(),
+            }
+            if role == "first_estimates"
+            else {
+                "path": registry.ANCHOR_INPUT_PATH,
+                "artifact_vintage_id": "production-derived-vintage",
+                "sha256": hashlib.sha256(
+                    attacker_anchor.read_bytes()
+                ).hexdigest(),
+            }
+        ),
+    )
+
+    bundle = anchor_context_publication.load_fixture_documents(root)
+
+    assert bundle.first_estimates_snapshot == committed_first
+    assert bundle.anchors_snapshot == committed_anchor
+    assert bundle.first_estimates_input["path"] == (
+        "tests/fixtures/anchor_context/first_estimates_fixture_v1.json"
+    )
+    assert bundle.anchor_input["artifact_vintage_id"] == (
+        "ssa_level_anchors.fixture_only.v1"
+    )
+    results = anchor_context_report.build_results(bundle)
+    assert len(results["comparison_results"]) == 9
+
+
+def test_fixture_loader_rejects_equal_size_leaf_replacement_after_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    fixture_path = (
+        root / "tests/fixtures/anchor_context/first_estimates_fixture_v1.json"
+    )
+    fixture_path.parent.mkdir(parents=True)
+    fixture_raw = FIRST_ESTIMATES_FIXTURE.read_bytes()
+    fixture_path.write_bytes(fixture_raw)
+    replacement = fixture_path.with_name("replacement.json")
+    replacement.write_bytes(b"x" * len(fixture_raw))
+    real_read = anchor_context_publication.os.read
+    replaced = False
+
+    def replacing_read(descriptor, size):
+        nonlocal replaced
+        chunk = real_read(descriptor, size)
+        if chunk and not replaced:
+            os.replace(replacement, fixture_path)
+            replaced = True
+        return chunk
+
+    monkeypatch.setattr(
+        anchor_context_publication.os,
+        "read",
+        replacing_read,
+    )
+
+    with pytest.raises(ValueError, match="input name changed"):
+        anchor_context_publication._load_verified_json(
+            root,
+            {
+                "path": (
+                    "tests/fixtures/anchor_context/"
+                    "first_estimates_fixture_v1.json"
+                ),
+                "sha256": (
+                    "be95a6eef919d2cf46197467fd75463d2c94d607983674da9f"
+                    "2723b0391d1c61"
+                ),
+            },
+            role="first_estimates",
+        )
+
+    assert replaced is True
 
 
 def test_forged_ceremony_capability_cannot_reach_production_compute(
@@ -1203,6 +1484,51 @@ def test_public_incident_validator_rejects_inode_exchange_during_read(
         )
 
     assert exchanged is True
+
+
+def test_public_incident_validator_rejects_runs_directory_exchange(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    record = _incident(reason="external_old")
+    record["configuration_echo"] = configuration
+    replacement = copy.deepcopy(record)
+    replacement["reason"] = "external_new"
+    path = root / "runs/anchor_context_report_incident_1.json"
+    path.write_bytes(anchor_context_publication.canonical_json_bytes(record))
+    replacement_payload = anchor_context_publication.canonical_json_bytes(
+        replacement
+    )
+    original_read = anchor_context_publication.os.read
+    exchanged = False
+
+    def exchange_runs_after_read(descriptor, count):
+        nonlocal exchanged
+        chunk = original_read(descriptor, count)
+        if chunk and not exchanged:
+            exchanged = True
+            (root / "runs").rename(root / "runs.old")
+            (root / "runs").mkdir()
+            path.write_bytes(replacement_payload)
+        return chunk
+
+    monkeypatch.setattr(
+        anchor_context_publication.os,
+        "read",
+        exchange_runs_after_read,
+    )
+
+    with pytest.raises(ValueError, match="path chain changed"):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+
+    assert exchanged is True
+    assert json.loads(path.read_bytes())["reason"] == "external_new"
 
 
 def test_public_incident_validator_rejects_equal_size_in_place_mutation(

@@ -9,9 +9,11 @@ engine input.
 from __future__ import annotations
 
 import copy
+import importlib
 import math
 import sys
 from collections.abc import Callable, Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 from populace_dynamics.estimates import anchor_context_registry as registry
@@ -153,32 +155,28 @@ def _string(value: Any, label: str) -> str:
 
 
 def _document_authority_protocol():
+    module_globals = globals()
     getframe = sys._getframe
     require_fixture_inputs: Callable[..., Any] | None = None
     require_production_inputs: Callable[..., Any] | None = None
+    binding_taken = False
+    publication_name = "populace_dynamics.estimates.anchor_context_publication"
+    publication_source = (
+        Path(__file__).with_name("anchor_context_publication.py").resolve()
+    )
+    publication_code = compile(
+        publication_source.read_bytes(),
+        str(publication_source),
+        "exec",
+        dont_inherit=True,
+        optimize=sys.flags.optimize,
+    )
 
     def bind(
         fixture_verifier: Callable[..., Any],
         production_verifier: Callable[..., Any],
     ) -> None:
         nonlocal require_fixture_inputs, require_production_inputs
-        from populace_dynamics.estimates import anchor_context_coordinator
-
-        caller = getframe(1)
-        coordinator_protocol = getattr(
-            anchor_context_coordinator,
-            "_ceremony_capability_protocol",
-            None,
-        )
-        if (
-            coordinator_protocol is None
-            or caller.f_code is not coordinator_protocol.__code__
-            or caller.f_globals is not vars(anchor_context_coordinator)
-        ):
-            raise TypeError(
-                "report document authority requires the sealed coordinator "
-                "initialization stack"
-            )
         if (
             require_fixture_inputs is not None
             or require_production_inputs is not None
@@ -187,20 +185,44 @@ def _document_authority_protocol():
         require_fixture_inputs = fixture_verifier
         require_production_inputs = production_verifier
 
+    def take():
+        nonlocal binding_taken
+        caller = getframe(1)
+        module = sys.modules.get(publication_name)
+        spec = getattr(module, "__spec__", None)
+        origin = getattr(spec, "origin", None)
+        try:
+            resolved_origin = Path(origin).resolve()
+            resolved_code = Path(caller.f_code.co_filename).resolve()
+        except (OSError, TypeError, ValueError):
+            resolved_origin = None
+            resolved_code = None
+        if (
+            binding_taken
+            or module is None
+            or vars(module) is not caller.f_globals
+            or caller.f_code != publication_code
+            or caller.f_globals.get("__name__") != publication_name
+            or resolved_origin != publication_source
+            or resolved_code != publication_source
+            or getattr(spec, "_initializing", False) is not True
+        ):
+            raise TypeError(
+                "document bootstrap belongs to the canonical publication "
+                "import"
+            )
+        binding_taken = True
+        module_globals.pop(
+            "_take_document_authority_verifier_binding",
+            None,
+        )
+        return bind
+
     def authorize(
         input_bundle: object,
         *,
         ceremony_capability: object | None,
     ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-        if require_fixture_inputs is None or require_production_inputs is None:
-            # Importing the report directly must retain its public fixture API.
-            # The coordinator import performs the one allowed binding from its
-            # sealed protocol frame; no caller-supplied verifier is accepted.
-            from populace_dynamics.estimates import (
-                anchor_context_coordinator as _anchor_context_coordinator,
-            )
-
-            del _anchor_context_coordinator
         if require_fixture_inputs is None or require_production_inputs is None:
             raise RuntimeError("report document authority is not bound")
         if ceremony_capability is None:
@@ -210,12 +232,20 @@ def _document_authority_protocol():
             ceremony_capability=ceremony_capability,
         )
 
-    return authorize, bind
+    def is_bound() -> bool:
+        return (
+            require_fixture_inputs is not None
+            and require_production_inputs is not None
+        )
+
+    return authorize, take, is_bound
 
 
-_authorized_documents, _bind_document_authority = (
-    _document_authority_protocol()
-)
+(
+    _authorized_documents,
+    _take_document_authority_verifier_binding,
+    _document_authority_is_bound,
+) = _document_authority_protocol()
 del _document_authority_protocol
 
 
@@ -1221,6 +1251,55 @@ def copy_results(results: Mapping[str, Any]) -> dict[str, Any]:
     value = copy.deepcopy(dict(results))
     _validate_results_structure(value)
     return value
+
+
+def _seal_document_authority_import() -> None:
+    """Do not expose an unclaimed verifier-binding surface after import."""
+    if _document_authority_is_bound():
+        return
+    publication_name = "populace_dynamics.estimates.anchor_context_publication"
+    publication_source = (
+        Path(__file__).with_name("anchor_context_publication.py").resolve()
+    )
+    publication_code = compile(
+        publication_source.read_bytes(),
+        str(publication_source),
+        "exec",
+        dont_inherit=True,
+        optimize=sys.flags.optimize,
+    )
+    importlib.import_module(publication_name)
+    if _document_authority_is_bound():
+        return
+    frame = sys._getframe(1)
+    while frame is not None:
+        module = sys.modules.get(publication_name)
+        spec = getattr(module, "__spec__", None)
+        origin = getattr(spec, "origin", None)
+        try:
+            origin_path = Path(origin).resolve()
+            code_path = Path(frame.f_code.co_filename).resolve()
+        except (OSError, TypeError, ValueError):
+            origin_path = None
+            code_path = None
+        if (
+            module is not None
+            and vars(module) is frame.f_globals
+            and frame.f_code == publication_code
+            and frame.f_globals.get("__name__") == publication_name
+            and origin_path == publication_source
+            and code_path == publication_source
+            and getattr(spec, "_initializing", False) is True
+        ):
+            return
+        frame = frame.f_back
+    raise RuntimeError(
+        "report authority requires the canonical publication import"
+    )
+
+
+_seal_document_authority_import()
+del _seal_document_authority_import
 
 
 __all__ = [

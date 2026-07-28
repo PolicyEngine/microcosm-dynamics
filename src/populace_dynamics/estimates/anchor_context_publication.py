@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import importlib
 import json
 import os
 import platform
@@ -420,56 +421,6 @@ def validate_registered_configuration_echo(
     )
 
 
-def _validate_fixture_configuration_echo(
-    configuration: Mapping[str, Any],
-    *,
-    registered_configuration_bytes: bytes,
-    first_estimates_input: Mapping[str, Any],
-    anchor_input: Mapping[str, Any],
-) -> None:
-    """Test-only exact validation for identities rejected by production."""
-    if canonical_json_bytes(configuration) != registered_configuration_bytes:
-        raise ValueError(
-            "fixture configuration differs from its exact registered bytes"
-        )
-    _assert_fixture_identities(first_estimates_input, anchor_input)
-    _validate_configuration_shape(
-        configuration,
-        expected_first_estimates_input=first_estimates_input,
-        expected_anchor_input=anchor_input,
-    )
-
-
-def _validate_configuration_echo_for_execution(
-    configuration: Mapping[str, Any],
-) -> None:
-    """Validate either the sole production identity or a rejected-by-prod fixture."""
-    registered_bytes = canonical_json_bytes(configuration)
-    first_estimates_input = _require_mapping(
-        configuration.get("first_estimates_input"),
-        "configuration first_estimates_input",
-    )
-    anchor_input = _require_mapping(
-        configuration.get("anchor_input"),
-        "configuration anchor_input",
-    )
-    if (
-        first_estimates_input == registry.first_estimates_input_identity()
-        and anchor_input == registry.anchor_input_identity()
-    ):
-        validate_registered_configuration_echo(
-            configuration,
-            registered_configuration_bytes=registered_bytes,
-        )
-        return
-    _validate_fixture_configuration_echo(
-        configuration,
-        registered_configuration_bytes=registered_bytes,
-        first_estimates_input=first_estimates_input,
-        anchor_input=anchor_input,
-    )
-
-
 def build_runtime_provenance(
     implementation_commit: str,
 ) -> dict[str, str]:
@@ -542,61 +493,268 @@ def _production_input_identity(role: str) -> Mapping[str, Any]:
     raise ValueError("unknown input role")
 
 
-def _fixture_input_identity(role: str) -> Mapping[str, Any]:
-    if role == "first_estimates":
-        return {
-            "path": _FIXTURE_FIRST_PATH,
-            "sha256": _FIXTURE_FIRST_SHA256,
-        }
-    if role == "anchor":
-        return {
-            "path": _FIXTURE_ANCHOR_PATH,
-            "artifact_vintage_id": _FIXTURE_ANCHOR_VINTAGE,
-            "sha256": _FIXTURE_ANCHOR_SHA256,
-        }
-    raise ValueError("unknown input role")
+def _fixture_identity_protocol():
+    """Freeze the sole fixture identity as literals in an unreachable closure."""
+    first = {
+        "path": (
+            "tests/fixtures/anchor_context/" "first_estimates_fixture_v1.json"
+        ),
+        "sha256": (
+            "be95a6eef919d2cf46197467fd75463d2c94d607983674da9f"
+            "2723b0391d1c61"
+        ),
+    }
+    anchor = {
+        "path": (
+            "tests/fixtures/anchor_context/"
+            "ssa_level_anchors_fixture_v1.json"
+        ),
+        "artifact_vintage_id": "ssa_level_anchors.fixture_only.v1",
+        "sha256": (
+            "0a473202440878e66201f60fbd76a686d22b77a2b0fd64fefb"
+            "3b88bcc55f2ac4"
+        ),
+    }
+
+    def identity(role: str) -> Mapping[str, Any]:
+        if role == "first_estimates":
+            return dict(first)
+        if role == "anchor":
+            return dict(anchor)
+        raise ValueError("unknown input role")
+
+    return identity
 
 
-def _input_io_protocol():
+_fixture_input_identity = _fixture_identity_protocol()
+del _fixture_identity_protocol
+
+
+def _fixture_identity_assertion_protocol(
+    fixture_input_identity: Callable[[str], Mapping[str, Any]],
+):
+    validate_input_identity = _validate_input_identity
+
+    def assert_identities(
+        first_estimates_input: Mapping[str, Any],
+        anchor_input: Mapping[str, Any],
+    ) -> None:
+        first = dict(
+            validate_input_identity(
+                first_estimates_input,
+                role="first_estimates",
+            )
+        )
+        anchor = dict(validate_input_identity(anchor_input, role="anchor"))
+        if first != fixture_input_identity("first_estimates"):
+            raise ValueError("fixture first-estimates identity is not fixed")
+        if anchor != fixture_input_identity("anchor"):
+            raise ValueError("fixture anchor identity is not fixed")
+
+    return assert_identities
+
+
+_assert_fixture_identities = _fixture_identity_assertion_protocol(
+    _fixture_input_identity
+)
+del _fixture_identity_assertion_protocol
+
+
+def _fixture_configuration_validation_protocol(
+    assert_fixture_identities: Callable[
+        [Mapping[str, Any], Mapping[str, Any]], None
+    ],
+):
+    canonical_bytes = canonical_json_bytes
+    validate_shape = _validate_configuration_shape
+    require_mapping = _require_mapping
+    production_first_identity = registry.first_estimates_input_identity
+    production_anchor_identity = registry.anchor_input_identity
+    validate_production = validate_registered_configuration_echo
+
+    def validate_fixture(
+        configuration: Mapping[str, Any],
+        *,
+        registered_configuration_bytes: bytes,
+        first_estimates_input: Mapping[str, Any],
+        anchor_input: Mapping[str, Any],
+    ) -> None:
+        """Validate only the literal committed fixture identities."""
+        if canonical_bytes(configuration) != registered_configuration_bytes:
+            raise ValueError(
+                "fixture configuration differs from its exact registered "
+                "bytes"
+            )
+        assert_fixture_identities(first_estimates_input, anchor_input)
+        validate_shape(
+            configuration,
+            expected_first_estimates_input=first_estimates_input,
+            expected_anchor_input=anchor_input,
+        )
+
+    def validate_for_execution(
+        configuration: Mapping[str, Any],
+    ) -> None:
+        """Validate either production or the sole committed fixture identity."""
+        registered_bytes = canonical_bytes(configuration)
+        first_estimates_input = require_mapping(
+            configuration.get("first_estimates_input"),
+            "configuration first_estimates_input",
+        )
+        anchor_input = require_mapping(
+            configuration.get("anchor_input"),
+            "configuration anchor_input",
+        )
+        if (
+            first_estimates_input == production_first_identity()
+            and anchor_input == production_anchor_identity()
+        ):
+            validate_production(
+                configuration,
+                registered_configuration_bytes=registered_bytes,
+            )
+            return
+        validate_fixture(
+            configuration,
+            registered_configuration_bytes=registered_bytes,
+            first_estimates_input=first_estimates_input,
+            anchor_input=anchor_input,
+        )
+
+    return validate_fixture, validate_for_execution
+
+
+(
+    _validate_fixture_configuration_echo,
+    _validate_configuration_echo_for_execution,
+) = _fixture_configuration_validation_protocol(_assert_fixture_identities)
+del _fixture_configuration_validation_protocol
+
+
+def _canonical_import_frame(
+    frame: Any,
+    *,
+    module_name: str,
+    source_path: Path,
+    module_code: Any,
+) -> bool:
+    module = sys.modules.get(module_name)
+    spec = getattr(module, "__spec__", None)
+    origin = getattr(spec, "origin", None)
+    try:
+        resolved_origin = Path(origin).resolve()
+        resolved_code = Path(frame.f_code.co_filename).resolve()
+    except (OSError, TypeError, ValueError):
+        return False
+    return bool(
+        module is not None
+        and vars(module) is frame.f_globals
+        and frame.f_code == module_code
+        and frame.f_globals.get("__name__") == module_name
+        and resolved_origin == source_path
+        and resolved_code == source_path
+        and getattr(spec, "_initializing", False) is True
+    )
+
+
+def _coordinator_capability_authority_protocol():
+    """Create a one-use import handshake and the retained exact verifier."""
+    module_globals = globals()
     getframe = sys._getframe
-    issued: dict[
-        int,
-        tuple[_InputReadAuthority, Path, str, int | None],
-    ] = {}
-    capability_verifier: (
+    coordinator_name = "populace_dynamics.estimates.anchor_context_coordinator"
+    coordinator_source = (
+        Path(__file__).with_name("anchor_context_coordinator.py").resolve()
+    )
+    coordinator_code = compile(
+        coordinator_source.read_bytes(),
+        str(coordinator_source),
+        "exec",
+        dont_inherit=True,
+        optimize=sys.flags.optimize,
+    )
+    verifier: (
         Callable[
             [object],
             first_publication._RegisteredConfigurationToken,
         ]
         | None
     ) = None
+    binding_taken = False
 
-    def bind_capability_verifier(
-        verifier: Callable[
+    def bind(
+        candidate: Callable[
             [object],
             first_publication._RegisteredConfigurationToken,
         ],
     ) -> None:
-        nonlocal capability_verifier
-        from populace_dynamics.estimates import anchor_context_coordinator
+        nonlocal verifier
+        if verifier is not None:
+            raise RuntimeError(
+                "coordinator capability verifier is already bound"
+            )
+        if not callable(candidate):
+            raise TypeError("coordinator capability verifier is not callable")
+        verifier = candidate
 
+    def take():
+        nonlocal binding_taken
         caller = getframe(1)
-        protocol = getattr(
-            anchor_context_coordinator,
-            "_ceremony_capability_protocol",
-            None,
-        )
-        if (
-            protocol is None
-            or caller.f_code is not protocol.__code__
-            or caller.f_locals.get("require") is not verifier
+        if binding_taken or not _canonical_import_frame(
+            caller,
+            module_name=coordinator_name,
+            source_path=coordinator_source,
+            module_code=coordinator_code,
         ):
             raise TypeError(
-                "input I/O verifier binding requires coordinator bootstrap"
+                "capability bootstrap belongs to the canonical coordinator "
+                "import"
             )
-        if capability_verifier is not None:
-            raise RuntimeError("input I/O capability verifier already bound")
-        capability_verifier = verifier
+        binding_taken = True
+        module_globals.pop(
+            "_take_coordinator_capability_verifier_binding",
+            None,
+        )
+        return bind
+
+    def require(
+        capability: object,
+    ) -> first_publication._RegisteredConfigurationToken:
+        if verifier is None:
+            raise RuntimeError("coordinator capability verifier is not bound")
+        return verifier(capability)
+
+    def is_bound() -> bool:
+        return verifier is not None
+
+    return take, require, is_bound
+
+
+(
+    _take_coordinator_capability_verifier_binding,
+    _require_coordinator_capability,
+    _coordinator_capability_is_bound,
+) = _coordinator_capability_authority_protocol()
+del _coordinator_capability_authority_protocol
+
+
+def _input_io_protocol(
+    verify_capability: Callable[
+        [object],
+        first_publication._RegisteredConfigurationToken,
+    ],
+):
+    getframe = sys._getframe
+    fixture_input_identity = _fixture_input_identity
+    production_input_identity = _production_input_identity
+    validate_input_identity = _validate_input_identity
+    protected_input_paths = (
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        registry.ANCHOR_INPUT_PATH,
+    )
+    issued: dict[
+        int,
+        tuple[_InputReadAuthority, Path, str, int | None],
+    ] = {}
 
     def require(
         candidate: object,
@@ -624,8 +782,10 @@ def _input_io_protocol():
         io_authority: object,
         repository_root: Path,
         relative_path: str,
-    ) -> tuple[int, os.stat_result]:
-        """Open one authorized file without following component symlinks."""
+        *,
+        forbidden_file_ids: frozenset[tuple[int, int]] = frozenset(),
+    ) -> tuple[int, os.stat_result, int, str]:
+        """Name-check, then open one file without following any symlink."""
         require(
             io_authority,
             repository_root=repository_root,
@@ -661,16 +821,46 @@ def _input_io_protocol():
                     dir_fd=current,
                 )
                 opened_directories.append(current)
+            name_metadata = os.stat(
+                parts[-1],
+                dir_fd=current,
+                follow_symlinks=False,
+            )
+            file_id = (name_metadata.st_dev, name_metadata.st_ino)
+            if not stat.S_ISREG(name_metadata.st_mode):
+                raise ValueError("input path is not a regular file")
+            if (
+                name_metadata.st_nlink != 1
+                or name_metadata.st_size > _INPUT_MAX_BYTES
+            ):
+                raise ValueError(
+                    "input must be one singly linked bounded regular file"
+                )
+            if file_id in forbidden_file_ids:
+                raise ValueError("fixture input aliases a production input")
             opened = os.open(
                 parts[-1],
                 os.O_RDONLY | no_follow | nonblocking | close_on_exec,
                 dir_fd=current,
             )
             metadata = os.fstat(opened)
-            if not stat.S_ISREG(metadata.st_mode):
+            stable_fields = (
+                "st_dev",
+                "st_ino",
+                "st_mode",
+                "st_nlink",
+                "st_size",
+                "st_mtime_ns",
+                "st_ctime_ns",
+            )
+            if any(
+                getattr(name_metadata, field) != getattr(metadata, field)
+                for field in stable_fields
+            ):
                 os.close(opened)
-                raise ValueError("input path is not a regular file")
-            return opened, metadata
+                raise ValueError("input changed between name and open checks")
+            retained_parent = opened_directories.pop()
+            return opened, metadata, retained_parent, parts[-1]
         finally:
             for directory in reversed(opened_directories):
                 os.close(directory)
@@ -688,10 +878,7 @@ def _input_io_protocol():
             expected_caller=load,
         )
         protected: set[tuple[int, int]] = set()
-        for relative in (
-            registry.FIRST_ESTIMATES_INPUT_PATH,
-            registry.ANCHOR_INPUT_PATH,
-        ):
+        for relative in protected_input_paths:
             try:
                 metadata = os.stat(
                     repository_root / relative,
@@ -745,9 +932,9 @@ def _input_io_protocol():
     ) -> tuple[Mapping[str, Any], bytes]:
         """Load one fixed fixture or live-capability production input."""
         root = Path(repository_root).resolve()
-        validated = _validate_input_identity(identity, role=role)
-        production_identity = _production_input_identity(role)
-        fixture_identity = _fixture_input_identity(role)
+        validated = validate_input_identity(identity, role=role)
+        production_identity = production_input_identity(role)
+        fixture_identity = fixture_input_identity(role)
         is_production = dict(validated) == dict(production_identity)
         is_fixture = dict(validated) == dict(fixture_identity)
         if not is_production and not is_fixture:
@@ -761,9 +948,7 @@ def _input_io_protocol():
                 raise TypeError(
                     "production input I/O requires a live ceremony capability"
                 )
-            if capability_verifier is None:
-                raise RuntimeError("production input verifier is not bound")
-            verified_registration = capability_verifier(ceremony_capability)
+            verified_registration = verify_capability(ceremony_capability)
             configuration = first_publication._configuration_echo(
                 verified_registration
             )
@@ -791,23 +976,28 @@ def _input_io_protocol():
             None,
         )
         descriptor: int | None = None
+        parent_descriptor: int | None = None
         try:
-            descriptor, metadata = open_regular_relative(
-                io_authority,
-                root,
-                relative_path,
-            )
-            file_id = (metadata.st_dev, metadata.st_ino)
-            if metadata.st_nlink != 1 or metadata.st_size > _INPUT_MAX_BYTES:
-                raise ValueError(
-                    "input must be one singly linked bounded regular file"
+            forbidden_file_ids = (
+                protected_input_file_ids(
+                    io_authority,
+                    root,
+                    relative_path,
                 )
-            if is_fixture and file_id in protected_input_file_ids(
+                if is_fixture
+                else frozenset()
+            )
+            (
+                descriptor,
+                metadata,
+                parent_descriptor,
+                leaf_name,
+            ) = open_regular_relative(
                 io_authority,
                 root,
                 relative_path,
-            ):
-                raise ValueError("fixture input aliases a production input")
+                forbidden_file_ids=forbidden_file_ids,
+            )
             issued[id(io_authority)] = (
                 io_authority,
                 root,
@@ -820,7 +1010,6 @@ def _input_io_protocol():
                 relative_path,
                 descriptor,
             )
-            after = os.fstat(descriptor)
             stable_fields = (
                 "st_dev",
                 "st_ino",
@@ -830,6 +1019,22 @@ def _input_io_protocol():
                 "st_mtime_ns",
                 "st_ctime_ns",
             )
+            try:
+                name_after = os.stat(
+                    leaf_name,
+                    dir_fd=parent_descriptor,
+                    follow_symlinks=False,
+                )
+            except OSError as error:
+                raise ValueError(
+                    "input name changed during its sealed read"
+                ) from error
+            if any(
+                getattr(metadata, field) != getattr(name_after, field)
+                for field in stable_fields
+            ):
+                raise ValueError("input name changed during its sealed read")
+            after = os.fstat(descriptor)
             if any(
                 getattr(metadata, field) != getattr(after, field)
                 for field in stable_fields
@@ -839,6 +1044,8 @@ def _input_io_protocol():
             issued.pop(id(io_authority), None)
             if descriptor is not None:
                 os.close(descriptor)
+            if parent_descriptor is not None:
+                os.close(parent_descriptor)
 
         digest = hashlib.sha256(raw).hexdigest()
         if digest != validated["sha256"]:
@@ -858,7 +1065,6 @@ def _input_io_protocol():
 
     return (
         load,
-        bind_capability_verifier,
         open_regular_relative,
         read_open_descriptor,
     )
@@ -866,32 +1072,21 @@ def _input_io_protocol():
 
 (
     _load_verified_json,
-    _bind_input_io_capability_verifier,
     _open_regular_relative,
     _read_open_descriptor,
-) = _input_io_protocol()
+) = _input_io_protocol(_require_coordinator_capability)
 del _input_io_protocol
 
 
-def _assert_fixture_identities(
-    first_estimates_input: Mapping[str, Any],
-    anchor_input: Mapping[str, Any],
-) -> None:
-    first = dict(
-        _validate_input_identity(
-            first_estimates_input,
-            role="first_estimates",
-        )
-    )
-    anchor = dict(_validate_input_identity(anchor_input, role="anchor"))
-    if first != _fixture_input_identity("first_estimates"):
-        raise ValueError("fixture first-estimates identity is not fixed")
-    if anchor != _fixture_input_identity("anchor"):
-        raise ValueError("fixture anchor identity is not fixed")
-
-
-def _fixture_input_protocol():
+def _fixture_input_protocol(
+    fixture_input_identity: Callable[[str], Mapping[str, Any]],
+):
     load_verified_json = _load_verified_json
+    first_identity = dict(fixture_input_identity("first_estimates"))
+    anchor_identity = dict(fixture_input_identity("anchor"))
+    first_sha256 = first_identity["sha256"]
+    anchor_sha256 = anchor_identity["sha256"]
+    anchor_vintage = anchor_identity["artifact_vintage_id"]
     issued: dict[
         int,
         tuple[_VerifiedFixtureInputs, Path, bytes, bytes, bool],
@@ -900,8 +1095,6 @@ def _fixture_input_protocol():
     def load(repository_root: str | Path) -> _VerifiedFixtureInputs:
         """Load only the two immutable manifest-bound fixture files."""
         root = Path(repository_root).resolve()
-        first_identity = _fixture_input_identity("first_estimates")
-        anchor_identity = _fixture_input_identity("anchor")
         first, first_raw = load_verified_json(
             root,
             first_identity,
@@ -969,8 +1162,8 @@ def _fixture_input_protocol():
             bundle.repository_root != issued_root
             or bundle.first_estimates_snapshot != first_raw
             or bundle.anchors_snapshot != anchor_raw
-            or hashlib.sha256(first_raw).hexdigest() != _FIXTURE_FIRST_SHA256
-            or hashlib.sha256(anchor_raw).hexdigest() != _FIXTURE_ANCHOR_SHA256
+            or hashlib.sha256(first_raw).hexdigest() != first_sha256
+            or hashlib.sha256(anchor_raw).hexdigest() != anchor_sha256
         ):
             raise ValueError("fixed fixture bundle bytes changed")
         try:
@@ -989,7 +1182,7 @@ def _fixture_input_protocol():
             or canonical_json_bytes(anchor) != anchor_raw
             or first.get("fixture_only") is not True
             or anchor.get("fixture_only") is not True
-            or anchor.get("artifact_vintage_id") != _FIXTURE_ANCHOR_VINTAGE
+            or anchor.get("artifact_vintage_id") != anchor_vintage
         ):
             raise ValueError("fixed fixture bundle content changed")
         return first, anchor
@@ -1016,11 +1209,16 @@ def _fixture_input_protocol():
     load_fixture_documents,
     _require_verified_fixture_inputs,
     _require_publishable_fixture_inputs,
-) = _fixture_input_protocol()
+) = _fixture_input_protocol(_fixture_input_identity)
 del _fixture_input_protocol
 
 
-def _production_input_protocol():
+def _production_input_protocol(
+    verify_coordinator_capability: Callable[
+        [object],
+        first_publication._RegisteredConfigurationToken,
+    ],
+):
     load_verified_json = _load_verified_json
     configuration_echo = first_publication._configuration_echo
     validate_configuration = validate_registered_configuration_echo
@@ -1034,49 +1232,11 @@ def _production_input_protocol():
             bytes,
         ],
     ] = {}
-    capability_verifier: (
-        Callable[
-            [object],
-            first_publication._RegisteredConfigurationToken,
-        ]
-        | None
-    ) = None
-
-    def bind_capability_verifier(
-        verifier: Callable[
-            [object],
-            first_publication._RegisteredConfigurationToken,
-        ],
-    ) -> None:
-        nonlocal capability_verifier
-        from populace_dynamics.estimates import anchor_context_coordinator
-
-        caller = sys._getframe(1)
-        protocol = getattr(
-            anchor_context_coordinator,
-            "_ceremony_capability_protocol",
-            None,
-        )
-        if (
-            protocol is None
-            or caller.f_code is not protocol.__code__
-            or caller.f_locals.get("require") is not verifier
-        ):
-            raise TypeError(
-                "production verifier binding requires coordinator bootstrap"
-            )
-        if capability_verifier is not None:
-            raise RuntimeError(
-                "production input capability verifier already bound"
-            )
-        capability_verifier = verifier
 
     def verify_capability(
         ceremony_capability: object,
     ) -> first_publication._RegisteredConfigurationToken:
-        if capability_verifier is None:
-            raise RuntimeError("production input verifier is not bound")
-        return capability_verifier(ceremony_capability)
+        return verify_coordinator_capability(ceremony_capability)
 
     def load(ceremony_capability: object) -> _VerifiedProductionInputs:
         token = verify_capability(ceremony_capability)
@@ -1177,15 +1337,23 @@ def _production_input_protocol():
 
     load.__name__ = "_load_production_documents"
     load.__qualname__ = "_load_production_documents"
-    return load, require, bind_capability_verifier
+    return load, require
 
 
 (
     _load_production_documents,
     _require_verified_production_inputs,
-    _bind_production_input_capability_verifier,
-) = _production_input_protocol()
+) = _production_input_protocol(_require_coordinator_capability)
 del _production_input_protocol
+
+_bind_report_document_authority = (
+    anchor_context_report._take_document_authority_verifier_binding()
+)
+_bind_report_document_authority(
+    _require_verified_fixture_inputs,
+    _require_verified_production_inputs,
+)
+del _bind_report_document_authority
 
 
 def _validate_environment_sidecar_hash(value: Any) -> str:
@@ -1703,11 +1871,27 @@ def _read_incident_file(
     runs_descriptor = -1
     descriptor = -1
     try:
+        root_metadata = os.fstat(root_descriptor)
+        root_named = os.stat(root, follow_symlinks=False)
+        if not stat.S_ISDIR(root_metadata.st_mode) or not stat.S_ISDIR(
+            root_named.st_mode
+        ):
+            raise ValueError("repository root is not a directory")
         runs_descriptor = os.open(
             "runs",
             os.O_RDONLY | directory_flag | no_follow | close_on_exec,
             dir_fd=root_descriptor,
         )
+        runs_metadata = os.fstat(runs_descriptor)
+        runs_named = os.stat(
+            "runs",
+            dir_fd=root_descriptor,
+            follow_symlinks=False,
+        )
+        if not stat.S_ISDIR(runs_metadata.st_mode) or not stat.S_ISDIR(
+            runs_named.st_mode
+        ):
+            raise ValueError("incident directory is not a directory")
         descriptor = os.open(
             relative.name,
             os.O_RDONLY | no_follow | nonblocking | close_on_exec,
@@ -1741,6 +1925,14 @@ def _read_incident_file(
             dir_fd=runs_descriptor,
             follow_symlinks=False,
         )
+        runs_after = os.fstat(runs_descriptor)
+        runs_named_after = os.stat(
+            "runs",
+            dir_fd=root_descriptor,
+            follow_symlinks=False,
+        )
+        root_after = os.fstat(root_descriptor)
+        root_named_after = os.stat(root, follow_symlinks=False)
         stable_fields = (
             "st_dev",
             "st_ino",
@@ -1756,6 +1948,18 @@ def _read_incident_file(
             for field in stable_fields
         ):
             raise ValueError("incident identity changed during its read")
+        if any(
+            getattr(runs_metadata, field) != getattr(runs_named, field)
+            or getattr(runs_metadata, field) != getattr(runs_after, field)
+            or getattr(runs_metadata, field)
+            != getattr(runs_named_after, field)
+            or getattr(root_metadata, field) != getattr(root_named, field)
+            or getattr(root_metadata, field) != getattr(root_after, field)
+            or getattr(root_metadata, field)
+            != getattr(root_named_after, field)
+            for field in stable_fields
+        ):
+            raise ValueError("incident path chain changed during its read")
         payload = bytes(chunks)
     finally:
         for opened in (descriptor, runs_descriptor, root_descriptor):
@@ -1929,6 +2133,43 @@ def incident_is_retry_eligible(record: Mapping[str, Any]) -> bool:
         and isinstance(record.get("reason"), str)
         and record["reason"].startswith("external_")
     )
+
+
+def _seal_coordinator_authority_import() -> None:
+    """Never return an import with a claimable coordinator binding surface."""
+    if _coordinator_capability_is_bound():
+        return
+    coordinator_name = "populace_dynamics.estimates.anchor_context_coordinator"
+    coordinator_source = (
+        Path(__file__).with_name("anchor_context_coordinator.py").resolve()
+    )
+    coordinator_code = compile(
+        coordinator_source.read_bytes(),
+        str(coordinator_source),
+        "exec",
+        dont_inherit=True,
+        optimize=sys.flags.optimize,
+    )
+    importlib.import_module(coordinator_name)
+    if _coordinator_capability_is_bound():
+        return
+    frame = sys._getframe(1)
+    while frame is not None:
+        if _canonical_import_frame(
+            frame,
+            module_name=coordinator_name,
+            source_path=coordinator_source,
+            module_code=coordinator_code,
+        ):
+            return
+        frame = frame.f_back
+    raise RuntimeError(
+        "publication authority requires the canonical coordinator import"
+    )
+
+
+_seal_coordinator_authority_import()
+del _seal_coordinator_authority_import
 
 
 __all__ = [

@@ -231,11 +231,54 @@
   and SystemExit probes with statistic-like messages confirm that neither the
   incident nor stdout/stderr contains them; the launcher suite now passes 30
   tests.
+- The final finding-1 authority hardening is integrated:
+  - publication exposes only a transient, self-deleting coordinator verifier
+    handshake and authenticates the exact compiled canonical coordinator
+    module code, module object, import state, and source origin; fake modules,
+    forged canonical-filename frames, and post-import clones cannot pre-bind
+    or replace it;
+  - the report verifier handoff is likewise one-use and internal to
+    publication, eliminating the three persistent binder surfaces;
+  - fixture path/hash/vintage identities are literal closure state used by
+    validation, loading, and computation even if public names are rebound;
+  - fixture rehearsal rejects hardlinks and protected production-input inodes
+    before a leaf open or read, while every opened input rechecks both its
+    descriptor and canonical leaf name after reading; and
+  - public runner clones, substituted closure dependencies, direct core/mint
+    calls, and forged capabilities fail before the ceremony lock, production
+    input I/O, or report computation.
+- The final finding-2 coordinator hardening is integrated:
+  - constructible retained provenance and caller-populatable retry registries
+    are gone; the first attempt returns an explicit one-shot receipt that is
+    usable only by the same public coordinator's uninterrupted second loop
+    iteration;
+  - the receipt authenticates the coordinator's exact published incident,
+    durable attempt and authority records, unchanged configuration,
+    `production_only` mode, and persisted `estimate_bearing_information_yielded:
+    false` predicate before the retry claim is created, then is consumed;
+  - all claim readers pin and recheck mode, link count, size, timestamps,
+    device/inode, and canonical name; registration hardlinks and protected
+    aliases are rejected before leaf open; and
+  - the execution law is retained as private immutable canonical bytes, with
+    only a read-only public view.
+- A real exported-public-runner fail-once regression confirms that the public
+  coordinator owns both attempts, creates exactly one report-first retry
+  claim, and never exposes the receipt. Coordinator, publication, and report
+  focused suites pass together with 183 tests.
+- Independent finding-4 review found a remaining directory-exchange race in
+  incident validation: the leaf descriptor remained stable while the
+  canonical `runs` name could be replaced. The validator now pins and
+  post-read rechecks the repository root, `runs` directory, and leaf metadata
+  chain. The concrete old-directory/new-directory probe is rejected while
+  confirming the canonical path contains the replacement; the publication
+  suite passes 74 tests.
+- Independent finding-5 review approved the complete oracle: all seven
+  available formulas are hardcoded independently across 20 draws and eight
+  years, covering 1,120 model cells, 56 official cells, 1,120 comparison
+  cells, and all 280 published annual numeric fields.
 
 ## Next
 
-- Complete and integrate the transient publication-capability handshake and
-  one-shot coordinator retry receipt.
 - Obtain an independent clean re-review of every referee disposition.
 - Run Black, Ruff, each tier, and the full test suite.
 - Record per-finding dispositions, final verification, and push status.
