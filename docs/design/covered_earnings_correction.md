@@ -123,43 +123,69 @@ Every atomic record carries the following fields or the run aborts:
 |---|---|
 | `proxy_labor_income_raw` | Original signed proxy amount, unchanged and recoverable. |
 | `adjudicated_source_amount` | Signed annualized amount after the §4 crosswalk, before the Option-B measurement transform. |
-| `measurement_adjusted_amount` | Finite, nonnegative Option-B output. |
-| `measurement_delta` | Exactly `measurement_adjusted_amount - adjudicated_source_amount`; it may be signed. |
+| `measurement_adjusted_gain_amount` | Finite, nonnegative Option-B gain or wage amount. It is zero for an admissible SE loss. |
+| `measurement_adjusted_se_loss_magnitude` | Finite, nonnegative magnitude of an admissible SE loss; zero for wages, gains, and a negative non-SE anomaly. |
+| `measurement_adjusted_net_amount` | Exactly `measurement_adjusted_gain_amount - measurement_adjusted_se_loss_magnitude`; it may be signed only for an admissible SE concept. |
+| `measurement_delta` | Exactly `measurement_adjusted_net_amount - adjudicated_source_amount`; it may be signed. |
 | `status_probabilities` | Ordered four-value vector for `covered_wage`, `covered_self_employment`, `noncovered`, `unresolved`; finite, in `[0,1]`, and summing to one within \(10^{-12}\). |
 | `status` | Deterministic class when one probability is exactly one; otherwise `modeled_distribution`. Draw rows carry one of the four realized classes. |
 | `classification_reason_codes` | Ordered, nonempty registered reason-code array. |
-| `source_provenance` | Source wave, role, job/component, reference year, raw field IDs, unit, missing-code disposition, observed/imputed/projected status, and admissible-information date. |
+| `source_provenance` | Source wave, role, job/component, `se_aggregation_group_id`, reference year, raw field IDs, unit, missing-code disposition, observed/imputed/projected status, and admissible-information date. |
 | `correction_version` | Immutable selected correction identity and canonical SHA-256. |
 | `uncertainty_provenance` | `expected_value` or the exact §5.4 correction-draw namespace and index. |
 
-For each atomic expected-value record, the four status-allocated nonnegative
-amounts equal `measurement_adjusted_amount` within \(10^{-9}\) dollars. Across
-all atomic records for one person-year,
+All ledger money is canonical signed integer microdollars after one registered
+round-half-even conversion at the Option-B boundary. For each atomic
+expected-value record, the four status-allocated nonnegative gain amounts
+equal `measurement_adjusted_gain_amount` with literal zero integer residual,
+and the four nonnegative loss magnitudes separately equal
+`measurement_adjusted_se_loss_magnitude` with literal zero residual. A loss magnitude
+may be allocated only to `covered_self_employment`, `noncovered`, or
+`unresolved`; it is always zero for `covered_wage`. A negative non-SE source
+amount is preserved as a source anomaly, maps to zero gain and zero SE loss,
+and appears in the measurement delta. Across all atomic records for one
+person-year,
 
 \[
-\sum T = \sum X + \sum(T-X),
+\sum(T^+-T^-) = \sum X + \sum((T^+-T^-)-X),
 \]
 
-where \(X\) is `adjudicated_source_amount` and \(T\) is
-`measurement_adjusted_amount`. Both sides and every component delta publish.
-An implementation may not force corrected amounts to reconcile to the raw
-proxy by hiding the measurement delta.
+where \(X\) is `adjudicated_source_amount`, \(T^+\) is adjusted gain, and
+\(T^-\) is the admissible SE loss magnitude. Both sides, both gross channels,
+and every component delta publish. An implementation may not force corrected
+amounts to reconcile to the raw proxy by hiding the loss channel or
+measurement delta.
 
 The frozen person-year output registry is:
 
 | Estimand ID | Definition |
 |---|---|
 | `covered_employee_wages_uncapped` | Sum of nonnegative amounts classified as OASDI-covered employee wages before the person-level maximum. |
-| `covered_se_net_earnings_pre_seca` | Sum of admissible self-employment gains and losses within the registered historical aggregation law; it never offsets wages. |
+| `covered_se_gains_pre_loss` | Nonnegative sum of amounts classified as covered self-employment gains before statutory SE aggregation. |
+| `covered_se_loss_magnitude` | Nonnegative magnitude of losses classified as covered self-employment and admissible to the same statutory aggregation unit. |
+| `covered_se_net_earnings_pre_seca` | Signed intermediate `covered_se_gains_pre_loss - covered_se_loss_magnitude`; it never offsets wages and is not a final taxable component. |
 | `covered_seca_base_uncapped` | Nonnegative self-employment base after the registered year-specific eligible-concept, net-earnings-factor, and threshold law, before wage-first cap coordination. |
 | `noncovered_earnings` | Sum assigned noncovered under direct evidence or the registered expected/draw classifier. |
+| `noncovered_se_loss_magnitude` | Separately reported nonnegative SE-loss magnitude assigned noncovered; it never enters an OASDI base. |
 | `unresolved_earnings` | Sum left outside a defensible covered/noncovered allocation. It is never silently counted as covered. |
+| `unresolved_se_loss_magnitude` | Separately reported nonnegative SE-loss magnitude left unresolved. |
 | `oasdi_taxable_wages_person` | Covered employee wages after the person-year maximum. |
 | `oasdi_taxable_se_person` | Eligible SECA base remaining after wages consume the person-year maximum. |
 | `oasdi_person_taxable_payroll` | Sum of the two preceding fields; the revenue tax-base view. |
 | `benefit_only_deemed_credits` | Literal zero in v1. No military or other deemed credit is invented without a separate source and legal registry. |
 | `benefit_creditable_earnings` | V1 creditable wage plus SE amount under the same combined maximum. It equals `oasdi_person_taxable_payroll` because deemed credits are zero, but remains a separate typed view. |
-| `modeled_covered_worker_indicator_or_probability` | Indicator per correction draw, and its exact across-correction-draw mean, that person taxable payroll is positive. It is not `proxy > 0`. |
+| `covered_wage_worker_probability_analytic` | Analytic probability of positive covered employee wages in the registered annual worker universe. |
+| `positive_covered_se_worker_probability_analytic` | Analytic probability of positive covered SECA base in the registered annual worker universe. |
+| `modeled_covered_worker_probability_analytic` | Analytic probability, under the registered joint wage/SE status mapping, that person taxable payroll is positive. This is the covered-share calibration selector and is not `proxy > 0`. |
+| `modeled_covered_worker_draw_indicator` | Zero/one indicator within one correction draw that taxable payroll is positive. |
+| `modeled_covered_worker_draw_grid_fraction_20` | Arithmetic mean of the 20 draw indicators. It is a finite-grid approximation, never renamed an exact probability. |
+
+For analytically independent homogeneous derived components with positive-base
+probabilities \(p_k\), unique-worker probability is
+\(1-\prod_k(1-p_k)\). Any registered dependence from a shared mixed-allocation
+variate replaces that product with its exact joint formula in
+`candidate_output_selector`; summing wage and SE probabilities is forbidden
+because a person may have both.
 
 ### 3.2 Statutory ordering
 
@@ -252,7 +278,8 @@ The implementation must create an immutable, literal, fully expanded
 `self_other_field`, `incorporation_field`, `government_level_field`,
 `industry_field`, `occupation_field`, `enrollment_field`, `missing_codes`,
 `structural_missing`, `admissible_information_date`, `annualization_rule_id`,
-`reconciliation_rule_id`, and `era_seam_reason_codes`.
+`reconciliation_rule_id`, `job_spell_match_rule_id`, and
+`era_seam_reason_codes`.
 
 The registry contains exactly one disposition for every
 `earnings_reference_year = 1968..2022` × admissible role × source job/component
@@ -271,7 +298,8 @@ The era law is:
 | 1979–1993 | Edited labor totals include farm/business labor parts. Separate business/farm fields may split or validate the total but are never added a second time. |
 | 1994–2002 | Edited labor totals and separately carried business/farm labor amounts are combined exactly once under the registered role allocation; changing code systems and job support remain explicit strata. |
 | 2003–2013 | Modern multi-job blocks are reconciled to role totals. Reporting units require the registered annualization rule and month presence; current-job timing may not be treated as prior-year income without the registered match. |
-| 2014–2022 | Consume the frozen projected labor proxy and the §4.3 modeled annual component/status path. No realized post-boundary PSID job fact is admissible. |
+| 2014 | Consume the frozen `boundary_2014` proxy row and initialize the §4.3 synthetic projected-component path. It is not relabeled as an observed job row. |
+| 2015–2022 | Consume the frozen projected labor proxy and the §4.3 annual component/status path. No realized post-boundary PSID job fact is admissible. |
 
 Direct role/job annual amounts have first source precedence. Role totals and
 separate components have second precedence and must reconcile under the era
@@ -298,13 +326,32 @@ self-employment, incorporation, enrollment, or earnings answer with
 reference year after 2013 may enter a 2014–2022 production component/status
 path.
 
-For incumbents, the last admissible state initializes an annual registered
-transition law. The law propagates deterministic state probabilities each
-calendar year; where §5.4 requires a distribution, the keyed draw realizes
-that path. A scheduled entrant initializes at first modeled presence using
-only attributes already admissible to the frozen projection and the
-registered entrant rule. Later realized answers are forbidden even if they
-exist in a staged file.
+Longitudinal observed jobs match only under the literal
+`job_spell_match_rule_id`: same role, verified job identifier where present,
+and compatible interview/reference-year timing. Ambiguous or unmatched jobs
+close the old spell and create a new stable component ID; row proximity never
+matches a spell. `gap_imputed` source years and `boundary_2014` retain those
+literal provenance states and never masquerade as direct questionnaire
+observations.
+
+For an incumbent, the last admissible wage/SE expected shares initialize two
+stable synthetic aggregate IDs, `projected#wage` and
+`projected#self_employment`, at the 2014 boundary. In every 2014–2022 year,
+the selected candidate's registered mixed-allocation logit divides the frozen
+nonnegative person-total proxy between those IDs; the two pre-measurement
+gains sum exactly to the nonnegative proxy. A negative projected person total
+is preserved as a non-SE source anomaly and produces zero gain unless a
+separate admissible source identifies it as an SE loss. V1 models no
+projected employer count or job birth/death and makes no job-level projection
+claim.
+
+The candidate's calendar-year/component functions in §5.3 then produce the
+annual deterministic coverage-probability path. A scheduled entrant
+initializes the same two synthetic IDs at first modeled presence using only
+its frozen proxy total and attributes already admissible to the projection.
+Later realized answers are forbidden even if they exist in a staged file.
+The two synthetic component gains plus published measurement deltas reconcile
+to the frozen person total each year.
 
 The status law advances annually, including odd years. The underlying frozen
 earnings projection's odd-year amount carry is not altered or claimed
@@ -332,10 +379,13 @@ probabilities have different field names, denominators, and meanings.
 ### 5.2 Option B: measurement layer
 
 Option B runs after source-component adjudication and before status amounts
-are aggregated. Its production mappings are nonnegative, component-specific,
-extensive-margin preserving, and monotonically nondecreasing in a positive
-source amount within a registered stratum. Exact zeros remain a separately
-modeled mass. Stable-person-ID tie-breaking, never row order, governs ranks.
+are aggregated. It represents adjusted gains and admissible SE-loss
+magnitudes as separate nonnegative channels. Gain mappings are
+component-specific, extensive-margin preserving, and monotonically
+nondecreasing in a positive source amount within a registered stratum. A loss
+mapping may operate only on a source component that the historical legal
+registry admits to SE netting. Exact zeros remain a separately modeled mass.
+Stable-person-ID tie-breaking, never row order, governs ranks.
 
 The layer may:
 
@@ -350,30 +400,64 @@ It may not turn an aggregate target into observed individual coverage, erase
 the raw proxy, fit a national level, or force an unconditional sign.
 Assignment flags describe source imputation, not administrative agreement.
 
+A mixed component is split before coverage classification into stable derived
+atomic IDs `<source_component_id>#wage` and
+`<source_component_id>#self_employment`. Their gain and loss channels
+reconcile exactly to the parent source under the registered mixed-allocation
+law. The four-class status draw then operates on each homogeneous derived
+component. It may not assign an entire mixed parent to one type. Uncertainty
+in the split uses a separately named `mixed_allocation_share` variate; it is
+not smuggled into the coverage-status CDF.
+
 ### 5.3 Frozen selectable candidate set
 
-The selectable candidates, in complexity order, are:
+Aggregate component moments cannot identify worker-level industry,
+occupation, government, or persistence effects. V1 therefore uses no fitted
+risk-stratum coefficient and no fitted person-specific transition parameter.
+Observed self/other, incorporation, and direct component labels adjudicate
+remuneration type under §4; they are not coverage labels. Direct legal rules
+remain fixed and are never estimated.
 
-| Candidate ID | Option-A layer | Option-B layer | Projected status law |
-|---|---|---|---|
-| `ab_stratified_expected_v1` | Direct rules plus pooled era × role × component × registered risk-stratum probabilities. | Nonnegative component/era conditional mean with explicit zero mass. | Annual deterministic transition of probabilities. |
-| `ab_ridge_expected_v1` | Direct rules plus multinomial expected mapping on the frozen feature basis, with fixed L2 penalty `1.0`. | Rank-preserving piecewise-linear map at weighted positive-amount quantiles `[0, .25, .50, .75, 1]`, roughness penalty `1.0`, and explicit zero mass. | Annual deterministic transition of probabilities. |
-| `ab_ridge_transition_draw_v1` | The preceding expected mapping plus a first-order annual state transition on the same admissible feature basis, fixed L2 penalty `1.0`. | The preceding rank map; only nondegenerate status and residual distributions receive §5.4 draws. | Annual expected transition plus keyed realizations. |
+The five calibration eras are exactly `1968-1975`, `1976-1978`,
+`1979-1993`, `1994-2002`, and `2003-2014`. Within records not directly
+classified by law, a candidate may estimate only:
 
-The frozen feature basis is year era, role, source component, observed versus
-imputed provenance, self/other, incorporation, government level, registered
-industry family, registered occupation family, assignment-flag state, and
-lagged admissible component/status state. Missingness indicators are explicit.
-Sex, race, mortality, claiming, benefit receipt, future earnings, and future
-job facts are not candidate features. Interactions not named in the literal
-candidate registry are forbidden.
+- one wage unknown-coverage logit and one SE unknown-coverage logit per
+  declared era basis;
+- one positive wage gain multiplier and one positive SE gain multiplier per
+  declared era basis; and
+- one mixed wage/SE allocation logit per declared era basis, only where the
+  crosswalk marks a source component `mixed`.
 
-Each implementation candidate object expands this table with exact feature
-encodings, parameter bounds, optimizer, convergence criterion, numeric
-precision, and fixed maximum iterations. The expanded objects are
-exact-deep-equality configuration, frozen before production fitting. A
-candidate that cannot converge under its registered criterion is an
-ineligible failed candidate, not an invitation to change its optimizer.
+No other free parameter is permitted. The selectable candidates, in
+complexity order, are:
+
+| Candidate ID | Exact era basis | 2015–2022 law |
+|---|---|---|
+| `ab_era_constant_expected_v1` | One constant parameter of each permitted kind in each of the five calibration eras. | Carry every fitted 2003–2014 parameter at its 2014 value. |
+| `ab_era_linear_expected_v1` | Intercept and calendar-year slope of each permitted kind within each multi-year era; the 1976–1978 slope is permitted, and no singleton era exists. | Extrapolate the registered 2003–2014 linear predictor annually through 2022. Coverage uses the logistic link; positive multipliers use the exponential link constrained to `[0.25, 4.0]`. |
+| `ab_pooled_seam_expected_v1` | One component-specific global calendar-year slope plus registered intercept shifts at 1976, 1979, 1994, and 2003 for each permitted kind. | Continue the global slope and last seam intercept annually through 2022, with the same links and multiplier bound. |
+
+Every uncertain incumbent and scheduled entrant receives the selected
+candidate's calendar-year/component probability; direct classifications
+override it. This is the exact annual status-evolution rule. Draw realizations
+are conditionally independent across years given that probability path; v1
+does not pretend that aggregate targets identify latent legal-status
+persistence.
+
+The literal `candidate_specs.v1` objects expand only the parameter indices
+implied above and freeze link functions, bounds, exact model-side target
+formulas, float64 arithmetic, deterministic optimizer, starting vector,
+maximum iterations, gradient and objective convergence tolerances, and
+failure disposition. A candidate is eligible only if the train-cell Jacobian
+with respect to its free parameters has full column rank, its registered
+condition number is no greater than \(10^8\), and the optimum is unique under
+the registered \(10^{-10}\) parameter-distance and objective-distance tests.
+Regularization cannot substitute for identification. Failure of any test
+makes the candidate ineligible and publishes its disposition; parameters or
+optimizer settings may not be changed after fitting starts. Registered
+profile-loss intervals for every free parameter publish as identification
+diagnostics and are never described as administrative uncertainty intervals.
 
 ### 5.4 Deterministic-first draw law and nonlinear benefits
 
@@ -391,7 +475,11 @@ The namespace input is the exact ordered tuple
   correction_version,
   stable_person_id,
   calendar_year,
+  role,
+  source_job_id,
   source_component_id,
+  derived_component_id,
+  variate_name,
   correction_draw_index
 )
 ```
@@ -405,11 +493,20 @@ distinct literal namespace suffix. Process hash functions, mutable seeds,
 row indices, wall clock, and global RNG are forbidden.
 
 Correction draws consume no projection, mortality, claiming, marriage, or
-other model RNG stream. The same correction draw feeds both consumers. For
+other model RNG stream. Calibration and selection use analytic conditional
+means and analytic worker probabilities only; no capped quantity or
+finite-draw fraction is a fitting target. The same correction draw feeds both consumers. For
 nonlinear career outcomes, each projection draw is crossed with all 20
 correction draws; top-35 selection, AIME, PIA, and benefit outputs are
 computed within each complete career draw before reduction. Computing
 `PIA(expected career)` and calling it `expected PIA` is forbidden.
+
+The evaluation reports finite-grid error honestly. For each registered
+nonlinear downstream metric it compares the means from draw prefixes `0..9`
+and `0..19`; absolute differences must be no greater than the operational
+stability tolerance frozen in `draw_spec.v1`. This is a deterministic
+resolution check, not a confidence interval. Failure blocks
+`correction_model_eligible`; it cannot trigger draw shopping.
 
 Canonical input sorting, fixed key order, fixed reduction order, canonical
 finite JSON, and the hash generator above make byte-identical replay and
@@ -472,48 +569,85 @@ a value, prior, or tolerance.
 ### 6.2 Frozen `calibration_target_specs`
 
 The registry schema is `calibration_target_specs.v1`. It is a literal ordered
-array, expanded cell by cell before fitting. Every object contains exactly:
+array, expanded cell by cell before fitting. Table 4.B2 and 4.B11 expand
+exactly over calendar years 1968–2022 in ascending order. The covered-share
+objects expand over the exact year array frozen when V-B7 is resolved; that
+array must contain at least one train cell in each of `1968-1975`,
+`1976-1978`, `1979-1993`, `1994-2002`, and `2003-2008`, and every available
+2009–2014 cell. It is frozen before fitting and may not be thinned after
+values are exposed. Every object contains exactly:
 
 `target_id`, `dependency_group`, `source_artifact_vintage_id`,
 `source_cell_ids`, `source_year`, `source_status`, `universe`,
-`transformation`, `stored_unit`, `role`, `loss`, `loss_weight`,
-`cell_tolerance`, `family_tolerance`, `selection_eligible`, and
-`candidate_output_selector`.
+`transformation`, `stored_unit`, `published_rounding_interval`,
+`model_universe_id`, `model_weight_field`, `model_weight_source_sha256`,
+`universe_concordance`, `role`, `loss`, `loss_weight`, `cell_tolerance`,
+`family_tolerance`, `selection_eligible`, and `candidate_output_selector`.
+
+`model_universe_id` resolves through a frozen selector containing exact age,
+annual-presence, employee/SE/both-type, unique-worker, duplicate-worker,
+zero-earner, and denominator rules. `model_weight_field` and its input hash
+are literal. `universe_concordance` maps every official scope element to the
+model selector and has no `approximately_same` branch. If the closed model
+input cannot construct the registered denominator, target registration
+aborts rather than making coverage absorb a frame mismatch.
 
 Roles are exactly `train`, `validation`, or `held_out_diagnostic`.
 The target families are frozen as follows:
 
-| Target family | Exact transformation | Loss | Role law |
+| Target family | Exact official transformation and model selector | Loss | Role and selection law |
 |---|---|---|---|
-| `b2_wage_taxable_intensity` | wage reported-taxable amount / wage-worker count | squared log ratio | 1968–2008 train; 2009–2014 validation; 2015+ held-out diagnostic |
-| `b2_se_taxable_intensity` | SE reported-taxable amount / SE-worker count | squared log ratio | same |
-| `b2_se_taxable_component_share` | SE reported-taxable amount / (wage + SE reported-taxable amounts) | squared logit error | same |
-| `b2_type_count_mix` | SE-worker count / (wage-worker count + SE-worker count) | squared logit error | same; explicitly a marginal type-count mix, not a unique-worker coverage share |
-| `b2_wage_taxable_fraction` | wage reported-taxable amount / total covered-employment wages | squared logit error | same |
-| `b2_se_taxable_fraction` | SE reported-taxable amount / reported total SE net earnings | squared logit error | same |
-| `ssa_precisely_universed_covered_share` | exact registered numerator / exact same-universe denominator | squared logit error | available 1968–2008 cells train; 2009–2014 validation; 2015+ held-out diagnostic; a missing required era aborts registration |
-| `b11_component_reconciliation` | literal total, wage, and SE taxable cells plus rounded-sum residual | no fitting loss | all years held-out diagnostic |
-| `b11_se_contribution_share` | SE OASDI contributions / (wage + SE OASDI contributions) | no fitting loss | all years held-out diagnostic; legal/accounting diagnostic only |
+| `b2_wage_total_intensity` | 4.B2 `c5/c11`; model `sum(weight*covered_employee_wages_uncapped)/sum(weight*covered_wage_worker_probability_analytic)` in the exact registered worker universe | squared log ratio | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; selection-eligible |
+| `b2_se_total_intensity` | 4.B2 `c8/c12`; model `sum(weight*covered_se_net_earnings_pre_seca)/sum(weight*positive_covered_se_worker_probability_analytic)` in the exact registered worker universe | squared log ratio | same; selection-eligible |
+| `b2_type_count_mix` | 4.B2 `c12/(c11+c12)`; model `sum(weight*positive_covered_se_worker_probability_analytic)/(sum(weight*covered_wage_worker_probability_analytic)+sum(weight*positive_covered_se_worker_probability_analytic))` | squared logit error | same; selection-eligible; a marginal type-count mix whose overlapping counts are never called unique workers |
+| `ssa_precisely_universed_covered_share` | exact registered numerator/denominator; model uses the exact registered population selector, timing, duplicate-worker rule, and `modeled_covered_worker_probability_analytic` | squared logit error | available 1968–2008 cells train; every available 2009–2014 cell validation; 2015–2022 held-out diagnostic; selection-eligible |
+| `b2_se_total_component_share` | 4.B2 `c8/(c5+c8)` and the algebraically identical model component ratio | no fitting loss | all 1968–2022 cells held-out diagnostic; dependency check only |
+| `b2_wage_taxable_intensity` | 4.B2 `c13/c11`; model consolidated taxable wage intensity | no fitting loss | all 1968–2022 cells held-out diagnostic; preserved employer-cap mismatch |
+| `b2_se_taxable_intensity` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | no fitting loss | all 1968–2022 cells held-out diagnostic |
+| `b2_wage_taxable_fraction` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | no fitting loss | all 1968–2022 cells held-out diagnostic; preserved employer-cap mismatch |
+| `b2_se_taxable_fraction` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | no fitting loss | all 1968–2022 cells held-out diagnostic |
+| `b11_component_reconciliation` | 4.B11 taxable-earnings total versus wage+SE rounded residual, separately contributions total versus wage+SE; worker total is never summed because component worker counts overlap | no fitting loss | all 1968–2022 cells held-out diagnostic |
+| `b11_se_contribution_share` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions) | no fitting loss | all 1968–2022 cells held-out diagnostic; legal/accounting diagnostic only |
 
-Within each selection-eligible family, annual cells have equal weight and the
-seven selection-eligible families have equal family weight. Positive
+`dependency_group` is operational. The four selection-eligible families are
+the only independent objective groups and each receives family weight 0.25;
+annual cells within a group have equal weight. Every other family receives
+zero fitting and selection weight and may only test an arithmetic,
+reconciliation, legal-rate, or preserved-mismatch disclosure. Positive
 intensity validation requires both RMS absolute log error no greater than
 `log(1.05)` and every-cell absolute log error no greater than `log(1.10)`.
-B2 bounded-share validation requires RMS absolute share error no greater than
+B2 type-count-mix validation requires RMS absolute share error no greater than
 0.015 and every-cell absolute share error no greater than 0.03. Covered-share
 validation requires RMS absolute share error no greater than 0.01 and every
-cell no greater than 0.02. All comparisons use unrounded stored values.
+cell no greater than 0.02. These are precommitted operational acceptance
+thresholds, not sampling confidence intervals.
 
-B11 arithmetic siblings receive zero selection weight and cannot rescue or
-reject a candidate except when they reveal an extraction, legal-rate, or
-reconciliation correctness failure. Published B2 average and percentage
-cells that duplicate registered transformations are held-out arithmetic
-diagnostics, never separately weighted targets.
+For positive \(m,o\), squared log-ratio loss is
+\((\log m-\log o)^2\); a nonpositive operand aborts that candidate cell.
+For \(m,o\) strictly between zero and one, squared logit error is
+\((\operatorname{logit}m-\operatorname{logit}o)^2\); an endpoint or
+out-of-domain value aborts. RMS is the square root of the equal-weighted
+arithmetic mean of the registered cell errors, never a ratio of aggregate
+means. B11 arithmetic siblings and dependent B2 transformations cannot rescue
+or reject a candidate except when they reveal an extraction, legal-rate, or
+reconciliation correctness failure. Published B2 averages and percentages
+that duplicate registered transformations are diagnostics, never separately
+weighted evidence.
 
-Changing a cell, source, year, role, dependency group, formula, loss, weight,
+“Stored value” means the full-precision deterministic transformation of the
+literal published rounded cells, not recovery of unpublished precision. Every
+source cell carries its exact published rounding interval, and diagnostics
+publish whether a residual is distinguishable from that interval.
+
+The expansion order is target-family order above, then ascending year. Source
+cell IDs are the literal table/row/header-path identities; model selectors are
+the literal formulas above with their exact support-universe selector supplied
+by the registered input manifest. Object key insertion order is irrelevant;
+arrays have the semantic order just declared and canonical JSON sorts object
+keys. Changing a cell, source, year, role, dependency group, formula, loss, weight,
 tolerance, selector, target order, or selection eligibility creates a new
 registry version and requires fresh registration. Exact deep equality,
-including array and object-key order where declared, is mandatory.
+including array order, is mandatory.
 
 ### 6.3 The 15 vintage-1 series
 
@@ -561,9 +695,11 @@ constant must leave every fitted target and loss byte-identical. A hidden
 intercept, offset, target weight, or post-fit factor that matches a national
 worker or payroll total is a forbidden level fit.
 
-The registered training objective is the equal-family-weighted mean of cell
-losses in §6.2 plus only the candidate's frozen regularization term. No
-candidate-specific target deletion is allowed.
+The registered training objective is the §6.2 equal-dependency-group-weighted
+mean over the four independent selection-eligible families. There is no
+regularization term and no candidate-specific target deletion. Full-rank and
+unique-optimum tests in §5.3 are candidate eligibility conditions, not
+penalties.
 
 ### 7.2 Exact selection sequence
 
@@ -600,9 +736,12 @@ independent validation.
 ### 7.4 Option C sensitivity
 
 The only Option-C ID is `aggregate_share_scale_sensitivity_v1`, labeled
-`aggregate-scaled-labor-income-proxy`. It applies a deterministic registered
-concept-share scalar to the frozen proxy and publishes component-aggregate
-movement only. It cannot enter careers, AIME, PIA, production revenue,
+`aggregate-scaled-labor-income-proxy`. For each year through 2014 it multiplies
+`max(proxy_labor_income_raw, 0)` by the most recent registered pre-2015
+`ssa_precisely_universed_covered_share` cell in the same §5.3 calibration era;
+years before that era's first cell use its first cell. The 2014 scalar is
+carried unchanged through 2022. This deterministic, deliberately crude rule
+publishes aggregate movement only. It cannot enter careers, AIME, PIA, production revenue,
 candidate selection, tolerance adjudication, the label certificate, or a
 held-out claim. It is emitted solely to show how the production Option-A+B
 model differs from a minimal scalar benchmark.
@@ -611,14 +750,15 @@ model differs from a minimal scalar benchmark.
 
 ### 8.1 Hard correctness gates
 
-Every gate below is conjunctive. Except for the explicitly stated unresolved
-tolerance, one violating record is failure:
+Every gate below is conjunctive. One violating record is failure:
 
 1. Every required 1968–2022 person-year has a unique complete ledger
    disposition, and the benefits and revenue key sets equal the registered
    union exactly.
-2. Final wage, SE, noncovered, unresolved, capped, and creditable components
-   are finite and nonnegative.
+2. Final wage, SE gain, SE loss-magnitude, SECA-base, noncovered, unresolved,
+   capped, and creditable fields are finite and nonnegative.
+   `covered_se_net_earnings_pre_seca` is the sole permitted signed statutory
+   intermediate.
 3. A negative SE amount never offsets employee wages; all permitted
    within-SE loss netting follows the effective-year legal rule.
 4. Atomic status amounts and person-year component deltas reconcile exactly
@@ -630,11 +770,13 @@ tolerance, one violating record is failure:
 7. Wages precede SE under one combined person-year maximum.
 8. The exact same underlying component bytes and correction draws feed
    benefits and revenue.
-9. Raw proxy, raw fields, source wave/role/job, annualization,
-   classification reasons, probabilities, measurement delta, and uncertainty
-   provenance remain recoverable.
-10. A second run is byte-identical and arbitrary input-row permutations
-    produce identical canonical output bytes.
+9. Raw proxy, raw fields, source wave/role/job, annualization, separate gain
+   and loss channels, classification reasons, probabilities, measurement
+   delta, and uncertainty provenance remain recoverable.
+10. Two in-memory executions inside the sealed run produce byte-identical
+    canonical ledger/model-result bytes, and the exact registered input
+    permutations do likewise. Timestamps, runtime provenance, incident
+    metadata, and sidecar bytes are outside this comparison.
 11. No mortality, claiming, projection, marriage, or other RNG stream is
     consumed or changed.
 12. No micro fact after §4.3's boundary enters an earlier projected year.
@@ -645,15 +787,20 @@ tolerance, one violating record is failure:
 15. The fitting/selection dependency trace contains no vintage-1 series,
     anchor report, post-2014 held-out target, benefit total, or Option-C
     output.
-16. The unresolved transformed-amount share is no greater than 0.01 overall
-    and 0.05 in every registered era × role stratum; the unresolved
-    person-year share is no greater than 0.05 in every stratum. Denominators,
-    zero-denominator behavior, and weights are frozen in the gate registry.
+16. Every unresolved amount follows the registered missing-fact policy and
+    reason code. No objective term or gate rewards moving unknown mass from
+    `unresolved` to covered or noncovered. Weighted unresolved gain/loss
+    shares, person-year shares, and status entropy publish overall and by era
+    × role, but v1 imposes no evidence-free magnitude cutoff.
 17. Zero/positive incidence, component identity, source status, and every
     required target/evaluation year are complete; a missing cell is never
     dropped from a reduction.
 18. Nonlinear AIME/PIA results are computed within each complete correction
     career draw before reduction.
+19. Each candidate passes the parameter-count, full-rank Jacobian,
+    condition-number, and unique-optimum identification law in §5.3.
+20. Every nonlinear downstream metric passes the registered 10-versus-20
+    correction-draw stability tolerance.
 
 ### 8.2 Empirical evaluation
 
@@ -663,8 +810,6 @@ also publishes:
 - every train and validation target, prediction, residual, loss, tolerance,
   and pass/fail result;
 - held-out target diagnostics only after selected-model bytes are locked;
-- before/after absolute log-ratio movement for the later vintage-1 context
-  comparisons, with no required direction;
 - wage/SE composition, zero/positive incidence, quantiles, tail shares, cap
   exposure, unresolved shares, and modeled covered-worker incidence;
 - changes in taxable payroll, contributions, top-35 composition, AIME, and
@@ -674,6 +819,10 @@ also publishes:
 
 A complete, valid empirical failure is a publishable result, not an incident
 and not a retry opportunity.
+
+The correction evaluation does not open or publish any vintage-1 comparison.
+Only §12's separately registered context report may publish the frozen
+before/after context ratios, with no required direction.
 
 ### 8.3 Circularity prohibitions
 
@@ -1090,7 +1239,7 @@ fact is load-bearing in v1.
 | Complete PSID crosswalk and era seams | §4.2 freezes the expanded key/schema, source precedence, business/farm reconciliation, annualization, mixed-job handling, missingness, and era laws. |
 | Production cutoff, entrants, and odd years | §4.3 admits observed reference-year facts through 2013 plus only frozen seed attributes; annual modeled transitions govern incumbents/entrants; odd-year earnings carry remains. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
-| Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2; 1968–2008 trains, 2009–2014 validates, 2015+ diagnoses; losses/tolerances are literal; none of the 15 series fits; viewed-cell honesty is explicit. |
+| Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2; 1968–2008 trains, 2009–2014 validates, 2015–2022 diagnoses; losses/tolerances are literal; none of the 15 series fits; viewed-cell honesty is explicit. |
 | B2/B11 and covered-share extraction | §6 and V-A1 require B2/B11 extraction; V-B7 requires exact covered-share universe or aborts. |
 | Post-calibration label vocabulary | §1 freezes exactly `frame-relative`, `modeled-covered-earnings`, `aggregate-concept-calibrated-not-population-aligned`. |
 | Cap, SE threshold/loss, incorporated owners, historical SECA | §§3.2 and 4.1 freeze component floors, within-SE-only loss netting, effective-year law, wage-first residual cap, incorporated salary, and excluded distributions. |
