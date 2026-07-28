@@ -84,6 +84,82 @@ def _repository(tmp_path: Path) -> Path:
     return root
 
 
+def _real_git(
+    repository: Path,
+    *arguments: str,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if not name.startswith("GIT_")
+    }
+    return subprocess.run(
+        ["git", "-C", str(repository), *arguments],
+        check=check,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
+
+
+def _commit_real_git_fixture(repository: Path, message: str) -> str:
+    _real_git(repository, "add", "--all")
+    _real_git(
+        repository,
+        "-c",
+        "user.name=Anchor Context Identity Test",
+        "-c",
+        "user.email=anchor-context-identity@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--no-verify",
+        "-qm",
+        message,
+    )
+    return _real_git(repository, "rev-parse", "HEAD").stdout.strip()
+
+
+def _write_real_registration(
+    repository: Path,
+    implementation_commit: str,
+) -> dict[str, str]:
+    configuration = {"implementation_commit": implementation_commit}
+    registration = repository / "docs/registrations/anchor-context.json"
+    registration.parent.mkdir(parents=True, exist_ok=True)
+    registration.write_text(
+        json.dumps(
+            configuration,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n"
+    )
+    return configuration
+
+
+def _code_identity_repository(
+    tmp_path: Path,
+) -> tuple[Path, dict[str, str]]:
+    root = tmp_path / "anchor-context-code-identity"
+    root.mkdir()
+    _real_git(root, "init", "-q")
+    source = root / "src/implementation.py"
+    source.parent.mkdir()
+    source.write_text("IMPLEMENTATION = 'registered'\n")
+    script = root / "scripts/run_report.py"
+    script.parent.mkdir()
+    script.write_text("print('registered implementation')\n")
+    implementation_commit = _commit_real_git_fixture(
+        root,
+        "registered implementation",
+    )
+    configuration = _write_real_registration(root, implementation_commit)
+    _commit_real_git_fixture(root, "registered records")
+    return root, configuration
+
+
 def _invocation(root: Path) -> list[str]:
     sentinel = root / "fresh-empty-pycache"
     sentinel.mkdir(exist_ok=True)
@@ -331,6 +407,118 @@ def _publish_external_incident(root: Path) -> Path:
         configuration_echo=_configuration(root),
         production_only=False,
     )
+
+
+def test_repository_guard_accepts_records_only_commit_after_implementation(
+    tmp_path: Path,
+):
+    root, configuration = _code_identity_repository(tmp_path)
+    implementation_commit = configuration["implementation_commit"]
+    head = _real_git(root, "rev-parse", "HEAD").stdout.strip()
+
+    assert head != implementation_commit
+    assert (
+        json.loads(
+            _real_git(
+                root,
+                "show",
+                "HEAD:docs/registrations/anchor-context.json",
+            ).stdout
+        )
+        == configuration
+    )
+    assert (
+        _real_git(
+            root,
+            "merge-base",
+            "--is-ancestor",
+            implementation_commit,
+            "HEAD",
+            check=False,
+        ).returncode
+        == 0
+    )
+    for code_root in ("src", "scripts"):
+        assert (
+            _real_git(
+                root,
+                "rev-parse",
+                f"{implementation_commit}:{code_root}",
+            ).stdout
+            == _real_git(
+                root,
+                "rev-parse",
+                f"HEAD:{code_root}",
+            ).stdout
+        )
+
+    coordinator._validate_repository(root, configuration)
+
+
+def test_repository_guard_rejects_src_change_after_implementation(
+    tmp_path: Path,
+):
+    root, configuration = _code_identity_repository(tmp_path)
+    implementation_commit = configuration["implementation_commit"]
+    (root / "src/implementation.py").write_text("IMPLEMENTATION = 'drifted'\n")
+    _commit_real_git_fixture(root, "change implementation")
+
+    assert (
+        _real_git(
+            root,
+            "merge-base",
+            "--is-ancestor",
+            implementation_commit,
+            "HEAD",
+            check=False,
+        ).returncode
+        == 0
+    )
+    with pytest.raises(coordinator._CeremonyAbort) as raised:
+        coordinator._validate_repository(root, configuration)
+
+    assert raised.value.reason == "preparation_implementation_commit_drift"
+
+
+def test_repository_guard_rejects_nonancestor_with_matching_code_trees(
+    tmp_path: Path,
+):
+    root, initial_configuration = _code_identity_repository(tmp_path)
+    common_parent = initial_configuration["implementation_commit"]
+    registered_commit = _real_git(root, "rev-parse", "HEAD").stdout.strip()
+    _real_git(root, "checkout", "-q", "--detach", common_parent)
+    configuration = _write_real_registration(root, registered_commit)
+    _commit_real_git_fixture(root, "unrelated registered records")
+
+    assert (
+        _real_git(
+            root,
+            "merge-base",
+            "--is-ancestor",
+            registered_commit,
+            "HEAD",
+            check=False,
+        ).returncode
+        == 1
+    )
+    for code_root in ("src", "scripts"):
+        assert (
+            _real_git(
+                root,
+                "rev-parse",
+                f"{registered_commit}:{code_root}",
+            ).stdout
+            == _real_git(
+                root,
+                "rev-parse",
+                f"HEAD:{code_root}",
+            ).stdout
+        )
+
+    with pytest.raises(coordinator._CeremonyAbort) as raised:
+        coordinator._validate_repository(root, configuration)
+
+    assert raised.value.reason == "preparation_implementation_commit_drift"
 
 
 def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(

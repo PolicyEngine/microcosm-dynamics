@@ -71,6 +71,13 @@ _PRIVATE_GITIGNORE_BYTES = (
     b"runs/anchor_context_report_retry_authority.claim\n"
     b"runs/anchor_context_report_incident_*.json\n"
 )
+_PRIVATE_CODE_ROOT_FILES = (
+    (Path("src/fixture_only_code_root.txt"), b"fixture-only source tree\n"),
+    (
+        Path("scripts/fixture_only_code_root.txt"),
+        b"fixture-only script tree\n",
+    ),
+)
 _SUCCESS_REFERENCE = "anchor-context-fixture-rehearsal-success"
 _INCIDENT_REFERENCE = "anchor-context-fixture-rehearsal-incident"
 _PASSED_CHECKS = (
@@ -439,6 +446,10 @@ def _populate_private_root(
 
     (private_root / "gates.yaml").write_bytes(_PRIVATE_CONTRACT_BYTES)
     (private_root / ".gitignore").write_bytes(_PRIVATE_GITIGNORE_BYTES)
+    for relative, payload in _PRIVATE_CODE_ROOT_FILES:
+        target = private_root / relative
+        target.parent.mkdir(parents=True)
+        target.write_bytes(payload)
     (private_root / "runs").mkdir()
     _git(private_root, "init", "-q")
     _git(
@@ -450,6 +461,7 @@ def _populate_private_root(
         _MANIFEST_PATH.as_posix(),
         first_estimates_input["path"],
         anchor_input["path"],
+        *(relative.as_posix() for relative, _ in _PRIVATE_CODE_ROOT_FILES),
     )
     _git(
         private_root,

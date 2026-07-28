@@ -2632,11 +2632,48 @@ def _validate_repository(
             "preparation_repository_drift",
             "The registered report requires an entirely clean checkout.",
         )
-    head = os.fsdecode(_git_bytes(root, "rev-parse", "HEAD")).strip()
-    if head != configuration["implementation_commit"]:
+    implementation_commit = configuration["implementation_commit"]
+    try:
+        _git_bytes(
+            root,
+            "rev-parse",
+            "--verify",
+            f"{implementation_commit}^{{commit}}",
+        )
+        _git_bytes(
+            root,
+            "merge-base",
+            "--is-ancestor",
+            implementation_commit,
+            "HEAD",
+        )
+        implementation_trees = tuple(
+            _git_bytes(
+                root,
+                "rev-parse",
+                f"{implementation_commit}:{code_root}",
+            )
+            for code_root in ("src", "scripts")
+        )
+        head_trees = tuple(
+            _git_bytes(root, "rev-parse", f"HEAD:{code_root}")
+            for code_root in ("src", "scripts")
+        )
+    except _CeremonyAbort as error:
         raise _CeremonyAbort(
             "preparation_implementation_commit_drift",
-            "Checkout HEAD differs from the registered implementation commit.",
+            (
+                "The registered implementation commit must exist, be an "
+                "ancestor of HEAD, and identify both code roots."
+            ),
+        ) from error
+    if implementation_trees != head_trees:
+        raise _CeremonyAbort(
+            "preparation_implementation_commit_drift",
+            (
+                "Checkout code trees differ from the registered "
+                "implementation commit."
+            ),
         )
     ignored = _git_bytes(
         root,
