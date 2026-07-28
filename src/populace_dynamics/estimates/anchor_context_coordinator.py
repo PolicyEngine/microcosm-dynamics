@@ -179,7 +179,7 @@ def _read_canonical_mapping(
     maximum_bytes: int,
     expected_name: str,
 ) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
-    """Read one singly-linked canonical mapping through a pinned descriptor."""
+    """Read a canonical claim through a pinned root-to-leaf descriptor chain."""
     stable_fields = (
         "st_mode",
         "st_nlink",
@@ -211,70 +211,130 @@ def _read_canonical_mapping(
         )
     ):
         return None
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    close_on_exec = getattr(os, "O_CLOEXEC", None)
+    if (
+        no_follow is None
+        or directory_flag is None
+        or nonblocking is None
+        or close_on_exec is None
+    ):
+        return None
+    repository_root = candidate.parent.parent
+    descriptors: list[int] = []
+    claim_descriptor: int | None = None
     try:
-        candidate_before = os.stat(candidate, follow_symlinks=False)
-        if (
-            candidate.parent.is_symlink()
-            or not stat.S_ISREG(candidate_before.st_mode)
-            or candidate_before.st_nlink != 1
-        ):
+        root_before = os.stat(repository_root, follow_symlinks=False)
+        if not stat.S_ISDIR(root_before.st_mode):
             return None
-        repository_root = candidate.parent.parent
+        root_descriptor = os.open(
+            repository_root,
+            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+        )
+        descriptors.append(root_descriptor)
+        root_opened = os.fstat(root_descriptor)
+        if signature(root_opened) != signature(root_before):
+            return None
+
+        runs_before = os.stat(
+            "runs",
+            dir_fd=root_descriptor,
+            follow_symlinks=False,
+        )
+        if not stat.S_ISDIR(runs_before.st_mode):
+            return None
+        runs_descriptor = os.open(
+            "runs",
+            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+            dir_fd=root_descriptor,
+        )
+        descriptors.append(runs_descriptor)
+        runs_opened = os.fstat(runs_descriptor)
+        if signature(runs_opened) != signature(runs_before):
+            return None
+
         protected_file_ids: set[tuple[int, int]] = set()
         for protected_relative in (
             registry.FIRST_ESTIMATES_INPUT_PATH,
             registry.ANCHOR_INPUT_PATH,
         ):
             try:
-                protected = os.stat(repository_root / protected_relative)
+                protected = os.stat(
+                    protected_relative,
+                    dir_fd=root_descriptor,
+                )
             except OSError:
                 continue
             protected_file_ids.add((protected.st_dev, protected.st_ino))
+
+        candidate_before = os.stat(
+            expected_name,
+            dir_fd=runs_descriptor,
+            follow_symlinks=False,
+        )
         if (
-            candidate_before.st_dev,
-            candidate_before.st_ino,
-        ) in protected_file_ids:
+            not stat.S_ISREG(candidate_before.st_mode)
+            or candidate_before.st_nlink != 1
+            or candidate_before.st_size > maximum_bytes
+            or (candidate_before.st_dev, candidate_before.st_ino)
+            in protected_file_ids
+        ):
             return None
-    except OSError:
-        return None
-    no_follow = getattr(os, "O_NOFOLLOW", None)
-    nonblocking = getattr(os, "O_NONBLOCK", None)
-    if no_follow is None or nonblocking is None:
-        return None
-    try:
-        descriptor = os.open(candidate, os.O_RDONLY | no_follow | nonblocking)
-        try:
-            metadata = os.fstat(descriptor)
-            if (
-                not stat.S_ISREG(metadata.st_mode)
-                or metadata.st_nlink != 1
-                or metadata.st_size > maximum_bytes
-                or signature(metadata) != signature(candidate_before)
-                or (metadata.st_dev, metadata.st_ino) in protected_file_ids
-            ):
-                return None
-            chunks = bytearray()
-            while len(chunks) <= maximum_bytes:
-                chunk = os.read(
-                    descriptor,
-                    maximum_bytes + 1 - len(chunks),
-                )
-                if not chunk:
-                    break
-                chunks.extend(chunk)
-            if len(chunks) > maximum_bytes:
-                return None
-            payload = bytes(chunks)
-            after = os.fstat(descriptor)
-            named_after = os.stat(candidate, follow_symlinks=False)
-            if (
-                len(payload) != metadata.st_size
-                or signature(after) != signature(metadata)
-                or signature(named_after) != signature(metadata)
-            ):
-                return None
-        finally:
-            os.close(descriptor)
+        claim_descriptor = os.open(
+            expected_name,
+            os.O_RDONLY | no_follow | nonblocking | close_on_exec,
+            dir_fd=runs_descriptor,
+        )
+        metadata = os.fstat(claim_descriptor)
+        if (
+            not stat.S_ISREG(metadata.st_mode)
+            or metadata.st_nlink != 1
+            or metadata.st_size > maximum_bytes
+            or signature(metadata) != signature(candidate_before)
+            or (metadata.st_dev, metadata.st_ino) in protected_file_ids
+        ):
+            return None
+        chunks = bytearray()
+        while len(chunks) <= maximum_bytes:
+            chunk = os.read(
+                claim_descriptor,
+                maximum_bytes + 1 - len(chunks),
+            )
+            if not chunk:
+                break
+            chunks.extend(chunk)
+        if len(chunks) > maximum_bytes:
+            return None
+        payload = bytes(chunks)
+        after = os.fstat(claim_descriptor)
+        named_after = os.stat(
+            expected_name,
+            dir_fd=runs_descriptor,
+            follow_symlinks=False,
+        )
+        if (
+            len(payload) != metadata.st_size
+            or signature(after) != signature(metadata)
+            or signature(named_after) != signature(metadata)
+        ):
+            return None
+        root_after = os.fstat(root_descriptor)
+        root_named_after = os.stat(repository_root, follow_symlinks=False)
+        runs_after = os.fstat(runs_descriptor)
+        runs_named_after = os.stat(
+            "runs",
+            dir_fd=root_descriptor,
+            follow_symlinks=False,
+        )
+        if (
+            signature(root_after) != signature(root_opened)
+            or signature(root_named_after) != signature(root_opened)
+            or signature(runs_after) != signature(runs_opened)
+            or signature(runs_named_after) != signature(runs_opened)
+        ):
+            return None
         value = json.loads(payload)
         canonical = anchor_context_publication.canonical_json_bytes(value)
     except (
@@ -286,6 +346,11 @@ def _read_canonical_mapping(
         RecursionError,
     ):
         return None
+    finally:
+        if claim_descriptor is not None:
+            os.close(claim_descriptor)
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
     if (
         not isinstance(value, Mapping)
         or canonical != payload
@@ -1558,38 +1623,73 @@ def _ceremony_capability_protocol(
         record_prelaunch=_retain_prelaunch_record,
     )
     operation_fields = tuple(_CoordinatorOperations.__dataclass_fields__)
-    sealed_operation_callables = tuple(
-        getattr(production_operations, field) for field in operation_fields
+    sealed_operation_identities = tuple(
+        (
+            getattr(production_operations, field),
+            getattr(
+                getattr(production_operations, field),
+                "__code__",
+                None,
+            ),
+        )
+        for field in operation_fields
     )
+    production_input_verifier = (
+        anchor_context_publication._require_verified_production_inputs
+    )
+    production_input_verifier_code = production_input_verifier.__code__
     invocations: dict[int, tuple[Any, ...]] = {}
     issued: dict[int, tuple[Any, ...]] = {}
 
     def operations_are_exact(candidate: object) -> bool:
         return candidate is production_operations and all(
             getattr(candidate, field, None) is expected
-            for field, expected in zip(
+            and getattr(expected, "__code__", None) is expected_code
+            for field, (expected, expected_code) in zip(
                 operation_fields,
-                sealed_operation_callables,
+                sealed_operation_identities,
                 strict=True,
             )
+        )
+
+    def runner_frame_dependencies_are_exact(frame: Any) -> bool:
+        """Pin every closure dependency that can enter the production core."""
+        local = frame.f_locals
+        return bool(
+            frame.f_code is run.__code__
+            and local.get("run_function") is run
+            and local.get("run") is run
+            and local.get("require_runner_provenance")
+            is require_runner_provenance
+            and local.get("sealed_repository_root") is sealed_repository_root
+            and local.get("exclusive_ceremony_lock") is exclusive_ceremony_lock
+            and local.get("read_registered_configuration_bytes")
+            is read_registered_configuration_bytes
+            and local.get("production_operations") is production_operations
+            and local.get("core") is core
+            and local.get("issue_invocation") is issue_invocation
+            and local.get("revoke_invocation") is revoke_invocation
+            and local.get("mint") is mint
+            and local.get("revoke") is revoke
+            and local.get("issue_initial_attempt") is issue_initial_attempt
+            and local.get("require_initial_attempt") is require_initial_attempt
+            and local.get("seal_retry_authority") is seal_retry_authority
+            and local.get("revoke_initial_attempt") is revoke_initial_attempt
+            and local.get("authorize_invocation") is authorize_invocation
+            and local.get("create_retry_claim") is create_retry_claim
+            and local.get("require_retry_authorization")
+            is require_retry_authorization
+            and local.get("revoke_retry_authorization")
+            is revoke_retry_authorization
+            and operations_are_exact(production_operations)
         )
 
     def require_runner_provenance(run_function: object) -> None:
         """Reject cloned runner code before it can acquire the ceremony lock."""
         caller = getframe(1)
         if (
-            caller.f_code is not run.__code__
+            not runner_frame_dependencies_are_exact(caller)
             or run_function is not run
-            or caller.f_locals.get("run_function") is not run
-            or caller.f_locals.get("sealed_repository_root")
-            is not sealed_repository_root
-            or caller.f_locals.get("exclusive_ceremony_lock")
-            is not exclusive_ceremony_lock
-            or caller.f_locals.get("read_registered_configuration_bytes")
-            is not read_registered_configuration_bytes
-            or caller.f_locals.get("production_operations")
-            is not production_operations
-            or not operations_are_exact(production_operations)
         ):
             raise TypeError("production runner provenance changed")
 
@@ -1602,8 +1702,7 @@ def _ceremony_capability_protocol(
     ) -> _CoordinatorInvocation:
         caller = getframe(1)
         if (
-            caller.f_code is not run.__code__
-            or caller.f_locals.get("run_function") is not run
+            not runner_frame_dependencies_are_exact(caller)
             or caller.f_locals.get("root") is not repository_root
             or caller.f_locals.get("registered_configuration_bytes")
             is not registered_configuration_bytes
@@ -1611,14 +1710,6 @@ def _ceremony_capability_protocol(
             is not actual_invocation
             or caller.f_locals.get("operations") is not operations
             or caller.f_locals.get("retry_receipt") is not retry_receipt
-            or caller.f_locals.get("sealed_repository_root")
-            is not sealed_repository_root
-            or caller.f_locals.get("exclusive_ceremony_lock")
-            is not exclusive_ceremony_lock
-            or caller.f_locals.get("read_registered_configuration_bytes")
-            is not read_registered_configuration_bytes
-            or caller.f_locals.get("production_operations")
-            is not production_operations
         ):
             raise TypeError(
                 "production invocation authority requires the sealed "
@@ -1662,7 +1753,7 @@ def _ceremony_capability_protocol(
             or not isinstance(invocation, _CoordinatorInvocation)
             or caller.f_code is not core.__code__
             or parent is None
-            or parent.f_code is not run.__code__
+            or not runner_frame_dependencies_are_exact(parent)
             or caller.f_locals.get("coordinator_invocation") is not invocation
             or caller.f_locals.get("production_only") is not True
         ):
@@ -1691,11 +1782,6 @@ def _ceremony_capability_protocol(
             or issued_run_function is not run
             or issued_root is not sealed_repository_root
             or not operations_are_exact(issued_operations)
-            or parent.f_locals.get("run_function") is not run
-            or parent.f_locals.get("exclusive_ceremony_lock")
-            is not exclusive_ceremony_lock
-            or parent.f_locals.get("read_registered_configuration_bytes")
-            is not read_registered_configuration_bytes
         ):
             raise TypeError("sealed production invocation state changed")
 
@@ -1736,11 +1822,7 @@ def _ceremony_capability_protocol(
             or invocation_state[0] is not invocation
             or invocation_state[-2] is not parent
             or invocation_state[-1] is not run
-            or parent.f_locals.get("run_function") is not run
-            or parent.f_locals.get("exclusive_ceremony_lock")
-            is not exclusive_ceremony_lock
-            or parent.f_locals.get("read_registered_configuration_bytes")
-            is not read_registered_configuration_bytes
+            or not runner_frame_dependencies_are_exact(parent)
             or not operations_are_exact(production_operations)
         ):
             raise TypeError(
@@ -1838,8 +1920,113 @@ def _ceremony_capability_protocol(
             retry_claim,
             retry_payload,
             retry_file_id,
+            caller,
+            parent,
+            invocation,
         )
         return capability
+
+    def has_live_execution_stack(
+        capability: _CeremonyCapability,
+        *,
+        registration: first_publication._RegisteredConfigurationToken,
+        record: _PrelaunchRecord,
+        attempt_claim: Path,
+        initial_attempt_authority: _InitialAttemptAuthority | None,
+        retry_authorization: _RetryAuthorization | None,
+        retry_claim: Path | None,
+        core_frame: Any,
+        run_frame: Any,
+        invocation: object,
+    ) -> bool:
+        """Require the exact active run, core, and current operation frames."""
+        core_local = core_frame.f_locals
+        invocation_state = invocations.get(id(invocation))
+        if (
+            core_frame.f_code is not core.__code__
+            or core_frame.f_back is not run_frame
+            or not runner_frame_dependencies_are_exact(run_frame)
+            or invocation_state is None
+            or invocation_state[0] is not invocation
+            or invocation_state[-2] is not run_frame
+            or invocation_state[-1] is not run
+            or core_local.get("require_coordinator_invocation")
+            is not require_invocation
+            or core_local.get("coordinator_invocation") is not invocation
+            or core_local.get("production_only") is not True
+            or core_local.get("root") is not sealed_repository_root
+            or core_local.get("operations") is not production_operations
+            or core_local.get("registration") is not registration
+            or core_local.get("prelaunch_record") is not record
+            or core_local.get("attempt_claim") != attempt_claim
+            or core_local.get("initial_attempt_authority")
+            is not initial_attempt_authority
+            or core_local.get("retry_authorization") is not retry_authorization
+            or core_local.get("retry_claim") != retry_claim
+            or core_local.get("ceremony_capability") is not capability
+            or core_local.get("execution_authority") is not capability
+            or core_local.get("mint_capability") is not mint
+            or core_local.get("revoke_capability") is not revoke
+            or core_local.get("issue_initial_attempt")
+            is not issue_initial_attempt
+            or core_local.get("require_initial_attempt")
+            is not require_initial_attempt
+            or core_local.get("seal_retry_authority")
+            is not seal_retry_authority
+            or core_local.get("revoke_initial_attempt")
+            is not revoke_initial_attempt
+            or core_local.get("authorize_invocation")
+            is not authorize_invocation
+            or core_local.get("create_retry_claim") is not create_retry_claim
+            or core_local.get("require_retry_authorization")
+            is not require_retry_authorization
+            or core_local.get("revoke_retry_authorization")
+            is not revoke_retry_authorization
+            or not operations_are_exact(production_operations)
+            or run_frame.f_locals.get("coordinator_invocation")
+            is not invocation
+            or run_frame.f_locals.get("root") is not sealed_repository_root
+            or run_frame.f_locals.get("operations")
+            is not production_operations
+            or run_frame.f_locals.get("registered_configuration_bytes")
+            is not invocation_state[2]
+            or run_frame.f_locals.get("actual_invocation")
+            is not invocation_state[3]
+            or run_frame.f_locals.get("retry_receipt")
+            is not invocation_state[6]
+        ):
+            return False
+
+        operation_frame = None
+        frame = getframe(2)
+        while frame is not None and frame is not core_frame:
+            if frame.f_back is core_frame:
+                operation_frame = frame
+                break
+            frame = frame.f_back
+        if operation_frame is None:
+            return False
+        allowed_codes = (
+            production_operations.load_inputs.__code__,
+            production_input_verifier_code,
+            production_operations.build_results.__code__,
+            production_operations.validate_results.__code__,
+            production_operations.build_artifact.__code__,
+            production_operations.publish_artifact.__code__,
+        )
+        operation_locals = operation_frame.f_locals
+        keyword_arguments = operation_locals.get("kwargs")
+        return bool(
+            operation_frame.f_code in allowed_codes
+            and (
+                any(value is capability for value in operation_locals.values())
+                or (
+                    isinstance(keyword_arguments, Mapping)
+                    and keyword_arguments.get("ceremony_capability")
+                    is capability
+                )
+            )
+        )
 
     def require(
         capability: object,
@@ -1865,7 +2052,25 @@ def _ceremony_capability_protocol(
             retry_claim,
             retry_payload,
             retry_file_id,
+            core_frame,
+            run_frame,
+            invocation,
         ) = state
+        if not has_live_execution_stack(
+            capability,
+            registration=registration,
+            record=record,
+            attempt_claim=attempt_claim,
+            initial_attempt_authority=initial_attempt_authority,
+            retry_authorization=retry_authorization,
+            retry_claim=retry_claim,
+            core_frame=core_frame,
+            run_frame=run_frame,
+            invocation=invocation,
+        ):
+            raise TypeError(
+                "production operation requires the active sealed ceremony stack"
+            )
         current_claim = _read_attempt_claim(attempt_claim)
         if (
             capability.registration is not registration
@@ -1970,7 +2175,7 @@ def _ceremony_capability_protocol(
     core = core_factory(require_invocation)
     bind_retry_authority_stack(core, _publish_abort)
     bind_capability_verifier(require)
-    return run, require, require_invocation, core
+    return run, require_invocation, core
 
 
 @dataclass(frozen=True)
@@ -2944,6 +3149,9 @@ def _read_registered_configuration_bytes(
         raise RuntimeError("platform lacks sealed registration flags")
 
     descriptors: list[int] = []
+    directory_chain: list[
+        tuple[int, os.stat_result, int | None, str | Path]
+    ] = []
     registration_descriptor: int | None = None
     stable_fields = (
         "st_mode",
@@ -2959,11 +3167,18 @@ def _read_registered_configuration_bytes(
         return tuple(getattr(metadata, field) for field in stable_fields)
 
     try:
+        root_before = os.stat(root, follow_symlinks=False)
+        if not stat.S_ISDIR(root_before.st_mode):
+            raise ValueError("repository root is not a regular directory")
         root_descriptor = os.open(
             root,
             os.O_RDONLY | directory_flag | no_follow | close_on_exec,
         )
         descriptors.append(root_descriptor)
+        root_opened = os.fstat(root_descriptor)
+        if signature(root_opened) != signature(root_before):
+            raise ValueError("repository root changed before its sealed open")
+        directory_chain.append((root_descriptor, root_opened, None, root))
         protected_file_ids: set[tuple[int, int]] = set()
         for protected_path in (
             registry.FIRST_ESTIMATES_INPUT_PATH,
@@ -2984,12 +3199,39 @@ def _read_registered_configuration_bytes(
             protected_file_ids.add((protected.st_dev, protected.st_ino))
         current = root_descriptor
         for component in _REGISTRATION_DIRECTORY.parts:
+            parent_descriptor = current
+            component_before = os.stat(
+                component,
+                dir_fd=parent_descriptor,
+                follow_symlinks=False,
+            )
+            if stat.S_ISLNK(component_before.st_mode):
+                raise OSError(
+                    "registration path component must not be a symbolic link"
+                )
+            if not stat.S_ISDIR(component_before.st_mode):
+                raise ValueError(
+                    "registration path component is not a directory"
+                )
             current = os.open(
                 component,
                 os.O_RDONLY | directory_flag | no_follow | close_on_exec,
-                dir_fd=current,
+                dir_fd=parent_descriptor,
             )
             descriptors.append(current)
+            component_opened = os.fstat(current)
+            if signature(component_opened) != signature(component_before):
+                raise ValueError(
+                    "registration directory changed before its sealed open"
+                )
+            directory_chain.append(
+                (
+                    current,
+                    component_opened,
+                    parent_descriptor,
+                    component,
+                )
+            )
         leaf_before = os.stat(
             parts[2],
             dir_fd=current,
@@ -3056,6 +3298,22 @@ def _read_registered_configuration_bytes(
             or signature(named_after) != signature(before)
         ):
             raise ValueError("registration changed during its sealed read")
+        for descriptor, opened, parent, name in directory_chain:
+            descriptor_after = os.fstat(descriptor)
+            if parent is None:
+                name_after = os.stat(name, follow_symlinks=False)
+            else:
+                name_after = os.stat(
+                    name,
+                    dir_fd=parent,
+                    follow_symlinks=False,
+                )
+            if signature(descriptor_after) != signature(opened) or signature(
+                name_after
+            ) != signature(opened):
+                raise ValueError(
+                    "registration path chain changed during its sealed read"
+                )
         return payload
     finally:
         if registration_descriptor is not None:
@@ -3066,7 +3324,6 @@ def _read_registered_configuration_bytes(
 
 (
     run_registered_anchor_context,
-    _require_ceremony_capability,
     _require_coordinator_invocation,
     _run_registered_anchor_context_core,
 ) = _ceremony_capability_protocol(

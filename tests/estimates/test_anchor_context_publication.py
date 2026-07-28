@@ -572,7 +572,7 @@ def test_fake_coordinator_and_code_clone_cannot_rebind_after_import():
             verifier.__closure__,
         )
         try:
-            clone(object())
+            clone(verifier.__self__, object())
         except TypeError as error:
             assert "live ceremony capability" in str(error)
         else:
@@ -630,6 +630,127 @@ def test_extracted_raw_io_helpers_reject_caller_minted_authority(
         issued.pop(id(forged), None)
 
     assert open_attempts == 0
+
+
+def test_fixture_registry_injection_and_global_substitution_cannot_compute(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    first_estimates, anchors = _fixture_inputs()
+    production_first = copy.deepcopy(first_estimates)
+    production_anchor = copy.deepcopy(anchors)
+    production_first["fixture_only"] = False
+    production_anchor["fixture_only"] = False
+    production_anchor["artifact_vintage_id"] = "production-derived.v1"
+    first_raw = anchor_context_publication.canonical_json_bytes(
+        production_first
+    )
+    anchor_raw = anchor_context_publication.canonical_json_bytes(
+        production_anchor
+    )
+    fixture_verifier = (
+        anchor_context_publication._require_verified_fixture_inputs
+    )
+    production_verifier = (
+        anchor_context_publication._require_verified_production_inputs
+    )
+    coordinator_verifier = (
+        anchor_context_publication._require_coordinator_capability
+    )
+    for verifier in (
+        fixture_verifier,
+        production_verifier,
+        coordinator_verifier,
+    ):
+        assert verifier.__closure__ is None
+    with pytest.raises(
+        AttributeError,
+        match="fixture authority state is sealed",
+    ):
+        _ = fixture_verifier.__self__._issued
+    with pytest.raises(TypeError, match="fixture authority state is sealed"):
+        fixture_verifier.__self__._sha256 = lambda _payload: None
+    with pytest.raises(
+        AttributeError,
+        match="production authority state is sealed",
+    ):
+        _ = production_verifier.__self__._issued
+    with pytest.raises(
+        AttributeError,
+        match="capability authority state is sealed",
+    ):
+        _ = coordinator_verifier.__self__._verifier
+
+    exact_type = anchor_context_publication._VerifiedFixtureInputs
+    forged = object.__new__(exact_type)
+    root = tmp_path / "forged-fixture-root"
+    object.__setattr__(forged, "repository_root", root)
+    object.__setattr__(
+        forged,
+        "first_estimates_input",
+        registry.first_estimates_input_identity(),
+    )
+    object.__setattr__(
+        forged,
+        "anchor_input",
+        registry.anchor_input_identity(),
+    )
+    object.__setattr__(forged, "first_estimates", production_first)
+    object.__setattr__(forged, "anchors", production_anchor)
+    object.__setattr__(forged, "first_estimates_snapshot", first_raw)
+    object.__setattr__(forged, "anchors_snapshot", anchor_raw)
+
+    class ForgedBundleType:
+        pass
+
+    class ForgedDigest:
+        def __init__(self, payload: bytes):
+            self.payload = payload
+
+        def hexdigest(self):
+            if self.payload == first_raw:
+                return anchor_context_publication._FIXTURE_FIRST_SHA256
+            return anchor_context_publication._FIXTURE_ANCHOR_SHA256
+
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_VerifiedFixtureInputs",
+        ForgedBundleType,
+    )
+    monkeypatch.setattr(
+        anchor_context_publication.hashlib,
+        "sha256",
+        ForgedDigest,
+    )
+    monkeypatch.setattr(
+        anchor_context_publication.json,
+        "loads",
+        lambda payload: (
+            production_first if payload == first_raw else production_anchor
+        ),
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_require_mapping",
+        lambda value, _label: value,
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "canonical_json_bytes",
+        lambda value: first_raw if value is production_first else anchor_raw,
+    )
+    monkeypatch.setattr(
+        anchor_context_publication,
+        "_fixture_input_identity",
+        lambda role: (
+            registry.first_estimates_input_identity()
+            if role == "first_estimates"
+            else registry.anchor_input_identity()
+        ),
+    )
+
+    with pytest.raises(TypeError, match="loader-issued bundle"):
+        anchor_context_report.build_results(forged)
 
 
 def test_public_engine_rejects_raw_nonfixture_documents_before_compute(
@@ -862,7 +983,7 @@ def test_fixture_loader_captures_literal_identity_against_rebinding(
     assert len(results["comparison_results"]) == 9
 
 
-def test_fixture_loader_rejects_equal_size_leaf_replacement_after_read(
+def test_fixture_loader_read_primitive_rejects_global_substitution(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ):
@@ -873,42 +994,39 @@ def test_fixture_loader_rejects_equal_size_leaf_replacement_after_read(
     fixture_path.parent.mkdir(parents=True)
     fixture_raw = FIRST_ESTIMATES_FIXTURE.read_bytes()
     fixture_path.write_bytes(fixture_raw)
-    replacement = fixture_path.with_name("replacement.json")
-    replacement.write_bytes(b"x" * len(fixture_raw))
     real_read = anchor_context_publication.os.read
-    replaced = False
+    substituted_reads = 0
 
-    def replacing_read(descriptor, size):
-        nonlocal replaced
-        chunk = real_read(descriptor, size)
-        if chunk and not replaced:
-            os.replace(replacement, fixture_path)
-            replaced = True
-        return chunk
+    def forged_read(_descriptor, _size):
+        nonlocal substituted_reads
+        substituted_reads += 1
+        return b"x" * len(fixture_raw)
 
     monkeypatch.setattr(
         anchor_context_publication.os,
         "read",
-        replacing_read,
+        forged_read,
     )
 
-    with pytest.raises(ValueError, match="input name changed"):
-        anchor_context_publication._load_verified_json(
-            root,
-            {
-                "path": (
-                    "tests/fixtures/anchor_context/"
-                    "first_estimates_fixture_v1.json"
-                ),
-                "sha256": (
-                    "be95a6eef919d2cf46197467fd75463d2c94d607983674da9f"
-                    "2723b0391d1c61"
-                ),
-            },
-            role="first_estimates",
-        )
+    value, raw = anchor_context_publication._load_verified_json(
+        root,
+        {
+            "path": (
+                "tests/fixtures/anchor_context/"
+                "first_estimates_fixture_v1.json"
+            ),
+            "sha256": (
+                "be95a6eef919d2cf46197467fd75463d2c94d607983674da9f"
+                "2723b0391d1c61"
+            ),
+        },
+        role="first_estimates",
+    )
 
-    assert replaced is True
+    assert substituted_reads == 0
+    assert raw == fixture_raw
+    assert value["fixture_only"] is True
+    assert anchor_context_publication.os.read is not real_read
 
 
 def test_forged_ceremony_capability_cannot_reach_production_compute(

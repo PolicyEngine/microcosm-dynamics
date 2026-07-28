@@ -276,6 +276,34 @@
   available formulas are hardcoded independently across 20 draws and eight
   years, covering 1,120 model cells, 56 official cells, 1,120 comparison
   cells, and all 280 published annual numeric fields.
+- A deeper independent authority attack then populated the inspectable
+  capability and initial-attempt registries directly and reached the first
+  production leaf. Capability verification now additionally requires the
+  exact live public-runner → core → sealed-operation frame, exact capability
+  identity in that frame, and every original runner/core dependency. The same
+  review's full-cell `FunctionType` clone, which replaced the runner guard,
+  core, issuer, reader, lock, and operations together, now fails before any
+  production operation.
+- The transient coordinator verifier is no longer retained as a coordinator
+  module global. Publication retains it only inside a sealed callable vault;
+  coordinator, fixture, and production verifier surfaces are bound methods
+  with no writable `__closure__`, and normal vault state reads or writes fail.
+  The exact closure-cell/registry/global-substitution probes cannot reach
+  production I/O or fixture-derived `build_results`.
+- Input, registration, incident, attempt, retry-authority, and retry-claim
+  readers now pin and recheck their complete root-to-leaf descriptor/name
+  chains. Concrete `runs`, `docs/registrations`, and fixture-ancestor directory
+  exchanges all fail instead of validating stale bytes.
+- The only excluded cases require direct interpreter-memory corruption
+  (`object.__getattribute__`/`object.__setattr__` against sealed vault internals)
+  or an adversarial namespace rewrite inside the kernel `stat`→`open`
+  interval. The independent reviewer confirmed that these are outside both
+  the ratified API/filesystem model and the explicitly requested
+  first-estimates opaque-token precedent; ordinary calls, mocks, static
+  aliases, registry injection, closure/global substitution, and code cloning
+  are covered.
+- The final launcher/coordinator/publication/rehearsal/report focused suite
+  passes with 240 tests.
 
 ## Next
 

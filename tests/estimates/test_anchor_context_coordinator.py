@@ -1453,6 +1453,42 @@ def test_canonical_mapping_rejects_equal_size_mutation_during_read(
     assert loaded is None
 
 
+def test_canonical_mapping_rejects_runs_directory_exchange_during_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    runs = root / "runs"
+    runs.mkdir(parents=True)
+    candidate = runs / "anchor_context_report_retry.claim"
+    candidate.write_bytes(b'{"value":"AAAA"}\n')
+    replacement = b'{"value":"BBBB"}\n'
+    original_read = coordinator.os.read
+    exchanged = False
+
+    def exchange_runs_after_first_read(descriptor, byte_count):
+        nonlocal exchanged
+        chunk = original_read(descriptor, byte_count)
+        if chunk and not exchanged:
+            exchanged = True
+            runs.rename(root / "runs.displaced")
+            runs.mkdir()
+            candidate.write_bytes(replacement)
+        return chunk
+
+    monkeypatch.setattr(coordinator.os, "read", exchange_runs_after_first_read)
+
+    loaded = coordinator._read_canonical_mapping(
+        candidate,
+        maximum_bytes=coordinator._CLAIM_MAX_BYTES,
+        expected_name=candidate.name,
+    )
+
+    assert exchanged is True
+    assert loaded is None
+    assert candidate.read_bytes() == replacement
+
+
 def test_retry_receipt_never_escapes_to_a_later_fixture_invocation(tmp_path):
     root = _repository(tmp_path)
     registered_bytes = _configuration_bytes(root)
@@ -1683,7 +1719,9 @@ def test_public_runner_owns_fail_once_report_first_retry(
         )
     )
     script = isolated / "exercise_public_retry.py"
-    script.write_text(textwrap.dedent("""
+    script.write_text(
+        textwrap.dedent(
+            """
             import hashlib
             import inspect
             import json
@@ -1735,27 +1773,42 @@ def test_public_runner_owns_fail_once_report_first_retry(
             publication._validate_runtime_provenance = (
                 lambda _value, **_kwargs: None
             )
-            publication._load_production_documents = lambda _authority: object()
-            publication._require_verified_production_inputs = (
-                lambda _bundle, **_kwargs: ({}, {})
-            )
+            verifier_calls = []
+
+            def verify(label, capability):
+                publication._require_coordinator_capability(capability)
+                verifier_calls.append(label)
+
+            def load_inputs(capability):
+                verify("load", capability)
+                return object()
+
+            def require_inputs(_bundle, *, ceremony_capability):
+                verify("inputs", ceremony_capability)
+                return {}, {}
+
+            publication._load_production_documents = load_inputs
+            publication._require_verified_production_inputs = require_inputs
             publication.build_runtime_provenance = lambda commit: {
                 "schema_version": publication.RUNTIME_PROVENANCE_SCHEMA_VERSION,
                 "implementation_commit": commit,
                 "python": "fixture",
                 "platform": "fixture",
             }
-            publication.build_anchor_context_artifact = (
-                lambda **kwargs: {
+            def build_artifact(**kwargs):
+                verify("artifact", kwargs["ceremony_capability"])
+                return {
                     "configuration_echo": kwargs["configuration_echo"],
                     "prior_incidents": list(kwargs["prior_incidents"]),
                 }
-            )
+
+            publication.build_anchor_context_artifact = build_artifact
 
             attempts = 0
 
-            def fail_once(_authority, _inputs):
+            def fail_once(authority, _inputs):
                 global attempts
+                verify("build", authority)
                 attempts += 1
                 if attempts == 1:
                     raise first.ExternalPreOutputFailure(
@@ -1765,11 +1818,14 @@ def test_public_runner_owns_fail_once_report_first_retry(
                 return {"attempt": attempts}
 
             report._build_production_results = fail_once
-            report._validate_production_results = (
-                lambda _authority, _results, _inputs: None
-            )
 
-            def publish(_token, artifact, **_kwargs):
+            def validate_results(authority, _results, _inputs):
+                verify("validate", authority)
+
+            report._validate_production_results = validate_results
+
+            def publish(_token, artifact, **kwargs):
+                verify("publish", kwargs["ceremony_capability"])
                 path = root / registry.PRIMARY_OUTPUT_PATH
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(publication.canonical_json_bytes(artifact))
@@ -1800,8 +1856,19 @@ def test_public_runner_owns_fail_once_report_first_retry(
             coordinator._git_bytes = git_bytes
             result = coordinator.run_registered_anchor_context(registration)
 
-            assert result.status == "published"
+            assert result.status == "published", (result, verifier_calls)
             assert attempts == 2
+            assert verifier_calls == [
+                "load",
+                "inputs",
+                "build",
+                "load",
+                "inputs",
+                "build",
+                "validate",
+                "artifact",
+                "publish",
+            ]
             assert not hasattr(result, "retry_receipt")
             assert set(
                 inspect.signature(
@@ -1824,7 +1891,9 @@ def test_public_runner_owns_fail_once_report_first_retry(
             assert artifact["prior_incidents"] == [
                 "runs/anchor_context_report_incident_1.json"
             ]
-            """))
+            """
+        )
+    )
     completed = subprocess.run(
         [sys.executable, str(script)],
         cwd=isolated,
@@ -1956,10 +2025,21 @@ def test_rebound_production_verifiers_cannot_reach_io_or_compute(
         opened_paths.append(relative_path)
         raise AssertionError("production path reached descriptor open")
 
+    assert not hasattr(coordinator, "_require_ceremony_capability")
+    retained_verifier = publication._require_coordinator_capability
+    assert retained_verifier.__closure__ is None
+    with pytest.raises(AttributeError):
+        retained_verifier.__closure__ = (object(),)
+    with pytest.raises(AttributeError, match="authority state is sealed"):
+        assert retained_verifier.__self__._verifier is None
+    with pytest.raises(TypeError, match="authority state is sealed"):
+        retained_verifier.__self__._verifier = lambda _candidate: registration
+
     monkeypatch.setattr(
         coordinator,
         "_require_ceremony_capability",
         lambda _candidate: registration,
+        raising=False,
     )
     monkeypatch.setattr(
         publication,
@@ -2174,6 +2254,238 @@ def test_functiontype_clone_with_replacement_ceremony_dependencies_fails_closed(
     assert not (tmp_path / "runs").exists()
 
 
+def test_full_cell_clone_and_populated_authority_registries_cannot_open_inputs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Preserve the concrete closure-population plus full-cell clone attack."""
+    root = tmp_path / "forged-production-root"
+    (root / "runs").mkdir(parents=True)
+    configuration = publication.registered_configuration_echo(
+        registration_reference=REGISTRATION_REFERENCE,
+        implementation_commit=IMPLEMENTATION_COMMIT,
+        invocation=_invocation(root),
+    )
+    configuration_bytes = publication.canonical_json_bytes(configuration)
+    registration = (
+        publication.first_publication._parse_registered_configuration(
+            repository_root=root,
+            registration_reference=REGISTRATION_REFERENCE,
+            registered_configuration_bytes=configuration_bytes,
+        )
+    )
+    prelaunch = coordinator._complete_prelaunch_checks(
+        repository_root=root,
+        configuration=configuration,
+        actual_invocation=configuration["invocation"],
+        history=coordinator._IncidentHistory(
+            paths=(),
+            records=(),
+            payloads=(),
+            file_ids=(),
+        ),
+        operations=_operations([], {}),
+    )
+    authority_path = root / coordinator._RETRY_AUTHORITY_PATH
+    authority_descriptor = os.open(
+        authority_path,
+        os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+        0o400,
+    )
+    authority_metadata = os.fstat(authority_descriptor)
+    authority_file_id = (
+        authority_metadata.st_dev,
+        authority_metadata.st_ino,
+    )
+    nonce = "a" * 64
+    attempt_payload = coordinator._attempt_claim_payload(
+        registration_reference=REGISTRATION_REFERENCE,
+        configuration_sha256=prelaunch.configuration_sha256,
+        next_incident_index=1,
+        authority_file_id=authority_file_id,
+        authority_nonce_sha256=hashlib.sha256(
+            nonce.encode("ascii")
+        ).hexdigest(),
+        prelaunch_record=prelaunch,
+    )
+    attempt_path = root / coordinator._ATTEMPT_CLAIM_PATH
+    coordinator._write_claim(attempt_path, attempt_payload)
+    attempt_metadata = attempt_path.stat()
+
+    initial_authority = object.__new__(coordinator._InitialAttemptAuthority)
+    object.__setattr__(
+        initial_authority,
+        "attempt_claim",
+        attempt_path,
+    )
+    initial_state = coordinator._InitialAttemptState(
+        token=initial_authority,
+        registration=registration,
+        prelaunch_record=prelaunch,
+        production_only=True,
+        attempt_claim=attempt_path,
+        attempt_payload=attempt_payload,
+        attempt_file_id=(
+            attempt_metadata.st_dev,
+            attempt_metadata.st_ino,
+        ),
+        authority_path=authority_path,
+        authority_file_id=authority_file_id,
+        authority_nonce=nonce,
+        authority_descriptor=authority_descriptor,
+    )
+    initial_cells = dict(
+        zip(
+            coordinator._require_initial_attempt.__code__.co_freevars,
+            coordinator._require_initial_attempt.__closure__,
+            strict=True,
+        )
+    )
+    initial_issued = initial_cells["initial_issued"].cell_contents
+    initial_issued[id(initial_authority)] = initial_state
+
+    forged = object.__new__(coordinator._CeremonyCapability)
+    object.__setattr__(forged, "registration", registration)
+    object.__setattr__(forged, "prelaunch_record", prelaunch)
+    object.__setattr__(forged, "attempt_claim", attempt_path)
+    object.__setattr__(forged, "retry_claim", None)
+
+    original = coordinator.run_registered_anchor_context
+    original_cells = dict(
+        zip(
+            original.__code__.co_freevars,
+            original.__closure__,
+            strict=True,
+        )
+    )
+    mint = original_cells["mint"].cell_contents
+    mint_cells = dict(
+        zip(
+            mint.__code__.co_freevars,
+            mint.__closure__,
+            strict=True,
+        )
+    )
+    issued = mint_cells["issued"].cell_contents
+    issue_invocation = original_cells["issue_invocation"].cell_contents
+    invocation_cells = dict(
+        zip(
+            issue_invocation.__code__.co_freevars,
+            issue_invocation.__closure__,
+            strict=True,
+        )
+    )
+    invocations = invocation_cells["invocations"].cell_contents
+    production_operations = original_cells[
+        "production_operations"
+    ].cell_contents
+    sealed_run = original
+    fake_frame = sys._getframe()
+    forged_invocation = object.__new__(coordinator._CoordinatorInvocation)
+    actual_invocation: list[str] = []
+    invocations[id(forged_invocation)] = (
+        forged_invocation,
+        root,
+        configuration_bytes,
+        actual_invocation,
+        tuple(actual_invocation),
+        production_operations,
+        None,
+        fake_frame,
+        sealed_run,
+    )
+    issued[id(forged)] = (
+        forged,
+        registration,
+        prelaunch,
+        attempt_path,
+        attempt_payload,
+        (attempt_metadata.st_dev, attempt_metadata.st_ino),
+        initial_authority,
+        None,
+        None,
+        None,
+        None,
+        fake_frame,
+        fake_frame,
+        forged_invocation,
+    )
+
+    leaf_names = {
+        Path(registry.FIRST_ESTIMATES_INPUT_PATH).name,
+        Path(registry.ANCHOR_INPUT_PATH).name,
+    }
+    original_open = coordinator.os.open
+    production_leaf_opens: list[str] = []
+
+    def observe_production_leaf(path, flags, *args, **kwargs):
+        if path in leaf_names:
+            production_leaf_opens.append(str(path))
+        return original_open(path, flags, *args, **kwargs)
+
+    monkeypatch.setattr(coordinator.os, "open", observe_production_leaf)
+
+    class Unlocked:
+        def __enter__(self):
+            return None
+
+        def __exit__(self, *_args):
+            return False
+
+    def attacker_core(**_kwargs):
+        inputs = publication._load_production_documents(forged)
+        report._build_production_results(forged, inputs)
+        raise AssertionError("forged ceremony reached production compute")
+
+    def cell(value):
+        def capture():
+            return value
+
+        return capture.__closure__[0]
+
+    replacement_values = {
+        name: closure_cell.cell_contents
+        for name, closure_cell in original_cells.items()
+    }
+    replacement_values.update(
+        {
+            "core": attacker_core,
+            "exclusive_ceremony_lock": lambda _root: Unlocked(),
+            "issue_invocation": lambda *_args: forged_invocation,
+            "read_registered_configuration_bytes": (
+                lambda _root, _path: configuration_bytes
+            ),
+            "require_runner_provenance": lambda _function: None,
+            "revoke_invocation": lambda _invocation: None,
+            "sealed_repository_root": root,
+        }
+    )
+    run_cell = cell(None)
+    cloned_cells = []
+    for name in original.__code__.co_freevars:
+        cloned_cells.append(
+            run_cell if name == "run" else cell(replacement_values[name])
+        )
+    clone = FunctionType(
+        original.__code__,
+        original.__globals__,
+        "fully_cloned_run_registered_anchor_context",
+        original.__defaults__,
+        tuple(cloned_cells),
+    )
+    run_cell.cell_contents = clone
+
+    try:
+        with pytest.raises(TypeError, match="active sealed ceremony stack"):
+            clone(root / "docs/registrations/context.json")
+        assert production_leaf_opens == []
+    finally:
+        issued.pop(id(forged), None)
+        invocations.pop(id(forged_invocation), None)
+        initial_issued.pop(id(initial_authority), None)
+        os.close(authority_descriptor)
+
+
 @pytest.mark.parametrize(
     "protected_path",
     [
@@ -2359,3 +2671,41 @@ def test_registration_gate_rejects_preopen_inode_exchange_before_read(
 
     assert exchanged is True
     assert read_attempts == 0
+
+
+def test_registration_gate_rejects_directory_chain_exchange_during_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    registration = root / "docs/registrations/context.json"
+    registration.parent.mkdir(parents=True)
+    original_payload = b'{"value":"AAAA"}\n'
+    replacement_payload = b'{"value":"BBBB"}\n'
+    registration.write_bytes(original_payload)
+    original_read = coordinator.os.read
+    exchanged = False
+
+    def exchange_directory_after_first_read(descriptor, byte_count):
+        nonlocal exchanged
+        chunk = original_read(descriptor, byte_count)
+        if chunk and not exchanged:
+            exchanged = True
+            displaced = root / "docs/registrations.displaced"
+            registration.parent.rename(displaced)
+            registration.parent.mkdir()
+            registration.write_bytes(replacement_payload)
+        return chunk
+
+    monkeypatch.setattr(
+        coordinator.os,
+        "read",
+        exchange_directory_after_first_read,
+    )
+
+    with pytest.raises(ValueError, match="path chain changed"):
+        coordinator._read_registered_configuration_bytes(root, registration)
+
+    assert exchanged is True
+    assert registration.read_bytes() == replacement_payload
