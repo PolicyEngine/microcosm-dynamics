@@ -5,8 +5,8 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: finding 4b, persisting concrete evidence for all six prelaunch
-  determinations and binding it through capability and retry verification.
+- Active work: finding 5, extending the independent formula oracle to all
+  seven available comparisons.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -101,11 +101,23 @@
   - regressions reject pretty/trailing bytes, missing files, symlinks, FIFOs,
     hardlinks, oversized files, inode exchange, positional mappings, and the
     removed bypass.
-- Focused publication/coordinator/rehearsal/launcher suite: 150 passed.
-- Black, Ruff, and `git diff --check` pass through finding 4a.
+- Finding 4b implemented:
+  - the initial attempt claim now embeds a canonical full prelaunch record
+    containing the ordered six passed checks, full registered configuration,
+    ratification and implementation identities, exact input identities,
+    output absence and incident contiguity, registered/actual invocation, and
+    the complete acknowledged execution law;
+  - the sole retry claim embeds the second invocation's corresponding six
+    checks while retry authorization verifies the original attempt's record;
+  - both records are durably written before the observer boundary and any
+    input load, and capability/retry checks bind their exact bytes and inodes;
+  - the production observer validates rather than discards the record, and
+    delete/reorder/evidence/echo/argv/index mutations fail before input load.
+- Focused launcher/report/publication/coordinator/rehearsal suite: 179 passed.
+- Black, Ruff, and `git diff --check` pass through finding 4b.
 
 ## Next
 
-- Implement findings 4–5 in separate coherent commits with dispositions.
+- Implement finding 5 in its own coherent commit with a disposition.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.

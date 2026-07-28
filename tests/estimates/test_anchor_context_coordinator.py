@@ -339,8 +339,9 @@ def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
         "authority_device",
         "authority_inode",
         "authority_nonce_sha256",
+        "prelaunch_record",
     }
-    assert claim["schema_version"] == "anchor_context_report_attempt.v2"
+    assert claim["schema_version"] == "anchor_context_report_attempt.v3"
     assert claim["registration_reference"] == REGISTRATION_REFERENCE
     assert (
         claim["configuration_sha256"]
@@ -357,6 +358,12 @@ def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
         metadata.st_ino,
     )
     assert len(claim["authority_nonce_sha256"]) == 64
+    assert (
+        claim["prelaunch_record"]["checks"][0]["evidence"][
+            "production_input_io_before_launch"
+        ]
+        is False
+    )
     assert authority.read_bytes() == b""
 
 
@@ -525,6 +532,10 @@ def test_all_six_prelaunch_checks_are_recorded_before_input_loading(
     original_load = operations.load_inputs
 
     def record_prelaunch(record):
+        claim = json.loads(
+            (root / "runs/anchor_context_report_attempt.claim").read_bytes()
+        )
+        assert claim["prelaunch_record"] == json.loads(record.evidence_bytes)
         events.append("prelaunch_record")
         records.append(record)
 
@@ -532,7 +543,12 @@ def test_all_six_prelaunch_checks_are_recorded_before_input_loading(
         events.append("input_load")
         assert len(records) == 1
         assert registration._repository_root == root
-        assert (root / "runs/anchor_context_report_attempt.claim").is_file()
+        claim = json.loads(
+            (root / "runs/anchor_context_report_attempt.claim").read_bytes()
+        )
+        assert claim["prelaunch_record"] == json.loads(
+            records[0].evidence_bytes
+        )
         return original_load(registration)
 
     result = _run(
@@ -546,15 +562,147 @@ def test_all_six_prelaunch_checks_are_recorded_before_input_loading(
 
     assert result.status == "published"
     assert events == ["prelaunch_record", "input_load"]
-    assert records == [
-        coordinator._PrelaunchRecord(
-            check_names=coordinator.PRELAUNCH_CHECK_NAMES,
-            configuration_sha256=hashlib.sha256(
-                _configuration_bytes(root)
-            ).hexdigest(),
-            next_incident_index=1,
-        )
-    ]
+    assert len(records) == 1
+    record = records[0]
+    assert record.check_names == coordinator.PRELAUNCH_CHECK_NAMES
+    assert (
+        record.configuration_sha256
+        == hashlib.sha256(_configuration_bytes(root)).hexdigest()
+    )
+    assert record.next_incident_index == 1
+    evidence = json.loads(record.evidence_bytes)
+    assert evidence["schema_version"] == "anchor_context_report_prelaunch.v1"
+    assert evidence["registration_reference"] == REGISTRATION_REFERENCE
+    assert [check["name"] for check in evidence["checks"]] == list(
+        coordinator.PRELAUNCH_CHECK_NAMES
+    )
+    assert all(check["passed"] is True for check in evidence["checks"])
+    assert evidence["checks"][0]["evidence"] == {
+        "design": _configuration(root)["design"],
+        "implementation_commit": IMPLEMENTATION_COMMIT,
+        "production_input_io_before_launch": False,
+    }
+    assert evidence["checks"][1]["evidence"] == {
+        "registration_reference": REGISTRATION_REFERENCE,
+        "registered_configuration": _configuration(root),
+        "registered_configuration_sha256": record.configuration_sha256,
+        "registered_configuration_byte_length": len(
+            _configuration_bytes(root)
+        ),
+    }
+    assert evidence["checks"][2]["evidence"] == {
+        "first_estimates_input": _configuration(root)["first_estimates_input"],
+        "anchor_input": _configuration(root)["anchor_input"],
+        "production_inputs_opened": False,
+    }
+    assert evidence["checks"][3]["evidence"] == {
+        "output_absence": [
+            {"path": registry.PRIMARY_OUTPUT_PATH, "absent": True},
+            {"path": registry.SIDECAR_OUTPUT_PATH, "absent": True},
+        ],
+        "incident_history": [],
+        "next_incident_index": 1,
+    }
+    assert evidence["checks"][4]["evidence"] == {
+        "registered_invocation": _invocation(root),
+        "actual_invocation": _invocation(root),
+        "byte_match": True,
+        "isolated_interpreter_verified": True,
+    }
+    assert evidence["checks"][5]["evidence"] == {
+        "execution_rule": coordinator.CANONICAL_EXECUTION_RULE,
+        "acknowledged": True,
+    }
+
+
+def test_prelaunch_observer_failure_leaves_durable_evidence_before_input(
+    tmp_path,
+):
+    root = _repository(tmp_path)
+    calls: list[str] = []
+    captured_record: list[coordinator._PrelaunchRecord] = []
+
+    def fail_after_durable_record(record):
+        claim_path = root / "runs/anchor_context_report_attempt.claim"
+        assert claim_path.is_file()
+        claim = json.loads(claim_path.read_bytes())
+        assert claim["prelaunch_record"] == json.loads(record.evidence_bytes)
+        captured_record.append(record)
+        raise RuntimeError("crash immediately after durable prelaunch record")
+
+    result = _run(
+        root,
+        replace(
+            _operations(calls, {}),
+            record_prelaunch=fail_after_durable_record,
+        ),
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert calls == []
+    assert len(captured_record) == 1
+    claim = json.loads(
+        (root / "runs/anchor_context_report_attempt.claim").read_bytes()
+    )
+    assert claim["prelaunch_record"] == json.loads(
+        captured_record[0].evidence_bytes
+    )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "delete",
+        "reorder_checks",
+        "check_evidence",
+        "configuration_echo",
+        "actual_invocation",
+        "next_incident_index",
+    ],
+)
+def test_prelaunch_claim_mutation_refuses_input_loading(tmp_path, mutation):
+    root = _repository(tmp_path)
+    calls: list[str] = []
+
+    def mutate_durable_record(_record):
+        claim_path = root / "runs/anchor_context_report_attempt.claim"
+        if mutation == "delete":
+            claim_path.unlink()
+            return
+        claim = json.loads(claim_path.read_bytes())
+        prelaunch = claim["prelaunch_record"]
+        if mutation == "reorder_checks":
+            prelaunch["checks"].reverse()
+        elif mutation == "check_evidence":
+            prelaunch["checks"][0]["evidence"][
+                "production_input_io_before_launch"
+            ] = True
+        elif mutation == "configuration_echo":
+            prelaunch["checks"][1]["evidence"]["registered_configuration"][
+                "invocation"
+            ][-1] += ".changed"
+        elif mutation == "actual_invocation":
+            prelaunch["checks"][4]["evidence"]["actual_invocation"][
+                -1
+            ] += ".changed"
+        else:
+            prelaunch["next_incident_index"] = 2
+        claim_path.chmod(0o644)
+        claim_path.write_bytes(publication.canonical_json_bytes(claim))
+        claim_path.chmod(0o444)
+
+    result = _run(
+        root,
+        replace(
+            _operations(calls, {}),
+            record_prelaunch=mutate_durable_record,
+        ),
+    )
+
+    assert result.status == "incident"
+    assert result.phase == "preparation"
+    assert calls == []
 
 
 def test_canonical_invocation_is_exact_checked_before_input_load(
@@ -888,7 +1036,10 @@ def test_retry_authority_requires_exact_reserved_canonical_file(
     assert not (root / "runs/anchor_context_report_retry.claim").exists()
 
 
-@pytest.mark.parametrize("target", ["attempt", "incident"])
+@pytest.mark.parametrize(
+    "target",
+    ["attempt", "attempt_prelaunch", "incident"],
+)
 def test_retry_authority_rejects_bound_record_mutation(tmp_path, target):
     root = _repository(tmp_path)
     external = coordinator.ExternalPreOutputFailure(
@@ -905,10 +1056,15 @@ def test_retry_authority_rejects_bound_record_mutation(tmp_path, target):
         ),
     )
     assert first.status == "incident"
-    if target == "attempt":
+    if target in {"attempt", "attempt_prelaunch"}:
         path = root / "runs/anchor_context_report_attempt.claim"
         value = json.loads(path.read_bytes())
-        value["authority_nonce_sha256"] = "0" * 64
+        if target == "attempt":
+            value["authority_nonce_sha256"] = "0" * 64
+        else:
+            value["prelaunch_record"]["checks"][5]["evidence"][
+                "acknowledged"
+            ] = False
     else:
         path = first.path
         value = json.loads(path.read_bytes())
@@ -952,7 +1108,7 @@ def test_retry_claim_requires_live_opaque_authorization(tmp_path):
             TypeError,
             match="live authenticated authorization",
         ):
-            coordinator._create_retry_claim(root, candidate)
+            coordinator._create_retry_claim(root, candidate, object())
     assert not (root / "runs/anchor_context_report_retry.claim").exists()
 
 
@@ -994,12 +1150,25 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
     retry_claim = json.loads(
         (root / "runs/anchor_context_report_retry.claim").read_bytes()
     )
-    assert retry_claim == {
-        "schema_version": "anchor_context_report_retry.v2",
-        "registration_reference": REGISTRATION_REFERENCE,
-        "retry_after_incident": 1,
-        "retry_authority_sha256": hashlib.sha256(authority_bytes).hexdigest(),
+    assert set(retry_claim) == {
+        "schema_version",
+        "registration_reference",
+        "retry_after_incident",
+        "retry_authority_sha256",
+        "prelaunch_record",
     }
+    assert retry_claim["schema_version"] == "anchor_context_report_retry.v3"
+    assert retry_claim["registration_reference"] == REGISTRATION_REFERENCE
+    assert retry_claim["retry_after_incident"] == 1
+    assert (
+        retry_claim["retry_authority_sha256"]
+        == hashlib.sha256(authority_bytes).hexdigest()
+    )
+    retry_prelaunch = retry_claim["prelaunch_record"]
+    assert retry_prelaunch["next_incident_index"] == 2
+    assert retry_prelaunch["checks"][3]["evidence"]["incident_history"] == [
+        "runs/anchor_context_report_incident_1.json"
+    ]
     assert attempt_path.read_bytes() == attempt_bytes
     assert authority_path.read_bytes() == authority_bytes
     assert (
@@ -1143,6 +1312,7 @@ def test_extracted_closure_mint_rejects_caller_created_prerequisites(
             _configuration_bytes(root)
         ).hexdigest(),
         next_incident_index=1,
+        evidence_bytes=b"{}\n",
     )
     closure = dict(
         zip(
@@ -1263,7 +1433,20 @@ def test_sealed_production_capability_is_live_only_during_full_chain(
     def capture_capability(capability):
         registration = coordinator._require_ceremony_capability(capability)
         assert registration._repository_root == root
-        assert (root / "runs/anchor_context_report_attempt.claim").is_file()
+        durable_claim = json.loads(
+            (root / "runs/anchor_context_report_attempt.claim").read_bytes()
+        )
+        assert len(durable_claim["prelaunch_record"]["checks"]) == 6
+        assert all(
+            check["passed"] is True
+            for check in durable_claim["prelaunch_record"]["checks"]
+        )
+        assert (
+            durable_claim["prelaunch_record"]["checks"][2]["evidence"][
+                "production_inputs_opened"
+            ]
+            is False
+        )
         captured_capabilities.append(capability)
         claim = root / "runs/anchor_context_report_attempt.claim"
         original_claim = claim.with_suffix(".original")

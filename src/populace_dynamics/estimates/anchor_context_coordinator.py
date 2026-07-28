@@ -55,14 +55,15 @@ _REGISTRATION_DIRECTORY = Path("docs/registrations")
 _IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _SAFE_REASON = first_coordinator._SAFE_EXTERNAL_REASON
 _ATTEMPT_CLAIM_PATH = Path("runs/anchor_context_report_attempt.claim")
-_ATTEMPT_CLAIM_SCHEMA = "anchor_context_report_attempt.v2"
+_ATTEMPT_CLAIM_SCHEMA = "anchor_context_report_attempt.v3"
 _RETRY_CLAIM_PATH = Path("runs/anchor_context_report_retry.claim")
-_RETRY_CLAIM_SCHEMA = "anchor_context_report_retry.v2"
+_RETRY_CLAIM_SCHEMA = "anchor_context_report_retry.v3"
 _RETRY_AUTHORITY_PATH = Path(
     "runs/anchor_context_report_retry_authority.claim"
 )
 _RETRY_AUTHORITY_SCHEMA = "anchor_context_report_retry_authority.v1"
-_CLAIM_MAX_BYTES = first_coordinator._ATTEMPT_CLAIM_MAX_BYTES
+_PRELAUNCH_RECORD_SCHEMA = "anchor_context_report_prelaunch.v1"
+_CLAIM_MAX_BYTES = 1024 * 1024
 _INCIDENT_MAX_BYTES = 4 * 1024 * 1024
 _REGISTRATION_MAX_BYTES = 1024 * 1024
 
@@ -188,6 +189,7 @@ def _attempt_claim_payload(
     next_incident_index: int,
     authority_file_id: tuple[int, int],
     authority_nonce_sha256: str,
+    prelaunch_record: _PrelaunchRecord,
 ) -> bytes:
     first_publication._validate_registration_reference_byte_bound(
         registration_reference
@@ -202,6 +204,13 @@ def _attempt_claim_payload(
         raise TypeError("next_incident_index must be a positive integer")
     if not _is_sha256(authority_nonce_sha256):
         raise TypeError("authority nonce commitment must be lowercase SHA-256")
+    prelaunch = _prelaunch_record_value(prelaunch_record)
+    if (
+        prelaunch["registration_reference"] != registration_reference
+        or prelaunch["configuration_sha256"] != configuration_sha256
+        or prelaunch["next_incident_index"] != next_incident_index
+    ):
+        raise ValueError("attempt claim differs from its prelaunch evidence")
     authority_device, authority_inode = authority_file_id
     if (
         isinstance(authority_device, bool)
@@ -224,6 +233,7 @@ def _attempt_claim_payload(
             "authority_device": authority_device,
             "authority_inode": authority_inode,
             "authority_nonce_sha256": authority_nonce_sha256,
+            "prelaunch_record": prelaunch,
         }
     )
 
@@ -244,10 +254,17 @@ def _read_attempt_claim(
         "authority_device",
         "authority_inode",
         "authority_nonce_sha256",
+        "prelaunch_record",
     }
     next_index = value.get("next_incident_index")
     authority_device = value.get("authority_device")
     authority_inode = value.get("authority_inode")
+    try:
+        prelaunch = _validate_prelaunch_record_value(
+            value.get("prelaunch_record")
+        )
+    except (TypeError, ValueError):
+        return None
     if (
         set(value) != expected_keys
         or value.get("schema_version") != _ATTEMPT_CLAIM_SCHEMA
@@ -264,6 +281,11 @@ def _read_attempt_claim(
         or not isinstance(authority_inode, int)
         or authority_inode < 1
         or not _is_sha256(value.get("authority_nonce_sha256"))
+        or prelaunch["registration_reference"]
+        != value.get("registration_reference")
+        or prelaunch["configuration_sha256"]
+        != value.get("configuration_sha256")
+        or prelaunch["next_incident_index"] != next_index
     ):
         return None
     return value, payload, file_id
@@ -337,6 +359,7 @@ def _retry_claim_payload(
     registration_reference: str,
     retry_after_incident: int,
     retry_authority_sha256: str,
+    prelaunch_record: _PrelaunchRecord,
 ) -> bytes:
     first_publication._validate_registration_reference_byte_bound(
         registration_reference
@@ -349,12 +372,19 @@ def _retry_claim_payload(
         raise TypeError("retry_after_incident must be a positive integer")
     if not _is_sha256(retry_authority_sha256):
         raise TypeError("retry authority digest must be lowercase SHA-256")
+    prelaunch = _prelaunch_record_value(prelaunch_record)
+    if (
+        prelaunch["registration_reference"] != registration_reference
+        or prelaunch["next_incident_index"] != retry_after_incident + 1
+    ):
+        raise ValueError("retry claim differs from its prelaunch evidence")
     return anchor_context_publication.canonical_json_bytes(
         {
             "schema_version": _RETRY_CLAIM_SCHEMA,
             "registration_reference": registration_reference,
             "retry_after_incident": retry_after_incident,
             "retry_authority_sha256": retry_authority_sha256,
+            "prelaunch_record": prelaunch,
         }
     )
 
@@ -374,6 +404,7 @@ def _read_retry_claim(
             "registration_reference",
             "retry_after_incident",
             "retry_authority_sha256",
+            "prelaunch_record",
         }
         or value.get("schema_version") != _RETRY_CLAIM_SCHEMA
         or not isinstance(value.get("registration_reference"), str)
@@ -381,6 +412,18 @@ def _read_retry_claim(
         or not isinstance(retry_index, int)
         or retry_index < 1
         or not _is_sha256(value.get("retry_authority_sha256"))
+    ):
+        return None
+    try:
+        prelaunch = _validate_prelaunch_record_value(
+            value.get("prelaunch_record")
+        )
+    except (TypeError, ValueError):
+        return None
+    if (
+        prelaunch["registration_reference"]
+        != value.get("registration_reference")
+        or prelaunch["next_incident_index"] != retry_index + 1
     ):
         return None
     return value, payload, file_id
@@ -423,17 +466,215 @@ def _continue_after_preparation() -> None:
     """Production no-op at the test-private preparation boundary."""
 
 
-def _retain_prelaunch_record(_record: _PrelaunchRecord) -> None:
-    """Production keeps the frozen record in the active call frame."""
+def _retain_prelaunch_record(record: _PrelaunchRecord) -> None:
+    """Exact-check the frozen record before its durable claim is observed."""
+    _prelaunch_record_value(record)
 
 
 @dataclass(frozen=True)
 class _PrelaunchRecord:
-    """In-memory proof that all six registered checks preceded input load."""
+    """Immutable canonical evidence that all six checks preceded input load."""
 
     check_names: tuple[str, ...]
     configuration_sha256: str
     next_incident_index: int
+    evidence_bytes: bytes
+
+
+def _validate_prelaunch_record_value(
+    candidate: object,
+) -> Mapping[str, Any]:
+    if not isinstance(candidate, Mapping):
+        raise TypeError("prelaunch record must be a JSON object")
+    value = candidate
+    if set(value) != {
+        "schema_version",
+        "registration_reference",
+        "configuration_sha256",
+        "next_incident_index",
+        "checks",
+    }:
+        raise ValueError("prelaunch record keys changed")
+    if value["schema_version"] != _PRELAUNCH_RECORD_SCHEMA:
+        raise ValueError("prelaunch record schema changed")
+    reference = value["registration_reference"]
+    if not isinstance(reference, str) or not reference:
+        raise TypeError("prelaunch registration reference is invalid")
+    configuration_sha256 = value["configuration_sha256"]
+    if not _is_sha256(configuration_sha256):
+        raise TypeError("prelaunch configuration digest is invalid")
+    next_index = value["next_incident_index"]
+    if (
+        isinstance(next_index, bool)
+        or not isinstance(next_index, int)
+        or next_index < 1
+    ):
+        raise TypeError("prelaunch next incident index is invalid")
+    checks = value["checks"]
+    if not isinstance(checks, list) or len(checks) != len(
+        PRELAUNCH_CHECK_NAMES
+    ):
+        raise TypeError("prelaunch checks must be the exact ordered six")
+    evidence_by_name: dict[str, Mapping[str, Any]] = {}
+    for position, expected_name in enumerate(PRELAUNCH_CHECK_NAMES):
+        check = checks[position]
+        if (
+            not isinstance(check, Mapping)
+            or set(check) != {"name", "passed", "evidence"}
+            or check["name"] != expected_name
+            or check["passed"] is not True
+            or not isinstance(check["evidence"], Mapping)
+        ):
+            raise ValueError("prelaunch check order or pass state changed")
+        evidence_by_name[expected_name] = check["evidence"]
+
+    design = evidence_by_name[PRELAUNCH_CHECK_NAMES[0]]
+    if (
+        set(design)
+        != {
+            "design",
+            "implementation_commit",
+            "production_input_io_before_launch",
+        }
+        or design["design"] != registry.design_binding()
+        or not isinstance(design["implementation_commit"], str)
+        or len(design["implementation_commit"]) != 40
+        or any(
+            character not in "0123456789abcdef"
+            for character in design["implementation_commit"]
+        )
+        or design["production_input_io_before_launch"] is not False
+    ):
+        raise ValueError("ratification and no-input evidence changed")
+
+    registration = evidence_by_name[PRELAUNCH_CHECK_NAMES[1]]
+    if set(registration) != {
+        "registration_reference",
+        "registered_configuration",
+        "registered_configuration_sha256",
+        "registered_configuration_byte_length",
+    }:
+        raise ValueError("registration evidence keys changed")
+    configuration = registration["registered_configuration"]
+    if not isinstance(configuration, Mapping):
+        raise TypeError("registered configuration evidence is not an object")
+    configuration_bytes = anchor_context_publication.canonical_json_bytes(
+        configuration
+    )
+    anchor_context_publication._validate_configuration_echo_for_execution(
+        configuration
+    )
+    if (
+        registration["registration_reference"] != reference
+        or configuration.get("registration_reference") != reference
+        or configuration.get("implementation_commit")
+        != design["implementation_commit"]
+        or registration["registered_configuration_sha256"]
+        != configuration_sha256
+        or hashlib.sha256(configuration_bytes).hexdigest()
+        != configuration_sha256
+        or registration["registered_configuration_byte_length"]
+        != len(configuration_bytes)
+    ):
+        raise ValueError("registered configuration evidence changed")
+
+    inputs = evidence_by_name[PRELAUNCH_CHECK_NAMES[2]]
+    if (
+        set(inputs)
+        != {
+            "first_estimates_input",
+            "anchor_input",
+            "production_inputs_opened",
+        }
+        or inputs["first_estimates_input"]
+        != configuration.get("first_estimates_input")
+        or inputs["anchor_input"] != configuration.get("anchor_input")
+        or inputs["production_inputs_opened"] is not False
+    ):
+        raise ValueError("registered input identity evidence changed")
+
+    outputs = evidence_by_name[PRELAUNCH_CHECK_NAMES[3]]
+    expected_absence = [
+        {"path": registry.PRIMARY_OUTPUT_PATH, "absent": True},
+        {"path": registry.SIDECAR_OUTPUT_PATH, "absent": True},
+    ]
+    history = outputs.get("incident_history")
+    if (
+        set(outputs)
+        != {"output_absence", "incident_history", "next_incident_index"}
+        or outputs["output_absence"] != expected_absence
+        or not isinstance(history, list)
+        or any(not isinstance(path, str) for path in history)
+        or outputs["next_incident_index"] != next_index
+        or next_index != len(history) + 1
+    ):
+        raise ValueError("output and incident-contiguity evidence changed")
+    for position, path in enumerate(history, start=1):
+        if path != f"runs/anchor_context_report_incident_{position}.json":
+            raise ValueError("prelaunch incident history is not contiguous")
+
+    invocation = evidence_by_name[PRELAUNCH_CHECK_NAMES[4]]
+    registered_invocation = invocation.get("registered_invocation")
+    actual_invocation = invocation.get("actual_invocation")
+    if (
+        set(invocation)
+        != {
+            "registered_invocation",
+            "actual_invocation",
+            "byte_match",
+            "isolated_interpreter_verified",
+        }
+        or not isinstance(registered_invocation, list)
+        or not registered_invocation
+        or any(
+            not isinstance(argument, str) or not argument
+            for argument in registered_invocation
+        )
+        or actual_invocation != registered_invocation
+        or registered_invocation != configuration.get("invocation")
+        or invocation["byte_match"] is not True
+        or invocation["isolated_interpreter_verified"] is not True
+    ):
+        raise ValueError("isolated invocation evidence changed")
+
+    execution = evidence_by_name[PRELAUNCH_CHECK_NAMES[5]]
+    if (
+        set(execution) != {"execution_rule", "acknowledged"}
+        or execution["execution_rule"] != CANONICAL_EXECUTION_RULE
+        or execution["acknowledged"] is not True
+    ):
+        raise ValueError("execution-law evidence changed")
+    return value
+
+
+def _prelaunch_record_value(
+    record: _PrelaunchRecord,
+) -> Mapping[str, Any]:
+    if not isinstance(record, _PrelaunchRecord):
+        raise TypeError("prelaunch record has the wrong type")
+    if not isinstance(record.evidence_bytes, bytes):
+        raise TypeError("prelaunch evidence must be immutable bytes")
+    try:
+        value = json.loads(record.evidence_bytes)
+        canonical = anchor_context_publication.canonical_json_bytes(value)
+    except (
+        UnicodeError,
+        json.JSONDecodeError,
+        TypeError,
+        ValueError,
+        OverflowError,
+        RecursionError,
+    ) as error:
+        raise ValueError("prelaunch evidence is not canonical JSON") from error
+    validated = _validate_prelaunch_record_value(value)
+    if (
+        canonical != record.evidence_bytes
+        or record.check_names != PRELAUNCH_CHECK_NAMES
+        or validated["configuration_sha256"] != record.configuration_sha256
+        or validated["next_incident_index"] != record.next_incident_index
+    ):
+        raise ValueError("prelaunch in-memory and canonical evidence differ")
+    return validated
 
 
 @dataclass
@@ -559,6 +800,7 @@ def _retry_authority_protocol():
             authority_nonce_sha256=hashlib.sha256(
                 authority_nonce.encode("ascii")
             ).hexdigest(),
+            prelaunch_record=prelaunch_record,
         )
         try:
             _write_claim(attempt_claim, attempt_payload)
@@ -614,10 +856,12 @@ def _retry_authority_protocol():
             raise TypeError(
                 "retry-authority reservation is not live"
             ) from error
+        current_prelaunch = _prelaunch_record_value(prelaunch_record)
         if (
             current_claim is None
             or current_claim[1] != state.attempt_payload
             or current_claim[2] != state.attempt_file_id
+            or current_claim[0]["prelaunch_record"] != current_prelaunch
             or (
                 authority_metadata.st_dev,
                 authority_metadata.st_ino,
@@ -928,6 +1172,7 @@ def _retry_authority_protocol():
 def _create_retry_claim(
     repository_root: Path,
     authorization: object,
+    prelaunch_record: _PrelaunchRecord,
     *,
     _require_authorization: Callable[
         [object, Path], _RetryAuthorizationState
@@ -942,6 +1187,7 @@ def _create_retry_claim(
         retry_authority_sha256=hashlib.sha256(
             state.authority_payload
         ).hexdigest(),
+        prelaunch_record=prelaunch_record,
     )
     try:
         _write_claim(path, payload)
@@ -1059,6 +1305,7 @@ def _ceremony_capability_protocol():
                 retry_authority_sha256=hashlib.sha256(
                     retry_state.authority_payload
                 ).hexdigest(),
+                prelaunch_record=prelaunch_record,
             )
             if (
                 retry_loaded is None
@@ -1175,10 +1422,12 @@ def _ceremony_capability_protocol():
                 mint_capability=mint,
                 revoke_capability=revoke,
                 issue_initial_attempt=issue_initial_attempt,
+                require_initial_attempt=require_initial_attempt,
                 seal_retry_authority=seal_retry_authority,
                 revoke_initial_attempt=revoke_initial_attempt,
                 authorize_invocation=authorize_invocation,
                 create_retry_claim=create_retry_claim,
+                require_retry_authorization=require_retry_authorization,
                 revoke_retry_authorization=revoke_retry_authorization,
             )
 
@@ -1568,14 +1817,101 @@ def _complete_prelaunch_checks(
         or CANONICAL_EXECUTION_RULE["no_self_rescue"] is not True
     ):
         raise AssertionError("canonical execution acknowledgement changed")
+    configuration_bytes = anchor_context_publication.canonical_json_bytes(
+        configuration
+    )
+    configuration_sha256 = hashlib.sha256(configuration_bytes).hexdigest()
+    next_incident_index = len(history.paths) + 1
+    evidence = {
+        "schema_version": _PRELAUNCH_RECORD_SCHEMA,
+        "registration_reference": configuration["registration_reference"],
+        "configuration_sha256": configuration_sha256,
+        "next_incident_index": next_incident_index,
+        "checks": [
+            {
+                "name": PRELAUNCH_CHECK_NAMES[0],
+                "passed": True,
+                "evidence": {
+                    "design": configuration["design"],
+                    "implementation_commit": configuration[
+                        "implementation_commit"
+                    ],
+                    "production_input_io_before_launch": False,
+                },
+            },
+            {
+                "name": PRELAUNCH_CHECK_NAMES[1],
+                "passed": True,
+                "evidence": {
+                    "registration_reference": configuration[
+                        "registration_reference"
+                    ],
+                    "registered_configuration": json.loads(
+                        configuration_bytes
+                    ),
+                    "registered_configuration_sha256": configuration_sha256,
+                    "registered_configuration_byte_length": len(
+                        configuration_bytes
+                    ),
+                },
+            },
+            {
+                "name": PRELAUNCH_CHECK_NAMES[2],
+                "passed": True,
+                "evidence": {
+                    "first_estimates_input": configuration[
+                        "first_estimates_input"
+                    ],
+                    "anchor_input": configuration["anchor_input"],
+                    "production_inputs_opened": False,
+                },
+            },
+            {
+                "name": PRELAUNCH_CHECK_NAMES[3],
+                "passed": True,
+                "evidence": {
+                    "output_absence": [
+                        {
+                            "path": registry.PRIMARY_OUTPUT_PATH,
+                            "absent": True,
+                        },
+                        {
+                            "path": registry.SIDECAR_OUTPUT_PATH,
+                            "absent": True,
+                        },
+                    ],
+                    "incident_history": list(history.paths),
+                    "next_incident_index": next_incident_index,
+                },
+            },
+            {
+                "name": PRELAUNCH_CHECK_NAMES[4],
+                "passed": True,
+                "evidence": {
+                    "registered_invocation": list(configuration["invocation"]),
+                    "actual_invocation": list(actual_invocation),
+                    "byte_match": True,
+                    "isolated_interpreter_verified": True,
+                },
+            },
+            {
+                "name": PRELAUNCH_CHECK_NAMES[5],
+                "passed": True,
+                "evidence": {
+                    "execution_rule": CANONICAL_EXECUTION_RULE,
+                    "acknowledged": True,
+                },
+            },
+        ],
+    }
+    evidence_bytes = anchor_context_publication.canonical_json_bytes(evidence)
     record = _PrelaunchRecord(
         check_names=PRELAUNCH_CHECK_NAMES,
-        configuration_sha256=hashlib.sha256(
-            anchor_context_publication.canonical_json_bytes(configuration)
-        ).hexdigest(),
-        next_incident_index=len(history.paths) + 1,
+        configuration_sha256=configuration_sha256,
+        next_incident_index=next_incident_index,
+        evidence_bytes=evidence_bytes,
     )
-    operations.record_prelaunch(record)
+    _prelaunch_record_value(record)
     return record
 
 
@@ -1683,13 +2019,28 @@ def _run_registered_anchor_context_core(
         ],
         _InitialAttemptAuthority,
     ],
+    require_initial_attempt: Callable[
+        [
+            object,
+            first_publication._RegisteredConfigurationToken,
+            _PrelaunchRecord,
+        ],
+        Path,
+    ],
     seal_retry_authority: Callable[..., Path],
     revoke_initial_attempt: Callable[[object], None],
     authorize_invocation: Callable[
         [Path, Mapping[str, Any], _IncidentHistory],
         _RetryAuthorization | None,
     ],
-    create_retry_claim: Callable[[Path, object], Path],
+    create_retry_claim: Callable[
+        [Path, object, _PrelaunchRecord],
+        Path,
+    ],
+    require_retry_authorization: Callable[
+        [object, Path],
+        _RetryAuthorizationState,
+    ],
     revoke_retry_authorization: Callable[[object], None],
 ) -> CoordinatorResult:
     """Shared ceremony state machine; only the sealed closure can mint."""
@@ -1745,7 +2096,45 @@ def _run_registered_anchor_context_core(
                 attempt_claim = initial_attempt_authority.attempt_claim
             else:
                 attempt_claim = root / _ATTEMPT_CLAIM_PATH
-                retry_claim = create_retry_claim(root, retry_authorization)
+                retry_claim = create_retry_claim(
+                    root,
+                    retry_authorization,
+                    prelaunch_record,
+                )
+            operations.record_prelaunch(prelaunch_record)
+            if initial_attempt_authority is not None:
+                if (
+                    require_initial_attempt(
+                        initial_attempt_authority,
+                        registration,
+                        prelaunch_record,
+                    )
+                    != attempt_claim
+                ):
+                    raise TypeError("initial prelaunch claim identity changed")
+            else:
+                retry_state = require_retry_authorization(
+                    retry_authorization,
+                    root,
+                )
+                retry_loaded = (
+                    _read_retry_claim(retry_claim)
+                    if retry_claim is not None
+                    else None
+                )
+                expected_retry_payload = _retry_claim_payload(
+                    registration_reference=retry_state.registration_reference,
+                    retry_after_incident=retry_state.incident_index,
+                    retry_authority_sha256=hashlib.sha256(
+                        retry_state.authority_payload
+                    ).hexdigest(),
+                    prelaunch_record=prelaunch_record,
+                )
+                if (
+                    retry_loaded is None
+                    or retry_loaded[1] != expected_retry_payload
+                ):
+                    raise TypeError("retry prelaunch claim changed")
             execution_authority: object = registration
             if mint_capability is not None:
                 ceremony_capability = mint_capability(
@@ -1890,10 +2279,12 @@ def _run_registered_anchor_context_for_test(
         mint_capability=None,
         revoke_capability=None,
         issue_initial_attempt=_issue_initial_attempt,
+        require_initial_attempt=_require_initial_attempt,
         seal_retry_authority=_seal_retry_authority,
         revoke_initial_attempt=_revoke_initial_attempt,
         authorize_invocation=_authorize_invocation,
         create_retry_claim=_create_retry_claim,
+        require_retry_authorization=_require_retry_authorization,
         revoke_retry_authorization=_revoke_retry_authorization,
     )
 
