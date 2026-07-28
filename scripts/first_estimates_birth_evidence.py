@@ -132,6 +132,19 @@ PRODUCTION_SOURCE_PATHS = (
     Path("scripts/registered_m6_inputs.py"),
     Path("scripts/build_mortality_floors.py"),
 )
+POST_REVIEW_SOURCE_EXCLUSIONS = (
+    Path("src/populace_dynamics/artifacts.py"),
+    Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
+    Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
+    Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
+    Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
+    Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+)
+POST_REVIEW_SHARED_SOURCE_BLOBS = {
+    Path(
+        "src/populace_dynamics/artifacts.py"
+    ): "c03afa29cbdaf722c2cf62608dbb01f061f6558d"
+}
 IMPLEMENTATION_REPLAY_ROWS = {
     "birth_source.derived_projection_age": 4_077,
     "birth_source.unresolved": 2_315,
@@ -246,7 +259,10 @@ def _assert_input_identity() -> None:
         )
         if ancestor.returncode != 0:
             raise RuntimeError(f"{label} {commit} is not an ancestor of HEAD")
-    paths = tuple(str(path) for path in PRODUCTION_SOURCE_PATHS)
+    paths = (
+        *(str(path) for path in PRODUCTION_SOURCE_PATHS),
+        *(f":(exclude){path}" for path in POST_REVIEW_SOURCE_EXCLUSIONS),
+    )
     committed = _run_git(
         "diff",
         "--quiet",
@@ -263,7 +279,17 @@ def _assert_input_identity() -> None:
         *paths,
         check=False,
     )
-    if committed.returncode != 0 or working.returncode != 0:
+    post_review_shared_drift = False
+    for path, expected_blob in POST_REVIEW_SHARED_SOURCE_BLOBS.items():
+        committed_blob = _run_git("rev-parse", f"HEAD:{path}").stdout.strip()
+        working_blob = _run_git("hash-object", "--", str(path)).stdout.strip()
+        if committed_blob != expected_blob or working_blob != expected_blob:
+            post_review_shared_drift = True
+    if (
+        committed.returncode != 0
+        or working.returncode != 0
+        or post_review_shared_drift
+    ):
         raise RuntimeError(
             "production sources differ from the reviewed implementation"
         )

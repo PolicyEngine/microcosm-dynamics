@@ -63,6 +63,22 @@ def test_reducer_input_identity_matches_reviewed_branch():
     reducer._assert_input_identity()
 
 
+def test_context_report_sources_are_outside_historical_reducer_identity():
+    assert reducer.POST_REVIEW_SOURCE_EXCLUSIONS == (
+        Path("src/populace_dynamics/artifacts.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
+        Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+    )
+    assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
+        Path(
+            "src/populace_dynamics/artifacts.py"
+        ): "c03afa29cbdaf722c2cf62608dbb01f061f6558d"
+    }
+
+
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
     records = (
         career.BirthYearRecord(
