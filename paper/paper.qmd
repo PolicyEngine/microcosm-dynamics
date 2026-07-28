@@ -2280,8 +2280,9 @@ administrative payment series.
 | 2021 | \$181.2B ± \$4.9B | 9.56M ± 0.18M | \$274.7B ± \$8.0B | 17.13M ± 0.43M |
 | 2022 | \$215.4B ± \$5.6B | 10.81M ± 0.21M | \$278.6B ± \$8.7B | 16.37M ± 0.43M |
 
-: **Labels on every number: frame-relative; pre-alignment;
-labor-income proxy.** Nominal dollars, in billions; weighted counts,
+: **Frame-relative; pre-alignment; labor-income proxy** — the
+artifact's own label triple, carried on every number in this section.
+Nominal dollars, in billions; weighted counts,
 in millions; mean ± sample SD over the twenty registered draws.
 Benefits are annualized eligibility PIA with COLA and no post-claim
 recomputation. The opening-stock column is report-only. The engine
@@ -2307,8 +2308,8 @@ combined contribution in @tbl-first-estimates-revenue.
 | 2021 | \$7,228.3B ± \$48.5B | \$896.3B ± \$6.0B | 120.49M ± 0.81M |
 | 2022 | \$7,321.1B ± \$47.2B | \$907.8B ± \$5.9B | 116.28M ± 0.72M |
 
-: **Labels on every number: frame-relative; pre-alignment;
-labor-income proxy.** Nominal dollars, in billions; weighted counts,
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Nominal dollars, in billions; weighted counts,
 in millions; mean ± sample SD over the twenty registered draws.
 The engine draws even-year earnings and carries the prior even-year
 value into odd years. Source: `tables.revenue.aggregate` in the
@@ -2316,9 +2317,8 @@ committed report artifact. {#tbl-first-estimates-revenue}
 
 The inclusion funnel is narrow by construction
 (@tbl-first-estimates-funnel): the report population is not the
-benefit population, a claim candidate is not an included claimant,
-and the first two counts are the registered baseline draw rather than
-across-draw means.
+benefit population, and a claim candidate is not an included
+claimant.
 
 | stage | unweighted persons | weighted frame count |
 |---|---:|---:|
@@ -2326,8 +2326,8 @@ across-draw means.
 | non-DI claimant candidates (draw 0) | 3,083 | 60.59M |
 | included (20-draw mean ± sample SD) | 1,518.1 ± 16.8 | 35.18M ± 0.40M |
 
-: **Labels on every number: frame-relative; pre-alignment;
-labor-income proxy.** Weighted counts are in millions. The first row
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Weighted counts are in millions. The first row
 sums the five draw-0 source dispositions in
 @tbl-first-estimates-birth-source; the candidate row sums the
 draw-0 `modeled_award` and `opening_backfill` origin counts; the
@@ -2348,16 +2348,15 @@ no included claimant in the baseline draw.
 | `unresolved` | 2,315 | 20.85M | 0 | 0.00M |
 | **total** | **30,482** | **387.10M** | **1,514** | **35.34M** |
 
-: **Labels on every number: frame-relative; pre-alignment;
-labor-income proxy.** Draw-0 unweighted and frame-weighted counts;
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Draw-0 unweighted and frame-weighted counts;
 weighted counts are in millions. The five source keys are frozen and
 reconcile to the report population. Source:
 `counts.per_draw[0].birth_source__*` and
 `counts.per_draw[0].included_birth_source__*` in the committed report
 artifact. {#tbl-first-estimates-birth-source}
 
-Birth timing is the largest quantified sensitivity, and its frozen
-row travels with every publication of these benefit numbers
+Birth timing is the largest quantified sensitivity
 (@tbl-first-estimates-birth-timing). Of the 3,083 baseline candidates,
 2,892 (93.8 percent) carry age-derived birth years — 2,806 from
 period-minus-age inference and 86 from projection-seed age — as do
@@ -2373,8 +2372,8 @@ chronology movers are modeled awards.
 | personwise adversarial minimum | \$2,893.5B | $\approx$−\$408.2B | — | — |
 | personwise adversarial maximum | \$3,366.9B | $\approx$+\$65.2B | — | — |
 
-: **Labels on every number: frame-relative; pre-alignment;
-labor-income proxy.** Draw-0 values from the frozen amendment-2
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Draw-0 values from the frozen amendment-2
 disclosure; the baseline weighted included count is 35.34 million.
 The coherent ±1 rows shift every age-derived birth year together. The
 personwise rows select each person's smaller or larger complete-ledger
@@ -2423,7 +2422,7 @@ income as OASDI-covered earnings, claim administrative
 benefit-payment dollars, or create a gate, floor, threshold, or
 verdict. The genuine `FORWARD` production object — redrawn transport
 state, endogenous widowhood, and synthetic disability support —
-remains unbuilt. The design names, without presuming, nine successors:
+remains unbuilt. The design names nine successors, none presumed:
 the annual SSA/Trustees level-anchor extraction; the
 covered-earnings correction; the W1 population bridge; the
 spouse/survivor entitlement adapter; behavioral claiming; the
