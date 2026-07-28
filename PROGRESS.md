@@ -5,10 +5,9 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: closing the final adversarial review findings across the
-  launcher, publication authority, and coordinator, followed by a clean
-  re-review, tier/full-suite verification, push, and per-finding output
-  report.
+- Active work: implementation, regression probes, independent clean review,
+  and the complete local verification matrix are finished; only the required
+  push and per-finding output report remain.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -336,8 +335,20 @@
   all 32 launcher tests passing. Together with the earlier independent
   approvals for F1, F4a, and F5, every referee finding now has an independent
   clean disposition.
+- Final repository verification is clean:
+  - Black checked every Python file;
+  - Ruff and `git diff --check` passed;
+  - full collection found exactly 3,925 tests and enforced the committed tier
+    manifest;
+  - unit: 919 passed, 5 skipped;
+  - artifact: 1,478 passed, 40 skipped;
+  - integration-PSID: 768 passed, 36 skipped;
+  - legacy reproduction: 520 passed;
+  - PolicyEngine oracle: 150 passed, 9 skipped; and
+  - unfiltered full suite: 3,835 passed, 90 skipped. Its 114 warnings are the
+    existing logistic-convergence and sandbox CPU-detection warnings.
 
 ## Next
 
-- Run Black, Ruff, each tier, and the full test suite.
-- Record per-finding dispositions, final verification, and push status.
+- Push `HEAD` explicitly to `origin/claude/context-report-impl`.
+- Record the push status and issue the per-finding output report.
