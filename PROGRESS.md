@@ -5,8 +5,8 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: finding 2, replacing structural retry classification with
-  authenticated, attempt-bound provenance and a persisted no-yield proof.
+- Active work: finding 3, making every valid-registration pre-import
+  preparation refusal publish the mandatory append-only typed incident.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -59,11 +59,28 @@
   regressions.
 - Fixture publication is issuance-bound to the exact temporary rehearsal root;
   alternate checkouts and mutation of the bundle's root are rejected.
-- Focused report/publication/coordinator/rehearsal suite: 122 passed.
-- Black, Ruff, and `git diff --check` pass for the finding-1 change set.
+- Finding 2 implemented:
+  - the initial attempt now reserves a unique retry-authority inode, commits a
+    coordinator-only random nonce in its durable claim, and retains the nonce
+    only in an opaque live token;
+  - only an eligible external preparation/compute failure with the internal
+    no-yield predicate can reveal that nonce, after the coordinator publishes,
+    reopens, canonical-checks, schema-validates, and hashes its own incident;
+  - retry adjudication authenticates the unchanged configuration, original
+    attempt bytes and inode, reserved authority inode, nonce commitment,
+    persisted literal no-yield predicate, and exact incident path/index/bytes;
+  - the retry branch reuses the pre-existing attempt, returns an
+    unconstructible live authorization, and consumes it in an authority-bound
+    O_EXCL retry claim before any input operation;
+  - hard crashes, absent/partial/noncanonical or inode-replaced authority,
+    mutations of every authority field, attempt/incident mutation, raw
+    integers/paths, and forged token objects all fail closed without creating
+    a retry claim.
+- Focused report/publication/coordinator/rehearsal suite: 141 passed.
+- Black, Ruff, and `git diff --check` pass through finding 2.
 
 ## Next
 
-- Implement findings 2–5 in separate coherent commits with dispositions.
+- Implement findings 3–5 in separate coherent commits with dispositions.
 - Run Black, Ruff, tier tests, and the full test suites.
 - Record per-finding dispositions, final verification, and push status.

@@ -283,6 +283,17 @@ def _run(
     )
 
 
+def _publish_external_incident(root: Path) -> Path:
+    return publication._write_anchor_context_incident_for_test(
+        repository_root=root,
+        phase="compute",
+        reason="external_fixture_storage_unavailable",
+        reason_detail="Fixture storage unavailable before output.",
+        configuration_echo=_configuration(root),
+        production_only=False,
+    )
+
+
 def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
     tmp_path,
 ):
@@ -318,10 +329,35 @@ def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
     assert Path(f"{result.path}.env.json").is_file()
     assert captured["artifact_kwargs"]["configuration_echo"] == configuration
     attempt_claim = root / "runs/anchor_context_report_attempt.claim"
-    assert json.loads(attempt_claim.read_bytes()) == {
-        "schema_version": "anchor_context_report_attempt.v1",
-        "registration_reference": REGISTRATION_REFERENCE,
+    claim = json.loads(attempt_claim.read_bytes())
+    assert set(claim) == {
+        "schema_version",
+        "registration_reference",
+        "configuration_sha256",
+        "next_incident_index",
+        "authority_path",
+        "authority_device",
+        "authority_inode",
+        "authority_nonce_sha256",
     }
+    assert claim["schema_version"] == "anchor_context_report_attempt.v2"
+    assert claim["registration_reference"] == REGISTRATION_REFERENCE
+    assert (
+        claim["configuration_sha256"]
+        == hashlib.sha256(registered_bytes).hexdigest()
+    )
+    assert claim["next_incident_index"] == 1
+    assert claim["authority_path"] == (
+        "runs/anchor_context_report_retry_authority.claim"
+    )
+    authority = root / claim["authority_path"]
+    metadata = authority.stat()
+    assert (claim["authority_device"], claim["authority_inode"]) == (
+        metadata.st_dev,
+        metadata.st_ino,
+    )
+    assert len(claim["authority_nonce_sha256"]) == 64
+    assert authority.read_bytes() == b""
 
 
 @pytest.mark.parametrize(
@@ -356,6 +392,9 @@ def test_every_failure_phase_publishes_typed_incident_without_values(
     assert "[1, 2, 3]" not in serialized
     assert not (root / registry.PRIMARY_OUTPUT_PATH).exists()
     assert not (root / registry.SIDECAR_OUTPUT_PATH).exists()
+    assert (
+        root / "runs/anchor_context_report_retry_authority.claim"
+    ).read_bytes() == b""
 
 
 def test_input_hash_failure_aborts_before_engine(tmp_path):
@@ -602,20 +641,88 @@ def test_external_failure_is_eligible_but_coordinator_does_not_self_rescue(
         "external_fixture_storage_unavailable",
         "Fixture storage unavailable before output.",
     )
+    operations = _operations(
+        calls,
+        {},
+        failure_phase=failure_phase,
+        failure=external,
+    )
+    original_publish = operations.publish_incident
+
+    def publish_before_authority(*args, **kwargs):
+        authority_path = (
+            root / "runs/anchor_context_report_retry_authority.claim"
+        )
+        assert authority_path.is_file()
+        assert authority_path.read_bytes() == b""
+        return original_publish(*args, **kwargs)
 
     result = _run(
         root,
-        _operations(
-            calls,
-            {},
-            failure_phase=failure_phase,
-            failure=external,
+        replace(
+            operations,
+            publish_incident=publish_before_authority,
         ),
     )
 
     assert result.status == "incident"
     record = json.loads(result.path.read_bytes())
+    assert set(record) == {
+        "schema_version",
+        "incident_index",
+        "timestamp_utc",
+        "phase",
+        "reason",
+        "reason_detail",
+        "registration_reference",
+        "configuration_echo",
+        "artifact_path",
+    }
     assert publication.incident_is_retry_eligible(record)
+    attempt_path = root / "runs/anchor_context_report_attempt.claim"
+    authority_path = root / "runs/anchor_context_report_retry_authority.claim"
+    attempt_bytes = attempt_path.read_bytes()
+    authority_bytes = authority_path.read_bytes()
+    authority = json.loads(authority_bytes)
+    assert set(authority) == {
+        "schema_version",
+        "registration_reference",
+        "configuration_sha256",
+        "attempt_claim_sha256",
+        "authority_nonce",
+        "incident_index",
+        "incident_path",
+        "incident_sha256",
+        "estimate_bearing_information_yielded",
+    }
+    assert authority == {
+        "schema_version": "anchor_context_report_retry_authority.v1",
+        "registration_reference": REGISTRATION_REFERENCE,
+        "configuration_sha256": hashlib.sha256(
+            _configuration_bytes(root)
+        ).hexdigest(),
+        "attempt_claim_sha256": hashlib.sha256(attempt_bytes).hexdigest(),
+        "authority_nonce": authority["authority_nonce"],
+        "incident_index": 1,
+        "incident_path": ("runs/anchor_context_report_incident_1.json"),
+        "incident_sha256": hashlib.sha256(
+            result.path.read_bytes()
+        ).hexdigest(),
+        "estimate_bearing_information_yielded": False,
+    }
+    assert len(authority["authority_nonce"]) == 64
+    attempt = json.loads(attempt_bytes)
+    assert (
+        hashlib.sha256(
+            authority["authority_nonce"].encode("ascii")
+        ).hexdigest()
+        == attempt["authority_nonce_sha256"]
+    )
+    authority_metadata = authority_path.stat()
+    assert (
+        attempt["authority_device"],
+        attempt["authority_inode"],
+    ) == (authority_metadata.st_dev, authority_metadata.st_ino)
     assert calls == expected_calls
     assert (
         len(
@@ -624,6 +731,229 @@ def test_external_failure_is_eligible_but_coordinator_does_not_self_rescue(
         == 1
     )
     assert not (root / registry.PRIMARY_OUTPUT_PATH).exists()
+
+
+def test_forged_external_incident_cannot_retroactively_create_attempt_claim(
+    tmp_path,
+):
+    root = _repository(tmp_path)
+    forged = _publish_external_incident(root)
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert forged.is_file()
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert blocked.reason == "preparation_retry_authority_missing_or_invalid"
+    assert calls == []
+    assert not (root / "runs/anchor_context_report_attempt.claim").exists()
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
+    assert not (
+        root / "runs/anchor_context_report_retry_authority.claim"
+    ).exists()
+
+
+def test_hard_failure_then_forged_incident_cannot_claim_retry(tmp_path):
+    root = _repository(tmp_path)
+    operations = _operations([], {})
+
+    def hard_crash():
+        raise RuntimeError("simulated unrecorded hard failure")
+
+    with pytest.raises(RuntimeError, match="unrecorded hard failure"):
+        _run(root, replace(operations, after_preparation=hard_crash))
+
+    attempt_path = root / "runs/anchor_context_report_attempt.claim"
+    authority_path = root / "runs/anchor_context_report_retry_authority.claim"
+    attempt_bytes = attempt_path.read_bytes()
+    assert authority_path.read_bytes() == b""
+    _publish_external_incident(root)
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.reason == "preparation_retry_authority_missing_or_invalid"
+    assert calls == []
+    assert attempt_path.read_bytes() == attempt_bytes
+    assert authority_path.read_bytes() == b""
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "schema_version",
+        "registration_reference",
+        "configuration_sha256",
+        "attempt_claim_sha256",
+        "authority_nonce",
+        "incident_index",
+        "incident_path",
+        "incident_sha256",
+        "estimate_bearing_information_yielded",
+    ],
+)
+def test_retry_authority_rejects_every_field_mutation(tmp_path, field):
+    root = _repository(tmp_path)
+    external = coordinator.ExternalPreOutputFailure(
+        "external_fixture_storage_unavailable",
+        "Fixture storage unavailable before output.",
+    )
+    first = _run(
+        root,
+        _operations(
+            [],
+            {},
+            failure_phase="compute",
+            failure=external,
+        ),
+    )
+    assert first.status == "incident"
+    authority_path = root / "runs/anchor_context_report_retry_authority.claim"
+    authority = json.loads(authority_path.read_bytes())
+    if field == "incident_index":
+        authority[field] = 2
+    elif field == "estimate_bearing_information_yielded":
+        authority[field] = True
+    elif field == "incident_path":
+        authority[field] = "runs/anchor_context_report_incident_2.json"
+    elif field.endswith("sha256") or field == "authority_nonce":
+        authority[field] = (
+            "f" * 64 if authority[field] != "f" * 64 else "e" * 64
+        )
+    else:
+        authority[field] = f"{authority[field]}-mutated"
+    authority_path.chmod(0o644)
+    authority_path.write_bytes(publication.canonical_json_bytes(authority))
+    authority_path.chmod(0o444)
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert calls == []
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["missing", "empty", "partial", "noncanonical", "inode_replacement"],
+)
+def test_retry_authority_requires_exact_reserved_canonical_file(
+    tmp_path,
+    mutation,
+):
+    root = _repository(tmp_path)
+    external = coordinator.ExternalPreOutputFailure(
+        "external_fixture_storage_unavailable",
+        "Fixture storage unavailable before output.",
+    )
+    assert (
+        _run(
+            root,
+            _operations(
+                [],
+                {},
+                failure_phase="compute",
+                failure=external,
+            ),
+        ).status
+        == "incident"
+    )
+    authority_path = root / "runs/anchor_context_report_retry_authority.claim"
+    original = authority_path.read_bytes()
+    authority_path.chmod(0o644)
+    if mutation == "missing":
+        authority_path.unlink()
+    elif mutation == "empty":
+        authority_path.write_bytes(b"")
+    elif mutation == "partial":
+        authority_path.write_bytes(original[: max(1, len(original) // 2)])
+    elif mutation == "noncanonical":
+        authority_path.write_bytes(b" " + original)
+    else:
+        displaced = authority_path.with_suffix(".displaced")
+        authority_path.rename(displaced)
+        authority_path.write_bytes(original)
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert calls == []
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
+
+
+@pytest.mark.parametrize("target", ["attempt", "incident"])
+def test_retry_authority_rejects_bound_record_mutation(tmp_path, target):
+    root = _repository(tmp_path)
+    external = coordinator.ExternalPreOutputFailure(
+        "external_fixture_storage_unavailable",
+        "Fixture storage unavailable before output.",
+    )
+    first = _run(
+        root,
+        _operations(
+            [],
+            {},
+            failure_phase="compute",
+            failure=external,
+        ),
+    )
+    assert first.status == "incident"
+    if target == "attempt":
+        path = root / "runs/anchor_context_report_attempt.claim"
+        value = json.loads(path.read_bytes())
+        value["authority_nonce_sha256"] = "0" * 64
+    else:
+        path = first.path
+        value = json.loads(path.read_bytes())
+        value["reason_detail"] += " Changed after authority publication."
+    path.chmod(0o644)
+    path.write_bytes(publication.canonical_json_bytes(value))
+    path.chmod(0o444)
+    calls: list[str] = []
+
+    blocked = _run(root, _operations(calls, {}))
+
+    assert blocked.status == "incident"
+    assert blocked.phase == "preparation"
+    assert calls == []
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
+
+
+def test_retry_claim_requires_live_opaque_authorization(tmp_path):
+    root = _repository(tmp_path)
+    external = coordinator.ExternalPreOutputFailure(
+        "external_fixture_storage_unavailable",
+        "Fixture storage unavailable before output.",
+    )
+    assert (
+        _run(
+            root,
+            _operations(
+                [],
+                {},
+                failure_phase="compute",
+                failure=external,
+            ),
+        ).status
+        == "incident"
+    )
+    with pytest.raises(TypeError, match="minted only by the coordinator"):
+        coordinator._RetryAuthorization()
+    forged = object.__new__(coordinator._RetryAuthorization)
+    for candidate in (1, Path("runs/incident.json"), forged):
+        with pytest.raises(
+            TypeError,
+            match="live authenticated authorization",
+        ):
+            coordinator._create_retry_claim(root, candidate)
+    assert not (root / "runs/anchor_context_report_retry.claim").exists()
 
 
 def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
@@ -643,6 +973,10 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
         ),
         configuration_bytes=registered_bytes,
     )
+    attempt_path = root / "runs/anchor_context_report_attempt.claim"
+    authority_path = root / "runs/anchor_context_report_retry_authority.claim"
+    attempt_bytes = attempt_path.read_bytes()
+    authority_bytes = authority_path.read_bytes()
 
     captured: dict[str, Any] = {}
     retry = _run(
@@ -657,6 +991,17 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
         "runs/anchor_context_report_incident_1.json"
     ]
     assert (root / "runs/anchor_context_report_retry.claim").is_file()
+    retry_claim = json.loads(
+        (root / "runs/anchor_context_report_retry.claim").read_bytes()
+    )
+    assert retry_claim == {
+        "schema_version": "anchor_context_report_retry.v2",
+        "registration_reference": REGISTRATION_REFERENCE,
+        "retry_after_incident": 1,
+        "retry_authority_sha256": hashlib.sha256(authority_bytes).hexdigest(),
+    }
+    assert attempt_path.read_bytes() == attempt_bytes
+    assert authority_path.read_bytes() == authority_bytes
     assert (
         publication.canonical_json_bytes(
             captured["artifact_kwargs"]["configuration_echo"]
@@ -695,11 +1040,18 @@ def test_one_later_invocation_may_retry_only_with_unchanged_bytes(tmp_path):
 
 def test_durable_attempt_claim_blocks_reentry_after_process_death(tmp_path):
     root = _repository(tmp_path)
-    coordinator._create_attempt_claim(
-        root,
-        REGISTRATION_REFERENCE,
-        allow_matching_retry_claim=False,
-    )
+    operations = _operations([], {})
+
+    def hard_crash():
+        raise RuntimeError("simulated hard process death")
+
+    with pytest.raises(RuntimeError, match="hard process death"):
+        _run(root, replace(operations, after_preparation=hard_crash))
+
+    assert (root / "runs/anchor_context_report_attempt.claim").is_file()
+    assert (
+        root / "runs/anchor_context_report_retry_authority.claim"
+    ).read_bytes() == b""
     calls: list[str] = []
 
     blocked = _run(root, _operations(calls, {}))
@@ -732,11 +1084,16 @@ def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
         ).status
         == "incident"
     )
-    coordinator._create_retry_claim(
-        root,
-        REGISTRATION_REFERENCE,
-        1,
-    )
+    operations = _operations([], {})
+
+    def hard_crash():
+        raise RuntimeError("simulated retry process death")
+
+    with pytest.raises(RuntimeError, match="retry process death"):
+        _run(root, replace(operations, after_preparation=hard_crash))
+
+    retry_claim = root / "runs/anchor_context_report_retry.claim"
+    retry_claim_bytes = retry_claim.read_bytes()
     calls: list[str] = []
 
     blocked = _run(root, _operations(calls, {}))
@@ -747,6 +1104,7 @@ def test_durable_retry_claim_blocks_a_second_retry_after_process_death(
         "preparation_fresh_registration_required_retry_claim"
     )
     assert calls == []
+    assert retry_claim.read_bytes() == retry_claim_bytes
     incidents = sorted(
         (root / "runs").glob("anchor_context_report_incident_*.json")
     )
@@ -778,11 +1136,7 @@ def test_extracted_closure_mint_rejects_caller_created_prerequisites(
         registered_configuration_bytes=_configuration_bytes(root),
         production_only=False,
     )
-    claim = coordinator._create_attempt_claim(
-        root,
-        REGISTRATION_REFERENCE,
-        allow_matching_retry_claim=False,
-    )
+    claim = root / "runs/anchor_context_report_attempt.claim"
     record = coordinator._PrelaunchRecord(
         check_names=coordinator.PRELAUNCH_CHECK_NAMES,
         configuration_sha256=hashlib.sha256(
@@ -800,7 +1154,14 @@ def test_extracted_closure_mint_rejects_caller_created_prerequisites(
     extracted_mint = closure["mint"].cell_contents
 
     with pytest.raises(TypeError, match="sealed runner stack"):
-        extracted_mint(registration, record, claim)
+        extracted_mint(
+            registration,
+            record,
+            claim,
+            None,
+            None,
+            None,
+        )
 
 
 def test_fixture_runner_authority_is_rejected_by_every_production_gate(

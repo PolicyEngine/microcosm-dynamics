@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
+import secrets
 import stat
 import subprocess
 import sys
@@ -53,9 +55,15 @@ _REGISTRATION_DIRECTORY = Path("docs/registrations")
 _IGNORED_EXECUTABLE_SUFFIXES = (b".pyc", b".pyo", b".so")
 _SAFE_REASON = first_coordinator._SAFE_EXTERNAL_REASON
 _ATTEMPT_CLAIM_PATH = Path("runs/anchor_context_report_attempt.claim")
-_ATTEMPT_CLAIM_SCHEMA = "anchor_context_report_attempt.v1"
+_ATTEMPT_CLAIM_SCHEMA = "anchor_context_report_attempt.v2"
 _RETRY_CLAIM_PATH = Path("runs/anchor_context_report_retry.claim")
-_RETRY_CLAIM_SCHEMA = "anchor_context_report_retry.v1"
+_RETRY_CLAIM_SCHEMA = "anchor_context_report_retry.v2"
+_RETRY_AUTHORITY_PATH = Path(
+    "runs/anchor_context_report_retry_authority.claim"
+)
+_RETRY_AUTHORITY_SCHEMA = "anchor_context_report_retry_authority.v1"
+_CLAIM_MAX_BYTES = first_coordinator._ATTEMPT_CLAIM_MAX_BYTES
+_INCIDENT_MAX_BYTES = 4 * 1024 * 1024
 _REGISTRATION_MAX_BYTES = 1024 * 1024
 
 
@@ -73,6 +81,7 @@ class _CeremonyCapability:
     registration: first_publication._RegisteredConfigurationToken
     prelaunch_record: _PrelaunchRecord
     attempt_claim: Path
+    retry_claim: Path | None
 
     def __init__(self, *_args: Any, **_kwargs: Any):
         raise TypeError(
@@ -80,36 +89,44 @@ class _CeremonyCapability:
         )
 
 
-def _claim_payload(
-    *,
-    schema_version: str,
-    registration_reference: str,
-    retry_after_incident: int | None = None,
-) -> bytes:
-    first_publication._validate_registration_reference_byte_bound(
-        registration_reference
+@dataclass(frozen=True, init=False)
+class _InitialAttemptAuthority:
+    """Live authority retaining the pre-incident nonce and reserved inode."""
+
+    attempt_claim: Path
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError(
+            "initial-attempt authority is minted only by the coordinator"
+        )
+
+
+@dataclass(frozen=True, init=False)
+class _RetryAuthorization:
+    """Opaque authorization minted only from authenticated durable evidence."""
+
+    incident_index: int
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError(
+            "retry authorization is minted only by the coordinator"
+        )
+
+
+def _is_sha256(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
     )
-    value: dict[str, Any] = {
-        "schema_version": schema_version,
-        "registration_reference": registration_reference,
-    }
-    if retry_after_incident is not None:
-        if (
-            isinstance(retry_after_incident, bool)
-            or not isinstance(retry_after_incident, int)
-            or retry_after_incident < 1
-        ):
-            raise TypeError("retry_after_incident must be a positive integer")
-        value["retry_after_incident"] = retry_after_incident
-    return anchor_context_publication.canonical_json_bytes(value)
 
 
-def _read_claim(
+def _read_canonical_mapping(
     path: Path,
     *,
-    schema_version: str,
-    retry: bool,
-) -> Mapping[str, Any] | None:
+    maximum_bytes: int,
+) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
+    """Read one singly-linked canonical mapping through a pinned descriptor."""
     no_follow = getattr(os, "O_NOFOLLOW", None)
     nonblocking = getattr(os, "O_NONBLOCK", None)
     if no_follow is None or nonblocking is None:
@@ -120,19 +137,27 @@ def _read_claim(
             metadata = os.fstat(descriptor)
             if (
                 not stat.S_ISREG(metadata.st_mode)
-                or metadata.st_size
-                > first_coordinator._ATTEMPT_CLAIM_MAX_BYTES
+                or metadata.st_nlink != 1
+                or metadata.st_size > maximum_bytes
             ):
                 return None
-            payload = os.read(
-                descriptor,
-                first_coordinator._ATTEMPT_CLAIM_MAX_BYTES + 1,
-            )
-            if len(
-                payload
-            ) > first_coordinator._ATTEMPT_CLAIM_MAX_BYTES or os.read(
-                descriptor, 1
-            ):
+            chunks = bytearray()
+            while len(chunks) <= maximum_bytes:
+                chunk = os.read(
+                    descriptor,
+                    maximum_bytes + 1 - len(chunks),
+                )
+                if not chunk:
+                    break
+                chunks.extend(chunk)
+            if len(chunks) > maximum_bytes:
+                return None
+            payload = bytes(chunks)
+            after = os.fstat(descriptor)
+            if (after.st_dev, after.st_ino) != (
+                metadata.st_dev,
+                metadata.st_ino,
+            ) or after.st_size != metadata.st_size:
                 return None
         finally:
             os.close(descriptor)
@@ -147,31 +172,222 @@ def _read_claim(
         RecursionError,
     ):
         return None
-    expected_keys = {
-        "schema_version",
-        "registration_reference",
-        *(("retry_after_incident",) if retry else ()),
-    }
     if (
         not isinstance(value, Mapping)
         or canonical != payload
-        or set(value) != expected_keys
-        or value.get("schema_version") != schema_version
-        or not isinstance(value.get("registration_reference"), str)
+        or len(payload) > maximum_bytes
     ):
         return None
+    return value, payload, (metadata.st_dev, metadata.st_ino)
+
+
+def _attempt_claim_payload(
+    *,
+    registration_reference: str,
+    configuration_sha256: str,
+    next_incident_index: int,
+    authority_file_id: tuple[int, int],
+    authority_nonce_sha256: str,
+) -> bytes:
+    first_publication._validate_registration_reference_byte_bound(
+        registration_reference
+    )
+    if not _is_sha256(configuration_sha256):
+        raise TypeError("configuration_sha256 must be lowercase SHA-256")
+    if (
+        isinstance(next_incident_index, bool)
+        or not isinstance(next_incident_index, int)
+        or next_incident_index < 1
+    ):
+        raise TypeError("next_incident_index must be a positive integer")
+    if not _is_sha256(authority_nonce_sha256):
+        raise TypeError("authority nonce commitment must be lowercase SHA-256")
+    authority_device, authority_inode = authority_file_id
+    if (
+        isinstance(authority_device, bool)
+        or not isinstance(authority_device, int)
+        or authority_device < 0
+        or isinstance(authority_inode, bool)
+        or not isinstance(authority_inode, int)
+        or authority_inode < 1
+    ):
+        raise TypeError(
+            "authority file identity must contain positive integers"
+        )
+    return anchor_context_publication.canonical_json_bytes(
+        {
+            "schema_version": _ATTEMPT_CLAIM_SCHEMA,
+            "registration_reference": registration_reference,
+            "configuration_sha256": configuration_sha256,
+            "next_incident_index": next_incident_index,
+            "authority_path": _RETRY_AUTHORITY_PATH.as_posix(),
+            "authority_device": authority_device,
+            "authority_inode": authority_inode,
+            "authority_nonce_sha256": authority_nonce_sha256,
+        }
+    )
+
+
+def _read_attempt_claim(
+    path: Path,
+) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
+    loaded = _read_canonical_mapping(path, maximum_bytes=_CLAIM_MAX_BYTES)
+    if loaded is None:
+        return None
+    value, payload, file_id = loaded
+    expected_keys = {
+        "schema_version",
+        "registration_reference",
+        "configuration_sha256",
+        "next_incident_index",
+        "authority_path",
+        "authority_device",
+        "authority_inode",
+        "authority_nonce_sha256",
+    }
+    next_index = value.get("next_incident_index")
+    authority_device = value.get("authority_device")
+    authority_inode = value.get("authority_inode")
+    if (
+        set(value) != expected_keys
+        or value.get("schema_version") != _ATTEMPT_CLAIM_SCHEMA
+        or not isinstance(value.get("registration_reference"), str)
+        or not _is_sha256(value.get("configuration_sha256"))
+        or isinstance(next_index, bool)
+        or not isinstance(next_index, int)
+        or next_index < 1
+        or value.get("authority_path") != _RETRY_AUTHORITY_PATH.as_posix()
+        or isinstance(authority_device, bool)
+        or not isinstance(authority_device, int)
+        or authority_device < 0
+        or isinstance(authority_inode, bool)
+        or not isinstance(authority_inode, int)
+        or authority_inode < 1
+        or not _is_sha256(value.get("authority_nonce_sha256"))
+    ):
+        return None
+    return value, payload, file_id
+
+
+def _retry_authority_payload(
+    *,
+    registration_reference: str,
+    configuration_sha256: str,
+    attempt_claim_sha256: str,
+    authority_nonce: str,
+    incident_index: int,
+    incident_path: str,
+    incident_sha256: str,
+) -> bytes:
+    return anchor_context_publication.canonical_json_bytes(
+        {
+            "schema_version": _RETRY_AUTHORITY_SCHEMA,
+            "registration_reference": registration_reference,
+            "configuration_sha256": configuration_sha256,
+            "attempt_claim_sha256": attempt_claim_sha256,
+            "authority_nonce": authority_nonce,
+            "incident_index": incident_index,
+            "incident_path": incident_path,
+            "incident_sha256": incident_sha256,
+            "estimate_bearing_information_yielded": False,
+        }
+    )
+
+
+def _read_retry_authority(
+    path: Path,
+) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
+    loaded = _read_canonical_mapping(path, maximum_bytes=_CLAIM_MAX_BYTES)
+    if loaded is None:
+        return None
+    value, payload, file_id = loaded
+    expected_keys = {
+        "schema_version",
+        "registration_reference",
+        "configuration_sha256",
+        "attempt_claim_sha256",
+        "authority_nonce",
+        "incident_index",
+        "incident_path",
+        "incident_sha256",
+        "estimate_bearing_information_yielded",
+    }
+    incident_index = value.get("incident_index")
+    if (
+        set(value) != expected_keys
+        or value.get("schema_version") != _RETRY_AUTHORITY_SCHEMA
+        or not isinstance(value.get("registration_reference"), str)
+        or not _is_sha256(value.get("configuration_sha256"))
+        or not _is_sha256(value.get("attempt_claim_sha256"))
+        or not _is_sha256(value.get("authority_nonce"))
+        or isinstance(incident_index, bool)
+        or not isinstance(incident_index, int)
+        or incident_index < 1
+        or value.get("incident_path")
+        != f"runs/anchor_context_report_incident_{incident_index}.json"
+        or not _is_sha256(value.get("incident_sha256"))
+        or value.get("estimate_bearing_information_yielded") is not False
+    ):
+        return None
+    return value, payload, file_id
+
+
+def _retry_claim_payload(
+    *,
+    registration_reference: str,
+    retry_after_incident: int,
+    retry_authority_sha256: str,
+) -> bytes:
+    first_publication._validate_registration_reference_byte_bound(
+        registration_reference
+    )
+    if (
+        isinstance(retry_after_incident, bool)
+        or not isinstance(retry_after_incident, int)
+        or retry_after_incident < 1
+    ):
+        raise TypeError("retry_after_incident must be a positive integer")
+    if not _is_sha256(retry_authority_sha256):
+        raise TypeError("retry authority digest must be lowercase SHA-256")
+    return anchor_context_publication.canonical_json_bytes(
+        {
+            "schema_version": _RETRY_CLAIM_SCHEMA,
+            "registration_reference": registration_reference,
+            "retry_after_incident": retry_after_incident,
+            "retry_authority_sha256": retry_authority_sha256,
+        }
+    )
+
+
+def _read_retry_claim(
+    path: Path,
+) -> tuple[Mapping[str, Any], bytes, tuple[int, int]] | None:
+    loaded = _read_canonical_mapping(path, maximum_bytes=_CLAIM_MAX_BYTES)
+    if loaded is None:
+        return None
+    value, payload, file_id = loaded
     retry_index = value.get("retry_after_incident")
-    if retry and (
-        isinstance(retry_index, bool)
+    if (
+        set(value)
+        != {
+            "schema_version",
+            "registration_reference",
+            "retry_after_incident",
+            "retry_authority_sha256",
+        }
+        or value.get("schema_version") != _RETRY_CLAIM_SCHEMA
+        or not isinstance(value.get("registration_reference"), str)
+        or isinstance(retry_index, bool)
         or not isinstance(retry_index, int)
         or retry_index < 1
+        or not _is_sha256(value.get("retry_authority_sha256"))
     ):
         return None
-    return value
+    return value, payload, file_id
 
 
 def _write_claim(path: Path, payload: bytes) -> None:
-    if len(payload) > first_coordinator._ATTEMPT_CLAIM_MAX_BYTES:
+    if len(payload) > _CLAIM_MAX_BYTES:
         raise ValueError("claim payload exceeds its read bound")
     descriptor = os.open(
         path,
@@ -195,76 +411,12 @@ def _write_claim(path: Path, payload: bytes) -> None:
         os.close(directory)
 
 
-def _create_attempt_claim(
-    repository_root: Path,
-    registration_reference: str,
-    *,
-    allow_matching_retry_claim: bool,
-) -> Path:
-    runs = first_coordinator._sealed_runs_directory(repository_root)
-    path = runs / _ATTEMPT_CLAIM_PATH.name
-    payload = _claim_payload(
-        schema_version=_ATTEMPT_CLAIM_SCHEMA,
-        registration_reference=registration_reference,
-    )
-    try:
-        _write_claim(path, payload)
-    except FileExistsError:
-        existing = _read_claim(
-            path,
-            schema_version=_ATTEMPT_CLAIM_SCHEMA,
-            retry=False,
-        )
-        if (
-            allow_matching_retry_claim
-            and existing is not None
-            and existing.get("registration_reference")
-            == registration_reference
-        ):
-            return path
-        raise _CeremonyAbort(
-            (
-                "preparation_fresh_registration_adjudication_required_"
-                "attempt_claim"
-            ),
-            (
-                "A durable anchor-context attempt claim already occupies "
-                "the canonical path; fresh-registration adjudication is "
-                "required."
-            ),
-        ) from None
-    return path
-
-
-def _create_retry_claim(
-    repository_root: Path,
-    registration_reference: str,
-    retry_after_incident: int,
-) -> Path:
-    runs = first_coordinator._sealed_runs_directory(repository_root)
-    path = runs / _RETRY_CLAIM_PATH.name
-    payload = _claim_payload(
-        schema_version=_RETRY_CLAIM_SCHEMA,
-        registration_reference=registration_reference,
-        retry_after_incident=retry_after_incident,
-    )
-    try:
-        _write_claim(path, payload)
-    except FileExistsError:
-        raise _CeremonyAbort(
-            "preparation_fresh_registration_required_retry_claim",
-            (
-                "The durable anchor-context retry claim is already "
-                "occupied; the sole retry is consumed."
-            ),
-        ) from None
-    return path
-
-
 @dataclass(frozen=True)
 class _IncidentHistory:
     paths: tuple[str, ...]
     records: tuple[Mapping[str, Any], ...]
+    payloads: tuple[bytes, ...]
+    file_ids: tuple[tuple[int, int], ...]
 
 
 def _continue_after_preparation() -> None:
@@ -284,26 +436,554 @@ class _PrelaunchRecord:
     next_incident_index: int
 
 
+@dataclass
+class _InitialAttemptState:
+    token: _InitialAttemptAuthority
+    registration: first_publication._RegisteredConfigurationToken
+    prelaunch_record: _PrelaunchRecord
+    production_only: bool
+    attempt_claim: Path
+    attempt_payload: bytes
+    attempt_file_id: tuple[int, int]
+    authority_path: Path
+    authority_file_id: tuple[int, int]
+    authority_nonce: str
+    authority_descriptor: int
+
+
+@dataclass(frozen=True)
+class _RetryAuthorizationState:
+    token: _RetryAuthorization
+    repository_root: Path
+    registration_reference: str
+    configuration_sha256: str
+    incident_index: int
+    incident_path: Path
+    incident_payload: bytes
+    incident_file_id: tuple[int, int]
+    attempt_claim: Path
+    attempt_payload: bytes
+    attempt_file_id: tuple[int, int]
+    authority_path: Path
+    authority_payload: bytes
+    authority_file_id: tuple[int, int]
+
+
+def _retry_authority_protocol():
+    """Issue only live initial/retry tokens backed by durable exact evidence."""
+    getframe = sys._getframe
+    initial_issued: dict[int, _InitialAttemptState] = {}
+    retry_issued: dict[int, _RetryAuthorizationState] = {}
+
+    def issue_initial(
+        registration: first_publication._RegisteredConfigurationToken,
+        prelaunch_record: _PrelaunchRecord,
+        production_only: bool,
+    ) -> _InitialAttemptAuthority:
+        caller = getframe(1)
+        if (
+            caller.f_code is not _run_registered_anchor_context_core.__code__
+            or caller.f_locals.get("registration") is not registration
+            or caller.f_locals.get("prelaunch_record") is not prelaunch_record
+            or caller.f_locals.get("production_only") is not production_only
+            or caller.f_locals.get("issue_initial_attempt")
+            is not issue_initial
+        ):
+            raise TypeError(
+                "initial-attempt authority can be issued only on the sealed "
+                "coordinator stack"
+            )
+        if not isinstance(
+            registration,
+            first_publication._RegisteredConfigurationToken,
+        ) or not isinstance(prelaunch_record, _PrelaunchRecord):
+            raise TypeError("initial attempt requires registration and checks")
+        root = registration._repository_root
+        runs = first_coordinator._sealed_runs_directory(root)
+        attempt_claim = runs / _ATTEMPT_CLAIM_PATH.name
+        retry_claim = runs / _RETRY_CLAIM_PATH.name
+        authority_path = runs / _RETRY_AUTHORITY_PATH.name
+        if os.path.lexists(attempt_claim):
+            raise _CeremonyAbort(
+                (
+                    "preparation_fresh_registration_adjudication_required_"
+                    "attempt_claim"
+                ),
+                (
+                    "A durable anchor-context attempt claim already occupies "
+                    "the canonical path; fresh-registration adjudication is "
+                    "required."
+                ),
+            )
+        if os.path.lexists(retry_claim):
+            raise _CeremonyAbort(
+                "preparation_fresh_registration_required_retry_claim",
+                (
+                    "The durable anchor-context retry claim is already "
+                    "occupied; the sole retry is consumed."
+                ),
+            )
+        if os.path.lexists(authority_path):
+            raise _CeremonyAbort(
+                "preparation_retry_authority_path_occupied",
+                (
+                    "The durable anchor-context retry-authority path is "
+                    "already occupied without authenticated history."
+                ),
+            )
+        try:
+            authority_descriptor = os.open(
+                authority_path,
+                os.O_WRONLY
+                | os.O_CREAT
+                | os.O_EXCL
+                | getattr(os, "O_NOFOLLOW", 0),
+                0o400,
+            )
+        except FileExistsError:
+            raise _CeremonyAbort(
+                "preparation_retry_authority_path_occupied",
+                "The durable retry-authority reservation is occupied.",
+            ) from None
+        authority_metadata = os.fstat(authority_descriptor)
+        authority_file_id = (
+            authority_metadata.st_dev,
+            authority_metadata.st_ino,
+        )
+        authority_nonce = secrets.token_hex(32)
+        attempt_payload = _attempt_claim_payload(
+            registration_reference=registration._registration_reference,
+            configuration_sha256=prelaunch_record.configuration_sha256,
+            next_incident_index=prelaunch_record.next_incident_index,
+            authority_file_id=authority_file_id,
+            authority_nonce_sha256=hashlib.sha256(
+                authority_nonce.encode("ascii")
+            ).hexdigest(),
+        )
+        try:
+            _write_claim(attempt_claim, attempt_payload)
+        except FileExistsError:
+            os.close(authority_descriptor)
+            raise _CeremonyAbort(
+                (
+                    "preparation_fresh_registration_adjudication_required_"
+                    "attempt_claim"
+                ),
+                "The durable anchor-context attempt claim became occupied.",
+            ) from None
+        attempt_metadata = os.stat(attempt_claim, follow_symlinks=False)
+        token = object.__new__(_InitialAttemptAuthority)
+        object.__setattr__(token, "attempt_claim", attempt_claim)
+        state = _InitialAttemptState(
+            token=token,
+            registration=registration,
+            prelaunch_record=prelaunch_record,
+            production_only=production_only,
+            attempt_claim=attempt_claim,
+            attempt_payload=attempt_payload,
+            attempt_file_id=(
+                attempt_metadata.st_dev,
+                attempt_metadata.st_ino,
+            ),
+            authority_path=authority_path,
+            authority_file_id=authority_file_id,
+            authority_nonce=authority_nonce,
+            authority_descriptor=authority_descriptor,
+        )
+        initial_issued[id(token)] = state
+        return token
+
+    def require_initial(
+        token: object,
+        registration: first_publication._RegisteredConfigurationToken,
+        prelaunch_record: _PrelaunchRecord,
+    ) -> Path:
+        state = initial_issued.get(id(token))
+        if (
+            state is None
+            or state.token is not token
+            or not isinstance(token, _InitialAttemptAuthority)
+            or state.registration is not registration
+            or state.prelaunch_record is not prelaunch_record
+        ):
+            raise TypeError("initial-attempt authority is not live")
+        current_claim = _read_attempt_claim(state.attempt_claim)
+        try:
+            authority_metadata = os.fstat(state.authority_descriptor)
+        except OSError as error:
+            raise TypeError(
+                "retry-authority reservation is not live"
+            ) from error
+        if (
+            current_claim is None
+            or current_claim[1] != state.attempt_payload
+            or current_claim[2] != state.attempt_file_id
+            or (
+                authority_metadata.st_dev,
+                authority_metadata.st_ino,
+            )
+            != state.authority_file_id
+            or authority_metadata.st_size != 0
+            or not stat.S_ISREG(authority_metadata.st_mode)
+            or authority_metadata.st_nlink != 1
+        ):
+            raise TypeError("initial-attempt durable state changed")
+        return state.attempt_claim
+
+    def seal(
+        token: object,
+        incident_path: Path,
+        *,
+        phase: str,
+        reason: str,
+        estimate_bearing_information_yielded: bool,
+    ) -> Path:
+        caller = getframe(1)
+        state = initial_issued.get(id(token))
+        if (
+            state is None
+            or state.token is not token
+            or not isinstance(token, _InitialAttemptAuthority)
+            or caller.f_code is not _publish_abort.__code__
+            or caller.f_locals.get("attempt_authority") is not token
+        ):
+            raise TypeError(
+                "retry authority can be sealed only by the live coordinator"
+            )
+        if (
+            phase not in {"preparation", "compute"}
+            or not reason.startswith("external_")
+            or estimate_bearing_information_yielded is not False
+        ):
+            raise TypeError("failure is not eligible for retry authority")
+        expected_relative = (
+            "runs/anchor_context_report_incident_"
+            f"{state.prelaunch_record.next_incident_index}.json"
+        )
+        expected_path = state.registration._repository_root / expected_relative
+        if Path(incident_path) != expected_path:
+            raise RuntimeError("incident writer returned a noncanonical path")
+        incident_loaded = _read_canonical_mapping(
+            expected_path,
+            maximum_bytes=_INCIDENT_MAX_BYTES,
+        )
+        if incident_loaded is None:
+            raise RuntimeError("published incident is not canonical on disk")
+        incident, incident_payload, _incident_file_id = incident_loaded
+        configuration = first_publication._configuration_echo(
+            state.registration
+        )
+        anchor_context_publication._validate_anchor_context_incident(
+            incident,
+            path=expected_path,
+            expected_configuration_echo=configuration,
+            repository_root=state.registration._repository_root,
+            production_only=state.production_only,
+        )
+        if (
+            incident.get("incident_index")
+            != state.prelaunch_record.next_incident_index
+            or incident.get("phase") != phase
+            or incident.get("reason") != reason
+            or incident.get("configuration_echo") != configuration
+            or not anchor_context_publication.incident_is_retry_eligible(
+                incident
+            )
+        ):
+            raise RuntimeError(
+                "published incident does not authenticate the caught failure"
+            )
+        current_claim = _read_attempt_claim(state.attempt_claim)
+        authority_metadata = os.fstat(state.authority_descriptor)
+        if (
+            current_claim is None
+            or current_claim[1] != state.attempt_payload
+            or current_claim[2] != state.attempt_file_id
+            or (
+                authority_metadata.st_dev,
+                authority_metadata.st_ino,
+            )
+            != state.authority_file_id
+            or authority_metadata.st_size != 0
+        ):
+            raise RuntimeError("attempt or retry-authority state changed")
+        authority_payload = _retry_authority_payload(
+            registration_reference=state.registration._registration_reference,
+            configuration_sha256=state.prelaunch_record.configuration_sha256,
+            attempt_claim_sha256=hashlib.sha256(
+                state.attempt_payload
+            ).hexdigest(),
+            authority_nonce=state.authority_nonce,
+            incident_index=state.prelaunch_record.next_incident_index,
+            incident_path=expected_relative,
+            incident_sha256=hashlib.sha256(incident_payload).hexdigest(),
+        )
+        first_coordinator._write_attempt_claim_payload(
+            state.authority_descriptor,
+            authority_payload,
+        )
+        os.fsync(state.authority_descriptor)
+        os.fchmod(state.authority_descriptor, 0o444)
+        os.close(state.authority_descriptor)
+        state.authority_descriptor = -1
+        directory = os.open(
+            state.authority_path.parent,
+            os.O_RDONLY
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0),
+        )
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+        sealed = _read_retry_authority(state.authority_path)
+        if (
+            sealed is None
+            or sealed[1] != authority_payload
+            or sealed[2] != state.authority_file_id
+        ):
+            raise RuntimeError("retry authority did not seal durably")
+        return state.authority_path
+
+    def revoke_initial(token: object) -> None:
+        state = initial_issued.get(id(token))
+        if state is None or state.token is not token:
+            return
+        initial_issued.pop(id(token), None)
+        if state.authority_descriptor >= 0:
+            os.close(state.authority_descriptor)
+            state.authority_descriptor = -1
+
+    def authorize(
+        repository_root: Path,
+        configuration: Mapping[str, Any],
+        history: _IncidentHistory,
+    ) -> _RetryAuthorization | None:
+        """Allow fresh execution or mint the sole authenticated retry."""
+        current = []
+        expected_bytes = anchor_context_publication.canonical_json_bytes(
+            configuration
+        )
+        configuration_sha256 = hashlib.sha256(expected_bytes).hexdigest()
+        for position, record in enumerate(history.records):
+            if (
+                record["registration_reference"]
+                != configuration["registration_reference"]
+            ):
+                continue
+            record_bytes = anchor_context_publication.canonical_json_bytes(
+                record["configuration_echo"]
+            )
+            if record_bytes != expected_bytes:
+                raise _CeremonyAbort(
+                    (
+                        "preparation_fresh_registration_required_"
+                        "configuration_drift"
+                    ),
+                    "This registration reference already has different bytes.",
+                )
+            current.append(
+                (
+                    record,
+                    history.paths[position],
+                    history.payloads[position],
+                    history.file_ids[position],
+                )
+            )
+        if not current:
+            return None
+        if len(current) != 1:
+            raise _CeremonyAbort(
+                "preparation_fresh_registration_required_second_failure",
+                "This registration already has a second failure.",
+            )
+        incident, incident_relative, incident_payload, incident_file_id = (
+            current[0]
+        )
+        if not anchor_context_publication.incident_is_retry_eligible(incident):
+            raise _CeremonyAbort(
+                "preparation_fresh_registration_required_nonretryable_incident",
+                "The prior incident is not retry-eligible.",
+            )
+        attempt_claim = repository_root / _ATTEMPT_CLAIM_PATH
+        authority_path = repository_root / _RETRY_AUTHORITY_PATH
+        attempt_loaded = _read_attempt_claim(attempt_claim)
+        authority_loaded = _read_retry_authority(authority_path)
+        if attempt_loaded is None or authority_loaded is None:
+            raise _CeremonyAbort(
+                "preparation_retry_authority_missing_or_invalid",
+                (
+                    "The prior incident has no authenticated initial-attempt "
+                    "and no-yield provenance."
+                ),
+            )
+        attempt, attempt_payload, attempt_file_id = attempt_loaded
+        authority, authority_payload, authority_file_id = authority_loaded
+        incident_index = incident["incident_index"]
+        commitment = hashlib.sha256(
+            authority["authority_nonce"].encode("ascii")
+        ).hexdigest()
+        if (
+            attempt["registration_reference"]
+            != configuration["registration_reference"]
+            or attempt["configuration_sha256"] != configuration_sha256
+            or attempt["next_incident_index"] != incident_index
+            or attempt["authority_device"] != authority_file_id[0]
+            or attempt["authority_inode"] != authority_file_id[1]
+            or not hmac.compare_digest(
+                attempt["authority_nonce_sha256"],
+                commitment,
+            )
+            or authority["registration_reference"]
+            != configuration["registration_reference"]
+            or authority["configuration_sha256"] != configuration_sha256
+            or authority["attempt_claim_sha256"]
+            != hashlib.sha256(attempt_payload).hexdigest()
+            or authority["incident_index"] != incident_index
+            or authority["incident_path"] != incident_relative
+            or authority["incident_sha256"]
+            != hashlib.sha256(incident_payload).hexdigest()
+            or authority["estimate_bearing_information_yielded"] is not False
+        ):
+            raise _CeremonyAbort(
+                "preparation_retry_authority_mismatch",
+                (
+                    "The retry authority does not authenticate the exact "
+                    "attempt, incident, configuration, and no-yield state."
+                ),
+            )
+        token = object.__new__(_RetryAuthorization)
+        object.__setattr__(token, "incident_index", incident_index)
+        retry_issued[id(token)] = _RetryAuthorizationState(
+            token=token,
+            repository_root=repository_root,
+            registration_reference=configuration["registration_reference"],
+            configuration_sha256=configuration_sha256,
+            incident_index=incident_index,
+            incident_path=repository_root / incident_relative,
+            incident_payload=incident_payload,
+            incident_file_id=incident_file_id,
+            attempt_claim=attempt_claim,
+            attempt_payload=attempt_payload,
+            attempt_file_id=attempt_file_id,
+            authority_path=authority_path,
+            authority_payload=authority_payload,
+            authority_file_id=authority_file_id,
+        )
+        return token
+
+    def require_retry(
+        token: object,
+        repository_root: Path,
+    ) -> _RetryAuthorizationState:
+        state = retry_issued.get(id(token))
+        if (
+            state is None
+            or state.token is not token
+            or not isinstance(token, _RetryAuthorization)
+            or state.repository_root != repository_root
+        ):
+            raise TypeError("retry requires live authenticated authorization")
+        attempt = _read_attempt_claim(state.attempt_claim)
+        authority = _read_retry_authority(state.authority_path)
+        incident = _read_canonical_mapping(
+            state.incident_path,
+            maximum_bytes=_INCIDENT_MAX_BYTES,
+        )
+        if (
+            attempt is None
+            or attempt[1] != state.attempt_payload
+            or attempt[2] != state.attempt_file_id
+            or authority is None
+            or authority[1] != state.authority_payload
+            or authority[2] != state.authority_file_id
+            or incident is None
+            or incident[1] != state.incident_payload
+            or incident[2] != state.incident_file_id
+        ):
+            raise TypeError("authenticated retry evidence changed")
+        return state
+
+    def revoke_retry(token: object) -> None:
+        state = retry_issued.get(id(token))
+        if state is not None and state.token is token:
+            retry_issued.pop(id(token), None)
+
+    return (
+        issue_initial,
+        require_initial,
+        seal,
+        revoke_initial,
+        authorize,
+        require_retry,
+        revoke_retry,
+    )
+
+
+(
+    _issue_initial_attempt,
+    _require_initial_attempt,
+    _seal_retry_authority,
+    _revoke_initial_attempt,
+    _authorize_invocation,
+    _require_retry_authorization,
+    _revoke_retry_authorization,
+) = _retry_authority_protocol()
+
+
+def _create_retry_claim(
+    repository_root: Path,
+    authorization: object,
+    *,
+    _require_authorization: Callable[
+        [object, Path], _RetryAuthorizationState
+    ] = _require_retry_authorization,
+) -> Path:
+    """Durably consume the one retry only from live authenticated evidence."""
+    state = _require_authorization(authorization, repository_root)
+    path = repository_root / _RETRY_CLAIM_PATH
+    payload = _retry_claim_payload(
+        registration_reference=state.registration_reference,
+        retry_after_incident=state.incident_index,
+        retry_authority_sha256=hashlib.sha256(
+            state.authority_payload
+        ).hexdigest(),
+    )
+    try:
+        _write_claim(path, payload)
+    except FileExistsError:
+        raise _CeremonyAbort(
+            "preparation_fresh_registration_required_retry_claim",
+            (
+                "The durable anchor-context retry claim is already occupied; "
+                "the sole retry is consumed."
+            ),
+        ) from None
+    return path
+
+
 def _ceremony_capability_protocol():
     """Expose only the sealed runner and live-capability verifier."""
-    issued: dict[
-        int,
-        tuple[
-            _CeremonyCapability,
-            first_publication._RegisteredConfigurationToken,
-            _PrelaunchRecord,
-            Path,
-            bytes,
-            tuple[int, int],
-        ],
-    ] = {}
+    getframe = sys._getframe
+    issue_initial_attempt = _issue_initial_attempt
+    require_initial_attempt = _require_initial_attempt
+    seal_retry_authority = _seal_retry_authority
+    revoke_initial_attempt = _revoke_initial_attempt
+    authorize_invocation = _authorize_invocation
+    create_retry_claim = _create_retry_claim
+    require_retry_authorization = _require_retry_authorization
+    revoke_retry_authorization = _revoke_retry_authorization
+    issued: dict[int, tuple[Any, ...]] = {}
 
     def mint(
         registration: first_publication._RegisteredConfigurationToken,
         prelaunch_record: _PrelaunchRecord,
         attempt_claim: Path,
+        initial_attempt_authority: _InitialAttemptAuthority | None,
+        retry_authorization: _RetryAuthorization | None,
+        retry_claim: Path | None,
     ) -> _CeremonyCapability:
-        caller = sys._getframe(1)
+        caller = getframe(1)
         parent = caller.f_back
         if (
             caller.f_code is not _run_registered_anchor_context_core.__code__
@@ -314,6 +994,11 @@ def _ceremony_capability_protocol():
             or caller.f_locals.get("registration") is not registration
             or caller.f_locals.get("prelaunch_record") is not prelaunch_record
             or caller.f_locals.get("attempt_claim") != attempt_claim
+            or caller.f_locals.get("initial_attempt_authority")
+            is not initial_attempt_authority
+            or caller.f_locals.get("retry_authorization")
+            is not retry_authorization
+            or caller.f_locals.get("retry_claim") != retry_claim
         ):
             raise TypeError(
                 "ceremony capabilities can be minted only on the sealed "
@@ -329,25 +1014,65 @@ def _ceremony_capability_protocol():
         expected_claim = registration._repository_root / _ATTEMPT_CLAIM_PATH
         if attempt_claim != expected_claim:
             raise RuntimeError("ceremony capability claim path changed")
-        claim = _read_claim(
-            attempt_claim,
-            schema_version=_ATTEMPT_CLAIM_SCHEMA,
-            retry=False,
-        )
+        claim_loaded = _read_attempt_claim(attempt_claim)
         if (
-            claim is None
-            or claim.get("registration_reference")
+            claim_loaded is None
+            or claim_loaded[0].get("registration_reference")
             != registration._registration_reference
+            or claim_loaded[0].get("configuration_sha256")
+            != prelaunch_record.configuration_sha256
         ):
             raise RuntimeError(
                 "ceremony capability requires its canonical attempt claim"
             )
-        claim_payload = _claim_payload(
-            schema_version=_ATTEMPT_CLAIM_SCHEMA,
-            registration_reference=registration._registration_reference,
-        )
-        claim_metadata = os.stat(attempt_claim, follow_symlinks=False)
-        claim_file_id = (claim_metadata.st_dev, claim_metadata.st_ino)
+        claim_payload = claim_loaded[1]
+        claim_file_id = claim_loaded[2]
+        if (initial_attempt_authority is None) == (
+            retry_authorization is None
+        ):
+            raise TypeError(
+                "ceremony capability requires exactly one attempt authority"
+            )
+        retry_payload: bytes | None = None
+        retry_file_id: tuple[int, int] | None = None
+        if initial_attempt_authority is not None:
+            if retry_claim is not None:
+                raise TypeError("initial execution cannot have a retry claim")
+            if (
+                require_initial_attempt(
+                    initial_attempt_authority,
+                    registration,
+                    prelaunch_record,
+                )
+                != attempt_claim
+            ):
+                raise TypeError("initial attempt authority changed")
+        else:
+            retry_state = require_retry_authorization(
+                retry_authorization,
+                registration._repository_root,
+            )
+            if (
+                retry_state.attempt_claim != attempt_claim
+                or retry_claim
+                != registration._repository_root / _RETRY_CLAIM_PATH
+            ):
+                raise TypeError("retry ceremony claim identity changed")
+            retry_loaded = _read_retry_claim(retry_claim)
+            expected_retry_payload = _retry_claim_payload(
+                registration_reference=retry_state.registration_reference,
+                retry_after_incident=retry_state.incident_index,
+                retry_authority_sha256=hashlib.sha256(
+                    retry_state.authority_payload
+                ).hexdigest(),
+            )
+            if (
+                retry_loaded is None
+                or retry_loaded[1] != expected_retry_payload
+            ):
+                raise TypeError("retry claim is not authority-bound")
+            retry_payload = retry_loaded[1]
+            retry_file_id = retry_loaded[2]
         capability = object.__new__(_CeremonyCapability)
         object.__setattr__(capability, "registration", registration)
         object.__setattr__(
@@ -356,6 +1081,7 @@ def _ceremony_capability_protocol():
             prelaunch_record,
         )
         object.__setattr__(capability, "attempt_claim", attempt_claim)
+        object.__setattr__(capability, "retry_claim", retry_claim)
         issued[id(capability)] = (
             capability,
             registration,
@@ -363,6 +1089,11 @@ def _ceremony_capability_protocol():
             attempt_claim,
             claim_payload,
             claim_file_id,
+            initial_attempt_authority,
+            retry_authorization,
+            retry_claim,
+            retry_payload,
+            retry_file_id,
         )
         return capability
 
@@ -385,26 +1116,45 @@ def _ceremony_capability_protocol():
             attempt_claim,
             claim_payload,
             claim_file_id,
+            initial_attempt_authority,
+            retry_authorization,
+            retry_claim,
+            retry_payload,
+            retry_file_id,
         ) = state
-        current_claim = _read_claim(
-            attempt_claim,
-            schema_version=_ATTEMPT_CLAIM_SCHEMA,
-            retry=False,
-        )
-        try:
-            claim_metadata = os.stat(attempt_claim, follow_symlinks=False)
-        except OSError as error:
-            raise TypeError("ceremony attempt claim disappeared") from error
+        current_claim = _read_attempt_claim(attempt_claim)
         if (
             capability.registration is not registration
             or capability.prelaunch_record is not record
             or capability.attempt_claim != attempt_claim
+            or capability.retry_claim != retry_claim
             or current_claim is None
-            or anchor_context_publication.canonical_json_bytes(current_claim)
-            != claim_payload
-            or (claim_metadata.st_dev, claim_metadata.st_ino) != claim_file_id
+            or current_claim[1] != claim_payload
+            or current_claim[2] != claim_file_id
         ):
             raise TypeError("ceremony capability state changed")
+        if initial_attempt_authority is not None:
+            require_initial_attempt(
+                initial_attempt_authority,
+                registration,
+                record,
+            )
+        else:
+            require_retry_authorization(
+                retry_authorization,
+                registration._repository_root,
+            )
+            current_retry = (
+                _read_retry_claim(retry_claim)
+                if retry_claim is not None
+                else None
+            )
+            if (
+                current_retry is None
+                or current_retry[1] != retry_payload
+                or current_retry[2] != retry_file_id
+            ):
+                raise TypeError("ceremony retry claim changed")
         return registration
 
     def revoke(capability: object) -> None:
@@ -430,6 +1180,12 @@ def _ceremony_capability_protocol():
                 production_only=True,
                 mint_capability=mint,
                 revoke_capability=revoke,
+                issue_initial_attempt=issue_initial_attempt,
+                seal_retry_authority=seal_retry_authority,
+                revoke_initial_attempt=revoke_initial_attempt,
+                authorize_invocation=authorize_invocation,
+                create_retry_claim=create_retry_claim,
+                revoke_retry_authorization=revoke_retry_authorization,
             )
 
     run.__name__ = "run_registered_anchor_context"
@@ -737,20 +1493,22 @@ def _read_incident_history(
     indexed.sort()
     paths = []
     records = []
+    payloads = []
+    file_ids = []
     for index, path in indexed:
-        raw = path.read_bytes()
-        try:
-            record = json.loads(raw)
-        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        loaded = _read_canonical_mapping(
+            path,
+            maximum_bytes=_INCIDENT_MAX_BYTES,
+        )
+        if loaded is None:
             raise _CeremonyAbort(
                 "preparation_incident_history_invalid",
-                f"Incident {index} is not valid JSON.",
-            ) from error
-        if anchor_context_publication.canonical_json_bytes(record) != raw:
-            raise _CeremonyAbort(
-                "preparation_incident_history_noncanonical",
-                f"Incident {index} bytes are not canonical.",
+                (
+                    f"Incident {index} is not a canonical, singly-linked "
+                    "bounded JSON object."
+                ),
             )
+        record, raw, file_id = loaded
         configuration = (
             record.get("configuration_echo")
             if isinstance(record, Mapping)
@@ -776,7 +1534,14 @@ def _read_incident_history(
             ) from error
         paths.append(path.relative_to(repository_root).as_posix())
         records.append(record)
-    return _IncidentHistory(paths=tuple(paths), records=tuple(records))
+        payloads.append(raw)
+        file_ids.append(file_id)
+    return _IncidentHistory(
+        paths=tuple(paths),
+        records=tuple(records),
+        payloads=tuple(payloads),
+        file_ids=tuple(file_ids),
+    )
 
 
 def _assert_outputs_absent(repository_root: Path) -> None:
@@ -789,45 +1554,6 @@ def _assert_outputs_absent(repository_root: Path) -> None:
                 "preparation_fresh_registration_required_published_v1",
                 "The primary report path or sidecar is already occupied.",
             )
-
-
-def _authorize_invocation(
-    configuration: Mapping[str, Any],
-    history: _IncidentHistory,
-) -> int | None:
-    """Allow a fresh run or the sole unchanged eligible retry."""
-    current = []
-    expected_bytes = anchor_context_publication.canonical_json_bytes(
-        configuration
-    )
-    for record in history.records:
-        if (
-            record["registration_reference"]
-            != configuration["registration_reference"]
-        ):
-            continue
-        record_bytes = anchor_context_publication.canonical_json_bytes(
-            record["configuration_echo"]
-        )
-        if record_bytes != expected_bytes:
-            raise _CeremonyAbort(
-                "preparation_fresh_registration_required_configuration_drift",
-                "This registration reference already has different bytes.",
-            )
-        current.append(record)
-    if not current:
-        return None
-    if len(current) != 1:
-        raise _CeremonyAbort(
-            "preparation_fresh_registration_required_second_failure",
-            "This registration already has a second failure.",
-        )
-    if not anchor_context_publication.incident_is_retry_eligible(current[0]):
-        raise _CeremonyAbort(
-            "preparation_fresh_registration_required_nonretryable_incident",
-            "The prior incident is not retry-eligible.",
-        )
-    return current[0]["incident_index"]
 
 
 def _complete_prelaunch_checks(
@@ -915,6 +1641,8 @@ def _publish_abort(
     error: BaseException,
     estimate_bearing_information_yielded: bool,
     operations: _CoordinatorOperations,
+    attempt_authority: _InitialAttemptAuthority | None,
+    seal_retry_authority: Callable[..., Path],
 ) -> CoordinatorResult:
     reason, detail = _safe_incident_fields(
         phase,
@@ -929,6 +1657,19 @@ def _publish_abort(
         reason=reason,
         reason_detail=detail,
     )
+    if (
+        attempt_authority is not None
+        and isinstance(error, ExternalPreOutputFailure)
+        and phase in {"preparation", "compute"}
+        and estimate_bearing_information_yielded is False
+    ):
+        seal_retry_authority(
+            attempt_authority,
+            path,
+            phase=phase,
+            reason=reason,
+            estimate_bearing_information_yielded=False,
+        )
     return CoordinatorResult(
         status="incident",
         path=path,
@@ -950,12 +1691,31 @@ def _run_registered_anchor_context_core(
                 first_publication._RegisteredConfigurationToken,
                 _PrelaunchRecord,
                 Path,
+                _InitialAttemptAuthority | None,
+                _RetryAuthorization | None,
+                Path | None,
             ],
             _CeremonyCapability,
         ]
         | None
     ),
     revoke_capability: Callable[[object], None] | None,
+    issue_initial_attempt: Callable[
+        [
+            first_publication._RegisteredConfigurationToken,
+            _PrelaunchRecord,
+            bool,
+        ],
+        _InitialAttemptAuthority,
+    ],
+    seal_retry_authority: Callable[..., Path],
+    revoke_initial_attempt: Callable[[object], None],
+    authorize_invocation: Callable[
+        [Path, Mapping[str, Any], _IncidentHistory],
+        _RetryAuthorization | None,
+    ],
+    create_retry_claim: Callable[[Path, object], Path],
+    revoke_retry_authorization: Callable[[object], None],
 ) -> CoordinatorResult:
     """Shared ceremony state machine; only the sealed closure can mint."""
     if production_only != (mint_capability is not None):
@@ -973,16 +1733,25 @@ def _run_registered_anchor_context_core(
         anchor_context_publication._AnchorContextPrecomputeToken | None
     ) = None
     ceremony_capability: _CeremonyCapability | None = None
+    initial_attempt_authority: _InitialAttemptAuthority | None = None
+    retry_authorization: _RetryAuthorization | None = None
+    retry_claim: Path | None = None
     try:
         try:
             history = _read_incident_history(
                 root,
                 production_only=production_only,
             )
-            retry_after_incident = _authorize_invocation(
+            retry_authorization = authorize_invocation(
+                root,
                 configuration,
                 history,
             )
+            if not production_only:
+                anchor_context_publication._assert_fixture_identities(
+                    configuration["first_estimates_input"],
+                    configuration["anchor_input"],
+                )
             prelaunch_record = _complete_prelaunch_checks(
                 repository_root=root,
                 configuration=configuration,
@@ -992,23 +1761,25 @@ def _run_registered_anchor_context_core(
             )
             if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
                 raise AssertionError("prelaunch check record changed")
-            attempt_claim = _create_attempt_claim(
-                root,
-                configuration["registration_reference"],
-                allow_matching_retry_claim=retry_after_incident is not None,
-            )
-            if retry_after_incident is not None:
-                _create_retry_claim(
-                    root,
-                    configuration["registration_reference"],
-                    retry_after_incident,
+            if retry_authorization is None:
+                initial_attempt_authority = issue_initial_attempt(
+                    registration,
+                    prelaunch_record,
+                    production_only,
                 )
+                attempt_claim = initial_attempt_authority.attempt_claim
+            else:
+                attempt_claim = root / _ATTEMPT_CLAIM_PATH
+                retry_claim = create_retry_claim(root, retry_authorization)
             execution_authority: object = registration
             if mint_capability is not None:
                 ceremony_capability = mint_capability(
                     registration,
                     prelaunch_record,
                     attempt_claim,
+                    initial_attempt_authority,
+                    retry_authorization,
+                    retry_claim,
                 )
                 execution_authority = ceremony_capability
             sidecar_payload, reported_sidecar_hash = (
@@ -1044,6 +1815,8 @@ def _run_registered_anchor_context_core(
                 error=error,
                 estimate_bearing_information_yielded=False,
                 operations=operations,
+                attempt_authority=initial_attempt_authority,
+                seal_retry_authority=seal_retry_authority,
             )
 
         operations.after_preparation()
@@ -1059,6 +1832,8 @@ def _run_registered_anchor_context_core(
                 error=error,
                 estimate_bearing_information_yielded=False,
                 operations=operations,
+                attempt_authority=initial_attempt_authority,
+                seal_retry_authority=seal_retry_authority,
             )
 
         estimate_bearing_information_yielded = True
@@ -1086,6 +1861,8 @@ def _run_registered_anchor_context_core(
                     estimate_bearing_information_yielded
                 ),
                 operations=operations,
+                attempt_authority=initial_attempt_authority,
+                seal_retry_authority=seal_retry_authority,
             )
 
         try:
@@ -1103,6 +1880,8 @@ def _run_registered_anchor_context_core(
                 error=error,
                 estimate_bearing_information_yielded=True,
                 operations=operations,
+                attempt_authority=initial_attempt_authority,
+                seal_retry_authority=seal_retry_authority,
             )
         return CoordinatorResult(
             status="published",
@@ -1113,6 +1892,10 @@ def _run_registered_anchor_context_core(
     finally:
         if ceremony_capability is not None and revoke_capability is not None:
             revoke_capability(ceremony_capability)
+        if initial_attempt_authority is not None:
+            revoke_initial_attempt(initial_attempt_authority)
+        if retry_authorization is not None:
+            revoke_retry_authorization(retry_authorization)
 
 
 def _run_registered_anchor_context_for_test(
@@ -1131,6 +1914,12 @@ def _run_registered_anchor_context_for_test(
         production_only=False,
         mint_capability=None,
         revoke_capability=None,
+        issue_initial_attempt=_issue_initial_attempt,
+        seal_retry_authority=_seal_retry_authority,
+        revoke_initial_attempt=_revoke_initial_attempt,
+        authorize_invocation=_authorize_invocation,
+        create_retry_claim=_create_retry_claim,
+        revoke_retry_authorization=_revoke_retry_authorization,
     )
 
 

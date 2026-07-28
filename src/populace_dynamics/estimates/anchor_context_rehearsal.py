@@ -54,6 +54,7 @@ _PRIVATE_CONTRACT_BYTES = b"fixture_only: true\n"
 _PRIVATE_GITIGNORE_BYTES = (
     b"runs/anchor_context_report_attempt.claim\n"
     b"runs/anchor_context_report_retry.claim\n"
+    b"runs/anchor_context_report_retry_authority.claim\n"
     b"runs/anchor_context_report_incident_*.json\n"
 )
 _SUCCESS_REFERENCE = "anchor-context-fixture-rehearsal-success"
