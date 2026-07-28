@@ -2,7 +2,8 @@
 
 ## State
 
-The code-tree identity guard is implemented; real-git regressions are next.
+Implementation and real-git regressions are complete; repository-wide
+verification is next.
 
 ## Done
 
@@ -17,7 +18,13 @@ The code-tree identity guard is implemented; real-git regressions are next.
   prelaunch and immediately before publication.
 - Replaced exact-`HEAD` identity with a fail-closed existence and ancestry
   check plus exact `src/` and `scripts/` tree-hash comparisons.
+- Added real temporary-Git regressions for a records-only descendant, a
+  committed `src/` change, and a nonancestor with matching code trees.
+- Added fixture-only code roots to the rehearsal's private temporary
+  repository and advanced the artifact-tier manifest by three tests.
+- Targeted results: coordinator `86 passed`; rehearsal `23 passed`; tier
+  policy `1 passed, 3927 deselected`.
 
 ## Next
 
-- Add real-git regression fixtures and run the required checks.
+- Run Black, Ruff, all tier collection smokes, and the full estimates suite.
