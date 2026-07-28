@@ -460,6 +460,11 @@ def test_fixture_hash_loader_and_echo_use_only_fixture_identities():
         b'{"value":-Infinity}\n',
         b'{"value":NaN}\n',
         b'{"value":1e999}\n',
+        b'{"value":1e-999}\n',
+        b'{"value":9007199254740993.0}\n',
+        '{"value":1}\n'.encode("utf-16"),
+        b'\xef\xbb\xbf{"value":1}\n',
+        b'{"value":"\xed\xb2\x80"}\n',
     ],
     ids=[
         "duplicate-key",
@@ -467,9 +472,14 @@ def test_fixture_hash_loader_and_echo_use_only_fixture_identities():
         "negative-infinity-literal",
         "nan-literal",
         "overflowing-float",
+        "underflowing-float",
+        "precision-losing-float",
+        "utf-16",
+        "utf-8-bom",
+        "wtf-8-surrogate",
     ],
 )
-def test_input_loader_refuses_non_unique_json_documents(
+def test_input_loader_refuses_ambiguous_json_documents(
     tmp_path: Path,
     raw: bytes,
 ):

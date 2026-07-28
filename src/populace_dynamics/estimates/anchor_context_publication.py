@@ -8,6 +8,7 @@ hash-gate, and typed incident contracts without performing a production run.
 from __future__ import annotations
 
 import copy
+import decimal
 import hashlib
 import importlib
 import json
@@ -232,8 +233,9 @@ def _strictly_parsed_document(
     _json_loads: Callable[..., Any] = json.loads,
     _float: Callable[[str], float] = float,
     _isfinite: Callable[[float], bool] = math.isfinite,
+    _decimal: Callable[[str], decimal.Decimal] = decimal.Decimal,
 ) -> Any:
-    """Parse JSON without ambiguous keys or non-finite numbers."""
+    """Parse UTF-8 JSON without ambiguous keys or lossy numbers."""
 
     def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result: dict[str, Any] = {}
@@ -252,11 +254,17 @@ def _strictly_parsed_document(
         value = _float(token)
         if not _isfinite(value):
             raise ValueError(f"{label} contains non-finite number {token}")
+        exactly_represented = _decimal(token) == _decimal(str(value))
+        if not exactly_represented:
+            raise ValueError(f"{label} contains inexact number {token}")
         return value
 
     try:
+        text = raw.decode("utf-8")
+        if text.startswith("\ufeff"):
+            raise ValueError(f"{label} contains a leading U+FEFF BOM")
         return _json_loads(
-            raw,
+            text,
             object_pairs_hook=unique_object,
             parse_constant=reject_constant,
             parse_float=finite_float,
