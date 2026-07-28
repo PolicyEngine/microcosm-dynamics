@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import decimal
 import hashlib
 import inspect
 import json
@@ -500,6 +501,39 @@ def test_input_loader_refuses_ambiguous_json_documents(
                 identity,
                 role="first_estimates",
             )
+
+
+def test_input_loader_normalizes_decimal_exception_for_matching_sha(
+    tmp_path: Path,
+):
+    raw = b'{"value":1e-999999999999999999999999}\n'
+    root = tmp_path / "strict-input-loader"
+    relative_path = anchor_context_publication._FIXTURE_FIRST_PATH
+    path = root / relative_path
+    path.parent.mkdir(parents=True)
+    path.write_bytes(raw)
+    identity = {
+        "path": relative_path,
+        "sha256": hashlib.sha256(raw).hexdigest(),
+    }
+
+    with _first_estimates_loader_identity(identity):
+        with pytest.raises(
+            ValueError,
+            match=(
+                r"^first_estimates input is not a uniquely parseable "
+                r"JSON document$"
+            ),
+        ) as caught:
+            anchor_context_publication._load_verified_json(
+                root,
+                identity,
+                role="first_estimates",
+            )
+
+    assert type(caught.value) is ValueError
+    assert not isinstance(caught.value, decimal.InvalidOperation)
+    assert isinstance(caught.value.__cause__, decimal.InvalidOperation)
 
 
 def test_strict_parser_accepts_committed_production_inputs():

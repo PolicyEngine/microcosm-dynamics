@@ -234,6 +234,9 @@ def _strictly_parsed_document(
     _float: Callable[[str], float] = float,
     _isfinite: Callable[[float], bool] = math.isfinite,
     _decimal: Callable[[str], decimal.Decimal] = decimal.Decimal,
+    _decimal_exception: type[decimal.DecimalException] = (
+        decimal.DecimalException
+    ),
 ) -> Any:
     """Parse UTF-8 JSON without ambiguous keys or lossy numbers."""
 
@@ -269,7 +272,13 @@ def _strictly_parsed_document(
             parse_constant=reject_constant,
             parse_float=finite_float,
         )
-    except (UnicodeError, ValueError, OverflowError, RecursionError) as error:
+    except (
+        UnicodeError,
+        ValueError,
+        OverflowError,
+        RecursionError,
+        _decimal_exception,
+    ) as error:
         raise ValueError(
             f"{label} is not a uniquely parseable JSON document"
         ) from error
