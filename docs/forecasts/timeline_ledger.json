@@ -178,6 +178,19 @@
     "within_p50": true,
     "within_p80": true
    }
+  },
+  {
+   "id": 11,
+   "registered_at": "2026-07-28T18:35:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-01",
+   "p80": "2026-08-05",
+   "status": "open",
+   "supersedes": null,
+   "revision_reason": null,
+   "resolution": null
   }
  ]
 }
