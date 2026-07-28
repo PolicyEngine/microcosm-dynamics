@@ -192,9 +192,15 @@
   initialization frame.
 - The combined launcher/coordinator/publication/rehearsal/report regression
   suite passes with 214 tests after the final closure and alias probes.
+- Full collection assigns exactly one tier to 3,897 tests at current HEAD:
+  924 unit, 1,490 artifact, 804 integration-PSID, 520 legacy reproduction,
+  and 159 PolicyEngine-oracle tests.
+- Unit tier: 919 passed, 5 skipped, with all 2,973 other-tier tests
+  deselected; the full-collection tier policy accepted the refreshed
+  manifest.
 
 ## Next
 
 - Obtain an independent clean re-review of every referee disposition.
-- Run Black, Ruff, tier tests, and the full test suites.
+- Run Black, Ruff, each tier, and the full test suite.
 - Record per-finding dispositions, final verification, and push status.
