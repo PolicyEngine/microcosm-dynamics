@@ -191,7 +191,6 @@ def _assert_incident(
     )
     assert record["artifact_path"] is None
     publication.validate_anchor_context_incident(
-        record,
         path=path,
         expected_configuration_echo=record["configuration_echo"],
         repository_root=repository,

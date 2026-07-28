@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import inspect
 import json
 import os
 from dataclasses import asdict
@@ -849,6 +850,16 @@ def test_incident_schema_types_timestamp_and_canonical_bytes(tmp_path: Path):
     assert path.read_bytes() == (
         anchor_context_publication.canonical_json_bytes(record)
     )
+    validated, payload, _file_id = (
+        anchor_context_publication._validate_anchor_context_incident_file(
+            path=path,
+            expected_configuration_echo=record["configuration_echo"],
+            repository_root=root,
+            production_only=False,
+        )
+    )
+    assert validated == record
+    assert payload == path.read_bytes()
 
 
 @pytest.mark.parametrize("missing_key", sorted(INCIDENT_KEYS))
@@ -927,12 +938,18 @@ def test_incident_rejects_keys_echo_index_location_and_noncontiguity(
             filename="anchor_context_report_incident_2.json",
         )
     with pytest.raises((TypeError, ValueError)):
+        outside = root / "elsewhere" / "anchor_context_report_incident_1.json"
+        outside.parent.mkdir()
+        outside.write_bytes(
+            anchor_context_publication.canonical_json_bytes(
+                {
+                    **_incident(),
+                    "configuration_echo": _production_configuration(),
+                }
+            )
+        )
         anchor_context_publication.validate_anchor_context_incident(
-            {
-                **_incident(),
-                "configuration_echo": _production_configuration(),
-            },
-            path=root / "elsewhere" / "anchor_context_report_incident_1.json",
+            path=outside,
             expected_configuration_echo=_production_configuration(),
             repository_root=root,
         )
@@ -956,23 +973,231 @@ def test_production_incident_requires_the_exact_complete_configuration_echo(
     configuration = _production_configuration()
     record = _incident()
     record["configuration_echo"] = configuration
-    anchor_context_publication.validate_anchor_context_incident(
-        record,
-        path=root / "runs/anchor_context_report_incident_1.json",
-        expected_configuration_echo=configuration,
-        repository_root=root,
+    path = root / "runs/anchor_context_report_incident_1.json"
+    path.write_bytes(anchor_context_publication.canonical_json_bytes(record))
+    assert (
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+        == record
     )
 
+    malformed_root = _repository(tmp_path / "malformed")
     malformed_echo = {"registration_reference": REGISTRATION_REFERENCE}
     malformed = copy.deepcopy(record)
     malformed["configuration_echo"] = malformed_echo
+    malformed_path = (
+        malformed_root / "runs/anchor_context_report_incident_1.json"
+    )
+    malformed_path.write_bytes(
+        anchor_context_publication.canonical_json_bytes(malformed)
+    )
     with pytest.raises((TypeError, ValueError)):
         anchor_context_publication.validate_anchor_context_incident(
-            malformed,
-            path=root / "runs/anchor_context_report_incident_1.json",
+            path=malformed_path,
             expected_configuration_echo=malformed_echo,
+            repository_root=malformed_root,
+        )
+
+
+@pytest.mark.parametrize(
+    "payload_transform",
+    [
+        lambda payload: b" " + payload,
+        lambda payload: payload + b"\n",
+        lambda payload: json.dumps(
+            json.loads(payload),
+            indent=2,
+        ).encode("utf-8"),
+    ],
+)
+def test_public_incident_validator_rejects_noncanonical_disk_bytes(
+    tmp_path,
+    payload_transform,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    record = _incident()
+    record["configuration_echo"] = configuration
+    path = root / "runs/anchor_context_report_incident_1.json"
+    canonical = anchor_context_publication.canonical_json_bytes(record)
+    path.write_bytes(payload_transform(canonical))
+
+    with pytest.raises(ValueError, match="canonical"):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
             repository_root=root,
         )
+
+
+def test_public_incident_validator_owns_the_disk_mapping_and_has_no_bypass(
+    tmp_path,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    supplied = _incident(reason="external_supplied_reason")
+    supplied["configuration_echo"] = configuration
+    on_disk = copy.deepcopy(supplied)
+    on_disk["reason"] = "external_on_disk_reason"
+    path = root / "runs/anchor_context_report_incident_1.json"
+    path.write_bytes(anchor_context_publication.canonical_json_bytes(on_disk))
+
+    assert (
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+        == on_disk
+    )
+    parameters = inspect.signature(
+        anchor_context_publication.validate_anchor_context_incident
+    ).parameters
+    assert "record" not in parameters
+    assert "validate_artifact_existence" not in parameters
+    with pytest.raises(TypeError):
+        anchor_context_publication.validate_anchor_context_incident(
+            supplied,
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+    with pytest.raises(TypeError):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+            validate_artifact_existence=False,
+        )
+
+
+@pytest.mark.parametrize(
+    "path_kind",
+    ["missing", "symlink", "fifo", "hardlink", "oversize"],
+)
+def test_public_incident_validator_rejects_unpinned_or_nonregular_path(
+    tmp_path,
+    path_kind,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    record = _incident()
+    record["configuration_echo"] = configuration
+    payload = anchor_context_publication.canonical_json_bytes(record)
+    path = root / "runs/anchor_context_report_incident_1.json"
+    source = root / "runs/source.json"
+    if path_kind == "symlink":
+        source.write_bytes(payload)
+        path.symlink_to(source)
+    elif path_kind == "fifo":
+        os.mkfifo(path)
+    elif path_kind == "hardlink":
+        source.write_bytes(payload)
+        os.link(source, path)
+    elif path_kind == "oversize":
+        path.write_bytes(
+            b"{" + b"x" * anchor_context_publication._INCIDENT_MAX_BYTES + b"}"
+        )
+
+    with pytest.raises((OSError, TypeError, ValueError)):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+
+
+def test_public_incident_validator_rejects_inode_exchange_during_read(
+    tmp_path,
+    monkeypatch,
+):
+    root = _repository(tmp_path)
+    configuration = _production_configuration()
+    record = _incident()
+    record["configuration_echo"] = configuration
+    payload = anchor_context_publication.canonical_json_bytes(record)
+    path = root / "runs/anchor_context_report_incident_1.json"
+    path.write_bytes(payload)
+    original_read = anchor_context_publication.os.read
+    exchanged = False
+
+    def exchange_after_read(descriptor, count):
+        nonlocal exchanged
+        chunk = original_read(descriptor, count)
+        if chunk and not exchanged:
+            exchanged = True
+            path.rename(path.with_suffix(".original"))
+            path.write_bytes(payload)
+        return chunk
+
+    monkeypatch.setattr(
+        anchor_context_publication.os,
+        "read",
+        exchange_after_read,
+    )
+
+    with pytest.raises(ValueError, match="identity changed"):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=path,
+            expected_configuration_echo=configuration,
+            repository_root=root,
+        )
+
+    assert exchanged is True
+
+
+def test_public_incident_validator_enforces_artifact_path_iff_on_disk(
+    tmp_path,
+):
+    configuration = _production_configuration()
+
+    compute_root = _repository(tmp_path / "compute")
+    compute = _incident(phase="compute")
+    compute["configuration_echo"] = configuration
+    compute["artifact_path"] = registry.PRIMARY_OUTPUT_PATH
+    compute_path = compute_root / "runs/anchor_context_report_incident_1.json"
+    compute_path.write_bytes(
+        anchor_context_publication.canonical_json_bytes(compute)
+    )
+    with pytest.raises(ValueError, match="iff"):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=compute_path,
+            expected_configuration_echo=configuration,
+            repository_root=compute_root,
+        )
+
+    publication_root = _repository(tmp_path / "publication")
+    (publication_root / registry.PRIMARY_OUTPUT_PATH).write_bytes(b"partial\n")
+    publication_record = _incident(phase="publication")
+    publication_record["configuration_echo"] = configuration
+    publication_path = (
+        publication_root / "runs/anchor_context_report_incident_1.json"
+    )
+    publication_path.write_bytes(
+        anchor_context_publication.canonical_json_bytes(publication_record)
+    )
+    with pytest.raises(ValueError, match="iff"):
+        anchor_context_publication.validate_anchor_context_incident(
+            path=publication_path,
+            expected_configuration_echo=configuration,
+            repository_root=publication_root,
+        )
+
+    publication_record["artifact_path"] = registry.PRIMARY_OUTPUT_PATH
+    publication_path.write_bytes(
+        anchor_context_publication.canonical_json_bytes(publication_record)
+    )
+    assert (
+        anchor_context_publication.validate_anchor_context_incident(
+            path=publication_path,
+            expected_configuration_echo=configuration,
+            repository_root=publication_root,
+        )
+        == publication_record
+    )
 
 
 def test_incident_artifact_path_iff_publication_partial(tmp_path: Path):

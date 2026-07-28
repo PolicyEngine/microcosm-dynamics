@@ -5,8 +5,8 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: finding 4, strengthening on-disk incident validation and
-  persisting concrete evidence for all six prelaunch determinations.
+- Active work: finding 4b, persisting concrete evidence for all six prelaunch
+  determinations and binding it through capability and retry verification.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -89,8 +89,20 @@
     refusal because no lawful registered echo exists;
   - regression probes cover every reported pre-import refusal, contiguous
     incident 1→2 publication without overwrite, and protected aliases.
-- Focused launcher/report/publication/coordinator/rehearsal suite: 160 passed.
-- Black, Ruff, and `git diff --check` pass through finding 3.
+- Finding 4a implemented:
+  - the public incident validator no longer accepts a caller-supplied mapping
+    or artifact-existence bypass; it owns the named on-disk bytes and always
+    enforces the partial-primary iff rule;
+  - incident files are opened through a pinned no-follow descriptor chain and
+    must be canonical, bounded, regular, singly linked, and inode/size-stable
+    through the read;
+  - coordinator history, retry sealing, the launcher probe, and rehearsal now
+    use the on-disk validator;
+  - regressions reject pretty/trailing bytes, missing files, symlinks, FIFOs,
+    hardlinks, oversized files, inode exchange, positional mappings, and the
+    removed bypass.
+- Focused publication/coordinator/rehearsal/launcher suite: 150 passed.
+- Black, Ruff, and `git diff --check` pass through finding 4a.
 
 ## Next
 

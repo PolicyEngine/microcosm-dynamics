@@ -157,6 +157,7 @@ _FIXTURE_ANCHOR_SHA256 = (
 )
 _FIXTURE_ANCHOR_VINTAGE = "ssa_level_anchors.fixture_only.v1"
 _FILE_READ_CHUNK_SIZE = 1024 * 1024
+_INCIDENT_MAX_BYTES = 4 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -1389,7 +1390,6 @@ def _validate_anchor_context_incident(
     path: str | Path,
     expected_configuration_echo: Mapping[str, Any],
     repository_root: str | Path,
-    validate_artifact_existence: bool = True,
     production_only: bool,
 ) -> None:
     """Enforce the exact typed nine-key incident schema."""
@@ -1465,21 +1465,15 @@ def _validate_anchor_context_incident(
     ):
         raise ValueError("partial primary path is not a regular file")
     partial_exists = primary.is_file()
-    if validate_artifact_existence:
-        expected_path = (
-            registry.PRIMARY_OUTPUT_PATH
-            if value["phase"] == "publication" and partial_exists
-            else None
+    expected_path = (
+        registry.PRIMARY_OUTPUT_PATH
+        if value["phase"] == "publication" and partial_exists
+        else None
+    )
+    if artifact_path != expected_path:
+        raise ValueError(
+            "artifact_path must be non-null iff publication partial exists"
         )
-        if artifact_path != expected_path:
-            raise ValueError(
-                "artifact_path must be non-null iff publication partial exists"
-            )
-    elif artifact_path is not None and (
-        value["phase"] != "publication"
-        or artifact_path != registry.PRIMARY_OUTPUT_PATH
-    ):
-        raise ValueError("artifact_path violates the publication iff rule")
     _, next_index = _next_incident_path(root)
     if incident_path.exists():
         if index >= next_index:
@@ -1489,23 +1483,161 @@ def _validate_anchor_context_incident(
     canonical_json_bytes(value)
 
 
+def _read_incident_file(
+    path: str | Path,
+    *,
+    repository_root: str | Path,
+) -> tuple[Mapping[str, Any], bytes, tuple[int, int]]:
+    """Read canonical incident bytes through one pinned no-follow chain."""
+    root = Path(repository_root).resolve()
+    candidate = Path(path)
+    if candidate.is_absolute():
+        try:
+            relative = candidate.relative_to(root)
+        except ValueError as error:
+            raise ValueError(
+                "incident path is outside the repository"
+            ) from error
+    else:
+        relative = candidate
+    if (
+        relative.is_absolute()
+        or len(relative.parts) != 2
+        or relative.parts[0] != "runs"
+        or any(part in {"", ".", ".."} for part in relative.parts)
+        or "\\" in relative.as_posix()
+        or _INCIDENT_FILENAME.fullmatch(relative.name) is None
+    ):
+        raise ValueError("incident path must be canonical directly under runs")
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    close_on_exec = getattr(os, "O_CLOEXEC", None)
+    if (
+        no_follow is None
+        or directory_flag is None
+        or nonblocking is None
+        or close_on_exec is None
+    ):
+        raise RuntimeError("platform lacks sealed incident descriptor flags")
+    root_descriptor = os.open(
+        root,
+        os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+    )
+    runs_descriptor = -1
+    descriptor = -1
+    try:
+        runs_descriptor = os.open(
+            "runs",
+            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+            dir_fd=root_descriptor,
+        )
+        descriptor = os.open(
+            relative.name,
+            os.O_RDONLY | no_follow | nonblocking | close_on_exec,
+            dir_fd=runs_descriptor,
+        )
+        metadata = os.fstat(descriptor)
+        file_id = (metadata.st_dev, metadata.st_ino)
+        if (
+            not stat.S_ISREG(metadata.st_mode)
+            or metadata.st_nlink != 1
+            or metadata.st_size < 1
+            or metadata.st_size > _INCIDENT_MAX_BYTES
+        ):
+            raise ValueError(
+                "incident must be a bounded singly-linked regular file"
+            )
+        chunks = bytearray()
+        while len(chunks) <= _INCIDENT_MAX_BYTES:
+            chunk = os.read(
+                descriptor,
+                _INCIDENT_MAX_BYTES + 1 - len(chunks),
+            )
+            if not chunk:
+                break
+            chunks.extend(chunk)
+        if len(chunks) > _INCIDENT_MAX_BYTES:
+            raise ValueError("incident exceeds its read bound")
+        after = os.fstat(descriptor)
+        named = os.stat(
+            relative.name,
+            dir_fd=runs_descriptor,
+            follow_symlinks=False,
+        )
+        if (
+            (after.st_dev, after.st_ino) != file_id
+            or after.st_size != metadata.st_size
+            or (named.st_dev, named.st_ino) != file_id
+            or named.st_size != metadata.st_size
+            or named.st_nlink != 1
+        ):
+            raise ValueError("incident identity changed during its read")
+        payload = bytes(chunks)
+    finally:
+        for opened in (descriptor, runs_descriptor, root_descriptor):
+            if opened >= 0:
+                os.close(opened)
+    try:
+        record = json.loads(payload)
+        canonical = canonical_json_bytes(record)
+    except (
+        UnicodeError,
+        json.JSONDecodeError,
+        TypeError,
+        ValueError,
+        OverflowError,
+        RecursionError,
+    ) as error:
+        raise ValueError("incident is not canonical JSON") from error
+    if not isinstance(record, Mapping) or canonical != payload:
+        raise ValueError("incident bytes are not one canonical JSON object")
+    return record, payload, file_id
+
+
+def _validate_anchor_context_incident_file(
+    *,
+    path: str | Path,
+    expected_configuration_echo: Mapping[str, Any] | None,
+    repository_root: str | Path,
+    production_only: bool,
+) -> tuple[Mapping[str, Any], bytes, tuple[int, int]]:
+    """Read and validate the exact current bytes at an incident path."""
+    record, payload, file_id = _read_incident_file(
+        path,
+        repository_root=repository_root,
+    )
+    expected = (
+        record.get("configuration_echo")
+        if expected_configuration_echo is None
+        else expected_configuration_echo
+    )
+    if not isinstance(expected, Mapping):
+        raise ValueError("incident has no configuration echo")
+    _validate_anchor_context_incident(
+        record,
+        path=path,
+        expected_configuration_echo=expected,
+        repository_root=repository_root,
+        production_only=production_only,
+    )
+    return record, payload, file_id
+
+
 def validate_anchor_context_incident(
-    record: Mapping[str, Any],
     *,
     path: str | Path,
     expected_configuration_echo: Mapping[str, Any],
     repository_root: str | Path,
-    validate_artifact_existence: bool = True,
-) -> None:
-    """Validate one production incident and its exact registered echo."""
-    _validate_anchor_context_incident(
-        record,
+) -> Mapping[str, Any]:
+    """Read and validate one production incident's exact on-disk bytes."""
+    record, _payload, _file_id = _validate_anchor_context_incident_file(
         path=path,
         expected_configuration_echo=expected_configuration_echo,
         repository_root=repository_root,
-        validate_artifact_existence=validate_artifact_existence,
         production_only=True,
     )
+    return record
 
 
 def _next_incident_path(repository_root: Path) -> tuple[Path, int]:

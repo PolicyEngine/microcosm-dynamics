@@ -663,22 +663,16 @@ def _retry_authority_protocol():
         expected_path = state.registration._repository_root / expected_relative
         if Path(incident_path) != expected_path:
             raise RuntimeError("incident writer returned a noncanonical path")
-        incident_loaded = _read_canonical_mapping(
-            expected_path,
-            maximum_bytes=_INCIDENT_MAX_BYTES,
-        )
-        if incident_loaded is None:
-            raise RuntimeError("published incident is not canonical on disk")
-        incident, incident_payload, _incident_file_id = incident_loaded
         configuration = first_publication._configuration_echo(
             state.registration
         )
-        anchor_context_publication._validate_anchor_context_incident(
-            incident,
-            path=expected_path,
-            expected_configuration_echo=configuration,
-            repository_root=state.registration._repository_root,
-            production_only=state.production_only,
+        incident, incident_payload, _incident_file_id = (
+            anchor_context_publication._validate_anchor_context_incident_file(
+                path=expected_path,
+                expected_configuration_echo=configuration,
+                repository_root=state.registration._repository_root,
+                production_only=state.production_only,
+            )
         )
         if (
             incident.get("incident_index")
@@ -1496,41 +1490,22 @@ def _read_incident_history(
     payloads = []
     file_ids = []
     for index, path in indexed:
-        loaded = _read_canonical_mapping(
-            path,
-            maximum_bytes=_INCIDENT_MAX_BYTES,
-        )
-        if loaded is None:
+        try:
+            record, raw, file_id = (
+                anchor_context_publication._validate_anchor_context_incident_file(
+                    path=path,
+                    expected_configuration_echo=None,
+                    repository_root=repository_root,
+                    production_only=production_only,
+                )
+            )
+        except (OSError, TypeError, ValueError) as error:
             raise _CeremonyAbort(
                 "preparation_incident_history_invalid",
                 (
                     f"Incident {index} is not a canonical, singly-linked "
                     "bounded JSON object."
                 ),
-            )
-        record, raw, file_id = loaded
-        configuration = (
-            record.get("configuration_echo")
-            if isinstance(record, Mapping)
-            else None
-        )
-        if not isinstance(configuration, Mapping):
-            raise _CeremonyAbort(
-                "preparation_incident_history_invalid",
-                f"Incident {index} has no configuration echo.",
-            )
-        try:
-            anchor_context_publication._validate_anchor_context_incident(
-                record,
-                path=path,
-                expected_configuration_echo=configuration,
-                repository_root=repository_root,
-                production_only=production_only,
-            )
-        except (TypeError, ValueError) as error:
-            raise _CeremonyAbort(
-                "preparation_incident_history_invalid",
-                f"Incident {index} violates the typed schema.",
             ) from error
         paths.append(path.relative_to(repository_root).as_posix())
         records.append(record)

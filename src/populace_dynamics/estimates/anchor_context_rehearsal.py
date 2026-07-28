@@ -541,8 +541,7 @@ def _run_incident_ceremony(
     record = json.loads(raw)
     if publication.canonical_json_bytes(record) != raw:
         raise FixtureRehearsalError("fixture incident is not canonical")
-    publication._validate_anchor_context_incident(
-        record,
+    publication._validate_anchor_context_incident_file(
         path=result.path,
         expected_configuration_echo=configuration,
         repository_root=root,
