@@ -168,10 +168,16 @@
    "resolution_criterion": "Per the ratified design section 5.3: the merge of a publication PR whose payload is the complete primary report pair -- the exact-complete, validator-passing anchor_context_report_v1 with its integrity-bound sidecar. Incident-only, partial, or validator-failing publications and the extraction alone resolve nothing.",
    "p50": "2026-07-31",
    "p80": "2026-08-05",
-   "status": "open",
+   "status": "resolved",
    "supersedes": null,
    "revision_reason": null,
-   "resolution": null
+   "resolution": {
+    "resolved_at": "2026-07-28T18:16:37Z",
+    "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/330 (merged 97ddeacf7229698c0bff3dfa7534b6f4ef4bb7bb): runs/anchor_context_report_v1.json sha256 1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34 with sidecar runs/anchor_context_report_v1.json.env.json sha256 9e594df76cbc34a6eb8dc58842d37b528f0ede1e0c104469f558a57cb9fd3b67, registration populace-dynamics#328; completion record https://github.com/PolicyEngine/populace-dynamics/issues/328#issuecomment-5108029974",
+    "error_days_p50": -3,
+    "within_p50": true,
+    "within_p80": true
+   }
   }
  ]
 }
