@@ -58,10 +58,18 @@ def _execution_rule_protocol():
             raise AssertionError("private execution law is not a mapping")
         return decoded
 
-    return MappingProxyType(dict(value())), value
+    return (
+        MappingProxyType(dict(value())),
+        bytes(bytearray(frozen)),
+        bytes(bytearray(frozen)),
+    )
 
 
-CANONICAL_EXECUTION_RULE, _execution_rule_value = _execution_rule_protocol()
+(
+    CANONICAL_EXECUTION_RULE,
+    _VALIDATION_EXECUTION_RULE_BYTES,
+    _COMPLETION_EXECUTION_RULE_BYTES,
+) = _execution_rule_protocol()
 del _execution_rule_protocol
 PRELAUNCH_CHECK_NAMES = (
     "ratified_design_and_implementation",
@@ -671,8 +679,10 @@ class _PrelaunchRecord:
     evidence_bytes: bytes
 
 
-def _validate_prelaunch_record_value(
+def _validate_prelaunch_record_value_impl(
     candidate: object,
+    *,
+    execution_rule: Mapping[str, Any],
 ) -> Mapping[str, Any]:
     if not isinstance(candidate, Mapping):
         raise TypeError("prelaunch record must be a JSON object")
@@ -863,7 +873,6 @@ def _validate_prelaunch_record_value(
     )
 
     execution = evidence_by_name[PRELAUNCH_CHECK_NAMES[5]]
-    execution_rule = _execution_rule_value()
     if (
         set(execution) != {"execution_rule", "acknowledged"}
         or execution["execution_rule"] != execution_rule
@@ -876,6 +885,35 @@ def _validate_prelaunch_record_value(
         "prelaunch execution rule",
     )
     return value
+
+
+def _prelaunch_record_validator_protocol(
+    implementation: Callable[..., Mapping[str, Any]],
+    canonical_execution_rule_bytes: bytes,
+) -> Callable[[object], Mapping[str, Any]]:
+    frozen = bytes(canonical_execution_rule_bytes)
+    json_loads = json.loads
+    mapping_type = Mapping
+
+    def validate(candidate: object) -> Mapping[str, Any]:
+        execution_rule = json_loads(frozen)
+        if not isinstance(execution_rule, mapping_type):
+            raise AssertionError("private execution law is not a mapping")
+        return implementation(
+            candidate,
+            execution_rule=execution_rule,
+        )
+
+    return validate
+
+
+_validate_prelaunch_record_value = _prelaunch_record_validator_protocol(
+    _validate_prelaunch_record_value_impl,
+    _VALIDATION_EXECUTION_RULE_BYTES,
+)
+del _VALIDATION_EXECUTION_RULE_BYTES
+del _validate_prelaunch_record_value_impl
+del _prelaunch_record_validator_protocol
 
 
 def _prelaunch_record_value(
@@ -930,49 +968,363 @@ def _retry_authority_protocol():
     sealed_core_code: Any = None
     sealed_abort_code: Any = None
 
-    @dataclass(frozen=True)
-    class ReceiptState:
-        """Protocol-private state carried by, rather than indexed from, a receipt."""
+    class RetryAuthorityVault:
+        """Hide receipt and retry-token identity registries behind bound methods."""
 
-        receipt: _RetryReceipt
-        repository_root: Path
-        registration_reference: str
-        configuration_sha256: str
-        incident_index: int
-        incident_path: Path
-        incident_payload: bytes
-        incident_file_id: tuple[int, int]
-        incident_phase: str
-        incident_reason: str
-        estimate_bearing_information_yielded: bool
-        attempt_claim: Path
-        attempt_payload: bytes
-        attempt_file_id: tuple[int, int]
-        authority_path: Path
-        authority_payload: bytes
-        authority_file_id: tuple[int, int]
-        production_only: bool
-        consumed: bool = False
+        __slots__ = (
+            "_abort",
+            "_authorizations",
+            "_authorize",
+            "_consume_receipt_bound",
+            "_core",
+            "_getframe",
+            "_incident_max_bytes",
+            "_issue_authorization_bound",
+            "_issue_receipt_bound",
+            "_mapping_proxy_type",
+            "_protocol_bound",
+            "_read_attempt_claim",
+            "_read_canonical_mapping",
+            "_read_retry_authority",
+            "_receipts",
+            "_receipt_type",
+            "_retry_type",
+            "_seal",
+            "_stack_bound",
+        )
 
-    @dataclass(frozen=True)
-    class RetryState:
-        """Protocol-private live retry authorization state."""
+        def __getattribute__(self, _name: str) -> Any:
+            raise AttributeError("retry authority state is sealed")
 
-        token: _RetryAuthorization
-        repository_root: Path
-        registration_reference: str
-        configuration_sha256: str
-        incident_index: int
-        incident_path: Path
-        incident_payload: bytes
-        incident_file_id: tuple[int, int]
-        attempt_claim: Path
-        attempt_payload: bytes
-        attempt_file_id: tuple[int, int]
-        authority_path: Path
-        authority_payload: bytes
-        authority_file_id: tuple[int, int]
-        live: bool = True
+        def __setattr__(self, _name: str, _value: Any) -> None:
+            raise TypeError("retry authority state is sealed")
+
+        def bind_protocol(
+            self,
+            seal: Callable[..., Any],
+            authorize: Callable[..., Any],
+            issue_receipt_bound: Callable[..., Any],
+            consume_receipt_bound: Callable[..., Any],
+            issue_authorization_bound: Callable[..., Any],
+        ) -> None:
+            if object.__getattribute__(self, "_protocol_bound"):
+                raise RuntimeError("retry authority protocol is already bound")
+            object.__setattr__(self, "_seal", seal)
+            object.__setattr__(self, "_authorize", authorize)
+            object.__setattr__(
+                self,
+                "_issue_receipt_bound",
+                issue_receipt_bound,
+            )
+            object.__setattr__(
+                self,
+                "_consume_receipt_bound",
+                consume_receipt_bound,
+            )
+            object.__setattr__(
+                self,
+                "_issue_authorization_bound",
+                issue_authorization_bound,
+            )
+            object.__setattr__(self, "_protocol_bound", True)
+
+        def bind_stack(
+            self,
+            core: Callable[..., Any],
+            abort: Callable[..., Any],
+        ) -> None:
+            if object.__getattribute__(self, "_stack_bound"):
+                raise RuntimeError("retry authority stack is already sealed")
+            object.__setattr__(self, "_core", core)
+            object.__setattr__(self, "_abort", abort)
+            object.__setattr__(self, "_stack_bound", True)
+
+        def issue_receipt(
+            self,
+            receipt: object,
+            initial_token: object,
+            repository_root: Path,
+            registration_reference: str,
+            configuration_sha256: str,
+            incident_index: int,
+            incident_path: Path,
+            incident_payload: bytes,
+            incident_file_id: tuple[int, int],
+            incident_phase: str,
+            incident_reason: str,
+            estimate_bearing_information_yielded: bool,
+            attempt_claim: Path,
+            attempt_payload: bytes,
+            attempt_file_id: tuple[int, int],
+            authority_path: Path,
+            authority_payload: bytes,
+            authority_file_id: tuple[int, int],
+            production_only: bool,
+        ) -> None:
+            caller = object.__getattribute__(self, "_getframe")(1)
+            abort_frame = caller.f_back
+            core_frame = (
+                abort_frame.f_back if abort_frame is not None else None
+            )
+            seal = object.__getattribute__(self, "_seal")
+            abort = object.__getattribute__(self, "_abort")
+            core = object.__getattribute__(self, "_core")
+            if (
+                not object.__getattribute__(self, "_protocol_bound")
+                or not object.__getattribute__(self, "_stack_bound")
+                or caller.f_code is not seal.__code__
+                or caller.f_locals.get("issue_receipt")
+                is not object.__getattribute__(self, "_issue_receipt_bound")
+                or caller.f_locals.get("receipt") is not receipt
+                or abort_frame is None
+                or abort_frame.f_code is not abort.__code__
+                or abort_frame.f_locals.get("seal_retry_authority") is not seal
+                or abort_frame.f_locals.get("attempt_authority")
+                is not initial_token
+                or core_frame is None
+                or core_frame.f_code is not core.__code__
+                or core_frame.f_locals.get("publish_abort") is not abort
+                or core_frame.f_locals.get("seal_retry_authority") is not seal
+                or core_frame.f_locals.get("initial_attempt_authority")
+                is not initial_token
+                or not isinstance(
+                    receipt,
+                    object.__getattribute__(self, "_receipt_type"),
+                )
+            ):
+                raise TypeError(
+                    "retry receipt issuance requires the exact published "
+                    "coordinator incident stack"
+                )
+            object.__getattribute__(self, "_receipts")[id(receipt)] = (
+                receipt,
+                repository_root,
+                registration_reference,
+                configuration_sha256,
+                incident_index,
+                incident_path,
+                incident_payload,
+                incident_file_id,
+                incident_phase,
+                incident_reason,
+                estimate_bearing_information_yielded,
+                attempt_claim,
+                attempt_payload,
+                attempt_file_id,
+                authority_path,
+                authority_payload,
+                authority_file_id,
+                production_only,
+            )
+
+        def consume_receipt(self, receipt: object) -> tuple[Any, ...] | None:
+            caller = object.__getattribute__(self, "_getframe")(1)
+            core_frame = caller.f_back
+            authorize = object.__getattribute__(self, "_authorize")
+            core = object.__getattribute__(self, "_core")
+            if (
+                not object.__getattribute__(self, "_protocol_bound")
+                or not object.__getattribute__(self, "_stack_bound")
+                or caller.f_code is not authorize.__code__
+                or caller.f_locals.get("consume_receipt")
+                is not object.__getattribute__(self, "_consume_receipt_bound")
+                or caller.f_locals.get("retry_receipt") is not receipt
+                or core_frame is None
+                or core_frame.f_code is not core.__code__
+                or core_frame.f_locals.get("authorize_invocation")
+                is not authorize
+                or core_frame.f_locals.get("retry_receipt") is not receipt
+            ):
+                raise TypeError(
+                    "retry receipt consumption requires the exact "
+                    "coordinator adjudication stack"
+                )
+            state = object.__getattribute__(self, "_receipts").pop(
+                id(receipt),
+                None,
+            )
+            if (
+                state is None
+                or state[0] is not receipt
+                or not isinstance(
+                    receipt,
+                    object.__getattribute__(self, "_receipt_type"),
+                )
+            ):
+                return None
+            return state
+
+        def issue_authorization(
+            self,
+            token: object,
+            repository_root: Path,
+            registration_reference: str,
+            configuration_sha256: str,
+            incident_index: int,
+            incident_path: Path,
+            incident_payload: bytes,
+            incident_file_id: tuple[int, int],
+            attempt_claim: Path,
+            attempt_payload: bytes,
+            attempt_file_id: tuple[int, int],
+            authority_path: Path,
+            authority_payload: bytes,
+            authority_file_id: tuple[int, int],
+        ) -> None:
+            caller = object.__getattribute__(self, "_getframe")(1)
+            core_frame = caller.f_back
+            authorize = object.__getattribute__(self, "_authorize")
+            core = object.__getattribute__(self, "_core")
+            if (
+                not object.__getattribute__(self, "_protocol_bound")
+                or not object.__getattribute__(self, "_stack_bound")
+                or caller.f_code is not authorize.__code__
+                or caller.f_locals.get("issue_authorization")
+                is not object.__getattribute__(
+                    self,
+                    "_issue_authorization_bound",
+                )
+                or caller.f_locals.get("token") is not token
+                or core_frame is None
+                or core_frame.f_code is not core.__code__
+                or core_frame.f_locals.get("authorize_invocation")
+                is not authorize
+                or not isinstance(
+                    token,
+                    object.__getattribute__(self, "_retry_type"),
+                )
+            ):
+                raise TypeError(
+                    "retry authorization issuance requires exact "
+                    "coordinator adjudication"
+                )
+            object.__getattribute__(self, "_authorizations")[id(token)] = (
+                token,
+                repository_root,
+                registration_reference,
+                configuration_sha256,
+                incident_index,
+                incident_path,
+                incident_payload,
+                incident_file_id,
+                attempt_claim,
+                attempt_payload,
+                attempt_file_id,
+                authority_path,
+                authority_payload,
+                authority_file_id,
+            )
+
+        def require_authorization(
+            self,
+            token: object,
+            repository_root: Path,
+        ) -> Mapping[str, Any]:
+            state = object.__getattribute__(self, "_authorizations").get(
+                id(token)
+            )
+            if (
+                state is None
+                or state[0] is not token
+                or not isinstance(
+                    token,
+                    object.__getattribute__(self, "_retry_type"),
+                )
+                or state[1] != repository_root
+            ):
+                raise TypeError(
+                    "retry requires live authenticated authorization"
+                )
+            attempt = object.__getattribute__(
+                self,
+                "_read_attempt_claim",
+            )(state[8])
+            authority = object.__getattribute__(
+                self,
+                "_read_retry_authority",
+            )(state[11])
+            incident = object.__getattribute__(
+                self,
+                "_read_canonical_mapping",
+            )(
+                state[5],
+                maximum_bytes=object.__getattribute__(
+                    self,
+                    "_incident_max_bytes",
+                ),
+                expected_name=state[5].name,
+            )
+            if (
+                attempt is None
+                or attempt[1] != state[9]
+                or attempt[2] != state[10]
+                or authority is None
+                or authority[1] != state[12]
+                or authority[2] != state[13]
+                or incident is None
+                or incident[1] != state[6]
+                or incident[2] != state[7]
+            ):
+                raise TypeError("authenticated retry evidence changed")
+            return object.__getattribute__(self, "_mapping_proxy_type")(
+                {
+                    "repository_root": state[1],
+                    "registration_reference": state[2],
+                    "configuration_sha256": state[3],
+                    "incident_index": state[4],
+                    "incident_path": state[5],
+                    "incident_payload": state[6],
+                    "incident_file_id": state[7],
+                    "attempt_claim": state[8],
+                    "attempt_payload": state[9],
+                    "attempt_file_id": state[10],
+                    "authority_path": state[11],
+                    "authority_payload": state[12],
+                    "authority_file_id": state[13],
+                }
+            )
+
+        def revoke_authorization(self, token: object) -> None:
+            state = object.__getattribute__(self, "_authorizations").get(
+                id(token)
+            )
+            if state is not None and state[0] is token:
+                object.__getattribute__(self, "_authorizations").pop(
+                    id(token),
+                    None,
+                )
+
+    vault = object.__new__(RetryAuthorityVault)
+    object.__setattr__(vault, "_abort", None)
+    object.__setattr__(vault, "_authorizations", {})
+    object.__setattr__(vault, "_authorize", None)
+    object.__setattr__(vault, "_core", None)
+    object.__setattr__(vault, "_getframe", getframe)
+    object.__setattr__(vault, "_incident_max_bytes", _INCIDENT_MAX_BYTES)
+    object.__setattr__(vault, "_mapping_proxy_type", MappingProxyType)
+    object.__setattr__(vault, "_protocol_bound", False)
+    object.__setattr__(vault, "_read_attempt_claim", _read_attempt_claim)
+    object.__setattr__(
+        vault,
+        "_read_canonical_mapping",
+        _read_canonical_mapping,
+    )
+    object.__setattr__(vault, "_read_retry_authority", _read_retry_authority)
+    object.__setattr__(vault, "_receipts", {})
+    object.__setattr__(vault, "_receipt_type", _RetryReceipt)
+    object.__setattr__(vault, "_retry_type", _RetryAuthorization)
+    object.__setattr__(vault, "_seal", None)
+    object.__setattr__(vault, "_stack_bound", False)
+    bind_vault_stack = object.__getattribute__(vault, "bind_stack")
+    bind_vault_protocol = object.__getattribute__(vault, "bind_protocol")
+    issue_receipt = object.__getattribute__(vault, "issue_receipt")
+    consume_receipt = object.__getattribute__(vault, "consume_receipt")
+    issue_authorization = object.__getattribute__(
+        vault,
+        "issue_authorization",
+    )
+    require_retry = object.__getattribute__(vault, "require_authorization")
+    revoke_retry = object.__getattribute__(vault, "revoke_authorization")
 
     def bind_stack(
         core: Callable[..., Any], abort: Callable[..., Any]
@@ -982,6 +1334,7 @@ def _retry_authority_protocol():
             raise RuntimeError("retry authority stack is already sealed")
         sealed_core_code = core.__code__
         sealed_abort_code = abort.__code__
+        bind_vault_stack(core, abort)
 
     def issue_initial(
         registration: first_publication._RegisteredConfigurationToken,
@@ -1249,29 +1602,27 @@ def _retry_authority_protocol():
         ):
             raise RuntimeError("retry authority did not seal durably")
         receipt = object.__new__(_RetryReceipt)
-        receipt_state = ReceiptState(
-            receipt=receipt,
-            repository_root=state.registration._repository_root,
-            registration_reference=(
-                state.registration._registration_reference
-            ),
-            configuration_sha256=(state.prelaunch_record.configuration_sha256),
-            incident_index=state.prelaunch_record.next_incident_index,
-            incident_path=expected_path,
-            incident_payload=incident_payload,
-            incident_file_id=incident_file_id,
-            attempt_claim=state.attempt_claim,
-            attempt_payload=state.attempt_payload,
-            attempt_file_id=state.attempt_file_id,
-            authority_path=state.authority_path,
-            authority_payload=authority_payload,
-            authority_file_id=state.authority_file_id,
-            incident_phase=phase,
-            incident_reason=reason,
-            estimate_bearing_information_yielded=False,
-            production_only=state.production_only,
+        issue_receipt(
+            receipt,
+            token,
+            state.registration._repository_root,
+            state.registration._registration_reference,
+            state.prelaunch_record.configuration_sha256,
+            state.prelaunch_record.next_incident_index,
+            expected_path,
+            incident_payload,
+            incident_file_id,
+            phase,
+            reason,
+            False,
+            state.attempt_claim,
+            state.attempt_payload,
+            state.attempt_file_id,
+            state.authority_path,
+            authority_payload,
+            state.authority_file_id,
+            state.production_only,
         )
-        object.__setattr__(receipt, "_state", receipt_state)
         return receipt
 
     def revoke_initial(token: object) -> None:
@@ -1407,31 +1758,27 @@ def _retry_authority_protocol():
                     "attempt, incident, configuration, and no-yield state."
                 ),
             )
-        receipt_state = getattr(retry_receipt, "_state", None)
+        receipt_state = consume_receipt(retry_receipt)
         if (
-            not isinstance(retry_receipt, _RetryReceipt)
-            or type(receipt_state) is not ReceiptState
-            or receipt_state.receipt is not retry_receipt
-            or receipt_state.consumed
-            or receipt_state.repository_root != repository_root
-            or receipt_state.registration_reference
-            != configuration["registration_reference"]
-            or receipt_state.configuration_sha256 != configuration_sha256
-            or receipt_state.incident_index != incident_index
-            or receipt_state.incident_path
-            != repository_root / incident_relative
-            or receipt_state.incident_payload != incident_payload
-            or receipt_state.incident_file_id != incident_file_id
-            or receipt_state.incident_phase != incident["phase"]
-            or receipt_state.incident_reason != incident["reason"]
-            or receipt_state.estimate_bearing_information_yielded is not False
-            or receipt_state.attempt_claim != attempt_claim
-            or receipt_state.attempt_payload != attempt_payload
-            or receipt_state.attempt_file_id != attempt_file_id
-            or receipt_state.authority_path != authority_path
-            or receipt_state.authority_payload != authority_payload
-            or receipt_state.authority_file_id != authority_file_id
-            or receipt_state.production_only is not production_only
+            receipt_state is None
+            or receipt_state[0] is not retry_receipt
+            or receipt_state[1] != repository_root
+            or receipt_state[2] != configuration["registration_reference"]
+            or receipt_state[3] != configuration_sha256
+            or receipt_state[4] != incident_index
+            or receipt_state[5] != repository_root / incident_relative
+            or receipt_state[6] != incident_payload
+            or receipt_state[7] != incident_file_id
+            or receipt_state[8] != incident["phase"]
+            or receipt_state[9] != incident["reason"]
+            or receipt_state[10] is not False
+            or receipt_state[11] != attempt_claim
+            or receipt_state[12] != attempt_payload
+            or receipt_state[13] != attempt_file_id
+            or receipt_state[14] != authority_path
+            or receipt_state[15] != authority_payload
+            or receipt_state[16] != authority_file_id
+            or receipt_state[17] is not production_only
         ):
             raise _CeremonyAbort(
                 "preparation_retry_provenance_not_coordinator_published",
@@ -1440,66 +1787,33 @@ def _retry_authority_protocol():
                     "coordinator's own incident publication."
                 ),
             )
-        object.__setattr__(receipt_state, "consumed", True)
         token = object.__new__(_RetryAuthorization)
         object.__setattr__(token, "incident_index", incident_index)
-        retry_state = RetryState(
-            token=token,
-            repository_root=repository_root,
-            registration_reference=configuration["registration_reference"],
-            configuration_sha256=configuration_sha256,
-            incident_index=incident_index,
-            incident_path=repository_root / incident_relative,
-            incident_payload=incident_payload,
-            incident_file_id=incident_file_id,
-            attempt_claim=attempt_claim,
-            attempt_payload=attempt_payload,
-            attempt_file_id=attempt_file_id,
-            authority_path=authority_path,
-            authority_payload=authority_payload,
-            authority_file_id=authority_file_id,
+        issue_authorization(
+            token,
+            repository_root,
+            configuration["registration_reference"],
+            configuration_sha256,
+            incident_index,
+            repository_root / incident_relative,
+            incident_payload,
+            incident_file_id,
+            attempt_claim,
+            attempt_payload,
+            attempt_file_id,
+            authority_path,
+            authority_payload,
+            authority_file_id,
         )
-        object.__setattr__(token, "_state", retry_state)
         return token
 
-    def require_retry(
-        token: object,
-        repository_root: Path,
-    ) -> Any:
-        state = getattr(token, "_state", None)
-        if (
-            type(state) is not RetryState
-            or state.token is not token
-            or state.live is not True
-            or not isinstance(token, _RetryAuthorization)
-            or state.repository_root != repository_root
-        ):
-            raise TypeError("retry requires live authenticated authorization")
-        attempt = _read_attempt_claim(state.attempt_claim)
-        authority = _read_retry_authority(state.authority_path)
-        incident = _read_canonical_mapping(
-            state.incident_path,
-            maximum_bytes=_INCIDENT_MAX_BYTES,
-            expected_name=state.incident_path.name,
-        )
-        if (
-            attempt is None
-            or attempt[1] != state.attempt_payload
-            or attempt[2] != state.attempt_file_id
-            or authority is None
-            or authority[1] != state.authority_payload
-            or authority[2] != state.authority_file_id
-            or incident is None
-            or incident[1] != state.incident_payload
-            or incident[2] != state.incident_file_id
-        ):
-            raise TypeError("authenticated retry evidence changed")
-        return state
-
-    def revoke_retry(token: object) -> None:
-        state = getattr(token, "_state", None)
-        if type(state) is RetryState and state.token is token:
-            object.__setattr__(state, "live", False)
+    bind_vault_protocol(
+        seal,
+        authorize,
+        issue_receipt,
+        consume_receipt,
+        issue_authorization,
+    )
 
     return (
         bind_stack,
@@ -1538,10 +1852,10 @@ def _retry_claim_protocol(
         state = require_authorization(authorization, repository_root)
         path = repository_root / _RETRY_CLAIM_PATH
         payload = _retry_claim_payload(
-            registration_reference=state.registration_reference,
-            retry_after_incident=state.incident_index,
+            registration_reference=state["registration_reference"],
+            retry_after_incident=state["incident_index"],
             retry_authority_sha256=hashlib.sha256(
-                state.authority_payload
+                state["authority_payload"]
             ).hexdigest(),
             prelaunch_record=prelaunch_record,
         )
@@ -1878,17 +2192,17 @@ def _ceremony_capability_protocol(
                 registration._repository_root,
             )
             if (
-                retry_state.attempt_claim != attempt_claim
+                retry_state["attempt_claim"] != attempt_claim
                 or retry_claim
                 != registration._repository_root / _RETRY_CLAIM_PATH
             ):
                 raise TypeError("retry ceremony claim identity changed")
             retry_loaded = _read_retry_claim(retry_claim)
             expected_retry_payload = _retry_claim_payload(
-                registration_reference=retry_state.registration_reference,
-                retry_after_incident=retry_state.incident_index,
+                registration_reference=retry_state["registration_reference"],
+                retry_after_incident=retry_state["incident_index"],
                 retry_authority_sha256=hashlib.sha256(
-                    retry_state.authority_payload
+                    retry_state["authority_payload"]
                 ).hexdigest(),
                 prelaunch_record=prelaunch_record,
             )
@@ -2514,13 +2828,14 @@ def _assert_outputs_absent(repository_root: Path) -> None:
             )
 
 
-def _complete_prelaunch_checks(
+def _complete_prelaunch_checks_impl(
     *,
     repository_root: Path,
     configuration: Mapping[str, Any],
     actual_invocation: Sequence[str],
     history: _IncidentHistory,
     operations: _CoordinatorOperations,
+    execution_rule: Mapping[str, Any],
 ) -> _PrelaunchRecord:
     """Perform the six §5.3 checks without opening either input."""
     if configuration["design"] != registry.design_binding():
@@ -2546,7 +2861,6 @@ def _complete_prelaunch_checks(
     if len(history.paths) != len(history.records):
         raise AssertionError("incident history paths and records differ")
     operations.assert_interpreter(configuration, actual_invocation)
-    execution_rule = _execution_rule_value()
     if (
         execution_rule["publishes_regardless"] is not True
         or execution_rule["no_self_rescue"] is not True
@@ -2648,6 +2962,46 @@ def _complete_prelaunch_checks(
     )
     _prelaunch_record_value(record)
     return record
+
+
+def _prelaunch_completion_protocol(
+    implementation: Callable[..., _PrelaunchRecord],
+    canonical_execution_rule_bytes: bytes,
+) -> Callable[..., _PrelaunchRecord]:
+    frozen = bytes(canonical_execution_rule_bytes)
+    json_loads = json.loads
+    mapping_type = Mapping
+
+    def complete(
+        *,
+        repository_root: Path,
+        configuration: Mapping[str, Any],
+        actual_invocation: Sequence[str],
+        history: _IncidentHistory,
+        operations: _CoordinatorOperations,
+    ) -> _PrelaunchRecord:
+        execution_rule = json_loads(frozen)
+        if not isinstance(execution_rule, mapping_type):
+            raise AssertionError("private execution law is not a mapping")
+        return implementation(
+            repository_root=repository_root,
+            configuration=configuration,
+            actual_invocation=actual_invocation,
+            history=history,
+            operations=operations,
+            execution_rule=execution_rule,
+        )
+
+    return complete
+
+
+_complete_prelaunch_checks = _prelaunch_completion_protocol(
+    _complete_prelaunch_checks_impl,
+    _COMPLETION_EXECUTION_RULE_BYTES,
+)
+del _COMPLETION_EXECUTION_RULE_BYTES
+del _complete_prelaunch_checks_impl
+del _prelaunch_completion_protocol
 
 
 def _safe_incident_fields(
@@ -2915,10 +3269,12 @@ def _build_registered_anchor_context_core(
                         else None
                     )
                     expected_retry_payload = retry_claim_payload(
-                        registration_reference=retry_state.registration_reference,
-                        retry_after_incident=retry_state.incident_index,
+                        registration_reference=retry_state[
+                            "registration_reference"
+                        ],
+                        retry_after_incident=retry_state["incident_index"],
                         retry_authority_sha256=hashlib.sha256(
-                            retry_state.authority_payload
+                            retry_state["authority_payload"]
                         ).hexdigest(),
                         prelaunch_record=prelaunch_record,
                     )

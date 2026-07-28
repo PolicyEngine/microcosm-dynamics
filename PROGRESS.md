@@ -314,9 +314,30 @@
   and KeyboardInterrupt probes containing statistic-like text each publish
   exactly one incident and leak that text to neither output stream. The
   launcher suite passes 32 tests.
+- Remaining-finding review also extracted and constructed the exact internal
+  receipt and retry-authorization state classes, proving that type equality
+  alone did not authenticate coordinator ownership. A sealed retry-authority
+  vault now owns both identity registries, issues only on the exact
+  publish-and-seal/core stack, consumes the receipt once on the exact
+  authorize/core stack, and exposes only bound verifier/revoker methods with
+  no closure. Receipt and authorization objects carry no caller-populatable
+  state; exact-state forgeries reach zero operations and create no retry
+  claim.
+- The same review rebound the shared execution-law provider so both
+  prelaunch evidence production and validation accepted an attacker-selected
+  law. That provider is deleted. Completion and validation independently
+  capture equal-but-distinct immutable canonical bytes, so global substitution
+  cannot change either surface and a forged law is rejected.
+- Coordinator tests pass 83/83 and the combined coordinator, publication, and
+  report suites pass 187/187 after these F2/F4b corrections.
+- Independent review replayed the exact extracted-state retry forgeries and
+  execution-law provider injection against the settled tree. It approved F2,
+  F3, and F4b with 14 adversarial tests, 41 broader retry/prelaunch tests, and
+  all 32 launcher tests passing. Together with the earlier independent
+  approvals for F1, F4a, and F5, every referee finding now has an independent
+  clean disposition.
 
 ## Next
 
-- Obtain an independent clean re-review of every referee disposition.
 - Run Black, Ruff, each tier, and the full test suite.
 - Record per-finding dispositions, final verification, and push status.

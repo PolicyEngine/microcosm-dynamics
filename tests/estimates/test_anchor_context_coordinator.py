@@ -11,7 +11,7 @@ import shutil
 import subprocess
 import sys
 import textwrap
-from dataclasses import FrozenInstanceError, asdict, replace
+from dataclasses import asdict, replace
 from pathlib import Path
 from types import FunctionType, SimpleNamespace
 from typing import Any
@@ -1064,10 +1064,35 @@ def test_self_consistent_forged_provenance_cannot_claim_retry(tmp_path):
             None,
             False,
         )
+    authorize_cells = dict(
+        zip(
+            coordinator._authorize_invocation.__code__.co_freevars,
+            coordinator._authorize_invocation.__closure__,
+            strict=True,
+        )
+    )
     assert not any(
         isinstance(cell.cell_contents, dict)
-        for cell in coordinator._authorize_invocation.__closure__
+        for cell in authorize_cells.values()
     )
+    assert not any(
+        isinstance(cell.cell_contents, type)
+        and cell.cell_contents.__name__ in {"ReceiptState", "RetryState"}
+        for cell in authorize_cells.values()
+    )
+    for name in ("consume_receipt", "issue_authorization"):
+        vault_method = authorize_cells[name].cell_contents
+        assert vault_method.__closure__ is None
+        with pytest.raises(AttributeError, match="authority state is sealed"):
+            assert vault_method.__self__._receipts == {}
+        with pytest.raises(TypeError, match="authority state is sealed"):
+            vault_method.__self__._receipts = {}
+    assert coordinator._require_retry_authorization.__closure__ is None
+    with pytest.raises(AttributeError, match="authority state is sealed"):
+        assert (
+            coordinator._require_retry_authorization.__self__._authorizations
+            == {}
+        )
     forged_receipt = object.__new__(coordinator._RetryReceipt)
     incident_metadata = incident_path.stat()
     attempt_metadata = attempt_path.stat()
@@ -1117,6 +1142,31 @@ def test_self_consistent_forged_provenance_cannot_claim_retry(tmp_path):
     assert blocked.reason == (
         "preparation_retry_provenance_not_coordinator_published"
     )
+    assert calls == []
+    assert not (root / coordinator._RETRY_CLAIM_PATH).exists()
+
+    forged_authorization = object.__new__(coordinator._RetryAuthorization)
+    object.__setattr__(
+        forged_authorization,
+        "_state",
+        SimpleNamespace(
+            token=forged_authorization,
+            repository_root=root,
+            registration_reference=REGISTRATION_REFERENCE,
+            incident_index=1,
+            authority_payload=authority_payload,
+            live=True,
+        ),
+    )
+    with pytest.raises(
+        TypeError,
+        match="live authenticated authorization",
+    ):
+        coordinator._create_retry_claim(
+            root,
+            forged_authorization,
+            prelaunch,
+        )
     assert calls == []
     assert not (root / coordinator._RETRY_CLAIM_PATH).exists()
 
@@ -1561,9 +1611,7 @@ def test_coordinator_owned_receipt_allows_exactly_one_report_first_retry(
 
     assert first.result.status == "incident"
     assert isinstance(first.retry_receipt, coordinator._RetryReceipt)
-    assert first.retry_receipt._state.production_only is False
-    with pytest.raises(FrozenInstanceError):
-        first.retry_receipt._state.production_only = True
+    assert not hasattr(first.retry_receipt, "_state")
     second = _run_attempt(
         root,
         operations,
@@ -1677,10 +1725,37 @@ def test_public_execution_law_cannot_mutate_private_evidence(
         "retry": "attacker selected",
         "fresh_registration_required_if": "never",
     }
+    assert not hasattr(coordinator, "_execution_rule_value")
     monkeypatch.setattr(
         coordinator,
         "CANONICAL_EXECUTION_RULE",
         attacker_rule,
+    )
+    monkeypatch.setattr(
+        coordinator,
+        "_execution_rule_value",
+        lambda: attacker_rule,
+        raising=False,
+    )
+    completion_cells = dict(
+        zip(
+            coordinator._complete_prelaunch_checks.__code__.co_freevars,
+            coordinator._complete_prelaunch_checks.__closure__,
+            strict=True,
+        )
+    )
+    validation_cells = dict(
+        zip(
+            coordinator._validate_prelaunch_record_value.__code__.co_freevars,
+            coordinator._validate_prelaunch_record_value.__closure__,
+            strict=True,
+        )
+    )
+    assert completion_cells["frozen"].cell_contents == (
+        validation_cells["frozen"].cell_contents
+    )
+    assert completion_cells["frozen"].cell_contents is not (
+        validation_cells["frozen"].cell_contents
     )
     configuration = _configuration(root)
     record = coordinator._complete_prelaunch_checks(
@@ -1700,6 +1775,15 @@ def test_public_execution_law_cannot_mutate_private_evidence(
     assert execution_rule["publishes_regardless"] is True
     assert execution_rule["no_self_rescue"] is True
     coordinator._prelaunch_record_value(record)
+
+    forged_evidence = json.loads(record.evidence_bytes)
+    forged_evidence["checks"][5]["evidence"]["execution_rule"] = attacker_rule
+    forged_record = replace(
+        record,
+        evidence_bytes=publication.canonical_json_bytes(forged_evidence),
+    )
+    with pytest.raises(ValueError, match="execution-law evidence changed"):
+        coordinator._prelaunch_record_value(forged_record)
 
 
 def test_public_runner_owns_fail_once_report_first_retry(
