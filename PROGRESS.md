@@ -2,8 +2,7 @@
 
 ## State
 
-The ratified design and failing coordinator path are understood; implementation
-is next.
+The code-tree identity guard is implemented; real-git regressions are next.
 
 ## Done
 
@@ -16,8 +15,9 @@ is next.
 - Traced `_validate_repository`: the clean-tree guard precedes an exact
   `HEAD == implementation_commit` comparison, and the same validator runs at
   prelaunch and immediately before publication.
+- Replaced exact-`HEAD` identity with a fail-closed existence and ancestry
+  check plus exact `src/` and `scripts/` tree-hash comparisons.
 
 ## Next
 
-- Replace exact-HEAD identity with code-tree identity.
 - Add real-git regression fixtures and run the required checks.
