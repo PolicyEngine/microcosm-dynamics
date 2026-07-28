@@ -1991,9 +1991,7 @@ def test_public_runner_owns_fail_once_report_first_retry(
         )
     )
     script = isolated / "exercise_public_retry.py"
-    script.write_text(
-        textwrap.dedent(
-            """
+    script.write_text(textwrap.dedent("""
             import hashlib
             import inspect
             import json
@@ -2163,9 +2161,7 @@ def test_public_runner_owns_fail_once_report_first_retry(
             assert artifact["prior_incidents"] == [
                 "runs/anchor_context_report_incident_1.json"
             ]
-            """
-        )
-    )
+            """))
     completed = subprocess.run(
         [sys.executable, str(script)],
         cwd=isolated,
