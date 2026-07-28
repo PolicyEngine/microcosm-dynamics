@@ -24,7 +24,9 @@ verification is next.
   repository and advanced the artifact-tier manifest by three tests.
 - Targeted results: coordinator `86 passed`; rehearsal `23 passed`; tier
   policy `1 passed, 3927 deselected`.
+- Repository-wide Black (`503 files`) and Ruff checks pass. Black required a
+  formatting-only cleanup in the related publication test module.
 
 ## Next
 
-- Run Black, Ruff, all tier collection smokes, and the full estimates suite.
+- Run all tier collection smokes and the full estimates suite.
