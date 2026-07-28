@@ -443,6 +443,62 @@ def test_constructible_registration_token_cannot_open_production_inputs(
     assert attempted_reads == []
 
 
+@pytest.mark.parametrize(
+    "binder",
+    [
+        anchor_context_publication._bind_input_io_capability_verifier,
+        anchor_context_publication._bind_production_input_capability_verifier,
+    ],
+)
+def test_production_verifier_binding_rejects_direct_callers(binder):
+    with pytest.raises(TypeError, match="coordinator bootstrap"):
+        binder(lambda _candidate: object())
+
+
+def test_extracted_raw_io_helpers_reject_caller_minted_authority(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    root = tmp_path / "repo"
+    protected = root / registry.FIRST_ESTIMATES_INPUT_PATH
+    protected.parent.mkdir(parents=True)
+    protected.write_bytes(b"protected production bytes")
+    cells = dict(
+        zip(
+            anchor_context_publication._load_verified_json.__code__.co_freevars,
+            anchor_context_publication._load_verified_json.__closure__,
+            strict=True,
+        )
+    )
+    forged = object.__new__(anchor_context_publication._InputReadAuthority)
+    issued = cells["issued"].cell_contents
+    issued[id(forged)] = (
+        forged,
+        root,
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        None,
+    )
+    open_attempts = 0
+
+    def forbidden_open(*_args, **_kwargs):
+        nonlocal open_attempts
+        open_attempts += 1
+        raise AssertionError("protected input reached os.open")
+
+    monkeypatch.setattr(anchor_context_publication.os, "open", forbidden_open)
+    try:
+        with pytest.raises(TypeError, match="internal to a verified loader"):
+            cells["open_regular_relative"].cell_contents(
+                forged,
+                root,
+                registry.FIRST_ESTIMATES_INPUT_PATH,
+            )
+    finally:
+        issued.pop(id(forged), None)
+
+    assert open_attempts == 0
+
+
 def test_public_engine_rejects_raw_nonfixture_documents_before_compute(
     monkeypatch: pytest.MonkeyPatch,
 ):

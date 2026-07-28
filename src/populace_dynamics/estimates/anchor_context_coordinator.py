@@ -1397,37 +1397,42 @@ def _retry_authority_protocol():
 ) = _retry_authority_protocol()
 
 
-def _create_retry_claim(
-    repository_root: Path,
-    authorization: object,
-    prelaunch_record: _PrelaunchRecord,
-    *,
-    _require_authorization: Callable[
-        [object, Path], _RetryAuthorizationState
-    ] = _require_retry_authorization,
-) -> Path:
-    """Durably consume the one retry only from live authenticated evidence."""
-    state = _require_authorization(authorization, repository_root)
-    path = repository_root / _RETRY_CLAIM_PATH
-    payload = _retry_claim_payload(
-        registration_reference=state.registration_reference,
-        retry_after_incident=state.incident_index,
-        retry_authority_sha256=hashlib.sha256(
-            state.authority_payload
-        ).hexdigest(),
-        prelaunch_record=prelaunch_record,
-    )
-    try:
-        _write_claim(path, payload)
-    except FileExistsError:
-        raise _CeremonyAbort(
-            "preparation_fresh_registration_required_retry_claim",
-            (
-                "The durable anchor-context retry claim is already occupied; "
-                "the sole retry is consumed."
-            ),
-        ) from None
-    return path
+def _retry_claim_protocol(
+    require_authorization: Callable[[object, Path], _RetryAuthorizationState],
+) -> Callable[[Path, object, _PrelaunchRecord], Path]:
+    def create(
+        repository_root: Path,
+        authorization: object,
+        prelaunch_record: _PrelaunchRecord,
+    ) -> Path:
+        """Consume the one retry only from live authenticated evidence."""
+        state = require_authorization(authorization, repository_root)
+        path = repository_root / _RETRY_CLAIM_PATH
+        payload = _retry_claim_payload(
+            registration_reference=state.registration_reference,
+            retry_after_incident=state.incident_index,
+            retry_authority_sha256=hashlib.sha256(
+                state.authority_payload
+            ).hexdigest(),
+            prelaunch_record=prelaunch_record,
+        )
+        try:
+            _write_claim(path, payload)
+        except FileExistsError:
+            raise _CeremonyAbort(
+                "preparation_fresh_registration_required_retry_claim",
+                (
+                    "The durable anchor-context retry claim is already "
+                    "occupied; the sole retry is consumed."
+                ),
+            ) from None
+        return path
+
+    return create
+
+
+_create_retry_claim = _retry_claim_protocol(_require_retry_authorization)
+del _retry_claim_protocol
 
 
 def _ceremony_capability_protocol(
@@ -1438,6 +1443,9 @@ def _ceremony_capability_protocol(
 ):
     """Expose only the sealed runner and live-capability verifier."""
     getframe = sys._getframe
+    sealed_repository_root = _sealed_repository_root()
+    exclusive_ceremony_lock = first_coordinator._exclusive_ceremony_lock
+    read_registered_configuration_bytes = _read_registered_configuration_bytes
     bind_retry_authority_stack = _bind_retry_authority_stack
     issue_initial_attempt = _issue_initial_attempt
     require_initial_attempt = _require_initial_attempt
@@ -1448,6 +1456,43 @@ def _ceremony_capability_protocol(
     require_retry_authorization = _require_retry_authorization
     revoke_retry_authorization = _revoke_retry_authorization
     retry_provenance_is_retained = _retry_provenance_is_retained
+    write_artifact = anchor_context_publication.write_anchor_context_artifact
+
+    def publish_artifact(
+        token: anchor_context_publication._AnchorContextPrecomputeToken,
+        artifact: Mapping[str, Any],
+        *,
+        input_bundle: object,
+        ceremony_capability: _CeremonyCapability,
+    ) -> Path:
+        return write_artifact(
+            token,
+            artifact,
+            input_bundle=input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
+
+    production_operations = _CoordinatorOperations(
+        assert_interpreter=_assert_sealed_interpreter,
+        validate_repository=_validate_repository,
+        prepare_sidecar=(
+            anchor_context_publication.prepare_environment_sidecar
+        ),
+        load_inputs=(anchor_context_publication._load_production_documents),
+        build_results=anchor_context_report._build_production_results,
+        validate_results=(anchor_context_report._validate_production_results),
+        build_runtime_provenance=(
+            anchor_context_publication.build_runtime_provenance
+        ),
+        build_artifact=(
+            anchor_context_publication.build_anchor_context_artifact
+        ),
+        publish_artifact=publish_artifact,
+        publish_incident=(
+            anchor_context_publication.write_anchor_context_incident
+        ),
+        record_prelaunch=_retain_prelaunch_record,
+    )
     invocations: dict[int, tuple[Any, ...]] = {}
     issued: dict[int, tuple[Any, ...]] = {}
 
@@ -1722,16 +1767,16 @@ def _ceremony_capability_protocol(
             issued.pop(id(capability), None)
 
     def run(registration_path: str | Path) -> CoordinatorResult:
-        root = _sealed_repository_root()
+        root = sealed_repository_root
         actual_invocation = list(getattr(sys, "orig_argv", ()))
-        with first_coordinator._exclusive_ceremony_lock(root):
+        with exclusive_ceremony_lock(root):
             registered_configuration_bytes = (
-                _read_registered_configuration_bytes(
+                read_registered_configuration_bytes(
                     root,
                     registration_path,
                 )
             )
-            operations = _default_operations()
+            operations = production_operations
             for attempt_index in range(2):
                 coordinator_invocation = issue_invocation(
                     root,
@@ -1782,6 +1827,14 @@ def _ceremony_capability_protocol(
     )
     core = core_factory(require_invocation)
     bind_retry_authority_stack(core, _publish_abort)
+    anchor_context_publication._bind_input_io_capability_verifier(require)
+    anchor_context_publication._bind_production_input_capability_verifier(
+        require
+    )
+    anchor_context_report._bind_document_authority(
+        anchor_context_publication._require_verified_fixture_inputs,
+        anchor_context_publication._require_verified_production_inputs,
+    )
     return run, require, require_invocation, core
 
 
@@ -2333,6 +2386,26 @@ def _publish_abort(
 def _build_registered_anchor_context_core(
     require_coordinator_invocation: Callable[..., None],
 ) -> Callable[..., CoordinatorResult]:
+    parse_configuration = _parse_configuration
+    configuration_echo = first_publication._configuration_echo
+    read_incident_history = _read_incident_history
+    assert_fixture_identities = (
+        anchor_context_publication._assert_fixture_identities
+    )
+    complete_prelaunch_checks = _complete_prelaunch_checks
+    prelaunch_check_names = PRELAUNCH_CHECK_NAMES
+    read_retry_claim = _read_retry_claim
+    retry_claim_payload = _retry_claim_payload
+    freeze_precompute = anchor_context_publication._freeze_precompute
+    require_production_inputs = (
+        anchor_context_publication._require_verified_production_inputs
+    )
+    require_fixture_inputs = (
+        anchor_context_publication._require_verified_fixture_inputs
+    )
+    publish_abort = _publish_abort
+    result_type = CoordinatorResult
+
     def core(
         *,
         repository_root: str | Path,
@@ -2406,12 +2479,12 @@ def _build_registered_anchor_context_core(
         if (mint_capability is None) != (revoke_capability is None):
             raise TypeError("ceremony capability lifecycle is incomplete")
         root = Path(repository_root).resolve()
-        registration = _parse_configuration(
+        registration = parse_configuration(
             repository_root=root,
             registered_configuration_bytes=registered_configuration_bytes,
             production_only=production_only,
         )
-        configuration = first_publication._configuration_echo(registration)
+        configuration = configuration_echo(registration)
         precompute: (
             anchor_context_publication._AnchorContextPrecomputeToken | None
         ) = None
@@ -2421,7 +2494,7 @@ def _build_registered_anchor_context_core(
         retry_claim: Path | None = None
         try:
             try:
-                history = _read_incident_history(
+                history = read_incident_history(
                     root,
                     production_only=production_only,
                 )
@@ -2431,18 +2504,18 @@ def _build_registered_anchor_context_core(
                     history,
                 )
                 if not production_only:
-                    anchor_context_publication._assert_fixture_identities(
+                    assert_fixture_identities(
                         configuration["first_estimates_input"],
                         configuration["anchor_input"],
                     )
-                prelaunch_record = _complete_prelaunch_checks(
+                prelaunch_record = complete_prelaunch_checks(
                     repository_root=root,
                     configuration=configuration,
                     actual_invocation=actual_invocation,
                     history=history,
                     operations=operations,
                 )
-                if prelaunch_record.check_names != PRELAUNCH_CHECK_NAMES:
+                if prelaunch_record.check_names != prelaunch_check_names:
                     raise AssertionError("prelaunch check record changed")
                 if retry_authorization is None:
                     initial_attempt_authority = issue_initial_attempt(
@@ -2477,11 +2550,11 @@ def _build_registered_anchor_context_core(
                         root,
                     )
                     retry_loaded = (
-                        _read_retry_claim(retry_claim)
+                        read_retry_claim(retry_claim)
                         if retry_claim is not None
                         else None
                     )
-                    expected_retry_payload = _retry_claim_payload(
+                    expected_retry_payload = retry_claim_payload(
                         registration_reference=retry_state.registration_reference,
                         retry_after_incident=retry_state.incident_index,
                         retry_authority_sha256=hashlib.sha256(
@@ -2511,7 +2584,7 @@ def _build_registered_anchor_context_core(
                 runtime_provenance = operations.build_runtime_provenance(
                     configuration["implementation_commit"]
                 )
-                precompute = anchor_context_publication._freeze_precompute(
+                precompute = freeze_precompute(
                     registration,
                     runtime_provenance=runtime_provenance,
                     sidecar_payload=sidecar_payload,
@@ -2523,16 +2596,14 @@ def _build_registered_anchor_context_core(
                     )
                 loaded_inputs = operations.load_inputs(execution_authority)
                 if production_only:
-                    anchor_context_publication._require_verified_production_inputs(
+                    require_production_inputs(
                         loaded_inputs,
                         ceremony_capability=ceremony_capability,
                     )
                 else:
-                    anchor_context_publication._require_verified_fixture_inputs(
-                        loaded_inputs
-                    )
+                    require_fixture_inputs(loaded_inputs)
             except BaseException as error:
-                return _publish_abort(
+                return publish_abort(
                     precompute or registration,
                     phase="preparation",
                     error=error,
@@ -2549,7 +2620,7 @@ def _build_registered_anchor_context_core(
                     loaded_inputs,
                 )
             except BaseException as error:
-                return _publish_abort(
+                return publish_abort(
                     precompute,
                     phase="compute",
                     error=error,
@@ -2576,7 +2647,7 @@ def _build_registered_anchor_context_core(
                     ceremony_capability=ceremony_capability,
                 )
             except BaseException as error:
-                return _publish_abort(
+                return publish_abort(
                     precompute,
                     phase="invariant",
                     error=error,
@@ -2597,7 +2668,7 @@ def _build_registered_anchor_context_core(
                     ceremony_capability=ceremony_capability,
                 )
             except BaseException as error:
-                return _publish_abort(
+                return publish_abort(
                     precompute,
                     phase="publication",
                     error=error,
@@ -2606,7 +2677,7 @@ def _build_registered_anchor_context_core(
                     attempt_authority=initial_attempt_authority,
                     seal_retry_authority=seal_retry_authority,
                 )
-            return CoordinatorResult(
+            return result_type(
                 status="published",
                 path=path,
                 phase="publication",
@@ -2626,15 +2697,6 @@ def _build_registered_anchor_context_core(
     core.__name__ = "_run_registered_anchor_context_core"
     core.__qualname__ = "_run_registered_anchor_context_core"
     return core
-
-
-(
-    run_registered_anchor_context,
-    _require_ceremony_capability,
-    _require_coordinator_invocation,
-    _run_registered_anchor_context_core,
-) = _ceremony_capability_protocol(_build_registered_anchor_context_core)
-del _build_registered_anchor_context_core
 
 
 def _run_registered_anchor_context_for_test(
@@ -2809,6 +2871,16 @@ def _read_registered_configuration_bytes(
             os.close(registration_descriptor)
         for descriptor in reversed(descriptors):
             os.close(descriptor)
+
+
+(
+    run_registered_anchor_context,
+    _require_ceremony_capability,
+    _require_coordinator_invocation,
+    _run_registered_anchor_context_core,
+) = _ceremony_capability_protocol(_build_registered_anchor_context_core)
+del _build_registered_anchor_context_core
+del _ceremony_capability_protocol
 
 
 __all__ = [

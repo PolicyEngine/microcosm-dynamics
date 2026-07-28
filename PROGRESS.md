@@ -5,8 +5,8 @@
 - Branch: `claude/context-report-impl`
 - Starting commit: `a139b3fea23661d97cd93527bc8a66737edea55b`
 - Referee verdict: `FIX-FIRST`
-- Active work: final review, tier/full-suite verification, push, and
-  per-finding output report.
+- Active work: independent clean re-review, tier/full-suite verification,
+  push, and per-finding output report.
 - Remote sync: `git fetch`/`git pull --ff-only` was attempted first, but the
   sandbox could not resolve `github.com`; the checked-out commit matches the
   existing local `origin/claude/context-report-impl` ref.
@@ -165,7 +165,33 @@
   invocation authority. It never exits between adjudication and retry.
 - Frozen nested prelaunch evidence now uses type-exact JSON comparison, so
   `true` cannot substitute for integer incident index or `registered_runs`.
-- The complete coordinator suite passes with 72 tests.
+- Retry-claim creation now captures the exact live authorization verifier in
+  a deleted protocol closure; callers cannot inject a forged verifier as a
+  hidden keyword argument.
+- A final finding-1 callable inventory exposed five residual substitution or
+  alias paths. All five now fail before production input bytes or computation:
+  - raw descriptor helpers use a one-call path-bound authority, exact loader
+    stack, stable metadata, a byte bound, and immediate revocation; even an
+    extracted helper plus a caller-added registry entry cannot reach
+    `os.open`;
+  - both production input protocols bind the exact ceremony-capability
+    verifier once from the coordinator's initialization frame, and their raw
+    loader dependencies are closure-captured;
+  - every report extraction/build/validation entry closure-captures the
+    original document authorizer and downstream engine callable, so rebinding
+    module globals cannot produce the 9/15/7 result sections;
+  - the public runner captures the canonical repository root value, lock,
+    descriptor-gated registration reader, core, and exact production
+    operation bundle before the protocol factory is deleted;
+  - rehearsal manifest and fixture sources are opened only through bounded,
+    no-follow descriptor chains that reject direct production paths,
+    hardlinks, symlinks, reverse aliases, unstable metadata, and oversized
+    files before `os.read`.
+- Direct attempts to pre-bind fake publication or report verifiers are
+  rejected unless the immediate caller is the exact coordinator protocol
+  initialization frame.
+- The combined launcher/coordinator/publication/rehearsal/report regression
+  suite passes with 214 tests after the final closure and alias probes.
 
 ## Next
 

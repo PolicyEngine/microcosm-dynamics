@@ -10,13 +10,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import stat
 import subprocess
 import sys
 import tempfile
 from collections.abc import Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, replace
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Literal
 
 from populace_dynamics.estimates import (
@@ -50,6 +51,19 @@ _ANCHOR_FIXTURE_SHA256 = (
 )
 _ANCHOR_FIXTURE_VINTAGE = "ssa_level_anchors.fixture_only.v1"
 _MANIFEST_SCHEMA = "anchor_context_fixture_manifest.fixture_only.v1"
+_FIXED_SOURCE_PATHS = frozenset(
+    {
+        _MANIFEST_PATH.as_posix(),
+        _FIRST_FIXTURE_PATH,
+        _ANCHOR_FIXTURE_PATH,
+    }
+)
+_PROTECTED_PRODUCTION_PATHS = (
+    registry.FIRST_ESTIMATES_INPUT_PATH,
+    registry.ANCHOR_INPUT_PATH,
+)
+_SOURCE_READ_CHUNK_SIZE = 64 * 1024
+_SOURCE_MAX_BYTES = 1024 * 1024
 _PRIVATE_CONTRACT_BYTES = b"fixture_only: true\n"
 _PRIVATE_GITIGNORE_BYTES = (
     b"runs/anchor_context_report_attempt.claim\n"
@@ -138,9 +152,10 @@ def _load_committed_manifest(
     repository_root: Path = _REPOSITORY_ROOT,
 ) -> tuple[Mapping[str, Any], bytes]:
     """Read and exact-check the nonproduction manifest, never an input."""
-    root = Path(repository_root)
-    path = _sealed_fixture_source(root, _MANIFEST_PATH.as_posix())
-    raw = path.read_bytes()
+    raw = _read_sealed_fixture_source(
+        Path(repository_root),
+        _MANIFEST_PATH.as_posix(),
+    )
     if hashlib.sha256(raw).hexdigest() != _MANIFEST_SHA256:
         raise FixtureRehearsalError("fixture manifest hash changed")
     try:
@@ -196,36 +211,203 @@ def _git(repository_root: Path, *arguments: str) -> bytes:
         ) from error
 
 
-def _sealed_fixture_source(source_root: Path, relative_path: str) -> Path:
-    """Resolve one fixed fixture without following a source-tree symlink."""
+def _source_metadata_signature(
+    metadata: os.stat_result,
+) -> tuple[int, int, int, int, int, int, int]:
+    """Return every source-file field that must remain stable."""
+    return (
+        metadata.st_mode,
+        metadata.st_dev,
+        metadata.st_ino,
+        metadata.st_nlink,
+        metadata.st_size,
+        metadata.st_mtime_ns,
+        metadata.st_ctime_ns,
+    )
+
+
+def _fixed_source_parts(relative_path: str) -> tuple[str, ...]:
+    """Accept only the three literal, repository-relative rehearsal files."""
+    if (
+        not isinstance(relative_path, str)
+        or relative_path not in _FIXED_SOURCE_PATHS
+    ):
+        raise FixtureRehearsalError("fixture source path is not fixed")
+    relative = PurePosixPath(relative_path)
+    if (
+        relative.is_absolute()
+        or relative.as_posix() != relative_path
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        raise FixtureRehearsalError("fixture source path is not canonical")
+    return relative.parts
+
+
+def _sealed_source_root(source_root: Path) -> Path:
+    """Require an already-canonical, real source directory."""
     root = Path(source_root)
     try:
+        root_metadata = os.stat(root, follow_symlinks=False)
         resolved_root = root.resolve(strict=True)
     except OSError as error:
         raise FixtureRehearsalError(
             "fixture source root is unavailable"
         ) from error
-    if root.is_symlink() or resolved_root != root:
+    if (
+        stat.S_ISLNK(root_metadata.st_mode)
+        or not stat.S_ISDIR(root_metadata.st_mode)
+        or resolved_root != root
+    ):
         raise FixtureRehearsalError("fixture source root resolution drifted")
+    return root
 
-    relative = Path(relative_path)
-    if relative.is_absolute() or ".." in relative.parts:
-        raise FixtureRehearsalError("fixture source path is not relative")
-    source = root
-    for component in relative.parts:
-        source /= component
-        if source.is_symlink():
-            raise FixtureRehearsalError(
-                "fixture source path contains a symlink"
-            )
+
+def _protected_production_file_ids(
+    source_root: Path,
+) -> frozenset[tuple[int, int]]:
+    """Inspect names only; never open or read either production input."""
+    protected: set[tuple[int, int]] = set()
+    for relative_path in _PROTECTED_PRODUCTION_PATHS:
+        candidate = source_root
+        parts = PurePosixPath(relative_path).parts
+        for index, component in enumerate(parts):
+            candidate /= component
+            try:
+                metadata = os.stat(candidate, follow_symlinks=False)
+            except FileNotFoundError:
+                break
+            except OSError as error:
+                raise FixtureRehearsalError(
+                    "canonical production input path is unavailable"
+                ) from error
+            if stat.S_ISLNK(metadata.st_mode):
+                raise FixtureRehearsalError(
+                    "canonical production input path contains a symlink"
+                )
+            if index < len(parts) - 1:
+                if not stat.S_ISDIR(metadata.st_mode):
+                    raise FixtureRehearsalError(
+                        "canonical production input parent is not a directory"
+                    )
+                continue
+            if not stat.S_ISREG(metadata.st_mode):
+                raise FixtureRehearsalError(
+                    "canonical production input path is not regular"
+                )
+            protected.add((metadata.st_dev, metadata.st_ino))
+    return frozenset(protected)
+
+
+def _read_sealed_fixture_source(
+    source_root: Path,
+    relative_path: str,
+) -> bytes:
+    """Descriptor-read one fixed fixture without production-file aliases."""
+    root = _sealed_source_root(source_root)
+    parts = _fixed_source_parts(relative_path)
+
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    nonblocking = getattr(os, "O_NONBLOCK", None)
+    close_on_exec = getattr(os, "O_CLOEXEC", None)
+    if (
+        no_follow is None
+        or directory_flag is None
+        or nonblocking is None
+        or close_on_exec is None
+    ):
+        raise FixtureRehearsalError("platform lacks sealed descriptor flags")
+
+    opened_directories: list[int] = []
+    descriptor: int | None = None
     try:
-        resolved_source = source.resolve(strict=True)
+        current = os.open(
+            root,
+            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+        )
+        opened_directories.append(current)
+        for component in parts[:-1]:
+            current = os.open(
+                component,
+                os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+                dir_fd=current,
+            )
+            opened_directories.append(current)
+        descriptor = os.open(
+            parts[-1],
+            os.O_RDONLY | no_follow | nonblocking | close_on_exec,
+            dir_fd=current,
+        )
+        before = os.fstat(descriptor)
+        named_before = os.stat(
+            parts[-1],
+            dir_fd=current,
+            follow_symlinks=False,
+        )
+        if not stat.S_ISREG(before.st_mode) or _source_metadata_signature(
+            named_before
+        ) != _source_metadata_signature(before):
+            raise FixtureRehearsalError(
+                "fixture source is not a stable regular file"
+            )
+        if before.st_nlink != 1:
+            raise FixtureRehearsalError(
+                "fixture source must be a singly linked regular file"
+            )
+        if before.st_size > _SOURCE_MAX_BYTES:
+            raise FixtureRehearsalError("fixture source exceeds byte bound")
+        if (before.st_dev, before.st_ino) in _protected_production_file_ids(
+            root
+        ):
+            raise FixtureRehearsalError(
+                "fixture source aliases a production input"
+            )
+
+        chunks: list[bytes] = []
+        observed_bytes = 0
+        while True:
+            remaining = _SOURCE_MAX_BYTES - observed_bytes
+            chunk = os.read(
+                descriptor,
+                min(_SOURCE_READ_CHUNK_SIZE, remaining + 1),
+            )
+            if not chunk:
+                break
+            observed_bytes += len(chunk)
+            if observed_bytes > _SOURCE_MAX_BYTES:
+                raise FixtureRehearsalError(
+                    "fixture source exceeds byte bound"
+                )
+            chunks.append(chunk)
+
+        after = os.fstat(descriptor)
+        named_after = os.stat(
+            parts[-1],
+            dir_fd=current,
+            follow_symlinks=False,
+        )
+        signature = _source_metadata_signature(before)
+        if (
+            _source_metadata_signature(after) != signature
+            or _source_metadata_signature(named_after) != signature
+            or observed_bytes != before.st_size
+        ):
+            raise FixtureRehearsalError(
+                "fixture source changed during descriptor read"
+            )
+        return b"".join(chunks)
+    except FixtureRehearsalError:
+        raise
     except OSError as error:
-        raise FixtureRehearsalError("fixture source is unavailable") from error
-    expected_source = resolved_root / relative
-    if resolved_source != expected_source or not source.is_file():
-        raise FixtureRehearsalError("fixture source resolution drifted")
-    return source
+        raise FixtureRehearsalError(
+            "fixture source is unavailable or contains a symlink"
+        ) from error
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        for directory in reversed(opened_directories):
+            os.close(directory)
 
 
 def _populate_private_root(
@@ -245,8 +427,10 @@ def _populate_private_root(
     manifest_target.write_bytes(manifest_bytes)
     for identity in (first_estimates_input, anchor_input):
         relative = Path(identity["path"])
-        source = _sealed_fixture_source(source_root, identity["path"])
-        raw = source.read_bytes()
+        raw = _read_sealed_fixture_source(
+            source_root,
+            identity["path"],
+        )
         if hashlib.sha256(raw).hexdigest() != identity["sha256"]:
             raise FixtureRehearsalError("fixed fixture hash changed")
         target = private_root / relative

@@ -10,7 +10,8 @@ from __future__ import annotations
 
 import copy
 import math
-from collections.abc import Mapping, Sequence
+import sys
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 from populace_dynamics.estimates import anchor_context_registry as registry
@@ -151,21 +152,71 @@ def _string(value: Any, label: str) -> str:
     return value
 
 
-def _authorized_documents(
-    input_bundle: object,
-    *,
-    ceremony_capability: object | None,
-) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-    from populace_dynamics.estimates import anchor_context_publication
+def _document_authority_protocol():
+    getframe = sys._getframe
+    require_fixture_inputs: Callable[..., Any] | None = None
+    require_production_inputs: Callable[..., Any] | None = None
 
-    if ceremony_capability is None:
-        return anchor_context_publication._require_verified_fixture_inputs(
-            input_bundle
+    def bind(
+        fixture_verifier: Callable[..., Any],
+        production_verifier: Callable[..., Any],
+    ) -> None:
+        nonlocal require_fixture_inputs, require_production_inputs
+        from populace_dynamics.estimates import anchor_context_coordinator
+
+        caller = getframe(1)
+        coordinator_protocol = getattr(
+            anchor_context_coordinator,
+            "_ceremony_capability_protocol",
+            None,
         )
-    return anchor_context_publication._require_verified_production_inputs(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
+        if (
+            coordinator_protocol is None
+            or caller.f_code is not coordinator_protocol.__code__
+            or caller.f_globals is not vars(anchor_context_coordinator)
+        ):
+            raise TypeError(
+                "report document authority requires the sealed coordinator "
+                "initialization stack"
+            )
+        if (
+            require_fixture_inputs is not None
+            or require_production_inputs is not None
+        ):
+            raise RuntimeError("report document authority already bound")
+        require_fixture_inputs = fixture_verifier
+        require_production_inputs = production_verifier
+
+    def authorize(
+        input_bundle: object,
+        *,
+        ceremony_capability: object | None,
+    ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+        if require_fixture_inputs is None or require_production_inputs is None:
+            # Importing the report directly must retain its public fixture API.
+            # The coordinator import performs the one allowed binding from its
+            # sealed protocol frame; no caller-supplied verifier is accepted.
+            from populace_dynamics.estimates import (
+                anchor_context_coordinator as _anchor_context_coordinator,
+            )
+
+            del _anchor_context_coordinator
+        if require_fixture_inputs is None or require_production_inputs is None:
+            raise RuntimeError("report document authority is not bound")
+        if ceremony_capability is None:
+            return require_fixture_inputs(input_bundle)
+        return require_production_inputs(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
+
+    return authorize, bind
+
+
+_authorized_documents, _bind_document_authority = (
+    _document_authority_protocol()
+)
+del _document_authority_protocol
 
 
 def _pointer_tokens(pointer: Any) -> tuple[str, ...]:
@@ -354,80 +405,105 @@ def _operand_values(
     return values
 
 
-def _extract_model_metrics(
-    input_bundle: object,
-    *,
-    ceremony_capability: object | None = None,
-) -> dict[str, dict[tuple[int, int], int | float]]:
-    """Resolve the exact seven model metrics on the frozen 20x8 grid."""
-    first_estimates, _anchors = _authorized_documents(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
-    source = _require_mapping(first_estimates, "first-estimates input")
-    registries = registry.frozen_registries()
-    registry.validate_frozen_registries(
-        required_series_ids=registries["required_series_ids"],
-        model_metric_specs=registries["model_metric_specs"],
-        pairings=registries["pairings"],
-        comparison_specs=registries["comparison_specs"],
-    )
-    tables = _validated_model_tables(source)
-    extracted: dict[str, dict[tuple[int, int], int | float]] = {}
-    for spec in registry.model_metric_specs():
-        operands = [
-            _operand_values(source, tables, operand)
-            for operand in spec["operands"]
-        ]
-        if any(tuple(values) != _EXPECTED_GRID for values in operands):
-            raise AnchorContextValidationError(
-                f"metric {spec['model_metric_id']!r} operand grids differ"
-            )
-        units = {operand["value_unit"] for operand in spec["operands"]}
-        if units != {spec["unit"]}:
-            raise AnchorContextValidationError(
-                f"metric {spec['model_metric_id']!r} units differ"
-            )
-        operation = spec["operation"]
-        if operation == "select":
-            if len(operands) != 1:
-                raise AnchorContextValidationError(
-                    f"select metric {spec['model_metric_id']!r} "
-                    "must have one operand"
-                )
-            values = operands[0]
-        elif operation == "same_key_sum":
-            if len(operands) != 2:
-                raise AnchorContextValidationError(
-                    f"same_key_sum metric {spec['model_metric_id']!r} "
-                    "must have two operands"
-                )
-            values = {
-                key: _number(
-                    operands[0][key] + operands[1][key],
-                    f"metric {spec['model_metric_id']!r} at {key!r}",
-                )
-                for key in _EXPECTED_GRID
-            }
-        else:
-            raise AnchorContextValidationError(
-                f"metric {spec['model_metric_id']!r} operation changed"
-            )
-        extracted[spec["model_metric_id"]] = values
-    if tuple(extracted) != tuple(
-        spec["model_metric_id"] for spec in registry.model_metric_specs()
-    ):
-        raise AnchorContextValidationError(
-            "model metrics are missing, extra, duplicated, or reordered"
+def _model_metric_protocol(
+    authorize_documents: Callable[
+        ..., tuple[Mapping[str, Any], Mapping[str, Any]]
+    ],
+):
+    def extract(
+        input_bundle: object,
+        *,
+        ceremony_capability: object | None = None,
+    ) -> dict[str, dict[tuple[int, int], int | float]]:
+        """Resolve the exact seven model metrics on the frozen 20x8 grid."""
+        first_estimates, _anchors = authorize_documents(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
         )
-    return extracted
+        source = _require_mapping(first_estimates, "first-estimates input")
+        registries = registry.frozen_registries()
+        registry.validate_frozen_registries(
+            required_series_ids=registries["required_series_ids"],
+            model_metric_specs=registries["model_metric_specs"],
+            pairings=registries["pairings"],
+            comparison_specs=registries["comparison_specs"],
+        )
+        tables = _validated_model_tables(source)
+        extracted: dict[str, dict[tuple[int, int], int | float]] = {}
+        for spec in registry.model_metric_specs():
+            operands = [
+                _operand_values(source, tables, operand)
+                for operand in spec["operands"]
+            ]
+            if any(tuple(values) != _EXPECTED_GRID for values in operands):
+                raise AnchorContextValidationError(
+                    f"metric {spec['model_metric_id']!r} operand grids differ"
+                )
+            units = {operand["value_unit"] for operand in spec["operands"]}
+            if units != {spec["unit"]}:
+                raise AnchorContextValidationError(
+                    f"metric {spec['model_metric_id']!r} units differ"
+                )
+            operation = spec["operation"]
+            if operation == "select":
+                if len(operands) != 1:
+                    raise AnchorContextValidationError(
+                        f"select metric {spec['model_metric_id']!r} "
+                        "must have one operand"
+                    )
+                values = operands[0]
+            elif operation == "same_key_sum":
+                if len(operands) != 2:
+                    raise AnchorContextValidationError(
+                        f"same_key_sum metric {spec['model_metric_id']!r} "
+                        "must have two operands"
+                    )
+                values = {
+                    key: _number(
+                        operands[0][key] + operands[1][key],
+                        f"metric {spec['model_metric_id']!r} at {key!r}",
+                    )
+                    for key in _EXPECTED_GRID
+                }
+            else:
+                raise AnchorContextValidationError(
+                    f"metric {spec['model_metric_id']!r} operation changed"
+                )
+            extracted[spec["model_metric_id"]] = values
+        if tuple(extracted) != tuple(
+            spec["model_metric_id"] for spec in registry.model_metric_specs()
+        ):
+            raise AnchorContextValidationError(
+                "model metrics are missing, extra, duplicated, or reordered"
+            )
+        return extracted
+
+    extract.__name__ = "_extract_model_metrics"
+    extract.__qualname__ = "_extract_model_metrics"
+    return extract
 
 
-def extract_model_metrics(
-    fixture_inputs: object,
-) -> dict[str, dict[tuple[int, int], int | float]]:
-    """Resolve model metrics only from the fixed nonproduction bundle."""
-    return _extract_model_metrics(fixture_inputs)
+_extract_model_metrics = _model_metric_protocol(_authorized_documents)
+del _model_metric_protocol
+
+
+def _fixture_model_metric_protocol(
+    extract_model_metrics_impl: Callable[
+        ...,
+        dict[str, dict[tuple[int, int], int | float]],
+    ],
+):
+    def extract_model_metrics(
+        fixture_inputs: object,
+    ) -> dict[str, dict[tuple[int, int], int | float]]:
+        """Resolve model metrics only from the fixed nonproduction bundle."""
+        return extract_model_metrics_impl(fixture_inputs)
+
+    return extract_model_metrics
+
+
+extract_model_metrics = _fixture_model_metric_protocol(_extract_model_metrics)
+del _fixture_model_metric_protocol
 
 
 def _validated_anchor_determinations(
@@ -452,100 +528,136 @@ def _validated_anchor_determinations(
     return determinations
 
 
-def _extract_official_values(
-    input_bundle: object,
-    *,
-    ceremony_capability: object | None = None,
-    expected_vintage_id: str | None = None,
-) -> dict[str, dict[int, int | float]]:
-    """Resolve all 120 normalized official values in registered order."""
-    _first_estimates, anchors = _authorized_documents(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
-    source = _require_mapping(anchors, "anchor input")
-    vintage_id = _string(
-        source.get("artifact_vintage_id"),
-        "anchor artifact_vintage_id",
-    )
-    if expected_vintage_id is not None and vintage_id != expected_vintage_id:
-        raise AnchorContextValidationError("anchor vintage identity changed")
-    if source.get("year_basis") != "calendar_year":
-        raise AnchorContextValidationError("anchor year basis changed")
-    determinations = _validated_anchor_determinations(source)
-    extracted: dict[str, dict[int, int | float]] = {}
-    for series_id in registry.REQUIRED_SERIES_IDS:
-        determination = _require_mapping(
-            determinations[series_id],
-            f"anchor determination {series_id!r}",
+def _official_value_protocol(
+    authorize_documents: Callable[
+        ..., tuple[Mapping[str, Any], Mapping[str, Any]]
+    ],
+):
+    def extract(
+        input_bundle: object,
+        *,
+        ceremony_capability: object | None = None,
+        expected_vintage_id: str | None = None,
+    ) -> dict[str, dict[int, int | float]]:
+        """Resolve all 120 normalized official values in registered order."""
+        _first_estimates, anchors = authorize_documents(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
         )
-        if determination.get("series_id") != series_id:
+        source = _require_mapping(anchors, "anchor input")
+        vintage_id = _string(
+            source.get("artifact_vintage_id"),
+            "anchor artifact_vintage_id",
+        )
+        if (
+            expected_vintage_id is not None
+            and vintage_id != expected_vintage_id
+        ):
             raise AnchorContextValidationError(
-                f"anchor determination {series_id!r} changed series_id"
+                "anchor vintage identity changed"
             )
-        stored_unit = _string(
-            determination.get("stored_unit"),
-            f"anchor determination {series_id!r} stored_unit",
-        )
-        scale_multiplier = _positive_number(
-            determination.get("scale_multiplier"),
-            f"anchor determination {series_id!r} scale_multiplier",
-        )
-        observations = _require_list(
-            determination.get("observations"),
-            f"anchor determination {series_id!r} observations",
-        )
-        years: list[int] = []
-        by_year: dict[int, int | float] = {}
-        for position, raw_observation in enumerate(observations):
-            observation = _require_mapping(
-                raw_observation,
-                f"anchor {series_id!r} observation {position}",
+        if source.get("year_basis") != "calendar_year":
+            raise AnchorContextValidationError("anchor year basis changed")
+        determinations = _validated_anchor_determinations(source)
+        extracted: dict[str, dict[int, int | float]] = {}
+        for series_id in registry.REQUIRED_SERIES_IDS:
+            determination = _require_mapping(
+                determinations[series_id],
+                f"anchor determination {series_id!r}",
             )
-            year = _integer(
-                observation.get("year"),
-                f"anchor {series_id!r} observation {position} year",
-            )
-            years.append(year)
-            if observation.get("year_basis") != "calendar_year":
+            if determination.get("series_id") != series_id:
                 raise AnchorContextValidationError(
-                    f"anchor {series_id!r} {year} year basis changed"
+                    f"anchor determination {series_id!r} changed series_id"
                 )
-            if observation.get("stored_unit") != stored_unit:
-                raise AnchorContextValidationError(
-                    f"anchor {series_id!r} {year} stored unit changed"
-                )
-            if observation.get("scale_multiplier") != scale_multiplier:
-                raise AnchorContextValidationError(
-                    f"anchor {series_id!r} {year} scale multiplier changed"
-                )
-            by_year[year] = _number(
-                observation.get("value"),
-                f"anchor {series_id!r} {year} value",
+            stored_unit = _string(
+                determination.get("stored_unit"),
+                f"anchor determination {series_id!r} stored_unit",
             )
-        _detect_duplicate_keys(years, label=f"anchor {series_id!r} years")
-        if tuple(years) != registry.REPORT_YEARS:
+            scale_multiplier = _positive_number(
+                determination.get("scale_multiplier"),
+                f"anchor determination {series_id!r} scale_multiplier",
+            )
+            observations = _require_list(
+                determination.get("observations"),
+                f"anchor determination {series_id!r} observations",
+            )
+            years: list[int] = []
+            by_year: dict[int, int | float] = {}
+            for position, raw_observation in enumerate(observations):
+                observation = _require_mapping(
+                    raw_observation,
+                    f"anchor {series_id!r} observation {position}",
+                )
+                year = _integer(
+                    observation.get("year"),
+                    f"anchor {series_id!r} observation {position} year",
+                )
+                years.append(year)
+                if observation.get("year_basis") != "calendar_year":
+                    raise AnchorContextValidationError(
+                        f"anchor {series_id!r} {year} year basis changed"
+                    )
+                if observation.get("stored_unit") != stored_unit:
+                    raise AnchorContextValidationError(
+                        f"anchor {series_id!r} {year} stored unit changed"
+                    )
+                if observation.get("scale_multiplier") != scale_multiplier:
+                    raise AnchorContextValidationError(
+                        f"anchor {series_id!r} {year} scale multiplier changed"
+                    )
+                by_year[year] = _number(
+                    observation.get("value"),
+                    f"anchor {series_id!r} {year} value",
+                )
+            _detect_duplicate_keys(
+                years,
+                label=f"anchor {series_id!r} years",
+            )
+            if tuple(years) != registry.REPORT_YEARS:
+                raise AnchorContextValidationError(
+                    f"anchor {series_id!r} years are missing, extra, or "
+                    "reordered"
+                )
+            extracted[series_id] = by_year
+        if tuple(extracted) != registry.REQUIRED_SERIES_IDS:
             raise AnchorContextValidationError(
-                f"anchor {series_id!r} years are missing, extra, or reordered"
+                "official values are missing, extra, duplicated, or reordered"
             )
-        extracted[series_id] = by_year
-    if tuple(extracted) != registry.REQUIRED_SERIES_IDS:
-        raise AnchorContextValidationError(
-            "official values are missing, extra, duplicated, or reordered"
-        )
-    return extracted
+        return extracted
+
+    extract.__name__ = "_extract_official_values"
+    extract.__qualname__ = "_extract_official_values"
+    return extract
 
 
-def extract_official_values(
-    fixture_inputs: object,
-    *,
-    expected_vintage_id: str | None = None,
-) -> dict[str, dict[int, int | float]]:
-    """Resolve official values only from the fixed nonproduction bundle."""
-    return _extract_official_values(
-        fixture_inputs,
-        expected_vintage_id=expected_vintage_id,
-    )
+_extract_official_values = _official_value_protocol(_authorized_documents)
+del _official_value_protocol
+
+
+def _fixture_official_value_protocol(
+    extract_official_values_impl: Callable[
+        ...,
+        dict[str, dict[int, int | float]],
+    ],
+):
+    def extract_official_values(
+        fixture_inputs: object,
+        *,
+        expected_vintage_id: str | None = None,
+    ) -> dict[str, dict[int, int | float]]:
+        """Resolve official values only from the fixed nonproduction bundle."""
+        return extract_official_values_impl(
+            fixture_inputs,
+            expected_vintage_id=expected_vintage_id,
+        )
+
+    return extract_official_values
+
+
+extract_official_values = _fixture_official_value_protocol(
+    _extract_official_values
+)
+del _fixture_official_value_protocol
 
 
 def _summarize(
@@ -670,129 +782,162 @@ def _available_comparison_rows(
     return rows
 
 
-def _build_results(
-    input_bundle: object,
-    *,
-    ceremony_capability: object | None = None,
-) -> dict[str, Any]:
-    """Build the exact-complete three-panel results payload."""
-    _first_estimates, anchors = _authorized_documents(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
-    metrics = _extract_model_metrics(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
-    official = _extract_official_values(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
-    comparison_results: list[dict[str, Any]] = []
-    for spec in registry.comparison_specs():
-        availability = spec["availability"]
-        if availability["status"] == "unavailable":
+def _result_build_protocol(
+    authorize_documents: Callable[
+        ..., tuple[Mapping[str, Any], Mapping[str, Any]]
+    ],
+    extract_model_metrics_impl: Callable[
+        ...,
+        dict[str, dict[tuple[int, int], int | float]],
+    ],
+    extract_official_values_impl: Callable[
+        ...,
+        dict[str, dict[int, int | float]],
+    ],
+):
+    def build(
+        input_bundle: object,
+        *,
+        ceremony_capability: object | None = None,
+    ) -> dict[str, Any]:
+        """Build the exact-complete three-panel results payload."""
+        _first_estimates, anchors = authorize_documents(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
+        metrics = extract_model_metrics_impl(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
+        official = extract_official_values_impl(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
+        comparison_results: list[dict[str, Any]] = []
+        for spec in registry.comparison_specs():
+            availability = spec["availability"]
+            if availability["status"] == "unavailable":
+                comparison_results.append(
+                    {
+                        "comparison_id": spec["comparison_id"],
+                        "availability": "unavailable",
+                        "evaluated": False,
+                        "reason": availability["reason"],
+                    }
+                )
+                continue
+            if availability != {"status": "available", "reason": None}:
+                raise AnchorContextValidationError(
+                    f"{spec['comparison_id']} availability changed"
+                )
             comparison_results.append(
                 {
                     "comparison_id": spec["comparison_id"],
-                    "availability": "unavailable",
-                    "evaluated": False,
-                    "reason": availability["reason"],
+                    "availability": "available",
+                    "evaluated": True,
+                    "annual_rows": _available_comparison_rows(
+                        spec,
+                        metrics,
+                        official,
+                    ),
                 }
             )
-            continue
-        if availability != {"status": "available", "reason": None}:
-            raise AnchorContextValidationError(
-                f"{spec['comparison_id']} availability changed"
+
+        determinations = _validated_anchor_determinations(anchors)
+        official_panel = []
+        for series_id in registry.REQUIRED_SERIES_IDS:
+            determination = determinations[series_id]
+            official_panel.append(
+                {
+                    "series_id": series_id,
+                    "stored_unit": determination["stored_unit"],
+                    "annual_rows": [
+                        {"year": year, "value": official[series_id][year]}
+                        for year in registry.REPORT_YEARS
+                    ],
+                }
             )
-        comparison_results.append(
-            {
-                "comparison_id": spec["comparison_id"],
-                "availability": "available",
-                "evaluated": True,
-                "annual_rows": _available_comparison_rows(
-                    spec,
-                    metrics,
-                    official,
-                ),
-            }
+
+        model_panel = []
+        for metric_spec in registry.model_metric_specs():
+            metric_id = metric_spec["model_metric_id"]
+            annual_rows = []
+            for year in registry.REPORT_YEARS:
+                mean, sample_sd = _summarize(
+                    [
+                        metrics[metric_id][(draw_index, year)]
+                        for draw_index in registry.DRAW_INDICES
+                    ],
+                    f"{metric_id} {year} level",
+                )
+                annual_rows.append(
+                    {"year": year, "mean": mean, "sample_sd": sample_sd}
+                )
+            model_panel.append(
+                {
+                    "model_metric_id": metric_id,
+                    "unit": metric_spec["unit"],
+                    "annual_rows": annual_rows,
+                }
+            )
+
+        results = {
+            "comparison_results": comparison_results,
+            "official_anchor_level_panel": official_panel,
+            "model_level_panel": model_panel,
+        }
+        _validate_results_structure(results)
+        return results
+
+    build.__name__ = "_build_results"
+    build.__qualname__ = "_build_results"
+    return build
+
+
+_build_results = _result_build_protocol(
+    _authorized_documents,
+    _extract_model_metrics,
+    _extract_official_values,
+)
+del _result_build_protocol
+
+
+def _result_entry_protocol(
+    authorize_documents: Callable[
+        ..., tuple[Mapping[str, Any], Mapping[str, Any]]
+    ],
+    build_results_impl: Callable[..., dict[str, Any]],
+):
+    def build_results(
+        fixture_inputs: object,
+    ) -> dict[str, Any]:
+        """Build results only from the fixed nonproduction fixture bundle."""
+        return build_results_impl(fixture_inputs)
+
+    def build_production_results(
+        ceremony_capability: object,
+        verified_inputs: object,
+    ) -> dict[str, Any]:
+        """Build production results only with coordinator-issued authority."""
+        authorize_documents(
+            verified_inputs,
+            ceremony_capability=ceremony_capability,
+        )
+        return build_results_impl(
+            verified_inputs,
+            ceremony_capability=ceremony_capability,
         )
 
-    determinations = _validated_anchor_determinations(anchors)
-    official_panel = []
-    for series_id in registry.REQUIRED_SERIES_IDS:
-        determination = determinations[series_id]
-        official_panel.append(
-            {
-                "series_id": series_id,
-                "stored_unit": determination["stored_unit"],
-                "annual_rows": [
-                    {"year": year, "value": official[series_id][year]}
-                    for year in registry.REPORT_YEARS
-                ],
-            }
-        )
-
-    model_panel = []
-    for metric_spec in registry.model_metric_specs():
-        metric_id = metric_spec["model_metric_id"]
-        annual_rows = []
-        for year in registry.REPORT_YEARS:
-            mean, sample_sd = _summarize(
-                [
-                    metrics[metric_id][(draw_index, year)]
-                    for draw_index in registry.DRAW_INDICES
-                ],
-                f"{metric_id} {year} level",
-            )
-            annual_rows.append(
-                {"year": year, "mean": mean, "sample_sd": sample_sd}
-            )
-        model_panel.append(
-            {
-                "model_metric_id": metric_id,
-                "unit": metric_spec["unit"],
-                "annual_rows": annual_rows,
-            }
-        )
-
-    results = {
-        "comparison_results": comparison_results,
-        "official_anchor_level_panel": official_panel,
-        "model_level_panel": model_panel,
-    }
-    _validate_results_structure(results)
-    return results
+    build_production_results.__name__ = "_build_production_results"
+    build_production_results.__qualname__ = "_build_production_results"
+    return build_results, build_production_results
 
 
-def build_results(
-    fixture_inputs: object,
-) -> dict[str, Any]:
-    """Build results only from the fixed nonproduction fixture bundle."""
-    return _build_results(fixture_inputs)
-
-
-def _build_production_results(
-    ceremony_capability: object,
-    verified_inputs: object,
-) -> dict[str, Any]:
-    """Build production results only through coordinator-issued authority."""
-    from populace_dynamics.estimates import (
-        anchor_context_coordinator,
-        anchor_context_publication,
-    )
-
-    anchor_context_coordinator._require_ceremony_capability(
-        ceremony_capability
-    )
-    anchor_context_publication._require_verified_production_inputs(
-        verified_inputs,
-        ceremony_capability=ceremony_capability,
-    )
-    return _build_results(
-        verified_inputs,
-        ceremony_capability=ceremony_capability,
-    )
+build_results, _build_production_results = _result_entry_protocol(
+    _authorized_documents,
+    _build_results,
+)
+del _result_entry_protocol
 
 
 def _validate_year_rows(
@@ -1005,57 +1150,70 @@ def _assert_result_values(
         )
 
 
-def _validate_results(
-    results: Mapping[str, Any],
-    *,
-    input_bundle: object,
-    ceremony_capability: object | None = None,
-) -> None:
-    """Validate schema, exact coverage, and every independently recomputed row."""
-    supplied = _require_mapping(results, "results")
-    _validate_results_structure(supplied)
-    expected = _build_results(
-        input_bundle,
-        ceremony_capability=ceremony_capability,
-    )
-    _assert_result_values(supplied, expected, path="results")
+def _result_validation_protocol(
+    authorize_documents: Callable[
+        ..., tuple[Mapping[str, Any], Mapping[str, Any]]
+    ],
+    build_results_impl: Callable[..., dict[str, Any]],
+):
+    def validate(
+        results: Mapping[str, Any],
+        *,
+        input_bundle: object,
+        ceremony_capability: object | None = None,
+    ) -> None:
+        """Validate schema, coverage, and independently recomputed rows."""
+        supplied = _require_mapping(results, "results")
+        _validate_results_structure(supplied)
+        expected = build_results_impl(
+            input_bundle,
+            ceremony_capability=ceremony_capability,
+        )
+        _assert_result_values(supplied, expected, path="results")
+
+    def validate_results(
+        results: Mapping[str, Any],
+        *,
+        fixture_inputs: object,
+    ) -> None:
+        """Validate results only against the fixed nonproduction bundle."""
+        validate(
+            results,
+            input_bundle=fixture_inputs,
+        )
+
+    def validate_production_results(
+        ceremony_capability: object,
+        results: Mapping[str, Any],
+        verified_inputs: object,
+    ) -> None:
+        """Validate production results through the same live capability."""
+        authorize_documents(
+            verified_inputs,
+            ceremony_capability=ceremony_capability,
+        )
+        validate(
+            results,
+            input_bundle=verified_inputs,
+            ceremony_capability=ceremony_capability,
+        )
+
+    validate.__name__ = "_validate_results"
+    validate.__qualname__ = "_validate_results"
+    validate_production_results.__name__ = "_validate_production_results"
+    validate_production_results.__qualname__ = "_validate_production_results"
+    return validate, validate_results, validate_production_results
 
 
-def validate_results(
-    results: Mapping[str, Any],
-    *,
-    fixture_inputs: object,
-) -> None:
-    """Validate results only against the fixed nonproduction bundle."""
-    _validate_results(
-        results,
-        input_bundle=fixture_inputs,
-    )
-
-
-def _validate_production_results(
-    ceremony_capability: object,
-    results: Mapping[str, Any],
-    verified_inputs: object,
-) -> None:
-    """Validate production results through the same live capability."""
-    from populace_dynamics.estimates import (
-        anchor_context_coordinator,
-        anchor_context_publication,
-    )
-
-    anchor_context_coordinator._require_ceremony_capability(
-        ceremony_capability
-    )
-    anchor_context_publication._require_verified_production_inputs(
-        verified_inputs,
-        ceremony_capability=ceremony_capability,
-    )
-    _validate_results(
-        results,
-        input_bundle=verified_inputs,
-        ceremony_capability=ceremony_capability,
-    )
+(
+    _validate_results,
+    validate_results,
+    _validate_production_results,
+) = _result_validation_protocol(
+    _authorized_documents,
+    _build_results,
+)
+del _result_validation_protocol
 
 
 def copy_results(results: Mapping[str, Any]) -> dict[str, Any]:

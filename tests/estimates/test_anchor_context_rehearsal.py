@@ -90,12 +90,12 @@ def test_production_or_unregistered_identity_is_refused_before_input_read(
     target[field] = production_value
     attempted_read = False
 
-    def forbidden_read(_path):
+    def forbidden_read(*_args, **_kwargs):
         nonlocal attempted_read
         attempted_read = True
         raise AssertionError("identity gate attempted an input read")
 
-    monkeypatch.setattr(Path, "read_bytes", forbidden_read)
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
     with pytest.raises(ValueError):
         rehearsal._populate_private_root(
             source_root=REPOSITORY_ROOT,
@@ -132,12 +132,12 @@ def test_fixture_source_symlink_is_refused_before_input_read(
 
     attempted_read = False
 
-    def forbidden_read(_path):
+    def forbidden_read(*_args, **_kwargs):
         nonlocal attempted_read
         attempted_read = True
         raise AssertionError("symlink gate attempted an input read")
 
-    monkeypatch.setattr(Path, "read_bytes", forbidden_read)
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
     first, anchor = rehearsal._fixed_fixture_identities()
     with pytest.raises(
         rehearsal.FixtureRehearsalError,
@@ -177,18 +177,185 @@ def test_manifest_symlink_is_refused_before_read(
 
     attempted_read = False
 
-    def forbidden_read(_path):
+    def forbidden_read(*_args, **_kwargs):
         nonlocal attempted_read
         attempted_read = True
         raise AssertionError("manifest symlink gate attempted a read")
 
-    monkeypatch.setattr(Path, "read_bytes", forbidden_read)
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
     with pytest.raises(
         rehearsal.FixtureRehearsalError,
         match="symlink",
     ):
         rehearsal._load_committed_manifest(source_root)
     assert attempted_read is False
+
+
+@pytest.mark.parametrize(
+    "protected_relative",
+    [
+        registry.FIRST_ESTIMATES_INPUT_PATH,
+        registry.ANCHOR_INPUT_PATH,
+    ],
+)
+def test_fixed_source_reader_rejects_direct_production_path_before_read(
+    protected_relative: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    source_root = (tmp_path / "source").resolve()
+    source_root.mkdir()
+    reads = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal reads
+        reads += 1
+        raise AssertionError("production input bytes were read")
+
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
+
+    with pytest.raises(
+        rehearsal.FixtureRehearsalError,
+        match="not fixed",
+    ):
+        rehearsal._read_sealed_fixture_source(
+            source_root,
+            protected_relative,
+        )
+
+    assert reads == 0
+
+
+@pytest.mark.parametrize(
+    ("fixture_relative", "protected_relative"),
+    [
+        (
+            rehearsal._FIRST_FIXTURE_PATH,
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+        ),
+        (
+            rehearsal._ANCHOR_FIXTURE_PATH,
+            registry.ANCHOR_INPUT_PATH,
+        ),
+        (
+            rehearsal._MANIFEST_PATH.as_posix(),
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+        ),
+    ],
+)
+def test_fixed_source_reader_rejects_production_hardlink_before_read(
+    fixture_relative: str,
+    protected_relative: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    source_root = (tmp_path / "source").resolve()
+    protected = source_root / protected_relative
+    protected.parent.mkdir(parents=True)
+    protected.write_bytes(b"protected production bytes")
+    fixture = source_root / fixture_relative
+    fixture.parent.mkdir(parents=True, exist_ok=True)
+    os.link(protected, fixture)
+    reads = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal reads
+        reads += 1
+        raise AssertionError("hardlinked production bytes were read")
+
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
+
+    with pytest.raises(
+        rehearsal.FixtureRehearsalError,
+        match="singly linked|aliases a production input",
+    ):
+        rehearsal._read_sealed_fixture_source(
+            source_root,
+            fixture_relative,
+        )
+
+    assert reads == 0
+
+
+@pytest.mark.parametrize(
+    ("fixture_relative", "protected_relative"),
+    [
+        (
+            rehearsal._FIRST_FIXTURE_PATH,
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+        ),
+        (
+            rehearsal._ANCHOR_FIXTURE_PATH,
+            registry.ANCHOR_INPUT_PATH,
+        ),
+        (
+            rehearsal._MANIFEST_PATH.as_posix(),
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+        ),
+    ],
+)
+def test_fixed_source_reader_rejects_reverse_production_symlink_before_read(
+    fixture_relative: str,
+    protected_relative: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    source_root = (tmp_path / "source").resolve()
+    fixture = source_root / fixture_relative
+    fixture.parent.mkdir(parents=True)
+    fixture.write_bytes(b"fixture bytes that must not be read")
+    protected = source_root / protected_relative
+    protected.parent.mkdir(parents=True, exist_ok=True)
+    protected.symlink_to(fixture)
+    reads = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal reads
+        reads += 1
+        raise AssertionError("reverse-aliased production bytes were read")
+
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
+
+    with pytest.raises(
+        rehearsal.FixtureRehearsalError,
+        match="production input path contains a symlink",
+    ):
+        rehearsal._read_sealed_fixture_source(
+            source_root,
+            fixture_relative,
+        )
+
+    assert reads == 0
+
+
+def test_fixed_source_reader_rejects_oversize_file_before_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    source_root = (tmp_path / "source").resolve()
+    fixture = source_root / rehearsal._FIRST_FIXTURE_PATH
+    fixture.parent.mkdir(parents=True)
+    with fixture.open("wb") as stream:
+        stream.truncate(rehearsal._SOURCE_MAX_BYTES + 1)
+    reads = 0
+
+    def forbidden_read(*_args, **_kwargs):
+        nonlocal reads
+        reads += 1
+        raise AssertionError("oversize fixture bytes were read")
+
+    monkeypatch.setattr(rehearsal.os, "read", forbidden_read)
+
+    with pytest.raises(
+        rehearsal.FixtureRehearsalError,
+        match="exceeds byte bound",
+    ):
+        rehearsal._read_sealed_fixture_source(
+            source_root,
+            rehearsal._FIRST_FIXTURE_PATH,
+        )
+
+    assert reads == 0
 
 
 def _sealed_command(sentinel: Path) -> list[str]:

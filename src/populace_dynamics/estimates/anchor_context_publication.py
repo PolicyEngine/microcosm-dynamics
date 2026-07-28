@@ -14,8 +14,9 @@ import os
 import platform
 import re
 import stat
+import sys
 import tempfile
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -157,6 +158,7 @@ _FIXTURE_ANCHOR_SHA256 = (
 )
 _FIXTURE_ANCHOR_VINTAGE = "ssa_level_anchors.fixture_only.v1"
 _FILE_READ_CHUNK_SIZE = 1024 * 1024
+_INPUT_MAX_BYTES = 64 * 1024 * 1024
 _INCIDENT_MAX_BYTES = 4 * 1024 * 1024
 
 
@@ -204,6 +206,14 @@ class _VerifiedFixtureInputs:
         raise TypeError(
             "verified fixture inputs are minted only by the fixed loader"
         )
+
+
+@dataclass(frozen=True, init=False)
+class _InputReadAuthority:
+    """One-call authority for one already-authorized input identity."""
+
+    def __init__(self, *_args: Any, **_kwargs: Any):
+        raise TypeError("input read authority is minted only by the loader")
 
 
 def _require_mapping(value: Any, label: str) -> Mapping[str, Any]:
@@ -547,177 +557,184 @@ def _fixture_input_identity(role: str) -> Mapping[str, Any]:
     raise ValueError("unknown input role")
 
 
-def _open_regular_relative(
-    io_authority: object,
-    repository_root: Path,
-    relative_path: str,
-) -> tuple[int, os.stat_result]:
-    """Open one regular file without following any path-component symlink."""
-    _require_input_io_authority(io_authority)
-    no_follow = getattr(os, "O_NOFOLLOW", None)
-    directory_flag = getattr(os, "O_DIRECTORY", None)
-    nonblocking = getattr(os, "O_NONBLOCK", None)
-    close_on_exec = getattr(os, "O_CLOEXEC", None)
-    if (
-        no_follow is None
-        or directory_flag is None
-        or nonblocking is None
-        or close_on_exec is None
-    ):
-        raise RuntimeError("platform lacks sealed descriptor flags")
-    parts = PurePosixPath(relative_path).parts
-    if not parts:
-        raise ValueError("input path is empty")
-    opened_directories: list[int] = []
-    try:
-        current = os.open(
-            repository_root,
-            os.O_RDONLY | directory_flag | no_follow | close_on_exec,
-        )
-        opened_directories.append(current)
-        for component in parts[:-1]:
-            current = os.open(
-                component,
-                os.O_RDONLY | directory_flag | no_follow | close_on_exec,
-                dir_fd=current,
-            )
-            opened_directories.append(current)
-        descriptor = os.open(
-            parts[-1],
-            os.O_RDONLY | no_follow | nonblocking | close_on_exec,
-            dir_fd=current,
-        )
-        metadata = os.fstat(descriptor)
-        if not stat.S_ISREG(metadata.st_mode):
-            os.close(descriptor)
-            raise ValueError("input path is not a regular file")
-        return descriptor, metadata
-    finally:
-        for directory in reversed(opened_directories):
-            os.close(directory)
+def _input_io_protocol():
+    getframe = sys._getframe
+    issued: dict[
+        int,
+        tuple[_InputReadAuthority, Path, str, int | None],
+    ] = {}
+    capability_verifier: (
+        Callable[
+            [object],
+            first_publication._RegisteredConfigurationToken,
+        ]
+        | None
+    ) = None
 
-
-def _protected_input_file_ids(
-    io_authority: object,
-    repository_root: Path,
-) -> frozenset[tuple[int, int]]:
-    _require_input_io_authority(io_authority)
-    protected: set[tuple[int, int]] = set()
-    for relative in (
-        registry.FIRST_ESTIMATES_INPUT_PATH,
-        registry.ANCHOR_INPUT_PATH,
-    ):
-        try:
-            metadata = os.stat(
-                repository_root / relative,
-                follow_symlinks=False,
-            )
-        except OSError:
-            continue
-        if not stat.S_ISREG(metadata.st_mode):
-            raise ValueError("canonical production input path is not regular")
-        protected.add((metadata.st_dev, metadata.st_ino))
-    return frozenset(protected)
-
-
-def _read_open_descriptor(io_authority: object, descriptor: int) -> bytes:
-    _require_input_io_authority(io_authority)
-    chunks: list[bytes] = []
-    while True:
-        chunk = os.read(descriptor, _FILE_READ_CHUNK_SIZE)
-        if not chunk:
-            return b"".join(chunks)
-        chunks.append(chunk)
-
-
-def _load_verified_json_with_authority(
-    io_authority: object,
-    repository_root: str | Path,
-    identity: Mapping[str, Any],
-    *,
-    role: str,
-    ceremony_capability: object | None = None,
-) -> tuple[Mapping[str, Any], bytes]:
-    """Load exactly one fixed fixture or capability-bound production input."""
-    _require_input_io_authority(io_authority)
-    root = Path(repository_root).resolve()
-    validated = _validate_input_identity(identity, role=role)
-    production_identity = _production_input_identity(role)
-    fixture_identity = _fixture_input_identity(role)
-    is_production = dict(validated) == dict(production_identity)
-    is_fixture = dict(validated) == dict(fixture_identity)
-    if not is_production and not is_fixture:
-        raise ValueError(
-            "input identity is neither fixed fixture nor production"
-        )
-
-    if is_production:
-        if ceremony_capability is None:
-            raise TypeError(
-                "production input I/O requires a live ceremony capability"
-            )
+    def bind_capability_verifier(
+        verifier: Callable[
+            [object],
+            first_publication._RegisteredConfigurationToken,
+        ],
+    ) -> None:
+        nonlocal capability_verifier
         from populace_dynamics.estimates import anchor_context_coordinator
 
-        registration = anchor_context_coordinator._require_ceremony_capability(
-            ceremony_capability
-        )
-        configuration = first_publication._configuration_echo(registration)
-        configuration_key = (
-            "first_estimates_input"
-            if role == "first_estimates"
-            else "anchor_input"
+        caller = getframe(1)
+        protocol = getattr(
+            anchor_context_coordinator,
+            "_ceremony_capability_protocol",
+            None,
         )
         if (
-            registration._repository_root != root
-            or configuration.get(configuration_key) != production_identity
+            protocol is None
+            or caller.f_code is not protocol.__code__
+            or caller.f_locals.get("require") is not verifier
         ):
-            raise ValueError(
-                "ceremony capability is not bound to this production input"
+            raise TypeError(
+                "input I/O verifier binding requires coordinator bootstrap"
             )
-    elif ceremony_capability is not None:
-        raise TypeError("fixture input I/O rejects production authority")
+        if capability_verifier is not None:
+            raise RuntimeError("input I/O capability verifier already bound")
+        capability_verifier = verifier
 
-    descriptor, metadata = _open_regular_relative(
-        io_authority,
-        root,
-        validated["path"],
-    )
-    try:
-        file_id = (metadata.st_dev, metadata.st_ino)
-        if metadata.st_nlink != 1:
-            raise ValueError("input must be a singly linked regular file")
-        if is_fixture and file_id in _protected_input_file_ids(
-            io_authority,
-            root,
+    def require(
+        candidate: object,
+        *,
+        repository_root: Path,
+        relative_path: str,
+        descriptor: int | None,
+        expected_caller: Callable[..., Any],
+    ) -> None:
+        state = issued.get(id(candidate))
+        caller = getframe(2)
+        if (
+            state is None
+            or state[0] is not candidate
+            or not isinstance(candidate, _InputReadAuthority)
+            or state[1] is not repository_root
+            or state[2] != relative_path
+            or state[3] != descriptor
+            or caller.f_code is not expected_caller.__code__
+            or caller.f_locals.get("io_authority") is not candidate
         ):
-            raise ValueError("fixture input aliases a production input")
-        raw = _read_open_descriptor(io_authority, descriptor)
-    finally:
-        os.close(descriptor)
-
-    digest = hashlib.sha256(raw).hexdigest()
-    if digest != validated["sha256"]:
-        raise ValueError(f"{role} input sha256 differs from registration")
-    try:
-        document = json.loads(raw)
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(f"{role} input is not valid JSON") from error
-    value = _require_mapping(document, f"{role} input")
-    if canonical_json_bytes(value) != raw:
-        raise ValueError(f"{role} input is not canonical JSON")
-    if role == "anchor" and value.get("artifact_vintage_id") != (
-        validated["artifact_vintage_id"]
-    ):
-        raise ValueError("anchor input vintage differs from registration")
-    return value, raw
-
-
-def _input_io_protocol():
-    authority = object()
-
-    def require(candidate: object) -> None:
-        if candidate is not authority:
             raise TypeError("input I/O is internal to a verified loader")
+
+    def open_regular_relative(
+        io_authority: object,
+        repository_root: Path,
+        relative_path: str,
+    ) -> tuple[int, os.stat_result]:
+        """Open one authorized file without following component symlinks."""
+        require(
+            io_authority,
+            repository_root=repository_root,
+            relative_path=relative_path,
+            descriptor=None,
+            expected_caller=load,
+        )
+        no_follow = getattr(os, "O_NOFOLLOW", None)
+        directory_flag = getattr(os, "O_DIRECTORY", None)
+        nonblocking = getattr(os, "O_NONBLOCK", None)
+        close_on_exec = getattr(os, "O_CLOEXEC", None)
+        if (
+            no_follow is None
+            or directory_flag is None
+            or nonblocking is None
+            or close_on_exec is None
+        ):
+            raise RuntimeError("platform lacks sealed descriptor flags")
+        parts = PurePosixPath(relative_path).parts
+        if not parts:
+            raise ValueError("input path is empty")
+        opened_directories: list[int] = []
+        try:
+            current = os.open(
+                repository_root,
+                os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+            )
+            opened_directories.append(current)
+            for component in parts[:-1]:
+                current = os.open(
+                    component,
+                    os.O_RDONLY | directory_flag | no_follow | close_on_exec,
+                    dir_fd=current,
+                )
+                opened_directories.append(current)
+            opened = os.open(
+                parts[-1],
+                os.O_RDONLY | no_follow | nonblocking | close_on_exec,
+                dir_fd=current,
+            )
+            metadata = os.fstat(opened)
+            if not stat.S_ISREG(metadata.st_mode):
+                os.close(opened)
+                raise ValueError("input path is not a regular file")
+            return opened, metadata
+        finally:
+            for directory in reversed(opened_directories):
+                os.close(directory)
+
+    def protected_input_file_ids(
+        io_authority: object,
+        repository_root: Path,
+        relative_path: str,
+    ) -> frozenset[tuple[int, int]]:
+        require(
+            io_authority,
+            repository_root=repository_root,
+            relative_path=relative_path,
+            descriptor=None,
+            expected_caller=load,
+        )
+        protected: set[tuple[int, int]] = set()
+        for relative in (
+            registry.FIRST_ESTIMATES_INPUT_PATH,
+            registry.ANCHOR_INPUT_PATH,
+        ):
+            try:
+                metadata = os.stat(
+                    repository_root / relative,
+                    follow_symlinks=False,
+                )
+            except OSError:
+                continue
+            if not stat.S_ISREG(metadata.st_mode):
+                raise ValueError(
+                    "canonical production input path is not regular"
+                )
+            protected.add((metadata.st_dev, metadata.st_ino))
+        return frozenset(protected)
+
+    def read_open_descriptor(
+        io_authority: object,
+        repository_root: Path,
+        relative_path: str,
+        descriptor: int,
+    ) -> bytes:
+        require(
+            io_authority,
+            repository_root=repository_root,
+            relative_path=relative_path,
+            descriptor=descriptor,
+            expected_caller=load,
+        )
+        chunks: list[bytes] = []
+        observed = 0
+        while True:
+            chunk = os.read(
+                descriptor,
+                min(
+                    _FILE_READ_CHUNK_SIZE,
+                    _INPUT_MAX_BYTES + 1 - observed,
+                ),
+            )
+            if not chunk:
+                return b"".join(chunks)
+            chunks.append(chunk)
+            observed += len(chunk)
+            if observed > _INPUT_MAX_BYTES:
+                raise ValueError("input exceeds its sealed byte bound")
 
     def load(
         repository_root: str | Path,
@@ -726,18 +743,134 @@ def _input_io_protocol():
         role: str,
         ceremony_capability: object | None = None,
     ) -> tuple[Mapping[str, Any], bytes]:
-        return _load_verified_json_with_authority(
-            authority,
-            repository_root,
-            identity,
-            role=role,
-            ceremony_capability=ceremony_capability,
+        """Load one fixed fixture or live-capability production input."""
+        root = Path(repository_root).resolve()
+        validated = _validate_input_identity(identity, role=role)
+        production_identity = _production_input_identity(role)
+        fixture_identity = _fixture_input_identity(role)
+        is_production = dict(validated) == dict(production_identity)
+        is_fixture = dict(validated) == dict(fixture_identity)
+        if not is_production and not is_fixture:
+            raise ValueError(
+                "input identity is neither fixed fixture nor production"
+            )
+
+        verified_registration = None
+        if is_production:
+            if ceremony_capability is None:
+                raise TypeError(
+                    "production input I/O requires a live ceremony capability"
+                )
+            if capability_verifier is None:
+                raise RuntimeError("production input verifier is not bound")
+            verified_registration = capability_verifier(ceremony_capability)
+            configuration = first_publication._configuration_echo(
+                verified_registration
+            )
+            configuration_key = (
+                "first_estimates_input"
+                if role == "first_estimates"
+                else "anchor_input"
+            )
+            if (
+                verified_registration._repository_root != root
+                or configuration.get(configuration_key) != production_identity
+            ):
+                raise ValueError(
+                    "ceremony capability is not bound to this production input"
+                )
+        elif ceremony_capability is not None:
+            raise TypeError("fixture input I/O rejects production authority")
+
+        relative_path = validated["path"]
+        io_authority = object.__new__(_InputReadAuthority)
+        issued[id(io_authority)] = (
+            io_authority,
+            root,
+            relative_path,
+            None,
         )
+        descriptor: int | None = None
+        try:
+            descriptor, metadata = open_regular_relative(
+                io_authority,
+                root,
+                relative_path,
+            )
+            file_id = (metadata.st_dev, metadata.st_ino)
+            if metadata.st_nlink != 1 or metadata.st_size > _INPUT_MAX_BYTES:
+                raise ValueError(
+                    "input must be one singly linked bounded regular file"
+                )
+            if is_fixture and file_id in protected_input_file_ids(
+                io_authority,
+                root,
+                relative_path,
+            ):
+                raise ValueError("fixture input aliases a production input")
+            issued[id(io_authority)] = (
+                io_authority,
+                root,
+                relative_path,
+                descriptor,
+            )
+            raw = read_open_descriptor(
+                io_authority,
+                root,
+                relative_path,
+                descriptor,
+            )
+            after = os.fstat(descriptor)
+            stable_fields = (
+                "st_dev",
+                "st_ino",
+                "st_mode",
+                "st_nlink",
+                "st_size",
+                "st_mtime_ns",
+                "st_ctime_ns",
+            )
+            if any(
+                getattr(metadata, field) != getattr(after, field)
+                for field in stable_fields
+            ):
+                raise ValueError("input changed during its sealed read")
+        finally:
+            issued.pop(id(io_authority), None)
+            if descriptor is not None:
+                os.close(descriptor)
 
-    return load, require
+        digest = hashlib.sha256(raw).hexdigest()
+        if digest != validated["sha256"]:
+            raise ValueError(f"{role} input sha256 differs from registration")
+        try:
+            document = json.loads(raw)
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ValueError(f"{role} input is not valid JSON") from error
+        value = _require_mapping(document, f"{role} input")
+        if canonical_json_bytes(value) != raw:
+            raise ValueError(f"{role} input is not canonical JSON")
+        if role == "anchor" and value.get("artifact_vintage_id") != (
+            validated["artifact_vintage_id"]
+        ):
+            raise ValueError("anchor input vintage differs from registration")
+        return value, raw
+
+    return (
+        load,
+        bind_capability_verifier,
+        open_regular_relative,
+        read_open_descriptor,
+    )
 
 
-_load_verified_json, _require_input_io_authority = _input_io_protocol()
+(
+    _load_verified_json,
+    _bind_input_io_capability_verifier,
+    _open_regular_relative,
+    _read_open_descriptor,
+) = _input_io_protocol()
+del _input_io_protocol
 
 
 def _assert_fixture_identities(
@@ -758,6 +891,7 @@ def _assert_fixture_identities(
 
 
 def _fixture_input_protocol():
+    load_verified_json = _load_verified_json
     issued: dict[
         int,
         tuple[_VerifiedFixtureInputs, Path, bytes, bytes, bool],
@@ -768,12 +902,12 @@ def _fixture_input_protocol():
         root = Path(repository_root).resolve()
         first_identity = _fixture_input_identity("first_estimates")
         anchor_identity = _fixture_input_identity("anchor")
-        first, first_raw = _load_verified_json(
+        first, first_raw = load_verified_json(
             root,
             first_identity,
             role="first_estimates",
         )
-        anchor, anchor_raw = _load_verified_json(
+        anchor, anchor_raw = load_verified_json(
             root,
             anchor_identity,
             role="anchor",
@@ -883,9 +1017,13 @@ def _fixture_input_protocol():
     _require_verified_fixture_inputs,
     _require_publishable_fixture_inputs,
 ) = _fixture_input_protocol()
+del _fixture_input_protocol
 
 
 def _production_input_protocol():
+    load_verified_json = _load_verified_json
+    configuration_echo = first_publication._configuration_echo
+    validate_configuration = validate_registered_configuration_echo
     issued: dict[
         int,
         tuple[
@@ -896,25 +1034,64 @@ def _production_input_protocol():
             bytes,
         ],
     ] = {}
+    capability_verifier: (
+        Callable[
+            [object],
+            first_publication._RegisteredConfigurationToken,
+        ]
+        | None
+    ) = None
 
-    def load(ceremony_capability: object) -> _VerifiedProductionInputs:
+    def bind_capability_verifier(
+        verifier: Callable[
+            [object],
+            first_publication._RegisteredConfigurationToken,
+        ],
+    ) -> None:
+        nonlocal capability_verifier
         from populace_dynamics.estimates import anchor_context_coordinator
 
-        token = anchor_context_coordinator._require_ceremony_capability(
-            ceremony_capability
+        caller = sys._getframe(1)
+        protocol = getattr(
+            anchor_context_coordinator,
+            "_ceremony_capability_protocol",
+            None,
         )
-        configuration = first_publication._configuration_echo(token)
-        validate_registered_configuration_echo(
+        if (
+            protocol is None
+            or caller.f_code is not protocol.__code__
+            or caller.f_locals.get("require") is not verifier
+        ):
+            raise TypeError(
+                "production verifier binding requires coordinator bootstrap"
+            )
+        if capability_verifier is not None:
+            raise RuntimeError(
+                "production input capability verifier already bound"
+            )
+        capability_verifier = verifier
+
+    def verify_capability(
+        ceremony_capability: object,
+    ) -> first_publication._RegisteredConfigurationToken:
+        if capability_verifier is None:
+            raise RuntimeError("production input verifier is not bound")
+        return capability_verifier(ceremony_capability)
+
+    def load(ceremony_capability: object) -> _VerifiedProductionInputs:
+        token = verify_capability(ceremony_capability)
+        configuration = configuration_echo(token)
+        validate_configuration(
             configuration,
             registered_configuration_bytes=token._configuration_bytes,
         )
-        first, first_raw = _load_verified_json(
+        first, first_raw = load_verified_json(
             token._repository_root,
             configuration["first_estimates_input"],
             role="first_estimates",
             ceremony_capability=ceremony_capability,
         )
-        anchor, anchor_raw = _load_verified_json(
+        anchor, anchor_raw = load_verified_json(
             token._repository_root,
             configuration["anchor_input"],
             role="anchor",
@@ -949,11 +1126,7 @@ def _production_input_protocol():
         *,
         ceremony_capability: object,
     ) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
-        from populace_dynamics.estimates import anchor_context_coordinator
-
-        registration = anchor_context_coordinator._require_ceremony_capability(
-            ceremony_capability
-        )
+        registration = verify_capability(ceremony_capability)
         state = issued.get(id(verified_inputs))
         if (
             state is None
@@ -1004,12 +1177,15 @@ def _production_input_protocol():
 
     load.__name__ = "_load_production_documents"
     load.__qualname__ = "_load_production_documents"
-    return load, require
+    return load, require, bind_capability_verifier
 
 
-_load_production_documents, _require_verified_production_inputs = (
-    _production_input_protocol()
-)
+(
+    _load_production_documents,
+    _require_verified_production_inputs,
+    _bind_production_input_capability_verifier,
+) = _production_input_protocol()
+del _production_input_protocol
 
 
 def _validate_environment_sidecar_hash(value: Any) -> str:

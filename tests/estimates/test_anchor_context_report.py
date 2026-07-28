@@ -14,6 +14,9 @@ from typing import Any
 import pytest
 
 from populace_dynamics.estimates import (
+    anchor_context_coordinator as coordinator,
+)
+from populace_dynamics.estimates import (
     anchor_context_publication as publication,
 )
 from populace_dynamics.estimates import anchor_context_registry as registry
@@ -327,6 +330,65 @@ def test_fixture_builds_exact_complete_results_shape(
         fixture_results,
         fixture_inputs=fixture_bundle,
     )
+
+
+def test_report_authority_binding_rejects_direct_callers():
+    with pytest.raises(TypeError, match="sealed coordinator initialization"):
+        report._bind_document_authority(lambda _bundle: (), lambda _bundle: ())
+
+    assert not hasattr(coordinator, "_ceremony_capability_protocol")
+
+
+def test_rebound_report_engine_globals_cannot_bypass_document_authority(
+    fixture_bundle,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    reached: list[str] = []
+
+    def forged_authorizer(*_args, **_kwargs):
+        reached.append("authorizer")
+        return ({}, {})
+
+    def forged_extractor(*_args, **_kwargs):
+        reached.append("extractor")
+        return {}
+
+    monkeypatch.setattr(report, "_authorized_documents", forged_authorizer)
+    monkeypatch.setattr(report, "_extract_model_metrics", forged_extractor)
+    monkeypatch.setattr(report, "_extract_official_values", forged_extractor)
+
+    fixture_results = report._build_results(fixture_bundle)
+    assert len(fixture_results["comparison_results"]) == 9
+    assert len(fixture_results["official_anchor_level_panel"]) == 15
+    assert len(fixture_results["model_level_panel"]) == 7
+
+    with pytest.raises(TypeError, match="live ceremony capability"):
+        report._build_production_results(object(), fixture_bundle)
+
+    assert reached == []
+
+
+def test_extracted_report_engine_dependencies_retain_document_authority(
+    fixture_bundle,
+):
+    closure = dict(
+        zip(
+            report._build_results.__code__.co_freevars,
+            report._build_results.__closure__,
+            strict=True,
+        )
+    )
+
+    for name in (
+        "authorize_documents",
+        "extract_model_metrics_impl",
+        "extract_official_values_impl",
+    ):
+        with pytest.raises(TypeError, match="live ceremony capability"):
+            closure[name].cell_contents(
+                fixture_bundle,
+                ceremony_capability=object(),
+            )
 
 
 def test_all_nine_model_operands_resolve_to_the_exact_draw_year_grid(
