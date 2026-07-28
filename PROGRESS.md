@@ -29,7 +29,10 @@ Final audit, report, cleanup, and push remain.
 - Tier collection passes at `924` unit, `1521` artifact, `804`
   integration-PSID, `520` legacy reproduction, and `159` PolicyEngine-oracle
   tests (`3928` total).
-- The full estimates suite passes: `401 passed in 19.83s`.
+- The full estimates suite passes on the formatted final source:
+  `401 passed in 51.70s`.
+- Two independent final reviews found no implementation, regression, design,
+  or scope defects.
 
 ## Next
 
