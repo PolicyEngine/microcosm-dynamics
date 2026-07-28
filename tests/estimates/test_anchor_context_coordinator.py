@@ -11,9 +11,10 @@ import shutil
 import subprocess
 import sys
 import textwrap
+from contextlib import contextmanager
 from dataclasses import asdict, replace
 from pathlib import Path
-from types import FunctionType, SimpleNamespace
+from types import FunctionType, MappingProxyType, SimpleNamespace
 from typing import Any
 
 import pytest
@@ -71,7 +72,11 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _repository(tmp_path: Path) -> Path:
+def _repository(
+    tmp_path: Path,
+    *,
+    pretty_first_estimates: bool = False,
+) -> Path:
     root = tmp_path / "anchor-context-fixture-rehearsal-test"
     (root / "runs").mkdir(parents=True)
     for source, relative in (
@@ -80,8 +85,72 @@ def _repository(tmp_path: Path) -> Path:
     ):
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(source.read_bytes())
+        if pretty_first_estimates and source == FIRST_ESTIMATES_FIXTURE:
+            document = json.loads(source.read_bytes())
+            document = {
+                "schema_version": document["schema_version"],
+                **{
+                    key: value
+                    for key, value in document.items()
+                    if key != "schema_version"
+                },
+            }
+            target.write_bytes(
+                (json.dumps(document, indent=2) + "\n").encode("utf-8")
+            )
+        else:
+            target.write_bytes(source.read_bytes())
     return root
+
+
+@contextmanager
+def _first_estimates_fixture_identity(identity: dict[str, str]):
+    def closure_cells(function):
+        return dict(
+            zip(
+                function.__code__.co_freevars,
+                function.__closure__,
+                strict=True,
+            )
+        )
+
+    input_loader_cells = closure_cells(publication._load_verified_json)
+    fixture_loader_cells = closure_cells(publication.load_fixture_documents)
+    identity_assertion_cells = closure_cells(
+        publication._assert_fixture_identities
+    )
+    input_identity_cell = input_loader_cells["fixture_input_identity"]
+    fixture_identity_cell = fixture_loader_cells["first_identity"]
+    assertion_identity_cell = identity_assertion_cells[
+        "fixture_input_identity"
+    ]
+    original_input_identity = input_identity_cell.cell_contents
+    original_fixture_identity = fixture_identity_cell.cell_contents
+    original_assertion_identity = assertion_identity_cell.cell_contents
+    issue_bundle = fixture_loader_cells["issue_bundle"].cell_contents
+    vault = issue_bundle.__self__
+    original_sha256 = object.__getattribute__(vault, "_first_sha256")
+    issued = object.__getattribute__(vault, "_issued")
+    original_issued = dict(issued)
+
+    def fixture_identity(role: str) -> dict[str, Any]:
+        if role == "first_estimates":
+            return dict(identity)
+        return dict(original_input_identity(role))
+
+    input_identity_cell.cell_contents = fixture_identity
+    fixture_identity_cell.cell_contents = MappingProxyType(dict(identity))
+    assertion_identity_cell.cell_contents = fixture_identity
+    object.__setattr__(vault, "_first_sha256", identity["sha256"])
+    try:
+        yield
+    finally:
+        issued.clear()
+        issued.update(original_issued)
+        object.__setattr__(vault, "_first_sha256", original_sha256)
+        assertion_identity_cell.cell_contents = original_assertion_identity
+        fixture_identity_cell.cell_contents = original_fixture_identity
+        input_identity_cell.cell_contents = original_input_identity
 
 
 def _real_git(
@@ -592,6 +661,65 @@ def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
         is False
     )
     assert authority.read_bytes() == b""
+
+
+def test_pretty_first_estimates_fixture_completes_ceremony(tmp_path: Path):
+    root = _repository(tmp_path, pretty_first_estimates=True)
+    pretty_path = root / FIXTURE_FIRST_PATH
+    pretty_bytes = pretty_path.read_bytes()
+    first_identity = {
+        "path": FIXTURE_FIRST_PATH,
+        "sha256": hashlib.sha256(pretty_bytes).hexdigest(),
+    }
+    configuration = _configuration(root)
+    configuration["first_estimates_input"] = first_identity
+    registered_bytes = publication.canonical_json_bytes(configuration)
+    calls: list[str] = []
+    captured: dict[str, Any] = {}
+
+    assert pretty_bytes.startswith(b'{\n  "schema_version":')
+    assert (
+        publication.canonical_json_bytes(json.loads(pretty_bytes))
+        != pretty_bytes
+    )
+
+    with _first_estimates_fixture_identity(first_identity):
+        result = _run(
+            root,
+            _operations(calls, captured),
+            configuration_bytes=registered_bytes,
+        )
+        bundle = captured["artifact_kwargs"]["input_bundle"]
+        first_one, anchor_one = publication._require_verified_fixture_inputs(
+            bundle
+        )
+        first_two, anchor_two = publication._require_verified_fixture_inputs(
+            bundle
+        )
+
+        assert result.status == "published"
+        assert result.phase == "publication"
+        assert bundle.first_estimates_snapshot == pretty_bytes
+        assert (
+            len(
+                json.loads(result.path.read_bytes())["results"][
+                    "comparison_results"
+                ]
+            )
+            == 9
+        )
+        assert first_one == first_two
+        assert anchor_one == anchor_two
+        assert first_one is not first_two
+        assert first_one["tables"] is not first_two["tables"]
+
+    assert calls == [
+        "preparation",
+        "compute",
+        "invariant_results",
+        "invariant_artifact",
+        "publication",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -1972,6 +2100,228 @@ def test_public_execution_law_cannot_mutate_private_evidence(
     )
     with pytest.raises(ValueError, match="execution-law evidence changed"):
         coordinator._prelaunch_record_value(forged_record)
+
+
+def test_real_production_vault_accepts_pretty_and_reparses_strictly(
+    tmp_path: Path,
+):
+    source_root = Path(__file__).parents[2]
+    isolated = tmp_path / "isolated-production-vault"
+    isolated.mkdir()
+    shutil.copytree(
+        source_root / "src",
+        isolated / "src",
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
+    for relative in (
+        Path(".gitignore"),
+        Path("gates.yaml"),
+        Path("scripts/run_anchor_context_report.py"),
+        Path(registry.FIRST_ESTIMATES_INPUT_PATH),
+        Path(registry.ANCHOR_INPUT_PATH),
+    ):
+        target = isolated / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_root / relative, target)
+
+    publication_source = (
+        isolated
+        / "src/populace_dynamics/estimates/anchor_context_publication.py"
+    )
+    publication_source.write_text(
+        publication_source.read_text().replace(
+            "\n_seal_coordinator_authority_import()\n",
+            "\n# Delayed only in this isolated import-order fixture.\n",
+        )
+    )
+    sentinel = tmp_path / "production-vault-empty-pycache"
+    sentinel.mkdir()
+    registration = isolated / "docs/registrations/context.json"
+    invocation = [
+        "python",
+        "-I",
+        "-B",
+        "-X",
+        f"pycache_prefix={sentinel}",
+        "scripts/run_anchor_context_report.py",
+        "--registration",
+        str(registration),
+    ]
+    exercise = isolated / "exercise_production_vault.py"
+    exercise.write_text(textwrap.dedent("""
+            import hashlib
+            import json
+            from pathlib import Path
+            from types import SimpleNamespace
+
+            from populace_dynamics.estimates import (
+                anchor_context_publication as publication,
+            )
+            from populace_dynamics.estimates import (
+                anchor_context_registry as registry,
+            )
+            from populace_dynamics.estimates import (
+                anchor_context_report as report,
+            )
+
+            root = Path.cwd()
+            invocation = __INVOCATION__
+            pretty = (root / registry.FIRST_ESTIMATES_INPUT_PATH).read_bytes()
+            production_loader = publication._load_production_documents
+            production_require = (
+                publication._require_verified_production_inputs
+            )
+            probe_completed = False
+
+            def probe_production_vault(capability, bundle):
+                global probe_completed
+                assert (
+                    hashlib.sha256(pretty).hexdigest()
+                    == registry.FIRST_ESTIMATES_INPUT_SHA256
+                )
+                assert pretty.startswith(b'{\\n  "schema_version":')
+                assert (
+                    publication.canonical_json_bytes(json.loads(pretty))
+                    != pretty
+                )
+                assert bundle.first_estimates_snapshot == pretty
+
+                first_one, anchor_one = production_require(
+                    bundle,
+                    ceremony_capability=capability,
+                )
+                first_two, anchor_two = production_require(
+                    bundle,
+                    ceremony_capability=capability,
+                )
+                assert first_one == first_two
+                assert anchor_one == anchor_two
+                assert first_one is not first_two
+                assert anchor_one is not anchor_two
+                assert first_one["tables"] is not first_two["tables"]
+                assert (
+                    anchor_one["determinations"]
+                    is not anchor_two["determinations"]
+                )
+
+                vault = production_require.__self__
+                issued = object.__getattribute__(vault, "_issued")
+                state = issued[id(bundle)]
+                original_snapshot = bundle.first_estimates_snapshot
+                duplicate = b'{"outer":{"value":1,"value":2}}\\n'
+                issued[id(bundle)] = (
+                    state[0],
+                    state[1],
+                    state[2],
+                    duplicate,
+                    state[4],
+                )
+                object.__setattr__(
+                    bundle,
+                    "first_estimates_snapshot",
+                    duplicate,
+                )
+                try:
+                    try:
+                        production_require(
+                            bundle,
+                            ceremony_capability=capability,
+                        )
+                    except ValueError as error:
+                        assert "uniquely parseable" in str(error)
+                    else:
+                        raise AssertionError(
+                            "production vault accepted a nested duplicate key"
+                        )
+                finally:
+                    issued[id(bundle)] = state
+                    object.__setattr__(
+                        bundle,
+                        "first_estimates_snapshot",
+                        original_snapshot,
+                    )
+                probe_completed = True
+                raise RuntimeError("downstream computation intentionally stopped")
+
+            report._build_production_results = probe_production_vault
+
+            from populace_dynamics.estimates import (
+                anchor_context_coordinator as coordinator,
+            )
+
+            runner_cells = dict(
+                zip(
+                    coordinator.run_registered_anchor_context.__code__.co_freevars,
+                    coordinator.run_registered_anchor_context.__closure__,
+                    strict=True,
+                )
+            )
+            operations = runner_cells["production_operations"].cell_contents
+            core = runner_cells["core"].cell_contents
+            core_cells = dict(
+                zip(
+                    core.__code__.co_freevars,
+                    core.__closure__,
+                    strict=True,
+                )
+            )
+            assert operations.load_inputs is production_loader
+            assert (
+                core_cells["require_production_inputs"].cell_contents
+                is production_require
+            )
+            coordinator.sys = SimpleNamespace(
+                orig_argv=invocation,
+                flags=SimpleNamespace(
+                    isolated=True,
+                    dont_write_bytecode=True,
+                ),
+                pycache_prefix=invocation[4].removeprefix(
+                    "pycache_prefix="
+                ),
+            )
+
+            result = coordinator.run_registered_anchor_context(invocation[-1])
+
+            assert probe_completed is True
+            assert result.status == "incident"
+            assert result.phase == "compute"
+            assert result.reason == "compute_abort"
+            """).replace("__INVOCATION__", repr(invocation)))
+
+    _real_git(isolated, "init", "-q")
+    implementation_commit = _commit_real_git_fixture(
+        isolated,
+        "registered production-vault implementation",
+    )
+    configuration = publication.registered_configuration_echo(
+        registration_reference="production-vault-regression",
+        implementation_commit=implementation_commit,
+        invocation=invocation,
+    )
+    registration.parent.mkdir(parents=True)
+    registration.write_bytes(publication.canonical_json_bytes(configuration))
+    _commit_real_git_fixture(
+        isolated,
+        "registered production-vault records",
+    )
+
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if not name.startswith("GIT_")
+    }
+    environment["PYTHONPATH"] = str(isolated / "src")
+    completed = subprocess.run(
+        [sys.executable, "-B", str(exercise)],
+        cwd=isolated,
+        env=environment,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
 
 
 def test_public_runner_owns_fail_once_report_first_retry(
