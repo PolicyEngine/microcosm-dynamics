@@ -304,6 +304,9 @@
   are covered.
 - The final launcher/coordinator/publication/rehearsal/report focused suite
   passes with 240 tests.
+- Final collection assigns exactly one tier to 3,923 tests: 924 unit, 1,516
+  artifact, 804 integration-PSID, 520 legacy reproduction, and 159
+  PolicyEngine-oracle tests.
 
 ## Next
 
