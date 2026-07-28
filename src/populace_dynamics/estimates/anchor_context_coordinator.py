@@ -1361,6 +1361,16 @@ def _retry_authority_protocol():
         if state is not None and state.token is token:
             retry_issued.pop(id(token), None)
 
+    def provenance_is_retained(
+        repository_root: Path,
+        incident_path: Path,
+    ) -> bool:
+        return any(
+            state.repository_root == repository_root
+            and state.incident_path == incident_path
+            for state in published.values()
+        )
+
     return (
         bind_stack,
         issue_initial,
@@ -1370,6 +1380,7 @@ def _retry_authority_protocol():
         authorize,
         require_retry,
         revoke_retry,
+        provenance_is_retained,
     )
 
 
@@ -1382,6 +1393,7 @@ def _retry_authority_protocol():
     _authorize_invocation,
     _require_retry_authorization,
     _revoke_retry_authorization,
+    _retry_provenance_is_retained,
 ) = _retry_authority_protocol()
 
 
@@ -1435,6 +1447,7 @@ def _ceremony_capability_protocol(
     create_retry_claim = _create_retry_claim
     require_retry_authorization = _require_retry_authorization
     revoke_retry_authorization = _revoke_retry_authorization
+    retry_provenance_is_retained = _retry_provenance_is_retained
     invocations: dict[int, tuple[Any, ...]] = {}
     issued: dict[int, tuple[Any, ...]] = {}
 
@@ -1719,35 +1732,48 @@ def _ceremony_capability_protocol(
                 )
             )
             operations = _default_operations()
-            coordinator_invocation = issue_invocation(
-                root,
-                registered_configuration_bytes,
-                actual_invocation,
-                operations,
-            )
-            try:
-                return core(
-                    repository_root=root,
-                    registered_configuration_bytes=(
-                        registered_configuration_bytes
-                    ),
-                    actual_invocation=actual_invocation,
-                    operations=operations,
-                    production_only=True,
-                    coordinator_invocation=coordinator_invocation,
-                    mint_capability=mint,
-                    revoke_capability=revoke,
-                    issue_initial_attempt=issue_initial_attempt,
-                    require_initial_attempt=require_initial_attempt,
-                    seal_retry_authority=seal_retry_authority,
-                    revoke_initial_attempt=revoke_initial_attempt,
-                    authorize_invocation=authorize_invocation,
-                    create_retry_claim=create_retry_claim,
-                    require_retry_authorization=(require_retry_authorization),
-                    revoke_retry_authorization=revoke_retry_authorization,
+            for attempt_index in range(2):
+                coordinator_invocation = issue_invocation(
+                    root,
+                    registered_configuration_bytes,
+                    actual_invocation,
+                    operations,
                 )
-            finally:
-                revoke_invocation(coordinator_invocation)
+                try:
+                    result = core(
+                        repository_root=root,
+                        registered_configuration_bytes=(
+                            registered_configuration_bytes
+                        ),
+                        actual_invocation=actual_invocation,
+                        operations=operations,
+                        production_only=True,
+                        coordinator_invocation=coordinator_invocation,
+                        mint_capability=mint,
+                        revoke_capability=revoke,
+                        issue_initial_attempt=issue_initial_attempt,
+                        require_initial_attempt=require_initial_attempt,
+                        seal_retry_authority=seal_retry_authority,
+                        revoke_initial_attempt=revoke_initial_attempt,
+                        authorize_invocation=authorize_invocation,
+                        create_retry_claim=create_retry_claim,
+                        require_retry_authorization=(
+                            require_retry_authorization
+                        ),
+                        revoke_retry_authorization=(
+                            revoke_retry_authorization
+                        ),
+                    )
+                finally:
+                    revoke_invocation(coordinator_invocation)
+                if (
+                    attempt_index == 0
+                    and result.status == "incident"
+                    and retry_provenance_is_retained(root, result.path)
+                ):
+                    continue
+                return result
+            raise AssertionError("coordinator retry loop did not terminate")
 
     run.__name__ = "run_registered_anchor_context"
     run.__qualname__ = "run_registered_anchor_context"

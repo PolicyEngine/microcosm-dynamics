@@ -158,6 +158,11 @@
   created only after the live initial authority publishes, reopens, and seals
   its incident. A caller-fabricated but internally consistent attempt,
   incident, nonce, and authority chain cannot mint a retry token or claim.
+- Because retained origin state is intentionally process-local, the supported
+  public coordinator now owns both attempts: after publishing and retaining
+  an eligible no-yield incident, it performs the sole retry under the same
+  lock, unchanged registration bytes/argv/operations, and a fresh sealed
+  invocation authority. It never exits between adjudication and retry.
 - Frozen nested prelaunch evidence now uses type-exact JSON comparison, so
   `true` cannot substitute for integer incident index or `registered_runs`.
 - The complete coordinator suite passes with 72 tests.

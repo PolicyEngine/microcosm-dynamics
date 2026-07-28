@@ -1722,6 +1722,11 @@ def test_sealed_production_capability_is_live_only_during_full_chain(
             coordinator._require_ceremony_capability(capability)
             is registration
         )
+        if len(captured_capabilities) == 1:
+            raise coordinator.ExternalPreOutputFailure(
+                "external_fixture_storage_unavailable",
+                "Fixture storage unavailable before output.",
+            )
         bundle = original_load(capability)
         for field in (
             "first_estimates_snapshot",
@@ -1762,9 +1767,12 @@ def test_sealed_production_capability_is_live_only_during_full_chain(
 
     assert result.status == "published"
     assert substituted_core_calls == []
-    assert len(captured_capabilities) == 1
-    with pytest.raises(TypeError, match="live ceremony capability"):
-        coordinator._require_ceremony_capability(captured_capabilities[0])
+    assert len(captured_capabilities) == 2
+    assert (root / "runs/anchor_context_report_incident_1.json").is_file()
+    assert (root / coordinator._RETRY_CLAIM_PATH).is_file()
+    for capability in captured_capabilities:
+        with pytest.raises(TypeError, match="live ceremony capability"):
+            coordinator._require_ceremony_capability(capability)
 
 
 @pytest.mark.parametrize(
