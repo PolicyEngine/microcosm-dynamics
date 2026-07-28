@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 import textwrap
+from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -157,6 +158,30 @@ def _fixture_identities() -> tuple[dict[str, str], dict[str, str]]:
     )
 
 
+@contextmanager
+def _first_estimates_loader_identity(identity: dict[str, str]):
+    cells = dict(
+        zip(
+            anchor_context_publication._load_verified_json.__code__.co_freevars,
+            anchor_context_publication._load_verified_json.__closure__,
+            strict=True,
+        )
+    )
+    identity_cell = cells["fixture_input_identity"]
+    original_identity = identity_cell.cell_contents
+
+    def fixture_identity(role: str) -> dict[str, Any]:
+        if role == "first_estimates":
+            return dict(identity)
+        return dict(original_identity(role))
+
+    identity_cell.cell_contents = fixture_identity
+    try:
+        yield
+    finally:
+        identity_cell.cell_contents = original_identity
+
+
 def _artifact() -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -280,6 +305,17 @@ def test_registered_configuration_is_exact_deep_and_canonical():
         configuration,
         registered_configuration_bytes=registered_bytes,
     )
+
+
+def test_registered_configuration_rejects_pretty_printed_bytes():
+    configuration = _production_configuration()
+    pretty_bytes = (json.dumps(configuration, indent=2) + "\n").encode("utf-8")
+
+    with pytest.raises(ValueError, match="exact registered bytes"):
+        anchor_context_publication.validate_registered_configuration_echo(
+            configuration,
+            registered_configuration_bytes=pretty_bytes,
+        )
 
 
 @pytest.mark.parametrize(
@@ -414,6 +450,62 @@ def test_fixture_hash_loader_and_echo_use_only_fixture_identities():
             wrong_hash,
             role="first_estimates",
         )
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        b'{"value":1,"value":2}\n',
+        b'{"value":Infinity}\n',
+        b'{"value":-Infinity}\n',
+        b'{"value":NaN}\n',
+        b'{"value":1e999}\n',
+    ],
+    ids=[
+        "duplicate-key",
+        "positive-infinity-literal",
+        "negative-infinity-literal",
+        "nan-literal",
+        "overflowing-float",
+    ],
+)
+def test_input_loader_refuses_non_unique_json_documents(
+    tmp_path: Path,
+    raw: bytes,
+):
+    root = tmp_path / "strict-input-loader"
+    relative_path = anchor_context_publication._FIXTURE_FIRST_PATH
+    path = root / relative_path
+    path.parent.mkdir(parents=True)
+    path.write_bytes(raw)
+    identity = {
+        "path": relative_path,
+        "sha256": hashlib.sha256(raw).hexdigest(),
+    }
+
+    with _first_estimates_loader_identity(identity):
+        with pytest.raises(ValueError, match="uniquely parseable"):
+            anchor_context_publication._load_verified_json(
+                root,
+                identity,
+                role="first_estimates",
+            )
+
+
+def test_strict_parser_accepts_committed_production_inputs():
+    first_estimates = anchor_context_publication._strictly_parsed_document(
+        (REPOSITORY_ROOT / registry.FIRST_ESTIMATES_INPUT_PATH).read_bytes(),
+        "first-estimates production input",
+    )
+    anchors = anchor_context_publication._strictly_parsed_document(
+        (REPOSITORY_ROOT / registry.ANCHOR_INPUT_PATH).read_bytes(),
+        "anchor production input",
+    )
+
+    assert first_estimates["schema_version"] == "first_estimates.v1"
+    assert (
+        anchors["artifact_vintage_id"] == registry.ANCHOR_ARTIFACT_VINTAGE_ID
+    )
 
 
 def test_constructible_registration_token_cannot_open_production_inputs(

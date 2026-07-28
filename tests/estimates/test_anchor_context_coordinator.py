@@ -11,9 +11,10 @@ import shutil
 import subprocess
 import sys
 import textwrap
+from contextlib import contextmanager
 from dataclasses import asdict, replace
 from pathlib import Path
-from types import FunctionType, SimpleNamespace
+from types import FunctionType, MappingProxyType, SimpleNamespace
 from typing import Any
 
 import pytest
@@ -71,7 +72,11 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _repository(tmp_path: Path) -> Path:
+def _repository(
+    tmp_path: Path,
+    *,
+    pretty_first_estimates: bool = False,
+) -> Path:
     root = tmp_path / "anchor-context-fixture-rehearsal-test"
     (root / "runs").mkdir(parents=True)
     for source, relative in (
@@ -80,8 +85,72 @@ def _repository(tmp_path: Path) -> Path:
     ):
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(source.read_bytes())
+        if pretty_first_estimates and source == FIRST_ESTIMATES_FIXTURE:
+            document = json.loads(source.read_bytes())
+            document = {
+                "schema_version": document["schema_version"],
+                **{
+                    key: value
+                    for key, value in document.items()
+                    if key != "schema_version"
+                },
+            }
+            target.write_bytes(
+                (json.dumps(document, indent=2) + "\n").encode("utf-8")
+            )
+        else:
+            target.write_bytes(source.read_bytes())
     return root
+
+
+@contextmanager
+def _first_estimates_fixture_identity(identity: dict[str, str]):
+    def closure_cells(function):
+        return dict(
+            zip(
+                function.__code__.co_freevars,
+                function.__closure__,
+                strict=True,
+            )
+        )
+
+    input_loader_cells = closure_cells(publication._load_verified_json)
+    fixture_loader_cells = closure_cells(publication.load_fixture_documents)
+    identity_assertion_cells = closure_cells(
+        publication._assert_fixture_identities
+    )
+    input_identity_cell = input_loader_cells["fixture_input_identity"]
+    fixture_identity_cell = fixture_loader_cells["first_identity"]
+    assertion_identity_cell = identity_assertion_cells[
+        "fixture_input_identity"
+    ]
+    original_input_identity = input_identity_cell.cell_contents
+    original_fixture_identity = fixture_identity_cell.cell_contents
+    original_assertion_identity = assertion_identity_cell.cell_contents
+    issue_bundle = fixture_loader_cells["issue_bundle"].cell_contents
+    vault = issue_bundle.__self__
+    original_sha256 = object.__getattribute__(vault, "_first_sha256")
+    issued = object.__getattribute__(vault, "_issued")
+    original_issued = dict(issued)
+
+    def fixture_identity(role: str) -> dict[str, Any]:
+        if role == "first_estimates":
+            return dict(identity)
+        return dict(original_input_identity(role))
+
+    input_identity_cell.cell_contents = fixture_identity
+    fixture_identity_cell.cell_contents = MappingProxyType(dict(identity))
+    assertion_identity_cell.cell_contents = fixture_identity
+    object.__setattr__(vault, "_first_sha256", identity["sha256"])
+    try:
+        yield
+    finally:
+        issued.clear()
+        issued.update(original_issued)
+        object.__setattr__(vault, "_first_sha256", original_sha256)
+        assertion_identity_cell.cell_contents = original_assertion_identity
+        fixture_identity_cell.cell_contents = original_fixture_identity
+        input_identity_cell.cell_contents = original_input_identity
 
 
 def _real_git(
@@ -592,6 +661,65 @@ def test_fixture_rehearsal_runs_engine_validators_and_ceremony_end_to_end(
         is False
     )
     assert authority.read_bytes() == b""
+
+
+def test_pretty_first_estimates_fixture_completes_ceremony(tmp_path: Path):
+    root = _repository(tmp_path, pretty_first_estimates=True)
+    pretty_path = root / FIXTURE_FIRST_PATH
+    pretty_bytes = pretty_path.read_bytes()
+    first_identity = {
+        "path": FIXTURE_FIRST_PATH,
+        "sha256": hashlib.sha256(pretty_bytes).hexdigest(),
+    }
+    configuration = _configuration(root)
+    configuration["first_estimates_input"] = first_identity
+    registered_bytes = publication.canonical_json_bytes(configuration)
+    calls: list[str] = []
+    captured: dict[str, Any] = {}
+
+    assert pretty_bytes.startswith(b'{\n  "schema_version":')
+    assert (
+        publication.canonical_json_bytes(json.loads(pretty_bytes))
+        != pretty_bytes
+    )
+
+    with _first_estimates_fixture_identity(first_identity):
+        result = _run(
+            root,
+            _operations(calls, captured),
+            configuration_bytes=registered_bytes,
+        )
+        bundle = captured["artifact_kwargs"]["input_bundle"]
+        first_one, anchor_one = publication._require_verified_fixture_inputs(
+            bundle
+        )
+        first_two, anchor_two = publication._require_verified_fixture_inputs(
+            bundle
+        )
+
+        assert result.status == "published"
+        assert result.phase == "publication"
+        assert bundle.first_estimates_snapshot == pretty_bytes
+        assert (
+            len(
+                json.loads(result.path.read_bytes())["results"][
+                    "comparison_results"
+                ]
+            )
+            == 9
+        )
+        assert first_one == first_two
+        assert anchor_one == anchor_two
+        assert first_one is not first_two
+        assert first_one["tables"] is not first_two["tables"]
+
+    assert calls == [
+        "preparation",
+        "compute",
+        "invariant_results",
+        "invariant_artifact",
+        "publication",
+    ]
 
 
 @pytest.mark.parametrize(
