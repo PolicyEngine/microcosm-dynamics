@@ -46,11 +46,14 @@ registration, fitting, evaluation, or publication work is authorized.
   benefit gap result now carries its independently derived operative-claim
   and career coordinates; all 2013 metrics are claim-specific, and revenue
   has no 2013 row.
+- Moved G11 metering to the trusted coordinator's process-entry bootstrap and
+  separated the initial nonce/authority/claim sequence from the same-process
+  retry sequence. The retry validates existing records, reuses the nonce,
+  creates only its retry claim, and makes zero new entropy calls.
 - Began a section-by-section consistency audit of the remaining contract.
 
 ## Next
 
-1. Repair the retry-nonce boot/retry sequencing wording and reconcile any
-   remaining schema references.
-2. Audit every round-3 residual, update this file, and commit the final design
+1. Audit every round-3 residual and all exact-schema/version references.
+2. Update this file and commit the final design
    state.

@@ -2962,9 +2962,11 @@ ledger still contains the one original call.
 Every other `os.urandom`/`secrets` callsite or argument and all
 `ProjectionRNGRegistry` seed/factory methods, Python `random`, NumPy
 `random`/`Generator`/`SeedSequence` entry points, native entropy providers,
-and discovered aliases are `forbidden`. Before the nonce call and before any
-correction import, the coordinator installs provider-level counting wrappers
-and an audit hook. Cached aliases, native-library, FFI, and subprocess
+and discovered aliases are `forbidden`. At coordinator process entry, before
+strict registration parsing or any lifecycle action and before any correction
+import, the frozen bootstrap installs provider-level counting wrappers and
+the native audit hook under §10.1; they remain active through any same-process
+authorized retry. Cached aliases, native-library, FFI, and subprocess
 bypasses are forbidden by the implementation/source closure. Candidate code
 cannot write the ledger. This detects a request for a fresh generator even
 though `rng.py` returns a new object per call; before/after generator-state
@@ -3500,6 +3502,21 @@ use committed synthetic fixtures and rejection cases. Reading any production
 value or computing any production statistic counts as a production execution
 and is forbidden before fresh registration.
 
+At trusted-coordinator process entry, before parsing a registration byte,
+performing repository proof, taking a lock, running a pre-launch check,
+importing correction code, or making any provider call, the frozen bootstrap
+installs the `rng_access_specs.v2` provider wrappers plus the native audit
+hook. That installation is the start of the metered ceremony lifecycle and
+itself has no RNG/entropy call. The bootstrap identities are pinned in the
+implementation tree; once the configuration is strictly parsed, its exact
+registered RNG registry must deep-equal those already-active identities and
+laws. A call before that comparison is still metered, and an install,
+identity, or comparison failure aborts before production access. The wrappers
+and call ledger remain alive across the initial attempt, incident
+publication, private receipt mint/consumption, authorized retry, and final
+publication; a new process cannot inherit the receipt or claim a continuation
+of that ledger.
+
 Every registration, input JSON, claim, retry-authority record, retry claim,
 incident, primary, and sidecar is parsed directly from bounded bytes under the
 repository's strict-input contract before any field is read. The parser:
@@ -3804,15 +3821,11 @@ nonempty `evidence_sha256` described in §10.4. `output_version` in a claim is
 the exact configured literal above. None is a hash of a display string or an
 implementation-selected subset.
 
-After strict parsing, repository proof, an exclusive coordinator lock,
-complete-history validation, and all six value-blind pre-launch checks—but
-before opening a production manifest path, target sidecar, projection input,
-or other production byte—the coordinator first installs and validates the
-whole-lifecycle `rng_access_specs.v2` provider wrappers and audit hook. On an
-initial registration, the first item below is exactly the one authorized
-`coordinator_retry_nonce_entropy` call. An authorized retry reuses that
-same-process nonce and executes item 1 with zero new entropy calls. The
-coordinator then:
+On the initial-attempt branch only, after strict parsing, repository proof,
+an exclusive coordinator lock, complete-history validation, and all six
+value-blind pre-launch checks—but before opening a production manifest path,
+target sidecar, projection input, or other production byte—the coordinator
+executes exactly:
 
 1. generates an in-memory 256-bit retry nonce and computes its SHA-256
    commitment;
@@ -3833,6 +3846,16 @@ coordinator then:
    fsyncs that descriptor, fsyncs the parent directory, and
    descriptor-rereads the exact bytes and identity; and
 4. only after that durable reread mints the production-I/O capability.
+
+Item 1 is the sole authorized `coordinator_retry_nonce_entropy` call. The
+authorized-retry branch executes none of items 1–3: in the same coordinator
+process, with the original wrappers and ledger still active, it revalidates
+the existing initial claim and sealed authority, reuses the private nonce
+with zero new entropy calls, consumes the opaque receipt, and creates and
+rereads only the retry claim under §10.3 before minting the retry
+production-I/O capability. Re-reserving the authority, recreating the initial
+claim, generating a replacement nonce, starting a fresh call ledger, or
+entering from a new process is failure.
 
 The claim binds the exact six-check record and complete prior-history object.
 Every later production open, broker grant, output stage, or incident write
@@ -3856,17 +3879,19 @@ recovery total without weakening strict parsing.
 
 The isolated runner performs, in order:
 
-1. **Registration and pre-launch.** Strict-parse the committed configuration;
+1. **Registration and pre-launch.** With the process-entry provider wrappers
+   and audit hook already active, strict-parse the committed configuration;
    prove repository ancestry/tree/blob and the branch-exact initial-clean or
    retry-active-ceremony checkout law, complete attempt history, exact
    `sys.orig_argv`, and the concrete fresh-empty sentinel; take the exclusive
    lock; and perform the six value-blind checks. No production path or target
    sidecar is openable in this phase.
-2. **Durable attempt claim.** Reserve the retry-authority inode and durably
-   publish and reread the initial claim exactly as in §10.1. On an authorized
-   retry, consume the opaque coordinator receipt and durably publish and
-   reread the retry claim instead. Only the live claim mints production-I/O
-   capability.
+2. **Durable attempt claim.** On the initial branch, reserve the
+   retry-authority inode and durably publish and reread the initial claim
+   exactly as in §10.1. On an authorized retry, validate the existing
+   authority/initial claim, consume the opaque coordinator receipt, and
+   durably publish and reread the retry claim instead. Only the applicable
+   live claim mints production-I/O capability.
 3. **Preparation and target brokering.** Open and hash only registered inputs;
    exact-check identities, manifests, frozen registries, physical-cell and
    alias closure, inventory/crosswalk closure, full prior history, and output
@@ -4308,10 +4333,11 @@ Their schemas and completeness laws are:
     midpoint row passes iff its count and trace exact-match the independently
     expanded expected key-call ledger and its nonnull exhaustive
     key→uniform registry hash matches. The coordinator retry-nonce row passes
-    iff the whole registration lifecycle contains exactly one metered
-    32-byte call at the pinned pre-production coordinator callsite, zero new
-    calls on an authorized retry, and the exact private commitment-only flow;
-    its keyed-registry hash is null. A row otherwise fails and retains the
+    iff the whole same-process ceremony lifecycle from the §10.1 bootstrap
+    contains exactly one metered 32-byte call at the pinned pre-production
+    coordinator callsite, zero new calls on an authorized retry, and the exact
+    private commitment-only flow; its keyed-registry hash is null. A row
+    otherwise fails and retains the
     nonzero count or mismatching hashes. Fresh-generator state snapshots are
     not evidence.
   - `weight_rescale_results` has exactly four
