@@ -5376,9 +5376,15 @@ runtime-identity capture are by law the complete and exact pre-wrapper
 bootstrap prefix: construction of the pinned phase domain, installation of
 the direct no-allocation exit path, initialization of the current phase to
 `bootstrap` and the lifecycle counter to zero, completion of boundary zero,
-and capture of `runtime_process_start_identity.v1`. No operation may be added
-to or interleaved with this prefix. It is provider-call-free and consumes no
-lifecycle sequence; any failure takes the preclaim direct-exit edge.
+and capture of `runtime_process_start_identity.v1`. On successful completion,
+no operation may be added to or interleaved with this prefix. It is provider-
+call-free and consumes no lifecycle sequence. The kernel `_exit` syscall
+primitive is available without bootstrap installation. A failure before a
+valid current-phase state exists invokes that primitive immediately without a
+phase transition; any later prefix failure takes the preclaim direct-exit
+edge. These are the prefix's only alternate outcomes; both are terminal and
+provider-call-free and enter no provider, cache, wrapper, audit-hook, callback,
+finalizer, import, logging, or lifecycle-sequence action.
 
 Immediately after successful completion of that prefix, with no intervening
 operation, the bootstrap executes the fixed, non-interleavable bootstrap-
@@ -5387,7 +5393,16 @@ lifecycle cache, one wrapper per `rng_access_specs.v2.providers` row in
 provider order, then the native audit hook. Ledger and cache creation are the
 sole installation-internal prerequisites that precede wrapper activation.
 These objects are exactly the §8.1 bootstrap identity rows and consume the
-exact creation sequences specified there. After the hook is active, the
+exact creation sequences specified there.
+
+If creation or activation of any installation object fails, the sequence has
+exactly one alternate outcome: it changes the already-initialized phase
+directly from `bootstrap` to `process_exit` and invokes the installed direct
+`_exit` path. That failure outcome is part of the installation sequence, is
+terminal and provider-call-free, consumes no additional lifecycle sequence,
+and performs no creation or activation after the failure.
+
+After the hook is active, the
 coordinator changes phase to `registration_prelaunch`; only then may any
 action outside the prefix and installation sequence begin. This installation
 is the start of the metered ceremony lifecycle and itself has no RNG/entropy
@@ -5842,11 +5857,14 @@ preheldout_structural_verification → evaluation → lifecycle_closure →
 publication → process_exit`. A no-eligible or early structural-failure path
 still enters each skipped-work state in this chain and immediately leaves it
 without creating a principal, opening a value, or consuming a provider or
-lifecycle sequence. Before the applicable initial or retry claim is durably
-reread, any exception takes the exact preclaim-abort edge from the current
-`bootstrap | registration_prelaunch | durable_attempt_claim` state to
-`process_exit`. It publishes no incident, receipt, lifecycle seal, primary,
-or sidecar; a partial durable record retains §10.1's `partial_invalid` law.
+lifecycle sequence. A failure before a valid current-phase state exists takes
+§10.1's state-free, bootstrap-fatal direct `_exit` termination. After a valid
+current-phase state exists and before the applicable initial or retry claim is
+durably reread, any exception takes the exact preclaim-abort edge from the
+current `bootstrap | registration_prelaunch | durable_attempt_claim` state to
+`process_exit`. Neither path publishes an incident, receipt, lifecycle seal,
+primary, or sidecar; a partial durable record retains §10.1's
+`partial_invalid` law.
 After the applicable claim is durably reread and before terminal durability,
 any exception changes state to `incident_handling` before cleanup, incident
 construction, or incident publication. Only a successfully popped and fully
