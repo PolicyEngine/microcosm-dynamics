@@ -134,8 +134,8 @@ Every atomic record carries the following fields or the run aborts:
 | `status_probabilities` | Ordered four-value vector for `covered_wage`, `covered_self_employment`, `noncovered`, `unresolved`; each value is a canonical exact dyadic and the vector sums to one exactly. |
 | `status` | Deterministic class when one probability is exactly one; otherwise `modeled_distribution`. Draw rows carry one of the four realized classes. |
 | `classification_reason_codes` | Ordered, nonempty registered reason-code array. |
-| `source_provenance` | Source wave, role, job/component, `se_aggregation_group_id`, reference year, raw field IDs, unit, missing-code disposition, observed/imputed/projected status, and admissible-information date. |
-| `correction_version` | Immutable selected correction identity and canonical SHA-256. |
+| `source_provenance` | Source wave, role, job/component, `se_aggregation_group_id`, verified reference year, exact `year_source_class`, raw field IDs, unit, missing-code disposition, admissible-information date, and—on a benefit gap view—operative claim year plus adjacent base-row hashes. |
+| `correction_version` | Immutable `substantive_model_sha256`; evaluation-only provenance is excluded under §§5.4 and 6.2. |
 | `uncertainty_provenance` | `expected_value` or the exact §5.4 correction-draw namespace and index. |
 | `status_allocated_gain_amounts` | Object with exactly the four status keys, each holding a nonnegative rational-microdollar amount; semantic traversal uses the registered status order. |
 | `status_allocated_se_loss_magnitudes` | Object with exactly the same four keys and nonnegative rational-microdollar magnitudes; `covered_wage` is literal zero. |
@@ -322,17 +322,23 @@ expected allocation or `unresolved`; it never defaults to SE income.
 
 ### 3.3 Shared-consumer law
 
-The canonical component ledger is written or materialized once per correction
-version and draw. Career assembly and revenue receive its canonical hash and
-typed views. They may apply benefit or contribution rates after the common
-ledger, but may not alter classification, measurement, annualization,
-nonnegativity, wage/SE ordering, or correction draws. For every
-`(projection_draw, correction_draw, person, year)`, the component bytes
-consumed by both paths must be identical. The common ledger covers the union
-of the separately registered consumer domains; benefits and revenue each
-consume exactly their own domain, and equality is checked on the
-intersection. A career-only correction, revenue-only correction, wrong
-consumer key set, or independently sampled pair fails.
+The canonical base component ledger is materialized once per substantive
+model and draw. Career assembly and revenue receive its canonical hash and
+typed accessor. They may apply a downstream benefit/contribution rate, and
+the benefit assembler may derive §8.1's claim-context gaps from corrected
+pre-statutory adjacent channels, but neither may alter classification,
+measurement, annualization, nonnegativity, wage/SE ordering, or draws.
+
+Consumer domains are not configured selectors. The sealed coordinator
+independently reconstructs the complete frozen Stage A–D benefit domain and
+the complete unsplit 2015–2022 revenue slices under
+`consumer_domain_derivation_specs.v1`. For every
+`(projection_draw, correction_draw, person, year)` in their intersection,
+base component bytes are identical. A benefit gap row additionally keys
+`operative_claim_year` and `career_variant_id`, binds its adjacent base-row
+hashes, and is never reusable across claim contexts. A career-only
+correction, revenue-only correction, omitted opening-backfill/difficult row,
+self-shrunk support set, or independently sampled pair fails G01/G08/G22.
 
 ## 4. Immutable authorities, PSID crosswalk, and information boundary
 
@@ -1206,34 +1212,98 @@ a new schema. No moving alias may appear in a registered configuration.
 
 ### 6.2 Frozen `calibration_target_specs`
 
-The registry schema is `calibration_target_specs.v1`. It is a literal ordered
-array, expanded cell by cell before fitting. Table 4.B2 and 4.B11 expand
-exactly over calendar years 1968–2022 in ascending order. The covered-share
-objects expand over the exact year array frozen when V-B7 is resolved; that
-array must contain at least one train cell in each of `1968-1975`,
-`1976-1978`, `1979-1993`, `1994-2002`, and `2003-2008`, and every available
-2009–2014 cell. It is frozen before fitting and may not be thinned after
-values are exposed. Every object contains exactly:
+Two source-identity registries are frozen before target specs.
+`physical_source_cell_specs.v1` assigns each cell in the vintage-1 and
+vintage-2 official artifacts exactly one physical identity containing:
 
-`target_id`, `dependency_group`, `source_artifact_vintage_id`,
-`source_cell_ids`, `source_year`, `source_status`, `universe`,
-`transformation`, `stored_unit`, `published_rounding_interval`,
-`model_universe_id`, `model_weight_field`, `model_weight_source_sha256`,
-`universe_concordance`, `role`, `loss`, `loss_weight`, `cell_tolerance`,
+`physical_cell_id`, `publication_family_id`, `edition_id`,
+`source_document_id`, `table_id`, `row_path`,
+`nested_column_header_path`, `calendar_year`, `as_published_token_sha256`,
+`normalized_semantic_sha256`, and `full_source_sha256`.
+
+The physical ID is the publication/edition/table/row/header/year/cell-token
+identity, not a logical series or target ID. `full_source_sha256` proves the
+production extraction but is evaluation provenance; it is excluded from the
+cell-scoped substantive projection below.
+
+`official_source_alias_specs.v1` is the complete frozen registry of
+cross-vintage physical aliases, republications, shared primitives, and
+arithmetic siblings. Each ordered row has exactly
+`alias_group_id`, `left_physical_cell_id`, `right_physical_cell_id`,
+`relation`, `effective_calendar_year`, `arithmetic_rule_id`, and
+`adjudication`. `relation` is
+`same_physical_cell | cross_vintage_republication | shared_primitive |
+arithmetic_sibling`; `arithmetic_rule_id` is nonnull exactly for the last
+relation. Registered arithmetic rules include the taxable-earnings/gross-
+contribution rate relationship and every extracted total/component or
+ratio/share sibling. The registry is built from both artifacts and all
+extracted formula registries, never from declared target roles. An omitted
+known relation, a cycle with inconsistent physical identity, or a
+cross-vintage relation without exact source proof aborts registration.
+
+The target registry schema is `calibration_target_specs.v2`. It is a literal
+ordered array expanded cell by cell before fitting. Table 4.B2 and 4.B11
+expand exactly over calendar years 1968–2022 in ascending order. The
+covered-share objects expand over the exact year array frozen when V-B7 is
+resolved. That array must contain at least one **direct-questionnaire**
+positive-weight train cell in each reference-era interval `1968–1974`,
+`1975–1977`, `1978–1992`, `1993–2001`, and `2002–2008`, plus every available
+2009–2014 official cell with its exact model-year source class. A gap or
+boundary cell cannot satisfy a direct-support minimum. The array is frozen
+before fitting and may not be thinned after values are exposed.
+
+Every target object contains exactly:
+
+`target_id`, `target_family`, `target_year`, `verified_calendar_year`,
+`role_rule_id`, `dependency_group`,
+`source_artifact_vintage_id`, `source_cell_ids`,
+`resolved_observation_ids`, `physical_source_cell_ids`,
+`primitive_ancestry_ids`, `source_year`, `source_status`,
+`model_year_source_class`, `universe`, `transformation`, `stored_unit`,
+`published_rounding_interval`, `model_universe_id`, `model_weight_field`,
+`model_weight_source_sha256`, `universe_concordance`, `declared_role`,
+`effective_role`, `loss`, `loss_weight`, `cell_tolerance`,
 `family_tolerance`, `selection_eligible`, and `candidate_output_selector`.
 
 `target_id` is the unique string `<target_family>:<four-digit-year>`;
-`dependency_group`, artifact identity, units, selector IDs, and weight field
-are nonempty strings; source cell IDs are an ordered nonempty unique string
-array; source year is a JSON integer excluding booleans; status is
-`historical | preliminary`; role is
+`target_family` and `target_year` are parsed from that exact ASCII grammar,
+and `verified_calendar_year` must equal the parsed integer. Source cell,
+observation, physical-cell, and ancestry IDs are ordered nonempty unique
+arrays. `source_year` is a JSON integer excluding booleans; source status is
+`historical | preliminary`; both roles are
 `train | validation | held_out_diagnostic`; loss is
 `squared_log_ratio | squared_logit_error | no_fitting_loss`; loss weight is a
 finite nonnegative JSON number; and selection eligibility is a JSON boolean.
-Every train or validation cell must have source status `historical`;
-`preliminary` is permitted only for `held_out_diagnostic`. A status/role
-mismatch aborts target-spec registration rather than silently excluding the
-cell.
+
+Registration resolves every logical source cell to one observation and then
+to its complete physical primitive ancestry. It parses the encoded year from
+the target ID, every logical cell ID, every transformation operand ID, every
+resolved observation, every physical identity, and every primitive-ancestry
+member. All parsed years must equal `target_year`, `source_year`, and the
+candidate-output selector's calendar year. There is no tolerated alias,
+carry, nearest-year lookup, or target-family exception.
+
+`effective_role` is recomputed from that verified year:
+
+```text
+1968..2008 -> train
+2009..2014 -> validation
+2015..2022 -> held_out_diagnostic
+```
+
+`declared_role` must equal it byte-for-byte. The validator then takes the
+transitive closure through `official_source_alias_specs.v1`. Every physical
+alias, shared primitive, and arithmetic sibling receives the same honest
+exposure classification for that year, even when its own target has
+`no_fitting_loss` and zero weight. A model-choice closure containing a
+post-2014 physical cell, a different-year operand, or a vintage-1 held-out
+alias aborts registration. An arithmetic sibling may publish a zero-weight
+diagnostic but can never count as independent validation.
+
+Every train or validation target must have source status `historical`;
+`preliminary` is permitted only for `held_out_diagnostic`. A status, year,
+role, ancestry, or alias mismatch aborts target-spec registration rather than
+silently dropping or relabeling the cell.
 
 `universe` has exactly `publication_scope`, `geography`, `population`,
 `time_basis`, `worker_unit`, `duplicate_worker_rule`, and `zero_earner_rule`,
@@ -1251,9 +1321,17 @@ verified operand rules determines it, and otherwise is
 `exact_concept_match | registered_frame_difference`. `frame_relation` is the
 literal `frame_relative_not_population_aligned`; `verification_status` is
 `pass`; and the digest is 64 lowercase hex.
-`candidate_output_selector` has exactly `field_ids`, `aggregation`,
+`candidate_output_selector` has exactly `calendar_year`,
+`year_source_class`, `availability`, `field_ids`, `aggregation`,
 `joint_probability_rule`, `cap_stage`, `projection_draw_reduction`, and
-`unit`; the draw reduction is the literal §5.4 law.
+`unit`. The year and source class exact-match the verified target and §4.2.
+`availability` is `available` for direct, boundary, and projected annual
+views and
+`not_applicable_no_claim_independent_model_analogue` for structural or
+claim-specific benefit gaps. The latter has empty field IDs, no predicted
+value or loss, zero weight, and no selection eligibility. It is an
+exposure-honest official diagnostic only; it cannot materialize a consumer
+row. The draw reduction is the literal §5.4 law.
 
 Both tolerance fields are tagged objects, never bare null. A selection-gate
 cell has exactly `applicability: selection_gate`, `metric`, and finite
@@ -1264,10 +1342,11 @@ cell has exactly `applicability: selection_gate`, `metric`, and finite
 values are `absolute_share_error`/`0.03` and
 `rms_absolute_share_error`/`0.015`; covered-share values are the same metric
 names with `0.02` and `0.01`. `selection_eligible` is true exactly for
-validation cells in the five selection-eligible families below and false
-otherwise. Train and selection-eligible validation loss weights implement
-the dependency weights below; every held-out or `no_fitting_loss` cell has
-weight zero.
+available validation cells in the five selection-eligible families below
+whose source class is `direct_questionnaire` or `boundary_2014`; it is false
+for 2009, 2011, and 2013 gap cells. Positive train weights exist only for
+available `direct_questionnaire` cells. Every gap, held-out, or
+`no_fitting_loss` cell has weight zero.
 
 `model_universe_id` resolves through a frozen selector containing exact age,
 annual-presence, employee/SE/both-type, unique-worker, duplicate-worker,
@@ -1299,21 +1378,21 @@ The target families are frozen as follows:
 
 | Target family | Exact official transformation and model selector | Loss | Role and selection law |
 |---|---|---|---|
-| `b2_wage_total_intensity` | 4.B2 `c5/c11`; model `sum(covered_employee_wages_uncapped) / sum(b2_wage_worker_membership_probability_analytic)` | squared log ratio | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; selection-eligible |
-| `b2_se_total_intensity` | 4.B2 `c8/c12`; model `sum(covered_se_net_earnings_pre_seca) / sum(b2_se_worker_membership_probability_analytic)`, where the numerator is the expected signed within-`se_aggregation_group_id` net concept before SECA factor, threshold, or cap | squared log ratio | same; selection-eligible |
-| `b11_se_only_worker_share` | 4.B11 `(T-W)/T`; model `sum(b11_se_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | squared logit error | same; selection-eligible |
-| `b11_dual_type_worker_share` | 4.B11 `(W+S-T)/T`; model `sum(b11_dual_type_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | squared logit error | same; selection-eligible |
-| `ssa_precisely_universed_covered_share` | exact registered numerator/denominator; model `sum(modeled_covered_worker_probability_analytic) / sum(registered_covered_share_denominator_indicator)` under the exact registered timing and duplicate-worker rules | squared logit error | available 1968–2008 cells train; every available 2009–2014 cell validation; 2015–2022 held-out diagnostic; selection-eligible |
-| `b11_wage_only_worker_share` | 4.B11 `(T-S)/T`; model `sum(b11_wage_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout because it is algebraically dependent |
-| `b2_type_count_mix` | 4.B2 `c12/(c11+c12)` and the analogous model marginal-count ratio | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout; overlapping marginal counts are never called unique workers |
-| `b2_se_total_component_share` | 4.B2 `c8/(c5+c8)` and the algebraically identical model component ratio | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout; dependency check only |
-| `b2_wage_taxable_intensity` | 4.B2 `c13/c11`; model consolidated taxable wage intensity | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout; preserved employer-cap mismatch |
-| `b2_se_taxable_intensity` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout |
-| `b2_wage_taxable_fraction` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout; preserved employer-cap mismatch |
-| `b2_se_taxable_fraction` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | no fitting loss | 1968–2008 train; 2009–2014 validation; 2015–2022 held-out diagnostic; zero-weight and selection-ineligible throughout |
-| `b11_taxable_earnings_component_reconciliation` | 4.B11 taxable-earnings total minus wage and SE taxable components; model `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`; report interval consistency only when its rounding tag is `source_verified` | no fitting loss | all 1968–2022 cells held-out diagnostic |
-| `b11_contributions_component_reconciliation` | 4.B11 contribution total minus wage and SE contribution components; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap | no fitting loss | all 1968–2022 cells held-out diagnostic |
-| `b11_se_contribution_share` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | no fitting loss | all 1968–2022 cells held-out diagnostic; legal/accounting diagnostic only |
+| `b2_wage_total_intensity` | 4.B2 `c5/c11`; model `sum(covered_employee_wages_uncapped) / sum(b2_wage_worker_membership_probability_analytic)` | squared log ratio on model-choice cells | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 held out. |
+| `b2_se_total_intensity` | 4.B2 `c8/c12`; model `sum(covered_se_net_earnings_pre_seca) / sum(b2_se_worker_membership_probability_analytic)`, where the numerator is the expected signed within-`se_aggregation_group_id` net concept before SECA factor, threshold, or cap | squared log ratio on model-choice cells | Same. |
+| `b11_se_only_worker_share` | 4.B11 `(T-W)/T`; model `sum(b11_se_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | squared logit error on model-choice cells | Same. |
+| `b11_dual_type_worker_share` | 4.B11 `(W+S-T)/T`; model `sum(b11_dual_type_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | squared logit error on model-choice cells | Same. |
+| `ssa_precisely_universed_covered_share` | exact registered numerator/denominator; model `sum(modeled_covered_worker_probability_analytic) / sum(registered_covered_share_denominator_indicator)` under the exact registered timing and duplicate-worker rules | squared logit error on model-choice cells | Same for every available verified year; source-class minimums above apply. |
+| `b11_wage_only_worker_share` | 4.B11 `(T-S)/T`; model `sum(b11_wage_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | no fitting loss | Recomputed year role; zero-weight and selection-ineligible because algebraically dependent. |
+| `b2_type_count_mix` | 4.B2 `c12/(c11+c12)` and the analogous model marginal-count ratio | no fitting loss | Recomputed year role; zero-weight and selection-ineligible; overlapping marginal counts are never unique workers. |
+| `b2_se_total_component_share` | 4.B2 `c8/(c5+c8)` and the algebraically identical model component ratio | no fitting loss | Recomputed year role; zero-weight dependency check only. |
+| `b2_wage_taxable_intensity` | 4.B2 `c13/c11`; model consolidated taxable wage intensity | no fitting loss | Recomputed year role; zero-weight preserved employer-cap mismatch. |
+| `b2_se_taxable_intensity` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | no fitting loss | Recomputed year role; zero-weight. |
+| `b2_wage_taxable_fraction` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | no fitting loss | Recomputed year role; zero-weight preserved employer-cap mismatch. |
+| `b2_se_taxable_fraction` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | no fitting loss | Recomputed year role; zero-weight. |
+| `b11_taxable_earnings_component_reconciliation` | 4.B11 taxable-earnings total minus wage and SE taxable components; model `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`; report interval consistency only when its rounding tag is `source_verified` | no fitting loss | Recomputed year role; zero-weight arithmetic-sibling diagnostic, never independent evidence. |
+| `b11_contributions_component_reconciliation` | 4.B11 contribution total minus wage and SE contribution components; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap | no fitting loss | Recomputed year role; zero-weight arithmetic-sibling diagnostic, never independent evidence. |
+| `b11_se_contribution_share` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | no fitting loss | Recomputed year role; zero-weight legal/accounting sibling diagnostic only. |
 
 `dependency_group` is operational and makes no statistical-independence
 claim. The two B2 fitting families share
@@ -1323,11 +1402,13 @@ families share `dependency_group: b11_worker_type_system`, whose objective
 weight is 0.25 and whose subweights are each one half. The covered-share
 family has one of the two covered-share dependency-group IDs below and weight
 0.25. Thus the effective family weights are 0.25, 0.25, 0.125, 0.125, and
-0.25 in the selection-eligible table order; annual cells within a family have
-equal weight.
+0.25 in the selection-eligible table order; positive-weight direct cells
+within a family have equal weight after gap cells are excluded by the frozen
+source-class rule.
 
-Before target registration, a source-ancestry audit expands every numerator
-and denominator to literal source cells and publications. It must prove that
+Before target registration, the physical source-ancestry audit above expands
+every numerator and denominator to literal physical primitive cells and its
+complete evidentiary dependency closure. It must prove that
 the covered-share target is not an arithmetic transform or republication of
 any selection-eligible B2 or B11 target. Exact target duplication aborts
 registration. Shared primitive cells, cross-table discrepancies,
@@ -1347,19 +1428,21 @@ validation requires RMS absolute share error no greater than 0.01 and every
 cell no greater than 0.02. These are precommitted operational acceptance
 thresholds, not sampling confidence intervals.
 
-Role belongs to one expanded derived target cell, while the target-use trace
-also expands its primitive ancestry. Every required 4.B2 primitive is
+Role is a verified-year consequence, while the target-use trace publishes
+`verified_calendar_year`, direct physical ancestry, alias group IDs,
+arithmetic-sibling group IDs, and effective evidentiary role. Every required
+4.B2 primitive is
 referenced by at least one B2 family; every required 4.B11 worker primitive
 is referenced by the worker-distribution families, every taxable primitive by
 its reconciliation, and every contribution primitive by its reconciliation
 or contribution-share family. A zero-weight transform sharing a primitive
 with model choice is marked train/validation in 1968–2014 even though it
 cannot enter loss or selection; it is never presented as held-out evidence in
-those years. Its 2015–2022 expansion is held out. The three B11
-taxable/contribution diagnostic families use distinct table-specific
-primitives and remain `held_out_diagnostic` for all years. The trace records
-the derived role and complete primitive ancestry, so no source cell acquires a
-second, more favorable evidentiary description.
+those years. Its 2015–2022 expansion is held out. The B11
+taxable/contribution diagnostics receive their verified train/validation role
+before 2015 even though their loss weight is zero; their arithmetic closure
+prevents an independent-evidence claim. No physical or logical source cell
+can acquire a second, more favorable evidentiary description.
 
 For positive \(m,o\), squared log-ratio loss is
 \((\log m-\log o)^2\); a nonpositive operand in train/validation fails that
@@ -1373,6 +1456,12 @@ exact reason `nonpositive_log_operand | logit_endpoint`; it cannot change
 eligibility.
 A `no_fitting_loss` domain violation in any role follows that same diagnostic
 branch and cannot fail or rescue a candidate.
+An unavailable structural-gap target publishes its official observation,
+`predicted: null`, `loss: null`, and
+`status: no_claim_independent_model_analogue`; it is excluded from RMS
+cardinality by the registry rather than dropped at runtime. Zero-weight and
+held-out discrepancies use the field name `diagnostic_error`, never `loss`,
+so the model-choice loss registry has no evaluation-only bytes.
 RMS is the square root of the equal-weighted
 arithmetic mean of the registered cell errors, never a ratio of aggregate
 means. B11 arithmetic siblings and dependent B2 transformations cannot rescue
@@ -1400,6 +1489,59 @@ keys. Changing a cell, source, year, role, dependency group, formula, loss, weig
 tolerance, selector, target order, or selection eligibility creates a new
 registry version and requires fresh registration. Exact deep equality,
 including array order, is mandatory.
+
+The substantive official-evidence identity is
+`fit_selection_cell_identity.v1`, with exactly:
+
+`schema_version`, `verified_role_specs`, `model_choice_targets`,
+`model_choice_physical_cells`, `model_choice_alias_closure`,
+`model_weight_identity`, `source_definition_fragments`, and
+`canonicalization`.
+
+It contains only positive-weight direct train cells and
+selection-eligible direct/boundary validation cells. Each target row retains
+its verified year, derived role, dependency group, loss/weight/tolerances,
+candidate selector, ordered physical operands, and canonical observed value.
+Each physical row retains its stable locator, exact published token,
+normalized value, and hashes of only the cell-scoped source fragments needed
+to establish that cell and its meaning.
+
+This identity expressly excludes full source-document SHA/size/capture
+entries, artifact-wide content hashes, whole-document `source_sha256` fields,
+held-out and zero-weight values/spec payloads, vintage-1 bytes, registration,
+invocation, incident, configuration, and any digest whose byte domain includes
+non-model-choice cells. `substantive_model_sha256` binds this canonical
+object; the complete artifact, source manifests, alias registry, target
+registry, and values remain mandatory in
+`full_calibration_evaluation_provenance.v1`, whose hash is
+`evaluation_provenance_sha256`. The latter enters input validation, sidecar,
+primary integrity, and evaluation binding only. It cannot enter a parameter,
+loss, selection decision, model hash, uniform, gate evidence hash, or
+eligibility decision.
+
+`heldout_noninterference_specs.v1` is a nonempty frozen fixture registry. It
+provides a baseline and a structurally valid mutant in which:
+
+1. every value not used by a positive-weight train cell or
+   selection-eligible validation cell—including every held-out and
+   zero-weight value—is replaced by a distinct domain-valid literal;
+2. every source fragment exclusively owned by those cells, including every
+   vintage-1-exclusive byte, is replaced;
+3. all affected document, artifact, manifest, and evaluation-provenance
+   hashes are recomputed; and
+4. every model-choice cell and shared interpretation fragment remains
+   byte-identical.
+
+The fixture freezes every replacement and exact expected cardinality; an empty
+mutation array fails. Baseline and mutant must produce byte-identical
+parameter bit vectors, model-choice predictions and losses, candidate
+dispositions, selection, model identity/hash, all expected and realized
+substantive ledger hashes, the exhaustive keyed-uniform registry hash, every
+hard-gate row and evidence hash, and
+`correction_model_eligibility`. Only full evaluation provenance and the
+changed diagnostic observations/residuals may differ. G21 enforces this
+noninterference; a whole-document digest in the model/RNG path necessarily
+fails it.
 
 ### 6.3 The 15 vintage-1 series
 
@@ -1430,6 +1572,12 @@ threshold choice, seed choice, or rescue; it never means unseen. Truly unseen
 temporal evidence requires later official cells whose registration predates
 their exposure, or a genuinely isolated administrative link.
 
+That seed-choice statement is executable, not semantic: vintage-1 bytes and
+their whole-source digests are absent from
+`fit_selection_cell_identity.v1` and `substantive_model_sha256`, and the
+mutant fixture in §6.2 changes every vintage-1-exclusive byte while requiring
+the model hash and all uniforms to remain identical.
+
 The separately registered pre-2015 4.B11 worker primitives are not any of
 the vintage-1 artifact's 2015–2022 observations. V1 consumes them only
 through the scale-free worker-type shares in §6.2; no 4.B11 national worker
@@ -1439,15 +1587,21 @@ level enters the objective.
 
 ### 7.1 Isolation and objective
 
-Only positive-weight `train` cells with a fitting loss estimate parameters.
-Only `selection_eligible` validation cells select among the frozen
-candidates. Zero-weight `no_fitting_loss` train/validation cells record their
-honest exposure role and publish diagnostics but cannot affect a parameter,
-optimizer, convergence decision, candidate eligibility, candidate order,
-threshold, draw, tie-break, or publication decision. The same prohibition
-applies to every `held_out_diagnostic` value. Selection code is structurally
-unable to open either vintage-1 production input or the held-out branch of
-the target API.
+Only verified-year, positive-weight, `direct_questionnaire` train cells with a
+fitting loss estimate parameters. Only verified-year,
+`selection_eligible` direct/boundary validation cells select among the frozen
+candidates. The optimizer and selector receive canonical cell-scoped packets
+from the trusted broker; a packet contains no artifact path, whole-document
+digest, arbitrary lookup API, diagnostic handle, or source byte outside
+`fit_selection_cell_identity.v1`.
+
+Zero-weight, unavailable-gap, and held-out cells run in separate
+noncommunicating diagnostic workers and cannot affect a parameter, optimizer,
+convergence decision, candidate eligibility, order, threshold, uniform,
+tie-break, gate, or publication decision. The optimizer/selector workers are
+structurally unable to open vintage-1, anchor-report, target-artifact,
+held-out, Option-C, benefit-total, or repository paths under G15's sandbox.
+Knowing a forbidden pathname does not grant access.
 
 All model-side targets are weight-scale invariant: shares, per-component
 intensities, or distributions. Multiplying every PSID weight by a positive
@@ -1462,6 +1616,11 @@ It is a predeclared loss weighting, not an independence claim. There is no
 regularization term and no candidate-specific target deletion. Full-rank,
 condition, and solution-agreement tests in §5.3 are candidate eligibility
 conditions, not penalties.
+
+The objective and selection registries are reconstructed from verified
+physical ancestry and derived roles, not accepted from target-use traces. A
+role, year, physical-cell, or alias-closure mismatch aborts before a value
+packet is granted.
 
 ### 7.2 Exact selection sequence
 
@@ -1503,7 +1662,11 @@ requires a new design/registry version and fresh registration.
 ### 7.3 PSID-side validation
 
 PSID cross-validation holds out complete people/households and complete
-questionnaire eras, never random person-wave rows. It evaluates parsing,
+**direct questionnaire waves/reference eras**, never random person-wave rows.
+Each held-out wave row publishes its verified reference year and source class.
+Structural-gap, claim-specific-gap, boundary, and projected rows are not
+questionnaire holdouts and cannot be counted toward direct-wave coverage.
+The diagnostic evaluates parsing,
 annualization, reconciliation, transition prediction, and observable
 self-employment/sector fields. It is explicitly internal validation, not
 administrative covered-earnings validation. Any literature quantity used as
@@ -1520,18 +1683,23 @@ with exact labels, partitions, losses, and tolerances before exposure.
 The only Option-C ID is `aggregate_share_scale_sensitivity_v1`, labeled
 `aggregate-scaled-labor-income-proxy`. For each year through 2014 it multiplies
 `max(proxy_labor_income_raw, 0)` by the most recent registered pre-2015
-`ssa_precisely_universed_covered_share` cell in the same §5.3 calibration era;
-years before that era's first cell use its first cell. The 2014 scalar is
-carried unchanged through 2022. This deterministic, deliberately crude rule
-publishes aggregate movement only. It cannot enter careers, AIME, PIA, production revenue,
+**direct-reference-year**
+`ssa_precisely_universed_covered_share` cell in the same
+`candidate_reference_era_specs.v1` era; years before that era's first direct
+cell use its first direct cell. A structural gap, claim-specific gap, or 2014
+boundary row retains its own source-class label and cannot masquerade as a
+direct covered-share observation. The 2014 scalar is carried unchanged
+through 2022. This deterministic, deliberately crude rule publishes aggregate
+movement only. It cannot enter careers, AIME, PIA, production revenue,
 candidate selection, tolerance adjudication, the label certificate, or a
 held-out claim. It is emitted solely to show how the production Option-A+B
 model differs from a minimal scalar benchmark.
 
 `sensitivity_specs.v1` is a one-object ordered array. Its object has exactly
 `sensitivity_id`, `label`, `input_selector`, `scalar_selector`,
-`pre_2015_rule`, `post_2014_rule`, `allowed_outputs`, and
-`forbidden_uses`; every value is the literal law in the preceding paragraph.
+`reference_era_specs`, `year_source_class_rule`, `pre_2015_rule`,
+`post_2014_rule`, `allowed_outputs`, and `forbidden_uses`; every value is the
+literal law in the preceding paragraph.
 `allowed_outputs` is exactly `["sensitivity_results"]`, and
 `forbidden_uses` is exactly
 `["careers","AIME","PIA","production_revenue","candidate_selection",
@@ -1541,17 +1709,71 @@ model differs from a minimal scalar benchmark.
 
 ### 8.1 Hard correctness gates
 
-`gate_specs.v1` is the ordered 20-object registry corresponding positionally
-to the list below. Its literal IDs are `G01` through `G20`; each object has
+`consumer_domain_derivation_specs.v1` has exactly
+`schema_version`, `source_input_ids`, `benefit_stage_a_d_derivation`,
+`revenue_unsplit_derivation`, `career_contexts`, `canonical_key_fields`,
+`canonical_order`, `expected_domain_hashes`, and `failure_disposition`.
+The benefit derivation independently reruns the complete frozen Stage A–D
+partition from immutable production inputs: every Stage-A person, Stage-B
+candidate, origin, C.5 birth disposition, opening-backfill replacement
+operative claim coordinate, Stage-D predicate/disposition, career span,
+registered sensitivity, and final benefit metric read is enumerated. Neither
+a configured consumer selector nor ledger presence is an input. Low coverage
+or missing support therefore cannot delete its own failing key.
+
+The revenue derivation is every
+`(projection_draw, stable_person_id, year)` row in the complete unsplit
+projection slices for 2015–2022 before filtering a null, nonpositive,
+benefit-ineligible, or otherwise difficult earnings row. A missing source
+amount receives its registered unresolved disposition or fails support; it
+never shrinks the domain. The configuration may bind expected hashes and
+counts, but the sealed coordinator independently recomputes them by draw,
+consumer, year, Stage disposition, operative-claim context, and career
+variant.
+
+`benefit_gap_derivation_specs.v1` has exactly `schema_version`, `gap_years`,
+`career_context_key_fields`, `cutoff_order`, `neighbor_rule`,
+`component_channels`, `rational_arithmetic`, `gap_year_statutory_rule`,
+`rng_rule`, `provenance_literal`, and `failure_disposition`.
+`gap_years` is exactly
+`[1997,1999,2001,2003,2005,2007,2009,2011,2013]`; context keys are
+`projection_draw_index`, `correction_draw_index`, `stable_person_id`,
+`operative_claim_year`, and `career_variant_id`. Sources after the operative
+claim year are discarded before neighbor lookup. If the gap is after the
+claim year, no row is emitted. Otherwise each corrected, pre-statutory
+covered-wage, covered-SE-gain, covered-SE-loss, noncovered, and unresolved
+channel uses the exact rational mean when both adjacent years are admissible,
+carries the only admissible neighbor when one exists, and receives the
+registered `unknown` disposition when neither exists. The effective-gap-year
+SECA factor/threshold and wage-first cap run only after that component vector
+is derived. Already capped totals are never averaged, and gap derivation
+consumes no new uniform. Neighbor years/hashes, operative claim year, draw,
+and `structural_gap_imputed` provenance publish.
+
+`earnings_consumer_dependency_specs.v1` has exactly `schema_version`,
+`complete_final_metric_inventory`, `allowed_corrected_ledger_fields`,
+`allowed_non_earnings_operands`, `forbidden_direct_earnings_operands`,
+`required_ledger_dominator`, `legacy_before_block_exceptions`, and
+`failure_disposition`. Its metric inventory is independently reconstructed
+from the frozen Stage A–D benefit surface, unsplit revenue surface,
+model-metric registry, every pairing, and every comparison spec. Every
+earnings-valued leaf of a certified corrected metric must be dominated by the
+hash-verified corrected-ledger accessor. Raw proxy and legacy first-estimates
+numbers are permitted only in the typed `before_context` block and are
+forbidden as corrected operands.
+
+`gate_specs.v2` is the ordered 22-object registry corresponding positionally
+to the list below. Its literal IDs are `G01` through `G22`; each object has
 exactly `gate_id`, `normative_statement`, `evidence_selector`, `comparator`,
 `required_value`, and `failure_disposition`. The statement text is the
 matching item below and every failure disposition is `gate_fail`. Every gate
 is conjunctive. One violating record is failure:
 
-1. The common ledger key set exactly equals the registered union of the
-   benefit and revenue domains over 1968–2022. Each consumer key set equals
-   its own registered domain—not the union—and component bytes are identical
-   on their intersection.
+1. The common base-ledger key set and every claim-context benefit gap view
+   exactly cover the independently reconstructed Stage A–D benefit and
+   complete unsplit revenue domains. Each consumer equals its own derived
+   domain—not a configured subset—and component bytes are identical on the
+   intersection. Missing support fails; it never revises a domain hash.
 2. Final wage, SE gain, SE loss-magnitude, SECA-base, noncovered, unresolved,
    capped, and creditable fields are finite and nonnegative.
    `covered_se_net_earnings_pre_seca` is the sole permitted signed statutory
@@ -1565,33 +1787,45 @@ is conjunctive. One violating record is failure:
 6. Historical SECA factors, thresholds, eligible concepts, incorporation
    treatment, and other legal rules apply only to registered years and facts.
 7. Wages precede SE under one combined person-year maximum.
-8. The exact same underlying component bytes and correction draws feed
-   benefits and revenue.
+8. The exact same hash-verified underlying component bytes and correction
+   draws feed benefits and revenue through the corrected-ledger accessor;
+   neither consumer may rematerialize an alternative correction.
 9. Raw proxy, raw fields, source wave/role/job, annualization, separate gain
    and loss channels, classification reasons, probabilities, measurement
    delta, and uncertainty provenance remain recoverable.
-10. Two in-memory executions inside the sealed run produce byte-identical
-    canonical ledger/model-result bytes, and the exact registered input
-    permutations do likewise. Timestamps, runtime provenance, incident
-    metadata, and sidecar bytes are outside this comparison.
-11. No mortality, claiming, projection, marriage, or other RNG stream is
-    consumed or changed.
-12. No micro fact after §4.3's boundary enters an earlier projected year.
+10. The six exact `replay_specs.v1` rows exist in order and byte-match the
+    complete fit/selection bundle, substantive model hash, and expected plus
+    realized ledger identities. Empty, missing, duplicate, or reordered rows
+    fail.
+11. The trusted RNG-provider call ledger has exactly one row per frozen
+    provider; every projection, mortality, claiming, marriage, Python,
+    NumPy, OS-entropy, or other forbidden provider has zero calls, and the
+    exhaustive correction key→uniform registry independently recomputes.
+12. No post-boundary questionnaire fact enters production; every gap right
+    neighbor is no later than the operative claim year; opening-backfill
+    adjudication precedes gap derivation; and no universal 2013 row is reused
+    across claim contexts. Revenue has no 2013 key.
 13. Career data-completeness and modeled OASDI coverage are separately named
     and computed.
-14. The selected correction is invariant to global weight rescaling and fits
-    no national payroll, worker, benefit, or contribution level.
-15. The fitting/selection dependency trace contains no vintage-1 series,
-    anchor report, post-2014 held-out target, benefit total, or Option-C
-    output.
+14. A coordinator-owned second execution with every weight multiplied by the
+    exact binary64 value `7.0` byte-matches each candidate's parameter bits,
+    predictions, losses, identification/disposition, selected candidate,
+    tie result, and substantive model hash; no level target is granted.
+15. Broker grants, worker IPC hashes, physical ancestry/alias closure, and
+    sandbox audit exact-match the derived allowlist. Fit/selection workers
+    have no path, descriptor, network, subprocess, or content-alias access to
+    vintage-1, anchor, held-out, benefit-total, Option-C, repository data,
+    runs, or docs bytes.
 16. Every unresolved amount follows the registered missing-fact policy and
     reason code. No objective term or gate rewards moving unknown mass from
     `unresolved` to covered or noncovered. Weighted unresolved gain/loss
     shares, person-year shares, and status entropy publish overall and by era
     × role, but v1 imposes no evidence-free magnitude cutoff.
-17. Zero/positive incidence, component identity, source status, and every
-    required target/evaluation year are complete; a missing cell is never
-    dropped from a reduction.
+17. The independently byte-pinned PSID inventory and crosswalk key streams and
+    dispositions match positionally; every value-code/adjudication rule ID
+    resolves once; the wave/reference/source-lineage map is exact; and every
+    target/evaluation key is present. A missing job field or cell never
+    shrinks the registry.
 18. Nonlinear AIME/PIA results are computed within each complete correction
     career draw before reduction.
 19. The selected candidate passes the parameter-count, full-rank Jacobian,
@@ -1600,12 +1834,52 @@ is conjunctive. One violating record is failure:
     candidate need not pass.
 20. Every registered metric that uses correction draws passes the
     10-versus-20 correction-draw stability tolerance.
+21. The complete held-out/zero-weight/exclusive-source-byte mutant in §6.2
+    leaves parameters, model-choice losses, selection, substantive model
+    hash, uniforms, ledger identities, every gate row/evidence hash, and
+    eligibility byte-identical.
+22. Every final corrected earnings-dependent metric in the complete
+    independently reconstructed benefit, revenue, pairing, and comparison
+    domains is transitively dominated by corrected ledger fields; raw proxy
+    or legacy numeric earnings appear only in `before_context`. Every
+    certified modeled-worker denominator uses
+    `modeled_covered_worker_probability_analytic`, never a draw indicator or
+    finite-grid fraction.
+
+`rng_access_specs.v1` freezes the sole allowed provider—the §5.4 SHA-256
+midpoint function—and every forbidden provider in the pinned environment:
+all `ProjectionRNGRegistry` seed/factory methods, Python `random`,
+`secrets`/`os.urandom`, NumPy `random`/`Generator`/`SeedSequence` entry
+points, and discovered aliases. Before correction imports, the trusted
+coordinator installs provider-level counting wrappers and an audit hook;
+cached aliases, native-library, FFI, and subprocess bypasses are forbidden by
+the implementation/source closure. Candidate code cannot write the ledger.
+This detects a request for a fresh generator even though `rng.py` returns a
+new object per call; before/after generator-state hashes are not evidence.
+
+`weight_rescale_specs.v1` freezes exactly four comparison rows: one for each
+of the three candidates' complete fit bundles and one for the selected
+candidate/tie/model identity. The coordinator, not candidate code, supplies
+identical packets twice and applies the exact `7.0` rescale to the second.
+Registration also proves every positive-weight target is a share, ratio, or
+intensity and the broker's level-target grant ledger is empty.
+
+`filesystem_isolation_specs.v1` freezes the supported isolation backend,
+worker executable/code hash, mount and descriptor allowlists, IPC schemas,
+broker grant registry, forbidden physical/path/content-alias registry, and
+audit policy. One fresh fit worker per candidate and a separate selector
+worker see only preloaded cell-scoped packets and pinned runtime libraries;
+repository `data`, `runs`, and `docs` are not mounted, non-IPC descriptors
+are closed, and network, subprocess, late import, `open`, `os.open`,
+`pathlib`, symlink, hardlink, and inherited-descriptor bypasses are denied.
+Zero-weight diagnostics run separately; the held-out evaluator is created
+only after model lock. An unavailable isolation backend aborts registration.
 
 The executable selector/comparator map is:
 
 | Gate | `evidence_selector` | `comparator` / `required_value` |
 |---|---|---|
-| G01 | `support_results` plus registered union/consumer/intersection key streams | `exact_registered_domain_law / true` |
+| G01 | `independently_derived_consumer_domain_and_support_results` | `exact_derived_domain_law / true` |
 | G02 | `final_component_domain_scan` | `all_records_true / true` |
 | G03 | `se_loss_offset_trace` | `all_records_true / true` |
 | G04 | `atomic_and_person_year_reconciliation_residuals` | `all_exact_zero / true` |
@@ -1614,17 +1888,19 @@ The executable selector/comparator map is:
 | G07 | `wage_first_combined_cap_trace` | `all_records_true / true` |
 | G08 | `benefit_revenue_component_hash_pairs` | `all_hash_pairs_equal / true` |
 | G09 | `recoverable_provenance_scan` | `all_records_true / true` |
-| G10 | `replay_results` | `all_hash_pairs_equal / true` |
-| G11 | `forbidden_rng_state_hashes_before_after` | `all_hash_pairs_equal / true` |
-| G12 | `information_cutoff_trace` | `all_records_true / true` |
+| G10 | `replay_registry_results` | `exact_six_rows_all_hashes_equal / true` |
+| G11 | `trusted_rng_provider_call_ledger` | `exact_forbidden_counts_zero_and_uniforms_recompute / true` |
+| G12 | `information_cutoff_and_claim_context_gap_evidence` | `all_records_true / true` |
 | G13 | `semantic_field_registry_scan` | `all_records_true / true` |
-| G14 | `weight_rescale_and_level_fit_trace` | `all_records_true / true` |
-| G15 | `fitting_selection_dependency_trace` | `forbidden_set_empty / true` |
+| G14 | `trusted_weight_rescale_reexecution_results` | `exact_four_rows_all_hashes_equal / true` |
+| G15 | `broker_and_sandbox_access_evidence` | `exact_grants_and_forbidden_access_zero / true` |
 | G16 | `unresolved_policy_and_disclosure_scan` | `all_records_true / true` |
-| G17 | `required_cell_and_component_key_scan` | `exact_keyset_equal / true` |
+| G17 | `inventory_crosswalk_lineage_and_required_cell_closure` | `all_exact_nonempty_registries_equal / true` |
 | G18 | `nonlinear_draw_reduction_trace` | `all_records_true / true` |
 | G19 | `selected_identification_and_candidate_dispositions` | `all_records_true / true` |
 | G20 | `draw_prefix_stability_results` | `all_tolerances_pass / true` |
+| G21 | `heldout_noninterference_results` | `all_substantive_bytes_equal / true` |
+| G22 | `complete_consumer_dependency_dominator_results` | `all_corrected_paths_and_analytic_denominators / true` |
 
 The selector strings are reserved result-builder entry points; each emits a
 canonical evidence object whose SHA-256 is recorded in the hard-gate row.
@@ -1648,18 +1924,20 @@ also publishes:
 
 `evaluation_specs.v1` is an ordered expanded array. Each object has exactly
 `metric_id`, `result_block`, `source_fields`, `population_selector`,
-`weight_field`, `stratum_id`, `calendar_year`, `statistic`, `unit`,
-`draw_reduction`, `stability_family`, and `gate_role`. Expansion order is the
-family order below, listed source-field order, listed statistic order,
-overall then era×role strata, and ascending year; IDs are the colon-joined
-components of that position.
+`weight_field`, `stratum_id`, `reference_era_id`, `year_source_class`,
+`role`, `calendar_year`, `statistic`, `unit`, `draw_reduction`,
+`stability_family`, and `gate_role`. Expansion order is the family order
+below, listed source-field order, listed statistic order, overall then
+reference-era × source-class × role strata, and ascending verified reference
+year; IDs are the colon-joined components of that position. Every registered
+combination has a row even when its count is zero.
 
 | Family | Exact expansion |
 |---|---|
-| `composition` | Wage share and SE share of nonnegative covered gains; overall annual 1968–2022 and five-era×registered-role aggregates. |
+| `composition` | Wage share and SE share of nonnegative covered gains; overall annual 1968–2022 and all registered reference-era×source-class×role aggregates. |
 | `incidence` | Positive wage, positive SECA base, modeled covered worker, and combined-cap exposure weighted shares; same strata/years. |
 | `distribution` | Weighted `p10,p25,p50,p75,p90,p95,p99` and top-`10,5,1` percent amount shares for `covered_employee_wages_uncapped`, `covered_seca_base_uncapped`, and `oasdi_person_taxable_payroll`; overall annual 1968–2022. Stable-person ID breaks weighted-quantile boundary ties. |
-| `unresolved` | Weighted gain amount, SE-loss magnitude, and person-year incidence shares; overall annual and five-era×registered-role aggregates, plus mean status entropy over modelable records. |
+| `unresolved` | Weighted gain amount, SE-loss magnitude, and person-year incidence shares; overall annual and every reference-era×source-class×role aggregate, plus mean status entropy over modelable records. |
 | `downstream_annual` | Corrected-minus-frozen-proxy taxable payroll, modeled contributions under frozen rates, and covered-worker incidence; overall annual 1968–2022. |
 | `downstream_career` | Corrected-minus-proxy AIME, PIA, and top-35 membership-change share; `calendar_year: null`, overall registered career universe only. |
 
@@ -1682,6 +1960,13 @@ unit family for every `projection_cross_correction_draw` metric and
 correction-draw metrics and `diagnostic_only` otherwise. Any omitted expansion
 row is failure.
 
+Every modeled covered-worker incidence and certified denominator in this
+registry uses `modeled_covered_worker_probability_analytic` within projection
+draw and verified calendar year. `modeled_covered_worker_draw_indicator` and
+`modeled_covered_worker_draw_grid_fraction_20` remain diagnostics only and
+are forbidden from corrected model metrics, pairings, comparison specs, and
+certificate inputs.
+
 A complete, valid empirical failure is a publishable result, not an incident
 and not a retry opportunity.
 
@@ -1702,6 +1987,10 @@ The following dataflows are invalid, not merely caveats:
 - using the same literature bounds as priors and validation criteria;
 - selecting a candidate, threshold, correction draw, or seed after viewing a
   held-out value;
+- placing a whole-document/artifact digest whose byte domain contains
+  held-out or zero-weight cells into the substantive model/RNG identity;
+- reintroducing a held-out or later-year primitive through a logical alias,
+  cross-vintage republication, shared denominator, or arithmetic sibling;
 - leaking realized 2017–2023 PSID job facts into the 2015–2022 projection;
 - calling PSID-internal prediction administrative validation;
 - double-weighting B2 and B11 rounded arithmetic siblings; or
@@ -1715,20 +2004,25 @@ The following dataflows are invalid, not merely caveats:
 The §3.4 proxy label retires only after a two-artifact proof and an external
 merge event. The correction evaluation proves conditions 1–7:
 
-1. the immutable legal, crosswalk, ledger-row-schema, coverage-dependence,
-   target, candidate, selection, draw, gate, and evaluation registries
-   exact-match their registered bytes;
-2. every 1968–2022 person-year used by benefits or revenue has full common
-   ledger support;
-3. every §8.1 hard gate and every registered calibration/validation tolerance
-   passes;
-4. the selected-model identity was locked before any held-out diagnostic
-   value was released beyond §10.2's integrity-only validator, and no
-   vintage-1 series was a fitting/selection input;
-5. all raw inputs, deltas, status probabilities/draws, reasons, and component
-   outputs are recoverable and reconcile;
-6. byte-identical replay, row-order invariance, RNG isolation, information
-   cutoff, and nonlinear-draw propagation pass;
+1. the immutable legal, source-inventory, crosswalk, value-code/adjudication,
+   wave/reference-lineage, gap-derivation, physical-cell/alias,
+   ledger-schema/dependence, target, candidate, selection, draw, replay, RNG,
+   isolation, domain, dependency, gate, and evaluation registries exact-match
+   their registered bytes;
+2. the common base ledger and operative-claim-year gap views exactly support
+   the independently reconstructed complete Stage A–D benefit and unsplit
+   revenue domains;
+3. all 22 §8.1 hard gates and every registered model-choice validation
+   tolerance pass;
+4. `substantive_model_sha256` was locked before held-out release; its
+   cell-scoped ancestry contains no vintage-1 or post-2014 primitive; and the
+   full held-out/zero-weight/exclusive-byte noninterference mutation passes;
+5. all raw inputs, deltas, source classes, status probabilities/draws,
+   reasons, claim-context gap neighbors, and component outputs are recoverable
+   and reconcile;
+6. the exact six-row replay registry, row-order invariance, provider-call RNG
+   isolation, cutoff-before-imputation, sandbox access, analytic-denominator,
+   and nonlinear-draw laws pass; and
 7. the sealed §10 runner has constructed and validator-accepted complete
    primary and sidecar bytes, with the primary binding the exact sidecar hash,
    before either final-path rename.
@@ -1742,9 +2036,18 @@ published label or prove that both final paths now exist. A `gate_fail` or
 
 The separately registered context report then proves condition 8:
 
-8. it opens the 15
-   vintage-1 series only after correction-model lock, publishes regardless,
-   preserves all applicable legacy formulas and mismatch masks, and validates;
+8. after correction-model lock it independently reconstructs the complete
+   frozen corrected model-metric domain, all 14 pairings, and all nine
+   comparison specs; rematerializes and hash-checks every applicable common
+   ledger and claim-context gap stream; computes every corrected
+   earnings-dependent metric exclusively through corrected ledger fields;
+   confines legacy numeric values to the typed `before_context` block;
+   transforms both `pairings[*].mismatch_codes` and
+   `comparison_specs[*].mismatch_codes` positionally with unchanged
+   cardinality/order and unaffected fields; uses analytic modeled-worker
+   probabilities for every certified denominator; only then opens all 15
+   vintage-1 series as context; publishes every required row regardless; and
+   validates.
 
 A validator-passing context report that pins the eligible correction artifact
 emits `label_retirement_certificate.status` equal to the literal
@@ -1796,14 +2099,25 @@ The exact `new_codes` array is:
 ]
 ```
 
-The model side is the fixed-frame weighted sum of registered coverage
-probabilities or draw indicators. The official side keeps its publication
-universe. The legacy metric is retained only as
-`positive_proxy_earner_count`; the corrected metric is a separate
-`modeled_covered_worker_count`.
+The certified model side is only the fixed-frame weighted sum
 
-The successor's per-pairing transformation is position-exact. Scan each
-frozen vintage-1 `mismatch_codes` array once from left to right:
+\[
+\sum_i w_i\,
+\texttt{modeled\_covered\_worker\_probability\_analytic}_{i,d,y}
+\]
+
+formed within each projection draw and verified calendar year, then reduced
+under §5.4's ratio-then-mean law. Draw indicators and the 20-draw grid
+fraction are diagnostic-only and forbidden here. The official side keeps its
+publication universe. The legacy metric is retained only as
+`positive_proxy_earner_count` in `before_context`; the corrected metric is a
+separate `modeled_covered_worker_count`.
+
+The successor transformation runs independently and position-exactly over
+both complete frozen registry families:
+`pairings[*].mismatch_codes` in all 14 pairing rows and
+`comparison_specs[*].mismatch_codes` in all nine comparison rows. Scan each
+array once from left to right:
 
 1. at the first occurrence of any of the first four retired proxy codes
    above, emit
@@ -1814,8 +2128,11 @@ frozen vintage-1 `mismatch_codes` array once from left to right:
    `replacements`; and
 4. emit every other code unchanged in its original position.
 
-Duplicate output codes are invalid. This produces every successor mask
-deterministically from the frozen pairing registry and makes the new
+Duplicate output codes are invalid. The successor pairing and comparison
+registries retain exact input cardinality/order and deep-copy every unaffected
+field. A missing difficult row is failure, not a smaller domain. This
+produces every successor mask deterministically from both frozen registries
+and makes the new
 modeled-earnings limitation mandatory for every former administrative
 earnings-history or payroll pairing. It is a new mismatch, not a renamed
 claim that the proxy defect persists.
