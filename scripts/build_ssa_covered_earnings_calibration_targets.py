@@ -54,7 +54,7 @@ CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 # Replaced with the first coherent builder commit before the artifact is
 # committed.  Keeping the pin literal makes an offline rebuild independent of
 # the current checkout's HEAD.
-EXTRACTION_IMPLEMENTATION_COMMIT = "34b8bfdfbce17d39a4a42c586df550278ae209d8"
+EXTRACTION_IMPLEMENTATION_COMMIT = "14efbded2b6d02bbfe0014a7b059068a733a1e11"
 
 SOURCE_DOCUMENT_ID = "ssa_supplement_2025_4b"
 SOURCE_FILENAME = "supplement2025_4b.html"
