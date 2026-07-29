@@ -4637,7 +4637,8 @@ The separately registered context report then proves condition 8:
    rematerializes and hash-checks every applicable common ledger and
    claim-context gap stream; computes every corrected earnings-dependent
    metric through those authoritative typed chains and exact-compares the
-   complete schema-valid runner proposal;
+   complete schema-valid runner proposal, locks every authoritative corrected
+   root and dependency proof, and destroys every runner-proposal capability;
    confines every evaluable legacy/raw-proxy numeric path to the typed
    `before_context` block;
    transforms both `pairings[*].mismatch_codes` and
@@ -4645,12 +4646,21 @@ The separately registered context report then proves condition 8:
    registry-row cardinality/order and every unaffected field; mismatch-array
    contents and cardinality obey only §9.2's suppression law; uses analytic modeled-worker
    probabilities for every certified denominator; meters the complete
-   context RNG/provider lifecycle under the pinned nonce/keyed/forbidden law,
-   destroys provider-capable workers, seals the same ledger/cache, enters
-   irreversible deny-all mode, and exact-rechecks it immediately before
-   rename;
-   only then opens all 15 vintage-1 series as context; publishes every
-   required row regardless; and validates.
+   context RNG/provider lifecycle under the pinned nonce/keyed/forbidden law;
+   only after the corrected roots are locked and every runner-proposal
+   capability is destroyed grants the separate context decoder access to all
+   15 vintage-1 series and computes every registered context row;
+   after all context computation destroys every provider-capable context
+   worker, consumes the empty-set barrier, seals the same ledger/cache, enters
+   irreversible deny-all mode, freezes the whole-lifecycle RNG evidence, and
+   constructs, validates, and stages the complete primary/sidecar candidates;
+   immediately before the first rename reconstructs semantic authority from
+   the frozen registries, exact-compares every constituent, and
+   reevaluates/bit-compares every branch-reachable authoritative root and
+   corresponding staged primary field; reconstructs the provider-lifecycle
+   comparand from the live bootstrap objects and exact-rechecks it with zero
+   post-seal/sticky counts and no intervening callback; then publishes every
+   required row regardless.
 
 A validator-passing context report that pins the eligible correction artifact
 emits `label_retirement_certificate.status` equal to the literal
