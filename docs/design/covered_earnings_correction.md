@@ -2954,9 +2954,11 @@ final metric or intermediate with any transitive earnings dependency must be
 dominated by the hash-verified corrected-ledger accessor; this includes
 benefit amounts, counts, insured-status, and claim outputs even when their
 published unit is not earnings. Only a dependency-graph-proven
-earnings-independent leaf may bypass that dominator. Raw proxy and legacy
-first-estimates numbers are permitted only in the typed `before_context`
-block and are forbidden as corrected operands.
+earnings-independent leaf may bypass that dominator. The atomic
+`proxy_labor_income_raw` field remains hash-bound audit provenance, but no
+corrected source-stream spec may select it. Raw proxy and legacy
+first-estimates numbers are permitted as evaluable numeric operands only in
+the typed `before_context` block and are forbidden as corrected operands.
 
 Dependency declaration is not numeric authority. The separately frozen
 `trusted_consumer_evaluation_specs.v1` is the coordinator's only executable
@@ -3292,8 +3294,10 @@ is conjunctive. One violating record is failure:
 22. Every final corrected earnings-dependent metric in the complete
     independently reconstructed benefit, revenue, pairing, and comparison
     domains is transitively dominated by corrected ledger fields and is
-    independently evaluated by the trusted typed DAG above. Raw proxy or
-    legacy numeric earnings appear only in `before_context`; the runner's
+    independently evaluated by the trusted typed DAG above. Raw proxy may
+    remain an inaccessible audit field in atomic ledger bytes, but raw-proxy
+    or legacy numeric earnings have zero corrected-root paths and are
+    evaluable only in `before_context`; the runner's
     complete proposed root stream exact-matches the coordinator's complete
     root stream with zero missing, extra, or value-mismatched rows. Every
     certified modeled-worker denominator uses
@@ -3751,7 +3755,8 @@ The separately registered context report then proves condition 8:
    ledger and claim-context gap stream; computes every corrected
    earnings-dependent metric through the coordinator-owned §8.1 typed
    evaluator and exact-compares the complete runner proposal;
-   confines legacy numeric values to the typed `before_context` block;
+   confines every evaluable legacy/raw-proxy numeric path to the typed
+   `before_context` block;
    transforms both `pairings[*].mismatch_codes` and
    `comparison_specs[*].mismatch_codes` positionally while retaining successor
    registry-row cardinality/order and every unaffected field; mismatch-array
@@ -5627,8 +5632,9 @@ imports §10.3–§10.5 unchanged, including
    gap stream, verifies their hashes, and reruns the complete transitive
    dependency-dominator proof. Every final output or intermediate with any
    transitive earnings dependency must be downstream of the corrected-ledger
-   accessor, regardless of its published unit; legacy/proxy numeric values
-   are confined to typed `before_context`.
+   accessor, regardless of its published unit; ledger-retained raw proxy is
+   audit-only and every evaluable legacy/proxy numeric path is confined to
+   typed `before_context`.
 
    The §9.2 mismatch transformation runs separately and positionally over all
    14 `successor_pairings[*].mismatch_codes` arrays and all nine
@@ -6092,8 +6098,9 @@ Ratification requires affirmative evidence for every item:
   claim-specific, nonannual coordinates are explicitly null, and no
   unconditional or revenue 2013 metric exists.
 - [ ] Every final corrected earnings-dependent metric is transitively
-  dominated by the corrected ledger; legacy/proxy values occur only in typed
-  before-context blocks; the coordinator evaluates every declared root under
+  dominated by the corrected ledger; ledger-retained raw proxy is audit-only
+  and legacy/proxy numeric operands occur only in typed before-context
+  blocks; the coordinator evaluates every declared root under
   the frozen 17-op type/unit grammar and rejects every missing, extra, or
   unequal runner proposal; every certified worker denominator uses analytic
   probabilities.
