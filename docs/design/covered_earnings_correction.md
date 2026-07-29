@@ -4265,15 +4265,21 @@ ledger still contains the one original call.
 Every other `os.urandom`/`secrets` callsite or argument and all
 `ProjectionRNGRegistry` seed/factory methods, Python `random`, NumPy
 `random`/`Generator`/`SeedSequence` entry points, native entropy providers,
-and discovered aliases are `forbidden`. At coordinator process entry, before
-strict registration parsing or any lifecycle action and before any correction
-import, the frozen bootstrap installs provider-level counting wrappers and
-the native audit hook under §10.1; they remain active through any same-process
-authorized retry. Cached aliases, native-library, FFI, and subprocess
-bypasses are forbidden by the implementation/source closure. Candidate code
-cannot write the ledger. This detects a request for a fresh generator even
-though `rng.py` returns a new object per call; before/after generator-state
-hashes are not evidence.
+and discovered aliases are `forbidden`. At coordinator process entry, only
+§10.1's exact provider-call-free pre-wrapper bootstrap prefix and the
+immediately following fixed bootstrap-installation sequence may execute
+before the complete provider-wrapper set and native audit hook are active.
+That installation sequence creates its ledger and cache backing, then the
+provider-order wrappers and hook, in the exact §8.1 bootstrap-object order.
+Before any action outside that prefix and installation sequence—including
+strict registration parsing, a phase transition away from `bootstrap`,
+delegated-principal lifecycle activity, correction import, or a provider
+call—the complete wrapper set and hook must be active. They remain active
+through any same-process authorized retry. Cached aliases, native-library,
+FFI, and subprocess bypasses are forbidden by the implementation/source
+closure. Candidate code cannot write the ledger. This detects a request for
+a fresh generator even though `rng.py` returns a new object per call;
+before/after generator-state hashes are not evidence.
 
 The wrappers have exactly two irreversible states:
 `active_metering | sealed_deny_all`. After all work permitted to request a
@@ -4370,7 +4376,8 @@ Before the first monitored object, the frozen bootstrap constructs the pinned
 phase domain, installs the direct no-allocation exit path, initializes the
 current-phase state cell and this coordinator-only atomic counter, completes
 boundary zero, and only then captures the runtime process identity. These
-prelude authorities do not consume a sequence.
+operations are the exact pre-wrapper bootstrap prefix and do not consume a
+sequence.
 Every G11-monitored bootstrap-object creation, delegated-principal creation
 or destruction, empty-set barrier, and seal consumes
 exactly one position; no other event does. Every consumed position is a
@@ -5207,14 +5214,27 @@ no-allocation exit path, initializes the current-phase state to `bootstrap`
 and the `rng_lifecycle_sequence_namespace.v1` counter to zero, and completes
 boundary zero. It then captures the exact
 `runtime_process_start_identity.v1`; any capture failure takes the defined
-preclaim direct-exit edge. Only after that capture does it create in fixed
-order the live provider call ledger, empty keyed-uniform lifecycle cache, one
-wrapper per `rng_access_specs.v2.providers` row, and native audit hook. These
-are exactly the §8.1 bootstrap identity rows and consume the exact creation
-sequences specified there. After the hook is
-installed the coordinator changes phase to `registration_prelaunch`. This
-installation is the start of the metered ceremony lifecycle and itself has no
-RNG/entropy call. The bootstrap identities and complete
+preclaim direct-exit edge. Those ordered operations through successful
+runtime-identity capture are by law the complete and exact pre-wrapper
+bootstrap prefix: construction of the pinned phase domain, installation of
+the direct no-allocation exit path, initialization of the current phase to
+`bootstrap` and the lifecycle counter to zero, completion of boundary zero,
+and capture of `runtime_process_start_identity.v1`. No operation may be added
+to or interleaved with this prefix. It is provider-call-free and consumes no
+lifecycle sequence; any failure takes the preclaim direct-exit edge.
+
+Immediately after successful completion of that prefix, with no intervening
+operation, the bootstrap executes the fixed, non-interleavable bootstrap-
+installation sequence: live provider call ledger, empty keyed-uniform
+lifecycle cache, one wrapper per `rng_access_specs.v2.providers` row in
+provider order, then the native audit hook. Ledger and cache creation are the
+sole installation-internal prerequisites that precede wrapper activation.
+These objects are exactly the §8.1 bootstrap identity rows and consume the
+exact creation sequences specified there. After the hook is active, the
+coordinator changes phase to `registration_prelaunch`; only then may any
+action outside the prefix and installation sequence begin. This installation
+is the start of the metered ceremony lifecycle and itself has no RNG/entropy
+call. The bootstrap identities and complete
 `rng_access_specs.v2` authority are pinned in the implementation tree; once
 the configuration is strictly parsed, its full registered object must
 deep-equal the already-active provider, phase, bootstrap-implementation, and
