@@ -4406,7 +4406,7 @@ canonical evidence object whose SHA-256 is recorded in the hard-gate row.
 Changing a selector, comparator, or required value is a gate-registry version
 change and requires fresh registration.
 
-For G21 comparison only, every G01–G20/G22 evidence selector uses its frozen
+For G21 comparison only, every G01–G10/G12–G20/G22 evidence selector uses its frozen
 substantive projection: complete outputs, counts, stable support keys,
 structural locators/relations, comparator inputs, and actual comparator
 outcome remain; decoded target values, diagnostic residuals, cell-token and
@@ -7329,9 +7329,11 @@ attempt history, or output path invalidates the evaluation registration. It
 cannot be “noted” after launch; it requires the §10.3
 fresh-registration/output-version disposition. However, changing only a
 held-out, zero-weight, or vintage-1-exclusive byte changes full evaluation
-provenance and registration—not `fit_selection_cell_identity.v1`,
-`substantive_model_sha256`, a uniform, gate row/evidence hash, or correction
-eligibility. G21 enforces that noninterference.
+provenance, registration, and G21's evidence SHA-256 because its evidence
+object embeds both full-provenance hashes. It does not change
+`fit_selection_cell_identity.v1`, `substantive_model_sha256`, a uniform, any
+non-G21 gate row/evidence hash, G21's status, or correction eligibility. G21
+enforces that noninterference.
 
 Until every box is ratified and the later publication sequence completes,
 the `first_estimates_report.md` §3.4 labor-income proxy label remains in
