@@ -2597,7 +2597,7 @@ fits and §7.2 selection even when the production selection result is
 `noninterference_pre_g21_bundle.v2` has exactly `schema_version`,
 `parameter_vectors`, `model_choice_predictions_and_losses`,
 `candidate_dispositions`, `selection_result`, `selection_branch`,
-`selected_model_projection`, and `hard_gate_rows_except_g21`.
+`selected_model_projection`, and `hard_gate_rows_except_g11_g21`.
 `selection_branch` is `selected_correction | no_eligible_candidate` and is
 independently derived from the complete dispositions and selection result.
 The selected projection is an exact tagged union:
@@ -2611,8 +2611,11 @@ The selected projection is an exact tagged union:
   `{"evaluation_status":"not_evaluated",
   "reason":"no_eligible_candidate"}`.
 
-The hard-gate array contains G01–G20 and G22 in that exact order with complete
-evidence hashes. A selected-model-dependent row that is unreachable on the
+The hard-gate array contains G01–G10, G12–G20, and G22 in that exact order
+with complete evidence hashes. G11 is structurally excluded because its
+outer process-lifecycle seal occurs only after G21 is fixed; the coordinator
+later attaches the same final G11 row to both substantive bundles. A
+selected-model-dependent row that is unreachable on the
 no-eligible branch retains the row with `status: not_evaluated`, null
 observed value, and the hash of the canonical
 `no_eligible_candidate` reason object. A parameter, prediction, loss,
@@ -2647,7 +2650,9 @@ It contains no eligibility or full-substantive-bundle hash.
 
 Each synthetic run then appends the identical G21 hard-gate row whose
 evidence hash covers that object and whose status equals it. Only after G21
-is fixed does each run derive
+is fixed and the outer coordinator has sealed its branch-general RNG
+lifecycle does each run receive the identical complete G11 row/seal and
+derive
 `correction_model_preconstruction_eligibility.v1`. That object has exactly
 `condition_1`, `condition_2`, `condition_3`, `condition_4`, `condition_5`,
 `condition_6`, and `eligible`. Conditions use
@@ -2657,8 +2662,10 @@ status/count/provenance predicate on both branches, never
 `noninterference_results.status`, either full evaluation-provenance hash, or
 a full-bundle equality. On `no_eligible_candidate`, condition 1 is evaluated,
 condition 4 is `pass | fail` from the complete branch-exhaustive mutation
-battery, conditions 2, 3, 5, and 6 are `not_evaluated` because they require a
-selected ledger/model, and preconstruction eligibility is false.
+battery, conditions 2, 3, 5, and 6 are `not_evaluated` because their complete
+conjunctions require a selected ledger/model, and preconstruction eligibility
+is false. This does not suppress G11: its complete no-eligible lifecycle row
+and seal remain evaluated in the hard-gate array.
 
 `noninterference_substantive_bundle.v1` has exactly `schema_version`,
 `pre_g21_bundle`, `g21_row`, `complete_hard_gate_results`, and
@@ -2681,8 +2688,10 @@ resulting full-bundle hashes are retained in the valid `gate_fail` primary;
 full-bundle equality is not a schema precondition for that branch.
 Parameters, model-choice predictions/losses, dispositions, the exact
 selection branch, the branch-tagged selected-model projection, every
-non-G21 gate row/evidence hash, G21, and preconstruction eligibility are all
-inside the comparison. A whole-document digest in the substantive/RNG path,
+non-G21 gate row/evidence hash (including the identically attached outer G11
+seal), G21, and preconstruction eligibility are all inside the post-G21
+comparison. The outer seal itself is absent from G21's comparator preimage.
+A whole-document digest in the substantive/RNG path,
 or held-out coupling that changes a disposition into a false no-eligible
 result, therefore produces a validly serialized G21 failure rather than
 escaping the battery or invalidating the report schema.
@@ -2697,8 +2706,10 @@ finalizer ignores those two asserted fields while it independently validates
 every other primary/sidecar key, branch, canonical byte, sidecar binding,
 result hash, and recomputed invariant; it then requires the asserted
 condition-7 value and final eligible boolean to equal the independently
-derived values and performs a final strict whole-object validation. Failure
-is an `invariant` incident and no primary is renamed. Condition 7, final
+derived values, performs a final strict whole-object validation, and
+immediately before rename rechecks the live RNG ledger/cache/wrapper seal
+against the serialized comparand. Failure is an `invariant` incident and no
+primary is renamed. Condition 7, final
 eligibility, and either complete output byte hash never enter G21, either
 pre-G21 bundle, or either substantive-bundle hash.
 
@@ -3779,7 +3790,12 @@ is conjunctive. One violating record is failure:
     key registry, the one coordinator-only retry-nonce entropy call
     exact-matches its 32-byte pre-production callsite/flow law, and every
     projection, mortality, claiming, marriage, Python, NumPy, other
-    OS-entropy, or forbidden provider has zero calls.
+    OS-entropy, or forbidden provider has zero calls. On both
+    `selected_correction` and `no_eligible_candidate`, the complete
+    process-lifecycle ledger/cache is sealed only after provider-capable work
+    ends, the unchanged wrappers enter irreversible deny-all state, and the
+    seal plus zero sticky/post-seal requests exact-rechecks immediately before
+    the first rename.
 12. No post-boundary questionnaire fact enters production; every gap right
     neighbor is no later than the operative claim year; opening-backfill
     adjudication precedes gap derivation; and no universal 2013 row is reused
@@ -3850,6 +3866,25 @@ Every ordered provider row has exactly `provider_id`, `authority_class`,
 `argument_law`, and `flow_law`. The correction class contains only §5.4's
 SHA-256 midpoint function and exact expanded key-call law.
 
+The live `trusted_rng_provider_call_ledger.v1` has exactly
+`schema_version`, `provider_order`, `events`, `terminal_branch`,
+`seal_sequence`, and `canonical_order`. Provider order exact-matches
+`rng_access_specs.v2`; schema version is the object literal and canonical
+order is `event-sequence`. Each event has exactly `event_sequence`,
+`provider_id`, `authority_class`, `callsite_identity`,
+`argument_schema_id`, `argument_sha256`, `phase`, `flow_destination`, and
+`disposition`. Event sequence is contiguous positive JSON integers; provider
+and authority class foreign-key the frozen row; phase is the exact §10.2
+phase literal; and disposition is
+`authorized_provider_return | denied_forbidden_request`. The nonce event
+hashes only its integer-32 argument object and commitment-only flow metadata,
+never the private bytes. A midpoint event binds its complete namespace
+argument and cache-miss flow. A forbidden request is recorded with its actual
+callsite/argument and denial before the provider is reached. Events retain
+execution order; at seal, terminal branch and seal sequence become nonnull
+and immutable. There is no summarized, worker-written, or selected subset of
+this ledger.
+
 Its `flow_law` also freezes
 `keyed_uniform_lifecycle_cache.v1`, a coordinator-owned in-memory map keyed
 by the complete canonical §5.4 namespace. It is created empty at process
@@ -3899,6 +3934,68 @@ bypasses are forbidden by the implementation/source closure. Candidate code
 cannot write the ledger. This detects a request for a fresh generator even
 though `rng.py` returns a new object per call; before/after generator-state
 hashes are not evidence.
+
+The wrappers have exactly two irreversible states:
+`active_metering | sealed_deny_all`. After all work permitted to request a
+provider is complete on the selected or no-eligible branch, the coordinator
+destroys every provider-capable worker and delegate, atomically seals the
+same provider ledger and keyed-uniform cache created at process entry, and
+transitions the same wrapper objects to `sealed_deny_all`. They are never
+uninstalled, reset, recreated, or replaced. In deny-all state every entropy,
+RNG, midpoint, cached-alias, native, FFI, or subprocess request is rejected
+before the underlying provider or cache can be reached. The wrapper
+atomically increments both post-seal request and denied counts and sets a
+sticky violation flag. Any such request prevents a final-path rename even
+though it obtained no random bit. Deny-all remains active through primary
+construction, sidecar construction, staging, both renames, incident handling,
+and process exit.
+
+The coordinator serializes the branch-general
+`rng_provider_lifecycle_seal.v1` object with exactly `schema_version`,
+`terminal_branch`, `evaluation_completion`,
+`provider_ledger_identity_sha256`,
+`keyed_uniform_cache_identity_sha256`, `wrapper_registry_sha256`,
+`wrapper_object_identities_sha256`,
+`audit_hook_identity_sha256`,
+`provider_capable_workers_destroyed_sequence`, `seal_sequence`,
+`provider_ledger_sha256`, `keyed_uniform_cache_sha256`, `wrapper_state`,
+`post_seal_request_count`, `post_seal_denied_count`,
+`post_seal_denial_trace_sha256`, `sticky_violation_count`,
+`pre_rename_recheck_sha256`, and `status`.
+Schema version is the object literal and status is `pass | fail`.
+For a correction run, `terminal_branch` is exactly
+`selected_correction | no_eligible_candidate` and `evaluation_completion`
+is the exact §10.2 branch literal. Each identity hash covers the
+coordinator-owned bootstrap identity record containing the pinned
+implementation blob, runtime process-start identity, literal object kind,
+and creation sequence; the ledger/cache identities must be unchanged from
+process entry through any authorized retry. `wrapper_registry_sha256`
+exact-matches the complete frozen provider/wrapper registry.
+`wrapper_object_identities_sha256` hashes, in provider order, the live
+wrapper identity rows having exactly `provider_id`, `implementation_blob`,
+`runtime_process_start_identity`, and `creation_sequence`; it must be
+unchanged from bootstrap through pre-rename recheck.
+`audit_hook_identity_sha256` exact-matches the pinned bootstrap hook.
+Destruction sequence is a
+positive JSON integer, seal sequence is the immediately following lifecycle
+event, and the two state hashes cover the complete corresponding objects at that
+point. Wrapper state is `sealed_deny_all`. The two post-seal counts are actual
+nonnegative JSON integers, denied count must equal request count, and sticky
+violation count is the JSON integer 0 or 1.
+`post_seal_denial_trace_sha256` hashes the complete ordered array of denied
+request rows, each having exactly `request_sequence`, `provider_id`,
+`callsite_identity`, `argument_sha256`, `phase`, and literal
+`disposition: denied_sealed`; it is the canonical empty-array hash when both
+counts are zero.
+
+`pre_rename_recheck_sha256` hashes the canonical object containing all seal
+fields except `schema_version`, itself, and `status`. The coordinator
+constructs that comparand at seal and reconstructs it from the still-live
+objects immediately before the first rename, after both staged files exist.
+Seal status passes only when identities and hashes are unchanged, ordering is
+exact, all three post-seal values are zero, the reconstructed comparand hash
+matches, and no callback can run between the recheck and rename. A mismatch
+is an invariant incident and permits neither rename.
 
 `keyed_uniform_registry.v1` is independently expanded from the complete
 derived ledger support, every registered `coverage_state_group_id`, the sole
@@ -4066,7 +4163,7 @@ The executable selector/comparator map is:
 | G08 | `benefit_revenue_component_hash_pairs` | `all_hash_pairs_equal / true` |
 | G09 | `recoverable_provenance_scan` | `all_records_true / true` |
 | G10 | `replay_registry_results` | `exact_six_rows_all_hashes_equal / true` |
-| G11 | `trusted_rng_provider_call_ledger` | `exact_keyed_calls_nonce_exception_and_forbidden_zero / true` |
+| G11 | `trusted_rng_provider_call_ledger_and_lifecycle_seal` | `exact_keyed_calls_nonce_exception_forbidden_zero_sealed_deny_and_prerename_recheck / true` |
 | G12 | `information_cutoff_and_claim_context_gap_evidence` | `all_records_true / true` |
 | G13 | `semantic_field_registry_scan` | `all_records_true / true` |
 | G14 | `trusted_survey_weight_rescale_reexecution_results` | `exact_four_survey_weight_rows_all_bundles_equal / true` |
@@ -4281,15 +4378,19 @@ first derives preconstruction conditions 1–6:
    reasons, claim-context gap neighbors, and component outputs are recoverable
    and reconcile;
 6. the exact six-row replay registry, row-order invariance, provider-call RNG
-   isolation, cutoff-before-imputation, sandbox access, analytic-denominator,
-   and nonlinear-draw laws pass.
+   isolation and branch-general lifecycle seal/deny evidence,
+   cutoff-before-imputation, sandbox access, analytic-denominator, and
+   nonlinear-draw laws pass.
 
 Only after those six conditions and all noninterference bundle hashes are
 frozen does the trusted finalizer prove postconstruction condition 7:
 
 7. the sealed §10 coordinator has constructed and validator-accepted complete
    primary and sidecar bytes, with the primary binding the exact sidecar hash,
-   before either final-path rename.
+   before either final-path rename; both files bind the complete
+   selected-or-no-eligible G11 seal and pre-rename recheck comparand, and the
+   live wrappers/ledger/cache exact-match that comparand with zero sticky
+   violation immediately before the first rename.
 
 The preconstruction object and the final
 `correction_model_eligibility.v2` wrapper are exactly those in §§6.2 and
@@ -4319,7 +4420,10 @@ The separately registered context report then proves condition 8:
    registry-row cardinality/order and every unaffected field; mismatch-array
    contents and cardinality obey only §9.2's suppression law; uses analytic modeled-worker
    probabilities for every certified denominator; meters the complete
-   context RNG/provider lifecycle under the pinned nonce/keyed/forbidden law;
+   context RNG/provider lifecycle under the pinned nonce/keyed/forbidden law,
+   destroys provider-capable workers, seals the same ledger/cache, enters
+   irreversible deny-all mode, and exact-rechecks it immediately before
+   rename;
    only then opens all 15 vintage-1 series as context; publishes every
    required row regardless; and validates.
 
@@ -4475,8 +4579,12 @@ laws. A call before that comparison is still metered, and an install,
 identity, or comparison failure aborts before production access. The wrappers
 and call ledger remain alive across the initial attempt, incident
 publication, private receipt mint/consumption, authorized retry, and final
-publication; a new process cannot inherit the receipt or claim a continuation
-of that ledger.
+publication; they have exactly one permitted `active_metering` →
+`sealed_deny_all` transition under §8.1 and can never be uninstalled, reset,
+or recreated. After that transition they reject and sticky-record every
+request before provider dispatch while preserving the sealed ledger/cache
+bytes. A new process cannot inherit the receipt or claim a continuation of
+that ledger.
 
 Every registration, input JSON, claim, retry-authority record, retry claim,
 incident, primary, and sidecar is parsed directly from bounded bytes under the
@@ -4550,6 +4658,7 @@ The sidecar schema is
 `substantive_model_sha256`, `evaluation_provenance_sha256`,
 `selected_ledger_identity_sha256`,
 `trusted_consumer_semantic_authority_sha256`,
+`rng_access_results_sha256`,
 and `trusted_consumer_evaluation_sha256`.
 `artifact_path` is the exact primary path; registration, commit, invocation,
 and configuration hash equal the primary/configuration. `runtime` and
@@ -4567,8 +4676,9 @@ provenance and do not enter the substantive model identity.
 the registered environment lock. `substantive_model_sha256` and the selected
 ledger and trusted-evaluation hashes are null exactly for the no-eligible
 branch and otherwise equal the primary; `evaluation_provenance_sha256` and
-`trusted_consumer_semantic_authority_sha256` are always nonnull and equal
-their primary integrity namesakes.
+`trusted_consumer_semantic_authority_sha256` and
+`rng_access_results_sha256` are always nonnull and equal their primary
+integrity namesakes.
 
 The sidecar is canonical JSON under the function below and contains no
 primary-file digest. It is constructed first in memory; the primary then
@@ -4935,17 +5045,19 @@ The isolated runner performs, in order:
    mirrored evaluation-only value and exclusive source-byte range required by
    §6.2 while preserving the model-choice closure.
    Each synthetic baseline and mutant independently constructs every
-   reachable G01–G20/G22 row and exact not-evaluated rows for unreachable
+   reachable G01–G10/G12–G20/G22 row and exact not-evaluated rows for unreachable
    selected-model evidence, then serializes its branch-tagged canonical
    pre-G21 bundle. The coordinator compares those hashes, proves
    all three mutation-class counts/key ledgers and the required evaluation-
    provenance difference, freezes the shared acyclic G21 evidence/row, and
-   only then derives each conditions-1–6 preconstruction object. It finally
-   compares the two full substantive bundles as a
-   post-preconstruction assertion; neither preconstruction eligibility nor a
-   full-bundle hash feeds G21. Freeze every reachable G10/G14 row,
+   only then freezes every conditions-1–6 input reachable before the
+   lifecycle seal; the selected branch's condition-6 G11 component remains
+   pending, while no-eligible condition 6 remains not evaluated for its other
+   selected-model conjuncts. Neither
+   final preconstruction eligibility nor a full-bundle hash feeds G21.
+   Freeze every reachable G10/G14 row,
    G21's acyclic pre-G21/count/provenance evidence, and the
-   pre-held-out portions of G11/G15; then destroy every optimizer, selector,
+   pre-held-out prefix evidence for G11/G15; then destroy every optimizer, selector,
    replay, rescale, and diagnostic worker and every associated mount.
    Provider wrappers and the coordinator audit hook remain active.
    Independently evaluate every hard gate whose complete evidence is
@@ -4953,13 +5065,15 @@ The isolated runner performs, in order:
    the remaining gates tagged not evaluated. G21 is always evaluated,
    including on `no_eligible_candidate`. If a selected branch has any
    reachable failed gate,
-   seal held-out access permanently and publish the exact pre-held-out
-   `gate_fail` branch below; no failure can be “completed” by opening
-   held-out values.
-8. **Conditional held-out evaluation.** On `no_eligible_candidate`, do not
-   create a held-out or selected-consumer capability; retain the evaluated
-   G21/noninterference evidence and proceed directly to publication. On a
-   selected branch, only after those workers are destroyed, create
+   seal held-out access permanently, mark the exact pre-held-out `gate_fail`
+   branch, and continue to phase 8's common lifecycle closure; no failure can
+   be “completed” by opening held-out values or skip G11 sealing.
+8. **Conditional held-out evaluation and branch-general lifecycle
+   closure.** On `no_eligible_candidate`, do not create a held-out or
+   selected-consumer capability; retain the evaluated G21/noninterference
+   evidence and enter the common tail below. A selected pre-held-out
+   structural-failure branch likewise creates neither capability. On a
+   selected branch without such a failure, only after those workers are destroyed, create
    the held-out evaluator and record first-exposure sequences. The trusted
    provenance validator may hash registered vintage-1 source bytes needed for
    physical-alias closure, but it never decodes or releases a 15-series value
@@ -4969,22 +5083,47 @@ The isolated runner performs, in order:
    instantiate and execute the reconstructed §8.1 opcode chains, exact-compare
    the configured DAG closure, lock every authoritative root, normalize and
    compare the exact-schema complete runner proposal, and construct corrected
-   result numbers only from those roots;
-   finalize G11 from the whole-run provider ledger and G15 from the complete
-   lifecycle audit; then run all 22 gates using locked G10/G14 and G21
-   preimage evidence and construct the complete noninterference bundle.
-   No fitting/selection-capable process or filesystem view exists.
+   result numbers only from those roots.
+
+   In the common tail on every terminal branch, complete only that branch's
+   already-authorized provider work, destroy every remaining provider-capable
+   evaluator, coordinator delegate, proposal process, mount, descriptor, and
+   callback, and prove the destruction ledger complete. Then atomically seal
+   the original provider ledger and keyed-uniform cache and transition the
+   original wrappers to `sealed_deny_all` under §8.1. Construct the complete
+   evaluated `rng_access_results`, including every nonce and forbidden row
+   and `rng_provider_lifecycle_seal.v1`; finalize G11 from that sealed
+   whole-process evidence and G15 from the complete lifecycle audit. Run or
+   update all 22 gate rows using locked G10/G14 and G21 preimage evidence,
+   with selected-model-dependent rows not evaluated only where the branch
+   makes them unreachable, and construct the complete noninterference bundle.
+   The coordinator then derives the final conditions-1–6 objects and compares
+   the two full substantive bundles as the post-G21 assertion. The common
+   outer-lifecycle seal is coordinator-supplied identically to the baseline
+   and mutant G11/hard-gate projections and, where condition 6 is evaluated,
+   its condition-6 projections; it remains structurally excluded from G21's
+   acyclic preimage.
+   No fitting/selection/provider-capable process or filesystem view exists.
 9. **Publication.** Freeze the full substantive-bundle hashes and the
-   conditions-1–6 object; construct the sidecar bytes and a complete primary
-   candidate containing the derived final eligibility wrapper; then perform
+   conditions-1–6 object; while wrappers remain in deny-all state, construct
+   the sidecar bytes and a complete primary candidate containing the derived
+   final eligibility wrapper and full G11 lifecycle evidence; then perform
    §6.2's condition-7 validation with condition 7 excluded from every earlier
    comparison preimage. Stage both without occupying final paths. Immediately
    before the first rename, reconstruct semantic authority again from the
    frozen registries, exact-compare every source/domain/rule/unit/root closure,
    and reevaluate/bit-compare every branch-reachable authoritative root and
-   corresponding primary field.
-   With no intervening callback, rename the primary atomically, then rename
-   the sidecar atomically. The pair is not falsely
+   corresponding primary field. In the same no-callback check, reconstruct
+   the complete provider ledger/cache hashes and lifecycle-seal comparand from
+   the live original objects; require the same wrapper registry, live
+   wrapper-object identities, and audit-hook identity, `sealed_deny_all`,
+   exact equality with serialized
+   `rng_access_results` and its integrity/sidecar hashes, and zero post-seal,
+   denied, and sticky counts. This check is mandatory on both selected and
+   no-eligible branches.
+   With no intervening callback, and with deny-all still active, rename the
+   primary atomically, then rename the sidecar atomically. Deny-all remains
+   active through process exit. The pair is not falsely
    described as one filesystem-atomic operation. A failure after the primary
    rename is the permitted partial state in §10.3.
 
@@ -5291,12 +5430,15 @@ Their schemas and completeness laws are:
   event type `selected_model_lock`, positive JSON-integer sequence, and hash
   equal to `selected_correction.substantive_model_sha256`. Every held-out
   exposure follows it.
-- `hard_gate_results` and `noninterference_results` are branch-general tagged
-  objects and always have exactly
+- `hard_gate_results`, `noninterference_results`, and `rng_access_results`
+  are branch-general tagged objects. The first two always have exactly
   `{"evaluation_status":"evaluated","rows":[...]}`, including on
   `no_eligible_candidate`. They can never use a block-level not-evaluated
-  branch. The genuinely selected-only blocks are `replay_results`,
-  `rng_access_results`, `weight_rescale_results`, `isolation_results`,
+  branch. `rng_access_results` always has exactly
+  `{"evaluation_status":"evaluated","lifecycle_seal":{...},"rows":[...]}`;
+  its lifecycle seal is the complete §8.1 object and cannot be omitted on
+  either terminal branch. The genuinely selected-only blocks are
+  `replay_results`, `weight_rescale_results`, `isolation_results`,
   `trusted_consumer_evaluation`, `support_results`, `distribution_results`,
   `downstream_results`, and `before_context_results`. Their evaluated array
   branch has exactly
@@ -5319,7 +5461,9 @@ Their schemas and completeness laws are:
     `preheldout_structural_gate_fail` reason object. No row is omitted.
     On `no_eligible_candidate`, every gate reachable through fitting,
     selection, sandbox, and the synthetic mutation ceremony retains its
-    actual pass/fail result; G21 is always `pass | fail`. A
+    actual pass/fail result; G11 and G21 are always `pass | fail`. On a
+    selected pre-held-out structural-failure branch, G11 is likewise updated
+    after the branch-general lifecycle seal rather than left not evaluated. A
     selected-model-dependent gate is `not_evaluated`, with
     `observed: null` and the hash of the canonical `no_eligible_candidate`
     reason object. Thus the branch has 22 rows rather than an omitted gate
@@ -5340,12 +5484,19 @@ Their schemas and completeness laws are:
     equal their P/R/H expectations and all three output left/right hash pairs
     are equal; it is `fail` otherwise. A fail row retains every mismatching
     order or output hash and is not schema-invalid.
-  - `rng_access_results` has one row per `rng_access_specs.v2` provider in
+  - `rng_access_results.rows` has one row per `rng_access_specs.v2` provider in
     exact order, each with exactly `provider_id`, `authority_class`,
     `call_count`, `argument_trace_sha256`,
     `keyed_uniform_registry_sha256`, and `status`.
-    `call_count` is the actual nonnegative JSON-integer count and the trace
-    hash binds actual complete callsite/argument/phase/flow evidence. A
+    `call_count` is the actual nonnegative JSON-integer count of that
+    provider's pre-seal ledger events, including an intercepted forbidden
+    request even though its underlying provider was not reached, and the trace
+    hash binds actual complete terminal-branch/callsite/argument/phase/flow
+    evidence from process entry through the atomic lifecycle seal. `lifecycle_seal`
+    deep-equals the exact `rng_provider_lifecycle_seal.v1` object for the
+    actual selected or no-eligible branch. Its status must pass in every
+    valid primary, and its `pre_rename_recheck_sha256` is reconstructed from
+    the same live objects immediately before the first rename. A
     forbidden-provider row passes iff its count is zero and its trace is the
     canonical empty ledger; its keyed-registry hash is null. The correction
     midpoint row passes iff its count and trace exact-match the independently
@@ -5359,7 +5510,11 @@ Their schemas and completeness laws are:
     private commitment-only flow; its keyed-registry hash is null. A row
     otherwise fails and retains the
     nonzero count or mismatching hashes. Fresh-generator state snapshots are
-    not evidence.
+    not evidence. G11 passes iff every provider row and the lifecycle seal
+    pass; `rng_access_results` remains fully evaluated and serialized when
+    G11 itself fails. The G11 hard-gate row's `evidence_sha256` hashes this
+    complete tagged object, never only the provider rows or a pre-held-out
+    prefix.
   - `weight_rescale_results` has exactly four
     `weight_rescale_specs.v1` rows, each with exactly `comparison_id`,
     `expected_base_survey_weight_packet_sha256`,
@@ -5565,7 +5720,9 @@ Their schemas and completeness laws are:
   selected-model condition unreachable.
   `no_eligible_candidate` has preconstruction condition 1 `pass`, condition 4
   `pass | fail` from the evaluated G21 battery, conditions 2, 3, 5, and 6
-  `not_evaluated`, and preconstruction eligibility false. Every valid primary
+  `not_evaluated`, and preconstruction eligibility false; G11 nevertheless
+  remains fully evaluated in `hard_gate_results` and `rng_access_results`.
+  Every valid primary
   has final condition 7 `pass`; failure to establish it is an invariant
   incident, not a primary with condition 7 fail. These are recomputed and are
   not the §9 label certificate. Condition inputs exclude either run's
@@ -5579,34 +5736,42 @@ Their schemas and completeness laws are:
 `status` is an exact tagged-union discriminator:
 
 - `pass` requires a nonnull selected correction, every selected-only block
-  evaluated, all correctness and registered validation conditions passing,
-  `evaluation_completion: complete`, and
+  evaluated, branch-general `rng_access_results` evaluated with a passing
+  lifecycle seal and G11, all correctness and registered validation
+  conditions passing, `evaluation_completion: complete`, and
   `correction_model_eligibility.eligible: true`;
 - `gate_fail` requires a nonnull selected correction, at least one declared
   failed condition, and eligibility false. With
   `evaluation_completion: complete`, selected-only evaluation is complete.
   With `preheldout_structural_gate_fail`, held-out slots are absent, every
   unreachable selected-only block has the exact not-evaluated reason, and no
-  held-out/vintage exposure exists. Both are normal publishes-regardless
+  held-out/vintage exposure exists. In both cases `rng_access_results` is
+  evaluated, its lifecycle seal passes, and G11 retains its actual pass/fail
+  result. Both are normal publishes-regardless
   results, not incidents; and
 - `no_eligible_candidate` requires selected correction null, all three
   candidate dispositions and all phase-reachable train/validation rows,
   null `lock_event`, `evaluation_completion: no_eligible_candidate`, no
   held-out exposure, evaluated 22-row hard-gate and complete noninterference
-  blocks with G21 `pass | fail`, every genuinely selected-only block in the
-  exact `not_evaluated` branch, preconstruction condition 4 evaluated, final
+  blocks with G11 and G21 each `pass | fail`, complete evaluated
+  `rng_access_results` with
+  `lifecycle_seal.terminal_branch: no_eligible_candidate` and a passing
+  lifecycle seal, every genuinely selected-only block in the exact
+  `not_evaluated` branch, preconstruction condition 4 evaluated, final
   condition 7 pass, and both eligibility booleans false.
 
 `integrity` has exactly `configuration_sha256`, `sidecar_sha256`,
 `substantive_model_sha256`, `evaluation_provenance_sha256`,
 `direct_law_fact_closure_sha256`,
 `trusted_consumer_semantic_authority_sha256`,
+`rng_access_results_sha256`,
 `ledger_identity_sha256`, `expected_ledger_streams_sha256`,
 `realized_ledger_streams_sha256`, `physical_alias_closure_sha256`,
 `claim_context_gap_streams_sha256`, and
 `trusted_consumer_evaluation_sha256`. Configuration, sidecar,
 evaluation-provenance, direct-law-fact-closure, and physical-alias hashes are
-always 64 lowercase hex, as is the trusted semantic-authority hash;
+always 64 lowercase hex, as are the trusted semantic-authority and
+RNG-access hashes;
 substantive-model, ledger, expected/realized-stream, and claim-gap hashes are
 null exactly in the no-eligible branch, as is the trusted-evaluation hash.
 `substantive_model_sha256` otherwise equals the selected correction;
@@ -5624,6 +5789,10 @@ result objects. It is nonnull on every branch.
 reconstructed §8.1 authority digest and exact-matches both registration-time
 and immediate-pre-rename reconstructions on every branch. It never hashes or
 derives from the configured graph.
+`rng_access_results_sha256` hashes the complete branch-general
+`results.rng_access_results` tagged object, including all provider rows and
+the lifecycle seal; it exact-matches the immediate-pre-rename reconstruction
+on every branch.
 `ledger_identity_sha256` otherwise hashes canonical
 `selected_correction.ledger_identity`.
 `expected_ledger_streams_sha256` and `realized_ledger_streams_sha256` hash
@@ -6115,7 +6284,8 @@ imports §10.3–§10.5 unchanged, including
    `physical_alias_closure_sha256`, `keyed_uniform_registry_sha256`,
    `claim_context_gap_streams_sha256`,
    `trusted_consumer_semantic_authority_sha256`,
-   and `trusted_consumer_evaluation_sha256`. `correction_status` is literal
+   `rng_access_results_sha256`, and
+   `trusted_consumer_evaluation_sha256`. `correction_status` is literal
    `pass`.
    `publication_commit` is the merged publication commit, exists, and is an
    ancestor of context `HEAD`; both paths are tracked at that commit and
@@ -6142,9 +6312,13 @@ imports §10.3–§10.5 unchanged, including
    `before_context` grant. An unequal stored hash or constituent fails
    context registration.
    `keyed_uniform_registry_sha256` is extracted from the unique passing
-   correction-midpoint `results.rng_access_results` row and independently
+   correction-midpoint `results.rng_access_results.rows` member and independently
    recomputed from the correction support/draw law; a null or unequal value
    rejects context registration.
+   `rng_access_results_sha256` exact-matches the correction's always-nonnull
+   integrity and sidecar fields and hashes its complete provider rows plus
+   selected-branch lifecycle seal; the context rejects an absent,
+   no-eligible-tagged, nonpassing, or pre-rename-mismatched seal.
 
    `predecessor_context_input` has exactly `publication_commit`,
    `registration_path`, `registration_blob_oid`, `registration_sha256`,
@@ -6334,8 +6508,10 @@ imports §10.3–§10.5 unchanged, including
    execute the authoritative chains, compare the exact-schema runner
    proposal, and lock every corrected root and dependency proof → destroy every runner proposal
    capability → only then grant a separate context decoder access to the 15
-   vintage-1 series → compute every registered context row → freeze and
-   validate the whole-lifecycle `rng_access_results` → publish. The trusted
+   vintage-1 series → compute every registered context row → destroy every
+   provider-capable context worker, seal the original ledger/cache, enter
+   irreversible deny-all state, and freeze and validate the whole-lifecycle
+   `rng_access_results` → publish. The trusted
    evaluator has no first-estimates, predecessor, vintage-1,
    `before_context`, fitting, selection, model
    mutation, threshold, seed, direction-based rejection, or alternate-ledger
@@ -6343,7 +6519,11 @@ imports §10.3–§10.5 unchanged, including
    Immediately before the context primary rename, the coordinator again
    reconstructs semantic authority without the configured graph/hash,
    exact-compares every constituent and branch-reachable root byte, and
-   permits no intervening callback.
+   reconstructs the provider ledger/cache and lifecycle-seal comparand from
+   the same live bootstrap objects. It requires unchanged wrapper-registry,
+   live wrapper-object, and audit-hook identities, deny-all state, exact
+   serialized RNG evidence and hashes, and zero post-seal/sticky counts, with
+   no intervening callback.
    The coordinator publishes every before/after diagnostic with no required
    direction and calls the event `structurally-out-of-fitting-sample`, never
    unseen: those 2015–2022 values have already been viewed.
@@ -6439,7 +6619,12 @@ imports §10.3–§10.5 unchanged, including
    missing, extra, value-mismatched, and packet-schema-mismatched rows on a
    pass. Its own integrity hash is separate from the correction report's
    namesake input hash; both remain bound.
-   `rng_access_results` has exactly one row per context
+   `rng_access_results` has exactly `evaluation_status: evaluated`,
+   `lifecycle_seal`, and `rows`; it has no not-evaluated branch.
+   `lifecycle_seal` is the context variant of the exact §8.1 object with
+   `terminal_branch: context_evaluated` and
+   `evaluation_completion: context_complete`; every other field and
+   pass/recheck law is unchanged. `rows` has exactly one row per context
    `rng_access_specs` provider in registered order and the exact §10.2 row
    schema: `provider_id`, `authority_class`, `call_count`,
    `argument_trace_sha256`, `keyed_uniform_registry_sha256`, and `status`.
@@ -6455,7 +6640,7 @@ imports §10.3–§10.5 unchanged, including
    authorized retry; its registry hash is null. Every forbidden row passes
    only with zero calls, canonical empty trace, and null registry hash.
    Unequal counts/hashes and forbidden calls remain serialized as failures;
-   every row must pass for primary `status: pass`.
+   every row and the lifecycle seal must pass for primary `status: pass`.
    Separately, a passing corrected metric row has finite output numbers,
    nonnegative SD, and null reason; an unevaluable failing metric has both
    numbers null and the exact structural reason; and an empirical failing
@@ -6497,7 +6682,10 @@ imports §10.3–§10.5 unchanged, including
    row fails, all reachable evidence is nevertheless serialized, and the
    certificate is null. Empirical, completeness, dependency, or
    transformation failure is therefore a complete publishable result, not
-   an incident or retry.
+   an incident or retry. A pre-seal provider-row failure likewise may publish
+   as `gate_fail`, but a lifecycle-seal failure, nonzero post-seal/sticky
+   value, or immediate pre-rename recheck mismatch is an invariant incident
+   and permits no context rename.
 
    `integrity` has exactly `configuration_sha256`, `sidecar_sha256`,
    `correction_input_sha256`, `domain_results_sha256`,
@@ -6521,7 +6709,8 @@ imports §10.3–§10.5 unchanged, including
    namesake object, including actual runner mismatch evidence. It binds the
    exact context sidecar and all actual result streams through §10's acyclic
    sidecar-first law. `rng_access_results_sha256` likewise hashes the complete
-   ordered provider rows, including unfavorable counts/traces.
+   tagged object, including its lifecycle seal and every ordered provider row
+   with unfavorable counts/traces.
 
    The context sidecar has exactly `schema_version`, `artifact_path`,
    `registration_reference`, `configuration_sha256`,
@@ -6590,8 +6779,8 @@ imports §10.3–§10.5 unchanged, including
    `trusted_consumer_evaluation_sha256` equals
    `integrity.trusted_consumer_evaluation_sha256`; the trusted root-stream
    hash inside that object supplies every corrected result byte.
-   `rng_access_results_sha256` equals its integrity namesake and binds all
-   context provider rows.
+   `rng_access_results_sha256` equals its integrity namesake and binds the
+   context lifecycle seal plus all provider rows.
    `analytic_denominator_trace_sha256` hashes the canonical ordered array of
    every `dependency_results[*].analytic_denominator_trace_sha256` in metric
    order. `mismatch_transformation_sha256` hashes a canonical object with
@@ -6616,11 +6805,13 @@ imports §10.3–§10.5 unchanged, including
    W1's authority, not this correction's. W1 must pin
    `substantive_model_sha256`, `fit_selection_cell_identity_sha256`,
    `evaluation_provenance_sha256`, `direct_law_fact_closure_sha256`,
-   `trusted_consumer_semantic_authority_sha256`, the physical alias closure,
+   `trusted_consumer_semantic_authority_sha256`,
+   `rng_access_results_sha256`, the physical alias closure,
    consumer-domain/gap/dependency registries, row schema, ledger identity,
    support key set, and applicable expected/realized stream hashes. It must
    independently reconstruct the applicable domain, rematerialize and verify
-   every hash before bridging, and may not rewrite components.
+   every hash and the selected-branch lifecycle-seal status before bridging,
+   and may not rewrite components.
 
 3. **Orthogonal first-estimates successors.** Spouse/survivor entitlement
    adaptation, behavioral claiming, and the `FORWARD` production object
@@ -6705,7 +6896,7 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 | Post-calibration label vocabulary | §1 freezes exactly `frame-relative`, `modeled-covered-earnings`, `aggregate-concept-calibrated-not-population-aligned`. |
 | Cap, SE threshold/loss, incorporated owners, historical SECA | §§3.2 and 4.1 freeze component floors, within-SE-only loss netting, effective-year law, wage-first residual cap, incorporated salary, and excluded distributions. |
 | Candidate set, thresholds, namespace, replay, certificate | §§5.3–5.4, 6.2, 7, 8, and 9 freeze candidates, cell-scoped namespace, exact six replays, all 22 gates, independent consumer/metric domains, corrected-only dependency domination, coordinator-reconstructed source identity/type/unit, domain, legal/operation-rule, exact unit-algebra, and root-opcode authority for the 17-op evaluator, an exact proposal schema, analytic certified denominators, and no post-hoc rescue. |
-| Versioning, ceremony, and mismatch disposition | §§6, 9, 10, and 12 freeze separate substantive/evaluation identities, strict committed registration, durable claims, opaque one-shot retry authority, process-lifecycle nonce metering and exact-once keyed-uniform retry caching, fresh-registration adjudication, no post-exposure same-output exception, and positional transformations of all 14 pairing plus nine comparison mismatch arrays. |
+| Versioning, ceremony, and mismatch disposition | §§6, 9, 10, and 12 freeze separate substantive/evaluation identities, strict committed registration, durable claims, opaque one-shot retry authority, process-lifecycle nonce metering and exact-once keyed-uniform retry caching, branch-general provider-ledger/cache sealing, irreversible post-seal deny wrappers, immediate pre-rename rechecks, fresh-registration adjudication, no post-exposure same-output exception, and positional transformations of all 14 pairing plus nine comparison mismatch arrays. |
 
 ### 14.2 Ratification checklist
 
@@ -6786,7 +6977,8 @@ Ratification requires affirmative evidence for every item:
   unequal runner rows; every certified worker denominator uses analytic
   probabilities.
 - [ ] `gate_specs.v3` contains exactly conjunctive G01–G22, including G10's
-  six exact replay rows, G11's one row per frozen provider, G14's exact four
+  six exact replay rows, G11's one row per frozen provider plus the complete
+  lifecycle seal on selected and no-eligible branches, G14's exact four
   trusted survey-weight rescale rows, G15's exact nonempty broker/sandbox
   assertions, and G17's exact 15-domain inventory/fact-binding/microfact
   closure; G22 additionally requires zero source/domain/rule/unit/root
@@ -6794,7 +6986,9 @@ Ratification requires affirmative evidence for every item:
 - [ ] Expected mappings, 20-draw namespace, nonlinear benefit propagation,
   frozen ledger-row schema, within-year dependence groups, byte replay,
   row-order invariance, exact-once process-lifecycle keyed-uniform caching,
-  and RNG isolation are executable.
+  complete nonce/forbidden-provider traces, post-seal deny-all enforcement,
+  and immediate pre-rename RNG rechecks are executable on both terminal
+  branches.
 - [ ] Aggregate motivation states both high per-worker ratios and
   approximately 1.01→0.80 aggregate payroll, with no unconditional sign.
 - [ ] Scope exclusions and the revenue-only degradation are exact and cannot
@@ -6813,8 +7007,10 @@ Ratification requires affirmative evidence for every item:
 - [ ] The only retry authority is the same-process opaque one-shot receipt;
   the sole coordinator nonce call is metered, a retry publishes its durable
   claim first and reuses cached midpoint values without duplicate provider
-  calls; killed/lost/failed attempts use append-only fresh-registration
-  adjudication and fresh claim namespaces.
+  calls; the original wrappers/ledger/cache persist until their single
+  irreversible seal/deny transition and cannot be reset; killed/lost/failed
+  attempts use append-only fresh-registration adjudication and fresh claim
+  namespaces.
 - [ ] Consumer/gap domains, projection/correction reductions, corrected-only
   dependency proofs, and deterministic ledger-rematerialization hashes are
   complete and independently recomputed.
@@ -6860,7 +7056,11 @@ The authorized order is:
    premise/slot mismatches; nonempty-fact constant-enum transforms; p25→p10
    and wage↔SE root poisoning; changed source field/type/unit, domain, rule,
    or unit-algebra rows; and malformed, missing, extra, or reordered
-   `consumer_result_proposal.v1` rows;
+   `consumer_result_proposal.v1` rows; omitted or selected-only
+   `rng_access_results`; truncated no-eligible nonce/forbidden-provider
+   evidence; wrapper/ledger/cache replacement; post-seal entropy requests
+   during primary or sidecar construction; and ledger/cache/wrapper mutation
+   immediately before either branch's first rename;
 3. merge a separate referee-gated implementation PR whose rehearsals are
    fixture-only and structurally reject production paths;
 4. obtain a fresh registered §10.1 configuration binding every preceding
