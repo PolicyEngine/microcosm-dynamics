@@ -18,11 +18,14 @@ registration, fitting, evaluation, or publication work is authorized.
   rejection.
 - Removed §12's post-exposure same-output fresh-registration exception so the
   context ceremony imports §10.3–§10.5 without weakening.
+- Split source siblings into exact-equality and structural-dependence classes.
+  Rounded published total/component relationships now carry ancestry and
+  exposure without asserting exact displayed sums or inferring intervals.
 - Began a section-by-section consistency audit of the remaining contract.
 
 ## Next
 
-1. Close the identity/noninterference and sibling-dependence residuals.
+1. Close the no-eligible noninterference and eligibility-phase residual.
 2. Close G14, microfact,
    support-schema, and 2013-coordinate residuals.
 3. Reconcile all hash names, RNG authority, suppression/cardinality rules,

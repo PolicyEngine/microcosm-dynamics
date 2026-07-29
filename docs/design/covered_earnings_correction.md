@@ -1637,19 +1637,21 @@ hash and is stable when a G21 evaluation-only value is poisoned.
 
 `official_source_alias_specs.v1` is the complete frozen registry of
 cross-vintage physical aliases, republications, shared primitives, and
-arithmetic siblings. Each ordered row has exactly
+source-defined siblings. Each ordered row has exactly
 `alias_group_id`, `left_physical_cell_id`, `right_physical_cell_id`,
 `relation`, `effective_calendar_year`, `arithmetic_rule_id`, and
 `adjudication`. `relation` is
 `same_physical_cell | cross_vintage_republication | shared_primitive |
-arithmetic_sibling`; `arithmetic_rule_id` is nonnull exactly for the last
-relation. `adjudication` is the relation-matched value-blind literal
+exact_arithmetic_sibling | structural_formula_sibling`;
+`arithmetic_rule_id` is nonnull exactly for either sibling relation.
+`adjudication` is the relation-matched value-blind literal
 `identity_by_structural_locator | republication_by_registered_source_rule |
 shared_primitive_by_registered_source_rule |
-arithmetic_sibling_by_registered_rule`; it contains no quote, value, token,
-content digest, or free text. The full proof bytes/digests remain only in the
-physical/source and arithmetic registries retained in evaluation provenance.
-Registered arithmetic rules include the taxable-earnings/gross-
+exact_arithmetic_sibling_by_registered_rule |
+structural_formula_sibling_by_registered_definition`; it contains no quote,
+value, token, content digest, or free text. The full proof bytes/digests
+remain only in the physical/source and arithmetic registries retained in
+evaluation provenance. Registered rules include the taxable-earnings/gross-
 contribution rate relationship and every extracted total/component or
 ratio/share sibling. The registry is built from both artifacts and all
 extracted formula registries, never from declared target roles. An omitted
@@ -1661,22 +1663,49 @@ registry. Every row has exactly `arithmetic_rule_id`,
 `effective_calendar_year`, `relation_class`,
 `ordered_operand_structural_locator_ids`,
 `output_structural_locator_id`, `sibling_structural_locator_ids`,
-`formula_ast`, `source_definition_locator_id`, and
+`assertion_scope`, `numeric_validation_law`, `formula_ast`,
+`source_definition_locator_id`, and
 `source_definition_fragment_sha256`.
 `relation_class` is `total_component | ratio_share |
 taxable_earnings_gross_contribution | worker_membership`; locator arrays are
-nonempty, unique, and foreign-key the physical registry. `formula_ast` uses
-the closed rational grammar `locator`, integer `rational`, and
+nonempty, unique, and foreign-key the physical registry. `assertion_scope` is
+`exact_published_value_equality | structural_dependence_only`; its value is
+derived from the pinned source definition before any displayed numeric value
+is decoded and cannot be selected from the size or sign of a residual.
+`numeric_validation_law` is respectively
+`exact_rational_ast_equality |
+not_applicable_no_published_numeric_assertion`.
+
+An exact-equality row has a nonnull `formula_ast` using the closed rational
+grammar `locator`, integer `rational`, and
 `add | subtract | multiply | divide` nodes with fixed arity and no float,
-path, callback, or implicit rounding. The fragment hash binds the exact
-published definition establishing the formula.
+path, callback, or implicit rounding. The validator evaluates it on the
+literal normalized published values and requires exact rational equality.
+A structural-dependence row has `formula_ast: null`. Its ordered
+operand/output/sibling locators encode the directed definition graph and its
+complete undirected evidentiary/exposure component, but assert no equality,
+tolerance, residual range, or unobserved precision. The fragment hash binds
+the exact published definition establishing either scope.
 `source_definition_locator_id` is SHA-256 of the canonical immutable
 publication-family/edition/document/table-or-section/citation-coordinate
 tuple and excludes source content, the quoted definition, cell values, and
 every full-source digest. Every nonnull arithmetic-rule reference in the
 alias registry resolves exactly once, every rule is referenced, and
-primitive/output/sibling closure is independently rederived; an extra,
-omitted, cyclic, year-mismatched, or algebraically inconsistent rule aborts.
+primitive/output/sibling closure is independently rederived. An extra,
+omitted, cyclic, year-mismatched, topology-inconsistent, or source-definition-
+inconsistent rule always aborts. Numeric inconsistency aborts only for
+`exact_published_value_equality`; a structural-dependence row never performs
+that comparison and reports the literal numeric-validation result
+`not_applicable_no_published_numeric_assertion`.
+
+In particular, a published total/component or taxable-earnings/contribution
+definition is structural-only unless the primary source expressly guarantees
+equality of the displayed values at their published precision. The 1969
+Table 4.B11 taxable total `33,233` and displayed components
+`31,501 + 1,733 = 33,234` therefore occupy one structural dependency and
+exposure component. The one-unit display residual is retained, but it is
+neither a registration inconsistency nor evidence from which an unreported
+rounding interval may be inferred.
 
 The independently derived
 `physical_source_structure_projection.v1` contains exactly
@@ -1684,18 +1713,20 @@ The independently derived
 `arithmetic_rules`. A projected arithmetic-rule row has exactly
 `arithmetic_rule_id`, `effective_calendar_year`, `relation_class`,
 `ordered_operand_structural_locator_ids`, `output_structural_locator_id`,
-`sibling_structural_locator_ids`, `formula_ast`, and
+`sibling_structural_locator_ids`, `assertion_scope`,
+`numeric_validation_law`, `formula_ast`, and
 `source_definition_locator_id`; it deliberately excludes
 `source_definition_fragment_sha256`. A structural cell has exactly
 `structural_locator_id`, the seven locator fields above, and
 `verified_calendar_year`; a structural alias row replaces each physical-cell
 endpoint by its validated structural locator and retains exactly relation,
 effective year, arithmetic-rule ID, and adjudication. This projection
-preserves locator, year, ancestry, alias, and arithmetic closure while
-excluding `physical_cell_id`, published/normalized tokens, full-source
-digests, and observed values. Full changing registries remain mandatory in
-evaluation provenance; only this value-blind structural projection may enter
-G15/G17 or another non-G21 gate evidence preimage used by G21.
+preserves locator, year, ancestry, alias, assertion scope, and exact-or-
+structural dependence closure while excluding `physical_cell_id`,
+published/normalized tokens, full-source digests, and observed values. Full
+changing registries remain mandatory in evaluation provenance; only this
+value-blind structural projection may enter G15/G17 or another non-G21 gate
+evidence preimage used by G21.
 
 The target registry schema is `calibration_target_specs.v2`. It is a literal
 ordered array expanded cell by cell before fitting. Table 4.B2 and 4.B11
@@ -1760,11 +1791,12 @@ ranges and roles in the displayed order; role order is
 
 `declared_role` must equal it byte-for-byte. The validator then takes the
 transitive closure through `official_source_alias_specs.v1`. Every physical
-alias, shared primitive, and arithmetic sibling receives the same honest
-exposure classification for that year, even when its own target has
+alias, shared primitive, exact arithmetic sibling, and structural-formula
+sibling receives the same honest exposure classification for that year, even
+when its own target has
 `no_fitting_loss` and zero weight. A model-choice closure containing a
 post-2014 physical cell, a different-year operand, or a vintage-1 held-out
-alias aborts registration. An arithmetic sibling may publish a zero-weight
+alias aborts registration. Either sibling class may publish a zero-weight
 diagnostic but can never count as independent validation.
 
 Every train or validation target must have source status `historical`;
@@ -1781,6 +1813,10 @@ has the exact tagged schema and source-verification law in §6.1; a derived
 target interval is `source_verified` only when interval arithmetic from
 verified operand rules determines it, and otherwise is
 `not_established_from_source_bytes`.
+A `structural_dependence_only` sibling can never establish such an interval:
+its rounding tag and every derived precision claim are
+`not_established_from_source_bytes`/`rounding_interval_unavailable`, with no
+inference from the displayed residual.
 `universe_concordance` has exactly `official_ratio_universe`,
 `model_analogue_universe`, `element_mappings`, `frame_relation`,
 `verification_status`, and `source_sha256`. Each ordered mapping has exactly
@@ -1857,8 +1893,8 @@ The target families are frozen as follows:
 | `b2_se_taxable_intensity` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | no fitting loss | Recomputed year role; zero-weight. |
 | `b2_wage_taxable_fraction` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | no fitting loss | Recomputed year role; zero-weight preserved employer-cap mismatch. |
 | `b2_se_taxable_fraction` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | no fitting loss | Recomputed year role; zero-weight. |
-| `b11_taxable_earnings_component_reconciliation` | 4.B11 taxable-earnings total minus wage and SE taxable components; model `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`; report interval consistency only when its rounding tag is `source_verified` | no fitting loss | Recomputed year role; zero-weight arithmetic-sibling diagnostic, never independent evidence. |
-| `b11_contributions_component_reconciliation` | 4.B11 contribution total minus wage and SE contribution components; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap | no fitting loss | Recomputed year role; zero-weight arithmetic-sibling diagnostic, never independent evidence. |
+| `b11_taxable_earnings_component_reconciliation` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components; the source relationship is `structural_dependence_only`, so the literal residual (including 1969's `-1`) is retained with `rounding_interval_unavailable` and no equality/interval adjudication. Model diagnostic is `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`. | no fitting loss | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
+| `b11_contributions_component_reconciliation` | Literal displayed 4.B11 contribution total minus displayed wage and SE contribution components, retained under the same structural-only/no-rounding-inference law; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap | no fitting loss | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
 | `b11_se_contribution_share` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | no fitting loss | Recomputed year role; zero-weight legal/accounting sibling diagnostic only. |
 
 `dependency_group` is operational and makes no statistical-independence
@@ -1896,8 +1932,8 @@ cell no greater than 0.02. These are precommitted operational acceptance
 thresholds, not sampling confidence intervals.
 
 Role is a verified-year consequence, while the target-use trace publishes
-`verified_calendar_year`, direct physical ancestry, alias group IDs,
-arithmetic-sibling group IDs, and effective evidentiary role. Every required
+`verified_calendar_year`, direct physical ancestry, alias group IDs, sibling
+group IDs with assertion scopes, and effective evidentiary role. Every required
 4.B2 primitive is
 referenced by at least one B2 family; every required 4.B11 worker primitive
 is referenced by the worker-distribution families, every taxable primitive by
@@ -1907,7 +1943,7 @@ with model choice is marked train/validation in 1968–2014 even though it
 cannot enter loss or selection; it is never presented as held-out evidence in
 those years. Its 2015–2022 expansion is held out. The B11
 taxable/contribution diagnostics receive their verified train/validation role
-before 2015 even though their loss weight is zero; their arithmetic closure
+before 2015 even though their loss weight is zero; their structural-dependence closure
 prevents an independent-evidence claim. No physical or logical source cell
 can acquire a second, more favorable evidentiary description.
 
@@ -1931,7 +1967,7 @@ held-out discrepancies use the field name `diagnostic_error`, never `loss`,
 so the model-choice loss registry has no evaluation-only bytes.
 RMS is the square root of the equal-weighted
 arithmetic mean of the registered cell errors, never a ratio of aggregate
-means. B11 arithmetic siblings and dependent B2 transformations cannot rescue
+means. B11 exact or structural siblings and dependent B2 transformations cannot rescue
 or reject a candidate. A source extraction/schema inconsistency is a
 preparation incident; a model legal-rate or reconciliation defect is
 adjudicated independently by G04, G06, or G07, not by a held-out residual.
@@ -1945,7 +1981,9 @@ literal published cells, not recovery of unpublished precision. A diagnostic
 may say a residual is distinguishable from published rounding only when every
 operand has a `source_verified` rounding rule and interval propagation proves
 it. Otherwise it publishes `rounding_interval_unavailable` and makes no
-precision claim.
+precision claim. A `structural_dependence_only` sibling is always in that
+otherwise branch: neither its relation nor the magnitude of its literal
+display residual authorizes rounding-interval inference.
 
 The expansion order is target-family order above, then ascending year. Source
 cell IDs are the literal table/row/header-path identities; model selectors are
@@ -1976,12 +2014,15 @@ to establish that cell and its meaning.
 `model_choice_alias_closure` is the complete ordered transitive closure
 projected to rows with exactly `left_structural_locator_id`,
 `right_structural_locator_id`, `relation`, `effective_calendar_year`,
-`arithmetic_rule_id`, `arithmetic_rule_projection_sha256`,
+`arithmetic_rule_id`, `assertion_scope`, `numeric_validation_law`,
+`arithmetic_rule_projection_sha256`,
 `source_definition_locator_id`, and `adjudication`.
 `arithmetic_rule_projection_sha256` is the SHA-256 of the exact matching
 row in `physical_source_structure_projection.v1.arithmetic_rules`, and it
-and `source_definition_locator_id` are nonnull exactly when
-`arithmetic_rule_id` is nonnull; all three otherwise are JSON null. The
+`assertion_scope`, `numeric_validation_law`, and
+`source_definition_locator_id` are nonnull exactly when
+`arithmetic_rule_id` is nonnull; all five otherwise are JSON null. The two
+nonnull values exact-match the projected rule. The
 closure never contains a value-bearing physical-cell ID, cell token,
 normalized value, source-definition fragment digest, or full-source digest.
 `source_definition_fragments` contains only the cell-scoped bytes needed to
@@ -1995,7 +2036,8 @@ entries, artifact-wide content hashes, whole-document `source_sha256` fields,
 held-out and zero-weight values and value-bearing spec payloads, vintage-1
 bytes, registration, invocation, incident, configuration, and any digest
 whose byte domain includes non-model-choice cells. The only retained
-held-out/zero-weight structure is the value-blind locator/relation/formula
+held-out/zero-weight structure is the value-blind
+locator/relation/assertion-scope/dependence
 closure expressly required above.
 
 `substantive_production_input_specs.v1` has exactly `schema_version`,
@@ -2112,8 +2154,9 @@ The fixture applies two deliberately different mutation mechanisms:
    are recomputed; and
 2. a zero-weight derived diagnostic whose entire physical ancestry is shared
    with model-choice cells is not falsified inside the source artifact.
-   Instead, after the trusted validator has proved the unchanged arithmetic
-   closure, the diagnostic broker replaces that target's decoded
+   Instead, after the trusted validator has proved the unchanged exact-or-
+   structural sibling topology and assertion-scope closure, the diagnostic
+   broker replaces that target's decoded
    post-validation payload/result value with a distinct domain-valid poison
    at the fit/selection isolation boundary.
 
@@ -2122,7 +2165,8 @@ The second class covers, among other registered members, derived B11
 their shared primitives and formulas remain unchanged. Every non-model-choice
 target is in exactly one value-mutation class, every exclusive fragment is in
 the third class, and every class's frozen count is tested. Model-choice cells,
-shared primitives, formulas, and shared interpretation fragments remain
+shared primitives, exact formulas, structural-dependence edges and scopes,
+and shared interpretation fragments remain
 byte-identical. Thus every held-out and zero-weight value is poisoned without
 claiming that an arithmetically inconsistent official source is valid.
 `noninterference_pre_g21_bundle.v1` has exactly `schema_version`,
@@ -2805,7 +2849,8 @@ descriptors are destroyed before a context decoder can exist.
 `isolation_results_sha256`, and `forbidden_access_count`. The first two
 hashes compare the complete independently derived grant arrays, the next two
 compare every typed worker/coordinator message and direction, the structural
-hash is the complete value-blind ancestry/alias/arithmetic projection above,
+hash is the complete value-blind
+ancestry/alias/exact-or-structural-dependence projection above,
 the next two hashes bind the complete typed consumer graph and actual trusted
 root streams, the lifecycle hashes bind creation/destruction and mount epochs, and the
 last value is the actual aggregate nonnegative count. G15 passes iff both
@@ -2815,6 +2860,10 @@ recompute, and forbidden count is zero. Unequal hashes/counts remain
 serializable failure evidence.
 No mutable token, value, full-source digest, or evaluation-provenance hash is
 in this gate evidence object.
+G15/G17 validate every sibling's topology, year, source-definition locator,
+`assertion_scope`, and `numeric_validation_law`. They evaluate displayed
+numbers only for `exact_published_value_equality`; a structural-only residual
+is retained as data and can neither fail nor satisfy an exact-equality test.
 
 The executable selector/comparator map is:
 
@@ -2964,10 +3013,11 @@ The following dataflows are invalid, not merely caveats:
 - placing a whole-document/artifact digest whose byte domain contains
   held-out or zero-weight cells into the substantive model/RNG identity;
 - reintroducing a held-out or later-year primitive through a logical alias,
-  cross-vintage republication, shared denominator, or arithmetic sibling;
+  cross-vintage republication, shared denominator, exact arithmetic sibling,
+  or structural-formula sibling;
 - leaking realized 2017–2023 PSID job facts into the 2015–2022 projection;
 - calling PSID-internal prediction administrative validation;
-- double-weighting B2 and B11 rounded arithmetic siblings; or
+- double-weighting B2 and B11 exact or structural siblings; or
 - allowing Option C or a post-hoc scalar to rescue a failed production
   candidate.
 
@@ -4027,13 +4077,16 @@ Their schemas and completeness laws are:
   with exactly `target_id`, `verified_calendar_year`, `effective_role`,
   `source_cell_ids`, `physical_source_cell_ids`,
   `primitive_ancestry_ids`, `alias_group_ids`,
-  `arithmetic_sibling_group_ids`, `effective_evidentiary_role`,
+  `sibling_group_ids`, `sibling_assertion_scopes`,
+  `effective_evidentiary_role`,
   `broker_packet_sha256`, `first_exposure_phase`,
   `first_exposure_sequence`, `used_for_fitting`, `used_for_selection`, and
   `used_for_diagnostic`. Year and all identity arrays are independently
   reconstructed by the trusted validator from physical source identities and
-  exact-match the frozen target/alias closure; they are not accepted from
-  worker self-report. `effective_evidentiary_role` applies
+exact-match the frozen target/alias closure; they are not accepted from
+worker self-report. The two sibling arrays are positionally parallel and
+retain `exact_published_value_equality | structural_dependence_only` for
+every sibling group in canonical alias order. `effective_evidentiary_role` applies
   `fit > selection > diagnostic` across the complete physical closure.
   `broker_packet_sha256` binds the only value packet that can reach a worker.
   An unopened held-out row has both exposure fields and packet hash null and
@@ -5066,7 +5119,7 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 | Complete PSID crosswalk and era seams | §4.2 requires an independently byte-pinned every-wave×role×job×component/context×purpose inventory with exact `present \| structural_missing` disposition, a separate all-key disposition stream and component-slot assembly, frozen structural-missing consequences, the full wave→reference-year/source-class map, first-class `mixed`, and executable value-code, annualization, reconciliation, job-match, SE-aggregation, and coverage-group registries. Reference-year 1975 is mixed; exact 1976–1977 concepts are registration-required. |
 | Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
-| Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2 and requires target-ID, declared, resolved observation, operand, physical-cell, ancestry, selector, and result years to agree before deriving 1968–2008 train, 2009–2014 validation, and 2015–2022 diagnostic roles. Physical ancestry closes over cross-vintage aliases and arithmetic siblings; none of vintage 1 fits and viewed-cell honesty is explicit. |
+| Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2 and requires target-ID, declared, resolved observation, operand, physical-cell, ancestry, selector, and result years to agree before deriving 1968–2008 train, 2009–2014 validation, and 2015–2022 diagnostic roles. Physical ancestry closes over cross-vintage aliases plus exact and structural siblings; structural dependence carries exposure without asserting displayed numeric equality or inferring a rounding interval. None of vintage 1 fits and viewed-cell honesty is explicit. |
 | B2/B11 and covered-share extraction | §6 and D-A1 retain the pinned source hashes, literal ten-row discrepancy registry, and pre-2015 scale-free targets; V-B7 requires an exact covered-share universe. Model choice binds only `fit_selection_cell_identity.v1`; full evaluation provenance is separate, and G21 mutates every held-out/zero-weight/exclusive byte while requiring the substantive model, uniforms, gates, and eligibility to remain byte-identical. |
 | Post-calibration label vocabulary | §1 freezes exactly `frame-relative`, `modeled-covered-earnings`, `aggregate-concept-calibrated-not-population-aligned`. |
 | Cap, SE threshold/loss, incorporated owners, historical SECA | §§3.2 and 4.1 freeze component floors, within-SE-only loss netting, effective-year law, wage-first residual cap, incorporated salary, and excluded distributions. |
@@ -5103,8 +5156,10 @@ Ratification requires affirmative evidence for every item:
   years; recomputes role from verified year; and freezes every dependency,
   loss, weight, tolerance, transformation, unit, and selector before fitting.
 - [ ] Physical source ancestry closes over the complete frozen cross-vintage,
-  shared-primitive, republication, and arithmetic-sibling registry with no
-  role laundering or aliased held-out primitive.
+  shared-primitive, republication, exact-arithmetic-sibling, and
+  structural-formula-sibling registry with no role laundering or aliased
+  held-out primitive; structural-only rows encode dependence and exposure
+  without a displayed-value equality or inferred rounding interval.
 - [ ] Model choice binds only the exact cell-scoped fit/selection identity;
   full evaluation provenance is separate, and the nonempty G21 fixture
   changes every held-out/zero-weight/exclusive source byte while parameters,
