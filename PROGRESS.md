@@ -2,10 +2,12 @@
 
 ## State
 
-Round 4 is in progress on `claude/ce-correction-design`. The working target is
-the round-3 `REWRITE` verdict for
+Round 4's design rewrite is complete and internally audited on
+`claude/ce-correction-design`; external referee ratification is next. The
+round-3 `REWRITE` residuals are addressed in
 `docs/design/covered_earnings_correction.md`. No implementation, data,
-registration, fitting, evaluation, or publication work is authorized.
+authority extraction, registration, fitting, evaluation, publication, or
+push is authorized by this round.
 
 ## Done
 
@@ -50,10 +52,37 @@ registration, fitting, evaluation, or publication work is authorized.
   separated the initial nonce/authority/claim sequence from the same-process
   retry sequence. The retry validates existing records, reuses the nonce,
   creates only its retry claim, and makes zero new entropy calls.
-- Began a section-by-section consistency audit of the remaining contract.
+- Completed the trusted evaluator grammar as an exact 17-operation,
+  type/unit-checked coordinator algebra, including weighted quantiles, top
+  shares, entropy, legal rounding, draw reduction, closed scalar extraction,
+  independently reconstructed roots, and complete runner-proposal mismatch
+  evidence.
+- Narrowed claim-context gap streams to a closed scalar channel schema,
+  re-derived gap-year SE groups, and kept annual coverage-group IDs and raw
+  proxy fields out of corrected gap sources. Option C now has a distinct
+  diagnostic-only proxy-carry law, singleton result dimensions, exact row
+  IDs/order, and explicit structural-failure serialization inside
+  `before_context_results`.
+- Closed direct-law typed execution end to end: source-backed field parsers,
+  boolean/enum/integer values, tagged structural-absence commitments,
+  unit-checked ASTs, exact transform-result construction, authority
+  precedence/conflict handling, and an acyclic pre-fit action trace with
+  later candidate-vector validation.
+- Added a coordinator-owned process-lifecycle keyed-uniform cache so an
+  authorized retry reuses every completed midpoint and invokes the provider
+  exactly once per canonical namespace key across both attempts; the context
+  ceremony imports the same law.
+- Resolved the remaining exact-schema defects: context and correction RNG
+  evidence, before-context year/claim coordinates and identities,
+  `primary_sha256`, `keyed_uniform_registry_sha256`, successor-registry versus
+  mismatch-array cardinality, and the no-post-exposure-retry deviation
+  statement.
+- Completed section-by-section stale-name, exact-schema, construction-order,
+  and contradiction audits; `git diff --check` is clean.
 
 ## Next
 
-1. Audit every round-3 residual and all exact-schema/version references.
-2. Update this file and commit the final design
-   state.
+1. Obtain external referee ratification of the round-4 design.
+2. If ratified, proceed only through the separately authorized authority,
+   extraction, implementation, registration, and production stages in
+   §14.3.
