@@ -356,11 +356,29 @@ Authority precedence is:
 3. no rule.
 
 A lower-ranked source cannot override a higher-ranked source. Secondary
-literature is not legal authority. Missing bytes, source-hash drift,
-overlapping effective dates, a year gap, conflicting same-rank rules, an
-unregistered transform, or absent required micro facts aborts direct
-classification. The record then follows its predeclared modeled or
-`unresolved` action; it never takes a guessed legal status.
+literature is not legal authority. Every verification claim in this registry
+has exactly one `verification_class`:
+
+- `registration_required` means missing bytes, source-hash drift, an
+  effective-year gap, conflicting same-rank rules, or an unregistered
+  transform aborts the whole registration. The complete Section 218 and
+  mandatory state/local coverage law, the complete historical SECA
+  eligible-concept/factor/threshold/coordination law, and every source needed
+  to construct a fitting or selection target have this class.
+- `direct_only_optional` means the registry must enumerate, before
+  registration, every affected source-inventory key and its exact
+  `modelable | unresolved` consequence. Missing or conflicting authority
+  disables direct classification for exactly those rows and applies that
+  frozen consequence; it neither aborts unrelated rows nor permits a guessed
+  legal status. Clergy, Railroad, student, federal-system, and residual
+  exclusion facts are in this class unless a separately identified
+  registration-required transform consumes them.
+
+There is no `load_bearing_gap` judgment and no implementation-time choice
+between abort and fallback. The registration validator derives the required
+claim set from the candidate/target ancestry, exact-compares it with the
+registry, and applies the class above. Missing required claims abort;
+optional facts can have only their predeclared row consequences.
 
 The treatment of named risk classes is frozen:
 
@@ -373,63 +391,171 @@ The treatment of named risk classes is frozen:
 | Student | Enrollment and education industry never prove the employer-school nexus or statutory student exception. Absent that nexus, no direct exclusion is allowed. |
 | Residual statutory exclusions | Domestic/agricultural thresholds, election work, family/casual service, foreign-government or international-organization service, nonresident-alien rules, and any other class require an effective-year registered rule and its required facts. |
 
-### 4.2 Complete source crosswalk
+### 4.2 Independent source inventory, reference-year map, and crosswalk
 
-The implementation must create an immutable, literal, fully expanded
-`psid_covered_earnings_crosswalk.v1`. Every object has exactly:
+The crosswalk may not define its own completeness universe. Before the
+crosswalk is authored, a source-only extractor must publish the immutable,
+byte-pinned
+`data/external/psid_covered_earnings_source_field_inventory_v1.json`.
+Its schema and artifact ID are respectively
+`psid_source_field_inventory.v1` and
+`psid_covered_earnings_source_field_inventory.v1`. The extractor is
+structurally unable to import the covered-earnings reader, crosswalk, candidate
+code, or adjudication registries. It reads only the registered PSID setup,
+layout, label, codebook/questionnaire, and fixed-width-file identities and
+binds every source byte by path, SHA-256, and size.
+
+An independently ratified `psid_questionnaire_slot_specs.v1` defines the
+inventory domain. It expands every staged family wave
+`1968..1997,1999,2001,...,2023`, both questionnaire roles
+`head_or_reference_person` and `spouse_or_partner`, every
+questionnaire-defined job slot plus the role-total, farm, and business
+aggregate slots, and each of these ordered field purposes:
+
+```json
+[
+  "interview_and_role_attachment",
+  "amount",
+  "reporting_unit",
+  "month_or_exposure",
+  "assignment",
+  "employee_self_or_mixed",
+  "incorporation",
+  "government_level",
+  "industry",
+  "occupation",
+  "enrollment",
+  "job_identifier"
+]
+```
+
+The slot registry is derived from and cites the complete questionnaire/layout
+domain, not from fields already used by `family.py`. A source inventory that
+contains only the current role totals is therefore incomplete by construction.
+For every slot-purpose key, the inventory has exactly one row with:
 
 `interview_wave`, `earnings_reference_year`, `role`, `job_slot`,
-`source_component_id`, `raw_field_ids`, `label_text`, `reporting_unit`,
-`periodicity`, `month_presence_fields`, `assignment_fields`,
-`self_other_field`, `incorporation_field`, `government_level_field`,
-`industry_field`, `occupation_field`, `enrollment_field`, `missing_codes`,
-`structural_missing`, `admissible_information_date`, `annualization_rule_id`,
+`slot_kind`, `field_purpose`, `disposition`, `raw_field_ids`,
+`exact_label_texts`, `full_source_descriptions`, `value_code_map`,
+`reporting_unit`, `source_file_ids`, `source_byte_sha256s`,
+`layout_coordinates`, and `absence_proof`.
+
+`earnings_reference_year` is always the JSON integer
+`interview_wave - 1`. `disposition` is exactly `present` or
+`structural_missing`. A present row has nonempty field IDs, complete labels
+and descriptions, an exact raw-code-to-meaning map where the field is coded,
+and null `absence_proof`. A structural-missing row has empty field IDs and a
+nonempty absence proof that binds the complete searched label/layout domain
+and search implementation. “Not used by the existing reader,” a short label,
+or the crosswalk's declaration is not an absence proof. Duplicate or missing
+slot-purpose keys, an unscanned layout column, a raw code without a
+disposition, source drift, or a wave/reference-year mismatch aborts inventory
+ratification.
+
+The frozen production wave-to-reference-year map is explicit:
+
+| `year_source_class` | Exact mapping and production meaning |
+|---|---|
+| `direct_questionnaire` | Reference years `1968..1996` map one-to-one to interview waves `1969..1997`; reference years `[1998,2000,2002,2004,2006,2008,2010,2012]` map to waves `[1999,2001,2003,2005,2007,2009,2011,2013]`. |
+| `structural_gap_imputed` | Reference years `[1997,1999,2001,2003,2005,2007,2009,2011]` have no direct income wave and are derived only by the cutoff-before-imputation law below. |
+| `claim_specific_boundary_gap` | Reference year `2013` has no direct production wave and is derived only after the operative benefit claim year is known. |
+| `boundary_2014` | Year `2014` is the frozen projection-boundary row, not the 2015 interview's prior-year answer. |
+| `projected` | Years `2015..2022` are frozen projected proxy rows; post-boundary questionnaire answers are inadmissible person facts. |
+
+The 1968 interview's reference year is 1967 and is outside the attachable
+production support. Interview waves 2015–2023 remain inventoried because
+their existence and exclusion must be auditable, but none is a direct
+production earnings source. Every crosswalk, support row, candidate basis,
+target selector, Option-C row, evaluation stratum, and result row carries the
+literal `year_source_class`; it may never be inferred from row availability.
+
+The reference-year seams, not interview-year aliases, are:
+
+| Reference years | Frozen source-concept adjudication |
+|---|---|
+| 1968–1974 | Preserve role totals. Unsupported job/context slots are explicit inventory absences. |
+| 1975–1977 | These are interview waves 1976–1978. The spouse-source concept is determined from the pinned full descriptions and value structure under V-B6. The short labels do not establish `wages_only`; where employee wages and unincorporated-business labor cannot be separated, `remuneration_type` is `mixed` or the row is unresolved under its predeclared rule. |
+| 1978–1992 | Pre-ER edited totals include the applicable farm/business labor parts. Separate fields split or validate the total and are never added twice. |
+| 1993–2001 | The farm/business concept seam is reference year 1992/1993: wave 1994 describes 1993. ER role totals and separately carried farm/business labor components combine exactly once. Direct years and biennial structural gaps retain distinct source classes. |
+| 2002–2012 | Modern job blocks begin with interview wave 2003 and therefore describe reference year 2002, then 2004, …, 2012. Job amounts, units, and timing reconcile to the appropriate prior-year role total; odd reference years remain structural gaps. |
+| 2013 | Claim-specific benefit gap only; no unconditional person-level source row exists. |
+| 2014 | Frozen boundary row only. |
+| 2015–2022 | Projected path only. |
+
+The implementation must then publish a separate immutable, fully expanded
+`psid_covered_earnings_crosswalk.v1`. Each source-backed object contains
+exactly:
+
+`source_inventory_key`, `interview_wave`, `earnings_reference_year`,
+`year_source_class`, `role`, `job_slot`, `source_component_id`,
+`remuneration_type`, `raw_field_ids`, `value_code_map_id`,
+`reporting_unit`, `periodicity`, `month_presence_fields`,
+`assignment_fields`, `self_other_field`, `incorporation_field`,
+`government_level_field`, `industry_field`, `occupation_field`,
+`enrollment_field`, `missing_codes`, `source_disposition`,
+`admissible_information_date`, `annualization_rule_id`,
 `reconciliation_rule_id`, `job_spell_match_rule_id`,
 `se_aggregation_group_id`, `coverage_state_group_rule_id`,
-`era_seam_reason_codes`, and `coverage_unknown_action`.
+`era_seam_reason_codes`, `direct_classification_rule_ids`, and
+`coverage_unknown_action`.
 
-The registry contains exactly one disposition for every
-`earnings_reference_year = 1968..2022` × admissible role × source job/component
-in the production input domain. A structural absence is an explicit value,
-not an omitted row. Duplicate keys; an unregistered role transition; a
-missing field label, unit, code, or source column; or a field that does not
-exist in the pinned input schema aborts registration.
+`remuneration_type` is exactly
+`employee | self_employment | mixed | nonremuneration`; `mixed` is a
+first-class source concept, not an implementation guess. `source_disposition`
+exactly equals the inventory's `present | structural_missing` value.
+Every raw field and value-code map exact-matches the independently pinned
+inventory row. The crosswalk contains one row for every inventory key and no
+other key. It may map a structural absence only to a predeclared
+`modelable | unresolved` consequence; it may not invent a field or call an
+absence zero.
 
-The era law is:
+Five separately frozen executable registries close every referenced rule:
 
-| Reference-year era | Frozen adjudication |
-|---|---|
-| 1968–1974 | Preserve role labor totals. Context fields not verified as common across the era are structural missing and use registered expected allocation or remain unresolved. |
-| 1975 | Admit only the self/other and broad-government fields whose exact role coverage is verified in the crosswalk; do not extrapolate head fields to spouse or secondary jobs. |
-| 1976–1978 | Carry the spouse wages-only seam explicitly. Any spouse farm/business amount is appended only from a separately verified source component; otherwise its missing component is modeled or unresolved, never assumed zero. |
-| 1979–1993 | Edited labor totals include farm/business labor parts. Separate business/farm fields may split or validate the total but are never added a second time. |
-| 1994–2002 | Edited labor totals and separately carried business/farm labor amounts are combined exactly once under the registered role allocation; changing code systems and job support remain explicit strata. |
-| 2003–2012 | Modern multi-job blocks are reconciled to role totals. Reporting units require the registered annualization rule and month presence; current-job timing may not be treated as prior-year income without the registered match. |
-| 2013 | Consume the frozen career's `gap_imputed` amount. Apply only context already admissible for the observed-through-2012 lineage; no later interview answer is reclassified as a direct 2013 job fact. |
-| 2014 | Consume the frozen `boundary_2014` proxy row and initialize the §4.3 synthetic projected-component path. It is not relabeled as an observed job row. |
-| 2015–2022 | Consume the frozen projected labor proxy and the §4.3 annual component/status path. No realized post-boundary PSID job fact is admissible. |
+- `psid_value_code_specs.v1` maps every literal raw code, including
+  employee/self-employed/**mixed** responses and missing sentinels, to one
+  typed disposition;
+- `psid_annualization_rule_specs.v1` declares required amount/unit/exposure
+  inputs, exact rational operations, applicability, and the missing-input
+  failure for each annualization ID;
+- `psid_reconciliation_rule_specs.v1` declares role-total, job, farm, and
+  business operands, precedence, exact-once equations, residual disposition,
+  and failure;
+- `psid_job_spell_match_rule_specs.v1` declares the admissible
+  wave/reference-year timing, role and job identifiers, compatibility tests,
+  ambiguity branch, and stable ID construction; and
+- `psid_coverage_state_group_rule_specs.v1` declares which same-service
+  components co-move and which must remain separate.
 
-Direct role/job annual amounts have first source precedence. Role totals and
-separate components have second precedence and must reconcile under the era
-law. Underidentified mixed employee/self-employed amounts use the registered
-conditional expected allocation or remain `unresolved`; v1 does not draw a
-mixed share.
-A combined family farm amount is never silently assigned to a person. It
-uses verified role labor/ownership information, a registered expected
-allocation, or `unresolved`.
+An ID missing from its registry, a rule with an implicit default, a
+nonexecutable prose-only operation, or an input not present in the inventory
+aborts registration. Direct role/job annual amounts have first precedence.
+Role totals and separate components have second precedence and reconcile
+under the frozen rule. Underidentified mixed employee/self-employed amounts
+use the registered exact-dyadic conditional expected allocation or remain
+`unresolved`; v1 does not draw a mixed share. A combined family farm amount
+is never silently assigned to a person.
 
-Annualization is a named pure rule over the literal reporting unit,
-reference-period definition, and admissible month/week/hour exposure. A
-missing exposure field cannot be replaced by an unregistered full-year
-assumption. Business/farm values are survey concepts, not asserted Schedule
-C/F or partnership net profit.
+There is no unconditional atomic common-ledger row for a structural gap.
+After Stage C has fixed an operative claim year, the benefit assembler first
+removes every corrected source component after that year and only then applies
+the registered component-wise immediate-neighbor gap rule. Thus a 2013
+claimant cannot use 2014 to fill 2013, while a later claimant may. The same
+ordering applies to every odd structural gap after 1996. Opening-backfill
+claim-year adjudication occurs before this derivation. Revenue has no 2013 or
+other pre-2015 consumer row. Official target years with no claim-independent
+model analogue remain exposure-honest, zero-weight, selection-ineligible
+diagnostics under §6.2; they cannot create a synthetic consumer row.
+
+G17 exact-compares the inventory key stream, crosswalk key stream, value-code
+maps, all five rule-ID closures, and the frozen wave/reference/source-class
+map. Missing support fails the gate; it never shrinks a domain.
 
 ### 4.3 Production information cutoff and status evolution
 
 The micro-information cutoff is the frozen 2014 projection boundary. Direct
 observed earnings and job-context lineage ends with income year 2012; income
-year 2013 remains the first-estimates `gap_imputed` seam, and 2014 remains
-`boundary_2014`. Only context already admissible for that
+year 2013 remains the claim-specific gap in §4.2, and 2014 remains
+`boundary_2014`. Only context already admissible for the
 observed-through-2012 lineage and attributes already present in the
 registered pre-mortality 2014 seed domain are admissible.
 Official pre-2015 aggregate calibration targets are calibration evidence, not
@@ -441,11 +567,15 @@ Longitudinal observed jobs match only under the literal
 `job_spell_match_rule_id`: same role, verified job identifier where present,
 and compatible interview/reference-year timing. Ambiguous or unmatched jobs
 close the old spell and create a new stable component ID; row proximity never
-matches a spell. `gap_imputed` source years and `boundary_2014` retain those
-literal provenance states and never masquerade as direct questionnaire
-observations.
+matches a spell. `structural_gap_imputed`,
+`claim_specific_boundary_gap`, and `boundary_2014` retain those literal
+provenance states and never masquerade as direct questionnaire observations.
+The base correction operates on the direct adjacent components. Only the
+benefit assembler may derive a gap, after it receives the final Stage-C
+operative claim year and applies the cutoff described in §4.2.
 
-For an incumbent, the last admissible wage/SE expected shares initialize two
+For an incumbent, the last admissible direct-questionnaire wage/SE expected
+shares initialize two
 stable synthetic aggregate IDs, `projected#wage` and
 `projected#self_employment`, at the 2014 boundary. In every 2014–2022 year,
 the selected candidate's registered mixed-allocation logit divides the frozen
@@ -470,7 +600,10 @@ Later realized answers are forbidden even if they exist in a staged file.
 The two synthetic component gains plus published measurement deltas reconcile
 to the frozen person total each year.
 
-The status law advances annually, including odd years. The underlying frozen
+The status law advances annually, including projected odd years. A
+questionnaire structural-gap year is derived component-wise only after the
+benefit cutoff and inherits `structural_gap_imputed`, never
+`direct_questionnaire`. The underlying frozen
 earnings projection's odd-year amount carry is not altered or claimed
 resolved. `odd_year_earnings_carry` therefore remains in §9.2.
 
@@ -478,8 +611,17 @@ resolved. `odd_year_earnings_carry` therefore remains in §9.2.
 
 ### 5.1 Option A: component/status classification
 
-Direct statutory classification occurs only when §4.1's required facts are
-present. Every other in-domain record receives either:
+Remuneration typing is resolved before statutory coverage. It consumes only
+inventory-backed fields through `psid_value_code_specs.v1` and produces
+exactly `employee`, `self_employment`, or `mixed`; a source that cannot be
+typed follows its registered unresolved consequence. A `mixed` source is
+split under §5.2 before either child is classified. A candidate may not infer
+remuneration type from the aggregate target it is trying to match.
+
+Direct statutory classification occurs only when §4.1's applicable
+`registration_required` authority is complete and every
+`direct_only_optional` fact required by that row is present. Every other
+in-domain homogeneous record receives exactly one of:
 
 - a deterministic conditional probability vector from a registered
   expected-value mapping;
@@ -493,7 +635,7 @@ features or risk strata, not legal truth. Unknown never defaults to
 private/covered. Career data-completeness ratios and OASDI coverage
 probabilities have different field names, denominators, and meanings.
 
-Remuneration type precedes coverage status. A wage-typed derived component
+A wage-typed derived component
 has structural probability zero for `covered_self_employment`; an SE-typed
 derived component has structural probability zero for `covered_wage`.
 `noncovered` and `unresolved` remain possible for either type. A source whose
@@ -511,62 +653,79 @@ There is no fitted unresolved share and no third complement-allocation
 branch in v1. Changing `modelable` to `unresolved` or vice versa changes the
 crosswalk artifact and requires fresh registration.
 
+The crosswalk—not the runtime—freezes which branch applies to every inventory
+key. Registration exact-compares each optional verification failure with its
+enumerated affected-key set. No missing optional source can widen a modelable
+domain, and no candidate may convert an unresolved row to improve a target or
+gate.
+
+Every classifier output retains `interview_wave`,
+`earnings_reference_year`, and `year_source_class`, copied positionally from
+the verified §4.2 map. A classifier, candidate, or downstream evaluator that
+relabels a structural gap, boundary, or projected year as direct fails G12
+and G17.
+
 ### 5.2 Option B: measurement layer
 
-Option B runs after source-component adjudication and before status amounts
-are aggregated. It represents adjusted gains and admissible SE-loss
-magnitudes as separate nonnegative channels. Gain mappings are
+Option B runs after the inventory-backed source adjudication and before
+coverage aggregation. It represents adjusted gains and admissible SE-loss
+magnitudes as separate nonnegative channels. A gain mapping is
 component-specific, extensive-margin preserving, and monotonically
-nondecreasing in a positive source amount within a registered stratum. A loss
-mapping may operate only on a source component that the historical legal
-registry admits to SE netting. Exact zeros remain a separately modeled mass.
-Stable-person-ID tie-breaking, never row order, governs ranks.
+nondecreasing in a positive source amount within its registered
+reference-era/source-class stratum. A loss mapping may operate only on a
+source component admitted to SE netting by the complete effective-year SECA
+registry. Exact zeros remain a separate mass. Stable-person ID, never row
+order, breaks ranks.
 
-V1's extensive-margin law is deliberately zero-preserving. After all
-separately reported business/farm components have been recovered exactly
-once, a source-supported positive component follows the positive mapping and
-a remaining zero component stays literal zero. V1 does not synthesize a
-positive job or amount for an otherwise unsupported zero person-year:
-aggregate targets do not identify which such careers contain omitted
-earnings. This is a two-branch zero/positive model, not a fitted hurdle.
-Consequently the covered-share validation may fail and produce
-`no_eligible_candidate`; a later zero-to-positive recovery model would need
-its own source-supported estimand, amount law, occurrence draw namespace,
-candidate version, and fresh registration. No text may claim that v1
-recovers wholly unreported earnings from an evidentiary zero.
+V1 is deliberately zero-preserving. After separately reported business/farm
+components are recovered exactly once, a source-supported positive component
+follows its positive mapping and a remaining zero stays zero. Aggregate cells
+do not identify which zero careers contain omitted earnings, so v1 never
+synthesizes a positive job or amount for an unsupported zero person-year.
+Covered-share validation may therefore yield `no_eligible_candidate`.
+A later zero-to-positive recovery model requires a new source-supported
+estimand, occurrence and amount laws, draw namespace, candidate version, and
+fresh registration.
 
-The layer may:
+The layer may only:
 
-- recover separately reported business/farm labor components exactly once;
-- allocate a mixed source component across employee and SE concepts;
+- recover an independently inventoried business/farm component once under its
+  reconciliation rule;
+- split a source whose literal `remuneration_type` is `mixed`;
 - apply a registered deterministic conditional-mean or monotone rank mapping;
   and
-- preserve every mapping delta and uncertainty limitation.
+- preserve the raw source, exact mapping delta, source class, and uncertainty
+  limitation.
 
 It may not turn an aggregate target into observed individual coverage, erase
-the raw proxy, fit a national level, or force an unconditional sign.
-Assignment flags describe source imputation, not administrative agreement.
+the raw proxy, fit a national level, force an unconditional sign, or use an
+assignment flag as administrative agreement.
 
-A mixed component is split before coverage classification into stable derived
-atomic IDs `<source_component_id>#wage` and
-`<source_component_id>#self_employment`. Their gain and loss channels
-reconcile exactly to the parent source under the registered mixed-allocation
-law. The four-class status draw then operates on each homogeneous derived
-component. The children receive distinct `coverage_state_group_id` values;
-components of the same type may share a group only under §3.1's same-service
-rule. It may not assign an entire mixed parent to one type. Uncertainty
-in the split is represented by the registered conditional expected share and
-an uncertainty reason code, not a draw. No selected v1 candidate contains a
-stochastic mixed-share or measurement-residual distribution. Adding one
-requires a new candidate/draw-spec version with an exact finite law.
+Every mixed component becomes the two stable atomic IDs
+`<source_component_id>#wage` and
+`<source_component_id>#self_employment` before coverage classification.
+`psid_reconciliation_rule_specs.v1` supplies the parent amount and permitted
+operands; the selected candidate supplies only the registered conditional
+expected wage share. Both children retain the parent's source-inventory key
+and `mixed` reason code. It is forbidden to assign the entire parent to one
+type or to create only one child.
 
-The expected mixed share is interpreted as an exact dyadic. Ideal child
-microdollars are retained as reduced rationals; the second child is exact
-parent minus first child, so the parent residual is literal zero. Signed
-admissible SE-loss magnitude is split on its nonnegative magnitude. Each
-child measurement transform likewise emits an exact rational and publishes
-its delta. No largest-remainder, cent, dollar, or display rounding enters
-fitting or the component ledger.
+The expected share is interpreted as an exact dyadic. The wage child is the
+exact rational product; the SE child is exact parent minus wage child, so the
+residual is literal zero. An admissible signed loss is split on its
+nonnegative magnitude. The children use distinct
+`coverage_state_group_id` values unless the frozen same-service rule proves a
+same-type group; wage and SE children never share a group. V1 has no
+stochastic mixed-share or measurement-residual variate. Adding either
+requires a new finite draw law and candidate version.
+
+A structural-gap amount is never measured independently. The benefit
+assembler derives each gap component from already corrected adjacent
+components after its operative-claim-year cutoff, then applies the
+gap-reference-year statutory transform. A gap therefore cannot acquire a
+free multiplier, mixed-share draw, or later questionnaire field. No
+largest-remainder, cent, dollar, or display rounding enters any parent-child
+or gap reconciliation.
 
 ### 5.3 Frozen selectable candidate set
 
@@ -577,9 +736,25 @@ Observed self/other, incorporation, and direct component labels adjudicate
 remuneration type under §4; they are not coverage labels. Direct legal rules
 remain fixed and are never estimated.
 
-The five calibration eras are exactly `1968-1975`, `1976-1978`,
-`1979-1993`, `1994-2002`, and `2003-2014`. Within records not directly
-classified by law, a candidate may estimate only:
+`candidate_reference_era_specs.v1` freezes these earnings-reference-year
+bases:
+
+| Era ID | Reference years | Source-class law |
+|---|---:|---|
+| `ry1968_1974_early_totals` | 1968–1974 | Direct questionnaire years only. |
+| `ry1975_1977_spouse_concept_seam` | 1975–1977 | Direct waves 1976–1978; the V-B6 concept adjudication, including `mixed`, is part of the basis. |
+| `ry1978_1992_pre_er_totals` | 1978–1992 | Direct questionnaire years; pre-ER total reconciliation. |
+| `ry1993_2001_er_biennial_transition` | 1993–2001 | Direct 1993–1996 and even 1998–2000 rows estimate parameters; odd structural gaps are derived and contribute no independent fitting row. |
+| `ry2002_2014_modern_boundary` | 2002–2014 | Direct even 2002–2012 rows estimate parameters; odd gaps 2003–2013 are derived and selection-ineligible; 2014 is a separately labeled boundary validation row. |
+
+These are reference-year eras. Seam IDs `1975`, `1978`, `1993`, and `2002`
+are never shifted to interview years. `year_source_class` is crossed with
+era ID in every candidate input/output row; a direct, structural-gap,
+claim-specific-gap, boundary, or projected row can never share a stratum
+label merely because its calendar year lies in the same era.
+
+Within source-backed records not directly classified by law, a candidate may
+estimate only:
 
 - one wage unknown-coverage logit and one SE unknown-coverage logit per
   declared era basis;
@@ -593,14 +768,15 @@ complexity order, are:
 
 | Candidate ID | Exact era basis | 2015–2022 law |
 |---|---|---|
-| `ab_era_constant_expected_v1` | One constant parameter of each permitted kind in each of the five calibration eras. | Carry every fitted 2003–2014 parameter at its 2014 value. |
-| `ab_era_linear_expected_v1` | Intercept and calendar-year slope of each permitted kind within each multi-year era; the 1976–1978 slope is permitted, and no singleton era exists. | Extrapolate the registered 2003–2014 linear predictor annually through 2022. |
-| `ab_pooled_seam_expected_v1` | One component-specific global calendar-year slope plus registered intercept shifts at 1976, 1979, 1994, and 2003 for each permitted kind. | Continue the global slope and last seam intercept annually through 2022. |
+| `ab_era_constant_expected_v1` | One constant parameter of each permitted kind in each of the five reference-era bases, estimated only from direct rows. | Evaluate the last-era constant at boundary 2014 and carry it through 2022. |
+| `ab_era_linear_expected_v1` | Intercept and reference-year slope in each era; the 1975–1977 slope is permitted. Gaps do not create observations. | Evaluate the registered 2002–2014 predictor at 2014, then extrapolate it annually through 2022. |
+| `ab_pooled_seam_expected_v1` | One component-specific reference-year slope plus intercept shifts at 1975, 1978, 1993, and 2002. | Continue the global slope and last seam intercept annually through 2022. |
 
 For every candidate and year, coverage and mixed-allocation predictors use
 the logistic link; positive multipliers use the exponential link and must lie
 in `[0.25,4.0]`. Linear time is exactly affine-scaled to `[-1,1]` over the
-candidate's declared fitting era; pooled time is scaled over 1968–2022.
+candidate's declared reference-era endpoints; pooled time is scaled over
+1968–2022. A missing year inside an era is not reindexed or compressed.
 Parameter domains are the compact intersection of coefficient bounds
 `[-16,16]` and the all-years multiplier constraint. A boundary hit publishes
 and makes the candidate ineligible.
@@ -612,13 +788,24 @@ are conditionally independent across years given that probability path; v1
 does not pretend that aggregate targets identify latent legal-status
 persistence.
 
+For a benefit structural gap, the candidate is evaluated on the corrected
+left and admissible right components first; the benefit assembler then
+derives the gap after cutoff. There is no gap-specific parameter vector.
+For 2014 and projected years, the last reference-era law operates only on the
+two synthetic aggregate IDs in §4.3 and retains `boundary_2014 | projected`
+provenance.
+
 `candidate_specs.v1` is the literal three-object array in the table order.
 Each object has exactly `candidate_id`, `complexity_rank`, `era_basis`,
 `parameter_specs`, `post_2014_rule`, `link_specs`,
-`model_target_selectors`, `numeric_spec`, `identification_spec`, and
-`failure_disposition`. `parameter_specs` fully expands names, centered-time
-bases, bounds, and zero starting values; `post_2014_rule`, links, and
-selectors are literal encodings of the laws above and §6.2.
+`admissible_year_source_classes`, `model_target_selectors`, `numeric_spec`,
+`identification_spec`, and `failure_disposition`. `era_basis` is an exact
+deep copy of `candidate_reference_era_specs.v1`; `parameter_specs` fully
+expands names, reference-year bases, bounds, and zero starting values;
+`admissible_year_source_classes` admits only `direct_questionnaire` for
+parameter estimation and labels boundary/projected evaluation separately;
+`post_2014_rule`, links, and selectors are literal encodings of the laws above
+and §6.2.
 `failure_disposition` is `ineligible_publish`.
 
 `numeric_spec` has exactly `algorithm`, `arithmetic`, `start_points`,
@@ -651,6 +838,9 @@ This is an operationally unique result under the frozen algorithm and starts,
 not a claim of a mathematically proven global optimum over the whole compact
 domain.
 
+The train-cell Jacobian contains only year-verified, positive-weight direct
+target rows. A structural-gap, claim-specific-gap, boundary, projected, or
+zero-weight diagnostic row may never increase rank or parameter count.
 Regularization cannot substitute for identification. Failure of any fit,
 boundary, rank, condition, or solution-certificate test makes the candidate
 ineligible and publishes its disposition; settings may not change after
@@ -659,17 +849,30 @@ diagnostics and are never described as administrative uncertainty intervals.
 
 ### 5.4 Deterministic-first draw law and nonlinear benefits
 
-The canonical expected-value ledger is always emitted. Distributional
-treatment is required for any nondegenerate historical coverage/status
-uncertainty that can change top-35 membership. The fixed correction draw grid is
-`draw_index = 0..19`.
+The canonical expected-value ledger is always emitted. Calibration, validation,
+candidate selection, and the certified modeled-worker denominator use
+analytic probabilities only—never realized status indicators or their finite
+grid average. Distributional treatment is required for nondegenerate
+coverage/status uncertainty that can change top-35 membership. The fixed
+correction draw grid is `draw_index = 0..19`.
+
+The draw identity is the `substantive_model_sha256` defined in §6.2 and
+§10.2. It binds only model-affecting micro inputs, legal/crosswalk/rule bytes,
+candidate/selection/draw laws, selected parameters, and the cell-scoped
+fit/selection target identity. It does not bind a whole source-document
+digest, held-out or zero-weight value, full target-artifact digest,
+vintage-1 byte, evaluation registration, incident, output path, or full
+evaluation provenance. Those remain bound by the separate
+`evaluation_provenance_sha256`. This separation is normative: an
+evaluation-only byte may change a diagnostic/report identity but may not
+reseed a correction.
 
 The namespace input is the exact ordered tuple
 
 ```text
 (
   "covered_earnings.v1",
-  correction_version,
+  substantive_model_sha256,
   stable_person_id,
   calendar_year,
   coverage_state_group_id,
@@ -693,10 +896,13 @@ RNG are forbidden.
 Correction draws consume no projection, mortality, claiming, marriage, or
 other model RNG stream. Calibration and selection use analytic conditional
 means and analytic worker probabilities only; no capped quantity or
-finite-draw fraction is a fitting target. The same correction draw feeds both consumers. For
+finite-draw fraction is a fitting target. The same correction draw feeds both
+consumers. For
 nonlinear career outcomes, each projection draw is crossed with all 20
 correction draws; top-35 selection, AIME, PIA, and benefit outputs are
-computed within each complete career draw before reduction. Computing
+computed within each complete career draw before reduction. Before those
+nonlinearities, every structural gap is derived component-wise after the
+operative-claim-year cutoff inside that same career draw. Computing
 `PIA(expected career)` and calling it `expected PIA` is forbidden.
 
 The registered projection grid is the ordered `projection_draw_index =
@@ -730,11 +936,14 @@ not a confidence interval. Failure blocks correction-model eligibility; it
 cannot trigger draw shopping.
 
 `draw_spec.v1` has exactly `schema_version`, `draw_indices`,
-`namespace_fields`, `generator`, `cdf_order`, `dependence_law`,
-`metric_unit_families`, `stability_tests`, and `forbidden_rng_streams`.
+`substantive_identity_field`, `namespace_fields`, `generator`, `cdf_order`,
+`dependence_law`, `metric_unit_families`, `stability_tests`, and
+`forbidden_rng_streams`.
 The schema literal is `draw_spec.v1`; indices are the ordered integers
-0..19; namespace fields are the exact tuple order above; generator is the
-literal SHA-256 midpoint law above; CDF order is the four-status array;
+0..19; `substantive_identity_field` is the literal
+`substantive_model_sha256`; namespace fields are the exact tuple order above;
+generator is the literal SHA-256 midpoint law above; CDF order is the
+four-status array;
 dependence law is the §3.1 joint-enumeration law plus conditional
 between-group and between-year independence; metric families and stability
 tests are the three exact rules above expanded over every required metric in
@@ -746,15 +955,33 @@ Canonical input sorting, fixed key order, fixed reduction order, canonical
 finite JSON, and the hash generator above make byte-identical replay and
 row-order invariance hard gates.
 
-The registered replay inputs are exactly: each source's captured physical
-order; every source row array reversed; and every source row array ordered by
-descending SHA-256 of its canonical stable-key bytes, ties by ascending
-stable key. Two fresh in-memory executions of each permutation must yield the
-same canonical substantive model and ledger hashes, and all three
-permutations must match. G14 separately multiplies every model weight by the
-exact binary64 value `7.0`; fitted parameters, predictions, losses, selected
-candidate, and substantive model hash must be byte-identical. Runtime and
-incident metadata are excluded, as stated in G10.
+`replay_specs.v1` freezes exactly three source orders and six comparisons.
+The source orders are captured physical order (`P`), every registered source
+row array reversed (`R`), and every source row array ordered by descending
+SHA-256 of canonical stable-key bytes with ascending stable-key ties (`H`).
+Each order runs twice in a fresh optimizer/module state, producing
+`P1,P2,R1,R2,H1,H2`. The exact comparison order is:
+
+```json
+[
+  ["replay:P1:P2","P1","P2"],
+  ["replay:R1:R2","R1","R2"],
+  ["replay:H1:H2","H1","H2"],
+  ["order:P1:R1","P1","R1"],
+  ["order:P1:H1","P1","H1"],
+  ["order:R1:H1","R1","H1"]
+]
+```
+
+Every pair must byte-match the full fit/selection bundle, substantive model
+hash, expected-ledger identity, and all 400 realized-ledger identities.
+Exactly six result rows are required; an empty, partial, duplicated, or
+reordered registry fails G10. G14 separately performs a trusted second
+fit/selection execution after multiplying every model weight by the exact
+binary64 value `7.0`; all parameter bits, predictions, losses, candidate
+dispositions, selection, and substantive model hash must match. Runtime,
+evaluation-only provenance, and incident metadata are excluded from both
+substantive comparisons.
 
 ## 6. New immutable calibration-target vintage
 
