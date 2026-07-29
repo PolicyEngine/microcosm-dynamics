@@ -2992,9 +2992,12 @@ predecessor report, vintage-1 values, every `before_context` block, the
 current output, runner IPC, and every precomputed earnings-dependent benefit
 or revenue table are forbidden source kinds and have zero broker grants.
 
-For a corrected atomic-ledger source, `value_fields` may name a direct
-registered `ledger_row_schema_specs` field or one of exactly four flattened
-literals
+For a corrected atomic-ledger source, every `value_fields` member must occur
+in the coordinator's independently reconstructed
+`earnings_consumer_dependency_specs.allowed_corrected_ledger_fields`;
+`proxy_labor_income_raw` and every legacy field are absent from that closed
+array. An admitted member may name a direct registered
+`ledger_row_schema_specs` field or one of exactly four flattened literals
 `status_probability::covered_wage`,
 `status_probability::covered_self_employment`,
 `status_probability::noncovered`, and
