@@ -12,13 +12,18 @@ registration, fitting, evaluation, or publication work is authorized.
 - Verified the requested starting point: `8537a04`.
 - Recorded all round-3 residuals as required work: findings 1–6, the five
   additional defects, and the §12 deviation-disclosure gap.
-- Began a section-by-section consistency audit of the design contract.
+- Replaced the declared-formula boundary with a coordinator-owned typed DAG:
+  closed source kinds, frozen node grammar, exact numeric/stream laws,
+  complete root evaluation, runner byte comparison, G15 isolation, and G22
+  rejection.
+- Removed §12's post-exposure same-output fresh-registration exception so the
+  context ceremony imports §10.3–§10.5 without weakening.
+- Began a section-by-section consistency audit of the remaining contract.
 
 ## Next
 
-1. Specify a coordinator-owned, typed, frozen evaluator that independently
-   computes every certified numeric output and rejects runner disagreement.
-2. Close the identity/noninterference, sibling-dependence, G14, microfact,
+1. Close the identity/noninterference and sibling-dependence residuals.
+2. Close G14, microfact,
    support-schema, and 2013-coordinate residuals.
 3. Reconcile all hash names, RNG authority, suppression/cardinality rules,
    eligibility phases, ceremony text, and deviations.

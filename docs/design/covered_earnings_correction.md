@@ -336,7 +336,9 @@ the complete unsplit 2015–2022 revenue slices under
 `(projection_draw, correction_draw, person, year)` in their intersection,
 base component bytes are identical. A benefit gap row additionally keys
 `operative_claim_year` and `career_variant_id`, binds its adjacent base-row
-hashes, and is never reusable across claim contexts. A career-only
+hashes, and is never reusable across claim contexts. Consumers receive only
+the coordinator-evaluated typed root streams and hashes in §8.1; a
+runner-produced aggregate table has no consumer authority. A career-only
 correction, revenue-only correction, omitted opening-backfill/difficult row,
 self-shrunk support set, or independently sampled pair fails G01/G08/G22.
 
@@ -2447,6 +2449,157 @@ earnings-independent leaf may bypass that dominator. Raw proxy and legacy
 first-estimates numbers are permitted only in the typed `before_context`
 block and are forbidden as corrected operands.
 
+Dependency declaration is not numeric authority. The separately frozen
+`trusted_consumer_evaluation_specs.v1` is the coordinator's only executable
+consumer grammar. It has exactly `schema_version`, `value_type_specs`,
+`unit_algebra_specs`, `source_stream_specs`, `operation_specs`,
+`graph_nodes`, `metric_roots`, `canonical_stream_law`, `numeric_law`, and
+`failure_disposition`. The coordinator independently reconstructs the
+complete root domain from the final-metric inventory above, the Stage A–D
+benefit domain, the revenue domain, and every corrected model-metric,
+pairing, and comparison domain. A configured count, root ID, graph hash, or
+domain hash is only a comparand. Missing, extra, duplicated, reordered, or
+unreachable roots or nodes abort registration; no configured graph may
+define a smaller output surface.
+
+Each `source_stream_specs` row has exactly `source_stream_id`, `source_kind`,
+`authority_input_id`, `authority_object_id`, `key_fields`, `value_fields`,
+`value_types`, `units`, `domain_derivation_id`, `content_binding_id`, and
+`dependency_class`. The three field arrays are nonempty, equal-length, and
+positionally typed. `source_kind` is exactly one of
+`corrected_expected_ledger | corrected_realized_ledger |
+claim_context_gap | correction_bound_earnings_independent_input |
+registered_legal_rule`; `dependency_class` is
+`corrected_earnings | earnings_independent`. A `content_binding_id` is a
+foreign key to a coordinator-recomputed complete ledger, gap, primitive-input,
+or legal-table stream identity. It is never a path, JSON pointer,
+runner-supplied digest, callback, or precomputed consumer result.
+`correction_bound_earnings_independent_input` is admitted only after the
+complete static dependency graph proves that the selected primitive cannot
+transitively depend on earnings. The first-estimates primary or sidecar,
+predecessor report, vintage-1 values, every `before_context` block, the
+current output, runner IPC, and every precomputed earnings-dependent benefit
+or revenue table are forbidden source kinds and have zero broker grants.
+
+`value_type_specs` freezes only `rational | json_integer | boolean | enum |
+summary_binary64`. A rational uses §3.1's reduced
+`{"numerator":<integer>,"denominator":<positive integer>}` form; a finite
+binary64 source value is decoded to its exact dyadic rational before
+arithmetic. A summary value has exactly `observation_count`,
+`mean_ieee754_binary64_hex`, and `sample_sd_ieee754_binary64_hex`.
+The latter two are lowercase 16-hex-digit finite binary64 encodings.
+Primary decimal `mean` and `sample_sd` values must round-trip to those exact
+bits. Negative zero is canonicalized to positive zero. `unit_algebra_specs`
+is the complete frozen array of permitted
+`(operation,left_unit,right_unit,result_unit)` tuples. Sum, difference,
+minimum, maximum, comparison, and choose branches require equal units;
+product and ratio must resolve exactly one registered unit-algebra row.
+
+`graph_nodes` is a unique topological array. Every input-node reference must
+point to an earlier row, and every row must be in the transitive closure of at
+least one independently derived metric root. Every node has exactly
+`node_id`, `op`, `output_key_fields`, `output_value_type`, and `output_unit`,
+plus only the following operation-specific keys:
+
+| `op` | Additional exact keys and law |
+|---|---|
+| `select` | `source_stream_id`, `value_field`. The source row already is the complete domain-scoped projection; no opaque selector or value-dependent filter exists. |
+| `exact_lookup` | `input_node_id`, `table_source_stream_id`, `input_lookup_key_fields`, `table_lookup_key_fields`, `table_value_field`. The registered table key is unique and lookup is total over the independently derived input domain. |
+| `same_key_sum`, `same_key_difference`, `same_key_product`, `same_key_min`, `same_key_max` | `left_node_id`, `right_node_id`. Both complete ordered key streams must be byte-identical before the exact operation. |
+| `same_key_ratio_positive` | `numerator_node_id`, `denominator_node_id`, `denominator_rule`, with literal rule `strictly_positive`; key streams must be identical. |
+| `same_key_compare` | `left_node_id`, `right_node_id`, `comparator`, where comparator is `lt \| le \| eq \| ge \| gt`; key streams must be identical. |
+| `same_key_choose` | `condition_node_id`, `true_node_id`, `false_node_id`; all key streams are identical and the two value branches have identical type and unit. |
+| `group_sum` | `input_node_id`, `group_key_fields`, `member_order_fields`, `output_domain_id`. Group keys and complete membership are independently derived; members use canonical stable-key order. |
+| `partition_top_k_sum` | `value_node_id`, `rank_node_id`, `partition_key_fields`, `k_rule_id`, `direction`, `tie_break_key_fields`, `short_partition_rule`, `output_domain_id`. Direction is `descending`; the registered top-35 rule supplies \(k=35\); ties use the complete stable career key; and short-career treatment is rule-derived. |
+| `legal_round` | `input_node_id`, `legal_rounding_rule_id`; the rule is an exact foreign key into a registered effective-year legal table. |
+| `draw_mean_sample_sd` | `input_node_id`, `within_draw_key_fields`, `reduction_draw_fields`, `draw_reduction_id`, `output_domain_id`; the reduction ID is one of §5.4's frozen laws. |
+
+There is no generic `args`, `parameters`, literal-number, formula-string,
+`eval`, callback, dynamically resolved pointer, implementation default,
+generic benefit-assembler node, predecessor-result lookup, or unregistered
+operation. Constants enter only through coordinator-read registered legal
+tables. This finite algebra must express wage/SE grouping and caps, top-35
+selection, AIME, bend-point/PIA and claim adjustments, insured-status and
+claim predicates, weighted benefit/revenue counts and amounts, contributions,
+ratios, and draw reductions. If a required intermediate cannot be expressed
+by these nodes, registration fails and a newly ratified evaluator version is
+required; runner code may not fill the gap.
+
+Every same-key operation requires exact equality of complete canonical key
+streams. `exact_lookup` rejects a missing or duplicate table key.
+`group_sum` uses the independently reconstructed output domain and cannot
+drop an empty or difficult group. Top-35 selection occurs inside each
+complete projection×correction×operative-claim×career draw before reduction,
+with exact-value descending rank and stable-key ties. Arithmetic and grouped
+accumulation are exact rational operations. The sample mean is exact
+\(\sum x/n\); sample variance is exact
+\(\sum(x-\bar{x})^2/(n-1)\); only its square root is correctly rounded once
+to nearest-even binary64. Legal rounding occurs only at a `legal_round`
+node. A wrong type/unit/domain, missing/extra/duplicate key, nonpositive
+ratio denominator, nonfinite conversion, or unavailable required input
+retains the independently required coordinate with its registered failure
+reason; it never suppresses a row.
+
+Each `metric_roots` row has exactly `model_metric_id`, `root_node_id`,
+`expected_domain_id`, `key_fields`, `value_type`, `unit`, `draw_reduction`,
+and `dependency_dominator_id`. Root keys include `year_source_class` and,
+where the source class is `claim_specific_boundary_gap`, the nonnull
+`operative_claim_year` and `career_variant_id`. They therefore cannot alias
+an unconditional 2013 result. Each independently inventoried metric resolves
+exactly one root, and every graph node is reachable from that root array.
+
+`canonical_stream_law` is the literal
+`independent-key-order-lf-canonical-typed-value-v1`. Every source, node, and
+root stream is the concatenation, in its independently derived key order, of
+one §10.1 canonical JSON line having exactly one of:
+
+```json
+{"key":[...],"value":{"state":"value","value_type":"<literal>","value":{}}}
+{"key":[...],"value":{"state":"unavailable","reason_code":"<registered literal>"}}
+```
+
+The first row's `value` member is the exact scalar or summary encoding
+declared by its value type, not necessarily a JSON object. Row count,
+ordered-keyset SHA-256, and complete value-stream SHA-256 are recorded for
+every stream. `numeric_law` is the literal
+`exact-rational-until-registered-round-or-summary-v1`, and
+`failure_disposition` is `gate_fail`.
+
+The coordinator—not the runner—evaluates this graph. It materializes and
+hash-locks all permitted source streams, evaluates every node and root in
+topological order, and constructs every corrected downstream/context numeric
+row from those trusted root streams. A runner may submit only a complete
+`consumer_result_proposal.v1` containing root coordinates, typed value bits
+or unavailable reasons, and no graph, source, or primary-field authority.
+The coordinator normalizes that packet and exact-compares it with its roots.
+`trusted_consumer_evaluation.v1` has exactly `schema_version`,
+`graph_specs_sha256`, `source_stream_results`, `node_results`,
+`metric_root_results`, `runner_comparison`, and `status`.
+Its source rows have exactly `source_stream_id`, `row_count`,
+`keyset_sha256`, `value_stream_sha256`, `status`, and `reason_code`; node
+rows replace the ID with `node_id` and additionally carry the ordered
+`predecessor_value_stream_sha256s`; root rows replace it with
+`model_metric_id`, `root_node_id`. Passing rows have null reason; failing
+rows retain actual counts and hashes.
+`runner_comparison` has exactly `runner_packet_sha256`,
+`normalized_runner_metric_root_streams_sha256`,
+`trusted_metric_root_streams_sha256`, `missing_row_count`,
+`extra_row_count`, `value_mismatch_count`, and `status`.
+All counts are actual nonnegative JSON integers. Overall status passes only
+when graph/source/node/root domains and hashes are exact, forbidden-source
+grants are zero, every root was coordinator-evaluated, all three mismatch
+counts are zero, and the two complete root-stream hashes match.
+
+Runner-proposed bytes never populate a corrected result. A runner that
+declares a corrected operand but returns a pinned first-estimates number
+therefore produces a positive value mismatch at the first differing root and
+fails G22; even if a value happens to coincide, the published byte is still
+the independently coordinator-derived byte and no legacy path is present.
+Immediately before final rename, the trusted validator reevaluates the whole
+DAG and bit-compares every primary corrected value and every recorded
+source/node/root hash. A result byte that is not the trusted root byte cannot
+be certified.
+
 `gate_specs.v2` is the ordered 22-object registry corresponding positionally
 to the list below. Its literal IDs are `G01` through `G22`; each object has
 exactly `gate_id`, `normative_statement`, `evidence_selector`, `comparator`,
@@ -2527,8 +2680,11 @@ is conjunctive. One violating record is failure:
     byte-identical.
 22. Every final corrected earnings-dependent metric in the complete
     independently reconstructed benefit, revenue, pairing, and comparison
-    domains is transitively dominated by corrected ledger fields; raw proxy
-    or legacy numeric earnings appear only in `before_context`. Every
+    domains is transitively dominated by corrected ledger fields and is
+    independently evaluated by the trusted typed DAG above. Raw proxy or
+    legacy numeric earnings appear only in `before_context`; the runner's
+    complete proposed root stream exact-matches the coordinator's complete
+    root stream with zero missing, extra, or value-mismatched rows. Every
     certified modeled-worker denominator uses
     `modeled_covered_worker_probability_analytic`, never a draw indicator or
     finite-grid fraction.
@@ -2617,7 +2773,10 @@ unproved packet therefore fails even if its output bundle happens to match.
   "subprocess_denied",
   "late_open_and_import_denied",
   "path_and_content_alias_denied",
-  "fit_heldout_worker_lifecycle_nonoverlap"
+  "fit_heldout_worker_lifecycle_nonoverlap",
+  "trusted_consumer_evaluator_mount_allowlist",
+  "runner_proposal_one_way_ipc",
+  "trusted_evaluator_context_decoder_lifecycle_nonoverlap"
 ]
 ```
 
@@ -2630,22 +2789,30 @@ are closed, and network, subprocess, late import, `open`, `os.open`,
 `pathlib`, symlink, hardlink, and inherited-descriptor bypasses are denied.
 Zero-weight diagnostics run separately; the held-out evaluator is created
 only after all replay/rescale/fit-capable workers are destroyed. An
-unavailable isolation or audit backend aborts registration.
+unavailable isolation or audit backend aborts registration. The trusted
+consumer evaluator receives only the five typed §8.1 stream kinds; proposal
+IPC is runner→coordinator and cannot carry source, graph, or result authority
+back to the runner; and the evaluator's proposal channel, process, mounts, and
+descriptors are destroyed before a context decoder can exist.
 
 `g15_broker_sandbox_evidence.v1` has exactly `schema_version`,
 `expected_broker_grant_registry_sha256`, `actual_broker_grant_ledger_sha256`,
 `registered_ipc_schemas_sha256`, `actual_ipc_trace_sha256`,
 `physical_source_structure_projection_sha256`,
+`trusted_consumer_graph_specs_sha256`,
+`trusted_consumer_root_streams_sha256`,
 `expected_worker_lifecycle_sha256`, `actual_worker_lifecycle_sha256`,
 `isolation_results_sha256`, and `forbidden_access_count`. The first two
 hashes compare the complete independently derived grant arrays, the next two
 compare every typed worker/coordinator message and direction, the structural
 hash is the complete value-blind ancestry/alias/arithmetic projection above,
-the lifecycle hashes bind creation/destruction and mount epochs, and the
+the next two hashes bind the complete typed consumer graph and actual trusted
+root streams, the lifecycle hashes bind creation/destruction and mount epochs, and the
 last value is the actual aggregate nonnegative count. G15 passes iff both
-grant arrays and both IPC/lifecycle traces exact-match, all 12 isolation rows
-pass, the structural projection independently recomputes, and forbidden
-count is zero. Unequal hashes/counts remain serializable failure evidence.
+grant arrays and both IPC/lifecycle traces exact-match, all 15 isolation rows
+pass, both trusted-consumer hashes and the structural projection independently
+recompute, and forbidden count is zero. Unequal hashes/counts remain
+serializable failure evidence.
 No mutable token, value, full-source digest, or evaluation-provenance hash is
 in this gate evidence object.
 
@@ -2674,7 +2841,7 @@ The executable selector/comparator map is:
 | G19 | `selected_identification_and_candidate_dispositions` | `all_records_true / true` |
 | G20 | `draw_prefix_stability_results` | `all_tolerances_pass / true` |
 | G21 | `heldout_noninterference_pre_g21_equality` | `acyclic_prebundle_mutation_domain_and_provenance_predicate / true` |
-| G22 | `complete_consumer_dependency_dominator_results` | `all_corrected_paths_and_analytic_denominators / true` |
+| G22 | `complete_consumer_dependency_and_trusted_evaluation_results` | `exact_paths_analytic_denominators_and_result_bytes / true` |
 
 The selector strings are reserved result-builder entry points; each emits a
 canonical evidence object whose SHA-256 is recorded in the hard-gate row.
@@ -2743,7 +2910,10 @@ combination has a row even when its count is zero.
 `population_selector`, weight, roles, and rate fields are literal references
 into registered input/crosswalk objects, not implementation defaults.
 Proxy-baseline fields are permitted only in the `before_context` family.
-Statistics use exact rational
+Every corrected `source_fields` reference resolves to exactly one §8.1
+trusted metric root; the coordinator constructs the result from that root and
+bit-compares the published decimal with the root's summary bits. A runner
+proposal is only mismatch evidence and never a result source. Statistics use exact rational
 accumulation and stable-key weighted algorithms. `draw_reduction` is
 `analytic_linear_within_projection_draw` for a linear annual quantity,
 `analytic_joint_state_within_projection_draw` for an annual composition,
@@ -3066,7 +3236,8 @@ The sidecar schema is
 `configuration_sha256`, `implementation_commit`, `invocation`, `runtime`,
 `attempt_evidence`, `input_hashes`, `dependency_versions`,
 `substantive_model_sha256`, `evaluation_provenance_sha256`, and
-`selected_ledger_identity_sha256`.
+`selected_ledger_identity_sha256`,
+`trusted_consumer_evaluation_sha256`.
 `artifact_path` is the exact primary path; registration, commit, invocation,
 and configuration hash equal the primary/configuration. `runtime` and
 `attempt_evidence` deep-equal the corresponding primary objects.
@@ -3081,9 +3252,9 @@ provenance and do not enter the substantive model identity.
 `environment_spec.package_order` expansion; each row has exactly nonempty
 `name`, `version`, and `source`, all strings, and version/source exact-match
 the registered environment lock. `substantive_model_sha256` and the selected
-ledger hash are null exactly for the no-eligible branch and otherwise equal
-the primary; `evaluation_provenance_sha256` is always nonnull and equals the
-primary's full evaluation-provenance hash.
+ledger and trusted-evaluation hashes are null exactly for the no-eligible
+branch and otherwise equal the primary; `evaluation_provenance_sha256` is
+always nonnull and equals the primary's full evaluation-provenance hash.
 
 The sidecar is canonical JSON under the function below and contains no
 primary-file digest. It is constructed first in memory; the primary then
@@ -3132,15 +3303,16 @@ exactly this top-level key set:
 34. `consumer_domain_derivation_specs`;
 35. `benefit_gap_derivation_specs`;
 36. `earnings_consumer_dependency_specs`;
-37. `gate_specs`;
-38. `rng_access_specs`;
-39. `weight_rescale_specs`;
-40. `filesystem_isolation_specs`;
-41. `heldout_noninterference_specs`;
-42. `evaluation_specs`;
-43. `sensitivity_specs`;
-44. `attempt_history`; and
-45. `output_paths`.
+37. `trusted_consumer_evaluation_specs`;
+38. `gate_specs`;
+39. `rng_access_specs`;
+40. `weight_rescale_specs`;
+41. `filesystem_isolation_specs`;
+42. `heldout_noninterference_specs`;
+43. `evaluation_specs`;
+44. `sensitivity_specs`;
+45. `attempt_history`; and
+46. `output_paths`.
 
 The nested schemas are exact:
 
@@ -3413,6 +3585,9 @@ The isolated runner performs, in order:
    physical-alias closure, but it never decodes or releases a 15-series value
    or computes a vintage-1 comparison; only §12 may do that. Complete target
    diagnostics, 10-versus-20 draw checks, downstream reductions, and Option C;
+   independently materialize every trusted evaluator source, execute and lock
+   every §8.1 DAG node/root, normalize and compare the complete runner
+   proposal, and construct corrected result numbers only from trusted roots;
    finalize G11 from the whole-run provider ledger and G15 from the complete
    lifecycle audit; then run all 22 gates using locked G10/G14 and G21
    preimage evidence and construct the complete noninterference bundle.
@@ -3632,7 +3807,7 @@ G01, G10, G12, G18, and G22 recompute the entire nested identity.
 `lock_event`, `evaluation_completion`,
 `hard_gate_results`, `replay_results`, `rng_access_results`,
 `weight_rescale_results`, `isolation_results`,
-`noninterference_results`, `support_results`,
+`noninterference_results`, `trusted_consumer_evaluation`, `support_results`,
 `distribution_results`, `downstream_results`, `sensitivity_results`,
 `before_context_results`,
 `target_use_trace`, and `correction_model_eligibility`.
@@ -3770,7 +3945,7 @@ Their schemas and completeness laws are:
     expectations, the trace proves every element's exact multiplier bits,
     and the two output bundles are equal; it is `fail` otherwise. All actual
     unequal hashes remain mandatory failure evidence.
-  - `isolation_results` has exactly the 12
+  - `isolation_results` has exactly the 15
     `filesystem_isolation_specs.v1` assertion rows in order, each with exactly
     `assertion_id`, `worker_id`, `expected_grant_sha256`,
     `actual_grant_sha256`, `forbidden_access_count`, `audit_trace_sha256`,
@@ -3803,6 +3978,16 @@ Their schemas and completeness laws are:
     acyclic evidence object's inequality predicate; neither complete
     provenance object can enter a substantive bundle, eligibility object, or
     other gate.
+  - `trusted_consumer_evaluation` is the exact
+    `trusted_consumer_evaluation.v1` object in §8.1. Its graph-spec hash
+    exact-matches the registered deep copy; source, node, and root rows have
+    the complete independently derived cardinality and order; the runner
+    comparison retains all actual mismatch counts and hashes; and G22 passes
+    this conjunct only when its overall status is `pass`. The coordinator
+    constructs every corrected distribution/downstream/sensitivity numeric
+    field from the matching trusted root summary and bit-compares it again
+    immediately before publication. A selected correction can never use the
+    `not_evaluated` tag or an empty stream.
   - `support_results` is independently expanded by projection draw,
     consumer, calendar year, Stage disposition, operative claim year, and
     career variant from `consumer_domain_derivation_specs.v1`. Each row has
@@ -3903,10 +4088,11 @@ Their schemas and completeness laws are:
 `substantive_model_sha256`, `evaluation_provenance_sha256`,
 `ledger_identity_sha256`, `expected_ledger_streams_sha256`,
 `realized_ledger_streams_sha256`, `physical_alias_closure_sha256`, and
-`claim_context_gap_streams_sha256`. Configuration, sidecar,
+`claim_context_gap_streams_sha256`,
+`trusted_consumer_evaluation_sha256`. Configuration, sidecar,
 evaluation-provenance, and physical-alias hashes are always 64 lowercase hex;
 substantive-model, ledger, expected/realized-stream, and claim-gap hashes are
-null exactly in the no-eligible branch.
+null exactly in the no-eligible branch, as is the trusted-evaluation hash.
 `substantive_model_sha256` otherwise equals the selected correction;
 `evaluation_provenance_sha256` always hashes only
 `evaluation_binding.full_calibration_evaluation_provenance` under the exact
@@ -3919,7 +4105,9 @@ the corresponding complete canonical arrays;
 complete `physical_source_cell_specs`, `official_source_alias_specs`, and
 `official_source_arithmetic_rule_specs`; and
 `claim_context_gap_streams_sha256` hashes the complete canonical
-`claim_context_gap_identity`. The primary records
+`claim_context_gap_identity`;
+`trusted_consumer_evaluation_sha256` hashes the complete canonical
+`results.trusted_consumer_evaluation`. The primary records
 SHA-256 of the exact sidecar bytes. Results validation checks array positions
 before lookup, recomputes selection, losses, gates, hashes, and status, and
 rejects every missing, extra, duplicate, reordered, wrong-branch, wrong-type,
@@ -4306,6 +4494,12 @@ structurally out of the fitting sample because the 2015–2022 cells have
 already been viewed. That is an honesty clarification, not an additional
 deviation.
 
+No post-exposure context fresh-registration exception is ratified. The
+previously considered same-output-version exception would have weakened
+§10.5 and required disclosure as a real ceremony deviation; §12 instead
+imports §10.3–§10.5 unchanged, including
+`heldout_vintage_tainted`. There is therefore no such deviation in v1.
+
 ## 12. What this unlocks
 
 1. **Post-correction context evidence.** After a `pass` correction report
@@ -4325,7 +4519,8 @@ deviation.
    `predecessor_comparison_specs`, `successor_comparison_specs`,
    `mismatch_transformation_specs`,
    `consumer_domain_derivation_specs`, `benefit_gap_derivation_specs`,
-   `earnings_consumer_dependency_specs`, `physical_source_cell_specs`,
+   `earnings_consumer_dependency_specs`,
+   `trusted_consumer_evaluation_specs`, `physical_source_cell_specs`,
    `official_source_alias_specs`, `official_source_arithmetic_rule_specs`,
    `analytic_worker_selector`,
    `context_domain_specs`, `attempt_history`, and `output_paths`.
@@ -4373,8 +4568,9 @@ deviation.
    `evaluation_provenance_sha256`, `ledger_identity_sha256`,
    `ledger_row_schema_sha256`, `support_keyset_sha256`,
    `expected_ledger_streams_sha256`, `realized_ledger_streams_sha256`,
-   `physical_alias_closure_sha256`, and
-   `claim_context_gap_streams_sha256`. `correction_status` is literal `pass`.
+   `physical_alias_closure_sha256`, `claim_context_gap_streams_sha256`, and
+   `trusted_consumer_evaluation_sha256`. `correction_status` is literal
+   `pass`.
    `publication_commit` is the merged publication commit, exists, and is an
    ancestor of context `HEAD`; both paths are tracked at that commit and
    `HEAD`, their Git blob OIDs exact-match the configured OIDs, and
@@ -4405,43 +4601,71 @@ deviation.
    registries, and the positional §9.2 transformation.
    Every independently extracted predecessor
    `legacy_model_metric_specs` row has exactly `model_metric_id`, `operands`,
-   `operation`, and `unit`. Each position produces one
-   `corrected_model_metric_specs.v1` row with exactly
-   `model_metric_id`, `predecessor_model_metric_id`, `operands`, `operation`,
-   `unit`, `draw_reduction`, and `dependency_dominator_id`.
+   `operation`, and `unit`. Those strings and selectors are validated and
+   retained as immutable `before_context` evidence; they are never executed
+   to produce a corrected number. Each position instead produces one
+   `corrected_model_metric_specs.v2` row with exactly
+   `model_metric_id`, `predecessor_model_metric_id`, `root_node_id`,
+   `result_key_fields`, `result_value_type`, `unit`, `draw_reduction`, and
+   `dependency_dominator_id`.
    `predecessor_model_metric_id` is the extracted ID;
    `model_metric_id` is that ID plus literal
    `:covered_earnings_corrected_v1`; and `unit` exact-copies the predecessor.
-   `operands` is an ordered nonempty array whose rows have exactly
-   `operand_id`, `selector_id`, `source_kind`, `source_field`, `unit`, and
-   `dependency_path_sha256`; `source_kind` is
-   `corrected_ledger | earnings_independent`, corrected-ledger fields must be
-   in G22's allowlist, and every path hash is independently recomputed.
-   `operation` has exactly `operation_id`, `formula`, and `operand_order`;
-   `operand_order` exact-matches the operand IDs and `formula` is a registered
-   expression in the closed arithmetic/benefit-assembly grammar, not
-   executable code or a predecessor result lookup.
-   The coordinator expands the full predecessor dependency graph. Every
+   The remaining fields exact-match the unique row in
+   `trusted_consumer_evaluation_specs.v1.metric_roots`. The root's complete
+   typed DAG—not a formula string, selector callback, or runner number—is the
+   operative corrected definition. Its result keys include
+   `year_source_class` and include `operative_claim_year` plus
+   `career_variant_id` for every 2013 claim-specific benefit coordinate.
+
+   The coordinator expands the full predecessor dependency graph before
+   deriving those roots. Every
    selector or intermediate whose transitive closure reaches a raw/proxy or
    legacy earnings operand—including benefit amounts, beneficiary or award
    counts, insured-status results, claim outputs, and other non-earnings-
-   valued outputs affected by earnings—is replaced and recomputed from
-   permitted corrected-ledger operands under the registered `operation`.
-   Only a leaf proven earnings-independent by the complete dependency graph
-   may be copied. `draw_reduction` is the unique §5.4 corrected law and
-   `dependency_dominator_id` is the matching G22 dominator row. No
-   predecessor report value, transitively earnings-dependent selector, or
-   legacy numeric intermediate is a corrected operand.
+   valued outputs affected by earnings—is represented by a root whose source
+   closure contains only the five §8.1 source kinds. A leaf proven
+   earnings-independent by the complete graph is reread from the
+   correction-bound primitive input; it is not copied from a predecessor
+   result. `draw_reduction` is the unique §5.4 corrected law and
+   `dependency_dominator_id` is the matching G22 root. No predecessor report
+   value, transitively earnings-dependent selector, legacy numeric
+   intermediate, or runner-proposed value is a corrected operand.
+
+   Before any decoded first-estimates, predecessor-result, vintage-1, or
+   `before_context` value is granted, the coordinator independently
+   rematerializes the correction ledger and claim-gap streams, materializes
+   every evaluator source relation, executes every node/root, records
+   `trusted_consumer_evaluation.v1`, and hash-locks the complete trusted root
+   stream. The evaluator code is part of the coordinator's pinned
+   implementation tree; its mount/descriptor allowlist contains no context
+   bytes, runner output, dynamic import, or extension operation. The runner's
+   complete proposal is normalized and compared, then its process and
+   descriptors are destroyed. Context decoding is a separately minted,
+   one-way capability. Corrected result JSON is later populated only from the
+   locked trusted summaries and is bit-compared with them immediately before
+   rename.
+
    `successor_pairings` and `successor_comparison_specs` are generated from
    the independently extracted predecessor arrays, point to the corrected
-   metric IDs in their model-side fields, replace every model-side
-   operand/formula reference with the corresponding successor `operands` and
-   `operation` IDs, apply §9.2 to their mismatch arrays, and deep-copy every
-   other field. The legacy arrays remain immutable `before_context` evidence.
+   metric IDs and trusted `root_node_id` values in their model-side fields,
+   and apply §9.2 to their mismatch arrays while deep-copying every other
+   unaffected field. A corrected model-side ratio is a
+   `same_key_ratio_positive` root, not a free formula. After the corrected
+   root stream is locked, the only context comparison operations are the
+   predecessor registry's exact literals
+   `model_value_over_official_value` and
+   `model_intensity_over_official_intensity`: the coordinator respectively
+   computes \(M/O\) or \((M_n/M_d)/(O_n/O_d)\) at identical keys, requires
+   every denominator strictly positive, and then applies the registered
+   draw reduction. No other operation, Cartesian combination, formula, or
+   callback is accepted. The legacy arrays remain immutable
+   `before_context` evidence.
    `analytic_worker_selector` is the sole literal
    `modeled_covered_worker_probability_analytic`; a draw indicator or
    20-draw grid fraction is rejected. The three domain/gap/dependency specs
-   and all three physical-source/alias/arithmetic registries exact-match the correction
+   the trusted evaluator specs, and all three
+   physical-source/alias/arithmetic registries exact-match the correction
    configuration.
 
    `mismatch_transformation_specs.v1` has exactly `schema_version`,
@@ -4523,38 +4747,40 @@ deviation.
    `runs/covered_earnings_context_report_retry_authority_`,
    `runs/covered_earnings_context_report_retry_`, and
    `runs/covered_earnings_context_report_fresh_registration_`.
-   §10.5's durable state transitions and sole normative execution law apply;
-   only the non-fitting exposure consequence below is context-specific.
+   §10.5's durable state transitions, exposure dispositions, and sole
+   normative execution law apply with no context-specific weakening.
 
    Its phases are exactly registration/pre-launch → durable claim → validate
    and rematerialize the locked correction and independently derived domains
-   → lock all corrected evidence and dependency proofs → only then grant the
-   context evaluator access to the 15 vintage-1 series → compute and publish
-   every registered row. The evaluator has no fitting, selection, model
+   → execute the trusted DAG, compare the runner proposal, and lock every
+   corrected root and dependency proof → destroy every runner proposal
+   capability → only then grant a separate context decoder access to the 15
+   vintage-1 series → compute and publish every registered row. The trusted
+   evaluator has no first-estimates, predecessor, vintage-1,
+   `before_context`, fitting, selection, model
    mutation, threshold, seed, direction-based rejection, or alternate-ledger
-   capability. It publishes every before/after diagnostic with no required
+   capability. The context decoder cannot change a locked corrected root.
+   The coordinator publishes every before/after diagnostic with no required
    direction and calls the event `structurally-out-of-fitting-sample`, never
    unseen: those 2015–2022 values have already been viewed.
 
-   For context adjudication, `exposure_state` records possible/confirmed
-   release of a decoded vintage-1/context value. It never taints the locked
-   correction or makes an already viewed value newly eligible for fitting.
-   An unchanged retry still requires §10's no-external-yield and
-   no-vintage/context-exposure receipt. If that receipt is unavailable, a
-   fresh same-output-version registration is
-   permitted when both final paths are absent even after context exposure,
-   because every corrected metric, predecessor row, transformation, and
-   output row is already complete and direction-free; the exposure and prior
-   attempt remain bound in history. A partial primary requires a new output
-   version. The exact context dispositions are
-   `same_output_version_new_registration | new_output_version`; it does not
-   use the correction-only `heldout_vintage_tainted` disposition.
+   In the imported §10.3 schemas,
+   `heldout_vintage_exposure_state`/`exposure_state` means decoded
+   vintage-1/context exposure. An unchanged retry still requires the private
+   same-process no-external-yield and no-exposure receipt. A fresh
+   same-output-version registration is allowed only when both final paths are
+   absent and exposure is `none`. Possible or confirmed exposure has
+   disposition `heldout_vintage_tainted` and is terminal for context v1; a
+   partial primary additionally requires a newly ratified output version, and
+   a complete pair is terminal. Context therefore imports §10.5 without
+   weakening it.
 
    The context primary has exactly `schema_version`, `artifact_id`,
    `registration_reference`, `configuration_echo`, `runtime_provenance`,
    `attempt_evidence`, `status`, `locked_correction`, `domain_results`,
    `corrected_metric_results`, `pairing_results`,
-   `comparison_spec_results`, `dependency_results`, `context_rows`,
+   `comparison_spec_results`, `dependency_results`,
+   `trusted_consumer_evaluation`, `context_rows`,
    `label_retirement_certificate`, `integrity`, and `certifies_nothing`.
    `schema_version` and `artifact_id` are both
    `covered_earnings_context_report.v1`; runtime and attempt evidence use
@@ -4583,25 +4809,42 @@ deviation.
    registered stratum × statistic under `domain_derivation_law`; its count
    and ordered key hash must equal
    `context_domain_specs.corrected_metric_result_domain_count` and
-   `context_domain_specs.corrected_metric_result_domain_sha256`. Its exact order is
-   corrected-metric position, ascending year with null career-year last,
+   `context_domain_specs.corrected_metric_result_domain_sha256`. Its exact
+   order is corrected-metric position, ascending year with null career-year
+   last, `year_source_class`, applicable operative-claim/career context order,
    stratum order, then statistic order. Each row has exactly
-   `model_metric_id`, `calendar_year`, `stratum_id`, `statistic`,
+   `model_metric_id`, `calendar_year`, `year_source_class`,
+   `operative_claim_year`, `career_variant_id`, `stratum_id`, `statistic`,
    `projection_draw_count`, `correction_draw_count`, `mean`, `sample_sd`,
    `unit`, `draw_reduction`, `dependency_dominator_id`, `status`, and
-   `reason_code`. Draw counts are the exact nonnegative cardinalities implied
-   by the registered reduction and cannot choose the domain. Each
+   `reason_code`. The two context coordinates are nonnull exactly for annual
+   2013 `claim_specific_boundary_gap` benefit rows and otherwise null where
+   the independent domain says not applicable. Draw counts are the exact
+   nonnegative cardinalities implied by the registered reduction and cannot
+   choose the domain. Each
    `dependency_results` row has exactly `model_metric_id`,
-   `dependency_dominator_id`,
+   `root_node_id`, `dependency_dominator_id`, `graph_sha256`,
    `forbidden_legacy_path_count`, `dependency_pathset_sha256`,
-   `analytic_denominator_trace_sha256`, and `status`. There is exactly one
+   `analytic_denominator_trace_sha256`,
+   `trusted_result_stream_sha256`, `runner_result_stream_sha256`,
+   `runner_mismatch_count`, `evaluation_trace_sha256`, and `status`. There is
+   exactly one
    dependency row per `corrected_model_metric_specs` row in identical order;
-   both IDs exact-match that spec, and every corresponding corrected result
-   exact-matches the same ID pair. The forbidden count is a nonnegative JSON
-   integer. Dependency status passes iff it is zero, the path-set hash equals
-   the independently expanded complete transitive path set, and the analytic
-   denominator trace proves the registered selector/reduction wherever
-   applicable; it fails otherwise and retains the unfavorable count/hashes.
+   all three IDs exact-match that spec/root, and every corresponding corrected
+   result exact-matches the same ID pair. Both counts are nonnegative JSON
+   integers. Dependency status passes iff both are zero, the path-set hash
+   equals the independently expanded complete transitive path set, the graph
+   and trace hashes equal the coordinator's complete evaluation, the trusted
+   and normalized runner root streams match, and the analytic-denominator
+   trace proves the registered selector/reduction wherever applicable; it
+   fails otherwise and retains the unfavorable count/hashes.
+   `trusted_consumer_evaluation` is the exact §8.1 object independently
+   recomputed in this context run. Its graph spec exact-matches the locked
+   correction configuration, its trusted root stream supplies every
+   `corrected_metric_results` numeric bit, and its runner comparison has zero
+   missing, extra, and mismatched rows on a pass. Its own integrity hash is
+   separate from the correction report's namesake input hash; both remain
+   bound.
    Separately, a passing corrected metric row has finite output numbers,
    nonnegative SD, and null reason; an unevaluable failing metric has both
    numbers null and the exact structural reason; and an empirical failing
@@ -4634,7 +4877,8 @@ deviation.
    certificate comparator.
 
    Primary `status` is `pass | gate_fail`. It is `pass` iff every domain,
-   metric, transformation, dependency, and context row passes and the
+   metric, transformation, dependency, trusted-evaluator, and context row
+   passes and the
    positive certificate below is nonnull. It is `gate_fail` iff at least one
    row fails, all reachable evidence is nevertheless serialized, and the
    certificate is null. Empirical, completeness, dependency, or
@@ -4647,20 +4891,25 @@ deviation.
    `corrected_metric_result_domain_sha256`, `context_row_domain_sha256`,
    `corrected_metric_results_sha256`, `pairing_results_sha256`,
    `comparison_spec_results_sha256`, `dependency_results_sha256`,
+   `trusted_consumer_evaluation_sha256`,
    `context_rows_sha256`, `attempt_evidence_sha256`, and
    `label_retirement_certificate_sha256`. Each is 64 lowercase hex and hashes
    the complete canonical named value, including canonical JSON null for a
    failed report's certificate. The three explicit domain hashes equal the
    corresponding `domain_results.*.actual_sha256` values; no configured
-   expected hash is substituted. It binds the exact context sidecar and all
+   expected hash is substituted.
+   `trusted_consumer_evaluation_sha256` hashes the complete canonical
+   namesake object, including actual runner mismatch evidence. It binds the
+   exact context sidecar and all
    actual result streams through §10's acyclic sidecar-first law.
 
    The context sidecar has exactly `schema_version`, `artifact_path`,
    `registration_reference`, `configuration_sha256`,
    `implementation_commit`, `invocation`, `runtime`, `attempt_evidence`,
    `input_hashes`, `dependency_versions`, `substantive_model_sha256`,
-   `evaluation_provenance_sha256`, `ledger_identity_sha256`, and
-   `context_rows_sha256`. Its schema literal is
+   `evaluation_provenance_sha256`, `ledger_identity_sha256`,
+   `trusted_consumer_evaluation_sha256`, and `context_rows_sha256`. Its schema
+   literal is
    `covered_earnings_context_environment.v1`; artifact path is the context
    primary; the three correction identities exact-match `correction_input`;
    inputs and dependencies are the complete manifest/lock expansions above;
@@ -4669,7 +4918,7 @@ deviation.
 
    On a `status: pass` result, `label_retirement_certificate` has exactly
    `status`, `correction_evaluation_path`,
-   `correction_evaluation_sha256`, `substantive_model_sha256`,
+   `primary_sha256`, `substantive_model_sha256`,
    `fit_selection_cell_identity_sha256`,
    `evaluation_provenance_sha256`,
    `correction_ledger_identity_sha256`, `context_report_schema`,
@@ -4679,9 +4928,11 @@ deviation.
    true; `context_report_schema` is the literal
    `covered_earnings_context_report.v1`; and
    `correction_ledger_identity_sha256` equals
-   `correction_input.ledger_identity_sha256`. The correction path, evaluation
-   SHA, substantive-model SHA, fit/selection identity SHA, and evaluation-
-   provenance SHA exact-match their namesake `correction_input` fields.
+   `correction_input.ledger_identity_sha256`.
+   `correction_evaluation_path` equals `correction_input.primary_path`;
+   `primary_sha256`, the substantive-model SHA, fit/selection identity SHA,
+   and evaluation-provenance SHA exact-match their namesake
+   `correction_input` fields.
    `condition_8_evidence` has exactly
    `corrected_metric_spec_domain_count`,
    `corrected_metric_spec_domain_sha256`,
@@ -4693,6 +4944,7 @@ deviation.
    `pairing_domain_sha256`, `comparison_domain_count`,
    `comparison_domain_sha256`, `successor_pairings_sha256`,
    `successor_comparison_specs_sha256`, `dependency_results_sha256`,
+   `trusted_consumer_evaluation_sha256`,
    `physical_alias_closure_sha256`, `analytic_denominator_trace_sha256`,
    `mismatch_transformation_sha256`, `context_row_domain_count`,
    `context_row_domain_sha256`, `context_row_count`, and
@@ -4706,6 +4958,9 @@ deviation.
    already bound by `correction_input`.
    `dependency_results_sha256` hashes the complete ordered result array and
    equals `integrity.dependency_results_sha256`.
+   `trusted_consumer_evaluation_sha256` equals
+   `integrity.trusted_consumer_evaluation_sha256`; the trusted root-stream
+   hash inside that object supplies every corrected result byte.
    `analytic_denominator_trace_sha256` hashes the canonical ordered array of
    every `dependency_results[*].analytic_denominator_trace_sha256` in metric
    order. `mismatch_transformation_sha256` hashes a canonical object with
