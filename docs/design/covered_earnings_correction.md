@@ -134,7 +134,7 @@ Every atomic record carries the following fields or the run aborts:
 | `status_probabilities` | Ordered four-value vector for `covered_wage`, `covered_self_employment`, `noncovered`, `unresolved`; each value is a canonical exact dyadic and the vector sums to one exactly. |
 | `status` | Deterministic class when one probability is exactly one; otherwise `modeled_distribution`. Draw rows carry one of the four realized classes. |
 | `classification_reason_codes` | Ordered, nonempty registered reason-code array. |
-| `source_provenance` | Source wave, role, job/component, `se_aggregation_group_id`, verified reference year, exact `year_source_class`, raw field IDs, unit, missing-code disposition, admissible-information date, and—on a benefit gap view—operative claim year plus adjacent base-row hashes. |
+| `source_provenance` | Source wave, role, job/component, `se_aggregation_group_id`, verified reference year, exact `year_source_class`, raw field IDs, unit, missing-code disposition, admissible-information date, and—on a benefit gap view—operative claim year, career variant, and adjacent base-row hashes. |
 | `correction_version` | Immutable `substantive_model_sha256`; evaluation-only provenance is excluded under §§5.4 and 6.2. |
 | `uncertainty_provenance` | `expected_value` or the exact §5.4 correction-draw namespace and index. |
 | `status_allocated_gain_amounts` | Object with exactly the four status keys, each holding a nonnegative rational-microdollar amount; semantic traversal uses the registered status order. |
@@ -722,11 +722,15 @@ The frozen production wave-to-reference-year map is explicit:
 The 1968 interview's reference year is 1967 and is outside the attachable
 production support. Interview waves 2015–2023 remain inventoried because
 their existence and exclusion must be auditable, but none is a direct
-production earnings source. Every production component row, support row,
-candidate basis, target selector, Option-C row, evaluation stratum, and
-result row carries the literal `year_source_class`; an all-key inventory
+production earnings source. Every year-indexed production component row,
+support row, candidate basis, target selector, Option-C row, evaluation
+stratum, and corrected result row carries the literal `year_source_class`.
+An explicitly nonannual career row carries
+`year_source_class: null`; a typed legacy `before_context` row is not
+reclassified as a production source and also carries null unless its frozen
+predecessor authority supplies an exact class. An all-key inventory
 disposition instead carries its exact three-state
-`inventory_year_disposition`. Neither may be inferred from row availability.
+`inventory_year_disposition`. No class may be inferred from row availability.
 
 The reference-year seams, not interview-year aliases, are:
 
@@ -2776,10 +2780,12 @@ reason; it never suppresses a row.
 Each `metric_roots` row has exactly `model_metric_id`, `root_node_id`,
 `expected_domain_id`, `key_fields`, `value_type`, `unit`, `draw_reduction`,
 and `dependency_dominator_id`. Root keys include `year_source_class` and,
-where the source class is `claim_specific_boundary_gap`, the nonnull
+for every claim-context benefit gap
+(`structural_gap_imputed | claim_specific_boundary_gap`), the nonnull
 `operative_claim_year` and `career_variant_id`. They therefore cannot alias
-an unconditional 2013 result. Each independently inventoried metric resolves
-exactly one root, and every graph node is reachable from that root array.
+an unconditional structural-gap or 2013 result. Each independently
+inventoried metric resolves exactly one root, and every graph node is
+reachable from that root array.
 
 `canonical_stream_law` is the literal
 `independent-key-order-lf-canonical-typed-value-v1`. Every source, node, and
@@ -3188,12 +3194,29 @@ also publishes:
 `evaluation_specs.v1` is an ordered expanded array. Each object has exactly
 `metric_id`, `result_block`, `source_fields`, `population_selector`,
 `weight_field`, `stratum_id`, `reference_era_id`, `year_source_class`,
-`role`, `calendar_year`, `statistic`, `unit`, `draw_reduction`,
-`stability_family`, and `gate_role`. Expansion order is the family order
-below, listed source-field order, listed statistic order, overall then
-reference-era × source-class × role strata, and ascending verified reference
-year; IDs are the colon-joined components of that position. Every registered
-combination has a row even when its count is zero.
+`role`, `calendar_year`, `operative_claim_year`, `career_variant_id`,
+`statistic`, `unit`, `draw_reduction`, `stability_family`, and `gate_role`.
+Expansion order is the family order below, listed source-field order, listed
+statistic order, overall then reference-era × source-class × role strata,
+ascending verified reference year, and the independently derived applicable
+benefit-context order. IDs are the colon-joined components of that position,
+including the literal `none` for a null context coordinate, so two claim
+contexts cannot share a metric ID. Every registered combination has a row
+even when its count is zero.
+
+For an annual corrected row, `year_source_class` is the exact §4.2 literal.
+Every `structural_gap_imputed | claim_specific_boundary_gap` annual row is a
+benefit-context row and has nonnull `operative_claim_year` and
+`career_variant_id` copied from the independently derived gap domain; those
+coordinates are null only where that domain declares them inapplicable.
+In particular, every annual 2013 row is
+`claim_specific_boundary_gap`, is expanded once per applicable operative
+claim/career coordinate, and has both coordinates nonnull. There is no
+unconditional/general-population or revenue 2013 metric. An annual family
+that cannot be evaluated in that benefit context omits 2013 from its
+independently registered domain rather than synthesizing a base row. A
+nonannual career row has `calendar_year`, `year_source_class`, and both
+context coordinates null.
 
 | Family | Exact expansion |
 |---|---|
@@ -4210,8 +4233,8 @@ Their schemas and completeness laws are:
   in for a claim-context benefit gap row.
   A slot made unreachable by the candidate's first fit, identification, or
   domain failure instead has exactly `candidate_id`, `target_id`,
-  `verified_calendar_year`, `effective_role`, `evaluation_status`,
-  `first_exposure_sequence`, and `reason_code`, with
+  `verified_calendar_year`, `effective_role`, `model_year_source_class`,
+  `evaluation_status`, `first_exposure_sequence`, and `reason_code`, with
   `evaluation_status: not_evaluated` and the exact disposition reason.
   Exposure sequence is a positive JSON integer iff the broker released that
   observation and is null otherwise.
@@ -4362,25 +4385,41 @@ Their schemas and completeness laws are:
     immediately before publication. A selected correction can never use the
     `not_evaluated` tag or an empty stream.
   - `support_results` is independently expanded by projection draw,
-    consumer, calendar year, Stage disposition, operative claim year, and
-    career variant from `consumer_domain_derivation_specs.v1`. Each row has
+    consumer, calendar year, source class, Stage disposition, operative claim
+    year, and career variant from `consumer_domain_derivation_specs.v1`. Each
+    row has
     exactly `projection_draw_index`, `consumer`, `calendar_year`,
-    `stage_disposition`, `operative_claim_year`, `career_variant_id`,
-    `expected_key_count`, `ledger_key_count`, `missing_key_count`,
-    `extra_key_count`, `expected_keyset_sha256`,
+    `year_source_class`, `stage_disposition`, `operative_claim_year`,
+    `career_variant_id`, `expected_key_count`, `ledger_key_count`,
+    `missing_key_count`, `extra_key_count`, `expected_keyset_sha256`,
     `ledger_keyset_sha256`, and `status`. Null context dimensions occur only
-    where the derivation registry says not applicable. Counts and hashes are
-    actual evidence; status is `pass` iff missing and extra counts are zero,
-    expected and ledger counts match, and keyset hashes are equal, and is
-    `fail` otherwise. A support failure retains the actual positive counts
-    and unequal hashes rather than violating the report schema.
+    where the derivation registry says not applicable. Source class is
+    coordinator-derived from the exact support/domain row and cannot be
+    inferred from availability. Every 2013 benefit row has
+    `year_source_class: claim_specific_boundary_gap` and nonnull operative
+    claim/career coordinates; revenue has only projected 2015–2022 rows and
+    no 2013 key. Counts and hashes are actual evidence; status is `pass` iff
+    missing and extra counts are zero, expected and ledger counts match, and
+    keyset hashes are equal, and is `fail` otherwise. A support failure
+    retains the actual positive counts and unequal hashes rather than
+    violating the report schema.
   - `distribution_results`, `downstream_results`, and
     `sensitivity_results` use the exact registered long schema `metric_id`,
-    `stratum_id`, `calendar_year`, `statistic`, `observation_count`, `mean`,
-    `sample_sd`, `unit`, `status`, and `reason_code`. A nonannual row has
-    `calendar_year: null`; count is a nonnegative JSON integer. With positive
-    count, means/SDs are finite, SD is nonnegative, and reason is null unless
-    status is `fail`; a tolerance or empirical failure retains its finite
+    `stratum_id`, `calendar_year`, `year_source_class`,
+    `operative_claim_year`, `career_variant_id`, `statistic`,
+    `observation_count`, `mean`, `sample_sd`, `unit`, `status`, and
+    `reason_code`. Each coordinate exact-matches the corresponding
+    `evaluation_specs.v1` row and trusted root. Canonical order is registry
+    position, ascending year, source class, applicable independently derived
+    claim/career context, stratum, then statistic. Every annual
+    claim-context gap row has both context coordinates nonnull; specifically,
+    every 2013 row has
+    `year_source_class: claim_specific_boundary_gap` and nonnull
+    coordinates. A nonannual row has `calendar_year`,
+    `year_source_class`, `operative_claim_year`, and `career_variant_id` all
+    null. Count is a nonnegative JSON integer. With positive count,
+    means/SDs are finite, SD is nonnegative, and reason is null unless status
+    is `fail`; a tolerance or empirical failure retains its finite
     unfavorable values and exact reason. With zero count, mean and SD are
     null: a diagnostic-only registered row has
     `status: not_applicable_empty_stratum` and that exact reason, while a
@@ -4389,25 +4428,31 @@ Their schemas and completeness laws are:
     `pass | fail | not_applicable_empty_stratum`; no empty row disappears or
     invents a finite statistic.
   - `before_context_results` is the sole typed legacy-numeric family and uses
-    exactly `metric_id`, `stratum_id`, `calendar_year`, `statistic`, `mean`,
-    `sample_sd`, `observation_count`, `unit`, `evidence_role`, `status`, and
-    `reason_code`. `evidence_role` is literal
+    exactly `metric_id`, `stratum_id`, `calendar_year`,
+    `year_source_class`, `operative_claim_year`, `career_variant_id`,
+    `statistic`, `mean`, `sample_sd`, `observation_count`, `unit`,
+    `evidence_role`, `status`, and `reason_code`. `evidence_role` is literal
     `fixed_legacy_before_context`; all other numeric/cardinality/empty-row
-    laws equal the three corrected long blocks. It is diagnostic-only and
-    cannot enter a candidate, gate, selection, corrected metric, ledger,
-    condition, or certificate operand.
+    laws equal the three corrected long blocks. A legacy row carries an exact
+    source class only when its frozen predecessor authority declares one;
+    otherwise it is null. It never carries claim-context coordinates and
+    cannot materialize a `claim_specific_boundary_gap` result; any frozen
+    unconditional legacy 2013 number remains a null-class diagnostic rather
+    than a corrected 2013 row. It is diagnostic-only and cannot enter a
+    candidate, gate, selection, corrected metric, ledger, condition, or
+    certificate operand.
 - `target_use_trace` is one row per expanded target spec in registry order,
   with exactly `target_id`, `verified_calendar_year`, `effective_role`,
-  `source_cell_ids`, `physical_source_cell_ids`,
+  `model_year_source_class`, `source_cell_ids`, `physical_source_cell_ids`,
   `primitive_ancestry_ids`, `alias_group_ids`,
   `sibling_group_ids`, `sibling_assertion_scopes`,
   `effective_evidentiary_role`,
   `broker_packet_sha256`, `first_exposure_phase`,
   `first_exposure_sequence`, `used_for_fitting`, `used_for_selection`, and
-  `used_for_diagnostic`. Year and all identity arrays are independently
-  reconstructed by the trusted validator from physical source identities and
-  exact-match the frozen target/alias closure; they are not accepted from
-  worker self-report. The two sibling arrays are positionally parallel and
+  `used_for_diagnostic`. Year, source class, and all identity arrays are
+  independently reconstructed by the trusted validator from physical source
+  identities and exact-match the frozen target/alias closure; they are not
+  accepted from worker self-report. The two sibling arrays are positionally parallel and
   retain `exact_published_value_equality | structural_dependence_only` for
   every sibling group in canonical alias order.
   `effective_evidentiary_role` applies
@@ -5003,7 +5048,8 @@ imports §10.3–§10.5 unchanged, including
    typed DAG—not a formula string, selector callback, or runner number—is the
    operative corrected definition. Its result keys include
    `year_source_class` and include `operative_claim_year` plus
-   `career_variant_id` for every 2013 claim-specific benefit coordinate.
+   `career_variant_id` for every claim-context benefit-gap coordinate,
+   including every 2013 row.
 
    The coordinator expands the full predecessor dependency graph before
    deriving those roots. Every
@@ -5205,10 +5251,12 @@ imports §10.3–§10.5 unchanged, including
    `projection_draw_count`, `correction_draw_count`, `mean`, `sample_sd`,
    `unit`, `draw_reduction`, `dependency_dominator_id`, `status`, and
    `reason_code`. The two context coordinates are nonnull exactly for annual
-   2013 `claim_specific_boundary_gap` benefit rows and otherwise null where
-   the independent domain says not applicable. Draw counts are the exact
-   nonnegative cardinalities implied by the registered reduction and cannot
-   choose the domain. Each
+   benefit rows whose class is
+   `structural_gap_imputed | claim_specific_boundary_gap` and otherwise null
+   where the independent domain says not applicable. Every 2013 row is the
+   latter class and has both coordinates nonnull; no unconditional or revenue
+   2013 row exists. Draw counts are the exact nonnegative cardinalities
+   implied by the registered reduction and cannot choose the domain. Each
    `dependency_results` row has exactly `model_metric_id`,
    `root_node_id`, `dependency_dominator_id`, `graph_sha256`,
    `forbidden_legacy_path_count`, `dependency_pathset_sha256`,
@@ -5243,18 +5291,21 @@ imports §10.3–§10.5 unchanged, including
    year, every corrected successor metric/pairing/comparison that names that
    concept, and the registered overall/stratum statistics. Its immutable
    expected count, keyset SHA-256, and order (vintage-1 §6.3 order, ascending
-   year, successor-registry position, statistic/stratum order) are stored in
-   `context_domain_specs` and independently reconstructed from the validated
-   vintage-1 and predecessor anchor registries; configuration counts are only
-   comparands. A missing concept, hard year, predecessor row, or null
-   observed value retains a row and fails.
+   year, source class, applicable claim/career context, successor-registry
+   position, statistic/stratum order) are stored in `context_domain_specs`
+   and independently reconstructed from the validated vintage-1 and
+   predecessor anchor registries; configuration counts are only comparands.
+   A missing concept, hard year, predecessor row, or null observed value
+   retains a row and fails.
 
    Each context row has exactly `row_id`, `vintage_1_series_id`,
-   `calendar_year`, `successor_registry_kind`, `successor_registry_position`,
-   `corrected_metric_id`, `statistic`, `stratum_id`,
-   `corrected_mean`, `corrected_sample_sd`, `vintage_1_value`,
+   `calendar_year`, `year_source_class`, `operative_claim_year`,
+   `career_variant_id`, `successor_registry_kind`,
+   `successor_registry_position`, `corrected_metric_id`, `statistic`,
+   `stratum_id`, `corrected_mean`, `corrected_sample_sd`, `vintage_1_value`,
    `difference`, `unit`, `draw_reduction`, `evidence_role`, `status`, and
-   `reason_code`. Registry-declared inapplicable coordinates alone are null.
+   `reason_code`. These four year/context fields exact-match the corrected
+   metric row. Registry-declared inapplicable coordinates alone are null.
    `evidence_role` is literal `structurally_out_of_fitting_sample`;
    `difference` is corrected minus vintage-1 under the registered common
    unit, with no directional criterion. A complete row has finite values and
@@ -5453,7 +5504,7 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 | Full support feasibility | G01 independently reconstructs the complete Stage A–D benefit and unsplit 2015–2022 revenue domains; every base-ledger and operative-claim gap key must exist. Missing support fails rather than shrinking a configured selector; failure permits only §11.2 and retains benefit proxy labels. |
 | Historical legal authority and named classes | §4.1 freezes authority precedence, byte-pinned effective-year registry, structured inventory-backed required facts, a coordinator-evaluated presence/value ledger, and fail-closed treatment for every named class. |
 | Complete PSID crosswalk and era seams | §4.2 requires an independently byte-pinned every-wave×role×job×component/context×35-purpose inventory—including state and every named direct-law microfact slot—with exact `present \| structural_missing` disposition, a separate all-key disposition stream and component-slot assembly, frozen structural-missing consequences, the full wave→reference-year/source-class map, first-class `mixed`, and executable value-code, annualization, reconciliation, job-match, SE-aggregation, and coverage-group registries. Reference-year 1975 is mixed; exact 1976–1977 concepts are registration-required. |
-| Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
+| Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Exact support/metric schemas carry source class, every annual gap result carries operative-claim/career coordinates, opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
 | Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2 and requires target-ID, declared, resolved observation, operand, physical-cell, ancestry, selector, and result years to agree before deriving 1968–2008 train, 2009–2014 validation, and 2015–2022 diagnostic roles. Physical ancestry closes over cross-vintage aliases plus exact and structural siblings; structural dependence carries exposure without asserting displayed numeric equality or inferring a rounding interval. None of vintage 1 fits and viewed-cell honesty is explicit. |
 | B2/B11 and covered-share extraction | §6 and D-A1 retain the pinned source hashes, literal ten-row discrepancy registry, and pre-2015 scale-free targets; V-B7 requires an exact covered-share universe. Model choice binds only `fit_selection_cell_identity.v1`; full evaluation provenance is separate, and G21 mutates every held-out/zero-weight/exclusive byte on both selected and no-eligible branches while requiring parameters, dispositions, selection branch, branch-tagged selected-model projection, gates, and conditions 1–6 to remain byte-identical. |
@@ -5516,6 +5567,11 @@ Ratification requires affirmative evidence for every item:
   independently reconstructed; missing support cannot shrink them; every
   structural gap is derived only after the operative claim cutoff; and
   revenue has no 2013 row.
+- [ ] Every exact support and corrected metric-result schema carries
+  `year_source_class`; annual benefit gap rows carry nonnull
+  `operative_claim_year` and `career_variant_id`, every 2013 row is
+  claim-specific, nonannual coordinates are explicitly null, and no
+  unconditional or revenue 2013 metric exists.
 - [ ] Every final corrected earnings-dependent metric is transitively
   dominated by the corrected ledger; legacy/proxy values occur only in typed
   before-context blocks; every certified worker denominator uses analytic

@@ -41,13 +41,16 @@ registration, fitting, evaluation, or publication work is authorized.
 - Made G06 independently reevaluate the direct-law ledger and action trace,
   expanded G17 to an exact 15-domain closure, and versioned the changed gate
   registry as `gate_specs.v3`.
+- Added `year_source_class` to the exact support and long-result schemas and
+  carried source class through target traces and context rows. Every annual
+  benefit gap result now carries its independently derived operative-claim
+  and career coordinates; all 2013 metrics are claim-specific, and revenue
+  has no 2013 row.
 - Began a section-by-section consistency audit of the remaining contract.
 
 ## Next
 
-1. Carry source class and claim/career coordinates through exact support and
-   metric schemas.
-2. Repair the retry-nonce boot/retry sequencing wording and reconcile any
+1. Repair the retry-nonce boot/retry sequencing wording and reconcile any
    remaining schema references.
-3. Audit every round-3 residual, update this file, and commit the final design
+2. Audit every round-3 residual, update this file, and commit the final design
    state.
