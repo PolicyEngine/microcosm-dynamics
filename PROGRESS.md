@@ -33,14 +33,21 @@ registration, fitting, evaluation, or publication work is authorized.
 - Defined G11's sole coordinator retry-nonce entropy exception, its metering
   boundary and flow restriction, and zero-new-entropy retry law; standardized
   the exact keyed-uniform hash field.
+- Expanded the source-only inventory to the exact 35-purpose domain,
+  including state of residence and every named direct-law microfact slot.
+  Structured required facts now foreign-key those slots; a sealed
+  coordinator derives the typed presence/value ledger and action fold, while
+  runner fact booleans/values are schema-impossible.
+- Made G06 independently reevaluate the direct-law ledger and action trace,
+  expanded G17 to an exact 15-domain closure, and versioned the changed gate
+  registry as `gate_specs.v3`.
 - Began a section-by-section consistency audit of the remaining contract.
 
 ## Next
 
-1. Close the inventory-backed microfact and state-of-residence residual.
-2. Carry source class and claim/career coordinates through exact support and
+1. Carry source class and claim/career coordinates through exact support and
    metric schemas.
-3. Reconcile suppression/cardinality wording and remaining version/schema
-   references.
-4. Audit every round-3 residual, update this file, and commit the final design
+2. Repair the retry-nonce boot/retry sequencing wording and reconcile any
+   remaining schema references.
+3. Audit every round-3 residual, update this file, and commit the final design
    state.
