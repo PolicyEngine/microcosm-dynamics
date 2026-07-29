@@ -1,6 +1,6 @@
 # The covered-earnings correction: a common component ledger for benefits and revenue
 
-- **Status:** DRAFT revision 1 for adversarial ratification. This document
+- **Status:** DRAFT revision 2 for adversarial ratification. This document
   authorizes no extraction, implementation, registration, fitting, evaluation,
   report run, or label change.
 - **Resolves:** the design step for forecast-ledger entry 11 and
@@ -480,7 +480,7 @@ The reference-year seams, not interview-year aliases, are:
 | Reference years | Frozen source-concept adjudication |
 |---|---|
 | 1968–1974 | Preserve role totals. Unsupported job/context slots are explicit inventory absences. |
-| 1975–1977 | These are interview waves 1976–1978. The spouse-source concept is determined from the pinned full descriptions and value structure under V-B6. The short labels do not establish `wages_only`; where employee wages and unincorporated-business labor cannot be separated, `remuneration_type` is `mixed` or the row is unresolved under its predeclared rule. |
+| 1975–1977 | These are interview waves 1976–1978. The pinned wave-1976 description for reference-year 1975 field `V4379` includes unincorporated-business labor income, so that source is `mixed`. The wave-1977/1978 short labels do not establish `wages_only`; V-B6 requires their exact reference-year 1976/1977 concepts and code maps or registration aborts. |
 | 1978–1992 | Pre-ER edited totals include the applicable farm/business labor parts. Separate fields split or validate the total and are never added twice. |
 | 1993–2001 | The farm/business concept seam is reference year 1992/1993: wave 1994 describes 1993. ER role totals and separately carried farm/business labor components combine exactly once. Direct years and biennial structural gaps retain distinct source classes. |
 | 2002–2012 | Modern job blocks begin with interview wave 2003 and therefore describe reference year 2002, then 2004, …, 2012. Job amounts, units, and timing reconcile to the appropriate prior-year role total; odd reference years remain structural gaps. |
@@ -1675,8 +1675,9 @@ independent validation.
 
 In v1 this block is diagnostic-only: no unspecified PSID-internal score can
 select a candidate, set a threshold, rescue a candidate, or enter the label
-certificate. Making it load-bearing requires a new registered target family
-with exact labels, partitions, losses, and tolerances before exposure.
+certificate. Making it selection- or certificate-bearing requires a new
+registered target family with exact labels, partitions, losses, and
+tolerances before exposure.
 
 ### 7.4 Option C sensitivity
 
@@ -2001,8 +2002,9 @@ The following dataflows are invalid, not merely caveats:
 
 ### 9.1 Exact certificate conditions
 
-The §3.4 proxy label retires only after a two-artifact proof and an external
-merge event. The correction evaluation proves conditions 1–7:
+The `first_estimates_report.md` §3.4 proxy label retires only after a
+two-artifact proof and an external merge event. The correction evaluation
+proves conditions 1–7:
 
 1. the immutable legal, source-inventory, crosswalk, value-code/adjudication,
    wave/reference-lineage, gap-derivation, physical-cell/alias,
@@ -3107,55 +3109,143 @@ measurement law; §5.2 forbids claiming they were recovered.
 
 ### 11.4 Deviations
 
-None. “Out-of-sample” for the post-correction context event is qualified in
-§12 as structurally out of the fitting sample because the 2015–2022 cells
-have already been viewed. This is an honesty clarification, not a deviation
-from the coordinator ruling.
+The scoping survey's blanket characterization of the 1976–1978 interview-
+wave spouse series as wages-only is not ratified. The pinned 1976-wave
+description for reference year 1975 (`V4379`) includes labor income from
+unincorporated business, so v1 types that source as `mixed`. The 1977–1978
+wave short labels alone do not establish wages-only; their exact reference-
+year 1976–1977 concepts and value-code maps, together with the frozen
+wave→reference-year mapping, are registration-required under V-B6. This
+tightens the survey's source-concept characterization without changing a
+coordinator ruling.
+
+“Out-of-sample” for the post-correction context event is qualified in §12 as
+structurally out of the fitting sample because the 2015–2022 cells have
+already been viewed. That is an honesty clarification, not an additional
+deviation.
 
 ## 12. What this unlocks
 
 1. **Post-correction context evidence.** After a `pass` correction report
    pair is published and its publication PR merges, a new fresh registration
-   pins that primary's exact path, file SHA-256, sidecar SHA-256, and
-   `selected_correction.model_sha256`, plus SHA-256 of
-   `selected_correction.ledger_identity`. Its append-only output is
+   may bind that locked correction. Its append-only output is
    `runs/covered_earnings_context_report_v1.json`, its sidecar is the exact
-   `<primary>.env.json`, and its schema is
-   `covered_earnings_context_report.v1`. The configuration also pins
-   `runs/first_estimates_v1.json`, the immutable 15-series vintage-1
-   artifact, unchanged applicable legacy comparison formulas, corrected
-   metric selectors, target-use masks, the §9.2 transformation, and the exact
-   §10.2 ledger stream hashes it must rematerialize before comparison.
+   `runs/covered_earnings_context_report_v1.json.env.json`, and its schema is
+   `covered_earnings_context_report.v1`.
 
-   That runner is fixture-only before registration, one-shot,
-   `publishes_regardless`, `no_self_rescue`, incident-bearing, and governed by
-   a separately ratified entry-8/10-style execution law. It cannot mutate,
-   refit, reselect, or reject the locked correction. Its sealed report opens
-   the 15 series only as context evidence and publishes every registered
-   before/after diagnostic with no required direction. It calls the event
-   `structurally-out-of-fitting-sample`, never unseen: those 2015–2022 values
-   have already been viewed.
+   The exact `covered_earnings_context_configuration.v1` key set is
+   `schema_version`, `registration_reference`, `design`,
+   `implementation_commit`, `invocation`, `correction_input`,
+   `first_estimates_input`, `vintage_1_input`, `model_metric_specs`,
+   `pairings`, `comparison_specs`, `mismatch_transformation_specs`,
+   `consumer_domain_derivation_specs`, `benefit_gap_derivation_specs`,
+   `earnings_consumer_dependency_specs`, `physical_source_cell_specs`,
+   `official_source_alias_specs`, `analytic_worker_selector`,
+   `context_domain_specs`, `attempt_history`, and `output_paths`.
+   It uses §10.1's strict parser and exact committed-design,
+   repository-ancestry/tree, clean-checkout, concrete invocation/sentinel,
+   history, and path schemas.
+
+   `correction_input` has exactly `primary_path`, `primary_sha256`,
+   `sidecar_path`, `sidecar_sha256`, `substantive_model_sha256`,
+   `fit_selection_cell_identity_sha256`,
+   `evaluation_provenance_sha256`, `ledger_identity_sha256`,
+   `ledger_row_schema_sha256`, `support_keyset_sha256`,
+   `expected_ledger_streams_sha256`, `realized_ledger_streams_sha256`,
+   `physical_alias_closure_sha256`, and
+   `claim_context_gap_streams_sha256`. Every value is recomputed from the
+   validator-passing pair and exact-matches it. Full evaluation provenance is
+   bound for audit, while the cell-scoped substantive hash remains the
+   correction version.
+
+   The configuration pins `runs/first_estimates_v1.json` and sidecar, the
+   immutable 15-series vintage-1 artifact, the complete frozen corrected
+   `model_metric_specs` domain, exactly 14 pairing objects, exactly nine
+   comparison-spec objects, and the positional §9.2 transformation.
+   `analytic_worker_selector` is the sole literal
+   `modeled_covered_worker_probability_analytic`; a draw indicator or
+   20-draw grid fraction is rejected. The three domain/gap/dependency specs
+   and both physical-source registries exact-match the correction
+   configuration.
+
+   `context_domain_specs.v1` independently reconstructs the complete
+   Stage A–D benefit and unsplit-revenue domains, complete corrected metric
+   domain, 14-pairing domain, and nine-comparison domain from their immutable
+   source registries. Configured counts and hashes are expected comparands,
+   never selectors. Missing, extra, duplicate, reordered, or difficult rows
+   fail; ledger absence cannot shrink a domain. The runner rematerializes
+   every expected and realized corrected stream and every operative-claim
+   gap stream, verifies their hashes, and reruns the complete transitive
+   dependency-dominator proof. Every corrected earnings-valued leaf must be
+   downstream of the corrected-ledger accessor; legacy/proxy numeric values
+   are confined to typed `before_context`.
+
+   The §9.2 mismatch transformation runs separately and positionally over all
+   14 `pairings[*].mismatch_codes` arrays and all nine
+   `comparison_specs[*].mismatch_codes` arrays. Cardinality, order, IDs, and
+   every unaffected field must deep-equal the frozen predecessors. No
+   omitted metric, pairing, comparison, seam, opening-backfill context, or
+   revenue row is allowed. Every certified worker denominator is recomputed
+   from analytic probabilities within projection draw/year before the frozen
+   ratio-then-mean reduction.
+
+   This context run imports the complete §10 ceremony kernel, not a weaker
+   analogue: fixture-only rehearsal; strict bytes; committed repository and
+   `sys.orig_argv` proof; concrete fresh-empty pycache sentinel; exclusive
+   coordinator lock; configuration-derived retry-authority reservation;
+   durable read-only initial claim before any production read; claim
+   revalidation on every access; append-only incidents; same-process opaque
+   one-shot `_RetryReceipt`; durable retry claim; and complete-history
+   fresh-registration adjudication after a killed attempt, receipt loss, or
+   retry failure. Context-specific schema literals and path prefixes replace
+   correction-specific ones, but §10.5's state machine and sole normative
+   execution law apply unchanged.
+
+   Its phases are exactly registration/pre-launch → durable claim → validate
+   and rematerialize the locked correction and independently derived domains
+   → lock all corrected evidence and dependency proofs → only then grant the
+   context evaluator access to the 15 vintage-1 series → compute and publish
+   every registered row. The evaluator has no fitting, selection, model
+   mutation, threshold, seed, direction-based rejection, or alternate-ledger
+   capability. It publishes every before/after diagnostic with no required
+   direction and calls the event `structurally-out-of-fitting-sample`, never
+   unseen: those 2015–2022 values have already been viewed.
 
    On a validator-passing result, `label_retirement_certificate` has exactly
    `status`, `correction_evaluation_path`,
-   `correction_evaluation_sha256`, `correction_model_sha256`,
+   `correction_evaluation_sha256`, `substantive_model_sha256`,
+   `fit_selection_cell_identity_sha256`,
+   `evaluation_provenance_sha256`,
    `correction_ledger_identity_sha256`, `context_report_schema`,
-   `condition_8`, `successor_labels`,
+   `condition_8`, `condition_8_evidence`, `successor_labels`,
    `retired_codes`, `replacements`, `new_codes`, and `preserved_codes`.
    `status` is `eligible_on_publication_pr_merge`; `condition_8` is boolean
-   true; labels are the exact §1 array; and every code array/map exact-matches
-   §9.2. A failed report carries JSON null instead, publishes its complete
-   failure, and changes no label. The artifact cannot assert condition 9;
-   only its publication-PR merge activates the certificate and resolves
-   entry 11.
+   true. `condition_8_evidence` has exactly
+   `corrected_metric_domain_count`, `corrected_metric_domain_sha256`,
+   `consumer_domains_sha256`, `claim_context_gap_stream_count`,
+   `claim_context_gap_streams_sha256`, `pairing_domain_count`,
+   `pairing_domain_sha256`, `comparison_domain_count`,
+   `comparison_domain_sha256`, `dependency_dominator_sha256`,
+   `physical_alias_closure_sha256`, `analytic_denominator_trace_sha256`,
+   `mismatch_transformation_sha256`, `context_row_count`, and
+   `context_rows_sha256`. Pairing and comparison counts are exactly 14 and
+   nine; every other count is the positive independently derived
+   cardinality. Labels are the exact §1 array and every code array/map
+   exact-matches §9.2. A failed report carries JSON null instead, publishes
+   its complete failure and structural evidence, and changes no label. The
+   artifact cannot assert condition 9; only its publication-PR merge
+   activates the certificate and resolves entry 11.
 
 2. **W1 bridge on corrected earnings.** W1 can build the national population
    bridge on the immutable corrected ledger rather than the labor-income
    proxy. Roster, weights, population alignment, and national levels remain
-   W1's authority, not this correction's. W1 must pin the correction-model
-   hash, production-input identity, row schema, and applicable expected/draw
-   ledger stream hashes; it must rematerialize and verify them before
-   bridging and may not rewrite components.
+   W1's authority, not this correction's. W1 must pin
+   `substantive_model_sha256`, `fit_selection_cell_identity_sha256`,
+   `evaluation_provenance_sha256`, the physical alias closure,
+   consumer-domain/gap/dependency registries, row schema, ledger identity,
+   support key set, and applicable expected/realized stream hashes. It must
+   independently reconstruct the applicable domain, rematerialize and verify
+   every hash before bridging, and may not rewrite components.
 
 3. **Orthogonal first-estimates successors.** Spouse/survivor entitlement
    adaptation, behavioral claiming, and the `FORWARD` production object
@@ -3170,8 +3260,8 @@ verification supplies either exact registered bytes/rules or a failure; it
 never supplies a default. Where one survey sentence joined a legal rule to an
 aggregate-magnitude claim—state/local, student, or residual exclusions—the
 two independently falsifiable claims are split once: the rule is in bucket B
-and the non-load-bearing magnitude is in bucket C. No atomic claim appears in
-two buckets.
+and the outside-v1 magnitude is in bucket C. No atomic claim appears in two
+buckets.
 
 ### 13.1 Bucket A — resolved in design from committed bytes
 
@@ -3186,17 +3276,17 @@ universe—is V-B7.
 
 ### 13.2 Bucket B — registration-time fail-closed verification
 
-| ID | VERIFY item | Required disposition and failure consequence |
-|---|---|---|
-| V-B1 | Exact Section 218 and mandatory state/local coverage law and effective dates | Pin controlling primary bytes and effective-year rules in §4.1. Missing/conflicting years abort legal-registry ratification and full correction. |
-| V-B2 | Exact clergy, minister, church-employee, religious-order, and exemption rules | Pin primary bytes and required facts. Failure forbids direct clergy exclusion and blocks any candidate relying on it. |
-| V-B3 | Exact historical residual-exclusion rules for domestic/agricultural thresholds, election, family/casual, foreign-government/international-organization, nonresident-alien, and similar service | Pin effective-year rules. An unverified class is modeled/unresolved and cannot be directly classified; a load-bearing gap aborts full certification. |
-| V-B4 | Historical pre-1990 SECA eligible-concept, net-earnings-factor, threshold, and coordination crosswalk | Pin every effective-year transform. A year gap aborts registration. |
-| V-B5 | Exact common 1968–1974 and spouse/secondary-job industry/occupation classifier availability and meaning | Verify each raw field/label/code in the expanded crosswalk. Structural absence is recorded explicitly; a false common mapping aborts. |
-| V-B6 | Exact pre-modern spouse and secondary-job self/other and incorporation support | Verify every role/job/year source. Missing support cannot be extrapolated and follows the modeled/unresolved rule. |
-| V-B7 | SSA covered-share publication, table, vintage, annual definition, numerator, denominator, duplicate-worker treatment, timing, and universe | Pin source bytes proving that the official numerator and denominator share one exact universe, then freeze the frame-relative model analogue under §6.2. Any mismatch, including annual-unique versus point-in-time, aborts target-artifact registration; no approximate 94-percent input exists. |
-| V-B8 | Earlier enrollment-field coverage and a stable cross-wave mapping | Verify the literal fields and meanings. Structural absence is explicit; enrollment still cannot establish the student/employer nexus. |
-| V-B9 | Exact effective-year student-service exception and employer-school nexus rule | Pin controlling primary bytes and required enrollment, regular-attendance, employer, and service facts. Missing law or facts forbids direct student exclusion; a candidate that depends on such exclusion is ineligible. |
+| ID | `verification_class` | VERIFY item | Required disposition and failure consequence |
+|---|---|---|---|
+| V-B1 | `registration_required` | Exact Section 218 and mandatory state/local coverage law and effective dates | Pin controlling primary bytes and every effective-year rule in §4.1. Any missing or conflicting Section 218 year/fact aborts registration. |
+| V-B2 | `direct_only_optional` | Exact clergy, minister, church-employee, religious-order, and exemption rules | Missing authority/facts disable direct classification for the exact predeclared inventory rows and apply only those rows' frozen `modelable \| unresolved` consequences. |
+| V-B3 | `direct_only_optional` | Exact historical residual-exclusion rules for domestic/agricultural thresholds, election, family/casual, foreign-government/international-organization, nonresident-alien, and similar service | Missing authority/facts disable direct classification for the exact predeclared inventory rows and apply only those rows' frozen `modelable \| unresolved` consequences. No runtime importance judgment exists. |
+| V-B4 | `registration_required` | Historical pre-1990 SECA eligible-concept, net-earnings-factor, threshold, and coordination crosswalk | Pin every effective-year transform. Any year or transform gap aborts registration. |
+| V-B5 | `registration_required` | Exact common 1968–1974 and spouse/secondary-job industry/occupation classifier availability and meaning | The independent inventory must cover every wave×role×job×component/context slot. Exact `structural_missing` is allowed; missing inventory/crosswalk evidence or a false common mapping aborts. |
+| V-B6 | `registration_required` | Exact pre-modern spouse and secondary-job source concepts, self/other and incorporation support, and wave→reference-year mapping | Register the complete wave/reference map and every spouse/secondary-job source concept/code map. Reference-year 1975 field `V4379` is `mixed`; exact 1976–1977 concepts must register or abort. |
+| V-B7 | `registration_required` | SSA covered-share publication, table, vintage, annual definition, numerator, denominator, duplicate-worker treatment, timing, and universe | Pin source bytes proving one exact numerator/denominator universe and the frame-relative model analogue. Any mismatch, including annual-unique versus point-in-time, aborts; no approximate 94-percent input exists. |
+| V-B8 | `registration_required` | Earlier enrollment-field coverage and a stable cross-wave mapping | Inventory and stable mapping must register for every slot. Exact structural absence is allowed; missing inventory evidence aborts, and enrollment still cannot establish employer-school nexus. |
+| V-B9 | `direct_only_optional` | Exact effective-year student-service exception and employer-school nexus rule | Missing law/facts forbid direct exclusion for the exact predeclared rows and apply only their frozen `modelable \| unresolved` consequences. |
 
 The legal registry also fail-closes CSRS/FERS/CSRS Offset,
 and Railroad-covered employer/service even though those source-fact absences
@@ -3219,7 +3309,7 @@ were not separately tagged `VERIFY` in the survey.
 
 Any future use of a bucket-C fact requires a new design/registry version and
 moves that fact into a byte-pinned, registration-time authority. No bucket-C
-fact is load-bearing in v1.
+fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 
 ## 14. Ratification and decision-closure checklist
 
@@ -3228,17 +3318,17 @@ fact is load-bearing in v1.
 | Scoping open decision | Settlement |
 |---|---|
 | Exact estimands | §3 freezes uncapped covered wages, pre-SECA net earnings, SECA base, noncovered/unresolved amounts, person taxable payroll, benefit-creditable earnings, modeled worker incidence, and zero v1 deemed credits. |
-| Full support feasibility | Full 1968–2022 support for both consumers is a demonstrated gate; failure permits only §11.2 and retains benefit proxy labels. |
+| Full support feasibility | G01 independently reconstructs the complete Stage A–D benefit and unsplit 2015–2022 revenue domains; every base-ledger and operative-claim gap key must exist. Missing support fails rather than shrinking a configured selector; failure permits only §11.2 and retains benefit proxy labels. |
 | Historical legal authority and named classes | §4.1 freezes authority precedence, byte-pinned effective-year registry, required facts, and fail-closed treatment for every named class. |
-| Complete PSID crosswalk and era seams | §4.2 freezes the expanded key/schema, source precedence, business/farm reconciliation, annualization, mixed-job handling, missingness, and era laws. |
-| Production cutoff, entrants, and odd years | §4.3 preserves direct observed lineage through 2012, the frozen gap-imputed 2013 seam, and only frozen 2014 seed attributes thereafter; annual modeled transitions govern incumbents/entrants; odd-year earnings carry remains. |
+| Complete PSID crosswalk and era seams | §4.2 requires an independently byte-pinned every-wave×role×job×component/context inventory with exact `present \| structural_missing` disposition, full wave→reference-year/source-class map, first-class `mixed`, and executable value-code, annualization, reconciliation, job-match, and coverage-group registries. Reference-year 1975 is mixed; exact 1976–1977 concepts are registration-required. |
+| Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
-| Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2; 1968–2008 trains, 2009–2014 validates, 2015–2022 diagnoses; losses/tolerances are literal; none of the 15 series fits; viewed-cell honesty is explicit. |
-| B2/B11 and covered-share extraction | §6 and D-A1 require B2/B11 extraction, literal discrepancy preservation, and pre-2015 scale-free targets; V-B7 requires an exact official covered-share universe or aborts. |
+| Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2 and requires target-ID, declared, resolved observation, operand, physical-cell, ancestry, selector, and result years to agree before deriving 1968–2008 train, 2009–2014 validation, and 2015–2022 diagnostic roles. Physical ancestry closes over cross-vintage aliases and arithmetic siblings; none of vintage 1 fits and viewed-cell honesty is explicit. |
+| B2/B11 and covered-share extraction | §6 and D-A1 retain the pinned source hashes, literal ten-row discrepancy registry, and pre-2015 scale-free targets; V-B7 requires an exact covered-share universe. Model choice binds only `fit_selection_cell_identity.v1`; full evaluation provenance is separate, and G21 mutates every held-out/zero-weight/exclusive byte while requiring the substantive model, uniforms, gates, and eligibility to remain byte-identical. |
 | Post-calibration label vocabulary | §1 freezes exactly `frame-relative`, `modeled-covered-earnings`, `aggregate-concept-calibrated-not-population-aligned`. |
 | Cap, SE threshold/loss, incorporated owners, historical SECA | §§3.2 and 4.1 freeze component floors, within-SE-only loss netting, effective-year law, wage-first residual cap, incorporated salary, and excluded distributions. |
-| Candidate set, thresholds, namespace, replay, certificate | §§5.3–5.4, 6.2, 7, 8, and 9 freeze all of them and prohibit post-hoc rescue. |
-| Versioning and mismatch disposition | §§6, 9, 10, and 12 freeze distinct artifact/report identities and exact retired, replaced, new, and preserved mismatch treatment. |
+| Candidate set, thresholds, namespace, replay, certificate | §§5.3–5.4, 6.2, 7, 8, and 9 freeze candidates, cell-scoped namespace, exact six replays, all 22 gates, independent consumer/metric domains, corrected-only dependency domination, analytic certified denominators, and no post-hoc rescue. |
+| Versioning, ceremony, and mismatch disposition | §§6, 9, 10, and 12 freeze separate substantive/evaluation identities, strict committed registration, durable claims, opaque one-shot retry authority, fresh-registration adjudication, and positional transformations of all 14 pairing plus nine comparison mismatch arrays. |
 
 ### 14.2 Ratification checklist
 
@@ -3247,22 +3337,48 @@ Ratification requires affirmative evidence for every item:
 - [ ] The document settles every §14.1 decision with no contradictory rule.
 - [ ] Every scoping `VERIFY` appears in exactly one §13 bucket and no
   unresolved VERIFY supplies a coefficient, rule, field, target, or claim.
-- [ ] The legal and crosswalk registries have literal ordered IDs, exact key
-  sets/types, effective-year coverage, source hashes, and missing/duplicate/
-  extra rejection.
+- [ ] Every VERIFY has the exact `registration_required |
+  direct_only_optional` class; required claims abort and optional claims have
+  only predeclared source-inventory-row consequences.
+- [ ] The legal registry and independent PSID source-field inventory have
+  literal ordered IDs, exact key sets/types, effective/reference-year
+  coverage, source hashes, every questionnaire slot, exact
+  `present | structural_missing` dispositions, and missing/duplicate/extra
+  rejection.
+- [ ] The crosswalk exact-matches that independent inventory and pins the
+  complete wave→reference-year/source-class map, `mixed` remuneration,
+  value-code maps, annualization, reconciliation, job matching, and
+  coverage-state grouping as executable registries.
 - [ ] Vintage 2 has immutable identity, exact source/cell provenance,
   canonical serialization, pinned hashes, offline reproduction, and an
   append-only refresh law.
-- [ ] `calibration_target_specs` freezes every cell's role, dependency group,
+- [ ] `calibration_target_specs.v2` proves equality of target-ID, target,
+  source, observation, operand, physical-ancestry, selector, result, and trace
+  years; recomputes role from verified year; and freezes every dependency,
   loss, weight, tolerance, transformation, unit, and selector before fitting.
+- [ ] Physical source ancestry closes over the complete frozen cross-vintage,
+  shared-primitive, republication, and arithmetic-sibling registry with no
+  role laundering or aliased held-out primitive.
+- [ ] Model choice binds only the exact cell-scoped fit/selection identity;
+  full evaluation provenance is separate, and the nonempty G21 fixture
+  changes every held-out/zero-weight/exclusive source byte while parameters,
+  losses, selection, model hash, uniforms, gates, and eligibility remain
+  byte-identical.
 - [ ] All 15 vintage-1 series are structurally inaccessible to fitting and
   selection and described as already viewed.
 - [ ] Candidate, hyperparameter, convergence, selection, tie, Option-C, and
   candidate-failure laws exact-match registration.
-- [ ] Full 1968–2022 support and identical benefit/revenue components are
-  executable assertions, not prose claims.
-- [ ] All scoping hard-correctness gates and circularity prohibitions are
-  normative and conjunctive.
+- [ ] The complete Stage A–D benefit and unsplit revenue domains are
+  independently reconstructed; missing support cannot shrink them; every
+  structural gap is derived only after the operative claim cutoff; and
+  revenue has no 2013 row.
+- [ ] Every final corrected earnings-dependent metric is transitively
+  dominated by the corrected ledger; legacy/proxy values occur only in typed
+  before-context blocks; every certified worker denominator uses analytic
+  probabilities.
+- [ ] `gate_specs.v2` contains exactly conjunctive G01–G22, including G10's
+  six exact replay rows, G11's one row per frozen provider, G14's exact four
+  trusted rescale rows, and G15's exact nonempty broker/sandbox assertions.
 - [ ] Expected mappings, 20-draw namespace, nonlinear benefit propagation,
   frozen ledger-row schema, within-year dependence groups, byte replay,
   row-order invariance, and RNG isolation are executable.
@@ -3275,12 +3391,27 @@ Ratification requires affirmative evidence for every item:
 - [ ] Configuration, correction-model identity, primary tagged unions,
   result rows, incident objects, target-exposure phases, and output paths
   exact-match §10's schemas and validators.
-- [ ] Consumer domains, projection/correction reductions, and deterministic
-  ledger-rematerialization hashes are complete and independently recomputed.
-- [ ] §10.5 is the sole normative evaluation execution law and enforces
-  one-shot, publishes-regardless, incidents, and fresh registration.
-- [ ] The post-correction context event and W1-on-corrected-earnings successor
-  are named without claiming already-viewed evidence is unseen.
+- [ ] Strict parsing rejects BOMs, duplicate keys, nonfinite/overflowed or
+  lossy numbers, bad types, and noncanonical bytes before any field is used.
+- [ ] Repository ancestry/blob/tree identity, clean checkout, byte-exact
+  `sys.orig_argv`, and the concrete absolute fresh-empty sentinel pass before
+  the exclusive durable initial claim and any production access.
+- [ ] The only retry authority is the same-process opaque one-shot receipt;
+  a retry publishes its durable claim first; killed/lost/failed attempts use
+  append-only fresh-registration adjudication and fresh claim namespaces.
+- [ ] Consumer/gap domains, projection/correction reductions, corrected-only
+  dependency proofs, and deterministic ledger-rematerialization hashes are
+  complete and independently recomputed.
+- [ ] §10.5 is the sole normative execution law and enforces durable claims,
+  publishes-regardless, terminal results, append-only incidents, at most one
+  receipt-authorized retry, and viable fresh registration afterward.
+- [ ] The context event independently reconstructs every corrected metric,
+  all 14 pairings, all nine comparison specs, both mismatch-array
+  transformations, and all analytic denominators under the same complete
+  ceremony kernel, without calling already-viewed evidence unseen.
+- [ ] W1 pins the substantive cell-scoped identity, separate evaluation
+  provenance, independent domain/dependency/gap specs, and corrected stream
+  identities before bridging.
 - [ ] `Deviations` is accurate.
 
 ### 14.3 Staged ratification protocol
@@ -3290,34 +3421,47 @@ The authorized order is:
 1. merge this referee-ratified design, with no authority artifact,
    implementation, or production result smuggled into the design commit;
 2. merge a separate referee-gated authority/extraction PR containing the
-   legal registry, PSID crosswalk, retained source captures, literal
-   manifests, vintage-2 target artifact, and the literal
+   legal registry, independent PSID source-field inventory, questionnaire-
+   slot/value-code/annualization/reconciliation/job-match/coverage-group
+   registries, crosswalk, retained source captures, literal manifests,
+   vintage-2 target artifact, physical-cell/alias registries, and the literal
    `ledger_row_schema_specs`, `coverage_state_dependence_specs`,
-   `calibration_target_specs`, `candidate_specs`, `selection_spec`,
-   `draw_spec`, `gate_specs`, `evaluation_specs`, and `sensitivity_specs`
-   authorities, plus builders and offline reproduction/rejection tests;
+   `calibration_target_specs.v2`, candidate/era/selection/draw specs,
+   replay, consumer-domain, claim-gap, dependency, RNG-access,
+   weight-rescale, filesystem-isolation, held-out-noninterference,
+   `gate_specs.v2`, evaluation, and sensitivity authorities, plus builders
+   and offline reproduction/rejection tests;
 3. merge a separate referee-gated implementation PR whose rehearsals are
    fixture-only and structurally reject production paths;
 4. obtain a fresh registered §10.1 configuration binding every preceding
-   commit, artifact byte, registry, invocation, incident history, and output
-   path;
-5. record all six §10.4 checks and launch the sealed §10.5 ceremony exactly
-   once;
+   commit, artifact byte, registry, concrete invocation/sentinel, complete
+   attempt history, fresh-registration adjudication, and output/claim
+   namespace;
+5. record all six §10.4 checks, durably claim the initial attempt, and launch
+   the sealed §10.5 ceremony; only its private one-shot receipt may authorize
+   the sole unchanged retry;
 6. publish the complete report pair or incident unchanged in a
    publishes-regardless PR; only a validator-passing `pass` pair may become
    the correction input to §12;
 7. after that pass PR merges, separately ratify and freshly register the
-   context-report configuration, then execute and publish its complete
-   report or incident regardless; and
+   §12 context-report configuration under the same strict parser,
+   repository/argv/sentinel, durable-claim, opaque-retry, and
+   fresh-registration kernel, then execute and publish its complete report or
+   incident regardless; and
 8. only merge of the validator-passing context-report PR activates the
    conditional certificate, retires the proxy label, and resolves forecast-
    ledger entry 11.
 
 Changing any registered byte, registry member/order, source, target value or
 role, candidate, tolerance, seed/draw law, implementation commit, invocation,
-incident history, or output path invalidates the registration. It cannot be
-“noted” after launch; it requires a fresh registration and, if an append-only
-path was consumed, a newly ratified version.
+attempt history, or output path invalidates the evaluation registration. It
+cannot be “noted” after launch; it requires the §10.3
+fresh-registration/output-version disposition. However, changing only a
+held-out, zero-weight, or vintage-1-exclusive byte changes full evaluation
+provenance and registration—not `fit_selection_cell_identity.v1`,
+`substantive_model_sha256`, a uniform, gate row/evidence hash, or correction
+eligibility. G21 enforces that noninterference.
 
 Until every box is ratified and the later publication sequence completes,
-the §3.4 labor-income proxy label remains in force.
+the `first_estimates_report.md` §3.4 labor-income proxy label remains in
+force.
