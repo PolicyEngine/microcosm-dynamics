@@ -3081,6 +3081,23 @@ plus only the following operation-specific keys:
 | `legal_round` | `input_node_id`, `legal_rounding_rule_id`; the rule is an exact foreign key into a registered effective-year legal table. |
 | `draw_mean_sample_sd` | `input_node_id`, `within_draw_key_fields`, `reduction_draw_fields`, `draw_reduction_id`, `output_domain_id`; the input is rational or scalar binary64, and the reduction ID is one of §5.4's frozen laws. |
 
+Every `legal_rounding_rule_id` resolves uniquely to a coordinator-read
+`legal_rounding_rule_specs.v1` row with exactly
+`legal_rounding_rule_id`, `effective_start`, `effective_end`,
+`applicability_key_fields`, `input_unit`, `output_unit`, `increment`,
+`integer_mode`, and `tie_mode`. Effective ranges are nonoverlapping and
+total over the node's independently derived domain; input and output units
+are identical; and increment is a positive reduced rational in that unit.
+`integer_mode` is exactly `floor | ceiling | truncate_toward_zero | nearest`.
+Tie mode is `not_applicable` for the first three and exactly
+`to_even | away_from_zero | toward_zero` for nearest. The evaluator divides
+the exact rational input by the increment, chooses the mathematical integer
+specified by that mode (using the tie rule only at exact half distance), and
+returns that integer times the increment as an exact rational. The rule row
+contains no result value, callback, formula string, implementation mode, or
+free parameter. Missing/duplicate year applicability, a unit mismatch, or an
+unknown mode fails the node.
+
 The signatures are exact. `select` emits its source field's type/unit except
 that source `binary64` emits rational with the same unit, and it rejects a
 summary source. `exact_lookup` applies the same rule to the table value;
