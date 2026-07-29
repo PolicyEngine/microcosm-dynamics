@@ -4071,10 +4071,12 @@ is conjunctive. One violating record is failure:
     projection, mortality, claiming, marriage, Python, NumPy, other
     OS-entropy, or forbidden provider has zero calls. On both
     `selected_correction` and `no_eligible_candidate`, the complete
-    process-lifecycle ledger/cache is sealed only after provider-capable work
-    ends, the unchanged wrappers enter irreversible deny-all state, and the
-    seal plus zero sticky/post-seal requests exact-rechecks immediately before
-    the first rename.
+    expected principal lifecycle event stream exact-matches the actual stream,
+    including every effective creation/destruction boundary and event order;
+    the process-lifecycle ledger/cache is sealed only after provider-capable
+    work ends, the unchanged wrappers enter irreversible deny-all state, and
+    the seal plus zero sticky/post-seal requests exact-rechecks immediately
+    before the first rename.
 12. No post-boundary questionnaire fact enters production; every gap right
     neighbor is no later than the operative claim year; opening-backfill
     adjudication precedes gap derivation; and no universal 2013 row is reused
@@ -4207,13 +4209,18 @@ the other row members in the order above. IDs and callsite/order pairs are
 unique; orders are exactly contiguous
 `0..(boundary_rows.length - 1)`; and rows are in boundary order. The array
 covers every principal authorization, creation, normal destruction, incident
-cutoff, delegated-empty-set barrier, and terminal role cutoff.
+cutoff, cutoff-specific incident-cleanup destruction, delegated-empty-set
+barrier, and terminal role cutoff.
 Boundary zero is the `bootstrap_phase_state_initialized` sentinel, completed
 immediately after the phase cell, direct-exit path, and lifecycle counter are
 initialized and before any fallible monitored-object creation. It is the
 minimum boundary/order sentinel. It is never an incident cutoff: incident
 publication requires a durably reread applicable claim and the frozen
 claim-era cutoff row whose phase equals the then-current coordinator phase.
+Across the effective principal events on any one legal terminal/cutoff path,
+no two creation or destruction events select the same boundary ID/order pair.
+Selected-path boundary orders need not be contiguous because unselected
+alternative-path and non-event boundary rows remain in the authority.
 
 Every principal-authority row has exactly `principal_authority_id`,
 `g15_code_identity_id`, `principal_kind`,
@@ -4227,19 +4234,39 @@ a nonempty canonical-order subset of
 `principal_lifecycle_role_id`, `execution_attempt`, `instance_coordinates`,
 `applicable_terminal_pairs`, `creation_phase`, `normal_destruction_phase`,
 `creation_boundary_id`, `creation_boundary_order`,
-`normal_destruction_boundary_id`, `normal_destruction_boundary_order`, and
-`lifecycle_role_order`. Execution attempt is
-`initial | authorized_retry`; instance coordinates are a possibly empty array
-of unique `<frozen-axis-id>:<member-id>` strings in frozen axis/member order;
-and applicable terminal pairs are a nonempty duplicate-free domain-order
-array of objects having exactly `terminal_branch` and
+`normal_destruction_boundary_id`, `normal_destruction_boundary_order`,
+`incident_cleanup_boundaries`, and `lifecycle_role_order`. Execution attempt
+is `initial | authorized_retry`; instance coordinates are a possibly empty
+array of unique `<frozen-axis-id>:<member-id>` strings in frozen axis/member
+order; and applicable terminal pairs are a nonempty duplicate-free
+domain-order array of objects having exactly `terminal_branch` and
 `evaluation_completion`, each one of the three legal pairs below. Both phases
-are `rng_lifecycle_phase_domain.v1` literals. The three order fields are
-nonnegative JSON integers excluding booleans; role order is globally unique,
-and normal destruction boundary is not earlier than creation boundary. The
-two boundary ID/order pairs foreign-key exact boundary rows; boundary orders
-are not lifecycle counter values. Lifecycle role order is the frozen expected
-principal-creation order across those boundaries.
+are `rng_lifecycle_phase_domain.v1` literals. Every boundary order and
+lifecycle role order is a nonnegative JSON integer excluding booleans; role
+order is globally unique, and normal destruction boundary is strictly later
+than creation boundary. The creation and normal-destruction ID/order pairs
+foreign-key exact boundary rows whose phases exact-match the corresponding
+role phase; boundary orders are not lifecycle counter values.
+
+`incident_cleanup_boundaries` is the complete possibly empty array of rows
+having exactly `incident_cutoff_boundary_id`,
+`incident_cutoff_boundary_order`,
+`incident_cleanup_destruction_boundary_id`, and
+`incident_cleanup_destruction_boundary_order`. It has exactly one row for
+every claim-era incident-cutoff boundary applicable to this execution attempt
+that is at or after the role's creation boundary and before its normal-
+destruction boundary, and no other row. Source and target ID/order pairs
+foreign-key exact boundary rows; the source is that cutoff, the target's phase
+is literal `incident_handling`, and the target order is strictly greater than
+the source order. For every retry-authorizable cutoff, every mapped initial-
+attempt cleanup target order is lower than every authorized-retry creation
+boundary order. Rows are in cutoff-boundary order. Different cutoff/live-role
+pairs have distinct cleanup target pairs, and no target for one cutoff may
+substitute for another even if their phases or coordinator callsites
+coincide.
+
+Lifecycle role order is the frozen expected principal-creation order across
+those boundaries.
 `principal_lifecycle_role_id` is literal `rng-principal-role:` plus SHA-256
 of §10.1 canonical bytes of the other role members in the order above.
 Roles have unique IDs and unique attempt/coordinate/role-order tuples and are
@@ -4471,35 +4498,51 @@ expressly excludes `rng_access_results`, the lifecycle seal, primary,
 sidecar, and all hashes of those objects, so its hash is noncircular. The
 initial outcome is retryable incident exactly when the retry row exists, and
 the last row's outcome is terminal branch. A retryable-incident row's phase
-and boundary ID/order exact-match the durable incident fields. A terminal-
-branch row's phase is literal `lifecycle_closure` and its boundary is the
+and boundary ID/order exact-match the durable incident fields and remain the
+pre-`incident_handling` cutoff; later cleanup boundaries do not replace those
+cutoff fields. A terminal-branch row's phase is literal `lifecycle_closure`
+and its boundary is the
 frozen terminal-role-cutoff row for that legal pair, which follows every
-applicable role-creation and normal-destruction boundary and precedes the
-delegated-empty-set barrier; it is not an asserted runtime value. These
-cutoffs are reconstructed from claims, the durable
-incident/receipt/retry-claim evidence, the frozen atomic-boundary registry,
-and the locked pair, never from actual lifecycle rows.
+applicable role-creation and every normal or selected incident-cleanup
+destruction boundary and precedes the delegated-empty-set barrier; it is not
+an asserted runtime value. These cutoffs are reconstructed from claims, the
+durable incident/receipt/retry-claim evidence, the frozen atomic-boundary
+registry, and the locked pair, never from actual lifecycle rows.
 
 Every role-domain row has exactly
 `principal_lifecycle_role_id`, `principal_authority_id`,
 `execution_attempt`, `instance_coordinates`, `creation_phase`,
-`destruction_phase`, and `lifecycle_role_order`. Each row is the exact
-projection of one authority `lifecycle_roles` row whose applicable-pair array
-contains the actual pair, whose execution attempt occurs in the attempt
-array, and whose creation boundary is no later than that attempt's cutoff;
-the added authority ID identifies its containing authority row. Creation
-phase deep-equals the template. Destruction phase is its normal template
-literal when normal destruction boundary is no later than the cutoff and is
-literal `incident_handling` otherwise; the latter case is legal only for a
-retryable-incident attempt. The filtered role set is complete, and every
-other field deep-equals that template. IDs and
-authority/attempt/coordinate tuples are unique. Rows are in execution-attempt
+`effective_creation_boundary_id`, `effective_creation_boundary_order`,
+`destruction_phase`, `effective_destruction_boundary_id`,
+`effective_destruction_boundary_order`, and `lifecycle_role_order`. Each row
+is the exact projection of one authority `lifecycle_roles` row whose
+applicable-pair array contains the actual pair, whose execution attempt occurs
+in the attempt array, and whose creation boundary is no later than that
+attempt's cutoff; the added authority ID identifies its containing authority
+row. Creation phase and effective creation boundary ID/order exactly equal
+the template's creation phase and pair.
+
+When the template's normal-destruction boundary is no later than the
+attempt's cutoff, destruction phase and effective destruction boundary
+ID/order exactly equal its normal-destruction phase and pair. Otherwise the
+attempt outcome must be `retryable_incident`, and the effective destruction
+pair is the unique `incident_cleanup_boundaries` target selected by that
+attempt's exact durable cutoff ID/order; destruction phase is that target
+row's literal `incident_handling` phase. A generic incident boundary or a
+mapping for any other cutoff is invalid. The filtered role set is complete,
+and every other field deep-equals the template. IDs and
+authority/attempt/coordinate tuples are unique. The combined array containing
+each selected row's effective creation and destruction ID/order pairs has no
+duplicate across either event kind, so effective boundary order defines one
+total expected event order. Rows are in execution-attempt
 order and then lifecycle-role order; canonical order is
 `attempt-then-lifecycle-role-order`. Configuration or actual lifecycle events
-cannot scope this expected domain.
+cannot scope this expected domain or choose an effective boundary.
 
 The serialized `provider_capable_principal_lifecycle.v1` object has exactly
 `schema_version`, `principal_authority`, `role_domain`, `rows`,
+`expected_principal_lifecycle_event_stream`,
+`actual_principal_lifecycle_event_stream`,
 `expected_worker_lifecycle_projection`,
 `actual_worker_lifecycle_projection`, `canonical_order`, and `status`.
 Principal authority is a complete exact deep copy of
@@ -4508,32 +4551,84 @@ the complete exact object above. The two projections are the complete exact
 `g15_worker_lifecycle_projection.v1` objects below. Each row has exactly
 `principal_instance_id`, `principal_lifecycle_role_id`,
 `principal_authority_id`, `execution_attempt`,
-`implementation_identity_sha256`, `creation_phase`, `creation_sequence`,
-`destruction_phase`, and `destruction_sequence`. Role, authority, attempt,
-implementation, and creation phase exact-match the joined authority and role
-rows. Creation sequence is a positive JSON integer excluding booleans.
-Destruction phase and sequence are either both null or, respectively, the
-role's exact destruction phase and a positive JSON integer excluding
-booleans that is greater than creation sequence; a mixed pair is invalid.
+`implementation_identity_sha256`, `creation_phase`,
+`effective_creation_boundary_id`, `effective_creation_boundary_order`,
+`creation_sequence`, `destruction_phase`,
+`effective_destruction_boundary_id`,
+`effective_destruction_boundary_order`, and `destruction_sequence`. Role,
+authority, attempt, implementation, creation phase, and effective creation
+pair exact-match the joined authority and role-domain rows. Creation sequence
+is a positive JSON integer excluding booleans. Destruction phase, effective
+destruction ID/order, and sequence are either all null or all nonnull. When
+nonnull they exact-match the role-domain destruction phase and effective pair,
+and sequence is a positive JSON integer excluding booleans greater than
+creation sequence; any partial group is invalid.
+
+The coordinator captures the event kind, live principal's immutable role,
+authority, attempt, and implementation identities, phase, effective boundary
+ID/order, and lifecycle sequence in the same atomic action that completes
+that exact registered boundary. It writes the immutable actual event trace
+and the corresponding lifecycle-row fields from that capture; neither a
+worker report nor an after-the-fact authority copy may populate them. For each
+lifecycle row, exactly one same-role `delegated_principal_creation` event and,
+when its destruction group is nonnull, exactly one same-role
+`delegated_principal_destruction` event must exist in the actual stream. Each
+event's sequence, phase, effective boundary ID/order, authority, attempt,
+implementation identity, and lifecycle-role order exact-match the
+corresponding row side and joined authority; no other event for that role and
+kind exists.
 `principal_instance_id` is literal `rng-principal:` plus SHA-256 of §10.1
 canonical bytes of
 `[runtime_process_start_identity,principal_lifecycle_role_id,
 principal_authority_id,execution_attempt,implementation_identity_sha256,
-creation_sequence]`. Instance IDs, role IDs, and sequence positions are
-unique, and rows are in creation-sequence order. Schema version is the object
-literal and canonical order is `creation-sequence`.
+effective_creation_boundary_id,effective_creation_boundary_order,
+creation_sequence]`. Instance IDs, role IDs, effective boundary pairs, and
+sequence positions are unique, and rows are in creation-sequence order.
+Schema version is the object literal and canonical order is
+`creation-sequence`.
+
+Each of `expected_principal_lifecycle_event_stream` and
+`actual_principal_lifecycle_event_stream` is a complete
+`provider_capable_principal_lifecycle_event_stream.v1` object with exactly
+`schema_version`, `events`, and `canonical_order`. Schema version is that
+literal and canonical order is `event-sequence`. Each event has exactly
+`lifecycle_sequence`, `event_kind`, `principal_lifecycle_role_id`,
+`principal_authority_id`, `execution_attempt`,
+`implementation_identity_sha256`, `phase`, `effective_boundary_id`,
+`effective_boundary_order`, and `lifecycle_role_order`. Event kind is exactly
+`delegated_principal_creation | delegated_principal_destruction`; all
+identity and role members exact-match the joined authority/domain row.
+Lifecycle sequence is a positive JSON integer excluding booleans. Effective
+boundary and lifecycle-role orders are nonnegative JSON integers excluding
+booleans; the effective ID/order pair foreign-keys one exact authority
+boundary row, and `phase` exact-matches that row.
+
+Let \(B\) be the exact bootstrap-identity row count and \(R\) the exact
+role-domain row count. The expected stream independently emits one creation
+and one destruction event for every role-domain row, projects phase and
+effective boundary pair from the corresponding side of that row, sorts the
+complete \(2R\)-event array by effective boundary order, and assigns
+`lifecycle_sequence` exactly \(B+1\) through \(B+2R\). The actual stream is
+the complete immutable coordinator trace of those event kinds in consumed
+lifecycle-sequence order, with no projection from expected rows. The two
+complete stream objects must deep-equal, and their §10.1 canonical bytes must
+be exactly equal, including array order, sequences, event kinds, and every
+event field; hash equality alone is insufficient.
 
 The actual row sequence projected to role IDs must equal the independently
 expanded role-domain ID sequence with no missing, extra, duplicate, or
-reordered role. Status is `pass` iff
-that equality and every authority, implementation, attempt, phase,
-nullability, identity, uniqueness, and ordering law above passes and every
-destruction pair is nonnull, and each of the two embedded G15 projections
-below independently satisfies its exact schema and derivation law; it is
-`fail` otherwise. Equality of those two valid projections is adjudicated only
-by correction gate G15. A null destruction pair therefore remains a
-coordinator-retained nonpublication failure preimage but prevents the
-empty-set barrier, seal, and primary.
+reordered role. Status is `pass` iff that equality, exact expected-versus-
+actual event-stream equality, and every authority, implementation, attempt,
+phase, effective-boundary, nullability, identity, uniqueness, and ordering
+law above passes, every destruction group is nonnull, and each of the two
+embedded G15 projections below independently satisfies its exact schema and
+derivation law; it is `fail` otherwise. Equality of those two valid
+projections is adjudicated only by correction gate G15. A null destruction
+group therefore remains a coordinator-retained nonpublication failure
+preimage but prevents the empty-set barrier, seal, and primary. Reversing two
+same-phase destructions changes actual event order/sequence, and recording a
+wrong same-phase creation boundary changes the event payload; neither can
+serialize as the expected stream.
 
 `g15_mount_epoch.v1` has exactly `schema_version`, `mount_epoch_id`,
 `mount_allowlist_id`, `mount_allowlist_sha256`, `descriptor_allowlist_id`,
@@ -4577,8 +4672,8 @@ hashes are, respectively, G15's `expected_worker_lifecycle_sha256` and
 `actual_worker_lifecycle_sha256`; G15 alone requires their hashes and rows to
 equal for the correction. It references these serialized G11 objects and
 cannot substitute its own summary. G11 separately validates runtime instance
-IDs and lifecycle sequences. No separately summarized provider-capable
-lifecycle is permitted.
+IDs, effective boundary placement, and exact expected-versus-actual event
+streams. No separately summarized provider-capable lifecycle is permitted.
 
 The coordinator serializes the branch-general
 `rng_provider_lifecycle_seal.v1` object with exactly `schema_version`,
@@ -4620,7 +4715,10 @@ unchanged from bootstrap through pre-rename recheck.
 The union of every bootstrap `creation_sequence`, every principal creation
 and destruction sequence, `provider_capable_workers_destroyed_sequence`, and
 `seal_sequence` is exactly the contiguous positive integer range
-`1..seal_sequence`, with no duplicate. The destroyed sequence is the
+`1..seal_sequence`, with no duplicate. If \(B\) is the bootstrap row count and
+\(R\) is the role-domain row count, the exact principal event-stream
+sequences are \(B+1..B+2R\), the destroyed sequence is \(B+2R+1\), and
+`seal_sequence` is \(B+2R+2\). The destroyed sequence is the
 `delegated_provider_capable_set_empty` barrier after the last non-root
 principal destruction; its phase and `seal_phase` are both literal
 `lifecycle_closure`. The still-live root coordinator is not a principal row.
@@ -4648,6 +4746,9 @@ Provider-call `event_sequence`, post-seal `request_sequence`, broker
 `exposure_sequence`, and receipt `pop_sequence` are distinct counters from
 `rng_lifecycle_sequence_namespace.v1` and from one another. Their values are
 never compared, merged, or used to fill a lifecycle-sequence gap.
+Authority `boundary_order` is likewise distinct from every counter. It
+determines expected principal-event order, but its selected-path values need
+not be contiguous and never substitute for `lifecycle_sequence`.
 
 `pre_rename_recheck_sha256` hashes the canonical object containing all seal
 fields except `schema_version`, itself, and `status`. The coordinator
@@ -4657,17 +4758,18 @@ Final status is `pass` iff: the terminal branch/completion pair is legal; the
 bootstrap object exact-matches the pinned expected object and every live
 ledger/cache/wrapper/hook identity still deep-equals its creation row; the
 principal lifecycle passes, including each embedded expected/actual
-projection's independent schema and derivation checks; every phase/role pair
-is allowed; every
-lifecycle sequence is a positive non-boolean integer and the complete union
-is exactly `1..seal_sequence` with no duplicate and the barrier immediately
-before the seal; the live ledger's seal sequence, ledger/cache state hashes,
-and wrapper state exact-match; request, denied, and sticky values are zero
-and the denial trace is the canonical empty-array hash; and the immediate
-pre-rename reconstruction equals the sealed comparand with no intervening
-callback. Status is `fail` otherwise. Failure to destroy a principal, prove
-the empty set, or perform the atomic seal is an invariant incident and
-permits no primary; any other mismatch permits neither rename.
+projection's independent schema and derivation checks and the complete
+expected and actual principal event streams deep-equal; every phase/role/
+effective-boundary tuple is allowed; every lifecycle sequence is a positive
+non-boolean integer and the complete union is exactly `1..seal_sequence` with
+no duplicate and the barrier immediately before the seal; the live ledger's
+seal sequence, ledger/cache state hashes, and wrapper state exact-match;
+request, denied, and sticky values are zero and the denial trace is the
+canonical empty-array hash; and the immediate pre-rename reconstruction
+equals the sealed comparand with no intervening callback. Status is `fail`
+otherwise. Failure to destroy a principal, prove the empty set, or perform
+the atomic seal is an invariant incident and permits no primary; any other
+mismatch permits neither rename.
 
 `keyed_uniform_registry.v1` is independently expanded from the complete
 derived ledger support, every registered `coverage_state_group_id`, the sole
@@ -4844,7 +4946,7 @@ The executable selector/comparator map is:
 | G08 | `benefit_revenue_component_hash_pairs` | `all_hash_pairs_equal / true` |
 | G09 | `recoverable_provenance_scan` | `all_records_true / true` |
 | G10 | `replay_registry_results` | `exact_six_rows_all_hashes_equal / true` |
-| G11 | `trusted_rng_provider_call_ledger_and_lifecycle_seal` | `exact_keyed_calls_nonce_exception_forbidden_zero_sealed_deny_and_prerename_recheck / true` |
+| G11 | `trusted_rng_provider_call_ledger_and_lifecycle_seal` | `exact_keyed_calls_nonce_exception_forbidden_zero_event_stream_sealed_deny_and_prerename_recheck / true` |
 | G12 | `information_cutoff_and_claim_context_gap_evidence` | `all_records_true / true` |
 | G13 | `semantic_field_registry_scan` | `all_records_true / true` |
 | G14 | `trusted_survey_weight_rescale_reexecution_results` | `exact_four_survey_weight_rows_all_bundles_equal / true` |
@@ -5107,7 +5209,8 @@ The separately registered context report then proves condition 8:
    capability is destroyed grants the separate context decoder access to all
    15 vintage-1 series and computes every registered context row;
    after all context computation destroys every delegated provider-capable
-   context principal, consumes the
+   context principal at its effective authority boundary, exact-compares the
+   complete expected and actual principal event streams, consumes the
    `delegated_provider_capable_set_empty` barrier, seals the same ledger/cache,
    enters irreversible deny-all mode, freezes the complete whole-lifecycle
    RNG evidence, and constructs, validates, and stages the complete
@@ -5887,13 +5990,16 @@ The isolated runner performs, in order:
    In the common tail on every terminal branch, complete only that branch's
    already-authorized provider work, destroy every remaining provider-capable
    evaluator, coordinator delegate, proposal process, mount, descriptor, and
-   callback, and prove the destruction ledger complete. Then atomically seal
-   the original provider ledger and keyed-uniform cache and transition the
-   original wrappers to `sealed_deny_all` under §8.1. Construct the complete
-   evaluated `rng_access_results`, including every nonce and forbidden row
-   and `rng_provider_lifecycle_seal.v1`; finalize G11 from that sealed
-   whole-process evidence and G15 from the complete lifecycle audit. Run or
-   update all 22 gate rows using locked G10/G14 and G21 preimage evidence,
+   callback at its authority-selected effective boundary, append every atomic
+   actual event, and exact-compare the complete expected and actual principal
+   event streams. Only after that equality and a complete destruction ledger
+   may it consume the empty-set barrier. Then atomically seal the original
+   provider ledger and keyed-uniform cache and transition the original
+   wrappers to `sealed_deny_all` under §8.1. Construct the complete evaluated
+   `rng_access_results`, including every nonce and forbidden row and
+   `rng_provider_lifecycle_seal.v1`; finalize G11 from that sealed whole-
+   process evidence and G15 from the complete lifecycle audit. Run or update
+   all 22 gate rows using locked G10/G14 and G21 preimage evidence,
    with selected-model-dependent rows not evaluated only where the branch
    makes them unreachable, and construct the complete noninterference bundle.
    The coordinator then derives the final conditions-1–6 objects and compares
@@ -6295,7 +6401,11 @@ Their schemas and completeness laws are:
     deep-equals the exact `rng_provider_lifecycle_seal.v1` object for the
     actual selected or no-eligible branch. Its status must pass in every
     valid primary, and its `pre_rename_recheck_sha256` is reconstructed from
-    the same live objects immediately before the first rename. A
+    the same live objects immediately before the first rename. Its embedded
+    principal lifecycle retains both complete event-stream preimages and
+    passes only when the independently reconstructed expected stream and
+    immutable actual coordinator stream deep-equal in every field and array
+    position. A
     forbidden-provider row passes iff its count is zero and its trace is the
     canonical empty ledger; its keyed-registry hash is null. The correction
     midpoint row passes iff its count and trace exact-match the independently
@@ -6309,11 +6419,12 @@ Their schemas and completeness laws are:
     private commitment-only flow; its keyed-registry hash is null. A row
     otherwise fails and retains the
     nonzero count or mismatching hashes. Fresh-generator state snapshots are
-    not evidence. G11 passes iff every provider row and the lifecycle seal
-    pass; `rng_access_results` remains fully evaluated and serialized when
-    G11 itself fails. The G11 hard-gate row's `evidence_sha256` hashes this
-    complete tagged object, never only the provider rows or a pre-held-out
-    prefix.
+    not evidence. G11 passes iff every provider row and the lifecycle seal,
+    including exact expected-versus-actual event-stream equality, pass;
+    `rng_access_results` remains fully evaluated and serialized when G11
+    itself fails. The G11 hard-gate row's `evidence_sha256` hashes this
+    complete tagged object, never only the provider rows, a lifecycle summary,
+    or a pre-held-out prefix.
   - `weight_rescale_results` has exactly four
     `weight_rescale_specs.v1` rows, each with exactly `comparison_id`,
     `expected_base_survey_weight_packet_sha256`,
@@ -6680,15 +6791,34 @@ and descriptor-reread. Its object has exactly these keys:
   §10.1 and that file exists.
 
 The incident object's four-literal `phase` is an error-classification domain,
-not `rng_lifecycle_phase_domain.v1`. Throughout cleanup, construction, and
-publication of any such incident, G11 ledger/denial events carry lifecycle
-phase `incident_handling` regardless of the incident's classification
-literal. The lifecycle phase and boundary ID/order exact-match one frozen
-principal-authority boundary row. For a receipt-authorized retry, the three
-lifecycle-cutoff fields are
+not `rng_lifecycle_phase_domain.v1`. The coordinator atomically retains the
+last-entered phase and exact last-completed cutoff ID/order before changing
+lifecycle phase to `incident_handling`. Before constructing or publishing the
+incident bytes, it enumerates every role of that attempt whose creation
+boundary is no later than the cutoff and whose normal destruction boundary is
+later. In cleanup-target boundary order, it destroys each such still-live
+principal at the unique `incident_cleanup_boundaries` target selected by that
+exact cutoff pair. Every destruction event atomically records lifecycle phase
+`incident_handling`, the selected cleanup target ID/order, and its consumed
+lifecycle sequence in the actual principal event stream and lifecycle row.
+A target mapped from another cutoff is invalid even if it has the same phase
+or callsite; no principal may be created during cleanup.
+
+All selected cleanup destructions and their actual event rows must complete
+and exact-match the cutoff-selected authority mappings before incident
+construction, incident publication, retry-authority sealing, or receipt
+minting. A cleanup or mapping mismatch is terminal, publishes no incident or
+receipt, and takes the direct `incident_handling → process_exit` edge. The
+complete expected-versus-actual stream equality remains mandatory when a
+terminal primary is later sealed. Throughout cleanup, construction, and
+publication, every provider or denial event likewise carries lifecycle phase
+`incident_handling` regardless of the incident's classification literal.
+
+For a receipt-authorized retry, the three durable lifecycle-cutoff fields are
 the independently durable source for the initial attempt's
-`attempt_lifecycle_cutoff_evidence.v1` values; the final role-domain object
-must exact-match them and the triggering incident hash.
+`attempt_lifecycle_cutoff_evidence.v1` values. The final role-domain object
+must exact-match them and the triggering incident hash, and its effective
+cleanup boundaries must be the cutoff-selected targets just recorded.
 
 Existing incident suffixes must be exactly `1..n-1`; configured attempt
 history must equal every incident and claim that predated registration by
@@ -7070,17 +7200,23 @@ imports §10.3–§10.5 unchanged, including
    13-literal correction object; its bootstrap-implementation rows substitute
    the context coordinator paths/blobs; and its principal authority
    independently enumerates the context worker, coordinator-delegate, and
-   proposal-process roles and atomic boundaries rather than correction-only
-   roles, with the sole applicable terminal pair
+   proposal-process roles, atomic boundaries, and complete cutoff-specific
+   incident-cleanup maps rather than correction-only roles, with the sole
+   applicable terminal pair
    `context_evaluated/context_complete`. Canonical order remains
    `provider-order`. Its lifecycle seal embeds context-owned expected and
    actual `g15_worker_lifecycle_projection.v1` preimages reconstructed from
    that authority and the context mount/descriptor/IPC audit; it does not
    depend on correction G15 evidence or a missing context filesystem block.
+   It also uses the exact §8.1 effective-boundary lifecycle-row schema and
+   complete expected/actual principal event-stream construction and
+   comparison, substituting only context authority members and paths.
    Unlike the correction seal, the context
    `rng_provider_lifecycle_seal.v1.status` is `pass` only when those two
-   individually valid projections also deep-equal, because the context
-   ceremony has no separate G15 gate.
+   individually valid projections also deep-equal and the independently
+   reconstructed expected principal event stream exactly deep-equals the
+   immutable actual stream, because the context ceremony has no separate G15
+   gate.
    The keyed-midpoint
    expected-call domain is independently expanded from the locked
    correction's complete support and draw namespace and must reproduce its
@@ -7372,7 +7508,8 @@ imports §10.3–§10.5 unchanged, including
    and dependency proof, destroy every runner proposal capability, only then
    grant a separate context decoder access to the 15 vintage-1 series, and
    compute every registered context row; `lifecycle_closure` to destroy every
-   delegated provider-capable context principal, consume the
+   delegated provider-capable context principal at its effective boundary,
+   exact-compare the complete expected and actual event streams, consume the
    `delegated_provider_capable_set_empty` barrier and seal sequences, enter
    irreversible deny-all state, and freeze and validate the whole-lifecycle
    `rng_access_results`; and `publication` to publish. Its exact normal
@@ -7381,7 +7518,8 @@ imports §10.3–§10.5 unchanged, including
    → evaluation → lifecycle_closure → publication → process_exit`.
    Exception, receipt-authorized retry, terminal-incident, and direct
    no-allocation exit transitions are exactly §10.2; no correction-only state
-   may appear in a context provider, denial, principal, barrier, or seal row.
+   may appear in a context provider, denial, principal, event-stream, barrier,
+   or seal row.
    The trusted
    evaluator has no first-estimates, predecessor, vintage-1,
    `before_context`, fitting, selection, model
@@ -7852,19 +7990,21 @@ Ratification requires affirmative evidence for every item:
   worker denominator uses analytic probabilities.
 - [ ] `gate_specs.v3` contains exactly conjunctive G01–G22, including G10's
   six exact replay rows, G11's one row per frozen provider plus the complete
-  lifecycle seal on selected and no-eligible branches, G14's exact four
-  trusted survey-weight rescale rows, G15's exact nonempty broker/sandbox
-  assertions, and G17's exact 15-domain inventory/fact-binding/microfact
-  closure; G22 additionally requires zero source/domain/rule/unit/root
-  semantic mismatches and zero proposal schema/value mismatches.
+  lifecycle seal and boundary-attested expected/actual principal event
+  streams on selected and no-eligible branches, G14's exact four trusted
+  survey-weight rescale rows, G15's exact nonempty broker/sandbox assertions,
+  and G17's exact 15-domain inventory/fact-binding/microfact closure; G22
+  additionally requires zero source/domain/rule/unit/root semantic mismatches
+  and zero proposal schema/value mismatches.
 - [ ] Expected mappings, 20-draw namespace, nonlinear benefit propagation,
   frozen ledger-row schema, within-year dependence groups, byte replay,
   row-order invariance, exact-once process-lifecycle keyed-uniform caching,
   the exact bootstrap-to-exit phase registry, complete bootstrap identity
   records, one contiguous creation/destruction/seal sequence namespace,
-  complete nonce/forbidden-provider traces, post-seal deny-all enforcement,
-  and immediate pre-rename RNG rechecks are executable on both terminal
-  branches.
+  exact cutoff-specific incident-cleanup maps, complete boundary-bearing
+  expected/actual principal event streams, complete nonce/forbidden-provider
+  traces, post-seal deny-all enforcement, and immediate pre-rename RNG
+  rechecks are executable on both terminal branches.
 - [ ] Aggregate motivation states both high per-worker ratios and
   approximately 1.01→0.80 aggregate payroll, with no unconditional sign.
 - [ ] Scope exclusions and the revenue-only degradation are exact and cannot
@@ -7941,7 +8081,9 @@ The authorized order is:
    `rng_access_results`; truncated no-eligible nonce/forbidden-provider
    evidence; missing/extra/reordered lifecycle phase literals; malformed or
    replaced bootstrap identity records; duplicate, gapped, reset, or
-   cross-namespace creation/destruction/seal sequences;
+   cross-namespace creation/destruction/seal sequences; a reversed same-phase
+   destruction order, wrong same-phase creation boundary, or incident cleanup
+   boundary selected from another cutoff;
    wrapper/ledger/cache replacement; post-seal entropy requests during
    primary or sidecar construction; and ledger/cache/wrapper mutation
    immediately before either branch's first rename;
