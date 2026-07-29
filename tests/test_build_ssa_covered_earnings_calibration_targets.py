@@ -64,6 +64,13 @@ def _observations_by_id(artifact: dict) -> dict[str, dict]:
     }
 
 
+def _refresh_content_sha256(artifact: dict) -> None:
+    artifact["integrity"]["content_sha256"] = "0" * 64
+    artifact["integrity"]["content_sha256"] = hashlib.sha256(
+        _canonical(artifact)
+    ).hexdigest()
+
+
 def test__calibration_target_artifact__is_canonical_and_sha256_pinned():
     raw = ARTIFACT.read_bytes()
     assert raw == _canonical(json.loads(raw))
@@ -347,4 +354,30 @@ def test__calibration_target_validator__rejects_content_hash_drift():
     artifact = _artifact()
     artifact["integrity"]["content_sha256"] = "f" * 64
     with pytest.raises(ValueError, match="content_sha256"):
+        builder.validate_artifact(artifact)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    (
+        ("table4_b2_as_published", "999"),
+        ("table4_b2_source_cell_id", "table4.b2/1968/c5"),
+        ("discrepancy_class", "literal_source_conflict_not_display_precision"),
+    ),
+)
+def test__calibration_target_validator__rejects_discrepancy_row_drift(
+    field, value
+):
+    artifact = _artifact()
+    artifact["cross_table_discrepancies"][0][field] = value
+    _refresh_content_sha256(artifact)
+    with pytest.raises(ValueError, match="discrepancy"):
+        builder.validate_artifact(artifact)
+
+
+def test__calibration_target_validator__rejects_implementation_commit_drift():
+    artifact = _artifact()
+    artifact["integrity"]["extraction_implementation_commit"] = "f" * 40
+    _refresh_content_sha256(artifact)
+    with pytest.raises(ValueError, match="implementation commit drift"):
         builder.validate_artifact(artifact)

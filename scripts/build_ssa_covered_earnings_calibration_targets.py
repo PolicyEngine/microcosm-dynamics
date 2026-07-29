@@ -667,6 +667,12 @@ def _cross_table_discrepancies(
             f"{tuple(found)!r} != {expected_values!r}"
         )
 
+    return _expected_cross_table_discrepancies()
+
+
+def _expected_cross_table_discrepancies() -> list[dict[str, Any]]:
+    """Return the exact ten-row discrepancy registry frozen by §6.1."""
+
     rows: list[dict[str, Any]] = []
     lookup = {
         (concept, "table4.b2"): b2_component
@@ -941,6 +947,24 @@ def _validate_cross_table_discrepancies(artifact: Mapping[str, Any]) -> None:
         actual_order.append((year, row["concept"]))
     if actual_order != expected_order:
         raise ValueError("cross-table discrepancies reordered")
+    expected_rows = _expected_cross_table_discrepancies()
+    if rows != expected_rows:
+        raise ValueError(
+            "cross-table discrepancy literals, cells, or classes drift"
+        )
+
+    observations = {
+        row["source_cell_id"]: row for row in artifact["observations"]
+    }
+    for row in rows:
+        for table in ("table4_b2", "table4_b11"):
+            source_cell_id = row[f"{table}_source_cell_id"]
+            as_published = row[f"{table}_as_published"]
+            if observations[source_cell_id]["as_published"] != as_published:
+                raise ValueError(
+                    f"{source_cell_id} discrepancy literal does not "
+                    "resolve to its observation"
+                )
 
 
 def validate_artifact(artifact: Mapping[str, Any]) -> None:
@@ -998,6 +1022,11 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
         integrity["extraction_implementation_commit"],
     ):
         raise ValueError("extraction implementation commit is invalid")
+    if (
+        integrity["extraction_implementation_commit"]
+        != EXTRACTION_IMPLEMENTATION_COMMIT
+    ):
+        raise ValueError("extraction implementation commit drift")
     if integrity["reproduced_from_source_bytes"] is not True:
         raise ValueError("artifact is not marked source-byte reproducible")
     expected_content_sha256 = _content_sha256(artifact)
