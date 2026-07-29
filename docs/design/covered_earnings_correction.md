@@ -370,9 +370,12 @@ nonnull member of that row's `raw_field_ids`. For a
 `structural_missing` row it is null. `typed_value_type` is exactly
 `rational | json_integer | boolean | enum`; `typed_value_unit` is the
 registered nonempty unit for a numeric fact and null for boolean/enum.
-Both exact-match the referenced inventory row's registered
-`typed_parse_specs` output,
-and the rule's `micro_fact` transform leaf has that same type/unit.
+For a present row, both exact-match the referenced inventory row's registered
+`typed_parse_specs` output and the rule's `micro_fact` transform leaf. For a
+structural-missing row, the parse array is correctly empty; the declared
+type/unit instead exact-match that transform leaf's frozen expected
+signature, but no value is constructed and the transform is necessarily
+skipped.
 Missing, extra, cross-purpose, or runner-selected references abort
 registration.
 
@@ -501,7 +504,9 @@ than a default. The commitment hashes that complete canonical object.
 Otherwise the action exact-matches the rule's
 `unresolved_action`, the transform disposition is
 `skipped_missing_fact`, and its result and commitment are null. The output
-fold is the §5.1 literal `unresolved`-dominates law.
+fold is the §5.1 literal `unresolved`-dominates law: an executed/all-present
+row leaves the input action unchanged, while a skipped row folds its
+nonnull registered missing-fact action into that input.
 
 For each record, the controlling transform is mechanically frozen. Discard
 only executed `no_disposition` results; among the remaining results, the
@@ -528,11 +533,19 @@ implementation default can choose between legal outcomes.
 transform executes, and the unique controlling-result law passes; otherwise
 it equals the completed action fold. A direct row's `classified_status` is
 the controlling result's status and its brokered probability vector is the
-corresponding exact one-hot vector. A modeled or unresolved row has
-`classified_status: null` and the exact §5.1 vector. Reason codes and
-`classified_component_sha256` hash the complete chosen typed result,
-one-hot/model vector, record key, remuneration type, and ordered reason
-codes actually brokered to fitting. Counts, key hash, row status, and overall
+corresponding exact one-hot vector. An unresolved row has
+`classified_status: null` and exact vector `[0,0,0,1]`. A modeled row also
+has `classified_status: null`, but before fitting it carries the literal
+`candidate_probability_pending` instead of a nonexistent \(q\) or model
+vector. Its coordinator-owned classified component exposes only the frozen
+feature inputs and modelable disposition to candidate IPC.
+`classified_component_sha256` hashes the record key, remuneration type,
+final disposition, direct one-hot/unresolved vector or pending marker, and
+ordered reason codes; it never hashes a candidate probability in this
+pre-fitting trace. Candidate-specific \(q\) vectors are separately
+exact-compared after fitting in each registered candidate prediction/ledger
+bundle and by G01/G10/G15/G22. Thus phase 3 can finish before fitting without
+letting a runner rewrite the later vector. Counts, key hash, row status, and overall
 status fail on any omitted, extra, reordered, wrong-presence, wrong-fold,
 executed/skipped, precedence/conflict, typed-result, reason, or
 classified-byte mismatch. G17 binds this same complete preimage; it does not
@@ -819,9 +832,10 @@ For a present row, `typed_parse_specs` has exactly one object per
 `parse_kind`, `raw_width`, `value_code_map_id`, `signed`,
 `decimal_places`, `implied_scale`, `typed_value_type`, and
 `typed_value_unit`. `raw_width` is the positive JSON-integer width in the
-source layout. A `value_code_map` parser has the row's nonnull map ID and
-null remaining parse fields; its chosen entry supplies type, unit, and
-canonical value. A `fixed_width_numeric` parser has null map ID, source-backed
+source layout. A `value_code_map` parser has the row's nonnull map ID, null
+`signed`, `decimal_places`, `implied_scale`, `typed_value_type`, and
+`typed_value_unit`; its chosen entry supplies type, unit, and canonical
+value. A `fixed_width_numeric` parser has null map ID, source-backed
 boolean `signed`, nonnegative JSON-integer decimal places, a positive reduced
 rational implied scale, output type `rational | json_integer`, and the
 source-backed nonempty unit. It accepts only the exact-width ASCII
@@ -1091,7 +1105,10 @@ Their exact row schemas are:
   missing reason is nonnull exactly for `missing` and otherwise null. Thus
   coded boolean/enum direct-law facts have an inventory-backed typed value
   path rather than an implementation coercion. Every literal raw code in the
-  inventory occurs once;
+  inventory occurs once. Within one map, all nonmissing entries have the same
+  `typed_value_type` and `typed_value_unit`; only normalized values and
+  dispositions may differ, so the parser's output signature cannot depend on
+  the observed token;
 - an annualization row has exactly `annualization_rule_id`,
   `applicable_source_inventory_keys`, `required_field_purposes`,
   `input_units`, `output_unit`, `formula_ast`, `rounding_rule`,
@@ -1129,16 +1146,39 @@ Every `*_ast` and each verified historical rule `transform` uses the closed
 `psid_rule_ast.v1` grammar. A node is exactly one of:
 `{"op":"field","source_inventory_key":...,"raw_field_id":...}`;
 `{"op":"micro_fact","micro_fact_id":...}`;
-`{"op":"rational","numerator":<integer>,"denominator":<positive integer>}`;
-`{"op":"literal","value":<string, boolean, or null>}`; or
+`{"op":"rational","numerator":<integer>,"denominator":<positive
+integer>,"unit":<registered nonempty unit>}`;
+`{"op":"json_integer","value":<JSON integer excluding booleans>,
+"unit":<registered nonempty unit>}`;
+`{"op":"literal","value":<string, boolean, or null>,
+"value_type":<rational, json_integer, enum, or boolean>,
+"unit":<registered unit or null>}`; or
 `{"op":<operator>,"args":[...]}`, where operator is one of
-`add | subtract | multiply | divide | minimum | maximum | equal | and | or |
-case`. `subtract`, `divide`, and `equal` have exactly two arguments; `case`
+`add | subtract | multiply | divide | minimum | maximum | equal | less |
+less_equal | greater_equal | greater | and | or | case`. `subtract`,
+`divide`, `equal`, and the four ordered comparisons have exactly two
+arguments; `case`
 has exactly three ordered arguments `(boolean predicate, true branch, false
 branch)` and evaluates only the selected branch; `add`, `multiply`,
 `minimum`, `maximum`, `and`, and `or` have at least two arguments and evaluate
 left to right, with boolean short-circuiting only for `and` and `or`.
-Registration type-checks every node and output. A referenced missing/null
+Registration type- and unit-checks every node and output. Rational
+`add | subtract | minimum | maximum` operands have one identical unit and
+retain it. Rational multiply permits exactly one `dimensionless` operand and
+returns the other unit. Rational divide permits a dimensionless denominator
+and returns the numerator unit, or identical units and returns
+`dimensionless`; every other unit pair is invalid. `equal` requires
+identical operand type and unit and returns boolean/null-unit. Each ordered
+comparison requires two rational or two JSON-integer operands with identical
+type/unit and returns boolean/null-unit. `and | or` require and return
+boolean/null-unit; and `case` requires a
+boolean/null-unit predicate plus branches with identical type, unit, and
+nullability and returns that branch signature. String literals declare
+enum/null-unit and booleans declare boolean/null-unit. A null literal's type
+and unit declare its branch signature; numeric types require a nonempty unit
+and boolean/enum require null unit. Null is permitted only where both case
+branches have that same explicitly nullable signature.
+There is no unit inference or coercion. A referenced missing/null
 field, wrong type, evaluated division by zero, or nonfinite result takes the
 rule's registered failure branch; there is no implicit null propagation.
 Every field node foreign-keys a `present` inventory row and its
@@ -1149,8 +1189,15 @@ Every `micro_fact` node is permitted only in a verified
 `historical_coverage_rule_specs[*].transform`, foreign-keys exactly one
 member of that same row's `required_micro_facts`, and receives only the
 coordinator-derived typed value from the §4.1 ledger. A historical transform
-may use `micro_fact`, rational, literal, and registered operator nodes but no
-direct `field` node; every required microfact must appear at least once.
+may use `micro_fact`, rational, JSON-integer, literal, and registered operator
+nodes but no direct `field` node; every required microfact must appear at
+least once.
+Its AST output is exactly one nonnull enum literal
+`covered_wage | covered_self_employment | noncovered | no_disposition`.
+The sealed coordinator—not the AST or runner—wraps that enum with the rule's
+registered `status_family` and `reason_code` to construct the exact
+`direct_law_transform_result.v1` object in §4.1. Any other transform output
+type or value is invalid at registration.
 No float literal, executable code, callback, path, implementation default, or
 unregistered operator is allowed. Selector/key arrays have declared field
 order; formula operands must foreign-key inventoried present rows; every
@@ -2765,10 +2812,20 @@ corrected metric, trusted-evaluator root, or separate corrected-result block.
 `sensitivity_specs.v1` is a one-object ordered array. Its object has exactly
 `sensitivity_id`, `label`, `input_selector`, `scalar_selector`,
 `reference_era_specs`, `year_source_class_rule`, `pre_2015_rule`,
-`diagnostic_proxy_gap_rule`, `post_2014_rule`, `allowed_outputs`, and
-`forbidden_uses`; every value is the literal law in the preceding paragraphs.
-`diagnostic_proxy_gap_rule` is the literal foreign key
+`diagnostic_proxy_gap_rule`, `post_2014_rule`, `stratum_id`, `statistic`,
+`aggregation_rule`, `allowed_outputs`, and `forbidden_uses`; every value is
+the literal law in the preceding paragraphs.
+`diagnostic_proxy_gap_rule` is the literal closed rule ID
 `option_c_diagnostic_proxy_gap_rule.v1`.
+The remaining result-domain literals are `stratum_id: overall`,
+`statistic: survey_weighted_total_draw_summary`, and
+`aggregation_rule:
+within_projection_draw_exact_psid_survey_weighted_sum_then_20_draw_mean_sample_sd_v1`.
+For each annual/context position, the coordinator exact-sums the scaled
+nonnegative person values times their frozen PSID survey weights inside each
+of the 20 projection draws, then applies the exact §5.4 mean/sample-SD law.
+A successful row therefore has `observation_count: 20`. No unregistered
+stratum, statistic, aggregation, correction draw, or row dimension exists.
 `allowed_outputs` is exactly `["before_context_results"]`, and
 `forbidden_uses` is exactly
 `["careers","AIME","PIA","production_revenue","candidate_selection",
@@ -2845,7 +2902,7 @@ exists.
 
 `field_specs` is closed rather than a copy of all atomic fields. It contains,
 in exact order, those eight keys; `remuneration_type`,
-`se_aggregation_group_id`, `coverage_state_group_id`,
+`se_aggregation_group_rule_id`, `gap_se_aggregation_group_id`,
 `year_source_class`, `channel_value_status`;
 `covered_wage_gain_amount`, `covered_se_gain_amount`,
 `covered_se_loss_magnitude`, `noncovered_gain_amount`,
@@ -2855,9 +2912,16 @@ in exact order, those eight keys; `remuneration_type`,
 `right_neighbor_row_sha256`, `gap_derivation_disposition`,
 `effective_gap_legal_rule_id`, and `no_new_uniform`. A neighbor coordinate
 and hash are nullable together exactly when no known admissible source
-component exists on that side after the cutoff. The three component/type
-fields must exact-match across two-neighbor rows and copy the sole neighbor
-on a carry. Source channel values are extracted only from the seven exact
+component exists on that side after the cutoff. Remuneration type and the
+SE-aggregation rule ID must exact-match across two-neighbor rows and copy the
+sole neighbor on a carry. Annual `se_aggregation_group_id` and
+`coverage_state_group_id` are deliberately absent: both are person-year
+identities and cannot be copied across adjacent years. For an SE component,
+`gap_se_aggregation_group_id` is freshly derived by the registered
+SE-aggregation rule from its same-service key fields with `gap_year`
+substituted for year; for a non-SE component, both SE-group fields are null.
+The gap stream consumes no new coverage uniform and needs no gap-year
+coverage-state group. Source channel values are extracted only from the seven exact
 §3.1 status-allocated gain/loss members with the corresponding names; no raw
 proxy, adjudicated source, measurement intermediate/delta, probability,
 status, reason, or already statutory/capped field is in this schema.
@@ -2875,7 +2939,8 @@ effective-year table foreign key, and `no_new_uniform` is literal boolean
 `true`. Canonical order is exactly the field order above; encodings are the
 applicable §3.1 rational/canonical encodings; row invariants are the
 executable cutoff, provenance-map, neighbor, channel-extraction,
-component-identity, effective-year-law, and no-new-uniform laws above; and
+component-identity, gap-SE-group derivation, effective-year-law, and
+no-new-uniform laws above; and
 failure disposition is `gate_fail`.
 
 `earnings_consumer_dependency_specs.v1` has exactly `schema_version`,
@@ -3250,8 +3315,10 @@ single authorized retry. On a cache miss, and only then, the coordinator
 invokes the pinned midpoint provider once, bit-validates the result against
 an independent SHA-256 evaluation, stores the exact binary64 bits, and
 returns them. On a hit it returns those exact stored bits and makes no
-provider call. The initial attempt may therefore leave any exact prefix or
-subset of the registry in the cache; a retry reuses every populated key and
+provider call. Both attempts request namespaces only in the independently
+expanded canonical registry order. The initial attempt may therefore leave
+any exact prefix of the registry in the cache; a retry restarts that order,
+reuses every populated key, and
 calls the provider exactly once for each previously unseen key. At successful
 completion the whole-process provider trace has exactly one call for every
 independently expanded registry key and no duplicate, while the registry
@@ -4807,10 +4874,13 @@ Their schemas and completeness laws are:
     `before_context_kind: frozen_legacy` requires
     `evidence_role: fixed_legacy_before_context`; such a row carries an exact
     source class only when its frozen predecessor authority declares one,
-    otherwise it is null, and it never carries claim-context coordinates. A
-    nonnull frozen class may not be `structural_gap_imputed` or
-    `claim_specific_boundary_gap`, because those classes require the
-    coordinates this branch forbids.
+    that class agrees with the §4.2 calendar-year map, and the class needs no
+    claim-context coordinates; otherwise it is null. The branch never carries
+    claim-context coordinates. A nonnull frozen class may not be
+    `structural_gap_imputed` or `claim_specific_boundary_gap`, because those
+    classes require the coordinates this branch forbids. In particular,
+    calendar year 2013 has no permissible nonnull class in this branch and
+    must be null.
     Any frozen unconditional legacy 2013 number therefore remains a
     null-class diagnostic rather than a corrected 2013 row.
     `before_context_kind: option_c_sensitivity` requires
@@ -4820,17 +4890,27 @@ Their schemas and completeness laws are:
     Its `metric_id` is the colon join of literal `option_c`, sensitivity ID,
     stratum ID, calendar year, year source class, operative claim year,
     career variant ID, and statistic, using literal `none` for every null;
-    the resulting IDs are unique. Each frozen-legacy ID is literal
-    `frozen_legacy:` joined to its unique predecessor metric ID. The two
-    literal branch prefixes make the
+    the resulting IDs are unique. Each frozen-legacy ID is the colon join of
+    literal `frozen_legacy`, predecessor model-metric ID, stratum ID,
+    calendar year, year source class, literal `none` operative-claim year,
+    literal `none` career variant, and statistic, again using `none` for any
+    other null coordinate. Registration proves uniqueness over the complete
+    expanded predecessor result domain, so annual/stratum/statistic rows
+    cannot collide. The two literal branch prefixes make the
     ID sets disjoint. Canonical array order is all frozen-legacy rows in
     predecessor evaluation order, followed by Option-C rows in
     `sensitivity_specs.v1` order ×
     `annual_provenance_context_expansion` order. No serializer sort or
     implementation discovery may change that order.
     The coordinator computes that openly raw-proxy number under §7.4; it is
-    not a trusted corrected root. All numeric/cardinality/empty-row laws equal
-    the corrected long blocks. Both branches are diagnostic-only and cannot
+    not a trusted corrected root. Ordinary numeric/cardinality/empty-row laws
+    equal the corrected long blocks. The sole override is an Option-C
+    diagnostic-proxy source failure under §7.4: the retained expected row has
+    `observation_count: 0`, null mean and sample SD, `status: fail`, and
+    `reason_code: missing_option_c_diagnostic_proxy`. This structural-input
+    failure is distinct from and takes precedence over
+    `not_applicable_empty_stratum`; no other reason may use the override.
+    Both branches are diagnostic-only and cannot
     enter a candidate, gate, selection, corrected metric, ledger, condition,
     or certificate operand.
 - `target_use_trace` is one row per expanded target spec in registry order,
@@ -5939,7 +6019,7 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 |---|---|
 | Exact estimands | §3 freezes uncapped covered wages, pre-SECA net earnings, SECA base, noncovered/unresolved amounts, person taxable payroll, benefit-creditable earnings, modeled worker incidence, and zero v1 deemed credits. |
 | Full support feasibility | G01 independently reconstructs the complete Stage A–D benefit and unsplit 2015–2022 revenue domains; every base-ledger and operative-claim gap key must exist. Missing support fails rather than shrinking a configured selector; failure permits only §11.2 and retains benefit proxy labels. |
-| Historical legal authority and named classes | §4.1 freezes authority precedence, byte-pinned effective-year registry, structured inventory-backed required facts, a coordinator-evaluated presence/value ledger, and fail-closed treatment for every named class. |
+| Historical legal authority and named classes | §4.1 freezes authority precedence, byte-pinned effective-year registry, structured inventory-backed required facts, source-backed typed parsers, a coordinator-evaluated presence/value/action trace, exact transform precedence/conflict law, and fail-closed treatment for every named class. |
 | Complete PSID crosswalk and era seams | §4.2 requires an independently byte-pinned every-wave×role×job×component/context×35-purpose inventory—including state and every named direct-law microfact slot—with exact `present \| structural_missing` disposition, a separate all-key disposition stream and component-slot assembly, frozen structural-missing consequences, the full wave→reference-year/source-class map, first-class `mixed`, and executable value-code, annualization, reconciliation, job-match, SE-aggregation, and coverage-group registries. Reference-year 1975 is mixed; exact 1976–1977 concepts are registration-required. |
 | Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Exact support/metric schemas carry source class, every annual gap result carries operative-claim/career coordinates, opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
@@ -5947,8 +6027,8 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 | B2/B11 and covered-share extraction | §6 and D-A1 retain the pinned source hashes, literal ten-row discrepancy registry, and pre-2015 scale-free targets; V-B7 requires an exact covered-share universe. Model choice binds only `fit_selection_cell_identity.v1`; full evaluation provenance is separate, and G21 mutates every held-out/zero-weight/exclusive byte on both selected and no-eligible branches while requiring parameters, dispositions, selection branch, branch-tagged selected-model projection, gates, and conditions 1–6 to remain byte-identical. |
 | Post-calibration label vocabulary | §1 freezes exactly `frame-relative`, `modeled-covered-earnings`, `aggregate-concept-calibrated-not-population-aligned`. |
 | Cap, SE threshold/loss, incorporated owners, historical SECA | §§3.2 and 4.1 freeze component floors, within-SE-only loss netting, effective-year law, wage-first residual cap, incorporated salary, and excluded distributions. |
-| Candidate set, thresholds, namespace, replay, certificate | §§5.3–5.4, 6.2, 7, 8, and 9 freeze candidates, cell-scoped namespace, exact six replays, all 22 gates, independent consumer/metric domains, corrected-only dependency domination, analytic certified denominators, and no post-hoc rescue. |
-| Versioning, ceremony, and mismatch disposition | §§6, 9, 10, and 12 freeze separate substantive/evaluation identities, strict committed registration, durable claims, opaque one-shot retry authority, fresh-registration adjudication, and positional transformations of all 14 pairing plus nine comparison mismatch arrays. |
+| Candidate set, thresholds, namespace, replay, certificate | §§5.3–5.4, 6.2, 7, 8, and 9 freeze candidates, cell-scoped namespace, exact six replays, all 22 gates, independent consumer/metric domains, corrected-only dependency domination, a coordinator-owned 17-op typed evaluator that reconstructs every corrected root, analytic certified denominators, and no post-hoc rescue. |
+| Versioning, ceremony, and mismatch disposition | §§6, 9, 10, and 12 freeze separate substantive/evaluation identities, strict committed registration, durable claims, opaque one-shot retry authority, process-lifecycle nonce metering and exact-once keyed-uniform retry caching, fresh-registration adjudication, no post-exposure same-output exception, and positional transformations of all 14 pairing plus nine comparison mismatch arrays. |
 
 ### 14.2 Ratification checklist
 
@@ -5999,7 +6079,9 @@ Ratification requires affirmative evidence for every item:
 - [ ] All 15 vintage-1 series are structurally inaccessible to fitting and
   selection and described as already viewed.
 - [ ] Candidate, hyperparameter, convergence, selection, tie, Option-C, and
-  candidate-failure laws exact-match registration.
+  candidate-failure laws exact-match registration; Option C is a
+  singleton-dimension, diagnostic-only typed `before_context` branch with
+  exact claim-context coordinates and failure serialization.
 - [ ] The complete Stage A–D benefit and unsplit revenue domains are
   independently reconstructed; missing support cannot shrink them; every
   structural gap is derived only after the operative claim cutoff; and
@@ -6011,7 +6093,9 @@ Ratification requires affirmative evidence for every item:
   unconditional or revenue 2013 metric exists.
 - [ ] Every final corrected earnings-dependent metric is transitively
   dominated by the corrected ledger; legacy/proxy values occur only in typed
-  before-context blocks; every certified worker denominator uses analytic
+  before-context blocks; the coordinator evaluates every declared root under
+  the frozen 17-op type/unit grammar and rejects every missing, extra, or
+  unequal runner proposal; every certified worker denominator uses analytic
   probabilities.
 - [ ] `gate_specs.v3` contains exactly conjunctive G01–G22, including G10's
   six exact replay rows, G11's one row per frozen provider, G14's exact four
@@ -6019,7 +6103,8 @@ Ratification requires affirmative evidence for every item:
   assertions, and G17's exact 15-domain inventory/microfact closure.
 - [ ] Expected mappings, 20-draw namespace, nonlinear benefit propagation,
   frozen ledger-row schema, within-year dependence groups, byte replay,
-  row-order invariance, and RNG isolation are executable.
+  row-order invariance, exact-once process-lifecycle keyed-uniform caching,
+  and RNG isolation are executable.
 - [ ] Aggregate motivation states both high per-worker ratios and
   approximately 1.01→0.80 aggregate payroll, with no unconditional sign.
 - [ ] Scope exclusions and the revenue-only degradation are exact and cannot
@@ -6036,8 +6121,10 @@ Ratification requires affirmative evidence for every item:
   `sys.orig_argv`, and the concrete absolute fresh-empty sentinel pass before
   the exclusive durable claim and any production access.
 - [ ] The only retry authority is the same-process opaque one-shot receipt;
-  a retry publishes its durable claim first; killed/lost/failed attempts use
-  append-only fresh-registration adjudication and fresh claim namespaces.
+  the sole coordinator nonce call is metered, a retry publishes its durable
+  claim first and reuses cached midpoint values without duplicate provider
+  calls; killed/lost/failed attempts use append-only fresh-registration
+  adjudication and fresh claim namespaces.
 - [ ] Consumer/gap domains, projection/correction reductions, corrected-only
   dependency proofs, and deterministic ledger-rematerialization hashes are
   complete and independently recomputed.
@@ -6069,7 +6156,8 @@ The authorized order is:
    vintage-2 target artifact, physical-cell/alias registries, and the literal
    `ledger_row_schema_specs`, `coverage_state_dependence_specs`,
    `calibration_target_specs.v2`, candidate/era/selection/draw specs,
-   replay, consumer-domain, claim-gap, dependency, RNG-access,
+   replay, consumer-domain, claim-gap, dependency, trusted typed consumer
+   evaluation, RNG-access,
    weight-rescale, filesystem-isolation, held-out-noninterference,
    `gate_specs.v3`, evaluation, and sensitivity authorities, plus builders
    and offline reproduction/rejection tests, including wrong-purpose,
