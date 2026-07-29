@@ -3311,25 +3311,77 @@ Each `domain_authority_schemas` row has exactly `domain_id`,
 `record_key_domain | enum_literal_domain`. Counts are nonnegative JSON
 integers excluding booleans; hashes bind the complete independently derived
 ordered key or literal set; and failure disposition is `gate_fail`.
-`literal_domain_class` is null for a record-key domain. For an enum-literal
-domain it is exactly `value_enum | unavailable_reason`, and the row is an
-exact projection of one `consumer_literal_domain_specs.v1` row:
-`derivation_registry_id` is that registry's authority registry ID,
-`derivation_member_ids` is its complete `ordered_literals`, `key_fields` is
-exactly `["literal"]`, and count/hash are recomputed from that array. No
-hash-only or open-string enum is permitted. Record-key rows are reconstructed
-from the complete consumer, gap, Stage, revenue, grouping, partition, draw,
-model-metric, pairing, and comparison domains before ledger presence is
-inspected. Every source-field `enum_domain_id` and
+
+For an enum-literal domain, let \(L\) be the unique referenced
+`consumer_literal_domain_specs.v1.rows` member. Its ten-field authority
+projection is fixed field by field:
+
+- `domain_id` is exactly `L.domain_id`;
+- `domain_kind` is literal `enum_literal_domain`;
+- `literal_domain_class` is exactly `L.domain_class`;
+- `derivation_registry_id` is exactly `L.authority_registry_id`;
+- `derivation_member_ids` is an exact deep copy of `L.ordered_literals`;
+- `key_fields` is exactly `["literal"]`;
+- `canonical_order` is literal
+  `first-authority-reference-then-ordered-literal`;
+- `expected_count` is recomputed as the length of `L.ordered_literals` and
+  must equal `L.literal_count`;
+- `expected_keyset_sha256` is recomputed as SHA-256 of
+  `canonical_json_bytes(L.ordered_literals)` and must equal
+  `L.ordered_literals_sha256`; and
+- `failure_disposition` is literal `gate_fail`.
+
+No projected value is implementation-selected. Thus fixed domain IDs and
+ordered literals produce one exact authority-row byte string. No hash-only
+or open-string enum is permitted.
+
+For a record-key domain, the coordinator first constructs a normalized
+record-domain descriptor \(R\) with exactly `domain_derivation_id`,
+`derivation_registry_id`, `derivation_member_ids`, `key_fields`,
+`canonical_order`, and `ordered_keys`. It derives every descriptor member and
+the complete key array only from the complete frozen consumer, gap, Stage,
+revenue, grouping, partition, draw, model-metric, pairing, and comparison
+registries before ledger presence is inspected. Configured evaluator, graph,
+runner, and ledger bytes supply none of them. `derivation_member_ids` is the
+complete ordered authority-member-ID array whose registered expansion and
+filter law produces the domain; `key_fields` is the complete ordered,
+duplicate-free JSON-string field array; and `canonical_order` is the owning
+registry's exact frozen ordering-law literal. `ordered_keys` is the resulting
+complete unique ordered array of canonical JSON arrays, each positionally
+matching `key_fields`. A scalar domain has `key_fields: []` and the sole key
+`[]`; a legitimate empty domain has `ordered_keys: []`.
+
+The record-key authority row is the following exact projection of \(R\):
+
+- `domain_id` is exactly `R.domain_derivation_id`;
+- `domain_kind` is literal `record_key_domain`;
+- `literal_domain_class` is JSON null;
+- `derivation_registry_id`, `derivation_member_ids`, `key_fields`, and
+  `canonical_order` are exact deep copies of their namesakes in \(R\);
+- `expected_count` is recomputed as the length of `R.ordered_keys`;
+- `expected_keyset_sha256` is exactly SHA-256 of
+  `canonical_json_bytes(R.ordered_keys)`; and
+- `failure_disposition` is literal `gate_fail`.
+
+The hash preimage is the one complete enclosing `ordered_keys` array,
+including §10.1's trailing line feed; it is never concatenated key bytes, a
+set, a display string, per-key hashes, or a JSON-lines stream. The empty
+domain therefore hashes canonical `[]`. Every repeated reference to one
+`domain_id` must reconstruct a byte-identical complete descriptor and key
+array or registration aborts.
+
+Every source-field `enum_domain_id` and
 `unavailable_reason_domain_id`, source `domain_derivation_id`, node output
 record-domain and `output_enum_domain_id`, and root `expected_domain_id`,
 `output_enum_domain_id`, and `unavailable_reason_domain_id` must equal the
 one authority row selected for that semantic step. Unknown, unused, aliased,
 merely signature-compatible, open-literal, or configured-only domain IDs
-fail registration. Domain rows are ordered by the reconstruction-input
-registry order above and then literal-domain first-reference order. Duplicate
-IDs are invalid rather than collapsed; distinct literal-domain IDs are
-retained even when their ordered literal arrays are byte-identical.
+fail registration. Record-key rows come first, in the reconstruction-input
+registry order above and then each owning registry's frozen derivation-member
+order. Enum-literal rows follow in exact
+`consumer_literal_domain_specs.v1.domain_order`. Duplicate IDs are invalid
+rather than collapsed; distinct IDs are retained even when their complete
+ordered key or literal arrays and hashes are byte-identical.
 
 `rule_authority_schemas` is a closed tagged array in class order: top-k;
 weighted quantile; weighted top fraction; entropy; positive-denominator;
@@ -3477,12 +3529,14 @@ all participate in reconstruction.
 `source_stream_specs`, `operation_specs`, `graph_nodes`, `metric_roots`,
 `canonical_stream_law`, `numeric_law`, and `failure_disposition`.
 `semantic_authority_sha256` is only the configured expected digest of the
-complete object above. The coordinator independently reconstructs and hashes
-that object, requires equality, and also exact-compares every constituent
-rather than accepting hash equality alone. Missing, extra, duplicated,
-reordered, unreachable, or semantically unequal sources, algebra rows, roots,
-or nodes abort registration; no configured graph may define a smaller or
-different output surface.
+complete object above. Its sole preimage is
+`canonical_json_bytes` of the complete nine-field reconstructed
+`trusted_consumer_semantic_authority.v1` object. The coordinator independently
+reconstructs and hashes that object, requires equality, and also
+exact-compares every constituent rather than accepting hash equality alone.
+Missing, extra, duplicated, reordered, unreachable, or semantically unequal
+sources, algebra rows, roots, or nodes abort registration; no configured
+graph may define a smaller or different output surface.
 
 Each `source_stream_specs` row has exactly `source_stream_id`, `source_kind`,
 `authority_input_id`, `authority_object_id`, `key_fields`, `value_fields`,
