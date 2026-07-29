@@ -1389,8 +1389,9 @@ expected and all 400 realized ledger identities, and claim-context gap
 identity.
 Exactly six result rows are required; an empty, partial, duplicated, or
 reordered registry fails G10. G14 separately performs a trusted second
-fit/selection execution after multiplying every model weight by the exact
-binary64 value `7.0`; all parameter bits, predictions, losses, candidate
+fit/selection execution after applying the exact common multiplier `7.0` to
+every PSID survey weight while leaving every target loss/objective weight
+unchanged; all parameter bits, predictions, losses, candidate
 dispositions, selection, and substantive model hash must match. Runtime,
 evaluation-only provenance, and incident metadata are excluded from both
 substantive comparisons.
@@ -2734,19 +2735,23 @@ is conjunctive. One violating record is failure:
     realized ledger identities. Empty, missing, duplicate, or reordered rows
     fail.
 11. The trusted RNG-provider call ledger has exactly one row per frozen
-    provider; every projection, mortality, claiming, marriage, Python,
-    NumPy, OS-entropy, or other forbidden provider has zero calls, and the
-    exhaustive correction key→uniform registry independently recomputes.
+    provider; the correction midpoint provider exact-matches the exhaustive
+    key registry, the one coordinator-only retry-nonce entropy call
+    exact-matches its 32-byte pre-production callsite/flow law, and every
+    projection, mortality, claiming, marriage, Python, NumPy, other
+    OS-entropy, or forbidden provider has zero calls.
 12. No post-boundary questionnaire fact enters production; every gap right
     neighbor is no later than the operative claim year; opening-backfill
     adjudication precedes gap derivation; and no universal 2013 row is reused
     across claim contexts. Revenue has no 2013 key.
 13. Career data-completeness and modeled OASDI coverage are separately named
     and computed.
-14. A coordinator-owned second execution with every weight multiplied by the
-    exact binary64 value `7.0` byte-matches each candidate's parameter bits,
-    predictions, losses, identification/disposition, selected candidate,
-    tie result, and substantive model hash; no level target is granted.
+14. A coordinator-owned second execution applies the exact common multiplier
+    `7.0` to every PSID survey weight while leaving every target
+    loss/objective weight bit-identical. It byte-matches each candidate's
+    parameter bits, predictions, losses, identification/disposition, selected
+    candidate, tie result, substantive model hash, and ledger identities; no
+    level target is granted.
 15. Broker grants, worker IPC hashes, physical ancestry/alias closure, and
     sandbox audit exact-match the derived allowlist. Fit/selection workers
     have no path, descriptor, network, subprocess, or content-alias access to
@@ -2789,38 +2794,62 @@ is conjunctive. One violating record is failure:
     `modeled_covered_worker_probability_analytic`, never a draw indicator or
     finite-grid fraction.
 
-`rng_access_specs.v1` freezes the sole allowed provider—the §5.4 SHA-256
-midpoint function—and every forbidden provider in the pinned environment:
-all `ProjectionRNGRegistry` seed/factory methods, Python `random`,
-`secrets`/`os.urandom`, NumPy `random`/`Generator`/`SeedSequence` entry
-points, and discovered aliases. Before correction imports, the trusted
-coordinator installs provider-level counting wrappers and an audit hook;
-cached aliases, native-library, FFI, and subprocess bypasses are forbidden by
-the implementation/source closure. Candidate code cannot write the ledger.
-This detects a request for a fresh generator even though `rng.py` returns a
-new object per call; before/after generator-state hashes are not evidence.
+`rng_access_specs.v2` freezes three authority classes:
+`correction_keyed_midpoint | coordinator_retry_nonce_entropy | forbidden`.
+Every ordered provider row has exactly `provider_id`, `authority_class`,
+`provider_identity`, `expected_call_law`, `allowed_callsite_identity`,
+`argument_law`, and `flow_law`. The correction class contains only §5.4's
+SHA-256 midpoint function and exact expanded key-call law. The ceremony class
+contains exactly one pinned `os.urandom` provider and exactly one
+implementation-blob/code-object callsite inside the trusted coordinator.
+Its argument law is one call with JSON integer byte count `32`; its call must
+occur after the exclusive coordinator lock and value-blind prelaunch checks
+but before authority reservation, the initial claim, any production-I/O
+capability, or any correction import. Its flow law permits the 32 private
+bytes only as the in-memory retry nonce, the SHA-256 commitment in the claim,
+and the same-process opaque receipt binding in §10.3. The raw bytes, a
+derived seed/uniform, or any nonce-dependent bit may not enter candidate
+packets, parameters, losses, selection, model identity, keyed uniforms,
+ledgers, corrected results, or runner IPC. An authorized retry reuses the
+original private nonce and makes zero new entropy calls; the whole-lifecycle
+ledger still contains the one original call.
+
+Every other `os.urandom`/`secrets` callsite or argument and all
+`ProjectionRNGRegistry` seed/factory methods, Python `random`, NumPy
+`random`/`Generator`/`SeedSequence` entry points, native entropy providers,
+and discovered aliases are `forbidden`. Before the nonce call and before any
+correction import, the coordinator installs provider-level counting wrappers
+and an audit hook. Cached aliases, native-library, FFI, and subprocess
+bypasses are forbidden by the implementation/source closure. Candidate code
+cannot write the ledger. This detects a request for a fresh generator even
+though `rng.py` returns a new object per call; before/after generator-state
+hashes are not evidence.
 
 `keyed_uniform_registry.v1` is independently expanded from the complete
 derived ledger support, every registered `coverage_state_group_id`, the sole
 `coverage_status` variate, correction draws 0–19, and residual counter zero.
 Each row has exactly the §5.4 namespace fields and
 `uniform_ieee754_binary64_hex`, in lexicographic namespace order. Missing,
-extra, duplicate, or reordered keys fail. Its canonical SHA-256 is the
-`uniform_registry_sha256` in every G11 provider row and the noninterference
-bundle; it is not a worker-reported list.
+extra, duplicate, or reordered keys fail. Its canonical SHA-256 is named
+`keyed_uniform_registry_sha256` in every exact schema and the
+noninterference bundle; any shortened alias is schema-invalid. It is not a
+worker-reported list.
 
 `weight_rescale_specs.v1` is exactly four objects with keys
 `comparison_id`, `bundle_schema`, `required_fields`,
 `base_weight_multiplier`, and `rescaled_weight_multiplier`: one for each
 candidate and one selection/tie/model/ledger row. A
 `weight_rescale_candidate_bundle.v1` has exactly `schema_version`,
-`candidate_id`, `candidate_input_packet_hashes`, `parameter_vector`,
+`candidate_id`, `non_weight_candidate_input_packet_hashes`,
+`survey_weight_domain_identity`, `registered_objective_weight_identity`,
+`parameter_vector`,
 `model_choice_predictions`, `model_choice_losses`,
 `identification_result`, and `candidate_disposition`. The fourth
 `weight_rescale_selection_bundle.v1` has exactly `schema_version`,
 `candidate_bundle_hashes`, `candidate_dispositions`,
 `selected_candidate_id`, `selection_result`, `tie_result`,
-`registered_model_weight_identity`, `model_identity`,
+`registered_survey_weight_identity`,
+`registered_objective_weight_identity`, `model_identity`,
 `substantive_model_sha256`, `expected_ledger_identity`,
 `realized_ledger_identities`, and `claim_context_gap_identity`.
 Its candidate hashes have exactly three rows in candidate order and its
@@ -2828,14 +2857,20 @@ realized array has exactly the canonical 400-draw registry. The
 `required_fields` arrays are these exact key sets in the stated order; no
 sub-bundle or digest chosen by the implementation is accepted.
 
-The multipliers are exact binary64 `1.0` and `7.0`. The coordinator, not
-candidate code, supplies identical semantic packets twice and applies the
-rescale only to ephemeral objective-weight packets. The registered
-`model_weight_identity` remains the canonical production target-ID/weight
-array from `calibration_target_specs`; the `7.0` packet and its multiplier
-are gate evidence outside model serialization and never replace that
-identity. Both executions therefore serialize against the same registered
-production identity after independently fitting their supplied packets.
+The multipliers are the exact values represented by binary64 `1.0` and
+`7.0`. The coordinator, not candidate code, supplies identical non-weight
+semantic packets twice and applies the multiplier to the complete PSID
+**survey-weight** vector. The complete vector is independently expanded from
+the correction-bound PSID roster, the registered survey-weight field, and
+every production/evaluation support key; configuration cannot omit a person,
+wave, role, direct/gap/boundary/projected row, zero earner, or difficult row.
+Every target `loss_weight`, dependency-group/family subweight, tolerance, and
+other objective/selection weight remains bit-identical between executions.
+The registered survey-weight identity and the separately named canonical
+production target-ID/objective-weight identity both remain unchanged in model
+serialization; the `7.0` multiplier is gate evidence only. Both executions
+therefore serialize against the same production identities after
+independently fitting their supplied survey-weight packets.
 Registration also proves every positive-weight target is a share, ratio, or
 intensity and the broker's level-target grant ledger is empty. G14 passes iff
 all four complete canonical bundles match, thereby proving parameter,
@@ -2844,15 +2879,29 @@ expected/400-ledger invariance without pretending the test packet is a new
 production configuration.
 
 Each execution also emits a coordinator-owned
-`objective_weight_packet.v1` with exactly `schema_version`, `candidate_id`,
-`target_ids`, `weight_ieee754_binary64_hex`, and
-`multiplier_ieee754_binary64_hex`. Target order is the complete model-choice
-packet order; the base multiplier bits encode `1.0`; the rescaled bits encode
-`7.0`; and every rescaled weight is the independently recomputed binary64
-product of the base weight and `7.0`. Expected and actual packet hashes and
-the elementwise comparison trace are G14 evidence outside the equality
-bundle and outside `model_identity`. A second 1× run, ignored multiplier, or
-unproved packet therefore fails even if its output bundle happens to match.
+`psid_survey_weight_packet.v1` with exactly `schema_version`,
+`comparison_id`, `survey_weight_field`, `survey_weight_domain_sha256`,
+`row_count`, `rows`, and `multiplier_ieee754_binary64_hex`. Rows are in the
+complete independently derived stable weight-key order and each has exactly
+`weight_key` and `survey_weight_ieee754_binary64_hex`; the latter is the
+positive finite source-weight bit pattern. Base and rescaled packets have
+identical rows and respectively the multiplier bits for `1.0` and `7.0`.
+The trusted weighted-statistic law decodes each survey weight and the common
+multiplier as exact dyadic rationals and applies the multiplier symbolically
+before §7.1's exact rational accumulation. It does not serialize a separately
+rounded binary64 `7*w_i`, so per-row multiplication rounding cannot create a
+false scale effect. Every actual survey-weight read must be traced to exactly
+one packet row and the same packet multiplier.
+
+Expected/actual packet hashes, complete broker grant hashes, and the
+elementwise weight-key/multiplier trace are G14 evidence outside the equality
+bundle and outside `model_identity`; packet hashes are expected to differ
+between 1× and 7× and are never compared with each other. The equality
+bundle's survey-weight-domain identity binds the common field, ordered keys,
+and base bits but excludes only the test multiplier. A second 1× run, a
+target-loss-weight rescale, an ignored multiplier, a rounded effective-weight
+substitution, a missing survey row, or an unproved packet therefore fails
+even if its output bundle happens to match.
 
 `filesystem_isolation_specs.v1` has exactly `schema_version`,
 `isolation_backend`, `worker_code_identities`, `mount_allowlists`,
@@ -2935,10 +2984,10 @@ The executable selector/comparator map is:
 | G08 | `benefit_revenue_component_hash_pairs` | `all_hash_pairs_equal / true` |
 | G09 | `recoverable_provenance_scan` | `all_records_true / true` |
 | G10 | `replay_registry_results` | `exact_six_rows_all_hashes_equal / true` |
-| G11 | `trusted_rng_provider_call_ledger` | `exact_forbidden_counts_zero_and_uniforms_recompute / true` |
+| G11 | `trusted_rng_provider_call_ledger` | `exact_keyed_calls_nonce_exception_and_forbidden_zero / true` |
 | G12 | `information_cutoff_and_claim_context_gap_evidence` | `all_records_true / true` |
 | G13 | `semantic_field_registry_scan` | `all_records_true / true` |
-| G14 | `trusted_weight_rescale_reexecution_results` | `exact_four_rows_all_hashes_equal / true` |
+| G14 | `trusted_survey_weight_rescale_reexecution_results` | `exact_four_survey_weight_rows_all_bundles_equal / true` |
 | G15 | `broker_sandbox_ipc_structural_closure_evidence` | `exact_grants_ipc_ancestry_alias_lifecycle_and_forbidden_zero / true` |
 | G16 | `unresolved_policy_and_disclosure_scan` | `all_records_true / true` |
 | G17 | `inventory_crosswalk_lineage_and_required_cell_closure` | `exact_fourteen_domains_counts_and_hashes_equal / true` |
@@ -3591,7 +3640,12 @@ implementation-selected subset.
 After strict parsing, repository proof, an exclusive coordinator lock,
 complete-history validation, and all six value-blind pre-launch checks—but
 before opening a production manifest path, target sidecar, projection input,
-or other production byte—the coordinator:
+or other production byte—the coordinator first installs and validates the
+whole-lifecycle `rng_access_specs.v2` provider wrappers and audit hook. On an
+initial registration, the first item below is exactly the one authorized
+`coordinator_retry_nonce_entropy` call. An authorized retry reuses that
+same-process nonce and executes item 1 with zero new entropy calls. The
+coordinator then:
 
 1. generates an in-memory 256-bit retry nonce and computes its SHA-256
    commitment;
@@ -4068,31 +4122,45 @@ Their schemas and completeness laws are:
     equal their P/R/H expectations and all three output left/right hash pairs
     are equal; it is `fail` otherwise. A fail row retains every mismatching
     order or output hash and is not schema-invalid.
-  - `rng_access_results` has one row per `rng_access_specs.v1` provider in
-    exact order, each with exactly `provider_id`, `call_count`,
-    `argument_trace_sha256`, `uniform_registry_sha256`, and `status`.
-    `call_count` is the actual nonnegative JSON-integer count and both hashes
-    bind actual complete evidence. A forbidden-provider row passes iff its
-    count is zero and its trace is the canonical empty ledger; the sole
-    allowed-provider row passes iff its count and trace exact-match the
-    independently expanded expected call ledger and its exhaustive
-    key→uniform registry hash matches. It fails otherwise and retains the
+  - `rng_access_results` has one row per `rng_access_specs.v2` provider in
+    exact order, each with exactly `provider_id`, `authority_class`,
+    `call_count`, `argument_trace_sha256`,
+    `keyed_uniform_registry_sha256`, and `status`.
+    `call_count` is the actual nonnegative JSON-integer count and the trace
+    hash binds actual complete callsite/argument/phase/flow evidence. A
+    forbidden-provider row passes iff its count is zero and its trace is the
+    canonical empty ledger; its keyed-registry hash is null. The correction
+    midpoint row passes iff its count and trace exact-match the independently
+    expanded expected key-call ledger and its nonnull exhaustive
+    key→uniform registry hash matches. The coordinator retry-nonce row passes
+    iff the whole registration lifecycle contains exactly one metered
+    32-byte call at the pinned pre-production coordinator callsite, zero new
+    calls on an authorized retry, and the exact private commitment-only flow;
+    its keyed-registry hash is null. A row otherwise fails and retains the
     nonzero count or mismatching hashes. Fresh-generator state snapshots are
     not evidence.
   - `weight_rescale_results` has exactly four
     `weight_rescale_specs.v1` rows, each with exactly `comparison_id`,
-    `expected_base_weight_packet_sha256`,
-    `actual_base_weight_packet_sha256`,
-    `expected_rescaled_weight_packet_sha256`,
-    `actual_rescaled_weight_packet_sha256`,
-    `elementwise_rescale_trace_sha256`, `base_bundle_sha256`,
-    `rescaled_bundle_sha256`, and `status`. The first five evidence fields
-    prove the exact 1×/7× coordinator packets above and the last two bind the
-    complete registered candidate or selection/model/ledger bundle. Status is
-    `pass` iff both actual packet hashes equal their independently derived
-    expectations, the trace proves every element's exact multiplier bits,
-    and the two output bundles are equal; it is `fail` otherwise. All actual
-    unequal hashes remain mandatory failure evidence.
+    `expected_base_survey_weight_packet_sha256`,
+    `actual_base_survey_weight_packet_sha256`,
+    `expected_rescaled_survey_weight_packet_sha256`,
+    `actual_rescaled_survey_weight_packet_sha256`,
+    `base_survey_weight_grant_ledger_sha256`,
+    `rescaled_survey_weight_grant_ledger_sha256`,
+    `survey_weight_multiplier_trace_sha256`,
+    `objective_weight_identity_comparison_sha256`,
+    `base_bundle_sha256`, `rescaled_bundle_sha256`, and `status`. The first
+    eight evidence fields prove the exact complete 1×/7× PSID survey packets,
+    every broker read, the common exact multiplier, and bit-identical
+    target-loss/objective weights; the last two bind the complete registered
+    candidate or selection/model/ledger bundle. Status is `pass` iff both
+    actual packet hashes equal their independently derived expectations,
+    both grant ledgers cover every weight key exactly once wherever consumed,
+    the multiplier trace proves exact common-rational use, the objective
+    identity comparison proves no objective weight changed, and the two
+    output bundles are equal; it is `fail` otherwise. Base and rescaled
+    packet hashes are not required to equal each other. All actual unequal or
+    incomplete hashes remain mandatory failure evidence.
   - `isolation_results` has exactly the 15
     `filesystem_isolation_specs.v1` assertion rows in order, each with exactly
     `assertion_id`, `worker_id`, `expected_grant_sha256`,

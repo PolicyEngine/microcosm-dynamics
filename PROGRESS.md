@@ -26,13 +26,21 @@ registration, fitting, evaluation, or publication work is authorized.
   evaluated hard-gate/noninterference evidence.
 - Split eligibility into conditions 1–6 before output construction and a
   finalizer-only condition 7, removing the hash/construction cycle.
+- Reworked G14 to rescale the complete PSID survey-weight vector by an exact
+  common factor while keeping every target loss/objective weight unchanged;
+  its coordinator-owned packets and traces now prove the intended §7.1
+  invariance law.
+- Defined G11's sole coordinator retry-nonce entropy exception, its metering
+  boundary and flow restriction, and zero-new-entropy retry law; standardized
+  the exact keyed-uniform hash field.
 - Began a section-by-section consistency audit of the remaining contract.
 
 ## Next
 
-1. Close G14, microfact,
-   support-schema, and 2013-coordinate residuals.
-2. Reconcile all hash names, RNG authority, suppression/cardinality rules,
-   eligibility phases, ceremony text, and deviations.
-3. Audit every round-3 residual, update this file, and commit the final design
+1. Close the inventory-backed microfact and state-of-residence residual.
+2. Carry source class and claim/career coordinates through exact support and
+   metric schemas.
+3. Reconcile suppression/cardinality wording and remaining version/schema
+   references.
+4. Audit every round-3 residual, update this file, and commit the final design
    state.
