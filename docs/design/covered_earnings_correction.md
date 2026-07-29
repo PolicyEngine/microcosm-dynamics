@@ -357,8 +357,15 @@ contains exactly:
 `verification_claim_ids`, `affected_inventory_keys`, and
 `optional_row_consequences`.
 
-`required_micro_facts` is an ordered array, not an array of names or
-runner-supplied booleans. Each member has exactly `micro_fact_id`,
+`covered_facts` and `excluded_facts` are not prose, names, or implementation
+premises. Each is an ordered array of
+`direct_law_fact_binding.v1` objects. A binding has exactly
+`fact_binding_id`, `premise_ast`, and `micro_fact_slots`.
+`fact_binding_id` is respectively the literal
+`<rule_id>:covered:<one-based canonical decimal position>` or
+`<rule_id>:excluded:<one-based canonical decimal position>`.
+`micro_fact_slots` is a nonempty ordered array, and each slot has exactly
+`micro_fact_id`,
 `field_purpose`, `source_field_ref`, `typed_value_type`,
 `typed_value_unit`, `presence_predicate_ast`, and `missing_reason_code`.
 `micro_fact_id` is globally unique and `field_purpose` is one of the exact
@@ -371,22 +378,47 @@ nonnull member of that row's `raw_field_ids`. For a
 `rational | json_integer | boolean | enum`; `typed_value_unit` is the
 registered nonempty unit for a numeric fact and null for boolean/enum.
 For a present row, both exact-match the referenced inventory row's registered
-`typed_parse_specs` output and the rule's `micro_fact` transform leaf. For a
+`typed_parse_specs` output and the rule's bound-premise `micro_fact` leaf. For a
 structural-missing row, the parse array is correctly empty; the declared
-type/unit instead exact-match that transform leaf's frozen expected
+type/unit instead exact-match that bound `premise_ast` leaf's frozen expected
 signature, but no value is constructed and the transform is necessarily
 skipped.
 Missing, extra, cross-purpose, or runner-selected references abort
 registration.
 
+`premise_ast` is the boolean/null-unit subset of `psid_rule_ast.v1`. It may
+contain only `micro_fact`, registered typed literal, `equal`, `less`,
+`less_equal`, `greater_equal`, `greater`, `and`, and `or` nodes; every
+`micro_fact` leaf must foreign-key exactly one member of that binding's
+`micro_fact_slots`, and every slot must occur at least once.
+It has no direct field node, free text, fact name, callback, path, default,
+or reference to another binding. Registration type- and unit-checks the
+complete premise and requires a nonnullable boolean result. Thus a purported
+covered or excluded fact has no representable premise outside the independent
+35-purpose inventory.
+
+`required_micro_facts` is an ordered array of the same exact slot objects,
+not an independently authored array of names or runner-supplied booleans.
+The coordinator derives it before accepting the rule by concatenating every
+`covered_facts[*].micro_fact_slots` array in covered-fact order and then
+every `excluded_facts[*].micro_fact_slots` array in excluded-fact order.
+The configured array must deep-equal that derivation. Because microfact IDs
+are globally unique, no deduplication, alias, or implementation ordering
+choice exists. It is empty if and only if both bound-fact arrays are empty;
+one nonempty bound-fact array necessarily produces a nonempty required-fact
+array. An empty pair declares an unconditional rule over the exact
+independently expanded affected domain and admits no hidden factual premise.
+
 V1 deliberately permits one source-field reference per microfact. A
 composite condition is represented by multiple uniquely named microfacts and
-combined only in the rule's typed `transform`; it is never resolved by field
-order, first-nonmissing selection, or an implementation callback. A verified
-rule row is split into distinct stable rule IDs wherever wave, role, job,
-component, or context attachment would select a different source inventory
-key. For each affected §3.1 record, registration independently requires the
-fact's source key to occur in that component's exact
+combined only in its fact binding's typed `premise_ast`; the transform
+consumes the resulting fact-binding boolean, never a raw fact value. Neither
+stage is resolved by field order, first-nonmissing selection, or an
+implementation callback. A verified rule row is split into distinct stable
+rule IDs wherever wave, role, job, component, or context attachment would
+select a different source inventory key. For each affected §3.1 record,
+registration independently requires every bound microfact's source key to
+occur in that component's exact
 `purpose_source_inventory_keys[field_purpose]` attachment closure, including
 any enumerated context-only attachment. The coordinator reads that field
 from the same stable person/wave/role/job/component record. A key attached to
@@ -412,7 +444,9 @@ registered inventory `typed_parse_specs` and, where selected, its complete
 value-code entry to a typed value. Extraction,
 mapping, or typing failure makes the atom false with the registered missing
 reason; it never supplies a default. The coordinator also executes the
-verified rule's closed `transform` against only those trusted typed values.
+verified rule's fact premises against only those trusted typed values and
+then executes the closed `transform` against only the resulting trusted
+fact-binding booleans.
 
 This produces the read-only
 `direct_law_micro_fact_presence_ledger.v1`, whose top-level object has
@@ -468,8 +502,12 @@ registered source bytes and emits
 `action_mismatch_count`, and `status`. The three counts are actual
 nonnegative JSON integers. Status passes only when the domains and all three
 hash pairs match and every mismatch count is zero. The expected side is a
-fresh coordinator evaluation from inventory/source bytes; the actual side is
-the immutable ledger and classified component stream used by fitting.
+fresh coordinator evaluation from inventory/source bytes. It expands each
+rule's covered-then-excluded fact-binding slots first, derives the expected
+required-microfact array from that expansion, and only then compares the
+configured `required_micro_facts`; the configured array is never an expected-
+domain input. The actual side is the immutable ledger and classified
+component stream used by fitting.
 
 Both action hashes have the exact
 `direct_law_action_trace.v1` preimage, whose top level has exactly
@@ -479,6 +517,7 @@ record×verified-rule domain in §3.1 atomic-key order, then ascending
 `authority_rank`, then `rule_id`. Each row has exactly
 `affected_record_key`, `rule_id`, `authority_rank`,
 `required_micro_fact_ids`, `presence_bits`, `missing_micro_fact_ids`,
+`fact_binding_ids`, `fact_binding_results`,
 `input_coverage_unknown_action`, `rule_missing_fact_action`,
 `output_coverage_unknown_action`, `transform_disposition`,
 `transform_result`, `transform_result_commitment_sha256`,
@@ -487,13 +526,18 @@ record×verified-rule domain in §3.1 atomic-key order, then ascending
 `classification_reason_codes`, `classified_component_sha256`, and `status`.
 The record key is the exact six-field array above; fact IDs and booleans
 positionally equal the rule's complete required-fact order; missing IDs are
-exactly the false positions.
+exactly the false positions. `fact_binding_ids` is the complete covered-then-
+excluded binding-ID order. Its parallel results array contains the
+coordinator-evaluated boolean for a binding exactly when all of that
+binding's microfact slots are present and JSON null otherwise. An empty
+bound-fact domain has two exact empty arrays.
 
 The first input action is the component's registration-time action and each
 later input exact-matches the preceding rule row's output. When no fact is
 missing, `rule_missing_fact_action` is null,
 `transform_disposition: executed_all_facts_present`, and the transform
-result and commitment are nonnull. A result is the exact
+consumes exactly the complete nonnull binding-result array; its result and
+commitment are nonnull. A result is the exact
 `direct_law_transform_result.v1` object with keys `status_family`,
 `classified_status`, and `reason_code`: family exact-matches the rule,
 status is `covered_wage | covered_self_employment | noncovered |
@@ -1146,6 +1190,7 @@ Every `*_ast` and each verified historical rule `transform` uses the closed
 `psid_rule_ast.v1` grammar. A node is exactly one of:
 `{"op":"field","source_inventory_key":...,"raw_field_id":...}`;
 `{"op":"micro_fact","micro_fact_id":...}`;
+`{"op":"fact_binding","fact_binding_id":...}`;
 `{"op":"rational","numerator":<integer>,"denominator":<positive
 integer>,"unit":<registered nonempty unit>}`;
 `{"op":"json_integer","value":<JSON integer excluding booleans>,
@@ -1186,14 +1231,25 @@ Every field node foreign-keys a `present` inventory row and its
 multi-field inventory row never leaves operand selection to field order or
 an implementation default.
 Every `micro_fact` node is permitted only in a verified
-`historical_coverage_rule_specs[*].transform`, foreign-keys exactly one
-member of that same row's `required_micro_facts`, and receives only the
-coordinator-derived typed value from the §4.1 ledger. A historical transform
-may use `micro_fact`, rational, JSON-integer, literal, and registered operator
-nodes but no direct `field` node; every required microfact must appear at
-least once.
+`historical_coverage_rule_specs[*].covered_facts[*].premise_ast` or
+`.excluded_facts[*].premise_ast`, foreign-keys exactly one slot in that
+same binding, and receives only the coordinator-derived typed value from the
+§4.1 ledger. A `fact_binding` node is permitted only in that rule's
+`transform`, foreign-keys exactly one row in its covered or excluded binding
+arrays, and receives only the coordinator-evaluated nonnullable boolean from
+that row's premise. A historical transform may use `fact_binding`, rational,
+JSON-integer, literal, and registered operator nodes but no direct `field` or
+`micro_fact` node; every bound fact must appear at least once.
 Its AST output is exactly one nonnull enum literal
 `covered_wage | covered_self_employment | noncovered | no_disposition`.
+If either bound-fact array is nonempty, the coordinator enumerates every
+boolean vector in complete covered-then-excluded binding order, with
+`false` before `true` at each position, evaluates the typed transform once
+per vector, and requires at least two distinct enum results. Thus
+`case(binding,noncovered,noncovered)`, a literal constant enum, or any other
+semantically constant transform cannot cite facts. A constant enum transform
+is registration-valid only for the exact empty-covered/empty-excluded
+unconditional branch, for which `required_micro_facts` is also exactly empty.
 The sealed coordinator—not the AST or runner—wraps that enum with the rule's
 registered `status_family` and `reason_code` to construct the exact
 `direct_law_transform_result.v1` object in §4.1. Any other transform output
@@ -1229,7 +1285,8 @@ diagnostics under §6.2; they cannot create a synthetic consumer row.
 `overall_status`. `comparison_rows` has exactly fifteen rows ordered
 G17-C01 through G17-C15 for: inventory key stream; all-key disposition
 stream; component-slot stream; structural-missing consequences; historical
-coverage-rule closure; required-microfact inventory/presence-ledger closure;
+coverage-rule closure; bound-fact/derived-required-microfact
+inventory/presence/premise/action closure;
 value-code registry; annualization registry; reconciliation registry;
 job-match registry; SE-aggregation registry; coverage-group registry; the
 nine verification-claim results; the frozen wave/reference/source-class map;
@@ -1239,11 +1296,14 @@ and
 `expected_sha256`, `actual_sha256`, and `status`. Counts are nonnegative JSON
 integers excluding booleans, hashes cover the complete canonically ordered
 domain named by the row, and status is `pass | fail`. The required-microfact
-row binds every complete
+row binds every complete covered/excluded
+`(rule_id,fact_binding_id,premise_ast,micro_fact_slots)` specification, the
+coordinator-derived `required_micro_facts` array, every complete
 `(rule_id,micro_fact_id,field_purpose,source_field_ref,typed_value_type,
-typed_value_unit,presence_predicate_ast,missing_reason_code)` specification
-plus every independently expanded coordinator presence-ledger row and the
-exact `direct_law_action_trace.v1` object. `comparison_count` is literal 15;
+typed_value_unit,presence_predicate_ast,missing_reason_code)` slot, every
+independently expanded coordinator presence-ledger row, and the exact
+fact-binding results in `direct_law_action_trace.v1`. `comparison_count` is
+literal 15;
 `comparison_id_order` is the exact
 ordered ID array; and `overall_status` is `pass` iff all fifteen
 expected/actual count and hash pairs are equal and all fifteen domains are
@@ -1252,8 +1312,11 @@ and independently derives every expected stream from the inventory,
 source-only slot expansion, authority results, affected record domain, and
 registered year map rather than a crosswalk or runner count/digest. An empty,
 missing, extra, duplicate, wrong-purpose, self-scoped, or uninventoried
-required fact fails. Missing support fails the gate; it never shrinks a
-domain.
+required fact fails. A mismatch between either bound-fact array and the
+derived required-fact concatenation, an empty binding slot array, a
+premise/slot mismatch, an unbound factual premise, or a fact-bearing
+constant transform also fails. Missing support fails the gate; it never
+shrinks a domain.
 
 ### 4.3 Production information cutoff and status evolution
 
@@ -1329,7 +1392,10 @@ applicable `registration_required | direct_only_optional` verified rule is
 complete and every `required_micro_facts` member of every such rule is
 coordinator-derived present. If any required fact is absent, that rule's
 `transform` is not executed; the frozen missing-fact fold below applies.
-When all facts are present, direct status is the unique
+That required array must already equal the covered-then-excluded binding-slot
+derivation; a rule cannot declare an empty required array while naming a
+covered or excluded premise. When all facts are present, the coordinator
+evaluates every bound premise and direct status is the unique
 `direct_law_controlling_result.v1` status under §4.1; a same-rank conflict,
 lower-rank contradiction, absent dispositive result, or typed-result failure
 aborts before fitting rather than choosing a status.
@@ -1380,10 +1446,16 @@ commitment from inventory-backed slots and executes the fold recorded in
 `direct_law_micro_fact_presence_ledger.v1`. No runner boolean, value,
 applicability key, or shortened fact domain exists. G06 exact-compares the
 independently expanded record×rule×fact domain, the derived missing-fact set,
-and the resulting action/classification trace. Registration exact-compares
-each optional verification failure with its enumerated affected-key set. No
-missing optional source can widen a modelable domain, and no candidate may
-convert an unresolved row to improve a target or gate.
+the covered/excluded binding schemas, their inventory-slot concatenation and
+runtime booleans, and the resulting action/classification trace.
+Registration exact-compares each optional verification failure with its
+enumerated affected-key set. The vacuous construction
+`covered_facts: [uninventoried premise]`,
+`required_micro_facts: []`, and a constant `noncovered` transform is not
+parseable: the premise lacks a bound slot, the required array fails its
+mandatory derivation, and a fact-bearing constant transform independently
+fails registration. No missing optional source can widen a modelable domain,
+and no candidate may convert an unresolved row to improve a target or gate.
 
 Every classifier output retains `interview_wave`,
 `earnings_reference_year`, and `year_source_class`, copied positionally from
@@ -3246,8 +3318,9 @@ is conjunctive. One violating record is failure:
    zero, or a full-year amount.
 6. Historical SECA factors, thresholds, eligible concepts, incorporation
    treatment, and other legal rules apply only to registered years and to
-   typed facts whose presence and value the coordinator derived through the
-   complete inventory-backed direct-law microfact ledger.
+   typed covered/excluded fact bindings whose complete required-microfact
+   arrays, presence, premise values, and transform inputs the coordinator
+   derived through the inventory-backed direct-law ledger.
 7. Wages precede SE under one combined person-year maximum.
 8. The exact same hash-verified underlying component bytes and correction
    draws feed benefits and revenue through the corrected-ledger accessor;
@@ -3291,8 +3364,9 @@ is conjunctive. One violating record is failure:
 17. The independently byte-pinned PSID inventory and crosswalk all-key
     disposition streams match positionally; the complete 35-purpose domain,
     component-slot assembly, structural-missing consequences, six executable
-    rule closures, inventory-backed direct-law microfact specifications and
-    coordinator presence ledger, and nine verification-claim results are
+    rule closures, inventory-backed covered/excluded fact-binding
+    specifications, coordinator-derived required-microfact projection,
+    presence/premise/action ledger, and nine verification-claim results are
     exact; the wave/reference/source-lineage map is exact; and every
     target/evaluation key is present. A missing job, state, direct-law field,
     microfact-ledger row, or cell never shrinks the registry.
@@ -3539,7 +3613,7 @@ The executable selector/comparator map is:
 | G03 | `se_loss_offset_trace` | `all_records_true / true` |
 | G04 | `atomic_and_person_year_reconciliation_residuals` | `all_exact_zero / true` |
 | G05 | `unknown_disposition_trace` | `all_records_true / true` |
-| G06 | `coordinator_legal_rule_microfact_action_trace` | `exact_rule_fact_domain_presence_and_action_fold / true` |
+| G06 | `coordinator_legal_rule_microfact_action_trace` | `exact_bound_fact_derived_microfact_domain_presence_premise_and_action_fold / true` |
 | G07 | `wage_first_combined_cap_trace` | `all_records_true / true` |
 | G08 | `benefit_revenue_component_hash_pairs` | `all_hash_pairs_equal / true` |
 | G09 | `recoverable_provenance_scan` | `all_records_true / true` |
@@ -3725,7 +3799,8 @@ two-artifact proof and an external merge event. The correction evaluation
 first derives preconstruction conditions 1–6:
 
 1. the immutable legal, verification-claim, source-inventory, crosswalk,
-   structural-missing, direct-law microfact/presence/action,
+   structural-missing, direct-law fact-binding/derived-microfact/
+   presence/premise/action,
    value-code/annualization/reconciliation/job-match/
    SE-aggregation/coverage-group, wave/reference-lineage, gap-derivation,
    physical-cell/alias/arithmetic, trusted-consumer-evaluator,
@@ -4189,6 +4264,14 @@ The nested schemas are exact:
   `heldout_noninterference_specs` is nonempty, and none of the inventory,
   domain, alias, RNG, isolation, or adjudication-rule registries may be
   omitted.
+- For each verified historical rule, before accepting the configuration or
+  opening a production value, the coordinator strict-parses every
+  covered/excluded binding, independently resolves each slot through the
+  source inventory and affected-key attachment closure, derives the
+  covered-then-excluded `required_micro_facts` array without consulting its
+  configured value, and requires deep equality. A binding/slot/premise/
+  derived-array mismatch or a fact-bearing constant transform aborts
+  registration.
 - `verification_claim_results` is the exact registered deep copy of the
   nine-row §4.1 result registry. Every `registration_required` row is
   `verified/pass`; every optional absent/conflict row binds its complete
@@ -4630,7 +4713,9 @@ Their schemas and completeness laws are:
   §4.1 `direct_law_micro_fact_presence_ledger.v1` object over the complete
   independently derived applicable record×rule×fact domain. G06 consumes its
   rows and final classification/action trace; G17 independently reconstructs
-  and exact-compares its count, keyset, source-purpose closure, and canonical
+  every covered/excluded binding and premise, derives the required-fact
+  concatenation without reading its configured comparand, and exact-compares
+  its count, keyset, source-purpose closure, premise results, and canonical
   hash. It is present on both selected and no-eligible branches and cannot be
   shortened by a candidate disposition.
 - `direct_law_action_trace` is the exact §4.1
@@ -5015,17 +5100,26 @@ Their schemas and completeness laws are:
 
 `integrity` has exactly `configuration_sha256`, `sidecar_sha256`,
 `substantive_model_sha256`, `evaluation_provenance_sha256`,
+`direct_law_fact_closure_sha256`,
 `ledger_identity_sha256`, `expected_ledger_streams_sha256`,
 `realized_ledger_streams_sha256`, `physical_alias_closure_sha256`,
 `claim_context_gap_streams_sha256`, and
 `trusted_consumer_evaluation_sha256`. Configuration, sidecar,
-evaluation-provenance, and physical-alias hashes are always 64 lowercase hex;
+evaluation-provenance, direct-law-fact-closure, and physical-alias hashes are
+always 64 lowercase hex;
 substantive-model, ledger, expected/realized-stream, and claim-gap hashes are
 null exactly in the no-eligible branch, as is the trusted-evaluation hash.
 `substantive_model_sha256` otherwise equals the selected correction;
 `evaluation_provenance_sha256` always hashes only
 `evaluation_binding.full_calibration_evaluation_provenance` under the exact
-equation above; and
+equation above. `direct_law_fact_closure_sha256` hashes a canonical object
+with exactly `covered_fact_bindings`, `excluded_fact_bindings`,
+`coordinator_derived_required_micro_facts`,
+`direct_law_micro_fact_presence_ledger_sha256`, and
+`direct_law_action_trace_sha256`; the first two are the complete rule-ordered
+binding projections, the third is derived from them without reading the
+configured comparand, and the last two hash the complete branch-general
+result objects. It is nonnull on every branch. Finally,
 `ledger_identity_sha256` otherwise hashes canonical
 `selected_correction.ledger_identity`.
 `expected_ledger_streams_sha256` and `realized_ledger_streams_sha256` hash
@@ -5509,7 +5603,8 @@ imports §10.3–§10.5 unchanged, including
    `sidecar_path`, `sidecar_blob_oid`, `sidecar_sha256`,
    `substantive_model_sha256`,
    `fit_selection_cell_identity_sha256`,
-   `evaluation_provenance_sha256`, `ledger_identity_sha256`,
+   `evaluation_provenance_sha256`, `direct_law_fact_closure_sha256`,
+   `ledger_identity_sha256`,
    `ledger_row_schema_sha256`, `support_keyset_sha256`,
    `expected_ledger_streams_sha256`, `realized_ledger_streams_sha256`,
    `physical_alias_closure_sha256`, `keyed_uniform_registry_sha256`,
@@ -5525,6 +5620,13 @@ imports §10.3–§10.5 unchanged, including
    ignored, uncommitted, unmerged, or gate-failing correction cannot start
    context. Full evaluation provenance is bound for audit, while the
    cell-scoped substantive hash remains the correction version.
+   `direct_law_fact_closure_sha256` exact-matches the always-nonnull
+   correction integrity field. Before rematerializing a ledger or evaluator
+   source, the context coordinator independently rebuilds its complete
+   preimage from the inherited legal-rule registry, independent inventory,
+   coordinator-derived covered/excluded slot concatenations, and the
+   correction's complete presence/premise/action results; it does not trust
+   the configured `required_micro_facts` array or the stored hash.
    `keyed_uniform_registry_sha256` is extracted from the unique passing
    correction-midpoint `results.rng_access_results` row and independently
    recomputed from the correction support/draw law; a null or unequal value
@@ -5965,7 +6067,8 @@ imports §10.3–§10.5 unchanged, including
    proxy. Roster, weights, population alignment, and national levels remain
    W1's authority, not this correction's. W1 must pin
    `substantive_model_sha256`, `fit_selection_cell_identity_sha256`,
-   `evaluation_provenance_sha256`, the physical alias closure,
+   `evaluation_provenance_sha256`, `direct_law_fact_closure_sha256`, the
+   physical alias closure,
    consumer-domain/gap/dependency registries, row schema, ledger identity,
    support key set, and applicable expected/realized stream hashes. It must
    independently reconstruct the applicable domain, rematerialize and verify
@@ -6045,7 +6148,7 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 |---|---|
 | Exact estimands | §3 freezes uncapped covered wages, pre-SECA net earnings, SECA base, noncovered/unresolved amounts, person taxable payroll, benefit-creditable earnings, modeled worker incidence, and zero v1 deemed credits. |
 | Full support feasibility | G01 independently reconstructs the complete Stage A–D benefit and unsplit 2015–2022 revenue domains; every base-ledger and operative-claim gap key must exist. Missing support fails rather than shrinking a configured selector; failure permits only §11.2 and retains benefit proxy labels. |
-| Historical legal authority and named classes | §4.1 freezes authority precedence, byte-pinned effective-year registry, structured inventory-backed required facts, source-backed typed parsers, a coordinator-evaluated presence/value/action trace, exact transform precedence/conflict law, and fail-closed treatment for every named class. |
+| Historical legal authority and named classes | §4.1 freezes authority precedence, a byte-pinned effective-year registry, schema-bound covered/excluded premises, the exact inventory-slot-derived required-fact array with empty iff both premise sets are empty, source-backed typed parsers, coordinator-evaluated presence/premise/action evidence, constant transforms only for unconditional rules, exact transform precedence/conflict law, and fail-closed treatment for every named class. |
 | Complete PSID crosswalk and era seams | §4.2 requires an independently byte-pinned every-wave×role×job×component/context×35-purpose inventory—including state and every named direct-law microfact slot—with exact `present \| structural_missing` disposition, a separate all-key disposition stream and component-slot assembly, frozen structural-missing consequences, the full wave→reference-year/source-class map, first-class `mixed`, and executable value-code, annualization, reconciliation, job-match, SE-aggregation, and coverage-group registries. Reference-year 1975 is mixed; exact 1976–1977 concepts are registration-required. |
 | Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Exact support/metric schemas carry source class, every annual gap result carries operative-claim/career coordinates, opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
@@ -6073,11 +6176,15 @@ Ratification requires affirmative evidence for every item:
   including state and every named direct-law microfact, exact
   `present | structural_missing` dispositions, complete missing-token laws,
   and missing/duplicate/extra rejection.
-- [ ] Every legal `required_micro_facts` member has a complete inventory
-  foreign-key/purpose/field/predicate closure; the coordinator alone derives
-  its typed presence/value commitment and action fold over the complete
-  record×rule×fact domain. Runner booleans or values are impossible, G06
-  exact-compares the runtime ledger, and G17 exact-compares all 15 domains.
+- [ ] Every covered/excluded fact is an exact typed binding to one or more
+  independent inventory slots; `required_micro_facts` deep-equals the
+  coordinator's covered-then-excluded slot concatenation and is empty iff
+  both binding arrays are empty. The coordinator alone derives typed
+  presence/value commitments, premise booleans, and the action fold over the
+  complete record×rule×fact domain. Fact-bearing constant transforms and the
+  empty-required/uninventoried-premise/constant-`noncovered` attack fail
+  registration; runner booleans or values are impossible; G06 exact-compares
+  the runtime ledger; and G17 exact-compares all 15 domains.
 - [ ] The crosswalk exact-matches that independent inventory and pins the
   all-key dispositions and component-slot assembly; it pins structural-
   missing consequences, the complete wave→reference-year/source-class map,
@@ -6127,7 +6234,8 @@ Ratification requires affirmative evidence for every item:
 - [ ] `gate_specs.v3` contains exactly conjunctive G01–G22, including G10's
   six exact replay rows, G11's one row per frozen provider, G14's exact four
   trusted survey-weight rescale rows, G15's exact nonempty broker/sandbox
-  assertions, and G17's exact 15-domain inventory/microfact closure.
+  assertions, and G17's exact 15-domain inventory/fact-binding/microfact
+  closure.
 - [ ] Expected mappings, 20-draw namespace, nonlinear benefit propagation,
   frozen ledger-row schema, within-year dependence groups, byte replay,
   row-order invariance, exact-once process-lifecycle keyed-uniform caching,
@@ -6176,7 +6284,8 @@ The authorized order is:
    implementation, or production result smuggled into the design commit;
 2. merge a separate referee-gated authority/extraction PR containing the
    legal and verification-claim registries with structured direct-law
-   microfact/presence-predicate authorities, independent PSID source-field
+   covered/excluded fact bindings, derived microfact/presence-predicate
+   authorities, independent PSID source-field
    inventory, questionnaire-slot/structural-missing/value-code/
    annualization/reconciliation/job-match/SE-aggregation/coverage-group
    registries, component-slot crosswalk, retained source captures, literal manifests,
@@ -6189,7 +6298,9 @@ The authorized order is:
    `gate_specs.v3`, evaluation, and sensitivity authorities, plus builders
    and offline reproduction/rejection tests, including wrong-purpose,
    uninventoried, runner-boolean, missing-ledger-row, and altered-action-fold
-   microfact cases;
+   microfact cases; free-text or uninventoried fact bindings; empty binding
+   slot arrays; missing, extra, or reordered derived required facts;
+   premise/slot mismatches; and nonempty-fact constant-enum transforms;
 3. merge a separate referee-gated implementation PR whose rehearsals are
    fixture-only and structurally reject production paths;
 4. obtain a fresh registered §10.1 configuration binding every preceding
