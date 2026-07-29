@@ -2169,20 +2169,40 @@ shared primitives, exact formulas, structural-dependence edges and scopes,
 and shared interpretation fragments remain
 byte-identical. Thus every held-out and zero-weight value is poisoned without
 claiming that an arithmetically inconsistent official source is valid.
-`noninterference_pre_g21_bundle.v1` has exactly `schema_version`,
+The fixture is branch-exhaustive. Baseline and mutant each rerun all three
+fits and §7.2 selection even when the production selection result is
+`no_eligible_candidate`; the production held-out handle remains sealed.
+`noninterference_pre_g21_bundle.v2` has exactly `schema_version`,
 `parameter_vectors`, `model_choice_predictions_and_losses`,
-`candidate_dispositions`, `selection_result`, `model_identity`,
-`substantive_model_sha256`, `keyed_uniform_registry_sha256`,
-`expected_ledger_streams`, `realized_ledger_streams`,
-`claim_context_gap_identity`, and
-`hard_gate_rows_except_g21`; the last array contains G01–G20 and G22 in that
-exact order with complete evidence hashes. Equality of this baseline/mutant
-object is G21's evidence and therefore has no self-reference.
+`candidate_dispositions`, `selection_result`, `selection_branch`,
+`selected_model_projection`, and `hard_gate_rows_except_g21`.
+`selection_branch` is `selected_correction | no_eligible_candidate` and is
+independently derived from the complete dispositions and selection result.
+The selected projection is an exact tagged union:
+
+- the selected branch has exactly `evaluation_status: evaluated`,
+  `model_identity`, `substantive_model_sha256`,
+  `keyed_uniform_registry_sha256`, `expected_ledger_streams`,
+  `realized_ledger_streams`, `claim_context_gap_identity`, and
+  `trusted_consumer_root_streams_sha256`; and
+- the no-eligible branch has exactly
+  `{"evaluation_status":"not_evaluated",
+  "reason":"no_eligible_candidate"}`.
+
+The hard-gate array contains G01–G20 and G22 in that exact order with complete
+evidence hashes. A selected-model-dependent row that is unreachable on the
+no-eligible branch retains the row with `status: not_evaluated`, null
+observed value, and the hash of the canonical
+`no_eligible_candidate` reason object. A parameter, prediction, loss,
+disposition, or selection-branch change is never hidden behind that tag.
+Equality of this complete baseline/mutant object is G21's evidence and
+therefore has no self-reference.
 
 After constructing the two pre-G21 bundles, the coordinator emits one shared
 `g21_acyclic_noninterference_evidence.v1` object with exactly
 `schema_version`, `fixture_id`, `baseline_pre_g21_bundle_sha256`,
 `mutant_pre_g21_bundle_sha256`,
+`baseline_selection_branch`, `mutant_selection_branch`,
 `expected_independently_mutable_value_count`,
 `actual_independently_mutable_value_count`,
 `expected_shared_derived_diagnostic_poison_count`,
@@ -2192,42 +2212,73 @@ After constructing the two pre-G21 bundles, the coordinator emits one shared
 `baseline_evaluation_provenance_sha256`,
 `mutant_evaluation_provenance_sha256`, `pre_g21_bundles_equal`,
 `mutation_domain_complete`, `evaluation_provenance_differs`, and `status`.
-The expected counts come from the fixture, actual counts come from the
+The two branch literals come from the respective bundles. The expected counts come from the fixture, actual counts come from the
 coordinator-expanded mutation ledger, and all are nonnegative JSON integers.
 The three booleans are respectively exact pre-bundle byte equality, equality
 of all three expected/actual count pairs plus exact one-time coverage of
 every frozen mutation key, and inequality of the two complete evaluation-
-provenance hashes. `status` is `pass` iff all three booleans are true; it is
+provenance hashes. A branch flip necessarily changes the two full bundle
+hashes and makes `pre_g21_bundles_equal` false. `status` is `pass` iff all
+three booleans are true; it is
 `fail` otherwise. This object is G21's complete acyclic comparator preimage.
 It contains no eligibility or full-substantive-bundle hash.
 
 Each synthetic run then appends the identical G21 hard-gate row whose
 evidence hash covers that object and whose status equals it. Only after G21
-is fixed does each run derive correction-model eligibility; condition 4
-uses this acyclic G21 status/count/provenance predicate, never
-`noninterference_results.status` or a full-bundle equality.
+is fixed does each run derive
+`correction_model_preconstruction_eligibility.v1`. That object has exactly
+`condition_1`, `condition_2`, `condition_3`, `condition_4`, `condition_5`,
+`condition_6`, and `eligible`. Conditions use
+`pass | fail | not_evaluated`; `eligible` is true iff a selected correction
+exists and all six conditions pass. Condition 4 uses this acyclic G21
+status/count/provenance predicate on both branches, never
+`noninterference_results.status`, either full evaluation-provenance hash, or
+a full-bundle equality. On `no_eligible_candidate`, condition 1 is evaluated,
+condition 4 is `pass | fail` from the complete branch-exhaustive mutation
+battery, conditions 2, 3, 5, and 6 are `not_evaluated` because they require a
+selected ledger/model, and preconstruction eligibility is false.
+
 `noninterference_substantive_bundle.v1` has exactly `schema_version`,
 `pre_g21_bundle`, `g21_row`, `complete_hard_gate_results`, and
-`correction_model_eligibility`. The complete array has exactly G01–G22.
+`correction_model_preconstruction_eligibility`. The complete array has
+exactly G01–G22, retaining the no-eligible not-evaluated rows.
 Its hash is published in `noninterference_results` but does not feed G21's
-own evidence or eligibility preimage, preserving acyclic identity. On pass,
-the pre-G21 bundles, constructed G21 rows, eligibility objects, and full
-substantive bundles are byte-identical; only full evaluation provenance and
-changed diagnostic observations/residuals may differ. Full-bundle equality
-is a required post-eligibility assertion and publication result, not an input
-to either eligibility object. If the acyclic G21 predicate passes but the
-post-eligibility full bundles differ, the report builder raises an
+own evidence or preconstruction-eligibility preimage, preserving acyclic
+identity. On pass, the pre-G21 bundles, constructed G21 rows,
+preconstruction-eligibility objects, and full substantive bundles are
+byte-identical; only full evaluation provenance and changed diagnostic
+observations/residuals may differ. Full-bundle equality is a required
+post-preconstruction assertion and publication result, not an input to
+preconstruction eligibility or final condition 7. If the acyclic G21
+predicate passes but the post-preconstruction full bundles differ, the report
+builder raises an
 `invariant` incident before constructing a primary: that impossible
 staged-derivation disagreement is not converted into an eligibility result.
 If the acyclic G21 predicate fails, both unequal pre-bundle hashes and both
 resulting full-bundle hashes are retained in the valid `gate_fail` primary;
 full-bundle equality is not a schema precondition for that branch.
-Parameters, model-choice
-predictions/losses, dispositions, selection, model identity and hash,
-uniforms, every expected/realized ledger identity, every non-G21 gate
-row/evidence hash, G21, and eligibility are all inside the comparison. A
-whole-document digest in the substantive/RNG path therefore produces a
-validly serialized G21 failure rather than an invalid report.
+Parameters, model-choice predictions/losses, dispositions, the exact
+selection branch, the branch-tagged selected-model projection, every
+non-G21 gate row/evidence hash, G21, and preconstruction eligibility are all
+inside the comparison. A whole-document digest in the substantive/RNG path,
+or held-out coupling that changes a disposition into a false no-eligible
+result, therefore produces a validly serialized G21 failure rather than
+escaping the battery or invalidating the report schema.
+
+Final condition 7 is deliberately absent from every object above. Only after
+both complete output byte strings have been assembled does the trusted
+finalizer construct `correction_model_eligibility.v2`, with exactly
+`preconstruction`, `condition_7`, and `eligible`. `preconstruction` is the
+exact already-frozen object. The candidate primary contains the literal
+`condition_7: pass` and `eligible` equal to preconstruction eligibility. The
+finalizer ignores those two asserted fields while it independently validates
+every other primary/sidecar key, branch, canonical byte, sidecar binding,
+result hash, and recomputed invariant; it then requires the asserted
+condition-7 value and final eligible boolean to equal the independently
+derived values and performs a final strict whole-object validation. Failure
+is an `invariant` incident and no primary is renamed. Condition 7, final
+eligibility, and either complete output byte hash never enter G21, either
+pre-G21 bundle, or either substantive-bundle hash.
 
 ### 6.3 The 15 vintage-1 series
 
@@ -2340,7 +2391,10 @@ and the no-eligible status is `no_eligible_candidate`.
 
 If no candidate is eligible, the complete evaluation status is the exact
 `no_eligible_candidate` failure branch in §10.2 and no production correction
-or label certificate exists. Human adjudication,
+or label certificate exists. This freezes the no-eligible selection branch
+but does not terminate the ceremony: the coordinator must still execute the
+complete §6.2 baseline/mutant fitting-and-selection battery, construct G21,
+and derive conditions 1–6 with the held-out handle sealed. Human adjudication,
 candidate/seed shopping, threshold relaxation, target removal, or choosing a
 visually preferable held-out path is forbidden. A changed candidate or rule
 requires a new design/registry version and fresh registration.
@@ -2719,9 +2773,11 @@ is conjunctive. One violating record is failure:
     10-versus-20 correction-draw stability tolerance.
 21. The complete §6.2 two-class held-out/zero-weight value poisoning and
     exclusive-source-byte mutant leaves parameters, model-choice losses,
-    selection, substantive model hash, uniforms, ledger identities, every
-    non-G21 gate row/evidence hash, G21 result, and eligibility
-    byte-identical.
+    candidate dispositions, the selected/no-eligible branch, the branch-tagged
+    selected-model projection, every non-G21 gate row/evidence hash, G21
+    result, and conditions 1–6 byte-identical. This battery runs even when
+    both baseline and production selection are `no_eligible_candidate`; a
+    mutant branch flip is failure.
 22. Every final corrected earnings-dependent metric in the complete
     independently reconstructed benefit, revenue, pairing, and comparison
     domains is transitively dominated by corrected ledger fields and is
@@ -3027,12 +3083,12 @@ The following dataflows are invalid, not merely caveats:
 
 The `first_estimates_report.md` §3.4 proxy label retires only after a
 two-artifact proof and an external merge event. The correction evaluation
-proves conditions 1–7:
+first derives preconstruction conditions 1–6:
 
 1. the immutable legal, verification-claim, source-inventory, crosswalk,
    structural-missing, value-code/annualization/reconciliation/job-match/
    SE-aggregation/coverage-group, wave/reference-lineage, gap-derivation,
-   physical-cell/alias/arithmetic,
+   physical-cell/alias/arithmetic, trusted-consumer-evaluator,
    ledger-schema/dependence, target, candidate, selection, draw, replay, RNG,
    isolation, domain, dependency, gate, and evaluation registries exact-match
    their registered bytes;
@@ -3041,25 +3097,35 @@ proves conditions 1–7:
    revenue domains;
 3. all 22 §8.1 hard gates and every registered model-choice validation
    tolerance pass;
-4. `substantive_model_sha256` was locked before held-out release; its
-   cell-scoped ancestry contains no vintage-1 or post-2014 primitive; and the
-   full held-out/zero-weight/exclusive-byte noninterference mutation passes;
+4. on a selected branch, `substantive_model_sha256` was locked before
+   held-out release and its cell-scoped ancestry contains no vintage-1 or
+   post-2014 primitive; on either selection branch, including
+   `no_eligible_candidate`, the complete held-out/zero-weight/exclusive-byte
+   mutation battery passes without changing a parameter, disposition,
+   selection branch, or branch-tagged selected-model projection;
 5. all raw inputs, deltas, source classes, status probabilities/draws,
    reasons, claim-context gap neighbors, and component outputs are recoverable
    and reconcile;
 6. the exact six-row replay registry, row-order invariance, provider-call RNG
    isolation, cutoff-before-imputation, sandbox access, analytic-denominator,
-   and nonlinear-draw laws pass; and
-7. the sealed §10 runner has constructed and validator-accepted complete
+   and nonlinear-draw laws pass.
+
+Only after those six conditions and all noninterference bundle hashes are
+frozen does the trusted finalizer prove postconstruction condition 7:
+
+7. the sealed §10 coordinator has constructed and validator-accepted complete
    primary and sidecar bytes, with the primary binding the exact sidecar hash,
    before either final-path rename.
 
-A `pass` correction report emits the exact
-`correction_model_eligibility` object in §10.2 with conditions 1–7 equal to
+The preconstruction object and the final
+`correction_model_eligibility.v2` wrapper are exactly those in §§6.2 and
+10.2. A `pass` correction report has conditions 1–6 and condition 7 all
 `pass`.
 That object is not a label-retirement certificate and cannot change a
 published label or prove that both final paths now exist. A `gate_fail` or
-`no_eligible_candidate` report emits it with `eligible: false`.
+`no_eligible_candidate` report emits it with `eligible: false`; on the latter,
+condition 4 remains evaluated from G21 rather than disappearing with the
+selected-model blocks.
 
 The separately registered context report then proves condition 8:
 
@@ -3067,11 +3133,13 @@ The separately registered context report then proves condition 8:
    frozen corrected model-metric domain, all 14 pairings, and all nine
    comparison specs; rematerializes and hash-checks every applicable common
    ledger and claim-context gap stream; computes every corrected
-   earnings-dependent metric exclusively through corrected ledger fields;
+   earnings-dependent metric through the coordinator-owned §8.1 typed
+   evaluator and exact-compares the complete runner proposal;
    confines legacy numeric values to the typed `before_context` block;
    transforms both `pairings[*].mismatch_codes` and
-   `comparison_specs[*].mismatch_codes` positionally with unchanged
-   cardinality/order and unaffected fields; uses analytic modeled-worker
+   `comparison_specs[*].mismatch_codes` positionally while retaining successor
+   registry-row cardinality/order and every unaffected field; mismatch-array
+   contents and cardinality obey only §9.2's suppression law; uses analytic modeled-worker
    probabilities for every certified denominator; only then opens all 15
    vintage-1 series as context; publishes every required row regardless; and
    validates.
@@ -3595,41 +3663,53 @@ The isolated runner performs, in order:
    `selection_eligible` validation cells and executes §7.2. After the
    selection decision is immutable, the separate diagnostic evaluator records
    zero-weight validation-role cells without communicating to the selector.
-   If none is eligible, skip lock and selected-model evaluation, keep the
-   held-out handle sealed, and publish the valid `no_eligible_candidate`
-   branch below.
-6. **Substantive lock.** For an eligible selection, serialize the
+   If none is eligible, freeze the exact `no_eligible_candidate` branch, skip
+   the production lock and selected-model evaluation, keep the held-out
+   handle sealed, and continue to phase 7; no primary is yet constructed or
+   published.
+6. **Conditional substantive lock.** For an eligible selection, serialize the
    cell-scoped correction-model
    identity below, record its SHA-256, close all fitting/selection mutation
-   capability, and record the exact `lock_event` result below.
+   capability, and record the exact `lock_event` result below. The
+   no-eligible branch records no lock and proceeds with its already-frozen
+   branch tag.
 7. **Pre-held-out structural verification.** While held-out and vintage-1
    value handles remain unminted, run the exact six replay comparisons, exact
    four trusted weight-rescale executions, optimizer-bearing sandbox
    assertions, and coordinator-expanded synthetic mirrors of the complete
    registered noninterference key/fragment domain.
-   Replay/rescale workers receive only the same cell-scoped model-choice
-   packets; the mutation fixture changes every mirrored evaluation-only value
-   and exclusive source-byte range required by §6.2 while preserving the
-   model-choice closure.
-   Each synthetic baseline and mutant independently completes G01–G20 and
-   G22 plus every G21-independent condition input, then serializes its
-   canonical pre-G21 bundle. The coordinator compares those hashes, proves
+   On a selected branch, replay/rescale workers receive only the same
+   cell-scoped model-choice packets. On both branches, including
+   no-eligible, fresh baseline and mutant fit/selection workers rerun the
+   complete three-candidate sequence; the mutation fixture changes every
+   mirrored evaluation-only value and exclusive source-byte range required by
+   §6.2 while preserving the model-choice closure.
+   Each synthetic baseline and mutant independently constructs every
+   reachable G01–G20/G22 row and exact not-evaluated rows for unreachable
+   selected-model evidence, then serializes its branch-tagged canonical
+   pre-G21 bundle. The coordinator compares those hashes, proves
    all three mutation-class counts/key ledgers and the required evaluation-
    provenance difference, freezes the shared acyclic G21 evidence/row, and
-   only then derives each eligibility object. It finally compares the two
-   full substantive bundles as a post-eligibility assertion; neither
-   eligibility nor a full-bundle hash feeds G21. Freeze G10/G14,
+   only then derives each conditions-1–6 preconstruction object. It finally
+   compares the two full substantive bundles as a
+   post-preconstruction assertion; neither preconstruction eligibility nor a
+   full-bundle hash feeds G21. Freeze every reachable G10/G14 row,
    G21's acyclic pre-G21/count/provenance evidence, and the
    pre-held-out portions of G11/G15; then destroy every optimizer, selector,
    replay, rescale, and diagnostic worker and every associated mount.
    Provider wrappers and the coordinator audit hook remain active.
    Independently evaluate every hard gate whose complete evidence is
    reachable while those handles are sealed, retaining a 22-row result with
-   the remaining gates tagged not evaluated. If any such gate has failed,
+   the remaining gates tagged not evaluated. G21 is always evaluated,
+   including on `no_eligible_candidate`. If a selected branch has any
+   reachable failed gate,
    seal held-out access permanently and publish the exact pre-held-out
    `gate_fail` branch below; no failure can be “completed” by opening
    held-out values.
-8. **Held-out evaluation.** Only after those workers are destroyed, create
+8. **Conditional held-out evaluation.** On `no_eligible_candidate`, do not
+   create a held-out or selected-consumer capability; retain the evaluated
+   G21/noninterference evidence and proceed directly to publication. On a
+   selected branch, only after those workers are destroyed, create
    the held-out evaluator and record first-exposure sequences. The trusted
    provenance validator may hash registered vintage-1 source bytes needed for
    physical-alias closure, but it never decodes or releases a 15-series value
@@ -3642,8 +3722,11 @@ The isolated runner performs, in order:
    lifecycle audit; then run all 22 gates using locked G10/G14 and G21
    preimage evidence and construct the complete noninterference bundle.
    No fitting/selection-capable process or filesystem view exists.
-9. **Publication.** Construct and validate the complete primary and sidecar
-   bytes. Stage both without occupying final paths, rename the primary
+9. **Publication.** Freeze the full substantive-bundle hashes and the
+   conditions-1–6 object; construct the sidecar bytes and a complete primary
+   candidate containing the derived final eligibility wrapper; then perform
+   §6.2's condition-7 validation with condition 7 excluded from every earlier
+   comparison preimage. Stage both without occupying final paths, rename the primary
    atomically, then rename the sidecar atomically. The pair is not falsely
    described as one filesystem-atomic operation. A failure after the primary
    rename is the permitted partial state in §10.3.
@@ -3936,15 +4019,23 @@ Their schemas and completeness laws are:
   event type `selected_model_lock`, positive JSON-integer sequence, and hash
   equal to `selected_correction.substantive_model_sha256`. Every held-out
   exposure follows it.
-- Each selected-only results object is
-  a tagged object. The evaluated branch has exactly
-  `{"evaluation_status":"evaluated","rows":[...]}`. The unselected branch has
-  exactly
+- `hard_gate_results` and `noninterference_results` are branch-general tagged
+  objects and always have exactly
+  `{"evaluation_status":"evaluated","rows":[...]}`, including on
+  `no_eligible_candidate`. They can never use a block-level not-evaluated
+  branch. The genuinely selected-only blocks are `replay_results`,
+  `rng_access_results`, `weight_rescale_results`, `isolation_results`,
+  `trusted_consumer_evaluation`, `support_results`, `distribution_results`,
+  `downstream_results`, `sensitivity_results`, and
+  `before_context_results`. Their evaluated array branch has exactly
+  `{"evaluation_status":"evaluated","rows":[...]}`; the trusted-evaluator
+  branch instead has exactly
+  `{"evaluation_status":"evaluated","result":<the §8.1 object>}`. Their
+  unreachable branch has exactly
   `{"evaluation_status":"not_evaluated","reason":...}`, where reason is
   `no_eligible_candidate | preheldout_structural_gate_fail`. The following
-  exact schemas and
-  cardinalities apply; `rows: []` is invalid for every nonempty frozen
-  registry:
+  exact schemas and cardinalities apply; `rows: []` is invalid for every
+  nonempty frozen registry:
 
   - `hard_gate_results` has exactly 22 rows, G01 through G22 in §8.1 order.
     Each has exactly `gate_id`, `status`, `observed`, `required`, and
@@ -3954,6 +4045,13 @@ Their schemas and completeness laws are:
     whose evidence would require held-out release is `not_evaluated` with
     `observed: null` and the hash of the canonical
     `preheldout_structural_gate_fail` reason object. No row is omitted.
+    On `no_eligible_candidate`, every gate reachable through fitting,
+    selection, sandbox, and the synthetic mutation ceremony retains its
+    actual pass/fail result; G21 is always `pass | fail`. A
+    selected-model-dependent gate is `not_evaluated`, with
+    `observed: null` and the hash of the canonical `no_eligible_candidate`
+    reason object. Thus the branch has 22 rows rather than an omitted gate
+    block.
   - `replay_results` has exactly the six `replay_specs.v1` rows in order.
     Each has exactly `test_id`, `left_run_id`, `right_run_id`,
     `left_expected_source_order_sha256`,
@@ -4008,6 +4106,7 @@ Their schemas and completeness laws are:
     `heldout_noninterference_specs.v1` fixture, each with exactly
     `fixture_id`, `baseline_pre_g21_bundle_sha256`,
     `mutant_pre_g21_bundle_sha256`,
+    `baseline_selection_branch`, `mutant_selection_branch`,
     `baseline_substantive_bundle_sha256`,
     `mutant_substantive_bundle_sha256`,
     `baseline_evaluation_provenance_sha256`,
@@ -4015,10 +4114,12 @@ Their schemas and completeness laws are:
     `independently_mutable_value_count`,
     `shared_derived_diagnostic_poison_count`,
     `exclusive_source_fragment_count`, and `status`. The counts are actual
-    nonnegative JSON integers and the hashes bind the actual canonical
-    objects. Status is `pass` iff all three counts exact-match the fixture,
+    nonnegative JSON integers, both branch literals are
+    `selected_correction | no_eligible_candidate`, and the hashes bind the
+    actual canonical objects. Status is `pass` iff all three counts exact-match the fixture,
     both pre-G21 hashes are equal, both full substantive-bundle hashes are
-    equal, and the full provenance hashes differ; it is `fail` otherwise and
+    equal, the branch literals are equal, and the full provenance hashes
+    differ; it is `fail` otherwise and
     preserves the unequal/count-mismatched evidence. A sole full-bundle
     inequality after the acyclic G21 predicate passed is instead the
     pre-primary `invariant` incident above, so no valid primary can combine
@@ -4027,9 +4128,11 @@ Their schemas and completeness laws are:
     from G21's preimage. The two provenance hashes enter G21 only through the
     acyclic evidence object's inequality predicate; neither complete
     provenance object can enter a substantive bundle, eligibility object, or
-    other gate.
-  - `trusted_consumer_evaluation` is the exact
-    `trusted_consumer_evaluation.v1` object in §8.1. Its graph-spec hash
+    other gate. This block is fully evaluated on no-eligible; only its
+    branch-tagged selected-model projections are not evaluated.
+  - `trusted_consumer_evaluation.result` is the exact
+    `trusted_consumer_evaluation.v1` object in §8.1 on the evaluated branch.
+    Its graph-spec hash
     exact-matches the registered deep copy; source, node, and root rows have
     the complete independently derived cardinality and order; the runner
     comparison retains all actual mismatch counts and hashes; and G22 passes
@@ -4083,10 +4186,11 @@ Their schemas and completeness laws are:
   `first_exposure_sequence`, `used_for_fitting`, `used_for_selection`, and
   `used_for_diagnostic`. Year and all identity arrays are independently
   reconstructed by the trusted validator from physical source identities and
-exact-match the frozen target/alias closure; they are not accepted from
-worker self-report. The two sibling arrays are positionally parallel and
-retain `exact_published_value_equality | structural_dependence_only` for
-every sibling group in canonical alias order. `effective_evidentiary_role` applies
+  exact-match the frozen target/alias closure; they are not accepted from
+  worker self-report. The two sibling arrays are positionally parallel and
+  retain `exact_published_value_equality | structural_dependence_only` for
+  every sibling group in canonical alias order.
+  `effective_evidentiary_role` applies
   `fit > selection > diagnostic` across the complete physical closure.
   `broker_packet_sha256` binds the only value packet that can reach a worker.
   An unopened held-out row has both exposure fields and packet hash null and
@@ -4099,24 +4203,32 @@ every sibling group in canonical alias order. `effective_evidentiary_role` appli
   sequence is a positive JSON integer, and phase, sequence, and applicable
   packet hash obey their exact branch law. Every evaluated target result
   points to the matching trace sequence.
-- `correction_model_eligibility` has exactly `condition_1`, `condition_2`,
-  `condition_3`, `condition_4`, `condition_5`, `condition_6`, `condition_7`,
-  and `eligible`. Each condition is the string
-  `pass | fail | not_evaluated`; `eligible` is a JSON boolean, true iff a
-  selected correction exists and every condition is `pass`. A `pass` report
-  has seven passes. A complete-evaluation `gate_fail` has only pass/fail
-  values and at least one fail. A pre-held-out structural `gate_fail` has at
-  least one fail and uses `not_evaluated` only for conditions whose required
-  evidence was unavailable because the held-out capability remained sealed.
-  `no_eligible_candidate` has condition 1 `pass`, conditions 2–6
-  `not_evaluated`, condition 7 `pass` for the validator-accepted failure
-  report bytes, and eligibility false. These are recomputed and are not the
-  §9 label certificate. Condition inputs exclude
-  either run's `evaluation_provenance_sha256`; condition 4 consumes only
-  G21's already-frozen boolean that the two hashes differ together with its
+- `correction_model_eligibility` is the exact
+  `correction_model_eligibility.v2` object with exactly `preconstruction`,
+  `condition_7`, and `eligible`. `preconstruction` is the exact
+  `correction_model_preconstruction_eligibility.v1` object frozen before
+  output construction and has exactly `condition_1` through `condition_6`
+  plus `eligible`. Every condition is
+  `pass | fail | not_evaluated`. Preconstruction eligibility is true iff a
+  selected correction exists and all six conditions pass. Final eligibility
+  is true iff preconstruction eligibility is true and condition 7 is `pass`.
+  A `pass` report has six preconstruction passes and condition 7 pass. A
+  complete-evaluation `gate_fail` has only pass/fail preconstruction values
+  and at least one fail. A pre-held-out structural `gate_fail` has at least
+  one fail and uses `not_evaluated` only where sealed held-out evidence made a
+  selected-model condition unreachable.
+  `no_eligible_candidate` has preconstruction condition 1 `pass`, condition 4
+  `pass | fail` from the evaluated G21 battery, conditions 2, 3, 5, and 6
+  `not_evaluated`, and preconstruction eligibility false. Every valid primary
+  has final condition 7 `pass`; failure to establish it is an invariant
+  incident, not a primary with condition 7 fail. These are recomputed and are
+  not the §9 label certificate. Condition inputs exclude either run's
+  `evaluation_provenance_sha256`; condition 4 consumes only G21's
+  already-frozen boolean that the two hashes differ together with its
   mutation-completeness and pre-bundle-equality predicates. G21 proves that
   changing only held-out, zero-weight, or vintage-1-exclusive bytes cannot
-  change any condition.
+  change any preconstruction condition. Condition 7 and final eligibility
+  enter no G21 or substantive-bundle preimage.
 
 `status` is an exact tagged-union discriminator:
 
@@ -4134,14 +4246,16 @@ every sibling group in canonical alias order. `effective_evidentiary_role` appli
 - `no_eligible_candidate` requires selected correction null, all three
   candidate dispositions and all phase-reachable train/validation rows,
   null `lock_event`, `evaluation_completion: no_eligible_candidate`, no
-  held-out exposure, every selected-only block in the exact
-  `not_evaluated` branch, and eligibility false.
+  held-out exposure, evaluated 22-row hard-gate and complete noninterference
+  blocks with G21 `pass | fail`, every genuinely selected-only block in the
+  exact `not_evaluated` branch, preconstruction condition 4 evaluated, final
+  condition 7 pass, and both eligibility booleans false.
 
 `integrity` has exactly `configuration_sha256`, `sidecar_sha256`,
 `substantive_model_sha256`, `evaluation_provenance_sha256`,
 `ledger_identity_sha256`, `expected_ledger_streams_sha256`,
-`realized_ledger_streams_sha256`, `physical_alias_closure_sha256`, and
-`claim_context_gap_streams_sha256`,
+`realized_ledger_streams_sha256`, `physical_alias_closure_sha256`,
+`claim_context_gap_streams_sha256`, and
 `trusted_consumer_evaluation_sha256`. Configuration, sidecar,
 evaluation-provenance, and physical-alias hashes are always 64 lowercase hex;
 substantive-model, ledger, expected/realized-stream, and claim-gap hashes are
@@ -4159,8 +4273,8 @@ complete `physical_source_cell_specs`, `official_source_alias_specs`, and
 `official_source_arithmetic_rule_specs`; and
 `claim_context_gap_streams_sha256` hashes the complete canonical
 `claim_context_gap_identity`;
-`trusted_consumer_evaluation_sha256` hashes the complete canonical
-`results.trusted_consumer_evaluation`. The primary records
+when nonnull, `trusted_consumer_evaluation_sha256` hashes the complete
+canonical evaluated `results.trusted_consumer_evaluation.result`. The primary records
 SHA-256 of the exact sidecar bytes. Results validation checks array positions
 before lookup, recomputes selection, losses, gates, hashes, and status, and
 rejects every missing, extra, duplicate, reordered, wrong-branch, wrong-type,
@@ -5120,7 +5234,7 @@ fact supplies a v1 rule, coefficient, target, field, tolerance, or claim.
 | Production cutoff, entrants, and odd years | Direct questionnaire lineage is 1968–1996 and even 1998–2012; structural odd gaps are derived per benefit career only after the operative-claim cutoff, including a claim-specific 2013; 2014 is the boundary and 2015–2022 are projected. Opening-backfill replacement precedes gap derivation, and revenue has no 2013 consumer row. |
 | Probabilities, imputations, draws, nonlinear AIME/PIA | §§5.1 and 5.4 make expected mappings primary, require 20 keyed correction draws where nonlinear distribution matters, and compute benefits within career draw. |
 | Target artifact, years, loss, partition, viewed cells | §6 creates immutable vintage 2 and requires target-ID, declared, resolved observation, operand, physical-cell, ancestry, selector, and result years to agree before deriving 1968–2008 train, 2009–2014 validation, and 2015–2022 diagnostic roles. Physical ancestry closes over cross-vintage aliases plus exact and structural siblings; structural dependence carries exposure without asserting displayed numeric equality or inferring a rounding interval. None of vintage 1 fits and viewed-cell honesty is explicit. |
-| B2/B11 and covered-share extraction | §6 and D-A1 retain the pinned source hashes, literal ten-row discrepancy registry, and pre-2015 scale-free targets; V-B7 requires an exact covered-share universe. Model choice binds only `fit_selection_cell_identity.v1`; full evaluation provenance is separate, and G21 mutates every held-out/zero-weight/exclusive byte while requiring the substantive model, uniforms, gates, and eligibility to remain byte-identical. |
+| B2/B11 and covered-share extraction | §6 and D-A1 retain the pinned source hashes, literal ten-row discrepancy registry, and pre-2015 scale-free targets; V-B7 requires an exact covered-share universe. Model choice binds only `fit_selection_cell_identity.v1`; full evaluation provenance is separate, and G21 mutates every held-out/zero-weight/exclusive byte on both selected and no-eligible branches while requiring parameters, dispositions, selection branch, branch-tagged selected-model projection, gates, and conditions 1–6 to remain byte-identical. |
 | Post-calibration label vocabulary | §1 freezes exactly `frame-relative`, `modeled-covered-earnings`, `aggregate-concept-calibrated-not-population-aligned`. |
 | Cap, SE threshold/loss, incorporated owners, historical SECA | §§3.2 and 4.1 freeze component floors, within-SE-only loss netting, effective-year law, wage-first residual cap, incorporated salary, and excluded distributions. |
 | Candidate set, thresholds, namespace, replay, certificate | §§5.3–5.4, 6.2, 7, 8, and 9 freeze candidates, cell-scoped namespace, exact six replays, all 22 gates, independent consumer/metric domains, corrected-only dependency domination, analytic certified denominators, and no post-hoc rescue. |
@@ -5163,8 +5277,9 @@ Ratification requires affirmative evidence for every item:
 - [ ] Model choice binds only the exact cell-scoped fit/selection identity;
   full evaluation provenance is separate, and the nonempty G21 fixture
   changes every held-out/zero-weight/exclusive source byte while parameters,
-  losses, selection, model hash, uniforms, gates, and eligibility remain
-  byte-identical.
+  losses, dispositions, selected/no-eligible branch, branch-tagged
+  selected-model projection, gates, and conditions 1–6 remain
+  byte-identical; the battery runs when no candidate is eligible.
 - [ ] All 15 vintage-1 series are structurally inaccessible to fitting and
   selection and described as already viewed.
 - [ ] Candidate, hyperparameter, convergence, selection, tie, Option-C, and
