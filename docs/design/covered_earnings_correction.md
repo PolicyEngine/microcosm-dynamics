@@ -2122,12 +2122,17 @@ that comparison and reports the literal numeric-validation result
 
 In particular, a published total/component or taxable-earnings/contribution
 definition is structural-only unless the primary source expressly guarantees
-equality of the displayed values at their published precision. The 1969
-Table 4.B11 taxable total `33,233` and displayed components
-`31,501 + 1,733 = 33,234` therefore occupy one structural dependency and
-exposure component. The one-unit display residual is retained, but it is
-neither a registration inconsistency nor evidence from which an unreported
-rounding interval may be inferred.
+equality of the displayed values at their published precision. A complete
+scan of the pinned
+[Table 4.B11](../../data/external/snapshots/ssa_level_anchors_vintage1/supplement2025_4b.html#L14840)
+rows for 1968–2022 finds zero taxable-earnings residuals: in 1969, for
+example, `402,510 = 375,010 + 27,500` exactly. It finds contribution
+total-minus-wage-minus-SE residuals of `+1` or `-1` only in 1969, 1971, 1986,
+1993, 2001, 2010, 2019, and 2021. The 1969 contribution total `33,233` and
+displayed components `31,501 + 1,733 = 33,234` therefore occupy one structural
+dependency and exposure component. Its `-1` display residual is retained, but
+it is neither a registration inconsistency nor evidence from which an
+unreported rounding interval may be inferred.
 
 The independently derived
 `physical_source_structure_projection.v1` contains exactly
@@ -2315,8 +2320,8 @@ The target families are frozen as follows:
 | `b2_se_taxable_intensity` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | no fitting loss | Recomputed year role; zero-weight. |
 | `b2_wage_taxable_fraction` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | no fitting loss | Recomputed year role; zero-weight preserved employer-cap mismatch. |
 | `b2_se_taxable_fraction` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | no fitting loss | Recomputed year role; zero-weight. |
-| `b11_taxable_earnings_component_reconciliation` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components; the source relationship is `structural_dependence_only`, so the literal residual (including 1969's `-1`) is retained with `rounding_interval_unavailable` and no equality/interval adjudication. Model diagnostic is `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`. | no fitting loss | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
-| `b11_contributions_component_reconciliation` | Literal displayed 4.B11 contribution total minus displayed wage and SE contribution components, retained under the same structural-only/no-rounding-inference law; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap | no fitting loss | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
+| `b11_taxable_earnings_component_reconciliation` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components; the source relationship is `structural_dependence_only`, so the literal residual is retained with `rounding_interval_unavailable` and no equality/interval adjudication. The complete pinned 1968–2022 scan has zero such residuals. Model diagnostic is `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`. | no fitting loss | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
+| `b11_contributions_component_reconciliation` | Literal displayed 4.B11 contribution total minus displayed wage and SE contribution components, retained under the same structural-only/no-rounding-inference law. The complete pinned 1968–2022 scan has `+1` or `-1` residuals only in 1969, 1971, 1986, 1993, 2001, 2010, 2019, and 2021, including 1969's `-1`. Model diagnostic is `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap. | no fitting loss | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
 | `b11_se_contribution_share` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | no fitting loss | Recomputed year role; zero-weight legal/accounting sibling diagnostic only. |
 
 `dependency_group` is operational and makes no statistical-independence
@@ -2440,11 +2445,11 @@ projected to rows with exactly `left_structural_locator_id`,
 `arithmetic_rule_projection_sha256`,
 `source_definition_locator_id`, and `adjudication`.
 `arithmetic_rule_projection_sha256` is the SHA-256 of the exact matching
-row in `physical_source_structure_projection.v1.arithmetic_rules`, and it
+row in `physical_source_structure_projection.v1.arithmetic_rules`. This hash,
 `assertion_scope`, `numeric_validation_law`, and
 `source_definition_locator_id` are nonnull exactly when
-`arithmetic_rule_id` is nonnull; all five otherwise are JSON null. The two
-nonnull values exact-match the projected rule. The
+`arithmetic_rule_id` is nonnull; all four otherwise are JSON null. When
+nonnull, all four values exact-match the projected rule. The
 closure never contains a value-bearing physical-cell ID, cell token,
 normalized value, source-definition fragment digest, or full-source digest.
 `source_definition_fragments` contains only the cell-scoped bytes needed to
