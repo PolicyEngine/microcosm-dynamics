@@ -4,22 +4,25 @@ from __future__ import annotations
 
 import copy
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 
 import pytest
 
-from populace_dynamics.estimates import (
-    covered_earnings_correction_registry as registry,
-)
-
 ROOT = Path(__file__).resolve().parents[2]
+SCRIPTS = ROOT / "scripts"
 ARTIFACT = (
     ROOT
     / "data"
     / "external"
     / "ssa_covered_earnings_calibration_targets_vintage2.json"
 )
+
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+
+import covered_earnings_correction_registry as registry  # noqa: E402
 
 
 def _artifact() -> dict:
