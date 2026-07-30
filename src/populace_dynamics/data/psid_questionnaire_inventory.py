@@ -40,6 +40,65 @@ INTERVIEW_WAVES: tuple[int, ...] = (
     *range(1968, 1998),
     *range(1999, 2024, 2),
 )
+FORMAT_MAP_IDENTITIES: tuple[tuple[int, int, int, int, str], ...] = (
+    (
+        2021,
+        3_212,
+        25_263,
+        2_460,
+        "39a29fa289ddd41852214e30bb7d77e41534c41efd21a75a68633282e808cfd2",
+    ),
+    (
+        2023,
+        3_078,
+        23_374,
+        2_327,
+        "d58883d52bb8a76b64206ae36093563e6cbb9d6c542de2bb3189f0e4b70cc2f2",
+    ),
+)
+FORMAT_MAP_WAVES: tuple[int, ...] = tuple(
+    row[0] for row in FORMAT_MAP_IDENTITIES
+)
+FORMAT_SOURCE_IDENTITIES: tuple[
+    tuple[int, str, str, str, int, str, str], ...
+] = (
+    (
+        2021,
+        "psid-family-2021-stata_value_labels",
+        "stata_value_labels",
+        "family/2021/FAM2021ER_formats.do",
+        1_531_909,
+        "c227518baa7ec94ed042aadfea42c4ed5bdd1b89df11c4bf4d578f4a4dd60e38",
+        "windows-1252",
+    ),
+    (
+        2021,
+        "psid-family-2021-spss_value_labels",
+        "spss_value_labels",
+        "family/2021/FAM2021ER_formats.sps",
+        1_151_352,
+        "863f151a4cab1282060aa3bfe4f6648bbbc1822e6f739bcfd502ff13b40a952c",
+        "windows-1252",
+    ),
+    (
+        2023,
+        "psid-family-2023-stata_value_labels",
+        "stata_value_labels",
+        "family/2023/FAM2023ER_formats.do",
+        1_427_122,
+        "7ecaa861c7e8afd80e579a0d04c9a8040ffeae42ad4a174acd8a8a0e558171eb",
+        "windows-1252",
+    ),
+    (
+        2023,
+        "psid-family-2023-spss_value_labels",
+        "spss_value_labels",
+        "family/2023/FAM2023ER_formats.sps",
+        1_084_066,
+        "89e4f2be4bea66fe83e0f11682bdcfab2590c01310bd697833846377d64a59f2",
+        "windows-1252",
+    ),
+)
 ROLES: tuple[str, ...] = (
     "head_or_reference_person",
     "spouse_or_partner",
@@ -198,6 +257,23 @@ def _optional_format_pair(directory: Path) -> tuple[Path, Path] | None:
             f".do/.sps pair; found do={len(do_files)}, sps={len(sps_files)}"
         )
     return do_files[0], sps_files[0]
+
+
+def _format_pair_for_wave(
+    directory: Path,
+    wave: int,
+) -> tuple[Path, Path] | None:
+    pair = _optional_format_pair(directory)
+    if wave in FORMAT_MAP_WAVES and pair is None:
+        raise DictionaryDriftError(
+            f"{directory}: wave {wave} is missing its required field-bound "
+            "format pair"
+        )
+    if wave not in FORMAT_MAP_WAVES and pair is not None:
+        raise DictionaryDriftError(
+            f"{directory}: unexpected field-bound format pair for wave {wave}"
+        )
+    return pair
 
 
 def _extract_statement(
@@ -777,6 +853,48 @@ def _registration_required_items() -> list[dict[str, Any]]:
     ]
 
 
+def _target_artifacts() -> list[dict[str, str]]:
+    return [
+        {
+            "schema_version": SLOT_SPECS_ID,
+            "artifact_id": SLOT_SPECS_ID,
+            "status": "not_emitted_registration_required",
+        },
+        {
+            "schema_version": "psid_source_field_inventory.v1",
+            "artifact_id": SOURCE_INVENTORY_ID,
+            "status": "not_emitted_registration_required",
+        },
+    ]
+
+
+def _inventory_ratification_abort(
+    registration_items: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "status": "registration_required",
+        "failure_disposition": "abort_inventory_ratification",
+        "missing_source_commitments": [
+            "complete questionnaire job/component/context slot hierarchy",
+            "full source descriptions for every present field",
+            "complete raw-code maps with typed missing dispositions",
+            "complete missing-token grammar for uncoded fields",
+            "source-backed periodicity and information-date basis",
+            "exhaustive questionnaire/layout absence proofs",
+        ],
+        "forbidden_fallbacks": [
+            "derive the slot domain from the correction crosswalk",
+            "infer structural_missing from a label keyword search",
+            "treat a short label as a full source description",
+            "infer a missing token or timing rule at runtime",
+            "claim reproduced_from_source_bytes true",
+        ],
+        "registration_required_item_ids": [
+            row["registration_item_id"] for row in registration_items
+        ],
+    }
+
+
 def build_registration_required_audit(
     data_root: Path | None = None,
 ) -> dict[str, Any]:
@@ -857,7 +975,7 @@ def build_registration_required_audit(
                 ]
             )
 
-        format_pair = _optional_format_pair(directory)
+        format_pair = _format_pair_for_wave(directory, wave)
         if format_pair is not None:
             format_do_path, format_sps_path = format_pair
             format_do_document = _document_row(
@@ -895,18 +1013,7 @@ def build_registration_required_audit(
     artifact: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "artifact_id": ARTIFACT_ID,
-        "target_artifacts": [
-            {
-                "schema_version": SLOT_SPECS_ID,
-                "artifact_id": SLOT_SPECS_ID,
-                "status": "not_emitted_registration_required",
-            },
-            {
-                "schema_version": "psid_source_field_inventory.v1",
-                "artifact_id": SOURCE_INVENTORY_ID,
-                "status": "not_emitted_registration_required",
-            },
-        ],
+        "target_artifacts": _target_artifacts(),
         "source_authority_manifest": manifest,
         "interview_waves": list(INTERVIEW_WAVES),
         "roles": list(ROLES),
@@ -941,28 +1048,9 @@ def build_registration_required_audit(
             "main_spss_value_label_statement_count": main_value_label_count,
             "format_file_evidence": format_file_evidence,
         },
-        "inventory_ratification_abort": {
-            "status": "registration_required",
-            "failure_disposition": "abort_inventory_ratification",
-            "missing_source_commitments": [
-                "complete questionnaire job/component/context slot hierarchy",
-                "full source descriptions for every present field",
-                "complete raw-code maps with typed missing dispositions",
-                "complete missing-token grammar for uncoded fields",
-                "source-backed periodicity and information-date basis",
-                "exhaustive questionnaire/layout absence proofs",
-            ],
-            "forbidden_fallbacks": [
-                "derive the slot domain from the correction crosswalk",
-                "infer structural_missing from a label keyword search",
-                "treat a short label as a full source description",
-                "infer a missing token or timing rule at runtime",
-                "claim reproduced_from_source_bytes true",
-            ],
-            "registration_required_item_ids": [
-                row["registration_item_id"] for row in registration_items
-            ],
-        },
+        "inventory_ratification_abort": _inventory_ratification_abort(
+            registration_items
+        ),
         "registration_required_items": registration_items,
         "canonical_order": [
             "interview_wave",
@@ -1081,9 +1169,9 @@ def _validate_format_file_evidence(
         )
 
 
-def validate_integrity(artifact: dict[str, Any]) -> None:
-    """Validate the audit's count, keyset, and content commitments."""
-
+def _validate_physical_field_integrity(
+    artifact: Mapping[str, Any],
+) -> list[list[Any]]:
     rows = artifact["physical_fields"]
     if artifact["physical_field_count"] != len(rows):
         raise DictionaryDriftError("physical field count mismatch")
@@ -1092,34 +1180,148 @@ def validate_integrity(artifact: dict[str, Any]) -> None:
         raise DictionaryDriftError("duplicate physical field key")
     if artifact["physical_field_keyset_sha256"] != _keyset_hash(keys):
         raise DictionaryDriftError("physical field keyset hash mismatch")
-    summary = artifact.get("evidence_summary")
-    if isinstance(summary, Mapping):
-        columns = artifact["physical_field_columns"]
-        wave_index = columns.index("interview_wave")
-        field_index = columns.index("raw_field_id")
-        physical_fields_by_wave: dict[int, set[str]] = {}
-        for row in rows:
-            physical_fields_by_wave.setdefault(row[wave_index], set()).add(
-                row[field_index]
-            )
-        format_evidence = summary.get("format_file_evidence", [])
-        if not isinstance(format_evidence, list):
-            raise DictionaryDriftError("format file evidence is not a list")
-        format_waves = [row.get("interview_wave") for row in format_evidence]
-        if len(format_waves) != len(set(format_waves)):
-            raise DictionaryDriftError("duplicate format evidence wave")
-        for evidence in format_evidence:
-            if not isinstance(evidence, Mapping):
-                raise DictionaryDriftError("format evidence row is not a map")
-            _validate_format_file_evidence(
-                evidence,
-                physical_fields_by_wave,
-            )
+    return rows
+
+
+def _validate_content_integrity(artifact: Mapping[str, Any]) -> None:
     expected_content_sha = artifact["integrity"]["content_sha256"]
     candidate = json.loads(json.dumps(artifact))
     candidate["integrity"]["content_sha256"] = _ZERO_SHA256
     if expected_content_sha != sha256_bytes(canonical_json_bytes(candidate)):
         raise DictionaryDriftError("artifact content hash mismatch")
+
+
+def _validate_fail_closed_status(artifact: Mapping[str, Any]) -> None:
+    registration_items = _registration_required_items()
+    if artifact.get("target_artifacts") != _target_artifacts():
+        raise DictionaryDriftError(
+            "registered audit target-artifact status drifted"
+        )
+    if artifact.get("registration_required_items") != registration_items:
+        raise DictionaryDriftError(
+            "registered audit registration-required findings drifted"
+        )
+    if artifact.get(
+        "inventory_ratification_abort"
+    ) != _inventory_ratification_abort(registration_items):
+        raise DictionaryDriftError(
+            "registered audit fail-closed disposition drifted"
+        )
+    integrity = artifact.get("integrity")
+    if not isinstance(integrity, Mapping):
+        raise DictionaryDriftError("registered audit integrity is not a map")
+    if integrity.get("reproduced_from_source_bytes") is not False:
+        raise DictionaryDriftError(
+            "registered audit falsely claims source-byte reproduction"
+        )
+
+
+def validate_integrity(artifact: dict[str, Any]) -> None:
+    """Validate every frozen identity and positive-evidence commitment."""
+
+    if artifact.get("schema_version") != SCHEMA_VERSION:
+        raise DictionaryDriftError("registered audit schema version drifted")
+    if artifact.get("artifact_id") != ARTIFACT_ID:
+        raise DictionaryDriftError("registered audit artifact ID drifted")
+    _validate_fail_closed_status(artifact)
+    rows = _validate_physical_field_integrity(artifact)
+    summary = artifact.get("evidence_summary")
+    if not isinstance(summary, Mapping):
+        raise DictionaryDriftError(
+            "registered audit lacks its evidence summary"
+        )
+    columns = artifact["physical_field_columns"]
+    wave_index = columns.index("interview_wave")
+    field_index = columns.index("raw_field_id")
+    physical_fields_by_wave: dict[int, set[str]] = {}
+    for row in rows:
+        physical_fields_by_wave.setdefault(row[wave_index], set()).add(
+            row[field_index]
+        )
+    format_evidence = summary.get("format_file_evidence", [])
+    if not isinstance(format_evidence, list):
+        raise DictionaryDriftError("format file evidence is not a list")
+    format_waves = [row.get("interview_wave") for row in format_evidence]
+    if len(format_waves) != len(set(format_waves)):
+        raise DictionaryDriftError("duplicate format evidence wave")
+    if format_waves != list(FORMAT_MAP_WAVES):
+        raise DictionaryDriftError(
+            "registered field-bound format evidence waves drifted"
+        )
+    for evidence in format_evidence:
+        if not isinstance(evidence, Mapping):
+            raise DictionaryDriftError("format evidence row is not a map")
+        _validate_format_file_evidence(
+            evidence,
+            physical_fields_by_wave,
+        )
+    expected_by_wave = {row[0]: row[1:] for row in FORMAT_MAP_IDENTITIES}
+    manifest = artifact.get("source_authority_manifest")
+    if not isinstance(manifest, list):
+        raise DictionaryDriftError(
+            "registered audit source manifest is not a list"
+        )
+    if not all(isinstance(row, Mapping) for row in manifest):
+        raise DictionaryDriftError(
+            "source-authority manifest row is not a map"
+        )
+    manifest_by_id = {row.get("document_id"): row for row in manifest}
+    manifest_ids = list(manifest_by_id)
+    if len(manifest_by_id) != len(manifest):
+        raise DictionaryDriftError("duplicate source-authority document ID")
+    if not all(isinstance(document_id, str) for document_id in manifest_ids):
+        raise DictionaryDriftError("invalid source-authority document ID")
+    format_sources_by_wave: dict[int, list[dict[str, Any]]] = {}
+    for (
+        wave,
+        document_id,
+        source_role,
+        path,
+        size_bytes,
+        sha256,
+        encoding,
+    ) in FORMAT_SOURCE_IDENTITIES:
+        expected_source = {
+            "document_id": document_id,
+            "interview_wave": wave,
+            "dictionary_role": source_role,
+            "path": path,
+            "size_bytes": size_bytes,
+            "sha256": sha256,
+            "encoding": encoding,
+        }
+        if manifest_by_id.get(document_id) != expected_source:
+            raise DictionaryDriftError(
+                f"wave {wave}: frozen {source_role} source identity drifted"
+            )
+        format_sources_by_wave.setdefault(wave, []).append(expected_source)
+    for evidence in format_evidence:
+        wave = evidence["interview_wave"]
+        expected_identity = expected_by_wave[wave]
+        observed_identity = (
+            evidence.get("value_label_map_count"),
+            evidence.get("value_label_row_count"),
+            evidence.get("explicit_truncation_count"),
+            evidence.get("field_bound_format_maps_sha256"),
+        )
+        if observed_identity != expected_identity:
+            raise DictionaryDriftError(
+                f"wave {wave}: frozen field-bound format evidence "
+                "identity drifted"
+            )
+        expected_source_ids = [
+            source["document_id"] for source in format_sources_by_wave[wave]
+        ]
+        if evidence.get("source_document_ids") != expected_source_ids:
+            raise DictionaryDriftError(
+                f"wave {wave}: format evidence source identities drifted"
+            )
+        if not set(expected_source_ids).issubset(manifest_ids):
+            raise DictionaryDriftError(
+                f"wave {wave}: format evidence sources are absent "
+                "from the authority manifest"
+            )
+    _validate_content_integrity(artifact)
 
 
 def render_artifact(artifact: dict[str, Any]) -> bytes:

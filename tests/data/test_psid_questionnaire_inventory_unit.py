@@ -141,6 +141,28 @@ def test_layout_gap_and_ambiguous_files_fail_closed(tmp_path: Path):
         inventory._single_file(tmp_path, ".do", formats=False)
 
 
+def test_required_format_pair_cannot_be_silently_omitted(tmp_path: Path):
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="missing its required field-bound format pair",
+    ):
+        inventory._format_pair_for_wave(tmp_path, 2021)
+
+    do_path = tmp_path / "FAM2021ER_formats.do"
+    sps_path = tmp_path / "FAM2021ER_formats.sps"
+    do_path.touch()
+    sps_path.touch()
+    assert inventory._format_pair_for_wave(tmp_path, 2021) == (
+        do_path,
+        sps_path,
+    )
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="unexpected field-bound format pair",
+    ):
+        inventory._format_pair_for_wave(tmp_path, 2019)
+
+
 def test_paired_dictionary_label_drift_fails_closed(tmp_path: Path):
     do_path = tmp_path / "FAM.do"
     sps_path = tmp_path / "FAM.sps"
@@ -275,7 +297,7 @@ def test_field_bound_format_map_drift_fails_closed(
         )
 
 
-def test_integrity_validator_rejects_count_key_and_content_drift():
+def test_core_integrity_helpers_reject_count_key_and_content_drift():
     row = [
         "psid-physical-field:" + "a" * 64,
         2003,
@@ -297,77 +319,52 @@ def test_integrity_validator_rejects_count_key_and_content_drift():
     artifact["integrity"]["content_sha256"] = inventory.sha256_bytes(
         inventory.canonical_json_bytes(artifact)
     )
-    inventory.validate_integrity(artifact)
+    inventory._validate_physical_field_integrity(artifact)
+    inventory._validate_content_integrity(artifact)
 
     bad_count = copy.deepcopy(artifact)
     bad_count["physical_field_count"] = 2
     with pytest.raises(inventory.DictionaryDriftError, match="count"):
-        inventory.validate_integrity(bad_count)
+        inventory._validate_physical_field_integrity(bad_count)
 
     bad_keyset = copy.deepcopy(artifact)
     bad_keyset["physical_field_keyset_sha256"] = "f" * 64
     with pytest.raises(inventory.DictionaryDriftError, match="keyset"):
-        inventory.validate_integrity(bad_keyset)
+        inventory._validate_physical_field_integrity(bad_keyset)
 
     bad_content = copy.deepcopy(artifact)
     bad_content["physical_fields"][0][8] = "CHANGED"
     with pytest.raises(inventory.DictionaryDriftError, match="content"):
-        inventory.validate_integrity(bad_content)
+        inventory._validate_content_integrity(bad_content)
 
 
-def test_integrity_validator_rejects_resealed_format_map_mutation():
+def test_format_evidence_validator_rejects_map_mutation():
     maps = [["ER1", "ER1L", [[1, "Yes"], [5, "No"]]]]
-    row = [
-        "psid-physical-field:" + "a" * 64,
-        2021,
-        2020,
-        "ER1",
-        1,
-        1,
-        1,
-        None,
-        "FIELD",
-        ["do", "sps", "raw"],
-    ]
-    artifact = {
-        "physical_field_columns": list(inventory.PHYSICAL_FIELD_COLUMNS),
-        "physical_fields": [row],
-        "physical_field_count": 1,
-        "physical_field_keyset_sha256": inventory._keyset_hash([row[0]]),
-        "evidence_summary": {
-            "format_file_evidence": [
-                {
-                    "interview_wave": 2021,
-                    "field_bound_format_map_columns": list(
-                        inventory.FIELD_BOUND_FORMAT_MAP_COLUMNS
-                    ),
-                    "code_label_columns": list(inventory.CODE_LABEL_COLUMNS),
-                    "field_bound_format_maps": maps,
-                    "field_bound_format_maps_sha256": inventory.sha256_bytes(
-                        inventory.canonical_json_bytes(maps)
-                    ),
-                    "value_label_map_count": 1,
-                    "value_label_row_count": 2,
-                }
-            ]
-        },
-        "integrity": {"content_sha256": "0" * 64},
+    evidence = {
+        "interview_wave": 2021,
+        "field_bound_format_map_columns": list(
+            inventory.FIELD_BOUND_FORMAT_MAP_COLUMNS
+        ),
+        "code_label_columns": list(inventory.CODE_LABEL_COLUMNS),
+        "field_bound_format_maps": maps,
+        "field_bound_format_maps_sha256": inventory.sha256_bytes(
+            inventory.canonical_json_bytes(maps)
+        ),
+        "value_label_map_count": 1,
+        "value_label_row_count": 2,
     }
-    artifact["integrity"]["content_sha256"] = inventory.sha256_bytes(
-        inventory.canonical_json_bytes(artifact)
+    inventory._validate_format_file_evidence(
+        evidence,
+        {2021: {"ER1"}},
     )
-    inventory.validate_integrity(artifact)
 
-    mutated = copy.deepcopy(artifact)
-    mutated["evidence_summary"]["format_file_evidence"][0][
-        "field_bound_format_maps"
-    ][0][2][0][1] = "Changed"
-    mutated["integrity"]["content_sha256"] = "0" * 64
-    mutated["integrity"]["content_sha256"] = inventory.sha256_bytes(
-        inventory.canonical_json_bytes(mutated)
-    )
+    mutated = copy.deepcopy(evidence)
+    mutated["field_bound_format_maps"][0][2][0][1] = "Changed"
     with pytest.raises(
         inventory.DictionaryDriftError,
         match="field-bound format-map hash mismatch",
     ):
-        inventory.validate_integrity(mutated)
+        inventory._validate_format_file_evidence(
+            mutated,
+            {2021: {"ER1"}},
+        )

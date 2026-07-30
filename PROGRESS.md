@@ -37,6 +37,11 @@ implemented and under verification.
 - Cross-checked every preserved map against the SPSS field/code domain and
   physical layout, independently hashed each wave's maps, and retained both
   format-document identities.
+- Independently pinned the path, size, SHA-256, role, and encoding of all four
+  2021/2023 format sources.
+- The audit validator now rejects resealed attempts to discard positive map
+  evidence, forge its source identities, or claim ratification/source-byte
+  reproduction while V-B5/V-B6/V-B8 remain unresolved.
 - Added RP, spouse, enrollment, parser-grammar, fail-close, nested-integrity,
   and 210-of-281 modern-reader map-coverage tests.
 - Renamed the 3,123-row assertion as the declared physical-reader subset and

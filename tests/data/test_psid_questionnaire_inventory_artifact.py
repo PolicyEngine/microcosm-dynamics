@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import re
 from pathlib import Path
+
+import pytest
 
 from populace_dynamics.data import psid_questionnaire_inventory as inventory
 
@@ -19,6 +22,13 @@ ARTIFACT_PATH = (
 
 def _artifact() -> dict:
     return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
+
+
+def _reseal(artifact: dict) -> None:
+    artifact["integrity"]["content_sha256"] = "0" * 64
+    artifact["integrity"]["content_sha256"] = inventory.sha256_bytes(
+        inventory.canonical_json_bytes(artifact)
+    )
 
 
 def test_committed_audit_has_exact_identity_and_full_physical_domain():
@@ -176,6 +186,64 @@ def test_2021_and_2023_field_bound_maps_preserve_referee_anchors():
         "ER85163",
         "ER85204",
     }.issubset(maps_2023)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "drop_all_evidence",
+        "drop_one_map_and_reseal",
+        "forge_source_ids",
+        "forge_format_source_identity",
+        "claim_ratified",
+        "drop_schema_identity",
+    ],
+)
+def test_registered_format_evidence_cannot_be_discarded_or_resealed(
+    mutation: str,
+):
+    artifact = copy.deepcopy(_artifact())
+    evidence = artifact["evidence_summary"]["format_file_evidence"]
+    if mutation == "drop_all_evidence":
+        evidence.clear()
+    elif mutation == "drop_one_map_and_reseal":
+        wave = evidence[0]
+        wave["field_bound_format_maps"].pop()
+        wave["value_label_map_count"] = len(wave["field_bound_format_maps"])
+        wave["value_label_row_count"] = sum(
+            len(row[2]) for row in wave["field_bound_format_maps"]
+        )
+        wave["field_bound_format_maps_sha256"] = inventory.sha256_bytes(
+            inventory.canonical_json_bytes(wave["field_bound_format_maps"])
+        )
+    elif mutation == "forge_source_ids":
+        evidence[0]["source_document_ids"] = ["invented-do", "invented-sps"]
+    elif mutation == "forge_format_source_identity":
+        source = next(
+            row
+            for row in artifact["source_authority_manifest"]
+            if row["document_id"] == "psid-family-2021-stata_value_labels"
+        )
+        source["path"] = "family/2021/FORGED_formats.do"
+        source["size_bytes"] += 1
+        source["sha256"] = "f" * 64
+    elif mutation == "claim_ratified":
+        artifact["target_artifacts"][0]["status"] = "ratified"
+        artifact["inventory_ratification_abort"]["status"] = "ratified"
+        artifact["inventory_ratification_abort"][
+            "failure_disposition"
+        ] = "continue_inventory_ratification"
+        artifact["inventory_ratification_abort"][
+            "registration_required_item_ids"
+        ] = []
+        artifact["registration_required_items"] = []
+        artifact["integrity"]["reproduced_from_source_bytes"] = True
+    else:
+        artifact.pop("schema_version")
+    _reseal(artifact)
+
+    with pytest.raises(inventory.DictionaryDriftError):
+        inventory.validate_integrity(artifact)
 
 
 def test_official_artifacts_are_explicitly_not_emitted():
