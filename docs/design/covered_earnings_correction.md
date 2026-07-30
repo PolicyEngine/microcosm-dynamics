@@ -13108,6 +13108,7 @@ The capture authorization is
 `fitting_free_model_input_authority_capture_registration.v1`, with exactly
 `schema_version`, `registration_reference`, `design`,
 `implementation_commit`, `invocation`,
+`environment_lock_input`, `environment_spec`,
 `calibrated_registrability_adjudication_input`,
 `selector_implementation_identity`, `input_access_specs`,
 `capability_specs`, `output_paths`, and `failure_disposition`. `design` is
@@ -13126,10 +13127,34 @@ is the authorization's own exact
 equal to the same-suffix paths frozen below; it has no incident, retry,
 report, or correction-output path.
 
-`input_access_specs` has exactly `ordered_input_descriptor_specs`,
+`environment_lock_input` has exactly `input_id`, `path`, `schema_version`,
+`artifact_vintage_id`, `role`, and `sha256`, all strings. Its first five
+values are respectively `environment_lock`,
+`requirements/covered_earnings_evaluation.lock`,
+`python_environment_lock.v1`,
+`covered_earnings_evaluation_environment.v1`, and `environment_lock`;
+`sha256` is 64 lowercase hex. The path is a traversal-free Git-tracked
+regular file with the same blob at `implementation_commit` and `HEAD`, and
+its stable descriptor bytes hash to the registered digest.
+`environment_spec` has exactly `lock_input_id` and `package_order`; the ID is
+literal `environment_lock`, and `package_order` is the exact ordered
+nonempty package-name array parsed from those registered lock bytes. The
+invocation interpreter's `environment_lock_sha256` exact-matches this input's
+digest. This is the sole registered non-production prelaunch input. It
+supplies environment validation and dependency provenance only and cannot
+supply an A1/A3 predicate, selector fact, weight fact, source statistic, or
+substantive-model input.
+
+`input_access_specs` has exactly `prelaunch_descriptor_specs`,
+`ordered_input_descriptor_specs`,
 `predicate_field_dependency_specs`,
 `predicate_field_dependency_specs_sha256`, `ordered_decoded_field_refs`,
 `opaque_hash_input_ids`, `permitted_reduction_ids`, and `canonicalization`.
+`prelaunch_descriptor_specs` is the exact one-element array whose row
+deep-equals `environment_lock_input`. Its ID and path are disjoint from every
+`ordered_input_descriptor_specs` row. It is not in
+`opaque_hash_input_ids`, `ordered_decoded_field_refs`, either broker's
+domain, the A1/A3 descriptor domain, or `input_closure_sha256`.
 `ordered_input_descriptor_specs` is the ordered-unique union of A1
 `source_input_ids` followed by the A3 weight input when it has not already
 appeared. Each descriptor row has exactly `input_id`, `path`,
@@ -13259,6 +13284,26 @@ eight-key runner identity with exactly `repository_relative_path`,
 tracked capture runner at the registered implementation commit and `HEAD`,
 and the live stable descriptor exact-matches its path/stat/mode/hash.
 
+After complete registration/repository/invocation validation and a passing
+preliminary adjudication, but before claim creation, the coordinator opens
+the sole `prelaunch_descriptor_specs` row exactly once through the registered
+root-to-leaf no-follow chain. It verifies a single-link regular file,
+stable-fstats it, exact-checks the six registered identity fields and both Git
+blobs, parses only the lock schema's package-name/version/source rows,
+exact-compares the package-name order to `environment_spec.package_order`,
+and freezes the complete dependency expansion. It then destroys that
+descriptor before claim creation. The observed
+`environment_lock_descriptor_identity` has exactly `input_id`, `path`,
+`schema_version`, `artifact_vintage_id`, `role`, `byte_length`, `sha256`,
+`st_dev`, `st_ino`, and `mode`; its six registered fields deep-equal
+`environment_lock_input`, byte length is a positive JSON integer, device and
+inode are positive JSON integers, and mode identifies a non-symlink regular
+file. Any extra prelaunch descriptor, schema/lock/package drift, read or
+identity failure, live descriptor after this step, or preliminary
+adjudication failure aborts before claim. Because this descriptor is
+explicitly registered and closed before source contact, it does not violate
+`unregistered_descriptor` or enter the A1/A3 source-contact lifecycle.
+
 After registration validation and before broker creation or any source open,
 the coordinator creates `output_paths.claim` exactly once with
 `O_CREAT | O_EXCL | O_NOFOLLOW`, mode 0600. It verifies through the new
@@ -13318,6 +13363,7 @@ The accepted append-only primary has schema
 `registration_reference`, `capture_registration_sha256`,
 `capture_claim_sha256`, `design`,
 `implementation_commit`, `capture_runner_identity`,
+`environment_lock_descriptor_identity`,
 `capture_authorizing_adjudication_input`,
 `selector_implementation_identity`,
 `ordered_input_descriptor_identities`, `decoded_field_domain_sha256`,
@@ -13337,7 +13383,8 @@ size/hash/stat identity.
 
 The role is `registration_authority_identity_capture_only`.
 `capture_claim_sha256` hashes the complete stable claim descriptor bytes.
-Registration hash, claim, full design, implementation, runner, selector,
+Registration hash, claim, full design, implementation, runner, environment
+lock identity, selector,
 descriptor domain, decoded-field domain, lifecycle, and sidecar all
 exact-match their independently reconstructed identities. The authorizing
 input deep-equals the capture registration's preliminary adjudication input.
@@ -13350,27 +13397,31 @@ The sidecar is
 `schema_version`, `artifact_path`, `registration_reference`,
 `capture_registration_sha256`, `capture_claim_sha256`, `design`,
 `implementation_commit`,
-`capture_runner_identity`, `capture_authorizing_adjudication_input`,
+`capture_runner_identity`, `environment_lock_descriptor_identity`,
+`capture_authorizing_adjudication_input`,
 `input_descriptor_identities`,
 `decoded_field_domain_sha256`, `input_closure_sha256`,
 `capture_lifecycle_closure`, `dependency_versions`, and `status`. It contains
-no source value or statistic. The primary's sidecar digest hashes its exact
-canonical bytes; the sidecar has no primary digest. A1 and A3
+no A1/A3 source value or statistic. The primary's sidecar digest hashes its
+exact canonical bytes; the sidecar has no primary digest. A1 and A3
 `authority_capture_path` equal the primary path and their
 `authority_capture_input_closure_sha256` equals both artifacts' closure hash.
 
 The sidecar's `input_descriptor_identities` is the same ordered array as the
 primary's `ordered_input_descriptor_identities`, with the exact ten-key row
 schema above. Its registration reference/hash, claim hash, design,
-implementation commit, runner identity, authorizing adjudication input,
+implementation commit, runner identity, environment-lock identity,
+authorizing adjudication input,
 descriptor array, decoded-field-domain hash, input-closure hash, and
 lifecycle child all deep-equal the primary projections. `artifact_path`
 equals the exact primary path. Sidecar status is `pass` iff all these
 equalities, its complete registered dependency-version closure, and every
 underlying object status pass. `dependency_versions` is the exact
-`environment_spec.package_order` expansion under the base environment-lock
-law; every row has exactly nonempty string `name`, `version`, and `source`,
-and version/source exact-match that lock.
+capture authorization's `environment_spec.package_order` expansion from the
+once-opened `environment_lock_input`; every row has exactly nonempty string
+`name`, `version`, and `source`, and version/source exact-match those
+descriptor-validated lock bytes. No implementation-discovered package,
+moving installed environment, or unregistered lock may contribute a row.
 
 Let the single parent tree of the candidate capture-authorization commit have
 exactly the contiguous canonical capture-registration suffixes `1..c-1`;
@@ -13389,13 +13440,16 @@ and the primary path plus `.env.json`; the artifact vintage is
 `output_paths` binds the latter three paths. None is overwritten.
 
 On any failure, no accepted authority primary/sidecar pair and no base
-correction incident is created; the committed registration, persistent
-claim, registered staging paths, and any partial final path are terminal and
-force the next capture vintage. No same-vintage retry exists.
+correction incident is created. The committed registration is terminal; any
+claim, registered staging path, or partial final path that was created
+persists and is also terminal. Every failure forces the next capture vintage.
+No same-vintage retry exists.
 
 After `access_sealed`, a separately trusted finalizer with no source,
 decoded-field, predicate, or reduction capability constructs both complete
-artifacts. The sidecar and primary staging paths are respectively exact
+artifacts from the sealed A1/A3 results and the frozen prelaunch environment
+identity/dependency expansion. The sidecar and primary staging paths are
+respectively exact
 concatenation `<sidecar>.stage.<capture_claim_sha256>` and
 `<primary>.stage.<capture_claim_sha256>`. It creates each once with
 `O_CREAT | O_EXCL | O_NOFOLLOW`, mode 0600, and verifies the new descriptor
