@@ -17449,3 +17449,140 @@ unique. Zero or multiple qualifying capture triples, any missing or extra
 role/ref/input/result, any registry-version mismatch, or any failure in
 either A1/A3 legacy-or-capture input aborts before final adjudication
 serialization.
+
+#### 16.11.3 Structural forecast-ledger subject
+
+Every §16 lifecycle reference to forecast-ledger entry 11 is prospectively
+replaced by the structural subject in this subsection. This replacement
+includes the condition-9 resolution, active-label fold, transition
+predecessor, transition `ledger_entry`, satisfiability text, and replacement
+ledger. It does not rename or reinterpret the immutable historical artifact
+IDs `entry11_unit1b_membership_readjudication_v2`,
+`entry11_unit1b_membership_readjudication_v2_legacy_envelope_v1`, or their
+verification predicate; those strings identify frozen methodology bytes,
+not a live forecast-ledger row.
+
+The subject preimage is
+`covered_earnings_forecast_ledger_subject_preimage.v1`, with exactly
+`schema_version`, `cutoff_commit`, `ledger_path`, `ledger_blob_sha256`,
+`ledger_schema_version`, and `rows`. `cutoff_commit` is a stored-Git
+40-lowercase-hex commit. `ledger_path` is exactly
+`docs/forecasts/timeline_ledger.json`; the named path must be a mode-`100644`
+blob in that commit tree; and `ledger_blob_sha256` hashes its complete raw
+bytes. Strict JSON parsing rejects duplicate keys and must first pass the
+complete existing forecast-ledger schema, append-only, supersession,
+back-link, resolution, and grading validators.
+`ledger_schema_version` is the exact top-level literal
+`forecast_ledger.v1`.
+
+`rows` preserves the ledger `entries` array order and contains one exact
+four-member object per raw entry: `entry_id`, `claim`, `status`, and
+`supersedes`. `entry_id` is the raw `id`, a unique positive JSON integer
+excluding booleans; `claim` and `status` are the raw strings; and
+`supersedes` is null when that raw member is absent or null and otherwise is
+the existing unequal positive entry ID. No other raw member enters this
+selection preimage. The complete preimage serializes under
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`.
+
+The typed result is
+`covered_earnings_forecast_ledger_subject_projection.v1`, with exactly
+`schema_version`, `cutoff_commit`, `ledger_blob_sha256`,
+`preimage_sha256`, `candidate_entry_ids`, `candidate_count`, `entry_id`, and
+`status`. Its cutoff and ledger digest exact-copy the preimage and
+`preimage_sha256` hashes the complete canonical preimage. The sole claim
+comparand, as exact Unicode string bytes, is:
+
+```text
+Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.
+```
+
+`candidate_entry_ids`, in preimage row order, contains exactly those IDs
+whose `claim` byte-equals that literal, whose `status` is `open`, and whose
+ID is not the nonnull `supersedes` value of any row. `candidate_count` is its
+length. `entry_id` is the sole candidate exactly when count is integer one
+and otherwise is null; status is `pass` exactly when count is one and is
+`fail` otherwise. Zero or multiple matching open unsuperseded rows abort
+before any condition-9, label, certificate, or ledger effect. Neither the
+artifact, registration, implementation, manifest, branch, clock, nor caller
+can supply an entry ID.
+
+For an initial `fitting_free_condition9` or `calibrated_condition9` event at
+two-parent merge \(M\), the subject cutoff is exactly \(M\)'s first parent
+\(P_0\). Therefore any valid append-only supersession committed before
+publication is visible in the preimage and the unique new open row, not a
+historical fixed number, becomes the subject. A supersession after \(M\)
+cannot retroactively change that event. The projection is evaluated before
+the event row is admitted.
+
+The exact `covered_earnings_label_event_projection.v1` top-level shape is
+amended to add `derived_ledger_subject_entry_id` and
+`derived_ledger_subject_projection_sha256` immediately after
+`derived_entry_state`. Both begin null with the initial `open` state. Each
+derived event row is amended to add `ledger_subject_entry_id` and
+`ledger_subject_projection_sha256` immediately before `transition_id`, so
+the complete row has exactly:
+
+`event_kind`, `event_commit`, `context_report_schema`,
+`context_primary_path`, `context_primary_sha256`,
+`context_sidecar_path`, `context_sidecar_sha256`, `certificate_sha256`,
+`ledger_subject_entry_id`, `ledger_subject_projection_sha256`, and
+`transition_id`.
+
+On the first resolving condition-9 event, the event subject ID is the passing
+first-parent projection's sole `entry_id`, and the event projection digest
+is SHA-256 of that complete canonical projection. The outer two derived
+fields exact-copy them. On any later no-op fitting-free or calibrated
+condition-9 event, both row fields exact-copy the already derived state and
+the outer fields remain unchanged. A `fitting_free_to_calibrated` row also
+exact-copies the already derived state and its manifest predecessor; it must
+not rerun the open-subject predicate after the original resolution. A null,
+changed, newly selected, or mismatched later subject aborts the event fold.
+Thus the root-most resolving event fixes one subject while every later label
+transition preserves it.
+
+The exact transition-manifest `predecessor` shape adds
+`ledger_subject_entry_id` and `ledger_subject_projection_sha256` immediately
+after `publication_merge_commit`. Both must equal the active
+`fitting_free_condition9` event row and the first-parent label projection's
+two derived fields. The transition `ledger_entry` retains exactly its five
+keys, but `entry_id` equals
+`predecessor.ledger_subject_entry_id`, never a design literal. Its
+`original_resolution_merge_commit` remains
+`predecessor.publication_merge_commit`, and its other values remain
+`resolved`, `resolved`, and
+`preserve_original_resolution_append_label_supersession`. The later
+calibrated merge therefore preserves the original subject and resolution
+event while appending only label-supersession history.
+
+In the fitting-free primary's `certifies_nothing` array, the earlier literal
+`not-ledger-entry-11-resolution` is replaced at the same position by
+`not-forecast-ledger-subject-resolution`. This exact literal means that no
+correction primary can resolve the subject selected by the closed projection;
+only its qualifying external condition-9 event can. Every §16 label or
+nonclaim sentence that formerly said it did not resolve entry 11 has this
+same structural meaning.
+
+Subject selection never edits, synthesizes, or repairs `supersedes`,
+`superseded_by`, `registered_at`, `p50`, `p80`, `claim`, or
+`revision_reason`. The qualifying external event resolves only the derived
+current subject for §16 lifecycle purposes. Every superseded forecast stays
+in the ledger with its original dates and back-links and is graded against
+the same real publication event under the preexisting forecast-ledger
+grading law. Selection cannot launder or discard an ancestor's miss.
+
+Accordingly, the §16 replacement-ledger subject is now “§9.3 structural
+forecast-ledger subject lifecycle.” The initial fitting-free or calibrated
+condition-9 event is the one-time `open -> resolved` event for the derived
+subject. A later fitting-free publication cannot reopen it, and the exact
+fitting-free-to-calibrated transition preserves `resolved -> resolved`.
+
+The current real-state witness is commit
+`f8c4a32c086eb8ebf3b641a5e08301d0dcd7ba22`. Its exact ledger blob SHA-256
+is `683e0743f2678dc22e0795eb3711dd5db40875bcab41d6fdefa61e246251f929`.
+Entries 11 and 12 carry the exact claim but are superseded; entry 13 carries
+the exact claim, is `open`, and no row supersedes it. The preimage SHA-256 is
+`07c7e29db5944fc4d02ee53dfc2fec3a5c9d08cdb703f87eab360e229e5f017d`;
+the candidate array is exactly `[13]`; and the complete passing projection's
+canonical SHA-256 is
+`8488ef1f59413b09f0b635bb0b0af823a9f3ec9905e589ba59ed7d0d636d4ffc`.
+Thus the structural subject on current real state is uniquely entry 13.

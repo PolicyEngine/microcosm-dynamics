@@ -25,6 +25,13 @@ definition, including its preimage schema, serialization, and result type.
   authority-role bindings.
 - Closed the preliminary-capture-final-adjudication lineage through one
   unique accepted capture triple and one canonical next-vintage artifact.
+- Replaced every §16 live entry-11 lifecycle reference with a strict
+  Git-cutoff subject projection that selects one open, unsuperseded exact
+  covered-earnings claim and aborts on zero or multiple matches.
+- Propagated the derived subject through condition 9, label-state events, the
+  calibrated transition predecessor, and the five-field ledger entry while
+  preserving forecast supersession/back-link and grading history.
+- Verified the current real-state projection selects entry 13 uniquely.
 - Froze all five registration-required V-B role arrays and both complete
   ten-row v1/v2 role maps, including their exact canonical domain hashes.
 - Added one closed A1/A3 capture-supplement predicate registry, complete
@@ -46,9 +53,7 @@ definition, including its preimage schema, serialization, and result type.
 
 ## Next
 
-1. Replace fixed ledger-entry references with the structural publication
-   subject.
-2. Replace G11 as the seventh complete `gate_specs.v4` row.
-3. Close G21 structural validity.
-4. Run strict JSON, append-only-prefix, closure, repository-state, and
+1. Replace G11 as the seventh complete `gate_specs.v4` row.
+2. Close G21 structural validity.
+3. Run strict JSON, append-only-prefix, closure, repository-state, and
    whitespace validation; record final dispositions.
