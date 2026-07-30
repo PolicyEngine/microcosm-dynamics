@@ -1,4 +1,4 @@
-"""Source reproduction and fail-closed tests for entry-11 extraction."""
+"""Source reproduction and amended vintage-2 tests for entry 11."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import shutil
 import sys
 from fractions import Fraction
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -21,6 +22,9 @@ ARTIFACT = (
     / "data"
     / "external"
     / "ssa_covered_earnings_calibration_targets_vintage2.json"
+)
+ARTIFACT_SHA256 = (
+    "fe018587a5b32188088078ef557dceca67f26352ebfc424e1d1622416cbdcf55"
 )
 
 if str(SCRIPTS) not in sys.path:
@@ -79,15 +83,176 @@ def _extract_after_source_mutation(old: bytes, new: bytes):
     return builder._extract_observations(builder._select_tables(mutated))
 
 
-def test__vintage2_authority__is_absent_and_build_fails_closed():
-    assert not ARTIFACT.exists()
-    with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
-        builder.build()
-    with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
-        builder.render()
+def test__vintage2_authority__builds_with_exact_amended_shape():
+    artifact = builder.build()
+    assert set(artifact) == {
+        "artifact_role",
+        "artifact_vintage_id",
+        "cross_table_discrepancies",
+        "integrity",
+        "observations",
+        "optional_covered_share",
+        "required_calendar_years",
+        "required_source_cell_ids",
+        "schema_version",
+        "source_document_manifest",
+        "year_basis",
+    }
+    assert artifact["schema_version"] == (
+        "ssa_covered_earnings_calibration_targets.v2"
+    )
+    assert set(artifact["required_source_cell_ids"]) == {
+        "table4_b2",
+        "table4_b11",
+    }
+    assert artifact["optional_covered_share"] == (
+        builder.OPTIONAL_COVERED_SHARE_UNAVAILABLE
+    )
+    builder.validate_artifact(artifact)
+    assert builder.render() == builder.entry10.canonical_json_bytes(artifact)
 
 
-def test__b2_b11_evidence__is_complete_and_ordered_without_minting_v2():
+def test__committed_vintage2__is_byte_reproducible():
+    raw = ARTIFACT.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
+    assert raw == builder.render()
+    artifact = builder._strict_json_object(raw, where=str(ARTIFACT))
+    builder.validate_artifact(artifact)
+
+
+def test__main__permits_identical_rebuild_but_rejects_in_place_revision(
+    monkeypatch,
+    tmp_path,
+):
+    output = tmp_path / ARTIFACT.name
+    monkeypatch.setattr(builder, "OUT_PATH", output)
+    builder.main()
+    assert output.read_bytes() == builder.render()
+    builder.main()
+    output.write_bytes(b"corrupt")
+    with pytest.raises(builder.RegistrationAborted, match="append-only"):
+        builder.main()
+    assert output.read_bytes() == b"corrupt"
+
+
+def test__main__cannot_bypass_head_append_only_law_by_deleting_worktree_file(
+    monkeypatch,
+    tmp_path,
+):
+    output = tmp_path / ARTIFACT.name
+    committed = ARTIFACT.read_bytes()
+    monkeypatch.setattr(builder, "OUT_PATH", output)
+    monkeypatch.setattr(
+        builder,
+        "_tracked_head_blob_for_output",
+        lambda _path: committed,
+    )
+    monkeypatch.setattr(builder, "render", lambda: b"different revision")
+    with pytest.raises(builder.RegistrationAborted, match="tracked in HEAD"):
+        builder.main()
+    assert not output.exists()
+
+    monkeypatch.setattr(builder, "render", lambda: committed)
+    builder.main()
+    assert output.read_bytes() == committed
+
+
+def test__tracked_lineage__derives_exactly_h_equals_two_from_git():
+    assert builder.validate_tracked_vintage_lineage() == {
+        "tracked_vintage_suffixes": [2],
+        "highest_vintage_suffix": 2,
+        "accepted_vintage_path": (
+            "data/external/"
+            "ssa_covered_earnings_calibration_targets_vintage2.json"
+        ),
+    }
+
+
+def test__tracked_lineage__enumerates_and_reads_head_not_index_or_worktree(
+    monkeypatch,
+    tmp_path,
+):
+    path = (
+        "data/external/"
+        "ssa_covered_earnings_calibration_targets_vintage2.json"
+    )
+    raw = ARTIFACT.read_bytes()
+    calls = []
+
+    def fake_run(args, **kwargs):
+        calls.append((args, kwargs))
+        if args[1] == "ls-tree":
+            return SimpleNamespace(stdout=(path + "\0").encode("utf-8"))
+        assert args == ["git", "show", f"HEAD:{path}"]
+        return SimpleNamespace(stdout=raw)
+
+    monkeypatch.setattr(builder.subprocess, "run", fake_run)
+    monkeypatch.setattr(
+        builder, "OUT_PATH", tmp_path / "corrupt-worktree.json"
+    )
+    assert builder.validate_tracked_vintage_lineage()[
+        "tracked_vintage_suffixes"
+    ] == [2]
+    assert calls[0][0] == [
+        "git",
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "-z",
+        "HEAD",
+        "--",
+        "data/external",
+    ]
+    assert all("ls-files" not in call[0] for call in calls)
+    assert all(call[1]["cwd"] == builder.ROOT for call in calls)
+    assert all(call[1]["check"] is True for call in calls)
+    assert all(call[1]["capture_output"] is True for call in calls)
+
+
+@pytest.mark.parametrize(
+    ("paths", "expected_exception", "message"),
+    (
+        ((), ValueError, "not contiguous"),
+        (
+            (
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage02.json",
+            ),
+            ValueError,
+            "malformed",
+        ),
+        (
+            (
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage2.json",
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage4.json",
+            ),
+            ValueError,
+            "not contiguous",
+        ),
+        (
+            (
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage2.json",
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage3.json",
+            ),
+            builder.RegistrationAborted,
+            "future ratified activation",
+        ),
+    ),
+)
+def test__tracked_lineage__fails_closed_on_non_h2_states(
+    paths,
+    expected_exception,
+    message,
+):
+    with pytest.raises(expected_exception, match=message):
+        builder.validate_tracked_vintage_lineage(paths)
+
+
+def test__b2_b11_evidence__is_complete_and_ordered():
     evidence = _evidence()
     assert set(evidence) == {
         "cross_table_discrepancies",
@@ -200,7 +365,8 @@ def test__vb7_adjudication__rejects_every_committed_construction():
     adjudication = builder.vb7_adjudication()
     assert adjudication["covered_share_required_years"] == []
     assert adjudication["registration_disposition"] == (
-        "abort_no_authoritative_vintage2_or_calibration_target_specs"
+        "optional_share_absent_valid_vintage2_accepted_"
+        "targets_fail_closed_on_membership_and_registration_authority"
     )
     candidates = {
         row["candidate_id"]: row
@@ -407,12 +573,12 @@ def test__membership_adjudication__fails_required_fitting_families():
 
 
 def test__partial_round1_shape__is_never_accepted_as_vintage2():
-    with pytest.raises(builder.RegistrationAborted, match="V-B7"):
+    with pytest.raises(ValueError, match="top-level fields"):
         builder.validate_artifact(_partial_legacy_artifact())
 
 
 def test__validator__reresolves_coherently_rehashed_cell_from_source_bytes():
-    artifact = _partial_legacy_artifact()
+    artifact = builder.build()
     row = next(
         row
         for row in artifact["observations"]
@@ -589,7 +755,7 @@ def test__vb7_fragment_hashes__come_from_verified_source_text():
 
 
 def test__partial_attack_helper__has_valid_self_hash_before_mutation():
-    artifact = _partial_legacy_artifact()
+    artifact = builder.build()
     preimage = copy.deepcopy(artifact)
     preimage["integrity"]["content_sha256"] = "0" * 64
     assert (
