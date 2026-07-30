@@ -10228,6 +10228,7 @@ spec row has exactly `requirement_id`, `requirement_class`,
       "ratified_design:psid_covered_earnings_crosswalk_v3",
       "configuration:psid_crosswalk_input",
       "git_cutoff:psid_crosswalk_input_raw_bytes",
+      "coordinator:psid_crosswalk_v3_append_only_history_projection",
       "coordinator:strict_parsed_crosswalk_identity"
     ],
     "verification_result_schema_version": "exact_identity_verification_result.v1",
@@ -10488,9 +10489,10 @@ holds and false otherwise:
    inventory identity equals the stable cutoff blob and its strict parse
    exact-covers the independently derived purpose/slot domain.
 8. `verify_psid_covered_earnings_crosswalk_v3_identity_v1`: the configured v3
-   identity equals the stable cutoff blob and its strict parse exact-covers
-   the independently derived inventory/role/component domain under
-   §16.5.1.
+   identity equals the one literal §16.5.1 path/vintage, the complete
+   coordinator-derived append-only history projection passes, the stable
+   cutoff blob equals the frozen first-add blob, and its strict parse exact-
+   covers the independently derived inventory/role/component domain.
 9. Each of `verify_fitting_free_claim_v_b1_v1` through
    `verify_fitting_free_claim_v_b6_v1`, then
    `verify_fitting_free_claim_v_b8_v1` and
@@ -12153,6 +12155,79 @@ leading literals become `psid_covered_earnings_crosswalk.v3`; its
 `verification_claim_specs.fitting_free.v1`; and its direct classification
 and measurement rows bind §16.3.
 
+The sole v3 crosswalk artifact identity is not registrant-supplied. Its path
+is the literal
+`data/external/psid_covered_earnings_crosswalk_v3.json`; both its internal
+`schema_version` and `artifact_id`, and the external
+`artifact_vintage_id`, are literal
+`psid_covered_earnings_crosswalk.v3`. The inherited four-key
+`psid_crosswalk_input` has exactly `path`, `artifact_vintage_id`,
+`schema_version`, and `sha256`; its first three values are those literals and
+`sha256` is the 64-lowercase-hex SHA-256 of the complete raw Git blob bytes,
+which must strict-parse and byte-equal the crosswalk's required canonical
+serialization. No alias, directory, suffix parameter, configuration-derived
+pathname, v1/v2 path, or alternate vintage is valid.
+
+After Amendment-2 ratification and after every registry referenced by its
+content is immutable, one separately reviewed, single-parent **v3 crosswalk
+commit** adds exactly that path as one Git regular blob with tree mode
+`100644` and makes no other tree change. Its parent and every prior ancestor
+have the path absent. The commit is a strict descendant of the Amendment-2
+ratification commit and a strict ancestor of the final authority cutoff.
+The coordinator derives it as the unique commit with that parent-to-child
+delta; no configuration, manifest, implementation, or operator supplies its
+identity. Every registry identity named by the crosswalk must already resolve
+to its exact immutable Git blob and canonical digest in that commit's parent,
+and the same blobs/digests must remain at the final authority cutoff. Zero or
+multiple crosswalk-commit candidates or any missing/changed prerequisite
+registry aborts.
+
+`psid_crosswalk_v3_append_only_history_projection.v1` has exactly
+`schema_version`, `path`, `artifact_vintage_id`, `crosswalk_commit`,
+`cutoff_commit`, `crosswalk_sha256`, `ordered_commit_ids`, `rows`,
+`row_count`, and `status`. The path and vintage are the literals above;
+crosswalk and cutoff commits are 40 lowercase hex;
+`crosswalk_commit` equals the unique coordinator-derived first-add commit
+above; `cutoff_commit` equals the final calibrated-registrability
+adjudication's `authority_cutoff.repository_commit`;
+`crosswalk_sha256` equals `psid_crosswalk_input.sha256`; and
+`ordered_commit_ids` is the complete set of Git ancestors of or equal to
+that exact cutoff, sorted by ascending commit ID. Each same-position row has
+exactly `commit_id`, `state`, `tree_mode`, `blob_oid`, and `raw_sha256`;
+its `commit_id` equals `ordered_commit_ids` at that position.
+
+For a row whose commit descends from or equals the v3 crosswalk commit,
+`state` is `present_exact_v3`; the path exists once, tree mode is `100644`,
+blob OID is 40 lowercase hex equal to the crosswalk-commit blob OID, and
+`raw_sha256` equals `crosswalk_sha256`. For every other row, state is
+`absent_before_v3`, the path is absent, and the last three fields are null.
+No third state exists. `row_count` is a JSON integer excluding booleans and
+equals both arrays' lengths; status is `pass | fail` and passes only when
+this complete ancestry, ordering, state, mode, OID, raw-byte hash,
+ratification ancestry, prerequisite-registry, and unique-first-add law
+passes. This rejects a side-branch early copy, in-place edit, deletion, or
+mutation followed by restoration.
+
+Ancestry is reconstructed from the raw stored commit objects and their
+literal parent OIDs, never a replacement view. Git replace refs, grafts,
+shallow boundaries, missing/promised-but-unavailable objects, or any
+promisor/partial-clone truncation of the required ancestry are forbidden.
+Every required commit, parent, tree, and named blob object must be locally
+present, have the claimed object type, and hash to its object ID before the
+ordered domain is formed. A history command's incomplete or rewritten view
+cannot establish absence.
+
+The receipt/configuration post-commit validator and every later P01
+invocation apply the identical tagged row law to the complete ancestor set of
+their live `HEAD`, with the final authority cutoff required to be an ancestor,
+and require the stable descriptor bytes and `git show HEAD:<path>` bytes to
+equal the same blob and digest. Any correction, context, certificate, or
+publication commit used by this lineage must preserve that result. This
+post-commit extension is a validation predicate, not an object embedded in
+the receipt, so it introduces no commit-hash cycle. Any future crosswalk-byte
+change requires a newly ratified schema/vintage and a new literal path; v3 is
+never overwritten.
+
 The v3 component row changes the v2 two-way tagged union to exactly three
 branches by adding
 `source_disposition: present_untyped_registered_unresolved`. That branch is
@@ -12343,7 +12418,18 @@ bytes, and requires its result path to be
 implementation/HEAD blob OIDs, executable mode, and byte hash bind that
 tracked runner under the complete base invocation law. The calibrated runner
 path is forbidden.
-`psid_crosswalk_input` exact-binds the new immutable v3 crosswalk. The
+`psid_crosswalk_input` is the exact four-key object frozen in §16.5.1: its
+path is literal
+`data/external/psid_covered_earnings_crosswalk_v3.json`; schema and artifact
+vintage are literal `psid_covered_earnings_crosswalk.v3`; and its digest
+equals the complete tracked canonical bytes. It deep-equals the identity in
+position 8 of the receipt-bound fitting-free requirement domain, whose
+append-only history projection must pass. A registrant-chosen path, vintage,
+digest domain, or earlier blob fails before any correction input opens. The
+coordinator exact-compares the configured path string to the ratified
+literal before creating a crosswalk descriptor, then derives the no-follow
+descriptor path from that literal rather than following a mismatching
+configured value. The
 production manifest and the separately keyed legal, inventory, and crosswalk
 authorities form the complete permitted correction-input domain; duplicate
 IDs or paths abort. No object may have a role containing
@@ -14781,8 +14867,11 @@ authorized order is:
 3. ratify those accepted bytes in one identifiable commit. That commit is the
    **amendment-2 ratification commit**; all authoring and referee-response
    commits before it are not ratification;
-4. only afterward merge and Git-track the separately reviewed crosswalk,
-   registry, implementation, and fixture-preparation bytes, then create a
+4. only afterward merge and Git-track every separately reviewed prerequisite
+   registry referenced by the v3 crosswalk, add that separately reviewed
+   crosswalk in the exact single-path append-only commit required by
+   §16.5.1, then merge and Git-track the remaining separately reviewed
+   registry, implementation, and fixture-preparation bytes, and create a
    preliminary value-blind calibrated registrability adjudication. If it is
    registrable, forbid A1/A3 capture. If it is validly not registrable and
    its exact fallback-blockage count is positive and fitting-free A1/A3
@@ -15417,9 +15506,11 @@ For completeness, the fitting-free replacement ledger is:
 | §§3–5 classification, measurement, aggregation, and draws | Retained machinery plus §§16.3 and 16.5.3 deterministic defaults/identity. |
 | §§5.3, 6.2, and 7 candidate/target/fitting/selection domains | Inapplicable only through §§16.4.1–16.4.2 canonical empty schemas and §16.5 capability absence. |
 | §4.1 verification/action trace | §16.3.1 and §16.5.1; eight direct rows stay required and V-B7 is target-only not applicable. |
+| §§4.2 and 15.6.3 PSID crosswalk artifact | §16.5.1 exact v3 schema/component union and the literal append-only path, first-add commit, ancestry projection, and immutable blob identity. |
 | §6.1 target artifact as correction input | Absent under §§16.4.1 and 16.5.2; historical evidence only. |
 | §8.1 G10/G14/G15/G17/G19/G21 | Exact replacements in §16.6. |
-| §8.1 every other gate | Unchanged under §16.6, including G20. |
+| §8.1 G11 lifecycle projection | The exact v4 G11 row copied positionally from v3, trusted-provider comparator, required value, event-equality law, seal/deny predicates, and pre-rename recheck remain controlling; §§16.5.5 and 16.6.3 replace only its registered phase order, terminal-branch, and evaluation-completion projection with the exact fitting-free lifecycle. |
+| §8.1 gates other than G10/G11/G14/G15/G17/G19/G21 | Unchanged under §16.6, including G20. |
 | §9 conditions and calibrated certificate fields | §§16.7.3–16.7.4. |
 | §9.3 forecast-ledger entry 11 lifecycle | The initial fitting-free condition-9 merge is the one-time resolution event; §16.9.1 preserves `resolved -> resolved` and appends only the later label-supersession history. |
 | §10 calibrated configuration/model/result/sidecar/paths | §§16.5.2–16.5.5. |
