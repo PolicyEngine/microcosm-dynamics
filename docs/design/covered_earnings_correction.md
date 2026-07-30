@@ -19610,3 +19610,85 @@ defect.
 | `zero_fit_projected_equal_remuneration_split_v1` | §16.3.2 |
 | `zero_fit_untyped_registered_unresolved_v1` | §16.3.2 |
 | `zero_rational_microdollars_v1` | §16.3.2 |
+
+#### 16.13 Round-8 critical closure
+
+This addendum is part of the same prospective Amendment 2 and is
+append-only. Every earlier byte remains historical text. Where an earlier
+§16 sentence conflicts with this addendum, the exact replacement below
+controls.
+
+##### 16.13.1 Branch-indexed cross-registry equality
+
+The unqualified phrase “cross-registry equality” in §16.12.1 is replaced by
+the following total branch-indexed equation. Let the ordered branch domain be
+\(B=(c,f)\), where \(c\) is calibrated and \(f\) is fitting-free. For each
+\(b\in B\), define the following named complete-array projections:
+
+- \(S_c\) is the `rows` member of the artifact member
+  `verification_claim_specs_v2`, and \(S_f\) is the `rows` member of
+  `verification_claim_specs_fitting_free_v1`;
+- \(R_c\) is the `rows` member of
+  `verification_claim_results_v2`, and \(R_f\) is the `rows` member of
+  `verification_claim_results_fitting_free_v1`; and
+- \(A_c\) and \(A_f\) are respectively the `rows` members of
+  `registry_rows[0]` and `registry_rows[1]` in
+  `verification_claim_adjudication_source_projection.v1`.
+
+Let \(I\) be the exact ordered array V-B1 through V-B9. Let
+\(\pi_{\mathrm{id}}(X)\) be the complete positional `claim_id` projection of
+array \(X\); let \(\pi_{\mathrm{spec}}(A_b)\) be the complete positional
+`verification_claim_spec` projection; and let
+\(\pi_{\mathrm{result}}(A_b)\) be the complete positional
+`derived_verification_claim_result` projection. These projections retain all
+nine members and all bytes of every projected object; they do not normalize,
+drop, substitute, or compare a selected subset of fields.
+
+For branch \(b\), the exact equality predicate is
+
+\[
+E_b \equiv
+  \bigl(\pi_{\mathrm{id}}(S_b)=I\bigr)
+  \land \bigl(\pi_{\mathrm{id}}(R_b)=I\bigr)
+  \land \bigl(\pi_{\mathrm{id}}(A_b)=I\bigr)
+  \land \bigl(S_b=\pi_{\mathrm{spec}}(A_b)\bigr)
+  \land \bigl(R_b=\pi_{\mathrm{result}}(A_b)\bigr).
+\]
+
+Every equality is deep equality of the complete canonical JSON value,
+including array order, object keyset, nulls, strings, and numeric types.
+The calibrated operands are compared only with the calibrated source row;
+the fitting-free operands are compared only with the fitting-free source
+row. In particular, neither \(S_c=S_f\) nor \(R_c=R_f\) is required or
+permitted as a substitute for the displayed equation. The intentional
+fitting-free V-B7 spec and result therefore compare with \(A_f[6]\), while
+the intentionally different calibrated V-B7 spec and result compare with
+\(A_c[6]\).
+
+Let \(D_b\) mean that all nine members of \(A_b\) have
+`derivation_status: pass`, their complete specs were independently
+reconstructed for branch \(b\), and their complete results are the unique
+values of the branch-applicable derivation equations. The source
+projection's status is `pass` exactly when its already frozen structural,
+count, digest, source-evidence, and canonicalization laws hold and
+\(D_c\land D_f\) is true. Each branch's spec envelope and result envelope
+has status `pass` exactly when the envelope's own schema, ID, order, count,
+row-digest, canonicalization, and source-projection-digest laws hold and
+\(D_b\land E_b\) is true; otherwise that envelope has status `fail`. The
+top-level adjudication artifact has status `pass` exactly when both branch
+envelope pairs, the complete source projection, every top-level schema and
+source-input equation, and the integrity equation pass. Thus a faithful
+committed negative result may occur inside a passing envelope; envelope
+status attests derivation and equality, not that every claim result has
+`status: pass`.
+
+The expected ten-key artifact is constructed in this total order, without
+reading the candidate artifact: independently reconstruct \(S_c\), then
+\(S_f\); construct all of \(A_c\), then all of \(A_f\), including each
+unique derived result; set the complete source-projection counts, digest,
+and status; set \(R_c=\pi_{\mathrm{result}}(A_c)\) and
+\(R_f=\pi_{\mathrm{result}}(A_f)\); construct the four envelopes and
+evaluate \(E_c\) then \(E_f\); set the top-level status; replace only
+`integrity.content_sha256` with 64 ASCII zeroes, serialize the complete
+artifact, compute that digest, and finally serialize the complete expected
+bytes. Candidate members are read only afterward as actual comparands.

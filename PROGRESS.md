@@ -14,11 +14,12 @@ round-7 findings and the ratification-blocking namespace sweep gap.
 - Confirmed the existing progress ledger and the prior report-removal commit.
 - Started independent read-only analyses of the V-B predicates and authority
   maps, the namespace/receipt dependency graph, and the closure sweep.
+- Defined cross-registry equality as complete deep equality between each
+  branch's own spec/result arrays and the corresponding named source-row
+  projections, with explicit envelope statuses and construction order.
 
 ## Next
 
-- Define branch-specific cross-registry equality over named comparable
-  projections.
 - Restore the base-design V-B1/V-B4 authorities and close the authenticated
   source matching semantics.
 - Replace the future namespace parent with phase-correct existing commits.
