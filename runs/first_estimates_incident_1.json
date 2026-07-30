@@ -1,0 +1,13 @@
+{
+  "schema_version": "first_estimates_incident.v1",
+  "incident_index": 1,
+  "timestamp_utc": "2026-07-25T05:00:33Z",
+  "phase": "preparation",
+  "reason": "preparation_cross_root_registered_configuration_refused",
+  "reason_detail": "The registered configuration path is outside the sealed root.",
+  "registration_reference": "populace-dynamics#288",
+  "configuration_echo": {
+    "registration_reference": "populace-dynamics#288"
+  },
+  "artifact_path": null
+}

@@ -2228,6 +2228,210 @@ The engine build reached three blockers, and each became a pinned design amendme
 
 The engine's first registered candidate stopped before scoring, by design, and the record grades it as such. The run was registered as a one-shot temporal-holdout projection, but the engine was build-only — the per-slice native-panel builders existed only as test stubs, the drift-scoring composition was unbuilt, and the real-data pre-flight had run only on synthetic ensembles — so the run lane stopped before any scored phase rather than reconstruct the projected panel's history schema inside a scoring lane, which would be unregistered modeling. No scored phase ran, no artifact was written, and the registration is graded a registration error on the public record. The unblock is a reviewed deliverable, not runner glue: a design amendment pins the scored-run harness with every modeling decision fixed and candidate-blind — its builders and scorer exercised on synthetic frames only until the registered run — and the harness build, comprising the year-0 realized slice, the projected-slice-to-native-panel builders, a drift-scoring layer that reuses the frozen floor's cell functions verbatim under a byte-identity self-test, and the real-data pre-flight, merged after the adversarial referee returned merge-ready across its sixteen probes — no build-versus-spec deviation, the self-test proven load-bearing by a mutation run that failed loudly. A pre-flight sign-path correction followed — a design amendment and its alignment patch, both merged. The fresh registration then stopped before scoring a second time, by design, one layer deeper than the first: the harness and its guards all passed — the registration accepted, the stale identifier rejected, the frozen floor byte-verified, the eleven-cell registry and the four-of-five protocol resolved — but the runner is deliberately not self-starting, requiring a certified external-reference binding dated 2014 or earlier that does not yet exist, and the guard correctly refused the only committed claiming reference as a post-cutoff 2023 vintage rather than bind it; so again nothing scored, no artifact written, and a further design amendment is in flight to supply those bindings.
 
+## The candidate ladder against the projection gate
+
+The bindings amendment landed, the seventh registration cleared, and the first candidate scored: FAIL, six of eleven cells, published under the gate's publishes-regardless rule with every per-seed, per-cell margin in the committed artifact. The failures were informative in the way the gate was designed to make them: the earnings process carried too much conditional-rank memory — lag-2 autocorrelation and rank mobility both far outside tolerance — and the marital transport gaps concentrated in first marriage and remarriage. The candidate-2 program answered with two train-only deltas, each selected and frozen before any scored evidence existed: a stable-coordinate earnings rank refresh drawn per transition at a share q chosen by a twenty-one-rung train-only ladder under a one-standard-error smallest-q rule (q\* = 0.55), and a support-aware first-marriage estimator with its regularization chosen by the same discipline. The program also had to say aloud what it expected: a mandated candid forecast, built on a boundary-transport measurement, predicted the run would fail with remarriage the failing cell, and the registration proceeded anyway because the run's registered purpose was scored evidence, not a predicted pass.
+
+Getting candidate 2 to a verdict consumed four registrations and six invocations, and the record grades every one. Two aborted on environment guards that exist to refuse an unregistered parameter surface; one was rejected by a preflight whose certified premise the registered candidate itself falsified — the check assumed the two comparison arms differ only in marital provenance while the registered first-marriage swap made that false by design, so a ratified amendment rebound the reference arm to the registered law; one crashed at a serialization boundary and was fixed under pin; and the sixth ran eight and a half hours before the host machine slept and a network-dependent supervisor process died and took the runner with it — an external kill with zero information produced, adjudicated on the public record before the registration's single disclosed re-execution was spent on a hardened topology with no supervisor in the process ancestry. The re-execution completed: FAIL, three of five seeds against a four-of-five bar, with the five-cell must-not-regress block passing on every seed — the two deltas surrendered nothing candidate 1 had won.
+
+![All three scored candidates against the locked gate: every seed of every gated cell, as holdout error over the locked tolerance. Candidate 1 fails six cells, several at two to four times tolerance; candidate 2 pulls ten of eleven cell-seed clusters inside but fails three of five seeds; candidate 3 passes — four of five seeds, with the lag-2 autocorrelation target inside tolerance in all five and only seed 2's mean-growth and remarriage residuals over the line. All three artifacts are committed and referee-verified; the figure is rebuilt from them at build time (`scripts/build_paper_figures.py`).](figures/m6_candidate_scorecard.svg){#fig-m6-scorecard}
+
+The verdict's most consequential content was the failure map, not the failure. The forecast inverted: remarriage — the predicted failing cell, measured in transport at up to 193 percent of tolerance — came in at a median 73 percent across seeds, failing once, marginally; the verdict-pivotal cells were instead two earnings margins, prime-age mean growth (undershot in all five seeds) and lag-2 autocorrelation (overshot in all five), each breaching in exactly one seed at thin margins. An artifact-only forensic program — every number quoted from the two committed artifacts, no fresh holdout read — established the discrepancies at two to two-and-a-half anchor-noise standard deviations, adjudicated the design directions a scored failure licenses (surface identity, never numbers, under an explicit leakage boundary), and survived four adversarial referee rounds in which each round caught a genuine record error, two of them the coordinator's own. A train-only diagnostic then split the growth undershoot mechanically: at the deepest train boundary the same statistic shows no gap at all — the discrepancy is a transfer phenomenon across boundary depth and calendar regime, not a fitting failure — while the persistence excess is real in train, three-point-nine floor standard deviations, and completely insensitive to the wage-index path.
+
+![The train-only selection ladder behind the earnings law, summed over its three pseudo-boundaries. More refresh monotonically reduces excess lag-2 persistence and destroys rank mobility past its interior minimum; a single parameter controls both, which is the frontier the selected q\* sits on. Candidate 3's amendment adds the missing degree of freedom — within-person correlation of consecutive refresh events — decoupling the joint no-refresh run law from the marginal rate.](figures/m6_q_frontier.svg){#fig-m6-frontier}
+
+That routing produced design amendment 6: the refresh events, independent per transition under candidate 2, gain a within-person first-order correlation at the frozen q\*, because under independence one parameter controls both the marginal refresh rate that rank mobility prices and the joint no-refresh run length that lag-2 persistence rides — the visible frontier of @fig-m6-frontier. Negative correlation shortens unrefreshed runs at an unchanged marginal: the consecutive-no-refresh probability falls by sixty-one percent at the deepest admissible grid rung. The amendment fixes the selection protocol blind — a seventeen-rung non-positive correlation ladder re-using the frozen machinery, a closest-to-zero one-standard-error tie-break, and an explicit designed-pause outcome if zero survives.
+
+The ladder selected a correlation of −0.60, the tie-break rule engaging exactly as written; a second referee recomputed the selection bit-for-bit before the lock. Candidate 3 was registered under a restatement of the one-run terms, a strengthened post-2014 attestation, the diagnostic's conditioning caveat carried verbatim, and — a house rule the candidate-2 experience earned — a transport-calibration datum pinning how far the previous registration's boundary-transport forecast overshot the scored window. The registration's candid forecast called FAIL the modal outcome while conceding, for the first time in the campaign, a materially nonzero chance of passing. The one-shot ran under a disclosed three-invocation chain — an environment-guard refusal, a host power-management incident that consumed the registration's single re-execution allowance, then nine uninterrupted hours — and returned the campaign's first PASS: four of five seeds against the eleven-cell contract with every must-not-regress constraint held. The routed target delivered outright — lag-2 autocorrelation came inside tolerance in all five seeds, at thirty-nine to ninety-four percent of it, where candidate 2 had breached — while the mean-growth cell cleared four of five with its residual breach shrunk, and remarriage reproduced candidate 2's scored band almost exactly, vindicating the transport-calibration datum's factor-of-two correction. The verdict artifact, its adversarial referee round, and the ratifying merge complete the arc: the correlated-refresh forward earnings law is first-certified on the registered 2016/2018 holdout surface, transferring no backward-law certificate and certifying nothing about mortality drift or the shock window.
+
+The campaign also keeps a second kind of score. An append-only forecast ledger records the project's own schedule estimates — median and eightieth-percentile dates against decidable resolution criteria, revised only by supersession with the evidence stated, graded against reality when they resolve. Its first resolved entries landed on their median dates; its first material revision, one day of median slip, carries the incident chain that caused it; and the certified-engine entry itself resolved two days inside its median when the candidate-3 verdict ratified. The ledger binds the project to the same discipline as the model: forecasts published before outcomes, misses kept on the page.
+
+## The first estimates
+
+The next record is not another gate. The registered estimates report,
+`runs/first_estimates_v1.json`, applies the statutory AIME/PIA and
+payroll-contribution formulas to the candidate-3 `GATED_REALIZED`
+reproduction panel, unsplit, over twenty registered 2014–2022 draws.
+Registration populace-dynamics#307 fixed the configuration before
+execution. The report class is verdictless: one registered run,
+`publishes_regardless`, `no_self_rescue`, and no gate, floor,
+threshold, or verdict. Its paired environment sidecar binds the
+execution record to the artifact. The sealed run matched every
+retained rehearsal spot-check — the four real-person birth-source
+classes draw-invariant at sample SD 0.0, unresolved-birth exclusions
+zero in every draw, and 1,514 included claimants in draw 0; the
+rehearsal's own artifact was discarded by design, so the retained
+checks are the comparison's full extent. Across draws the included
+count was 1,518.1 ± 16.8.
+
+The annual benefit aggregates keep the two claim origins separate
+(@tbl-first-estimates-benefits). Modeled awards are the primary
+statutory flow. The opening stock is a report-only imputation, not an
+administrative payment series.
+
+| year | modeled-award benefit, mean ± SD | weighted beneficiaries, mean ± SD | opening-stock benefit, mean ± SD | weighted beneficiaries, mean ± SD |
+|---|---:|---:|---:|---:|
+| 2015 | \$23.5B ± \$3.4B | 1.31M ± 0.16M | \$334.2B ± \$4.6B | 23.81M ± 0.34M |
+| 2016 | \$47.5B ± \$4.2B | 2.66M ± 0.22M | \$319.5B ± \$4.8B | 22.49M ± 0.33M |
+| 2017 | \$74.1B ± \$3.5B | 4.17M ± 0.24M | \$305.8B ± \$5.1B | 21.20M ± 0.35M |
+| 2018 | \$97.5B ± \$4.7B | 5.40M ± 0.25M | \$298.2B ± \$5.3B | 20.10M ± 0.35M |
+| 2019 | \$122.9B ± \$5.2B | 6.65M ± 0.26M | \$292.5B ± \$5.9B | 18.99M ± 0.35M |
+| 2020 | \$151.4B ± \$5.3B | 8.07M ± 0.23M | \$284.4B ± \$6.8B | 18.10M ± 0.39M |
+| 2021 | \$181.2B ± \$4.9B | 9.56M ± 0.18M | \$274.7B ± \$8.0B | 17.13M ± 0.43M |
+| 2022 | \$215.4B ± \$5.6B | 10.81M ± 0.21M | \$278.6B ± \$8.7B | 16.37M ± 0.43M |
+
+: **Frame-relative; pre-alignment; labor-income proxy** — the
+artifact's own label triple, carried on every number in this section.
+Nominal dollars, in billions; weighted counts,
+in millions; mean ± sample SD over the twenty registered draws.
+Benefits are annualized eligibility PIA with COLA and no post-claim
+recomputation. The opening-stock column is report-only. The engine
+draws even-year earnings and carries the prior even-year value into
+odd years. Birth-timing sensitivity travels with these primary
+benefit numbers in @tbl-first-estimates-birth-timing. Source:
+`tables.modeled_award_flow.aggregate` and
+`tables.opening_stock.aggregate` in the committed report artifact.
+{#tbl-first-estimates-benefits}
+
+The revenue ledger uses the same frame weights and the same
+labor-income proxy; the equal employee and employer legs sum to the
+combined contribution in @tbl-first-estimates-revenue.
+
+| year | taxable payroll, mean ± SD | combined contributions, mean ± SD | weighted covered earners, mean ± SD |
+|---|---:|---:|---:|
+| 2015 | \$6,540.2B ± \$7.1B | \$811.0B ± \$0.9B | 139.05M ± 0.10M |
+| 2016 | \$6,880.3B ± \$32.8B | \$853.2B ± \$4.1B | 132.93M ± 0.56M |
+| 2017 | \$6,957.9B ± \$34.5B | \$862.8B ± \$4.3B | 132.28M ± 0.55M |
+| 2018 | \$7,082.1B ± \$52.6B | \$878.2B ± \$6.5B | 126.60M ± 0.68M |
+| 2019 | \$7,095.8B ± \$55.9B | \$879.9B ± \$6.9B | 125.83M ± 0.71M |
+| 2020 | \$7,208.0B ± \$44.0B | \$893.8B ± \$5.5B | 121.21M ± 0.78M |
+| 2021 | \$7,228.3B ± \$48.5B | \$896.3B ± \$6.0B | 120.49M ± 0.81M |
+| 2022 | \$7,321.1B ± \$47.2B | \$907.8B ± \$5.9B | 116.28M ± 0.72M |
+
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Nominal dollars, in billions; weighted counts,
+in millions; mean ± sample SD over the twenty registered draws.
+The engine draws even-year earnings and carries the prior even-year
+value into odd years. Source: `tables.revenue.aggregate` in the
+committed report artifact. {#tbl-first-estimates-revenue}
+
+The inclusion funnel is narrow by construction
+(@tbl-first-estimates-funnel): the report population is not the
+benefit population, and a claim candidate is not an included
+claimant.
+
+| stage | unweighted persons | weighted frame count |
+|---|---:|---:|
+| report population (draw 0) | 30,482 | 387.10M |
+| non-DI claimant candidates (draw 0) | 3,083 | 60.59M |
+| included (20-draw mean ± sample SD) | 1,518.1 ± 16.8 | 35.18M ± 0.40M |
+
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Weighted counts are in millions. The first row
+sums the five draw-0 source dispositions in
+@tbl-first-estimates-birth-source; the candidate row sums the
+draw-0 `modeled_award` and `opening_backfill` origin counts; the
+included row is the artifact's across-draw aggregate. Source:
+`counts.per_draw[0]` and `counts.aggregate` in the committed report
+artifact. {#tbl-first-estimates-funnel}
+
+All five registered birth-source dispositions remain visible
+(@tbl-first-estimates-birth-source), including classes that contribute
+no included claimant in the baseline draw.
+
+| birth-source disposition | report population | weighted frame count | included claimants | included weighted count |
+|---|---:|---:|---:|---:|
+| `exact_marriage` | 9,673 | 108.49M | 74 | 1.60M |
+| `inferred_period_age` | 13,727 | 209.81M | 1,440 | 33.74M |
+| `derived_projection_age` | 4,077 | 40.78M | 0 | 0.00M |
+| `synthetic_native` | 690 | 7.17M | 0 | 0.00M |
+| `unresolved` | 2,315 | 20.85M | 0 | 0.00M |
+| **total** | **30,482** | **387.10M** | **1,514** | **35.34M** |
+
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Draw-0 unweighted and frame-weighted counts;
+weighted counts are in millions. The five source keys are frozen and
+reconcile to the report population. Source:
+`counts.per_draw[0].birth_source__*` and
+`counts.per_draw[0].included_birth_source__*` in the committed report
+artifact. {#tbl-first-estimates-birth-source}
+
+Birth timing is the largest quantified sensitivity
+(@tbl-first-estimates-birth-timing). Of the 3,083 baseline candidates,
+2,892 (93.8 percent) carry age-derived birth years — 2,806 from
+period-minus-age inference and 86 from projection-seed age — as do
+1,440 of the 1,514 baseline included claimants. The coherent shifts
+change the included set as well as the benefit calculation; all 278
+chronology movers are modeled awards.
+
+| draw-0 construction | annualized benefit total | change from baseline | change as share of baseline | included persons |
+|---|---:|---:|---:|---:|
+| baseline | \$3,301.7B | \$0.0B | 0.00% | 1,514 |
+| births−1 | \$3,271.3B | −\$30.3B | −0.92% | 1,520 |
+| births+1 | \$2,989.0B | −\$312.6B | −9.47% | 1,240 |
+| personwise adversarial minimum | \$2,893.5B | $\approx$−\$408.2B | — | — |
+| personwise adversarial maximum | \$3,366.9B | $\approx$+\$65.2B | — | — |
+
+: **Frame-relative; pre-alignment; labor-income proxy.**
+Draw-0 values from the frozen amendment-2
+disclosure; the baseline weighted included count is 35.34 million.
+The coherent ±1 rows shift every age-derived birth year together. The
+personwise rows select each person's smaller or larger complete-ledger
+contribution independently. **Stress scenarios, not bounds.** The
+artifact recomputes the sensitivity per draw and publishes the
+twenty-draw mean and sample SD; this frozen row travels with every
+publication of these numbers until a ratified birth-timing resolution
+retires it by amendment. Source:
+`diagnostics.birth_timing_sensitivity.per_draw[0]` and
+`gap_block[31]` in the committed report artifact.
+{#tbl-first-estimates-birth-timing}
+
+The execution record stays on the page. Registrations 1–5 —
+populace-dynamics#288, #289, #292, #295, and #299 — ended in the
+first five ordered, append-only incident records. The registration-5
+diagnosis prompted a scoped guard fix; that fix's adversarial referee
+exposed the separate birth-year-completeness failure, and an
+out-of-ceremony full-pipeline dress rehearsal confirmed it before
+another registration was spent. Amendment 2, design
+revision 10, added two source dispositions and froze the five-key
+source table, made the inclusion law executable, and froze the
+sensitivity; revision 10.1 corrected
+only the age-derived candidate share to 2,892 of 3,083. Registration
+6, populace-dynamics#305, refused to start on a stale durable attempt
+claim and produced the sixth committed, append-only incident record.
+Registration 7,
+populace-dynamics#307, completed under the sealed interpreter and
+published the report, which cross-references all six incidents. The
+full-pipeline rehearsal before a fresh registration is now standing
+practice for this report class.
+
+The artifact carries a frozen 32-row gap block rather than folding
+limitations into the headline. Among the registered gaps: scheduled
+2017/2019 openers anchor the reproduction object; open additions,
+mortality drift, widowhood, earnings survivorship, the 2020–2022
+shock window, and families B/C remain outside a certified surface;
+alignment is `not_computed`; claiming is mechanical; DI adjudication
+and spouse/survivor benefits are out of scope; odd-year earnings are
+carried; post-claim benefits are not recomputed; and nothing extends
+past 2022. No annual SSA level series anchors these levels, and the
+published-average context ratio is deferred.
+
+By its own `certifies_nothing` block, the report does not certify
+forward production, estimate national dollars, treat PSID labor
+income as OASDI-covered earnings, claim administrative
+benefit-payment dollars, or create a gate, floor, threshold, or
+verdict. The genuine `FORWARD` production object — redrawn transport
+state, endogenous widowhood, and synthetic disability support —
+remains unbuilt. The design names nine successors, none presumed:
+the annual SSA/Trustees level-anchor extraction; the
+covered-earnings correction; the W1 population bridge; the
+spouse/survivor entitlement adapter; behavioral claiming; the
+`FORWARD` production object; a ratified birth-timing resolution; a
+committed birth-completeness preflight; and, if a later report window
+requires it, an explicitly treated infant cohort. This is what the
+statutory formulas yield on the reproduction panel — not an estimate
+of what Social Security pays and collects.
+
 ## The interim benefit seam
 
 The transport pass certifies the CPS-observable cross-section, not
@@ -2375,8 +2579,18 @@ Development proceeds through stage gates defined as score
 thresholds — earnings-history credibility first, family and benefit
 outputs second, forward projection third, productization last —
 and every gate's evidence publishes whether it passes or fails; the
-first two stages have passed their gates, and the third's
-temporal-holdout gate is locked with its scored run pending.
+first three stages have now passed their gates. The third — the
+forward-projection temporal holdout — certified at this revision on
+its third registered candidate, with two failures on the record
+first: six of eleven cells, then three of five seeds with every
+prior win held, then a pass at four of five seeds through a ratified
+correlated-refresh amendment whose routed target cleared in all
+five. The next registered report has now published the first
+end-to-end statutory-formula benefit and payroll-contribution
+aggregates on the candidate-3 reproduction panel. Those results are
+verdictless, frame-relative, pre-alignment, and based on a
+labor-income proxy; forward production remains unbuilt and the levels
+remain unanchored.
 
 The layer is open source under the MIT license. The project
 invites corrections, particularly to the benchmark

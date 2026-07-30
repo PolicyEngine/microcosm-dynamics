@@ -14,6 +14,7 @@ import pytest
 import scipy
 import sklearn
 
+import populace_dynamics.artifacts as artifact_helpers
 from populace_dynamics.artifacts import write_new
 from populace_dynamics.contract import (
     ContractRef,
@@ -198,3 +199,35 @@ def test__given_written_pair__then_repeat_write_changes_neither_file(tmp_path):
         write_new(destination, {"candidate": 2}, sidecar=True)
     assert destination.read_bytes() == original_artifact
     assert sidecar.read_bytes() == original_sidecar
+
+
+def test__given_preserve_partial_mode__then_sidecar_failure_keeps_primary(
+    tmp_path,
+    monkeypatch,
+):
+    """Registered report ceremonies may make a partial path append-only."""
+    destination = tmp_path / "candidate.json"
+    sidecar = Path(f"{destination}.env.json")
+    original_write = artifact_helpers._write_exclusive
+    calls = 0
+
+    def fail_sidecar(path, payload):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("synthetic sidecar failure")
+        original_write(path, payload)
+
+    monkeypatch.setattr(artifact_helpers, "_write_exclusive", fail_sidecar)
+
+    with pytest.raises(OSError, match="synthetic sidecar failure"):
+        write_new(
+            destination,
+            b'{"candidate":1}\n',
+            sidecar=True,
+            sidecar_payload=b'{"environment":"fixture"}\n',
+            preserve_primary_on_sidecar_failure=True,
+        )
+
+    assert destination.read_bytes() == b'{"candidate":1}\n'
+    assert not sidecar.exists()
