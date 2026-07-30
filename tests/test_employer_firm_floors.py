@@ -36,10 +36,10 @@ ARTIFACT = ROOT / "runs/employer_firm_floors_v1.json"
 BUILDER = ROOT / "scripts/build_employer_firm_floors.py"
 
 ARTIFACT_SHA256 = (
-    "500bea1564746797815253b2c1feb04a39b31c0e0815f2d0a56fad74918856be"
+    "eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17"
 )
 BUILDER_SHA256 = (
-    "5011e68668c283cf4d8238d1c9d8aa8087c8cccf30a9d6d9d3722a8744a2ee17"
+    "a748975e787f3b255df611ebcf9cb3808c7b0e88866d9aa10ebe320864900a72"
 )
 
 CANONICAL_NAMES = {band.name for band in banding.CANONICAL_BANDS}
@@ -170,9 +170,16 @@ def test_method_findings_are_recorded(artifact):
     )
     assert "trend, not noise" in findings["e11_margin_trend"]
     assert "does not gate the first IC3 lock" in findings["e12_deferred"]
-    assert "Phase 2 must not certify two-sided moments" in (
-        findings["e12_deferred"]
-    )
+    assert "aggregate size/industry employment" in findings["e12_deferred"]
+    for unsupported_claim in (
+        "true worker-firm linkage",
+        "coworker sorting",
+        "within/between-firm variance",
+        "firm effects",
+        "spillovers",
+    ):
+        assert unsupported_claim in findings["e12_deferred"]
+    assert "no-go until a true-linked reference" in findings["e12_deferred"]
     assert "business-cycle" in findings["cycle_signal_in_floors"]
     assert "nominal wage growth" in findings["e7_nominal_trend"]
     assert artifact["e11"]["status"].startswith("detail floor NOT")

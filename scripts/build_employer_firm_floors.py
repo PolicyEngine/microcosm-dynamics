@@ -663,8 +663,12 @@ def build() -> dict:
                 "E12 is deferred and does not gate the first IC3 "
                 "lock. True-linked validation remains deferred "
                 "pending a committed, provenance-pinned reference "
-                "extract; Phase 2 must not certify two-sided moments "
-                "until that reference is adjudicable"
+                "extract. Reproducing aggregate size/industry "
+                "employment, mean-earnings, or flow margins cannot "
+                "certify true worker-firm linkage, coworker sorting, "
+                "within/between-firm variance, firm effects, or "
+                "spillovers. Those stronger Phase 2 claims remain a "
+                "no-go until a true-linked reference is adjudicable"
             ),
             "cycle_signal_in_floors": (
                 "temporal-stability floors on published aggregates "
@@ -720,7 +724,12 @@ def build() -> dict:
         "e2": e2,
         "e6_e7": e6_e7_block(),
         "e11": e11,
-        "e12": {"status": "deferred - no committed extract"},
+        "e12": {
+            "status": (
+                "deferred - true-linked reference required; aggregate "
+                "fit cannot certify linkage or two-sided moments"
+            )
+        },
     }
 
 
