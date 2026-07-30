@@ -315,13 +315,19 @@ def registration_status() -> dict[str, Any]:
 def source_identity_evidence() -> dict[str, Any]:
     """Return source-reproduced, explicitly non-authoritative registries."""
 
-    return source_identity.build()
+    value = source_identity.load_pinned_evidence()
+    source_identity.validate_evidence(value)
+    return value
 
 
 def validate_source_identity_evidence(value: object) -> None:
     """Re-resolve and validate every physical, alias, and rule evidence row."""
 
     source_identity.validate_evidence(value)
+    if value != source_identity.load_pinned_evidence():
+        raise RegistryValidationError(
+            "source identity evidence differs from pinned canonical bytes"
+        )
 
 
 def _exact_keys(

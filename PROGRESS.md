@@ -4,8 +4,7 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `b0c60df`
-- Current phase: pin independently canonical source-identity evidence under
-  the mandatory registration abort.
+- Current phase: final formatting, required suites, and report.
 - Constraint: use committed source bytes only; do not capture network data.
 
 ## Done
@@ -44,7 +43,7 @@
   exercise parser defense in depth.
 - Both entry-11 modules now collect exclusively as `artifact`: `37 tests
   collected`; extraction tests pass: `16 passed`.
-- Full collection resolves to 3,991 tests: 822 unit, 1,686 artifact, 804
+- Full collection resolves to 3,995 tests: 822 unit, 1,690 artifact, 804
   integration-PSID, 520 legacy reproduction, and 159 PolicyEngine-oracle.
 - Built all committed-byte source-identity evidence: 945 exact 12-field
   physical occurrences, 921 structural locators, 873 exact seven-field alias
@@ -58,8 +57,14 @@
   source cells before exact comparison.
 - Finding-3 focused tests pass: `11 passed`; all entry-11 tests pass:
   `48 passed`.
+- Pinned the canonical source-identity evidence as 1,515,354 committed bytes
+  with SHA-256
+  `130fbcbdf1b78c871ac47391f6eaadb1a74f9f3eadcb8827c997f3a6982c8e3b`.
+  Loaders verify literal size, digest, and canonical serialization before
+  registry validation, then rebuild from committed sources for exact equality.
+- Added coherent definition-fragment rehash and pinned-byte drift attacks.
+  All entry-11 tests pass: `52 passed`.
 
 ## Next
 
-1. Pin independent canonical evidence-registry bytes and digests.
-2. Run required suites and record their tails in the final report.
+1. Run required suites and record their tails in the final report.

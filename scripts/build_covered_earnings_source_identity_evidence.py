@@ -42,6 +42,12 @@ import build_ssa_covered_earnings_calibration_targets as entry11
 import build_ssa_level_anchors as entry10
 
 ROOT = Path(__file__).resolve().parents[1]
+OUT_PATH = (
+    ROOT
+    / "data"
+    / "external"
+    / "covered_earnings_source_identity_evidence_v1.json"
+)
 
 SCHEMA_VERSION = "covered_earnings_source_identity_evidence.v1"
 PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION = "physical_source_cell_specs.v1"
@@ -59,6 +65,10 @@ TARGET_YEARS = tuple(range(1968, 2023))
 VINTAGE1_OCCURRENCE = "committed_vintage1"
 ENTRY11_OCCURRENCE = "entry11_source_reextraction"
 OCCURRENCE_NAMESPACE = "covered_earnings_source_evidence_occurrence.v1"
+PINNED_CANONICAL_SIZE_BYTES = 1_515_354
+PINNED_CANONICAL_SHA256 = (
+    "130fbcbdf1b78c871ac47391f6eaadb1a74f9f3eadcb8827c997f3a6982c8e3b"
+)
 
 PHYSICAL_SOURCE_CELL_FIELDS = (
     "physical_cell_id",
@@ -1222,6 +1232,41 @@ def validate_evidence(value: object) -> None:
         )
 
 
+def load_pinned_evidence() -> dict[str, Any]:
+    """Load canonical evidence only after independent byte pins pass."""
+
+    raw = OUT_PATH.read_bytes()
+    if len(raw) != PINNED_CANONICAL_SIZE_BYTES:
+        raise EvidenceValidationError(
+            f"pinned evidence size {len(raw)} != "
+            f"{PINNED_CANONICAL_SIZE_BYTES}"
+        )
+    digest = _sha256_bytes(raw)
+    if digest != PINNED_CANONICAL_SHA256:
+        raise EvidenceValidationError(
+            f"pinned evidence sha256 {digest} != " f"{PINNED_CANONICAL_SHA256}"
+        )
+    try:
+        value = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise EvidenceValidationError(
+            "pinned evidence is not canonical JSON"
+        ) from error
+    if canonical_json_bytes(value) != raw:
+        raise EvidenceValidationError(
+            "pinned evidence bytes violate canonical serialization"
+        )
+    _validate_evidence_laws(value)
+    return value
+
+
+def validate_pinned_evidence() -> None:
+    """Require both independent byte pins and fresh source reproduction."""
+
+    pinned = load_pinned_evidence()
+    validate_evidence(pinned)
+
+
 def render() -> bytes:
     """Return canonical evidence bytes without assigning artifact authority."""
 
@@ -1230,10 +1275,18 @@ def render() -> bytes:
 
 def main() -> None:
     raw = render()
+    if (
+        len(raw) != PINNED_CANONICAL_SIZE_BYTES
+        or _sha256_bytes(raw) != PINNED_CANONICAL_SHA256
+    ):
+        raise EvidenceValidationError(
+            "rendered evidence differs from independent canonical pins"
+        )
+    OUT_PATH.write_bytes(raw)
+    validate_pinned_evidence()
     evidence = json.loads(raw)
-    validate_evidence(evidence)
     print(
-        "validated non-authoritative source-identity evidence: "
+        "wrote and validated non-authoritative source-identity evidence: "
         f"{len(evidence['physical_source_cell_specs'])} occurrences, "
         f"{len(evidence['official_source_alias_specs'])} aliases, "
         f"{len(evidence['official_source_arithmetic_rule_specs'])} rules; "

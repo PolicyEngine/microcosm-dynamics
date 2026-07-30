@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -254,4 +255,56 @@ def test__identity_validator__rejects_omitted_alias(evidence):
     changed = copy.deepcopy(evidence)
     changed["official_source_alias_specs"].pop()
     with pytest.raises(builder.EvidenceValidationError, match="alias count"):
+        builder.validate_evidence(changed)
+
+
+def test__pinned_evidence__has_independent_canonical_byte_pins():
+    raw = builder.OUT_PATH.read_bytes()
+    assert len(raw) == 1_515_354
+    assert hashlib.sha256(raw).hexdigest() == (
+        "130fbcbdf1b78c871ac47391f6eaadb1a74f9f3eadcb8827c997f3a6982c8e3b"
+    )
+    value = json.loads(raw)
+    assert builder.canonical_json_bytes(value) == raw
+    assert builder.load_pinned_evidence() == value
+
+
+def test__pinned_evidence__reproduces_all_sources_and_registries():
+    builder.validate_pinned_evidence()
+    assert (
+        registry.source_identity_evidence() == builder.load_pinned_evidence()
+    )
+
+
+def test__pinned_evidence__rejects_byte_drift_before_source_rebuild(
+    tmp_path,
+    monkeypatch,
+):
+    changed_path = tmp_path / builder.OUT_PATH.name
+    changed = bytearray(builder.OUT_PATH.read_bytes())
+    changed[-2] ^= 1
+    changed_path.write_bytes(changed)
+    monkeypatch.setattr(builder, "OUT_PATH", changed_path)
+    with pytest.raises(builder.EvidenceValidationError, match="sha256"):
+        builder.load_pinned_evidence()
+
+
+def test__validator__rejects_coherently_rehashed_definition(evidence):
+    changed = copy.deepcopy(evidence)
+    fragment = changed["source_definition_fragments"][0]
+    fragment["exact_raw_html_cells_utf8"][0] += " "
+    fragments = [
+        value.encode("utf-8")
+        for value in fragment["exact_raw_html_cells_utf8"]
+    ]
+    digest = hashlib.sha256(b"\x00".join(fragments)).hexdigest()
+    fragment["source_definition_fragment_sha256"] = digest
+    locator = fragment["source_definition_locator_id"]
+    for rule in changed["official_source_arithmetic_rule_specs"]:
+        if rule["source_definition_locator_id"] == locator:
+            rule["source_definition_fragment_sha256"] = digest
+    with pytest.raises(
+        builder.EvidenceValidationError,
+        match="fresh committed-source re-resolution",
+    ):
         builder.validate_evidence(changed)
