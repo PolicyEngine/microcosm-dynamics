@@ -2,9 +2,9 @@
 
 ## State
 
-Implementation is in progress on `claude/ce-psid-inventory`. The referee
-verdict is `SHIP WITH EDITS`; all five required-before-merge items are
-implemented and under verification.
+Implementation and verification are complete on
+`claude/ce-psid-inventory`. The referee verdict is `SHIP WITH EDITS`; all
+five required-before-merge items are implemented and committed.
 
 ## Done
 
@@ -54,8 +54,20 @@ implemented and under verification.
   mismatch is covered.
 - The exact ER21146 cache-poison regression now also pins
   `reader_field_id=occupation_raw` and `raw_token_hex=202030`.
+- Black 25.11.0 reports all 16 branch-modified Python files unchanged at line
+  length 79.
+- Both committed PSID artifacts reproduce byte-for-byte from the staged source
+  data.
+- The complete PSID/referee suite passed: 107 passed and 3 skipped.
+- The literal full suite produced 4,215 passes and 95 skips; its only failure
+  was the expected tier-count drift from the newly added tests. The manifest
+  is now updated to the collected 4,311-test domain, and the tier-policy gate
+  passes with 4,310 tests deselected.
+- Rebuilt dictionary-audit file SHA-256:
+  `e06eec5de5fd0215dbea40bba49366e3ef940cc253a11c7da8109133bfb7dcb0`.
+- Rebuilt physical-reader registry file SHA-256:
+  `22b9d773f935a713ec63fd93fcbc6367a6f4047d962270d48471fdb39cbcbb17`.
 
 ## Next
 
-1. Run Black and the relevant/full test suites.
-2. Record the final artifact hash and test disposition.
+Ready for review and merge; no push was performed.
