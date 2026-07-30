@@ -8223,3 +8223,128 @@ pre-output absence of a lawful source, not to whether a fitted model agreed
 with an observed target. The minimal honest response is therefore removal of
 the family from the required calibration contract, not replacement by
 synthesis.
+
+### 15.3 Exact §6.1 replacement — vintage-2 source artifact
+
+This subsection replaces the base §6.1 artifact-shape law at base-ratification
+lines 1826–1907, the covered-share-required-source paragraphs at lines
+2026–2032, and only the covered-share portion of the prerequisite consequence
+at lines 2013–2015. Because no authoritative vintage-2 artifact has ever been
+minted, the append-only path and vintage ID remain
+`data/external/ssa_covered_earnings_calibration_targets_vintage2.json` and
+`ssa_covered_earnings_calibration_targets.vintage2`. The changed key meanings
+require the new schema literal
+`ssa_covered_earnings_calibration_targets.v2`.
+
+The artifact has exactly these eleven top-level keys, in semantic order:
+
+1. `schema_version`;
+2. `artifact_vintage_id`;
+3. `artifact_role`;
+4. `year_basis`;
+5. `required_calendar_years`;
+6. `required_source_cell_ids`;
+7. `optional_covered_share`;
+8. `source_document_manifest`;
+9. `observations`;
+10. `cross_table_discrepancies`; and
+11. `integrity`.
+
+The unchanged literals and laws for `artifact_role`, `year_basis`,
+`required_calendar_years`, `cross_table_discrepancies`, canonicalization, and
+integrity continue to apply. `required_source_cell_ids` has exactly the two
+underscore-form object keys `table4_b2` and `table4_b11`, with the exact
+year-major arrays already frozen in base §6.1. It has no
+`ssa_covered_share` key. At the manifest layer, the required table-ID domain
+is exactly the dotted array `["table4.b2","table4.b11"]`.
+`source_document_manifest` has exactly the one required Supplement object,
+whose `table_ids` equals that array; no optional covered-share document may
+appear in the required manifest.
+
+Top-level `observations` contains exactly \(6\times55=330\) Table 4.B2 cells
+and \(9\times55=495\) Table 4.B11 cells, for 825 cells total, in the original
+order and with the original status, literal-token, unit, normalization,
+rounding-tag, source-resolution, and uniqueness laws. Its IDs exact-match
+only the two required arrays. An optional source cell may not leak into the
+top-level observations, required ID arrays, required manifest, physical-cell
+expansion, or discrepancy registry.
+
+`optional_covered_share` has exactly these eight keys:
+
+1. `status`;
+2. `failure_reason`;
+3. `covered_share_required_years`;
+4. `ssa_covered_share`;
+5. `source_document_manifest`;
+6. `observations`;
+7. `source_activation_condition_id`; and
+8. `target_reactivation_condition_id`.
+
+For vintage 2, its exact immutable value is:
+
+```json
+{
+  "status": "unavailable_source_absent",
+  "failure_reason": "no_qualifying_literal_as_published_ssa_worker_share_series_in_registered_sources",
+  "covered_share_required_years": [],
+  "ssa_covered_share": [],
+  "source_document_manifest": [],
+  "observations": [],
+  "source_activation_condition_id": "literal_as_published_ssa_covered_worker_share_cells_v1",
+  "target_reactivation_condition_id": "future_ratified_amendment_and_fresh_registration_required_v1"
+}
+```
+
+This is an explicit empty-with-failure state, not successful empty
+covered-share authority. It is valid for the amended required B2/B11 artifact
+and does not abort that artifact merely because the optional source is
+absent. The artifact's zeroed-field content hash and canonical-byte
+reproduction bind the complete optional object, including its status and
+reason. The empty block creates zero physical-source, alias, arithmetic,
+target, result, provenance, or trace rows.
+
+`literal_as_published_ssa_covered_worker_share_cells_v1` is satisfied only
+by committed, hash-pinned primary SSA bytes containing **literal published
+worker-incidence share cells—not separately published operands**. The series
+must meet all of the following before a successor artifact may use the
+alternate `source_verified_not_target_bound` status:
+
+1. exactly one literal `as_published` covered-worker-share observation for
+   each included calendar year, from one source-defined numerator/denominator
+   universe; no quotient or other synthesized cell;
+2. an unthinned inclusion of every available cell from the qualifying series
+   over 1968–2014, including at least one cell in each of 1968–1974,
+   1975–1977, 1978–1992, 1993–2001, and 2002–2008, and every available
+   2009–2014 cell;
+3. source bytes establishing the exact numerator and denominator sets,
+   numerator-subset relation, OASDI scope, geography, annual timing, worker
+   unit, duplicate-worker rule, same-type and dual-type treatment, zero rule,
+   edition, cell status, literal token, and source identity; and
+4. exact compliance with the manifest, observation, status, ordering,
+   source-resolution, canonicalization, integrity, and append-only laws.
+
+In that alternate source-only state, `failure_reason` is JSON null; the four
+arrays are nonempty, ordered, mutually consistent, and one-to-one by year;
+and the optional manifest and observations use the same exact nested schemas
+as their required counterparts. A partial, ambiguous, synthesized,
+cross-publication, thinned, wrong-universe, or otherwise nonconforming
+attempt aborts optional-source activation and cannot fall back within the
+same build to an asserted available state.
+
+Source availability alone never reinstates a fitting target. A source-
+verified block remains `not_target_bound`. Reactivating a covered-share
+calibration family requires the separately exact
+`future_ratified_amendment_and_fresh_registration_required_v1` condition: a
+new prospective design amendment must freeze the model denominator and
+universe concordance, target rows, dependency audit, weights, tolerances,
+identities, and versioned registries; pass the full referee ceremony; mint a
+new append-only artifact vintage; and receive a fresh registration before
+any fitting or selection. There is no automatic weight reversal.
+
+All base §6.1 B2/B11 methodology-byte prerequisites remain controlling.
+Until primary methodology bytes settle every applicable zero, loss-only,
+below-threshold, wage-capped, multiple-job, dual-type, and
+multiple-component membership case, the corresponding B2 intensity or B11
+worker-distribution family—and therefore the required amended calibration
+contract—fails closed. Removing the optional share family does not supply an
+alternative denominator or waive one prerequisite.
