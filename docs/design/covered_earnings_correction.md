@@ -9276,9 +9276,9 @@ creates `covered_earnings_path_applicability_specs.v1`, an object with exactly
 - `calibrated_predicate:
   complete_then_operative_calibrated_registration_domain_is_lawfully_registrable`;
 - `fitting_free_predicate:
-  final_value_blind_adjudication_pass_and_calibrated_status_not_registrable_and_all_fitting_free_authorities_pass`;
+  final_value_blind_adjudication_pass_and_calibrated_status_not_registrable_and_nonempty_enumerated_source_methodology_or_family_blockage_and_all_fitting_free_authorities_pass`;
 - `priority_law:
-  calibrated_mandatory_when_complete_otherwise_fitting_free_only_if_complete`;
+  calibrated_mandatory_when_complete_fitting_free_only_for_enumerated_calibration_blockage_global_only_failure_aborts`;
 - `exclusivity_law:
   exactly_one_path_true_and_calibrated_has_precedence`;
 - `derivation_stage:
@@ -9290,7 +9290,7 @@ creates `covered_earnings_path_applicability_specs.v1`, an object with exactly
 - `prior_artifact_law:
   immutable_under_original_registration_and_never_reclassified`;
 - `amendment_survival_law:
-  amendment_2_remains_unrepealed_fallback_when_calibrated_path_active`; and
+  amendment_2_remains_unrepealed_separate_path_when_calibrated_path_active`;
 - `failure_disposition: abort_registration`.
 
 The coordinator derives both predicates from registered authority bytes,
@@ -9306,9 +9306,12 @@ Any separately registered §16.10 A1/A3 capture is an earlier, explicit
 production-source contact that emits only sealed identity/keyset/digest
 bytes and cannot derive a path or model output. It is forbidden when a
 preliminary value-blind adjudication finds calibrated registrability,
-indeterminate conflict, or invalid evidence; only a passing, conflict-free
-`not_registrable` adjudication may precede capture and the mandatory final
-adjudication at a later cutoff. The
+indeterminate conflict, invalid evidence, or no enumerated calibration
+blockage; only a passing, conflict-free `not_registrable` adjudication with a
+positive `calibrated_fallback_blockage_count` may precede capture and the
+mandatory final adjudication at a later cutoff. A global-only implementation,
+environment, namespace, or registered-domain failure never authorizes
+capture. The
 selected-registration coordinator reopens none of its source descriptors and
 receives only that sealed authority artifact. It derives the path from the
 final adjudication before any target value, correction-execution value, model
@@ -9327,7 +9330,11 @@ The value-blind authority for that derivation is
 `global_requirement_count`, `global_requirement_domain_sha256`,
 `global_requirement_rows`,
 `calibrated_domain_identity_sha256`, `calibrated_registrability_status`,
-`calibrated_failure_reason_ids`, `numeric_target_value_domain`,
+`calibrated_failure_reason_ids`,
+`calibrated_fallback_blockage_reason_ids`,
+`calibrated_fallback_blockage_count`,
+`calibrated_fallback_blockage_domain_sha256`,
+`numeric_target_value_domain`,
 `numeric_target_value_count`, `numeric_target_value_domain_sha256`,
 `target_decoder_capability_domain`, `target_decoder_capability_count`,
 `target_decoder_capability_domain_sha256`, `canonicalization`, `status`, and
@@ -9900,7 +9907,10 @@ own digest or the enclosing row status.
 `required_authority_count`, `required_authority_domain_sha256`,
 `ordered_global_requirement_ids`,
 `global_requirement_evidence_identity_sha256s`,
-`global_requirement_count`, and `global_requirement_domain_sha256`.
+`global_requirement_count`, `global_requirement_domain_sha256`,
+`calibrated_fallback_blockage_reason_ids`,
+`calibrated_fallback_blockage_count`, and
+`calibrated_fallback_blockage_domain_sha256`.
 Every digest array is the complete positional projection of its adjudication
 rows; each count and canonical-array domain hash independently exact-matches.
 The three conflict fields exact-copy the complete top-level conflict
@@ -9912,8 +9922,10 @@ The calibrated status domain is
 iff conflict count is zero, every family row is registrable, every
 authority/global `requirement_satisfied` boolean is true, and every
 row-evidence status passes. It is `not_registrable` iff conflict count is
-zero, every row-evidence status passes, and at least one requirement is
-unsatisfied. It is `indeterminate_conflict` iff conflict count is positive
+zero, every row-evidence status passes, and at least one family row has
+`registrable: false` or at least one required-authority/global row has
+`requirement_satisfied: false`. It is `indeterminate_conflict` iff conflict
+count is positive
 and every manifest/conflict/evidence equation is faithfully reconstructable.
 Failure IDs are the ordered concatenation, with omissions only for
 nonconflicting/registrable/satisfied rows, of
@@ -9923,6 +9935,32 @@ nonconflicting/registrable/satisfied rows, of
 declared row-array orders. That array is empty iff status is `registrable`
 and nonempty otherwise; no other prefix, free text, duplicate, or ordering is
 valid.
+
+The distinct fitting-free-qualifying blockage projection is
+`calibrated_fallback_blockage_reason_ids`. It is the ordered concatenation,
+with omissions for favorable rows, of:
+
+1. `source:<authority_id>` for each source-manifest row whose availability is
+   `absent` or whose unique present candidate has aggregate verification
+   result `failed`, in immutable source-manifest order;
+2. `methodology:<authority_id>` under the same rule in immutable methodology-
+   manifest order; and
+3. `family:<family_id>` for each family row whose
+   `source_prerequisite_status` or `methodology_prerequisite_status` is
+   `fail`, in the exact 14-family order.
+
+The array is ordered but not deduplicated across these three different
+prefix domains. Conflict rows never enter it because conflict aborts
+adjudication. Required-authority and global rows never enter it; in
+particular, no `authority:`, `global:`, implementation, capability-graph,
+runner-environment, or namespace failure is qualifying. Its count is a
+nonnegative JSON integer equal to its length and its domain hash is SHA-256
+of its canonical bytes. All three fields exact-copy into the calibrated
+domain-identity preimage above. A nonempty projection proves at least one
+specifically enumerated source, methodology, or family blockage; a generic
+`not_registrable` status does not. When the count is zero the array is exact
+`[]` and the hash is
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`.
 
 Both numeric/capability arrays are exact `[]`, both counts are integer zero,
 and both hashes are the canonical-empty-array hash. The adjudication contains
@@ -9937,12 +9975,20 @@ serialized `indeterminate_conflict` status but makes adjudication status
 `fail`; any other evidence-status failure likewise fails. Both abort instead
 of becoming a lawful negative.
 
+`not_registrable` remains the honest status for any conflict-free faithful
+negative, including a negative caused only by a calibrated implementation,
+capability graph, runner environment, registered-domain identity, or output
+namespace. That broad status records failure; only the separate nonempty
+blockage projection can authorize evaluation of the fitting-free path
+predicate.
+
 The fitting-free configuration exact-binds one immutable append-only
 adjudication input. A pre-branch authority validator independently recomputes
 every source/methodology row from the two manifests and every global row from
 its registered-domain, capability, environment, or namespace bytes,
-exact-compares the artifact, emits only the status/reason/domain-hash
-projection to path activation, and destroys its authority before either
+exact-compares the artifact, emits only the status/reason/domain-hash and
+qualifying-blockage projection to path activation, and destroys its authority
+before either
 execution graph is created. No target-value decoder exists in that validator.
 
 The separately reconstructed fitting-free authority preimage is
@@ -10498,7 +10544,11 @@ For either derived path, the accepted common applicability result is
 `covered_earnings_path_applicability_result.v1`, with exactly
 `schema_version`, `authority_cutoff_sha256`,
 `calibrated_registrability_status`, `calibrated_domain_identity_sha256`,
-`calibrated_failure_reason_ids`, `fitting_free_authority_status`,
+`calibrated_failure_reason_ids`,
+`calibrated_fallback_blockage_reason_ids`,
+`calibrated_fallback_blockage_count`,
+`calibrated_fallback_blockage_domain_sha256`,
+`fitting_free_authority_status`,
 `fitting_free_domain_identity_sha256`,
 `fitting_free_failure_requirement_ids`, `calibrated_predicate_result`,
 `fitting_free_predicate_result`, `derived_path`,
@@ -10510,12 +10560,17 @@ The two status fields are respectively
 `calibrated_failure_reason_ids` is an ordered nonempty array exactly when the
 first field is `not_registrable | indeterminate_conflict` and is empty for
 `registrable`.
+The three fallback-blockage fields exact-copy the adjudication's separately
+derived projection/count/hash. The array may be empty with calibrated status
+`not_registrable`; its count is positive iff at least one closed
+source/methodology/family blockage exists.
 `fitting_free_failure_requirement_ids` is nonempty exactly when the
 fitting-free status is `fail`. The cutoff and two domain hashes are nonnull
 64-lowercase-hex canonical hashes. The two predicate results are booleans:
 the first is true iff adjudication status passes and calibrated status is
 `registrable`; the second is true iff adjudication status passes, calibrated
-status is `not_registrable`, and fitting-free authority status is `pass`.
+status is `not_registrable`, fallback-blockage count is positive, and
+fitting-free authority status is `pass`.
 Both are false for `indeterminate_conflict`.
 `derived_path` is one of the two ordered
 literals when exactly one predicate holds and is null on the abort branch;
@@ -10528,6 +10583,8 @@ lawfully derived. The result is not a free projection:
 - `calibrated_registrability_status`,
   `calibrated_domain_identity_sha256`, and
   `calibrated_failure_reason_ids` byte-equal the three adjudication fields;
+- the fallback-blockage array, count, and hash byte-equal the three
+  adjudication fields and satisfy their length/hash equations;
 - the fitting-free status, domain hash, and failure IDs are the exact
   independently reconstructed projection of the complete 22-row
   `fitting_free_registration_domain_identity.v1`: result
@@ -10539,12 +10596,14 @@ lawfully derived. The result is not a free projection:
   calibrated status is `registrable`, regardless of the separately recorded
   fitting-free authority status; it is `DETERMINISTIC_FITTING_FREE` exactly
   when adjudication status passes, calibrated status is `not_registrable`,
-  and fitting-free authority status is `pass`; otherwise, including every
-  `indeterminate_conflict`, it is null and result status is `fail`.
+  fallback-blockage count is positive, and fitting-free authority status is
+  `pass`; otherwise, including every `indeterminate_conflict` and every
+  global-only calibrated failure, it is null and result status is `fail`.
 
 On the currently adjudicated source facts, the calibrated
-status is `not_registrable`, but Amendment 2 alone still does not make the
-fitting-free authority status pass: A1 and A3 remain independent
+status is `not_registrable` and the failing family prerequisites produce a
+nonempty qualifying blockage projection, but Amendment 2 alone still does
+not make the fitting-free authority status pass: A1 and A3 remain independent
 registration-time requirements under §16.4.
 
 The common append-only binding artifact is
@@ -10622,7 +10681,8 @@ these closed cases holds:
 
 1. result path `CALIBRATED`, calibrated status `registrable`; or
 2. result path `DETERMINISTIC_FITTING_FREE`, calibrated status
-   `not_registrable`, and fitting-free status `pass`.
+   `not_registrable`, fallback-blockage count positive, and fitting-free
+   status `pass`.
 
 A fitting-free failure is retained and permitted only in case 1. Both files
 are Git-tracked in the same fresh-registration commit before validation.
@@ -13714,13 +13774,14 @@ currently available authority set already permits a production run.
 The branch predicates have the following complete truth table at a fresh
 registration:
 
-| Complete calibrated domain registrable | All fitting-free authorities pass | Result |
-|---|---|---|
-| true | true | `CALIBRATED`; fitting-free predicate is false only because its calibrated-false conjunct is false |
-| true | false | `CALIBRATED`; the independent fitting-free failures remain recorded but do not defeat calibrated precedence |
-| false | true | `DETERMINISTIC_FITTING_FREE` |
-| false | false | abort registration |
-| unknown, conflicting, or derived after unauthorized target/correction-execution value or output access | any | abort registration |
+| Complete calibrated domain registrable | Qualifying source/methodology/family blockage count positive | All fitting-free authorities pass | Result |
+|---|---|---|---|
+| true | false | any | `CALIBRATED`; fitting-free is false and separately recorded fitting-free failures do not defeat precedence |
+| true | true | any | abort as internally inconsistent evidence; a registrable calibrated domain cannot have a qualifying blockage |
+| false | true | true | `DETERMINISTIC_FITTING_FREE` |
+| false | true | false | abort registration |
+| false | false | any | abort registration; a global-only, implementation-only, environment-only, namespace-only, or generic-authority-only failure is not fallback authority |
+| unknown, conflicting, invalid, or derived after unauthorized target/correction-execution value or output access | any | any | abort registration |
 
 The present 17 partial and 11 unestablished membership facts make the first
 predicate false. The presently unresolved A1 and A3 authorities also make
@@ -13738,8 +13799,25 @@ registered. The fresh-registration ceremony then verifies only those
 authority bytes, constructs the 14 family, required-authority, seven global,
 and 22 fitting-free rows without reopening a production source value, and
 writes one acyclic receipt/configuration pair. On the current family facts
-that pair can select fitting-free only after every 22-row requirement passes;
+that pair has a nonempty enumerated blockage projection and can select
+fitting-free only after every 22-row requirement passes;
 otherwise it records the exact failure IDs and aborts.
+
+The referee's five-step downgrade counterexample therefore has no witness:
+
+1. all calibration source and methodology facts materialize;
+2. all 14 families and required authorities pass, so the exact qualifying
+   blockage array is `[]`, its count is zero, and its hash is the canonical
+   empty-array hash;
+3. the registrant omits the calibrated runner environment or occupies the
+   calibrated output namespace;
+4. calibrated status may faithfully be `not_registrable` because the
+   corresponding global row is false, but that global ID cannot enter the
+   blockage projection; and
+5. the calibrated predicate is false and the fitting-free predicate is also
+   false because blockage count is zero. The applicability result has
+   `derived_path: null` and `status: fail`; no capture, receipt,
+   configuration, or execution is authorized, and registration aborts.
 
 Given those bytes, each empty branch has a direct canonical witness:
 
@@ -13898,7 +13976,8 @@ second precedence schema. Its calibrated predicate means the complete
 then-operative base/Amendment-1 calibrated source, target, methodology,
 authority, registry, and capability domain is lawfully registrable. Its
 fitting-free predicate means the final adjudication has `status: pass`,
-calibrated status is exactly `not_registrable`, and every Amendment-2
+calibrated status is exactly `not_registrable`, the closed
+source/methodology/family blockage count is positive, and every Amendment-2
 requirement, including A1 and A3, passes. Its exact priority, exclusivity,
 decision cutoff, prior-artifact, amendment-survival, and failure values are
 those frozen in §16.2.
@@ -13920,13 +13999,17 @@ predicate.
 
 The fitting-free predicate is evaluated only after the calibrated predicate
 is definitively false—exactly adjudication `status: pass` plus calibrated
-status `not_registrable`—under the final value-blind authority/schema
-adjudication before target or correction-execution exposure.
+status `not_registrable`—and the exact qualifying-blockage count is positive
+under the final value-blind authority/schema adjudication before target or
+correction-execution exposure.
 `indeterminate_conflict` aborts and never reaches this predicate. It then
 requires every §16 authority and schema, including A1, A2, A3, the eight
 direct-law verification rows, the deterministic model, the complete empty-
 domain/capability proofs, and a fresh fitting-free output namespace. A
-calibrated failure does not itself make this predicate true.
+calibrated failure does not itself make this predicate true. If the
+calibrated predicate is false but the blockage count is zero, the coordinator
+does not evaluate fitting-free eligibility; it emits the null-path failing
+result and aborts.
 
 The sole precedence result is the exact
 `covered_earnings_path_applicability_result.v1` object in §16.2, embedded in
@@ -13944,6 +14027,10 @@ predicate holds and is otherwise null.
 registry/authority projection in §16.2 and is nonempty iff calibrated status
 is `not_registrable | indeterminate_conflict`; it cannot contain a magnitude,
 loss, prediction, or implementation-authored free text.
+The separate `calibrated_fallback_blockage_reason_ids` projection contains
+only the closed `source:`, `methodology:`, and `family:` cases. Its positive
+count is necessary but not sufficient for fitting-free; no global or generic
+authority failure can enter it.
 `fitting_free_failure_requirement_ids` is an ordered unique projection of
 failing §16 registration authority/spec IDs and is nonempty iff fitting-free
 status is `fail`. Both domain identity hashes are nonnull canonical hashes of
@@ -13959,23 +14046,28 @@ The normative consequences are:
    unchanged configuration retains the then-operative calibrated `design`
    object; the common receipt's separate amendment-2 design identity binds
    this precedence law without extending that configuration.
-2. If the calibrated adjudication passes with status `not_registrable` and
-   every fitting-free requirement passes, `DETERMINISTIC_FITTING_FREE` is
-   authorized under revision 4.
+2. If the calibrated adjudication passes with status `not_registrable`, the
+   exact fallback-blockage count is positive, and every fitting-free
+   requirement passes, `DETERMINISTIC_FITTING_FREE` is authorized under
+   revision 4.
 3. If the calibrated status is `indeterminate_conflict`, or the adjudication
    otherwise fails, registration aborts before the fitting-free predicate.
 4. If the calibrated adjudication passes with status `not_registrable` and
    any fitting-free requirement fails, registration aborts. Missing A1 or A3
    is enough.
-5. A conflict-free partially established calibrated family set cannot be
+5. If calibrated status is `not_registrable` but the qualifying blockage
+   array is empty, registration aborts before capture or receipt creation.
+   This includes every global-only implementation, capability, runner-
+   environment, registered-domain, or namespace failure.
+6. A conflict-free partially established calibrated family set cannot be
    thinned, renormalized, combined with the deterministic model, or treated
    as context-assisted fitting. It leaves the complete calibrated predicate
    false.
-6. Once a path is derived, a target-source error, optimizer failure,
+7. Once a path is derived, a target-source error, optimizer failure,
    `no_eligible_candidate`, gate failure, incident, retry, or unfavorable
    context result cannot switch paths. The attempt completes or fails under
    its registered law.
-7. Every authority or methodology change is considered only at a new fresh-
+8. Every authority or methodology change is considered only at a new fresh-
    registration cutoff. It never rewrites an earlier model hash, label,
    certificate, incident, or output.
 
@@ -14001,8 +14093,9 @@ source bytes:
   base/Amendment-1 calibrated machinery. Amendment 2 need not and must not be
   repealed, amended in place, or used as a starting candidate.
 - If a future cutoff again lacks a complete calibrated domain, Amendment 2
-  remains available for a new fitting-free registration only if all its own
-  requirements still pass.
+  remains available for a new fitting-free registration only if the exact
+  qualifying blockage projection is nonempty and all its own requirements
+  still pass. A global-only failure always aborts.
 
 This is path precedence, not evidentiary blending. A deterministic-
 uncalibrated artifact remains exactly what its labels said even after a later
@@ -14028,9 +14121,10 @@ authorized order is:
    registry, implementation, and fixture-preparation bytes, then create a
    preliminary value-blind calibrated registrability adjudication. If it is
    registrable, forbid A1/A3 capture. If it is validly not registrable and
-   fitting-free A1/A3 authority is required, Git-track the reviewed capture
-   executable and authorization before running the separately referee-gated
-   capture, then review and Git-track its append-only identity artifacts.
+   its exact fallback-blockage count is positive and fitting-free A1/A3
+   authority is required, Git-track the reviewed capture executable and
+   authorization before running the separately referee-gated capture, then
+   review and Git-track its append-only identity artifacts.
    Finally create the mandatory adjudication at a later cutoff; every other
    rehearsal remains fixture-only;
 5. obtain the receipt-bound fresh registration selected by §16.2: a
@@ -14063,9 +14157,10 @@ strict runner/descriptor law to
 canonical Git-tracked registration and its repository/implementation proof
 pass. Its four-key adjudication input binds the valid preliminary
 value-blind artifact; capture is authorized only when that artifact's
-evidence status passes and calibrated status is `not_registrable`. A
-preliminary `registrable`, `indeterminate_conflict`, or otherwise invalid
-adjudication forbids every capture descriptor open. `registration_reference`
+evidence status passes, calibrated status is `not_registrable`, and its
+exact fallback-blockage count is positive. A preliminary `registrable`,
+`indeterminate_conflict`, zero-blockage, or otherwise invalid adjudication
+forbids every capture descriptor open. `registration_reference`
 is the authorization's own exact
 §16.10 path. `output_paths` has exactly `claim`, `primary`, and `sidecar`,
 equal to the same-suffix paths frozen below; it has no incident, retry,
