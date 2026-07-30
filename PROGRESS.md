@@ -3,8 +3,7 @@
 ## State
 
 Implementation is in progress on `claude/ce-psid-inventory`. The referee
-verdict is `SHIP WITH EDITS`; all five required-before-merge items remain
-open at this baseline.
+verdict is `SHIP WITH EDITS`; item 1 is implemented and under verification.
 
 ## Done
 
@@ -12,16 +11,18 @@ open at this baseline.
 - Confirmed the worktree is clean and on the requested branch.
 - Recorded the required implementation, artifact rebuild, formatting, and
   test work in the active plan.
+- Cached extraction evidence is now held as immutable bytes and decoded into
+  fresh dictionaries for every caller.
+- Added the exact regression that poisons the 2003 job-1 occupation row with
+  ER21146's industry coordinates before a default-SHA read.
 
 ## Next
 
-1. Fix cached extraction-evidence poisoning and add the exact ER21146
-   coordinate-poisoning regression.
-2. Make dictionary and raw fixed-width source identity mandatory at public
+1. Make dictionary and raw fixed-width source identity mandatory at public
    reader boundaries.
-3. Freeze and independently hash `SOURCE_CONCEPT_SEAMS`.
-4. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
+2. Freeze and independently hash `SOURCE_CONCEPT_SEAMS`.
+3. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
    audit artifact.
-5. Clarify the modern reader-subset test and add the remaining adversarial,
+4. Clarify the modern reader-subset test and add the remaining adversarial,
    reachability, all-wave, and person-attachment assertions.
-6. Run Black and the relevant/full test suites.
+5. Run Black and the relevant/full test suites.

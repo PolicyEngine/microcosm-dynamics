@@ -101,7 +101,7 @@ def default_dictionary_audit_path() -> Path:
 def _load_evidence_cached(
     registry_path_string: str,
     dictionary_audit_path_string: str,
-) -> tuple[dict[str, Any], dict[str, Any]]:
+) -> tuple[bytes, bytes]:
     registry_path = Path(registry_path_string)
     audit_path = Path(dictionary_audit_path_string)
     registry_bytes = registry_path.read_bytes()
@@ -113,7 +113,7 @@ def _load_evidence_cached(
         audit,
         dictionary_audit_file_sha256=hashlib.sha256(audit_bytes).hexdigest(),
     )
-    return registry, audit
+    return registry_bytes, audit_bytes
 
 
 def load_raw_extraction_evidence(
@@ -133,7 +133,11 @@ def load_raw_extraction_evidence(
         if dictionary_audit_path is None
         else Path(dictionary_audit_path)
     ).resolve()
-    return _load_evidence_cached(str(registry_file), str(audit_file))
+    registry_bytes, audit_bytes = _load_evidence_cached(
+        str(registry_file),
+        str(audit_file),
+    )
+    return json.loads(registry_bytes), json.loads(audit_bytes)
 
 
 def _family_paths(wave: int, data_dir: Path | None) -> tuple[Path, Path]:
