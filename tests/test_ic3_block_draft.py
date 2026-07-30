@@ -436,7 +436,7 @@ def test_draft_and_design_document_agree_on_the_demotions(block):
     # The design doc must not still advertise E1/E6 as gated.
     assert "does not gate at first" in design
     assert "E2, E7 and E11-margins are firm-side" in design
-    assert "strict-staging blocker" in design
+    assert "BLOCKED_STRICT_STAGING" in design
     assert "certifies no person link" in design
     assert "strong E12 is **deferred**" in design
 

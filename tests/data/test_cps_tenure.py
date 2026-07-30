@@ -376,7 +376,12 @@ class TestTenureTabulation:
 @needs_real_tenure
 class TestRealData:
     def test_reads_any_staged_year(self):
-        staged = sorted(REAL_DATA.glob("jan*pub.csv*"))
+        # Match the reader's accepted staging surface exactly. A
+        # download-in-progress ``.part`` file is not staged evidence
+        # and must not make an otherwise optional real-data test fail.
+        staged = sorted(
+            (*REAL_DATA.glob("jan*pub.csv"), *REAL_DATA.glob("jan*pub.csv.gz"))
+        )
         if not staged:
             pytest.skip("no jan{yy}pub files staged")
         year = 2000 + int(staged[-1].name[3:5])
