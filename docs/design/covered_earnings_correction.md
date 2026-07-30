@@ -8742,7 +8742,7 @@ are:
 
 The coordinator still expands every expected Option-C
 `annual_provenance_context_expansion` coordinate so either optional-source
-state cannot shrink the result domain. Each row has all 16
+state cannot shrink the result domain. Each row has all 15
 `before_context_results` fields: `metric_id` is the base §10.2 colon join
 using `aggregate_share_scale_sensitivity_v2`; `before_context_kind` is
 `option_c_sensitivity`; `stratum_id` is `overall`; the calendar/source-class/
