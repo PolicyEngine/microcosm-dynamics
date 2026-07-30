@@ -10887,3 +10887,130 @@ These are not deviations from the referee's six-item contract. They are the
 minimum honest consequences of removing aggregate fitting while preserving
 the ratified classification, measurement, crosswalk, statutory, draw,
 consumer, ceremony, and fail-closed laws.
+
+### 16.9 Exact precedence and calibration-reactivation law
+
+`covered_earnings_path_precedence_specs.v1` has exactly
+`schema_version`, `ordered_paths`, `predicate_derivation`,
+`calibrated_requirement`, `fitting_free_requirement`, `priority_law`,
+`exclusivity_law`, `decision_cutoff`, `runtime_transition_domain`,
+`prior_artifact_law`, `amendment_survival_law`, and
+`failure_disposition`.
+
+Its values are:
+
+- `ordered_paths: ["CALIBRATED","DETERMINISTIC_FITTING_FREE"]`;
+- `predicate_derivation:
+  coordinator_independent_complete_then_operative_domains`;
+- `calibrated_requirement:
+  every_base_and_amendment_1_calibrated_source_target_methodology_authority_registry_and_capability_prerequisite_lawfully_registrable`;
+- `fitting_free_requirement:
+  calibrated_requirement_false_and_every_amendment_2_requirement_including_A1_and_A3_pass`;
+- `priority_law:
+  calibrated_mandatory_when_complete_otherwise_fitting_free_only_if_complete`;
+- `exclusivity_law: exactly_one_derived_path_no_caller_choice_or_hybrid`;
+- `decision_cutoff:
+  fresh_registration_before_any_production_value_output_or_model_contact`;
+- `runtime_transition_domain: []`;
+- `prior_artifact_law:
+  immutable_under_original_registration_and_never_reclassified`;
+- `amendment_survival_law:
+  amendment_2_remains_unrepealed_fallback_when_calibrated_path_active`; and
+- `failure_disposition: abort_registration`.
+
+The empty runtime-transition array has integer count zero and the canonical-
+empty-array hash. It forbids calibrated-to-fitting-free, fitting-free-to-
+calibrated, partial-family, outcome-responsive, retry-responsive, and
+gate-failure transitions inside one registration or attempt.
+
+The coordinator derives calibrated registrability under the complete then-
+operative base/Amendment-1 calibrated law. It must establish the full target
+registry, every required source/methodology fact, A1–A5 as applicable, all
+candidate/selection inputs, target-value capabilities, and the complete
+fresh calibrated namespace. It does not ask whether a candidate is likely to
+fit or pass. Candidate loss, model output, held-out value, gate result,
+runtime availability, and caller preference are outside the predicate.
+
+The fitting-free predicate is evaluated only after the calibrated predicate
+is definitively false for pre-exposure authority/schema reasons. It then
+requires every §16 authority and schema, including A1, A2, A3, the eight
+direct-law verification rows, the deterministic model, the complete empty-
+domain/capability proofs, and a fresh fitting-free output namespace. A
+calibrated failure does not itself make this predicate true.
+
+`covered_earnings_path_precedence_result.v1` has exactly
+`schema_version`, `authority_cutoff_sha256`,
+`calibrated_registrability_status`, `calibrated_domain_identity_sha256`,
+`calibrated_failure_reason_ids`, `fitting_free_authority_status`,
+`fitting_free_domain_identity_sha256`,
+`fitting_free_failure_requirement_ids`, `derived_path`,
+`derived_before_production_value_access`, `prior_artifact_disposition`, and
+`status`.
+
+The two statuses are `registrable | not_registrable` and `pass | fail`.
+`derived_path` is a path literal when and only when exactly one complete
+predicate holds and is otherwise null. The boolean is always true on a valid
+result. `prior_artifact_disposition` is
+`unchanged_not_reclassified`. `status` is `pass` only for a derived path and
+`fail` only for the abort branch.
+
+`calibrated_failure_reason_ids` is an ordered unique projection of the exact
+failing calibrated registry/authority IDs and is nonempty iff calibrated
+status is `not_registrable`; it cannot contain a magnitude, loss,
+prediction, or implementation-authored free text.
+`fitting_free_failure_requirement_ids` is an ordered unique projection of
+failing §16 registration authority/spec IDs and is nonempty iff fitting-free
+status is `fail`. Both domain identity hashes are nonnull canonical hashes of
+the complete independently derived domains even when their status fails.
+
+The normative consequences are:
+
+1. If the complete calibrated predicate is true, `CALIBRATED` is mandatory.
+   A fitting-free registration aborts with
+   `calibrated_path_mandatory`; calibrated execution uses the complete
+   base/Amendment-1 target, candidate, fitting, selection, gate, calibrated-
+   label, and certificate laws in its own fresh append-only namespace.
+2. If the calibrated predicate is false and every fitting-free requirement
+   passes, `DETERMINISTIC_FITTING_FREE` is authorized under revision 4.
+3. If the calibrated predicate is false and any fitting-free requirement
+   fails, registration aborts. Missing A1 or A3 is enough.
+4. A partially established calibrated family set cannot be thinned,
+   renormalized, combined with the deterministic model, or treated as
+   context-assisted fitting. It leaves the complete calibrated predicate
+   false.
+5. Once a path is derived, a target-source error, optimizer failure,
+   `no_eligible_candidate`, gate failure, incident, retry, or unfavorable
+   context result cannot switch paths. The attempt completes or fails under
+   its registered law.
+6. Every authority or methodology change is considered only at a new fresh-
+   registration cutoff. It never rewrites an earlier model hash, label,
+   certificate, incident, or output.
+
+Calibration reactivation is automatic in precedence but never implicit in
+source bytes:
+
+- Amendment 1's exact
+  `unavailable_source_absent -> source_verified_not_target_bound` transition
+  may add a qualifying successor source artifact. By §15.8, that transition
+  alone creates no target family, fitting weight, selector, tolerance, or
+  target-value authority and therefore cannot by itself make the calibrated
+  predicate true.
+- Newly registered controlling methodology bytes may establish the currently
+  partial/unestablished B2/B11 membership facts. If they make every
+  Amendment-1 family and all other calibrated prerequisites lawfully
+  registrable under the unchanged calibrated design, the calibrated predicate
+  becomes true at the next fresh registration.
+- A later ratified target-reactivation amendment may give a qualifying §15
+  successor source target authority. It contributes only its expressly
+  activated family; every other calibrated prerequisite must still pass.
+- When any lawful combination of those events makes the complete calibrated
+  predicate true, the next registration **must** take `CALIBRATED` under the
+  base/Amendment-1 calibrated machinery. Amendment 2 need not and must not be
+  repealed, amended in place, or used as a starting candidate.
+- If a future cutoff again lacks a complete calibrated domain, Amendment 2
+  remains available for a new fitting-free registration only if all its own
+  requirements still pass.
+
+This is path precedence, not evidentiary blending. A deterministic-
+uncalibrated artifact remains exactly what its labels said even after a later
+calibrated artifact exists.
