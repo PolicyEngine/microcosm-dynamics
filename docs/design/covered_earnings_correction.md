@@ -9257,7 +9257,10 @@ Under revision 3, that state is not an empty successful calibration:
 Amendment 2 does not reinterpret that failure as calibrated success. It
 creates `covered_earnings_path_applicability_specs.v1`, an object with exactly
 `schema_version`, `ordered_paths`, `calibrated_predicate`,
-`fitting_free_predicate`, `exclusivity_law`, `derivation_stage`, and
+`fitting_free_predicate`, `priority_law`, `exclusivity_law`,
+`derivation_stage`, `runtime_transition_domain`,
+`runtime_transition_count`, `runtime_transition_domain_sha256`,
+`prior_artifact_law`, `amendment_survival_law`, and
 `failure_disposition`. Its values are:
 
 - `schema_version: covered_earnings_path_applicability_specs.v1`;
@@ -9266,10 +9269,20 @@ creates `covered_earnings_path_applicability_specs.v1`, an object with exactly
   complete_then_operative_calibrated_registration_domain_is_lawfully_registrable`;
 - `fitting_free_predicate:
   calibrated_predicate_false_by_pre_exposure_authority_adjudication_and_all_fitting_free_authorities_pass`;
+- `priority_law:
+  calibrated_mandatory_when_complete_otherwise_fitting_free_only_if_complete`;
 - `exclusivity_law:
   exactly_one_path_true_and_calibrated_has_precedence`;
 - `derivation_stage:
-  fresh_registration_before_any_production_value_or_output_contact`; and
+  fresh_registration_before_any_production_value_or_output_contact`;
+- `runtime_transition_domain: []`;
+- `runtime_transition_count: 0`;
+- `runtime_transition_domain_sha256:
+  37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`;
+- `prior_artifact_law:
+  immutable_under_original_registration_and_never_reclassified`;
+- `amendment_survival_law:
+  amendment_2_remains_unrepealed_fallback_when_calibrated_path_active`; and
 - `failure_disposition: abort_registration`.
 
 The coordinator derives both predicates from registered authority bytes,
@@ -9281,18 +9294,27 @@ The complete precedence consequences are in §16.9.
 
 For the fitting-free branch, the accepted applicability result is
 `covered_earnings_path_applicability_result.v1`, with exactly
-`schema_version`, `calibrated_registrability_status`,
+`schema_version`, `authority_cutoff_sha256`,
+`calibrated_registrability_status`, `calibrated_domain_identity_sha256`,
 `calibrated_failure_reason_ids`, `fitting_free_authority_status`,
-`derived_path`, `derived_before_production_value_access`, and `status`.
+`fitting_free_domain_identity_sha256`,
+`fitting_free_failure_requirement_ids`, `derived_path`,
+`derived_before_production_value_access`, `prior_artifact_disposition`, and
+`status`.
 The two status fields are respectively
 `registrable | not_registrable` and `pass | fail`;
 `calibrated_failure_reason_ids` is an ordered nonempty array exactly when the
-first field is `not_registrable` and is empty otherwise; `derived_path` is
-one of the two ordered literals; the boolean is literal `true`; and `status`
-is `pass` only when the path-specification law above holds. On the currently
-adjudicated source facts, the calibrated status is `not_registrable`, but
-Amendment 2 alone still does not make the fitting-free authority status pass:
-A1 and A3 remain independent registration-time requirements under §16.4.
+first field is `not_registrable` and is empty otherwise.
+`fitting_free_failure_requirement_ids` is nonempty exactly when the
+fitting-free status is `fail`. The cutoff and two domain hashes are nonnull
+64-lowercase-hex canonical hashes. `derived_path` is one of the two ordered
+literals when exactly one predicate holds and is null on the abort branch;
+the boolean is literal `true`; `prior_artifact_disposition` is
+`unchanged_not_reclassified`; and `status` is `pass` only when a path is
+lawfully derived. On the currently adjudicated source facts, the calibrated
+status is `not_registrable`, but Amendment 2 alone still does not make the
+fitting-free authority status pass: A1 and A3 remain independent
+registration-time requirements under §16.4.
 
 ### 16.3 The named deterministic classification and measurement model
 
@@ -9324,6 +9346,7 @@ The first three literals are respectively
   "candidate_evaluator",
   "selector",
   "model_choice",
+  "parameter_store",
   "fitting_tolerance_evaluator",
   "target_result",
   "target_use_trace"
@@ -9599,16 +9622,20 @@ manifest role, or decoder can foreign-key it. A nonempty array, nonzero
 count, different empty hash, extra field, target-shaped child, or target
 source in the fitting-free input domain aborts registration.
 
-`fitting_free_target_domain_result.v1` has the same first two keys followed
-by exactly `target_count`, `model_choice_target_count`,
+`fitting_free_target_domain_result.v1` has exactly
+`schema_version`, `correction_path`, `target_count`,
+`model_choice_target_count`,
 `target_input_count`, `target_value_capability_count`,
 `official_comparison_count`, `target_domain_sha256`,
 `model_choice_target_domain_sha256`, `target_input_domain_sha256`,
 `target_value_capability_domain_sha256`,
 `official_comparison_domain_sha256`, and `status`. Every count is zero, every
-hash is the canonical empty-array hash above, and status is `pass`. This
-result is always evaluated on a valid fitting-free primary. `not_evaluated`,
-an omitted row, or a null field cannot stand in for lawful emptiness.
+hash is the canonical empty-array hash above,
+`schema_version` is `fitting_free_target_domain_result.v1`,
+`correction_path` is `DETERMINISTIC_FITTING_FREE`, and status is `pass`.
+This result is always evaluated on a valid fitting-free primary.
+`not_evaluated`, an omitted row, or a null field cannot stand in for lawful
+emptiness.
 
 #### 16.4.2 Exact model-choice branch
 
@@ -9643,11 +9670,18 @@ domain and zero starting points in base §5.3 explain the literal defaults in
 §16.3 but confer no runtime parameter or optimizer capability.
 
 `fitting_free_model_choice_result.v1` has exactly `schema_version`,
-`correction_path`, `deterministic_model_id`, the six count fields above, the
-six corresponding `*_domain_sha256` fields, and `status`. All counts are
-zero, all hashes are the canonical empty-array hash, the model ID is the
-registered literal, and status is `pass`. It is inapplicable-by-branch, not
-not-evaluated after a failed selection.
+`correction_path`, `deterministic_model_id`, `candidate_count`,
+`fitted_parameter_count`, `optimizer_principal_count`,
+`selector_principal_count`, `selection_result_count`,
+`model_choice_tolerance_count`, `candidate_domain_sha256`,
+`fitted_parameter_domain_sha256`, `optimizer_principal_domain_sha256`,
+`selector_principal_domain_sha256`, `selection_result_domain_sha256`,
+`model_choice_tolerance_domain_sha256`, and `status`. All counts are zero,
+all hashes are the canonical empty-array hash, the first three values are
+`fitting_free_model_choice_result.v1`,
+`DETERMINISTIC_FITTING_FREE`, and the registered deterministic model ID, and
+status is `pass`. It is inapplicable-by-branch, not not-evaluated after a
+failed selection.
 
 #### 16.4.3 A1, A2, A3, A4, and A5
 
@@ -9671,6 +9705,12 @@ The required dispositions are:
 | A3 | `model_weight_source_sha256` | `registration_required` | `verified/pass`; nonnull staged weight-input identity, digest, and complete weight-key domain; null reason. |
 | A4 | `official_target_membership_and_joint_analytic_selectors` | `not_applicable_no_official_target_or_model_choice_domain` | `not_applicable/pass`; null authority identity; reason `official_target_selector_domain_empty_fitting_free_v1`. |
 | A5 | `official_model_universe_concordance` | `not_applicable_no_official_target_comparison` | `not_applicable/pass`; null authority identity; reason `official_target_comparison_removed_fitting_free_v1`. |
+
+A1–A3 have nonnull `evidence_sha256`. A4's evidence hash is the canonical
+hash of the complete target/model-choice selector empty closure. A5's
+evidence hash is the canonical hash of
+`official_comparison_absence_closure`. Thus a not-applicable authority row
+still carries independently checkable nonnull evidence.
 
 An A1 identity has exactly `authority_id`, `selector_id`,
 `selector_sha256`, `age_rule`, `annual_presence_rule`,
@@ -9783,10 +9823,12 @@ and measurement rows bind §16.3. All other rows remain governed by the base
 
 `verification_claim_specs.fitting_free.v1` and
 `verification_claim_results.fitting_free.v1` retain the exact spec-row and
-result-row shapes and positional V-B1-through-V-B9 order. V-B1–V-B6 and
-V-B8–V-B9 remain registration-required and must be `verified/pass`; their
-authorities and affected inventory closures are unchanged except for parent
-identities and hashes. V-B7 alone is replaced by:
+result-row shapes and positional V-B1-through-V-B9 order. V-B1, V-B4, V-B5,
+V-B6, and V-B8 remain `registration_required` and must be `verified/pass`.
+V-B2, V-B3, and V-B9 remain `direct_only_optional` and retain their exact
+verified/absent/conflict consequence branches. Their authorities and affected
+inventory closures are unchanged except for parent identities and hashes.
+V-B7 alone is replaced by:
 
 ```json
 {
@@ -9824,7 +9866,8 @@ comparison authority. The optional vintage-2 source state remains historical
 Amendment-1 evidence and may be bound as design ancestry, but it is not an
 input to the fitting-free correction. The eight direct-law verification rows
 remain fully effective; V-B7 cannot excuse a missing required legal,
-inventory, or crosswalk authority.
+inventory, or crosswalk authority or alter a direct-only-optional
+consequence.
 
 #### 16.5.2 Exact fitting-free configuration
 
@@ -10063,6 +10106,31 @@ conditions and certificate semantics are §16.7. A failed condition makes
 status `gate_fail` and the boolean false; publication-regardless and
 incident laws remain in force.
 
+`integrity` has exactly `configuration_sha256`, `sidecar_sha256`,
+`substantive_model_sha256`, `evaluation_provenance_sha256`,
+`path_applicability_result_sha256`,
+`fitting_free_target_domain_result_sha256`,
+`fitting_free_model_choice_result_sha256`,
+`direct_law_fact_closure_sha256`,
+`trusted_consumer_semantic_authority_sha256`,
+`rng_access_results_sha256`, `ledger_identity_sha256`,
+`expected_ledger_streams_sha256`, `realized_ledger_streams_sha256`,
+`claim_context_gap_streams_sha256`,
+`trusted_consumer_evaluation_sha256`, and
+`official_context_diagnostic_dispositions_sha256`. Every value is nonnull
+64-lowercase hex on a valid primary and hashes the complete canonical named
+object, including an exact tagged not-evaluated object where a precontext
+structural failure makes a downstream block unreachable.
+
+Primary `status: pass` requires `evaluation_completion: complete`, all 22
+gate rows and conditions 1–7 passing, every registered downstream block
+evaluated, and `eligible_for_label_retirement: true`. `status: gate_fail`
+requires at least one reachable failed gate/condition, false eligibility, the
+complete sealed G11/RNG lifecycle, and either complete evaluation or the
+exact `precontext_structural_gate_fail` branch. Both statuses publish
+regardless. Registration, authority, parsing, path-activation, model-lock,
+or finalizer-invariant failure remains an incident and creates no primary.
+
 The sidecar schema is
 `covered_earnings_correction_fitting_free_environment.v1` and has exactly
 `schema_version`, `artifact_path`, `registration_reference`,
@@ -10111,8 +10179,8 @@ exactly:
    capability closure without opening a production value;
 2. independently derive and freeze the path-applicability result; require
    exactly `DETERMINISTIC_FITTING_FREE`, then validate A1–A3, all eight
-   direct-law authorities, the complete correction-input domain, and both
-   canonical empty domains;
+   direct-law verification/consequence rows, the complete correction-input
+   domain, and both canonical empty domains;
 3. execute the complete direct-law fact ledger/action trace, §16.3
    classification and measurement, and deterministic draws in workers that
    possess only the registered correction-input capability;
@@ -10255,6 +10323,7 @@ shape. Its `assertions` member is exactly:
   "target_validator_principal_domain_empty",
   "target_broker_principal_domain_empty",
   "target_diagnostic_principal_domain_empty",
+  "parameter_store_principal_domain_empty",
   "target_value_ipc_domain_empty",
   "target_value_open_release_zero",
   "context_paths_denied_before_model_lock",
@@ -10303,7 +10372,7 @@ principal classes above and must be canonical empty on both expected and
 actual sides. All seven count fields associated with prohibited principals,
 target capabilities, opens, releases, and general forbidden access are zero.
 The model grant registry and IPC trace exact-match their expected closures;
-all 23 isolation rows pass; the lifecycle hashes/rows are equal; and the four
+all 24 isolation rows pass; the lifecycle hashes/rows are equal; and the four
 trusted-consumer hashes independently reconstruct. A merely unused but
 reachable authority, import, descriptor, callback, decoder, broker method, or
 IPC variant fails G15.
@@ -10311,14 +10380,23 @@ IPC variant fails G15.
 `rng_access_specs.fitting_free.v1` has the exact base provider, nonce,
 exception, keyed-call, forbidden-call, principal-event, seal, and deny-all
 laws. Its exact phase order is `bootstrap`,
-`registration_prelaunch`, `input_validation`,
+`registration_prelaunch`, `durable_attempt_claim`, `input_validation`,
 `direct_model_construction`, `deterministic_lock`,
-`precontext_verification`, `downstream_evaluation`, `lifecycle_seal`,
-`publication`, and `process_exit`. G11 requires the same complete actual/
-expected event equality, zero forbidden/denied/sticky counts, sealed
-keyed-uniform cache, live wrapper identity, and pre-rename recheck as before.
-No `fitting` or `selection` phase, provider-capable principal, or lifecycle
-event exists.
+`precontext_verification`, `downstream_evaluation`, `lifecycle_closure`,
+`publication`, `incident_handling`, and `process_exit`. The normal complete
+chain follows that order while omitting `incident_handling`; the exact
+precontext-failure chain moves directly from `precontext_verification` to
+`lifecycle_closure`. Base exception, same-process receipt-authorized retry,
+incident, and direct-no-allocation exit transitions remain exact.
+
+The lifecycle seal's `terminal_branch` is exactly
+`fitting_free_evaluated | fitting_free_precontext_structural_gate_fail` and
+its `evaluation_completion` is respectively
+`complete | precontext_structural_gate_fail`. Every terminal primary pair
+uses the matching literals. G11 requires the same complete actual/expected
+event equality, zero forbidden/denied/sticky counts, sealed keyed-uniform
+cache, live wrapper identity, and pre-rename recheck as before. No `fitting`
+or `selection` phase, provider-capable principal, or lifecycle event exists.
 
 #### 16.6.4 G17 — exact authority and empty-domain closure
 
@@ -10350,18 +10428,45 @@ ordered G17-C01 through G17-C17:
 Each row retains the base exact seven-key comparison shape. C01–C14 retain
 their base domain purpose and nonempty comparison law, with amended parent
 identities and C13's fitting-free verification rows; their expected/actual
-counts and hashes must match. C15 is the sole explicit exception to the old
-nonempty rule: expected and actual counts are zero, both hashes are the
-canonical-empty-array hash, and its expanded evidence exact-matches the
-complete §16.4 official-comparison absence closure. C16 and C17 are nonempty
-and exact-match the independently reconstructed authorities, not configured
+counts and hashes must match. C15 is itself a nonempty, ordered
+`fitting_free_empty_domain_evidence.v1` stream with exactly 15 rows:
+
+```json
+[
+  "target_family_order",
+  "target_specs",
+  "model_choice_target_ids",
+  "target_input_ids",
+  "target_value_capability_ids",
+  "official_comparison_family_ids",
+  "official_comparison_rows",
+  "official_value_decoder_authority_ids",
+  "target_value_broker_grant_ids",
+  "candidate_ids",
+  "fitted_parameter_ids",
+  "optimizer_principal_ids",
+  "selector_principal_ids",
+  "selection_result_domain",
+  "model_choice_tolerance_ids"
+]
+```
+
+Each inner row has exactly `domain_id`, `expected_count`, `actual_count`,
+`expected_domain_sha256`, `actual_domain_sha256`, and `status`; both counts
+are zero, both hashes are the canonical-empty-array hash, and status is
+`pass`. The outer C15 comparison therefore has expected and actual count 15,
+and its two equal nonempty hashes bind the complete ordered inner stream.
+That stream exact-covers §§16.4.1–16.4.3; a missing, duplicate, extra,
+nonempty, or differently hashed child fails. C16 and C17 are nonempty and
+exact-match the independently reconstructed authorities, not configured
 counts or implementation subsets.
 
 `comparison_count` is integer 17, `comparison_id_order` is the exact ordered
-ID array, and `overall_status` is `pass` iff all comparisons and special
-cardinality laws pass. V-B7's not-applicable row remains physically present
-inside the nine-row C13 domain. The A5 not-applicable result is valid only
-through C15; A1, A2, or A3 cannot disappear because target rows are empty.
+ID array, and `overall_status` is `pass` iff all 17 nonempty comparison
+domains and the C15 inner-empty cardinality laws pass. V-B7's not-applicable
+row remains physically present inside the nine-row C13 domain. The A5
+not-applicable result is valid only through C15; A1, A2, or A3 cannot
+disappear because target rows are empty.
 
 #### 16.6.5 G19 — singleton deterministic activation
 
@@ -10372,14 +10477,15 @@ through C15; A1, A2, or A3 cannot disappear because target rows are empty.
 `activated_model_specs_sha256`, `deterministic_rule_count`,
 `instantiated_rule_count`, `target_count`, `candidate_count`,
 `fitted_parameter_count`, `optimizer_principal_count`,
-`selector_principal_count`, `selection_result_count`,
+`selector_principal_count`, `parameter_store_principal_count`,
+`selection_result_count`,
 `target_value_capability_count`, `all_rules_instantiated`, and `status`.
 
 The path and both IDs exact-match the registered fitting-free branch. The two
 spec hashes are equal. `deterministic_rule_count` is the positive,
 independently expanded count of all §16.3 classification, measurement,
 aggregation, statutory-order, and draw rules and equals
-`instantiated_rule_count`. All seven prohibited-domain counts are zero,
+`instantiated_rule_count`. All eight prohibited-domain counts are zero,
 `all_rules_instantiated` is true, and status is `pass`.
 
 A fake zero-parameter candidate, selected fixed candidate, empty disposition
@@ -10431,6 +10537,8 @@ self-reference. No evaluation-provenance hash is in the prebundle.
 `expected_mutated_byte_range_count`, `actual_mutated_byte_range_count`,
 `baseline_optimizer_principal_count`, `mutant_optimizer_principal_count`,
 `baseline_selector_principal_count`, `mutant_selector_principal_count`,
+`baseline_parameter_store_principal_count`,
+`mutant_parameter_store_principal_count`,
 `baseline_target_value_capability_count`,
 `mutant_target_value_capability_count`, `baseline_target_value_open_count`,
 `mutant_target_value_open_count`, `baseline_target_value_release_count`,
@@ -10599,9 +10707,9 @@ The fitting-free conditions are:
    support the independently reconstructed complete Stage A–D benefit and
    unsplit revenue domains;
 3. all 22 hard gates pass; target, official-comparison, candidate, fitted-
-   parameter, optimizer, selector, selection-result, target-value-capability,
-   and model-choice-tolerance counts are all integer zero; G20's complete
-   finite-grid tolerance domain nevertheless passes;
+   parameter, optimizer, selector, parameter-store, selection-result,
+   target-value-capability, and model-choice-tolerance counts are all integer
+   zero; G20's complete finite-grid tolerance domain nevertheless passes;
 4. the deterministic model identity was locked before any evaluation-only or
    context decoder grant, and fitting-free G21 proves complete opaque-
    mutation coverage, byte-identical substantive prebundles, zero forbidden
@@ -10623,12 +10731,14 @@ The fitting-free conditions are:
 Conditions 1–6 are frozen before final output construction. Condition 7 is
 proved by the trusted finalizer and enters no G21 or substantive-bundle
 preimage. `eligible_for_label_retirement` is true iff all seven statuses are
-`pass`; the failure disposition is `publish_gate_fail`. A preparation,
-registration, authority, or finalizer invariant failure still follows the
-incident law and creates no primary. Every valid `pass` primary has seven
-passes. A valid `gate_fail` primary retains every reachable unfavorable row,
-uses `not_evaluated` only after an exact precontext structural failure, and
-has a false eligibility boolean.
+`pass`; `failure_disposition` is exactly
+`conditions_1_through_6_fail_publish_gate_fail_condition_7_failure_invariant_incident`.
+A preparation, registration, authority, or finalizer invariant failure still
+follows the incident law and creates no primary. Every valid primary has
+condition 7 `pass`; every valid `pass` primary has all seven passes. A valid
+`gate_fail` primary retains every reachable unfavorable row, uses
+`not_evaluated` only after an exact precontext structural failure, and has a
+false eligibility boolean.
 
 The correction eligibility object is not the label-retirement certificate.
 It cannot activate labels or attest that a later context pair and merge
@@ -10695,7 +10805,7 @@ On a passing context result,
 
 `status` is `eligible_on_publication_pr_merge`; `context_report_schema` is
 `covered_earnings_context_report.fitting_free.v1`; and `condition_8` is true.
-The five correction path/hash fields exact-match the locked correction.
+The six correction path/hash fields exact-match the locked correction.
 `condition_8_evidence` retains every exact §12 count/hash field and adds
 exactly `fitting_free_diagnostic_disposition_sha256`,
 `no_fitting_loss_context_row_count`,
@@ -10831,12 +10941,13 @@ Every revised gate has a nonempty, exact witness:
 
 - G10 has six ordered comparisons over complete deterministic bundles;
 - G14 has one 1×/7× person-level comparison plus two complete weight packets;
-- G15 has 23 assertion rows, exact grant/IPC/lifecycle equality, and seven
+- G15 has 24 assertion rows, exact grant/IPC/lifecycle equality, and seven
   prohibited-access counts equal to zero;
-- G17 has 17 ordered comparisons: C01–C14 nonempty, C15 canonically empty,
-  and C16–C17 nonempty A1/A2/A3 authority closures;
+- G17 has 17 nonempty ordered comparison domains: C15 is a 15-row stream
+  proving each child domain canonically empty, and C16–C17 are nonempty
+  A1/A2/A3 authority closures;
 - G19 has one registered/activated model, a positive complete rule count,
-  equal model hashes, and seven prohibited-domain counts equal to zero; and
+  equal model hashes, and eight prohibited-domain counts equal to zero; and
 - G21 has a nonempty opaque fixture/mutation domain, equal substantive
   prebundles, zero forbidden capabilities/opens/releases, and unequal full
   fixture-bound evaluation provenance.
@@ -10890,38 +11001,21 @@ consumer, ceremony, and fail-closed laws.
 
 ### 16.9 Exact precedence and calibration-reactivation law
 
-`covered_earnings_path_precedence_specs.v1` has exactly
-`schema_version`, `ordered_paths`, `predicate_derivation`,
-`calibrated_requirement`, `fitting_free_requirement`, `priority_law`,
-`exclusivity_law`, `decision_cutoff`, `runtime_transition_domain`,
-`prior_artifact_law`, `amendment_survival_law`, and
-`failure_disposition`.
+The sole precedence registry is the exact
+`covered_earnings_path_applicability_specs.v1` object in §16.2; there is no
+second precedence schema. Its calibrated predicate means the complete
+then-operative base/Amendment-1 calibrated source, target, methodology,
+authority, registry, and capability domain is lawfully registrable. Its
+fitting-free predicate means that calibrated predicate is false and every
+Amendment-2 requirement, including A1 and A3, passes. Its exact priority,
+exclusivity, decision cutoff, prior-artifact, amendment-survival, and failure
+values are those frozen in §16.2.
 
-Its values are:
-
-- `ordered_paths: ["CALIBRATED","DETERMINISTIC_FITTING_FREE"]`;
-- `predicate_derivation:
-  coordinator_independent_complete_then_operative_domains`;
-- `calibrated_requirement:
-  every_base_and_amendment_1_calibrated_source_target_methodology_authority_registry_and_capability_prerequisite_lawfully_registrable`;
-- `fitting_free_requirement:
-  calibrated_requirement_false_and_every_amendment_2_requirement_including_A1_and_A3_pass`;
-- `priority_law:
-  calibrated_mandatory_when_complete_otherwise_fitting_free_only_if_complete`;
-- `exclusivity_law: exactly_one_derived_path_no_caller_choice_or_hybrid`;
-- `decision_cutoff:
-  fresh_registration_before_any_production_value_output_or_model_contact`;
-- `runtime_transition_domain: []`;
-- `prior_artifact_law:
-  immutable_under_original_registration_and_never_reclassified`;
-- `amendment_survival_law:
-  amendment_2_remains_unrepealed_fallback_when_calibrated_path_active`; and
-- `failure_disposition: abort_registration`.
-
-The empty runtime-transition array has integer count zero and the canonical-
-empty-array hash. It forbids calibrated-to-fitting-free, fitting-free-to-
-calibrated, partial-family, outcome-responsive, retry-responsive, and
-gate-failure transitions inside one registration or attempt.
+The registry's empty runtime-transition array, integer-zero count, and
+canonical-empty-array hash forbid calibrated-to-fitting-free,
+fitting-free-to-calibrated, partial-family, outcome-responsive,
+retry-responsive, and gate-failure transitions inside one registration or
+attempt.
 
 The coordinator derives calibrated registrability under the complete then-
 operative base/Amendment-1 calibrated law. It must establish the full target
@@ -10938,21 +11032,12 @@ direct-law verification rows, the deterministic model, the complete empty-
 domain/capability proofs, and a fresh fitting-free output namespace. A
 calibrated failure does not itself make this predicate true.
 
-`covered_earnings_path_precedence_result.v1` has exactly
-`schema_version`, `authority_cutoff_sha256`,
-`calibrated_registrability_status`, `calibrated_domain_identity_sha256`,
-`calibrated_failure_reason_ids`, `fitting_free_authority_status`,
-`fitting_free_domain_identity_sha256`,
-`fitting_free_failure_requirement_ids`, `derived_path`,
-`derived_before_production_value_access`, `prior_artifact_disposition`, and
-`status`.
-
-The two statuses are `registrable | not_registrable` and `pass | fail`.
+The sole precedence result is the exact
+`covered_earnings_path_applicability_result.v1` object in §16.2, bound by the
+configuration and primary. There is no unbound precedence result. Its two
+statuses are `registrable | not_registrable` and `pass | fail`.
 `derived_path` is a path literal when and only when exactly one complete
-predicate holds and is otherwise null. The boolean is always true on a valid
-result. `prior_artifact_disposition` is
-`unchanged_not_reclassified`. `status` is `pass` only for a derived path and
-`fail` only for the abort branch.
+predicate holds and is otherwise null.
 
 `calibrated_failure_reason_ids` is an ordered unique projection of the exact
 failing calibrated registry/authority IDs and is nonempty iff calibrated
