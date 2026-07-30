@@ -1,23 +1,15 @@
-"""Tests for the frozen entry-11 B2/B11 target registries."""
+"""Tests for the fail-closed entry-11 registration boundary."""
 
 from __future__ import annotations
 
 import copy
-import json
 import sys
-from collections import Counter
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "scripts"
-ARTIFACT = (
-    ROOT
-    / "data"
-    / "external"
-    / "ssa_covered_earnings_calibration_targets_vintage2.json"
-)
 
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
@@ -25,86 +17,295 @@ if str(SCRIPTS) not in sys.path:
 import covered_earnings_correction_registry as registry  # noqa: E402
 
 
-def _artifact() -> dict:
-    return json.loads(ARTIFACT.read_bytes())
-
-
-def _target(target_id: str) -> dict:
-    return next(
-        row
-        for row in registry.calibration_target_specs()
-        if row["target_id"] == target_id
-    )
-
-
-def test__target_registry__pins_schema_order_and_complete_b2_b11_expansion():
-    rows = registry.calibration_target_specs()
-    assert registry.CALIBRATION_TARGET_SPECS_SCHEMA_VERSION == (
-        "calibration_target_specs.v2"
-    )
-    assert registry.TARGET_FAMILY_ORDER == (
-        "b2_wage_total_intensity",
-        "b2_se_total_intensity",
-        "b11_se_only_worker_share",
-        "b11_dual_type_worker_share",
-        "b11_wage_only_worker_share",
-        "b2_type_count_mix",
-        "b2_se_total_component_share",
-        "b2_wage_taxable_intensity",
-        "b2_se_taxable_intensity",
-        "b2_wage_taxable_fraction",
-        "b2_se_taxable_fraction",
-        "b11_taxable_earnings_component_reconciliation",
-        "b11_contributions_component_reconciliation",
-        "b11_se_contribution_share",
-    )
-    assert len(rows) == 14 * 55 == 770
-    assert [(row["target_family"], row["target_year"]) for row in rows] == [
-        (family, year)
-        for family in registry.TARGET_FAMILY_ORDER
-        for year in range(1968, 2023)
+def _complete_shape_row() -> dict:
+    year = 1968
+    source_cells = [
+        "table4.b2/1968/c5",
+        "table4.b2/1968/c11",
     ]
-    assert all(
-        set(row)
-        == {
-            "candidate_output_selector",
-            "cell_tolerance",
-            "declared_role",
-            "dependency_group",
-            "effective_role",
-            "family_tolerance",
-            "loss",
-            "loss_weight",
-            "model_year_source_class",
-            "physical_source_cell_ids",
-            "primitive_ancestry_ids",
-            "published_rounding_interval",
-            "resolved_observation_ids",
-            "role_rule_id",
-            "selection_eligible",
-            "source_artifact_vintage_id",
-            "source_cell_ids",
-            "source_status",
-            "source_year",
-            "stored_unit",
-            "target_family",
-            "target_id",
-            "target_year",
-            "transformation",
-            "verified_calendar_year",
-        }
-        for row in rows
+    return {
+        "target_id": "b2_wage_total_intensity:1968",
+        "target_family": "b2_wage_total_intensity",
+        "target_year": year,
+        "verified_calendar_year": year,
+        "role_rule_id": registry.ROLE_RULE_ID,
+        "dependency_group": "b2_component_system",
+        "source_artifact_vintage_id": ("future_authoritative_source_artifact"),
+        "source_cell_ids": source_cells,
+        "resolved_observation_ids": [
+            "observation:table4.b2/1968/c5",
+            "observation:table4.b2/1968/c11",
+        ],
+        "physical_source_cell_ids": [
+            "physical:future:table4.b2:1968:c5",
+            "physical:future:table4.b2:1968:c11",
+        ],
+        "primitive_ancestry_ids": [
+            "physical:future:table4.b2:1968:c5",
+            "physical:future:table4.b2:1968:c11",
+        ],
+        "source_year": year,
+        "source_status": "historical",
+        "model_year_source_class": "direct_questionnaire",
+        "universe": {
+            "publication_scope": "future-source-derived-scope",
+            "geography": "future-source-derived-geography",
+            "population": "future-source-derived-population",
+            "time_basis": "calendar_year",
+            "worker_unit": "future-source-derived-worker-unit",
+            "duplicate_worker_rule": "future-source-derived-rule",
+            "zero_earner_rule": "future-source-derived-rule",
+        },
+        "transformation": {
+            "operation": "divide",
+            "operand_cell_ids": source_cells,
+            "formula": "c5/c11",
+            "domain": "strictly_positive_ratio",
+        },
+        "stored_unit": "current_dollars_per_worker",
+        "published_rounding_interval": {
+            "status": "not_established_from_source_bytes"
+        },
+        "model_universe_id": "future_frozen_selector",
+        "model_weight_field": "future_registered_weight",
+        "model_weight_source_sha256": "1" * 64,
+        "universe_concordance": {
+            "official_ratio_universe": "future-official-universe",
+            "model_analogue_universe": "future-model-universe",
+            "element_mappings": [
+                {
+                    "official_element": "worker",
+                    "model_rule": "future-frozen-rule",
+                    "status": "exact_concept_match",
+                },
+                {
+                    "official_element": "national-frame",
+                    "model_rule": "closed-model-frame",
+                    "status": "registered_frame_difference",
+                },
+            ],
+            "frame_relation": "frame_relative_not_population_aligned",
+            "verification_status": "pass",
+            "source_sha256": "2" * 64,
+        },
+        "declared_role": "train",
+        "effective_role": "train",
+        "loss": "squared_log_ratio",
+        "loss_weight": 0.0,
+        "cell_tolerance": {"applicability": "not_selection_gate"},
+        "family_tolerance": {"applicability": "not_selection_gate"},
+        "selection_eligible": False,
+        "candidate_output_selector": {
+            "calendar_year": year,
+            "year_source_class": "direct_questionnaire",
+            "availability": "available",
+            "field_ids": ["future_field"],
+            "aggregation": "sum(future_field)",
+            "joint_probability_rule": "future-frozen-rule",
+            "cap_stage": "future-frozen-stage",
+            "projection_draw_reduction": "arithmetic_mean_over_20_draws",
+            "unit": "current_dollars_per_worker",
+        },
+    }
+
+
+def test__target_schema__is_exactly_the_designs_30_fields():
+    expected = (
+        "target_id",
+        "target_family",
+        "target_year",
+        "verified_calendar_year",
+        "role_rule_id",
+        "dependency_group",
+        "source_artifact_vintage_id",
+        "source_cell_ids",
+        "resolved_observation_ids",
+        "physical_source_cell_ids",
+        "primitive_ancestry_ids",
+        "source_year",
+        "source_status",
+        "model_year_source_class",
+        "universe",
+        "transformation",
+        "stored_unit",
+        "published_rounding_interval",
+        "model_universe_id",
+        "model_weight_field",
+        "model_weight_source_sha256",
+        "universe_concordance",
+        "declared_role",
+        "effective_role",
+        "loss",
+        "loss_weight",
+        "cell_tolerance",
+        "family_tolerance",
+        "selection_eligible",
+        "candidate_output_selector",
     )
-    registry.validate_calibration_target_specs(rows)
+    assert len(expected) == 30
+    assert registry.CALIBRATION_TARGET_SPEC_FIELDS == expected
+    assert registry.calibration_target_schema()["row_fields"] == list(expected)
+    registry.validate_calibration_target_row_schema(_complete_shape_row())
 
 
-def test__target_registry__pins_verified_role_authority():
+@pytest.mark.parametrize(
+    "field",
+    (
+        "universe",
+        "model_universe_id",
+        "model_weight_field",
+        "model_weight_source_sha256",
+        "universe_concordance",
+    ),
+)
+def test__target_schema__rejects_each_round_1_omission(field):
+    row = _complete_shape_row()
+    del row[field]
+    with pytest.raises(registry.RegistryValidationError, match="wrong fields"):
+        registry.validate_calibration_target_row_schema(row)
+
+
+def test__target_schema__rejects_the_old_reduced_25_field_shape():
+    row = _complete_shape_row()
+    for field in (
+        "universe",
+        "model_universe_id",
+        "model_weight_field",
+        "model_weight_source_sha256",
+        "universe_concordance",
+    ):
+        del row[field]
+    with pytest.raises(
+        registry.RegistryValidationError,
+        match="model_universe_id.*model_weight_field.*universe",
+    ):
+        registry.validate_calibration_target_specs([row])
+
+
+def test__target_schema__requires_exact_source_derived_universe_shape():
+    row = _complete_shape_row()
+    del row["universe"]["zero_earner_rule"]
+    with pytest.raises(
+        registry.RegistryValidationError,
+        match="zero_earner_rule",
+    ):
+        registry.validate_calibration_target_row_schema(row)
+
+
+@pytest.mark.parametrize(
+    ("path", "value", "match"),
+    (
+        (
+            ("model_weight_source_sha256",),
+            "not-a-digest",
+            "model_weight_source_sha256",
+        ),
+        (
+            ("universe_concordance", "verification_status"),
+            "unresolved",
+            "verification_status",
+        ),
+        (
+            ("universe_concordance", "frame_relation"),
+            "population_aligned",
+            "frame_relation",
+        ),
+        (
+            (
+                "universe_concordance",
+                "element_mappings",
+                0,
+                "status",
+            ),
+            "invented_status",
+            "status",
+        ),
+    ),
+)
+def test__target_schema__requires_passing_hashed_concordance(
+    path: tuple[object, ...],
+    value: object,
+    match: str,
+):
+    row = _complete_shape_row()
+    cursor = row
+    for key in path[:-1]:
+        cursor = cursor[key]
+    cursor[path[-1]] = value
+    with pytest.raises(registry.RegistryValidationError, match=match):
+        registry.validate_calibration_target_row_schema(row)
+
+
+def test__target_schema__recomputes_year_role_and_source_class():
+    row = _complete_shape_row()
+    row["declared_role"] = "validation"
+    with pytest.raises(registry.RegistryValidationError, match="recomputed"):
+        registry.validate_calibration_target_row_schema(row)
+    row = _complete_shape_row()
+    row["model_year_source_class"] = "structural_gap_imputed"
+    with pytest.raises(registry.RegistryValidationError, match="class drift"):
+        registry.validate_calibration_target_row_schema(row)
+
+
+def test__registration_status__resolves_all_five_missing_authorities():
+    status = registry.registration_status()
+    assert status["registration_complete"] is False
+    assert status["emitted_target_row_count"] == 0
+    assert status["covered_share_required_years"] == []
+    assert status["vb7_registration_disposition"] == (
+        "abort_no_authoritative_vintage2_or_calibration_target_specs"
+    )
+    assert {
+        item["field"] for item in status["unresolved_authority_fields"]
+    } == {
+        "universe",
+        "model_universe_id",
+        "model_weight_field",
+        "model_weight_source_sha256",
+        "universe_concordance",
+    }
+    membership = {
+        row["family"]: row["verdict"]
+        for row in status["membership_adjudications"]
+    }
+    assert membership == {
+        "b2_wage_total_intensity": "fail_closed",
+        "b2_se_total_intensity": "fail_closed",
+        "b11_worker_distribution": "fail_closed",
+    }
+
+
+@pytest.mark.parametrize(
+    "getter",
+    (
+        registry.calibration_target_specs,
+        registry.physical_source_cell_specs,
+        registry.official_source_alias_specs,
+        registry.official_source_arithmetic_rule_specs,
+        registry.frozen_registries,
+    ),
+)
+def test__final_registry_getters__all_abort(getter):
+    with pytest.raises(
+        registry.RegistrationAborted,
+        match="V-B7=.*abort_no_authoritative",
+    ):
+        getter()
+
+
+def test__complete_shape_is_not_mistaken_for_complete_authority():
+    row = _complete_shape_row()
+    with pytest.raises(
+        registry.RegistrationAborted,
+        match="unresolved fields=universe",
+    ):
+        registry.validate_calibration_target_specs([copy.deepcopy(row)])
+
+
+def test__verified_role_specs__remain_exact_and_value_independent():
     assert registry.verified_role_specs() == {
         "schema_version": "verified_role_specs.v1",
-        "role_rule_id": (
-            "verified_calendar_year_1968_2008_train_2009_2014_validation_"
-            "2015_2022_heldout_v1"
-        ),
+        "role_rule_id": registry.ROLE_RULE_ID,
         "year_basis": "verified_calendar_year",
         "ordered_ranges": [
             {"first_year": 1968, "last_year": 2008, "role": "train"},
@@ -119,353 +320,8 @@ def test__target_registry__pins_verified_role_authority():
         "derivation": "recompute_never_trust_declared_role",
         "failure_disposition": "abort",
     }
-    assert {
-        year: registry.role_for_year(year)
-        for year in (1968, 2008, 2009, 2014, 2015, 2022)
-    } == {
-        1968: "train",
-        2008: "train",
-        2009: "validation",
-        2014: "validation",
-        2015: "held_out_diagnostic",
-        2022: "held_out_diagnostic",
-    }
-
-
-def test__target_registry__pins_source_class_selection_and_weight_laws():
-    rows = registry.calibration_target_specs()
-    fitting_families = registry.TARGET_FAMILY_ORDER[:4]
-    for family in fitting_families:
-        family_rows = [row for row in rows if row["target_family"] == family]
-        assert sum(row["loss_weight"] > 0 for row in family_rows) == 35
-        assert {
-            row["target_year"]
-            for row in family_rows
-            if row["selection_eligible"]
-        } == {2010, 2012, 2014}
-    assert (
-        sum(
-            row["loss_weight"]
-            for row in rows
-            if row["target_family"] == "b2_wage_total_intensity"
-        )
-        == 0.25
-    )
-    assert (
-        sum(
-            row["loss_weight"]
-            for row in rows
-            if row["target_family"] == "b11_se_only_worker_share"
-        )
-        == 0.125
-    )
-
-    expected_classes = {
-        1968: "direct_questionnaire",
-        1996: "direct_questionnaire",
-        1997: "structural_gap_imputed",
-        1998: "direct_questionnaire",
-        2009: "structural_gap_imputed",
-        2010: "direct_questionnaire",
-        2011: "structural_gap_imputed",
-        2012: "direct_questionnaire",
-        2013: "claim_specific_boundary_gap",
-        2014: "boundary_2014",
-        2015: "projected",
-        2022: "projected",
-    }
-    assert {
-        year: registry.model_year_source_class_for_year(year)
-        for year in expected_classes
-    } == expected_classes
-
-    no_fitting_rows = [row for row in rows if row["loss"] == "no_fitting_loss"]
-    assert no_fitting_rows
-    assert all(row["loss_weight"] == 0.0 for row in no_fitting_rows)
-    assert not any(row["selection_eligible"] for row in no_fitting_rows)
-
-
-def test__target_registry__pins_validation_tolerance_tags():
-    intensity = _target("b2_wage_total_intensity:2010")
-    assert intensity["cell_tolerance"] == {
-        "applicability": "selection_gate",
-        "metric": "absolute_log_error",
-        "maximum": 0.09531017980432493,
-    }
-    assert intensity["family_tolerance"] == {
-        "applicability": "selection_gate",
-        "metric": "rms_absolute_log_error",
-        "maximum": 0.04879016416943205,
-    }
-    type_mix = _target("b11_dual_type_worker_share:2014")
-    assert type_mix["cell_tolerance"] == {
-        "applicability": "selection_gate",
-        "metric": "absolute_share_error",
-        "maximum": 0.03,
-    }
-    assert type_mix["family_tolerance"] == {
-        "applicability": "selection_gate",
-        "metric": "rms_absolute_share_error",
-        "maximum": 0.015,
-    }
-    assert _target("b2_wage_total_intensity:2009")["cell_tolerance"] == {
-        "applicability": "not_selection_gate"
-    }
-    assert _target("b11_wage_only_worker_share:2010")["cell_tolerance"] == {
-        "applicability": "not_selection_gate"
-    }
-
-
-@pytest.mark.parametrize(
-    "field",
-    (
-        "target_year",
-        "verified_calendar_year",
-        "source_year",
-    ),
-)
-def test__target_validator__rejects_integer_year_field_alias(field):
-    rows = registry.calibration_target_specs()
-    rows[0][field] = 1969
-    with pytest.raises(registry.RegistryValidationError, match="year"):
-        registry.validate_calibration_target_specs(rows)
-
-
-def test__target_validator__rejects_bool_as_year():
-    rows = registry.calibration_target_specs()
-    rows[0]["verified_calendar_year"] = True
-    with pytest.raises(registry.RegistryValidationError, match="year"):
-        registry.validate_calibration_target_specs(rows)
-
-
-@pytest.mark.parametrize(
-    ("field", "prefix"),
-    (
-        ("source_cell_ids", ""),
-        ("resolved_observation_ids", "observation:"),
-        ("physical_source_cell_ids", "physical_source_cell:"),
-        ("primitive_ancestry_ids", "physical_source_cell:"),
-    ),
-)
-def test__target_validator__rejects_source_identity_year_alias(field, prefix):
-    rows = registry.calibration_target_specs()
-    value = rows[0][field][0]
-    assert value.startswith(prefix)
-    rows[0][field][0] = value.replace("/1968/", "/1969/")
-    with pytest.raises(registry.RegistryValidationError, match="year|closure"):
-        registry.validate_calibration_target_specs(rows)
-
-
-def test__target_validator__rejects_target_id_year_alias():
-    rows = registry.calibration_target_specs()
-    rows[0]["target_id"] = "b2_wage_total_intensity:1969"
-    with pytest.raises(registry.RegistryValidationError, match="year"):
-        registry.validate_calibration_target_specs(rows)
-
-
-def test__target_validator__rejects_operand_year_alias():
-    rows = registry.calibration_target_specs()
-    rows[0]["transformation"]["operand_cell_ids"][0] = "table4.b2/1969/c5"
-    with pytest.raises(
-        registry.RegistryValidationError, match="operand|closure"
-    ):
-        registry.validate_calibration_target_specs(rows)
-
-
-def test__target_validator__rejects_candidate_selector_year_alias():
-    rows = registry.calibration_target_specs()
-    rows[0]["candidate_output_selector"]["calendar_year"] = 1969
-    with pytest.raises(registry.RegistryValidationError, match="year"):
-        registry.validate_calibration_target_specs(rows)
-
-
-@pytest.mark.parametrize("role_field", ("declared_role", "effective_role"))
-def test__target_validator__recomputes_role_never_trusts_declared(
-    role_field,
-):
-    rows = registry.calibration_target_specs()
-    row = next(row for row in rows if row["target_year"] == 2009)
-    row[role_field] = "train"
-    with pytest.raises(registry.RegistryValidationError, match="recomputed"):
-        registry.validate_calibration_target_specs(rows)
-
-
-def test__target_validator__rejects_reordered_or_extra_row_schema():
-    rows = registry.calibration_target_specs()
-    rows[0], rows[1] = rows[1], rows[0]
+    assert registry.role_for_year(1968) == "train"
+    assert registry.role_for_year(2014) == "validation"
+    assert registry.role_for_year(2022) == "held_out_diagnostic"
     with pytest.raises(registry.RegistryValidationError):
-        registry.validate_calibration_target_specs(rows)
-
-    rows = registry.calibration_target_specs()
-    rows[0]["unexpected"] = None
-    with pytest.raises(registry.RegistryValidationError, match="wrong keys"):
-        registry.validate_calibration_target_specs(rows)
-
-
-def test__alias_registry__pins_complete_same_year_relationship_classes():
-    aliases = registry.official_source_alias_specs()
-    rules = registry.official_source_arithmetic_rule_specs()
-    assert len(aliases) == 55 * (4 + 3 * 3) == 715
-    assert len(rules) == 55 * 3 == 165
-    assert Counter(row["relation"] for row in aliases) == {
-        "shared_primitive": 220,
-        "structural_formula_sibling": 495,
-    }
-    registry.validate_alias_closure(
-        registry.calibration_target_specs(),
-        aliases,
-        rules,
-    )
-
-
-def test__alias_validator__rejects_cross_year_alias():
-    aliases = registry.official_source_alias_specs()
-    aliases[0]["right_physical_cell_id"] = aliases[0][
-        "right_physical_cell_id"
-    ].replace("/1968/", "/1969/")
-    with pytest.raises(registry.RegistryValidationError, match="year"):
-        registry.validate_alias_closure(
-            registry.calibration_target_specs(),
-            aliases,
-            registry.official_source_arithmetic_rule_specs(),
-        )
-
-
-def test__alias_validator__rejects_missing_or_extra_alias():
-    aliases = registry.official_source_alias_specs()
-    with pytest.raises(registry.RegistryValidationError):
-        registry.validate_alias_closure(
-            registry.calibration_target_specs(),
-            aliases[:-1],
-            registry.official_source_arithmetic_rule_specs(),
-        )
-
-    aliases = registry.official_source_alias_specs()
-    extra = copy.deepcopy(aliases[0])
-    extra["alias_group_id"] = "unregistered_extra"
-    aliases.append(extra)
-    with pytest.raises(registry.RegistryValidationError):
-        registry.validate_alias_closure(
-            registry.calibration_target_specs(),
-            aliases,
-            registry.official_source_arithmetic_rule_specs(),
-        )
-
-
-def test__alias_validator__rejects_numeric_equality_assertion_on_structural_rule():
-    rules = registry.official_source_arithmetic_rule_specs()
-    contribution_rule = next(
-        row
-        for row in rules
-        if row["arithmetic_rule_id"] == "b11_contribution_components:1969"
-    )
-    contribution_rule["assertion_scope"] = "exact_published_value_equality"
-    contribution_rule["numeric_validation_law"] = "exact_rational_ast_equality"
-    contribution_rule["formula_ast"] = {"rational": 0}
-    with pytest.raises(
-        registry.RegistryValidationError,
-        match="numeric equality",
-    ):
-        registry.validate_alias_closure(
-            registry.calibration_target_specs(),
-            registry.official_source_alias_specs(),
-            rules,
-        )
-
-
-def test__structural_sibling_registry__pins_all_display_residual_years():
-    rows = registry.structural_sibling_specs()
-    registry.validate_structural_sibling_specs(rows)
-    contribution_rows = [
-        row for row in rows if "contributions" in row["target_id"]
-    ]
-    taxable_rows = [
-        row for row in rows if "taxable_earnings" in row["target_id"]
-    ]
-    assert {
-        row["verified_calendar_year"]: row["published_display_residual"]
-        for row in contribution_rows
-        if row["published_display_residual"]
-    } == {
-        1969: -1,
-        1971: -1,
-        1986: 1,
-        1993: -1,
-        2001: 1,
-        2010: -1,
-        2019: 1,
-        2021: 1,
-    }
-    assert all(row["published_display_residual"] == 0 for row in taxable_rows)
-
-
-def test__1969_contributions__is_structural_only_not_exact_equality():
-    row = next(
-        row
-        for row in registry.structural_sibling_specs()
-        if row["target_id"]
-        == "b11_contributions_component_reconciliation:1969"
-    )
-    assert row == {
-        "structural_sibling_id": (
-            "b11_contributions_component_reconciliation:1969:"
-            "display_components"
-        ),
-        "target_id": ("b11_contributions_component_reconciliation:1969"),
-        "verified_calendar_year": 1969,
-        "source_cell_ids": [
-            "table4.b11/1969/contributions_total",
-            "table4.b11/1969/contributions_wage",
-            "table4.b11/1969/contributions_self_employment",
-        ],
-        "relation": "structural_formula_sibling",
-        "arithmetic_rule_id": "b11_contribution_components:1969",
-        "assertion_scope": "structural_dependence_only",
-        "numeric_validation_law": (
-            "not_applicable_no_published_numeric_assertion"
-        ),
-        "formula_ast": None,
-        "published_display_residual": -1,
-        "stored_display_residual": -1_000_000,
-        "rounding_disposition": "rounding_interval_unavailable",
-    }
-    target = _target("b11_contributions_component_reconciliation:1969")
-    assert target["effective_role"] == "train"
-    assert target["loss"] == "no_fitting_loss"
-    assert target["loss_weight"] == 0.0
-    assert target["selection_eligible"] is False
-
-
-def test__structural_sibling_validator__recomputes_committed_observations():
-    registry.validate_structural_sibling_observations(
-        _artifact()["observations"]
-    )
-
-
-def test__structural_sibling_validator__rejects_changed_1969_component():
-    observations = _artifact()["observations"]
-    row = next(
-        row
-        for row in observations
-        if row["source_cell_id"] == "table4.b11/1969/contributions_wage"
-    )
-    assert row["as_published"] == "31,501"
-    row["as_published"] = "31,500"
-    with pytest.raises(
-        registry.RegistryValidationError,
-        match="observed residual",
-    ):
-        registry.validate_structural_sibling_observations(observations)
-
-
-def test__frozen_registry_getters__return_deep_copies_and_validate():
-    first = registry.frozen_registries()
-    second = registry.frozen_registries()
-    first["calibration_target_specs"][0]["target_year"] = 1969
-    assert second["calibration_target_specs"][0]["target_year"] == 1968
-    registry.validate_frozen_registries(
-        calibration_targets=second["calibration_target_specs"],
-        aliases=second["official_source_alias_specs"],
-        arithmetic_rules=second["official_source_arithmetic_rule_specs"],
-        structural_siblings=second["structural_sibling_specs"],
-    )
+        registry.role_for_year(True)

@@ -4,8 +4,8 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `b0c60df`
-- Current phase: replace the reduced target registry with exact-schema,
-  source-identity evidence and a mandatory registration abort.
+- Current phase: build source-identity evidence under the mandatory
+  registration abort.
 - Constraint: use committed source bytes only; do not capture network data.
 
 ## Done
@@ -28,14 +28,20 @@
 - Added source re-resolution to legacy artifact validation and proved a
   coherently changed/rehashed cell is rejected.
 - Finding-1 focused tests pass: `11 passed`.
+- Replaced the false 25-field target export with the exact 30-field
+  `calibration_target_specs.v2` schema and exact nested universe/concordance
+  laws.
+- Resolved all five formerly omitted fields: the committed repository cannot
+  supply their required immutable authority, so no target row is emitted and
+  every final-registry getter aborts. No placeholder claims a passing
+  concordance.
+- Finding-2 focused tests pass: `21 passed`.
 
 ## Next
 
-1. Replace the false 25-field `calibration_target_specs.v2` export with the
-   exact 30-field law and reject every unresolved authority field.
-2. Build and validate the 12-field physical-cell and proven alias evidence,
+1. Build and validate the 12-field physical-cell and proven alias evidence,
    including the 24 vintage-1 B11 republications, without certifying it as a
    complete final registry.
-3. Pin independent canonical evidence-registry bytes and digests.
-4. Add tier and crafted parser-attack coverage, run required suites, and record
+2. Pin independent canonical evidence-registry bytes and digests.
+3. Add tier and crafted parser-attack coverage, run required suites, and record
    their tails in the final report.
