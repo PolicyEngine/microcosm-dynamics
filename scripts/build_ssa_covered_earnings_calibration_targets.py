@@ -1,11 +1,15 @@
-"""Verify the SSA source evidence for a possible vintage-2 target artifact.
+"""Build the amended SSA covered-earnings vintage-2 source artifact.
 
 This entry-11 extraction is deliberately offline.  It reuses the entry-10
-capture verifier and HTML parser and reads only committed source bytes.  The
-Table 4.B2 and Table 4.B11 extraction is complete, but the committed bytes do
-not resolve the registration-required V-B7 worker-share universe or all
-worker-membership cases.  Consequently this module deliberately cannot emit
-the append-only vintage-2 authority.
+capture verifier and HTML parser and reads only committed source bytes.  Under
+amended design section 15.3, the complete Table 4.B2 and Table 4.B11
+extraction is sufficient for the source-only artifact.  The optional covered
+worker-share block is the amendment's exact immutable
+``unavailable_source_absent`` object.
+
+This artifact does not settle the separate section 6.1 worker-membership
+prerequisites for calibration-target registration.  The registry therefore
+continues to fail closed where those facts remain unresolved.
 
 The committed source rows cited by the ratified design are:
 
@@ -59,18 +63,35 @@ OUT_PATH = (
     / "ssa_covered_earnings_calibration_targets_vintage2.json"
 )
 
-SCHEMA_VERSION = "ssa_covered_earnings_calibration_targets.v1"
+SCHEMA_VERSION = "ssa_covered_earnings_calibration_targets.v2"
 ARTIFACT_VINTAGE_ID = "ssa_covered_earnings_calibration_targets.vintage2"
 ARTIFACT_ROLE = "official_calibration_target_source_only"
 YEAR_BASIS = "calendar_year"
 REQUIRED_CALENDAR_YEARS = tuple(range(1968, 2023))
-COVERED_SHARE_REQUIRED_YEARS: tuple[int, ...] = ()
 CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 
 # Replaced with the first coherent builder commit before the artifact is
 # committed.  Keeping the pin literal makes an offline rebuild independent of
 # the current checkout's HEAD.
 EXTRACTION_IMPLEMENTATION_COMMIT = "14efbded2b6d02bbfe0014a7b059068a733a1e11"
+
+OPTIONAL_COVERED_SHARE_UNAVAILABLE = {
+    "status": "unavailable_source_absent",
+    "failure_reason": (
+        "no_qualifying_literal_as_published_ssa_worker_share_series_in_"
+        "registered_sources"
+    ),
+    "covered_share_required_years": [],
+    "ssa_covered_share": [],
+    "source_document_manifest": [],
+    "observations": [],
+    "source_activation_condition_id": (
+        "literal_as_published_ssa_covered_worker_share_cells_v1"
+    ),
+    "target_reactivation_condition_id": (
+        "future_ratified_amendment_and_fresh_registration_required_v1"
+    ),
+}
 
 SOURCE_DOCUMENT_ID = "ssa_supplement_2025_4b"
 SOURCE_FILENAME = "supplement2025_4b.html"
@@ -480,7 +501,6 @@ def _required_source_cell_ids() -> dict[str, list[str]]:
             for year in REQUIRED_CALENDAR_YEARS
             for spec in TABLE4_B11_COMPONENT_SPECS
         ],
-        "ssa_covered_share": [],
     }
 
 
@@ -1620,11 +1640,7 @@ def extract_b2_b11_source_evidence() -> dict[str, Any]:
     observations, literals = _extract_observations(tables)
     evidence = {
         "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
-        "required_source_cell_ids": {
-            key: value
-            for key, value in _required_source_cell_ids().items()
-            if key != "ssa_covered_share"
-        },
+        "required_source_cell_ids": _required_source_cell_ids(),
         "source_document_manifest": _source_document_manifest(entries),
         "observations": observations,
         "cross_table_discrepancies": _cross_table_discrepancies(literals),
@@ -1871,14 +1887,14 @@ def _validate_cross_table_discrepancies(artifact: Mapping[str, Any]) -> None:
 
 
 def validate_artifact(artifact: Mapping[str, Any]) -> None:
-    """Apply the extraction unit's strict §6 schema and cell laws."""
+    """Apply the amended §15.3 schema, integrity, and source-cell laws."""
     expected_top_level = {
         "artifact_role",
         "artifact_vintage_id",
-        "covered_share_required_years",
         "cross_table_discrepancies",
         "integrity",
         "observations",
+        "optional_covered_share",
         "required_calendar_years",
         "required_source_cell_ids",
         "schema_version",
@@ -1893,8 +1909,8 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
         "artifact_role": ARTIFACT_ROLE,
         "year_basis": YEAR_BASIS,
         "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
-        "covered_share_required_years": [],
         "required_source_cell_ids": _required_source_cell_ids(),
+        "optional_covered_share": OPTIONAL_COVERED_SHARE_UNAVAILABLE,
     }
     for key, expected in expected_literals.items():
         if artifact[key] != expected:
@@ -1939,32 +1955,47 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
             f"content_sha256 {integrity['content_sha256']} != "
             f"{expected_content_sha256}"
         )
-    disposition = vb7_adjudication()["registration_disposition"]
-    raise RegistrationAborted(
-        "V-B7 and worker-membership authority are unresolved; "
-        f"{disposition}"
-    )
 
 
 def build() -> dict[str, Any]:
-    """Abort because committed bytes cannot establish the full authority."""
+    """Build and validate the exact amended vintage-2 source authority."""
 
-    extract_b2_b11_source_evidence()
-    adjudication = vb7_adjudication()
-    raise RegistrationAborted(
-        "cannot emit ssa_covered_earnings_calibration_targets.vintage2: "
-        f"{adjudication['registration_disposition']}"
-    )
+    evidence = extract_b2_b11_source_evidence()
+    artifact = {
+        "schema_version": SCHEMA_VERSION,
+        "artifact_vintage_id": ARTIFACT_VINTAGE_ID,
+        "artifact_role": ARTIFACT_ROLE,
+        "year_basis": YEAR_BASIS,
+        "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
+        "required_source_cell_ids": evidence["required_source_cell_ids"],
+        "optional_covered_share": copy.deepcopy(
+            OPTIONAL_COVERED_SHARE_UNAVAILABLE
+        ),
+        "source_document_manifest": evidence["source_document_manifest"],
+        "observations": evidence["observations"],
+        "cross_table_discrepancies": evidence["cross_table_discrepancies"],
+        "integrity": {
+            "canonicalization": CANONICALIZATION,
+            "content_sha256": "0" * 64,
+            "extraction_implementation_commit": (
+                EXTRACTION_IMPLEMENTATION_COMMIT
+            ),
+            "reproduced_from_source_bytes": True,
+        },
+    }
+    artifact["integrity"]["content_sha256"] = _content_sha256(artifact)
+    validate_artifact(artifact)
+    return artifact
 
 
 def render() -> bytes:
-    """Abort instead of rendering an incomplete object under the final ID."""
+    """Render the validated artifact as canonical bytes."""
 
     return entry10.canonical_json_bytes(build())
 
 
 def main() -> None:
-    render()
+    OUT_PATH.write_bytes(render())
 
 
 if __name__ == "__main__":

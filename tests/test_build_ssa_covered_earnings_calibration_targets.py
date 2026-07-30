@@ -1,4 +1,4 @@
-"""Source reproduction and fail-closed tests for entry-11 extraction."""
+"""Source reproduction and amended vintage-2 tests for entry 11."""
 
 from __future__ import annotations
 
@@ -79,15 +79,36 @@ def _extract_after_source_mutation(old: bytes, new: bytes):
     return builder._extract_observations(builder._select_tables(mutated))
 
 
-def test__vintage2_authority__is_absent_and_build_fails_closed():
-    assert not ARTIFACT.exists()
-    with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
-        builder.build()
-    with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
-        builder.render()
+def test__vintage2_authority__builds_with_exact_amended_shape():
+    artifact = builder.build()
+    assert set(artifact) == {
+        "artifact_role",
+        "artifact_vintage_id",
+        "cross_table_discrepancies",
+        "integrity",
+        "observations",
+        "optional_covered_share",
+        "required_calendar_years",
+        "required_source_cell_ids",
+        "schema_version",
+        "source_document_manifest",
+        "year_basis",
+    }
+    assert artifact["schema_version"] == (
+        "ssa_covered_earnings_calibration_targets.v2"
+    )
+    assert set(artifact["required_source_cell_ids"]) == {
+        "table4_b2",
+        "table4_b11",
+    }
+    assert artifact["optional_covered_share"] == (
+        builder.OPTIONAL_COVERED_SHARE_UNAVAILABLE
+    )
+    builder.validate_artifact(artifact)
+    assert builder.render() == builder.entry10.canonical_json_bytes(artifact)
 
 
-def test__b2_b11_evidence__is_complete_and_ordered_without_minting_v2():
+def test__b2_b11_evidence__is_complete_and_ordered():
     evidence = _evidence()
     assert set(evidence) == {
         "cross_table_discrepancies",
@@ -407,12 +428,12 @@ def test__membership_adjudication__fails_required_fitting_families():
 
 
 def test__partial_round1_shape__is_never_accepted_as_vintage2():
-    with pytest.raises(builder.RegistrationAborted, match="V-B7"):
+    with pytest.raises(ValueError, match="top-level fields"):
         builder.validate_artifact(_partial_legacy_artifact())
 
 
 def test__validator__reresolves_coherently_rehashed_cell_from_source_bytes():
-    artifact = _partial_legacy_artifact()
+    artifact = builder.build()
     row = next(
         row
         for row in artifact["observations"]
@@ -589,7 +610,7 @@ def test__vb7_fragment_hashes__come_from_verified_source_text():
 
 
 def test__partial_attack_helper__has_valid_self_hash_before_mutation():
-    artifact = _partial_legacy_artifact()
+    artifact = builder.build()
     preimage = copy.deepcopy(artifact)
     preimage["integrity"]["content_sha256"] = "0" * 64
     assert (
