@@ -44,6 +44,8 @@
   exercise parser defense in depth.
 - Both entry-11 modules now collect exclusively as `artifact`: `37 tests
   collected`; extraction tests pass: `16 passed`.
+- Full collection resolves to 3,980 tests: 822 unit, 1,675 artifact, 804
+  integration-PSID, 520 legacy reproduction, and 159 PolicyEngine-oracle.
 
 ## Next
 
