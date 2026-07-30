@@ -9293,3 +9293,270 @@ is `pass` only when the path-specification law above holds. On the currently
 adjudicated source facts, the calibrated status is `not_registrable`, but
 Amendment 2 alone still does not make the fitting-free authority status pass:
 A1 and A3 remain independent registration-time requirements under §16.4.
+
+### 16.3 The named deterministic classification and measurement model
+
+The fitting-free production model is
+`option_a_zero_fit_deterministic_v1`. It is a model law, not a member of
+`candidate_specs`, a zero-iteration fit, a selected starting vector, or an
+optimizer result. Its frozen registry is
+`deterministic_zero_fit_model_specs.v1`, with exactly:
+
+`schema_version`, `model_id`, `correction_path`,
+`direct_classification_law`, `coverage_default`,
+`mixed_allocation_default`, `measurement_case_specs`,
+`component_aggregation_law`, `draw_law`, `reason_code_order`,
+`forbidden_capabilities`, and `failure_disposition`.
+
+The first three literals are respectively
+`deterministic_zero_fit_model_specs.v1`,
+`option_a_zero_fit_deterministic_v1`, and
+`DETERMINISTIC_FITTING_FREE`. `failure_disposition` is
+`abort_registration`. `forbidden_capabilities` is exactly:
+
+```json
+[
+  "official_target_value_decoder",
+  "target_value_packet",
+  "fitting_loss",
+  "optimizer",
+  "candidate_registry",
+  "candidate_evaluator",
+  "selector",
+  "model_choice",
+  "fitting_tolerance_evaluator",
+  "target_result",
+  "target_use_trace"
+]
+```
+
+The absence of those capabilities is enforced structurally in §§16.4–16.6.
+This array is a closed prohibition registry, not an assertion that can make a
+present capability lawful.
+
+#### 16.3.1 Direct, modelable, unresolved, and nonremuneration records
+
+`direct_classification_law` has exactly
+`historical_rule_registry_id`, `required_authority_classes`,
+`controlling_result_law`, `missing_microfact_fold`,
+`optional_authority_law`, `untyped_remuneration_law`, and
+`nonremuneration_law`. Its values preserve the complete §§4.1 and 5.1
+machinery:
+
+- `historical_rule_registry_id` names the fitting-free registration's exact
+  `historical_coverage_rule_specs.v1` bytes.
+- `required_authority_classes` is exactly
+  `["registration_required","direct_only_optional"]`. Every
+  `registration_required` authority needed for legal classification,
+  including complete historical Section 218 and SECA law, must be
+  `verified`; fitting-free execution is not missing-authority fallback.
+- `controlling_result_law` is
+  `direct_law_controlling_result_v1_exact_one_hot`. When every applicable
+  fact is present, all transforms, rank precedence, same-rank agreement,
+  lower-rank noncontradiction, status typing, reason codes, and the resulting
+  one-hot vector remain exactly §4.1.
+- `missing_microfact_fold` is
+  `registered_actions_unresolved_dominates_then_modelable`. For a verified
+  rule whose person-record microfact is absent, the transform remains
+  unexecuted and only its predeclared `modelable | unresolved` action enters
+  the fold. A runner cannot provide presence, value, action, or status.
+- `optional_authority_law` is
+  `direct_only_optional_exact_per_inventory_key_consequence`. An absent or
+  conflicting optional authority applies only its frozen key-specific
+  consequence and never supplies a guessed legal disposition.
+- `untyped_remuneration_law` is
+  `require_registered_unresolved_consequence_never_infer_mixed`. A present
+  amount that cannot be typed `employee | self_employment | mixed` may create
+  one provenance-retaining unresolved record only when its independently
+  registered consequence is `unresolved`; a `modelable` consequence without a
+  homogeneous type aborts. It can never be divided by a coverage probability.
+- `nonremuneration_law` is
+  `lineage_and_reconciliation_only_no_covered_earnings_atomic_record`.
+  `nonremuneration` remains a valid §4.2 value-code disposition, but it is not
+  silently promoted to the three-type production remuneration domain. Its
+  exact exclusion and source amount remain in the reconciliation/crosswalk
+  evidence; it creates no §3.1 gain, loss, status, statutory base, or worker
+  incidence. A reconciliation that cannot exclude it exactly once aborts.
+
+`coverage_default` has exactly `applicability`, `status_order`,
+`modelable_employee`, `modelable_self_employment`, `unresolved`,
+`direct_override`, `calendar_law`, and `derivation`. Its values are:
+
+- `applicability: homogeneous_records_after_direct_law_fold`;
+- `status_order:
+  ["covered_wage","covered_self_employment","noncovered","unresolved"]`;
+- `modelable_employee` equals
+  `[{"numerator":1,"exponent":-1},{"numerator":0,"exponent":0},
+  {"numerator":1,"exponent":-1},{"numerator":0,"exponent":0}]`;
+- `modelable_self_employment` equals
+  `[{"numerator":0,"exponent":0},{"numerator":1,"exponent":-1},
+  {"numerator":1,"exponent":-1},{"numerator":0,"exponent":0}]`;
+- `unresolved` equals
+  `[{"numerator":0,"exponent":0},{"numerator":0,"exponent":0},
+  {"numerator":0,"exponent":0},{"numerator":1,"exponent":0}]`;
+- `direct_override: registered_direct_one_hot`;
+- `calendar_law:
+  constant_for_every_modelable_year_role_era_and_source_class`; and
+- `derivation:
+  frozen_logistic_zero_link_value_not_a_parameter_or_estimate`.
+
+Thus \(q=1/2\) is an exact dyadic literal. It is not a prior fitted from the
+official aggregates. A modelable employee record has status vector
+\([1/2,0,1/2,0]\), a modelable SE record has
+\([0,1/2,1/2,0]\), and an unresolved record has
+\([0,0,0,1]\). Direct one-hot classification overrides the default.
+Unknown never defaults wholly to covered, noncovered, private, zero, or a
+full-year amount. The fitting-free action trace is
+`direct_law_action_trace.fitting_free.v1`: it retains the complete v1 row
+shape and laws, except a final `modeled` disposition carries the applicable
+exact vector above instead of `candidate_probability_pending`. A pending
+marker, candidate probability, extra status branch, or fitted unresolved
+share is invalid.
+
+#### 16.3.2 Mixed remuneration and measurement cases
+
+`mixed_allocation_default` has exactly `applicability`, `wage_share`,
+`self_employment_share`, `positive_parent_law`, `negative_parent_law`,
+`child_id_law`, `coverage_group_law`, `uncertainty_law`, and
+`projected_application`. The two shares are each the exact dyadic
+`{"numerator":1,"exponent":-1}`. A literal mixed parent always creates both
+stable children `<source_component_id>#wage` and
+`<source_component_id>#self_employment`. For a positive parent, each child
+receives exactly one half of the rational amount. For a negative parent, its
+nonnegative magnitude is split exactly in half before each child takes the
+case law below: the wage half is a negative non-SE anomaly and the SE half is
+an admissible loss only when the registered effective-year SE rule admits
+that concept and aggregation group. Zero creates both zero children where
+the independently frozen component domain requires the two identities; it
+never creates a positive amount.
+
+The two child amounts sum exactly to the signed parent with zero rational
+residual. Both children retain the parent inventory identity and mixed
+reason, never share a coverage-state group, and receive no mixed-share draw
+or measurement-residual draw. The same exact half split applies to the two
+synthetic boundary/projected IDs `projected#wage` and
+`projected#self_employment`. A negative projected total remains the base
+non-SE source anomaly and produces no gain unless a separate admissible
+source identifies an SE loss. A structural or claim-specific gap is never
+split or measured anew: the benefit assembler derives its component channels
+after the operative-claim-year cutoff under the unchanged gap law.
+
+`measurement_case_specs` is exactly the following ordered four-row registry.
+Every row has exactly `case_id`, `predicate`, `gain_amount`,
+`se_loss_magnitude`, `net_amount`, `measurement_delta`, and `reason_code`.
+Here \(A\) is the exact signed adjudicated child/source amount and all
+arithmetic is rational microdollars:
+
+| `case_id` | Exact predicate | Gain | SE loss magnitude | Net | Delta | `reason_code` |
+|---|---|---:|---:|---:|---:|---|
+| `positive_identity` | \(A>0\) | \(A\) | \(0\) | \(A\) | \(0\) | `zero_fit_positive_identity_measurement_v1` |
+| `exact_zero_preserved` | \(A=0\) | \(0\) | \(0\) | \(0\) | \(0\) | `zero_fit_exact_zero_preserved_v1` |
+| `admissible_se_loss_identity` | \(A<0\), homogeneous SE child, and the registered effective-year SE law admits its concept and `se_aggregation_group_id` | \(0\) | \(-A\) | \(A\) | \(0\) | `zero_fit_admissible_se_loss_identity_v1` |
+| `negative_anomaly_zero_adjusted` | \(A<0\) and the preceding SE-loss predicate is false | \(0\) | \(0\) | \(0\) | \(-A\) | `zero_fit_negative_nonse_or_ineligible_loss_anomaly_v1` |
+
+The four predicates are mutually exclusive and exhaustive over finite signed
+amounts. The positive multiplier is therefore the exact rational one
+`{"numerator":1,"denominator":1}`, the zero map is literal zero, and no era
+effect, slope, rank transform, residual, coefficient, or hidden rounding
+exists. Exact-once recovery of an independently inventoried farm or business
+component still occurs before this registry. A remaining unsupported zero
+never becomes a positive job or amount.
+
+`reason_code_order` is exactly:
+
+```json
+[
+  "zero_fit_modelable_employee_half_coverage_v1",
+  "zero_fit_modelable_se_half_coverage_v1",
+  "zero_fit_equal_mixed_remuneration_split_v1",
+  "zero_fit_positive_identity_measurement_v1",
+  "zero_fit_exact_zero_preserved_v1",
+  "zero_fit_admissible_se_loss_identity_v1",
+  "zero_fit_negative_nonse_or_ineligible_loss_anomaly_v1",
+  "zero_fit_projected_equal_remuneration_split_v1",
+  "zero_fit_untyped_registered_unresolved_v1",
+  "zero_fit_nonremuneration_lineage_only_v1"
+]
+```
+
+Each atomic row first retains its complete inherited source, seam, legal, and
+missing-fact reason order, then appends every applicable zero-fit code in the
+order above. Missing, extra, duplicate, or reordered applicable codes fail
+G06/G09/G16.
+
+#### 16.3.3 Status allocation, aggregation, statutory ordering, and draws
+
+For a nonnegative adjusted gain \(A\), a modelable wage record allocates
+\([A/2,0,A/2,0]\) and a modelable SE record allocates
+\([0,A/2,A/2,0]\) across the frozen status order. For an admissible SE-loss
+magnitude \(L\), a modelable SE record allocates
+\([0,L/2,L/2,0]\). An unresolved record allocates its entire gain or
+admissible loss magnitude to the fourth status. A direct record allocates the
+entire applicable channel to its one-hot status. A realized draw allocates
+the entire applicable channel to its realized status. Wage loss allocation
+remains literal zero. Both expected gain and loss allocations reconcile
+separately with zero rational residual.
+
+`component_aggregation_law` has exactly `reconciliation`,
+`covered_wage_aggregation`, `covered_se_aggregation`,
+`noncovered_and_unresolved_channels`, `loss_only_and_net_zero`,
+`statutory_order`, `expected_value_nonlinearity`, and
+`failure_disposition`. It preserves these exact base laws:
+
+1. reconcile role totals, jobs, farm, business, and mixed children exactly
+   once under the registered crosswalk before status aggregation;
+2. sum only `covered_wage` nonnegative gains into uncapped covered employee
+   wages;
+3. sum covered SE gains and loss magnitudes only inside the registered
+   same-person/year/service `se_aggregation_group_id`; an SE loss never
+   offsets a wage or another forbidden group;
+4. retain noncovered and unresolved gains and loss magnitudes in their
+   separate published channels and exclude them from every OASDI base;
+5. for a loss-only or net-zero SE group, retain the signed
+   `covered_se_net_earnings_pre_seca` at or below zero, set
+   `covered_seca_base_uncapped` and `oasdi_taxable_se_person` to zero, and
+   leave wage channels unchanged; and
+6. inside every deterministic joint state, apply the exact effective-year
+   eligible concept, SECA factor, and threshold; floor the SECA base
+   nonnegative; apply the person-year wage maximum first; and let SE consume
+   only the remaining combined maximum.
+
+`expected_value_nonlinearity` is
+`enumerate_joint_states_then_apply_threshold_and_cap_then_weight`. Applying a
+threshold, floor, or cap to expected marginal components is forbidden.
+Internal taxable-earnings and contribution reconciliation remain G04/G06/G07
+correctness evidence; fitting-free status does not convert them into a target
+or tolerance.
+
+`draw_law` names `draw_spec.fitting_free.v1`. It preserves the base 20
+correction draws, exact status CDF order, coverage-state dependence groups,
+between-group and between-year conditional independence, exact finite joint
+state law, projection-by-correction crossing, prefix-stability tests, and
+forbidden RNG streams. Its namespace tuple replaces only the first literal:
+
+```text
+(
+  "covered_earnings.deterministic_fitting_free.v1",
+  substantive_model_sha256,
+  stable_person_id,
+  calendar_year,
+  coverage_state_group_id,
+  variate_name,
+  correction_draw_index,
+  residual_counter
+)
+```
+
+The SHA-256 midpoint generator and all other namespace fields are unchanged.
+`coverage_status` remains the sole nondegenerate variate and residual counter
+remains zero. Direct and unresolved one-hot groups consume no keyed uniform.
+A modelable half-probability group consumes exactly one uniform per registered
+draw; the midpoint can never equal \(1/2\), so `u < 1/2` realizes the
+type-compatible covered status and `u > 1/2` realizes `noncovered`.
+Wage/SE mixed children remain distinct groups. There is no mixed-allocation
+or measurement-residual variate.
+
+“Deterministic” therefore describes the frozen model specification,
+canonical input-to-output mapping, and byte-reproducible keyed draws. It does
+not claim that every status is one-hot or that status uncertainty and
+finite-grid evaluation disappeared.
