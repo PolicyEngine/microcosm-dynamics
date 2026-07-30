@@ -14,6 +14,7 @@ prerequisites can be resolved from immutable authority.
 from __future__ import annotations
 
 import copy
+import math
 import re
 from collections.abc import Mapping, Sequence
 from typing import Any
@@ -138,19 +139,114 @@ TOLERANCE_SELECTION_GATE_FIELDS = (
     "metric",
     "maximum",
 )
+PUBLISHED_ROUNDING_INTERVAL_FIELDS = (
+    "status",
+    "lower",
+    "upper",
+    "lower_closed",
+    "upper_closed",
+    "rule_source_document_id",
+    "rule_citation",
+)
 
 _HEX_64 = re.compile(r"[0-9a-f]{64}")
-_TARGET_ID = re.compile(r"(?P<family>[a-z0-9_]+):(?P<year>\d{4})")
+_TARGET_ID = re.compile(r"(?P<family>[a-z0-9_]+):(?P<year>[0-9]{4})")
+_SOURCE_CELL_ID = re.compile(
+    r"(?P<table>[^/\s]+)/(?P<year>[0-9]{4})/(?P<component>[^/\s]+)"
+)
 _MAPPING_STATUSES = {
     "exact_concept_match",
     "registered_frame_difference",
 }
-_LOSSES = {
-    "squared_log_ratio",
-    "squared_logit_error",
-    "no_fitting_loss",
+_LOSS_BY_TARGET_FAMILY = {
+    "b2_wage_total_intensity": "squared_log_ratio",
+    "b2_se_total_intensity": "squared_log_ratio",
+    "b11_se_only_worker_share": "squared_logit_error",
+    "b11_dual_type_worker_share": "squared_logit_error",
+    "ssa_precisely_universed_covered_share": "squared_logit_error",
+    "b11_wage_only_worker_share": "no_fitting_loss",
+    "b2_type_count_mix": "no_fitting_loss",
+    "b2_se_total_component_share": "no_fitting_loss",
+    "b2_wage_taxable_intensity": "no_fitting_loss",
+    "b2_se_taxable_intensity": "no_fitting_loss",
+    "b2_wage_taxable_fraction": "no_fitting_loss",
+    "b2_se_taxable_fraction": "no_fitting_loss",
+    "b11_taxable_earnings_component_reconciliation": "no_fitting_loss",
+    "b11_contributions_component_reconciliation": "no_fitting_loss",
+    "b11_se_contribution_share": "no_fitting_loss",
 }
 _SOURCE_STATUSES = {"historical", "preliminary"}
+_AVAILABLE_SOURCE_CLASSES = {
+    "direct_questionnaire",
+    "boundary_2014",
+    "projected",
+}
+_UNAVAILABLE_SOURCE_CLASSES = {
+    "structural_gap_imputed",
+    "claim_specific_boundary_gap",
+}
+_FITTING_FAMILIES = frozenset(
+    family
+    for family, loss in _LOSS_BY_TARGET_FAMILY.items()
+    if loss != "no_fitting_loss"
+)
+_INTENSITY_FAMILIES = {
+    "b2_wage_total_intensity",
+    "b2_se_total_intensity",
+}
+_B11_SELECTION_FAMILIES = {
+    "b11_se_only_worker_share",
+    "b11_dual_type_worker_share",
+}
+_SOURCE_COMPONENTS_BY_TARGET_FAMILY = {
+    "b2_wage_total_intensity": ("table4.b2", ("c5", "c11")),
+    "b2_se_total_intensity": ("table4.b2", ("c8", "c12")),
+    "b11_se_only_worker_share": (
+        "table4.b11",
+        ("workers_total", "workers_wage"),
+    ),
+    "b11_dual_type_worker_share": (
+        "table4.b11",
+        ("workers_total", "workers_wage", "workers_self_employment"),
+    ),
+    "b11_wage_only_worker_share": (
+        "table4.b11",
+        ("workers_total", "workers_self_employment"),
+    ),
+    "b2_type_count_mix": ("table4.b2", ("c11", "c12")),
+    "b2_se_total_component_share": ("table4.b2", ("c5", "c8")),
+    "b2_wage_taxable_intensity": ("table4.b2", ("c11", "c13")),
+    "b2_se_taxable_intensity": ("table4.b2", ("c12", "c17")),
+    "b2_wage_taxable_fraction": ("table4.b2", ("c5", "c13")),
+    "b2_se_taxable_fraction": ("table4.b2", ("c8", "c17")),
+    "b11_taxable_earnings_component_reconciliation": (
+        "table4.b11",
+        (
+            "taxable_earnings_total",
+            "taxable_earnings_wage",
+            "taxable_earnings_self_employment",
+        ),
+    ),
+    "b11_contributions_component_reconciliation": (
+        "table4.b11",
+        (
+            "contributions_total",
+            "contributions_wage",
+            "contributions_self_employment",
+        ),
+    ),
+    "b11_se_contribution_share": (
+        "table4.b11",
+        ("contributions_wage", "contributions_self_employment"),
+    ),
+}
+_AVAILABLE_SELECTOR_SCALAR_FIELDS = (
+    "aggregation",
+    "joint_probability_rule",
+    "cap_stage",
+    "projection_draw_reduction",
+    "unit",
+)
 
 UNRESOLVED_AUTHORITY_FIELDS = (
     {
@@ -281,6 +377,15 @@ def calibration_target_schema() -> dict[str, Any]:
         "candidate_output_selector_fields": list(
             CANDIDATE_OUTPUT_SELECTOR_FIELDS
         ),
+        "published_rounding_interval_fields": list(
+            PUBLISHED_ROUNDING_INTERVAL_FIELDS
+        ),
+        "tolerance_not_applicable_fields": list(
+            TOLERANCE_NOT_APPLICABLE_FIELDS
+        ),
+        "tolerance_selection_gate_fields": list(
+            TOLERANCE_SELECTION_GATE_FIELDS
+        ),
     }
 
 
@@ -362,10 +467,67 @@ def _ordered_unique_strings(
     return value
 
 
+def _finite_json_number(value: object, where: str) -> int | float:
+    if type(value) not in {int, float}:
+        raise RegistryValidationError(f"{where} must be a finite JSON number")
+    try:
+        finite = math.isfinite(value)
+    except OverflowError:
+        finite = False
+    if not finite:
+        raise RegistryValidationError(f"{where} must be a finite JSON number")
+    return value
+
+
+def _source_cell_year(value: object, where: str) -> int:
+    source_cell_id = _nonempty_string(value, where)
+    match = _SOURCE_CELL_ID.fullmatch(source_cell_id)
+    if match is None:
+        raise RegistryValidationError(
+            f"{where} must encode an ASCII calendar year"
+        )
+    return _json_year(int(match.group("year")), where)
+
+
 def _validate_universe(value: object, where: str) -> None:
     universe = _exact_keys(value, UNIVERSE_FIELDS, where)
     for field in UNIVERSE_FIELDS:
         _nonempty_string(universe[field], f"{where}.{field}")
+
+
+def _validate_rounding_interval(
+    value: object,
+    row: Mapping[str, Any],
+) -> None:
+    where = f"{row['target_id']}.published_rounding_interval"
+    interval = _exact_keys(
+        value,
+        PUBLISHED_ROUNDING_INTERVAL_FIELDS,
+        where,
+    )
+    status = interval["status"]
+    other_fields = PUBLISHED_ROUNDING_INTERVAL_FIELDS[1:]
+    if status == "not_established_from_source_bytes":
+        if any(interval[field] is not None for field in other_fields):
+            raise RegistryValidationError(
+                f"{where} unverified values must all be null"
+            )
+        return
+    if status != "source_verified":
+        raise RegistryValidationError(f"{where}.status")
+    lower = _finite_json_number(interval["lower"], f"{where}.lower")
+    upper = _finite_json_number(interval["upper"], f"{where}.upper")
+    if lower > upper:
+        raise RegistryValidationError(f"{where} lower exceeds upper")
+    for field in ("lower_closed", "upper_closed"):
+        if type(interval[field]) is not bool:
+            raise RegistryValidationError(f"{where}.{field} must be boolean")
+    for field in ("rule_source_document_id", "rule_citation"):
+        _nonempty_string(interval[field], f"{where}.{field}")
+    if row["target_family"] in _SOURCE_COMPONENTS_BY_TARGET_FAMILY:
+        raise RegistryValidationError(
+            f"{where} B2/B11 source bytes cannot verify rounding"
+        )
 
 
 def _validate_transformation(value: object, row: Mapping[str, Any]) -> None:
@@ -439,15 +601,15 @@ def _validate_tolerance(value: object, where: str) -> None:
         raise RegistryValidationError(f"{where}.applicability")
     tolerance = _exact_keys(value, TOLERANCE_SELECTION_GATE_FIELDS, where)
     _nonempty_string(tolerance["metric"], f"{where}.metric")
-    maximum = tolerance["maximum"]
-    if type(maximum) not in {int, float} or not (0 < maximum < float("inf")):
+    maximum = _finite_json_number(tolerance["maximum"], f"{where}.maximum")
+    if maximum <= 0:
         raise RegistryValidationError(f"{where}.maximum")
 
 
 def _validate_selector(
     value: object,
     row: Mapping[str, Any],
-) -> None:
+) -> str:
     where = f"{row['target_id']}.candidate_output_selector"
     selector = _exact_keys(value, CANDIDATE_OUTPUT_SELECTOR_FIELDS, where)
     if _json_year(selector["calendar_year"], f"{where}.calendar_year") != (
@@ -456,24 +618,100 @@ def _validate_selector(
         raise RegistryValidationError(f"{where}.calendar_year mismatch")
     if selector["year_source_class"] != row["model_year_source_class"]:
         raise RegistryValidationError(f"{where}.year_source_class mismatch")
-    if selector["availability"] not in {
-        "available",
-        "not_applicable_no_claim_independent_model_analogue",
-    }:
-        raise RegistryValidationError(f"{where}.availability")
-    _ordered_unique_strings(
-        selector["field_ids"],
-        f"{where}.field_ids",
-        allow_empty=True,
+    source_class = row["model_year_source_class"]
+    if source_class in _AVAILABLE_SOURCE_CLASSES:
+        expected_availability = "available"
+    elif source_class in _UNAVAILABLE_SOURCE_CLASSES:
+        expected_availability = (
+            "not_applicable_no_claim_independent_model_analogue"
+        )
+    else:
+        raise RegistryValidationError(f"{where}.year_source_class")
+    if selector["availability"] != expected_availability:
+        raise RegistryValidationError(
+            f"{where}.availability violates source-class law"
+        )
+    if expected_availability == "available":
+        _ordered_unique_strings(
+            selector["field_ids"],
+            f"{where}.field_ids",
+        )
+        for field in _AVAILABLE_SELECTOR_SCALAR_FIELDS:
+            _nonempty_string(selector[field], f"{where}.{field}")
+        if (
+            selector["projection_draw_reduction"]
+            != "arithmetic_mean_over_20_draws"
+        ):
+            raise RegistryValidationError(f"{where}.projection_draw_reduction")
+        if selector["unit"] != row["stored_unit"]:
+            raise RegistryValidationError(f"{where}.unit mismatch")
+    else:
+        field_ids = _ordered_unique_strings(
+            selector["field_ids"],
+            f"{where}.field_ids",
+            allow_empty=True,
+        )
+        if field_ids:
+            raise RegistryValidationError(
+                f"{where}.field_ids must be empty when unavailable"
+            )
+        for field in _AVAILABLE_SELECTOR_SCALAR_FIELDS:
+            if selector[field] is not None:
+                raise RegistryValidationError(
+                    f"{where}.{field} must be null when unavailable"
+                )
+    return expected_availability
+
+
+def _expected_selection_eligibility(
+    row: Mapping[str, Any],
+    availability: str,
+) -> bool:
+    return (
+        row["effective_role"] == "validation"
+        and row["target_family"] in _FITTING_FAMILIES
+        and row["model_year_source_class"]
+        in {"direct_questionnaire", "boundary_2014"}
+        and availability == "available"
     )
-    for field in (
-        "aggregation",
-        "joint_probability_rule",
-        "cap_stage",
-        "projection_draw_reduction",
-        "unit",
-    ):
-        _nonempty_string(selector[field], f"{where}.{field}")
+
+
+def _expected_tolerances(target_family: str) -> tuple[dict, dict]:
+    if target_family in _INTENSITY_FAMILIES:
+        return (
+            {
+                "applicability": "selection_gate",
+                "metric": "absolute_log_error",
+                "maximum": 0.09531017980432493,
+            },
+            {
+                "applicability": "selection_gate",
+                "metric": "rms_absolute_log_error",
+                "maximum": 0.04879016416943205,
+            },
+        )
+    if target_family in _B11_SELECTION_FAMILIES:
+        cell_maximum = 0.03
+        family_maximum = 0.015
+    elif target_family == "ssa_precisely_universed_covered_share":
+        cell_maximum = 0.02
+        family_maximum = 0.01
+    else:
+        raise RegistryValidationError(
+            f"{target_family} has no registered selection tolerance"
+        )
+    return (
+        {
+            "applicability": "selection_gate",
+            "metric": "absolute_share_error",
+            "maximum": cell_maximum,
+        },
+        {
+            "applicability": "selection_gate",
+            "metric": "rms_absolute_share_error",
+            "maximum": family_maximum,
+        },
+    )
 
 
 def validate_calibration_target_row_schema(
@@ -481,7 +719,7 @@ def validate_calibration_target_row_schema(
     *,
     index: int = 0,
 ) -> None:
-    """Validate the exact 30-field and nested schemas for one future row."""
+    """Validate exact row-local laws without claiming foreign-key authority."""
 
     row = _exact_keys(
         value,
@@ -512,19 +750,62 @@ def validate_calibration_target_row_schema(
             )
     for field in (
         "dependency_group",
-        "source_artifact_vintage_id",
         "stored_unit",
         "model_universe_id",
         "model_weight_field",
     ):
         _nonempty_string(row[field], f"{target_id}.{field}")
-    for field in (
-        "source_cell_ids",
-        "resolved_observation_ids",
-        "physical_source_cell_ids",
-        "primitive_ancestry_ids",
+    if (
+        row["source_artifact_vintage_id"]
+        != PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID
     ):
-        _ordered_unique_strings(row[field], f"{target_id}.{field}")
+        raise RegistryValidationError(
+            f"{target_id}.source_artifact_vintage_id"
+        )
+    source_cell_ids = _ordered_unique_strings(
+        row["source_cell_ids"],
+        f"{target_id}.source_cell_ids",
+    )
+    resolved_observation_ids = _ordered_unique_strings(
+        row["resolved_observation_ids"],
+        f"{target_id}.resolved_observation_ids",
+    )
+    _ordered_unique_strings(
+        row["physical_source_cell_ids"],
+        f"{target_id}.physical_source_cell_ids",
+    )
+    _ordered_unique_strings(
+        row["primitive_ancestry_ids"],
+        f"{target_id}.primitive_ancestry_ids",
+    )
+    if len(resolved_observation_ids) != len(source_cell_ids):
+        raise RegistryValidationError(
+            f"{target_id}.resolved_observation_ids must resolve "
+            "source_cell_ids one-to-one"
+        )
+    for index, source_cell_id in enumerate(source_cell_ids):
+        if (
+            _source_cell_year(
+                source_cell_id,
+                f"{target_id}.source_cell_ids[{index}]",
+            )
+            != parsed_year
+        ):
+            raise RegistryValidationError(
+                f"{target_id}.source_cell_ids[{index}] "
+                "violates year-equality law"
+            )
+    source_components = _SOURCE_COMPONENTS_BY_TARGET_FAMILY.get(target_family)
+    if source_components is not None:
+        table_id, component_ids = source_components
+        expected_source_cell_ids = [
+            f"{table_id}/{parsed_year}/{component_id}"
+            for component_id in component_ids
+        ]
+        if source_cell_ids != expected_source_cell_ids:
+            raise RegistryValidationError(
+                f"{target_id}.source_cell_ids violate target-family law"
+            )
     if row["source_status"] not in _SOURCE_STATUSES:
         raise RegistryValidationError(f"{target_id}.source_status")
     expected_class = model_year_source_class_for_year(parsed_year)
@@ -534,6 +815,7 @@ def validate_calibration_target_row_schema(
         )
     _validate_universe(row["universe"], f"{target_id}.universe")
     _validate_transformation(row["transformation"], row)
+    _validate_rounding_interval(row["published_rounding_interval"], row)
     if (
         type(row["model_weight_source_sha256"]) is not str
         or _HEX_64.fullmatch(row["model_weight_source_sha256"]) is None
@@ -554,25 +836,85 @@ def validate_calibration_target_row_schema(
         raise RegistryValidationError(
             f"{target_id} role was not independently recomputed"
         )
-    if row["loss"] not in _LOSSES:
-        raise RegistryValidationError(f"{target_id}.loss")
-    loss_weight = row["loss_weight"]
-    if type(loss_weight) not in {int, float} or not (
-        0 <= loss_weight < float("inf")
+    if (
+        row["source_status"] == "preliminary"
+        and expected_role != "held_out_diagnostic"
     ):
-        raise RegistryValidationError(f"{target_id}.loss_weight")
+        raise RegistryValidationError(
+            f"{target_id}.source_status preliminary outside held-out role"
+        )
+    if target_family != "ssa_precisely_universed_covered_share":
+        expected_status = (
+            "preliminary" if parsed_year >= 2021 else "historical"
+        )
+        if row["source_status"] != expected_status:
+            raise RegistryValidationError(
+                f"{target_id}.source_status violates source artifact law"
+            )
+    expected_loss = _LOSS_BY_TARGET_FAMILY[target_family]
+    if row["loss"] != expected_loss:
+        raise RegistryValidationError(
+            f"{target_id}.loss must be {expected_loss}"
+        )
+    availability = _validate_selector(
+        row["candidate_output_selector"],
+        row,
+    )
     if type(row["selection_eligible"]) is not bool:
         raise RegistryValidationError(f"{target_id}.selection_eligible")
+    expected_selection_eligible = _expected_selection_eligibility(
+        row,
+        availability,
+    )
+    if row["selection_eligible"] is not expected_selection_eligible:
+        raise RegistryValidationError(
+            f"{target_id}.selection_eligible violates role/source-class law"
+        )
+    loss_weight = _finite_json_number(
+        row["loss_weight"],
+        f"{target_id}.loss_weight",
+    )
+    if loss_weight < 0:
+        raise RegistryValidationError(f"{target_id}.loss_weight")
+    weight_must_be_zero = (
+        expected_loss == "no_fitting_loss"
+        or availability == "not_applicable_no_claim_independent_model_analogue"
+        or expected_role == "held_out_diagnostic"
+    )
+    if weight_must_be_zero and loss_weight != 0:
+        raise RegistryValidationError(f"{target_id}.loss_weight must be zero")
+    positive_weight_allowed = availability == "available" and (
+        (
+            expected_role == "train"
+            and row["model_year_source_class"] == "direct_questionnaire"
+            and target_family in _FITTING_FAMILIES
+        )
+        or expected_selection_eligible
+    )
+    if loss_weight > 0 and not positive_weight_allowed:
+        raise RegistryValidationError(
+            f"{target_id}.loss_weight is positive outside a model-choice cell"
+        )
     _validate_tolerance(row["cell_tolerance"], f"{target_id}.cell_tolerance")
     _validate_tolerance(
         row["family_tolerance"],
         f"{target_id}.family_tolerance",
     )
-    if type(row["published_rounding_interval"]) is not dict:
-        raise RegistryValidationError(
-            f"{target_id}.published_rounding_interval"
+    if expected_selection_eligible:
+        expected_cell_tolerance, expected_family_tolerance = (
+            _expected_tolerances(target_family)
         )
-    _validate_selector(row["candidate_output_selector"], row)
+    else:
+        expected_cell_tolerance = {"applicability": "not_selection_gate"}
+        expected_family_tolerance = {"applicability": "not_selection_gate"}
+    if row["cell_tolerance"] != expected_cell_tolerance:
+        raise RegistryValidationError(
+            f"{target_id}.cell_tolerance violates selection law"
+        )
+    if row["family_tolerance"] != expected_family_tolerance:
+        raise RegistryValidationError(
+            f"{target_id}.family_tolerance violates selection law"
+        )
 
 
 def _abort_message() -> str:
@@ -618,7 +960,7 @@ def frozen_registries() -> dict[str, Any]:
 
 
 def validate_calibration_target_specs(value: object) -> None:
-    """Validate row schemas, then abort because authority is incomplete."""
+    """Validate row-local laws, then abort before claiming full authority."""
 
     if type(value) is not list or not value:
         raise RegistryValidationError(
@@ -645,12 +987,15 @@ __all__ = [
     "OFFICIAL_SOURCE_ALIAS_SPECS_SCHEMA_VERSION",
     "OFFICIAL_SOURCE_ARITHMETIC_RULE_SPECS_SCHEMA_VERSION",
     "PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION",
+    "PUBLISHED_ROUNDING_INTERVAL_FIELDS",
     "PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID",
     "ROLE_RULE_ID",
     "RegistrationAborted",
     "RegistryValidationError",
     "TARGET_FAMILY_ORDER",
     "TARGET_YEARS",
+    "TOLERANCE_NOT_APPLICABLE_FIELDS",
+    "TOLERANCE_SELECTION_GATE_FIELDS",
     "TRANSFORMATION_FIELDS",
     "UNIVERSE_CONCORDANCE_FIELDS",
     "UNIVERSE_ELEMENT_MAPPING_FIELDS",
