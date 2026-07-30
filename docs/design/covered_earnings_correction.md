@@ -9483,6 +9483,87 @@ The methodology `artifact_vintage_id` is an envelope value; §16.2's exact
 legacy-envelope law below is the sole way to derive it. Neither expected
 preimage asserts that a missing fixed path exists.
 
+The sole legacy-envelope rule is
+`entry11_unit1b_membership_readjudication_v2_legacy_envelope_v1`. Its
+reference bytes are the regular Git blob at
+`4baa94e25b284b42f966b58222807b3ea27b05c7:data/external/covered_earnings_membership_adjudication_v2.json`:
+the tree mode is exactly `100644`, the blob object ID is exactly
+`5d3218273557f9cd600238a6d6501c2ec665551c`, its byte length is exactly
+57,125, and SHA-256 of its complete raw bytes is exactly
+`7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14`.
+This reference identifies bytes; it is not an alternate candidate locator.
+At the adjudication cutoff the rule reads only the registered fixed path in
+the cutoff tree. If that path is absent, the methodology row has
+`availability: absent`, an empty candidate array, and `not_evaluable` as
+specified above. No reference-commit bytes are injected into that cutoff.
+
+If the fixed cutoff-tree path is present, a strict parser must reject
+duplicate keys and must find exactly these top-level keys, with none missing
+or extra:
+
+```json
+[
+  "adjudication_id",
+  "candidate_source_dispositions",
+  "facts",
+  "family_dispositions",
+  "integrity",
+  "pdf_extraction_method",
+  "registration_authority_adjudications",
+  "repo_authority_locators",
+  "schema_version",
+  "source_capture_manifest",
+  "source_locators"
+]
+```
+
+In particular the top-level key `artifact_vintage_id` must be absent.
+`schema_version` must be exactly
+`covered_earnings_membership_adjudication.v2` and `adjudication_id` must be
+exactly `entry11_unit1b_membership_readjudication_v2`. `integrity` must have
+exactly `canonicalization`, `content_sha256`, and
+`reproduced_from_source_bytes`; their values must be respectively
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`,
+`36a73f34ad81e9fda318b5eec4399ccec85050e4fb18700b744e81e1793ad9ab`,
+and JSON boolean `true`. The content digest is independently recomputed by
+deep-copying the complete parsed object, replacing only
+`integrity.content_sha256` with 64 ASCII zeroes, serializing under that
+canonicalization with one terminal LF, and hashing the resulting bytes.
+The artifact must contain exactly 30 `facts`, 14 `family_dispositions`, and
+five `registration_authority_adjudications`, and every retained v2
+top-level, source-manifest, locator, fact, family, registration-authority,
+integrity, and semantic validation must pass. Finally, the complete raw
+cutoff-tree blob must have mode `100644`, the exact 57,125-byte length, and
+SHA-256
+`7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14`.
+The raw-byte identity makes these conditions necessary and sufficient for
+accepting the real committed artifact, not merely an object with similar
+projected values.
+
+Only after every preceding check passes does the rule construct the sole
+candidate, in this exact field order:
+
+```json
+{
+  "path": "data/external/covered_earnings_membership_adjudication_v2.json",
+  "schema_version": "covered_earnings_membership_adjudication.v2",
+  "artifact_vintage_id": "entry11_unit1b_membership_readjudication_v2",
+  "sha256": "7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14"
+}
+```
+
+The candidate path is the registered literal, `schema_version` is copied
+from the parsed artifact, `artifact_vintage_id` is copied from its
+`adjudication_id`, and `sha256` is computed from the raw bytes. Thus the
+vintage is derived envelope metadata and is not a claim that the legacy
+artifact contains that key. A present fixed-path blob with any other byte,
+length, schema, ID, key set, integrity value, projection, or semantic result
+is `predicate_failed` and aborts adjudication under the registry's
+`failure_disposition`; it may not be recoded as absent or conflict, wrapped
+with caller-supplied metadata, discovered at another path, or admitted as an
+alternate candidate. There is no filename-derived vintage, permissive
+fallback, or second legacy-envelope rule.
+
 `actual_preimage` is `calibrated_authority_actual_preimage.v1`, with exactly
 `schema_version`, `manifest_kind`, `authority_id`, `candidate_locator`,
 `ordered_source_projections`, `candidate_authority_identities`,
@@ -9526,7 +9607,7 @@ schema/vintage and all §15.3 top-level, integrity, lineage, and semantic
 equations pass, and the complete family-source-fact projection matches those
 same bytes. `verify_entry11_unit1b_membership_readjudication_v2_v1` is true
 iff the fixed path yields the unique expected envelope candidate through the
-sole legacy-envelope derivation below, its raw/strict/facts/family/
+sole legacy-envelope derivation above, its raw/strict/facts/family/
 registration-authority projections are complete and same-byte-derived, and
 every existing semantic and integrity check passes. Missing is
 `not_evaluable`, multiple is `conflict`, and a present candidate failing any
@@ -14081,7 +14162,12 @@ source bytes:
   target-value authority and therefore cannot by itself make the calibrated
   predicate true.
 - Newly registered controlling methodology bytes may establish the currently
-  partial/unestablished B2/B11 membership facts. If they make every
+  partial/unestablished B2/B11 membership facts only through a later ratified
+  append-only successor to
+  `calibrated_authority_verification_specs.v1`, with a fixed new identity,
+  path, predicate, projection program, envelope law if needed, and fresh
+  adjudication. They cannot mutate the singleton v1 methodology row or use a
+  registrant-supplied candidate. If the successor law makes every
   Amendment-1 family and all other calibrated prerequisites lawfully
   registrable under the unchanged calibrated design, the calibrated predicate
   becomes true at the next fresh registration.
