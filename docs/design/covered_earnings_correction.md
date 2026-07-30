@@ -8146,9 +8146,12 @@ force.
 
 ### 15.1 Status, scope, and precedence
 
-- **Status:** **PROSPECTIVE AMENDMENT — UNRATIFIED.** This section proposes
-  revision 3 of the design. It authorizes no extraction, implementation,
-  registration, fitting, evaluation, report run, or label change.
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 3
+  of the design. Before completion of §15.8 step 3 it is unratified and
+  authorizes no action. After step 3 but before step 5, only step-4
+  authority, implementation, and fixture preparation is authorized. It
+  becomes operative only when a validator-accepted fresh registration names
+  the exact ratification commit. No status literal is updated in place.
 - **Base authority:** The immutable base is the complete revision-2 text at
   commit `59fd058b943c2b9960af9cb98ecdec97709cc2dd`, ratified after eleven
   adversarial referee rounds.
@@ -8312,15 +8315,30 @@ provenance commitments specified below.
 by committed, hash-pinned primary SSA bytes containing **literal published
 worker-incidence share cells—not separately published operands**. The series
 must meet all of the following before a successor artifact may use the
-alternate `source_verified_not_target_bound` status:
+alternate `source_verified_not_target_bound` status.
+
+The authority review freezes a complete hash-pinned candidate-corpus
+cutoff. Series identity is derived only from source-stated numerator,
+denominator, universe, timing, unit, duplicate-worker rule, and zero rule.
+Exactly one qualifying identity must exist: zero retains the absent state;
+more than one is `authority_conflict` and requires a new prospective
+amendment. Within that identity, use the unique greatest source-stated
+publication/revision edition as of the cutoff. Missing or tied edition
+dates and cross-edition mixing abort. Values, series length, and
+implementation order may not choose among candidates.
+
+The clauses:
 
 1. exactly one literal `as_published` covered-worker-share observation for
    each included calendar year, from one source-defined numerator/denominator
    universe; no quotient or other synthesized cell;
-2. an unthinned inclusion of every available cell from the qualifying series
-   over 1968–2014, including at least one cell in each of 1968–1974,
-   1975–1977, 1978–1992, 1993–2001, and 2002–2008, and every available
-   2009–2014 cell;
+2. `covered_share_required_years` is exactly the strictly ascending array
+   of every calendar year \(y\in[1968,2014]\) for which the selected
+   qualifying series's frozen edition contains a literal cell. The ID and
+   observation arrays contain exactly those cells and no year outside that
+   closed interval. No in-window cell may be omitted. The array must
+   include at least one cell in each of 1968–1974, 1975–1977, 1978–1992,
+   1993–2001, and 2002–2008, plus every available 2009–2014 cell;
 3. source bytes establishing the exact numerator and denominator sets,
    numerator-subset relation, OASDI scope, geography, annual timing, worker
    unit, duplicate-worker rule, same-type and dual-type treatment, zero rule,
@@ -8369,27 +8387,22 @@ wrong-universe, or otherwise nonconforming attempt aborts optional-source
 activation and cannot fall back within the same build to an asserted
 available state.
 
-The absent object above is the only permitted vintage-2 state. A later
-source-only transition uses the same
-`ssa_covered_earnings_calibration_targets.v2` schema but has a deterministic
-successor namespace. Let \(n_{\max}\) be the largest integer suffix among
-vintage 2 and every later validator-accepted artifact in this lineage that a
-prior fresh registration binds. The next source-only artifact uses exactly
-\(n=n_{\max}+1\), where \(n\ge3\) is serialized as canonical base-10 digits
-with no sign or leading zero, and has exactly:
-
-- path
-  `data/external/ssa_covered_earnings_calibration_targets_vintage<n>.json`;
-  and
-- `artifact_vintage_id`
-  `ssa_covered_earnings_calibration_targets.vintage<n>`,
-
-with the same decimal \(n\) substituted literally in both places. The first
-such pair is therefore
-`data/external/ssa_covered_earnings_calibration_targets_vintage3.json` and
-`ssa_covered_earnings_calibration_targets.vintage3`. Reusing or overwriting a
-prior path or identity, skipping an integer, choosing a moving alias, or
-disagreeing suffixes aborts.
+The absent object above is the only permitted vintage-2 state. Let \(H\) be
+the set of canonical integer suffixes \(n\) for which `HEAD` tracks a path
+exactly matching
+`data/external/ssa_covered_earnings_calibration_targets_vintage<n>.json`.
+The coordinator derives \(H\) from Git, never from configuration. It must
+equal the contiguous set \(\{2,\ldots,n_{\max}\}\). Every member
+strict-parses under schema `ssa_covered_earnings_calibration_targets.v2`,
+has path/`artifact_vintage_id` suffix equality, passes integrity validation,
+and obeys the invariant-content law below. Every tracked amendment-1
+configuration under `docs/registrations` that binds suffix \(n\) must pin
+the current blob digest for that member. Missing members, gaps, aliases,
+digest disagreement, or a malformed matching path aborts. A configuration
+must bind the unique highest member of \(H\); vintage 2 is accepted exactly
+when \(H=\{2\}\). To create a successor from the pre-addition lineage
+\(H\), use exactly \(n=n_{\max}+1\), serialized as canonical base-10 digits
+with no sign or leading zero, in both the path and artifact-vintage ID.
 
 Such a successor exists only after a qualifying source passes every
 activation clause above and its separate authority/extraction review. It has
@@ -8851,23 +8864,15 @@ four-key `design` member has the exact §15.8 values, including integer
 `psid_crosswalk_input.artifact_vintage_id` is exactly
 `psid_covered_earnings_crosswalk.v2`;
 `calibration_target_input.schema_version` is v2; and its
-`(path, artifact_vintage_id)` pair and pinned digest exact-match exactly one
-of these two states:
+`(path, artifact_vintage_id)` pair and pinned digest satisfy the binding
+law below.
 
-1. the current absent-source pair
-   (`data/external/ssa_covered_earnings_calibration_targets_vintage2.json`,
-   `ssa_covered_earnings_calibration_targets.vintage2`), whose optional block
-   deep-equals §15.3's immutable `unavailable_source_absent` object and which
-   is accepted only while no source-verified successor has ever been bound
-   by an accepted registration; or
-2. a source-verified successor pair generated by §15.3's exact integer
-   namespace: either the highest-numbered successor already bound anywhere
-   in the accepted registration history, or, for the registration
-   that first introduces newer qualifying source bytes, the single exact
-   next-integer successor; the artifact's optional block has
-   `status: source_verified_not_target_bound`, its invariant content
-   exact-matches vintage 2, and its authority, activation, integrity, review,
-   and prior-registration lineage all validate.
+`calibration_target_input` exact-binds the unique highest member of §15.3's
+Git-derived contiguous lineage. If its suffix is 2, its optional block
+deep-equals the immutable absent object. If its suffix is at least 3, it is
+a validated `source_verified_not_target_bound` successor. No
+configuration-supplied registration-history claim, lower lineage member,
+untracked successor, gap, or stale vintage-2 fallback is accepted.
 
 No other target path, identity, state, or vintage is accepted. Every
 frozen-registry member is an exact registered deep copy of the amendment-1
@@ -8882,20 +8887,26 @@ digest binds those exact bytes. In particular the configuration accepts only
 2, predecessor crosswalk schema/identity, predecessor target input schema, or
 predecessor child registry aborts.
 
-The primary output schema and artifact ID are both
+The primary schema and artifact ID remain
 `covered_earnings_correction_evaluation.v2`. V2 retains the exact 14
 top-level keys and every unchanged nested shape from v1; its target results
 and target-use trace derive from the 14-family v3 target registry, and its
-Option-C result rows and reason domain are exactly §15.6.2. The append-only
-primary path is
-`runs/covered_earnings_correction_evaluation_v2.json`, with exact sidecar
-`runs/covered_earnings_correction_evaluation_v2.json.env.json`; the v1 paths
-remain historical and may not be overwritten. Configuration v3's
-`output_paths.output_version` is
-`covered_earnings_correction_evaluation_v2`, and its `primary` and `sidecar`
-values are those exact paths. The sidecar schema remains
+Option-C result rows and reason domain are exactly §15.6.2. Let \(n\) be the
+validated suffix of `calibration_target_input`. For \(n=2\),
+`output_version`, primary, and sidecar remain exactly
+`covered_earnings_correction_evaluation_v2`,
+`runs/covered_earnings_correction_evaluation_v2.json`, and
+`runs/covered_earnings_correction_evaluation_v2.json.env.json`. For
+\(n\ge3\), they are exactly
+`covered_earnings_correction_evaluation_v2_source_vintage<n>`,
+`runs/covered_earnings_correction_evaluation_v2_source_vintage<n>.json`, and
+`runs/covered_earnings_correction_evaluation_v2_source_vintage<n>.json.env.json`.
+The same canonical \(n\) must appear in the target artifact and both output
+paths; these values are derived, not configured. No earlier output path may
+be reused; the v1 paths remain historical and may not be overwritten. The
+sidecar schema remains
 `covered_earnings_correction_evaluation_environment.v2`, but its
-`artifact_path` exact-matches the v2 primary. A v1 primary schema/artifact ID,
+`artifact_path` exact-matches the primary. A v1 primary schema/artifact ID,
 output version, or path aborts.
 
 `full_calibration_evaluation_provenance.v1`,
@@ -9145,7 +9156,7 @@ source state, pro-rata reassignment, retained analytic fields, honesty
 caveat, nonweakening rule, and ratification protocol follow the coordinator
 ruling without substantive deviation.
 
-Two scope clarifications are deliberate:
+Three scope clarifications are deliberate:
 
 1. “Source absence” means no qualifying direct series in the captured and
    adversarially inspected SSA publication corpus. It is not a timeless claim
@@ -9161,6 +9172,16 @@ Two scope clarifications are deliberate:
    model-universe concordance, and viewed-cell boundary undefined and would
    bypass the required amendment ceremony. A new ratified amendment and
    fresh registration are therefore required for target reactivation.
+3. The round-1 referee edits tightened four closure laws beyond the
+   original draft: the covered-share year domain is the closed interval
+   1968–2014 with no omissible in-window cell; source selection is bound
+   to a hash-pinned candidate-corpus cutoff with a unique
+   series-identity/edition rule (`authority_conflict` on plurality);
+   successor lineage is derived from Git-tracked paths as a contiguous
+   suffix set, never from configuration-supplied registration history; and
+   evaluation outputs for source successors take a derived
+   `_source_vintage<n>` namespace so no completed output path is ever
+   reused.
 
 The integer masses `2,2,1,1` are an exact serialization of the coordinator's
 \(1/3,1/3,1/6,1/6\) normalized weights, not a different weighting choice.
