@@ -18374,3 +18374,104 @@ serialize a self-consistent wrapper around `verified/pass`, but it cannot constr
 expected projection or make the predicate true: for V-B5, V-B6, or V-B8 the
 committed first-vintage bytes force `registration_required`, a nonempty
 residual domain, and a negative result.
+
+#### 16.12.2 Total runner-node/root equality
+
+The exact equality law `root_runner_node_binding_equation.v1`
+prospectively replaces every earlier §16 use of “for the same root” and
+every earlier flat reference to a runner-root member. It applies
+independently to each of the two literal
+`covered_earnings_static_graph_runner_root.v1` objects in §16.11.1 and
+changes neither of those objects nor the two-key `graph_root` schema.
+
+Let \(I\) be the complete
+`covered_earnings_static_graph_runner_identity.v1` object for the applicable
+literal root, and let
+\(h=\operatorname{SHA256}(\operatorname{canonical\_json\_bytes}(I))\).
+
+The independently derived `root_python_symbol_locator_projection.v1` has
+exactly `schema_version`, `runner_identity_sha256`,
+`runner_symbol_locator`, `entrypoint_symbol_locator`,
+`entrypoint_call_source_locator`, and `status`. The schema value is that
+literal name and the identity digest is \(h\). Each locator has the existing
+exact five-key `symbol_locator` shape. Its repository path and blob digest
+are copied from \(I\), while its symbol and byte interval are derived by
+these three exhaustive
+lexical rules over the exact raw blob:
+
+- the callable rule requires exactly one top-level LF-delimited occurrence
+  of the ASCII bytes `def main(`, where `main` is the exact
+  `entrypoint_qualified_symbol`; its interval starts at the `m` byte and
+  ends immediately after the `n` byte; and
+- the runner rule requires exactly one top-level LF-delimited occurrence of
+  the ASCII bytes `if __name__ == "__main__":`, where the quoted content is
+  the exact `runner_qualified_symbol`; its interval starts at the first
+  underscore of that content and ends immediately after its final
+  underscore; and
+- the call-site rule requires exactly one top-level occurrence of the ASCII
+  bytes `if __name__ == "__main__":` followed immediately by LF, four ASCII
+  spaces, and `main()`, where `main` is the exact
+  `entrypoint_qualified_symbol`. Its locator copies \(I\)'s path and blob
+  digest, uses `I.runner_root.runner_qualified_symbol` as
+  `qualified_symbol_or_schema_path`, starts at the `m` byte of the call, and
+  ends immediately after its `n` byte.
+
+Top-level means the first byte of the blob or the byte immediately after LF,
+with no intervening whitespace. The blob must be strict UTF-8, all three complete
+patterns and their symbol substrings must be ASCII, and zero or multiple
+matches fail. Differently quoted, spaced, indented, enclosing-range, whole-
+file, and equal-pattern duplicate choices are not alternates. Status is
+`pass` iff all three complete locators are uniquely constructed and all
+copied fields equal \(I\). This projection is the
+prospective root-node exception to the earlier generic interval wording; no
+parser, AST library, implementation callback, or producer offset supplies a
+bound.
+
+The graph is valid only if all of these equalities hold:
+
+1. `graph_root.runner_identity_sha256 == h`.
+2. There is exactly one node \(R\) whose `node_class` is `runner`,
+   `principal_id == I.runner_root.principal_id`, and
+   `implementation_identity_sha256 == h`.
+3. \(R\)'s `symbol_locator.repository_relative_path` equals
+   `I.runner_root.repository_relative_path`;
+   `qualified_symbol_or_schema_path` equals
+   `I.runner_root.runner_qualified_symbol`; and `blob_sha256` equals
+   `I.blob_sha256`. The complete locator deep-equals
+   `runner_symbol_locator` from the projection above.
+4. \(R\)'s `byte_start` and `byte_end_exclusive` therefore equal the unique
+   runner-symbol substring interval above.
+5. There is exactly one node \(E\) whose `node_class` is `callable`,
+   `principal_id == I.runner_root.principal_id`, and whose symbol locator's
+   repository path, qualified symbol, and blob digest equal respectively
+   `I.runner_root.repository_relative_path`,
+   `I.runner_root.entrypoint_qualified_symbol`, and `I.blob_sha256`.
+   Its `implementation_identity_sha256` also equals \(h\). Its byte interval
+   and complete locator deep-equal `entrypoint_symbol_locator` from the
+   projection above.
+6. `graph_root.entrypoint_node_id == E.node_id`.
+7. There is exactly one `entrypoint_call` edge from `R.node_id` to
+   `E.node_id`. Its source locator deep-equals
+   `entrypoint_call_source_locator` from the projection above, and its
+   `route_id` and `edge_id` are the unique values of the already frozen
+   `graph-route:` and `graph-edge:` equations.
+8. \(R\) has no other `entrypoint_call` edge, and no other runner node for
+   this root can reach \(E\) as an entrypoint.
+
+The node IDs remain the existing hashes of the complete node tuples. Thus
+the equality `R.implementation_identity_sha256 == h`, together with the
+root-derived locator, forces `R.node_id`; the callable locator and explicit
+equality `E.implementation_identity_sha256 == h` force `E.node_id`; and
+those two IDs force the entrypoint route and edge. The graph's ordered
+node/edge arrays, counts, domain hashes, and complete graph identity
+consequently have only one
+serialization for a fixed cutoff tree.
+
+The calibrated graph predicate and both fitting-free graph positions
+consume this exact equation in addition to their existing transitive
+closure, class-domain, ordering, and capability rules. G15's implementation
+projection consumes the same \(I\), \(h\), \(R\), and \(E\), rather than
+re-resolving a symbol. A zero/multiple node or edge result; unequal nested
+principal, path, symbol, blob, interval, or implementation digest; another
+entrypoint; or an independently selected “same root” makes the applicable
+graph result false and aborts before registration.
