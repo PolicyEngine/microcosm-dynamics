@@ -29,8 +29,8 @@ def test_pre_er_artifact_has_the_complete_frozen_domain():
         "description_line_count": 48_103,
         "code_map_row_count": 88_545,
         "closed_range_count": 9_230,
-        "field_with_explicit_missing_count": 14_179,
-        "explicit_missing_code_row_count": 28_301,
+        "field_with_explicit_missing_count": 14_180,
+        "explicit_missing_code_row_count": 28_211,
         "multi_page_field_count": 2_241,
         "page_stream_locator_count": 5_261,
     }
@@ -110,8 +110,7 @@ def test_pre_2013_enrollment_like_codes_prevent_blanket_absence_claim():
     facts = [
         fact
         for fact in artifact["era_facts"]
-        if fact["fact_class"]
-        == "enrollment_like_code_not_stable_current_status"
+        if fact["fact_class"] == "lexical_enrollment_like_code_non_evidentiary"
     ]
     assert len(facts) == 28
     assert {
@@ -119,7 +118,10 @@ def test_pre_2013_enrollment_like_codes_prevent_blanket_absence_claim():
         "pre-2013-enrollment-like:1985:V11958",
     }.issubset({fact["fact_id"] for fact in facts})
     assert all(
-        fact["regular_school_equivalence_status"] == "not_established"
+        fact["regular_school_equivalence_status"]
+        == "non_evidentiary_not_established"
+        and fact["status"]
+        == "observed_not_evidence_for_current_regular_school"
         for fact in facts
     )
 

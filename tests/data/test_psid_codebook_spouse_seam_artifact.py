@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
 from pathlib import Path
 
 from populace_dynamics.data import psid_questionnaire_inventory as inventory
@@ -39,12 +40,17 @@ def test_spouse_seam_has_frozen_complete_source_domain():
         "description_line_count": 3_697,
         "code_map_row_count": 10_573,
         "closed_range_count": 796,
-        "field_with_explicit_missing_count": 1_506,
-        "explicit_missing_code_row_count": 2_831,
+        "field_with_explicit_missing_count": 1_507,
+        "explicit_missing_code_row_count": 2_807,
         "multi_page_field_count": 263,
         "page_stream_locator_count": 557,
     }
-    assert artifact["era_fact_count"] == 8
+    assert artifact["era_fact_count"] == 32
+    assert Counter(row["fact_class"] for row in artifact["era_facts"]) == {
+        "spouse_annual_amount_concept": 3,
+        "spouse_job_context_concept": 5,
+        "secondary_job_context_concept": 24,
+    }
 
 
 def test_v4379_is_source_bound_as_mixed():
@@ -102,6 +108,13 @@ def test_v5289_and_v5788_maps_are_complete_without_concept_overclaim():
     assert (
         "ry1975_1977_spouse_concept_seam:" "V-B6:V5289_V5788_concept"
     ) in residual_ids
+    assert (
+        "ry1975_1977_spouse_concept_seam:" "V-B6:government_level_absence"
+    ) in residual_ids
+    assert (
+        "ry1975_1977_spouse_concept_seam:"
+        "V-B6:secondary_job_attachment_and_absence"
+    ) in residual_ids
 
 
 def test_1976_context_maps_remain_interview_time_unmatched():
@@ -122,6 +135,24 @@ def test_1976_context_maps_remain_interview_time_unmatched():
         row["job_match_timing"]
         == "not_established_against_annual_V4379_amount"
         for row in facts
+    )
+    purposes = {row["raw_field_ids"][0]: row["field_purpose"] for row in facts}
+    assert purposes["V4845"] == "government_employer_indicator"
+    assert purposes["V4850"] == "government_employer_indicator"
+    secondary = [
+        row
+        for row in artifact["era_facts"]
+        if row["fact_class"] == "secondary_job_context_concept"
+    ]
+    assert {(row["interview_wave"], row["role"]) for row in secondary} == {
+        (1976, "head_or_reference_person"),
+        (1976, "spouse_or_partner"),
+        (1977, "head_or_reference_person"),
+        (1978, "head_or_reference_person"),
+    }
+    assert all(
+        row["annual_role_total_attachment_status"] == "registration_required"
+        for row in secondary
     )
     fields = _fields_by_id(artifact)
     map_index = artifact["field_evidence_columns"].index("code_map")

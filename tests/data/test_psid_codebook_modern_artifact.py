@@ -45,12 +45,12 @@ def test_modern_artifact_has_the_complete_frozen_domain():
         "multi_page_field_count": 5_838,
         "page_stream_locator_count": 11_096,
     }
-    assert artifact["era_fact_count"] == 962
+    assert artifact["era_fact_count"] == 1_866
     assert Counter(fact["fact_class"] for fact in artifact["era_facts"]) == {
         "er_role_total_component_reconciliation": 14,
-        "modern_bc_de_questionnaire_field": 924,
+        "modern_bc_de_questionnaire_field": 1_828,
         "regular_school_enrollment_branch": 6,
-        "enrollment_like_code_not_stable_current_status": 18,
+        "lexical_enrollment_like_code_non_evidentiary": 18,
     }
 
 
@@ -67,6 +67,26 @@ def test_bc46_amount_and_unit_are_role_job_and_reference_year_bound():
         assert fact["source_question_id"] == "BC46"
         assert fact["information_date_basis"] == "reference_year"
         assert fact["job_match_timing"] == "explicit_source_job_number"
+    monthly = facts["modern-job-context:2003:ER21133"]
+    assert monthly["field_purpose"] == "monthly_employment_indicator"
+    assert monthly["reporting_unit"] == "complete_source_indicator_code_map"
+    assert monthly["information_date_basis"] == "reference_year_month"
+    salary = facts["modern-job-context:2003:ER21153"]
+    assert salary["job_slot"] == "current_main_job"
+    assert salary["field_purpose"] == "salary_amount"
+    assert salary["reporting_unit"] == (
+        "dollars_and_cents_paired_with_source_reporting_unit"
+    )
+    assert salary["job_match_timing"] == ("explicit_current_main_job_wording")
+    tenure = facts["modern-job-context:2003:ER21171"]
+    assert tenure["field_purpose"] == "employer_tenure_years"
+    assert tenure["reporting_unit"] == "years"
+    weeks = facts["modern-job-context:2007:ER36168"]
+    assert weeks["field_purpose"] == "weeks_worked"
+    assert weeks["reference_periodicity"] == "reference_year_weeks"
+    hours = facts["modern-job-context:2003:ER21176"]
+    assert hours["field_purpose"] == "average_hours_per_week"
+    assert hours["reporting_unit"] == "hours_per_week"
 
 
 def test_bc46_complete_amount_and_unit_maps_are_preserved():
@@ -159,6 +179,17 @@ def test_vb8_later_branches_are_positive_but_composite_stays_residual():
         for row in artifact["registration_required_residuals"]
     }
     assert "ry2002_2014_modern_bc_de:V-B8:branch_freshness" in (residual_ids)
+    assert (
+        "ry2002_2014_modern_bc_de:" "V-B8:pre_2013_questionnaire_absence_proof"
+    ) in residual_ids
+    assert (
+        "ry2002_2014_modern_bc_de:job_chronology_exposure_attachment"
+        in residual_ids
+    )
+    assert (
+        "ry2002_2014_modern_bc_de:job_amount_role_total_reconciliation"
+        in residual_ids
+    )
 
 
 def test_modern_amount_and_unit_pages_have_exact_raw_stream_locators():

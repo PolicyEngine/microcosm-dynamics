@@ -49,7 +49,7 @@ def test_early_era_has_frozen_complete_source_domain():
         "description_line_count": 10_184,
         "code_map_row_count": 22_328,
         "closed_range_count": 1_666,
-        "field_with_explicit_missing_count": 2_554,
+        "field_with_explicit_missing_count": 2_555,
         "explicit_missing_code_row_count": 4_358,
         "multi_page_field_count": 618,
         "page_stream_locator_count": 1_197,

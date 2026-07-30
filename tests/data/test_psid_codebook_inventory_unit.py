@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from populace_dynamics.data import psid_covered_earnings_registry
 from populace_dynamics.data import psid_questionnaire_inventory as inventory
 
 TABLE_HEADER = "  Count       %    Value/Range Code Value/Range Text"
@@ -44,6 +45,25 @@ def test_code_map_parser_preserves_column_and_page_wrap_edge_cases():
         ],
         TABLE_HEADER,
     ) == [["140", "1.75", "1", "Was received this month"]]
+    assert inventory._is_explicit_missing_meaning("Not ascertained")
+    assert inventory._is_explicit_missing_meaning(
+        "Number of rooms in dwelling not ascertained"
+    )
+    assert inventory._is_explicit_missing_meaning("Don't know")
+    assert not inventory._is_explicit_missing_meaning(
+        "Number of rooms in dwelling not ascertained or respondent "
+        "shares room"
+    )
+    assert not inventory._is_explicit_missing_meaning(
+        "Completed education was less than high school; completed "
+        "education was not ascertained"
+    )
+    assert not inventory._is_explicit_missing_meaning(
+        "This family is primary either alone or sharing was not ascertained"
+    )
+    assert not inventory._is_explicit_missing_meaning(
+        "Teachers and related occupations (including NA type)"
+    )
 
 
 def test_code_map_parser_rejects_orphan_and_unclosed_continuations():
@@ -109,6 +129,12 @@ def test_complete_codebook_domain_constants_are_frozen():
     assert inventory.CODEBOOK_TOTAL_MAP_ROW_COUNT == 479_345
     assert inventory.CODEBOOK_TOTAL_CLOSED_RANGE_COUNT == 36_950
     assert inventory.CODEBOOK_TOTAL_DESCRIPTION_LINE_COUNT == 219_518
+    assert inventory.FROZEN_INVENTORY_WAVE_ROWS_SHA256 == (
+        psid_covered_earnings_registry.INVENTORY_WAVE_ROWS_SHA256
+    )
+    assert inventory.POST_CUTOFF_INVENTORY_WAVES == (
+        psid_covered_earnings_registry.POST_CUTOFF_INVENTORY_WAVES
+    )
 
 
 def test_codebook_extractor_imports_no_reader_crosswalk_or_registry():
@@ -123,6 +149,7 @@ def test_codebook_extractor_imports_no_reader_crosswalk_or_registry():
     forbidden = {
         "populace_dynamics.data.family",
         "populace_dynamics.data.psid_covered_earnings",
+        "populace_dynamics.data.psid_covered_earnings_registry",
         "populace_dynamics.data.psid_job_context_registry",
     }
     assert imported.isdisjoint(forbidden)

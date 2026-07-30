@@ -47,7 +47,7 @@ def test_er_transition_has_the_complete_frozen_domain():
         "code_map_row_count": 91_014,
         "closed_range_count": 8_505,
         "field_with_explicit_missing_count": 15_517,
-        "explicit_missing_code_row_count": 40_370,
+        "explicit_missing_code_row_count": 40_372,
         "multi_page_field_count": 2_499,
         "page_stream_locator_count": 4_822,
     }

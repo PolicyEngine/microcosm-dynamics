@@ -47,9 +47,10 @@ def test_postcutoff_artifact_has_the_complete_frozen_domain():
     }
     assert Counter(fact["fact_class"] for fact in artifact["era_facts"]) == {
         "er_role_total_component_reconciliation": 8,
-        "modern_bc_de_questionnaire_field": 528,
+        "modern_bc_de_questionnaire_field": 1_040,
         "regular_school_enrollment_branch": 16,
     }
+    assert artifact["era_fact_count"] == 1_064
 
 
 def test_postcutoff_role_totals_preserve_exact_exclusion_lineage():
@@ -68,6 +69,7 @@ def test_postcutoff_role_totals_preserve_exact_exclusion_lineage():
     assert all(
         len(fact["included_component_raw_field_ids"]) == 8
         and len(fact["excluded_component_raw_field_ids"]) == 2
+        and fact["inventory_year_disposition"] == "inventory_only_post_cutoff"
         for fact in facts
     )
     head_2023 = next(
@@ -149,6 +151,20 @@ def test_postcutoff_residuals_preserve_farm_and_enrollment_fail_close():
         residuals["ry2015_2022_exclusion_lineage:V-B8:branch_freshness"][
             "status"
         ]
+        == "registration_required"
+    )
+    assert (
+        residuals[
+            "ry2015_2022_exclusion_lineage:"
+            "job_chronology_exposure_attachment"
+        ]["status"]
+        == "registration_required"
+    )
+    assert (
+        residuals[
+            "ry2015_2022_exclusion_lineage:"
+            "job_amount_role_total_reconciliation"
+        ]["status"]
         == "registration_required"
     )
 

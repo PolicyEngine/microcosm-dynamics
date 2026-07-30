@@ -126,8 +126,18 @@ CODEBOOK_TOTAL_PAGE_COUNT = 29_897
 CODEBOOK_TOTAL_MAP_ROW_COUNT = 479_345
 CODEBOOK_TOTAL_CLOSED_RANGE_COUNT = 36_950
 CODEBOOK_TOTAL_DESCRIPTION_LINE_COUNT = 219_518
+FROZEN_INVENTORY_WAVE_ROWS_SHA256 = (
+    "dd91873b7964afea577e094a2598e21ec8d3d14f977ab6ea688913d05045b2ab"
+)
+POST_CUTOFF_INVENTORY_WAVES: tuple[int, ...] = (
+    2015,
+    2017,
+    2019,
+    2021,
+    2023,
+)
 CODEBOOK_ADJUDICATION_CONTENT_SHA256 = (
-    "e3142cd1efc245e97b0aeaf46f7e7724b72ac02903c3cf891db7e4fe38f11c9b"
+    "97f79ac5fb4441f34019500fd3d04c9944f3ee296bd8d91a709542bda3527c24"
 )
 CODEBOOK_ERA_SPECS: tuple[tuple[str, tuple[int, ...]], ...] = (
     (
@@ -182,7 +192,7 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         "60e9fce4eaf372ee691f863b7f55f5fe1c6c627440f566adc0239f15c86030c0",
         "fc1307936490598a4f38b50f549e5c37ec8185eff11f0d21583e90981e0e09d7",
         "69b1d9af907657211c55bb7a8eb68def190b2c819e37ceb74560c68d7e52cbf1",
-        "d14fec0ebc260f806cc0e8cf4e2cb670d39a9e7efd8be6b6d08347cb80930a9d",
+        "7eee6a88383df6aea6c4cf11a7190eeb51d1736ee469bd17439dd001140bf247",
     ),
     (
         "ry1975_1977_spouse_concept_seam",
@@ -191,12 +201,12 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         10_573,
         796,
         557,
-        8,
-        5,
+        32,
+        7,
         "962e7e97190906063f4f54c8a6b09704e14ed307bb5ac5a59d93b9bf83194abe",
         "f85f793d89bcbebd1f0c9a0e261296f583aca8bd7d2ee20a8b7973a7aadc9e4c",
         "7cc14d09f3b7391eb3ddd5967654ff02b269bc9a5db055c7d9f962e84dcad230",
-        "ee2a97c091c94497e9f6a20661d8f1ac5eca893a6310dc691a3b8c3a995a7afb",
+        "a8b32316bf906ed8ac141fcaf2f871a5690ae22263562e35378b1b8f4547b7bd",
     ),
     (
         "ry1978_1992_pre_er_totals",
@@ -210,7 +220,7 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         "7f29ce21f9ab7f6f27d872716ccedf0edd83514756573d5e0e290a6404f9a987",
         "1727594490a69363ac4bb813906a1240d321f0ac31037393d438f880696dfe8c",
         "aeca075964acfdb73446f71c325b7820a131c9b28af93aadf1224eaf4ccdc240",
-        "99e690f4afbff8597f1ff3655e6d400736fca1f1ffed076d086f7ade558b868b",
+        "c9d7e6c8a7750688389e21930ce091cad4f4cc00ed7af40d489495afa940986b",
     ),
     (
         "ry1993_2001_er_transition",
@@ -224,7 +234,7 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         "e2c7c19047e595ec3472e022bc3bf196836a3cec371b6728322cf6192c51f7ac",
         "0145cad9993636651b3e4ef3cc3357b0e78bbf9e4350ada135cab5345f388f87",
         "159f64ea85e2ae5b0c84f1d1468278eb6854d6b715f5677d68f2bafcac4ccdcd",
-        "174f26b5ec5dea85e78c677eeacc5668c5080e4965749d1c5ed42860b42c3e70",
+        "cf48b3d4573f8f80b90f43eee6be2e076b821348c2431c9197c3f1ce1b1e8913",
     ),
     (
         "ry2002_2014_modern_bc_de",
@@ -233,12 +243,12 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         166_010,
         10_624,
         11_096,
-        962,
-        5,
+        1_866,
+        9,
         "d08cef8b0624cf2a162474ee83f4db0686c027df760fcf95267b9d93930445b2",
         "0b213f615da11804c18f870dd15a75f70c434fccd51a7e0aca77d0729be361d1",
         "006bf4bb002c4634db3b6c47a209cccd2fbe7319c8525701a6e39ea3695d38fb",
-        "be400500504c35cfde631e6b5b9a07972fed434d10545317e14b4218f9747229",
+        "7d48a950b9cae3b6f2459795eafa47969d3c0e9a34eeae32510972c5d5fdcac2",
     ),
     (
         "ry2015_2022_exclusion_lineage",
@@ -247,12 +257,12 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         100_875,
         6_129,
         6_964,
-        552,
-        5,
+        1_064,
+        8,
         "c92a0be88caf610d16ae97aa52ab0106f559e33dc678f0a97ec5385ff437254d",
         "8b8c62400f6f41ea0008340664b43c0f3105e3a1a5861cb3372dc7fff13f67f1",
         "e0d060bf924b0d3748b12ea384c43a79e8caebb5422ac48ef67b2fc78831423f",
-        "473ed0d23e9635aad97830245d6fd0e096e71a6de7a11d12690d6169964532f5",
+        "9d0db284951777748a5f29be8d65209ce68ba439d52bb1776b12bd3de66cd221",
     ),
 )
 EARLY_ROLE_TOTAL_FIELDS: tuple[tuple[int, str, str], ...] = (
@@ -326,10 +336,36 @@ SPOUSE_SEAM_AMOUNT_FIELDS: tuple[tuple[int, str, str], ...] = (
 )
 SPOUSE_1976_CONTEXT_FIELDS: tuple[tuple[str, str], ...] = (
     ("V4844", "employee_self_or_mixed"),
-    ("V4845", "government_level"),
-    ("V4850", "government_level"),
+    ("V4845", "government_employer_indicator"),
+    ("V4850", "government_employer_indicator"),
     ("V4855", "incorporation"),
     ("V4858", "incorporation"),
+)
+SPOUSE_SEAM_SECONDARY_JOB_FIELDS: tuple[tuple[int, str, str, str], ...] = (
+    (1976, "head_or_reference_person", "V4518", "secondary_job_indicator"),
+    (1976, "head_or_reference_person", "V4519", "occupation"),
+    (1976, "head_or_reference_person", "V4520", "extra_job_count"),
+    (1976, "head_or_reference_person", "V4521", "hourly_amount"),
+    (1976, "head_or_reference_person", "V4522", "weeks_worked"),
+    (1976, "head_or_reference_person", "V4523", "average_hours_per_week"),
+    (1976, "spouse_or_partner", "V4901", "secondary_job_indicator"),
+    (1976, "spouse_or_partner", "V4902", "occupation"),
+    (1976, "spouse_or_partner", "V4903", "extra_job_count"),
+    (1976, "spouse_or_partner", "V4904", "hourly_amount"),
+    (1976, "spouse_or_partner", "V4905", "weeks_worked"),
+    (1976, "spouse_or_partner", "V4906", "average_hours_per_week"),
+    (1977, "head_or_reference_person", "V5428", "secondary_job_indicator"),
+    (1977, "head_or_reference_person", "V5429", "occupation"),
+    (1977, "head_or_reference_person", "V5430", "extra_job_count"),
+    (1977, "head_or_reference_person", "V5431", "hourly_amount"),
+    (1977, "head_or_reference_person", "V5432", "weeks_worked"),
+    (1977, "head_or_reference_person", "V5433", "average_hours_per_week"),
+    (1978, "head_or_reference_person", "V5915", "secondary_job_indicator"),
+    (1978, "head_or_reference_person", "V5916", "occupation"),
+    (1978, "head_or_reference_person", "V5917", "extra_job_count"),
+    (1978, "head_or_reference_person", "V5918", "hourly_amount"),
+    (1978, "head_or_reference_person", "V5919", "weeks_worked"),
+    (1978, "head_or_reference_person", "V5920", "average_hours_per_week"),
 )
 PRE_ER_ROLE_TOTAL_FIELDS: tuple[tuple[int, str, str], ...] = (
     (1979, "head_or_reference_person", "V6767"),
@@ -508,10 +544,26 @@ _CODEBOOK_RANGE_CONTINUATION_RE = re.compile(
     rf"^\s*({_CODEBOOK_NUMBER_PATTERN})(?:\s+(\S.*))?\s*$"
 )
 _EXPLICIT_MISSING_MEANING_RE = re.compile(
-    r"(?:\bDK\b|\bNA\b|\bN/A\b|\bRF\b|refus|missing|"
-    r"\binap\b|not applicable|data suppressed|wild code)",
+    r"(?:\bDK\b|\bNA\b(?!\s+type\b)|\bN/A\b|\bRF\b|refus|missing|"
+    r"\binap\b|not applicable|data suppressed|wild code|"
+    r"don(?:'|’)?t know)",
     flags=re.IGNORECASE,
 )
+_NOT_ASCERTAINED_RE = re.compile(r"\bnot ascertained\b", re.IGNORECASE)
+
+
+def _is_explicit_missing_meaning(meaning: str) -> bool:
+    """Classify only source meanings that denote a missing disposition."""
+
+    if _EXPLICIT_MISSING_MEANING_RE.search(meaning):
+        return True
+    match = _NOT_ASCERTAINED_RE.search(meaning)
+    if match is None:
+        return False
+    normalized = f" {' '.join(meaning.lower().split())} "
+    return not (
+        " either " in normalized or " or " in normalized or ";" in normalized
+    )
 
 
 class DictionaryDriftError(ValueError):
@@ -1384,7 +1436,7 @@ def _extract_wave_codebook_evidence(
         missing_indices = [
             index
             for index, code_row in enumerate(code_map)
-            if _EXPLICIT_MISSING_MEANING_RE.search(code_row[3])
+            if _is_explicit_missing_meaning(code_row[3])
         ]
         source_document_ids = [
             *physical[physical_columns["source_document_ids"]],
@@ -1846,15 +1898,19 @@ def _registration_required_items() -> list[dict[str, Any]]:
             "status": "registration_required",
             "required_evidence": (
                 "Exact 1976/1977-reference-year spouse remuneration type "
-                "plus complete annual-job matching for employee/self/mixed, "
-                "incorporation, and government level."
+                "plus complete main/secondary annual-job matching for "
+                "employee/self/mixed, incorporation, government-employer "
+                "status, and federal/state/local government level."
             ),
             "source_finding": (
                 "V4382 proves that V4379 includes spouse unincorporated-"
                 "business labor. V5289/V5788 have complete amount maps but "
-                "do not establish wages-only versus mixed. The 1976 current-"
-                "job context maps are not matched to the annual amount and "
-                "do not distinguish federal/state/local government."
+                "do not establish wages-only versus mixed. Current-job and "
+                "secondary-job concepts are source-bound, but are not "
+                "matched to the annual spouse amounts. V4845/V4850 prove "
+                "only a government-employer yes/no indicator, not the "
+                "federal/state/local level, and codebooks alone cannot prove "
+                "whether a spouse secondary-job branch is absent in 1977/78."
             ),
         },
         {
@@ -2403,9 +2459,59 @@ def _spouse_seam_facts(
                 "role": "spouse_or_partner",
                 "job_slot": "current_job_branch",
                 "field_purpose": purpose,
+                "reporting_unit": "complete_source_categorical_code_map",
+                "reference_periodicity": "current_interview_job_status",
                 "information_date_basis": "interview_time",
                 "job_match_timing": (
                     "not_established_against_annual_V4379_amount"
+                ),
+                **_fact_source_binding([row], columns),
+            }
+        )
+    secondary_units = {
+        "secondary_job_indicator": "complete_source_boolean_code_map",
+        "occupation": "legacy_occupation_category_code",
+        "extra_job_count": "count_of_extra_jobs",
+        "hourly_amount": "dollars_and_cents_per_hour",
+        "weeks_worked": "weeks_in_reference_year",
+        "average_hours_per_week": "hours_per_week",
+    }
+    secondary_periodicities = {
+        "secondary_job_indicator": "any_during_reference_year",
+        "occupation": "first_reported_extra_job",
+        "extra_job_count": "reference_year_total",
+        "hourly_amount": "hourly",
+        "weeks_worked": "reference_year_weeks",
+        "average_hours_per_week": "weekly_average",
+    }
+    for wave, role, field_id, purpose in SPOUSE_SEAM_SECONDARY_JOB_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "1976-1978 secondary-job context",
+        )
+        first_reported = purpose in {"occupation", "hourly_amount"}
+        facts.append(
+            {
+                "fact_id": f"secondary-job-context:{wave}:{field_id}",
+                "fact_class": "secondary_job_context_concept",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": role,
+                "job_slot": "secondary_job_branch",
+                "field_purpose": purpose,
+                "reporting_unit": secondary_units[purpose],
+                "reference_periodicity": secondary_periodicities[purpose],
+                "information_date_basis": "reference_year",
+                "job_match_timing": (
+                    "first_reported_extra_job"
+                    if first_reported
+                    else "aggregate_extra_job_branch"
+                ),
+                "annual_role_total_attachment_status": (
+                    "registration_required"
                 ),
                 **_fact_source_binding([row], columns),
             }
@@ -2430,7 +2536,7 @@ def _pre_er_role_total_facts(
             role == "head_or_reference_person" and wave != 1982
         ) or (role == "spouse_or_partner" and wave >= 1984)
         if explicit_inclusion and not (
-            "farm" in description or "business" in description
+            "farm" in description and "business" in description
         ):
             raise DictionaryDriftError(
                 f"pre-ER inclusion anchor drifted: {wave}/{field_id}"
@@ -2532,6 +2638,32 @@ def _er_total_role(label: str) -> str | None:
     return None
 
 
+def _bounded_description_segment(
+    description: str,
+    *,
+    start_markers: Sequence[str],
+    stop_markers: Sequence[str],
+) -> str:
+    """Return source prose between explicit semantic paragraph anchors."""
+
+    lowered = description.lower()
+    starts = [
+        lowered.find(marker.lower())
+        for marker in start_markers
+        if lowered.find(marker.lower()) >= 0
+    ]
+    if not starts:
+        return ""
+    start = min(starts)
+    stops = [
+        lowered.find(marker.lower(), start + 1)
+        for marker in stop_markers
+        if lowered.find(marker.lower(), start + 1) >= 0
+    ]
+    end = min(stops) if stops else len(description)
+    return description[start:end]
+
+
 def _er_role_total_facts(
     field_rows: Sequence[Sequence[Any]],
 ) -> list[dict[str, Any]]:
@@ -2564,24 +2696,61 @@ def _er_role_total_facts(
             if (wave, field_id) in by_coordinate
             and field_id != row[columns["raw_field_id"]]
         ]
-        bound_rows = [
-            row,
-            *[by_coordinate[(wave, field_id)] for field_id in referenced_ids],
-        ]
-        note_offset = lowered.find("note that")
-        included_text = (
-            description[:note_offset] if note_offset >= 0 else description
+        included_text = _bounded_description_segment(
+            description,
+            start_markers=(
+                "the income reported here",
+                "this variable is the sum",
+            ),
+            stop_markers=(
+                "note that",
+                "all missing",
+                "dollar amounts",
+                "new immigrant",
+                "values were",
+            ),
         )
-        excluded_text = description[note_offset:] if note_offset >= 0 else ""
+        excluded_text = _bounded_description_segment(
+            description,
+            start_markers=("note that",),
+            stop_markers=(
+                "all missing",
+                "dollar amounts",
+                "new immigrant",
+                "values were",
+            ),
+        )
+        included_reference_ids = set(
+            re.findall(
+                r"\b(?:ER|V)[0-9]+(?:_[A-Z0-9]+)?\b",
+                included_text,
+            )
+        )
+        excluded_reference_ids = set(
+            re.findall(
+                r"\b(?:ER|V)[0-9]+(?:_[A-Z0-9]+)?\b",
+                excluded_text,
+            )
+        )
         included_ids = [
             field_id
             for field_id in referenced_ids
-            if field_id in included_text
+            if field_id in included_reference_ids
         ]
         excluded_ids = [
             field_id
             for field_id in referenced_ids
-            if field_id in excluded_text
+            if field_id in excluded_reference_ids
+        ]
+        if set(included_ids) & set(excluded_ids):
+            raise DictionaryDriftError(
+                "ER role-total component is both included and excluded: "
+                f"{wave}/{row[columns['raw_field_id']]}"
+            )
+        component_ids = [*included_ids, *excluded_ids]
+        bound_rows = [
+            row,
+            *[by_coordinate[(wave, field_id)] for field_id in component_ids],
         ]
         facts.append(
             {
@@ -2601,6 +2770,11 @@ def _er_role_total_facts(
                 "information_date_basis": "reference_year_tax_year",
                 "job_match_timing": "not_applicable_role_total",
                 "remuneration_type": "wage_type_excluding_farm_business",
+                "inventory_year_disposition": (
+                    "inventory_only_post_cutoff"
+                    if wave in POST_CUTOFF_INVENTORY_WAVES
+                    else "direct_questionnaire"
+                ),
                 "included_component_raw_field_ids": included_ids,
                 "excluded_component_raw_field_ids": excluded_ids,
                 "component_reconciliation_status": (
@@ -2620,6 +2794,7 @@ def _er_role_total_facts(
 
 
 _MODERN_JOB_QUESTIONS = {
+    "6",
     "20",
     "21",
     "22",
@@ -2638,15 +2813,61 @@ _MODERN_JOB_QUESTIONS = {
     "38",
     "39",
     "41",
+    "42A",
     "43",
     "44",
     "45",
     "46",
 }
 _MODERN_JOB_LABEL_RE = re.compile(r"^(BC|DE)([0-9]+[A-Z]?)\s+(.+)$")
+_MODERN_CURRENT_MAIN_JOB_QUESTIONS = {
+    "29",
+    "30",
+    "31",
+    "32",
+    "32A",
+    "33",
+    "34",
+    "34A",
+    "36",
+    "37",
+    "38",
+    "39",
+    "41",
+}
+_MODERN_REFERENCE_YEAR_QUESTIONS = {
+    "42A",
+    "43",
+    "44",
+    "45",
+    "46",
+}
+
+
+def _modern_is_reporting_unit_label(text: str) -> bool:
+    return bool(
+        " TIME UNIT" in f" {text}"
+        or " PER WHAT" in f" {text}"
+        or text.endswith(" PER")
+        or " PER FOR " in f" {text}"
+    )
 
 
 def _modern_field_purpose(question: str, text: str) -> str:
+    if question == "6":
+        if "BEGINNING MONTH" in text:
+            return "employment_spell_start_month"
+        if "BEGINNING YEAR" in text:
+            return "employment_spell_start_year"
+        if "ENDING MONTH" in text:
+            return "employment_spell_end_month"
+        if "ENDING YEAR" in text:
+            return "employment_spell_end_year"
+        if "WTR EMPLOYED" in text:
+            return "monthly_employment_indicator"
+        raise DictionaryDriftError(
+            f"unadjudicated modern question 6 subtype: {text}"
+        )
     if question == "20":
         return "occupation"
     if question == "21":
@@ -2657,18 +2878,175 @@ def _modern_field_purpose(question: str, text: str) -> str:
         return "incorporation"
     if question == "24":
         return "government_level"
-    if (
-        " TIME UNIT" in f" {text}"
-        or " PER WHAT" in f" {text}"
-        or text.endswith(" PER")
-        or " PER FOR " in f" {text}"
-    ):
-        return "reporting_unit"
-    if re.search(r"\b(?:AMT|AMOUNT|RATE|AVG|DIFFERENTIAL)\b", text):
-        return "amount"
-    if question in {"41", "43"}:
-        return "month_or_exposure"
-    return "assignment"
+    if question == "29":
+        return "pay_basis"
+    if question == "30":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "salary_amount"
+        )
+    if question == "31":
+        return "salaried_overtime_pay_indicator"
+    if question == "32":
+        return "salaried_overtime_pay_basis"
+    if question == "32A":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "salaried_overtime_rate"
+        )
+    if question == "33":
+        return "regular_hourly_wage_rate"
+    if question == "34":
+        return "hourly_overtime_pay_basis"
+    if question == "34A":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "hourly_overtime_rate"
+        )
+    if question == "36":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "tips_amount"
+        )
+    if question == "37":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "commission_amount"
+        )
+    if question == "38":
+        return "other_pay_basis"
+    if question == "39":
+        return "extra_hour_earnings_rate"
+    if question == "41":
+        for token, purpose in (
+            ("YRS", "employer_tenure_years"),
+            ("MOS", "employer_tenure_months"),
+            ("WKS", "employer_tenure_weeks"),
+        ):
+            if re.search(rf"\b{token}\b", text):
+                return purpose
+        raise DictionaryDriftError(
+            f"unadjudicated modern question 41 subtype: {text}"
+        )
+    if question == "42A":
+        return "weeks_worked"
+    if question == "43":
+        return "average_hours_per_week"
+    if question == "44":
+        return "overtime_indicator"
+    if question == "45":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "overtime_hours"
+        )
+    if question == "46":
+        return (
+            "reporting_unit"
+            if _modern_is_reporting_unit_label(text)
+            else "amount"
+        )
+    raise DictionaryDriftError(
+        f"unadjudicated modern question subtype: {question}/{text}"
+    )
+
+
+def _modern_reporting_unit(
+    question: str,
+    purpose: str,
+    row: Sequence[Any],
+    columns: Mapping[str, int],
+) -> str | list[str]:
+    if purpose == "reporting_unit":
+        missing_indices = set(row[columns["missing_code_map_indices"]])
+        return [
+            code_row[3]
+            for index, code_row in enumerate(row[columns["code_map"]])
+            if index not in missing_indices
+        ]
+    exact_units = {
+        "employment_spell_start_month": "calendar_month_or_season",
+        "employment_spell_end_month": "calendar_month_or_season",
+        "employment_spell_start_year": "calendar_year",
+        "employment_spell_end_year": "calendar_year",
+        "monthly_employment_indicator": "complete_source_indicator_code_map",
+        "weeks_worked": "weeks",
+        "average_hours_per_week": "hours_per_week",
+        "overtime_indicator": "complete_source_indicator_code_map",
+        "overtime_hours": "hours",
+        "occupation": "source_occupation_code",
+        "industry": "source_industry_code",
+        "employee_self_or_mixed": "complete_source_categorical_code_map",
+        "incorporation": "complete_source_indicator_code_map",
+        "government_level": "complete_source_government_level_code_map",
+        "pay_basis": "complete_source_categorical_code_map",
+        "salaried_overtime_pay_indicator": (
+            "complete_source_indicator_code_map"
+        ),
+        "salaried_overtime_pay_basis": (
+            "complete_source_categorical_code_map"
+        ),
+        "hourly_overtime_pay_basis": ("complete_source_categorical_code_map"),
+        "other_pay_basis": "complete_source_categorical_code_map",
+        "employer_tenure_years": "years",
+        "employer_tenure_months": "months",
+        "employer_tenure_weeks": "weeks",
+        "salary_amount": (
+            "dollars_and_cents_paired_with_source_reporting_unit"
+        ),
+        "salaried_overtime_rate": (
+            "dollars_and_cents_paired_with_source_reporting_unit"
+        ),
+        "regular_hourly_wage_rate": "dollars_and_cents_per_hour",
+        "hourly_overtime_rate": (
+            "dollars_and_cents_paired_with_source_reporting_unit"
+        ),
+        "tips_amount": ("dollars_and_cents_paired_with_source_reporting_unit"),
+        "commission_amount": (
+            "source_monetary_amount_paired_with_reporting_unit"
+        ),
+        "extra_hour_earnings_rate": "dollars_and_cents_per_hour",
+    }
+    if purpose == "amount":
+        if question == "46":
+            return "signed_dollars_and_cents"
+    return exact_units[purpose]
+
+
+def _modern_reference_periodicity(question: str, purpose: str) -> str:
+    if purpose in {
+        "employment_spell_start_month",
+        "employment_spell_start_year",
+        "employment_spell_end_month",
+        "employment_spell_end_year",
+    }:
+        return "employment_spell_event_date"
+    if purpose == "monthly_employment_indicator":
+        return "named_reference_year_month"
+    if question in _MODERN_CURRENT_MAIN_JOB_QUESTIONS:
+        if purpose.startswith("employer_tenure_"):
+            return "current_employer_tenure_as_of_interview"
+        return "current_main_job_pay_basis_at_interview"
+    if question == "42A":
+        return "reference_year_weeks"
+    if question == "43":
+        return "weekly_average_over_reference_year_job_period"
+    if question == "44":
+        return "any_during_reference_year_job_period"
+    if question == "45":
+        return "paired_source_time_unit_over_reference_year_job_period"
+    if question == "46":
+        return "paired_source_time_unit_for_reference_year_job_amount"
+    if question in {"20", "21", "22", "23", "24"}:
+        return "enumerated_source_job_identity_as_reported_at_interview"
+    raise DictionaryDriftError(
+        f"unadjudicated modern periodicity: {question}/{purpose}"
+    )
 
 
 def _modern_job_context_facts(
@@ -2682,16 +3060,51 @@ def _modern_job_context_facts(
         if match is None or match.group(2) not in _MODERN_JOB_QUESTIONS:
             continue
         block, question, text = match.groups()
-        job_match = re.search(r"(?:--|-)?JOB\s+([1-4])\b", text)
-        job_slot = (
-            f"job_{job_match.group(1)}"
-            if job_match is not None
-            else "role_block_unadjudicated"
-        )
         purpose = _modern_field_purpose(question, text)
-        reference_year_question = question == "46"
         wave = row[columns["interview_wave"]]
         field_id = row[columns["raw_field_id"]]
+        description = row[columns["full_source_description"]]
+        source_text = "\n".join(
+            [
+                description,
+                *[code_row[3] for code_row in row[columns["code_map"]]],
+            ]
+        )
+        job_match = re.search(r"(?:--|-)?JOB\s+([1-4])\b", text)
+        if job_match is not None:
+            job_slot = f"job_{job_match.group(1)}"
+            job_match_timing = "explicit_source_job_number"
+        elif question in _MODERN_CURRENT_MAIN_JOB_QUESTIONS:
+            normalized_description = " ".join(description.split()).upper()
+            if "CURRENT MAIN JOB" not in normalized_description:
+                raise DictionaryDriftError(
+                    "modern current-main-job anchor drifted: "
+                    f"{wave}/{field_id}/{block}{question}"
+                )
+            job_slot = "current_main_job"
+            job_match_timing = "explicit_current_main_job_wording"
+        else:
+            raise DictionaryDriftError(
+                "modern job attachment is unadjudicated: "
+                f"{wave}/{field_id}/{block}{question}"
+            )
+        reference_year_question = question in _MODERN_REFERENCE_YEAR_QUESTIONS
+        if reference_year_question and str(wave - 1) not in source_text:
+            raise DictionaryDriftError(
+                "modern reference-year anchor drifted: "
+                f"{wave}/{field_id}/{block}{question}"
+            )
+        if (
+            purpose == "monthly_employment_indicator"
+            and str(wave - 1) not in source_text
+        ):
+            raise DictionaryDriftError(
+                "modern reference-year-month anchor drifted: "
+                f"{wave}/{field_id}/{block}{question}"
+            )
+        event_date_question = question == "6" and purpose != (
+            "monthly_employment_indicator"
+        )
         facts.append(
             {
                 "fact_id": f"modern-job-context:{wave}:{field_id}",
@@ -2708,26 +3121,30 @@ def _modern_job_context_facts(
                 "source_question_id": f"{block}{question}",
                 "job_slot": job_slot,
                 "field_purpose": purpose,
-                "reporting_unit": (
-                    "complete_source_code_map"
-                    if purpose == "reporting_unit"
-                    else "paired_or_intrinsic_source_description"
+                "reporting_unit": _modern_reporting_unit(
+                    question,
+                    purpose,
+                    row,
+                    columns,
                 ),
-                "reference_periodicity": (
-                    "prior_reference_year_job_period"
-                    if reference_year_question
-                    else "interview_time_question"
+                "reference_periodicity": _modern_reference_periodicity(
+                    question,
+                    purpose,
                 ),
                 "information_date_basis": (
                     "reference_year"
                     if reference_year_question
-                    else "interview_time"
+                    else (
+                        "employment_spell_event_date"
+                        if event_date_question
+                        else (
+                            "reference_year_month"
+                            if purpose == "monthly_employment_indicator"
+                            else "interview_time"
+                        )
+                    )
                 ),
-                "job_match_timing": (
-                    "explicit_source_job_number"
-                    if job_match is not None
-                    else "role_block_unadjudicated"
-                ),
+                "job_match_timing": job_match_timing,
                 **_fact_source_binding([row], columns),
             }
         )
@@ -2814,19 +3231,22 @@ def _pre_2013_enrollment_like_facts(
         facts.append(
             {
                 "fact_id": f"pre-2013-enrollment-like:{wave}:{field_id}",
-                "fact_class": "enrollment_like_code_not_stable_current_status",
-                "status": "established_from_codebook_bytes",
+                "fact_class": ("lexical_enrollment_like_code_non_evidentiary"),
+                "status": ("observed_not_evidence_for_current_regular_school"),
                 "interview_wave": wave,
                 "earnings_reference_year": wave - 1,
-                "role": "not_fully_adjudicated_from_field_alone",
+                "role": "not_adjudicated_from_lexical_match",
                 "job_slot": "not_applicable_person_status",
-                "field_purpose": "enrollment",
+                "field_purpose": "lexical_search_lead",
                 "matching_code_map_indices": matching_indices,
+                "universe_status": "not_adjudicated_from_lexical_match",
                 "information_date_basis": (
                     "background_or_last_attended_freshness_not_established"
                 ),
                 "job_match_timing": "not_applicable_person_status",
-                "regular_school_equivalence_status": "not_established",
+                "regular_school_equivalence_status": (
+                    "non_evidentiary_not_established"
+                ),
                 **_fact_source_binding([row], columns),
             }
         )
@@ -2974,8 +3394,8 @@ def _era_residuals(
                     "status": "registration_required",
                     "missing_fact": (
                         "Binding of 1976 interview-time current-job context "
-                        "to annual V4379, federal/state/local level, and "
-                        "equivalent 1977/1978 spouse context or absence."
+                        "to annual V4379 and equivalent 1977/1978 spouse "
+                        "current-job context or structural absence."
                     ),
                     "registration_required_item": (
                         "V-B6: questionnaire flow and timing/attachment "
@@ -2988,6 +3408,68 @@ def _era_residuals(
                         "V4850",
                         "V4855",
                         "V4858",
+                    ],
+                },
+                {
+                    "residual_id": f"{era_id}:V-B6:government_level_absence",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Federal/state/local government level for the spouse "
+                        "job, or questionnaire-exhaustive proof that only a "
+                        "government-employer yes/no distinction was asked."
+                    ),
+                    "registration_required_item": (
+                        "V-B6: official questionnaire flow and exhaustive "
+                        "government-level absence proof"
+                    ),
+                    "searched_interview_waves": [1976],
+                    "searched_raw_field_ids": ["V4845", "V4850"],
+                    "established_codebook_finding": (
+                        "Both fields are yes/no government-employer "
+                        "indicators and do not encode the level."
+                    ),
+                },
+                {
+                    "residual_id": (
+                        f"{era_id}:V-B6:secondary_job_attachment_and_absence"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Attachment of the 1976 spouse secondary-job branch "
+                        "to annual V4379/V5289/V5788, plus whether an "
+                        "equivalent spouse branch is structurally absent in "
+                        "1977/1978 and the allocation of its components."
+                    ),
+                    "registration_required_item": (
+                        "V-B6: official questionnaire/flow/editing bytes for "
+                        "secondary-job attachment and absence proof"
+                    ),
+                    "searched_interview_waves": list(waves),
+                    "searched_raw_field_ids": [
+                        "V4518",
+                        "V4519",
+                        "V4520",
+                        "V4521",
+                        "V4522",
+                        "V4523",
+                        "V4901",
+                        "V4902",
+                        "V4903",
+                        "V4904",
+                        "V4905",
+                        "V4906",
+                        "V5428",
+                        "V5429",
+                        "V5430",
+                        "V5431",
+                        "V5432",
+                        "V5433",
+                        "V5915",
+                        "V5916",
+                        "V5917",
+                        "V5918",
+                        "V5919",
+                        "V5920",
                     ],
                 },
             ]
@@ -3053,16 +3535,69 @@ def _era_residuals(
         residuals.extend(
             [
                 {
-                    "residual_id": f"{era_id}:role_block_job_attachment",
+                    "residual_id": (
+                        f"{era_id}:job_chronology_exposure_attachment"
+                    ),
                     "status": "registration_required",
                     "missing_fact": (
-                        "Stable job-number attachment for BC/DE role-block "
-                        "amount/unit questions whose codebook labels do not "
-                        "carry an explicit job number."
+                        "Questionnaire-flow attachment among Q6 employment "
+                        "spell dates/months, Q42A weeks, Q43 hours, Q44 "
+                        "overtime, Q45 overtime hours/unit, and each stable "
+                        "main/secondary job slot."
                     ),
                     "registration_required_item": (
-                        "questionnaire branch flow and main-job indicator "
-                        "adjudication"
+                        "official BC/DE questionnaire branch flow and "
+                        "main/secondary-job attachment rules"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": (
+                        f"{era_id}:job_amount_role_total_reconciliation"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Exact reconciliation of Q32A/Q34A current-job "
+                        "overtime pay and Q46 reference-year job amounts to "
+                        "the edited head/spouse role totals."
+                    ),
+                    "registration_required_item": (
+                        "PSID editing/component allocation instructions "
+                        "binding job amounts to role totals"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": f"{era_id}:role_farm_labor_allocation",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Pure role-specific farm labor carried outside the "
+                        "farm/business-excluding edited role totals; "
+                        "available aggregate fields do not establish the "
+                        "role allocation."
+                    ),
+                    "registration_required_item": (
+                        "corrected PSID farm allocation/editing source"
+                    ),
+                    "searched_interview_waves": list(waves),
+                    "searched_aggregate_raw_field_ids": [
+                        "ER21855",
+                        "ER21870",
+                        "ER24109",
+                        "ER24111",
+                    ],
+                },
+                {
+                    "residual_id": f"{era_id}:edited_total_reconciliation",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "A source rule resolving rounding, editing, and "
+                        "sample-gap differences between edited role totals "
+                        "and detailed BC/DE/job components."
+                    ),
+                    "registration_required_item": (
+                        "PSID processing/editing instructions; edited total "
+                        "must remain authoritative meanwhile"
                     ),
                     "searched_interview_waves": list(waves),
                 },
@@ -3080,11 +3615,71 @@ def _era_residuals(
                     ),
                     "searched_interview_waves": list(waves),
                 },
+                {
+                    "residual_id": (
+                        f"{era_id}:V-B8:"
+                        "pre_2013_questionnaire_absence_proof"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Questionnaire-exhaustive proof that no current "
+                        "head/spouse regular-school item exists before 2013; "
+                        "lexical still-in-school/college code hits are "
+                        "background search leads, not role/universe evidence."
+                    ),
+                    "registration_required_item": (
+                        "V-B8: official questionnaires and flow/universe "
+                        "documentation for every 1968-2011 interview wave"
+                    ),
+                    "searched_interview_waves": [
+                        wave for wave in INTERVIEW_WAVES if wave < 2013
+                    ],
+                    "searched_codebook_evidence_eras": [
+                        era_name
+                        for era_name, era_waves in CODEBOOK_ERA_SPECS
+                        if any(wave < 2013 for wave in era_waves)
+                    ],
+                    "codebook_lexical_search_evidentiary_status": (
+                        "non_evidentiary_for_questionnaire_absence"
+                    ),
+                },
             ]
         )
     elif era_id == "ry2015_2022_exclusion_lineage":
         residuals.extend(
             [
+                {
+                    "residual_id": (
+                        f"{era_id}:job_chronology_exposure_attachment"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Questionnaire-flow attachment among Q6 employment "
+                        "spell dates/months, Q43 hours, Q44 overtime, Q45 "
+                        "overtime hours/unit, and each stable job slot."
+                    ),
+                    "registration_required_item": (
+                        "official BC/DE questionnaire branch flow and "
+                        "main/secondary-job attachment rules"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": (
+                        f"{era_id}:job_amount_role_total_reconciliation"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Exact reconciliation of Q32A/Q34A current-job "
+                        "overtime pay and Q46 reference-year job amounts to "
+                        "the edited head/spouse role totals."
+                    ),
+                    "registration_required_item": (
+                        "PSID editing/component allocation instructions "
+                        "binding job amounts to role totals"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
                 {
                     "residual_id": f"{era_id}:role_farm_labor_allocation",
                     "status": "registration_required",
@@ -3094,6 +3689,20 @@ def _era_residuals(
                     ),
                     "registration_required_item": (
                         "corrected PSID farm allocation/editing source"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": f"{era_id}:edited_total_reconciliation",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "A source rule resolving rounding, editing, and "
+                        "sample-gap differences between edited role totals "
+                        "and detailed BC/DE/job components."
+                    ),
+                    "registration_required_item": (
+                        "PSID processing/editing instructions; edited total "
+                        "must remain authoritative meanwhile"
                     ),
                     "searched_interview_waves": list(waves),
                 },
@@ -3428,7 +4037,7 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
         expected_missing = [
             index
             for index, code_row in enumerate(code_map)
-            if _EXPLICIT_MISSING_MEANING_RE.search(code_row[3])
+            if _is_explicit_missing_meaning(code_row[3])
         ]
         if row[columns["missing_code_map_indices"]] != expected_missing:
             raise DictionaryDriftError(
@@ -3483,6 +4092,9 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
     facts = artifact["era_facts"]
     if artifact["era_fact_count"] != len(facts):
         raise DictionaryDriftError("codebook era fact count drifted")
+    fact_ids = [fact["fact_id"] for fact in facts]
+    if len(fact_ids) != len(set(fact_ids)):
+        raise DictionaryDriftError("duplicate codebook era fact ID")
     field_key_set = set(field_keys)
     for fact in facts:
         if not fact["codebook_field_keys"] or not set(
@@ -3502,6 +4114,15 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
     if not residuals or len(residual_ids) != len(set(residual_ids)):
         raise DictionaryDriftError(
             "codebook residual domain is empty or duplicated"
+        )
+    if any(
+        row["status"] != "registration_required"
+        or not row["missing_fact"]
+        or not row["registration_required_item"]
+        for row in residuals
+    ):
+        raise DictionaryDriftError(
+            "codebook residual is not an exact fail-closed disposition"
         )
     identity_rows = [
         row for row in CODEBOOK_ERA_IDENTITIES if row[0] == era_id
@@ -3736,6 +4357,30 @@ def build_codebook_inventory_adjudication(
                 ]
             ),
         },
+        {
+            "fact_id": "cross-era:wave2015_postcutoff_inventory_boundary",
+            "disposition": "present",
+            "finding": (
+                "The frozen unit-2 year registry classifies interview wave "
+                "2015 (reference year 2014) and every later staged wave as "
+                "inventory-only post-cutoff; their codebook facts preserve "
+                "lineage but are inadmissible as direct production sources."
+            ),
+            "source_fact_ids": source_fact_ids(
+                [
+                    "er-role-total:2015:",
+                    "er-role-total:2017:",
+                    "er-role-total:2019:",
+                    "er-role-total:2021:",
+                    "er-role-total:2023:",
+                ]
+            ),
+            "source_registry": (
+                "populace_dynamics.data.psid_covered_earnings_registry"
+            ),
+            "inventory_wave_rows_sha256": (FROZEN_INVENTORY_WAVE_ROWS_SHA256),
+            "codebook_or_crosswalk_inference_used": False,
+        },
     ]
     for fact in cross_era_facts:
         if not set(fact["source_fact_ids"]).issubset(facts_by_id):
@@ -3747,11 +4392,13 @@ def build_codebook_inventory_adjudication(
         ["early-occupation:", "early-industry:", "early-secondary-occupation:"]
     )
     vb6_facts = source_fact_ids(
-        ["spouse-seam-amount:", "spouse-1976-context:"]
+        [
+            "spouse-seam-amount:",
+            "spouse-1976-context:",
+            "secondary-job-context:",
+        ]
     )
-    vb8_facts = source_fact_ids(
-        ["regular-school:", "pre-2013-enrollment-like:"]
-    )
+    vb8_facts = source_fact_ids(["regular-school:"])
     adjudication: dict[str, Any] = {
         "schema_version": CODEBOOK_ADJUDICATION_SCHEMA_VERSION,
         "artifact_id": CODEBOOK_ADJUDICATION_SCHEMA_VERSION,
@@ -3772,9 +4419,11 @@ def build_codebook_inventory_adjudication(
                 "registration_item_id": "V-B5",
                 "verdict": "registration_required",
                 "established_subclaims": (
-                    "Retrospective three-digit main-job occupation/industry "
-                    "fields for both roles and broad head secondary "
-                    "occupation are present with complete displayed maps."
+                    "Retrospective main-job occupation/industry fields for "
+                    "both roles and broad head secondary occupation are "
+                    "present. Complete grouped maps displayed by the "
+                    "codebooks are preserved; exact three-digit meanings "
+                    "remain unestablished."
                 ),
                 "established_fact_ids": vb5_facts,
                 "residual_ids": [
@@ -3789,7 +4438,11 @@ def build_codebook_inventory_adjudication(
                 "verdict": "registration_required",
                 "established_subclaims": (
                     "V4379 is mixed; V5289/V5788 amount concepts and 1976 "
-                    "interview-time spouse context maps are present."
+                    "interview-time spouse context maps are present. The "
+                    "1976 head and spouse, and 1977-1978 head, secondary-job "
+                    "fields and displayed maps are source-bound without "
+                    "claiming annual role-total attachment or 1977-1978 "
+                    "spouse-branch absence."
                 ),
                 "established_fact_ids": vb6_facts,
                 "residual_ids": [
@@ -3801,24 +4454,55 @@ def build_codebook_inventory_adjudication(
                         "ry1975_1977_spouse_concept_seam:"
                         "V-B6:annual_job_match"
                     ),
+                    (
+                        "ry1975_1977_spouse_concept_seam:"
+                        "V-B6:government_level_absence"
+                    ),
+                    (
+                        "ry1975_1977_spouse_concept_seam:"
+                        "V-B6:secondary_job_attachment_and_absence"
+                    ),
                 ],
             },
             {
                 "registration_item_id": "V-B8",
                 "verdict": "registration_required",
                 "established_subclaims": (
-                    "All later regular-school branch fields and earlier "
-                    "still-in-school/college codes are present with complete "
-                    "displayed maps."
+                    "The two 2013 continuing-role K/L84 fields and the "
+                    "2015-2023 new-role 61A plus continuing-role 84 fields "
+                    "for both roles are present with complete displayed "
+                    "maps. Earlier lexical still-in-school/college hits "
+                    "remain explicitly non-evidentiary for role, universe, "
+                    "or current status."
                 ),
                 "established_fact_ids": vb8_facts,
                 "residual_ids": [
                     ("ry2002_2014_modern_bc_de:" "V-B8:branch_freshness"),
+                    (
+                        "ry2002_2014_modern_bc_de:"
+                        "V-B8:pre_2013_questionnaire_absence_proof"
+                    ),
                     ("ry2015_2022_exclusion_lineage:" "V-B8:branch_freshness"),
                 ],
             },
         ],
         "registration_required_residuals": residuals,
+        "production_admissibility": {
+            "source_registry": (
+                "populace_dynamics.data.psid_covered_earnings_registry"
+            ),
+            "source_registry_status": "frozen_unit_2_independent_registry",
+            "inventory_wave_rows_sha256": (FROZEN_INVENTORY_WAVE_ROWS_SHA256),
+            "boundary_earnings_reference_year": 2014,
+            "first_inventory_only_interview_wave": 2015,
+            "inventory_only_post_cutoff_waves": list(
+                POST_CUTOFF_INVENTORY_WAVES
+            ),
+            "inventory_year_disposition": "inventory_only_post_cutoff",
+            "production_use": "lineage_only",
+            "derived_from_codebook_bytes": False,
+            "crosswalk_inference_used": False,
+        },
         "official_inventory_ratification": {
             "status": "registration_required",
             "failure_disposition": "abort_inventory_ratification",
@@ -3871,6 +4555,26 @@ def validate_codebook_inventory_adjudication(
         raise DictionaryDriftError(
             "codebook adjudication evidence domain drifted"
         )
+    identity_by_era = {
+        row[0]: dict(zip(CODEBOOK_ERA_IDENTITY_COLUMNS, row, strict=True))
+        for row in CODEBOOK_ERA_IDENTITIES
+    }
+    for row in evidence:
+        identity = identity_by_era[row["era_id"]]
+        if (
+            row["content_sha256"] != identity["content_sha256"]
+            or row["field_count"] != identity["field_count"]
+            or row["page_stream_locator_count"]
+            != identity["page_stream_locator_count"]
+            or row["code_map_row_count"] != identity["code_map_row_count"]
+            or row["closed_range_count"] != identity["closed_range_count"]
+            or row["description_line_count"]
+            != identity["description_line_count"]
+            or row["fact_count"] != identity["fact_count"]
+        ):
+            raise DictionaryDriftError(
+                "codebook adjudication evidence identity drifted"
+            )
     totals = adjudication["complete_domain_totals"]
     expected = {
         "interview_wave_count": len(INTERVIEW_WAVES),
@@ -3891,14 +4595,47 @@ def validate_codebook_inventory_adjudication(
         raise DictionaryDriftError("codebook disposition law drifted")
     if any(row["disposition"] != "present" for row in dispositions["present"]):
         raise DictionaryDriftError("non-present fact in present domain")
+    present_ids = [row["fact_id"] for row in dispositions["present"]]
+    if len(present_ids) != len(set(present_ids)):
+        raise DictionaryDriftError("duplicate fact in present domain")
     if dispositions["structural_missing"]:
         raise DictionaryDriftError(
             "codebook-only adjudication invented structural absence"
+        )
+    if dispositions["structural_missing_status"] != (
+        "none_adjudicated_codebook_search_is_not_questionnaire_absence_proof"
+    ):
+        raise DictionaryDriftError(
+            "codebook structural-missing explanation drifted"
         )
     if totals["present_fact_count"] != len(dispositions["present"]):
         raise DictionaryDriftError("codebook present-fact total drifted")
     if totals["structural_missing_count"] != 0:
         raise DictionaryDriftError("codebook structural-missing total drifted")
+    residuals = adjudication["registration_required_residuals"]
+    residual_ids = [row["residual_id"] for row in residuals]
+    if (
+        totals["registration_required_residual_count"] != len(residuals)
+        or len(residual_ids) != len(set(residual_ids))
+        or any(row["status"] != "registration_required" for row in residuals)
+    ):
+        raise DictionaryDriftError(
+            "codebook adjudication residual domain drifted"
+        )
+    cross_era_facts = adjudication["cross_era_facts"]
+    if [row["fact_id"] for row in cross_era_facts] != [
+        "cross-era:ry1992_1993_component_seam",
+        "cross-era:ry2016_2022_exclusion_lineage",
+        "cross-era:wave2015_postcutoff_inventory_boundary",
+    ]:
+        raise DictionaryDriftError("codebook cross-era fact domain drifted")
+    present_id_set = set(present_ids)
+    if any(
+        row["disposition"] != "present"
+        or not set(row["source_fact_ids"]).issubset(present_id_set)
+        for row in cross_era_facts
+    ):
+        raise DictionaryDriftError("codebook cross-era source binding drifted")
     verdicts = adjudication["verdicts"]
     if [(row["registration_item_id"], row["verdict"]) for row in verdicts] != [
         ("V-B5", "registration_required"),
@@ -3906,17 +4643,67 @@ def validate_codebook_inventory_adjudication(
         ("V-B8", "registration_required"),
     ]:
         raise DictionaryDriftError("V-B verdict domain drifted")
+    residual_id_set = set(residual_ids)
+    for verdict in verdicts:
+        established_ids = verdict["established_fact_ids"]
+        verdict_residual_ids = verdict["residual_ids"]
+        if (
+            not established_ids
+            or len(established_ids) != len(set(established_ids))
+            or not set(established_ids).issubset(present_id_set)
+            or not verdict_residual_ids
+            or len(verdict_residual_ids) != len(set(verdict_residual_ids))
+            or not set(verdict_residual_ids).issubset(residual_id_set)
+        ):
+            raise DictionaryDriftError("V-B verdict source binding drifted")
+    vb8 = verdicts[2]
+    if not all(
+        fact_id.startswith("regular-school:")
+        for fact_id in vb8["established_fact_ids"]
+    ):
+        raise DictionaryDriftError(
+            "V-B8 treated a lexical search lead as established"
+        )
+    production = adjudication["production_admissibility"]
+    if production != {
+        "source_registry": (
+            "populace_dynamics.data.psid_covered_earnings_registry"
+        ),
+        "source_registry_status": "frozen_unit_2_independent_registry",
+        "inventory_wave_rows_sha256": FROZEN_INVENTORY_WAVE_ROWS_SHA256,
+        "boundary_earnings_reference_year": 2014,
+        "first_inventory_only_interview_wave": 2015,
+        "inventory_only_post_cutoff_waves": list(POST_CUTOFF_INVENTORY_WAVES),
+        "inventory_year_disposition": "inventory_only_post_cutoff",
+        "production_use": "lineage_only",
+        "derived_from_codebook_bytes": False,
+        "crosswalk_inference_used": False,
+    }:
+        raise DictionaryDriftError(
+            "codebook production-admissibility boundary drifted"
+        )
     ratification = adjudication["official_inventory_ratification"]
-    if ratification["status"] != "registration_required":
+    if (
+        ratification["status"] != "registration_required"
+        or ratification["failure_disposition"]
+        != "abort_inventory_ratification"
+        or ratification["target_artifacts"] != _target_artifacts()
+    ):
         raise DictionaryDriftError("official inventory did not fail closed")
     if ratification["official_partial_artifact_emitted"] is not False:
         raise DictionaryDriftError(
             "official partial inventory was impermissibly emitted"
         )
-    if adjudication["independence"]["crosswalk_used"] is not False:
-        raise DictionaryDriftError(
-            "codebook adjudication depends on a crosswalk"
-        )
+    if adjudication["independence"] != {
+        "inventory_source": (
+            "registered codebook/setup/raw identities and pinned PDF "
+            "content streams"
+        ),
+        "crosswalk_used": False,
+        "reader_used": False,
+        "derived_text_evidentiary_status": "locator_only_not_evidence",
+    }:
+        raise DictionaryDriftError("codebook adjudication lost independence")
     expected_content_sha = adjudication["integrity"]["content_sha256"]
     candidate = json.loads(json.dumps(adjudication))
     candidate["integrity"]["content_sha256"] = _ZERO_SHA256
