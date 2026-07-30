@@ -9347,8 +9347,8 @@ and `adjudicated_at_utc`. The two manifests enumerate and hash the complete
 registered source/methodology authority set without a numeric observation.
 `repository_commit` is 40 lowercase hex. Every nonnull manifest candidate,
 registered-domain/implementation/environment identity, and referenced
-capture registration/primary/sidecar must exist as exact Git-tracked bytes in
-that commit tree. `adjudicated_at_utc` is exactly
+capture registration/claim/primary/sidecar must exist as exact Git-tracked
+bytes in that commit tree. `adjudicated_at_utc` is exactly
 `YYYY-MM-DDTHH:MM:SSZ` with a real Gregorian UTC date/time; it is audit
 metadata and never orders cutoffs. Cutoff order uses strict Git ancestry.
 `then_operative_calibrated_design_identity` has exactly `path`,
@@ -10443,7 +10443,7 @@ or `live_prebranch`. They resolve respectively to the
 ratification-commit design blob; the staged selected-configuration field
 tree; the registered implementation tree; the final authority-cutoff tree;
 that tree's single parent; coordinator results reconstructed under this
-section; the accepted capture pair; and stable prebranch descriptor
+section; the accepted capture primary and sidecar; and stable prebranch descriptor
 observations. The staged configuration root contains only the literal nested
 fields named by these projections, excludes `registration_reference` and
 every receipt/domain/result digest, and must later byte-equal those fields in
@@ -10595,7 +10595,8 @@ status passes; no implementation-authored ID or text may enter.
 The domain's cutoff digest and every requirement-evidence cutoff digest
 equal SHA-256 of the final calibrated adjudication's complete
 `authority_cutoff`; when capture occurred, that cutoff is strictly later
-than the capture primary and includes its accepted identities.
+than the commit adding the accepted tracked capture triple and includes all
+four accepted authorization/claim/primary/sidecar identities.
 
 The nonnull `cross_binding` literals above impose exact digest and deep-copy
 equations; they are not comments. The producer-side position can pass before
@@ -11809,16 +11810,24 @@ positional law.
 
 `authority_capture_input` is
 `fitting_free_model_input_authority_capture_input.v1`, with exactly
-`schema_version`, `registration_path`, `registration_sha256`,
+`schema_version`, `registration_path`, `registration_sha256`, `claim_path`,
+`claim_schema_version`, `claim_artifact_vintage_id`, `claim_sha256`,
 `artifact_path`, `artifact_vintage_id`, `artifact_schema_version`,
-`artifact_sha256`, `sidecar_path`, and `sidecar_sha256`. All three paths use
-one §16.10 capture suffix; the vintage and schema are the exact accepted
-primary literals; and every digest binds the complete canonical bytes.
-Registration, primary, and sidecar deep-validate one another. A1/A3 capture
-paths, closure hashes, identities, counts, and keysets must deep-match that
-primary. The child remains in the complete configuration and full evaluation
-provenance but enters the substantive model only through the separate A1
-substantive projection below.
+`artifact_sha256`, `sidecar_path`, and `sidecar_sha256`. The claim schema is
+literal `fitting_free_model_input_authority_capture_claim.v1`; its vintage
+and the primary vintage are the same exact §16.10 capture vintage. All four
+paths use one capture suffix, and every digest binds the complete canonical
+Git blob bytes at the final authority cutoff. Registration, claim, primary,
+and sidecar deep-validate one another: the claim's registration reference,
+registration digest, and vintage equal the authorization; both identity
+artifacts' `capture_claim_sha256` equal `claim_sha256`; the primary's sidecar
+digest equals `sidecar_sha256`; and every path, schema, vintage, and digest
+equals the corresponding accepted §16.10 artifact. A1/A3 capture paths,
+closure hashes, identities, counts, and keysets must deep-match that primary.
+The complete four-artifact child remains in the configuration and full
+evaluation provenance. The claim is a nonauthority lifecycle witness and
+enters neither A1/A3 nor the substantive model; model entry remains only
+through the separate A1 substantive projection below.
 
 An A1 identity has exactly `authority_id`, `selector_id`,
 `selector_implementation_identity`, `selector_sha256`, `age_rule`,
@@ -11875,8 +11884,9 @@ derived A1 support key has exactly one finite positive source weight; and the
 field exact-matches A2. A manifest hash of a downstream report, unstaged PSID
 alias, missing raw input digest, or implementation-reported subset fails A3.
 The two capture paths and input-closure hashes exact-match one another and
-the accepted §16.10 authority-capture artifact/sidecar; they cannot point to
-different preparations.
+the accepted §16.10 tracked primary/sidecar, whose shared
+`capture_claim_sha256` equals the tracked claim digest in
+`authority_capture_input`; they cannot point to different preparations.
 
 `fitting_free_model_input_authority_substantive_projection.v1` has exactly
 `schema_version`, `model_universe_selector_substantive_identity`,
@@ -12555,16 +12565,21 @@ integrity law remains. `input_hashes` is the exact allowed fitting-free input
 domain, including the separately retained A3 weight input, plus the
 separately keyed value-blind path-adjudication input, the exact
 evaluation-only input identity, and the committed synthetic G21 fixture
-inputs. It also includes exactly three rows with IDs
+inputs. It also includes exactly four rows with IDs
 `fitting_free_model_input_authority_capture_registration`,
+`fitting_free_model_input_authority_capture_claim`,
 `fitting_free_model_input_authority_capture_primary`, and
 `fitting_free_model_input_authority_capture_sidecar`; their paths/digests
 exact-match `authority_capture_input`, and their respective roles are
 `registration_authority_capture_authorization`,
+`registration_authority_capture_lifecycle_claim`,
 `registration_authority_capture_identity`, and
-`registration_authority_capture_environment`. Their roles stay disjoint and each exact-matches full evaluation
-provenance. The array contains no calibration-target, official-target, or
-production official-aggregate row.
+`registration_authority_capture_environment`. Their roles stay disjoint and
+each row retains the inherited exact `input_id`, `path`, `actual_sha256`
+shape and exact-matches full evaluation provenance; the listed role is its
+position's already-defined provenance role, not an added row key. The claim
+row grants no selector, weight, source, or model capability. The array contains no
+calibration-target, official-target, or production official-aggregate row.
 
 `prebranch_runner_environment_identity_sha256` is SHA-256 of the complete
 same-cutoff `runner_environment_actual_preimage.v1` constructed for position
@@ -12631,10 +12646,14 @@ exactly:
 1. validate registration, configuration, revision-4 design identity,
    common applicability-receipt shape/path/digests, checkout, invocation,
    output absence, histories, and the exact forbidden-capability closure
-   without opening a target or correction-execution value;
+   without opening a target or correction-execution value; when A1/A3 use a
+   capture, this phase first completes §16.10's fresh-process clean-checkout
+   transition under the unchanged P01 initial branch and validates the
+   tracked authorization/claim/primary/sidecar quartet;
 2. validate the value-blind calibrated adjudication, independently
-   reconstruct A1–A3 from the closed capture identity bytes, all eight
-   operative direct-law verification/consequence rows, the complete
+   reconstruct A1–A3 from the claim-bound tracked primary/sidecar identity
+   bytes (never from the nonauthority claim), all eight operative direct-law
+   verification/consequence rows, the complete
    correction-input domain, both canonical empty domains, and the forbidden-
    capability graph; only then rederive both independent authority statuses
    and both path predicates, exact-compare the complete receipt/result, freeze
@@ -13885,9 +13904,13 @@ replacing `fit_selection_cell_identity_sha256` with
 `fitting_free_crosswalk_direct_law_closure_sha256`. Its context-input
 manifest derives the complete fitting-free correction primary/sidecar
 allowlist, A3 and value-blind path-adjudication identities, and registered
-evaluation-only vintage-1 inputs from those locked bytes; it contains no
-calibration target, official-target input, physical official-cell registry,
-or production aggregate input. To satisfy inherited manifest completeness,
+evaluation-only vintage-1 inputs from those locked bytes. That derivation
+preserves, in the same order, the correction sidecar's exact four
+authorization/claim/primary/sidecar capture rows and their full digests; the
+claim remains lifecycle provenance and supplies no context decoder grant. It
+contains no calibration target, official-target input, physical official-cell
+registry, or production aggregate input. To satisfy inherited manifest
+completeness,
 the context coordinator may descriptor-read each committed G21 synthetic
 fixture once, before any context decoder grant, solely to recompute its byte
 length/SHA-256 and exact-match the correction sidecar commitment; it then
@@ -14628,9 +14651,11 @@ authorized order is:
    its exact fallback-blockage count is positive and fitting-free A1/A3
    authority is required, Git-track the reviewed capture executable and
    authorization before running the separately referee-gated capture, then
-   review and Git-track its append-only identity artifacts.
-   Finally create the mandatory adjudication at a later cutoff; every other
-   rehearsal remains fixture-only;
+   review and Git-track its lifecycle claim and two append-only identity
+   artifacts together as the exact capture triple. End the capture process
+   and establish the clean-checkout transition below before creating the
+   mandatory adjudication at a later cutoff; every other rehearsal remains
+   fixture-only;
 5. obtain the receipt-bound fresh registration selected by §16.2: a
    fitting-free registration binds the amendment-2 commit/revision-4 blob in
    its `design` child, while an unchanged calibrated registration binds them
@@ -14675,6 +14700,11 @@ is the authorization's own exact
 §16.10 path. `output_paths` has exactly `claim`, `primary`, and `sidecar`,
 equal to the same-suffix paths frozen below; it has no incident, retry,
 report, or correction-output path.
+
+The retained failure literal names the two would-be A1/A3 authority
+artifacts; it does not define acceptance. Even a valid authority pair is
+unaccepted until its exact lifecycle claim joins it in the reviewed
+capture-triple commit below.
 
 `environment_lock_input` has exactly `input_id`, `path`, `schema_version`,
 `artifact_vintage_id`, `role`, and `sha256`, all strings. Its first five
@@ -14870,7 +14900,10 @@ parent directory, and descriptor-rereads the exact bytes/stat identity before
 exclusive creation, reread drift, or write/fsync mismatch aborts before any
 source open.
 The claim persists on every outcome, is not an A1/A3 authority artifact, and
-makes the suffix terminal.
+makes the suffix terminal. On success, these exact immutable bytes—not a
+recreated, reparsed-and-reserialized, renamed, or replacement claim—are the
+third capture artifact committed with the primary and sidecar under the
+capture-triple law below.
 
 Each registered input is opened exactly once through a single-link
 root-to-leaf no-follow chain, verified as a regular file, and pinned by one
@@ -14988,11 +15021,46 @@ and the primary path plus `.env.json`; the artifact vintage is
 `covered_earnings_fitting_free_model_input_authority_capture.vintage<c>`.
 `output_paths` binds the latter three paths. None is overwritten.
 
-On any failure, no accepted authority primary/sidecar pair and no base
-correction incident is created. The committed registration is terminal; any
-claim, registered staging path, or partial final path that was created
-persists and is also terminal. Every failure forces the next capture vintage.
-No same-vintage retry exists.
+An invocation that aborts before successful `O_EXCL` creation of the claim
+path is a `preclaim_validation_refusal`, not a capture attempt: it opened no
+production source, created no path, and may only repeat the closed validation
+for the same committed authorization. A later authorization suffix may not
+be committed while its immediate predecessor has only this unresolved
+state. Successful creation of the claim path—not later completion of its
+canonical write—is the irreversible capture-attempt boundary.
+
+On any failure after that boundary, no accepted capture triple and no base
+correction incident is created. The capture process exits, and one reviewed,
+single-parent, append-only **terminal-claim commit** adds exactly the
+same-suffix claim path and makes no other tree change. Its parent contains
+the same-suffix authorization and none of the claim, primary, or sidecar
+paths. The added path has Git tree mode `100644` and its raw blob is exactly
+the stable bytes left at the terminal claim path, including zero, partial, or
+invalid bytes if canonical claim creation itself failed; those bytes are
+never parsed as authority, normalized, replaced, or completed. Any staging
+or partial final path remains untouched and untracked in the failed checkout
+and is not part of this commit. The terminal-claim commit is the unique
+single-parent commit in the authorization's descendant history that first
+adds that claim path without the primary/sidecar. Its existence permanently
+disqualifies the suffix from a capture-triple commit or
+`authority_capture_input`.
+
+Every later authorization must be at the next derived vintage and strictly
+descend from that terminal-claim commit. The coordinator derives
+`terminal_capture_history_projection.v1` over every ancestor \(K\) of the
+later `HEAD` \(H\), in ascending commit-ID order. Let \(A_f\) and \(F\) be
+the failed suffix's authorization and terminal-claim commits. If
+\(F \preceq K\), the authorization and exact failed-claim blob are present
+unchanged and primary/sidecar are absent. Otherwise, if \(A_f \preceq K\),
+only the unchanged authorization is present. Otherwise all four same-suffix
+paths are absent. Here \(\preceq\) means Git ancestor-of-or-equal. The exact
+mode/OID/raw-hash row law and the three incomparable-branch cases are the
+same as the successful-history projection below. Missing, changed, deleted-
+then-restored, multiple, or non-single-parent terminal-claim history aborts.
+The committed registration and claim are terminal, as is any registered
+staging or partial final path left in the failed checkout. Thus every
+post-claim failure forces the next capture vintage, and no same-vintage retry
+exists.
 
 After `access_sealed`, a separately trusted finalizer with no source,
 decoded-field, predicate, or reduction capability constructs both complete
@@ -15020,28 +15088,142 @@ absolute for every broker, verifier, and source-capable principal.
 
 On success, the ceremony has already destroyed all descriptors, seals access,
 publishes sidecar then primary under that finalizer law, and permits no
-further source contact. Both artifacts require independent review and Git
-tracking before they can supply A1/A3 to the fresh correction registration.
+further source contact. The claim, primary, and sidecar are the exact
+**capture triple**. Success is not accepted merely because those three paths
+exist. After the capture process exits, one independently reviewed,
+single-parent, append-only capture-artifact commit must add exactly those
+three same-suffix paths relative to its parent, with no other tree change.
+The parent contains the committed same-suffix authorization and none of the
+three paths. Each added path is a regular Git blob with tree mode `100644`;
+the raw claim, primary, and sidecar blob bytes hash respectively to
+`claim_sha256`, `artifact_sha256`, and `sidecar_sha256` in the complete
+reviewed `authority_capture_input`, and every cross-reference above passes.
+That commit is the **capture-triple commit**. No earlier tree containing only
+a subset and no later commit that changes one of the three blobs can be an
+accepted capture. The coordinator derives this 40-lowercase-hex identity as
+the unique single-parent ancestor of the final authority cutoff whose
+parent-to-child tree delta adds those exact three paths; it is not supplied
+by a configuration, manifest, or operator. Zero or multiple matching commits
+aborts. Let \(A\) be the unique commit that added the same-suffix
+authorization. \(A\) must be an ancestor of \(T\), and every commit \(J\)
+that is a descendant of or equal to \(A\) and an ancestor of \(T\)'s parent
+must retain the authorization path at exact tree mode `100644`, blob OID,
+and raw SHA-256 fixed at \(A\), with that raw digest equal to
+`authority_capture_input.registration_sha256`, and must have all three
+same-suffix output paths absent from its tree. Together with the post-\(T\)
+projection below, this freezes the authorization at every commit from \(A\)
+through registration `HEAD`. This derived prehistory rejects an in-place
+authorization rewrite, earlier claim-only, pair-only, add/delete, or side-
+branch predecessor even when \(T\)'s immediate parent looks valid.
+
+The later validator also derives the complete
+`capture_artifact_history_projection.v1`; no producer serializes or supplies
+its domain. Let \(A\) be the authorization commit, \(T\) the capture-triple
+commit, and \(H\) the correction-registration `HEAD`, with the final
+authority cutoff required to be an ancestor of \(H\). The projection's
+commit domain is exactly every Git commit \(K\) that is an ancestor of or
+equal to \(H\), ordered by ascending 40-lowercase-hex commit ID. The
+validator reads the named Git blobs' raw bytes and forms each present-
+artifact row with exactly `path`, `tree_mode`, `blob_oid`, and
+`raw_sha256`; tree mode is literal `100644`, and blob OID and raw digest are
+respectively 40 and 64 lowercase hex.
+
+Each commit has exactly one coordinator-derived tag. `post_triple` applies
+iff \(T\) is an ancestor of or equal to \(K\): authorization, claim,
+primary, and sidecar must be present in that exact order, and all four rows
+must equal their rows at \(T\), including mode, blob OID, raw bytes, and the
+corresponding reviewed `authority_capture_input` digest.
+`post_authorization_pretriple` applies iff the first condition is false and
+\(A\) is an ancestor of or equal to \(K\): the authorization row must equal
+its row at \(A\), and all three output paths must be absent.
+`preauthorization_or_incomparable` applies otherwise, and all four same-
+suffix paths must be absent. Thus a merged branch forked before \(A\), after
+\(A\), or after \(T\) has one exact state even when it is incomparable with
+the later event commits. Any missing required path, forbidden early path,
+changed mode/OID/bytes, mutation followed by restoration, extra/missing
+ancestry commit, wrong tag, or non-exact row order aborts capture acceptance.
+
+The claim's capture-time descriptor mode remains exactly 0444 through final
+finalizer validation. The primary and sidecar retain the nonexecutable mode
+0600 created on their staging descriptors through final-path publication and
+finalizer validation. Git represents each of the three subsequently reviewed
+nonexecutable regular files as tree mode `100644`; this representation
+changes no artifact byte. Capture validation therefore binds each live
+descriptor's applicable mode/inode and bytes, while capture-triple and
+correction validation bind the Git tree modes and raw blob bytes. A later
+checkout is neither expected nor permitted to reproduce any obsolete
+capture-process inode or permission bits. The two identity artifacts remain
+the only A1/A3 authorities; the tracked claim is the nonauthority proof of
+their formerly live same-vintage claim identity.
+Precisely,
+`SHA256(finalizer stable claim-descriptor bytes)`,
+primary `capture_claim_sha256`, sidecar `capture_claim_sha256`,
+`authority_capture_input.claim_sha256`,
+`SHA256(git show <capture-triple commit>:<claim_path>)`,
+`SHA256(git show HEAD:<claim_path>)`, and
+`SHA256(pre-registration stable claim-descriptor bytes)` must all be the
+same 64-lowercase-hex digest. At the capture-triple commit, final authority
+cutoff, and registration `HEAD`, strict parsing also reproduces the exact
+seven-key claim schema and the same vintage, registration reference, and
+capture-registration digest. The hash-reference DAG remains acyclic: claim
+binds registration; sidecar binds claim and registration; primary binds
+claim, sidecar, and registration; and the later configuration binds all
+four. The claim never receives a primary, sidecar, configuration, or future
+commit digest.
+
+The correction control plane may consume that triple only after a mandatory
+clean-checkout transition. A newly launched process must have `HEAD` at a
+commit strictly descending from the capture-triple commit. The authorization,
+claim, primary, and sidecar must all be tracked at `HEAD` and at the final
+authority cutoff, with the same raw blobs, paths, modes, schemas, vintage,
+digests, and cross-references frozen above. For each capture-triple path,
+raw `git show <capture-triple commit>:<path>` bytes, raw
+`git show HEAD:<path>` bytes, and the stable pre-registration descriptor
+bytes are identical, and their SHA-256 equals the corresponding
+`authority_capture_input` digest. Both registered staging paths
+must be absent, the capture process and every capture descriptor must be
+gone, and the index and worktree must satisfy the unchanged base P01 initial
+branch: no untracked or ignored path exception, no modified tracked path,
+and no staged difference. The checkout may be newly created or the capture
+checkout after the tracking commit, but this fresh-process clean state is
+mandatory. An untracked, ignored, missing, modified, differently staged, or
+partial claim/triple aborts before any correction claim or input open.
+`authority_capture_input` then binds the exact four tracked artifacts; it
+does not reconstruct, omit, or tolerate an absent former claim.
+
+A failed vintage's partial/staging output remains permanently untouched and
+untracked in the checkout where it was created and can never enter a later
+accepted triple; that checkout therefore continues to fail P01. Any later
+capture or correction must use a different checkout descending from the
+terminal-claim commit. That clean checkout contains the unchanged tracked
+failed claim, omits the untracked partial/staging residue, and uses the next
+derived vintage. No failed partial/staging residue is copied, removed,
+ignored, allowlisted, or treated as authority evidence. Thus persistence on
+every outcome creates no hidden initial-branch exception or invisible same-
+vintage retry, while the successful claim cited by a correction is always
+the tracked third artifact above.
 
 Capture success never selects fitting-free. The coordinator must append a
 new final
 `covered_earnings_calibrated_registrability_adjudication.v1` whose authority
 cutoff `repository_commit` is a strict Git descendant of both the preliminary
-cutoff commit and the commit containing the accepted capture pair, and whose
-manifests include the new A1/A3 identities. UTC timestamps do not establish
+cutoff commit and the capture-triple commit, and whose manifests include the
+new A1/A3 identities and whose cutoff tree contains the unchanged tracked
+authorization/claim/primary/sidecar quartet. UTC timestamps do not establish
 that order. Only that final artifact may enter the common receipt. If capture
 made the calibrated domain registrable—for example because A1/A3 were its
 last gaps—the receipt must select `CALIBRATED`; otherwise it evaluates the
-complete fitting-free domain. Reusing the preliminary cutoff or deriving a
-path from capture success aborts.
+complete fitting-free domain. Reusing the preliminary cutoff, omitting the
+tracked claim, or deriving a path from capture success aborts.
 
 This ceremony is the sole narrow prospective replacement of §10.1's
 pre-registration production-contact ban. Its input/source inspection
 authority consists only of the sole registered non-production prelaunch
 environment-lock descriptor for environment validation/provenance and the
 exact registered A1/A3 fields/bytes above. It emits only the one non-authority
-lifecycle claim plus the two identity artifacts; every other step-4
-preparation and rehearsal remains fixture-only.
+lifecycle claim plus the two identity artifacts as three tracked capture
+artifacts; the claim remains nonauthority and only the primary/sidecar supply
+A1/A3. Every other step-4 preparation and rehearsal remains fixture-only.
 
 The existing four-key registration `design` object is not enlarged. Its exact
 amendment-2 fitting-free values are:
