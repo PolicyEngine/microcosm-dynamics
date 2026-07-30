@@ -1,10 +1,9 @@
-"""Reproduction and fail-closed tests for entry-11 target extraction."""
+"""Source reproduction and fail-closed tests for entry-11 extraction."""
 
 from __future__ import annotations
 
 import copy
 import hashlib
-import json
 import shutil
 import sys
 from pathlib import Path
@@ -22,17 +21,6 @@ ARTIFACT = (
     / "external"
     / "ssa_covered_earnings_calibration_targets_vintage2.json"
 )
-ARTIFACT_SHA256 = (
-    "135b40cf00a43054e16fc113b7d30672303654a6f96df8b82f5929edab58f7d7"
-)
-ARTIFACT_SIZE_BYTES = 732_387
-CONTENT_SHA256 = (
-    "367d18f2920359eb201c5db625a153aad3cde3de0960187dfa011dd1723d4081"
-)
-BUILDER_COMMIT = "14efbded2b6d02bbfe0014a7b059068a733a1e11"
-SOURCE_SHA256 = (
-    "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449"
-)
 
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
@@ -40,84 +28,66 @@ if str(SCRIPTS) not in sys.path:
 import build_ssa_covered_earnings_calibration_targets as builder  # noqa: E402
 
 
-def _artifact() -> dict:
-    return json.loads(ARTIFACT.read_bytes())
+def _evidence() -> dict:
+    return builder.extract_b2_b11_source_evidence()
 
 
-def _canonical(value: object) -> bytes:
-    return (
-        json.dumps(
-            value,
-            allow_nan=False,
-            ensure_ascii=True,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-        + "\n"
-    ).encode("utf-8")
+def _partial_legacy_artifact() -> dict:
+    """Construct the withdrawn round-1 shape solely for rejection attacks."""
+
+    evidence = _evidence()
+    artifact = {
+        "schema_version": builder.SCHEMA_VERSION,
+        "artifact_vintage_id": builder.ARTIFACT_VINTAGE_ID,
+        "artifact_role": builder.ARTIFACT_ROLE,
+        "year_basis": builder.YEAR_BASIS,
+        "required_calendar_years": list(builder.REQUIRED_CALENDAR_YEARS),
+        "required_source_cell_ids": {
+            **evidence["required_source_cell_ids"],
+            "ssa_covered_share": [],
+        },
+        "covered_share_required_years": [],
+        "source_document_manifest": evidence["source_document_manifest"],
+        "observations": evidence["observations"],
+        "cross_table_discrepancies": evidence["cross_table_discrepancies"],
+        "integrity": {
+            "canonicalization": builder.CANONICALIZATION,
+            "content_sha256": "0" * 64,
+            "extraction_implementation_commit": (
+                builder.EXTRACTION_IMPLEMENTATION_COMMIT
+            ),
+            "reproduced_from_source_bytes": True,
+        },
+    }
+    artifact["integrity"]["content_sha256"] = builder._content_sha256(artifact)
+    return artifact
 
 
-def _observations_by_id(artifact: dict) -> dict[str, dict]:
+def _observations_by_id(evidence: dict) -> dict[str, dict]:
     return {
         observation["source_cell_id"]: observation
-        for observation in artifact["observations"]
+        for observation in evidence["observations"]
     }
 
 
-def _refresh_content_sha256(artifact: dict) -> None:
-    artifact["integrity"]["content_sha256"] = "0" * 64
-    artifact["integrity"]["content_sha256"] = hashlib.sha256(
-        _canonical(artifact)
-    ).hexdigest()
+def test__vintage2_authority__is_absent_and_build_fails_closed():
+    assert not ARTIFACT.exists()
+    with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
+        builder.build()
+    with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
+        builder.render()
 
 
-def test__calibration_target_artifact__is_canonical_and_sha256_pinned():
-    raw = ARTIFACT.read_bytes()
-    assert raw == _canonical(json.loads(raw))
-    assert len(raw) == ARTIFACT_SIZE_BYTES
-    assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
-
-
-def test__calibration_target_builder__reproduces_committed_bytes_twice():
-    raw = ARTIFACT.read_bytes()
-    assert builder.render() == raw
-    assert builder.render() == raw
-
-
-def test__calibration_target_artifact__pins_identity_and_schema():
-    artifact = _artifact()
-    assert set(artifact) == {
-        "artifact_role",
-        "artifact_vintage_id",
-        "covered_share_required_years",
+def test__b2_b11_evidence__is_complete_and_ordered_without_minting_v2():
+    evidence = _evidence()
+    assert set(evidence) == {
         "cross_table_discrepancies",
-        "integrity",
         "observations",
         "required_calendar_years",
         "required_source_cell_ids",
-        "schema_version",
         "source_document_manifest",
-        "year_basis",
     }
-    assert artifact["schema_version"] == (
-        "ssa_covered_earnings_calibration_targets.v1"
-    )
-    assert artifact["artifact_vintage_id"] == (
-        "ssa_covered_earnings_calibration_targets.vintage2"
-    )
-    assert artifact["artifact_role"] == (
-        "official_calibration_target_source_only"
-    )
-    assert artifact["year_basis"] == "calendar_year"
-    assert artifact["required_calendar_years"] == list(range(1968, 2023))
-    # V-B7 is registration-time work and no source row is synthesized.
-    assert artifact["covered_share_required_years"] == []
-    assert artifact["required_source_cell_ids"]["ssa_covered_share"] == []
-
-
-def test__calibration_target_artifact__pins_complete_ordered_b2_b11_cells():
-    artifact = _artifact()
-    required = artifact["required_source_cell_ids"]
+    required = evidence["required_source_cell_ids"]
     b2_components = ("c5", "c8", "c11", "c12", "c13", "c17")
     b11_components = (
         "workers_total",
@@ -140,46 +110,27 @@ def test__calibration_target_artifact__pins_complete_ordered_b2_b11_cells():
         for year in range(1968, 2023)
         for component in b11_components
     ]
-    expected_order = required["table4_b2"] + required["table4_b11"]
     assert [
-        row["source_cell_id"] for row in artifact["observations"]
-    ] == expected_order
-    assert len(artifact["observations"]) == 825
+        row["source_cell_id"] for row in evidence["observations"]
+    ] == required["table4_b2"] + required["table4_b11"]
+    assert len(evidence["observations"]) == 825
 
 
-def test__calibration_target_artifact__pins_boundary_source_rows():
-    rows = _observations_by_id(_artifact())
+def test__b2_b11_evidence__pins_boundary_source_rows():
+    rows = _observations_by_id(_evidence())
     expected = {
         "table4.b2/1968/c5": "413,600",
         "table4.b2/1968/c8": "46,400",
         "table4.b2/1968/c11": "84,470",
         "table4.b2/1968/c12": "6,570",
-        "table4.b2/1968/c13": "348,500",
-        "table4.b2/1968/c17": "27,340",
         "table4.b2/2014/c5": "6,873,446",
         "table4.b2/2014/c8": "558,400",
-        "table4.b2/2014/c11": "154,301",
-        "table4.b2/2014/c12": "19,285",
-        "table4.b2/2014/c13": "5,834,200",
-        "table4.b2/2014/c17": "344,500",
         "table4.b11/1968/workers_total": "89,380",
-        "table4.b11/1968/workers_wage": "84,470",
-        "table4.b11/1968/workers_self_employment": "6,570",
         "table4.b11/1968/taxable_earnings_total": "375,800",
-        "table4.b11/1968/taxable_earnings_wage": "348,500",
-        "table4.b11/1968/taxable_earnings_self_employment": "27,300",
         "table4.b11/1968/contributions_total": "28,069",
-        "table4.b11/1968/contributions_wage": "26,486",
-        "table4.b11/1968/contributions_self_employment": "1,583",
         "table4.b11/2014/workers_total": "165,429",
-        "table4.b11/2014/workers_wage": "154,301",
-        "table4.b11/2014/workers_self_employment": "19,285",
         "table4.b11/2014/taxable_earnings_total": "6,178,700",
-        "table4.b11/2014/taxable_earnings_wage": "5,834,200",
-        "table4.b11/2014/taxable_earnings_self_employment": "344,500",
         "table4.b11/2014/contributions_total": "766,159",
-        "table4.b11/2014/contributions_wage": "723,441",
-        "table4.b11/2014/contributions_self_employment": "42,718",
     }
     assert {
         source_cell_id: rows[source_cell_id]["as_published"]
@@ -187,55 +138,9 @@ def test__calibration_target_artifact__pins_boundary_source_rows():
     } == expected
 
 
-def test__calibration_target_artifact__pins_units_status_and_rounding_law():
-    artifact = _artifact()
-    for observation in artifact["observations"]:
-        year = observation["calendar_year"]
-        component = observation["source_cell_id"].rsplit("/", 1)[1]
-        worker_component = component in {
-            "c11",
-            "c12",
-            "workers_total",
-            "workers_wage",
-            "workers_self_employment",
-        }
-        if worker_component:
-            assert (
-                observation["published_unit"],
-                observation["stored_unit"],
-                observation["scale"],
-            ) == ("thousands_of_persons", "persons", 1_000)
-        else:
-            assert (
-                observation["published_unit"],
-                observation["stored_unit"],
-                observation["scale"],
-            ) == (
-                "millions_of_current_dollars",
-                "current_dollars",
-                1_000_000,
-            )
-        assert observation["status"] == (
-            "preliminary" if year in {2021, 2022} else "historical"
-        )
-        assert observation["published_rounding_interval"] == {
-            "status": "not_established_from_source_bytes",
-            "lower": None,
-            "upper": None,
-            "lower_closed": None,
-            "upper_closed": None,
-            "rule_source_document_id": None,
-            "rule_citation": None,
-        }
-        published = int(observation["as_published"].replace(",", ""))
-        assert observation["normalized_value"] == (
-            published * observation["scale"]
-        )
-
-
-def test__calibration_target_artifact__pins_source_manifest():
-    artifact = _artifact()
-    assert artifact["source_document_manifest"] == [
+def test__b2_b11_evidence__pins_units_status_manifest_and_discrepancies():
+    evidence = _evidence()
+    assert evidence["source_document_manifest"] == [
         {
             "source_document_id": "ssa_supplement_2025_4b",
             "publication": "Annual Statistical Supplement, 2025",
@@ -250,7 +155,7 @@ def test__calibration_target_artifact__pins_source_manifest():
                 "data/external/snapshots/ssa_level_anchors_vintage1/"
                 "supplement2025_4b.html"
             ),
-            "sha256": SOURCE_SHA256,
+            "sha256": builder.SOURCE_SHA256,
             "size_bytes": 488_165,
             "capture_manifest_path": (
                 "data/external/snapshots/ssa_level_anchors_vintage1/"
@@ -258,18 +163,19 @@ def test__calibration_target_artifact__pins_source_manifest():
             ),
             "capture_manifest_entry": (
                 "2026-07-27T13:02:54Z "
-                f"{SOURCE_SHA256} 488165 supplement2025_4b.html"
+                f"{builder.SOURCE_SHA256} 488165 supplement2025_4b.html"
             ),
         }
     ]
-    source = SNAPSHOTS / "supplement2025_4b.html"
-    assert source.stat().st_size == 488_165
-    assert hashlib.sha256(source.read_bytes()).hexdigest() == SOURCE_SHA256
-
-
-def test__calibration_target_artifact__pins_discrepancy_registry():
-    artifact = _artifact()
-    observed = [
+    for observation in evidence["observations"]:
+        year = observation["calendar_year"]
+        assert observation["status"] == (
+            "preliminary" if year in {2021, 2022} else "historical"
+        )
+        assert observation["published_rounding_interval"] == (
+            builder.ROUNDING_NOT_ESTABLISHED
+        )
+    assert [
         (
             row["calendar_year"],
             row["concept"],
@@ -277,30 +183,84 @@ def test__calibration_target_artifact__pins_discrepancy_registry():
             row["table4_b11_as_published"],
             row["discrepancy_class"],
         )
-        for row in artifact["cross_table_discrepancies"]
-    ]
-    assert observed == list(builder.EXPECTED_CROSS_TABLE_DISCREPANCIES)
-    assert {
-        row["adjudication"] for row in artifact["cross_table_discrepancies"]
-    } == {"preserve_both_use_registered_table_specific_selector_never_average"}
+        for row in evidence["cross_table_discrepancies"]
+    ] == list(builder.EXPECTED_CROSS_TABLE_DISCREPANCIES)
 
 
-def test__calibration_target_artifact__pins_integrity_self_hash():
-    artifact = _artifact()
-    assert artifact["integrity"] == {
-        "canonicalization": (
-            "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
-        ),
-        "content_sha256": CONTENT_SHA256,
-        "extraction_implementation_commit": BUILDER_COMMIT,
-        "reproduced_from_source_bytes": True,
+def test__vb7_adjudication__rejects_every_committed_construction():
+    adjudication = builder.vb7_adjudication()
+    assert adjudication["covered_share_required_years"] == []
+    assert adjudication["registration_disposition"] == (
+        "abort_no_authoritative_vintage2_or_calibration_target_specs"
+    )
+    candidates = {
+        row["candidate_id"]: row
+        for row in adjudication["candidate_constructions"]
     }
-    preimage = copy.deepcopy(artifact)
-    preimage["integrity"]["content_sha256"] = "0" * 64
-    assert hashlib.sha256(_canonical(preimage)).hexdigest() == CONTENT_SHA256
+    earnings = candidates["table4_b1_reported_taxable_earnings_share"]
+    assert earnings["published_percentage_examples"] == {
+        "1968": "81.7",
+        "2014": "83.1",
+    }
+    assert earnings["verdict"] == "reject_earnings_share_is_not_worker_share"
+
+    workers = candidates[
+        "supplement_workers_with_taxable_earnings_over_"
+        "trustees_covered_workers"
+    ]
+    assert workers["displayed_ratio_comparison_counts"] == {
+        "above_one": 31,
+        "below_one": 24,
+        "equal_one": 0,
+    }
+    assert workers["example_1978"] == {
+        "numerator_thousands": "110,600",
+        "denominator_thousands": "109,432",
+    }
+    assert workers["verdict"].startswith("reject_not_a_source_defined")
 
 
-def test__calibration_target_builder__rejects_source_drift_before_parsing(
+def test__membership_adjudication__fails_required_fitting_families():
+    relationships = {
+        row["family"]: row
+        for row in builder.vb7_adjudication()[
+            "worker_membership_relationships"
+        ]
+    }
+    assert set(relationships) == {
+        "b2_wage_total_intensity",
+        "b2_se_total_intensity",
+        "b11_worker_distribution",
+    }
+    assert {row["verdict"] for row in relationships.values()} == {
+        "fail_closed"
+    }
+    assert (
+        "zero_and_loss_only_membership"
+        in relationships["b2_se_total_intensity"]["not_established"]
+    )
+
+
+def test__partial_round1_shape__is_never_accepted_as_vintage2():
+    with pytest.raises(builder.RegistrationAborted, match="V-B7"):
+        builder.validate_artifact(_partial_legacy_artifact())
+
+
+def test__validator__reresolves_coherently_rehashed_cell_from_source_bytes():
+    artifact = _partial_legacy_artifact()
+    row = next(
+        row
+        for row in artifact["observations"]
+        if row["source_cell_id"] == "table4.b2/1973/c5"
+    )
+    row["as_published"] = "999"
+    row["normalized_value"] = 999_000_000
+    artifact["integrity"]["content_sha256"] = builder._content_sha256(artifact)
+    with pytest.raises(ValueError, match="re-resolve from source bytes"):
+        builder.validate_artifact(artifact)
+
+
+def test__extractor__rejects_source_drift_before_parsing(
     tmp_path, monkeypatch
 ):
     copied = tmp_path / "ssa_level_anchors_vintage1"
@@ -316,68 +276,34 @@ def test__calibration_target_builder__rejects_source_drift_before_parsing(
 
     monkeypatch.setattr(builder, "_select_tables", parse_must_not_run)
     with pytest.raises(ValueError, match="source-byte drift"):
-        builder.build()
+        builder.extract_b2_b11_source_evidence()
 
 
-def test__calibration_target_validator__rejects_extra_schema_field():
-    artifact = _artifact()
-    artifact["unexpected"] = None
-    with pytest.raises(ValueError, match="top-level fields"):
-        builder.validate_artifact(artifact)
-
-
-def test__calibration_target_validator__rejects_observation_year_alias():
-    artifact = _artifact()
-    artifact["observations"][0]["calendar_year"] = 1969
-    with pytest.raises(ValueError, match="calendar-year equality"):
-        builder.validate_artifact(artifact)
-
-
-def test__calibration_target_validator__rejects_reordered_cells():
-    artifact = _artifact()
-    artifact["observations"][0], artifact["observations"][1] = (
-        artifact["observations"][1],
-        artifact["observations"][0],
+def test__vb7_fragment_hashes__come_from_verified_source_text():
+    adjudication = builder.vb7_adjudication()
+    candidates = adjudication["candidate_constructions"]
+    digests = {
+        value
+        for candidate in candidates
+        for key, value in candidate.items()
+        if key.endswith("_fragment_sha256")
+    }
+    assert digests
+    assert all(
+        isinstance(digest, str)
+        and len(digest) == 64
+        and digest == digest.lower()
+        for digest in digests
     )
-    with pytest.raises(ValueError, match="reordered"):
-        builder.validate_artifact(artifact)
 
 
-def test__calibration_target_validator__rejects_normalized_value_drift():
-    artifact = _artifact()
-    artifact["observations"][0]["normalized_value"] += 1
-    with pytest.raises(ValueError, match="normalized value drift"):
-        builder.validate_artifact(artifact)
-
-
-def test__calibration_target_validator__rejects_content_hash_drift():
-    artifact = _artifact()
-    artifact["integrity"]["content_sha256"] = "f" * 64
-    with pytest.raises(ValueError, match="content_sha256"):
-        builder.validate_artifact(artifact)
-
-
-@pytest.mark.parametrize(
-    ("field", "value"),
-    (
-        ("table4_b2_as_published", "999"),
-        ("table4_b2_source_cell_id", "table4.b2/1968/c5"),
-        ("discrepancy_class", "literal_source_conflict_not_display_precision"),
-    ),
-)
-def test__calibration_target_validator__rejects_discrepancy_row_drift(
-    field, value
-):
-    artifact = _artifact()
-    artifact["cross_table_discrepancies"][0][field] = value
-    _refresh_content_sha256(artifact)
-    with pytest.raises(ValueError, match="discrepancy"):
-        builder.validate_artifact(artifact)
-
-
-def test__calibration_target_validator__rejects_implementation_commit_drift():
-    artifact = _artifact()
-    artifact["integrity"]["extraction_implementation_commit"] = "f" * 40
-    _refresh_content_sha256(artifact)
-    with pytest.raises(ValueError, match="implementation commit drift"):
-        builder.validate_artifact(artifact)
+def test__partial_attack_helper__has_valid_self_hash_before_mutation():
+    artifact = _partial_legacy_artifact()
+    preimage = copy.deepcopy(artifact)
+    preimage["integrity"]["content_sha256"] = "0" * 64
+    assert (
+        artifact["integrity"]["content_sha256"]
+        == hashlib.sha256(
+            builder.entry10.canonical_json_bytes(preimage)
+        ).hexdigest()
+    )

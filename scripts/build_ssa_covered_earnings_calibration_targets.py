@@ -1,9 +1,11 @@
-"""Build the vintage-2 SSA covered-earnings calibration-target artifact.
+"""Verify the SSA source evidence for a possible vintage-2 target artifact.
 
 This entry-11 extraction is deliberately offline.  It reuses the entry-10
-capture verifier and HTML parser, reads only the committed Supplement bytes,
-and extracts the exact Table 4.B2 and Table 4.B11 cells registered in
-``docs/design/covered_earnings_correction.md`` section 6.
+capture verifier and HTML parser and reads only committed source bytes.  The
+Table 4.B2 and Table 4.B11 extraction is complete, but the committed bytes do
+not resolve the registration-required V-B7 worker-share universe or all
+worker-membership cases.  Consequently this module deliberately cannot emit
+the append-only vintage-2 authority.
 
 The committed source rows cited by the ratified design are:
 
@@ -11,11 +13,16 @@ The committed source rows cited by the ratified design are:
   2014 row lines 1944-1956.
 * Table 4.B11: header lines 14838-14861, 1968 row lines 15118-15127,
   and 2014 row lines 15670-15679.
+* Table 4.B1: header lines 41-65 and definitions at lines 929-947.
+* Trustees Table IV.B4: caption/header lines 242-291 and covered-worker
+  definition at lines 4913-4915.
 
-V-B7 covered-share source capture and universe verification are explicitly
-registration-time work and are outside this extraction unit.  Until that
-authority is registered, both covered-share arrays are therefore empty and
-no covered-share source document is synthesized.
+Table 4.B1's published reported-taxable percentage is an earnings-dollar
+share, not the worker-incidence ratio frozen by sections 3.1 and 6.2.  A
+cross-publication worker-count construction also fails: the Trustees
+denominator does not establish the required duplicate-worker and membership
+rules, and the resulting displayed-count ratio exceeds one in many years.
+The exact adjudication is returned by :func:`vb7_adjudication`.
 
 Run from the repository root::
 
@@ -30,6 +37,7 @@ import math
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from fractions import Fraction
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -80,6 +88,33 @@ SOURCE_CAPTURE_MANIFEST_ENTRY = (
     f"{SOURCE_RETRIEVED_AT_UTC} {SOURCE_SHA256} "
     f"{SOURCE_SIZE_BYTES} {SOURCE_FILENAME}"
 )
+
+TRUSTEES_COVERED_WORKERS_DOCUMENT_ID = "ssa_trustees_2026_lr4b4"
+TRUSTEES_COVERED_WORKERS_FILENAME = "trustees2026_lr4b4.html"
+TRUSTEES_COVERED_WORKERS_SHA256 = (
+    "40435030d154e29eb49a4e411b78253f504049eddff6e149d7e33033fb139458"
+)
+TRUSTEES_COVERED_WORKERS_SIZE_BYTES = 133_558
+TABLE4_B1_CAPTION = (
+    "Table 4.B1 Number of workers with Social Security (OASDI) taxable "
+    "earnings and amount of earnings, selected years 1937\u20132024"
+)
+TRUSTEES_IV_B4_CAPTION = (
+    "Table IV.B4.\u2014Covered Workers and Beneficiaries, Calendar Years "
+    "1945-2100"
+)
+TABLE4_B1_PERCENTAGE_HEADER = (
+    "Earnings",
+    "Reported taxable a",
+    "Percentage of total",
+)
+TABLE4_B1_TOTAL_WORKERS_HEADER = ("Number a (thousands)", "Total")
+TRUSTEES_COVERED_WORKERS_HEADER = ("Covered workers a (in thousands)",)
+
+
+class RegistrationAborted(ValueError):
+    """Committed bytes do not satisfy a registration-required design law."""
+
 
 ROUNDING_NOT_ESTABLISHED = {
     "status": "not_established_from_source_bytes",
@@ -484,6 +519,375 @@ def _all_year_rows(table: Any) -> dict[int, tuple[str, list[Any]]]:
     return indexed
 
 
+def _select_one_captioned_table(
+    raw: bytes,
+    *,
+    source_document_id: str,
+    exact_caption: str,
+) -> tuple[Any, tuple[Any, ...]]:
+    parsed = entry10._parse_tables(raw, source_document_id)
+    matches = [table for table in parsed if table.caption == exact_caption]
+    if len(matches) != 1:
+        raise ValueError(
+            f"{source_document_id} caption {exact_caption!r} selected "
+            f"{len(matches)} tables"
+        )
+    return matches[0], parsed
+
+
+def _unique_column(table: Any, header_path: tuple[str, ...]) -> int:
+    matches = [
+        index
+        for index, path in enumerate(entry10._column_header_paths(table))
+        if path == header_path
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"header path {header_path!r} selected {len(matches)} columns"
+        )
+    return matches[0]
+
+
+def _trustees_year_rows(table: Any) -> dict[int, tuple[str, list[Any]]]:
+    body_rows = [row for row in table.rows if row.section == "tbody"]
+    grid = entry10._expand_rows(body_rows)
+    indexed: dict[int, tuple[str, list[Any]]] = {}
+    row_group: str | None = None
+    for source_row, expanded_row in zip(body_rows, grid, strict=True):
+        nonempty = [cell for cell in source_row.cells if cell.text]
+        if (
+            len(nonempty) == 1
+            and nonempty[0].tag == "th"
+            and nonempty[0].colspan > 1
+        ):
+            row_group = nonempty[0].text
+            continue
+        row_headers = [
+            cell
+            for cell in source_row.cells
+            if cell.attributes.get("scope") == "row"
+        ]
+        if len(row_headers) != 1 or row_group != "Historical data:":
+            continue
+        row_header = row_headers[0]
+        match = re.fullmatch(r"(?P<year>\d{4})(?: [a-z])?", row_header.text)
+        if match is None:
+            continue
+        if row_header.rowspan != 1 or row_header.colspan != 1:
+            raise ValueError(
+                f"Trustees row {row_header.text!r} is not a physical 1x1 cell"
+            )
+        year = int(match.group("year"))
+        if year in indexed:
+            raise ValueError(f"duplicate Trustees source year {year}")
+        indexed[year] = (row_header.text, expanded_row)
+    return indexed
+
+
+def _selected_literal(
+    row: Sequence[Any],
+    column: int,
+    *,
+    where: str,
+) -> str:
+    if column >= len(row) or row[column] is None:
+        raise ValueError(f"{where} has no physical source cell")
+    cell = row[column]
+    if (
+        cell.tag != "td"
+        or cell.rowspan != 1
+        or cell.colspan != 1
+        or not cell.text
+    ):
+        raise ValueError(f"{where} did not select a literal physical 1x1 cell")
+    return cell.text
+
+
+def _source_fragment(
+    tables: Sequence[Any],
+    *,
+    required_text: str,
+    source_document_id: str,
+) -> str:
+    matches = [
+        cell.text
+        for table in tables
+        for row in table.rows
+        for cell in row.cells
+        if required_text in cell.text
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"{source_document_id} definition {required_text!r} selected "
+            f"{len(matches)} fragments"
+        )
+    return matches[0]
+
+
+def _parse_decimal_cell(literal: str, *, where: str) -> Fraction:
+    if not re.fullmatch(r"\d+(?:\.\d+)?", literal):
+        raise ValueError(f"{where} literal {literal!r} is not a decimal")
+    whole, separator, fraction = literal.partition(".")
+    if not separator:
+        return Fraction(int(whole), 1)
+    return Fraction(int(whole + fraction), 10 ** len(fraction))
+
+
+def _verified_vb7_inputs() -> dict[str, Any]:
+    entries, raw_by_document_id = entry10.read_verified_snapshots()
+    supplement_raw = raw_by_document_id[SOURCE_DOCUMENT_ID]
+    trustees_raw = raw_by_document_id[TRUSTEES_COVERED_WORKERS_DOCUMENT_ID]
+    if (
+        hashlib.sha256(supplement_raw).hexdigest() != SOURCE_SHA256
+        or len(supplement_raw) != SOURCE_SIZE_BYTES
+    ):
+        raise ValueError(
+            "Supplement source identity drift before V-B7 parsing"
+        )
+    if (
+        hashlib.sha256(trustees_raw).hexdigest()
+        != TRUSTEES_COVERED_WORKERS_SHA256
+        or len(trustees_raw) != TRUSTEES_COVERED_WORKERS_SIZE_BYTES
+    ):
+        raise ValueError("Trustees source identity drift before V-B7 parsing")
+
+    supplement_entry = entries[SOURCE_DOCUMENT_ID]
+    trustees_entry = entries[TRUSTEES_COVERED_WORKERS_DOCUMENT_ID]
+    if (
+        supplement_entry.filename != SOURCE_FILENAME
+        or trustees_entry.filename != TRUSTEES_COVERED_WORKERS_FILENAME
+    ):
+        raise ValueError("V-B7 capture-manifest filename drift")
+
+    b1, supplement_tables = _select_one_captioned_table(
+        supplement_raw,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        exact_caption=TABLE4_B1_CAPTION,
+    )
+    trustees, trustees_tables = _select_one_captioned_table(
+        trustees_raw,
+        source_document_id=TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
+        exact_caption=TRUSTEES_IV_B4_CAPTION,
+    )
+    return {
+        "b1": b1,
+        "supplement_tables": supplement_tables,
+        "trustees": trustees,
+        "trustees_tables": trustees_tables,
+    }
+
+
+def vb7_adjudication() -> dict[str, Any]:
+    """Adjudicate every committed-byte V-B7 candidate without minting v2."""
+
+    inputs = _verified_vb7_inputs()
+    b1 = inputs["b1"]
+    trustees = inputs["trustees"]
+    b1_rows = _all_year_rows(b1)
+    trustees_rows = _trustees_year_rows(trustees)
+    missing_b1 = sorted(set(REQUIRED_CALENDAR_YEARS) - set(b1_rows))
+    missing_trustees = sorted(
+        set(REQUIRED_CALENDAR_YEARS) - set(trustees_rows)
+    )
+    if missing_b1 or missing_trustees:
+        raise ValueError(
+            "V-B7 candidate source years missing: "
+            f"4.B1={missing_b1}, IV.B4={missing_trustees}"
+        )
+
+    percentage_column = _unique_column(b1, TABLE4_B1_PERCENTAGE_HEADER)
+    b1_workers_column = _unique_column(b1, TABLE4_B1_TOTAL_WORKERS_HEADER)
+    trustees_workers_column = _unique_column(
+        trustees, TRUSTEES_COVERED_WORKERS_HEADER
+    )
+
+    percentages: dict[int, str] = {}
+    count_pairs: dict[int, tuple[str, str]] = {}
+    comparisons = {"above_one": 0, "below_one": 0, "equal_one": 0}
+    for year in REQUIRED_CALENDAR_YEARS:
+        percentage = _selected_literal(
+            b1_rows[year][1],
+            percentage_column,
+            where=f"table4.b1/{year}/reported_taxable_percentage",
+        )
+        _parse_decimal_cell(
+            percentage,
+            where=f"table4.b1/{year}/reported_taxable_percentage",
+        )
+        percentages[year] = percentage
+
+        numerator = _selected_literal(
+            b1_rows[year][1],
+            b1_workers_column,
+            where=f"table4.b1/{year}/workers_total",
+        )
+        denominator = _selected_literal(
+            trustees_rows[year][1],
+            trustees_workers_column,
+            where=f"trustees.iv.b4/{year}/covered_workers",
+        )
+        numerator_value = entry10._parse_integer_cell(
+            numerator, where=f"table4.b1/{year}/workers_total"
+        )
+        denominator_value = entry10._parse_integer_cell(
+            denominator, where=f"trustees.iv.b4/{year}/covered_workers"
+        )
+        if denominator_value <= 0:
+            raise ValueError(
+                f"Trustees covered-worker denominator {year} <= 0"
+            )
+        ratio = Fraction(numerator_value, denominator_value)
+        comparison = (
+            "above_one"
+            if ratio > 1
+            else "below_one" if ratio < 1 else "equal_one"
+        )
+        comparisons[comparison] += 1
+        count_pairs[year] = (numerator, denominator)
+
+    b1_definition = _source_fragment(
+        [b1],
+        required_text=(
+            "Reported taxable earnings include Social Security taxable wages"
+        ),
+        source_document_id=SOURCE_DOCUMENT_ID,
+    )
+    b1_total_definition = _source_fragment(
+        [b1],
+        required_text="Total wages, including estimated amounts above taxable",
+        source_document_id=SOURCE_DOCUMENT_ID,
+    )
+    trustees_definition = _source_fragment(
+        inputs["trustees_tables"],
+        required_text=(
+            "Workers who are paid at some time during the year for employment"
+        ),
+        source_document_id=TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
+    )
+
+    return {
+        "schema_version": "ssa_covered_earnings_vb7_adjudication.v1",
+        "candidate_constructions": [
+            {
+                "candidate_id": "table4_b1_reported_taxable_earnings_share",
+                "available_years": list(REQUIRED_CALENDAR_YEARS),
+                "published_percentage_examples": {
+                    "1968": percentages[1968],
+                    "2014": percentages[2014],
+                },
+                "source_definition_fragment_sha256": hashlib.sha256(
+                    b1_definition.encode("utf-8")
+                ).hexdigest(),
+                "source_total_definition_fragment_sha256": hashlib.sha256(
+                    b1_total_definition.encode("utf-8")
+                ).hexdigest(),
+                "established": [
+                    "publication_table_vintage",
+                    "annual_calendar_year",
+                    "oasdi_scope",
+                    "same_system_earnings_amount_numerator_denominator",
+                    "every_1968_2022_published_percentage",
+                ],
+                "not_established": [
+                    "worker_incidence_numerator_denominator",
+                    "worker_duplicate_rule",
+                    "exact_worker_universe_model_analogue",
+                ],
+                "verdict": "reject_earnings_share_is_not_worker_share",
+            },
+            {
+                "candidate_id": (
+                    "supplement_workers_with_taxable_earnings_over_"
+                    "trustees_covered_workers"
+                ),
+                "available_years": list(REQUIRED_CALENDAR_YEARS),
+                "trustees_definition_fragment_sha256": hashlib.sha256(
+                    trustees_definition.encode("utf-8")
+                ).hexdigest(),
+                "displayed_ratio_comparison_counts": comparisons,
+                "example_1978": {
+                    "numerator_thousands": count_pairs[1978][0],
+                    "denominator_thousands": count_pairs[1978][1],
+                },
+                "established": [
+                    "publication_table_vintages",
+                    "annual_calendar_year",
+                    "oasdi_scope",
+                    "worker_count_units",
+                    "every_1968_2022_displayed_count",
+                ],
+                "not_established": [
+                    "same_population_universe_across_publications",
+                    "trustees_multiple_job_duplicate_rule",
+                    "trustees_dual_type_duplicate_rule",
+                    "zero_loss_threshold_cap_membership_equivalence",
+                    "source_authorized_cross_publication_reconciliation",
+                ],
+                "verdict": (
+                    "reject_not_a_source_defined_subset_share_and_universe_"
+                    "rules_are_incomplete"
+                ),
+            },
+            {
+                "candidate_id": "other_committed_same_universe_construction",
+                "available_years": [],
+                "established": [],
+                "not_established": [
+                    "a_published_worker_share_with_exact_same_universe_"
+                    "numerator_and_denominator"
+                ],
+                "verdict": "reject_no_committed_source_cell",
+            },
+        ],
+        "worker_membership_relationships": [
+            {
+                "family": "b2_wage_total_intensity",
+                "established": [
+                    "c5_total_wages_include_amounts_above_taxable_limit",
+                    "c11_is_number_in_wage_and_salary_employment",
+                    "dual_type_people_are_included_in_each_type",
+                ],
+                "not_established": [
+                    "zero_and_below_threshold_membership",
+                    "multiple_job_duplicate_treatment_for_all_years",
+                    "exact_c5_population_equals_c11_population",
+                ],
+                "verdict": "fail_closed",
+            },
+            {
+                "family": "b2_se_total_intensity",
+                "established": [
+                    "c8_is_reported_self_employment_net_earnings",
+                    "c12_is_number_in_self_employment",
+                    "dual_type_people_are_included_in_each_type",
+                ],
+                "not_established": [
+                    "zero_and_loss_only_membership",
+                    "below_threshold_and_wage_first_cap_membership",
+                    "multiple_component_and_multiple_job_duplicate_treatment",
+                    "exact_c8_population_equals_c12_population",
+                ],
+                "verdict": "fail_closed",
+            },
+            {
+                "family": "b11_worker_distribution",
+                "established": [
+                    "dual_type_workers_count_in_each_type_once_in_total"
+                ],
+                "not_established": [
+                    "zero_loss_only_below_threshold_and_cap_membership",
+                    "multiple_job_and_multiple_component_treatment_all_years",
+                ],
+                "verdict": "fail_closed",
+            },
+        ],
+        "covered_share_required_years": [],
+        "registration_disposition": (
+            "abort_no_authoritative_vintage2_or_calibration_target_specs"
+        ),
+    }
+
+
 def _component_columns(
     table: Any, specs: Sequence[ComponentSpec]
 ) -> dict[str, int]:
@@ -759,6 +1163,33 @@ def _content_sha256(artifact: Mapping[str, Any]) -> str:
     return hashlib.sha256(entry10.canonical_json_bytes(preimage)).hexdigest()
 
 
+def extract_b2_b11_source_evidence() -> dict[str, Any]:
+    """Return the complete verified extraction without an artifact identity."""
+
+    entries, raw_by_document_id = entry10.read_verified_snapshots()
+    raw = raw_by_document_id[SOURCE_DOCUMENT_ID]
+    if hashlib.sha256(raw).hexdigest() != SOURCE_SHA256:
+        raise ValueError("Supplement source-byte drift before parsing")
+    if len(raw) != SOURCE_SIZE_BYTES:
+        raise ValueError("Supplement source-size drift before parsing")
+    tables = _select_tables(raw)
+    observations, literals = _extract_observations(tables)
+    evidence = {
+        "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
+        "required_source_cell_ids": {
+            key: value
+            for key, value in _required_source_cell_ids().items()
+            if key != "ssa_covered_share"
+        },
+        "source_document_manifest": _source_document_manifest(entries),
+        "observations": observations,
+        "cross_table_discrepancies": _cross_table_discrepancies(literals),
+    }
+    if len(evidence["observations"]) != 15 * len(REQUIRED_CALENDAR_YEARS):
+        raise ValueError("B2/B11 evidence extraction is not exactly 825 cells")
+    return evidence
+
+
 def _validate_rounding_interval(value: Any, where: str) -> None:
     if value != ROUNDING_NOT_ESTABLISHED:
         raise ValueError(f"{where} rounding interval is not source-closed")
@@ -905,6 +1336,34 @@ def _validate_observations(artifact: Mapping[str, Any]) -> None:
             raise ValueError(f"{source_cell_id} normalized value drift")
 
 
+def _reresolve_observations_from_sources(
+    artifact: Mapping[str, Any],
+) -> None:
+    """Re-extract each B2/B11 cell and compare the complete observation."""
+
+    expected = extract_b2_b11_source_evidence()
+    expected_by_id = {
+        row["source_cell_id"]: row for row in expected["observations"]
+    }
+    for observation in artifact["observations"]:
+        source_cell_id = observation["source_cell_id"]
+        source_row = expected_by_id.get(source_cell_id)
+        if source_row is None:
+            raise ValueError(
+                f"{source_cell_id} does not resolve to committed source bytes"
+            )
+        if observation != source_row:
+            changed = sorted(
+                key
+                for key in OBSERVATION_KEYS
+                if observation.get(key) != source_row.get(key)
+            )
+            raise ValueError(
+                f"{source_cell_id} does not re-resolve from source bytes; "
+                f"changed fields={changed}"
+            )
+
+
 def _validate_cross_table_discrepancies(artifact: Mapping[str, Any]) -> None:
     rows = artifact["cross_table_discrepancies"]
     if not isinstance(rows, list) or len(rows) != 10:
@@ -999,6 +1458,7 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
 
     _validate_manifest(artifact["source_document_manifest"])
     _validate_observations(artifact)
+    _reresolve_observations_from_sources(artifact)
     _validate_cross_table_discrepancies(artifact)
 
     integrity = artifact["integrity"]
@@ -1035,54 +1495,32 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
             f"content_sha256 {integrity['content_sha256']} != "
             f"{expected_content_sha256}"
         )
+    disposition = vb7_adjudication()["registration_disposition"]
+    raise RegistrationAborted(
+        "V-B7 and worker-membership authority are unresolved; "
+        f"{disposition}"
+    )
 
 
 def build() -> dict[str, Any]:
-    """Build and fail-closed validate the complete offline extraction."""
-    entries, raw_by_document_id = entry10.read_verified_snapshots()
-    raw = raw_by_document_id[SOURCE_DOCUMENT_ID]
-    if hashlib.sha256(raw).hexdigest() != SOURCE_SHA256:
-        raise ValueError("Supplement source-byte drift before parsing")
-    if len(raw) != SOURCE_SIZE_BYTES:
-        raise ValueError("Supplement source-size drift before parsing")
+    """Abort because committed bytes cannot establish the full authority."""
 
-    tables = _select_tables(raw)
-    observations, literals = _extract_observations(tables)
-    artifact: dict[str, Any] = {
-        "schema_version": SCHEMA_VERSION,
-        "artifact_vintage_id": ARTIFACT_VINTAGE_ID,
-        "artifact_role": ARTIFACT_ROLE,
-        "year_basis": YEAR_BASIS,
-        "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
-        "required_source_cell_ids": _required_source_cell_ids(),
-        "covered_share_required_years": list(COVERED_SHARE_REQUIRED_YEARS),
-        "source_document_manifest": _source_document_manifest(entries),
-        "observations": observations,
-        "cross_table_discrepancies": _cross_table_discrepancies(literals),
-        "integrity": {
-            "canonicalization": CANONICALIZATION,
-            "content_sha256": "0" * 64,
-            "extraction_implementation_commit": (
-                EXTRACTION_IMPLEMENTATION_COMMIT
-            ),
-            "reproduced_from_source_bytes": True,
-        },
-    }
-    artifact["integrity"]["content_sha256"] = _content_sha256(artifact)
-    validate_artifact(artifact)
-    return artifact
+    extract_b2_b11_source_evidence()
+    adjudication = vb7_adjudication()
+    raise RegistrationAborted(
+        "cannot emit ssa_covered_earnings_calibration_targets.vintage2: "
+        f"{adjudication['registration_disposition']}"
+    )
 
 
 def render() -> bytes:
-    """Rebuild and return the exact canonical artifact bytes."""
+    """Abort instead of rendering an incomplete object under the final ID."""
+
     return entry10.canonical_json_bytes(build())
 
 
 def main() -> None:
-    raw = render()
-    OUT_PATH.write_bytes(raw)
-    print(f"wrote {OUT_PATH} ({15 * len(REQUIRED_CALENDAR_YEARS)} cells)")
-    print(f"json sha256: {hashlib.sha256(raw).hexdigest()}")
+    render()
 
 
 if __name__ == "__main__":
