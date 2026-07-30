@@ -1,0 +1,189 @@
+"""Reproducibility and fail-closed tests for entry-11 adjudication."""
+
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "scripts"
+ARTIFACT = (
+    ROOT
+    / "data"
+    / "external"
+    / "covered_earnings_membership_adjudication_v2.json"
+)
+ARTIFACT_SHA256 = (
+    "6ce2ae3ac26164698f2bd12e3151726a8541dbb0b479d7801234f3c4b5f2a8aa"
+)
+
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+
+import build_covered_earnings_membership_adjudication as builder  # noqa: E402
+
+
+def _artifact() -> dict:
+    return json.loads(ARTIFACT.read_text(encoding="utf-8"))
+
+
+def test__adjudication__is_canonical_and_byte_reproducible():
+    raw = ARTIFACT.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
+    assert raw == builder.render()
+    value = _artifact()
+    builder.validate_adjudication(value)
+    assert raw == builder.canonical.canonical_json_bytes(value)
+
+
+def test__adjudication__binds_every_verdict_to_exact_captured_bytes():
+    value = _artifact()
+    locator_ids = {
+        locator["locator_id"] for locator in value["source_locators"]
+    }
+    assert len(locator_ids) == 19
+    assert {row["location_type"] for row in value["source_locators"]} == {
+        "html_line_and_byte_range",
+        "pdf_compressed_content_stream_byte_range",
+    }
+    for fact in value["facts"]:
+        assert fact["evidence_locator_ids"]
+        assert set(fact["evidence_locator_ids"]) <= locator_ids
+
+
+def test__adjudication__covers_the_complete_recheck_shopping_list():
+    value = _artifact()
+    by_group = {
+        group: [row for row in value["facts"] if row["group"] == group]
+        for group in ("b2_wage", "b2_se", "b11")
+    }
+    assert {group: len(rows) for group, rows in by_group.items()} == {
+        "b2_wage": 8,
+        "b2_se": 11,
+        "b11": 11,
+    }
+    assert {row["fact_id"] for row in by_group["b2_wage"]} >= {
+        "b2_wage_exact_c11_predicate",
+        "b2_wage_zero_treatment",
+        "b2_wage_below_threshold_treatment",
+        "b2_wage_same_type_dedup",
+        "b2_wage_cap_treatment",
+        "b2_wage_multiple_employer_treatment",
+        "b2_wage_c5_c11_population_identity",
+        "b2_wage_historical_continuity",
+    }
+    assert {row["fact_id"] for row in by_group["b2_se"]} >= {
+        "b2_se_c8_signed_ordering",
+        "b2_se_threshold_and_cap_ordering",
+        "b2_se_loss_netting",
+        "b2_se_loss_only_membership",
+        "b2_se_zero_and_net_zero_membership",
+        "b2_se_below_threshold_membership",
+        "b2_se_exact_c12_predicate",
+        "b2_se_c8_c12_population_identity",
+        "b2_se_aggregation_and_dedup",
+        "b2_se_wage_first_exhaustion",
+        "b2_se_historical_continuity",
+    }
+    assert {row["fact_id"] for row in by_group["b11"]} >= {
+        "b11_exact_t_definition",
+        "b11_exact_w_definition",
+        "b11_exact_s_definition",
+        "b11_t_unduplicated_union",
+        "b11_zero_loss_threshold_cases",
+        "b11_cap_and_wage_exhaustion",
+        "b11_same_type_wage_dedup",
+        "b11_same_type_se_dedup",
+        "b11_timing",
+        "b11_geography",
+        "b11_historical_continuity",
+    }
+
+
+def test__adjudication__records_exact_family_fail_closed_lists():
+    rows = _artifact()["family_dispositions"]
+    assert [row["target_family"] for row in rows] == list(
+        builder.TARGET_FAMILY_FACT_IDS
+    )
+    assert len(rows) == 14
+    assert {row["verdict"] for row in rows} == {"fail_closed"}
+    assert all(row["missing_fact_list"] for row in rows)
+    by_family = {row["target_family"]: row for row in rows}
+    assert (
+        "exact_c11_person_year_predicate_for_every_historical_regime"
+        in by_family["b2_wage_total_intensity"]["missing_source_fact_ids"]
+    )
+    assert (
+        "c8_signed_negative_and_seca_factor_stage"
+        in by_family["b2_se_total_intensity"]["missing_source_fact_ids"]
+    )
+    assert (
+        "exact_annual_unique_person_definition_T_1968_2022"
+        in by_family["b11_dual_type_worker_share"]["missing_source_fact_ids"]
+    )
+
+
+def test__model_authorities__resolve_only_the_committed_weight_field():
+    rows = _artifact()["registration_authority_adjudications"]
+    assert len(rows) == 5
+    by_id = {row["authority_id"]: row for row in rows}
+    assert by_id["model_weight_field"] == {
+        "authority_id": "model_weight_field",
+        "status": "resolved_from_committed_first_estimates_authority",
+        "resolved_value": "weight",
+        "reason_id": (
+            "first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1"
+        ),
+        "citations": [
+            "docs/design/first_estimates_report.md:540",
+            "src/populace_dynamics/harness/m6_cells.py:113",
+            "src/populace_dynamics/estimates/ledgers.py:879",
+        ],
+    }
+    assert by_id["model_universe_id"]["resolved_value"] is None
+    assert by_id["model_weight_source_sha256"]["resolved_value"] is None
+    assert by_id["universe_concordance"]["status"] == "registration_required"
+
+
+def test__pdf_extraction__is_recorded_but_never_used_as_evidence():
+    method = _artifact()["pdf_extraction_method"]
+    assert method["tool"] == "Poppler pdftotext"
+    assert method["tool_version"] == "26.04.0"
+    assert method["derived_text_retained"] is False
+    assert method["derived_text_evidentiary_status"] == (
+        "locator_only_not_evidence"
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    (
+        ("locator", "source locator"),
+        ("fact", "fact table"),
+        ("family", "family fail-closed"),
+        ("authority", "registration authority"),
+    ),
+)
+def test__adjudication__rejects_coherently_rehashed_corruption(
+    mutation,
+    message,
+):
+    value = _artifact()
+    if mutation == "locator":
+        value["source_locators"][0]["byte_start"] += 1
+    elif mutation == "fact":
+        value["facts"][0]["verdict"] = "established"
+    elif mutation == "family":
+        value["family_dispositions"][0]["verdict"] = "open"
+    else:
+        value["registration_authority_adjudications"][1][
+            "resolved_value"
+        ] = "person_weight"
+    value["integrity"]["content_sha256"] = builder._content_sha256(value)
+    with pytest.raises(ValueError, match=message):
+        builder.validate_adjudication(value)
