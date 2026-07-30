@@ -9,11 +9,23 @@
   "heaping_caveat": "reported tenure heaps on integers, so half-vs-half quantile gaps are frequently exactly zero (36/63 cells in the first build) - a degenerate threshold basis; the ECDF max-gap floor is the heaping-robust alternative for the IC3 round to choose between",
   "thin_flag_units": "rows per half, equal to persons (one CPS record per person) vs THIN_CELL_PERSONS=200",
   "cps_tenure_reader_commit": "5c9e5e67884bfe52d8d6c35ba6fdde40f52d5d62",
-  "promotion_integrity": {
-    "measured_values": "preserved from the recorded on-data build; not rebuilt during v1 promotion",
-    "source_input_sha256_status": "BLOCKED_STRICT_STAGING: original raw input digests were not recorded and the 2020/2022/2024 CPS extracts are unavailable in the promotion environment",
-    "required_follow_up_before_ic3_lock": "on-data owner must rerun the builder from the exact staged vintages, emit source SHA256 values and a measurement-environment sidecar, and reconcile every measured value"
-  },
+  "source_inputs": [
+    {
+      "year": "2020",
+      "path": "jan20pub.csv",
+      "sha256": "ab0383891ed4e953128e55692d03c7731c2963de7356abf83d872b1a3fcf5af5"
+    },
+    {
+      "year": "2022",
+      "path": "jan22pub.csv",
+      "sha256": "f09bd072084b00dc10f8336cf8ee3f35e6673a4d5827155183f33923ccce96c8"
+    },
+    {
+      "year": "2024",
+      "path": "jan24pub.csv",
+      "sha256": "ae0141ebe5f8255421e7e6c7cd1179caaf84e60a4297a58d8deddde32895771d"
+    }
+  ],
   "by_year": {
     "2020": {
       "16_19": {

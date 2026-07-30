@@ -12,10 +12,9 @@
     "e5_runs_by_age": "rows per half, equal to persons (one row per person in the run-length frame) vs THIN_CELL_PERSONS=200"
   },
   "sipp_jobs_reader_commit": "a059193e4fad80ceb1c2e1f4177aa5c69abb1048",
-  "promotion_integrity": {
-    "measured_values": "preserved from the recorded on-data build; not rebuilt during v1 promotion",
-    "source_input_sha256_status": "BLOCKED_STRICT_STAGING: original raw input digest was not recorded and pu2023 is unavailable in the promotion environment",
-    "required_follow_up_before_ic3_lock": "on-data owner must rerun the builder from the exact staged vintage, emit source SHA256 and a measurement-environment sidecar, and reconcile every measured value"
+  "source_input": {
+    "path": "pu2023.csv.gz",
+    "sha256": "1e49df7e013970ea60443e4e15ded3e8fda07643038471bf6b3429a7383fbf69"
   },
   "e4_retention_by_age_sex": {
     "16_24|sex1": {

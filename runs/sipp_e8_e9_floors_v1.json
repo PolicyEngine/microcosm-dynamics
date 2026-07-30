@@ -13,11 +13,9 @@
     "e9_transitions.earnings_change": "distinct persons per half (person_id.nunique(); rows are consecutive-month transition pairs and a person can contribute up to 11) vs THIN_CELL_PERSONS=200"
   },
   "sipp_jobs_reader_commit": "a059193e4fad80ceb1c2e1f4177aa5c69abb1048",
-  "promotion_integrity": {
-    "measured_values": "preserved from the recorded on-data build; not rebuilt during v1 promotion",
-    "source_input_sha256_status": "BLOCKED_STRICT_STAGING: original raw input digest was not recorded and pu2023 is unavailable in the promotion environment",
-    "e9_distinct_person_count_status": "FOLLOW_UP_REQUIRED: not derivable from the aggregate draft artifact; the builder now emits persons_unweighted on the next on-data rebuild",
-    "required_follow_up_before_ic3_lock": "on-data owner must rerun the builder from the exact staged vintage, emit source SHA256 and a measurement-environment sidecar, verify the E9 distinct-person count, and reconcile every measured value"
+  "source_input": {
+    "path": "pu2023.csv.gz",
+    "sha256": "1e49df7e013970ea60443e4e15ded3e8fda07643038471bf6b3429a7383fbf69"
   },
   "e8_nonemployment_by_age": {
     "16_24": {
@@ -123,6 +121,7 @@
         "median_log_change": 0.0,
         "iqr_log_change": 0.0656,
         "pairs_unweighted": 163552,
+        "persons_unweighted": 16286,
         "floor_abs_median_gap": {
           "mean": 0.0,
           "sd": 0.0
@@ -137,6 +136,7 @@
         "median_log_change": 0.2264,
         "iqr_log_change": 1.069,
         "pairs_unweighted": 545,
+        "persons_unweighted": 524,
         "floor_abs_median_gap": {
           "mean": 0.06659,
           "sd": 0.05025

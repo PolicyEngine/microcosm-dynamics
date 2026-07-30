@@ -1,0 +1,16 @@
+{
+  "artifact": "sipp_e8_e9_floors_v1.json",
+  "status": "SOURCE_INPUT_DIGESTS",
+  "official_source": {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2023/pu2023_csv.zip",
+    "archive_sha256": "9c5363d56aca2041db20d46d17b81e9be931eb5b18bd5f5238b367d2dd7fb74b",
+    "archive_bytes": 109036604,
+    "archive_member": "pu2023.csv"
+  },
+  "staged_input": {
+    "path": "pu2023.csv.gz",
+    "sha256": "1e49df7e013970ea60443e4e15ded3e8fda07643038471bf6b3429a7383fbf69",
+    "bytes": 109032744,
+    "transport_note": "gzip -n recompression of the sole CSV member from the verified official Census ZIP"
+  }
+}
