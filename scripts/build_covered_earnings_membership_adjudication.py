@@ -12,6 +12,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import subprocess
+import zlib
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -172,6 +173,7 @@ PDF_LOCATOR_SPECS = (
         98_844,
         "150a1bc2e35fd6e3b13582d511170b7bdc879de933953dd0889ce7bb00c8128d",
         "Table 4.B2 title, headers, and early rows",
+        (b"Table 4.B2",),
     ),
     (
         "pdf_b2_later_rows_and_notes",
@@ -181,6 +183,7 @@ PDF_LOCATOR_SPECS = (
         103_058,
         "fa096e1ac41d187fa4db37312bd2d3a38c1d5cf4f17581c56ccedb33ae59d87b",
         "Table 4.B2 later rows, footnotes, and sources",
+        (b"Table 4.B2",),
     ),
     (
         "pdf_b7_positive_bins_page_1",
@@ -190,6 +193,7 @@ PDF_LOCATOR_SPECS = (
         143_533,
         "698345398c088dfb5e4862daf6c60bef1153943a95619d7d176dea24f93c74fc",
         "Table 4.B7 post-1992 positive wage bands, first page",
+        (b"Table 4.B7",),
     ),
     (
         "pdf_b7_positive_bins_page_2",
@@ -199,6 +203,7 @@ PDF_LOCATOR_SPECS = (
         146_727,
         "37237cff66f36f8adad73066c1c29ed8ce52b05493016eb70c2b5d183351b790",
         "Table 4.B7 post-1992 positive wage bands, second page",
+        (b"Table 4.B7",),
     ),
     (
         "pdf_b7_positive_bins_page_3",
@@ -208,43 +213,65 @@ PDF_LOCATOR_SPECS = (
         149_626,
         "87fb061b85cdf2b0e680f1b5cb559d6a96febb471fcf08771267987691b991d7",
         "Table 4.B7 post-1992 positive wage bands, third page",
+        (b"Table 4.B7",),
     ),
     (
         "pdf_b10_title_and_all_areas_row",
         24,
-        "48 0 R",
-        174_071,
-        176_401,
-        "a02c9224f597e306d4ac220374fa2297c649824564fa6bc86a2ab1432b4a34f4",
+        "46 0 R",
+        169_638,
+        173_740,
+        "d4cf272ec1595e40e4cb31e10619d7f1a4d5ccc788f70d06c58ea968d1efca66",
         "Table 4.B10 title, headers, and 2023 all-areas row",
+        (b"Table 4.B10", b"All areas"),
     ),
     (
         "pdf_b10_2023_technical_notes",
         25,
-        "50 0 R",
-        176_721,
-        180_412,
-        "4ddb1cc58abcb6c0f342b56ee8b36429797bb1fe0f8829d18c5e14025d132422",
+        "48 0 R",
+        174_071,
+        176_401,
+        "a02c9224f597e306d4ac220374fa2297c649824564fa6bc86a2ab1432b4a34f4",
         "Table 4.B10 2023 CWHS, geography, and unduplication notes",
+        (
+            b"Table 4.B10",
+            b"Workers with earnings in both wage and salary employment",
+            b"state totals and subtotals are unduplicated counts of workers",
+        ),
     ),
     (
         "pdf_b11_title_headers_and_early_rows",
         26,
-        "52 0 R",
-        180_740,
-        184_070,
-        "664050a4b71544eefef56366ee4bb1bb629383bcff365c1068e84682beda7e23",
+        "50 0 R",
+        176_721,
+        180_412,
+        "4ddb1cc58abcb6c0f342b56ee8b36429797bb1fe0f8829d18c5e14025d132422",
         "Table 4.B11 title, T/W/S headers, and early rows",
+        (b"Table 4.B11",),
     ),
     (
         "pdf_b11_later_rows_and_notes",
         27,
-        "55 0 R",
-        184_687,
-        188_746,
-        "533efd86dcdf006c01b77cd6469099d0c7cc395d2b4702ef34e9601f33ffbc12",
+        "52 0 R",
+        180_740,
+        184_070,
+        "664050a4b71544eefef56366ee4bb1bb629383bcff365c1068e84682beda7e23",
         "Table 4.B11 later rows, dual-type note, and sources",
+        (
+            b"Table 4.B11",
+            b"Workers with earnings in both wage and salary employment",
+            b"counted in each type of employment but only on)-5.9 "
+            b"(ce in the total.",
+        ),
     ),
+)
+
+EXCLUDED_B12_PDF_LOCATOR = (
+    28,
+    "55 0 R",
+    184_687,
+    188_746,
+    "533efd86dcdf006c01b77cd6469099d0c7cc395d2b4702ef34e9601f33ffbc12",
 )
 
 REPO_AUTHORITY_LOCATOR_SPECS = (
@@ -1087,14 +1114,35 @@ def _pdf_locator(
     byte_end: int,
     range_sha256: str,
     description: str,
+    semantic_anchors: Sequence[bytes],
     raw: bytes,
 ) -> dict[str, Any]:
+    locator_identity = (
+        page,
+        content_object,
+        byte_start,
+        byte_end,
+        range_sha256,
+    )
+    if locator_identity == EXCLUDED_B12_PDF_LOCATOR:
+        raise ValueError(f"{locator_id} resolves to excluded Table 4.B12")
+    excerpt = raw[byte_start:byte_end]
     if (
         byte_start < 0
         or byte_end <= byte_start
-        or hashlib.sha256(raw[byte_start:byte_end]).hexdigest() != range_sha256
+        or (hashlib.sha256(excerpt).hexdigest() != range_sha256)
     ):
         raise ValueError(f"{locator_id} PDF byte-range identity drift")
+    try:
+        decoded = zlib.decompress(excerpt)
+    except zlib.error as error:
+        raise ValueError(f"{locator_id} PDF stream decode drift") from error
+    if b"Table 4.B12" in decoded:
+        raise ValueError(f"{locator_id} resolves to excluded Table 4.B12")
+    if not semantic_anchors or any(
+        anchor not in decoded for anchor in semantic_anchors
+    ):
+        raise ValueError(f"{locator_id} PDF semantic anchor drift")
     return {
         "locator_id": locator_id,
         "source_document_id": "ssa_supplement_2025_4b_pdf",

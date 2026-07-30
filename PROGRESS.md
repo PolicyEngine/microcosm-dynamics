@@ -2,10 +2,11 @@
 
 ## State
 
-Regression assertions now encode the corrected B10/B11 tuples, decoded
-semantic anchors, and exact B12 exclusion. The targeted test is red against
-the old locator artifact, failing first on B10 object `48 0 R` versus the
-required `46 0 R`.
+The builder now binds all PDF locators to zlib-decoded table semantics,
+uses the four corrected B10/B11 streams, and rejects the exact B12
+fingerprint and any decoded B12 content. An in-memory render validates at
+57,125 bytes with SHA-256 `7306c898...f1abb14`; the committed artifact still
+needs regeneration and repinning.
 
 ## Done
 
@@ -16,10 +17,14 @@ required `46 0 R`.
   locator implementation, and repository-specific verification commands.
 - Added and formatted the direct zlib-decoding semantic regression checks.
 - Confirmed the new test fails against the incorrect committed locator.
+- Corrected the four B10/B11 locator tuples, which repoints all 14 affected
+  fact rows through their existing semantic locator IDs.
+- Added semantic anchors for every captured PDF stream and explicit B12
+  rejection in `_pdf_locator`.
+- Confirmed the corrected builder renders and validates in memory.
 
 ## Next
 
-- Correct the four locator tuples and all directed fact-row mappings.
 - Regenerate and repin the adjudication artifact.
 - Run formatting, focused tests, estimates suites, and independent
   verification.
