@@ -20,14 +20,35 @@ definition, including its preimage schema, serialization, and result type.
   array and closed its unique-row/hash predicate.
 - Froze the Git-parent generation/registration suffix projection, including
   its rows, canonical value, result law, and current `n=1, r=1` derivation.
+- Added the immutable v2 authority-verification successor, complete A1/A3
+  capture rows, locator/preimage/predicate/result closure, and exact
+  authority-role bindings.
+- Closed the preliminary-capture-final-adjudication lineage through one
+  unique accepted capture triple and one canonical next-vintage artifact.
+- Froze all five registration-required V-B role arrays and both complete
+  ten-row v1/v2 role maps, including their exact canonical domain hashes.
+- Added one closed A1/A3 capture-supplement predicate registry, complete
+  manifest/legacy/capture preimage, phase equation, and typed result that
+  preserves preliminary negatives and permits only matching v2 supplements.
+- Closed every noncapture required-authority result with disjoint A2/A4/A5,
+  required-V-B, and family predicate classes, complete semantic payloads,
+  unfavorable serialization, and one common typed result.
+- Froze the independent 14-family source/method prerequisite registry,
+  exact fact arrays, 38-member required-authority order, duplicate-preserving
+  candidate construction, and source-versus-method conditional equations.
+- Closed the SSA family-source projection against the artifact's actual
+  observation schema with exact selectors, value-blind identity rows, total
+  duplicate-preserving false results, and frozen current-value hashes;
+  methodology facts remain exclusively on the methodology branch.
+- Replaced the cyclic/unbound cutoff digest with a complete acyclic cutoff
+  identity, binding capture design/cutoff digests and registry versions before
+  manifest construction.
 
 ## Next
 
-1. Define authority-role resolution and lawful append-only capture
-   incorporation.
-2. Replace fixed ledger-entry references with the structural publication
+1. Replace fixed ledger-entry references with the structural publication
    subject.
-3. Replace G11 as the seventh complete `gate_specs.v4` row.
-4. Close G21 structural validity.
-5. Run strict JSON, append-only-prefix, closure, repository-state, and
+2. Replace G11 as the seventh complete `gate_specs.v4` row.
+3. Close G21 structural validity.
+4. Run strict JSON, append-only-prefix, closure, repository-state, and
    whitespace validation; record final dispositions.

@@ -15749,3 +15749,1703 @@ and the complete selected output-path object is:
 
 Its canonical SHA-256 is exactly
 `2c6fd056ee9a9a9be74f27e875cd64c109ecdce16d00fac1ce188c0b885ca5c8`.
+
+#### 16.11.2 Closed authority roles and append-only capture incorporation
+
+The preliminary adjudication retains the two immutable
+`calibrated_authority_verification_specs.v1` objects and never edits either
+singleton manifest. Successful capture instead activates the logical
+append-only successor `calibrated_authority_verification_specs.v2`. Each v2
+object has exactly the same six top-level keys as v1:
+`schema_version`, `manifest_kind`, `ordered_authority_ids`, `rows`,
+`row_count`, and `failure_disposition`. Its schema value is
+`calibrated_authority_verification_specs.v2`; failure remains
+`abort_adjudication`; and each object exact-copies its complete v1 row as
+position zero before appending the one same-kind capture row below.
+
+The source v2 ordered IDs are exactly:
+
+```json
+[
+  "ssa_covered_earnings_calibration_targets.vintage2",
+  "fitting_free_capture_a3_weight_source_authority"
+]
+```
+
+Its appended row is exactly:
+
+```json
+{
+  "authority_id": "fitting_free_capture_a3_weight_source_authority",
+  "authority_class": "captured_model_weight_source",
+  "candidate_locator": {
+    "locator_type": "accepted_capture_primary_by_final_cutoff",
+    "primary_path_prefix": "data/registries/covered_earnings_fitting_free_model_input_authority_capture_vintage",
+    "primary_path_suffix": ".json",
+    "primary_schema_version": "fitting_free_model_input_authority_capture.v1",
+    "primary_artifact_role": "registration_authority_identity_capture_only",
+    "authority_identity_member": "a3_authority_identity",
+    "sidecar_path_derivation": "primary_path_plus_.env.json"
+  },
+  "ordered_source_projections": [
+    "git_raw_bytes",
+    "strict_capture_primary",
+    "capture_primary:a3_authority_identity",
+    "capture_sidecar:input_descriptor_identities"
+  ],
+  "expected_preimage_schema_version": "calibrated_capture_authority_expected_preimage.v1",
+  "actual_preimage_schema_version": "calibrated_capture_authority_actual_preimage.v1",
+  "verification_predicate_id": "verify_fitting_free_capture_a3_weight_source_authority_v1",
+  "verification_result_schema_version": "calibrated_capture_authority_verification_result.v1"
+}
+```
+
+The methodology v2 ordered IDs are exactly:
+
+```json
+[
+  "entry11_unit1b_membership_readjudication_v2",
+  "fitting_free_capture_a1_model_universe_authority"
+]
+```
+
+Its appended row is exactly:
+
+```json
+{
+  "authority_id": "fitting_free_capture_a1_model_universe_authority",
+  "authority_class": "captured_model_universe_methodology",
+  "candidate_locator": {
+    "locator_type": "accepted_capture_primary_by_final_cutoff",
+    "primary_path_prefix": "data/registries/covered_earnings_fitting_free_model_input_authority_capture_vintage",
+    "primary_path_suffix": ".json",
+    "primary_schema_version": "fitting_free_model_input_authority_capture.v1",
+    "primary_artifact_role": "registration_authority_identity_capture_only",
+    "authority_identity_member": "a1_authority_identity",
+    "sidecar_path_derivation": "primary_path_plus_.env.json"
+  },
+  "ordered_source_projections": [
+    "git_raw_bytes",
+    "strict_capture_primary",
+    "capture_primary:a1_authority_identity"
+  ],
+  "expected_preimage_schema_version": "calibrated_capture_authority_expected_preimage.v1",
+  "actual_preimage_schema_version": "calibrated_capture_authority_actual_preimage.v1",
+  "verification_predicate_id": "verify_fitting_free_capture_a1_model_universe_authority_v1",
+  "verification_result_schema_version": "calibrated_capture_authority_verification_result.v1"
+}
+```
+
+Each v2 count is integer two. The two displayed rows, their exact positions,
+and their inherited v1 predecessors are the complete v2 serializations; no
+third row, reordered predecessor, alternate authority ID, or configured
+locator exists. The embedded final manifests retain schema
+`calibrated_authority_manifest.v1`, but their ordered IDs, rows, count, and
+domain hash must exactly instantiate the selected v2 object.
+
+The locator type `accepted_capture_primary_by_final_cutoff` has one closed
+derivation. Let \(P_n\) be the preliminary adjudication named by a capture
+authorization and let \(C\) be the proposed final authority cutoff. The
+coordinator enumerates raw Git ancestry through \(C\) and applies every
+§16.10 authorization, terminal-claim, capture-triple, immutable-history,
+canonical-suffix, schema, path, mode, raw-byte, cross-reference, and clean-
+transition equation. It retains only successful capture-triple commits whose
+authorization's exact four-key
+`calibrated_registrability_adjudication_input` names \(P_n\). There must be
+exactly one retained commit \(T\); zero or multiple abort before a v2
+manifest or final adjudication can be serialized. A terminal-claim vintage
+does not qualify and remains subject to its unchanged history law.
+
+\(P_n\) must be the unique highest member of the contiguous adjudication
+lineage at the authorization commit. \(C\) must be a strict Git descendant
+of both \(T\) and `P_n.authority_cutoff.repository_commit`. The unchanged
+authorization, claim, primary, and sidecar quartet must exist at \(C\) with
+the exact modes and bytes fixed at \(T\). The primary path is the locator's
+prefix plus \(T\)'s canonical positive capture suffix plus its suffix. The
+sidecar path is that complete primary path plus literal `.env.json`.
+These operations are the complete locator result; a manifest, configuration,
+operator, clock, or branch name supplies no candidate.
+
+For both capture rows, `git_raw_bytes` is the complete primary Git blob and
+has value type `raw_git_bytes`. `strict_capture_primary` is the complete
+strict-parsed primary after duplicate-key rejection and proof that
+`canonical_json_bytes(parsed_primary)` equals those raw bytes; its value type
+is `canonical_json_projection`. The two `capture_primary:` projections are
+the literal complete same-named primary members. The
+`capture_sidecar:input_descriptor_identities` projection is the literal
+complete sidecar member closed in §16.11.1 after strict parsing and proof
+that the primary's `sidecar_sha256` hashes the complete canonical sidecar.
+Those three member projections have value type
+`canonical_json_projection`. Each projection digest hashes the raw bytes for
+the first type and the complete canonical projected value otherwise.
+
+The capture expected preimage is
+`calibrated_capture_authority_expected_preimage.v1`, with exactly
+`schema_version`, `manifest_kind`, `authority_id`, `authority_class`,
+`candidate_locator`, `ordered_source_projections`,
+`expected_candidate_identity`, `expected_sidecar_identity`,
+`expected_authority_identity`, `verification_predicate_id`, and
+`design_identity_sha256`. `expected_candidate_identity` has exactly `path`,
+`schema_version`, `artifact_vintage_id`, and `sha256` and identifies the
+complete primary derived from \(T\). `expected_sidecar_identity` has exactly
+`path`, `schema_version`, and `sha256`; its schema is
+`fitting_free_model_input_authority_capture_environment.v1`.
+`expected_authority_identity` is the complete A1 or A3 object independently
+reconstructed under §§16.4.3 and 16.10, not copied from the primary.
+
+The capture actual preimage is
+`calibrated_capture_authority_actual_preimage.v1`, with exactly
+`schema_version`, `manifest_kind`, `authority_id`, `candidate_locator`,
+`ordered_source_projections`, `capture_triple_commit`,
+`candidate_authority_identity`, `sidecar_authority_identity`,
+`source_projection_rows`, `source_projection_count`,
+`source_projection_domain_sha256`, `actual_authority_identity`, and
+`authority_cutoff_sha256`. The candidate and sidecar identities have the
+same exact four-key and three-key shapes as their expected counterparts;
+`capture_triple_commit` is \(T\)'s 40-lowercase-hex commit ID; and
+`actual_authority_identity` is the complete strict-parsed A1 or A3 member.
+Each projection row has exactly `projection_id`, `value_type`, and
+`value_identity_sha256`. A1 has three rows and A3 has four, in their
+registered order; count equals the array length and the domain hash covers
+the complete canonical row array.
+
+The result type is
+`calibrated_capture_authority_verification_result.v1`, with exactly
+`schema_version`, `authority_id`, `verification_predicate_id`,
+`expected_preimage_sha256`, `actual_preimage_sha256`,
+`candidate_results`, `aggregate_result`, and `failure_code`. The two
+preimage digests hash their complete canonical objects. `candidate_results`
+has exactly one row with exactly `candidate_identity_sha256`,
+`predicate_result`, and `failure_code`; its identity digest hashes the
+complete four-key primary identity, its result is a JSON boolean, and its
+code is null exactly on true and otherwise `predicate_failed`.
+`aggregate_result` is `verified` on true and `failed` on false; the outer
+failure code follows the same null/`predicate_failed` equation. Locator
+cardinality failure aborts before this result and cannot be mislabeled
+absence or conflict.
+
+`verify_fitting_free_capture_a1_model_universe_authority_v1` is true iff the
+unique accepted-triple and canonical primary/sidecar equations pass; all
+expected and actual identity fields deep-equal; and the complete A1 selector
+implementation, selector digest, rule members, positive support count,
+support keyset, source-input closure, capture path, claim, and input-closure
+equations in §§16.4.3 and 16.10 pass. The actual primary member cannot attest
+itself: the expected A1 is independently reconstructed from the accepted
+selector implementation and descriptor closure.
+
+`verify_fitting_free_capture_a3_weight_source_authority_v1` is true iff the
+same unique accepted-triple and identity equations pass; the complete
+primary and sidecar descriptor arrays deep-equal; §16.11.1's unique A3
+descriptor-row projection passes; the A3 input ID, path, schema, vintage,
+source digest, weight field, positive-weight domain, count, keyset, capture
+path, claim, and closure equations pass; and the independently reconstructed
+A1 support keyset equals the A3 weight keyset. Both predicate IDs denote
+these exact conjunctions and return only the typed result above; there is no
+callback, producer boolean, permissive comparator, or alternate equation.
+
+Authority roles resolve through the closed registries
+`calibrated_authority_role_binding_specs.v1` and
+`calibrated_authority_role_binding_specs.v2`. Each has exactly
+`schema_version`, `ordered_authority_role_ids`, `rows`, `row_count`,
+`domain_sha256`, `status`, and `failure_disposition`. Each positional row has
+exactly `authority_role_id` and `authority_manifest_refs`; every ref has
+exactly `manifest_kind` and `authority_id`. The first five ordered role IDs
+are exactly:
+
+```json
+[
+  "model_universe_id",
+  "model_weight_field",
+  "model_weight_source_sha256",
+  "denominator_and_joint_analytic_selectors",
+  "universe_concordance"
+]
+```
+
+They are followed by first occurrences of every nonempty
+`required_authority_roles` member from the then-operative
+`registration_required` V-B claims, in registered claim order and then role
+order. That already frozen claim registry is the complete suffix source.
+An unknown role, collision with one of the first five, duplicate after
+stable first occurrence, configured role, or role from an optional claim
+aborts. Count equals the ordered ID and row lengths; `domain_sha256` hashes
+the complete canonical rows; status is `pass` exactly when every row and
+foreign key follows the selected version below; and failure disposition is
+`abort_adjudication`.
+
+The v1 bindings are exact:
+
+- `model_universe_id`, `model_weight_field`,
+  `model_weight_source_sha256`, and
+  `denominator_and_joint_analytic_selectors` each map to the sole legacy
+  methodology ref
+  `{"manifest_kind":"methodology_authority",
+  "authority_id":"entry11_unit1b_membership_readjudication_v2"}`;
+- `universe_concordance` maps first to the sole legacy source ref
+  `{"manifest_kind":"source_authority",
+  "authority_id":"ssa_covered_earnings_calibration_targets.vintage2"}` and
+  then to that legacy methodology ref; and
+- every V-B role maps to that legacy methodology ref.
+
+The v2 bindings deep-copy every v1 row and change only two ref arrays. The
+`model_universe_id` row appends
+`{"manifest_kind":"methodology_authority",
+"authority_id":"fitting_free_capture_a1_model_universe_authority"}` after
+its legacy methodology ref. The `model_weight_source_sha256` row appends
+`{"manifest_kind":"source_authority",
+"authority_id":"fitting_free_capture_a3_weight_source_authority"}` after
+its legacy methodology ref. No other v2 role row changes.
+
+Required authorities A1 through A5 map positionally to the five leading role
+IDs. Each registration-required verification claim expands its exact
+`required_authority_roles` array through the selected role registry and
+stable-deduplicates only identical refs at first occurrence. Each family
+source prerequisite maps directly to the legacy source row and each family
+methodology prerequisite maps directly to the legacy methodology row.
+These are the complete replacements for §16.2's previously open-ended
+“independently expanded” sentence. An empty ref array, unmapped role,
+additional ref, wrong order, or ref that does not foreign-key the selected
+manifest version aborts. A1/A3 v2 predicates consume both preserved legacy
+evidence and the appended capture evidence; they supplement rather than
+rewrite the legacy artifact.
+
+Before a successful capture, the preliminary \(P_n\) must use the v1
+verification objects and v1 role-binding object. It may faithfully serialize
+negative A1/A3 requirements through the legacy methodology row. Once unique
+\(T\) exists, a post-capture v1 adjudication is invalid: the mandatory final
+adjudication uses both v2 verification objects and the v2 role-binding
+object.
+
+That final artifact is exactly adjudication vintage \(n+1\), at
+`data/registries/covered_earnings_calibrated_registrability_adjudication_vintage<n+1>.json`.
+The candidate first-add commit must have one parent, preserve every prior
+lineage path and blob unchanged, add exactly that canonical next path, and
+leave the lineage exactly contiguous `1..n+1`. Its final authority cutoff
+\(C\) is strictly after both the preliminary cutoff and \(T\). It serializes
+the two fresh two-row v2 manifests, the v2 role expansion, every resulting
+required-authority row and evidence digest, and all unchanged global/family
+evidence under the existing canonicalization. No prior adjudication,
+verification object, manifest, capture artifact, or role-binding object is
+edited in place.
+
+For a receipt consuming a preliminary artifact, the existing
+`covered_earnings_path_applicability_registry_bundle.v1` contains the v1
+source/methodology objects and adds the exact key
+`calibrated_authority_role_binding_specs` with the complete v1 role object.
+For a receipt after capture, its same key contains the complete v2 role
+object and `ordered_calibrated_manifest_verification_specs` contains the
+source then methodology v2 objects. The bundle remains otherwise unchanged,
+and its digest covers this selected complete object. A receipt pairing a
+post-capture adjudication with any v1 registry child fails before path
+applicability.
+
+The successful transition is therefore unique and end-to-end:
+
+1. serialize preliminary \(P_n\) with v1 manifests and v1 role bindings;
+2. require its evidence status to pass, calibrated status to be
+   `not_registrable`, and its qualifying blockage count to be positive;
+3. bind \(P_n\)'s exact four-key identity in the capture authorization;
+4. create, review, and commit the exact claim/primary/sidecar triple at
+   unique \(T\), then enter the mandatory clean descendant checkout;
+5. at final cutoff \(C\), derive unique \(T\), revalidate the unchanged
+   quartet, and mechanically instantiate the two v2 appended rows;
+6. populate A1 and A3 from the same primary, with A3 projecting the actual
+   sidecar descriptor member, and expand the complete v2 role map;
+7. serialize every required-authority typed preimage/result in fixed order;
+8. add only final adjudication vintage \(n+1\) under the lineage law; and
+9. bind that artifact and the complete v2 registry bundle in the receipt
+   before evaluating path applicability.
+
+Capture success itself never selects a path. The unique \(T\), derived
+suffixes and paths, fixed row/projection/ref order, complete preimages, typed
+results, and canonical hashes leave exactly one valid final serialization.
+
+##### Total capture-role and required-authority closure
+
+This closure completes §16.11.2 by replacing its derivation from otherwise nonliteral
+`required_authority_roles`, its undefined “v2 predicates consume both”
+sentence, and every §16 statement that
+`authority_cutoff_sha256` hashes the complete four-key `authority_cutoff`.
+It adds no implementation callback or configurable registry member.
+
+The five registration-required claim-role arrays are the ratified object
+`calibrated_registration_required_claim_role_arrays.v1`, with exactly
+`schema_version`, `ordered_claim_ids`, `rows`, `row_count`, `domain_sha256`,
+`canonicalization`, `status`, and `failure_disposition`. Its sole complete
+value is:
+
+```json
+{
+  "schema_version": "calibrated_registration_required_claim_role_arrays.v1",
+  "ordered_claim_ids": [
+    "V-B1",
+    "V-B4",
+    "V-B5",
+    "V-B6",
+    "V-B8"
+  ],
+  "rows": [
+    {
+      "claim_id": "V-B1",
+      "required_authority_roles": [
+        "section_218_and_mandatory_state_local_coverage_authority"
+      ]
+    },
+    {
+      "claim_id": "V-B4",
+      "required_authority_roles": [
+        "historical_seca_concept_factor_threshold_coordination_authority"
+      ]
+    },
+    {
+      "claim_id": "V-B5",
+      "required_authority_roles": [
+        "psid_common_classifier_inventory_and_meaning_authority"
+      ]
+    },
+    {
+      "claim_id": "V-B6",
+      "required_authority_roles": [
+        "psid_premodern_spouse_secondary_concept_authority"
+      ]
+    },
+    {
+      "claim_id": "V-B8",
+      "required_authority_roles": [
+        "psid_earlier_enrollment_crosswave_mapping_authority"
+      ]
+    }
+  ],
+  "row_count": 5,
+  "domain_sha256": "da9e2fc09339b20ddae4813df95cdb740bec9edcada8c372bbe40f4ee5400010",
+  "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+  "status": "pass",
+  "failure_disposition": "abort_adjudication"
+}
+```
+
+The domain digest hashes canonical bytes of the complete `rows` array.
+These arrays exact-replace the same-ID claim members in every carried-forward
+calibrated or fitting-free claim-registry version used by the preliminary or
+final adjudication; all other claim fields remain unchanged. The five IDs
+are the complete `registration_required` claim projection in claim order.
+A missing, extra, duplicate, reordered, empty, alternate, optional-claim, or
+configured role array aborts. V-B2, V-B3, and V-B9 retain their already
+frozen `direct_only_optional` class; V-B7 retains its already frozen
+`optional_target_source` calibrated-v2 class and
+`not_applicable_no_target_domain` fitting-free-v1 disposition. None is
+`registration_required`, so none can enter the calibrated
+required-authority role suffix.
+
+Accordingly, the exact `ordered_authority_role_ids` of both
+`calibrated_authority_role_binding_specs.v1` and
+`calibrated_authority_role_binding_specs.v2` is:
+
+```json
+[
+  "model_universe_id",
+  "model_weight_field",
+  "model_weight_source_sha256",
+  "denominator_and_joint_analytic_selectors",
+  "universe_concordance",
+  "section_218_and_mandatory_state_local_coverage_authority",
+  "historical_seca_concept_factor_threshold_coordination_authority",
+  "psid_common_classifier_inventory_and_meaning_authority",
+  "psid_premodern_spouse_secondary_concept_authority",
+  "psid_earlier_enrollment_crosswave_mapping_authority"
+]
+```
+
+Both row counts are integer ten. For v1, the first five rows have exactly the
+ref arrays already stated in §16.11.2 and each of the five newly literal
+suffix rows has the one-element methodology ref array
+`[{"manifest_kind":"methodology_authority",
+"authority_id":"entry11_unit1b_membership_readjudication_v2"}]`.
+The resulting exact canonical `rows`-array SHA-256 is
+`25a2d05dec280f929cc2066aef7a73f8f3eee1ed8a576551bfd24254b25c0dd8`.
+
+For v2, the ten v1 rows and ref order are byte-identical except that
+`model_universe_id` appends the methodology ref
+`fitting_free_capture_a1_model_universe_authority` and
+`model_weight_source_sha256` appends the source ref
+`fitting_free_capture_a3_weight_source_authority`, exactly as displayed in
+§16.11.2. Its exact canonical `rows`-array SHA-256 is
+`8c64b848a1d774326cbc7262b5161ce051c02969ca1c9a14cb217b957f18f0c0`.
+Those digests are the respective `domain_sha256` values; both statuses are
+`pass`, both failures are `abort_adjudication`, and the already frozen base
+canonicalization is the sole serialization. These equations are the
+complete authority-role-to-row map; no claim bytes, producer, or manifest
+may add a role or ref.
+
+The capture transition changes only the A1 and A3 calibrated
+required-authority predicates. Their sole ratified registry is
+`calibrated_capture_required_authority_predicate_specs.v1`, with exactly
+`schema_version`, `ordered_predicate_ids`, `rows`, `row_count`,
+`domain_sha256`, `canonicalization`, and `failure_disposition`, and this
+complete value:
+
+```json
+{
+  "schema_version": "calibrated_capture_required_authority_predicate_specs.v1",
+  "ordered_predicate_ids": [
+    "verify_calibrated_capture_supplemented_required_authority_v1"
+  ],
+  "rows": [
+    {
+      "verification_predicate_id": "verify_calibrated_capture_supplemented_required_authority_v1",
+      "input_preimage_schema_version": "calibrated_capture_required_authority_aggregation_preimage.v1",
+      "predicate_equation": "legacy_negative_authentic&&phase_shape_valid&&capture_supplement_verified",
+      "result_schema_version": "calibrated_capture_required_authority_aggregation_result.v1"
+    }
+  ],
+  "row_count": 1,
+  "domain_sha256": "36940412700058f7811fc303373286050c827ea5977086f83a92652f393cc925",
+  "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+  "failure_disposition": "abort_adjudication"
+}
+```
+
+The registry digest hashes canonical bytes of its complete `rows` array.
+Only required-authority IDs A1 and A3 use this predicate; every other
+required-authority ID retains its previously ratified requirement-specific
+predicate, preimage, success disposition, and typed result. Artifact
+authenticity alone is therefore never substituted for a V-B, family, A2,
+A4, or A5 semantic result.
+
+The predicate input is
+`calibrated_capture_required_authority_aggregation_preimage.v1`, with exactly
+`schema_version`, `requirement_id`, `registry_phase`,
+`authority_manifest_refs`, `authority_manifests`,
+`authority_manifest_sha256s`, `authority_manifest_rows`,
+`authority_manifest_row_sha256s`,
+`legacy_registration_authority_adjudication`,
+`legacy_registration_authority_adjudication_sha256`,
+`capture_authority_identity`, `capture_authority_identity_sha256`,
+`capture_manifest_verification_result`,
+`capture_manifest_verification_result_sha256`,
+`verification_predicate_id`, and `authority_cutoff_sha256`.
+Its requirement is `A1 | A3`, phase is `preliminary_v1 | post_capture_v2`,
+predicate ID is the singleton literal, and cutoff digest is the complete
+cutoff-identity hash below.
+
+The ref array exact-copies the selected same-ID role-binding row. The three
+manifest arrays have the same positive length and ref order. Each
+`authority_manifests` member is the complete selected source or methodology
+manifest containing the referenced row, even when two refs repeat the same
+manifest; each manifest digest hashes those complete canonical bytes. Each
+row member is the complete referenced manifest row and each row digest
+hashes it. Thus enclosing manifest status, sibling rows, manifest counts and
+domain hashes, the referenced row, and its typed result are all preimage
+bytes. A digest-only manifest, omitted repeated manifest, or row copied from
+a different complete manifest is invalid.
+
+For A1, `legacy_registration_authority_adjudication` is exactly:
+
+```json
+{
+  "authority_id": "model_universe_id",
+  "citations": [
+    "correction_model_universe_registration_law",
+    "correction_support_manifest_registration_law",
+    "amendment_preserved_selector_law",
+    "first_estimates_unsplit_panel_law"
+  ],
+  "reason_id": "missing_registered_correction_model_universe_selector",
+  "resolved_value": null,
+  "status": "registration_required"
+}
+```
+
+Its canonical SHA-256 is
+`243bcc0a197e52ce4c3fc49f22465e8ce10376f83f36b237b6971fff16c7b4c6`.
+For A3, the exact object is:
+
+```json
+{
+  "authority_id": "model_weight_source_sha256",
+  "citations": [
+    "first_estimates_artifact_configuration_and_integrity",
+    "psid_external_staging_law",
+    "registered_inputs_staging_law"
+  ],
+  "reason_id": "missing_registered_model_weight_input_digest",
+  "resolved_value": null,
+  "status": "registration_required"
+}
+```
+
+Its canonical SHA-256 is
+`6be036291dd21972d9abaf62ef816307cca2e67a7a7cedafcbde360edd827cd5`.
+Each embedded legacy object is independently reconstructed from the exact
+reference bytes frozen by the legacy-envelope law, so the preimage remains
+serializable when the cutoff candidate is absent or conflicting. When a
+cutoff candidate is present, it must be the unique same-ID member of that
+candidate's strict-parsed `registration_authority_adjudications` projection
+and must deep-equal the embedded expected object. The digest field equals the
+displayed value. Absence, conflict, a changed status, reason, value,
+citation, order, duplicate, or alternate source makes
+`legacy_negative_authentic` false rather than suppressing the typed result
+or turning the negative legacy disposition positive.
+
+In `preliminary_v1`, the ref/manifest/row arrays each have length one and
+contain only the legacy methodology ref, complete methodology v1 manifest,
+and its legacy manifest row. All four capture identity/result fields are
+exactly JSON null. In `post_capture_v2`, each array has length two in its
+same-ID v2 role order. A1 contains the legacy methodology ref then captured
+A1 methodology ref; A3 contains the legacy methodology ref then captured A3
+source ref. `capture_authority_identity` is the complete strict primary A1
+or A3 member and its digest hashes that object.
+`capture_manifest_verification_result` is the complete typed result from the
+same capture manifest row and its digest hashes that result. Those fields
+must also deep-equal the same objects embedded in the second complete
+manifest row; a producer copy cannot attest itself.
+
+`legacy_negative_authentic` is true iff the legacy complete manifest and row
+pass every selected v1-or-v2 inherited registry equation, the methodology
+candidate is unique/present/verified, and the same-byte legacy projection
+contains the exact A1 or A3 negative object and displayed digest.
+`phase_shape_valid` is true iff the phase, refs, complete manifests, complete
+rows, hashes, and null/non-null capture field disposition exactly follow the
+preceding two phase cases. `capture_supplement_verified` is false by
+definition in `preliminary_v1`; in `post_capture_v2` it is true iff the
+second manifest and row pass, the capture result's registered A1-or-A3
+predicate is boolean true with verified aggregate and null failure codes,
+and its independently reconstructed authority identity deep-equals the
+complete primary member in this preimage. It cannot become true from the
+legacy artifact.
+
+The typed result is
+`calibrated_capture_required_authority_aggregation_result.v1`, with exactly
+`schema_version`, `requirement_id`, `registry_phase`,
+`verification_predicate_id`, `input_preimage`, `input_preimage_sha256`,
+`legacy_negative_authentic`, `phase_shape_valid`,
+`capture_supplement_verified`, `requirement_satisfied`, `failure_code`, and
+`status`. The embedded preimage is the complete object above exactly once and
+its digest hashes those canonical bytes. IDs and phase exact-copy it. The
+three Booleans obey the exhaustive equations above;
+`requirement_satisfied` is their conjunction in the registry's displayed
+order. Failure code is null on true,
+`capture_supplement_required` on a valid preliminary negative, and
+`capture_supplement_verification_failed` on every other false result.
+Status is `pass` iff every field faithfully encodes those equations,
+including a valid preliminary false result; an inconsistent producer Boolean
+or code aborts.
+
+For A1/A3 only, `calibrated_required_authority_evidence.v1` exact-copies this
+predicate ID and complete typed result, and its
+`verification_inputs_sha256` hashes the complete aggregation preimage.
+`requirement_satisfied` equals the typed result Boolean. A preliminary row
+has `authority_availability: present`, `verification_status: fail`,
+`requirement_satisfied: false`, and evidence status `pass`; it remains the
+lawful negative that authorizes no success by itself. A final row is
+`pass/true/pass` only when the same frozen negative legacy disposition and
+the matching successful capture supplement both validate. Missing or
+conflicting refs retain the earlier `not_evaluable/false/pass` law and never
+serialize a false capture success.
+
+The independent family prerequisite source is
+`calibrated_family_authority_requirement_specs.v1`, with exactly
+`schema_version`, `ordered_family_ids`, `rows`, `row_count`,
+`domain_sha256`, `canonicalization`, and `failure_disposition`. Its sole
+complete value is:
+
+```json
+{
+  "schema_version": "calibrated_family_authority_requirement_specs.v1",
+  "ordered_family_ids": [
+    "b2_wage_total_intensity",
+    "b2_se_total_intensity",
+    "b11_se_only_worker_share",
+    "b11_dual_type_worker_share",
+    "b11_wage_only_worker_share",
+    "b2_type_count_mix",
+    "b2_se_total_component_share",
+    "b2_wage_taxable_intensity",
+    "b2_se_taxable_intensity",
+    "b2_wage_taxable_fraction",
+    "b2_se_taxable_fraction",
+    "b11_taxable_earnings_component_reconciliation",
+    "b11_contributions_component_reconciliation",
+    "b11_se_contribution_share"
+  ],
+  "rows": [
+    {
+      "family_id": "b2_wage_total_intensity",
+      "source_requirement_id": "family_source:b2_wage_total_intensity",
+      "methodology_requirement_id": "family_methodology:b2_wage_total_intensity",
+      "required_authority_ids": [
+        "family_source:b2_wage_total_intensity",
+        "family_methodology:b2_wage_total_intensity"
+      ],
+      "required_source_fact_ids": [
+        "b2_wage_exact_c11_predicate",
+        "b2_wage_zero_treatment",
+        "b2_wage_below_threshold_treatment",
+        "b2_wage_same_type_dedup",
+        "b2_wage_cap_treatment",
+        "b2_wage_multiple_employer_treatment",
+        "b2_wage_c5_c11_population_identity",
+        "b2_wage_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b2_se_total_intensity",
+      "source_requirement_id": "family_source:b2_se_total_intensity",
+      "methodology_requirement_id": "family_methodology:b2_se_total_intensity",
+      "required_authority_ids": [
+        "family_source:b2_se_total_intensity",
+        "family_methodology:b2_se_total_intensity"
+      ],
+      "required_source_fact_ids": [
+        "b2_se_c8_signed_ordering",
+        "b2_se_threshold_and_cap_ordering",
+        "b2_se_loss_netting",
+        "b2_se_loss_only_membership",
+        "b2_se_zero_and_net_zero_membership",
+        "b2_se_below_threshold_membership",
+        "b2_se_exact_c12_predicate",
+        "b2_se_c8_c12_population_identity",
+        "b2_se_aggregation_and_dedup",
+        "b2_se_wage_first_exhaustion",
+        "b2_se_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b11_se_only_worker_share",
+      "source_requirement_id": "family_source:b11_se_only_worker_share",
+      "methodology_requirement_id": "family_methodology:b11_se_only_worker_share",
+      "required_authority_ids": [
+        "family_source:b11_se_only_worker_share",
+        "family_methodology:b11_se_only_worker_share"
+      ],
+      "required_source_fact_ids": [
+        "b11_exact_t_definition",
+        "b11_exact_w_definition",
+        "b11_exact_s_definition",
+        "b11_t_unduplicated_union",
+        "b11_zero_loss_threshold_cases",
+        "b11_cap_and_wage_exhaustion",
+        "b11_same_type_wage_dedup",
+        "b11_same_type_se_dedup",
+        "b11_timing",
+        "b11_geography",
+        "b11_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b11_dual_type_worker_share",
+      "source_requirement_id": "family_source:b11_dual_type_worker_share",
+      "methodology_requirement_id": "family_methodology:b11_dual_type_worker_share",
+      "required_authority_ids": [
+        "family_source:b11_dual_type_worker_share",
+        "family_methodology:b11_dual_type_worker_share"
+      ],
+      "required_source_fact_ids": [
+        "b11_exact_t_definition",
+        "b11_exact_w_definition",
+        "b11_exact_s_definition",
+        "b11_t_unduplicated_union",
+        "b11_zero_loss_threshold_cases",
+        "b11_cap_and_wage_exhaustion",
+        "b11_same_type_wage_dedup",
+        "b11_same_type_se_dedup",
+        "b11_timing",
+        "b11_geography",
+        "b11_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b11_wage_only_worker_share",
+      "source_requirement_id": "family_source:b11_wage_only_worker_share",
+      "methodology_requirement_id": "family_methodology:b11_wage_only_worker_share",
+      "required_authority_ids": [
+        "family_source:b11_wage_only_worker_share",
+        "family_methodology:b11_wage_only_worker_share"
+      ],
+      "required_source_fact_ids": [
+        "b11_exact_t_definition",
+        "b11_exact_w_definition",
+        "b11_exact_s_definition",
+        "b11_t_unduplicated_union",
+        "b11_zero_loss_threshold_cases",
+        "b11_cap_and_wage_exhaustion",
+        "b11_same_type_wage_dedup",
+        "b11_same_type_se_dedup",
+        "b11_timing",
+        "b11_geography",
+        "b11_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b2_type_count_mix",
+      "source_requirement_id": "family_source:b2_type_count_mix",
+      "methodology_requirement_id": "family_methodology:b2_type_count_mix",
+      "required_authority_ids": [
+        "family_source:b2_type_count_mix",
+        "family_methodology:b2_type_count_mix"
+      ],
+      "required_source_fact_ids": [
+        "b2_wage_exact_c11_predicate",
+        "b2_wage_zero_treatment",
+        "b2_wage_below_threshold_treatment",
+        "b2_wage_same_type_dedup",
+        "b2_wage_cap_treatment",
+        "b2_wage_multiple_employer_treatment",
+        "b2_wage_historical_continuity",
+        "b2_se_loss_netting",
+        "b2_se_loss_only_membership",
+        "b2_se_zero_and_net_zero_membership",
+        "b2_se_below_threshold_membership",
+        "b2_se_exact_c12_predicate",
+        "b2_se_aggregation_and_dedup",
+        "b2_se_wage_first_exhaustion",
+        "b2_se_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b2_se_total_component_share",
+      "source_requirement_id": "family_source:b2_se_total_component_share",
+      "methodology_requirement_id": "family_methodology:b2_se_total_component_share",
+      "required_authority_ids": [
+        "family_source:b2_se_total_component_share",
+        "family_methodology:b2_se_total_component_share"
+      ],
+      "required_source_fact_ids": [
+        "b2_se_c8_signed_ordering",
+        "b2_se_threshold_and_cap_ordering",
+        "b2_se_loss_netting",
+        "b2_se_loss_only_membership",
+        "b2_se_zero_and_net_zero_membership",
+        "b2_se_aggregation_and_dedup",
+        "b2_se_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b2_wage_taxable_intensity",
+      "source_requirement_id": "family_source:b2_wage_taxable_intensity",
+      "methodology_requirement_id": "family_methodology:b2_wage_taxable_intensity",
+      "required_authority_ids": [
+        "family_source:b2_wage_taxable_intensity",
+        "family_methodology:b2_wage_taxable_intensity"
+      ],
+      "required_source_fact_ids": [
+        "b2_wage_exact_c11_predicate",
+        "b2_wage_zero_treatment",
+        "b2_wage_below_threshold_treatment",
+        "b2_wage_same_type_dedup",
+        "b2_wage_cap_treatment",
+        "b2_wage_multiple_employer_treatment",
+        "b2_wage_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b2_se_taxable_intensity",
+      "source_requirement_id": "family_source:b2_se_taxable_intensity",
+      "methodology_requirement_id": "family_methodology:b2_se_taxable_intensity",
+      "required_authority_ids": [
+        "family_source:b2_se_taxable_intensity",
+        "family_methodology:b2_se_taxable_intensity"
+      ],
+      "required_source_fact_ids": [
+        "b2_se_loss_netting",
+        "b2_se_loss_only_membership",
+        "b2_se_zero_and_net_zero_membership",
+        "b2_se_below_threshold_membership",
+        "b2_se_exact_c12_predicate",
+        "b2_se_aggregation_and_dedup",
+        "b2_se_wage_first_exhaustion",
+        "b2_se_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b2_wage_taxable_fraction",
+      "source_requirement_id": "family_source:b2_wage_taxable_fraction",
+      "methodology_requirement_id": "family_methodology:b2_wage_taxable_fraction",
+      "required_authority_ids": [
+        "family_source:b2_wage_taxable_fraction",
+        "family_methodology:b2_wage_taxable_fraction"
+      ],
+      "required_source_fact_ids": []
+    },
+    {
+      "family_id": "b2_se_taxable_fraction",
+      "source_requirement_id": "family_source:b2_se_taxable_fraction",
+      "methodology_requirement_id": "family_methodology:b2_se_taxable_fraction",
+      "required_authority_ids": [
+        "family_source:b2_se_taxable_fraction",
+        "family_methodology:b2_se_taxable_fraction"
+      ],
+      "required_source_fact_ids": [
+        "b2_se_c8_signed_ordering",
+        "b2_se_threshold_and_cap_ordering",
+        "b2_se_loss_netting",
+        "b2_se_loss_only_membership",
+        "b2_se_zero_and_net_zero_membership",
+        "b2_se_aggregation_and_dedup",
+        "b2_se_historical_continuity"
+      ]
+    },
+    {
+      "family_id": "b11_taxable_earnings_component_reconciliation",
+      "source_requirement_id": "family_source:b11_taxable_earnings_component_reconciliation",
+      "methodology_requirement_id": "family_methodology:b11_taxable_earnings_component_reconciliation",
+      "required_authority_ids": [
+        "family_source:b11_taxable_earnings_component_reconciliation",
+        "family_methodology:b11_taxable_earnings_component_reconciliation"
+      ],
+      "required_source_fact_ids": []
+    },
+    {
+      "family_id": "b11_contributions_component_reconciliation",
+      "source_requirement_id": "family_source:b11_contributions_component_reconciliation",
+      "methodology_requirement_id": "family_methodology:b11_contributions_component_reconciliation",
+      "required_authority_ids": [
+        "family_source:b11_contributions_component_reconciliation",
+        "family_methodology:b11_contributions_component_reconciliation"
+      ],
+      "required_source_fact_ids": []
+    },
+    {
+      "family_id": "b11_se_contribution_share",
+      "source_requirement_id": "family_source:b11_se_contribution_share",
+      "methodology_requirement_id": "family_methodology:b11_se_contribution_share",
+      "required_authority_ids": [
+        "family_source:b11_se_contribution_share",
+        "family_methodology:b11_se_contribution_share"
+      ],
+      "required_source_fact_ids": []
+    }
+  ],
+  "row_count": 14,
+  "domain_sha256": "06b6942812e614dc26235bf8fe31082d62680184038e6cc0146d6bf8905738d2",
+  "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+  "failure_disposition": "abort_adjudication"
+}
+```
+
+The domain digest hashes canonical bytes of the complete `rows` array. Each
+row has exactly `family_id`, `source_requirement_id`,
+`methodology_requirement_id`, `required_authority_ids`, and
+`required_source_fact_ids`. The two requirement IDs are literal
+`family_source:<family_id>` and `family_methodology:<family_id>`; the pair
+array is always source then methodology. The fact arrays are independent
+ratified literals reproduced from the frozen reference methodology bytes,
+not members projected from an adjudication output.
+
+The previously registered source-projection literal
+`calibration_family_source_fact_projection` is closed here. Despite the
+historical literal's name, it does not manufacture a `facts` member,
+methodology verdict, or `established` status that the exact eleven-key SSA
+source artifact does not contain. It denotes one complete aggregate
+observation projection with schema
+`calibration_family_source_fact_projection.v1`; the
+`required_source_fact_ids` above are consumed only by the independent
+methodology requirement.
+
+The projection input is
+`calibration_family_source_fact_projection_preimage.v1`, with exactly
+`schema_version`, `source_candidate_identity`,
+`source_artifact_identity_projection`,
+`source_observation_identity_rows`,
+`source_observation_identity_row_count`,
+`source_observation_identity_row_domain_sha256`, `ordered_family_ids`,
+`family_selector_rows`,
+`family_selector_row_count`, and
+`family_selector_row_domain_sha256`. `source_candidate_identity` is one
+complete four-key candidate identity from the source manifest.
+The two source projections are derived only from the complete
+duplicate-key-rejecting parse of the same candidate's raw bytes.
+
+`source_artifact_identity_projection` has exactly `schema_version`,
+`artifact_vintage_id`, `artifact_role`, `year_basis`,
+`required_calendar_years`, `required_source_cell_ids`,
+`source_document_manifest`, and `integrity`, copied without normalization
+from the same-named top-level members; a missing member is represented by
+JSON null. `source_observation_identity_rows` has one positional row per
+member of the parsed top-level `observations` array, preserving order and
+duplicates. If the parsed root is not an object or `observations` is not an
+array, the row array is exact `[]`. Each row has exactly
+`source_cell_id`, `source_document_id`, `table_id`, `table_title`,
+`calendar_year`, `row_path`, `nested_column_header_path`,
+`published_unit`, `stored_unit`, `scale`, `status`,
+`published_rounding_interval_status`, and `source_sha256`. The first
+eleven and last members copy the same-named observation members, using JSON
+null when the observation is not an object or a member is missing. The
+rounding-status member copies
+`published_rounding_interval.status` only when that value is an object and
+the nested member exists, and otherwise is null. Count and digest cover this
+complete row array.
+
+These two projections deliberately exclude `as_published`,
+`normalized_value`, rounding bounds and closure flags, discrepancy values,
+and the optional-source value block. Thus the calibrated adjudication binds
+the frozen raw artifact identity and enough source structure to decide
+family availability without serializing or consuming a numeric target
+value. The later selected path remains solely responsible for any
+authorized value decoding.
+
+Neither identity projection is a separately addressable registry token:
+both are literal members of the exact preimage, and their result types are
+respectively the exact eight-key object and exact array of 13-key rows just
+defined. The preimage, both member results, every nested row and array, and
+every digest preimage serialize only under
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`; no raw-order,
+digest-only, caller-supplied, or alternative encoding exists.
+
+A raw candidate that cannot be strictly parsed has no projection value. The
+family array exact-copies the 14-family registry order above. The selector
+array has exactly these complete five-key rows:
+
+```json
+[
+  {
+    "family_id": "b2_wage_total_intensity",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c5",
+      "c11"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_se_total_intensity",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c8",
+      "c12"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b11_se_only_worker_share",
+    "table_id": "table4.b11",
+    "ordered_component_ids": [
+      "workers_total",
+      "workers_wage"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b11_dual_type_worker_share",
+    "table_id": "table4.b11",
+    "ordered_component_ids": [
+      "workers_total",
+      "workers_wage",
+      "workers_self_employment"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b11_wage_only_worker_share",
+    "table_id": "table4.b11",
+    "ordered_component_ids": [
+      "workers_total",
+      "workers_self_employment"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_type_count_mix",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c11",
+      "c12"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_se_total_component_share",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c5",
+      "c8"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_wage_taxable_intensity",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c11",
+      "c13"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_se_taxable_intensity",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c12",
+      "c17"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_wage_taxable_fraction",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c5",
+      "c13"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b2_se_taxable_fraction",
+    "table_id": "table4.b2",
+    "ordered_component_ids": [
+      "c8",
+      "c17"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b11_taxable_earnings_component_reconciliation",
+    "table_id": "table4.b11",
+    "ordered_component_ids": [
+      "taxable_earnings_total",
+      "taxable_earnings_wage",
+      "taxable_earnings_self_employment"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b11_contributions_component_reconciliation",
+    "table_id": "table4.b11",
+    "ordered_component_ids": [
+      "contributions_total",
+      "contributions_wage",
+      "contributions_self_employment"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  },
+  {
+    "family_id": "b11_se_contribution_share",
+    "table_id": "table4.b11",
+    "ordered_component_ids": [
+      "contributions_wage",
+      "contributions_self_employment"
+    ],
+    "first_calendar_year": 1968,
+    "last_calendar_year": 2022
+  }
+]
+```
+
+The selector count is integer 14. SHA-256 of the complete selector array's
+canonical bytes is
+`58b2a07e02a89bf12130cdcb8c7d836b01c80f1f1bb83c122567bce86a5f78db`;
+the preimage count and digest must equal those values. A selector is not
+configuration, an extension point, or a target-row output. Its component
+order is the source artifact's registered component order restricted to the
+physical operands of the §15.5 same-family transformation.
+
+For each selector row, construct `ordered_expected_source_cell_ids` by the
+year-major Cartesian product of every integer from
+`first_calendar_year` through `last_calendar_year`, inclusive, then the
+listed component order. Each ID is exactly
+`<table_id>/<calendar-year>/<component-id>`, with the year in canonical
+base-10 form. `projected_observation_identity_rows` is the stable filter of
+the complete preimage `source_observation_identity_rows`, retaining every
+complete identity row whose `source_cell_id` is a JSON string equal to a
+member of the expected ID array. Original array order and every duplicate
+are retained; no lookup overwrite, deduplication, sort, repair, full
+observation, or synthesized row is permitted.
+
+Each positional `family_projection_rows` result has exactly
+`family_id`, `family_selector_row`,
+`ordered_expected_source_cell_ids`, `expected_source_cell_count`,
+`expected_source_cell_domain_sha256`,
+`projected_observation_identity_rows`,
+`projected_observation_identity_row_count`,
+`projected_observation_identity_row_domain_sha256`,
+`projection_result`, `failure_code`, and `status`. The ID and selector
+exact-copy the same preimage position. Both counts are nonnegative JSON
+integers equal to their array lengths, and both digests hash the respective
+complete arrays.
+
+The row's `projection_result` is true iff all of the following hold:
+
+1. the candidate identity exact-matches §16.2's frozen source identity,
+   including raw SHA-256
+   `fe018587a5b32188088078ef557dceca67f26352ebfc424e1d1622416cbdcf55`,
+   the strict JSON value and both identity projections were derived from
+   those same raw bytes, and the source artifact identity projection passes
+   every applicable §15.3 schema, vintage, role, year, required-ID,
+   manifest, integrity, and source-byte equation;
+2. the observation-identity array has exactly 825 faithfully derived rows
+   in §15.3 source order; its count and digest validate; and each row's
+   source-cell, document, table, year, status, unit, scale, rounding-status,
+   and source-digest members obey the exact structural equations of the
+   same-byte source artifact;
+3. the family selector, expected-ID derivation, counts, and hashes obey the
+   frozen laws above;
+4. `projected_observation_identity_rows` is the exact
+   duplicate-preserving stable filter above and its complete
+   `source_cell_id` projection deep-equals
+   `ordered_expected_source_cell_ids`, which proves exactly one same-position
+   identity row for every required family cell; and
+5. every projected identity row has the exact table, encoded and explicit
+   year, component, status, unit, scale, rounding-status, source digest, and
+   unique `source_document_manifest` resolution required by its
+   same-position expected ID.
+
+It is false for every other faithfully represented state, including a
+missing or duplicate family observation. `failure_code` is null exactly
+when true and otherwise the sole literal
+`family_source_observation_projection_failed`. Row status is `pass` iff
+every field faithfully serializes these equations, including a lawful false
+result; status does not turn false evidence true.
+
+The complete `calibration_family_source_fact_projection.v1` result has
+exactly `schema_version`, `input_preimage`, `input_preimage_sha256`,
+`ordered_family_ids`, `family_projection_rows`,
+`family_projection_row_count`, `family_projection_row_domain_sha256`,
+`aggregate_result`, `failure_code`, `canonicalization`, and `status`.
+The complete preimage is embedded exactly once and its digest hashes those
+bytes. Family IDs exact-copy the preimage; result rows exact-cover them in
+the same order; count is 14; and the row-domain digest hashes the complete
+row array. `aggregate_result` is the ordered conjunction of all 14 row
+Booleans. Its failure code is null exactly when true and otherwise the sole
+literal `family_source_projection_failed`. Canonicalization is
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`. Aggregate status is
+`pass` iff the complete preimage, rows, counts, hashes, Boolean, code, and
+canonicalization faithfully encode these rules, including a false
+aggregate.
+
+The source manifest's existing
+`calibration_family_source_fact_projection` source-projection row hashes
+this entire aggregate result, not a producer callback, an adjudication
+subset, an invented fact array, or a numeric observation. Projection
+availability has the following exhaustive precedence. If the candidate
+identity array is empty, or if any candidate's raw bytes fail strict JSON
+parsing, availability is `absent` and the projection-result domain is exact
+`[]`; parse failure dominates candidate multiplicity. Otherwise one
+complete aggregate result is constructed per candidate identity in
+candidate order: one result is `present`, and two or more are
+`conflicting`. No family consumer may select among conflicting candidates.
+Only one complete projection with aggregate status `pass` is `present`.
+
+For this source-projection row, the otherwise mandatory
+`value_identity_sha256` is total: at `present` it hashes the sole complete
+aggregate result directly; at `absent` it is the canonical empty-array hash
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`;
+and at `conflicting` it hashes the complete candidate-ordered array of
+aggregate results. Its `value_type` is always
+`canonical_json_projection`. A digest of the singleton wrapper array,
+first/last conflicting member, null, or omitted unfavorable domain is
+invalid.
+
+Accordingly, the earlier source predicate's phrase “complete
+family-source-fact projection matches those same bytes” means exactly:
+availability `present`, aggregate status `pass`, aggregate result true,
+same-byte derivation from the sole candidate, and equality of the
+recomputed complete aggregate digest. It has no alternate fact lookup,
+partial-family interpretation, or implementation-selected comparator.
+
+For the frozen source bytes, the exact preimage SHA-256 is
+`a10d3793d293645bf7faec5bb2bd9d3e39392b668f00ff8cd09b2e18a6a8611a`;
+its observation-identity domain has count 825 and SHA-256
+`26dab230ff92ca6bd109ba7ff53d0193bfb14d4a90f24cb64091c4739a8e779d`;
+the complete family-row domain SHA-256 is
+`d5401894e18d7afb55006dc5922225106ff42c25fecf76ca97cd4711168bc2f5`,
+and SHA-256 of the complete aggregate projection value is
+`99196e276d421f419885a27e875d2d9d1265359300c7185cdddf8491c9de54e6`.
+The exact same-position row witnesses are:
+
+```json
+[
+  {
+    "family_id": "b2_wage_total_intensity",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "c39f01b53dd9201901aedc3969a09851aa215a9e2b649f2c44b54204177e56d3",
+    "projected_observation_identity_row_domain_sha256": "3be6b1e0ec7a950c7cf509da3eae1cadc85fd27876dcc6194b605508b9cc3b1d",
+    "family_projection_row_sha256": "85ceb732c3540b76b43b888153a5cbca1172d2d18c3a5c693c2546ff6cddb441"
+  },
+  {
+    "family_id": "b2_se_total_intensity",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "6e4c4fb981afec4bc5d34f2f32613df41ebab637c9c4ae3f75566c2ff9184bcc",
+    "projected_observation_identity_row_domain_sha256": "3067e33d8ba73be2472294d879342dd96074e7ed79334ac2707e6f3e864cd824",
+    "family_projection_row_sha256": "be5c4d09f722967a53c1331dea2530fb3825ca775d6e168b3f9a0055c32ddef9"
+  },
+  {
+    "family_id": "b11_se_only_worker_share",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "f57a567a813c09dfdc1ae763a8cfc66ce3bc7b6b6514ae4722e793b72213b8a4",
+    "projected_observation_identity_row_domain_sha256": "20e95fd012e08f07a465ba8c01086332fd5e52a34dd65d0679b28861635e7df8",
+    "family_projection_row_sha256": "1469a686d0f3ec78ca22e825d87ad90f648d524a2b96da2a6229201b3997934c"
+  },
+  {
+    "family_id": "b11_dual_type_worker_share",
+    "expected_source_cell_count": 165,
+    "expected_source_cell_domain_sha256": "a1024453014ee7519d091b5e9b5423622e23e41d825e960498065c6b713df829",
+    "projected_observation_identity_row_domain_sha256": "05244f773733d6ca844793352f9c8ed6e94b7feb76330c601a7d816abdcf275c",
+    "family_projection_row_sha256": "eaf49345127a180a961627087302cb91658c095e75180e795c5608a2dff29f78"
+  },
+  {
+    "family_id": "b11_wage_only_worker_share",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "d5c630bc08412873d5e84c952d46b021ff622c729eadd91b00c7d08ab95c6038",
+    "projected_observation_identity_row_domain_sha256": "e228ff63af3e35c9b59b09564c9395cb478c8838bbc63969dbc032a2e9832dc5",
+    "family_projection_row_sha256": "96cb7b04a0ec2377e2503a398547f96c5b904b2d507c4c16f9b0ad93125f252f"
+  },
+  {
+    "family_id": "b2_type_count_mix",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "d1755ef53ba1464116d17474d6ba5ffda8c80be6237d4e0e99a0347b78d4e323",
+    "projected_observation_identity_row_domain_sha256": "ab3a26318579779d1f30d62cbecb643c00e8ce56517dc5fbe3179228db363078",
+    "family_projection_row_sha256": "7a3b05aa4d1c16a3887fde19307cea041612aa3a8227dd9cff8ddcb18ab87bf0"
+  },
+  {
+    "family_id": "b2_se_total_component_share",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "35bf61d3ec3faef07c182c6df4d8e88a8999f963ca724553ad9036a6db11b31e",
+    "projected_observation_identity_row_domain_sha256": "7c7f672013347aa2a048d441615e47c4c46d9bad7c51af105602043dbc19e2bb",
+    "family_projection_row_sha256": "94eafd66249e73eb4ffd3b6ddc9cd6afbd00985d970303889bf02e3c366c6b51"
+  },
+  {
+    "family_id": "b2_wage_taxable_intensity",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "3c2fc4829a3d049f22bb9e0ec3215191aefa9d0f79bc191f593335f317ca7fbf",
+    "projected_observation_identity_row_domain_sha256": "dd72c17a974fe26e566b06f86b7128a6c4632774f648858cfb2709b8d272ea91",
+    "family_projection_row_sha256": "715af0b63f1d9abe90b7c86c8bc1425fb649ac2ad13afd0a3c19919bbb7e76ac"
+  },
+  {
+    "family_id": "b2_se_taxable_intensity",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "3ce876d01dd01f684e24d0aa9a3125478a1a338d39aeb048b2fb04614e5925eb",
+    "projected_observation_identity_row_domain_sha256": "0f43f092ab38106ab69d043c4f0b6cd2803d5eb4fbf4013c6bacb6680f2565c6",
+    "family_projection_row_sha256": "d0ca658c29269d665ca57931ad443daa11a5a6310fe326a1fd15ea0a0508bce1"
+  },
+  {
+    "family_id": "b2_wage_taxable_fraction",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "7161edbc2951628029b7edd910729cf6b49ca683e87fa0d25e0118569ca3d293",
+    "projected_observation_identity_row_domain_sha256": "0e56991295ef9130b93490347563da0a69e013aa496b715ef52e8939cc75faa2",
+    "family_projection_row_sha256": "521a0c64dda02061d5b0a6e50ad9efd8d90aa1e74e45d99dddc08628e137924f"
+  },
+  {
+    "family_id": "b2_se_taxable_fraction",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "c2657e285b87f8ca5da4e4121688832081305b1a02fe5c684d4935f09b85ce84",
+    "projected_observation_identity_row_domain_sha256": "91cdd82fd3130f75591e78e8474c1d1100fdbb0005b88e924ce8e808daa1838c",
+    "family_projection_row_sha256": "e1a6ad747ed99f5d385ad7239c6e467be0cad95f7a282524a241bdaa18d957c9"
+  },
+  {
+    "family_id": "b11_taxable_earnings_component_reconciliation",
+    "expected_source_cell_count": 165,
+    "expected_source_cell_domain_sha256": "8772b8ab1829913bb9785ef930b56c33c15520f5f9fedbef0f2c14a00839be78",
+    "projected_observation_identity_row_domain_sha256": "b4f5bde59f753d9b947e27be8059fced3ea5e418ad841574b34ada85c90cc726",
+    "family_projection_row_sha256": "a02a80378526baaa112c50049a2b61574213048014c08703d288f70f1a1ed2bb"
+  },
+  {
+    "family_id": "b11_contributions_component_reconciliation",
+    "expected_source_cell_count": 165,
+    "expected_source_cell_domain_sha256": "c254a71f8142d8449ae721435a2c4f39874c9e4274ca66dd7e3a5dd80e9fb890",
+    "projected_observation_identity_row_domain_sha256": "bd25eadb84c80139b511fdad1715f52a2c4ab78cda505050c4300659a28dc37a",
+    "family_projection_row_sha256": "7c47fae7b6be8a539534debbc1c599e1dbac0c8c56ad8d4002f99ea47c61ae14"
+  },
+  {
+    "family_id": "b11_se_contribution_share",
+    "expected_source_cell_count": 110,
+    "expected_source_cell_domain_sha256": "b1cd17e0596d528bba220a099e815b6b926d4e54d893ff9c3247430eb23ea282",
+    "projected_observation_identity_row_domain_sha256": "af0c1d831e3b7c397bd7097396f752a92c4d1e743c3e621ec24ffd0934c236bd",
+    "family_projection_row_sha256": "7b648d8854fcc0574d0ed937429595afda59cbe5e32a235d6326adb224152c09"
+  }
+]
+```
+
+That witness array is explanatory, not another registry or input; each row
+hash covers the corresponding complete typed projection row, including its
+full value-blind observation identities. Its canonical array SHA-256 is
+`46fcca062ea6427c1848b91da73a368705564eeecddc8454bb3099df0c4c43e2`.
+The displayed aggregate hashes are mandatory expected values whenever the
+frozen candidate identity is selected; a recomputation disagreement makes
+the source authority predicate false.
+
+Every adjudication `family_rows.required_authority_ids` exact-copies the
+same-family pair above. Its source prerequisite status equals the same-ID
+source required-authority Boolean; its methodology prerequisite status
+equals the same-ID methodology Boolean; `failed_requirement_ids` is the
+ordered false-member projection of that pair; and `registrable` is their
+conjunction. The complete `ordered_required_authority_ids` is exactly A1
+through A5, the five required V-B IDs in the claim-role order above, then all
+14 source/methodology pairs in family order. Its count is integer 38 and its
+canonical array SHA-256 is
+`bee612c909fcbaad078a6f73ae686e433a020c299df10b3cd034d5f59a64f01b`.
+No target-cell object or derived family output supplies an ID.
+
+All noncapture calibrated required-authority rows use the separate closed
+registry `calibrated_noncapture_required_authority_predicate_specs.v1`.
+It has exactly `schema_version`, `ordered_predicate_ids`, `rows`,
+`row_count`, `domain_sha256`, `canonicalization`, and
+`failure_disposition`, with this sole complete value:
+
+```json
+{
+  "schema_version": "calibrated_noncapture_required_authority_predicate_specs.v1",
+  "ordered_predicate_ids": [
+    "verify_calibrated_legacy_model_authority_requirement_v1",
+    "verify_calibrated_verification_claim_requirement_v1",
+    "verify_calibrated_family_authority_requirement_v1"
+  ],
+  "rows": [
+    {
+      "verification_predicate_id": "verify_calibrated_legacy_model_authority_requirement_v1",
+      "input_preimage_schema_version": "calibrated_noncapture_required_authority_preimage.v1",
+      "predicate_equation": "manifest_evidence_valid&&legacy_model_authority_disposition_satisfied",
+      "result_schema_version": "calibrated_noncapture_required_authority_result.v1"
+    },
+    {
+      "verification_predicate_id": "verify_calibrated_verification_claim_requirement_v1",
+      "input_preimage_schema_version": "calibrated_noncapture_required_authority_preimage.v1",
+      "predicate_equation": "manifest_evidence_valid&&verification_claim_result_satisfied",
+      "result_schema_version": "calibrated_noncapture_required_authority_result.v1"
+    },
+    {
+      "verification_predicate_id": "verify_calibrated_family_authority_requirement_v1",
+      "input_preimage_schema_version": "calibrated_noncapture_required_authority_preimage.v1",
+      "predicate_equation": "manifest_evidence_valid&&family_requirement_projection_satisfied",
+      "result_schema_version": "calibrated_noncapture_required_authority_result.v1"
+    }
+  ],
+  "row_count": 3,
+  "domain_sha256": "517bca56dbdae0c5445c6bf8abab843553ecda1e3f85ee5c9cc1210b8b0fdf75",
+  "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+  "failure_disposition": "abort_adjudication"
+}
+```
+
+The registry digest hashes canonical bytes of the complete `rows` array.
+The predicate mapping is exhaustive and disjoint: A2, A4, and A5 use the
+first row; V-B1, V-B4, V-B5, V-B6, and V-B8 use the second; and every
+one of the 28 literal `family_source:<family_id>` and
+`family_methodology:<family_id>` members of
+`calibrated_family_authority_requirement_specs.v1` uses the third. A1 and A3
+use the capture registry above. A collision across classes, an ID outside
+the exact 38-member domain, a different predicate position, or an
+implementation-selected predicate aborts.
+
+Their common input is
+`calibrated_noncapture_required_authority_preimage.v1`, with exactly
+`schema_version`, `requirement_id`, `requirement_class`,
+`authority_manifest_refs`, `authority_manifests`,
+`authority_manifest_sha256s`, `authority_manifest_rows`,
+`authority_manifest_row_sha256s`, `semantic_source_rows`,
+`semantic_source_count`, `semantic_source_domain_sha256`,
+`verification_predicate_id`, and `authority_cutoff_sha256`.
+Requirement class is exactly `legacy_model_authority`,
+`verification_claim`, or `family_authority` in the predicate positions
+above. The ref, complete-manifest, manifest-digest, complete-row, and
+row-digest arrays obey the same positional, repeated-manifest, selected
+version, full-status, and canonical-hash laws as the A1/A3 preimage. Count
+and domain hash cover the complete nonempty semantic row array, and cutoff
+hash is the cutoff identity below.
+
+Each `semantic_source_rows` member has exactly `source_kind`, `source_id`,
+`source_payload`, `source_payload_sha256`, and `source_result`.
+`source_payload` has exactly `availability`, `candidate_values`,
+`candidate_count`, and `candidate_domain_sha256`. Availability is `present`
+for count one, `absent` for zero, and `conflicting` for more than one.
+Candidates are complete JSON values sorted by unsigned-byte lexicographic
+order of their canonical serialization; count equals length and the domain
+digest hashes the complete array. The enclosing payload digest hashes that
+complete four-key object. `source_result` is a coordinator-derived Boolean
+under the same-position equation below. These wrappers retain absence,
+conflict, malformed semantic disposition, and a valid negative result
+without deleting the required-authority row.
+
+For `legacy_model_authority`, there is exactly one semantic row. Its kind is
+`legacy_registration_authority_adjudication`; its source ID maps A2, A4, and
+A5 respectively to `model_weight_field`,
+`denominator_and_joint_analytic_selectors`, and
+`universe_concordance`. Candidate values are every same-ID row from the
+strict cutoff methodology artifact's
+`registration_authority_adjudications`, preserving duplicates before the
+canonical sort. The exact reference-object hashes and successful
+dispositions are:
+
+```json
+[
+  {
+    "requirement_id": "A2",
+    "source_id": "model_weight_field",
+    "reference_object_sha256": "d5c18b11a555b1564f25c7f6019d9a1b6d741160c7e8a981451646ade1e8090d",
+    "required_status": "resolved_from_committed_first_estimates_authority",
+    "required_reason_id": "first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1",
+    "required_resolved_value": "weight",
+    "source_result": true
+  },
+  {
+    "requirement_id": "A4",
+    "source_id": "denominator_and_joint_analytic_selectors",
+    "reference_object_sha256": "385fdac58d4373ea6d2eb71b6d7ed7165f8323ab2d2c74826da8d5da7a95f1ba",
+    "required_status": "partially_resolved_fail_closed",
+    "required_reason_id": "selector_ids_resolved_membership_predicates_unestablished",
+    "required_resolved_value": {
+      "b2_b11_membership_selector_ids": [
+        "b2_wage_worker_membership_probability_analytic",
+        "b2_se_worker_membership_probability_analytic",
+        "b11_wage_only_worker_probability_analytic",
+        "b11_se_only_worker_probability_analytic",
+        "b11_dual_type_worker_probability_analytic",
+        "b11_any_worker_probability_analytic"
+      ],
+      "covered_share_denominator_selector_id": "registered_covered_share_denominator_indicator",
+      "joint_probability_reduction": "analytic_joint_state_within_projection_draw",
+      "membership_predicates": null
+    },
+    "source_result": false
+  },
+  {
+    "requirement_id": "A5",
+    "source_id": "universe_concordance",
+    "reference_object_sha256": "b6137bed5a8555c9b0332b730cddd61d47b1995064daadd3c2862431c819ff40",
+    "required_status": "registration_required",
+    "required_reason_id": "cannot_pass_without_official_and_model_universes",
+    "required_resolved_value": {
+      "frame_relation": "frame_relative_not_population_aligned"
+    },
+    "source_result": false
+  }
+]
+```
+
+This array is the complete literal same-position disposition table, not an
+artifact or extension point. Its reference digest hashes the full exact
+same-ID object in the
+legacy-envelope reference bytes, including citations and any structured
+resolved value. A semantic row's Boolean exact-copies the displayed
+Boolean only when availability is present and its sole complete candidate
+has the displayed digest, status, reason, and resolved value; otherwise it
+is false. For A4 and A5, the exact honest fail-closed legacy values therefore
+remain lawful false results rather than evidence failures. The first
+registry predicate's
+`legacy_model_authority_disposition_satisfied` is exactly this one Boolean.
+
+For `verification_claim`, there is exactly one semantic row, with kind
+`verification_claim_spec_and_result` and source ID equal to the V-B
+requirement ID. The fixed spec is the unique same-position row in the
+ratified claim registry. The coordinator enumerates every result-registry
+row whose `claim_id` equals the requirement ID, retaining duplicate rows,
+and pairs each independently with that fixed spec. Each resulting complete
+candidate value has exactly
+`verification_claim_spec` and `verification_claim_result`, containing the
+complete fixed spec and one complete observed result. The candidate array is
+then sorted by the wrapper's canonical-byte rule; zero matching result rows
+is absent, one is present, and two or more, including byte-identical
+duplicates, is conflicting. Its source result is true iff availability is
+present; both complete objects have the same required claim ID; the spec
+class is `registration_required`; its role array deep-equals the same-ID row of
+`calibrated_registration_required_claim_role_arrays.v1`; the result's
+`authority_input_ids` is the exact ordered authority-ID projection of the
+expanded manifest refs; affected-key and governing-rule fields satisfy the
+complete claim spec; `verification_status` is `verified`;
+`optional_consequence_specs_sha256` is null; and result status is `pass`.
+It is false for an absent/conflicting pair, an authentic negative claim
+result, or any mismatch. The second registry predicate's
+`verification_claim_result_satisfied` is exactly this Boolean.
+
+For `family_authority`, there is exactly one semantic row. The requirement
+ID grammar and exact family registry resolve it to one family row and one
+kind: `family_source:` selects `source_requirement_id` and
+`family_methodology:` selects `methodology_requirement_id`. The ref array is
+respectively the one legacy source ref or the one legacy methodology ref.
+Source kind is `calibration_family_requirement_projection` and source ID is
+the complete requirement ID.
+
+Each candidate value has exactly `family_id`, `requirement_id`,
+`family_requirement_spec_row`, `source_authority_projection`, and
+`methodology_authority_projection`; the spec member is the complete exact
+14-row-registry member. For a source requirement, the coordinator enumerates
+the complete same-family `family_projection_rows` member from every complete
+`calibration_family_source_fact_projection.v1` candidate value in the
+referenced source manifest row, retaining candidate, aggregate, and row
+duplicates; that typed result row is the source domain, while the unconsumed
+methodology domain is the singleton `[null]`. For a methodology requirement,
+the unconsumed source domain is `[null]`, while the methodology domain is
+every complete `family_dispositions` row whose `target_family` equals the
+family, from every candidate in the referenced methodology manifest row,
+retaining duplicates.
+
+The complete candidate array is the duplicate-preserving Cartesian product
+of the source and methodology domains, with the fixed family/spec/requirement
+members attached, then sorted by canonical bytes. An empty consumed domain
+yields zero candidates and `absent`; one product member is `present`; and
+multiple product members, including identical duplicates, are
+`conflicting`. Null is introduced only by the exact unconsumed singleton,
+never for a missing consumed projection.
+
+A source-requirement semantic row is true iff availability is present; its
+spec and IDs exact-match the family registry; methodology projection is
+null; the nonnull source projection is the unique same-family typed row,
+same-byte-derived from the unique verified source-manifest candidate's
+complete aggregate projection; its `family_id` and selector exact-match the
+frozen family position; its counts and hashes validate; and its
+`projection_result` is true with status `pass`. No
+`required_source_fact_ids` member is read on this branch because the exact
+SSA artifact contains observations rather than methodology facts. An empty
+methodology-fact array therefore has no special source-side meaning: the
+complete same-family observation projection must still pass.
+
+A methodology-requirement semantic row is true iff availability is present;
+its spec and IDs exact-match; source projection is null; the nonnull
+methodology row is same-byte-derived from the unique verified methodology
+candidate; its `target_family` and `required_source_fact_ids` exact-copy the
+family registry; its verdict is `pass`; and its `missing_fact_list`,
+`missing_registration_authority_ids`, and `missing_source_fact_ids` are
+exact empty arrays. The third registry predicate's
+`family_requirement_projection_satisfied` is exactly the applicable one
+source-result Boolean. These are conditional literal equations over the
+embedded objects, not a family callback or producer disposition.
+
+`manifest_evidence_valid` for all three predicates is true iff every ref
+resolves to its same-position complete manifest and row; every complete
+manifest and row status is `pass`; every selected manifest registry,
+candidate, availability, expected/actual preimage, registered predicate,
+typed result, count, domain hash, and copied digest validates; and each row
+is uniquely present and verified. It is false on any absence, conflict,
+failed manifest predicate, sibling-row failure, or hash mismatch.
+
+The common result is
+`calibrated_noncapture_required_authority_result.v1`, with exactly
+`schema_version`, `requirement_id`, `verification_predicate_id`,
+`input_preimage`, `input_preimage_sha256`, `manifest_evidence_valid`,
+`semantic_source_results`, `semantic_predicate_satisfied`,
+`requirement_satisfied`, `failure_code`, and `status`. The complete preimage
+is embedded exactly once and its digest hashes those bytes. IDs exact-copy
+the preimage and the class-mapped registry row. The result array is the
+complete same-order `semantic_source_rows.source_result` projection.
+`semantic_predicate_satisfied` is the applicable named conjunct above:
+the one model Boolean, the one claim Boolean, or the conjunction of the
+nonempty family array. `requirement_satisfied` is exactly
+`manifest_evidence_valid && semantic_predicate_satisfied`, matching the
+selected registry equation. Failure code is null on true and the sole
+literal `required_authority_semantics_failed` otherwise. Status is `pass`
+iff every field faithfully encodes these equations, including a valid false
+result.
+
+For every noncapture row,
+`calibrated_required_authority_evidence.v1.verification_predicate_id`
+exact-copies its class-mapped ID,
+`verification_inputs_sha256` hashes the complete common preimage,
+`verification_result` is this complete typed result, and
+`requirement_satisfied` exact-copies its Boolean. The enclosing
+`verification_status` retains the frozen availability mapping:
+`not_evaluable` for absent/conflicting, `pass` for present/true, and `fail`
+for present/false; evidence status is `pass` for every faithful favorable or
+unfavorable serialization. Thus every member of the complete derived
+`ordered_required_authority_ids` domain now has one and only one registered
+predicate, complete input object, result type, and success equation.
+
+The exact acyclic source of every §16 `authority_cutoff_sha256` is
+`calibrated_authority_cutoff_identity.v1`, with exactly
+`schema_version`, `repository_commit`, `adjudicated_at_utc`,
+`then_operative_calibrated_design_identity_sha256`,
+`source_authority_verification_specs_schema_version`,
+`methodology_authority_verification_specs_schema_version`,
+`registration_required_claim_role_arrays_schema_version`,
+`authority_role_binding_specs_schema_version`,
+`family_authority_requirement_specs_schema_version`,
+`noncapture_required_authority_predicate_specs_schema_version`, and
+`capture_required_authority_predicate_specs_schema_version`.
+The commit and UTC values exact-copy the complete top-level
+`authority_cutoff`; the design digest hashes the complete four-key
+`then_operative_calibrated_design_identity`; and the seven schema-version
+members exact-copy the selected complete ratified registries. Preliminary
+\(P_n\) uses manifest versions v1, claim-role version v1, role version v1,
+family-requirement version v1, and both predicate versions v1. Final
+\(P_{n+1}\) uses manifest versions v2, claim-role version v1, role version
+v2, family-requirement version v1, and both predicate versions v1.
+The UTC value is not producer-selected: it is the exact
+`YYYY-MM-DDTHH:MM:SSZ` UTC conversion, to whole seconds, of
+`repository_commit`'s Git committer timestamp. A fractional second, author
+timestamp, local-offset rendering, wall-clock observation, or unequal
+top-level value aborts. The timestamp remains metadata and never replaces
+Git ancestry for cutoff ordering.
+
+This identity serializes only under
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`;
+`authority_cutoff_sha256` is the 64-lowercase-hex SHA-256 of those complete
+canonical bytes. The source and methodology manifest hashes are deliberately
+not members: the coordinator constructs this identity first, uses its hash
+inside manifest preimages and required-authority evidence, then constructs
+and hashes the complete manifests, and only then populates the full
+four-key `authority_cutoff`. This ordering replaces the former cyclic
+“complete authority cutoff” hash language everywhere in §16.
+
+In every `calibrated_capture_authority_expected_preimage.v1`,
+`design_identity_sha256` exact-copies
+`then_operative_calibrated_design_identity_sha256` from that cutoff identity.
+In every `calibrated_capture_authority_actual_preimage.v1`,
+`authority_cutoff_sha256` exact-copies the cutoff-identity hash. The same two
+equations apply to the inherited v1 manifest preimages and all
+required-authority, family, global, fitting-free-domain, applicability, and
+receipt cutoff-hash fields. A full cutoff hash, manifest hash, caller digest,
+clock-derived identity, or differently versioned registry tuple is invalid.
+
+The exact
+`covered_earnings_path_applicability_registry_bundle.v1` key set is therefore
+`schema_version`, `path_applicability_specs`,
+`ordered_calibrated_manifest_verification_specs`,
+`calibrated_registration_required_claim_role_arrays`,
+`calibrated_authority_role_binding_specs`,
+`calibrated_family_authority_requirement_specs`,
+`calibrated_noncapture_required_authority_predicate_specs`,
+`calibrated_capture_required_authority_predicate_specs`,
+`calibrated_global_requirement_verification_specs`, and
+`fitting_free_requirement_verification_specs`. The five added children are
+the complete objects above in the selected preliminary/final versions. The
+bundle digest binds their complete canonical bytes; an earlier six-key
+bundle, version mismatch, digest-only placeholder, or extra child fails.
+
+The successful capture serialization now has this acyclic forced order:
+
+1. freeze \(P_n\)'s four-key calibrated-design object; selected source-v1,
+   methodology-v1, claim-role-v1, role-v1, family-requirement-v1,
+   noncapture-predicate-v1, and capture-predicate-v1 registries; repository
+   commit; and UTC field, then construct and hash the complete cutoff
+   identity;
+2. construct and hash both v1 manifests, construct the two complete
+   preliminary A1/A3 aggregation inputs and lawful negative typed results,
+   construct every class-mapped noncapture semantic preimage and typed
+   result, and then populate the full cutoff and preliminary adjudication;
+3. authorize only that exact \(P_n\), derive the unique accepted capture
+   triple \(T\), and revalidate its unchanged quartet at final commit \(C\);
+4. freeze the same four-key design object; selected source-v2,
+   methodology-v2, claim-role-v1, role-v2, family-requirement-v1,
+   noncapture-predicate-v1, and capture-predicate-v1 registries; \(C\); and
+   final UTC field, then construct and hash the final cutoff identity;
+5. derive the captured A1/A3 expected values independently, construct their
+   expected/actual preimages and typed manifest results, and append the two
+   v2 manifest rows after the immutable v1 rows;
+6. hash the two complete v2 manifests, populate the full final cutoff, and
+   expand the exact ten-row v2 role registry;
+7. serialize the complete two-manifest aggregation preimage and successful
+   typed result for A1 and A3, and serialize every other required-authority
+   ID under its exact class-mapped semantic preimage and typed result;
+8. serialize only adjudication vintage \(n+1\) under the contiguous
+   append-only first-add law; and
+9. bind that adjudication plus the exact ten-key v2 registry bundle in the
+   receipt before path derivation.
+
+Every preimage is available before its hash consumer, every result has one
+registered equation and type, A1/A3 enter through one immutable manifest
+successor rather than an in-place edit, and the final canonical bytes are
+unique. Zero or multiple qualifying capture triples, any missing or extra
+role/ref/input/result, any registry-version mismatch, or any failure in
+either A1/A3 legacy-or-capture input aborts before final adjudication
+serialization.
