@@ -1,7 +1,7 @@
-"""Build DRAFT aggregate-side noise floors for gates E1/E2/E6/E7/E11
+"""Build pre-lock aggregate-side noise floors for gates E1/E2/E6/E7/E11
 (workstream B, issue #192).
 
-REPORTED ANCHOR, NOT A GATE RUN — and explicitly a DRAFT: C3 (the
+REPORTED ANCHOR, NOT A GATE RUN: IC3 (the
 employer gate block) has not locked, no thresholds are proposed here,
 and nothing below is ratified. This is the firm-side counterpart to
 the workstream-A floor battery (#212): it commits the floor-building
@@ -35,7 +35,7 @@ All band semantics come from
 here. Cells whose minimum denominator over the window is below
 ``THIN_JOBS`` (a draft choice, recorded) are flagged thin; national
 cells are all thick in practice, and the flag is carried so the
-state-level C3 cells inherit the convention.
+state-level IC3 cells inherit the convention.
 
 Usage::
 
@@ -67,7 +67,7 @@ ARTIFACT = ROOT / "runs/employer_firm_floors_v1.json"
 #: bytes: a silently re-fetched extract changes the floors, and a
 #: reproduction test that reads the same changed file would still
 #: pass. v1 is a pinning event, not a ratification -- the artifact
-#: stays pre-lock with no thresholds until the C3 amendment merges.
+#: stays pre-lock with no thresholds until the IC3 amendment merges.
 INPUT_EXTRACTS = (
     "susb_us_sector_size_2022.csv",
     "bds_us_firm_size_1978_2022.csv",
@@ -541,11 +541,11 @@ def build() -> dict:
         "artifact": "employer_firm_floors",
         "version": "v1",
         "status": (
-            "PRE-LOCK REFERENCE - NOT RATIFIED; C3 not locked; no "
+            "PRE-LOCK REFERENCE - NOT RATIFIED; IC3 not locked; no "
             "thresholds. v1 marks the artifact sha256-pinned and "
             "reproduction-tested (#230 section 12.2 item 2), which "
             "is a pinning event, not a ratification: the numbers "
-            "here bind nothing until the C3 amendment PR merges"
+            "here bind nothing until the IC3 amendment PR merges"
         ),
         "input_extract_sha256": _input_digests(),
         "issue": "192",
@@ -574,7 +574,7 @@ def build() -> dict:
         "unit_rules": [
             "QWI/J2J cells count jobs, not persons (ADR 0003): the "
             "job-to-person adjustment (~ multiple-jobholding rate, "
-            "~5%) is a pre-registered C3 item",
+            "~5%) is a pre-registered IC3 item",
             "QWI EarnS is MEAN monthly earnings of full-quarter "
             "employees; QWI never publishes medians; E7 is stated on "
             "means",
@@ -584,7 +584,7 @@ def build() -> dict:
             "but state/local employment embedded in other sectors "
             "(esp. 61, 62) remains — E2/E11 cells must restate on a "
             "private-comparable basis or carry this scope caveat "
-            "(locks with C3)",
+            "(locks with IC3)",
         ],
         "method_findings": {
             "e1_no_sector_replicate": (
@@ -650,7 +650,7 @@ def build() -> dict:
                 "revision noise is small for these aggregates, not "
                 "evidence that it is zero. Building it needs two "
                 "release-stamped vintages of the same series "
-                "committed; the C3 referee round should decide "
+                "committed; the IC3 referee round should decide "
                 "whether E1/E2/E6/E7/E11 thresholds must carry a "
                 "revision allowance on top of the temporal floor"
             ),
@@ -660,16 +660,18 @@ def build() -> dict:
                 "employer-employee microdata, and the published "
                 "decompositions are research outputs rather than a "
                 "recurring aggregate release. No floor is buildable; "
-                "E12 is recorded as deferred pending a committed, "
-                "provenance-pinned reference extract, and must not "
-                "lock with C3 without one"
+                "E12 is deferred and does not gate the first IC3 "
+                "lock. True-linked validation remains deferred "
+                "pending a committed, provenance-pinned reference "
+                "extract; Phase 2 must not certify two-sided moments "
+                "until that reference is adjudicable"
             ),
             "cycle_signal_in_floors": (
                 "temporal-stability floors on published aggregates "
                 "include true business-cycle variation (2020-2021 "
                 "most visibly) as well as source noise; both the "
                 "full-sample and ex-pandemic figures are committed "
-                "rather than choosing one — the C3 referee round "
+                "rather than choosing one — the IC3 referee round "
                 "picks the formulation with both on the record"
             ),
             "floors_not_monotone_in_disaggregation": (
@@ -688,7 +690,7 @@ def build() -> dict:
                 "conservative bound for the cells beneath it. Every "
                 "gated cell needs its own floor, or the threshold "
                 "policy must say explicitly which cell's floor "
-                "governs (C3 open question 1)"
+                "governs (IC3 open question 1)"
             ),
             "e11_margin_trend": (
                 "the E11 destination-size margins are EE flow "
@@ -704,7 +706,7 @@ def build() -> dict:
                 "relative), and 3.4x to 6.6x smaller on the "
                 "ex-pandemic window. Most of the raw floor is the "
                 "aggregate flow trend, which is exactly what the "
-                "relative variant removes; the C3 referee round picks "
+                "relative variant removes; the IC3 referee round picks "
                 "the formulation, as for E7"
             ),
             "e7_nominal_trend": (

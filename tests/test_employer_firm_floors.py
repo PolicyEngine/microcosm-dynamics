@@ -4,11 +4,11 @@
 (workstream B counterpart to the #212 battery): PRE-LOCK, NOT
 RATIFIED, no thresholds — it commits the floor-building method for
 the E1/E2/E6/E7/E11 aggregate references, and the E11/E12 deferral
-findings, before C3 locks.
+findings, before IC3 locks.
 
 **v1 is a pinning event, not a ratification** (#230 section 12.2
 item 2). Three digests are pinned, and each catches a different way
-the artifact could drift out from under the C3 record:
+the artifact could drift out from under the IC3 record:
 
 * the artifact's own bytes — an edited artifact;
 * the builder's bytes — a changed method that happens to land on
@@ -17,7 +17,7 @@ the artifact could drift out from under the C3 record:
 * every input extract's bytes — a re-fetched source. This is the
   one a reproduction test alone cannot catch: rebuild from a
   silently changed extract and the artifact and the rebuild agree
-  with each other while both differ from what C3 was shown.
+  with each other while both differ from what IC3 was shown.
 """
 
 from __future__ import annotations
@@ -36,10 +36,10 @@ ARTIFACT = ROOT / "runs/employer_firm_floors_v1.json"
 BUILDER = ROOT / "scripts/build_employer_firm_floors.py"
 
 ARTIFACT_SHA256 = (
-    "78918b15ba21c58cb179e6f40668a4db052136e426e1e71a7beecb384baa18da"
+    "500bea1564746797815253b2c1feb04a39b31c0e0815f2d0a56fad74918856be"
 )
 BUILDER_SHA256 = (
-    "fac6c6be6d185fee704661b4d3338639fd8957ca9fd52308f4cab78a25ffa263"
+    "5011e68668c283cf4d8238d1c9d8aa8087c8cccf30a9d6d9d3722a8744a2ee17"
 )
 
 CANONICAL_NAMES = {band.name for band in banding.CANONICAL_BANDS}
@@ -50,7 +50,7 @@ def artifact() -> dict:
     return json.loads(ARTIFACT.read_text())
 
 
-def test_artifact_is_a_draft_with_no_thresholds(artifact):
+def test_artifact_is_a_prelock_reference_with_no_thresholds(artifact):
     assert artifact["artifact"] == "employer_firm_floors"
     assert artifact["version"] == "v1"
     # "DRAFT" gave way to "PRE-LOCK REFERENCE" at v1: the artifact
@@ -169,7 +169,10 @@ def test_method_findings_are_recorded(artifact):
         findings["release_revision_noise_unfloored"]
     )
     assert "trend, not noise" in findings["e11_margin_trend"]
-    assert "must not lock with C3" in findings["e12_deferred"]
+    assert "does not gate the first IC3 lock" in findings["e12_deferred"]
+    assert "Phase 2 must not certify two-sided moments" in (
+        findings["e12_deferred"]
+    )
     assert "business-cycle" in findings["cycle_signal_in_floors"]
     assert "nominal wage growth" in findings["e7_nominal_trend"]
     assert artifact["e11"]["status"].startswith("detail floor NOT")
@@ -337,7 +340,7 @@ def test_input_extract_digests_match_the_committed_files(artifact):
     """The drift a reproduction test structurally cannot catch.
 
     If an extract is re-fetched, the artifact and a rebuild from it
-    agree with each other while both differ from what the C3 record
+    agree with each other while both differ from what the IC3 record
     was shown. Only a digest recorded *at build time* and compared
     against the file *now* separates those.
     """
@@ -348,7 +351,7 @@ def test_input_extract_digests_match_the_committed_files(artifact):
         assert _sha256(path) == digest, (
             f"{name} has changed since the floors were built; rebuild "
             "the artifact and re-pin deliberately, and say so in the "
-            "C3 record — the floors move with it"
+            "IC3 record — the floors move with it"
         )
 
 
@@ -366,7 +369,7 @@ def test_every_consumed_extract_is_digest_recorded(artifact):
 def test_v1_is_pinned_but_not_ratified(artifact):
     # The distinction the whole ceremony rests on: pinning makes the
     # numbers immovable, not binding. Thresholds arrive only with the
-    # C3 amendment PR.
+    # IC3 amendment PR.
     status = artifact["status"]
     assert "NOT RATIFIED" in status
     assert "no thresholds" in status
