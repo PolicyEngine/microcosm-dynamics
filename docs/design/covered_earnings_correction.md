@@ -8348,3 +8348,57 @@ multiple-component membership case, the corresponding B2 intensity or B11
 worker-distribution family—and therefore the required amended calibration
 contract—fails closed. Removing the optional share family does not supply an
 alternative denominator or waive one prerequisite.
+
+### 15.4 Exact §3.1 replacement — fields retained, target binding removed
+
+The two base §3.1 rows at base-ratification lines 237–238 remain in the
+frozen person-year output registry, with these exact replacement
+definitions:
+
+| Estimand ID | Amendment-1 definition |
+|---|---|
+| `registered_covered_share_denominator_indicator` | Deterministic zero/one membership in the frozen **model-only** annual population universe used for covered-worker-incidence gates and diagnostics. It resolves through the registered age, annual-presence, employee/SE/both-type, unique-worker, duplicate-worker, zero-earner, and denominator rules, but makes no concordance claim to an absent official share source. It is not an official-target universe, target denominator, earnings outcome, or coverage outcome. |
+| `modeled_covered_worker_probability_analytic` | Analytic probability, under the registered joint wage/SE status mapping, that person taxable payroll is positive. It is the analytic selector for gates, evaluation diagnostics, and context comparisons; it is not target-bound and is not `proxy > 0`. |
+
+The exact finite-joint-state law following the base table remains unchanged.
+So do `modeled_covered_worker_draw_indicator` and
+`modeled_covered_worker_draw_grid_fraction_20`, including their
+diagnostic-only status.
+
+The retained model-only annual diagnostic is
+`model_covered_worker_incidence_diagnostic`. Within correction draw \(d\) and
+verified calendar year \(y\), it is exactly
+
+\[
+\frac{\sum_i w_i\,
+  \texttt{modeled_covered_worker_probability_analytic}_{i,y,d}}
+{\sum_i w_i\,
+  \texttt{registered_covered_share_denominator_indicator}_{i,y}},
+\]
+
+where both sums use the same registered model universe and weight field and
+the denominator must be strictly positive. It has no official observation,
+source cell, target row, loss, tolerance, evidentiary role, selection
+eligibility, or candidate-rescue effect. It publishes in §8.2's `incidence`
+diagnostic family. G01 independently reconstructs its complete annual
+person-year domain, G20 applies only if its registered reduction mode is
+`projection_cross_correction_draw`, and G22 verifies its selector,
+denominator, weight, same-key ratio, and corrected-root dependency. Thus the
+denominator indicator has an exact diagnostic consumer rather than a
+dangling definition.
+
+The existing retained uses of
+`modeled_covered_worker_probability_analytic` remain controlling: every
+certified modeled-worker denominator in the hard-gate law
+(base-ratification lines 4140–4141), every modeled-incidence or denominator
+metric in §8.2 (lines 5090–5095), and the context
+`analytic_worker_selector` (lines 7421–7423) uses that analytic field, never
+a draw indicator or 20-draw fraction. None of those uses confers target
+status.
+
+Base §5.2's zero-preserving measurement law also remains. Its sentence at
+line 1485 is replaced by: **the optional covered-share diagnostic may be
+unavailable, but its absence or value cannot produce
+`no_eligible_candidate`; candidate eligibility is determined only by the
+surviving required families and all unchanged candidate, B2/B11
+methodology, domain, convergence, rank, and tolerance laws.**
