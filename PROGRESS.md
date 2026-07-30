@@ -4,7 +4,7 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `b0c60df`
-- Current phase: final formatting, required suites, and report.
+- Current phase: complete.
 - Constraint: use committed source bytes only; do not capture network data.
 
 ## Done
@@ -64,7 +64,16 @@
   registry validation, then rebuild from committed sources for exact equality.
 - Added coherent definition-fragment rehash and pinned-byte drift attacks.
   All entry-11 tests pass: `52 passed`.
+- Black left all seven changed Python files unchanged; repository-wide Ruff
+  and `git diff --check` pass.
+- Required suites pass: four-file source/registry `75 passed`; full estimates
+  `437 passed`; entry-11 `52 passed`.
+- Wrote the finding-by-finding disposition, full V-B7 clause adjudication,
+  and exact test tails to `FINAL_REPORT.md`.
 
 ## Next
 
-1. Run required suites and record their tails in the final report.
+1. No round-2 implementation work remains.
+2. A future successful authority requires newly ratified primary/model
+   universe and weight inputs and a new append-only identity; vintage 2 must
+   not be refreshed or retroactively assigned.
