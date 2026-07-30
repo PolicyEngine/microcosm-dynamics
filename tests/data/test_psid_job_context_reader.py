@@ -212,13 +212,23 @@ def modern_family_dir(tmp_path: Path) -> Path:
 
 
 def test_raw_reader_emits_complete_exact_byte_domain(modern_family_dir: Path):
+    with pytest.raises(
+        psid_job_context.RawJobContextReadError,
+        match="dictionary SHA/size drift",
+    ):
+        psid_job_context.read_family_job_context_raw(
+            2003,
+            data_dir=modern_family_dir,
+            nrows=1,
+        )
     frame = psid_job_context.read_family_job_context_raw(
         2003,
         data_dir=modern_family_dir,
         nrows=1,
+        require_dictionary_sha=False,
     )
     assert list(frame.columns) == list(psid_job_context.RAW_CONTEXT_COLUMNS)
-    assert len(frame) == 281
+    assert len(frame) == 297
     assert set(frame["family_record_index"]) == {0}
     assert set(frame["family_interview_raw_token_hex"]) == {"2020202037"}
     for row in frame.itertuples(index=False):
@@ -240,6 +250,7 @@ def test_raw_reader_preserves_spaces_and_source_widths(
         2003,
         data_dir=modern_family_dir,
         nrows=1,
+        require_dictionary_sha=False,
     ).set_index("raw_field_id")
     assert frame.loc["ER21002", "raw_token_hex"] == b"    7".hex()
     assert frame.loc["ER21129", "raw_token_hex"] == b"01".hex()
@@ -255,6 +266,7 @@ def test_reader_field_filter_is_explicit_and_still_keeps_raw_join_key(
         2003,
         data_dir=modern_family_dir,
         reader_field_ids=("occupation_raw",),
+        require_dictionary_sha=False,
     )
     assert len(frame) == 2 * 8
     assert set(frame["reader_field_id"]) == {"occupation_raw"}
@@ -270,13 +282,14 @@ def test_person_sidecar_attaches_shared_and_role_fields(
     panel = psid_job_context.family_job_context_panel(
         waves=(2003,),
         data_dir=modern_family_dir,
+        require_dictionary_sha=False,
     )
     assert list(panel.columns) == list(psid_job_context.PERSON_CONTEXT_COLUMNS)
-    assert len(panel) == 426
+    assert len(panel) == 450
     assert panel.groupby("person_id").size().to_dict() == {
-        1001: 142,
-        1002: 142,
-        2001: 142,
+        1001: 150,
+        1002: 150,
+        2001: 150,
     }
     by_person = panel.groupby("person_id")
     assert set(by_person.get_group(1001)["reader_role"]) == {"shared", "head"}
@@ -300,6 +313,7 @@ def test_bundle_keeps_earnings_and_context_as_separate_relations(
     bundle = psid_job_context.family_earnings_bundle(
         waves=(2003,),
         data_dir=modern_family_dir,
+        require_dictionary_sha=False,
     )
     after_bytes = bundle.earnings.to_csv(
         index=False,
@@ -319,7 +333,7 @@ def test_bundle_keeps_earnings_and_context_as_separate_relations(
         psid_job_context.PERSON_CONTEXT_COLUMNS
     )
     assert len(bundle.earnings) == 3
-    assert len(bundle.job_context) == 426
+    assert len(bundle.job_context) == 450
 
 
 @pytest.mark.parametrize(
@@ -360,6 +374,7 @@ def test_source_drift_fails_closed(
             2003,
             data_dir=modern_family_dir,
             nrows=1,
+            require_dictionary_sha=False,
         )
 
 

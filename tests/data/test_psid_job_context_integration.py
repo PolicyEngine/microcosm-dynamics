@@ -22,11 +22,11 @@ def test_real_2003_raw_context_has_exact_record_field_product():
         data_dir=PSID_ROOT,
         nrows=2,
     )
-    assert len(frame) == 2 * 281
+    assert len(frame) == 2 * 297
     assert frame["family_record_index"].nunique() == 2
     assert (frame.raw_token_hex.str.len() == 2 * frame.raw_width).all()
     assert set(frame.reader_role) == {"shared", "head", "spouse"}
-    assert frame.raw_extraction_key.nunique() == 281
+    assert frame.raw_extraction_key.nunique() == 297
 
 
 @needs_psid

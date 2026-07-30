@@ -65,8 +65,8 @@ def test_registry_identity_and_independent_domain_are_exact(evidence):
         "DE": "spouse",
         "FAMILY": "shared",
     }
-    assert artifact["row_count"] == 3_091
-    assert len(registry.expected_reader_coordinates()) == 3_091
+    assert artifact["row_count"] == 3_123
+    assert len(registry.expected_reader_coordinates()) == 3_123
     registry.validate_raw_extraction_registry(
         artifact,
         audit,
@@ -77,7 +77,10 @@ def test_registry_identity_and_independent_domain_are_exact(evidence):
 def test_each_wave_has_complete_shared_role_and_job_domains(evidence):
     _, _, artifact = evidence
     by_wave = Counter(row["interview_wave"] for row in artifact["rows"])
-    assert by_wave == {wave: 281 for wave in range(2003, 2024, 2)}
+    assert by_wave == {
+        wave: 297 if wave in (2003, 2005) else 281
+        for wave in range(2003, 2024, 2)
+    }
     for wave in registry.MODERN_INTERVIEW_WAVES:
         wave_rows = [
             row for row in artifact["rows"] if row["interview_wave"] == wave
@@ -107,7 +110,8 @@ def test_each_wave_has_complete_shared_role_and_job_domains(evidence):
                     for row in role_rows
                     if row["reader_job_slot"] == f"job_{job_number}"
                 ]
-                assert len(job_rows) == 29
+                expected_job_rows = 31 if wave in (2003, 2005) else 29
+                assert len(job_rows) == expected_job_rows
 
 
 def test_rows_are_raw_only_and_never_claim_official_semantics(evidence):
@@ -146,6 +150,12 @@ def test_source_anchors_and_coding_width_seam_are_pinned(evidence):
         "job_beginning_month_raw"
     )
     assert one(2003, "ER21145")["raw_width"] == 3
+    assert one(2003, "ER21174")["reader_field_id"] == (
+        "calculated_elapsed_weeks_raw"
+    )
+    assert one(2003, "ER21175")["reader_field_id"] == (
+        "calculated_elapsed_weeks_accuracy_raw"
+    )
     assert one(2017, "ER66195")["raw_width"] == 4
     assert one(2023, "ER82642")["reader_field_id"] == (
         "prior_year_job_earnings_reporting_unit_raw"

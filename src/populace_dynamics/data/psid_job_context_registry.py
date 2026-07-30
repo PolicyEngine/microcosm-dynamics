@@ -185,6 +185,26 @@ def _parse_shared_label(wave: int, label: str) -> dict[str, Any] | None:
 
 def _parse_accuracy_label(label: str) -> dict[str, Any] | None:
     match = re.fullmatch(
+        r"(CALCULATED|ACCURACY OF) ELAPSED WEEKS--"
+        r"(HD|RP|WF|SP) JOB ([1-4])",
+        label,
+    )
+    if match is not None:
+        field_kind, role_token, job_number = match.groups()
+        block = _ROLE_TOKEN_BLOCK[role_token]
+        reader_field_id = (
+            "calculated_elapsed_weeks_raw"
+            if field_kind == "CALCULATED"
+            else "calculated_elapsed_weeks_accuracy_raw"
+        )
+        return _parsed(
+            source_block=block,
+            reader_job_slot=f"job_{job_number}",
+            source_context_scope="explicit_job_label",
+            source_question_id=f"{block}6-CALCULATED-ELAPSED",
+            reader_field_id=reader_field_id,
+        )
+    match = re.fullmatch(
         r"ACCURACY OF HR/WK WORKED--(HD|RP|WF|SP) JOB ([1-4])",
         label,
     )
@@ -460,6 +480,10 @@ def _is_relevant_candidate(wave: int, exact_label: str) -> bool:
         return True
     if label.startswith("ACCURACY OF OT--"):
         return True
+    if label.startswith("CALCULATED ELAPSED WEEKS--"):
+        return True
+    if label.startswith("ACCURACY OF ELAPSED WEEKS--"):
+        return True
     return _RELEVANT_QUESTION_RE.match(label) is not None
 
 
@@ -502,7 +526,12 @@ def _role_block_expected(block: str) -> list[dict[str, Any]]:
     ]
 
 
-def _explicit_job_expected(block: str, job_number: int) -> list[dict]:
+def _explicit_job_expected(
+    block: str,
+    job_number: int,
+    *,
+    include_calculated_elapsed: bool,
+) -> list[dict]:
     slot = f"job_{job_number}"
     result = [
         _parsed(
@@ -554,6 +583,20 @@ def _explicit_job_expected(block: str, job_number: int) -> list[dict]:
                 reader_field_id=reader_field,
             )
         )
+    if include_calculated_elapsed:
+        for reader_field in (
+            "calculated_elapsed_weeks_raw",
+            "calculated_elapsed_weeks_accuracy_raw",
+        ):
+            result.append(
+                _parsed(
+                    source_block=block,
+                    reader_job_slot=slot,
+                    source_context_scope="explicit_job_label",
+                    source_question_id=f"{block}6-CALCULATED-ELAPSED",
+                    reader_field_id=reader_field,
+                )
+            )
     return result
 
 
@@ -585,7 +628,11 @@ def expected_reader_coordinates() -> tuple[tuple[Any, ...], ...]:
             for job_number in range(1, 5):
                 rows.extend(
                     row | {"interview_wave": wave}
-                    for row in _explicit_job_expected(block, job_number)
+                    for row in _explicit_job_expected(
+                        block,
+                        job_number,
+                        include_calculated_elapsed=wave in (2003, 2005),
+                    )
                 )
     return tuple(_coordinate(row) for row in rows)
 
