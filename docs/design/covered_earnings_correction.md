@@ -10456,3 +10456,272 @@ output hashes never enter G21 or either prebundle.
 The G21 fixture establishes absence of aggregate-evidence influence, not
 permission to inspect aggregate evidence. No official aggregate magnitude is
 decoded, logged, compared, or used by this branch.
+
+### 16.7 Labels, diagnostics, eligibility, and certificate
+
+#### 16.7.1 Exact evidentiary labels
+
+The fitting-free primary and every successful successor certificate use
+exactly:
+
+```json
+[
+  "frame-relative",
+  "modeled-covered-earnings",
+  "deterministic-uncalibrated"
+]
+```
+
+The array order and spelling are normative. The third token means that
+registered statutory classification, deterministic measurement,
+aggregation, SECA arithmetic, and keyed status modeling occurred, while no
+official aggregate observation, target value, loss, fitting tolerance,
+optimizer, candidate comparison, selection criterion, or post-lock context
+diagnostic informed model construction or activation. “Deterministic” refers
+to the frozen input-to-output law and reproducible keyed draws; it does not
+claim that every modeled status is one-hot.
+
+The exact proxy array and the exact calibrated array are both forbidden on a
+fitting-free primary or certificate. The labels make no population-alignment
+or individual administrative-truth claim and do not resolve ledger entry 11
+before condition 9.
+
+`evaluation_specs.fitting_free.v1` retains every base model-only support,
+distribution, downstream, finite-grid-stability, and typed
+`before_context` row whose operands exist under §§3–5 and §16.3. It removes
+every target-result, target-residual, target-tolerance, fit, and selection
+position. Amendment 1's typed-unavailable Option-C law remains controlling.
+No row may use one of the ten Amendment-1 `no_fitting_loss` family IDs below.
+
+#### 16.7.2 Adjudication of the ten no-fitting-loss families
+
+The current context domain is closed to the 15 vintage-1 series and the
+preexisting frozen pairings/comparison specs. It has no extension point for
+Amendment 1's ten official-family diagnostics. Amendment 2 does not enlarge
+that domain.
+
+`fitting_free_official_context_diagnostic_dispositions.v1` has exactly
+`schema_version`, `ordered_family_ids`, `rows`, `family_count`,
+`published_context_row_count`, `official_value_decoder_grant_count`,
+`official_source_open_count`, `canonical_empty_published_domain_sha256`,
+`status`, and `failure_disposition`. `ordered_family_ids` is exactly:
+
+```json
+[
+  "b11_wage_only_worker_share",
+  "b2_type_count_mix",
+  "b2_se_total_component_share",
+  "b2_wage_taxable_intensity",
+  "b2_se_taxable_intensity",
+  "b2_wage_taxable_fraction",
+  "b2_se_taxable_fraction",
+  "b11_taxable_earnings_component_reconciliation",
+  "b11_contributions_component_reconciliation",
+  "b11_se_contribution_share"
+]
+```
+
+Each row has exactly `family_id`, `amendment_1_loss`,
+`membership_methodology_status`, `context_domain_authorization`,
+`correction_disposition`, `context_disposition`,
+`official_source_access`, `reason_code`, and `status`.
+`amendment_1_loss` is always `no_fitting_loss`;
+`context_domain_authorization` is
+`not_authorized_by_closed_context_domain`; `correction_disposition` is
+`omitted_no_target_domain`; `context_disposition` is
+`omitted_not_authorized`; `official_source_access` is `not_opened`; and
+status is `pass`.
+
+For the following six families,
+`membership_methodology_status` is
+`unresolved_partial_or_unestablished` and reason is
+`membership_methodology_unresolved_and_context_domain_closed`:
+
+```json
+[
+  "b11_wage_only_worker_share",
+  "b2_type_count_mix",
+  "b2_se_total_component_share",
+  "b2_wage_taxable_intensity",
+  "b2_se_taxable_intensity",
+  "b2_se_taxable_fraction"
+]
+```
+
+For the remaining four, `membership_methodology_status` is
+`not_required_for_literal_component_arithmetic` and reason is
+`context_domain_closed_no_registered_family`. Arithmetic plausibility does
+not create publication authority.
+
+`family_count` is 10. `published_context_row_count`,
+`official_value_decoder_grant_count`, and `official_source_open_count` are
+integer zero. The empty-domain hash is
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`;
+status is `pass`; and failure disposition is `abort_registration`.
+
+Thus none of the ten official/model comparisons survives as a fitting-free
+correction result or CONTEXT row. This is the required fail-closed
+adjudication, not silent omission. The model's own exact-once, gain/loss,
+component, SE netting, taxable-payroll, and contribution arithmetic checks
+survive under G04, G06, G07, G13, G16, G18, G20, and G22 and may appear
+under their already registered model-only metric IDs. They do not decode an
+official value or inherit an Amendment-1 family ID.
+
+A5 is not applicable only to the fitting-free correction process, whose
+official-target comparison closure is exact empty. The separately registered
+15-series context process performs mismatch-labeled post-lock context
+comparisons under §12, not official-target comparison or calibration, and
+cannot supply an A5 authority back to the correction. A future process that
+registers any official-target comparison must make A5 registration-required
+there; calling the row CONTEXT or assigning zero fitting weight does not
+avoid that rule.
+
+#### 16.7.3 Exact conditions 1–7
+
+`correction_model_eligibility.fitting_free.v1` is the exact schema introduced
+in §16.5.4. `condition_ids` is exactly
+`["condition_1","condition_2","condition_3","condition_4",
+"condition_5","condition_6","condition_7"]`. Each
+`condition_results` row has exactly `condition_id`, `status`, and
+`evidence_sha256`, in that order. Status is `pass | fail | not_evaluated`;
+the array is positional and complete.
+
+The fitting-free conditions are:
+
+1. every immutable legal, inventory, v3 crosswalk, verification,
+   direct-law fact/action, component, structural-missing, value-code,
+   annualization, reconciliation, job-match, SE-aggregation,
+   coverage-group, lineage, gap, ledger, rounding, consumer-semantic,
+   A1–A5 disposition, deterministic-model, empty-domain, draw, replay,
+   RNG, isolation, noninterference, gate, evaluation, and diagnostic-
+   disposition registry exact-matches the registered bytes;
+2. the common component ledger and operative-claim-year gap views exactly
+   support the independently reconstructed complete Stage A–D benefit and
+   unsplit revenue domains;
+3. all 22 hard gates pass; target, official-comparison, candidate, fitted-
+   parameter, optimizer, selector, selection-result, target-value-capability,
+   and model-choice-tolerance counts are all integer zero; G20's complete
+   finite-grid tolerance domain nevertheless passes;
+4. the deterministic model identity was locked before any evaluation-only or
+   context decoder grant, and fitting-free G21 proves complete opaque-
+   mutation coverage, byte-identical substantive prebundles, zero forbidden
+   capabilities/opens/releases, and different full evaluation provenance;
+5. every raw correction input, source class, direct/modelable/unresolved
+   disposition, deterministic default, mixed allocation, gain/loss/delta,
+   status vector/draw, reconciliation, claim-context neighbor, and component
+   output is recoverable and exact-reconciles;
+6. the exact six deterministic replay comparisons, row-order invariance,
+   G11 lifecycle seal/deny evidence, one-row G14 rescale, fitting-free G15,
+   cutoff-before-imputation, analytic-denominator, and nonlinear-draw laws
+   pass; and
+7. the sealed coordinator has constructed and validator-accepted complete
+   fitting-free primary and sidecar bytes, with the primary binding the exact
+   sidecar hash, before either rename, and the live provider wrappers,
+   ledger, cache, and pre-rename comparand exact-match with zero sticky
+   violation.
+
+Conditions 1–6 are frozen before final output construction. Condition 7 is
+proved by the trusted finalizer and enters no G21 or substantive-bundle
+preimage. `eligible_for_label_retirement` is true iff all seven statuses are
+`pass`; the failure disposition is `publish_gate_fail`. A preparation,
+registration, authority, or finalizer invariant failure still follows the
+incident law and creates no primary. Every valid `pass` primary has seven
+passes. A valid `gate_fail` primary retains every reachable unfavorable row,
+uses `not_evaluated` only after an exact precontext structural failure, and
+has a false eligibility boolean.
+
+The correction eligibility object is not the label-retirement certificate.
+It cannot activate labels or attest that a later context pair and merge
+exist.
+
+#### 16.7.4 Fitting-free context and conditions 8–9
+
+The fitting-free successor context branch uses:
+
+- `covered_earnings_context_configuration.fitting_free.v1`;
+- `covered_earnings_context_report.fitting_free.v1`;
+- `covered_earnings_context_environment.fitting_free.v1`;
+- primary
+  `runs/covered_earnings_context_report_fitting_free_v1.json`; and
+- sidecar
+  `runs/covered_earnings_context_report_fitting_free_v1.json.env.json`.
+
+Its incident, attempt, retry-authority, retry, and
+fresh-registration-adjudication prefixes insert
+`covered_earnings_context_report_fitting_free` in the corresponding §12
+prefix positions. Its runner is
+`scripts/run_covered_earnings_context_report_fitting_free.py`. No calibrated
+or predecessor context path may be overwritten.
+
+These context schemas retain every exact §12 key, strict ceremony law,
+pairing count 14, comparison count nine, 15-series context domain, trusted
+consumer reconstruction, provider lifecycle, publication-regardless rule,
+and mismatch transformation, with only these prospective substitutions:
+
+- `correction_input` accepts only a passing
+  `covered_earnings_correction_fitting_free_evaluation.v1` primary and its
+  integrity-bound sidecar;
+- calibrated fit/selection identity fields become
+  `deterministic_model_identity_sha256`;
+- all corrected metric rematerialization binds
+  `covered_earnings_deterministic_uncalibrated_model.v1`,
+  `draw_spec.fitting_free.v1`, and the fitting-free ledger identities;
+- every context row's `evidence_role` becomes
+  `post_lock_context_only_not_available_to_correction`;
+- no row or decoder grant may use any of §16.7.2's ten family IDs; and
+- `successor_labels` is the exact fitting-free array in §16.7.1.
+
+Condition 8 is satisfied only when this separately registered context report,
+after deterministic model lock, independently reconstructs the complete
+corrected model-metric domain, 14 pairings, nine comparison specs, consumer
+semantic authority, ledger/gap streams, analytic denominators, mismatch
+transformations, and the complete 15-series context-row domain; destroys
+every runner-proposal capability before granting the separate context
+decoder; opens only those 15 registered vintage-1 series; computes and
+publishes every row with no directional criterion; seals and rechecks the
+complete context RNG lifecycle; validates both staged artifacts; and records
+zero no-fitting-loss-family rows, zero such decoder grants, and zero such
+source opens as independently checked domain evidence.
+
+On a passing context result,
+`label_retirement_certificate.fitting_free.v1` has exactly:
+
+`status`, `correction_evaluation_path`, `primary_sha256`,
+`substantive_model_sha256`, `deterministic_model_identity_sha256`,
+`evaluation_provenance_sha256`, `correction_ledger_identity_sha256`,
+`context_report_schema`, `condition_8`, `condition_8_evidence`,
+`successor_labels`, `retired_codes`, `replacements`, `new_codes`, and
+`preserved_codes`.
+
+`status` is `eligible_on_publication_pr_merge`; `context_report_schema` is
+`covered_earnings_context_report.fitting_free.v1`; and `condition_8` is true.
+The five correction path/hash fields exact-match the locked correction.
+`condition_8_evidence` retains every exact §12 count/hash field and adds
+exactly `fitting_free_diagnostic_disposition_sha256`,
+`no_fitting_loss_context_row_count`,
+`no_fitting_loss_decoder_grant_count`, and
+`no_fitting_loss_source_open_count`. The added hash binds the complete
+§16.7.2 registry and all three counts are zero. Every other count/hash law,
+including positive corrected domains, 14 pairing rows, nine comparison rows,
+all 15-series context rows, dependency roots, RNG evidence, mismatch
+transformation, and analytic denominators, remains exact.
+
+`successor_labels` is the exact §16.7.1 array. `retired_codes`,
+`replacements`, `new_codes`, and `preserved_codes` are byte-for-byte the
+base §9.2 values and transformations. In §9.2's frame-composition sentence,
+`deterministic-uncalibrated` prospectively replaces
+`aggregate-concept-calibrated-not-population-aligned`: it states that no
+aggregate fitting/selection occurred and makes no population-alignment
+claim. No mismatch code is suppressed merely because aggregate calibration
+is absent.
+
+A failed context report carries a null certificate and changes no label. A
+passing report can assert only `eligible_on_publication_pr_merge`. Condition
+9 remains the external event:
+
+9. the publication PR containing that exact fitting-free context primary,
+   its integrity-bound sidecar, and its conditional certificate merges.
+
+Only that merge activates the successor labels and resolves ledger entry 11.
+An amendment merge, registration, deterministic-model lock, correction
+primary, unmerged context pair, or failed certificate resolves nothing.
