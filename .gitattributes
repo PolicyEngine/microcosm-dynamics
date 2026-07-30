@@ -21,3 +21,7 @@ data/external/*.source.html binary
 
 # Use bd merge for beads JSONL files
 .beads/issues.jsonl merge=beads
+
+# Anchor snapshots: pinned bytes, never normalized
+data/external/snapshots/** binary
+data/external/snapshots/covered_earnings_methodology_capture1/** binary
