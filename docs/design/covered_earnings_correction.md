@@ -9737,3 +9737,400 @@ back-propagate A5 into the correction.
 currently available repo bytes therefore still aborts fitting-free
 registration. Amendment 2 removes no model-universe or weight-input
 obligation.
+
+### 16.5 Versioned configuration, identity, result, and path branches
+
+The fitting-free branch is append-only and type-distinct from every
+calibrated artifact. It does not reuse a calibrated schema with null
+candidate fields. The complete changed-version map is:
+
+| Historical or calibrated literal | Fitting-free literal |
+|---|---|
+| `psid_covered_earnings_crosswalk.v2` | `psid_covered_earnings_crosswalk.v3` |
+| `verification_claim_specs.v2` | `verification_claim_specs.fitting_free.v1` |
+| `verification_claim_results.v2` | `verification_claim_results.fitting_free.v1` |
+| calibrated target registries | `fitting_free_target_domain_specs.v1` |
+| calibrated candidate/selection registries | `fitting_free_model_choice_specs.v1` |
+| fitted correction model identity | `covered_earnings_deterministic_uncalibrated_model.v1` |
+| `draw_spec.v1` | `draw_spec.fitting_free.v1` |
+| calibrated replay registry | `replay_specs.fitting_free.v1` |
+| `gate_specs.v3` | `gate_specs.v4` |
+| calibrated RNG authority | `rng_access_specs.fitting_free.v1` |
+| calibrated weight-rescale registry | `deterministic_weight_rescale_specs.v1` |
+| calibrated isolation registry | `filesystem_isolation_specs.fitting_free.v1` |
+| calibrated noninterference registry | `fitting_free_noninterference_specs.v1` |
+| `evaluation_specs.v1` | `evaluation_specs.fitting_free.v1` |
+| calibrated configuration | `covered_earnings_correction_fitting_free_configuration.v1` |
+| calibrated primary | `covered_earnings_correction_fitting_free_evaluation.v1` |
+| calibrated sidecar | `covered_earnings_correction_fitting_free_environment.v1` |
+
+An unchanged child schema retains its literal version only where its complete
+shape and law remain unchanged. Every retained instance nevertheless binds
+revision 4, the amendment-2 ratification commit, and the fitting-free parent
+hashes. A calibrated parent cannot contain a fitting-free child, and a
+fitting-free parent cannot contain a calibrated target, candidate,
+selection, optimizer, or target-value child.
+
+#### 16.5.1 Crosswalk and verification registries
+
+`psid_covered_earnings_crosswalk.v3` has the exact ten-key shape, component
+rows, inventory binding, canonical order, and integrity law of v2. Its two
+leading literals become `psid_covered_earnings_crosswalk.v3`; its
+`rule_registry_identities` row names and hashes
+`verification_claim_specs.fitting_free.v1`; and its direct classification
+and measurement rows bind §16.3. All other rows remain governed by the base
+§§3–5 laws.
+
+`verification_claim_specs.fitting_free.v1` and
+`verification_claim_results.fitting_free.v1` retain the exact spec-row and
+result-row shapes and positional V-B1-through-V-B9 order. V-B1–V-B6 and
+V-B8–V-B9 remain registration-required and must be `verified/pass`; their
+authorities and affected inventory closures are unchanged except for parent
+identities and hashes. V-B7 alone is replaced by:
+
+```json
+{
+  "claim_id": "V-B7",
+  "verification_class": "not_applicable_no_target_domain",
+  "claim_subject": "Official aggregate covered-worker-share target authority",
+  "affected_inventory_keys": [],
+  "required_authority_roles": [],
+  "governing_rule_ids": [
+    "fitting_free_target_domain_empty_v1"
+  ],
+  "success_disposition": "not_applicable",
+  "missing_authority_disposition": "not_applicable"
+}
+```
+
+Its result is exactly:
+
+```json
+{
+  "claim_id": "V-B7",
+  "authority_input_ids": [],
+  "affected_inventory_keyset_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "governing_rule_ids": [
+    "fitting_free_target_domain_empty_v1"
+  ],
+  "verification_status": "not_applicable",
+  "optional_consequence_specs_sha256": null,
+  "status": "pass"
+}
+```
+
+This disposition grants no source-open, target, observation, decoder, or
+comparison authority. The optional vintage-2 source state remains historical
+Amendment-1 evidence and may be bound as design ancestry, but it is not an
+input to the fitting-free correction. The eight direct-law verification rows
+remain fully effective; V-B7 cannot excuse a missing required legal,
+inventory, or crosswalk authority.
+
+#### 16.5.2 Exact fitting-free configuration
+
+`covered_earnings_correction_fitting_free_configuration.v1` has exactly
+these 44 top-level keys, in this declared order:
+
+1. `schema_version`;
+2. `registration_reference`;
+3. `design`;
+4. `implementation_commit`;
+5. `invocation`;
+6. `production_input_manifest`;
+7. `legal_rule_input`;
+8. `psid_source_field_inventory_input`;
+9. `psid_crosswalk_input`;
+10. `ledger_row_schema_specs`;
+11. `coverage_state_dependence_specs`;
+12. `historical_coverage_rule_specs`;
+13. `verification_claim_specs`;
+14. `verification_claim_results`;
+15. `psid_questionnaire_slot_specs`;
+16. `psid_structural_missing_consequence_specs`;
+17. `psid_value_code_specs`;
+18. `psid_annualization_rule_specs`;
+19. `psid_reconciliation_rule_specs`;
+20. `psid_job_spell_match_rule_specs`;
+21. `psid_se_aggregation_group_rule_specs`;
+22. `psid_coverage_state_group_rule_specs`;
+23. `path_applicability_specs`;
+24. `fitting_free_model_input_authority_results`;
+25. `fitting_free_target_domain_specs`;
+26. `fitting_free_model_choice_specs`;
+27. `deterministic_zero_fit_model_specs`;
+28. `fitting_free_substantive_production_input_specs`;
+29. `draw_spec`;
+30. `replay_specs`;
+31. `consumer_domain_derivation_specs`;
+32. `benefit_gap_derivation_specs`;
+33. `earnings_consumer_dependency_specs`;
+34. `legal_rounding_rule_specs`;
+35. `trusted_consumer_evaluation_specs`;
+36. `gate_specs`;
+37. `rng_access_specs`;
+38. `deterministic_weight_rescale_specs`;
+39. `filesystem_isolation_specs`;
+40. `fitting_free_noninterference_specs`;
+41. `evaluation_specs`;
+42. `fitting_free_official_context_diagnostic_dispositions`;
+43. `attempt_history`; and
+44. `output_paths`.
+
+The configuration has no `calibration_target_input`,
+`physical_source_cell_specs`, `official_source_alias_specs`,
+`official_source_arithmetic_rule_specs`, `calibration_target_specs`,
+`candidate_reference_era_specs`, `candidate_specs`, `selection_spec`,
+`sensitivity_specs`, or similarly purposed extension field. Exact-key
+validation rejects one even if its value is null or empty.
+
+The base strict parser, canonicalization, invocation, Git-tree,
+attempt-history, environment-lock, descriptor, and output-absence laws
+remain unchanged except for the new runner and paths below. The four-key
+`design` member has the §16.10 identity and integer `revision: 4`.
+`psid_crosswalk_input` exact-binds the new immutable v3 crosswalk. The
+production manifest and the separately keyed legal, inventory, and crosswalk
+authorities form the complete permitted correction-input domain; duplicate
+IDs or paths abort. No object may have a role containing
+`calibration_target`, `official_target`, `target_value`,
+`candidate_selection`, or `optimizer`.
+
+Every `*_specs`, `*_results`, and disposition member is an exact registered
+deep copy of its named registry. The fitting-free configuration accepts only
+`verification_claim_specs.fitting_free.v1`,
+`verification_claim_results.fitting_free.v1`,
+`path_applicability_specs.v1`,
+`fitting_free_model_input_authority_results.v1`,
+`fitting_free_target_domain_specs.v1`,
+`fitting_free_model_choice_specs.v1`,
+`deterministic_zero_fit_model_specs.v1`,
+`fitting_free_substantive_production_input_specs.v1`,
+`draw_spec.fitting_free.v1`, `replay_specs.fitting_free.v1`,
+`gate_specs.v4`, `rng_access_specs.fitting_free.v1`,
+`deterministic_weight_rescale_specs.v1`,
+`filesystem_isolation_specs.fitting_free.v1`,
+`fitting_free_noninterference_specs.v1`,
+`evaluation_specs.fitting_free.v1`, and
+`fitting_free_official_context_diagnostic_dispositions.v1`. Predecessor or
+calibrated literals abort.
+
+`fitting_free_substantive_production_input_specs.v1` has exactly
+`schema_version`, `correction_path`, `included_inputs`,
+`excluded_input_ids`, `support_universe`, `canonicalization`, and
+`failure_disposition`. Each included row has exactly `input_id`,
+`schema_version`, `artifact_vintage_id`, `role`, `content_scope`, and
+`scoped_sha256`. The ordered rows are the statically reconstructed closure of
+PSID amounts, status inputs, A1 selector inputs, the A3 weight input, and
+model-affecting legal/inventory/crosswalk projections used by §§3–5 and
+§16.3. A whole-input digest is required when any byte can affect the
+correction; a registered canonical fragment is permitted only under the base
+projection-isolation law. `excluded_input_ids` is the complete ordered
+complement and includes every official aggregate, vintage-1 context, display,
+incident-history, and fixture-only input. The two domains are disjoint,
+unique, and exhaustive over the allowed input domain. Target artifacts and
+target-value roles are not merely excluded: they are outside the allowed
+domain.
+
+`support_universe` binds the independently reconstructed stable-person/year
+keyset, A1 selector identity, A2 weight identity, A3 weight-input identity,
+the exact 20 projection draws, and every required component role. It cannot
+be scoped from implementation output. Canonicalization is the base literal
+and the failure disposition is `abort_registration`.
+
+#### 16.5.3 Deterministic model and evaluation provenance
+
+The locked model identity schema is
+`covered_earnings_deterministic_uncalibrated_model.v1` and has exactly:
+
+`schema_version`, `correction_path`, `deterministic_model_specs`,
+`fitting_free_target_domain_specs`, `fitting_free_model_choice_specs`,
+`fitting_free_model_input_authority_results`, `ledger_row_schema_specs`,
+`coverage_state_dependence_specs`, `draw_spec`,
+`fitting_free_substantive_production_input_specs`,
+`substantive_production_input_identity`, and `implementation_commit`.
+
+`substantive_production_input_identity` has exactly `schema_version`,
+`inputs`, and `support_universe`. Its inputs are the exact ordered projection
+of the included-input specs, with the same six row fields and values. Its
+schema literal is
+`covered_earnings_fitting_free_substantive_production_input_identity.v1`.
+No target, official aggregate, context, fixture, configuration, output,
+history, timestamp, or runtime byte enters this identity.
+
+The model hash is SHA-256 of canonical bytes of the complete model identity.
+That hash is the immutable correction version and draw-namespace identity.
+It changes if and only if a bound deterministic model, substantive input,
+authority, legal/crosswalk projection, draw law, implementation, or governing
+schema changes; it cannot change because an excluded aggregate/context value
+changes.
+
+`full_fitting_free_evaluation_provenance.v1` has exactly
+`schema_version`, `registration_reference`, `configuration_sha256`,
+`design_identity`, `implementation_commit`, `correction_path`,
+`production_input_identity`, `model_input_authority_identity`,
+`target_absence_identity`, `model_choice_absence_identity`,
+`evaluation_only_input_identity`, `fixture_registry_identity`, and
+`attempt_history_identity`. Every child is a canonical identity or hash
+projection reconstructed from the registered configuration. The target and
+model-choice absence identities are the hashes of §§16.4.1–16.4.2, never
+target artifacts or values.
+
+`evaluation_only_input_identity` admits only roles
+`vintage1_post_lock_context` and `evaluation_integrity_only`; the latter
+cannot contain an official target value. `fixture_registry_identity` binds
+only the committed synthetic G21 mutation registry. Neither child enters the
+model identity, draw key, classification, measurement, ledger, downstream
+root, or path activation. A role outside the closed allowed set, a target
+decoder, or a target-value-shaped row aborts registration.
+
+`fitting_free_evaluation_binding.v1` has exactly `schema_version`,
+`artifact_id`, `registration_reference`, `configuration_sha256`,
+`full_fitting_free_evaluation_provenance`, and
+`evaluation_provenance_sha256`. Its hash is SHA-256 of canonical bytes of the
+full provenance child. The binding is present on every primary; neither it
+nor its hash enters the substantive model. Its only gate use is G21's frozen
+baseline/mutant provenance-inequality boolean.
+
+#### 16.5.4 Primary, result branches, sidecar, and paths
+
+The primary schema and artifact ID are both
+`covered_earnings_correction_fitting_free_evaluation.v1`. It has exactly:
+
+`schema_version`, `artifact_id`, `artifact_role`,
+`registration_reference`, `configuration_echo`, `runtime_provenance`,
+`attempt_evidence`, `fitting_free_evaluation_binding`, `status`,
+`evidentiary_labels`, `deterministic_correction`, `results`, `integrity`,
+and `certifies_nothing`.
+
+`artifact_role` is
+`registered_deterministic_uncalibrated_correction_model_evaluation`.
+`status` is `pass | gate_fail`; there is no
+`no_eligible_candidate`. `evidentiary_labels` is always the exact §16.7
+array. `certifies_nothing` is exactly
+`["not-population-aligned",
+"not-individual-administrative-covered-earnings-truth",
+"not-ledger-entry-11-resolution",
+"not-aggregate-calibrated"]`.
+
+`deterministic_correction` is never null. It has exactly
+`correction_path`, `deterministic_model_id`, `model_identity`,
+`substantive_model_sha256`, `evaluation_provenance_sha256`, and
+`ledger_identity`. Its first two values are
+`DETERMINISTIC_FITTING_FREE` and
+`option_a_zero_fit_deterministic_v1`; the identities and hashes exact-match
+this subsection. `ledger_identity` retains the complete base
+`covered_earnings_ledger_rematerialization.v1` and
+`covered_earnings_claim_context_gap_rematerialization.v1` laws, with the new
+model hash and fitting-free draw namespace. It still has 20 expected streams
+and 400 realized projection/correction streams and binds the independently
+reconstructed complete support.
+
+`results` has exactly these 21 keys:
+
+`input_validation`, `path_applicability_result`,
+`direct_law_micro_fact_presence_ledger`, `direct_law_action_trace`,
+`fitting_free_target_domain_result`, `fitting_free_model_choice_result`,
+`deterministic_model_lock_event`, `evaluation_completion`,
+`hard_gate_results`, `replay_results`, `rng_access_results`,
+`weight_rescale_results`, `isolation_results`, `noninterference_results`,
+`trusted_consumer_evaluation`, `support_results`, `distribution_results`,
+`downstream_results`, `before_context_results`,
+`official_context_diagnostic_dispositions`, and
+`correction_model_eligibility`.
+
+There is no candidate disposition, target result, selected correction,
+target-use trace, loss, parameter, optimizer, selector, or target exposure
+sequence anywhere in the primary. Exact-key validation rejects one.
+`path_applicability_result`, both empty-domain results, and the direct-law
+objects are always evaluated. `deterministic_model_lock_event` has exactly
+`event_type`, `lifecycle_sequence`, and `substantive_model_sha256`; its event
+type is `deterministic_model_lock`, its sequence is a positive JSON integer,
+and its hash equals the correction. It occurs before any evaluation-only or
+post-lock context grant.
+
+`evaluation_completion` is exactly
+`complete | precontext_structural_gate_fail`. The latter branch preserves
+all already reachable gate evidence, marks genuinely unreachable
+evaluation blocks with exact reason `precontext_structural_gate_fail`, and
+never opens a context-only handle. Every primary still has a nonnull locked
+model; a preparation, authority, applicability, or lock failure produces an
+incident rather than a primary.
+
+`correction_model_eligibility` uses
+`correction_model_eligibility.fitting_free.v1` and has exactly
+`schema_version`, `correction_path`, `condition_ids`, `condition_results`,
+`eligible_for_label_retirement`, and `failure_disposition`. Its ordered
+conditions and certificate semantics are §16.7. A failed condition makes
+status `gate_fail` and the boolean false; publication-regardless and
+incident laws remain in force.
+
+The sidecar schema is
+`covered_earnings_correction_fitting_free_environment.v1` and has exactly
+`schema_version`, `artifact_path`, `registration_reference`,
+`configuration_sha256`, `implementation_commit`, `invocation`, `runtime`,
+`attempt_evidence`, `input_hashes`, `dependency_versions`,
+`substantive_model_sha256`, `evaluation_provenance_sha256`,
+`deterministic_ledger_identity_sha256`,
+`trusted_consumer_semantic_authority_sha256`,
+`rng_access_results_sha256`, and
+`trusted_consumer_evaluation_sha256`. The base one-way sidecar-to-primary
+integrity law remains. `input_hashes` is the exact allowed fitting-free input
+domain and contains no calibration-target or official-target row.
+
+The exact append-only paths are:
+
+- `output_version`:
+  `covered_earnings_correction_fitting_free_v1`;
+- primary:
+  `runs/covered_earnings_correction_fitting_free_v1.json`;
+- sidecar:
+  `runs/covered_earnings_correction_fitting_free_v1.json.env.json`;
+- incident prefix:
+  `runs/covered_earnings_correction_fitting_free_incident_`;
+- attempt-claim prefix:
+  `runs/covered_earnings_correction_fitting_free_attempt_`;
+- retry-authority prefix:
+  `runs/covered_earnings_correction_fitting_free_retry_authority_`;
+- retry-claim prefix:
+  `runs/covered_earnings_correction_fitting_free_retry_`; and
+- fresh-registration-adjudication prefix:
+  `runs/covered_earnings_correction_fitting_free_fresh_registration_`.
+
+The claim/hash/index suffix grammar and complete-history law are unchanged.
+No calibrated, source-vintage, predecessor, or context-report path may be
+reused or overwritten.
+
+#### 16.5.5 Sealed fitting-free execution order
+
+The fitting-free ceremony retains the base bootstrap, strict registration,
+claim, incident/retry, RNG metering, destruction, deny-all seal, atomic
+rename ordering, and publication-regardless laws. Its correction phases are
+exactly:
+
+1. validate registration, configuration, revision-4 design identity,
+   checkout, invocation, output absence, histories, and the exact forbidden-
+   capability closure without opening a production value;
+2. independently derive and freeze the path-applicability result; require
+   exactly `DETERMINISTIC_FITTING_FREE`, then validate A1–A3, all eight
+   direct-law authorities, the complete correction-input domain, and both
+   canonical empty domains;
+3. execute the complete direct-law fact ledger/action trace, §16.3
+   classification and measurement, and deterministic draws in workers that
+   possess only the registered correction-input capability;
+4. freeze the deterministic model identity and lock event; destroy every
+   model-construction worker and its mount;
+5. while context/evaluation-only handles remain sealed, run G10, G14, G15,
+   G17, G19, G21, and every other reachable structural gate; on structural
+   failure, preserve the locked evidence and take the exact precontext
+   failure branch;
+6. on the structurally clean branch, grant only the independently registered
+   downstream-evaluation capabilities, complete G20 and every downstream
+   root, then destroy all evaluator capabilities;
+7. seal the original RNG/provider lifecycle, finalize all G01–G22 rows and
+   conditions, construct the sidecar and primary, revalidate every
+   authoritative root, and publish under the unchanged rename law.
+
+No phase creates or calls a target validator, target broker, official-value
+decoder, target packet, optimizer, candidate worker, selector, loss
+evaluator, or parameter store. Path choice is complete before any production
+value opens and is immutable for the attempt. A runtime failure in this
+ceremony cannot fall through to the calibrated path or vice versa.
