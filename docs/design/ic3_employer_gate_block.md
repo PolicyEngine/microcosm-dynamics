@@ -1,14 +1,16 @@
 # IC3 employer gate block — thresholds, partitions, and rulings
 
-- **Design id**: `2026-07-17-c3-employer-gate-block`
-- **Status**: **DRAFT FOR REFEREE — NOT RATIFIED. Revision 2**,
+- **Design id**: `2026-07-17-ic3-employer-gate-block`
+- **Status**: **DRAFT FOR REFEREE — NOT RATIFIED. Revision 3**,
   responding to the round-1 adversarial review of 2026-07-17
   (verdict: NOT RATIFIABLE AS DRAFTED — 5 blocking, 6 should-fix).
-  Blocking items B1, B3, B4, B5 and should-fix S1 are addressed in
-  this revision; **B2 remains open** — the refereed block YAML is
-  registered as a required pre-lock artifact (§12.2a) and is
-  authored next, after the IC-rename (#277) lands so it is written
-  once under final names. §13 item 6 is answered (§9.1). Nothing in this
+  Blocking items B1, B3, B4, B5 and should-fix S1 are addressed.
+  **B2 remains open**: the refereed block YAML is still a required
+  pre-lock artifact (§12.2a). The IC rename (#277) and its final
+  design filename are now composed here, so that YAML must use
+  `ic3` names from its first commit. §13 records every remaining
+  decision and distinguishes a workstream decision from referee
+  ratification. Nothing in this
   document binds until the lock ceremony flips it (§12). This document
   edits no `gates.yaml` cell, moves no threshold, builds no floor, and
   writes no test. Every number labelled PROPOSED is a proposal to the
@@ -18,22 +20,30 @@
   one-shot candidate runs before IC3 locks).
 - **Contracts**: ADR 0003 (`docs/adr/0003-employer-firm-extension.md`,
   IC1 spell schema and IC2 banding, **frozen**); ADR 0004
-  (`docs/adr/0004-linkage-qc.md`, linkage QC, adopted-with-changes per
-  the Workstream B review on PR #224).
-- **Evidence base** (all DRAFT — NOT RATIFIED artifacts, cited by
-  branch pending merge):
-  - PR #212 (`sipp-spell-floors`): `runs/sipp_spell_floors_draft_v0.json`
-    (E4/E5), `runs/sipp_e8_e9_floors_draft_v0.json` (E8/E9),
-    `runs/tenure_floors_draft_v0.json` (E3).
-  - PR #214 (`seam-reconciliation`):
-    `runs/seam_reconciliation_draft_v0.json`.
-  - PR #223 (`firm-floors-pre-c3`):
-    `runs/employer_firm_floors_draft_v0.json` (E1/E2/E6/E7, E11/E12
-    method findings).
-  - PR #228 (`j2j-se-od-extracts`):
-    `data/external/j2j_us_sexage_2015on.csv` (E2 gate axis),
-    `data/external/j2jod_us_firmsize_od_2015on.csv` (E11), with the
-    test-pinned detail-window finding.
+  (`docs/adr/0004-linkage-qc.md`, linkage QC). The three #224 adoption
+  requirements are now in the ADR text on the exact composed head,
+  not supplied by a comment-thread amendment.
+- **Composed prerequisite record** (exact heads, all ancestors of this
+  revision): master `691901f`; IC rename #277 `c5b4d11`; J2J/J2JOD
+  references #228 `f5070b4`; ADR 0004 #224 `dff73d5`; cross-wave
+  evidence #235 `c686f0f`; E4/E5 registered design #236 `73213c5`;
+  byte-faithful seam anchor #274 `7411d8d`.
+- **Intentionally not composed**: unfinished floor promotions #212 and
+  #223. Their gate thresholds, builders, final filenames, and lock-time
+  digests remain `PENDING`; this document must not pretend to consume
+  them before their current heads are approved and merged.
+- **Available evidence pins** (branch-composition pins, not lock-time
+  merge ratification):
+
+  | Source | Current path | SHA-256 | Lock-time merged pin |
+  |---|---|---|---|
+  | #228 E2 reference | `data/external/j2j_us_sexage_2015on.csv` | `6ca16b98b3e809ebf4493f6884c75bee712c727cce16ddc219e0fca97e7edf60` | PENDING merge |
+  | #228 E11 reference | `data/external/j2jod_us_firmsize_od_2015on.csv` | `0f83df008ae498643b66ecf25187170014988f5fb1f761c84cf9882376e3bef6` | PENDING merge |
+  | #235 cross-wave artifact | `runs/crosswave_jobid_check_draft_v0.json` | `33d4a7be88b417cb980ad4b12e65e1310eabd541a4926673e2414eead20941f1` | PENDING promotion/merge |
+  | #235 builder | `scripts/build_crosswave_jobid_check.py` | `3887d392e3d978e2c5788e9e03557101129d9f759917037b756dba6e3ed0cb33` | PENDING merge |
+  | #236 registered design | `docs/design/e4_e5_audit_manifest.md` | `d37b3ce014532e16e009cd5cf8b025601c029fd0bde48ac593c993d51025d103` | PENDING merge |
+  | #274 seam anchor | `runs/seam_reconciliation_draft_v0.json` | `622ff4117a073c36698ed1e7d1828a6a0399471bfd0c06520e0da5ac2cd98e83` | PENDING promotion/merge |
+  | #274 builder | `scripts/build_seam_reconciliation.py` | `61d9c99efcfdf2469caa5787499f853d0321128c56187553d5a5c87d69536f0f` | PENDING merge |
 - **Authors**: joint Workstream A (@daphnehanse11) / Workstream B
   (@vahid-ahmadi) per the #192 interface-contract schedule (IC3 is the
   jointly-authored employer gate block).
@@ -101,7 +111,7 @@ statistic the threshold derives from):
 | Gate | Moment | Reference | Floor artifact | Recommended floor basis | First-lock status |
 |---|---|---|---|---|---|
 | E1 | employment share by firm-size band (× sector) | SUSB 2022 | #223 `e1` | SUSB noise-flag CV bounds + BDS YoY margin floor (coarsened `20_99`) | **report-only** — B1: every SUSB-derived margin is a deterministic function of a calibration target |
-| E2 | hire/sep/J2J rates by sex × age | LEHD J2J `sa` (#228) | #223 `e2` (aggregate-side); sex×age floor to be built on the #228 extract | ex-pandemic YoY \|log ratio\| | **gated** (after the sex×age floor build) |
+| E2 | hire/sep/J2J rates by sex × age | LEHD J2J `sa` (#228) | #223 PENDING; not composed here | ex-pandemic YoY \|log ratio\|, PENDING referee choice | **proposed gated** only after floor approval/merge |
 | E3 | tenure quantiles by age | CPS tenure supplement 2020/22/24 | #212 `tenure_floors` | **ECDF max-gap** (heaping-robust) | **gated** |
 | E4 | employer-retention pairs by age × sex | SIPP holdout | #212 `e4_retention_by_age_sex` | \|log rate ratio\| | **gated** (linkage-QC prerequisite, §9) |
 | E5 | multi-window attachment runs by age | SIPP holdout | #212 `e5_runs_by_age` | \|log share ratio\| | **gated** (linkage-QC prerequisite, §9) |
@@ -110,8 +120,8 @@ statistic the threshold derives from):
 | E8 | nonemployment incidence/duration by age | SIPP holdout | #212 `e8_nonemployment_by_age` | \|log share ratio\| (any/long) | **gated** |
 | E9 | earnings-change dist. by transition type | SIPP holdout | #212 `e9_transitions` | j2j: median + IQR gaps; stay: none (both floors degenerate) | **j2j gated; whole stay cell report-only** (B5) |
 | E10 | regression gate: locked PSID gates still pass | existing `gates.yaml` | existing gate-1/2 floors | unchanged | **gated** (always) |
-| E11 | J2J flows origin × destination firm size | LEHD J2JOD (#228) | #228 extract; margins floored via #223 `e2` ee\_\* | margins: ex-pandemic YoY; detail: none derivable | **margins gated; 5-quarter detail report-only** (§7) |
-| E12 | within/between-firm variance, coworker corr. | AKM (Song et al.; KSS) | none | none buildable | **deferred — cannot lock** (§8) |
+| E11 | aggregate J2J flows by origin × destination size | LEHD J2JOD (#228) | #228 extract; margin floor PENDING #223 | margins: PENDING; detail: none derivable | **aggregate margins proposed gated; 5-quarter detail report-only** (§7); certifies no person link |
+| E12 | aggregate assignment audit plus linkage/sorting aspiration | public grouped margins / future linked source | aggregate floor PENDING; linkage floor unavailable | strict claims split (§8) | **strong E12 deferred**; future aggregate audit may certify observable margins only |
 
 Per-gate detail follows.
 
@@ -261,12 +271,13 @@ Per-gate detail follows.
   YoY variation embeds aggregate nominal wage growth — a trend, not
   noise. Both the raw and the **aggregate-relative** (cell relative
   to the all-size aggregate) floors are committed.
-- **Recommendation**: gate on the **aggregate-relative** EarnS
+- **Unratified proposal — REFEREE/PENDING**: gate on the
+  **aggregate-relative** EarnS
   moment (the size *gradient* of earnings, which is what firm-size
   policy needs) with its ex-pandemic floor; the raw-level cell is
   report-only. Referee alternative: gate raw levels with a
   deflation rule (requires choosing a deflator — a new registered
-  input, hence not recommended for first lock).
+  input).
 - **Substantive tolerance**: 5% relative gradient error PROPOSED.
 
 ### E8 — nonemployment incidence and duration by age (SIPP holdout)
@@ -344,7 +355,7 @@ For the referee's convenience, the committed degeneracies the block
 must not gate on directly:
 
 1. **E3 tenure quantile gaps**: exactly 0.0 in 36/63 cells (integer
-   heaping) → ECDF max-gap recommended (#212).
+   heaping) → ECDF max-gap is an unratified proposal (#212).
 2. **E9 stay median AND stay IQR**: *both* floors exactly 0.0/0.0
    (wave-constant reporting under dependent interviewing) → the
    whole stay cell is report-only (#212; corrected under B5 — the
@@ -373,16 +384,16 @@ registers (names PROPOSED):
 
 - `sipp_job_spells` — loader `populace_dynamics.data.sipp_jobs`,
   pu2023 (ref. year 2022), person-disjoint holdout, WPFINWGT;
-  feeds E4/E5/E8/E9; floor runs: the three #212 artifacts
-  (promoted from `draft_v0` to `v1` at lock, sha256-pinned,
-  reproduction-tested per the `runs/` convention).
+  feeds E4/E5/E8/E9; floor-run paths, deployment-scale conversion,
+  and digests are **PENDING #212** and cannot be copied into the block
+  YAML before that promotion is approved and merged.
 - `cps_tenure` — CPS Jan supplements 2020/2022/2024; feeds E3;
-  floor run: `tenure_floors` v1.
+  floor-run path and digest: **PENDING #212**.
 - `employer_firm_targets` — the committed
   `data/external/{susb,bds,qwi,j2j,j2jod,j2j_sexage}_us_*.csv`
   extracts (external references, never scored model output);
-  feeds E1/E2/E6/E7/E11; floor run: `employer_firm_floors` v1 plus
-  the pre-lock sex×age floor build (§3-E2).
+  feeds E1/E2/E6/E7/E11; final floor-run path and digest:
+  **PENDING #223**.
 
 ## 6. The seam ruling (formal proposal, from #214)
 
@@ -411,13 +422,23 @@ artifact itself is marked NOT RATIFIED):**
    vs seam contrast never enters a hazard as if it were a real
    monthly time-pattern.
 
-**Blocking check before ratification** (concept-delta 5, UNVERIFIED
-ASSUMPTION): the 9.45% seam rate assumes SIPP `EJB` job IDs are
-longitudinally consistent across the pu2022→pu2023 boundary. If IDs
-are reassigned at wave boundaries, part of the seam contrast is a
-linkage artifact. The cross-wave job-ID consistency check (ADR 0004
-referee item 7) is a **required pre-lock artifact**; the ruling above
-is conditional on its result.
+**Cross-wave check delivered, operative interpretation PENDING.**
+#235 is a disclosed re-analysis, not a pre-registration. From its
+committed counts, excess re-key signature is 15.12% on E→E
+separations (`PASS_WITH_CORRECTION_BAND` under the unratified bands)
+and 9.36% after scaling to all separations (`PASS`). The one-sided
+95% uppers are 17.65% and 10.92%, respectively. Its author-proposed
+15%/30% bands and operative population remain `REFEREE`; this
+control document chooses neither. This is the first item in Vahid's
+2026-07-30 continuation comment and must be settled before promotion.
+
+Whichever population is chosen, the scale direction is explicit:
+E→E-conditional excess may be multiplied by the observed E→E share
+of all seam separations to produce the all-separations excess.
+The inverse operation is not an evidentiary correction, and neither
+quantity is a correction to the measured 9.45% seam separation rate.
+The seam ruling above therefore remains proposed, with its confidence
+framing PENDING the population and band decisions.
 
 ## 7. E11 — the window decision (explicit referee choice)
 
@@ -428,13 +449,21 @@ detail cell carries status flag 11 (a state coverage gap propagated
 to the national aggregate; J2J Explorer suppresses identically).
 The one-sided margins run through 2025Q1.
 
-The referee round must choose between:
+Vahid's 2026-07-30 synthetic-layer decision records the strict
+claims boundary: grouped size/industry employment, mean-earnings,
+and flow reproduction can support an **aggregate assignment audit**;
+it cannot establish true linkage, coworker sorting, within/between
+variance, firm effects, or spillovers. E11 is therefore an
+aggregate-only statistic under either option below. A pass never
+means that a SIPP/CPS worker has the correct firm or coworkers.
 
-- **(a) Margins-gated + detail report-only — RECOMMENDED.** Gate the
+The referee round must still choose between:
+
+- **(a) Aggregate margins-gated + detail report-only.** Gate the
   origin-size and destination-size margins (the `ee_hire_rate` /
-  `ee_separation_rate` cells already floored in #223 `e2`, which the
-  artifact's `e11.margin_proxy` records as exactly these margins),
-  ex-pandemic basis; score the full 6×6 detail on the 2015Q1–2016Q1
+  `ee_separation_rate` cells whose final floor is PENDING #223),
+  on the referee-selected temporal basis; score the full 6×6 detail
+  on the 2015Q1–2016Q1
   window **report-only**. Rationale: a five-quarter window supports
   no temporal-stability floor (floors-before-thresholds forbids
   gating it), and a gate pinned to a nine-year-old suppressed
@@ -451,27 +480,36 @@ report-only detail cells and to the margins-gate's origin/destination
 assignments respectively; the joint-pair audit becomes operative only
 if (b) is chosen or the detail cell is later promoted.
 
-## 8. E12 — deferred; no-go rule
+For first lock, no person-level E11 origin/destination assignment is
+certified. The gate-eligible object in (a) is the grouped flow margin
+itself, held out under §10; linkage QC cannot be inferred from its
+aggregate fit.
 
-Per #223 (`method_findings.e12_deferred`) there is no committed E12
-reference extract: AKM within/between decompositions require linked
-employer-employee microdata, and published decompositions (Song et
-al.; KSS-corrected) are research outputs, not a recurring
-provenance-pinned release. No floor is buildable. Per ADR 0004 §5
-and referee item 2, E12 additionally needs an **adjudicable truth
-source** for the worker-to-firm-type assignment at the exact
-co-assignment unit the estimand uses.
+## 8. E12 — two-tier claims boundary; strong form deferred
 
-**Proposal**: E12 is registered in the IC3 block as **deferred** —
-definition and estimand-candidates recorded, no threshold, no floor,
-`locked: false` permanently until both (i) a committed
-provenance-pinned reference extract and (ii) an admissible
-adjudication frame exist. **Phase-2 consequence** (#192 phase gate +
-ADR 0004): if no adjudicable truth source can be identified, that is
-a **phase-2 no-go** — claims scope down to firm-size-keyed policy
-only; calibration fit to aggregates is not a substitute; the
-firm-type register may not relabel type agreement as firm-identity
-or coworker validation.
+Vahid's decision record on issue #282 adopts the “both” posture with
+a strict scope:
+
+1. **Aggregate assignment audit**: a future, separately floored audit
+   may certify reproduction of observable grouped size/industry
+   employment, mean-earnings, and flow margins. It certifies those
+   margins only. Its exact statistic, calibration/gate partition, and
+   noise floor remain `PENDING`; no aggregate E12 threshold is
+   introduced by this revision.
+2. **Linkage/sorting E12**: true coworker assignment,
+   within/between-firm variance, worker sorting, firm effects, and
+   spillovers require linked employer-employee evidence and an audit at
+   the co-assignment unit. No current public source can power that
+   test. This strong form remains a registered aspiration and a
+   no-go boundary for those claims.
+
+Thus strong E12 is **deferred** in the first IC3 block: definition
+recorded, no threshold, no floor, and no `locked: true` claim.
+Passing E11 or any later aggregate audit may support grouped-margin
+representativeness; it may not be cited as observed linkage,
+firm-identity, coworker, variance-decomposition, causal firm-effect,
+or spillover validation. The synthetic firm register remains usable
+for explicitly firm-size-keyed policy analysis under that limitation.
 
 ## 9. Linkage-QC integration (ADR 0004 as amended)
 
@@ -528,27 +566,33 @@ seen**.
 Instantiated at first-lock scope, from Workstream A's offer
 (2026-07-22) with the B-side registrations added:
 
-- **Analysis unit**: the adjacent-month job-pair. **Clustering**:
-  worker (a person contributes many pairs; they are not
-  independent).
-- **Target reference population**: all adjacent-month job-pairs in
-  the #235 within-wave frame (384,747 job-holdings), *not* the
-  adjudicated subsample — the reweighting exists to carry audit
-  results from the sample to the frame.
+- **Analysis unit**: E4 uses the adjacent-month job-pair; E5 uses the
+  maximal same-ID run registered by #236. A pair-level score cannot
+  automatically weight a run. **Clustering**: worker for both units
+  (a person contributes many pairs/runs; they are not independent).
+- **Target reference populations**: E4 targets all eligible
+  adjacent-month job-pairs in the #235 population—384,747
+  within-wave job holdings plus 10,828 seam holdings, retained as
+  separate risk strata. E5 targets the corresponding maximal-run
+  frame defined in #236. Neither target is the adjudicated subsample;
+  reweighting carries audit results from each sampled arm to its
+  registered frame and never pools across the seam axis.
 - **Candidate observables `X`**: age band, sex, industry section,
   establishment-size code (IC2 span, inexactness carried), earnings
-  tercile, multi-job flag, and the **seam-vs-within indicator** —
+  tercile, multi-job flag, and the **seam-vs-within indicator**;
+  E5 additionally includes pre-link run-length stratum —
   the last is load-bearing, since #214/#235 establish the seam as
   the dimension along which attachment behaviour differs most.
-- **Weight construction**: inverse of a registered logistic
-  adjudication-inclusion propensity over `X`, trimmed at a
-  registered percentile.
+- **Weight construction**: separate pair- and run-unit inclusion
+  propensities over their registered `X`, with the functional form
+  and any trimming left REFEREE. Audit sample-inclusion weights and
+  later linkage-bias weights remain distinct.
 - **Overlap/balance tolerances, trimming percentile, propensity
   specification**: REFEREE (ADR 0004 §6.4) — added to §13 as item
-  16.
+  17.
 - **Operative version** (weighted vs unweighted) for E4, E5 and —
   when they promote — E9, E11, E12: REFEREE, registered **before**
-  any candidate scores exist, per §3.4. Added to §13 as item 17.
+  any candidate scores exist, per §3.4. Added to §13 as item 18.
 - **Publication rule**: both versions publish for every
   link-consuming cell regardless of which is operative; a divergence
   between them is itself a reportable finding, not a nuisance to be
@@ -604,8 +648,8 @@ is the trap the ladder below exists to prevent, and it is a
 different failure from the E12 identification gap: E12 lacks a
 reference; this lacks an *independent* one.
 
-**Registered degradation ladder.** What E9/E11 firm-size-conditional
-cells degrade to, in force from first lock:
+**Registered degradation ladder.** What person-level E9/E11 outcomes
+conditioning on an imputed band degrade to, in force from first lock:
 
 - **Tier 0 — permanent report-only, per the round-1 disposition.**
   The rule below is carried **verbatim** from Workstream A's §13
@@ -620,6 +664,13 @@ cells degrade to, in force from first lock:
   > they gate only if an external person-level truth source
   > materializes, at which point they enter through the standard
   > promotion ceremony (new floor + ADR 0004 audit)."
+
+  The later 2026-07-30 #282 decision clarifies the scope: this
+  permanent disposition binds person-level cells whose interpretation
+  requires the imputed band to be correct for that person. It does not
+  prevent a genuinely held-out **aggregate** grouped-margin audit from
+  certifying reproduction of that margin under §7/§8. Such an
+  aggregate pass still certifies no individual assignment.
 
   The word doing the work is **permanent**: report-only here does
   not mean "awaiting ratification", it means the cell has no
@@ -642,8 +693,8 @@ cells degrade to, in force from first lock:
   target. This is a build check: it is near-tautological, it is
   registered as such, and it may not be cited as evidence the band
   imputation is correct.
-- **Tier 2 — promotion on a genuinely disjoint margin.** A
-  firm-size-conditional cell becomes gate-eligible only against a
+- **Tier 2 — aggregate audit on a genuinely disjoint margin.** A
+  grouped firm-size statistic becomes gate-eligible only against a
   reference margin **not used in calibration**, per the ADR 0003
   disjoint partition already registered in §10. E11's origin ×
   destination ladder is the live example: the size *margins* are
@@ -651,7 +702,8 @@ cells degrade to, in force from first lock:
   only part carrying independent information. Promotion also
   requires a committed floor first (floors-before-thresholds), which
   §7 shows the five-quarter detail window does not currently
-  support.
+  support. Tier 2 certification stops at aggregate reproduction and
+  never promotes the underlying person-level band assignment.
 - **Tier 3 — full per-record adjudication: only with a linked
   reference.** Gated on the same condition as E12 (§8). If a linked
   employer-employee reference ever becomes available, ADR 0004's
@@ -741,7 +793,7 @@ be read under.
 | E8 | nonemployment incidence/duration by age (SIPP holdout) | different source, held-out persons |
 | E9 | j2j earnings-change median + IQR (SIPP holdout) | different source, held-out persons |
 | E10 | the locked PSID gates, re-scored | PSID; disjoint by construction |
-| E11 | destination-size EE flow **margins** (J2JOD) | J2JOD is not a calibration input; see the caveat below |
+| E11 | aggregate destination-size EE flow **margins** (J2JOD) | J2JOD is not a calibration input; certifies aggregate reproduction only (§7) |
 
 **E11 caveat, registered rather than assumed.** J2JOD margins are
 not consumed by fitting *as committed*, but they are close kin to
@@ -760,7 +812,7 @@ rule, without a further referee round.
 | E7 | raw `EarnS` levels | nominal trend, not noise (#223); the gradient carries the signal |
 | E9 | stay median **and** stay IQR | both floors degenerate — see §4 and §11.4 (B5) |
 | E11 | 5-quarter origin × destination detail | no temporal replicate: one YoY pair per cell (#223 v1 `e11.detail_window`) |
-| E9/E11 | any firm-size-**conditional** cell | §9.1 Tier 0 — no admissible truth frame, **permanently** report-only |
+| E9/E11 | any person-level outcome conditioned on that person's imputed firm-size band | §9.1 Tier 0 — no admissible per-record truth frame, **permanently** report-only |
 | — | firm-age axis (QWI/BDS) | held-out axis registered, but no committed extract or floor |
 | — | state axis (QWI state-level) | held-out axis registered, no committed extract or floor |
 
@@ -768,7 +820,8 @@ rule, without a further referee round.
 
 | gate | status |
 |---|---|
-| E12 | no adjudicable reference exists (§8); phase-2 no-go rule attaches |
+| E12 strong linkage/sorting form | no adjudicable linked reference exists (§8); strict claims no-go attaches |
+| E12 aggregate form | statistic, disjoint partition, floor, and threshold all PENDING a later promotion (§8) |
 
 ### 10.6 What B1 costs, stated plainly
 
@@ -811,7 +864,7 @@ so each is given one here or the cell stops gating.
 | E9 stay | **withdrawn** | — | was 100% operative against a degenerate floor with no basis; cell demoted to report-only (§3-E9, B5) |
 | B-side thin flag | 10,000 jobs | — | below |
 
-**The 10,000-job thin flag** (§13 item 14's B side, previously "a
+**The 10,000-job thin flag** (§13 item 15's B side, previously "a
 draft choice"). Reference calculation: treat a cell's YoY \|log
 ratio\| as if the flow count were binomial in the denominator —
 `sd ≈ sqrt(2(1-p)/(Np))`. At a typical p ≈ 0.10 separation rate:
@@ -845,24 +898,28 @@ near 0.14).
    primary-job-only, so person-spells vs job-count cells carry a
    wedge on the order of the multiple-jobholding rate (~5%,
    time-varying). **Disposition (PROPOSED)**: a pre-registered
-   jobs→persons adjustment factor, published per cell alongside its
+   jobs/person adjustment factor, published per cell alongside its
    source (CPS multiple-jobholding rate series), applied to E2/E6/E11
-   comparisons before scoring; the factor's series and vintage are
-   registered in the amendment PR — an explicit pre-registered item,
-   not a footnote.
+   comparisons before scoring. **Scale direction is fixed** by the
+   recorded Workstream A decision: inflate person-denominated model
+   cells to the job-denominated QWI/J2J scale, never deflate the
+   administrative job references to persons. The exact formula,
+   series, and vintage remain REFEREE/PENDING in the amendment
+   record—an explicit pre-registration item, not a footnote.
 2. **QWI publishes mean earnings (`EarnS`), never medians.**
    **Disposition**: E7 stated on means (§3-E7); no median-based
    employer earnings gate exists in the block.
 3. **J2J ownership `oslp` vs QWI `op` vs SUSB (no government).**
    NAICS 92 is dropped from the J2J extracts, but state/local
-   employment embedded in sectors 61/62 remains. **Disposition
-   (RECOMMENDED)**: carry the scope difference as a pre-registered
+   employment embedded in sectors 61/62 remains. **Unratified
+   disposition — REFEREE/PENDING**: carry the scope difference as a
+   pre-registered
    per-cell caveat on E2/E11 (the #228 extracts quantify the small
    LED-vs-flat-file margin delta from excluded public "N" flows),
    rather than restating J2J on a private-comparable basis — a
    restatement would require a new extract and re-floor.
    The restatement option stays on the record as the referee
-   alternative (§13 item 4).
+   alternative (§13 item 13).
 
 ## 12. Registration and lock ceremony
 
@@ -873,16 +930,25 @@ in `docs/design/m6_projection_engine.md`):
    review; every §13 item answered on the record).
 2. Required pre-lock artifacts land **and are immutable**
    (closes blocking item B3):
-   - The E2 sex×age floor build (§3-E2) — **delivered**, #223
-     `draft_v0.1` → `employer_firm_floors_v1.json`.
-   - The cross-wave job-ID check (§6) — #235.
-   - The E4/E5 minimal audit manifest (§9) — #236.
+   - **PENDING #223**: approved current-head E2 sex×age floor and
+     `runs/employer_firm_floors_v1.json`; this branch deliberately
+     contains neither.
+   - **COMPOSED, not merged/promoted #235**: current draft
+     `runs/crosswave_jobid_check_draft_v0.json`. Promotion reconciles
+     its internal `draft_v1` label and lands
+     `runs/crosswave_jobid_check_v1.json`; this control revision does
+     not rename it.
+   - **COMPOSED, not merged #236**:
+     `docs/design/e4_e5_audit_manifest.md`, registered and undrawn.
+   - **COMPOSED, not merged/promoted #274**: byte-faithful
+     `runs/seam_reconciliation_draft_v0.json` and builder. The later
+     v1 pin/amendment must not rewrite the restored draft anchor.
    - Promotion of the four draft floor artifacts to sha256-pinned
      `v1` with reproduction tests, meeting the M6 byte-reproduction
      standard (pinned builder → byte-identical artifact, zero hand
      edits, reproduction test covering metadata keys) — S5.
-   - **#224 merged to master, with the three adopted changes folded
-     into `docs/adr/0004-linkage-qc.md`'s text.** A locked block
+   - **COMPOSED, not merged #224**, with the three adopted changes
+     folded into `docs/adr/0004-linkage-qc.md`'s text. A locked block
      whose normative ADR exists only as a branch file amended by
      comment thread is not a locked contract.
    - **Every cited evidence PR merged to master** (#212, #223,
@@ -892,9 +958,9 @@ in `docs/design/m6_projection_engine.md`):
      refs; the round-1 as-reviewed pin list is the record of what
      round 1 saw, and the amendment PR must pin what the *lock*
      sees.
-   - The IC1/IC2/IC3 rename (#277) merged, so the block YAML is
-     authored once under its final names rather than renamed after
-     being refereed.
+   - **COMPOSED, not merged #277**: the block YAML is authored once
+     under final IC1/IC2/IC3 names after that prerequisite merges,
+     rather than renamed after being refereed.
 2a. **The refereed block YAML** (closes blocking item B2, part 1).
    A committed `docs/design/ic3_employer_gate_block_draft.yaml` —
    enumerated cells for every gate, `derivations` blocks in the
@@ -931,63 +997,87 @@ in `docs/design/m6_projection_engine.md`):
 
 Every decision this draft leaves to the referee, enumerated:
 
-1. **Threshold policy**: accept `floor mean + 4 × floor sd` with
-   per-gate substantive tolerances, or set k per-gate? Every
-   PROPOSED tolerance in §3 needs a ratified number.
-2. **Temporal-floor basis**: ex-pandemic (recommended) vs
-   full-sample floors for E2/E6/E7/E11-margins (#223 commits both).
-3. **E1 treatment**: national coarsened-margin gate + sector
-   report-only (recommended) vs CV-bound-based size × sector gate;
-   and confirmation of the calibrated-margin vs gated-stability
-   partition logic (§10).
-4. **E3 formulation**: ECDF max-gap (recommended) vs quantile gaps
-   with a substantive-tolerance patch over the heaping zeros.
-5. **E9 stay formulation**: IQR-only gate (recommended) vs a
-   distributional distance (would require a new floor build before
-   it could gate).
-6. **Phase-1 imputed-band adjudicability** — **ANSWERED in §9.1,
-   no longer an open item.** No admissible per-record truth frame
-   exists, and per-record adjudication is ill-posed for a
-   draw-based imputation: a correctly specified imputation scores
-   arbitrarily badly per record while a degenerate modal-band one
-   scores better, so the metric improves as the model worsens. The
-   referee is asked to ratify the finding and the four-tier
-   degradation ladder in §9.1 — not to answer the question. Kept in
-   this list, renumbered nowhere, so the #224 review item remains
-   traceable to its answer.
-7. **Linkage-QC numerics** (ADR 0004 §6.1): `P_floor`, `P_design`,
-   α, power, multiplicity, and whether recall gates; plus
-   ratification of the E4/E5-first minimal audit scope (§9).
-8. **The seam ruling** (§6): ratify J2J-levels / SIPP-persistence /
-   seam-aware estimation, conditional on the cross-wave job-ID
-   consistency check.
-9. **E11 window** (§7): margins-gated + detail report-only
-   (recommended) vs five-quarter detail gate.
-10. **E12**: confirm the deferred/no-go registration and the phase-2
-    consequence wording (§8).
-11. **Jobs→persons adjustment** (§11.1): adopt the proposed
-    published-factor mechanism and its source series.
-12. **`oslp` vs `op` scope** (§11.3): per-cell caveat (recommended)
-    vs private-comparable restatement of the J2J references.
-13. **Held-out firm-age and state axes** (§10): confirm report-only
-    registration at first lock, with promotion conditions.
-14. **Thin-cell rules**: confirm `THIN_CELL_PERSONS = 200`
-    (SIPP-side) and the 10,000-job minimum denominator (B-side,
-    a draft choice in #223) as the locked thin flags.
-15. **ASEC reference-period mismatch** (ADR 0003 conditioning DAG):
-    confirm its carriage as a known label-misalignment note on the
-    affected gate cells.
-16. **Linkage-bias reweighting numerics** (ADR 0004 §6.4, added
-    under B4, §9.0): propensity specification, overlap/balance
-    tolerances, and the trimming percentile.
-17. **Operative weighting version** (ADR 0004 §3.4, added under
-    B4): weighted or unweighted as operative for E4/E5 — and for
-    E9/E11/E12 at promotion — registered **before** any candidate
-    scores exist.
-18. **E9-stay disposition** (B5): confirm the withdrawal of the
-    0.02 stay tolerance and the demotion of both stay statistics
-    to report-only, or supply a defended substantive basis for a
-    stay gate against a degenerate floor.
-19. **B1's cost** (§10.6): confirm that first-lock firm-side
-    gating rests on E2, E7 and E11-margins only, or direct one of
-    the two registered routes to restore firm-side power.
+1. **Threshold policy — REFEREE/PENDING**: set the common or
+   gate-specific `k`, and ratify every substantive tolerance in §3.
+2. **Temporal-floor basis — REFEREE/PENDING #223**: choose
+   ex-pandemic or full-sample floors for E2/E6/E7/E11 margins.
+3. **E1 treatment — WORKSTREAM DECISION RECORDED; REFEREE
+   VERIFICATION PENDING**: Vahid recorded national coarsened-margin
+   and sector report-only treatment. Confirm that disposition and
+   the calibrated-margin versus gated-stability partition in §10.
+4. **E3 formulation — REFEREE/PENDING**: choose ECDF max-gap or
+   quantile gaps and, if needed, a substantive patch for heaping
+   zeros. The recorded filename/per-year-cell correction does not
+   decide the statistic.
+5. **E9 stay formulation — WORKSTREAM DECISION RECORDED; REFEREE
+   VERIFICATION PENDING**: Vahid recorded withdrawal of the 0.02
+   stay tolerance and report-only treatment for both stay
+   statistics. No stay statistic gates unless a later floor and
+   substantive basis are approved.
+6. **Phase-1 imputed-band adjudicability — WORKSTREAM DECISION
+   RECORDED; REFEREE VERIFICATION PENDING**: Vahid recorded the
+   permanent person-level report-only disposition and degradation
+   ladder in §9.1. The later E12 decision permits only a disjoint,
+   aggregate audit of observable grouped margins; it does not
+   restore person-level truth or certify worker–firm assignment.
+   This item remains numbered for #224 traceability.
+7. **Linkage-QC design and numerics — REFEREE/PENDING #236**:
+   ratify the pair-level E4 and maximal-run E5 populations,
+   `P_floor`, `P_floor_run`, `P_design`, budget/run ceiling,
+   arm-specific `q_link`, α, power, multiplicity, whether recall
+   gates, repeat-agreement/action rules, and the E4/E5-first scope.
+8. **Blinding and draw mechanics — REFEREE/PENDING #236**: approve
+   custody, seed commitment, audit-frame freeze, sample draw,
+   unblinding order, and immutable evidence publication before any
+   audit draw occurs.
+9. **Seam ruling — REFEREE/PENDING**: select the operative
+   population and correction bands from #235, then ratify or amend
+   the J2J-levels / SIPP-persistence / seam-aware interpretation.
+10. **E11 scope and floor — REFEREE/PENDING #223**: decide the
+    aggregate margin statistic, temporal basis, and threshold.
+    Five-quarter detail remains report-only, and no E11 result
+    certifies a person-level worker–firm link.
+11. **E12 claims boundary — WORKSTREAM DECISION RECORDED; REFEREE
+    VERIFICATION PENDING**: Vahid recorded both a future strict
+    aggregate audit and deferral of strong linkage/sorting claims.
+    The aggregate statistic, disjoint partition, floor, and
+    threshold remain REFEREE/PENDING; firm effects, variance,
+    sorting, coworker/spillover, and person-level assignment claims
+    remain no-go.
+12. **Jobs/person scale — DIRECTION RECORDED; DETAILS
+    REFEREE/PENDING #212**: job-based QWI/J2J references are not
+    deflated. If a person-scale candidate is compared to them, the
+    candidate cells are inflated by an approved observed
+    jobs-per-person factor. Ratify the exact formula, series,
+    vintage, and deployment conversion; #212 is intentionally not
+    composed here.
+13. **`oslp` versus `op` scope — REFEREE/PENDING**: choose a
+    per-cell caveat or private-comparable restatement of the J2J
+    references.
+14. **Held-out firm-age and state axes — REFEREE/PENDING**: confirm
+    report-only registration at first lock and promotion
+    conditions.
+15. **Thin-cell rules — REFEREE/PENDING #223**: ratify
+    `THIN_CELL_PERSONS = 200` for SIPP and the proposed 10,000-job
+    B-side minimum denominator.
+16. **ASEC reference-period mismatch — REFEREE/PENDING**: confirm
+    its treatment as a known label-misalignment note on affected
+    cells.
+17. **Linkage-bias reweighting — REFEREE/PENDING**: separately
+    specify pair- and run-population propensities, overlap and
+    balance tolerances, trimming, and audit selection weights.
+18. **Operative weighting version — REFEREE/PENDING**: register
+    weighted or unweighted E4/E5 as operative, and do the same
+    before any later E9/E11/E12 promotion, before candidate scores
+    exist.
+19. **B1's cost — REFEREE/PENDING**: confirm that first-lock
+    firm-side gating rests on E2, E7, and aggregate E11 margins
+    only, or direct a registered route to restore firm-side power.
+20. **Deployment split/scale — REFEREE/PENDING #212**: ratify the
+    conversion from the registered 50/50 half split to the intended
+    20% holdout deployment scale, including rounding and strata.
+21. **Draft gate block — REFEREE/PENDING**: after every item above
+    is answered and every prerequisite is merged at an approved
+    digest, approve a separate mechanical YAML amendment. This
+    draft does not modify `gates.yaml`, lock IC3, or authorize a
+    candidate run.
