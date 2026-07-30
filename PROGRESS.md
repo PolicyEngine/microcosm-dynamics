@@ -3,7 +3,7 @@
 ## State
 
 Implementation is in progress on `claude/ce-psid-inventory`. The referee
-verdict is `SHIP WITH EDITS`; items 1 through 3 are implemented and under
+verdict is `SHIP WITH EDITS`; items 1 through 4 are implemented and under
 verification.
 
 ## Done
@@ -27,11 +27,16 @@ verification.
   `validate_frozen_registry`.
 - Added direct immutability coverage and a V4379 `mixed` to `wages_only`
   mutation that must fail the frozen-registry hash check.
+- Parsed and preserved all 3,212 (2021) and 3,078 (2023) field-bound Stata
+  format maps, including their 25,263 and 23,374 exact code-label rows.
+- Cross-checked every preserved map against the SPSS field/code domain and
+  physical layout, independently hashed each wave's maps, and retained both
+  format-document identities.
+- Added RP, spouse, enrollment, parser-grammar, fail-close, nested-integrity,
+  and 210-of-281 modern-reader map-coverage tests.
 
 ## Next
 
-1. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
-   audit artifact.
-2. Clarify the modern reader-subset test and add the remaining adversarial,
+1. Clarify the modern reader-subset test and add the remaining adversarial,
    reachability, all-wave, and person-attachment assertions.
-3. Run Black and the relevant/full test suites.
+2. Run Black and the relevant/full test suites.

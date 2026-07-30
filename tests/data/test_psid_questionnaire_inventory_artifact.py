@@ -85,23 +85,97 @@ def test_source_evidence_records_the_exact_ratification_blockers():
     assert summary["explicit_spss_numeric_format_count"] == 2_919
     assert summary["main_spss_missing_values_declaration_count"] == 0
     assert summary["main_spss_value_label_statement_count"] == 0
-    assert summary["format_file_evidence"] == [
-        {
-            "explicit_truncation_count": 2_460,
-            "interview_wave": 2021,
-            "source_document_id": "psid-family-2021-spss_value_labels",
-            "value_label_map_count": 3_212,
-            "value_label_row_count": 25_263,
-        },
-        {
-            "explicit_truncation_count": 2_327,
-            "interview_wave": 2023,
-            "source_document_id": "psid-family-2023-spss_value_labels",
-            "value_label_map_count": 3_078,
-            "value_label_row_count": 23_374,
-        },
+    format_evidence = summary["format_file_evidence"]
+    assert [
+        (
+            row["interview_wave"],
+            row["value_label_map_count"],
+            row["value_label_row_count"],
+            row["explicit_truncation_count"],
+            row["field_bound_format_maps_sha256"],
+        )
+        for row in format_evidence
+    ] == [
+        (
+            2021,
+            3_212,
+            25_263,
+            2_460,
+            "39a29fa289ddd41852214e30bb7d77e41534c41efd21a75a68633282e808cfd2",
+        ),
+        (
+            2023,
+            3_078,
+            23_374,
+            2_327,
+            "d58883d52bb8a76b64206ae36093563e6cbb9d6c542de2bb3189f0e4b70cc2f2",
+        ),
     ]
+    for row in format_evidence:
+        wave = row["interview_wave"]
+        assert row["source_document_ids"] == [
+            f"psid-family-{wave}-stata_value_labels",
+            f"psid-family-{wave}-spss_value_labels",
+        ]
+        assert row["field_bound_format_map_columns"] == list(
+            inventory.FIELD_BOUND_FORMAT_MAP_COLUMNS
+        )
+        assert row["code_label_columns"] == list(inventory.CODE_LABEL_COLUMNS)
+        assert (
+            len(row["field_bound_format_maps"]) == row["value_label_map_count"]
+        )
     assert artifact["integrity"]["reproduced_from_source_bytes"] is False
+
+
+def test_2021_and_2023_field_bound_maps_preserve_referee_anchors():
+    artifact = _artifact()
+    evidence_by_wave = {
+        row["interview_wave"]: {
+            field_map[0]: field_map
+            for field_map in row["field_bound_format_maps"]
+        }
+        for row in artifact["evidence_summary"]["format_file_evidence"]
+    }
+    maps_2021 = evidence_by_wave[2021]
+    assert {
+        "ER78203",
+        "ER78204",
+        "ER78205",
+        "ER78217",
+        "ER78246",
+        "ER78517",
+        "ER78518",
+        "ER78519",
+        "ER78531",
+        "ER78560",
+        "ER81059",
+        "ER81100",
+        "ER81186",
+        "ER81227",
+    }.issubset(maps_2021)
+    assert dict(maps_2021["ER78203"][2]) == {
+        1: "Someone else only",
+        2: "Both someone else and self",
+        3: "Self-employed only",
+        8: "DK",
+        9: "NA; refused",
+        0: (
+            "Inap.:  did not work for money in 2020; has not worked for "
+            "money since January 1, 2019 (ER78172=5); DK, NA, or RF "
+            "whether worked for money since January 1, 2019 "
+            "(ER78172=8 or 9)"
+        ),
+    }
+    assert dict(maps_2021["ER78204"][2])[1] == "Unincorporated"
+    assert dict(maps_2021["ER78205"][2])[1] == "Federal government"
+    assert dict(maps_2021["ER81059"][2])[9] == "DK; NA; refused"
+    maps_2023 = evidence_by_wave[2023]
+    assert {
+        "ER85036",
+        "ER85077",
+        "ER85163",
+        "ER85204",
+    }.issubset(maps_2023)
 
 
 def test_official_artifacts_are_explicitly_not_emitted():

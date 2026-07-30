@@ -168,28 +168,111 @@ VARIABLE LABELS
         inventory._compare_wave_dictionaries(2003, do_path, sps_path)
 
 
-def test_truncated_value_maps_are_counted_as_incomplete_evidence(
+def test_field_bound_stata_maps_preserve_complete_positive_evidence(
     tmp_path: Path,
 ):
-    path = tmp_path / "formats.sps"
-    path.write_bytes(
+    stata_path = tmp_path / "formats.do"
+    stata_path.write_bytes(
+        (
+            "label define AL  ///\n"
+            '  -9 "NA; refused"  ///\n'
+            '   1 `"Twelfth grade, "High School", GED"\'\n'
+            "forvalues n = 2 /3 {\n"
+            "    label define AL `n' "
+            '"Associate`=char(146)\'s value", modify\n'
+            "}\n"
+            "label values A AL\n"
+        ).encode("cp1252")
+    )
+    spss_path = tmp_path / "formats.sps"
+    spss_path.write_bytes(
         (
             "VALUE LABELS\n"
             "A   /*Truncated value label ends with ...*/\n"
-            "  1 'café'\n"
-            "  9 'DK'\n"
-            ".\n"
-            "VALUE LABELS\n"
-            "B\n"
-            "  0 'No'\n"
-            ".\n"
+            " -9 'NA; refused'\n"
+            "  1 'Truncated'\n"
+            "  2 'Truncated'\n"
+            "  3 'Truncated'\n"
+            ".\nEXECUTE.\n"
         ).encode("cp1252")
     )
-    assert inventory._format_evidence(path) == {
-        "value_label_map_count": 2,
-        "value_label_row_count": 3,
-        "explicit_truncation_count": 1,
-    }
+    evidence = inventory._format_evidence(
+        stata_path,
+        spss_path,
+        {"A"},
+    )
+    assert evidence["field_bound_format_map_columns"] == [
+        "raw_field_id",
+        "stata_value_label_id",
+        "code_label_rows",
+    ]
+    assert evidence["code_label_columns"] == [
+        "raw_code",
+        "exact_stata_value_label",
+    ]
+    assert evidence["field_bound_format_maps"] == [
+        [
+            "A",
+            "AL",
+            [
+                [-9, "NA; refused"],
+                [1, 'Twelfth grade, "High School", GED'],
+                [2, "Associate’s value"],
+                [3, "Associate’s value"],
+            ],
+        ]
+    ]
+    assert evidence["value_label_map_count"] == 1
+    assert evidence["value_label_row_count"] == 4
+    assert evidence["explicit_truncation_count"] == 1
+
+
+@pytest.mark.parametrize(
+    ("stata", "spss", "physical_fields", "message"),
+    [
+        (
+            'label define AL 1 "One" 1 "Duplicate"\nlabel values A AL\n',
+            "VALUE LABELS\nA\n 1 'One'\n.\n",
+            {"A"},
+            "duplicate Stata",
+        ),
+        (
+            'label define AL 1 "One"\nlabel values A BL\n',
+            "VALUE LABELS\nA\n 1 'One'\n.\n",
+            {"A"},
+            "definitions and bindings disagree",
+        ),
+        (
+            'label define AL 1 "One"\nlabel values A AL\n',
+            "VALUE LABELS\nA\n 2 'Two'\n.\n",
+            {"A"},
+            "code domains disagree",
+        ),
+        (
+            'label define AL 1 "One"\nlabel values A AL\n',
+            "VALUE LABELS\nA\n 1 'One'\n.\n",
+            set(),
+            "outside the physical layout",
+        ),
+    ],
+)
+def test_field_bound_format_map_drift_fails_closed(
+    tmp_path: Path,
+    stata: str,
+    spss: str,
+    physical_fields: set[str],
+    message: str,
+):
+    stata_path = tmp_path / "formats.do"
+    spss_path = tmp_path / "formats.sps"
+    stata_path.write_text(stata, encoding="cp1252")
+    spss_path.write_text(spss, encoding="cp1252")
+    with pytest.raises(inventory.DictionaryDriftError, match=message):
+        inventory._format_evidence(
+            stata_path,
+            spss_path,
+            physical_fields,
+        )
 
 
 def test_integrity_validator_rejects_count_key_and_content_drift():
@@ -230,3 +313,61 @@ def test_integrity_validator_rejects_count_key_and_content_drift():
     bad_content["physical_fields"][0][8] = "CHANGED"
     with pytest.raises(inventory.DictionaryDriftError, match="content"):
         inventory.validate_integrity(bad_content)
+
+
+def test_integrity_validator_rejects_resealed_format_map_mutation():
+    maps = [["ER1", "ER1L", [[1, "Yes"], [5, "No"]]]]
+    row = [
+        "psid-physical-field:" + "a" * 64,
+        2021,
+        2020,
+        "ER1",
+        1,
+        1,
+        1,
+        None,
+        "FIELD",
+        ["do", "sps", "raw"],
+    ]
+    artifact = {
+        "physical_field_columns": list(inventory.PHYSICAL_FIELD_COLUMNS),
+        "physical_fields": [row],
+        "physical_field_count": 1,
+        "physical_field_keyset_sha256": inventory._keyset_hash([row[0]]),
+        "evidence_summary": {
+            "format_file_evidence": [
+                {
+                    "interview_wave": 2021,
+                    "field_bound_format_map_columns": list(
+                        inventory.FIELD_BOUND_FORMAT_MAP_COLUMNS
+                    ),
+                    "code_label_columns": list(inventory.CODE_LABEL_COLUMNS),
+                    "field_bound_format_maps": maps,
+                    "field_bound_format_maps_sha256": inventory.sha256_bytes(
+                        inventory.canonical_json_bytes(maps)
+                    ),
+                    "value_label_map_count": 1,
+                    "value_label_row_count": 2,
+                }
+            ]
+        },
+        "integrity": {"content_sha256": "0" * 64},
+    }
+    artifact["integrity"]["content_sha256"] = inventory.sha256_bytes(
+        inventory.canonical_json_bytes(artifact)
+    )
+    inventory.validate_integrity(artifact)
+
+    mutated = copy.deepcopy(artifact)
+    mutated["evidence_summary"]["format_file_evidence"][0][
+        "field_bound_format_maps"
+    ][0][2][0][1] = "Changed"
+    mutated["integrity"]["content_sha256"] = "0" * 64
+    mutated["integrity"]["content_sha256"] = inventory.sha256_bytes(
+        inventory.canonical_json_bytes(mutated)
+    )
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="field-bound format-map hash mismatch",
+    ):
+        inventory.validate_integrity(mutated)

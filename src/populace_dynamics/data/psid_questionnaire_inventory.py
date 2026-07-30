@@ -8,13 +8,15 @@ parsed.  That separation enforces the independent-domain rule in
 covered-earnings design section 4.2.
 
 The staged dictionaries pin physical fields, short labels, and fixed-width
-coordinates.  They do not contain enough evidence to ratify
-``psid_questionnaire_slot_specs.v1``: most waves have no value maps, no wave
-declares missing-value tokens, and the files do not establish complete
-questionnaire slot hierarchies, full descriptions, timing, or exhaustive
-absence proofs.  The public builder therefore emits a reproducible
-registration-required audit and refuses to manufacture either ratified
-artifact.
+coordinates.  The 2021 and 2023 format pairs also provide field-bound code
+maps, including positive DK, NA/refused, and inapplicable-code evidence.
+They still do not contain enough evidence to ratify
+``psid_questionnaire_slot_specs.v1``: 41 waves have no value maps, no main
+SPSS setup has a formal ``MISSING VALUES`` declaration, and the files do not
+establish complete questionnaire slot hierarchies, full descriptions,
+timing, or exhaustive absence proofs.  The public builder therefore emits a
+reproducible registration-required audit and refuses to manufacture either
+ratified artifact.
 """
 
 from __future__ import annotations
@@ -23,7 +25,7 @@ import argparse
 import hashlib
 import json
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -91,6 +93,15 @@ PHYSICAL_FIELD_COLUMNS: tuple[str, ...] = (
     "spss_numeric_format",
     "exact_short_label",
     "source_document_ids",
+)
+FIELD_BOUND_FORMAT_MAP_COLUMNS: tuple[str, ...] = (
+    "raw_field_id",
+    "stata_value_label_id",
+    "code_label_rows",
+)
+CODE_LABEL_COLUMNS: tuple[str, ...] = (
+    "raw_code",
+    "exact_stata_value_label",
 )
 
 _LAYOUT_FIELD_RE = re.compile(
@@ -317,33 +328,330 @@ def _document_row(
     }
 
 
-def _format_evidence(path: Path) -> dict[str, int]:
-    text = path.read_bytes().decode("cp1252")
-    blocks = re.findall(
+def _stata_statements(text: str) -> list[str]:
+    statements: list[str] = []
+    continued: list[str] = []
+    for source_line in text.splitlines():
+        line = source_line.strip()
+        if not line and not continued:
+            continue
+        if line.endswith("///"):
+            continued.append(line[:-3].rstrip())
+            continue
+        continued.append(line)
+        statement = " ".join(part for part in continued if part)
+        if statement:
+            statements.append(statement)
+        continued = []
+    if continued:
+        raise DictionaryDriftError("unterminated Stata line continuation")
+    return statements
+
+
+def _expand_stata_char_macros(value: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        code = int(match.group(1))
+        if not 0 <= code <= 255:
+            raise DictionaryDriftError(
+                f"unsupported Stata char() code: {code}"
+            )
+        return bytes([code]).decode("cp1252")
+
+    expanded = re.sub(r"`=char\((\d+)\)'", replace, value)
+    if re.search(r"`[^']*'", expanded):
+        raise DictionaryDriftError(
+            f"unsupported Stata macro in value label: {expanded!r}"
+        )
+    return expanded
+
+
+def _parse_stata_code_label_rows(
+    body: str,
+    *,
+    loop_variable: str | None = None,
+    loop_value: int | None = None,
+) -> list[list[Any]]:
+    rows: list[list[Any]] = []
+    position = 0
+    while position < len(body):
+        while position < len(body) and body[position].isspace():
+            position += 1
+        if position == len(body):
+            break
+        integer_match = re.match(r"[+-]?\d+", body[position:])
+        if integer_match is not None:
+            raw_code = int(integer_match.group())
+            position += len(integer_match.group())
+        else:
+            macro_match = re.match(
+                r"`([A-Za-z][A-Za-z0-9_]*)'", body[position:]
+            )
+            if macro_match is None:
+                raise DictionaryDriftError(
+                    f"unparsed Stata value-label code near {body[position:]!r}"
+                )
+            if (
+                loop_variable is None
+                or macro_match.group(1) != loop_variable
+                or loop_value is None
+            ):
+                raise DictionaryDriftError(
+                    f"unbound Stata loop macro: {macro_match.group()!r}"
+                )
+            raw_code = loop_value
+            position += len(macro_match.group())
+        while position < len(body) and body[position].isspace():
+            position += 1
+        if body.startswith('`"', position):
+            label_start = position + 2
+            label_end = body.find("\"'", label_start)
+            if label_end < 0:
+                raise DictionaryDriftError(
+                    "unterminated Stata compound-quoted value label"
+                )
+            label = body[label_start:label_end]
+            position = label_end + 2
+        elif position < len(body) and body[position] == '"':
+            label_start = position + 1
+            label_end = body.find('"', label_start)
+            if label_end < 0:
+                raise DictionaryDriftError("unterminated Stata value label")
+            label = body[label_start:label_end]
+            position = label_end + 1
+        else:
+            raise DictionaryDriftError(
+                f"unparsed Stata value-label text near {body[position:]!r}"
+            )
+        rows.append([raw_code, _expand_stata_char_macros(label)])
+    if not rows:
+        raise DictionaryDriftError("empty Stata value-label definition")
+    return rows
+
+
+def _parse_stata_label_definition(
+    statement: str,
+    *,
+    loop_variable: str | None = None,
+    loop_value: int | None = None,
+) -> tuple[str, list[list[Any]]]:
+    match = re.fullmatch(
+        r"label\s+define\s+([A-Za-z][A-Za-z0-9_]*)\s+"
+        r"(?P<body>.*?)(?:\s*,\s*modify)?",
+        statement,
+        flags=re.IGNORECASE,
+    )
+    if match is None:
+        raise DictionaryDriftError(
+            f"unparsed Stata label definition: {statement!r}"
+        )
+    return (
+        match.group(1),
+        _parse_stata_code_label_rows(
+            match.group("body"),
+            loop_variable=loop_variable,
+            loop_value=loop_value,
+        ),
+    )
+
+
+def _append_stata_label_rows(
+    definitions: dict[str, list[list[Any]]],
+    label_id: str,
+    rows: Sequence[list[Any]],
+) -> None:
+    defined = definitions.setdefault(label_id, [])
+    existing_codes = {row[0] for row in defined}
+    incoming_codes = [row[0] for row in rows]
+    if len(incoming_codes) != len(set(incoming_codes)):
+        raise DictionaryDriftError(
+            f"duplicate Stata codes in value-label definition {label_id}"
+        )
+    duplicates = existing_codes.intersection(incoming_codes)
+    if duplicates:
+        raise DictionaryDriftError(
+            f"duplicate Stata value-label codes for {label_id}: "
+            f"{sorted(duplicates)}"
+        )
+    defined.extend(rows)
+
+
+def _parse_stata_format_maps(text: str) -> list[list[Any]]:
+    statements = _stata_statements(text)
+    definitions: dict[str, list[list[Any]]] = {}
+    bindings: list[tuple[str, str]] = []
+    bound_fields: set[str] = set()
+    bound_label_ids: set[str] = set()
+    index = 0
+    while index < len(statements):
+        statement = statements[index]
+        loop_match = re.fullmatch(
+            r"forvalues\s+([A-Za-z][A-Za-z0-9_]*)\s*=\s*"
+            r"([+-]?\d+)\s*/\s*([+-]?\d+)\s*\{",
+            statement,
+            flags=re.IGNORECASE,
+        )
+        if loop_match is not None:
+            if index + 2 >= len(statements) or statements[index + 2] != "}":
+                raise DictionaryDriftError(
+                    f"unclosed or multi-command Stata forvalues: {statement!r}"
+                )
+            variable, first_text, last_text = loop_match.groups()
+            first = int(first_text)
+            last = int(last_text)
+            if first > last:
+                raise DictionaryDriftError(
+                    f"descending Stata forvalues range: {statement!r}"
+                )
+            for value in range(first, last + 1):
+                label_id, rows = _parse_stata_label_definition(
+                    statements[index + 1],
+                    loop_variable=variable,
+                    loop_value=value,
+                )
+                _append_stata_label_rows(definitions, label_id, rows)
+            index += 3
+            continue
+        if re.match(r"label\s+define\b", statement, flags=re.IGNORECASE):
+            label_id, rows = _parse_stata_label_definition(statement)
+            _append_stata_label_rows(definitions, label_id, rows)
+            index += 1
+            continue
+        binding_match = re.fullmatch(
+            r"label\s+values\s+([A-Za-z][A-Za-z0-9_]*)\s+"
+            r"([A-Za-z][A-Za-z0-9_]*)",
+            statement,
+            flags=re.IGNORECASE,
+        )
+        if binding_match is not None:
+            field_id, label_id = binding_match.groups()
+            if field_id in bound_fields:
+                raise DictionaryDriftError(
+                    f"duplicate Stata value-label binding for {field_id}"
+                )
+            if label_id in bound_label_ids:
+                raise DictionaryDriftError(
+                    f"Stata value-label definition bound twice: {label_id}"
+                )
+            bound_fields.add(field_id)
+            bound_label_ids.add(label_id)
+            bindings.append((field_id, label_id))
+            index += 1
+            continue
+        raise DictionaryDriftError(
+            f"unparsed Stata format statement: {statement!r}"
+        )
+
+    definition_ids = set(definitions)
+    if definition_ids != bound_label_ids:
+        raise DictionaryDriftError(
+            "Stata value-label definitions and bindings disagree; "
+            f"unbound={sorted(definition_ids - bound_label_ids)[:4]}, "
+            f"undefined={sorted(bound_label_ids - definition_ids)[:4]}"
+        )
+    return [
+        [field_id, label_id, definitions[label_id]]
+        for field_id, label_id in bindings
+    ]
+
+
+def _parse_spss_format_domains(
+    text: str,
+) -> tuple[dict[str, tuple[int, ...]], int]:
+    block_pattern = re.compile(
         r"^\s*VALUE\s+LABELS\s*$" r"(?P<body>.*?)" r"^\s*\.\s*$",
-        text,
         flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
     )
-    value_rows = sum(
-        len(
-            re.findall(
-                r"^\s*-?\d+(?:\.\d+)?\s+'",
-                body,
-                flags=re.MULTILINE,
-            )
+    blocks = list(block_pattern.finditer(text))
+    remainder = block_pattern.sub("", text)
+    if remainder.strip().upper() not in {"", "EXECUTE."}:
+        raise DictionaryDriftError(
+            f"unparsed SPSS format content: {remainder.strip()[:80]!r}"
         )
-        for body in blocks
-    )
-    return {
-        "value_label_map_count": len(blocks),
-        "value_label_row_count": value_rows,
-        "explicit_truncation_count": len(
-            re.findall(
-                r"/\*Truncated value label ends with \.\.\.\*/",
-                text,
-                flags=re.IGNORECASE,
+    domains: dict[str, tuple[int, ...]] = {}
+    truncation_count = 0
+    for block in blocks:
+        lines = [
+            line.strip()
+            for line in block.group("body").splitlines()
+            if line.strip()
+        ]
+        if not lines:
+            raise DictionaryDriftError("empty SPSS value-label block")
+        header_match = re.fullmatch(
+            r"([A-Za-z][A-Za-z0-9_]*)"
+            r"(?:\s+/\*Truncated value label ends with \.\.\.\*/)?",
+            lines[0],
+            flags=re.IGNORECASE,
+        )
+        if header_match is None:
+            raise DictionaryDriftError(
+                f"unparsed SPSS value-label header: {lines[0]!r}"
             )
+        field_id = header_match.group(1)
+        if field_id in domains:
+            raise DictionaryDriftError(
+                f"duplicate SPSS value-label map for {field_id}"
+            )
+        if "/*" in lines[0]:
+            truncation_count += 1
+        codes: list[int] = []
+        for line in lines[1:]:
+            row_match = re.fullmatch(r"([+-]?\d+)\s+'(.*)'", line)
+            if row_match is None:
+                raise DictionaryDriftError(
+                    f"unparsed SPSS value-label row: {line!r}"
+                )
+            codes.append(int(row_match.group(1)))
+        if not codes or len(codes) != len(set(codes)):
+            raise DictionaryDriftError(
+                f"empty or duplicate SPSS code domain for {field_id}"
+            )
+        domains[field_id] = tuple(codes)
+    if not domains:
+        raise DictionaryDriftError("no SPSS field-bound value-label maps")
+    return domains, truncation_count
+
+
+def _format_evidence(
+    stata_path: Path,
+    spss_path: Path,
+    physical_field_names: Iterable[str],
+) -> dict[str, Any]:
+    stata_maps = _parse_stata_format_maps(
+        stata_path.read_bytes().decode("cp1252")
+    )
+    spss_domains, truncation_count = _parse_spss_format_domains(
+        spss_path.read_bytes().decode("cp1252")
+    )
+    stata_domains = {
+        row[0]: tuple(code_row[0] for code_row in row[2]) for row in stata_maps
+    }
+    if set(stata_domains) != set(spss_domains):
+        raise DictionaryDriftError(
+            "Stata and SPSS field-bound value-label domains disagree"
+        )
+    for field_id, stata_codes in stata_domains.items():
+        if set(stata_codes) != set(spss_domains[field_id]):
+            raise DictionaryDriftError(
+                f"Stata and SPSS code domains disagree for {field_id}"
+            )
+    unknown_fields = set(stata_domains).difference(physical_field_names)
+    if unknown_fields:
+        raise DictionaryDriftError(
+            "format maps bind fields outside the physical layout: "
+            f"{sorted(unknown_fields)[:4]}"
+        )
+    row_count = sum(len(row[2]) for row in stata_maps)
+    return {
+        "field_bound_format_map_columns": list(FIELD_BOUND_FORMAT_MAP_COLUMNS),
+        "code_label_columns": list(CODE_LABEL_COLUMNS),
+        "field_bound_format_maps": stata_maps,
+        "field_bound_format_maps_sha256": sha256_bytes(
+            canonical_json_bytes(stata_maps)
         ),
+        "value_label_map_count": len(stata_maps),
+        "value_label_row_count": row_count,
+        "explicit_truncation_count": truncation_count,
     }
 
 
@@ -447,8 +755,9 @@ def _registration_required_items() -> list[dict[str, Any]]:
             ),
             "source_finding": (
                 "V4379 is design-adjudicated mixed; the short labels for "
-                "V5289 and V5788 do not prove wages_only, and the requested "
-                "code maps are absent."
+                "V5289 and V5788 do not prove wages_only.  The 2021/2023 "
+                "format maps provide later positive evidence but not the "
+                "required pre-modern maps."
             ),
         },
         {
@@ -460,8 +769,9 @@ def _registration_required_items() -> list[dict[str, Any]]:
             ),
             "source_finding": (
                 "Current-enrollment labels begin only in 2013 and later "
-                "waves contain multiple plausible concepts; setup labels "
-                "do not establish a stable earlier mapping."
+                "waves contain multiple plausible mapped concepts; neither "
+                "the setup labels nor the later maps establish a stable "
+                "earlier mapping."
             ),
         },
     ]
@@ -563,9 +873,16 @@ def build_registration_required_audit(
                 "spss_value_labels",
             )
             manifest.extend([format_do_document, format_sps_document])
-            evidence = _format_evidence(format_sps_path)
+            evidence = _format_evidence(
+                format_do_path,
+                format_sps_path,
+                (name for name, *_ in rows),
+            )
             evidence["interview_wave"] = wave
-            evidence["source_document_id"] = format_sps_document["document_id"]
+            evidence["source_document_ids"] = [
+                format_do_document["document_id"],
+                format_sps_document["document_id"],
+            ]
             format_file_evidence.append(evidence)
 
     registration_items = _registration_required_items()
@@ -689,6 +1006,81 @@ def require_ratified_source_inventory(
     raise RegistrationRequiredError(SOURCE_INVENTORY_ID, item_ids)
 
 
+def _validate_format_file_evidence(
+    evidence: Mapping[str, Any],
+    physical_fields_by_wave: Mapping[int, set[str]],
+) -> None:
+    if evidence.get("field_bound_format_map_columns") != list(
+        FIELD_BOUND_FORMAT_MAP_COLUMNS
+    ):
+        raise DictionaryDriftError("field-bound format-map columns drifted")
+    if evidence.get("code_label_columns") != list(CODE_LABEL_COLUMNS):
+        raise DictionaryDriftError("format code-label columns drifted")
+    maps = evidence.get("field_bound_format_maps")
+    if not isinstance(maps, list):
+        raise DictionaryDriftError("field-bound format maps are not a list")
+    field_ids: list[str] = []
+    label_ids: list[str] = []
+    code_label_row_count = 0
+    for field_map in maps:
+        if not isinstance(field_map, list) or len(field_map) != 3:
+            raise DictionaryDriftError("field-bound format-map row drifted")
+        field_id, label_id, code_rows = field_map
+        if not isinstance(field_id, str) or not isinstance(label_id, str):
+            raise DictionaryDriftError(
+                "field-bound format-map identity is not textual"
+            )
+        if not isinstance(code_rows, list) or not code_rows:
+            raise DictionaryDriftError(
+                f"empty format code-label rows for {field_id}"
+            )
+        codes: list[int] = []
+        for code_row in code_rows:
+            if not isinstance(code_row, list) or len(code_row) != 2:
+                raise DictionaryDriftError(
+                    f"format code-label row drifted for {field_id}"
+                )
+            raw_code, label = code_row
+            if (
+                isinstance(raw_code, bool)
+                or not isinstance(raw_code, int)
+                or not isinstance(label, str)
+            ):
+                raise DictionaryDriftError(
+                    f"invalid format code-label types for {field_id}"
+                )
+            codes.append(raw_code)
+        if len(codes) != len(set(codes)):
+            raise DictionaryDriftError(
+                f"duplicate format-map raw code for {field_id}"
+            )
+        code_label_row_count += len(code_rows)
+        field_ids.append(field_id)
+        label_ids.append(label_id)
+    if len(field_ids) != len(set(field_ids)):
+        raise DictionaryDriftError("duplicate field-bound format-map field")
+    if len(label_ids) != len(set(label_ids)):
+        raise DictionaryDriftError("duplicate field-bound Stata label ID")
+    if evidence.get("value_label_map_count") != len(maps):
+        raise DictionaryDriftError("field-bound format-map count mismatch")
+    if evidence.get("value_label_row_count") != code_label_row_count:
+        raise DictionaryDriftError("format code-label row count mismatch")
+    if evidence.get("field_bound_format_maps_sha256") != sha256_bytes(
+        canonical_json_bytes(maps)
+    ):
+        raise DictionaryDriftError("field-bound format-map hash mismatch")
+    wave = evidence.get("interview_wave")
+    if wave not in physical_fields_by_wave:
+        raise DictionaryDriftError(
+            "format-map wave is outside physical domain"
+        )
+    unknown_fields = set(field_ids).difference(physical_fields_by_wave[wave])
+    if unknown_fields:
+        raise DictionaryDriftError(
+            "format maps bind fields outside the artifact physical layout"
+        )
+
+
 def validate_integrity(artifact: dict[str, Any]) -> None:
     """Validate the audit's count, keyset, and content commitments."""
 
@@ -700,6 +1092,29 @@ def validate_integrity(artifact: dict[str, Any]) -> None:
         raise DictionaryDriftError("duplicate physical field key")
     if artifact["physical_field_keyset_sha256"] != _keyset_hash(keys):
         raise DictionaryDriftError("physical field keyset hash mismatch")
+    summary = artifact.get("evidence_summary")
+    if isinstance(summary, Mapping):
+        columns = artifact["physical_field_columns"]
+        wave_index = columns.index("interview_wave")
+        field_index = columns.index("raw_field_id")
+        physical_fields_by_wave: dict[int, set[str]] = {}
+        for row in rows:
+            physical_fields_by_wave.setdefault(row[wave_index], set()).add(
+                row[field_index]
+            )
+        format_evidence = summary.get("format_file_evidence", [])
+        if not isinstance(format_evidence, list):
+            raise DictionaryDriftError("format file evidence is not a list")
+        format_waves = [row.get("interview_wave") for row in format_evidence]
+        if len(format_waves) != len(set(format_waves)):
+            raise DictionaryDriftError("duplicate format evidence wave")
+        for evidence in format_evidence:
+            if not isinstance(evidence, Mapping):
+                raise DictionaryDriftError("format evidence row is not a map")
+            _validate_format_file_evidence(
+                evidence,
+                physical_fields_by_wave,
+            )
     expected_content_sha = artifact["integrity"]["content_sha256"]
     candidate = json.loads(json.dumps(artifact))
     candidate["integrity"]["content_sha256"] = _ZERO_SHA256

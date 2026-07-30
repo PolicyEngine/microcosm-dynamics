@@ -166,6 +166,28 @@ def test_source_anchors_and_coding_width_seam_are_pinned(evidence):
     )
 
 
+def test_late_wave_reader_subset_preserves_field_bound_map_evidence(evidence):
+    audit, _, artifact = evidence
+    maps_by_wave = {
+        row["interview_wave"]: {
+            field_map[0] for field_map in row["field_bound_format_maps"]
+        }
+        for row in audit["evidence_summary"]["format_file_evidence"]
+    }
+    for wave in (2021, 2023):
+        reader_rows = [
+            row for row in artifact["rows"] if row["interview_wave"] == wave
+        ]
+        assert len(reader_rows) == 281
+        assert (
+            sum(
+                row["raw_field_id"] in maps_by_wave[wave]
+                for row in reader_rows
+            )
+            == 210
+        )
+
+
 def test_both_interview_current_state_fields_remain_distinct(evidence):
     _, _, artifact = evidence
     for wave in registry.MODERN_INTERVIEW_WAVES:
