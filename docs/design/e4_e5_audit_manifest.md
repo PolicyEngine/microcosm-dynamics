@@ -8,7 +8,10 @@ pairs) and E5 (attachment runs) consume. The numeric slots marked
 `REFEREE` are ADR 0004 §6.1 items; the sample is drawn only after the
 referee round fills them, by the committed draw script, under the
 seed registered here. Owner: @daphnehanse11 (frame + coder-panel
-operation, per #230 §9.3).
+operation, per #230 §9.3). Prerequisite order is ADR 0004 (#224),
+then the cross-wave provenance artifact (#235), then this manifest.
+The exact prerequisite heads are merged into this branch; neither is
+a movable forward reference here.
 
 ## 1. The assignment under audit
 
@@ -126,10 +129,12 @@ Registered parameters — `REFEREE` slots per ADR 0004 §6.1:
 | `P_design` | REFEREE |
 | `alpha` (one-sided) | REFEREE |
 | `1 - beta` | REFEREE |
-| Multiplicity rule | REFEREE (recommended: intersection-union across the 4 arm-(a) strata with joint power computed by simulation) |
+| Multiplicity rule | REFEREE |
 | Recall: gates or reported-with-bound | REFEREE |
 | `P_floor_run` (share of runs correctly delimited, one-sided lower bound) | REFEREE |
 | Run-arm link-coding budget ceiling | REFEREE |
+| `q_link_design` (link-level indeterminate rate used for sizing) | REFEREE |
+| Calibration-repeat agreement floor and failure action | REFEREE |
 | False-continuation / false-break decomposition | registered: always reported separately, each with its own bound |
 
 **No-revisit clause (registered)**: every `REFEREE` slot in this
@@ -144,9 +149,30 @@ the §7 retire-and-reissue remedy.
 that resamples **workers** — the registered clustering unit — from
 the *actual frame*, which exists before the draw (#235 sizes it).
 The design effect is therefore **measured from the frame's
-cluster-size distribution, not assumed**. The indeterminate/unusable
-inflation is a named parameter: prior 10%, superseded by the
-calibration round's measured rate if that is larger.
+cluster-size distribution, not assumed**. Indeterminate inflation is
+arm-specific. Arms (a)/(b), whose units are individual link codings,
+use the referee-filled `q_link_design`. For each arm-(c) run with
+`k_r` constituent coding opportunities (internal links plus the
+observed terminal opportunities), the registered planning probability
+is
+
+`q_run,r = 1 - (1 - q_link_design)^k_r`.
+
+The arm-(c) simulation applies that probability to the actual run-length
+distribution in each stratum; it never applies a scalar link-level
+inflation to runs. This is a sizing model, not an assumption that
+constituent adjudication outcomes are independent in the reported
+estimator. The result artifact reports realized run-level indeterminacy
+directly.
+
+**Fail-closed pre-draw trigger (registered)**: if any arm-(c) stratum's
+powered target after the formula above exceeds either its frame count
+or the referee-filled link-coding budget, the draw does not occur and
+the design returns to the referee before any audit label exists. It may
+not silently omit full-year or seam runs, replace the formula with 10%,
+or license E5 from pair precision. A calibration rate observed after
+the draw never authorizes a supplemental sample or target revision; it
+is reported and may produce the already-registered graded stop.
 
 **Worked example** (illustrative only, not a proposal): for a
 simple-random operative stratum, `P_floor = 0.95`,
@@ -156,7 +182,7 @@ simple-random operative stratum, `P_floor = 0.95`,
 `n` are floor illustrations only; registered targets come from the
 worker-resampling simulation above. Four strata at the example
 numbers imply an arm-(a) total near 550 adjudications before
-inflation — feasible for a two-coder panel.
+inflation.
 
 **Arm (b) target (registered formula)**: per stratum, the
 true-counterpart prevalence prior `π` is the #235 excess rate for
@@ -175,10 +201,16 @@ codings) and capped by the registered ceiling above.
 
 ## 5. Coding protocol (ADR 0004 §2.4)
 
-- **Blinding**: coders see both months' job-record fields with all
+- **Outcome blinding**: coders see both months' job-record fields with all
   `EJB` job IDs **masked**, and never see the matcher outcome
   (same/different ID), the #235 signature flag, any downstream gate
   quantity, or the other coder's decision.
+- **Condition blinding is unattainable**: the job-record evidence needed
+  to adjudicate an employer attachment can reveal whether a sheet came
+  from a stay or separation arm. The design therefore makes no
+  condition-blinding claim. It relies on outcome masking and coders
+  external to the assignment implementation. The draw artifact names
+  the holder of the ID-unmasking key; that holder cannot code a sheet.
 - **Labels**: `same_employer`, `different_employer`,
   `insufficient_evidence`, under a frozen coding manual
   (`docs/design/e4_e5_coding_manual_v1.md`, to be committed before
@@ -192,13 +224,24 @@ codings) and capped by the registered ceiling above.
   partial-identification bounds also reported. Hard cases are never
   dropped after labels are known.
 - **Calibration**: coders first train on vetted cases excluded from
-  both arms; blinded repeats (10% of assignments) measure continuing
-  accuracy and agreement.
+  all three arms; blinded repeats (10% of assignments) measure
+  continuing accuracy and agreement. The referee-filled agreement
+  floor and its failure action are fixed before the draw and may not
+  be revised after a repeat label exists.
 - The precision test publishes the sensitivity bound to
   reference-label error per ADR 0004 (the label is hand-adjudicated
   reference truth, not infallible ground truth).
 
 ## 6. Provenance (ADR 0004 §2.5)
+
+The prerequisite cross-wave artifact is
+`runs/crosswave_jobid_check_draft_v0.json`, SHA-256
+`33d4a7be88b417cb980ad4b12e65e1310eabd541a4926673e2414eead20941f1`;
+its builder is `scripts/build_crosswave_jobid_check.py`, SHA-256
+`3887d392e3d978e2c5788e9e03557101129d9f759917037b756dba6e3ed0cb33`,
+last changed at `35926fe708bea8a9b5cc22791505f245c8ad35be`.
+Those committed objects pin the frame counts and signature parameters
+used here.
 
 The draw artifact (`runs/e4_e5_audit_draw_v1.json`, committed when
 the sample is drawn) will contain: reader version and pu-file
@@ -206,9 +249,12 @@ sha256s, frame query (this document's §2 verbatim), stratum
 definitions and inclusion probabilities, the random seed
 (**registered now: 20260717**), sha256 of each selected job-pair's
 public-use identifiers, coding-manual and evidence-sheet versions,
-coder-assignment protocol, and counts. Replacements or exclusions
-are logged; the sample is never silently refreshed. All fields are
-public-use-derived; no restricted data exists in this design.
+coder-assignment protocol, and counts. The draw script itself must be
+committed and reviewed before execution and pin the RNG algorithm,
+sorted frame-key order, deterministic stratum allocation, and one-draw
+rule in addition to the seed. Replacements or exclusions are logged;
+the sample is never silently refreshed. All fields are public-use-
+derived; no restricted data exists in this design.
 
 ## 7. No leakage (ADR 0004 §2.6)
 
