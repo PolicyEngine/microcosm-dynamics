@@ -8374,40 +8374,88 @@ alternative denominator or waive one prerequisite.
 ### 15.4 Exact §3.1 replacement — fields retained, target binding removed
 
 The two base §3.1 rows at base-ratification lines 237–238 remain in the
-frozen person-year output registry, with these exact replacement
-definitions:
+frozen person-year output registry. Their changed definition bytes create
+`ledger_row_schema_specs.v2`: it has the exact eight-key shape, row kind,
+key/field order, encodings, invariants, and failure law of v1, but its
+`schema_version` is `ledger_row_schema_specs.v2` and the two field-spec
+definitions are exactly:
 
 | Estimand ID | Amendment-1 definition |
 |---|---|
 | `registered_covered_share_denominator_indicator` | Deterministic zero/one membership in the frozen **model-only** annual population universe used for covered-worker-incidence gates and diagnostics. It resolves through the registered age, annual-presence, employee/SE/both-type, unique-worker, duplicate-worker, zero-earner, and denominator rules, but makes no concordance claim to an absent official share source. It is not an official-target universe, target denominator, earnings outcome, or coverage outcome. |
 | `modeled_covered_worker_probability_analytic` | Analytic probability, under the registered joint wage/SE status mapping, that person taxable payroll is positive. It is the analytic selector for gates, evaluation diagnostics, and context comparisons; it is not target-bound and is not `proxy > 0`. |
 
+No other field-spec definition changes. Because the benefit-gap schema binds
+the complete base-row-schema hash, its operative literal becomes
+`benefit_gap_row_schema_specs.v2`; it differs from v1 only in its own schema
+literal and in `base_row_schema_sha256`, which hashes
+`ledger_row_schema_specs.v2`. The gap key, field, encoding, invariant, and
+failure laws remain byte-for-byte unchanged.
+
 The exact finite-joint-state law following the base table remains unchanged.
 So do `modeled_covered_worker_draw_indicator` and
 `modeled_covered_worker_draw_grid_fraction_20`, including their
 diagnostic-only status.
 
-The retained model-only annual diagnostic is
-`model_covered_worker_incidence_diagnostic`. Within correction draw \(d\) and
-verified calendar year \(y\), it is exactly
+The model-only denominator selector is the new exact literal
+`model_covered_worker_incidence_universe_selector.v1`. It selects each
+`(stable_person_id,calendar_year)` in the independently reconstructed
+`production_input_manifest.support_universe` exactly once after that
+manifest's registered age, annual-presence, and zero-earner rules. Multiple
+jobs, businesses, source components, and wage/SE classifications collapse to
+one person-year by stable-person key. Wage-only, SE-only, dual-type, and
+zero-positive-covered-payroll states are numerator outcomes, not denominator
+filters. Its weight is exactly the field named by
+`production_input_manifest.support_universe.weight_field`. The indicator is
+one exactly on that selector's person-years and zero otherwise; no target
+row, optional source block, official universe, or implementation default may
+alter it.
+
+Within projection draw \(p\) and verified calendar year \(y\), the retained
+model-only annual incidence statistic is exactly
 
 \[
 \frac{\sum_i w_i\,
-  \texttt{modeled_covered_worker_probability_analytic}_{i,y,d}}
+  \texttt{modeled_covered_worker_probability_analytic}_{i,y,p}}
 {\sum_i w_i\,
   \texttt{registered_covered_share_denominator_indicator}_{i,y}},
 \]
 
-where both sums use the same registered model universe and weight field and
-the denominator must be strictly positive. It has no official observation,
+where both sums use
+`model_covered_worker_incidence_universe_selector.v1` and its exact registered
+weight, and the denominator must be strictly positive.
+
+`evaluation_specs.v2` retains, without adding, deleting, or reordering a
+metric position, the v1 `incidence` modeled-worker and `downstream_annual`
+analytic covered-worker-incidence expansions. Every such v2 row has the same
+17-field object shape and base §8.2 coordinate expansion, with these exact
+values:
+
+| Field(s) | Amendment-1 value |
+|---|---|
+| `metric_id` | The same base §8.2 colon-joined positional ID for the retained `incidence` modeled-covered-worker or `downstream_annual` analytic-covered-worker-incidence row; only the registry version changes. |
+| `result_block` | `distribution_results` for the `incidence` position; `downstream_results` for the `downstream_annual` position. |
+| `source_fields` | `["modeled_covered_worker_probability_analytic","registered_covered_share_denominator_indicator"]` in that order. |
+| `population_selector` | `model_covered_worker_incidence_universe_selector.v1`. |
+| `weight_field` | The literal field reference in `production_input_manifest.support_universe.weight_field`. |
+| `stratum_id`, `reference_era_id`, `year_source_class`, `role`, `calendar_year`, `operative_claim_year`, `career_variant_id` | The exact unchanged base §8.2 `annual_provenance_context_expansion` and, for the `incidence` family, its unchanged registered aggregate strata, in the same positions and order. |
+| `statistic` | `survey_weighted_analytic_covered_worker_incidence`. |
+| `unit` | `share`. |
+| `draw_reduction` | `analytic_joint_state_within_projection_draw`. |
+| `stability_family` | `not_applicable`. |
+| `gate_role` | `diagnostic_only`. |
+
+The statistic uses the existing registered same-key positive-denominator
+ratio semantic recipe and reconstructed trusted root; neither recipe nor
+opcode chain gains an official-source input. It has no official observation,
 source cell, target row, loss, tolerance, evidentiary role, selection
-eligibility, or candidate-rescue effect. It publishes in §8.2's `incidence`
-diagnostic family. G01 independently reconstructs its complete annual
-person-year domain, G20 applies only if its registered reduction mode is
-`projection_cross_correction_draw`, and G22 verifies its selector,
-denominator, weight, same-key ratio, and corrected-root dependency. Thus the
-denominator indicator has an exact diagnostic consumer rather than a
-dangling definition.
+eligibility, or candidate-rescue effect. G01 independently reconstructs the
+complete annual person-year domain and exact selector membership; G22
+verifies the two source fields, selector, weight, same-key ratio, strictly
+positive denominator, analytic joint-state reduction, and corrected-root
+dependency. G20 does not apply because these rows do not cross correction
+draws. Thus the denominator indicator has exact diagnostic consumers rather
+than a dangling definition.
 
 The existing retained uses of
 `modeled_covered_worker_probability_analytic` remain controlling: every
@@ -8428,11 +8476,12 @@ methodology, domain, convergence, rank, and tolerance laws.**
 ### 15.5 Exact §6.2/§7 replacement — families, dependencies, and weights
 
 The changed family domain, order, dependency assignments, and weight law
-create `calibration_target_specs.v3`, `fit_selection_cell_identity.v2`, and
-`selection_spec.v2`. Their predecessors remain historical. Except for the
-changes stated here, the target object's exact 30-field shape, source/year/
-role/ancestry checks, transformation and selector schemas, tolerance tags,
-universe law, expansion law, and cell-scoped isolation law remain as ratified.
+create `calibration_target_specs.v3`, `candidate_specs.v2`,
+`fit_selection_cell_identity.v2`, and `selection_spec.v2`. Their predecessors
+remain historical. Except for the changes stated here, the target object's
+exact 30-field shape, source/year/role/ancestry checks, transformation and
+selector schemas, tolerance tags, universe law, expansion law, and
+cell-scoped isolation law remain as ratified.
 
 `calibration_target_specs.v3` expands exactly the following 14 families in
 this order, then ascending verified calendar year. It creates no
@@ -8440,12 +8489,12 @@ this order, then ascending verified calendar year. It creates no
 source-verified `optional_covered_share` block creates zero target objects
 unless a later ratified amendment expressly reactivates a family.
 
-| Target family | `dependency_group` | Exact official transformation and model selector | Loss | Raw family mass | Normalized effective weight | Role and selection law |
+| Target family | `dependency_group` | Exact official transformation and model selector | Loss | Raw family coefficient | Normalized effective weight | Role and selection law |
 |---|---|---|---|---:|---:|---|
 | `b2_wage_total_intensity` | `b2_component_system` | 4.B2 `c5/c11`; model `sum(covered_employee_wages_uncapped) / sum(b2_wage_worker_membership_probability_analytic)` | `squared_log_ratio` | 2 | \(1/3\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
-| `b2_se_total_intensity` | `b2_component_system` | 4.B2 `c8/c12`; model `sum(covered_se_net_earnings_pre_seca) / sum(b2_se_worker_membership_probability_analytic)`, where the numerator is the expected signed within-`se_aggregation_group_id` net concept before SECA factor, threshold, or cap | `squared_log_ratio` | 2 | \(1/3\) | Same exact role and selection law as the preceding family. |
-| `b11_se_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-W)/T`; model `sum(b11_se_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Same exact role and selection law. |
-| `b11_dual_type_worker_share` | `b11_worker_type_system` | 4.B11 `(W+S-T)/T`; model `sum(b11_dual_type_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Same exact role and selection law. |
+| `b2_se_total_intensity` | `b2_component_system` | 4.B2 `c8/c12`; model `sum(covered_se_net_earnings_pre_seca) / sum(b2_se_worker_membership_probability_analytic)`, where the numerator is the expected signed within-`se_aggregation_group_id` net concept before SECA factor, threshold, or cap | `squared_log_ratio` | 2 | \(1/3\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b11_se_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-W)/T`; model `sum(b11_se_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b11_dual_type_worker_share` | `b11_worker_type_system` | 4.B11 `(W+S-T)/T`; model `sum(b11_dual_type_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
 | `b11_wage_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-S)/T`; model `sum(b11_wage_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight and selection-ineligible because algebraically dependent. |
 | `b2_type_count_mix` | `b2_component_system` | 4.B2 `c12/(c11+c12)` and the analogous model marginal-count ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight and selection-ineligible; overlapping marginal counts are never unique workers. |
 | `b2_se_total_component_share` | `b2_component_system` | 4.B2 `c8/(c5+c8)` and the algebraically identical model component ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight dependency check only. |
@@ -8453,14 +8502,14 @@ unless a later ratified amendment expressly reactivates a family.
 | `b2_se_taxable_intensity` | `b2_component_system` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight. |
 | `b2_wage_taxable_fraction` | `b2_component_system` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight preserved employer-cap mismatch. |
 | `b2_se_taxable_fraction` | `b2_component_system` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight. |
-| `b11_taxable_earnings_component_reconciliation` | `b11_taxable_earnings_component_system` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components under `structural_dependence_only`; model `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence; literal residual retained with `rounding_interval_unavailable`. |
-| `b11_contributions_component_reconciliation` | `b11_contribution_component_system` | Literal displayed 4.B11 contribution total minus displayed wage and SE components under `structural_dependence_only`; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence; worker total is never summed because component worker counts overlap. |
+| `b11_taxable_earnings_component_reconciliation` | `b11_taxable_earnings_component_system` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components; the source relationship is `structural_dependence_only`, so the literal residual is retained with `rounding_interval_unavailable` and no equality/interval adjudication. The complete pinned 1968–2022 scan has zero such residuals. Model diagnostic is `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`. | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
+| `b11_contributions_component_reconciliation` | `b11_contribution_component_system` | Literal displayed 4.B11 contribution total minus displayed wage and SE contribution components, retained under the same `structural_dependence_only`, `rounding_interval_unavailable`, and no-equality/no-interval/no-rounding-inference law. The complete pinned 1968–2022 scan has `+1` or `-1` residuals only in 1969, 1971, 1986, 1993, 2001, 2010, 2019, and 2021, including 1969's `-1`. Model diagnostic is `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap. | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
 | `b11_se_contribution_share` | `b11_contribution_component_system` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight legal/accounting sibling diagnostic only. |
 
 The four selection-eligible families and only those families have positive
 mass. The active dependency-group masses and normalized weights are exactly:
 
-| `dependency_group` | Raw group mass | Normalized group weight | Positive-weight family subweights |
+| `dependency_group` | Raw group coefficient | Normalized group weight | Positive-weight family subweights |
 |---|---:|---:|---|
 | `b2_component_system` | 4 | \(4/6=2/3\) | \(1/2,1/2\) |
 | `b11_worker_type_system` | 2 | \(2/6=1/3\) | \(1/2,1/2\) |
@@ -8470,6 +8519,17 @@ mass. The active dependency-group masses and normalized weights are exactly:
 The IDs `covered_share_system_disjoint_source` and
 `covered_share_system_shared_source` are absent from every amendment-1
 registry.
+
+`candidate_specs.v2` retains exactly the three v1 candidate objects, in the
+same order, with the same 11-key shape and byte-identical candidate IDs,
+complexity ranks, era bases, parameter laws, post-2014 rules, links,
+admissible source classes, numeric specs, identification specs, and failure
+dispositions. Its `model_target_selectors` are the exact ordered projection
+of the 14 v3 families above and contain no covered-share family or selector.
+`modeled_covered_worker_probability_analytic` may remain a declared candidate
+diagnostic output needed by §15.4, but it is absent from
+`model_target_selectors` and cannot enter a target packet, loss, eligibility
+test, or selection comparison.
 
 The reassignment is exact and pro rata. Before amendment, the surviving
 families had weights \(1/4,1/4,1/8,1/8\), totaling \(3/4\). Normalizing their
@@ -8521,9 +8581,10 @@ RMS absolute log error no greater than
 `0.09531017980432493`. B11 worker-type validation requires RMS absolute
 share error no greater than `0.015` and every-cell absolute share error no
 greater than `0.03`. There is no covered-share tolerance. Every zero-weight
-family remains incapable of fitting, selecting, failing, or rescuing a
-candidate, and its original arithmetic/dependency disclosure remains in
-force.
+family remains incapable of entering fitting, candidate selection, or a
+family tolerance and cannot fail or rescue a candidate through those paths.
+Its original arithmetic/dependency disclosure and the independent G04/G06/G07
+correctness consequences remain in force.
 
 ### 15.6 Exact consequential replacements and complete reference ledger
 
