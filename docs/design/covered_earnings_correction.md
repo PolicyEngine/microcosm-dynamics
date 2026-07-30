@@ -8769,3 +8769,54 @@ universe concordance, model weights, target domains, candidate eligibility,
 hard gates, publication regardless, incidents, and fresh-registration
 dispositions—remain unchanged. Amendment 1 removes one impossible required
 source; it does not soften any surviving authority or execution gate.
+
+### 15.8 Amendment ratification and registration protocol
+
+Amendment 1 uses the same referee-rounds-then-ratify discipline as the base
+design. Drafting, review, or merge-request existence has no operative effect.
+The authorized order is:
+
+1. submit the complete append-only amendment to adversarial referee review
+   without an authority artifact, implementation, registration, fit,
+   evaluation, or model output in the amendment lane;
+2. answer every finding in the public review record, repeat referee rounds
+   until the exact final bytes receive an affirmative ratification verdict,
+   and verify the complete round-to-round diff;
+3. ratify those accepted bytes in one identifiable commit. That commit is the
+   **amendment-1 ratification commit**; the authoring commits in this branch
+   are not ratification;
+4. only afterward merge the separately referee-gated authority/extraction
+   and implementation work required by base §14.3, using the amendment-1
+   schema and registry versions and preserving fixture-only rehearsal;
+5. obtain a fresh §10.1 registration that binds the amendment-1 ratification
+   commit, the full amended design blob, every required authority/artifact/
+   registry/implementation byte, and a fresh output/claim namespace; then
+6. perform the unchanged prelaunch, sealed execution, incident, publication,
+   context, and certificate sequence in base §§9–14.
+
+The existing four-key registration `design` object is not enlarged. Its exact
+amendment-1 values are:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the 40-lowercase-hex amendment-1 ratification
+  commit, never the base commit alone, an authoring commit, a branch name, or
+  a placeholder;
+- `blob_sha256`: SHA-256 of the complete amended file at that exact
+  ratification commit; and
+- `revision`: JSON integer `3`.
+
+The repository proof remains exact: the configured path's HEAD blob must
+equal the blob at `design.ratification_commit`, and both must hash to
+`design.blob_sha256`. The immutable base-lineage commit
+`59fd058b943c2b9960af9cb98ecdec97709cc2dd` is bound inside §15.1 and must be
+an ancestor of the amendment ratification commit. This avoids adding an
+`amendment_commit` field while still making the amended bytes—not the base
+alone—the sole registered design.
+
+**Amendment 1 is inoperative unless and until its exact ratification commit
+is named by a validator-accepted fresh registration.** Before that point no
+builder, registry, candidate, or run may act as though the share family were
+removed or the weights reassigned. After ratification, changing any §15 byte,
+family, mass, optional-source state, version literal, or reactivation
+condition requires a new prospective amendment and fresh registration; it
+cannot be noted after launch.
