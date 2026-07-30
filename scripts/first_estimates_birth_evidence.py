@@ -134,6 +134,7 @@ PRODUCTION_SOURCE_PATHS = (
 )
 POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/artifacts.py"),
+    Path("src/populace_dynamics/data/kauffman_firms.py"),
     Path("src/populace_dynamics/firms/targets.py"),
     Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
     Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
