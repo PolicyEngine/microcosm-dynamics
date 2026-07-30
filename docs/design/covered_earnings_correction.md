@@ -11014,3 +11014,87 @@ source bytes:
 This is path precedence, not evidentiary blending. A deterministic-
 uncalibrated artifact remains exactly what its labels said even after a later
 calibrated artifact exists.
+
+### 16.10 Amendment ratification and fresh-registration protocol
+
+Amendment 2 uses the same referee-rounds-then-ratify discipline as Amendment
+1. Drafting, review, or merge-request existence has no operative effect. The
+authorized order is:
+
+1. submit the complete append-only §16 bytes to adversarial referee review
+   without an authority artifact, implementation, registration,
+   classification run, model output, evaluation, or context output in the
+   amendment lane;
+2. answer every finding in the public review record, repeat referee rounds
+   until the exact final bytes receive an affirmative ratification verdict,
+   and verify the complete round-to-round diff;
+3. ratify those accepted bytes in one identifiable commit. That commit is the
+   **amendment-2 ratification commit**; all authoring and referee-response
+   commits before it are not ratification;
+4. only afterward merge separately referee-gated A1/A3 authority work,
+   crosswalk/registry artifacts, implementation, and fixture preparation
+   required by §§14.3 and 16, using only fixture rehearsal before production;
+5. obtain a fresh §10.1-style registration that binds the amendment-2
+   ratification commit, the full revision-4 design blob, the independently
+   derived fitting-free path decision, every required authority/artifact/
+   registry/implementation byte, and the fresh fitting-free output/claim
+   namespace; then
+6. perform the applicable unchanged prelaunch, sealed execution, incident,
+   publication, separate context, certificate, and external merge sequence.
+
+The existing four-key registration `design` object is not enlarged. Its exact
+amendment-2 fitting-free values are:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the 40-lowercase-hex amendment-2 ratification
+  commit, never the base, Amendment-1, authoring, branch-name, or placeholder
+  identity;
+- `blob_sha256`: SHA-256 of the complete revision-4 file bytes at that exact
+  commit; and
+- `revision`: JSON integer `4`, excluding booleans.
+
+The repository proof is exact: the configured path's `HEAD` blob must equal
+the blob at `design.ratification_commit`, and both must hash to
+`design.blob_sha256`. The immutable immediate-base commit
+`15e3ca57eb92d8385e7ec893e60c460fad1f3a6e` must be an ancestor of the
+amendment-2 ratification commit; through it, the ratified-design commit
+`59fd058b943c2b9960af9cb98ecdec97709cc2dd` remains an ancestor. No second
+amendment field or mutable design alias is allowed.
+
+**Amendment 2 is inoperative unless and until its exact ratification commit is
+named by a validator-accepted fresh fitting-free registration.** After
+ratification but before that registration, step 4 may prepare the separately
+reviewed authority, artifact, registry, implementation, and fixture bytes. It
+may not open a production value, derive a production path from output,
+classify a production row, mint a production claim, lock a model, or execute
+an evaluation/context run. Before ratification, even that Amendment-2
+preparation is unauthorized.
+
+After registration, changing any §16 byte, deterministic literal, path law,
+authority disposition, empty-domain schema, gate, condition, label, context
+domain, or precedence rule requires a new prospective amendment and fresh
+registration. It cannot be noted after launch. Section 15.3's already frozen
+source-only successor transition remains available under its own exact law,
+but it changes no §16 byte and has only the reactivation effect permitted by
+§16.9.
+
+For completeness, the fitting-free replacement ledger is:
+
+| Base/Amendment-1 subject | Fitting-free controlling clause |
+|---|---|
+| §1 calibrated successor label | §16.7.1 exact deterministic-uncalibrated array. |
+| §§3–5 classification, measurement, aggregation, and draws | Retained machinery plus §§16.3 and 16.5.3 deterministic defaults/identity. |
+| §§5.3, 6.2, and 7 candidate/target/fitting/selection domains | Inapplicable only through §§16.4.1–16.4.2 canonical empty schemas and §16.5 capability absence. |
+| §4.1 verification/action trace | §16.3.1 and §16.5.1; eight direct rows stay required and V-B7 is target-only not applicable. |
+| §6.1 target artifact as correction input | Absent under §§16.4.1 and 16.5.2; historical evidence only. |
+| §8.1 G10/G14/G15/G17/G19/G21 | Exact replacements in §16.6. |
+| §8.1 every other gate | Unchanged under §16.6, including G20. |
+| §9 conditions and calibrated certificate fields | §§16.7.3–16.7.4. |
+| §10 calibrated configuration/model/result/sidecar/paths | §§16.5.2–16.5.5. |
+| §12 context report/certificate | §16.7.4 exact fitting-free successor; 15-series domain retained and ten no-fitting-loss families excluded. |
+| §14 ratification and execution sequence | This subsection plus every unchanged base ceremony law. |
+| §15 calibration/source reactivation | §16.9 precedence; source-only activation alone remains non-target. |
+
+Every pointer not listed in this ledger remains controlling without
+weakening. A fitting-free implementation may not infer that silence deletes
+an authority, gate, domain, consumer, ceremony, publication, or honesty law.
