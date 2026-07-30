@@ -9351,23 +9351,188 @@ Each embedded manifest is a
 `calibrated_authority_manifest.v1` object with exactly `schema_version`,
 `manifest_kind`, `ordered_authority_ids`, `rows`, `row_count`,
 `domain_sha256`, and `status`. `manifest_kind` is respectively
-`source_authority` or `methodology_authority`. The ordered IDs are the
-complete expected authority domain, including unavailable members. Every
-positional row has exactly `authority_id`, `authority_class`,
+`source_authority` or `methodology_authority`.
+
+The manifest domains and their verification programs are not supplied by a
+manifest, configuration, implementation, or registrant. They are the
+following two immutable instances of
+`calibrated_authority_verification_specs.v1`, each with exactly
+`schema_version`, `manifest_kind`, `ordered_authority_ids`, `rows`,
+`row_count`, and `failure_disposition`:
+
+```json
+[
+  {
+    "schema_version": "calibrated_authority_verification_specs.v1",
+    "manifest_kind": "source_authority",
+    "ordered_authority_ids": [
+      "ssa_covered_earnings_calibration_targets.vintage2"
+    ],
+    "rows": [
+      {
+        "authority_id": "ssa_covered_earnings_calibration_targets.vintage2",
+        "authority_class": "official_calibration_source",
+        "candidate_locator": {
+          "locator_type": "fixed_git_path",
+          "path": "data/external/ssa_covered_earnings_calibration_targets_vintage2.json"
+        },
+        "ordered_source_projections": [
+          "git_raw_bytes",
+          "strict_json_top_level_and_integrity",
+          "calibration_family_source_fact_projection"
+        ],
+        "expected_preimage_schema_version": "calibrated_authority_expected_preimage.v1",
+        "actual_preimage_schema_version": "calibrated_authority_actual_preimage.v1",
+        "verification_predicate_id": "verify_ssa_covered_earnings_calibration_targets_vintage2_v1",
+        "verification_result_schema_version": "calibrated_authority_verification_result.v1"
+      }
+    ],
+    "row_count": 1,
+    "failure_disposition": "abort_adjudication"
+  },
+  {
+    "schema_version": "calibrated_authority_verification_specs.v1",
+    "manifest_kind": "methodology_authority",
+    "ordered_authority_ids": [
+      "entry11_unit1b_membership_readjudication_v2"
+    ],
+    "rows": [
+      {
+        "authority_id": "entry11_unit1b_membership_readjudication_v2",
+        "authority_class": "calibration_membership_methodology",
+        "candidate_locator": {
+          "locator_type": "fixed_git_path",
+          "path": "data/external/covered_earnings_membership_adjudication_v2.json"
+        },
+        "ordered_source_projections": [
+          "git_raw_bytes",
+          "strict_json_top_level_and_integrity",
+          "facts",
+          "family_dispositions",
+          "registration_authority_adjudications"
+        ],
+        "expected_preimage_schema_version": "calibrated_authority_expected_preimage.v1",
+        "actual_preimage_schema_version": "calibrated_authority_actual_preimage.v1",
+        "verification_predicate_id": "verify_entry11_unit1b_membership_readjudication_v2_v1",
+        "verification_result_schema_version": "calibrated_authority_verification_result.v1"
+      }
+    ],
+    "row_count": 1,
+    "failure_disposition": "abort_adjudication"
+  }
+]
+```
+
+The outer array above is explanatory serialization of the two objects; it is
+not a third registry or an extension point. The source and methodology
+manifest `ordered_authority_ids`, row count, row order, ID, class, candidate
+locator, source-projection order, schema tags, and predicate ID must
+deep-equal the corresponding object above. Consequently each current
+manifest has exactly one positional row, including when its fixed path is
+absent. Adding an authority, alternate path, predicate, projection, or
+candidate-discovery rule requires a later ratified append-only version of
+this registry and a fresh adjudication; it cannot mutate v1.
+
+Every positional manifest row has exactly `authority_id`, `authority_class`,
 `availability`, `candidate_authority_identities`,
 `candidate_identity_count`, `candidate_identity_domain_sha256`,
-`verification_predicate_id`, and `status`. Each candidate identity has
+`verification_predicate_id`, `expected_preimage`, `actual_preimage`,
+`verification_result`, and `status`. Each candidate identity has
 exactly `path`, `schema_version`, `artifact_vintage_id`, and `sha256`, with a
 traversal-free path and 64-hex digest. `availability` is `present | absent |
 conflicting`: its count is respectively one, zero, or at least two; the
 domain hash covers the complete canonical candidate array. Candidate order
 is canonical `(path,artifact_vintage_id,schema_version,sha256)` order.
+
+`expected_preimage` is
+`calibrated_authority_expected_preimage.v1`, with exactly
+`schema_version`, `manifest_kind`, `authority_id`, `authority_class`,
+`candidate_locator`, `ordered_source_projections`,
+`expected_candidate_identity`, `verification_predicate_id`, and
+`design_identity_sha256`. For the source row,
+`expected_candidate_identity` is exactly:
+
+```json
+{
+  "path": "data/external/ssa_covered_earnings_calibration_targets_vintage2.json",
+  "schema_version": "ssa_covered_earnings_calibration_targets.v2",
+  "artifact_vintage_id": "ssa_covered_earnings_calibration_targets.vintage2",
+  "sha256": "fe018587a5b32188088078ef557dceca67f26352ebfc424e1d1622416cbdcf55"
+}
+```
+
+For the methodology row it is exactly:
+
+```json
+{
+  "path": "data/external/covered_earnings_membership_adjudication_v2.json",
+  "schema_version": "covered_earnings_membership_adjudication.v2",
+  "artifact_vintage_id": "entry11_unit1b_membership_readjudication_v2",
+  "sha256": "7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14"
+}
+```
+
+The methodology `artifact_vintage_id` is an envelope value; §16.2's exact
+legacy-envelope law below is the sole way to derive it. Neither expected
+preimage asserts that a missing fixed path exists.
+
+`actual_preimage` is `calibrated_authority_actual_preimage.v1`, with exactly
+`schema_version`, `manifest_kind`, `authority_id`, `candidate_locator`,
+`ordered_source_projections`, `candidate_authority_identities`,
+`source_projection_rows`, `source_projection_count`,
+`source_projection_domain_sha256`, and `authority_cutoff_sha256`. Each
+source-projection row has exactly `projection_id`, `availability`,
+`value_type`, and `value_identity_sha256`; its ID is the same-position
+registry literal, its availability is `present | absent | conflicting`, its
+type is fixed positionally: `git_raw_bytes` has `raw_git_bytes`,
+`strict_json_top_level_and_integrity` has `strict_json`, and every other
+registered projection has `canonical_json_projection`. Those are the only
+three types. Its digest binds the complete raw bytes or canonical projected
+value. The rows
+are constructed from the fixed Git path and strict-parsed artifact, never
+from a manifest-provided pointer. Count and hash cover this complete
+positional array, including unfavorable evidence.
+
+`verification_result` is
+`calibrated_authority_verification_result.v1`, with exactly
+`schema_version`, `authority_id`, `verification_predicate_id`,
+`expected_preimage_sha256`, `actual_preimage_sha256`,
+`candidate_results`, `aggregate_result`, and `failure_code`.
+Each candidate result has exactly `candidate_identity_sha256`,
+`predicate_result`, and `failure_code`; the predicate result is a JSON
+boolean, the code is null exactly on true and is the sole literal
+`predicate_failed` on false, and the array is the complete same-length,
+same-order projection of `candidate_authority_identities`. The aggregate result is
+`verified | failed | not_evaluable | conflict`: it is `verified` or `failed`
+for the respective true or false unique candidate, `not_evaluable` for
+absence, and `conflict` for multiple candidates. Its failure code is
+respectively null, `predicate_failed`, `fixed_path_absent`, or
+`multiple_candidates_at_fixed_path`. This typed object, not an untyped
+string or digest equality chosen by an implementation, is the only predicate
+result.
+
+The two manifest predicate IDs are executable equations, not labels.
+`verify_ssa_covered_earnings_calibration_targets_vintage2_v1` is true iff the
+fixed Git path yields the unique exact expected candidate identity, the raw
+bytes hash to its digest, strict parsing yields exactly the registered v2
+schema/vintage and all §15.3 top-level, integrity, lineage, and semantic
+equations pass, and the complete family-source-fact projection matches those
+same bytes. `verify_entry11_unit1b_membership_readjudication_v2_v1` is true
+iff the fixed path yields the unique expected envelope candidate through the
+sole legacy-envelope derivation below, its raw/strict/facts/family/
+registration-authority projections are complete and same-byte-derived, and
+every existing semantic and integrity check passes. Missing is
+`not_evaluable`, multiple is `conflict`, and a present candidate failing any
+conjunct is false; no comparator callback or implementation result enters
+either equation.
+
 Manifest-row status passes when this is a faithful, complete encoding of the
 observed authority state, including absence or conflict evidence; it does not
 assert that the requirement is satisfied or make a conflict decisive. IDs
-exact-cover the expected kind, count equals both manifest array lengths, the
-manifest domain hash covers all complete rows, and manifest status passes iff
-every row-evidence status passes. The two cutoff
+exact-cover the same-kind registry, count equals both manifest array lengths,
+the manifest domain hash covers all complete rows, and manifest status passes
+iff every expected/actual/result schema, predicate, projection, and
+row-evidence equation passes. The two cutoff
 manifest hashes are respectively SHA-256 of canonical bytes of these
 complete embedded objects.
 
@@ -9456,21 +9621,232 @@ and must be `pass` for a valid absent/conflicting/failed requirement.
 ```
 
 Its count is integer seven and its domain hash is SHA-256 of the canonical
-ID array. `global_requirement_rows` has exactly seven positional rows. Each
-has exactly `requirement_id`, `requirement_class`,
-`expected_identity_sha256`, `actual_identity_sha256`,
-`requirement_satisfied`, `evidence_identity_sha256`, and `status`. The closed classes are
+ID array. The same seven positions are the immutable rows of
+`calibrated_global_requirement_verification_specs.v1`; each spec row has
+exactly `requirement_id`, `requirement_class`,
+`verification_predicate_id`, `expected_preimage_schema_version`,
+`actual_preimage_schema_version`, `ordered_source_projections`, and
+`verification_result_schema_version`. The complete rows are:
+
+```json
+[
+  {
+    "requirement_id": "calibrated_target_input_identity_registered",
+    "requirement_class": "registered_domain",
+    "verification_predicate_id": "verify_calibrated_target_input_identity_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:calibration_target_input_identity",
+      "configuration:calibration_target_input",
+      "git_cutoff:calibration_target_input_raw_bytes"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  },
+  {
+    "requirement_id": "calibrated_target_registry_complete",
+    "requirement_class": "registered_domain",
+    "verification_predicate_id": "verify_calibrated_target_registry_complete_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:calibration_target_specs_v3",
+      "configuration:calibration_target_specs",
+      "coordinator:calibration_target_specs_resolved_source_projection"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  },
+  {
+    "requirement_id": "calibrated_candidate_registry_complete",
+    "requirement_class": "registered_domain",
+    "verification_predicate_id": "verify_calibrated_candidate_registry_complete_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:candidate_reference_era_specs",
+      "ratified_design:candidate_specs_v2",
+      "configuration:candidate_reference_era_specs",
+      "configuration:candidate_specs"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  },
+  {
+    "requirement_id": "calibrated_selection_registry_complete",
+    "requirement_class": "registered_domain",
+    "verification_predicate_id": "verify_calibrated_selection_registry_complete_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:selection_spec_v2",
+      "configuration:selection_spec"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  },
+  {
+    "requirement_id": "calibrated_target_value_capability_graph_complete",
+    "requirement_class": "capability_graph",
+    "verification_predicate_id": "verify_calibrated_target_value_capability_graph_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:calibrated_target_principal_and_capability_specs",
+      "git_cutoff:calibrated_runner_transitive_static_graph",
+      "configuration:rng_access_specs",
+      "configuration:filesystem_isolation_specs"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  },
+  {
+    "requirement_id": "calibrated_runner_environment_capability_graph_registered",
+    "requirement_class": "environment",
+    "verification_predicate_id": "verify_calibrated_runner_environment_graph_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:production_input_manifest.environment_spec",
+      "configuration:invocation.interpreter_identity",
+      "git_cutoff:environment_lock_raw_bytes",
+      "live_prebranch:interpreter_lock_and_package_graph"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  },
+  {
+    "requirement_id": "fresh_calibrated_output_namespace_available",
+    "requirement_class": "namespace",
+    "verification_predicate_id": "verify_fresh_calibrated_output_namespace_v1",
+    "expected_preimage_schema_version": "calibrated_global_expected_preimage.v1",
+    "actual_preimage_schema_version": "calibrated_global_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:output_paths",
+      "git_parent:terminal_namespace_history",
+      "live_prebranch:descriptor_lstat_namespace_absence"
+    ],
+    "verification_result_schema_version": "calibrated_global_verification_result.v1"
+  }
+]
+```
+
+This array is the complete row value of the named registry in the displayed
+order; the registry's outer object has exactly `schema_version`,
+`ordered_requirement_ids`, `rows`, `row_count`, and
+`failure_disposition`, with the seven-ID array above, count seven, and
+`abort_adjudication`. The configuration and implementation do not contain a
+registry override.
+
+The seven `verification_predicate_id` values have these exhaustive
+same-position true equations:
+
+1. `verify_calibrated_target_input_identity_v1`: the configured four-key
+   target identity equals the ratified identity and the cutoff path's strict
+   schema/vintage/raw-byte digest.
+2. `verify_calibrated_target_registry_complete_v1`: the configured
+   `calibration_target_specs.v3` deep-equals the ratified registry and its
+   independently expanded complete source projection.
+3. `verify_calibrated_candidate_registry_complete_v1`: both configured
+   candidate registries deep-equal their two ratified registries, with exact
+   row order/count/keys and no extra candidate.
+4. `verify_calibrated_selection_registry_complete_v1`: the configured
+   `selection_spec.v2` deep-equals the ratified object in every field.
+5. `verify_calibrated_target_value_capability_graph_v1`: the coordinator
+   starts at the fixed calibrated runner, computes the complete transitive
+   code/schema/principal/grant/IPC/import/callback graph from the cutoff Git
+   tree, and its ordered nodes/edges and registered RNG/isolation projections
+   equal the ratified target-capability graph.
+6. `verify_calibrated_runner_environment_graph_v1`: the once-opened lock,
+   interpreter identity, package-name/version/source expansion, and live
+   stable descriptors equal the configured environment spec and immutable
+   lock bytes.
+7. `verify_fresh_calibrated_output_namespace_v1`: every configured terminal
+   path is the next lawful suffix under the complete Git-parent history and
+   every no-follow stable descriptor/lstat observation proves it absent.
+
+For item 5, graph nodes are the canonical
+`covered_earnings_prebranch_static_capability_graph.v1` object, with exactly
+`schema_version`, `graph_root`, `ordered_nodes`, `ordered_edges`,
+`node_count`, `edge_count`, `node_domain_sha256`, and
+`edge_domain_sha256`. `graph_root` has exactly `runner_identity_sha256` and
+`entrypoint_node_id`. Each node has exactly `node_id`, `node_class`,
+`principal_id`, `implementation_identity_sha256`, and `symbol_locator`;
+`node_class` is `runner | principal | constructor | callable | schema |
+descriptor_broker | ipc_endpoint`, and `symbol_locator` has exactly
+`repository_relative_path`, `qualified_symbol_or_schema_path`,
+`blob_sha256`, `byte_start`, and `byte_end_exclusive`. Offsets are
+nonnegative JSON integers with end greater than start and select the exact
+Git-blob bytes defining the symbol/schema.
+
+`node_id` is literal `graph-node:` plus SHA-256 of canonical
+`[node_class,principal_id,implementation_identity_sha256,symbol_locator]`.
+A principal ID is its exact registered principal literal; an otherwise
+reachable unregistered principal is still retained and receives literal
+`graph-principal:` plus SHA-256 of its constructor `symbol_locator`.
+Each edge has exactly `edge_id`, `edge_class`, `from_node_id`, `to_node_id`,
+`source_locator`, and `route_id`; its locator has the same five-key shape.
+The closed edge classes are `entrypoint_call | import | callback |
+schema_reference | descriptor_grant | ipc_route`.
+`route_id` is literal `graph-route:` plus SHA-256 of canonical
+`[edge_class,from_node_id,to_node_id,source_locator]`, and `edge_id` is
+literal `graph-edge:` plus SHA-256 of canonical
+`[edge_class,from_node_id,to_node_id,route_id]`. Thus neither node nor route
+IDs are producer names.
+
+Reachability starts only at the fixed runner entrypoint and closes all six
+edge classes to a fixed point. Nodes order by
+`(principal_id,repository_relative_path,qualified_symbol_or_schema_path,
+byte_start,byte_end_exclusive,node_id)` and edges by
+`(edge_class,from_node_id,to_node_id,route_id,edge_id)`. Counts equal array
+lengths and domain hashes cover the complete canonical arrays. This one
+schema, ID construction, order, and canonicalization is used by the
+calibrated global graph and fitting-free positions 2 and 20; no alternate
+graph serialization is valid.
+Every predicate result is true iff every stated conjunct holds and false
+otherwise. These equations, not a callback named by the implementation,
+define the registered predicate IDs.
+
+`global_requirement_rows` has exactly seven positional rows. Each has
+exactly `requirement_id`, `requirement_class`,
+`verification_predicate_id`, `expected_preimage`, `actual_preimage`,
+`verification_result`, `requirement_satisfied`,
+`evidence_identity_sha256`, and `status`. The closed classes are
 `registered_domain | capability_graph | environment | namespace`;
 the first four IDs have `registered_domain`, the fifth has
 `capability_graph`, the sixth has `environment`, and the seventh has
-`namespace`. Expected identities are independently reconstructed before
-production-value access; actual identities hash the complete registered
-domain, implementation graph, environment graph, or Git/descriptor-derived
-namespace disposition and remain nonnull on a mismatch. Status passes only
-when the ID/class are positional, both digests are 64 lowercase hex, and the
-boolean faithfully equals their equality; the boolean, not evidence status,
-is false on a valid mismatch. These rows are global requirements, never fictional
-source/methodology authorities.
+`namespace`.
+
+The expected and actual preimages have their respective registry schema
+literal and exactly `schema_version`, `requirement_id`,
+`verification_predicate_id`, `ordered_source_projections`,
+`source_projection_rows`, `source_projection_count`,
+`source_projection_domain_sha256`, and `design_or_cutoff_identity_sha256`.
+Every projection row has exactly `projection_id`, `value_type`, and
+`value_identity_sha256`; its ID exact-copies the same-position registry
+literal. The closed types are `canonical_json | raw_git_bytes | git_tree |
+stable_descriptor | namespace_scan`. Type is not selected by the producer:
+a `ratified_design:`, `configuration:`, or `coordinator:` projection is
+`canonical_json`;
+a `git_cutoff:` projection ending in `_raw_bytes` is `raw_git_bytes` and
+every other `git_cutoff:` projection is `git_tree`;
+`live_prebranch:descriptor_lstat_namespace_absence` is `namespace_scan` and
+every other `live_prebranch:` projection is `stable_descriptor`;
+`git_parent:terminal_namespace_history` is `git_tree`. No other prefix or
+type pairing is valid. The `coordinator:` root is the trusted validator's
+independent expansion under the ratified target-row law; it is not a
+configuration member or implementation result. The expected side is independently
+reconstructed from ratified design and registered immutable identities; the
+actual side serializes the complete configured, Git, live-environment, or
+namespace observation, including an unfavorable graph. Counts and hashes
+cover the complete arrays.
+
+`verification_result` is
+`calibrated_global_verification_result.v1`, with exactly
+`schema_version`, `requirement_id`, `verification_predicate_id`,
+`expected_preimage_sha256`, `actual_preimage_sha256`, `result`, and
+`failure_code`. `result` is a JSON boolean; the code is null on true and the
+literal `predicate_mismatch` on false. The expected and actual digests remain
+nonnull on a mismatch. Status passes only when the ID/class/predicate/schema
+tags and every positional projection are exact and the boolean faithfully
+equals the registered predicate result; the boolean, not evidence status,
+is false on a valid mismatch. These rows are global requirements, never
+fictional source/methodology authorities.
 
 The family `evidence_identity_sha256` hashes canonical
 `calibrated_family_registrability_evidence.v1`, with exactly
@@ -9504,14 +9880,13 @@ the complete positional rows referenced by the ref array.
 Each global `evidence_identity_sha256` hashes canonical
 `calibrated_global_requirement_evidence.v1`, with exactly
 `schema_version`, `requirement_id`, `requirement_class`,
-`expected_identity_sha256`, `actual_identity_sha256`,
-`evidence_input_identity_sha256s`, `evidence_input_count`,
-`evidence_input_domain_sha256`, `verification_result`,
-`requirement_satisfied`, and
-`authority_cutoff_sha256`. The input array exact-covers all registered bytes
-or descriptor identities used to derive the two compared digests; count and
-domain hash bind it. Neither evidence schema contains its own digest or the
-enclosing row status.
+`verification_predicate_id`, `expected_preimage`, `actual_preimage`,
+`verification_result`, `requirement_satisfied`, and
+`authority_cutoff_sha256`. The three nested objects deep-equal the same-row
+objects above; their complete projection arrays exact-cover all registered
+bytes, graphs, or descriptor identities used by the predicate. The boolean
+equals `verification_result.result`. Neither evidence schema contains its
+own digest or the enclosing row status.
 
 `calibrated_domain_identity_sha256` is SHA-256 of canonical
 `calibrated_registrability_domain_identity.v1`, with exactly
@@ -9603,8 +9978,436 @@ The separately reconstructed fitting-free authority preimage is
 ]
 ```
 
-Every positional row has exactly `requirement_id`, `requirement_class`,
-`requirement_satisfied`, `evidence_identity_sha256`, and `status`; the closed classes are
+Those IDs and the following same-position rows are the complete immutable
+`fitting_free_requirement_verification_specs.v1` registry. The registry has
+exactly `schema_version`, `ordered_requirement_ids`, `rows`, `row_count`, and
+`failure_disposition`; its schema is its name, its ID array is the array
+above, its count is integer 22, and failure is `abort_registration`. Each
+spec row has exactly `requirement_id`, `requirement_class`,
+`verification_predicate_id`, `expected_preimage_schema_version`,
+`actual_preimage_schema_version`, `ordered_source_projections`,
+`verification_result_schema_version`, and `cross_binding`:
+
+```json
+[
+  {
+    "requirement_id": "amendment_2_design_identity",
+    "requirement_class": "design",
+    "verification_predicate_id": "verify_amendment_2_design_identity_v1",
+    "expected_preimage_schema_version": "exact_identity_expected_preimage.v1",
+    "actual_preimage_schema_version": "exact_identity_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:amendment_2_design_identity",
+      "configuration:design",
+      "git_cutoff:docs/design/covered_earnings_correction.md"
+    ],
+    "verification_result_schema_version": "exact_identity_verification_result.v1",
+    "cross_binding": "receipt_core:amendment_2_design_identity"
+  },
+  {
+    "requirement_id": "fitting_free_implementation_identity",
+    "requirement_class": "implementation",
+    "verification_predicate_id": "verify_fitting_free_implementation_identity_v1",
+    "expected_preimage_schema_version": "implementation_graph_expected_preimage.v1",
+    "actual_preimage_schema_version": "implementation_graph_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:implementation_commit",
+      "ratified_design:fitting_free_runner_root",
+      "git_implementation:fitting_free_runner_transitive_code_schema_descriptor_graph",
+      "git_cutoff:fitting_free_runner_transitive_code_schema_descriptor_graph"
+    ],
+    "verification_result_schema_version": "implementation_graph_verification_result.v1",
+    "cross_binding": "g15:prebranch_capability_graph_implementation_projection_sha256"
+  },
+  {
+    "requirement_id": "A1",
+    "requirement_class": "registration_authority",
+    "verification_predicate_id": "verify_fitting_free_a1_model_universe_authority_v1",
+    "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+    "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:fitting_free_model_input_authority_results.rows/0",
+      "configuration:fitting_free_model_input_authority_results.rows/0",
+      "capture_primary:a1_authority_identity"
+    ],
+    "verification_result_schema_version": "authority_predicate_verification_result.v1",
+    "cross_binding": "capture_primary:a1_authority_identity"
+  },
+  {
+    "requirement_id": "A2",
+    "requirement_class": "registration_authority",
+    "verification_predicate_id": "verify_fitting_free_a2_weight_field_authority_v1",
+    "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+    "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:fitting_free_model_input_authority_results.rows/1",
+      "configuration:fitting_free_model_input_authority_results.rows/1",
+      "capture_primary:a2_authority_identity"
+    ],
+    "verification_result_schema_version": "authority_predicate_verification_result.v1",
+    "cross_binding": "capture_primary:a2_authority_identity"
+  },
+  {
+    "requirement_id": "A3",
+    "requirement_class": "registration_authority",
+    "verification_predicate_id": "verify_fitting_free_a3_weight_source_authority_v1",
+    "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+    "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:fitting_free_model_input_authority_results.rows/2",
+      "configuration:fitting_free_model_input_authority_results.rows/2",
+      "capture_primary:a3_authority_identity",
+      "capture_sidecar:input_hashes"
+    ],
+    "verification_result_schema_version": "authority_predicate_verification_result.v1",
+    "cross_binding": "capture_primary_and_sidecar:a3_source_and_keyset_closure"
+  },
+  {
+    "requirement_id": "historical_coverage_rules",
+    "requirement_class": "legal_authority",
+    "verification_predicate_id": "verify_historical_coverage_rules_identity_v1",
+    "expected_preimage_schema_version": "exact_identity_expected_preimage.v1",
+    "actual_preimage_schema_version": "exact_identity_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:historical_coverage_rule_specs",
+      "configuration:legal_rule_input",
+      "configuration:historical_coverage_rule_specs",
+      "git_cutoff:legal_rule_input_raw_bytes"
+    ],
+    "verification_result_schema_version": "exact_identity_verification_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "psid_source_field_inventory",
+    "requirement_class": "inventory_authority",
+    "verification_predicate_id": "verify_psid_source_field_inventory_identity_v1",
+    "expected_preimage_schema_version": "exact_identity_expected_preimage.v1",
+    "actual_preimage_schema_version": "exact_identity_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:psid_source_field_inventory_input",
+      "git_cutoff:psid_source_field_inventory_raw_bytes",
+      "coordinator:strict_parsed_inventory_identity"
+    ],
+    "verification_result_schema_version": "exact_identity_verification_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "psid_covered_earnings_crosswalk_v3",
+    "requirement_class": "crosswalk_authority",
+    "verification_predicate_id": "verify_psid_covered_earnings_crosswalk_v3_identity_v1",
+    "expected_preimage_schema_version": "exact_identity_expected_preimage.v1",
+    "actual_preimage_schema_version": "exact_identity_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:psid_covered_earnings_crosswalk_v3",
+      "configuration:psid_crosswalk_input",
+      "git_cutoff:psid_crosswalk_input_raw_bytes",
+      "coordinator:strict_parsed_crosswalk_identity"
+    ],
+    "verification_result_schema_version": "exact_identity_verification_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B1",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b1_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/0",
+      "configuration:verification_claim_results.rows/0",
+      "coordinator:claim_authority_inventory_closure/0"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B2",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b2_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/1",
+      "configuration:verification_claim_results.rows/1",
+      "coordinator:claim_authority_inventory_closure/1"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B3",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b3_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/2",
+      "configuration:verification_claim_results.rows/2",
+      "coordinator:claim_authority_inventory_closure/2"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B4",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b4_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/3",
+      "configuration:verification_claim_results.rows/3",
+      "coordinator:claim_authority_inventory_closure/3"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B5",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b5_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/4",
+      "configuration:verification_claim_results.rows/4",
+      "coordinator:claim_authority_inventory_closure/4"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B6",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b6_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/5",
+      "configuration:verification_claim_results.rows/5",
+      "coordinator:claim_authority_inventory_closure/5"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B8",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b8_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/7",
+      "configuration:verification_claim_results.rows/7",
+      "coordinator:claim_authority_inventory_closure/7"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "V-B9",
+    "requirement_class": "verification_claim",
+    "verification_predicate_id": "verify_fitting_free_claim_v_b9_v1",
+    "expected_preimage_schema_version": "verification_claim_expected_preimage.v1",
+    "actual_preimage_schema_version": "verification_claim_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:verification_claim_specs.rows/8",
+      "configuration:verification_claim_results.rows/8",
+      "coordinator:claim_authority_inventory_closure/8"
+    ],
+    "verification_result_schema_version": "verification_claim_binding_result.v1",
+    "cross_binding": null
+  },
+  {
+    "requirement_id": "fitting_free_target_domain_specs",
+    "requirement_class": "empty_domain",
+    "verification_predicate_id": "verify_fitting_free_target_domain_empty_v1",
+    "expected_preimage_schema_version": "empty_domain_expected_preimage.v1",
+    "actual_preimage_schema_version": "empty_domain_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:fitting_free_target_domain_specs",
+      "configuration:fitting_free_target_domain_specs",
+      "coordinator:reconstructed_fitting_free_target_domain_result"
+    ],
+    "verification_result_schema_version": "empty_domain_verification_result.v1",
+    "cross_binding": "g15:prebranch_target_domain_identity_sha256"
+  },
+  {
+    "requirement_id": "fitting_free_model_choice_specs",
+    "requirement_class": "empty_domain",
+    "verification_predicate_id": "verify_fitting_free_model_choice_domain_empty_v1",
+    "expected_preimage_schema_version": "empty_domain_expected_preimage.v1",
+    "actual_preimage_schema_version": "empty_domain_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:fitting_free_model_choice_specs",
+      "configuration:fitting_free_model_choice_specs",
+      "coordinator:reconstructed_fitting_free_model_choice_result"
+    ],
+    "verification_result_schema_version": "empty_domain_verification_result.v1",
+    "cross_binding": "g15:prebranch_model_choice_domain_identity_sha256"
+  },
+  {
+    "requirement_id": "deterministic_zero_fit_model_specs",
+    "requirement_class": "deterministic_model",
+    "verification_predicate_id": "verify_deterministic_zero_fit_model_specs_v1",
+    "expected_preimage_schema_version": "resolved_registry_expected_preimage.v1",
+    "actual_preimage_schema_version": "resolved_registry_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:deterministic_zero_fit_model_specs",
+      "configuration:deterministic_zero_fit_model_specs",
+      "coordinator:fully_resolved_37_rule_preimage"
+    ],
+    "verification_result_schema_version": "resolved_registry_verification_result.v1",
+    "cross_binding": "g19:registered_deterministic_rule_identity_sha256"
+  },
+  {
+    "requirement_id": "fitting_free_forbidden_capability_graph",
+    "requirement_class": "capability_graph",
+    "verification_predicate_id": "verify_fitting_free_forbidden_capability_graph_v1",
+    "expected_preimage_schema_version": "capability_graph_expected_preimage.v1",
+    "actual_preimage_schema_version": "capability_graph_actual_preimage.v1",
+    "ordered_source_projections": [
+      "ratified_design:deterministic_zero_fit_model_specs.forbidden_capabilities",
+      "ratified_design:filesystem_isolation_specs.fitting_free.v1.assertions",
+      "git_implementation:fitting_free_runner_transitive_static_graph",
+      "coordinator:complete_prebranch_principal_grant_ipc_import_callback_graph"
+    ],
+    "verification_result_schema_version": "capability_graph_absence_verification_result.v1",
+    "cross_binding": "g15:prebranch_capability_graph_identity_sha256"
+  },
+  {
+    "requirement_id": "fitting_free_runner_environment_capability_graph",
+    "requirement_class": "environment",
+    "verification_predicate_id": "verify_fitting_free_runner_environment_graph_v1",
+    "expected_preimage_schema_version": "runner_environment_expected_preimage.v1",
+    "actual_preimage_schema_version": "runner_environment_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:production_input_manifest.inputs/environment_lock",
+      "configuration:production_input_manifest.environment_spec",
+      "configuration:invocation.interpreter_identity",
+      "live_prebranch:environment_lock_descriptor_identity",
+      "live_prebranch:interpreter_and_package_graph"
+    ],
+    "verification_result_schema_version": "runner_environment_verification_result.v1",
+    "cross_binding": "sidecar:prebranch_runner_environment_identity_sha256"
+  },
+  {
+    "requirement_id": "fresh_fitting_free_output_namespace_available",
+    "requirement_class": "namespace",
+    "verification_predicate_id": "verify_fresh_fitting_free_output_namespace_v1",
+    "expected_preimage_schema_version": "fresh_namespace_expected_preimage.v1",
+    "actual_preimage_schema_version": "fresh_namespace_actual_preimage.v1",
+    "ordered_source_projections": [
+      "configuration:output_paths",
+      "coordinator:selected_output_paths_sha256",
+      "git_parent:terminal_attempt_and_registration_suffix_projection",
+      "live_prebranch:descriptor_lstat_namespace_absence_rows"
+    ],
+    "verification_result_schema_version": "fresh_namespace_verification_result.v1",
+    "cross_binding": "receipt_configuration_namespace_identity_and_claim_path_projection"
+  }
+]
+```
+
+Every source-projection prefix above is one of the closed roots
+`ratified_design`, `configuration`, `git_implementation`, `git_cutoff`,
+`git_parent`, `coordinator`, `capture_primary`, `capture_sidecar`,
+or `live_prebranch`. They resolve respectively to the
+ratification-commit design blob; the staged selected-configuration field
+tree; the registered implementation tree; the final authority-cutoff tree;
+that tree's single parent; coordinator results reconstructed under this
+section; the accepted capture pair; and stable prebranch descriptor
+observations. The staged configuration root contains only the literal nested
+fields named by these projections, excludes `registration_reference` and
+every receipt/domain/result digest, and must later byte-equal those fields in
+the final receipt-bound configuration.
+The special segment
+`production_input_manifest.inputs/environment_lock` means the unique array
+row whose `input_id` is literal `environment_lock`, not an array index or
+caller key; zero or multiple matching rows fails projection resolution.
+Every root
+identity is already nonnull and hash-bound by the adjudication, capture,
+configuration, or receipt. Text after the colon is a literal JSON
+Pointer-like member path or the named closed projection defined in §16; no
+wildcard expansion, caller path, implementation row, graph node, source
+array, or authority ID can alter it. Projection values remain serialized on
+a valid negative.
+
+The 22 `verification_predicate_id` values denote the following closed
+equations. A result is true iff every conjunct in its same-position equation
+holds and false otherwise:
+
+1. `verify_amendment_2_design_identity_v1`: the staged configuration design
+   deep-equals the ratified four-key Amendment-2 identity and the cutoff
+   design bytes have its exact blob digest.
+2. `verify_fitting_free_implementation_identity_v1`: the registered
+   implementation commit and cutoff carry the identical fixed runner root
+   and identical complete reachable node/edge graph under the canonical
+   graph grammar above.
+3. `verify_fitting_free_a1_model_universe_authority_v1`: the positional A1
+   row satisfies every §16.4.3 A1 predicate and deep-equals the accepted
+   capture-primary A1 identity.
+4. `verify_fitting_free_a2_weight_field_authority_v1`: the positional A2 row
+   is the exact five-field literal §16.4.3 identity and deep-equals the
+   capture-primary A2 identity.
+5. `verify_fitting_free_a3_weight_source_authority_v1`: the positional A3 row
+   satisfies every path/schema/vintage/hash/keyset/weight predicate in
+   §16.4.3, deep-equals the capture primary, and exact-matches the sidecar's
+   same source input.
+6. `verify_historical_coverage_rules_identity_v1`: the legal input's stable
+   Git bytes, configured identity, and strict-parsed rule registry all equal
+   the ratified complete historical-rule registry.
+7. `verify_psid_source_field_inventory_identity_v1`: the configured
+   inventory identity equals the stable cutoff blob and its strict parse
+   exact-covers the independently derived purpose/slot domain.
+8. `verify_psid_covered_earnings_crosswalk_v3_identity_v1`: the configured v3
+   identity equals the stable cutoff blob and its strict parse exact-covers
+   the independently derived inventory/role/component domain under
+   §16.5.1.
+9. Each of `verify_fitting_free_claim_v_b1_v1` through
+   `verify_fitting_free_claim_v_b6_v1`, then
+   `verify_fitting_free_claim_v_b8_v1` and
+   `verify_fitting_free_claim_v_b9_v1`, applies to its fixed displayed
+   position: the spec row exact-matches the ratified same-ID row, the result
+   row is independently reconstructed from the spec-declared complete
+   authority-role and affected-inventory closure, and every required
+   disposition/evidence equation in §16.5.1 passes. No result row can attest
+   itself.
+10. `verify_fitting_free_target_domain_empty_v1`: the configured target spec
+    deep-equals §16.4.1 and the coordinator-reconstructed result has every
+    exact empty array, zero count, canonical-empty hash, and pass literal.
+11. `verify_fitting_free_model_choice_domain_empty_v1`: the configured
+    model-choice spec deep-equals §16.4.2 and the reconstructed result has
+    every exact empty array, zero count, canonical-empty hash, registered
+    model ID, and pass literal.
+12. `verify_deterministic_zero_fit_model_specs_v1`: the configured model spec
+    deep-equals the ratified object and all 37 registered IDs resolve in
+    order to their complete rule preimages under §16.3.
+13. `verify_fitting_free_forbidden_capability_graph_v1`: the complete
+    prebranch graph rooted at the fixed fitting-free runner contains no node
+    reachable through any of the 12 forbidden capability classes and its
+    target/model-choice exact-key projections are empty.
+14. `verify_fitting_free_runner_environment_graph_v1`: the registered
+    lock/interpreter/package identities, once-opened stable descriptors, and
+    complete live package graph all deep-equal.
+15. `verify_fresh_fitting_free_output_namespace_v1`: the selected paths and
+    canonical path digest agree, the complete parent suffix history selects
+    the least lawful generation/registration, and every no-follow stable
+    descriptor/lstat row proves every terminal path absent.
+
+Item 9 covers exactly eight positions in their displayed order, so the
+numbered list covers all 22 rows. The canonical graph grammar for items 2 and
+13 is the same complete node/edge grammar fixed for the calibrated graph
+above, with the fitting-free runner as the sole root; graph reachability and
+canonical tuple order, not an implementation inventory, determine the
+domain. The row-specific equation is part of the registry identified by the
+predicate ID. An unknown predicate, callback, alternate equation, or
+operator-selected comparator aborts.
+
+Every positional runtime row has exactly `requirement_id`,
+`requirement_class`, `verification_predicate_id`, `expected_preimage`,
+`actual_preimage`, `verification_result`, `requirement_satisfied`,
+`evidence_identity_sha256`, and `status`; the closed classes are
 `design | implementation | registration_authority | legal_authority |
 inventory_authority | crosswalk_authority | verification_claim |
 empty_domain | deterministic_model | capability_graph | environment |
@@ -9615,20 +10418,45 @@ have their same-named authority classes; all eight V-B IDs have
 spec has `deterministic_model`; and the final three have respectively
 `capability_graph`, `environment`, and `namespace`.
 
+Each expected or actual preimage has its same-position registered schema
+literal and exactly `schema_version`, `requirement_id`,
+`verification_predicate_id`, `ordered_source_projections`,
+`source_projection_rows`, `source_projection_count`, and
+`source_projection_domain_sha256`. Each projection row has exactly
+`projection_id`, `value_type`, and `value_identity_sha256`; the ID
+exact-copies its registered position, type is one of `canonical_json |
+raw_git_bytes | git_tree | stable_descriptor | namespace_scan`, and the
+pairing is fixed as follows. `ratified_design:`, `configuration:`,
+`coordinator:`, `capture_primary:`, and `capture_sidecar:` are
+`canonical_json`. A `git_cutoff:` projection ending in `_raw_bytes` or naming
+the literal design path is `raw_git_bytes`; every other `git_cutoff:`,
+`git_implementation:`, or `git_parent:` projection is `git_tree`.
+`live_prebranch:descriptor_lstat_namespace_absence_rows` is
+`namespace_scan`; every other `live_prebranch:` projection is
+`stable_descriptor`. No other prefix/type pairing is valid. The digest
+hashes the complete projected value. Counts and hashes cover every
+row, including unfavorable actual evidence. A missing conditional capture
+root is represented by the exact registered absent tagged value only when
+that capture is not required; it cannot delete or reorder a projection.
+
+Every `verification_result` has the same-position registered schema literal
+and exactly `schema_version`, `requirement_id`,
+`verification_predicate_id`, `expected_preimage_sha256`,
+`actual_preimage_sha256`, `result`, and `failure_code`. `result` is a JSON
+boolean. `failure_code` is null exactly on true and otherwise is the sole
+literal `predicate_mismatch`; a free string, enum substitution, scalar hash
+comparison, or omitted unfavorable preimage fails evidence validation.
+
 Each evidence digest hashes canonical
 `fitting_free_requirement_evidence.v1`, with exactly `schema_version`,
-`requirement_id`, `requirement_class`, `expected_identity_sha256`,
-`actual_identity_sha256`, `evidence_input_identity_sha256s`,
-`evidence_input_count`, `evidence_input_domain_sha256`,
-`verification_result`, `requirement_satisfied`, and
-`authority_cutoff_sha256`. The input array is the
-complete ordered identity-digest projection used to derive that requirement;
-count and canonical-array domain hash exact-match; expected/actual digests
-hash the complete registered/observed identity, graph, or namespace
-disposition and remain nonnull on mismatch. The boolean is true iff the
-registered requirement's predicate passes. Row status attests faithful
-evidence and boolean reconstruction and can pass for a valid negative. Count
-is integer 22;
+`requirement_id`, `requirement_class`, `verification_predicate_id`,
+`expected_preimage`, `actual_preimage`, `verification_result`,
+`requirement_satisfied`, and `authority_cutoff_sha256`. It is the complete
+same-row projection excluding only the evidence digest and row status.
+`requirement_satisfied` equals `verification_result.result`. Row status
+attests the registered position, all tagged preimages, typed result, source
+closure, cross-binding, and boolean reconstruction and can pass for a valid
+negative. Count is integer 22;
 `requirement_domain_sha256` hashes canonical bytes of the complete rows
 array, including unfavorable booleans. `authority_status` is `pass` iff
 every boolean is true and is `fail` otherwise; top `status` passes iff every
@@ -9641,6 +10469,30 @@ The domain's cutoff digest and every requirement-evidence cutoff digest
 equal SHA-256 of the final calibrated adjudication's complete
 `authority_cutoff`; when capture occurred, that cutoff is strictly later
 than the capture primary and includes its accepted identities.
+
+The nonnull `cross_binding` literals above impose exact digest and deep-copy
+equations; they are not comments. The producer-side position can pass before
+a named post-path consumer exists, and no later gate, sidecar, or claim is an
+input to prebranch applicability. The accepted receipt permanently carries
+the producer preimage. When the named consumer is later constructed, its own
+validation must consume and deep-equal that receipt-bound preimage or fail
+that later gate/artifact before publication.
+
+In particular, the implementation graph in position 2 is the
+implementation-root projection of the complete position-20 actual graph,
+position 20 binds forward to G15, position 21 binds forward to the sidecar's
+independently reconstructed environment identity, and position 22 binds
+forward to the receipt/configuration and the existing durable claim's exact
+`primary_path` and `sidecar_path` projection only. The complete namespace
+preimage is bound by the receipt/configuration; the unchanged claim schema
+carries no invented namespace-evidence field.
+The A1–A3 and G19 bindings likewise deep-equal their named evidence. An
+unequal later digest, later evidence reconstructed from a different graph, or
+a cycle that tries to use a post-path result as a prebranch input fails the
+consumer, not the already-computed producer status. Thus no manifest, configuration,
+implementation, or operator can author an authority set, predicate,
+preimage schema, projection order, result type, capability graph,
+environment graph, or namespace graph.
 
 For either derived path, the accepted common applicability result is
 `covered_earnings_path_applicability_result.v1`, with exactly
@@ -9713,12 +10565,31 @@ The common append-only binding artifact is
 adjudication input is the exact four-key identity in §16.5.2; its amendment
 identity is the complete four-key §16.10 revision-4 design object; its
 fitting-free child is the complete 22-row object above; and its result
-deep-equals the common result. The specs digest hashes the complete
-Amendment-2 registry. The selected path is a traversal-free single-link
+deep-equals the common result. The specs digest hashes canonical
+`covered_earnings_path_applicability_registry_bundle.v1`, with exactly
+`schema_version`, `path_applicability_specs`,
+`ordered_calibrated_manifest_verification_specs`,
+`calibrated_global_requirement_verification_specs`, and
+`fitting_free_requirement_verification_specs`. The manifest-spec array is
+exactly the source then methodology objects above; the other three children
+deep-equal their complete named registries. Thus the digest binds every
+predicate ID, schema tag, ordered projection, result type, and cross-binding,
+not merely the two path booleans.
+The selected path is a traversal-free single-link
 regular configuration file directly under `docs/registrations`; schema,
 design, implementation commit, and output-path digest byte-equal that
 configuration's exact values. `selected_output_paths_sha256` is SHA-256 of
 the complete canonical selected configuration `output_paths` object.
+On a fitting-free receipt it also exact-matches the first two projections of
+the position-22 `fresh_namespace_actual_preimage.v1`; the remaining
+Git-parent and stable descriptor/lstat projections prove that every selected
+terminal path is fresh. The later unchanged durable attempt claim's
+`primary_path` and `sidecar_path` must exact-copy the corresponding selected
+paths. The claim makes no broader namespace assertion; the complete
+position-22 evidence remains in the receipt-bound fitting-free domain. A
+receipt/configuration/claim disagreement, an
+unserialized occupied path, or a namespace scan chosen by the runner fails;
+the receipt cannot certify only its own digest.
 `CALIBRATED` requires configuration schema
 `covered_earnings_correction_evaluation_configuration.v3`;
 `DETERMINISTIC_FITTING_FREE` requires
@@ -11531,6 +12402,7 @@ The sidecar schema is
 `attempt_evidence`, `input_hashes`, `dependency_versions`,
 `substantive_model_sha256`, `evaluation_provenance_sha256`,
 `deterministic_ledger_identity_sha256`,
+`prebranch_runner_environment_identity_sha256`,
 `trusted_consumer_semantic_authority_sha256`,
 `rng_access_results_sha256`, and
 `trusted_consumer_evaluation_sha256`. The base one-way sidecar-to-primary
@@ -11548,6 +12420,16 @@ exact-match `authority_capture_input`, and their respective roles are
 `registration_authority_capture_environment`. Their roles stay disjoint and each exact-matches full evaluation
 provenance. The array contains no calibration-target, official-target, or
 production official-aggregate row.
+
+`prebranch_runner_environment_identity_sha256` is SHA-256 of the complete
+same-cutoff `runner_environment_actual_preimage.v1` constructed for position
+21 of `fitting_free_requirement_verification_specs.v1`. The sidecar
+independently reconstructs it from the exact configuration invocation and
+environment-lock identities, the stable live interpreter/lock descriptor
+evidence, and the complete `dependency_versions` expansion. It must equal
+the position-21 actual-preimage digest in the receipt-bound fitting-free
+domain. A copied digest without equal projection rows, a package omission,
+or any different live graph fails sidecar validation.
 
 Let \(n\) be the coordinator-derived positive fitting-free output-generation
 integer. It is derived only from terminal output-namespace dispositions:
@@ -11842,7 +12724,11 @@ prediction or rank, candidate ID, fitted parameter, or selection result.
 
 `g15_fitting_free_sandbox_evidence.v1` has exactly:
 
-`schema_version`, `expected_model_grant_registry_sha256`,
+`schema_version`, `prebranch_capability_graph_identity_sha256`,
+`prebranch_capability_graph_implementation_projection_sha256`,
+`prebranch_target_domain_identity_sha256`,
+`prebranch_model_choice_domain_identity_sha256`,
+`expected_model_grant_registry_sha256`,
 `actual_model_grant_ledger_sha256`, `registered_ipc_schemas_sha256`,
 `actual_ipc_trace_sha256`,
 `expected_forbidden_principal_domain_sha256`,
@@ -11865,6 +12751,51 @@ prediction or rank, candidate ID, fitted parameter, or selection result.
 `trusted_consumer_root_streams_sha256`,
 `expected_worker_lifecycle_sha256`, `actual_worker_lifecycle_sha256`,
 `isolation_results_sha256`, and `forbidden_access_count`.
+
+`prebranch_capability_graph_identity_sha256` is SHA-256 of the complete
+position-20 `capability_graph_actual_preimage.v1` constructed before path
+activation from the fixed runner's transitive static code/schema/descriptor
+graph and the coordinator's complete principal/grant/IPC/import/callback
+projection. It exact-equals that row's
+`verification_result.actual_preimage_sha256`. G15 independently expands all
+forbidden-principal and forbidden-capability rows below from this same graph;
+the position-2 `implementation_graph_actual_preimage.v1` must equal the
+registered implementation-root projection of this graph and its Git-tree
+identities must agree at the implementation commit and cutoff;
+neither the row nor G15 may substitute an implementation-reported graph,
+copy the other's favorable arrays, or omit an unfavorable reachable node.
+This is a forward binding from prebranch evidence to G15, not a backward hash
+of the later gate, so the applicability graph remains acyclic.
+
+`prebranch_capability_graph_implementation_projection_sha256` hashes
+canonical `prebranch_capability_graph_implementation_projection.v1`, with
+exactly `schema_version`, `runner_root_identity`,
+`implementation_commit`, `authority_cutoff_commit`,
+`ordered_node_identity_sha256s`, `ordered_edge_identity_sha256s`,
+`node_count`, `edge_count`, and `graph_sha256`. The arrays/counts/hash are
+the complete implementation-root subgraph under the closed node/edge grammar
+above and exact-match position 2.
+
+`prebranch_target_domain_identity_sha256` hashes canonical
+`prebranch_fitting_free_target_domain_identity.v1`, with exactly
+`schema_version`, `target_domain_specs_sha256`,
+`target_domain_result_sha256`, `exact_key_domain_sha256`,
+`target_count`, `target_input_count`, `target_value_capability_count`,
+`target_value_open_count`, and `target_value_release_count`. It is the exact
+position-17 configured-spec/coordinator-result projection; every count is
+zero on pass.
+
+`prebranch_model_choice_domain_identity_sha256` hashes canonical
+`prebranch_fitting_free_model_choice_domain_identity.v1`, with exactly
+`schema_version`, `model_choice_specs_sha256`,
+`model_choice_result_sha256`, `exact_key_domain_sha256`,
+`candidate_count`, `fitted_parameter_count`, `optimizer_principal_count`,
+`selector_principal_count`, `selection_result_count`, and
+`model_choice_tolerance_count`. It is the exact position-18
+configured-spec/coordinator-result projection; every count is zero on pass.
+G15 reconstructs all three objects from its receipt-bound prebranch evidence
+and its live static/exact-key validators. An unequal object or digest fails
+G15 even when every individual count happens to be zero.
 
 The expected forbidden-principal domain is canonical empty. The actual digest
 hashes the complete independently audited ordered union of every principal
@@ -12091,7 +13022,9 @@ disappear because target rows are empty.
 
 `schema_version`, `correction_path`, `registered_model_id`,
 `activated_model_id`, `registered_model_specs_sha256`,
-`activated_model_specs_sha256`, `deterministic_rule_count`,
+`activated_model_specs_sha256`,
+`registered_deterministic_rule_identity_sha256`,
+`deterministic_rule_count`,
 `instantiated_rule_count`, `expected_rule_id_order_sha256`,
 `actual_rule_id_order_sha256`, `actual_rule_instantiation_trace`,
 `actual_rule_instantiation_trace_sha256`, `rule_instantiation_rows`,
@@ -12106,6 +13039,16 @@ spec hashes are equal on pass. `deterministic_rule_count` is exactly 37, the
 length of
 `deterministic_zero_fit_model_specs.v1.deterministic_rule_id_order`; its
 expected order hash is SHA-256 of that canonical array.
+
+`registered_deterministic_rule_identity_sha256` hashes canonical
+`registered_deterministic_rule_identity.v1`, with exactly
+`schema_version`, `model_id`, `model_specs_sha256`, `ordered_rule_ids`,
+`ordered_rule_spec_sha256s`, `rule_count`, and `rule_domain_sha256`. It
+deep-equals the complete position-19
+`coordinator:fully_resolved_37_rule_preimage` value and its digest equals
+that projection row's `value_identity_sha256`. G19 independently reconstructs
+the object from its expected registered side before comparing the activated
+trace; the activated side may remain unfavorable on gate failure.
 `rule_instantiation_rows` has exactly one positional row per expected rule,
 each with exactly `rule_id`, `expected_rule_sha256`, `actual_rule_id`,
 `actual_rule_sha256`, `comparison_disposition`, and `status`. Expected
