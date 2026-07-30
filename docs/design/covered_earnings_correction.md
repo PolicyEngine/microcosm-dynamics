@@ -18804,3 +18804,809 @@ equality is a mandatory forward validation when the claim is constructed.
 An unequal parent, selected path, digest, absence row, derived claim path, or
 claim output path fails the named cross-binding before execution or
 publication.
+
+#### 16.12.5 CLOSURE SWEEP APPENDIX
+
+This appendix freezes a conservative identifier-token closure over the
+complete §16 definition corpus through §16.12.4. The corpus excludes this
+appendix, so a table row cannot introduce or define its own token. The
+extractor first forms ASCII atoms from every single-line backticked span and
+every string leaf in each strict JSON fence. An atom has this grammar:
+
+```text
+ATOM    := [A-Za-z0-9][A-Za-z0-9_.:/+#<>-]*
+VERSION := (\.v[0-9]+($|\b)|_v[0-9]+($|\b)|\.vintage[0-9]+($|\b))
+ROOT    := ^(ratified_design|configuration|git_implementation|git_cutoff|git_parent|coordinator|capture_primary|capture_sidecar|live_prebranch)(:|$)
+PREFIX  := ^(verify_|G[0-9]+|A[0-9]+|V-B[0-9]+|P[0-9]+|[a-z0-9_]+:)
+SUFFIX  := (_required|_projection|_equation)$
+```
+
+An atom is in the candidate set when it matches VERSION, ROOT, PREFIX, or
+SUFFIX. A JSON string leaf is also a candidate when its current or
+array-owning key is exactly schema_version, artifact_id, cross_binding,
+source_projection_name, ordered_source_projections, or projection_id, or
+when that key ends in _id, _ids, _rule, _rules, _schema_version, _literal,
+or _literals. Array context propagates to every string member. This
+deliberately broad grammar retains ID-shaped schema members, states, typed
+paths, and qualified references as well as registry IDs, projection names,
+rule IDs, schema names, and roots; no semantic classifier may silently
+discard a possible reference.
+
+The introduced-token set is the candidate set minus every exact ATOM already
+present before the §16 heading in a backticked span or syntactic JSON string
+value. Tokens sort by unsigned UTF-8 bytes. Reapplying that procedure to the
+definition corpus yields exactly 618 distinct tokens.
+
+For this table, a real frozen definition is an exact object, row, value,
+schema, source projection, or equation in the cited subsection. An explicit
+successor that names an exact predecessor shape and freezes every
+substitution also qualifies. In §16.2, a same-position registered schema tag
+is defined jointly by its displayed registry row and the subsection's exact
+generic preimage/result law; a registered source projection is defined
+jointly by its displayed row, root/type/path law, and same-position
+predicate equation. A bare mention, an implementation callback, or this
+table does not qualify. A compound anchor identifies a definition completed
+or prospectively overridden across all cited subsections.
+
+The sweep found and closes one reference-first family before freezing the
+table: `coordinator:claim_authority_inventory_closure/0`,
+`coordinator:claim_authority_inventory_closure/1`,
+`coordinator:claim_authority_inventory_closure/2`,
+`coordinator:claim_authority_inventory_closure/3`,
+`coordinator:claim_authority_inventory_closure/4`,
+`coordinator:claim_authority_inventory_closure/5`,
+`coordinator:claim_authority_inventory_closure/7`, and
+`coordinator:claim_authority_inventory_closure/8`. Their suffix/claim pairs
+are, in that exact order, 0/V-B1, 1/V-B2, 2/V-B3, 3/V-B4, 4/V-B5, 5/V-B6,
+7/V-B8, and 8/V-B9. For suffix \(i\), the projection value is exactly the
+complete five-key claim row at zero-based row index \(i\) inside the
+zero-based registry object at index one of the independently constructed,
+verified `verification_claim_adjudication_source_projection.v1`. Index one
+is the fitting-free branch. Thus the value has exactly `claim_id`,
+`verification_claim_spec`, `adjudication_sources`,
+`derived_verification_claim_result`, and `derivation_status`, with every
+member obeying §16.12.1; its claim ID must equal the paired literal above.
+
+Each of the eight expected and actual source-projection values is that same
+complete row, its registered value type is `canonical_json`, and its
+`value_identity_sha256` hashes the complete canonical five-key row. The
+source row must come from the authenticated adjudication projection already
+bound into the v2 cutoff identity and applicability bundle. The
+configuration's same-position spec and result rows are comparands only and
+must deep-equal respectively the row's independently reconstructed spec and
+derived result. An absent or failed adjudication projection, wrong branch or
+index, duplicate or mismatched claim, unequal comparand, or digest mismatch
+makes the applicable V-B predicate false. No configuration, producer
+assertion, ambient registry, or callback can construct one of these eight
+coordinator values.
+
+The sweep also closes the exact bytes of seven other reference-first source
+projections. `coordinator:calibration_target_specs_resolved_source_projection`
+is the complete canonical JSON array of every exact 30-field
+`calibration_target_specs.v3` row, in the registry's frozen family-then-year
+order, independently expanded under §§6.2 and 15.5. Every source-cell,
+observation, physical-cell, transformation, selector, role, year, and
+primitive-ancestry ID in each row is fully resolved from the ratified
+registry and authenticated source projections before serialization. The
+ratified and configured registries are comparands only. The projection's
+registered type is `canonical_json`, and its value digest hashes that
+complete array. A missing, extra, duplicate, reordered, partially resolved,
+or configuration-sourced row makes the projection value canonical JSON null
+and the same-position predicate false; the null digest remains serialized as
+unfavorable evidence.
+
+`coordinator:strict_parsed_inventory_identity` is the complete top-level JSON
+object obtained by duplicate-key-rejecting parsing of the registered
+inventory cutoff bytes. `coordinator:strict_parsed_crosswalk_identity` is
+likewise the complete top-level JSON object obtained from the registered v3
+crosswalk cutoff bytes. Neither value is a selected member, normalized
+subset, wrapper, or configuration echo. Each must pass its complete
+schema/version/artifact/integrity/domain laws, serializes under the common
+canonical JSON rule, has registered type `canonical_json`, and is hashed in
+full. A parse, root-type, schema, integrity, raw-byte, history, or domain
+failure gives the applicable projection canonical JSON null and a false
+predicate while preserving that null value digest in the actual preimage.
+
+`live_prebranch:interpreter_lock_and_package_graph` and
+`live_prebranch:interpreter_and_package_graph` each have one exact complete
+eight-key value: `interpreter_identity`, `environment_lock_input`,
+`environment_lock_descriptor_identity`, `package_order`, `package_rows`,
+`package_row_count`, `package_row_domain_sha256`, and `status`. The first
+three members are respectively the complete stable live interpreter
+identity, complete registered six-key lock input, and complete observed
+ten-key stable lock-descriptor identity. `package_order` is the exact
+configured order independently parsed from those descriptor-validated lock
+bytes. `package_rows` has one same-position object per name, each with
+exactly `name`, `version`, and `source`, copied from that lock parse without
+environment discovery; count equals both array lengths and the domain digest
+hashes the complete row array. Status is `pass` exactly when descriptor
+stability, raw hash, lock schema, interpreter, order, row, count, digest,
+configured-environment, and immutable-Git comparisons all pass. On a
+missing/invalid lock or descriptor, the descriptor identity is null, both
+arrays are exact empty, count is zero, the row hash is the canonical
+empty-array hash, and status is `fail`. Their registered type is
+`stable_descriptor`; the projection digest hashes this entire eight-key
+object. The calibrated token uses its registered calibrated lock/configuration
+and the fitting-free token uses its registered fitting-free
+lock/configuration; neither can use an installed-package inventory or a
+producer-supplied graph.
+
+Finally, `live_prebranch:descriptor_lstat_namespace_absence` and
+`live_prebranch:descriptor_lstat_namespace_absence_rows` share this exact
+complete namespace-scan value schema: `parent_commit`,
+`selected_receipt_path`, `selected_registration_path`,
+`selected_configuration_sha256`, `ordered_paths`, `rows`, `row_count`,
+`domain_sha256`, and `status`. Parent is \(J\) under §16.12.4. The receipt
+and registration paths and configuration digest are independently derived
+under the receipt/configuration equations. `ordered_paths` is the
+unsigned-byte-sorted, duplicate-free array of exactly nine paths:
+
+1. selected receipt;
+2. selected registration;
+3. configured primary;
+4. configured sidecar;
+5. incident prefix plus one more than \(J\)'s complete contiguous
+   same-generation incident suffix, as a positive canonical decimal and
+   literal `.json`;
+6. attempt-claim prefix plus selected-configuration SHA-256 and literal
+   `.claim`;
+7. retry-authority prefix plus that SHA-256 and literal `.claim`;
+8. retry-claim prefix plus that SHA-256 and literal `.claim`; and
+9. fresh-registration-adjudication prefix plus one more than \(J\)'s
+   complete contiguous same-generation adjudication suffix, as a positive
+   canonical decimal and literal `.json`.
+
+The calibrated token derives those members from the independently validated
+staged calibrated receipt/configuration and \(J\)-history. The fitting-free
+token derives them from the receipt-bound fitting-free configuration and the
+complete \(J\)-derived namespace/history projection. Any collision among
+the nine paths fails before sorting.
+
+There is one same-position row per path, with exactly `path`,
+`parent_descriptor_rows`, `lstat_state`, `errno_name`, `st_dev`, `st_ino`,
+`st_mode`, `st_nlink`, `st_size`, and `row_status`.
+`parent_descriptor_rows` is in root-to-leaf parent order and has one exact
+seven-key row per opened parent: `path`, `st_dev`, `st_ino`, `st_mode`,
+`st_nlink`, `descriptor_stable`, and `symlink_free`. All traversal uses
+stable no-follow descriptors; zero/multiple paths, a changed descriptor, a
+symlink, or a non-directory parent is unfavorable evidence. Terminal
+`lstat_state` is exactly `absent`, `present`, or `error`. On `absent`,
+`errno_name` is `ENOENT`, all five stat members are null, and row status
+passes iff every parent row is stable and symlink-free. On `present`,
+errno is null, all five stat members are the observed nonnegative JSON
+integers, and row status fails. On `error`, errno is the actual nonempty
+stable POSIX name, all five stat members are null, and row status fails.
+Count equals both arrays' lengths, the domain digest hashes the complete row
+array, and top status passes exactly when all nine rows pass. The registered
+type is `namespace_scan`; the source-projection digest hashes this complete
+nine-key object, including every unfavorable row. Neither expected nor
+actual preimage may replace it with a Boolean, path list, configured
+absence, omitted error, or implementation-selected scan.
+
+The following table is normative. It has exactly one body row per introduced
+token and no other body row. A missing, extra, duplicate, or out-of-byte-order
+token; a token introduced elsewhere in §16 but absent here; a row whose
+anchor does not contain the stated real frozen definition; or a purported
+definition that depends on the table itself is a ratification-blocking
+defect.
+
+| Identifier token | Frozen-definition anchor |
+|---|---|
+| `4baa94e25b284b42f966b58222807b3ea27b05c7:data/external/covered_earnings_membership_adjudication_v2.json` | §16.2 |
+| `A1` | §16.4.3 + §16.12.3 |
+| `A2` | §16.2 |
+| `A3` | §16.2 |
+| `A4` | §16.4.3 |
+| `A4.joint_analytic_target_selector_ids` | §16.6.4 |
+| `A4.model_choice_target_ids` | §16.6.4 |
+| `A4.official_target_membership_selector_ids` | §16.6.4 |
+| `A5` | §16.4.3 |
+| `A5.official_comparison_family_ids` | §16.6.4 |
+| `A5.official_comparison_rows` | §16.6.4 |
+| `A5.official_target_input_ids` | §16.6.4 |
+| `A5.official_value_decoder_authority_ids` | §16.6.4 |
+| `A5.target_value_broker_grant_ids` | §16.6.4 |
+| `G10` | §16.6 |
+| `G11` | §16.11.4 |
+| `G14` | §16.6 |
+| `G15` | §16.6 |
+| `G17` | §16.6 |
+| `G19` | §16.6 |
+| `G21` | §16.6 |
+| `V-B1` | §16.2 |
+| `V-B2` | §16.2 |
+| `V-B3` | §16.2 |
+| `V-B4` | §16.2 |
+| `V-B5` | §16.2 + §16.12.1 |
+| `V-B6` | §16.2 + §16.12.1 |
+| `V-B8` | §16.2 + §16.12.1 |
+| `V-B9` | §16.2 |
+| `a1_age` | §16.10 + §16.12.3 |
+| `a1_annual_presence` | §16.10 + §16.12.3 |
+| `a1_denominator` | §16.10 + §16.12.3 |
+| `a1_duplicate_component` | §16.10 + §16.12.3 |
+| `a1_remuneration_type` | §16.10 + §16.12.3 |
+| `a1_stable_person_uniqueness` | §16.10 + §16.12.3 |
+| `a1_zero_earner` | §16.10 + §16.12.3 |
+| `absent_before_v3` | §16.5.1 |
+| `actual_source_projection` | §16.12.1 |
+| `actual_verification_claim_results_fitting_free_v1` | §16.12.1 |
+| `actual_verification_claim_results_v2` | §16.12.1 |
+| `actual_verification_claim_specs_fitting_free_v1` | §16.12.1 |
+| `actual_verification_claim_specs_v2` | §16.12.1 |
+| `admissibility_equation` | §16.3.2 |
+| `amendment_2_design_identity` | §16.2 |
+| `amount_eq_zero_v1` | §16.3.2 |
+| `amount_gt_zero_v1` | §16.3.2 |
+| `amount_lt_zero_and_not_registered_homogeneous_se_loss_admissible_v1` | §16.3.2 |
+| `amount_lt_zero_and_registered_homogeneous_se_loss_admissible_v1` | §16.3.2 |
+| `atomic_match_required` | §16.3.2 |
+| `atomic_reason_applicability_admissible_se_loss_measurement_v1` | §16.3.2 |
+| `atomic_reason_applicability_exact_zero_measurement_v1` | §16.3.2 |
+| `atomic_reason_applicability_modelable_employee_half_v1` | §16.3.2 |
+| `atomic_reason_applicability_modelable_se_half_v1` | §16.3.2 |
+| `atomic_reason_applicability_negative_anomaly_measurement_v1` | §16.3.2 |
+| `atomic_reason_applicability_positive_measurement_v1` | §16.3.2 |
+| `atomic_reason_applicability_projected_exact_half_split_v1` | §16.3.2 |
+| `atomic_reason_applicability_source_mixed_exact_half_split_v1` | §16.3.2 |
+| `atomic_reason_applicability_untyped_registered_unresolved_v1` | §16.3.2 |
+| `authority:<requirement_id>` | §16.2 |
+| `authority_predicate_actual_preimage.v1` | §16.2 |
+| `authority_predicate_expected_preimage.v1` | §16.2 |
+| `authority_predicate_verification_result.v1` | §16.2 |
+| `b11_cap_and_wage_exhaustion` | §16.11.2 |
+| `b11_exact_s_definition` | §16.11.2 |
+| `b11_exact_t_definition` | §16.11.2 |
+| `b11_exact_w_definition` | §16.11.2 |
+| `b11_geography` | §16.11.2 |
+| `b11_historical_continuity` | §16.11.2 |
+| `b11_same_type_se_dedup` | §16.11.2 |
+| `b11_same_type_wage_dedup` | §16.11.2 |
+| `b11_t_unduplicated_union` | §16.11.2 |
+| `b11_timing` | §16.11.2 |
+| `b11_zero_loss_threshold_cases` | §16.11.2 |
+| `b2_se_aggregation_and_dedup` | §16.11.2 |
+| `b2_se_below_threshold_membership` | §16.11.2 |
+| `b2_se_c8_c12_population_identity` | §16.11.2 |
+| `b2_se_c8_signed_ordering` | §16.11.2 |
+| `b2_se_exact_c12_predicate` | §16.11.2 |
+| `b2_se_historical_continuity` | §16.11.2 |
+| `b2_se_loss_netting` | §16.11.2 |
+| `b2_se_loss_only_membership` | §16.11.2 |
+| `b2_se_threshold_and_cap_ordering` | §16.11.2 |
+| `b2_se_wage_first_exhaustion` | §16.11.2 |
+| `b2_se_zero_and_net_zero_membership` | §16.11.2 |
+| `b2_wage_below_threshold_treatment` | §16.11.2 |
+| `b2_wage_c5_c11_population_identity` | §16.11.2 |
+| `b2_wage_cap_treatment` | §16.11.2 |
+| `b2_wage_exact_c11_predicate` | §16.11.2 |
+| `b2_wage_historical_continuity` | §16.11.2 |
+| `b2_wage_multiple_employer_treatment` | §16.11.2 |
+| `b2_wage_same_type_dedup` | §16.11.2 |
+| `b2_wage_zero_treatment` | §16.11.2 |
+| `benefit_gap_derivation_specs.fitting_free.v1` | §16.5 |
+| `benefit_gap_row_schema_specs.fitting_free.v1` | §16.5 |
+| `c13` | §16.11.2 |
+| `c17` | §16.11.2 |
+| `calibrated_authority_actual_preimage.v1` | §16.2 |
+| `calibrated_authority_cutoff_identity.v1` | §16.11.2 |
+| `calibrated_authority_cutoff_identity.v2` | §16.12.1 |
+| `calibrated_authority_expected_preimage.v1` | §16.2 |
+| `calibrated_authority_manifest.v1` | §16.2 |
+| `calibrated_authority_role_binding_specs.v1` | §16.11.2 |
+| `calibrated_authority_role_binding_specs.v2` | §16.11.2 |
+| `calibrated_authority_role_binding_specs.v3` | §16.12.1 |
+| `calibrated_authority_role_binding_specs.v4` | §16.12.1 |
+| `calibrated_authority_verification_inputs.v1` | §16.2 |
+| `calibrated_authority_verification_result.v1` | §16.2 |
+| `calibrated_authority_verification_specs.v1` | §16.2 |
+| `calibrated_authority_verification_specs.v2` | §16.11.2 |
+| `calibrated_authority_verification_specs.v3` | §16.12.1 |
+| `calibrated_authority_verification_specs.v4` | §16.12.1 |
+| `calibrated_candidate_registry_complete` | §16.2 |
+| `calibrated_capture_authority_actual_preimage.v1` | §16.11.2 |
+| `calibrated_capture_authority_expected_preimage.v1` | §16.11.2 |
+| `calibrated_capture_authority_verification_result.v1` | §16.11.2 |
+| `calibrated_capture_required_authority_aggregation_preimage.v1` | §16.11.2 |
+| `calibrated_capture_required_authority_aggregation_result.v1` | §16.11.2 |
+| `calibrated_capture_required_authority_predicate_specs.v1` | §16.11.2 |
+| `calibrated_family_authority_requirement_specs.v1` | §16.11.2 |
+| `calibrated_family_registrability_evidence.v1` | §16.2 |
+| `calibrated_global_actual_preimage.v1` | §16.2 |
+| `calibrated_global_expected_preimage.v1` | §16.2 |
+| `calibrated_global_requirement_evidence.v1` | §16.2 |
+| `calibrated_global_requirement_verification_specs.v1` | §16.2 |
+| `calibrated_global_verification_result.v1` | §16.2 |
+| `calibrated_noncapture_required_authority_predicate_specs.v1` | §16.11.2 |
+| `calibrated_noncapture_required_authority_predicate_specs.v2` | §16.12.1 |
+| `calibrated_noncapture_required_authority_preimage.v1` | §16.11.2 |
+| `calibrated_noncapture_required_authority_preimage.v2` | §16.12.1 |
+| `calibrated_noncapture_required_authority_result.v1` | §16.11.2 |
+| `calibrated_noncapture_required_authority_result.v2` | §16.12.1 |
+| `calibrated_registrability_domain_identity.v1` | §16.2 |
+| `calibrated_registration_required_claim_role_arrays.v1` | §16.11.2 |
+| `calibrated_required_authority_evidence.v1` | §16.2 |
+| `calibrated_required_authority_evidence.v1.verification_predicate_id` | §16.11.2 |
+| `calibrated_runner_environment_capability_graph_registered` | §16.2 |
+| `calibrated_selection_registry_complete` | §16.2 |
+| `calibrated_target_input_identity_registered` | §16.2 |
+| `calibrated_target_principal_and_capability_specs.v1` | §16.11.1 |
+| `calibrated_target_registry_complete` | §16.2 |
+| `calibrated_target_value_capability_graph_complete` | §16.2 |
+| `calibrated_verification_claim_adjudication_actual_preimage.v1` | §16.12.1 |
+| `calibrated_verification_claim_adjudication_expected_preimage.v1` | §16.12.1 |
+| `calibrated_verification_claim_adjudication_result.v1` | §16.12.1 |
+| `calibration_family_requirement_projection` | §16.11.2 |
+| `calibration_family_source_fact_projection` | §16.11.2 |
+| `calibration_family_source_fact_projection.v1` | §16.11.2 |
+| `calibration_family_source_fact_projection_preimage.v1` | §16.11.2 |
+| `cannot_pass_without_official_and_model_universes` | §16.11.2 |
+| `canonical_json_projection` | §16.2 |
+| `capability_graph_absence_verification_result.v1` | §16.2 |
+| `capability_graph_actual_preimage.v1` | §16.2 |
+| `capability_graph_expected_preimage.v1` | §16.2 |
+| `capture_artifact_history_projection.v1` | §16.10 |
+| `capture_primary` | §16.2 |
+| `capture_primary:` | §16.2 |
+| `capture_primary:a1_authority_identity` | §16.11.2 + §16.12.3 |
+| `capture_primary:a2_authority_identity` | §16.2 + §16.11.2 |
+| `capture_primary:a3_authority_identity` | §16.2 |
+| `capture_primary_and_sidecar:a3_source_and_keyset_closure` | §16.2 + §16.11.2 |
+| `capture_sidecar` | §16.2 |
+| `capture_sidecar:` | §16.2 |
+| `capture_sidecar:input_descriptor_identities` | §16.11.1 + §16.11.2 |
+| `capture_sidecar:input_hashes` | §16.2 + §16.11.1 |
+| `capture_supplement_required` | §16.11.2 |
+| `classified_component_stream.fitting_free.v1` | §16.3.1 |
+| `classified_component_stream_registry.fitting_free.v1` | §16.3.1 |
+| `condition_1_registry_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_2_ledger_consumer_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_3_gate_domain_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_4_noninterference_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_5_recovery_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_6_determinism_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_7_finalizer_evidence.fitting_free.v1` | §16.7.3 |
+| `condition_evidence_projections.fitting_free.v1` | §16.7.3 |
+| `configuration` | §16.2 |
+| `configuration:` | §16.2 |
+| `configuration:calibration_target_input` | §16.2 |
+| `configuration:calibration_target_specs` | §16.2 |
+| `configuration:candidate_reference_era_specs` | §16.2 |
+| `configuration:candidate_specs` | §16.2 |
+| `configuration:design` | §16.2 |
+| `configuration:deterministic_zero_fit_model_specs` | §16.2 |
+| `configuration:filesystem_isolation_specs` | §16.2 |
+| `configuration:fitting_free_model_choice_specs` | §16.2 |
+| `configuration:fitting_free_model_input_authority_results.rows/0` | §16.2 |
+| `configuration:fitting_free_model_input_authority_results.rows/1` | §16.2 |
+| `configuration:fitting_free_model_input_authority_results.rows/2` | §16.2 |
+| `configuration:fitting_free_target_domain_specs` | §16.2 |
+| `configuration:historical_coverage_rule_specs` | §16.2 |
+| `configuration:implementation_commit` | §16.2 |
+| `configuration:invocation.interpreter_identity` | §16.2 |
+| `configuration:legal_rule_input` | §16.2 |
+| `configuration:output_paths` | §16.2 |
+| `configuration:production_input_manifest.environment_spec` | §16.2 |
+| `configuration:production_input_manifest.inputs/environment_lock` | §16.2 |
+| `configuration:psid_crosswalk_input` | §16.2 |
+| `configuration:psid_source_field_inventory_input` | §16.2 |
+| `configuration:rng_access_specs` | §16.2 |
+| `configuration:selection_spec` | §16.2 |
+| `configuration:verification_claim_results.rows/0` | §16.2 |
+| `configuration:verification_claim_results.rows/1` | §16.2 |
+| `configuration:verification_claim_results.rows/2` | §16.2 |
+| `configuration:verification_claim_results.rows/3` | §16.2 |
+| `configuration:verification_claim_results.rows/4` | §16.2 |
+| `configuration:verification_claim_results.rows/5` | §16.2 |
+| `configuration:verification_claim_results.rows/7` | §16.2 |
+| `configuration:verification_claim_results.rows/8` | §16.2 |
+| `configuration:verification_claim_specs.rows/0` | §16.2 |
+| `configuration:verification_claim_specs.rows/1` | §16.2 |
+| `configuration:verification_claim_specs.rows/2` | §16.2 |
+| `configuration:verification_claim_specs.rows/3` | §16.2 |
+| `configuration:verification_claim_specs.rows/4` | §16.2 |
+| `configuration:verification_claim_specs.rows/5` | §16.2 |
+| `configuration:verification_claim_specs.rows/7` | §16.2 |
+| `configuration:verification_claim_specs.rows/8` | §16.2 |
+| `conflict:<manifest_kind>:<authority_id>` | §16.2 |
+| `contributions_self_employment` | §16.11.2 |
+| `contributions_total` | §16.11.2 |
+| `contributions_wage` | §16.11.2 |
+| `coordinator` | §16.2 |
+| `coordinator:` | §16.2 |
+| `coordinator:calibration_target_specs_resolved_source_projection` | §16.2 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/0` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/1` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/2` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/3` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/4` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/5` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/7` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:claim_authority_inventory_closure/8` | §16.2 + §16.12.1 + §16.12.5 |
+| `coordinator:complete_prebranch_principal_grant_ipc_import_callback_graph` | §16.2 |
+| `coordinator:fully_resolved_37_rule_preimage` | §16.2 |
+| `coordinator:psid_crosswalk_v3_append_only_history_projection` | §16.2 + §16.5.1 |
+| `coordinator:reconstructed_fitting_free_model_choice_result` | §16.2 |
+| `coordinator:reconstructed_fitting_free_target_domain_result` | §16.2 |
+| `coordinator:selected_output_paths_sha256` | §16.2 |
+| `coordinator:strict_parsed_crosswalk_identity` | §16.2 + §16.12.5 |
+| `coordinator:strict_parsed_inventory_identity` | §16.2 + §16.12.5 |
+| `correction_model_eligibility.fitting_free.v1` | §16.5.4 |
+| `coverage_state_dependence_specs.fitting_free.v1` | §16.3.1 |
+| `covered_earnings_calibrated_registrability_adjudication.v1` | §16.2 |
+| `covered_earnings_context_configuration.fitting_free.v1` | §16.7.4 |
+| `covered_earnings_context_environment.fitting_free.v1` | §16.7.4 |
+| `covered_earnings_context_report.fitting_free.v1` | §16.7.4 |
+| `covered_earnings_correction_calibrated_runner` | §16.11.1 + §16.12.2 |
+| `covered_earnings_correction_fitting_free_configuration.v1` | §16.2 |
+| `covered_earnings_correction_fitting_free_environment.v1` | §16.5 |
+| `covered_earnings_correction_fitting_free_evaluation.v1` | §16.5 |
+| `covered_earnings_correction_fitting_free_runner` | §16.11.1 + §16.12.2 |
+| `covered_earnings_correction_fitting_free_v1` | §16.11.1 |
+| `covered_earnings_deterministic_uncalibrated_model.v1` | §16.3 |
+| `covered_earnings_fitting_free_substantive_production_input_identity.v1` | §16.5.3 |
+| `covered_earnings_forecast_ledger_subject_preimage.v1` | §16.11.3 |
+| `covered_earnings_forecast_ledger_subject_projection.v1` | §16.11.3 |
+| `covered_earnings_label_event_projection.v1` | §16.9.1 |
+| `covered_earnings_label_supersession.fitting_free_to_calibrated.v1` | §16.9.1 |
+| `covered_earnings_membership_adjudication.v2` | §16.2 |
+| `covered_earnings_path_applicability_receipt.v1` | §16.2 |
+| `covered_earnings_path_applicability_receipt_core.v1` | §16.2 |
+| `covered_earnings_path_applicability_registry_bundle.v1` | §16.2 |
+| `covered_earnings_path_applicability_registry_bundle.v2` | §16.12.1 |
+| `covered_earnings_path_applicability_result.v1` | §16.2 |
+| `covered_earnings_path_applicability_specs.v1` | §16.2 |
+| `covered_earnings_prebranch_static_capability_graph.v1` | §16.2 |
+| `covered_earnings_static_graph_runner_identity.v1` | §16.11.1 + §16.12.2 |
+| `covered_earnings_static_graph_runner_root.v1` | §16.11.1 + §16.12.2 |
+| `covered_earnings_verification_claim_adjudication.v1` | §16.12.1 |
+| `covered_earnings_verification_claim_adjudication.vintage1` | §16.12.1 |
+| `crosswalk_exact_once_role_job_farm_business_mixed_v1` | §16.3.3 |
+| `data/external/covered_earnings_membership_adjudication_v2.json` | §16.2 |
+| `data/external/psid_codebook_inventory_adjudication_v1.json` | §16.12.1 |
+| `data/external/psid_covered_earnings_crosswalk_v3.json` | §16.5.1 |
+| `denominator_and_joint_analytic_selectors` | §16.11.2 |
+| `deterministic_default_application_trace.fitting_free.v1` | §16.3.1 |
+| `deterministic_default_application_trace_registry.fitting_free.v1` | §16.3.1 |
+| `deterministic_weight_rescale_bundle.v1` | §16.6.2 |
+| `deterministic_weight_rescale_specs.v1` | §16.5 |
+| `deterministic_zero_fit_model_specs` | §16.2 |
+| `deterministic_zero_fit_model_specs.v1` | §16.3 |
+| `deterministic_zero_fit_model_specs.v1.deterministic_rule_id_order` | §16.6.5 |
+| `draw_spec.fitting_free.v1` | §16.3 |
+| `empty_domain_actual_preimage.v1` | §16.2 |
+| `empty_domain_expected_preimage.v1` | §16.2 |
+| `empty_domain_verification_result.v1` | §16.2 |
+| `entry11_unit1b_membership_readjudication_v2` | §16.2 |
+| `entry11_unit1b_membership_readjudication_v2_legacy_envelope_v1` | §16.2 |
+| `evaluation_specs.fitting_free.v1` | §16.5 |
+| `exact_identity_actual_preimage.v1` | §16.2 |
+| `exact_identity_expected_preimage.v1` | §16.2 |
+| `exact_identity_verification_result.v1` | §16.2 |
+| `exact_registered_same_length_buffer_replacement_v1` | §16.11.5 |
+| `exclusion_count_required` | §16.3.2 |
+| `expected_source_projection` | §16.12.1 |
+| `expected_verification_claim_results_fitting_free_v1` | §16.12.1 |
+| `expected_verification_claim_results_v2` | §16.12.1 |
+| `expected_verification_claim_specs_fitting_free_v1` | §16.12.1 |
+| `expected_verification_claim_specs_v2` | §16.12.1 |
+| `facts` | §16.2 |
+| `family:<family_id>` | §16.2 |
+| `family_dispositions` | §16.2 |
+| `family_methodology:<family_id>` | §16.11.2 |
+| `family_methodology:b11_contributions_component_reconciliation` | §16.11.2 |
+| `family_methodology:b11_dual_type_worker_share` | §16.11.2 |
+| `family_methodology:b11_se_contribution_share` | §16.11.2 |
+| `family_methodology:b11_se_only_worker_share` | §16.11.2 |
+| `family_methodology:b11_taxable_earnings_component_reconciliation` | §16.11.2 |
+| `family_methodology:b11_wage_only_worker_share` | §16.11.2 |
+| `family_methodology:b2_se_taxable_fraction` | §16.11.2 |
+| `family_methodology:b2_se_taxable_intensity` | §16.11.2 |
+| `family_methodology:b2_se_total_component_share` | §16.11.2 |
+| `family_methodology:b2_se_total_intensity` | §16.11.2 |
+| `family_methodology:b2_type_count_mix` | §16.11.2 |
+| `family_methodology:b2_wage_taxable_fraction` | §16.11.2 |
+| `family_methodology:b2_wage_taxable_intensity` | §16.11.2 |
+| `family_methodology:b2_wage_total_intensity` | §16.11.2 |
+| `family_source:<family_id>` | §16.11.2 |
+| `family_source:b11_contributions_component_reconciliation` | §16.11.2 |
+| `family_source:b11_dual_type_worker_share` | §16.11.2 |
+| `family_source:b11_se_contribution_share` | §16.11.2 |
+| `family_source:b11_se_only_worker_share` | §16.11.2 |
+| `family_source:b11_taxable_earnings_component_reconciliation` | §16.11.2 |
+| `family_source:b11_wage_only_worker_share` | §16.11.2 |
+| `family_source:b2_se_taxable_fraction` | §16.11.2 |
+| `family_source:b2_se_taxable_intensity` | §16.11.2 |
+| `family_source:b2_se_total_component_share` | §16.11.2 |
+| `family_source:b2_se_total_intensity` | §16.11.2 |
+| `family_source:b2_type_count_mix` | §16.11.2 |
+| `family_source:b2_wage_taxable_fraction` | §16.11.2 |
+| `family_source:b2_wage_taxable_intensity` | §16.11.2 |
+| `family_source:b2_wage_total_intensity` | §16.11.2 |
+| `filesystem_isolation_specs.fitting_free.v1` | §16.5 |
+| `filesystem_isolation_specs.fitting_free.v1.assertions` | §16.6.3 |
+| `final_classified_component_identity.fitting_free.v1` | §16.3.1 |
+| `first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1` | §16.4.3 |
+| `fitting_free_a1_semantic_identity.v1` | §16.12.3 |
+| `fitting_free_attempt_history_identity.v1` | §16.5.3 |
+| `fitting_free_attempt_history_projection.v1` | §16.5.3 |
+| `fitting_free_authority_capture_predicate_field_dependency_specs.v1` | §16.10 |
+| `fitting_free_capture_a1_model_universe_authority` | §16.11.2 + §16.12.1 |
+| `fitting_free_capture_a3_weight_source_authority` | §16.11.2 |
+| `fitting_free_crosswalk_direct_law_closure.v1` | §16.5.1 |
+| `fitting_free_empty_domain_evidence.v1` | §16.6.4 |
+| `fitting_free_evaluation_binding.v1` | §16.5.3 |
+| `fitting_free_evaluation_only_input_identity.v1` | §16.5.3 |
+| `fitting_free_fixture_registry_identity.v1` | §16.6.6 |
+| `fitting_free_forbidden_aggregate_noninterference_v1` | §16.6.6 |
+| `fitting_free_forbidden_capability_closure.v1` | §16.7.3 |
+| `fitting_free_forbidden_capability_graph` | §16.2 |
+| `fitting_free_forbidden_domain_count_projection.v1` | §16.7.3 |
+| `fitting_free_implementation_identity` | §16.2 |
+| `fitting_free_model_choice_result.v1` | §16.4.2 |
+| `fitting_free_model_choice_specs` | §16.2 |
+| `fitting_free_model_choice_specs.v1` | §16.4.2 |
+| `fitting_free_model_input_authority_capture.v1` | §16.10 |
+| `fitting_free_model_input_authority_capture_claim.v1` | §16.4.3 |
+| `fitting_free_model_input_authority_capture_environment.v1` | §16.10 |
+| `fitting_free_model_input_authority_capture_input.v1` | §16.4.3 |
+| `fitting_free_model_input_authority_capture_lifecycle_closure.v1` | §16.10 |
+| `fitting_free_model_input_authority_capture_registration.v1` | §16.10 |
+| `fitting_free_model_input_authority_results.v1` | §16.4.3 |
+| `fitting_free_model_input_authority_substantive_projection` | §16.5.3 |
+| `fitting_free_model_input_authority_substantive_projection.v1` | §16.4.3 |
+| `fitting_free_model_universe_selector_v1` | §16.12.3 |
+| `fitting_free_noninterference_pre_g21_bundle.v1` | §16.6.6 |
+| `fitting_free_noninterference_specs.v1` | §16.5 |
+| `fitting_free_noninterference_substantive_bundle.v1` | §16.6.6 |
+| `fitting_free_official_context_diagnostic_dispositions.v1` | §16.5.2 |
+| `fitting_free_registration_domain_identity.v1` | §16.2 |
+| `fitting_free_replay_bundle.v1` | §16.6.1 |
+| `fitting_free_requirement_evidence.v1` | §16.2 |
+| `fitting_free_requirement_verification_specs.v1` | §16.2 |
+| `fitting_free_runner_environment_capability_graph` | §16.2 |
+| `fitting_free_substantive_production_input_specs.v1` | §16.5.2 |
+| `fitting_free_target_domain_empty_v1` | §16.5.1 |
+| `fitting_free_target_domain_result.v1` | §16.4.1 |
+| `fitting_free_target_domain_specs` | §16.2 |
+| `fitting_free_target_domain_specs.v1` | §16.4.1 |
+| `fixture_descriptor:<input_id>` | §16.6.6 |
+| `fixture_import:<input_id>` | §16.6.6 |
+| `fixture_ipc:<input_id>` | §16.6.6 |
+| `fixture_path:<input_id>` | §16.6.6 |
+| `forbidden_capability_instance.fitting_free.v1` | §16.6.3 |
+| `forbidden_principal_instance.fitting_free.v1` | §16.6.3 |
+| `forecast_ledger.v1` | §16.11.3 |
+| `fresh_calibrated_output_namespace_available` | §16.2 |
+| `fresh_fitting_free_output_namespace_available` | §16.2 |
+| `fresh_namespace_actual_preimage.v1` | §16.2 |
+| `fresh_namespace_expected_preimage.v1` | §16.2 |
+| `fresh_namespace_verification_result.v1` | §16.2 |
+| `full_fitting_free_evaluation_provenance.v1` | §16.5.3 |
+| `full_fitting_free_production_input_identity.v1` | §16.5.3 |
+| `full_fitting_free_production_input_identity_row.v1` | §16.5.3 |
+| `g14_deterministic_weight_rescale_evidence.v1` | §16.6.2 |
+| `g15:prebranch_capability_graph_identity_sha256` | §16.2 + §16.6.3 |
+| `g15:prebranch_capability_graph_implementation_projection_sha256` | §16.2 + §16.6.3 |
+| `g15:prebranch_model_choice_domain_identity_sha256` | §16.2 + §16.6.3 |
+| `g15:prebranch_target_domain_identity_sha256` | §16.2 + §16.6.3 |
+| `g15_fitting_free_sandbox_evidence.v1` | §16.6.3 |
+| `g17_fitting_free_inventory_crosswalk_evidence.v1` | §16.6.4 |
+| `g19:registered_deterministic_rule_identity_sha256` | §16.2 + §16.6.5 |
+| `g19_deterministic_model_activation_evidence.v1` | §16.6.5 |
+| `g21_actual_mutation_ledger.fitting_free.v1` | §16.6.6 |
+| `g21_fitting_free_acyclic_noninterference_evidence.v1` | §16.6.6 |
+| `g21_structural_validity_preimage.fitting_free.v1` | §16.11.5 |
+| `g21_structural_validity_result.fitting_free.v1` | §16.11.5 |
+| `g21_structural_validity_rule_specs.fitting_free.v1` | §16.11.5 |
+| `gate_specs.v4` | §16.5 + §16.11.4 |
+| `git_cutoff` | §16.2 |
+| `git_cutoff:` | §16.2 |
+| `git_cutoff:calibrated_runner_transitive_static_graph` | §16.2 + §16.11.1 + §16.12.2 |
+| `git_cutoff:calibration_target_input_raw_bytes` | §16.2 |
+| `git_cutoff:docs/design/covered_earnings_correction.md` | §16.2 |
+| `git_cutoff:environment_lock_raw_bytes` | §16.2 |
+| `git_cutoff:fitting_free_runner_transitive_code_schema_descriptor_graph` | §16.2 + §16.11.1 + §16.12.2 |
+| `git_cutoff:legal_rule_input_raw_bytes` | §16.2 |
+| `git_cutoff:psid_crosswalk_input_raw_bytes` | §16.2 |
+| `git_cutoff:psid_source_field_inventory_raw_bytes` | §16.2 |
+| `git_implementation` | §16.2 |
+| `git_implementation:` | §16.2 |
+| `git_implementation:fitting_free_runner_transitive_code_schema_descriptor_graph` | §16.2 + §16.11.1 + §16.12.2 |
+| `git_implementation:fitting_free_runner_transitive_static_graph` | §16.2 + §16.11.1 + §16.12.2 |
+| `git_parent` | §16.12.4 |
+| `git_parent:` | §16.12.4 |
+| `git_parent:terminal_attempt_and_registration_suffix_projection` | §16.11.1 + §16.12.4 |
+| `git_parent:terminal_namespace_history` | §16.12.4 |
+| `git_raw_bytes` | §16.2 |
+| `global:<requirement_id>` | §16.2 |
+| `ignore_asserted_fields_projection_v1` | §16.7.3 |
+| `implementation_graph_actual_preimage.v1` | §16.2 |
+| `implementation_graph_expected_preimage.v1` | §16.2 |
+| `implementation_graph_verification_result.v1` | §16.2 |
+| `isolation_results.fitting_free.v1` | §16.6.3 |
+| `keyed_uniform_required` | §16.3.1 |
+| `label_retirement_certificate.fitting_free.v1` | §16.7.4 |
+| `ledger_row_schema_specs.fitting_free.v1` | §16.3.1 |
+| `literal_hex_byte_replacement.v1` | §16.6.6 |
+| `live_prebranch` | §16.2 |
+| `live_prebranch:` | §16.2 |
+| `live_prebranch:descriptor_lstat_namespace_absence` | §16.2 + §16.12.4 + §16.12.5 |
+| `live_prebranch:descriptor_lstat_namespace_absence_rows` | §16.2 + §16.12.4 + §16.12.5 |
+| `live_prebranch:environment_lock_descriptor_identity` | §16.2 |
+| `live_prebranch:interpreter_and_package_graph` | §16.2 + §16.12.5 |
+| `live_prebranch:interpreter_lock_and_package_graph` | §16.2 + §16.12.5 |
+| `measurement_row.fitting_free.v1` | §16.3.2 |
+| `measurement_stream.fitting_free.v1` | §16.3.2 |
+| `measurement_stream_registry.fitting_free.v1` | §16.3.2 |
+| `methodology:<authority_id>` | §16.2 |
+| `methodology_authority_projection` | §16.11.2 |
+| `missing_registered_correction_model_universe_selector` | §16.11.2 |
+| `missing_registered_model_weight_input_digest` | §16.11.2 |
+| `mixed_allocation_default.child_id_law` | §16.3 |
+| `model_status_selector_specs_identity.v1` | §16.4.3 |
+| `model_universe_selector_executable_identity.v1` | §16.4.3 + §16.12.3 |
+| `model_universe_selector_substantive_identity.v1` | §16.4.3 |
+| `model_universe_support_keyset_projection.v1` | §16.12.3 |
+| `negate_source_amount_v1` | §16.3.2 |
+| `newly_ratified_output_version_required` | §16.12.4 |
+| `noninterference_results.fitting_free.v1` | §16.6.6 |
+| `nonremuneration_reconciliation_disposition.fitting_free.v1` | §16.3.2 |
+| `nonremuneration_reconciliation_dispositions.fitting_free.v1` | §16.3.2 |
+| `nonremuneration_reconciliation_dispositions_registry.fitting_free.v1` | §16.3.2 |
+| `official_target_comparison_removed_fitting_free_v1` | §16.4.3 |
+| `official_target_selector_domain_empty_fitting_free_v1` | §16.4.3 |
+| `opaque_descriptor_identity:<input_id>` | §16.10 |
+| `option_a_zero_fit_deterministic_v1` | §16.3 |
+| `per_group_loss_only_or_net_zero_base_zero_v1` | §16.3.3 |
+| `per_group_se_transform_sum_nonnegative_bases_then_wage_first_person_cap_v1` | §16.3.3 |
+| `per_registered_se_group_gain_loss_net_and_base_v1` | §16.3.3 |
+| `post_capture_v2` | §16.11.2 |
+| `prebranch_capability_graph_implementation_projection.v1` | §16.6.3 |
+| `prebranch_fitting_free_model_choice_domain_identity.v1` | §16.6.3 |
+| `prebranch_fitting_free_target_domain_identity.v1` | §16.6.3 |
+| `predicate_equation` | §16.11.2 |
+| `preliminary_v1` | §16.11.2 |
+| `present_exact_v3` | §16.5.1 |
+| `projected_status_evolution_input_identity.fitting_free.v1` | §16.3.1 |
+| `psid_codebook_inventory_adjudication.v1` | §16.12.1 |
+| `psid_codebook_inventory_adjudication:verdicts` | §16.12.1 |
+| `psid_covered_earnings_crosswalk.v3` | §16.5 |
+| `psid_covered_earnings_crosswalk_v3` | §16.2 |
+| `psid_crosswalk_v3_append_only_history_projection.v1` | §16.5.1 |
+| `psid_questionnaire_slot_specs.v1.questionnaire_component_slot_id` | §16.3.2 |
+| `psid_questionnaire_slot_specs.v1.questionnaire_component_slot_ids` | §16.3.2 |
+| `psid_survey_weight_packet.fitting_free.v1` | §16.6.2 |
+| `ratified_design` | §16.2 |
+| `ratified_design:` | §16.2 |
+| `ratified_design:amendment_2_design_identity` | §16.2 |
+| `ratified_design:calibrated_target_principal_and_capability_specs` | §16.2 |
+| `ratified_design:calibration_target_input_identity` | §16.2 |
+| `ratified_design:calibration_target_specs_v3` | §16.2 |
+| `ratified_design:candidate_reference_era_specs` | §16.2 |
+| `ratified_design:candidate_specs_v2` | §16.2 |
+| `ratified_design:deterministic_zero_fit_model_specs` | §16.2 |
+| `ratified_design:deterministic_zero_fit_model_specs.forbidden_capabilities` | §16.2 |
+| `ratified_design:filesystem_isolation_specs.fitting_free.v1.assertions` | §16.2 |
+| `ratified_design:fitting_free_a1_semantic_identity` | §16.12.3 |
+| `ratified_design:fitting_free_model_choice_specs` | §16.2 |
+| `ratified_design:fitting_free_model_input_authority_results.rows/0` | §16.2 |
+| `ratified_design:fitting_free_model_input_authority_results.rows/1` | §16.2 |
+| `ratified_design:fitting_free_model_input_authority_results.rows/2` | §16.2 |
+| `ratified_design:fitting_free_runner_root` | §16.2 + §16.11.1 + §16.12.2 |
+| `ratified_design:fitting_free_target_domain_specs` | §16.2 |
+| `ratified_design:historical_coverage_rule_specs` | §16.2 |
+| `ratified_design:psid_covered_earnings_crosswalk_v3` | §16.2 |
+| `ratified_design:selection_spec_v2` | §16.2 |
+| `receipt_configuration_namespace_identity_and_claim_path_projection` | §16.12.4 |
+| `receipt_core:amendment_2_design_identity` | §16.2 |
+| `registered_component_input_action_identity.fitting_free.v1` | §16.3.1 |
+| `registered_deterministic_rule_identity.v1` | §16.6.5 |
+| `registration_authority_adjudications` | §16.2 |
+| `replay_source_order_evidence.fitting_free.v1` | §16.6.1 |
+| `replay_specs.fitting_free.v1` | §16.5 |
+| `requirement:<requirement_id>` | §16.2 |
+| `resolved_registry_actual_preimage.v1` | §16.2 |
+| `resolved_registry_expected_preimage.v1` | §16.2 |
+| `resolved_registry_verification_result.v1` | §16.2 |
+| `rng_access_specs.fitting_free.v1` | §16.5 |
+| `root_python_symbol_locator_projection.v1` | §16.11.1 + §16.12.2 |
+| `root_runner_node_binding_equation.v1` | §16.11.1 + §16.12.2 |
+| `runner_environment_actual_preimage.v1` | §16.2 |
+| `runner_environment_expected_preimage.v1` | §16.2 |
+| `runner_environment_verification_result.v1` | §16.2 |
+| `runs/covered_earnings_correction_fitting_free_v1.json` | §16.11.1 |
+| `runs/covered_earnings_correction_fitting_free_v1.json.env.json` | §16.11.1 |
+| `se_aggregation_group_statutory_trace.fitting_free.v1` | §16.3.3 |
+| `se_loss_admissibility_identity.fitting_free.v1` | §16.3.2 |
+| `se_loss_admissibility_specs.fitting_free.v1` | §16.3.2 |
+| `selector_ids_resolved_membership_predicates_unestablished` | §16.11.2 |
+| `separate_noncovered_and_unresolved_gain_loss_channels_v1` | §16.3.3 |
+| `sidecar:prebranch_runner_environment_identity_sha256` | §16.2 + §16.5.4 |
+| `source:<authority_id>` | §16.2 |
+| `source_adjudication_inputs` | §16.12.1 |
+| `source_amount_v1` | §16.3.2 |
+| `source_artifact_identity_projection` | §16.11.2 |
+| `source_authority_projection` | §16.11.2 |
+| `strict_capture_primary` | §16.11.2 |
+| `strict_json_top_level_and_integrity` | §16.2 |
+| `sum_nonnegative_covered_wage_gain_only_v1` | §16.3.3 |
+| `table4.b11` | §16.11.2 |
+| `table4.b2` | §16.11.2 |
+| `taxable_earnings_self_employment` | §16.11.2 |
+| `taxable_earnings_total` | §16.11.2 |
+| `taxable_earnings_wage` | §16.11.2 |
+| `terminal_attempt_and_registration_suffix_projection.v1` | §16.11.1 |
+| `terminal_capture_history_projection.v1` | §16.10 |
+| `terminal_namespace_history_projection.v1` | §16.12.4 |
+| `typed_base_plus_untyped_unresolved_singleton_no_uniform_v1` | §16.3.1 |
+| `untyped_unresolved_singleton_no_uniform_v1` | §16.3.1 |
+| `verification_claim_actual_preimage.v1` | §16.2 |
+| `verification_claim_adjudication_source_input_identity.v1` | §16.12.1 |
+| `verification_claim_adjudication_source_projection` | §16.12.1 |
+| `verification_claim_adjudication_source_projection.v1` | §16.12.1 |
+| `verification_claim_binding_result.v1` | §16.2 |
+| `verification_claim_expected_preimage.v1` | §16.2 |
+| `verification_claim_result_registry_envelope.v1` | §16.12.1 |
+| `verification_claim_result_row.v1` | §16.12.1 |
+| `verification_claim_results.fitting_free.v1` | §16.5.1 + §16.12.1 |
+| `verification_claim_results_fitting_free_v1` | §16.12.1 |
+| `verification_claim_results_v2` | §16.12.1 |
+| `verification_claim_source_projection` | §16.12.1 |
+| `verification_claim_spec_registry_envelope.v1` | §16.12.1 |
+| `verification_claim_specs.fitting_free.v1` | §16.5.1 + §16.12.1 |
+| `verification_claim_specs_fitting_free_v1` | §16.12.1 |
+| `verification_claim_specs_v2` | §16.12.1 |
+| `verify_amendment_2_design_identity_v1` | §16.2 |
+| `verify_calibrated_authenticated_verification_claim_requirement_v1` | §16.12.1 |
+| `verify_calibrated_candidate_registry_complete_v1` | §16.2 |
+| `verify_calibrated_capture_supplemented_required_authority_v1` | §16.11.2 |
+| `verify_calibrated_family_authority_requirement_v1` | §16.11.2 |
+| `verify_calibrated_legacy_model_authority_requirement_v1` | §16.11.2 |
+| `verify_calibrated_runner_environment_graph_v1` | §16.2 |
+| `verify_calibrated_selection_registry_complete_v1` | §16.2 |
+| `verify_calibrated_target_input_identity_v1` | §16.2 |
+| `verify_calibrated_target_registry_complete_v1` | §16.2 |
+| `verify_calibrated_target_value_capability_graph_v1` | §16.2 |
+| `verify_calibrated_verification_claim_requirement_v1` | §16.11.2 |
+| `verify_covered_earnings_verification_claim_adjudication_v1` | §16.12.1 |
+| `verify_deterministic_zero_fit_model_specs_v1` | §16.2 |
+| `verify_entry11_unit1b_membership_readjudication_v2_v1` | §16.2 |
+| `verify_fitting_free_a1_model_universe_authority_v1` | §16.2 |
+| `verify_fitting_free_a2_weight_field_authority_v1` | §16.2 |
+| `verify_fitting_free_a3_weight_source_authority_v1` | §16.2 |
+| `verify_fitting_free_capture_a1_model_universe_authority_v1` | §16.11.2 |
+| `verify_fitting_free_capture_a3_weight_source_authority_v1` | §16.11.2 |
+| `verify_fitting_free_claim_v_b1_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b2_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b3_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b4_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b5_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b6_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b8_v1` | §16.2 |
+| `verify_fitting_free_claim_v_b9_v1` | §16.2 |
+| `verify_fitting_free_forbidden_capability_graph_v1` | §16.2 |
+| `verify_fitting_free_implementation_identity_v1` | §16.2 |
+| `verify_fitting_free_model_choice_domain_empty_v1` | §16.2 |
+| `verify_fitting_free_runner_environment_graph_v1` | §16.2 |
+| `verify_fitting_free_target_domain_empty_v1` | §16.2 |
+| `verify_fresh_calibrated_output_namespace_v1` | §16.2 |
+| `verify_fresh_fitting_free_output_namespace_v1` | §16.2 |
+| `verify_historical_coverage_rules_identity_v1` | §16.2 |
+| `verify_psid_covered_earnings_crosswalk_v3_identity_v1` | §16.2 |
+| `verify_psid_source_field_inventory_identity_v1` | §16.2 |
+| `verify_ssa_covered_earnings_calibration_targets_vintage2_v1` | §16.2 |
+| `workers_self_employment` | §16.11.2 |
+| `workers_total` | §16.11.2 |
+| `workers_wage` | §16.11.2 |
+| `zero_fit_admissible_se_loss_identity_v1` | §16.3.2 |
+| `zero_fit_equal_mixed_remuneration_split_v1` | §16.3.2 |
+| `zero_fit_exact_zero_preserved_v1` | §16.3.2 |
+| `zero_fit_modelable_employee_half_coverage_v1` | §16.3.2 |
+| `zero_fit_modelable_se_half_coverage_v1` | §16.3.2 |
+| `zero_fit_negative_nonse_or_ineligible_loss_anomaly_v1` | §16.3.2 |
+| `zero_fit_nonremuneration_lineage_only_v1` | §16.3.2 |
+| `zero_fit_positive_identity_measurement_v1` | §16.3.2 |
+| `zero_fit_projected_equal_remuneration_split_v1` | §16.3.2 |
+| `zero_fit_untyped_registered_unresolved_v1` | §16.3.2 |
+| `zero_rational_microdollars_v1` | §16.3.2 |
