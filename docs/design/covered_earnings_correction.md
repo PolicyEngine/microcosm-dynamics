@@ -20168,3 +20168,80 @@ B_n\to P_n\to S_n\to A\to T\to C\to P_{n+1}\to J
 with the \(A,T,C,P_{n+1}\) suffix omitted on the no-capture branch.
 Every operand precedes its consumer, and neither the receipt/configuration
 hash graph nor the Git chronology contains a cycle.
+
+##### 16.13.5 Closure-sweep correction
+
+This subsection prospectively corrects the count and normative table in
+§16.12.5 for that appendix's stated corpus, namely the complete §16
+definition corpus through §16.12.4 and excluding the appendix itself. The
+grammar displayed there remains controlling. In particular, `PREFIX` is
+applied as a regular-expression search beginning at byte zero, exactly as
+displayed:
+`^(verify_|G[0-9]+|A[0-9]+|V-B[0-9]+|P[0-9]+|[a-z0-9_]+:)`.
+The `[a-z0-9_]+:` alternative accepts the complete terminal colon and
+requires no byte after it. A hidden nonempty-post-colon condition, namespace
+semantics test, leaf-versus-prefix classifier, or other semantic filtering
+is not part of the pattern and is forbidden.
+
+Mechanical reapplication gives these exact appendix totals:
+
+- pre-§16 ATOM set: 2,187 distinct atoms;
+- §16.1-through-§16.12.4 candidate set: 693 distinct tokens;
+- exact candidates already present before §16: 65 distinct tokens; and
+- introduced-token set: \(693-65=628\) distinct tokens.
+
+The prior displayed table has 618 distinct byte-sorted rows, no duplicate,
+and no extra. Its LF-terminated token-list SHA-256 is
+`cdc2df0aa370cd72e1996eac052b86d25e0d53e17c57f38295ea5962b66db0c2`.
+It omitted exactly the ten rows below. The corrected normative table is the
+unsigned-byte-sorted union of those 618 historical rows and these ten rows,
+using the displayed final row numbers and neighbors as exact insertion
+coordinates. It has exactly 628 rows. The old “exactly 618” sentence and
+standalone 618-row interpretation have no prospective operative case.
+
+Each omitted atom is the complete ASCII literal including its terminal
+colon, and its cited law supplies a real definition:
+
+- `authority:` is the required-authority failure-ID prefix concatenated with
+  one exact `requirement_id`;
+- `family:` is the family failure/blockage-ID prefix concatenated with one
+  exact `family_id`;
+- `family_methodology:` is the family-authority requirement-kind prefix that
+  selects the exact `methodology_requirement_id`;
+- `family_source:` is the family-authority requirement-kind prefix that
+  selects the exact `source_requirement_id`;
+- `fitting_free_to_calibrated:` is the transition-ID prefix concatenated
+  with SHA-256 of the canonical predecessor/successor certificate-digest
+  pair;
+- `global:` is the global-requirement failure-ID prefix concatenated with
+  one exact `requirement_id`;
+- `joint_state:` is the analytic joint-state ID prefix concatenated with
+  SHA-256 of the complete canonical state assignment;
+- `methodology:` is the methodology-authority blockage-ID prefix
+  concatenated with one exact `authority_id`;
+- `source:` is the source-authority blockage-ID prefix concatenated with one
+  exact `authority_id`; and
+- `untyped_unresolved:` is the singleton untyped-group ID prefix
+  concatenated with SHA-256 of the complete canonical six-key atomic tuple.
+
+The ten normative merge rows are:
+
+| Final row | Identifier token | Unsigned-byte insertion neighbors | Frozen-definition anchor |
+|---:|---|---|---|
+| 59 | `authority:` | `atomic_reason_applicability_untyped_registered_unresolved_v1` / `authority:<requirement_id>` | §16.2 |
+| 301 | `family:` | `facts` / `family:<family_id>` | §16.2 |
+| 304 | `family_methodology:` | `family_dispositions` / `family_methodology:<family_id>` | §16.11.2 |
+| 320 | `family_source:` | `family_methodology:b2_wage_total_intensity` / `family_source:<family_id>` | §16.11.2 |
+| 383 | `fitting_free_to_calibrated:` | `fitting_free_target_domain_specs.v1` / `fixture_descriptor:<input_id>` | §16.9.1 |
+| 433 | `global:` | `git_raw_bytes` / `global:<requirement_id>` | §16.2 |
+| 440 | `joint_state:` | `isolation_results.fitting_free.v1` / `keyed_uniform_required` | §16.3.3 |
+| 455 | `methodology:` | `measurement_stream_registry.fitting_free.v1` / `methodology:<authority_id>` | §16.2 |
+| 540 | `source:` | `sidecar:prebranch_runner_environment_identity_sha256` / `source:<authority_id>` | §16.2 |
+| 558 | `untyped_unresolved:` | `typed_base_plus_untyped_unresolved_singleton_no_uniform_v1` / `untyped_unresolved_singleton_no_uniform_v1` | §16.3.1 |
+
+The corrected 628-token list is reconstructed by inserting each row at that
+exact coordinate, sorting all tokens by unsigned UTF-8 bytes, and emitting
+each complete token followed by one LF. SHA-256 of those exact bytes is
+`1b6e24552a42240aa952e73a3e313977ef60c139c4827c1c61a428be659aab7b`.
+A count, order, neighbor, definition, or digest disagreement remains
+ratification-blocking.

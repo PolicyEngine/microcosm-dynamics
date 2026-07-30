@@ -28,8 +28,11 @@ round-7 findings and the ratification-blocking namespace sweep gap.
 - Replaced final-configuration hashes inside receipt-core namespace scans
   with pre-reference configuration-core hashes, moved full-SHA paths to an
   outer post-reference scan, and froze a 12-step acyclic construction order.
+- Re-derived the original appendix corpus as 2,187 pre-§16 atoms, 693
+  candidates, 65 overlaps, and 628 introduced tokens; added the ten omitted
+  terminal-colon prefix rows with exact definitions, positions, and hash.
 
 ## Next
 
-- Add the ten omitted namespace-prefix atoms, regenerate the table and totals,
-  and validate the complete amendment.
+- Validate the complete amendment, re-review the dependency graph, and
+  finalize the progress ledger and report.
