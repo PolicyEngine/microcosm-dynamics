@@ -7,7 +7,7 @@ Active on `claude/ce-design-amendment2` from
 17,952 lines with SHA-256
 `12b3f9f5b3ae3c5106aba2287b708169c8b99eb72f00fd553faeb8d83271f5d4`.
 All design changes in this round will be appended after that byte-for-byte
-preserved prefix. Findings 1 and 2 are complete; finding 3 is next.
+preserved prefix. Findings 1 through 3 are complete; finding 4 is next.
 
 ## Done
 
@@ -20,10 +20,12 @@ preserved prefix. Findings 1 and 2 are complete; finding 3 is next.
   and applicability-bundle bindings.
 - Added one total equality law binding each runner node's principal, symbol
   locator, implementation digest, entrypoint, and edge to its root identity.
+- Froze the canonical A1 semantic object, support-keyset output schema,
+  authorization-derived input domain, independent selector rerun, and the
+  uniquely completing nine-step serialization.
 
 ## Next
 
-1. Close and commit independent canonical A1 reconstruction.
-2. Close and commit the namespace-parent and output-version predicates.
-3. Mechanically enumerate §16 identifiers, repair any undefined tokens, add
+1. Close and commit the namespace-parent and output-version predicates.
+2. Mechanically enumerate §16 identifiers, repair any undefined tokens, add
    the normative closure sweep appendix, validate, and commit the sweep.

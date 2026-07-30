@@ -18475,3 +18475,180 @@ re-resolving a symbol. A zero/multiple node or edge result; unequal nested
 principal, path, symbol, blob, interval, or implementation digest; another
 entrypoint; or an independently selected “same root” makes the applicable
 graph result false and aborts before registration.
+
+#### 16.12.3 Independent canonical A1 and unique capture walk
+
+Every expected A1 construction in §16 prospectively uses the ratified
+semantic object `fitting_free_a1_semantic_identity.v1`. Its sole complete
+value is:
+
+```json
+{
+  "schema_version": "fitting_free_a1_semantic_identity.v1",
+  "selector_id": "fitting_free_model_universe_selector_v1",
+  "age_rule": "a1_age",
+  "annual_presence_rule": "a1_annual_presence",
+  "remuneration_type_rule": "a1_remuneration_type",
+  "stable_person_uniqueness_rule": "a1_stable_person_uniqueness",
+  "duplicate_component_rule": "a1_duplicate_component",
+  "zero_earner_rule": "a1_zero_earner",
+  "denominator_rule": "a1_denominator",
+  "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+}
+```
+
+Those ten keys and values are exhaustive; the semantic object is not a
+registry or extension point. Its canonical SHA-256 is
+`75025a36d595c1c1676af9a980fb7d80211a5d69035ff2657e4c8226fa849764`.
+`ratified_design:fitting_free_a1_semantic_identity` is the source projection
+whose value is exactly this complete object and whose value-identity digest
+is that published hash. No capture artifact, configuration, selector
+implementation, or observed support row supplies any of its eight A1
+semantic members.
+
+The formerly reference-only selector output schema is now the exact
+`model_universe_support_keyset_projection.v1` object. It has exactly
+`schema_version`, `ordered_support_keys`, `support_key_count`,
+`support_keyset_sha256`, and `status`; its schema value is that literal name.
+Each `ordered_support_keys` member is an exact two-element JSON array
+`[stable_person_id,calendar_year]`. The first leaf is the nonnull registered
+stable-person key in its source-schema type without string/numeric coercion;
+the second is a JSON integer excluding booleans in the registered calendar-
+year domain.
+
+Support keys are sorted first by unsigned-byte lexicographic order of the
+first leaf's canonical JSON serialization and then by numeric calendar year.
+The array is nonempty and has no duplicate complete key. Count is a positive
+JSON integer equal to its length, and `support_keyset_sha256` hashes the
+complete canonical `ordered_support_keys` array. Status is `pass` iff every
+key was emitted exactly once by the accepted selector, every ordering,
+domain, uniqueness, count, and hash equation holds, and no forbidden
+selector input contributed a leaf. This complete schema and equation are
+the only meaning of the output-schema tag in
+`model_universe_selector_executable_identity.v1`.
+
+The A1 row at position two of final methodology object
+`calibrated_authority_verification_specs.v4` prospectively replaces its
+three-member projection array with exactly:
+
+```json
+[
+  "git_raw_bytes",
+  "strict_capture_primary",
+  "capture_primary:a1_authority_identity",
+  "ratified_design:fitting_free_a1_semantic_identity"
+]
+```
+
+That array's canonical SHA-256 is
+`200bd9329072718a1430434008cdb70b191e7ca5cd6f59760c2003c895a9f357`.
+The row retains its already frozen ID, class, locator, expected/actual
+preimage types, predicate, and result type. For A1, every actual-preimage
+`ordered_source_projections` and `source_projection_rows` array has these
+four positions, count is integer four, and its domain digest hashes the
+complete four-row array. The first projection hashes raw primary bytes, the
+second hashes the complete strict primary, the third hashes the primary A1
+comparand, and the fourth hashes the ratified semantic object. The appended
+projection supplies expected semantics only; it does not make primary bytes
+an expected-value source.
+
+The earlier construction of
+`input_access_specs.ordered_input_descriptor_specs` from A1
+`source_input_ids` is prospectively reversed. The accepted, Git-tracked
+capture authorization contains the independently reviewed complete
+descriptor-spec array before any primary, sidecar, claim, source open, or A1
+object exists. Its existing five-key descriptor rows and role arrays remain
+unchanged. Expected A1 `source_input_ids` is the nonempty order-preserving
+`input_id` projection of exactly those authorization rows whose `role_ids`
+contains `a1_selector_source`. A3's input is independently the unique row
+whose roles contain `a3_weight_source`. The union/role/duplicate laws then
+validate the authorization array; neither A1 nor A3 constructs it.
+
+For each selected A1 descriptor spec, the unique same-ID sidecar
+`input_descriptor_identities` row must exact-copy its five registered
+coordinates and roles. Its observed path must resolve at the capture-triple
+commit \(T\) and final cutoff \(C\) to one mode-`100644` Git blob whose raw
+SHA-256 and byte length equal that sidecar row. The blob must strict-parse
+under its registered schema/vintage and remain byte-identical from \(T\)
+through \(C\). Zero/multiple rows, an untracked source, an authorization/
+sidecar/Git mismatch, changed bytes, or another role aborts expected
+construction.
+
+The coordinator constructs expected A1 in its existing 16-key order from
+only these independent sources:
+
+| A1 member | Sole expected source |
+|---|---|
+| `authority_id` | Literal `A1`. |
+| `selector_id` and the seven rule members | The same-named members of `fitting_free_a1_semantic_identity.v1`. |
+| `selector_implementation_identity` | The complete accepted capture-authorization member, exact-checked against its tracked implementation blob and never read from the primary. |
+| `selector_sha256` | SHA-256 of the complete canonical implementation identity. |
+| `source_input_ids` | The authorization role projection above. |
+| `support_key_count` and `support_keyset_sha256` | A new independent execution of the accepted selector over only the exact sidecar-bound Git bytes and registered field-dependency coordinates, producing a passing `model_universe_support_keyset_projection.v1`. |
+| `authority_capture_path` | The primary path mechanically derived from the unique accepted capture-triple commit \(T\). |
+| `authority_capture_input_closure_sha256` | SHA-256 of the complete canonical sidecar `input_descriptor_identities` array after every authorization/Git equality above passes. |
+
+The independent selector execution uses the accepted implementation
+commit/blob/entrypoint, registered interpreter and dependency lock, exact
+predicate-field-dependency registry, and the same forbidden-capability and
+six-reduction boundary as capture. It opens only stored Git blob bytes
+already bound by the sidecar and emits only the complete support-keyset
+projection. It consumes no primary member, primary top-level reduction,
+configuration A1, result, target, candidate, model output, loss, rank, or
+selection value. Its complete key array is retained through comparison; a
+producer-supplied count or hash is never an execution input.
+
+Only after all 16 expected fields are populated does the verifier
+strict-parse `primary.a1_authority_identity` as
+`actual_authority_identity`. The two complete objects must deep-equal, the
+primary's top-level count/hash and both A3 keyset fields must equal the
+independently reconstructed projection, and the primary/sidecar descriptor
+arrays, claim, path, and closure must satisfy every existing cross-binding.
+Thus the primary is an actual comparand only. A self-consistent primary A1
+plus matching top-level reductions cannot attest any expected field.
+
+With the authenticated V-B and A1 successors, the complete nine-step
+capture-success serialization re-walks uniquely:
+
+1. Freeze the preliminary four-key calibrated-design object; source-v1,
+   methodology-v3, claim-role-v1, role-v3, family-v1,
+   noncapture-predicate-v2, and capture-predicate-v1 registries; the
+   committed verification-claim adjudication projection; repository commit;
+   and derived UTC. Construct and hash the complete v2 cutoff identity.
+2. Construct the source-v1 and methodology-v3 manifests, including the
+   faithful authenticated negative V-B rows; construct lawful preliminary
+   A1/A3 legacy negatives and every other typed authority result; then
+   populate the full cutoff and unique preliminary adjudication \(P_n\).
+3. Exact-bind \(P_n\) in the committed authorization, derive the one
+   qualifying accepted capture-triple commit \(T\) from raw ancestry, and
+   revalidate its unchanged authorization/claim/primary/sidecar quartet at
+   final cutoff \(C\).
+4. Freeze the same design object; source-v2, methodology-v4 with the exact
+   four-projection A1 row, claim-role-v1, role-v4, family-v1,
+   noncapture-predicate-v2, and capture-predicate-v1 registries; \(C\); and
+   derived final UTC. Construct and hash the final v2 cutoff identity.
+5. From the semantic object, authorization, exact sidecar-bound Git bytes,
+   independent selector execution, unique \(T\), and descriptor closure,
+   construct the one expected A1. Independently reconstruct A3 from its
+   unique sidecar descriptor. Only then parse the primary comparands,
+   construct both expected/actual preimages and typed results, and append the
+   A1/A3 final-manifest rows.
+6. Hash the complete source-v2 and methodology-v4 manifests, populate the
+   full final cutoff, and expand the exact role-v4 map. Every hash consumer
+   now has its complete preimage.
+7. Serialize the complete A1/A3 aggregation preimages/results and all
+   remaining noncapture required-authority rows from their authenticated
+   manifest projections. No required-authority row is producer-sourced.
+8. Serialize only contiguous adjudication vintage \(n+1\) under the unique
+   single-parent first-add and immutable-lineage law.
+9. Bind that adjudication, the complete
+   `covered_earnings_path_applicability_registry_bundle.v2`, and every
+   same-cutoff identity in the receipt before namespace or path derivation.
+
+At step 5 the eight formerly missing semantic fields now come from ratified
+bytes, while implementation, input domain, reductions, path, and closure
+come from independent pre-primary or committed-byte sources. Steps 6–9
+therefore have exactly one reachable canonical serialization. Any zero/
+multiple \(T\), missing/extra descriptor, mismatched semantic constant,
+unreproducible selector output, primary-only value, registry version
+mismatch, or hash disagreement aborts before final adjudication.
