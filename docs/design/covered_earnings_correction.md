@@ -19910,3 +19910,80 @@ key array. For claims outside \(M\), both arrays are exact empty. These two
 cases replace the earlier multiset/set language: equality is always ordered
 array deep equality with exact multiplicity, and any duplicate is therefore
 an extra row and a derivation failure.
+
+##### 16.13.3 Phase-scoped namespace parents
+
+The universal-\(J\) rule in §16.12.4 and every conflicting root-table
+sentence are prospectively replaced by this phase equation. Let \(P_i\) be
+an adjudication artifact, let \(S_i\) be the unique first-add commit for its
+canonical path, and let \(B_i\) be \(S_i\)'s unique parent. Before the first
+byte of \(P_i\) is serialized, the raw commit and tree objects of \(B_i\)
+must exist locally, pass their object-ID checks, and have \(P_i\)'s path
+absent. The adjudication's `authority_cutoff.repository_commit` is exactly
+\(B_i\). Commit \(S_i\) has the sole parent \(B_i\), adds only the canonical
+next adjudication path as mode `100644`, and makes no other tree change.
+
+For every source projection physically serialized inside \(P_i\),
+`git_cutoff` resolves to \(B_i\)'s stored tree and `git_parent` also resolves
+to \(B_i\)'s stored tree, where the latter name means the parent of the
+adjudication first-add commit. Every such projection member named
+`parent_commit` equals \(B_i\)'s 40-lowercase-hex commit OID. Neither
+\(S_i\), a later authorization or capture commit, the later receipt parent,
+nor a branch tip is an operand of \(P_i\)'s bytes.
+
+Let \(J\) instead be the already stored adjudication first-add commit whose
+artifact is selected by the later receipt. If capture was required,
+\(J=S_{n+1}\), the first-add commit for the final adjudication. If no capture
+was required and the preliminary artifact is directly consumable,
+\(J=S_n\). Only source projections newly constructed in the subsequent
+receipt/registration namespace phase resolve `git_parent` to \(J\)'s stored
+tree and serialize `parent_commit` equal to \(J\). A copy of an earlier
+adjudication projection retains its original \(B_i\) value; it is not
+reinterpreted against \(J\).
+
+Thus the complete root-resolution equation is
+
+\[
+\operatorname{resolve}(\texttt{git\_parent},X)=
+\begin{cases}
+\operatorname{Tree}(B_i),
+  &X\text{ is a projection serialized inside }P_i,\\
+\operatorname{Tree}(J),
+  &X\text{ is newly constructed in the later receipt/namespace phase}.
+\end{cases}
+\]
+
+The same case split controls every corresponding `parent_commit`. No
+configuration field, clock, worktree, index, staged tree, eventual commit
+OID, or producer choice selects the phase.
+
+On the capture branch the stored-commit chronology is exactly
+
+\[
+B_n \longrightarrow S_n \longrightarrow A \longrightarrow T
+\longrightarrow C \longrightarrow J=S_{n+1}\longrightarrow Q.
+\]
+
+Here \(A\) is the committed authorization, \(T\) is the unique accepted
+capture-triple commit, \(C=B_{n+1}\) is the stored final cutoff, \(J\) adds
+only \(P_{n+1}\), and the candidate receipt/configuration commit \(Q\) has
+the sole parent \(J\). On the no-capture branch, \(J=S_n\) and the middle
+authorization/capture/final-adjudication suffix is absent. In both branches,
+\(J\) exists before any receipt or selected configuration byte is
+serialized, while \(Q\) is not an input to either file.
+
+After \(Q\) is stored, the post-commit validator requires its raw commit
+object to have exactly one parent equal to the frozen \(J\), requires its
+tree delta to contain exactly the accepted receipt and selected
+configuration paths and bytes, and reruns every receipt-phase \(J\)-tree
+projection against the unchanged stored object. It does not rewrite or
+reinterpret any \(B_i\)-bound adjudication projection. This chronology has
+only already existing Git objects on serialization edges:
+
+\[
+B_i\to\operatorname{bytes}(P_i)\to S_i,\qquad
+J\to\operatorname{bytes}(\text{receipt/configuration})\to Q.
+\]
+
+No artifact contains the OID or tree of the commit whose identity depends
+on that artifact's own blob, so no Git/hash fixed point exists.

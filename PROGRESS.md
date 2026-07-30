@@ -22,10 +22,12 @@ round-7 findings and the ratification-blocking namespace sweep gap.
   retained the base V-B1/V-B4 legal authority, limited serialized PSID
   source rows to those three claims, and froze the other claims' source-row
   and disposition domains as explicitly empty rather than unmatched.
+- Bound every adjudication's namespace roots to its already existing
+  first-add parent, reserved the later receipt parent for newly constructed
+  receipt-phase projections, and prohibited any artifact/self-commit edge.
 
 ## Next
 
-- Replace the future namespace parent with phase-correct existing commits.
 - Cut the receipt/configuration digest cycle and state one total construction
   order.
 - Add the ten omitted namespace-prefix atoms, regenerate the table and totals,
