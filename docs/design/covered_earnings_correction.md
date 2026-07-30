@@ -10934,7 +10934,13 @@ ID-to-path map is:
   "loss_or_net_zero": ["component_aggregation_law.loss_only_and_net_zero"],
   "per_group_statutory_then_person_cap": ["component_aggregation_law.statutory_order"],
   "joint_state_nonlinearity": ["component_aggregation_law.expected_value_nonlinearity"],
-  "draw_law": ["draw_law"]
+  "draw_law": [
+    "draw_law",
+    "coverage_state_dependence_specs.within_group_law",
+    "coverage_state_dependence_specs.between_group_law",
+    "coverage_state_dependence_specs.between_year_law",
+    "draw_spec"
+  ]
 }
 ```
 
@@ -10942,6 +10948,9 @@ An unprefixed path resolves against the same registered
 `deterministic_zero_fit_model_specs.v1` object. A path beginning
 `coverage_state_dependence_specs` resolves against that exact sibling in the
 locked `covered_earnings_deterministic_uncalibrated_model.v1` identity.
+The exact unprefixed path `draw_spec` is the sole exception to the local-
+object rule and resolves to that complete same-named sibling in the locked
+model identity; no other unprefixed path can escape the deterministic spec.
 `rule_spec` is exactly the
 canonical object mapping each listed path, in that path-array order before
 canonicalization, to its complete resolved value; its hash is SHA-256 of
@@ -10949,6 +10958,22 @@ those canonical bytes. The ordered rule-spec array is derived entirely from
 the complete named locked-model members and exact-matches an independently
 expanded copy. A missing path, extra byte, alternate projection, shared,
 omitted, added, or synthesized rule ID fails registration/G19.
+
+Consequently the 37th `draw_law` preimage has exactly the five displayed
+members. Its local name cannot instantiate the rule by itself: the complete
+registered `within_group_law`, `between_group_law`, `between_year_law`, and
+`draw_spec.fitting_free.v1` bytes must all resolve and hash in that order.
+G19's same-position expected and actual rule hashes cover this five-member
+object, so changing, omitting, or merely relying on the locked-model
+whole-object digest for any named dependence/draw child fails the individual
+rule-instantiation row.
+The draw spec contains the literal field name
+`substantive_model_sha256`, not the eventual model-hash value, so including
+the complete sibling creates no hash cycle. Expanding this preimage and the
+reason map below intentionally changes rule-spec hashes 37 and 29,
+respectively, then the registered rule identity, locked model hash, draw
+namespace, and every derived evidence hash; no predecessor digest remains
+valid for a fresh fitting-free registration.
 
 #### 16.3.1 Direct, modelable, unresolved, and nonremuneration records
 
@@ -11149,12 +11174,13 @@ rule/count combination or shared fallback passes the trace.
 `final_classification_disposition`, `applicable_rule_id`,
 `coverage_status_vector`, `coverage_state_group_id`, and
 `classification_reason_codes`. Its schema-version literal is
-`final_classified_component_identity.fitting_free.v1`. The reason array is the complete inherited
-source/seam/legal/missing-fact array followed by every applicable zero-fit
-code in §16.3.2's exact order. The canonical classified-component stream has
-one same-position row whose complete identity/digest equals this object for
-every atomic key; G09/G10/G14/G16/G17-C06/G21 bind that one-to-one
-comparison. Thus a vector cannot pass while final reason provenance drifts.
+`final_classified_component_identity.fitting_free.v1`. The reason array is
+the complete independently reconstructed inherited source/seam/legal/
+missing-fact prefix followed by the sole predicate-map stable-filter
+serialization in §16.3.2. The canonical classified-component stream has one
+same-position row whose complete identity/digest equals this object for every
+atomic key; G09/G10/G14/G16/G17-C06/G21 bind that one-to-one comparison.
+Thus a vector cannot pass while final reason provenance drifts.
 
 `classified_component_stream.fitting_free.v1` has exactly
 `schema_version`, `projection_draw_index`, `ordered_atomic_keys`, `rows`,
@@ -11431,15 +11457,114 @@ never becomes a positive job or amount.
     "zero_fit_projected_equal_remuneration_split_v1",
     "zero_fit_untyped_registered_unresolved_v1"
   ],
+  "atomic_reason_code_applicability_predicate_map": {
+    "zero_fit_modelable_employee_half_coverage_v1": "atomic_reason_applicability_modelable_employee_half_v1",
+    "zero_fit_modelable_se_half_coverage_v1": "atomic_reason_applicability_modelable_se_half_v1",
+    "zero_fit_equal_mixed_remuneration_split_v1": "atomic_reason_applicability_source_mixed_exact_half_split_v1",
+    "zero_fit_positive_identity_measurement_v1": "atomic_reason_applicability_positive_measurement_v1",
+    "zero_fit_exact_zero_preserved_v1": "atomic_reason_applicability_exact_zero_measurement_v1",
+    "zero_fit_admissible_se_loss_identity_v1": "atomic_reason_applicability_admissible_se_loss_measurement_v1",
+    "zero_fit_negative_nonse_or_ineligible_loss_anomaly_v1": "atomic_reason_applicability_negative_anomaly_measurement_v1",
+    "zero_fit_projected_equal_remuneration_split_v1": "atomic_reason_applicability_projected_exact_half_split_v1",
+    "zero_fit_untyped_registered_unresolved_v1": "atomic_reason_applicability_untyped_registered_unresolved_v1"
+  },
   "nonremuneration_reconciliation_reason_code": "zero_fit_nonremuneration_lineage_only_v1"
 }
 ```
 
-Each atomic row first retains its complete inherited source, seam, legal, and
-missing-fact reason order, then appends every applicable zero-fit code in the
-atomic order above. Missing, extra, duplicate, or reordered applicable codes
-fail G09/G10/G14/G16/G17-C06/G21 closures. Unchanged G06 attests only the
-pre-default legal trace and does not inspect these appended codes.
+This is the sole valid three-key `reason_code_order` object. The map has
+exactly the nine code-array members as its keys, each once, and the nine
+displayed predicate IDs are closed, nonempty, and unique; a map selected by
+an implementation, a callback, an unknown predicate ID, or a different
+code-to-predicate pairing aborts registration.
+
+The predicates are the following closed equations over independently
+reconstructed upstream facts. The already-authored
+`classification_reason_codes` and `measurement_reason_code` fields are
+excluded from every predicate preimage and cannot attest applicability:
+
+1. `atomic_reason_applicability_modelable_employee_half_v1` is true iff the
+   same-key default row has `applicable_rule_id: modelable_wage_half`,
+   remuneration type `employee`, final disposition `modeled`, the exact
+   employee half vector, and `keyed_uniform_required: true`.
+2. `atomic_reason_applicability_modelable_se_half_v1` is true iff the
+   analogous fields are `modelable_se_half`, `self_employment`, `modeled`,
+   the exact SE half vector, and true.
+3. `atomic_reason_applicability_source_mixed_exact_half_split_v1` is true
+   for each of exactly two children iff the independently resolved source-
+   backed v3 crosswalk parent is literal `mixed`, the complete same-parent
+   expansion has only the exact `#wage` and `#self_employment` child IDs,
+   both signed amounts equal the parent rational amount divided by two,
+   their sum has zero rational residual, their types are respectively
+   `employee` and `self_employment`, and their coverage groups are distinct.
+4. `atomic_reason_applicability_positive_measurement_v1` is true iff the
+   finite adjudicated source amount is strictly greater than rational zero
+   and independent four-row registry evaluation selects `positive_identity`.
+5. `atomic_reason_applicability_exact_zero_measurement_v1` is true iff that
+   amount equals rational zero and registry evaluation selects
+   `exact_zero_preserved`.
+6. `atomic_reason_applicability_admissible_se_loss_measurement_v1` is true
+   iff that amount is strictly negative, the independently reconstructed
+   SE-loss identity passes structurally with `admissible: true`, and registry
+   evaluation selects `admissible_se_loss_identity`.
+7. `atomic_reason_applicability_negative_anomaly_measurement_v1` is true iff
+   that amount is strictly negative, the independently reconstructed
+   applicable source-backed or synthetic identity passes structurally with
+   `admissible: false`, and registry evaluation selects
+   `negative_anomaly_zero_adjusted`. A structurally failing SE-loss identity
+   makes the measurement row fail and can never make this predicate true.
+8. `atomic_reason_applicability_projected_exact_half_split_v1` is true for
+   each of exactly two children iff the trusted component-input-action kind
+   is `projected_status_evolution`, its resolved identity has
+   `status_evolution_rule_id:
+   projected_two_ids_modelable_distinct_groups_v1`, both exact
+   `projected#wage` and `projected#self_employment` siblings bind one parent-
+   proxy identity, carry its signed rational amount divided by two, have the
+   required respective types and distinct groups, and sum exactly to the
+   parent amount.
+9. `atomic_reason_applicability_untyped_registered_unresolved_v1` is true iff
+   the unique source v3 crosswalk branch is
+   `present_untyped_registered_unresolved`, its derived ID is the exact
+   `#untyped_unresolved` child, and the same-key default row has
+   `applicable_rule_id: untyped_unresolved`, vector `[0,0,0,1]`, and no
+   keyed uniform.
+
+Items 4–7 use the expected case obtained directly from the finite source
+atomic amount and, only when negative, the independently reconstructed
+SE-loss-admissibility inputs. That evaluation occurs before final classified-
+component reason serialization. It consumes no later measurement row,
+measurement reason, classified-component digest, or gate result; the later
+measurement row must repeat the already determined unique case and code.
+Likewise, items 3 and 8 use the registered parent/child expansion and items
+1, 2, and 9 use the independently reconstructed default inputs, never the
+reason-bearing output they validate. The resulting dependency graph is
+acyclic.
+
+For every atomic row, the coordinator first reconstructs the complete
+inherited source, seam, legal, and missing-fact reason prefix and requires
+that none of the nine zero-fit codes occurs in it. It then evaluates all nine
+mapped predicates, in `atomic_reason_code_order`, and appends exactly the
+codes whose predicates are true, preserving that order. This stable filter
+is the sole valid serialization of `classification_reason_codes`. Exactly
+one of predicates 4–7 is true for every structurally passing finite
+production atomic remuneration row; a structurally failing negative
+SE-loss identity makes neither 6 nor 7 lawfully true and retains a failing
+row. Predicates 1, 2, and 9 are mutually exclusive on a passing default row,
+and predicates 3 and 8 are mutually exclusive on passing lineage. Other
+combinations are allowed only as the conjunction of their independently true
+predicates. Thus, for example, a positive projected wage child appends employee-half,
+positive-measurement, projected-split in global order; a modeled
+source-mixed SE child with an admissible negative loss appends SE-half,
+source-mixed-split, admissible-loss; and a zero untyped row appends
+exact-zero, untyped.
+
+Missing, extra, duplicate, or reordered prefix/suffix codes, an incorrect
+predicate result, or a measurement-row reason unequal to its unique
+applicable predicate-4-through-7 code fails
+G09/G10/G14/G16/G17-C06/G21 closures. Nonremuneration is outside the atomic
+predicate domain and retains only its separate reconciliation reason.
+Unchanged G06 attests only the pre-default legal trace and does not inspect
+these appended codes.
 
 `nonremuneration_reconciliation_specs` has exactly `row_schema`,
 `stream_schema`, `registry_schema`, `source_key_fields`,
@@ -13275,6 +13400,18 @@ trace; the activated side may remain unfavorable on gate failure.
 each with exactly `rule_id`, `expected_rule_sha256`, `actual_rule_id`,
 `actual_rule_sha256`, `comparison_disposition`, and `status`. Expected
 IDs/hashes come from the same-position `deterministic_rule_specs`.
+For one-based position 29, `reason_code_order`, the expected and actual
+hashes cover the complete expanded three-key object, including all nine
+code-to-predicate pairs and not merely the code array. For one-based position
+37, `draw_law`, they cover the canonical five-member resolved object in
+§16.3: local draw-law name, within-group law, between-group law, between-year
+law, and complete fitting-free draw spec. G19 independently resolves both
+complete position-29 objects and both complete position-37 objects from the
+registered and activated locked-model children, computes their canonical
+hashes, and requires the trace's actual hashes to equal those activated-side
+computations before forming the comparison. An echoed expected hash, the
+whole-model digest, or literal `draw_law` value cannot substitute for either
+resolved object or any member.
 `actual_rule_id` and `actual_rule_sha256` are both nonnull for
 `exact_position | wrong_position` and both null for `missing`; row status
 passes only for exact position plus equal hashes.
