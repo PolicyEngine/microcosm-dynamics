@@ -22,6 +22,9 @@ ARTIFACT = (
     / "external"
     / "ssa_covered_earnings_calibration_targets_vintage2.json"
 )
+ARTIFACT_SHA256 = (
+    "fe018587a5b32188088078ef557dceca67f26352ebfc424e1d1622416cbdcf55"
+)
 
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
@@ -106,6 +109,68 @@ def test__vintage2_authority__builds_with_exact_amended_shape():
     )
     builder.validate_artifact(artifact)
     assert builder.render() == builder.entry10.canonical_json_bytes(artifact)
+
+
+def test__committed_vintage2__is_byte_reproducible():
+    raw = ARTIFACT.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
+    assert raw == builder.render()
+    artifact = builder._strict_json_object(raw, where=str(ARTIFACT))
+    builder.validate_artifact(artifact)
+
+
+def test__tracked_lineage__derives_exactly_h_equals_two_from_git():
+    assert builder.validate_tracked_vintage_lineage() == {
+        "tracked_vintage_suffixes": [2],
+        "highest_vintage_suffix": 2,
+        "accepted_vintage_path": (
+            "data/external/"
+            "ssa_covered_earnings_calibration_targets_vintage2.json"
+        ),
+    }
+
+
+@pytest.mark.parametrize(
+    ("paths", "expected_exception", "message"),
+    (
+        ((), ValueError, "not contiguous"),
+        (
+            (
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage02.json",
+            ),
+            ValueError,
+            "malformed",
+        ),
+        (
+            (
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage2.json",
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage4.json",
+            ),
+            ValueError,
+            "not contiguous",
+        ),
+        (
+            (
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage2.json",
+                "data/external/"
+                "ssa_covered_earnings_calibration_targets_vintage3.json",
+            ),
+            builder.RegistrationAborted,
+            "future ratified activation",
+        ),
+    ),
+)
+def test__tracked_lineage__fails_closed_on_non_h2_states(
+    paths,
+    expected_exception,
+    message,
+):
+    with pytest.raises(expected_exception, match=message):
+        builder.validate_tracked_vintage_lineage(paths)
 
 
 def test__b2_b11_evidence__is_complete_and_ordered():

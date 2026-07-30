@@ -45,8 +45,10 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import math
 import re
+import subprocess
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from fractions import Fraction
@@ -73,7 +75,7 @@ CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 # Replaced with the first coherent builder commit before the artifact is
 # committed.  Keeping the pin literal makes an offline rebuild independent of
 # the current checkout's HEAD.
-EXTRACTION_IMPLEMENTATION_COMMIT = "14efbded2b6d02bbfe0014a7b059068a733a1e11"
+EXTRACTION_IMPLEMENTATION_COMMIT = "9bb011e2cefa6c886c496929e1189e158c6c1b35"
 
 OPTIONAL_COVERED_SHARE_UNAVAILABLE = {
     "status": "unavailable_source_absent",
@@ -92,6 +94,13 @@ OPTIONAL_COVERED_SHARE_UNAVAILABLE = {
         "future_ratified_amendment_and_fresh_registration_required_v1"
     ),
 }
+
+VINTAGE_PATH_PREFIX = (
+    "data/external/ssa_covered_earnings_calibration_targets_vintage"
+)
+VINTAGE_PATH_PATTERN = re.compile(
+    rf"{re.escape(VINTAGE_PATH_PREFIX)}(?P<suffix>[1-9][0-9]*)\.json"
+)
 
 SOURCE_DOCUMENT_ID = "ssa_supplement_2025_4b"
 SOURCE_FILENAME = "supplement2025_4b.html"
@@ -1992,6 +2001,103 @@ def render() -> bytes:
     """Render the validated artifact as canonical bytes."""
 
     return entry10.canonical_json_bytes(build())
+
+
+def _strict_json_object(raw: bytes, *, where: str) -> dict[str, Any]:
+    """Parse one canonical JSON object while rejecting duplicate keys."""
+
+    def reject_constant(token: str) -> None:
+        raise ValueError(f"{where} contains nonfinite constant {token}")
+
+    def exact_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        value: dict[str, Any] = {}
+        for key, member in pairs:
+            if key in value:
+                raise ValueError(f"{where} contains duplicate key {key!r}")
+            value[key] = member
+        return value
+
+    try:
+        value = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=exact_object,
+            parse_constant=reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(f"{where} is not strict UTF-8 JSON") from error
+    if type(value) is not dict:
+        raise ValueError(f"{where} must contain one JSON object")
+    if raw != entry10.canonical_json_bytes(value):
+        raise ValueError(f"{where} is not canonical artifact bytes")
+    return value
+
+
+def validate_tracked_vintage_lineage(
+    tracked_paths: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Derive and validate the amended artifact lineage from Git.
+
+    The only source-activation state implemented by this entry is the
+    immutable vintage-2 absent block.  A future successor therefore fails
+    closed here until its separately ratified activation implementation
+    exists.
+    """
+
+    if tracked_paths is None:
+        result = subprocess.run(
+            [
+                "git",
+                "ls-files",
+                "--",
+                f"{VINTAGE_PATH_PREFIX}*.json",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        tracked_paths = tuple(
+            line for line in result.stdout.splitlines() if line
+        )
+    else:
+        tracked_paths = tuple(tracked_paths)
+
+    suffix_to_path: dict[int, str] = {}
+    for path in tracked_paths:
+        match = VINTAGE_PATH_PATTERN.fullmatch(path)
+        if match is None:
+            raise ValueError(
+                f"malformed covered-earnings vintage path {path!r}"
+            )
+        suffix = int(match.group("suffix"))
+        if suffix < 2 or suffix in suffix_to_path:
+            raise ValueError(
+                f"invalid or duplicate covered-earnings vintage suffix "
+                f"{suffix}"
+            )
+        suffix_to_path[suffix] = path
+
+    suffixes = sorted(suffix_to_path)
+    if not suffixes or suffixes != list(range(2, suffixes[-1] + 1)):
+        raise ValueError(
+            f"tracked vintage suffixes are not contiguous from 2: {suffixes}"
+        )
+    if suffixes != [2]:
+        raise RegistrationAborted(
+            "a covered-share successor requires a future ratified activation "
+            "implementation and fresh registration"
+        )
+
+    path = suffix_to_path[2]
+    artifact = _strict_json_object((ROOT / path).read_bytes(), where=path)
+    if artifact.get("artifact_vintage_id") != ARTIFACT_VINTAGE_ID:
+        raise ValueError("vintage path and artifact-vintage ID disagree")
+    validate_artifact(artifact)
+    return {
+        "tracked_vintage_suffixes": suffixes,
+        "highest_vintage_suffix": suffixes[-1],
+        "accepted_vintage_path": path,
+    }
 
 
 def main() -> None:
