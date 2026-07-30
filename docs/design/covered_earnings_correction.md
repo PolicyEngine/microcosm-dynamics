@@ -8710,3 +8710,62 @@ base clauses are also expressly re-pointed:
 | 2169–2190, 2518–2538, 4086–4091, 4120–4126, 4813–4821, 6158–6182, 6311–6335, 6608 onward | Target row shape, provenance, objective-bit gates, noninterference, result order/cardinality, and trace domains derive only from §15.5's 14-family v3 registry. |
 | 2744–2759, 7170–7173, 7554–7556 | Already-viewed honesty remains controlling and is supplemented—not weakened—by §§15.2 and 15.7. |
 | 7921–7922 | The §14.1 extraction settlement is replaced by the B2/B11-required, covered-share-optional law stated in the final direct-ledger row above. |
+
+### 15.7 Honesty, fail-closed preservation, and B2/B11 nonweakening
+
+This amendment is source-absence adjudication, not outcome-responsive
+reweighting. The relevant SSA bytes and displayed operands had been viewed,
+so they are never described as unseen. Their artifact shape and estimands
+proved the required direct share cells absent before fitting. At that point
+there was no model target packet, fitted parameter, prediction, residual,
+loss, ranking, candidate selection, gate result, corrected ledger, or
+benefit/revenue output. The \(31/55\) quotient-above-one finding is disclosed
+as corroboration of the universe mismatch; neither it nor any other observed
+official magnitude chose the replacement families or their relative weights.
+The pro-rata rule preserves the surviving predeclared ratio mechanically.
+
+The amended failure boundary is exact:
+
+- absence of an optional covered-share source passes only as the canonical
+  `unavailable_source_absent` object and V-B7
+  `authority_absent/pass`; it does not masquerade as an empty official
+  series or successful share authority;
+- a nonempty optional-source attempt fails unless every source-activation
+  clause passes; no partial population, thinning, synthesis, clipping,
+  fallback percentage, or empty-state rewrite is allowed after that attempt;
+- a source-verified optional block remains incapable of fitting or selection
+  until a later ratified amendment and fresh registration activate a new
+  family; and
+- every required B2/B11 source, model-universe, and methodology failure keeps
+  the amended required calibration contract fail-closed.
+
+In particular, weight reassignment grants no evidentiary credit and changes
+none of the base §6.1 membership prerequisites. Before B2 wage intensity may
+register, primary methodology bytes must establish the exact `c11`
+person-year predicate; zero and below-threshold treatment; same-type
+deduplication across employers/jobs; cap and multiple-employer treatment;
+coextensiveness of the `c5` amount and `c11` worker universes; and effective
+dates for every regime change. Before B2 SE intensity may register, those
+bytes must establish whether `c8` is signed and whether it is before or after
+the SECA factor, threshold, and cap; loss-only, zero, net-zero, and
+below-threshold treatment; the exact `c12` predicate; aggregation and
+deduplication across businesses/components; wage-first cap exhaustion; and
+every historical regime change. Before either B11 worker-distribution family
+may register, they must establish exact annual unique-person definitions of
+\(T,W,S\); that \(T\) is the unduplicated union; zero, loss, threshold, and
+cap treatment; same-type job/business/component deduplication; timing;
+geography; and historical-method continuity.
+
+The already captured B2/B11 bytes settle only the relationships they
+literally prove. Dual wage/SE counting, above-cap amounts, a 2023-only B10
+deduplication note, post-1992 table-specific zero exclusions, or VI.G1
+payroll-dollar notes do not silently settle the remaining historical worker-
+membership questions. Missing methodology bytes abort the affected family;
+because all four positive-weight families are required, one affected-family
+failure aborts fitting and selection rather than renormalizing again.
+
+All other base fail-closed laws—including source hashing, literal cells,
+universe concordance, model weights, target domains, candidate eligibility,
+hard gates, publication regardless, incidents, and fresh-registration
+dispositions—remain unchanged. Amendment 1 removes one impossible required
+source; it does not soften any surviving authority or execution gate.
