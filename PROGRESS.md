@@ -36,6 +36,9 @@ definition, including its preimage schema, serialization, and result type.
   six-field rows, including a fitting-free G11 statement and explicit
   `gate_fail` disposition.
 - Removed any normative dependence on the separate G11 deviations-ledger row.
+- Closed G21 structural validity with one singleton rule registry, complete
+  raw-byte/range preimage, six literal predicate equations, one typed result,
+  and acyclic mutation-ledger foreign keys.
 - Froze all five registration-required V-B role arrays and both complete
   ten-row v1/v2 role maps, including their exact canonical domain hashes.
 - Added one closed A1/A3 capture-supplement predicate registry, complete
@@ -57,6 +60,5 @@ definition, including its preimage schema, serialization, and result type.
 
 ## Next
 
-1. Close G21 structural validity.
-2. Run strict JSON, append-only-prefix, closure, repository-state, and
+1. Run strict JSON, append-only-prefix, closure, repository-state, and
    whitespace validation; record final dispositions.

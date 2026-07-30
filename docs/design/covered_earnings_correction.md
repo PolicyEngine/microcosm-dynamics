@@ -17680,3 +17680,169 @@ in §§16.6 and 16.11.4.” The earlier separate
 “§8.1 G11 lifecycle projection” ledger row has no controlling effect and
 supplies no v4 byte. Gates G01–G09, G12–G13, G16, G18, G20, and G22 alone
 retain their complete v3 rows.
+
+#### 16.11.5 Closed G21 structural-validity rule
+
+The exact key set of `fitting_free_noninterference_specs.v1` is amended by
+inserting `structural_validity_rule_specs` immediately after
+`mutation_byte_ranges`. It therefore has exactly `schema_version`,
+`fixture_id`, `opaque_fixture_inputs`, `mutation_byte_ranges`,
+`structural_validity_rule_specs`, `denied_path_ids`,
+`pre_g21_bundle_schema`, `canonicalization`, and
+`failure_disposition`. The added child deep-equals the complete singleton
+registry below. A specification retaining the earlier eight-key shape or
+supplying only a rule string is invalid.
+
+The registry is
+`g21_structural_validity_rule_specs.fitting_free.v1`, with exactly
+`schema_version`, `ordered_rule_ids`, `rows`, `row_count`,
+`domain_sha256`, and `failure_disposition`. Its one and only value is:
+
+```json
+{
+  "schema_version": "g21_structural_validity_rule_specs.fitting_free.v1",
+  "ordered_rule_ids": [
+    "exact_registered_same_length_buffer_replacement_v1"
+  ],
+  "rows": [
+    {
+      "structural_validity_rule_id": "exact_registered_same_length_buffer_replacement_v1",
+      "input_preimage_schema": "g21_structural_validity_preimage.fitting_free.v1",
+      "predicate_equation": "baseline_identity_matches&&length_unchanged&&mutation_domain_matches&&outside_ranges_equal&&registered_ranges_equal&&complete_mutant_identity_matches",
+      "result_schema": "g21_structural_validity_result.fitting_free.v1",
+      "required_status": "pass"
+    }
+  ],
+  "row_count": 1,
+  "domain_sha256": "0fc060967859afb7767b7e2f84b259f5315746a96e4e5b887f83558ce3c29dab",
+  "failure_disposition": "abort_registration"
+}
+```
+
+The domain digest is SHA-256 of canonical bytes of the complete singleton
+`rows` array. Every `mutation_byte_ranges` row's
+`structural_validity_rule_id` must be the displayed sole ID. A missing,
+unknown, alternate, extra, or configured rule ID, row, schema, equation,
+result type, required status, or registry member aborts registration.
+
+The exact predicate input is
+`g21_structural_validity_preimage.fitting_free.v1`, with exactly
+`schema_version`, `structural_validity_rule_id`, `input_id`,
+`registered_byte_length`, `actual_baseline_byte_length`,
+`actual_mutant_byte_length`, `registered_baseline_sha256`,
+`actual_baseline_sha256`, `expected_mutation_id_order`,
+`actual_mutation_id_order`, `expected_mutation_rows`,
+`actual_mutation_rows`, `expected_mutation_domain_sha256`,
+`actual_mutation_domain_sha256`, `baseline_outside_ranges_sha256`,
+`mutant_outside_ranges_sha256`, `expected_replacement_ranges_sha256`,
+`actual_replacement_ranges_sha256`, `expected_mutant_sha256`, and
+`actual_mutant_sha256`.
+
+The schema and rule fields equal the displayed literals. `input_id`
+foreign-keys exactly one registered opaque input. All three lengths are
+nonnegative JSON integers excluding booleans, and every named digest is 64
+lowercase hex. The registered length and baseline digest exact-copy that
+opaque-input row. The two actual lengths and full-buffer digests are derived
+from the descriptor-read baseline and the final in-memory mutant, never from
+the configuration or an implementation assertion.
+
+`expected_mutation_rows` is every registered mutation for this input in its
+registered order. `actual_mutation_rows` is the complete observed projection
+from the actual ledger in actual canonical input/offset/ID order, including
+extras. Each row in either array has exactly `mutation_id`, `input_id`,
+`start_offset`, `end_offset_exclusive`, `before_range_sha256`,
+`after_range_sha256`, `application_count`, and
+`structural_validity_rule_id`. On the expected side, the two range hashes
+copy `baseline_range_sha256` and `mutant_range_sha256`,
+`application_count` is integer one, and the rule is the singleton ID. On the
+actual side, the fields are observed from the materializer and mutation
+ledger; an unknown rule remains serializable unfavorable evidence.
+The two ID-order arrays are the complete same-side `mutation_id`
+projections. Each domain digest hashes its complete canonical row array.
+Missing rows therefore remain visible by expected/actual inequality, while
+extra rows remain physically present on the actual side.
+
+The outside-range hashes cover the raw bytes at every offset outside the
+union of registered half-open ranges, concatenated in increasing offset
+order. The expected replacement-range hash covers the raw concatenation of
+the decoded literal replacements in registered mutation order; the actual
+replacement-range hash covers the same-coordinate slices of the final
+mutant in that order. `expected_mutant_sha256` hashes the one complete buffer
+obtained by applying the sole registered materialization algorithm to the
+registered baseline; `actual_mutant_sha256` hashes the observed complete
+final buffer. These byte domains plus the complete range rows make the
+preimage independently reproducible. It serializes only under
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`.
+
+The typed predicate result is
+`g21_structural_validity_result.fitting_free.v1`, with exactly
+`schema_version`, `structural_validity_rule_id`, `input_id`,
+`input_preimage`, `input_preimage_sha256`,
+`baseline_identity_matches`, `length_unchanged`,
+`mutation_domain_matches`, `outside_ranges_equal`,
+`registered_ranges_equal`, `complete_mutant_identity_matches`,
+`predicate_value`, and `status`. `input_preimage` is the complete object
+above exactly once and its digest hashes those canonical bytes. The schema,
+rule, and input ID equal the embedded values. The six booleans have these
+exhaustive equations:
+
+1. `baseline_identity_matches` is true iff
+   `actual_baseline_byte_length == registered_byte_length` and
+   `actual_baseline_sha256 == registered_baseline_sha256`.
+2. `length_unchanged` is true iff
+   `actual_mutant_byte_length == registered_byte_length`.
+3. `mutation_domain_matches` is true iff
+   `actual_mutation_id_order` deep-equals `expected_mutation_id_order`,
+   `actual_mutation_rows` deep-equals `expected_mutation_rows`, and the
+   actual domain digest equals the expected domain digest.
+4. `outside_ranges_equal` is true iff
+   `mutant_outside_ranges_sha256 == baseline_outside_ranges_sha256`.
+5. `registered_ranges_equal` is true iff
+   `actual_replacement_ranges_sha256 ==
+   expected_replacement_ranges_sha256`.
+6. `complete_mutant_identity_matches` is true iff
+   `actual_mutant_sha256 == expected_mutant_sha256`.
+
+`predicate_value` is exactly their conjunction in that displayed
+left-to-right order, which is the registry's literal
+`predicate_equation`. Status is `pass` exactly when the predicate is true
+and is `fail` otherwise. A producer cannot populate any boolean; the
+coordinator derives all six from the embedded preimage and refuses an
+inconsistent result. This canonical complete result object is the rule's
+sole serialization and result type.
+
+The exact
+`g21_actual_mutation_ledger.fitting_free.v1` key set is correspondingly
+amended to `schema_version`, `mutation_id_order`, `rows`,
+`structural_validity_results`, `structural_validity_result_count`,
+`row_count`, `mutation_domain_sha256`, and `status`.
+`structural_validity_results` contains exactly one complete typed result per
+mutated opaque input, in opaque-input order; its count equals that array
+length and the number of distinct mutated registered input IDs.
+
+Each actual mutation-ledger row adds
+`structural_validity_rule_id` and
+`structural_validity_result_sha256` immediately before its existing
+`structural_validity_status`. The rule ID exact-matches the registered
+mutation and singleton registry. The result digest hashes the complete
+same-input object in `structural_validity_results`; the existing status
+exact-copies that result's status. The result preimage's
+`actual_mutation_rows` projection excludes result digests and statuses, so
+the result can be frozen before rows receive the result hash and no hash
+cycle exists. Row and ledger status pass only when these foreign keys,
+digests, result counts, typed results, and all earlier one-time mutation
+laws pass.
+
+Finally, `fitting_free_fixture_registry_identity.v1` adds exact members
+`structural_validity_rule_specs`,
+`structural_validity_rule_count`, and
+`structural_validity_rule_domain_sha256` immediately after
+`mutation_byte_ranges`. They are respectively the complete singleton object,
+integer one, and
+`0fc060967859afb7767b7e2f84b259f5315746a96e4e5b887f83558ce3c29dab`.
+Baseline and mutant fixture identities keep all three values byte-identical.
+The existing G21 evidence's `actual_mutation_ledger` and its digest thereby
+bind the complete registry, preimages, results, row foreign keys, and
+unfavorable actuals. `mutation_domain_complete` is true only when every
+registered input's typed structural result passes in addition to all its
+earlier conjuncts.
