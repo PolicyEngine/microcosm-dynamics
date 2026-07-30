@@ -12787,15 +12787,16 @@ future witness requires exact A1 selector bytes, A2 weight-field authority,
 and an A3 staged weight input/digest/keyset, plus every unchanged authority
 and gate prerequisite.
 
-That witness is finite: the step-4 capture reads only its closed A1/A3
-projection, emits one positive support/key count pair plus hashes and
-identities, closes all descriptors, and is independently registered. The
-fresh-registration ceremony then verifies only those authority bytes,
-constructs the 14 family, required-authority, seven global, and 22
-fitting-free rows without reopening a production source value, and writes one
-acyclic receipt/configuration pair. On the current family facts that pair can
-select fitting-free only after every 22-row requirement passes; otherwise it
-records the exact failure IDs and aborts.
+That witness is finite: the step-4 capture reads only its singleton registered
+non-production environment lock and its closed A1/A3 projection, emits the
+frozen dependency provenance and one positive support/key count pair plus
+hashes and identities, closes all descriptors, and is independently
+registered. The fresh-registration ceremony then verifies only those
+authority bytes, constructs the 14 family, required-authority, seven global,
+and 22 fitting-free rows without reopening a production source value, and
+writes one acyclic receipt/configuration pair. On the current family facts
+that pair can select fitting-free only after every 22-row requirement passes;
+otherwise it records the exact failure IDs and aborts.
 
 Given those bytes, each empty branch has a direct canonical witness:
 
@@ -13487,12 +13488,12 @@ complete fitting-free domain. Reusing the preliminary cutoff or deriving a
 path from capture success aborts.
 
 This ceremony is the sole narrow prospective replacement of §10.1's
-pre-registration production-contact ban. It may inspect only the sole
-registered non-production prelaunch environment-lock descriptor for
-environment validation/provenance and the exact registered A1/A3
-fields/bytes above. It emits only the one non-authority lifecycle claim plus
-the two identity artifacts; every other step-4 preparation and rehearsal
-remains fixture-only.
+pre-registration production-contact ban. Its input/source inspection
+authority consists only of the sole registered non-production prelaunch
+environment-lock descriptor for environment validation/provenance and the
+exact registered A1/A3 fields/bytes above. It emits only the one non-authority
+lifecycle claim plus the two identity artifacts; every other step-4
+preparation and rehearsal remains fixture-only.
 
 The existing four-key registration `design` object is not enlarged. Its exact
 amendment-2 fitting-free values are:
@@ -13524,10 +13525,13 @@ ratification but before that registration, step 4 may prepare the separately
 reviewed authority, artifact, registry, implementation, and fixture bytes. It
 may open only the exact singleton registered prelaunch environment-lock
 descriptor and the exact A1/A3 authority-capture descriptor/field domain
-above; every other descriptor and every other production-value open is
-forbidden. It may not derive a production path from output, classify a
-production row, mint a production claim, lock a model, or execute an
-evaluation/context run. Before ratification, even that Amendment-2
+above as input/source descriptors; every other input/source descriptor and
+every other production-value open is forbidden. The separately governed
+registered invocation/interpreter/runner, registration/adjudication, claim,
+staging, and finalizer-control descriptors remain required and grant no
+input/source value access. The ceremony may not derive a production path from
+output, classify a production row, mint a production claim, lock a model, or
+execute an evaluation/context run. Before ratification, even that Amendment-2
 preparation is unauthorized.
 
 After registration, changing any §16 byte, deterministic literal, path law,
