@@ -447,7 +447,7 @@ def test_exact_composed_heads_are_pinned_and_ancestral(block):
         "ic_naming_root_pr_277": "c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0",
         "person_side_floors_pr_212": "211152bb506e08b0a8b39dcae1c255365a71df0d",
         "firm_side_floors_pr_223": "34a70fc8c809d23b4643588ca228565b1c7b6513",
-        "controlling_design_pr_230": "85750ac10e9c5274c012db485fa4dc3ce432d137",
+        "controlling_design_pr_230": "037b43faec5e8b46f9d92a295ced792e602e5b6f",
     }
 
 

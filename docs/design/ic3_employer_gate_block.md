@@ -24,19 +24,23 @@
   requirements are now in the ADR text on the exact composed head,
   not supplied by a comment-thread amendment.
 - **Composed prerequisite record** (exact heads, all ancestors of this
-  revision): master `691901f`; IC rename #277 `c5b4d11`; person-side
-  promotion #212 `211152b`; firm-side promotion #223 `34a70fc`;
-  controlling design #230 `85750ac`; J2J/J2JOD
+  revision): master `691901f`; IC rename #277 `c5b4d11`; J2J/J2JOD
   references #228 `f5070b4`; ADR 0004 #224 `dff73d5`; cross-wave
   evidence #235 `c686f0f`; E4/E5 registered design #236 `73213c5`;
-  byte-faithful seam anchor #274 `7411d8d`.
-- **Composition is not ratification**: the exact current #212/#223
-  heads are present so paths, populations and artifact digests can be
-  checked. Their presence is not approval or a merge claim. #212 also
-  records a strict-staging blocker: its original raw-input digests and
-  measurement environments are unavailable, and the exact E9
-  distinct-person count requires an on-data reconciliation before
-  IC3 can lock.
+  byte-faithful seam anchor #274 `7411d8d`; Workstream A v1 floor
+  promotion #212 `211152b`; Workstream B v1 floor promotion #223
+  `34a70fc`; controlling design #230 `037b43fa`.
+- **Floor-promotion readiness is not implied by composition.** #212
+  is explicitly `BLOCKED_STRICT_STAGING`: its original raw-input
+  digests and measurement environments were not recorded, pu2023 and
+  the CPS tenure extracts were unavailable in the promotion
+  environment, and the exact E9 distinct-person count is still
+  required. Its three builders must be rerun by an on-data owner,
+  every measured value reconciled, and the resulting source digests,
+  environment, and count reviewed before IC3 lock. #223 is a
+  reproducible pre-lock anchor with artifact, builder, and all six
+  input digests pinned, but remains draft pending current-head review
+  and merge. Neither composition is ratification.
 - **Available evidence pins** (branch-composition pins, not lock-time
   merge ratification):
 
@@ -49,6 +53,14 @@
   | #236 registered design | `docs/design/e4_e5_audit_manifest.md` | `d37b3ce014532e16e009cd5cf8b025601c029fd0bde48ac593c993d51025d103` | PENDING merge |
   | #274 seam anchor | `runs/seam_reconciliation_draft_v0.json` | `622ff4117a073c36698ed1e7d1828a6a0399471bfd0c06520e0da5ac2cd98e83` | PENDING promotion/merge |
   | #274 builder | `scripts/build_seam_reconciliation.py` | `61d9c99efcfdf2469caa5787499f853d0321128c56187553d5a5c87d69536f0f` | PENDING merge |
+  | #212 E4/E5 artifact | `runs/sipp_spell_floors_v1.json` | `0110366a37a46fcc12b9a5665f3e6d5ea4c99fd2cabc4bf8cfc3fa8719890faf` | BLOCKED on-data reconciliation/merge |
+  | #212 E4/E5 builder | `scripts/build_sipp_spell_floors.py` | `e869208f039a4005b78ffe27502f414f5e01775f64c64e89ffcad6effd838ffb` | BLOCKED on-data reconciliation/merge |
+  | #212 E3 artifact | `runs/tenure_floors_v1.json` | `afbbb9ba38e0c69e78d94bd854c064dfae980f398092904b87b59a526a78e015` | BLOCKED on-data reconciliation/merge |
+  | #212 E3 builder | `scripts/build_tenure_floors.py` | `a4b0434196d5e3713c6ebed3302364fb60ec24e72bb82b039eef8d3bccc6d9eb` | BLOCKED on-data reconciliation/merge |
+  | #212 E8/E9 artifact | `runs/sipp_e8_e9_floors_v1.json` | `28515717e83824056708a491b2702089cb439d5369deaff480f391c6f8862aa2` | BLOCKED on-data reconciliation/count/merge |
+  | #212 E8/E9 builder | `scripts/build_sipp_e8_e9_floors.py` | `214d8a32afacb86396151fccfa19bd76c5cfce1bddc35fd75508cbfab6d9d45b` | BLOCKED on-data reconciliation/count/merge |
+  | #223 aggregate artifact | `runs/employer_firm_floors_v1.json` | `eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17` | PENDING approval/merge |
+  | #223 aggregate builder | `scripts/build_employer_firm_floors.py` | `a748975e787f3b255df611ebcf9cb3808c7b0e88866d9aa10ebe320864900a72` | PENDING approval/merge |
 - **Authors**: joint Workstream A (@daphnehanse11) / Workstream B
   (@vahid-ahmadi) per the #192 interface-contract schedule (IC3 is the
   jointly-authored employer gate block).
@@ -116,17 +128,17 @@ statistic the threshold derives from):
 | Gate | Moment | Reference | Floor artifact | Recommended floor basis | First-lock status |
 |---|---|---|---|---|---|
 | E1 | employment share by firm-size band (× sector) | SUSB 2022 | #223 `e1` | SUSB noise-flag CV bounds + BDS YoY margin floor (coarsened `20_99`) | **report-only** — B1: every SUSB-derived margin is a deterministic function of a calibration target |
-| E2 | hire/sep/J2J rates by sex × age | LEHD J2J `sa` (#228) | #223 `e2.by_sex_age` | ex-pandemic vs full-sample remains a PENDING referee choice | **proposed gated** only after floor approval/merge |
-| E3 | tenure quantiles by age | CPS tenure supplement 2020/22/24 | #212 `tenure_floors` | **ECDF max-gap** (heaping-robust) | **gated** |
-| E4 | employer-retention pairs by age × sex | SIPP holdout | #212 `e4_retention_by_age_sex` | \|log rate ratio\| | **gated** (linkage-QC prerequisite, §9) |
-| E5 | multi-window attachment runs by age | SIPP holdout | #212 `e5_runs_by_age` | \|log share ratio\| | **gated** (linkage-QC prerequisite, §9) |
+| E2 | hire/sep/J2J rates by sex × age | LEHD J2J `sa` (#228) | #223 `runs/employer_firm_floors_v1.json`, `e2.by_sex_age` | ex-pandemic YoY \|log ratio\|, PENDING referee choice | **proposed gated** only after floor approval/merge |
+| E3 | tenure quantiles by age | CPS tenure supplement 2020/22/24 | #212 `runs/tenure_floors_v1.json` | **ECDF max-gap** (heaping-robust), BLOCKED on-data reconciliation | **proposed gated** only after reconciliation/approval/merge |
+| E4 | employer-retention pairs by age × sex | SIPP holdout | #212 `runs/sipp_spell_floors_v1.json`, `e4_retention_by_age_sex` | \|log rate ratio\|, BLOCKED on-data reconciliation | **proposed gated** only after reconciliation and linkage-QC prerequisite (§9) |
+| E5 | multi-window attachment runs by age | SIPP holdout | #212 `runs/sipp_spell_floors_v1.json`, `e5_runs_by_age` | \|log share ratio\|, BLOCKED on-data reconciliation | **proposed gated** only after reconciliation and linkage-QC prerequisite (§9) |
 | E6 | hire/sep flow rates by firm-size (× sector) | QWI | #223 `e6_e7` | ex-pandemic YoY \|log ratio\| | **report-only** — B1: the size margin is a linear functional of the calibrated size × sector cells |
 | E7 | mean earnings (`EarnS`) by firm-size | QWI | #223 `e6_e7` | **aggregate-relative** EarnS floor | **gated** |
-| E8 | nonemployment incidence/duration by age | SIPP holdout | #212 `e8_nonemployment_by_age` | \|log share ratio\| (any/long) | **gated** |
-| E9 | earnings-change dist. by transition type | SIPP holdout | #212 `e9_transitions` | j2j: median + IQR gaps; stay: none (both floors degenerate) | **j2j gated; whole stay cell report-only** (B5) |
+| E8 | nonemployment incidence/duration by age | SIPP holdout | #212 `runs/sipp_e8_e9_floors_v1.json`, `e8_nonemployment_by_age` | \|log share ratio\| (any/long), BLOCKED on-data reconciliation | **proposed gated** only after reconciliation/approval/merge |
+| E9 | earnings-change dist. by transition type | SIPP holdout | #212 `runs/sipp_e8_e9_floors_v1.json`, `e9_transitions` | j2j: median + IQR gaps, BLOCKED on-data reconciliation/count; stay: none | **j2j proposed gated after reconciliation; whole stay cell report-only** (B5) |
 | E10 | regression gate: locked PSID gates still pass | existing `gates.yaml` | existing gate-1/2 floors | unchanged | **gated** (always) |
-| E11 | aggregate J2J flows by origin × destination size | LEHD J2JOD (#228) | #223 `e11.destination_size_margin` | margin floor basis remains PENDING; detail: none derivable | **aggregate margins proposed gated; 5-quarter detail report-only** (§7); certifies no person link |
-| E12 | aggregate assignment audit plus linkage/sorting aspiration | public grouped margins / future linked source | aggregate floor PENDING; linkage floor unavailable | strict claims split (§8) | **strong E12 deferred**; future aggregate audit may certify observable margins only |
+| E11 | aggregate J2J flows by origin × destination size | LEHD J2JOD (#228) | #223 `runs/employer_firm_floors_v1.json`, `e11.destination_size_margin` | margin temporal basis PENDING referee choice; detail: none derivable | **aggregate margins proposed gated after floor approval/merge; 5-quarter detail report-only** (§7); certifies no person link |
+| E12 | aggregate assignment audit plus linkage/sorting aspiration | public grouped margins / future linked source | #223 `e12` deferral; linkage floor unavailable | strict claims split (§8) | **strong E12 deferred**; aggregate audit may certify observable margins only |
 
 Per-gate detail follows.
 
@@ -176,13 +188,15 @@ Per-gate detail follows.
   is the `sa` tabulation, verified empirically and test-pinned).
   This is a held-out **gate axis** per ADR 0003: calibration touches
   firm-size × sector flow margins only, never the demographic axes.
-- **Floor**: the committed #223 `e2` block floors the aggregate-side
-  firm-size cells (36 same-quarter YoY pairs; full and ex-pandemic
-  variants both committed per
-  `method_findings.cycle_signal_in_floors`). The sex × age floor
-  itself is a required pre-lock build on the #228 extract, same
-  method (#223 `method_findings.e2_no_age_sex_axis` recorded the
-  deferral explicitly).
+- **Floor**: #223 `runs/employer_firm_floors_v1.json`
+  `e2.by_sex_age` floors all 27 sex × age cells from the #228
+  extract, with the 2 × 8 non-margin cross pooled separately so
+  aggregate margins are not double-counted. The same artifact also
+  retains the aggregate-side firm-size cells. Full and ex-pandemic
+  variants are both committed per
+  `method_findings.cycle_signal_in_floors`; the referee still selects
+  the operative basis. #223 marks the earlier missing-axis finding
+  `SUPERSEDED`, not silently removed.
 - **Recommendation**: **ex-pandemic** YoY \|log ratio\| floors
   (e.g. firmsize1 hire rate: full 0.0565 ± 0.0549 vs ex-pandemic
   0.0273 ± 0.0211). Rationale: the full-sample floor treats the
@@ -199,7 +213,7 @@ Per-gate detail follows.
 
 - **Cells**: BLS age bands × supplement years 2020/2022/2024
   (`PTST1TN`, `PWTENWGT`; reader per #205).
-- **Degeneracy finding** (#212 `tenure_floors_v1.json`,
+- **Degeneracy finding** (#212 `runs/tenure_floors_v1.json`,
   `heaping_caveat`): reported tenure heaps on integers, so
   half-vs-half quantile-gap floors are exactly zero in 36/63 cells —
   a degenerate threshold basis.
@@ -289,7 +303,7 @@ Per-gate detail follows.
 
 - **Cells**: 6 age bands × {any-nonemployment share, long
   (multi-month) nonemployment share}
-  (#212 `sipp_e8_e9_floors_v1.json`; floors 0.05–0.20
+  (#212 `runs/sipp_e8_e9_floors_v1.json`; floors 0.05–0.20
   \|log ratio\|, all non-thin; censoring-free 12-month-observed
   restriction recorded in the artifact and carried into the cell
   definition).
@@ -312,7 +326,7 @@ Per-gate detail follows.
   at first lock — both its statistics are report-only.** The
   previous draft gated stay on the IQR, presenting it as the
   non-degenerate escape from the median's 0.0/0.0 floor. It is not:
-  `sipp_e8_e9_floors_v1.json`
+  `runs/sipp_e8_e9_floors_v1.json`
   `e9_transitions.earnings_change.stay.floor_abs_iqr_gap` is
   **also** `{mean: 0.0, sd: 0.0}`, so the "IQR-only" gate was 100%
   the hand-set 0.02 with no stated basis — a hand-set number
@@ -389,18 +403,26 @@ registers (names PROPOSED):
 
 - `sipp_job_spells` — loader `populace_dynamics.data.sipp_jobs`,
   pu2023 (ref. year 2022), person-disjoint holdout, WPFINWGT;
-  feeds E4/E5/E8/E9; v1 floor-run paths and artifact digests are
-  composed from exact #212 head `211152b`. Raw-input digests,
-  measurement environments, E9 distinct-person population, and the
-  deployment-scale resolution remain lock-blocking.
+  feeds E4/E5/E8/E9; floor paths are
+  `runs/sipp_spell_floors_v1.json` and
+  `runs/sipp_e8_e9_floors_v1.json`. Their promotion-time digests are
+  recorded above, but both state `BLOCKED_STRICT_STAGING`: pu2023 was
+  unavailable, its original digest/environment was not recorded,
+  and the E8/E9 artifact still needs the exact E9 distinct-person
+  count. They cannot enter block YAML before an on-data rebuild,
+  measured-value reconciliation, review, and merge.
 - `cps_tenure` — CPS Jan supplements 2020/2022/2024; feeds E3;
-  v1 floor-run path and artifact digest composed from #212; original
-  raw-input digests and measurement environment remain unavailable.
+  floor path `runs/tenure_floors_v1.json`, with its promotion-time
+  digest above. It is likewise `BLOCKED_STRICT_STAGING` until the
+  three source extracts are rerun on-data with digests/environment,
+  reconciled, reviewed, and merged.
 - `employer_firm_targets` — the committed
   `data/external/{susb,bds,qwi,j2j,j2jod,j2j_sexage}_us_*.csv`
   extracts (external references, never scored model output);
-  feeds E1/E2/E6/E7/E11; v1 floor-run path, artifact digest, and
-  source-extract digests composed from exact #223 head `34a70fc`.
+  feeds E1/E2/E6/E7/E11; floor path
+  `runs/employer_firm_floors_v1.json`, with artifact, builder, and
+  every consumed extract digest pinned by #223. It remains a
+  pre-lock, not-ratified anchor pending current-head review and merge.
 
 ## 6. The seam ruling (formal proposal, from #214)
 
@@ -468,8 +490,11 @@ The referee round must still choose between:
 
 - **(a) Aggregate margins-gated + detail report-only.** Gate the
   origin-size and destination-size margins (the `ee_hire_rate` /
-  `ee_separation_rate` cells whose final floor is PENDING #223),
-  on the referee-selected temporal basis; score the full 6×6 detail
+  `ee_separation_rate` cells whose destination-margin floor is
+  composed at #223
+  `runs/employer_firm_floors_v1.json.e11.destination_size_margin`),
+  on the referee-selected raw-count versus aggregate-relative and
+  full versus ex-pandemic temporal basis; score the full 6×6 detail
   on the 2015Q1–2016Q1
   window **report-only**. Rationale: a five-quarter window supports
   no temporal-stability floor (floors-before-thresholds forbids
@@ -920,9 +945,10 @@ near 0.14).
    NAICS 92 is dropped from the J2J extracts, but state/local
    employment embedded in sectors 61/62 remains. **Unratified
    disposition — REFEREE/PENDING**: carry the scope difference as a
-   pre-registered
-   per-cell caveat on E2/E11 (the #228 extracts quantify the small
-   LED-vs-flat-file margin delta from excluded public "N" flows),
+   pre-registered per-cell caveat on E2/E11. The #228 comparison
+   cannot identify an excluded-public-`N` adjustment: the LED tool
+   margin is above the flat file in 37/41 quarters and the deviations
+   are two-sided, consistent with independent noise infusion,
    rather than restating J2J on a private-comparable basis — a
    restatement would require a new extract and re-floor.
    The restatement option stays on the record as the referee
@@ -937,13 +963,20 @@ in `docs/design/m6_projection_engine.md`):
    review; every §13 item answered on the record).
 2. Required pre-lock artifacts land **and are immutable**
    (closes blocking item B3):
-   - **COMPOSED, not approved/merged #223**: current-head E2 sex×age
-     floor and `runs/employer_firm_floors_v1.json`.
-   - **COMPOSED, strict-staging reconciliation PENDING #212**:
-     current v1 person-side artifacts. Their measured values and
-     artifact digests are pinned, but their original raw-input
-     digests/environments and exact E9 distinct-person population are
-     not; these are explicit lock blockers.
+   - **COMPOSED, not approved/merged #223**:
+     `runs/employer_firm_floors_v1.json`, with artifact, builder,
+     and all six consumed-input digests pinned. Composition supplies
+     the exact current evidence for review; it does not satisfy the
+     current-head approval or merge requirement.
+   - **COMPOSED, BLOCKED #212**: the three exact v1 paths and
+     promotion-time artifact/builder pins listed above. Their
+     `promotion_integrity.source_input_sha256_status` values are
+     `BLOCKED_STRICT_STAGING`, their sidecars are promotion-only
+     rather than measurement environments, and E8/E9 still lacks the
+     exact E9 distinct-person count. An on-data owner must rerun each
+     builder from the registered vintage, capture raw digests and
+     environment, reconcile every measured value, record the count,
+     and obtain review before these can enter the lock.
    - **COMPOSED, not merged/promoted #235**: current draft
      `runs/crosswave_jobid_check_draft_v0.json`. Promotion reconciles
      its internal `draft_v1` label and lands
@@ -954,9 +987,10 @@ in `docs/design/m6_projection_engine.md`):
    - **COMPOSED, not merged/promoted #274**: byte-faithful
      `runs/seam_reconciliation_draft_v0.json` and builder. The later
      v1 pin/amendment must not rewrite the restored draft anchor.
-   - Promotion of current draft cross-wave and seam artifacts to
-     sha256-pinned `v1` paths. No promotion may rewrite their measured
-     payloads or imply referee approval.
+   - Promotion of #235 and #274 draft artifacts to reviewed,
+     sha256-pinned v1 paths. The three #212 files already carry v1
+     names, but naming/promotion pins do not cure their registered
+     on-data reconciliation blocker.
    - **COMPOSED, not merged #224**, with the three adopted changes
      folded into `docs/adr/0004-linkage-qc.md`'s text. A locked block
      whose normative ADR exists only as a branch file amended by
@@ -1059,8 +1093,9 @@ Every decision this draft leaves to the referee, enumerated:
     deflated. If a person-scale candidate is compared to them, the
     candidate cells are inflated by an approved observed
     jobs-per-person factor. Ratify the exact formula, series,
-    vintage, and deployment conversion; #212 is intentionally not
-    composed here.
+    vintage, and deployment conversion. #212 is composed here and
+    records the separate 50/50-to-20% deployment-scale gap; it does
+    not supply or ratify this jobs-per-person factor.
 13. **`oslp` versus `op` scope — REFEREE/PENDING**: choose a
     per-cell caveat or private-comparable restatement of the J2J
     references.
