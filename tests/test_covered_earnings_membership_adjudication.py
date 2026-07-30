@@ -19,7 +19,7 @@ ARTIFACT = (
     / "covered_earnings_membership_adjudication_v2.json"
 )
 ARTIFACT_SHA256 = (
-    "fcf5f968bdf1b1120feb3e07e97dcbda3dc67d98cee270a5c594bcbf8ab02a12"
+    "7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14"
 )
 PDF_CAPTURE = (
     ROOT

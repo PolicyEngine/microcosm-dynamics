@@ -2,11 +2,11 @@
 
 ## State
 
-The builder now binds all PDF locators to zlib-decoded table semantics,
-uses the four corrected B10/B11 streams, and rejects the exact B12
-fingerprint and any decoded B12 content. An in-memory render validates at
-57,125 bytes with SHA-256 `7306c898...f1abb14`; the committed artifact still
-needs regeneration and repinning.
+The canonical artifact has been regenerated and repinned at 57,125 bytes
+with SHA-256 `7306c898...f1abb14`. Its structured diff changes only the four
+locator bindings and integrity digest; fact classifications, evidence-ID
+lists, vintage bytes, and fail-closed dispositions are unchanged. The
+focused adjudication suite passes.
 
 ## Done
 
@@ -22,9 +22,12 @@ needs regeneration and repinning.
 - Added semantic anchors for every captured PDF stream and explicit B12
   rejection in `_pdf_locator`.
 - Confirmed the corrected builder renders and validates in memory.
+- Regenerated the adjudication artifact and updated its pinned test digest.
+- Verified the artifact diff is limited to the four corrected locator
+  objects/ranges/hashes plus the derived integrity digest.
+- Passed all 14 membership-adjudication tests.
 
 ## Next
 
-- Regenerate and repin the adjudication artifact.
 - Run formatting, focused tests, estimates suites, and independent
   verification.
