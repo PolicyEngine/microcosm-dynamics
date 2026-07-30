@@ -12953,10 +12953,11 @@ The sole precedence registry is the exact
 second precedence schema. Its calibrated predicate means the complete
 then-operative base/Amendment-1 calibrated source, target, methodology,
 authority, registry, and capability domain is lawfully registrable. Its
-fitting-free predicate means that calibrated predicate is false and every
-Amendment-2 requirement, including A1 and A3, passes. Its exact priority,
-exclusivity, decision cutoff, prior-artifact, amendment-survival, and failure
-values are those frozen in §16.2.
+fitting-free predicate means the final adjudication has `status: pass`,
+calibrated status is exactly `not_registrable`, and every Amendment-2
+requirement, including A1 and A3, passes. Its exact priority, exclusivity,
+decision cutoff, prior-artifact, amendment-survival, and failure values are
+those frozen in §16.2.
 
 The registry's empty runtime-transition array, integer-zero count, and
 canonical-empty-array hash forbid calibrated-to-fitting-free,
