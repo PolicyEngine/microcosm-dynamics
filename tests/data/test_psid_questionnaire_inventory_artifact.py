@@ -46,9 +46,13 @@ def test_committed_audit_has_exact_identity_and_full_physical_domain():
 def test_manifest_pins_all_staged_dictionary_and_raw_source_files():
     artifact = _artifact()
     manifest = artifact["source_authority_manifest"]
-    assert len(manifest) == 133
-    assert sum(row["size_bytes"] for row in manifest) == 1_404_728_442
-    assert len({row["document_id"] for row in manifest}) == 133
+    assert len(manifest) == 176
+    assert sum(row["size_bytes"] for row in manifest) == 1_514_409_083
+    assert len({row["document_id"] for row in manifest}) == 176
+    assert (
+        inventory.sha256_bytes(inventory.canonical_json_bytes(manifest))
+        == inventory.SOURCE_AUTHORITY_MANIFEST_SHA256
+    )
     assert {row["interview_wave"] for row in manifest} == set(
         inventory.INTERVIEW_WAVES
     )
@@ -59,6 +63,20 @@ def test_manifest_pins_all_staged_dictionary_and_raw_source_files():
         if row["dictionary_role"] == "raw_fixed_width":
             assert Path(row["path"]).suffix == ".txt"
             assert row["encoding"] == "binary"
+        elif row["dictionary_role"] == "family_codebook":
+            assert Path(row["path"]).suffix.lower() == ".pdf"
+            assert row["encoding"] == "binary"
+            assert row["provenance"] == {
+                "source_organization": "Panel Study of Income Dynamics",
+                "source_product": "Family File Codebook",
+                "source_edition": str(row["interview_wave"]),
+                "local_staging_authentication": ("path_size_sha256_verified"),
+                "network_capture_performed_in_unit": False,
+                "retrieval_provenance_status": (
+                    "registration_required_missing_family_archive_"
+                    "capture_record"
+                ),
+            }
         else:
             assert Path(row["path"]).suffix in {".do", ".sps"}
             assert row["encoding"] == "windows-1252"
@@ -66,6 +84,18 @@ def test_manifest_pins_all_staged_dictionary_and_raw_source_files():
         row for row in manifest if row["dictionary_role"] == "raw_fixed_width"
     ]
     assert len(raw_rows) == len(inventory.INTERVIEW_WAVES)
+    codebook_rows = [
+        row for row in manifest if row["dictionary_role"] == "family_codebook"
+    ]
+    assert len(codebook_rows) == inventory.CODEBOOK_AUTHORITY_FILE_COUNT
+    assert (
+        sum(row["size_bytes"] for row in codebook_rows)
+        == inventory.CODEBOOK_AUTHORITY_TOTAL_SIZE_BYTES
+    )
+    assert (
+        inventory.sha256_bytes(inventory.canonical_json_bytes(codebook_rows))
+        == inventory.CODEBOOK_AUTHORITY_MANIFEST_SHA256
+    )
 
 
 def test_every_physical_field_uses_wave_minus_one_reference_year():
@@ -85,12 +115,22 @@ def test_every_physical_field_uses_wave_minus_one_reference_year():
 def test_source_evidence_records_the_exact_ratification_blockers():
     artifact = _artifact()
     summary = artifact["evidence_summary"]
-    assert summary["dictionary_file_count"] == 90
-    assert summary["dictionary_total_size_bytes"] == 24_205_059
+    assert summary["dictionary_file_count"] == 133
+    assert summary["dictionary_total_size_bytes"] == 133_885_700
+    assert summary["setup_dictionary_file_count"] == 90
+    assert summary["setup_dictionary_total_size_bytes"] == 24_205_059
+    assert summary["codebook_file_count"] == 43
+    assert summary["codebook_total_size_bytes"] == 109_680_641
+    assert summary["codebook_authority_manifest_sha256"] == (
+        "8ac987fc5207ded050fe9a20e11a7596591a64e6f64c5218f77970fb75ac2ad5"
+    )
     assert summary["raw_fixed_width_file_count"] == 43
     assert summary["raw_fixed_width_total_size_bytes"] == 1_380_523_383
-    assert summary["source_authority_file_count"] == 133
-    assert summary["source_authority_total_size_bytes"] == 1_404_728_442
+    assert summary["source_authority_file_count"] == 176
+    assert summary["source_authority_total_size_bytes"] == 1_514_409_083
+    assert summary["source_authority_manifest_sha256"] == (
+        "2e1160fc28a76a73538313f79ad48b578b5128ee9a119ae8776d125df0777d6b"
+    )
     assert summary["main_dictionary_field_count"] == 89_599
     assert summary["explicit_spss_numeric_format_count"] == 2_919
     assert summary["main_spss_missing_values_declaration_count"] == 0
@@ -195,6 +235,7 @@ def test_2021_and_2023_field_bound_maps_preserve_referee_anchors():
         "drop_one_map_and_reseal",
         "forge_source_ids",
         "forge_format_source_identity",
+        "forge_codebook_source_identity",
         "claim_ratified",
         "drop_schema_identity",
     ],
@@ -226,6 +267,13 @@ def test_registered_format_evidence_cannot_be_discarded_or_resealed(
         )
         source["path"] = "family/2021/FORGED_formats.do"
         source["size_bytes"] += 1
+        source["sha256"] = "f" * 64
+    elif mutation == "forge_codebook_source_identity":
+        source = next(
+            row
+            for row in artifact["source_authority_manifest"]
+            if row["document_id"] == "psid-family-1976-codebook"
+        )
         source["sha256"] = "f" * 64
     elif mutation == "claim_ratified":
         artifact["target_artifacts"][0]["status"] = "ratified"

@@ -99,6 +99,16 @@ FORMAT_SOURCE_IDENTITIES: tuple[
         "windows-1252",
     ),
 )
+CODEBOOK_AUTHORITY_FILE_COUNT = 43
+CODEBOOK_AUTHORITY_TOTAL_SIZE_BYTES = 109_680_641
+CODEBOOK_AUTHORITY_MANIFEST_SHA256 = (
+    "8ac987fc5207ded050fe9a20e11a7596591a64e6f64c5218f77970fb75ac2ad5"
+)
+SOURCE_AUTHORITY_FILE_COUNT = 176
+SOURCE_AUTHORITY_TOTAL_SIZE_BYTES = 1_514_409_083
+SOURCE_AUTHORITY_MANIFEST_SHA256 = (
+    "2e1160fc28a76a73538313f79ad48b578b5128ee9a119ae8776d125df0777d6b"
+)
 ROLES: tuple[str, ...] = (
     "head_or_reference_person",
     "spouse_or_partner",
@@ -259,6 +269,16 @@ def _optional_format_pair(directory: Path) -> tuple[Path, Path] | None:
     return do_files[0], sps_files[0]
 
 
+def _single_codebook_file(directory: Path) -> Path:
+    candidates = sorted(directory.glob("*codebook*.pdf"))
+    if len(candidates) != 1:
+        raise DictionaryDriftError(
+            f"{directory}: expected exactly one codebook PDF, "
+            f"found {[path.name for path in candidates]}"
+        )
+    return candidates[0]
+
+
 def _format_pair_for_wave(
     directory: Path,
     wave: int,
@@ -402,6 +422,32 @@ def _document_row(
         "sha256": sha256_bytes(content),
         "encoding": encoding,
     }
+
+
+def _codebook_document_row(
+    path: Path,
+    data_root: Path,
+    wave: int,
+) -> dict[str, Any]:
+    row = _document_row(
+        path,
+        data_root,
+        wave,
+        "family_codebook",
+        encoding="binary",
+    )
+    row["document_id"] = f"psid-family-{wave}-codebook"
+    row["provenance"] = {
+        "source_organization": "Panel Study of Income Dynamics",
+        "source_product": "Family File Codebook",
+        "source_edition": str(wave),
+        "local_staging_authentication": "path_size_sha256_verified",
+        "network_capture_performed_in_unit": False,
+        "retrieval_provenance_status": (
+            "registration_required_missing_family_archive_capture_record"
+        ),
+    }
+    return row
 
 
 def _stata_statements(text: str) -> list[str]:
@@ -923,6 +969,7 @@ def build_registration_required_audit(
         do_path = _single_file(directory, ".do", formats=False)
         sps_path = _single_file(directory, ".sps", formats=False)
         raw_path = _single_file(directory, ".txt", formats=False)
+        codebook_path = _single_codebook_file(directory)
         do_document = _document_row(
             do_path,
             root,
@@ -942,7 +989,19 @@ def build_registration_required_audit(
             "raw_fixed_width",
             encoding="binary",
         )
-        manifest.extend([do_document, sps_document, raw_document])
+        codebook_document = _codebook_document_row(
+            codebook_path,
+            root,
+            wave,
+        )
+        manifest.extend(
+            [
+                do_document,
+                sps_document,
+                raw_document,
+                codebook_document,
+            ]
+        )
         rows, missing_count, value_label_count = _compare_wave_dictionaries(
             wave,
             do_path,
@@ -1007,6 +1066,16 @@ def build_registration_required_audit(
     dictionary_manifest = [
         row for row in manifest if row["dictionary_role"] != "raw_fixed_width"
     ]
+    setup_dictionary_manifest = [
+        row
+        for row in dictionary_manifest
+        if row["dictionary_role"] != "family_codebook"
+    ]
+    codebook_manifest = [
+        row
+        for row in dictionary_manifest
+        if row["dictionary_role"] == "family_codebook"
+    ]
     raw_manifest = [
         row for row in manifest if row["dictionary_role"] == "raw_fixed_width"
     ]
@@ -1029,9 +1098,23 @@ def build_registration_required_audit(
             "source_authority_total_size_bytes": sum(
                 row["size_bytes"] for row in manifest
             ),
+            "source_authority_manifest_sha256": sha256_bytes(
+                canonical_json_bytes(manifest)
+            ),
             "dictionary_file_count": len(dictionary_manifest),
             "dictionary_total_size_bytes": sum(
                 row["size_bytes"] for row in dictionary_manifest
+            ),
+            "setup_dictionary_file_count": len(setup_dictionary_manifest),
+            "setup_dictionary_total_size_bytes": sum(
+                row["size_bytes"] for row in setup_dictionary_manifest
+            ),
+            "codebook_file_count": len(codebook_manifest),
+            "codebook_total_size_bytes": sum(
+                row["size_bytes"] for row in codebook_manifest
+            ),
+            "codebook_authority_manifest_sha256": sha256_bytes(
+                canonical_json_bytes(codebook_manifest)
             ),
             "raw_fixed_width_file_count": len(raw_manifest),
             "raw_fixed_width_total_size_bytes": sum(
@@ -1216,6 +1299,84 @@ def _validate_fail_closed_status(artifact: Mapping[str, Any]) -> None:
         )
 
 
+def _validate_codebook_authority_manifest(
+    artifact: Mapping[str, Any],
+) -> None:
+    manifest = artifact.get("source_authority_manifest")
+    if not isinstance(manifest, list):
+        raise DictionaryDriftError(
+            "registered audit source manifest is not a list"
+        )
+    if len(manifest) != SOURCE_AUTHORITY_FILE_COUNT:
+        raise DictionaryDriftError(
+            "complete source authority manifest file count drifted"
+        )
+    if (
+        sum(row.get("size_bytes", 0) for row in manifest)
+        != SOURCE_AUTHORITY_TOTAL_SIZE_BYTES
+    ):
+        raise DictionaryDriftError(
+            "complete source authority manifest total size drifted"
+        )
+    if (
+        sha256_bytes(canonical_json_bytes(manifest))
+        != SOURCE_AUTHORITY_MANIFEST_SHA256
+    ):
+        raise DictionaryDriftError(
+            "complete source authority manifest hash drifted"
+        )
+    codebooks = [
+        row
+        for row in manifest
+        if isinstance(row, Mapping)
+        and row.get("dictionary_role") == "family_codebook"
+    ]
+    if len(codebooks) != CODEBOOK_AUTHORITY_FILE_COUNT:
+        raise DictionaryDriftError(
+            "codebook authority manifest file count drifted"
+        )
+    if (
+        sum(row.get("size_bytes", 0) for row in codebooks)
+        != CODEBOOK_AUTHORITY_TOTAL_SIZE_BYTES
+    ):
+        raise DictionaryDriftError(
+            "codebook authority manifest total size drifted"
+        )
+    if (
+        sha256_bytes(canonical_json_bytes(codebooks))
+        != CODEBOOK_AUTHORITY_MANIFEST_SHA256
+    ):
+        raise DictionaryDriftError("codebook authority manifest hash drifted")
+    expected_waves = list(INTERVIEW_WAVES)
+    if [row.get("interview_wave") for row in codebooks] != expected_waves:
+        raise DictionaryDriftError("codebook authority wave order drifted")
+    for row in codebooks:
+        wave = row["interview_wave"]
+        if row.get("document_id") != f"psid-family-{wave}-codebook":
+            raise DictionaryDriftError(
+                f"wave {wave}: codebook document ID drifted"
+            )
+        if row.get("encoding") != "binary":
+            raise DictionaryDriftError(
+                f"wave {wave}: codebook encoding drifted"
+            )
+        if Path(row.get("path", "")).suffix.lower() != ".pdf":
+            raise DictionaryDriftError(f"wave {wave}: codebook path drifted")
+        if row.get("provenance") != {
+            "source_organization": "Panel Study of Income Dynamics",
+            "source_product": "Family File Codebook",
+            "source_edition": str(wave),
+            "local_staging_authentication": "path_size_sha256_verified",
+            "network_capture_performed_in_unit": False,
+            "retrieval_provenance_status": (
+                "registration_required_missing_family_archive_capture_record"
+            ),
+        }:
+            raise DictionaryDriftError(
+                f"wave {wave}: codebook provenance drifted"
+            )
+
+
 def validate_integrity(artifact: dict[str, Any]) -> None:
     """Validate every frozen identity and positive-evidence commitment."""
 
@@ -1224,6 +1385,7 @@ def validate_integrity(artifact: dict[str, Any]) -> None:
     if artifact.get("artifact_id") != ARTIFACT_ID:
         raise DictionaryDriftError("registered audit artifact ID drifted")
     _validate_fail_closed_status(artifact)
+    _validate_codebook_authority_manifest(artifact)
     rows = _validate_physical_field_integrity(artifact)
     summary = artifact.get("evidence_summary")
     if not isinstance(summary, Mapping):
