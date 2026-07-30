@@ -8175,3 +8175,51 @@ replacement before implementation or output contact, carry the limitation
 forward, and require a new referee-gated ratification and registration. The
 append-only presentation here is stricter: the displaced law remains
 readable, with this pointer, rather than being rewritten in place.
+
+### 15.2 Established source absence and reason for amendment
+
+The base §6.1/§6.2 contract requires one literal `as_published` SSA
+covered-worker-incidence share observation per registered year, with an
+unthinned era span reaching 1968–2014 and an exact numerator, denominator,
+timing, unit, duplicate-worker rule, zero rule, universe, and frame-relative
+model analogue. The captured and adversarially inspected SSA publication
+corpus contains no series satisfying that contract:
+
+- Supplement Table 4.B1's published percentage is a share of **earnings
+  dollars**, not the incidence of workers with covered earnings.
+- Supplement 4.C concerns insured status, a different estimand and
+  denominator from annual covered-worker incidence.
+- Trustees Table IV.B4 publishes worker counts and per-beneficiary ratios,
+  not literal covered-worker-share cells.
+- Dividing Table 4.B1 workers by IV.B4 workers would synthesize one value
+  from two publications. It is also empirically incoherent as a subset
+  share: the displayed quotient exceeds 1 in 31 of 55 years, is below 1 in
+  24, and equals 1 in none. For 1978 it is exactly
+  \(110{,}600/109{,}432=13{,}825/13{,}679>1\). The value check corroborates
+  the independently decisive universe and artifact-shape failures; it is not
+  the basis for changing weights.
+- Table 4.B10 OASDI workers divided by Table 4.B12 HI workers is likewise a
+  synthesized quotient, is available in the adjudicated candidate only for
+  preliminary 2023, lies outside every registered fit/validation era, and
+  has no registered HI-denominator model analogue. Table 4.B11
+  \(T/(W+S)\), VI.G1 payroll/GDP quantities, maximum-earner shares, entrant
+  shares, and IV.B4 worker/beneficiary ratios also answer different
+  questions.
+
+The one-observation law is independent and controlling: separately published
+operands, even if their quotient happened to lie in \([0,1]\), are not one
+published covered-share observation. No cross-publication quotient,
+interpolation, clipping, reconciliation, B1 earnings percentage, insured-
+status percentage, or approximate “94 percent” may fill the missing cells.
+Definitional prose cannot cure either the artifact-shape failure or the
+estimand failure.
+
+The defect was established during authority extraction, before any fitting
+and before any model target value, prediction, parameter, loss, ranking,
+selection, gate result, or other model output existed. Some official source
+values had necessarily been viewed to adjudicate their identities and
+universes; they are not called unseen. The amendment responds to the
+pre-output absence of a lawful source, not to whether a fitted model agreed
+with an observed target. The minimal honest response is therefore removal of
+the family from the required calibration contract, not replacement by
+synthesis.
