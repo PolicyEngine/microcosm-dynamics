@@ -3,11 +3,6 @@
 - **Status:** DRAFT revision 2 for adversarial ratification. This document
   authorizes no extraction, implementation, registration, fitting, evaluation,
   report run, or label change.
-- **Amendment pointer:** The revision-2 base was ratified at
-  `59fd058b943c2b9960af9cb98ecdec97709cc2dd` after eleven adversarial
-  referee rounds. Its original text remains below as the historical ratified
-  law. Prospective amendment 1 is appended at §15; it is inoperative unless
-  and until ratified under §15.8.
 - **Resolves:** the design step for forecast-ledger entry 11 and
   populace-dynamics#332. Entry 11 itself remains open until the publication
   criterion in §9.3 is met.
@@ -8165,7 +8160,7 @@ force.
   families; and re-points every affected base-law reference.
 - **No implied repeal:** Original §§1–14 remain visible and are not edited in
   place. They remain controlling except for the exact clauses enumerated in
-  §§15.3–15.6. Where an enumerated original clause conflicts with §15, §15 is
+  §§15.3–15.8. Where an enumerated original clause conflicts with §15, §15 is
   its prospective replacement law. Silence in §15 leaves the original clause
   unchanged.
 
@@ -8215,22 +8210,21 @@ Definitional prose cannot cure either the artifact-shape failure or the
 estimand failure.
 
 The defect was established during authority extraction, before any fitting
-and before any model target value, prediction, parameter, loss, ranking,
-selection, gate result, or other model output existed. Some official source
-values had necessarily been viewed to adjudicate their identities and
-universes; they are not called unseen. The amendment responds to the
-pre-output absence of a lawful source, not to whether a fitted model agreed
-with an observed target. The minimal honest response is therefore removal of
-the family from the required calibration contract, not replacement by
-synthesis.
+and before any model output existed. Some official source values had
+necessarily been viewed to adjudicate their identities and universes; they
+are not called unseen. The amendment responds to the pre-fit, pre-model-output
+absence of a lawful source, not to whether a fitted model agreed with an
+observed target. The minimal honest response is therefore removal of the
+family from the required calibration contract, not replacement by synthesis.
 
 ### 15.3 Exact §6.1 replacement — vintage-2 source artifact
 
 This subsection replaces the base §6.1 artifact-shape law at base-ratification
 lines 1826–1907, the covered-share-required-source paragraphs at lines
 2026–2032, and only the covered-share portion of the prerequisite consequence
-at lines 2013–2015. Because no authoritative vintage-2 artifact has ever been
-minted, the append-only path and vintage ID remain
+at lines 2013–2015. No ratified, validator-accepted, or registered
+authoritative vintage-2 artifact exists; a reviewed incomplete identity never
+qualified as one. The append-only path and vintage ID therefore remain
 `data/external/ssa_covered_earnings_calibration_targets_vintage2.json` and
 `ssa_covered_earnings_calibration_targets.vintage2`. The changed key meanings
 require the new schema literal
@@ -8280,7 +8274,15 @@ expansion, or discrepancy registry.
 7. `source_activation_condition_id`; and
 8. `target_reactivation_condition_id`.
 
-For vintage 2, its exact immutable value is:
+Its `status` domain is exactly
+`unavailable_source_absent | source_verified_not_target_bound`. Both states
+carry the immutable literals
+`source_activation_condition_id:
+literal_as_published_ssa_covered_worker_share_cells_v1` and
+`target_reactivation_condition_id:
+future_ratified_amendment_and_fresh_registration_required_v1`; no successor
+may rename or omit either condition. For vintage 2, its exact immutable value
+is:
 
 ```json
 {
@@ -8323,13 +8325,33 @@ alternate `source_verified_not_target_bound` status:
 4. exact compliance with the manifest, observation, status, ordering,
    source-resolution, canonicalization, integrity, and append-only laws.
 
-In that alternate source-only state, `failure_reason` is JSON null; the four
-arrays are nonempty, ordered, mutually consistent, and one-to-one by year;
-and the optional manifest and observations use the same exact nested schemas
-as their required counterparts. A partial, ambiguous, synthesized,
-cross-publication, thinned, wrong-universe, or otherwise nonconforming
-attempt aborts optional-source activation and cannot fall back within the
-same build to an asserted available state.
+In that alternate source-only state, `failure_reason` is JSON null.
+`covered_share_required_years`, `ssa_covered_share`, and `observations` are
+nonempty, equal-length, ordered, and positionally one-to-one by strictly
+ascending unique calendar year. Each share ID exact-matches its observation's
+`source_cell_id` and encoded year. `source_document_manifest` is instead an
+ordered nonempty document-level array: its document IDs and table ownership
+are unique within the optional scope; every optional observation resolves to
+exactly one optional manifest document and table; and every optional manifest
+document/table is referenced by at least one optional observation. The
+optional manifest and observations otherwise use the exact schemas and
+validation laws in base §6.1.
+
+Cross-scope document identity is also exact. If an optional
+`source_document_id` repeats the required manifest's ID because one physical
+SSA publication contains both required and optional tables, its
+`publication`, `edition`, `url`, `retrieved_at_utc`, `committed_path`,
+`sha256`, `size_bytes`, `capture_manifest_path`, and
+`capture_manifest_entry` fields exact-match the required entry, while its
+nested `table_ids` is a nonempty optional-table array disjoint from
+`["table4.b2","table4.b11"]`. This exact shared-physical-document alias is the
+only permitted cross-scope duplicate. Otherwise a document ID is globally
+unique across both manifests. Conflicting physical metadata, duplicate table
+ownership, an unreferenced table, or an observation resolving across scopes
+aborts. A partial, ambiguous, synthesized, cross-publication, thinned,
+wrong-universe, or otherwise nonconforming attempt aborts optional-source
+activation and cannot fall back within the same build to an asserted
+available state.
 
 Source availability alone never reinstates a fitting target. A source-
 verified block remains `not_target_bound`. Reactivating a covered-share
@@ -8717,9 +8739,8 @@ This amendment is source-absence adjudication, not outcome-responsive
 reweighting. The relevant SSA bytes and displayed operands had been viewed,
 so they are never described as unseen. Their artifact shape and estimands
 proved the required direct share cells absent before fitting. At that point
-there was no model target packet, fitted parameter, prediction, residual,
-loss, ranking, candidate selection, gate result, corrected ledger, or
-benefit/revenue output. The \(31/55\) quotient-above-one finding is disclosed
+no fitting had occurred and no model output existed. The \(31/55\)
+quotient-above-one finding is disclosed
 as corroboration of the universe mismatch; neither it nor any other observed
 official magnitude chose the replacement families or their relative weights.
 The pro-rata rule preserves the surviving predeclared ratio mechanically.
@@ -8767,8 +8788,9 @@ failure aborts fitting and selection rather than renormalizing again.
 All other base fail-closed laws—including source hashing, literal cells,
 universe concordance, model weights, target domains, candidate eligibility,
 hard gates, publication regardless, incidents, and fresh-registration
-dispositions—remain unchanged. Amendment 1 removes one impossible required
-source; it does not soften any surviving authority or execution gate.
+dispositions—remain unchanged. Amendment 1 removes one source that is
+unavailable in, and not lawfully constructible from, the captured registered
+corpus; it does not soften any surviving authority or execution gate.
 
 ### 15.8 Amendment ratification and registration protocol
 
@@ -8814,12 +8836,25 @@ an ancestor of the amendment ratification commit. This avoids adding an
 alone—the sole registered design.
 
 **Amendment 1 is inoperative unless and until its exact ratification commit
-is named by a validator-accepted fresh registration.** Before that point no
-builder, registry, candidate, or run may act as though the share family were
-removed or the weights reassigned. After ratification, changing any §15 byte,
-family, mass, optional-source state, version literal, or reactivation
-condition requires a new prospective amendment and fresh registration; it
-cannot be noted after launch.
+is named by a validator-accepted fresh registration.** After ratification but
+before that registration, step 4 may prepare separately referee-gated source
+artifacts, frozen registries, implementation bytes, and fixture-only
+rehearsals. It may not activate a production configuration, fit or select a
+candidate, open production/held-out values, mint a claim, or execute an
+evaluation/report run. Before ratification, even that amendment-1 preparation
+is unauthorized.
+
+After registration, changing any §15 byte, family, mass, version literal,
+condition ID, or target-reactivation law requires a new prospective amendment
+and fresh registration; it cannot be noted after launch. The one exception is
+the already frozen §15.3 source-only transition from
+`unavailable_source_absent` to `source_verified_not_target_bound`: a future
+qualifying SSA publication may support that transition in a new append-only
+artifact vintage after its own referee-gated authority/extraction review and
+fresh registration. That transition changes neither amendment law nor target
+status, cannot use the vintage-2 path, and confers no fitting, weighting,
+selection, Option-C numeric, or tolerance authority. Target reactivation
+still requires a new amendment.
 
 ### 15.9 Deviations and clarifications
 
