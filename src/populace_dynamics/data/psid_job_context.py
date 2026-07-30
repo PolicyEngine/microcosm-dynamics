@@ -14,7 +14,7 @@ import json
 from collections.abc import Mapping, Sequence
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 import pandas as pd
 
@@ -71,6 +71,13 @@ PERSON_CONTEXT_COLUMNS: tuple[str, ...] = (
 
 class RawJobContextReadError(ValueError):
     """Raised when source bytes or setup metadata drift from the registry."""
+
+
+class FamilyEarningsBundle(NamedTuple):
+    """Separate legacy earnings and one-to-many raw context relations."""
+
+    earnings: pd.DataFrame
+    job_context: pd.DataFrame
 
 
 def _repository_root() -> Path:
@@ -533,3 +540,36 @@ def family_job_context_panel(
         ]
     )
     return panel.loc[:, list(PERSON_CONTEXT_COLUMNS)].reset_index(drop=True)
+
+
+def family_earnings_bundle(
+    *,
+    waves: Sequence[int] | None = None,
+    data_dir: Path | None = None,
+    reader_field_ids: Sequence[str] | None = None,
+) -> FamilyEarningsBundle:
+    """Return unchanged earnings beside, never merged with, raw context.
+
+    The default domain is the modern 2003--2023 interview waves shared by
+    both relations.  Keeping the one-to-many sidecar separate preserves the
+    legacy earnings panel's exact row and column bytes.
+    """
+
+    from populace_dynamics.data import family
+
+    use_waves = (
+        tuple(psid_job_context_registry.MODERN_INTERVIEW_WAVES)
+        if waves is None
+        else tuple(waves)
+    )
+    return FamilyEarningsBundle(
+        earnings=family.family_earnings_panel(
+            waves=use_waves,
+            data_dir=data_dir,
+        ),
+        job_context=family_job_context_panel(
+            waves=use_waves,
+            data_dir=data_dir,
+            reader_field_ids=reader_field_ids,
+        ),
+    )

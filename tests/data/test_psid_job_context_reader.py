@@ -297,7 +297,7 @@ def test_bundle_keeps_earnings_and_context_as_separate_relations(
         data_dir=modern_family_dir,
     )
     before_bytes = before.to_csv(index=False, lineterminator="\n").encode()
-    bundle = family.family_earnings_bundle(
+    bundle = psid_job_context.family_earnings_bundle(
         waves=(2003,),
         data_dir=modern_family_dir,
     )
