@@ -558,6 +558,31 @@ def _validate_family_interview_token_agreement(
             )
 
 
+def _validate_person_attachment_domain(
+    wave: int,
+    role: str,
+    role_raw: pd.DataFrame,
+    people: pd.DataFrame,
+    *,
+    family_is_truncated: bool,
+) -> pd.DataFrame:
+    raw_interviews = set(role_raw["interview"].unique())
+    person_interviews = set(people["interview"].unique())
+    missing_people = raw_interviews.difference(person_interviews)
+    if role == "head" and missing_people:
+        raise RawJobContextReadError(
+            f"wave {wave}: unmatched head person attachment for family "
+            f"interview(s) {sorted(missing_people)[:4]}"
+        )
+    orphan_people = person_interviews.difference(raw_interviews)
+    if orphan_people and not family_is_truncated:
+        raise RawJobContextReadError(
+            f"wave {wave}: {role} person interview(s) absent from the "
+            f"family raw domain: {sorted(orphan_people)[:4]}"
+        )
+    return people[people["interview"].isin(raw_interviews)]
+
+
 def _empty_person_context_frame() -> pd.DataFrame:
     return pd.DataFrame(columns=list(PERSON_CONTEXT_COLUMNS))
 
@@ -644,6 +669,13 @@ def family_job_context_panel(
         for role in ("head", "spouse"):
             people = _role_people(wave_people, wave, role)
             role_raw = raw[raw["reader_role"].isin(("shared", role))].copy()
+            people = _validate_person_attachment_domain(
+                wave,
+                role,
+                role_raw,
+                people,
+                family_is_truncated=family_nrows is not None,
+            )
             attached = role_raw.merge(
                 people,
                 on="interview",
@@ -652,6 +684,12 @@ def family_job_context_panel(
             )
             if attached.empty:
                 continue
+            if set(attached["person_id"].unique()) != set(
+                people["person_id"].unique()
+            ):
+                raise RawJobContextReadError(
+                    f"wave {wave}: unmatched {role} inner-join attachment"
+                )
             attached["role"] = role
             attached["_registry_ordinal"] = attached["raw_extraction_key"].map(
                 registry_ordinal

@@ -335,6 +335,31 @@ def test_person_attachment_rejects_raw_typed_interview_token_mismatch(
         )
 
 
+def test_person_attachment_rejects_unmatched_head_interview(
+    modern_family_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    demographic_panel = psid_job_context.panels.demographic_panel
+
+    def missing_head(*args, **kwargs):
+        frame = demographic_panel(*args, **kwargs)
+        return frame[frame["person_id"] != 2001]
+
+    monkeypatch.setattr(
+        psid_job_context.panels,
+        "demographic_panel",
+        missing_head,
+    )
+    with pytest.raises(
+        psid_job_context.RawJobContextReadError,
+        match="unmatched head person attachment",
+    ):
+        psid_job_context.family_job_context_panel(
+            waves=(2003,),
+            data_dir=modern_family_dir,
+        )
+
+
 def test_bundle_keeps_earnings_and_context_as_separate_relations(
     modern_family_dir: Path,
 ):

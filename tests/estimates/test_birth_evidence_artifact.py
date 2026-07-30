@@ -150,9 +150,23 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
     }
     assert root_module in module_paths
     assert psid_exclusions.issubset(module_paths)
+    module_by_path = {
+        path.resolve(): module_name
+        for module_name, path in module_paths.items()
+    }
+    dynamic_identity_roots = {
+        module_by_path[(ROOT / path).resolve()]
+        for path in reducer.PRODUCTION_SOURCE_PATHS
+        if (ROOT / path).is_file()
+    }
+    assert {
+        "scripts.registered_m6_candidate3_inputs",
+        "scripts.registered_m6_candidate2_inputs",
+        "scripts.registered_m6_inputs",
+    }.issubset(dynamic_identity_roots)
 
     reachable: set[str] = set()
-    pending = [root_module]
+    pending = [root_module, *sorted(dynamic_identity_roots)]
     while pending:
         module_name = pending.pop()
         if module_name in reachable:
