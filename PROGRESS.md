@@ -4,8 +4,8 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `2ff590d`
-- Current phase: inspect the ratified design, evidence boundary, exact nested
-  schema laws, and retained V-B7 adjudication before changing code.
+- Current phase: implement the full nested calibration-target schema laws from
+  design sections 6.1 and 6.2.
 - Constraints: use committed source bytes only; keep final registration
   fail-closed; commit each coherent edit; do not push.
 
@@ -14,13 +14,20 @@
 - Confirmed the worktree is clean at the requested baseline.
 - Recorded the three exact recheck edits and the required verification queue.
 - Identified `FINAL_REPORT.md` as the established final output-file convention.
+- Removed the evidence loader and validator from the authoritative registry
+  module and its public exports.
+- Renamed all three nested identity collections and schema IDs from final
+  `*_specs.v1` authority names to explicit `*_evidence.v1` names.
+- Regenerated and independently pinned 1,515,381 canonical evidence bytes at
+  SHA-256
+  `1080acc9672abf209bb9c5ec06170ca351b26200ba1727652fd515b25b216380`.
+- Proved every evidence row shape is rejected by every final-registry
+  ingestion path; the evidence/registry focused suite passes: `40 passed`.
 
 ## Next
 
-1. Separate evidence-only registries from all authoritative registry APIs and
-   prove evidence rows cannot be ingested as final authority.
-2. Enforce the full nested calibration-target schema laws from design
+1. Enforce the full nested calibration-target schema laws from design
    sections 6.1 and 6.2.
-3. Add hash-reproduced rejection coverage for every omitted V-B7 candidate.
-4. Run Black at line length 79, required suites and tail checks, then record
+2. Add hash-reproduced rejection coverage for every omitted V-B7 candidate.
+3. Run Black at line length 79, required suites and tail checks, then record
    the final disposition and exact verification results.

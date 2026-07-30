@@ -50,10 +50,14 @@ OUT_PATH = (
 )
 
 SCHEMA_VERSION = "covered_earnings_source_identity_evidence.v1"
-PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION = "physical_source_cell_specs.v1"
-OFFICIAL_SOURCE_ALIAS_SPECS_SCHEMA_VERSION = "official_source_alias_specs.v1"
-OFFICIAL_SOURCE_ARITHMETIC_RULE_SPECS_SCHEMA_VERSION = (
-    "official_source_arithmetic_rule_specs.v1"
+PHYSICAL_SOURCE_CELL_EVIDENCE_SCHEMA_VERSION = (
+    "physical_source_cell_evidence.v1"
+)
+OFFICIAL_SOURCE_ALIAS_EVIDENCE_SCHEMA_VERSION = (
+    "official_source_alias_evidence.v1"
+)
+OFFICIAL_SOURCE_ARITHMETIC_RULE_EVIDENCE_SCHEMA_VERSION = (
+    "official_source_arithmetic_rule_evidence.v1"
 )
 
 PUBLICATION_FAMILY_SUPPLEMENT = "ssa_annual_statistical_supplement"
@@ -65,12 +69,12 @@ TARGET_YEARS = tuple(range(1968, 2023))
 VINTAGE1_OCCURRENCE = "committed_vintage1"
 ENTRY11_OCCURRENCE = "entry11_source_reextraction"
 OCCURRENCE_NAMESPACE = "covered_earnings_source_evidence_occurrence.v1"
-PINNED_CANONICAL_SIZE_BYTES = 1_515_354
+PINNED_CANONICAL_SIZE_BYTES = 1_515_381
 PINNED_CANONICAL_SHA256 = (
-    "130fbcbdf1b78c871ac47391f6eaadb1a74f9f3eadcb8827c997f3a6982c8e3b"
+    "1080acc9672abf209bb9c5ec06170ca351b26200ba1727652fd515b25b216380"
 )
 
-PHYSICAL_SOURCE_CELL_FIELDS = (
+PHYSICAL_SOURCE_CELL_EVIDENCE_FIELDS = (
     "physical_cell_id",
     "structural_locator_id",
     "publication_family_id",
@@ -84,7 +88,7 @@ PHYSICAL_SOURCE_CELL_FIELDS = (
     "normalized_semantic_sha256",
     "full_source_sha256",
 )
-OFFICIAL_SOURCE_ALIAS_FIELDS = (
+OFFICIAL_SOURCE_ALIAS_EVIDENCE_FIELDS = (
     "alias_group_id",
     "left_physical_cell_id",
     "right_physical_cell_id",
@@ -93,7 +97,7 @@ OFFICIAL_SOURCE_ALIAS_FIELDS = (
     "arithmetic_rule_id",
     "adjudication",
 )
-OFFICIAL_SOURCE_ARITHMETIC_RULE_FIELDS = (
+OFFICIAL_SOURCE_ARITHMETIC_RULE_EVIDENCE_FIELDS = (
     "arithmetic_rule_id",
     "effective_calendar_year",
     "relation_class",
@@ -923,18 +927,18 @@ def _build_unvalidated() -> dict[str, Any]:
             ),
         },
         "source_verification": source_verification,
-        "physical_source_cell_specs_schema_version": (
-            PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION
+        "physical_source_cell_evidence_schema_version": (
+            PHYSICAL_SOURCE_CELL_EVIDENCE_SCHEMA_VERSION
         ),
-        "physical_source_cell_specs": physical_rows,
-        "official_source_alias_specs_schema_version": (
-            OFFICIAL_SOURCE_ALIAS_SPECS_SCHEMA_VERSION
+        "physical_source_cell_evidence": physical_rows,
+        "official_source_alias_evidence_schema_version": (
+            OFFICIAL_SOURCE_ALIAS_EVIDENCE_SCHEMA_VERSION
         ),
-        "official_source_alias_specs": aliases,
-        "official_source_arithmetic_rule_specs_schema_version": (
-            OFFICIAL_SOURCE_ARITHMETIC_RULE_SPECS_SCHEMA_VERSION
+        "official_source_alias_evidence": aliases,
+        "official_source_arithmetic_rule_evidence_schema_version": (
+            OFFICIAL_SOURCE_ARITHMETIC_RULE_EVIDENCE_SCHEMA_VERSION
         ),
-        "official_source_arithmetic_rule_specs": arithmetic_rules,
+        "official_source_arithmetic_rule_evidence": arithmetic_rules,
         "source_definition_fragments": list(definitions.values()),
         "adjudication": _count_adjudication(aliases, arithmetic_rules),
     }
@@ -956,9 +960,9 @@ def _exact_keys(
 def _validate_evidence_laws(value: object) -> None:
     if type(value) is not dict:
         raise EvidenceValidationError("evidence must be an object")
-    physical_rows = value.get("physical_source_cell_specs")
-    alias_rows = value.get("official_source_alias_specs")
-    arithmetic_rows = value.get("official_source_arithmetic_rule_specs")
+    physical_rows = value.get("physical_source_cell_evidence")
+    alias_rows = value.get("official_source_alias_evidence")
+    arithmetic_rows = value.get("official_source_arithmetic_rule_evidence")
     fragments = value.get("source_definition_fragments")
     if (
         type(physical_rows) is not list
@@ -975,8 +979,8 @@ def _validate_evidence_laws(value: object) -> None:
     for index, candidate in enumerate(physical_rows):
         row = _exact_keys(
             candidate,
-            PHYSICAL_SOURCE_CELL_FIELDS,
-            f"physical_source_cell_specs[{index}]",
+            PHYSICAL_SOURCE_CELL_EVIDENCE_FIELDS,
+            f"physical_source_cell_evidence[{index}]",
         )
         physical_id = row["physical_cell_id"]
         if (
@@ -1062,8 +1066,8 @@ def _validate_evidence_laws(value: object) -> None:
     for index, candidate in enumerate(arithmetic_rows):
         row = _exact_keys(
             candidate,
-            OFFICIAL_SOURCE_ARITHMETIC_RULE_FIELDS,
-            f"official_source_arithmetic_rule_specs[{index}]",
+            OFFICIAL_SOURCE_ARITHMETIC_RULE_EVIDENCE_FIELDS,
+            f"official_source_arithmetic_rule_evidence[{index}]",
         )
         rule_id = row["arithmetic_rule_id"]
         if type(rule_id) is not str or rule_id in arithmetic_by_id:
@@ -1122,8 +1126,8 @@ def _validate_evidence_laws(value: object) -> None:
     for index, candidate in enumerate(alias_rows):
         row = _exact_keys(
             candidate,
-            OFFICIAL_SOURCE_ALIAS_FIELDS,
-            f"official_source_alias_specs[{index}]",
+            OFFICIAL_SOURCE_ALIAS_EVIDENCE_FIELDS,
+            f"official_source_alias_evidence[{index}]",
         )
         if (
             type(row["alias_group_id"]) is not str
@@ -1287,9 +1291,9 @@ def main() -> None:
     evidence = json.loads(raw)
     print(
         "wrote and validated non-authoritative source-identity evidence: "
-        f"{len(evidence['physical_source_cell_specs'])} occurrences, "
-        f"{len(evidence['official_source_alias_specs'])} aliases, "
-        f"{len(evidence['official_source_arithmetic_rule_specs'])} rules; "
+        f"{len(evidence['physical_source_cell_evidence'])} occurrences, "
+        f"{len(evidence['official_source_alias_evidence'])} aliases, "
+        f"{len(evidence['official_source_arithmetic_rule_evidence'])} rules; "
         f"canonical sha256={_sha256_bytes(raw)}"
     )
 

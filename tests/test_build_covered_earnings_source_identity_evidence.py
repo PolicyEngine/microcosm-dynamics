@@ -60,13 +60,14 @@ def test__identity_evidence__does_not_mint_vintage2_authority(evidence):
 
 
 def test__physical_evidence__has_all_945_exact_12_field_rows(evidence):
-    rows = evidence["physical_source_cell_specs"]
-    assert evidence["physical_source_cell_specs_schema_version"] == (
-        "physical_source_cell_specs.v1"
+    rows = evidence["physical_source_cell_evidence"]
+    assert evidence["physical_source_cell_evidence_schema_version"] == (
+        "physical_source_cell_evidence.v1"
     )
     assert len(rows) == 120 + 825 == 945
     assert all(
-        set(row) == set(builder.PHYSICAL_SOURCE_CELL_FIELDS) for row in rows
+        set(row) == set(builder.PHYSICAL_SOURCE_CELL_EVIDENCE_FIELDS)
+        for row in rows
     )
     assert len({row["physical_cell_id"] for row in rows}) == 945
     assert len({row["structural_locator_id"] for row in rows}) == 921
@@ -83,7 +84,7 @@ def test__physical_evidence__has_all_945_exact_12_field_rows(evidence):
 
 
 def test__physical_evidence__hashes_the_design_locator_tuple(evidence):
-    for row in evidence["physical_source_cell_specs"]:
+    for row in evidence["physical_source_cell_evidence"]:
         preimage = [
             row["publication_family_id"],
             row["edition_id"],
@@ -102,13 +103,14 @@ def test__physical_evidence__hashes_the_design_locator_tuple(evidence):
 
 
 def test__alias_evidence__has_complete_proven_relation_counts(evidence):
-    rows = evidence["official_source_alias_specs"]
-    assert evidence["official_source_alias_specs_schema_version"] == (
-        "official_source_alias_specs.v1"
+    rows = evidence["official_source_alias_evidence"]
+    assert evidence["official_source_alias_evidence_schema_version"] == (
+        "official_source_alias_evidence.v1"
     )
     assert len(rows) == 873
     assert all(
-        set(row) == set(builder.OFFICIAL_SOURCE_ALIAS_FIELDS) for row in rows
+        set(row) == set(builder.OFFICIAL_SOURCE_ALIAS_EVIDENCE_FIELDS)
+        for row in rows
     )
     assert Counter(row["relation"] for row in rows) == {
         "same_physical_cell": 24,
@@ -126,11 +128,11 @@ def test__cross_vintage_evidence__uses_vintage1_and_reextraction_endpoints(
 ):
     physical = {
         row["physical_cell_id"]: row
-        for row in evidence["physical_source_cell_specs"]
+        for row in evidence["physical_source_cell_evidence"]
     }
     rows = [
         row
-        for row in evidence["official_source_alias_specs"]
+        for row in evidence["official_source_alias_evidence"]
         if row["relation"]
         in {"same_physical_cell", "cross_vintage_republication"}
     ]
@@ -165,14 +167,15 @@ def test__cross_vintage_evidence__uses_vintage1_and_reextraction_endpoints(
 
 
 def test__arithmetic_evidence__is_complete_and_structural_only(evidence):
-    rows = evidence["official_source_arithmetic_rule_specs"]
+    rows = evidence["official_source_arithmetic_rule_evidence"]
     assert (
-        evidence["official_source_arithmetic_rule_specs_schema_version"]
-        == "official_source_arithmetic_rule_specs.v1"
+        evidence["official_source_arithmetic_rule_evidence_schema_version"]
+        == "official_source_arithmetic_rule_evidence.v1"
     )
     assert len(rows) == 275
     assert all(
-        set(row) == set(builder.OFFICIAL_SOURCE_ARITHMETIC_RULE_FIELDS)
+        set(row)
+        == set(builder.OFFICIAL_SOURCE_ARITHMETIC_RULE_EVIDENCE_FIELDS)
         for row in rows
     )
     assert Counter(row["relation_class"] for row in rows) == {
@@ -222,12 +225,61 @@ def test__definition_hashes__bind_exact_verified_raw_html_cells(evidence):
 
 def test__identity_validator__reresolves_every_row_from_sources(evidence):
     builder.validate_evidence(copy.deepcopy(evidence))
-    registry.validate_source_identity_evidence(copy.deepcopy(evidence))
+
+
+def test__identity_evidence__has_no_authoritative_registry_api(evidence):
+    assert not hasattr(registry, "source_identity_evidence")
+    assert not hasattr(registry, "validate_source_identity_evidence")
+    assert "source_identity_evidence" not in registry.__all__
+    assert "validate_source_identity_evidence" not in registry.__all__
+    assert (
+        evidence["physical_source_cell_evidence_schema_version"]
+        != registry.PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION
+    )
+    assert (
+        evidence["official_source_alias_evidence_schema_version"]
+        != registry.OFFICIAL_SOURCE_ALIAS_SPECS_SCHEMA_VERSION
+    )
+    assert (
+        evidence["official_source_arithmetic_rule_evidence_schema_version"]
+        != registry.OFFICIAL_SOURCE_ARITHMETIC_RULE_SPECS_SCHEMA_VERSION
+    )
+
+
+@pytest.mark.parametrize(
+    ("evidence_key", "final_key"),
+    (
+        (
+            "physical_source_cell_evidence",
+            "physical_source_cell_specs",
+        ),
+        (
+            "official_source_alias_evidence",
+            "official_source_alias_specs",
+        ),
+        (
+            "official_source_arithmetic_rule_evidence",
+            "official_source_arithmetic_rule_specs",
+        ),
+    ),
+)
+def test__identity_evidence__cannot_enter_final_registry_ingestion(
+    evidence,
+    evidence_key,
+    final_key,
+):
+    rows = copy.deepcopy(evidence[evidence_key])
+    with pytest.raises(registry.RegistryValidationError, match="wrong fields"):
+        registry.validate_calibration_target_row_schema(rows[0])
+    with pytest.raises(registry.RegistryValidationError, match="wrong fields"):
+        registry.validate_calibration_target_specs(rows)
+    with pytest.raises(registry.RegistrationAborted):
+        registry.validate_frozen_registries(**{final_key: rows})
 
 
 def test__identity_validator__rejects_structural_locator_corruption(evidence):
     changed = copy.deepcopy(evidence)
-    changed["physical_source_cell_specs"][0]["structural_locator_id"] = (
+    changed["physical_source_cell_evidence"][0]["structural_locator_id"] = (
         "0" * 64
     )
     with pytest.raises(
@@ -241,9 +293,9 @@ def test__identity_validator__rejects_coherent_token_digest_corruption(
     evidence,
 ):
     changed = copy.deepcopy(evidence)
-    changed["physical_source_cell_specs"][0]["as_published_token_sha256"] = (
-        "0" * 64
-    )
+    changed["physical_source_cell_evidence"][0][
+        "as_published_token_sha256"
+    ] = ("0" * 64)
     with pytest.raises(
         builder.EvidenceValidationError,
         match="fresh committed-source re-resolution",
@@ -253,16 +305,16 @@ def test__identity_validator__rejects_coherent_token_digest_corruption(
 
 def test__identity_validator__rejects_omitted_alias(evidence):
     changed = copy.deepcopy(evidence)
-    changed["official_source_alias_specs"].pop()
+    changed["official_source_alias_evidence"].pop()
     with pytest.raises(builder.EvidenceValidationError, match="alias count"):
         builder.validate_evidence(changed)
 
 
 def test__pinned_evidence__has_independent_canonical_byte_pins():
     raw = builder.OUT_PATH.read_bytes()
-    assert len(raw) == 1_515_354
+    assert len(raw) == 1_515_381
     assert hashlib.sha256(raw).hexdigest() == (
-        "130fbcbdf1b78c871ac47391f6eaadb1a74f9f3eadcb8827c997f3a6982c8e3b"
+        "1080acc9672abf209bb9c5ec06170ca351b26200ba1727652fd515b25b216380"
     )
     value = json.loads(raw)
     assert builder.canonical_json_bytes(value) == raw
@@ -271,9 +323,6 @@ def test__pinned_evidence__has_independent_canonical_byte_pins():
 
 def test__pinned_evidence__reproduces_all_sources_and_registries():
     builder.validate_pinned_evidence()
-    assert (
-        registry.source_identity_evidence() == builder.load_pinned_evidence()
-    )
 
 
 def test__pinned_evidence__rejects_byte_drift_before_source_rebuild(
@@ -300,7 +349,7 @@ def test__validator__rejects_coherently_rehashed_definition(evidence):
     digest = hashlib.sha256(b"\x00".join(fragments)).hexdigest()
     fragment["source_definition_fragment_sha256"] = digest
     locator = fragment["source_definition_locator_id"]
-    for rule in changed["official_source_arithmetic_rule_specs"]:
+    for rule in changed["official_source_arithmetic_rule_evidence"]:
         if rule["source_definition_locator_id"] == locator:
             rule["source_definition_fragment_sha256"] = digest
     with pytest.raises(
