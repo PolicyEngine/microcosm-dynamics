@@ -4,7 +4,7 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `2ff590d`
-- Current phase: add exhaustive, source-hash-reproduced V-B7 rejection rows.
+- Current phase: run the full verification matrix and tail checks.
 - Constraints: use committed source bytes only; keep final registration
   fail-closed; commit each coherent edit; do not push.
 
@@ -34,9 +34,21 @@
   boundary; row-local validation does not invent an ID grammar, and full
   registration still aborts before claiming foreign-key or weight authority.
 - Exact-schema/evidence focused tests pass: `111 passed`.
+- Added source-byte and fragment-hash reproduction for the VI.G1
+  taxable-payroll/GDP series and both directly published IV.B4
+  worker/beneficiary ratios.
+- Added the exact 2023 4.B10/4.B12 quotient
+  `182,689 / 186,620 = 0.9789358054`, together with its CWHS,
+  unduplicated-worker, and preliminary-status source fragments.
+- Recorded the quotient's synthesized, preliminary, 2023-only, and
+  no-HI-model-analogue failures, and added
+  `one_as_published_covered_share_observation_per_year` to candidate (b).
+- The adjudication tests pass: `19 passed`; the combined four-file suite
+  passes: `153 passed`.
 
 ## Next
 
-1. Add hash-reproduced rejection coverage for every omitted V-B7 candidate.
-2. Run Black at line length 79, required suites and tail checks, then record
-   the final disposition and exact verification results.
+1. Run Black at line length 79, the remaining required suites, tier
+   inventories, and fail-closed tail checks.
+2. Record the final disposition and exact verification results in the output
+   report.

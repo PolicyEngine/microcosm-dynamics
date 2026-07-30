@@ -16,12 +16,20 @@ The committed source rows cited by the ratified design are:
 * Table 4.B1: header lines 41-65 and definitions at lines 929-947.
 * Trustees Table IV.B4: caption/header lines 242-291 and covered-worker
   definition at lines 4913-4915.
+* Trustees Table VI.G1: caption/header lines 240-287 and taxable-payroll
+  definition at lines 4566-4570.
+* Tables 4.B10 and 4.B12: 2023 all-area worker totals and their CWHS,
+  preliminary, and unduplicated-count notes.
 
 Table 4.B1's published reported-taxable percentage is an earnings-dollar
 share, not the worker-incidence ratio frozen by sections 3.1 and 6.2.  A
 cross-publication worker-count construction also fails: the Trustees
 denominator does not establish the required duplicate-worker and membership
 rules, and the resulting displayed-count ratio exceeds one in many years.
+VI.G1's payroll-to-GDP ratio and IV.B4's worker/beneficiary ratios are not
+worker-incidence shares.  The 2023 4.B10 OASDI-worker/4.B12 HI-worker quotient
+is synthesized, preliminary, outside every registered role, and lacks an HI
+model-denominator analogue.
 The exact adjudication is returned by :func:`vb7_adjudication`.
 
 Run from the repository root::
@@ -95,6 +103,12 @@ TRUSTEES_COVERED_WORKERS_SHA256 = (
     "40435030d154e29eb49a4e411b78253f504049eddff6e149d7e33033fb139458"
 )
 TRUSTEES_COVERED_WORKERS_SIZE_BYTES = 133_558
+TRUSTEES_VI_G1_DOCUMENT_ID = "ssa_trustees_2026_lr6g1"
+TRUSTEES_VI_G1_FILENAME = "trustees2026_lr6g1.html"
+TRUSTEES_VI_G1_SHA256 = (
+    "3b9e96be991d5a102d41ede443e157d2d1a2a928174430497dc9c3a1fa532dc0"
+)
+TRUSTEES_VI_G1_SIZE_BYTES = 226_685
 TABLE4_B1_CAPTION = (
     "Table 4.B1 Number of workers with Social Security (OASDI) taxable "
     "earnings and amount of earnings, selected years 1937\u20132024"
@@ -103,6 +117,20 @@ TRUSTEES_IV_B4_CAPTION = (
     "Table IV.B4.\u2014Covered Workers and Beneficiaries, Calendar Years "
     "1945-2100"
 )
+TRUSTEES_VI_G1_CAPTION = (
+    "Table VI.G1.\u2014Selected Economic Variables, Calendar Years 1970-2100 "
+    "[GDP and taxable payroll in billions]"
+)
+TABLE4_B10_CAPTION = (
+    "Table 4.B10 Number of workers with Social Security (OASDI) taxable "
+    "earnings, amount taxable, and contributions, by state or other area and "
+    "type of earnings, 2023"
+)
+TABLE4_B12_CAPTION = (
+    "Table 4.B12 Number of workers with Medicare Part A (HI) taxable "
+    "earnings, amount taxable, and contributions, by state or other area and "
+    "type of earnings, 2023"
+)
 TABLE4_B1_PERCENTAGE_HEADER = (
     "Earnings",
     "Reported taxable a",
@@ -110,6 +138,17 @@ TABLE4_B1_PERCENTAGE_HEADER = (
 )
 TABLE4_B1_TOTAL_WORKERS_HEADER = ("Number a (thousands)", "Total")
 TRUSTEES_COVERED_WORKERS_HEADER = ("Covered workers a (in thousands)",)
+TRUSTEES_WORKERS_PER_BENEFICIARY_HEADER = (
+    "Covered workers per OASDI beneficiary",
+)
+TRUSTEES_BENEFICIARIES_PER_100_WORKERS_HEADER = (
+    "OASDI beneficiaries per 100 covered workers",
+)
+TRUSTEES_VI_G1_PAYROLL_GDP_RATIO_HEADER = ("Ratio of taxable payroll to GDP",)
+TABLE4_B10_B12_TOTAL_WORKERS_HEADER = (
+    "Number b (thousands)",
+    "Total",
+)
 
 
 class RegistrationAborted(ValueError):
@@ -535,6 +574,21 @@ def _select_one_captioned_table(
     return matches[0], parsed
 
 
+def _select_one_parsed_table(
+    tables: Sequence[Any],
+    *,
+    source_document_id: str,
+    exact_caption: str,
+) -> Any:
+    matches = [table for table in tables if table.caption == exact_caption]
+    if len(matches) != 1:
+        raise ValueError(
+            f"{source_document_id} caption {exact_caption!r} selected "
+            f"{len(matches)} parsed tables"
+        )
+    return matches[0]
+
+
 def _unique_column(table: Any, header_path: tuple[str, ...]) -> int:
     matches = [
         index
@@ -584,6 +638,35 @@ def _trustees_year_rows(table: Any) -> dict[int, tuple[str, list[Any]]]:
     return indexed
 
 
+def _unique_stub_row(table: Any, *, stub_text: str) -> list[Any]:
+    body_rows = [row for row in table.rows if row.section == "tbody"]
+    grid = entry10._expand_rows(body_rows)
+    matches: list[list[Any]] = []
+    for source_row, expanded_row in zip(body_rows, grid, strict=True):
+        row_headers = [
+            cell
+            for cell in source_row.cells
+            if cell.attributes.get("scope") == "row" and cell.text == stub_text
+        ]
+        if not row_headers:
+            continue
+        if len(row_headers) != 1:
+            raise ValueError(
+                f"{table.caption} has duplicate {stub_text!r} row headers"
+            )
+        row_header = row_headers[0]
+        if row_header.rowspan != 1 or row_header.colspan != 1:
+            raise ValueError(
+                f"{table.caption} {stub_text!r} is not a physical 1x1 cell"
+            )
+        matches.append(expanded_row)
+    if len(matches) != 1:
+        raise ValueError(
+            f"{table.caption} selected {len(matches)} {stub_text!r} rows"
+        )
+    return matches[0]
+
+
 def _selected_literal(
     row: Sequence[Any],
     column: int,
@@ -625,7 +708,7 @@ def _source_fragment(
 
 
 def _parse_decimal_cell(literal: str, *, where: str) -> Fraction:
-    if not re.fullmatch(r"\d+(?:\.\d+)?", literal):
+    if not re.fullmatch(r"(?:\d+(?:\.\d+)?|\.\d+)", literal):
         raise ValueError(f"{where} literal {literal!r} is not a decimal")
     whole, separator, fraction = literal.partition(".")
     if not separator:
@@ -633,10 +716,23 @@ def _parse_decimal_cell(literal: str, *, where: str) -> Fraction:
     return Fraction(int(whole + fraction), 10 ** len(fraction))
 
 
+def _fraction_decimal(value: Fraction, *, places: int) -> str:
+    if value < 0 or places < 1:
+        raise ValueError(
+            "fraction decimal renderer requires nonnegative value"
+        )
+    scale = 10**places
+    quotient, remainder = divmod(value.numerator * scale, value.denominator)
+    if remainder * 2 >= value.denominator:
+        quotient += 1
+    return f"{quotient // scale}.{quotient % scale:0{places}d}"
+
+
 def _verified_vb7_inputs() -> dict[str, Any]:
     entries, raw_by_document_id = entry10.read_verified_snapshots()
     supplement_raw = raw_by_document_id[SOURCE_DOCUMENT_ID]
     trustees_raw = raw_by_document_id[TRUSTEES_COVERED_WORKERS_DOCUMENT_ID]
+    trustees_vi_g1_raw = raw_by_document_id[TRUSTEES_VI_G1_DOCUMENT_ID]
     if (
         hashlib.sha256(supplement_raw).hexdigest() != SOURCE_SHA256
         or len(supplement_raw) != SOURCE_SIZE_BYTES
@@ -650,12 +746,19 @@ def _verified_vb7_inputs() -> dict[str, Any]:
         or len(trustees_raw) != TRUSTEES_COVERED_WORKERS_SIZE_BYTES
     ):
         raise ValueError("Trustees source identity drift before V-B7 parsing")
+    if (
+        hashlib.sha256(trustees_vi_g1_raw).hexdigest() != TRUSTEES_VI_G1_SHA256
+        or len(trustees_vi_g1_raw) != TRUSTEES_VI_G1_SIZE_BYTES
+    ):
+        raise ValueError("Trustees VI.G1 identity drift before V-B7 parsing")
 
     supplement_entry = entries[SOURCE_DOCUMENT_ID]
     trustees_entry = entries[TRUSTEES_COVERED_WORKERS_DOCUMENT_ID]
+    trustees_vi_g1_entry = entries[TRUSTEES_VI_G1_DOCUMENT_ID]
     if (
         supplement_entry.filename != SOURCE_FILENAME
         or trustees_entry.filename != TRUSTEES_COVERED_WORKERS_FILENAME
+        or trustees_vi_g1_entry.filename != TRUSTEES_VI_G1_FILENAME
     ):
         raise ValueError("V-B7 capture-manifest filename drift")
 
@@ -669,11 +772,30 @@ def _verified_vb7_inputs() -> dict[str, Any]:
         source_document_id=TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
         exact_caption=TRUSTEES_IV_B4_CAPTION,
     )
+    trustees_vi_g1, trustees_vi_g1_tables = _select_one_captioned_table(
+        trustees_vi_g1_raw,
+        source_document_id=TRUSTEES_VI_G1_DOCUMENT_ID,
+        exact_caption=TRUSTEES_VI_G1_CAPTION,
+    )
+    table4_b10 = _select_one_parsed_table(
+        supplement_tables,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        exact_caption=TABLE4_B10_CAPTION,
+    )
+    table4_b12 = _select_one_parsed_table(
+        supplement_tables,
+        source_document_id=SOURCE_DOCUMENT_ID,
+        exact_caption=TABLE4_B12_CAPTION,
+    )
     return {
         "b1": b1,
         "supplement_tables": supplement_tables,
         "trustees": trustees,
         "trustees_tables": trustees_tables,
+        "trustees_vi_g1": trustees_vi_g1,
+        "trustees_vi_g1_tables": trustees_vi_g1_tables,
+        "table4_b10": table4_b10,
+        "table4_b12": table4_b12,
     }
 
 
@@ -683,16 +805,25 @@ def vb7_adjudication() -> dict[str, Any]:
     inputs = _verified_vb7_inputs()
     b1 = inputs["b1"]
     trustees = inputs["trustees"]
+    trustees_vi_g1 = inputs["trustees_vi_g1"]
+    table4_b10 = inputs["table4_b10"]
+    table4_b12 = inputs["table4_b12"]
     b1_rows = _all_year_rows(b1)
     trustees_rows = _trustees_year_rows(trustees)
+    trustees_vi_g1_rows = _trustees_year_rows(trustees_vi_g1)
+    vi_g1_required_years = tuple(range(1970, 2023))
     missing_b1 = sorted(set(REQUIRED_CALENDAR_YEARS) - set(b1_rows))
     missing_trustees = sorted(
         set(REQUIRED_CALENDAR_YEARS) - set(trustees_rows)
     )
-    if missing_b1 or missing_trustees:
+    missing_vi_g1 = sorted(
+        set(vi_g1_required_years) - set(trustees_vi_g1_rows)
+    )
+    if missing_b1 or missing_trustees or missing_vi_g1:
         raise ValueError(
             "V-B7 candidate source years missing: "
-            f"4.B1={missing_b1}, IV.B4={missing_trustees}"
+            f"4.B1={missing_b1}, IV.B4={missing_trustees}, "
+            f"VI.G1={missing_vi_g1}"
         )
 
     percentage_column = _unique_column(b1, TABLE4_B1_PERCENTAGE_HEADER)
@@ -700,9 +831,23 @@ def vb7_adjudication() -> dict[str, Any]:
     trustees_workers_column = _unique_column(
         trustees, TRUSTEES_COVERED_WORKERS_HEADER
     )
+    trustees_workers_per_beneficiary_column = _unique_column(
+        trustees,
+        TRUSTEES_WORKERS_PER_BENEFICIARY_HEADER,
+    )
+    trustees_beneficiaries_per_100_workers_column = _unique_column(
+        trustees,
+        TRUSTEES_BENEFICIARIES_PER_100_WORKERS_HEADER,
+    )
+    trustees_vi_g1_ratio_column = _unique_column(
+        trustees_vi_g1,
+        TRUSTEES_VI_G1_PAYROLL_GDP_RATIO_HEADER,
+    )
 
     percentages: dict[int, str] = {}
     count_pairs: dict[int, tuple[str, str]] = {}
+    workers_per_beneficiary: dict[int, str] = {}
+    beneficiaries_per_100_workers: dict[int, str] = {}
     comparisons = {"above_one": 0, "below_one": 0, "equal_one": 0}
     for year in REQUIRED_CALENDAR_YEARS:
         percentage = _selected_literal(
@@ -745,6 +890,75 @@ def vb7_adjudication() -> dict[str, Any]:
         comparisons[comparison] += 1
         count_pairs[year] = (numerator, denominator)
 
+        workers_per_beneficiary_literal = _selected_literal(
+            trustees_rows[year][1],
+            trustees_workers_per_beneficiary_column,
+            where=f"trustees.iv.b4/{year}/workers_per_beneficiary",
+        )
+        beneficiaries_per_100_workers_literal = _selected_literal(
+            trustees_rows[year][1],
+            trustees_beneficiaries_per_100_workers_column,
+            where=f"trustees.iv.b4/{year}/beneficiaries_per_100_workers",
+        )
+        _parse_decimal_cell(
+            workers_per_beneficiary_literal,
+            where=f"trustees.iv.b4/{year}/workers_per_beneficiary",
+        )
+        _parse_decimal_cell(
+            beneficiaries_per_100_workers_literal,
+            where=f"trustees.iv.b4/{year}/beneficiaries_per_100_workers",
+        )
+        workers_per_beneficiary[year] = workers_per_beneficiary_literal
+        beneficiaries_per_100_workers[year] = (
+            beneficiaries_per_100_workers_literal
+        )
+
+    vi_g1_ratios: dict[int, str] = {}
+    for year in vi_g1_required_years:
+        literal = _selected_literal(
+            trustees_vi_g1_rows[year][1],
+            trustees_vi_g1_ratio_column,
+            where=f"trustees.vi.g1/{year}/taxable_payroll_to_gdp",
+        )
+        _parse_decimal_cell(
+            literal,
+            where=f"trustees.vi.g1/{year}/taxable_payroll_to_gdp",
+        )
+        vi_g1_ratios[year] = literal
+
+    table4_b10_total_column = _unique_column(
+        table4_b10,
+        TABLE4_B10_B12_TOTAL_WORKERS_HEADER,
+    )
+    table4_b12_total_column = _unique_column(
+        table4_b12,
+        TABLE4_B10_B12_TOTAL_WORKERS_HEADER,
+    )
+    table4_b10_total = _selected_literal(
+        _unique_stub_row(table4_b10, stub_text="All areas"),
+        table4_b10_total_column,
+        where="table4.b10/2023/all_areas/workers_total",
+    )
+    table4_b12_total = _selected_literal(
+        _unique_stub_row(table4_b12, stub_text="All areas"),
+        table4_b12_total_column,
+        where="table4.b12/2023/all_areas/workers_total",
+    )
+    table4_b10_total_value = entry10._parse_integer_cell(
+        table4_b10_total,
+        where="table4.b10/2023/all_areas/workers_total",
+    )
+    table4_b12_total_value = entry10._parse_integer_cell(
+        table4_b12_total,
+        where="table4.b12/2023/all_areas/workers_total",
+    )
+    if table4_b12_total_value <= 0:
+        raise ValueError("Table 4.B12 2023 all-areas worker total <= 0")
+    table4_b10_b12_ratio = Fraction(
+        table4_b10_total_value,
+        table4_b12_total_value,
+    )
+
     b1_definition = _source_fragment(
         [b1],
         required_text=(
@@ -764,6 +978,63 @@ def vb7_adjudication() -> dict[str, Any]:
         ),
         source_document_id=TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
     )
+    trustees_workers_per_beneficiary_header = _source_fragment(
+        [trustees],
+        required_text="Covered workers per OASDI beneficiary",
+        source_document_id=TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
+    )
+    trustees_beneficiaries_per_100_workers_header = _source_fragment(
+        [trustees],
+        required_text="OASDI beneficiaries per 100 covered workers",
+        source_document_id=TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
+    )
+    trustees_vi_g1_definition = _source_fragment(
+        inputs["trustees_vi_g1_tables"],
+        required_text="Total earnings subject to OASDI contribution rates",
+        source_document_id=TRUSTEES_VI_G1_DOCUMENT_ID,
+    )
+    trustees_vi_g1_ratio_header = _source_fragment(
+        [trustees_vi_g1],
+        required_text="Ratio of taxable payroll to GDP",
+        source_document_id=TRUSTEES_VI_G1_DOCUMENT_ID,
+    )
+
+    table4_b10_b12_fragments: dict[str, str] = {}
+    for fragment_id, required_text in (
+        (
+            "cwhs_source",
+            (
+                "SOURCE: Social Security Administration, Continuous Work "
+                "History Sample"
+            ),
+        ),
+        (
+            "preliminary_status",
+            "NOTES: Data are based on preliminary estimates.",
+        ),
+        (
+            "unduplicated_worker_rule",
+            (
+                "National and state totals and subtotals are unduplicated "
+                "counts of workers in each type of employment."
+            ),
+        ),
+    ):
+        b10_fragment = _source_fragment(
+            [table4_b10],
+            required_text=required_text,
+            source_document_id=SOURCE_DOCUMENT_ID,
+        )
+        b12_fragment = _source_fragment(
+            [table4_b12],
+            required_text=required_text,
+            source_document_id=SOURCE_DOCUMENT_ID,
+        )
+        if b10_fragment != b12_fragment:
+            raise ValueError(
+                f"Tables 4.B10/4.B12 {fragment_id} fragments differ"
+            )
+        table4_b10_b12_fragments[fragment_id] = b10_fragment
 
     return {
         "schema_version": "ssa_covered_earnings_vb7_adjudication.v1",
@@ -822,10 +1093,183 @@ def vb7_adjudication() -> dict[str, Any]:
                     "trustees_dual_type_duplicate_rule",
                     "zero_loss_threshold_cap_membership_equivalence",
                     "source_authorized_cross_publication_reconciliation",
+                    "one_as_published_covered_share_observation_per_year",
                 ],
                 "verdict": (
                     "reject_not_a_source_defined_subset_share_and_universe_"
                     "rules_are_incomplete"
+                ),
+            },
+            {
+                "candidate_id": "trustees_vi_g1_taxable_payroll_to_gdp",
+                "available_years": list(vi_g1_required_years),
+                "source_document_sha256": TRUSTEES_VI_G1_SHA256,
+                "published_ratio_examples": {
+                    "1970": vi_g1_ratios[1970],
+                    "2014": vi_g1_ratios[2014],
+                    "2022": vi_g1_ratios[2022],
+                },
+                "source_definition_fragment_sha256": hashlib.sha256(
+                    trustees_vi_g1_definition.encode("utf-8")
+                ).hexdigest(),
+                "ratio_header_fragment_sha256": hashlib.sha256(
+                    trustees_vi_g1_ratio_header.encode("utf-8")
+                ).hexdigest(),
+                "established": [
+                    "publication_table_vintage",
+                    "direct_published_taxable_payroll_to_gdp_ratio",
+                    "oasdi_taxable_payroll_dollar_numerator",
+                    "gdp_dollar_denominator",
+                    "calendar_years_1970_2022",
+                    "multiple_employer_excess_wage_payroll_adjustment",
+                ],
+                "not_established": [
+                    "worker_incidence_numerator_denominator",
+                    "person_or_worker_denominator",
+                    "worker_duplicate_rule",
+                    "one_as_published_covered_share_observation_per_year",
+                    "exact_worker_universe_model_analogue",
+                    "1968_1969_source_cells",
+                ],
+                "verdict": (
+                    "reject_payroll_to_gdp_dollar_ratio_is_not_worker_"
+                    "incidence_share"
+                ),
+            },
+            {
+                "candidate_id": (
+                    "trustees_iv_b4_covered_workers_per_oasdi_beneficiary"
+                ),
+                "available_years": list(REQUIRED_CALENDAR_YEARS),
+                "published_ratio_examples": {
+                    "1968": workers_per_beneficiary[1968],
+                    "1978": workers_per_beneficiary[1978],
+                    "2014": workers_per_beneficiary[2014],
+                    "2022": workers_per_beneficiary[2022],
+                },
+                "source_definition_fragment_sha256": hashlib.sha256(
+                    trustees_definition.encode("utf-8")
+                ).hexdigest(),
+                "ratio_header_fragment_sha256": hashlib.sha256(
+                    trustees_workers_per_beneficiary_header.encode("utf-8")
+                ).hexdigest(),
+                "established": [
+                    "publication_table_vintage",
+                    "direct_published_ratio_cells",
+                    "annual_covered_worker_numerator",
+                    "june_30_current_payment_beneficiary_denominator",
+                    "every_1968_2022_ratio",
+                ],
+                "not_established": [
+                    "worker_incidence_numerator_denominator",
+                    "population_universe_denominator",
+                    "common_annual_timing_numerator_denominator",
+                    "worker_duplicate_rule",
+                    "one_as_published_covered_share_observation_per_year",
+                    "exact_worker_universe_model_analogue",
+                ],
+                "verdict": (
+                    "reject_beneficiary_burden_ratio_is_not_worker_"
+                    "incidence_share"
+                ),
+            },
+            {
+                "candidate_id": (
+                    "trustees_iv_b4_oasdi_beneficiaries_per_100_"
+                    "covered_workers"
+                ),
+                "available_years": list(REQUIRED_CALENDAR_YEARS),
+                "published_ratio_examples": {
+                    "1968": beneficiaries_per_100_workers[1968],
+                    "1978": beneficiaries_per_100_workers[1978],
+                    "2014": beneficiaries_per_100_workers[2014],
+                    "2022": beneficiaries_per_100_workers[2022],
+                },
+                "source_definition_fragment_sha256": hashlib.sha256(
+                    trustees_definition.encode("utf-8")
+                ).hexdigest(),
+                "ratio_header_fragment_sha256": hashlib.sha256(
+                    trustees_beneficiaries_per_100_workers_header.encode(
+                        "utf-8"
+                    )
+                ).hexdigest(),
+                "established": [
+                    "publication_table_vintage",
+                    "direct_published_ratio_cells",
+                    "june_30_current_payment_beneficiary_numerator",
+                    "annual_covered_worker_denominator",
+                    "every_1968_2022_ratio",
+                ],
+                "not_established": [
+                    "worker_incidence_numerator_denominator",
+                    "population_universe_denominator",
+                    "common_annual_timing_numerator_denominator",
+                    "worker_duplicate_rule",
+                    "one_as_published_covered_share_observation_per_year",
+                    "exact_worker_universe_model_analogue",
+                ],
+                "verdict": (
+                    "reject_beneficiary_burden_ratio_is_not_worker_"
+                    "incidence_share"
+                ),
+            },
+            {
+                "candidate_id": (
+                    "supplement_2023_table4_b10_oasdi_workers_over_"
+                    "table4_b12_hi_workers"
+                ),
+                "available_years": [2023],
+                "source_document_sha256": SOURCE_SHA256,
+                "example_2023": {
+                    "numerator_thousands": table4_b10_total,
+                    "denominator_thousands": table4_b12_total,
+                    "exact_fraction": (
+                        f"{table4_b10_b12_ratio.numerator}/"
+                        f"{table4_b10_b12_ratio.denominator}"
+                    ),
+                    "decimal_10_places": _fraction_decimal(
+                        table4_b10_b12_ratio,
+                        places=10,
+                    ),
+                },
+                "numerator_fragment_sha256": hashlib.sha256(
+                    table4_b10_total.encode("utf-8")
+                ).hexdigest(),
+                "denominator_fragment_sha256": hashlib.sha256(
+                    table4_b12_total.encode("utf-8")
+                ).hexdigest(),
+                "operand_fragment_composite_sha256": hashlib.sha256(
+                    table4_b10_total.encode("utf-8")
+                    + b"\x00"
+                    + table4_b12_total.encode("utf-8")
+                ).hexdigest(),
+                "cwhs_source_fragment_sha256": hashlib.sha256(
+                    table4_b10_b12_fragments["cwhs_source"].encode("utf-8")
+                ).hexdigest(),
+                "unduplicated_worker_rule_fragment_sha256": hashlib.sha256(
+                    table4_b10_b12_fragments[
+                        "unduplicated_worker_rule"
+                    ].encode("utf-8")
+                ).hexdigest(),
+                "preliminary_status_fragment_sha256": hashlib.sha256(
+                    table4_b10_b12_fragments["preliminary_status"].encode(
+                        "utf-8"
+                    )
+                ).hexdigest(),
+                "established": [
+                    "same_cwhs_one_percent_source",
+                    "unduplicated_national_worker_totals",
+                    "2023_calendar_year_worker_counts",
+                ],
+                "not_established": [
+                    "one_as_published_covered_share_observation_per_year",
+                    "non_preliminary_status",
+                    "any_1968_2022_registered_role_year",
+                    "hi_worker_denominator_model_analogue",
+                ],
+                "verdict": (
+                    "reject_synthesized_preliminary_2023_only_quotient_"
+                    "without_hi_model_denominator"
                 ),
             },
             {

@@ -6,6 +6,7 @@ import copy
 import hashlib
 import shutil
 import sys
+from fractions import Fraction
 from pathlib import Path
 
 import pytest
@@ -205,6 +206,24 @@ def test__vb7_adjudication__rejects_every_committed_construction():
         row["candidate_id"]: row
         for row in adjudication["candidate_constructions"]
     }
+    assert set(candidates) == {
+        "table4_b1_reported_taxable_earnings_share",
+        (
+            "supplement_workers_with_taxable_earnings_over_"
+            "trustees_covered_workers"
+        ),
+        "trustees_vi_g1_taxable_payroll_to_gdp",
+        "trustees_iv_b4_covered_workers_per_oasdi_beneficiary",
+        ("trustees_iv_b4_oasdi_beneficiaries_per_100_" "covered_workers"),
+        (
+            "supplement_2023_table4_b10_oasdi_workers_over_"
+            "table4_b12_hi_workers"
+        ),
+        "other_committed_same_universe_construction",
+    }
+    assert adjudication["candidate_constructions"][-1]["candidate_id"] == (
+        "other_committed_same_universe_construction"
+    )
     earnings = candidates["table4_b1_reported_taxable_earnings_share"]
     assert earnings["published_percentage_examples"] == {
         "1968": "81.7",
@@ -226,6 +245,144 @@ def test__vb7_adjudication__rejects_every_committed_construction():
         "denominator_thousands": "109,432",
     }
     assert workers["verdict"].startswith("reject_not_a_source_defined")
+    assert (
+        "one_as_published_covered_share_observation_per_year"
+        in workers["not_established"]
+    )
+
+
+def test__vb7_adjudication__rejects_vi_g1_payroll_to_gdp():
+    candidates = {
+        row["candidate_id"]: row
+        for row in builder.vb7_adjudication()["candidate_constructions"]
+    }
+    candidate = candidates["trustees_vi_g1_taxable_payroll_to_gdp"]
+    assert candidate["available_years"] == list(range(1970, 2023))
+    assert candidate["source_document_sha256"] == (
+        "3b9e96be991d5a102d41ede443e157d2d1a2a928174430497dc9c3a1fa532dc0"
+    )
+    assert candidate["published_ratio_examples"] == {
+        "1970": "0.376",
+        "2014": ".350",
+        "2022": ".351",
+    }
+    assert candidate["source_definition_fragment_sha256"] == (
+        "3ca4fa14471b8fe43c539f527ba11727dcc72aeac6bcd944977508309bfc9b38"
+    )
+    assert candidate["ratio_header_fragment_sha256"] == (
+        "1ddc1e23278571f12b430c83283d32f5a78533a2568036f7ee8b9ebf1711f54f"
+    )
+    assert candidate["not_established"] == [
+        "worker_incidence_numerator_denominator",
+        "person_or_worker_denominator",
+        "worker_duplicate_rule",
+        "one_as_published_covered_share_observation_per_year",
+        "exact_worker_universe_model_analogue",
+        "1968_1969_source_cells",
+    ]
+    assert candidate["verdict"] == (
+        "reject_payroll_to_gdp_dollar_ratio_is_not_worker_incidence_share"
+    )
+
+
+def test__vb7_adjudication__rejects_both_iv_b4_beneficiary_ratios():
+    candidates = {
+        row["candidate_id"]: row
+        for row in builder.vb7_adjudication()["candidate_constructions"]
+    }
+    expected = {
+        "trustees_iv_b4_covered_workers_per_oasdi_beneficiary": {
+            "examples": {
+                "1968": "3.8",
+                "1978": "3.2",
+                "2014": "2.8",
+                "2022": "2.8",
+            },
+            "header_sha256": (
+                "5aecf2b5d2c9a65e67e354e114d08c336c348c667f0a54d30516d2d4a6f9317c"
+            ),
+        },
+        ("trustees_iv_b4_oasdi_beneficiaries_per_100_covered_workers"): {
+            "examples": {
+                "1968": "26",
+                "1978": "31",
+                "2014": "35",
+                "2022": "36",
+            },
+            "header_sha256": (
+                "1b33b9c5de900b8102d5026b05135260e183a1d86fc106d16c538ac4c427c84a"
+            ),
+        },
+    }
+    failures = [
+        "worker_incidence_numerator_denominator",
+        "population_universe_denominator",
+        "common_annual_timing_numerator_denominator",
+        "worker_duplicate_rule",
+        "one_as_published_covered_share_observation_per_year",
+        "exact_worker_universe_model_analogue",
+    ]
+    for candidate_id, values in expected.items():
+        candidate = candidates[candidate_id]
+        assert candidate["available_years"] == list(range(1968, 2023))
+        assert candidate["published_ratio_examples"] == values["examples"]
+        assert candidate["source_definition_fragment_sha256"] == (
+            "130d02a0fb0158a972b5ead853e338a6b1e58d5bdd7d032f40b187a5deeaca49"
+        )
+        assert (
+            candidate["ratio_header_fragment_sha256"]
+            == values["header_sha256"]
+        )
+        assert candidate["not_established"] == failures
+        assert candidate["verdict"] == (
+            "reject_beneficiary_burden_ratio_is_not_worker_incidence_share"
+        )
+
+
+def test__vb7_adjudication__rejects_2023_b10_b12_worker_quotient():
+    candidates = {
+        row["candidate_id"]: row
+        for row in builder.vb7_adjudication()["candidate_constructions"]
+    }
+    candidate = candidates[
+        "supplement_2023_table4_b10_oasdi_workers_over_"
+        "table4_b12_hi_workers"
+    ]
+    assert candidate["available_years"] == [2023]
+    assert candidate["example_2023"] == {
+        "numerator_thousands": "182,689",
+        "denominator_thousands": "186,620",
+        "exact_fraction": "182689/186620",
+        "decimal_10_places": "0.9789358054",
+    }
+    assert candidate["numerator_fragment_sha256"] == (
+        "aeb3f0f7a8cea093ea854a93499996c46a188d326f0986ca1e665644e703fff7"
+    )
+    assert candidate["denominator_fragment_sha256"] == (
+        "5e62802d7d9345c0ec9fe3e28e25410dc1344ac3e0611f6350e6578bc22bf9bf"
+    )
+    assert candidate["operand_fragment_composite_sha256"] == (
+        "b1802803df0069051016ecd046f8954af6325232f17e3f79fed4bfa8cb175293"
+    )
+    assert candidate["cwhs_source_fragment_sha256"] == (
+        "a02bb45f130c696aef43924a63ac9c1ede08206d2bef7e8bc24f72d28fff0a4b"
+    )
+    assert candidate["unduplicated_worker_rule_fragment_sha256"] == (
+        "d92c41987b78b20db440870cc57b34e474b96e7d72cd4dcc2c63db1a203a546d"
+    )
+    assert candidate["preliminary_status_fragment_sha256"] == (
+        "f05a3933f67a7701befd7bd5e834c87db3bf8c610a554556435b3f1c23e2ed1d"
+    )
+    assert candidate["not_established"] == [
+        "one_as_published_covered_share_observation_per_year",
+        "non_preliminary_status",
+        "any_1968_2022_registered_role_year",
+        "hi_worker_denominator_model_analogue",
+    ]
+    assert candidate["verdict"] == (
+        "reject_synthesized_preliminary_2023_only_quotient_"
+        "without_hi_model_denominator"
+    )
 
 
 def test__membership_adjudication__fails_required_fitting_families():
@@ -288,21 +445,147 @@ def test__extractor__rejects_source_drift_before_parsing(
 
 
 def test__vb7_fragment_hashes__come_from_verified_source_text():
-    adjudication = builder.vb7_adjudication()
-    candidates = adjudication["candidate_constructions"]
-    digests = {
-        value
-        for candidate in candidates
-        for key, value in candidate.items()
-        if key.endswith("_fragment_sha256")
+    inputs = builder._verified_vb7_inputs()
+    candidates = {
+        row["candidate_id"]: row
+        for row in builder.vb7_adjudication()["candidate_constructions"]
     }
-    assert digests
-    assert all(
-        isinstance(digest, str)
-        and len(digest) == 64
-        and digest == digest.lower()
-        for digest in digests
+    vi_g1 = candidates["trustees_vi_g1_taxable_payroll_to_gdp"]
+    vi_definition = builder._source_fragment(
+        inputs["trustees_vi_g1_tables"],
+        required_text="Total earnings subject to OASDI contribution rates",
+        source_document_id=builder.TRUSTEES_VI_G1_DOCUMENT_ID,
     )
+    vi_header = builder._source_fragment(
+        [inputs["trustees_vi_g1"]],
+        required_text="Ratio of taxable payroll to GDP",
+        source_document_id=builder.TRUSTEES_VI_G1_DOCUMENT_ID,
+    )
+    assert (
+        vi_g1["source_definition_fragment_sha256"]
+        == hashlib.sha256(vi_definition.encode("utf-8")).hexdigest()
+    )
+    assert (
+        vi_g1["ratio_header_fragment_sha256"]
+        == hashlib.sha256(vi_header.encode("utf-8")).hexdigest()
+    )
+
+    trustees_definition = builder._source_fragment(
+        inputs["trustees_tables"],
+        required_text=(
+            "Workers who are paid at some time during the year for employment"
+        ),
+        source_document_id=builder.TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
+    )
+    iv_candidates = (
+        (
+            "trustees_iv_b4_covered_workers_per_oasdi_beneficiary",
+            "Covered workers per OASDI beneficiary",
+        ),
+        (
+            "trustees_iv_b4_oasdi_beneficiaries_per_100_covered_workers",
+            "OASDI beneficiaries per 100 covered workers",
+        ),
+    )
+    for candidate_id, header_text in iv_candidates:
+        candidate = candidates[candidate_id]
+        header = builder._source_fragment(
+            [inputs["trustees"]],
+            required_text=header_text,
+            source_document_id=builder.TRUSTEES_COVERED_WORKERS_DOCUMENT_ID,
+        )
+        assert (
+            candidate["source_definition_fragment_sha256"]
+            == hashlib.sha256(trustees_definition.encode("utf-8")).hexdigest()
+        )
+        assert (
+            candidate["ratio_header_fragment_sha256"]
+            == hashlib.sha256(header.encode("utf-8")).hexdigest()
+        )
+
+    quotient = candidates[
+        "supplement_2023_table4_b10_oasdi_workers_over_"
+        "table4_b12_hi_workers"
+    ]
+    total_header = builder.TABLE4_B10_B12_TOTAL_WORKERS_HEADER
+    b10_literal = builder._selected_literal(
+        builder._unique_stub_row(
+            inputs["table4_b10"],
+            stub_text="All areas",
+        ),
+        builder._unique_column(inputs["table4_b10"], total_header),
+        where="test/table4.b10/all_areas/total",
+    )
+    b12_literal = builder._selected_literal(
+        builder._unique_stub_row(
+            inputs["table4_b12"],
+            stub_text="All areas",
+        ),
+        builder._unique_column(inputs["table4_b12"], total_header),
+        where="test/table4.b12/all_areas/total",
+    )
+    b10_value = builder.entry10._parse_integer_cell(
+        b10_literal,
+        where="test/table4.b10/all_areas/total",
+    )
+    b12_value = builder.entry10._parse_integer_cell(
+        b12_literal,
+        where="test/table4.b12/all_areas/total",
+    )
+    ratio = Fraction(b10_value, b12_value)
+    assert ratio == Fraction(182_689, 186_620)
+    assert builder._fraction_decimal(ratio, places=10) == "0.9789358054"
+    assert (
+        quotient["numerator_fragment_sha256"]
+        == hashlib.sha256(b10_literal.encode("utf-8")).hexdigest()
+    )
+    assert (
+        quotient["denominator_fragment_sha256"]
+        == hashlib.sha256(b12_literal.encode("utf-8")).hexdigest()
+    )
+    assert (
+        quotient["operand_fragment_composite_sha256"]
+        == hashlib.sha256(
+            b10_literal.encode("utf-8") + b"\x00" + b12_literal.encode("utf-8")
+        ).hexdigest()
+    )
+
+    note_fields = (
+        (
+            (
+                "SOURCE: Social Security Administration, Continuous Work "
+                "History Sample"
+            ),
+            "cwhs_source_fragment_sha256",
+        ),
+        (
+            (
+                "National and state totals and subtotals are unduplicated "
+                "counts of workers in each type of employment."
+            ),
+            "unduplicated_worker_rule_fragment_sha256",
+        ),
+        (
+            "NOTES: Data are based on preliminary estimates.",
+            "preliminary_status_fragment_sha256",
+        ),
+    )
+    for required_text, field in note_fields:
+        b10_fragment = builder._source_fragment(
+            [inputs["table4_b10"]],
+            required_text=required_text,
+            source_document_id=builder.SOURCE_DOCUMENT_ID,
+        )
+        b12_fragment = builder._source_fragment(
+            [inputs["table4_b12"]],
+            required_text=required_text,
+            source_document_id=builder.SOURCE_DOCUMENT_ID,
+        )
+        assert b10_fragment == b12_fragment
+        assert (
+            quotient[field]
+            == hashlib.sha256(b10_fragment.encode("utf-8")).hexdigest()
+        )
 
 
 def test__partial_attack_helper__has_valid_self_hash_before_mutation():
