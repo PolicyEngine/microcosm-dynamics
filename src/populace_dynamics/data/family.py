@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import NamedTuple
 
 import pandas as pd
 
@@ -46,6 +47,9 @@ __all__ = [
     "WAVES_WITHOUT_ACC",
     "read_family_labor",
     "family_earnings_panel",
+    "family_job_context_panel",
+    "family_earnings_bundle",
+    "FamilyEarningsBundle",
 ]
 
 #: Waves whose labels the loader resolves; annual to 1997, biennial after.
@@ -58,10 +62,11 @@ FAMILY_WAVES: tuple[int, ...] = (
 #: table is the adjudicated map (wave -> interview, head labor, wife
 #: labor variables with their exact labels), built by reading every
 #: staged file's own label block (2026-07-05). Labels verify at read
-#: time under whitespace normalization. wife_concept flags 1976-1978,
-#: where no edited wife labor-income total exists and the wife series
-#: is her wage item only — a documented series limitation, not a
-#: silent substitution. Note the 1992->1993 seam: pre-1994 head
+#: time under whitespace normalization. ``wife_concept`` records the
+#: ratified reference-year seam: wave 1976's V4379 is mixed wage and
+#: unincorporated-business labor, while the exact wave-1977/1978 concepts
+#: remain registration-required under V-B6. These metadata do not alter the
+#: frozen reader values. Note the 1992->1993 seam: pre-1994 head
 #: totals include the labor part of farm and business income, while
 #: the ER-era series carries those parts in separate variables, so
 #: windows straddling reference years 1992/1993 mix concepts.
@@ -118,19 +123,19 @@ _PRE94: dict[int, dict[str, tuple[str, str] | str]] = {
         "interview": ("V4302", "1976 ID NUMBER"),
         "head": ("V5031", "HEAD TOTAL LABOR Y"),
         "wife": ("V4379", "WIFES ANNUAL WAGE H25"),
-        "wife_concept": "wages_only",
+        "wife_concept": "mixed",
     },
     1977: {
         "interview": ("V5202", "1977 ID"),
         "head": ("V5627", "TOT 1976 LABOR INCM HEAD"),
         "wife": ("V5289", "WIFE 1976 WAGES"),
-        "wife_concept": "wages_only",
+        "wife_concept": "registration_required_v_b6",
     },
     1978: {
         "interview": ("V5702", "1978 ID"),
         "head": ("V6174", "TOT 1977 HEAD LABOR Y"),
         "wife": ("V5788", "WIFE 1977 WAGE"),
-        "wife_concept": "wages_only",
+        "wife_concept": "registration_required_v_b6",
     },
     1979: {
         "interview": ("V6302", "1979 ID"),
@@ -858,3 +863,69 @@ def family_earnings_panel(
     keep = (panel.earnings < _MISSING) & (panel.weight > 0)
     panel = panel.loc[keep]
     return panel.sort_values(["person_id", "period"]).reset_index(drop=True)
+
+
+class FamilyEarningsBundle(NamedTuple):
+    """Separate legacy earnings and one-to-many raw context relations."""
+
+    earnings: pd.DataFrame
+    job_context: pd.DataFrame
+
+
+def family_job_context_panel(
+    *,
+    waves: tuple[int, ...] | None = None,
+    data_dir: Path | None = None,
+    family_nrows: int | None = None,
+    individual_nrows: int | None = None,
+    reader_field_ids: tuple[str, ...] | None = None,
+) -> pd.DataFrame:
+    """Return the modern raw job-context sidecar attached to persons.
+
+    This lazy wrapper keeps the legacy reader's import and execution path
+    unchanged.  See :mod:`populace_dynamics.data.psid_job_context` for the
+    exact-byte relation and its fail-closed registry checks.
+    """
+
+    from populace_dynamics.data import psid_job_context
+
+    return psid_job_context.family_job_context_panel(
+        waves=waves,
+        data_dir=data_dir,
+        family_nrows=family_nrows,
+        individual_nrows=individual_nrows,
+        reader_field_ids=reader_field_ids,
+    )
+
+
+def family_earnings_bundle(
+    *,
+    waves: tuple[int, ...] | None = None,
+    data_dir: Path | None = None,
+    reader_field_ids: tuple[str, ...] | None = None,
+) -> FamilyEarningsBundle:
+    """Return unchanged earnings bytes alongside a separate raw sidecar.
+
+    The default domain is the modern 2003--2023 interview waves shared by
+    both relations.  Context is never merged onto earnings: doing so would
+    duplicate legacy rows and change the frozen seven-column output.
+    """
+
+    from populace_dynamics.data import psid_job_context_registry
+
+    use_waves = (
+        tuple(psid_job_context_registry.MODERN_INTERVIEW_WAVES)
+        if waves is None
+        else tuple(waves)
+    )
+    return FamilyEarningsBundle(
+        earnings=family_earnings_panel(
+            waves=use_waves,
+            data_dir=data_dir,
+        ),
+        job_context=family_job_context_panel(
+            waves=use_waves,
+            data_dir=data_dir,
+            reader_field_ids=reader_field_ids,
+        ),
+    )

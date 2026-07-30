@@ -166,6 +166,19 @@ def test_family_merge_assigns_roles_and_reference_year(
     assert by_person.loc[2001, "earnings"] == 40000
 
 
+def test_legacy_earnings_panel_bytes_are_pinned(mini_family_dir: Path):
+    panel = family.family_earnings_panel(
+        waves=(1994,),
+        data_dir=mini_family_dir,
+    )
+    assert panel.to_csv(index=False, lineterminator="\n").encode() == (
+        b"person_id,period,earnings,earnings_acc,role,age,weight\n"
+        b"1001,1993,30000.0,3,head,40,15\n"
+        b"1002,1993,12000.0,2,spouse,38,14\n"
+        b"2001,1993,40000.0,5,head,50,16\n"
+    )
+
+
 def test_earnings_acc_is_max_of_role_components(mini_family_dir: Path):
     """Head acc = max(wage, misc); spouse acc = the wife total flag."""
     panel = family.family_earnings_panel(
