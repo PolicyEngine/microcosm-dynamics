@@ -2,11 +2,9 @@
 
 ## State
 
-The canonical artifact has been regenerated and repinned at 57,125 bytes
-with SHA-256 `7306c898...f1abb14`. Its structured diff changes only the four
-locator bindings and integrity digest; fact classifications, evidence-ID
-lists, vintage bytes, and fail-closed dispositions are unchanged. The
-focused adjudication suite passes.
+Complete. The canonical artifact is repinned at 57,125 bytes with SHA-256
+`7306c898...f1abb14`. Focused and estimates suites pass, and two independent
+read-only reviews found no actionable issues. No push was performed.
 
 ## Done
 
@@ -26,8 +24,14 @@ focused adjudication suite passes.
 - Verified the artifact diff is limited to the four corrected locator
   objects/ranges/hashes plus the derived integrity digest.
 - Passed all 14 membership-adjudication tests.
+- Passed the 262-test focused adjudication/downstream suite.
+- Passed the full 636-test estimates suite with `PYTHONPATH=src`.
+- Ran Black 79 on both modified Python files; both are unchanged. A
+  repository-wide check identified two unrelated pre-existing files it
+  would reformat, which remain untouched.
+- Completed independent fix-plan, semantic-regression, and artifact-diff
+  audits with no findings.
 
 ## Next
 
-- Run formatting, focused tests, estimates suites, and independent
-  verification.
+- None for this local-only fix round.
