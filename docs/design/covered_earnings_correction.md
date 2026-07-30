@@ -17950,3 +17950,427 @@ hashes every typed result, and only then attaches
 mutation-covered input has exactly one constructible typed result, every
 schema-valid extra observation has exactly one constructible unfavorable
 row, and no observed-domain choice can alter coverage or ordering.
+
+### 16.12 Round-6 frozen-object closure
+
+This addendum is part of the same prospective Amendment 2 and is
+append-only. Every earlier byte remains historical text. Where an earlier
+§16 sentence conflicts with this addendum, the exact replacement below
+controls. A name below denotes the frozen object and equation defined here,
+not an implementation callback, producer assertion, or extension point.
+
+#### 16.12.1 Authenticated V-B adjudication and result registries
+
+Every §16 use of a `verification_claim_results` member is prospectively
+replaced by the authenticated construction in this subsection. In
+particular, the unnamed “result-registry” source in §16.11.2 does not exist.
+The only result-registry source is the named, versioned, hash-bound
+adjudication projection below.
+
+The first committed source is the exact object
+`verification_claim_adjudication_source_input_identity.v1`, whose complete
+value is:
+
+```json
+{
+  "source_input_id": "psid_codebook_inventory_adjudication.v1",
+  "path": "data/external/psid_codebook_inventory_adjudication_v1.json",
+  "source_commit": "223abf9821f863b310fffed3554be553331c45db",
+  "tree_mode": "100644",
+  "blob_oid": "bfbdeb5f425cbbacc8640e4e8079ffe2b9e67326",
+  "raw_sha256": "cba893e4b6552b736c2ef5fc1ac9787c11f510a99b90cfe24e80b47abf0de105",
+  "schema_version": "psid_codebook_inventory_adjudication.v1",
+  "artifact_id": "psid_codebook_inventory_adjudication.v1",
+  "content_sha256": "e3142cd1efc245e97b0aeaf46f7e7724b72ac02903c3cf891db7e4fe38f11c9b"
+}
+```
+
+Its canonical SHA-256 is
+`6c464c9cf7f2aa682c5fe61733642b34de46a6515d9fe1cccce5d1ba1760d3d1`.
+The nine displayed keys, order-insensitive under the already frozen
+canonicalization, are the complete schema. The stored commit must be locally
+present and have that path at that exact mode, blob OID, and raw-byte digest.
+The raw bytes must strict-parse with no duplicate key, have the displayed
+schema and artifact IDs, validate their own displayed integrity digest, and
+canonicalize byte-for-byte to the blob. Git replacements, grafts, shallow or
+promisor gaps, a same-byte file at another path, and a producer-supplied
+identity are invalid.
+
+The sole first-vintage adjudication authority is
+`covered_earnings_verification_claim_adjudication.v1`. Its literal artifact
+ID is the same string; its external vintage ID is
+`covered_earnings_verification_claim_adjudication.vintage1`; and its sole
+path is
+`data/registries/covered_earnings_verification_claim_adjudication_vintage1.json`.
+It is a strict canonical JSON object with exactly these ten keys:
+`schema_version`, `artifact_id`, `source_adjudication_inputs`,
+`verification_claim_specs_v2`, `verification_claim_results_v2`,
+`verification_claim_specs_fitting_free_v1`,
+`verification_claim_results_fitting_free_v1`,
+`verification_claim_adjudication_source_projection`, `integrity`, and
+`status`. Its `schema_version` and `artifact_id` values are both exactly
+`covered_earnings_verification_claim_adjudication.v1`.
+
+`source_adjudication_inputs` is exactly the singleton array containing the
+complete source identity above. `integrity` has exactly `canonicalization`
+and `content_sha256`; the former is
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1` and the latter hashes the
+complete artifact after replacing only itself with 64 ASCII zeroes.
+`status` is `pass` iff every equation below passes and is `fail` otherwise.
+No configuration, result row, manifest wrapper, or implementation may add a
+source input.
+
+After this amendment is ratified, one reviewed single-parent
+**verification-claim-adjudication commit** adds exactly the literal
+first-vintage path as mode `100644` and makes no other tree change. Its
+parent must contain the exact source identity above and have the new path
+absent; the stored source commit must be an ancestor of that parent. Every
+ancestor of the final authority cutoff at or after this first-add commit
+must retain both blobs byte-for-byte at the displayed paths and modes. The
+coordinator derives the unique first-add commit from raw Git objects. Zero
+or multiple candidates, an earlier copy, a mutation or delete/restore, or a
+non-single-parent first add aborts.
+
+The frozen seven-field row schema is
+`verification_claim_result_row.v1`. Its exact keys are `claim_id`,
+`authority_input_ids`, `affected_inventory_keyset_sha256`,
+`governing_rule_ids`, `verification_status`,
+`optional_consequence_specs_sha256`, and `status`, with the value domains
+and same-claim equations already frozen in §§4.1, 15.6.1, and 16.5.1.
+
+Each of the artifact's two result-registry children instantiates the
+distinct authority envelope
+`verification_claim_result_registry_envelope.v1`, with exactly
+`schema_version`, `registry_id`, `ordered_claim_ids`, `rows`, `row_count`,
+`rows_sha256`, `source_projection_sha256`, `canonicalization`, `status`, and
+`failure_disposition`. Its schema value is the envelope name and its
+`registry_id` is respectively
+`verification_claim_results.v2` or
+`verification_claim_results.fitting_free.v1`; `ordered_claim_ids` is exactly
+V-B1 through V-B9; `rows` has the nine same-position
+`verification_claim_result_row.v1` objects; count is integer nine;
+`rows_sha256` hashes the complete rows array;
+`source_projection_sha256` hashes the complete source projection below;
+canonicalization is the frozen literal; status is `pass` exactly on full
+derivation and cross-registry equality; and failure is
+`abort_adjudication`.
+
+Each spec child instantiates the distinct authority envelope
+`verification_claim_spec_registry_envelope.v1`, with exactly
+`schema_version`, `registry_id`, `ordered_claim_ids`, `rows`, `row_count`,
+`rows_sha256`, `canonicalization`, `status`, and `failure_disposition`.
+Its schema value is the envelope name, its `registry_id` is the applicable
+external spec-registry identity, its ordered IDs are V-B1 through V-B9, its
+rows are the nine exact eight-field claim-spec objects, its count is integer
+nine, its rows digest hashes the complete rows, and its canonicalization,
+status, and failure laws are the same as the result envelope. The two spec
+envelope row arrays are the complete independently reconstructible
+`verification_claim_specs.v2` and
+`verification_claim_specs.fitting_free.v1` registries already ratified in
+§§4.1, 15.6.1, and 16.5.1. They are not copied from a configuration. Their
+nine spec rows, including the fitting-free V-B7 replacement, are
+reconstructed from the ratified text and then exact-compared with the two
+artifact-envelope `rows` members. A calibrated configuration's two complete
+claim-registry children must deep-equal the v2 spec/result row arrays; a
+fitting-free configuration's two complete children must deep-equal the
+fitting-free-v1 spec/result row arrays. A single configuration never
+contains or compares all four branches. No configuration field is a source
+for any expected value.
+
+The named source projection is
+`verification_claim_adjudication_source_projection.v1`. It has exactly
+`schema_version`, `ordered_registry_ids`, `ordered_claim_ids`,
+`registry_rows`, `row_count`, `domain_sha256`, `canonicalization`, and
+`status`. Its ordered registry IDs are exactly
+`verification_claim_results.v2` then
+`verification_claim_results.fitting_free.v1`; its ordered claim IDs are
+V-B1 through V-B9; and `registry_rows` has exactly two same-position
+objects. Each registry object has exactly `result_registry_id`,
+`spec_registry_id`, and `rows`; those IDs are the corresponding calibrated
+or fitting-free pair and `rows` has nine claim rows in claim order. The
+projection `row_count` is integer 18, and its domain digest hashes the
+complete two-object `registry_rows` array. Status is `pass` iff all 18 claim
+rows obey the derivation below. Each claim row has exactly `claim_id`,
+`verification_claim_spec`,
+`adjudication_sources`, `derived_verification_claim_result`, and
+`derivation_status`. The spec is the complete independently reconstructed
+same-position, same-branch spec. `adjudication_sources` is a complete array
+in source-input order; each member has exactly `source_identity_sha256`,
+`source_projection_name`, `source_row_pointer`, `source_row_sha256`,
+`source_disposition`, and `unresolved_evidence_ids`.
+
+For both branch rows of V-B5, V-B6, and V-B8,
+`source_projection_name` is the literal
+`psid_codebook_inventory_adjudication:verdicts`; the source identity digest
+is the displayed singleton identity digest; and the row pointers are
+respectively `/verdicts/0`, `/verdicts/1`, and `/verdicts/2`. The complete
+strict-parsed verdict-row canonical digests are respectively:
+
+```json
+[
+  {
+    "claim_id": "V-B5",
+    "source_row_sha256": "454d16a745d3b5ef8dc88e18f15f50f69ad92f1c22a5656a4e986493c40a3fa7"
+  },
+  {
+    "claim_id": "V-B6",
+    "source_row_sha256": "6744edb09d314f57bea91fddc8b96bb81160cbce5a0a9243753db5f7288ec318"
+  },
+  {
+    "claim_id": "V-B8",
+    "source_row_sha256": "05ef5bf55ba6e12f6a22abfd0619268634d96d40f578e2922863f978a1d3a76f"
+  }
+]
+```
+
+Each of those three committed verdict rows has
+`verdict: registration_required` and a nonempty `residual_ids` array.
+`source_disposition` is therefore `registration_required`, and
+`unresolved_evidence_ids` exact-copies the committed `residual_ids`.
+The complete `registration_required_residuals` array is also strict-parsed
+from the same blob; every copied residual ID must resolve exactly once, and
+no unreferenced row can change the result. Missing, duplicate, reordered,
+unknown, or differently hashed verdict/residual evidence makes the
+projection fail.
+
+For each branch row of V-B5, V-B6, and V-B8, that committed disposition
+constructs exactly this seven-field negative: `claim_id` is the applicable
+literal; `authority_input_ids` is exactly
+`["psid_codebook_inventory_adjudication.v1"]`;
+`affected_inventory_keyset_sha256` hashes the independently expanded
+same-claim spec array; `governing_rule_ids` exact-copies that spec array;
+`verification_status` is `authority_absent`;
+`optional_consequence_specs_sha256` is null; and `status` is `fail`.
+`derivation_status` is nevertheless `pass` when those fields faithfully
+serialize the committed negative. No `registration_required` source
+disposition can map to `verified`, `pass`, a nonnull optional-consequence
+digest, an empty source-input array, or another failure status.
+
+For every other branch/claim pair, `adjudication_sources` is the complete
+matching projection, possibly empty, of the same frozen source-input domain;
+no ambient file or configuration row is searched. An empty required-claim
+source domain derives `authority_absent/fail`. Two incompatible committed
+same-claim dispositions derive `authority_conflict/fail`. A required claim
+derives `verified/pass` only when every nonempty role in its independently
+reconstructed spec resolves to exact committed adjudication evidence, every
+evidence row's source disposition is `verified`, there is no unresolved
+evidence ID, and the affected-key and governing-rule projections
+independently exact-match the spec. The optional and fitting-free V-B7
+branches retain their previously frozen consequence and not-applicable
+equations, but their result fields are reconstructed here rather than read
+from a configuration.
+
+For every derived result, `claim_id` and `governing_rule_ids` exact-copy the
+expected spec; the affected-key digest hashes the independently expanded
+complete affected-key array; `authority_input_ids` is the stable,
+duplicate-free source-input-ID projection of the committed adjudication
+evidence actually consumed; and the optional-consequence digest follows the
+claim class's frozen equation. `derivation_status` is `pass` only when that
+complete result is the unique value of these equations. Each complete
+nine-row result array is exactly the applicable registry row's
+`derived_verification_claim_result` projection. In particular, both
+first-vintage V-B5, V-B6, and V-B8 rows can only be faithful negative rows.
+
+The adjudication authority is exposed by the new methodology-manifest row:
+
+```json
+{
+  "authority_id": "covered_earnings_verification_claim_adjudication.vintage1",
+  "authority_class": "verification_claim_adjudication_methodology",
+  "candidate_locator": {
+    "locator_type": "fixed_git_path",
+    "path": "data/registries/covered_earnings_verification_claim_adjudication_vintage1.json"
+  },
+  "ordered_source_projections": [
+    "git_raw_bytes",
+    "strict_json_top_level_and_integrity",
+    "source_adjudication_inputs",
+    "verification_claim_specs_v2",
+    "verification_claim_results_v2",
+    "verification_claim_specs_fitting_free_v1",
+    "verification_claim_results_fitting_free_v1",
+    "verification_claim_adjudication_source_projection"
+  ],
+  "expected_preimage_schema_version": "calibrated_verification_claim_adjudication_expected_preimage.v1",
+  "actual_preimage_schema_version": "calibrated_verification_claim_adjudication_actual_preimage.v1",
+  "verification_predicate_id": "verify_covered_earnings_verification_claim_adjudication_v1",
+  "verification_result_schema_version": "calibrated_verification_claim_adjudication_result.v1"
+}
+```
+
+`calibrated_verification_claim_adjudication_expected_preimage.v1` has
+exactly `schema_version`, `manifest_kind`, `authority_id`,
+`authority_class`, `candidate_locator`, `ordered_source_projections`,
+`expected_candidate_identity`, `source_adjudication_inputs`,
+`expected_verification_claim_specs_v2`,
+`expected_verification_claim_results_v2`,
+`expected_verification_claim_specs_fitting_free_v1`,
+`expected_verification_claim_results_fitting_free_v1`,
+`expected_source_projection`, `verification_predicate_id`, and
+`design_identity_sha256`. The candidate identity has exactly `path`,
+`schema_version`, `artifact_vintage_id`, and `sha256`; its path and tags are
+the literals above. The verifier first constructs the complete expected
+ten-key artifact, including its recomputed integrity digest and `pass`
+status, solely from ratified specs and committed source bytes; the expected
+identity digest is SHA-256 of those canonical bytes. The actual identity
+digest is SHA-256 of the unique first-add Git blob. Those digests must
+equal. Every expected registry and projection is constructed before the
+candidate's corresponding member is read.
+
+`calibrated_verification_claim_adjudication_actual_preimage.v1` has exactly
+`schema_version`, `manifest_kind`, `authority_id`, `candidate_locator`,
+`ordered_source_projections`, `candidate_authority_identity`,
+`source_projection_rows`, `source_projection_count`,
+`source_projection_domain_sha256`,
+`actual_verification_claim_specs_v2`,
+`actual_verification_claim_results_v2`,
+`actual_verification_claim_specs_fitting_free_v1`,
+`actual_verification_claim_results_fitting_free_v1`,
+`actual_source_projection`, and `authority_cutoff_sha256`. Its candidate
+identity has the same exact four-key shape. Its projection rows have exactly
+`projection_id`, `value_type`, and `value_identity_sha256`, in the registered
+eight-member order; raw bytes use `raw_git_bytes` and all other values use
+`canonical_json_projection`.
+
+`calibrated_verification_claim_adjudication_result.v1` has exactly
+`schema_version`, `authority_id`, `verification_predicate_id`,
+`expected_preimage_sha256`, `actual_preimage_sha256`,
+`candidate_results`, `aggregate_result`, and `failure_code`.
+`candidate_results` has exactly one row with
+`candidate_identity_sha256`, `predicate_result`, and `failure_code`.
+The two preimage digests hash their complete canonical objects, the candidate
+digest hashes its four-key identity, and both failure codes are null exactly
+on true and `predicate_failed` otherwise. Aggregate result is `verified` on
+true and `failed` on false.
+
+`verify_covered_earnings_verification_claim_adjudication_v1` is the literal
+conjunction of the first-add/immutability law, source identity and integrity
+checks, strict schema checks, all eight source projections, independent
+spec reconstruction, independent committed-byte result derivation, all
+expected/actual deep equalities, all counts and hashes, and the artifact
+integrity/status equations above. The candidate's result members are
+comparands only. The verifier never uses a candidate result, configuration
+result, embedded status, or manifest status to construct an expected result.
+
+The preliminary methodology verification object is the logical append-only
+`calibrated_authority_verification_specs.v3`: it has the exact v1 six-key
+schema, copies the complete legacy methodology row at position zero, and
+appends the complete adjudication row above at position one. Its ordered IDs
+are exactly the legacy ID followed by
+`covered_earnings_verification_claim_adjudication.vintage1`, and its count is
+two. The final methodology object is
+`calibrated_authority_verification_specs.v4`: it copies both v3 rows and
+appends the already frozen A1 capture row at position two. Its ordered IDs
+are exactly those two followed by
+`fitting_free_capture_a1_model_universe_authority`, and its count is three.
+Both use failure `abort_adjudication`; the source verification objects remain
+v1 preliminarily and v2 finally. Earlier methodology versions remain
+immutable historical objects and are not valid for a new round-6
+adjudication.
+
+The corresponding role maps are
+`calibrated_authority_role_binding_specs.v3` preliminarily and
+`calibrated_authority_role_binding_specs.v4` finally. V3 is the complete v1
+ten-row object except that each of the five V-B role rows replaces its
+legacy methodology ref with the sole exact ref
+`{"manifest_kind":"methodology_authority","authority_id":"covered_earnings_verification_claim_adjudication.vintage1"}`.
+V4 is the complete v2 ten-row object with the identical five replacements.
+No leading A1–A5 role row otherwise changes. Their row arrays, counts, domain
+digests, status, and failure disposition are mechanically recomputed; no
+configured or claim-supplied ref is admitted.
+
+The noncapture predicate registry successor is
+`calibrated_noncapture_required_authority_predicate_specs.v2`. It has the
+exact v1 seven-key schema and exact three-row order. Rows one and three are
+byte-identical to v1. Row two alone becomes:
+
+```json
+{
+  "verification_predicate_id": "verify_calibrated_authenticated_verification_claim_requirement_v1",
+  "input_preimage_schema_version": "calibrated_noncapture_required_authority_preimage.v2",
+  "predicate_equation": "manifest_evidence_valid&&authenticated_verification_claim_result_satisfied",
+  "result_schema_version": "calibrated_noncapture_required_authority_result.v2"
+}
+```
+
+The v2 preimage is the complete v1 preimage plus, in that order,
+`verification_claim_registry_identities`,
+`verification_claim_source_projection`, and
+`verification_claim_source_projection_sha256`. The identities array has
+exactly the calibrated-v2 spec registry followed by the calibrated-v2 result
+registry. Calibrated preliminary and final required-authority adjudications
+always select `registry_rows[0]`; the fitting-free-v1 pair at
+`registry_rows[1]` is only the later fitting-free
+configuration/applicability comparand and never an input to this calibrated
+noncapture predicate.
+Each identity has exactly `registry_id`, `registry_kind`,
+`artifact_identity_sha256`, `artifact_member`, and `registry_sha256`.
+Registry kind is respectively `verification_claim_specs` or
+`verification_claim_results`; artifact identity hashes the complete
+four-key adjudication-authority identity; member is the applicable literal
+ten-key-artifact member name; and registry digest hashes that envelope's
+complete nine-row `rows` member. The projection is the complete same-claim
+row from the verified adjudication authority, and its digest hashes that row.
+The v2 result is the
+complete v1 result plus the same projection digest immediately before
+`requirement_satisfied`.
+
+For a V-B requirement, a `semantic_source_rows` member no longer enumerates
+an ambient result registry. Its sole candidate is the exact same-claim
+source-projection row from the unique verified methodology-manifest
+authority. The configuration spec/result pair is accepted only as an exact
+comparand to that row's independently expected spec/derived result.
+`authenticated_verification_claim_result_satisfied` is exactly the
+Boolean conjunction that the claim row's `derivation_status` is `pass`, its
+`derived_verification_claim_result.verification_status` is `verified`, and
+its derived result `status` is `pass`. The same Boolean is
+`semantic_source_rows.source_result`. Manifest validity remains the separate
+first conjunct in the registered predicate. Any absent authority, duplicate
+claim, source mismatch, derivation failure, or faithful negative result
+makes the semantic Boolean false. All new preliminary and final
+adjudications use predicate v2.
+
+Every new adjudication uses
+`calibrated_authority_cutoff_identity.v2`. It has all v1 members in the same
+order and then exactly
+`verification_claim_adjudication_identity_sha256`,
+`verification_claim_specs_v2_sha256`,
+`verification_claim_results_v2_sha256`,
+`verification_claim_specs_fitting_free_v1_sha256`,
+`verification_claim_results_fitting_free_v1_sha256`, and
+`verification_claim_adjudication_source_projection_sha256`.
+The first digest hashes the complete four-key candidate authority identity;
+the next four hash the independently reconstructed expected same-named
+nine-row values, each of which must already exact-match its candidate
+authority-envelope `rows` before the cutoff identity is constructed; and the
+last hashes the independently constructed complete source projection.
+Configuration comparison occurs later and supplies none of these bytes. Its
+selected methodology/role/
+noncapture schema tags are respectively v3/v3/v2 preliminarily and v4/v4/v2
+finally. No digest is copied from the adjudication artifact or configuration:
+each is recomputed from the already verified complete object.
+
+The exact applicability successor is
+`covered_earnings_path_applicability_registry_bundle.v2`. It has every v1
+key and then exactly `verification_claim_adjudication_identity`,
+`verification_claim_specs_v2`, `verification_claim_results_v2`,
+`verification_claim_specs_fitting_free_v1`,
+`verification_claim_results_fitting_free_v1`, and
+`verification_claim_adjudication_source_projection`. Each child is the
+complete nine-row registry value hashed by the same-named v2 cutoff member,
+except that the identity and source-projection children are their complete
+named objects. The bundle digest
+covers the complete successor object; a v1 bundle, digest-only placeholder,
+wrong registry branch, or omitted/extra child fails before applicability.
+
+The forced construction order is now source Git bytes; independently
+expected specs, projection, and results; unique candidate identity and
+strict candidate-member/integrity comparison; cutoff identity; typed
+methodology-manifest preimages and verified row; noncapture V-B evidence;
+complete cutoff; and applicability bundle. The typed manifest result may
+consume the already constructed cutoff-identity hash, but no cutoff member
+consumes that manifest result or manifest digest. A producer can still
+serialize a self-consistent wrapper around `verified/pass`, but it cannot construct the
+expected projection or make the predicate true: for V-B5, V-B6, or V-B8 the
+committed first-vintage bytes force `registration_required`, a nonempty
+residual domain, and a negative result.
