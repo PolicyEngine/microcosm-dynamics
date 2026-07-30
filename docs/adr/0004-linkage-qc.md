@@ -205,6 +205,29 @@ are opened.
    set a cutoff for, or otherwise adapt the matcher it scores. A leaked
    sample is retired from evaluation and replaced under a new manifest.
 
+#### First-lock scope, ownership, and sidecar location
+
+The first C3 lock applies this audit to **E4/E5 SIPP-internal employer
+attachment only**. Within-panel `EJB` job-ID attachment is an assignment
+for which hand-adjudicable reference evidence can exist. The full
+five-band × NAICS-major × transition-class × `primary_job` grid is
+phased behind the first lock. E9 transition classes, E11 ordered pairs,
+and any later-promoted gate must clear a new audit at promotion time;
+none inherits an E4/E5 pass.
+
+Workstream A (`@daphnehanse11`) owns the E4/E5 adjudication frame,
+coding manual, coder-panel operation, and privacy-safe audit manifest.
+Workstream B (`@vahid-ahmadi`) owns the firm-side sidecar schema,
+versioning rules, and firm-side audit artifacts. Versioned sidecars
+join C1 on `person_id` and `spell_id`; they never amend C1. Before the
+first audit opens labels, the reusable schema and versioning contract
+must be committed at
+`docs/design/employer_linkage_qc_sidecar.schema.json`. Privacy-safe
+manifests and results must use
+`runs/employer_linkage_qc_<scope>_v<N>.json`. Restricted evidence,
+direct identifiers, coder identities, and access-controlled lookup
+keys remain outside git.
+
 ### 3. Linkage-bias reweighting on observables
 
 1. **Name the target population and identification assumption.** Each
@@ -314,6 +337,28 @@ the frozen C1 seam ultimately carries one `CanonicalBand`. Therefore:
 4. E4/E5 score retention and attachment, E9 scores transition-conditioned
    earnings changes, and E11 scores firm-size flows only after their
    applicable link and reweighting requirements above are evaluable.
+5. A QRF-imputed enterprise-size band on a CPS host has no admissible
+   per-record truth frame. CPS `NOEMP` is the training label and has a
+   reference-period mismatch; SIPP measures establishment rather than
+   enterprise size; public LEHD/SUSB data have no person-level link to
+   CPS; and pre-redesign SIPP is an aged self-report on a different
+   sample. More fundamentally, a draw from a conditional distribution
+   is not a claim that an observed host has one adjudicable true class.
+   Therefore:
+
+   > Cells conditioning on imputed firm-size bands are validated
+   > distributionally (calibration fit to SUSB margins plus held-out-axis
+   > stability) and are report-only in every phase; they gate only if an
+   > external person-level truth source materializes, at which point they
+   > enter through the standard promotion ceremony (new floor + ADR 0004
+   > audit).
+
+   This status is permanent for the current evidence regime, not a
+   provisional deferral. Calibration fit is a build check and may not be
+   described as independent validation. A genuinely disjoint margin can
+   support promotion only after its own floor and audit; true per-record,
+   coworker, or firm-identity claims additionally require a linked
+   reference.
 
 The pre-C3 floor draft on
 [PR #212](https://github.com/PolicyEngine/populace-dynamics/pull/212)
@@ -354,9 +399,12 @@ does not resolve them:
 1. The numeric precision floor or floors; `P_design`, `alpha`, power,
    confidence interval, multiplicity correction, and whether recall has
    an operative floor.
-2. The phase-1 and phase-2 adjudication frames, permissible evidence,
-   exact truth labels, privacy-safe manifest, and whether an E12 truth
-   source exists at all.
+2. Within the first-lock E4/E5 scope fixed in section 2, the permissible
+   evidence, exact truth labels, privacy-safe manifest details, and
+   numeric coder-panel design; for later phases, the E9/E11 frames and
+   whether an E12 truth source exists at all. Imputed CPS enterprise-size
+   bands follow section 5's permanent report-only degradation rule and
+   are not an unresolved hand-adjudication frame.
 3. Beyond E11's required ordered pair and the actual co-assignment unit
    used by E12, which endpoint, pair, transition, and run levels gate;
    how a passing endpoint result composes, if at all; and which sparse
