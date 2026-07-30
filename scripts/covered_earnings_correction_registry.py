@@ -18,6 +18,7 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+import build_covered_earnings_source_identity_evidence as source_identity
 import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
@@ -309,6 +310,18 @@ def registration_status() -> dict[str, Any]:
         ),
         "failure_disposition": "abort",
     }
+
+
+def source_identity_evidence() -> dict[str, Any]:
+    """Return source-reproduced, explicitly non-authoritative registries."""
+
+    return source_identity.build()
+
+
+def validate_source_identity_evidence(value: object) -> None:
+    """Re-resolve and validate every physical, alias, and rule evidence row."""
+
+    source_identity.validate_evidence(value)
 
 
 def _exact_keys(
@@ -667,8 +680,10 @@ __all__ = [
     "physical_source_cell_specs",
     "registration_status",
     "role_for_year",
+    "source_identity_evidence",
     "validate_calibration_target_row_schema",
     "validate_calibration_target_specs",
     "validate_frozen_registries",
+    "validate_source_identity_evidence",
     "verified_role_specs",
 ]

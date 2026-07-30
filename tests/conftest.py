@@ -72,6 +72,7 @@ def _references_committed_artifact(source: str) -> bool:
         indicator in source for indicator in data_path_indicators
     ) and any(indicator in source for indicator in external_path_indicators)
     transitive_committed_byte_readers = (
+        "build_covered_earnings_source_identity_evidence",
         "build_ssa_covered_earnings_calibration_targets",
         "covered_earnings_correction_registry",
     )

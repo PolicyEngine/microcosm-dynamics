@@ -4,8 +4,8 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `b0c60df`
-- Current phase: build source-identity evidence under the mandatory
-  registration abort.
+- Current phase: pin independently canonical source-identity evidence under
+  the mandatory registration abort.
 - Constraint: use committed source bytes only; do not capture network data.
 
 ## Done
@@ -44,13 +44,22 @@
   exercise parser defense in depth.
 - Both entry-11 modules now collect exclusively as `artifact`: `37 tests
   collected`; extraction tests pass: `16 passed`.
-- Full collection resolves to 3,980 tests: 822 unit, 1,675 artifact, 804
+- Full collection resolves to 3,991 tests: 822 unit, 1,686 artifact, 804
   integration-PSID, 520 legacy reproduction, and 159 PolicyEngine-oracle.
+- Built all committed-byte source-identity evidence: 945 exact 12-field
+  physical occurrences, 921 structural locators, 873 exact seven-field alias
+  rows, and 275 exact eleven-field structural rules.
+- Alias adjudication records 24 same-cell, 24 cross-extraction
+  republication, 220 shared-primitive, 495 B11 group-sibling, and 110
+  taxable-earnings/contribution sibling rows. The sources establish zero
+  exact-arithmetic siblings, so none are forced.
+- Definition digests bind structurally selected exact raw Table 4.B11 HTML
+  cells. Evidence validation re-renders vintage 1 and re-resolves all entry-11
+  source cells before exact comparison.
+- Finding-3 focused tests pass: `11 passed`; all entry-11 tests pass:
+  `48 passed`.
 
 ## Next
 
-1. Build and validate the 12-field physical-cell and proven alias evidence,
-   including the 24 vintage-1 B11 republications, without certifying it as a
-   complete final registry.
-2. Pin independent canonical evidence-registry bytes and digests.
-3. Run required suites and record their tails in the final report.
+1. Pin independent canonical evidence-registry bytes and digests.
+2. Run required suites and record their tails in the final report.
