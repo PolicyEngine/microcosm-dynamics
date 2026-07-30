@@ -8402,3 +8402,103 @@ unavailable, but its absence or value cannot produce
 `no_eligible_candidate`; candidate eligibility is determined only by the
 surviving required families and all unchanged candidate, B2/B11
 methodology, domain, convergence, rank, and tolerance laws.**
+
+### 15.5 Exact §6.2/§7 replacement — families, dependencies, and weights
+
+The changed family domain, order, dependency assignments, and weight law
+create `calibration_target_specs.v3`, `fit_selection_cell_identity.v2`, and
+`selection_spec.v2`. Their predecessors remain historical. Except for the
+changes stated here, the target object's exact 30-field shape, source/year/
+role/ancestry checks, transformation and selector schemas, tolerance tags,
+universe law, expansion law, and cell-scoped isolation law remain as ratified.
+
+`calibration_target_specs.v3` expands exactly the following 14 families in
+this order, then ascending verified calendar year. It creates no
+`ssa_precisely_universed_covered_share` object or placeholder. An empty or
+source-verified `optional_covered_share` block creates zero target objects
+unless a later ratified amendment expressly reactivates a family.
+
+| Target family | `dependency_group` | Exact official transformation and model selector | Loss | Raw family mass | Normalized effective weight | Role and selection law |
+|---|---|---|---|---:|---:|---|
+| `b2_wage_total_intensity` | `b2_component_system` | 4.B2 `c5/c11`; model `sum(covered_employee_wages_uncapped) / sum(b2_wage_worker_membership_probability_analytic)` | `squared_log_ratio` | 2 | \(1/3\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b2_se_total_intensity` | `b2_component_system` | 4.B2 `c8/c12`; model `sum(covered_se_net_earnings_pre_seca) / sum(b2_se_worker_membership_probability_analytic)`, where the numerator is the expected signed within-`se_aggregation_group_id` net concept before SECA factor, threshold, or cap | `squared_log_ratio` | 2 | \(1/3\) | Same exact role and selection law as the preceding family. |
+| `b11_se_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-W)/T`; model `sum(b11_se_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Same exact role and selection law. |
+| `b11_dual_type_worker_share` | `b11_worker_type_system` | 4.B11 `(W+S-T)/T`; model `sum(b11_dual_type_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Same exact role and selection law. |
+| `b11_wage_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-S)/T`; model `sum(b11_wage_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight and selection-ineligible because algebraically dependent. |
+| `b2_type_count_mix` | `b2_component_system` | 4.B2 `c12/(c11+c12)` and the analogous model marginal-count ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight and selection-ineligible; overlapping marginal counts are never unique workers. |
+| `b2_se_total_component_share` | `b2_component_system` | 4.B2 `c8/(c5+c8)` and the algebraically identical model component ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight dependency check only. |
+| `b2_wage_taxable_intensity` | `b2_component_system` | 4.B2 `c13/c11`; model consolidated taxable wage intensity | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight preserved employer-cap mismatch. |
+| `b2_se_taxable_intensity` | `b2_component_system` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight. |
+| `b2_wage_taxable_fraction` | `b2_component_system` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight preserved employer-cap mismatch. |
+| `b2_se_taxable_fraction` | `b2_component_system` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight. |
+| `b11_taxable_earnings_component_reconciliation` | `b11_taxable_earnings_component_system` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components under `structural_dependence_only`; model `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence; literal residual retained with `rounding_interval_unavailable`. |
+| `b11_contributions_component_reconciliation` | `b11_contribution_component_system` | Literal displayed 4.B11 contribution total minus displayed wage and SE components under `structural_dependence_only`; model `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence; worker total is never summed because component worker counts overlap. |
+| `b11_se_contribution_share` | `b11_contribution_component_system` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight legal/accounting sibling diagnostic only. |
+
+The four selection-eligible families and only those families have positive
+mass. The active dependency-group masses and normalized weights are exactly:
+
+| `dependency_group` | Raw group mass | Normalized group weight | Positive-weight family subweights |
+|---|---:|---:|---|
+| `b2_component_system` | 4 | \(4/6=2/3\) | \(1/2,1/2\) |
+| `b11_worker_type_system` | 2 | \(2/6=1/3\) | \(1/2,1/2\) |
+
+`b11_taxable_earnings_component_system` and
+`b11_contribution_component_system` are exact zero-weight diagnostic groups.
+The IDs `covered_share_system_disjoint_source` and
+`covered_share_system_shared_source` are absent from every amendment-1
+registry.
+
+The reassignment is exact and pro rata. Before amendment, the surviving
+families had weights \(1/4,1/4,1/8,1/8\), totaling \(3/4\). Normalizing their
+unchanged ratio by \(4/3\) gives
+
+\[
+(1/4)(4/3)=1/3,\quad
+(1/4)(4/3)=1/3,\quad
+(1/8)(4/3)=1/6,\quad
+(1/8)(4/3)=1/6.
+\]
+
+The respective increments are \(1/12,1/12,1/24,1/24\), and
+
+\[
+1/12+1/12+1/24+1/24=1/4,\qquad
+1/3+1/3+1/6+1/6=1.
+\]
+
+No rounded decimal represents either \(1/3\) or \(1/6\). Accordingly, the
+finite-JSON-number `loss_weight` field uses exact relative integer mass:
+`2` for an available model-choice cell in either B2 intensity family, `1`
+for such a cell in either B11 worker-share family, and `0` otherwise;
+booleans are forbidden. “Model-choice cell” here means a positive-weight
+direct train cell or a selection-eligible direct/boundary validation cell in
+the applicable phase. All four families must have the same registered
+positive cell count within a phase; a mismatch or thinned family aborts.
+The phase objective is the weighted mean over its admitted cells, so
+normalization by the total mass yields the exact effective weights above.
+Equivalently, if \(L_F\) is each family's equal-cell arithmetic mean, both
+training and validation use exactly
+
+\[
+\frac{
+  2L_{\mathrm{b2,wage}}+
+  2L_{\mathrm{b2,SE}}+
+  L_{\mathrm{b11,SE-only}}+
+  L_{\mathrm{b11,dual}}
+}{6}.
+\]
+
+This integer-mass representation is normative in
+`calibration_target_specs.v3`, `fit_selection_cell_identity.v2`, and
+`selection_spec.v2`; a decimal approximation is a schema violation.
+
+All other base tolerance and role laws remain. Intensity validation requires
+RMS absolute log error no greater than
+`0.04879016416943205` and every-cell absolute log error no greater than
+`0.09531017980432493`. B11 worker-type validation requires RMS absolute
+share error no greater than `0.015` and every-cell absolute share error no
+greater than `0.03`. There is no covered-share tolerance. Every zero-weight
+family remains incapable of fitting, selecting, failing, or rescuing a
+candidate, and its original arithmetic/dependency disclosure remains in
+force.
