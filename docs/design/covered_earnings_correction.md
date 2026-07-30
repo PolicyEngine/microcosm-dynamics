@@ -19715,3 +19715,135 @@ In the stated construction order, \(E\) is evaluated after all six row-array
 operands \(S_c,S_f,R_c,R_f,A_c,A_f\) exist and before any envelope status,
 envelope digest, or top-level status is assigned. No status or digest is an
 operand of \(E\).
+
+##### 16.13.2 V-B establishing sources, role maps, and total matching
+
+Every contrary role-map and “possibly empty” source-domain sentence in
+§16.12.1 is prospectively replaced by this subsection. The
+`source_adjudication_inputs` singleton is the newly authenticated PSID
+adjudication domain only. It is not the establishing-source universe for the
+other six claims and cannot displace their base-design authorities.
+
+The successor role maps change exactly three V-B rows, not five. In
+`calibrated_authority_role_binding_specs.v3`, the rows for
+`section_218_and_mandatory_state_local_coverage_authority` and
+`historical_seca_concept_factor_threshold_coordination_authority` are
+byte-for-byte the same complete rows as in
+`calibrated_authority_role_binding_specs.v1`. In
+`calibrated_authority_role_binding_specs.v4`, those two rows are
+byte-for-byte the same complete rows as in
+`calibrated_authority_role_binding_specs.v2`. In both successor maps, exactly
+the following three rows replace their prior `authority_manifest_refs` with
+the singleton methodology-authority ref to
+`covered_earnings_verification_claim_adjudication.vintage1`:
+
+- `psid_common_classifier_inventory_and_meaning_authority`;
+- `psid_premodern_spouse_secondary_concept_authority`; and
+- `psid_earlier_enrollment_crosswave_mapping_authority`.
+
+Every other row is byte-for-byte inherited from the stated predecessor,
+including all five leading A-role rows. Row order remains the exact ten-role
+order already frozen; row count remains ten; and each successor
+`domain_sha256` is mechanically the SHA-256 of that uniquely determined
+complete canonical `rows` array. No configured or claim-supplied ref is
+admitted. Consequently V-B1 and V-B4 remain established by the §4.1
+`historical_coverage_rule_specs.v1` registry and `legal_rule_input`, including
+the independent `historical_coverage_rules` identity predicate. The new PSID
+adjudication authority is neither an establishing authority nor a failure
+source for either claim.
+
+Source matching is a keyed exact-cover operation. For a serialized
+`adjudication_sources` member, its `source_identity_sha256` must resolve
+exactly one source input ID under the same branch's independently
+reconstructed authority domain. Its source-row match key is the five-tuple
+
+\[
+(\text{result-registry ID},\text{claim ID},\text{source input ID},
+ \text{source projection name},\text{source row pointer}).
+\]
+
+The first two components come from the enclosing branch and claim row; the
+third comes only from the uniquely resolved source identity; and the final
+two exact-copy the serialized member. A match compares all five components.
+Dropping a component, prefix matching, treating a digest as an input ID,
+matching only on claim ID, or allowing one row to match two keys is invalid.
+
+For the PSID adjudication source, the more specific committed-byte key is
+exactly
+
+\[
+(\text{source input ID},\text{source projection name},
+ \texttt{registration_item_id}).
+\]
+
+The permitted key set is exactly the following three tuples, in this order:
+
+1. (`psid_codebook_inventory_adjudication.v1`,
+   `psid_codebook_inventory_adjudication:verdicts`, V-B5);
+2. (`psid_codebook_inventory_adjudication.v1`,
+   `psid_codebook_inventory_adjudication:verdicts`, V-B6); and
+3. (`psid_codebook_inventory_adjudication.v1`,
+   `psid_codebook_inventory_adjudication:verdicts`, V-B8).
+
+Their `source_row_pointer` values are respectively `/verdicts/0`,
+`/verdicts/1`, and `/verdicts/2`; each strict-parsed verdict's
+`registration_item_id` must equal the stated claim; and each
+`source_row_sha256` must equal the already frozen same-position complete-row
+digest. For each branch and each of those three claims,
+`adjudication_sources` contains exactly the one matching row. The closed
+`source_disposition` domain for this source is the singleton
+`registration_required`. That value is selected exactly when the matched
+verdict has `verdict: registration_required` and its nonempty residual
+closure passes. No `verified`, `authority_absent`, `authority_conflict`,
+null, unknown, or producer-defined disposition is representable from this
+source.
+
+For claims V-B1, V-B2, V-B3, V-B4, and V-B9, the expected key domain is the
+exact claim-matching projection of the base §4.1 legal source manifest,
+`legal_rule_input`, and `historical_coverage_rule_specs.v1`. A historical
+rule row matches a claim exactly when its `rule_id` is in the claim spec's
+complete ordered `governing_rule_ids` and its
+`verification_claim_ids` contains that same claim ID. The expected source
+rows follow governing-rule order and then the base source-manifest order;
+their pointers address the complete matched rule/source rows, and their
+identity and row digests bind those complete values. Every governing rule and
+every establishing source required by the claim must contribute exactly one
+expected key. A rule/source row outside that exact intersection cannot
+match.
+
+For calibrated V-B7, the expected key domain is the complete base
+`optional_ssa_literal_covered_worker_share_source` role-resolution domain in
+optional-manifest order, including its explicit resolved absence or conflict
+state. For fitting-free V-B7, the spec's authority-role domain is exact
+empty and `adjudication_sources` is structurally exact empty under the
+already frozen `not_applicable_no_target_domain` equation. That is the only
+empty non-PSID source array authorized here; it is fixed by the fitting-free
+spec, not produced by a failed match.
+
+For every serialized source row in those six non-PSID claim domains, the
+closed `source_disposition` domain is exactly `verified`,
+`authority_absent`, or `authority_conflict`. The value exact-copies the
+base authority-status or complete role-resolution state; it is never
+inferred from match cardinality. Its `unresolved_evidence_ids` is exact
+empty. A base source may not carry `registration_required`, and a PSID
+source may not carry any of these three base dispositions. The outer claim's
+required or optional result follows its already frozen branch-specific
+equation from these explicit matched states. In particular, V-B1 and V-B4
+derive `verified/pass` only from their complete verified legal authority and
+identity evidence; V-B2, V-B3, and V-B9 retain their exact optional-
+consequence branches; calibrated V-B7 retains its exact optional-source
+branches; and fitting-free V-B7 retains its exact
+`not_applicable/pass` result.
+
+For every branch and claim, the serialized key multiset must exactly equal
+the independently constructed expected key set, and every matched source
+row must pass its identity, pointer, row-hash, disposition, and unresolved-
+evidence equations. A missing, extra, duplicate, nonmatching, cross-claim,
+cross-branch, or differently ordered row makes `derivation_status` `fail`
+and therefore fails the source projection and artifact. It never constructs
+`authority_absent`, an empty required-claim domain, or another claim result.
+The §16.12.1 empty-required-domain and incompatible-unmatched-source
+sentences have no prospective operative case. Absence and conflict are
+representable only as the explicit matched base dispositions above; the
+committed PSID negatives are representable only as the three exact matched
+`registration_required` rows.

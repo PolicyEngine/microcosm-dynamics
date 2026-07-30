@@ -18,11 +18,12 @@ round-7 findings and the ratification-blocking namespace sweep gap.
   branch's own spec/result arrays and the corresponding named source-row
   projections, plus complete cross-branch equality at the eight shared claim
   positions, with explicit envelope statuses and construction order.
+- Limited the authenticated PSID role-map replacements to V-B5/V-B6/V-B8,
+  retained the base V-B1/V-B4 legal authority, and made every source domain
+  an exact keyed cover with disjoint closed disposition domains.
 
 ## Next
 
-- Restore the base-design V-B1/V-B4 authorities and close the authenticated
-  source matching semantics.
 - Replace the future namespace parent with phase-correct existing commits.
 - Cut the receipt/configuration digest cycle and state one total construction
   order.
