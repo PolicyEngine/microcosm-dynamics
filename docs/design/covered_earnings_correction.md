@@ -19692,3 +19692,26 @@ evaluate \(E_c\) then \(E_f\); set the top-level status; replace only
 `integrity.content_sha256` with 64 ASCII zeroes, serialize the complete
 artifact, compute that digest, and finally serialize the complete expected
 bytes. Candidate members are read only afterward as actual comparands.
+
+The total cross-registry predicate also compares the positions that are
+specified identically in both branches. Let
+\(K=(0,1,2,3,4,5,7,8)\), corresponding in order to V-B1 through V-B6,
+V-B8, and V-B9, and let \(\pi_K\) be the order-preserving complete-row
+projection at those positions, with neither deduplication nor field
+selection. The complete predicate is therefore
+
+\[
+E \equiv E_c \land E_f
+  \land \bigl(\pi_K(S_c)=\pi_K(S_f)\bigr)
+  \land \bigl(\pi_K(R_c)=\pi_K(R_f)\bigr).
+\]
+
+The shared-position equalities are deep equalities of the complete eight-row
+arrays. Position 6 is absent from \(K\); no calibrated-to-fitting-free V-B7
+equality is an operand. The source projection, all four envelopes, and the
+top-level adjudication artifact have `status: pass` only when the applicable
+structural and derivation laws stated above and this complete \(E\) are true.
+In the stated construction order, \(E\) is evaluated after all six row-array
+operands \(S_c,S_f,R_c,R_f,A_c,A_f\) exist and before any envelope status,
+envelope digest, or top-level status is assigned. No status or digest is an
+operand of \(E\).

@@ -16,7 +16,8 @@ round-7 findings and the ratification-blocking namespace sweep gap.
   maps, the namespace/receipt dependency graph, and the closure sweep.
 - Defined cross-registry equality as complete deep equality between each
   branch's own spec/result arrays and the corresponding named source-row
-  projections, with explicit envelope statuses and construction order.
+  projections, plus complete cross-branch equality at the eight shared claim
+  positions, with explicit envelope statuses and construction order.
 
 ## Next
 
