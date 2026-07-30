@@ -18652,3 +18652,155 @@ therefore have exactly one reachable canonical serialization. Any zero/
 multiple \(T\), missing/extra descriptor, mismatched semantic constant,
 unreproducible selector output, primary-only value, registry version
 mismatch, or hash disagreement aborts before final adjudication.
+
+#### 16.12.4 One namespace parent and exact output-version evidence
+
+Every §16 source-projection root beginning `git_parent:` prospectively has
+one definition. Let \(Q\) be the candidate single-parent commit that will
+add the accepted receipt and selected registration configuration under the
+existing fresh-registration commit law, and let \(J\) be its unique parent.
+Before either candidate file is serialized, the coordinator freezes the raw
+stored commit, tree, and blob objects of \(J\). `git_parent` means exactly
+that frozen \(J\) tree; every projection member named `parent_commit` equals
+\(J\)'s 40-lowercase-hex commit OID.
+
+The final authority-cutoff commit \(C\) must be an ancestor of or equal to
+\(J\), and `git_cutoff` continues to mean exactly \(C\)'s tree. The earlier
+§16 root-table sentence making `git_parent` the parent of the authority-
+cutoff tree has no prospective operative case and is overridden. A cutoff
+parent, cutoff tree, worktree, index, staged candidate tree, branch tip,
+clock-selected tree, or configuration-selected commit cannot substitute for
+\(J\).
+
+After \(Q\) is stored, the post-commit validator rereads its raw commit
+object and requires exactly one parent equal to \(J\), then reruns both
+`git_parent:terminal_namespace_history` and
+`git_parent:terminal_attempt_and_registration_suffix_projection` against
+the unchanged \(J\) tree before accepting the candidate delta. A merge
+commit, different parent, changed parent object, precommit/postcommit tree
+disagreement, or projection evaluated against any other tree aborts the
+receipt and configuration.
+
+The calibrated projection
+`git_parent:terminal_namespace_history` has the sole value schema
+`terminal_namespace_history_projection.v1`. It has exactly
+`schema_version`, `parent_commit`, `output_paths`,
+`ordered_history_classes`, `history_rows`, `row_count`, `domain_sha256`, and
+`status`. Its schema value is that literal name, parent is \(J\), and
+`output_paths` is the exact calibrated eight-key object independently fixed
+by the candidate configuration schema. The class order is exactly
+`primary`, `sidecar`, `incidents`, `attempt_claims`,
+`retry_authorities`, `retry_claims`, then
+`fresh_registration_adjudications`.
+
+Each `history_rows` member has exactly `history_class`, `path`, `tree_mode`,
+`blob_oid`, `raw_sha256`, and `record_state`. The domain is the exact
+primary and sidecar paths when present plus every \(J\)-tree path matching
+one of the five literal configured prefixes and its inherited canonical
+suffix grammar. Rows order by class position, then canonical suffix, then
+unsigned-byte path; mode is `100644`; blob and raw digests are respectively
+40 and 64 lowercase hex; and `record_state` is `valid`,
+`partial_invalid`, or, only for a zero-byte reserved retry authority,
+`reserved_empty`. Every matching path is retained, including unfavorable
+bytes, and is validated under the complete §10.3 state, index, contiguity,
+cross-reference, exposure, and terminal-disposition laws. Count equals the
+array length and the domain digest hashes the complete canonical rows.
+Status is `pass` iff the enumeration is total and every inherited namespace
+law passes. This complete object, not a path list or configured history, is
+the `git_tree` projection consumed by the calibrated namespace predicate.
+
+For the fitting-free terminal-generation projection, the fourth reason
+literal `newly_ratified_output_version_required` has this exact
+generation-specific predicate. For positive canonical decimal generation
+\(g\), a qualifying evidence path is exactly:
+
+`runs/covered_earnings_correction_fitting_free_v<g>_fresh_registration_<a>.json`
+
+where \(a\) is a positive canonical decimal. The \(J\)-tree entry must have
+mode `100644`; its raw SHA-256 is recomputed; and its bytes must strict-parse
+without duplicate keys as canonical
+`covered_earnings_correction_fresh_registration_adjudication.v1`, with the
+exact 23-key schema in §10.3. `schema_version` equals that literal and
+`adjudication_index` equals integer \(a\). The suffixes for the same literal
+prefix must be exactly contiguous `1..a_max`; a zero, leading-zero alias,
+gap, duplicate, malformed matching path, or ignored extra path fails the
+projection.
+
+The evidence object must pass every inherited §10.3 path/hash/state,
+descriptor, incident, exposure, audit, cross-reference, precedence, and
+canonicalization equation when reconstructed from \(J\), rather than merely
+carrying plausible fields. In addition:
+
+1. `output_path_state` is exactly `partial_primary`;
+2. when `exposure_state` is `none`, `disposition` is exactly
+   `new_output_version`;
+3. when exposure is `possible` or `confirmed`, disposition is exactly
+   `heldout_vintage_tainted`, while the simultaneous partial-primary state
+   still requires a new output generation; and
+4. `complete_pair` is invalid for this predicate.
+
+The generation linkage is exact. `prior_registration_reference` resolves in
+\(J\) to one valid receipt-bound configuration at:
+
+`docs/registrations/covered_earnings_correction_fitting_free_v<g>_registration_<r>.json`
+
+for one positive canonical \(r\). Its strict schema is
+`covered_earnings_correction_fitting_free_configuration.v1`; its raw
+SHA-256 equals `prior_configuration_sha256`; its registration reference
+equals the adjudication member; and its complete `output_paths` has
+`output_version` exactly
+`covered_earnings_correction_fitting_free_v<g>`. Its primary, sidecar, and
+five prefixes are exactly the §16.5.4 paths obtained by substituting the
+same \(g\), including a `fresh_registration_adjudication_prefix` equal to
+the qualifying evidence path with only \(a\) and `.json` removed. Every
+claim, authority, incident, retry, final-path, and history member cited by
+the adjudication must resolve through that same configuration and
+generation. A digest-only configuration, cross-generation reference, path
+alias, mismatched \(r\), or copied output-version string fails.
+
+`newly_ratified_output_version_required` occurs in generation \(g\)'s
+`ordered_terminal_reason_literals` iff at least one such qualifying
+\(J\)-tree artifact exists. Its supporting evidence rows are exactly all
+qualifying paths, in unsigned-byte path order, with their actual mode, blob
+OID, and raw SHA-256. Zero qualifying artifacts omits the reason; one or more
+makes \(g\) terminal. For the complete terminal-generation row,
+`evidence_rows` is the duplicate-free path-sorted union of the evidence for
+all present reason literals, and its count/hash cover that full union.
+Neither an artifact status alone nor a configuration, branch, clock,
+producer flag, untracked file, or later candidate-tree byte can establish or
+suppress the reason.
+
+Consequently the terminal-generation domain is constructed entirely from
+\(J\): every \(g<n\) has at least one exact terminal reason and evidence
+set, and selected \(n\) is the least positive generation with none. The
+selected registration suffix \(r\), registration path, eight-key output
+paths, and output-path digest then follow the already frozen equations.
+
+Finally,
+`receipt_configuration_namespace_identity_and_claim_path_projection` is the
+following exact equality law, not an untyped cross-binding label. The
+position-22 fitting-free namespace result must pass; its parent projection
+must be the complete \(J\)-derived
+`terminal_attempt_and_registration_suffix_projection.v1`; and:
+
+- that projection's `selected_registration_path` equals the actual selected
+  configuration path and `receipt_core.selected_registration_path`;
+- its complete `selected_output_paths` deep-equals the configuration
+  `output_paths`, and its digest equals both the coordinator projection and
+  `receipt_core.selected_output_paths_sha256`;
+- the receipt and configuration registration-reference, schema, design,
+  implementation, and selected-configuration digest laws all pass;
+- the selected registration, primary, sidecar, and every claim/incident/
+  retry/fresh-adjudication terminal path is absent from \(J\) exactly where
+  the namespace preimage requires absence, and every live no-follow
+  descriptor/lstat row independently agrees; and
+- the later durable attempt-claim path is exactly the selected
+  `attempt_claim_prefix` plus the accepted selected-configuration SHA-256
+  and literal `.claim`, while that claim's `primary_path` and `sidecar_path`
+  exact-copy the receipt-bound selected paths.
+
+No later claim is an input to the prebranch namespace result; this last
+equality is a mandatory forward validation when the claim is constructed.
+An unequal parent, selected path, digest, absence row, derived claim path, or
+claim output path fails the named cross-binding before execution or
+publication.
