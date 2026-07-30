@@ -41,6 +41,11 @@ and is renamed with this amendment, so a referee following the ADR's
 own link does not meet unmapped names. The unrenamed senses in the
 table above (the locked `gates.yaml` fingerprints, the SSA table
 labels, the RNG substream) remain as they are, by the reasons given.
+Production-source docstrings sealed by the published first-estimates
+replay ceremony also retain their historical `C1`/`C2` wording. They
+are not operative contract text and are interpreted through this
+one-to-one mapping; cosmetic edits would invalidate the sealed replay
+identity. New source text uses the `IC` names.
 
 **Sign-off:** @vahid-ahmadi (Workstream B, author) ·
 @daphnehanse11 (Workstream A) — the joint sign-off is recorded by
