@@ -13534,7 +13534,11 @@ claim that every modeled status is one-hot.
 The exact proxy array and the exact calibrated array are both forbidden on a
 fitting-free primary or certificate. The labels make no population-alignment
 or individual administrative-truth claim and do not resolve ledger entry 11
-before condition 9.
+before condition 9. Once an initial fitting-free condition-9 merge activates
+this array, it remains the active report-wide label array until and unless
+the exact deterministic-to-calibrated publication transition in §16.9
+merges. A calibrated registration, execution, context report, conditional
+certificate, open PR, or unmerged transition manifest cannot deactivate it.
 
 `evaluation_specs.fitting_free.v1` retains every base model-only support,
 distribution, downstream, finite-grid-stability, and typed
@@ -13961,9 +13965,23 @@ passing report can assert only `eligible_on_publication_pr_merge`. Condition
 9. the publication PR containing that exact fitting-free context primary,
    its integrity-bound sidecar, and its conditional certificate merges.
 
-Only that merge activates the successor labels and resolves ledger entry 11.
-An amendment merge, registration, deterministic-model lock, correction
-primary, unmerged context pair, or failed certificate resolves nothing.
+When the report-wide proxy labels are active and forecast-ledger entry 11 is
+unresolved, only that merge activates the fitting-free successor labels and
+resolves entry 11. That merge commit is thereafter the immutable
+`original_resolution_merge_commit` for entry 11. An amendment merge,
+registration, deterministic-model lock, correction primary, unmerged context
+pair, or failed certificate resolves nothing.
+For label-state and later-predecessor purposes, “merge” is exactly a
+`fitting_free_condition9` event derived by the closed Git projection in
+§16.9.1; a commit or result tree that does not satisfy that event predicate
+does not activate labels or resolve the entry.
+
+If entry 11 is already resolved, a later fitting-free publication can still
+publish an artifact carrying its honest §16.7.1 labels, but it neither
+reopens the entry nor changes the active report-wide label state. In
+particular, it cannot reverse an active calibrated label state. The sole
+post-resolution label-state change authorized by this amendment is the
+fitting-free-to-calibrated transition in §16.9.
 
 ### 16.8 Satisfiability walk and honest limitations
 
@@ -14303,15 +14321,289 @@ source bytes:
 - When any lawful combination of those events makes the complete calibrated
   predicate true, the next registration **must** take `CALIBRATED` under the
   base/Amendment-1 calibrated machinery. Amendment 2 need not and must not be
-  repealed, amended in place, or used as a starting candidate.
+  repealed, amended in place, or used as a starting candidate. If the active
+  report-wide predecessor labels are the deterministic §16.7.1 array, later
+  publication still requires the calibrated condition-9 event plus the exact
+  §16.9.1 transition manifest; registration alone changes no label.
 - If a future cutoff again lacks a complete calibrated domain, Amendment 2
   remains available for a new fitting-free registration only if the exact
   qualifying blockage projection is nonempty and all its own requirements
   still pass. A global-only failure always aborts.
 
+#### 16.9.1 Exact fitting-free-to-calibrated label supersession
+
+This transition branch is mandatory exactly when forecast-ledger entry 11
+was first resolved by a fitting-free condition-9 publication merge, the
+§16.7.1 deterministic labels remain active at the later calibrated
+publication cutoff, and a fresh receipt-selected `CALIBRATED` run has
+produced a validator-passing calibrated context primary, sidecar, and
+conditional base certificate. It is inapplicable to the original
+proxy-to-calibrated publication, a still-unresolved entry, an already active
+calibrated label state, or any calibrated-to-fitting-free change. The last of
+those has no transition in this amendment.
+
+The required append-only transition manifest is
+`covered_earnings_label_supersession.fitting_free_to_calibrated.v1`. It has
+exactly `schema_version`, `transition_id`, `predecessor`, `successor`,
+`ledger_entry`, `canonicalization`, and `status`. The schema version is the
+object-name literal; canonicalization is exactly
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`; and status is exactly
+`eligible_on_successor_publication_pr_merge`.
+Every manifest path is a traversal-free repository-relative string; every
+field named `*_sha256` is exactly 64 lowercase hex; every commit is exactly
+40 lowercase hex; and null, missing, or extra members are forbidden.
+
+`predecessor` has exactly `context_report_schema`,
+`context_primary_path`, `context_primary_sha256`,
+`context_sidecar_path`, `context_sidecar_sha256`, `certificate_sha256`,
+`publication_merge_commit`, and `active_labels`.
+`context_report_schema` is exactly
+`covered_earnings_context_report.fitting_free.v1`; the two paths are the
+same-generation fitting-free paths in §16.7.4; both digests are SHA-256 of
+the complete immutable tracked bytes; and `certificate_sha256` is SHA-256 of
+the complete canonical embedded
+`label_retirement_certificate.fitting_free.v1`. It exact-matches the
+primary's `integrity.label_retirement_certificate_sha256`. The embedded
+certificate has status `eligible_on_publication_pr_merge` and binds the exact
+correction; the enclosing context primary integrity and this manifest bind
+the certificate and context sidecar. `active_labels` must deep-equal both the
+embedded certificate's `successor_labels` and the exact §16.7.1 array.
+`publication_merge_commit` is the 40-lowercase-hex condition-9 merge that
+activated those labels and first resolved entry 11.
+
+The predecessor primary must strict-validate with `status: pass`.
+The sidecar separately strict-validates under its exact
+`covered_earnings_context_environment.fitting_free.v1` schema and every
+shared-identity, hash, input, dependency, and lifecycle comparator must pass;
+it has no `status` member. `context_sidecar_path` must be the primary path
+plus `.env.json`, the primary's `integrity.sidecar_sha256` must equal
+`context_sidecar_sha256`, and the sidecar's artifact path and shared
+identities exact-match the primary. Both paths are mode-`100644` tracked
+files. The manifest primary digest is recomputed from the complete primary
+bytes rather than copied from either artifact.
+
+The predecessor is derived from Git history, never selected by the successor
+registrant. The closed derivation is
+`covered_earnings_label_event_projection.v1`, computed at any label-state
+cutoff commit. For final successor validation immediately before the
+external merge, that cutoff is the merge's first parent—not the transition-
+manifest creation commit or any commit in the publication branch. After the
+merge, the cutoff is the merge commit itself. The projection has exactly
+`schema_version`, `cutoff_commit`, `rows`, `row_count`,
+`event_domain_sha256`, `derived_entry_state`, `derived_active_labels`,
+`active_event_position`, and `status`. Its schema version is exactly
+`covered_earnings_label_event_projection.v1`; `cutoff_commit` is the exact
+commit being evaluated; count is the rows length; the domain digest hashes
+the complete canonical rows; `active_event_position` is a zero-based JSON
+integer or null; and no configuration, manifest, branch name, clock, or
+caller supplies a row. Status passes iff the complete enumeration, row
+validation, first-parent order, and state fold below pass; otherwise
+label-state validation aborts.
+
+The coordinator enumerates only the unique stored-Git first-parent chain of
+`cutoff_commit`: the cutoff, then parent zero recursively to the root. It
+examines every commit on that chain having exactly two parents in stored Git
+parent order. For each such commit \(M\), with first parent \(P_0\) and
+second parent \(P_1\), it enumerates all tree paths matching exactly one of:
+
+- `runs/covered_earnings_context_report_fitting_free_v<n>.json`, where
+  \(n\) is canonical positive decimal text, together with that path plus
+  `.env.json`;
+- the exact calibrated primary/sidecar paths
+  `runs/covered_earnings_context_report_v1.json` and
+  `runs/covered_earnings_context_report_v1.json.env.json`; or
+- the exact transition-manifest prefix/suffix grammar below together with
+  the calibrated pair above.
+
+A qualifying two-parent commit outside this first-parent chain has no label
+effect. Its tree may be inspected only as \(P_1\) of a chain merge under the
+payload rule below; no event from its internal first-parent or merge history
+is imported. Thus a publication branch cannot activate labels before its
+external merge or make the active-state projection depend on off-lane branch
+topology.
+
+A candidate event exists only when \(P_0\) lacks the complete exact candidate
+payload, \(P_1\) contains it as mode-`100644` blobs, and \(M\)'s tree contains
+the identical paths, modes, and blobs. For a fitting-free or calibrated
+context candidate, “payload” is its strict-validating primary, exact sidecar,
+embedded positive certificate, and all cross-bindings. For a transition
+candidate it additionally includes exactly one strict-validating transition
+manifest whose predecessor pair is already unchanged in \(P_0\), \(P_1\),
+and \(M\). A merge introducing more than one candidate context pair, more
+than one candidate manifest, a context pair without its sidecar/certificate,
+or a calibrated pair plus a malformed transition manifest aborts the
+projection.
+
+Each derived event row has exactly `event_kind`, `event_commit`,
+`context_report_schema`, `context_primary_path`,
+`context_primary_sha256`, `context_sidecar_path`,
+`context_sidecar_sha256`, `certificate_sha256`, and `transition_id`.
+`event_kind` is exactly
+`fitting_free_condition9 | calibrated_condition9 |
+fitting_free_to_calibrated`; commit and pair fields are reconstructed from
+\(M\)'s tree. `transition_id` is null for the first two kinds. A calibrated
+pair introduced with one valid transition manifest is only
+`fitting_free_to_calibrated`, never also `calibrated_condition9`; without a
+manifest it is `calibrated_condition9`. Event commits must be unique. Rows
+are ordered by their positions on the same first-parent chain, root-most to
+cutoff-most. Equal commits or more than one candidate event at one chain
+commit aborts. This intrinsic chain order, not timestamp, hash lexicography,
+DAG traversal order, second-parent history, or first discovery, is the sole
+event order.
+
+The projection folds those rows through one exact state machine, starting
+with entry state `open`, the exact ordered proxy array
+`["frame-relative","pre-alignment","labor-income proxy"]`, and null active
+event. A `fitting_free_condition9` row changes `open` to `resolved`, changes
+the active labels to §16.7.1, and becomes active only from that initial
+state; later such rows publish honest artifacts but leave state and active
+event unchanged. A `calibrated_condition9` row changes the initial state to
+`resolved` with the §1 labels, is a no-op when those labels are already
+active, and aborts when deterministic labels are active because the required
+transition manifest is missing. A `fitting_free_to_calibrated` row is valid
+only from `resolved` plus deterministic labels and only when its complete
+manifest predecessor exact-projects the then-active event row; it preserves
+`resolved`, activates the §1 array, and becomes the active event. It aborts
+from every other state. No event kind can reopen the entry or activate
+fitting-free labels over calibrated labels.
+
+Immediately before the successor merge, the projection at that merge's first
+parent must end with `status: pass`, `derived_entry_state: resolved`,
+`derived_active_labels` equal to §16.7.1, and `active_event_position`
+selecting exactly one `fitting_free_condition9` row. That row must
+exact-project into every `predecessor` field:
+`publication_merge_commit` equals its `event_commit`; the six
+schema/path/hash/certificate fields equal the same-named event-row fields;
+and `active_labels` equals that first-parent projection's
+`derived_active_labels`. Its event commit must also be an ancestor of the
+successor registration, correction, and context creation cutoffs, and every
+one of those trees must retain the predecessor pair unchanged. A transition
+manifest can be constructed conditionally before this future check, but it
+has no label effect and cannot make a nonmatching predecessor valid. Zero
+active rows, another derived state, or any predecessor mismatch at the
+merge's first parent aborts. Thus the predecessor certificate hash identifies
+the certificate mechanically derived to control the then-active labels, not
+merely any historical fitting-free certificate with favorable fields.
+
+`successor` has exactly `context_report_schema`,
+`context_primary_path`, `context_primary_sha256`,
+`context_sidecar_path`, `context_sidecar_sha256`, `certificate_sha256`,
+`certificate_status`, and `prospective_labels`.
+`context_report_schema` is exactly
+`covered_earnings_context_report.v1`; `context_primary_path` is exactly
+`runs/covered_earnings_context_report_v1.json` and
+`context_sidecar_path` is exactly
+`runs/covered_earnings_context_report_v1.json.env.json` under the unchanged
+fresh calibrated namespace law. Both complete tracked-byte digests
+exact-match those paths and their cross-bindings.
+`certificate_sha256` hashes the complete canonical embedded base
+`label_retirement_certificate`; it exact-matches the calibrated primary's
+`integrity.label_retirement_certificate_sha256`. `certificate_status` is exactly
+`eligible_on_publication_pr_merge`, and `prospective_labels` is exactly the
+three-token calibrated array in §1 and must deep-equal the embedded
+certificate's `successor_labels`. The certificate binds the exact calibrated
+correction; the enclosing context primary integrity and this manifest bind
+the certificate and sidecar. Every calibrated correction, context, condition,
+gate, evidence, code-disposition, sidecar, and certificate law remains
+required; this manifest cannot cure a failed calibrated certificate.
+The successor primary must strict-validate with `status: pass`. The sidecar
+separately strict-validates under exact
+`covered_earnings_context_environment.v1` and every shared-identity, hash,
+input, dependency, semantic-authority, and lifecycle comparator must pass; it
+has no `status` member. The sidecar path is the primary path plus `.env.json`,
+the primary's `integrity.sidecar_sha256` exact-matches the manifest sidecar
+digest, and the sidecar's artifact/shared identity fields exact-match the
+manifest pair. Both paths are mode-`100644` tracked files. The successor
+primary digest is independently recomputed from its complete bytes.
+
+The calibrated certificate remains the immutable evidence certificate for
+its calibrated output. On this branch, however, the base proxy-predecessor
+sentence does not identify the currently active label state:
+`predecessor` above is the sole predecessor-label and predecessor-certificate
+binding. Specifically, §9.1's prospective phrase “ordered legacy labels”
+means `predecessor.active_labels` on this branch, not the earlier proxy
+array. Neither certificate is edited or reissued, and the successor
+certificate does not claim that the deterministic predecessor used aggregate
+calibration.
+
+`ledger_entry` has exactly `entry_id`,
+`original_resolution_merge_commit`, `state_before`, `state_after`, and
+`disposition`. Their values are respectively JSON integer `11`, the exact
+`predecessor.publication_merge_commit`, `resolved`, `resolved`, and
+`preserve_original_resolution_append_label_supersession`.
+`transition_id` is the literal prefix
+`fitting_free_to_calibrated:` followed by SHA-256 of canonical
+`[predecessor.certificate_sha256,successor.certificate_sha256]`. The two
+certificate digests must differ, and no earlier accepted transition may use
+that predecessor certificate, transition ID, or successor certificate.
+
+The manifest path is exactly
+`runs/covered_earnings_label_supersession_fitting_free_to_calibrated_v<s>.json`,
+where \(s\) is canonical base-10 positive-integer text with no sign or
+leading zero and is the least positive suffix absent from the single parent
+tree of the commit that first adds the candidate manifest. That parent tree
+contains exactly the contiguous predecessor paths `1..s-1`; the candidate
+commit adds suffix \(s\) without changing any predecessor, and its tree
+contains exactly `1..s` with \(s\) the unique greatest suffix. The candidate
+path must have been absent from every ancestor and is added as a regular
+mode-`100644` canonical file. Its blob and mode remain unchanged through the
+successor publication merge and every later descendant. Deletion, overwrite,
+suffix reuse, a gap, an alternate directory/prefix, or a second manifest for
+one successor certificate aborts. The manifest contains no
+successor publication merge commit, transition-file digest, or transition
+blob ID, and neither successor primary nor certificate contains the
+transition ID, path, digest, or blob ID. The one-way
+successor-artifacts-to-manifest dependency therefore has no future-event or
+hash cycle.
+
+For this branch, calibrated condition 9 is strengthened to the external
+merge of one publication PR whose result tree contains all of the following:
+
+1. the exact calibrated successor context primary, integrity-bound sidecar,
+   and embedded conditional certificate;
+2. the exact new transition manifest above; and
+3. the exact predecessor fitting-free context primary and sidecar, unchanged
+   from `predecessor.publication_merge_commit`.
+
+That merge must itself satisfy the exact two-parent
+`fitting_free_to_calibrated` event predicate above. Recomputing
+`covered_earnings_label_event_projection.v1` with the merge commit as cutoff
+must pass and, relative to the complete projection at \(P_0\), append exactly
+that one event row while leaving every earlier row byte-identical. It must
+retain the same predecessor history, derive `resolved`, derive the exact §1
+array, and select the new transition row as `active_event_position`. A
+result-tree-only assertion or a merge that does not produce those exact
+first-parent projections changes no label.
+
+Before that merge—including after calibrated registration, execution,
+context publication to an unmerged branch, certificate creation, transition
+manifest creation, or PR approval—the deterministic §16.7.1 array remains
+the sole active report-wide label array. At the one external merge event the
+deterministic array is atomically superseded by the exact §1 calibrated
+array. There is no intermediate unlabeled state, dual-active state,
+preactivation, or artifact-authored assertion that the merge occurred. If
+any required byte, hash, ancestry, certificate status, or manifest law fails,
+the calibrated conditional certificate remains inactive and the
+deterministic labels remain active.
+
+This external transition spans two distinct receipt-selected registrations
+and publication events. It is not a runtime path transition and does not add
+an element to §16.2's canonical-empty
+`runtime_transition_domain` array.
+
+The merge preserves both complete context pairs, both embedded historical
+certificates, both correction artifacts and sidecars, and the transition
+manifest. The fitting-free certificate remains valid historical evidence for
+the artifact and interval it activated; the calibrated certificate governs
+the successor interval. Entry 11 is not reopened or resolved a second time:
+its original resolution event remains
+`predecessor.publication_merge_commit`, its state remains `resolved`, and the
+later merge appends only the label-supersession history recorded by
+`ledger_entry`.
+
 This is path precedence, not evidentiary blending. A deterministic-
-uncalibrated artifact remains exactly what its labels said even after a later
-calibrated artifact exists.
+uncalibrated artifact remains exactly what its labels and historical
+certificate said even after the later calibrated label state becomes active.
 
 ### 16.10 Amendment ratification and fresh-registration protocol
 
@@ -14347,6 +14639,12 @@ authorized order is:
    implementation, and fresh output/claim namespace; then
 6. perform the applicable unchanged prelaunch, sealed execution, incident,
    publication, separate context, certificate, and external merge sequence.
+   When a calibrated successor's active predecessor is the deterministic
+   §16.7.1 label state, construct the §16.9.1 transition manifest only after
+   both certificates and context pairs are immutable, include it with the
+   exact preserved predecessor and calibrated successor payload, and require
+   that strengthened merge law. No other step may synthesize or waive the
+   manifest.
 
 Step 4's sole production-source exception is
 `fitting_free_model_input_authority_capture.v1`. It is a registration-
@@ -14796,7 +15094,7 @@ For completeness, the fitting-free replacement ledger is:
 
 | Base/Amendment-1 subject | Fitting-free controlling clause |
 |---|---|
-| §1 calibrated successor label | §16.7.1 exact deterministic-uncalibrated array. |
+| §1 calibrated successor label | §16.7.1 exact deterministic-uncalibrated array for a fitting-free artifact; §16.9.1 atomically activates the exact §1 array only at a later qualifying calibrated publication merge. |
 | §§3–5 classification, measurement, aggregation, and draws | Retained machinery plus §§16.3 and 16.5.3 deterministic defaults/identity. |
 | §§5.3, 6.2, and 7 candidate/target/fitting/selection domains | Inapplicable only through §§16.4.1–16.4.2 canonical empty schemas and §16.5 capability absence. |
 | §4.1 verification/action trace | §16.3.1 and §16.5.1; eight direct rows stay required and V-B7 is target-only not applicable. |
@@ -14804,6 +15102,7 @@ For completeness, the fitting-free replacement ledger is:
 | §8.1 G10/G14/G15/G17/G19/G21 | Exact replacements in §16.6. |
 | §8.1 every other gate | Unchanged under §16.6, including G20. |
 | §9 conditions and calibrated certificate fields | §§16.7.3–16.7.4. |
+| §9.3 forecast-ledger entry 11 lifecycle | The initial fitting-free condition-9 merge is the one-time resolution event; §16.9.1 preserves `resolved -> resolved` and appends only the later label-supersession history. |
 | §10 calibrated configuration/model/result/sidecar/paths | §§16.5.2–16.5.5. |
 | §12 context report/certificate | §16.7.4 exact fitting-free successor; 15-series domain retained and ten no-fitting-loss families excluded. |
 | §14 ratification and execution sequence | This subsection plus every unchanged base ceremony law. |
