@@ -1,12 +1,12 @@
-"""Fail-closed registration boundary for covered-earnings correction.
+"""Amendment-1 registration boundary for covered-earnings correction.
 
-The committed SSA bytes establish the 825 Table 4.B2/4.B11 source cells, but
-they do not establish the worker-universe laws required by section 6.1 of the
-ratified design.  They also do not establish a frozen model-universe selector,
-production weight input, or passing official-to-model universe concordance.
+The amended vintage-2 source artifact is complete and accepted.  The new
+methodology bytes nevertheless leave at least one section 6.1 membership fact
+unresolved for every target family, and registration-time model-universe,
+weight-input, and concordance authorities remain absent.
 
 This module therefore exposes the exact registry schemas and validators, but
-it never labels a reduced or unresolved object ``calibration_target_specs.v2``.
+it never labels a reduced or unresolved object ``calibration_target_specs.v3``.
 Every getter for a final frozen registry aborts until all registration
 prerequisites can be resolved from immutable authority.
 """
@@ -19,13 +19,14 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+import build_covered_earnings_membership_adjudication as adjudication
 import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
-DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_REVISION = 2
+DESIGN_RATIFICATION_COMMIT = "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
+DESIGN_REVISION = 3
 
-CALIBRATION_TARGET_SPECS_SCHEMA_VERSION = "calibration_target_specs.v2"
+CALIBRATION_TARGET_SPECS_SCHEMA_VERSION = "calibration_target_specs.v3"
 VERIFIED_ROLE_SPECS_SCHEMA_VERSION = "verified_role_specs.v1"
 PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION = "physical_source_cell_specs.v1"
 OFFICIAL_SOURCE_ALIAS_SPECS_SCHEMA_VERSION = "official_source_alias_specs.v1"
@@ -48,7 +49,6 @@ TARGET_FAMILY_ORDER = (
     "b2_se_total_intensity",
     "b11_se_only_worker_share",
     "b11_dual_type_worker_share",
-    "ssa_precisely_universed_covered_share",
     "b11_wage_only_worker_share",
     "b2_type_count_mix",
     "b2_se_total_component_share",
@@ -163,7 +163,6 @@ _LOSS_BY_TARGET_FAMILY = {
     "b2_se_total_intensity": "squared_log_ratio",
     "b11_se_only_worker_share": "squared_logit_error",
     "b11_dual_type_worker_share": "squared_logit_error",
-    "ssa_precisely_universed_covered_share": "squared_logit_error",
     "b11_wage_only_worker_share": "no_fitting_loss",
     "b2_type_count_mix": "no_fitting_loss",
     "b2_se_total_component_share": "no_fitting_loss",
@@ -174,6 +173,32 @@ _LOSS_BY_TARGET_FAMILY = {
     "b11_taxable_earnings_component_reconciliation": "no_fitting_loss",
     "b11_contributions_component_reconciliation": "no_fitting_loss",
     "b11_se_contribution_share": "no_fitting_loss",
+}
+_RAW_FAMILY_COEFFICIENT = {
+    "b2_wage_total_intensity": 2,
+    "b2_se_total_intensity": 2,
+    "b11_se_only_worker_share": 1,
+    "b11_dual_type_worker_share": 1,
+}
+_DEPENDENCY_GROUP_BY_TARGET_FAMILY = {
+    "b2_wage_total_intensity": "b2_component_system",
+    "b2_se_total_intensity": "b2_component_system",
+    "b11_se_only_worker_share": "b11_worker_type_system",
+    "b11_dual_type_worker_share": "b11_worker_type_system",
+    "b11_wage_only_worker_share": "b11_worker_type_system",
+    "b2_type_count_mix": "b2_component_system",
+    "b2_se_total_component_share": "b2_component_system",
+    "b2_wage_taxable_intensity": "b2_component_system",
+    "b2_se_taxable_intensity": "b2_component_system",
+    "b2_wage_taxable_fraction": "b2_component_system",
+    "b2_se_taxable_fraction": "b2_component_system",
+    "b11_taxable_earnings_component_reconciliation": (
+        "b11_taxable_earnings_component_system"
+    ),
+    "b11_contributions_component_reconciliation": (
+        "b11_contribution_component_system"
+    ),
+    "b11_se_contribution_share": "b11_contribution_component_system",
 }
 _SOURCE_STATUSES = {"historical", "preliminary"}
 _AVAILABLE_SOURCE_CLASSES = {
@@ -266,18 +291,18 @@ UNRESOLVED_AUTHORITY_FIELDS = (
         ),
     },
     {
-        "field": "model_weight_field",
-        "status": "missing_registered_weight_field",
-        "reason": (
-            "no correction-specific production input manifest registers a "
-            "model weight field"
-        ),
-    },
-    {
         "field": "model_weight_source_sha256",
         "status": "missing_registered_weight_input_digest",
         "reason": (
             "no immutable correction model-weight input is available to hash"
+        ),
+    },
+    {
+        "field": "denominator_and_joint_analytic_selectors",
+        "status": "selector_ids_resolved_membership_predicates_unestablished",
+        "reason": (
+            "design-fixed selector IDs and joint reduction cannot become "
+            "executable until every source-membership predicate is settled"
         ),
     },
     {
@@ -286,6 +311,17 @@ UNRESOLVED_AUTHORITY_FIELDS = (
         "reason": (
             "an exact official-to-model mapping cannot be certified while "
             "the official membership and model selector remain unresolved"
+        ),
+    },
+)
+
+RESOLVED_AUTHORITY_FIELDS = (
+    {
+        "field": "model_weight_field",
+        "status": "resolved_from_committed_first_estimates_authority",
+        "value": "weight",
+        "authority_id": (
+            "first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1"
         ),
     },
 )
@@ -389,28 +425,74 @@ def calibration_target_schema() -> dict[str, Any]:
     }
 
 
-def registration_status() -> dict[str, Any]:
-    """Re-adjudicate committed bytes and report why registration aborts."""
+def target_family_registry() -> list[dict[str, Any]]:
+    """Return the exact amendment-1 14-family order and coefficient law."""
 
-    adjudication = extraction.vb7_adjudication()
+    rows = []
+    for family in TARGET_FAMILY_ORDER:
+        raw_coefficient = _RAW_FAMILY_COEFFICIENT.get(family, 0)
+        rows.append(
+            {
+                "target_family": family,
+                "dependency_group": _DEPENDENCY_GROUP_BY_TARGET_FAMILY[family],
+                "loss": _LOSS_BY_TARGET_FAMILY[family],
+                "raw_family_coefficient": raw_coefficient,
+                "normalized_effective_weight_numerator": raw_coefficient,
+                "normalized_effective_weight_denominator": (
+                    6 if raw_coefficient else 1
+                ),
+            }
+        )
+    return rows
+
+
+def accepted_source_artifact() -> dict[str, Any]:
+    """Return exactly the validator-accepted, tracked vintage-2 artifact."""
+
+    lineage = extraction.validate_tracked_vintage_lineage()
+    if lineage["tracked_vintage_suffixes"] != [2]:
+        raise RegistrationAborted(
+            "source artifact lineage is not exactly H={2}"
+        )
+    artifact = extraction.build()
+    extraction.validate_artifact(artifact)
+    if extraction.render() != extraction.OUT_PATH.read_bytes():
+        raise RegistrationAborted(
+            "tracked vintage-2 bytes do not reproduce from committed sources"
+        )
+    return artifact
+
+
+def registration_status() -> dict[str, Any]:
+    """Re-adjudicate committed bytes and report the remaining closed gates."""
+
+    artifact = accepted_source_artifact()
+    membership = adjudication.build()
     return {
         "registration_complete": False,
-        "proposed_artifact_vintage_id": (PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID),
+        "source_artifact_status": "accepted",
+        "source_artifact_vintage_id": artifact["artifact_vintage_id"],
+        "source_artifact_schema_version": artifact["schema_version"],
+        "source_artifact_lineage_suffixes": [2],
+        "optional_covered_share_status": artifact["optional_covered_share"][
+            "status"
+        ],
         "calibration_target_schema_version": (
             CALIBRATION_TARGET_SPECS_SCHEMA_VERSION
         ),
+        "target_family_order": list(TARGET_FAMILY_ORDER),
         "emitted_target_row_count": 0,
+        "resolved_authority_fields": copy.deepcopy(
+            list(RESOLVED_AUTHORITY_FIELDS)
+        ),
         "unresolved_authority_fields": copy.deepcopy(
             list(UNRESOLVED_AUTHORITY_FIELDS)
         ),
-        "vb7_registration_disposition": (
-            adjudication["registration_disposition"]
+        "registration_authority_adjudications": copy.deepcopy(
+            membership["registration_authority_adjudications"]
         ),
-        "covered_share_required_years": copy.deepcopy(
-            adjudication["covered_share_required_years"]
-        ),
-        "membership_adjudications": copy.deepcopy(
-            adjudication["worker_membership_relationships"]
+        "family_dispositions": copy.deepcopy(
+            membership["family_dispositions"]
         ),
         "failure_disposition": "abort",
     }
@@ -693,9 +775,6 @@ def _expected_tolerances(target_family: str) -> tuple[dict, dict]:
     if target_family in _B11_SELECTION_FAMILIES:
         cell_maximum = 0.03
         family_maximum = 0.015
-    elif target_family == "ssa_precisely_universed_covered_share":
-        cell_maximum = 0.02
-        family_maximum = 0.01
     else:
         raise RegistryValidationError(
             f"{target_family} has no registered selection tolerance"
@@ -749,12 +828,22 @@ def validate_calibration_target_row_schema(
                 f"{target_id}.{field} violates year-equality law"
             )
     for field in (
-        "dependency_group",
         "stored_unit",
         "model_universe_id",
-        "model_weight_field",
     ):
         _nonempty_string(row[field], f"{target_id}.{field}")
+    expected_dependency_group = _DEPENDENCY_GROUP_BY_TARGET_FAMILY[
+        target_family
+    ]
+    if row["dependency_group"] != expected_dependency_group:
+        raise RegistryValidationError(
+            f"{target_id}.dependency_group must be "
+            f"{expected_dependency_group}"
+        )
+    if row["model_weight_field"] != "weight":
+        raise RegistryValidationError(
+            f"{target_id}.model_weight_field must be weight"
+        )
     if (
         row["source_artifact_vintage_id"]
         != PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID
@@ -843,14 +932,11 @@ def validate_calibration_target_row_schema(
         raise RegistryValidationError(
             f"{target_id}.source_status preliminary outside held-out role"
         )
-    if target_family != "ssa_precisely_universed_covered_share":
-        expected_status = (
-            "preliminary" if parsed_year >= 2021 else "historical"
+    expected_status = "preliminary" if parsed_year >= 2021 else "historical"
+    if row["source_status"] != expected_status:
+        raise RegistryValidationError(
+            f"{target_id}.source_status violates source artifact law"
         )
-        if row["source_status"] != expected_status:
-            raise RegistryValidationError(
-                f"{target_id}.source_status violates source artifact law"
-            )
     expected_loss = _LOSS_BY_TARGET_FAMILY[target_family]
     if row["loss"] != expected_loss:
         raise RegistryValidationError(
@@ -874,16 +960,7 @@ def validate_calibration_target_row_schema(
         row["loss_weight"],
         f"{target_id}.loss_weight",
     )
-    if loss_weight < 0:
-        raise RegistryValidationError(f"{target_id}.loss_weight")
-    weight_must_be_zero = (
-        expected_loss == "no_fitting_loss"
-        or availability == "not_applicable_no_claim_independent_model_analogue"
-        or expected_role == "held_out_diagnostic"
-    )
-    if weight_must_be_zero and loss_weight != 0:
-        raise RegistryValidationError(f"{target_id}.loss_weight must be zero")
-    positive_weight_allowed = availability == "available" and (
+    model_choice_cell = availability == "available" and (
         (
             expected_role == "train"
             and row["model_year_source_class"] == "direct_questionnaire"
@@ -891,9 +968,13 @@ def validate_calibration_target_row_schema(
         )
         or expected_selection_eligible
     )
-    if loss_weight > 0 and not positive_weight_allowed:
+    expected_loss_weight = (
+        _RAW_FAMILY_COEFFICIENT[target_family] if model_choice_cell else 0
+    )
+    if loss_weight != expected_loss_weight:
         raise RegistryValidationError(
-            f"{target_id}.loss_weight is positive outside a model-choice cell"
+            f"{target_id}.loss_weight must equal exact amendment-1 integer "
+            f"mass {expected_loss_weight}"
         )
     _validate_tolerance(row["cell_tolerance"], f"{target_id}.cell_tolerance")
     _validate_tolerance(
@@ -924,13 +1005,13 @@ def _abort_message() -> str:
     )
     return (
         "covered-earnings correction registration aborted: "
-        f"V-B7={status['vb7_registration_disposition']}; "
-        f"unresolved fields={missing}"
+        "source artifact accepted; no target family clears every "
+        f"prerequisite; unresolved fields={missing}"
     )
 
 
 def calibration_target_specs() -> list[dict[str, Any]]:
-    """Abort instead of returning reduced or unresolved v2 target rows."""
+    """Abort instead of returning reduced or unresolved v3 target rows."""
 
     raise RegistrationAborted(_abort_message())
 
@@ -964,10 +1045,21 @@ def validate_calibration_target_specs(value: object) -> None:
 
     if type(value) is not list or not value:
         raise RegistryValidationError(
-            "calibration_target_specs.v2 must be a nonempty ordered array"
+            "calibration_target_specs.v3 must be a nonempty ordered array"
         )
     for index, row in enumerate(value):
         validate_calibration_target_row_schema(row, index=index)
+    expected_target_ids = [
+        f"{family}:{year}"
+        for family in TARGET_FAMILY_ORDER
+        for year in TARGET_YEARS
+    ]
+    actual_target_ids = [row["target_id"] for row in value]
+    if actual_target_ids != expected_target_ids:
+        raise RegistryValidationError(
+            "calibration_target_specs.v3 must contain exactly the 14-family "
+            "by 55-year ordered expansion"
+        )
     raise RegistrationAborted(_abort_message())
 
 
@@ -1002,6 +1094,7 @@ __all__ = [
     "UNIVERSE_FIELDS",
     "UNRESOLVED_AUTHORITY_FIELDS",
     "VERIFIED_ROLE_SPECS_SCHEMA_VERSION",
+    "accepted_source_artifact",
     "calibration_target_schema",
     "calibration_target_specs",
     "design_binding",
@@ -1012,6 +1105,7 @@ __all__ = [
     "physical_source_cell_specs",
     "registration_status",
     "role_for_year",
+    "target_family_registry",
     "validate_calibration_target_row_schema",
     "validate_calibration_target_specs",
     "validate_frozen_registries",
