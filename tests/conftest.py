@@ -54,11 +54,33 @@ def _replay_frozen_qstar_preproduction_registry(request, monkeypatch):
     )
 
 
-def _references_run_artifact(source: str) -> bool:
-    """Return whether source refers to a JSON file under ``runs/``."""
+def _references_committed_artifact(source: str) -> bool:
+    """Return whether a module reads committed or transitive evidence bytes."""
+
     runs_path_indicators = ('"runs"', "'runs'", '"runs/', "'runs/")
-    return ".json" in source and any(
+    references_run_json = ".json" in source and any(
         indicator in source for indicator in runs_path_indicators
+    )
+    data_path_indicators = ('"data"', "'data'", '"data/', "'data/")
+    external_path_indicators = (
+        '"external"',
+        "'external'",
+        '"external/',
+        "'external/",
+    )
+    references_data_external = any(
+        indicator in source for indicator in data_path_indicators
+    ) and any(indicator in source for indicator in external_path_indicators)
+    transitive_committed_byte_readers = (
+        "build_ssa_covered_earnings_calibration_targets",
+        "covered_earnings_correction_registry",
+    )
+    return (
+        references_run_json
+        or references_data_external
+        or any(
+            reader in source for reader in transitive_committed_byte_readers
+        )
     )
 
 
@@ -74,7 +96,7 @@ def _classify_test_module(relative_path: Path, source: str) -> str:
         return "artifact"
     if any(indicator in source for indicator in _PSID_DATA_INDICATORS):
         return "integration_psid"
-    if _references_run_artifact(source):
+    if _references_committed_artifact(source):
         return "artifact"
     return "unit"
 

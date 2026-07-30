@@ -36,6 +36,14 @@
   every final-registry getter aborts. No placeholder claims a passing
   concordance.
 - Finding-2 focused tests pass: `21 passed`.
+- Corrected artifact-tier classification for committed `data/external`
+  readers and the entry-11 modules that read those bytes transitively.
+- Added the referee's selected-cell colspan and rowspan collapses, numeric
+  footnote insertion, malformed thousands grouping, and nested-header drift
+  attacks. All five are rejected after bypassing the outer source hash to
+  exercise parser defense in depth.
+- Both entry-11 modules now collect exclusively as `artifact`: `37 tests
+  collected`; extraction tests pass: `16 passed`.
 
 ## Next
 
@@ -43,5 +51,4 @@
    including the 24 vintage-1 B11 republications, without certifying it as a
    complete final registry.
 2. Pin independent canonical evidence-registry bytes and digests.
-3. Add tier and crafted parser-attack coverage, run required suites, and record
-   their tails in the final report.
+3. Run required suites and record their tails in the final report.

@@ -70,6 +70,14 @@ def _observations_by_id(evidence: dict) -> dict[str, dict]:
     }
 
 
+def _extract_after_source_mutation(old: bytes, new: bytes):
+    source = SNAPSHOTS / builder.SOURCE_FILENAME
+    raw = source.read_bytes()
+    assert raw.count(old) == 1
+    mutated = raw.replace(old, new, 1)
+    return builder._extract_observations(builder._select_tables(mutated))
+
+
 def test__vintage2_authority__is_absent_and_build_fails_closed():
     assert not ARTIFACT.exists()
     with pytest.raises(builder.RegistrationAborted, match="cannot emit"):
@@ -307,3 +315,48 @@ def test__partial_attack_helper__has_valid_self_hash_before_mutation():
             builder.entry10.canonical_json_bytes(preimage)
         ).hexdigest()
     )
+
+
+@pytest.mark.parametrize(
+    ("span_attribute", "expected"),
+    (
+        (b'colspan="2"', r"rowspan=1, colspan=2"),
+        (b'rowspan="2"', r"rowspan=2, colspan=1"),
+    ),
+)
+def test__parser_attack__rejects_selected_cell_span_collapse(
+    span_attribute: bytes,
+    expected: str,
+):
+    original = b'<td headers="r18 c3 c5">413,600</td>'
+    mutated = b"<td " + span_attribute + b' headers="r18 c3 c5">413,600</td>'
+    with pytest.raises(ValueError, match=expected):
+        _extract_after_source_mutation(original, mutated)
+
+
+def test__parser_attack__rejects_numeric_footnote_insertion():
+    original = b'<td headers="r18 c3 c5">413,600</td>'
+    mutated = b'<td headers="r18 c3 c5">413,600<sup>a</sup></td>'
+    with pytest.raises(ValueError, match="missing or nonnumeric"):
+        _extract_after_source_mutation(original, mutated)
+
+
+def test__parser_attack__rejects_malformed_thousands_grouping():
+    original = b'<td headers="r18 c3 c5">413,600</td>'
+    mutated = b'<td headers="r18 c3 c5">413,60</td>'
+    with pytest.raises(ValueError, match="missing or nonnumeric"):
+        _extract_after_source_mutation(original, mutated)
+
+
+def test__parser_attack__rejects_nested_header_drift():
+    original = (
+        b'<th rowspan="2" id="c5" headers="c3">'
+        b"Total in covered employment&nbsp;<sup>b</sup> "
+        b"(millions of&nbsp;dollars)</th>"
+    )
+    mutated = original.replace(
+        b"Total in covered employment",
+        b"Total covered employment",
+    )
+    with pytest.raises(ValueError, match="selected 0 columns"):
+        _extract_after_source_mutation(original, mutated)
