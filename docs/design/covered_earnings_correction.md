@@ -15521,3 +15521,231 @@ For completeness, the fitting-free replacement ledger is:
 Every pointer not listed in this ledger remains controlling without
 weakening. A fitting-free implementation may not infer that silence deletes
 an authority, gate, domain, consumer, ceremony, publication, or honesty law.
+
+### 16.11 Round-4 closure addendum
+
+This addendum is part of the same prospective Amendment 2. It is append-only:
+every earlier byte remains historical text, and the exact replacements below
+control wherever an earlier §16 sentence conflicts. No identifier,
+projection, or rule reference introduced here is an implementation callback.
+Each is closed in the same subsection that introduces it.
+
+#### 16.11.1 Closed graph roots, capture-sidecar projection, and parent suffix value
+
+The two previously named graph-root projections share the exact schema
+`covered_earnings_static_graph_runner_root.v1`. It has exactly
+`schema_version`, `principal_id`, `repository_relative_path`,
+`runner_qualified_symbol`, `entrypoint_qualified_symbol`,
+`required_git_tree_mode`, `graph_schema_version`, and `canonicalization`.
+The two and only two values are:
+
+```json
+[
+  {
+    "schema_version": "covered_earnings_static_graph_runner_root.v1",
+    "principal_id": "covered_earnings_correction_calibrated_runner",
+    "repository_relative_path": "scripts/run_covered_earnings_correction_evaluation.py",
+    "runner_qualified_symbol": "__main__",
+    "entrypoint_qualified_symbol": "main",
+    "required_git_tree_mode": "100755",
+    "graph_schema_version": "covered_earnings_prebranch_static_capability_graph.v1",
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+  },
+  {
+    "schema_version": "covered_earnings_static_graph_runner_root.v1",
+    "principal_id": "covered_earnings_correction_fitting_free_runner",
+    "repository_relative_path": "scripts/run_covered_earnings_correction_fitting_free_evaluation.py",
+    "runner_qualified_symbol": "__main__",
+    "entrypoint_qualified_symbol": "main",
+    "required_git_tree_mode": "100755",
+    "graph_schema_version": "covered_earnings_prebranch_static_capability_graph.v1",
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+  }
+]
+```
+
+That array is explanatory serialization of the two exact objects, not a
+third registry. The two displayed principal literals are the entire runner-
+principal domain and identify only their same-row roots. A different path,
+principal, symbol, mode, graph schema, or canonicalization is not an
+alternate root.
+
+The Git-bound root preimage is
+`covered_earnings_static_graph_runner_identity.v1`, with exactly
+`schema_version`, `runner_root`, `tree_mode`, `blob_oid`, and `blob_sha256`.
+`runner_root` is one complete same-row object above; `tree_mode` equals its
+`required_git_tree_mode`; `blob_oid` is the 40-lowercase-hex Git blob object
+at its exact path in the tree named by the enclosing preimage; and
+`blob_sha256` is the 64-lowercase-hex SHA-256 of that complete blob.
+Canonical serialization is the root's declared canonicalization.
+`graph_root.runner_identity_sha256` is SHA-256 of the complete canonical
+`covered_earnings_static_graph_runner_identity.v1` object.
+
+`graph_root.entrypoint_node_id` is the `node_id` of the unique `callable`
+node whose principal, repository-relative path, qualified symbol, and blob
+digest equal the root preimage's `principal_id`,
+`repository_relative_path`, `entrypoint_qualified_symbol`, and
+`blob_sha256`. The graph must also contain exactly one `runner` node for the
+same root and exactly one `entrypoint_call` edge from that runner node to the
+callable node under the existing edge grammar. Zero or multiple matching
+nodes or edges, another entrypoint, an absent exact path, or a mode/blob
+mismatch aborts the applicable adjudication. This object, its canonical
+SHA-256, and the resulting two-key `graph_root` are respectively the complete
+preimage, serialization, and typed root result.
+
+The calibrated design projection is the exact
+`calibrated_target_principal_and_capability_specs.v1` object. It has exactly
+`schema_version`, `runner_root`, `node_class_domain`,
+`edge_class_domain`, `rng_access_specs`, `filesystem_isolation_specs`, and
+`canonicalization`. Its values are:
+
+- `schema_version:
+  calibrated_target_principal_and_capability_specs.v1`;
+- `runner_root`: the complete calibrated first object above;
+- `node_class_domain:
+  ["runner","principal","constructor","callable","schema",
+  "descriptor_broker","ipc_endpoint"]`;
+- `edge_class_domain:
+  ["entrypoint_call","import","callback","schema_reference",
+  "descriptor_grant","ipc_route"]`;
+- `rng_access_specs`: an exact complete deep copy of the then-operative
+  calibrated `rng_access_specs.v2`, not a schema tag or digest;
+- `filesystem_isolation_specs`: an exact complete deep copy of
+  `filesystem_isolation_specs.v1`, not a schema tag or digest; and
+- `canonicalization:
+  python-json-sort-keys-compact-ascii-no-nan-lf-v1`.
+
+Thus
+`ratified_design:calibrated_target_principal_and_capability_specs`
+resolves to the complete canonical object just defined, and
+`ratified_design:fitting_free_runner_root` resolves to the complete
+fitting-free second root object above. In their existing expected/actual
+preimages, each projection row has exactly its registered `projection_id`,
+`value_type: canonical_json`, and `value_identity_sha256` equal to SHA-256
+of the complete projected canonical object. The existing calibrated and
+fitting-free boolean verification-result schemas remain the sole result
+types. Their predicates now additionally require the exact root-identity and
+unique-entrypoint equations above; the calibrated predicate requires both
+complete nested registry copies to deep-equal their ratified objects.
+
+For the A3 row of
+`fitting_free_requirement_verification_specs.v1`, the earlier fourth source
+projection `capture_sidecar:input_hashes` is replaced in that same position
+by the exact existing member projection
+`capture_sidecar:input_descriptor_identities`. Its projected value is the
+complete ordered capture-sidecar array whose rows have exactly `input_id`,
+`path`, `schema_version`, `artifact_vintage_id`, `role_ids`, `byte_length`,
+`sha256`, `st_dev`, `st_ino`, and `mode`, as frozen in §16.10. The
+projection row uses the already frozen `canonical_json` value type and its
+identity digest is SHA-256 of canonical bytes of that complete array.
+
+The A3 predicate requires exactly one descriptor row whose `input_id` equals
+`a3_authority_identity.input_id`; zero or multiple matches is false. That
+row's path, schema, vintage, and `sha256` must equal respectively A3
+`path`, `schema_version`, `artifact_vintage_id`, and `source_sha256`;
+`role_ids` must contain `a3_weight_source` in its registered order; and
+SHA-256 of the complete sidecar descriptor array must equal A3
+`authority_capture_input_closure_sha256`. The complete primary and sidecar
+arrays must still deep-equal. The existing
+`authority_predicate_expected_preimage.v1`,
+`authority_predicate_actual_preimage.v1`, and
+`authority_predicate_verification_result.v1` remain the exact preimage and
+boolean-result schemas; the replacement adds no alternate predicate or
+result type.
+
+The named Git-parent projection is
+`terminal_attempt_and_registration_suffix_projection.v1`. It has exactly
+`schema_version`, `parent_commit`,
+`ordered_terminal_generation_suffixes`, `terminal_generation_rows`,
+`terminal_generation_count`, `terminal_generation_domain_sha256`,
+`selected_generation_suffix`, `ordered_registration_attempt_suffixes`,
+`registration_attempt_rows`, `registration_attempt_count`,
+`registration_attempt_domain_sha256`,
+`selected_registration_attempt_suffix`, `selected_registration_path`,
+`selected_output_paths`, `selected_output_paths_sha256`,
+`canonicalization`, and `status`.
+
+Each `terminal_generation_rows` member has exactly `generation_suffix`,
+`output_version`, `primary_path`, `sidecar_path`,
+`ordered_terminal_reason_literals`, `evidence_rows`, `evidence_count`, and
+`evidence_domain_sha256`. The reason array is a nonempty ordered subset of
+this closed order:
+
+```json
+[
+  "complete_pair",
+  "terminal_exposure",
+  "partial_final_artifact",
+  "newly_ratified_output_version_required"
+]
+```
+
+Each reason occurs exactly when the existing §16.5.4 terminal-history law
+proves that disposition from the parent tree and its complete registered
+history. Each evidence row has exactly `path`, `tree_mode`, `blob_oid`, and
+`raw_sha256`, is ordered by path, and records the exact parent-tree entry
+supporting a reason; mode is `100644` and the two digests are respectively
+40 and 64 lowercase hex. A `newly_ratified_output_version_required` reason
+uses the exact tracked ratification/registration evidence row that imposes
+that version. No clock, branch, worktree, configuration, or producer status
+can supply a reason.
+
+`ordered_terminal_generation_suffixes` is the complete ascending canonical-
+decimal suffix projection and must be exactly `1..n-1`.
+`terminal_generation_rows` has one same-position row per suffix.
+`terminal_generation_count` equals both lengths and its domain hash covers
+the complete canonical row array. Generation \(n\) is the least positive
+canonical decimal suffix for which none of the four reasons is established;
+it is `selected_generation_suffix`. A zero, leading-zero alias, gap,
+duplicate, higher occupied generation after a nonterminal generation, or
+missing evidence row fails the projection.
+
+Each `registration_attempt_rows` member has exactly
+`generation_suffix`, `registration_attempt_suffix`, `path`, `tree_mode`,
+`blob_oid`, and `raw_sha256`. It enumerates every parent-tree path matching
+exactly
+`docs/registrations/covered_earnings_correction_fitting_free_v<n>_registration_<r>.json`
+for selected \(n\), in ascending canonical \(r\), with mode `100644` and
+exact Git/raw digests. Its suffix array must be exactly `1..r-1`; count
+equals both array lengths and the domain hash covers the complete canonical
+rows. Selected \(r\) is the least absent positive suffix. Zero, alias,
+duplicate, gap, or a row for another generation fails.
+
+`selected_registration_path` is the exact grammar above with selected
+\(n,r\). `selected_output_paths` is the complete existing eight-key
+`output_paths` object mechanically substituting selected \(n\), and
+`selected_output_paths_sha256` hashes that complete canonical object.
+The selected registration, primary, and sidecar paths must all be absent in
+the parent tree. `parent_commit` is the exact 40-lowercase-hex single parent
+being projected. Canonicalization is
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`; status is `pass` iff
+every enumeration, path, row, count, hash, absence, and derivation equation
+above holds and otherwise is `fail`. In the existing namespace preimage this
+complete object is the value of
+`git_parent:terminal_attempt_and_registration_suffix_projection`; its row
+has `value_type: git_tree`, and its value digest is SHA-256 of the complete
+canonical projection. This is its only value serialization and result type.
+
+At the audited `8f55b5436b096930fbc4b51daec7e2969927e7bf` tree, both
+suffix/row domains are exact empty arrays with count zero and domain hash
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`.
+The derived generation and registration suffixes are both integer `1`; the
+selected registration path is
+`docs/registrations/covered_earnings_correction_fitting_free_v1_registration_1.json`;
+and the complete selected output-path object is:
+
+```json
+{
+  "output_version": "covered_earnings_correction_fitting_free_v1",
+  "primary": "runs/covered_earnings_correction_fitting_free_v1.json",
+  "sidecar": "runs/covered_earnings_correction_fitting_free_v1.json.env.json",
+  "incident_prefix": "runs/covered_earnings_correction_fitting_free_v1_incident_",
+  "attempt_claim_prefix": "runs/covered_earnings_correction_fitting_free_v1_attempt_",
+  "retry_authority_prefix": "runs/covered_earnings_correction_fitting_free_v1_retry_authority_",
+  "retry_claim_prefix": "runs/covered_earnings_correction_fitting_free_v1_retry_",
+  "fresh_registration_adjudication_prefix": "runs/covered_earnings_correction_fitting_free_v1_fresh_registration_"
+}
+```
+
+Its canonical SHA-256 is exactly
+`2c6fd056ee9a9a9be74f27e875cd64c109ecdce16d00fac1ce188c0b885ca5c8`.

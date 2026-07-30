@@ -14,16 +14,20 @@ definition, including its preimage schema, serialization, and result type.
 
 - Confirmed the requested branch, base commit, and clean worktree.
 - Recorded the five remaining findings and the per-finding commit sequence.
+- Closed both named graph-root projections with exact runner objects,
+  entrypoints, canonical identity preimages, and typed graph roots.
+- Replaced A3's nonexistent capture-sidecar member with the exact descriptor
+  array and closed its unique-row/hash predicate.
+- Froze the Git-parent generation/registration suffix projection, including
+  its rows, canonical value, result law, and current `n=1, r=1` derivation.
 
 ## Next
 
-1. Close the two graph roots, the A3 capture-sidecar projection, and the
-   git-parent suffix projection.
-2. Define authority-role resolution and lawful append-only capture
+1. Define authority-role resolution and lawful append-only capture
    incorporation.
-3. Replace fixed ledger-entry references with the structural publication
+2. Replace fixed ledger-entry references with the structural publication
    subject.
-4. Replace G11 as the seventh complete `gate_specs.v4` row.
-5. Close G21 structural validity.
-6. Run strict JSON, append-only-prefix, closure, repository-state, and
+3. Replace G11 as the seventh complete `gate_specs.v4` row.
+4. Close G21 structural validity.
+5. Run strict JSON, append-only-prefix, closure, repository-state, and
    whitespace validation; record final dispositions.
