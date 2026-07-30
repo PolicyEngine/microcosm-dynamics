@@ -10725,3 +10725,165 @@ passing report can assert only `eligible_on_publication_pr_merge`. Condition
 Only that merge activates the successor labels and resolves ledger entry 11.
 An amendment merge, registration, deterministic-model lock, correction
 primary, unmerged context pair, or failed certificate resolves nothing.
+
+### 16.8 Satisfiability walk and honest limitations
+
+This subsection checks that every new branch law has a finite witness without
+using a target value, fitted label, caller-selected path, or post-output
+fact. It is a schema/law satisfiability proof, not evidence that the
+currently available authority set already permits a production run.
+
+#### 16.8.1 Registration and empty-domain witness
+
+The branch predicates have the following complete truth table at a fresh
+registration:
+
+| Complete calibrated domain registrable | All fitting-free authorities pass | Result |
+|---|---|---|
+| true | not evaluated because the fitting-free predicate requires calibrated false | `CALIBRATED` |
+| false | true | `DETERMINISTIC_FITTING_FREE` |
+| false | false | abort registration |
+| unknown, conflicting, or derived after value access | any | abort registration |
+
+The present 17 partial and 11 unestablished membership facts make the first
+predicate false. The presently unresolved A1 and A3 authorities also make
+the second predicate false. The current concrete outcome is therefore
+**abort registration**, not a fitting-free production result. A lawful
+future witness requires exact A1 selector bytes, A2 weight-field authority,
+and an A3 staged weight input/digest/keyset, plus every unchanged authority
+and gate prerequisite.
+
+Given those bytes, each empty branch has a direct canonical witness:
+
+- all six target/official-comparison arrays are exact `[]`, all five counts
+  are zero, and all empty-domain hashes equal the registered canonical hash;
+- all six model-choice arrays are exact `[]`, all six counts are zero, and
+  all hashes equal that same canonical hash;
+- the A5 absence closure has five empty arrays, five zero counts, and five
+  canonical-empty hashes;
+- the configuration has none of the forbidden exact keys, input roles, paths,
+  principals, IPC fields, or capabilities; and
+- the result publishes evaluated empty-domain objects rather than null,
+  missing, or not-evaluated calibrated objects.
+
+These witnesses are independent of aggregate values. A nonempty official
+row cannot improve them; it invalidates this branch.
+
+#### 16.8.2 Classification and measurement witness by case
+
+The following finite cases cover every new deterministic rule:
+
+| Input/adjudication case | Exact witness |
+|---|---|
+| Verified direct positive wage | Direct one-hot status; gain equals source amount; loss and delta zero. |
+| Modelable positive wage | Status vector `[1/2,0,1/2,0]`; expected covered and noncovered gains each \(A/2\); one keyed status draw per correction draw. |
+| Modelable positive SE | Status vector `[0,1/2,1/2,0]`; expected covered and noncovered gains each \(A/2\); SECA law runs only inside realized/expected joint states. |
+| Registered unresolved amount | Status vector `[0,0,0,1]`; the complete gain/loss channel remains unresolved and never enters an OASDI base. |
+| Exact zero | Gain, loss, net, and delta all zero; no positive job or worker is synthesized. |
+| Eligible homogeneous SE loss | Gain zero, loss magnitude \(-A\), net \(A\), delta zero; offset only inside its registered SE aggregation group. |
+| Negative wage or ineligible negative amount | Adjusted gain/loss/net zero and delta \(-A\); source anomaly remains recoverable. |
+| Positive mixed amount | Two stable children of exactly \(A/2\), one wage and one SE, each taking its homogeneous status law. |
+| Negative mixed amount | Equal signed children; wage half is an anomaly, while the SE half is a loss only if the effective-year SE law admits it. |
+| Untyped remuneration | Only a registered unresolved consequence is allowed; `mixed` is never inferred. |
+| `nonremuneration` | Source lineage/reconciliation row only; no atomic covered-earnings or status row. |
+
+For every row, the four measurement predicates are mutually exclusive and
+exhaustive over finite signed \(A\). Mixed-child signed sums equal their
+parent. Gain and loss channels each reconcile exactly. SE netting stays
+within group, wage-first cap ordering remains defined, and the joint-state
+enumeration produces a finite statutory result before expectation. The
+one-half vectors sum to one exactly as dyadic rationals; no floating
+approximation is required.
+
+The draw witness is likewise finite: direct/unresolved one-hot groups consume
+zero uniforms; each modelable half-probability group consumes one registered
+midpoint per correction draw; mixed children use distinct group IDs; and
+every corrected metric has fixed 10- and 20-draw prefixes. No path requires a
+mixed-share or measurement-residual draw.
+
+#### 16.8.3 Artifact, gate, and certificate witness
+
+The new artifact graph is acyclic in this exact order:
+
+```text
+ratified design + registered authorities
+  -> path applicability
+  -> empty target/model-choice closures
+  -> deterministic model/input identity
+  -> direct classification/measurement streams
+  -> model lock
+  -> precontext gates and G21
+  -> downstream roots and G20
+  -> RNG lifecycle seal
+  -> sidecar bytes
+  -> primary bytes binding the sidecar
+  -> separate context sidecar/primary
+  -> conditional certificate
+  -> external merge event
+```
+
+No later hash is an input to an earlier substantive identity. In particular,
+full evaluation provenance is absent from the model and G21 prebundle;
+condition 7 is absent from G21; condition 8 is produced only by the separate
+context process; and condition 9 is not asserted by an artifact.
+
+Every revised gate has a nonempty, exact witness:
+
+- G10 has six ordered comparisons over complete deterministic bundles;
+- G14 has one 1×/7× person-level comparison plus two complete weight packets;
+- G15 has 23 assertion rows, exact grant/IPC/lifecycle equality, and seven
+  prohibited-access counts equal to zero;
+- G17 has 17 ordered comparisons: C01–C14 nonempty, C15 canonically empty,
+  and C16–C17 nonempty A1/A2/A3 authority closures;
+- G19 has one registered/activated model, a positive complete rule count,
+  equal model hashes, and seven prohibited-domain counts equal to zero; and
+- G21 has a nonempty opaque fixture/mutation domain, equal substantive
+  prebundles, zero forbidden capabilities/opens/releases, and unequal full
+  fixture-bound evaluation provenance.
+
+G01–G09, G11–G13, G16, G18, G20, and G22 retain their ordinary finite
+witnesses. In particular, lawful empty fitting/model-choice domains do not
+make the ledger support, RNG lifecycle, cutoff, reconciliation, nonlinear
+reduction, finite-grid, or trusted-consumer domains empty.
+
+A passing primary has a nonnull deterministic correction, 21 exact result
+members, all 22 gate rows, and seven passing eligibility conditions. A
+passing fitting-free context report has the unchanged positive corrected
+metric, pairing, comparison, dependency, and 15-series domains, plus an exact
+zero-row proof for the ten unauthorized Amendment-1 diagnostic families.
+That report can emit the conditional certificate. The external merge alone
+satisfies condition 9.
+
+#### 16.8.4 Deliberate assumptions and nonclaims
+
+The fitting-free model is useful without being empirically calibrated. Its
+limitations are explicit:
+
+1. The one-half modelable coverage vectors are the exact zero-link defaults
+   of the ratified model family. They are deterministic assumptions, not
+   estimates of historical coverage rates.
+2. The one-half mixed-remuneration allocation is a deterministic
+   underidentification rule. No aggregate or micro-linked evidence establishes
+   that split.
+3. The identity multiplier preserves observed positive amounts and the
+   negative-case registry preserves losses/anomalies; neither corrects
+   remaining survey measurement error through aggregate evidence.
+4. Keyed draws represent unresolved modeled status under a frozen law.
+   “Deterministic-uncalibrated” does not mean uncertainty-free.
+5. None of the ten Amendment-1 no-fitting-loss official diagnostics is
+   published. Six retain unresolved methodology and all ten lack authority in
+   the closed context schema. Four arithmetically plausible comparisons are
+   still omitted rather than described as validated.
+6. G21 uses committed opaque synthetic bytes to prove structural
+   noninterference and absent capabilities. It does not inspect or validate a
+   production official aggregate.
+7. The separately locked 15-series context report can describe differences
+   only after the correction is immutable. Its values, signs, ranks, and
+   directions cannot retroactively alter the correction.
+8. The labels continue to disclaim population alignment, individual
+   administrative truth, and pre-merge ledger-entry resolution.
+
+These are not deviations from the referee's six-item contract. They are the
+minimum honest consequences of removing aggregate fitting while preserving
+the ratified classification, measurement, crosswalk, statutory, draw,
+consumer, ceremony, and fail-closed laws.
