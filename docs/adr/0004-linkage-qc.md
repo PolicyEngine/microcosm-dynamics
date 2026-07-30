@@ -1,7 +1,7 @@
-# ADR 0004: Employer-firm linkage QC requirements for C3
+# ADR 0004: Employer-firm linkage QC requirements for IC3
 
-**Status:** Proposed — input to the C3 referee round; this document
-locks no C3 threshold. C1 and C2 are treated as frozen and immutable
+**Status:** Proposed — input to the IC3 referee round; this document
+locks no IC3 threshold. IC1 and IC2 are treated as frozen and immutable
 for this work under the workstream directive and the freeze record in
 [populace-dynamics#215](https://github.com/PolicyEngine/populace-dynamics/pull/215).
 This ADR does not amend their schema, semantics, or readers.
@@ -10,7 +10,7 @@ This ADR does not amend their schema, semantics, or readers.
 
 The employer-firm plan on
 [issue #192](https://github.com/PolicyEngine/populace-dynamics/issues/192)
-requires noise floors before thresholds, a referee round before the C3
+requires noise floors before thresholds, a referee round before the IC3
 gate block locks, and no one-shot candidate run before that lock. The
 same ordering must govern the worker-to-employer or worker-to-firm-type
 assignment itself. A downstream E-cell cannot certify a model if the
@@ -18,22 +18,22 @@ links used to construct the cell have unknown quality.
 
 Here, **link** includes any accepted worker-to-employer, employer-
 attachment, or worker-to-firm-type assignment consumed by an E-cell.
-That includes an assigned C2 `CanonicalBand` or industry type; it does
+That includes an assigned IC2 `CanonicalBand` or industry type; it does
 not turn a statistical imputation into an identified firm ID. A **link
 unit** is the unit on which a decision is accepted or withheld. Paired
 and run-level moments may require a stricter derived unit, as specified
 below.
 
-The frozen contract seam remains the C1 spell fields
+The frozen contract seam remains the IC1 spell fields
 `person_id`, `spell_id`, `start_period`, `end_period`, `industry`,
 `firm_size_band`, `class_of_worker`, `earnings_share`, and
-`primary_job`. The implemented C2 seam is the banding functions in
+`primary_job`. The implemented IC2 seam is the banding functions in
 `src/populace_dynamics/firms/banding.py`. Linkage-QC decisions,
 adjudication labels, match scores, and linkage weights therefore live
-in versioned sidecars keyed to C1 rows; they are not new C1 columns.
-`spell_type` is also not a C1 field. Where needed below, transition
+in versioned sidecars keyed to IC1 rows; they are not new IC1 columns.
+`spell_type` is also not an IC1 field. Where needed below, transition
 type is derived from adjacent spell rows plus the versioned person-month
-observation/nonemployment frame; C1 spells alone do not identify exits,
+observation/nonemployment frame; IC1 spells alone do not identify exits,
 entries, or censoring.
 
 ### Evidence behind the precision-first rule
@@ -73,7 +73,7 @@ positive links.
 
 ## Decision
 
-### 1. Precision first, before every C3 threshold
+### 1. Precision first, before every IC3 threshold
 
 1. **Every link-producing component used by a gated E-cell must have
    an independent audit artifact.** For categorical assignments, the
@@ -88,16 +88,16 @@ positive links.
    `1 - precision` is the false-discovery rate, not that pairwise rate.
    Point estimates and one-sided confidence bounds are both required.
 2. **The precision floor is pre-registered before E-cell thresholds.**
-   C3 must name the assignment, eligible universe, link unit, floor
+   IC3 must name the assignment, eligible universe, link unit, floor
    `P_floor`, confidence level, required strata, pooling rule, and
    failure disposition before it names any threshold for an E-cell
    that consumes that assignment. Recall is always published. Whether
-   recall also gates is an explicit C3 referee decision, not an
+   recall also gates is an explicit IC3 referee decision, not an
    after-the-fact response to results.
 3. **Passing uses a confidence bound, not the observed proportion.**
    The lower one-sided confidence bound for precision must be at least
    `P_floor` overall and at every stratum or derived-unit level that
-   C3 designates operative. Oversampled strata are combined only with
+   IC3 designates operative. Oversampled strata are combined only with
    their recorded sample inclusion weights.
 4. **No threshold shopping follows a linkage failure.** A failed or
    unevaluable applicable floor makes the linked E-cell invalid. It is
@@ -106,7 +106,7 @@ positive links.
    result. A registered candidate with any required invalid cell cannot
    pass the employer block.
 5. **The audit precedes the one-shot run.** Linkage-QC results and the
-   immutable adjudication manifest must be on the C3 record before a
+   immutable adjudication manifest must be on the IC3 record before a
    candidate may consume the matcher. A materially changed matcher,
    cutoff, candidate-generation rule, source vintage, or target
    vocabulary requires a new versioned audit or the pre-registered
@@ -114,7 +114,7 @@ positive links.
 
 ### 2. Hand-adjudication sample
 
-The C3 block must register the following sample design before labels
+The IC3 block must register the following sample design before labels
 are opened.
 
 1. **Frame and two audit arms.** Define the complete eligible universe,
@@ -126,11 +126,11 @@ are opened.
    reference that can find a true counterpart omitted by candidate
    generation; reviewing only the matcher's candidate set is not an
    end-to-end recall study. Report candidate-generation recall separately
-   from selector/cutoff recall. Because a unit may enter both arms, C3
+   from selector/cutoff recall. Because a unit may enter both arms, IC3
    registers the dual-frame overlap and combined-inclusion estimator so
    it is neither omitted nor counted twice.
 2. **Stratification follows the moments the matcher feeds.** For the
-   accepted arm, stratify at minimum by the five assigned C2
+   accepted arm, stratify at minimum by the five assigned IC2
    `CanonicalBand` values (plus withheld or unresolved assignments),
    assigned NAICS major industry, and the derived spell/transition class
    relevant to the battery: stay, job-to-job, exit, or entry, crossed
@@ -140,9 +140,9 @@ are opened.
    known-true class before review, the universe arm uses a separate
    pre-link stratification frame observed for every eligible unit, then
    reports recall by adjudicated true band, industry, and transition
-   domain. C3 publishes any pooling of sparse strata before adjudication
+   domain. IC3 publishes any pooling of sparse strata before adjudication
    and retains every arm-specific inclusion probability.
-3. **Target size is powered at the floor.** C3 registers `P_floor`, a
+3. **Target size is powered at the floor.** IC3 registers `P_floor`, a
    substantively meaningful design precision `P_design > P_floor`,
    one-sided size `alpha`, power `1 - beta`, and its multiplicity rule.
    For independent, equal-probability accepted assignments within a
@@ -161,7 +161,7 @@ are opened.
    power with the registered clustering unit, inclusion weights, finite-
    population correction where material, and anticipated design effect.
    The target includes unusable-record, indeterminate, and nonresponse
-   inflation. If multiple strata must clear, C3 distinguishes simultaneous
+   inflation. If multiple strata must clear, IC3 distinguishes simultaneous
    confidence coverage from an intersection-union pass rule and computes
    the **joint** probability that every required stratum passes at
    `P_design`; powering each stratum separately at `1 - beta` is not
@@ -178,7 +178,7 @@ are opened.
    coder's decision. They code `link`, `no link`, or `insufficient
    evidence` under a frozen manual. A third coder or standing panel
    adjudicates disagreements without majority labels being disclosed
-   first. Before labels open, C3 registers whether an indeterminate,
+   first. Before labels open, IC3 registers whether an indeterminate,
    unusable-evidence, or nonresponse case counts conservatively as
    incorrect, enters partial-identification bounds, or makes the floor
    unevaluable; hard cases may not be dropped from denominators after
@@ -207,7 +207,7 @@ are opened.
 
 #### First-lock scope, ownership, and sidecar location
 
-The first C3 lock applies this audit to **E4/E5 SIPP-internal employer
+The first IC3 lock applies this audit to **E4/E5 SIPP-internal employer
 attachment only**. Within-panel `EJB` job-ID attachment is an assignment
 for which hand-adjudicable reference evidence can exist. The full
 five-band × NAICS-major × transition-class × `primary_job` grid is
@@ -219,7 +219,7 @@ Workstream A (`@daphnehanse11`) owns the E4/E5 adjudication frame,
 coding manual, coder-panel operation, and privacy-safe audit manifest.
 Workstream B (`@vahid-ahmadi`) owns the firm-side sidecar schema,
 versioning rules, and firm-side audit artifacts. Versioned sidecars
-join C1 on `person_id` and `spell_id`; they never amend C1. Before the
+join IC1 on `person_id` and `spell_id`; they never amend IC1. Before the
 first audit opens labels, the reusable schema and versioning contract
 must be committed at
 `docs/design/employer_linkage_qc_sidecar.schema.json`. Privacy-safe
@@ -247,7 +247,7 @@ keys remain outside git.
    version `s_i = Pr(L_i = 1 | X_i)`, where `L_i` denotes inclusion in
    the usable linked subsample of the complete eligible universe at the
    E-cell's analysis unit. A person-level score does not automatically
-   weight a pair, run, or cluster; C3 models that unit's inclusion or
+   weight a pair, run, or cluster; IC3 models that unit's inclusion or
    pre-registers and justifies a joint construction from component
    scores. Publish the model specification, training
    population, out-of-sample diagnostics, propensity distributions for
@@ -265,7 +265,7 @@ keys remain outside git.
    `[(1 - r_i) / r_i] [q / (1 - q)]`, where `q` is the linked-copy
    share of the stack. `s_i` and `r_i` are not interchangeable. The
    linkage adjustment multiplies the pre-existing survey/design/
-   opportunity weight; it does not replace that base weight. C3 derives
+   opportunity weight; it does not replace that base weight. IC3 derives
    and registers the applicable form before seeing the E-cell.
 4. **Publish weighted and unweighted with valid uncertainty.** Every
    E-cell consuming links publishes both, labels the registered operative
@@ -294,22 +294,22 @@ keys remain outside git.
 
 An overall floor failure invalidates every linked cell using that
 matcher version. A required-stratum failure invalidates every cell whose
-estimand includes that stratum, unless C3 pre-registers a genuinely
+estimand includes that stratum, unless IC3 pre-registers a genuinely
 disjoint matcher and estimand. A passing marginal link floor does not by
-itself certify a pair or a run: C3 must either audit the derived unit
+itself certify a pair or a run: IC3 must either audit the derived unit
 directly or register and justify a conservative composition rule.
 
 | cell | linkage unit and required QC | weighting and failure disposition |
 |---|---|---|
-| **E4 — retention pairs** | Audit endpoint assignments and, if C3 makes it operative, the derived same-employer/same-attribute decision. The audit strata include age, industry, C2 band, transition month, and `primary_job` status used by the cell. | Publish pair-opportunity estimates unweighted and with linkage-IPW. If any C3-designated endpoint or pair-level floor fails, all affected E4 retention cells are invalid. |
-| **E5 — attachment runs** | If C3 designates a run-level floor, audit the full multi-window run label, including false continuation and false break errors. A per-month pass alone cannot certify a run because error compounds with length. | Weight the eligible run opportunity, not each observed linked month as if independent. If any C3-designated endpoint or run-level floor fails, the affected E5 run-length cells are invalid. |
-| **E9 — earnings-change coherence** | Derive stay, job-to-job, exit, and entry from adjacent C1 spells plus the versioned person-month observation/nonemployment frame. Audit any C3-designated transition floor; for job-to-job cells, audit both origin and destination firm-size/industry assignments. | Define propensity and composite weight on the eligible transition opportunity, then publish both versions within class. A failed C3-designated origin, destination, or transition-class floor invalidates the corresponding E9 cells; the referee cannot replace them post hoc with a different definition. |
-| **E11 — firm-size flow ladder** | The unit is an origin-destination job-to-job pair. Audit the joint ordered C2-band assignment. An unresolved `BandSpan` is not a correct categorical assignment merely because it contains the eventual band. | Model inclusion and weight at the ordered-pair opportunity. An overall or joint-pair floor failure invalidates E11; a required origin/destination stratum failure invalidates every E11 cell containing it. |
+| **E4 — retention pairs** | Audit endpoint assignments and, if IC3 makes it operative, the derived same-employer/same-attribute decision. The audit strata include age, industry, IC2 band, transition month, and `primary_job` status used by the cell. | Publish pair-opportunity estimates unweighted and with linkage-IPW. If any IC3-designated endpoint or pair-level floor fails, all affected E4 retention cells are invalid. |
+| **E5 — attachment runs** | If IC3 designates a run-level floor, audit the full multi-window run label, including false continuation and false break errors. A per-month pass alone cannot certify a run because error compounds with length. | Weight the eligible run opportunity, not each observed linked month as if independent. If any IC3-designated endpoint or run-level floor fails, the affected E5 run-length cells are invalid. |
+| **E9 — earnings-change coherence** | Derive stay, job-to-job, exit, and entry from adjacent IC1 spells plus the versioned person-month observation/nonemployment frame. Audit any IC3-designated transition floor; for job-to-job cells, audit both origin and destination firm-size/industry assignments. | Define propensity and composite weight on the eligible transition opportunity, then publish both versions within class. A failed IC3-designated origin, destination, or transition-class floor invalidates the corresponding E9 cells; the referee cannot replace them post hoc with a different definition. |
+| **E11 — firm-size flow ladder** | For any per-record audit, the unit is an origin-destination job-to-job pair and the joint ordered IC2-band assignment is audited. An unresolved `BandSpan` is not a correct categorical assignment merely because it contains the eventual band. A separately registered held-out aggregate destination-band distribution may gate under the boundary below. | Model inclusion and weight at the ordered-pair opportunity for per-record claims. A failed IC3-designated origin, destination, or transition-class floor invalidates the corresponding per-record E11 cells. An aggregate E11 gate certifies only reproduction of its registered aggregate distribution. |
 | **E12 — variance and coworker structure** | Phase 2 must audit worker-to-firm-type assignment and any generated same-firm or coworker co-assignment at the exact unit the E12 estimand uses. Type agreement alone cannot validate a claim about an identified firm. | Model inclusion at the worker pair, co-assignment, or cluster unit used by the decomposition; a worker-only propensity is insufficient without a justified composition. Publish both versions. If truth, floor, or support fails, every E12 cell using it is invalid and phase 2 is a no-go. |
 
 E3 and E8 do not ordinarily require a worker-to-firm link, and E10
 re-runs the existing locked PSID earnings gates without a new noise
-floor. They are not blanket exemptions: if a final C3 implementation
+floor. They are not blanket exemptions: if a final IC3 implementation
 constructs any of them from accepted employer or firm-type assignments,
 the precision-first law applies. Linkage failure never weakens E10 or
 changes an existing PSID threshold.
@@ -323,7 +323,7 @@ spells, not an observed two-sided worker-firm roster. The SIPP reader's
 `EJB{n}_JOBID` is a within-panel attachment key. Its spell collapse
 currently carries raw `empsize_code`; `sipp_empsize_to_canonical` in
 `banding.py` preserves source-band ambiguity through `BandSpan`, while
-the frozen C1 seam ultimately carries one `CanonicalBand`. Therefore:
+the frozen IC1 seam ultimately carries one `CanonicalBand`. Therefore:
 
 1. QC scores the **final accepted assignment consumed by the E-cell**,
    after any ambiguity resolution, not the raw SIPP code or a claim that
@@ -331,9 +331,9 @@ the frozen C1 seam ultimately carries one `CanonicalBand`. Therefore:
 2. An exact SIPP interval-to-band map establishes only numeric interval
    nesting. SIPP measures establishment size, so it does not by itself
    validate administrative enterprise size.
-3. Sidecars join to C1 with `person_id` and `spell_id`. They do not add
+3. Sidecars join to IC1 with `person_id` and `spell_id`. They do not add
    `job_id`, `firm_id`, match score, adjudication status, or weights to
-   frozen C1.
+   frozen IC1.
 4. E4/E5 score retention and attachment, E9 scores transition-conditioned
    earnings changes, and E11 scores firm-size flows only after their
    applicable link and reweighting requirements above are evaluable.
@@ -346,21 +346,30 @@ the frozen C1 seam ultimately carries one `CanonicalBand`. Therefore:
    is not a claim that an observed host has one adjudicable true class.
    Therefore:
 
-   > Cells conditioning on imputed firm-size bands are validated
-   > distributionally (calibration fit to SUSB margins plus held-out-axis
-   > stability) and are report-only in every phase; they gate only if an
-   > external person-level truth source materializes, at which point they
-   > enter through the standard promotion ceremony (new floor + ADR 0004
-   > audit).
+   > Per-record or individual-outcome cells conditioning on imputed
+   > firm-size bands are validated distributionally (calibration fit to
+   > SUSB margins plus held-out-axis stability) and are report-only in
+   > every phase; they gate only if an external person-level truth source
+   > materializes, at which point they enter through the standard
+   > promotion ceremony (new floor + ADR 0004 audit).
 
-   This status is permanent for the current evidence regime, not a
-   provisional deferral. Calibration fit is a build check and may not be
-   described as independent validation. A genuinely disjoint margin can
-   support promotion only after its own floor and audit; true per-record,
-   coworker, or firm-identity claims additionally require a linked
-   reference.
+   This per-record status is permanent for the current evidence regime,
+   not a provisional deferral. Calibration fit is a build check and may
+   not be described as independent validation.
 
-The pre-C3 floor draft on
+   A genuinely held-out aggregate distribution such as E11's
+   destination-size margin may gate when it is disjoint from every
+   calibration target and IC3 locks its exact statistic, population, cell
+   list, floor, and automatic demotion rule before fitting. Such a gate
+   certifies aggregate-distribution reproduction only. It does **not**
+   validate any worker's assigned band, true worker-employer linkage,
+   worker sorting, coworker structure, or firm effects. This boundary
+   implements the HIPSM-first synthetic-firm decision recorded on
+   [issue #282](https://github.com/PolicyEngine/populace-dynamics/issues/282):
+   aggregate validation is admissible now, while true-linked validation
+   remains a future promotion requirement.
+
+The pre-IC3 floor draft on
 [PR #212](https://github.com/PolicyEngine/populace-dynamics/pull/212)
 does not satisfy or conflict with this ADR: it estimates sampling noise
 in E3/E4/E5/E8/E9 after the linkage inputs are defined. Its half-splits
@@ -385,13 +394,13 @@ attenuating.
 
 For that reason, a phase-2 E12 story must identify an admissible
 hand-adjudication frame for the actual assignment unit and clear its
-precision floor. If public margins cannot support that truth, C3 records
+precision floor. If public margins cannot support that truth, IC3 records
 the limitation as a phase-2 no-go; calibration fit to aggregates is not
 a substitute. The register may support firm-type policy claims only at
 the level it identifies. It may not relabel type agreement as firm-
 identity or coworker validation.
 
-### 6. Items for the C3 referee round — deliberately unresolved
+### 6. Items for the IC3 referee round — deliberately unresolved
 
 The referee round must decide and pre-register the following. This ADR
 does not resolve them:
@@ -429,23 +438,23 @@ does not resolve them:
 9. Long-window tenure evidence from PSID/NLSY and any transport test for
    applying one adjudication result across source vintages or populations.
 
-The settled C1 fields, C2 semantics and five bands, explicit
+The settled IC1 fields, IC2 semantics and five bands, explicit
 `NOEMP`/`FIRMSIZE` coding, class-of-worker universe, and person-table
 geography join are outside this list. Reopening them requires the joint
-C1/C2 amendment process, not the C3 referee round.
+IC1/IC2 amendment process, not the IC3 referee round.
 
 ## Consequences
 
-- C3 gains a linkage-quality input gate before its model-fit gates.
+- IC3 gains a linkage-quality input gate before its model-fit gates.
   E4, E5, E9, E11, and E12 cannot certify a candidate from unaudited or
   floor-failing assignments.
 - Every link-consuming cell exposes the observable-selection question
   by publishing linkage-IPW and unweighted estimates together, with one
   operative version chosen before the candidate result is seen.
 - The required evidence is carried in sidecars and reported artifacts;
-  C1, C2, `gates.yaml`, readers, and banding code are unchanged.
+  IC1, IC2, `gates.yaml`, readers, and banding code are unchanged.
 - Exact floor values, E-cell thresholds, and operative weighting choices
-  remain decisions for the C3 referee round.
+  remain decisions for the IC3 referee round.
 
 ## References
 
