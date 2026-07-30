@@ -66,17 +66,26 @@ def test_manifest_pins_all_staged_dictionary_and_raw_source_files():
         elif row["dictionary_role"] == "family_codebook":
             assert Path(row["path"]).suffix.lower() == ".pdf"
             assert row["encoding"] == "binary"
-            assert row["provenance"] == {
-                "source_organization": "Panel Study of Income Dynamics",
-                "source_product": "Family File Codebook",
-                "source_edition": str(row["interview_wave"]),
-                "local_staging_authentication": ("path_size_sha256_verified"),
-                "network_capture_performed_in_unit": False,
-                "retrieval_provenance_status": (
-                    "registration_required_missing_family_archive_"
-                    "capture_record"
-                ),
-            }
+            provenance = row["provenance"]
+            assert provenance["source_organization"] == (
+                "Panel Study of Income Dynamics"
+            )
+            assert provenance["source_product"] == "Family File Codebook"
+            assert provenance["source_edition"] == str(row["interview_wave"])
+            assert provenance["local_staging_authentication"] == (
+                "path_size_sha256_verified"
+            )
+            assert provenance["network_capture_performed_in_unit"] is False
+            assert provenance["retrieval_provenance_status"] == (
+                "registration_required_missing_original_retrieval_url_"
+                "timestamp"
+            )
+            archive = provenance["local_family_archive"]
+            assert archive["member_size_bytes"] == row["size_bytes"]
+            assert archive["member_sha256"] == row["sha256"]
+            assert archive["membership_authentication"] == (
+                "archive_member_bytes_equal_registered_codebook_bytes"
+            )
         else:
             assert Path(row["path"]).suffix in {".do", ".sps"}
             assert row["encoding"] == "windows-1252"
@@ -122,14 +131,14 @@ def test_source_evidence_records_the_exact_ratification_blockers():
     assert summary["codebook_file_count"] == 43
     assert summary["codebook_total_size_bytes"] == 109_680_641
     assert summary["codebook_authority_manifest_sha256"] == (
-        "8ac987fc5207ded050fe9a20e11a7596591a64e6f64c5218f77970fb75ac2ad5"
+        "b0ff4b6a09b5cb664ecd9c99a2de61f5c8a47cdb48889cd19f64f77bca11fd34"
     )
     assert summary["raw_fixed_width_file_count"] == 43
     assert summary["raw_fixed_width_total_size_bytes"] == 1_380_523_383
     assert summary["source_authority_file_count"] == 176
     assert summary["source_authority_total_size_bytes"] == 1_514_409_083
     assert summary["source_authority_manifest_sha256"] == (
-        "2e1160fc28a76a73538313f79ad48b578b5128ee9a119ae8776d125df0777d6b"
+        "52906f7a36955d20282dbce2dd4bac260395d3ce3961bd0baf763290c3152116"
     )
     assert summary["main_dictionary_field_count"] == 89_599
     assert summary["explicit_spss_numeric_format_count"] == 2_919

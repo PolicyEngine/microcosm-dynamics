@@ -7,24 +7,30 @@ physical layout, while the raw ``.txt`` files are byte-pinned without being
 parsed.  That separation enforces the independent-domain rule in
 covered-earnings design section 4.2.
 
-The staged dictionaries pin physical fields, short labels, and fixed-width
-coordinates.  The 2021 and 2023 format pairs also provide field-bound code
-maps, including positive DK, NA/refused, and inapplicable-code evidence.
-They still do not contain enough evidence to ratify
-``psid_questionnaire_slot_specs.v1``: 41 waves have no value maps, no main
-SPSS setup has a formal ``MISSING VALUES`` declaration, and the files do not
-establish complete questionnaire slot hierarchies, full descriptions,
-timing, or exhaustive absence proofs.  The public builder therefore emits a
-reproducible registration-required audit and refuses to manufacture either
-ratified artifact.
+The staged setup dictionaries pin physical fields, short labels, and
+fixed-width coordinates.  All 43 registered family codebooks add complete
+displayed descriptions and value maps, each bound to authenticated PDF page
+content-stream byte ranges.  Ancillary era artifacts preserve those positive
+facts independently of the reader and correction crosswalk.
+
+The sources still do not ratify ``psid_questionnaire_slot_specs.v1``: they
+lack exact fixed-width token grammar for every sentinel, complete
+questionnaire slot attachment, and questionnaire-exhaustive absence proofs.
+The public builders therefore emit reproducible positive evidence and an
+explicit registration-required adjudication while refusing to manufacture a
+partial official inventory.
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import re
+import subprocess
+import zipfile
+import zlib
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -35,6 +41,12 @@ SCHEMA_VERSION = (
 ARTIFACT_ID = SCHEMA_VERSION
 SLOT_SPECS_ID = "psid_questionnaire_slot_specs.v1"
 SOURCE_INVENTORY_ID = "psid_covered_earnings_source_field_inventory.v1"
+CODEBOOK_EVIDENCE_SCHEMA_VERSION = "psid_codebook_field_evidence.v1"
+CODEBOOK_ADJUDICATION_SCHEMA_VERSION = (
+    "psid_codebook_inventory_adjudication.v1"
+)
+PDF_TEXT_EXTRACTION_TOOL = "Poppler pdftotext"
+PDF_TEXT_EXTRACTION_VERSION = "26.04.0"
 
 INTERVIEW_WAVES: tuple[int, ...] = (
     *range(1968, 1998),
@@ -102,12 +114,278 @@ FORMAT_SOURCE_IDENTITIES: tuple[
 CODEBOOK_AUTHORITY_FILE_COUNT = 43
 CODEBOOK_AUTHORITY_TOTAL_SIZE_BYTES = 109_680_641
 CODEBOOK_AUTHORITY_MANIFEST_SHA256 = (
-    "8ac987fc5207ded050fe9a20e11a7596591a64e6f64c5218f77970fb75ac2ad5"
+    "b0ff4b6a09b5cb664ecd9c99a2de61f5c8a47cdb48889cd19f64f77bca11fd34"
 )
 SOURCE_AUTHORITY_FILE_COUNT = 176
 SOURCE_AUTHORITY_TOTAL_SIZE_BYTES = 1_514_409_083
 SOURCE_AUTHORITY_MANIFEST_SHA256 = (
-    "2e1160fc28a76a73538313f79ad48b578b5128ee9a119ae8776d125df0777d6b"
+    "52906f7a36955d20282dbce2dd4bac260395d3ce3961bd0baf763290c3152116"
+)
+CODEBOOK_TOTAL_FIELD_COUNT = 89_599
+CODEBOOK_TOTAL_PAGE_COUNT = 29_897
+CODEBOOK_TOTAL_MAP_ROW_COUNT = 479_345
+CODEBOOK_TOTAL_CLOSED_RANGE_COUNT = 36_950
+CODEBOOK_TOTAL_DESCRIPTION_LINE_COUNT = 219_518
+CODEBOOK_ADJUDICATION_CONTENT_SHA256 = (
+    "e3142cd1efc245e97b0aeaf46f7e7724b72ac02903c3cf891db7e4fe38f11c9b"
+)
+CODEBOOK_ERA_SPECS: tuple[tuple[str, tuple[int, ...]], ...] = (
+    (
+        "wave1968_ry1968_1974_early_totals",
+        tuple(range(1968, 1976)),
+    ),
+    (
+        "ry1975_1977_spouse_concept_seam",
+        tuple(range(1976, 1979)),
+    ),
+    (
+        "ry1978_1992_pre_er_totals",
+        tuple(range(1979, 1994)),
+    ),
+    (
+        "ry1993_2001_er_transition",
+        (1994, 1995, 1996, 1997, 1999, 2001),
+    ),
+    (
+        "ry2002_2014_modern_bc_de",
+        tuple(range(2003, 2016, 2)),
+    ),
+    (
+        "ry2015_2022_exclusion_lineage",
+        tuple(range(2017, 2024, 2)),
+    ),
+)
+CODEBOOK_ERA_IDENTITY_COLUMNS: tuple[str, ...] = (
+    "era_id",
+    "field_count",
+    "description_line_count",
+    "code_map_row_count",
+    "closed_range_count",
+    "page_stream_locator_count",
+    "fact_count",
+    "residual_count",
+    "source_authority_manifest_sha256",
+    "field_evidence_keyset_sha256",
+    "source_locator_keyset_sha256",
+    "content_sha256",
+)
+CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
+    (
+        "wave1968_ry1968_1974_early_totals",
+        3_868,
+        10_184,
+        22_328,
+        1_666,
+        1_197,
+        64,
+        5,
+        "60e9fce4eaf372ee691f863b7f55f5fe1c6c627440f566adc0239f15c86030c0",
+        "fc1307936490598a4f38b50f549e5c37ec8185eff11f0d21583e90981e0e09d7",
+        "69b1d9af907657211c55bb7a8eb68def190b2c819e37ceb74560c68d7e52cbf1",
+        "d14fec0ebc260f806cc0e8cf4e2cb670d39a9e7efd8be6b6d08347cb80930a9d",
+    ),
+    (
+        "ry1975_1977_spouse_concept_seam",
+        1_838,
+        3_697,
+        10_573,
+        796,
+        557,
+        8,
+        5,
+        "962e7e97190906063f4f54c8a6b09704e14ed307bb5ac5a59d93b9bf83194abe",
+        "f85f793d89bcbebd1f0c9a0e261296f583aca8bd7d2ee20a8b7973a7aadc9e4c",
+        "7cc14d09f3b7391eb3ddd5967654ff02b269bc9a5db055c7d9f962e84dcad230",
+        "ee2a97c091c94497e9f6a20661d8f1ac5eca893a6310dc691a3b8c3a995a7afb",
+    ),
+    (
+        "ry1978_1992_pre_er_totals",
+        15_745,
+        48_103,
+        88_545,
+        9_230,
+        5_261,
+        60,
+        4,
+        "7f29ce21f9ab7f6f27d872716ccedf0edd83514756573d5e0e290a6404f9a987",
+        "1727594490a69363ac4bb813906a1240d321f0ac31037393d438f880696dfe8c",
+        "aeca075964acfdb73446f71c325b7820a131c9b28af93aadf1224eaf4ccdc240",
+        "99e690f4afbff8597f1ff3655e6d400736fca1f1ffed076d086f7ade558b868b",
+    ),
+    (
+        "ry1993_2001_er_transition",
+        15_983,
+        32_205,
+        91_014,
+        8_505,
+        4_822,
+        30,
+        5,
+        "e2c7c19047e595ec3472e022bc3bf196836a3cec371b6728322cf6192c51f7ac",
+        "0145cad9993636651b3e4ef3cc3357b0e78bbf9e4350ada135cab5345f388f87",
+        "159f64ea85e2ae5b0c84f1d1468278eb6854d6b715f5677d68f2bafcac4ccdcd",
+        "174f26b5ec5dea85e78c677eeacc5668c5080e4965749d1c5ed42860b42c3e70",
+    ),
+    (
+        "ry2002_2014_modern_bc_de",
+        33_154,
+        77_828,
+        166_010,
+        10_624,
+        11_096,
+        962,
+        5,
+        "d08cef8b0624cf2a162474ee83f4db0686c027df760fcf95267b9d93930445b2",
+        "0b213f615da11804c18f870dd15a75f70c434fccd51a7e0aca77d0729be361d1",
+        "006bf4bb002c4634db3b6c47a209cccd2fbe7319c8525701a6e39ea3695d38fb",
+        "be400500504c35cfde631e6b5b9a07972fed434d10545317e14b4218f9747229",
+    ),
+    (
+        "ry2015_2022_exclusion_lineage",
+        19_011,
+        47_501,
+        100_875,
+        6_129,
+        6_964,
+        552,
+        5,
+        "c92a0be88caf610d16ae97aa52ab0106f559e33dc678f0a97ec5385ff437254d",
+        "8b8c62400f6f41ea0008340664b43c0f3105e3a1a5861cb3372dc7fff13f67f1",
+        "e0d060bf924b0d3748b12ea384c43a79e8caebb5422ac48ef67b2fc78831423f",
+        "473ed0d23e9635aad97830245d6fd0e096e71a6de7a11d12690d6169964532f5",
+    ),
+)
+EARLY_ROLE_TOTAL_FIELDS: tuple[tuple[int, str, str], ...] = (
+    (1968, "head_or_reference_person", "V74"),
+    (1968, "spouse_or_partner", "V75"),
+    (1969, "head_or_reference_person", "V514"),
+    (1969, "spouse_or_partner", "V516"),
+    (1970, "head_or_reference_person", "V1196"),
+    (1970, "spouse_or_partner", "V1198"),
+    (1971, "head_or_reference_person", "V1897"),
+    (1971, "spouse_or_partner", "V1899"),
+    (1972, "head_or_reference_person", "V2498"),
+    (1972, "spouse_or_partner", "V2500"),
+    (1973, "head_or_reference_person", "V3051"),
+    (1973, "spouse_or_partner", "V3053"),
+    (1974, "head_or_reference_person", "V3463"),
+    (1974, "spouse_or_partner", "V3465"),
+    (1975, "head_or_reference_person", "V3863"),
+    (1975, "spouse_or_partner", "V3865"),
+)
+EARLY_OCCUPATION_INDUSTRY_FIELDS: tuple[
+    tuple[int, str, str, str, str], ...
+] = (
+    (1968, "head_or_reference_person", "main_job", "occupation", "V197_A"),
+    (1968, "head_or_reference_person", "main_job", "industry", "V197_B"),
+    (1968, "spouse_or_partner", "main_job", "occupation", "V243_A"),
+    (1968, "spouse_or_partner", "main_job", "industry", "V243_B"),
+    (1969, "head_or_reference_person", "main_job", "occupation", "V640_A"),
+    (1969, "head_or_reference_person", "main_job", "industry", "V640_B"),
+    (1969, "spouse_or_partner", "main_job", "occupation", "V609_A"),
+    (1969, "spouse_or_partner", "main_job", "industry", "V609_B"),
+    (1970, "head_or_reference_person", "main_job", "occupation", "V1279_A"),
+    (1970, "head_or_reference_person", "main_job", "industry", "V1279_B"),
+    (1970, "spouse_or_partner", "main_job", "occupation", "V1367_A"),
+    (1970, "spouse_or_partner", "main_job", "industry", "V1367_B"),
+    (1971, "head_or_reference_person", "main_job", "occupation", "V1984_A"),
+    (1971, "head_or_reference_person", "main_job", "industry", "V1985_A"),
+    (1971, "spouse_or_partner", "main_job", "occupation", "V2074_A"),
+    (1971, "spouse_or_partner", "main_job", "industry", "V2075_A"),
+    (1972, "head_or_reference_person", "main_job", "occupation", "V2582_A"),
+    (1972, "head_or_reference_person", "main_job", "industry", "V2583_A"),
+    (1972, "spouse_or_partner", "main_job", "occupation", "V2672_A"),
+    (1972, "spouse_or_partner", "main_job", "industry", "V2673_A"),
+    (1973, "head_or_reference_person", "main_job", "occupation", "V3115_A"),
+    (1973, "head_or_reference_person", "main_job", "industry", "V3116_A"),
+    (1973, "spouse_or_partner", "main_job", "occupation", "V3183_A"),
+    (1973, "spouse_or_partner", "main_job", "industry", "V3184_A"),
+    (1974, "head_or_reference_person", "main_job", "occupation", "V3530_A"),
+    (1974, "head_or_reference_person", "main_job", "industry", "V3531_A"),
+    (1974, "spouse_or_partner", "main_job", "occupation", "V3601_A"),
+    (1974, "spouse_or_partner", "main_job", "industry", "V3602_A"),
+    (1975, "head_or_reference_person", "main_job", "occupation", "V3968_A"),
+    (1975, "head_or_reference_person", "main_job", "industry", "V3969_A"),
+    (1975, "spouse_or_partner", "main_job", "occupation", "V4055_A"),
+    (1975, "spouse_or_partner", "main_job", "industry", "V4056_A"),
+)
+EARLY_SECONDARY_OCCUPATION_FIELDS: tuple[tuple[int, str], ...] = (
+    (1968, "V228"),
+    (1969, "V661"),
+    (1970, "V1299"),
+    (1971, "V2005"),
+    (1972, "V2603"),
+    (1973, "V3136"),
+    (1974, "V3551"),
+    (1975, "V4006"),
+)
+SPOUSE_SEAM_AMOUNT_FIELDS: tuple[tuple[int, str, str], ...] = (
+    (1976, "V4379", "mixed"),
+    (1977, "V5289", "not_established_wages_only_or_mixed"),
+    (1978, "V5788", "not_established_wages_only_or_mixed"),
+)
+SPOUSE_1976_CONTEXT_FIELDS: tuple[tuple[str, str], ...] = (
+    ("V4844", "employee_self_or_mixed"),
+    ("V4845", "government_level"),
+    ("V4850", "government_level"),
+    ("V4855", "incorporation"),
+    ("V4858", "incorporation"),
+)
+PRE_ER_ROLE_TOTAL_FIELDS: tuple[tuple[int, str, str], ...] = (
+    (1979, "head_or_reference_person", "V6767"),
+    (1979, "spouse_or_partner", "V6398"),
+    (1980, "head_or_reference_person", "V7413"),
+    (1980, "spouse_or_partner", "V6988"),
+    (1981, "head_or_reference_person", "V8066"),
+    (1981, "spouse_or_partner", "V7580"),
+    (1982, "head_or_reference_person", "V8690"),
+    (1982, "spouse_or_partner", "V8273"),
+    (1983, "head_or_reference_person", "V9376"),
+    (1983, "spouse_or_partner", "V8881"),
+    (1984, "head_or_reference_person", "V11023"),
+    (1984, "spouse_or_partner", "V10263"),
+    (1985, "head_or_reference_person", "V12372"),
+    (1985, "spouse_or_partner", "V11404"),
+    (1986, "head_or_reference_person", "V13624"),
+    (1986, "spouse_or_partner", "V12803"),
+    (1987, "head_or_reference_person", "V14671"),
+    (1987, "spouse_or_partner", "V13905"),
+    (1988, "head_or_reference_person", "V16145"),
+    (1988, "spouse_or_partner", "V14920"),
+    (1989, "head_or_reference_person", "V17534"),
+    (1989, "spouse_or_partner", "V16420"),
+    (1990, "head_or_reference_person", "V18878"),
+    (1990, "spouse_or_partner", "V17836"),
+    (1991, "head_or_reference_person", "V20178"),
+    (1991, "spouse_or_partner", "V19136"),
+    (1992, "head_or_reference_person", "V21484"),
+    (1992, "spouse_or_partner", "V20436"),
+    (1993, "head_or_reference_person", "V23323"),
+    (1993, "spouse_or_partner", "V23324"),
+)
+ENROLLMENT_REGULAR_SCHOOL_FIELDS: tuple[tuple[int, str, str, str], ...] = (
+    (2013, "spouse_or_partner", "continuing_role_update", "ER57616"),
+    (2013, "head_or_reference_person", "continuing_role_update", "ER57726"),
+    (2015, "spouse_or_partner", "new_role_background", "ER64709"),
+    (2015, "spouse_or_partner", "continuing_role_update", "ER64767"),
+    (2015, "head_or_reference_person", "new_role_background", "ER64848"),
+    (2015, "head_or_reference_person", "continuing_role_update", "ER64906"),
+    (2017, "spouse_or_partner", "new_role_background", "ER70782"),
+    (2017, "spouse_or_partner", "continuing_role_update", "ER70839"),
+    (2017, "head_or_reference_person", "new_role_background", "ER70920"),
+    (2017, "head_or_reference_person", "continuing_role_update", "ER70977"),
+    (2019, "spouse_or_partner", "new_role_background", "ER76794"),
+    (2019, "spouse_or_partner", "continuing_role_update", "ER76854"),
+    (2019, "head_or_reference_person", "new_role_background", "ER76939"),
+    (2019, "head_or_reference_person", "continuing_role_update", "ER76999"),
+    (2021, "spouse_or_partner", "new_role_background", "ER81059"),
+    (2021, "spouse_or_partner", "continuing_role_update", "ER81100"),
+    (2021, "head_or_reference_person", "new_role_background", "ER81186"),
+    (2021, "head_or_reference_person", "continuing_role_update", "ER81227"),
+    (2023, "spouse_or_partner", "new_role_background", "ER85036"),
+    (2023, "spouse_or_partner", "continuing_role_update", "ER85077"),
+    (2023, "head_or_reference_person", "new_role_background", "ER85163"),
+    (2023, "head_or_reference_person", "continuing_role_update", "ER85204"),
 )
 ROLES: tuple[str, ...] = (
     "head_or_reference_person",
@@ -172,6 +450,32 @@ CODE_LABEL_COLUMNS: tuple[str, ...] = (
     "raw_code",
     "exact_stata_value_label",
 )
+CODEBOOK_CODE_MAP_COLUMNS: tuple[str, ...] = (
+    "frequency",
+    "percent",
+    "raw_value_or_range",
+    "source_meaning",
+)
+CODEBOOK_FIELD_EVIDENCE_COLUMNS: tuple[str, ...] = (
+    "codebook_field_key",
+    "interview_wave",
+    "earnings_reference_year",
+    "raw_field_id",
+    "exact_codebook_short_label",
+    "declared_format",
+    "layout_start",
+    "layout_end",
+    "raw_width",
+    "spss_numeric_format",
+    "full_source_description",
+    "code_map",
+    "missing_code_map_indices",
+    "missing_raw_token_grammar_status",
+    "semantic_annotation_status",
+    "source_document_ids",
+    "source_locator_ids",
+    "derived_field_block_sha256",
+)
 
 _LAYOUT_FIELD_RE = re.compile(
     r"(?:\b(?:byte|int|long|float|double)\s+)?"
@@ -181,6 +485,33 @@ _SPSS_FORMAT_RE = re.compile(
     r"([A-Za-z][A-Za-z0-9_]*)\s+\(([A-Za-z]\d+(?:\.\d+)?)\)"
 )
 _ZERO_SHA256 = "0" * 64
+_CODEBOOK_FIELD_HEADER_RE = re.compile(
+    r'^([A-Z][A-Z0-9_]*)[ \t]+"([^"\r\n]*)"[ \t]+'
+    r"((?:NUM\([1-9][0-9]*\.[0-9]+\))|"
+    r"(?:CHR\([1-9][0-9]*\)))[ \t]*$"
+)
+_CODEBOOK_MAP_HEADER_RE = re.compile(
+    r"^[ \t]*Count[ \t]+%[ \t]+Value/Range Code[ \t]+"
+    r"Value/Range Text[ \t]*$"
+)
+_CODEBOOK_MAP_ROW_RE = re.compile(
+    r"^\s*((?:\d{1,3}(?:,\d{3})*|-))\s+"
+    r"((?:\d+(?:\.\d+)?|\.\d+|-))\s+(\S.*)$"
+)
+_CODEBOOK_NUMBER_PATTERN = r"-?(?:\d+(?:,\d{3})*(?:\.\d+)?|\.\d+)"
+_CODEBOOK_VALUE_AND_MEANING_RE = re.compile(
+    rf"^({_CODEBOOK_NUMBER_PATTERN}"
+    rf"(?:\s+-\s+{_CODEBOOK_NUMBER_PATTERN}|\s+-)?)"
+    r"(?:\s+(\S.*))?$"
+)
+_CODEBOOK_RANGE_CONTINUATION_RE = re.compile(
+    rf"^\s*({_CODEBOOK_NUMBER_PATTERN})(?:\s+(\S.*))?\s*$"
+)
+_EXPLICIT_MISSING_MEANING_RE = re.compile(
+    r"(?:\bDK\b|\bNA\b|\bN/A\b|\bRF\b|refus|missing|"
+    r"\binap\b|not applicable|data suppressed|wild code)",
+    flags=re.IGNORECASE,
+)
 
 
 class DictionaryDriftError(ValueError):
@@ -274,6 +605,16 @@ def _single_codebook_file(directory: Path) -> Path:
     if len(candidates) != 1:
         raise DictionaryDriftError(
             f"{directory}: expected exactly one codebook PDF, "
+            f"found {[path.name for path in candidates]}"
+        )
+    return candidates[0]
+
+
+def _single_family_archive(directory: Path) -> Path:
+    candidates = sorted(directory.glob("*.zip"))
+    if len(candidates) != 1:
+        raise DictionaryDriftError(
+            f"{directory}: expected exactly one family ZIP archive, "
             f"found {[path.name for path in candidates]}"
         )
     return candidates[0]
@@ -429,6 +770,23 @@ def _codebook_document_row(
     data_root: Path,
     wave: int,
 ) -> dict[str, Any]:
+    codebook_bytes = path.read_bytes()
+    archive_path = _single_family_archive(path.parent)
+    archive_bytes = archive_path.read_bytes()
+    with zipfile.ZipFile(archive_path) as archive:
+        matching_members: list[tuple[zipfile.ZipInfo, bytes]] = []
+        for member in archive.infolist():
+            if member.is_dir() or not member.filename.lower().endswith(".pdf"):
+                continue
+            member_bytes = archive.read(member)
+            if member_bytes == codebook_bytes:
+                matching_members.append((member, member_bytes))
+    if len(matching_members) != 1:
+        raise DictionaryDriftError(
+            f"wave {wave}: codebook bytes match "
+            f"{len(matching_members)} PDF members in {archive_path.name}"
+        )
+    archive_member, archive_member_bytes = matching_members[0]
     row = _document_row(
         path,
         data_root,
@@ -442,12 +800,625 @@ def _codebook_document_row(
         "source_product": "Family File Codebook",
         "source_edition": str(wave),
         "local_staging_authentication": "path_size_sha256_verified",
+        "local_family_archive": {
+            "path": archive_path.relative_to(data_root).as_posix(),
+            "size_bytes": len(archive_bytes),
+            "sha256": sha256_bytes(archive_bytes),
+            "member_path": archive_member.filename,
+            "member_size_bytes": archive_member.file_size,
+            "member_crc32": f"{archive_member.CRC:08x}",
+            "member_sha256": sha256_bytes(archive_member_bytes),
+            "membership_authentication": (
+                "archive_member_bytes_equal_registered_codebook_bytes"
+            ),
+        },
         "network_capture_performed_in_unit": False,
         "retrieval_provenance_status": (
-            "registration_required_missing_family_archive_capture_record"
+            "registration_required_missing_original_retrieval_url_timestamp"
         ),
     }
     return row
+
+
+def _pdf_indirect_objects(
+    raw: bytes,
+) -> dict[tuple[int, int], tuple[int, bytes]]:
+    matches = list(re.finditer(rb"(?m)^(\d+)\s+(\d+)\s+obj\r?\n", raw))
+    objects: dict[tuple[int, int], tuple[int, bytes]] = {}
+    for index, match in enumerate(matches):
+        boundary = (
+            matches[index + 1].start()
+            if index + 1 < len(matches)
+            else len(raw)
+        )
+        end = raw.find(b"endobj", match.end(), boundary)
+        if end < 0:
+            raise DictionaryDriftError(
+                f"PDF object {match.group(1).decode()} has no endobj"
+            )
+        key = (int(match.group(1)), int(match.group(2)))
+        if key in objects:
+            raise DictionaryDriftError(f"duplicate PDF object {key}")
+        objects[key] = (match.end(), raw[match.end() : end])
+    if not objects:
+        raise DictionaryDriftError("PDF contains no indirect objects")
+    return objects
+
+
+def _pdf_references(value: bytes) -> list[tuple[int, int]]:
+    return [
+        (int(object_number), int(generation))
+        for object_number, generation in re.findall(
+            rb"(\d+)\s+(\d+)\s+R",
+            value,
+        )
+    ]
+
+
+def _pdf_page_objects(
+    objects: Mapping[tuple[int, int], tuple[int, bytes]],
+) -> list[tuple[int, int]]:
+    catalog = [
+        (key, body)
+        for key, (_, body) in objects.items()
+        if re.search(rb"/Type\s*/Catalog\b", body)
+    ]
+    if len(catalog) != 1:
+        raise DictionaryDriftError(
+            f"PDF must have one catalog object, found {len(catalog)}"
+        )
+    pages_reference = re.search(
+        rb"/Pages\s+(\d+)\s+(\d+)\s+R",
+        catalog[0][1],
+    )
+    if pages_reference is None:
+        raise DictionaryDriftError("PDF catalog has no Pages reference")
+    root = (int(pages_reference.group(1)), int(pages_reference.group(2)))
+
+    def children(reference: tuple[int, int]) -> list[tuple[int, int]]:
+        try:
+            body = objects[reference][1]
+        except KeyError as error:
+            raise DictionaryDriftError(
+                f"PDF page tree references missing object {reference}"
+            ) from error
+        if re.search(rb"/Type\s*/Page(?!s)\b", body):
+            return [reference]
+        if not re.search(rb"/Type\s*/Pages\b", body):
+            raise DictionaryDriftError(
+                f"PDF page-tree object {reference} is not Page/Pages"
+            )
+        direct = re.search(rb"/Kids\s*(\[[^]]*\])", body, flags=re.DOTALL)
+        if direct is not None:
+            kids_value = direct.group(1)
+        else:
+            indirect = re.search(
+                rb"/Kids\s+(\d+)\s+(\d+)\s+R",
+                body,
+            )
+            if indirect is None:
+                raise DictionaryDriftError(
+                    f"PDF Pages object {reference} has no Kids"
+                )
+            kids_reference = (
+                int(indirect.group(1)),
+                int(indirect.group(2)),
+            )
+            try:
+                kids_value = objects[kids_reference][1]
+            except KeyError as error:
+                raise DictionaryDriftError(
+                    "PDF Kids array references a missing object"
+                ) from error
+        kids = _pdf_references(kids_value)
+        if not kids:
+            raise DictionaryDriftError(
+                f"PDF Pages object {reference} has an empty Kids array"
+            )
+        return [page for child in kids for page in children(child)]
+
+    pages = children(root)
+    root_body = objects[root][1]
+    count_match = re.search(rb"/Count\s+(\d+)\b", root_body)
+    count_reference = re.search(
+        rb"/Count\s+(\d+)\s+(\d+)\s+R",
+        root_body,
+    )
+    if count_reference is not None:
+        count_body = objects[
+            (int(count_reference.group(1)), int(count_reference.group(2)))
+        ][1]
+        scalar = re.fullmatch(rb"\s*(\d+)\s*", count_body)
+        if scalar is None:
+            raise DictionaryDriftError("PDF indirect Count is not an integer")
+        declared_count = int(scalar.group(1))
+    elif count_match is not None:
+        declared_count = int(count_match.group(1))
+    else:
+        raise DictionaryDriftError("PDF Pages object has no Count")
+    if declared_count != len(pages):
+        raise DictionaryDriftError(
+            "PDF Pages Count does not match enumerated page objects"
+        )
+    if len(pages) != len(set(pages)):
+        raise DictionaryDriftError("PDF page tree repeats a page object")
+    return pages
+
+
+def _pdf_stream_length(
+    dictionary: bytes,
+    objects: Mapping[tuple[int, int], tuple[int, bytes]],
+) -> int:
+    indirect = re.search(
+        rb"/Length\s+(\d+)\s+(\d+)\s+R",
+        dictionary,
+    )
+    if indirect is not None:
+        reference = (int(indirect.group(1)), int(indirect.group(2)))
+        try:
+            body = objects[reference][1]
+        except KeyError as error:
+            raise DictionaryDriftError(
+                "PDF stream Length references a missing object"
+            ) from error
+        scalar = re.fullmatch(rb"\s*(\d+)\s*", body)
+        if scalar is None:
+            raise DictionaryDriftError(
+                "PDF indirect stream Length is not an integer"
+            )
+        return int(scalar.group(1))
+    direct = re.search(rb"/Length\s+(\d+)\b", dictionary)
+    if direct is None:
+        raise DictionaryDriftError("PDF stream has no Length")
+    return int(direct.group(1))
+
+
+def _pdf_filter_chain(dictionary: bytes) -> list[str]:
+    match = re.search(
+        rb"/Filter\s*(\[[^]]*\]|/[A-Za-z0-9]+)",
+        dictionary,
+        flags=re.DOTALL,
+    )
+    if match is None:
+        return []
+    return [
+        value.decode("ascii")
+        for value in re.findall(rb"/([A-Za-z0-9]+)", match.group(1))
+    ]
+
+
+def _decode_pdf_stream(data: bytes, filter_chain: Sequence[str]) -> bytes:
+    decoded = data
+    for filter_name in filter_chain:
+        if filter_name == "ASCII85Decode":
+            try:
+                decoded = base64.a85decode(decoded, adobe=True)
+            except ValueError as error:
+                raise DictionaryDriftError(
+                    "PDF ASCII85 stream decode failed"
+                ) from error
+        elif filter_name == "FlateDecode":
+            try:
+                decoded = zlib.decompress(decoded)
+            except zlib.error as error:
+                raise DictionaryDriftError(
+                    "PDF Flate stream decode failed"
+                ) from error
+        else:
+            raise DictionaryDriftError(
+                f"unsupported PDF stream filter: {filter_name}"
+            )
+    return decoded
+
+
+def _pdf_page_stream_locators(
+    raw: bytes,
+    document_id: str,
+    page_field_ids: Mapping[int, Sequence[str]],
+    derived_pages: Sequence[str],
+) -> list[dict[str, Any]]:
+    objects = _pdf_indirect_objects(raw)
+    pages = _pdf_page_objects(objects)
+    if len(pages) != len(derived_pages):
+        raise DictionaryDriftError(
+            "PDF page tree and derived page-text count disagree"
+        )
+    locators: list[dict[str, Any]] = []
+    content_references: list[tuple[int, int]] = []
+    for page_number, page_reference in enumerate(pages, start=1):
+        page_body = objects[page_reference][1]
+        contents = re.findall(
+            rb"/Contents\s+(\d+)\s+(\d+)\s+R",
+            page_body,
+        )
+        if len(contents) != 1:
+            raise DictionaryDriftError(
+                f"PDF page {page_number} does not have one Contents stream"
+            )
+        content_reference = (int(contents[0][0]), int(contents[0][1]))
+        content_references.append(content_reference)
+        try:
+            object_body_start, content_body = objects[content_reference]
+        except KeyError as error:
+            raise DictionaryDriftError(
+                f"PDF page {page_number} Contents object is missing"
+            ) from error
+        marker = re.search(rb"stream\r?\n", content_body)
+        if marker is None:
+            raise DictionaryDriftError(
+                f"PDF page {page_number} Contents object has no stream"
+            )
+        dictionary = content_body[: marker.start()]
+        stream_length = _pdf_stream_length(dictionary, objects)
+        byte_start = object_body_start + marker.end()
+        byte_end = byte_start + stream_length
+        if not 0 <= byte_start < byte_end <= len(raw):
+            raise DictionaryDriftError(
+                f"PDF page {page_number} stream range is outside the file"
+            )
+        stream_bytes = raw[byte_start:byte_end]
+        filter_chain = _pdf_filter_chain(dictionary)
+        decoded = _decode_pdf_stream(stream_bytes, filter_chain)
+        anchors = list(page_field_ids.get(page_number, ()))
+        missing_anchors = [
+            field_id
+            for field_id in anchors
+            if field_id.encode("ascii") not in decoded
+        ]
+        if missing_anchors:
+            raise DictionaryDriftError(
+                f"PDF page {page_number} lacks decoded field anchors "
+                f"{missing_anchors[:4]}"
+            )
+        range_sha256 = sha256_bytes(stream_bytes)
+        locator_preimage = [
+            document_id,
+            page_number,
+            f"{page_reference[0]} {page_reference[1]} R",
+            f"{content_reference[0]} {content_reference[1]} R",
+            byte_start,
+            byte_end,
+            range_sha256,
+        ]
+        locators.append(
+            {
+                "locator_id": (
+                    "psid-codebook-page:"
+                    f"{sha256_bytes(canonical_json_bytes(locator_preimage))}"
+                ),
+                "source_document_id": document_id,
+                "location_type": ("pdf_page_content_stream_raw_byte_range"),
+                "pdf_page": page_number,
+                "page_object": (f"{page_reference[0]} {page_reference[1]} R"),
+                "content_object": (
+                    f"{content_reference[0]} {content_reference[1]} R"
+                ),
+                "filter_chain": filter_chain,
+                "declared_stream_length": stream_length,
+                "byte_start": byte_start,
+                "byte_end": byte_end,
+                "range_sha256": range_sha256,
+                "decoded_stream_sha256": sha256_bytes(decoded),
+                "decoded_raw_field_id_anchors": anchors,
+                "derived_page_text_sha256": sha256_bytes(
+                    derived_pages[page_number - 1].encode("utf-8")
+                ),
+            }
+        )
+    if len(content_references) != len(set(content_references)):
+        raise DictionaryDriftError("PDF pages share a Contents stream")
+    return locators
+
+
+def _pdftotext_version() -> str:
+    result = subprocess.run(
+        ["pdftotext", "-v"],
+        check=True,
+        capture_output=True,
+    )
+    output = (result.stdout + result.stderr).decode(
+        "utf-8",
+        errors="strict",
+    )
+    match = re.search(r"pdftotext version ([0-9.]+)", output)
+    if match is None:
+        raise DictionaryDriftError("cannot resolve pdftotext version")
+    version = match.group(1)
+    if version != PDF_TEXT_EXTRACTION_VERSION:
+        raise DictionaryDriftError(
+            "pdftotext version drift: "
+            f"{version} != {PDF_TEXT_EXTRACTION_VERSION}"
+        )
+    return version
+
+
+def _pdftotext_pages(path: Path) -> list[str]:
+    result = subprocess.run(
+        [
+            "pdftotext",
+            "-layout",
+            "-enc",
+            "UTF-8",
+            str(path),
+            "-",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    text = result.stdout.decode("utf-8", errors="strict")
+    pages = text.split("\f")
+    if pages and not pages[-1].strip():
+        pages.pop()
+    if not pages or any("\x00" in page for page in pages):
+        raise DictionaryDriftError(f"{path}: invalid derived PDF text")
+    return pages
+
+
+def _codebook_content_lines(
+    pages: Sequence[str],
+    wave: int,
+) -> list[tuple[int, str]]:
+    """Validate page framing and return only substantive page lines."""
+
+    flattened: list[tuple[int, str]] = []
+    total_pages = len(pages)
+    for page_number, page in enumerate(pages, start=1):
+        lines = page.splitlines()
+        excluded: set[int] = set()
+        if page_number > 1:
+            nonblank = [
+                index for index, line in enumerate(lines) if line.strip()
+            ]
+            if len(nonblank) < 2:
+                raise DictionaryDriftError(
+                    f"codebook page {page_number} lacks framing"
+                )
+            header_index = nonblank[0]
+            footer_index = nonblank[-1]
+            header = " ".join(lines[header_index].split())
+            footer = " ".join(lines[footer_index].split())
+            expected_headers = {
+                f"Filename = FAM{wave}",
+                (
+                    "PANEL STUDY OF INCOME DYNAMICS: "
+                    f"{wave} PUBLIC RELEASE FAMILY FILE"
+                ),
+                f"Panel Study of Income Dynamics: {wave} Family File",
+            }
+            if header not in expected_headers:
+                raise DictionaryDriftError(
+                    f"codebook page {page_number} header drifted: "
+                    f"{header!r}"
+                )
+            if footer != f"Page {page_number} of {total_pages}":
+                raise DictionaryDriftError(
+                    f"codebook page {page_number} footer drifted: "
+                    f"{footer!r}"
+                )
+            excluded = {header_index, footer_index}
+        flattened.extend(
+            (page_number, line)
+            for index, line in enumerate(lines)
+            if index not in excluded and line.strip()
+        )
+    return flattened
+
+
+def _parse_codebook_map(
+    lines: Sequence[str],
+    table_header: str,
+) -> list[list[str]]:
+    count_anchor = table_header.index("Count")
+    rows: list[list[str]] = []
+    for line in lines:
+        if not line.strip():
+            continue
+        leading_spaces = len(line) - len(line.lstrip())
+        match = (
+            _CODEBOOK_MAP_ROW_RE.fullmatch(line)
+            if leading_spaces <= count_anchor + 7
+            else None
+        )
+        if match is None:
+            if not rows:
+                raise DictionaryDriftError(
+                    f"code-map continuation precedes its first row: {line!r}"
+                )
+            if rows[-1][2].endswith(" -"):
+                range_match = _CODEBOOK_RANGE_CONTINUATION_RE.fullmatch(line)
+                if range_match is None:
+                    raise DictionaryDriftError(
+                        "open code-map range is not followed by its "
+                        f"upper bound: {line!r}"
+                    )
+                rows[-1][2] = f"{rows[-1][2]} {range_match.group(1)}"
+                suffix = range_match.group(2)
+                if suffix:
+                    rows[-1][3] = (
+                        f"{rows[-1][3]} {' '.join(suffix.split())}"
+                    ).strip()
+                continue
+            continuation = " ".join(line.split())
+            rows[-1][3] = f"{rows[-1][3]} {continuation}".strip()
+            continue
+        if rows and rows[-1][2].endswith(" -"):
+            raise DictionaryDriftError(
+                "open code-map range reaches the next row without "
+                "an upper bound"
+            )
+        value_match = _CODEBOOK_VALUE_AND_MEANING_RE.fullmatch(match.group(3))
+        if value_match is None:
+            raise DictionaryDriftError(
+                f"invalid code-map value/meaning grammar: {line!r}"
+            )
+        source_meaning = value_match.group(2) or ""
+        rows.append(
+            [
+                match.group(1),
+                match.group(2),
+                " ".join(value_match.group(1).split()),
+                " ".join(source_meaning.split()),
+            ]
+        )
+    if not rows:
+        raise DictionaryDriftError("codebook field has an empty code map")
+    if any(not row[3] for row in rows):
+        raise DictionaryDriftError(
+            "codebook field has a row without a final source meaning"
+        )
+    if any(row[2].endswith(" -") for row in rows):
+        raise DictionaryDriftError(
+            "codebook field has an unresolved open range"
+        )
+    return rows
+
+
+def _codebook_field_key(
+    wave: int,
+    raw_field_id: str,
+    start: int,
+    end: int,
+) -> str:
+    preimage = [wave, raw_field_id, start, end]
+    return (
+        "psid-codebook-field:"
+        f"{sha256_bytes(canonical_json_bytes(preimage))}"
+    )
+
+
+def _extract_wave_codebook_evidence(
+    *,
+    wave: int,
+    codebook_path: Path,
+    codebook_document: Mapping[str, Any],
+    physical_rows: Sequence[Sequence[Any]],
+) -> tuple[list[list[Any]], list[dict[str, Any]]]:
+    derived_pages = _pdftotext_pages(codebook_path)
+    flattened = _codebook_content_lines(derived_pages, wave)
+    headings: list[tuple[int, re.Match[str]]] = []
+    page_field_ids: dict[int, list[str]] = {}
+    for position, (page_number, line) in enumerate(flattened):
+        match = _CODEBOOK_FIELD_HEADER_RE.fullmatch(line)
+        if match is not None:
+            headings.append((position, match))
+            page_field_ids.setdefault(page_number, []).append(match.group(1))
+    if not headings:
+        raise DictionaryDriftError(f"wave {wave}: no codebook fields")
+
+    physical_columns = {
+        name: index for index, name in enumerate(PHYSICAL_FIELD_COLUMNS)
+    }
+    physical_by_id = {
+        row[physical_columns["raw_field_id"]]: row for row in physical_rows
+    }
+    heading_ids = [match.group(1) for _, match in headings]
+    if len(heading_ids) != len(set(heading_ids)):
+        raise DictionaryDriftError(
+            f"wave {wave}: duplicate codebook field heading"
+        )
+    if set(heading_ids) != set(physical_by_id):
+        raise DictionaryDriftError(
+            f"wave {wave}: codebook and physical field domains disagree"
+        )
+
+    raw = codebook_path.read_bytes()
+    locators = _pdf_page_stream_locators(
+        raw,
+        codebook_document["document_id"],
+        page_field_ids,
+        derived_pages,
+    )
+    locator_by_page = {row["pdf_page"]: row["locator_id"] for row in locators}
+    rows: list[list[Any]] = []
+    for heading_index, (position, match) in enumerate(headings):
+        next_position = (
+            headings[heading_index + 1][0]
+            if heading_index + 1 < len(headings)
+            else len(flattened)
+        )
+        block = flattened[position + 1 : next_position]
+        table_headers = [
+            (offset, line)
+            for offset, (_, line) in enumerate(block)
+            if _CODEBOOK_MAP_HEADER_RE.fullmatch(line)
+        ]
+        if len(table_headers) != 1:
+            raise DictionaryDriftError(
+                f"wave {wave} field {match.group(1)} has "
+                f"{len(table_headers)} code-map headers"
+            )
+        table_offset, table_header = table_headers[0]
+        description_lines = [
+            " ".join(line.split()) for _, line in block[:table_offset]
+        ]
+        description = "\n".join(description_lines)
+        code_map = _parse_codebook_map(
+            [line for _, line in block[table_offset + 1 :]],
+            table_header,
+        )
+        meaningful_pages = [page_number for page_number, line in block]
+        heading_page = flattened[position][0]
+        last_page = max(meaningful_pages, default=heading_page)
+        source_locator_ids = [
+            locator_by_page[page_number]
+            for page_number in range(heading_page, last_page + 1)
+        ]
+        field_id, codebook_label, declared_format = match.groups()
+        physical = physical_by_id[field_id]
+        start = physical[physical_columns["start"]]
+        end = physical[physical_columns["end"]]
+        raw_width = physical[physical_columns["raw_width"]]
+        format_match = re.fullmatch(
+            r"(?:NUM|CHR)\((\d+)(?:\.\d+)?\)",
+            declared_format,
+        )
+        if format_match is None or int(format_match.group(1)) != raw_width:
+            raise DictionaryDriftError(
+                f"wave {wave} field {field_id} codebook/layout width drift"
+            )
+        setup_label = physical[physical_columns["exact_short_label"]]
+        if _normalise_label(codebook_label) != _normalise_label(setup_label):
+            raise DictionaryDriftError(
+                f"wave {wave} field {field_id} codebook/setup label drift"
+            )
+        missing_indices = [
+            index
+            for index, code_row in enumerate(code_map)
+            if _EXPLICIT_MISSING_MEANING_RE.search(code_row[3])
+        ]
+        source_document_ids = [
+            *physical[physical_columns["source_document_ids"]],
+            codebook_document["document_id"],
+        ]
+        derived_block = [
+            flattened[position][1],
+            description,
+            code_map,
+        ]
+        rows.append(
+            [
+                _codebook_field_key(wave, field_id, start, end),
+                wave,
+                wave - 1,
+                field_id,
+                codebook_label,
+                declared_format,
+                start,
+                end,
+                raw_width,
+                physical[physical_columns["spss_numeric_format"]],
+                description,
+                code_map,
+                missing_indices,
+                "not_established_exact_fixed_width_raw_tokens",
+                "fact_or_registration_required_residual",
+                source_document_ids,
+                source_locator_ids,
+                sha256_bytes(canonical_json_bytes(derived_block)),
+            ]
+        )
+    rows.sort(key=lambda row: row[6])
+    return rows, locators
 
 
 def _stata_statements(text: str) -> list[str]:
@@ -858,42 +1829,48 @@ def _registration_required_items() -> list[dict[str, Any]]:
             "registration_item_id": "V-B5",
             "status": "registration_required",
             "required_evidence": (
-                "Exact early-era, spouse, and secondary-job industry and "
-                "occupation concepts and complete source code maps."
+                "Exact early-era main/spouse/secondary-job attachment, "
+                "complete three-digit meanings, and exhaustive absence "
+                "proofs for unsupported occupation/industry slots."
             ),
             "source_finding": (
-                "Physical fields and short labels exist, but the setup "
-                "dictionaries do not establish a common code system, full "
-                "code maps, or complete slot attachment."
+                "Registered codebooks establish retrospective main-job "
+                "fields for both roles and broad head secondary occupation, "
+                "but explicitly defer exact three-digit listings to "
+                "unregistered Appendix V2/retrospective documentation and "
+                "cannot prove secondary-industry/spouse-secondary absence."
             ),
         },
         {
             "registration_item_id": "V-B6",
             "status": "registration_required",
             "required_evidence": (
-                "Exact reference-year 1976/1977 spouse concepts plus "
-                "pre-modern employee/self/mixed, incorporation, and "
-                "government-level maps."
+                "Exact 1976/1977-reference-year spouse remuneration type "
+                "plus complete annual-job matching for employee/self/mixed, "
+                "incorporation, and government level."
             ),
             "source_finding": (
-                "V4379 is design-adjudicated mixed; the short labels for "
-                "V5289 and V5788 do not prove wages_only.  The 2021/2023 "
-                "format maps provide later positive evidence but not the "
-                "required pre-modern maps."
+                "V4382 proves that V4379 includes spouse unincorporated-"
+                "business labor. V5289/V5788 have complete amount maps but "
+                "do not establish wages-only versus mixed. The 1976 current-"
+                "job context maps are not matched to the annual amount and "
+                "do not distinguish federal/state/local government."
             ),
         },
         {
             "registration_item_id": "V-B8",
             "status": "registration_required",
             "required_evidence": (
-                "A stable cross-era current-enrollment mapping and complete "
-                "source code maps."
+                "A stable cross-era current regular-school mapping, branch "
+                "and carry-forward logic, freshness rules, and exhaustive "
+                "questionnaire absence proof."
             ),
             "source_finding": (
-                "Current-enrollment labels begin only in 2013 and later "
-                "waves contain multiple plausible mapped concepts; neither "
-                "the setup labels nor the later maps establish a stable "
-                "earlier mapping."
+                "Complete K/L61A and K/L84 maps are preserved, but they are "
+                "complementary new/continuing-role branches. Earlier "
+                "background fields contain still-in-school/college codes, "
+                "disproving blanket absence while failing to establish "
+                "current-wave freshness or regular-school equivalence."
             ),
         },
     ]
@@ -922,10 +1899,9 @@ def _inventory_ratification_abort(
         "failure_disposition": "abort_inventory_ratification",
         "missing_source_commitments": [
             "complete questionnaire job/component/context slot hierarchy",
-            "full source descriptions for every present field",
-            "complete raw-code maps with typed missing dispositions",
-            "complete missing-token grammar for uncoded fields",
-            "source-backed periodicity and information-date basis",
+            "exact fixed-width missing-token padding/sign/blank grammar",
+            "role/job attachment where codebook descriptions are ambiguous",
+            "source-backed cross-wave component and freshness mapping",
             "exhaustive questionnaire/layout absence proofs",
         ],
         "forbidden_fallbacks": [
@@ -1155,6 +2131,1824 @@ def build_registration_required_audit(
     return artifact
 
 
+def _codebook_era_waves(era_id: str) -> tuple[int, ...]:
+    matches = [
+        waves for candidate, waves in CODEBOOK_ERA_SPECS if candidate == era_id
+    ]
+    if len(matches) != 1:
+        raise DictionaryDriftError(f"unknown codebook era: {era_id}")
+    return matches[0]
+
+
+def _early_role_total_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    for wave, role, field_id in EARLY_ROLE_TOTAL_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "early role-total",
+        )
+        description = row[columns["full_source_description"]]
+        lowered = description.lower()
+        role_anchor = "head" if role == "head_or_reference_person" else "wife"
+        if (
+            "income" not in lowered
+            or role_anchor not in lowered
+            or not any(
+                code_row[3].lower().startswith("actual amount")
+                for code_row in row[columns["code_map"]]
+            )
+        ):
+            raise DictionaryDriftError(
+                f"early role-total source anchors drifted: {wave}/{field_id}"
+            )
+        remuneration_type = None
+        if role == "head_or_reference_person":
+            if (
+                "farm income" not in lowered
+                or "business income" not in lowered
+            ):
+                raise DictionaryDriftError(
+                    f"early head mixed-income anchors drifted: {wave}/{field_id}"
+                )
+            remuneration_type = "mixed"
+        facts.append(
+            {
+                "fact_id": f"early-role-total:{wave}:{role}",
+                "fact_class": "role_total_amount_concept",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": role,
+                "job_slot": "role_total",
+                "questionnaire_component_slot": "role_total_labor_income",
+                "slot_kind": "role_total",
+                "field_purpose": "amount",
+                "raw_field_ids": [field_id],
+                "codebook_field_keys": [row[columns["codebook_field_key"]]],
+                "source_locator_ids": list(row[columns["source_locator_ids"]]),
+                "reporting_unit": "dollars",
+                "reference_periodicity": "annual",
+                "information_date_basis": "reference_year_end",
+                "job_match_timing": "not_applicable_role_total",
+                "remuneration_type": remuneration_type,
+            }
+        )
+    facts.extend(_early_occupation_industry_facts(field_rows))
+    return facts
+
+
+def _codebook_fields_by_coordinate(
+    field_rows: Sequence[Sequence[Any]],
+) -> tuple[
+    dict[str, int],
+    dict[tuple[int, str], Sequence[Any]],
+]:
+    columns = {
+        name: index
+        for index, name in enumerate(CODEBOOK_FIELD_EVIDENCE_COLUMNS)
+    }
+    by_coordinate = {
+        (
+            row[columns["interview_wave"]],
+            row[columns["raw_field_id"]],
+        ): row
+        for row in field_rows
+    }
+    return columns, by_coordinate
+
+
+def _required_codebook_field(
+    by_coordinate: Mapping[tuple[int, str], Sequence[Any]],
+    wave: int,
+    field_id: str,
+    fact_class: str,
+) -> Sequence[Any]:
+    try:
+        return by_coordinate[(wave, field_id)]
+    except KeyError as error:
+        raise DictionaryDriftError(
+            f"{fact_class} field is absent: {wave}/{field_id}"
+        ) from error
+
+
+def _fact_source_binding(
+    rows: Sequence[Sequence[Any]],
+    columns: Mapping[str, int],
+) -> dict[str, list[str]]:
+    locators: list[str] = []
+    for row in rows:
+        for locator_id in row[columns["source_locator_ids"]]:
+            if locator_id not in locators:
+                locators.append(locator_id)
+    return {
+        "raw_field_ids": [row[columns["raw_field_id"]] for row in rows],
+        "codebook_field_keys": [
+            row[columns["codebook_field_key"]] for row in rows
+        ],
+        "source_locator_ids": locators,
+    }
+
+
+def _early_occupation_industry_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    for (
+        wave,
+        role,
+        job_slot,
+        purpose,
+        field_id,
+    ) in EARLY_OCCUPATION_INDUSTRY_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "early occupation/industry",
+        )
+        searchable = " ".join(
+            (
+                row[columns["exact_codebook_short_label"]],
+                row[columns["full_source_description"]],
+            )
+        ).lower()
+        if purpose not in searchable:
+            raise DictionaryDriftError(
+                f"early {purpose} anchor drifted: {wave}/{field_id}"
+            )
+        facts.append(
+            {
+                "fact_id": f"early-{purpose}:{wave}:{role}:{field_id}",
+                "fact_class": "occupation_industry_concept",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": role,
+                "job_slot": job_slot,
+                "field_purpose": purpose,
+                "code_system": "1970_census_three_digit_grouped_map",
+                "universe_status": (
+                    "selected_original_sample_subset_per_source_description"
+                ),
+                "complete_exact_code_system_status": (
+                    "registration_required_external_appendix"
+                ),
+                "information_date_basis": "retrospective_reference_year",
+                "job_match_timing": ("retrospective_main_job_selected_subset"),
+                **_fact_source_binding([row], columns),
+            }
+        )
+    for wave, field_id in EARLY_SECONDARY_OCCUPATION_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "early secondary occupation",
+        )
+        facts.append(
+            {
+                "fact_id": f"early-secondary-occupation:{wave}:{field_id}",
+                "fact_class": "occupation_industry_concept",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": "head_or_reference_person",
+                "job_slot": "secondary_job",
+                "field_purpose": "occupation",
+                "code_system": "broad_one_digit_source_groups",
+                "universe_status": "source_description_and_code_map",
+                "complete_exact_code_system_status": (
+                    "not_applicable_broad_source_groups"
+                ),
+                "information_date_basis": "retrospective_reference_year",
+                "job_match_timing": "secondary_job_not_further_resolved",
+                **_fact_source_binding([row], columns),
+            }
+        )
+    return facts
+
+
+def _spouse_seam_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    for wave, field_id, remuneration_type in SPOUSE_SEAM_AMOUNT_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "spouse seam amount",
+        )
+        bound_rows = [row]
+        if field_id == "V4379":
+            business_row = _required_codebook_field(
+                by_coordinate,
+                wave,
+                "V4382",
+                "spouse seam business link",
+            )
+            if (
+                "labor part of unincorporated business income is in V4379"
+                not in (business_row[columns["full_source_description"]])
+            ):
+                raise DictionaryDriftError(
+                    "1976 spouse mixed-income source link drifted"
+                )
+            bound_rows.append(business_row)
+        facts.append(
+            {
+                "fact_id": f"spouse-seam-amount:{wave}:{field_id}",
+                "fact_class": "spouse_annual_amount_concept",
+                "status": (
+                    "established_from_codebook_bytes"
+                    if remuneration_type == "mixed"
+                    else "amount_established_remuneration_type_residual"
+                ),
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": "spouse_or_partner",
+                "job_slot": "role_total",
+                "field_purpose": "amount",
+                "reporting_unit": "dollars",
+                "reference_periodicity": "annual",
+                "information_date_basis": "reference_year_end",
+                "job_match_timing": (
+                    "annual_role_amount_not_matched_to_interview_job"
+                ),
+                "remuneration_type": remuneration_type,
+                **_fact_source_binding(bound_rows, columns),
+            }
+        )
+    for field_id, purpose in SPOUSE_1976_CONTEXT_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            1976,
+            field_id,
+            "1976 spouse context",
+        )
+        facts.append(
+            {
+                "fact_id": f"spouse-1976-context:{field_id}",
+                "fact_class": "spouse_job_context_concept",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": 1976,
+                "earnings_reference_year": 1975,
+                "role": "spouse_or_partner",
+                "job_slot": "current_job_branch",
+                "field_purpose": purpose,
+                "information_date_basis": "interview_time",
+                "job_match_timing": (
+                    "not_established_against_annual_V4379_amount"
+                ),
+                **_fact_source_binding([row], columns),
+            }
+        )
+    return facts
+
+
+def _pre_er_role_total_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    for wave, role, field_id in PRE_ER_ROLE_TOTAL_FIELDS:
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "pre-ER role total",
+        )
+        description = row[columns["full_source_description"]].lower()
+        explicit_inclusion = (
+            role == "head_or_reference_person" and wave != 1982
+        ) or (role == "spouse_or_partner" and wave >= 1984)
+        if explicit_inclusion and not (
+            "farm" in description or "business" in description
+        ):
+            raise DictionaryDriftError(
+                f"pre-ER inclusion anchor drifted: {wave}/{field_id}"
+            )
+        facts.append(
+            {
+                "fact_id": f"pre-er-role-total:{wave}:{role}",
+                "fact_class": "role_total_amount_concept",
+                "status": (
+                    "established_including_farm_business_once"
+                    if explicit_inclusion
+                    else "role_total_established_component_mix_residual"
+                ),
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": role,
+                "job_slot": "role_total",
+                "field_purpose": "amount",
+                "reporting_unit": "dollars",
+                "reference_periodicity": "annual",
+                "information_date_basis": "reference_year_end",
+                "job_match_timing": "not_applicable_role_total",
+                "farm_business_in_total_status": (
+                    "explicitly_included_exactly_once"
+                    if explicit_inclusion
+                    else "not_established_by_total_description"
+                ),
+                **_fact_source_binding([row], columns),
+            }
+        )
+    split_1983 = _required_codebook_field(
+        by_coordinate,
+        1984,
+        "V10254",
+        "RY1983 farm/business split",
+    )
+    facts.append(
+        {
+            "fact_id": "pre-er-split-rule:1984:V10254",
+            "fact_class": "farm_business_labor_asset_split_rule",
+            "status": "established_from_codebook_bytes",
+            "interview_wave": 1984,
+            "earnings_reference_year": 1983,
+            "roles": list(ROLES),
+            "information_date_basis": "reference_year_end",
+            "rule_scope": "hours_based_rule_first_explicit_in_codebooks",
+            **_fact_source_binding([split_1983], columns),
+        }
+    )
+    seam_rows = [
+        _required_codebook_field(
+            by_coordinate,
+            1993,
+            field_id,
+            "RY1992 ownership/work split",
+        )
+        for field_id in (
+            "V21733",
+            "V21738",
+            "V21803",
+            "V21806",
+            "V21807",
+            "V23323",
+            "V23324",
+        )
+    ]
+    facts.append(
+        {
+            "fact_id": "pre-er-split-rule:1993:ownership_work_seam",
+            "fact_class": "farm_business_labor_asset_split_rule",
+            "status": "established_from_codebook_bytes",
+            "interview_wave": 1993,
+            "earnings_reference_year": 1992,
+            "roles": list(ROLES),
+            "information_date_basis": "reference_year_end",
+            "rule_scope": (
+                "ownership_and_work_based_1992_rule_and_exact_once_totals"
+            ),
+            **_fact_source_binding(seam_rows, columns),
+        }
+    )
+    return facts
+
+
+def _er_total_role(label: str) -> str | None:
+    normalized = " ".join(label.split())
+    if (
+        normalized.startswith("LABOR INCOME OF HEAD")
+        or normalized == "LABOR INCOME-HEAD"
+        or normalized.startswith("LABOR INCOME OF REF PERSON")
+    ):
+        return "head_or_reference_person"
+    if (
+        normalized.startswith("LABOR INCOME OF WIFE")
+        or normalized == "LABOR INCOME-WIFE"
+        or normalized.startswith("LABOR INCOME OF SPOUSE")
+    ):
+        return "spouse_or_partner"
+    return None
+
+
+def _er_role_total_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    totals_by_wave: dict[int, set[str]] = {}
+    for row in field_rows:
+        label = row[columns["exact_codebook_short_label"]]
+        role = _er_total_role(label)
+        if role is None:
+            continue
+        wave = row[columns["interview_wave"]]
+        description = row[columns["full_source_description"]]
+        lowered = description.lower()
+        if "labor income" not in lowered or not (
+            "excluding" in lowered
+            and "farm" in lowered
+            and "business" in lowered
+        ):
+            raise DictionaryDriftError(
+                "ER role-total exclusion lineage drifted: "
+                f"{wave}/{row[columns['raw_field_id']]}"
+            )
+        totals_by_wave.setdefault(wave, set()).add(role)
+        referenced_ids = [
+            field_id
+            for field_id in dict.fromkeys(
+                re.findall(r"\b(?:ER|V)[0-9]+(?:_[A-Z0-9]+)?\b", description)
+            )
+            if (wave, field_id) in by_coordinate
+            and field_id != row[columns["raw_field_id"]]
+        ]
+        bound_rows = [
+            row,
+            *[by_coordinate[(wave, field_id)] for field_id in referenced_ids],
+        ]
+        note_offset = lowered.find("note that")
+        included_text = (
+            description[:note_offset] if note_offset >= 0 else description
+        )
+        excluded_text = description[note_offset:] if note_offset >= 0 else ""
+        included_ids = [
+            field_id
+            for field_id in referenced_ids
+            if field_id in included_text
+        ]
+        excluded_ids = [
+            field_id
+            for field_id in referenced_ids
+            if field_id in excluded_text
+        ]
+        facts.append(
+            {
+                "fact_id": (
+                    f"er-role-total:{wave}:{role}:"
+                    f"{row[columns['raw_field_id']]}"
+                ),
+                "fact_class": "er_role_total_component_reconciliation",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": role,
+                "job_slot": "role_total",
+                "field_purpose": "amount",
+                "reporting_unit": "dollars",
+                "reference_periodicity": "annual",
+                "information_date_basis": "reference_year_tax_year",
+                "job_match_timing": "not_applicable_role_total",
+                "remuneration_type": "wage_type_excluding_farm_business",
+                "included_component_raw_field_ids": included_ids,
+                "excluded_component_raw_field_ids": excluded_ids,
+                "component_reconciliation_status": (
+                    "raw_ids_enumerated_in_total_description"
+                    if included_ids
+                    else "concepts_only_or_total_only_in_source_description"
+                ),
+                **_fact_source_binding(bound_rows, columns),
+            }
+        )
+    expected_waves = {row[columns["interview_wave"]] for row in field_rows}
+    if totals_by_wave != {wave: set(ROLES) for wave in expected_waves}:
+        raise DictionaryDriftError(
+            "ER role-total domain is not exactly two roles per wave"
+        )
+    return facts
+
+
+_MODERN_JOB_QUESTIONS = {
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "29",
+    "30",
+    "31",
+    "32",
+    "32A",
+    "33",
+    "34",
+    "34A",
+    "36",
+    "37",
+    "38",
+    "39",
+    "41",
+    "43",
+    "44",
+    "45",
+    "46",
+}
+_MODERN_JOB_LABEL_RE = re.compile(r"^(BC|DE)([0-9]+[A-Z]?)\s+(.+)$")
+
+
+def _modern_field_purpose(question: str, text: str) -> str:
+    if question == "20":
+        return "occupation"
+    if question == "21":
+        return "industry"
+    if question == "22":
+        return "employee_self_or_mixed"
+    if question == "23":
+        return "incorporation"
+    if question == "24":
+        return "government_level"
+    if (
+        " TIME UNIT" in f" {text}"
+        or " PER WHAT" in f" {text}"
+        or text.endswith(" PER")
+        or " PER FOR " in f" {text}"
+    ):
+        return "reporting_unit"
+    if re.search(r"\b(?:AMT|AMOUNT|RATE|AVG|DIFFERENTIAL)\b", text):
+        return "amount"
+    if question in {"41", "43"}:
+        return "month_or_exposure"
+    return "assignment"
+
+
+def _modern_job_context_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, _ = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    for row in field_rows:
+        label = " ".join(row[columns["exact_codebook_short_label"]].split())
+        match = _MODERN_JOB_LABEL_RE.fullmatch(label)
+        if match is None or match.group(2) not in _MODERN_JOB_QUESTIONS:
+            continue
+        block, question, text = match.groups()
+        job_match = re.search(r"(?:--|-)?JOB\s+([1-4])\b", text)
+        job_slot = (
+            f"job_{job_match.group(1)}"
+            if job_match is not None
+            else "role_block_unadjudicated"
+        )
+        purpose = _modern_field_purpose(question, text)
+        reference_year_question = question == "46"
+        wave = row[columns["interview_wave"]]
+        field_id = row[columns["raw_field_id"]]
+        facts.append(
+            {
+                "fact_id": f"modern-job-context:{wave}:{field_id}",
+                "fact_class": "modern_bc_de_questionnaire_field",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": (
+                    "head_or_reference_person"
+                    if block == "BC"
+                    else "spouse_or_partner"
+                ),
+                "source_block": block,
+                "source_question_id": f"{block}{question}",
+                "job_slot": job_slot,
+                "field_purpose": purpose,
+                "reporting_unit": (
+                    "complete_source_code_map"
+                    if purpose == "reporting_unit"
+                    else "paired_or_intrinsic_source_description"
+                ),
+                "reference_periodicity": (
+                    "prior_reference_year_job_period"
+                    if reference_year_question
+                    else "interview_time_question"
+                ),
+                "information_date_basis": (
+                    "reference_year"
+                    if reference_year_question
+                    else "interview_time"
+                ),
+                "job_match_timing": (
+                    "explicit_source_job_number"
+                    if job_match is not None
+                    else "role_block_unadjudicated"
+                ),
+                **_fact_source_binding([row], columns),
+            }
+        )
+    if not facts:
+        raise DictionaryDriftError("modern BC/DE fact domain is empty")
+    return facts
+
+
+def _regular_school_enrollment_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
+    present_waves = {row[columns["interview_wave"]] for row in field_rows}
+    facts: list[dict[str, Any]] = []
+    for wave, role, branch, field_id in ENROLLMENT_REGULAR_SCHOOL_FIELDS:
+        if wave not in present_waves:
+            continue
+        row = _required_codebook_field(
+            by_coordinate,
+            wave,
+            field_id,
+            "regular-school enrollment",
+        )
+        description = row[columns["full_source_description"]]
+        meanings = [
+            code_row[3].lower() for code_row in row[columns["code_map"]]
+        ]
+        if (
+            "regular school" not in description.lower()
+            or not any(meaning == "yes" for meaning in meanings)
+            or not any(meaning == "no" for meaning in meanings)
+        ):
+            raise DictionaryDriftError(
+                f"regular-school source anchors drifted: {wave}/{field_id}"
+            )
+        facts.append(
+            {
+                "fact_id": f"regular-school:{wave}:{role}:{branch}",
+                "fact_class": "regular_school_enrollment_branch",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": role,
+                "job_slot": "not_applicable_person_status",
+                "field_purpose": "enrollment",
+                "branch": branch,
+                "universe_status": "source_description_and_code_map",
+                "information_date_basis": (
+                    "explicit_current_interview_time"
+                    if wave >= 2019
+                    else "current_label_question_wording_not_explicit"
+                ),
+                "job_match_timing": "not_applicable_person_status",
+                "stable_cross_wave_mapping_status": (
+                    "registration_required_branch_and_freshness_composite"
+                ),
+                **_fact_source_binding([row], columns),
+            }
+        )
+    return facts
+
+
+def _pre_2013_enrollment_like_facts(
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    columns, _ = _codebook_fields_by_coordinate(field_rows)
+    facts: list[dict[str, Any]] = []
+    for row in field_rows:
+        wave = row[columns["interview_wave"]]
+        if wave >= 2013:
+            continue
+        matching_indices = [
+            index
+            for index, code_row in enumerate(row[columns["code_map"]])
+            if re.search(
+                r"\bstill in (?:school|college)\b",
+                code_row[3],
+                flags=re.IGNORECASE,
+            )
+        ]
+        if not matching_indices:
+            continue
+        field_id = row[columns["raw_field_id"]]
+        facts.append(
+            {
+                "fact_id": f"pre-2013-enrollment-like:{wave}:{field_id}",
+                "fact_class": "enrollment_like_code_not_stable_current_status",
+                "status": "established_from_codebook_bytes",
+                "interview_wave": wave,
+                "earnings_reference_year": wave - 1,
+                "role": "not_fully_adjudicated_from_field_alone",
+                "job_slot": "not_applicable_person_status",
+                "field_purpose": "enrollment",
+                "matching_code_map_indices": matching_indices,
+                "information_date_basis": (
+                    "background_or_last_attended_freshness_not_established"
+                ),
+                "job_match_timing": "not_applicable_person_status",
+                "regular_school_equivalence_status": "not_established",
+                **_fact_source_binding([row], columns),
+            }
+        )
+    return facts
+
+
+def _era_facts(
+    era_id: str,
+    field_rows: Sequence[Sequence[Any]],
+) -> list[dict[str, Any]]:
+    if era_id == "wave1968_ry1968_1974_early_totals":
+        facts = _early_role_total_facts(field_rows)
+    elif era_id == "ry1975_1977_spouse_concept_seam":
+        facts = _spouse_seam_facts(field_rows)
+    elif era_id == "ry1978_1992_pre_er_totals":
+        facts = _pre_er_role_total_facts(field_rows)
+    elif era_id == "ry1993_2001_er_transition":
+        facts = _er_role_total_facts(field_rows)
+    else:
+        facts = [
+            *_er_role_total_facts(field_rows),
+            *_modern_job_context_facts(field_rows),
+            *_regular_school_enrollment_facts(field_rows),
+        ]
+    facts.extend(_pre_2013_enrollment_like_facts(field_rows))
+    return facts
+
+
+def _era_residuals(
+    era_id: str,
+    waves: Sequence[int],
+    field_rows: Sequence[Sequence[Any]],
+    manifest: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    residuals = [
+        {
+            "residual_id": f"{era_id}:fixed_width_missing_token_grammar",
+            "status": "registration_required",
+            "missing_fact": (
+                "Exact fixed-width raw tokens for every displayed missing, "
+                "unknown, refused, and inapplicable code or uncoded blank."
+            ),
+            "registration_required_item": (
+                "source grammar that proves padding, sign, blank, and "
+                "sentinel bytes for every field"
+            ),
+            "searched_interview_waves": list(waves),
+            "searched_codebook_field_count": len(field_rows),
+        },
+        {
+            "residual_id": f"{era_id}:family_archive_capture_record",
+            "status": "registration_required",
+            "missing_fact": (
+                "Original family-archive retrieval URL and exact retrieval "
+                "timestamp."
+            ),
+            "registration_required_item": (
+                "original family-archive network capture record"
+            ),
+            "searched_interview_waves": list(waves),
+            "searched_codebook_document_ids": [
+                row["document_id"]
+                for row in manifest
+                if row["dictionary_role"] == "family_codebook"
+            ],
+            "established_local_provenance": (
+                "registered PDF bytes equal the sole matching PDF member "
+                "of a path/size/SHA-256-pinned local family archive"
+            ),
+        },
+        {
+            "residual_id": f"{era_id}:questionnaire_slot_closure",
+            "status": "registration_required",
+            "missing_fact": (
+                "Questionnaire-exhaustive role/job/component/context "
+                "hierarchy and absence proof for every unsupported slot."
+            ),
+            "registration_required_item": (
+                "official questionnaire/flow bytes and a ratified "
+                "codebook-to-questionnaire slot taxonomy"
+            ),
+            "searched_interview_waves": list(waves),
+            "searched_codebook_field_count": len(field_rows),
+        },
+    ]
+    if era_id == "wave1968_ry1968_1974_early_totals":
+        residuals.extend(
+            [
+                {
+                    "residual_id": (
+                        f"{era_id}:unsupported_job_context_absence_proofs"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Questionnaire-exhaustive absence proof for every "
+                        "unsupported early job, component, context, and "
+                        "35-purpose slot."
+                    ),
+                    "registration_required_item": (
+                        "complete early questionnaire bytes or a ratified "
+                        "codebook-to-questionnaire slot taxonomy"
+                    ),
+                    "searched_interview_waves": list(waves),
+                    "searched_codebook_field_count": len(field_rows),
+                },
+                {
+                    "residual_id": (
+                        f"{era_id}:occupation_industry_attachment_closure"
+                    ),
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Exact three-digit meanings, selected-sample "
+                        "attachment, secondary-job industry, spouse-secondary "
+                        "fields, and exhaustive absence for unsupported "
+                        "occupation/industry slots."
+                    ),
+                    "registration_required_item": (
+                        "V-B5: Appendix V2/Wave XIV, 1968-1980 "
+                        "Retrospective Occupation-Industry Files "
+                        "Documentation, and official questionnaires"
+                    ),
+                    "searched_interview_waves": list(waves),
+                    "searched_codebook_field_count": len(field_rows),
+                },
+            ]
+        )
+    elif era_id == "ry1975_1977_spouse_concept_seam":
+        residuals.extend(
+            [
+                {
+                    "residual_id": f"{era_id}:V-B6:V5289_V5788_concept",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Whether V5289 and V5788 include spouse "
+                        "unincorporated-business labor or are wages-only."
+                    ),
+                    "registration_required_item": (
+                        "V-B6: official questionnaire/editing instructions"
+                    ),
+                    "searched_interview_waves": [1977, 1978],
+                    "searched_raw_field_ids": ["V5289", "V5788"],
+                },
+                {
+                    "residual_id": f"{era_id}:V-B6:annual_job_match",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Binding of 1976 interview-time current-job context "
+                        "to annual V4379, federal/state/local level, and "
+                        "equivalent 1977/1978 spouse context or absence."
+                    ),
+                    "registration_required_item": (
+                        "V-B6: questionnaire flow and timing/attachment "
+                        "documentation"
+                    ),
+                    "searched_interview_waves": list(waves),
+                    "searched_raw_field_ids": [
+                        "V4844",
+                        "V4845",
+                        "V4850",
+                        "V4855",
+                        "V4858",
+                    ],
+                },
+            ]
+        )
+    elif era_id == "ry1978_1992_pre_er_totals":
+        residuals.append(
+            {
+                "residual_id": f"{era_id}:early_split_and_inclusion",
+                "status": "registration_required",
+                "missing_fact": (
+                    "RY1978-1982 labor/asset split algorithm and spouse "
+                    "farm/business inclusion, plus RY1981 V8690 component "
+                    "composition."
+                ),
+                "registration_required_item": (
+                    "PSID processing/editing instructions for RY1978-1982"
+                ),
+                "searched_interview_waves": list(range(1979, 1984)),
+                "searched_raw_field_ids": [
+                    "V6398",
+                    "V6988",
+                    "V7580",
+                    "V8273",
+                    "V8881",
+                    "V8690",
+                ],
+            }
+        )
+    elif era_id == "ry1993_2001_er_transition":
+        residuals.extend(
+            [
+                {
+                    "residual_id": f"{era_id}:role_farm_labor_allocation",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Pure head/spouse farm-labor amounts: each ER farm "
+                        "field combines labor and asset income and its "
+                        "published role-allocation cross-reference uses an "
+                        "unavailable code."
+                    ),
+                    "registration_required_item": (
+                        "corrected PSID farm allocation/editing source"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": f"{era_id}:edited_total_reconciliation",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "A source rule resolving rounding/editing/sample-gap "
+                        "differences between edited role totals and detailed "
+                        "components."
+                    ),
+                    "registration_required_item": (
+                        "PSID processing/editing instructions; edited total "
+                        "must remain authoritative meanwhile"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+            ]
+        )
+    elif era_id == "ry2002_2014_modern_bc_de":
+        residuals.extend(
+            [
+                {
+                    "residual_id": f"{era_id}:role_block_job_attachment",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Stable job-number attachment for BC/DE role-block "
+                        "amount/unit questions whose codebook labels do not "
+                        "carry an explicit job number."
+                    ),
+                    "registration_required_item": (
+                        "questionnaire branch flow and main-job indicator "
+                        "adjudication"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": f"{era_id}:V-B8:branch_freshness",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "2013 new-role non-college enrollment coverage and "
+                        "a freshness-safe composite of 61A, 84, and upstream "
+                        "still-in-school/college codes."
+                    ),
+                    "registration_required_item": (
+                        "V-B8: questionnaire branch/carry-forward rules and "
+                        "ratified composite mapping"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+            ]
+        )
+    elif era_id == "ry2015_2022_exclusion_lineage":
+        residuals.extend(
+            [
+                {
+                    "residual_id": f"{era_id}:role_farm_labor_allocation",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Role-specific farm labor carried outside the "
+                        "explicitly farm/business-excluding role totals."
+                    ),
+                    "registration_required_item": (
+                        "corrected PSID farm allocation/editing source"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+                {
+                    "residual_id": f"{era_id}:V-B8:branch_freshness",
+                    "status": "registration_required",
+                    "missing_fact": (
+                        "Freshness-safe composite of new-role 61A, "
+                        "continuing-role 84, role-status branches, and "
+                        "upstream still-in-school/college codes."
+                    ),
+                    "registration_required_item": (
+                        "V-B8: questionnaire branch/carry-forward rules and "
+                        "ratified composite mapping"
+                    ),
+                    "searched_interview_waves": list(waves),
+                },
+            ]
+        )
+    return residuals
+
+
+def build_codebook_era_evidence(
+    era_id: str,
+    data_root: Path | None = None,
+) -> dict[str, Any]:
+    """Extract one complete era's codebook fields from pinned PDF bytes."""
+
+    _pdftotext_version()
+    root = default_psid_root() if data_root is None else Path(data_root)
+    waves = _codebook_era_waves(era_id)
+    audit = build_registration_required_audit(root)
+    manifest = [
+        row
+        for row in audit["source_authority_manifest"]
+        if row["interview_wave"] in waves
+    ]
+    physical_columns = {
+        name: index for index, name in enumerate(PHYSICAL_FIELD_COLUMNS)
+    }
+    physical_by_wave = {
+        wave: [
+            row
+            for row in audit["physical_fields"]
+            if row[physical_columns["interview_wave"]] == wave
+        ]
+        for wave in waves
+    }
+    manifest_by_id = {row["document_id"]: row for row in manifest}
+    field_rows: list[list[Any]] = []
+    locators: list[dict[str, Any]] = []
+    for wave in waves:
+        codebook_document_id = f"psid-family-{wave}-codebook"
+        codebook_document = manifest_by_id[codebook_document_id]
+        codebook_path = root / codebook_document["path"]
+        wave_fields, wave_locators = _extract_wave_codebook_evidence(
+            wave=wave,
+            codebook_path=codebook_path,
+            codebook_document=codebook_document,
+            physical_rows=physical_by_wave[wave],
+        )
+        field_rows.extend(wave_fields)
+        locators.extend(wave_locators)
+
+    field_keys = [
+        row[CODEBOOK_FIELD_EVIDENCE_COLUMNS.index("codebook_field_key")]
+        for row in field_rows
+    ]
+    locator_ids = [row["locator_id"] for row in locators]
+    facts = _era_facts(era_id, field_rows)
+    field_columns = {
+        name: index
+        for index, name in enumerate(CODEBOOK_FIELD_EVIDENCE_COLUMNS)
+    }
+    code_map_rows = [
+        code_row
+        for row in field_rows
+        for code_row in row[field_columns["code_map"]]
+    ]
+    extraction_summary = {
+        "field_count": len(field_rows),
+        "description_line_count": sum(
+            len(row[field_columns["full_source_description"]].splitlines())
+            for row in field_rows
+        ),
+        "code_map_row_count": len(code_map_rows),
+        "closed_range_count": sum(
+            " - " in code_row[2] for code_row in code_map_rows
+        ),
+        "field_with_explicit_missing_count": sum(
+            bool(row[field_columns["missing_code_map_indices"]])
+            for row in field_rows
+        ),
+        "explicit_missing_code_row_count": sum(
+            len(row[field_columns["missing_code_map_indices"]])
+            for row in field_rows
+        ),
+        "multi_page_field_count": sum(
+            len(row[field_columns["source_locator_ids"]]) > 1
+            for row in field_rows
+        ),
+        "page_stream_locator_count": len(locators),
+    }
+    artifact: dict[str, Any] = {
+        "schema_version": CODEBOOK_EVIDENCE_SCHEMA_VERSION,
+        "artifact_id": f"{CODEBOOK_EVIDENCE_SCHEMA_VERSION}:{era_id}",
+        "era_id": era_id,
+        "interview_waves": list(waves),
+        "earnings_reference_years": [wave - 1 for wave in waves],
+        "source_authority_manifest": manifest,
+        "source_authority_manifest_sha256": sha256_bytes(
+            canonical_json_bytes(manifest)
+        ),
+        "extraction_method": {
+            "tool": PDF_TEXT_EXTRACTION_TOOL,
+            "tool_version": PDF_TEXT_EXTRACTION_VERSION,
+            "command": (
+                "pdftotext -layout -enc UTF-8 " "<registered-codebook-path> -"
+            ),
+            "derived_text_retained": True,
+            "derived_text_evidentiary_status": ("locator_only_not_evidence"),
+            "fact_binding": (
+                "pinned_pdf_sha256_size_page_object_content_object_"
+                "raw_stream_byte_range"
+            ),
+            "network_capture": False,
+        },
+        "extraction_summary": extraction_summary,
+        "code_map_columns": list(CODEBOOK_CODE_MAP_COLUMNS),
+        "field_evidence_columns": list(CODEBOOK_FIELD_EVIDENCE_COLUMNS),
+        "field_evidence": field_rows,
+        "field_evidence_count": len(field_rows),
+        "field_evidence_keyset_sha256": sha256_bytes(
+            canonical_json_bytes(field_keys)
+        ),
+        "source_locators": locators,
+        "source_locator_count": len(locators),
+        "source_locator_keyset_sha256": sha256_bytes(
+            canonical_json_bytes(locator_ids)
+        ),
+        "era_facts": facts,
+        "era_fact_count": len(facts),
+        "registration_required_residuals": _era_residuals(
+            era_id,
+            waves,
+            field_rows,
+            manifest,
+        ),
+        "canonical_order": [
+            "interview_wave",
+            "physical_layout_coordinate",
+        ],
+        "integrity": {
+            "canonicalization": (
+                "UTF-8 JSON; keys sorted; no insignificant whitespace; "
+                "content_sha256 computed with itself set to 64 zeroes"
+            ),
+            "content_sha256": _ZERO_SHA256,
+            "reproduced_from_source_bytes": True,
+        },
+    }
+    artifact["integrity"]["content_sha256"] = sha256_bytes(
+        canonical_json_bytes(artifact)
+    )
+    validate_codebook_era_evidence(artifact)
+    return artifact
+
+
+def _validate_codebook_locator(locator: Mapping[str, Any]) -> None:
+    required = {
+        "locator_id",
+        "source_document_id",
+        "location_type",
+        "pdf_page",
+        "page_object",
+        "content_object",
+        "filter_chain",
+        "declared_stream_length",
+        "byte_start",
+        "byte_end",
+        "range_sha256",
+        "decoded_stream_sha256",
+        "decoded_raw_field_id_anchors",
+        "derived_page_text_sha256",
+    }
+    if set(locator) != required:
+        raise DictionaryDriftError("codebook locator schema drifted")
+    if locator["location_type"] != "pdf_page_content_stream_raw_byte_range":
+        raise DictionaryDriftError("codebook locator type drifted")
+    if (
+        isinstance(locator["pdf_page"], bool)
+        or not isinstance(locator["pdf_page"], int)
+        or locator["pdf_page"] < 1
+    ):
+        raise DictionaryDriftError("codebook locator page is invalid")
+    if (
+        locator["byte_end"] - locator["byte_start"]
+        != locator["declared_stream_length"]
+    ):
+        raise DictionaryDriftError("codebook locator stream length drifted")
+    preimage = [
+        locator["source_document_id"],
+        locator["pdf_page"],
+        locator["page_object"],
+        locator["content_object"],
+        locator["byte_start"],
+        locator["byte_end"],
+        locator["range_sha256"],
+    ]
+    expected_id = (
+        "psid-codebook-page:" f"{sha256_bytes(canonical_json_bytes(preimage))}"
+    )
+    if locator["locator_id"] != expected_id:
+        raise DictionaryDriftError("codebook locator identity drifted")
+    for name in (
+        "range_sha256",
+        "decoded_stream_sha256",
+        "derived_page_text_sha256",
+    ):
+        if re.fullmatch(r"[0-9a-f]{64}", locator[name]) is None:
+            raise DictionaryDriftError(
+                f"codebook locator {name} is not SHA-256"
+            )
+
+
+def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
+    """Validate one ancillary codebook extraction without a crosswalk."""
+
+    top_level_keys = {
+        "schema_version",
+        "artifact_id",
+        "era_id",
+        "interview_waves",
+        "earnings_reference_years",
+        "source_authority_manifest",
+        "source_authority_manifest_sha256",
+        "extraction_method",
+        "extraction_summary",
+        "code_map_columns",
+        "field_evidence_columns",
+        "field_evidence",
+        "field_evidence_count",
+        "field_evidence_keyset_sha256",
+        "source_locators",
+        "source_locator_count",
+        "source_locator_keyset_sha256",
+        "era_facts",
+        "era_fact_count",
+        "registration_required_residuals",
+        "canonical_order",
+        "integrity",
+    }
+    if set(artifact) != top_level_keys:
+        raise DictionaryDriftError(
+            "codebook evidence top-level schema drifted"
+        )
+    era_id = artifact["era_id"]
+    waves = _codebook_era_waves(era_id)
+    if artifact["schema_version"] != CODEBOOK_EVIDENCE_SCHEMA_VERSION:
+        raise DictionaryDriftError("codebook evidence schema version drifted")
+    if artifact["artifact_id"] != (
+        f"{CODEBOOK_EVIDENCE_SCHEMA_VERSION}:{era_id}"
+    ):
+        raise DictionaryDriftError("codebook evidence artifact ID drifted")
+    if artifact["interview_waves"] != list(waves):
+        raise DictionaryDriftError("codebook evidence wave domain drifted")
+    if artifact["earnings_reference_years"] != [wave - 1 for wave in waves]:
+        raise DictionaryDriftError(
+            "codebook evidence reference-year domain drifted"
+        )
+    manifest = artifact["source_authority_manifest"]
+    if artifact["source_authority_manifest_sha256"] != sha256_bytes(
+        canonical_json_bytes(manifest)
+    ):
+        raise DictionaryDriftError(
+            "codebook evidence authority manifest hash drifted"
+        )
+    if artifact["code_map_columns"] != list(CODEBOOK_CODE_MAP_COLUMNS):
+        raise DictionaryDriftError("codebook map columns drifted")
+    if artifact["field_evidence_columns"] != list(
+        CODEBOOK_FIELD_EVIDENCE_COLUMNS
+    ):
+        raise DictionaryDriftError("codebook field columns drifted")
+    fields = artifact["field_evidence"]
+    if artifact["field_evidence_count"] != len(fields):
+        raise DictionaryDriftError("codebook field count drifted")
+    columns = {
+        name: index
+        for index, name in enumerate(CODEBOOK_FIELD_EVIDENCE_COLUMNS)
+    }
+    field_keys = [row[columns["codebook_field_key"]] for row in fields]
+    if len(field_keys) != len(set(field_keys)):
+        raise DictionaryDriftError("duplicate codebook field key")
+    if artifact["field_evidence_keyset_sha256"] != sha256_bytes(
+        canonical_json_bytes(field_keys)
+    ):
+        raise DictionaryDriftError("codebook field keyset hash drifted")
+    locators = artifact["source_locators"]
+    if artifact["source_locator_count"] != len(locators):
+        raise DictionaryDriftError("codebook locator count drifted")
+    for locator in locators:
+        _validate_codebook_locator(locator)
+    locator_ids = [row["locator_id"] for row in locators]
+    if len(locator_ids) != len(set(locator_ids)):
+        raise DictionaryDriftError("duplicate codebook locator ID")
+    if artifact["source_locator_keyset_sha256"] != sha256_bytes(
+        canonical_json_bytes(locator_ids)
+    ):
+        raise DictionaryDriftError("codebook locator keyset hash drifted")
+    locator_id_set = set(locator_ids)
+    manifest_ids = {row["document_id"] for row in manifest}
+    code_map_rows: list[Sequence[Any]] = []
+    for row in fields:
+        if len(row) != len(CODEBOOK_FIELD_EVIDENCE_COLUMNS):
+            raise DictionaryDriftError("codebook field row schema drifted")
+        if row[columns["interview_wave"]] not in waves:
+            raise DictionaryDriftError("codebook field wave is outside era")
+        if row[columns["earnings_reference_year"]] != (
+            row[columns["interview_wave"]] - 1
+        ):
+            raise DictionaryDriftError(
+                "codebook field reference-year mapping drifted"
+            )
+        code_map = row[columns["code_map"]]
+        code_map_rows.extend(code_map)
+        if not code_map or any(
+            not isinstance(code_row, list)
+            or len(code_row) != len(CODEBOOK_CODE_MAP_COLUMNS)
+            for code_row in code_map
+        ):
+            raise DictionaryDriftError("codebook field code map drifted")
+        expected_missing = [
+            index
+            for index, code_row in enumerate(code_map)
+            if _EXPLICIT_MISSING_MEANING_RE.search(code_row[3])
+        ]
+        if row[columns["missing_code_map_indices"]] != expected_missing:
+            raise DictionaryDriftError(
+                "codebook missing-code classification drifted"
+            )
+        if row[columns["missing_raw_token_grammar_status"]] != (
+            "not_established_exact_fixed_width_raw_tokens"
+        ):
+            raise DictionaryDriftError(
+                "codebook raw-token grammar status drifted"
+            )
+        if row[columns["semantic_annotation_status"]] != (
+            "fact_or_registration_required_residual"
+        ):
+            raise DictionaryDriftError(
+                "codebook semantic annotation status drifted"
+            )
+        if not set(row[columns["source_document_ids"]]).issubset(manifest_ids):
+            raise DictionaryDriftError(
+                "codebook field cites an unknown source document"
+            )
+        if not row[columns["source_locator_ids"]] or not set(
+            row[columns["source_locator_ids"]]
+        ).issubset(locator_id_set):
+            raise DictionaryDriftError(
+                "codebook field cites an unknown/empty locator"
+            )
+    extraction_summary = artifact["extraction_summary"]
+    expected_summary = {
+        "field_count": len(fields),
+        "description_line_count": sum(
+            len(row[columns["full_source_description"]].splitlines())
+            for row in fields
+        ),
+        "code_map_row_count": len(code_map_rows),
+        "closed_range_count": sum(
+            " - " in code_row[2] for code_row in code_map_rows
+        ),
+        "field_with_explicit_missing_count": sum(
+            bool(row[columns["missing_code_map_indices"]]) for row in fields
+        ),
+        "explicit_missing_code_row_count": sum(
+            len(row[columns["missing_code_map_indices"]]) for row in fields
+        ),
+        "multi_page_field_count": sum(
+            len(row[columns["source_locator_ids"]]) > 1 for row in fields
+        ),
+        "page_stream_locator_count": len(locators),
+    }
+    if extraction_summary != expected_summary:
+        raise DictionaryDriftError("codebook extraction summary drifted")
+    facts = artifact["era_facts"]
+    if artifact["era_fact_count"] != len(facts):
+        raise DictionaryDriftError("codebook era fact count drifted")
+    field_key_set = set(field_keys)
+    for fact in facts:
+        if not fact["codebook_field_keys"] or not set(
+            fact["codebook_field_keys"]
+        ).issubset(field_key_set):
+            raise DictionaryDriftError(
+                "codebook era fact cites an unknown field"
+            )
+        if not fact["source_locator_ids"] or not set(
+            fact["source_locator_ids"]
+        ).issubset(locator_id_set):
+            raise DictionaryDriftError(
+                "codebook era fact cites an unknown locator"
+            )
+    residuals = artifact["registration_required_residuals"]
+    residual_ids = [row["residual_id"] for row in residuals]
+    if not residuals or len(residual_ids) != len(set(residual_ids)):
+        raise DictionaryDriftError(
+            "codebook residual domain is empty or duplicated"
+        )
+    identity_rows = [
+        row for row in CODEBOOK_ERA_IDENTITIES if row[0] == era_id
+    ]
+    if len(identity_rows) != 1:
+        raise DictionaryDriftError(
+            "codebook era frozen identity is absent or duplicated"
+        )
+    expected_identity = dict(
+        zip(CODEBOOK_ERA_IDENTITY_COLUMNS, identity_rows[0], strict=True)
+    )
+    observed_identity = {
+        "era_id": era_id,
+        "field_count": len(fields),
+        "description_line_count": extraction_summary["description_line_count"],
+        "code_map_row_count": extraction_summary["code_map_row_count"],
+        "closed_range_count": extraction_summary["closed_range_count"],
+        "page_stream_locator_count": len(locators),
+        "fact_count": len(facts),
+        "residual_count": len(residuals),
+        "source_authority_manifest_sha256": artifact[
+            "source_authority_manifest_sha256"
+        ],
+        "field_evidence_keyset_sha256": artifact[
+            "field_evidence_keyset_sha256"
+        ],
+        "source_locator_keyset_sha256": artifact[
+            "source_locator_keyset_sha256"
+        ],
+        "content_sha256": artifact["integrity"]["content_sha256"],
+    }
+    if observed_identity != expected_identity:
+        raise DictionaryDriftError(
+            f"codebook era frozen identity drifted: {era_id}"
+        )
+    if artifact["canonical_order"] != [
+        "interview_wave",
+        "physical_layout_coordinate",
+    ]:
+        raise DictionaryDriftError("codebook canonical order drifted")
+    integrity = artifact["integrity"]
+    if integrity["reproduced_from_source_bytes"] is not True:
+        raise DictionaryDriftError(
+            "codebook evidence lacks source-byte reproduction status"
+        )
+    expected_content_sha = integrity["content_sha256"]
+    candidate = json.loads(json.dumps(artifact))
+    candidate["integrity"]["content_sha256"] = _ZERO_SHA256
+    if expected_content_sha != sha256_bytes(canonical_json_bytes(candidate)):
+        raise DictionaryDriftError("codebook evidence content hash drifted")
+
+
+def render_codebook_era_evidence(artifact: Mapping[str, Any]) -> bytes:
+    """Render canonical codebook evidence with one trailing newline."""
+
+    validate_codebook_era_evidence(artifact)
+    return canonical_json_bytes(artifact) + b"\n"
+
+
+def default_codebook_evidence_path(era_id: str) -> Path:
+    """Return the committed ancillary evidence path for one era."""
+
+    return (
+        Path("data")
+        / "external"
+        / "psid_codebook_field_evidence"
+        / f"{era_id}_v1.json"
+    )
+
+
+def build_codebook_inventory_adjudication(
+    era_artifacts: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Adjudicate all six codebook eras without inventing absence proofs."""
+
+    expected_eras = [era_id for era_id, _ in CODEBOOK_ERA_SPECS]
+    by_era: dict[str, Mapping[str, Any]] = {}
+    for era_artifact in era_artifacts:
+        validate_codebook_era_evidence(era_artifact)
+        era_id = era_artifact["era_id"]
+        if era_id in by_era:
+            raise DictionaryDriftError(
+                f"duplicate codebook era artifact: {era_id}"
+            )
+        by_era[era_id] = era_artifact
+    if list(by_era) != expected_eras:
+        raise DictionaryDriftError(
+            "codebook adjudication era order/domain drifted"
+        )
+
+    evidence_artifacts: list[dict[str, Any]] = []
+    present_facts: list[dict[str, Any]] = []
+    residuals: list[dict[str, Any]] = []
+    facts_by_id: dict[str, Mapping[str, Any]] = {}
+    for era_id in expected_eras:
+        era_artifact = by_era[era_id]
+        rendered = render_codebook_era_evidence(era_artifact)
+        evidence_artifacts.append(
+            {
+                "era_id": era_id,
+                "artifact_id": era_artifact["artifact_id"],
+                "committed_path": default_codebook_evidence_path(
+                    era_id
+                ).as_posix(),
+                "content_sha256": era_artifact["integrity"]["content_sha256"],
+                "rendered_sha256": sha256_bytes(rendered),
+                "field_count": era_artifact["field_evidence_count"],
+                "page_stream_locator_count": era_artifact[
+                    "source_locator_count"
+                ],
+                "code_map_row_count": era_artifact["extraction_summary"][
+                    "code_map_row_count"
+                ],
+                "closed_range_count": era_artifact["extraction_summary"][
+                    "closed_range_count"
+                ],
+                "description_line_count": era_artifact["extraction_summary"][
+                    "description_line_count"
+                ],
+                "fact_count": era_artifact["era_fact_count"],
+            }
+        )
+        for fact in era_artifact["era_facts"]:
+            fact_id = fact["fact_id"]
+            if fact_id in facts_by_id:
+                raise DictionaryDriftError(
+                    f"duplicate codebook fact ID: {fact_id}"
+                )
+            facts_by_id[fact_id] = fact
+            present_facts.append(
+                {
+                    "fact_id": fact_id,
+                    "era_id": era_id,
+                    "disposition": "present",
+                    "source_status": fact["status"],
+                    "raw_field_ids": fact["raw_field_ids"],
+                    "codebook_field_keys": fact["codebook_field_keys"],
+                    "source_locator_ids": fact["source_locator_ids"],
+                }
+            )
+        for residual in era_artifact["registration_required_residuals"]:
+            residuals.append({"era_id": era_id, **residual})
+
+    totals = {
+        "interview_wave_count": sum(
+            len(artifact["interview_waves"]) for artifact in era_artifacts
+        ),
+        "codebook_authority_count": sum(
+            sum(
+                row["dictionary_role"] == "family_codebook"
+                for row in artifact["source_authority_manifest"]
+            )
+            for artifact in era_artifacts
+        ),
+        "field_count": sum(
+            artifact["field_evidence_count"] for artifact in era_artifacts
+        ),
+        "page_stream_locator_count": sum(
+            artifact["source_locator_count"] for artifact in era_artifacts
+        ),
+        "code_map_row_count": sum(
+            artifact["extraction_summary"]["code_map_row_count"]
+            for artifact in era_artifacts
+        ),
+        "closed_range_count": sum(
+            artifact["extraction_summary"]["closed_range_count"]
+            for artifact in era_artifacts
+        ),
+        "description_line_count": sum(
+            artifact["extraction_summary"]["description_line_count"]
+            for artifact in era_artifacts
+        ),
+        "present_fact_count": len(present_facts),
+        "structural_missing_count": 0,
+        "registration_required_residual_count": len(residuals),
+    }
+    expected_totals = {
+        "interview_wave_count": len(INTERVIEW_WAVES),
+        "codebook_authority_count": CODEBOOK_AUTHORITY_FILE_COUNT,
+        "field_count": CODEBOOK_TOTAL_FIELD_COUNT,
+        "page_stream_locator_count": CODEBOOK_TOTAL_PAGE_COUNT,
+        "code_map_row_count": CODEBOOK_TOTAL_MAP_ROW_COUNT,
+        "closed_range_count": CODEBOOK_TOTAL_CLOSED_RANGE_COUNT,
+        "description_line_count": CODEBOOK_TOTAL_DESCRIPTION_LINE_COUNT,
+    }
+    if {name: totals[name] for name in expected_totals} != expected_totals:
+        raise DictionaryDriftError(
+            "complete codebook adjudication totals drifted"
+        )
+
+    def source_fact_ids(prefixes: Sequence[str]) -> list[str]:
+        result = [
+            fact_id
+            for fact_id in facts_by_id
+            if any(fact_id.startswith(prefix) for prefix in prefixes)
+        ]
+        if not result:
+            raise DictionaryDriftError(
+                f"no codebook facts match prefixes {prefixes}"
+            )
+        return result
+
+    cross_era_facts = [
+        {
+            "fact_id": "cross-era:ry1992_1993_component_seam",
+            "disposition": "present",
+            "finding": (
+                "RY1992 role totals include role farm/business labor "
+                "exactly once; RY1993 ER role totals explicitly exclude "
+                "farm and unincorporated-business income."
+            ),
+            "source_fact_ids": [
+                "pre-er-split-rule:1993:ownership_work_seam",
+                "er-role-total:1994:head_or_reference_person:ER4140",
+                "er-role-total:1994:spouse_or_partner:ER4144",
+            ],
+        },
+        {
+            "fact_id": "cross-era:ry2016_2022_exclusion_lineage",
+            "disposition": "present",
+            "finding": (
+                "Every 2017-2023 role total preserves the prior-tax-year "
+                "wage-type sum and explicitly excludes separately carried "
+                "farm and unincorporated-business income."
+            ),
+            "source_fact_ids": source_fact_ids(
+                [
+                    "er-role-total:2017:",
+                    "er-role-total:2019:",
+                    "er-role-total:2021:",
+                    "er-role-total:2023:",
+                ]
+            ),
+        },
+    ]
+    for fact in cross_era_facts:
+        if not set(fact["source_fact_ids"]).issubset(facts_by_id):
+            raise DictionaryDriftError(
+                "cross-era fact cites an unknown source fact"
+            )
+
+    vb5_facts = source_fact_ids(
+        ["early-occupation:", "early-industry:", "early-secondary-occupation:"]
+    )
+    vb6_facts = source_fact_ids(
+        ["spouse-seam-amount:", "spouse-1976-context:"]
+    )
+    vb8_facts = source_fact_ids(
+        ["regular-school:", "pre-2013-enrollment-like:"]
+    )
+    adjudication: dict[str, Any] = {
+        "schema_version": CODEBOOK_ADJUDICATION_SCHEMA_VERSION,
+        "artifact_id": CODEBOOK_ADJUDICATION_SCHEMA_VERSION,
+        "source_evidence_artifacts": evidence_artifacts,
+        "complete_domain_totals": totals,
+        "fact_dispositions": {
+            "allowed_values": ["present", "structural_missing"],
+            "present": present_facts,
+            "structural_missing": [],
+            "structural_missing_status": (
+                "none_adjudicated_codebook_search_is_not_questionnaire_"
+                "absence_proof"
+            ),
+        },
+        "cross_era_facts": cross_era_facts,
+        "verdicts": [
+            {
+                "registration_item_id": "V-B5",
+                "verdict": "registration_required",
+                "established_subclaims": (
+                    "Retrospective three-digit main-job occupation/industry "
+                    "fields for both roles and broad head secondary "
+                    "occupation are present with complete displayed maps."
+                ),
+                "established_fact_ids": vb5_facts,
+                "residual_ids": [
+                    (
+                        "wave1968_ry1968_1974_early_totals:"
+                        "occupation_industry_attachment_closure"
+                    )
+                ],
+            },
+            {
+                "registration_item_id": "V-B6",
+                "verdict": "registration_required",
+                "established_subclaims": (
+                    "V4379 is mixed; V5289/V5788 amount concepts and 1976 "
+                    "interview-time spouse context maps are present."
+                ),
+                "established_fact_ids": vb6_facts,
+                "residual_ids": [
+                    (
+                        "ry1975_1977_spouse_concept_seam:"
+                        "V-B6:V5289_V5788_concept"
+                    ),
+                    (
+                        "ry1975_1977_spouse_concept_seam:"
+                        "V-B6:annual_job_match"
+                    ),
+                ],
+            },
+            {
+                "registration_item_id": "V-B8",
+                "verdict": "registration_required",
+                "established_subclaims": (
+                    "All later regular-school branch fields and earlier "
+                    "still-in-school/college codes are present with complete "
+                    "displayed maps."
+                ),
+                "established_fact_ids": vb8_facts,
+                "residual_ids": [
+                    ("ry2002_2014_modern_bc_de:" "V-B8:branch_freshness"),
+                    ("ry2015_2022_exclusion_lineage:" "V-B8:branch_freshness"),
+                ],
+            },
+        ],
+        "registration_required_residuals": residuals,
+        "official_inventory_ratification": {
+            "status": "registration_required",
+            "failure_disposition": "abort_inventory_ratification",
+            "target_artifacts": _target_artifacts(),
+            "official_partial_artifact_emitted": False,
+            "reason": (
+                "The complete physical/codebook domain establishes positive "
+                "facts but cannot establish questionnaire-exhaustive "
+                "structural absence or every required attachment/timing "
+                "rule."
+            ),
+        },
+        "independence": {
+            "inventory_source": (
+                "registered codebook/setup/raw identities and pinned PDF "
+                "content streams"
+            ),
+            "crosswalk_used": False,
+            "reader_used": False,
+            "derived_text_evidentiary_status": ("locator_only_not_evidence"),
+        },
+        "integrity": {
+            "canonicalization": (
+                "UTF-8 JSON; keys sorted; no insignificant whitespace; "
+                "content_sha256 computed with itself set to 64 zeroes"
+            ),
+            "content_sha256": _ZERO_SHA256,
+        },
+    }
+    adjudication["integrity"]["content_sha256"] = sha256_bytes(
+        canonical_json_bytes(adjudication)
+    )
+    validate_codebook_inventory_adjudication(adjudication)
+    return adjudication
+
+
+def validate_codebook_inventory_adjudication(
+    adjudication: Mapping[str, Any],
+) -> None:
+    """Validate the complete ancillary adjudication and its fail-close."""
+
+    if adjudication["schema_version"] != (
+        CODEBOOK_ADJUDICATION_SCHEMA_VERSION
+    ) or adjudication["artifact_id"] != (CODEBOOK_ADJUDICATION_SCHEMA_VERSION):
+        raise DictionaryDriftError("codebook adjudication identity drifted")
+    evidence = adjudication["source_evidence_artifacts"]
+    if [row["era_id"] for row in evidence] != [
+        era_id for era_id, _ in CODEBOOK_ERA_SPECS
+    ]:
+        raise DictionaryDriftError(
+            "codebook adjudication evidence domain drifted"
+        )
+    totals = adjudication["complete_domain_totals"]
+    expected = {
+        "interview_wave_count": len(INTERVIEW_WAVES),
+        "codebook_authority_count": CODEBOOK_AUTHORITY_FILE_COUNT,
+        "field_count": CODEBOOK_TOTAL_FIELD_COUNT,
+        "page_stream_locator_count": CODEBOOK_TOTAL_PAGE_COUNT,
+        "code_map_row_count": CODEBOOK_TOTAL_MAP_ROW_COUNT,
+        "closed_range_count": CODEBOOK_TOTAL_CLOSED_RANGE_COUNT,
+        "description_line_count": CODEBOOK_TOTAL_DESCRIPTION_LINE_COUNT,
+    }
+    if {name: totals[name] for name in expected} != expected:
+        raise DictionaryDriftError("codebook adjudication totals drifted")
+    dispositions = adjudication["fact_dispositions"]
+    if dispositions["allowed_values"] != [
+        "present",
+        "structural_missing",
+    ]:
+        raise DictionaryDriftError("codebook disposition law drifted")
+    if any(row["disposition"] != "present" for row in dispositions["present"]):
+        raise DictionaryDriftError("non-present fact in present domain")
+    if dispositions["structural_missing"]:
+        raise DictionaryDriftError(
+            "codebook-only adjudication invented structural absence"
+        )
+    if totals["present_fact_count"] != len(dispositions["present"]):
+        raise DictionaryDriftError("codebook present-fact total drifted")
+    if totals["structural_missing_count"] != 0:
+        raise DictionaryDriftError("codebook structural-missing total drifted")
+    verdicts = adjudication["verdicts"]
+    if [(row["registration_item_id"], row["verdict"]) for row in verdicts] != [
+        ("V-B5", "registration_required"),
+        ("V-B6", "registration_required"),
+        ("V-B8", "registration_required"),
+    ]:
+        raise DictionaryDriftError("V-B verdict domain drifted")
+    ratification = adjudication["official_inventory_ratification"]
+    if ratification["status"] != "registration_required":
+        raise DictionaryDriftError("official inventory did not fail closed")
+    if ratification["official_partial_artifact_emitted"] is not False:
+        raise DictionaryDriftError(
+            "official partial inventory was impermissibly emitted"
+        )
+    if adjudication["independence"]["crosswalk_used"] is not False:
+        raise DictionaryDriftError(
+            "codebook adjudication depends on a crosswalk"
+        )
+    expected_content_sha = adjudication["integrity"]["content_sha256"]
+    candidate = json.loads(json.dumps(adjudication))
+    candidate["integrity"]["content_sha256"] = _ZERO_SHA256
+    if expected_content_sha != sha256_bytes(canonical_json_bytes(candidate)):
+        raise DictionaryDriftError(
+            "codebook adjudication content hash drifted"
+        )
+    if expected_content_sha != CODEBOOK_ADJUDICATION_CONTENT_SHA256:
+        raise DictionaryDriftError(
+            "codebook adjudication frozen identity drifted"
+        )
+
+
+def render_codebook_inventory_adjudication(
+    adjudication: Mapping[str, Any],
+) -> bytes:
+    """Render the complete ancillary adjudication canonically."""
+
+    validate_codebook_inventory_adjudication(adjudication)
+    return canonical_json_bytes(adjudication) + b"\n"
+
+
+def default_codebook_adjudication_path() -> Path:
+    """Return the committed complete codebook adjudication path."""
+
+    return (
+        Path("data")
+        / "external"
+        / "psid_codebook_inventory_adjudication_v1.json"
+    )
+
+
 def require_ratified_slot_specs(
     audit: dict[str, Any],
 ) -> None:
@@ -1362,18 +4156,55 @@ def _validate_codebook_authority_manifest(
             )
         if Path(row.get("path", "")).suffix.lower() != ".pdf":
             raise DictionaryDriftError(f"wave {wave}: codebook path drifted")
-        if row.get("provenance") != {
+        provenance = row.get("provenance")
+        if not isinstance(provenance, Mapping):
+            raise DictionaryDriftError(
+                f"wave {wave}: codebook provenance is not a map"
+            )
+        expected_provenance = {
             "source_organization": "Panel Study of Income Dynamics",
             "source_product": "Family File Codebook",
             "source_edition": str(wave),
             "local_staging_authentication": "path_size_sha256_verified",
+            "local_family_archive": provenance.get("local_family_archive"),
             "network_capture_performed_in_unit": False,
             "retrieval_provenance_status": (
-                "registration_required_missing_family_archive_capture_record"
+                "registration_required_missing_original_retrieval_url_"
+                "timestamp"
             ),
-        }:
+        }
+        if provenance != expected_provenance:
             raise DictionaryDriftError(
                 f"wave {wave}: codebook provenance drifted"
+            )
+        archive = provenance["local_family_archive"]
+        if not isinstance(archive, Mapping) or set(archive) != {
+            "path",
+            "size_bytes",
+            "sha256",
+            "member_path",
+            "member_size_bytes",
+            "member_crc32",
+            "member_sha256",
+            "membership_authentication",
+        }:
+            raise DictionaryDriftError(
+                f"wave {wave}: codebook archive provenance drifted"
+            )
+        if (
+            not archive["path"].startswith(f"family/{wave}/")
+            or Path(archive["path"]).suffix.lower() != ".zip"
+            or archive["size_bytes"] <= 0
+            or re.fullmatch(r"[0-9a-f]{64}", archive["sha256"]) is None
+            or Path(archive["member_path"]).suffix.lower() != ".pdf"
+            or archive["member_size_bytes"] != row["size_bytes"]
+            or archive["member_sha256"] != row["sha256"]
+            or re.fullmatch(r"[0-9a-f]{8}", archive["member_crc32"]) is None
+            or archive["membership_authentication"]
+            != "archive_member_bytes_equal_registered_codebook_bytes"
+        ):
+            raise DictionaryDriftError(
+                f"wave {wave}: codebook archive membership drifted"
             )
 
 
