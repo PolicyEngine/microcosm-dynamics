@@ -2,13 +2,16 @@
 
 ## State
 
-Round-4 remediation is in progress on `claude/ce-design-amendment2` from
-base commit `8f55b5436b096930fbc4b51daec7e2969927e7bf`.
+Round-4 remediation is complete on `claude/ce-design-amendment2` from base
+commit `8f55b5436b096930fbc4b51daec7e2969927e7bf`. All three critical and both
+high findings pass. The substantive design HEAD is
+`8e322f4c9f4aa907f0e390528e4ddd805450c7ef`.
 
 The amendment remains append-only relative to the frozen prefix whose SHA-256
-begins `f882ea1d`. Every finding commit must pass a self-audit that no new
-Section 16 identifier, projection, or rule reference lacks its complete frozen
-definition, including its preimage schema, serialization, and result type.
+is `f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7`.
+Every finding commit passed the self-audit that no new Section 16 identifier,
+projection, or rule reference lacks its complete frozen definition, including
+its preimage schema, serialization, and result type.
 
 ## Done
 
@@ -60,8 +63,28 @@ definition, including its preimage schema, serialization, and result type.
 - Replaced the cyclic/unbound cutoff digest with a complete acyclic cutoff
   identity, binding capture design/cutoff digests and registry versions before
   manifest construction.
+- Rebuilt the local unpushed round-4 history so the complete capture-role,
+  predicate, source-projection, and required-authority closure is in the same
+  introducing finding-2 commit; later findings remain separate commits.
+- Verified every round-4 design blob begins with its parent's complete bytes,
+  every design delta is insertion-only, and every commit preserves the exact
+  579,090-byte frozen prefix.
+- Strict-parsed all 47 Section 16 JSON fences with duplicate-key rejection and
+  recomputed the displayed graph, gate, role, predicate, family, source,
+  authority-domain, and ledger hashes.
+- Reproduced the real-state ledger witness at
+  `f8c4a32c086eb8ebf3b641a5e08301d0dcd7ba22`: entries 11 and 12 remain
+  superseded, the exact candidate array is `[13]`, and zero or multiple open
+  unsuperseded matches fail.
+- Passed `pytest -q tests/test_forecast_ledger.py` with 5 tests. With
+  `PYTHONPATH=src`, all 4,073 repository tests collect; an intentionally
+  bounded full run reached 165 passed and 5 skipped with no failure before
+  manual interruption. Plain `pytest -q` lacks the repository `src` path and
+  therefore reports 73 `ModuleNotFoundError: populace_dynamics` collection
+  errors.
+- Passed independent closure, capture-constructibility, commit-history, and
+  holistic five-finding audits; `git diff --check` is clean.
 
 ## Next
 
-1. Run strict JSON, append-only-prefix, closure, repository-state, and
-   whitespace validation; record final dispositions.
+None. Ready for review and ratification; no push was performed.
