@@ -29,6 +29,9 @@ passing silently into a locked contract:
 
 from __future__ import annotations
 
+import copy
+import hashlib
+import json
 from pathlib import Path
 
 import pytest
@@ -57,6 +60,58 @@ GATED_CELL_COUNTS = {
     "e11_destination_size_margins": 5,
 }
 
+EXPECTED_CELLS = {
+    "e2_sexage_rates": {
+        f"sex{sex}_A{age:02d}" for sex in (1, 2) for age in range(1, 9)
+    },
+    "e3_tenure_ecdf_by_age": {
+        f"{year}|{band}"
+        for year in (2020, 2022, 2024)
+        for band in (
+            "16_19",
+            "20_24",
+            "25_34",
+            "35_44",
+            "45_54",
+            "55_64",
+            "65_200",
+        )
+    },
+    "e4_retention_by_age_sex": {
+        f"{age}|sex{sex}"
+        for age in ("16_24", "25_34", "35_44", "45_54", "55_64", "65_99")
+        for sex in (1, 2)
+    },
+    "e5_runs_by_age": {
+        "16_24",
+        "25_34",
+        "35_44",
+        "45_54",
+        "55_64",
+        "65_99",
+    },
+    "e7_earns_relative_gradient_by_size": {
+        f"firmsize{size}" for size in range(1, 6)
+    },
+    "e8_nonemployment_by_age": {
+        f"{age}|{stat}"
+        for age in ("16_24", "25_34", "35_44", "45_54", "55_64", "65_99")
+        for stat in ("any_nonemp", "long_nonemp")
+    },
+    "e9_j2j_earnings_change": {"median_log_change", "iqr_log_change"},
+    "e10_locked_psid_gates": {"inherits_locked_gate_1_cells"},
+    "e11_destination_size_margins": {
+        f"firmsize{size}" for size in range(1, 6)
+    },
+}
+
+ARTIFACT_SHA256 = {
+    "runs/sipp_spell_floors_v1.json": "0110366a37a46fcc12b9a5665f3e6d5ea4c99fd2cabc4bf8cfc3fa8719890faf",
+    "runs/tenure_floors_v1.json": "afbbb9ba38e0c69e78d94bd854c064dfae980f398092904b87b59a526a78e015",
+    "runs/sipp_e8_e9_floors_v1.json": "28515717e83824056708a491b2702089cb439d5369deaff480f391c6f8862aa2",
+    "runs/employer_firm_floors_v1.json": "eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17",
+}
+
 #: Demoted by round 1. Re-gating any of these silently is the
 #: failure mode this set exists to prevent.
 MUST_STAY_REPORT_ONLY = {
@@ -77,7 +132,55 @@ def block() -> dict:
     ]
 
 
+def _assert_contract_integrity(candidate: dict) -> None:
+    """Fail closed on every mutation that could imply a premature lock."""
+    assert candidate["locked"] is False
+    assert candidate["status"] == "draft_round_1_continuing_blocked"
+    assert candidate["design_commit"] == "PENDING"
+    assert candidate["threshold_policy"]["status"] == "REFEREE_PENDING"
+    assert candidate["scoring_frame"]["floor_scale_assertion"]["status"] == (
+        "RECORDED_NOT_SATISFIED"
+    )
+    assert set(candidate["lock_blockers"]) == {
+        "person_side_raw_input_sha256_and_measurement_environment",
+        "e9_exact_distinct_person_population",
+        "scoring_frame_floor_scale_resolution",
+        "referee_choices_and_verification",
+        "design_commit_and_required_merge_commits",
+        "crosswave_and_seam_artifact_promotions",
+    }
+    assert candidate["evidence_provenance"][
+        "person_side_raw_input_status"
+    ] == ("BLOCKED_STRICT_STAGING")
+    assert (
+        candidate["evidence_provenance"]["artifact_sha256"] == ARTIFACT_SHA256
+    )
+    assert set(candidate["partition"]["gate_cells"]) == set(
+        candidate["families"]
+    )
+    for name, expected in EXPECTED_CELLS.items():
+        assert set(candidate["families"][name]["cells"]) == expected
+    for name in (
+        "e2_sexage_rates",
+        "e7_earns_relative_gradient_by_size",
+        "e11_destination_size_margins",
+    ):
+        assert candidate["families"][name]["floor_basis"] == "REFEREE"
+        assert candidate["families"][name]["referee_status"] == "PENDING"
+    assert candidate["families"]["e9_j2j_earnings_change"][
+        "gate_eligibility"
+    ].startswith("BLOCKED_")
+    assert candidate["e12"]["status"] == "DEFERRED"
+    assert (
+        "certifies no person-employer link"
+        in candidate["families"]["e11_destination_size_margins"][
+            "certification_scope"
+        ]
+    )
+
+
 def test_block_is_not_locked_and_edits_no_gate(block):
+    _assert_contract_integrity(block)
     assert block["locked"] is False
     assert block["status"].startswith("draft")
     # The draft must never carry a concrete design_commit: it is
@@ -224,16 +327,16 @@ def test_reweighting_targets_the_full_frame_including_the_seam(block):
 
 
 def test_thin_rules_cover_the_pair_unit_families(block):
-    """E9's unit is transition pairs; the person rule does not
-    govern it, and an unmodified 200-person flag misreads it."""
+    """Pairs are reported, but E9 eligibility needs distinct people."""
     thin = block["threshold_policy"]["thin_rules"]
-    assert thin["sipp_side_min_pairs"] == 200
+    assert thin["sipp_side_min_persons"] == 200
+    assert thin["sipp_side_min_pairs_reporting"] == 200
+    family = block["families"]["e9_j2j_earnings_change"]
     assert (
-        "pairs"
-        in block["families"]["e9_j2j_earnings_change"][
-            "thinnest_gated_cell_note"
-        ].lower()
+        "exact distinct person count is not derivable"
+        in family["thinnest_gated_cell_note"]
     )
+    assert family["gate_eligibility"].startswith("BLOCKED_")
 
 
 def test_e9_declares_its_linkage_status(block):
@@ -302,8 +405,9 @@ def test_ceremony_requires_merges_and_pinning(block):
 def test_the_block_states_what_it_cannot_certify(block):
     """The paper's rule: misses publish as prominently as hits."""
     not_certified = block["not_certified"]
-    assert "E2, E7 and E11-margins ONLY" in (
-        not_certified["firm_side_gating_is_thin"]
+    assert (
+        "E2, E7 and E11-margins ONLY"
+        in (not_certified["firm_side_gating_is_thin"])
     )
     assert "PERMANENTLY" in not_certified["imputed_band_conditioned_cells"]
     assert "Phase-2 no-go" in not_certified["e12_not_gated"]
@@ -321,15 +425,6 @@ def test_the_design_document_is_at_the_registered_path(block):
     )
 
 
-@pytest.mark.skipif(
-    not DESIGN.exists(),
-    reason=(
-        "the revision-2 design document lands with #230; this branch "
-        "carries the block YAML only. The check becomes live — and "
-        "must pass — once both are on master, which the ceremony's "
-        "merge list requires before the amendment PR."
-    ),
-)
 def test_draft_and_design_document_agree_on_the_demotions(block):
     """The YAML and the prose must not drift apart.
 
@@ -340,7 +435,132 @@ def test_draft_and_design_document_agree_on_the_demotions(block):
     design = DESIGN.read_text(encoding="utf-8")
     # The design doc must not still advertise E1/E6 as gated.
     assert "does not gate at first" in design
-    assert "E2, E7 and E11-margins only" in design
+    assert "E2, E7 and E11-margins are firm-side" in design
+    assert "strict-staging blocker" in design
+    assert "certifies no person link" in design
+    assert "strong E12 is **deferred**" in design
+
+
+def test_exact_composed_heads_are_pinned_and_ancestral(block):
+    assert block["composed_heads"] == {
+        "master": "691901f2915865fceb906f1dc5f36c913a5e2675",
+        "ic_naming_root_pr_277": "c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0",
+        "person_side_floors_pr_212": "211152bb506e08b0a8b39dcae1c255365a71df0d",
+        "firm_side_floors_pr_223": "34a70fc8c809d23b4643588ca228565b1c7b6513",
+        "controlling_design_pr_230": "85750ac10e9c5274c012db485fa4dc3ce432d137",
+    }
+
+
+def test_artifact_provenance_and_cell_populations_are_real(block):
+    pins = block["evidence_provenance"]["artifact_sha256"]
+    assert pins == ARTIFACT_SHA256
+    for relative, expected in ARTIFACT_SHA256.items():
+        assert (
+            hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+            == expected
+        )
+
+    firm = json.loads((ROOT / "runs/employer_firm_floors_v1.json").read_text())
+    e2 = firm["e2"]["by_sex_age"]["cells"]
+    for cell in EXPECTED_CELLS["e2_sexage_rates"]:
+        assert e2[cell]["min_denominator_jobs"] >= 10_000
+        assert e2[cell]["thin"] is False
+    for cell in EXPECTED_CELLS["e7_earns_relative_gradient_by_size"]:
+        assert (
+            firm["e6_e7"]["by_firmsize_all_industry"][cell][
+                "min_denominator_jobs"
+            ]
+            >= 10_000
+        )
+    for cell in EXPECTED_CELLS["e11_destination_size_margins"]:
+        assert cell in firm["e11"]["destination_size_margin"]
+
+    spells = json.loads((ROOT / "runs/sipp_spell_floors_v1.json").read_text())
+    assert (
+        set(spells["e4_retention_by_age_sex"])
+        == EXPECTED_CELLS["e4_retention_by_age_sex"]
+    )
+    assert set(spells["e5_runs_by_age"]) == EXPECTED_CELLS["e5_runs_by_age"]
+    assert not any(
+        cell["thin"] for cell in spells["e4_retention_by_age_sex"].values()
+    )
+    assert not any(cell["thin"] for cell in spells["e5_runs_by_age"].values())
+
+    e8e9 = json.loads((ROOT / "runs/sipp_e8_e9_floors_v1.json").read_text())
+    j2j = e8e9["e9_transitions"]["earnings_change"]["j2j"]
+    assert j2j["pairs_unweighted"] == 545
+    assert "persons_unweighted" not in j2j
+    assert (
+        "FOLLOW_UP_REQUIRED"
+        in e8e9["promotion_integrity"]["e9_distinct_person_count_status"]
+    )
+
+
+def test_current_and_future_ceremony_paths_are_not_conflated(block):
+    ceremony = block["ceremony"]
+    for relative in ceremony["current_composed_evidence"]:
+        assert (ROOT / relative).is_file()
+    future = set(ceremony["pre_lock_artifacts_required"])
+    assert "runs/crosswave_jobid_check_v1.json" in future
+    assert "runs/seam_reconciliation_v1.json" in future
+    assert not (ROOT / "runs/crosswave_jobid_check_v1.json").exists()
+    assert not (ROOT / "runs/seam_reconciliation_v1.json").exists()
+    assert "crosswave_and_seam_artifact_promotions" in block["lock_blockers"]
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    (
+        "lock",
+        "drop_cell",
+        "rename_cell",
+        "partition_drift",
+        "artifact_digest_drift",
+        "remove_raw_blocker",
+        "premature_floor_choice",
+        "promote_e9",
+        "expand_e11_claim",
+        "promote_e12",
+    ),
+)
+def test_contract_mutations_fail_closed(block, mutation):
+    candidate = copy.deepcopy(block)
+    if mutation == "lock":
+        candidate["locked"] = True
+    elif mutation == "drop_cell":
+        candidate["families"]["e2_sexage_rates"]["cells"].pop()
+    elif mutation == "rename_cell":
+        candidate["families"]["e4_retention_by_age_sex"]["cells"][0] = (
+            "renamed"
+        )
+    elif mutation == "partition_drift":
+        candidate["partition"]["gate_cells"].remove(
+            "e7_earns_relative_gradient_by_size"
+        )
+    elif mutation == "artifact_digest_drift":
+        candidate["evidence_provenance"]["artifact_sha256"][
+            "runs/tenure_floors_v1.json"
+        ] = "0" * 64
+    elif mutation == "remove_raw_blocker":
+        candidate["lock_blockers"].remove(
+            "person_side_raw_input_sha256_and_measurement_environment"
+        )
+    elif mutation == "premature_floor_choice":
+        candidate["families"]["e11_destination_size_margins"][
+            "floor_basis"
+        ] = "ex_pandemic"
+    elif mutation == "promote_e9":
+        candidate["families"]["e9_j2j_earnings_change"]["gate_eligibility"] = (
+            "ELIGIBLE"
+        )
+    elif mutation == "expand_e11_claim":
+        candidate["families"]["e11_destination_size_margins"][
+            "certification_scope"
+        ] = "certifies worker sorting"
+    elif mutation == "promote_e12":
+        candidate["e12"]["status"] = "GATED"
+    with pytest.raises(AssertionError):
+        _assert_contract_integrity(candidate)
 
 
 def test_naming_uses_the_interface_contract_prefix():

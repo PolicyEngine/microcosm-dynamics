@@ -36,7 +36,7 @@
 gates:
   employer:
     id: employer_firm_attachment_block
-    status: draft_round_1_continuing
+    status: draft_round_1_continuing_blocked
     locked: false
     kind: employer_attachment
     design: docs/design/ic3_employer_gate_block.md
@@ -52,10 +52,46 @@ gates:
       document found at an unregistered path rather than skipping.
     design_commit: PENDING  # squash-merge commit, set at the flip
     plan: issue #192
+    composed_heads:
+      master: 691901f2915865fceb906f1dc5f36c913a5e2675
+      ic_naming_root_pr_277: c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0
+      person_side_floors_pr_212: 211152bb506e08b0a8b39dcae1c255365a71df0d
+      firm_side_floors_pr_223: 34a70fc8c809d23b4643588ca228565b1c7b6513
+      controlling_design_pr_230: 85750ac10e9c5274c012db485fa4dc3ce432d137
+    composed_head_rule: >-
+      these are exact branch-composition identities, not merge,
+      approval, referee, or ratification claims. Every listed commit
+      and all of its ancestors must be ancestors of this YAML commit.
     contracts:
       ic1_spell_schema: docs/adr/0003-employer-firm-extension.md
       ic2_banding: src/populace_dynamics/firms/banding.py
-      linkage_qc: docs/adr/0004-linkage-qc.md  # PENDING merge (B3)
+      linkage_qc: docs/adr/0004-linkage-qc.md
+
+    evidence_provenance:
+      person_side_pr: "212@211152bb506e08b0a8b39dcae1c255365a71df0d"
+      firm_side_pr: "223@34a70fc8c809d23b4643588ca228565b1c7b6513"
+      design_pr: "230@85750ac10e9c5274c012db485fa4dc3ce432d137"
+      artifact_sha256:
+        runs/sipp_spell_floors_v1.json: 0110366a37a46fcc12b9a5665f3e6d5ea4c99fd2cabc4bf8cfc3fa8719890faf
+        runs/tenure_floors_v1.json: afbbb9ba38e0c69e78d94bd854c064dfae980f398092904b87b59a526a78e015
+        runs/sipp_e8_e9_floors_v1.json: 28515717e83824056708a491b2702089cb439d5369deaff480f391c6f8862aa2
+        runs/employer_firm_floors_v1.json: eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17
+      person_side_raw_input_status: BLOCKED_STRICT_STAGING
+      person_side_raw_input_note: >-
+        #212 promoted measured values without rebuilding because
+        pu2023 and the CPS tenure extracts were unavailable, while
+        the original drafts recorded neither raw SHA256 values nor
+        their measurement environments. This remains lock-blocking
+        until an on-data owner performs the registered reconciliation.
+      firm_side_raw_input_status: PINNED_IN_ARTIFACT
+
+    lock_blockers:
+      - person_side_raw_input_sha256_and_measurement_environment
+      - e9_exact_distinct_person_population
+      - scoring_frame_floor_scale_resolution
+      - referee_choices_and_verification
+      - design_commit_and_required_merge_commits
+      - crosswave_and_seam_artifact_promotions
 
     covers: >-
       the employer-attachment layer imputed onto the Populace person
@@ -130,22 +166,21 @@ gates:
           at verification; resolution is one of the three recorded
           options, chosen on the record before any candidate runs.
         holdout_reverses_the_ratio: >-
-          the artifacts' sqrt(2) note assumed full-source scoring, in
-          which case half-split floors are conservative (too wide) by
-          ~1/sqrt(2). This block scores on a 0.20 holdout, which is
-          SMALLER than the half-split basis, so its sampling noise is
-          LARGER (~sqrt(0.5/0.2) = 1.58x under root-n) and half-split
-          floors turn mildly ANTI-conservative — too tight — rather
-          than conservative. The direction reverses; the status stays
-          RECORDED_NOT_SATISFIED either way, and the resolution
-          chosen on the record must use this direction, not the
-          artifacts' unmodified ratio.
+          the promoted #212 artifacts now record the corrected
+          direction. A 0.20 holdout is SMALLER than the half-split
+          basis, so its sampling noise is LARGER
+          (~sqrt(0.5/0.2) = 1.58x under root-n) and unadjusted
+          half-split floors are ANTI-conservative — too tight. The
+          status remains RECORDED_NOT_SATISFIED until the referee
+          accepts a registered scale adjustment or matching-context
+          floors.
         tolerance: REFEREE
 
     # ---------------------------------------------------------------
     # Threshold policy (S1: honest restatement)
     # ---------------------------------------------------------------
     threshold_policy:
+      status: REFEREE_PENDING
       rule: max(floor_mean + k * floor_sd, substantive_tolerance)
       k: 4
       k_basis: >-
@@ -167,14 +202,15 @@ gates:
         report-only gates publish per-cell pass/fail but never block.
       thin_rules:
         sipp_side_min_persons: 200        # person-unit families
-        sipp_side_min_pairs: 200          # pair-unit families (E9)
+        sipp_side_min_pairs_reporting: 200
         firm_side_min_denominator_jobs: 10000
         unit_rule: >-
           a thin rule applies only to families measured in ITS unit.
-          E9 is counted in transition pairs, not persons, so the
-          person rule does not govern it; the pair rule does, at the
-          same 200 threshold and with the clustering caveat that a
-          pair count overstates the independent-observation count.
+          E9 must be adjudicated in distinct persons because its split
+          unit is person. Its 545 transition pairs are retained as a
+          reporting count but cannot establish the 200-person floor;
+          #212 registers the exact distinct-person count as an on-data
+          follow-up.
         thin_disposition: report_only
 
     # ---------------------------------------------------------------
@@ -235,6 +271,7 @@ gates:
     families:
 
       e2_sexage_rates:
+        referee_status: PENDING
         quantity_type: flow
         split_unit: job
         reference: data/external/j2j_us_sexage_2015on.csv
@@ -242,7 +279,7 @@ gates:
           hire / separation / j2j-hire / j2j-separation rates per
           MainB job, sex x age group, |ln(model/reference)|
         floor_run: runs/employer_firm_floors_v1.json
-        floor_basis: ex_pandemic
+        floor_basis: REFEREE
         floor_path: e2.by_sex_age.cells
         substantive_tolerance: 0.10
         cells:  # 2 sexes x 8 age groups; margins report-only
@@ -275,15 +312,16 @@ gates:
           k: 4
           rounding: 3
           metric: log_ratio
-          sd_key: ex_pandemic_sd
-          mean_key: ex_pandemic_mean
+          sd_key: REFEREE
+          mean_key: REFEREE
 
       e3_tenure_ecdf_by_age:
         quantity_type: stock
         split_unit: person
         reference: CPS January tenure supplement (2020/2022/2024)
         statistic: ECDF max-gap of the tenure distribution by age band
-        floor_run: runs/tenure_floors_v1.json  # PENDING promotion (#212)
+        floor_run: runs/tenure_floors_v1.json
+        referee_status: PENDING
         floor_path: by_year.<year>.<age_band>.floor_ecdf_max_gap
         substantive_tolerance: 0.02
         formulation_note: >-
@@ -337,7 +375,8 @@ gates:
         split_unit: person
         reference: SIPP holdout
         statistic: employer-retention pair rate, |ln(model/truth)|
-        floor_run: runs/sipp_spell_floors_v1.json  # PENDING promotion (#212)
+        floor_run: runs/sipp_spell_floors_v1.json
+        referee_status: PENDING
         floor_path: e4_retention_by_age_sex
         substantive_tolerance: 0.005
         tolerance_note: >-
@@ -365,7 +404,8 @@ gates:
         split_unit: person
         reference: SIPP holdout
         statistic: multi-window attachment run share, |ln(model/truth)|
-        floor_run: runs/sipp_spell_floors_v1.json  # PENDING promotion (#212)
+        floor_run: runs/sipp_spell_floors_v1.json
+        referee_status: PENDING
         floor_path: e5_runs_by_age
         substantive_tolerance: 0.05
         linkage_prerequisite: true
@@ -379,6 +419,7 @@ gates:
         derivations: { k: 4, rounding: 3, metric: log_ratio }
 
       e7_earns_relative_gradient_by_size:
+        referee_status: PENDING
         quantity_type: stock
         split_unit: job
         reference: data/external/qwi_us_firmsize_sector_2015on.csv
@@ -386,7 +427,7 @@ gates:
           QWI EarnS (a MEAN, never a median — ADR 0003 unit rule)
           relative to the all-size aggregate, by firm-size band
         floor_run: runs/employer_firm_floors_v1.json
-        floor_basis: ex_pandemic
+        floor_basis: REFEREE
         floor_path: e6_e7.by_firmsize_all_industry.<cell>.e7_earns_rel_to_aggregate
         substantive_tolerance: 0.05
         disjointness: >-
@@ -408,7 +449,8 @@ gates:
           any- and long-nonemployment shares by age band,
           |ln(model/truth)|, censoring-free 12-month-observed
           restriction carried from the floor artifact
-        floor_run: runs/sipp_e8_e9_floors_v1.json  # PENDING promotion (#212)
+        floor_run: runs/sipp_e8_e9_floors_v1.json
+        referee_status: PENDING
         floor_path: e8_nonemployment_by_age
         substantive_tolerance: 0.10
         linkage_prerequisite: false  # needs no worker-to-firm link
@@ -434,7 +476,9 @@ gates:
         statistic: >-
           median and IQR of log earnings change across j2j
           transitions, absolute gap
-        floor_run: runs/sipp_e8_e9_floors_v1.json  # PENDING promotion (#212)
+        floor_run: runs/sipp_e8_e9_floors_v1.json
+        referee_status: PENDING
+        gate_eligibility: BLOCKED_PENDING_DISTINCT_PERSON_COUNT_AND_LINKAGE_AUDIT
         floor_path: e9_transitions.earnings_change.j2j
         substantive_tolerance: null  # floors non-degenerate; not needed
         linkage_prerequisite: true
@@ -451,14 +495,12 @@ gates:
           promotion, is a referee item — flagged here rather than
           decided silently by omission.
         thinnest_gated_cell_note: >-
-          545 unweighted PAIRS — the thinnest gated cell in the
-          block. The `sipp_side_min_persons: 200` thin rule is stated
-          in persons and does not apply to E9 unmodified: this
-          family's unit is transition pairs, and a pair count is not
-          a person count (the same 545 pairs may come from fewer
-          persons, clustered within worker). E9's thin test is the
-          pair-count rule in `thin_rules.sipp_side_min_pairs`.
-          Recorded, not hidden.
+          545 unweighted PAIRS are recorded, but the exact distinct
+          person count is not derivable from the promoted aggregate
+          artifact. Because the split unit is person, pair count
+          cannot establish eligibility. The #212 builder now emits
+          `persons_unweighted`; an on-data rebuild and reconciliation
+          must establish whether the cell clears 200 distinct persons.
         cells:
           - median_log_change
           - iqr_log_change
@@ -488,6 +530,7 @@ gates:
         derivations: null
 
       e11_destination_size_margins:
+        referee_status: PENDING
         quantity_type: flow
         split_unit: job
         reference: data/external/j2jod_us_firmsize_od_2015on.csv
@@ -497,7 +540,7 @@ gates:
           counts carry aggregate flow growth, a trend not noise —
           same treatment as E7)
         floor_run: runs/employer_firm_floors_v1.json
-        floor_basis: ex_pandemic
+        floor_basis: REFEREE
         floor_path: e11.destination_size_margin.<cell>.ee_rel
         substantive_tolerance: 0.05
         cross_source_bound: >-
@@ -506,6 +549,10 @@ gates:
           post-2016Q1 constraints are margins-only, this bounds how
           tight any E11 threshold can be, independently of the
           temporal floor.
+        certification_scope: >-
+          aggregate destination-size margin reproduction only. It
+          certifies no person-employer link, worker sorting, firm
+          effect, coworker correlation, spillover, or causal channel.
         cells:
           - firmsize1
           - firmsize2
@@ -513,6 +560,18 @@ gates:
           - firmsize4
           - firmsize5
         derivations: { k: 4, rounding: 3, metric: log_ratio }
+
+    e12:
+      status: DEFERRED
+      strong_form: >-
+        true within/between-firm variance, worker sorting, and
+        coworker correlation require an adjudicable linked reference;
+        no such public microlevel reference is available.
+      aggregate_form: >-
+        a future disjoint grouped-margin audit may certify only its
+        named observable margins after its statistic, floor,
+        threshold and partition receive a separate promotion and
+        referee verification. Passing E11 does not promote this claim.
 
     # ---------------------------------------------------------------
     # Linkage QC (ADR 0004; B4 instantiation)
@@ -575,6 +634,13 @@ gates:
     # Lock ceremony
     # ---------------------------------------------------------------
     ceremony:
+      current_composed_evidence:
+        - runs/crosswave_jobid_check_draft_v0.json
+        - runs/seam_reconciliation_draft_v0.json
+        - runs/employer_firm_floors_v1.json
+        - runs/sipp_spell_floors_v1.json
+        - runs/sipp_e8_e9_floors_v1.json
+        - runs/tenure_floors_v1.json
       pre_lock_artifacts_required:
         - runs/employer_firm_floors_v1.json          # DELIVERED (#223)
         - runs/crosswave_jobid_check_v1.json         # #235
