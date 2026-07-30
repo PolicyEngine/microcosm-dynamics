@@ -9189,3 +9189,107 @@ Likewise, retaining V-B7 as the ninth executable verification row with the
 new `optional_target_source` class is schema closure: deleting or leaving
 that hidden required row unchanged would respectively churn unrelated
 cardinalities or keep the supposedly removed source as a global blocker.
+
+## 16. AMENDMENT SECTION — Amendment 2: authorize the fitting-free correction path
+
+### 16.1 Status, scope, and precedence
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 4
+  of the design. Before completion of §16.10 step 3 it is unratified and
+  authorizes no action. After step 3 but before step 5, only step-4
+  authority, implementation, and fixture preparation is authorized. It
+  becomes operative only when a validator-accepted fresh registration names
+  the exact amendment-2 ratification commit. No status literal is updated in
+  place.
+- **Amended base authority:** The immutable immediate base is the complete
+  revision-3 text at commit
+  `15e3ca57eb92d8385e7ec893e60c460fad1f3a6e`. That commit contains the
+  revision-2 base at
+  `59fd058b943c2b9960af9cb98ecdec97709cc2dd` and Amendment 1.
+- **Change:** Amendment 2 adds a separately named deterministic fitting-free
+  correction path. It freezes Option A classification, Option B measurement,
+  statutory component aggregation, and correction draws without an official
+  target, fitted coefficient, candidate, optimizer, selector, model-choice
+  loss, or fitting tolerance.
+- **No implied repeal:** Original §§1–15 remain visible and are not edited in
+  place. They remain controlling except for the exact fitting-free clauses
+  enumerated in §§16.2–16.10. Where an enumerated original clause conflicts
+  with §16 on the fitting-free path, §16 is its prospective replacement law.
+  Silence in §16 leaves the original clause unchanged. Section 16 never
+  weakens or substitutes for a requirement on the calibrated path.
+
+The two exact path literals are `CALIBRATED` and
+`DETERMINISTIC_FITTING_FREE`. They are mutually exclusive fresh-registration
+consequences, not caller options, runtime fallbacks, candidate outcomes, or
+report statuses. Section 16.9 freezes their complete precedence law. In
+particular, a runtime failure in the calibrated ceremony can never switch the
+same registration to the fitting-free path.
+
+This amendment implements exactly the referee's six-item minimum: one named
+deterministic model; lawfully empty target and model-choice branches with
+mechanically absent fitting capabilities; exact revisions to the six
+dependent gates and certificate; one new label array; preserved A1 and A3
+registration authority with an exact A5 disposition and diagnostic ruling;
+and append-only identities, ratification, registration, and reactivation
+precedence. It creates no general license to simplify another base registry,
+gate, consumer domain, statutory transform, draw law, incident law, or
+publication condition.
+
+### 16.2 Established dead end and branch-activation law
+
+The accepted vintage-2 source artifact contains 825 physical cells: 330 from
+Table 4.B2 and 495 from Table 4.B11 over 1968–2022. Its membership
+adjudication establishes two required facts, partially establishes 17, and
+leaves 11 unestablished. Every one of Amendment 1's 14 calibration families
+therefore fails at least one source or registration prerequisite. The
+validator emits zero 30-field target rows.
+
+Under revision 3, that state is not an empty successful calibration:
+
+1. `calibration_target_specs.v3` expands the complete 14-family domain;
+2. all four positive-mass families are required and cannot be thinned or
+   renormalized after a prerequisite fails;
+3. `no_eligible_candidate` exists only after lawful target registration,
+   three complete fits, and selection; and
+4. zero registrable target rows stop the ceremony before classification,
+   measurement, gates, model identity, primary, sidecar, or certificate.
+
+Amendment 2 does not reinterpret that failure as calibrated success. It
+creates `covered_earnings_path_applicability_specs.v1`, an object with exactly
+`schema_version`, `ordered_paths`, `calibrated_predicate`,
+`fitting_free_predicate`, `exclusivity_law`, `derivation_stage`, and
+`failure_disposition`. Its values are:
+
+- `schema_version: covered_earnings_path_applicability_specs.v1`;
+- `ordered_paths: ["CALIBRATED","DETERMINISTIC_FITTING_FREE"]`;
+- `calibrated_predicate:
+  complete_then_operative_calibrated_registration_domain_is_lawfully_registrable`;
+- `fitting_free_predicate:
+  calibrated_predicate_false_by_pre_exposure_authority_adjudication_and_all_fitting_free_authorities_pass`;
+- `exclusivity_law:
+  exactly_one_path_true_and_calibrated_has_precedence`;
+- `derivation_stage:
+  fresh_registration_before_any_production_value_or_output_contact`; and
+- `failure_disposition: abort_registration`.
+
+The coordinator derives both predicates from registered authority bytes,
+schemas, Git lineage, and complete domains before it opens a production model
+value. Configuration contains no path switch. Exactly one predicate must be
+true. Both true, both false, an undecidable authority state, a
+configuration-proposed path, or a path derived after model output is invalid.
+The complete precedence consequences are in §16.9.
+
+For the fitting-free branch, the accepted applicability result is
+`covered_earnings_path_applicability_result.v1`, with exactly
+`schema_version`, `calibrated_registrability_status`,
+`calibrated_failure_reason_ids`, `fitting_free_authority_status`,
+`derived_path`, `derived_before_production_value_access`, and `status`.
+The two status fields are respectively
+`registrable | not_registrable` and `pass | fail`;
+`calibrated_failure_reason_ids` is an ordered nonempty array exactly when the
+first field is `not_registrable` and is empty otherwise; `derived_path` is
+one of the two ordered literals; the boolean is literal `true`; and `status`
+is `pass` only when the path-specification law above holds. On the currently
+adjudicated source facts, the calibrated status is `not_registrable`, but
+Amendment 2 alone still does not make the fitting-free authority status pass:
+A1 and A3 remain independent registration-time requirements under §16.4.
