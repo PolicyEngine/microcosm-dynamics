@@ -32,6 +32,10 @@ definition, including its preimage schema, serialization, and result type.
   calibrated transition predecessor, and the five-field ledger entry while
   preserving forecast supersession/back-link and grading history.
 - Verified the current real-state projection selects entry 13 uniquely.
+- Rebuilt the normative `gate_specs.v4` replacement domain as seven complete
+  six-field rows, including a fitting-free G11 statement and explicit
+  `gate_fail` disposition.
+- Removed any normative dependence on the separate G11 deviations-ledger row.
 - Froze all five registration-required V-B role arrays and both complete
   ten-row v1/v2 role maps, including their exact canonical domain hashes.
 - Added one closed A1/A3 capture-supplement predicate registry, complete
@@ -53,7 +57,6 @@ definition, including its preimage schema, serialization, and result type.
 
 ## Next
 
-1. Replace G11 as the seventh complete `gate_specs.v4` row.
-2. Close G21 structural validity.
-3. Run strict JSON, append-only-prefix, closure, repository-state, and
+1. Close G21 structural validity.
+2. Run strict JSON, append-only-prefix, closure, repository-state, and
    whitespace validation; record final dispositions.

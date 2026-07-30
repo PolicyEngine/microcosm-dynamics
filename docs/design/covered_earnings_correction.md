@@ -17586,3 +17586,97 @@ the candidate array is exactly `[13]`; and the complete passing projection's
 canonical SHA-256 is
 `8488ef1f59413b09f0b635bb0b0af823a9f3ec9905e589ba59ed7d0d636d4ffc`.
 Thus the structural subject on current real state is uniquely entry 13.
+
+#### 16.11.4 G11 as the seventh complete v4 replacement row
+
+The complete replacement domain of `gate_specs.v4` is now exactly
+`["G10","G11","G14","G15","G17","G19","G21"]`. The earlier six-row
+serialization is superseded by this exact seven-row normative serialization:
+
+```json
+[
+  {
+    "gate_id": "G10",
+    "normative_statement": "The exact six registered deterministic replay comparison rows exist in registered order; both fresh executions for each P, R, and H source order bind complete deterministic bundles, and every paired bundle, source-order, substantive-model, direct-law, default-application, classified-component, measurement, reconciliation, keyed-uniform, expected-ledger, realized-ledger, and claim-context identity is equal. An empty, missing, duplicate, extra, or reordered row fails.",
+    "evidence_selector": "fitting_free_replay_registry_results",
+    "comparator": "exact_six_deterministic_rows_all_hashes_equal",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G11",
+    "normative_statement": "The trusted RNG-provider call ledger has exactly one row per frozen provider; the correction midpoint provider exact-matches the complete fitting-free keyed-uniform registry; the single coordinator retry-nonce call exact-matches its 32-byte pre-production law; and every forbidden provider has zero calls. On both exact fitting-free terminal pairs, fitting_free_evaluated/complete and fitting_free_precontext_structural_gate_fail/precontext_structural_gate_fail, the complete expected principal-lifecycle event stream byte-equals the actual stream, including every effective creation and destruction boundary and event order, with no fitting- or selection-scoped phase, principal, or event. After all provider-capable work ends, the original ledger and cache are sealed, the unchanged wrappers enter irreversible deny-all state, every forbidden, post-seal, denied, and sticky count is zero, and all live identities and the pre-rename comparand exact-recheck immediately before the first rename.",
+    "evidence_selector": "trusted_rng_provider_call_ledger_and_lifecycle_seal",
+    "comparator": "exact_keyed_calls_nonce_exception_forbidden_zero_event_stream_sealed_deny_and_prerename_recheck",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G14",
+    "normative_statement": "A coordinator-owned second execution applies the exact common survey-weight multiplier 7.0 to every registered PSID weight key while the 1.0 and 7.0 packets and broker grants remain complete, every target/objective and optimization capability count remains zero, and the complete person-level deterministic correction bundle is byte-identical between executions.",
+    "evidence_selector": "trusted_deterministic_survey_weight_rescale_result",
+    "comparator": "exact_one_person_level_bundle_equal_and_weight_packets_complete",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G15",
+    "normative_statement": "The exact 24-row isolation registry is present in order; the receipt-bound static capability graph, model grants, IPC schemas and trace, worker and evaluator lifecycles, and trusted-consumer roots equal their complete independently reconstructed projections; every forbidden-principal, forbidden-capability, target-value, open, release, and access domain is empty, and every required prohibited-access count is zero.",
+    "evidence_selector": "fitting_free_sandbox_ipc_capability_absence_evidence",
+    "comparator": "exact_grants_ipc_lifecycle_and_forbidden_authority_graphs_empty",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G17",
+    "normative_statement": "The exact ordered G17-C01 through G17-C18 comparison rows are physically present and every expected and actual count, key stream, and domain hash is equal; C15 contains its exact 20 physical canonical-empty child rows, while C16, C17, and C18 retain the nonempty model-universe, weight-authority, and path-adjudication closures.",
+    "evidence_selector": "fitting_free_inventory_crosswalk_authority_and_empty_domain_closure",
+    "comparator": "exact_eighteen_domains_counts_and_hashes_equal",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G19",
+    "normative_statement": "Exactly one registered deterministic model is activated with the same complete model-specification hash; all 37 registered rule preimages are instantiated once in exact order with equal expected and actual hashes, and all eight prohibited target, candidate, parameter, optimizer, selector, store, selection-result, and target-value-capability counts are zero.",
+    "evidence_selector": "deterministic_model_registration_and_activation",
+    "comparator": "singleton_registered_model_all_rules_instantiated_and_forbidden_domains_empty",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G21",
+    "normative_statement": "The complete committed opaque-fixture domain is used; every registered literal-byte replacement is independently materialized and applied exactly once with no other byte changed; all resulting buffers pass their registered structural rules; the baseline and mutant pre-G21 bundles are byte-identical; every denied-path, forbidden-principal, forbidden-capability, target-value, open, and release count is zero; and the two fixture-bound evaluation-provenance hashes differ.",
+    "evidence_selector": "fitting_free_noninterference_pre_g21_equality",
+    "comparator": "acyclic_deterministic_prebundle_mutation_capability_and_provenance_predicate",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  }
+]
+```
+
+To construct v4, copy every complete v3 row positionally and replace exactly
+those seven positions with the complete same-ID object above. No field is
+merged or inherited at a replacement position. In particular G11's v3
+`normative_statement` and `failure_disposition` bytes are not v4 bytes; the
+new row retains only the already frozen trusted-provider evidence selector,
+comparator, and required boolean as its explicit same-valued fields. Any
+alternate statement, selector, comparator, required value, disposition,
+missing member, extra member, or different replacement order is not
+`gate_specs.v4`.
+
+G11's two terminal-pair literals are the exact result of the already closed
+§§16.5.5 and 16.6.3 phase, branch, and evaluation-completion schemas. The
+row therefore consumes those registered objects directly and does not rely
+on a deviations ledger to revise inherited prose. Its `gate_fail`
+disposition applies when complete unfavorable G11 evidence and a valid seal
+can serialize. Inability to seal, sticky or post-seal activity, live identity
+drift, or failure of the immediate pre-rename recheck remains the already
+frozen invariant-incident/no-primary branch; `gate_fail` cannot downgrade
+such an incident into a publishable primary.
+
+For the fitting-free replacement ledger, the controlling gate row is now
+“§8.1 G10/G11/G14/G15/G17/G19/G21 — seven complete six-field replacements
+in §§16.6 and 16.11.4.” The earlier separate
+“§8.1 G11 lifecycle projection” ledger row has no controlling effect and
+supplies no v4 byte. Gates G01–G09, G12–G13, G16, G18, G20, and G22 alone
+retain their complete v3 rows.
