@@ -19,8 +19,9 @@ round-7 findings and the ratification-blocking namespace sweep gap.
   projections, plus complete cross-branch equality at the eight shared claim
   positions, with explicit envelope statuses and construction order.
 - Limited the authenticated PSID role-map replacements to V-B5/V-B6/V-B8,
-  retained the base V-B1/V-B4 legal authority, and made every source domain
-  an exact keyed cover with disjoint closed disposition domains.
+  retained the base V-B1/V-B4 legal authority, limited serialized PSID
+  source rows to those three claims, and froze the other claims' source-row
+  and disposition domains as explicitly empty rather than unmatched.
 
 ## Next
 

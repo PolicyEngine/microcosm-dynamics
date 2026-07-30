@@ -19847,3 +19847,66 @@ sentences have no prospective operative case. Absence and conflict are
 representable only as the explicit matched base dispositions above; the
 committed PSID negatives are representable only as the three exact matched
 `registration_required` rows.
+
+The preceding attempted serialization of base legal and optional source rows
+has no prospective operative case. Those sources already have their own
+base-design authentication and are not added to the ten-key adjudication
+artifact. Let \(M=(\text{V-B5},\text{V-B6},\text{V-B8})\). For each branch
+and each claim outside \(M\), `adjudication_sources` is the exact empty
+array, the ordered source-row match-key domain is the exact empty array, and
+the closed `source_disposition` domain is the empty set. Any serialized
+source member for one of those six claims is extra and makes
+`derivation_status` `fail`. This empty array is a declared disjoint-domain
+boundary, not a failed match, missing authority, or source disposition; no
+match operation is performed for it. Thus no legal-input, historical-rule,
+optional-source, sentinel, configuration, or producer identity is smuggled
+into `source_adjudication_inputs`.
+
+For a claim outside \(M\), `derivation_status` is `pass` exactly when its
+`verification_claim_spec` is the independently reconstructed same-branch
+base spec and its `derived_verification_claim_result` is the independently
+reconstructed same-branch base result under §§4.1, 15.6.1, and 16.5.1,
+including all of that result's original authority, affected-key,
+governing-rule, optional-consequence, status, and failure equations. The
+configured spec and result and the candidate adjudication artifact remain
+comparands only. The already authenticated base result is constructed before
+the adjudication candidate is read; the PSID source contributes no byte to
+it. For calibrated V-B7 this includes the already frozen exact absent/pass
+branch with an empty `authority_input_ids` array; for fitting-free V-B7 it
+includes the exact not-applicable/pass branch. No invented absence row is
+required.
+
+For V-B1 and V-B4, the independently constructed base result has
+`authority_input_ids` exactly `["historical_coverage_rules"]`. Its
+`verification_status` is `verified`, its
+`optional_consequence_specs_sha256` is null, and its status is `pass` only
+when the complete §4.1 legal registry and source manifest, the immutable
+`legal_rule_input` Git bytes, every same-claim effective-year rule and
+transform, and the `historical_coverage_rules` exact-identity predicate all
+pass. These are the establishing authorities; neither the legacy
+methodology-manifest ID nor the PSID adjudication ID may appear in either
+result's `authority_input_ids`.
+
+The inherited v1/v2 role ref on each of those two claims remains only the
+preexisting manifest-availability evidence required by the unchanged
+calibrated adjudication envelope. It is not substantive legal evidence.
+For V-B1 and V-B4, the
+`authenticated_verification_claim_result_satisfied` Boolean in
+`calibrated_noncapture_required_authority_predicate_specs.v2` is true
+exactly when the authenticated same-claim row passes the empty-source
+boundary and base-result equality above **and** the independently computed
+`historical_coverage_rules` exact-identity result is true. The usual
+same-claim spec/result equations remain required. For those two claims only,
+the older sentence requiring `authority_input_ids` to equal the expanded
+manifest-ref authority-ID projection is replaced by the exact singleton
+above. A missing or false legal-identity result makes the semantic Boolean
+false; it cannot be repaired by a present legacy methodology manifest.
+
+For claims in \(M\), the source-row match key, exact pointer order, singleton
+`registration_required` disposition domain, residual closure, and negative
+result equations stated above remain controlling. Their ordered expected
+key array has exactly one member and must deep-equal the ordered serialized
+key array. For claims outside \(M\), both arrays are exact empty. These two
+cases replace the earlier multiset/set language: equality is always ordered
+array deep equality with exact multiplicity, and any duplicate is therefore
+an extra row and a derivation failure.
