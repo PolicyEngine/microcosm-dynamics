@@ -10134,3 +10134,325 @@ decoder, target packet, optimizer, candidate worker, selector, loss
 evaluator, or parameter store. Path choice is complete before any production
 value opens and is immutable for the attempt. A runtime failure in this
 ceremony cannot fall through to the calibrated path or vice versa.
+
+### 16.6 Exact gate replacements
+
+`gate_specs.v4` retains exactly G01 through G22 in the base order. Only the
+following six rows replace their v3 counterparts:
+
+| Gate | `evidence_selector` | `comparator` / `required_value` |
+|---|---|---|
+| G10 | `fitting_free_replay_registry_results` | `exact_six_deterministic_rows_all_hashes_equal / true` |
+| G14 | `trusted_deterministic_survey_weight_rescale_result` | `exact_one_person_level_bundle_equal_and_weight_packets_complete / true` |
+| G15 | `fitting_free_sandbox_ipc_capability_absence_evidence` | `exact_grants_ipc_lifecycle_and_forbidden_authority_graphs_empty / true` |
+| G17 | `fitting_free_inventory_crosswalk_authority_and_empty_domain_closure` | `exact_seventeen_domains_counts_and_hashes_equal / true` |
+| G19 | `deterministic_model_registration_and_activation` | `singleton_registered_model_all_rules_instantiated_and_forbidden_domains_empty / true` |
+| G21 | `fitting_free_noninterference_pre_g21_equality` | `acyclic_deterministic_prebundle_mutation_capability_and_provenance_predicate / true` |
+
+G01–G09, G12–G13, G16, G18, G20, and G22 retain their exact v3 selector,
+comparator, required value, and full evidence law. G11 retains its exact
+trusted-provider comparator and required value; only its registered lifecycle
+projection changes to the fitting-free phases below. No unchanged gate may be
+not-evaluated merely because fitting and selection do not exist.
+
+In particular, G20 remains mandatory over every corrected metric assigned by
+`evaluation_specs.fitting_free.v1`: all 10-versus-20 correction-draw
+tolerances in base §5.4 remain exact. The empty
+`model_choice_tolerance_ids` array proves only that fitting and selection
+tolerances do not exist. It does not waive finite-grid stability.
+
+#### 16.6.1 G10 — deterministic replay
+
+`replay_specs.fitting_free.v1` retains the exact P, R, and H source orders,
+two fresh executions per order, and the exact six ordered comparison IDs in
+base §5.4. Each run emits canonical
+`fitting_free_replay_bundle.v1` bytes with exactly:
+
+`schema_version`, `deterministic_model_identity`,
+`substantive_model_sha256`, `direct_law_fact_closure_sha256`,
+`classified_component_stream_sha256`, `measurement_stream_sha256`,
+`keyed_uniform_registry_sha256`, `expected_ledger_identity`,
+`realized_ledger_identities`, and `claim_context_gap_identity`.
+
+The fact closure binds the complete independently derived presence ledger and
+action trace. The classified stream contains every atomic source component,
+classification child, status-group identity, and exact coverage vector in
+canonical key order. The measurement stream contains every gain, loss, net,
+adjustment-delta, SE aggregation group, and nonremuneration disposition in
+the same order. The realized identity has exactly the complete 400-stream
+projection-major/correction-minor registry.
+
+`replay_source_order_evidence.fitting_free.v1` retains the base exact
+five-key order-evidence shape and proves that P, R, and H were actually
+executed. Each G10 result row has exactly `comparison_id`, `left_run_id`,
+`right_run_id`, `left_bundle_sha256`, `right_bundle_sha256`,
+`left_source_order_evidence_sha256`,
+`right_source_order_evidence_sha256`, and `status`. Exactly six rows in the
+registered order are required. Every bundle pair must byte-match and every
+source-order comparand must pass.
+
+No replay object contains a candidate, parameter, prediction, loss,
+identification result, disposition, selector result, tie result, target ID,
+or observation. An empty old fit/selection bundle is not a fitting-free
+replay.
+
+#### 16.6.2 G14 — deterministic weight-rescale reexecution
+
+`deterministic_weight_rescale_specs.v1` contains exactly one object with
+`comparison_id`, `bundle_schema`, `required_fields`,
+`base_weight_multiplier`, and `rescaled_weight_multiplier`. Its values are
+`deterministic_model_common_survey_weight_scale_1x_7x`,
+`deterministic_weight_rescale_bundle.v1`, the exact bundle-key array below,
+and the binary64 values `1.0` and `7.0`.
+
+`deterministic_weight_rescale_bundle.v1` has exactly:
+
+`schema_version`, `deterministic_model_identity`,
+`substantive_model_sha256`, `direct_law_fact_closure_sha256`,
+`classified_component_stream_sha256`, `measurement_stream_sha256`,
+`fitting_free_target_domain_sha256`,
+`fitting_free_model_choice_domain_sha256`,
+`keyed_uniform_registry_sha256`, `expected_ledger_identity`,
+`realized_ledger_identities`, and `claim_context_gap_identity`.
+
+The coordinator supplies the same complete A1/A2/A3-derived stable weight-key
+domain twice and applies the common multiplier as an exact dyadic rational.
+`psid_survey_weight_packet.fitting_free.v1` retains the base packet keys and
+row law; its two packets have multiplier bits for 1× and 7×. Classification,
+measurement, deterministic model identity, keyed uniforms, expected/realized
+person-level ledgers, and gap identities must be byte-identical. Both empty-
+domain hashes must equal the registered canonical-empty identities.
+
+`g14_deterministic_weight_rescale_evidence.v1` has exactly
+`schema_version`, `comparison_id`, `weight_domain_sha256`,
+`base_weight_packet_sha256`, `rescaled_weight_packet_sha256`,
+`base_broker_grant_sha256`, `rescaled_broker_grant_sha256`,
+`weight_key_multiplier_trace_sha256`, `base_bundle_sha256`,
+`rescaled_bundle_sha256`, `target_objective_capability_count`,
+`optimizer_principal_count`, `selector_principal_count`, `bundles_equal`,
+and `status`. The three counts are zero; packets/grants/traces are complete;
+the bundle hashes are equal; and status is `pass`.
+
+Survey-weighted aggregate levels are deliberately outside the equality
+bundle because they scale by seven. G14 tests that a common survey-weight
+scale cannot change any person-level correction byte; it does not falsely
+require weighted totals to stay constant.
+
+#### 16.6.3 G15 — isolation and mechanical capability absence
+
+`filesystem_isolation_specs.fitting_free.v1` retains the base eleven-key
+shape. Its `assertions` member is exactly:
+
+```json
+[
+  "deterministic_model_worker_mount_allowlist",
+  "descriptor_allowlist",
+  "deterministic_input_grant_exactness",
+  "calibration_target_path_absent",
+  "official_target_input_absent",
+  "optimizer_principal_domain_empty",
+  "selector_principal_domain_empty",
+  "target_validator_principal_domain_empty",
+  "target_broker_principal_domain_empty",
+  "target_diagnostic_principal_domain_empty",
+  "target_value_ipc_domain_empty",
+  "target_value_open_release_zero",
+  "context_paths_denied_before_model_lock",
+  "vintage1_and_anchor_path_denied",
+  "repository_data_runs_docs_denied",
+  "network_denied",
+  "subprocess_denied",
+  "late_open_and_import_denied",
+  "path_and_content_alias_denied",
+  "model_context_worker_lifecycle_nonoverlap",
+  "trusted_consumer_evaluator_mount_allowlist",
+  "runner_proposal_one_way_ipc",
+  "trusted_evaluator_context_decoder_lifecycle_nonoverlap"
+]
+```
+
+There is one mandatory result row per assertion. Worker-code,
+principal-authority, mount, descriptor, IPC, grant, and lifecycle registries
+derive independently from the static implementation graph. They omit
+optimizer, selector, target-validator, target-broker, target-diagnostic, and
+parameter-store principals entirely; an empty mount attached to such a
+principal still fails. The deterministic worker receives only preloaded
+component/legal/status packets. Repository `data`, `runs`, and `docs` are not
+mounted, and no IPC field can carry an observation, target handle, official
+value, loss, tolerance, prediction, rank, candidate ID, parameter, or
+selection result.
+
+`g15_fitting_free_sandbox_evidence.v1` has exactly:
+
+`schema_version`, `expected_model_grant_registry_sha256`,
+`actual_model_grant_ledger_sha256`, `registered_ipc_schemas_sha256`,
+`actual_ipc_trace_sha256`, `forbidden_principal_domain_sha256`,
+`expected_forbidden_principal_count`, `actual_forbidden_principal_count`,
+`expected_target_value_capability_count`,
+`actual_target_value_capability_count`, `target_value_open_count`,
+`target_value_release_count`,
+`trusted_consumer_semantic_authority_sha256`,
+`trusted_consumer_semantic_comparison_sha256`,
+`trusted_consumer_graph_specs_sha256`,
+`trusted_consumer_root_streams_sha256`,
+`expected_worker_lifecycle_sha256`, `actual_worker_lifecycle_sha256`,
+`isolation_results_sha256`, and `forbidden_access_count`.
+
+The forbidden-principal domain is the ordered union of the six prohibited
+principal classes above and must be canonical empty on both expected and
+actual sides. All seven count fields associated with prohibited principals,
+target capabilities, opens, releases, and general forbidden access are zero.
+The model grant registry and IPC trace exact-match their expected closures;
+all 23 isolation rows pass; the lifecycle hashes/rows are equal; and the four
+trusted-consumer hashes independently reconstruct. A merely unused but
+reachable authority, import, descriptor, callback, decoder, broker method, or
+IPC variant fails G15.
+
+`rng_access_specs.fitting_free.v1` has the exact base provider, nonce,
+exception, keyed-call, forbidden-call, principal-event, seal, and deny-all
+laws. Its exact phase order is `bootstrap`,
+`registration_prelaunch`, `input_validation`,
+`direct_model_construction`, `deterministic_lock`,
+`precontext_verification`, `downstream_evaluation`, `lifecycle_seal`,
+`publication`, and `process_exit`. G11 requires the same complete actual/
+expected event equality, zero forbidden/denied/sticky counts, sealed
+keyed-uniform cache, live wrapper identity, and pre-rename recheck as before.
+No `fitting` or `selection` phase, provider-capable principal, or lifecycle
+event exists.
+
+#### 16.6.4 G17 — exact authority and empty-domain closure
+
+`g17_fitting_free_inventory_crosswalk_evidence.v1` has exactly
+`schema_version`, `comparison_rows`, `comparison_count`,
+`comparison_id_order`, and `overall_status`. It contains exactly 17 rows,
+ordered G17-C01 through G17-C17:
+
+| ID | Exact domain |
+|---|---|
+| G17-C01 | Inventory key stream. |
+| G17-C02 | All-key disposition stream. |
+| G17-C03 | Component-slot stream. |
+| G17-C04 | Structural-missing consequence stream. |
+| G17-C05 | Historical coverage-rule closure. |
+| G17-C06 | Bound-fact, derived-required-microfact, inventory, presence, premise, and action closure. |
+| G17-C07 | Value-code registry. |
+| G17-C08 | Annualization registry. |
+| G17-C09 | Reconciliation registry. |
+| G17-C10 | Job-match registry. |
+| G17-C11 | SE-aggregation registry. |
+| G17-C12 | Coverage-group registry. |
+| G17-C13 | Positional nine-row fitting-free verification-claim results. |
+| G17-C14 | Frozen wave/reference/source-class map. |
+| G17-C15 | Fitting-free target, official-comparison, model-choice, and forbidden-capability empty closure. |
+| G17-C16 | A1 executable model-universe selector identity and complete support keyset. |
+| G17-C17 | A2 weight-field identity plus A3 staged weight-input digest and complete weight-keyset. |
+
+Each row retains the base exact seven-key comparison shape. C01–C14 retain
+their base domain purpose and nonempty comparison law, with amended parent
+identities and C13's fitting-free verification rows; their expected/actual
+counts and hashes must match. C15 is the sole explicit exception to the old
+nonempty rule: expected and actual counts are zero, both hashes are the
+canonical-empty-array hash, and its expanded evidence exact-matches the
+complete §16.4 official-comparison absence closure. C16 and C17 are nonempty
+and exact-match the independently reconstructed authorities, not configured
+counts or implementation subsets.
+
+`comparison_count` is integer 17, `comparison_id_order` is the exact ordered
+ID array, and `overall_status` is `pass` iff all comparisons and special
+cardinality laws pass. V-B7's not-applicable row remains physically present
+inside the nine-row C13 domain. The A5 not-applicable result is valid only
+through C15; A1, A2, or A3 cannot disappear because target rows are empty.
+
+#### 16.6.5 G19 — singleton deterministic activation
+
+`g19_deterministic_model_activation_evidence.v1` has exactly:
+
+`schema_version`, `correction_path`, `registered_model_id`,
+`activated_model_id`, `registered_model_specs_sha256`,
+`activated_model_specs_sha256`, `deterministic_rule_count`,
+`instantiated_rule_count`, `target_count`, `candidate_count`,
+`fitted_parameter_count`, `optimizer_principal_count`,
+`selector_principal_count`, `selection_result_count`,
+`target_value_capability_count`, `all_rules_instantiated`, and `status`.
+
+The path and both IDs exact-match the registered fitting-free branch. The two
+spec hashes are equal. `deterministic_rule_count` is the positive,
+independently expanded count of all §16.3 classification, measurement,
+aggregation, statutory-order, and draw rules and equals
+`instantiated_rule_count`. All seven prohibited-domain counts are zero,
+`all_rules_instantiated` is true, and status is `pass`.
+
+A fake zero-parameter candidate, selected fixed candidate, empty disposition
+array, null selection, not-evaluated identification test, or runtime default
+cannot pass G19. Registration activates exactly one named deterministic
+model; no selection event exists.
+
+#### 16.6.6 G21 — fitting-free noninterference
+
+`fitting_free_noninterference_specs.v1` has exactly `schema_version`,
+`fixture_id`, `opaque_fixture_inputs`, `mutation_byte_ranges`,
+`denied_path_ids`, `pre_g21_bundle_schema`, `canonicalization`, and
+`failure_disposition`. The three arrays are nonempty, unique, and derived
+from the complete committed fixture registry. Each opaque input has only
+`input_id`, `path`, `fixture_role`, and `sha256`; its role is
+`synthetic_forbidden_aggregate_evidence_fixture`. It has no official-source,
+target-family, observation, selector, tolerance, or model semantic.
+
+The coordinator's fixture harness may descriptor-read and byte-mutate the
+committed synthetic inputs in a separately isolated synthetic execution
+before any production value opens. The correction-input validator,
+correction workers, model, and downstream evaluator have no path, descriptor,
+decoder, broker, IPC, import, or callback capable of reading them. Each
+registered byte range is replaced exactly once by a distinct structurally
+valid fixture byte sequence, and all fixture and full fitting-free
+evaluation-provenance hashes are recomputed. No production official-target
+source is introduced by this fixture.
+
+Each baseline and mutant run emits
+`fitting_free_noninterference_pre_g21_bundle.v1` with exactly:
+
+`schema_version`, `correction_path`, `deterministic_model_identity`,
+`substantive_model_sha256`, `direct_law_fact_closure_sha256`,
+`classified_component_stream_sha256`, `measurement_stream_sha256`,
+`keyed_uniform_registry_sha256`, `expected_ledger_identity`,
+`realized_ledger_identities`, `claim_context_gap_identity`, and
+`hard_gate_rows_except_g11_g21`.
+
+The hard-gate array contains G01–G10, G12–G20, and G22 in exact order with
+their complete fitting-free substantive evidence hashes. G11 is excluded
+only to avoid the later outer-lifecycle seal; G21 is excluded to avoid
+self-reference. No evaluation-provenance hash is in the prebundle.
+
+`g21_fitting_free_acyclic_noninterference_evidence.v1` has exactly:
+
+`schema_version`, `fixture_id`, `baseline_pre_g21_bundle_sha256`,
+`mutant_pre_g21_bundle_sha256`, `expected_opaque_fixture_input_count`,
+`actual_opaque_fixture_input_count`,
+`expected_mutated_byte_range_count`, `actual_mutated_byte_range_count`,
+`baseline_optimizer_principal_count`, `mutant_optimizer_principal_count`,
+`baseline_selector_principal_count`, `mutant_selector_principal_count`,
+`baseline_target_value_capability_count`,
+`mutant_target_value_capability_count`, `baseline_target_value_open_count`,
+`mutant_target_value_open_count`, `baseline_target_value_release_count`,
+`mutant_target_value_release_count`,
+`baseline_evaluation_provenance_sha256`,
+`mutant_evaluation_provenance_sha256`, `pre_g21_bundles_equal`,
+`mutation_domain_complete`, `forbidden_capability_counts_zero`,
+`evaluation_provenance_differs`, and `status`.
+
+The count pairs match the independently derived nonempty fixture registry and
+complete one-time mutation ledger. Every prohibited capability/open/release
+count is zero. The prebundles are byte-identical, while the two full
+evaluation-provenance hashes differ because they bind the distinct synthetic
+fixture bytes. `status` is `pass` iff all four booleans are true.
+
+After G21 is frozen, both synthetic projections receive the same complete
+outer G11 seal and the coordinator compares their complete G01–G22
+substantive bundles. A difference after a passing acyclic predicate is an
+invariant incident and no primary is renamed; a failing acyclic predicate
+remains serializable `gate_fail` evidence. Final eligibility and complete
+output hashes never enter G21 or either prebundle.
+
+The G21 fixture establishes absence of aggregate-evidence influence, not
+permission to inspect aggregate evidence. No official aggregate magnitude is
+decoded, logged, compared, or used by this branch.
