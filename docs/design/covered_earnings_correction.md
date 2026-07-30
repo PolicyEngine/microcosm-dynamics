@@ -8502,3 +8502,211 @@ greater than `0.03`. There is no covered-share tolerance. Every zero-weight
 family remains incapable of fitting, selecting, failing, or rescuing a
 candidate, and its original arithmetic/dependency disclosure remains in
 force.
+
+### 15.6 Exact consequential replacements and complete reference ledger
+
+#### 15.6.1 V-B7 and the executable verification registries
+
+Base §4.1's two verification classes are extended by exactly one class:
+
+- `optional_target_source` applies only to V-B7. It means absence of a
+  qualifying source is accepted only as the exact empty failure state in
+  §15.3 and does not abort the unrelated required B2/B11 contract. A claimed
+  available source must pass every §15.3 source-activation condition or the
+  attempted activation fails closed. Verification never confers target,
+  fitting, weight, tolerance, or selection authority.
+
+This meaning change creates `verification_claim_specs.v2` and
+`verification_claim_results.v2`. Both retain their predecessor's exact row
+shapes and the positional nine-row V-B1-through-V-B9 order. V-B1–V-B6 and
+V-B8–V-B9 are byte-for-byte unchanged except for identities/digests that
+necessarily bind the version-2 array. The V-B7 spec has:
+
+```json
+{
+  "claim_id": "V-B7",
+  "verification_class": "optional_target_source",
+  "claim_subject": "SSA literal as_published covered-worker-share source",
+  "affected_inventory_keys": [],
+  "required_authority_roles": [
+    "optional_ssa_literal_covered_worker_share_source"
+  ],
+  "governing_rule_ids": [
+    "literal_as_published_ssa_covered_worker_share_cells_v1"
+  ],
+  "success_disposition": "verified",
+  "missing_authority_disposition": "retain_empty_optional_source_failure_state"
+}
+```
+
+For V-B7, an `authority_absent/pass` result is valid if and only if
+`authority_input_ids` is empty; the complete §15.3 optional object
+deep-equals the immutable empty failure state; and
+`optional_consequence_specs_sha256` equals the SHA-256 of that canonical
+object. A `verified/pass` result requires nonempty authority IDs and a
+fully valid `source_verified_not_target_bound` optional block; its optional-
+consequence hash is null. `authority_conflict` is always `fail`. A missing,
+extra, partial, differently reasoned, or source-available/target-active row
+aborts. The other eight result laws are unchanged.
+
+The §4.2 crosswalk's `rule_registry_identities` row points to
+`verification_claim_specs.v2`; the structural-absence paragraph's reference
+to the verification registry means v2. Direct statutory classification
+continues to consume only applicable legal rules with class
+`registration_required | direct_only_optional`; V-B7's
+`optional_target_source` has no direct-law action and no inventory key.
+G17 and hard-gate condition 17 still compare exactly nine verification
+results, now from v2. The generic configuration keys
+`verification_claim_specs` and `verification_claim_results` are unchanged,
+but they must contain exact v2 deep copies. Configuration acceptance requires
+every ordinary required row to be `verified/pass`, every ordinary optional
+row to bind its consequence law, and V-B7 to satisfy one of the two exact
+pass branches above.
+
+Accordingly, the replacement §13.2 row is:
+
+| ID | `verification_class` | VERIFY item | Required disposition and failure consequence |
+|---|---|---|---|
+| V-B7 | `optional_target_source` | Literal SSA covered-worker-share publication cells, table, vintage, annual definition, numerator, denominator, subset relation, duplicate-worker treatment, zero rule, timing, unit, geography, and universe | With no qualifying registered source, exact-match §15.3's empty `unavailable_source_absent` block and pass only as source absent; required B2/B11 registration continues. A nonempty source attempt must satisfy every `literal_as_published_ssa_covered_worker_share_cells_v1` clause or fail. A verified source remains `not_target_bound`; no approximate percentage, quotient, or definitional substitute is permitted, and target reactivation requires the later amendment/registration condition. |
+
+The §14.2 class checklist is correspondingly
+`registration_required | direct_only_optional | optional_target_source`, with
+the third class permitted only for V-B7; all nine rows exact-match
+`verification_claim_specs.v2` and `verification_claim_results.v2`.
+
+#### 15.6.2 Option C is a typed unavailable diagnostic
+
+Base §7.4's numeric scalar cannot consume a family that no longer exists.
+The operative registry is therefore `sensitivity_specs.v2`, still a
+one-object ordered array with the exact 13-key object shape, but with
+`sensitivity_id: aggregate_share_scale_sensitivity_v2`. Its label is
+`aggregate-scaled-labor-income-proxy-unavailable-source-absent`;
+`input_selector` is `optional_covered_share.status`;
+`scalar_selector` is `unavailable_no_literal_share_cell`;
+`reference_era_specs` remains `candidate_reference_era_specs.v1`;
+`year_source_class_rule` remains the exact §4.2 map; `pre_2015_rule`,
+`diagnostic_proxy_gap_rule`, and `post_2014_rule` are respectively
+`not_computed_optional_covered_share_source_absent`,
+`not_read_optional_covered_share_source_absent`, and
+`not_carried_optional_covered_share_source_absent`; `stratum_id` remains
+`overall`; `statistic` remains `survey_weighted_total_draw_summary`;
+`aggregation_rule` is `not_applicable_source_absent`; and the original
+`allowed_outputs` and `forbidden_uses` arrays remain exact.
+
+The coordinator still expands every expected Option-C
+`annual_provenance_context_expansion` coordinate so absence cannot shrink
+the result domain. Every row has `observation_count: 0`, null `mean` and
+`sample_sd`, `status: fail`, and the exact
+`reason_code: optional_covered_share_source_absent`. That reason takes
+precedence over `missing_option_c_diagnostic_proxy` and
+`not_applicable_empty_stratum`; no raw proxy, optional source value, B1
+percentage, B1/IV.B4 quotient, B10/B12 quotient, carry scalar, or substitute
+is read or computed. These expected failure rows remain only in the
+`option_c_sensitivity` branch of `before_context_results`, remain
+diagnostic-only, and cannot fail or rescue a candidate, gate, certificate,
+or publication.
+
+The exact typed failure branch replaces “sensitivity benchmark” in the §1
+charter, “complete Option C” in the ceremony, and the numeric Option-C
+language in §8.2 and the result contract. It preserves their domain,
+coordinate, sandbox, separation, circularity, ordering, and forbidden-use
+laws. A future numeric Option C requires a new sensitivity version in the
+same future amendment that decides whether and how any source-verified
+optional block may be used; source arrival alone does not change v2.
+
+Because the §8.2 incidence diagnostic definition and the Option-C
+before-context branch change, the operative empirical registry is
+`evaluation_specs.v2`; its object shape and every unaffected expansion row
+remain unchanged. The G21 fixture registry is
+`heldout_noninterference_specs.v2`, derived from the 14-family target domain
+and v2 evaluation/sensitivity domain. The empty optional block is not a
+target/value mutation row, but its canonical hash remains mandatory full
+evaluation provenance and any drift invalidates registration.
+
+#### 15.6.3 Version propagation and derived domains
+
+The complete changed-version map is:
+
+| Historical literal | Amendment-1 literal |
+|---|---|
+| `ssa_covered_earnings_calibration_targets.v1` (schema) | `ssa_covered_earnings_calibration_targets.v2` |
+| `calibration_target_specs.v2` | `calibration_target_specs.v3` |
+| `fit_selection_cell_identity.v1` | `fit_selection_cell_identity.v2` |
+| `selection_spec.v1` | `selection_spec.v2` |
+| `verification_claim_specs.v1` | `verification_claim_specs.v2` |
+| `verification_claim_results.v1` | `verification_claim_results.v2` |
+| `sensitivity_specs.v1` | `sensitivity_specs.v2` |
+| `evaluation_specs.v1` | `evaluation_specs.v2` |
+| `heldout_noninterference_specs.v1` | `heldout_noninterference_specs.v2` |
+
+`full_calibration_evaluation_provenance.v1`,
+`covered_earnings_correction_evaluation_configuration.v2`,
+`candidate_reference_era_specs.v1`, the physical/alias/arithmetic registry
+schemas, `gate_specs.v3`, and every unchanged wrapper schema retain their
+literal versions because their shapes and meanings do not change. New
+instances must bind the amendment-1 child identities and hashes, the
+amendment ratification commit, and a fresh registration. In particular,
+`full_calibration_evaluation_provenance.v1` embeds the v2 source-artifact
+schema, v3 target registry, v2 verification/evaluation/sensitivity
+registries, and their exact full-provenance hashes; retaining its envelope
+version does not permit a predecessor child.
+
+Every base clause whose domain is defined as “the §6.2 family order,” “one
+row per target spec,” “complete target registry,” or equivalent now expands
+over the exact 14-family v3 order in §15.5. This includes physical ancestry,
+model-choice identity, full provenance, G21 classification and mutation
+fixtures, objective-bit checks, target results, target-use traces, and their
+cardinalities. The optional block contributes no row to any such domain.
+The physical-ancestry audit still rejects target duplication and records all
+shared B2/B11 primitives and structural siblings; it has no covered-share
+independence branch or `covered_share_system_*` group.
+
+#### 15.6.4 Exhaustive base-line pointer ledger
+
+The line numbers below are from the immutable base commit
+`59fd058b943c2b9960af9cb98ecdec97709cc2dd`. This is the complete
+case-insensitive `covered[_ -]?share` occurrence ledger; every hit is
+retained historically and re-pointed here:
+
+| Base line(s) containing the match | Operative disposition |
+|---|---|
+| 237, 238 | Definitions replaced by §15.4; both fields remain defined and lose target binding. |
+| 1485 | Eligibility consequence replaced by §15.4; optional absence cannot cause `no_eligible_candidate`. |
+| 1842 | Top-level key 7 replaced by `optional_covered_share` under §15.3. |
+| 1851 | Required ID keys become exactly `table4_b2` and `table4_b11` under §15.3. |
+| 1860, 1861, 1862 | Share IDs and years move into the exact optional block under §15.3. |
+| 1871 | Required manifest ends after the one Supplement entry; optional manifest is nested and empty under §15.3. |
+| 1882 | Optional share status is the explicit nested failure state, not inferred source status. |
+| 1885, 1886 | Required observation cardinality is exactly 825; optional cardinality is zero under §15.3. |
+| 2014 | The fail-closed prerequisite consequence applies to B2/B11; §15.3 expressly preserves every membership prerequisite. |
+| 2026 | The source is optional, not a separate required manifest entry; all no-synthesis/universe prohibitions remain activation conditions. |
+| 2161 | Active target expansion has zero covered-share objects and follows §15.5's 14-family domain. |
+| 2273 | The covered-share tolerance is deleted; the B2/B11 tolerances remain in §15.5. |
+| 2315 | The target-family row is removed and replaced by the no-row law in §15.5. |
+| 2332, 2333 | Group weights are the exact \(2/3\) B2 and \(1/3\) B11 law in §15.5; there is no share group. |
+| 2342 | The ancestry audit operates only on the surviving target domain under §15.6.3. |
+| 2346, 2347, 2348 | Both `covered_share_system_*` IDs are removed; only §15.5's dependency IDs are legal. |
+| 2356 | There is no covered-share validation tolerance or candidate consequence. |
+| 2789 | The §7.1 objective is exactly the integer-mass normalized formula in §15.5. |
+| 2866, 2870 | Numeric Option C is replaced by §15.6.2's typed unavailable rows; there is no scalar lookup or carry. |
+| 7867 | The old required-target question is resolved as §15.6.1's optional-source failure state. |
+| 7880 | V-B7 is replaced in full by §15.6.1's `optional_target_source` row. |
+| 7922 | The §14.1 settlement becomes: B2/B11 extraction and methodology remain required and fail-closed; covered-share source evidence is optional/empty, produces no target, and model choice binds `fit_selection_cell_identity.v2`. |
+
+The direct grep does not capture every dependent phrase. These additional
+base clauses are also expressly re-pointed:
+
+| Base line(s) | Dependent replacement |
+|---|---|
+| 643–693, 951, 1109, 1294, 4108, 5704–5709, 7933–7938 | Verification-class/spec/result/configuration/checklist cascade is exactly §15.6.1; nine-row cardinality remains. |
+| 1863, 2158–2167, 2266–2279, 2307–2359, 2415–2440 | V-B7 minimums, five-family language, target table/order, dependency law, and model-choice identity become §§15.3–15.5's optional block, four active families, 14-row v3 order, and v2 identity. |
+| 2420–2422, 2557, 7963–7966, 8079 | Every `calibration_target_specs.v2` echo means `calibration_target_specs.v3`. |
+| 2426, 2484, 2752, 2771, 6159, 7922, 8137 | Every `fit_selection_cell_identity.v1` echo means `fit_selection_cell_identity.v2`. |
+| 2520, 6106, 6174–6177, 6710 | The full-provenance envelope remains v1 but binds the new child versions and empty optional-state hash under §15.6.3. |
+| 2550–2598, 6478 | G21's target/value domain and fixture use `heldout_noninterference_specs.v2`; the empty optional block creates no target mutation row. |
+| 2781–2828 | Objective prose and `selection_spec.v1` are replaced by §15.5 and `selection_spec.v2`. |
+| 33–34, 917–918, 2777–2778, 2860–2922, 4092–4097, 5005–5006, 5042–5054, 5125–5126, 6000–6006, 6578–6607, 7980–7983 | Every Option-C charter, source-class, isolation, schema, publication, expansion, circularity, ceremony, result, and checklist reference means §15.6.2's v2 typed unavailable branch. |
+| 1750, 3251, 3396, 5008, 5059, 6543–6544 | Unprefixed `evaluation_specs.v1` references mean `evaluation_specs.v2`; `trusted_consumer_evaluation_specs.v1` is unchanged. |
+| 2169–2190, 2518–2538, 4086–4091, 4120–4126, 4813–4821, 6158–6182, 6311–6335, 6608 onward | Target row shape, provenance, objective-bit gates, noninterference, result order/cardinality, and trace domains derive only from §15.5's 14-family v3 registry. |
+| 2744–2759, 7170–7173, 7554–7556 | Already-viewed honesty remains controlling and is supplemented—not weakened—by §§15.2 and 15.7. |
+| 7921–7922 | The §14.1 extraction settlement is replaced by the B2/B11-required, covered-share-optional law stated in the final direct-ledger row above. |
