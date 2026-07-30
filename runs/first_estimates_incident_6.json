@@ -1,0 +1,13 @@
+{
+  "schema_version": "first_estimates_incident.v1",
+  "incident_index": 6,
+  "timestamp_utc": "2026-07-26T06:39:07Z",
+  "phase": "preparation",
+  "reason": "preparation_fresh_registration_adjudication_required_attempt_claim",
+  "reason_detail": "A durable attempt claim already occupies the canonical path; fresh-registration adjudication must resolve it.",
+  "registration_reference": "populace-dynamics#305",
+  "configuration_echo": {
+    "registration_reference": "populace-dynamics#305"
+  },
+  "artifact_path": null
+}
