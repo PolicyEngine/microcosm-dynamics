@@ -3,6 +3,11 @@
 - **Status:** DRAFT revision 2 for adversarial ratification. This document
   authorizes no extraction, implementation, registration, fitting, evaluation,
   report run, or label change.
+- **Amendment pointer:** The revision-2 base was ratified at
+  `59fd058b943c2b9960af9cb98ecdec97709cc2dd` after eleven adversarial
+  referee rounds. Its original text remains below as the historical ratified
+  law. Prospective amendment 1 is appended at §15; it is inoperative unless
+  and until ratified under §15.8.
 - **Resolves:** the design step for forecast-ledger entry 11 and
   populace-dynamics#332. Entry 11 itself remains open until the publication
   criterion in §9.3 is met.
@@ -8141,3 +8146,32 @@ enforces that noninterference.
 Until every box is ratified and the later publication sequence completes,
 the `first_estimates_report.md` §3.4 labor-income proxy label remains in
 force.
+
+## 15. AMENDMENT SECTION — Amendment 1: remove the unavailable covered-share target
+
+### 15.1 Status, scope, and precedence
+
+- **Status:** **PROSPECTIVE AMENDMENT — UNRATIFIED.** This section proposes
+  revision 3 of the design. It authorizes no extraction, implementation,
+  registration, fitting, evaluation, report run, or label change.
+- **Base authority:** The immutable base is the complete revision-2 text at
+  commit `59fd058b943c2b9960af9cb98ecdec97709cc2dd`, ratified after eleven
+  adversarial referee rounds.
+- **Change:** Amendment 1 removes
+  `ssa_precisely_universed_covered_share` from the required calibration,
+  fitting, validation, selection, and tolerance contract; makes literal SSA
+  covered-share cells an empty optional-source block; reassigns the removed
+  weight exactly pro rata across the four surviving positive-weight
+  families; and re-points every affected base-law reference.
+- **No implied repeal:** Original §§1–14 remain visible and are not edited in
+  place. They remain controlling except for the exact clauses enumerated in
+  §§15.3–15.6. Where an enumerated original clause conflicts with §15, §15 is
+  its prospective replacement law. Silence in §15 leaves the original clause
+  unchanged.
+
+This section follows the first-estimates amendment discipline: identify the
+ratified base, state the defect and why it requires design action, freeze the
+replacement before implementation or output contact, carry the limitation
+forward, and require a new referee-gated ratification and registration. The
+append-only presentation here is stricter: the displaced law remains
+readable, with this pointer, rather than being rewritten in place.
