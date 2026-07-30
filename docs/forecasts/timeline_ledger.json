@@ -190,7 +190,10 @@
    "status": "superseded",
    "supersedes": null,
    "revision_reason": null,
-   "resolution": null
+   "resolution": null,
+   "superseded_by": [
+    12
+   ]
   },
   {
    "id": 12,
