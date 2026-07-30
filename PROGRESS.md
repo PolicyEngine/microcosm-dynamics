@@ -3,7 +3,7 @@
 ## State
 
 Implementation is in progress on `claude/ce-psid-inventory`. The referee
-verdict is `SHIP WITH EDITS`; items 1 and 2 are implemented and under
+verdict is `SHIP WITH EDITS`; items 1 through 3 are implemented and under
 verification.
 
 ## Done
@@ -22,12 +22,16 @@ verification.
   files and made every physical-field row cite its raw source.
 - Production reads now validate both dictionary and raw-file identity before
   parsing or slicing, with same-size SHA and raw-path adversarial coverage.
+- `SOURCE_CONCEPT_SEAMS` rows are immutable mapping proxies, and the complete
+  seam registry has an independent canonical SHA-256 checked by
+  `validate_frozen_registry`.
+- Added direct immutability coverage and a V4379 `mixed` to `wages_only`
+  mutation that must fail the frozen-registry hash check.
 
 ## Next
 
-1. Freeze and independently hash `SOURCE_CONCEPT_SEAMS`.
-2. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
+1. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
    audit artifact.
-3. Clarify the modern reader-subset test and add the remaining adversarial,
+2. Clarify the modern reader-subset test and add the remaining adversarial,
    reachability, all-wave, and person-attachment assertions.
-4. Run Black and the relevant/full test suites.
+3. Run Black and the relevant/full test suites.

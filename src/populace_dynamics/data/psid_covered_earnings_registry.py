@@ -17,6 +17,7 @@ import json
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
+from types import MappingProxyType
 from typing import Any, NoReturn
 
 CROSSWALK_SCHEMA_VERSION = "psid_covered_earnings_crosswalk.v2"
@@ -115,69 +116,72 @@ REFERENCE_ERA_SPECS: tuple[ReferenceEraSpec, ...] = (
     ReferenceEraSpec("ry2002_2014_modern_boundary", 2002, 2014),
 )
 
-SOURCE_CONCEPT_SEAMS: tuple[Mapping[str, Any], ...] = (
-    {
-        "seam_id": "spouse_reference_1975_mixed",
-        "interview_wave": 1976,
-        "earnings_reference_year": 1975,
-        "role": "spouse_or_partner",
-        "raw_field_id": "V4379",
-        "remuneration_type": "mixed",
-        "registration_required_item_id": None,
-    },
-    {
-        "seam_id": "spouse_reference_1976_unresolved",
-        "interview_wave": 1977,
-        "earnings_reference_year": 1976,
-        "role": "spouse_or_partner",
-        "raw_field_id": "V5289",
-        "remuneration_type": None,
-        "registration_required_item_id": "V-B6",
-    },
-    {
-        "seam_id": "spouse_reference_1977_unresolved",
-        "interview_wave": 1978,
-        "earnings_reference_year": 1977,
-        "role": "spouse_or_partner",
-        "raw_field_id": "V5788",
-        "remuneration_type": None,
-        "registration_required_item_id": "V-B6",
-    },
-    {
-        "seam_id": "pre_er_farm_business_exact_once",
-        "first_reference_year": 1978,
-        "last_reference_year": 1992,
-        "source_concept": (
-            "edited_role_totals_include_applicable_farm_business_labor"
-        ),
-        "combination_law": "separate_fields_validate_or_split_never_add",
-    },
-    {
-        "seam_id": "er_farm_business_exact_once",
-        "first_reference_year": 1993,
-        "last_reference_year": 2001,
-        "first_interview_wave": 1994,
-        "source_concept": (
-            "er_role_totals_and_separate_farm_business_components"
-        ),
-        "combination_law": "combine_exactly_once",
-    },
-    {
-        "seam_id": "modern_bc_de_direct",
-        "first_reference_year": 2002,
-        "last_reference_year": 2012,
-        "first_interview_wave": 2003,
-        "interview_waves": tuple(range(2003, 2014, 2)),
-        "gap_law": "odd_reference_years_are_structural_gap_imputed",
-    },
-    {
-        "seam_id": "modern_bc_de_post_cutoff",
-        "first_reference_year": 2014,
-        "last_reference_year": 2022,
-        "interview_waves": POST_CUTOFF_INVENTORY_WAVES,
-        "inventory_year_disposition": "inventory_only_post_cutoff",
-        "production_use": "lineage_only",
-    },
+SOURCE_CONCEPT_SEAMS: tuple[Mapping[str, Any], ...] = tuple(
+    MappingProxyType(row)
+    for row in (
+        {
+            "seam_id": "spouse_reference_1975_mixed",
+            "interview_wave": 1976,
+            "earnings_reference_year": 1975,
+            "role": "spouse_or_partner",
+            "raw_field_id": "V4379",
+            "remuneration_type": "mixed",
+            "registration_required_item_id": None,
+        },
+        {
+            "seam_id": "spouse_reference_1976_unresolved",
+            "interview_wave": 1977,
+            "earnings_reference_year": 1976,
+            "role": "spouse_or_partner",
+            "raw_field_id": "V5289",
+            "remuneration_type": None,
+            "registration_required_item_id": "V-B6",
+        },
+        {
+            "seam_id": "spouse_reference_1977_unresolved",
+            "interview_wave": 1978,
+            "earnings_reference_year": 1977,
+            "role": "spouse_or_partner",
+            "raw_field_id": "V5788",
+            "remuneration_type": None,
+            "registration_required_item_id": "V-B6",
+        },
+        {
+            "seam_id": "pre_er_farm_business_exact_once",
+            "first_reference_year": 1978,
+            "last_reference_year": 1992,
+            "source_concept": (
+                "edited_role_totals_include_applicable_farm_business_labor"
+            ),
+            "combination_law": "separate_fields_validate_or_split_never_add",
+        },
+        {
+            "seam_id": "er_farm_business_exact_once",
+            "first_reference_year": 1993,
+            "last_reference_year": 2001,
+            "first_interview_wave": 1994,
+            "source_concept": (
+                "er_role_totals_and_separate_farm_business_components"
+            ),
+            "combination_law": "combine_exactly_once",
+        },
+        {
+            "seam_id": "modern_bc_de_direct",
+            "first_reference_year": 2002,
+            "last_reference_year": 2012,
+            "first_interview_wave": 2003,
+            "interview_waves": tuple(range(2003, 2014, 2)),
+            "gap_law": "odd_reference_years_are_structural_gap_imputed",
+        },
+        {
+            "seam_id": "modern_bc_de_post_cutoff",
+            "first_reference_year": 2014,
+            "last_reference_year": 2022,
+            "interview_waves": POST_CUTOFF_INVENTORY_WAVES,
+            "inventory_year_disposition": "inventory_only_post_cutoff",
+            "production_use": "lineage_only",
+        },
+    )
 )
 
 
@@ -412,6 +416,9 @@ PRODUCTION_YEAR_ROWS_SHA256 = (
 INVENTORY_WAVE_ROWS_SHA256 = (
     "dd91873b7964afea577e094a2598e21ec8d3d14f977ab6ea688913d05045b2ab"
 )
+SOURCE_CONCEPT_SEAMS_SHA256 = (
+    "45fefe055a76606d5dbe96cb2bac51a2f160d21257087971c52dcf1a4ee25317"
+)
 
 
 def validate_frozen_registry() -> None:
@@ -426,6 +433,10 @@ def validate_frozen_registry() -> None:
         raise ReferenceRegistryError("production year registry hash drifted")
     if _canonical_hash(inventory) != INVENTORY_WAVE_ROWS_SHA256:
         raise ReferenceRegistryError("inventory wave registry hash drifted")
+    if _canonical_hash(SOURCE_CONCEPT_SEAMS) != SOURCE_CONCEPT_SEAMS_SHA256:
+        raise ReferenceRegistryError(
+            "source concept seam registry hash drifted"
+        )
 
 
 validate_frozen_registry()

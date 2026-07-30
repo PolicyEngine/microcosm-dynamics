@@ -132,6 +132,32 @@ def test_source_concept_seams_preserve_mixed_and_exact_once_laws():
     assert seams["modern_bc_de_direct"]["first_interview_wave"] == 2003
 
 
+def test_source_concept_seams_are_immutable_and_independently_hashed():
+    assert registry._canonical_hash(registry.SOURCE_CONCEPT_SEAMS) == (
+        registry.SOURCE_CONCEPT_SEAMS_SHA256
+    )
+    v4379 = next(
+        row
+        for row in registry.SOURCE_CONCEPT_SEAMS
+        if row.get("raw_field_id") == "V4379"
+    )
+    with pytest.raises(TypeError):
+        v4379["remuneration_type"] = "wages_only"
+
+
+def test_v4379_concept_mutation_fails_frozen_registry_validation(monkeypatch):
+    seams = tuple(dict(row) for row in registry.SOURCE_CONCEPT_SEAMS)
+    v4379 = next(row for row in seams if row.get("raw_field_id") == "V4379")
+    v4379["remuneration_type"] = "wages_only"
+    monkeypatch.setattr(registry, "SOURCE_CONCEPT_SEAMS", seams)
+
+    with pytest.raises(
+        registry.ReferenceRegistryError,
+        match="source concept seam registry hash drifted",
+    ):
+        registry.validate_frozen_registry()
+
+
 @pytest.mark.parametrize(
     "mutation",
     [
