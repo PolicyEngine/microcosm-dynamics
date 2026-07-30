@@ -12365,8 +12365,8 @@ configuration under these exact laws:
   the complete registered §§16.4.1–16.4.2 specs objects, never target
   artifacts or values;
 - `evaluation_only_input_identity` is the exact schema below;
-- `fixture_registry_identity` is the exact committed-fixture identity in
-  §16.6.6; and
+- `fixture_registry_identity` is the exact baseline or deterministically
+  materialized mutant committed-fixture identity in §16.6.6; and
 - `attempt_history_identity` is
   `fitting_free_attempt_history_identity.v1`, with exactly
   `schema_version`, `attempt_history_sha256`, `claim_history_sha256`,
@@ -12410,14 +12410,18 @@ target-value-shaped row aborts registration.
 
 For G21's baseline and mutant projections, every full-provenance field and
 every child byte above must be identical except
-`fixture_registry_identity`. That child differs only in exact content
-digests produced by the synthetic mutations; its input IDs, paths, roles,
-byte lengths, complete rows containing both registered baseline/mutant range
-digests, range coordinates, denial domain, schemas, and orders remain
-byte-identical. Consequently the two full-provenance hashes
-differ if and only if that fixture-byte identity differs. Timestamp, history,
-runtime, ordering, random nonce, configured free text, or arbitrary
-provenance churn cannot satisfy G21.
+`fixture_registry_identity`. The baseline child carries every registered
+committed-input SHA-256. The mutant child replaces only each affected
+input's content digest with SHA-256 of the complete buffer produced by
+§16.6.6's literal-byte generator; an unaffected input retains its baseline
+digest. Input IDs, paths, roles, byte lengths, every complete mutation row
+including its generator and both range digests, range coordinates, denial
+domain, schemas, and orders remain byte-identical. Counts and enclosing
+domain hashes are then recomputed mechanically from those exact rows. No
+other child field may differ. Consequently the two full-provenance hashes
+differ if and only if that materialized fixture-byte identity differs.
+Timestamp, history, runtime, ordering, random nonce, configured free text, or
+arbitrary provenance churn cannot satisfy G21.
 
 `fitting_free_evaluation_binding.v1` has exactly `schema_version`,
 `artifact_id`, `registration_reference`, `configuration_sha256`,
@@ -12634,7 +12638,11 @@ exactly:
    correction-input domain, both canonical empty domains, and the forbidden-
    capability graph; only then rederive both independent authority statuses
    and both path predicates, exact-compare the complete receipt/result, freeze
-   them, and require `DETERMINISTIC_FITTING_FREE`;
+   them, and require `DETERMINISTIC_FITTING_FREE`; after that path freeze but
+   before any correction-execution value opens, independently materialize
+   each mutant fixture buffer from its committed baseline through §16.6.6's
+   literal-byte generators and freeze the complete one-time mutation ledger
+   and baseline/mutant fixture identities;
 3. construct the complete deterministic model identity from registered
    specs, substantive input identities, implementation, and authorities;
    freeze its hash and lock event before any keyed draw, then destroy every
@@ -12649,7 +12657,8 @@ exactly:
 5. while context/evaluation-only handles remain sealed, run G10, G14, G17,
    G19, and every other reachable pre-evaluation structural gate, but not
    G15, G21, or G11; freeze the structural pass/fail result;
-6. on the clean branch, grant the independently registered downstream
+6. using only the frozen baseline/mutant fixture identities and mutation
+   ledger, on the clean branch grant the independently registered downstream
    capabilities to the two G21 projections, compute every downstream root
    and G20/G22 row, and destroy all evaluators. On the structural-failure
    branch, grant none and instead construct the exact registered
@@ -12678,16 +12687,69 @@ ceremony cannot fall through to the calibrated path or vice versa.
 ### 16.6 Exact gate replacements
 
 `gate_specs.v4` retains exactly G01 through G22 in the base order. Only the
-following six rows replace their v3 counterparts:
+following six full objects replace their same-position v3 counterparts:
 
-| Gate | `evidence_selector` | `comparator` / `required_value` |
-|---|---|---|
-| G10 | `fitting_free_replay_registry_results` | `exact_six_deterministic_rows_all_hashes_equal / true` |
-| G14 | `trusted_deterministic_survey_weight_rescale_result` | `exact_one_person_level_bundle_equal_and_weight_packets_complete / true` |
-| G15 | `fitting_free_sandbox_ipc_capability_absence_evidence` | `exact_grants_ipc_lifecycle_and_forbidden_authority_graphs_empty / true` |
-| G17 | `fitting_free_inventory_crosswalk_authority_and_empty_domain_closure` | `exact_eighteen_domains_counts_and_hashes_equal / true` |
-| G19 | `deterministic_model_registration_and_activation` | `singleton_registered_model_all_rules_instantiated_and_forbidden_domains_empty / true` |
-| G21 | `fitting_free_noninterference_pre_g21_equality` | `acyclic_deterministic_prebundle_mutation_capability_and_provenance_predicate / true` |
+```json
+[
+  {
+    "gate_id": "G10",
+    "normative_statement": "The exact six registered deterministic replay comparison rows exist in registered order; both fresh executions for each P, R, and H source order bind complete deterministic bundles, and every paired bundle, source-order, substantive-model, direct-law, default-application, classified-component, measurement, reconciliation, keyed-uniform, expected-ledger, realized-ledger, and claim-context identity is equal. An empty, missing, duplicate, extra, or reordered row fails.",
+    "evidence_selector": "fitting_free_replay_registry_results",
+    "comparator": "exact_six_deterministic_rows_all_hashes_equal",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G14",
+    "normative_statement": "A coordinator-owned second execution applies the exact common survey-weight multiplier 7.0 to every registered PSID weight key while the 1.0 and 7.0 packets and broker grants remain complete, every target/objective and optimization capability count remains zero, and the complete person-level deterministic correction bundle is byte-identical between executions.",
+    "evidence_selector": "trusted_deterministic_survey_weight_rescale_result",
+    "comparator": "exact_one_person_level_bundle_equal_and_weight_packets_complete",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G15",
+    "normative_statement": "The exact 24-row isolation registry is present in order; the receipt-bound static capability graph, model grants, IPC schemas and trace, worker and evaluator lifecycles, and trusted-consumer roots equal their complete independently reconstructed projections; every forbidden-principal, forbidden-capability, target-value, open, release, and access domain is empty, and every required prohibited-access count is zero.",
+    "evidence_selector": "fitting_free_sandbox_ipc_capability_absence_evidence",
+    "comparator": "exact_grants_ipc_lifecycle_and_forbidden_authority_graphs_empty",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G17",
+    "normative_statement": "The exact ordered G17-C01 through G17-C18 comparison rows are physically present and every expected and actual count, key stream, and domain hash is equal; C15 contains its exact 20 physical canonical-empty child rows, while C16, C17, and C18 retain the nonempty model-universe, weight-authority, and path-adjudication closures.",
+    "evidence_selector": "fitting_free_inventory_crosswalk_authority_and_empty_domain_closure",
+    "comparator": "exact_eighteen_domains_counts_and_hashes_equal",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G19",
+    "normative_statement": "Exactly one registered deterministic model is activated with the same complete model-specification hash; all 37 registered rule preimages are instantiated once in exact order with equal expected and actual hashes, and all eight prohibited target, candidate, parameter, optimizer, selector, store, selection-result, and target-value-capability counts are zero.",
+    "evidence_selector": "deterministic_model_registration_and_activation",
+    "comparator": "singleton_registered_model_all_rules_instantiated_and_forbidden_domains_empty",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  },
+  {
+    "gate_id": "G21",
+    "normative_statement": "The complete committed opaque-fixture domain is used; every registered literal-byte replacement is independently materialized and applied exactly once with no other byte changed; all resulting buffers pass their registered structural rules; the baseline and mutant pre-G21 bundles are byte-identical; every denied-path, forbidden-principal, forbidden-capability, target-value, open, and release count is zero; and the two fixture-bound evaluation-provenance hashes differ.",
+    "evidence_selector": "fitting_free_noninterference_pre_g21_equality",
+    "comparator": "acyclic_deterministic_prebundle_mutation_capability_and_provenance_predicate",
+    "required_value": true,
+    "failure_disposition": "gate_fail"
+  }
+]
+```
+
+This array is the normative serialization of those six rows, not an
+explanatory projection. To construct v4, copy every complete v3 row
+positionally and replace positions G10, G14, G15, G17, G19, and G21 with the
+complete same-position object above. No field is merged. In particular, the
+six v3 `normative_statement` strings and failure dispositions are not
+inherited, and any alternate statement text, selector, comparator, required
+value, missing field, or extra field is not `gate_specs.v4`. Object members
+serialize under the unchanged base sort-keys canonicalization.
 
 G01–G09, G12–G13, G16, G18, G20, and G22 retain their exact v3 selector,
 comparator, required value, and full evidence law. G11 retains its exact
@@ -13227,17 +13289,55 @@ derived from the complete committed fixture registry. Each opaque input has
 exactly `input_id`, `path`, `fixture_role`, `byte_length`, and `sha256`; its
 role is
 `synthetic_forbidden_aggregate_evidence_fixture`. It has no official-source,
-target-family, observation, model-choice-selector, tolerance, or model semantic.
+target-family, observation, model-choice-selector, tolerance, or model
+semantic. Its path is a traversal-free Git file with mode exactly `100644`
+fixed by the registered configuration, its positive byte length is the
+complete committed baseline length, and `sha256` is SHA-256 of those complete
+baseline bytes.
+Those fields are the sole baseline locator and identity; a runtime-selected
+file or byte source is forbidden.
 
 Each `mutation_byte_ranges` row has exactly `mutation_id`, `input_id`,
 `start_offset`, `end_offset_exclusive`, `baseline_range_sha256`,
-`mutant_range_sha256`, and `structural_validity_rule_id`. Offsets are JSON
-integers excluding booleans, satisfy
+`replacement_generator`, `mutant_range_sha256`, and
+`structural_validity_rule_id`. `replacement_generator` has exactly
+`schema_version`, `replacement_bytes_hex`, and
+`replacement_byte_count`. The schema version is exactly
+`literal_hex_byte_replacement.v1`. `replacement_bytes_hex` is a nonempty
+string with no `0x` prefix, separator, or whitespace and matches
+`(?:[0-9a-f]{2})+`.
+`replacement_byte_count` excludes booleans and equals both half the hex
+string length and `end_offset_exclusive - start_offset`. The generator's
+sole algorithm consumes successive two-character pairs from left to right
+and emits their unsigned byte values in that order. It has no seed,
+environment input, callback, decoder choice, or implementation-authored
+branch. SHA-256 of the emitted bytes must equal
+`mutant_range_sha256`.
+
+Offsets are JSON integers excluding booleans, satisfy
 `0 <= start_offset < end_offset_exclusive <= byte_length`, and are
 nonoverlapping within an input. Rows are ordered by opaque-input position,
 then start offset, then mutation ID. Both range hashes bind exact bytes, must
-differ, and the structural-validity rule must pass after replacement. Every
-registered row is mutated exactly once and no unregistered byte is changed.
+differ, and the structural-validity rule must pass after replacement. The
+generator object and its literal bytes are part of the complete committed
+specification row deep-copied into the configuration; a digest without those
+bytes is invalid.
+
+The mutant is materialized by this sole algorithm. For each opaque input in
+registered order, the harness descriptor-reads the committed baseline,
+requires mode `100644`, length, and complete digest to match the registered
+input, and copies the bytes into a new same-length buffer. It then visits
+that input's mutation rows in registered order. Before each write, the
+baseline slice at the registered half-open coordinates must hash to
+`baseline_range_sha256`; the harness decodes the literal generator as above,
+checks its count and `mutant_range_sha256`, and overwrites that range exactly
+once. After all writes, every byte outside the union of registered ranges
+must equal the same-position baseline byte, every registered range must
+equal its decoded replacement bytes, and each registered structural rule
+must pass over the complete resulting buffer. The full mutant SHA-256 is
+then computed from that buffer. There is no temporary-file locator,
+registrant-supplied mutant, implicit text encoding, variable-length splice,
+or second materialization procedure.
 
 `denied_path_ids` is the exact ordered concatenation, for each opaque input
 in order, of
@@ -13256,14 +13356,20 @@ downstream principal could reach the fixture.
 hashes cover the complete ordered arrays; status passes only when every shape,
 range, order, one-time mutation, and denial-closure law above passes. This is
 the exact `fixture_registry_identity` child in full evaluation provenance.
+For the baseline child, each opaque-input digest is the committed baseline
+digest from the specification. For the mutant child, the same-position
+digest is the full mechanically computed mutant digest; every other
+opaque-input field and every mutation/denial row is identical, and the
+opaque-input domain hash is recomputed. These are the only two valid
+fixture-identity serializations for the G21 pair.
 
 The coordinator's fixture harness may descriptor-read and byte-mutate the
 committed synthetic inputs in a separately isolated synthetic execution
 before any correction-execution value opens. The correction-input validator,
 correction workers, model, and downstream evaluator have no path, descriptor,
 decoder, broker, IPC, import, or callback capable of reading them. Each
-registered byte range is replaced exactly once by a distinct structurally
-valid fixture byte sequence, and all fixture and full fitting-free
+registered byte range is replaced exactly once by its literal generated
+sequence, and all full-buffer, fixture-identity, and full fitting-free
 evaluation-provenance hashes are recomputed. No production official-target
 source is introduced by this fixture.
 
@@ -13319,6 +13425,13 @@ self-reference. No evaluation-provenance hash is in the prebundle.
 `mutation_domain_complete`, `forbidden_capability_counts_zero`,
 `evaluation_provenance_differs`, and `status`.
 
+The expected/actual opaque-input count and domain-hash pairs compare the
+registered baseline locator/identity rows with the descriptor-read baseline
+rows. The full mutant input digests are separately bound by the mutant
+`fixture_registry_identity`, its enclosing evaluation-provenance hash, and
+the complete ledger below; they cannot be substituted into the baseline
+comparand or omitted.
+
 `actual_mutation_ledger` is
 `g21_actual_mutation_ledger.fitting_free.v1`, with exactly
 `schema_version`, `mutation_id_order`, `rows`, `row_count`,
@@ -13332,7 +13445,14 @@ ID-order and domain-hash mismatch; extras remain as rows. Application count
 is a nonnegative JSON integer and passes only at one. The enclosing ledger
 digest hashes this complete object, and its mutation-domain hash covers the
 exact ordered `{mutation_id,input_id,start_offset,end_offset_exclusive}`
-projection.
+projection. Each passing same-position ledger row must equal the registered
+ID, input, and coordinates; `before_range_sha256` must equal
+`baseline_range_sha256`; `after_range_sha256` must equal
+`mutant_range_sha256` and the digest of the decoded literal replacement;
+`application_count` must equal one; and structural-validity status and row
+status must pass. The ledger therefore cross-binds the materialized bytes to
+the complete registered generator row rather than accepting a claimed
+before/after digest pair.
 
 The three count pairs, both opaque-input and mutation-domain hash pairs, the
 complete actual mutation ledger, and denied-domain hashes match the independently
@@ -13342,7 +13462,9 @@ capability/open/release count is required to be zero on pass and retained
 otherwise. The prebundles are byte-identical, while the two full
 evaluation-provenance hashes differ because they bind the distinct synthetic
 fixture bytes. `mutation_domain_complete` is true iff all input, range, and
-denied-path count/hash laws and every one-time structural mutation pass;
+denied-path count/hash laws, every generator/result digest law, both complete
+baseline/mutant fixture identities, the outside-range byte equality, and
+every one-time structural mutation pass;
 `forbidden_capability_counts_zero` also requires all four denied-path
 open/release counts to be zero. `status` is `pass` iff all four booleans are
 true.
@@ -13997,10 +14119,12 @@ Every revised gate has a nonempty, exact witness:
 - G19 has one registered/activated model, 37 ordered rule-instantiation
   comparisons, equal model hashes, and eight prohibited-domain counts equal
   to zero; and
-- G21 has a nonempty opaque fixture/mutation domain, equal substantive
-  prebundles and postbundles, complete denied-path evidence, zero forbidden
-  capabilities/opens/releases, and unequal full fixture-bound evaluation
-  provenance.
+- G21 has a nonempty committed opaque fixture/mutation domain, a literal
+  byte generator and one-time before/after ledger for every registered
+  range, independently recomputed full baseline/mutant identities, equal
+  substantive prebundles and postbundles, complete denied-path evidence,
+  zero forbidden capabilities/opens/releases, and unequal full
+  fixture-bound evaluation provenance.
 
 G01–G09, G11–G13, G16, G18, G20, and G22 retain their ordinary finite
 witnesses. In particular, lawful empty fitting/model-choice domains do not
@@ -14035,8 +14159,10 @@ limitations are explicit:
    published. Six retain unresolved methodology and all ten lack authority in
    the closed context schema. Four arithmetically plausible comparisons are
    still omitted rather than described as validated.
-6. G21 uses committed opaque synthetic bytes to prove structural
-   noninterference and absent capabilities. It does not inspect or validate a
+6. G21 uses committed opaque synthetic baseline bytes and registered literal
+   replacement bytes to prove structural noninterference and absent
+   capabilities. The deterministic generator makes the mutant independently
+   materializable, but neither baseline nor mutant inspects or validates a
    production official aggregate.
 7. The separately locked 15-series context report can describe differences
    only after the correction is immutable. Its values, signs, ranks, and
