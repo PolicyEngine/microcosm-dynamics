@@ -13487,10 +13487,12 @@ complete fitting-free domain. Reusing the preliminary cutoff or deriving a
 path from capture success aborts.
 
 This ceremony is the sole narrow prospective replacement of §10.1's
-pre-registration production-contact ban. It may inspect only the exact
-registered A1/A3 fields/bytes above and emits only the one non-authority
-lifecycle claim plus the two identity artifacts; every other step-4
-preparation and rehearsal remains fixture-only.
+pre-registration production-contact ban. It may inspect only the sole
+registered non-production prelaunch environment-lock descriptor for
+environment validation/provenance and the exact registered A1/A3
+fields/bytes above. It emits only the one non-authority lifecycle claim plus
+the two identity artifacts; every other step-4 preparation and rehearsal
+remains fixture-only.
 
 The existing four-key registration `design` object is not enlarged. Its exact
 amendment-2 fitting-free values are:
@@ -13520,11 +13522,13 @@ child or by a validator-accepted calibrated registration's hash-bound receipt
 core.** After
 ratification but before that registration, step 4 may prepare the separately
 reviewed authority, artifact, registry, implementation, and fixture bytes. It
-may open only the exact A1/A3 authority-capture descriptor/field domain above;
-every other production-value open is forbidden. It may not derive a
-production path from output, classify a production row, mint a production
-claim, lock a model, or execute an evaluation/context run. Before
-ratification, even that Amendment-2 preparation is unauthorized.
+may open only the exact singleton registered prelaunch environment-lock
+descriptor and the exact A1/A3 authority-capture descriptor/field domain
+above; every other descriptor and every other production-value open is
+forbidden. It may not derive a production path from output, classify a
+production row, mint a production claim, lock a model, or execute an
+evaluation/context run. Before ratification, even that Amendment-2
+preparation is unauthorized.
 
 After registration, changing any §16 byte, deterministic literal, path law,
 authority disposition, empty-domain schema, gate, condition, label, context
