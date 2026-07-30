@@ -17846,3 +17846,107 @@ bind the complete registry, preimages, results, row foreign keys, and
 unfavorable actuals. `mutation_domain_complete` is true only when every
 registered input's typed structural result passes in addition to all its
 earlier conjuncts.
+
+#### 16.11.6 Total unfavorable G21 serialization
+
+For avoidance of doubt, this subsection replaces the phrases “per mutated
+opaque input,” “distinct mutated registered input IDs,” “actual canonical
+input/offset/ID order,” and “every registered input's typed structural
+result” in §16.11.5. It does not add a schema, rule, projection, or
+canonicalization ID.
+
+The **result-covered input domain** is derived only from the registered
+`mutation_byte_ranges`, never from observed rows. Scan that registered array
+once in its existing order, project `input_id`, and retain the first
+occurrence of each value. The resulting nonempty ordered array is the sole
+result-covered input domain. Every retained value must foreign-key exactly
+one `opaque_fixture_inputs.input_id`; otherwise registration aborts.
+
+`structural_validity_results` in
+`g21_actual_mutation_ledger.fitting_free.v1` contains exactly one
+`g21_structural_validity_result.fitting_free.v1` for every value in that
+domain, in domain order, even when no actual row exists for the value. Its
+count equals the domain length. For each covered value, the embedded
+`g21_structural_validity_preimage.fitting_free.v1` has:
+
+- `expected_mutation_rows` equal to all registered mutation rows with that
+  `input_id`, in their existing registered order; and
+- `actual_mutation_rows` equal to all complete observed raw mutation rows
+  whose `input_id` equals that value, in the total order below, before any
+  result digest or derived status is attached.
+
+Thus a wholly missing expected mutation produces an empty actual array and a
+typed failing result; it cannot suppress the result. An observed row whose
+`input_id` is not in the result-covered input domain remains in the complete
+actual ledger but is not inserted into a different input's preimage and does
+not manufacture a result.
+
+The observed raw row has exactly `mutation_id`, `input_id`, `start_offset`,
+`end_offset_exclusive`, `before_range_sha256`, `after_range_sha256`,
+`application_count`, and `structural_validity_rule_id`.
+`structural_validity_rule_id` exact-copies the materializer's emitted JSON
+string, including an unknown string, and is exactly JSON `null` iff the
+materializer emitted no rule ID. An unknown string is retained only as
+unfavorable evidence: it is never registered, invoked, interpreted, or
+dereferenced. These exact eight-field objects are the
+`actual_mutation_rows` in each covered result preimage.
+
+The observed rule field and the derived result-digest field in every complete
+actual-ledger row have these exhaustive dispositions:
+
+1. If `input_id` is in the result-covered input domain,
+   `structural_validity_rule_id` preserves that raw string or null, and
+   `structural_validity_result_sha256` is the 64-lowercase-hex SHA-256 of
+   that input's complete typed result. `structural_validity_status`
+   exact-copies the result status. The row can pass only when its observed
+   rule equals `exact_registered_same_length_buffer_replacement_v1` and that
+   typed result passes.
+2. Otherwise, `structural_validity_rule_id` still preserves that raw string
+   or null, `structural_validity_result_sha256` is exactly JSON `null`, and
+   `structural_validity_status` and row `status` are both exactly `fail`.
+
+No other rule-field type, digest null placement, omitted field, or tagged
+value serializes.
+The presence of any row in case 2 makes the enclosing ledger status,
+`mutation_domain_complete`, and G21 status `fail`, while preserving the
+complete unfavorable evidence. A covered row with an unknown or extra
+`mutation_id` or with an unknown or absent rule ID still uses case 1: it is
+included unchanged in that input's actual preimage, makes
+`mutation_domain_matches` false, and is bound by the unique failing result
+digest.
+
+The complete observed raw rows are sorted by this one ascending tuple:
+
+1. integer zero when `input_id` matches a registered
+   `opaque_fixture_inputs` row, otherwise integer one;
+2. for a registered input, its zero-based rank; for an unregistered input,
+   the unsigned-byte lexicographic order of the canonical JSON serialization
+   of its string `input_id`;
+3. numeric `start_offset`;
+4. numeric `end_offset_exclusive`;
+5. unsigned-byte lexicographic order of the canonical JSON serialization of
+   the string `mutation_id`; and
+6. unsigned-byte lexicographic order of the canonical JSON serialization of
+   the exact raw object containing `mutation_id`, `input_id`, `start_offset`,
+   `end_offset_exclusive`, `before_range_sha256`, `after_range_sha256`, and
+   `application_count`, and `structural_validity_rule_id`.
+
+Every canonical JSON serialization in this tuple uses the already frozen
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1` bytes. All IDs are JSON
+strings except the explicitly nullable observed rule ID; offsets and
+application counts retain their previously frozen nonnegative-integer
+domains. The final raw-object component is a total tie-break across every
+remaining observed field. Byte-identical duplicate raw rows are retained as
+adjacent separate array members; their multiplicity changes `row_count` and
+the complete array bytes, while permuting identical members cannot change
+the serialization. `mutation_id_order` is exactly the `mutation_id`
+projection of this sorted complete array, with duplicates retained.
+
+The coordinator first forms and sorts the eight-field raw rows, then projects
+each covered input's exact expected and actual arrays, then constructs and
+hashes every typed result, and only then attaches
+`structural_validity_result_sha256`, `structural_validity_status`, and row
+`status` and derives the enclosing statuses. Consequently every registered
+mutation-covered input has exactly one constructible typed result, every
+schema-valid extra observation has exactly one constructible unfavorable
+row, and no observed-domain choice can alter coverage or ordering.

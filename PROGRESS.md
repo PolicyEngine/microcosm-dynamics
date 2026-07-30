@@ -39,6 +39,9 @@ definition, including its preimage schema, serialization, and result type.
 - Closed G21 structural validity with one singleton rule registry, complete
   raw-byte/range preimage, six literal predicate equations, one typed result,
   and acyclic mutation-ledger foreign keys.
+- Made G21 unfavorable evidence total: results cover the registered mutation
+  domain even when observations are missing, out-of-domain observations carry
+  exact null/fail tags, and every observed row has one frozen total order.
 - Froze all five registration-required V-B role arrays and both complete
   ten-row v1/v2 role maps, including their exact canonical domain hashes.
 - Added one closed A1/A3 capture-supplement predicate registry, complete
