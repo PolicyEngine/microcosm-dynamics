@@ -9560,3 +9560,180 @@ or measurement-residual variate.
 canonical input-to-output mapping, and byte-reproducible keyed draws. It does
 not claim that every status is one-hot or that status uncertainty and
 finite-grid evaluation disappeared.
+
+### 16.4 Empty target/model-choice branches and retained authorities
+
+The fitting-free path has typed empty domains. It does not instantiate the
+calibrated schemas with missing rows, null observations, zero weights,
+not-evaluated candidates, or a `no_eligible_candidate` result. In this
+subsection,
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`
+is the exact SHA-256 of §10.1
+`canonical_json_bytes([])`.
+
+#### 16.4.1 Exact target branch
+
+`fitting_free_target_domain_specs.v1` has exactly:
+
+`schema_version`, `correction_path`, `target_family_order`, `target_specs`,
+`target_count`, `model_choice_target_ids`, `model_choice_target_count`,
+`target_input_ids`, `target_input_count`, `target_value_capability_ids`,
+`target_value_capability_count`,
+`official_comparison_family_ids`, `official_comparison_count`,
+`canonical_empty_domain_sha256`, and `failure_disposition`.
+
+Its two leading values are `fitting_free_target_domain_specs.v1` and
+`DETERMINISTIC_FITTING_FREE`. The six array members
+`target_family_order`, `target_specs`, `model_choice_target_ids`,
+`target_input_ids`, `target_value_capability_ids`, and
+`official_comparison_family_ids` are each the exact empty array. All five
+count fields are JSON integer zero excluding booleans. The canonical hash is the
+literal above and `failure_disposition` is `abort_registration`.
+
+This is an empty-by-law schema, not an empty successful
+`calibration_target_specs.v3` registry. It contains no target-row grammar,
+observation field, physical-cell reference, transformation, predicted value,
+loss, role, tolerance, selector, source-value handle, or extension map. No
+calibration target input, source artifact, target sidecar, official-value
+manifest role, or decoder can foreign-key it. A nonempty array, nonzero
+count, different empty hash, extra field, target-shaped child, or target
+source in the fitting-free input domain aborts registration.
+
+`fitting_free_target_domain_result.v1` has the same first two keys followed
+by exactly `target_count`, `model_choice_target_count`,
+`target_input_count`, `target_value_capability_count`,
+`official_comparison_count`, `target_domain_sha256`,
+`model_choice_target_domain_sha256`, `target_input_domain_sha256`,
+`target_value_capability_domain_sha256`,
+`official_comparison_domain_sha256`, and `status`. Every count is zero, every
+hash is the canonical empty-array hash above, and status is `pass`. This
+result is always evaluated on a valid fitting-free primary. `not_evaluated`,
+an omitted row, or a null field cannot stand in for lawful emptiness.
+
+#### 16.4.2 Exact model-choice branch
+
+`fitting_free_model_choice_specs.v1` has exactly:
+
+`schema_version`, `correction_path`, `applicability`,
+`deterministic_model_id`, `candidate_ids`, `candidate_count`,
+`fitted_parameter_ids`, `fitted_parameter_count`,
+`optimizer_principal_ids`, `optimizer_principal_count`,
+`selector_principal_ids`, `selector_principal_count`,
+`selection_result_domain`, `selection_result_count`,
+`model_choice_tolerance_ids`, `model_choice_tolerance_count`,
+`canonical_empty_domain_sha256`, and `failure_disposition`.
+
+The first four values are
+`fitting_free_model_choice_specs.v1`,
+`DETERMINISTIC_FITTING_FREE`,
+`not_applicable_deterministic_model_bound_by_registration`, and
+`option_a_zero_fit_deterministic_v1`. The six domain arrays
+`candidate_ids`, `fitted_parameter_ids`, `optimizer_principal_ids`,
+`selector_principal_ids`, `selection_result_domain`, and
+`model_choice_tolerance_ids` are each exact `[]`; their parallel counts are
+each integer zero. The empty hash and failure disposition are the literals
+above and `abort_registration`.
+
+The deterministic model is activated by the validator-accepted
+fresh-registration law; no selector chooses it. There is no candidate ID,
+parameter ID or vector, optimizer start, objective, rank/Jacobian/Hessian
+test, validation loss, tie result, selector worker, fitting tolerance, or
+`no_eligible_candidate` member in this branch. The compact coefficient
+domain and zero starting points in base §5.3 explain the literal defaults in
+§16.3 but confer no runtime parameter or optimizer capability.
+
+`fitting_free_model_choice_result.v1` has exactly `schema_version`,
+`correction_path`, `deterministic_model_id`, the six count fields above, the
+six corresponding `*_domain_sha256` fields, and `status`. All counts are
+zero, all hashes are the canonical empty-array hash, the model ID is the
+registered literal, and status is `pass`. It is inapplicable-by-branch, not
+not-evaluated after a failed selection.
+
+#### 16.4.3 A1, A2, A3, A4, and A5
+
+The target-row fields that formerly carried model authorities do not exist in
+the empty target branch. The fitting-free configuration instead contains
+`fitting_free_model_input_authority_results.v1`, with exactly
+`schema_version`, `ordered_authority_ids`, `rows`,
+`model_status_selector_closure`, `official_comparison_absence_closure`,
+`canonicalization`, and `failure_disposition`.
+`ordered_authority_ids` is exactly `["A1","A2","A3","A4","A5"]`.
+Each row has exactly `authority_id`, `subject`, `applicability`,
+`verification_status`, `authority_identity`, `evidence_sha256`, `status`,
+and `reason_code`, in that order.
+
+The required dispositions are:
+
+| ID | `subject` | `applicability` | Required result |
+|---|---|---|---|
+| A1 | `model_universe_id_and_executable_selector` | `registration_required` | `verified/pass`; nonnull identity and evidence; null reason. |
+| A2 | `model_weight_field` | `registration_required` | `verified/pass`; exact field `weight`, authority ID `first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1`; null reason. |
+| A3 | `model_weight_source_sha256` | `registration_required` | `verified/pass`; nonnull staged weight-input identity, digest, and complete weight-key domain; null reason. |
+| A4 | `official_target_membership_and_joint_analytic_selectors` | `not_applicable_no_official_target_or_model_choice_domain` | `not_applicable/pass`; null authority identity; reason `official_target_selector_domain_empty_fitting_free_v1`. |
+| A5 | `official_model_universe_concordance` | `not_applicable_no_official_target_comparison` | `not_applicable/pass`; null authority identity; reason `official_target_comparison_removed_fitting_free_v1`. |
+
+An A1 identity has exactly `authority_id`, `selector_id`,
+`selector_sha256`, `age_rule`, `annual_presence_rule`,
+`remuneration_type_rule`, `stable_person_uniqueness_rule`,
+`duplicate_component_rule`, `zero_earner_rule`, `denominator_rule`,
+`support_keyset_sha256`, and `source_input_ids`. It binds the executable
+closed model selector, not merely its name. Its ordered source IDs are
+nonempty and resolve only through the registered production
+input/crosswalk domain.
+
+The A2 identity has exactly `authority_id`, `weight_field`,
+`authority_source_id`, `value_type`, and `unit`; its values are `A2`,
+`weight`, `first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1`,
+`finite_positive_binary64`, and `survey_weight`.
+
+An A3 identity has exactly `authority_id`, `input_id`, `path`,
+`schema_version`, `artifact_vintage_id`, `weight_field`,
+`source_sha256`, `weight_key_count`, and `weight_keyset_sha256`.
+The path is a traversal-free immutable registered file; the two hashes are 64
+lowercase hex; the count is a positive JSON integer; every independently
+derived A1 support key has exactly one finite positive source weight; and the
+field exact-matches A2. A manifest hash of a downstream report, unstaged PSID
+alias, missing raw input digest, or implementation-reported subset fails A3.
+
+`model_status_selector_closure` has exactly `selector_ids`,
+`selector_specs_sha256`, `model_universe_selector_sha256`,
+`model_weight_source_sha256`, and `status`. Its exact selector array is:
+
+```json
+[
+  "registered_covered_share_denominator_indicator",
+  "modeled_covered_worker_probability_analytic",
+  "modeled_covered_worker_draw_indicator",
+  "modeled_covered_worker_draw_grid_fraction_20"
+]
+```
+
+These are the retained model-only §15.4 incidence/count and diagnostic
+selectors. Their executable joint-status semantics derive from §§3.1, 3.2,
+15.4, and 16.3 and must pass G01/G18/G22. A4's not-applicable target-selector
+disposition does not waive or null these model-only selectors.
+
+`official_comparison_absence_closure` has exactly
+`official_target_input_ids`, `official_comparison_family_ids`,
+`official_comparison_rows`, `official_value_decoder_authority_ids`,
+`target_value_broker_grant_ids`, `official_target_input_count`,
+`official_comparison_family_count`, `official_comparison_row_count`,
+`official_value_decoder_authority_count`, `target_value_broker_grant_count`,
+`official_target_input_domain_sha256`,
+`official_comparison_family_domain_sha256`,
+`official_comparison_row_domain_sha256`,
+`official_value_decoder_authority_domain_sha256`,
+`target_value_broker_grant_domain_sha256`, and `status`. Every array is exact
+`[]`, every count is zero, every hash is the canonical empty-array hash, and
+status is `pass`. A5 is not applicable if and only if this complete closure
+passes. Any official-target comparison, even with zero fitting weight, makes
+A5 registration-required in the process that performs it. Post-lock §16.7
+context comparisons retain their separate frame/mismatch laws and never
+back-propagate A5 into the correction.
+
+`canonicalization` is the base
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1` literal and
+`failure_disposition` is `abort_registration`. A1 or A3 missing under the
+currently available repo bytes therefore still aborts fitting-free
+registration. Amendment 2 removes no model-universe or weight-input
+obligation.
