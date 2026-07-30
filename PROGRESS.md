@@ -25,10 +25,11 @@ round-7 findings and the ratification-blocking namespace sweep gap.
 - Bound every adjudication's namespace roots to its already existing
   first-add parent, reserved the later receipt parent for newly constructed
   receipt-phase projections, and prohibited any artifact/self-commit edge.
+- Replaced final-configuration hashes inside receipt-core namespace scans
+  with pre-reference configuration-core hashes, moved full-SHA paths to an
+  outer post-reference scan, and froze a 12-step acyclic construction order.
 
 ## Next
 
-- Cut the receipt/configuration digest cycle and state one total construction
-  order.
 - Add the ten omitted namespace-prefix atoms, regenerate the table and totals,
   and validate the complete amendment.

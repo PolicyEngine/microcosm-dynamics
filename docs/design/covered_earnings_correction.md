@@ -19987,3 +19987,184 @@ J\to\operatorname{bytes}(\text{receipt/configuration})\to Q.
 
 No artifact contains the OID or tree of the commit whose identity depends
 on that artifact's own blob, so no Git/hash fixed point exists.
+
+##### 16.13.4 Acyclic receipt and configuration construction
+
+Every §16.12.5 namespace-scan sentence that places the final selected-
+configuration SHA-256, or a path derived from that SHA-256, inside
+`receipt_core`'s transitive closure is prospectively replaced by this
+subsection.
+
+For each branch \(b\), let \(F_b\) denote its complete final selected-
+configuration object. Define \(F_b^0\), the pre-reference configuration
+core, by projecting every exact schema key and value of \(F_b\) except
+`registration_reference`, without inserting a null, empty string,
+placeholder, zero digest, or alternate key. The calibrated
+`covered_earnings_correction_evaluation_configuration.v3` core therefore
+has exactly its 46 non-reference keys. The fitting-free
+`covered_earnings_correction_fitting_free_configuration.v1` core has exactly
+its 44 non-reference keys. Let
+
+\[
+h_b^0 =
+\operatorname{SHA256}(\operatorname{canonical\_json\_bytes}(F_b^0)).
+\]
+
+Every member of \(F_b^0\) is independently available before receipt-core
+hashing. Neither a receipt digest nor a registration reference is an input
+to \(F_b^0\) or \(h_b^0\).
+
+When a pre-reference scan is physically serialized inside an adjudication
+\(P_i\), its operand is the phase-local staged core \(F_{b,i}^0\), formed by
+the same all-keys-except-reference projection from the configuration
+comparand available at \(B_i\), and its hash is \(h_{b,i}^0\). Both must be
+complete before \(P_i\) serialization. They are not aliases for, and cannot
+depend on, the later receipt-phase \(F_b^0\), \(h_b^0\), selected path, or
+\(J\). The later receipt phase reconstructs its own complete cores against
+the then-current frozen inputs and exact-compares every field that is
+required to remain unchanged.
+
+The namespace scan embedded in any adjudication or in the 22-row
+fitting-free domain is the **pre-reference scan**. Its exact nine-key shape
+is the §16.12.5 scan shape after replacing only
+`selected_configuration_sha256` with
+`pre_reference_configuration_core_sha256` in the same position. That member
+equals the applicable \(h_b^0\). Its parent is the phase-correct \(B_i\) or
+\(J\) from §16.13.3. Its ordered path array retains the selected receipt,
+selected registration, primary, sidecar, next incident, and next fresh-
+registration-adjudication paths. Its three claim paths are respectively the
+attempt-claim, retry-authority, and retry-claim literal prefixes followed by
+\(h_b^0\) and literal `.claim`. No final-configuration digest is an operand.
+Every path, row, count, digest, descriptor, lstat, ordering, collision, and
+status law otherwise remains exactly the frozen namespace-scan law.
+
+The complete `receipt_core` key set is prospectively its prior exact key set
+plus `pre_reference_configuration_core_sha256` immediately after
+`selected_output_paths_sha256`. Its value is
+
+\[
+h^0 =
+\begin{cases}
+h_c^0,&\text{when the derived path is }\texttt{CALIBRATED},\\
+h_f^0,&\text{when the derived path is }
+      \texttt{DETERMINISTIC\_FITTING\_FREE}.
+\end{cases}
+\]
+
+It must deep-equal the corresponding selected \(F_b^0\) digest. The complete
+fitting-free domain embedded in the core independently retains its own
+position-22 pre-reference scan and \(h_f^0\), including on the calibrated
+selection branch. The core contains no final \(F_b\) digest.
+
+Let \(R_c\) be that complete receipt core, \(h_R\) its canonical SHA-256,
+and \(\rho\) the exact string
+`<receipt_id>:<receipt_core_sha256>` with those realized values. Only after
+\(R_c\) and \(h_R\) exist does the coordinator construct the final selected
+configuration:
+
+\[
+F=\operatorname{insert}(F_b^0,
+  \texttt{registration\_reference}=\rho),
+\qquad
+h_F=\operatorname{SHA256}(\operatorname{canonical\_json\_bytes}(F)).
+\]
+
+Insertion places the member at the configuration schema's already frozen
+position and changes no other key or value. The final configuration must
+canonicalize to the exact bytes later written at the selected registration
+path. The pre-reference and final hashes serve different objects;
+\(h^0=h_F\) is invalid and aborts rather than collapsing the phases.
+
+After \(h_F\) exists, the coordinator constructs the
+`post_reference_namespace_scan` as prewrite evidence. It has exactly the
+original §16.12.5 nine-key scan shape, including
+`selected_configuration_sha256`. Its parent is the already stored \(J\);
+that SHA member is \(h_F\); and its selected receipt, selected registration,
+primary, sidecar, next-incident, and next-fresh-adjudication paths equal the
+pre-reference scan's same-purpose paths. Its three claim paths instead use
+the same literal prefixes followed by \(h_F\) and literal `.claim`. Its
+ordered paths, rows, counts, domain digest, stable no-follow descriptor/lstat
+evidence, and pass/fail laws are recomputed over these actual final paths.
+They may not be copied from the pre-reference scan.
+
+The outer
+`covered_earnings_path_applicability_receipt.v1` exact key set is
+prospectively its prior key set plus `post_reference_namespace_scan`
+immediately after `selected_registration_configuration_sha256`.
+The selected-configuration member equals \(h_F\), the post-reference scan's
+same-named member equals \(h_F\), and both equal SHA-256 of the exact final
+configuration bytes. Outer receipt status can pass only when the core and
+its digest, \(\rho\), the final configuration, \(h_F\), the complete
+post-reference scan, and every branch/path/schema equation pass.
+
+The named
+`receipt_configuration_namespace_identity_and_claim_path_projection` is
+therefore a two-phase law. Its receipt-core/position-22 phase binds only
+\(J\), the selected receipt/registration/output paths, \(h_b^0\), the
+pre-reference scan, and the receipt-independent configuration core. It does
+not bind \(h_F\) or a final claim path. Its outer-receipt phase binds \(h_F\),
+the complete post-reference scan, and the final configuration bytes. When a
+durable attempt claim is later constructed, its path must equal the selected
+`attempt_claim_prefix` plus \(h_F\) and literal `.claim`, and its primary and
+sidecar paths must exact-copy the receipt-bound values. That later consumer
+is not an input to either namespace scan.
+
+The cut edge is absolute. If \(\operatorname{TC}(R_c)\) denotes the
+transitive closure of every complete value or digest embedded in the receipt
+core, then
+
+\[
+h_F,\quad
+\texttt{post\_reference\_namespace\_scan},\quad
+\{\text{each literal claim prefix}\Vert h_F\Vert\texttt{.claim}\}
+\notin \operatorname{TC}(R_c).
+\]
+
+The same exclusion applies to a digest, wrapper, row, path array, Boolean,
+or other projection derived from any excluded value. Only \(F_b^0\),
+\(h_b^0\), and the pre-reference scan may occur on the core side of the cut.
+No equality, placeholder convention, iterative rehashing, fixed-point
+search, or producer assertion can restore a prohibited edge.
+
+Construction follows this one total order:
+
+1. Freeze existing \(B_n\); construct the calibrated \(F_c^0\), \(h_c^0\),
+   and pre-reference namespace evidence against \(B_n\); then serialize
+   \(P_n\).
+2. Store \(S_n\) with sole parent \(B_n\), adding only \(P_n\).
+3. When capture is required, store authorization \(A\), the accepted capture
+   triple \(T\), and the final cutoff \(C\).
+4. Construct \(P_{n+1}\) against existing \(C\), then store it alone as
+   \(J=S_{n+1}\). Without capture, set the already stored \(J=S_n\).
+5. Freeze the raw \(J\) commit and tree; derive the receipt suffix,
+   registration suffix, selected receipt/registration paths, output paths,
+   and complete history domains.
+6. Construct both branch pre-reference configuration cores \(F_c^0,F_f^0\)
+   and their hashes \(h_c^0,h_f^0\).
+7. Against \(J\), construct the calibrated namespace result and the complete
+   fitting-free 22-row domain using only the applicable pre-reference hashes
+   and scans; then derive the path.
+8. Select \(F_b^0\) and \(h^0\); construct and hash complete receipt core
+   \(R_c\).
+9. Form \(\rho\); insert it into \(F_b^0\); serialize \(F\); and compute
+   \(h_F\).
+10. Scan the actual full-\(h_F\) terminal paths and construct the complete
+    outer receipt, including `post_reference_namespace_scan`.
+11. Write exactly the final configuration and outer receipt bytes, then
+    store only those two paths in \(Q\) with sole parent \(J\).
+12. Post-commit, verify \(Q\)'s raw parent and exact two-path delta, rehash
+    both stored blobs, and rerun the unchanged \(J\)-tree projections. The
+    prewrite lstat observations for the two newly present paths are validated
+    as captured evidence and are not falsely rerun as postwrite absence.
+
+The resulting dependency graph is
+
+\[
+B_n\to P_n\to S_n\to A\to T\to C\to P_{n+1}\to J
+\to F^0\to h^0\to N_0\to R_c\to h_R\to F\to h_F
+\to N_1\to R_o\to Q,
+\]
+
+with the \(A,T,C,P_{n+1}\) suffix omitted on the no-capture branch.
+Every operand precedes its consumer, and neither the receipt/configuration
+hash graph nor the Git chronology contains a cycle.
