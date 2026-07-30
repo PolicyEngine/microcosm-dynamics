@@ -45,6 +45,10 @@
   `one_as_published_covered_share_observation_per_year` to candidate (b).
 - The adjudication tests pass: `19 passed`; the combined four-file suite
   passes: `153 passed`.
+- Repinned the artifact tier for the 78 added cases: full collection is
+  `4,073` tests, comprising `822` unit, `1,768` artifact, `804`
+  integration-PSID, `520` legacy-reproduction, and `159`
+  PolicyEngine-oracle tests.
 
 ## Next
 
