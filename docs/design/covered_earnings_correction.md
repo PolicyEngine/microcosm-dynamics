@@ -8820,3 +8820,34 @@ removed or the weights reassigned. After ratification, changing any §15 byte,
 family, mass, optional-source state, version literal, or reactivation
 condition requires a new prospective amendment and fresh registration; it
 cannot be noted after launch.
+
+### 15.9 Deviations and clarifications
+
+The minimal-honest disposition, required B2/B11 key set, optional empty
+source state, pro-rata reassignment, retained analytic fields, honesty
+caveat, nonweakening rule, and ratification protocol follow the coordinator
+ruling without substantive deviation.
+
+Two scope clarifications are deliberate:
+
+1. “Source absence” means no qualifying direct series in the captured and
+   adversarially inspected SSA publication corpus. It is not a timeless claim
+   that no future SSA edition can publish such cells. This is why §15.3 gives
+   a source-activation condition rather than declaring the concept
+   impossible.
+2. If “reactivation” were read to restore positive target weight
+   automatically when a source appears, this amendment rejects that reading.
+   A qualifying future publication may populate a **new successor
+   artifact's optional source block**, but cannot by itself restore the
+   removed target family. Automatic restoration would leave the now-
+   reassigned \(1/4\) weight, dependency audit, tolerances, target registry,
+   model-universe concordance, and viewed-cell boundary undefined and would
+   bypass the required amendment ceremony. A new ratified amendment and
+   fresh registration are therefore required for target reactivation.
+
+The integer masses `2,2,1,1` are an exact serialization of the coordinator's
+\(1/3,1/3,1/6,1/6\) normalized weights, not a different weighting choice.
+Likewise, retaining V-B7 as the ninth executable verification row with the
+new `optional_target_source` class is schema closure: deleting or leaving
+that hidden required row unchanged would respectively churn unrelated
+cardinalities or keep the supposedly removed source as a global blocker.
