@@ -9898,7 +9898,7 @@ Every `*_specs`, `*_results`, and disposition member is an exact registered
 deep copy of its named registry. The fitting-free configuration accepts only
 `verification_claim_specs.fitting_free.v1`,
 `verification_claim_results.fitting_free.v1`,
-`path_applicability_specs.v1`,
+`covered_earnings_path_applicability_specs.v1`,
 `fitting_free_model_input_authority_results.v1`,
 `fitting_free_target_domain_specs.v1`,
 `fitting_free_model_choice_specs.v1`,
