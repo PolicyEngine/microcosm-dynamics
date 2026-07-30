@@ -1,8 +1,8 @@
-"""Build DRAFT SIPP job-spell noise floors for gates E4/E5 (#192).
+"""Build pre-IC3 SIPP job-spell noise-floor references (#192).
 
-REPORTED ANCHOR, NOT A GATE RUN — and explicitly a DRAFT: C3 (the
+REPORTED ANCHOR, NOT A GATE RUN: IC3 (the
 employer gate block) has not locked, no thresholds are proposed
-here, and nothing below is ratified. Like the disability floors,
+here, and v1 pinning does not ratify anything. Like the disability floors,
 this commits the person-disjoint half-vs-half sampling-noise floor
 that pre-registered E4/E5 thresholds would later be derived from,
 so the floor-building method is on the record before any candidate
@@ -48,7 +48,7 @@ Usage::
 
     python scripts/build_sipp_spell_floors.py
 
-writes ``runs/sipp_spell_floors_draft_v0.json``.
+writes ``runs/sipp_spell_floors_v1.json``.
 """
 
 from __future__ import annotations
@@ -63,6 +63,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from populace_dynamics.contract import environment_block  # noqa: E402
 from populace_dynamics.data import sipp_jobs  # noqa: E402
 
 YEAR = 2023
@@ -71,8 +72,20 @@ AGE_BANDS = ((16, 24), (25, 34), (35, 44), (45, 54), (55, 64), (65, 99))
 THIN_CELL_PERSONS = 200
 
 ARTIFACT = Path(__file__).resolve().parents[1] / (
-    "runs/sipp_spell_floors_draft_v0.json"
+    "runs/sipp_spell_floors_v1.json"
 )
+ENV_SIDECAR = ARTIFACT.with_suffix(".env.json")
+
+
+def _source_pin() -> dict[str, str]:
+    path = sipp_jobs._resolve_person_path(  # noqa: SLF001
+        YEAR,
+        sipp_jobs._resolve_data_dir(None),  # noqa: SLF001
+    )
+    return {
+        "path": path.name,
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+    }
 
 
 def _reader_commit() -> str:
@@ -170,8 +183,9 @@ def floors_for_retention(pairs: pd.DataFrame) -> dict:
             halves_n.append(
                 min(a["person_id"].nunique(), b["person_id"].nunique())
             )
-            ra, rb = _weighted_rate(a, "retained"), _weighted_rate(
-                b, "retained"
+            ra, rb = (
+                _weighted_rate(a, "retained"),
+                _weighted_rate(b, "retained"),
             )
             gaps.append(abs(np.log(ra / rb)))
         cells[f"{band}|sex{int(sex)}"] = {
@@ -194,8 +208,9 @@ def floors_for_runs(runs: pd.DataFrame) -> dict:
             half = _half(cell["person_id"], seed)
             a, b = cell[half == 0], cell[half == 1]
             halves_n.append(min(len(a), len(b)))
-            ra, rb = _weighted_rate(a, "long_run"), _weighted_rate(
-                b, "long_run"
+            ra, rb = (
+                _weighted_rate(a, "long_run"),
+                _weighted_rate(b, "long_run"),
             )
             gaps.append(abs(np.log(ra / rb)))
         cells[str(band)] = {
@@ -214,21 +229,24 @@ def build() -> dict:
     runs = run_length_frame(job_months)
     return {
         "artifact": "sipp_spell_floors",
-        "version": "draft_v0",
-        "status": "DRAFT - NOT RATIFIED; C3 not locked; no thresholds",
+        "version": "v1",
+        "status": (
+            "PRE-LOCK REFERENCE - NOT RATIFIED; IC3 not locked; no "
+            "thresholds. v1 is a pinning event, not a ratification"
+        ),
         "issue": "192",
         "deployment_scale_note": (
             "RECORDED GAP (review of #212): these floors are "
             "half-vs-half, i.e. the sampling noise of ~50%-of-source "
-            "estimates, while candidate runs will be scored on the "
-            "full source - there is no candidate-context floor "
-            "(gate-1 ctx20 analog) in this draft. Under root-n "
-            "scaling the full-source floor is ~1/sqrt(2) (~0.71x) "
-            "of the half-split floor, making half-split-derived "
-            "thresholds conservative (too wide) at deployment "
-            "scale; C3 decides whether to accept that conservatism, "
-            "scale analytically, or require deployment-context "
-            "floors at v1 promotion."
+            "estimates, while IC3 proposes scoring on a 0.20 person "
+            "holdout - there is no candidate-context floor (gate-1 "
+            "ctx20 analog). Under root-n scaling, a 20% scoring "
+            "frame has ~sqrt(0.5/0.2)=1.58x the sampling noise of "
+            "the half-split basis, so these floors are mildly "
+            "ANTI-conservative (too tight), not conservative. "
+            "RECORDED_NOT_SATISFIED: IC3 must accept a registered "
+            "analytic scale adjustment or require matching-context "
+            "floors before candidate runs."
         ),
         "source": f"pu{YEAR} (reference year {YEAR - 1})",
         "method": (
@@ -239,7 +257,7 @@ def build() -> dict:
         "seam_caveat": (
             "both halves share SIPP seam structure; the seam-vs-J2J "
             "reconciliation run is a separate required artifact "
-            "before thresholds lock"
+            "before IC3 thresholds lock"
         ),
         "thin_flag_units": {
             "e4_retention_by_age_sex": (
@@ -254,6 +272,7 @@ def build() -> dict:
             ),
         },
         "sipp_jobs_reader_commit": _reader_commit(),
+        "source_input": _source_pin(),
         "e4_retention_by_age_sex": floors_for_retention(pairs),
         "e5_runs_by_age": floors_for_runs(runs),
     }
@@ -262,6 +281,17 @@ def build() -> dict:
 def main() -> None:
     artifact = build()
     ARTIFACT.write_text(json.dumps(artifact, indent=2) + "\n")
+    ENV_SIDECAR.write_text(
+        json.dumps(
+            {
+                "artifact": ARTIFACT.name,
+                "status": "MEASUREMENT_ENVIRONMENT",
+                "environment": environment_block(),
+            },
+            indent=2,
+        )
+        + "\n"
+    )
     print(f"wrote {ARTIFACT}")
     e4 = artifact["e4_retention_by_age_sex"]
     print(f"E4 cells: {len(e4)}; example:", next(iter(e4.items())))

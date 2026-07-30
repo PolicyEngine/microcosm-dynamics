@@ -1,7 +1,7 @@
-"""Build DRAFT SIPP floors for gates E8 and E9 (#192).
+"""Build pre-IC3 SIPP floor references for gates E8 and E9 (#192).
 
-REPORTED ANCHOR, NOT A GATE RUN — and explicitly a DRAFT: C3 has
-not locked, no thresholds are proposed. Completes Workstream A's
+REPORTED ANCHOR, NOT A GATE RUN: IC3 has not locked and no thresholds
+are proposed. Completes Workstream A's
 floor battery (E3 tenure and E4/E5 spells are committed siblings;
 E10 needs no floor — it is pass/fail on the locked PSID gates).
 
@@ -28,18 +28,17 @@ recorded, not hidden):
     rates, not earnings changes (their change is to/from zero by
     construction).
 
-(c) **The floor**: person-disjoint sha256 half-splits, seeds 0-4;
+(c) **The floor**: person-disjoint sha256 half-splits, seeds 0-19;
     for rates the |log rate ratio| between halves, for medians/IQRs
     the absolute gap in log-points; mean/sd across seeds. Cells
     under 200 unweighted persons per half are flagged thin.
 
 Thin-flag units (recorded for honesty across the floor battery):
 the E8 thin flag counts **rows** per half, which equal persons
-because the E8 frame has one row per person; the E9
-earnings-change thin flag counts **rows** per half, which are
-consecutive-month transition *pairs* (a person can contribute up
-to 11), not persons — unlike the E4 spell floor, which counts
-distinct persons. All compare against the same
+because the E8 frame has one row per person; the E9 earnings-change
+thin flag counts **distinct persons** per half
+(``person_id.nunique()``), although the underlying rows are
+consecutive-month transition pairs. All compare against the same
 ``THIN_CELL_PERSONS = 200``.
 
 Seam caveat: identical to the E4/E5 floors — both halves share
@@ -50,7 +49,7 @@ Usage::
 
     python scripts/build_sipp_e8_e9_floors.py
 
-writes ``runs/sipp_e8_e9_floors_draft_v0.json``.
+writes ``runs/sipp_e8_e9_floors_v1.json``.
 """
 
 from __future__ import annotations
@@ -67,6 +66,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from populace_dynamics.contract import environment_block  # noqa: E402
 from populace_dynamics.data import sipp_jobs  # noqa: E402
 
 YEAR = 2023
@@ -74,7 +74,22 @@ SEEDS = tuple(range(20))
 AGE_BANDS = ((16, 24), (25, 34), (35, 44), (45, 54), (55, 64), (65, 99))
 THIN_CELL_PERSONS = 200
 
-ARTIFACT = REPO / "runs/sipp_e8_e9_floors_draft_v0.json"
+ARTIFACT = REPO / "runs/sipp_e8_e9_floors_v1.json"
+ENV_SIDECAR = ARTIFACT.with_suffix(".env.json")
+
+
+def _source_path(year: int) -> Path:
+    data_dir = Path(
+        os.environ.get(
+            "POPULACE_DYNAMICS_SIPP_DIR",
+            str(Path("~/PolicyEngine/sipp-data").expanduser()),
+        )
+    ).expanduser()
+    for suffix in (".csv", ".csv.gz"):
+        path = data_dir / f"pu{year}{suffix}"
+        if path.exists():
+            return path
+    raise FileNotFoundError(f"pu{year}.csv[.gz] not staged")
 
 
 def _reader_commit() -> str:
@@ -112,18 +127,7 @@ def _half(person_id: str, seed: int) -> int:
 
 
 def _person_month_universe(year: int) -> pd.DataFrame:
-    data_dir = Path(
-        os.environ.get(
-            "POPULACE_DYNAMICS_SIPP_DIR",
-            str(Path("~/PolicyEngine/sipp-data").expanduser()),
-        )
-    ).expanduser()
-    for suffix in (".csv", ".csv.gz"):
-        path = data_dir / f"pu{year}{suffix}"
-        if path.exists():
-            break
-    else:
-        raise FileNotFoundError(f"pu{year}.csv[.gz] not staged")
+    path = _source_path(year)
     raw = pd.read_csv(
         path,
         sep="|",
@@ -307,6 +311,7 @@ def e9_floors(pairs: pd.DataFrame) -> dict:
             "median_log_change": round(med, 4),
             "iqr_log_change": round(iqr, 4),
             "pairs_unweighted": int(len(cell)),
+            "persons_unweighted": int(cell["person_id"].nunique()),
             "floor_abs_median_gap": {
                 "mean": round(float(np.mean(med_gaps)), 5),
                 "sd": round(float(np.std(med_gaps)), 5),
@@ -326,21 +331,24 @@ def build() -> dict:
     pairs = e9_transition_frame(panel)
     return {
         "artifact": "sipp_e8_e9_floors",
-        "version": "draft_v0",
-        "status": "DRAFT - NOT RATIFIED; C3 not locked; no thresholds",
+        "version": "v1",
+        "status": (
+            "PRE-LOCK REFERENCE - NOT RATIFIED; IC3 not locked; no "
+            "thresholds. v1 is a pinning event, not a ratification"
+        ),
         "issue": "192",
         "deployment_scale_note": (
             "RECORDED GAP (review of #212): these floors are "
             "half-vs-half, i.e. the sampling noise of ~50%-of-source "
-            "estimates, while candidate runs will be scored on the "
-            "full source - there is no candidate-context floor "
-            "(gate-1 ctx20 analog) in this draft. Under root-n "
-            "scaling the full-source floor is ~1/sqrt(2) (~0.71x) "
-            "of the half-split floor, making half-split-derived "
-            "thresholds conservative (too wide) at deployment "
-            "scale; C3 decides whether to accept that conservatism, "
-            "scale analytically, or require deployment-context "
-            "floors at v1 promotion."
+            "estimates, while IC3 proposes scoring on a 0.20 person "
+            "holdout - there is no candidate-context floor (gate-1 "
+            "ctx20 analog). Under root-n scaling, a 20% scoring "
+            "frame has ~sqrt(0.5/0.2)=1.58x the sampling noise of "
+            "the half-split basis, so these floors are mildly "
+            "ANTI-conservative (too tight), not conservative. "
+            "RECORDED_NOT_SATISFIED: IC3 must accept a registered "
+            "analytic scale adjustment or require matching-context "
+            "floors before candidate runs."
         ),
         "source": f"pu{YEAR} (reference year {YEAR - 1}), persons "
         "observed all 12 reference months (censoring-free draft "
@@ -374,12 +382,19 @@ def build() -> dict:
                 "person in the E8 frame) vs THIN_CELL_PERSONS=200"
             ),
             "e9_transitions.earnings_change": (
-                "rows per half = consecutive-month transition "
-                "pairs, not persons (a person can contribute up to "
-                "11) vs THIN_CELL_PERSONS=200"
+                "distinct persons per half (person_id.nunique(); "
+                "rows are consecutive-month transition pairs and a "
+                "person can contribute up to 11) vs "
+                "THIN_CELL_PERSONS=200"
             ),
         },
         "sipp_jobs_reader_commit": _reader_commit(),
+        "source_input": {
+            "path": _source_path(YEAR).name,
+            "sha256": hashlib.sha256(
+                _source_path(YEAR).read_bytes()
+            ).hexdigest(),
+        },
         "e8_nonemployment_by_age": e8_floors(persons),
         "e9_transitions": e9_floors(pairs),
     }
@@ -388,6 +403,17 @@ def build() -> dict:
 def main() -> None:
     artifact = build()
     ARTIFACT.write_text(json.dumps(artifact, indent=2) + "\n")
+    ENV_SIDECAR.write_text(
+        json.dumps(
+            {
+                "artifact": ARTIFACT.name,
+                "status": "MEASUREMENT_ENVIRONMENT",
+                "environment": environment_block(),
+            },
+            indent=2,
+        )
+        + "\n"
+    )
     print(f"wrote {ARTIFACT}")
     print("e9 transition mix:", artifact["e9_transitions"]["transition_rates"])
     stay = artifact["e9_transitions"]["earnings_change"]["stay"]

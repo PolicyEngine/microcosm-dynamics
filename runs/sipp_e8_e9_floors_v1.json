@@ -1,18 +1,24 @@
 {
   "artifact": "sipp_e8_e9_floors",
-  "version": "draft_v0",
-  "status": "DRAFT - NOT RATIFIED; C3 not locked; no thresholds",
+  "version": "v1",
+  "status": "PRE-LOCK REFERENCE - NOT RATIFIED; IC3 not locked; no thresholds. v1 is a pinning event, not a ratification",
   "issue": "192",
-  "deployment_scale_note": "RECORDED GAP (review of #212): these floors are half-vs-half, i.e. the sampling noise of ~50%-of-source estimates, while candidate runs will be scored on the full source - there is no candidate-context floor (gate-1 ctx20 analog) in this draft. Under root-n scaling the full-source floor is ~1/sqrt(2) (~0.71x) of the half-split floor, making half-split-derived thresholds conservative (too wide) at deployment scale; C3 decides whether to accept that conservatism, scale analytically, or require deployment-context floors at v1 promotion.",
+  "deployment_scale_note": "RECORDED GAP (review of #212): these floors are half-vs-half, i.e. the sampling noise of ~50%-of-source estimates, while IC3 proposes scoring on a 0.20 person holdout - there is no candidate-context floor (gate-1 ctx20 analog). Under root-n scaling, a 20% scoring frame has ~sqrt(0.5/0.2)=1.58x the sampling noise of the half-split basis, so these floors are mildly ANTI-conservative (too tight), not conservative. RECORDED_NOT_SATISFIED: IC3 must accept a registered analytic scale adjustment or require matching-context floors before candidate runs.",
   "source": "pu2023 (reference year 2022), persons observed all 12 reference months (censoring-free draft restriction, recorded; ESTIMAND NOTE per review: candidate runs scored against these cells must apply the identical full-year-persons restriction)",
   "method": "person-disjoint sha256 half-splits, seeds 0-19 (raised from 5 per review: E8 cells where floor sd exceeds the mean need a stable across-seed sd); rates floored on |log rate ratio|, earnings-change medians/IQRs on absolute gaps in log-points; weighted by WPFINWGT",
   "seam_caveat": "identical to the E4/E5 floors: half-splits share SIPP's seam structure; #214 carries the seam measurement",
   "stay_median_heaping_caveat": "within-job SIPP monthly earnings are mostly constant across a wave (dependent-interview reporting), so the stay-transition median log-change heaps at exactly 0 and its half-vs-half floor is degenerate (0.0) - the same failure class as the tenure quantile heaping; E9-stay thresholds should be stated on the IQR or a distributional distance, not the median",
   "thin_flag_units": {
     "e8_nonemployment_by_age": "rows per half, equal to persons (one row per person in the E8 frame) vs THIN_CELL_PERSONS=200",
-    "e9_transitions.earnings_change": "rows per half = consecutive-month transition pairs, not persons (a person can contribute up to 11) vs THIN_CELL_PERSONS=200"
+    "e9_transitions.earnings_change": "distinct persons per half (person_id.nunique(); rows are consecutive-month transition pairs and a person can contribute up to 11) vs THIN_CELL_PERSONS=200"
   },
   "sipp_jobs_reader_commit": "a059193e4fad80ceb1c2e1f4177aa5c69abb1048",
+  "promotion_integrity": {
+    "measured_values": "preserved from the recorded on-data build; not rebuilt during v1 promotion",
+    "source_input_sha256_status": "BLOCKED_STRICT_STAGING: original raw input digest was not recorded and pu2023 is unavailable in the promotion environment",
+    "e9_distinct_person_count_status": "FOLLOW_UP_REQUIRED: not derivable from the aggregate draft artifact; the builder now emits persons_unweighted on the next on-data rebuild",
+    "required_follow_up_before_ic3_lock": "on-data owner must rerun the builder from the exact staged vintage, emit source SHA256 and a measurement-environment sidecar, verify the E9 distinct-person count, and reconcile every measured value"
+  },
   "e8_nonemployment_by_age": {
     "16_24": {
       "any_nonemp_share": 0.4145,
