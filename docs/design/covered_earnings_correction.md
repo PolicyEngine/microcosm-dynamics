@@ -8141,3 +8141,1051 @@ enforces that noninterference.
 Until every box is ratified and the later publication sequence completes,
 the `first_estimates_report.md` §3.4 labor-income proxy label remains in
 force.
+
+## 15. AMENDMENT SECTION — Amendment 1: remove the unavailable covered-share target
+
+### 15.1 Status, scope, and precedence
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 3
+  of the design. Before completion of §15.8 step 3 it is unratified and
+  authorizes no action. After step 3 but before step 5, only step-4
+  authority, implementation, and fixture preparation is authorized. It
+  becomes operative only when a validator-accepted fresh registration names
+  the exact ratification commit. No status literal is updated in place.
+- **Base authority:** The immutable base is the complete revision-2 text at
+  commit `59fd058b943c2b9960af9cb98ecdec97709cc2dd`, ratified after eleven
+  adversarial referee rounds.
+- **Change:** Amendment 1 removes
+  `ssa_precisely_universed_covered_share` from the required calibration,
+  fitting, validation, selection, and tolerance contract; makes literal SSA
+  covered-share cells an empty optional-source block; reassigns the removed
+  weight exactly pro rata across the four surviving positive-weight
+  families; and re-points every affected base-law reference.
+- **No implied repeal:** Original §§1–14 remain visible and are not edited in
+  place. They remain controlling except for the exact clauses enumerated in
+  §§15.3–15.8. Where an enumerated original clause conflicts with §15, §15 is
+  its prospective replacement law. Silence in §15 leaves the original clause
+  unchanged.
+
+This section follows the first-estimates amendment discipline: identify the
+ratified base, state the defect and why it requires design action, freeze the
+replacement before implementation or output contact, carry the limitation
+forward, and require a new referee-gated ratification and registration. The
+append-only presentation here is stricter: the displaced law remains
+readable, with this pointer, rather than being rewritten in place.
+
+### 15.2 Established source absence and reason for amendment
+
+The base §6.1/§6.2 contract requires one literal `as_published` SSA
+covered-worker-incidence share observation per registered year, with an
+unthinned era span reaching 1968–2014 and an exact numerator, denominator,
+timing, unit, duplicate-worker rule, zero rule, universe, and frame-relative
+model analogue. The captured and adversarially inspected SSA publication
+corpus contains no series satisfying that contract:
+
+- Supplement Table 4.B1's published percentage is a share of **earnings
+  dollars**, not the incidence of workers with covered earnings.
+- Supplement 4.C concerns insured status, a different estimand and
+  denominator from annual covered-worker incidence.
+- Trustees Table IV.B4 publishes worker counts and per-beneficiary ratios,
+  not literal covered-worker-share cells.
+- Dividing Table 4.B1 workers by IV.B4 workers would synthesize one value
+  from two publications. It is also empirically incoherent as a subset
+  share: the displayed quotient exceeds 1 in 31 of 55 years, is below 1 in
+  24, and equals 1 in none. For 1978 it is exactly
+  \(110{,}600/109{,}432=13{,}825/13{,}679>1\). The value check corroborates
+  the independently decisive universe and artifact-shape failures; it is not
+  the basis for changing weights.
+- Table 4.B10 OASDI workers divided by Table 4.B12 HI workers is likewise a
+  synthesized quotient, is available in the adjudicated candidate only for
+  preliminary 2023, lies outside every registered fit/validation era, and
+  has no registered HI-denominator model analogue. Table 4.B11
+  \(T/(W+S)\), VI.G1 payroll/GDP quantities, maximum-earner shares, entrant
+  shares, and IV.B4 worker/beneficiary ratios also answer different
+  questions.
+
+The one-observation law is independent and controlling: separately published
+operands, even if their quotient happened to lie in \([0,1]\), are not one
+published covered-share observation. No cross-publication quotient,
+interpolation, clipping, reconciliation, B1 earnings percentage, insured-
+status percentage, or approximate “94 percent” may fill the missing cells.
+Definitional prose cannot cure either the artifact-shape failure or the
+estimand failure.
+
+The defect was established during authority extraction, before any fitting
+and before any model output existed. Some official source values had
+necessarily been viewed to adjudicate their identities and universes; they
+are not called unseen. The amendment responds to the pre-fit, pre-model-output
+absence of a lawful source, not to whether a fitted model agreed with an
+observed target. The minimal honest response is therefore removal of the
+family from the required calibration contract, not replacement by synthesis.
+
+### 15.3 Exact §6.1 replacement — vintage-2 source artifact
+
+This subsection replaces the base §6.1 artifact-shape law at base-ratification
+lines 1826–1907, the covered-share-required-source paragraphs at lines
+2026–2032, and only the covered-share portion of the prerequisite consequence
+at lines 2013–2015. No ratified, validator-accepted, or registered
+authoritative vintage-2 artifact exists; a reviewed incomplete identity never
+qualified as one. The append-only path and vintage ID therefore remain
+`data/external/ssa_covered_earnings_calibration_targets_vintage2.json` and
+`ssa_covered_earnings_calibration_targets.vintage2`. The changed key meanings
+require the new schema literal
+`ssa_covered_earnings_calibration_targets.v2`.
+
+The artifact has exactly these eleven top-level keys, in semantic order:
+
+1. `schema_version`;
+2. `artifact_vintage_id`;
+3. `artifact_role`;
+4. `year_basis`;
+5. `required_calendar_years`;
+6. `required_source_cell_ids`;
+7. `optional_covered_share`;
+8. `source_document_manifest`;
+9. `observations`;
+10. `cross_table_discrepancies`; and
+11. `integrity`.
+
+The unchanged literals and laws for `artifact_role`, `year_basis`,
+`required_calendar_years`, `cross_table_discrepancies`, canonicalization, and
+integrity continue to apply. `required_source_cell_ids` has exactly the two
+underscore-form object keys `table4_b2` and `table4_b11`, with the exact
+year-major arrays already frozen in base §6.1. It has no
+`ssa_covered_share` key. At the manifest layer, the required table-ID domain
+is exactly the dotted array `["table4.b2","table4.b11"]`.
+`source_document_manifest` has exactly the one required Supplement object,
+whose `table_ids` equals that array; no optional covered-share document may
+appear in the required manifest.
+
+Top-level `observations` contains exactly \(6\times55=330\) Table 4.B2 cells
+and \(9\times55=495\) Table 4.B11 cells, for 825 cells total, in the original
+order and with the original status, literal-token, unit, normalization,
+rounding-tag, source-resolution, and uniqueness laws. Its IDs exact-match
+only the two required arrays. An optional source cell may not leak into the
+top-level observations, required ID arrays, required manifest, physical-cell
+expansion, or discrepancy registry.
+
+`optional_covered_share` has exactly these eight keys:
+
+1. `status`;
+2. `failure_reason`;
+3. `covered_share_required_years`;
+4. `ssa_covered_share`;
+5. `source_document_manifest`;
+6. `observations`;
+7. `source_activation_condition_id`; and
+8. `target_reactivation_condition_id`.
+
+Its `status` domain is exactly
+`unavailable_source_absent | source_verified_not_target_bound`. Both states
+carry the immutable literals
+`source_activation_condition_id:
+literal_as_published_ssa_covered_worker_share_cells_v1` and
+`target_reactivation_condition_id:
+future_ratified_amendment_and_fresh_registration_required_v1`; no successor
+may rename or omit either condition. For vintage 2, its exact immutable value
+is:
+
+```json
+{
+  "status": "unavailable_source_absent",
+  "failure_reason": "no_qualifying_literal_as_published_ssa_worker_share_series_in_registered_sources",
+  "covered_share_required_years": [],
+  "ssa_covered_share": [],
+  "source_document_manifest": [],
+  "observations": [],
+  "source_activation_condition_id": "literal_as_published_ssa_covered_worker_share_cells_v1",
+  "target_reactivation_condition_id": "future_ratified_amendment_and_fresh_registration_required_v1"
+}
+```
+
+This is an explicit empty-with-failure state, not successful empty
+covered-share authority. It is valid for the amended required B2/B11 artifact
+and does not abort that artifact merely because the optional source is
+absent. The artifact's zeroed-field content hash and canonical-byte
+reproduction bind the complete optional object, including its status and
+reason. The empty block creates zero physical-source, alias, arithmetic,
+target, target-result, or target-use-trace rows derived from an optional
+observation. It still creates the required V-B7 consequence result, the full
+Option-C typed failure domain, and the enclosing artifact/configuration/full-
+provenance commitments specified below.
+
+`literal_as_published_ssa_covered_worker_share_cells_v1` is satisfied only
+by committed, hash-pinned primary SSA bytes containing **literal published
+worker-incidence share cells—not separately published operands**. The series
+must meet all of the following before a successor artifact may use the
+alternate `source_verified_not_target_bound` status.
+
+The authority review freezes a complete hash-pinned candidate-corpus
+cutoff. Series identity is derived only from source-stated numerator,
+denominator, universe, timing, unit, duplicate-worker rule, and zero rule.
+Exactly one qualifying identity must exist: zero retains the absent state;
+more than one is `authority_conflict` and requires a new prospective
+amendment. Within that identity, use the unique greatest source-stated
+publication/revision edition as of the cutoff. Missing or tied edition
+dates and cross-edition mixing abort. Values, series length, and
+implementation order may not choose among candidates.
+
+The clauses:
+
+1. exactly one literal `as_published` covered-worker-share observation for
+   each included calendar year, from one source-defined numerator/denominator
+   universe; no quotient or other synthesized cell;
+2. `covered_share_required_years` is exactly the strictly ascending array
+   of every calendar year \(y\in[1968,2014]\) for which the selected
+   qualifying series's frozen edition contains a literal cell. The ID and
+   observation arrays contain exactly those cells and no year outside that
+   closed interval. No in-window cell may be omitted. The array must
+   include at least one cell in each of 1968–1974, 1975–1977, 1978–1992,
+   1993–2001, and 2002–2008, plus every available 2009–2014 cell;
+3. source bytes establishing the exact numerator and denominator sets,
+   numerator-subset relation, OASDI scope, geography, annual timing, worker
+   unit, duplicate-worker rule, same-type and dual-type treatment, zero rule,
+   edition, cell status, literal token, and source identity; and
+4. exact share normalization for every optional observation:
+   `published_unit` is `percent` or `share` as the literal source defines,
+   `stored_unit` is `share`, and `scale` is respectively the finite JSON
+   number `0.01` or `1`; a source-bound registered literal parser must resolve
+   exactly one finite decimal token from `as_published`, and that token times
+   `scale` exactly produces `normalized_value`, which is finite and in the
+   closed interval \([0,1]\). An ambiguous token, boolean, nonfinite value,
+   source-unstated unit conversion, percent-as-share storage, clipping, or
+   derived quotient fails; and
+5. exact compliance with the manifest, observation, status, ordering,
+   source-resolution, canonicalization, integrity, and append-only laws.
+
+In that alternate source-only state, `failure_reason` is JSON null.
+`covered_share_required_years`, `ssa_covered_share`, and `observations` are
+nonempty, equal-length, ordered, and positionally one-to-one by strictly
+ascending unique calendar year. Each share ID exact-matches its observation's
+`source_cell_id` and encoded year. The inherited base observation-ID
+exact-match rule is scope-local: optional observations exact-match
+`optional_covered_share.ssa_covered_share`, while top-level required
+observations exact-match only the two top-level required arrays.
+`source_document_manifest` is instead an
+ordered nonempty document-level array: its document IDs and table ownership
+are unique within the optional scope; every optional observation resolves to
+exactly one optional manifest document and table; and every optional manifest
+document/table is referenced by at least one optional observation. The
+optional manifest and observations otherwise use the exact schemas and
+validation laws in base §6.1.
+
+Cross-scope document identity is also exact. If an optional
+`source_document_id` repeats the required manifest's ID because one physical
+SSA publication contains both required and optional tables, its
+`publication`, `edition`, `url`, `retrieved_at_utc`, `committed_path`,
+`sha256`, `size_bytes`, `capture_manifest_path`, and
+`capture_manifest_entry` fields exact-match the required entry, while its
+nested `table_ids` is a nonempty optional-table array disjoint from
+`["table4.b2","table4.b11"]`. This exact shared-physical-document alias is the
+only permitted cross-scope duplicate. Otherwise a document ID is globally
+unique across both manifests. Conflicting physical metadata, duplicate table
+ownership, an unreferenced table, or an observation resolving across scopes
+aborts. A partial, ambiguous, synthesized, cross-publication, thinned,
+wrong-universe, or otherwise nonconforming attempt aborts optional-source
+activation and cannot fall back within the same build to an asserted
+available state.
+
+The absent object above is the only permitted vintage-2 state. Let \(H\) be
+the set of canonical integer suffixes \(n\) for which `HEAD` tracks a path
+exactly matching
+`data/external/ssa_covered_earnings_calibration_targets_vintage<n>.json`.
+The coordinator derives \(H\) from Git, never from configuration. It must
+equal the contiguous set \(\{2,\ldots,n_{\max}\}\). Every member
+strict-parses under schema `ssa_covered_earnings_calibration_targets.v2`,
+has path/`artifact_vintage_id` suffix equality, passes integrity validation,
+and obeys the invariant-content law below. Every tracked amendment-1
+configuration under `docs/registrations` that binds suffix \(n\) must pin
+the current blob digest for that member. Missing members, gaps, aliases,
+digest disagreement, or a malformed matching path aborts. A configuration
+must bind the unique highest member of \(H\); vintage 2 is accepted exactly
+when \(H=\{2\}\). To create a successor from the pre-addition lineage
+\(H\), use exactly \(n=n_{\max}+1\), serialized as canonical base-10 digits
+with no sign or leading zero, in both the path and artifact-vintage ID.
+
+Such a successor exists only after a qualifying source passes every
+activation clause above and its separate authority/extraction review. It has
+`status: source_verified_not_target_bound` and `failure_reason: null`. Apart
+from `artifact_vintage_id`, the complete `optional_covered_share` object, and
+the necessarily recomputed `integrity`, every top-level value and nested byte
+must exact-match the validator-accepted vintage-2 artifact: the required
+B2/B11 cells, IDs, required manifest, discrepancies, roles, years, and schema
+cannot drift during a source-only transition. The successor is append-only,
+must be bound by a fresh registration, and does not revise or supersede the
+historical bytes of an earlier vintage.
+
+Source availability alone never reinstates a fitting target. A source-
+verified block remains `not_target_bound`. Reactivating a covered-share
+calibration family requires the separately exact
+`future_ratified_amendment_and_fresh_registration_required_v1` condition: a
+new prospective design amendment must freeze the model denominator and
+universe concordance, target rows, dependency audit, weights, tolerances,
+identities, and versioned registries; pass the full referee ceremony; mint a
+new append-only artifact vintage; and receive a fresh registration before
+any fitting or selection. There is no automatic weight reversal.
+
+All base §6.1 B2/B11 methodology-byte prerequisites remain controlling.
+Until primary methodology bytes settle every applicable zero, loss-only,
+below-threshold, wage-capped, multiple-job, dual-type, and
+multiple-component membership case, the corresponding B2 intensity or B11
+worker-distribution family—and therefore the required amended calibration
+contract—fails closed. Removing the optional share family does not supply an
+alternative denominator or waive one prerequisite.
+
+### 15.4 Exact §3.1 replacement — fields retained, target binding removed
+
+The two base §3.1 rows at base-ratification lines 237–238 remain in the
+frozen person-year output registry, with these exact replacement definitions:
+
+| Estimand ID | Amendment-1 definition |
+|---|---|
+| `registered_covered_share_denominator_indicator` | Deterministic zero/one membership in the frozen **model-only** annual population universe selected by the retained `evaluation_specs.v1` modeled-worker-incidence row. Its population-selector foreign key resolves into the same registered input/crosswalk object as in revision 2 and carries that object's age, annual-presence, stable-person uniqueness, employee/SE/both-type, duplicate-component, and zero-earner rules. It makes no concordance claim to an absent official share source and is not an official-target universe, target denominator, earnings outcome, or coverage outcome. |
+| `modeled_covered_worker_probability_analytic` | Analytic probability, under the registered joint wage/SE status mapping, that person taxable payroll is positive. It is the analytic selector for gates, evaluation diagnostics, and context comparisons; it is not target-bound and is not `proxy > 0`. |
+
+These person-year estimands are not members of the atomic component
+`field_specs` frozen at base lines 182–203. Therefore
+`ledger_row_schema_specs.v1`, `benefit_gap_row_schema_specs.v1`, their field
+orders, and every dependent hash remain unchanged; amendment 1 does not
+insert a field into either row schema.
+
+The exact finite-joint-state law following the base table remains unchanged.
+So do `modeled_covered_worker_draw_indicator` and
+`modeled_covered_worker_draw_grid_fraction_20`, including their
+diagnostic-only status.
+
+Let \(U_I,W_I\) be the exact `population_selector` and `weight_field` bytes in
+the base `evaluation_specs.v1` modeled-worker-incidence position, and let
+\(U_C,W_C\) be those bytes in the base downstream
+`modeled_covered_worker_count` position. Amendment 1 preserves all four bytes
+and their registered input/crosswalk foreign-key resolution. No new selector
+ID is introduced. Each selector collapses jobs, businesses, source
+components, and wage/SE classifications exactly as its registered stable-
+person/year domain requires; no optional SSA source or target row participates
+in either domain.
+
+Within projection draw \(p\) and verified calendar year \(y\), the retained
+model-only annual incidence statistic is exactly
+
+\[
+\frac{\sum_i w_i\,
+  \texttt{modeled_covered_worker_probability_analytic}_{i,y,p}}
+{\sum_i w_i\,
+  \texttt{registered_covered_share_denominator_indicator}_{i,y}},
+\]
+
+where both sums use \(U_I,W_I\), and the denominator must be strictly
+positive. Separately, the base downstream level remains exactly
+
+\[
+\sum_{i\in U_C} W_{C,i}\,
+  \texttt{modeled_covered_worker_probability_analytic}_{i,y,p}.
+\]
+
+It is not divided by the denominator indicator. The two retained
+`evaluation_specs.v1` positions are restated exactly:
+
+| Position | Exact unchanged row law |
+|---|---|
+| `incidence` modeled covered worker | `result_block: distribution_results`; `source_fields: ["modeled_covered_worker_probability_analytic","registered_covered_share_denominator_indicator"]`; \(U_I,W_I\); statistic `survey_weighted_analytic_covered_worker_incidence`; unit `share`; the complete annual/context and registered aggregate-strata expansion; `draw_reduction: analytic_joint_state_within_projection_draw`; `stability_family: not_applicable`; `gate_role: diagnostic_only`. |
+| `downstream_annual` modeled covered-worker count | `result_block: downstream_results`; `source_fields: ["modeled_covered_worker_probability_analytic"]`; \(U_C,W_C\); statistic `modeled_covered_worker_count`; unit `persons`; the complete `annual_provenance_context_expansion`; `draw_reduction: analytic_joint_state_within_projection_draw`; `stability_family: not_applicable`; `gate_role: diagnostic_only`. |
+
+Their 17-field objects, metric IDs, coordinate rows, array positions,
+population-selector/weight bytes, source-field arrays, statistics, units,
+reductions, and semantic recipes are byte-for-byte unchanged from
+`evaluation_specs.v1`; only the §3.1 interpretation loses official-target
+binding. Neither row's registered source roles, domain-derivation ID, opcode
+steps, semantic-recipe ID, or trusted root ever included the removed official
+target. Therefore `evaluation_specs.v1`,
+`consumer_source_field_schema_specs.v1`,
+`consumer_semantic_recipe_specs.v1`,
+`earnings_consumer_dependency_specs.v1`,
+`trusted_consumer_evaluation_specs.v1`, and `draw_spec.v1` remain unchanged
+in both schema and instance bytes.
+
+The incidence share has no official observation, source cell, target row,
+loss, tolerance, evidentiary role, selection eligibility, or candidate-rescue
+effect. G01 independently reconstructs both complete annual person-year
+domains and exact selector memberships; G22 verifies each source-field array,
+selector, weight, ratio-or-sum opcode, analytic joint-state reduction, and
+corrected-root dependency. G20 does not apply because neither row crosses
+correction draws. Thus the denominator indicator has an exact diagnostic
+consumer, while the distinct base `modeled_covered_worker_count` law remains
+intact.
+
+The existing retained uses of
+`modeled_covered_worker_probability_analytic` remain controlling: every
+certified modeled-worker denominator in the hard-gate law
+(base-ratification lines 4140–4141), every modeled-incidence or denominator
+metric in §8.2 (lines 5090–5095), and the context
+`analytic_worker_selector` (lines 7421–7423) uses that analytic field, never
+a draw indicator or 20-draw fraction. None of those uses confers target
+status.
+
+Base §5.2's zero-preserving measurement law also remains. Its sentence at
+line 1485 is replaced by: **the optional covered-share diagnostic may be
+unavailable, but its absence or value cannot produce
+`no_eligible_candidate`; candidate eligibility is determined only by the
+surviving required families and all unchanged candidate, B2/B11
+methodology, domain, convergence, rank, and tolerance laws.**
+
+### 15.5 Exact §6.2/§7 replacement — families, dependencies, and weights
+
+The changed family domain, order, dependency assignments, and weight law
+create `calibration_target_specs.v3`, `candidate_specs.v2`,
+`fit_selection_cell_identity.v2`, and `selection_spec.v2`. Their predecessors
+remain historical. Except for the changes stated here, the target object's
+exact 30-field shape, source/year/role/ancestry checks, transformation and
+selector schemas, tolerance tags, universe law, expansion law, and
+cell-scoped isolation law remain as ratified.
+
+`calibration_target_specs.v3` expands exactly the following 14 families in
+this order, then ascending verified calendar year. It creates no
+`ssa_precisely_universed_covered_share` object or placeholder. An empty or
+source-verified `optional_covered_share` block creates zero target objects
+unless a later ratified amendment expressly reactivates a family.
+
+| Target family | `dependency_group` | Exact official transformation and model selector | Loss | Raw family coefficient | Normalized effective weight | Role and selection law |
+|---|---|---|---|---:|---:|---|
+| `b2_wage_total_intensity` | `b2_component_system` | 4.B2 `c5/c11`; model `sum(covered_employee_wages_uncapped) / sum(b2_wage_worker_membership_probability_analytic)` | `squared_log_ratio` | 2 | \(1/3\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b2_se_total_intensity` | `b2_component_system` | 4.B2 `c8/c12`; model `sum(covered_se_net_earnings_pre_seca) / sum(b2_se_worker_membership_probability_analytic)`, where the numerator is the expected signed within-`se_aggregation_group_id` net concept before SECA factor, threshold, or cap | `squared_log_ratio` | 2 | \(1/3\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b11_se_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-W)/T`; model `sum(b11_se_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b11_dual_type_worker_share` | `b11_worker_type_system` | 4.B11 `(W+S-T)/T`; model `sum(b11_dual_type_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `squared_logit_error` | 1 | \(1/6\) | Role is recomputed by verified year; positive-weight direct train cells fit; available direct/boundary validation cells select; gaps are zero-weight unavailable diagnostics; 2015–2022 is held out. |
+| `b11_wage_only_worker_share` | `b11_worker_type_system` | 4.B11 `(T-S)/T`; model `sum(b11_wage_only_worker_probability_analytic) / sum(b11_any_worker_probability_analytic)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight and selection-ineligible because algebraically dependent. |
+| `b2_type_count_mix` | `b2_component_system` | 4.B2 `c12/(c11+c12)` and the analogous model marginal-count ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight and selection-ineligible; overlapping marginal counts are never unique workers. |
+| `b2_se_total_component_share` | `b2_component_system` | 4.B2 `c8/(c5+c8)` and the algebraically identical model component ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight dependency check only. |
+| `b2_wage_taxable_intensity` | `b2_component_system` | 4.B2 `c13/c11`; model consolidated taxable wage intensity | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight preserved employer-cap mismatch. |
+| `b2_se_taxable_intensity` | `b2_component_system` | 4.B2 `c17/c12`; model consolidated taxable SE intensity | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight. |
+| `b2_wage_taxable_fraction` | `b2_component_system` | 4.B2 `c13/c5`; model taxable/uncapped wage ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight preserved employer-cap mismatch. |
+| `b2_se_taxable_fraction` | `b2_component_system` | 4.B2 `c17/c8`; model taxable/uncapped SE ratio | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight. |
+| `b11_taxable_earnings_component_reconciliation` | `b11_taxable_earnings_component_system` | Literal displayed 4.B11 taxable-earnings total minus displayed wage and SE taxable components; the source relationship is `structural_dependence_only`, so the literal residual is retained with `rounding_interval_unavailable` and no equality/interval adjudication. The complete pinned 1968–2022 scan has zero such residuals. Model diagnostic is `sum(oasdi_person_taxable_payroll) - sum(oasdi_taxable_wages_person) - sum(oasdi_taxable_se_person)`. | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
+| `b11_contributions_component_reconciliation` | `b11_contribution_component_system` | Literal displayed 4.B11 contribution total minus displayed wage and SE contribution components, retained under the same `structural_dependence_only`, `rounding_interval_unavailable`, and no-equality/no-interval/no-rounding-inference law. The complete pinned 1968–2022 scan has `+1` or `-1` residuals only in 1969, 1971, 1986, 1993, 2001, 2010, 2019, and 2021, including 1969's `-1`. Model diagnostic is `sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate) - sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate) - sum(oasdi_taxable_se_person * registered_se_oasdi_rate)`; worker total is never summed because component worker counts overlap. | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight structural-formula-sibling diagnostic, never independent evidence. |
+| `b11_se_contribution_share` | `b11_contribution_component_system` | 4.B11 SE OASDI contributions/(wage+SE OASDI contributions); model `sum(oasdi_taxable_se_person * registered_se_oasdi_rate) / sum(oasdi_taxable_wages_person * registered_wage_oasdi_combined_rate + oasdi_taxable_se_person * registered_se_oasdi_rate)` | `no_fitting_loss` | 0 | 0 | Recomputed year role; zero-weight legal/accounting sibling diagnostic only. |
+
+The four selection-eligible families and only those families have positive
+mass. The active dependency-group masses and normalized weights are exactly:
+
+| `dependency_group` | Raw group coefficient | Normalized group weight | Positive-weight family subweights |
+|---|---:|---:|---|
+| `b2_component_system` | 4 | \(4/6=2/3\) | \(1/2,1/2\) |
+| `b11_worker_type_system` | 2 | \(2/6=1/3\) | \(1/2,1/2\) |
+
+`b11_taxable_earnings_component_system` and
+`b11_contribution_component_system` are exact zero-weight diagnostic groups.
+The IDs `covered_share_system_disjoint_source` and
+`covered_share_system_shared_source` are absent from every amendment-1
+registry.
+
+`candidate_specs.v2` retains exactly the three v1 candidate objects, in the
+same order, with the same 11-key shape and byte-identical candidate IDs,
+complexity ranks, era bases, parameter laws, post-2014 rules, links,
+admissible source classes, numeric specs, identification specs, and failure
+dispositions. Its `model_target_selectors` are the exact ordered projection
+of the 14 v3 families above and contain no covered-share family or selector.
+`modeled_covered_worker_probability_analytic` may remain a declared candidate
+diagnostic output needed by §15.4, but it is absent from
+`model_target_selectors` and cannot enter a target packet, loss, eligibility
+test, or selection comparison.
+
+`fit_selection_cell_identity.v2` retains exactly the eight v1 keys and all
+v1 physical-cell, alias-closure, model-weight, fragment, and canonicalization
+laws. Its schema literal is v2; `model_choice_targets` and every derived
+closure contain only the four positive-weight families above in their v3
+family/year order. `selection_spec.v2` retains exactly the eight v1 keys; its
+schema literal is v2, candidate order and tie law are unchanged, its training
+objective is the exact integer-coefficient law below, and its eligibility/
+primary-criterion rows operate only on those four families and their stated
+tolerances. No optional share source, retained incidence diagnostic, or
+zero-weight family enters either registry's model-choice domain.
+
+The reassignment is exact and pro rata. Before amendment, the surviving
+families had weights \(1/4,1/4,1/8,1/8\), totaling \(3/4\). Normalizing their
+unchanged ratio by \(4/3\) gives
+
+\[
+(1/4)(4/3)=1/3,\quad
+(1/4)(4/3)=1/3,\quad
+(1/8)(4/3)=1/6,\quad
+(1/8)(4/3)=1/6.
+\]
+
+The respective increments are \(1/12,1/12,1/24,1/24\), and
+
+\[
+1/12+1/12+1/24+1/24=1/4,\qquad
+1/3+1/3+1/6+1/6=1.
+\]
+
+No rounded decimal represents either \(1/3\) or \(1/6\). Accordingly, the
+finite-JSON-number `loss_weight` field uses exact relative integer mass:
+`2` for an available model-choice cell in either B2 intensity family, `1`
+for such a cell in either B11 worker-share family, and `0` otherwise;
+booleans are forbidden. “Model-choice cell” here means a positive-weight
+direct train cell or a selection-eligible direct/boundary validation cell in
+the applicable phase. All four families must have the same registered
+positive cell count within a phase; a mismatch or thinned family aborts.
+The phase objective is the weighted mean over its admitted cells, so
+normalization by the total mass yields the exact effective weights above.
+Equivalently, if \(L_F\) is each family's equal-cell arithmetic mean, both
+training and validation use exactly
+
+\[
+\frac{
+  2L_{\mathrm{b2,wage}}+
+  2L_{\mathrm{b2,SE}}+
+  L_{\mathrm{b11,SE-only}}+
+  L_{\mathrm{b11,dual}}
+}{6}.
+\]
+
+This integer-mass representation is normative in
+`calibration_target_specs.v3`, `fit_selection_cell_identity.v2`, and
+`selection_spec.v2`; a decimal approximation is a schema violation.
+
+All other base tolerance and role laws remain. Intensity validation requires
+RMS absolute log error no greater than
+`0.04879016416943205` and every-cell absolute log error no greater than
+`0.09531017980432493`. B11 worker-type validation requires RMS absolute
+share error no greater than `0.015` and every-cell absolute share error no
+greater than `0.03`. There is no covered-share tolerance. Every zero-weight
+family remains incapable of entering fitting, candidate selection, or a
+family tolerance and cannot fail or rescue a candidate through those paths.
+Its original arithmetic/dependency disclosure and the independent G04/G06/G07
+correctness consequences remain in force.
+
+### 15.6 Exact consequential replacements and complete reference ledger
+
+#### 15.6.1 V-B7 and the executable verification registries
+
+Base §4.1's two verification classes are extended by exactly one class:
+
+- `optional_target_source` applies only to V-B7. It means absence of a
+  qualifying source is accepted only as the exact empty failure state in
+  §15.3 and does not abort the unrelated required B2/B11 contract. A claimed
+  available source must pass every §15.3 source-activation condition or the
+  attempted activation fails closed. Verification never confers target,
+  fitting, weight, tolerance, or selection authority.
+
+This meaning change creates `verification_claim_specs.v2` and
+`verification_claim_results.v2`. Both retain their predecessor's exact row
+shapes and the positional nine-row V-B1-through-V-B9 order. V-B1–V-B6 and
+V-B8–V-B9 are byte-for-byte unchanged except for identities/digests that
+necessarily bind the version-2 array. The V-B7 spec has:
+
+```json
+{
+  "claim_id": "V-B7",
+  "verification_class": "optional_target_source",
+  "claim_subject": "Literal SSA covered-worker-share publication cells, table, vintage, annual definition, numerator, denominator, subset relation, duplicate-worker treatment, zero rule, timing, unit, geography, and universe",
+  "affected_inventory_keys": [],
+  "required_authority_roles": [
+    "optional_ssa_literal_covered_worker_share_source"
+  ],
+  "governing_rule_ids": [
+    "literal_as_published_ssa_covered_worker_share_cells_v1"
+  ],
+  "success_disposition": "verified",
+  "missing_authority_disposition": "retain_empty_optional_source_failure_state"
+}
+```
+
+The V-B7 result has exactly the seven v1 result fields in v1 order. In both
+accepted branches, `claim_id` is `V-B7`;
+`affected_inventory_keyset_sha256` is
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`,
+the SHA-256 of `canonical_json_bytes([])`; `governing_rule_ids` is exactly
+`["literal_as_published_ssa_covered_worker_share_cells_v1"]`; and `status` is
+`pass`.
+
+The exact absent branch is:
+
+```json
+{
+  "claim_id": "V-B7",
+  "authority_input_ids": [],
+  "affected_inventory_keyset_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "governing_rule_ids": [
+    "literal_as_published_ssa_covered_worker_share_cells_v1"
+  ],
+  "verification_status": "authority_absent",
+  "optional_consequence_specs_sha256": "5d5f0713c7febca36e371e811d87ac9b93d7950630d1c13fceddd50a0286e657",
+  "status": "pass"
+}
+```
+
+The nonnull consequence digest is exactly the SHA-256 of
+`canonical_json_bytes` applied to §15.3's immutable vintage-2
+`optional_covered_share` object. That object must deep-equal the registered
+artifact block.
+
+In the verified branch, `verification_status` is `verified`,
+`optional_consequence_specs_sha256` is JSON null, and
+`authority_input_ids` is the ordered nonempty unique array of registered
+inputs with role `optional_ssa_literal_covered_worker_share_source`, one per
+optional manifest object in manifest order. Each ID resolves to exactly that
+object's committed path and physical digest; shared-physical-document aliases
+obey §15.3's exact-match law. The optional block must be fully valid with
+`status: source_verified_not_target_bound`; its observation/source closure
+must resolve to exactly those authority IDs, with no missing or unrelated
+authority. Arbitrary nonempty IDs cannot pass.
+
+For `authority_conflict`, the row retains the actual ordered attempted
+authority IDs, the same empty affected-key digest and governing-rule array,
+uses `verification_status: authority_conflict`,
+`optional_consequence_specs_sha256: null`, and `status: fail`. A missing,
+extra, partial, differently reasoned, unrelated-authority, or
+source-available-and-target-active row aborts. The other eight result laws are
+unchanged.
+
+The §4.2 crosswalk's `rule_registry_identities` row points to
+`verification_claim_specs.v2`; the structural-absence paragraph's reference
+to the verification registry means v2. Direct statutory classification
+continues to consume only applicable legal rules with class
+`registration_required | direct_only_optional`; V-B7's
+`optional_target_source` has no direct-law action and no inventory key.
+G17 and hard-gate condition 17 still compare exactly nine verification
+results, now from v2. The generic configuration keys
+`verification_claim_specs` and `verification_claim_results` are unchanged,
+but they must contain exact v2 deep copies. Configuration acceptance requires
+every ordinary required row to be `verified/pass`, every ordinary optional
+row to bind its consequence law, and V-B7 to satisfy one of the two exact
+pass branches above.
+
+Accordingly, the replacement §13.2 row is:
+
+| ID | `verification_class` | VERIFY item | Required disposition and failure consequence |
+|---|---|---|---|
+| V-B7 | `optional_target_source` | Literal SSA covered-worker-share publication cells, table, vintage, annual definition, numerator, denominator, subset relation, duplicate-worker treatment, zero rule, timing, unit, geography, and universe | With no qualifying registered source, exact-match §15.3's empty `unavailable_source_absent` block and pass only as source absent; required B2/B11 registration continues. A nonempty source attempt must satisfy every `literal_as_published_ssa_covered_worker_share_cells_v1` clause or fail. A verified source remains `not_target_bound`; no approximate percentage, quotient, or definitional substitute is permitted, and target reactivation requires the later amendment/registration condition. |
+
+The §14.2 class checklist is correspondingly
+`registration_required | direct_only_optional | optional_target_source`, with
+the third class permitted only for V-B7; all nine rows exact-match
+`verification_claim_specs.v2` and `verification_claim_results.v2`.
+
+#### 15.6.2 Option C is a typed unavailable diagnostic
+
+Base §7.4's numeric scalar cannot consume a family that no longer exists.
+The operative registry is therefore `sensitivity_specs.v2`, still a
+one-object ordered array with the exact 14-key object shape. Its exact values
+are:
+
+| Key | Amendment-1 value |
+|---|---|
+| `sensitivity_id` | `aggregate_share_scale_sensitivity_v2` |
+| `label` | `aggregate-scaled-labor-income-proxy-unavailable-not-target-bound` |
+| `input_selector` | `optional_covered_share.status` |
+| `scalar_selector` | `no_numeric_scalar_optional_source_not_target_bound` |
+| `reference_era_specs` | Exact deep copy of `candidate_reference_era_specs.v1`. |
+| `year_source_class_rule` | Exact base §4.2 map. |
+| `pre_2015_rule` | `not_computed_optional_covered_share_not_target_bound` |
+| `diagnostic_proxy_gap_rule` | `not_read_optional_covered_share_not_target_bound` |
+| `post_2014_rule` | `not_carried_optional_covered_share_not_target_bound` |
+| `stratum_id` | `overall` |
+| `statistic` | `survey_weighted_total_draw_summary` |
+| `aggregation_rule` | `not_applicable_optional_source_not_target_bound` |
+| `allowed_outputs` | `["before_context_results"]` |
+| `forbidden_uses` | `["careers","AIME","PIA","production_revenue","candidate_selection","tolerance_adjudication","label_certificate","held_out_claim"]` |
+
+The coordinator still expands every expected Option-C
+`annual_provenance_context_expansion` coordinate so either optional-source
+state cannot shrink the result domain. Each row has all 15
+`before_context_results` fields: `metric_id` is the base §10.2 colon join
+using `aggregate_share_scale_sensitivity_v2`; `before_context_kind` is
+`option_c_sensitivity`; `stratum_id` is `overall`; the calendar/source-class/
+claim-year/career coordinates exact-match the current expansion position;
+`statistic` is `survey_weighted_total_draw_summary`; `mean` and `sample_sd`
+are JSON null; `observation_count` is `0`; `unit` is the exact nonnumeric
+literal `not_applicable_unavailable_optional_source`; `evidence_role` is
+`raw_proxy_sensitivity_before_context`; and `status` is `fail`. Its final
+field, `reason_code`, is state-conditional:
+
+- `unavailable_source_absent` maps to
+  `reason_code: optional_covered_share_source_absent`; and
+- `source_verified_not_target_bound` maps to
+  `reason_code: optional_covered_share_source_verified_not_target_bound`.
+
+Those are the only two Option-C v2 reason branches and replace
+`missing_option_c_diagnostic_proxy`; each takes precedence over
+`not_applicable_empty_stratum`. The frozen-legacy reason domain is unchanged.
+No raw proxy, optional source value, B1
+percentage, B1/IV.B4 quotient, B10/B12 quotient, carry scalar, or substitute
+is read or computed in either branch. These expected failure rows remain only
+in the `option_c_sensitivity` branch of `before_context_results`, remain
+diagnostic-only, and cannot fail or rescue a candidate, gate, certificate,
+or publication.
+
+The exact typed failure branch replaces “sensitivity benchmark” in the §1
+charter, “complete Option C” in the ceremony, and the numeric Option-C
+language in §8.2 and the result contract. It preserves their domain,
+coordinate, sandbox, separation, circularity, ordering, and forbidden-use
+laws. A future numeric Option C requires a new sensitivity version in the
+same future amendment that decides whether and how any source-verified
+optional block may be used; the source-only transition changes only the
+typed reason branch and does not change v2.
+
+The two §8.2 modeled-worker rows remain byte-identical
+`evaluation_specs.v1` rows under §15.4. Option C instead changes the separate
+sensitivity and primary-result domains. The G21 fixture registry is
+`heldout_noninterference_specs.v2`, derived from the 14-family target domain,
+unchanged v1 evaluation domain, v2 sensitivity domain, and the optional-
+source classification in §15.6.3. The empty optional block is not a target
+mutation row, but its canonical hash remains mandatory full evaluation
+provenance and any drift invalidates registration.
+
+#### 15.6.3 Version propagation and derived domains
+
+The complete changed-version map is:
+
+| Historical literal | Amendment-1 literal |
+|---|---|
+| `ssa_covered_earnings_calibration_targets.v1` (schema) | `ssa_covered_earnings_calibration_targets.v2` |
+| `psid_covered_earnings_crosswalk.v1` | `psid_covered_earnings_crosswalk.v2` |
+| `calibration_target_specs.v2` | `calibration_target_specs.v3` |
+| `candidate_specs.v1` | `candidate_specs.v2` |
+| `fit_selection_cell_identity.v1` | `fit_selection_cell_identity.v2` |
+| `selection_spec.v1` | `selection_spec.v2` |
+| `verification_claim_specs.v1` | `verification_claim_specs.v2` |
+| `verification_claim_results.v1` | `verification_claim_results.v2` |
+| `sensitivity_specs.v1` | `sensitivity_specs.v2` |
+| `heldout_noninterference_specs.v1` | `heldout_noninterference_specs.v2` |
+| `covered_earnings_correction_evaluation.v1` | `covered_earnings_correction_evaluation.v2` |
+| `covered_earnings_correction_evaluation_configuration.v2` | `covered_earnings_correction_evaluation_configuration.v3` |
+
+`psid_covered_earnings_crosswalk.v2` has the exact ten-key shape,
+component rows, inventory binding, canonical order, and integrity law of v1.
+Both leading literals become `psid_covered_earnings_crosswalk.v2`, and its
+ordered `rule_registry_identities` member names and hashes
+`verification_claim_specs.v2`; every other member is unchanged.
+
+`covered_earnings_correction_evaluation_configuration.v3` has exactly the
+same 47 top-level keys and nested shapes as v2. Its schema literal is v3; its
+four-key `design` member has the exact §15.8 values, including integer
+`revision: 3`; `psid_crosswalk_input.schema_version` is v2;
+`psid_crosswalk_input.artifact_vintage_id` is exactly
+`psid_covered_earnings_crosswalk.v2`;
+`calibration_target_input.schema_version` is v2; and its
+`(path, artifact_vintage_id)` pair and pinned digest satisfy the binding
+law below.
+
+`calibration_target_input` exact-binds the unique highest member of §15.3's
+Git-derived contiguous lineage. If its suffix is 2, its optional block
+deep-equals the immutable absent object. If its suffix is at least 3, it is
+a validated `source_verified_not_target_bound` successor. No
+configuration-supplied registration-history claim, lower lineage member,
+untracked successor, gap, or stale vintage-2 fallback is accepted.
+
+No other target path, identity, state, or vintage is accepted. Every
+frozen-registry member is an exact registered deep copy of the amendment-1
+version in the table above. The crosswalk input's path is its newly
+registered immutable v2 path, distinct from any v1 artifact path, and its
+digest binds those exact bytes. In particular the configuration accepts only
+`ledger_row_schema_specs.v1`, `calibration_target_specs.v3`,
+`candidate_specs.v2`, `selection_spec.v2`, `draw_spec.v1`,
+`verification_claim_specs.v2`, `verification_claim_results.v2`,
+`heldout_noninterference_specs.v2`, `evaluation_specs.v1`, and
+`sensitivity_specs.v2`. A v2 configuration literal, integer design revision
+2, predecessor crosswalk schema/identity, predecessor target input schema, or
+predecessor child registry aborts.
+
+The primary schema and artifact ID remain
+`covered_earnings_correction_evaluation.v2`. V2 retains the exact 14
+top-level keys and every unchanged nested shape from v1; its target results
+and target-use trace derive from the 14-family v3 target registry, and its
+Option-C result rows and reason domain are exactly §15.6.2. Let \(n\) be the
+validated suffix of `calibration_target_input`. For \(n=2\),
+`output_version`, primary, and sidecar remain exactly
+`covered_earnings_correction_evaluation_v2`,
+`runs/covered_earnings_correction_evaluation_v2.json`, and
+`runs/covered_earnings_correction_evaluation_v2.json.env.json`. For
+\(n\ge3\), they are exactly
+`covered_earnings_correction_evaluation_v2_source_vintage<n>`,
+`runs/covered_earnings_correction_evaluation_v2_source_vintage<n>.json`, and
+`runs/covered_earnings_correction_evaluation_v2_source_vintage<n>.json.env.json`.
+The same canonical \(n\) must appear in the target artifact and both output
+paths; these values are derived, not configured. No earlier output path may
+be reused; the v1 paths remain historical and may not be overwritten. The
+sidecar schema remains
+`covered_earnings_correction_evaluation_environment.v2`, but its
+`artifact_path` exact-matches the primary. A v1 primary schema/artifact ID,
+output version, or path aborts.
+
+`full_calibration_evaluation_provenance.v1`,
+`candidate_reference_era_specs.v1`, the physical/alias/arithmetic registry
+schemas, `consumer_semantic_recipe_specs.v1`, `gate_specs.v3`, the sidecar
+schema, and every other unchanged wrapper schema retain their
+literal versions because their shapes and generic derivation laws do not
+change. “Retain” means the schema literal and shape remain; registered
+instance bytes still change wherever an amended child identity, digest,
+configuration hash, or result is embedded. New instances must bind the
+amendment-1 child identities and hashes, the amendment ratification commit,
+and a fresh registration. In particular,
+`full_calibration_evaluation_provenance.v1` embeds the v2 source-artifact
+identity, the v3 target registry and target commitments, and the complete
+official/evaluation manifests; its `configuration_sha256` indirectly binds
+the v2 verification/sensitivity/fixture registries and every other
+configuration child. Retaining its envelope version does not permit a
+predecessor child. The reconstructed
+`trusted_consumer_semantic_authority.v1` binds the unchanged v1 ledger, gap,
+draw, evaluation, and semantic-recipe registries; those instance bytes do not
+change under §15.4's target-status removal.
+
+Every base clause whose domain is defined as “the §6.2 family order,” “one
+row per target spec,” “complete target registry,” or equivalent now expands
+over the exact 14-family v3 order in §15.5. This includes physical ancestry,
+model-choice identity, full provenance, G21 classification and mutation
+fixtures, objective-bit checks, target results, target-use traces, and their
+cardinalities. The optional block contributes no row to any such domain.
+The physical-ancestry audit still rejects target duplication and records all
+shared B2/B11 primitives and structural siblings; it has no covered-share
+independence branch or `covered_share_system_*` group.
+
+`heldout_noninterference_specs.v2` retains the exact v1 fixture-object shape
+and count-equals-array-length laws, but independently derives its domains from
+the v3 target registry, v2 sensitivity registry, and the complete optional-
+source state. In the vintage-2 absent state, the canonical empty optional
+object has no mutable value/source-fragment key, but its enclosing artifact
+and configuration hashes remain full evaluation provenance. In any later
+`source_verified_not_target_bound` registration:
+
+- every optional normalized observation key appears exactly once in
+  `independently_mutable_value_keys`;
+- every optional committed source byte range, manifest member, literal token,
+  unit/normalization definition, and observation fragment appears exactly
+  once in `exclusive_source_fragment_keys`; and
+- no optional key enters a model-choice packet,
+  `fit_selection_cell_identity.v2`, `substantive_model_sha256`, target result,
+  target-use trace, or numeric Option-C operand.
+
+The v2 synthetic mutant changes every such value and exclusive fragment
+consistently while keeping the source-activation status valid and
+`source_verified_not_target_bound`. The full evaluation-provenance hash must
+change, while all candidate inputs, parameters, losses, dispositions,
+selection, substantive identity, uniforms, gates, and conditions 1–6 remain
+byte-identical; V-B7 remains `verified/pass` and Option C retains its
+source-verified-not-target-bound reason. An absent-to-verified status change
+is a new authority/artifact/registration event, not a within-registration
+mutation fixture. Missing, extra, duplicated, overlapping, or unmutated
+optional keys fail G21.
+
+#### 15.6.4 Exhaustive base-line pointer ledger
+
+The line numbers below are from the immutable base commit
+`59fd058b943c2b9960af9cb98ecdec97709cc2dd`. This is the complete
+case-insensitive `covered[_ -]?share` occurrence ledger; every hit is
+retained historically and re-pointed here:
+
+| Base line(s) containing the match | Operative disposition |
+|---|---|
+| 237, 238 | Definitions replaced by §15.4; both fields remain defined and lose target binding. |
+| 1485 | Eligibility consequence replaced by §15.4; optional absence cannot cause `no_eligible_candidate`. |
+| 1842 | Top-level key 7 replaced by `optional_covered_share` under §15.3. |
+| 1851 | Required ID keys become exactly `table4_b2` and `table4_b11` under §15.3. |
+| 1860, 1861, 1862 | Share IDs and years move into the exact optional block under §15.3. |
+| 1871 | Required manifest ends after the one Supplement entry; optional manifest is nested and empty under §15.3. |
+| 1882 | Optional share status is the explicit nested failure state, not inferred source status. |
+| 1885, 1886 | Required observation cardinality is exactly 825; optional cardinality is zero under §15.3. |
+| 2014 | The fail-closed prerequisite consequence applies to B2/B11; §15.3 expressly preserves every membership prerequisite. |
+| 2026 | The source is optional, not a separate required manifest entry; all no-synthesis/universe prohibitions remain activation conditions. |
+| 2161 | Active target expansion has zero covered-share objects and follows §15.5's 14-family domain. |
+| 2273 | The covered-share tolerance is deleted; the B2/B11 tolerances remain in §15.5. |
+| 2315 | The target-family row is removed and replaced by the no-row law in §15.5. |
+| 2332, 2333 | Group weights are the exact \(2/3\) B2 and \(1/3\) B11 law in §15.5; there is no share group. |
+| 2342 | The ancestry audit operates only on the surviving target domain under §15.6.3. |
+| 2346, 2347, 2348 | Both `covered_share_system_*` IDs are removed; only §15.5's dependency IDs are legal. |
+| 2356 | There is no covered-share validation tolerance or candidate consequence. |
+| 2789 | The §7.1 objective is exactly the integer-mass normalized formula in §15.5. |
+| 2866, 2870 | Numeric Option C is replaced by §15.6.2's typed unavailable rows; there is no scalar lookup or carry. |
+| 7867 | The old required-target question is resolved as §15.6.1's optional-source failure state. |
+| 7880 | V-B7 is replaced in full by §15.6.1's `optional_target_source` row. |
+| 7922 | The §14.1 settlement becomes: B2/B11 extraction and methodology remain required and fail-closed; covered-share source evidence is optional/empty, produces no target, and model choice binds `fit_selection_cell_identity.v2`. |
+
+The direct grep does not capture every dependent phrase. These additional
+base clauses are also expressly re-pointed:
+
+| Base line(s) | Dependent replacement |
+|---|---|
+| 643–693, 951, 1109, 1294, 4108, 5704–5709, 7933–7938 | Verification-class/spec/result/configuration/checklist cascade is exactly §15.6.1; nine-row cardinality remains. |
+| 939–957 | The crosswalk schema/identity and its verification-registry member become `psid_covered_earnings_crosswalk.v2` and `verification_claim_specs.v2` under §15.6.3. |
+| 1598–1608 | `candidate_specs.v2` retains the three candidates but projects `model_target_selectors` to §15.5's 14-family v3 registry with no covered-share target selector. |
+| 1776–1788 | Replay prediction/loss arrays use the complete amended model-choice target order; no removed-share position or optional-source-derived position remains. |
+| 1811–1816 | G14 holds §15.5's exact target coefficients and normalized objective weights unchanged under the common survey-weight multiplier. |
+| 1863, 2158–2167, 2266–2279, 2307–2359, 2415–2440 | V-B7 minimums, five-family language, target table/order, dependency law, and model-choice identity become §§15.3–15.5's optional block, four active families, 14-row v3 order, and v2 identity. |
+| 2420–2422, 2557, 5671–5676, 7963–7966, 8079 | Every target-registry/configuration echo means `calibration_target_specs.v3`; configuration also exact-binds every other amendment-1 child version in §15.6.3. |
+| 2426, 2484, 2752, 2771, 6159, 7922, 8137 | Every `fit_selection_cell_identity.v1` echo means `fit_selection_cell_identity.v2`. |
+| 2520, 6106, 6174–6177, 6710 | The full-provenance envelope remains v1 but binds the new child versions and complete optional-state hash under §15.6.3. |
+| 2550–2598, 6478 | G21 uses `heldout_noninterference_specs.v2`; the empty block creates no optional value row, while every future verified optional value/source fragment enters §15.6.3's exact evaluation-only mutation closure. |
+| 2781–2828 | Objective prose and `selection_spec.v1` are replaced by §15.5 and `selection_spec.v2`. |
+| 33–34, 917–918, 2777–2778, 2860–2922, 4092–4097, 5005–5006, 5042–5054, 5125–5126, 6000–6006, 6578–6607, 7980–7983 | Every Option-C charter, source-class, isolation, schema, publication, expansion, circularity, ceremony, result, and checklist reference means §15.6.2's v2 typed unavailable branch. |
+| 5001, 5049, 5052, 5090–5095, 5276–5288, 7915 | §15.4 preserves the distinct v1 modeled-incidence share and `modeled_covered_worker_count` sum; both use the analytic probability without target status, and only the share uses the denominator indicator. |
+| 5008, 5059, 6543–6544 | `evaluation_specs.v1` and `trusted_consumer_evaluation_specs.v1` remain byte-for-byte unchanged under §15.4. |
+| 5473–5475, 5721–5726, 6070–6082 | The primary schema and artifact ID become exactly `covered_earnings_correction_evaluation.v2`; the append-only output version, primary path, and sidecar path become the exact §15.6.3 values derived from the validated suffix of `calibration_target_input`. |
+| 5527–5588 | The configuration schema becomes `covered_earnings_correction_evaluation_configuration.v3`, exact-binds the amended child versions, and uses §15.8's four-key design member with revision 3. |
+| 6446–6465 | Published weight-rescale evidence compares §15.5's exact integer target coefficients/objective identity and still requires bit-identical model-choice outputs. |
+| 2169–2190, 2518–2538, 4086–4091, 4120–4126, 4813–4821, 6158–6182, 6311–6335, 6608–6637 | Target row shape, provenance, objective-bit gates, noninterference, result order/cardinality, and trace domains derive only from §15.5's 14-family v3 registry. |
+| 2744–2759, 7170–7173, 7554–7556 | Already-viewed honesty remains controlling and is supplemented—not weakened—by §§15.2 and 15.7. |
+| 7921–7922 | The §14.1 extraction settlement is replaced by the B2/B11-required, covered-share-optional law stated in the final direct-ledger row above. |
+
+### 15.7 Honesty, fail-closed preservation, and B2/B11 nonweakening
+
+This amendment is source-absence adjudication, not outcome-responsive
+reweighting. The relevant SSA bytes and displayed operands had been viewed,
+so they are never described as unseen. Their artifact shape and estimands
+proved the required direct share cells absent before fitting. At that point
+no fitting had occurred and no model output existed. The \(31/55\)
+quotient-above-one finding is disclosed
+as corroboration of the universe mismatch; neither it nor any other observed
+official magnitude chose the replacement families or their relative weights.
+The pro-rata rule preserves the surviving predeclared ratio mechanically.
+
+The amended failure boundary is exact:
+
+- absence of an optional covered-share source passes only as the canonical
+  `unavailable_source_absent` object and V-B7
+  `authority_absent/pass`; it does not masquerade as an empty official
+  series or successful share authority;
+- a nonempty optional-source attempt fails unless every source-activation
+  clause passes; no partial population, thinning, synthesis, clipping,
+  fallback percentage, or empty-state rewrite is allowed after that attempt;
+- a source-verified optional block remains incapable of fitting or selection
+  until a later ratified amendment and fresh registration activate a new
+  family; and
+- every required B2/B11 source, model-universe, and methodology failure keeps
+  the amended required calibration contract fail-closed.
+
+In particular, weight reassignment grants no evidentiary credit and changes
+none of the base §6.1 membership prerequisites. Before B2 wage intensity may
+register, primary methodology bytes must establish the exact `c11`
+person-year predicate; zero and below-threshold treatment; same-type
+deduplication across employers/jobs; cap and multiple-employer treatment;
+coextensiveness of the `c5` amount and `c11` worker universes; and effective
+dates for every regime change. Before B2 SE intensity may register, those
+bytes must establish whether `c8` is signed and whether it is before or after
+the SECA factor, threshold, and cap; loss-only, zero, net-zero, and
+below-threshold treatment; the exact `c12` predicate; aggregation and
+deduplication across businesses/components; wage-first cap exhaustion; and
+every historical regime change. Before either B11 worker-distribution family
+may register, they must establish exact annual unique-person definitions of
+\(T,W,S\); that \(T\) is the unduplicated union; zero, loss, threshold, and
+cap treatment; same-type job/business/component deduplication; timing;
+geography; and historical-method continuity.
+
+The already captured B2/B11 bytes settle only the relationships they
+literally prove. Dual wage/SE counting, above-cap amounts, a 2023-only B10
+deduplication note, post-1992 table-specific zero exclusions, or VI.G1
+payroll-dollar notes do not silently settle the remaining historical worker-
+membership questions. Missing methodology bytes abort the affected family;
+because all four positive-weight families are required, one affected-family
+failure aborts fitting and selection rather than renormalizing again.
+
+All other base fail-closed laws—including source hashing, literal cells,
+universe concordance, model weights, target domains, candidate eligibility,
+hard gates, publication regardless, incidents, and fresh-registration
+dispositions—remain unchanged. Amendment 1 removes one source that is
+unavailable in, and not lawfully constructible from, the captured adjudicated
+corpus; it does not soften any surviving authority or execution gate.
+
+### 15.8 Amendment ratification and registration protocol
+
+Amendment 1 uses the same referee-rounds-then-ratify discipline as the base
+design. Drafting, review, or merge-request existence has no operative effect.
+The authorized order is:
+
+1. submit the complete append-only amendment to adversarial referee review
+   without an authority artifact, implementation, registration, fit,
+   evaluation, or model output in the amendment lane;
+2. answer every finding in the public review record, repeat referee rounds
+   until the exact final bytes receive an affirmative ratification verdict,
+   and verify the complete round-to-round diff;
+3. ratify those accepted bytes in one identifiable commit. That commit is the
+   **amendment-1 ratification commit**; the authoring commits in this branch
+   are not ratification;
+4. only afterward merge the separately referee-gated authority/extraction
+   and implementation work required by base §14.3, using the amendment-1
+   schema and registry versions and preserving fixture-only rehearsal;
+5. obtain a fresh §10.1 registration that binds the amendment-1 ratification
+   commit, the full amended design blob, every required authority/artifact/
+   registry/implementation byte, and a fresh output/claim namespace; then
+6. perform the unchanged prelaunch, sealed execution, incident, publication,
+   context, and certificate sequence in base §§9–14.
+
+The existing four-key registration `design` object is not enlarged. Its exact
+amendment-1 values are:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the 40-lowercase-hex amendment-1 ratification
+  commit, never the base commit alone, an authoring commit, a branch name, or
+  a placeholder;
+- `blob_sha256`: SHA-256 of the complete amended file at that exact
+  ratification commit; and
+- `revision`: JSON integer `3`.
+
+The repository proof remains exact: the configured path's HEAD blob must
+equal the blob at `design.ratification_commit`, and both must hash to
+`design.blob_sha256`. The immutable base-lineage commit
+`59fd058b943c2b9960af9cb98ecdec97709cc2dd` is bound inside §15.1 and must be
+an ancestor of the amendment ratification commit. This avoids adding an
+`amendment_commit` field while still making the amended bytes—not the base
+alone—the sole registered design.
+
+**Amendment 1 is inoperative unless and until its exact ratification commit
+is named by a validator-accepted fresh registration.** After ratification but
+before that registration, step 4 may prepare separately referee-gated source
+artifacts, frozen registries, implementation bytes, and fixture-only
+rehearsals. It may not activate a production configuration, fit or select a
+candidate, open production/held-out values, mint a claim, or execute an
+evaluation/report run. Before ratification, even that amendment-1 preparation
+is unauthorized.
+
+After registration, changing any §15 byte, family, mass, version literal,
+condition ID, or target-reactivation law requires a new prospective amendment
+and fresh registration; it cannot be noted after launch. The one exception is
+the already frozen §15.3 source-only transition from
+`unavailable_source_absent` to `source_verified_not_target_bound`: a future
+qualifying SSA publication may support that transition in a new append-only
+artifact vintage under §15.3's exact next-integer path/identity grammar after
+its own referee-gated authority/extraction review and fresh registration.
+That transition changes neither amendment law nor target status, cannot use
+the vintage-2 path, and confers no fitting, weighting, selection, Option-C
+numeric, or tolerance authority. Target reactivation still requires a new
+amendment.
+
+### 15.9 Deviations and clarifications
+
+The minimal-honest disposition, required B2/B11 key set, optional empty
+source state, pro-rata reassignment, retained analytic fields, honesty
+caveat, nonweakening rule, and ratification protocol follow the coordinator
+ruling without substantive deviation.
+
+Three scope clarifications are deliberate:
+
+1. “Source absence” means no qualifying direct series in the captured and
+   adversarially inspected SSA publication corpus. It is not a timeless claim
+   that no future SSA edition can publish such cells. This is why §15.3 gives
+   a source-activation condition rather than declaring the concept
+   impossible.
+2. If “reactivation” were read to restore positive target weight
+   automatically when a source appears, this amendment rejects that reading.
+   A qualifying future publication may populate a **new successor
+   artifact's optional source block**, but cannot by itself restore the
+   removed target family. Automatic restoration would leave the now-
+   reassigned \(1/4\) weight, dependency audit, tolerances, target registry,
+   model-universe concordance, and viewed-cell boundary undefined and would
+   bypass the required amendment ceremony. A new ratified amendment and
+   fresh registration are therefore required for target reactivation.
+3. The round-1 referee edits tightened four closure laws beyond the
+   original draft: the covered-share year domain is the closed interval
+   1968–2014 with no omissible in-window cell; source selection is bound
+   to a hash-pinned candidate-corpus cutoff with a unique
+   series-identity/edition rule (`authority_conflict` on plurality);
+   successor lineage is derived from Git-tracked paths as a contiguous
+   suffix set, never from configuration-supplied registration history; and
+   evaluation outputs for source successors take a derived
+   `_source_vintage<n>` namespace so no completed output path is ever
+   reused.
+
+The integer masses `2,2,1,1` are an exact serialization of the coordinator's
+\(1/3,1/3,1/6,1/6\) normalized weights, not a different weighting choice.
+Likewise, retaining V-B7 as the ninth executable verification row with the
+new `optional_target_source` class is schema closure: deleting or leaving
+that hidden required row unchanged would respectively churn unrelated
+cardinalities or keep the supposedly removed source as a global blocker.
