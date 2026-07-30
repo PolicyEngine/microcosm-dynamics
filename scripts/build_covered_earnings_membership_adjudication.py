@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import subprocess
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -246,6 +247,107 @@ PDF_LOCATOR_SPECS = (
     ),
 )
 
+REPO_AUTHORITY_LOCATOR_SPECS = (
+    (
+        "correction_model_universe_registration_law",
+        "docs/design/covered_earnings_correction.md",
+        2281,
+        2292,
+        "exact model selector and universe-concordance requirements",
+    ),
+    (
+        "correction_support_manifest_registration_law",
+        "docs/design/covered_earnings_correction.md",
+        5628,
+        5650,
+        "registration-owned support-universe and input-hash fields",
+    ),
+    (
+        "amendment_preserved_selector_law",
+        "docs/design/covered_earnings_correction.md",
+        8457,
+        8465,
+        "preserved selector bytes and no-new-selector-ID amendment law",
+    ),
+    (
+        "correction_joint_selector_law",
+        "docs/design/covered_earnings_correction.md",
+        229,
+        252,
+        "membership selector IDs and finite joint-state reduction",
+    ),
+    (
+        "amendment_target_selector_law",
+        "docs/design/covered_earnings_correction.md",
+        8550,
+        8563,
+        "amended target transformations and model selectors",
+    ),
+    (
+        "first_estimates_unsplit_panel_law",
+        "docs/design/first_estimates_report.md",
+        89,
+        97,
+        "first-estimates unsplit reproduction panel rather than selector ID",
+    ),
+    (
+        "first_estimates_frame_law",
+        "docs/design/first_estimates_report.md",
+        59,
+        67,
+        "closed PSID frame and pre-alignment limitation",
+    ),
+    (
+        "first_estimates_weight_law",
+        "docs/design/first_estimates_report.md",
+        540,
+        547,
+        "fixed start-wave PSID cross-sectional weight law",
+    ),
+    (
+        "first_estimates_artifact_configuration_and_integrity",
+        "runs/first_estimates_v1.json",
+        8,
+        182,
+        "configuration echo and environment-sidecar integrity scope",
+    ),
+    (
+        "first_estimates_artifact_frame_labels",
+        "runs/first_estimates_v1.json",
+        356,
+        363,
+        "frame-relative and pre-alignment artifact labels",
+    ),
+    (
+        "m6_anchor_weight_implementation",
+        "src/populace_dynamics/harness/m6_cells.py",
+        113,
+        140,
+        "literal weight field and earliest-positive-wave anchor rule",
+    ),
+    (
+        "ledger_weight_implementation",
+        "src/populace_dynamics/estimates/ledgers.py",
+        879,
+        896,
+        "projection-ledger positive fixed weight ingestion",
+    ),
+    (
+        "psid_external_staging_law",
+        "src/populace_dynamics/data/psid.py",
+        63,
+        109,
+        "PSID products staged outside Git",
+    ),
+    (
+        "registered_inputs_staging_law",
+        "scripts/registered_m6_inputs.py",
+        48,
+        51,
+        "real data touched only by the registered run",
+    ),
+)
+
 PDF_EXTRACTION_METHOD = {
     "tool": "Poppler pdftotext",
     "tool_version": "26.04.0",
@@ -264,6 +366,76 @@ PDF_EXTRACTION_METHOD = {
         "byte_range"
     ),
 }
+
+CANDIDATE_SOURCE_DISPOSITIONS = (
+    {
+        "source_document_id": "ssa_glossary",
+        "verdict": "does_not_establish_membership_facts",
+        "evidence_locator_ids": [
+            "glossary_scope_limitations",
+            "glossary_uncaptured_dynamic_definitions",
+        ],
+        "reason": (
+            "captured page is recent-publication guidance and its substantive "
+            "definitions require an uncaptured runtime JSON request"
+        ),
+    },
+    {
+        "source_document_id": "ssa_oasdi_program_reference",
+        "verdict": "partial_current_and_selected_history_only",
+        "evidence_locator_ids": [
+            "oasdi_incomplete_history_disclaimer",
+            "oasdi_current_coverage_and_tax_context",
+            "oasdi_selected_historical_coverage_changes",
+            "oasdi_current_employee_and_seca_rules",
+        ],
+        "reason": (
+            "current rules and selected changes are useful, but the source "
+            "expressly disclaims a complete historical regime map"
+        ),
+    },
+    {
+        "source_document_id": "ssa_eedata_2023_intro",
+        "verdict": "partial_separate_2023_method_only",
+        "evidence_locator_ids": [
+            "eedata_2023_identity",
+            "eedata_2023_tax_rules",
+            "eedata_2023_counting_and_sources",
+        ],
+        "reason": (
+            "exact 2023 CWHS rules do not establish B2/B11 historical "
+            "continuity or transfer across named source systems"
+        ),
+    },
+    {
+        "source_document_id": "ssa_supplement_2025_highlights",
+        "verdict": "does_not_establish_membership_facts",
+        "evidence_locator_ids": ["supplement_highlights_2024_context"],
+        "reason": (
+            "headline 2024 totals contain no zero, duplicate, timing, "
+            "geography, or historical-method definition"
+        ),
+    },
+    {
+        "source_document_id": "ssa_supplement_2025_4b_pdf",
+        "verdict": "partial_table_specific_facts_only",
+        "evidence_locator_ids": [
+            "pdf_b2_title_headers",
+            "pdf_b2_later_rows_and_notes",
+            "pdf_b7_positive_bins_page_1",
+            "pdf_b7_positive_bins_page_2",
+            "pdf_b7_positive_bins_page_3",
+            "pdf_b10_title_and_all_areas_row",
+            "pdf_b10_2023_technical_notes",
+            "pdf_b11_title_headers_and_early_rows",
+            "pdf_b11_later_rows_and_notes",
+        ],
+        "reason": (
+            "establishes labels, selected structural facts, and 2023-specific "
+            "notes but not complete historical predicates"
+        ),
+    },
+)
 
 
 def _fact(
@@ -686,18 +858,47 @@ B11_FACT_IDS = tuple(
     fact["fact_id"] for fact in FACTS if fact["group"] == "b11"
 )
 
+B2_SE_AMOUNT_FACT_IDS = (
+    "b2_se_c8_signed_ordering",
+    "b2_se_threshold_and_cap_ordering",
+    "b2_se_loss_netting",
+    "b2_se_loss_only_membership",
+    "b2_se_zero_and_net_zero_membership",
+    "b2_se_aggregation_and_dedup",
+    "b2_se_historical_continuity",
+)
+B2_WAGE_COUNT_FACT_IDS = (
+    "b2_wage_exact_c11_predicate",
+    "b2_wage_zero_treatment",
+    "b2_wage_below_threshold_treatment",
+    "b2_wage_same_type_dedup",
+    "b2_wage_cap_treatment",
+    "b2_wage_multiple_employer_treatment",
+    "b2_wage_historical_continuity",
+)
+B2_SE_COUNT_FACT_IDS = (
+    "b2_se_loss_netting",
+    "b2_se_loss_only_membership",
+    "b2_se_zero_and_net_zero_membership",
+    "b2_se_below_threshold_membership",
+    "b2_se_exact_c12_predicate",
+    "b2_se_aggregation_and_dedup",
+    "b2_se_wage_first_exhaustion",
+    "b2_se_historical_continuity",
+)
+
 TARGET_FAMILY_FACT_IDS = {
     "b2_wage_total_intensity": B2_WAGE_FACT_IDS,
     "b2_se_total_intensity": B2_SE_FACT_IDS,
     "b11_se_only_worker_share": B11_FACT_IDS,
     "b11_dual_type_worker_share": B11_FACT_IDS,
     "b11_wage_only_worker_share": B11_FACT_IDS,
-    "b2_type_count_mix": B2_WAGE_FACT_IDS + B2_SE_FACT_IDS,
-    "b2_se_total_component_share": B2_SE_FACT_IDS,
-    "b2_wage_taxable_intensity": B2_WAGE_FACT_IDS,
-    "b2_se_taxable_intensity": B2_SE_FACT_IDS,
-    "b2_wage_taxable_fraction": B2_WAGE_FACT_IDS,
-    "b2_se_taxable_fraction": B2_SE_FACT_IDS,
+    "b2_type_count_mix": B2_WAGE_COUNT_FACT_IDS + B2_SE_COUNT_FACT_IDS,
+    "b2_se_total_component_share": B2_SE_AMOUNT_FACT_IDS,
+    "b2_wage_taxable_intensity": B2_WAGE_COUNT_FACT_IDS,
+    "b2_se_taxable_intensity": B2_SE_COUNT_FACT_IDS,
+    "b2_wage_taxable_fraction": (),
+    "b2_se_taxable_fraction": B2_SE_AMOUNT_FACT_IDS,
     "b11_taxable_earnings_component_reconciliation": (),
     "b11_contributions_component_reconciliation": (),
     "b11_se_contribution_share": (),
@@ -710,10 +911,10 @@ REGISTRATION_AUTHORITY_ADJUDICATIONS = (
         "resolved_value": None,
         "reason_id": "missing_registered_correction_model_universe_selector",
         "citations": [
-            "docs/design/covered_earnings_correction.md:2281",
-            "docs/design/covered_earnings_correction.md:5628",
-            "docs/design/covered_earnings_correction.md:8457",
-            "docs/design/first_estimates_report.md:89",
+            "correction_model_universe_registration_law",
+            "correction_support_manifest_registration_law",
+            "amendment_preserved_selector_law",
+            "first_estimates_unsplit_panel_law",
         ],
     },
     {
@@ -724,9 +925,9 @@ REGISTRATION_AUTHORITY_ADJUDICATIONS = (
             "first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1"
         ),
         "citations": [
-            "docs/design/first_estimates_report.md:540",
-            "src/populace_dynamics/harness/m6_cells.py:113",
-            "src/populace_dynamics/estimates/ledgers.py:879",
+            "first_estimates_weight_law",
+            "m6_anchor_weight_implementation",
+            "ledger_weight_implementation",
         ],
     },
     {
@@ -735,24 +936,35 @@ REGISTRATION_AUTHORITY_ADJUDICATIONS = (
         "resolved_value": None,
         "reason_id": "missing_registered_model_weight_input_digest",
         "citations": [
-            "runs/first_estimates_v1.json:8",
-            "runs/first_estimates_v1.json:178",
-            "src/populace_dynamics/data/psid.py:63",
-            "scripts/registered_m6_inputs.py:48",
+            "first_estimates_artifact_configuration_and_integrity",
+            "psid_external_staging_law",
+            "registered_inputs_staging_law",
         ],
     },
     {
         "authority_id": "denominator_and_joint_analytic_selectors",
         "status": "partially_resolved_fail_closed",
         "resolved_value": {
-            "selector_ids_and_joint_reduction": "design_frozen",
+            "covered_share_denominator_selector_id": (
+                "registered_covered_share_denominator_indicator"
+            ),
+            "b2_b11_membership_selector_ids": [
+                "b2_wage_worker_membership_probability_analytic",
+                "b2_se_worker_membership_probability_analytic",
+                "b11_wage_only_worker_probability_analytic",
+                "b11_se_only_worker_probability_analytic",
+                "b11_dual_type_worker_probability_analytic",
+                "b11_any_worker_probability_analytic",
+            ],
+            "joint_probability_reduction": (
+                "analytic_joint_state_within_projection_draw"
+            ),
             "membership_predicates": None,
         },
         "reason_id": "selector_ids_resolved_membership_predicates_unestablished",
         "citations": [
-            "docs/design/covered_earnings_correction.md:229",
-            "docs/design/covered_earnings_correction.md:242",
-            "docs/design/covered_earnings_correction.md:8550",
+            "correction_joint_selector_law",
+            "amendment_target_selector_law",
         ],
     },
     {
@@ -763,18 +975,32 @@ REGISTRATION_AUTHORITY_ADJUDICATIONS = (
         },
         "reason_id": "cannot_pass_without_official_and_model_universes",
         "citations": [
-            "docs/design/covered_earnings_correction.md:2247",
-            "docs/design/covered_earnings_correction.md:2281",
-            "docs/design/first_estimates_report.md:59",
-            "runs/first_estimates_v1.json:356",
+            "correction_model_universe_registration_law",
+            "first_estimates_frame_law",
+            "first_estimates_artifact_frame_labels",
         ],
     },
 )
 
-GLOBAL_MISSING_AUTHORITY_IDS = tuple(
-    row["reason_id"]
-    for row in REGISTRATION_AUTHORITY_ADJUDICATIONS
-    if row["status"] != "resolved_from_committed_first_estimates_authority"
+COMMON_REGISTRATION_AUTHORITY_IDS = (
+    "missing_registered_correction_model_universe_selector",
+    "missing_registered_model_weight_input_digest",
+    "cannot_pass_without_official_and_model_universes",
+)
+MEMBERSHIP_SELECTOR_AUTHORITY_ID = (
+    "selector_ids_resolved_membership_predicates_unestablished"
+)
+MEMBERSHIP_SELECTOR_FAMILIES = frozenset(
+    {
+        "b2_wage_total_intensity",
+        "b2_se_total_intensity",
+        "b11_se_only_worker_share",
+        "b11_dual_type_worker_share",
+        "b11_wage_only_worker_share",
+        "b2_type_count_mix",
+        "b2_wage_taxable_intensity",
+        "b2_se_taxable_intensity",
+    }
 )
 
 
@@ -891,6 +1117,47 @@ def _source_locators(raw_by_id: Mapping[str, bytes]) -> list[dict[str, Any]]:
     return locators
 
 
+def _repo_authority_locators() -> list[dict[str, Any]]:
+    rows = []
+    for (
+        locator_id,
+        committed_path,
+        line_start,
+        line_end,
+        description,
+    ) in REPO_AUTHORITY_LOCATOR_SPECS:
+        raw = subprocess.run(
+            ["git", "show", f"HEAD:{committed_path}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        lines = raw.splitlines(keepends=True)
+        if not 1 <= line_start <= line_end <= len(lines):
+            raise ValueError(
+                f"{locator_id} line range is outside committed repo bytes"
+            )
+        byte_start = sum(map(len, lines[: line_start - 1]))
+        byte_end = sum(map(len, lines[:line_end]))
+        rows.append(
+            {
+                "locator_id": locator_id,
+                "committed_path": committed_path,
+                "line_start": line_start,
+                "line_end": line_end,
+                "byte_start": byte_start,
+                "byte_end": byte_end,
+                "range_sha256": hashlib.sha256(
+                    raw[byte_start:byte_end]
+                ).hexdigest(),
+                "full_source_sha256": hashlib.sha256(raw).hexdigest(),
+                "size_bytes": len(raw),
+                "description": description,
+            }
+        )
+    return rows
+
+
 def _family_dispositions() -> list[dict[str, Any]]:
     fact_by_id = {fact["fact_id"]: fact for fact in FACTS}
     rows = []
@@ -900,7 +1167,9 @@ def _family_dispositions() -> list[dict[str, Any]]:
             for fact_id in fact_ids
             if fact_by_id[fact_id]["missing_fact_id"] is not None
         ]
-        missing_authority = list(GLOBAL_MISSING_AUTHORITY_IDS)
+        missing_authority = list(COMMON_REGISTRATION_AUTHORITY_IDS)
+        if family in MEMBERSHIP_SELECTOR_FAMILIES:
+            missing_authority.append(MEMBERSHIP_SELECTOR_AUTHORITY_ID)
         rows.append(
             {
                 "target_family": family,
@@ -929,6 +1198,8 @@ def validate_adjudication(value: Mapping[str, Any]) -> None:
         "source_capture_manifest",
         "pdf_extraction_method",
         "source_locators",
+        "repo_authority_locators",
+        "candidate_source_dispositions",
         "facts",
         "family_dispositions",
         "registration_authority_adjudications",
@@ -954,6 +1225,27 @@ def validate_adjudication(value: Mapping[str, Any]) -> None:
     locator_ids = [row["locator_id"] for row in expected_locators]
     if len(locator_ids) != len(set(locator_ids)):
         raise ValueError("source locator IDs are not unique")
+    expected_repo_locators = _repo_authority_locators()
+    if value["repo_authority_locators"] != expected_repo_locators:
+        raise ValueError(
+            "repo authority locator does not re-resolve from committed bytes"
+        )
+    repo_locator_ids = {row["locator_id"] for row in expected_repo_locators}
+    if len(repo_locator_ids) != len(expected_repo_locators):
+        raise ValueError("repo authority locator IDs are not unique")
+    if value["candidate_source_dispositions"] != list(
+        CANDIDATE_SOURCE_DISPOSITIONS
+    ):
+        raise ValueError("candidate source dispositions drift")
+    for row in value["candidate_source_dispositions"]:
+        if not row["evidence_locator_ids"] or any(
+            locator_id not in locator_ids
+            for locator_id in row["evidence_locator_ids"]
+        ):
+            raise ValueError(
+                f"{row['source_document_id']} candidate disposition lacks "
+                "exact captured-byte evidence"
+            )
 
     if value["facts"] != list(FACTS):
         raise ValueError("fact table drift")
@@ -983,6 +1275,14 @@ def validate_adjudication(value: Mapping[str, Any]) -> None:
         REGISTRATION_AUTHORITY_ADJUDICATIONS
     ):
         raise ValueError("registration authority adjudication drift")
+    for row in value["registration_authority_adjudications"]:
+        if not row["citations"] or any(
+            locator_id not in repo_locator_ids
+            for locator_id in row["citations"]
+        ):
+            raise ValueError(
+                f"{row['authority_id']} lacks repo-authority byte citations"
+            )
 
     integrity = value["integrity"]
     if set(integrity) != {
@@ -1009,6 +1309,10 @@ def build() -> dict[str, Any]:
         "source_capture_manifest": manifest,
         "pdf_extraction_method": copy.deepcopy(PDF_EXTRACTION_METHOD),
         "source_locators": _source_locators(raw_by_id),
+        "repo_authority_locators": _repo_authority_locators(),
+        "candidate_source_dispositions": copy.deepcopy(
+            list(CANDIDATE_SOURCE_DISPOSITIONS)
+        ),
         "facts": copy.deepcopy(list(FACTS)),
         "family_dispositions": _family_dispositions(),
         "registration_authority_adjudications": copy.deepcopy(

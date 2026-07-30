@@ -1356,7 +1356,8 @@ def vb7_adjudication() -> dict[str, Any]:
         ],
         "covered_share_required_years": [],
         "registration_disposition": (
-            "abort_no_authoritative_vintage2_or_calibration_target_specs"
+            "optional_share_absent_valid_vintage2_accepted_"
+            "targets_fail_closed_on_membership_and_registration_authority"
         ),
     }
 
@@ -2032,8 +2033,54 @@ def _strict_json_object(raw: bytes, *, where: str) -> dict[str, Any]:
     return value
 
 
+def _git_head_vintage_paths() -> tuple[str, ...]:
+    """Return matching artifact paths from HEAD, never the index."""
+
+    result = subprocess.run(
+        [
+            "git",
+            "ls-tree",
+            "-r",
+            "--name-only",
+            "-z",
+            "HEAD",
+            "--",
+            "data/external",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    try:
+        decoded = result.stdout.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError("HEAD vintage paths are not UTF-8") from error
+    if not decoded:
+        return ()
+    if not decoded.endswith("\0"):
+        raise ValueError("git ls-tree did not return NUL-terminated paths")
+    return tuple(
+        path
+        for path in decoded[:-1].split("\0")
+        if path.startswith(VINTAGE_PATH_PREFIX) and path.endswith(".json")
+    )
+
+
+def _git_head_blob(path: str) -> bytes:
+    """Read one exact artifact blob from HEAD, never the worktree."""
+
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    return result.stdout
+
+
 def validate_tracked_vintage_lineage(
     tracked_paths: Sequence[str] | None = None,
+    head_blobs: Mapping[str, bytes] | None = None,
 ) -> dict[str, Any]:
     """Derive and validate the amended artifact lineage from Git.
 
@@ -2043,24 +2090,12 @@ def validate_tracked_vintage_lineage(
     exists.
     """
 
-    if tracked_paths is None:
-        result = subprocess.run(
-            [
-                "git",
-                "ls-files",
-                "--",
-                f"{VINTAGE_PATH_PREFIX}*.json",
-            ],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        tracked_paths = tuple(
-            line for line in result.stdout.splitlines() if line
-        )
-    else:
-        tracked_paths = tuple(tracked_paths)
+    derive_from_head = tracked_paths is None
+    tracked_paths = (
+        _git_head_vintage_paths() if derive_from_head else tuple(tracked_paths)
+    )
+    if derive_from_head and head_blobs is not None:
+        raise ValueError("injected HEAD blobs require injected tracked paths")
 
     suffix_to_path: dict[int, str] = {}
     for path in tracked_paths:
@@ -2089,7 +2124,17 @@ def validate_tracked_vintage_lineage(
         )
 
     path = suffix_to_path[2]
-    artifact = _strict_json_object((ROOT / path).read_bytes(), where=path)
+    if head_blobs is None:
+        raw = (
+            _git_head_blob(path)
+            if derive_from_head
+            else (ROOT / path).read_bytes()
+        )
+    else:
+        if set(head_blobs) != set(tracked_paths):
+            raise ValueError("injected HEAD blob domain does not match paths")
+        raw = head_blobs[path]
+    artifact = _strict_json_object(raw, where=f"HEAD:{path}")
     if artifact.get("artifact_vintage_id") != ARTIFACT_VINTAGE_ID:
         raise ValueError("vintage path and artifact-vintage ID disagree")
     validate_artifact(artifact)
@@ -2100,8 +2145,35 @@ def validate_tracked_vintage_lineage(
     }
 
 
+def _tracked_head_blob_for_output(path: Path) -> bytes | None:
+    """Return the output's HEAD blob when the path is already tracked."""
+
+    try:
+        relative_path = path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        return None
+    if relative_path not in _git_head_vintage_paths():
+        return None
+    return _git_head_blob(relative_path)
+
+
 def main() -> None:
-    OUT_PATH.write_bytes(render())
+    rendered = render()
+    tracked_head_blob = _tracked_head_blob_for_output(OUT_PATH)
+    if tracked_head_blob is not None and tracked_head_blob != rendered:
+        raise RegistrationAborted(
+            "append-only vintage-2 path is already tracked in HEAD with "
+            "different bytes; mint a successor under the ratified lineage "
+            "law"
+        )
+    if OUT_PATH.exists():
+        if OUT_PATH.read_bytes() != rendered:
+            raise RegistrationAborted(
+                "append-only vintage-2 path already exists with different "
+                "bytes; mint a successor under the ratified lineage law"
+            )
+        return
+    OUT_PATH.write_bytes(rendered)
 
 
 if __name__ == "__main__":

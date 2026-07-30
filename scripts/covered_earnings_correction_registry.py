@@ -14,17 +14,25 @@ prerequisites can be resolved from immutable authority.
 from __future__ import annotations
 
 import copy
+import hashlib
 import math
 import re
+import subprocess
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 import build_covered_earnings_membership_adjudication as adjudication
 import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
+BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
 DESIGN_RATIFICATION_COMMIT = "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
 DESIGN_REVISION = 3
+DESIGN_BLOB_SHA256 = (
+    "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+)
+ROOT = Path(__file__).resolve().parents[1]
 
 CALIBRATION_TARGET_SPECS_SCHEMA_VERSION = "calibration_target_specs.v3"
 VERIFIED_ROLE_SPECS_SCHEMA_VERSION = "verified_role_specs.v1"
@@ -265,6 +273,276 @@ _SOURCE_COMPONENTS_BY_TARGET_FAMILY = {
         ("contributions_wage", "contributions_self_employment"),
     ),
 }
+
+
+def _row_law(
+    *,
+    operation: str,
+    formula: str,
+    domain: str,
+    stored_unit: str,
+    field_ids: Sequence[str],
+    aggregation: str,
+    cap_stage: str,
+) -> dict[str, Any]:
+    return {
+        "transformation": {
+            "operation": operation,
+            "formula": formula,
+            "domain": domain,
+        },
+        "stored_unit": stored_unit,
+        "selector": {
+            "field_ids": list(field_ids),
+            "aggregation": aggregation,
+            "joint_probability_rule": (
+                "analytic_joint_state_within_projection_draw"
+            ),
+            "cap_stage": cap_stage,
+            "unit": stored_unit,
+        },
+    }
+
+
+_TARGET_FAMILY_ROW_LAWS = {
+    "b2_wage_total_intensity": _row_law(
+        operation="divide",
+        formula="c5/c11",
+        domain="strictly_positive_denominator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "covered_employee_wages_uncapped",
+            "b2_wage_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(covered_employee_wages_uncapped)/"
+            "sum(b2_wage_worker_membership_probability_analytic)"
+        ),
+        cap_stage="pre_person_level_oasdi_cap",
+    ),
+    "b2_se_total_intensity": _row_law(
+        operation="divide",
+        formula="c8/c12",
+        domain="strictly_positive_denominator_signed_numerator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "covered_se_net_earnings_pre_seca",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(covered_se_net_earnings_pre_seca)/"
+            "sum(b2_se_worker_membership_probability_analytic)"
+        ),
+        cap_stage="pre_seca_factor_threshold_and_oasdi_cap",
+    ),
+    "b11_se_only_worker_share": _row_law(
+        operation="subtract_then_divide",
+        formula="(workers_total-workers_wage)/workers_total",
+        domain="nonnegative_implied_numerator_strictly_positive_total",
+        stored_unit="share",
+        field_ids=(
+            "b11_se_only_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b11_se_only_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b11_dual_type_worker_share": _row_law(
+        operation="add_subtract_then_divide",
+        formula=(
+            "(workers_wage+workers_self_employment-workers_total)/"
+            "workers_total"
+        ),
+        domain="nonnegative_implied_numerator_strictly_positive_total",
+        stored_unit="share",
+        field_ids=(
+            "b11_dual_type_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b11_dual_type_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b11_wage_only_worker_share": _row_law(
+        operation="subtract_then_divide",
+        formula="(workers_total-workers_self_employment)/workers_total",
+        domain="nonnegative_implied_numerator_strictly_positive_total",
+        stored_unit="share",
+        field_ids=(
+            "b11_wage_only_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b11_wage_only_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b2_type_count_mix": _row_law(
+        operation="divide_by_component_sum",
+        formula="c12/(c11+c12)",
+        domain="nonnegative_components_strictly_positive_sum",
+        stored_unit="share",
+        field_ids=(
+            "b2_wage_worker_membership_probability_analytic",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b2_se_worker_membership_probability_analytic)/"
+            "(sum(b2_wage_worker_membership_probability_analytic)+"
+            "sum(b2_se_worker_membership_probability_analytic))"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b2_se_total_component_share": _row_law(
+        operation="divide_by_component_sum",
+        formula="c8/(c5+c8)",
+        domain="strictly_positive_component_sum",
+        stored_unit="share",
+        field_ids=(
+            "covered_employee_wages_uncapped",
+            "covered_se_net_earnings_pre_seca",
+        ),
+        aggregation=(
+            "sum(covered_se_net_earnings_pre_seca)/"
+            "(sum(covered_employee_wages_uncapped)+"
+            "sum(covered_se_net_earnings_pre_seca))"
+        ),
+        cap_stage="pre_seca_factor_threshold_and_oasdi_cap_component_ratio",
+    ),
+    "b2_wage_taxable_intensity": _row_law(
+        operation="divide",
+        formula="c13/c11",
+        domain="strictly_positive_denominator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "b2_wage_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_wages_person)/"
+            "sum(b2_wage_worker_membership_probability_analytic)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_over_registered_membership",
+    ),
+    "b2_se_taxable_intensity": _row_law(
+        operation="divide",
+        formula="c17/c12",
+        domain="strictly_positive_denominator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "oasdi_taxable_se_person",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_se_person)/"
+            "sum(b2_se_worker_membership_probability_analytic)"
+        ),
+        cap_stage="post_wage_first_oasdi_cap_over_registered_membership",
+    ),
+    "b2_wage_taxable_fraction": _row_law(
+        operation="divide",
+        formula="c13/c5",
+        domain="strictly_positive_denominator",
+        stored_unit="share",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "covered_employee_wages_uncapped",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_wages_person)/"
+            "sum(covered_employee_wages_uncapped)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_over_pre_cap_amount",
+    ),
+    "b2_se_taxable_fraction": _row_law(
+        operation="divide",
+        formula="c17/c8",
+        domain="strictly_positive_denominator",
+        stored_unit="share",
+        field_ids=(
+            "oasdi_taxable_se_person",
+            "covered_se_net_earnings_pre_seca",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_se_person)/"
+            "sum(covered_se_net_earnings_pre_seca)"
+        ),
+        cap_stage="post_wage_first_oasdi_cap_over_pre_seca_net_amount",
+    ),
+    "b11_taxable_earnings_component_reconciliation": _row_law(
+        operation="subtract_components_from_total",
+        formula=(
+            "taxable_earnings_total-taxable_earnings_wage-"
+            "taxable_earnings_self_employment"
+        ),
+        domain="structural_dependence_only_no_numeric_equality_assertion",
+        stored_unit="current_dollars",
+        field_ids=(
+            "oasdi_person_taxable_payroll",
+            "oasdi_taxable_wages_person",
+            "oasdi_taxable_se_person",
+        ),
+        aggregation=(
+            "sum(oasdi_person_taxable_payroll)-"
+            "sum(oasdi_taxable_wages_person)-"
+            "sum(oasdi_taxable_se_person)"
+        ),
+        cap_stage="post_person_level_oasdi_cap",
+    ),
+    "b11_contributions_component_reconciliation": _row_law(
+        operation="subtract_components_from_total",
+        formula=(
+            "contributions_total-contributions_wage-"
+            "contributions_self_employment"
+        ),
+        domain="structural_dependence_only_no_numeric_equality_assertion",
+        stored_unit="current_dollars",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "registered_wage_oasdi_combined_rate",
+            "oasdi_taxable_se_person",
+            "registered_se_oasdi_rate",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate+"
+            "oasdi_taxable_se_person*registered_se_oasdi_rate)-"
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate)-"
+            "sum(oasdi_taxable_se_person*registered_se_oasdi_rate)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_and_registered_rates",
+    ),
+    "b11_se_contribution_share": _row_law(
+        operation="divide_by_component_sum",
+        formula=(
+            "contributions_self_employment/"
+            "(contributions_wage+contributions_self_employment)"
+        ),
+        domain="nonnegative_components_strictly_positive_sum",
+        stored_unit="share",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "registered_wage_oasdi_combined_rate",
+            "oasdi_taxable_se_person",
+            "registered_se_oasdi_rate",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_se_person*registered_se_oasdi_rate)/"
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate+"
+            "oasdi_taxable_se_person*registered_se_oasdi_rate)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_and_registered_rates",
+    ),
+}
+
 _AVAILABLE_SELECTOR_SCALAR_FIELDS = (
     "aggregation",
     "joint_probability_rule",
@@ -338,10 +616,47 @@ class RegistrationAborted(RegistryValidationError):
 def design_binding() -> dict[str, Any]:
     """Return the ratified design identity."""
 
+    ancestry = subprocess.run(
+        [
+            "git",
+            "merge-base",
+            "--is-ancestor",
+            BASE_DESIGN_RATIFICATION_COMMIT,
+            DESIGN_RATIFICATION_COMMIT,
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    )
+    if ancestry.returncode != 0:
+        raise RegistrationAborted(
+            "base design is not an ancestor of amendment-1 ratification"
+        )
+    worktree_bytes = (ROOT / DESIGN_PATH).read_bytes()
+    head_bytes = subprocess.run(
+        ["git", "show", f"HEAD:{DESIGN_PATH}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    ratified_bytes = subprocess.run(
+        ["git", "show", f"{DESIGN_RATIFICATION_COMMIT}:{DESIGN_PATH}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    if not (worktree_bytes == head_bytes == ratified_bytes):
+        raise RegistrationAborted(
+            "covered-earnings design differs across worktree, HEAD, and "
+            "ratification commit"
+        )
+    if hashlib.sha256(head_bytes).hexdigest() != DESIGN_BLOB_SHA256:
+        raise RegistrationAborted("covered-earnings design blob digest drift")
     return {
         "path": DESIGN_PATH,
         "ratification_commit": DESIGN_RATIFICATION_COMMIT,
         "revision": DESIGN_REVISION,
+        "blob_sha256": DESIGN_BLOB_SHA256,
     }
 
 
@@ -440,6 +755,13 @@ def target_family_registry() -> list[dict[str, Any]]:
                 "normalized_effective_weight_numerator": raw_coefficient,
                 "normalized_effective_weight_denominator": (
                     6 if raw_coefficient else 1
+                ),
+                "transformation": copy.deepcopy(
+                    _TARGET_FAMILY_ROW_LAWS[family]["transformation"]
+                ),
+                "stored_unit": _TARGET_FAMILY_ROW_LAWS[family]["stored_unit"],
+                "available_candidate_output_selector": copy.deepcopy(
+                    _TARGET_FAMILY_ROW_LAWS[family]["selector"]
                 ),
             }
         )
@@ -625,6 +947,12 @@ def _validate_transformation(value: object, row: Mapping[str, Any]) -> None:
         )
     for field in ("operation", "formula", "domain"):
         _nonempty_string(transformation[field], f"{where}.{field}")
+    expected = _TARGET_FAMILY_ROW_LAWS[row["target_family"]]["transformation"]
+    for field, expected_value in expected.items():
+        if transformation[field] != expected_value:
+            raise RegistryValidationError(
+                f"{where}.{field} violates target-family law"
+            )
 
 
 def _validate_concordance(value: object, where: str) -> None:
@@ -714,7 +1042,7 @@ def _validate_selector(
             f"{where}.availability violates source-class law"
         )
     if expected_availability == "available":
-        _ordered_unique_strings(
+        field_ids = _ordered_unique_strings(
             selector["field_ids"],
             f"{where}.field_ids",
         )
@@ -727,6 +1055,21 @@ def _validate_selector(
             raise RegistryValidationError(f"{where}.projection_draw_reduction")
         if selector["unit"] != row["stored_unit"]:
             raise RegistryValidationError(f"{where}.unit mismatch")
+        expected = _TARGET_FAMILY_ROW_LAWS[row["target_family"]]["selector"]
+        if field_ids != expected["field_ids"]:
+            raise RegistryValidationError(
+                f"{where}.field_ids violate target-family law"
+            )
+        for field in (
+            "aggregation",
+            "joint_probability_rule",
+            "cap_stage",
+            "unit",
+        ):
+            if selector[field] != expected[field]:
+                raise RegistryValidationError(
+                    f"{where}.{field} violates target-family law"
+                )
     else:
         field_ids = _ordered_unique_strings(
             selector["field_ids"],
@@ -844,6 +1187,13 @@ def validate_calibration_target_row_schema(
         raise RegistryValidationError(
             f"{target_id}.model_weight_field must be weight"
         )
+    expected_stored_unit = _TARGET_FAMILY_ROW_LAWS[target_family][
+        "stored_unit"
+    ]
+    if row["stored_unit"] != expected_stored_unit:
+        raise RegistryValidationError(
+            f"{target_id}.stored_unit must be {expected_stored_unit}"
+        )
     if (
         row["source_artifact_vintage_id"]
         != PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID
@@ -960,6 +1310,10 @@ def validate_calibration_target_row_schema(
         row["loss_weight"],
         f"{target_id}.loss_weight",
     )
+    if type(loss_weight) is not int:
+        raise RegistryValidationError(
+            f"{target_id}.loss_weight must be an exact JSON integer"
+        )
     model_choice_cell = availability == "available" and (
         (
             expected_role == "train"

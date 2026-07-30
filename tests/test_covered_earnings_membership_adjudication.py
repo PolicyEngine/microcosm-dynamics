@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import copy
 import hashlib
 import json
 import sys
@@ -19,7 +18,7 @@ ARTIFACT = (
     / "covered_earnings_membership_adjudication_v2.json"
 )
 ARTIFACT_SHA256 = (
-    "6ce2ae3ac26164698f2bd12e3151726a8541dbb0b479d7801234f3c4b5f2a8aa"
+    "fcf5f968bdf1b1120feb3e07e97dcbda3dc67d98cee270a5c594bcbf8ab02a12"
 )
 
 if str(SCRIPTS) not in sys.path:
@@ -54,6 +53,35 @@ def test__adjudication__binds_every_verdict_to_exact_captured_bytes():
     for fact in value["facts"]:
         assert fact["evidence_locator_ids"]
         assert set(fact["evidence_locator_ids"]) <= locator_ids
+
+
+def test__candidate_source_dispositions__cover_all_five_named_sources():
+    rows = _artifact()["candidate_source_dispositions"]
+    assert [row["source_document_id"] for row in rows] == [
+        "ssa_glossary",
+        "ssa_oasdi_program_reference",
+        "ssa_eedata_2023_intro",
+        "ssa_supplement_2025_highlights",
+        "ssa_supplement_2025_4b_pdf",
+    ]
+    assert all(row["evidence_locator_ids"] for row in rows)
+    assert rows[0]["verdict"] == "does_not_establish_membership_facts"
+    assert (
+        "glossary_uncaptured_dynamic_definitions"
+        in rows[0]["evidence_locator_ids"]
+    )
+    assert rows[3]["verdict"] == "does_not_establish_membership_facts"
+
+
+def test__model_authority_locators__re_resolve_repo_lines_and_bytes():
+    value = _artifact()
+    locators = value["repo_authority_locators"]
+    assert len(locators) == len(builder.REPO_AUTHORITY_LOCATOR_SPECS)
+    locator_ids = {row["locator_id"] for row in locators}
+    for authority in value["registration_authority_adjudications"]:
+        assert authority["citations"]
+        assert set(authority["citations"]) <= locator_ids
+    builder.validate_adjudication(value)
 
 
 def test__adjudication__covers_the_complete_recheck_shopping_list():
@@ -126,9 +154,20 @@ def test__adjudication__records_exact_family_fail_closed_lists():
         "exact_annual_unique_person_definition_T_1968_2022"
         in by_family["b11_dual_type_worker_share"]["missing_source_fact_ids"]
     )
+    assert (
+        by_family["b2_wage_taxable_fraction"]["missing_source_fact_ids"] == []
+    )
+    accounting = by_family["b11_contributions_component_reconciliation"]
+    assert accounting["missing_registration_authority_ids"] == list(
+        builder.COMMON_REGISTRATION_AUTHORITY_IDS
+    )
+    assert (
+        builder.MEMBERSHIP_SELECTOR_AUTHORITY_ID
+        not in accounting["missing_registration_authority_ids"]
+    )
 
 
-def test__model_authorities__resolve_only_the_committed_weight_field():
+def test__model_authorities__resolve_exact_repo_defined_fields_only():
     rows = _artifact()["registration_authority_adjudications"]
     assert len(rows) == 5
     by_id = {row["authority_id"]: row for row in rows}
@@ -140,13 +179,32 @@ def test__model_authorities__resolve_only_the_committed_weight_field():
             "first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1"
         ),
         "citations": [
-            "docs/design/first_estimates_report.md:540",
-            "src/populace_dynamics/harness/m6_cells.py:113",
-            "src/populace_dynamics/estimates/ledgers.py:879",
+            "first_estimates_weight_law",
+            "m6_anchor_weight_implementation",
+            "ledger_weight_implementation",
         ],
     }
     assert by_id["model_universe_id"]["resolved_value"] is None
     assert by_id["model_weight_source_sha256"]["resolved_value"] is None
+    assert by_id["denominator_and_joint_analytic_selectors"][
+        "resolved_value"
+    ] == {
+        "covered_share_denominator_selector_id": (
+            "registered_covered_share_denominator_indicator"
+        ),
+        "b2_b11_membership_selector_ids": [
+            "b2_wage_worker_membership_probability_analytic",
+            "b2_se_worker_membership_probability_analytic",
+            "b11_wage_only_worker_probability_analytic",
+            "b11_se_only_worker_probability_analytic",
+            "b11_dual_type_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ],
+        "joint_probability_reduction": (
+            "analytic_joint_state_within_projection_draw"
+        ),
+        "membership_predicates": None,
+    }
     assert by_id["universe_concordance"]["status"] == "registration_required"
 
 
@@ -164,6 +222,8 @@ def test__pdf_extraction__is_recorded_but_never_used_as_evidence():
     ("mutation", "message"),
     (
         ("locator", "source locator"),
+        ("repo_locator", "repo authority locator"),
+        ("candidate", "candidate source dispositions"),
         ("fact", "fact table"),
         ("family", "family fail-closed"),
         ("authority", "registration authority"),
@@ -176,6 +236,10 @@ def test__adjudication__rejects_coherently_rehashed_corruption(
     value = _artifact()
     if mutation == "locator":
         value["source_locators"][0]["byte_start"] += 1
+    elif mutation == "repo_locator":
+        value["repo_authority_locators"][0]["line_start"] += 1
+    elif mutation == "candidate":
+        value["candidate_source_dispositions"][0]["verdict"] = "accepted"
     elif mutation == "fact":
         value["facts"][0]["verdict"] = "established"
     elif mutation == "family":

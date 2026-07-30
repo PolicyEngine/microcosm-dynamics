@@ -62,7 +62,7 @@ def _complete_shape_row() -> dict:
             "operation": "divide",
             "operand_cell_ids": source_cells,
             "formula": "c5/c11",
-            "domain": "strictly_positive_ratio",
+            "domain": "strictly_positive_denominator",
         },
         "stored_unit": "current_dollars_per_worker",
         "published_rounding_interval": {
@@ -107,10 +107,18 @@ def _complete_shape_row() -> dict:
             "calendar_year": year,
             "year_source_class": "direct_questionnaire",
             "availability": "available",
-            "field_ids": ["future_field"],
-            "aggregation": "sum(future_field)",
-            "joint_probability_rule": "future-frozen-rule",
-            "cap_stage": "future-frozen-stage",
+            "field_ids": [
+                "covered_employee_wages_uncapped",
+                "b2_wage_worker_membership_probability_analytic",
+            ],
+            "aggregation": (
+                "sum(covered_employee_wages_uncapped)/"
+                "sum(b2_wage_worker_membership_probability_analytic)"
+            ),
+            "joint_probability_rule": (
+                "analytic_joint_state_within_projection_draw"
+            ),
+            "cap_stage": "pre_person_level_oasdi_cap",
             "projection_draw_reduction": "arithmetic_mean_over_20_draws",
             "unit": "current_dollars_per_worker",
         },
@@ -219,6 +227,266 @@ SELECTOR_SCALAR_FIELDS = (
     "projection_draw_reduction",
     "unit",
 )
+EXPECTED_ROW_LAWS = {
+    "b2_wage_total_intensity": (
+        "divide",
+        "c5/c11",
+        "strictly_positive_denominator",
+        "current_dollars_per_worker",
+        (
+            "covered_employee_wages_uncapped",
+            "b2_wage_worker_membership_probability_analytic",
+        ),
+        (
+            "sum(covered_employee_wages_uncapped)/"
+            "sum(b2_wage_worker_membership_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "pre_person_level_oasdi_cap",
+        "current_dollars_per_worker",
+    ),
+    "b2_se_total_intensity": (
+        "divide",
+        "c8/c12",
+        "strictly_positive_denominator_signed_numerator",
+        "current_dollars_per_worker",
+        (
+            "covered_se_net_earnings_pre_seca",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        (
+            "sum(covered_se_net_earnings_pre_seca)/"
+            "sum(b2_se_worker_membership_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "pre_seca_factor_threshold_and_oasdi_cap",
+        "current_dollars_per_worker",
+    ),
+    "b11_se_only_worker_share": (
+        "subtract_then_divide",
+        "(workers_total-workers_wage)/workers_total",
+        "nonnegative_implied_numerator_strictly_positive_total",
+        "share",
+        (
+            "b11_se_only_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        (
+            "sum(b11_se_only_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "registered_worker_membership_definition",
+        "share",
+    ),
+    "b11_dual_type_worker_share": (
+        "add_subtract_then_divide",
+        (
+            "(workers_wage+workers_self_employment-workers_total)/"
+            "workers_total"
+        ),
+        "nonnegative_implied_numerator_strictly_positive_total",
+        "share",
+        (
+            "b11_dual_type_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        (
+            "sum(b11_dual_type_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "registered_worker_membership_definition",
+        "share",
+    ),
+    "b11_wage_only_worker_share": (
+        "subtract_then_divide",
+        "(workers_total-workers_self_employment)/workers_total",
+        "nonnegative_implied_numerator_strictly_positive_total",
+        "share",
+        (
+            "b11_wage_only_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        (
+            "sum(b11_wage_only_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "registered_worker_membership_definition",
+        "share",
+    ),
+    "b2_type_count_mix": (
+        "divide_by_component_sum",
+        "c12/(c11+c12)",
+        "nonnegative_components_strictly_positive_sum",
+        "share",
+        (
+            "b2_wage_worker_membership_probability_analytic",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        (
+            "sum(b2_se_worker_membership_probability_analytic)/"
+            "(sum(b2_wage_worker_membership_probability_analytic)+"
+            "sum(b2_se_worker_membership_probability_analytic))"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "registered_worker_membership_definition",
+        "share",
+    ),
+    "b2_se_total_component_share": (
+        "divide_by_component_sum",
+        "c8/(c5+c8)",
+        "strictly_positive_component_sum",
+        "share",
+        (
+            "covered_employee_wages_uncapped",
+            "covered_se_net_earnings_pre_seca",
+        ),
+        (
+            "sum(covered_se_net_earnings_pre_seca)/"
+            "(sum(covered_employee_wages_uncapped)+"
+            "sum(covered_se_net_earnings_pre_seca))"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "pre_seca_factor_threshold_and_oasdi_cap_component_ratio",
+        "share",
+    ),
+    "b2_wage_taxable_intensity": (
+        "divide",
+        "c13/c11",
+        "strictly_positive_denominator",
+        "current_dollars_per_worker",
+        (
+            "oasdi_taxable_wages_person",
+            "b2_wage_worker_membership_probability_analytic",
+        ),
+        (
+            "sum(oasdi_taxable_wages_person)/"
+            "sum(b2_wage_worker_membership_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_person_level_oasdi_cap_over_registered_membership",
+        "current_dollars_per_worker",
+    ),
+    "b2_se_taxable_intensity": (
+        "divide",
+        "c17/c12",
+        "strictly_positive_denominator",
+        "current_dollars_per_worker",
+        (
+            "oasdi_taxable_se_person",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        (
+            "sum(oasdi_taxable_se_person)/"
+            "sum(b2_se_worker_membership_probability_analytic)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_wage_first_oasdi_cap_over_registered_membership",
+        "current_dollars_per_worker",
+    ),
+    "b2_wage_taxable_fraction": (
+        "divide",
+        "c13/c5",
+        "strictly_positive_denominator",
+        "share",
+        ("oasdi_taxable_wages_person", "covered_employee_wages_uncapped"),
+        (
+            "sum(oasdi_taxable_wages_person)/"
+            "sum(covered_employee_wages_uncapped)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_person_level_oasdi_cap_over_pre_cap_amount",
+        "share",
+    ),
+    "b2_se_taxable_fraction": (
+        "divide",
+        "c17/c8",
+        "strictly_positive_denominator",
+        "share",
+        ("oasdi_taxable_se_person", "covered_se_net_earnings_pre_seca"),
+        (
+            "sum(oasdi_taxable_se_person)/"
+            "sum(covered_se_net_earnings_pre_seca)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_wage_first_oasdi_cap_over_pre_seca_net_amount",
+        "share",
+    ),
+    "b11_taxable_earnings_component_reconciliation": (
+        "subtract_components_from_total",
+        (
+            "taxable_earnings_total-taxable_earnings_wage-"
+            "taxable_earnings_self_employment"
+        ),
+        "structural_dependence_only_no_numeric_equality_assertion",
+        "current_dollars",
+        (
+            "oasdi_person_taxable_payroll",
+            "oasdi_taxable_wages_person",
+            "oasdi_taxable_se_person",
+        ),
+        (
+            "sum(oasdi_person_taxable_payroll)-"
+            "sum(oasdi_taxable_wages_person)-"
+            "sum(oasdi_taxable_se_person)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_person_level_oasdi_cap",
+        "current_dollars",
+    ),
+    "b11_contributions_component_reconciliation": (
+        "subtract_components_from_total",
+        (
+            "contributions_total-contributions_wage-"
+            "contributions_self_employment"
+        ),
+        "structural_dependence_only_no_numeric_equality_assertion",
+        "current_dollars",
+        (
+            "oasdi_taxable_wages_person",
+            "registered_wage_oasdi_combined_rate",
+            "oasdi_taxable_se_person",
+            "registered_se_oasdi_rate",
+        ),
+        (
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate+"
+            "oasdi_taxable_se_person*registered_se_oasdi_rate)-"
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate)-"
+            "sum(oasdi_taxable_se_person*registered_se_oasdi_rate)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_person_level_oasdi_cap_and_registered_rates",
+        "current_dollars",
+    ),
+    "b11_se_contribution_share": (
+        "divide_by_component_sum",
+        (
+            "contributions_self_employment/"
+            "(contributions_wage+contributions_self_employment)"
+        ),
+        "nonnegative_components_strictly_positive_sum",
+        "share",
+        (
+            "oasdi_taxable_wages_person",
+            "registered_wage_oasdi_combined_rate",
+            "oasdi_taxable_se_person",
+            "registered_se_oasdi_rate",
+        ),
+        (
+            "sum(oasdi_taxable_se_person*registered_se_oasdi_rate)/"
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate+"
+            "oasdi_taxable_se_person*registered_se_oasdi_rate)"
+        ),
+        "analytic_joint_state_within_projection_draw",
+        "post_person_level_oasdi_cap_and_registered_rates",
+        "share",
+    ),
+}
 
 
 def _selection_tolerances(family: str) -> tuple[dict, dict]:
@@ -261,6 +529,11 @@ def _row_for(
     row["target_id"] = f"{family}:{year}"
     row["target_family"] = family
     row["dependency_group"] = DEPENDENCY_GROUP_BY_FAMILY[family]
+    family_law = next(
+        item
+        for item in registry.target_family_registry()
+        if item["target_family"] == family
+    )
     for field in ("target_year", "verified_calendar_year", "source_year"):
         row[field] = year
     table_id, component_ids = SOURCE_COMPONENTS_BY_FAMILY[family]
@@ -278,6 +551,8 @@ def _row_for(
     row["physical_source_cell_ids"] = physical_ids
     row["primitive_ancestry_ids"] = list(physical_ids)
     row["transformation"]["operand_cell_ids"] = list(row["source_cell_ids"])
+    row["transformation"].update(family_law["transformation"])
+    row["stored_unit"] = family_law["stored_unit"]
     row["source_status"] = "preliminary" if year >= 2021 else "historical"
     source_class = registry.model_year_source_class_for_year(year)
     role = registry.role_for_year(year)
@@ -285,6 +560,8 @@ def _row_for(
     row["declared_role"] = role
     row["effective_role"] = role
     selector = row["candidate_output_selector"]
+    selector.update(family_law["available_candidate_output_selector"])
+    selector["projection_draw_reduction"] = "arithmetic_mean_over_20_draws"
     selector["calendar_year"] = year
     selector["year_source_class"] = source_class
     if source_class in AVAILABLE_SOURCE_CLASSES:
@@ -423,6 +700,76 @@ def test__target_family_registry__pins_order_dependencies_and_weights():
         for row in rows
         if row["raw_family_coefficient"] == 0
     )
+    assert by_family["b11_dual_type_worker_share"]["transformation"][
+        "formula"
+    ] == ("(workers_wage+workers_self_employment-workers_total)/workers_total")
+    assert by_family["b11_contributions_component_reconciliation"][
+        "available_candidate_output_selector"
+    ]["field_ids"] == [
+        "oasdi_taxable_wages_person",
+        "registered_wage_oasdi_combined_rate",
+        "oasdi_taxable_se_person",
+        "registered_se_oasdi_rate",
+    ]
+
+
+def test__target_family_registry__matches_independent_section_15_row_laws():
+    actual = {}
+    for row in registry.target_family_registry():
+        transformation = row["transformation"]
+        selector = row["available_candidate_output_selector"]
+        actual[row["target_family"]] = (
+            transformation["operation"],
+            transformation["formula"],
+            transformation["domain"],
+            row["stored_unit"],
+            tuple(selector["field_ids"]),
+            selector["aggregation"],
+            selector["joint_probability_rule"],
+            selector["cap_stage"],
+            selector["unit"],
+        )
+    assert actual == EXPECTED_ROW_LAWS
+
+
+@pytest.mark.parametrize("family", tuple(LOSS_BY_FAMILY))
+@pytest.mark.parametrize(
+    "field",
+    (
+        "transformation.operation",
+        "transformation.formula",
+        "transformation.domain",
+        "stored_unit",
+        "selector.field_ids",
+        "selector.aggregation",
+        "selector.joint_probability_rule",
+        "selector.cap_stage",
+        "selector.unit",
+    ),
+)
+def test__target_schema__pins_every_family_transformation_and_selector(
+    family,
+    field,
+):
+    row = _row_for(1968, family)
+    registry.validate_calibration_target_row_schema(row)
+    if field == "stored_unit":
+        row["stored_unit"] = "wrong_unit"
+    elif field.startswith("transformation."):
+        member = field.split(".", 1)[1]
+        row["transformation"][member] += "_wrong"
+    else:
+        member = field.split(".", 1)[1]
+        selector = row["candidate_output_selector"]
+        if member == "field_ids":
+            selector[member] = list(reversed(selector[member]))
+        else:
+            selector[member] += "_wrong"
+    with pytest.raises(
+        registry.RegistryValidationError,
+        match="target-family|stored_unit|unit mismatch",
+    ):
+        registry.validate_calibration_target_row_schema(row)
 
 
 @pytest.mark.parametrize(
@@ -860,6 +1207,11 @@ def test__target_schema__requires_exact_integer_mass_on_model_choice_cells():
     ):
         registry.validate_calibration_target_row_schema(train)
 
+    train = _row_for(1968)
+    train["loss_weight"] = 2.0
+    with pytest.raises(registry.RegistryValidationError, match="JSON integer"):
+        registry.validate_calibration_target_row_schema(train)
+
 
 @pytest.mark.parametrize(
     ("year", "expected"),
@@ -1030,3 +1382,14 @@ def test__verified_role_specs__remain_exact_and_value_independent():
     assert registry.role_for_year(2022) == "held_out_diagnostic"
     with pytest.raises(registry.RegistryValidationError):
         registry.role_for_year(True)
+
+
+def test__design_binding__proves_head_and_ratification_blob_identity():
+    assert registry.design_binding() == {
+        "path": "docs/design/covered_earnings_correction.md",
+        "ratification_commit": ("15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"),
+        "revision": 3,
+        "blob_sha256": (
+            "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+        ),
+    }

@@ -8,6 +8,7 @@ import shutil
 import sys
 from fractions import Fraction
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -119,6 +120,43 @@ def test__committed_vintage2__is_byte_reproducible():
     builder.validate_artifact(artifact)
 
 
+def test__main__permits_identical_rebuild_but_rejects_in_place_revision(
+    monkeypatch,
+    tmp_path,
+):
+    output = tmp_path / ARTIFACT.name
+    monkeypatch.setattr(builder, "OUT_PATH", output)
+    builder.main()
+    assert output.read_bytes() == builder.render()
+    builder.main()
+    output.write_bytes(b"corrupt")
+    with pytest.raises(builder.RegistrationAborted, match="append-only"):
+        builder.main()
+    assert output.read_bytes() == b"corrupt"
+
+
+def test__main__cannot_bypass_head_append_only_law_by_deleting_worktree_file(
+    monkeypatch,
+    tmp_path,
+):
+    output = tmp_path / ARTIFACT.name
+    committed = ARTIFACT.read_bytes()
+    monkeypatch.setattr(builder, "OUT_PATH", output)
+    monkeypatch.setattr(
+        builder,
+        "_tracked_head_blob_for_output",
+        lambda _path: committed,
+    )
+    monkeypatch.setattr(builder, "render", lambda: b"different revision")
+    with pytest.raises(builder.RegistrationAborted, match="tracked in HEAD"):
+        builder.main()
+    assert not output.exists()
+
+    monkeypatch.setattr(builder, "render", lambda: committed)
+    builder.main()
+    assert output.read_bytes() == committed
+
+
 def test__tracked_lineage__derives_exactly_h_equals_two_from_git():
     assert builder.validate_tracked_vintage_lineage() == {
         "tracked_vintage_suffixes": [2],
@@ -128,6 +166,47 @@ def test__tracked_lineage__derives_exactly_h_equals_two_from_git():
             "ssa_covered_earnings_calibration_targets_vintage2.json"
         ),
     }
+
+
+def test__tracked_lineage__enumerates_and_reads_head_not_index_or_worktree(
+    monkeypatch,
+    tmp_path,
+):
+    path = (
+        "data/external/"
+        "ssa_covered_earnings_calibration_targets_vintage2.json"
+    )
+    raw = ARTIFACT.read_bytes()
+    calls = []
+
+    def fake_run(args, **kwargs):
+        calls.append((args, kwargs))
+        if args[1] == "ls-tree":
+            return SimpleNamespace(stdout=(path + "\0").encode("utf-8"))
+        assert args == ["git", "show", f"HEAD:{path}"]
+        return SimpleNamespace(stdout=raw)
+
+    monkeypatch.setattr(builder.subprocess, "run", fake_run)
+    monkeypatch.setattr(
+        builder, "OUT_PATH", tmp_path / "corrupt-worktree.json"
+    )
+    assert builder.validate_tracked_vintage_lineage()[
+        "tracked_vintage_suffixes"
+    ] == [2]
+    assert calls[0][0] == [
+        "git",
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "-z",
+        "HEAD",
+        "--",
+        "data/external",
+    ]
+    assert all("ls-files" not in call[0] for call in calls)
+    assert all(call[1]["cwd"] == builder.ROOT for call in calls)
+    assert all(call[1]["check"] is True for call in calls)
+    assert all(call[1]["capture_output"] is True for call in calls)
 
 
 @pytest.mark.parametrize(
@@ -286,7 +365,8 @@ def test__vb7_adjudication__rejects_every_committed_construction():
     adjudication = builder.vb7_adjudication()
     assert adjudication["covered_share_required_years"] == []
     assert adjudication["registration_disposition"] == (
-        "abort_no_authoritative_vintage2_or_calibration_target_specs"
+        "optional_share_absent_valid_vintage2_accepted_"
+        "targets_fail_closed_on_membership_and_registration_authority"
     )
     candidates = {
         row["candidate_id"]: row
