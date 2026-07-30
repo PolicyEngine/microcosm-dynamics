@@ -8609,7 +8609,7 @@ necessarily bind the version-2 array. The V-B7 spec has:
 {
   "claim_id": "V-B7",
   "verification_class": "optional_target_source",
-  "claim_subject": "SSA literal as_published covered-worker-share source",
+  "claim_subject": "Literal SSA covered-worker-share publication cells, table, vintage, annual definition, numerator, denominator, subset relation, duplicate-worker treatment, zero rule, timing, unit, geography, and universe",
   "affected_inventory_keys": [],
   "required_authority_roles": [
     "optional_ssa_literal_covered_worker_share_source"
@@ -8622,15 +8622,53 @@ necessarily bind the version-2 array. The V-B7 spec has:
 }
 ```
 
-For V-B7, an `authority_absent/pass` result is valid if and only if
-`authority_input_ids` is empty; the complete §15.3 optional object
-deep-equals the immutable empty failure state; and
-`optional_consequence_specs_sha256` equals the SHA-256 of that canonical
-object. A `verified/pass` result requires nonempty authority IDs and a
-fully valid `source_verified_not_target_bound` optional block; its optional-
-consequence hash is null. `authority_conflict` is always `fail`. A missing,
-extra, partial, differently reasoned, or source-available/target-active row
-aborts. The other eight result laws are unchanged.
+The V-B7 result has exactly the seven v1 result fields in v1 order. In both
+accepted branches, `claim_id` is `V-B7`;
+`affected_inventory_keyset_sha256` is
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`,
+the SHA-256 of `canonical_json_bytes([])`; `governing_rule_ids` is exactly
+`["literal_as_published_ssa_covered_worker_share_cells_v1"]`; and `status` is
+`pass`.
+
+The exact absent branch is:
+
+```json
+{
+  "claim_id": "V-B7",
+  "authority_input_ids": [],
+  "affected_inventory_keyset_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "governing_rule_ids": [
+    "literal_as_published_ssa_covered_worker_share_cells_v1"
+  ],
+  "verification_status": "authority_absent",
+  "optional_consequence_specs_sha256": "5d5f0713c7febca36e371e811d87ac9b93d7950630d1c13fceddd50a0286e657",
+  "status": "pass"
+}
+```
+
+The nonnull consequence digest is exactly the SHA-256 of
+`canonical_json_bytes` applied to §15.3's immutable vintage-2
+`optional_covered_share` object. That object must deep-equal the registered
+artifact block.
+
+In the verified branch, `verification_status` is `verified`,
+`optional_consequence_specs_sha256` is JSON null, and
+`authority_input_ids` is the ordered nonempty unique array of registered
+inputs with role `optional_ssa_literal_covered_worker_share_source`, one per
+optional manifest object in manifest order. Each ID resolves to exactly that
+object's committed path and physical digest; shared-physical-document aliases
+obey §15.3's exact-match law. The optional block must be fully valid with
+`status: source_verified_not_target_bound`; its observation/source closure
+must resolve to exactly those authority IDs, with no missing or unrelated
+authority. Arbitrary nonempty IDs cannot pass.
+
+For `authority_conflict`, the row retains the actual ordered attempted
+authority IDs, the same empty affected-key digest and governing-rule array,
+uses `verification_status: authority_conflict`,
+`optional_consequence_specs_sha256: null`, and `status: fail`. A missing,
+extra, partial, differently reasoned, unrelated-authority, or
+source-available/target-active row aborts. The other eight result laws are
+unchanged.
 
 The §4.2 crosswalk's `rule_registry_identities` row points to
 `verification_claim_specs.v2`; the structural-absence paragraph's reference
@@ -8661,31 +8699,43 @@ the third class permitted only for V-B7; all nine rows exact-match
 
 Base §7.4's numeric scalar cannot consume a family that no longer exists.
 The operative registry is therefore `sensitivity_specs.v2`, still a
-one-object ordered array with the exact 13-key object shape, but with
-`sensitivity_id: aggregate_share_scale_sensitivity_v2`. Its label is
-`aggregate-scaled-labor-income-proxy-unavailable-source-absent`;
-`input_selector` is `optional_covered_share.status`;
-`scalar_selector` is `unavailable_no_literal_share_cell`;
-`reference_era_specs` remains `candidate_reference_era_specs.v1`;
-`year_source_class_rule` remains the exact §4.2 map; `pre_2015_rule`,
-`diagnostic_proxy_gap_rule`, and `post_2014_rule` are respectively
-`not_computed_optional_covered_share_source_absent`,
-`not_read_optional_covered_share_source_absent`, and
-`not_carried_optional_covered_share_source_absent`; `stratum_id` remains
-`overall`; `statistic` remains `survey_weighted_total_draw_summary`;
-`aggregation_rule` is `not_applicable_source_absent`; and the original
-`allowed_outputs` and `forbidden_uses` arrays remain exact.
+one-object ordered array with the exact 14-key object shape. Its exact values
+are:
+
+| Key | Amendment-1 value |
+|---|---|
+| `sensitivity_id` | `aggregate_share_scale_sensitivity_v2` |
+| `label` | `aggregate-scaled-labor-income-proxy-unavailable-not-target-bound` |
+| `input_selector` | `optional_covered_share.status` |
+| `scalar_selector` | `no_numeric_scalar_optional_source_not_target_bound` |
+| `reference_era_specs` | Exact deep copy of `candidate_reference_era_specs.v1`. |
+| `year_source_class_rule` | Exact base §4.2 map. |
+| `pre_2015_rule` | `not_computed_optional_covered_share_not_target_bound` |
+| `diagnostic_proxy_gap_rule` | `not_read_optional_covered_share_not_target_bound` |
+| `post_2014_rule` | `not_carried_optional_covered_share_not_target_bound` |
+| `stratum_id` | `overall` |
+| `statistic` | `survey_weighted_total_draw_summary` |
+| `aggregation_rule` | `not_applicable_optional_source_not_target_bound` |
+| `allowed_outputs` | `["before_context_results"]` |
+| `forbidden_uses` | `["careers","AIME","PIA","production_revenue","candidate_selection","tolerance_adjudication","label_certificate","held_out_claim"]` |
 
 The coordinator still expands every expected Option-C
-`annual_provenance_context_expansion` coordinate so absence cannot shrink
-the result domain. Every row has `observation_count: 0`, null `mean` and
-`sample_sd`, `status: fail`, and the exact
-`reason_code: optional_covered_share_source_absent`. That reason takes
-precedence over `missing_option_c_diagnostic_proxy` and
-`not_applicable_empty_stratum`; no raw proxy, optional source value, B1
+`annual_provenance_context_expansion` coordinate so either optional-source
+state cannot shrink the result domain. Every row has
+`observation_count: 0`, null `mean` and `sample_sd`, and `status: fail`.
+Its exact reason is state-conditional:
+
+- `unavailable_source_absent` maps to
+  `reason_code: optional_covered_share_source_absent`; and
+- `source_verified_not_target_bound` maps to
+  `reason_code: optional_covered_share_source_verified_not_target_bound`.
+
+Those are the only two v2 reason branches and respectively take precedence
+over `missing_option_c_diagnostic_proxy` and
+`not_applicable_empty_stratum`. No raw proxy, optional source value, B1
 percentage, B1/IV.B4 quotient, B10/B12 quotient, carry scalar, or substitute
-is read or computed. These expected failure rows remain only in the
-`option_c_sensitivity` branch of `before_context_results`, remain
+is read or computed in either branch. These expected failure rows remain only
+in the `option_c_sensitivity` branch of `before_context_results`, remain
 diagnostic-only, and cannot fail or rescue a candidate, gate, certificate,
 or publication.
 
@@ -8695,7 +8745,8 @@ language in §8.2 and the result contract. It preserves their domain,
 coordinate, sandbox, separation, circularity, ordering, and forbidden-use
 laws. A future numeric Option C requires a new sensitivity version in the
 same future amendment that decides whether and how any source-verified
-optional block may be used; source arrival alone does not change v2.
+optional block may be used; the source-only transition changes only the
+typed reason branch and does not change v2.
 
 Because the §8.2 incidence diagnostic definition and the Option-C
 before-context branch change, the operative empirical registry is
@@ -8713,26 +8764,64 @@ The complete changed-version map is:
 | Historical literal | Amendment-1 literal |
 |---|---|
 | `ssa_covered_earnings_calibration_targets.v1` (schema) | `ssa_covered_earnings_calibration_targets.v2` |
+| `ledger_row_schema_specs.v1` | `ledger_row_schema_specs.v2` |
+| `benefit_gap_row_schema_specs.v1` | `benefit_gap_row_schema_specs.v2` |
+| `psid_covered_earnings_crosswalk.v1` | `psid_covered_earnings_crosswalk.v2` |
 | `calibration_target_specs.v2` | `calibration_target_specs.v3` |
+| `candidate_specs.v1` | `candidate_specs.v2` |
 | `fit_selection_cell_identity.v1` | `fit_selection_cell_identity.v2` |
 | `selection_spec.v1` | `selection_spec.v2` |
+| `draw_spec.v1` | `draw_spec.v2` |
 | `verification_claim_specs.v1` | `verification_claim_specs.v2` |
 | `verification_claim_results.v1` | `verification_claim_results.v2` |
 | `sensitivity_specs.v1` | `sensitivity_specs.v2` |
 | `evaluation_specs.v1` | `evaluation_specs.v2` |
 | `heldout_noninterference_specs.v1` | `heldout_noninterference_specs.v2` |
+| `covered_earnings_correction_evaluation_configuration.v2` | `covered_earnings_correction_evaluation_configuration.v3` |
+
+`psid_covered_earnings_crosswalk.v2` has the exact ten-key shape,
+component rows, inventory binding, canonical order, and integrity law of v1.
+Both leading literals become `psid_covered_earnings_crosswalk.v2`, and its
+ordered `rule_registry_identities` member names and hashes
+`verification_claim_specs.v2`; every other member is unchanged.
+
+`draw_spec.v2` has the exact ten-key shape and all draw indices, identity,
+namespace, generator, CDF, dependence, and forbidden-stream values of v1.
+Its schema literal is `draw_spec.v2`, and its metric-unit-family and stability
+rows expand over `evaluation_specs.v2` rather than v1. The amended incidence
+rows are assigned once to the `share` unit family with
+`stability_family: not_applicable`; no metric is omitted or multiply
+assigned.
+
+`covered_earnings_correction_evaluation_configuration.v3` has exactly the
+same 47 top-level keys and nested shapes as v2. Its schema literal is v3; its
+four-key `design` member has the exact §15.8 values, including integer
+`revision: 3`; `psid_crosswalk_input.schema_version` is v2;
+`calibration_target_input.schema_version` is v2; and every frozen-registry
+member is an exact registered deep copy of the amendment-1 version in the
+table above. In particular it accepts only
+`ledger_row_schema_specs.v2`, `calibration_target_specs.v3`,
+`candidate_specs.v2`, `selection_spec.v2`, `draw_spec.v2`,
+`verification_claim_specs.v2`, `verification_claim_results.v2`,
+`heldout_noninterference_specs.v2`, `evaluation_specs.v2`, and
+`sensitivity_specs.v2`. A v2 configuration literal, integer design revision
+2, predecessor crosswalk/target input schema, or predecessor child registry
+aborts.
 
 `full_calibration_evaluation_provenance.v1`,
-`covered_earnings_correction_evaluation_configuration.v2`,
 `candidate_reference_era_specs.v1`, the physical/alias/arithmetic registry
-schemas, `gate_specs.v3`, and every unchanged wrapper schema retain their
-literal versions because their shapes and meanings do not change. New
-instances must bind the amendment-1 child identities and hashes, the
-amendment ratification commit, and a fresh registration. In particular,
+schemas, `consumer_semantic_recipe_specs.v1`, `gate_specs.v3`, the primary and
+sidecar schemas, and every other unchanged wrapper schema retain their
+literal versions because their shapes and generic derivation laws do not
+change. New instances must bind the amendment-1 child identities and hashes,
+the amendment ratification commit, and a fresh registration. In particular,
 `full_calibration_evaluation_provenance.v1` embeds the v2 source-artifact
 schema, v3 target registry, v2 verification/evaluation/sensitivity
 registries, and their exact full-provenance hashes; retaining its envelope
-version does not permit a predecessor child.
+version does not permit a predecessor child. The reconstructed
+`trusted_consumer_semantic_authority.v1` likewise binds the v2 ledger/gap,
+draw, and evaluation registries even though its generic derived-object schema
+remains v1.
 
 Every base clause whose domain is defined as “the §6.2 family order,” “one
 row per target spec,” “complete target registry,” or equivalent now expands
@@ -8781,16 +8870,24 @@ base clauses are also expressly re-pointed:
 
 | Base line(s) | Dependent replacement |
 |---|---|
+| 182–203, 2982–2989, 3248, 3283 | The changed field-definition bytes and dependent base-row hash are exactly `ledger_row_schema_specs.v2` and `benefit_gap_row_schema_specs.v2` under §§15.4 and 15.6.3. |
 | 643–693, 951, 1109, 1294, 4108, 5704–5709, 7933–7938 | Verification-class/spec/result/configuration/checklist cascade is exactly §15.6.1; nine-row cardinality remains. |
+| 939–957 | The crosswalk schema/identity and its verification-registry member become `psid_covered_earnings_crosswalk.v2` and `verification_claim_specs.v2` under §15.6.3. |
+| 1598–1608 | `candidate_specs.v2` retains the three candidates but projects `model_target_selectors` to §15.5's 14-family v3 registry with no covered-share target selector. |
+| 1731–1752, 3251, 3396 | `draw_spec.v2` expands exactly over `evaluation_specs.v2`; amended analytic-incidence rows use the share family and no correction-draw stability test. |
+| 1776–1788 | Replay prediction/loss arrays use the complete amended model-choice target order; no removed-share position or optional-source-derived position remains. |
+| 1811–1816 | G14 holds §15.5's exact target coefficients and normalized objective weights unchanged under the common survey-weight multiplier. |
 | 1863, 2158–2167, 2266–2279, 2307–2359, 2415–2440 | V-B7 minimums, five-family language, target table/order, dependency law, and model-choice identity become §§15.3–15.5's optional block, four active families, 14-row v3 order, and v2 identity. |
-| 2420–2422, 2557, 7963–7966, 8079 | Every `calibration_target_specs.v2` echo means `calibration_target_specs.v3`. |
+| 2420–2422, 2557, 5671–5676, 7963–7966, 8079 | Every target-registry/configuration echo means `calibration_target_specs.v3`; configuration also exact-binds every other amendment-1 child version in §15.6.3. |
 | 2426, 2484, 2752, 2771, 6159, 7922, 8137 | Every `fit_selection_cell_identity.v1` echo means `fit_selection_cell_identity.v2`. |
 | 2520, 6106, 6174–6177, 6710 | The full-provenance envelope remains v1 but binds the new child versions and empty optional-state hash under §15.6.3. |
 | 2550–2598, 6478 | G21's target/value domain and fixture use `heldout_noninterference_specs.v2`; the empty optional block creates no target mutation row. |
 | 2781–2828 | Objective prose and `selection_spec.v1` are replaced by §15.5 and `selection_spec.v2`. |
 | 33–34, 917–918, 2777–2778, 2860–2922, 4092–4097, 5005–5006, 5042–5054, 5125–5126, 6000–6006, 6578–6607, 7980–7983 | Every Option-C charter, source-class, isolation, schema, publication, expansion, circularity, ceremony, result, and checklist reference means §15.6.2's v2 typed unavailable branch. |
-| 1750, 3251, 3396, 5008, 5059, 6543–6544 | Unprefixed `evaluation_specs.v1` references mean `evaluation_specs.v2`; `trusted_consumer_evaluation_specs.v1` is unchanged. |
-| 2169–2190, 2518–2538, 4086–4091, 4120–4126, 4813–4821, 6158–6182, 6311–6335, 6608 onward | Target row shape, provenance, objective-bit gates, noninterference, result order/cardinality, and trace domains derive only from §15.5's 14-family v3 registry. |
+| 5008, 5059, 6543–6544 | Unprefixed `evaluation_specs.v1` references mean `evaluation_specs.v2`; `trusted_consumer_evaluation_specs.v1` is unchanged. |
+| 5527–5588 | The configuration schema becomes `covered_earnings_correction_evaluation_configuration.v3`, exact-binds the amended child versions, and uses §15.8's four-key design member with revision 3. |
+| 6446–6465 | Published weight-rescale evidence compares §15.5's exact integer target coefficients/objective identity and still requires bit-identical model-choice outputs. |
+| 2169–2190, 2518–2538, 4086–4091, 4120–4126, 4813–4821, 6158–6182, 6311–6335, 6608–6637 | Target row shape, provenance, objective-bit gates, noninterference, result order/cardinality, and trace domains derive only from §15.5's 14-family v3 registry. |
 | 2744–2759, 7170–7173, 7554–7556 | Already-viewed honesty remains controlling and is supplemented—not weakened—by §§15.2 and 15.7. |
 | 7921–7922 | The §14.1 extraction settlement is replaced by the B2/B11-required, covered-share-optional law stated in the final direct-ledger row above. |
 
