@@ -601,7 +601,7 @@ def _explicit_job_expected(
 
 
 def expected_reader_coordinates() -> tuple[tuple[Any, ...], ...]:
-    """Return the source-independent expected modern reader domain."""
+    """Return the declared physical-reader subset, never the slot universe."""
 
     rows: list[dict[str, Any]] = []
     for wave in MODERN_INTERVIEW_WAVES:

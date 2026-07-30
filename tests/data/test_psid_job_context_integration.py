@@ -27,17 +27,24 @@ def _stage_real_2003_setup(tmp_path: Path) -> Path:
 
 
 @needs_psid
-def test_real_2003_raw_context_has_exact_record_field_product():
-    frame = psid_job_context.read_family_job_context_raw(
-        2003,
-        data_dir=PSID_ROOT,
-        nrows=2,
-    )
-    assert len(frame) == 2 * 297
-    assert frame["family_record_index"].nunique() == 2
-    assert (frame.raw_token_hex.str.len() == 2 * frame.raw_width).all()
-    assert set(frame.reader_role) == {"shared", "head", "spouse"}
-    assert frame.raw_extraction_key.nunique() == 297
+def test_all_eleven_real_waves_read_declared_physical_subset():
+    waves = psid_job_context.psid_job_context_registry.MODERN_INTERVIEW_WAVES
+    assert len(waves) == 11
+    observed_counts = {}
+    for wave in waves:
+        frame = psid_job_context.read_family_job_context_raw(
+            wave,
+            data_dir=PSID_ROOT,
+            nrows=1,
+        )
+        expected_count = 297 if wave in (2003, 2005) else 281
+        observed_counts[wave] = len(frame)
+        assert len(frame) == expected_count
+        assert frame["family_record_index"].nunique() == 1
+        assert (frame.raw_token_hex.str.len() == 2 * frame.raw_width).all()
+        assert set(frame.reader_role) == {"shared", "head", "spouse"}
+        assert frame.raw_extraction_key.nunique() == expected_count
+    assert sum(observed_counts.values()) == 3_123
 
 
 @needs_psid
@@ -117,6 +124,7 @@ def test_cached_evidence_cannot_poison_er21145_with_er21146_coordinates():
             "exact_short_label": ("BC21 MAIN IND FOR JOB 1: 2000 CODE (HD)"),
             "layout_start_1indexed": 271,
             "layout_end_1indexed": 273,
+            "raw_width": 3,
         }
     )
 
@@ -130,6 +138,7 @@ def test_cached_evidence_cannot_poison_er21145_with_er21146_coordinates():
         (frame["reader_role"] == "head")
         & (frame["reader_job_slot"] == "job_1")
     ].squeeze()
+    assert actual["reader_field_id"] == "occupation_raw"
     assert actual["raw_field_id"] == "ER21145"
     assert actual["exact_short_label"] == (
         "BC20 MAIN OCC FOR JOB 1: 2000 CODE (HD)"
@@ -138,6 +147,7 @@ def test_cached_evidence_cannot_poison_er21145_with_er21146_coordinates():
         actual["layout_start_1indexed"],
         actual["layout_end_1indexed"],
     ) == (268, 270)
+    assert actual["raw_token_hex"] == "202030"
 
 
 @needs_psid

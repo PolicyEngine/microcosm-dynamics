@@ -3,8 +3,8 @@
 ## State
 
 Implementation is in progress on `claude/ce-psid-inventory`. The referee
-verdict is `SHIP WITH EDITS`; items 1 through 4 are implemented and under
-verification.
+verdict is `SHIP WITH EDITS`; all five required-before-merge items are
+implemented and under verification.
 
 ## Done
 
@@ -34,9 +34,18 @@ verification.
   format-document identities.
 - Added RP, spouse, enrollment, parser-grammar, fail-close, nested-integrity,
   and 210-of-281 modern-reader map-coverage tests.
+- Renamed the 3,123-row assertion as the declared physical-reader subset and
+  explicitly distinguished it from `psid_questionnaire_slot_specs.v1`.
+- Added real default-identity reads for all eleven modern waves, a static
+  reachability proof for the four birth-identity exclusions, and a public-API
+  signature guard.
+- Person attachment now fails before joining when the raw family-interview
+  token disagrees with the typed family interview; the synthetic 7-to-9
+  mismatch is covered.
+- The exact ER21146 cache-poison regression now also pins
+  `reader_field_id=occupation_raw` and `raw_token_hex=202030`.
 
 ## Next
 
-1. Clarify the modern reader-subset test and add the remaining adversarial,
-   reachability, all-wave, and person-attachment assertions.
-2. Run Black and the relevant/full test suites.
+1. Run Black and the relevant/full test suites.
+2. Record the final artifact hash and test disposition.

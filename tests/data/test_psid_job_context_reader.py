@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import json
 from pathlib import Path
 
@@ -216,7 +217,9 @@ def modern_family_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return tmp_path
 
 
-def test_raw_reader_emits_complete_exact_byte_domain(modern_family_dir: Path):
+def test_raw_reader_emits_declared_physical_exact_byte_subset(
+    modern_family_dir: Path,
+):
     frame = psid_job_context.read_family_job_context_raw(
         2003,
         data_dir=modern_family_dir,
@@ -236,6 +239,18 @@ def test_raw_reader_emits_complete_exact_byte_domain(modern_family_dir: Path):
         "remuneration_type",
         "year_source_class",
     }.intersection(frame.columns)
+
+
+def test_public_reader_apis_expose_no_source_identity_bypass():
+    for function in (
+        psid_job_context.read_family_job_context_raw,
+        psid_job_context.family_job_context_panel,
+        psid_job_context.family_earnings_bundle,
+    ):
+        assert (
+            "require_dictionary_sha"
+            not in inspect.signature(function).parameters
+        )
 
 
 def test_raw_reader_preserves_spaces_and_source_widths(
@@ -292,6 +307,32 @@ def test_person_sidecar_attaches_shared_and_role_fields(
     assert not panel.duplicated(
         ["person_id", "interview_wave", "raw_extraction_key"]
     ).any()
+
+
+def test_person_attachment_rejects_raw_typed_interview_token_mismatch(
+    modern_family_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    read_family_labor = family.read_family_labor
+
+    def mismatched_family_labor(*args, **kwargs):
+        frame = read_family_labor(*args, **kwargs).copy()
+        frame.loc[0, "interview"] = 9
+        return frame
+
+    monkeypatch.setattr(
+        family,
+        "read_family_labor",
+        mismatched_family_labor,
+    )
+    with pytest.raises(
+        psid_job_context.RawJobContextReadError,
+        match="raw/typed family interview token mismatch",
+    ):
+        psid_job_context.family_job_context_panel(
+            waves=(2003,),
+            data_dir=modern_family_dir,
+        )
 
 
 def test_bundle_keeps_earnings_and_context_as_separate_relations(

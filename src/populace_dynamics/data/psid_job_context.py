@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections.abc import Mapping, Sequence
 from functools import lru_cache
 from pathlib import Path
@@ -504,6 +505,59 @@ def _role_people(
     return people
 
 
+def _validate_family_interview_token_agreement(
+    wave: int,
+    raw: pd.DataFrame,
+) -> None:
+    attachments = raw[
+        [
+            "family_record_index",
+            "family_interview_raw_token_hex",
+            "interview",
+        ]
+    ].drop_duplicates()
+    if attachments["family_record_index"].duplicated().any():
+        raise RawJobContextReadError(
+            f"wave {wave}: inconsistent family interview attachment tokens"
+        )
+    for row in attachments.itertuples(index=False):
+        try:
+            token = bytes.fromhex(row.family_interview_raw_token_hex)
+            token_text = token.decode("ascii")
+        except (TypeError, ValueError, UnicodeDecodeError) as error:
+            raise RawJobContextReadError(
+                f"wave {wave}, family record {row.family_record_index}: "
+                "family interview raw token is not canonical ASCII hex"
+            ) from error
+        if re.fullmatch(r" *[0-9]+", token_text) is None:
+            raise RawJobContextReadError(
+                f"wave {wave}, family record {row.family_record_index}: "
+                f"family interview raw token is not numeric: {token_text!r}"
+            )
+        if pd.isna(row.interview):
+            raise RawJobContextReadError(
+                f"wave {wave}, family record {row.family_record_index}: "
+                "typed family interview is missing"
+            )
+        raw_interview = int(token_text)
+        try:
+            typed_interview = int(row.interview)
+        except (TypeError, ValueError, OverflowError) as error:
+            raise RawJobContextReadError(
+                f"wave {wave}, family record {row.family_record_index}: "
+                f"typed family interview is invalid: {row.interview!r}"
+            ) from error
+        if (
+            row.interview != typed_interview
+            or raw_interview != typed_interview
+        ):
+            raise RawJobContextReadError(
+                f"wave {wave}, family record {row.family_record_index}: "
+                "raw/typed family interview token mismatch; "
+                f"raw={token_text!r}, typed={row.interview!r}"
+            )
+
+
 def _empty_person_context_frame() -> pd.DataFrame:
     return pd.DataFrame(columns=list(PERSON_CONTEXT_COLUMNS))
 
@@ -585,6 +639,7 @@ def family_job_context_panel(
             how="left",
             validate="many_to_one",
         )
+        _validate_family_interview_token_agreement(wave, raw)
         wave_people = demo[demo["period"] == wave]
         for role in ("head", "spouse"):
             people = _role_people(wave_people, wave, role)

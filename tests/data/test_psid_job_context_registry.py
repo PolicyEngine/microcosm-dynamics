@@ -74,8 +74,14 @@ def test_registry_identity_and_independent_domain_are_exact(evidence):
     )
 
 
-def test_each_wave_has_complete_shared_role_and_job_domains(evidence):
+def test_each_wave_has_declared_physical_reader_role_and_job_subset(evidence):
     _, _, artifact = evidence
+    assert (
+        artifact["artifact_id"]
+        == "psid_modern_job_context_raw_extraction_specs.v1"
+    )
+    assert artifact["authority_scope"] == "physical_extraction_only"
+    assert artifact["artifact_id"] != "psid_questionnaire_slot_specs.v1"
     by_wave = Counter(row["interview_wave"] for row in artifact["rows"])
     assert by_wave == {
         wave: 297 if wave in (2003, 2005) else 281
