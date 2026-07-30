@@ -10,6 +10,7 @@ trimmed, coerced, classified, or interpreted as missing.
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import re
 from collections.abc import Mapping, Sequence
@@ -24,6 +25,9 @@ from populace_dynamics.data import (
     psid,
     psid_job_context_registry,
 )
+
+_SPS_COLSPEC_RE = re.compile(r"(\S+)\s+(\d+)\s*-\s*(\d+)")
+_SPS_LABEL_RE = re.compile(r'^\s*(\S+)\s+"([^"]*)"', re.MULTILINE)
 
 RAW_CONTEXT_COLUMNS: tuple[str, ...] = (
     "family_record_index",
@@ -117,23 +121,11 @@ def _load_evidence_cached(
     return registry_bytes, audit_bytes
 
 
-def load_raw_extraction_evidence(
-    *,
-    registry_path: Path | None = None,
-    dictionary_audit_path: Path | None = None,
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Load and independently validate the two committed registry artifacts."""
+def load_raw_extraction_evidence() -> tuple[dict[str, Any], dict[str, Any]]:
+    """Load fresh objects from the two committed registry artifacts."""
 
-    registry_file = (
-        default_registry_path()
-        if registry_path is None
-        else Path(registry_path)
-    ).resolve()
-    audit_file = (
-        default_dictionary_audit_path()
-        if dictionary_audit_path is None
-        else Path(dictionary_audit_path)
-    ).resolve()
+    registry_file = default_registry_path().resolve()
+    audit_file = default_dictionary_audit_path().resolve()
     registry_bytes, audit_bytes = _load_evidence_cached(
         str(registry_file),
         str(audit_file),
@@ -224,9 +216,10 @@ def _authority_row(
     return authority_rows[0]
 
 
-def _validate_authority_file(
+def _validate_authority_snapshot(
     wave: int,
     source_path: Path,
+    source_bytes: bytes,
     authority: Mapping[str, Any],
     description: str,
 ) -> None:
@@ -236,12 +229,8 @@ def _validate_authority_file(
             f"wave {wave}: staged {description} source path drift; "
             f"{observed_path!r} != {authority['path']!r}"
         )
-    observed_size = source_path.stat().st_size
-    digest = hashlib.sha256()
-    with source_path.open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    observed_sha256 = digest.hexdigest()
+    observed_size = len(source_bytes)
+    observed_sha256 = hashlib.sha256(source_bytes).hexdigest()
     if (
         observed_size != authority["size_bytes"]
         or observed_sha256 != authority["sha256"]
@@ -257,40 +246,115 @@ def _validate_authority_file(
 def _validate_staged_source_identity(
     wave: int,
     setup_path: Path,
+    setup_bytes: bytes,
     text_path: Path,
+    text_bytes: bytes,
     dictionary_audit: Mapping[str, Any],
 ) -> None:
-    """Validate all staged source identities before parsing or slicing."""
+    """Validate the immutable snapshots used for parsing and slicing."""
 
-    _validate_authority_file(
+    _validate_authority_snapshot(
         wave,
         setup_path,
+        setup_bytes,
         _authority_row(dictionary_audit, wave, "spss_setup"),
         "SPSS dictionary",
     )
-    _validate_authority_file(
+    _validate_authority_snapshot(
         wave,
         text_path,
+        text_bytes,
         _authority_row(dictionary_audit, wave, "raw_fixed_width"),
         "raw fixed-width",
     )
 
 
-def _validate_staged_setup(
+def _load_validated_staged_source_snapshots(
     wave: int,
     setup_path: Path,
     text_path: Path,
-    specs: Sequence[Mapping[str, Any]],
-    interview_spec: Mapping[str, Any],
     dictionary_audit: Mapping[str, Any],
-) -> int:
+) -> tuple[bytes, bytes]:
+    setup_bytes = setup_path.read_bytes()
+    text_bytes = text_path.read_bytes()
     _validate_staged_source_identity(
         wave,
         setup_path,
+        setup_bytes,
         text_path,
+        text_bytes,
         dictionary_audit,
     )
-    layout = psid.parse_sps_layout(setup_path)
+    return setup_bytes, text_bytes
+
+
+def _parse_staged_setup_snapshot(
+    wave: int,
+    setup_path: Path,
+    setup_bytes: bytes,
+) -> tuple[pd.DataFrame, dict[str, str]]:
+    text = setup_bytes.decode(errors="replace")
+    layout_match = re.search(
+        r"DATA LIST\b.*?/(.*?)\n\s*\.\s*\n",
+        text,
+        re.DOTALL,
+    )
+    if layout_match is None:
+        raise RawJobContextReadError(
+            f"wave {wave}: no DATA LIST block in {setup_path}"
+        )
+    fields = _SPS_COLSPEC_RE.findall(layout_match.group(1))
+    if not fields:
+        raise RawJobContextReadError(
+            f"wave {wave}: empty DATA LIST block in {setup_path}"
+        )
+    names = [name for name, _, _ in fields]
+    starts = [int(start) for _, start, _ in fields]
+    ends = [int(end) for _, _, end in fields]
+    layout = pd.DataFrame(
+        {
+            "name": names,
+            "start": starts,
+            "end": ends,
+            "width": [
+                end - start + 1
+                for start, end in zip(starts, ends, strict=True)
+            ],
+        }
+    )
+
+    label_match = re.search(
+        r"VARIABLE LABELS\s*\n(.*?)\n\s*\.\s*\n",
+        text,
+        re.DOTALL,
+    )
+    if label_match is None:
+        raise RawJobContextReadError(
+            f"wave {wave}: no VARIABLE LABELS block in {setup_path}"
+        )
+    labels = {
+        name: label.strip()
+        for name, label in _SPS_LABEL_RE.findall(label_match.group(1))
+    }
+    if not labels:
+        raise RawJobContextReadError(
+            f"wave {wave}: empty VARIABLE LABELS block in {setup_path}"
+        )
+    return layout, labels
+
+
+def _validate_staged_setup(
+    wave: int,
+    setup_path: Path,
+    setup_bytes: bytes,
+    specs: Sequence[Mapping[str, Any]],
+    interview_spec: Mapping[str, Any],
+) -> int:
+    layout, labels = _parse_staged_setup_snapshot(
+        wave,
+        setup_path,
+        setup_bytes,
+    )
     if layout["name"].duplicated().any():
         duplicates = sorted(
             layout.loc[layout["name"].duplicated(keep=False), "name"].unique()
@@ -299,7 +363,6 @@ def _validate_staged_setup(
             f"wave {wave}: duplicate staged layout fields {duplicates[:4]}"
         )
     layout_by_name = layout.set_index("name")
-    labels = psid.parse_sps_labels(setup_path)
     validate_specs = list(specs)
     if interview_spec["raw_extraction_key"] not in {
         row["raw_extraction_key"] for row in validate_specs
@@ -380,8 +443,6 @@ def read_family_job_context_raw(
     data_dir: Path | None = None,
     nrows: int | None = None,
     reader_field_ids: Sequence[str] | None = None,
-    registry_path: Path | None = None,
-    dictionary_audit_path: Path | None = None,
 ) -> pd.DataFrame:
     """Read one family wave's exact raw job-context tokens.
 
@@ -392,23 +453,25 @@ def read_family_job_context_raw(
     """
 
     row_limit = _validate_nrows(nrows)
-    registry, dictionary_audit = load_raw_extraction_evidence(
-        registry_path=registry_path,
-        dictionary_audit_path=dictionary_audit_path,
-    )
+    registry, dictionary_audit = load_raw_extraction_evidence()
     specs, interview_spec = _wave_specs(
         registry,
         wave,
         reader_field_ids,
     )
     setup_path, text_path = _family_paths(wave, data_dir)
-    record_width = _validate_staged_setup(
+    setup_bytes, text_bytes = _load_validated_staged_source_snapshots(
         wave,
         setup_path,
         text_path,
+        dictionary_audit,
+    )
+    record_width = _validate_staged_setup(
+        wave,
+        setup_path,
+        setup_bytes,
         specs,
         interview_spec,
-        dictionary_audit,
     )
     if not specs or row_limit == 0:
         return _empty_raw_context_frame()
@@ -416,7 +479,7 @@ def read_family_job_context_raw(
     output: dict[str, list[Any]] = {
         column: [] for column in RAW_CONTEXT_COLUMNS
     }
-    with text_path.open("rb") as source:
+    with io.BytesIO(text_bytes) as source:
         for family_record_index, line in enumerate(source):
             if row_limit is not None and family_record_index >= row_limit:
                 break
@@ -594,8 +657,6 @@ def family_job_context_panel(
     family_nrows: int | None = None,
     individual_nrows: int | None = None,
     reader_field_ids: Sequence[str] | None = None,
-    registry_path: Path | None = None,
-    dictionary_audit_path: Path | None = None,
 ) -> pd.DataFrame:
     """Attach the raw family job-context relation to head/spouse persons.
 
@@ -626,10 +687,7 @@ def family_job_context_panel(
         max_period=max(use_waves),
     )
     demo = demo[demo["period"].isin(use_waves)]
-    registry, _ = load_raw_extraction_evidence(
-        registry_path=registry_path,
-        dictionary_audit_path=dictionary_audit_path,
-    )
+    registry, _ = load_raw_extraction_evidence()
     registry_ordinal = {
         row["raw_extraction_key"]: ordinal
         for ordinal, row in enumerate(registry["rows"])
@@ -642,8 +700,6 @@ def family_job_context_panel(
             data_dir=data_dir,
             nrows=family_nrows,
             reader_field_ids=reader_field_ids,
-            registry_path=registry_path,
-            dictionary_audit_path=dictionary_audit_path,
         )
         if raw.empty:
             continue

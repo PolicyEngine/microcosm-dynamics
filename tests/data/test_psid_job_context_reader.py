@@ -242,15 +242,52 @@ def test_raw_reader_emits_declared_physical_exact_byte_subset(
 
 
 def test_public_reader_apis_expose_no_source_identity_bypass():
-    for function in (
+    forbidden_parameters = {
+        "require_dictionary_sha",
+        "registry_path",
+        "dictionary_audit_path",
+    }
+    public_functions = (
+        psid_job_context.load_raw_extraction_evidence,
         psid_job_context.read_family_job_context_raw,
         psid_job_context.family_job_context_panel,
         psid_job_context.family_earnings_bundle,
-    ):
-        assert (
-            "require_dictionary_sha"
-            not in inspect.signature(function).parameters
+    )
+    for function in public_functions:
+        assert forbidden_parameters.isdisjoint(
+            inspect.signature(function).parameters
         )
+
+
+def test_reader_uses_one_immutable_source_snapshot(
+    modern_family_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    raw_path = modern_family_dir / "family" / "2003" / "FAM2003ER.txt"
+    setup_path = modern_family_dir / "family" / "2003" / "FAM2003ER.sps"
+    parse_snapshot = psid_job_context._parse_staged_setup_snapshot
+
+    def poison_staged_paths(*args, **kwargs):
+        raw_path.write_bytes(b"poisoned after snapshot\n")
+        setup_path.write_text("poisoned after snapshot", encoding="utf-8")
+        return parse_snapshot(*args, **kwargs)
+
+    monkeypatch.setattr(
+        psid_job_context,
+        "_parse_staged_setup_snapshot",
+        poison_staged_paths,
+    )
+    frame = psid_job_context.read_family_job_context_raw(
+        2003,
+        data_dir=modern_family_dir,
+        nrows=1,
+        reader_field_ids=("occupation_raw",),
+    )
+    occupation = frame[
+        (frame["reader_role"] == "head")
+        & (frame["reader_job_slot"] == "job_1")
+    ].squeeze()
+    assert occupation["raw_token_hex"] == b"123".hex()
 
 
 def test_raw_reader_preserves_spaces_and_source_widths(

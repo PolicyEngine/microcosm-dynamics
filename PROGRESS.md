@@ -18,10 +18,15 @@ implemented and under verification.
   ER21146's industry coordinates before a default-SHA read.
 - Removed `require_dictionary_sha` from all public reader APIs; synthetic
   tests use only a private identity-validation seam.
+- Removed caller-supplied registry/audit paths from the public evidence and
+  reader APIs, so self-sealed alternate authority artifacts cannot bypass the
+  committed identities.
 - Registered path, size, and SHA-256 for all 43 staged raw family `.txt`
   files and made every physical-field row cite its raw source.
 - Production reads now validate both dictionary and raw-file identity before
   parsing or slicing, with same-size SHA and raw-path adversarial coverage.
+- Dictionary parsing and raw slicing now consume the same validated immutable
+  byte snapshots, closing the hash-then-reopen race.
 - `SOURCE_CONCEPT_SEAMS` rows are immutable mapping proxies, and the complete
   seam registry has an independent canonical SHA-256 checked by
   `validate_frozen_registry`.
