@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import zlib
 from pathlib import Path
 
 import pytest
@@ -19,6 +20,14 @@ ARTIFACT = (
 )
 ARTIFACT_SHA256 = (
     "fcf5f968bdf1b1120feb3e07e97dcbda3dc67d98cee270a5c594bcbf8ab02a12"
+)
+PDF_CAPTURE = (
+    ROOT
+    / "data"
+    / "external"
+    / "snapshots"
+    / "covered_earnings_methodology_capture1"
+    / "supplement2025_4b.pdf"
 )
 
 if str(SCRIPTS) not in sys.path:
@@ -42,6 +51,9 @@ def test__adjudication__is_canonical_and_byte_reproducible():
 
 def test__adjudication__binds_every_verdict_to_exact_captured_bytes():
     value = _artifact()
+    locators_by_id = {
+        locator["locator_id"]: locator for locator in value["source_locators"]
+    }
     locator_ids = {
         locator["locator_id"] for locator in value["source_locators"]
     }
@@ -53,6 +65,87 @@ def test__adjudication__binds_every_verdict_to_exact_captured_bytes():
     for fact in value["facts"]:
         assert fact["evidence_locator_ids"]
         assert set(fact["evidence_locator_ids"]) <= locator_ids
+
+    expected_pdf_locators = {
+        "pdf_b10_title_and_all_areas_row": (
+            24,
+            "46 0 R",
+            169_638,
+            173_740,
+            "d4cf272ec1595e40e4cb31e10619d7f1a4d5ccc788f70d06c58ea968d1efca66",
+            (b"Table 4.B10",),
+        ),
+        "pdf_b10_2023_technical_notes": (
+            25,
+            "48 0 R",
+            174_071,
+            176_401,
+            "a02c9224f597e306d4ac220374fa2297c649824564fa6bc86a2ab1432b4a34f4",
+            (
+                b"Table 4.B10",
+                b"state totals and subtotals are unduplicated counts of workers",
+                b"each ty\\\rpe of employment.",
+            ),
+        ),
+        "pdf_b11_title_headers_and_early_rows": (
+            26,
+            "50 0 R",
+            176_721,
+            180_412,
+            "4ddb1cc58abcb6c0f342b56ee8b36429797bb1fe0f8829d18c5e14025d132422",
+            (b"Table 4.B11",),
+        ),
+        "pdf_b11_later_rows_and_notes": (
+            27,
+            "52 0 R",
+            180_740,
+            184_070,
+            "664050a4b71544eefef56366ee4bb1bb629383bcff365c1068e84682beda7e23",
+            (
+                b"Table 4.B11",
+                b"Workers with earnings in both wage and salary employment",
+                b"counted in each type of employment but only on)-5.9 "
+                b"(ce in the total.",
+            ),
+        ),
+    }
+    pdf_raw = PDF_CAPTURE.read_bytes()
+    for locator_id, expected in expected_pdf_locators.items():
+        page, content_object, byte_start, byte_end, range_sha256, anchors = (
+            expected
+        )
+        locator = locators_by_id[locator_id]
+        assert locator["pdf_page"] == page
+        assert locator["content_object"] == content_object
+        assert locator["byte_start"] == byte_start
+        assert locator["byte_end"] == byte_end
+        assert locator["range_sha256"] == range_sha256
+        decoded = zlib.decompress(pdf_raw[byte_start:byte_end])
+        assert all(anchor in decoded for anchor in anchors)
+
+    b12_start, b12_end = 184_687, 188_746
+    b12_sha256 = (
+        "533efd86dcdf006c01b77cd6469099d0c7cc395d2b4702ef34e9601f33ffbc12"
+    )
+    b12_bytes = pdf_raw[b12_start:b12_end]
+    assert hashlib.sha256(b12_bytes).hexdigest() == b12_sha256
+    assert b"Table 4.B12" in zlib.decompress(b12_bytes)
+    pdf_locators = [
+        locator
+        for locator in value["source_locators"]
+        if locator["location_type"]
+        == "pdf_compressed_content_stream_byte_range"
+    ]
+    assert all(
+        locator["content_object"] != "55 0 R" for locator in pdf_locators
+    )
+    assert all(
+        (locator["byte_start"], locator["byte_end"]) != (b12_start, b12_end)
+        for locator in pdf_locators
+    )
+    assert all(
+        locator["range_sha256"] != b12_sha256 for locator in pdf_locators
+    )
 
 
 def test__candidate_source_dispositions__cover_all_five_named_sources():
