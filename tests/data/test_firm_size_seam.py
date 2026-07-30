@@ -1,6 +1,6 @@
-"""The C2 firm-size seam: readers -> ``firms/banding.py``.
+"""The IC2 firm-size seam: readers -> ``firms/banding.py``.
 
-The seam Max flagged before the C1/C2 freeze (#192, #208): the
+The seam Max flagged before the IC1/IC2 freeze (#192, #208): the
 person-side readers and the target-side mapper name the same concept
 in different code spaces, so wiring one into the other without an
 adapter mis-bands silently. ``NOEMP 6`` is 1000+ while IPUMS
@@ -42,7 +42,7 @@ from .test_sipp_jobs import _write_pu_file
 # The intended bands, stated here independently of the mapper's
 # tables so that editing one of them cannot silently move the other.
 # Codes 5 (500-999) and 6 (1000+) both land in B500_PLUS: canonical
-# C2 is coarser than NOEMP above 500, by design.
+# IC2 is coarser than NOEMP above 500, by design.
 NOEMP_INTENDED: dict[int, CanonicalBand] = {
     1: CanonicalBand.LT10,
     2: CanonicalBand.B10_49,

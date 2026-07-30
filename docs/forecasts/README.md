@@ -40,3 +40,6 @@ Recomputed from resolved entries; append rows, never rewrite history.
 |----|---------------|-----|-----|----------|--------------------:|-------------|-------------|
 | 5 (superseded) | Registration 8 submitted | 2026-07-19 | 2026-07-21 | 2026-07-19 | 0 | yes | yes |
 | 6 | Registration 8 submitted | 2026-07-20 | 2026-07-22 | 2026-07-19 | -1 | yes | yes |
+| 9 | Certified projection engine (gate_m6 PASS) | 2026-07-26 | 2026-07-30 | 2026-07-24 | -2 | yes | yes |
+| 8 | First DynaSim-style SS estimates published | 2026-08-02 | 2026-08-09 | 2026-07-26 | -7 | yes | yes |
+| 10 | Anchor context report published | 2026-07-31 | 2026-08-05 | 2026-07-28 | -3 | yes | yes |

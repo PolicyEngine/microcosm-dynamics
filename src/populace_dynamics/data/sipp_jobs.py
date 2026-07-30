@@ -93,7 +93,7 @@ _EMPSIZE_CODES = frozenset(range(1, 9))
 
 #: EMPSIZE code -> canonical band-span label, straight from
 #: :func:`populace_dynamics.firms.banding.sipp_empsize_to_canonical`
-#: (the C2 seam, #192 step 2 / #208). **This is establishment size,
+#: (the IC2 seam, #192 step 2 / #208). **This is establishment size,
 #: not firm size** (#192 finding 1): SIPP's redesign dropped the
 #: all-locations question, so these labels describe the worker's
 #: location and are a proxy-chain input to firm size, never a
@@ -270,7 +270,7 @@ def read_sipp_job_months(
         self-employment/other arrangements whose establishment size
         is structurally NIU; ``firms/banding.py`` expects that mix),
         ``estab_size_band``/``estab_size_band_exact`` (the canonical
-        C2 span for that code, from ``firms/banding.py`` — NaN both
+        IC2 span for that code, from ``firms/banding.py`` — NaN both
         wherever ``empsize_code`` is NaN *and* at the -9 item-
         nonresponse sentinel, which has no band; **establishment**
         size, so not interchangeable with the ASEC reader's
@@ -470,7 +470,7 @@ def read_sipp_job_months(
                 "clwrk": clwrk,
                 "jborse": jborse,
                 "empsize_code": empsize,
-                # The C2 seam. Establishment size, not firm size —
+                # The IC2 seam. Establishment size, not firm size —
                 # see EMPSIZE_CANONICAL_SPANS. NaN where EMPSIZE is
                 # missing or the slot has no establishment.
                 "estab_size_band": empsize.map(EMPSIZE_CANONICAL_SPANS),

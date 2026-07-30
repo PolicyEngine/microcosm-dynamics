@@ -1,0 +1,5 @@
+2026-07-30T05:07:30Z 94fe0175a7de2c98087b18f1ecc22fa67ae62e7c5910725998deab0a3b64a6db 20336 glossary.html https://www.ssa.gov/policy/about/glossary.html
+2026-07-30T05:07:30Z 32048535a2baf80ff7a8f4c3c89012a51b414e3a35bafcb3510e031eec758688 257526 oasdi-reference.html https://www.ssa.gov/policy/about/oasdi-reference.html
+2026-07-30T05:07:30Z b8802cfce61af1d053830ed62c1d46559df1617c87b4264f0ec81eff5bea048a 15591 eedata2023_intro.html https://www.ssa.gov/policy/docs/statcomps/eedata_sc/2023/intro.html
+2026-07-30T05:07:30Z b02128d43ac22300f0378c1ad68deb51b2f9469734d1637213f7a830424f18c0 22700 supplement2025_highlights.html https://www.ssa.gov/policy/docs/statcomps/supplement/2025/highlights.html
+2026-07-30T05:07:30Z 6f1faedb2fdb85b775a3c70eea404a7940d8077abd196614767b44bd0bce130e 225789 supplement2025_4b.pdf https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.pdf
