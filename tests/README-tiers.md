@@ -15,7 +15,9 @@ beyond pytest's normal collection. Classification uses this precedence:
 4. `integration_psid`: all other modules that reference
    `POPULACE_DYNAMICS_PSID_DIR` or the default `~/PolicyEngine/psid-data`
    root.
-5. `artifact`: modules that read committed `runs/*.json` evidence artifacts.
+5. `artifact`: modules that read committed `runs/*.json` evidence artifacts,
+   reference committed `data/external` evidence, or import one of the
+   entry-11 source/registry modules that reads those bytes transitively.
 6. `unit`: all remaining tests.
 
 The count manifest in `tier_counts.json` is enforced during a full-suite
@@ -36,9 +38,9 @@ pytest --collect-only -q -m oracle_policyengine | tail -1
 
 | Tier | Tests at HEAD |
 |---|---:|
-| `unit` | 376 |
-| `artifact` | 1,003 |
-| `integration_psid` | 800 |
+| `unit` | 803 |
+| `artifact` | 1,953 |
+| `integration_psid` | 804 |
 | `reproduction_legacy` | 520 |
-| `oracle_policyengine` | 156 |
-| **Total** | **2,862** |
+| `oracle_policyengine` | 159 |
+| **Total** | **4,239** |
