@@ -4,7 +4,7 @@
 
 - Branch: `claude/ce-impl-extraction`
 - Baseline: `2ff590d`
-- Current phase: run the full verification matrix and tail checks.
+- Current phase: complete.
 - Constraints: use committed source bytes only; keep final registration
   fail-closed; commit each coherent edit; do not push.
 
@@ -49,10 +49,20 @@
   `4,073` tests, comprising `822` unit, `1,768` artifact, `804`
   integration-PSID, `520` legacy-reproduction, and `159`
   PolicyEngine-oracle tests.
+- Black at line length 79 leaves all six changed Python files unchanged;
+  repository-wide Ruff and `git diff --check` pass.
+- Required suites pass: four-file source/registry `153 passed`; full
+  estimates `508 passed`; complete entry-11 `130 passed`.
+- The explicit fail-closed tail passes all 13 parametrized cases, and the
+  full tier-policy manifest assertion passes against all 4,073 tests.
+- Independent review reproduced every new source and fragment hash and
+  returned APPROVE with no actionable findings.
+- Wrote the exact dispositions, verification tails, commits, and hygiene
+  result to `FINAL_REPORT.md`.
 
 ## Next
 
-1. Run Black at line length 79, the remaining required suites, tier
-   inventories, and fail-closed tail checks.
-2. Record the final disposition and exact verification results in the output
-   report.
+1. No round-3 implementation work remains.
+2. A future successful registration still requires the missing primary SSA
+   membership/share evidence and frozen model-side universe, weight, digest,
+   denominator-selector, and concordance authority.
