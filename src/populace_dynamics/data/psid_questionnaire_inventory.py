@@ -2,8 +2,10 @@
 
 This module deliberately does not import the family reader, a correction
 crosswalk, or any adjudication registry.  Its only inputs are the staged
-``.do`` and ``.sps`` dictionary files.  That separation enforces the
-independent-domain rule in covered-earnings design section 4.2.
+family source files.  The ``.do`` and ``.sps`` dictionaries establish the
+physical layout, while the raw ``.txt`` files are byte-pinned without being
+parsed.  That separation enforces the independent-domain rule in
+covered-earnings design section 4.2.
 
 The staged dictionaries pin physical fields, short labels, and fixed-width
 coordinates.  They do not contain enough evidence to ratify
@@ -300,6 +302,8 @@ def _document_row(
     data_root: Path,
     wave: int,
     dictionary_role: str,
+    *,
+    encoding: str = "windows-1252",
 ) -> dict[str, Any]:
     content = path.read_bytes()
     return {
@@ -309,7 +313,7 @@ def _document_row(
         "path": path.relative_to(data_root).as_posix(),
         "size_bytes": len(content),
         "sha256": sha256_bytes(content),
-        "encoding": "windows-1252",
+        "encoding": encoding,
     }
 
 
@@ -468,8 +472,8 @@ def build_registration_required_audit(
 ) -> dict[str, Any]:
     """Build the source-only physical-field audit.
 
-    No microdata file is opened or hashed.  The audit includes only the
-    dictionary manifest and parsed dictionary metadata.
+    Raw microdata are byte-pinned for source identity but never parsed.  All
+    physical-field metadata are derived independently from the dictionaries.
     """
 
     root = default_psid_root() if data_root is None else Path(data_root)
@@ -490,6 +494,7 @@ def build_registration_required_audit(
             )
         do_path = _single_file(directory, ".do", formats=False)
         sps_path = _single_file(directory, ".sps", formats=False)
+        raw_path = _single_file(directory, ".txt", formats=False)
         do_document = _document_row(
             do_path,
             root,
@@ -502,7 +507,14 @@ def build_registration_required_audit(
             wave,
             "spss_setup",
         )
-        manifest.extend([do_document, sps_document])
+        raw_document = _document_row(
+            raw_path,
+            root,
+            wave,
+            "raw_fixed_width",
+            encoding="binary",
+        )
+        manifest.extend([do_document, sps_document, raw_document])
         rows, missing_count, value_label_count = _compare_wave_dictionaries(
             wave,
             do_path,
@@ -517,6 +529,7 @@ def build_registration_required_audit(
         source_ids = [
             do_document["document_id"],
             sps_document["document_id"],
+            raw_document["document_id"],
         ]
         for name, start, end, numeric_format, label in rows:
             physical_fields.append(
@@ -556,6 +569,12 @@ def build_registration_required_audit(
             format_file_evidence.append(evidence)
 
     registration_items = _registration_required_items()
+    dictionary_manifest = [
+        row for row in manifest if row["dictionary_role"] != "raw_fixed_width"
+    ]
+    raw_manifest = [
+        row for row in manifest if row["dictionary_role"] == "raw_fixed_width"
+    ]
     artifact: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "artifact_id": ARTIFACT_ID,
@@ -582,9 +601,17 @@ def build_registration_required_audit(
             row[0] for row in physical_fields
         ),
         "evidence_summary": {
-            "dictionary_file_count": len(manifest),
-            "dictionary_total_size_bytes": sum(
+            "source_authority_file_count": len(manifest),
+            "source_authority_total_size_bytes": sum(
                 row["size_bytes"] for row in manifest
+            ),
+            "dictionary_file_count": len(dictionary_manifest),
+            "dictionary_total_size_bytes": sum(
+                row["size_bytes"] for row in dictionary_manifest
+            ),
+            "raw_fixed_width_file_count": len(raw_manifest),
+            "raw_fixed_width_total_size_bytes": sum(
+                row["size_bytes"] for row in raw_manifest
             ),
             "wave_field_counts": wave_field_counts,
             "main_dictionary_field_count": len(physical_fields),

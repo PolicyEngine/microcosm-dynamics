@@ -3,7 +3,8 @@
 ## State
 
 Implementation is in progress on `claude/ce-psid-inventory`. The referee
-verdict is `SHIP WITH EDITS`; item 1 is implemented and under verification.
+verdict is `SHIP WITH EDITS`; items 1 and 2 are implemented and under
+verification.
 
 ## Done
 
@@ -15,14 +16,18 @@ verdict is `SHIP WITH EDITS`; item 1 is implemented and under verification.
   fresh dictionaries for every caller.
 - Added the exact regression that poisons the 2003 job-1 occupation row with
   ER21146's industry coordinates before a default-SHA read.
+- Removed `require_dictionary_sha` from all public reader APIs; synthetic
+  tests use only a private identity-validation seam.
+- Registered path, size, and SHA-256 for all 43 staged raw family `.txt`
+  files and made every physical-field row cite its raw source.
+- Production reads now validate both dictionary and raw-file identity before
+  parsing or slicing, with same-size SHA and raw-path adversarial coverage.
 
 ## Next
 
-1. Make dictionary and raw fixed-width source identity mandatory at public
-   reader boundaries.
-2. Freeze and independently hash `SOURCE_CONCEPT_SEAMS`.
-3. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
+1. Freeze and independently hash `SOURCE_CONCEPT_SEAMS`.
+2. Preserve field-bound Stata format maps for 2021 and 2023 and rebuild the
    audit artifact.
-4. Clarify the modern reader-subset test and add the remaining adversarial,
+3. Clarify the modern reader-subset test and add the remaining adversarial,
    reachability, all-wave, and person-attachment assertions.
-5. Run Black and the relevant/full test suites.
+4. Run Black and the relevant/full test suites.

@@ -204,43 +204,91 @@ def _wave_specs(
     )
 
 
+def _authority_row(
+    dictionary_audit: Mapping[str, Any],
+    wave: int,
+    source_role: str,
+) -> Mapping[str, Any]:
+    authority_rows = [
+        row
+        for row in dictionary_audit["source_authority_manifest"]
+        if row["interview_wave"] == wave
+        and row["dictionary_role"] == source_role
+    ]
+    if len(authority_rows) != 1:
+        raise RawJobContextReadError(
+            f"wave {wave}: expected one SHA-pinned {source_role} "
+            "authority row"
+        )
+    return authority_rows[0]
+
+
+def _validate_authority_file(
+    wave: int,
+    source_path: Path,
+    authority: Mapping[str, Any],
+    description: str,
+) -> None:
+    observed_path = f"family/{wave}/{source_path.name}"
+    if authority["path"] != observed_path:
+        raise RawJobContextReadError(
+            f"wave {wave}: staged {description} source path drift; "
+            f"{observed_path!r} != {authority['path']!r}"
+        )
+    observed_size = source_path.stat().st_size
+    digest = hashlib.sha256()
+    with source_path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    observed_sha256 = digest.hexdigest()
+    if (
+        observed_size != authority["size_bytes"]
+        or observed_sha256 != authority["sha256"]
+    ):
+        raise RawJobContextReadError(
+            f"wave {wave}: staged {description} SHA/size drift; "
+            f"observed ({observed_sha256}, {observed_size}) != "
+            f"registered ({authority['sha256']}, "
+            f"{authority['size_bytes']})"
+        )
+
+
+def _validate_staged_source_identity(
+    wave: int,
+    setup_path: Path,
+    text_path: Path,
+    dictionary_audit: Mapping[str, Any],
+) -> None:
+    """Validate all staged source identities before parsing or slicing."""
+
+    _validate_authority_file(
+        wave,
+        setup_path,
+        _authority_row(dictionary_audit, wave, "spss_setup"),
+        "SPSS dictionary",
+    )
+    _validate_authority_file(
+        wave,
+        text_path,
+        _authority_row(dictionary_audit, wave, "raw_fixed_width"),
+        "raw fixed-width",
+    )
+
+
 def _validate_staged_setup(
     wave: int,
     setup_path: Path,
+    text_path: Path,
     specs: Sequence[Mapping[str, Any]],
     interview_spec: Mapping[str, Any],
     dictionary_audit: Mapping[str, Any],
-    *,
-    require_dictionary_sha: bool,
 ) -> int:
-    if not isinstance(require_dictionary_sha, bool):
-        raise RawJobContextReadError(
-            "require_dictionary_sha must be a boolean"
-        )
-    if require_dictionary_sha:
-        authority_rows = [
-            row
-            for row in dictionary_audit["source_authority_manifest"]
-            if row["interview_wave"] == wave
-            and row["dictionary_role"] == "spss_setup"
-        ]
-        if len(authority_rows) != 1:
-            raise RawJobContextReadError(
-                f"wave {wave}: expected one SHA-pinned SPSS authority row"
-            )
-        authority = authority_rows[0]
-        setup_bytes = setup_path.read_bytes()
-        observed_sha256 = hashlib.sha256(setup_bytes).hexdigest()
-        if (
-            len(setup_bytes) != authority["size_bytes"]
-            or observed_sha256 != authority["sha256"]
-        ):
-            raise RawJobContextReadError(
-                f"wave {wave}: staged SPSS dictionary SHA/size drift; "
-                f"observed ({observed_sha256}, {len(setup_bytes)}) != "
-                f"registered ({authority['sha256']}, "
-                f"{authority['size_bytes']})"
-            )
+    _validate_staged_source_identity(
+        wave,
+        setup_path,
+        text_path,
+        dictionary_audit,
+    )
     layout = psid.parse_sps_layout(setup_path)
     if layout["name"].duplicated().any():
         duplicates = sorted(
@@ -333,7 +381,6 @@ def read_family_job_context_raw(
     reader_field_ids: Sequence[str] | None = None,
     registry_path: Path | None = None,
     dictionary_audit_path: Path | None = None,
-    require_dictionary_sha: bool = True,
 ) -> pd.DataFrame:
     """Read one family wave's exact raw job-context tokens.
 
@@ -357,10 +404,10 @@ def read_family_job_context_raw(
     record_width = _validate_staged_setup(
         wave,
         setup_path,
+        text_path,
         specs,
         interview_spec,
         dictionary_audit,
-        require_dictionary_sha=require_dictionary_sha,
     )
     if not specs or row_limit == 0:
         return _empty_raw_context_frame()
@@ -470,7 +517,6 @@ def family_job_context_panel(
     reader_field_ids: Sequence[str] | None = None,
     registry_path: Path | None = None,
     dictionary_audit_path: Path | None = None,
-    require_dictionary_sha: bool = True,
 ) -> pd.DataFrame:
     """Attach the raw family job-context relation to head/spouse persons.
 
@@ -519,7 +565,6 @@ def family_job_context_panel(
             reader_field_ids=reader_field_ids,
             registry_path=registry_path,
             dictionary_audit_path=dictionary_audit_path,
-            require_dictionary_sha=require_dictionary_sha,
         )
         if raw.empty:
             continue
@@ -587,7 +632,6 @@ def family_earnings_bundle(
     waves: Sequence[int] | None = None,
     data_dir: Path | None = None,
     reader_field_ids: Sequence[str] | None = None,
-    require_dictionary_sha: bool = True,
 ) -> FamilyEarningsBundle:
     """Return unchanged earnings beside, never merged with, raw context.
 
@@ -612,6 +656,5 @@ def family_earnings_bundle(
             waves=use_waves,
             data_dir=data_dir,
             reader_field_ids=reader_field_ids,
-            require_dictionary_sha=require_dictionary_sha,
         ),
     )

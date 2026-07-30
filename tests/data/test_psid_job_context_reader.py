@@ -75,7 +75,12 @@ def _write_sps(path: Path, fields: list[dict]) -> None:
 
 
 @pytest.fixture()
-def modern_family_dir(tmp_path: Path) -> Path:
+def modern_family_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    monkeypatch.setattr(
+        psid_job_context,
+        "_validate_staged_source_identity",
+        lambda *_args: None,
+    )
     artifact = json.loads(REGISTRY_PATH.read_bytes())
     registry_rows = [
         row for row in artifact["rows"] if row["interview_wave"] == 2003
@@ -212,20 +217,10 @@ def modern_family_dir(tmp_path: Path) -> Path:
 
 
 def test_raw_reader_emits_complete_exact_byte_domain(modern_family_dir: Path):
-    with pytest.raises(
-        psid_job_context.RawJobContextReadError,
-        match="dictionary SHA/size drift",
-    ):
-        psid_job_context.read_family_job_context_raw(
-            2003,
-            data_dir=modern_family_dir,
-            nrows=1,
-        )
     frame = psid_job_context.read_family_job_context_raw(
         2003,
         data_dir=modern_family_dir,
         nrows=1,
-        require_dictionary_sha=False,
     )
     assert list(frame.columns) == list(psid_job_context.RAW_CONTEXT_COLUMNS)
     assert len(frame) == 297
@@ -250,7 +245,6 @@ def test_raw_reader_preserves_spaces_and_source_widths(
         2003,
         data_dir=modern_family_dir,
         nrows=1,
-        require_dictionary_sha=False,
     ).set_index("raw_field_id")
     assert frame.loc["ER21002", "raw_token_hex"] == b"    7".hex()
     assert frame.loc["ER21129", "raw_token_hex"] == b"01".hex()
@@ -266,7 +260,6 @@ def test_reader_field_filter_is_explicit_and_still_keeps_raw_join_key(
         2003,
         data_dir=modern_family_dir,
         reader_field_ids=("occupation_raw",),
-        require_dictionary_sha=False,
     )
     assert len(frame) == 2 * 8
     assert set(frame["reader_field_id"]) == {"occupation_raw"}
@@ -282,7 +275,6 @@ def test_person_sidecar_attaches_shared_and_role_fields(
     panel = psid_job_context.family_job_context_panel(
         waves=(2003,),
         data_dir=modern_family_dir,
-        require_dictionary_sha=False,
     )
     assert list(panel.columns) == list(psid_job_context.PERSON_CONTEXT_COLUMNS)
     assert len(panel) == 450
@@ -313,7 +305,6 @@ def test_bundle_keeps_earnings_and_context_as_separate_relations(
     bundle = psid_job_context.family_earnings_bundle(
         waves=(2003,),
         data_dir=modern_family_dir,
-        require_dictionary_sha=False,
     )
     after_bytes = bundle.earnings.to_csv(
         index=False,
@@ -374,7 +365,6 @@ def test_source_drift_fails_closed(
             2003,
             data_dir=modern_family_dir,
             nrows=1,
-            require_dictionary_sha=False,
         )
 
 

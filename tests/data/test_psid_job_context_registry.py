@@ -126,6 +126,10 @@ def test_rows_are_raw_only_and_never_claim_official_semantics(evidence):
             row["layout_end_1indexed"] - row["layout_start_1indexed"] + 1
         )
         assert row["source_document_ids"]
+        assert (
+            f"psid-family-{row['interview_wave']}-raw_fixed_width"
+            in row["source_document_ids"]
+        )
         assert row["reader_field_id"].endswith("_raw")
 
 

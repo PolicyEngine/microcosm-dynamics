@@ -33,22 +33,29 @@ def test_committed_audit_has_exact_identity_and_full_physical_domain():
     inventory.validate_integrity(artifact)
 
 
-def test_manifest_pins_only_all_staged_dictionary_files():
+def test_manifest_pins_all_staged_dictionary_and_raw_source_files():
     artifact = _artifact()
     manifest = artifact["source_authority_manifest"]
-    assert len(manifest) == 90
-    assert sum(row["size_bytes"] for row in manifest) == 24_205_059
-    assert len({row["document_id"] for row in manifest}) == 90
+    assert len(manifest) == 133
+    assert sum(row["size_bytes"] for row in manifest) == 1_404_728_442
+    assert len({row["document_id"] for row in manifest}) == 133
     assert {row["interview_wave"] for row in manifest} == set(
         inventory.INTERVIEW_WAVES
     )
     for row in manifest:
-        assert Path(row["path"]).suffix in {".do", ".sps"}
         assert row["path"].startswith("family/")
-        assert not row["path"].endswith(".txt")
         assert re.fullmatch(r"[0-9a-f]{64}", row["sha256"])
         assert row["size_bytes"] > 0
-        assert row["encoding"] == "windows-1252"
+        if row["dictionary_role"] == "raw_fixed_width":
+            assert Path(row["path"]).suffix == ".txt"
+            assert row["encoding"] == "binary"
+        else:
+            assert Path(row["path"]).suffix in {".do", ".sps"}
+            assert row["encoding"] == "windows-1252"
+    raw_rows = [
+        row for row in manifest if row["dictionary_role"] == "raw_fixed_width"
+    ]
+    assert len(raw_rows) == len(inventory.INTERVIEW_WAVES)
 
 
 def test_every_physical_field_uses_wave_minus_one_reference_year():
@@ -69,6 +76,11 @@ def test_source_evidence_records_the_exact_ratification_blockers():
     artifact = _artifact()
     summary = artifact["evidence_summary"]
     assert summary["dictionary_file_count"] == 90
+    assert summary["dictionary_total_size_bytes"] == 24_205_059
+    assert summary["raw_fixed_width_file_count"] == 43
+    assert summary["raw_fixed_width_total_size_bytes"] == 1_380_523_383
+    assert summary["source_authority_file_count"] == 133
+    assert summary["source_authority_total_size_bytes"] == 1_404_728_442
     assert summary["main_dictionary_field_count"] == 89_599
     assert summary["explicit_spss_numeric_format_count"] == 2_919
     assert summary["main_spss_missing_values_declaration_count"] == 0
