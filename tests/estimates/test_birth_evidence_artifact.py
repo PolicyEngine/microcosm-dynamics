@@ -67,6 +67,7 @@ def test_reducer_input_identity_matches_reviewed_branch():
 def test_context_report_sources_are_outside_historical_reducer_identity():
     assert reducer.POST_REVIEW_SOURCE_EXCLUSIONS == (
         Path("src/populace_dynamics/artifacts.py"),
+        Path("src/populace_dynamics/firms/targets.py"),
         Path("src/populace_dynamics/data/psid_covered_earnings_registry.py"),
         Path("src/populace_dynamics/data/psid_job_context.py"),
         Path("src/populace_dynamics/data/psid_job_context_registry.py"),
