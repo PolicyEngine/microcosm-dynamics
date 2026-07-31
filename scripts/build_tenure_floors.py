@@ -276,7 +276,9 @@ def main() -> None:
                         **source,
                         "bytes": cps_tenure._resolve_person_path(  # noqa: SLF001
                             int(source["year"]), data_dir
-                        ).stat().st_size,
+                        )
+                        .stat()
+                        .st_size,
                         "official_url": OFFICIAL_SOURCE_URL.format(
                             year=int(source["year"]),
                             yy=int(source["year"]) % 100,
