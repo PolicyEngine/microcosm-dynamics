@@ -1165,6 +1165,42 @@ def _source_locators(raw_by_id: Mapping[str, bytes]) -> list[dict[str, Any]]:
     return locators
 
 
+# Commit whose tree holds every cited repo authority exactly as
+# adjudicated; locator rows bind those bytes, not the evolving working
+# tree, so the artifact stays byte-frozen under lawful later edits.
+ADJUDICATION_SOURCE_COMMIT = "4baa94e25b284b42f966b58222807b3ea27b05c7"
+
+# Ratified documents may only grow by appendment, so their adjudicated
+# bytes must remain an exact byte prefix of the committed file.
+APPEND_ONLY_AUTHORITY_PATHS = frozenset(
+    {
+        "docs/design/covered_earnings_correction.md",
+        "docs/design/first_estimates_report.md",
+    }
+)
+
+
+def _committed_source_bytes(committed_path: str) -> bytes:
+    raw = subprocess.run(
+        ["git", "show", f"{ADJUDICATION_SOURCE_COMMIT}:{committed_path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    if committed_path in APPEND_ONLY_AUTHORITY_PATHS:
+        head = subprocess.run(
+            ["git", "show", f"HEAD:{committed_path}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        if not head.startswith(raw):
+            raise ValueError(
+                f"{committed_path} violates append-only authority prefix"
+            )
+    return raw
+
+
 def _repo_authority_locators() -> list[dict[str, Any]]:
     rows = []
     for (
@@ -1174,12 +1210,7 @@ def _repo_authority_locators() -> list[dict[str, Any]]:
         line_end,
         description,
     ) in REPO_AUTHORITY_LOCATOR_SPECS:
-        raw = subprocess.run(
-            ["git", "show", f"HEAD:{committed_path}"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-        ).stdout
+        raw = _committed_source_bytes(committed_path)
         lines = raw.splitlines(keepends=True)
         if not 1 <= line_start <= line_end <= len(lines):
             raise ValueError(
