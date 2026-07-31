@@ -1,14 +1,14 @@
 # IC3 employer gate block — thresholds, partitions, and rulings
 
 - **Design id**: `2026-07-17-ic3-employer-gate-block`
-- **Status**: **DRAFT FOR REFEREE — NOT RATIFIED. Revision 4**,
+- **Status**: **DRAFT FOR REFEREE — NOT RATIFIED. Revision 5**,
   responding to the round-1 adversarial review of 2026-07-17
   (verdict: NOT RATIFIABLE AS DRAFTED — 5 blocking, 6 should-fix).
   Blocking items B1, B3, B4, B5 and should-fix S1 are addressed.
-  The refereed block YAML now exists at
-  `docs/design/ic3_employer_gate_block_draft.yaml`, closing B2's
-  artifact-creation half. Referee verification and every unresolved
-  prerequisite remain open. §13 records every remaining
+  **B2 remains open**: the refereed block YAML is still a required
+  pre-lock artifact (§12.2a). The IC rename (#277) and its final
+  design filename are now composed here, so that YAML must use
+  `ic3` names from its first commit. §13 records every remaining
   decision and distinguishes a workstream decision from referee
   ratification. Nothing in this
   document binds until the lock ceremony flips it (§12). This document
@@ -28,19 +28,17 @@
   references #228 `f5070b4`; ADR 0004 #224 `dff73d5`; cross-wave
   evidence #235 `c686f0f`; E4/E5 registered design #236 `73213c5`;
   byte-faithful seam anchor #274 `7411d8d`; Workstream A v1 floor
-  promotion #212 `211152b`; Workstream B v1 floor promotion #223
-  `34a70fc`; controlling design #230 `037b43fa`.
+  promotion #212 `c24809b`; Workstream B v1 floor promotion #223
+  `34a70fc`.
 - **Floor-promotion readiness is not implied by composition.** #212
-  is explicitly `BLOCKED_STRICT_STAGING`: its original raw-input
-  digests and measurement environments were not recorded, pu2023 and
-  the CPS tenure extracts were unavailable in the promotion
-  environment, and the exact E9 distinct-person count is still
-  required. Its three builders must be rerun by an on-data owner,
-  every measured value reconciled, and the resulting source digests,
-  environment, and count reviewed before IC3 lock. #223 is a
-  reproducible pre-lock anchor with artifact, builder, and all six
-  input digests pinned, but remains draft pending current-head review
-  and merge. Neither composition is ratification.
+  is now a reproducible pre-lock anchor: all three builders were
+  rerun from the exact Census-hosted vintages, every previously
+  recorded measured value reproduced exactly, source-input and
+  measurement-environment sidecars were recorded, and E9 now reports
+  distinct-person counts (stay 16,286; J2J 524). #212 and #223 remain
+  draft evidence pending current-head review, approval, and merge;
+  #212 also leaves the deployment-scale conversion and threshold
+  choices to the referee. Neither composition is ratification.
 - **Available evidence pins** (branch-composition pins, not lock-time
   merge ratification):
 
@@ -53,12 +51,15 @@
   | #236 registered design | `docs/design/e4_e5_audit_manifest.md` | `d37b3ce014532e16e009cd5cf8b025601c029fd0bde48ac593c993d51025d103` | PENDING merge |
   | #274 seam anchor | `runs/seam_reconciliation_draft_v0.json` | `622ff4117a073c36698ed1e7d1828a6a0399471bfd0c06520e0da5ac2cd98e83` | PENDING promotion/merge |
   | #274 builder | `scripts/build_seam_reconciliation.py` | `61d9c99efcfdf2469caa5787499f853d0321128c56187553d5a5c87d69536f0f` | PENDING merge |
-  | #212 E4/E5 artifact | `runs/sipp_spell_floors_v1.json` | `0110366a37a46fcc12b9a5665f3e6d5ea4c99fd2cabc4bf8cfc3fa8719890faf` | BLOCKED on-data reconciliation/merge |
-  | #212 E4/E5 builder | `scripts/build_sipp_spell_floors.py` | `e869208f039a4005b78ffe27502f414f5e01775f64c64e89ffcad6effd838ffb` | BLOCKED on-data reconciliation/merge |
-  | #212 E3 artifact | `runs/tenure_floors_v1.json` | `afbbb9ba38e0c69e78d94bd854c064dfae980f398092904b87b59a526a78e015` | BLOCKED on-data reconciliation/merge |
-  | #212 E3 builder | `scripts/build_tenure_floors.py` | `a4b0434196d5e3713c6ebed3302364fb60ec24e72bb82b039eef8d3bccc6d9eb` | BLOCKED on-data reconciliation/merge |
-  | #212 E8/E9 artifact | `runs/sipp_e8_e9_floors_v1.json` | `28515717e83824056708a491b2702089cb439d5369deaff480f391c6f8862aa2` | BLOCKED on-data reconciliation/count/merge |
-  | #212 E8/E9 builder | `scripts/build_sipp_e8_e9_floors.py` | `214d8a32afacb86396151fccfa19bd76c5cfce1bddc35fd75508cbfab6d9d45b` | BLOCKED on-data reconciliation/count/merge |
+  | #212 E4/E5 artifact | `runs/sipp_spell_floors_v1.json` | `500b68034c9a301eb823e1d8f7584cf6c7654bf536247827353b0941d1d026ae` | PENDING approval/merge |
+  | #212 E4/E5 builder | `scripts/build_sipp_spell_floors.py` | `8ce7e41a9af71767672c39f7933ccde3c2eeaa0aa4f7044c5113f7430439d1dc` | PENDING approval/merge |
+  | #212 E4/E5 environment/input sidecars | `runs/sipp_spell_floors_v1.{env,inputs}.json` | `124adfc94e32c157886d40b405c4495a4e7a4e935f4bf940a551c551ca6eaba7` / `68a039b0951698b9031d8c29a064a4e2a287f2e2f54552726bf6ed502d7cbe7d` | PENDING approval/merge |
+  | #212 E3 artifact | `runs/tenure_floors_v1.json` | `08e67e5d362bbd0c1703c85fdb40624de094561f385eceb6d0a9eea4772cc6ff` | PENDING approval/merge |
+  | #212 E3 builder | `scripts/build_tenure_floors.py` | `593237bfbba31e77183a8d38bf07ae6ad77eb9392abd323ce71aecdc3e6dfb9e` | PENDING approval/merge |
+  | #212 E3 environment/input sidecars | `runs/tenure_floors_v1.{env,inputs}.json` | `68df172eb5266ba4771b7d6d8d3c0812fb6e3f2d63486b1104b886abf1e822a2` / `7e0577e3cbce04363017b8bb1c168915d887368a1cc17b57e801998faed754e3` | PENDING approval/merge |
+  | #212 E8/E9 artifact | `runs/sipp_e8_e9_floors_v1.json` | `b360f04fc785eeb11c8e77e4128bdb8a98d31501a11f048fa2df4e86b1f7e059` | PENDING approval/merge |
+  | #212 E8/E9 builder | `scripts/build_sipp_e8_e9_floors.py` | `3b2209de9b10cf680f5a074ea0c56077b03ebda68a4a614f2e20f0d0c2455272` | PENDING approval/merge |
+  | #212 E8/E9 environment/input sidecars | `runs/sipp_e8_e9_floors_v1.{env,inputs}.json` | `b206213d87d4287234d2c5f0838e3237ec7945d6ed8cc2c48db7be1f9cd52258` / `ab5486e0e4b17f881208b6108f618bc6984ed56e13604bd11206c28cbbaee019` | PENDING approval/merge |
   | #223 aggregate artifact | `runs/employer_firm_floors_v1.json` | `eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17` | PENDING approval/merge |
   | #223 aggregate builder | `scripts/build_employer_firm_floors.py` | `a748975e787f3b255df611ebcf9cb3808c7b0e88866d9aa10ebe320864900a72` | PENDING approval/merge |
 - **Authors**: joint Workstream A (@daphnehanse11) / Workstream B
@@ -129,13 +130,13 @@ statistic the threshold derives from):
 |---|---|---|---|---|---|
 | E1 | employment share by firm-size band (× sector) | SUSB 2022 | #223 `e1` | SUSB noise-flag CV bounds + BDS YoY margin floor (coarsened `20_99`) | **report-only** — B1: every SUSB-derived margin is a deterministic function of a calibration target |
 | E2 | hire/sep/J2J rates by sex × age | LEHD J2J `sa` (#228) | #223 `runs/employer_firm_floors_v1.json`, `e2.by_sex_age` | ex-pandemic YoY \|log ratio\|, PENDING referee choice | **proposed gated** only after floor approval/merge |
-| E3 | tenure quantiles by age | CPS tenure supplement 2020/22/24 | #212 `runs/tenure_floors_v1.json` | **ECDF max-gap** (heaping-robust), BLOCKED on-data reconciliation | **proposed gated** only after reconciliation/approval/merge |
-| E4 | employer-retention pairs by age × sex | SIPP holdout | #212 `runs/sipp_spell_floors_v1.json`, `e4_retention_by_age_sex` | \|log rate ratio\|, BLOCKED on-data reconciliation | **proposed gated** only after reconciliation and linkage-QC prerequisite (§9) |
-| E5 | multi-window attachment runs by age | SIPP holdout | #212 `runs/sipp_spell_floors_v1.json`, `e5_runs_by_age` | \|log share ratio\|, BLOCKED on-data reconciliation | **proposed gated** only after reconciliation and linkage-QC prerequisite (§9) |
+| E3 | tenure quantiles by age | CPS tenure supplement 2020/22/24 | #212 `runs/tenure_floors_v1.json` | **ECDF max-gap** (heaping-robust), PENDING referee choice | **proposed gated** only after approval/merge |
+| E4 | employer-retention pairs by age × sex | SIPP holdout | #212 `runs/sipp_spell_floors_v1.json`, `e4_retention_by_age_sex` | \|log rate ratio\|, PENDING referee choice | **proposed gated** only after approval/merge and linkage-QC prerequisite (§9) |
+| E5 | multi-window attachment runs by age | SIPP holdout | #212 `runs/sipp_spell_floors_v1.json`, `e5_runs_by_age` | \|log share ratio\|, PENDING referee choice | **proposed gated** only after approval/merge and linkage-QC prerequisite (§9) |
 | E6 | hire/sep flow rates by firm-size (× sector) | QWI | #223 `e6_e7` | ex-pandemic YoY \|log ratio\| | **report-only** — B1: the size margin is a linear functional of the calibrated size × sector cells |
 | E7 | mean earnings (`EarnS`) by firm-size | QWI | #223 `e6_e7` | **aggregate-relative** EarnS floor | **gated** |
-| E8 | nonemployment incidence/duration by age | SIPP holdout | #212 `runs/sipp_e8_e9_floors_v1.json`, `e8_nonemployment_by_age` | \|log share ratio\| (any/long), BLOCKED on-data reconciliation | **proposed gated** only after reconciliation/approval/merge |
-| E9 | earnings-change dist. by transition type | SIPP holdout | #212 `runs/sipp_e8_e9_floors_v1.json`, `e9_transitions` | j2j: median + IQR gaps, BLOCKED on-data reconciliation/count; stay: none | **j2j proposed gated after reconciliation; whole stay cell report-only** (B5) |
+| E8 | nonemployment incidence/duration by age | SIPP holdout | #212 `runs/sipp_e8_e9_floors_v1.json`, `e8_nonemployment_by_age` | \|log share ratio\| (any/long), PENDING referee choice | **proposed gated** only after approval/merge |
+| E9 | earnings-change dist. by transition type | SIPP holdout | #212 `runs/sipp_e8_e9_floors_v1.json`, `e9_transitions` | j2j: median + IQR gaps, PENDING referee choice; stay: none | **j2j proposed gated after approval/merge; whole stay cell report-only** (B5) |
 | E10 | regression gate: locked PSID gates still pass | existing `gates.yaml` | existing gate-1/2 floors | unchanged | **gated** (always) |
 | E11 | aggregate J2J flows by origin × destination size | LEHD J2JOD (#228) | #223 `runs/employer_firm_floors_v1.json`, `e11.destination_size_margin` | margin temporal basis PENDING referee choice; detail: none derivable | **aggregate margins proposed gated after floor approval/merge; 5-quarter detail report-only** (§7); certifies no person link |
 | E12 | aggregate assignment audit plus linkage/sorting aspiration | public grouped margins / future linked source | #223 `e12` deferral; linkage floor unavailable | strict claims split (§8) | **strong E12 deferred**; aggregate audit may certify observable margins only |
@@ -405,17 +406,17 @@ registers (names PROPOSED):
   pu2023 (ref. year 2022), person-disjoint holdout, WPFINWGT;
   feeds E4/E5/E8/E9; floor paths are
   `runs/sipp_spell_floors_v1.json` and
-  `runs/sipp_e8_e9_floors_v1.json`. Their promotion-time digests are
-  recorded above, but both state `BLOCKED_STRICT_STAGING`: pu2023 was
-  unavailable, its original digest/environment was not recorded,
-  and the E8/E9 artifact still needs the exact E9 distinct-person
-  count. They cannot enter block YAML before an on-data rebuild,
-  measured-value reconciliation, review, and merge.
+  `runs/sipp_e8_e9_floors_v1.json`. Their current artifact, builder,
+  environment, and input digests are recorded above. The exact-vintage
+  rebuild reproduced every prior measured value and recorded the E9
+  distinct-person counts. They still cannot enter block YAML before
+  current-head review, approval, merge, and referee resolution of the
+  registered scale and threshold choices.
 - `cps_tenure` — CPS Jan supplements 2020/2022/2024; feeds E3;
-  floor path `runs/tenure_floors_v1.json`, with its promotion-time
-  digest above. It is likewise `BLOCKED_STRICT_STAGING` until the
-  three source extracts are rerun on-data with digests/environment,
-  reconciled, reviewed, and merged.
+  floor path `runs/tenure_floors_v1.json`, with current artifact,
+  builder, environment, and input digests above. The exact-vintage
+  rebuild reproduced every prior measured value; current-head review,
+  approval, merge, and referee threshold choice remain required.
 - `employer_firm_targets` — the committed
   `data/external/{susb,bds,qwi,j2j,j2jod,j2j_sexage}_us_*.csv`
   extracts (external references, never scored model output);
@@ -968,15 +969,13 @@ in `docs/design/m6_projection_engine.md`):
      and all six consumed-input digests pinned. Composition supplies
      the exact current evidence for review; it does not satisfy the
      current-head approval or merge requirement.
-   - **COMPOSED, BLOCKED #212**: the three exact v1 paths and
-     promotion-time artifact/builder pins listed above. Their
-     `promotion_integrity.source_input_sha256_status` values are
-     `BLOCKED_STRICT_STAGING`, their sidecars are promotion-only
-     rather than measurement environments, and E8/E9 still lacks the
-     exact E9 distinct-person count. An on-data owner must rerun each
-     builder from the registered vintage, capture raw digests and
-     environment, reconcile every measured value, record the count,
-     and obtain review before these can enter the lock.
+   - **COMPOSED, reconciled, not approved/merged #212**: the three
+     exact v1 paths plus current artifact, builder, input-sidecar, and
+     measurement-environment pins listed above. Exact-vintage rebuilds
+     reproduced every prior measured value and E8/E9 records the exact
+     stay/J2J distinct-person counts. Current-head approval and merge,
+     deployment-scale conversion, and referee threshold choices remain
+     required before these can enter the lock.
    - **COMPOSED, not merged/promoted #235**: current draft
      `runs/crosswave_jobid_check_draft_v0.json`. Promotion reconciles
      its internal `draft_v1` label and lands
@@ -988,9 +987,9 @@ in `docs/design/m6_projection_engine.md`):
      `runs/seam_reconciliation_draft_v0.json` and builder. The later
      v1 pin/amendment must not rewrite the restored draft anchor.
    - Promotion of #235 and #274 draft artifacts to reviewed,
-     sha256-pinned v1 paths. The three #212 files already carry v1
-     names, but naming/promotion pins do not cure their registered
-     on-data reconciliation blocker.
+     sha256-pinned v1 paths. The three #212 files already carry
+     reconciled v1 names and current provenance pins, but still require
+     approval and merge.
    - **COMPOSED, not merged #224**, with the three adopted changes
      folded into `docs/adr/0004-linkage-qc.md`'s text. A locked block
      whose normative ADR exists only as a branch file amended by
