@@ -21661,3 +21661,25 @@ and expands exactly to
 =
 K_c(B_i).\texttt{selected\_registration\_path}.
 \]
+
+#### 16.14.9 Mode/type-independent tree- and gitlink-mode rows
+
+This subsection prospectively replaces the sentence beginning “Thus a
+canonical path occupied by a tree or gitlink” in §16.14.2 and the first
+paragraph of §16.14.7. It does not change the total least-absent selection
+law, the status conclusion, or any other row law.
+
+For any canonical \(p_r\) whose observed `tree_mode` is a tree or gitlink
+mode, the explicit row has the exact observed mode and OID, and `object_type`
+is independently the exact `blob | tree | commit | tag | missing` result
+required by §16.14.2. `raw_sha256` hashes the complete payload exactly for
+`blob` and is null otherwise. `failure_reason_codes` always contains
+`mode_not_100644`; it additionally contains `object_missing` exactly for
+`missing`, `object_not_blob` exactly for `tree`, `commit`, or `tag`, and
+neither object code for `blob`, together with every other applicable code in
+the frozen order. `record_state` is `invalid`, and row construction never
+aborts.
+
+For \(r=1\), regardless of independently resolved object type, \(p_1\)
+remains occupied: selection is \(p_2\) iff exact \(p_2\) is absent, and
+otherwise is the least absent \(p_{s(X)}\) with \(s(X)\ge3\).
