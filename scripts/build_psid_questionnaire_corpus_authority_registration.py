@@ -1071,7 +1071,9 @@ def validate_structure(value: Mapping[str, Any]) -> None:
         documents,
     )
     if value["accepted_authority_registry"] != expected_registry:
-        raise ValueError("registration-attempt accepted authority registry drift")
+        raise ValueError(
+            "registration-attempt accepted authority registry drift"
+        )
     if value["failure_disposition"] != FAILURE_DISPOSITION:
         raise ValueError("registration-attempt failure disposition drift")
     integrity = value["integrity"]

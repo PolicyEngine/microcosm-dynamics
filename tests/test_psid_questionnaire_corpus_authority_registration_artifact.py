@@ -88,7 +88,9 @@ def test_artifact_accepts_the_exact_complete_capture_domain():
         value["name_disambiguation"],
         documents,
     )
-    assert registry["schema_version"] == builder.ACCEPTED_REGISTRY_SCHEMA_VERSION
+    assert (
+        registry["schema_version"] == builder.ACCEPTED_REGISTRY_SCHEMA_VERSION
+    )
     assert registry["artifact_id"] == builder.ACCEPTED_REGISTRY_ARTIFACT_ID
     assert registry["document_count"] == 456
     assert registry["unique_document_identity_count"] == 455
