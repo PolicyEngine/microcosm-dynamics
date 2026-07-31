@@ -31,6 +31,10 @@ round-7 findings and the ratification-blocking namespace sweep gap.
 - Re-derived the original appendix corpus as 2,187 pre-§16 atoms, 693
   candidates, 65 overlaps, and 628 introduced tokens; added the ten omitted
   terminal-colon prefix rows with exact definitions, positions, and hash.
+- Bound the six non-PSID base V-B results to the existing four-projection
+  historical-rules identity verifier, carried that projection in v2
+  adjudication-verifier preimages and v3 noncapture evidence, and replaced
+  the conflicting source-projection status order with one total construction.
 
 ## Next
 

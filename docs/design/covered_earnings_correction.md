@@ -20245,3 +20245,248 @@ each complete token followed by one LF. SHA-256 of those exact bytes is
 `1b6e24552a42240aa952e73a3e313977ef60c139c4827c1c61a428be659aab7b`.
 A count, order, neighbor, definition, or digest disagreement remains
 ratification-blocking.
+
+##### 16.13.6 Authenticated base V-B results and final status order
+
+This subsection prospectively replaces every §16.13.1–§16.13.2 reference to
+an unnamed “already authenticated base result,” the attempted non-PSID
+source-row serialization, and every conflicting source-projection status or
+construction-order sentence.
+
+Let \(L=(\text{V-B1},\text{V-B2},\text{V-B3},\text{V-B4},
+\text{V-B7},\text{V-B9})\). Before the first-vintage verification-claim
+adjudication is serialized, freeze its already stored parent \(B_V\). The
+candidate path must be absent from \(\operatorname{Tree}(B_V)\). The
+coordinator constructs
+`verification_claim_base_legal_input_core.v1`, with exactly
+`legal_rule_input` and `historical_coverage_rule_specs`, from the two
+same-named pre-reference staged fields. No complete selected configuration,
+registration reference, receipt, candidate result row, or adjudication
+member is an input to that core.
+
+The coordinator then executes the already registered
+`historical_coverage_rules` identity requirement against \(B_V\), with
+exactly these four ordered projections:
+
+1. `ratified_design:historical_coverage_rule_specs`;
+2. `configuration:legal_rule_input`;
+3. `configuration:historical_coverage_rule_specs`; and
+4. `git_cutoff:legal_rule_input_raw_bytes`.
+
+The two `configuration:` values are exactly the two members of
+`verification_claim_base_legal_input_core.v1`; they are authenticated
+comparands, not result sources. The `git_cutoff:` root is
+\(\operatorname{Tree}(B_V)\), and the legal-input path is the traversal-free
+path in the authenticated `legal_rule_input` identity. The coordinator must
+construct the complete `exact_identity_expected_preimage.v1`,
+`exact_identity_actual_preimage.v1`, and
+`exact_identity_verification_result.v1`. The result must have the registered
+requirement and predicate IDs, `result: true`, `failure_code: null`, and
+faithful schema/digest equations. Otherwise construction aborts before an
+expected verification-claim-adjudication identity exists. A partial staged
+configuration, configuration result registry, candidate artifact, ambient
+file, or producer Boolean cannot satisfy this predicate.
+
+Let \(H\) be the complete strict-parsed historical-rule registry authenticated
+by that true result. For branch \(b\in\{c,f\}\) and legal claim
+\(x\in(\text{V-B1},\text{V-B2},\text{V-B3},\text{V-B4},\text{V-B9})\),
+let \(G_{b,x}\) be the exact `governing_rule_ids` array in the same-claim
+member of \(S_b\). Construct \(Q_{b,x}\) by resolving every member of
+\(G_{b,x}\), in that order, to exactly one complete row of \(H\). Each
+resolved row must contain \(x\) exactly once in `verification_claim_ids`;
+conversely, the ordered `rule_id` projection of every \(H\) row containing
+\(x\) must deep-equal \(G_{b,x}\). A missing, extra, duplicate, reordered,
+unresolved, or cross-claim rule aborts; malformed observations are not
+filtered to form a smaller expected domain.
+
+The legal disposition is the total precedence equation
+
+\[
+\delta_{b,x} =
+\begin{cases}
+\texttt{authority\_conflict},
+  &\text{if any row of }Q_{b,x}\text{ has that status},\\
+\texttt{authority\_absent},
+  &\text{otherwise, if any row has that status},\\
+\texttt{verified},
+  &\text{otherwise, if every row is verified}.
+\end{cases}
+\]
+
+The exact-cover law makes those the only three cases; an empty or
+nonexhaustive \(Q_{b,x}\) aborts instead of creating a fourth disposition.
+The complete seven-field result for a legal claim is unique:
+
+- `claim_id` is \(x\);
+- `authority_input_ids` is exactly
+  `["historical_coverage_rules"]`;
+- `affected_inventory_keyset_sha256` hashes canonical bytes of the complete
+  same-claim \(S_b\) `affected_inventory_keys` array;
+- `governing_rule_ids` deep-equals \(G_{b,x}\);
+- `verification_status` is \(\delta_{b,x}\);
+- `optional_consequence_specs_sha256` is null for `verified` and for either
+  registration-required claim, and for an absent/conflicting
+  `direct_only_optional` claim it hashes the complete \(G_{b,x}\)-ordered
+  concatenation of the matched rules' exact same-claim
+  `optional_row_consequences`; and
+- `status` follows the §4.1 class equation: a registration-required result
+  passes exactly on `verified`, while a direct-only-optional result passes
+  on `verified` or on an exact authenticated absence/conflict consequence.
+
+Thus V-B1 and V-B4 derive only from the complete historical legal authority;
+they pass only on verified legal rows and become faithful legal negatives
+otherwise. V-B2, V-B3, and V-B9 retain their exact verified or explicit
+optional-consequence branches. The calibrated V-B7 member is the complete
+literal §15.6.1 absent/pass seven-field row, and the fitting-free V-B7 member
+is the complete literal §16.5.1 not-applicable/pass seven-field row. Both
+have empty `authority_input_ids`; neither is inferred from a failed source
+match.
+
+The authenticated base-result object is
+`verification_claim_base_result_projection.v1`, with exactly
+`schema_version`, `ordered_result_registry_ids`, `ordered_claim_ids`,
+`registry_rows`, `row_count`, `domain_sha256`,
+`historical_coverage_rules_identity_result_sha256`, `canonicalization`, and
+`status`. Its schema value is its name. Its ordered registry IDs are
+`verification_claim_results.v2` then
+`verification_claim_results.fitting_free.v1`; its ordered claim IDs are
+exactly \(L\). `registry_rows` has two objects, each with exactly
+`result_registry_id` and `rows`, and each `rows` array has the six complete
+seven-field results in \(L\) order for that registry. `row_count` is integer
+12; `domain_sha256` hashes the complete two-object `registry_rows` array;
+the identity-result digest hashes the complete typed
+`exact_identity_verification_result.v1`; and canonicalization is the frozen
+common literal. Status is `pass` exactly when the legal identity result,
+the \(H\) exact-cover equations, all ten legal results, both literal V-B7
+results, both arrays, the count, and both digests pass. This object is
+constructed and hashed before the ten-key candidate is read.
+
+The adjudication verifier successors are
+`calibrated_verification_claim_adjudication_expected_preimage.v2` and
+`calibrated_verification_claim_adjudication_actual_preimage.v2`. The
+expected v2 preimage is the complete v1 expected preimage with these six
+members inserted immediately after `source_adjudication_inputs`:
+
+1. `historical_coverage_rules_expected_preimage`;
+2. `historical_coverage_rules_actual_preimage`;
+3. `historical_coverage_rules_identity_result`;
+4. `historical_coverage_rules_identity_result_sha256`;
+5. `verification_claim_base_result_projection`; and
+6. `verification_claim_base_result_projection_sha256`.
+
+The actual v2 preimage is the complete v1 actual preimage with those same
+six independently reconstructed members inserted immediately after
+`source_projection_domain_sha256`. Each object member is the complete named
+object above, and each digest hashes its complete preceding object. The
+methodology-authority row for
+`covered_earnings_verification_claim_adjudication.vintage1` selects these v2
+preimage schemas and inserts the same six named canonical-JSON projections,
+in the displayed order, immediately after `source_adjudication_inputs` in
+its `ordered_source_projections`. Its projection rows, count, and domain
+digest cover the resulting complete order. The existing typed adjudication
+result schema remains unchanged.
+
+Both v2 preimage hashes therefore bind the legal Git bytes, both legal
+identity preimages, the typed identity result, and all twelve base-result
+rows. The candidate artifact remains the exact ten-key
+`covered_earnings_verification_claim_adjudication.v1` object, and its
+`source_adjudication_inputs` remains the exact PSID singleton. For
+\(x\notin M=(\text{V-B5},\text{V-B6},\text{V-B8})\), the candidate source
+row's `adjudication_sources`, ordered match-key array, and closed
+`source_disposition` domain are all exact empty as already stated. Its
+`derived_verification_claim_result` must deep-equal the same-branch,
+same-claim member of the authenticated base-result projection. An empty
+domain is therefore a declared disjoint-domain schema case, not evidence
+absence; no nonmatch is representable or interpreted. For \(x\in M\), the
+three exact PSID keys and singleton `registration_required` disposition
+remain controlling.
+
+The calibrated noncapture successors are
+`calibrated_noncapture_required_authority_predicate_specs.v3`,
+`calibrated_noncapture_required_authority_preimage.v3`, and
+`calibrated_noncapture_required_authority_result.v3`. The predicate registry
+is the complete v2 registry except that its verification-claim row has
+preimage and result schema values equal to those v3 names and predicate
+equation
+`claim_authority_binding_valid&&authenticated_verification_claim_result_satisfied`.
+
+The v3 preimage is the complete v2 preimage plus final member
+`base_legal_authority_binding`. It is JSON null for every requirement except
+V-B1 and V-B4. For either of those claims it has exactly
+`requirement_id`, `authority_input_id`,
+`historical_coverage_rules_expected_preimage_sha256`,
+`historical_coverage_rules_actual_preimage_sha256`,
+`historical_coverage_rules_identity_result`,
+`historical_coverage_rules_identity_result_sha256`,
+`base_result_projection_row`, and
+`base_result_projection_row_sha256`. The first two values are the same-claim
+literal and `historical_coverage_rules`. The next four values and digests
+deep-equal the complete independently verified adjudication-authority v2
+preimage members. The projection row is the calibrated same-claim complete
+seven-field result in `verification_claim_base_result_projection.v1`, and
+its digest hashes that complete row.
+
+For V-B1 and V-B4, `claim_authority_binding_valid` is true exactly when the
+successor role row retains the base v1/v2 row shape rather than the PSID
+redirect; the complete legal binding above validates; the typed legal
+identity result is true with null failure; the authenticated adjudication
+result deep-equals `base_result_projection_row`; and its
+`authority_input_ids` is exactly `["historical_coverage_rules"]`. The
+inherited legacy methodology ref is retained only as a byte-for-byte
+role-map lineage field. Its candidate availability, verdict, and semantic
+disposition are not claim evidence, do not enter `authority_input_ids`, and
+cannot make `claim_authority_binding_valid` false. Thus the sole substantive
+establishing authority for these two claims is the §4.1 legal registry and
+its authenticated Git input. For V-B5, V-B6, and V-B8 the legal binding is
+null and `claim_authority_binding_valid` is exactly the former complete
+`manifest_evidence_valid` predicate over the authenticated PSID
+adjudication authority.
+
+The v3 result is the complete v2 result with
+`base_legal_authority_binding_sha256` and
+`claim_authority_binding_valid`, in that order, immediately before
+`requirement_satisfied`. The digest is SHA-256 of the complete binding for
+V-B1/V-B4 and JSON null otherwise. The Boolean faithfully equals the
+applicable equation above. `requirement_satisfied` is the conjunction in the
+registered v3 predicate row; `verification_inputs_sha256` hashes the
+complete v3 preimage. Every new preliminary or final calibrated
+adjudication selects the v3 predicate registry. Its authority-cutoff object
+is `calibrated_authority_cutoff_identity.v3`, with the exact v2 keyset and
+key order, `schema_version` equal to its v3 name, and
+`noncapture_required_authority_predicate_specs_schema_version` equal to
+`calibrated_noncapture_required_authority_predicate_specs.v3`; every other
+value follows the v2 equation. All applicability bundles and evidence rows
+must select and hash those operative v3 objects.
+
+Finally, the only valid construction order for the expected ten-key
+artifact is:
+
+1. freeze and validate stored \(B_V\) and the two permitted staged legal
+   members;
+2. independently reconstruct \(S_c\) and \(S_f\);
+3. build and hash both legal-identity preimages, execute the typed identity
+   result, and abort on false;
+4. construct and hash
+   `verification_claim_base_result_projection.v1`;
+5. strict-parse the fixed PSID input and construct all of \(A_c\) then
+   \(A_f\), using the three PSID rows for \(M\) and authenticated base
+   projection equality plus empty source arrays for every \(x\notin M\);
+6. set \(R_c=\pi_{\mathrm{result}}(A_c)\) and
+   \(R_f=\pi_{\mathrm{result}}(A_f)\);
+7. evaluate \(D_c,D_f,E_c,E_f\), and the complete \(E\) over the six
+   existing row arrays;
+8. set source-projection count and domain hash, then assign its status
+   exactly on its structural laws and
+   \(D_c\land D_f\land E\), and hash that complete projection;
+9. construct the four envelopes, their row/source-projection hashes, and
+   their statuses under the equations in §16.13.1;
+10. set the top-level semantic status; and
+11. replace only `integrity.content_sha256` with 64 ASCII zeroes, hash the
+    complete artifact, insert that digest, and serialize the final expected
+    bytes.
+
+No status or digest is assigned before all of its operands exist, and no
+status or digest is used to derive an earlier operand. In particular, the
+source-projection status has one equation—structural validity together with
+\(D_c\land D_f\land E\)—and the conflicting earlier status and order
+sentences have no prospective operative case.
