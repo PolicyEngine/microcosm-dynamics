@@ -2,11 +2,12 @@
 
 ## State
 
-Active on `claude/ce-design-amendment2` from
+Complete on `claude/ce-design-amendment2`, based on
 `c036a56abf60dadb410ca3e6ed8d28f0907e85e3`. The round-6 document is
-19,612 lines. All design changes in this round will be appended after that
-byte-for-byte preserved prefix. Work is in progress on the four critical
-round-7 findings and the ratification-blocking namespace sweep gap.
+19,612 lines. The final document is 20,953 lines, with all 1,341 round-8
+lines appended after that byte-for-byte preserved prefix. All four critical
+round-7 findings and the ratification-blocking namespace sweep gap are
+closed.
 
 ## Done
 
@@ -45,8 +46,23 @@ round-7 findings and the ratification-blocking namespace sweep gap.
 - Added the missing calibrated registration filename grammar, complete
   Tree(X) history/least-absent suffix projection, namespace-preimage binding,
   and exact B-star/J equality.
+- Received independent PASS dispositions for findings 1–2, findings 3–4,
+  and the corrected closure sweep after the final controlling clauses.
+- Confirmed the original 19,612-line prefix still has SHA-256
+  `6e3397901475fc66d2e2d69bd0f2dc72598d63afeb7e6211b9af0f74a8e4aeb7`
+  and byte-equals the document at `c036a56`.
+- Confirmed the final 20,953-line document has SHA-256
+  `5c6d9a0e215438936127babce86ec54bfee7d283b572b3200ec5bfd94d656602`,
+  all 53 §16 JSON fences strict-parse without duplicate keys, and
+  `git diff c036a56 --check` passes.
+- Confirmed the corrected sweep remains 628 distinct byte-sorted tokens with
+  LF-list SHA-256
+  `1b6e24552a42240aa952e73a3e313977ef60c139c4827c1c61a428be659aab7b`.
+- Ran `pytest -q tests/test_forecast_ledger.py`: 5 passed. The full suite
+  remains unavailable in this checkout because collection raises 73
+  `ModuleNotFoundError: populace_dynamics` errors before tests run.
 
 ## Next
 
-- Validate the complete amendment, re-review the dependency graph, and
-  finalize the progress ledger and report.
+- No round-8 design work remains. Hand off the committed branch for
+  ratification review; do not push.
