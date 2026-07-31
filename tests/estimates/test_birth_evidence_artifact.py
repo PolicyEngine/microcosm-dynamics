@@ -76,6 +76,7 @@ def test_context_report_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+        Path("src/populace_dynamics/firms/targets.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(

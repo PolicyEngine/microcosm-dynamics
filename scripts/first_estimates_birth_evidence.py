@@ -146,6 +146,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
     Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
     Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+    # The IC3 employer-target extension is a downstream firm projection and
+    # remains outside the reviewed birth-evidence implementation.
+    Path("src/populace_dynamics/firms/targets.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
