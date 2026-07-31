@@ -21635,3 +21635,29 @@ suffix is presumed absent. Here “occupied” always means a mode-bearing
 member of \(D_X\), regardless of that entry's mode, object resolution,
 content, or record validity. Status is `fail`, and serialization never
 requires a nonexistent blob digest.
+
+#### 16.14.8 Calibrated v2 projection notation closure
+
+For every stored phase commit \(X\), define the previously unbound notation
+
+\[
+\Gamma_c^{(2)}(X)\equiv\Gamma_c(X),
+\]
+
+where the right-hand side is exactly the complete
+`calibrated_registration_suffix_projection.v2` value defined in §16.14.2.
+This is a notation alias for that complete value, not the
+parent-commit-excluding \(\pi_\Gamma^{(2)}\) projection, and it has no v1
+case.
+
+Consequently the §16.14.4 same-phase equality contains no undefined token
+and expands exactly to
+
+\[
+\Gamma_c(B_i).\texttt{selected\_registration\_path}
+=
+\texttt{pre\_reference\_namespace\_scan}
+  .\texttt{selected\_registration\_path}
+=
+K_c(B_i).\texttt{selected\_registration\_path}.
+\]
