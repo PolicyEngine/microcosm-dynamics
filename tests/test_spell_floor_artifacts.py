@@ -18,7 +18,7 @@ ARTIFACTS = {
 }
 BUILDERS = {
     "scripts/build_sipp_spell_floors.py": "8ce7e41a9af71767672c39f7933ccde3c2eeaa0aa4f7044c5113f7430439d1dc",
-    "scripts/build_tenure_floors.py": "593237bfbba31e77183a8d38bf07ae6ad77eb9392abd323ce71aecdc3e6dfb9e",
+    "scripts/build_tenure_floors.py": "fda07dec53ab11c41aab2b7f92dc0c18ecad0f3843d70256bb2f140351b273b1",
     "scripts/build_sipp_e8_e9_floors.py": "3b2209de9b10cf680f5a074ea0c56077b03ebda68a4a614f2e20f0d0c2455272",
 }
 
@@ -86,12 +86,13 @@ def test_source_input_sidecars_match_artifacts(spells, tenure, e8e9):
         (e8e9, e8e9_inputs),
     ):
         assert sidecar["status"] == "SOURCE_INPUT_DIGESTS"
-        assert sidecar["staged_input"]["path"] == artifact["source_input"][
-            "path"
-        ]
-        assert sidecar["staged_input"]["sha256"] == artifact["source_input"][
-            "sha256"
-        ]
+        assert (
+            sidecar["staged_input"]["path"] == artifact["source_input"]["path"]
+        )
+        assert (
+            sidecar["staged_input"]["sha256"]
+            == artifact["source_input"]["sha256"]
+        )
         assert sidecar["staged_input"]["bytes"] > 0
         official = sidecar["official_source"]
         assert official["url"].startswith("https://www2.census.gov/")
@@ -174,15 +175,11 @@ def test_e8_e9_pinned_values(e8e9):
     assert stay["median_log_change"] == 0.0
     assert "heaps at exactly 0" in e8e9["stay_median_heaping_caveat"]
     assert (
-        e8e9["e9_transitions"]["earnings_change"]["stay"][
-            "persons_unweighted"
-        ]
+        e8e9["e9_transitions"]["earnings_change"]["stay"]["persons_unweighted"]
         == 16286
     )
     assert (
-        e8e9["e9_transitions"]["earnings_change"]["j2j"][
-            "persons_unweighted"
-        ]
+        e8e9["e9_transitions"]["earnings_change"]["j2j"]["persons_unweighted"]
         == 524
     )
     builder = (ROOT / "scripts/build_sipp_e8_e9_floors.py").read_text()
