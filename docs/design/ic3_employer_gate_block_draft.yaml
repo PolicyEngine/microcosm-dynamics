@@ -55,9 +55,9 @@ gates:
     composed_heads:
       master: 691901f2915865fceb906f1dc5f36c913a5e2675
       ic_naming_root_pr_277: c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0
-      person_side_floors_pr_212: 211152bb506e08b0a8b39dcae1c255365a71df0d
+      person_side_floors_pr_212: c24809b081c448255a39b74870de70207f615724
       firm_side_floors_pr_223: 34a70fc8c809d23b4643588ca228565b1c7b6513
-      controlling_design_pr_230: 037b43faec5e8b46f9d92a295ced792e602e5b6f
+      controlling_design_pr_230: 1bc161e7ca6a86965708734b425bbc209bed0083
     composed_head_rule: >-
       these are exact branch-composition identities, not merge,
       approval, referee, or ratification claims. Every listed commit
@@ -68,26 +68,29 @@ gates:
       linkage_qc: docs/adr/0004-linkage-qc.md
 
     evidence_provenance:
-      person_side_pr: "212@211152bb506e08b0a8b39dcae1c255365a71df0d"
+      person_side_pr: "212@c24809b081c448255a39b74870de70207f615724"
       firm_side_pr: "223@34a70fc8c809d23b4643588ca228565b1c7b6513"
-      design_pr: "230@037b43faec5e8b46f9d92a295ced792e602e5b6f"
+      design_pr: "230@1bc161e7ca6a86965708734b425bbc209bed0083"
       artifact_sha256:
-        runs/sipp_spell_floors_v1.json: 0110366a37a46fcc12b9a5665f3e6d5ea4c99fd2cabc4bf8cfc3fa8719890faf
-        runs/tenure_floors_v1.json: afbbb9ba38e0c69e78d94bd854c064dfae980f398092904b87b59a526a78e015
-        runs/sipp_e8_e9_floors_v1.json: 28515717e83824056708a491b2702089cb439d5369deaff480f391c6f8862aa2
+        runs/sipp_spell_floors_v1.json: 500b68034c9a301eb823e1d8f7584cf6c7654bf536247827353b0941d1d026ae
+        runs/sipp_spell_floors_v1.env.json: 124adfc94e32c157886d40b405c4495a4e7a4e935f4bf940a551c551ca6eaba7
+        runs/sipp_spell_floors_v1.inputs.json: 68a039b0951698b9031d8c29a064a4e2a287f2e2f54552726bf6ed502d7cbe7d
+        runs/tenure_floors_v1.json: 08e67e5d362bbd0c1703c85fdb40624de094561f385eceb6d0a9eea4772cc6ff
+        runs/tenure_floors_v1.env.json: 68df172eb5266ba4771b7d6d8d3c0812fb6e3f2d63486b1104b886abf1e822a2
+        runs/tenure_floors_v1.inputs.json: 7e0577e3cbce04363017b8bb1c168915d887368a1cc17b57e801998faed754e3
+        runs/sipp_e8_e9_floors_v1.json: b360f04fc785eeb11c8e77e4128bdb8a98d31501a11f048fa2df4e86b1f7e059
+        runs/sipp_e8_e9_floors_v1.env.json: b206213d87d4287234d2c5f0838e3237ec7945d6ed8cc2c48db7be1f9cd52258
+        runs/sipp_e8_e9_floors_v1.inputs.json: ab5486e0e4b17f881208b6108f618bc6984ed56e13604bd11206c28cbbaee019
         runs/employer_firm_floors_v1.json: eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17
-      person_side_raw_input_status: BLOCKED_STRICT_STAGING
+      person_side_raw_input_status: PINNED_REPRODUCED_ON_DATA
       person_side_raw_input_note: >-
-        #212 promoted measured values without rebuilding because
-        pu2023 and the CPS tenure extracts were unavailable, while
-        the original drafts recorded neither raw SHA256 values nor
-        their measurement environments. This remains lock-blocking
-        until an on-data owner performs the registered reconciliation.
+        exact #212 head c24809b reran all three builders from the
+        Census-hosted vintages, reproduced every previously recorded
+        measured value, and recorded raw-input plus
+        measurement-environment sidecars.
       firm_side_raw_input_status: PINNED_IN_ARTIFACT
 
     lock_blockers:
-      - person_side_raw_input_sha256_and_measurement_environment
-      - e9_exact_distinct_person_population
       - scoring_frame_floor_scale_resolution
       - referee_choices_and_verification
       - design_commit_and_required_merge_commits
@@ -206,11 +209,10 @@ gates:
         firm_side_min_denominator_jobs: 10000
         unit_rule: >-
           a thin rule applies only to families measured in ITS unit.
-          E9 must be adjudicated in distinct persons because its split
-          unit is person. Its 545 transition pairs are retained as a
-          reporting count but cannot establish the 200-person floor;
-          #212 registers the exact distinct-person count as an on-data
-          follow-up.
+          E9 is adjudicated in distinct persons because its split unit
+          is person. Exact #212 head c24809b records 545 transition
+          pairs from 524 distinct persons, clearing the 200-person
+          floor while retaining pair count as a clustering diagnostic.
         thin_disposition: report_only
 
     # ---------------------------------------------------------------
@@ -478,7 +480,7 @@ gates:
           transitions, absolute gap
         floor_run: runs/sipp_e8_e9_floors_v1.json
         referee_status: PENDING
-        gate_eligibility: BLOCKED_PENDING_DISTINCT_PERSON_COUNT_AND_LINKAGE_AUDIT
+        gate_eligibility: BLOCKED_PENDING_LINKAGE_AUDIT_AND_REFEREE_DECISION
         floor_path: e9_transitions.earnings_change.j2j
         substantive_tolerance: null  # floors non-degenerate; not needed
         linkage_prerequisite: true
@@ -495,12 +497,11 @@ gates:
           promotion, is a referee item — flagged here rather than
           decided silently by omission.
         thinnest_gated_cell_note: >-
-          545 unweighted PAIRS are recorded, but the exact distinct
-          person count is not derivable from the promoted aggregate
-          artifact. Because the split unit is person, pair count
-          cannot establish eligibility. The #212 builder now emits
-          `persons_unweighted`; an on-data rebuild and reconciliation
-          must establish whether the cell clears 200 distinct persons.
+          545 unweighted pairs from 524 distinct persons are recorded
+          by exact #212 head c24809b. The person-unit population
+          therefore clears the registered 200-person thin floor.
+          Linkage-audit scope and referee verification remain
+          unresolved and continue to block first-lock eligibility.
         cells:
           - median_log_change
           - iqr_log_change

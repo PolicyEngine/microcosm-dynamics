@@ -106,9 +106,15 @@ EXPECTED_CELLS = {
 }
 
 ARTIFACT_SHA256 = {
-    "runs/sipp_spell_floors_v1.json": "0110366a37a46fcc12b9a5665f3e6d5ea4c99fd2cabc4bf8cfc3fa8719890faf",
-    "runs/tenure_floors_v1.json": "afbbb9ba38e0c69e78d94bd854c064dfae980f398092904b87b59a526a78e015",
-    "runs/sipp_e8_e9_floors_v1.json": "28515717e83824056708a491b2702089cb439d5369deaff480f391c6f8862aa2",
+    "runs/sipp_spell_floors_v1.json": "500b68034c9a301eb823e1d8f7584cf6c7654bf536247827353b0941d1d026ae",
+    "runs/sipp_spell_floors_v1.env.json": "124adfc94e32c157886d40b405c4495a4e7a4e935f4bf940a551c551ca6eaba7",
+    "runs/sipp_spell_floors_v1.inputs.json": "68a039b0951698b9031d8c29a064a4e2a287f2e2f54552726bf6ed502d7cbe7d",
+    "runs/tenure_floors_v1.json": "08e67e5d362bbd0c1703c85fdb40624de094561f385eceb6d0a9eea4772cc6ff",
+    "runs/tenure_floors_v1.env.json": "68df172eb5266ba4771b7d6d8d3c0812fb6e3f2d63486b1104b886abf1e822a2",
+    "runs/tenure_floors_v1.inputs.json": "7e0577e3cbce04363017b8bb1c168915d887368a1cc17b57e801998faed754e3",
+    "runs/sipp_e8_e9_floors_v1.json": "b360f04fc785eeb11c8e77e4128bdb8a98d31501a11f048fa2df4e86b1f7e059",
+    "runs/sipp_e8_e9_floors_v1.env.json": "b206213d87d4287234d2c5f0838e3237ec7945d6ed8cc2c48db7be1f9cd52258",
+    "runs/sipp_e8_e9_floors_v1.inputs.json": "ab5486e0e4b17f881208b6108f618bc6984ed56e13604bd11206c28cbbaee019",
     "runs/employer_firm_floors_v1.json": "eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17",
 }
 
@@ -142,8 +148,6 @@ def _assert_contract_integrity(candidate: dict) -> None:
         "RECORDED_NOT_SATISFIED"
     )
     assert set(candidate["lock_blockers"]) == {
-        "person_side_raw_input_sha256_and_measurement_environment",
-        "e9_exact_distinct_person_population",
         "scoring_frame_floor_scale_resolution",
         "referee_choices_and_verification",
         "design_commit_and_required_merge_commits",
@@ -151,7 +155,7 @@ def _assert_contract_integrity(candidate: dict) -> None:
     }
     assert candidate["evidence_provenance"][
         "person_side_raw_input_status"
-    ] == ("BLOCKED_STRICT_STAGING")
+    ] == ("PINNED_REPRODUCED_ON_DATA")
     assert (
         candidate["evidence_provenance"]["artifact_sha256"] == ARTIFACT_SHA256
     )
@@ -332,10 +336,7 @@ def test_thin_rules_cover_the_pair_unit_families(block):
     assert thin["sipp_side_min_persons"] == 200
     assert thin["sipp_side_min_pairs_reporting"] == 200
     family = block["families"]["e9_j2j_earnings_change"]
-    assert (
-        "exact distinct person count is not derivable"
-        in family["thinnest_gated_cell_note"]
-    )
+    assert "524 distinct persons" in family["thinnest_gated_cell_note"]
     assert family["gate_eligibility"].startswith("BLOCKED_")
 
 
@@ -436,7 +437,7 @@ def test_draft_and_design_document_agree_on_the_demotions(block):
     # The design doc must not still advertise E1/E6 as gated.
     assert "does not gate at first" in design
     assert "E2, E7 and E11-margins are firm-side" in design
-    assert "BLOCKED_STRICT_STAGING" in design
+    assert "reproducible pre-lock anchor" in design
     assert "certifies no person link" in design
     assert "strong E12 is **deferred**" in design
 
@@ -445,9 +446,9 @@ def test_exact_composed_heads_are_pinned_and_ancestral(block):
     assert block["composed_heads"] == {
         "master": "691901f2915865fceb906f1dc5f36c913a5e2675",
         "ic_naming_root_pr_277": "c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0",
-        "person_side_floors_pr_212": "211152bb506e08b0a8b39dcae1c255365a71df0d",
+        "person_side_floors_pr_212": "c24809b081c448255a39b74870de70207f615724",
         "firm_side_floors_pr_223": "34a70fc8c809d23b4643588ca228565b1c7b6513",
-        "controlling_design_pr_230": "037b43faec5e8b46f9d92a295ced792e602e5b6f",
+        "controlling_design_pr_230": "1bc161e7ca6a86965708734b425bbc209bed0083",
     }
 
 
@@ -489,11 +490,8 @@ def test_artifact_provenance_and_cell_populations_are_real(block):
     e8e9 = json.loads((ROOT / "runs/sipp_e8_e9_floors_v1.json").read_text())
     j2j = e8e9["e9_transitions"]["earnings_change"]["j2j"]
     assert j2j["pairs_unweighted"] == 545
-    assert "persons_unweighted" not in j2j
-    assert (
-        "FOLLOW_UP_REQUIRED"
-        in e8e9["promotion_integrity"]["e9_distinct_person_count_status"]
-    )
+    assert j2j["persons_unweighted"] == 524
+    assert j2j["thin"] is False
 
 
 def test_current_and_future_ceremony_paths_are_not_conflated(block):
@@ -516,7 +514,7 @@ def test_current_and_future_ceremony_paths_are_not_conflated(block):
         "rename_cell",
         "partition_drift",
         "artifact_digest_drift",
-        "remove_raw_blocker",
+        "reintroduce_resolved_blocker",
         "premature_floor_choice",
         "promote_e9",
         "expand_e11_claim",
@@ -541,8 +539,8 @@ def test_contract_mutations_fail_closed(block, mutation):
         candidate["evidence_provenance"]["artifact_sha256"][
             "runs/tenure_floors_v1.json"
         ] = "0" * 64
-    elif mutation == "remove_raw_blocker":
-        candidate["lock_blockers"].remove(
+    elif mutation == "reintroduce_resolved_blocker":
+        candidate["lock_blockers"].append(
             "person_side_raw_input_sha256_and_measurement_environment"
         )
     elif mutation == "premature_floor_choice":
