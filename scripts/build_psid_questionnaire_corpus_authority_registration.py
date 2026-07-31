@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Build the fail-closed PSID documentation-corpus registration attempt.
+"""Build the fail-closed PSID documentation-corpus registration artifact.
 
 The 3 GB corpus remains in the conventional external PSID staging tree.  This
 source-only builder reads the capture ceremony inputs and document bytes; it
 does not import a PSID reader, crosswalk, candidate model, or adjudication
-registry.  A failed identity closure is serialized as an audit attempt, never
-as an accepted authority registry.
+registry.  Full identity closure emits a compact accepted-authority projection;
+any later drift aborts without an accepted authority registry.
 """
 
 from __future__ import annotations
@@ -43,40 +43,29 @@ CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 CAPTURE_ROOT_ID = "psid_external_staging_root"
 CAPTURE_RELATIVE_PATH = "documentation/capture1"
 FAILURE_DISPOSITION = "abort_without_accepted_corpus_authority"
+ACCEPTED_REGISTRY_SCHEMA_VERSION = (
+    "psid_questionnaire_corpus_authority_registry.v1"
+)
+ACCEPTED_REGISTRY_ARTIFACT_ID = ACCEPTED_REGISTRY_SCHEMA_VERSION
 
 EXPECTED_DOCUMENT_ROW_COUNT = 456
 EXPECTED_LINK_COUNT = 465
 EXPECTED_UNIQUE_HREF_COUNT = 456
 EXPECTED_DUPLICATE_LINK_COUNT = 9
-EXPECTED_DISAMBIGUATION_COUNT = 3
+EXPECTED_DISAMBIGUATION_COUNT = 19
 EXPECTED_UNIQUE_DOCUMENT_IDENTITY_COUNT = 455
+EXPECTED_VERIFIED_DOCUMENT_COUNT = 456
+EXPECTED_FAILED_DOCUMENT_COUNT = 0
 EXPECTED_ORDERED_UNIQUE_HREFS_SHA256 = (
     "baa4c9fc45343701afea62349497f1e0fe5624ab12494f71fd10633254c0c323"
 )
 EXPECTED_DOCUMENT_ROWS_SHA256 = (
-    "7e4bc4eeb395c8c65a79fdb0d390c0f7de3591af98cef951d796c6ee7d8ff559"
+    "fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3"
 )
 EXPECTED_CONTENT_SHA256 = (
-    "9f15d3d0472ec74dd7fc3388f6a4a516f8d253ec5b2bc52d242a287091865678"
+    "4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27"
 )
-EXPECTED_FAILED_DOCUMENT_IDS = [
-    "psid-corpus-document-0250",
-    "psid-corpus-document-0253",
-    "psid-corpus-document-0254",
-    "psid-corpus-document-0256",
-    "psid-corpus-document-0259",
-    "psid-corpus-document-0262",
-    "psid-corpus-document-0265",
-    "psid-corpus-document-0278",
-    "psid-corpus-document-0322",
-    "psid-corpus-document-0342",
-    "psid-corpus-document-0356",
-    "psid-corpus-document-0359",
-    "psid-corpus-document-0371",
-    "psid-corpus-document-0379",
-    "psid-corpus-document-0380",
-    "psid-corpus-document-0383",
-]
+EXPECTED_FAILED_DOCUMENT_IDS: list[str] = []
 EXPECTED_DISAMBIGUATION_ROWS = [
     {
         "line_number": 6,
@@ -96,6 +85,102 @@ EXPECTED_DISAMBIGUATION_ROWS = [
         "sha256": "168eb8fbae17615ca9d164c7f0ecd8676affd38996938bf2a0be9ac8d593a4ad",
         "on_disk_filename": "cds-i_spanish_PCGChild.pdf",
     },
+    {
+        "line_number": 10,
+        "digest_row_filename": "PCGhhld.pdf",
+        "sha256": "b9a5ae639b028be764801b8bf7ba90c8e0eeb52c7b3697aeb585e998bcea153c",
+        "on_disk_filename": "cds-i_english_PCGhhld.pdf",
+    },
+    {
+        "line_number": 11,
+        "digest_row_filename": "child.pdf",
+        "sha256": "27fccc37fb39a8eb75c13c5c76d12545f768e72e664b3a750aa1c5032118d918",
+        "on_disk_filename": "cds-i_english_child.pdf",
+    },
+    {
+        "line_number": 12,
+        "digest_row_filename": "child.pdf",
+        "sha256": "e24164056a7dc18d95574447e2ed217fc132789ce9ffe461aa82766581f098fa",
+        "on_disk_filename": "cds-i_spanish_child.pdf",
+    },
+    {
+        "line_number": 13,
+        "digest_row_filename": "OCGchild.pdf",
+        "sha256": "ca879e570e7aab3527f2787dee0905b938a89824628ba1086756aeae70c6c814",
+        "on_disk_filename": "cds-i_english_OCGchild.pdf",
+    },
+    {
+        "line_number": 14,
+        "digest_row_filename": "OCGhhld.pdf",
+        "sha256": "1c4470d0e5808d398748693214f129368f765f6edf73bac4df8ab2c5dd3acb4d",
+        "on_disk_filename": "cds-i_english_OCGhhld.pdf",
+    },
+    {
+        "line_number": 15,
+        "digest_row_filename": "absdadch.pdf",
+        "sha256": "4e51cc6a780565de66f6f37e302ebfdf267d3ce229b123bbf4313004165d494f",
+        "on_disk_filename": "cds-i_english_absdadch.pdf",
+    },
+    {
+        "line_number": 16,
+        "digest_row_filename": "absdadhh.pdf",
+        "sha256": "0f5ed6a3c41b73a423d8ad8ca240cca3ae91a16c8954e8889cf7e479462ac0ed",
+        "on_disk_filename": "cds-i_english_absdadhh.pdf",
+    },
+    {
+        "line_number": 17,
+        "digest_row_filename": "Tdiary.pdf",
+        "sha256": "247e2ae0caba18e4544efc2e11f1bc70e14987a311c8288c0970f8139a2678ff",
+        "on_disk_filename": "cds-i_english_Tdiary.pdf",
+    },
+    {
+        "line_number": 18,
+        "digest_row_filename": "child.pdf",
+        "sha256": "3b73487d36e56ec504d98ffc12a25dacecdf777905e1535be3689fe0568a3aff",
+        "on_disk_filename": "cds-iii_child.pdf",
+    },
+    {
+        "line_number": 19,
+        "digest_row_filename": "child.pdf",
+        "sha256": "d787d533922cdbe6f009fd8975bfcd08b9c5dacba40ea07a89fa897da3e11b4a",
+        "on_disk_filename": "cds-14_child.pdf",
+    },
+    {
+        "line_number": 20,
+        "digest_row_filename": "pcg.pdf",
+        "sha256": "2c49d95db0111d6f56c383a72226a0c617743b5747f5c23f89da6b27dd517a1b",
+        "on_disk_filename": "cds-19_pcg.pdf",
+    },
+    {
+        "line_number": 21,
+        "digest_row_filename": "child.pdf",
+        "sha256": "ba004bb09be6aaecafa4be335853a1d41b9755266a37a7f503251c872af448ea",
+        "on_disk_filename": "cds-19_child.pdf",
+    },
+    {
+        "line_number": 22,
+        "digest_row_filename": "pcg.pdf",
+        "sha256": "3fef10e44c82a646787213c1901e907144c62745f36fce4a06c06bf97ae0b5c9",
+        "on_disk_filename": "cds-20_pcg.pdf",
+    },
+    {
+        "line_number": 23,
+        "digest_row_filename": "Coverscreen.pdf",
+        "sha256": "d4eae86efecfd55d039c13d4b34fe9d4fb068a1e08889b82aa8442320b2bdf52",
+        "on_disk_filename": "cds-21_Coverscreen.pdf",
+    },
+    {
+        "line_number": 24,
+        "digest_row_filename": "pcg.pdf",
+        "sha256": "885469c34535ff028c77e9407f624263a7b2a2fa8ca5fe49cdb715734825a2cf",
+        "on_disk_filename": "cds-21_pcg.pdf",
+    },
+    {
+        "line_number": 25,
+        "digest_row_filename": "child.pdf",
+        "sha256": "8bdea6e086087b359c20932ebaf9c82d08f716df29d1245e0596c15c055360ac",
+        "on_disk_filename": "cds-21_child.pdf",
+    },
 ]
 
 # Capture-ceremony files are frozen independently of the generated artifact.
@@ -109,8 +194,8 @@ CAPTURE_INPUT_SPECS = (
     (
         "name_disambiguation",
         "name_disambiguation.txt",
-        626,
-        "71ff7ad133830d31a80190e5a2bd6b52fb870841b9571b778f4b094deae23376",
+        2_272,
+        "5a4912096adc8f8cec3361743a067b70fdebc89955c1787ecfca224f5912301b",
     ),
     (
         "source_page_index",
@@ -584,6 +669,66 @@ def _content_sha256(value: Mapping[str, Any]) -> str:
     return _sha256(canonical_json_bytes(preimage))
 
 
+def _registry_content_sha256(value: Mapping[str, Any]) -> str:
+    preimage = copy.deepcopy(value)
+    preimage["integrity"]["content_sha256"] = "0" * 64
+    return _sha256(canonical_json_bytes(preimage))
+
+
+def _accepted_authority_registry(
+    repo_authority_locators: list[dict[str, Any]],
+    capture_input_identities: list[dict[str, Any]],
+    name_disambiguation: list[dict[str, Any]],
+    documents: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Return the closed accepted-authority projection for a complete corpus."""
+
+    if len(documents) != EXPECTED_DOCUMENT_ROW_COUNT or any(
+        row["availability"] != "verified" for row in documents
+    ):
+        raise ValueError("accepted authority requires every document verified")
+    ordered_document_ids = [row["source_document_id"] for row in documents]
+    if len(ordered_document_ids) != len(set(ordered_document_ids)):
+        raise ValueError("accepted authority document IDs are not unique")
+    unique_document_identity_count = len(
+        {
+            (row["expected_sha256"], row["expected_size_bytes"])
+            for row in documents
+        }
+    )
+    value: dict[str, Any] = {
+        "schema_version": ACCEPTED_REGISTRY_SCHEMA_VERSION,
+        "artifact_id": ACCEPTED_REGISTRY_ARTIFACT_ID,
+        "authority_scope": "external_psid_questionnaire_and_codebook_bytes",
+        "staging": {
+            "staging_root_id": CAPTURE_ROOT_ID,
+            "relative_capture_path": CAPTURE_RELATIVE_PATH,
+            "absolute_paths_serialized": False,
+        },
+        "repo_authority_locators_sha256": _sha256(
+            canonical_json_bytes(repo_authority_locators)
+        ),
+        "capture_input_identities_sha256": _sha256(
+            canonical_json_bytes(capture_input_identities)
+        ),
+        "name_disambiguation_rows_sha256": _sha256(
+            canonical_json_bytes(name_disambiguation)
+        ),
+        "authority_manifest_pointer": "/document_candidates",
+        "ordered_document_ids": ordered_document_ids,
+        "document_count": len(documents),
+        "unique_document_identity_count": unique_document_identity_count,
+        "document_rows_sha256": _sha256(canonical_json_bytes(documents)),
+        "status": "pass",
+        "integrity": {
+            "canonicalization": CANONICALIZATION,
+            "content_sha256": "0" * 64,
+        },
+    }
+    value["integrity"]["content_sha256"] = _registry_content_sha256(value)
+    return value
+
+
 def build_registration_attempt(
     capture_root: Path = DEFAULT_CAPTURE_ROOT,
 ) -> dict[str, Any]:
@@ -610,6 +755,17 @@ def build_registration_attempt(
         if row["availability"] != "verified"
     ]
     registration_status = "pass" if not failed_ids else "fail"
+    repo_authority_locators = _repo_authority_locators()
+    accepted_authority_registry = (
+        _accepted_authority_registry(
+            repo_authority_locators,
+            capture_inputs,
+            mappings,
+            documents,
+        )
+        if registration_status == "pass"
+        else None
+    )
     value: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "artifact_id": ARTIFACT_ID,
@@ -620,7 +776,7 @@ def build_registration_attempt(
             "absolute_paths_serialized": False,
             "repo_authority_locator_id": "psid_external_staging_law",
         },
-        "repo_authority_locators": _repo_authority_locators(),
+        "repo_authority_locators": repo_authority_locators,
         "capture_input_identities": capture_inputs,
         "link_inventory_summary": link_summary,
         "name_disambiguation": mappings,
@@ -642,7 +798,7 @@ def build_registration_attempt(
         "failed_document_count": len(failed_ids),
         "registration_status": registration_status,
         "failure_disposition": FAILURE_DISPOSITION,
-        "accepted_authority_registry": None,
+        "accepted_authority_registry": accepted_authority_registry,
         "integrity": {
             "canonicalization": CANONICALIZATION,
             "content_sha256": "0" * 64,
@@ -898,18 +1054,24 @@ def validate_structure(value: Mapping[str, Any]) -> None:
     ):
         raise ValueError("registration-attempt availability projection drift")
     if (
-        value["verified_document_count"] != 440
+        value["verified_document_count"] != EXPECTED_VERIFIED_DOCUMENT_COUNT
         or value["verified_document_count"] != len(verified)
-        or value["failed_document_count"] != 16
+        or value["failed_document_count"] != EXPECTED_FAILED_DOCUMENT_COUNT
         or value["failed_document_count"] != len(failed)
         or failed != EXPECTED_FAILED_DOCUMENT_IDS
     ):
         raise ValueError("registration-attempt availability count drift")
     expected_status = "pass" if not failed else "fail"
-    if value["registration_status"] != "fail" or expected_status != "fail":
+    if value["registration_status"] != "pass" or expected_status != "pass":
         raise ValueError("registration-attempt status drift")
-    if value["accepted_authority_registry"] is not None:
-        raise ValueError("registration attempt emitted an accepted authority")
+    expected_registry = _accepted_authority_registry(
+        value["repo_authority_locators"],
+        value["capture_input_identities"],
+        value["name_disambiguation"],
+        documents,
+    )
+    if value["accepted_authority_registry"] != expected_registry:
+        raise ValueError("registration-attempt accepted authority registry drift")
     if value["failure_disposition"] != FAILURE_DISPOSITION:
         raise ValueError("registration-attempt failure disposition drift")
     integrity = value["integrity"]

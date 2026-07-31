@@ -1,4 +1,4 @@
-"""Offline bindings for the committed PSID corpus-registration attempt."""
+"""Offline bindings for the committed PSID corpus-registration artifact."""
 
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ ARTIFACT = (
     / "external"
     / "psid_questionnaire_corpus_authority_registration_attempt_v1.json"
 )
-ARTIFACT_SIZE_BYTES = 499_221
+ARTIFACT_SIZE_BYTES = 520_656
 ARTIFACT_SHA256 = (
-    "a1216521410d5a73e0dfde4d094d703843016cf6e67c8ee11ac3c4be70baceb0"
+    "07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c"
 )
 
 if str(SCRIPTS) not in sys.path:
@@ -37,10 +37,20 @@ def _artifact() -> dict[str, Any]:
     return value
 
 
-def _reseal(value: dict[str, Any], *, documents_changed: bool = False) -> None:
+def _reseal(
+    value: dict[str, Any],
+    *,
+    documents_changed: bool = False,
+    registry_changed: bool = False,
+) -> None:
     if documents_changed:
         value["document_rows_sha256"] = builder._sha256(
             builder.canonical_json_bytes(value["document_candidates"])
+        )
+    if registry_changed:
+        registry = value["accepted_authority_registry"]
+        registry["integrity"]["content_sha256"] = (
+            builder._registry_content_sha256(registry)
         )
     value["integrity"]["content_sha256"] = builder._content_sha256(value)
 
@@ -56,7 +66,7 @@ def test_committed_attempt_is_canonical_size_and_sha_pinned():
     assert b"maxghenis" not in raw
 
 
-def test_attempt_covers_the_exact_capture_domain_and_fails_closed():
+def test_artifact_accepts_the_exact_complete_capture_domain():
     value = _artifact()
     documents = value["document_candidates"]
     assert value["document_candidate_count"] == len(documents) == 456
@@ -64,16 +74,29 @@ def test_attempt_covers_the_exact_capture_domain_and_fails_closed():
     assert value["ordered_document_ids"] == [
         f"psid-corpus-document-{position:04d}" for position in range(1, 457)
     ]
-    assert value["verified_document_count"] == 440
-    assert value["failed_document_count"] == 16
+    assert value["verified_document_count"] == 456
+    assert value["failed_document_count"] == 0
+    assert value["failed_document_ids"] == []
     assert value["failed_document_ids"] == builder.EXPECTED_FAILED_DOCUMENT_IDS
-    assert {row["availability"] for row in documents} == {
-        "verified",
-        "identity_mismatch",
-    }
-    assert value["registration_status"] == "fail"
+    assert {row["availability"] for row in documents} == {"verified"}
+    assert value["registration_status"] == "pass"
     assert value["failure_disposition"] == builder.FAILURE_DISPOSITION
-    assert value["accepted_authority_registry"] is None
+    registry = value["accepted_authority_registry"]
+    assert registry == builder._accepted_authority_registry(
+        value["repo_authority_locators"],
+        value["capture_input_identities"],
+        value["name_disambiguation"],
+        documents,
+    )
+    assert registry["schema_version"] == builder.ACCEPTED_REGISTRY_SCHEMA_VERSION
+    assert registry["artifact_id"] == builder.ACCEPTED_REGISTRY_ARTIFACT_ID
+    assert registry["document_count"] == 456
+    assert registry["unique_document_identity_count"] == 455
+    assert registry["document_rows_sha256"] == value["document_rows_sha256"]
+    assert registry["status"] == "pass"
+    assert registry["integrity"]["content_sha256"] == (
+        "c82304267d254e81ab5d7e7e198f89d09056700a7429d7fcfa32fdab6bb99b03"
+    )
     assert value["name_disambiguation"] == builder.EXPECTED_DISAMBIGUATION_ROWS
     assert value["link_inventory_summary"] == {
         "link_count": 465,
@@ -86,7 +109,7 @@ def test_attempt_covers_the_exact_capture_domain_and_fails_closed():
     }
 
 
-def test_every_available_source_has_a_fail_closed_full_file_locator():
+def test_every_accepted_source_has_a_fail_closed_full_file_locator():
     value = _artifact()
     for capture_input in value["capture_input_identities"]:
         locator = capture_input["locator"]
@@ -96,30 +119,22 @@ def test_every_available_source_has_a_fail_closed_full_file_locator():
         assert locator["range_sha256"] == locator["full_file_sha256"]
 
     for row in value["document_candidates"]:
-        if row["availability"] == "verified":
-            locator = row["locator"]
-            assert locator == {
-                "location_type": "full_file_byte_range",
-                "filename": row["on_disk_filename"],
-                "full_file_sha256": row["expected_sha256"],
-                "size_bytes": row["expected_size_bytes"],
-                "byte_start": 0,
-                "byte_end": row["expected_size_bytes"],
-                "range_sha256": row["expected_sha256"],
-            }
-            assert row["observed_identity"] == {
-                "filename": row["on_disk_filename"],
-                "sha256": row["expected_sha256"],
-                "size_bytes": row["expected_size_bytes"],
-            }
-        else:
-            assert row["locator"] is None
-            observed = row["observed_identity"]
-            assert observed is not None
-            assert (
-                observed["sha256"],
-                observed["size_bytes"],
-            ) != (row["expected_sha256"], row["expected_size_bytes"])
+        assert row["availability"] == "verified"
+        locator = row["locator"]
+        assert locator == {
+            "location_type": "full_file_byte_range",
+            "filename": row["on_disk_filename"],
+            "full_file_sha256": row["expected_sha256"],
+            "size_bytes": row["expected_size_bytes"],
+            "byte_start": 0,
+            "byte_end": row["expected_size_bytes"],
+            "range_sha256": row["expected_sha256"],
+        }
+        assert row["observed_identity"] == {
+            "filename": row["on_disk_filename"],
+            "sha256": row["expected_sha256"],
+            "size_bytes": row["expected_size_bytes"],
+        }
 
 
 def test_repo_authority_locators_resolve_frozen_lines_and_byte_ranges():
@@ -154,12 +169,12 @@ def test_repo_authority_locators_resolve_frozen_lines_and_byte_ranges():
 @pytest.mark.parametrize(
     ("mutation", "message"),
     [
-        ("accept_authority", "accepted authority"),
+        ("accepted_registry", "accepted authority registry"),
         ("capture_input", "capture input identity"),
         ("repo_locator", "repo authority locator"),
         ("document_link", "document rows digest"),
         ("verified_locator", "verified locator"),
-        ("promote_failed_document", "document rows digest"),
+        ("demote_verified_document", "document rows digest"),
     ],
 )
 def test_coherently_resealed_mutations_are_rejected(
@@ -168,8 +183,10 @@ def test_coherently_resealed_mutations_are_rejected(
 ):
     value = copy.deepcopy(_artifact())
     documents_changed = False
-    if mutation == "accept_authority":
-        value["accepted_authority_registry"] = {"authority_id": "forged"}
+    registry_changed = False
+    if mutation == "accepted_registry":
+        value["accepted_authority_registry"]["status"] = "fail"
+        registry_changed = True
     elif mutation == "capture_input":
         value["capture_input_identities"][0]["locator"][
             "filename"
@@ -196,27 +213,14 @@ def test_coherently_resealed_mutations_are_rejected(
         row["locator"]["byte_end"] -= 1
         documents_changed = True
     else:
-        failed_id = value["failed_document_ids"][0]
-        row = next(
-            item
-            for item in value["document_candidates"]
-            if item["source_document_id"] == failed_id
-        )
-        row["availability"] = "verified"
+        row = value["document_candidates"][0]
+        row["availability"] = "identity_mismatch"
         row["observed_identity"] = {
             "filename": row["on_disk_filename"],
-            "sha256": row["expected_sha256"],
+            "sha256": "0" * 64,
             "size_bytes": row["expected_size_bytes"],
         }
-        row["locator"] = {
-            "location_type": "full_file_byte_range",
-            "filename": row["on_disk_filename"],
-            "full_file_sha256": row["expected_sha256"],
-            "size_bytes": row["expected_size_bytes"],
-            "byte_start": 0,
-            "byte_end": row["expected_size_bytes"],
-            "range_sha256": row["expected_sha256"],
-        }
+        row["locator"] = None
         value["verified_document_ids"] = [
             item["source_document_id"]
             for item in value["document_candidates"]
@@ -229,7 +233,13 @@ def test_coherently_resealed_mutations_are_rejected(
         ]
         value["verified_document_count"] = len(value["verified_document_ids"])
         value["failed_document_count"] = len(value["failed_document_ids"])
+        value["registration_status"] = "fail"
+        value["accepted_authority_registry"] = None
         documents_changed = True
-    _reseal(value, documents_changed=documents_changed)
+    _reseal(
+        value,
+        documents_changed=documents_changed,
+        registry_changed=registry_changed,
+    )
     with pytest.raises(ValueError, match=message):
         builder.validate_structure(value)
