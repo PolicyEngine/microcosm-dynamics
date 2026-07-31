@@ -53,11 +53,16 @@ gates:
     design_commit: PENDING  # squash-merge commit, set at the flip
     plan: issue #192
     composed_heads:
-      master: 691901f2915865fceb906f1dc5f36c913a5e2675
-      ic_naming_root_pr_277: c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0
-      person_side_floors_pr_212: c24809b081c448255a39b74870de70207f615724
-      firm_side_floors_pr_223: 34a70fc8c809d23b4643588ca228565b1c7b6513
-      controlling_design_pr_230: 1bc161e7ca6a86965708734b425bbc209bed0083
+      master: 044d2fc789052e89ea0849fa39fea9899317d97e
+      ic_naming_root_pr_277: 35499f134c009680e7b51c6599d49812246b5b2d
+      references_pr_228: 50404cb190f04c88508410b296dccf120cfdbf39
+      person_side_floors_pr_212: 55ddae010e7a76ee72dd456eb215ba44f2d65558
+      firm_side_floors_pr_223: b4c5b6f117b66b70a5527ec5d842f490ff3296c5
+      linkage_qc_pr_224: 32f8fed2cbb938d02ec7d9264d0a2556bd8c2f6f
+      crosswave_evidence_pr_235: d13e8c4c6d578d6fab65a297f2fcfacf0af3cf6d
+      audit_manifest_pr_236: 85bcf90861265b7d5c8987d24432627879a74a00
+      seam_evidence_pr_274: 42a92ccec6a9b74915abc6ade66340f94246d805
+      controlling_design_pr_230: 173ac15d2cda4038ad20b591a4f6737ebdc1ab67
     composed_head_rule: >-
       these are exact branch-composition identities, not merge,
       approval, referee, or ratification claims. Every listed commit
@@ -68,10 +73,15 @@ gates:
       linkage_qc: docs/adr/0004-linkage-qc.md
 
     evidence_provenance:
-      person_side_pr: "212@c24809b081c448255a39b74870de70207f615724"
-      firm_side_pr: "223@34a70fc8c809d23b4643588ca228565b1c7b6513"
-      design_pr: "230@1bc161e7ca6a86965708734b425bbc209bed0083"
+      person_side_pr: "212@55ddae010e7a76ee72dd456eb215ba44f2d65558"
+      firm_side_pr: "223@b4c5b6f117b66b70a5527ec5d842f490ff3296c5"
+      design_pr: "230@173ac15d2cda4038ad20b591a4f6737ebdc1ab67"
       artifact_sha256:
+        data/external/j2j_us_sexage_2015on.csv: 6ca16b98b3e809ebf4493f6884c75bee712c727cce16ddc219e0fca97e7edf60
+        data/external/j2jod_us_firmsize_od_2015on.csv: 0f83df008ae498643b66ecf25187170014988f5fb1f761c84cf9882376e3bef6
+        docs/design/e4_e5_audit_manifest.md: d37b3ce014532e16e009cd5cf8b025601c029fd0bde48ac593c993d51025d103
+        runs/crosswave_jobid_check_draft_v0.json: 33d4a7be88b417cb980ad4b12e65e1310eabd541a4926673e2414eead20941f1
+        runs/seam_reconciliation_draft_v0.json: 622ff4117a073c36698ed1e7d1828a6a0399471bfd0c06520e0da5ac2cd98e83
         runs/sipp_spell_floors_v1.json: 500b68034c9a301eb823e1d8f7584cf6c7654bf536247827353b0941d1d026ae
         runs/sipp_spell_floors_v1.env.json: 124adfc94e32c157886d40b405c4495a4e7a4e935f4bf940a551c551ca6eaba7
         runs/sipp_spell_floors_v1.inputs.json: 68a039b0951698b9031d8c29a064a4e2a287f2e2f54552726bf6ed502d7cbe7d
@@ -84,7 +94,7 @@ gates:
         runs/employer_firm_floors_v1.json: eb58474b42166d51ccbe80a1c58d33ffb8a60a4a5ac097290fecc6c2a8b92f17
       person_side_raw_input_status: PINNED_REPRODUCED_ON_DATA
       person_side_raw_input_note: >-
-        exact #212 head c24809b reran all three builders from the
+        exact #212 head 55ddae0 reran all three builders from the
         Census-hosted vintages, reproduced every previously recorded
         measured value, and recorded raw-input plus
         measurement-environment sidecars.
@@ -498,7 +508,7 @@ gates:
           decided silently by omission.
         thinnest_gated_cell_note: >-
           545 unweighted pairs from 524 distinct persons are recorded
-          by exact #212 head c24809b. The person-unit population
+          by exact #212 head 55ddae0. The person-unit population
           therefore clears the registered 200-person thin floor.
           Linkage-audit scope and referee verification remain
           unresolved and continue to block first-lock eligibility.

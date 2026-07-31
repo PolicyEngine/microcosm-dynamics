@@ -106,6 +106,11 @@ EXPECTED_CELLS = {
 }
 
 ARTIFACT_SHA256 = {
+    "data/external/j2j_us_sexage_2015on.csv": "6ca16b98b3e809ebf4493f6884c75bee712c727cce16ddc219e0fca97e7edf60",
+    "data/external/j2jod_us_firmsize_od_2015on.csv": "0f83df008ae498643b66ecf25187170014988f5fb1f761c84cf9882376e3bef6",
+    "docs/design/e4_e5_audit_manifest.md": "d37b3ce014532e16e009cd5cf8b025601c029fd0bde48ac593c993d51025d103",
+    "runs/crosswave_jobid_check_draft_v0.json": "33d4a7be88b417cb980ad4b12e65e1310eabd541a4926673e2414eead20941f1",
+    "runs/seam_reconciliation_draft_v0.json": "622ff4117a073c36698ed1e7d1828a6a0399471bfd0c06520e0da5ac2cd98e83",
     "runs/sipp_spell_floors_v1.json": "500b68034c9a301eb823e1d8f7584cf6c7654bf536247827353b0941d1d026ae",
     "runs/sipp_spell_floors_v1.env.json": "124adfc94e32c157886d40b405c4495a4e7a4e935f4bf940a551c551ca6eaba7",
     "runs/sipp_spell_floors_v1.inputs.json": "68a039b0951698b9031d8c29a064a4e2a287f2e2f54552726bf6ed502d7cbe7d",
@@ -406,9 +411,8 @@ def test_ceremony_requires_merges_and_pinning(block):
 def test_the_block_states_what_it_cannot_certify(block):
     """The paper's rule: misses publish as prominently as hits."""
     not_certified = block["not_certified"]
-    assert (
-        "E2, E7 and E11-margins ONLY"
-        in (not_certified["firm_side_gating_is_thin"])
+    assert "E2, E7 and E11-margins ONLY" in (
+        not_certified["firm_side_gating_is_thin"]
     )
     assert "PERMANENTLY" in not_certified["imputed_band_conditioned_cells"]
     assert "Phase-2 no-go" in not_certified["e12_not_gated"]
@@ -444,11 +448,16 @@ def test_draft_and_design_document_agree_on_the_demotions(block):
 
 def test_exact_composed_heads_are_pinned_and_ancestral(block):
     assert block["composed_heads"] == {
-        "master": "691901f2915865fceb906f1dc5f36c913a5e2675",
-        "ic_naming_root_pr_277": "c5b4d11f1b3bd6b34a3de8ea1a1c8d72e6777ee0",
-        "person_side_floors_pr_212": "c24809b081c448255a39b74870de70207f615724",
-        "firm_side_floors_pr_223": "34a70fc8c809d23b4643588ca228565b1c7b6513",
-        "controlling_design_pr_230": "1bc161e7ca6a86965708734b425bbc209bed0083",
+        "master": "044d2fc789052e89ea0849fa39fea9899317d97e",
+        "ic_naming_root_pr_277": "35499f134c009680e7b51c6599d49812246b5b2d",
+        "references_pr_228": "50404cb190f04c88508410b296dccf120cfdbf39",
+        "person_side_floors_pr_212": "55ddae010e7a76ee72dd456eb215ba44f2d65558",
+        "firm_side_floors_pr_223": "b4c5b6f117b66b70a5527ec5d842f490ff3296c5",
+        "linkage_qc_pr_224": "32f8fed2cbb938d02ec7d9264d0a2556bd8c2f6f",
+        "crosswave_evidence_pr_235": "d13e8c4c6d578d6fab65a297f2fcfacf0af3cf6d",
+        "audit_manifest_pr_236": "85bcf90861265b7d5c8987d24432627879a74a00",
+        "seam_evidence_pr_274": "42a92ccec6a9b74915abc6ade66340f94246d805",
+        "controlling_design_pr_230": "173ac15d2cda4038ad20b591a4f6737ebdc1ab67",
     }
 
 
@@ -528,9 +537,9 @@ def test_contract_mutations_fail_closed(block, mutation):
     elif mutation == "drop_cell":
         candidate["families"]["e2_sexage_rates"]["cells"].pop()
     elif mutation == "rename_cell":
-        candidate["families"]["e4_retention_by_age_sex"]["cells"][0] = (
-            "renamed"
-        )
+        candidate["families"]["e4_retention_by_age_sex"]["cells"][
+            0
+        ] = "renamed"
     elif mutation == "partition_drift":
         candidate["partition"]["gate_cells"].remove(
             "e7_earns_relative_gradient_by_size"
@@ -538,7 +547,7 @@ def test_contract_mutations_fail_closed(block, mutation):
     elif mutation == "artifact_digest_drift":
         candidate["evidence_provenance"]["artifact_sha256"][
             "runs/tenure_floors_v1.json"
-        ] = "0" * 64
+        ] = ("0" * 64)
     elif mutation == "reintroduce_resolved_blocker":
         candidate["lock_blockers"].append(
             "person_side_raw_input_sha256_and_measurement_environment"
@@ -548,9 +557,9 @@ def test_contract_mutations_fail_closed(block, mutation):
             "floor_basis"
         ] = "ex_pandemic"
     elif mutation == "promote_e9":
-        candidate["families"]["e9_j2j_earnings_change"]["gate_eligibility"] = (
-            "ELIGIBLE"
-        )
+        candidate["families"]["e9_j2j_earnings_change"][
+            "gate_eligibility"
+        ] = "ELIGIBLE"
     elif mutation == "expand_e11_claim":
         candidate["families"]["e11_destination_size_margins"][
             "certification_scope"

@@ -5,10 +5,10 @@
   responding to the round-1 adversarial review of 2026-07-17
   (verdict: NOT RATIFIABLE AS DRAFTED — 5 blocking, 6 should-fix).
   Blocking items B1, B3, B4, B5 and should-fix S1 are addressed.
-  **B2 remains open**: the refereed block YAML is still a required
-  pre-lock artifact (§12.2a). The IC rename (#277) and its final
-  design filename are composed at their current head, so that YAML
-  must use `ic3` names from its first commit. §13 records every remaining
+  The refereed block YAML now exists at
+  `docs/design/ic3_employer_gate_block_draft.yaml`, closing B2's
+  artifact-creation half. Referee verification and every unresolved
+  prerequisite remain open. §13 records every remaining
   decision and distinguishes a workstream decision from referee
   ratification. All current prerequisite heads are composed below,
   but their external PR approval and merge requirements are not
@@ -31,7 +31,7 @@
   `55ddae0`; Workstream B v1 floor promotion #223 `b4c5b6f`; ADR
   0004 #224 `32f8fed`; cross-wave evidence #235 `d13e8c4`; E4/E5
   registered design #236 `85bcf90`; byte-faithful seam anchor #274
-  `42a92cc`.
+  `42a92cc`; controlling design #230 `173ac15`.
 - **Floor-promotion readiness is not implied by composition.** #212
   is now a reproducible pre-lock anchor: all three builders were
   rerun from the exact Census-hosted vintages, every previously
