@@ -6,6 +6,7 @@ not load the diagnostic cache or recompute the projection.
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 from collections import Counter
@@ -66,6 +67,10 @@ def test_reducer_input_identity_matches_reviewed_branch():
 def test_context_report_sources_are_outside_historical_reducer_identity():
     assert reducer.POST_REVIEW_SOURCE_EXCLUSIONS == (
         Path("src/populace_dynamics/artifacts.py"),
+        Path("src/populace_dynamics/data/psid_covered_earnings_registry.py"),
+        Path("src/populace_dynamics/data/psid_job_context.py"),
+        Path("src/populace_dynamics/data/psid_job_context_registry.py"),
+        Path("src/populace_dynamics/data/psid_questionnaire_inventory.py"),
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
         Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
@@ -77,6 +82,109 @@ def test_context_report_sources_are_outside_historical_reducer_identity():
             "src/populace_dynamics/artifacts.py"
         ): "c03afa29cbdaf722c2cf62608dbb01f061f6558d"
     }
+
+
+def _repository_module_paths() -> dict[str, Path]:
+    modules: dict[str, Path] = {}
+    for source_root, prefix in (
+        (ROOT / "src", ()),
+        (ROOT / "scripts", ("scripts",)),
+    ):
+        for path in source_root.rglob("*.py"):
+            relative = path.relative_to(source_root).with_suffix("")
+            parts = (*prefix, *relative.parts)
+            if parts[-1] == "__init__":
+                parts = parts[:-1]
+            if parts:
+                modules[".".join(parts)] = path
+    return modules
+
+
+def _internal_imports(
+    module_name: str,
+    path: Path,
+    module_paths: dict[str, Path],
+) -> set[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    imports: set[str] = set()
+    is_package = path.name == "__init__.py"
+    module_parts = module_name.split(".")
+    package_parts = module_parts if is_package else module_parts[:-1]
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imports.update(
+                alias.name
+                for alias in node.names
+                if alias.name in module_paths
+            )
+            continue
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        if node.level:
+            keep = len(package_parts) - node.level + 1
+            if keep < 0:
+                continue
+            base_parts = package_parts[:keep]
+            if node.module:
+                base_parts.extend(node.module.split("."))
+            base = ".".join(base_parts)
+        else:
+            base = node.module or ""
+        if base in module_paths:
+            imports.add(base)
+        for alias in node.names:
+            candidate = f"{base}.{alias.name}" if base else alias.name
+            if candidate in module_paths:
+                imports.add(candidate)
+    return imports
+
+
+def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
+    module_paths = _repository_module_paths()
+    root_module = "scripts.first_estimates_birth_evidence"
+    psid_exclusions = {
+        "populace_dynamics.data.psid_covered_earnings_registry",
+        "populace_dynamics.data.psid_job_context",
+        "populace_dynamics.data.psid_job_context_registry",
+        "populace_dynamics.data.psid_questionnaire_inventory",
+    }
+    assert root_module in module_paths
+    assert psid_exclusions.issubset(module_paths)
+    module_by_path = {
+        path.resolve(): module_name
+        for module_name, path in module_paths.items()
+    }
+    dynamic_identity_roots = {
+        module_by_path[(ROOT / path).resolve()]
+        for path in reducer.PRODUCTION_SOURCE_PATHS
+        if (ROOT / path).is_file()
+    }
+    assert {
+        "scripts.registered_m6_candidate3_inputs",
+        "scripts.registered_m6_candidate2_inputs",
+        "scripts.registered_m6_inputs",
+    }.issubset(dynamic_identity_roots)
+
+    reachable: set[str] = set()
+    pending = [root_module, *sorted(dynamic_identity_roots)]
+    while pending:
+        module_name = pending.pop()
+        if module_name in reachable:
+            continue
+        reachable.add(module_name)
+        pending.extend(
+            _internal_imports(
+                module_name,
+                module_paths[module_name],
+                module_paths,
+            )
+            - reachable
+        )
+
+    assert psid_exclusions.isdisjoint(reachable), (
+        "historically excluded PSID modules became reachable from the "
+        f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
+    )
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
