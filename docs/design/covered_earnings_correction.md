@@ -21608,3 +21608,30 @@ The row pointers remain `/verdicts/0`, `/verdicts/1`, and `/verdicts/2` in
 that order. For each row, `unresolved_evidence_ids` exact-copies the complete
 committed `residual_ids` array; the displayed cardinality is an additional
 exact check, not a replacement for that array equality.
+
+#### 16.14.7 Least-absent selection after a nonblob suffix 1
+
+This subsection prospectively replaces mandatory regression clause 3 of
+§16.14.2. If the exact canonical path \(p_1\) is occupied by a tree or
+gitlink, its explicit row has `registration_suffix: 1`, the observed
+mode/OID and `tree | commit | missing` type, and `raw_sha256: null`. A
+resolved tree or gitlink has `object_not_blob`; an unresolved entry has
+`object_missing`; the row has exactly the applicable one of those codes and
+`record_state: invalid`.
+
+Because \(p_1\) is a mode-bearing member of \(D_X\), selection is exactly
+
+\[
+s(X)=\min\{r\in\mathbb Z_{>0}:p_r
+\text{ is not a mode-bearing member of }D_X\},
+\qquad
+\texttt{selected\_registration\_path}=p_{s(X)}.
+\]
+
+Thus the selected suffix and path are 2 and exact \(p_2\) if and only if
+exact \(p_2\) is absent. If \(p_2\) is also occupied, selection is the least
+absent canonical path \(p_{s(X)}\), where \(s(X)\ge 3\); no particular higher
+suffix is presumed absent. Here “occupied” always means a mode-bearing
+member of \(D_X\), regardless of that entry's mode, object resolution,
+content, or record validity. Status is `fail`, and serialization never
+requires a nonexistent blob digest.
