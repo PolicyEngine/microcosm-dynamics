@@ -4,7 +4,7 @@
 The ratified design has no successor methodology or PSID authority registry
 that can admit a membership v3.  This artifact therefore preserves every v2
 membership fact and family disposition, records the independently extracted
-PSID evidence, and makes both blocking conditions explicit.
+accepted-corpus evidence, and makes the remaining design blocker explicit.
 """
 
 from __future__ import annotations
@@ -46,14 +46,14 @@ FROZEN_INPUTS = {
     },
     "corpus_registration_attempt": {
         "committed_path": "data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json",
-        "size_bytes": 499_221,
-        "sha256": "a1216521410d5a73e0dfde4d094d703843016cf6e67c8ee11ac3c4be70baceb0",
+        "size_bytes": 520_656,
+        "sha256": "07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c",
         "schema_version": "psid_questionnaire_corpus_authority_registration_attempt.v1",
     },
     "questionnaire_extraction": {
         "committed_path": "data/external/psid_questionnaire_corpus_extraction_v1.json",
-        "size_bytes": 81_210,
-        "sha256": "4a6bfd761b05b40115c7a416ceb0836f73989d1492b58cb2729e78a288e5a29b",
+        "size_bytes": 81_177,
+        "sha256": "5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347",
         "schema_version": "psid_questionnaire_corpus_extraction.v1",
     },
 }
@@ -430,16 +430,24 @@ def _constructed_value() -> dict[str, Any]:
     inputs = _frozen_inputs()
     registration = inputs["corpus_registration_attempt"]
     extraction = inputs["questionnaire_extraction"]
+    accepted_registry = registration.get("accepted_authority_registry")
     if (
-        registration.get("registration_status") != "fail"
-        or registration.get("accepted_authority_registry") is not None
-        or registration.get("verified_document_count") != 440
-        or registration.get("failed_document_count") != 16
+        registration.get("registration_status") != "pass"
+        or not isinstance(accepted_registry, Mapping)
+        or accepted_registry.get("schema_version")
+        != "psid_questionnaire_corpus_authority_registry.v1"
+        or accepted_registry.get("artifact_id")
+        != "psid_questionnaire_corpus_authority_registry.v1"
+        or accepted_registry.get("document_count") != 456
+        or accepted_registry.get("status") != "pass"
+        or registration.get("verified_document_count") != 456
+        or registration.get("failed_document_count") != 0
+        or registration.get("failed_document_ids") != []
     ):
-        raise ValueError("corpus registration blocker drift")
+        raise ValueError("corpus registration acceptance drift")
     if extraction.get("authority_disposition") != {
-        "corpus_registration_status": "fail",
-        "accepted_corpus_authority": False,
+        "corpus_registration_status": "pass",
+        "accepted_corpus_authority": True,
         "verified_candidate_documents_may_support_nonoperative_audit": True,
         "membership_v3_or_supersession_effect": "none",
     }:
@@ -462,7 +470,7 @@ def _constructed_value() -> dict[str, Any]:
             "membership_domain": "SSA_Tables_B2_B11_membership_predicates",
             "questionnaire_domain": "PSID_variable_semantics_for_V-B5_V-B6_V-B8",
             "fitting_or_numeric_targets": False,
-            "accepted_authority_registration": False,
+            "accepted_authority_registration": True,
         },
         "supersession_adjudication": {
             "membership_v3_permitted": False,
@@ -477,12 +485,18 @@ def _constructed_value() -> dict[str, Any]:
                 "closed_psid_source_disposition_law",
                 "frozen_vb_source_rows_and_residuals_law",
             ],
-            "independent_capture_blocker": {
-                "disposition": "corpus_registration_failed",
+            "independent_capture_registration": {
+                "disposition": "accepted_corpus_authority",
                 "document_candidate_count": 456,
-                "verified_document_count": 440,
-                "failed_document_count": 16,
-                "accepted_authority_registry": None,
+                "verified_document_count": 456,
+                "failed_document_count": 0,
+                "accepted_authority_registry_identity": {
+                    "schema_version": accepted_registry["schema_version"],
+                    "artifact_id": accepted_registry["artifact_id"],
+                    "content_sha256": accepted_registry["integrity"][
+                        "content_sha256"
+                    ],
+                },
             },
         },
         "membership_verdict_summary": _membership_verdict_summary(
@@ -508,7 +522,7 @@ def _constructed_value() -> dict[str, Any]:
             "membership_families_changed": 0,
             "membership_v3_emitted": False,
             "closure_attempt_status": "nonoperative_partial_evidentiary_closure",
-            "required_next_authority_action": "restore_all_456_capture_identities_then_ratify_append_only_successor_registry_and_fresh_adjudication",
+            "required_next_authority_action": "ratify_append_only_successor_registry_and_fresh_adjudication",
         },
         "integrity": {
             "canonicalization": CANONICALIZATION,

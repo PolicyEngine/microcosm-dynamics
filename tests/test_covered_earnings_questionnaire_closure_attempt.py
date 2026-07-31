@@ -25,7 +25,7 @@ MEMBERSHIP_V2_PATH = (
     / "covered_earnings_membership_adjudication_v2.json"
 )
 ARTIFACT_SHA256 = (
-    "3a262fbc0d9b6106632abb222385ca08a270ae4b51af5a8936278d53be2a2017"
+    "00c4fb1e671503406dfec55d80b29379ad12f7b8bf330dfe74895724ab19a46c"
 )
 MEMBERSHIP_V2_SHA256 = (
     "7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14"
@@ -61,13 +61,13 @@ def test_closure_attempt_is_canonical_byte_reproducible_and_sha_pinned():
     raw = ARTIFACT_PATH.read_bytes()
     value = _artifact()
     assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
-    assert len(raw) == 50_474
+    assert len(raw) == 50_657
     assert raw == builder.canonical_json_bytes(value)
     assert raw == builder.render()
     assert value["schema_version"] == builder.SCHEMA_VERSION
     assert value["artifact_id"] == builder.ARTIFACT_ID
     assert value["integrity"]["content_sha256"] == (
-        "6c6e5d99c8221d5a2c1c125ec8f6ed9284d1ea7ba8d8fbe867a238da44454ec8"
+        "47c15dfe9018a4ae91c4f409378d2b85c3cdecf442c1ee752d8f7e8e3b125249"
     )
     builder.validate_closure_attempt(value)
 
@@ -117,7 +117,7 @@ def test_design_authority_locators_bind_the_frozen_ratified_prefix():
         assert re.fullmatch(r"[0-9a-f]{64}", row["range_sha256"])
 
 
-def test_supersession_is_blocked_by_design_and_failed_capture_registration():
+def test_supersession_is_blocked_by_design_despite_accepted_capture():
     value = _artifact()
     adjudication = value["supersession_adjudication"]
     assert adjudication == {
@@ -133,15 +133,25 @@ def test_supersession_is_blocked_by_design_and_failed_capture_registration():
             "closed_psid_source_disposition_law",
             "frozen_vb_source_rows_and_residuals_law",
         ],
-        "independent_capture_blocker": {
-            "disposition": "corpus_registration_failed",
+        "independent_capture_registration": {
+            "disposition": "accepted_corpus_authority",
             "document_candidate_count": 456,
-            "verified_document_count": 440,
-            "failed_document_count": 16,
-            "accepted_authority_registry": None,
+            "verified_document_count": 456,
+            "failed_document_count": 0,
+            "accepted_authority_registry_identity": {
+                "schema_version": (
+                    "psid_questionnaire_corpus_authority_registry.v1"
+                ),
+                "artifact_id": (
+                    "psid_questionnaire_corpus_authority_registry.v1"
+                ),
+                "content_sha256": (
+                    "c82304267d254e81ab5d7e7e198f89d09056700a7429d7fcfa32fdab6bb99b03"
+                ),
+            },
         },
     }
-    assert value["attempt_scope"]["accepted_authority_registration"] is False
+    assert value["attempt_scope"]["accepted_authority_registration"] is True
     assert value["closure_disposition"]["membership_v3_emitted"] is False
     assert not (
         ROOT
@@ -258,7 +268,7 @@ def test_psid_evidentiary_closure_does_not_change_operative_residuals():
         "membership_families_changed": 0,
         "membership_v3_emitted": False,
         "closure_attempt_status": "nonoperative_partial_evidentiary_closure",
-        "required_next_authority_action": "restore_all_456_capture_identities_then_ratify_append_only_successor_registry_and_fresh_adjudication",
+        "required_next_authority_action": "ratify_append_only_successor_registry_and_fresh_adjudication",
     }
 
 
@@ -291,7 +301,7 @@ def test_closure_validator_rejects_coherently_resealed_mutations(
     elif mutation == "design_locator":
         value["design_authority_locators"][0]["line_start"] += 1
     elif mutation == "scope":
-        value["attempt_scope"]["accepted_authority_registration"] = True
+        value["attempt_scope"]["accepted_authority_registration"] = False
     elif mutation == "supersession":
         value["supersession_adjudication"]["membership_v3_permitted"] = True
     elif mutation == "membership_summary":
