@@ -21538,3 +21538,73 @@ this is a construction schedule, not a data-dependency operand. Neither
 `status` nor its validity has an edge into the integrity preimage, no
 integrity value has an edge into \(T_V\), and the two checks share only
 their already completed semantic ancestors.
+
+#### 16.14.6 Master-carried post-fix V-B source identity
+
+This subsection prospectively replaces the first committed source identity
+in §16.12.1, its canonical identity digest, the three displayed verdict-row
+digests, and every downstream use of the “displayed singleton identity
+digest.” No earlier source identity, source commit, artifact digest, verdict
+row digest, or residual cardinality has a prospective operative case.
+
+The sole operative
+`verification_claim_adjudication_source_input_identity.v1` value is:
+
+```json
+{
+  "source_input_id": "psid_codebook_inventory_adjudication.v1",
+  "path": "data/external/psid_codebook_inventory_adjudication_v1.json",
+  "source_commit": "b8e8e4f200b362a9661dbc6ef765852496608e49",
+  "tree_mode": "100644",
+  "blob_oid": "c956f5e0cdd63a9eefc0c1bde3824cd817950b39",
+  "raw_sha256": "df73026bcf649d12ecb606501d64780f41567b6dc09d7029f9191111cab09c62",
+  "schema_version": "psid_codebook_inventory_adjudication.v1",
+  "artifact_id": "psid_codebook_inventory_adjudication.v1",
+  "content_sha256": "359c7edac8c0b331c1a4d2a77ad2945974fa033e50e104d866e48b39a45b5a84"
+}
+```
+
+Its §10.1 canonical SHA-256, and therefore the exact
+`source_identity_sha256` used by both branch rows for V-B5, V-B6, and V-B8,
+is
+`518f25891172109e8f5ffd18ae09b2a9b16f73723f8d630b4e7c65177c86ab6f`.
+
+The sole source-commit and ancestry anchor is the master squash commit
+`b8e8e4f200b362a9661dbc6ef765852496608e49`, whose single parent is
+`044d2fc789052e89ea0849fa39fea9899317d97e` and whose tree carries the
+displayed path, mode, and blob. The §16.12.1 adjudication-parent law requires
+that master commit itself to be an ancestor of the future
+verification-claim-adjudication commit's parent. A pre-squash review head or
+pre-squash last-change commit is not an admissible source pin or ancestry
+substitute, whether or not an object from it remains locally readable.
+
+The complete §10.1-canonical verdict-row digests and residual cardinalities
+are exactly:
+
+```json
+[
+  {
+    "claim_id": "V-B5",
+    "source_row_sha256": "8c2d6b0580f3d9d9d5c042c2a8b5822f1ab656089e0f82561d057c8624ff6622",
+    "residual_count": 1,
+    "source_disposition": "registration_required"
+  },
+  {
+    "claim_id": "V-B6",
+    "source_row_sha256": "25fb91f2b80bd8d5ca80ec942c00f96f95a49b37bf7c6dd3a067c6c74ef2b05e",
+    "residual_count": 4,
+    "source_disposition": "registration_required"
+  },
+  {
+    "claim_id": "V-B8",
+    "source_row_sha256": "25fa8ecf8de54c672724c29deb0f994090c243c793b8b5fbe9238248d35faa8e",
+    "residual_count": 3,
+    "source_disposition": "registration_required"
+  }
+]
+```
+
+The row pointers remain `/verdicts/0`, `/verdicts/1`, and `/verdicts/2` in
+that order. For each row, `unresolved_evidence_ids` exact-copies the complete
+committed `residual_ids` array; the displayed cardinality is an additional
+exact check, not a replacement for that array equality.
