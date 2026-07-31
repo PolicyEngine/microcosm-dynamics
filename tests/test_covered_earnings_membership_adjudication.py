@@ -344,3 +344,48 @@ def test__adjudication__rejects_coherently_rehashed_corruption(
     value["integrity"]["content_sha256"] = builder._content_sha256(value)
     with pytest.raises(ValueError, match=message):
         builder.validate_adjudication(value)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "accepted"),
+    [
+        ("equal_bytes", True),
+        ("strict_append", True),
+        ("shorter_bytes", False),
+        ("equal_length_outside_cited_ranges", False),
+        ("equal_length_inside_cited_range", False),
+        ("lf_to_crlf", False),
+    ],
+)
+def test__append_only_prefix__accepts_only_exact_prefix_extensions(
+    mutation,
+    accepted,
+):
+    committed_path = "docs/design/first_estimates_report.md"
+    adjudicated = builder._adjudicated_source_bytes(committed_path)
+    # Cited ranges for this document include bytes 3462-3959; byte 0 is
+    # outside every cited range.
+    if mutation == "equal_bytes":
+        live = adjudicated
+    elif mutation == "strict_append":
+        live = adjudicated + b"\nAppended amendment text.\n"
+    elif mutation == "shorter_bytes":
+        live = adjudicated[:-1]
+    elif mutation == "equal_length_outside_cited_ranges":
+        live = bytes([adjudicated[0] ^ 1]) + adjudicated[1:]
+    elif mutation == "equal_length_inside_cited_range":
+        live = (
+            adjudicated[:3500]
+            + bytes([adjudicated[3500] ^ 1])
+            + adjudicated[3501:]
+        )
+    else:
+        live = adjudicated.replace(b"\n", b"\r\n")
+    assert len(live) > 0
+    if accepted:
+        builder._verify_append_only_prefix(committed_path, adjudicated, live)
+    else:
+        with pytest.raises(ValueError, match="append-only authority prefix"):
+            builder._verify_append_only_prefix(
+                committed_path, adjudicated, live
+            )

@@ -1387,16 +1387,33 @@ def test__verified_role_specs__remain_exact_and_value_independent():
 
 
 def test__design_binding__proves_head_and_ratification_blob_identity():
-    # An in-flight append-only amendment lawfully extends the design
-    # past the pinned ratification blob; the binding must fail closed
-    # until a post-merge repin, with the ratified bytes surviving as an
-    # exact byte prefix of both the worktree and HEAD copies.
+    # The registry constants are asserted against these pinned values
+    # unconditionally, so a coherent wrong repin cannot satisfy either
+    # leg below. An in-flight append-only amendment lawfully extends
+    # the design past the pinned ratification blob; the binding must
+    # then fail closed until a post-merge repin, with the ratified
+    # bytes surviving as an exact byte prefix of both the worktree and
+    # HEAD copies.
+    expected_binding = {
+        "path": "docs/design/covered_earnings_correction.md",
+        "ratification_commit": "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e",
+        "revision": 3,
+        "blob_sha256": (
+            "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+        ),
+    }
+    assert {
+        "path": registry.DESIGN_PATH,
+        "ratification_commit": registry.DESIGN_RATIFICATION_COMMIT,
+        "revision": registry.DESIGN_REVISION,
+        "blob_sha256": registry.DESIGN_BLOB_SHA256,
+    } == expected_binding
     ratified_bytes = subprocess.run(
         [
             "git",
             "show",
-            f"{registry.DESIGN_RATIFICATION_COMMIT}:"
-            "docs/design/covered_earnings_correction.md",
+            f"{expected_binding['ratification_commit']}:"
+            f"{expected_binding['path']}",
         ],
         cwd=ROOT,
         check=True,
@@ -1404,28 +1421,17 @@ def test__design_binding__proves_head_and_ratification_blob_identity():
     ).stdout
     assert (
         hashlib.sha256(ratified_bytes).hexdigest()
-        == registry.DESIGN_BLOB_SHA256
+        == expected_binding["blob_sha256"]
     )
-    worktree_bytes = (
-        ROOT / "docs/design/covered_earnings_correction.md"
-    ).read_bytes()
+    worktree_bytes = (ROOT / expected_binding["path"]).read_bytes()
     head_bytes = subprocess.run(
-        ["git", "show", "HEAD:docs/design/covered_earnings_correction.md"],
+        ["git", "show", f"HEAD:{expected_binding['path']}"],
         cwd=ROOT,
         check=True,
         capture_output=True,
     ).stdout
     if worktree_bytes == ratified_bytes:
-        assert registry.design_binding() == {
-            "path": "docs/design/covered_earnings_correction.md",
-            "ratification_commit": (
-                "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
-            ),
-            "revision": 3,
-            "blob_sha256": (
-                "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
-            ),
-        }
+        assert registry.design_binding() == expected_binding
     else:
         assert worktree_bytes == head_bytes
         assert worktree_bytes.startswith(ratified_bytes)
