@@ -20951,3 +20951,118 @@ suffix may change. This equation joins the already required \(K_c\),
 \(K_c(C)\), and \(K_c(J)\), and hence every pre-reference scan in the
 12-step order, has one independently constructible calibrated registration
 path.
+
+### 16.14 Round-10 exactness repairs
+
+This addendum is part of the same prospective Amendment 2 and is
+append-only. Every earlier byte remains historical text. Where an earlier
+§16 sentence conflicts with an exact replacement in this addendum, the
+replacement below controls.
+
+#### 16.14.1 Status-free V-B integrity preimage and total order
+
+This subsection prospectively replaces every §16.12.1, §16.13.1, and
+§16.13.6 equation or construction-order sentence under which the top-level
+`status` of `covered_earnings_verification_claim_adjudication.v1` depends on
+the validity of `integrity.content_sha256`, or under which that integrity
+digest hashes the top-level `status`.
+
+Let \(V\) denote the complete ten-key adjudication artifact. Let
+\(H_{c,s},H_{c,r},H_{f,s},H_{f,r}\) denote respectively its complete
+calibrated spec envelope, calibrated result envelope, fitting-free spec
+envelope, and fitting-free result envelope, and let \(P\) denote its
+complete `verification_claim_adjudication_source_projection`. Define
+\(Q_{\rm top}\) as the conjunction of all top-level schema, artifact-ID,
+exact-keyset, member-type, canonicalization-literal, and exact
+`source_adjudication_inputs` singleton equations, except the integrity
+digest equation and except the value equation for `status`. The prescribed
+ten-key shape, including the final `status` member, is known from the
+schema; evaluating \(Q_{\rm top}\) does not read a candidate `status` value.
+
+The sole semantic-status equation is
+
+\[
+\begin{aligned}
+T_V \equiv{}&
+Q_{\rm top}\\
+&\land(H_{c,s}.\texttt{status}=\texttt{pass})
+\land(H_{c,r}.\texttt{status}=\texttt{pass})\\
+&\land(H_{f,s}.\texttt{status}=\texttt{pass})
+\land(H_{f,r}.\texttt{status}=\texttt{pass})\\
+&\land(P.\texttt{status}=\texttt{pass}),\\[2mm]
+V.\texttt{status}={}&
+\begin{cases}
+\texttt{pass},&T_V,\\
+\texttt{fail},&\neg T_V.
+\end{cases}
+\end{aligned}
+\]
+
+No integrity member, integrity digest, integrity equality, integrity
+validity Boolean, or value derived from one is an operand of \(T_V\).
+
+For any complete candidate or expected \(V\), define
+\(\operatorname{drop}_{\rm status}(V)\) by deleting the top-level `status`
+member without inserting a null, placeholder, alternate key, or empty
+value. Define the exact nine-key integrity preimage
+
+\[
+V^{-,0} =
+\operatorname{replace}\!\left(
+  \operatorname{drop}_{\rm status}(V),
+  \texttt{integrity.content\_sha256},
+  \texttt{"0000000000000000000000000000000000000000000000000000000000000000"}
+\right).
+\]
+
+The controlling integrity equality is
+
+\[
+V.\texttt{integrity.content\_sha256}
+=
+\operatorname{SHA256}\!\left(
+  \operatorname{canonical\_json\_bytes}(V^{-,0})
+\right).
+\]
+
+Thus neither the bytes nor the semantic validity of `status` are in the
+integrity preimage. The final artifact nevertheless has exactly the
+previously prescribed ten keys; the omission exists only in the named
+integrity preimage.
+
+The expected artifact is constructed, without reading the candidate
+artifact, in this sole total order:
+
+1. freeze and validate \(B_V\) and the permitted staged legal members;
+2. independently reconstruct \(S_c\) and \(S_f\);
+3. construct and hash both legal-identity preimages, execute the typed
+   identity result, and abort if it is false;
+4. construct and hash
+   `verification_claim_base_result_projection.v1`;
+5. strict-parse the fixed PSID input and construct all of \(A_c\), then all
+   of \(A_f\), under the §16.13.6 source-domain laws;
+6. set the result arrays
+   \(R_c=\pi_{\mathrm{result}}(A_c)\) and
+   \(R_f=\pi_{\mathrm{result}}(A_f)\);
+7. evaluate \(D_c,D_f,E_c,E_f\), and complete \(E\) over the six existing
+   row arrays;
+8. construct the complete source projection, set its count and domain
+   digest, assign its status from its structural laws and
+   \(D_c\land D_f\land E\), and hash that complete projection;
+9. construct the four complete envelopes, including every row and
+   source-projection digest, and assign each envelope status under its
+   branch equation;
+10. construct \(V^{-,0}\) from those nine non-status members with the
+    64-zero self field, compute the displayed integrity digest, and insert
+    that digest into the status-free nine-key object;
+11. evaluate \(Q_{\rm top}\) and \(T_V\), derive the unique semantic
+    `status`, and insert it as the tenth and final top-level member; and
+12. serialize the complete expected \(V\), then and only then read and
+    compare the candidate artifact.
+
+Artifact acceptance is the conjunction of strict canonical parsing, the
+complete ten-key/schema/source-input and nested equations, exact expected-
+candidate equality, the displayed status equation with literal
+`status: pass`, and the displayed status-free integrity equality. A forged
+status therefore fails semantic equality, and a forged digest fails
+integrity equality, without either check being an input to the other.
