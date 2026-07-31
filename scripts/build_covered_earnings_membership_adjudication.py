@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import copy
 import hashlib
-import subprocess
 import zlib
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -1165,13 +1164,119 @@ def _source_locators(raw_by_id: Mapping[str, bytes]) -> list[dict[str, Any]]:
     return locators
 
 
-# Commit whose tree holds every cited repo authority exactly as
-# adjudicated; locator rows bind those bytes, not the evolving working
-# tree, so the artifact stays byte-frozen under lawful later edits.
-ADJUDICATION_SOURCE_COMMIT = "4baa94e25b284b42f966b58222807b3ea27b05c7"
+# Repo authority rows record each cited source exactly as adjudicated.
+# The adjudication-era commit was squash-merged, so its object ID is not
+# reachable from later checkouts; the adjudicated identities are frozen
+# here instead and rows bind these values, not the evolving working
+# tree, keeping the artifact byte-frozen under lawful later edits.
+FROZEN_REPO_AUTHORITY_RANGES = {
+    "correction_model_universe_registration_law": (
+        140467,
+        141295,
+        "c1340fc9b25d94e35dd4ff5a915ab19422f85687f4d298672cbc0ad06164aa68",
+    ),
+    "correction_support_manifest_registration_law": (
+        349193,
+        350694,
+        "61500380ee9eea85613b02ae21ac4d003e0bad0191eda449dba3808b769f975d",
+    ),
+    "amendment_preserved_selector_law": (
+        529533,
+        530129,
+        "56770ee41f53fb7656f5706f57d639fd4def1b27b2071dbed1ab7a3a4c85a001",
+    ),
+    "correction_joint_selector_law": (
+        14560,
+        17482,
+        "171fd9fabbaff374e4bf9f059235971e5c7915861e40783b80ce99f85eaa02ee",
+    ),
+    "amendment_target_selector_law": (
+        535014,
+        540373,
+        "ce3a8d2018960234cc916a56a0b9a57d87b756909cfa277c9a6fc37f1ff93899",
+    ),
+    "first_estimates_unsplit_panel_law": (
+        5056,
+        5610,
+        "c1965f50fdcf18276225926adf2e5ca0443502fbf645c3f44d41026e24af9b6d",
+    ),
+    "first_estimates_frame_law": (
+        3462,
+        3959,
+        "612d56731625aed40a74191d669302f38a3516762575b9d67ddd15bfe2bc23dc",
+    ),
+    "first_estimates_weight_law": (
+        30220,
+        30631,
+        "4453869fd48c0ddb4a154b1ac18e2a779a58107e6bb7f20e1e40c9e833b79df6",
+    ),
+    "first_estimates_artifact_configuration_and_integrity": (
+        206,
+        7235,
+        "f333135c9daaeee23b48eeabf07127f3674b933962405f1668f5c5c44f0a980e",
+    ),
+    "first_estimates_artifact_frame_labels": (
+        16652,
+        16898,
+        "cf51ed7f61dbabb25515e0ebb48a972aec262e5a39ee67050e2201f5d5923803",
+    ),
+    "m6_anchor_weight_implementation": (
+        4123,
+        5679,
+        "6bbbe9df90b7f82b4cff2fb83a82d93828d2d86f79afc6cb6c68512472f2d997",
+    ),
+    "ledger_weight_implementation": (
+        29947,
+        30722,
+        "3c8a777d32c640637aff0975b548ca4a5b3986369c411ea06f62800f7841e60a",
+    ),
+    "psid_external_staging_law": (
+        2271,
+        4172,
+        "f740a4735f8f08d9826acb35467474b295ee2516c7db6ba5e265a04b167bed8f",
+    ),
+    "registered_inputs_staging_law": (
+        2818,
+        3075,
+        "7b7127a1f4f0d32acf43065aaea87fb93d774db883da9a20ff93ad3164e253c2",
+    ),
+}
+
+FROZEN_REPO_AUTHORITY_SOURCES = {
+    "docs/design/covered_earnings_correction.md": (
+        "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7",
+        579090,
+    ),
+    "docs/design/first_estimates_report.md": (
+        "d4e7bc82d55f3ea9e601d5eb62ebcaa27886f008bb1c0d434228a4e1b649bdbc",
+        43518,
+    ),
+    "runs/first_estimates_v1.json": (
+        "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977",
+        29185250,
+    ),
+    "src/populace_dynamics/harness/m6_cells.py": (
+        "faff61537aacccdf9b9ec335167e7d5f4178bcb2a73e0d6639141dea2f4af282",
+        32662,
+    ),
+    "src/populace_dynamics/estimates/ledgers.py": (
+        "7cae0554809535f9e9e7fca464f451196748c2561d4e21165203933e17e140d7",
+        41572,
+    ),
+    "src/populace_dynamics/data/psid.py": (
+        "b0983390f84833f1b1436f60a066a829700f6149193aa712808b87d53867e29f",
+        14292,
+    ),
+    "scripts/registered_m6_inputs.py": (
+        "4b8e1e7d45f3a59db51c0ffcb728c1f41acd2b3dc53689ba104af2db54503a57",
+        22598,
+    ),
+}
 
 # Ratified documents may only grow by appendment, so their adjudicated
-# bytes must remain an exact byte prefix of the committed file.
+# bytes must remain an exact byte prefix of the current file; other
+# cited sources may lawfully change after adjudication and carry no
+# live check.
 APPEND_ONLY_AUTHORITY_PATHS = frozenset(
     {
         "docs/design/covered_earnings_correction.md",
@@ -1180,28 +1285,23 @@ APPEND_ONLY_AUTHORITY_PATHS = frozenset(
 )
 
 
-def _committed_source_bytes(committed_path: str) -> bytes:
-    raw = subprocess.run(
-        ["git", "show", f"{ADJUDICATION_SOURCE_COMMIT}:{committed_path}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
-    if committed_path in APPEND_ONLY_AUTHORITY_PATHS:
-        head = subprocess.run(
-            ["git", "show", f"HEAD:{committed_path}"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-        ).stdout
-        if not head.startswith(raw):
-            raise ValueError(
-                f"{committed_path} violates append-only authority prefix"
-            )
-    return raw
+def _append_only_prefixes() -> dict[str, bytes]:
+    prefixes = {}
+    for path in sorted(APPEND_ONLY_AUTHORITY_PATHS):
+        full_sha256, size_bytes = FROZEN_REPO_AUTHORITY_SOURCES[path]
+        live = (ROOT / path).read_bytes()
+        prefix = live[:size_bytes]
+        if (
+            len(live) < size_bytes
+            or hashlib.sha256(prefix).hexdigest() != full_sha256
+        ):
+            raise ValueError(f"{path} violates append-only authority prefix")
+        prefixes[path] = prefix
+    return prefixes
 
 
 def _repo_authority_locators() -> list[dict[str, Any]]:
+    prefixes = _append_only_prefixes()
     rows = []
     for (
         locator_id,
@@ -1210,14 +1310,30 @@ def _repo_authority_locators() -> list[dict[str, Any]]:
         line_end,
         description,
     ) in REPO_AUTHORITY_LOCATOR_SPECS:
-        raw = _committed_source_bytes(committed_path)
-        lines = raw.splitlines(keepends=True)
-        if not 1 <= line_start <= line_end <= len(lines):
-            raise ValueError(
-                f"{locator_id} line range is outside committed repo bytes"
-            )
-        byte_start = sum(map(len, lines[: line_start - 1]))
-        byte_end = sum(map(len, lines[:line_end]))
+        byte_start, byte_end, range_sha256 = FROZEN_REPO_AUTHORITY_RANGES[
+            locator_id
+        ]
+        full_source_sha256, size_bytes = FROZEN_REPO_AUTHORITY_SOURCES[
+            committed_path
+        ]
+        if committed_path in prefixes:
+            raw = prefixes[committed_path]
+            lines = raw.splitlines(keepends=True)
+            if not 1 <= line_start <= line_end <= len(lines):
+                raise ValueError(
+                    f"{locator_id} line range is outside adjudicated bytes"
+                )
+            derived_start = sum(map(len, lines[: line_start - 1]))
+            derived_end = sum(map(len, lines[:line_end]))
+            if (
+                derived_start != byte_start
+                or derived_end != byte_end
+                or hashlib.sha256(raw[byte_start:byte_end]).hexdigest()
+                != range_sha256
+            ):
+                raise ValueError(
+                    f"{locator_id} adjudicated byte-range identity drift"
+                )
         rows.append(
             {
                 "locator_id": locator_id,
@@ -1226,11 +1342,9 @@ def _repo_authority_locators() -> list[dict[str, Any]]:
                 "line_end": line_end,
                 "byte_start": byte_start,
                 "byte_end": byte_end,
-                "range_sha256": hashlib.sha256(
-                    raw[byte_start:byte_end]
-                ).hexdigest(),
-                "full_source_sha256": hashlib.sha256(raw).hexdigest(),
-                "size_bytes": len(raw),
+                "range_sha256": range_sha256,
+                "full_source_sha256": full_source_sha256,
+                "size_bytes": size_bytes,
                 "description": description,
             }
         )

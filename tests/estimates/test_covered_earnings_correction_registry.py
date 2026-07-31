@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import subprocess
 import sys
 from pathlib import Path
 
@@ -1385,11 +1387,51 @@ def test__verified_role_specs__remain_exact_and_value_independent():
 
 
 def test__design_binding__proves_head_and_ratification_blob_identity():
-    assert registry.design_binding() == {
-        "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": ("15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"),
-        "revision": 3,
-        "blob_sha256": (
-            "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
-        ),
-    }
+    # An in-flight append-only amendment lawfully extends the design
+    # past the pinned ratification blob; the binding must fail closed
+    # until a post-merge repin, with the ratified bytes surviving as an
+    # exact byte prefix of both the worktree and HEAD copies.
+    ratified_bytes = subprocess.run(
+        [
+            "git",
+            "show",
+            f"{registry.DESIGN_RATIFICATION_COMMIT}:"
+            "docs/design/covered_earnings_correction.md",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert (
+        hashlib.sha256(ratified_bytes).hexdigest()
+        == registry.DESIGN_BLOB_SHA256
+    )
+    worktree_bytes = (
+        ROOT / "docs/design/covered_earnings_correction.md"
+    ).read_bytes()
+    head_bytes = subprocess.run(
+        ["git", "show", "HEAD:docs/design/covered_earnings_correction.md"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    if worktree_bytes == ratified_bytes:
+        assert registry.design_binding() == {
+            "path": "docs/design/covered_earnings_correction.md",
+            "ratification_commit": (
+                "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
+            ),
+            "revision": 3,
+            "blob_sha256": (
+                "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+            ),
+        }
+    else:
+        assert worktree_bytes == head_bytes
+        assert worktree_bytes.startswith(ratified_bytes)
+        assert len(worktree_bytes) > len(ratified_bytes)
+        with pytest.raises(
+            registry.RegistrationAborted,
+            match="differs across worktree, HEAD, and",
+        ):
+            registry.design_binding()
