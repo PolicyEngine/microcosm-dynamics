@@ -20838,3 +20838,116 @@ result. The general availability mapping remains unchanged for every other
 required-authority row. Consequently an inherited methodology observation
 cannot establish, negate, or make unevaluable either legal claim, while its
 raw lineage evidence remains authenticated.
+
+##### 16.13.9 Calibrated registration-suffix closure
+
+This subsection defines the previously missing calibrated registration-path
+constructor used by every \(K_c(X)\). No configuration, branch name, clock,
+or producer string supplies that path.
+
+For an already stored phase commit \(X\), define
+`calibrated_registration_suffix_projection.v1`, denoted
+\(\Gamma_c(X)\), with exactly `schema_version`, `parent_commit`,
+`ordered_registration_suffixes`, `registration_rows`,
+`registration_count`, `registration_domain_sha256`,
+`selected_registration_suffix`, `selected_registration_path`,
+`canonicalization`, and `status`. Its schema value is its name,
+`parent_commit` is \(X\)'s 40-lowercase-hex OID, and canonicalization is the
+frozen common literal.
+
+The sole calibrated registration filename grammar is
+
+`docs/registrations/covered_earnings_correction_evaluation_v2_registration_<r>.json`,
+
+where \(r\) is a positive canonical decimal integer with no sign, leading
+zero, whitespace, escape, alternate extension, or path alias. The
+coordinator enumerates every mode-bearing entry of
+\(\operatorname{Tree}(X)\) whose complete path matches that grammar. It
+retains every match, including malformed or unfavorable bytes, and sorts
+rows by numeric suffix.
+
+Each `registration_rows` member has exactly `registration_suffix`, `path`,
+`tree_mode`, `blob_oid`, `raw_sha256`, and `record_state`. The suffix is the
+positive JSON integer parsed from the exact path; mode is the observed Git
+mode; the OID and digest identify the complete stored blob; and
+`record_state` is `valid | invalid`. It is `valid` exactly when:
+
+- mode is `100644`;
+- raw bytes strict-parse without duplicate keys and canonicalize
+  byte-for-byte;
+- schema is
+  `covered_earnings_correction_evaluation_configuration.v3`;
+- the complete `output_paths` obeys §15.6.3 for the authenticated target
+  suffix: it uses `covered_earnings_correction_evaluation_v2` and its exact
+  paths for suffix 2, or the exact
+  `covered_earnings_correction_evaluation_v2_source_vintage<n>` version,
+  primary, sidecar, and five prefixes for suffix \(n\ge3\);
+- `registration_reference` resolves to exactly one earlier valid
+  `covered_earnings_path_applicability_receipt.v1` in
+  \(\operatorname{Tree}(X)\), whose selected-configuration digest hashes
+  these complete configuration bytes; and
+- every design, implementation, receipt-core, output-path, Git, and
+  immutable-history binding required by that earlier registration passes.
+
+Any failed conjunct makes the retained row `invalid`; it is never omitted or
+reinterpreted as an absent suffix.
+
+`ordered_registration_suffixes` is the complete same-order suffix projection
+of `registration_rows`; `registration_count` equals both array lengths; and
+`registration_domain_sha256` hashes the complete canonical row array. The
+observed suffix array must be exactly \(1,\ldots,m\) for one integer
+\(m\ge0\), every row must be `valid`, and
+`selected_registration_suffix` is \(m+1\). Its selected path is the exact
+grammar above with that canonical decimal substituted and must be absent
+from \(\operatorname{Tree}(X)\). A gap, duplicate, higher suffix after a
+gap, zero, alias, matching invalid row, selected-path presence, incomplete
+enumeration, or hash/count mismatch makes projection status `fail`.
+Otherwise status is `pass`. In the empty-history case, both arrays are
+empty, count is zero, the row-domain digest is the canonical empty-array
+hash, and the selected suffix and path are exactly integer 1 and
+`docs/registrations/covered_earnings_correction_evaluation_v2_registration_1.json`.
+
+The calibrated member
+\(K_c(X).\texttt{selected\_registration\_path}\) is exactly
+\(\Gamma_c(X).\texttt{selected\_registration\_path}\), and \(K_c(X)\) is
+constructible only when \(\Gamma_c(X).\texttt{status}\) is `pass`.
+The fitting-free member continues to come exclusively from
+`terminal_attempt_and_registration_suffix_projection.v1`.
+
+For every round-8 adjudication,
+`calibrated_global_requirement_verification_specs.v2` is the complete v1
+registry except that the
+`fresh_calibrated_output_namespace_available` row inserts
+`git_parent:calibrated_registration_suffix_projection` immediately after
+`git_parent:terminal_namespace_history` in its exact
+`ordered_source_projections`. The new projection's registered type is
+`git_tree`; its value is the complete \(\Gamma_c(B_i)\); and its identity
+digest hashes that complete canonical object. The generic expected/actual
+preimage schemas retain their exact keysets while their projection rows,
+count, and domain digest cover this four-member order. The calibrated
+namespace predicate additionally requires \(\Gamma_c(B_i)\) to pass and its
+selected path to deep-equal both the same scan member and
+\(K_c(B_i).\texttt{selected\_registration\_path}\). Every preliminary and
+final \(P_i\), operative registry bundle, and evidence digest selects this
+v2 global registry.
+
+The adjudication-to-receipt law in §16.13.7 additionally requires
+
+\[
+\pi_{\Gamma}\!\left(\Gamma_c(B^\star)\right)
+=
+\pi_{\Gamma}\!\left(\Gamma_c(J)\right),
+\]
+
+where \(\pi_{\Gamma}\) is the complete ordered projection of exactly
+`schema_version`, `ordered_registration_suffixes`, `registration_rows`,
+`registration_count`, `registration_domain_sha256`,
+`selected_registration_suffix`, `selected_registration_path`,
+`canonicalization`, and `status`. It excludes only `parent_commit`. Because
+\(J\) adds only the selected adjudication path outside
+`docs/registrations`, equality is mandatory; no registration row or selected
+suffix may change. This equation joins the already required \(K_c\),
+\(u_c\), and terminal-history equalities. Consequently every \(K_c(B_n)\),
+\(K_c(C)\), and \(K_c(J)\), and hence every pre-reference scan in the
+12-step order, has one independently constructible calibrated registration
+path.

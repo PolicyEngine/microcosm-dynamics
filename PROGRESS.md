@@ -42,6 +42,9 @@ round-7 findings and the ratification-blocking namespace sweep gap.
 - Closed each V-B legal-binding digest equation and overrode the outer
   V-B1/V-B4 availability mapping so inherited methodology availability is
   authenticated lineage evidence but never substantive legal authority.
+- Added the missing calibrated registration filename grammar, complete
+  Tree(X) history/least-absent suffix projection, namespace-preimage binding,
+  and exact B-star/J equality.
 
 ## Next
 
