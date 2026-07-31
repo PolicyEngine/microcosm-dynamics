@@ -27,10 +27,10 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
-DESIGN_REVISION = 3
+DESIGN_RATIFICATION_COMMIT = "3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb"
+DESIGN_REVISION = 4
 DESIGN_BLOB_SHA256 = (
-    "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+    "29f0cb134e95b6215dc502d0e25392b5c971fdb93dfad40fd5d221e8a482a1b7"
 )
 ROOT = Path(__file__).resolve().parents[1]
 
