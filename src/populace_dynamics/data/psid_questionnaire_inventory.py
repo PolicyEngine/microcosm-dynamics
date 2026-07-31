@@ -137,7 +137,7 @@ POST_CUTOFF_INVENTORY_WAVES: tuple[int, ...] = (
     2023,
 )
 CODEBOOK_ADJUDICATION_CONTENT_SHA256 = (
-    "90e12cc34ef60b14750e5496b7af2466741f835c315ce38baeed292d1cc22e18"
+    "359c7edac8c0b331c1a4d2a77ad2945974fa033e50e104d866e48b39a45b5a84"
 )
 CODEBOOK_ERA_SPECS: tuple[tuple[str, tuple[int, ...]], ...] = (
     (
@@ -206,7 +206,7 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         "962e7e97190906063f4f54c8a6b09704e14ed307bb5ac5a59d93b9bf83194abe",
         "f85f793d89bcbebd1f0c9a0e261296f583aca8bd7d2ee20a8b7973a7aadc9e4c",
         "7cc14d09f3b7391eb3ddd5967654ff02b269bc9a5db055c7d9f962e84dcad230",
-        "857014d8b1252dd14195d680a775acf8f6cd6ff053e581de557f8790e9ee3523",
+        "086a69e006a102f44cc512b4615a137559e6ac97d3c0bee2be630dcff094e228",
     ),
     (
         "ry1978_1992_pre_er_totals",
@@ -3573,19 +3573,22 @@ def _era_residuals(
                     "searched_raw_field_ids": ["V5289", "V5788"],
                 },
                 {
-                    "residual_id": f"{era_id}:V-B6:annual_job_match",
+                    "residual_id": (
+                        f"{era_id}:V-B6:"
+                        "1977_1978_spouse_current_job_context_absence"
+                    ),
                     "status": "registration_required",
                     "missing_fact": (
-                        "Binding of 1976 interview-time current-job context "
-                        "to annual V4379 and equivalent 1977/1978 spouse "
-                        "current-job context or structural absence."
+                        "Whether an equivalent spouse current-job context is "
+                        "present in the 1977 and 1978 questionnaires or is "
+                        "structurally absent."
                     ),
                     "registration_required_item": (
-                        "V-B6: questionnaire flow and timing/attachment "
-                        "documentation"
+                        "V-B6: official 1977-1978 questionnaire/flow bytes "
+                        "and questionnaire-exhaustive absence proof"
                     ),
-                    "searched_interview_waves": list(waves),
-                    "searched_raw_field_ids": [
+                    "searched_interview_waves": [1977, 1978],
+                    "established_1976_context_raw_field_ids": [
                         "V4844",
                         "V4845",
                         "V4850",
@@ -4422,6 +4425,36 @@ def default_codebook_evidence_path(era_id: str) -> Path:
     )
 
 
+def _vb6_temporal_attachment_production_branch() -> dict[str, Any]:
+    """Register the nonblocking branch for unproved 1976 job attachment."""
+
+    return {
+        "branch_id": (
+            "V-B6:1976_spouse_current_job_temporal_attachment_failure"
+        ),
+        "registration_status": "registered_nonblocking_production_branch",
+        "interview_wave": 1976,
+        "earnings_reference_year": 1975,
+        "role": "spouse_or_partner",
+        "annual_amount_fact_id": "spouse-seam-amount:1976:V4379",
+        "context_fact_ids": [
+            f"spouse-1976-context:{field_id}"
+            for field_id, _ in SPOUSE_1976_CONTEXT_FIELDS
+        ],
+        "source_disposition": "present",
+        "information_date_basis": "interview_time",
+        "attachment_status": ("not_proven_against_reference_year_service"),
+        "failure_disposition": "unresolved",
+        "reason_code": (
+            "interview_time_context_not_proven_for_reference_year_service"
+        ),
+        "registration_blocker": False,
+        "source_fact_bindings_derived_from_codebook_bytes": True,
+        "production_consequence_derived_from_codebook_bytes": False,
+        "crosswalk_inference_used": False,
+    }
+
+
 def build_codebook_inventory_adjudication(
     era_artifacts: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
@@ -4668,10 +4701,11 @@ def build_codebook_inventory_adjudication(
                 "established_subclaims": (
                     "V4379 is mixed; V5289/V5788 amount concepts and 1976 "
                     "interview-time spouse context maps are present. The "
+                    "unproved 1976 temporal attachment takes the registered "
+                    "nonblocking unresolved production branch. The "
                     "1976 head and spouse, and 1977-1978 head, secondary-job "
                     "fields and displayed maps are source-bound without "
-                    "claiming annual role-total attachment or 1977-1978 "
-                    "spouse-branch absence."
+                    "claiming 1977-1978 spouse-branch absence."
                 ),
                 "established_fact_ids": vb6_facts,
                 "residual_ids": [
@@ -4681,7 +4715,8 @@ def build_codebook_inventory_adjudication(
                     ),
                     (
                         "ry1975_1977_spouse_concept_seam:"
-                        "V-B6:annual_job_match"
+                        "V-B6:"
+                        "1977_1978_spouse_current_job_context_absence"
                     ),
                     (
                         "ry1975_1977_spouse_concept_seam:"
@@ -4731,6 +4766,9 @@ def build_codebook_inventory_adjudication(
             "production_use": "lineage_only",
             "derived_from_codebook_bytes": False,
             "crosswalk_inference_used": False,
+            "registered_nonblocking_branches": [
+                _vb6_temporal_attachment_production_branch()
+            ],
         },
         "official_inventory_ratification": {
             "status": "registration_required",
@@ -4894,6 +4932,20 @@ def validate_codebook_inventory_adjudication(
             "V-B8 treated a lexical search lead as established"
         )
     production = adjudication["production_admissibility"]
+    expected_vb6_branch = _vb6_temporal_attachment_production_branch()
+    if production.get("registered_nonblocking_branches") != [
+        expected_vb6_branch
+    ]:
+        raise DictionaryDriftError(
+            "V-B6 temporal-attachment production branch drifted"
+        )
+    if {
+        expected_vb6_branch["annual_amount_fact_id"],
+        *expected_vb6_branch["context_fact_ids"],
+    } - present_id_set or expected_vb6_branch["branch_id"] in residual_id_set:
+        raise DictionaryDriftError(
+            "V-B6 temporal-attachment source binding drifted"
+        )
     if production != {
         "source_registry": (
             "populace_dynamics.data.psid_covered_earnings_registry"
@@ -4907,6 +4959,7 @@ def validate_codebook_inventory_adjudication(
         "production_use": "lineage_only",
         "derived_from_codebook_bytes": False,
         "crosswalk_inference_used": False,
+        "registered_nonblocking_branches": [expected_vb6_branch],
     }:
         raise DictionaryDriftError(
             "codebook production-admissibility boundary drifted"

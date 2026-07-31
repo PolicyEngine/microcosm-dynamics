@@ -3,8 +3,8 @@
 ## State
 
 - Branch `claude/ce-codebook-inventory` starts clean at `bc39940`.
-- Referee edits 1 and 2 are implemented and source-rebuilt.
-- Referee edit 3 remains pending.
+- All three referee edits are implemented and source-rebuilt.
+- Final audit-artifact cascades and full verification remain.
 
 ## Done
 
@@ -22,10 +22,15 @@
 - Rebuilt and repinned all six era artifacts and the adjudication at 32
   residuals.
 - Passed all 48 era and consolidated adjudication artifact tests.
+- Split the V-B6 mixed annual-job residual into a 1977-1978
+  questionnaire-absence residual and a registered nonblocking 1976 temporal
+  attachment branch with the frozen `unresolved` consequence.
+- Recorded the exact 32-residual partition plus one nonblocking production
+  branch and passed the 18 spouse-seam/adjudication tests.
 
 ## Next
 
-1. Split `V-B6 annual_job_match` into its questionnaire-absence residual and
-   its non-blocking temporal-attachment production branch.
-2. Rebuild and repin the adjudication artifact, update residual counts, format,
-   and run the relevant suites.
+1. Rebuild the source-hashed questionnaire audit and dependent raw
+   job-context registry.
+2. Run all artifact checks, Black, Ruff, and the requested test suites.
+3. Record final identities, verification results, and branch status.

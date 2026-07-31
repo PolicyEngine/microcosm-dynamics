@@ -37,6 +37,37 @@ def _reseal(artifact: dict) -> None:
     )
 
 
+def _expected_vb6_temporal_attachment_branch() -> dict:
+    return {
+        "branch_id": (
+            "V-B6:1976_spouse_current_job_temporal_attachment_failure"
+        ),
+        "registration_status": "registered_nonblocking_production_branch",
+        "interview_wave": 1976,
+        "earnings_reference_year": 1975,
+        "role": "spouse_or_partner",
+        "annual_amount_fact_id": "spouse-seam-amount:1976:V4379",
+        "context_fact_ids": [
+            "spouse-1976-context:V4844",
+            "spouse-1976-context:V4845",
+            "spouse-1976-context:V4850",
+            "spouse-1976-context:V4855",
+            "spouse-1976-context:V4858",
+        ],
+        "source_disposition": "present",
+        "information_date_basis": "interview_time",
+        "attachment_status": ("not_proven_against_reference_year_service"),
+        "failure_disposition": "unresolved",
+        "reason_code": (
+            "interview_time_context_not_proven_for_reference_year_service"
+        ),
+        "registration_blocker": False,
+        "source_fact_bindings_derived_from_codebook_bytes": True,
+        "production_consequence_derived_from_codebook_bytes": False,
+        "crosswalk_inference_used": False,
+    }
+
+
 def test_adjudication_has_the_complete_43_wave_domain():
     artifact = _artifact()
     inventory.validate_codebook_inventory_adjudication(artifact)
@@ -93,7 +124,10 @@ def test_vb5_vb6_vb8_verdicts_preserve_positive_subclaims_and_residuals():
     )
     assert verdicts["V-B6"]["residual_ids"] == [
         ("ry1975_1977_spouse_concept_seam:" "V-B6:V5289_V5788_concept"),
-        "ry1975_1977_spouse_concept_seam:V-B6:annual_job_match",
+        (
+            "ry1975_1977_spouse_concept_seam:"
+            "V-B6:1977_1978_spouse_current_job_context_absence"
+        ),
         "ry1975_1977_spouse_concept_seam:V-B6:government_level_absence",
         (
             "ry1975_1977_spouse_concept_seam:"
@@ -146,6 +180,113 @@ def test_cross_era_facts_record_the_1992_1993_seam_and_later_lineage():
         "production_use": "lineage_only",
         "derived_from_codebook_bytes": False,
         "crosswalk_inference_used": False,
+        "registered_nonblocking_branches": [
+            _expected_vb6_temporal_attachment_branch()
+        ],
+    }
+
+
+def test_vb6_temporal_attachment_is_present_and_nonblocking():
+    artifact = _artifact()
+    branch = artifact["production_admissibility"][
+        "registered_nonblocking_branches"
+    ][0]
+    assert branch == _expected_vb6_temporal_attachment_branch()
+    present_ids = {
+        row["fact_id"] for row in artifact["fact_dispositions"]["present"]
+    }
+    assert {
+        branch["annual_amount_fact_id"],
+        *branch["context_fact_ids"],
+    }.issubset(present_ids)
+    residual_ids = {
+        row["residual_id"]
+        for row in artifact["registration_required_residuals"]
+    }
+    assert branch["branch_id"] not in residual_ids
+    assert branch["failure_disposition"] in {"modelable", "unresolved"}
+    assert branch["registration_blocker"] is False
+
+
+@pytest.mark.parametrize(
+    ("key", "value"),
+    [
+        ("source_disposition", "structural_missing"),
+        ("failure_disposition", "registration_required"),
+        (
+            "context_fact_ids",
+            [
+                "spouse-1976-context:V4844",
+                "spouse-1976-context:V4845",
+                "spouse-1976-context:V4850",
+                "spouse-1976-context:V4855",
+                "spouse-1976-context:NOT_A_FACT",
+            ],
+        ),
+    ],
+)
+def test_vb6_temporal_attachment_branch_rejects_resealed_drift(
+    key: str,
+    value: object,
+):
+    artifact = copy.deepcopy(_artifact())
+    branch = artifact["production_admissibility"][
+        "registered_nonblocking_branches"
+    ][0]
+    branch[key] = value
+    _reseal(artifact)
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="V-B6 temporal-attachment production branch drifted",
+    ):
+        inventory.validate_codebook_inventory_adjudication(artifact)
+
+
+def test_residual_count_has_the_exact_referee_partition():
+    artifact = _artifact()
+    residual_ids = {
+        row["residual_id"]
+        for row in artifact["registration_required_residuals"]
+    }
+    fixed_width = {
+        residual_id
+        for residual_id in residual_ids
+        if residual_id.endswith(":fixed_width_missing_token_grammar")
+    }
+    questionnaire_suffixes = (
+        ":questionnaire_slot_closure",
+        ":unsupported_job_context_absence_proofs",
+        ":V-B6:1977_1978_spouse_current_job_context_absence",
+        ":V-B6:government_level_absence",
+        ":V-B6:secondary_job_attachment_and_absence",
+        ":job_chronology_exposure_attachment",
+        ":V-B8:branch_freshness",
+        ":V-B8:pre_2013_questionnaire_absence_proof",
+    )
+    questionnaire = {
+        residual_id
+        for residual_id in residual_ids
+        if residual_id.endswith(questionnaire_suffixes)
+    }
+    semantic_editing = residual_ids - fixed_width - questionnaire
+    assert {
+        "questionnaire_absence_branch": len(questionnaire),
+        "fixed_width_grammar": len(fixed_width),
+        "archive_provenance": 0,
+        "semantic_editing": len(semantic_editing),
+        "total": len(residual_ids),
+        "nonblocking_production_branches": len(
+            artifact["production_admissibility"][
+                "registered_nonblocking_branches"
+            ]
+        ),
+    } == {
+        "questionnaire_absence_branch": 15,
+        "fixed_width_grammar": 6,
+        "archive_provenance": 0,
+        "semantic_editing": 11,
+        "total": 32,
+        "nonblocking_production_branches": 1,
     }
 
 

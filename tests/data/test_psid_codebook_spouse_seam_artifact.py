@@ -164,6 +164,31 @@ def test_1976_context_maps_remain_interview_time_unmatched():
     ]
 
 
+def test_vb6_residual_is_only_the_1977_1978_questionnaire_absence():
+    artifact = _artifact()
+    residuals = {
+        row["residual_id"]: row
+        for row in artifact["registration_required_residuals"]
+    }
+    old_id = "ry1975_1977_spouse_concept_seam:V-B6:annual_job_match"
+    new_id = (
+        "ry1975_1977_spouse_concept_seam:"
+        "V-B6:1977_1978_spouse_current_job_context_absence"
+    )
+    assert old_id not in residuals
+    residual = residuals[new_id]
+    assert residual["searched_interview_waves"] == [1977, 1978]
+    assert residual["established_1976_context_raw_field_ids"] == [
+        "V4844",
+        "V4845",
+        "V4850",
+        "V4855",
+        "V4858",
+    ]
+    assert "structurally absent" in residual["missing_fact"]
+    assert "timing/attachment" not in residual["missing_fact"]
+
+
 def test_1976_page_locator_pins_spouse_amount_and_business_link():
     artifact = _artifact()
     locator = next(
