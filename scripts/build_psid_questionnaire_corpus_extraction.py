@@ -154,10 +154,10 @@ PASSAGE_SPECS = (
 PRE2013_QUESTIONNAIRES = tuple(
     list(zip(range(1968, 1998), (
         "q68.pdf", "q69.pdf", "q70.pdf", "q71.pdf", "q72.pdf", "q73.pdf", "q74.pdf", "q75.pdf", "q76.pdf", "q77.pdf", "q78.pdf", "q79.pdf", "q80.pdf", "q81.pdf", "q82.pdf", "q83.pdf", "q84.pdf", "q85.pdf", "q86.pdf", "q87.pdf", "q88.pdf", "q89.pdf", "q90.pdf", "q91.pdf", "q92.pdf", "q93.pdf", "q94.pdf", "q95.pdf", "q96.pdf", "q97.pdf",
-    )))
+    ), strict=True))
     + list(zip((1999, 2001, 2003, 2005, 2007, 2009, 2011), (
         "q1999.pdf", "q2001.pdf", "q2003.pdf", "q2005.pdf", "q2007.pdf", "q2009.pdf", "q2011.pdf",
-    )))
+    ), strict=True))
 )
 
 
