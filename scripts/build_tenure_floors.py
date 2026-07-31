@@ -61,6 +61,11 @@ THIN_CELL_PERSONS = 200
 
 ARTIFACT = REPO / "runs/tenure_floors_v1.json"
 ENV_SIDECAR = ARTIFACT.with_suffix(".env.json")
+INPUT_SIDECAR = ARTIFACT.with_suffix(".inputs.json")
+OFFICIAL_SOURCE_URL = (
+    "https://www2.census.gov/programs-surveys/cps/datasets/"
+    "{year}/supp/jan{yy:02d}pub.csv"
+)
 
 
 def _source_pins() -> list[dict[str, str]]:
@@ -260,6 +265,30 @@ def build() -> dict:
 def main() -> None:
     artifact = build()
     ARTIFACT.write_text(json.dumps(artifact, indent=2) + "\n")
+    data_dir = cps_tenure._resolve_data_dir(None)  # noqa: SLF001
+    INPUT_SIDECAR.write_text(
+        json.dumps(
+            {
+                "artifact": ARTIFACT.name,
+                "status": "SOURCE_INPUT_DIGESTS",
+                "source_inputs": [
+                    {
+                        **source,
+                        "bytes": cps_tenure._resolve_person_path(  # noqa: SLF001
+                            int(source["year"]), data_dir
+                        ).stat().st_size,
+                        "official_url": OFFICIAL_SOURCE_URL.format(
+                            year=int(source["year"]),
+                            yy=int(source["year"]) % 100,
+                        ),
+                    }
+                    for source in artifact["source_inputs"]
+                ],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
     ENV_SIDECAR.write_text(
         json.dumps(
             {

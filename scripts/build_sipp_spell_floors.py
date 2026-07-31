@@ -75,10 +75,19 @@ ARTIFACT = Path(__file__).resolve().parents[1] / (
     "runs/sipp_spell_floors_v1.json"
 )
 ENV_SIDECAR = ARTIFACT.with_suffix(".env.json")
+INPUT_SIDECAR = ARTIFACT.with_suffix(".inputs.json")
+OFFICIAL_SOURCE_URL = (
+    "https://www2.census.gov/programs-surveys/sipp/data/datasets/"
+    "2023/pu2023_csv.zip"
+)
+OFFICIAL_ARCHIVE_SHA256 = (
+    "9c5363d56aca2041db20d46d17b81e9be931eb5b18bd5f5238b367d2dd7fb74b"
+)
+OFFICIAL_ARCHIVE_BYTES = 109_036_604
 
 
 def _source_pin() -> dict[str, str]:
-    path = sipp_jobs._resolve_person_path(  # noqa: SLF001
+    path = sipp_jobs._resolve_pu_path(  # noqa: SLF001
         YEAR,
         sipp_jobs._resolve_data_dir(None),  # noqa: SLF001
     )
@@ -281,6 +290,34 @@ def build() -> dict:
 def main() -> None:
     artifact = build()
     ARTIFACT.write_text(json.dumps(artifact, indent=2) + "\n")
+    staged_path = sipp_jobs._resolve_pu_path(  # noqa: SLF001
+        YEAR,
+        sipp_jobs._resolve_data_dir(None),  # noqa: SLF001
+    )
+    INPUT_SIDECAR.write_text(
+        json.dumps(
+            {
+                "artifact": ARTIFACT.name,
+                "status": "SOURCE_INPUT_DIGESTS",
+                "official_source": {
+                    "url": OFFICIAL_SOURCE_URL,
+                    "archive_sha256": OFFICIAL_ARCHIVE_SHA256,
+                    "archive_bytes": OFFICIAL_ARCHIVE_BYTES,
+                    "archive_member": "pu2023.csv",
+                },
+                "staged_input": {
+                    **artifact["source_input"],
+                    "bytes": staged_path.stat().st_size,
+                    "transport_note": (
+                        "gzip -n recompression of the sole CSV member "
+                        "from the verified official Census ZIP"
+                    ),
+                },
+            },
+            indent=2,
+        )
+        + "\n"
+    )
     ENV_SIDECAR.write_text(
         json.dumps(
             {
