@@ -21315,3 +21315,108 @@ The following are mandatory regression clauses:
    `record_state: invalid`. Because the exact path \(p_1\) is occupied, the
    selected suffix is 2 and the selected path is exact \(p_2\); status is
    `fail`, and serialization never requires a nonexistent blob digest.
+
+#### 16.14.3 Disjoint V-B result and receipt-core symbols
+
+This subsection prospectively replaces every receipt-core use of \(R_c\) in
+§§16.13.4 and 16.13.7, including both dependency graphs. It does not change
+the branch-result definitions in §§16.13.1 and 16.13.6.
+
+For the entire prospective Amendment 2 notation, reserve
+
+\[
+\begin{aligned}
+R_c &=
+\texttt{verification\_claim\_results\_v2.rows}
+=\pi_{\rm result}(A_c),\\
+R_f &=
+\texttt{verification\_claim\_results\_fitting\_free\_v1.rows}
+=\pi_{\rm result}(A_f).
+\end{aligned}
+\]
+
+Thus \(R_c\) and \(R_f\) always mean the complete calibrated and
+fitting-free V-B result-row arrays, respectively. They have no receipt,
+configuration, namespace, or receipt-core meaning.
+
+Let \(R_{\rm core}\) denote the one complete selected
+`covered_earnings_path_applicability_receipt_core.v1` value constructed
+after \(F^0\), \(g^0\), and all selected \(K^0/F^0\) equalities exist. Its
+binding has the sole equation
+
+\[
+h_R =
+\operatorname{SHA256}\!\left(
+  \operatorname{canonical\_json\_bytes}(R_{\rm core})
+\right),
+\]
+
+and the registration reference is then
+
+\[
+\rho =
+\texttt{<receipt\_id>:<receipt\_core\_sha256>},
+\]
+
+with the realized receipt ID and exactly \(h_R\) as its two components.
+Let \(R_{\rm outer}\) denote the complete final
+`covered_earnings_path_applicability_receipt.v1`. Neither
+\(R_{\rm core}\) nor \(R_{\rm outer}\) is an alias, projection, or
+re-binding of \(R_c\) or \(R_f\).
+
+In particular, the four previously conflicting sites have these only
+meanings:
+
+1. the §16.13.1 definition of \(R_c\) remains the calibrated V-B result-row
+   array;
+2. the §16.13.4 receipt-core definition, hash, existence checks,
+   construction step, and transitive-closure notation all use
+   \(R_{\rm core}\);
+3. the §16.13.6 assignment
+   \(R_c=\pi_{\rm result}(A_c)\) remains the calibrated V-B result-row
+   assignment; and
+4. the final §16.13.7 DAG uses \(R_{\rm core}\) between \(g^0\) and \(h_R\).
+
+Accordingly, the receipt/configuration cut is exactly
+
+\[
+h_F,\quad
+\texttt{post\_reference\_namespace\_scan},\quad
+\{\text{each literal claim prefix}\Vert h_F\Vert\texttt{.claim}\}
+\notin \operatorname{TC}(R_{\rm core}),
+\]
+
+and every reference in that law's prose to the receipt core's transitive
+closure means \(\operatorname{TC}(R_{\rm core})\). After the selected
+pre-reference configuration core is hashed and validated, the controlling
+construction suffix is
+
+\[
+F^0\to g^0\to R_{\rm core}\to h_R\to\rho
+\to F\to h_F\to N_1\to R_{\rm outer}\to Q.
+\]
+
+The complete replacement for the first dependency graph in §16.13.4 is
+
+\[
+B_n\to P_n\to S_n\to A\to T\to C\to P_{n+1}\to J
+\to F^0\to h^0\to N_0\to R_{\rm core}\to h_R\to\rho
+\to F\to h_F\to N_1\to R_{\rm outer}\to Q,
+\]
+
+with the \(A,T,C,P_{n+1}\) suffix omitted on the no-capture branch.
+
+The complete replacement for the final dependency graph in §16.13.7 is
+
+\[
+B_n\to P_n\to S_n\to A\to T\to C\to P_{n+1}\to J
+\to(K_c,K_f)\to(u_c,u_f)\to N_f\to\text{path}
+\to N^0\to F^0\to g^0\to R_{\rm core}\to h_R\to\rho
+\to F\to h_F\to N_1\to R_{\rm outer}\to Q,
+\]
+
+again with the capture suffix omitted on the no-capture branch and with
+\(N^0=N_f\) already available on fitting-free selection. These graphs and
+the displayed hash equation are exhaustive: no receipt-core mathematical
+occurrence may use \(R_c\), and no V-B result-array occurrence may use
+\(R_{\rm core}\).
