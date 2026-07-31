@@ -35,6 +35,10 @@ round-7 findings and the ratification-blocking namespace sweep gap.
   historical-rules identity verifier, carried that projection in v2
   adjudication-verifier preimages and v3 noncapture evidence, and replaced
   the conflicting source-projection status order with one total construction.
+- Split the branch-total seven-key namespace core from the selected-only
+  configuration core, froze adjudication-to-receipt core/history equalities,
+  serialized the receipt-time calibrated scan as acceptance evidence, and
+  replaced the chronology with a complete selected-only 12-step order.
 
 ## Next
 

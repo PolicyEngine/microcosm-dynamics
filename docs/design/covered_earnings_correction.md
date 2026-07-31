@@ -20490,3 +20490,276 @@ status or digest is used to derive an earlier operand. In particular, the
 source-projection status has one equation—structural validity together with
 \(D_c\land D_f\land E\)—and the conflicting earlier status and order
 sentences have no prospective operative case.
+
+##### 16.13.7 Branch-total namespace core and selected-only configuration
+
+This subsection prospectively replaces the parts of §16.13.4 that require a
+complete calibrated or fitting-free configuration core before path
+derivation, use its digest in a pre-path scan, permit an open
+adjudication-to-receipt comparison, or construct a new calibrated result
+against \(J\).
+
+For branch \(b\in\{c,f\}\) and already stored phase commit \(X\), define
+`pre_reference_namespace_core.v1`, denoted \(K_b(X)\), with exactly these
+seven keys in this order:
+
+1. `candidate_path`;
+2. `receipt_id`;
+3. `selected_receipt_path`;
+4. `selected_registration_path`;
+5. `selected_configuration_schema_version`;
+6. `selected_output_paths`; and
+7. `selected_output_paths_sha256`.
+
+`candidate_path` is `CALIBRATED` for \(c\) and
+`DETERMINISTIC_FITTING_FREE` for \(f\). `receipt_id` and
+`selected_receipt_path` use the least positive receipt suffix derived from
+\(\operatorname{Tree}(X)\) under the complete contiguous-history law.
+`selected_registration_path` and the complete eight-key
+`selected_output_paths` follow the applicable calibrated or fitting-free
+terminal-history equations over that same stored tree. The configuration
+schema is respectively
+`covered_earnings_correction_evaluation_configuration.v3` or
+`covered_earnings_correction_fitting_free_configuration.v1`. The final
+member is SHA-256 of canonical bytes of the complete
+`selected_output_paths`.
+
+No configuration comparand, legal-input core, A1/A3 capture object,
+registration reference, receipt-core digest, final configuration digest,
+invocation, environment field, result row, or producer value is an operand
+of \(K_b(X)\). Define
+
+\[
+u_b(X)=
+\operatorname{SHA256}\!\left(
+  \operatorname{canonical\_json\_bytes}(K_b(X))\right).
+\]
+
+The pre-reference namespace scan has exactly
+`parent_commit`, `selected_receipt_path`,
+`selected_registration_path`, `pre_reference_namespace_core_sha256`,
+`ordered_paths`, `rows`, `row_count`, `domain_sha256`, and `status`.
+The fourth member equals \(u_b(X)\). Its first five and ninth paths retain
+the complete receipt, registration, primary, sidecar, next-incident, and
+next-fresh-registration-adjudication derivations. Paths six through eight
+use the attempt-claim, retry-authority, and retry-claim prefixes from
+\(K_b(X).\texttt{selected\_output\_paths}\), followed by \(u_b(X)\) and
+literal `.claim`. Those three paths are pre-reference collision probes only.
+No durable claim may use \(u_b(X)\). Every inherited ordering, descriptor,
+lstat, row, count, digest, collision, and pass/fail equation otherwise
+remains controlling.
+
+For every calibrated or fitting-free namespace requirement,
+`configuration:output_paths` must deep-equal
+\(K_b(X).\texttt{selected\_output\_paths}\), and
+`coordinator:selected_output_paths_sha256` must equal its seventh member.
+The namespace scan's digest member must equal the independently recomputed
+\(u_b(X)\). The prior
+`pre_reference_configuration_core_sha256` scan member and every
+pre-path use of a 46-key or 44-key configuration core have no prospective
+operative case.
+
+Let \(P^\star\) be the adjudication selected by the receipt, let
+\(B^\star\) be the unique parent of its first-add commit, and let \(J\) be
+that already stored first-add commit. Let \(H_c(X)\) be the complete
+`terminal_namespace_history_projection.v1` independently reconstructed from
+\(\operatorname{Tree}(X)\). Because \(J\) adds only \(P^\star\)'s canonical
+adjudication path, which is outside every member of the calibrated terminal
+namespace, the receipt validator must establish these exact equalities:
+
+\[
+K_c(B^\star)=K_c(J),\qquad
+u_c(B^\star)=u_c(J),
+\]
+
+and
+
+\[
+\pi_{\mathcal H}\!\left(H_c(B^\star)\right)
+=
+\pi_{\mathcal H}\!\left(H_c(J)\right),
+\]
+
+where \(\pi_{\mathcal H}\) is the complete ordered projection of exactly
+`schema_version`, `output_paths`, `ordered_history_classes`, `history_rows`,
+`row_count`, `domain_sha256`, and `status`. It excludes only
+`parent_commit`, whose unequal values are necessarily \(B^\star\) and \(J\).
+No other history field, row, digest, status, or byte is excluded.
+
+The selected adjudication's calibrated live-scan source-projection digest
+must equal SHA-256 of the complete independently reconstructed
+\(B^\star\)-bound pre-reference scan, whose namespace-core digest is
+\(u_c(B^\star)\). Its same-row configured output paths, terminal-history
+projection, expected and actual preimages, typed result, evidence digest,
+`requirement_satisfied`, and row status must all pass their exact equations.
+Any core, history, path, digest, or row inequality aborts receipt
+construction. It does not revise the adjudication, switch the derived path,
+or authorize fitting-free fallback; a changed calibrated core requires a
+new adjudication under the existing lineage law.
+
+Let \(N_c(J)\) and \(N_f(J)\) be the complete independently reconstructed
+pre-reference scans using \(K_c(J),u_c(J)\) and \(K_f(J),u_f(J)\),
+respectively. Their consumers are disjoint:
+
+- on `CALIBRATED`, the existing \(P^\star\) calibrated predicate remains the
+  sole calibrated path-derivation input. Its namespace requirement must be
+  satisfied, all adjudication-to-receipt equalities above must pass, and
+  \(N_c(J).\texttt{status}\) must be `pass`. \(N_c(J)\) is later
+  receipt-acceptance evidence only. It is not a new
+  `calibrated_global_verification_result.v1`, is not inserted into
+  `calibrated_domain_identity_sha256`, and cannot turn a calibrated failure
+  into fitting-free eligibility.
+- on `DETERMINISTIC_FITTING_FREE`, position 22 of the complete fitting-free
+  domain uses \(K_f(J)\), \(u_f(J)\), and \(N_f(J)\). Its namespace Boolean
+  and evidence status must pass, and the position-22 live-scan projection
+  digest must equal SHA-256 of canonical bytes of the complete \(N_f(J)\).
+
+After the unchanged applicability equations derive exactly one path, define
+the selected values
+
+\[
+(K^0,u^0,N^0)=
+\begin{cases}
+(K_c(J),u_c(J),N_c(J)),
+  &\texttt{CALIBRATED},\\
+(K_f(J),u_f(J),N_f(J)),
+  &\texttt{DETERMINISTIC\_FITTING\_FREE}.
+\end{cases}
+\]
+
+Only then may the coordinator construct the selected branch's complete
+configuration without `registration_reference`. Let \(F^0\) have exactly
+the selected configuration schema's non-reference keys: 46 for calibrated
+or 44 for fitting-free. No corresponding complete object is constructed for
+the unselected branch. Define
+
+\[
+g^0=
+\operatorname{SHA256}\!\left(
+  \operatorname{canonical\_json\_bytes}(F^0)\right).
+\]
+
+The following are mandatory deep/type equalities:
+
+\[
+F^0.\texttt{schema\_version}
+=K^0.\texttt{selected\_configuration\_schema\_version},
+\]
+
+\[
+F^0.\texttt{output\_paths}
+=K^0.\texttt{selected\_output\_paths},
+\]
+
+and
+
+\[
+\operatorname{SHA256}\!\left(
+ \operatorname{canonical\_json\_bytes}
+ (F^0.\texttt{output\_paths})\right)
+=K^0.\texttt{selected\_output\_paths\_sha256}.
+\]
+
+The derived path must equal \(K^0.\texttt{candidate\_path}\). The receipt's
+ID, path, selected registration path, schema, design, implementation commit,
+and output-path digest must equal the corresponding independently derived
+\(K^0\) or \(F^0\) value. A configured or receipt value is a comparand only.
+
+Under the operative Amendment-2 design identity,
+`covered_earnings_path_applicability_receipt_core.v1` prospectively has
+exactly these 16 keys in this order:
+
+1. `schema_version`;
+2. `receipt_id`;
+3. `amendment_2_design_identity`;
+4. `selected_configuration_design_identity`;
+5. `selected_registration_path`;
+6. `selected_configuration_schema_version`;
+7. `selected_implementation_commit`;
+8. `selected_output_paths_sha256`;
+9. `pre_reference_configuration_core_sha256`;
+10. `pre_reference_namespace_core`;
+11. `pre_reference_namespace_core_sha256`;
+12. `selected_pre_reference_namespace_scan`;
+13. `calibrated_registrability_adjudication_input`;
+14. `fitting_free_registration_domain_identity`;
+15. `path_applicability_specs_sha256`; and
+16. `path_applicability_result`.
+
+Members 9 through 12 equal \(g^0,K^0,u^0,N^0\), respectively. The complete
+fitting-free domain remains serialized at position 14 on both selected
+branches. On fitting-free selection, its position-22 scan deep-equals member
+12. On calibrated selection, member 12 is the newly reconstructed
+\(J\)-bound acceptance scan described above, while the immutable
+\(B^\star\)-bound adjudication evidence remains in member 13's transitive
+closure. A parser or validator must dispatch this exact keyset under the
+operative ratified design identity as well as the schema literal; the prior
+13-key Amendment-2 interpretation has no prospective operative case.
+
+After canonical hashing of that complete receipt core, construction is
+
+\[
+\rho=\texttt{<receipt_id>:<receipt_core_sha256>},
+\]
+
+\[
+F=\operatorname{insert}
+  (F^0,\texttt{registration\_reference}=\rho),
+\qquad
+h_F=\operatorname{SHA256}\!\left(
+  \operatorname{canonical\_json\_bytes}(F)\right).
+\]
+
+Deleting only `registration_reference` from final \(F\) must reproduce exact
+\(F^0\), and recomputing its hash must reproduce \(g^0\). The outer
+`post_reference_namespace_scan` remains the sole scan using \(h_F\) and the
+actual durable full-\(h_F\) claim paths. Neither that scan, \(h_F\), nor a
+value or digest derived from either is in the receipt core's transitive
+closure.
+
+The complete replacement construction order is:
+
+1. Freeze \(B_n\); construct \(K_c(B_n)\), \(u_c(B_n)\), and its calibrated
+   pre-reference scan; then serialize \(P_n\).
+2. Store \(S_n\) with sole parent \(B_n\), adding only \(P_n\).
+3. If capture is required, store authorization \(A\), the accepted capture
+   triple \(T\), and final cutoff \(C\).
+4. Construct \(P_{n+1}\) using \(K_c(C)\), \(u_c(C)\), and its calibrated
+   pre-reference scan; store it alone as \(J=S_{n+1}\). Without capture,
+   set the already stored \(J=S_n\).
+5. Freeze the raw \(J\) commit and tree; derive receipt and registration
+   suffixes and both branches' complete terminal-history and output-path
+   domains.
+6. Construct \(K_c(J),u_c(J),K_f(J),u_f(J)\), then verify the selected
+   adjudication's complete calibrated core and history equalities against
+   \(J\).
+7. Construct \(N_f(J)\) and the complete 22-row fitting-free domain; derive
+   the path using the unchanged applicability equations. No newly created
+   \(J\)-calibrated result enters path derivation.
+8. Select \(K^0,u^0,N^0\): construct and require \(N_c(J)\) only on
+   calibrated selection; on fitting-free selection use the passing
+   position-22 \(N_f(J)\).
+9. Construct only the selected \(F^0\), compute \(g^0\), validate every
+   \(K^0/F^0\) equality, then construct and hash the complete receipt core.
+10. Form \(\rho\), construct final \(F\), compute \(h_F\), scan all actual
+    full-\(h_F\) terminal paths, and construct the complete outer receipt.
+11. Write exactly the final configuration and receipt bytes, then commit
+    only those two paths as \(Q\) with sole parent \(J\).
+12. Validate \(Q\)'s raw parent, exact two-path delta, and stored blobs, and
+    rerun the stored-\(J\) projections without falsely rerunning
+    receipt/configuration live absence after those paths exist.
+
+The resulting acyclic dependency order is
+
+\[
+B_n\to P_n\to S_n\to A\to T\to C\to P_{n+1}\to J
+\to (K_c,K_f)\to(u_c,u_f)\to N_f\to\text{path}
+\to N^0\to F^0\to g^0\to R_c\to h_R\to F\to h_F
+\to N_1\to R_o\to Q,
+\]
+
+with the capture suffix omitted on the no-capture branch and \(N^0=N_f\)
+already available on fitting-free selection. Every configuration core is
+selected-only, every namespace core is branch-total, every parent commit
+exists before its consumer serializes, and neither the Git graph nor the
+receipt/configuration hash graph has a self edge.
