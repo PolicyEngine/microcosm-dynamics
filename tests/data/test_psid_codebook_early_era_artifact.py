@@ -55,7 +55,7 @@ def test_early_era_has_frozen_complete_source_domain():
         "page_stream_locator_count": 1_197,
     }
     assert artifact["era_fact_count"] == 64
-    assert len(artifact["registration_required_residuals"]) == 5
+    assert len(artifact["registration_required_residuals"]) == 4
 
 
 def test_early_role_totals_preserve_full_maps_and_mixed_head_concepts():

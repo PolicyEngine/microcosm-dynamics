@@ -50,7 +50,7 @@ def test_adjudication_has_the_complete_43_wave_domain():
         "description_line_count": 219_518,
         "present_fact_count": 3_116,
         "structural_missing_count": 0,
-        "registration_required_residual_count": 38,
+        "registration_required_residual_count": 32,
     }
     assert artifact["integrity"]["content_sha256"] == (
         inventory.CODEBOOK_ADJUDICATION_CONTENT_SHA256
@@ -168,6 +168,29 @@ def test_official_partial_inventory_is_not_emitted():
         row["status"] == "registration_required"
         for row in artifact["registration_required_residuals"]
     )
+
+
+def test_archive_capture_metadata_is_not_a_registration_blocker():
+    artifact = _artifact()
+    residual_ids = {
+        row["residual_id"]
+        for row in artifact["registration_required_residuals"]
+    }
+    assert not any(
+        residual_id.endswith(":family_archive_capture_record")
+        for residual_id in residual_ids
+    )
+    for era_artifact in _era_artifacts():
+        codebooks = [
+            row
+            for row in era_artifact["source_authority_manifest"]
+            if row["dictionary_role"] == "family_codebook"
+        ]
+        assert codebooks
+        assert all(
+            row["path"] and row["size_bytes"] > 0 and len(row["sha256"]) == 64
+            for row in codebooks
+        )
 
 
 def test_committed_adjudication_rebuilds_and_resealed_mutation_fails():

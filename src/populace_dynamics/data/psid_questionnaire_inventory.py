@@ -137,7 +137,7 @@ POST_CUTOFF_INVENTORY_WAVES: tuple[int, ...] = (
     2023,
 )
 CODEBOOK_ADJUDICATION_CONTENT_SHA256 = (
-    "c8797f312ee24c63c00a4610106bae8a7c446a5a2158b953e38bda4b018e7496"
+    "90e12cc34ef60b14750e5496b7af2466741f835c315ce38baeed292d1cc22e18"
 )
 CODEBOOK_ERA_SPECS: tuple[tuple[str, tuple[int, ...]], ...] = (
     (
@@ -188,11 +188,11 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         1_666,
         1_197,
         64,
-        5,
+        4,
         "60e9fce4eaf372ee691f863b7f55f5fe1c6c627440f566adc0239f15c86030c0",
         "fc1307936490598a4f38b50f549e5c37ec8185eff11f0d21583e90981e0e09d7",
         "69b1d9af907657211c55bb7a8eb68def190b2c819e37ceb74560c68d7e52cbf1",
-        "7eee6a88383df6aea6c4cf11a7190eeb51d1736ee469bd17439dd001140bf247",
+        "f8e3d3e6a9fa90fc01d3e79cde2e75d42505bda484e94fa614a25b06c5b8dc8e",
     ),
     (
         "ry1975_1977_spouse_concept_seam",
@@ -202,11 +202,11 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         796,
         557,
         32,
-        7,
+        6,
         "962e7e97190906063f4f54c8a6b09704e14ed307bb5ac5a59d93b9bf83194abe",
         "f85f793d89bcbebd1f0c9a0e261296f583aca8bd7d2ee20a8b7973a7aadc9e4c",
         "7cc14d09f3b7391eb3ddd5967654ff02b269bc9a5db055c7d9f962e84dcad230",
-        "a8b32316bf906ed8ac141fcaf2f871a5690ae22263562e35378b1b8f4547b7bd",
+        "857014d8b1252dd14195d680a775acf8f6cd6ff053e581de557f8790e9ee3523",
     ),
     (
         "ry1978_1992_pre_er_totals",
@@ -216,11 +216,11 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         9_230,
         5_261,
         60,
-        4,
+        3,
         "7f29ce21f9ab7f6f27d872716ccedf0edd83514756573d5e0e290a6404f9a987",
         "1727594490a69363ac4bb813906a1240d321f0ac31037393d438f880696dfe8c",
         "aeca075964acfdb73446f71c325b7820a131c9b28af93aadf1224eaf4ccdc240",
-        "c9d7e6c8a7750688389e21930ce091cad4f4cc00ed7af40d489495afa940986b",
+        "f8c1f74f6b9b587d3fad1c7235ffcdf9d23945f7801c59ca8f7f73c12f94f480",
     ),
     (
         "ry1993_2001_er_transition",
@@ -230,11 +230,11 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         8_505,
         4_822,
         30,
-        5,
+        4,
         "e2c7c19047e595ec3472e022bc3bf196836a3cec371b6728322cf6192c51f7ac",
         "0145cad9993636651b3e4ef3cc3357b0e78bbf9e4350ada135cab5345f388f87",
         "159f64ea85e2ae5b0c84f1d1468278eb6854d6b715f5677d68f2bafcac4ccdcd",
-        "cf48b3d4573f8f80b90f43eee6be2e076b821348c2431c9197c3f1ce1b1e8913",
+        "0cc4e5d61b56ab571eb79ad60cc9f946a817a3629fd2caa97e452c38399e14df",
     ),
     (
         "ry2002_2014_modern_bc_de",
@@ -244,11 +244,11 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         10_624,
         11_096,
         1_866,
-        9,
+        8,
         "d08cef8b0624cf2a162474ee83f4db0686c027df760fcf95267b9d93930445b2",
         "0b213f615da11804c18f870dd15a75f70c434fccd51a7e0aca77d0729be361d1",
         "006bf4bb002c4634db3b6c47a209cccd2fbe7319c8525701a6e39ea3695d38fb",
-        "65e64050205e97cff41abcb683ab5f8b2d0f2af63d02d951cfe614835a8fd534",
+        "ee84491011860768e2ea694e087a2923beb6562a65b022e43d5121144908ee3b",
     ),
     (
         "ry2015_2022_exclusion_lineage",
@@ -258,11 +258,11 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         6_129,
         6_964,
         1_064,
-        8,
+        7,
         "c92a0be88caf610d16ae97aa52ab0106f559e33dc678f0a97ec5385ff437254d",
         "8b8c62400f6f41ea0008340664b43c0f3105e3a1a5861cb3372dc7fff13f67f1",
         "e0d060bf924b0d3748b12ea384c43a79e8caebb5422ac48ef67b2fc78831423f",
-        "217d0a7e09ff5f47e31dfd87f893bc1d6551c6fc2f09e2ba2fcf33497b753d59",
+        "aebffce0eda9cc6de2e2fd9c8cc8c61e5f0be91ad3439b6669920b94d2a6cb18",
     ),
 )
 EARLY_ROLE_TOTAL_FIELDS: tuple[tuple[int, str, str], ...] = (
@@ -3484,7 +3484,6 @@ def _era_residuals(
     era_id: str,
     waves: Sequence[int],
     field_rows: Sequence[Sequence[Any]],
-    manifest: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
     residuals = [
         {
@@ -3500,27 +3499,6 @@ def _era_residuals(
             ),
             "searched_interview_waves": list(waves),
             "searched_codebook_field_count": len(field_rows),
-        },
-        {
-            "residual_id": f"{era_id}:family_archive_capture_record",
-            "status": "registration_required",
-            "missing_fact": (
-                "Original family-archive retrieval URL and exact retrieval "
-                "timestamp."
-            ),
-            "registration_required_item": (
-                "original family-archive network capture record"
-            ),
-            "searched_interview_waves": list(waves),
-            "searched_codebook_document_ids": [
-                row["document_id"]
-                for row in manifest
-                if row["dictionary_role"] == "family_codebook"
-            ],
-            "established_local_provenance": (
-                "registered PDF bytes equal the sole matching PDF member "
-                "of a path/size/SHA-256-pinned local family archive"
-            ),
         },
         {
             "residual_id": f"{era_id}:questionnaire_slot_closure",
@@ -4054,7 +4032,6 @@ def build_codebook_era_evidence(
             era_id,
             waves,
             field_rows,
-            manifest,
         ),
         "canonical_order": [
             "interview_wave",
