@@ -1,16 +1,18 @@
 # IC3 employer gate block — thresholds, partitions, and rulings
 
 - **Design id**: `2026-07-17-ic3-employer-gate-block`
-- **Status**: **DRAFT FOR REFEREE — NOT RATIFIED. Revision 5**,
+- **Status**: **DRAFT FOR REFEREE — NOT RATIFIED. Revision 6**,
   responding to the round-1 adversarial review of 2026-07-17
   (verdict: NOT RATIFIABLE AS DRAFTED — 5 blocking, 6 should-fix).
   Blocking items B1, B3, B4, B5 and should-fix S1 are addressed.
-  The refereed block YAML now exists at
-  `docs/design/ic3_employer_gate_block_draft.yaml`, closing B2's
-  artifact-creation half. Referee verification and every unresolved
-  prerequisite remain open. §13 records every remaining
+  **B2 remains open**: the refereed block YAML is still a required
+  pre-lock artifact (§12.2a). The IC rename (#277) and its final
+  design filename are composed at their current head, so that YAML
+  must use `ic3` names from its first commit. §13 records every remaining
   decision and distinguishes a workstream decision from referee
-  ratification. Nothing in this
+  ratification. All current prerequisite heads are composed below,
+  but their external PR approval and merge requirements are not
+  satisfied by branch composition. Nothing in this
   document binds until the lock ceremony flips it (§12). This document
   edits no `gates.yaml` cell, moves no threshold, builds no floor, and
   writes no test. Every number labelled PROPOSED is a proposal to the
@@ -24,21 +26,22 @@
   requirements are now in the ADR text on the exact composed head,
   not supplied by a comment-thread amendment.
 - **Composed prerequisite record** (exact heads, all ancestors of this
-  revision): master `691901f`; IC rename #277 `c5b4d11`; J2J/J2JOD
-  references #228 `f5070b4`; ADR 0004 #224 `dff73d5`; cross-wave
-  evidence #235 `c686f0f`; E4/E5 registered design #236 `73213c5`;
-  byte-faithful seam anchor #274 `7411d8d`; Workstream A v1 floor
-  promotion #212 `c24809b`; Workstream B v1 floor promotion #223
-  `34a70fc`; controlling design #230 `1bc161e7`.
+  revision): master `044d2fc`; IC rename #277 `35499f1`; J2J/J2JOD
+  references #228 `50404cb`; Workstream A v1 floor promotion #212
+  `55ddae0`; Workstream B v1 floor promotion #223 `b4c5b6f`; ADR
+  0004 #224 `32f8fed`; cross-wave evidence #235 `d13e8c4`; E4/E5
+  registered design #236 `85bcf90`; byte-faithful seam anchor #274
+  `42a92cc`.
 - **Floor-promotion readiness is not implied by composition.** #212
   is now a reproducible pre-lock anchor: all three builders were
   rerun from the exact Census-hosted vintages, every previously
   recorded measured value reproduced exactly, source-input and
   measurement-environment sidecars were recorded, and E9 now reports
-  distinct-person counts (stay 16,286; J2J 524). #212 and #223 remain
-  draft evidence pending current-head review, approval, and merge;
-  #212 also leaves the deployment-scale conversion and threshold
-  choices to the referee. Neither composition is ratification.
+  distinct-person counts (stay 16,286; J2J 524). #212 is open and
+  non-draft; #223 remains draft. Both remain unmerged evidence
+  pending current-head approval and merge. #212 also leaves the
+  deployment-scale conversion and threshold choices to the referee.
+  Neither composition is approval, merge, or ratification.
 - **Available evidence pins** (branch-composition pins, not lock-time
   merge ratification):
 
@@ -55,7 +58,7 @@
   | #212 E4/E5 builder | `scripts/build_sipp_spell_floors.py` | `8ce7e41a9af71767672c39f7933ccde3c2eeaa0aa4f7044c5113f7430439d1dc` | PENDING approval/merge |
   | #212 E4/E5 environment/input sidecars | `runs/sipp_spell_floors_v1.{env,inputs}.json` | `124adfc94e32c157886d40b405c4495a4e7a4e935f4bf940a551c551ca6eaba7` / `68a039b0951698b9031d8c29a064a4e2a287f2e2f54552726bf6ed502d7cbe7d` | PENDING approval/merge |
   | #212 E3 artifact | `runs/tenure_floors_v1.json` | `08e67e5d362bbd0c1703c85fdb40624de094561f385eceb6d0a9eea4772cc6ff` | PENDING approval/merge |
-  | #212 E3 builder | `scripts/build_tenure_floors.py` | `593237bfbba31e77183a8d38bf07ae6ad77eb9392abd323ce71aecdc3e6dfb9e` | PENDING approval/merge |
+  | #212 E3 builder | `scripts/build_tenure_floors.py` | `fda07dec53ab11c41aab2b7f92dc0c18ecad0f3843d70256bb2f140351b273b1` | PENDING approval/merge |
   | #212 E3 environment/input sidecars | `runs/tenure_floors_v1.{env,inputs}.json` | `68df172eb5266ba4771b7d6d8d3c0812fb6e3f2d63486b1104b886abf1e822a2` / `7e0577e3cbce04363017b8bb1c168915d887368a1cc17b57e801998faed754e3` | PENDING approval/merge |
   | #212 E8/E9 artifact | `runs/sipp_e8_e9_floors_v1.json` | `b360f04fc785eeb11c8e77e4128bdb8a98d31501a11f048fa2df4e86b1f7e059` | PENDING approval/merge |
   | #212 E8/E9 builder | `scripts/build_sipp_e8_e9_floors.py` | `3b2209de9b10cf680f5a074ea0c56077b03ebda68a4a614f2e20f0d0c2455272` | PENDING approval/merge |
@@ -964,46 +967,48 @@ in `docs/design/m6_projection_engine.md`):
    review; every §13 item answered on the record).
 2. Required pre-lock artifacts land **and are immutable**
    (closes blocking item B3):
-   - **COMPOSED, not approved/merged #223**:
+   - **COMPOSED at `b4c5b6f`, not approved/merged #223**:
      `runs/employer_firm_floors_v1.json`, with artifact, builder,
      and all six consumed-input digests pinned. Composition supplies
      the exact current evidence for review; it does not satisfy the
      current-head approval or merge requirement.
-   - **COMPOSED, reconciled, not approved/merged #212**: the three
+   - **COMPOSED at `55ddae0`, reconciled, not approved/merged #212**:
+     the three
      exact v1 paths plus current artifact, builder, input-sidecar, and
      measurement-environment pins listed above. Exact-vintage rebuilds
      reproduced every prior measured value and E8/E9 records the exact
      stay/J2J distinct-person counts. Current-head approval and merge,
      deployment-scale conversion, and referee threshold choices remain
      required before these can enter the lock.
-   - **COMPOSED, not merged/promoted #235**: current draft
+   - **COMPOSED at `d13e8c4`, not merged/promoted #235**: current draft
      `runs/crosswave_jobid_check_draft_v0.json`. Promotion reconciles
      its internal `draft_v1` label and lands
      `runs/crosswave_jobid_check_v1.json`; this control revision does
      not rename it.
-   - **COMPOSED, not merged #236**:
+   - **COMPOSED at `85bcf90`, not merged #236**:
      `docs/design/e4_e5_audit_manifest.md`, registered and undrawn.
-   - **COMPOSED, not merged/promoted #274**: byte-faithful
+   - **COMPOSED at `42a92cc`, not merged/promoted #274**: byte-faithful
      `runs/seam_reconciliation_draft_v0.json` and builder. The later
      v1 pin/amendment must not rewrite the restored draft anchor.
    - Promotion of #235 and #274 draft artifacts to reviewed,
      sha256-pinned v1 paths. The three #212 files already carry
      reconciled v1 names and current provenance pins, but still require
      approval and merge.
-   - **COMPOSED, not merged #224**, with the three adopted changes
-     folded into `docs/adr/0004-linkage-qc.md`'s text. A locked block
+   - **COMPOSED at `32f8fed`, not merged #224**, with the three
+     adopted changes folded into `docs/adr/0004-linkage-qc.md`'s
+     text. A locked block
      whose normative ADR exists only as a branch file amended by
      comment thread is not a locked contract.
-   - **Every cited evidence PR merged to master** (#212, #223,
-     #228, #235, #236, #274) and **every consumed artifact
+   - **Every cited prerequisite PR merged to master** (#212, #223,
+     #224, #228, #235, #236, #274, #277) and **every consumed artifact
      sha256-pinned at its merge commit**. The draft's evidence base
      is currently "cited by branch pending merge" over force-pushable
      refs; the round-1 as-reviewed pin list is the record of what
      round 1 saw, and the amendment PR must pin what the *lock*
      sees.
-   - **COMPOSED, not merged #277**: the block YAML is authored once
-     under final IC1/IC2/IC3 names after that prerequisite merges,
-     rather than renamed after being refereed.
+   - **COMPOSED at `35499f1`, not merged #277**: the block YAML is
+     authored once under final IC1/IC2/IC3 names after that
+     prerequisite merges, rather than renamed after being refereed.
 2a. **The refereed block YAML** (closes blocking item B2, part 1).
    A committed `docs/design/ic3_employer_gate_block_draft.yaml` —
    enumerated cells for every gate, `derivations` blocks in the
