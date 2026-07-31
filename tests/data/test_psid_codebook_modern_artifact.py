@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from collections import Counter
 from pathlib import Path
+
+import pytest
 
 from populace_dynamics.data import psid_questionnaire_inventory as inventory
 
@@ -190,6 +193,89 @@ def test_vb8_later_branches_are_positive_but_composite_stays_residual():
         "ry2002_2014_modern_bc_de:job_amount_role_total_reconciliation"
         in residual_ids
     )
+
+
+def test_vb8_2015_new_role_facts_bind_complete_branch_composites():
+    artifact = _artifact()
+    facts = {fact["fact_id"]: fact for fact in artifact["era_facts"]}
+    fields = _fields_by_id(artifact)
+    columns = artifact["field_evidence_columns"]
+    key_index = columns.index("codebook_field_key")
+    locator_index = columns.index("source_locator_ids")
+    expected = {
+        "regular-school:2015:spouse_or_partner:new_role_background": [
+            "ER64630",
+            "ER64694",
+            "ER64695",
+            "ER64709",
+        ],
+        (
+            "regular-school:2015:head_or_reference_person:"
+            "new_role_background"
+        ): [
+            "ER64769",
+            "ER64833",
+            "ER64834",
+            "ER64848",
+        ],
+    }
+    for fact_id, raw_field_ids in expected.items():
+        fact = facts[fact_id]
+        bound_rows = [fields[(2015, field_id)] for field_id in raw_field_ids]
+        expected_locators = []
+        for row in bound_rows:
+            for locator_id in row[locator_index]:
+                if locator_id not in expected_locators:
+                    expected_locators.append(locator_id)
+        assert fact["raw_field_ids"] == raw_field_ids
+        assert fact["codebook_field_keys"] == [
+            row[key_index] for row in bound_rows
+        ]
+        assert fact["source_locator_ids"] == expected_locators
+        assert fact["universe_checkpoint_raw_field_id"] == raw_field_ids[0]
+        assert fact["upstream_still_in_college_raw_field_ids"] == (
+            raw_field_ids[1:3]
+        )
+        assert fact["endpoint_raw_field_id"] == raw_field_ids[3]
+        assert fact["universe_status"] == (
+            "checkpoint_establishes_new_splitoff_recontact_branch"
+        )
+
+
+def test_validator_rejects_field_locator_from_another_wave():
+    artifact = copy.deepcopy(_artifact())
+    fields = _fields_by_id(artifact)
+    locator_index = artifact["field_evidence_columns"].index(
+        "source_locator_ids"
+    )
+    fields[(2015, "ER64709")][locator_index] = list(
+        fields[(2013, "ER57616")][locator_index]
+    )
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="field locator wave/document binding drifted",
+    ):
+        inventory.validate_codebook_era_evidence(artifact)
+
+
+@pytest.mark.parametrize(
+    "binding_name",
+    ["raw_field_ids", "codebook_field_keys", "source_locator_ids"],
+)
+def test_validator_rejects_incomplete_fact_field_union(binding_name: str):
+    artifact = copy.deepcopy(_artifact())
+    fact = next(
+        row
+        for row in artifact["era_facts"]
+        if row["fact_id"]
+        == "regular-school:2015:spouse_or_partner:new_role_background"
+    )
+    fact[binding_name] = fact[binding_name][:-1]
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="fact source binding is not the exact field union",
+    ):
+        inventory.validate_codebook_era_evidence(artifact)
 
 
 def test_modern_amount_and_unit_pages_have_exact_raw_stream_locators():

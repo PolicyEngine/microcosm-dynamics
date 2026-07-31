@@ -137,7 +137,7 @@ POST_CUTOFF_INVENTORY_WAVES: tuple[int, ...] = (
     2023,
 )
 CODEBOOK_ADJUDICATION_CONTENT_SHA256 = (
-    "97f79ac5fb4441f34019500fd3d04c9944f3ee296bd8d91a709542bda3527c24"
+    "c8797f312ee24c63c00a4610106bae8a7c446a5a2158b953e38bda4b018e7496"
 )
 CODEBOOK_ERA_SPECS: tuple[tuple[str, tuple[int, ...]], ...] = (
     (
@@ -248,7 +248,7 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         "d08cef8b0624cf2a162474ee83f4db0686c027df760fcf95267b9d93930445b2",
         "0b213f615da11804c18f870dd15a75f70c434fccd51a7e0aca77d0729be361d1",
         "006bf4bb002c4634db3b6c47a209cccd2fbe7319c8525701a6e39ea3695d38fb",
-        "7d48a950b9cae3b6f2459795eafa47969d3c0e9a34eeae32510972c5d5fdcac2",
+        "65e64050205e97cff41abcb683ab5f8b2d0f2af63d02d951cfe614835a8fd534",
     ),
     (
         "ry2015_2022_exclusion_lineage",
@@ -262,7 +262,7 @@ CODEBOOK_ERA_IDENTITIES: tuple[tuple[Any, ...], ...] = (
         "c92a0be88caf610d16ae97aa52ab0106f559e33dc678f0a97ec5385ff437254d",
         "8b8c62400f6f41ea0008340664b43c0f3105e3a1a5861cb3372dc7fff13f67f1",
         "e0d060bf924b0d3748b12ea384c43a79e8caebb5422ac48ef67b2fc78831423f",
-        "9d0db284951777748a5f29be8d65209ce68ba439d52bb1776b12bd3de66cd221",
+        "217d0a7e09ff5f47e31dfd87f893bc1d6551c6fc2f09e2ba2fcf33497b753d59",
     ),
 )
 EARLY_ROLE_TOTAL_FIELDS: tuple[tuple[int, str, str], ...] = (
@@ -422,6 +422,90 @@ ENROLLMENT_REGULAR_SCHOOL_FIELDS: tuple[tuple[int, str, str, str], ...] = (
     (2023, "spouse_or_partner", "continuing_role_update", "ER85077"),
     (2023, "head_or_reference_person", "new_role_background", "ER85163"),
     (2023, "head_or_reference_person", "continuing_role_update", "ER85204"),
+)
+NEW_ROLE_ENROLLMENT_BRANCH_FIELDS: tuple[
+    tuple[int, str, str, str, str, str], ...
+] = (
+    (
+        2015,
+        "spouse_or_partner",
+        "ER64630",
+        "ER64694",
+        "ER64695",
+        "ER64709",
+    ),
+    (
+        2015,
+        "head_or_reference_person",
+        "ER64769",
+        "ER64833",
+        "ER64834",
+        "ER64848",
+    ),
+    (
+        2017,
+        "spouse_or_partner",
+        "ER70703",
+        "ER70767",
+        "ER70768",
+        "ER70782",
+    ),
+    (
+        2017,
+        "head_or_reference_person",
+        "ER70841",
+        "ER70905",
+        "ER70906",
+        "ER70920",
+    ),
+    (
+        2019,
+        "spouse_or_partner",
+        "ER76711",
+        "ER76775",
+        "ER76776",
+        "ER76794",
+    ),
+    (
+        2019,
+        "head_or_reference_person",
+        "ER76856",
+        "ER76920",
+        "ER76921",
+        "ER76939",
+    ),
+    (
+        2021,
+        "spouse_or_partner",
+        "ER80976",
+        "ER81040",
+        "ER81041",
+        "ER81059",
+    ),
+    (
+        2021,
+        "head_or_reference_person",
+        "ER81103",
+        "ER81167",
+        "ER81168",
+        "ER81186",
+    ),
+    (
+        2023,
+        "spouse_or_partner",
+        "ER84953",
+        "ER85017",
+        "ER85018",
+        "ER85036",
+    ),
+    (
+        2023,
+        "head_or_reference_person",
+        "ER85080",
+        "ER85144",
+        "ER85145",
+        "ER85163",
+    ),
 )
 ROLES: tuple[str, ...] = (
     "head_or_reference_person",
@@ -3158,6 +3242,21 @@ def _regular_school_enrollment_facts(
 ) -> list[dict[str, Any]]:
     columns, by_coordinate = _codebook_fields_by_coordinate(field_rows)
     present_waves = {row[columns["interview_wave"]] for row in field_rows}
+    new_role_fields = {
+        (wave, role, endpoint_field_id): (
+            checkpoint_field_id,
+            still_in_college_month_field_id,
+            still_in_college_year_field_id,
+        )
+        for (
+            wave,
+            role,
+            checkpoint_field_id,
+            still_in_college_month_field_id,
+            still_in_college_year_field_id,
+            endpoint_field_id,
+        ) in NEW_ROLE_ENROLLMENT_BRANCH_FIELDS
+    }
     facts: list[dict[str, Any]] = []
     for wave, role, branch, field_id in ENROLLMENT_REGULAR_SCHOOL_FIELDS:
         if wave not in present_waves:
@@ -3180,6 +3279,111 @@ def _regular_school_enrollment_facts(
             raise DictionaryDriftError(
                 f"regular-school source anchors drifted: {wave}/{field_id}"
             )
+        bound_rows = [row]
+        universe_status = "source_description_and_code_map"
+        branch_binding: dict[str, Any] = {}
+        if branch == "new_role_background":
+            try:
+                (
+                    checkpoint_field_id,
+                    still_in_college_month_field_id,
+                    still_in_college_year_field_id,
+                ) = new_role_fields[(wave, role, field_id)]
+            except KeyError as error:
+                raise DictionaryDriftError(
+                    "new-role regular-school branch binding is absent: "
+                    f"{wave}/{role}/{field_id}"
+                ) from error
+            checkpoint_row = _required_codebook_field(
+                by_coordinate,
+                wave,
+                checkpoint_field_id,
+                "new-role enrollment universe checkpoint",
+            )
+            still_in_college_month_row = _required_codebook_field(
+                by_coordinate,
+                wave,
+                still_in_college_month_field_id,
+                "new-role enrollment still-in-college month",
+            )
+            still_in_college_year_row = _required_codebook_field(
+                by_coordinate,
+                wave,
+                still_in_college_year_field_id,
+                "new-role enrollment still-in-college year",
+            )
+            checkpoint_description = " ".join(
+                checkpoint_row[columns["full_source_description"]]
+                .lower()
+                .split()
+            )
+            if not all(
+                anchor in checkpoint_description
+                for anchor in (
+                    "have not had a designation",
+                    "split-off",
+                    "recontact interviews",
+                    "carried forward",
+                )
+            ):
+                raise DictionaryDriftError(
+                    "new-role enrollment universe anchors drifted: "
+                    f"{wave}/{checkpoint_field_id}"
+                )
+            month_map = still_in_college_month_row[columns["code_map"]]
+            year_map = still_in_college_year_row[columns["code_map"]]
+            if not any(
+                code_row[2] == "96"
+                and code_row[3].lower() == "still in school"
+                for code_row in month_map
+            ) or not any(
+                code_row[2] == "9,996"
+                and code_row[3].lower() == "still in school"
+                for code_row in year_map
+            ):
+                raise DictionaryDriftError(
+                    "new-role still-in-college anchors drifted: "
+                    f"{wave}/{role}"
+                )
+            inapplicable_meanings = [
+                code_row[3]
+                for code_row in row[columns["code_map"]]
+                if code_row[2] == "0"
+            ]
+            normalized_inapplicable = " ".join(inapplicable_meanings).replace(
+                ",", ""
+            )
+            if (
+                len(inapplicable_meanings) != 1
+                or f"{still_in_college_month_field_id}=96"
+                not in normalized_inapplicable
+                or f"{still_in_college_year_field_id}=9996"
+                not in normalized_inapplicable
+            ):
+                raise DictionaryDriftError(
+                    "new-role 61A inapplicability anchors drifted: "
+                    f"{wave}/{field_id}"
+                )
+            bound_rows = [
+                checkpoint_row,
+                still_in_college_month_row,
+                still_in_college_year_row,
+                row,
+            ]
+            universe_status = (
+                "checkpoint_establishes_new_splitoff_recontact_branch"
+            )
+            branch_binding = {
+                "universe_checkpoint_raw_field_id": checkpoint_field_id,
+                "upstream_still_in_college_raw_field_ids": [
+                    still_in_college_month_field_id,
+                    still_in_college_year_field_id,
+                ],
+                "endpoint_raw_field_id": field_id,
+                "endpoint_inapplicability_status": (
+                    "bound_to_upstream_still_in_college_codes"
+                ),
+            }
         facts.append(
             {
                 "fact_id": f"regular-school:{wave}:{role}:{branch}",
@@ -3191,7 +3395,7 @@ def _regular_school_enrollment_facts(
                 "job_slot": "not_applicable_person_status",
                 "field_purpose": "enrollment",
                 "branch": branch,
-                "universe_status": "source_description_and_code_map",
+                "universe_status": universe_status,
                 "information_date_basis": (
                     "explicit_current_interview_time"
                     if wave >= 2019
@@ -3201,7 +3405,8 @@ def _regular_school_enrollment_facts(
                 "stable_cross_wave_mapping_status": (
                     "registration_required_branch_and_freshness_composite"
                 ),
-                **_fact_source_binding([row], columns),
+                **branch_binding,
+                **_fact_source_binding(bound_rows, columns),
             }
         )
     return facts
@@ -4008,12 +4213,21 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
     locator_ids = [row["locator_id"] for row in locators]
     if len(locator_ids) != len(set(locator_ids)):
         raise DictionaryDriftError("duplicate codebook locator ID")
+    locator_by_id = {row["locator_id"]: row for row in locators}
     if artifact["source_locator_keyset_sha256"] != sha256_bytes(
         canonical_json_bytes(locator_ids)
     ):
         raise DictionaryDriftError("codebook locator keyset hash drifted")
     locator_id_set = set(locator_ids)
     manifest_ids = {row["document_id"] for row in manifest}
+    manifest_by_id = {row["document_id"]: row for row in manifest}
+    if any(
+        locator["source_document_id"] not in manifest_ids
+        for locator in locators
+    ):
+        raise DictionaryDriftError(
+            "codebook locator cites an unknown source document"
+        )
     code_map_rows: list[Sequence[Any]] = []
     for row in fields:
         if len(row) != len(CODEBOOK_FIELD_EVIDENCE_COLUMNS):
@@ -4055,16 +4269,29 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
             raise DictionaryDriftError(
                 "codebook semantic annotation status drifted"
             )
-        if not set(row[columns["source_document_ids"]]).issubset(manifest_ids):
+        source_document_ids = row[columns["source_document_ids"]]
+        if not set(source_document_ids).issubset(manifest_ids):
             raise DictionaryDriftError(
                 "codebook field cites an unknown source document"
             )
-        if not row[columns["source_locator_ids"]] or not set(
-            row[columns["source_locator_ids"]]
-        ).issubset(locator_id_set):
+        source_locator_ids = row[columns["source_locator_ids"]]
+        if not source_locator_ids or not set(source_locator_ids).issubset(
+            locator_id_set
+        ):
             raise DictionaryDriftError(
                 "codebook field cites an unknown/empty locator"
             )
+        for locator_id in source_locator_ids:
+            locator = locator_by_id[locator_id]
+            source_document_id = locator["source_document_id"]
+            if (
+                source_document_id not in source_document_ids
+                or manifest_by_id[source_document_id]["interview_wave"]
+                != row[columns["interview_wave"]]
+            ):
+                raise DictionaryDriftError(
+                    "codebook field locator wave/document binding drifted"
+                )
     extraction_summary = artifact["extraction_summary"]
     expected_summary = {
         "field_count": len(fields),
@@ -4096,10 +4323,12 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
     if len(fact_ids) != len(set(fact_ids)):
         raise DictionaryDriftError("duplicate codebook era fact ID")
     field_key_set = set(field_keys)
+    field_by_key = dict(zip(field_keys, fields, strict=True))
     for fact in facts:
-        if not fact["codebook_field_keys"] or not set(
-            fact["codebook_field_keys"]
-        ).issubset(field_key_set):
+        fact_field_keys = fact["codebook_field_keys"]
+        if not fact_field_keys or not set(fact_field_keys).issubset(
+            field_key_set
+        ):
             raise DictionaryDriftError(
                 "codebook era fact cites an unknown field"
             )
@@ -4108,6 +4337,29 @@ def validate_codebook_era_evidence(artifact: Mapping[str, Any]) -> None:
         ).issubset(locator_id_set):
             raise DictionaryDriftError(
                 "codebook era fact cites an unknown locator"
+            )
+        bound_fields = [field_by_key[key] for key in fact_field_keys]
+        expected_source_binding = _fact_source_binding(
+            bound_fields,
+            columns,
+        )
+        if any(
+            fact[name] != expected_source_binding[name]
+            for name in (
+                "raw_field_ids",
+                "codebook_field_keys",
+                "source_locator_ids",
+            )
+        ):
+            raise DictionaryDriftError(
+                "codebook era fact source binding is not the exact field "
+                "union"
+            )
+        if {row[columns["interview_wave"]] for row in bound_fields} != {
+            fact["interview_wave"]
+        }:
+            raise DictionaryDriftError(
+                "codebook era fact field-wave binding drifted"
             )
     residuals = artifact["registration_required_residuals"]
     residual_ids = [row["residual_id"] for row in residuals]

@@ -122,6 +122,67 @@ def test_postcutoff_enrollment_has_both_role_branches_every_wave():
     )
 
 
+def test_postcutoff_new_role_facts_bind_complete_branch_composites():
+    artifact = _artifact()
+    facts = {fact["fact_id"]: fact for fact in artifact["era_facts"]}
+    fields = _fields_by_id(artifact)
+    columns = artifact["field_evidence_columns"]
+    key_index = columns.index("codebook_field_key")
+    locator_index = columns.index("source_locator_ids")
+    expected = {
+        (
+            2017,
+            "spouse_or_partner",
+        ): ["ER70703", "ER70767", "ER70768", "ER70782"],
+        (
+            2017,
+            "head_or_reference_person",
+        ): ["ER70841", "ER70905", "ER70906", "ER70920"],
+        (
+            2019,
+            "spouse_or_partner",
+        ): ["ER76711", "ER76775", "ER76776", "ER76794"],
+        (
+            2019,
+            "head_or_reference_person",
+        ): ["ER76856", "ER76920", "ER76921", "ER76939"],
+        (
+            2021,
+            "spouse_or_partner",
+        ): ["ER80976", "ER81040", "ER81041", "ER81059"],
+        (
+            2021,
+            "head_or_reference_person",
+        ): ["ER81103", "ER81167", "ER81168", "ER81186"],
+        (
+            2023,
+            "spouse_or_partner",
+        ): ["ER84953", "ER85017", "ER85018", "ER85036"],
+        (
+            2023,
+            "head_or_reference_person",
+        ): ["ER85080", "ER85144", "ER85145", "ER85163"],
+    }
+    for (wave, role), raw_field_ids in expected.items():
+        fact = facts[f"regular-school:{wave}:{role}:new_role_background"]
+        bound_rows = [(fields[(wave, field_id)]) for field_id in raw_field_ids]
+        expected_locators = []
+        for row in bound_rows:
+            for locator_id in row[locator_index]:
+                if locator_id not in expected_locators:
+                    expected_locators.append(locator_id)
+        assert fact["raw_field_ids"] == raw_field_ids
+        assert fact["codebook_field_keys"] == [
+            row[key_index] for row in bound_rows
+        ]
+        assert fact["source_locator_ids"] == expected_locators
+        assert fact["universe_checkpoint_raw_field_id"] == raw_field_ids[0]
+        assert fact["upstream_still_in_college_raw_field_ids"] == (
+            raw_field_ids[1:3]
+        )
+        assert fact["endpoint_raw_field_id"] == raw_field_ids[3]
+
+
 def test_regular_school_map_keeps_inapplicable_distinct_from_no():
     artifact = _artifact()
     fields = _fields_by_id(artifact)
