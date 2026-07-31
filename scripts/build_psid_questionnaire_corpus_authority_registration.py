@@ -37,9 +37,7 @@ OUT_PATH = (
     / "psid_questionnaire_corpus_authority_registration_attempt_v1.json"
 )
 
-SCHEMA_VERSION = (
-    "psid_questionnaire_corpus_authority_registration_attempt.v1"
-)
+SCHEMA_VERSION = "psid_questionnaire_corpus_authority_registration_attempt.v1"
 ARTIFACT_ID = SCHEMA_VERSION
 CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 CAPTURE_ROOT_ID = "psid_external_staging_root"
@@ -275,7 +273,9 @@ def _full_file_locator(filename: str, raw: bytes) -> dict[str, Any]:
     }
 
 
-def _capture_inputs(capture_root: Path) -> tuple[list[dict[str, Any]], dict[str, bytes]]:
+def _capture_inputs(
+    capture_root: Path,
+) -> tuple[list[dict[str, Any]], dict[str, bytes]]:
     rows: list[dict[str, Any]] = []
     raw_by_id: dict[str, bytes] = {}
     for input_id, filename, size_bytes, sha256 in CAPTURE_INPUT_SPECS:
@@ -315,9 +315,13 @@ def _frozen_repo_bytes(committed_path: str) -> tuple[bytes, Mapping[str, Any]]:
 def _repo_authority_locators() -> list[dict[str, Any]]:
     cache: dict[str, tuple[bytes, Mapping[str, Any]]] = {}
     rows: list[dict[str, Any]] = []
-    for locator_id, path, line_start, line_end, description in (
-        REPO_AUTHORITY_LOCATOR_SPECS
-    ):
+    for (
+        locator_id,
+        path,
+        line_start,
+        line_end,
+        description,
+    ) in REPO_AUTHORITY_LOCATOR_SPECS:
         if path not in cache:
             cache[path] = _frozen_repo_bytes(path)
         raw, identity = cache[path]
@@ -356,7 +360,9 @@ def _digest_rows(raw: bytes) -> list[dict[str, Any]]:
             raise ValueError(f"browser digest row {row_number} grammar drift")
         sha256, size, filename = match.groups()
         if Path(filename).name != filename or filename in {".", ".."}:
-            raise ValueError(f"browser digest row {row_number} unsafe filename")
+            raise ValueError(
+                f"browser digest row {row_number} unsafe filename"
+            )
         rows.append(
             {
                 "digest_row_number": row_number,
@@ -426,7 +432,9 @@ class _HrefCollector(HTMLParser):
             self.hrefs.append(href)
 
 
-def _validate_inventory_against_html(html_raw: bytes, inventory_raw: bytes) -> None:
+def _validate_inventory_against_html(
+    html_raw: bytes, inventory_raw: bytes
+) -> None:
     """Require every captured inventory occurrence to exist in the source page."""
 
     try:
@@ -442,11 +450,15 @@ def _validate_inventory_against_html(html_raw: bytes, inventory_raw: bytes) -> N
     collector.feed(html_text)
     source_counts = Counter(urldefrag(href).url for href in collector.hrefs)
     inventory_counts = Counter(item["href"] for item in inventory)
-    if any(source_counts[href] < count for href, count in inventory_counts.items()):
+    if any(
+        source_counts[href] < count for href, count in inventory_counts.items()
+    ):
         raise ValueError("PSID link inventory is not source-page backed")
 
 
-def _unique_inventory_links(raw: bytes) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _unique_inventory_links(
+    raw: bytes,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     value = _strictly_parsed_document(raw, "PSID document link inventory")
     if not isinstance(value, list) or len(value) != EXPECTED_LINK_COUNT:
         raise ValueError("PSID document link inventory count drift")
@@ -454,12 +466,16 @@ def _unique_inventory_links(raw: bytes) -> tuple[list[dict[str, Any]], dict[str,
     unique: list[dict[str, Any]] = []
     for link_position, item in enumerate(value, start=1):
         if not isinstance(item, dict) or set(item) != {"href", "text", "row"}:
-            raise ValueError(f"link inventory row {link_position} schema drift")
+            raise ValueError(
+                f"link inventory row {link_position} schema drift"
+            )
         if not all(isinstance(item[key], str) for key in item):
             raise ValueError(f"link inventory row {link_position} type drift")
         href = item["href"]
         if not href.startswith("https://psidonline.isr.umich.edu/"):
-            raise ValueError(f"link inventory row {link_position} origin drift")
+            raise ValueError(
+                f"link inventory row {link_position} origin drift"
+            )
         if href in seen:
             continue
         seen.add(href)
@@ -508,7 +524,9 @@ def _document_candidates(
         expected_sha = digest_row["sha256"]
         expected_size = digest_row["size_bytes"]
         digest_name = digest_row["digest_row_filename"]
-        on_disk_name = mapping_by_key.get((digest_name, expected_sha), digest_name)
+        on_disk_name = mapping_by_key.get(
+            (digest_name, expected_sha), digest_name
+        )
         path = capture_root / on_disk_name
         observed_identity: dict[str, Any] | None = None
         locator: dict[str, Any] | None = None
@@ -566,7 +584,9 @@ def _content_sha256(value: Mapping[str, Any]) -> str:
     return _sha256(canonical_json_bytes(preimage))
 
 
-def build_registration_attempt(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> dict[str, Any]:
+def build_registration_attempt(
+    capture_root: Path = DEFAULT_CAPTURE_ROOT,
+) -> dict[str, Any]:
     """Reconstruct the complete capture attempt from staged source bytes."""
 
     capture_inputs, raw = _capture_inputs(capture_root)
@@ -576,7 +596,9 @@ def build_registration_attempt(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> dic
         raw["source_page_index"], raw["source_link_inventory"]
     )
     links, link_summary = _unique_inventory_links(raw["source_link_inventory"])
-    documents = _document_candidates(capture_root, digest_rows, links, mappings)
+    documents = _document_candidates(
+        capture_root, digest_rows, links, mappings
+    )
     verified_ids = [
         row["source_document_id"]
         for row in documents
@@ -610,7 +632,9 @@ def build_registration_attempt(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> dic
                 for row in documents
             }
         ),
-        "ordered_document_ids": [row["source_document_id"] for row in documents],
+        "ordered_document_ids": [
+            row["source_document_id"] for row in documents
+        ],
         "document_rows_sha256": _sha256(canonical_json_bytes(documents)),
         "verified_document_ids": verified_ids,
         "verified_document_count": len(verified_ids),
@@ -659,9 +683,15 @@ def validate_structure(value: Mapping[str, Any]) -> None:
     }
     if set(value) != expected_keys:
         raise ValueError("registration-attempt top-level schema drift")
-    if value["schema_version"] != SCHEMA_VERSION or value["artifact_id"] != ARTIFACT_ID:
+    if (
+        value["schema_version"] != SCHEMA_VERSION
+        or value["artifact_id"] != ARTIFACT_ID
+    ):
         raise ValueError("registration-attempt identity drift")
-    if value["authority_scope"] != "external_psid_questionnaire_and_codebook_bytes":
+    if (
+        value["authority_scope"]
+        != "external_psid_questionnaire_and_codebook_bytes"
+    ):
         raise ValueError("registration-attempt authority scope drift")
     if value["staging"] != {
         "staging_root_id": CAPTURE_ROOT_ID,
@@ -700,7 +730,10 @@ def validate_structure(value: Mapping[str, Any]) -> None:
     if value["name_disambiguation"] != EXPECTED_DISAMBIGUATION_ROWS:
         raise ValueError("registration-attempt disambiguation domain drift")
     documents = value["document_candidates"]
-    if not isinstance(documents, list) or len(documents) != EXPECTED_DOCUMENT_ROW_COUNT:
+    if (
+        not isinstance(documents, list)
+        or len(documents) != EXPECTED_DOCUMENT_ROW_COUNT
+    ):
         raise ValueError("registration-attempt document domain drift")
     expected_document_keys = {
         "source_document_id",
@@ -726,7 +759,9 @@ def validate_structure(value: Mapping[str, Any]) -> None:
     first_link_positions: list[int] = []
     for position, row in enumerate(documents, start=1):
         if not isinstance(row, dict) or set(row) != expected_document_keys:
-            raise ValueError(f"registration-attempt document row {position} schema drift")
+            raise ValueError(
+                f"registration-attempt document row {position} schema drift"
+            )
         expected_id = f"psid-corpus-document-{position:04d}"
         if (
             row["source_document_id"] != expected_id
@@ -822,20 +857,24 @@ def validate_structure(value: Mapping[str, Any]) -> None:
                 raise ValueError(f"{expected_id} mismatch identity drift")
         elif locator is not None or observed is not None:
             raise ValueError(f"{expected_id} missing-row identity drift")
-    if first_link_positions != sorted(first_link_positions) or len(set(first_link_positions)) != len(first_link_positions):
+    if first_link_positions != sorted(first_link_positions) or len(
+        set(first_link_positions)
+    ) != len(first_link_positions):
         raise ValueError("registration-attempt first-link order drift")
     ids = [row["source_document_id"] for row in documents]
     if ids != value["ordered_document_ids"] or len(ids) != len(set(ids)):
         raise ValueError("registration-attempt document ID order drift")
     if value["document_candidate_count"] != EXPECTED_DOCUMENT_ROW_COUNT:
         raise ValueError("registration-attempt document count drift")
-    if (
-        value["document_rows_sha256"] != EXPECTED_DOCUMENT_ROWS_SHA256
-        or value["document_rows_sha256"] != _sha256(canonical_json_bytes(documents))
-    ):
+    if value["document_rows_sha256"] != EXPECTED_DOCUMENT_ROWS_SHA256 or value[
+        "document_rows_sha256"
+    ] != _sha256(canonical_json_bytes(documents)):
         raise ValueError("registration-attempt document rows digest drift")
     unique_identity_count = len(
-        {(row["expected_sha256"], row["expected_size_bytes"]) for row in documents}
+        {
+            (row["expected_sha256"], row["expected_size_bytes"])
+            for row in documents
+        }
     )
     if (
         value["unique_document_identity_count"]
@@ -843,9 +882,20 @@ def validate_structure(value: Mapping[str, Any]) -> None:
         or value["unique_document_identity_count"] != unique_identity_count
     ):
         raise ValueError("registration-attempt unique identity count drift")
-    verified = [row["source_document_id"] for row in documents if row["availability"] == "verified"]
-    failed = [row["source_document_id"] for row in documents if row["availability"] != "verified"]
-    if verified != value["verified_document_ids"] or failed != value["failed_document_ids"]:
+    verified = [
+        row["source_document_id"]
+        for row in documents
+        if row["availability"] == "verified"
+    ]
+    failed = [
+        row["source_document_id"]
+        for row in documents
+        if row["availability"] != "verified"
+    ]
+    if (
+        verified != value["verified_document_ids"]
+        or failed != value["failed_document_ids"]
+    ):
         raise ValueError("registration-attempt availability projection drift")
     if (
         value["verified_document_count"] != 440
@@ -880,7 +930,9 @@ def validate_structure(value: Mapping[str, Any]) -> None:
         raise ValueError("registration-attempt integrity failure")
     rendered = canonical_json_bytes(value)
     if b"/Users/" in rendered or b"maxghenis" in rendered:
-        raise ValueError("registration-attempt serialized an absolute host path")
+        raise ValueError(
+            "registration-attempt serialized an absolute host path"
+        )
 
 
 def validate_registration_attempt(
@@ -890,7 +942,9 @@ def validate_registration_attempt(
 
     validate_structure(value)
     if value != build_registration_attempt(capture_root):
-        raise ValueError("registration attempt does not reproduce from capture bytes")
+        raise ValueError(
+            "registration attempt does not reproduce from capture bytes"
+        )
 
 
 def render(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> bytes:
@@ -899,7 +953,9 @@ def render(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> bytes:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--capture-root", type=Path, default=DEFAULT_CAPTURE_ROOT)
+    parser.add_argument(
+        "--capture-root", type=Path, default=DEFAULT_CAPTURE_ROOT
+    )
     parser.add_argument("--output", type=Path, default=OUT_PATH)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()

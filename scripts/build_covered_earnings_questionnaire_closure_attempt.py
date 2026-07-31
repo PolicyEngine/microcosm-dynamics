@@ -145,7 +145,9 @@ def _strictly_parsed_document(raw: bytes, label: str) -> Any:
         result: dict[str, Any] = {}
         for key, value in pairs:
             if key in result:
-                raise ValueError(f"{label} contains duplicate object key {key!r}")
+                raise ValueError(
+                    f"{label} contains duplicate object key {key!r}"
+                )
             result[key] = value
         return result
 
@@ -177,7 +179,9 @@ def _strictly_parsed_document(raw: bytes, label: str) -> Any:
         RecursionError,
         decimal.DecimalException,
     ) as error:
-        raise ValueError(f"{label} is not a uniquely parseable JSON document") from error
+        raise ValueError(
+            f"{label} is not a uniquely parseable JSON document"
+        ) from error
 
 
 def _sha256(raw: bytes) -> str:
@@ -243,7 +247,9 @@ def _design_authority_locators() -> list[dict[str, Any]]:
     return rows
 
 
-def _membership_fact_readjudications(membership: Mapping[str, Any]) -> list[dict[str, Any]]:
+def _membership_fact_readjudications(
+    membership: Mapping[str, Any],
+) -> list[dict[str, Any]]:
     facts = membership.get("facts")
     if not isinstance(facts, list) or len(facts) != 30:
         raise ValueError("membership v2 fact domain drift")
@@ -266,7 +272,9 @@ def _membership_fact_readjudications(membership: Mapping[str, Any]) -> list[dict
     return rows
 
 
-def _membership_verdict_summary(rows: list[Mapping[str, Any]]) -> dict[str, int]:
+def _membership_verdict_summary(
+    rows: list[Mapping[str, Any]],
+) -> dict[str, int]:
     verdicts = [row["closure_attempt_verdict"] for row in rows]
     summary = {
         "fact_count": len(rows),
@@ -286,7 +294,9 @@ def _membership_verdict_summary(rows: list[Mapping[str, Any]]) -> dict[str, int]
     return summary
 
 
-def _membership_family_dispositions(membership: Mapping[str, Any]) -> list[dict[str, Any]]:
+def _membership_family_dispositions(
+    membership: Mapping[str, Any],
+) -> list[dict[str, Any]]:
     families = membership.get("family_dispositions")
     if not isinstance(families, list) or len(families) != 14:
         raise ValueError("membership v2 family domain drift")
@@ -363,7 +373,13 @@ def _psid_evidence_rows(extraction: Mapping[str, Any]) -> list[dict[str, Any]]:
                 "operative_effect": "none",
             }
         )
-    if sum(row["evidentiary_verdict"] == "established_by_questionnaire_corpus" for row in rows) != 7:
+    if (
+        sum(
+            row["evidentiary_verdict"] == "established_by_questionnaire_corpus"
+            for row in rows
+        )
+        != 7
+    ):
         raise ValueError("questionnaire established-count drift")
     if sum(bool(row["remaining_unestablished_facts"]) for row in rows) != 1:
         raise ValueError("questionnaire residual-count drift")
@@ -377,12 +393,16 @@ def _vb_family_summary(
     operative_by_id = {row["claim_id"]: row for row in operative_rows}
     rows: list[dict[str, Any]] = []
     for family_id in ("V-B5", "V-B6", "V-B8"):
-        selected = [row for row in evidence_rows if row["family_id"] == family_id]
+        selected = [
+            row for row in evidence_rows if row["family_id"] == family_id
+        ]
         closed = sum(
             row["evidentiary_verdict"] == "established_by_questionnaire_corpus"
             for row in selected
         )
-        remaining = sum(bool(row["remaining_unestablished_facts"]) for row in selected)
+        remaining = sum(
+            bool(row["remaining_unestablished_facts"]) for row in selected
+        )
         operative = operative_by_id[family_id]
         rows.append(
             {
@@ -390,7 +410,9 @@ def _vb_family_summary(
                 "targeted_residual_count": len(selected),
                 "evidentially_closed_count": closed,
                 "evidentiary_remaining_residual_count": remaining,
-                "operative_residual_count": operative["operative_residual_count"],
+                "operative_residual_count": operative[
+                    "operative_residual_count"
+                ],
                 "operative_source_disposition": "registration_required",
                 "operative_change": "none",
             }
@@ -421,7 +443,9 @@ def _constructed_value() -> dict[str, Any]:
         "verified_candidate_documents_may_support_nonoperative_audit": True,
         "membership_v3_or_supersession_effect": "none",
     }:
-        raise ValueError("questionnaire extraction authority disposition drift")
+        raise ValueError(
+            "questionnaire extraction authority disposition drift"
+        )
     membership_rows = _membership_fact_readjudications(
         inputs["membership_adjudication_v2"]
     )
@@ -461,16 +485,24 @@ def _constructed_value() -> dict[str, Any]:
                 "accepted_authority_registry": None,
             },
         },
-        "membership_verdict_summary": _membership_verdict_summary(membership_rows),
+        "membership_verdict_summary": _membership_verdict_summary(
+            membership_rows
+        ),
         "membership_fact_readjudications": membership_rows,
         "membership_family_dispositions": _membership_family_dispositions(
             inputs["membership_adjudication_v2"]
         ),
         "operative_psid_vb_rows": operative_rows,
         "psid_questionnaire_evidence_results": evidence_rows,
-        "psid_vb_family_summary": _vb_family_summary(evidence_rows, operative_rows),
+        "psid_vb_family_summary": _vb_family_summary(
+            evidence_rows, operative_rows
+        ),
         "closure_disposition": {
-            "evidentiary_residuals_by_family": {"V-B5": 0, "V-B6": 1, "V-B8": 0},
+            "evidentiary_residuals_by_family": {
+                "V-B5": 0,
+                "V-B6": 1,
+                "V-B8": 0,
+            },
             "operative_residuals_by_family": {"V-B5": 1, "V-B6": 4, "V-B8": 3},
             "membership_facts_changed": 0,
             "membership_families_changed": 0,
@@ -527,7 +559,9 @@ def build_closure_attempt() -> dict[str, Any]:
 def validate_closure_attempt(value: Mapping[str, Any]) -> None:
     validate_structure(value)
     if value != _constructed_value():
-        raise ValueError("closure attempt does not reproduce from frozen inputs")
+        raise ValueError(
+            "closure attempt does not reproduce from frozen inputs"
+        )
 
 
 def render() -> bytes:
