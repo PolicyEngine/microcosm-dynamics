@@ -21469,3 +21469,72 @@ not a configuration or receipt comparand, a scan constructed against
 \(J\) or any other phase, a post-reference scan, or a producer-supplied
 path. Every operative v3 calibrated global-registry evaluation applies
 this exact same-phase equality to its v2 \(\Gamma_c\) value.
+
+#### 16.14.5 Non-integrity scope of the V-B semantic-status predicate
+
+This subsection removes an ambiguity in §16.14.1 without changing its
+status-free integrity preimage or equality. It prospectively replaces
+\(Q_{\rm top}\) there with \(Q_{\rm top}^{\!*}\).
+
+Let \(\mathcal K_V\) be the literal ten-name outer schema:
+
+1. `schema_version`;
+2. `artifact_id`;
+3. `source_adjudication_inputs`;
+4. `verification_claim_specs_v2`;
+5. `verification_claim_results_v2`;
+6. `verification_claim_specs_fitting_free_v1`;
+7. `verification_claim_results_fitting_free_v1`;
+8. `verification_claim_adjudication_source_projection`;
+9. `integrity`; and
+10. `status`.
+
+\(Q_{\rm top}^{\!*}\) is exactly the conjunction that `schema_version` and
+`artifact_id` have their frozen literals, `source_adjudication_inputs` is
+the exact authenticated singleton, and the schema blueprint requires that
+inserting the one derived string-valued `status` member into the nine named
+non-status members yields exactly \(\mathcal K_V\). The last conjunct is a
+schema-plan assertion evaluated without reading the candidate artifact; it
+is not an early exact-keyset check against a still-nine-key serialized
+object.
+
+The outer blueprint names the required `integrity` member, but
+\(Q_{\rm top}^{\!*}\) does not dereference that member or inspect any of its
+children or values. In particular, `integrity.canonicalization`,
+`integrity.content_sha256`, the integrity object's keyset or member types,
+the status-free digest equality, and any integrity-validity result are not
+operands of \(Q_{\rm top}^{\!*}\) or \(T_V\). The
+`canonicalization-literal` phrase in §16.14.1's earlier definition of
+\(Q_{\rm top}\) has no prospective operative case. All integrity shape,
+literal, and digest equations remain separate artifact-acceptance
+conjuncts.
+
+The controlling tail of the sole total construction order, after
+§16.14.1 steps 1–9, is:
+
+10. evaluate \(Q_{\rm top}^{\!*}\) from the fixed schema plan and completed
+    non-integrity semantic members, then evaluate and retain the unique
+    Boolean \(T_V\) from \(Q_{\rm top}^{\!*}\), the four envelope statuses,
+    and the source-projection status; do not yet insert `status`;
+11. construct the exact nine-key \(V^{-,0}\), including the frozen
+    `integrity.canonicalization` and 64-zero self field, hash that status-free
+    preimage, and insert the resulting `integrity.content_sha256`; and
+12. derive `pass | fail` solely from the already retained \(T_V\), insert
+    that `status` as the tenth member, serialize the complete expected
+    artifact, and only then read and compare the candidate.
+
+Candidate acceptance separately requires the exact ten-key
+\(\mathcal K_V\) object and member types, literal semantic `status: pass`
+under \(T_V\), the exact two-key integrity object and canonicalization
+literal, and the §16.14.1 status-free digest equality. Consequently the
+sole ordering constraint between these final fields is
+
+\[
+\text{status-free integrity digest completion}\prec
+\text{final status assignment};
+\]
+
+this is a construction schedule, not a data-dependency operand. Neither
+`status` nor its validity has an edge into the integrity preimage, no
+integrity value has an edge into \(T_V\), and the two checks share only
+their already completed semantic ancestors.
