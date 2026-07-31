@@ -17,9 +17,12 @@ import hashlib
 import json
 import math
 import re
+from collections import Counter
 from collections.abc import Mapping
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
+from urllib.parse import urldefrag
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CAPTURE_ROOT = (
@@ -48,6 +51,54 @@ EXPECTED_LINK_COUNT = 465
 EXPECTED_UNIQUE_HREF_COUNT = 456
 EXPECTED_DUPLICATE_LINK_COUNT = 9
 EXPECTED_DISAMBIGUATION_COUNT = 3
+EXPECTED_UNIQUE_DOCUMENT_IDENTITY_COUNT = 455
+EXPECTED_ORDERED_UNIQUE_HREFS_SHA256 = (
+    "baa4c9fc45343701afea62349497f1e0fe5624ab12494f71fd10633254c0c323"
+)
+EXPECTED_DOCUMENT_ROWS_SHA256 = (
+    "7e4bc4eeb395c8c65a79fdb0d390c0f7de3591af98cef951d796c6ee7d8ff559"
+)
+EXPECTED_CONTENT_SHA256 = (
+    "9f15d3d0472ec74dd7fc3388f6a4a516f8d253ec5b2bc52d242a287091865678"
+)
+EXPECTED_FAILED_DOCUMENT_IDS = [
+    "psid-corpus-document-0250",
+    "psid-corpus-document-0253",
+    "psid-corpus-document-0254",
+    "psid-corpus-document-0256",
+    "psid-corpus-document-0259",
+    "psid-corpus-document-0262",
+    "psid-corpus-document-0265",
+    "psid-corpus-document-0278",
+    "psid-corpus-document-0322",
+    "psid-corpus-document-0342",
+    "psid-corpus-document-0356",
+    "psid-corpus-document-0359",
+    "psid-corpus-document-0371",
+    "psid-corpus-document-0379",
+    "psid-corpus-document-0380",
+    "psid-corpus-document-0383",
+]
+EXPECTED_DISAMBIGUATION_ROWS = [
+    {
+        "line_number": 6,
+        "digest_row_filename": "Active%20Saving_Intro.pdf",
+        "sha256": "01a18b2e40c11311be00592f9d175effaead8cba0b4a51147e20d7d549b58c05",
+        "on_disk_filename": "Active%20Saving_Intro.pdf",
+    },
+    {
+        "line_number": 7,
+        "digest_row_filename": "PCGchild.pdf",
+        "sha256": "164310dd55a198cb23f739586cfa57cfad63d80c36e9c74cc51083be7b775041",
+        "on_disk_filename": "cds-i_english_PCGchild.pdf",
+    },
+    {
+        "line_number": 8,
+        "digest_row_filename": "PCGChild.pdf",
+        "sha256": "168eb8fbae17615ca9d164c7f0ecd8676affd38996938bf2a0be9ac8d593a4ad",
+        "on_disk_filename": "cds-i_spanish_PCGChild.pdf",
+    },
+]
 
 # Capture-ceremony files are frozen independently of the generated artifact.
 CAPTURE_INPUT_SPECS = (
@@ -228,7 +279,10 @@ def _capture_inputs(capture_root: Path) -> tuple[list[dict[str, Any]], dict[str,
     rows: list[dict[str, Any]] = []
     raw_by_id: dict[str, bytes] = {}
     for input_id, filename, size_bytes, sha256 in CAPTURE_INPUT_SPECS:
-        raw = (capture_root / filename).read_bytes()
+        path = capture_root / filename
+        if not path.is_file() or path.is_symlink():
+            raise ValueError(f"{input_id} is unavailable or symlinked")
+        raw = path.read_bytes()
         if len(raw) != size_bytes or _sha256(raw) != sha256:
             raise ValueError(f"{input_id} frozen identity drift")
         rows.append(
@@ -335,6 +389,8 @@ def _disambiguation_rows(raw: bytes) -> list[dict[str, Any]]:
             _HEX64.fullmatch(sha256) is None
             or Path(digest_name).name != digest_name
             or Path(on_disk_name).name != on_disk_name
+            or digest_name in {".", ".."}
+            or on_disk_name in {".", ".."}
         ):
             raise ValueError(
                 f"name disambiguation line {line_number} identity drift"
@@ -353,6 +409,41 @@ def _disambiguation_rows(raw: bytes) -> list[dict[str, Any]]:
     if len(keys) != len(set(keys)):
         raise ValueError("name disambiguation keys are not unique")
     return rows
+
+
+class _HrefCollector(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.hrefs: list[str] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> None:
+        if tag != "a":
+            return
+        href = dict(attrs).get("href")
+        if href is not None:
+            self.hrefs.append(href)
+
+
+def _validate_inventory_against_html(html_raw: bytes, inventory_raw: bytes) -> None:
+    """Require every captured inventory occurrence to exist in the source page."""
+
+    try:
+        html_text = html_raw.decode("utf-8")
+    except UnicodeError as error:
+        raise ValueError("PSID source-page index is not UTF-8") from error
+    inventory = _strictly_parsed_document(
+        inventory_raw, "PSID document link inventory"
+    )
+    if not isinstance(inventory, list):
+        raise ValueError("PSID document link inventory is not an array")
+    collector = _HrefCollector()
+    collector.feed(html_text)
+    source_counts = Counter(urldefrag(href).url for href in collector.hrefs)
+    inventory_counts = Counter(item["href"] for item in inventory)
+    if any(source_counts[href] < count for href, count in inventory_counts.items()):
+        raise ValueError("PSID link inventory is not source-page backed")
 
 
 def _unique_inventory_links(raw: bytes) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -481,6 +572,9 @@ def build_registration_attempt(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> dic
     capture_inputs, raw = _capture_inputs(capture_root)
     digest_rows = _digest_rows(raw["browser_digest_manifest"])
     mappings = _disambiguation_rows(raw["name_disambiguation"])
+    _validate_inventory_against_html(
+        raw["source_page_index"], raw["source_link_inventory"]
+    )
     links, link_summary = _unique_inventory_links(raw["source_link_inventory"])
     documents = _document_candidates(capture_root, digest_rows, links, mappings)
     verified_ids = [
@@ -567,44 +661,202 @@ def validate_structure(value: Mapping[str, Any]) -> None:
         raise ValueError("registration-attempt top-level schema drift")
     if value["schema_version"] != SCHEMA_VERSION or value["artifact_id"] != ARTIFACT_ID:
         raise ValueError("registration-attempt identity drift")
+    if value["authority_scope"] != "external_psid_questionnaire_and_codebook_bytes":
+        raise ValueError("registration-attempt authority scope drift")
+    if value["staging"] != {
+        "staging_root_id": CAPTURE_ROOT_ID,
+        "relative_capture_path": CAPTURE_RELATIVE_PATH,
+        "absolute_paths_serialized": False,
+        "repo_authority_locator_id": "psid_external_staging_law",
+    }:
+        raise ValueError("registration-attempt staging law drift")
+    if value["repo_authority_locators"] != _repo_authority_locators():
+        raise ValueError("registration-attempt repo authority locator drift")
+    expected_capture_inputs = [
+        {
+            "capture_input_id": input_id,
+            "locator": {
+                "location_type": "full_file_byte_range",
+                "filename": filename,
+                "full_file_sha256": sha256,
+                "size_bytes": size_bytes,
+                "byte_start": 0,
+                "byte_end": size_bytes,
+                "range_sha256": sha256,
+            },
+        }
+        for input_id, filename, size_bytes, sha256 in CAPTURE_INPUT_SPECS
+    ]
+    if value["capture_input_identities"] != expected_capture_inputs:
+        raise ValueError("registration-attempt capture input identity drift")
+    if value["link_inventory_summary"] != {
+        "link_count": EXPECTED_LINK_COUNT,
+        "unique_href_count": EXPECTED_UNIQUE_HREF_COUNT,
+        "duplicate_link_count": EXPECTED_DUPLICATE_LINK_COUNT,
+        "deduplication_rule": "stable_first_occurrence_by_exact_href",
+        "ordered_unique_hrefs_sha256": EXPECTED_ORDERED_UNIQUE_HREFS_SHA256,
+    }:
+        raise ValueError("registration-attempt link inventory summary drift")
+    if value["name_disambiguation"] != EXPECTED_DISAMBIGUATION_ROWS:
+        raise ValueError("registration-attempt disambiguation domain drift")
     documents = value["document_candidates"]
     if not isinstance(documents, list) or len(documents) != EXPECTED_DOCUMENT_ROW_COUNT:
         raise ValueError("registration-attempt document domain drift")
+    expected_document_keys = {
+        "source_document_id",
+        "document_identity_sha256",
+        "digest_row_number",
+        "unique_link_position",
+        "first_link_position",
+        "source_url",
+        "source_link_text",
+        "source_page_row",
+        "digest_row_filename",
+        "on_disk_filename",
+        "expected_sha256",
+        "expected_size_bytes",
+        "availability",
+        "observed_identity",
+        "locator",
+    }
+    mapping_by_key = {
+        (row["digest_row_filename"], row["sha256"]): row["on_disk_filename"]
+        for row in EXPECTED_DISAMBIGUATION_ROWS
+    }
+    first_link_positions: list[int] = []
+    for position, row in enumerate(documents, start=1):
+        if not isinstance(row, dict) or set(row) != expected_document_keys:
+            raise ValueError(f"registration-attempt document row {position} schema drift")
+        expected_id = f"psid-corpus-document-{position:04d}"
+        if (
+            row["source_document_id"] != expected_id
+            or row["digest_row_number"] != position
+            or row["unique_link_position"] != position
+        ):
+            raise ValueError(f"{expected_id} positional identity drift")
+        first_link_position = row["first_link_position"]
+        if (
+            not isinstance(first_link_position, int)
+            or isinstance(first_link_position, bool)
+            or not position <= first_link_position <= EXPECTED_LINK_COUNT
+        ):
+            raise ValueError(f"{expected_id} first-link position drift")
+        first_link_positions.append(first_link_position)
+        digest_name = row["digest_row_filename"]
+        on_disk_name = row["on_disk_filename"]
+        expected_sha256 = row["expected_sha256"]
+        expected_size = row["expected_size_bytes"]
+        if (
+            not isinstance(digest_name, str)
+            or not isinstance(on_disk_name, str)
+            or Path(digest_name).name != digest_name
+            or Path(on_disk_name).name != on_disk_name
+            or digest_name in {".", ".."}
+            or on_disk_name in {".", ".."}
+            or _HEX64.fullmatch(expected_sha256) is None
+            or not isinstance(expected_size, int)
+            or isinstance(expected_size, bool)
+            or expected_size <= 0
+        ):
+            raise ValueError(f"{expected_id} source identity grammar drift")
+        if on_disk_name != mapping_by_key.get(
+            (digest_name, expected_sha256), digest_name
+        ):
+            raise ValueError(f"{expected_id} disambiguation projection drift")
+        source_url = row["source_url"]
+        if (
+            not isinstance(source_url, str)
+            or not source_url.startswith("https://psidonline.isr.umich.edu/")
+            or not isinstance(row["source_link_text"], str)
+            or not isinstance(row["source_page_row"], str)
+        ):
+            raise ValueError(f"{expected_id} link identity drift")
+        identity_preimage = [
+            position,
+            source_url,
+            digest_name,
+            expected_sha256,
+            expected_size,
+        ]
+        if row["document_identity_sha256"] != _sha256(
+            canonical_json_bytes(identity_preimage)
+        ):
+            raise ValueError(f"{expected_id} document identity digest drift")
+        availability = row["availability"]
+        if availability not in {"verified", "identity_mismatch", "missing"}:
+            raise ValueError(f"{expected_id} availability vocabulary drift")
+        locator = row["locator"]
+        observed = row["observed_identity"]
+        if availability == "verified":
+            expected_locator = {
+                "location_type": "full_file_byte_range",
+                "filename": on_disk_name,
+                "full_file_sha256": expected_sha256,
+                "size_bytes": expected_size,
+                "byte_start": 0,
+                "byte_end": expected_size,
+                "range_sha256": expected_sha256,
+            }
+            if locator != expected_locator or observed != {
+                "filename": on_disk_name,
+                "sha256": expected_sha256,
+                "size_bytes": expected_size,
+            }:
+                raise ValueError(f"{expected_id} verified locator drift")
+        elif availability == "identity_mismatch":
+            if (
+                locator is not None
+                or not isinstance(observed, dict)
+                or set(observed) != {"filename", "sha256", "size_bytes"}
+                or observed["filename"] != on_disk_name
+                or not isinstance(observed["sha256"], str)
+                or _HEX64.fullmatch(observed["sha256"]) is None
+                or not isinstance(observed["size_bytes"], int)
+                or isinstance(observed["size_bytes"], bool)
+                or observed["size_bytes"] <= 0
+                or (
+                    observed["sha256"] == expected_sha256
+                    and observed["size_bytes"] == expected_size
+                )
+            ):
+                raise ValueError(f"{expected_id} mismatch identity drift")
+        elif locator is not None or observed is not None:
+            raise ValueError(f"{expected_id} missing-row identity drift")
+    if first_link_positions != sorted(first_link_positions) or len(set(first_link_positions)) != len(first_link_positions):
+        raise ValueError("registration-attempt first-link order drift")
     ids = [row["source_document_id"] for row in documents]
     if ids != value["ordered_document_ids"] or len(ids) != len(set(ids)):
         raise ValueError("registration-attempt document ID order drift")
-    if value["document_candidate_count"] != len(documents):
+    if value["document_candidate_count"] != EXPECTED_DOCUMENT_ROW_COUNT:
         raise ValueError("registration-attempt document count drift")
-    if value["document_rows_sha256"] != _sha256(canonical_json_bytes(documents)):
+    if (
+        value["document_rows_sha256"] != EXPECTED_DOCUMENT_ROWS_SHA256
+        or value["document_rows_sha256"] != _sha256(canonical_json_bytes(documents))
+    ):
         raise ValueError("registration-attempt document rows digest drift")
+    unique_identity_count = len(
+        {(row["expected_sha256"], row["expected_size_bytes"]) for row in documents}
+    )
+    if (
+        value["unique_document_identity_count"]
+        != EXPECTED_UNIQUE_DOCUMENT_IDENTITY_COUNT
+        or value["unique_document_identity_count"] != unique_identity_count
+    ):
+        raise ValueError("registration-attempt unique identity count drift")
     verified = [row["source_document_id"] for row in documents if row["availability"] == "verified"]
     failed = [row["source_document_id"] for row in documents if row["availability"] != "verified"]
     if verified != value["verified_document_ids"] or failed != value["failed_document_ids"]:
         raise ValueError("registration-attempt availability projection drift")
-    if value["verified_document_count"] != len(verified) or value["failed_document_count"] != len(failed):
+    if (
+        value["verified_document_count"] != 440
+        or value["verified_document_count"] != len(verified)
+        or value["failed_document_count"] != 16
+        or value["failed_document_count"] != len(failed)
+        or failed != EXPECTED_FAILED_DOCUMENT_IDS
+    ):
         raise ValueError("registration-attempt availability count drift")
-    for row in documents:
-        locator = row["locator"]
-        if row["availability"] == "verified":
-            expected_locator = {
-                "location_type": "full_file_byte_range",
-                "filename": row["on_disk_filename"],
-                "full_file_sha256": row["expected_sha256"],
-                "size_bytes": row["expected_size_bytes"],
-                "byte_start": 0,
-                "byte_end": row["expected_size_bytes"],
-                "range_sha256": row["expected_sha256"],
-            }
-            if locator != expected_locator or row["observed_identity"] != {
-                "filename": row["on_disk_filename"],
-                "sha256": row["expected_sha256"],
-                "size_bytes": row["expected_size_bytes"],
-            }:
-                raise ValueError(f"{row['source_document_id']} locator drift")
-        elif locator is not None:
-            raise ValueError(f"{row['source_document_id']} failed row has locator")
     expected_status = "pass" if not failed else "fail"
-    if value["registration_status"] != expected_status:
+    if value["registration_status"] != "fail" or expected_status != "fail":
         raise ValueError("registration-attempt status drift")
     if value["accepted_authority_registry"] is not None:
         raise ValueError("registration attempt emitted an accepted authority")
@@ -622,9 +874,13 @@ def validate_structure(value: Mapping[str, Any]) -> None:
         integrity["canonicalization"] != CANONICALIZATION
         or integrity["structural_status"] != "pass"
         or integrity["reproduced_from_available_capture_bytes"] is not True
+        or integrity["content_sha256"] != EXPECTED_CONTENT_SHA256
         or integrity["content_sha256"] != _content_sha256(value)
     ):
         raise ValueError("registration-attempt integrity failure")
+    rendered = canonical_json_bytes(value)
+    if b"/Users/" in rendered or b"maxghenis" in rendered:
+        raise ValueError("registration-attempt serialized an absolute host path")
 
 
 def validate_registration_attempt(
