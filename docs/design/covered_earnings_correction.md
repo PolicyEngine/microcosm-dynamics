@@ -21066,3 +21066,252 @@ candidate equality, the displayed status equation with literal
 `status: pass`, and the displayed status-free integrity equality. A forged
 status therefore fails semantic equality, and a forged digest fails
 integrity equality, without either check being an input to the other.
+
+#### 16.14.2 Total calibrated registration-suffix projection
+
+This subsection prospectively replaces
+`calibrated_registration_suffix_projection.v1` and every §16.13.9
+enumeration, row-shape, ordering, selection, constructibility, registry, and
+projection equation that selects it. The sole operative successor is
+`calibrated_registration_suffix_projection.v2`, still denoted
+\(\Gamma_c(X)\).
+
+For an already stored phase commit \(X\), the v2 projection has exactly
+`schema_version`, `parent_commit`, `ordered_registration_suffixes`,
+`registration_rows`, `registration_count`,
+`registration_domain_sha256`, `selected_registration_suffix`,
+`selected_registration_path`, `canonicalization`, and `status`.
+`schema_version` is the v2 name, `parent_commit` is \(X\)'s exact
+40-lowercase-hex OID, and `canonicalization` is the frozen common literal.
+
+Let the raw ASCII basename prefix \(a\) be
+
+`covered_earnings_correction_evaluation_v2_registration_`
+
+and let \(d\) be the raw ASCII directory prefix
+`docs/registrations/`. The coordinator reads the raw Git tree, without
+first decoding a path as UTF-8, and enumerates one row for **every**
+mode-bearing direct entry of the raw `docs/registrations` tree whose raw
+basename begins with \(a\). It does not normalize, case-fold, recurse,
+extension-filter, decimal-filter, mode-filter, object-type-filter,
+object-existence-filter, or content-filter before enumeration. Therefore a
+canonical name, zero or leading-zero spelling, sign, whitespace, alternate
+extension, empty or nondecimal tail, path alias, non-UTF-8 basename, tree,
+gitlink, symlink, executable blob, and missing leaf object all remain in the
+domain. An observed prefix-matching entry can never be reinterpreted as an
+empty history or an absent suffix.
+
+The directory-container state is derived before row construction. It is
+`absent` exactly when `docs/registrations` has no tree entry,
+`readable_tree` exactly when that entry has tree mode and its tree object is
+locally readable under the frozen lookup, and `invalid` for every other
+mode, type, missing object, or read error. The direct-entry domain
+\(D_X\) is the complete set of full raw paths for those child entries only
+in the `readable_tree` case and is empty in the other two cases. `absent`
+supplies the genuine empty stream. `invalid` also serializes empty row
+arrays and the total selected fields defined below, but necessarily has
+projection status `fail`; it is an ancestor obstruction and may never
+invoke the empty-history passing case.
+
+Each `registration_rows` member has exactly these keys in this order:
+
+1. `raw_path_bytes_hex`;
+2. `raw_basename_tail_bytes_hex`;
+3. `path`;
+4. `registration_suffix`;
+5. `tree_mode`;
+6. `object_oid`;
+7. `object_type`;
+8. `raw_sha256`;
+9. `failure_reason_codes`; and
+10. `record_state`.
+
+Their values are total:
+
+- `raw_path_bytes_hex` is the nonnull lowercase even-length hexadecimal
+  encoding of the complete raw path bytes \(d\Vert\text{basename}\);
+- `raw_basename_tail_bytes_hex` is the nonnull lowercase even-length
+  hexadecimal encoding of every raw basename byte after \(a\), including
+  the exact `.json`, an alternate extension, or an empty tail;
+- `path` is the exact decoded complete path string when the raw path is
+  valid UTF-8 and is JSON null otherwise;
+- `registration_suffix` is the exact nonnegative mathematical JSON integer
+  represented by the digit run when the complete raw tail is ASCII
+  `[0-9]+.json`, including integer zero and a leading-zero spelling, and is
+  JSON null otherwise;
+- `tree_mode` and `object_oid` are always the exact observed mode and
+  40-lowercase-hex OID from the tree entry;
+- `object_type` is exactly `blob | tree | commit | tag | missing`, where
+  `missing` means the entry OID cannot be resolved locally under the frozen
+  no-replacement object lookup;
+- `raw_sha256` hashes the complete raw blob payload bytes exactly when
+  `object_type` is `blob` and is JSON null for a tree, commit, tag, or
+  missing object;
+- `failure_reason_codes` is an array defined below, including a nonempty
+  explanation for every null in `path`, `registration_suffix`, or
+  `raw_sha256`; and
+- `record_state` is `valid` exactly when `failure_reason_codes` is empty and
+  is `invalid` exactly when it is nonempty.
+
+The closed order of failure codes is:
+
+1. `non_utf8_path`;
+2. `missing_or_alternate_json_extension`;
+3. `empty_suffix`;
+4. `non_decimal_suffix`;
+5. `zero_suffix`;
+6. `leading_zero_suffix`;
+7. `noncanonical_filename_or_alias`;
+8. `suffix_after_first_gap`;
+9. `mode_not_100644`;
+10. `object_missing`;
+11. `object_not_blob`;
+12. `strict_json_or_duplicate_key_failure`;
+13. `noncanonical_json_bytes`;
+14. `schema_mismatch`;
+15. `output_paths_mismatch`;
+16. `registration_reference_resolution_failure`; and
+17. `registration_binding_failure`.
+
+Each row contains the complete applicable subset in that order, without a
+duplicate. A raw tail is canonical for positive integer \(r\) exactly when
+it byte-equals the canonical ASCII decimal spelling of \(r\) followed by
+literal `.json`. Every other retained spelling receives
+`noncanonical_filename_or_alias` in addition to its more specific
+applicable lexical codes. A canonical row receives
+`suffix_after_first_gap` exactly when its suffix is greater than the
+unconditional selected suffix defined below. Content-dependent codes are
+evaluated whenever their operands exist; a missing or nonblob object does
+not invent bytes merely to run a later content check.
+
+Applicability of those codes is exact. `non_utf8_path` occurs iff `path` is
+null. `missing_or_alternate_json_extension` occurs iff the tail does not end
+in exact lowercase ASCII `.json`. When that extension is exact, let \(q\)
+be the preceding tail bytes: `empty_suffix` occurs iff \(q\) is empty;
+`non_decimal_suffix` occurs iff \(q\) is nonempty and is not all ASCII
+digits; `zero_suffix` occurs iff \(q\) is exactly `0`; and
+`leading_zero_suffix` occurs iff \(q\) matches ASCII `0[0-9]+`.
+`noncanonical_filename_or_alias` occurs iff the complete tail is not exact
+ASCII `[1-9][0-9]*.json`. `suffix_after_first_gap` occurs iff the row is
+canonical with suffix greater than \(s(X)\). `mode_not_100644` occurs iff
+the observed mode differs. `object_missing` occurs iff `object_type` is
+`missing`; `object_not_blob` occurs iff the resolved type is `tree`,
+`commit`, or `tag`, and the two object codes are never both present. The
+remaining content/reference/binding code occurs iff its named conjunct is
+evaluable and false; when an earlier parse or object prerequisite makes it
+unevaluable, that earlier failure code is the complete explanation.
+
+Apart from the filename and gap laws just stated, the content-validity
+conjuncts are exactly the v1 conjuncts: mode `100644`; strict duplicate-free
+canonical JSON; the exact calibrated configuration schema; the complete
+suffix-applicable §15.6.3 output paths; a unique earlier valid receipt whose
+selected-configuration digest hashes the complete blob; and every design,
+implementation, receipt-core, output-path, Git, and immutable-history
+binding. Each failed conjunct contributes its corresponding code. Thus a
+canonical path occupied by a tree or gitlink has a row with its observed
+mode, OID, and `tree | commit | missing` type, a null `raw_sha256`, a
+nonempty failure-code array, and `record_state: invalid`; it never causes
+row construction to abort.
+
+Canonical-name rows are sorted first by numeric `registration_suffix`,
+including canonical-name rows whose mode, object, content, or history is
+invalid. Every noncanonical row follows, sorted by unsigned raw complete
+path bytes. No locale or decoded-string order is permitted.
+`ordered_registration_suffixes` is the complete same-order projection of
+the nullable `registration_suffix` member and therefore has element domain
+`JSON integer | null`. `registration_count` equals both array lengths, and
+`registration_domain_sha256` hashes canonical bytes of the complete ordered
+`registration_rows` array.
+
+For positive integer \(r\), define the exact raw canonical path
+
+\[
+p_r =
+\texttt{docs/registrations/covered\_earnings\_correction\_evaluation\_v2\_registration\_}
+\Vert\operatorname{canonical\_decimal}(r)\Vert\texttt{.json}.
+\]
+
+Selection is unconditional:
+
+\[
+s(X)=\min\{r\in\mathbb{Z}_{>0}:p_r
+\text{ is not a mode-bearing member of }D_X\}.
+\]
+
+The direct-entry domain is finite, so \(s(X)\) always exists, regardless of
+an invalid container, invalid leaf objects, aliases, gaps, or higher
+suffixes. The projection always sets
+`selected_registration_suffix` to \(s(X)\) and
+`selected_registration_path` to the UTF-8 string \(p_{s(X)}\). It never
+uses a nullable maximum, a contiguous-domain witness, a producer value, or
+an empty-domain fallback to define either mandatory field.
+
+Projection status is `pass` exactly when the directory-container state is
+either `absent` or `readable_tree`; enumeration, row values, ordering,
+counts, domain hash, and both selected-field equations all obey the
+equations above; every retained row is a valid canonical-name row; and
+`ordered_registration_suffixes` is exactly
+\([1,2,\ldots,s(X)-1]\). Otherwise the same complete object serializes with
+`status: fail`. The genuine empty-history case passes with empty arrays,
+count zero, the canonical empty-array row-domain hash, selected suffix 1,
+and exact path \(p_1\) only when no raw prefix-matching entry exists.
+
+Every \(K_c(B_n)\), \(K_c(C)\), and \(K_c(J)\) selects v2 and always
+serializes its selected-registration-path member from the total v2 result;
+\(u_c\) is therefore also defined when \(\Gamma_c.status\) is `fail`. This
+prospectively replaces the v1 sentence that made \(K_c\) nonconstructible
+on projection failure. Failure is evidence, not an empty domain:
+calibrated namespace success, a passing preliminary or final adjudication,
+path selection of `CALIBRATED`, and receipt/configuration construction each
+separately require the applicable v2 \(\Gamma_c.status\) to be `pass`.
+
+The operative global registry successor is
+`calibrated_global_requirement_verification_specs.v3`. It is the complete
+v2 registry with its outer schema value changed to the v3 name and with the
+`git_parent:calibrated_registration_suffix_projection` source projection
+bound to the complete v2 value and its complete canonical identity digest;
+every other row, field, and order is unchanged. The generic expected and
+actual preimage keysets remain unchanged, while their projection rows,
+count, and domain digest cover the same four-member order. Every
+preliminary/final \(P_i\), cutoff and registry bundle, applicability
+evidence row, and receipt-bound registry digest selects this operative v3
+registry and the v2 projection value.
+
+Every former \(\pi_\Gamma\) use is prospectively
+\(\pi_\Gamma^{(2)}\), the complete ordered projection of the v2 keys
+`schema_version`, `ordered_registration_suffixes`, `registration_rows`,
+`registration_count`, `registration_domain_sha256`,
+`selected_registration_suffix`, `selected_registration_path`,
+`canonicalization`, and `status`, excluding only `parent_commit`. The
+adjudication-to-receipt equality is exactly
+
+\[
+\pi_\Gamma^{(2)}(\Gamma_c(B^\star))
+=\pi_\Gamma^{(2)}(\Gamma_c(J)).
+\]
+
+No v1 \(\Gamma_c\), v1 value digest, or v1 \(\pi_\Gamma\) has a prospective
+operative case.
+
+The following are mandatory regression clauses:
+
+1. If the only prefix-matching entry is
+   `covered_earnings_correction_evaluation_v2_registration_01.json`, the
+   domain has one explicit invalid row with `registration_suffix: 1`,
+   `leading_zero_suffix` and `noncanonical_filename_or_alias`, plus every
+   observed mode/OID/type/digest field. The selected suffix is 1, the
+   selected path is exact \(p_1\), and status is `fail`; the domain is never
+   empty and never passes.
+2. If the otherwise-valid canonical suffix domain is exactly
+   \(\{1,3\}\), both rows serialize with every mandatory field, the suffix-3
+   row is explicitly `invalid` with `suffix_after_first_gap`, the selected
+   suffix is 2, the selected path is exact \(p_2\), and status is `fail`.
+   No mandatory field depends on a nonexistent contiguous-domain maximum.
+3. If a canonical suffix-1 path is a tree or gitlink, its explicit row has
+   `registration_suffix: 1`, the observed mode/OID and
+   `tree | commit | missing` type and `raw_sha256: null`. A resolved tree or
+   gitlink has `object_not_blob`; an unresolved entry has `object_missing`;
+   the row has exactly the applicable one of those codes and
+   `record_state: invalid`. Because the exact path \(p_1\) is occupied, the
+   selected suffix is 2 and the selected path is exact \(p_2\); status is
+   `fail`, and serialization never requires a nonexistent blob digest.
