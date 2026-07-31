@@ -21420,3 +21420,52 @@ again with the capture suffix omitted on the no-capture branch and with
 the displayed hash equation are exhaustive: no receipt-core mathematical
 occurrence may use \(R_c\), and no V-B result-array occurrence may use
 \(R_{\rm core}\).
+
+#### 16.14.4 Six legal-binding conjuncts and the same-phase scan member
+
+This subsection prospectively replaces the two minor §16.13.8–§16.13.9
+exactness errors.
+
+The sentence “These five digest/equality equations are conjuncts of
+`claim_authority_binding_valid`” is replaced by the following exact
+statement: these **six** digest/equality equations are six separate
+conjuncts of `claim_authority_binding_valid`:
+
+1. `historical_coverage_rules_expected_preimage_sha256` equals SHA-256 of
+   the complete canonical
+   `historical_coverage_rules_expected_preimage` object;
+2. `historical_coverage_rules_actual_preimage_sha256` equals SHA-256 of the
+   complete canonical `historical_coverage_rules_actual_preimage` object;
+3. the complete expected and actual
+   `historical_coverage_rules_identity_result` typed objects deep-equal;
+4. `historical_coverage_rules_identity_result_sha256` equals SHA-256 of the
+   complete canonical `historical_coverage_rules_identity_result` object;
+5. `base_result_projection_row` deep-equals the calibrated same-claim
+   seven-field result in
+   `verification_claim_base_result_projection.v1`; and
+6. `base_result_projection_row_sha256` equals SHA-256 of the complete
+   canonical `base_result_projection_row`.
+
+No item combines with another for counting, and passing five of six is
+insufficient.
+
+For a phase commit \(B_i\), the §16.13.9 phrase “the same scan member” means
+exactly
+`pre_reference_namespace_scan.selected_registration_path` in the complete
+same-phase calibrated pre-reference scan constructed from \(K_c(B_i)\) and
+\(u_c(B_i)\). The controlling equality is
+
+\[
+\Gamma_c^{(2)}(B_i).\texttt{selected\_registration\_path}
+=
+\texttt{pre\_reference\_namespace\_scan}
+  .\texttt{selected\_registration\_path}
+=
+K_c(B_i).\texttt{selected\_registration\_path}.
+\]
+
+All three operands belong to the same \(B_i\) phase. The middle operand is
+not a configuration or receipt comparand, a scan constructed against
+\(J\) or any other phase, a post-reference scan, or a producer-supplied
+path. Every operative v3 calibrated global-registry evaluation applies
+this exact same-phase equality to its v2 \(\Gamma_c\) value.
