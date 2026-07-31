@@ -20763,3 +20763,78 @@ already available on fitting-free selection. Every configuration core is
 selected-only, every namespace core is branch-total, every parent commit
 exists before its consumer serializes, and neither the Git graph nor the
 receipt/configuration hash graph has a self edge.
+
+##### 16.13.8 V-B legal-binding digest and outer-row closure
+
+This subsection supplies the exact equations for the four byte-controlling
+legal-binding fields in §16.13.6 and replaces the inherited
+availability-to-status mapping only for V-B1 and V-B4.
+
+Let \(W\) be the complete verified
+`calibrated_verification_claim_adjudication_expected_preimage.v2` and let
+\(Z\) be its complete actual-preimage counterpart. For either V-B1 or V-B4,
+the `base_legal_authority_binding` fields have exactly these equations:
+
+\[
+\begin{aligned}
+\texttt{historical\_coverage\_rules\_expected\_preimage\_sha256}
+&=\operatorname{SHA256}(
+  \operatorname{canonical\_json\_bytes}(
+  W.\texttt{historical\_coverage\_rules\_expected\_preimage})),\\
+\texttt{historical\_coverage\_rules\_actual\_preimage\_sha256}
+&=\operatorname{SHA256}(
+  \operatorname{canonical\_json\_bytes}(
+  Z.\texttt{historical\_coverage\_rules\_actual\_preimage})),\\
+\texttt{historical\_coverage\_rules\_identity\_result}
+&=W.\texttt{historical\_coverage\_rules\_identity\_result}
+ =Z.\texttt{historical\_coverage\_rules\_identity\_result},\\
+\texttt{historical\_coverage\_rules\_identity\_result\_sha256}
+&=\operatorname{SHA256}(
+  \operatorname{canonical\_json\_bytes}(
+  \texttt{historical\_coverage\_rules\_identity\_result})).
+\end{aligned}
+\]
+
+The expected and actual complete typed identity-result objects must first
+deep-equal. The two preimage digests are 64-lowercase-hex strings and hash
+their corresponding complete objects; they do not deep-equal those objects.
+The binding's `base_result_projection_row` independently deep-equals the
+calibrated same-claim seven-field result in
+`verification_claim_base_result_projection.v1`, and
+`base_result_projection_row_sha256` hashes canonical bytes of that complete
+row. These five digest/equality equations are conjuncts of
+`claim_authority_binding_valid`.
+
+For the V-B1 and V-B4 members of `required_authority_rows`, the inherited
+legacy methodology ref remains serialized solely to preserve the exact
+successor role-map lineage. `authority_availability` still faithfully records
+that ref's observed `present | absent | conflicting` state and remains
+covered by the complete v3 preimage, result, evidence identity, and row
+status. It is not a success operand for either legal claim.
+
+For those two rows only, the outer equations are:
+
+\[
+\begin{aligned}
+\texttt{requirement\_satisfied}
+&=
+\texttt{calibrated\_noncapture\_required\_authority\_result.v3}
+  .\texttt{requirement\_satisfied},\\
+\texttt{verification\_status}
+&=
+\begin{cases}
+\texttt{pass},&\texttt{requirement\_satisfied}=\texttt{true},\\
+\texttt{fail},&\texttt{requirement\_satisfied}=\texttt{false}.
+\end{cases}
+\end{aligned}
+\]
+
+`not_evaluable` is forbidden for V-B1/V-B4; legacy-ref absence or conflict
+does not override the typed legal result. Row status is `pass` exactly when
+the observed lineage availability, every embedded object and digest, the
+v3 predicate/result, the displayed Boolean/status mapping, and the complete
+evidence-identity hash are faithfully serialized, including a lawful false
+result. The general availability mapping remains unchanged for every other
+required-authority row. Consequently an inherited methodology observation
+cannot establish, negate, or make unevaluable either legal claim, while its
+raw lineage evidence remains authenticated.

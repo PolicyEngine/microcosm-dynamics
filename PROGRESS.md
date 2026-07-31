@@ -39,6 +39,9 @@ round-7 findings and the ratification-blocking namespace sweep gap.
   configuration core, froze adjudication-to-receipt core/history equalities,
   serialized the receipt-time calibrated scan as acceptance evidence, and
   replaced the chronology with a complete selected-only 12-step order.
+- Closed each V-B legal-binding digest equation and overrode the outer
+  V-B1/V-B4 availability mapping so inherited methodology availability is
+  authenticated lineage evidence but never substantive legal authority.
 
 ## Next
 
