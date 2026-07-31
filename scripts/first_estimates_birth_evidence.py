@@ -134,6 +134,7 @@ PRODUCTION_SOURCE_PATHS = (
 )
 POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/artifacts.py"),
+    Path("src/populace_dynamics/data/kauffman_firms.py"),
     Path("src/populace_dynamics/firms/targets.py"),
     # Entry-11 PSID data-layer additions are downstream source readers and
     # registries.  They are outside the reviewed birth-evidence projection
