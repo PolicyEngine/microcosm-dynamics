@@ -4,7 +4,8 @@
 
 - Branch `claude/ce-codebook-inventory` starts clean at `bc39940`.
 - All three referee edits are implemented and source-rebuilt.
-- Final audit-artifact cascades and full verification remain.
+- The complete artifact cascade is rebuilt and byte-checked.
+- Final formatting, lint, and full verification suites remain.
 
 ## Done
 
@@ -27,10 +28,11 @@
   attachment branch with the frozen `unresolved` consequence.
 - Recorded the exact 32-residual partition plus one nonblocking production
   branch and passed the 18 spouse-seam/adjudication tests.
+- Rebuilt the source-hashed questionnaire audit and dependent raw job-context
+  registry.
+- Passed all three artifact builders in `--check` mode.
 
 ## Next
 
-1. Rebuild the source-hashed questionnaire audit and dependent raw
-   job-context registry.
-2. Run all artifact checks, Black, Ruff, and the requested test suites.
-3. Record final identities, verification results, and branch status.
+1. Run Black, Ruff, and the requested focused, estimates, and PSID suites.
+2. Record final identities, verification results, and branch status.
