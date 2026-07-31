@@ -134,6 +134,9 @@ PRODUCTION_SOURCE_PATHS = (
 )
 POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/artifacts.py"),
+    Path("src/populace_dynamics/data/asec_firm_size.py"),
+    Path("src/populace_dynamics/data/sipp_jobs.py"),
+    Path("src/populace_dynamics/firms/banding.py"),
     # Entry-11 PSID data-layer additions are downstream source readers and
     # registries.  They are outside the reviewed birth-evidence projection
     # implementation and must not invalidate its historical identity seal.
@@ -150,7 +153,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
         "src/populace_dynamics/artifacts.py"
-    ): "c03afa29cbdaf722c2cf62608dbb01f061f6558d"
+    ): "c03afa29cbdaf722c2cf62608dbb01f061f6558d",
+    Path(
+        "src/populace_dynamics/data/asec_firm_size.py"
+    ): "dee60e8c330833ef4944dd5033c213915b416fa9",
+    Path(
+        "src/populace_dynamics/firms/banding.py"
+    ): "e488ac266da29d2b5259575be0a7402fdbab73ab",
 }
 IMPLEMENTATION_REPLAY_ROWS = {
     "birth_source.derived_projection_age": 4_077,
