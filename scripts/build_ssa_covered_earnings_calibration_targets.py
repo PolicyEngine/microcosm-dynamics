@@ -1,11 +1,15 @@
-"""Verify the SSA source evidence for a possible vintage-2 target artifact.
+"""Build the amended SSA covered-earnings vintage-2 source artifact.
 
 This entry-11 extraction is deliberately offline.  It reuses the entry-10
-capture verifier and HTML parser and reads only committed source bytes.  The
-Table 4.B2 and Table 4.B11 extraction is complete, but the committed bytes do
-not resolve the registration-required V-B7 worker-share universe or all
-worker-membership cases.  Consequently this module deliberately cannot emit
-the append-only vintage-2 authority.
+capture verifier and HTML parser and reads only committed source bytes.  Under
+amended design section 15.3, the complete Table 4.B2 and Table 4.B11
+extraction is sufficient for the source-only artifact.  The optional covered
+worker-share block is the amendment's exact immutable
+``unavailable_source_absent`` object.
+
+This artifact does not settle the separate section 6.1 worker-membership
+prerequisites for calibration-target registration.  The registry therefore
+continues to fail closed where those facts remain unresolved.
 
 The committed source rows cited by the ratified design are:
 
@@ -41,8 +45,10 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import math
 import re
+import subprocess
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from fractions import Fraction
@@ -59,18 +65,42 @@ OUT_PATH = (
     / "ssa_covered_earnings_calibration_targets_vintage2.json"
 )
 
-SCHEMA_VERSION = "ssa_covered_earnings_calibration_targets.v1"
+SCHEMA_VERSION = "ssa_covered_earnings_calibration_targets.v2"
 ARTIFACT_VINTAGE_ID = "ssa_covered_earnings_calibration_targets.vintage2"
 ARTIFACT_ROLE = "official_calibration_target_source_only"
 YEAR_BASIS = "calendar_year"
 REQUIRED_CALENDAR_YEARS = tuple(range(1968, 2023))
-COVERED_SHARE_REQUIRED_YEARS: tuple[int, ...] = ()
 CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 
 # Replaced with the first coherent builder commit before the artifact is
 # committed.  Keeping the pin literal makes an offline rebuild independent of
 # the current checkout's HEAD.
-EXTRACTION_IMPLEMENTATION_COMMIT = "14efbded2b6d02bbfe0014a7b059068a733a1e11"
+EXTRACTION_IMPLEMENTATION_COMMIT = "9bb011e2cefa6c886c496929e1189e158c6c1b35"
+
+OPTIONAL_COVERED_SHARE_UNAVAILABLE = {
+    "status": "unavailable_source_absent",
+    "failure_reason": (
+        "no_qualifying_literal_as_published_ssa_worker_share_series_in_"
+        "registered_sources"
+    ),
+    "covered_share_required_years": [],
+    "ssa_covered_share": [],
+    "source_document_manifest": [],
+    "observations": [],
+    "source_activation_condition_id": (
+        "literal_as_published_ssa_covered_worker_share_cells_v1"
+    ),
+    "target_reactivation_condition_id": (
+        "future_ratified_amendment_and_fresh_registration_required_v1"
+    ),
+}
+
+VINTAGE_PATH_PREFIX = (
+    "data/external/ssa_covered_earnings_calibration_targets_vintage"
+)
+VINTAGE_PATH_PATTERN = re.compile(
+    rf"{re.escape(VINTAGE_PATH_PREFIX)}(?P<suffix>[1-9][0-9]*)\.json"
+)
 
 SOURCE_DOCUMENT_ID = "ssa_supplement_2025_4b"
 SOURCE_FILENAME = "supplement2025_4b.html"
@@ -480,7 +510,6 @@ def _required_source_cell_ids() -> dict[str, list[str]]:
             for year in REQUIRED_CALENDAR_YEARS
             for spec in TABLE4_B11_COMPONENT_SPECS
         ],
-        "ssa_covered_share": [],
     }
 
 
@@ -1327,7 +1356,8 @@ def vb7_adjudication() -> dict[str, Any]:
         ],
         "covered_share_required_years": [],
         "registration_disposition": (
-            "abort_no_authoritative_vintage2_or_calibration_target_specs"
+            "optional_share_absent_valid_vintage2_accepted_"
+            "targets_fail_closed_on_membership_and_registration_authority"
         ),
     }
 
@@ -1620,11 +1650,7 @@ def extract_b2_b11_source_evidence() -> dict[str, Any]:
     observations, literals = _extract_observations(tables)
     evidence = {
         "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
-        "required_source_cell_ids": {
-            key: value
-            for key, value in _required_source_cell_ids().items()
-            if key != "ssa_covered_share"
-        },
+        "required_source_cell_ids": _required_source_cell_ids(),
         "source_document_manifest": _source_document_manifest(entries),
         "observations": observations,
         "cross_table_discrepancies": _cross_table_discrepancies(literals),
@@ -1871,14 +1897,14 @@ def _validate_cross_table_discrepancies(artifact: Mapping[str, Any]) -> None:
 
 
 def validate_artifact(artifact: Mapping[str, Any]) -> None:
-    """Apply the extraction unit's strict §6 schema and cell laws."""
+    """Apply the amended §15.3 schema, integrity, and source-cell laws."""
     expected_top_level = {
         "artifact_role",
         "artifact_vintage_id",
-        "covered_share_required_years",
         "cross_table_discrepancies",
         "integrity",
         "observations",
+        "optional_covered_share",
         "required_calendar_years",
         "required_source_cell_ids",
         "schema_version",
@@ -1893,8 +1919,8 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
         "artifact_role": ARTIFACT_ROLE,
         "year_basis": YEAR_BASIS,
         "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
-        "covered_share_required_years": [],
         "required_source_cell_ids": _required_source_cell_ids(),
+        "optional_covered_share": OPTIONAL_COVERED_SHARE_UNAVAILABLE,
     }
     for key, expected in expected_literals.items():
         if artifact[key] != expected:
@@ -1939,32 +1965,215 @@ def validate_artifact(artifact: Mapping[str, Any]) -> None:
             f"content_sha256 {integrity['content_sha256']} != "
             f"{expected_content_sha256}"
         )
-    disposition = vb7_adjudication()["registration_disposition"]
-    raise RegistrationAborted(
-        "V-B7 and worker-membership authority are unresolved; "
-        f"{disposition}"
-    )
 
 
 def build() -> dict[str, Any]:
-    """Abort because committed bytes cannot establish the full authority."""
+    """Build and validate the exact amended vintage-2 source authority."""
 
-    extract_b2_b11_source_evidence()
-    adjudication = vb7_adjudication()
-    raise RegistrationAborted(
-        "cannot emit ssa_covered_earnings_calibration_targets.vintage2: "
-        f"{adjudication['registration_disposition']}"
-    )
+    evidence = extract_b2_b11_source_evidence()
+    artifact = {
+        "schema_version": SCHEMA_VERSION,
+        "artifact_vintage_id": ARTIFACT_VINTAGE_ID,
+        "artifact_role": ARTIFACT_ROLE,
+        "year_basis": YEAR_BASIS,
+        "required_calendar_years": list(REQUIRED_CALENDAR_YEARS),
+        "required_source_cell_ids": evidence["required_source_cell_ids"],
+        "optional_covered_share": copy.deepcopy(
+            OPTIONAL_COVERED_SHARE_UNAVAILABLE
+        ),
+        "source_document_manifest": evidence["source_document_manifest"],
+        "observations": evidence["observations"],
+        "cross_table_discrepancies": evidence["cross_table_discrepancies"],
+        "integrity": {
+            "canonicalization": CANONICALIZATION,
+            "content_sha256": "0" * 64,
+            "extraction_implementation_commit": (
+                EXTRACTION_IMPLEMENTATION_COMMIT
+            ),
+            "reproduced_from_source_bytes": True,
+        },
+    }
+    artifact["integrity"]["content_sha256"] = _content_sha256(artifact)
+    validate_artifact(artifact)
+    return artifact
 
 
 def render() -> bytes:
-    """Abort instead of rendering an incomplete object under the final ID."""
+    """Render the validated artifact as canonical bytes."""
 
     return entry10.canonical_json_bytes(build())
 
 
+def _strict_json_object(raw: bytes, *, where: str) -> dict[str, Any]:
+    """Parse one canonical JSON object while rejecting duplicate keys."""
+
+    def reject_constant(token: str) -> None:
+        raise ValueError(f"{where} contains nonfinite constant {token}")
+
+    def exact_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        value: dict[str, Any] = {}
+        for key, member in pairs:
+            if key in value:
+                raise ValueError(f"{where} contains duplicate key {key!r}")
+            value[key] = member
+        return value
+
+    try:
+        value = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=exact_object,
+            parse_constant=reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(f"{where} is not strict UTF-8 JSON") from error
+    if type(value) is not dict:
+        raise ValueError(f"{where} must contain one JSON object")
+    if raw != entry10.canonical_json_bytes(value):
+        raise ValueError(f"{where} is not canonical artifact bytes")
+    return value
+
+
+def _git_head_vintage_paths() -> tuple[str, ...]:
+    """Return matching artifact paths from HEAD, never the index."""
+
+    result = subprocess.run(
+        [
+            "git",
+            "ls-tree",
+            "-r",
+            "--name-only",
+            "-z",
+            "HEAD",
+            "--",
+            "data/external",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    try:
+        decoded = result.stdout.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError("HEAD vintage paths are not UTF-8") from error
+    if not decoded:
+        return ()
+    if not decoded.endswith("\0"):
+        raise ValueError("git ls-tree did not return NUL-terminated paths")
+    return tuple(
+        path
+        for path in decoded[:-1].split("\0")
+        if path.startswith(VINTAGE_PATH_PREFIX) and path.endswith(".json")
+    )
+
+
+def _git_head_blob(path: str) -> bytes:
+    """Read one exact artifact blob from HEAD, never the worktree."""
+
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    return result.stdout
+
+
+def validate_tracked_vintage_lineage(
+    tracked_paths: Sequence[str] | None = None,
+    head_blobs: Mapping[str, bytes] | None = None,
+) -> dict[str, Any]:
+    """Derive and validate the amended artifact lineage from Git.
+
+    The only source-activation state implemented by this entry is the
+    immutable vintage-2 absent block.  A future successor therefore fails
+    closed here until its separately ratified activation implementation
+    exists.
+    """
+
+    derive_from_head = tracked_paths is None
+    tracked_paths = (
+        _git_head_vintage_paths() if derive_from_head else tuple(tracked_paths)
+    )
+    if derive_from_head and head_blobs is not None:
+        raise ValueError("injected HEAD blobs require injected tracked paths")
+
+    suffix_to_path: dict[int, str] = {}
+    for path in tracked_paths:
+        match = VINTAGE_PATH_PATTERN.fullmatch(path)
+        if match is None:
+            raise ValueError(
+                f"malformed covered-earnings vintage path {path!r}"
+            )
+        suffix = int(match.group("suffix"))
+        if suffix < 2 or suffix in suffix_to_path:
+            raise ValueError(
+                f"invalid or duplicate covered-earnings vintage suffix "
+                f"{suffix}"
+            )
+        suffix_to_path[suffix] = path
+
+    suffixes = sorted(suffix_to_path)
+    if not suffixes or suffixes != list(range(2, suffixes[-1] + 1)):
+        raise ValueError(
+            f"tracked vintage suffixes are not contiguous from 2: {suffixes}"
+        )
+    if suffixes != [2]:
+        raise RegistrationAborted(
+            "a covered-share successor requires a future ratified activation "
+            "implementation and fresh registration"
+        )
+
+    path = suffix_to_path[2]
+    if head_blobs is None:
+        raw = (
+            _git_head_blob(path)
+            if derive_from_head
+            else (ROOT / path).read_bytes()
+        )
+    else:
+        if set(head_blobs) != set(tracked_paths):
+            raise ValueError("injected HEAD blob domain does not match paths")
+        raw = head_blobs[path]
+    artifact = _strict_json_object(raw, where=f"HEAD:{path}")
+    if artifact.get("artifact_vintage_id") != ARTIFACT_VINTAGE_ID:
+        raise ValueError("vintage path and artifact-vintage ID disagree")
+    validate_artifact(artifact)
+    return {
+        "tracked_vintage_suffixes": suffixes,
+        "highest_vintage_suffix": suffixes[-1],
+        "accepted_vintage_path": path,
+    }
+
+
+def _tracked_head_blob_for_output(path: Path) -> bytes | None:
+    """Return the output's HEAD blob when the path is already tracked."""
+
+    try:
+        relative_path = path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        return None
+    if relative_path not in _git_head_vintage_paths():
+        return None
+    return _git_head_blob(relative_path)
+
+
 def main() -> None:
-    render()
+    rendered = render()
+    tracked_head_blob = _tracked_head_blob_for_output(OUT_PATH)
+    if tracked_head_blob is not None and tracked_head_blob != rendered:
+        raise RegistrationAborted(
+            "append-only vintage-2 path is already tracked in HEAD with "
+            "different bytes; mint a successor under the ratified lineage "
+            "law"
+        )
+    if OUT_PATH.exists():
+        if OUT_PATH.read_bytes() != rendered:
+            raise RegistrationAborted(
+                "append-only vintage-2 path already exists with different "
+                "bytes; mint a successor under the ratified lineage law"
+            )
+        return
+    OUT_PATH.write_bytes(rendered)
 
 
 if __name__ == "__main__":

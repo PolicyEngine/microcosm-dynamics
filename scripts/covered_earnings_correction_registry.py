@@ -1,12 +1,12 @@
-"""Fail-closed registration boundary for covered-earnings correction.
+"""Amendment-1 registration boundary for covered-earnings correction.
 
-The committed SSA bytes establish the 825 Table 4.B2/4.B11 source cells, but
-they do not establish the worker-universe laws required by section 6.1 of the
-ratified design.  They also do not establish a frozen model-universe selector,
-production weight input, or passing official-to-model universe concordance.
+The amended vintage-2 source artifact is complete and accepted.  The new
+methodology bytes nevertheless leave at least one section 6.1 membership fact
+unresolved for every target family, and registration-time model-universe,
+weight-input, and concordance authorities remain absent.
 
 This module therefore exposes the exact registry schemas and validators, but
-it never labels a reduced or unresolved object ``calibration_target_specs.v2``.
+it never labels a reduced or unresolved object ``calibration_target_specs.v3``.
 Every getter for a final frozen registry aborts until all registration
 prerequisites can be resolved from immutable authority.
 """
@@ -14,18 +14,27 @@ prerequisites can be resolved from immutable authority.
 from __future__ import annotations
 
 import copy
+import hashlib
 import math
 import re
+import subprocess
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
+import build_covered_earnings_membership_adjudication as adjudication
 import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
-DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_REVISION = 2
+BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
+DESIGN_RATIFICATION_COMMIT = "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
+DESIGN_REVISION = 3
+DESIGN_BLOB_SHA256 = (
+    "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+)
+ROOT = Path(__file__).resolve().parents[1]
 
-CALIBRATION_TARGET_SPECS_SCHEMA_VERSION = "calibration_target_specs.v2"
+CALIBRATION_TARGET_SPECS_SCHEMA_VERSION = "calibration_target_specs.v3"
 VERIFIED_ROLE_SPECS_SCHEMA_VERSION = "verified_role_specs.v1"
 PHYSICAL_SOURCE_CELL_SPECS_SCHEMA_VERSION = "physical_source_cell_specs.v1"
 OFFICIAL_SOURCE_ALIAS_SPECS_SCHEMA_VERSION = "official_source_alias_specs.v1"
@@ -48,7 +57,6 @@ TARGET_FAMILY_ORDER = (
     "b2_se_total_intensity",
     "b11_se_only_worker_share",
     "b11_dual_type_worker_share",
-    "ssa_precisely_universed_covered_share",
     "b11_wage_only_worker_share",
     "b2_type_count_mix",
     "b2_se_total_component_share",
@@ -163,7 +171,6 @@ _LOSS_BY_TARGET_FAMILY = {
     "b2_se_total_intensity": "squared_log_ratio",
     "b11_se_only_worker_share": "squared_logit_error",
     "b11_dual_type_worker_share": "squared_logit_error",
-    "ssa_precisely_universed_covered_share": "squared_logit_error",
     "b11_wage_only_worker_share": "no_fitting_loss",
     "b2_type_count_mix": "no_fitting_loss",
     "b2_se_total_component_share": "no_fitting_loss",
@@ -174,6 +181,32 @@ _LOSS_BY_TARGET_FAMILY = {
     "b11_taxable_earnings_component_reconciliation": "no_fitting_loss",
     "b11_contributions_component_reconciliation": "no_fitting_loss",
     "b11_se_contribution_share": "no_fitting_loss",
+}
+_RAW_FAMILY_COEFFICIENT = {
+    "b2_wage_total_intensity": 2,
+    "b2_se_total_intensity": 2,
+    "b11_se_only_worker_share": 1,
+    "b11_dual_type_worker_share": 1,
+}
+_DEPENDENCY_GROUP_BY_TARGET_FAMILY = {
+    "b2_wage_total_intensity": "b2_component_system",
+    "b2_se_total_intensity": "b2_component_system",
+    "b11_se_only_worker_share": "b11_worker_type_system",
+    "b11_dual_type_worker_share": "b11_worker_type_system",
+    "b11_wage_only_worker_share": "b11_worker_type_system",
+    "b2_type_count_mix": "b2_component_system",
+    "b2_se_total_component_share": "b2_component_system",
+    "b2_wage_taxable_intensity": "b2_component_system",
+    "b2_se_taxable_intensity": "b2_component_system",
+    "b2_wage_taxable_fraction": "b2_component_system",
+    "b2_se_taxable_fraction": "b2_component_system",
+    "b11_taxable_earnings_component_reconciliation": (
+        "b11_taxable_earnings_component_system"
+    ),
+    "b11_contributions_component_reconciliation": (
+        "b11_contribution_component_system"
+    ),
+    "b11_se_contribution_share": "b11_contribution_component_system",
 }
 _SOURCE_STATUSES = {"historical", "preliminary"}
 _AVAILABLE_SOURCE_CLASSES = {
@@ -240,6 +273,276 @@ _SOURCE_COMPONENTS_BY_TARGET_FAMILY = {
         ("contributions_wage", "contributions_self_employment"),
     ),
 }
+
+
+def _row_law(
+    *,
+    operation: str,
+    formula: str,
+    domain: str,
+    stored_unit: str,
+    field_ids: Sequence[str],
+    aggregation: str,
+    cap_stage: str,
+) -> dict[str, Any]:
+    return {
+        "transformation": {
+            "operation": operation,
+            "formula": formula,
+            "domain": domain,
+        },
+        "stored_unit": stored_unit,
+        "selector": {
+            "field_ids": list(field_ids),
+            "aggregation": aggregation,
+            "joint_probability_rule": (
+                "analytic_joint_state_within_projection_draw"
+            ),
+            "cap_stage": cap_stage,
+            "unit": stored_unit,
+        },
+    }
+
+
+_TARGET_FAMILY_ROW_LAWS = {
+    "b2_wage_total_intensity": _row_law(
+        operation="divide",
+        formula="c5/c11",
+        domain="strictly_positive_denominator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "covered_employee_wages_uncapped",
+            "b2_wage_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(covered_employee_wages_uncapped)/"
+            "sum(b2_wage_worker_membership_probability_analytic)"
+        ),
+        cap_stage="pre_person_level_oasdi_cap",
+    ),
+    "b2_se_total_intensity": _row_law(
+        operation="divide",
+        formula="c8/c12",
+        domain="strictly_positive_denominator_signed_numerator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "covered_se_net_earnings_pre_seca",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(covered_se_net_earnings_pre_seca)/"
+            "sum(b2_se_worker_membership_probability_analytic)"
+        ),
+        cap_stage="pre_seca_factor_threshold_and_oasdi_cap",
+    ),
+    "b11_se_only_worker_share": _row_law(
+        operation="subtract_then_divide",
+        formula="(workers_total-workers_wage)/workers_total",
+        domain="nonnegative_implied_numerator_strictly_positive_total",
+        stored_unit="share",
+        field_ids=(
+            "b11_se_only_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b11_se_only_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b11_dual_type_worker_share": _row_law(
+        operation="add_subtract_then_divide",
+        formula=(
+            "(workers_wage+workers_self_employment-workers_total)/"
+            "workers_total"
+        ),
+        domain="nonnegative_implied_numerator_strictly_positive_total",
+        stored_unit="share",
+        field_ids=(
+            "b11_dual_type_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b11_dual_type_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b11_wage_only_worker_share": _row_law(
+        operation="subtract_then_divide",
+        formula="(workers_total-workers_self_employment)/workers_total",
+        domain="nonnegative_implied_numerator_strictly_positive_total",
+        stored_unit="share",
+        field_ids=(
+            "b11_wage_only_worker_probability_analytic",
+            "b11_any_worker_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b11_wage_only_worker_probability_analytic)/"
+            "sum(b11_any_worker_probability_analytic)"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b2_type_count_mix": _row_law(
+        operation="divide_by_component_sum",
+        formula="c12/(c11+c12)",
+        domain="nonnegative_components_strictly_positive_sum",
+        stored_unit="share",
+        field_ids=(
+            "b2_wage_worker_membership_probability_analytic",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(b2_se_worker_membership_probability_analytic)/"
+            "(sum(b2_wage_worker_membership_probability_analytic)+"
+            "sum(b2_se_worker_membership_probability_analytic))"
+        ),
+        cap_stage="registered_worker_membership_definition",
+    ),
+    "b2_se_total_component_share": _row_law(
+        operation="divide_by_component_sum",
+        formula="c8/(c5+c8)",
+        domain="strictly_positive_component_sum",
+        stored_unit="share",
+        field_ids=(
+            "covered_employee_wages_uncapped",
+            "covered_se_net_earnings_pre_seca",
+        ),
+        aggregation=(
+            "sum(covered_se_net_earnings_pre_seca)/"
+            "(sum(covered_employee_wages_uncapped)+"
+            "sum(covered_se_net_earnings_pre_seca))"
+        ),
+        cap_stage="pre_seca_factor_threshold_and_oasdi_cap_component_ratio",
+    ),
+    "b2_wage_taxable_intensity": _row_law(
+        operation="divide",
+        formula="c13/c11",
+        domain="strictly_positive_denominator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "b2_wage_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_wages_person)/"
+            "sum(b2_wage_worker_membership_probability_analytic)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_over_registered_membership",
+    ),
+    "b2_se_taxable_intensity": _row_law(
+        operation="divide",
+        formula="c17/c12",
+        domain="strictly_positive_denominator",
+        stored_unit="current_dollars_per_worker",
+        field_ids=(
+            "oasdi_taxable_se_person",
+            "b2_se_worker_membership_probability_analytic",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_se_person)/"
+            "sum(b2_se_worker_membership_probability_analytic)"
+        ),
+        cap_stage="post_wage_first_oasdi_cap_over_registered_membership",
+    ),
+    "b2_wage_taxable_fraction": _row_law(
+        operation="divide",
+        formula="c13/c5",
+        domain="strictly_positive_denominator",
+        stored_unit="share",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "covered_employee_wages_uncapped",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_wages_person)/"
+            "sum(covered_employee_wages_uncapped)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_over_pre_cap_amount",
+    ),
+    "b2_se_taxable_fraction": _row_law(
+        operation="divide",
+        formula="c17/c8",
+        domain="strictly_positive_denominator",
+        stored_unit="share",
+        field_ids=(
+            "oasdi_taxable_se_person",
+            "covered_se_net_earnings_pre_seca",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_se_person)/"
+            "sum(covered_se_net_earnings_pre_seca)"
+        ),
+        cap_stage="post_wage_first_oasdi_cap_over_pre_seca_net_amount",
+    ),
+    "b11_taxable_earnings_component_reconciliation": _row_law(
+        operation="subtract_components_from_total",
+        formula=(
+            "taxable_earnings_total-taxable_earnings_wage-"
+            "taxable_earnings_self_employment"
+        ),
+        domain="structural_dependence_only_no_numeric_equality_assertion",
+        stored_unit="current_dollars",
+        field_ids=(
+            "oasdi_person_taxable_payroll",
+            "oasdi_taxable_wages_person",
+            "oasdi_taxable_se_person",
+        ),
+        aggregation=(
+            "sum(oasdi_person_taxable_payroll)-"
+            "sum(oasdi_taxable_wages_person)-"
+            "sum(oasdi_taxable_se_person)"
+        ),
+        cap_stage="post_person_level_oasdi_cap",
+    ),
+    "b11_contributions_component_reconciliation": _row_law(
+        operation="subtract_components_from_total",
+        formula=(
+            "contributions_total-contributions_wage-"
+            "contributions_self_employment"
+        ),
+        domain="structural_dependence_only_no_numeric_equality_assertion",
+        stored_unit="current_dollars",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "registered_wage_oasdi_combined_rate",
+            "oasdi_taxable_se_person",
+            "registered_se_oasdi_rate",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate+"
+            "oasdi_taxable_se_person*registered_se_oasdi_rate)-"
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate)-"
+            "sum(oasdi_taxable_se_person*registered_se_oasdi_rate)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_and_registered_rates",
+    ),
+    "b11_se_contribution_share": _row_law(
+        operation="divide_by_component_sum",
+        formula=(
+            "contributions_self_employment/"
+            "(contributions_wage+contributions_self_employment)"
+        ),
+        domain="nonnegative_components_strictly_positive_sum",
+        stored_unit="share",
+        field_ids=(
+            "oasdi_taxable_wages_person",
+            "registered_wage_oasdi_combined_rate",
+            "oasdi_taxable_se_person",
+            "registered_se_oasdi_rate",
+        ),
+        aggregation=(
+            "sum(oasdi_taxable_se_person*registered_se_oasdi_rate)/"
+            "sum(oasdi_taxable_wages_person*"
+            "registered_wage_oasdi_combined_rate+"
+            "oasdi_taxable_se_person*registered_se_oasdi_rate)"
+        ),
+        cap_stage="post_person_level_oasdi_cap_and_registered_rates",
+    ),
+}
+
 _AVAILABLE_SELECTOR_SCALAR_FIELDS = (
     "aggregation",
     "joint_probability_rule",
@@ -266,18 +569,18 @@ UNRESOLVED_AUTHORITY_FIELDS = (
         ),
     },
     {
-        "field": "model_weight_field",
-        "status": "missing_registered_weight_field",
-        "reason": (
-            "no correction-specific production input manifest registers a "
-            "model weight field"
-        ),
-    },
-    {
         "field": "model_weight_source_sha256",
         "status": "missing_registered_weight_input_digest",
         "reason": (
             "no immutable correction model-weight input is available to hash"
+        ),
+    },
+    {
+        "field": "denominator_and_joint_analytic_selectors",
+        "status": "selector_ids_resolved_membership_predicates_unestablished",
+        "reason": (
+            "design-fixed selector IDs and joint reduction cannot become "
+            "executable until every source-membership predicate is settled"
         ),
     },
     {
@@ -286,6 +589,17 @@ UNRESOLVED_AUTHORITY_FIELDS = (
         "reason": (
             "an exact official-to-model mapping cannot be certified while "
             "the official membership and model selector remain unresolved"
+        ),
+    },
+)
+
+RESOLVED_AUTHORITY_FIELDS = (
+    {
+        "field": "model_weight_field",
+        "status": "resolved_from_committed_first_estimates_authority",
+        "value": "weight",
+        "authority_id": (
+            "first_estimates_fixed_start_wave_psid_cross_sectional_weight_v1"
         ),
     },
 )
@@ -302,10 +616,47 @@ class RegistrationAborted(RegistryValidationError):
 def design_binding() -> dict[str, Any]:
     """Return the ratified design identity."""
 
+    ancestry = subprocess.run(
+        [
+            "git",
+            "merge-base",
+            "--is-ancestor",
+            BASE_DESIGN_RATIFICATION_COMMIT,
+            DESIGN_RATIFICATION_COMMIT,
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    )
+    if ancestry.returncode != 0:
+        raise RegistrationAborted(
+            "base design is not an ancestor of amendment-1 ratification"
+        )
+    worktree_bytes = (ROOT / DESIGN_PATH).read_bytes()
+    head_bytes = subprocess.run(
+        ["git", "show", f"HEAD:{DESIGN_PATH}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    ratified_bytes = subprocess.run(
+        ["git", "show", f"{DESIGN_RATIFICATION_COMMIT}:{DESIGN_PATH}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    if not (worktree_bytes == head_bytes == ratified_bytes):
+        raise RegistrationAborted(
+            "covered-earnings design differs across worktree, HEAD, and "
+            "ratification commit"
+        )
+    if hashlib.sha256(head_bytes).hexdigest() != DESIGN_BLOB_SHA256:
+        raise RegistrationAborted("covered-earnings design blob digest drift")
     return {
         "path": DESIGN_PATH,
         "ratification_commit": DESIGN_RATIFICATION_COMMIT,
         "revision": DESIGN_REVISION,
+        "blob_sha256": DESIGN_BLOB_SHA256,
     }
 
 
@@ -389,28 +740,81 @@ def calibration_target_schema() -> dict[str, Any]:
     }
 
 
-def registration_status() -> dict[str, Any]:
-    """Re-adjudicate committed bytes and report why registration aborts."""
+def target_family_registry() -> list[dict[str, Any]]:
+    """Return the exact amendment-1 14-family order and coefficient law."""
 
-    adjudication = extraction.vb7_adjudication()
+    rows = []
+    for family in TARGET_FAMILY_ORDER:
+        raw_coefficient = _RAW_FAMILY_COEFFICIENT.get(family, 0)
+        rows.append(
+            {
+                "target_family": family,
+                "dependency_group": _DEPENDENCY_GROUP_BY_TARGET_FAMILY[family],
+                "loss": _LOSS_BY_TARGET_FAMILY[family],
+                "raw_family_coefficient": raw_coefficient,
+                "normalized_effective_weight_numerator": raw_coefficient,
+                "normalized_effective_weight_denominator": (
+                    6 if raw_coefficient else 1
+                ),
+                "transformation": copy.deepcopy(
+                    _TARGET_FAMILY_ROW_LAWS[family]["transformation"]
+                ),
+                "stored_unit": _TARGET_FAMILY_ROW_LAWS[family]["stored_unit"],
+                "available_candidate_output_selector": copy.deepcopy(
+                    _TARGET_FAMILY_ROW_LAWS[family]["selector"]
+                ),
+            }
+        )
+    return rows
+
+
+def accepted_source_artifact() -> dict[str, Any]:
+    """Return exactly the validator-accepted, tracked vintage-2 artifact."""
+
+    lineage = extraction.validate_tracked_vintage_lineage()
+    if lineage["tracked_vintage_suffixes"] != [2]:
+        raise RegistrationAborted(
+            "source artifact lineage is not exactly H={2}"
+        )
+    artifact = extraction.build()
+    extraction.validate_artifact(artifact)
+    if extraction.render() != extraction.OUT_PATH.read_bytes():
+        raise RegistrationAborted(
+            "tracked vintage-2 bytes do not reproduce from committed sources"
+        )
+    return artifact
+
+
+def registration_status() -> dict[str, Any]:
+    """Re-adjudicate committed bytes and report the remaining closed gates."""
+
+    artifact = accepted_source_artifact()
+    membership = adjudication.build()
     return {
         "registration_complete": False,
-        "proposed_artifact_vintage_id": (PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID),
+        "source_artifact_status": "accepted",
+        "source_artifact_vintage_id": artifact["artifact_vintage_id"],
+        "source_artifact_schema_version": artifact["schema_version"],
+        "source_artifact_lineage_suffixes": [2],
+        "optional_covered_share_status": artifact["optional_covered_share"][
+            "status"
+        ],
         "calibration_target_schema_version": (
             CALIBRATION_TARGET_SPECS_SCHEMA_VERSION
         ),
+        "target_family_order": list(TARGET_FAMILY_ORDER),
         "emitted_target_row_count": 0,
+        "resolved_authority_fields": copy.deepcopy(
+            list(RESOLVED_AUTHORITY_FIELDS)
+        ),
         "unresolved_authority_fields": copy.deepcopy(
             list(UNRESOLVED_AUTHORITY_FIELDS)
         ),
-        "vb7_registration_disposition": (
-            adjudication["registration_disposition"]
+        "registration_authority_adjudications": copy.deepcopy(
+            membership["registration_authority_adjudications"]
         ),
-        "covered_share_required_years": copy.deepcopy(
-            adjudication["covered_share_required_years"]
-        ),
-        "membership_adjudications": copy.deepcopy(
-            adjudication["worker_membership_relationships"]
+        "family_dispositions": copy.deepcopy(
+            membership["family_dispositions"]
         ),
         "failure_disposition": "abort",
     }
@@ -543,6 +947,12 @@ def _validate_transformation(value: object, row: Mapping[str, Any]) -> None:
         )
     for field in ("operation", "formula", "domain"):
         _nonempty_string(transformation[field], f"{where}.{field}")
+    expected = _TARGET_FAMILY_ROW_LAWS[row["target_family"]]["transformation"]
+    for field, expected_value in expected.items():
+        if transformation[field] != expected_value:
+            raise RegistryValidationError(
+                f"{where}.{field} violates target-family law"
+            )
 
 
 def _validate_concordance(value: object, where: str) -> None:
@@ -632,7 +1042,7 @@ def _validate_selector(
             f"{where}.availability violates source-class law"
         )
     if expected_availability == "available":
-        _ordered_unique_strings(
+        field_ids = _ordered_unique_strings(
             selector["field_ids"],
             f"{where}.field_ids",
         )
@@ -645,6 +1055,21 @@ def _validate_selector(
             raise RegistryValidationError(f"{where}.projection_draw_reduction")
         if selector["unit"] != row["stored_unit"]:
             raise RegistryValidationError(f"{where}.unit mismatch")
+        expected = _TARGET_FAMILY_ROW_LAWS[row["target_family"]]["selector"]
+        if field_ids != expected["field_ids"]:
+            raise RegistryValidationError(
+                f"{where}.field_ids violate target-family law"
+            )
+        for field in (
+            "aggregation",
+            "joint_probability_rule",
+            "cap_stage",
+            "unit",
+        ):
+            if selector[field] != expected[field]:
+                raise RegistryValidationError(
+                    f"{where}.{field} violates target-family law"
+                )
     else:
         field_ids = _ordered_unique_strings(
             selector["field_ids"],
@@ -693,9 +1118,6 @@ def _expected_tolerances(target_family: str) -> tuple[dict, dict]:
     if target_family in _B11_SELECTION_FAMILIES:
         cell_maximum = 0.03
         family_maximum = 0.015
-    elif target_family == "ssa_precisely_universed_covered_share":
-        cell_maximum = 0.02
-        family_maximum = 0.01
     else:
         raise RegistryValidationError(
             f"{target_family} has no registered selection tolerance"
@@ -749,12 +1171,29 @@ def validate_calibration_target_row_schema(
                 f"{target_id}.{field} violates year-equality law"
             )
     for field in (
-        "dependency_group",
         "stored_unit",
         "model_universe_id",
-        "model_weight_field",
     ):
         _nonempty_string(row[field], f"{target_id}.{field}")
+    expected_dependency_group = _DEPENDENCY_GROUP_BY_TARGET_FAMILY[
+        target_family
+    ]
+    if row["dependency_group"] != expected_dependency_group:
+        raise RegistryValidationError(
+            f"{target_id}.dependency_group must be "
+            f"{expected_dependency_group}"
+        )
+    if row["model_weight_field"] != "weight":
+        raise RegistryValidationError(
+            f"{target_id}.model_weight_field must be weight"
+        )
+    expected_stored_unit = _TARGET_FAMILY_ROW_LAWS[target_family][
+        "stored_unit"
+    ]
+    if row["stored_unit"] != expected_stored_unit:
+        raise RegistryValidationError(
+            f"{target_id}.stored_unit must be {expected_stored_unit}"
+        )
     if (
         row["source_artifact_vintage_id"]
         != PROPOSED_SOURCE_ARTIFACT_VINTAGE_ID
@@ -843,14 +1282,11 @@ def validate_calibration_target_row_schema(
         raise RegistryValidationError(
             f"{target_id}.source_status preliminary outside held-out role"
         )
-    if target_family != "ssa_precisely_universed_covered_share":
-        expected_status = (
-            "preliminary" if parsed_year >= 2021 else "historical"
+    expected_status = "preliminary" if parsed_year >= 2021 else "historical"
+    if row["source_status"] != expected_status:
+        raise RegistryValidationError(
+            f"{target_id}.source_status violates source artifact law"
         )
-        if row["source_status"] != expected_status:
-            raise RegistryValidationError(
-                f"{target_id}.source_status violates source artifact law"
-            )
     expected_loss = _LOSS_BY_TARGET_FAMILY[target_family]
     if row["loss"] != expected_loss:
         raise RegistryValidationError(
@@ -874,16 +1310,11 @@ def validate_calibration_target_row_schema(
         row["loss_weight"],
         f"{target_id}.loss_weight",
     )
-    if loss_weight < 0:
-        raise RegistryValidationError(f"{target_id}.loss_weight")
-    weight_must_be_zero = (
-        expected_loss == "no_fitting_loss"
-        or availability == "not_applicable_no_claim_independent_model_analogue"
-        or expected_role == "held_out_diagnostic"
-    )
-    if weight_must_be_zero and loss_weight != 0:
-        raise RegistryValidationError(f"{target_id}.loss_weight must be zero")
-    positive_weight_allowed = availability == "available" and (
+    if type(loss_weight) is not int:
+        raise RegistryValidationError(
+            f"{target_id}.loss_weight must be an exact JSON integer"
+        )
+    model_choice_cell = availability == "available" and (
         (
             expected_role == "train"
             and row["model_year_source_class"] == "direct_questionnaire"
@@ -891,9 +1322,13 @@ def validate_calibration_target_row_schema(
         )
         or expected_selection_eligible
     )
-    if loss_weight > 0 and not positive_weight_allowed:
+    expected_loss_weight = (
+        _RAW_FAMILY_COEFFICIENT[target_family] if model_choice_cell else 0
+    )
+    if loss_weight != expected_loss_weight:
         raise RegistryValidationError(
-            f"{target_id}.loss_weight is positive outside a model-choice cell"
+            f"{target_id}.loss_weight must equal exact amendment-1 integer "
+            f"mass {expected_loss_weight}"
         )
     _validate_tolerance(row["cell_tolerance"], f"{target_id}.cell_tolerance")
     _validate_tolerance(
@@ -924,13 +1359,13 @@ def _abort_message() -> str:
     )
     return (
         "covered-earnings correction registration aborted: "
-        f"V-B7={status['vb7_registration_disposition']}; "
-        f"unresolved fields={missing}"
+        "source artifact accepted; no target family clears every "
+        f"prerequisite; unresolved fields={missing}"
     )
 
 
 def calibration_target_specs() -> list[dict[str, Any]]:
-    """Abort instead of returning reduced or unresolved v2 target rows."""
+    """Abort instead of returning reduced or unresolved v3 target rows."""
 
     raise RegistrationAborted(_abort_message())
 
@@ -964,10 +1399,21 @@ def validate_calibration_target_specs(value: object) -> None:
 
     if type(value) is not list or not value:
         raise RegistryValidationError(
-            "calibration_target_specs.v2 must be a nonempty ordered array"
+            "calibration_target_specs.v3 must be a nonempty ordered array"
         )
     for index, row in enumerate(value):
         validate_calibration_target_row_schema(row, index=index)
+    expected_target_ids = [
+        f"{family}:{year}"
+        for family in TARGET_FAMILY_ORDER
+        for year in TARGET_YEARS
+    ]
+    actual_target_ids = [row["target_id"] for row in value]
+    if actual_target_ids != expected_target_ids:
+        raise RegistryValidationError(
+            "calibration_target_specs.v3 must contain exactly the 14-family "
+            "by 55-year ordered expansion"
+        )
     raise RegistrationAborted(_abort_message())
 
 
@@ -1002,6 +1448,7 @@ __all__ = [
     "UNIVERSE_FIELDS",
     "UNRESOLVED_AUTHORITY_FIELDS",
     "VERIFIED_ROLE_SPECS_SCHEMA_VERSION",
+    "accepted_source_artifact",
     "calibration_target_schema",
     "calibration_target_specs",
     "design_binding",
@@ -1012,6 +1459,7 @@ __all__ = [
     "physical_source_cell_specs",
     "registration_status",
     "role_for_year",
+    "target_family_registry",
     "validate_calibration_target_row_schema",
     "validate_calibration_target_specs",
     "validate_frozen_registries",

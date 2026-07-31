@@ -203,9 +203,25 @@
    "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
    "p50": "2026-08-02",
    "p80": "2026-08-06",
-   "status": "open",
+   "status": "superseded",
    "supersedes": 11,
    "revision_reason": "Material evidence from the unit-1 implementation, confirmed by two adversarial referee rounds: committed primary bytes establish no lawful V-B7 covered-share construction (SSA publishes no literal covered-worker-share cell series; cross-publication quotients are barred and empirically invalid, exceeding 1.0 in 31 of 55 years), and the B2/B11 worker-membership prerequisites need a new methodology-byte capture. The path now includes a public design amendment ceremony plus a capture ceremony before registration, moving p50 by one day.",
+   "resolution": null,
+   "superseded_by": [
+    13
+   ]
+  },
+  {
+   "id": 13,
+   "registered_at": "2026-07-30T13:40:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-04",
+   "p80": "2026-08-08",
+   "status": "open",
+   "supersedes": 12,
+   "revision_reason": "Two referee rulings added mandatory ceremonies to the path: (1) no lawful registration exists with zero registrable calibration rows, so Amendment 2 (fitting-free path) must ratify first (drafted; in referee rounds); (2) the ratified inventory law admits no narrowed PSID inventory, so the complete 43-wave codebook authentication/extraction ceremony is required before unit-3 registration (codebook PDFs are staged locally, bounding the work). p50 moves two days.",
    "resolution": null
   }
  ]
