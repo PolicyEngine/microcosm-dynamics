@@ -17,7 +17,7 @@ ARTIFACT_PATH = (
     ROOT / "data" / "external" / "psid_questionnaire_corpus_extraction_v1.json"
 )
 ARTIFACT_SHA256 = (
-    "4a6bfd761b05b40115c7a416ceb0836f73989d1492b58cb2729e78a288e5a29b"
+    "5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347"
 )
 
 if str(SCRIPTS) not in sys.path:
@@ -42,14 +42,14 @@ def test_committed_extraction_is_canonical_and_has_exact_identity():
     raw = ARTIFACT_PATH.read_bytes()
     value = _artifact()
     assert hashlib.sha256(raw).hexdigest() == ARTIFACT_SHA256
-    assert len(raw) == 81_210
+    assert len(raw) == 81_177
     assert raw == builder.canonical_json_bytes(value)
     assert value["schema_version"] == builder.SCHEMA_VERSION
     assert value["artifact_id"] == builder.ARTIFACT_ID
     assert value["integrity"] == {
         "canonicalization": builder.CANONICALIZATION,
         "content_sha256": (
-            "775eabe173513b946a2ffbf22a6bb5b1c9e8afc7373860776272b4f92f64cf50"
+            "18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c"
         ),
         "source_byte_ranges_verified": True,
         "structural_status": "pass",
@@ -57,7 +57,7 @@ def test_committed_extraction_is_canonical_and_has_exact_identity():
     builder.validate_structure(value)
 
 
-def test_source_identities_and_authority_disposition_are_fail_closed():
+def test_source_identities_and_authority_disposition_record_acceptance():
     value = _artifact()
     identities = {
         row["source_artifact_id"]: row
@@ -71,8 +71,8 @@ def test_source_identities_and_authority_disposition_are_fail_closed():
         "7306c898d044df0ce86754b8468b26e32d8696027e8dde2f7d5935d79f1abb14"
     )
     assert value["authority_disposition"] == {
-        "corpus_registration_status": "fail",
-        "accepted_corpus_authority": False,
+        "corpus_registration_status": "pass",
+        "accepted_corpus_authority": True,
         "verified_candidate_documents_may_support_nonoperative_audit": True,
         "membership_v3_or_supersession_effect": "none",
     }
@@ -190,7 +190,7 @@ def test_eight_target_residuals_have_honest_evidentiary_outcomes():
         "No captured questionnaire or editing instruction supplies the exact allocation from V4901-V4906 components to annual V4379/V5289/V5788 totals."
     ]
     assert {row["operative_effect"] for row in rows} == {
-        "none_unregistered_source_and_frozen_design_domain"
+        "none_accepted_corpus_and_frozen_design_domain"
     }
     assert value["family_extraction_summary"] == [
         {
@@ -243,7 +243,7 @@ def test_structure_rejects_coherently_resealed_mutations(mutation: str):
     elif mutation == "source_identity":
         value["source_artifact_identities"][0]["sha256"] = "0" * 64
     elif mutation == "authority_disposition":
-        value["authority_disposition"]["accepted_corpus_authority"] = True
+        value["authority_disposition"]["accepted_corpus_authority"] = False
     elif mutation == "extraction_method":
         value["extraction_method"]["derived_text_retained"] = True
     elif mutation == "passage_locator":

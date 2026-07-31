@@ -2,7 +2,7 @@
 """Build the source-bound PSID questionnaire extraction audit.
 
 The source corpus is external to Git.  This builder accepts only individually
-verified document candidates from the frozen registration attempt, verifies
+verified documents from the frozen registration artifact, verifies
 every cited file and byte range, and records questionnaire evidence separately
 from authority acceptance or operative membership adjudication.
 """
@@ -34,8 +34,8 @@ ARTIFACT_ID = "entry11_unit1b_psid_questionnaire_extraction_v1"
 CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 
 AUTHORITY_DISPOSITION = {
-    "corpus_registration_status": "fail",
-    "accepted_corpus_authority": False,
+    "corpus_registration_status": "pass",
+    "accepted_corpus_authority": True,
     "verified_candidate_documents_may_support_nonoperative_audit": True,
     "membership_v3_or_supersession_effect": "none",
 }
@@ -53,8 +53,8 @@ EXTRACTION_METHOD = {
 FROZEN_INPUTS = {
     "corpus_registration_attempt": {
         "committed_path": "data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json",
-        "size_bytes": 499_221,
-        "sha256": "a1216521410d5a73e0dfde4d094d703843016cf6e67c8ee11ac3c4be70baceb0",
+        "size_bytes": 520_656,
+        "sha256": "07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c",
         "schema_version": "psid_questionnaire_corpus_authority_registration_attempt.v1",
     },
     "psid_codebook_inventory_adjudication": {
@@ -960,14 +960,29 @@ def _source_artifact_identities() -> list[dict[str, Any]]:
 def _registration_documents(
     registration: Mapping[str, Any],
 ) -> dict[str, Mapping[str, Any]]:
+    accepted_registry = registration.get("accepted_authority_registry")
     if (
-        registration.get("registration_status") != "fail"
-        or registration.get("accepted_authority_registry") is not None
+        registration.get("registration_status") != "pass"
         or registration.get("document_candidate_count") != 456
-        or registration.get("verified_document_count") != 440
-        or registration.get("failed_document_count") != 16
+        or registration.get("verified_document_count") != 456
+        or registration.get("failed_document_count") != 0
+        or registration.get("failed_document_ids") != []
+        or not isinstance(accepted_registry, Mapping)
+        or accepted_registry.get("schema_version")
+        != "psid_questionnaire_corpus_authority_registry.v1"
+        or accepted_registry.get("artifact_id")
+        != "psid_questionnaire_corpus_authority_registry.v1"
+        or accepted_registry.get("document_count") != 456
+        or accepted_registry.get("unique_document_identity_count") != 455
+        or accepted_registry.get("authority_manifest_pointer")
+        != "/document_candidates"
+        or accepted_registry.get("ordered_document_ids")
+        != registration.get("ordered_document_ids")
+        or accepted_registry.get("document_rows_sha256")
+        != registration.get("document_rows_sha256")
+        or accepted_registry.get("status") != "pass"
     ):
-        raise ValueError("corpus registration-attempt disposition drift")
+        raise ValueError("corpus registration disposition drift")
     documents = registration.get("document_candidates")
     if not isinstance(documents, list):
         raise ValueError("registration document domain missing")
@@ -1314,7 +1329,7 @@ def _residual_extractions(
                 "absence_proof_ids": absence_ids,
                 "established_findings": findings,
                 "remaining_unestablished_facts": remaining,
-                "operative_effect": "none_unregistered_source_and_frozen_design_domain",
+                "operative_effect": "none_accepted_corpus_and_frozen_design_domain",
             }
         )
     return rows
@@ -1564,7 +1579,7 @@ def validate_structure(value: Mapping[str, Any]) -> None:
             raise ValueError("residual verdict/remaining-fact mismatch")
         if (
             row["operative_effect"]
-            != "none_unregistered_source_and_frozen_design_domain"
+            != "none_accepted_corpus_and_frozen_design_domain"
         ):
             raise ValueError("residual operative-effect drift")
     if value["family_extraction_summary"] != _family_summary(residuals):
