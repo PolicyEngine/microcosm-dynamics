@@ -3,9 +3,9 @@
 ## State
 
 - Branch `claude/ce-codebook-inventory` starts clean at `bc39940`.
-- All three referee edits are implemented and source-rebuilt.
+- All three referee edits are implemented, source-rebuilt, and verified.
 - The complete artifact cascade is rebuilt and byte-checked.
-- Final formatting, lint, and full verification suites remain.
+- The branch is ready for handoff without a push.
 
 ## Done
 
@@ -31,8 +31,12 @@
 - Rebuilt the source-hashed questionnaire audit and dependent raw job-context
   registry.
 - Passed all three artifact builders in `--check` mode.
+- Passed Black at 79 columns, Ruff, `git diff --check`, and LF attribute
+  checks.
+- Passed 148 focused inventory/registry tests, 637 estimates tests, and 175
+  PSID/schema tests, with no failures or skips.
 
 ## Next
 
-1. Run Black, Ruff, and the requested focused, estimates, and PSID suites.
-2. Record final identities, verification results, and branch status.
+- No implementation work remains; deliver the final report through the
+  requested output channel.
