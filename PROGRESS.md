@@ -2,7 +2,7 @@
 
 ## State
 
-Title I's legal-registry schema is drafted; drafting Title II's official-inventory disposition laws before the common revision-7 lifecycle frame.
+Both substantive titles are drafted; the remaining work is the exact replacement/closure ledger, revision-7 comparator census and successors, and final ratification/build law.
 
 ## Done
 
@@ -14,9 +14,9 @@ Title I's legal-registry schema is drafted; drafting Title II's official-invento
 - Recomputed the immutable 32-row adjudication artifact and the exact surviving residual partition: grammar 6, slot/absence 7, downstream 12.
 - Confirmed that the staged legal captures are schema inputs only; Amendment 5 will pin none of their rows or digests.
 - Drafted the concrete legal input, complete registry and source-manifest schemas, rule/source join, source-byte closure, independent legal-rule domain, interval/partition law, and v2 future-row authentication predicate.
+- Pinned the exact 25-row official-inventory residual scope and drafted the Class-B grammar, Class-A whole-document hierarchy/absence, and Class-C rule-residual consequence laws.
 
 ## Next
 
-- Draft and commit Title II inventory disposition law.
 - Add the replacement ledger, 31-row comparator census, revision-7 successors, build sequence, and ratification law.
 - Recompute passage and document digests, run closure checks, and remove this temporary file before final handoff.

@@ -24166,3 +24166,462 @@ domain, bundle, gate, capture, receipt, and result digests must be freshly
 recomputed; no predecessor digest is copied. The replacement does not
 reinterpret the existing `ratified_design:` root as a future Git artifact
 and therefore does not self-authenticate the candidate.
+
+### 19.3 TITLE II — official-inventory disposition laws
+
+#### 19.3.1 Authenticated residual scope and exact three-class partition
+
+The sole scope root is
+`data/external/psid_codebook_inventory_adjudication_v1.json` at source
+commit `b8e8e4f200b362a9661dbc6ef765852496608e49`, whose sole parent is
+`044d2fc789052e89ea0849fa39fea9899317d97e`. The path has mode `100644`,
+Git blob `c956f5e0cdd63a9eefc0c1bde3824cd817950b39`, exactly 1,415,319 raw
+bytes, raw SHA-256
+`df73026bcf649d12ecb606501d64780f41567b6dc09d7029f9191111cab09c62`,
+and independently reconstructed self-zeroed content SHA-256
+`359c7edac8c0b331c1a4d2a77ad2945974fa033e50e104d866e48b39a45b5a84`.
+Its schema and artifact literals are both
+`psid_codebook_inventory_adjudication.v1`. No worktree, staging, report, or
+later edited copy is a scope operand.
+
+Each row digest below hashes the complete strict-parsed
+`registration_required_residuals[index]` row under §10.1 canonical JSON with
+one terminal LF. The rows, indices, IDs, and class membership are an exact
+enumeration, not examples.
+
+| Class | Source index | Exact `residual_id` | Complete row SHA-256 |
+|---|---:|---|---|
+| B | 0 | `wave1968_ry1968_1974_early_totals:fixed_width_missing_token_grammar` | `23d99caf96d768890114c524a109e50f9b6a0fb647cd4581358947a088382041` |
+| B | 4 | `ry1975_1977_spouse_concept_seam:fixed_width_missing_token_grammar` | `758f345fca251795b085cdcd7612a530d55ad0b3c6b86a3038a90518be742573` |
+| B | 10 | `ry1978_1992_pre_er_totals:fixed_width_missing_token_grammar` | `3978ce76bea607de075add3e6c7adf6dfd6fcb4c34b6212c8d2654519f4243d9` |
+| B | 13 | `ry1993_2001_er_transition:fixed_width_missing_token_grammar` | `dfee0aa93e3f625f67a8ce2af1fcfb58fe67acfb87d7ca1e30816ac4d57b6528` |
+| B | 17 | `ry2002_2014_modern_bc_de:fixed_width_missing_token_grammar` | `d4d8a18d8824b7ec1d0d429389783d9f48a451ad08b712a948231895047c69b5` |
+| B | 25 | `ry2015_2022_exclusion_lineage:fixed_width_missing_token_grammar` | `7e3ef6b1c0340ae832a922b60f92091af9642aa7c2ab49f23aacf3e699d748ae` |
+| A | 1 | `wave1968_ry1968_1974_early_totals:questionnaire_slot_closure` | `8b133338fda147b9b48bbc4e48b4cacc7c71eab4879b0adcb2b3adef6cb3835e` |
+| A | 2 | `wave1968_ry1968_1974_early_totals:unsupported_job_context_absence_proofs` | `3a2901825d71ece3e09df3bb80ddc627f30b7fce06e5415b780e14a5abfae8bb` |
+| A | 5 | `ry1975_1977_spouse_concept_seam:questionnaire_slot_closure` | `a8d3111af3a84318ce4b0292c9521e4a32c62fb9463cc4e67aa0ed1bcc8339b3` |
+| A | 11 | `ry1978_1992_pre_er_totals:questionnaire_slot_closure` | `fd3bc863c0775cf05bfe96e0690cf8623e11337207f68f6b8ab826642278a038` |
+| A | 14 | `ry1993_2001_er_transition:questionnaire_slot_closure` | `c3c6e342db0c7c179ae53e3aa5f1e3b38fcda0a8bd3dab6839d4d3cf7323eb98` |
+| A | 18 | `ry2002_2014_modern_bc_de:questionnaire_slot_closure` | `5a779f1d6f1e67bfa3d470d3884f2acba15aa98c5fb6397107a19c370f444325` |
+| A | 26 | `ry2015_2022_exclusion_lineage:questionnaire_slot_closure` | `dbb2de2ee9f4b82db6ce26e35a26e5489f9efab8e5661b038af2217e457349d2` |
+| C | 9 | `ry1975_1977_spouse_concept_seam:V-B6:secondary_job_attachment_and_absence` | `fc5e885dce17e4fcc140e6e0823f7fd8e1b6e7557f52b12112ae617af5fc5b96` |
+| C | 12 | `ry1978_1992_pre_er_totals:early_split_and_inclusion` | `5f452d93c2ae7eba01629dfa82bf95be525f59e9ca38a0941d19258372f7c2e3` |
+| C | 15 | `ry1993_2001_er_transition:role_farm_labor_allocation` | `99972044f0b8c01532f885d29cc4a35985c4bb7df426e37531c7274338e7b8c4` |
+| C | 16 | `ry1993_2001_er_transition:edited_total_reconciliation` | `47ecec93c52ada192aa26d428aa2c9de8e2c7ccef88eedaa05a469e1a67fbaf5` |
+| C | 19 | `ry2002_2014_modern_bc_de:job_chronology_exposure_attachment` | `dce26365515c2750c9b820fd1eacb07cd498f97dbbb44bad5440978409889f56` |
+| C | 20 | `ry2002_2014_modern_bc_de:job_amount_role_total_reconciliation` | `0386c86b7e7c58922747b7af3c548c6fcd71236438464be081b65c24aaed63f9` |
+| C | 21 | `ry2002_2014_modern_bc_de:role_farm_labor_allocation` | `93af3e95ee699e6500953728b3aa95e65b6013fdcac329146da42996a3ee012d` |
+| C | 22 | `ry2002_2014_modern_bc_de:edited_total_reconciliation` | `1aad226827471216abf23db660de84369c0e86dfc21715f052564155bfbc11ec` |
+| C | 27 | `ry2015_2022_exclusion_lineage:job_chronology_exposure_attachment` | `af986b2c8b49b7ba46a3ee40ebb8c218a7a3a3ac964847428d22aaf66cc0b988` |
+| C | 28 | `ry2015_2022_exclusion_lineage:job_amount_role_total_reconciliation` | `2c0ac9ed607cbfc5e8725cba425de22d979aef8c5319c2ca119339c920e8f1ff` |
+| C | 29 | `ry2015_2022_exclusion_lineage:role_farm_labor_allocation` | `552e7b8ffdb7b700260113c4103d53a47855fe371c83115f68c6ea669a1fe227` |
+| C | 30 | `ry2015_2022_exclusion_lineage:edited_total_reconciliation` | `f9682b0811199d632be38061cf733ac72d2e94ba7a27c1a0db6f34523cc7cd08` |
+
+Within each class, the canonical residual-ID array follows the displayed
+source-index order. Their SHA-256 values are respectively:
+
+- Class B, six IDs:
+  `96c4cd39be4cb0cc3a32017972f0f95db34db9d478a7a539e319a65ecf1301af`;
+- Class A, seven IDs:
+  `458c3e184e247b35d524b6800a6333eb1821b905f95322cb09aa5b90c9640b5b`;
+  and
+- Class C, twelve IDs:
+  `7e795fb94c60ed43add537cb283cc474945d742adf9ed41abc6cc9851a6a50e2`.
+
+Concatenating B then A then C produces the exact 25-ID surviving domain with
+canonical SHA-256
+`639af85904b56d59d9a3bf2d943c9a7ada0e1fd50c9c714ac6fb0f5f33da2701`.
+The exact complement in the source 32-row array is
+`[3,6,7,8,23,24,31]`; that canonical integer array has SHA-256
+`b79bd448bb397ed0ac6c91c812aabc809e433882c11e5506cc5bb529c73a8951`.
+Those seven rows remain resolved or otherwise disposed under §§17–18 and
+are not silently reopened. A class row may leave this surviving domain only
+through a source-authenticated successor disposition that exact-references
+its row and closes the applicable law below; omission or relabeling is not
+resolution.
+
+#### 19.3.2 Class B — lawful fixed-width grammar derivation
+
+For each `present` official-inventory row, `layout_coordinates` remains
+positional with `raw_field_ids` and `typed_parse_specs` and now has exactly
+one object per raw field with:
+
+```text
+raw_field_id
+start
+end
+raw_width
+dictionary_source_document_ids
+dictionary_field_row_sha256
+codebook_field_row_sha256
+codebook_value_domain_sha256
+raw_token_grammar
+```
+
+`start` and `end` are nonnegative JSON integers excluding booleans and use
+zero-based half-open fixed-width record coordinates; `start < end` and
+`end - start == raw_width == typed_parse_specs.raw_width`. The ordered,
+nonempty dictionary document IDs and complete canonical dictionary-field row
+establish field identity, coordinates, width, declared type, and declared
+numeric format. The complete codebook-field row and value-domain digest
+establish every source-listed value/range, its source meaning, and whether it
+is typed or missing. Each digest is recomputed from the referenced committed
+row; no inventory-authored transcription can be its own authority.
+
+`raw_token_grammar` has exactly:
+
+```text
+grammar_status
+observed_source_file_id
+observed_source_sha256
+observed_record_count
+observed_token_rows
+observed_token_row_count
+observed_token_rows_sha256
+unobserved_possible_values
+unknown_token_action
+```
+
+`grammar_status` is exactly `source_declared_complete |
+pinned_observed_domain_complete_with_closed_unobserved_action`. The observed
+source ID and complete-file SHA-256 exact-match the immutable raw source file
+registered for the inventory row. Record count is a nonnegative JSON integer
+excluding booleans. Each observed-token row has exactly `raw_token_hex`,
+`frequency`, `source_value`, `codebook_entry_positions`, and `disposition`.
+The lowercase hex decodes to exactly `raw_width` bytes; frequency is a
+positive JSON integer; codebook positions are a nonempty, unique, ascending
+array of nonnegative JSON integers; and `disposition` is exactly
+`typed_value | missing`. Rows are unique and ordered by unsigned decoded raw
+bytes, counts and the complete canonical row-array digest agree, and
+frequencies sum exactly to `observed_record_count` for that field's complete
+fixed-width census.
+
+`unobserved_possible_values` exact-covers every complete codebook
+value/range entry with zero observed occurrences. Each row has exactly
+`source_value_domain`, `rendering_status`, `registered_raw_token_hexes`, and
+`if_encountered`. `source_value_domain` is the nonempty ascending array of
+zero-based codebook-entry positions represented by that row. The only
+lawful combinations are:
+
+| `rendering_status` | `registered_raw_token_hexes` | `if_encountered` |
+|---|---|---|
+| `unique_registered_rendering` | complete nonempty unique unsigned-byte-ordered exact-width token array | `parse_under_registered_grammar` |
+| `physical_rendering_unestablished` | exact empty array | `abort_before_classification_require_successor_inventory_ratification` |
+
+The top-level `unknown_token_action` is always
+`abort_before_classification_require_successor_inventory_ratification`.
+`source_declared_complete` is permitted only when dictionary/codebook bytes
+jointly declare one unambiguous physical rendering for every possible token,
+including sign, padding, blank, and sentinel bytes, and the raw-file census
+confirms every observed spelling. The second grammar status is permitted
+when those sources establish meanings and observed spellings but leave one
+or more possible unobserved physical spellings unproved; every such value is
+then represented by one of the two closed rows above. A row or field conflict
+aborts.
+
+The three evidence roles are noninterchangeable. Dictionary/layout files
+prove coordinates, width, format, and any explicit padding rule. Complete
+codebook value lists prove meanings and missing dispositions. Exhaustive
+census of the byte-pinned raw field proves only the physical spellings and
+frequencies that occur in that file. Observation cannot invent meaning; a
+codebook cannot invent sign or padding; an era convention cannot substitute
+for field-specific evidence; and agreement by two sources cannot override a
+conflict in the third. This exact combination is sufficient for a present
+row only when every observed token is exact-width, has one semantic branch,
+and the census exact-covers the pinned file.
+
+An unobserved source value with a uniquely source-determined rendering may
+enter the registered grammar. An unobserved value whose physical rendering
+is not established remains outside it with the explicit field-level abort
+action. An observed but unmapped token aborts inventory ratification. A
+later unseen token is source drift requiring successor inventory
+ratification. None becomes blank, missing, zero, a stripped value,
+`modelable`, `unresolved`, or an optional legal-authority consequence.
+
+For actual field-level presence, every `missing_raw_tokens` member is
+prospectively replaced by an object with exactly `raw_field_id`,
+`raw_token_hex`, `source_meaning`, and `missing_reason_code`. Rows follow
+`raw_field_ids` position and then unsigned token bytes. They exact-project
+only observed or uniquely source-rendered grammar tokens whose codebook
+disposition is `missing`. A physically unestablished possible sentinel stays
+only in `unobserved_possible_values` and keeps the abort action; it is never
+silently added as missing. Section 4.1 presence tests the exact
+`(raw_field_id,raw_token_hex)` pair, so the same raw bytes in another field
+cannot inherit the disposition.
+
+No generic whitespace trim, sign inference, decimal inference, locale
+conversion, cross-field padding default, or first-successful parse exists.
+Exact removal of a specifically registered field-level padding prefix or
+suffix is lawful only when the dictionary grammar and registered raw token
+both establish those exact bytes. This Class-B law closes all six displayed
+grammar residuals but does not itself supply any field grammar row.
+
+#### 19.3.3 Class A — exhaustive slot hierarchy and absence-proof scope
+
+The source-only closure evidence is the future canonical artifact at
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json`, with
+schema literal `psid_questionnaire_slot_closure_evidence.v1`. It is a
+subordinate source-evidence member authenticated by the official slot
+registry's source-authority manifest, not a tenth official registry or a
+production input. Its top level has exactly `schema_version`, `era_rows`,
+`era_row_count`, `era_id_order`, `era_domain_sha256`, and `status`.
+
+The complete ordered era/wave domain is:
+
+| `era_id` | Exact `interview_waves` |
+|---|---|
+| `wave1968_ry1968_1974_early_totals` | `[1968,1969,1970,1971,1972,1973,1974,1975]` |
+| `ry1975_1977_spouse_concept_seam` | `[1976,1977,1978]` |
+| `ry1978_1992_pre_er_totals` | `[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993]` |
+| `ry1993_2001_er_transition` | `[1994,1995,1996,1997,1999,2001]` |
+| `ry2002_2014_modern_bc_de` | `[2003,2005,2007,2009,2011,2013,2015]` |
+| `ry2015_2022_exclusion_lineage` | `[2017,2019,2021,2023]` |
+
+The concatenation is the complete unique 43-wave §4.2 interview domain in
+official order. Each era row has exactly `era_id`, `interview_waves`,
+`whole_document_locators`, `hierarchy_rows`, `hierarchy_row_count`,
+`hierarchy_keyset_sha256`, `expanded_disposition_rows`,
+`expanded_disposition_row_count`, `expanded_disposition_keyset_sha256`,
+`absence_proofs`, `absence_proof_count`, `absence_proof_domain_sha256`, and
+`status`. Counts and canonical digests close every nested ordered domain;
+status passes only when every wave and equation below passes.
+
+A hierarchy row has exactly `questionnaire_slot_id`, `interview_wave`,
+`role`, `job_slot`, `questionnaire_component_slot`, `slot_kind`,
+`flow_branch_ids`, and `source_locator_ids`. It enumerates every
+remuneration and context node in every page and flow branch, both roles,
+every questionnaire-defined job and aggregate, and every component/context
+slot. It is derived from complete official questionnaires, never from fields
+used by the current reader or from the desired inventory shape.
+
+An expanded-disposition row has exactly `source_inventory_key`,
+`questionnaire_slot_id`, `field_purpose`, `questionnaire_presence`,
+`positive_locator_ids`, and `absence_proof_id`. It positionally exact-covers
+the hierarchy × ordered 35-purpose domain and is the exact tagged union:
+
+- `questionnaire_presence: asked` requires a nonempty complete positive-
+  locator array and null absence-proof ID; or
+- `questionnaire_presence: structural_query_slot` requires an exact empty
+  positive-locator array and one nonnull, resolving absence-proof ID.
+
+No third state or evidence-free empty array exists. The slot and inventory
+keys are independently recomputed under §4.2; the extraction cannot author
+them.
+
+Each `whole_document_locators` member has exactly `locator_id`,
+`source_document_id`, `interview_wave`, `filename`, `location_type`,
+`byte_start`, `byte_end`, `size_bytes`, `full_file_sha256`, `range_sha256`,
+and `pdf_page_domain`. It obeys all of these equations:
+
+```text
+location_type == whole_document_exact_file_range
+byte_start == 0
+byte_end == size_bytes
+range_sha256 == full_file_sha256
+pdf_page_domain == all_pages_and_flow_branches
+```
+
+Each locator resolves one manifest-authenticated complete regular file and
+its full byte range. Every official family questionnaire for every claimed
+wave is included; where a wave has multiple family questionnaire/flow
+documents, every one is included. The era closure separately binds the
+complete paired dictionary/layout and codebook field streams used to
+enumerate the hierarchy through their source-manifest rows and complete
+keyset hashes below. A bounded page range, keyword hit, search-result
+snippet, filename-only match, or same-title byte cannot stand in for this
+closure.
+
+The existing official-inventory `absence_proof` nested member is
+prospectively completed with exactly `absence_proof_id`, `era_id`,
+`target_inventory_keys`, `target_predicate`, `searched_interview_waves`,
+`searched_locator_ids`, `searched_layout_keyset_sha256`,
+`searched_codebook_keyset_sha256`, `excluded_near_matches`,
+`search_implementation`, and `conclusion`. `search_implementation` is the
+§18/#345 precedent literal
+`questionnaire_whole_document_visual_and_flow_review_v1`.
+
+`target_predicate` names the exact role × job slot × questionnaire component
+× slot kind × field-purpose tuple set being negated.
+`target_inventory_keys` is the complete independent expansion of that
+predicate, never a proof-selected subset. `searched_interview_waves` is the
+complete era array for an era-wide claim or the exact claimed wave subset
+for a narrower claim; every corresponding complete questionnaire locator is
+in `searched_locator_ids`. The two keyset digests close the complete relevant
+layout and codebook streams. `excluded_near_matches` explicitly dispositions
+every positive label, branch, field, or slot close enough to satisfy any
+part of the target predicate. `conclusion` is source-backed and may establish
+only its exact target/domain.
+
+A lawful absence proof therefore sweeps all pages and flow branches of every
+document in its claimed wave scope, the complete role/job/component/context
+hierarchy, all 35 purposes, and the complete linked layout/codebook streams.
+It proves both the positive hierarchy and every unsupported tuple. “Not used
+by the existing reader,” a short label, a missing token in data, keyword
+absence, a bounded questionnaire section, or a crosswalk declaration proves
+nothing. A narrow whole-document proof remains narrow; in particular,
+§18's through-2011 referee sweep cannot be generalized to the full 43-wave
+slot universe without the additional exact documents and rows.
+
+The six passing era closures discharge the seven Class-A residual IDs only
+because the early era separately exact-covers both its positive
+questionnaire-slot hierarchy and every unsupported early
+job/context/purpose negative. Any missing wave, branch, role, job,
+component, purpose, source stream, near-match disposition, row, count, or
+digest leaves the corresponding residual `registration_required`. This law
+ratifies the extraction target and proof form; it does not declare any
+future extraction complete.
+
+#### 19.3.4 Class C — rule-registry residual consequences
+
+The existing v1 registry names remain unchanged, but three previously
+underspecified exact row schemas gain one common
+`residual_consequence` member immediately before `failure_disposition`.
+The complete successor reconciliation-row order is:
+
+```text
+reconciliation_rule_id
+applicable_source_inventory_keys
+ordered_operand_selectors
+precedence_order
+exact_once_formula_ast
+residual_disposition
+residual_consequence
+failure_disposition
+reason_code
+```
+
+The complete successor job-match-row order is:
+
+```text
+job_spell_match_rule_id
+applicable_source_inventory_keys
+allowed_wave_reference_pairs
+required_role_fields
+required_job_identifier_fields
+compatibility_predicate_ast
+ambiguity_action
+stable_component_id_preimage_fields
+residual_consequence
+failure_disposition
+reason_code
+```
+
+The complete successor SE-aggregation-row order is:
+
+```text
+se_aggregation_group_rule_id
+applicable_source_inventory_keys
+person_year_key_fields
+same_service_key_fields
+eligible_gain_concepts
+eligible_loss_concepts
+forbidden_cross_group_offsets
+group_id_preimage_fields
+family_aggregate_allocation_rule
+residual_consequence
+failure_disposition
+reason_code
+```
+
+The existing `residual_disposition`, `ambiguity_action`,
+`family_aggregate_allocation_rule`, and all three runtime
+`failure_disposition` members retain their executable meanings. The new
+member records source-authority sufficiency and registration consequence; it
+cannot substitute for an executable AST, matching rule, allocation key, or
+runtime failure action. This explicit keyset replacement retains the outer
+v1 artifact/registry names because no official row has yet been ratified,
+but every enclosing row, registry, nine-registry identity, G17, crosswalk,
+bundle, and receipt digest must be freshly computed.
+
+The common member is `psid_rule_residual_consequence.v1` and has exactly:
+
+```text
+schema_version
+residual_evidence_identity
+authority_status
+verification_class
+verification_claim_ids
+residual_ids
+row_consequences
+```
+
+`residual_evidence_identity` has exactly `path`, `artifact_id`,
+`schema_version`, and `sha256` and exact-matches the raw adjudication
+identity in §19.3.1. `authority_status` is exactly `verified |
+documented_no_source_allocation_required | authority_absent |
+authority_conflict`. `verification_class` is exactly
+`registration_required | direct_only_optional`; it and the complete ordered
+claim-ID array are independently derived from the claim, legal-rule, and
+applicable-inventory-key closure and exact-compared with the row. A row
+cannot select a smaller key domain, omit a claim, or demote a required
+dependency.
+
+Each `row_consequences` member has exactly `consequence_id`, `residual_id`,
+`source_inventory_key`, `source_handling`, `coverage_consequence`, and
+`reason_code`. The ID is the literal
+`<rule-id>:<residual-id>:<source-inventory-key>`. Rows exact-cover the
+Cartesian expansion of the member's complete residual-ID array and every
+independently applicable inventory key, in §19.3.1 residual order and then
+official inventory order. `source_handling` is exactly:
+
+```text
+inclusive_total_exact_once
+edited_total_exact_once_details_lineage_only
+aggregate_unallocated_no_person_assignment
+no_unproved_job_attachment
+```
+
+`coverage_consequence` is exactly `continue_registered_parent | modelable |
+unresolved | abort_registration`. The complete registry allocation is:
+
+| Registry | Exact Class-C source indices |
+|---|---|
+| reconciliation | `[9,12,16,20,22,28,30]` |
+| job spell match | `[19,27]` |
+| SE aggregation | `[15,21,29]` |
+
+Residual 9 alone may have
+`authority_status: documented_no_source_allocation_required`. It must bind
+the complete §18.2 documented-inclusive-total projection, use
+`inclusive_total_exact_once`, and use
+`coverage_consequence: continue_registered_parent`. `V4379`, `V5289`, or
+`V5788` is consumed once; `V4901`–`V4907` remains descriptor context only.
+No rate × weeks × hours amount, component decomposition, secondary-job
+addition, or new allocation is authorized. This is the §18 inclusive-total
+precedent expressed at the rule-registry stage, not a weakening of V-B6.
+
+Residuals 12, 16, 20, 22, 28, and 30 use
+`edited_total_exact_once_details_lineage_only`; residuals 15, 21, and 29 use
+`aggregate_unallocated_no_person_assignment`; residuals 19 and 27 use
+`no_unproved_job_attachment`. These values preserve an authenticated parent
+total or aggregate and prevent unproved detail/person/job attachment; they
+do not themselves make an unresolved required row executable. Every one of
+the twelve source residual rows has literal `status:
+registration_required` in the authenticated adjudication blob.
+
+A source-resolved successor may use `authority_status: verified` only when
+the complete executable rule and its source closure pass and the residual is
+removed by an exact successor disposition. For `authority_absent |
+authority_conflict`, a `registration_required` row forces
+`abort_registration` for every affected key. `modelable`, `unresolved`, a
+runtime fallback, preservation of a raw parent, or structural nonuse cannot
+cure it. Thus the eleven Class-C residuals other than index 9 remain hard
+official-inventory/registry blockers until source-resolved.
+
+The `direct_only_optional` branch exists only for a key independently proved
+optional under §4.1. It requires exactly one `modelable | unresolved`
+consequence for every applicable key and must exact-match that same key's
+registered `optional_row_consequences` value and reason. The existing
+unresolved-dominates fold remains controlling. None of the twelve displayed
+registration-required residuals can enter this branch without a later
+ratified design-law change; a candidate source or rule row cannot reclassify
+one.
+
+A downstream gap never rewrites an official inventory row from `present` to
+`structural_missing`. No zero, equal/proportional share, row-order match,
+nearest-job match, first-nonmissing choice, context-derived annual amount, or
+silent aggregate-to-person allocation exists. Section 16.3.2's one-half
+mixed split remains a modeled child split after one exact read of its parent
+and is never relabeled as source allocation. G17 may carry complete negative
+objects structurally, but final production, crosswalk, and registry
+registration abort wherever a required gap remains.
