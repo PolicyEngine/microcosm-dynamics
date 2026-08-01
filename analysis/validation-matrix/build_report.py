@@ -9,7 +9,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-
 HERE = Path(__file__).resolve().parent
 MATRIX_PATH = HERE / "matrix.json"
 OUT = HERE / "report.md"
@@ -38,7 +37,9 @@ def escape(text: str) -> str:
     return text.replace("|", "\\|").replace("\n", "<br>")
 
 
-def display_mapping(mapping: dict[str, Any], skip: set[str] | None = None) -> str:
+def display_mapping(
+    mapping: dict[str, Any], skip: set[str] | None = None
+) -> str:
     skip = skip or set()
     parts = []
     for key, value in mapping.items():
@@ -195,7 +196,11 @@ def display_deviation(deviation: dict[str, Any]) -> str:
                 rendered = compact_number(value)
             parts.append(f"{key.replace('_', ' ')}: {rendered}")
     if not parts:
-        parts.append(display_value({k: v for k, v in deviation.items() if k != "definition"}))
+        parts.append(
+            display_value(
+                {k: v for k, v in deviation.items() if k != "definition"}
+            )
+        )
     if deviation.get("definition"):
         parts.append(f"Definition: {deviation['definition']}")
     return "<br>".join(parts)
@@ -209,9 +214,7 @@ def display_mismatch(mismatch: dict[str, Any]) -> str:
         "benefit_concept": "Benefit concept",
         "earnings_and_accounting": "Earnings/accounting",
     }
-    return "<br>".join(
-        f"**{labels[key]}:** {mismatch[key]}" for key in labels
-    )
+    return "<br>".join(f"**{labels[key]}:** {mismatch[key]}" for key in labels)
 
 
 def row_group(row: dict[str, Any]) -> str:
@@ -255,7 +258,9 @@ def human_matrix(matrix: dict[str, Any]) -> list[str]:
                 display_deviation(row["deviation"]),
                 display_mismatch(row["concept_mismatch"]),
             ]
-            output.append("| " + " | ".join(escape(cell) for cell in cells) + " |")
+            output.append(
+                "| " + " | ".join(escape(cell) for cell in cells) + " |"
+            )
         output.append("")
     return output
 
@@ -313,7 +318,9 @@ def series_inventory(matrix: dict[str, Any]) -> list[str]:
             (
                 f"`counts` contains {counts['per_draw_row_count']} per-draw rows "
                 f"and {counts['aggregate_metric_count']} aggregate metrics: "
-                + ", ".join(f"`{item}`" for item in counts["aggregate_metrics"])
+                + ", ".join(
+                    f"`{item}`" for item in counts["aggregate_metrics"]
+                )
                 + "."
             ),
             "",
@@ -369,7 +376,9 @@ def blocked_table(matrix: dict[str, Any]) -> list[str]:
             item["reason"],
         ]
         output.append("| " + " | ".join(escape(cell) for cell in cells) + " |")
-    output.extend(["", "Published-side examples retained as gaps, not rows:", ""])
+    output.extend(
+        ["", "Published-side examples retained as gaps, not rows:", ""]
+    )
     for item in matrix["blocked_comparisons"]:
         examples = item.get("published_examples_not_promoted_to_rows", [])
         for example in examples:
@@ -409,9 +418,7 @@ def per_row_notes(matrix: dict[str, Any]) -> list[str]:
             f"`{', '.join(row['comparison_scope'])}`; our source "
             f"`{source['path']}` at `{source['json_pointer']}`, SHA-256 "
             f"`{source['sha256']}`; status: {row['evidential_status']}; mismatch "
-            "codes: "
-            + ", ".join(f"`{code}`" for code in codes)
-            + "."
+            "codes: " + ", ".join(f"`{code}`" for code in codes) + "."
         )
     output.append("")
     return output
@@ -568,7 +575,9 @@ def capture_section(matrix: dict[str, Any]) -> list[str]:
         "",
     ]
     for name, capture in review["captures"].items():
-        warning = f" Warning: {capture['warning']}" if capture.get("warning") else ""
+        warning = (
+            f" Warning: {capture['warning']}" if capture.get("warning") else ""
+        )
         output.append(
             f"- `{name}` — `{capture['filename']}`, SHA-256 "
             f"`{capture['sha256']}`, {capture['size_bytes']:,} bytes, "

@@ -15,7 +15,6 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).with_name("matrix.json")
 
@@ -263,7 +262,11 @@ def label_state(source_has_embedded_labels: bool) -> dict[str, Any]:
 
 
 def source_pin(relative: str, pointer: str) -> dict[str, str]:
-    return {"path": relative, "sha256": sha256(relative), "json_pointer": pointer}
+    return {
+        "path": relative,
+        "sha256": sha256(relative),
+        "json_pointer": pointer,
+    }
 
 
 def official_locator(series_id: str, role: str) -> dict[str, Any]:
@@ -465,7 +468,9 @@ def build_trustees_rows() -> list[dict[str, Any]]:
         ]
         locators = [
             official_locator(series_id, role)
-            for series_id, role in zip(locator_ids, ["numerator", "denominator"])
+            for series_id, role in zip(
+                locator_ids, ["numerator", "denominator"]
+            )
         ]
         rows.append(
             {
@@ -582,7 +587,9 @@ def build_cbo_rows() -> list[dict[str, Any]]:
             {
                 "year": year,
                 "mean_index_2015_100": statistics.mean(indices),
-                "sample_sd_across_paired_draw_indices": statistics.stdev(indices),
+                "sample_sd_across_paired_draw_indices": statistics.stdev(
+                    indices
+                ),
             }
         )
 
@@ -632,7 +639,16 @@ def build_cbo_rows() -> list[dict[str, Any]]:
                 "variation_note": "exact mechanical identity; floating noise suppressed",
             }
         )
-    cbo_tax_share_values = [12.82, 13.09, 13.05, 12.58, 12.80, 13.50, 12.20, 12.63]
+    cbo_tax_share_values = [
+        12.82,
+        13.09,
+        13.05,
+        12.58,
+        12.80,
+        13.50,
+        12.20,
+        12.63,
+    ]
     cbo_tax_shares = [
         {"year": year, "percent": value}
         for year, value in zip(years, cbo_tax_share_values)
@@ -893,7 +909,9 @@ def build_ppi_rows() -> list[dict[str, Any]]:
             "evidential_status": "module replication; reported-not-gated",
         }
     )
-    for index, item in enumerate(ppi["three_way_comparison"]["ppi_by_quintile"]):
+    for index, item in enumerate(
+        ppi["three_way_comparison"]["ppi_by_quintile"]
+    ):
         ours = item["generated_pooled"]["mean"]
         published = item["dynasim_pct"]
         quintile = item["quintile"]
@@ -1186,7 +1204,8 @@ def build_sharing_rows() -> list[dict[str, Any]]:
                 "row_id": f"dynasim.favreault_steuerle.package1b.{cell_id}",
                 "external_model": "DYNASIM3",
                 "quantity": (
-                    "Package 1b winner/loser share: " + item["cell"].replace(":", ", ")
+                    "Package 1b winner/loser share: "
+                    + item["cell"].replace(":", ", ")
                 ),
                 "comparison_scope": ["share", "distributional_incidence"],
                 "our": {
@@ -1315,13 +1334,16 @@ def wish_financing_stub() -> dict[str, Any]:
     annual = []
     for year in years:
         indices = [
-            100.0 * values[year] / values[years[0]] for values in by_draw.values()
+            100.0 * values[year] / values[years[0]]
+            for values in by_draw.values()
         ]
         annual.append(
             {
                 "year": year,
                 "mean_index_2015_100": statistics.mean(indices),
-                "sample_sd_across_paired_draw_indices": statistics.stdev(indices),
+                "sample_sd_across_paired_draw_indices": statistics.stdev(
+                    indices
+                ),
             }
         )
     pairs = [(2015, 2016), (2017, 2018), (2019, 2020), (2021, 2022)]
@@ -1335,7 +1357,9 @@ def wish_financing_stub() -> dict[str, Any]:
             {
                 "component_years": [start, end],
                 "mean_index_2015_2016_100": statistics.mean(indices),
-                "sample_sd_across_paired_draw_indices": statistics.stdev(indices),
+                "sample_sd_across_paired_draw_indices": statistics.stdev(
+                    indices
+                ),
             }
         )
     return {
@@ -1346,7 +1370,8 @@ def wish_financing_stub() -> dict[str, Any]:
         "our": {
             "share_of_proxy_payroll": 0.003,
             "share_of_proxy_payroll_percent": 0.3,
-            "share_of_modeled_combined_12_4_percent_contributions": 0.003 / 0.124,
+            "share_of_modeled_combined_12_4_percent_contributions": 0.003
+            / 0.124,
             "annual_relative_trajectory": annual,
             "odd_year_carry_aware_biennial_relative_trajectory": biennial,
             "absolute_revenue_levels_published": False,
@@ -1497,7 +1522,9 @@ def available_series_inventory() -> dict[str, Any]:
             "per_draw_row_count": len(per_draw),
             "per_draw_fields": list(per_draw[0]),
             "aggregate_row_count": len(aggregates),
-            "aggregate_metrics": sorted({item["metric"] for item in aggregates}),
+            "aggregate_metrics": sorted(
+                {item["metric"] for item in aggregates}
+            ),
             "biennial_companion_row_count": len(table["biennial_companion"]),
             "odd_year_carry_disclosure": table["odd_year_carry_disclosure"],
         }
@@ -1639,7 +1666,9 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
                             "tableIncome2070; All beneficiaries > Total"
                         ),
                         "reviewed_external_capture": deepcopy(
-                            REFRESH_REVIEW["captures"]["ssa_mint_beneficiary_tables"]
+                            REFRESH_REVIEW["captures"][
+                                "ssa_mint_beneficiary_tables"
+                            ]
                         ),
                     },
                 },
@@ -1745,7 +1774,9 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
                         "page": "not applicable (unpaginated HTML)",
                         "table": "Key Findings, first bullet",
                         "reviewed_external_capture": deepcopy(
-                            REFRESH_REVIEW["captures"]["morningstar_wish_landing"]
+                            REFRESH_REVIEW["captures"][
+                                "morningstar_wish_landing"
+                            ]
                         ),
                     },
                     "warning": (
@@ -1784,7 +1815,12 @@ matrix = {
         "never national dollar levels"
     ),
     "honesty_frame": {
-        "allowed_comparison_scopes": ["ratio", "share", "trajectory", "ordering"],
+        "allowed_comparison_scopes": [
+            "ratio",
+            "share",
+            "trajectory",
+            "ordering",
+        ],
         "absolute_dollar_level_comparisons": False,
         "population_alignment_claim": False,
         "source_artifact_labels": SOURCE_ARTIFACT_LABELS,
@@ -1801,17 +1837,22 @@ matrix = {
         ),
     },
     "inputs": [
-        {"path": relative, "sha256": sha256(relative)} for relative in INPUT_PATHS
+        {"path": relative, "sha256": sha256(relative)}
+        for relative in INPUT_PATHS
     ],
     "external_capture_review": REFRESH_REVIEW,
     "available_series_inventory": available_series_inventory(),
     "certification_context": {
         "entry8_first_estimates": {
             "source": source_pin("runs/first_estimates_v1.json", "/"),
-            "configured_engine": first["configuration_echo"]["candidate_specs"],
+            "configured_engine": first["configuration_echo"][
+                "candidate_specs"
+            ],
         },
         "m6": {
-            "source": source_pin("runs/gate_m6_candidate3_v1.json", "/verdict"),
+            "source": source_pin(
+                "runs/gate_m6_candidate3_v1.json", "/verdict"
+            ),
             "status": m6["verdict"]["status"],
             "valid": m6["verdict"]["valid"],
             "n_seeds_pass": m6["gate_contract_result"]["n_seeds_pass"],
@@ -1852,7 +1893,9 @@ matrix = {
 }
 
 OUT.write_text(
-    json.dumps(matrix, sort_keys=True, indent=2, ensure_ascii=True, allow_nan=False)
+    json.dumps(
+        matrix, sort_keys=True, indent=2, ensure_ascii=True, allow_nan=False
+    )
     + "\n",
     encoding="utf-8",
 )

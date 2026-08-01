@@ -4,7 +4,6 @@ import hashlib
 import json
 from pathlib import Path
 
-
 MATRIX_PATH = (
     Path(__file__).resolve().parents[1]
     / "analysis"
