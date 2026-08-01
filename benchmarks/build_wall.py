@@ -15,7 +15,9 @@ from schema import (
     latest_records,
     load_history,
     load_registry,
+    require,
     sha256_bytes,
+    validate_history_against_registry,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -125,13 +127,17 @@ def render() -> bytes:
     registry, registry_raw = load_registry()
     history, _ = load_history()
     current_registry_sha = sha256_bytes(registry_raw)
+    validate_history_against_registry(history, registry, current_registry_sha)
     entries = registry["entries"]
     by_id = {entry["row_id"]: entry for entry in entries}
     latest = latest_records(history)
-    assert set(latest) == set(by_id)
-    assert all(
-        record["registry_sha"] == current_registry_sha
-        for record in latest.values()
+    require(set(latest) == set(by_id), "wall is missing active registry rows")
+    require(
+        all(
+            record["registry_sha"] == current_registry_sha
+            for record in latest.values()
+        ),
+        "latest wall records do not use the current registry",
     )
 
     records_by_row = defaultdict(list)
@@ -146,9 +152,12 @@ def render() -> bytes:
     )
     gap_counts = Counter(record["gap_class"] for record in latest.values())
     evaluated_run = next(iter(latest.values()))["evaluated_at_run"]
-    assert all(
-        record["evaluated_at_run"] == evaluated_run
-        for record in latest.values()
+    require(
+        all(
+            record["evaluated_at_run"] == evaluated_run
+            for record in latest.values()
+        ),
+        "latest wall records do not form one certified run set",
     )
 
     output = [
@@ -259,7 +268,10 @@ def render() -> bytes:
         ]
     )
     rendered = "\n".join(output).encode("utf-8")
-    assert b"https://" not in rendered and b"http://" not in rendered
+    require(
+        b"https://" not in rendered and b"http://" not in rendered,
+        "wall may not contain external links",
+    )
     return rendered
 
 

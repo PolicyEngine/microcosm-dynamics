@@ -13,8 +13,8 @@ offline source-capture request is retained as [SOURCES-NEEDED.md](SOURCES-NEEDED
 
 - [registry.json](registry.json) contains one specification per `row_id`,
   immutable source pins and exact locators, model-side artifact pointers,
-  comparison scope, verification status, primary gap law, and an initially
-  empty `spec_revisions` changelog.
+  comparison scope, verification status, primary gap law, and a preserved
+  `spec_revisions` changelog.
 - [history.jsonl](history.jsonl) is append-only. Each line is one compact,
   sorted-key canonical JSON object for one row evaluation.
 - [wall.md](wall.md) is the publishable generated view. It has no external
@@ -27,8 +27,10 @@ offline source-capture request is retained as [SOURCES-NEEDED.md](SOURCES-NEEDED
 `registry.json` is append-mostly. Add new entries; do not silently repurpose an
 existing `row_id`. If an existing specification's source pin or exact locator
 changes, append a nonempty object to that entry's `spec_revisions` with
-sequential `revision`, nonempty `changed_fields`, and a one-sentence `note`.
-Never erase an earlier revision note.
+sequential `revision`, JSON-Pointer `changed_fields` that cover every actual
+specification diff, and a one-sentence `note`. New rows are appended after all
+existing rows regardless of tier, are appended to `REGISTRY_ROW_ORDER` in the
+builder, and start with no revisions. Never erase an earlier revision note.
 
 ## Tiers
 
@@ -97,36 +99,46 @@ does not transfer certification to the anchor-context and replication
 artifacts that supply individual row values.
 
 The permanent reproduction pin covers exactly the first 42 canonical lines,
-not the whole growing file. `build_history.py --initialize` was a one-time
-operation and refuses to touch an existing history. Its normal role is
-`--check`.
+not the whole growing file. `build_history.py --check` verifies that frozen
+prefix independently of the current registry and never writes history. A
+separate committed-history check requires every prior history byte to remain
+the exact prefix of the current file.
 
 ## Append protocol
 
 For every future certified run:
 
-1. Commit any new registry entries first. For an existing source or locator
+1. Prepare any new registry entries first. For an existing specification
    change, preserve the old specification history through a new
-   `spec_revisions` note.
+   `spec_revisions` note. Commit the registry, evaluation set, history append,
+   and regenerated wall together so the harness never lands between states.
 2. Produce the immutable certified evaluation artifact and compute its SHA-256.
    A run SHA may appear in only one record set and may never be reused.
 3. Evaluate every active registry entry, in registry order, using the exact
-   registry bytes whose SHA-256 becomes `registry_sha`.
+   registry bytes whose SHA-256 becomes `registry_sha`. The evaluator is
+   responsible for deriving and reviewing the candidate values from the
+   certified artifact; the append tool checks identities and invariants but is
+   not a model evaluator.
 4. Emit one canonical JSONL object per row with exactly `evaluated_at_run`,
    `registry_sha`, `row_id`, `our`, `published`, `deviation`, `gap_class`,
-   `gap_note`, and `label_state`. Encode with UTF-8, sorted keys, compact
-   separators, ASCII escapes, finite numbers only, and one trailing LF per
-   object.
+   `gap_note`, and `label_state`. Units, gap class, and gap note must match the
+   registry. Under an unchanged registry, published values are immutable.
+   Encode with UTF-8, sorted keys, compact separators, ASCII escapes, finite
+   numbers only, and one trailing LF per object.
 5. Validate the candidate set, then append it as one contiguous byte block:
 
    ```sh
-   python benchmarks/append_history.py candidate.jsonl --check
-   python benchmarks/append_history.py candidate.jsonl --append
+   python benchmarks/append_history.py candidate.jsonl \
+     --run-artifact runs/certified.json --check
+   python benchmarks/append_history.py candidate.jsonl \
+     --run-artifact runs/certified.json --append
    ```
 
 6. Never edit, replace, reorder, or truncate an existing history byte. A row's
    deviation moving without a new `evaluated_at_run` SHA is a drift finding by
-   law; the append validator rejects every reused run SHA.
+   law; the append validator rejects every reused run SHA. The supplied run
+   artifact's bytes must hash to `evaluated_at_run`. Appends revalidate under
+   an exclusive lock and write the complete canonical set as one byte block.
 7. Regenerate `wall.md`, run all checks, and commit the history append and wall
    together. The first evaluation for a row has trend `n/a`; later movement is
    labeled neutrally as `changed` or `unchanged` unless a separate directional

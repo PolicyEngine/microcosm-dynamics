@@ -2396,6 +2396,52 @@ TIER_ORDER = (
     "model_triangulation",
     "statutory_parameter",
 )
+# Registry order is immutable. Add new row IDs only at the end of this tuple,
+# even when their tier would otherwise sort earlier.
+REGISTRY_ROW_ORDER = (
+    "ssa.reported_taxable_earnings_per_worker",
+    "ssa.adjusted_taxable_payroll_per_covered_worker",
+    "ssa.gross_contributions_per_worker",
+    "ssa.net_payroll_tax_contributions_per_covered_worker",
+    "ssa.retired_worker_beneficiaries_per_worker",
+    "ssa.retired_worker_awards_per_worker",
+    "ssa.retired_worker_benefits_per_reported_taxable_earnings",
+    "cbo.taxable_payroll.trajectory_2015_100",
+    "cbo.tax_revenue.share_of_taxable_payroll",
+    "dynasim.favreault_steuerle.package1b.married.male.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.male.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.female.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.female.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.female.gain_ge_20",
+    "dynasim.favreault_steuerle.package1b.divorced.male.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.divorced.male.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.divorced.female.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_20",
+    "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_20",
+    "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_5",
+    "dynasim.mermin.price_indexing.all",
+    "dynasim.mermin.ppi.generated.q1",
+    "dynasim.mermin.ppi.generated.q2",
+    "dynasim.mermin.ppi.generated.q3",
+    "dynasim.mermin.ppi.generated.q4",
+    "dynasim.mermin.ppi.generated.q5",
+    "dynasim.mermin.ppi.real_shared.q1",
+    "dynasim.mermin.ppi.real_shared.q2",
+    "dynasim.mermin.ppi.real_shared.q3",
+    "dynasim.mermin.ppi.real_shared.q4",
+    "dynasim.mermin.ppi.real_shared.q5",
+    "dynasim.mermin.nra70.q1",
+    "dynasim.mermin.nra70.q2",
+    "dynasim.mermin.nra70.q3",
+    "dynasim.mermin.nra70.q4",
+    "dynasim.mermin.nra70.q5",
+    "dynasim.mermin.nra70.all",
+    "dynasim.mermin.cola_minus_0_4pp.age_62_67",
+    "dynasim.mermin.cola_minus_0_4pp.age_80_85",
+    "dynasim.mermin.four_reform_cost_ordering",
+    "wish.hr4289.employee_rate.share_of_payroll",
+)
 TIER_DEFINITIONS = {
     "admin_truth": {
         "definition": (
@@ -2507,6 +2553,9 @@ ALLOWED_COMPARISON_SCOPES = (
     "trajectory",
     "ordering",
 )
+# Append a sequential changelog object here whenever an existing specification
+# changes. The schema and tests compare generations and reject silent edits.
+SPEC_REVISIONS: dict[str, list[dict[str, Any]]] = {}
 LABEL_MISMATCH_ROWS = {
     "ssa.reported_taxable_earnings_per_worker",
     "ssa.adjusted_taxable_payroll_per_covered_worker",
@@ -2714,28 +2763,41 @@ def registry_entry(row: dict[str, Any]) -> dict[str, Any]:
         "quantity": row["quantity"],
         "row_id": row["row_id"],
         "source_pin": published_source_pin(row),
-        "spec_revisions": [],
+        "spec_revisions": deepcopy(SPEC_REVISIONS.get(row["row_id"], [])),
         "tier": benchmark_tier(row),
         "verification_class": row["verification_class"],
     }
 
 
 def ordered_rows() -> list[dict[str, Any]]:
-    """Return evaluation rows in stable tier-first registry order."""
+    """Return rows in the explicit append-only registry order."""
 
-    positions = {name: index for index, name in enumerate(TIER_ORDER)}
-    original_positions = {
-        row["row_id"]: index for index, row in enumerate(all_rows)
-    }
-    return sorted(
-        all_rows,
-        key=lambda row: (
-            positions[benchmark_tier(row)],
-            original_positions[row["row_id"]],
-        ),
+    rows_by_id = {row["row_id"]: row for row in all_rows}
+    if len(rows_by_id) != len(all_rows):
+        raise AssertionError("duplicate builder row_id")
+    missing_rows = set(REGISTRY_ROW_ORDER) - set(rows_by_id)
+    if missing_rows:
+        raise AssertionError(
+            "append-mostly registry cannot remove frozen rows: "
+            + ", ".join(sorted(missing_rows))
+        )
+    unordered_rows = set(rows_by_id) - set(REGISTRY_ROW_ORDER)
+    if unordered_rows:
+        raise AssertionError(
+            "append new row IDs to REGISTRY_ROW_ORDER: "
+            + ", ".join(sorted(unordered_rows))
+        )
+    return [rows_by_id[row_id] for row_id in REGISTRY_ROW_ORDER]
+
+
+unknown_spec_revision_rows = set(SPEC_REVISIONS) - {
+    row["row_id"] for row in all_rows
+}
+if unknown_spec_revision_rows:
+    raise AssertionError(
+        "spec revisions name unknown rows: "
+        + ", ".join(sorted(unknown_spec_revision_rows))
     )
-
-
 registry_entries = [registry_entry(row) for row in ordered_rows()]
 tier_counts = {
     tier: sum(entry["tier"] == tier for entry in registry_entries)
