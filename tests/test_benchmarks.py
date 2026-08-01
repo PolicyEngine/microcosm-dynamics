@@ -235,9 +235,12 @@ def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
         <= {"ratio", "share", "trajectory", "ordering"}
         for entry in registry["entries"]
     )
+    _check_benchmark_migration_round_trip()
 
 
-def test__benchmark_migration__round_trips_merged_matrix_losslessly():
+def _check_benchmark_migration_round_trip():
+    """Exercise the merged-matrix lossless migration regression."""
+
     schema = load_schema()
     registry, _ = schema.load_registry()
     history, _ = schema.load_history()
@@ -341,7 +344,9 @@ def test__benchmark_history__unexplained_or_unnoted_gap_alarms():
         schema.validate_history(reused_run)
 
 
-def test__benchmark_history__binds_unverified_class_to_registry():
+def _check_unverified_history_binding():
+    """Exercise current-history gap-class binding."""
+
     schema = load_schema()
     registry, registry_raw = schema.load_registry()
     history, _ = schema.load_history()
@@ -359,7 +364,9 @@ def test__benchmark_history__binds_unverified_class_to_registry():
         )
 
 
-def test__benchmark_labels__future_states_are_consistent_and_evidence_bound():
+def _check_future_label_evidence_binding():
+    """Exercise future label consistency and evidence binding."""
+
     schema = load_schema()
     registry, registry_raw = schema.load_registry()
     history, _ = schema.load_history()
@@ -437,7 +444,9 @@ def test__benchmark_labels__future_states_are_consistent_and_evidence_bound():
         )
 
 
-def test__benchmark_wall__renders_future_label_diversity_from_history():
+def _check_future_label_rendering():
+    """Exercise future label-diversity rendering from history."""
+
     schema = load_schema()
     history, _ = schema.load_history()
     future = copy.deepcopy(history[:3])
@@ -527,6 +536,7 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws():
     )
     marked_preliminary["gap_class"] = "preliminary_source"
     schema.validate_registry_entry(marked_preliminary)
+    _check_unverified_history_binding()
 
 
 def test__benchmark_registry__retains_exact_dynasim_locators():
@@ -820,3 +830,5 @@ def test__benchmark_wall__is_self_contained_complete_and_seeded():
     assert "`preliminary_source` | 0" in wall
     assert "`unverified_source` | 20" in wall
     assert "`unexplained` | 0" in wall
+    _check_future_label_evidence_binding()
+    _check_future_label_rendering()
