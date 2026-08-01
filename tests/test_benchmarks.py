@@ -216,6 +216,74 @@ def run_append_check(
     )
 
 
+def _check_manifest_git_bindings(tmp_path: Path) -> None:
+    """Regress index preflight, HEAD binding, and literal path identity."""
+
+    schema = load_schema()
+    repo = tmp_path / "artifact-git-repo"
+    runs = repo / "runs"
+    runs.mkdir(parents=True)
+    wildcard_dir = repo / "wild"
+    wildcard_dir.mkdir()
+
+    def git(*arguments: str) -> None:
+        subprocess.run(
+            ["git", *arguments],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+    def entry(path: Path) -> dict[str, str]:
+        return {
+            "artifact_path": path.relative_to(repo).as_posix(),
+            "evaluated_at_run": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+
+    git("init", "--quiet")
+    modified = runs / "modified.json"
+    victim = wildcard_dir / "victim.json"
+    modified.write_bytes(b'{"evaluation":"committed"}\n')
+    victim.write_bytes(b'{"evaluation":"literal-victim"}\n')
+    git(
+        "--literal-pathspecs",
+        "add",
+        "--",
+        "runs/modified.json",
+        "wild/victim.json",
+    )
+    git(
+        "-c",
+        "user.name=Benchmark Test",
+        "-c",
+        "user.email=benchmark@example.test",
+        "commit",
+        "--quiet",
+        "-m",
+        "seed artifacts",
+    )
+    schema.validate_manifest_artifact(entry(modified), repo)
+
+    modified.write_bytes(b'{"evaluation":"staged-modification"}\n')
+    git("--literal-pathspecs", "add", "--", "runs/modified.json")
+    schema.validate_index_manifest_artifact(entry(modified), repo)
+    with pytest.raises(AssertionError, match="differs from HEAD"):
+        schema.validate_manifest_artifact(entry(modified), repo)
+
+    staged_new = runs / "staged-new.json"
+    staged_new.write_bytes(b'{"evaluation":"staged-new"}\n')
+    git("--literal-pathspecs", "add", "--", "runs/staged-new.json")
+    schema.validate_index_manifest_artifact(entry(staged_new), repo)
+    with pytest.raises(AssertionError, match="not committed at HEAD"):
+        schema.validate_manifest_artifact(entry(staged_new), repo)
+
+    literal_wildcard = wildcard_dir / "*.json"
+    literal_wildcard.write_bytes(victim.read_bytes())
+    with pytest.raises(AssertionError, match="not tracked in the Git index"):
+        schema.validate_index_manifest_artifact(entry(literal_wildcard), repo)
+
+
 def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
     schema = load_schema()
     registry, raw = schema.load_registry()
@@ -868,6 +936,7 @@ def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
             manifest,
         )
 
+    _check_manifest_git_bindings(tmp_path)
     assert {path: path.read_bytes() for path in before} == before
 
 

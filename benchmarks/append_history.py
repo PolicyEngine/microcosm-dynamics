@@ -20,6 +20,7 @@ from schema import (
     validate_history,
     validate_history_against_registry,
     validate_history_run_artifacts,
+    validate_index_manifest_artifact,
 )
 
 
@@ -97,7 +98,9 @@ def validate_candidate(path: Path, run_artifact: Path) -> tuple[bytes, bytes]:
     validate_history_run_artifacts(
         existing + candidate,
         [*manifest, artifact_entry],
+        require_git=False,
     )
+    validate_index_manifest_artifact(artifact_entry)
     return candidate_raw, canonical_jsonl_line(artifact_entry)
 
 
@@ -124,7 +127,7 @@ def append(path: Path, run_artifact: Path) -> None:
             raise OSError("short append to benchmark history")
         os.fsync(manifest_descriptor)
         os.fsync(history_descriptor)
-        load_history()
+        load_history(require_git=False)
     except BaseException:
         if mutated:
             for descriptor, size in zip(

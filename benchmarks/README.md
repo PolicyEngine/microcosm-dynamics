@@ -129,8 +129,11 @@ For every future evaluation run:
    run-manifest entry, history append, and regenerated wall together so the
    harness never lands between states.
 2. Produce the immutable evaluation artifact inside the repository, stage its
-   final bytes, and compute its SHA-256. The append checker rejects missing,
-   untracked, modified, or path-escaping artifacts.
+   final bytes, and compute its SHA-256. The append preflight binds the exact
+   literal artifact path and bytes to the Git index; it rejects missing,
+   untracked, unstaged-modified, ambiguous, or path-escaping artifacts.
+   Committed builder and CI checks separately bind every manifested artifact
+   to `HEAD`.
    A run SHA may appear in only one record set and may never be reused.
 3. Evaluate every active registry entry, in registry order, using the exact
    registry bytes whose SHA-256 becomes `registry_sha`. The evaluator is

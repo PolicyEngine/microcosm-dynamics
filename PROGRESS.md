@@ -2,8 +2,8 @@
 
 ## State
 
-Edits 1 and 2 are implemented. The structured preliminary-source predicate
-is under its final targeted and lint gates.
+Edits 1 through 3 are implemented. Run provenance binding is under its final
+public-check, targeted, and lint gates.
 
 ## Done
 
@@ -22,11 +22,14 @@ is under its final targeted and lint gates.
   SHA-pinned accepted publisher observations.
 - Added missing-marker, false-marker, and negated-prose regressions while
   retaining the existing structured-positive SSA case.
+- Split staged append preflight from committed builder/CI artifact checks.
+- Made both Git paths literal, NUL-delimited, exact-cardinality, returned-path
+  checked, and bound to the selected blob's exact bytes.
+- Added staged-new, staged-modified, and literal-wildcard regressions.
 
 ## Next
 
-1. Split index-bound append preflight from HEAD-bound committed checks.
-2. Bind label prose to the evidence-backed array result.
-3. Enforce exact public and internal history key shapes.
-4. Move rollback-size capture under both append locks.
-5. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.
+1. Bind label prose to the evidence-backed array result.
+2. Enforce exact public and internal history key shapes.
+3. Move rollback-size capture under both append locks.
+4. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.

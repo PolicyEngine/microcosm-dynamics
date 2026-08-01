@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import re
 import subprocess
 from collections import Counter, defaultdict
@@ -593,10 +594,10 @@ def repo_relative_artifact_path(path: Path, root: Path = ROOT) -> str:
     return relative
 
 
-def validate_manifest_artifact(
-    entry: dict[str, Any], root: Path = ROOT, *, require_git: bool = True
-) -> None:
-    """Resolve one manifested artifact and verify its committed byte identity."""
+def manifest_artifact_bytes(
+    entry: dict[str, Any], root: Path = ROOT
+) -> tuple[Path, str, bytes]:
+    """Return one confined artifact's path, relative path, and hashed bytes."""
 
     validate_run_manifest([entry])
     root = root.resolve()
@@ -610,38 +611,151 @@ def validate_manifest_artifact(
         path.is_file(), f"missing immutable evaluation artifact: {relative}"
     )
     require(
-        sha256_bytes(path.read_bytes()) == entry["evaluated_at_run"],
+        sha256_bytes(raw := path.read_bytes()) == entry["evaluated_at_run"],
         f"immutable evaluation artifact SHA mismatch: {relative}",
     )
-    if not require_git:
-        return
-    tracked = subprocess.run(
-        ["git", "ls-files", "--stage", "--error-unmatch", "--", relative],
+    return root, relative, raw
+
+
+def literal_git_record(
+    result: subprocess.CompletedProcess[bytes],
+    relative: str,
+    *,
+    source: str,
+) -> tuple[list[bytes], bytes]:
+    """Parse exactly one NUL-delimited literal-path Git record."""
+
+    missing_message = (
+        f"immutable evaluation artifact is not committed at HEAD: {relative}"
+        if source == "HEAD"
+        else f"immutable evaluation artifact is not present in {source}: {relative}"
+    )
+    require(
+        result.returncode == 0,
+        missing_message,
+    )
+    records = result.stdout.split(b"\0")
+    if records and records[-1] == b"":
+        records.pop()
+    require(
+        len(records) == 1,
+        (
+            f"immutable evaluation artifact is not committed at HEAD as "
+            f"exactly one literal path: {relative}"
+            if source == "HEAD"
+            else f"{source} must return exactly one immutable artifact path: "
+            f"{relative}"
+        ),
+    )
+    metadata, separator, returned_path = records[0].partition(b"\t")
+    require(
+        separator == b"\t" and returned_path == os.fsencode(relative),
+        f"{source} returned a different immutable artifact path: {relative}",
+    )
+    return metadata.split(), returned_path
+
+
+def require_git_blob_bytes(
+    root: Path,
+    object_id: bytes,
+    raw: bytes,
+    relative: str,
+    *,
+    source: str,
+) -> None:
+    """Require one selected Git blob to equal the artifact's worktree bytes."""
+
+    try:
+        object_name = object_id.decode("ascii")
+    except UnicodeDecodeError:
+        object_name = ""
+    require(bool(object_name), f"invalid {source} blob ID: {relative}")
+    blob = subprocess.run(
+        ["git", "cat-file", "blob", object_name],
         cwd=root,
         check=False,
         capture_output=True,
-        text=True,
     )
     require(
-        tracked.returncode == 0,
-        f"immutable evaluation artifact is not tracked in the Git index: {relative}",
+        blob.returncode == 0 and blob.stdout == raw,
+        f"immutable evaluation artifact differs from {source}: {relative}",
     )
-    index_fields = tracked.stdout.strip().split(maxsplit=3)
+
+
+def validate_index_manifest_artifact(
+    entry: dict[str, Any], root: Path = ROOT
+) -> None:
+    """Bind one append candidate's worktree bytes to its staged Git blob."""
+
+    root, relative, raw = manifest_artifact_bytes(entry, root)
+    tracked = subprocess.run(
+        [
+            "git",
+            "--literal-pathspecs",
+            "ls-files",
+            "--stage",
+            "-z",
+            "--error-unmatch",
+            "--",
+            relative,
+        ],
+        cwd=root,
+        check=False,
+        capture_output=True,
+    )
+    if tracked.returncode != 0:
+        raise AssertionError(
+            "immutable evaluation artifact is not tracked in the Git index: "
+            f"{relative}"
+        )
+    index_fields, _ = literal_git_record(tracked, relative, source="Git index")
     require(
-        len(index_fields) == 4 and index_fields[2] == "0",
+        len(index_fields) == 3 and index_fields[2] == b"0",
         f"immutable evaluation artifact has an unresolved Git index state: {relative}",
     )
-    worktree_blob = subprocess.run(
-        ["git", "hash-object", "--", relative],
+    require_git_blob_bytes(
+        root,
+        index_fields[1],
+        raw,
+        relative,
+        source="Git index",
+    )
+
+
+def validate_manifest_artifact(
+    entry: dict[str, Any], root: Path = ROOT, *, require_git: bool = True
+) -> None:
+    """Bind one manifested artifact to its committed blob at HEAD."""
+
+    root, relative, raw = manifest_artifact_bytes(entry, root)
+    if not require_git:
+        return
+    committed = subprocess.run(
+        [
+            "git",
+            "--literal-pathspecs",
+            "ls-tree",
+            "--full-tree",
+            "-z",
+            "HEAD",
+            "--",
+            relative,
+        ],
         cwd=root,
         check=False,
         capture_output=True,
-        text=True,
     )
+    head_fields, _ = literal_git_record(committed, relative, source="HEAD")
     require(
-        worktree_blob.returncode == 0
-        and worktree_blob.stdout.strip() == index_fields[1],
-        f"immutable evaluation artifact differs from the Git index: {relative}",
+        len(head_fields) == 3 and head_fields[1] == b"blob",
+        f"immutable evaluation artifact is not a blob at HEAD: {relative}",
+    )
+    require_git_blob_bytes(
+        root,
+        head_fields[2],
+        raw,
+        relative,
+        source="HEAD",
     )
 
 
@@ -825,6 +939,8 @@ def load_registry(path: Path = REGISTRY_PATH) -> tuple[dict[str, Any], bytes]:
 
 def load_history(
     path: Path = HISTORY_PATH,
+    *,
+    require_git: bool = True,
 ) -> tuple[list[dict[str, Any]], bytes]:
     """Load and validate canonical history records in append order."""
 
@@ -853,7 +969,9 @@ def load_history(
         del record["_byte_end"]
     if path.resolve() == HISTORY_PATH.resolve():
         manifest, _ = load_run_manifest()
-        validate_history_run_artifacts(records, manifest)
+        validate_history_run_artifacts(
+            records, manifest, require_git=require_git
+        )
         registry, _ = load_registry()
         validate_seed_run_manifest(manifest, registry)
     return records, raw
