@@ -22718,6 +22718,30 @@ equation. Every displayed row or row-array digest uses
 hashes the exact half-open source interval. The three source-artifact
 identity rows are, in this order:
 
+This derived object is not asserted to be a row already serialized inside
+the closure JSON. For V-B6 only, this subsection prospectively replaces the
+§§16.12.1, 16.13.2, and 17.2 rule that the source-row pointer must address a
+strict-parsed row inside the sole source-input blob. The verifier first
+strict-parses and authenticates that sole closure input, exact-matches the
+`corpus_registration_attempt` and `questionnaire_extraction` dependency rows
+it consumes against the closure's complete `source_artifact_identities`, and
+reads those two dependency JSON blobs and the closure blob only at the pinned
+source commit. The 456 raw registered PDFs are not Git members at that
+commit. They resolve only through the strict-passing
+`psid_questionnaire_corpus_authority_registry.v1` child, its
+`psid_external_staging_root` and `documentation/capture1` staging identity,
+and its registered document row; the resolved bytes must exact-match that
+row's `full_file_sha256`, `size_bytes`, full-file range, and range digest.
+An absolute or current-working-directory path, `source_url`, filename-only
+lookup, or same-title document is never an authority resolver. A missing or
+differently hashed staged byte fails the projection. The verifier then checks
+every identity, integrity, row, range, and derived-text equation below and
+constructs the complete 13-key projection in the stated order. No candidate
+adjudication, configuration, result, status, digest, or ambient file supplies
+a projection member. The unchanged closure source identity is the sole
+authenticated root of this dependency-closed derivation and does not admit a
+second source input.
+
 | Path | Git blob | Bytes | Raw SHA-256 | Content SHA-256 |
 |---|---|---:|---|---|
 | `data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json` | `825f6c61ef9d4a161886cbc44f5cc914d65160d2` | 520,656 | `07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c` | `4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27` |
@@ -22766,22 +22790,41 @@ The registered corpus contains same-title codebooks whose bytes differ from
 the earlier archive editions used by the codebook-inventory extraction.
 They are not interchangeable. Amendment 4 therefore derives fresh page
 locators directly from the #345 registered documents, never copies the
-earlier edition's locator. The derivation uses the repository's
-`_pdf_page_stream_locators` algorithm and Poppler `pdftotext` version
-`26.04.0` with exact arguments `[-layout,-enc,UTF-8]`. The six reference
+earlier edition's locator. The derivation uses only `_pdftotext_pages` to
+construct `derived_pages` and `_pdf_page_stream_locators` to construct the
+locator rows, both from
+`src/populace_dynamics/data/psid_questionnaire_inventory.py` at source
+commit `c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`: mode `100644`, Git blob
+`e461d69cdec35f0ef795a097ac0b9ab9a8f9eaf0`, exactly 205,550 raw bytes,
+and raw SHA-256
+`b742fb14d62411ed1072cf320ad7cff0b3397a5a7255584964bac4995b6acbee`.
+A later worktree implementation is not selectable. Text derivation uses
+Poppler `pdftotext` version `26.04.0` with the exact three-string JSON
+argument array `["-layout","-enc","UTF-8"]`, followed by the uniquely
+registry-resolved input path and `-` for standard output. The pinned
+`_pdftotext_pages` strictly decodes that output as UTF-8, splits it on form
+feed, and removes exactly one terminal whitespace-only page when present;
+no other page segmentation is permitted. The six reference
 rows have exactly `source_document_id`, `source_document_row_pointer`,
 `source_document_row_sha256`, `page_locator_id`,
 `page_locator_row_sha256`, `range_sha256`, and
 `derived_page_text_sha256`, in this order:
 
-| Registered document row | Page | Document-row SHA-256 | Locator-row SHA-256 | Range SHA-256 | Derived-text SHA-256 |
-|---|---:|---|---|---|---|
-| `psid-corpus-document-0046`, `/document_candidates/45` | 20 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `d7a68eadcb5ae32ca6fb239f37e89711474fcd18221d73d39b9d2d93a4afe697` | `87101f3096debb296972dff5c8db32e4b56aa55f9031cbad7d4cf65cef948dae` | `94709e4ab868411b3111bedf867c27d11a75a26edeeac0c12da511c046a88c32` |
-| `psid-corpus-document-0046`, `/document_candidates/45` | 180 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `5946933af0f767bff15773e74262973c998938069701835ac68f90c388ca1eb4` | `22f3cef78b2deabb5b570a8a03cee6bc9bd924f461c3621011b3607c14323748` | `3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9` |
-| `psid-corpus-document-0046`, `/document_candidates/45` | 181 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `038ac554ae570d1d0d7f152c847840e460a6b88a1db4375d09140c74ae5c767c` | `9b91dd6d54015f614c80124d78ff99a133b834256a2905be2278c4b5f8b290b1` | `8c83a7e42dcf437e47ea27fef97ce97498677a3c5102589294fae49dc681c55a` |
-| `psid-corpus-document-0046`, `/document_candidates/45` | 182 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `cd57bab720ab21c5a58450942e5e1d49376d1c391301e03a67c4471486bfb524` | `6405a708e4ec2305c6aca26b732471ccc4ea906958729fea4a892b584695f97b` | `6b6a1c88b9ffb6d933cc5e17d92c3ac7bc744bb1ab961e567eddd204afc85c04` |
-| `psid-corpus-document-0051`, `/document_candidates/50` | 22 | `13082ddda241aa7d157da67c6503a44d7d83b7bba9a6bd5354a14858cfbb1189` | `a98b3b055c290aa3e3b86f3d0ba563cc27c8142ba7ed92e72c1294c44aa6c8a5` | `cd35f250c75723ccaccb8230ec760d97d70d40b90b65e4b39e9a699f84397805` | `a53592207ba8bd2dc884d61fcd62108a9d23c5492d87133468bd7ed7030de640` |
-| `psid-corpus-document-0056`, `/document_candidates/55` | 22 | `163634bcace0d2c7bbde569c9223dc73d54ec1838c6cd8bbe37a41f77e00e338` | `0991897f973e697eb36c0b7ddd14200339d7d158cb4fc60ac8256b56108a55a4` | `577f558d22dd0a3e010048dc16296a2ca69c5ec4479d8127734671e3630a87b4` | `dccd52e85ad26e6db69ea97e6c8ea7a6fbbcafefb9961fc3d4eadcf2ed2689cf` |
+| Registered document row | Page | Exact ordered `page_field_ids` / decoded anchors | Document-row SHA-256 | Locator-row SHA-256 | Range SHA-256 | Derived-text SHA-256 |
+|---|---:|---|---|---|---|---|
+| `psid-corpus-document-0046`, `/document_candidates/45` | 20 | `["V4379","V4380","V4381","V4382"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `d7a68eadcb5ae32ca6fb239f37e89711474fcd18221d73d39b9d2d93a4afe697` | `87101f3096debb296972dff5c8db32e4b56aa55f9031cbad7d4cf65cef948dae` | `94709e4ab868411b3111bedf867c27d11a75a26edeeac0c12da511c046a88c32` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 180 | `["V4901","V4902"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `5946933af0f767bff15773e74262973c998938069701835ac68f90c388ca1eb4` | `22f3cef78b2deabb5b570a8a03cee6bc9bd924f461c3621011b3607c14323748` | `3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 181 | `["V4903"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `038ac554ae570d1d0d7f152c847840e460a6b88a1db4375d09140c74ae5c767c` | `9b91dd6d54015f614c80124d78ff99a133b834256a2905be2278c4b5f8b290b1` | `8c83a7e42dcf437e47ea27fef97ce97498677a3c5102589294fae49dc681c55a` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 182 | `["V4904","V4905","V4906","V4907"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `cd57bab720ab21c5a58450942e5e1d49376d1c391301e03a67c4471486bfb524` | `6405a708e4ec2305c6aca26b732471ccc4ea906958729fea4a892b584695f97b` | `6b6a1c88b9ffb6d933cc5e17d92c3ac7bc744bb1ab961e567eddd204afc85c04` |
+| `psid-corpus-document-0051`, `/document_candidates/50` | 22 | `["V5289","V5290","V5291","V5292"]` | `13082ddda241aa7d157da67c6503a44d7d83b7bba9a6bd5354a14858cfbb1189` | `a98b3b055c290aa3e3b86f3d0ba563cc27c8142ba7ed92e72c1294c44aa6c8a5` | `cd35f250c75723ccaccb8230ec760d97d70d40b90b65e4b39e9a699f84397805` | `a53592207ba8bd2dc884d61fcd62108a9d23c5492d87133468bd7ed7030de640` |
+| `psid-corpus-document-0056`, `/document_candidates/55` | 22 | `["V5785","V5786","V5787","V5788","V5789"]` | `163634bcace0d2c7bbde569c9223dc73d54ec1838c6cd8bbe37a41f77e00e338` | `0991897f973e697eb36c0b7ddd14200339d7d158cb4fc60ac8256b56108a55a4` | `577f558d22dd0a3e010048dc16296a2ca69c5ec4479d8127734671e3630a87b4` | `dccd52e85ad26e6db69ea97e6c8ea7a6fbbcafefb9961fc3d4eadcf2ed2689cf` |
+
+For each document, `page_field_ids` has exactly the displayed page keys in
+ascending order and exact displayed string arrays; every unspecified page
+has the empty array. Each output locator's
+`decoded_raw_field_id_anchors` must deep-equal its displayed input array.
+The locator-row digests hash the complete rows, including those arrays, under
+the common LF-terminated canonicalization.
 
 Their locator IDs are the complete `psid-codebook-page:` prefix followed,
 respectively, by
@@ -22842,11 +22885,13 @@ exact allocation; §18 changes only whether such an allocation is a required
 PSID design object.
 
 The independent #345 referee sweep is now a deterministic projection over
-all 456 strict-ordered `/document_candidates`, whose complete row-array
+all 456 strict-ordered `/document_candidates`, using that same pinned
+`_pdftotext_pages` function and registry-resolved byte domain. Its complete row-array
 SHA-256 is
 `fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3`.
 For each registered PDF, derive the complete page sequence with Poppler
-`pdftotext` 26.04.0 and exact arguments `[-layout,-enc,UTF-8]`. A candidate
+`pdftotext` 26.04.0 and the exact three-string JSON argument array
+`["-layout","-enc","UTF-8"]`. A candidate
 has at least one page matching
 `(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907)(?!\d)` and at least one
 page matching `(?<!\d)(?:4379|5289|5788)(?!\d)`. Each candidate row has
@@ -22903,9 +22948,12 @@ The exact `corpus_wide_cooccurrence_sweep` object has, in order,
 `candidate_document_ids_sha256`, `candidate_rows_sha256`,
 `sole_same_page_candidate`, and `formula_candidate_count`. Its first three
 values are `/document_candidates`, integer 456, and the displayed complete
-document-row digest. Its tool/version/argument and regex values are the
-displayed literals. The row-field order, ID array, counts, and digests are
-the displayed values. `sole_same_page_candidate` has exactly
+document-row digest. Its `text_derivation_tool` and
+`text_derivation_version` are the exact JSON strings `Poppler pdftotext` and
+`26.04.0`; its `text_derivation_arguments` is the exact three-string JSON
+array above; and its two regex values are the displayed exact JSON strings.
+The row-field order, ID array, counts, and digests are the displayed values.
+`sole_same_page_candidate` has exactly
 `source_document_id`, `pdf_page_number_1_based`,
 `derived_page_text_sha256`, and `disposition`, with the displayed document,
 integer page 573, text digest, and disposition. Those are the complete 15
@@ -22998,11 +23046,32 @@ component arithmetic decomposition exists or is used.
 
 For V-B6 only, `source_projection_name` is prospectively
 `covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total`.
-Its `source_row_pointer` is `/`, denoting the complete derived projection in
-§18.2, and its `source_row_sha256` is the complete projection digest
+Its `source_row_pointer` is the empty JSON string, the RFC 6901 JSON Pointer
+to the complete derived projection in §18.2; `/` would instead select a
+member whose key is the empty string and is not permitted. Its
+`source_row_sha256` is the complete projection digest
 `7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a`.
-The source-row match key remains the §17.2 three-tuple, but the exact
-permitted key set is now, in order:
+Section 16.13.2's outer source-row match key remains exactly the five-tuple
+
+\[
+(\text{result-registry ID},\text{claim ID},\text{source input ID},
+ \text{source projection name},\text{source row pointer}).
+\]
+
+All five components retain their ratified derivations; for V-B6 the final
+component exact-copies the empty-string pointer above. The more-specific
+§17.2 committed-byte three-key rule is prospectively replaced for the V-B6
+derived projection only by
+
+\[
+(\text{source input ID},\text{source projection name},
+ \texttt{claim_id}).
+\]
+
+The third component exact-copies the projection's `claim_id` member, which
+must be `V-B6`. V-B5 and V-B8 retain §17.2's `family_id` third component and
+their committed family rows. The resulting complete permitted key set is,
+in order:
 
 1. (`covered_earnings_questionnaire_closure_attempt.v1`,
    `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
@@ -23020,12 +23089,20 @@ The complete V-B6 `adjudication_sources` member in both branches is:
 {
   "source_identity_sha256": "1bb79fba8b752310f99181191d1f5c39bf031a3a11a14852e83c088cdc6bb6b6",
   "source_projection_name": "covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total",
-  "source_row_pointer": "/",
+  "source_row_pointer": "",
   "source_row_sha256": "7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a",
   "source_disposition": "verified",
   "unresolved_evidence_ids": []
 }
 ```
+
+For that V-B6 member, row matching means reconstructing §18.2's complete
+derived value from the authenticated dependency closure, resolving the empty
+pointer to that value, and hashing its canonical bytes. It does not mean
+dereferencing the empty pointer against the closure JSON itself. Failure of
+any dependency, derivation, key, pointer, or digest equation makes the source
+member nonmatching and fails adjudication; it never selects the favorable
+serialized disposition.
 
 The V-B5 and V-B8 source members, pointers, row digests, empty residuals,
 verified dispositions, and positive derivations remain byte-for-byte as
@@ -23122,11 +23199,15 @@ not design comparators.
 
 This table is a closed revision-6 ratification invariant. It has exactly 27
 distinct IDs, exactly 12 `replaced-by-named-successor` rows, and exactly 15
-`lawfully-unchanged-with-reason` rows. Every §17.3 ratification-blocking
-condition applies to this successor count and table. The validator must
-reperform the complete searches and consumer walk over the exact D4 blob;
-an omitted comparator, an extra/duplicate row, a false reason, or an
-incompletely defined/dispatched successor blocks Amendment-4 ratification.
+`lawfully-unchanged-with-reason` rows. Section 17.3's ratification-blocking
+conditions apply with its literal “in §17.4” successor-definition and
+dispatch target prospectively replaced by “in §§18.6–18.7.” Thus an in-scope
+comparator absent from this table, an extra or duplicate row, a wrong anchor,
+an empty or third disposition, a named successor not completely defined and
+dispatched in §§18.6–18.7, or an unchanged reason that fails to preserve
+every consumer blocks Amendment-4 ratification. The validator must reperform
+the complete searches and consumer walk over the exact D4 blob; the counts
+and every row must reproduce.
 
 ### 18.6 Revision-6 design, capture, registry, and domain successors
 
@@ -23373,12 +23454,24 @@ The domain successor is
 keyset/order, changes its schema value, selects the complete v3 requirement
 registry, and freshly recomputes every row, evidence, Boolean, failure ID,
 count, and hash. The bundle successor is
-`covered_earnings_path_applicability_registry_bundle.v4`: the complete v3
-bundle with its schema changed and its requirement-registry child replaced
-by v3; every other child/order is unchanged. Every Amendment-4 cutoff,
-22-row reconstruction, applicability result, receipt, and validator selects
-v3 registry, v3 domain, and v4 bundle. No configuration, caller, receipt,
-or unfavorable ancestry value can select an earlier version.
+`covered_earnings_path_applicability_registry_bundle.v4`. It retains the
+complete v3 keyset and key order and changes its schema value to the v4 name.
+Its `fitting_free_requirement_verification_specs` child is the complete v3
+registry. Its `verification_claim_results_v2`,
+`verification_claim_results_fitting_free_v1`, and
+`verification_claim_adjudication_source_projection` children are freshly
+reconstructed with §18.4's positive V-B6 result/source rows; neither result
+or projection child may be copied from v3. Its
+`verification_claim_adjudication_identity` child is likewise freshly
+constructed from the unique candidate ten-key adjudication artifact carrying
+those successor children. The `verification_claim_specs_v2` and
+`verification_claim_specs_fitting_free_v1` children remain byte-for-byte
+equal to v3, and every remaining child value and the complete child order
+remain unchanged. The v4 bundle digest hashes this entire reconstructed
+object. Every Amendment-4 cutoff, 22-row reconstruction, applicability
+result, receipt, and validator selects the v3 registry, v3 domain, and v4
+bundle. No configuration, caller, receipt, or unfavorable ancestry value can
+select an earlier version.
 
 The authenticated V-B6 positive in §18.4 propagates through the unchanged
 V-B6 requirement row into the freshly hashed 22-row evidence domain. The
@@ -23453,21 +23546,28 @@ fitting-free configuration design child.” The §16.5.5 D2 configuration
 check remains only `K_f^d = D2`, joined to the earlier D4 position-1 proof
 and later v3 receipt proof.
 
-The exact complete successor-name set introduced by the revision-6 design
-lineage is therefore:
+The exact complete successor object, schema, and predicate identifier set
+introduced by the revision-6 design lineage in §§18.5–18.7 is therefore the
+following 16 names. Member names, enum or role literals, projection-path
+literals, and cross-binding literals are not object, schema, or predicate
+identifiers and are outside this set:
 
-1. `verify_amendment_4_fitting_free_design_identity_v1`;
-2. `fitting_free_requirement_verification_specs.v3`;
-3. `fitting_free_registration_domain_identity.v3`;
-4. `covered_earnings_path_applicability_registry_bundle.v4`;
-5. `fitting_free_model_input_authority_capture_registration.v3`;
-6. `amendment_4_capture_registration_repository_proof.v1`;
-7. `verify_amendment_4_capture_registration_repository_identity_v1`;
-8. `fitting_free_model_input_authority_capture_claim.v3`;
-9. `fitting_free_model_input_authority_capture_input.v3`;
-10. `covered_earnings_path_applicability_receipt_core.v3`;
-11. `covered_earnings_path_applicability_receipt.v3`; and
-12. `verify_amendment_4_selected_registration_design_lineage_v1`.
+1. `amendment_4_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_4_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_4_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v3`;
+5. `verify_amendment_4_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_4_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v3`;
+8. `covered_earnings_path_applicability_registry_bundle.v4`;
+9. `fitting_free_model_input_authority_capture_registration.v3`;
+10. `amendment_4_capture_registration_repository_proof.v1`;
+11. `verify_amendment_4_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v3`;
+13. `fitting_free_model_input_authority_capture_input.v3`;
+14. `covered_earnings_path_applicability_receipt_core.v3`;
+15. `covered_earnings_path_applicability_receipt.v3`; and
+16. `verify_amendment_4_selected_registration_design_lineage_v1`.
 
 These are the complete design/capture/receipt consequences of appending
 Amendment 4. They create no mutable alias, configuration branch, runtime
