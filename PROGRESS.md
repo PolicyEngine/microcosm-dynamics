@@ -2,7 +2,7 @@
 
 ## State
 
-The complete §19 draft and the first independent substantive-review correction pass are present; final independent re-review and full structural/test verification remain.
+The complete §19 draft and both independent substantive/structural correction passes are present; final stable-tree re-review and final digest/tree cleanup remain.
 
 ## Done
 
@@ -20,8 +20,11 @@ The complete §19 draft and the first independent substantive-review correction 
 - Defined D5, the four changed requirement rows, capture registration/proof/claim/input v4, domain v4, bundle v5, receipt v4, selected-lineage predicate, and the exact 29-name successor inventory.
 - Defined the dependency-ordered legal source/registry, Class-A/B official inventory, nine-registry, crosswalk, capture, and receipt build; reported six law tensions and the fail-closed current witness result.
 - Closed the first substantive-review findings: exact v2 result/preimages, legal partitions and independent inventory-family matrix, typed Class-B value/padding grammar, Class-A evidence/proof identities and digest domains, deterministic Class-C gap carriers, concrete G17 successor payloads, bounded D5-to-L5 ancestry, and a branching-consumer closure sweep.
+- Closed the second review findings: one-year keyed partition bounds and structured midyear evidence, source-row-bound literal/range/DFA grammar with executable padding and dictionary missing literals, the Class-A source-manifest/flow/locator/occurrence domains and retained slot projection, punctuation-complete sweep terms and plural successor anchors, explicit fresh adjudication construction, and unambiguous §19.8.1/§19.8.3 step mapping.
+- Reproduced all pinned design/inventory identities, all 25 residual-row and five residual-domain digests, the 32-row comparator census, the 29-name successor inventory, and the 92-row staging-manifest schema compatibility.
+- Ran the broad relevant regression set: 424 tests passed.
 
 ## Next
 
-- Obtain final independent re-review and run digest, prefix, structural, and relevant test closure.
-- Recompute passage and document digests, run closure checks, and remove this temporary file before final handoff.
+- Commit this correction pass after the mandatory prefix check, then obtain final independent stable-tree re-review.
+- Recompute final passage/document digests, remove this temporary file, and write the external final report.
