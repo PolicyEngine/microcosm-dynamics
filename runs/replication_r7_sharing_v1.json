@@ -12,7 +12,7 @@
   "global_increase_decision": "Package 1b applies the anchor's +4.5% global benefit increase (a scalar on the PIA formula factors) as part of its cited definition -- it is in the package name and is directly visible in the anchor's never-married Table-3 row (97-99% show a 'gain < 5%', the uniform bump). A scalar-off variant is reported in sensitivity_no_scalar. See the module docstring.",
   "package_1c_not_implemented": "Package 1c (earnings sharing with a self-financed survivor benefit) requires people married at benefit entitlement to 'purchase' survivor insurance worth two-thirds of their own benefit through an actuarially fair, unisex-priced benefit reduction at a 4.6 percent real interest rate (Favreault-Steuerle 2007, Table 2, printed p.15). That pricing needs individual- and spouse-specific cohort survival probabilities and an annuity-factor method the paper describes only as 'roughly actuarially fair on a cohort basis' -- it states no annuity factors and no mortality table. Implementing it would inject an unvalidated cohort-mortality/annuity model beyond this reported diagnostic's scope, so 1c is transcribed (Table 3 rows recorded in the anchor provenance) but not scored, per the registration's 'else document why not' clause.",
   "anchor_provenance": {
-    "paper": "Favreault, M. M. and Steuerle, C. E. (2007). Social Security Spouse and Survivor Benefits for the Modern Family. The Urban Institute, Retirement Project Discussion Paper 07-01 (report 311436). DYNASIM3, runid 440v2. Cost-balanced at 2050; 1960-80 birth cohorts evaluated in 2049.",
+    "paper": "Favreault, M. M. and Steuerle, C. E. (2007). Social Security Spouse and Survivor Benefits for the Modern Family. The Urban Institute, Retirement Project Discussion Paper 07-01 (report 311436). DYNASIM3, runid 440v2. Package costs are balanced at 2050. Table 3 covers adult current-law scheduled OASDI beneficiaries in 2049; the 1960-80 cohorts evaluated as they turn 65 belong to Table 4.",
     "source_files": [
       "~/PolicyEngine/dynasim-refs/311436-spouse-survivor-modern.pdf",
       "~/PolicyEngine/dynasim-refs/311436-spouse-survivor-modern.txt"
@@ -27,6 +27,10 @@
     },
     "table3_winners_losers_2049": {
       "citation": "Table 3 (Winners and Losers Relative to Current Law Scheduled among Current Law Beneficiaries under the Options in 2049, by Sex and Marital Status), printed p.19-20; DYNASIM3 runid 440v2",
+      "population": "Adult current-law scheduled OASDI beneficiaries in 2049; the notes include both OASI and DI beneficiaries.",
+      "classification_timing": "Sex and marital status are measured in 2049.",
+      "conditional_denominator": "Each printed share is conditional on the relevant 2049 sex-by-marital-status beneficiary group.",
+      "cohort_scope_note": "The 1960-80 birth cohorts evaluated as they turn 65 are the Table 4 population, not the Table 3 population.",
       "bucket_order": [
         "lose_ge_20",
         "lose_10_20",
@@ -405,7 +409,9 @@
       ]
     },
     "named_population_deltas": [
-      "observed PSID retirees eligible 2005-2019 (born 1943-1957) vs DYNASIM projected 1960-1980 cohorts in 2049",
+      "observed PSID retirement beneficiaries eligible 2005-2019 (born 1943-1957), classified by marital status at age-62 eligibility, vs adult current-law scheduled OASDI beneficiaries classified by sex and marital status in 2049",
+      "our retirement-only calculation excludes DI; DYNASIM Table 3 includes OASI and DI beneficiaries",
+      "our and DYNASIM shares are conditional on their respective sex-by-marital-status groups, with different group membership and population frames",
       "PSID coverage-0.8 long-stayers vs DYNASIM SIPP+PSID synthetic population (our women have strong own careers, so rely less on survivor benefits)",
       "spouse earnings observed on whatever PSID years exist (often sparser than the study person's coverage-0.8 career), biasing the higher earner's loss upward",
       "no within-couple claim-age timing, no mortality projection, no behavioural response (single expected claim-age reduction)",
@@ -1086,7 +1092,7 @@
     "aggregate_cost_change": {
       "weighted_aggregate_pct_change_1b": -4.23,
       "weighted_aggregate_pct_change_1b_noscalar": -8.35,
-      "note": "the +4.5% scalar was DYNASIM-calibrated for 2049 cost-neutrality; applied to this observed 1943-57 sample it is not cost-neutral -- a named population delta"
+      "note": "the +4.5% scalar was DYNASIM-calibrated for 2050 cost-neutrality; applied to this observed 1943-57 sample it is not cost-neutral -- a named population delta"
     }
   },
   "package_1a_descriptive": {
@@ -3065,7 +3071,7 @@
     }
   ],
   "revision_pins": {
-    "populace_dynamics_sha": "5fe23087d3c478cd78fb0d1b88a4dfd7bac64ddb",
+    "populace_dynamics_sha": "a8704357f48bc491dc591834e86600cf98ab75f1",
     "pe_us_revision": "bf71be3b",
     "artifact_schema_version": "replication_r7_sharing.v1"
   },
