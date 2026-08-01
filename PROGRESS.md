@@ -2,7 +2,7 @@
 
 ## State
 
-Both titles and their exact replacement/closure boundary are drafted; the remaining work is the revision-7 comparator census and lifecycle successors, then final ratification/build law and verification.
+Both titles, their replacement boundary, and the 32-row revision-7 comparator census are drafted; the remaining work is the lifecycle successors, final ratification/build law, and verification.
 
 ## Done
 
@@ -16,8 +16,9 @@ Both titles and their exact replacement/closure boundary are drafted; the remain
 - Drafted the concrete legal input, complete registry and source-manifest schemas, rule/source join, source-byte closure, independent legal-rule domain, interval/partition law, and v2 future-row authentication predicate.
 - Pinned the exact 25-row official-inventory residual scope and drafted the Class-B grammar, Class-A whole-document hierarchy/absence, and Class-C rule-residual consequence laws.
 - Enumerated every replaced/composed/preserved passage family, the six changed G17 comparands while retaining all 18 domains, and the mandatory candidate-byte closure sweep.
+- Closed the revision-7 comparator census at 32 unique rows: 15 named replacements and 17 lawfully unchanged anchors, including the D5-to-L5 legal first-add comparator.
 
 ## Next
 
-- Add the complete comparator census (including the legal first-add comparator), revision-7 successors, build sequence, and ratification law.
+- Add the revision-7 design/capture/receipt successors, build sequence, and ratification law.
 - Recompute passage and document digests, run closure checks, and remove this temporary file before final handoff.
