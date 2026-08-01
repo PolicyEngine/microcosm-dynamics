@@ -188,6 +188,15 @@ REFRESH_REVIEW = {
         },
     },
     "missing_after_refresh": {
+        "mermin_2005_publisher_capture": {
+            "url": MERMIN_URL,
+            "status": (
+                "Publisher-controlled bytes were not retrieved; the modern "
+                "Urban Institute URLs returned 404 and the web archive was "
+                "unavailable. The 20 Mermin comparisons are therefore "
+                "reported_not_verified, not canonical verified rows."
+            ),
+        },
         "morningstar_full_wish_report": {
             "url_discovered_in_captured_landing_json_ld": MORNINGSTAR_WISH_REPORT_URL,
             "status": "not staged; associatedMedia says isAccessibleForFree=false",
@@ -804,8 +813,40 @@ def mermin_locator(table: str, pdf_page: int) -> list[dict[str, Any]]:
             "page": {"pdf": pdf_page},
             "table": table,
             "url": MERMIN_URL,
+            "capture_status": (
+                "Publisher-controlled bytes missing after REFRESH; this "
+                "locator has not been verified against an accepted capture."
+            ),
+            "unmanifested_corroborating_copy": {
+                "sha256": (
+                    "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+                ),
+                "manifested": False,
+                "accepted_as_verified_source": False,
+                "scope": (
+                    "Provisionally corroborates only Table 2 progressive-price-"
+                    "indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify "
+                    "this row or any other Mermin cell under the capture rule."
+                ),
+            },
         }
     ]
+
+
+def mermin_reported_value_provenance(
+    relative: str, pointer: str
+) -> dict[str, Any]:
+    """Describe the only committed provenance for a reported Mermin value."""
+
+    return {
+        "classification": "reported_not_verified",
+        "numeric_source": source_pin(relative, pointer),
+        "numeric_source_note": (
+            "The value is transcribed in a committed replication artifact, "
+            "not extracted from a manifested publisher-controlled capture."
+        ),
+        "publisher_capture_status": "missing_after_refresh",
+    }
 
 
 def scalar_deviation(ours: float, published: float) -> dict[str, Any]:
@@ -902,6 +943,10 @@ def build_ppi_rows() -> list[dict[str, Any]]:
             "published": {
                 "value": pi_published,
                 "unit": "percent of scheduled benefit",
+                "provenance": mermin_reported_value_provenance(
+                    "runs/replication_ppi_mermin_v1.json",
+                    "/three_way_comparison/pi_scalars/dynasim_pct",
+                ),
                 "source_locators": mermin_locator("Table 2", 16),
             },
             "deviation": scalar_deviation(pi_ours, pi_published),
@@ -939,6 +984,10 @@ def build_ppi_rows() -> list[dict[str, Any]]:
                 "published": {
                     "value": published,
                     "unit": "percent of scheduled benefit",
+                    "provenance": mermin_reported_value_provenance(
+                        "runs/replication_ppi_mermin_v1.json",
+                        f"/three_way_comparison/ppi_by_quintile/{index}/dynasim_pct",
+                    ),
                     "source_locators": mermin_locator("Table 2", 16),
                 },
                 "deviation": scalar_deviation(ours, published),
@@ -974,6 +1023,10 @@ def build_ppi_rows() -> list[dict[str, Any]]:
                 "published": {
                     "value": published,
                     "unit": "percent of scheduled benefit",
+                    "provenance": mermin_reported_value_provenance(
+                        "runs/replication_ppi_shared_v1.json",
+                        f"/three_way_comparison/ppi_by_quintile/{index}/anchor_dynasim_ppi_pct",
+                    ),
                     "source_locators": mermin_locator("Table 2", 16),
                 },
                 "deviation": scalar_deviation(ours, published),
@@ -1064,6 +1117,10 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
                 "published": {
                     "value": published,
                     "unit": "percent of scheduled benefit",
+                    "provenance": mermin_reported_value_provenance(
+                        "runs/replication_mermin_rows_v1.json",
+                        f"/nra_raise_to_70/table/by_quintile/{index}/anchor_pct",
+                    ),
                     "source_locators": mermin_locator("Table 2", 16),
                 },
                 "deviation": scalar_deviation(ours, published),
@@ -1091,6 +1148,10 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
             "published": {
                 "value": overall["anchor_pct"],
                 "unit": "percent of scheduled benefit",
+                "provenance": mermin_reported_value_provenance(
+                    "runs/replication_mermin_rows_v1.json",
+                    "/nra_raise_to_70/table/overall/anchor_pct",
+                ),
                 "source_locators": mermin_locator("Table 2", 16),
             },
             "deviation": scalar_deviation(
@@ -1130,6 +1191,10 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
                 "published": {
                     "value": published,
                     "unit": "percent of scheduled benefit",
+                    "provenance": mermin_reported_value_provenance(
+                        "runs/replication_mermin_rows_v1.json",
+                        f"/cola_minus_0_4pp/table/{index}/anchor_pct",
+                    ),
                     "source_locators": locator,
                 },
                 "deviation": scalar_deviation(ours, published),
@@ -1283,6 +1348,10 @@ def build_ordering_row() -> dict[str, Any]:
         "published": {
             "value": test["anchor_order_by_reduction"],
             "unit": "descending ordinal 75-year deficit reduction",
+            "provenance": mermin_reported_value_provenance(
+                "runs/replication_cost_ordering_v1.json",
+                "/tests/T2_mermin_kendall_tau/anchor_order_by_reduction",
+            ),
             "source_locators": mermin_locator(
                 "Table 1, 75-year deficit/surplus row", 15
             ),
@@ -1792,22 +1861,32 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
 rows: list[dict[str, Any]] = []
 rows.extend(build_trustees_rows())
 rows.extend(build_cbo_rows())
-rows.extend(build_ppi_rows())
-rows.extend(build_mermin_remaining_rows())
 rows.extend(build_sharing_rows())
-rows.append(build_ordering_row())
 wish = wish_financing_stub()
 rows.append(build_wish_parameter_row())
 
-assert len(rows) == 42
-assert len({row["row_id"] for row in rows}) == len(rows)
+reported_not_verified: list[dict[str, Any]] = []
+reported_not_verified.extend(build_ppi_rows())
+reported_not_verified.extend(build_mermin_remaining_rows())
+reported_not_verified.append(build_ordering_row())
+
 for row in rows:
+    row["verification_class"] = "verified"
+for row in reported_not_verified:
+    row["verification_class"] = "reported_not_verified"
+
+all_rows = [*rows, *reported_not_verified]
+assert len(rows) == 22
+assert len(reported_not_verified) == 20
+assert len({row["row_id"] for row in all_rows}) == len(all_rows)
+assert not any(".mermin." in row["row_id"] for row in rows)
+for row in all_rows:
     assert row["our"]["label_state"]["population_alignment_claim"] is False
     assert all(row["concept_mismatch"].values())
     assert row["published"]["source_locators"]
 
 matrix = {
-    "schema_version": "cross_model_validation_matrix.v1",
+    "schema_version": "cross_model_validation_matrix.v2",
     "canonicalization": "UTF-8, sorted keys, indent=2, allow_nan=false, one trailing newline",
     "purpose": (
         "Frame-relative comparison of ratios, shares, trajectories, and orderings "
@@ -1877,7 +1956,17 @@ matrix = {
         },
     },
     "row_count": len(rows),
+    "total_row_count": len(all_rows),
     "rows": rows,
+    "reported_not_verified": {
+        "row_count": len(reported_not_verified),
+        "reason": (
+            "Mermin publisher-controlled bytes were not retrievable; values "
+            "are retained from committed replication artifacts but are not "
+            "accepted as verified external-source cells."
+        ),
+        "rows": reported_not_verified,
+    },
     "wish_financing_stub": wish,
     "blocked_comparisons": blocked_comparisons(wish),
     "honest_gaps": [

@@ -129,6 +129,15 @@ def display_locator(locator: dict[str, Any]) -> str:
     url = locator.get("url")
     if url:
         parts.append(f"[publisher source]({url})")
+    if locator.get("capture_status"):
+        parts.append(f"capture status: {locator['capture_status']}")
+    corroboration = locator.get("unmanifested_corroborating_copy")
+    if corroboration:
+        parts.append(
+            "unmanifested corroborating copy SHA-256 "
+            f"`{corroboration['sha256']}`; not an accepted verified source; "
+            f"{corroboration['scope']}"
+        )
     return "; ".join(parts)
 
 
@@ -144,7 +153,19 @@ def display_published(published: dict[str, Any]) -> str:
         if companions
         else ""
     )
-    return f"{value} {unit}{companion_text}<br>**Locator:** {locators}"
+    provenance = published.get("provenance")
+    provenance_text = ""
+    if provenance:
+        source = provenance["numeric_source"]
+        provenance_text = (
+            "<br>**Reported-value provenance:** "
+            f"`{source['path']}` at `{source['json_pointer']}`, SHA-256 "
+            f"`{source['sha256']}`. {provenance['numeric_source_note']}"
+        )
+    return (
+        f"{value} {unit}{companion_text}{provenance_text}"
+        f"<br>**Locator:** {locators}"
+    )
 
 
 def annual_list(values: list[dict[str, Any]], value_key: str) -> str:
@@ -228,7 +249,7 @@ def row_group(row: dict[str, Any]) -> str:
     return "WISH statutory parameter"
 
 
-def human_matrix(matrix: dict[str, Any]) -> list[str]:
+def human_matrix(rows: list[dict[str, Any]]) -> list[str]:
     output = []
     groups = [
         "SSA Trustees and Statistical Supplement",
@@ -237,7 +258,9 @@ def human_matrix(matrix: dict[str, Any]) -> list[str]:
         "WISH statutory parameter",
     ]
     for group in groups:
-        group_rows = [row for row in matrix["rows"] if row_group(row) == group]
+        group_rows = [row for row in rows if row_group(row) == group]
+        if not group_rows:
+            continue
         output.extend(
             [
                 f"### {group}",
@@ -403,21 +426,24 @@ def blocked_table(matrix: dict[str, Any]) -> list[str]:
     return output
 
 
-def per_row_notes(matrix: dict[str, Any]) -> list[str]:
+def per_row_notes(
+    rows: list[dict[str, Any]], heading: str = "Per-row provenance notes"
+) -> list[str]:
     output = [
-        "## Per-row provenance notes",
+        f"## {heading}",
         "",
-        "These notes make the artifact and gate status explicit for every canonical row.",
+        "These notes make the artifact, source class, and gate status explicit for every row.",
         "",
     ]
-    for row in matrix["rows"]:
+    for row in rows:
         source = row["our"]["source"]
         codes = row["concept_mismatch"]["mismatch_codes"]
         output.append(
             f"- `{row['row_id']}` — scopes "
             f"`{', '.join(row['comparison_scope'])}`; our source "
             f"`{source['path']}` at `{source['json_pointer']}`, SHA-256 "
-            f"`{source['sha256']}`; status: {row['evidential_status']}; mismatch "
+            f"`{source['sha256']}`; class: `{row['verification_class']}`; "
+            f"status: {row['evidential_status']}; mismatch "
             "codes: " + ", ".join(f"`{code}`" for code in codes) + "."
         )
     output.append("")
@@ -595,25 +621,33 @@ def render() -> str:
     matrix = json.loads(raw)
     matrix_sha = hashlib.sha256(raw).hexdigest()
     counts = Counter(row_group(row) for row in matrix["rows"])
+    reported_counts = Counter(
+        row_group(row) for row in matrix["reported_not_verified"]["rows"]
+    )
     lines = [
         "# Cross-model validation matrix",
         "",
         "## Outcome",
         "",
         (
-            f"**State:** complete and verified. The canonical matrix has "
+            f"**State:** the canonical verified-source matrix has "
             f"**{matrix['row_count']} rows** and SHA-256 `{matrix_sha}`: "
             f"{counts['SSA Trustees and Statistical Supplement']} SSA, "
             f"{counts['CBO / CBOLT']} CBO, "
             f"{counts['DYNASIM module replications']} DYNASIM, and "
-            f"{counts['WISH statutory parameter']} WISH statutory row."
+            f"{counts['WISH statutory parameter']} WISH statutory row. "
+            f"A separate `reported_not_verified` class contains "
+            f"**{matrix['reported_not_verified']['row_count']} Mermin rows** "
+            f"({reported_counts['DYNASIM module replications']} DYNASIM) whose "
+            "publisher-controlled source bytes could not be retrieved."
         ),
         "",
         (
-            "**Done:** all supportable ratios, shares, trajectories, and orderings "
-            "were built; every canonical row below includes both values, full label "
-            "state, exact source locator, deviation, and all five mismatch dimensions. "
-            "Displayed numbers are rounded for readability; `matrix.json` is canonical."
+            "**Done:** the supported ratios, shares, and trajectories were built. "
+            "The Mermin comparisons remain visible only as reported, unverified "
+            "replication results with their committed-artifact provenance and the "
+            "unmanifested corroborating-copy SHA disclosed. Displayed numbers are "
+            "rounded for readability; `matrix.json` is canonical."
         ),
         "",
         (
@@ -628,7 +662,7 @@ def render() -> str:
     lines.extend(series_inventory(matrix))
     lines.extend(
         [
-            "## Canonical human matrix",
+            "## Canonical verified-source human matrix",
             "",
             (
                 "The deviation convention is always ours minus published unless "
@@ -637,8 +671,29 @@ def render() -> str:
             "",
         ]
     )
-    lines.extend(human_matrix(matrix))
-    lines.extend(per_row_notes(matrix))
+    lines.extend(human_matrix(matrix["rows"]))
+    lines.extend(per_row_notes(matrix["rows"]))
+    lines.extend(
+        [
+            "## Reported, not verified: Mermin comparisons",
+            "",
+            (
+                "These 20 rows are excluded from the canonical verified-source "
+                "matrix. Their published values come only from committed "
+                "replication artifacts. Publisher-controlled bytes were not "
+                "retrieved; the disclosed unmanifested copy is not accepted as "
+                "verification under the capture rule."
+            ),
+            "",
+        ]
+    )
+    lines.extend(human_matrix(matrix["reported_not_verified"]["rows"]))
+    lines.extend(
+        per_row_notes(
+            matrix["reported_not_verified"]["rows"],
+            "Reported-not-verified per-row provenance notes",
+        )
+    )
     lines.extend(wish_section(matrix))
     lines.extend(blocked_table(matrix))
     lines.extend(["## Honest gaps", ""])
@@ -657,7 +712,9 @@ def render() -> str:
             "",
             (
                 f"- Matrix rebuild was byte-stable at SHA-256 `{matrix_sha}` with "
-                f"{matrix['row_count']} unique rows."
+                f"{matrix['row_count']} canonical verified-source rows and "
+                f"{matrix['reported_not_verified']['row_count']} separately "
+                "reported-not-verified rows."
             ),
             "- Report regeneration was byte-stable.",
             (
@@ -670,12 +727,7 @@ def render() -> str:
                 "1 passed, 4,471 deselected; the new test is registered in the "
                 "unit tier (903 unit tests; 4,472 total tests)."
             ),
-            (
-                "- Tree audit: no tracked `PROGRESS.md` or `FINAL_REPORT.md`; no "
-                "writes under `runs/`, `docs/design/`, or `data/external/`; the "
-                "only narrow out-of-directory changes are the requested test and "
-                "tier-count registration."
-            ),
+            "- Progress and final closure reporting are tracked separately from the matrix artifact.",
             "",
         ]
     )

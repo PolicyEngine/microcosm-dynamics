@@ -754,6 +754,10 @@
     },
     "missing_after_refresh": {
       "dynasim4_cohort_workbook": "Publisher workbook URL returned 404; no workbook was staged.",
+      "mermin_2005_publisher_capture": {
+        "status": "Publisher-controlled bytes were not retrieved; the modern Urban Institute URLs returned 404 and the web archive was unavailable. The 20 Mermin comparisons are therefore reported_not_verified, not canonical verified rows.",
+        "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+      },
       "morningstar_full_wish_report": {
         "status": "not staged; associatedMedia says isAccessibleForFree=false",
         "url_discovered_in_captured_landing_json_ld": "https://www.morningstar.com/content/cs-assets/v3/assets/blt9415ea4cc4157833/bltbbad12f4cb956f93/68a338a0fd4281840b31bbf3/Morningstar_WISH_Act_Analysis.pdf"
@@ -858,7 +862,1734 @@
     }
   ],
   "purpose": "Frame-relative comparison of ratios, shares, trajectories, and orderings against published SSA, CBO, DYNASIM, and WISH statutory quantities; never national dollar levels",
-  "row_count": 42,
+  "reported_not_verified": {
+    "reason": "Mermin publisher-controlled bytes were not retrievable; values are retained from committed replication artifacts but are not accepted as verified external-source cells.",
+    "row_count": 20,
+    "rows": [
+      {
+        "comparison_scope": [
+          "ratio"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
+          "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
+          "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "phase_a_generator_vs_dynasim_projection",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
+          "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
+        },
+        "deviation": {
+          "absolute_percentage_points": 1.0659396311584288,
+          "definition": "signed = ours - published",
+          "relative_percent": -1.5721823468413443,
+          "signed_percentage_points": -1.0659396311584288
+        },
+        "evidential_status": "module replication; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
+          "source": {
+            "json_pointer": "/three_way_comparison/pi_scalars/generated_pooled_mean_pct/mean",
+            "path": "runs/replication_ppi_mermin_v1.json",
+            "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 66.73406036884157
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/pi_scalars/dynasim_pct",
+              "path": "runs/replication_ppi_mermin_v1.json",
+              "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 67.8
+        },
+        "quantity": "Price-indexed benefit as percent of scheduled, all workers",
+        "row_id": "dynasim.mermin.price_indexing.all",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
+          "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
+          "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "phase_a_generator_vs_dynasim_projection",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
+          "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
+        },
+        "deviation": {
+          "absolute_percentage_points": 1.2999999999999972,
+          "definition": "signed = ours - published",
+          "relative_percent": 1.317122593718345,
+          "signed_percentage_points": 1.2999999999999972
+        },
+        "evidential_status": "module replication; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/0/generated_pooled/mean",
+            "path": "runs/replication_ppi_mermin_v1.json",
+            "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 100.0
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/0/dynasim_pct",
+              "path": "runs/replication_ppi_mermin_v1.json",
+              "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 98.7
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 1",
+        "row_id": "dynasim.mermin.ppi.generated.q1",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
+          "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
+          "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "phase_a_generator_vs_dynasim_projection",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
+          "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
+        },
+        "deviation": {
+          "absolute_percentage_points": 8.977307342696207,
+          "definition": "signed = ours - published",
+          "relative_percent": 9.93064971537192,
+          "signed_percentage_points": 8.977307342696207
+        },
+        "evidential_status": "module replication; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/1/generated_pooled/mean",
+            "path": "runs/replication_ppi_mermin_v1.json",
+            "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 99.37730734269621
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/1/dynasim_pct",
+              "path": "runs/replication_ppi_mermin_v1.json",
+              "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 90.4
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 2",
+        "row_id": "dynasim.mermin.ppi.generated.q2",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
+          "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
+          "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "phase_a_generator_vs_dynasim_projection",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
+          "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
+        },
+        "deviation": {
+          "absolute_percentage_points": 13.378319889388465,
+          "definition": "signed = ours - published",
+          "relative_percent": 16.455498018928004,
+          "signed_percentage_points": 13.378319889388465
+        },
+        "evidential_status": "module replication; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/2/generated_pooled/mean",
+            "path": "runs/replication_ppi_mermin_v1.json",
+            "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 94.67831988938846
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/2/dynasim_pct",
+              "path": "runs/replication_ppi_mermin_v1.json",
+              "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 81.3
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 3",
+        "row_id": "dynasim.mermin.ppi.generated.q3",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
+          "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
+          "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "phase_a_generator_vs_dynasim_projection",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
+          "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
+        },
+        "deviation": {
+          "absolute_percentage_points": 14.134815570696233,
+          "definition": "signed = ours - published",
+          "relative_percent": 18.672147385331872,
+          "signed_percentage_points": 14.134815570696233
+        },
+        "evidential_status": "module replication; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/3/generated_pooled/mean",
+            "path": "runs/replication_ppi_mermin_v1.json",
+            "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 89.83481557069624
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/3/dynasim_pct",
+              "path": "runs/replication_ppi_mermin_v1.json",
+              "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 75.7
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 4",
+        "row_id": "dynasim.mermin.ppi.generated.q4",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
+          "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
+          "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "phase_a_generator_vs_dynasim_projection",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
+          "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
+        },
+        "deviation": {
+          "absolute_percentage_points": 12.721218971389561,
+          "definition": "signed = ours - published",
+          "relative_percent": 17.742285873625608,
+          "signed_percentage_points": 12.721218971389561
+        },
+        "evidential_status": "module replication; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/4/generated_pooled/mean",
+            "path": "runs/replication_ppi_mermin_v1.json",
+            "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 84.42121897138956
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/4/dynasim_pct",
+              "path": "runs/replication_ppi_mermin_v1.json",
+              "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 71.7
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 5",
+        "row_id": "dynasim.mermin.ppi.generated.q5",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
+          "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
+          "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "real_psid_common_support_vs_dynasim_projection",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.7877460579159816,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.7981216392259238,
+          "signed_percentage_points": 0.7877460579159816
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/0/shared_ppi_pct",
+            "path": "runs/replication_ppi_shared_v1.json",
+            "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 99.48774605791598
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/0/anchor_dynasim_ppi_pct",
+              "path": "runs/replication_ppi_shared_v1.json",
+              "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 98.7
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 1",
+        "row_id": "dynasim.mermin.ppi.real_shared.q1",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
+          "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
+          "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "real_psid_common_support_vs_dynasim_projection",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 6.720513834983635,
+          "definition": "signed = ours - published",
+          "relative_percent": 7.43419672011465,
+          "signed_percentage_points": 6.720513834983635
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/1/shared_ppi_pct",
+            "path": "runs/replication_ppi_shared_v1.json",
+            "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 97.12051383498364
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/1/anchor_dynasim_ppi_pct",
+              "path": "runs/replication_ppi_shared_v1.json",
+              "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 90.4
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 2",
+        "row_id": "dynasim.mermin.ppi.real_shared.q2",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
+          "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
+          "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "real_psid_common_support_vs_dynasim_projection",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 12.501529219213069,
+          "definition": "signed = ours - published",
+          "relative_percent": 15.377034709979176,
+          "signed_percentage_points": 12.501529219213069
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/2/shared_ppi_pct",
+            "path": "runs/replication_ppi_shared_v1.json",
+            "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 93.80152921921307
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/2/anchor_dynasim_ppi_pct",
+              "path": "runs/replication_ppi_shared_v1.json",
+              "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 81.3
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 3",
+        "row_id": "dynasim.mermin.ppi.real_shared.q3",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
+          "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
+          "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "real_psid_common_support_vs_dynasim_projection",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 14.79474510613521,
+          "definition": "signed = ours - published",
+          "relative_percent": 19.54391691695536,
+          "signed_percentage_points": 14.79474510613521
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/3/shared_ppi_pct",
+            "path": "runs/replication_ppi_shared_v1.json",
+            "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 90.49474510613521
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/3/anchor_dynasim_ppi_pct",
+              "path": "runs/replication_ppi_shared_v1.json",
+              "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 75.7
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 4",
+        "row_id": "dynasim.mermin.ppi.real_shared.q4",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
+          "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
+          "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "real_psid_common_support_vs_dynasim_projection",
+            "truncated_proxy_career_vs_full_415b_career",
+            "single_eligibility_year_vs_mixed_eligibility_years"
+          ],
+          "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 14.915985385333542,
+          "definition": "signed = ours - published",
+          "relative_percent": 20.803326897257392,
+          "signed_percentage_points": 14.915985385333542
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/three_way_comparison/ppi_by_quintile/4/shared_ppi_pct",
+            "path": "runs/replication_ppi_shared_v1.json",
+            "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 86.61598538533354
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/three_way_comparison/ppi_by_quintile/4/anchor_dynasim_ppi_pct",
+              "path": "runs/replication_ppi_shared_v1.json",
+              "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 71.7
+        },
+        "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 5",
+        "row_id": "dynasim.mermin.ppi.real_shared.q5",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
+          "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "observed_claim_age_behavior_vs_2050_behavior",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.3287228468666541,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.41400862325775556,
+          "signed_percentage_points": 0.3287228468666541
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/nra_raise_to_70/table/by_quintile/0/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 79.72872284686666
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/nra_raise_to_70/table/by_quintile/0/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 79.4
+        },
+        "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 1",
+        "row_id": "dynasim.mermin.nra70.q1",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
+          "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "observed_claim_age_behavior_vs_2050_behavior",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.24413834006212198,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.30709225165046483,
+          "signed_percentage_points": 0.24413834006212198
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/nra_raise_to_70/table/by_quintile/1/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 79.74413834006212
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/nra_raise_to_70/table/by_quintile/1/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 79.5
+        },
+        "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 2",
+        "row_id": "dynasim.mermin.nra70.q2",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
+          "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "observed_claim_age_behavior_vs_2050_behavior",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.14862732233332565,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.1867177416247756,
+          "signed_percentage_points": 0.14862732233332565
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/nra_raise_to_70/table/by_quintile/2/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 79.74862732233332
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/nra_raise_to_70/table/by_quintile/2/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 79.6
+        },
+        "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 3",
+        "row_id": "dynasim.mermin.nra70.q3",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
+          "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "observed_claim_age_behavior_vs_2050_behavior",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.02694555358456796,
+          "definition": "signed = ours - published",
+          "relative_percent": -0.03376635787539772,
+          "signed_percentage_points": -0.02694555358456796
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/nra_raise_to_70/table/by_quintile/3/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 79.77305444641543
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/nra_raise_to_70/table/by_quintile/3/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 79.8
+        },
+        "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 4",
+        "row_id": "dynasim.mermin.nra70.q4",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "distributional_share"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
+          "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "observed_claim_age_behavior_vs_2050_behavior",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.12616541062649844,
+          "definition": "signed = ours - published",
+          "relative_percent": -0.15790414346245063,
+          "signed_percentage_points": -0.12616541062649844
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/nra_raise_to_70/table/by_quintile/4/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 79.77383458937351
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/nra_raise_to_70/table/by_quintile/4/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 79.9
+        },
+        "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 5",
+        "row_id": "dynasim.mermin.nra70.q5",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
+          "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "observed_claim_age_behavior_vs_2050_behavior",
+            "individual_aime_vs_shared_lifetime_income_quintile",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.053675840481730575,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.06734735317657226,
+          "signed_percentage_points": 0.053675840481730575
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/nra_raise_to_70/table/overall/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 79.75367584048173
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/nra_raise_to_70/table/overall/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 79.7
+        },
+        "quantity": "NRA-to-70 benefit as percent of scheduled, all scored retirees",
+        "row_id": "dynasim.mermin.nra70.all",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "age_trajectory"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. The 80-85 row also uses our committed survival weighting.",
+          "earnings_and_accounting": "The PIA-independent ratio does not validate benefit levels, lifetime accumulation, or population weights.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "claim_age_cola_start_vs_age62_eligibility_start",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
+            "module_survival_weighting_vs_dynasim_population_weighting"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.2979308567755936,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.30124454679028023,
+          "signed_percentage_points": 0.2979308567755936
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/cola_minus_0_4pp/table/0/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 99.1979308567756
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/cola_minus_0_4pp/table/0/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 16
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 2",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 98.9
+        },
+        "quantity": "Benefit under COLA minus 0.4 percentage points as percent of scheduled, ages 62-67",
+        "row_id": "dynasim.mermin.cola_minus_0_4pp.age_62_67",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ratio",
+          "age_trajectory"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. The 80-85 row also uses our committed survival weighting.",
+          "earnings_and_accounting": "The PIA-independent ratio does not validate benefit levels, lifetime accumulation, or population weights.",
+          "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
+          "mismatch_codes": [
+            "observed_retirees_vs_projected_2050_cross_section",
+            "claim_age_cola_start_vs_age62_eligibility_start",
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
+            "module_survival_weighting_vs_dynasim_population_weighting"
+          ],
+          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
+          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+        },
+        "deviation": {
+          "absolute_percentage_points": 0.6145039782961845,
+          "definition": "signed = ours - published",
+          "relative_percent": 0.6650475955586321,
+          "signed_percentage_points": 0.6145039782961845
+        },
+        "evidential_status": "module replication; real-data-only; reported-not-gated",
+        "external_model": "DYNASIM3",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "real-data-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/cola_minus_0_4pp/table/1/our_pct_of_scheduled",
+            "path": "runs/replication_mermin_rows_v1.json",
+            "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+          },
+          "unit": "percent of scheduled benefit",
+          "value": 93.01450397829619
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/cola_minus_0_4pp/table/1/anchor_pct",
+              "path": "runs/replication_mermin_rows_v1.json",
+              "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 18
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 4",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "percent of scheduled benefit",
+          "value": 92.4
+        },
+        "quantity": "Benefit under COLA minus 0.4 percentage points as percent of scheduled, ages 80-85",
+        "row_id": "dynasim.mermin.cola_minus_0_4pp.age_80_85",
+        "verification_class": "reported_not_verified"
+      },
+      {
+        "comparison_scope": [
+          "ordering"
+        ],
+        "concept_mismatch": {
+          "benefit_concept": "Our ordering uses benefit-reduction magnitudes; the publication orders reductions in the 75-year deficit as a share of taxable payroll. Only rank order is compared.",
+          "earnings_and_accounting": "Per-capita statutory benefit changes and actuarial-payroll balance effects have incompatible units; no numeric magnitude deviation is computed.",
+          "frame": "Our ordinal result is scored once on a common Phase-A frame; the published order comes from DYNASIM/CBO actuarial scoring. No level alignment is claimed.",
+          "mismatch_codes": [
+            "per_capita_benefit_delta_vs_75_year_actuarial_payroll_effect",
+            "restricted_common_frame_vs_national_projection",
+            "ordinal_only_no_level_matching"
+          ],
+          "population": "Our common restricted PSID career frame differs from DYNASIM's projected population and from the national actuarial population.",
+          "year_basis": "Our result is a common-evaluation-age per-capita analogue; the published column is a 75-year actuarial effect under 2005 assumptions."
+        },
+        "deviation": {
+          "definition": "Kendall tau compares the two descending orders; magnitudes are not subtracted because their units are incompatible",
+          "discordant_pair_count": 1,
+          "kendall_tau": 0.6666666666666669,
+          "pair_count": 6
+        },
+        "evidential_status": "ordinal synthesis; reported-not-gated",
+        "external_model": "DYNASIM3 / CBO 2005 actuarial scoring",
+        "our": {
+          "label_state": {
+            "individual_administrative_truth_claim": false,
+            "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+            "population_alignment_claim": false,
+            "ratified_array_activation_asserted_by_this_matrix": false,
+            "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+            "ratified_fitting_free_exact_label_array": [
+              "frame-relative",
+              "modeled-covered-earnings",
+              "deterministic-uncalibrated"
+            ],
+            "source_artifact_embedded_labels": null,
+            "source_artifact_label_note": "This report-only module artifact embeds no label array."
+          },
+          "provenance_status": "ordinal-only; reported-not-gated",
+          "source": {
+            "json_pointer": "/tests/T2_mermin_kendall_tau/our_order_by_reduction",
+            "path": "runs/replication_cost_ordering_v1.json",
+            "sha256": "ef421e147e684d2c3cd18fc635303b9891d769ef36b7ae550dcc4b458573367a"
+          },
+          "unit": "descending ordinal benefit-reduction magnitude",
+          "value": [
+            "price_indexing",
+            "nra_raised_to_70",
+            "progressive_price_indexing",
+            "reduced_cola"
+          ]
+        },
+        "published": {
+          "provenance": {
+            "classification": "reported_not_verified",
+            "numeric_source": {
+              "json_pointer": "/tests/T2_mermin_kendall_tau/anchor_order_by_reduction",
+              "path": "runs/replication_cost_ordering_v1.json",
+              "sha256": "ef421e147e684d2c3cd18fc635303b9891d769ef36b7ae550dcc4b458573367a"
+            },
+            "numeric_source_note": "The value is transcribed in a committed replication artifact, not extracted from a manifested publisher-controlled capture.",
+            "publisher_capture_status": "missing_after_refresh"
+          },
+          "source_locators": [
+            {
+              "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
+              "page": {
+                "pdf": 15
+              },
+              "publisher": "Urban Institute",
+              "table": "Table 1, 75-year deficit/surplus row",
+              "unmanifested_corroborating_copy": {
+                "accepted_as_verified_source": false,
+                "manifested": false,
+                "scope": "Provisionally corroborates only Table 2 progressive-price-indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify this row or any other Mermin cell under the capture rule.",
+                "sha256": "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
+              },
+              "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
+            }
+          ],
+          "unit": "descending ordinal 75-year deficit reduction",
+          "value": [
+            "price_indexing",
+            "progressive_price_indexing",
+            "nra_raised_to_70",
+            "reduced_cola"
+          ]
+        },
+        "quantity": "Ordinal benefit-reduction ordering across four reforms",
+        "row_id": "dynasim.mermin.four_reform_cost_ordering",
+        "verification_class": "reported_not_verified"
+      }
+    ]
+  },
+  "row_count": 22,
   "rows": [
     {
       "comparison_scope": [
@@ -1188,7 +2919,8 @@
         ]
       },
       "quantity": "Reported taxable earnings per worker",
-      "row_id": "ssa.reported_taxable_earnings_per_worker"
+      "row_id": "ssa.reported_taxable_earnings_per_worker",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -1516,7 +3248,8 @@
         ]
       },
       "quantity": "Adjusted taxable payroll per covered worker",
-      "row_id": "ssa.adjusted_taxable_payroll_per_covered_worker"
+      "row_id": "ssa.adjusted_taxable_payroll_per_covered_worker",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -1847,7 +3580,8 @@
         ]
       },
       "quantity": "Gross OASDI contributions per worker",
-      "row_id": "ssa.gross_contributions_per_worker"
+      "row_id": "ssa.gross_contributions_per_worker",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -2177,7 +3911,8 @@
         ]
       },
       "quantity": "Net payroll-tax contributions per covered worker",
-      "row_id": "ssa.net_payroll_tax_contributions_per_covered_worker"
+      "row_id": "ssa.net_payroll_tax_contributions_per_covered_worker",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -2507,7 +4242,8 @@
         ]
       },
       "quantity": "Retired-worker beneficiaries per worker",
-      "row_id": "ssa.retired_worker_beneficiaries_per_worker"
+      "row_id": "ssa.retired_worker_beneficiaries_per_worker",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -2835,7 +4571,8 @@
         ]
       },
       "quantity": "Retired-worker awards per worker",
-      "row_id": "ssa.retired_worker_awards_per_worker"
+      "row_id": "ssa.retired_worker_awards_per_worker",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -3170,7 +4907,8 @@
         ]
       },
       "quantity": "Retired-worker benefits per reported taxable earnings",
-      "row_id": "ssa.retired_worker_benefits_per_reported_taxable_earnings"
+      "row_id": "ssa.retired_worker_benefits_per_reported_taxable_earnings",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -3354,7 +5092,8 @@
         ]
       },
       "quantity": "Taxable-payroll trajectory normalized to 2015",
-      "row_id": "cbo.taxable_payroll.trajectory_2015_100"
+      "row_id": "cbo.taxable_payroll.trajectory_2015_100",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -3546,1292 +5285,8 @@
         ]
       },
       "quantity": "Social Security tax revenues as a share of taxable payroll",
-      "row_id": "cbo.tax_revenue.share_of_taxable_payroll"
-    },
-    {
-      "comparison_scope": [
-        "ratio"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
-        "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
-        "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "phase_a_generator_vs_dynasim_projection",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
-        "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
-      },
-      "deviation": {
-        "absolute_percentage_points": 1.0659396311584288,
-        "definition": "signed = ours - published",
-        "relative_percent": -1.5721823468413443,
-        "signed_percentage_points": -1.0659396311584288
-      },
-      "evidential_status": "module replication; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
-        "source": {
-          "json_pointer": "/three_way_comparison/pi_scalars/generated_pooled_mean_pct/mean",
-          "path": "runs/replication_ppi_mermin_v1.json",
-          "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 66.73406036884157
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 67.8
-      },
-      "quantity": "Price-indexed benefit as percent of scheduled, all workers",
-      "row_id": "dynasim.mermin.price_indexing.all"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
-        "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
-        "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "phase_a_generator_vs_dynasim_projection",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
-        "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
-      },
-      "deviation": {
-        "absolute_percentage_points": 1.2999999999999972,
-        "definition": "signed = ours - published",
-        "relative_percent": 1.317122593718345,
-        "signed_percentage_points": 1.2999999999999972
-      },
-      "evidential_status": "module replication; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/0/generated_pooled/mean",
-          "path": "runs/replication_ppi_mermin_v1.json",
-          "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 100.0
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 98.7
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 1",
-      "row_id": "dynasim.mermin.ppi.generated.q1"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
-        "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
-        "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "phase_a_generator_vs_dynasim_projection",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
-        "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
-      },
-      "deviation": {
-        "absolute_percentage_points": 8.977307342696207,
-        "definition": "signed = ours - published",
-        "relative_percent": 9.93064971537192,
-        "signed_percentage_points": 8.977307342696207
-      },
-      "evidential_status": "module replication; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/1/generated_pooled/mean",
-          "path": "runs/replication_ppi_mermin_v1.json",
-          "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 99.37730734269621
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 90.4
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 2",
-      "row_id": "dynasim.mermin.ppi.generated.q2"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
-        "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
-        "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "phase_a_generator_vs_dynasim_projection",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
-        "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
-      },
-      "deviation": {
-        "absolute_percentage_points": 13.378319889388465,
-        "definition": "signed = ours - published",
-        "relative_percent": 16.455498018928004,
-        "signed_percentage_points": 13.378319889388465
-      },
-      "evidential_status": "module replication; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/2/generated_pooled/mean",
-          "path": "runs/replication_ppi_mermin_v1.json",
-          "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 94.67831988938846
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 81.3
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 3",
-      "row_id": "dynasim.mermin.ppi.generated.q3"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
-        "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
-        "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "phase_a_generator_vs_dynasim_projection",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
-        "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
-      },
-      "deviation": {
-        "absolute_percentage_points": 14.134815570696233,
-        "definition": "signed = ours - published",
-        "relative_percent": 18.672147385331872,
-        "signed_percentage_points": 14.134815570696233
-      },
-      "evidential_status": "module replication; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/3/generated_pooled/mean",
-          "path": "runs/replication_ppi_mermin_v1.json",
-          "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 89.83481557069624
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 75.7
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 4",
-      "row_id": "dynasim.mermin.ppi.generated.q4"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are own-record benefits as percent of scheduled, but our PPI incidence uses a proxy PIA chain and excludes spouse/survivor benefits.",
-        "earnings_and_accounting": "Our quintiles rank individual proxy AIME; Mermin ranks spouse-shared lifetime income. Our careers are truncated and proxy-based rather than full \u00a7415(b) careers.",
-        "frame": "Our row is a report-only Phase-A replication using the gate-filtered candidate-11 earnings generator, not the entry-8 M6 projected population; the DYNASIM row is a published model projection. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "phase_a_generator_vs_dynasim_projection",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our support is ages 25-59 in the 1998-2022 biennial panel transported to 2050; DYNASIM reports 5,351 retired workers ages 62-67 in 2050.",
-        "year_basis": "Our single 2050 eligibility transport applies the 2012-2050 wedge; DYNASIM's mixed ages imply mixed eligibility years near 2047 under the 2005 vintage."
-      },
-      "deviation": {
-        "absolute_percentage_points": 12.721218971389561,
-        "definition": "signed = ours - published",
-        "relative_percent": 17.742285873625608,
-        "signed_percentage_points": 12.721218971389561
-      },
-      "evidential_status": "module replication; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "reported-not-gated; gate-1 candidate 11 generator; not M6-certified",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/4/generated_pooled/mean",
-          "path": "runs/replication_ppi_mermin_v1.json",
-          "sha256": "3be8c9ff87e8e427e9939863df59fc9583960831aa7e946fc84c1ebdb21ef58b"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 84.42121897138956
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 71.7
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 5",
-      "row_id": "dynasim.mermin.ppi.generated.q5"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
-        "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
-        "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "real_psid_common_support_vs_dynasim_projection",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.7877460579159816,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.7981216392259238,
-        "signed_percentage_points": 0.7877460579159816
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/0/shared_ppi_pct",
-          "path": "runs/replication_ppi_shared_v1.json",
-          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 99.48774605791598
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 98.7
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 1",
-      "row_id": "dynasim.mermin.ppi.real_shared.q1"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
-        "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
-        "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "real_psid_common_support_vs_dynasim_projection",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 6.720513834983635,
-        "definition": "signed = ours - published",
-        "relative_percent": 7.43419672011465,
-        "signed_percentage_points": 6.720513834983635
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/1/shared_ppi_pct",
-          "path": "runs/replication_ppi_shared_v1.json",
-          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 97.12051383498364
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 90.4
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 2",
-      "row_id": "dynasim.mermin.ppi.real_shared.q2"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
-        "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
-        "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "real_psid_common_support_vs_dynasim_projection",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 12.501529219213069,
-        "definition": "signed = ours - published",
-        "relative_percent": 15.377034709979176,
-        "signed_percentage_points": 12.501529219213069
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/2/shared_ppi_pct",
-          "path": "runs/replication_ppi_shared_v1.json",
-          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 93.80152921921307
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 81.3
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 3",
-      "row_id": "dynasim.mermin.ppi.real_shared.q3"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
-        "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
-        "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "real_psid_common_support_vs_dynasim_projection",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 14.79474510613521,
-        "definition": "signed = ours - published",
-        "relative_percent": 19.54391691695536,
-        "signed_percentage_points": 14.79474510613521
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/3/shared_ppi_pct",
-          "path": "runs/replication_ppi_shared_v1.json",
-          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 90.49474510613521
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 75.7
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 4",
-      "row_id": "dynasim.mermin.ppi.real_shared.q4"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both report own-record PPI benefits as percent of scheduled; our shared measure is only the ranking variable and benefits remain own-record.",
-        "earnings_and_accounting": "Our shared-lifetime ranking matches Mermin's stated concept, but uses compressed proxy histories and a restricted PSID common support rather than full careers.",
-        "frame": "Our row is a report-only real-PSID-couple regrouping, not generated population output; DYNASIM is a projected synthetic population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "real_psid_common_support_vs_dynasim_projection",
-          "truncated_proxy_career_vs_full_415b_career",
-          "single_eligibility_year_vs_mixed_eligibility_years"
-        ],
-        "population": "Our common support contains observed PSID retirees/couples with a coverage restriction; DYNASIM reports 5,351 projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed 1998-2022 histories are transported to a single 2050 eligibility cohort; DYNASIM uses a mixed 2050 cross-section and 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 14.915985385333542,
-        "definition": "signed = ours - published",
-        "relative_percent": 20.803326897257392,
-        "signed_percentage_points": 14.915985385333542
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/three_way_comparison/ppi_by_quintile/4/shared_ppi_pct",
-          "path": "runs/replication_ppi_shared_v1.json",
-          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 86.61598538533354
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 71.7
-      },
-      "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 5",
-      "row_id": "dynasim.mermin.ppi.real_shared.q5"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
-        "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "observed_claim_age_behavior_vs_2050_behavior",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.3287228468666541,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.41400862325775556,
-        "signed_percentage_points": 0.3287228468666541
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/nra_raise_to_70/table/by_quintile/0/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 79.72872284686666
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 79.4
-      },
-      "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 1",
-      "row_id": "dynasim.mermin.nra70.q1"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
-        "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "observed_claim_age_behavior_vs_2050_behavior",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.24413834006212198,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.30709225165046483,
-        "signed_percentage_points": 0.24413834006212198
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/nra_raise_to_70/table/by_quintile/1/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 79.74413834006212
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 79.5
-      },
-      "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 2",
-      "row_id": "dynasim.mermin.nra70.q2"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
-        "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "observed_claim_age_behavior_vs_2050_behavior",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.14862732233332565,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.1867177416247756,
-        "signed_percentage_points": 0.14862732233332565
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/nra_raise_to_70/table/by_quintile/2/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 79.74862732233332
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 79.6
-      },
-      "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 3",
-      "row_id": "dynasim.mermin.nra70.q3"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
-        "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "observed_claim_age_behavior_vs_2050_behavior",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.02694555358456796,
-        "definition": "signed = ours - published",
-        "relative_percent": -0.03376635787539772,
-        "signed_percentage_points": -0.02694555358456796
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/nra_raise_to_70/table/by_quintile/3/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 79.77305444641543
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 79.8
-      },
-      "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 4",
-      "row_id": "dynasim.mermin.nra70.q4"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "distributional_share"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
-        "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "observed_claim_age_behavior_vs_2050_behavior",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.12616541062649844,
-        "definition": "signed = ours - published",
-        "relative_percent": -0.15790414346245063,
-        "signed_percentage_points": -0.12616541062649844
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/nra_raise_to_70/table/by_quintile/4/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 79.77383458937351
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 79.9
-      },
-      "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 5",
-      "row_id": "dynasim.mermin.nra70.q5"
-    },
-    {
-      "comparison_scope": [
-        "ratio"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Both are retired-worker own-record benefits as percent of scheduled, but ours is a person-weighted statutory-factor ratio with no earnings test or behavioral response; the published aggregate is dollar-weighted.",
-        "earnings_and_accounting": "Our distribution ranks transported individual proxy AIME; Mermin ranks spouse-shared lifetime income.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "observed_claim_age_behavior_vs_2050_behavior",
-          "individual_aime_vs_shared_lifetime_income_quintile",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.053675840481730575,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.06734735317657226,
-        "signed_percentage_points": 0.053675840481730575
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/nra_raise_to_70/table/overall/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 79.75367584048173
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 79.7
-      },
-      "quantity": "NRA-to-70 benefit as percent of scheduled, all scored retirees",
-      "row_id": "dynasim.mermin.nra70.all"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "age_trajectory"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. The 80-85 row also uses our committed survival weighting.",
-        "earnings_and_accounting": "The PIA-independent ratio does not validate benefit levels, lifetime accumulation, or population weights.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "claim_age_cola_start_vs_age62_eligibility_start",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
-          "module_survival_weighting_vs_dynasim_population_weighting"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.2979308567755936,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.30124454679028023,
-        "signed_percentage_points": 0.2979308567755936
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/cola_minus_0_4pp/table/0/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 99.1979308567756
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 16
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 2",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 98.9
-      },
-      "quantity": "Benefit under COLA minus 0.4 percentage points as percent of scheduled, ages 62-67",
-      "row_id": "dynasim.mermin.cola_minus_0_4pp.age_62_67"
-    },
-    {
-      "comparison_scope": [
-        "ratio",
-        "age_trajectory"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. The 80-85 row also uses our committed survival weighting.",
-        "earnings_and_accounting": "The PIA-independent ratio does not validate benefit levels, lifetime accumulation, or population weights.",
-        "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
-        "mismatch_codes": [
-          "observed_retirees_vs_projected_2050_cross_section",
-          "claim_age_cola_start_vs_age62_eligibility_start",
-          "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
-          "module_survival_weighting_vs_dynasim_population_weighting"
-        ],
-        "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-        "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
-      },
-      "deviation": {
-        "absolute_percentage_points": 0.6145039782961845,
-        "definition": "signed = ours - published",
-        "relative_percent": 0.6650475955586321,
-        "signed_percentage_points": 0.6145039782961845
-      },
-      "evidential_status": "module replication; real-data-only; reported-not-gated",
-      "external_model": "DYNASIM3",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "real-data-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/cola_minus_0_4pp/table/1/our_pct_of_scheduled",
-          "path": "runs/replication_mermin_rows_v1.json",
-          "sha256": "c55c2f35856eb56c6ead6428dbd5085a5910b3ee651a15c4ae22b45f51656100"
-        },
-        "unit": "percent of scheduled benefit",
-        "value": 93.01450397829619
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 18
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 4",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "percent of scheduled benefit",
-        "value": 92.4
-      },
-      "quantity": "Benefit under COLA minus 0.4 percentage points as percent of scheduled, ages 80-85",
-      "row_id": "dynasim.mermin.cola_minus_0_4pp.age_80_85"
+      "row_id": "cbo.tax_revenue.share_of_taxable_payroll",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -4906,7 +5361,8 @@
         "value": 49.2
       },
       "quantity": "Package 1b winner/loser share: married, male, lose_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.married.male.lose_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.married.male.lose_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -4981,7 +5437,8 @@
         "value": 29.5
       },
       "quantity": "Package 1b winner/loser share: married, male, gain_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.married.male.gain_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.married.male.gain_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5056,7 +5513,8 @@
         "value": 22.1
       },
       "quantity": "Package 1b winner/loser share: married, female, lose_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.married.female.lose_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.married.female.lose_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5131,7 +5589,8 @@
         "value": 60.3
       },
       "quantity": "Package 1b winner/loser share: married, female, gain_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.married.female.gain_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.married.female.gain_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5206,7 +5665,8 @@
         "value": 44.1
       },
       "quantity": "Package 1b winner/loser share: married, female, gain_ge_20",
-      "row_id": "dynasim.favreault_steuerle.package1b.married.female.gain_ge_20"
+      "row_id": "dynasim.favreault_steuerle.package1b.married.female.gain_ge_20",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5281,7 +5741,8 @@
         "value": 29.5
       },
       "quantity": "Package 1b winner/loser share: divorced, male, lose_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.divorced.male.lose_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.divorced.male.lose_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5356,7 +5817,8 @@
         "value": 21.1
       },
       "quantity": "Package 1b winner/loser share: divorced, male, gain_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.divorced.male.gain_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.divorced.male.gain_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5431,7 +5893,8 @@
         "value": 44.7
       },
       "quantity": "Package 1b winner/loser share: divorced, female, gain_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.divorced.female.gain_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.divorced.female.gain_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5506,7 +5969,8 @@
         "value": 35.6
       },
       "quantity": "Package 1b winner/loser share: widowed, male, lose_ge_20",
-      "row_id": "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_20"
+      "row_id": "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_20",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5581,7 +6045,8 @@
         "value": 78.5
       },
       "quantity": "Package 1b winner/loser share: widowed, male, lose_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_5"
+      "row_id": "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5656,7 +6121,8 @@
         "value": 38.3
       },
       "quantity": "Package 1b winner/loser share: widowed, female, lose_ge_20",
-      "row_id": "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_20"
+      "row_id": "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_20",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5731,83 +6197,8 @@
         "value": 66.7
       },
       "quantity": "Package 1b winner/loser share: widowed, female, lose_ge_5",
-      "row_id": "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_5"
-    },
-    {
-      "comparison_scope": [
-        "ordering"
-      ],
-      "concept_mismatch": {
-        "benefit_concept": "Our ordering uses benefit-reduction magnitudes; the publication orders reductions in the 75-year deficit as a share of taxable payroll. Only rank order is compared.",
-        "earnings_and_accounting": "Per-capita statutory benefit changes and actuarial-payroll balance effects have incompatible units; no numeric magnitude deviation is computed.",
-        "frame": "Our ordinal result is scored once on a common Phase-A frame; the published order comes from DYNASIM/CBO actuarial scoring. No level alignment is claimed.",
-        "mismatch_codes": [
-          "per_capita_benefit_delta_vs_75_year_actuarial_payroll_effect",
-          "restricted_common_frame_vs_national_projection",
-          "ordinal_only_no_level_matching"
-        ],
-        "population": "Our common restricted PSID career frame differs from DYNASIM's projected population and from the national actuarial population.",
-        "year_basis": "Our result is a common-evaluation-age per-capita analogue; the published column is a 75-year actuarial effect under 2005 assumptions."
-      },
-      "deviation": {
-        "definition": "Kendall tau compares the two descending orders; magnitudes are not subtracted because their units are incompatible",
-        "discordant_pair_count": 1,
-        "kendall_tau": 0.6666666666666669,
-        "pair_count": 6
-      },
-      "evidential_status": "ordinal synthesis; reported-not-gated",
-      "external_model": "DYNASIM3 / CBO 2005 actuarial scoring",
-      "our": {
-        "label_state": {
-          "individual_administrative_truth_claim": false,
-          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
-          "population_alignment_claim": false,
-          "ratified_array_activation_asserted_by_this_matrix": false,
-          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
-          "ratified_fitting_free_exact_label_array": [
-            "frame-relative",
-            "modeled-covered-earnings",
-            "deterministic-uncalibrated"
-          ],
-          "source_artifact_embedded_labels": null,
-          "source_artifact_label_note": "This report-only module artifact embeds no label array."
-        },
-        "provenance_status": "ordinal-only; reported-not-gated",
-        "source": {
-          "json_pointer": "/tests/T2_mermin_kendall_tau/our_order_by_reduction",
-          "path": "runs/replication_cost_ordering_v1.json",
-          "sha256": "ef421e147e684d2c3cd18fc635303b9891d769ef36b7ae550dcc4b458573367a"
-        },
-        "unit": "descending ordinal benefit-reduction magnitude",
-        "value": [
-          "price_indexing",
-          "nra_raised_to_70",
-          "progressive_price_indexing",
-          "reduced_cola"
-        ]
-      },
-      "published": {
-        "source_locators": [
-          {
-            "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
-            "page": {
-              "pdf": 15
-            },
-            "publisher": "Urban Institute",
-            "table": "Table 1, 75-year deficit/surplus row",
-            "url": "https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF"
-          }
-        ],
-        "unit": "descending ordinal 75-year deficit reduction",
-        "value": [
-          "price_indexing",
-          "progressive_price_indexing",
-          "nra_raised_to_70",
-          "reduced_cola"
-        ]
-      },
-      "quantity": "Ordinal benefit-reduction ordering across four reforms",
-      "row_id": "dynasim.mermin.four_reform_cost_ordering"
+      "row_id": "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_5",
+      "verification_class": "verified"
     },
     {
       "comparison_scope": [
@@ -5893,10 +6284,12 @@
         "value": 0.3
       },
       "quantity": "Single-side WISH employee payroll-tax rate",
-      "row_id": "wish.hr4289.employee_rate.share_of_payroll"
+      "row_id": "wish.hr4289.employee_rate.share_of_payroll",
+      "verification_class": "verified"
     }
   ],
-  "schema_version": "cross_model_validation_matrix.v1",
+  "schema_version": "cross_model_validation_matrix.v2",
+  "total_row_count": 42,
   "wish_financing_stub": {
     "concept_mismatch": {
       "benefit_concept": "The current artifact has no LTSS eligibility, vesting, benefit, spend-down, adequacy, trust-fund, or program-cost model.",
