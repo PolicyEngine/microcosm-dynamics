@@ -2,12 +2,13 @@
 
 ## State
 
-Findings 1–10 are closed; final integrity and satisfiability verification is
-next. The worktree starts from
-unratified Amendment 5
-commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
+Findings 1–10 are closed in order and final integrity, identity, source-byte,
+and satisfiability verification has passed. The worktree starts from
+unratified Amendment 5 commit
+`6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
-the ratified 1,376,610-byte prefix exactly.
+the ratified 1,376,610-byte prefix exactly. The only remaining action is the
+external round-2 referee report.
 
 ## Done
 
@@ -113,9 +114,56 @@ the ratified 1,376,610-byte prefix exactly.
   owned physical grammar only when their complete codebook domain supplies one
   common type/unit, and otherwise fail closed rather than borrowing a host
   numeric serializer.
+- Recomputed the final 1,737,698-byte design document as Git blob
+  `fba8f727af257afbbec37b0a14de43002b406fd5` with raw SHA-256
+  `be211e1aabd5b89144cbd060409bba0b681f83da73131c98f002f2d3da5ed5cd`.
+  Its first 1,376,610 bytes equal the D4 Git blob byte-for-byte and retain
+  SHA-256
+  `6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8`;
+  its 361,088-byte Amendment-5 suffix has SHA-256
+  `cc808d63ac76c0a5b89a526ad1a47e2fff6e50361c1e092ade22d61acb829d07`.
+- Independently recomputed every §19 pinned identity: 58 occurrences / 55
+  unique SHA-256 values and 19 occurrences / 14 unique Git identities, with
+  exact expected-set coverage and zero mismatches. This includes both
+  self-zeroed native canonicalizers, all 25 residual-row hashes, all five
+  residual-domain hashes, the two-root 257-document denominator, its
+  questionnaire slice, and the 566-byte page-derivation value.
+- Reauthenticated all 257 denominator source files from the staged roots:
+  2,741,145,128 bytes hashed with no size or digest mismatch. Reconstructed
+  the exact role counts 81 questionnaire/QxQ, 86 dictionary/layout, 47
+  codebook/value-label, and 43 raw fixed-width files.
+- Reverified 29 §19 headings, 33 balanced fenced blocks, five strict JSON
+  blocks, 12 rectangular Markdown tables, zero suffix tabs/CR bytes, 125
+  closure-sweep seeds expanding to 3,057 first-occurrence-unique variants,
+  the 32-row comparator census (15 replaced, 17 unchanged), all 18 G17 rows
+  (seven changed, 11 preserved), and the disjoint 16+21=37 successor names.
+  `git diff --check` passes and D4-to-HEAD remains 5,791 insertions with zero
+  deletions in the design file.
+- Confirmed the two round-1 authoring digest literals and the superseded v1
+  source-extractor interface literal are absent from §19.
+- Ran the focused authority/source/registry regression suite with the
+  mandated interpreter: 251 tests passed.
+- Re-ran satisfiability walk A. Its source-to-artifact construction is now
+  byte-functional, but current evidence correctly aborts: Q5 and both
+  official consumers are absent, staged raw bytes are not registered in the
+  repository, and the 2023 `G13.` prompt still maps ambiguously to distinct
+  reference-person and spouse fields without a separately authenticated
+  semantic field-binding authority.
+- Re-ran satisfiability walk B. The local historical-SECA `[1968,1990)` path
+  is representable through the complete partition and typed
+  v2-to-v3-to-v4-to-v5 successor chain. The complete current registry still
+  correctly aborts because D5/L5, the official inventory/domain, future
+  legal-source blobs, and complete rank-1 legal rows do not yet exist.
+- Re-ran satisfiability walk C. The current §16.8.1 tuple still aborts
+  correctly: adjudication remains two established, 17 partial, and 11
+  unestablished; registration is incomplete; target emission remains zero;
+  and no D5/Q5/L5, v4 capture/cutoff/domain, v5 bundle, or v4 receipt witness
+  exists. The 11 Class-C residuals other than index 9 remain hard blockers.
 
 ## Next
 
-1. Commit finding 10 after adversarial review and prefix/literal checks.
-2. Recompute identities, sweep stale literals, rerun all satisfiability
-   walks, and write the round-2 referee report.
+1. Commit this final verification state after worktree and staged-prefix
+   checks.
+2. Write the round-2 referee report to the requested output path, or report
+   the sandbox limitation and provide the exact fallback file if that path
+   is not writable.
