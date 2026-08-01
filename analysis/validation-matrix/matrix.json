@@ -2361,17 +2361,16 @@
           "age_trajectory"
         ],
         "concept_mismatch": {
-          "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. The 80-85 row also uses our committed survival weighting.",
+          "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. Our ratio is person-weighted while the published aggregate is dollar-weighted.",
           "earnings_and_accounting": "The PIA-independent ratio does not validate benefit levels, lifetime accumulation, or population weights.",
           "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
           "mismatch_codes": [
             "observed_retirees_vs_projected_2050_cross_section",
             "claim_age_cola_start_vs_age62_eligibility_start",
-            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
-            "module_survival_weighting_vs_dynasim_population_weighting"
+            "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio"
           ],
-          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+          "population": "Our observed PSID retirees were eligible in 2005-2019 (births 1943-1957), with benefit paths evaluated at ages 62-67 and no survival weighting; Mermin reports 5,351 projected own-record retired workers ages 62-67 in the 2050 cross-section.",
+          "year_basis": "Our row combines observed-era eligibility and claim-age behavior with benefit-path evaluation at ages 62-67. Mermin's 2050 cross-section uses the paper's fixed 2.8% scheduled and 2.4% reduced COLA assumptions under its 2005 vintage."
         },
         "deviation": {
           "absolute_percentage_points": 0.2979308567755936,
@@ -2449,7 +2448,7 @@
           "age_trajectory"
         ],
         "concept_mismatch": {
-          "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. The 80-85 row also uses our committed survival weighting.",
+          "benefit_concept": "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 first eligibility. Our aggregate applies the module's survival weights and is person-weighted, while the published aggregate is dollar-weighted.",
           "earnings_and_accounting": "The PIA-independent ratio does not validate benefit levels, lifetime accumulation, or population weights.",
           "frame": "Our row is a real-data-only, report-not-gated module result on a restricted Phase-A PSID frame; DYNASIM is a projected population. No frame alignment is claimed.",
           "mismatch_codes": [
@@ -2458,8 +2457,8 @@
             "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
             "module_survival_weighting_vs_dynasim_population_weighting"
           ],
-          "population": "Our retirees were eligible in 2005-2019 (births 1943-1957); DYNASIM reports projected retired workers ages 62-67 in 2050.",
-          "year_basis": "Observed-era claim-age behavior is combined with a 2050-policy NRA; DYNASIM applies its 2050 cross-section under 2005 assumptions."
+          "population": "Our observed PSID retirees were eligible in 2005-2019 (births 1943-1957), with benefit paths extrapolated to ages 80-85 and weighted by the committed survival schedule; Mermin reports 3,088 projected own-record retired workers ages 80-85 in the 2050 cross-section.",
+          "year_basis": "Our row combines observed-era eligibility and claim-age behavior with extrapolated benefit paths at ages 80-85. Mermin's 2050 cross-section uses the paper's fixed 2.8% scheduled and 2.4% reduced COLA assumptions under its 2005 vintage."
         },
         "deviation": {
           "absolute_percentage_points": 0.6145039782961845,

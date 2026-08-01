@@ -1127,13 +1127,56 @@ NRA_MISMATCH = {
     ],
 }
 
-COLA_MISMATCH = {
+COLA_62_67_MISMATCH = {
     "frame": NRA_MISMATCH["frame"],
-    "population": NRA_MISMATCH["population"],
-    "year_basis": NRA_MISMATCH["year_basis"],
+    "population": (
+        "Our observed PSID retirees were eligible in 2005-2019 (births "
+        "1943-1957), with benefit paths evaluated at ages 62-67 and no "
+        "survival weighting; Mermin reports 5,351 projected own-record "
+        "retired workers ages 62-67 in the 2050 cross-section."
+    ),
+    "year_basis": (
+        "Our row combines observed-era eligibility and claim-age behavior "
+        "with benefit-path evaluation at ages 62-67. Mermin's 2050 "
+        "cross-section uses the paper's fixed 2.8% scheduled and 2.4% reduced "
+        "COLA assumptions under its 2005 vintage."
+    ),
     "benefit_concept": (
-        "Our COLA ratio compounds from claim age; Mermin credits COLAs from age-62 "
-        "first eligibility. The 80-85 row also uses our committed survival weighting."
+        "Our COLA ratio compounds from claim age; Mermin credits COLAs from "
+        "age-62 first eligibility. Our ratio is person-weighted while the "
+        "published aggregate is dollar-weighted."
+    ),
+    "earnings_and_accounting": (
+        "The PIA-independent ratio does not validate benefit levels, lifetime "
+        "accumulation, or population weights."
+    ),
+    "mismatch_codes": [
+        "observed_retirees_vs_projected_2050_cross_section",
+        "claim_age_cola_start_vs_age62_eligibility_start",
+        "person_weighted_factor_ratio_vs_dollar_weighted_benefit_ratio",
+    ],
+}
+
+COLA_80_85_MISMATCH = {
+    "frame": NRA_MISMATCH["frame"],
+    "population": (
+        "Our observed PSID retirees were eligible in 2005-2019 (births "
+        "1943-1957), with benefit paths extrapolated to ages 80-85 and "
+        "weighted by the committed survival schedule; Mermin reports 3,088 "
+        "projected own-record retired workers ages 80-85 in the 2050 "
+        "cross-section."
+    ),
+    "year_basis": (
+        "Our row combines observed-era eligibility and claim-age behavior "
+        "with extrapolated benefit paths at ages 80-85. Mermin's 2050 "
+        "cross-section uses the paper's fixed 2.8% scheduled and 2.4% reduced "
+        "COLA assumptions under its 2005 vintage."
+    ),
+    "benefit_concept": (
+        "Our COLA ratio compounds from claim age; Mermin credits COLAs from "
+        "age-62 first eligibility. Our aggregate applies the module's "
+        "survival weights and is person-weighted, while the published "
+        "aggregate is dollar-weighted."
     ),
     "earnings_and_accounting": (
         "The PIA-independent ratio does not validate benefit levels, lifetime "
@@ -1284,7 +1327,11 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
                     "source_locators": locator,
                 },
                 "deviation": scalar_deviation(ours, published),
-                "concept_mismatch": deepcopy(COLA_MISMATCH),
+                "concept_mismatch": deepcopy(
+                    COLA_62_67_MISMATCH
+                    if age_group == "62-67"
+                    else COLA_80_85_MISMATCH
+                ),
                 "evidential_status": "module replication; real-data-only; reported-not-gated",
             }
         )

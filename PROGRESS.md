@@ -27,16 +27,18 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
 - Finding 4: separated the two SSA published units from the model units,
   qualified 5.A4 with the Number-panel row path, and restored 2021-2022
   preliminary status to every canonical 4.B11 locator.
+- Finding 5: split the two COLA mismatch records so ages 62-67 and 80-85
+  carry their correct 2050 populations, evaluation ages, year bases, and
+  survival-weighting disclosures.
 
 ## Next
 
-1. Finding 5: split the NRA and age-80--85 COLA mismatch records.
-2. Finding 6: complete WISH page/section locators, derivation metadata,
+1. Finding 6: complete WISH page/section locators, derivation metadata,
    introduced-bill wording, and by-construction disclosure.
-3. Finding 7: remove certification and completeness overclaims.
-4. Implement fail-closed, non-writing `--check` modes for both builders and
+2. Finding 7: remove certification and completeness overclaims.
+3. Implement fail-closed, non-writing `--check` modes for both builders and
    strengthen the drift test for both files, capture pins, and locators.
-5. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+4. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-6. Write the final closure report to the requested output file.
+5. Write the final closure report to the requested output file.
