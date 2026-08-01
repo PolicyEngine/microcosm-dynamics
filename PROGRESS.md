@@ -2,7 +2,8 @@
 
 ## State
 
-Findings 1–9 are closed; finding 10 is next. The worktree starts from
+Findings 1–10 are closed; final integrity and satisfiability verification is
+next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -88,9 +89,33 @@ the ratified 1,376,610-byte prefix exactly.
   selectable. The current predecessor has neither
   this canonical partition nor this complete annotation denominator, so it
   remains `registration_required` evidence rather than a passing proof.
+- Closed finding 10 with an authenticated v2 four-entry-point source-only
+  extractor and a serialized, candidate-independent all-wave/all-field grammar
+  derivation relation. Exact source spellings `NUM(w.d)` and `Fw.d` alone map
+  to one unsigned ASCII digit, implied-decimal, no-padding profile; unsupported,
+  incomplete, signed, padded, or conflicting formats abort. Complete ordered
+  dictionary row/label/description projections fix both grammar provenance and
+  canonical `source_meaning`. The complete combined dictionary/codebook group
+  alone fixes the serialized `derived_parse_kind`: a nonempty codebook domain
+  is value-code, while an exact-empty domain can be fixed-width numeric only
+  from a supported source format and complete declarations. Consumers
+  exact-match that branch. Exact source-value-cell lexemes plus the same format
+  tuple uniquely render every codebook literal, including `0` as `00` under
+  `NUM(2.0)`, and the compiler independently replays the bytes. Exact committed
+  `CHR(w)` can only copy an already full-width ASCII literal or remain inert;
+  it never constructs a numeric grammar or range rendering. The accepted
+  language, missing-token exclusion,
+  action-sensitive prefix quotient, no-sink rule, BFS numbering, transition
+  ordering, digests, `NUM(2.0)` exhaustive vector, inventory/Q5 joins, G17,
+  ledger, sweep, build order, and internal-identifier classification are now
+  explicit. Matching fixed-numeric codebook rows remain source-cited but must
+  have exact-empty normalized entries; value-code ranges use the same compiler-
+  owned physical grammar only when their complete codebook domain supplies one
+  common type/unit, and otherwise fail closed rather than borrowing a host
+  numeric serializer.
 
 ## Next
 
-1. Close finding 10 and commit it separately.
+1. Commit finding 10 after adversarial review and prefix/literal checks.
 2. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.

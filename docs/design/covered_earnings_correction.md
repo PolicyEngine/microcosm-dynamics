@@ -25304,16 +25304,20 @@ resolution.
 The §19.3.3 source-document manifest carries one
 `field_source_derivation` object shared by the slot and inventory artifacts.
 It has exactly `implementation_identity`, `document_derivations`,
-`document_derivation_count`, `document_derivation_domain_sha256`, and
-`status`. `implementation_identity` has exactly `path`, `source_commit`,
+`document_derivation_count`, `document_derivation_domain_sha256`,
+`numeric_grammar_derivation_rows`, `numeric_grammar_derivation_row_count`,
+`numeric_grammar_derivation_keyset_sha256`,
+`numeric_grammar_derivation_domain_sha256`, and `status`.
+`implementation_identity` has exactly `path`, `source_commit`,
 `tree_mode`, `blob_oid`, `byte_size`, `raw_sha256`, `interface_version`, and
 `entry_points`. Path is canonical repository-relative; commit and blob are
 40-lowercase-hex Git identities; mode is string `100644`; size is positive;
 and SHA-256 covers the complete implementation blob at that commit. The
 interface literal is
-`dictionary_codebook_fixed_width_source_derivation_v1`, and entry points are
+`dictionary_codebook_fixed_width_source_derivation_v2`, and entry points are
 exactly, in order, `extract_dictionary_layout_rows`,
-`extract_codebook_rows`, and `frame_fixed_width_records`. This is a
+`extract_codebook_rows`, `derive_source_numeric_grammar`, and
+`frame_fixed_width_records`. This is a
 separately reviewed source-only extractor: its commit is an ancestor of the
 closure artifact's first-add commit, its imports are structurally unable to
 reach the PSID reader, crosswalk, candidate registries, or configuration,
@@ -25321,18 +25325,67 @@ and its bytes remain unchanged through the slot/inventory authority cutoff.
 Amendment 5 pins the interface and identity schema, not a future
 implementation value.
 
-Each entry point receives only the complete manifest document bytes, its
-document role/waves/path, this closed interface literal, and—for PDF—the
-pinned page-text result; the raw-record entry point additionally receives
-the previously reconstructed complete same-wave canonical dictionary rows.
-It receives no candidate decoder, region, row,
-entry, framing, token, or inventory value. For a text document it attempts
+The dictionary extraction entry point receives only the complete manifest
+document bytes, its document role/waves/path, this closed interface literal,
+and—for PDF—the pinned page-text result. The codebook extraction entry point
+receives those same values for one codebook document plus the previously
+reconstructed complete canonical dictionary rows for every wave in that
+document's manifest wave array. Those rows are supplied as the exact
+`dictionary_inputs` objects and `U`/source-row order fixed below, without a
+field filter; they are its sole physical-width/format context. It must apply
+the exact literal-rendering function below while constructing canonical
+codebook rows. The raw-record entry point
+receives the complete raw document bytes and manifest members plus the
+previously reconstructed complete same-wave canonical dictionary rows. The
+numeric-grammar entry point receives only the complete independently ordered
+canonical dictionary and codebook rows and their document parser-family and
+wave members; it receives no raw-data bytes. No entry
+point receives a candidate decoder, region, row, entry, framing, token,
+inventory, or grammar value; source-derived dictionary context is not a
+candidate row. For a text document the applicable extraction entry point attempts
 strict `UTF-8` then strict `windows-1252` in that order and selects the first
 decoder/parser-family pair that consumes the complete required source domain;
 a second pair with a different canonical result is a conflict. Parser family
 is selected by complete source syntax, never filename alone. The expected
 decoder, segmentation, canonical rows, framing, counts, and digests are
-constructed before their serialized comparands are read.
+constructed before their serialized comparands are read. The numeric-grammar
+relation is likewise constructed in full before any inventory field,
+`typed_parse_specs`, layout grammar, inventory/configured copy of a normalized
+codebook domain, token census, or configured derivation row is read; its own
+codebook relation and `R` are projected directly from the already
+source-derived canonical codebook rows. It independently replays every
+codebook-literal rendering from the retained source lexeme and dictionary
+context and aborts on any unequal `raw_token_hex` before using literal
+precedence or constructing a DFA.
+
+For one codebook document `c`, `dictionary_context(c)` is the exact
+`U`-ordered filter of the complete dictionary-input array to documents whose
+manifest wave array has a nonempty intersection with `c.interview_waves`; each
+retained four-key input and all of its canonical rows remain complete and in
+source order. The codebook entry point's call tuple is exactly
+`[interface_version,c.source_document_id,c.interview_waves,
+c.canonical_source_path,complete_document_bytes,pinned_page_text_or_null,
+dictionary_context(c)]`. The byte string is the complete authenticated file;
+the page-text value is the complete pinned derivation for PDF and null for
+text. No field ID, source entry, candidate literal, or consumer can filter the
+context. Its return is the complete canonical codebook-row array plus the
+count, ordered-ID keyset digest, and complete-row domain digest already stored
+in that document derivation. Re-running the tuple must deep-equal all four.
+
+The numeric entry point's call value is exactly the four-position JSON value
+array `[interface_version,W,dictionary_inputs,codebook_inputs]`.
+`interface_version` is the v2 literal above; `W` is the complete independent
+wave array; and each input array follows `U` document order with one object
+having exactly `source_document_id`, `interview_waves`, `parser_family`, and
+`canonical_rows`. Those four values exact-copy the manifest/document
+derivation, and the row array is complete. Dictionary inputs exact-cover all
+86 dictionary documents and codebook inputs all 47 codebook documents. The
+return value is exactly the four-position JSON value array
+`[numeric_grammar_derivation_rows,numeric_grammar_derivation_row_count,
+numeric_grammar_derivation_keyset_sha256,
+numeric_grammar_derivation_domain_sha256]` with the equations below. No
+additional argument, callback, environment value, or alternate return shape
+is admitted.
 
 `document_derivations` exact-covers, once each and in independently derived
 `U` order, all 176 nonquestionnaire documents: 86 `dictionary_layout`, 47
@@ -25393,9 +25446,15 @@ A canonical dictionary row has exactly `dictionary_field_row_id`,
 `source_locator_ids`. Source position is zero-based. Coordinate basis is
 `one_based_inclusive | zero_based_half_open`; the displayed `start,end` is
 its unique zero-based half-open conversion, and width is `end - start`.
-Declared parse/type members obey the exact §4.2 typed-parse branch or are
-null only when the source is silent and another same-field authenticated
-dictionary row supplies the unique value. Each source-missing row has
+The declared sign, decimal, scale, type, and unit members exact-normalize an
+express source value and otherwise are null. The compiler later requires their
+unique complete coalescence only for a derived fixed-width branch; a value-code
+range obtains type/unit from the complete codebook domain and does not fill a
+silent dictionary member by default.
+`declared_parse_kind` is `fixed_width_numeric | value_code_map` only when the
+dictionary source expressly states that semantic distinction and otherwise is
+null; a numeric format statement alone never chooses coded versus uncoded.
+The complete-group compiler below derives the final branch. Each source-missing row has
 exactly `raw_token_hex`, `source_meaning`, and `missing_reason_code`.
 
 A canonical codebook row has exactly `codebook_field_row_id`,
@@ -25411,6 +25470,326 @@ the complete ID arrays, and domain hashes cover the complete §10.1-
 canonical rows. Every source locator resolves within that document's
 selected regions. Duplicate, skipped, reordered, unlocatable, or
 nondeterministically decoded rows/entries abort.
+
+The third source-only entry point constructs the complete
+`numeric_grammar_derivation_rows` relation from those canonical dictionary and
+codebook rows, not from a field selected by a consumer. Let `W` be the independently
+fixed interview-wave order in `U`. For each wave in `W`, scan every
+`dictionary_layout` document whose manifest wave array contains that wave in
+`U` order and its canonical rows in source position. Stable-first unique
+`raw_field_id` values in that stream fix the group order. One group contains
+every same-wave canonical dictionary row having that exact field ID plus every
+same-wave canonical codebook row having that ID, each in `U` then source-row
+order. The
+serialized relation has exactly one row for every such group, including
+value-code groups and groups whose numeric authority fails; no inventory,
+join, codebook entry, observed token, or candidate grammar can select its
+denominator.
+
+Each numeric-grammar derivation row has exactly
+`numeric_grammar_derivation_id`, `interview_wave`, `raw_field_id`,
+`dictionary_field_row_ids`, `dictionary_field_rows_sha256`,
+`codebook_field_row_ids`, `codebook_field_rows_sha256`,
+`source_format_projection`, `source_meaning_projection`,
+`dictionary_field_meaning`, `derived_parse_kind`, `normalized_format_profile`,
+`derivation_status`, `padding_rule`, and `registered_numeric_grammar`.
+The row-ID array is the group's complete dictionary-row projection in the
+order above and is nonempty; its digest is SHA-256 of the resolved complete
+ordered canonical-row array's standalone §10.1 terminal-LF JSON bytes, not
+merely their IDs. The codebook ID array is the group's complete, possibly
+empty projection; its digest is the same canonical SHA-256 construction over
+the resolved codebook rows, including the canonical empty array.
+`source_format_projection` has exactly
+one same-position object per row with exactly `dictionary_field_row_id`,
+`parser_family`, and `source_format_text`. The ID exact-copies the row,
+parser family exact-copies its containing document derivation, and format is
+the exact extracted JSON string or null when that source row is silent. Null,
+empty, duplicate, and differently spelled format values are retained rather
+than normalized away.
+
+`source_meaning_projection` likewise has exactly one same-position object
+per row with exactly `dictionary_field_row_id`, `source_label`, and
+`source_description`. The last two members exact-copy the canonical
+dictionary row as a JSON string or null, preserving every Unicode scalar,
+space, line break, empty string, duplicate, and source-row order. Codebook
+labels/descriptions are excluded: they retain their literal/range meanings
+but cannot replace the dictionary field meaning. For a compiled row, at least
+one projected label or description is a nonempty string and
+`dictionary_field_meaning` is exactly the strict UTF-8 decoding of the §10.1
+terminal-LF canonical JSON bytes of the complete
+`source_meaning_projection` after removing exactly that one terminal LF.
+There is no joining punctuation, whitespace folding, label preference,
+stable-first deduplication, or choice among rows. For a noncompiled row the
+field meaning is null.
+
+The only numeric source-format spellings supported by this v2 interface are
+the exact uppercase ASCII strings `NUM(w.d)` and `Fw.d`, where `w` is a
+canonical positive base-10 integer without a leading zero, `d` is canonical
+nonnegative base-10 without a leading zero except the single string `0`, and
+`0 <= d < w`. Parentheses occur only in the `NUM` spelling; neither spelling
+admits a sign, space, tab, line break, decimal byte in the payload, padding
+marker, exponent, grouping character, lowercase letter, or trailing byte.
+At the byte level the forms are exactly
+`4e 55 4d 28 || ASCII(canonical-decimal(w)) || 2e ||
+ASCII(canonical-decimal(d)) || 29` and
+`46 || ASCII(canonical-decimal(w)) || 2e ||
+ASCII(canonical-decimal(d))`, respectively, where `||` is byte concatenation;
+no decoder or regular-expression option may widen them.
+Each spelling maps to the exact tuple `(w,d)` and profile literal
+`unsigned_ascii_digits_implied_decimal_no_padding_v1`; the two spellings are
+equivalent only when both tuple members are equal. This closed syntax is the
+complete source-format-to-profile mapping—parser-library defaults and other
+format families supply no implicit branch.
+
+The exact uppercase ASCII spelling `CHR(w)`, with `w` in the same canonical
+positive-integer syntax, is recognized only as a nonnumeric exact-character
+literal mode. It maps to no numeric profile, scalar operation, range grammar,
+or DFA. Its sole use is the direct-width codebook-literal rule below and the
+explicit outside-numeric/physical-unestablished statuses; any shorter
+character lexeme, numeric range member, padding, or host character-field
+convention remains unrendered. No other source-format spelling is supported.
+
+Codebook literal rendering is the following source-only function, used first
+by `extract_codebook_rows` and replayed by
+`derive_source_numeric_grammar`. The codebook parser isolates the complete
+source value cell before interpreting it. `source_value_lexeme` is the strict
+decoded cell after removing the maximal leading and trailing sequence of ASCII
+space `0x20` and tab `0x09`; no other byte is removed, and an empty result,
+embedded CR/LF, non-ASCII whitespace, decoding substitution, or second cell
+segmentation aborts. The retained lexeme therefore preserves every internal
+byte, including the spaces in a range such as `1 - 51`.
+
+For each `literal` entry, take the complete same-wave/raw-field dictionary-row
+projection across every wave named by the codebook document. Every row width
+must equal one positive `w`; at least one format is nonnull; and every nonnull
+format must resolve either to one common numeric `(w,d)` tuple under the closed
+syntax above or to the one common `CHR(w)` mode. A mixed mode, unequal tuple or
+width, unsupported spelling, missing format, or cross-wave difference aborts
+codebook derivation. Let `L` be the literal's exact `source_value_lexeme`. In
+numeric mode its candidate payload set is constructed by exactly two rules:
+(1) when `L` is exactly `w` ASCII digits, include those bytes unchanged; and
+(2) when `L` is the canonical unsigned decimal spelling
+`(0|[1-9][0-9]*)(\.[0-9]+)?`, parse its exact rational value `x`, compute
+`M = x * 10^d`, and, only when `M` is an integer in `[0,10^w)`, include the
+unique zero-left-padded `w`-digit ASCII spelling of `M`. In `CHR(w)` mode the
+candidate set contains the exact strict-ASCII encoding of `L` if and only if
+its byte length is `w`; there is no second rule. The candidate set after byte
+deduplication must contain exactly one
+payload. `raw_token_hex` is its lowercase hex. Zero candidates are unsupported;
+two unequal candidates are conflicting. No source meaning, typed value,
+frequency, observed token, host formatter, space fill, sign convention, or
+shortest/longest choice can supply another rendering. Thus source lexeme `0`
+under `NUM(2.0)` has the sole payload `00`, while lexeme `99` has `99`.
+
+The status decision tree is evaluated in this order. Let `C` be the complete
+codebook-document, row, and entry-order concatenation of `normalized_entries`
+from the group's complete codebook rows, retaining every literal, range,
+duplicate, and overlap for the later conflict tests. Let `F` be the complete
+same-order projection of nonnull `source_format_text` values; let `N`, `H`, and
+`X` be its order-preserving subprojections of closed numeric spellings, exact
+`CHR(w)` spellings, and every other spelling. The compiler,
+not either document extractor, derives `derived_parse_kind`: it is
+`value_code_map` exactly when `C` is nonempty; when `C` is empty it is
+`fixed_width_numeric` exactly when `N` is nonempty and both `H` and `X` are
+empty; otherwise it is null. A `NUM(w.d)` or `Fw.d`
+format therefore establishes physical numeric rendering but never, by itself,
+chooses between a code-valued and uncoded field. In particular, a separately
+authenticated nonempty codebook makes a `NUM(2.0)` field value-code without
+requiring a dictionary-authored parser label.
+
+Project every nonnull `declared_parse_kind` in group order without
+deduplication. More than one distinct value, one value unequal to the nonnull
+derived branch, or any nonnull declaration when the derived branch is null is
+`conflicting_source_numeric_format`. A malformed normalized entry, duplicate
+decoded literal, semantic overlap within `C`, literal-rendering replay mismatch,
+or unequal literal candidates is also conflicting before a passing branch is
+assigned. Nonempty `X`, or a literal with no candidate, is unsupported;
+nonempty `N` together with nonempty `H` is conflicting. Before any passing
+status, every dictionary row must also have one common coordinate pair and one
+common positive raw width `w`; every `H` member must be the same `CHR(w)`, and
+every `N` member's tuple width must equal `w`. Any disagreement is conflicting.
+These consistency checks
+cannot select the branch;
+if one fails, none of the passing statuses below applies. Let `R` be the
+complete order-preserving subprojection of `C` whose
+entry kind is `numeric_range`. For derived `value_code_map`, if `R` is empty,
+the row immediately has
+status `value_code_domain_no_numeric_grammar`, null profile, meaning, and
+grammar, and the exact `none` padding object with empty hex strings and payload
+width equal to raw width; format strings remain losslessly projected and have
+already been used to replay every literal, but construct no DFA. If `R` is
+nonempty, `N` is empty, `X` is empty, and either `F` is empty or `H` is
+nonempty, the row has
+status `value_code_range_physical_rendering_unestablished`, the same null
+profile/meaning/grammar and exact `none` padding object; a later observed range
+member aborts. Otherwise a nonempty `R`, or the derived
+`fixed_width_numeric` branch,
+is numeric-required and must compile as follows.
+
+When `C` is empty, `N` is empty, `X` is empty, and `H` is nonempty with one
+common width equal to every dictionary row, the row instead has status
+`nonnumeric_source_field_outside_numeric_grammar`, null derived parse kind,
+profile, meaning, and grammar, and the exact `none` padding object at raw width.
+It records the source-only all-field denominator but cannot be consumed by a
+layout, typed parser, positive-field join, or inventory row. This inert status
+does not create a character parser or relax the unsupported-format abort.
+
+A numeric-required row needs at least one nonnull format; every nonnull format
+must parse under the closed syntax and all must yield the same tuple. Its `w`
+must equal every dictionary row's `raw_width` and the group's unique
+coordinates, and at least one projected dictionary label or description must
+be nonempty. On `fixed_width_numeric`, the declarations must additionally
+coalesce to `declared_signed: false`, decimal places `d`, one positive reduced
+rational implied scale, one type `rational | json_integer`, and one nonempty
+unit. Its `value_derivation` binding is `typed_parse_specs` and the other five
+members exact-copy those coalesced declarations. On a value-code range branch,
+every member of `R` must have one common `rational | json_integer` type and one
+common nonempty unit; its binding is `dictionary_range_rendering`, signed is
+false, decimal places is `d`, implied scale is exactly the retained rational
+`{"numerator":1,"denominator":1}`, and type/unit are that common pair.
+For each range, its finite semantic member array is every value
+`inclusive_min + k * step` in ascending integer `k` order that is no greater
+than `inclusive_max`. For every such value `v`, compute
+`M = v * 10^d / implied_scale`; `M` must be an integer in
+`[0,10^w)`, and its unique zero-left-padded `w`-digit ASCII payload must be in
+the DFA language and must not equal any normalized literal token, which has
+classification precedence. This exact-cover image test must pass for every
+member of every range; the compiler may accept extra digit payloads, but
+runtime semantic membership rejects them. Thus a range cannot be marked
+source-renderable when only its observed subset fits the format.
+`normalized_format_profile` then has exactly `profile_kind`,
+`payload_width`, and `decimal_places`, populated by that literal, `w`, and
+`d`; `derived_parse_kind` retains the source-only branch fixed above;
+`derivation_status` is `compiled_source_numeric_grammar`;
+`padding_rule` is exactly `operation: none`, empty prefix and suffix hex, and
+payload width `w`; and the grammar is the exact construction below.
+
+After the parse-kind decision, the numeric-required failure mapping is exact.
+When `C` is empty, an empty `F` is incomplete; any `X` is unsupported, and a
+mixed or unequal `N`/`H` projection is conflicting. For derived fixed width, unresolved
+signed/scale/type/unit is incomplete. On either compiled branch, no nonempty
+projected label or
+description is incomplete; on the value-code range branch, an untyped or
+nonunitized `R` is incomplete. Each produces
+`incomplete_source_numeric_authority`. On a numeric-required row, a nonnull
+format outside the two exact numeric syntaxes, a true fixed-width signed
+declaration, or a nonintegral possible result for a
+`json_integer` type, any codebook literal with no rendering candidate,
+or any range member failing the complete physical-image
+test produces `unsupported_source_numeric_format`. Conflicting
+format tuples, coordinate/width/declaration disagreement,
+unequal fixed-width declarations of sign, decimal places, scale, type, or
+unit, unequal range types or units, unequal codebook-literal candidates, a
+literal replay mismatch, a duplicate decoded missing token, or an empty
+accepted language produces
+`conflicting_source_numeric_format`. Each failure row has null profile,
+meaning, padding, and grammar; `derived_parse_kind` retains the nonnull branch
+when one was derived and otherwise is null. Satisfying more than one failure
+predicate also
+uses `conflicting_source_numeric_format`. Any row with one of these three
+statuses makes top-level `status: pass` impossible and aborts slot/inventory
+construction; it cannot be reclassified as value-code or repaired from a
+codebook, census, inventory parse spec, or runtime parser.
+
+For a compiled group, let `E` be the set of exact-width decoded
+`source_missing_literals` tokens in its complete dictionary rows that consist
+only of bytes `0x30..0x39`. A duplicate decoded missing token anywhere in the
+group is a conflict even when its meaning/reason agrees; all missing tokens
+remain in the separate dictionary-missing relation. The grammar's accepted
+language is exactly
+`{0x30,...,0x39}^w \ E`, which must be nonempty. If accepted bytes are the
+digits of unsigned integer `M`, the exact scalar is
+`M / 10^d * value_derivation.implied_scale`; no binary floating point
+participates. Thus format parsing fixes bytes and the decimal operation while
+the authenticated fixed-width declarations or complete codebook range domain
+fix scale, output type, and unit.
+
+The DFA serializer is also closed. Begin with one prefix state for every byte
+prefix, including empty, that extends to a member of the accepted language;
+add a digit edge exactly when the extended prefix still has an accepted
+completion, set that edge's `position` to the source prefix length, emit the
+corresponding `append_digit_0` through `append_digit_9`, and mark exactly the
+length-`w` prefixes accepting. The value accumulator starts at integer
+`A_0 = 0`; action `append_digit_n` at depth `k` sets
+`A_(k+1) = 10 * A_k + n`; and an accepting path uses `M = A_w` in the scalar
+equation above. No reject sink is serialized and an absent edge rejects
+immediately without emitting an action for that byte or any later byte.
+Quotient only states at the same prefix depth `k` having identical accepting
+status and, for every byte suffix of exactly length `w-k`, identical final
+accept/reject result and identical emitted action sequence up to the first
+absent edge or acceptance. Repeat to the unique fixed point; every retained
+state is reachable from start and can reach acceptance.
+Assign IDs `q:0`, `q:1`, ... by breadth-first traversal from the start,
+visiting outgoing bytes in unsigned order. `state_ids` follows assignment,
+`accepting_state_ids` filters that array, and transition rows follow position,
+numeric state suffix, then unsigned input byte. This action-sensitive quotient
+and ordering, including omission of the sink, are the only lawful
+serialization.
+
+The row's ten-key `registered_numeric_grammar` is populated exactly by that
+automaton, its count, canonical full-row digest, value derivation, and fixed
+invalid-payload action below. The derivation ID is literal
+`psid-numeric-grammar-derivation:` followed by SHA-256 of §10.1 terminal-LF
+canonical bytes of exactly this 14-position JSON value array—not an ID-deleted
+object, keyed map, or concatenated string:
+
+```text
+[
+  interview_wave,
+  raw_field_id,
+  dictionary_field_row_ids,
+  dictionary_field_rows_sha256,
+  codebook_field_row_ids,
+  codebook_field_rows_sha256,
+  source_format_projection,
+  source_meaning_projection,
+  dictionary_field_meaning,
+  derived_parse_kind,
+  normalized_format_profile,
+  derivation_status,
+  padding_rule,
+  registered_numeric_grammar
+]
+```
+
+The first position is a JSON integer excluding booleans; positions 2, 4, 6,
+and 12 are strings; positions 3 and 5 are string arrays; positions 7 and 8
+are arrays with the exact nested object shapes above; positions 9 and 10 are
+respectively string-or-null and `fixed_width_numeric | value_code_map | null`;
+and positions 11, 13, and 14 obey their displayed object-or-null branches.
+Rows follow the fixed group order; IDs and complete preimages are unique.
+`numeric_grammar_derivation_row_count` equals length, its keyset digest hashes
+the ordered derivation-ID array, and its domain digest hashes the complete
+ordered row array. Each is SHA-256 of the standalone §10.1 terminal-LF
+canonical JSON bytes of its named complete array. Re-running the entry point must deep-equal every row and
+all three aggregate values; matching only a grammar ID or transition digest
+is insufficient. Two unequal 14-member preimages producing one derivation
+ID, or two unequal complete rows producing one complete-row digest, abort as
+a hash collision rather than deduplicating.
+
+As a mandatory constructor conformance vector, a fixed-width-numeric group
+with one exact `NUM(2.0)` format, width two, false signed declaration,
+decimal places zero, scale one, integer output, a nonempty unit/meaning, and
+no missing literal accepts exactly the 100 two-byte strings `00` through
+`99` among all 65,536 two-byte strings. It serializes states `q:0`, `q:1`,
+`q:2`, start `q:0`, accepting array `["q:2"]`, and exactly 20 digit
+transitions: ten from `q:0` to `q:1` at position zero and ten from `q:1` to
+`q:2` at position one, with their matching append-digit actions. The other
+65,436 strings reject. Exhaustive disagreement with any one of these facts
+rejects the implementation identity.
+
+The same physical vector is mandatory when `NUM(2.0)` belongs to a value-code
+group with a numeric range: the automaton and 100 accepted payloads are
+identical, while `value_derivation` uses `dictionary_range_rendering`, false,
+zero, rational one, and the range domain's common type/unit. Classification
+still exact-matches a registered literal first; otherwise the DFA result must
+belong to exactly one normalized range. Thus for a source domain with literal
+lexeme `0`, range lexeme `1 - 51`, and literal lexeme `99`, the rendering
+function produces two-byte ASCII `00` and `99`, with `raw_token_hex` `3030`
+and `3939`; those two tokens take their literal rows,
+`01` through `51` take the one range row, and `52` through `98` abort after a
+valid physical parse but failed semantic membership. No observed-range token
+or codebook meaning can alter the automaton bytes.
 
 A raw-data derivation row has exactly `source_document_id`,
 `derivation_kind`, `record_framing`, `record_count`,
@@ -25447,13 +25826,20 @@ remainder aborts.
 
 The derivation status is `pass` exactly when the implementation identity,
 complete document cover, decoder/locator/row schemas, row and record
-reproductions, all counts/digests, and every byte-consumption equation pass;
-otherwise the slot and inventory artifacts abort rather than treating a
+reproductions, the complete numeric-grammar derivation relation and mandatory
+conformance vector, all counts/digests, and every byte-consumption equation
+pass, and every grammar row status is `compiled_source_numeric_grammar |
+value_code_domain_no_numeric_grammar |
+value_code_range_physical_rendering_unestablished |
+nonnumeric_source_field_outside_numeric_grammar`. The range-physical status
+does not authorize a range parse; the later census must contain zero members
+of its ranges. The outside-numeric status has no lawful consumer.
+Otherwise the slot and inventory artifacts abort rather than treating a
 candidate canonical row or token census as evidence.
 
 This source-only implementation identity and the retained official-
 inventory `integrity.extraction_implementation_commit` are distinct layers,
-not an equality: the former identifies the restricted canonical-row/framing
+not an equality: the former identifies the restricted canonical-row/grammar/framing
 extractor, while the latter continues to identify the complete inventory
 builder. The builder must consume the passing `field_source_derivation`
 object and cannot replace, reinterpret, or self-supply any of its source-
@@ -25478,6 +25864,8 @@ raw_width
 dictionary_source_document_ids
 dictionary_field_row_ids
 dictionary_field_rows_sha256
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
 codebook_source_document_ids
 codebook_field_row_ids
 codebook_field_rows_sha256
@@ -25498,21 +25886,43 @@ nonempty dictionary document IDs and row IDs resolve exact source-manifest
 `field_source_derivation`;
 the row-array digest covers those complete canonical rows and establishes
 field identity, coordinates, width, declared type, and declared numeric
-format. Codebook document and row-ID arrays obey the same resolution/order
+format. The unique same-wave/raw-field numeric-grammar derivation row must
+have exactly that dictionary-row array/digest and the complete matching
+codebook-row array/digest below. For a
+layout field, `numeric_grammar_derivation_id` exact-copies its ID and
+`numeric_grammar_derivation_sha256` hashes its complete 15-key row under
+§10.1 with one terminal LF. For a fixed-width-numeric field, profile payload
+width and decimal places equal the positional `typed_parse_specs.raw_width`
+and `.decimal_places`, and the grammar's value-derivation members equal the
+six-member projection specified above. The positional
+`typed_parse_specs.parse_kind` must exact-equal the derivation row's nonnull
+`derived_parse_kind`; a null or failure branch cannot be consumed. For every
+branch, the derivation row's
+padding and grammar respectively deep-equal
+`raw_token_grammar.padding_rule` and `.registered_numeric_grammar`. A value-
+code field with ranges takes the compiled range branch exactly when its
+complete source row does, otherwise it takes the physical-unestablished null-
+grammar branch and must have zero observed range members; one without ranges
+takes the value-code/no-grammar null branch. Codebook
+document and row-ID arrays obey the same resolution/order
 law against `codebook` manifest rows and, under §19.3.3, exact-cover every
 same-wave matching canonical codebook row even for a numeric parser. They
 are nonempty for a `value_code_map` parser. For a
 `fixed_width_numeric` parser they are exact empty only when no matching row
-exists; a matching row remains cited as source evidence and may contribute
-only numeric-domain, label/description, or missing-literal constraints
-compatible with the independently derived numeric grammar. A categorical or
-otherwise incompatible entry aborts rather than selecting another parser.
-When empty, both codebook digests hash canonical empty arrays; otherwise
-`codebook_field_rows_sha256` hashes the complete ordered source rows.
-`normalized_codebook_entries` is the complete
+exists; a matching row remains cited as source evidence, but every such row's
+complete `normalized_entries` must be exact empty. Its label and description
+remain authenticated corroborating bytes but cannot contribute the numeric
+language, missing set, `dictionary_field_meaning`, type, unit, or value. Any
+literal, range, categorical, missing, or otherwise nonempty normalized entry
+on this branch aborts rather than being ignored or selecting another parser.
+When the codebook row array is empty, `codebook_field_rows_sha256` hashes the
+canonical empty array; otherwise it hashes the complete ordered source rows.
+Independently, `normalized_codebook_entries` is the complete
 concatenation of their normalized entry arrays in codebook-document,
 source-row, and entry order, with neither deduplication nor selection; count
 equals length and `codebook_value_domain_sha256` hashes that complete array.
+Thus its digest is the canonical-empty-array hash whenever all retained row
+entry arrays are empty, whether or not the row array itself is empty.
 `raw_data_source_document_id` resolves exactly one same-wave
 `raw_fixed_width_data` document and its one record-framing derivation. No bare
 row hash, authored position, or inventory transcription can choose its own
@@ -25531,9 +25941,11 @@ complete matching-row relation is empty; otherwise both projections retain
 the complete cited source even though the parser remains numeric.
 
 Across the cited dictionary rows, all nonnull declarations of coordinate,
-width, parse kind, sign, decimal places, scale, type, and unit must agree, and
-their unique coalescence must populate every retained typed-parse member
-required by its branch. A silent source contributes null, never a default.
+width, sign, decimal places, scale, type, and unit must agree, and their unique
+coalescence must populate every retained typed-parse member required by the
+compiler-derived branch. Nonnull dictionary parse-kind declarations obey the
+corroboration test above but never populate the retained branch; only
+`derived_parse_kind` does. A silent source contributes null, never a default.
 Across cited codebook rows, duplicate raw literals or overlapping ranges are
 conflicts rather than corroboration. Every normalized entry belongs to this
 field and every source value-list entry appears once.
@@ -25548,14 +25960,17 @@ from `raw_field_ids`. Every field-local source ID therefore occurs in the
 retained closure, while a shared document occurs only once.
 
 A normalized codebook entry is exactly one tagged branch. A `literal` entry
-has exactly `entry_ref`, `entry_kind`, `raw_token_hex`, `source_meaning`,
-`typed_disposition`, `value_type`, `typed_value_unit`, `canonical_value`, and
-`missing_reason_code`. A `numeric_range` entry has exactly `entry_ref`,
-`entry_kind`, `value_type`, `typed_value_unit`, `inclusive_min`,
+has exactly `entry_ref`, `entry_kind`, `source_value_lexeme`, `raw_token_hex`,
+`source_meaning`, `typed_disposition`, `value_type`, `typed_value_unit`,
+`canonical_value`, and `missing_reason_code`. A `numeric_range` entry has
+exactly `entry_ref`, `entry_kind`, `source_value_lexeme`, `value_type`,
+`typed_value_unit`, `inclusive_min`,
 `inclusive_max`, `step`, `source_meaning`, `typed_disposition`, and
 `missing_reason_code`. An entry reference is literal
 `<codebook-field-row-id>:entry:<zero-based-position>` and resolves one source
-entry. A literal token decodes to exact raw width.
+entry. The lexeme obeys the exact source-cell function above. A literal token
+decodes to exact raw width and its bytes must equal that function's unique
+rendering; the numeric compiler rederives both before consuming the entry.
 
 The closed literal `typed_disposition` domain is `employee |
 self_employment | mixed | nonremuneration | rational | json_integer |
@@ -25570,8 +25985,9 @@ type/unit. Minimum is no greater than maximum, and a scalar is a member if
 and only if it has the same type/unit, lies inclusively between the bounds,
 and `(value-inclusive_min)/step` is a nonnegative integer. Entries follow
 codebook document, field row, and source entry order. Conflicting overlapping
-entries abort. This normalization is the deterministic parser output from
-authenticated source bytes, not a new value list.
+entries abort. This normalization is the deterministic parser plus
+dictionary-format rendering output from authenticated source bytes, not a new
+value list.
 
 `raw_token_grammar` has exactly:
 
@@ -25622,50 +26038,89 @@ by: the registered numeric grammar below accepts only the exact
 `payload_width` payload and then applies the retained signed, decimal-place,
 scale, output-type, and unit values. A `value_code_map` parser always uses
 `operation: none` and its complete-width token. This is the sole serialized
-preparse operation and is not generic trimming.
+preparse operation and is not generic trimming. The v2 constructor above
+emits only `none`; an extracted prefix, suffix, whitespace-padding, zoned-
+decimal, overpunch, or other preparse convention is an unsupported format and
+aborts. The removal enum remains representable for predecessor history but no
+Amendment-5 authority may construct it without a later interface version that
+freezes its source syntax and automaton.
 
-`registered_numeric_grammar` is null only when no source-declared numeric
-rendering participates. Otherwise it is a deterministic finite-state object
+`registered_numeric_grammar` is nonnull exactly for a
+`compiled_source_numeric_grammar` derivation row and its consuming layout
+grammar; it is null on every other branch. When nonnull it is a deterministic finite-state object
 with exactly `grammar_id`, `payload_width`, `state_ids`, `start_state_id`,
 `accepting_state_ids`, `transition_rows`, `transition_row_count`,
 `transition_domain_sha256`, `value_derivation`, and
 `invalid_payload_action`. It is mandatory for every
-`fixed_width_numeric` parser and may also establish a codebook-range
-rendering. State arrays are nonempty, unique, canonical-state ordered foreign
-keys; start and every accepting state resolve. The source-derived DFA is
-first minimized over reachable position/state suffix behavior, then states
-are assigned literal IDs `q:0`, `q:1`, ... by breadth-first traversal from
-start, following position then unsigned input byte; `q:0` is the start and
-arrays follow numeric suffix. This makes equivalent source grammars serialize
-identically. Each transition has exactly
+`fixed_width_numeric` parser. For a value-code parser it is nonnull exactly
+when the complete normalized domain contains at least one numeric range and
+the v2 source derivation compiles; otherwise it is null and every observed
+range member aborts. `raw_token_grammar.padding_rule` and
+`raw_token_grammar.registered_numeric_grammar` must respectively deep-equal
+the unique same-wave/raw-field derivation row's same-named members; no other
+constructor is admissible. State arrays are nonempty, unique, in the exact
+constructor order above, and contain only states reachable from start and
+co-reachable to acceptance; start and every accepting state resolve. Each
+transition has exactly
 `position`, `state_id`, `input_byte_hex`, `next_state_id`, and
-`value_action`; position is a JSON integer in `[0,payload_width)`, input is
+`value_action`; position is a JSON integer in `[0,payload_width)` and equals
+the unique prefix depth of `state_id` fixed by the quotient above; input is
 one exact byte, states resolve, and action is `append_digit_0 |
 append_digit_1 | append_digit_2 | append_digit_3 | append_digit_4 |
 append_digit_5 | append_digit_6 | append_digit_7 | append_digit_8 |
 append_digit_9 | set_negative | consume_decimal_point | no_op`. There is at
 most one transition for each `(position,state_id,input_byte_hex)` and omitted
-transitions reject. Rows follow position, state order, then unsigned input
-byte; count and complete-row digest agree.
+transitions reject. The compiled v2 profile permits only byte/action pairs
+`30/append_digit_0` through `39/append_digit_9`; `set_negative`,
+`consume_decimal_point`, and `no_op` are unreachable predecessor-domain enum
+values and cannot occur. Rows follow position, numeric state suffix, then
+unsigned input byte; count equals array length and
+`transition_domain_sha256` hashes the complete ordered transition-row array
+under §10.1 with one terminal LF.
 
 `value_derivation` has exactly `derivation_binding`, `signed`,
 `decimal_places`, `implied_scale`, `typed_value_type`, and
-`typed_value_unit`. Binding is `typed_parse_specs` for a fixed-width-numeric
-parser, in which case the other five deep-equal those retained parse members,
-or `dictionary_range_rendering` for a value-code parser, in which case they
-are uniquely transcribed from the cited dictionary format and exact-match
-the normalized range type/unit. The grammar `payload_width` deep-equals the
-padding-rule value. Exactly `payload_width` transitions ending in an accepting
-state must construct one canonical scalar under those values; no other path
-does. `invalid_payload_action` is
+`typed_value_unit`. For a fixed-width parser, binding is `typed_parse_specs`;
+profile payload width equals `typed_parse_specs.raw_width`, profile decimal
+places equals `typed_parse_specs.decimal_places`, and the remaining five
+value-derivation members positionally equal that parse object's `signed`,
+`decimal_places`, `implied_scale`, `typed_value_type`, and
+`typed_value_unit`. For a value-code range parser, binding is
+`dictionary_range_rendering` and the remaining five equal the compiler values
+fixed above; every normalized range type/unit must equal the last two.
+The grammar `payload_width` equals both profile and padding-rule width. Every
+accepting path consumes exactly `payload_width` transitions at consecutive
+positions zero through `payload_width - 1` and constructs the scalar fixed by
+the accumulator and constructor equations; no shorter, longer, or other path
+accepts. `invalid_payload_action` is
 `abort_before_classification_require_successor_inventory_ratification`.
-The complete DFA, padding bytes, and value derivation must be uniquely
-reconstructed from the cited dictionary rows. Thus an uncoded numeric token
-is source-derived, while an inventory-authored regex or permissive parser is
-not.
+The complete DFA, padding bytes, and value derivation are reconstructed by
+the authenticated v2 entry point from the complete cited dictionary and
+codebook rows.
+Thus an uncoded numeric token is source-derived, while an inventory-authored
+regex, host numeric formatter, or permissive parser is not.
 `grammar_id` is literal `psid-numeric-grammar:` followed by SHA-256 of
-§10.1 canonical bytes of the remaining nine grammar members in displayed
-order.
+§10.1 terminal-LF canonical bytes of exactly this nine-position JSON value
+array—not an ID-deleted object, keyed map, or concatenated string:
+
+```text
+[
+  payload_width,
+  state_ids,
+  start_state_id,
+  accepting_state_ids,
+  transition_rows,
+  transition_row_count,
+  transition_domain_sha256,
+  value_derivation,
+  invalid_payload_action
+]
+```
+
+Widths/counts are JSON integers excluding booleans; state arrays are string
+arrays; start, digest, and action are strings; and transition/value members
+have their exact nested object shapes above. Unequal nine-member preimages
+producing one grammar ID abort as a hash collision.
 
 `dictionary_missing_literal_entries` registers source-declared blank or
 sentinel bytes for an uncoded field. Each entry has exactly `entry_ref`,
@@ -25712,8 +26167,15 @@ Every observed `source_value` has exactly `typed_disposition`, `value_type`,
 normalized-literal type/unit/value equations above. Type is `rational |
 json_integer | boolean | enum` or null; unit is nonempty exactly for a
 rational/integer and null otherwise; canonical value and type are null
-exactly when `typed_disposition` is `missing`; and source meaning is the
-exact nonempty authenticated dictionary/codebook text. For
+exactly when `typed_disposition` is `missing`. `source_meaning` is one exact
+nonempty branch function: `codebook_literal | codebook_range_member` copies
+the referenced normalized entry's source string;
+`dictionary_missing_literal` copies the referenced dictionary-missing source
+string; and `dictionary_numeric_grammar` copies the compiler-derived canonical
+JSON string from the complete ordered dictionary label/description projection.
+The last is authenticated derived text, not a claim that JSON punctuation or
+row IDs appeared in the dictionary. No other selection, concatenation, or
+free-text branch exists. For
 `codebook_literal`, exactly one reference
 resolves a literal entry that deep-equals that same typed disposition, type,
 unit, canonical value, meaning, and outer missing/typed-value disposition and
@@ -25721,14 +26183,16 @@ whose `raw_token_hex` equals the observed token. For
 `codebook_range_member`, exactly one reference resolves a
 numeric-range entry, the scalar satisfies the exact membership equation
 above, and its type, unit, numeric disposition, and meaning match. The
-registered range DFA must be nonnull and its raw payload must be that
-grammar's unique result. A range without a source DFA can represent its
-unobserved physical uncertainty below but cannot classify an observed byte;
-such an occurrence aborts. For
-`dictionary_numeric_grammar`, the reference array is empty, the codebook
-domain is exact empty, and the scalar is the
-unique DFA result with dictionary field meaning, typed disposition equal to
-its numeric type, and outer `typed_value` disposition. For
+registered range DFA must be the nonnull grammar in the complete v2 source-
+derivation row and its raw payload must produce that unique scalar. Without a
+compiled grammar the range can represent its unobserved physical uncertainty
+below but cannot classify an observed byte; such an occurrence aborts. For
+`dictionary_numeric_grammar`, the reference array is empty, the
+normalized codebook-entry domain is exact empty even when complete matching
+codebook row/document projections are nonempty, and the scalar is the unique
+DFA result. Its `source_meaning` exact-copies the unique same-wave/raw-field
+derivation row's `dictionary_field_meaning`, its typed disposition equals its
+numeric type, and its outer disposition is `typed_value`. For
 `dictionary_missing_literal`, exactly one reference resolves the same-token
 dictionary entry above; source value has typed disposition `missing`, null
 type, unit, and canonical value, and that entry's exact meaning, and outer
@@ -25742,21 +26206,22 @@ classified:
 
 | `typed_parse_specs.parse_kind` | Exact codebook/dictionary domain | Required parser state | Permitted observed derivations | Permitted unobserved rows |
 |---|---|---|---|---|
-| `value_code_map` | nonempty normalized codebook domain; dictionary-missing domain exact empty | padding `none`; numeric DFA null when no range has a source rendering and otherwise the one common source-derived range DFA | `codebook_literal`, plus `codebook_range_member` only when that DFA is nonnull | one `codebook_entries` row per unobserved literal/range; literal uses its singleton rendering, range uses DFA or physical-unestablished branch |
-| `fixed_width_numeric` | normalized codebook domain exact empty; dictionary-missing domain complete, possibly empty | nonnull DFA bound to `typed_parse_specs`; source-declared padding branch | `dictionary_numeric_grammar` or `dictionary_missing_literal` only | one row per unobserved dictionary missing literal plus the one `uncoded_dictionary_numeric_domain` row when nonempty |
+| `value_code_map` | nonempty normalized codebook domain; dictionary-missing domain exact empty | padding `none`; numeric DFA is the nonnull v2-derived range grammar exactly when a numeric range exists and compiles, otherwise null | `codebook_literal`, plus `codebook_range_member` only with that nonnull DFA | one `codebook_entries` row per unobserved literal/range; literal uses its singleton rendering, range uses the DFA or physical-unestablished branch |
+| `fixed_width_numeric` | complete matching codebook rows permitted but every normalized-entry array exact empty; dictionary-missing domain complete, possibly empty | nonnull v2-derived DFA bound to `typed_parse_specs`; padding `none` | `dictionary_numeric_grammar` or `dictionary_missing_literal` only | one row per unobserved dictionary missing literal plus the one `uncoded_dictionary_numeric_domain` row when nonempty |
 
 These rows are mutually exclusive and complete. A value-code field cannot
 use a dictionary numeric/missing branch, and a fixed-width-numeric field
 cannot use a codebook literal/range or value-map entry. Every nonmissing
 fixed-width-numeric token therefore traverses its mandatory DFA and exact
 output signature. A value-code token is first matched against its complete
-executable map below; only a map miss in a field with a nonnull range DFA may
-take that DFA and must then belong to exactly one normalized range. No
-first-successful parser or cross-branch fallback exists. Within one value-
-code map, every nonmissing normalized entry has the same type/unit signature;
-all numeric ranges share the one field DFA or all lack a source-established
-DFA; the latter branch requires zero observed range members. A mixed
-signature or mixed grammar availability aborts.
+executable literal map below; only a map miss with a nonnull range DFA may
+take that exact compiler-owned grammar and must then belong to exactly one
+normalized range. A map miss never invokes a host numeric parser or the
+fixed-width field's semantic branch. No first-successful parser or cross-
+branch fallback exists. Within one value-code map, every nonmissing normalized
+entry has the same type/unit signature; all numeric ranges share the one field
+DFA or all lack a source-established DFA, and the latter case requires zero
+observed range members. Mixed signature or grammar availability aborts.
 
 For each `value_code_map` field, derive its executable entry array by
 traversing normalized entries in source order. A literal contributes exactly
@@ -25802,6 +26267,8 @@ raw_field_id
 dictionary_source_document_ids
 dictionary_field_row_ids
 dictionary_field_rows_sha256
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
 codebook_source_document_ids
 codebook_field_row_ids
 codebook_field_rows_sha256
@@ -25818,8 +26285,9 @@ executable_entry_domain_sha256
 ```
 
 The first two members resolve the unique inventory/layout field. The next
-eight exact-copy its complete dictionary/codebook document and canonical-
-row arrays, complete-row digests, and normalized-entry count/domain digest.
+ten exact-copy its complete dictionary/codebook document and canonical-
+row arrays, complete-row digests, numeric-grammar derivation ID/complete-row
+digest, and normalized-entry count/domain digest.
 The raw-data ID resolves the same manifest and raw-data derivation as that
 layout field; its SHA-256 exact-matches the source manifest, retained source-
 file projection, and `raw_token_grammar.observed_source_sha256`.
@@ -25881,17 +26349,16 @@ dictionary_missing_literal`; and value/disposition/raw token obey that exact
 source entry. `unique_registered_rendering` is required for every qualifying
 `literal | dictionary_missing_literal` row and forbidden otherwise; its
 mapping array is that row's exact singleton source rendering. An authored
-range-member token is forbidden. A `numeric_range` row with a nonnull
-source-derived DFA must use `source_registered_numeric_grammar`; one without
-such a DFA must use `physical_rendering_unestablished`. The uncoded numeric
-row always uses `source_registered_numeric_grammar` with its nonnull
-dictionary-derived DFA. These four cases are exhaustive and mutually
+range-member token is forbidden. Every `numeric_range` row uses
+`source_registered_numeric_grammar` when the field's v2 range DFA is nonnull
+and otherwise uses `physical_rendering_unestablished`. The uncoded numeric row
+always uses `source_registered_numeric_grammar` with its nonnull dictionary-
+derived DFA. These four source-domain cases are exhaustive and mutually
 exclusive; no authenticated literal token may take the empty physical-
-unestablished branch. The DFA branch parses a future payload uniquely, then requires
-that value to belong to the row's one referenced range or, for the uncoded
-branch, the dictionary numeric domain. An overlapping semantic result, a
-valid numeric payload outside a nonempty codebook domain, or an invalid
-transition aborts. Thus an unseen favorable token has one
+unestablished branch. The DFA branch parses a future payload uniquely and
+requires that value to belong to the row's referenced numeric range or, for
+the uncoded branch, the dictionary numeric domain. An
+overlapping semantic result or invalid transition aborts. Thus an unseen favorable token has one
 constructible source-derived result; physical or semantic ambiguity takes
 the empty abort branch.
 
@@ -25911,7 +26378,8 @@ then represented by one of the three closed rows above. A row or field
 conflict aborts.
 
 The three evidence roles are noninterchangeable. Dictionary/layout files
-prove coordinates, width, format, and any explicit padding rule. Complete
+prove coordinates, width, and format; an explicit non-none padding convention
+is preserved as source text but is unsupported by the v2 compiler. Complete
 codebook value lists prove meanings and missing dispositions. Exhaustive
 census of the byte-pinned raw field proves only the physical spellings and
 frequencies that occur in that file. Observation cannot invent meaning; a
@@ -25944,9 +26412,9 @@ cannot inherit the disposition.
 
 No generic whitespace trim, sign inference, decimal inference, locale
 conversion, cross-field padding default, or first-successful parse exists.
-Exact removal of a specifically registered field-level padding prefix or
-suffix is lawful only when the dictionary grammar and registered raw token
-both establish those exact bytes through `padding_rule`. This Class-B law
+The retained exact-prefix/suffix-removal enum describes predecessor history
+only and is not lawful for an Amendment-5 authority; every v2 `padding_rule`
+uses `none`. This Class-B law
 closes the disposition-schema gap shared by all six displayed grammar
 residuals; it supplies no
 field grammar row and discharges none of their source-evidence obligations.
@@ -26199,11 +26667,13 @@ or storage root can never supply an expected value.
 Every whole-document and field-stream locator foreign-keys this independently
 derived domain. `field_source_derivation` is the complete §19.3.2 object and
 exact-covers the 176-row nonquestionnaire slice of `U`; its implementation
-and row/record derivations are reconstructed before any hierarchy, inventory,
-or locator row is read. Thus a filename, locator, extraction row, candidate
+and row/numeric-grammar/record derivations are reconstructed before any
+hierarchy, inventory, or locator row is read. Its numeric relation exact-
+covers every wave/field group, including groups no positive join or inventory
+row consumes. Thus a filename, locator, extraction row, candidate
 manifest, or alleged canonical source row cannot invent or suppress a
-document ID, role, wave, source path, field statement, value entry, or raw
-record.
+document ID, role, wave, source path, field statement, numeric format,
+meaning projection, grammar byte, value entry, or raw record.
 
 `questionnaire_page_text_derivation` has exactly `implementation_path`,
 `source_commit`, `tree_mode`, `blob_oid`, `byte_size`, `raw_sha256`,
@@ -26846,6 +27316,8 @@ raw_width
 dictionary_source_document_ids
 dictionary_field_row_ids
 dictionary_field_rows_sha256
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
 codebook_source_document_ids
 codebook_field_row_ids
 codebook_field_rows_sha256
@@ -26860,7 +27332,10 @@ record_framing_sha256
 For the joined wave and field, dictionary row IDs are the complete nonempty
 matching canonical-row projection across all `U` dictionary documents, in
 `U` then source-row order. Codebook row IDs are the complete matching
-projection under the same order. When the complete same-wave codebook domain
+projection under the same order. The two numeric-grammar members exact-copy
+the unique same-wave/raw-field derivation ID and SHA-256 of its complete
+15-key terminal-LF canonical row; its dictionary and codebook row IDs and
+complete-row digests must equal this projection. When the complete same-wave codebook domain
 has no matching field and the complete dictionary rows uniquely establish
 the uncoded `fixed_width_numeric` branch,
 `codebook_source_document_ids`, `codebook_field_row_ids`, and
@@ -26868,7 +27343,11 @@ the uncoded `fixed_width_numeric` branch,
 `normalized_codebook_entry_count` is integer zero, and both
 `codebook_field_rows_sha256` and `codebook_value_domain_sha256` hash the
 §10.1 terminal-LF canonical empty array. A missing codebook for any other
-branch aborts; otherwise the codebook row array is nonempty. Document arrays are the stable-first
+branch aborts; otherwise the codebook row array is nonempty. On the uncoded
+fixed-width-numeric branch, every retained matching codebook row must have an
+exact-empty normalized-entry array, so the entry array/count/domain digest
+remain the canonical empty values even when the codebook row/document arrays
+and complete-row digest are nonempty. Document arrays are the stable-first
 source-manifest-order projections of their complete row arrays. All
 dictionary declarations of start, end, and width agree, and populate the
 displayed zero-based half-open values. The codebook-entry array is the
@@ -27332,11 +27811,12 @@ deep-equals the join's ordered raw-field-ID projection. Its
 length and position. Project each layout object through, in order,
 `raw_field_id`, `start`, `end`, `raw_width`,
 `dictionary_source_document_ids`, `dictionary_field_row_ids`,
-`dictionary_field_rows_sha256`, `codebook_source_document_ids`,
+`dictionary_field_rows_sha256`, `numeric_grammar_derivation_id`,
+`numeric_grammar_derivation_sha256`, `codebook_source_document_ids`,
 `codebook_field_row_ids`, `codebook_field_rows_sha256`,
 `normalized_codebook_entries`, `normalized_codebook_entry_count`,
 `codebook_value_domain_sha256`, and `raw_data_source_document_id`; it must
-deep-equal the first 14 members of the join's same-position raw-field
+deep-equal the first 16 members of the join's same-position raw-field
 projection. Independently resolve the raw-data manifest SHA-256 and complete
 record-framing digest and require equality to the projection's final two
 members.
@@ -27623,9 +28103,9 @@ unnamed consumer.
 | §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate-and-type-total-successor-chain`; the v2 legal result feeds base-result projection v2, adjudication preimages v3, noncapture predicate/preimage/result v4, and authority cutoff v4. Every unrelated singleton-authority requirement is preserved. |
 | §16.13.6 legal-claim result equation over matched-rule rows alone | `replaced-by-§19.2.5-Q-plus-P-total-equation`: each complete matched-rule domain \(Q_{b,x}\) is composed with the independently reconstructed, nonempty, cell-exact-covering partition domain `P_x`; conflict has first precedence, absence and unrepresentable transition have second precedence, and `verified` requires every \(Q_{b,x}\) row verified plus every `P_x` row `verified_dispositive`. Optional negative rows exact-project their complete \(N_p\) occurrence domains into the retained legal-result consequence stream; every residual, empty, or nonexhaustive combination aborts. The retained three-status and seven-field legal-result schemas are unchanged. |
 | §§16.13.6, 16.13.8, and 16.14.4 legal-result/base-binding consumers | `replaced-by-§19.2.5-type-total-consumers`: every old typed identity/base/adjudication/noncapture/cutoff occurrence is replaced by the exact v2/v3/v4 object named there, including all six binding conjuncts, construction order, evidence/global-registry rows, bundles, cutoffs, configurations, receipts, and validators. No structural relabeling or mixed-version object is lawful. |
-| §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, a separately identified source-only extractor, raw-record framing and complete census, serialized normalized literal/range domains, exhaustive parse-kind branches, source-derived finite-state numeric grammar, exact registered padding, dictionary/codebook missing literals, closed unobserved-value rows, and explicit outside-grammar abort. The retained whole-inventory builder identity remains distinct. `typed_parse_specs` retains its ratified nine-key shape; its full-width member validates the source field while the exact successor payload-width/DFA and value-code range laws replace only its older parser-width/path predicates. |
+| §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2-v2-source-format-compiler`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, a separately identified four-entry-point source-only extractor, raw-record framing and complete census, and a serialized all-wave/all-field numeric-derivation relation precede inventory selection. Exact `NUM(w.d)`/`Fw.d` syntax maps to one unsigned digit/implied-decimal/no-padding profile; every other numeric-required format aborts. Exact committed `CHR(w)` syntax supports only direct same-width literal copying and an inert outside-numeric or range-physical-unestablished row, never a numeric grammar. The complete combined group derives and serializes `value_code_map` for a nonempty normalized codebook domain and `fixed_width_numeric` for an exact-empty domain with supported numeric format; dictionary parse-kind text can only corroborate. Complete ordered dictionary label/description JSON fixes dictionary-numeric `source_meaning`; exact codebook value-cell lexemes plus the same format tuple uniquely derive every complete-width literal (including `0` to `00` under `NUM(2.0)`) and the compiler replays them before literal precedence. Action-sensitive prefix quotienting, explicit accumulator/depth, sink omission, BFS numbering, counts/digests, and exhaustive fixed/range `NUM(2.0)` vectors fix DFA bytes. Matching fixed-numeric codebook rows remain cited but must have empty normalized entries; value-code numeric ranges use the same compiler with codebook-derived type/unit, their exact entry meaning, and literal-first precedence. Serialized normalized literal domains, exhaustive parse-kind branches, dictionary missing literals, closed unobserved-value rows, and outside-grammar abort remain. The retained whole-inventory builder identity stays distinct. `typed_parse_specs` retains its ratified nine-key shape, exact-matches the source-derived branch, and only its named width/decimal/value-derivation projection is otherwise compared to the source compiler result. |
 | §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
-| §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
+| §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim. The predecessor padding-removal enum remains representable, but the v2 compiler emits only `none`, so Amendment 5 admits no removal branch. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
 | §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3-canonical-proof-partition`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, and reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files). For each H row, the official-order missing-purpose complement `M_h` emits exactly one proof iff nonempty; its four singleton hierarchy coordinates, complete `M_h`, singleton wave, target-key order, and filtered-H proof order are functions. Q5 separately exact-covers every questionnaire occurrence and canonical field row with source-only maximal semantic bindings; unresolved grouping fails. Atom-level partials produce exact near-match rows, while the complete branch-compatible witness relation used by `O_P` decides full-match truth. Ordering, both reason codes, and conclusions are exact functions. Only this fixed denominator supplies retained slot evidence, and every structural inventory proof deep-equals it. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes and the complete Q5 annotation. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
 | §4.2 source-derived job/component IDs, `slot_kind`, hierarchy, and unsupported-tuple denominator | `replaced-and-completed-by-§19.3.3-source-only-hierarchy-annotation`: the separately first-added `Q5` closure is the authenticated annotation authority over all pages of the fixed 81-document domain. Exact UTF-8 occurrence coordinates, same-wave and branch ancestry, complete role/job/component anchor partitions, repeat/alias and aggregate-anchor reverse covers, coordinate-derived IDs, sentinels, per-kind equations, and the exact all-source-component projection `R_Q` are frozen. The complete hierarchy is `W × two roles × R_Q`; source-only `O_H` is derived before purpose positives, observed and structural-hierarchy rows are explicit, every row expands over all 35 purposes, and complete `O_P` versus structural branches exact-partition that fixed domain. Each nonempty same-H missing-purpose complement has its one canonical singleton-wave proof and complete source-atom annotation denominator. G17-C01 carries the exact authority header plus six era annotation projections. The prior 37-wave/61-passage artifact and unauthenticated review literal cannot satisfy the new authority. Existing official v1 artifact names remain; only their formerly underdetermined nested dimensions and evidence are completed. |
 | §4.2 independent `questionnaire_presence`/`source_disposition` tags and positive/structural evidence | `replaced-and-completed-by-§19.3.3-positive-field-join`: direct raw-ID or byte-identical leading question-identifier spans join each purpose prompt to a unique same-wave `D_w` field; ambiguous multi-field question labels abort. One source-only join per positive carries the complete ordered dictionary/codebook/raw-data projection. Asked, join, and present keys exact-cover each other in both directions; raw fields and layouts compare positionally; `asked iff present` and `structural_query_slot iff structural_missing`; structural inventory proofs deep-equal the complete Q5 proof object. The retained slot row carries the positive, join, or proof IDs, and G17-C01 compares the full join and proof/status bytes. No current artifact is promoted by this schema law. |
@@ -27661,8 +28141,8 @@ The seven changed expected/actual payloads are exactly:
 - **G17-C01** is a tagged object with exactly `inventory_key_stream`,
   `slot_source_authority_manifest`, `hierarchy_annotation_authority`,
   `positive_occurrence_field_join_rows`,
-  `inventory_layout_grammar_rows`, `inventory_absence_proof_rows`, and
-  `slot_closure_evidence_identity`. The
+  `numeric_grammar_source_derivation`, `inventory_layout_grammar_rows`,
+  `inventory_absence_proof_rows`, and `slot_closure_evidence_identity`. The
   first is the unchanged complete official key stream. The second is the
   complete two-key §19.3.3 slot-source manifest. On the expected side, before
   any candidate manifest is read, both immutable upstream roots and all four
@@ -27719,9 +28199,27 @@ The seven changed expected/actual payloads are exactly:
   copying a candidate join as expected is forbidden. The two complete
   objects deep-equal under §10.1.
 
-  The fifth value is the positional projection of every official inventory
+  The fifth value has exactly `implementation_identity`,
+  `numeric_grammar_derivation_rows`, `numeric_grammar_derivation_row_count`,
+  `numeric_grammar_derivation_keyset_sha256`, and
+  `numeric_grammar_derivation_domain_sha256` and exact-projects those members
+  from the passing `field_source_derivation`. Expected bytes are built by
+  executing the identity-selected v2 source-only compiler on the complete
+  dictionary/codebook denominator before any inventory comparand is read.
+  Actual full-relation bytes come from the authenticated manifest. Every used
+  layout exact-copies its derivation ID/full-row SHA and the applicable named
+  derived parse branch, parse-profile, padding, grammar, value-derivation, and
+  meaning projections;
+  a value-code range takes the compiled branch when source-renderable and the
+  physical-unestablished null branch otherwise, while a literal-only value-
+  code field takes the no-range null branch. Rows unused by inventory remain
+  present and are independently recompiled from the complete source
+  denominator, not reverse-projected from a nonexistent consumer. Both complete values,
+  not just counts, IDs, or digests, must deep-equal under §10.1.
+
+  The sixth value is the positional projection of every official inventory
   row's complete §19.3.2 layout/token grammar, including exact-empty
-  structural branches. The sixth is one row per complete official key, in
+  structural branches. The seventh is one row per complete official key, in
   that order, with exactly `source_inventory_key`,
   `questionnaire_presence`, `source_disposition`,
   `closure_absence_proof_id`, `closure_absence_proof`, and
@@ -27730,7 +28228,7 @@ The seven changed expected/actual payloads are exactly:
   proof objects. All structural keys under one H row carry its same canonical
   proof, including the authenticated candidate-domain digests, exact near-
   match projection, and fixed conclusion bytes. Thus C01 compares the full
-  proof bytes and status pair, not only an ID or digest. The final
+  proof bytes and status pair, not only an ID or digest. The eighth and final
   identity has exactly `path`, `artifact_id`, `schema_version`,
   `source_commit`, `tree_mode`, `blob_oid`, `byte_size`, and `sha256`.
   Its path is
@@ -27783,8 +28281,12 @@ The seven changed expected/actual payloads are exactly:
   object. Within `base_direct_law_closure`, every inventory presence lookup
   and raw-token commitment uses the exact
   `(raw_field_id,raw_token_hex)` grammar/missing branch from §19.3.2 and the
-  complete §19.2 rule-domain/partition. No outer key or deterministic-
-  default law changes.
+  complete §19.2 rule-domain/partition. Every numeric parse first resolves the
+  unique same-wave/raw-field v2 derivation row and exact-compares its complete
+  padding, DFA, and value derivation before taking a transition. A dictionary-
+  numeric result also compares the compiler's canonical dictionary meaning; a
+  codebook-range result instead compares the one normalized range's meaning,
+  type, and unit. No outer key or deterministic-default law changes.
   For an all-present record in a verified partition, the independently
   evaluated covered-then-excluded binding results must map every occurrence
   of one `joint_binding_id` to one equal Boolean and thereby select exactly
@@ -27804,6 +28306,13 @@ The seven changed expected/actual payloads are exactly:
   compared complete rows include the exact §19.3.2 `source_commitments`
   object and `entries`; their domain hashes therefore cover every nested
   field row, count, source/census digest, and executable-entry digest.
+  Value-code source commitments also require the same field's complete
+  numeric-derivation row to take the compiled range branch exactly when its
+  complete normalized domain has a source-renderable numeric range, and the
+  physical-unestablished or no-range null branch otherwise; the physical-
+  unestablished branch requires zero observed range members. An observed range token must exact-project the
+  compiler result and one normalized range; an alternate numeric constructor
+  cannot enter C07.
   Expected and actual `entries` must also deep-equal each committed field's
   independently derived executable array. A matching entry array with an
   omitted, additional, reordered, or unequal source commitment fails C07.
@@ -27906,6 +28415,25 @@ layout_coordinates
 typed_parse_specs
 source_file_ids
 field_source_derivation
+dictionary_codebook_fixed_width_source_derivation_v2
+derive_source_numeric_grammar
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_id
+psid-numeric-grammar-derivation:
+numeric_grammar_source_derivation
+derived_parse_kind
+source_format_projection
+source_meaning_projection
+source_value_lexeme
+normalized_format_profile
+registered_numeric_grammar
+dictionary_numeric_grammar
+codebook_range_member
+source_meaning
+NUM(2.0)
+Fw.d
+CHR(w)
+nonnumeric_source_field_outside_numeric_grammar
 source_document_manifest
 upstream_corpus_registry_identity
 source_document_keyset_sha256
@@ -28543,6 +29071,15 @@ and symbolic commit names are likewise outside the inventory. In particular,
 artifacts, and `fixed_two_root_complete_source_document_projection` is the
 fixed value of their non-ID `projection_law` member; none is a separately
 selectable schema, rule, or predicate identifier. Likewise,
+`dictionary_codebook_fixed_width_source_derivation_v2` is a pinned source-
+only interface literal; `derive_source_numeric_grammar`,
+`numeric_grammar_derivation_rows`, its row/member/status/derived-branch/profile literals,
+`psid-numeric-grammar-derivation:`, and `psid-numeric-grammar:` are an entry
+point, retained member/tag values, and ID prefixes inside
+`field_source_derivation`, not separately selectable schemas or predicates.
+The profile literal `unsigned_ascii_digits_implied_decimal_no_padding_v1` and
+G17 member `numeric_grammar_source_derivation` are likewise a value and payload
+member, not identifiers. They add no successor name. Likewise,
 `hierarchy_annotation_authority`, its page/occurrence/role/catalog/alias/
 relationship, raw-field-reference, positive-field-join, and
 near-match-source-annotation members, and `era_annotation_rows` members,
@@ -28588,8 +29125,15 @@ accepted authority operand before every named predecessor passes.
    construct the exact 81/86/47/43-role `U` array, count, order, keyset, and
    row-domain digest before reading any Class-A candidate manifest.
    Separately review and authenticate the source-only
-   field-extraction implementation, then construct every dictionary/codebook
-   canonical-row and raw-record-framing derivation from those exact bytes. A
+   field-extraction implementation, then construct every dictionary canonical
+   row and only then every codebook canonical row from its exact complete
+   wave-intersecting dictionary context and literal-rendering rule. Before any
+   inventory or Q5 field candidate is read, run its exact v2 numeric entry point
+   across the full wave/field denominator, replay every literal rendering,
+   construct every format/meaning projection and grammar-derivation row,
+   exhaust the `NUM(2.0)` conformance domain, exact-compare all rows/counts/
+   digests, and reject every unsupported, incomplete, or conflicting numeric
+   group. Then construct every raw-record-framing derivation. A
    URL, staging row, extraction, report, or candidate
    digest is still nonauthority. No row from the legal staging universe is
    grandfathered by Amendment 5.
@@ -28638,14 +29182,20 @@ accepted authority operand before every named predecessor passes.
    Class-A residuals must receive exact source-backed successor dispositions.
 3. **Construct and ratify the official inventory.** From the ratified slot
    domain, paired dictionary/codebook authority, and byte-pinned raw-file
-   censuses, build every §19.3.2 normalized value domain, padding/DFA field
-   grammar, and every present/structural-
+   censuses, build every §19.3.2 normalized value domain and every present/structural-
    query row. `asked` slot rows may map only to `present` inventory rows;
    every structural-query row—including every key under a structural-
    hierarchy node—may map only to `structural_missing` with its complete
    source proof. All structural keys under one H row must map to its unique
    canonical `P_h`; no containing-key proof may be selected. Construct every present row in its same-key Q5 join's exact
-   raw-field order; require the full forward/reverse key covers, both status
+   raw-field order; exact-copy the already compiled same-wave/raw-field
+   derivation ID/full-row SHA and require named equality of its padding,
+   grammar, profile-to-parse members, value-derivation projection, and fixed-
+   numeric dictionary meaning or value-code range meaning/type/unit. A value-
+   code field takes the compiled range, physical-unestablished, or exact no-
+   range null branch as its complete source domain dictates; an unestablished
+   range requires zero observed members, and no branch may be rebuilt from an
+   inventory parse spec. Require the full forward/reverse key covers, both status
    biconditionals, positional source projections, and complete structural-
    proof deep equality. Neither the slot registry nor the inventory is independently
    ratified unless the same two-key source-authority manifest passes the
@@ -28777,10 +29327,28 @@ them.
    The old flat-token wording can be read to require silently guessing every
    padding/sentinel spelling or to make a completely scanned present file
    forever unregistrable. Section 19.3.2 expressly replaces it with
-   field-specific source grammar, complete observed census, and an explicit
-   abort for every physically unestablished possible token. If source review
-   requires a positive spelling instead, that field remains Class B; no trim,
-   missing default, or era convention resolves it.
+   an authenticated v2 source-format compiler, complete observed census, and
+   an explicit abort for every physically unestablished possible token. The
+   deliberately smallest numeric compiler recognizes only exact source-emitted
+   `NUM(w.d)` and `Fw.d` as unsigned ASCII digits with implied decimals and no
+   padding; signed, padded, overpunched, zoned, explicit-decimal, or differently
+   spelled formats remain unsupported rather than inheriting host behavior.
+   The same smallest-source rule derives coded versus uncoded only after the
+   complete dictionary/codebook group is assembled: any nonempty normalized
+   codebook domain is value-code, while an exact-empty domain can be uncoded
+   numeric only through one of those supported formats plus complete numeric
+   declarations. An isolated dictionary parser label is corroboration, not
+   authority for overriding the codebook domain.
+   The only additional source-authenticated format is exact `CHR(w)`, which may
+   copy an already `w`-byte ASCII literal but constructs no numeric grammar or
+   range spelling. Codebook literals retain their exact source value-cell
+   lexeme and must have one rendering under the applicable tuple/mode;
+   accepting a short printed code as raw
+   bytes, picking space padding, or consulting observed data are rejected
+   alternatives. The compiler independently replays the rendering.
+   If source review requires one of those spellings, that field remains Class
+   B pending a later interface version; no trim, missing default, or era
+   convention resolves it.
 4. **Unallocated aggregates versus executable allocation laws.** The
    existing SE family action requires registered person allocation. Title II
    does not replace it with an unallocated executable path. Its sibling
