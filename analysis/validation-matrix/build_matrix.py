@@ -282,7 +282,7 @@ def official_locator(series_id: str, role: str) -> dict[str, Any]:
     series = anchors["determinations"][series_id]
     observation = series["observations"][0]
     table = series["source_table"]
-    return {
+    locator = {
         "role": role,
         "series_id": series_id,
         "publisher": "Social Security Administration",
@@ -291,7 +291,11 @@ def official_locator(series_id: str, role: str) -> dict[str, Any]:
         "page": "not applicable (HTML)",
         "table": table["table_id"],
         "table_title": table["table_title"],
-        "row_locator": "calendar-year rows 2015 through 2022",
+        "row_locator": (
+            "Number > calendar-year rows 2015 through 2022"
+            if table["table_id"] == "5.A4"
+            else "calendar-year rows 2015 through 2022"
+        ),
         "column_header_path": observation["source_column_header_path"],
         "url": observation["source_url"],
         "committed_extraction": {
@@ -306,6 +310,15 @@ def official_locator(series_id: str, role: str) -> dict[str, Any]:
             "json_pointer": f"/determinations/{series_id}/observations",
         },
     }
+    if table["table_id"] == "4.B11":
+        locator["row_locator"] = (
+            "calendar-year rows 2015 through 2020; preliminary rows 2021 e "
+            "and 2022 e"
+        )
+        locator["source_status"] = (
+            "2015-2020 historical; 2021-2022 preliminary (source row marker e)"
+        )
+    return locator
 
 
 TRUSTEES_ROWS: list[dict[str, Any]] = [
@@ -370,6 +383,10 @@ TRUSTEES_ROWS: list[dict[str, Any]] = [
         "comparison_id": "cmp_retired_worker_beneficiaries_per_worker",
         "quantity": "Retired-worker beneficiaries per worker",
         "unit": "annualized-presence beneficiaries per annual worker",
+        "published_unit": (
+            "December retired-worker current-payment stock per worker with "
+            "OASDI taxable earnings during the calendar year."
+        ),
         "population": (
             "Our numerator is a mechanical own-retirement annual-presence "
             "population including report-only opening backfill; SSA is the "
@@ -386,6 +403,10 @@ TRUSTEES_ROWS: list[dict[str, Any]] = [
         "comparison_id": "cmp_retired_worker_awards_per_worker",
         "quantity": "Retired-worker awards per worker",
         "unit": "mechanical claim stamps per annual worker",
+        "published_unit": (
+            "Administratively effectuated retired-worker awards per worker "
+            "with OASDI taxable earnings during the calendar year."
+        ),
         "population": (
             "Our numerator is modeled own-retirement claim stamps; SSA counts "
             "administratively effectuated retired-worker awards. Denominators "
@@ -499,7 +520,7 @@ def build_trustees_rows() -> list[dict[str, Any]]:
                 },
                 "published": {
                     "value": published_values,
-                    "unit": definition["unit"],
+                    "unit": definition.get("published_unit", definition["unit"]),
                     "formula": spec["official_formula"],
                     "source_locators": locators,
                 },

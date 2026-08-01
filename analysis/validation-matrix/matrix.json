@@ -2895,8 +2895,9 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "numerator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_reported_taxable_earnings",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"
@@ -2916,8 +2917,9 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "denominator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_workers_with_taxable_earnings",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"
@@ -3556,8 +3558,9 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "numerator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_gross_contributions",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"
@@ -3577,8 +3580,9 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "denominator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_workers_with_taxable_earnings",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"
@@ -4218,7 +4222,7 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "numerator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "Number > calendar-year rows 2015 through 2022",
             "series_id": "retired_worker_december_current_payment_stock",
             "table": "5.A4",
             "table_title": "Number of beneficiaries and total monthly benefits, by trust fund and type of benefit, December 1940\u20132024, selected years",
@@ -4239,14 +4243,15 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "denominator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_workers_with_taxable_earnings",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"
           }
         ],
-        "unit": "annualized-presence beneficiaries per annual worker",
+        "unit": "December retired-worker current-payment stock per worker with OASDI taxable earnings during the calendar year.",
         "value": [
           {
             "value": 0.23836146290416563,
@@ -4568,14 +4573,15 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "denominator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_workers_with_taxable_earnings",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"
           }
         ],
-        "unit": "mechanical claim stamps per annual worker",
+        "unit": "Administratively effectuated retired-worker awards per worker with OASDI taxable earnings during the calendar year.",
         "value": [
           {
             "value": 0.016880049469040228,
@@ -4904,8 +4910,9 @@
             "page": "not applicable (HTML)",
             "publisher": "Social Security Administration",
             "role": "denominator",
-            "row_locator": "calendar-year rows 2015 through 2022",
+            "row_locator": "calendar-year rows 2015 through 2020; preliminary rows 2021 e and 2022 e",
             "series_id": "oasdi_reported_taxable_earnings",
+            "source_status": "2015-2020 historical; 2021-2022 preliminary (source row marker e)",
             "table": "4.B11",
             "table_title": "Number of workers with Social Security (OASDI) taxable earnings, amount taxable, and contributions, by type of earnings, selected years 1937\u20132024",
             "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html"

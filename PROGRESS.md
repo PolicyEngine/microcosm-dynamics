@@ -24,18 +24,19 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
 - Finding 3: added exact `row_path` and `column_path` locators to all 32
   DYNASIM rows, with explicit derivations for the nine Favreault rounded-
   bucket sums and the Mermin reform ordering.
+- Finding 4: separated the two SSA published units from the model units,
+  qualified 5.A4 with the Number-panel row path, and restored 2021-2022
+  preliminary status to every canonical 4.B11 locator.
 
 ## Next
 
-1. Finding 4: correct the two SSA published units, the 5.A4 Number-panel
-   path, and 4.B11 preliminary flags.
-2. Finding 5: split the NRA and age-80--85 COLA mismatch records.
-3. Finding 6: complete WISH page/section locators, derivation metadata,
+1. Finding 5: split the NRA and age-80--85 COLA mismatch records.
+2. Finding 6: complete WISH page/section locators, derivation metadata,
    introduced-bill wording, and by-construction disclosure.
-4. Finding 7: remove certification and completeness overclaims.
-5. Implement fail-closed, non-writing `--check` modes for both builders and
+3. Finding 7: remove certification and completeness overclaims.
+4. Implement fail-closed, non-writing `--check` modes for both builders and
    strengthen the drift test for both files, capture pins, and locators.
-6. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+5. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-7. Write the final closure report to the requested output file.
+6. Write the final closure report to the requested output file.
