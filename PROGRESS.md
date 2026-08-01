@@ -2,7 +2,7 @@
 
 ## State
 
-The complete §19 draft and all live substantive/structural corrections are present; final stable-tree re-review and final digest/tree cleanup remain.
+The complete §19 draft and the final legal/Class-B executability correction are present; one last stable-tree re-review and final digest/tree cleanup remain.
 
 ## Done
 
@@ -25,8 +25,9 @@ The complete §19 draft and all live substantive/structural corrections are pres
 - Ran the broad relevant regression set: 424 tests passed.
 - On the stable-tree re-review, closed the last shared legal-partition edge: midyear years add explicit split points and disposition inspects complete verified/absent/conflict row projections; also unified absence-proof locator order with the serialized locator union.
 - Closed the final live source/evidence totality findings: midyear establishing links now enter the claim source-key projection; legal transitions carry complete rank-1 bundles; Class-B literal/range/uncoded branches and observed-member ordering are total; the #345 page derivation is byte-pinned; and Class-A structural rows and proof targets form a bidirectional exact cover.
+- Closed the frozen-head audit findings: the legal claim/link projection is now a serialized manifest child while retained non-PSID adjudication-source arrays stay exact empty; Class B now derives canonical dictionary/codebook rows and raw-record framing from an authenticated source-only interface, exact-covers field-to-file identities and censuses, serializes normalized entries, losslessly projects executable value maps, fixes the parse-kind matrix, and canonicalizes every byte-hex spelling.
 
 ## Next
 
-- Commit this final correction after the mandatory prefix check, then obtain the final independent stable-tree verdict.
+- Commit this final executability correction after the mandatory prefix check, then obtain the final independent stable-tree verdict.
 - Recompute final passage/document digests, remove this temporary file, and write the external final report.
