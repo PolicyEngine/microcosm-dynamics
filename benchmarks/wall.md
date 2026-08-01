@@ -6,7 +6,7 @@ This is the publishable, validation-only view of [the benchmark registry](regist
 
 ## Honest labels
 
-The source artifact's exact embedded label array is `["frame-relative", "pre-alignment", "labor-income proxy"]`. The design's exact fitting-free array is `["frame-relative", "modeled-covered-earnings", "deterministic-uncalibrated"]`; this wall does not assert that its activation event has occurred. Every displayed model value remains **frame-relative proxy covered-earnings; no population alignment**.
+The latest evaluation's distinct source-artifact embedded label arrays are `["frame-relative", "pre-alignment", "labor-income proxy"]` (10 rows). Rows with no embedded label array: 32. The registered design's exact fitting-free array is `["frame-relative", "modeled-covered-earnings", "deterministic-uncalibrated"]` (locator `docs/design/covered_earnings_correction.md §16.7.1`); this evaluation does not assert that its activation event has occurred. No population-alignment claim is made. No individual-administrative-truth claim is made. Every displayed model value remains **frame-relative proxy covered-earnings; no population alignment**.
 
 These benchmark values and gaps may never inform model construction, calibration targets, candidate selection, or tolerance adjudication. Model-triangulation rows are informative, never normative, and are never fixed toward. See the [benchmark protocol](README.md).
 

@@ -34,6 +34,9 @@ GAP_CLASSES = (
     "unexplained",
 )
 COMPARISON_SCOPES = ("ratio", "share", "trajectory", "ordering")
+MATRIX_DISPLAY = (
+    "frame-relative proxy covered-earnings; no population alignment"
+)
 LEGACY_COMPARISON_SCOPES = (
     "ratio",
     "share",
@@ -236,6 +239,191 @@ def any_numeric_leaf(value: Any) -> bool:
     if isinstance(value, list):
         return any(any_numeric_leaf(item) for item in value)
     return False
+
+
+def is_label_array(value: Any) -> bool:
+    """Return whether value is one nonempty exact label array."""
+
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(isinstance(item, str) and item.strip() for item in value)
+        and len(value) == len(set(value))
+    )
+
+
+def label_state_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Summarize and consistency-check one evaluation block's label states."""
+
+    require(bool(records), "label-state summary requires records")
+    states = [record["label_state"] for record in records]
+    ratified_arrays = {
+        json.dumps(
+            state["ratified_fitting_free_exact_label_array"], sort_keys=True
+        )
+        for state in states
+    }
+    require(
+        len(ratified_arrays) == 1,
+        "evaluation block has inconsistent ratified label arrays",
+    )
+    locators = {state["ratified_array_locator"] for state in states}
+    require(
+        len(locators) == 1,
+        "evaluation block has inconsistent ratified-array locators",
+    )
+    claim_keys = (
+        "ratified_array_activation_asserted_by_this_matrix",
+        "population_alignment_claim",
+        "individual_administrative_truth_claim",
+    )
+    claims = {tuple(state[key] for key in claim_keys) for state in states}
+    require(
+        len(claims) == 1,
+        "evaluation block has inconsistent label activation claims",
+    )
+    displays = {state["matrix_display"] for state in states}
+    require(
+        len(displays) == 1,
+        "evaluation block has inconsistent label displays",
+    )
+
+    embedded_counts = Counter(
+        json.dumps(state["source_artifact_embedded_labels"], sort_keys=True)
+        for state in states
+        if state["source_artifact_embedded_labels"] is not None
+    )
+    embedded_arrays = [
+        {
+            "labels": json.loads(identity),
+            "row_count": embedded_counts[identity],
+        }
+        for identity in sorted(embedded_counts)
+    ]
+    activation, population, individual = next(iter(claims))
+    return {
+        "embedded_arrays": embedded_arrays,
+        "individual_administrative_truth_claim": individual,
+        "matrix_display": next(iter(displays)),
+        "no_array_count": sum(
+            state["source_artifact_embedded_labels"] is None
+            for state in states
+        ),
+        "population_alignment_claim": population,
+        "ratified_array_activation_asserted_by_this_matrix": activation,
+        "ratified_array_locator": next(iter(locators)),
+        "ratified_fitting_free_exact_label_array": json.loads(
+            next(iter(ratified_arrays))
+        ),
+    }
+
+
+def embedded_label_arrays(value: Any) -> list[list[str]]:
+    """Collect exact arrays stored under `labels` keys in one artifact."""
+
+    arrays = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key == "labels" and is_label_array(child):
+                arrays.append(child)
+            arrays.extend(embedded_label_arrays(child))
+    elif isinstance(value, list):
+        for child in value:
+            arrays.extend(embedded_label_arrays(child))
+    return arrays
+
+
+def validate_registered_label_evidence(
+    records: list[dict[str, Any]],
+    registry: dict[str, Any],
+    root: Path = ROOT,
+) -> None:
+    """Bind one current evaluation's label claims to registered evidence."""
+
+    summary = label_state_summary(records)
+    honesty = registry["honesty_frame"]
+    registered = registry["migration_context"]["wish_financing_stub"]["our"][
+        "label_state"
+    ]
+    registered_expectations = {
+        "individual_administrative_truth_claim": False,
+        "matrix_display": MATRIX_DISPLAY,
+        "population_alignment_claim": honesty["population_alignment_claim"],
+        "ratified_array_activation_asserted_by_this_matrix": honesty[
+            "ratified_array_activation_asserted_by_this_matrix"
+        ],
+        "ratified_array_locator": honesty["ratified_array_locator"],
+        "ratified_fitting_free_exact_label_array": honesty[
+            "ratified_fitting_free_exact_label_array"
+        ],
+    }
+    require(
+        all(
+            registered[key] == expected
+            for key, expected in registered_expectations.items()
+        ),
+        "registered label evidence disagrees with the honesty frame",
+    )
+    evidence_messages = {
+        "individual_administrative_truth_claim": (
+            "individual-administrative-truth claim disagrees with registered "
+            "evidence"
+        ),
+        "matrix_display": "label display disagrees with registered evidence",
+        "population_alignment_claim": (
+            "population-alignment claim disagrees with registered evidence"
+        ),
+        "ratified_array_activation_asserted_by_this_matrix": (
+            "activation claim disagrees with registered evidence"
+        ),
+        "ratified_array_locator": (
+            "ratified-array locator disagrees with registered evidence"
+        ),
+        "ratified_fitting_free_exact_label_array": (
+            "ratified label array disagrees with registered evidence"
+        ),
+    }
+    for key, message in evidence_messages.items():
+        require(summary[key] == registered[key], message)
+
+    root = root.resolve()
+    entries_by_id = {entry["row_id"]: entry for entry in registry["entries"]}
+    artifact_labels: dict[Path, list[str] | None] = {}
+    for record in records:
+        row_id = record["row_id"]
+        pointer = entries_by_id[row_id]["our_side_artifact"][
+            "artifact_pointer"
+        ]
+        relative_path = pointer["path"]
+        path = (root / relative_path).resolve()
+        require(
+            path.is_relative_to(root),
+            f"label-evidence path escapes repository: {row_id}",
+        )
+        if path not in artifact_labels:
+            raw = path.read_bytes()
+            require(
+                sha256_bytes(raw) == pointer["sha256"],
+                f"label-evidence artifact SHA drift: {row_id}",
+            )
+            arrays = embedded_label_arrays(json.loads(raw))
+            identities = {
+                json.dumps(array, sort_keys=True) for array in arrays
+            }
+            require(
+                len(identities) <= 1,
+                f"model-side artifact has ambiguous embedded label arrays: "
+                f"{relative_path}",
+            )
+            artifact_labels[path] = (
+                json.loads(next(iter(identities))) if identities else None
+            )
+        require(
+            record["label_state"]["source_artifact_embedded_labels"]
+            == artifact_labels[path],
+            "source-artifact label claim disagrees with registered evidence: "
+            f"{row_id}",
+        )
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -1381,14 +1569,13 @@ def validate_history(records: list[dict[str, Any]]) -> None:
             and label_state["matrix_display"].strip()
             and isinstance(label_state["ratified_array_locator"], str)
             and label_state["ratified_array_locator"].strip()
-            and isinstance(
-                label_state["ratified_fitting_free_exact_label_array"], list
+            and is_label_array(
+                label_state["ratified_fitting_free_exact_label_array"]
             )
-            and label_state["ratified_fitting_free_exact_label_array"]
             and (
                 label_state["source_artifact_embedded_labels"] is None
-                or isinstance(
-                    label_state["source_artifact_embedded_labels"], list
+                or is_label_array(
+                    label_state["source_artifact_embedded_labels"]
                 )
             )
             and isinstance(label_state["source_artifact_label_note"], str)
@@ -1416,6 +1603,7 @@ def validate_history(records: list[dict[str, Any]]) -> None:
     )
 
     for record_set in sets.values():
+        label_state_summary(record_set)
         offset_states = [
             "_byte_start" in record and "_byte_end" in record
             for record in record_set
@@ -1477,6 +1665,7 @@ def validate_history_against_registry(
                     record["gap_note"] == entry["gap_note"],
                     f"history gap note disagrees with registry: {record['row_id']}",
                 )
+            validate_registered_label_evidence(record_set, registry)
 
 
 def reconstruct_legacy_matrix(

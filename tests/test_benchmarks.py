@@ -45,7 +45,7 @@ CURRENT_HISTORY_SHA256 = (
     "61b8233b430c80c68a26cd5c1cbda8cb71ed8ef2631d96d0d4b7424f2f430d31"
 )
 WALL_SHA256 = (
-    "a9fd36b7275770d87ebde3f2d965f4d0235e82a54fdee6e142c19e0d8be1ffdb"
+    "88658e92030aaf7003ef19a5d5ec33748ea170e2daf3e146ae34d465f4628281"
 )
 SEED_ROW_COUNT = 42
 TIER_COUNTS = {
@@ -94,6 +94,28 @@ def load_schema():
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    return module
+
+
+def load_wall_builder():
+    """Load the wall builder with its sibling schema import available."""
+
+    path = BENCHMARKS / "build_wall.py"
+    spec = importlib.util.spec_from_file_location(
+        "benchmark_wall_builder", path
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    previous_schema = sys.modules.get("schema")
+    sys.path.insert(0, str(BENCHMARKS))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(str(BENCHMARKS))
+        if previous_schema is None:
+            sys.modules.pop("schema", None)
+        else:
+            sys.modules["schema"] = previous_schema
     return module
 
 
@@ -335,6 +357,104 @@ def test__benchmark_history__binds_unverified_class_to_registry():
             registry,
             hashlib.sha256(registry_raw).hexdigest(),
         )
+
+
+def test__benchmark_labels__future_states_are_consistent_and_evidence_bound():
+    schema = load_schema()
+    registry, registry_raw = schema.load_registry()
+    history, _ = schema.load_history()
+    registry_sha = hashlib.sha256(registry_raw).hexdigest()
+
+    inconsistent_array = copy.deepcopy(history)
+    inconsistent_array[0]["label_state"][
+        "ratified_fitting_free_exact_label_array"
+    ] = ["future-label"]
+    with pytest.raises(AssertionError, match="inconsistent ratified label"):
+        schema.validate_history(inconsistent_array)
+
+    inconsistent_locator = copy.deepcopy(history)
+    inconsistent_locator[0]["label_state"][
+        "ratified_array_locator"
+    ] = "docs/design/future.md §1"
+    with pytest.raises(AssertionError, match="inconsistent ratified-array"):
+        schema.validate_history(inconsistent_locator)
+
+    inconsistent_activation = copy.deepcopy(history)
+    inconsistent_activation[0]["label_state"][
+        "ratified_array_activation_asserted_by_this_matrix"
+    ] = True
+    with pytest.raises(AssertionError, match="inconsistent label activation"):
+        schema.validate_history(inconsistent_activation)
+
+    unsupported_mutations = (
+        (
+            "ratified_fitting_free_exact_label_array",
+            ["future-label"],
+            "ratified label array disagrees",
+        ),
+        (
+            "ratified_array_locator",
+            "docs/design/future.md §1",
+            "ratified-array locator disagrees",
+        ),
+        (
+            "ratified_array_activation_asserted_by_this_matrix",
+            True,
+            "activation claim disagrees",
+        ),
+        (
+            "population_alignment_claim",
+            True,
+            "population-alignment claim disagrees",
+        ),
+        (
+            "individual_administrative_truth_claim",
+            True,
+            "individual-administrative-truth claim disagrees",
+        ),
+    )
+    for field, value, message in unsupported_mutations:
+        unsupported = copy.deepcopy(history)
+        for record in unsupported:
+            record["label_state"][field] = value
+        schema.validate_history(unsupported)
+        with pytest.raises(AssertionError, match=message):
+            schema.validate_history_against_registry(
+                unsupported,
+                registry,
+                registry_sha,
+            )
+
+    false_embedded_claim = copy.deepcopy(history)
+    false_embedded_claim[0]["label_state"][
+        "source_artifact_embedded_labels"
+    ] = ["future-label"]
+    with pytest.raises(AssertionError, match="source-artifact label claim"):
+        schema.validate_history_against_registry(
+            false_embedded_claim,
+            registry,
+            registry_sha,
+        )
+
+
+def test__benchmark_wall__renders_future_label_diversity_from_history():
+    schema = load_schema()
+    history, _ = schema.load_history()
+    future = copy.deepcopy(history[:3])
+    future[0]["label_state"]["source_artifact_embedded_labels"] = ["future-a"]
+    future[1]["label_state"]["source_artifact_embedded_labels"] = ["future-b"]
+    future[2]["label_state"]["source_artifact_embedded_labels"] = None
+    for record in future:
+        record["label_state"][
+            "ratified_array_activation_asserted_by_this_matrix"
+        ] = True
+    wall_builder = load_wall_builder()
+    rendered = wall_builder.render_honest_labels(future)
+
+    assert '`["future-a"]` (1 row)' in rendered
+    assert '`["future-b"]` (1 row)' in rendered
+    assert "Rows with no embedded label array: 1." in rendered
+    assert "this evaluation asserts that its activation event" in rendered
 
 
 def test__benchmark_registry__retains_source_and_verification_drift_laws():
@@ -690,6 +810,12 @@ def test__benchmark_wall__is_self_contained_complete_and_seeded():
     assert (
         '`["frame-relative", "pre-alignment", "labor-income proxy"]`' in wall
     )
+    assert (
+        '`["frame-relative", "pre-alignment", "labor-income proxy"]` '
+        "(10 rows)" in wall
+    )
+    assert "Rows with no embedded label array: 32." in wall
+    assert "certified run set" not in wall
     assert "http://" not in wall and "https://" not in wall
     assert "`preliminary_source` | 0" in wall
     assert "`unverified_source` | 20" in wall

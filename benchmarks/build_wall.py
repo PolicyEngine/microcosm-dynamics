@@ -12,6 +12,7 @@ from typing import Any
 from schema import (
     GAP_CLASSES,
     TIERS,
+    label_state_summary,
     latest_records,
     load_history,
     load_registry,
@@ -121,6 +122,59 @@ def tier_heading(tier: str) -> str:
     return tier.replace("_", " ").title()
 
 
+def row_count_text(count: int) -> str:
+    """Return one compact row-count phrase with honest grammar."""
+
+    return f"{count} {'row' if count == 1 else 'rows'}"
+
+
+def render_honest_labels(records: list[dict[str, Any]]) -> str:
+    """Render label diversity and claims from one latest history block."""
+
+    summary = label_state_summary(records)
+    embedded = summary["embedded_arrays"]
+    if embedded:
+        embedded_text = "; ".join(
+            "`"
+            + json.dumps(item["labels"], ensure_ascii=False)
+            + "` ("
+            + row_count_text(item["row_count"])
+            + ")"
+            for item in embedded
+        )
+    else:
+        embedded_text = "none"
+    ratified = json.dumps(
+        summary["ratified_fitting_free_exact_label_array"],
+        ensure_ascii=False,
+    )
+    activation = (
+        "asserts"
+        if summary["ratified_array_activation_asserted_by_this_matrix"]
+        else "does not assert"
+    )
+    population = (
+        "This evaluation asserts population alignment."
+        if summary["population_alignment_claim"]
+        else "No population-alignment claim is made."
+    )
+    individual = (
+        "This evaluation asserts individual administrative truth."
+        if summary["individual_administrative_truth_claim"]
+        else "No individual-administrative-truth claim is made."
+    )
+    return (
+        "The latest evaluation's distinct source-artifact embedded label "
+        f"arrays are {embedded_text}. Rows with no embedded label array: "
+        f"{summary['no_array_count']}. The registered design's exact "
+        f"fitting-free array is `{ratified}` (locator "
+        f"`{summary['ratified_array_locator']}`); this evaluation "
+        f"{activation} that its activation event has occurred. {population} "
+        f"{individual} Every displayed model value remains "
+        f"**{summary['matrix_display']}**."
+    )
+
+
 def render() -> bytes:
     """Return deterministic Markdown bytes without mutating the filesystem."""
 
@@ -144,12 +198,8 @@ def render() -> bytes:
     for record in history:
         records_by_row[record["row_id"]].append(record)
 
-    labels = registry["honesty_frame"]
-    embedded = json.dumps(labels["source_artifact_labels"], ensure_ascii=False)
-    ratified = json.dumps(
-        labels["ratified_fitting_free_exact_label_array"],
-        ensure_ascii=False,
-    )
+    latest_label_records = [latest[entry["row_id"]] for entry in entries]
+    honest_labels = render_honest_labels(latest_label_records)
     gap_counts = Counter(record["gap_class"] for record in latest.values())
     evaluated_run = next(iter(latest.values()))["evaluated_at_run"]
     require(
@@ -157,7 +207,7 @@ def render() -> bytes:
             record["evaluated_at_run"] == evaluated_run
             for record in latest.values()
         ),
-        "latest wall records do not form one certified run set",
+        "latest wall records do not form one evaluation run set",
     )
 
     output = [
@@ -175,14 +225,7 @@ def render() -> bytes:
         "",
         "## Honest labels",
         "",
-        (
-            "The source artifact's exact embedded label array is "
-            f"`{embedded}`. The design's exact fitting-free array is "
-            f"`{ratified}`; this wall does not assert that its activation event "
-            "has occurred. Every displayed model value remains "
-            "**frame-relative proxy covered-earnings; no population "
-            "alignment**."
-        ),
+        honest_labels,
         "",
         (
             "These benchmark values and gaps may never inform model "
