@@ -968,7 +968,7 @@ def build_ppi_rows() -> list[dict[str, Any]]:
         {
             "row_id": "dynasim.mermin.price_indexing.all",
             "external_model": "DYNASIM3",
-            "quantity": "Price-indexed benefit as percent of scheduled, all workers",
+            "quantity": "Price-indexed benefit as percent of scheduled, all retired workers ages 62-67",
             "comparison_scope": ["ratio"],
             "our": {
                 "value": pi_ours,
@@ -992,7 +992,8 @@ def build_ppi_rows() -> list[dict[str, Any]]:
                 "source_locators": mermin_locator(
                     "Table 2",
                     16,
-                    "All",
+                    "Retired workers ages 62-67 > overall sex-combined > "
+                    "All (top-level row before Men)",
                     "Percent of Scheduled Benefits > Price indexing",
                 ),
             },
@@ -1269,7 +1270,8 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
                 "source_locators": mermin_locator(
                     "Table 2",
                     16,
-                    "All",
+                    "Retired workers ages 62-67 > overall sex-combined > "
+                    "All (top-level row before Men)",
                     (
                         "Percent of Scheduled Benefits > Normal retirement "
                         "age raised to 70"
@@ -1291,14 +1293,16 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
             locator = mermin_locator(
                 "Table 2",
                 16,
-                "All",
+                "Retired workers ages 62-67 > overall sex-combined > "
+                "All (top-level row before Men)",
                 "Percent of Scheduled Benefits > Reduced cost of living adjustment",
             )
         else:
             locator = mermin_locator(
                 "Table 4",
                 18,
-                "All",
+                "Retired workers ages 80-85 > overall sex-combined > "
+                "All (top-level row before Men)",
                 "Percent of Scheduled Benefits > Reduced cost of living adjustment",
             )
         rows.append(
@@ -1902,7 +1906,7 @@ def build_wish_parameter_row() -> dict[str, Any]:
             "year_basis": (
                 "The scalar parameter matches, but the introduced bill specifies "
                 "wages after 2021 and would have applied only if enacted; only "
-                "2022 overlaps our artifact, and no published revenue path exists."
+                "2022 overlaps our artifact, and no revenue path is present in the committed captures."
             ),
             "benefit_concept": (
                 "The introduced bill would finance a new LTSS benefit if enacted; "

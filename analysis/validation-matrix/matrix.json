@@ -948,7 +948,7 @@
                 "pdf": 16
               },
               "publisher": "Urban Institute",
-              "row_path": "All",
+              "row_path": "Retired workers ages 62-67 > overall sex-combined > All (top-level row before Men)",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -962,7 +962,7 @@
           "unit": "percent of scheduled benefit",
           "value": 67.8
         },
-        "quantity": "Price-indexed benefit as percent of scheduled, all workers",
+        "quantity": "Price-indexed benefit as percent of scheduled, all retired workers ages 62-67",
         "row_id": "dynasim.mermin.price_indexing.all",
         "verification_class": "reported_not_verified"
       },
@@ -2350,7 +2350,7 @@
                 "pdf": 16
               },
               "publisher": "Urban Institute",
-              "row_path": "All",
+              "row_path": "Retired workers ages 62-67 > overall sex-combined > All (top-level row before Men)",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2437,7 +2437,7 @@
                 "pdf": 16
               },
               "publisher": "Urban Institute",
-              "row_path": "All",
+              "row_path": "Retired workers ages 62-67 > overall sex-combined > All (top-level row before Men)",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2525,7 +2525,7 @@
                 "pdf": 18
               },
               "publisher": "Urban Institute",
-              "row_path": "All",
+              "row_path": "Retired workers ages 80-85 > overall sex-combined > All (top-level row before Men)",
               "table": "Table 4",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -6345,7 +6345,7 @@
           "no_ltss_benefit_model"
         ],
         "population": "Our closed 2015-2022 PSID reproduction panel is not the national employee population subject to the proposed tax.",
-        "year_basis": "The scalar parameter matches, but the introduced bill specifies wages after 2021 and would have applied only if enacted; only 2022 overlaps our artifact, and no published revenue path exists."
+        "year_basis": "The scalar parameter matches, but the introduced bill specifies wages after 2021 and would have applied only if enacted; only 2022 overlaps our artifact, and no revenue path is present in the committed captures."
       },
       "deviation": {
         "definition": "By construction: our 0.3% input was copied from the introduced bill, so zero deviation is neither independent validation nor calibration.",

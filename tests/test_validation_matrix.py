@@ -14,10 +14,10 @@ MATRIX_BUILDER = MATRIX_DIR / "build_matrix.py"
 REPORT_BUILDER = MATRIX_DIR / "build_report.py"
 
 MATRIX_SHA256 = (
-    "47c2e33ea799ead379088adf1013a95dfdbd74a634ddc90c7d8039898016e2a6"
+    "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
 )
 REPORT_SHA256 = (
-    "9ad213e83760aff235dd47b1b6ade317c36d9f4e5e6f0d51a9eada8972b95d3c"
+    "3d36dd1da7e7df292d2b465cc5f66539ff4e1a88af39d27d13f6c0990b7b8638"
 )
 VERIFIED_ROW_COUNT = 22
 REPORTED_NOT_VERIFIED_ROW_COUNT = 20
@@ -106,6 +106,9 @@ def test__validation_matrix__matches_reviewed_sha_and_row_count():
         for locator in row["published"]["source_locators"]:
             assert locator["row_path"]
             assert locator["column_path"]
+            # Mermin Tables 2 and 4 each print three "All" rows (overall,
+            # Men, Women); a bare "All" path is not a unique source cell.
+            assert locator["row_path"] != "All"
             if locator.get("derivation"):
                 derived_ids.add(row["row_id"])
     assert derived_ids == DERIVED_DYNASIM_ROW_IDS

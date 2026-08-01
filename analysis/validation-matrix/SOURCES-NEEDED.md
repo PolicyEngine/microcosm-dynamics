@@ -137,10 +137,10 @@ committed evidence.
     - URL: https://www.congress.gov/bill/117th-congress/house-bill/4289
     - Capture: bill landing HTML and the official introduced-text PDF/XML linked
       there.
-    - Establishes: statutory payroll-contribution rate, covered earnings,
+    - Establishes: proposed payroll-contribution rate, covered earnings,
       effective dates, vesting, benefit eligibility, and benefit concept. This
-      is the authority for the lane's single-side 0.3-percentage-point
-      payroll-surtax scenario; the bill separately levies employees and
+      is the source authority for the lane's single-side 0.3-percentage-point
+      payroll-surtax scenario; the introduced bill would, if enacted, separately levy employees and
       employers at 0.3 percent each (0.6 percent combined), and an actuarial
       memo is not a substitute for bill text.
 
