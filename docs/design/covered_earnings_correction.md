@@ -23759,8 +23759,8 @@ status
 
 The first three values are all the literal
 `historical_coverage_rule_specs.v1`; `canonical_order` is the literal
-`rule_id_unsigned_utf8_v1`; `ordered_rule_ids` is the complete unique rule-ID
-array in unsigned UTF-8 byte order; `rows` has exactly the existing §4.1
+`rule_id_unsigned_utf8_v1`; `ordered_rule_ids` is the complete nonempty
+unique rule-ID array in unsigned UTF-8 byte order; `rows` has exactly the existing §4.1
 20-field rule-row keyset in that same order; `row_count` equals both array
 lengths; `row_keyset_sha256` hashes the canonical ordered ID array; and
 `rows_sha256` hashes the canonical complete ordered row array.
@@ -23815,6 +23815,7 @@ byte_size
 sha256
 ```
 
+`source_documents` and `rule_source_links` are both nonempty.
 `source_document_id` is the literal `legal-source:` followed by that row's
 64-lowercase-hex `sha256`. The path is a nonempty, traversal-free,
 repository-relative path whose basename is the capture filename and whose
@@ -24625,3 +24626,161 @@ mixed split remains a modeled child split after one exact read of its parent
 and is never relabeled as source allocation. G17 may carry complete negative
 objects structurally, but final production, crosswalk, and registry
 registration abort wherever a required gap remains.
+
+### 19.4 Exact replacement, preservation, and closure-sweep ledger
+
+#### 19.4.1 Exhaustive passage disposition
+
+The following table is the complete replacement and composition inventory.
+“Replace” means only the named clause and complete successor stated in this
+section; it never means delete the historical text or reinterpret an
+unnamed consumer.
+
+| Ratified anchor | Revision-7 disposition |
+|---|---|
+| §4.1 historical-rule registry top level and rule ordering | `replaced-by-§19.2.1-successor`: exact envelope, literals, nonempty rule array, unsigned-UTF-8 rule-ID order, counts, row/domain digests, self-zeroed integrity, and status. The existing 20-field rule-row schema is preserved. |
+| §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link envelopes, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
+| §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals, independent 14-family cell denominator, elementary partition, all-overlap execution, rank agreement, and closed midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
+| §8 and §10.1 `legal_rule_input` | `replaced-by-§19.2.1-literals-and-§19.2.2-subordinate-byte-closure`: one concrete path/vintage/schema, canonical complete raw blob, configured complete deep copy, and referenced source blobs closed before runner creation. The implicit input ID/role and every other production-input law are preserved. |
+| §16.2 `historical_coverage_rules` requirement row and item-6 predicate equation | `replaced-by-§19.2.5-v2-successor`: schema descriptor plus configuration, raw bytes, append-only history, independent domain, and source-byte closure. Requirement ID/class remain unchanged. |
+| §16.13.2 legal establishing-source match | `replaced-by-§19.2.2-complete-link-projection`; every nonlegal source row and matching law is preserved. |
+| §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate`; all downstream claim/result/base equations and every unrelated singleton-authority requirement are preserved. |
+| §4.2 `layout_coordinates` nested shape and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: exact per-field coordinates, three-role evidence, complete observed-token census, closed unobserved-value rows, and explicit unseen-token abort. `typed_parse_specs` retains its ratified nine-key shape. |
+| §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
+| §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3`: source-manifest-authenticated six-era/43-wave hierarchy extraction and exact whole-document, branch, layout, codebook, near-match, and target-key proof. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
+| §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets`: one `residual_consequence` member is inserted at the exact enumerated position. Every preexisting member and executable meaning is preserved. |
+| §4.2 `family_aggregate_allocation_rule` | `preserved-byte-for-byte`: it retains exactly `action` and `allocation_source_inventory_keys`; the new source-authority consequence is the sibling rule-row member, not an allocation default. |
+| §§16.2, 16.5.1, 16.11.2, and 16.13 official registry/crosswalk identities and construction | `composed-with-the-completed-nested-schemas`: all v1 official artifact/registry names, nine-registry order, first-add/cutoff history, nonempty/no-unreferenced-row rules, and configuration deep-copy laws remain. Every affected content and identity digest is fresh. |
+| §16.6.4 G17 | `replaced-only-as-enumerated-in-§19.4.2`: comparison count/order and every unnamed domain remain unchanged; C01, C05, C06, C09, C10, and C11 receive the complete successor comparands. |
+| §16.12.5 frozen ten-artifact token sweep | `preserved-byte-for-byte`: Amendment 5 adds no authority row to that historical sweep. The Class-A 43-wave closure and this amendment's normative passage sweep are separate prospective closures. |
+| §18 documented-inclusive-total projection, V-B6 successor, and exact-once/no-source-allocation laws | `preserved-byte-for-byte-and-composed-with-§19.3.4`: residual 9 alone records the same verified no-allocation-required consequence; no arithmetic allocation is introduced. |
+| §§17–18 revision-5/revision-6 comparator tables | `preserved-as-immutable-historical-invariants`; §19.5 is the complete revision-7 successor census. |
+
+All `.v1` official slot, inventory, crosswalk, and six executable-registry
+names remain exactly ratified. All nine registry identities remain in their
+ratified order. No Class-A evidence artifact becomes a registry and no legal
+source blob becomes a generic production input. Every count, key stream,
+canonical order, foreign key, nonempty rule, no-unreferenced-rule,
+strict-parser, content-hash, first-add history, crosswalk exact-cover, gate,
+label, target, model, output, and publication law not expressly listed in
+the table remains controlling by silence.
+
+#### 19.4.2 Exact G17 successor comparands
+
+`g17_fitting_free_inventory_crosswalk_evidence.v1` retains exactly 18
+physical comparison rows in order G17-C01 through G17-C18, the base seven-
+key comparison-row shape, and `comparison_count: 18`. C02–C04, C07–C08,
+C12–C18 retain their complete ratified purposes and payloads. In particular,
+C15 remains the exact nonempty 20-row canonical-empty-child stream; inventory
+grammar or absence evidence never enters that target/model-choice domain.
+
+The six changed expected/actual payloads are exactly:
+
+- **G17-C01** is a tagged object with exactly `inventory_key_stream`,
+  `inventory_layout_grammar_rows`, `inventory_absence_proof_rows`, and
+  `slot_closure_evidence_identity`. The first is the unchanged complete
+  official key stream. The next two are positional projections of every
+  official inventory row's complete §19.3.2 layout/token grammar and
+  §19.3.3 absence-proof value, including exact empty branches. The final
+  four-key identity names the manifest-authenticated canonical
+  `psid_questionnaire_slot_closure_evidence.v1` byte. The expected object is
+  freshly reconstructed from authenticated dictionary/codebook/raw-file and
+  questionnaire sources; the actual object comes from the slot registry and
+  inventory. C01's expected/actual count remains the complete official
+  inventory-row count, while its domain hash covers this entire tagged
+  object.
+- **G17-C05** is a tagged object with exactly `registry_envelope`,
+  `legal_source_manifest`, `rule_domain`, `rule_rows`,
+  `legal_source_document_byte_closure`, and
+  `legal_authority_verification_result`. It deep-copies the complete
+  §19.2 values after independently reconstructing source bytes, domain, and
+  v2 predicate result. C05's expected/actual count is the rule-row count;
+  its hash covers the complete tagged object and every nested count/digest.
+- **G17-C06** retains its exact two-key
+  `base_direct_law_closure`/`deterministic_default_application_closure`
+  object. Within `base_direct_law_closure`, every inventory presence lookup
+  and raw-token commitment uses the exact
+  `(raw_field_id,raw_token_hex)` grammar/missing branch from §19.3.2 and the
+  complete §19.2 rule-domain/partition. No outer key or deterministic-
+  default law changes.
+- **G17-C09**, **G17-C10**, and **G17-C11** respectively compare every
+  complete reconciliation, job-match, and SE-aggregation row under the
+  successor keysets in §19.3.4, including every complete
+  `psid_rule_residual_consequence.v1` value. Their counts remain the
+  independently required registry-row counts; their hashes cover the
+  complete rows. A structurally present negative consequence is not an
+  omitted rule, and a required `abort_registration` consequence cannot make
+  overall G17 sufficient for production registration.
+
+For all six, the configured actual never supplies the expected denominator,
+count, key order, authority status, claim class, or consequence. Missing,
+extra, reordered, differently hashed, source-drifted, self-demoted, or
+unequal nested evidence fails the comparison and therefore G17. All 18 rows
+must still be physically present and pass; there is no G17-C19.
+
+#### 19.4.3 Closure-sweep scope determination and silence discipline
+
+Before §19.8 step 2 acceptance, the coordinator constructs
+`amendment_5_schema_disposition_closure_sweep.v1`. Its normative design
+corpus is every byte of §§1–19 in the candidate D5 blob except exactly the
+historical ASCII table intervals excluded by §§17.3 and 18.5 and the §19.5
+ASCII table interval defined there. It does not exclude prose surrounding
+those tables, this replacement ledger, code fences, footnotes, or a passage
+because the passage is inconvenient. Reports, prompts, staging manifests,
+and uncommitted files are review evidence, not normative corpus members.
+
+The sweep has exactly `schema_version`, `design_corpus_ranges`,
+`search_terms`, `matched_passages`, `matched_passage_count`,
+`matched_passage_domain_sha256`, `unresolved_passage_ids`, and `status`.
+Search terms exact-cover, including case and punctuation variants, all of:
+
+```text
+historical_coverage_rule_specs
+legal_rule_input
+legal source
+effective_start
+effective_end
+authority_rank
+governing_rule_ids
+layout_coordinates
+typed_parse_specs
+missing_raw_tokens
+absence_proof
+questionnaire slot
+residual_disposition
+ambiguity_action
+family_aggregate_allocation_rule
+reconciliation_rule
+job_spell_match_rule
+se_aggregation_group_rule
+G17-C01
+G17-C05
+G17-C06
+G17-C09
+G17-C10
+G17-C11
+registration_required
+direct_only_optional
+inclusive total
+exact once
+```
+
+Complete paragraphs, table rows, list items, code objects, equations, and
+every named consumer reached from a match are inspected even when the exact
+token is absent from the consumer. Each `matched_passages` row has exactly
+`passage_id`, `start_byte`, `end_byte`, `matched_terms`, `consumer_path`,
+`disposition`, and `successor_anchor`. Ranges are half-open D5 byte offsets;
+IDs and order follow starting byte. `disposition` is exactly
+`replaced-by-named-successor | composed-with-named-successor |
+lawfully-unchanged-with-reason`; every successor anchor resolves to this
+section or an exact preserved law. A match cannot be discarded as
+“editorial,” and a repeated passage remains a distinct row.
+
+Status passes only when the ranges reconstruct the declared corpus, every
+literal and consumer match appears once, the row count/hash reproduce, and
+`unresolved_passage_ids` is exact empty. This sweep determines closure; it
+does not decide substantive law. Any unenumerated conflict or a passage that
+cannot truthfully receive one of the three dispositions blocks ratification
+and is reported under §19.8. Silence preserves all nonmatched and
+nonenumerated law; it never authorizes an inferred replacement.
