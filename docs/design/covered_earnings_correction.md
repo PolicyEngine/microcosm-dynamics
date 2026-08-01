@@ -24233,6 +24233,7 @@ official inventory then raw-field order. Each row has exactly
 `source_coding_declaration_id`, `questionnaire_era`, `interview_wave`,
 `source_inventory_key`, `raw_field_id`, `source_coding_system`,
 `coding_reference_source_document_id`, `source_declaration_projection`,
+`source_declaration_assertion_occurrences`,
 `source_nonstate_member_refs`, and `source_row_sha256s`. The four field
 coordinates exact-copy the slot/inventory/layout join.
 
@@ -24252,11 +24253,67 @@ rows. A field ID, dictionary coordinate or numeric format alone, normalized
 value-domain shape, observed value, inventory tag, or candidate mapping is
 not a coding declaration.
 
-Before `inventory_domain_rows` is read, the source-only extractor reconstructs
-the complete declaration projection. Every declaration/reference in that
-projection must select the same one of these four closed systems:
+`source_declaration_assertion_occurrences` is the complete source-ordered
+per-assertion disposition relation over that projection. Each occurrence row
+has exactly `source_assertion_ordinal`, `source_document_id`,
+`source_document_sha256`, `canonical_row_id`, `source_locator_id`,
+`locator_text_sha256`,
+`locator_utf8_byte_start`, `locator_utf8_byte_end`,
+`source_projection_pointer`, `projection_utf8_byte_start`,
+`projection_utf8_byte_end`, `assertion_text`, `assertion_sha256`,
+`disposition`, `selected_source_coding_system`, and
+`coding_reference_source_document_id`, in this order. The source document
+and canonical-row IDs exact-copy one row of
+`source_declaration_projection`; `source_document_sha256` exact-copies that
+document's independently authenticated manifest digest, and the locator is
+a member of that row's exact locator array. For a PDF page locator,
+`locator_text_sha256` hashes the complete pinned derived-page UTF-8 payload
+and the locator coordinates are absolute half-open byte positions in that
+payload. For a strict-decoded text locator, they are absolute half-open byte
+positions in its complete authenticated decoded payload. The nonempty slice
+must strict-decode to `assertion_text`, and both its SHA-256 and the
+independently resolved source locator must exact-match. The projection
+pointer is exactly `/source_label`, `/source_description`, or
+`/normalized_entry_meanings/<zero-based-position>`; its nonempty half-open
+UTF-8 slice must be byte-equal to the locator slice. Thus matching words on a
+page cannot be detached from the complete projected declaration-bearing
+member.
 
-- an exact PSID State Codes reference resolves
+Before any serialized declaration or `inventory_domain_rows` row is read,
+the source-only extractor and an independent source reviewer separately
+enumerate every maximal source assertion that declares a coding vocabulary,
+directs the reader to a coding reference, or attributes the coding's source
+or history in every complete projected label, description, and normalized
+entry meaning. They exact-compare the complete occurrence denominator and
+its source order. For each assertion, scan its projection row's
+`source_locator_ids` in their already authenticated source order and select
+the first locator whose payload contains the complete byte-equal assertion
+and whose span maps byte-for-byte to the stated projection member. There must
+be exactly one matching span in that selected payload; zero or multiple
+matches abort. Later containing locators are corroboration and emit no row.
+Thus locator choice is a function of the fixed locator array, not an
+extractor preference. Rows follow declaration-projection order, selected-
+locator order, locator start, locator end, and then source-member position;
+ordinals are the consecutive zero-based positions in that order. Repeated
+assertions in different source positions remain separate. Across the
+complete occurrence relation for one canonical row, locator spans are
+nonoverlapping and unique even when projection pointers differ; an equal or
+overlapping span is multiply disposed and aborts. The serialized array must
+deep-equal this independently agreed denominator before any disposition is
+used. A candidate field ID, format, domain, observed value, intended system,
+or favorable disposition cannot add, suppress, merge, split, or reorder an
+assertion. The expected relation has exactly one row per assertion: zero is
+an omitted assertion and more than one is a multiply disposed assertion;
+either aborts. If the two independent enumerations or any asserted boundary
+or order differ, the assertion is competing and aborts rather than choosing
+one review.
+
+Every occurrence has exactly one of the two closed `disposition` values
+`selecting_system_reference | nonselecting_historical_provenance`.
+`selecting_system_reference` must match exactly one of these four closed
+systems and serialize that arm's exact system/reference pair:
+
+- an exact PSID State Codes reference resolves occurrence
   `coding_reference_source_document_id` to
   `psid-corpus-document-0222` and selects `psid_state_code`;
 - an exact FIPS State Codes reference—including exact source declaration
@@ -24268,14 +24325,147 @@ projection must select the same one of these four closed systems:
   source meanings name the fixed authority rows uses null reference document
   and selects `source_labeled_alias`.
 
-No integer-set subset, permutation, width, field name, source frequency, or
-majority test participates. The serialized `source_coding_system` and
-reference ID must deep-equal that reconstruction. Zero declarations, two
-systems, an unresolved reference, or conflicting rows abort. Consequently
-V93's exact PSID State Codes reference selects PSID from its complete
-0/1–51/99 domain, while ER21004's exact FIPS declaration selects FIPS from
-its complete 0/1–56/99 domain; neither domain is asked whether it also
-contains all codes of another table.
+`nonselecting_historical_provenance` has null
+`selected_source_coding_system` and null
+`coding_reference_source_document_id` and is permitted only when the
+occurrence's exact document SHA-256, page or raw locator payload digest,
+half-open locator span, assertion bytes, and assertion SHA-256 equal one row
+of the closed historical-provenance occurrence table below. This version's
+table has exactly one row: the displayed V93 GSA occurrence. No wording,
+issuer name, age, origin claim, candidate annotation, or unsupported
+reference can infer this disposition, and it establishes no GSA-to-PSID
+equivalence. Adding another historical-provenance row requires a later
+ratified amendment with its own authenticated byte occurrence.
+
+For each agreed occurrence, both source-only builders apply the four
+selecting matchers and the closed historical table before reading the
+serialized disposition. Exactly one arm must match. Zero matching arms is
+an unknown assertion and two or more are competing dispositions; either
+aborts. The independently equal expected row, including its disposition and
+selected or null pair, must then deep-equal the serialized occurrence row.
+Thus the disposition is authenticated source law, not a candidate-authored
+classification.
+
+The complete V93 replay is pinned independently through committed artifact
+`data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json`,
+mode `100644`, Git blob `7330949776439c2124aba2a6ffa280dbbf02e4af`,
+4,628,883 bytes, and raw SHA-256
+`52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48`.
+Its `/field_evidence/92` row has field key
+`psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9`,
+complete canonical-row SHA-256
+`e26fe968c48a7e5c7fb397140a50c232cb8a3bc9d270798af0199e52a9f0b5eb`,
+and internal `derived_field_block_sha256`
+`9fd5b204ba235d80092ce65a1c9456e6386909e85fb905bd083ac8dafad04813`.
+Its `/source_locators/22` row has ID
+`psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6`,
+complete canonical-row SHA-256
+`59f1bb14fb1c47d8c68a591a94fe007241140bdf8c5c10ce560a371765a21274`,
+page 23, raw PDF content-stream span `[114117,118952)`, range and decoded
+SHA-256
+`4ac45462bc2228a74da38407620f70832ec960ec033067bbaddf18d817145bf8`,
+and complete 2,839-byte derived-page-text SHA-256
+`22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4`.
+The underlying `family/1968/fam1968_codebook.pdf` is exactly 851,348 bytes
+with SHA-256
+`9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6`.
+The historical field key and locator are replay bindings to this committed
+evidence; they do not substitute for the future
+`<source-document-id>#row:<position>` or `psid-source-region:` identities,
+which must independently resolve the same document, page, and byte slices.
+
+The following exact 16-field objects are the complete source-ordered V93
+assertion-occurrence replay; the first object alone is the complete closed
+historical-provenance occurrence table for this version. JSON `\n` decodes
+to one byte `0a`. Every identity, locator payload digest, locator and
+projection span, assertion byte, hash, disposition, and selected/null result
+is inside its occurrence row rather than supplied by editorial prose.
+
+```json
+[
+  {
+    "source_assertion_ordinal": 0,
+    "source_document_id": "psid-family-1968-codebook",
+    "source_document_sha256": "9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6",
+    "canonical_row_id": "psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9",
+    "source_locator_id": "psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6",
+    "locator_text_sha256": "22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4",
+    "locator_utf8_byte_start": 2296,
+    "locator_utf8_byte_end": 2446,
+    "source_projection_pointer": "/source_description",
+    "projection_utf8_byte_start": 22,
+    "projection_utf8_byte_end": 172,
+    "assertion_text": "This and the county code are from U.S. General Services Administration Geographical\nLocation Codes, (Office of Finance) October 1966, Washington, D.C.",
+    "assertion_sha256": "5708fb79a95843cf44aeb0ae5a7d346bb1220da795dd1a51d7cefcea7ff707c6",
+    "disposition": "nonselecting_historical_provenance",
+    "selected_source_coding_system": null,
+    "coding_reference_source_document_id": null
+  },
+  {
+    "source_assertion_ordinal": 1,
+    "source_document_id": "psid-family-1968-codebook",
+    "source_document_sha256": "9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6",
+    "canonical_row_id": "psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9",
+    "source_locator_id": "psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6",
+    "locator_text_sha256": "22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4",
+    "locator_utf8_byte_start": 2447,
+    "locator_utf8_byte_end": 2554,
+    "source_projection_pointer": "/source_description",
+    "projection_utf8_byte_start": 173,
+    "projection_utf8_byte_end": 280,
+    "assertion_text": "Please refer to PSID\nstate codes here http://psidonline.isr.umich.edu/data/Documentation/PSIDStateCodes.pdf",
+    "assertion_sha256": "306f3ac591b2d9660c06731b2b1cc6d84df7d63a8413e66084960c1ff2d90480",
+    "disposition": "selecting_system_reference",
+    "selected_source_coding_system": "psid_state_code",
+    "coding_reference_source_document_id": "psid-corpus-document-0222"
+  },
+  {
+    "source_assertion_ordinal": 2,
+    "source_document_id": "psid-family-1968-codebook",
+    "source_document_sha256": "9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6",
+    "canonical_row_id": "psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9",
+    "source_locator_id": "psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6",
+    "locator_text_sha256": "22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4",
+    "locator_utf8_byte_start": 2711,
+    "locator_utf8_byte_end": 2741,
+    "source_projection_pointer": "/normalized_entry_meanings/1",
+    "projection_utf8_byte_start": 0,
+    "projection_utf8_byte_end": 30,
+    "assertion_text": "Actual state (PSID state code)",
+    "assertion_sha256": "f1d7b57a844bd428ddcca3816abd06282bbdf17d4e54579260fa5c57dc52cd9f",
+    "disposition": "selecting_system_reference",
+    "selected_source_coding_system": "psid_state_code",
+    "coding_reference_source_document_id": "psid-corpus-document-0222"
+  }
+]
+```
+
+The complete actual V93 block is page-text span `[2201,2780)`, including
+the one line feed terminating its final row: exactly 579 bytes with SHA-256
+`2af3fd35952769484959285fe65b6407c03f5a39d68fccabe26af5d88eadfc10`.
+It exact-covers the `V93 "STATE (68)" NUM(2.0)` header; `State where lives
+now`; the complete GSA sentence in occurrence 0; the complete PSID direction
+in occurrence 1; the `Count / % / Value/Range Code / Value/Range Text`
+header; and the complete source rows `0 / Inap.: U.S. territory or foreign
+country`, `1 - 51 / Actual state (PSID state code)`, and `99 / DK; NA`.
+Replaying a sanitized description, either sentence alone, or selected domain
+rows is not this vector.
+
+For every field, stable-unique the source-ordered projection of
+`[selected_source_coding_system,coding_reference_source_document_id]` from
+only selecting occurrences. It must contain exactly one pair. The top-level
+`source_coding_system` and `coding_reference_source_document_id` must
+deep-equal that pair. No integer-set subset, permutation, width, field name,
+source frequency, or majority test participates. An omitted or extra
+assertion, unknown disposition, unknown selecting arm, unsupported selecting
+reference, historical-provenance row absent from the closed table,
+overlapping or duplicate occurrence, occurrence receiving both dispositions,
+two distinct selecting pairs, or competing source rows aborts before a
+domain row is read. Consequently the complete V93 block selects only PSID:
+its GSA occurrence is byte-authorized nonselecting history and its two PSID
+occurrences select the same pair. ER21004's exact FIPS declaration selects
+FIPS from its complete 0/1–56/99 domain. Neither domain is asked whether it
+also contains all codes of another table.
 
 `source_nonstate_member_refs` is the unique source-order array of exact
 two-position values `[source_entry_ref,range_member_index]` for every
@@ -24287,10 +24477,13 @@ normalized source member. It cannot be inferred from a spelling list,
 candidate annotation, or table miss. Missing members are excluded here and
 retain their separate typed-missing branch. The declaration ID is literal
 `psid-state-coding-declaration:` followed by SHA-256 of §10.1 terminal-LF
-canonical bytes of the exact nine-position JSON value array of the complete
+canonical bytes of the exact ten-position JSON value array of the complete
 row after omitting only `source_coding_declaration_id`, in displayed order.
-Unequal preimages producing one ID abort as a hash collision. Count equals
-array length and the digest hashes the complete ordered declaration rows.
+The full source-ordered occurrence array, every locator/span/text/hash, and
+every assertion disposition and selected/null result therefore enter the ID
+preimage. Unequal occurrence or disposition preimages producing one ID abort
+as a hash collision. Count equals array length and the digest hashes the
+complete ordered declaration rows.
 
 `inventory_domain_rows` independently exact-covers every source-domain
 member of every official-inventory raw field attached to a
@@ -24400,14 +24593,18 @@ trimming, case folding, punctuation folding, USPS table, fuzzy matching,
 observed-value inference, width heuristic, subset predicate, field-name
 selection, or majority rule is admitted.
 
-The following five hostile constructor vectors are mandatory and are
+The following seven hostile constructor vectors are mandatory and are
 evaluated from complete declarations and domains, not hand-selected rows:
 
-1. **Numeric PSID.** The authenticated 1968 V93 PSID declaration with
-   literal 0, inclusive range 1–51, and typed-missing 99 selects only
-   `psid_state_code`; all 51 range members map in PSID order, 0 takes the
-   exact source-authenticated nonstate branch, and 99 takes the missing
-   branch.
+1. **Complete numeric PSID.** Replay the authenticated 579-byte 1968 V93
+   block, not a PSID-only summary. Its three exact occurrence rows cover the
+   GSA source-attribution sentence, PSID direction, and `Actual state (PSID
+   state code)` meaning. The first is the one byte-pinned
+   `nonselecting_historical_provenance` row and the latter two are equal
+   `selecting_system_reference` rows, so the singleton selector is
+   `psid_state_code`. From literal 0, inclusive range 1–51, and typed-missing
+   99, all 51 range members map in PSID order, 0 takes the exact source-
+   authenticated nonstate branch, and 99 takes the missing branch.
 2. **Numeric FIPS.** The authenticated 2003 ER21004 declaration `Actual
    state (FIPS code)` with literal 0, inclusive range 1–56, and typed-missing
    99 selects only `fips_state_code`; the 51 displayed FIPS integers map,
@@ -24425,13 +24622,24 @@ evaluated from complete declarations and domains, not hand-selected rows:
    authenticated meanings for Alabama and Arizona are swapped makes `J_v`
    and `J_m` resolve unequal rows for both members and must abort before any
    domain row, count, or digest can pass.
+6. **Recognized plus unsupported reference.** A complete assertion cover
+   containing one exact selecting PSID reference and a distinct authenticated
+   operative reference to an unsupported coding system must abort. The
+   unsupported row matches no selecting arm and cannot take the historical
+   arm because it is not the exact frozen V93 GSA occurrence; omitting it or
+   candidate-labeling it provenance also aborts.
+7. **Conflicting references.** A complete assertion cover containing exact
+   selecting PSID and FIPS references for one raw field yields two distinct
+   selecting pairs and must abort before either system or any domain member
+   is accepted.
 
 Rows follow official inventory order, raw-field order, then expanded domain
 ordinal. `inventory_domain_row_count` equals array length and is positive;
 its digest hashes the complete array. Status passes only when the two raw
 authority documents, fixed table, tagged-union branches, stepped range
 expansion, declaration exact cover, source-selected system, both joins for
-every branch, member/disposition exact cover, negative branches, hostile
+every branch, assertion-occurrence/disposition exact cover,
+member/disposition exact cover, negative branches, all seven hostile
 vectors, alias equations, counts, and digests all pass, and the stable unique nonnull canonical-ID projection of
 the complete inventory-domain array equals all 51 canonical IDs in authority
 order. A missing or extra field/member, duplicate or overlapping source
@@ -26016,15 +26224,26 @@ and `3939`; those two tokens take their literal rows,
 valid physical parse but failed semantic membership. No observed-range token
 or codebook meaning can alter the automaton bytes.
 
-The complete canonical 1968 codebook-row array, V93 framing, and V93 raw
-census are a second mandatory regression vector, not an illustrative or
-field-filtered sample. Both same-wave dictionary rows
-fix coordinates 245–246 in their one-based source basis and are format-
-silent. The locator-bound codebook row supplies exact `NUM(2.0)` plus the
-complete source domain literal 0, inclusive range 1–51, and literal 99. The
-common source-ordered format projection therefore retains both null
-dictionary declarations and the codebook declaration. The authenticated raw
-file frames exactly 4,802 records of width 771 with separator `0d0a` after
+The complete canonical 1968 codebook-row array, complete actual V93 block,
+V93 framing, and V93 raw census are a second mandatory regression vector,
+not an illustrative, sanitized, or field-filtered sample. Before format or
+domain replay, reconstruct the exact page-23 `[2201,2780)` 579-byte block
+and SHA-256
+`2af3fd35952769484959285fe65b6407c03f5a39d68fccabe26af5d88eadfc10`
+under the §19.2.3 document/page identities. Exact-cover its three coding
+assertions by the displayed source-ordered occurrences: the GSA span is the
+one authorized `nonselecting_historical_provenance` row, and the PSID
+direction and `Actual state (PSID state code)` meaning are the two agreeing
+`selecting_system_reference` rows. Any missing sentence, selected table-row
+summary, changed span or disposition, unsupported historical row, or
+different selector aborts this regression before compilation. Both
+same-wave dictionary rows fix coordinates 245–246 in their one-based source
+basis and are format-silent. The locator-bound codebook row supplies exact
+`NUM(2.0)` plus the complete source domain literal 0, inclusive range 1–51,
+and literal 99. The common source-ordered format projection therefore
+retains both null dictionary declarations and the codebook declaration. The
+authenticated raw file frames exactly 4,802 records of width 771 with
+separator `0d0a` after
 every record including the terminal record; V93 is exact zero-based slice
 `[244,246)`. Its complete unsigned-byte-ordered census has 41 distinct rows,
 frequency sum 4,802, exactly 1,069 ASCII-space-padded one-digit observations,
@@ -26041,8 +26260,9 @@ canonical raw tokens ` 0` through ` 9` and `10` through `99`; the padding
 operation canonicalizes them to `00` through `99`, so the DFA remains states
 `q:0`, `q:1`, `q:2` with the same 20 digit transitions. Values 52–98 pass
 physical parsing but fail semantic membership. The v3 implementation must
-deep-equal the complete source-ordered 1968 codebook-row array and its full
-V93 entry domain, common format projection, record
+deep-equal the complete source-ordered 1968 codebook-row array, full V93
+block and assertion-occurrence dispositions, and its full V93 entry domain,
+common format projection, record
 framing, all 41 census rows with their frequencies/order, profile
 authentication, padding rule, literal and range renderings, grammar, counts,
 and digests. A partial codebook or census, changed frequency, changed format
@@ -28408,7 +28628,7 @@ unnamed consumer.
 | §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals; independent 14-family cell denominator; exact eight-position cell-ID and 15-position partition-ID value-array preimages, types, null branches, LF-canonical hashes, and collision aborts; effective-stream or one-year keyed partitions; exact cell cover; authenticated normalized joint-binding identities; complete false-before-true Cartesian vectors; all-transform tables; exact `no_disposition`; per-vector same/lower-rank agreement; rank-1 totality; and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
 | §§4.1, 5.1, and 16.3.1 own-rule Boolean enumeration and `direct_law_controlling_result` runtime law | `composed-with-§19.2.4-joint-overlap-table`: own-rule AST/type/output validation remains; identical cross-rule binding signatures co-vary and all other signatures take the complete Cartesian product for registry overlap proof. At runtime, an all-present record must select one exact `T_p` row before the retained controlling result and one-hot classification; missing facts retain the skipped-transform fold. |
 | §4.1 `verification_claim_specs` legal `affected_inventory_keys` and `governing_rule_ids` | `completed-by-§19.2.3-byte-producing-projections`: the affected-key source is the complete independent disposition/cell relation in official inventory order; the governing-rule source is the complete rule-major effective-cell relation fixed by family claim in registry order; exact uniqueness, five-claim order, cross-family/jurisdiction aggregation, JSON-array serialization, branch equality, and nonempty aborts are explicit. Neither configured destination array selects either source relation. |
-| §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary; exact PSID/FIPS/name authority table; locator-bound source coding declarations that select PSID, FIPS, exact-name, or alias authority without a domain-subset predicate; inclusive range expansion; complete enum-member cover including authenticated foreign/territory dispositions; value and meaning joins on every branch with mandatory agreement; and five hostile constructor vectors. Observed values and candidate enums never select the denominator. |
+| §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary; exact PSID/FIPS/name authority table; exact-covered locator/span-bound coding assertions with source-ordered selecting-reference or byte-authorized historical-provenance dispositions in every declaration-ID preimage; source-selected PSID, FIPS, exact-name, or alias authority without a domain-subset predicate; inclusive range expansion; complete enum-member cover including authenticated foreign/territory dispositions; value and meaning joins on every branch with mandatory agreement; and seven hostile constructor vectors. Observed values and candidate enums never select the denominator. |
 | §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
 | §8 and §10.1 `legal_rule_input` | `replaced-by-§19.2.1-literals-and-§19.2.2-subordinate-byte-closure`: one concrete path/vintage/schema, canonical complete raw blob, configured complete deep copy, and referenced source blobs closed before runner creation. The implicit input ID/role and every other production-input law are preserved. |
 | §16.2 `historical_coverage_rules` requirement row and item-6 predicate equation | `replaced-by-§19.2.5-v2-successor`: schema descriptor plus configuration, raw bytes, append-only history, independent domain, and source-byte closure. Requirement ID/class remain unchanged. |
@@ -28579,6 +28799,7 @@ The seven changed expected/actual payloads are exactly:
   `legal_authority_verification_result`. The first value is the complete
   strict-parsed §19.2 registry, including its envelope, manifest, independent
   domain, locator-bound source coding declarations, fixed source-authenticated
+  assertion occurrence/disposition exact cover and declaration-ID preimages,
   jurisdiction mapping, expanded state-field domain, both authority joins and
   every nonstate disposition, rule rows, interval partitions, counts, and digests.
   Both sides recompute the exact \(M_t\), \(M_c\), and \(M_p\) value arrays,
@@ -28728,6 +28949,10 @@ direct_law_controlling_result
 jurisdiction_ids
 jurisdiction_mapping
 source_coding_declaration
+source_declaration_assertion_occurrences
+assertion_disposition
+selecting_system_reference
+nonselecting_historical_provenance
 state_of_residence
 PSID state code
 FIPS state code
@@ -29402,6 +29627,12 @@ tag, an ID prefix, and a G17 payload member—not successor schema or predicate
 identifiers. They add no successor name.
 Member names, enum/role literals, projection paths, cross-binding literals,
 and symbolic commit names are likewise outside the inventory. In particular,
+`source_declaration_assertion_occurrences`, `assertion_disposition`,
+`selecting_system_reference`, and
+`nonselecting_historical_provenance` are respectively a retained member,
+closure-search term, and closed disposition values inside the completed
+jurisdiction mapping; none is a separately selectable schema or predicate.
+Likewise,
 `upstream_corpus_registry_identity`, `source_document_manifest`, and
 `source_document_keyset_sha256` are exact member names inside retained
 artifacts, and `fixed_two_root_complete_source_document_projection` is the
@@ -29467,26 +29698,37 @@ accepted authority operand before every named predecessor passes.
    and only then construct every codebook canonical row from its exact
    wave-intersecting dictionary and raw-census contexts, including its own
    locator-bound format text. Before any inventory or Q5 field candidate is
-   read, run the exact v3 numeric entry point across the full wave/field
-   denominator, replay the common tagged format projection, exact declaration
-   agreement, both candidate-arm results, every literal/range rendering, and
-   every grammar-derivation row. Exhaust both the zero-arm constructor and the
-   complete 4,802-record V93 space-arm regression; exact-compare all rows,
-   frequencies, counts, framing values, profiles, operations, and digests; and
-   reject every unsupported, incomplete, or conflicting numeric group. A
+   read, authenticate the complete V93 page locator and 579-byte block,
+   reconstruct all three assertion occurrences and their source-ordered
+   dispositions, and require the singleton PSID selecting pair without
+   treating the GSA provenance span as an equivalence. Then run the exact v3
+   numeric entry point across the full wave/field denominator, replay the
+   common tagged format projection, exact declaration agreement, both
+   candidate-arm results, every literal/range rendering, and every grammar-
+   derivation row. Exhaust both the zero-arm constructor and the complete
+   4,802-record V93 space-arm regression; exact-compare all occurrence,
+   domain, frequency, count, framing, profile, operation, and digest values;
+   and reject every unsupported, incomplete, or conflicting numeric or coding
+   group. A
    URL, staging row, extraction, report, or candidate
    digest is still nonauthority. No row from the legal staging universe is
    grandfathered by Amendment 5.
 
-   In the resulting local Walk-A format leg, V93 is representable: its two
-   silent dictionary rows and codebook `NUM(2.0)` declaration enter the common
-   projection, the complete census uniquely selects ASCII-space padding, and
-   all 4,802 observations classify as range members. V93 is therefore not an
-   additional Class-B format blocker under v3. Overall Walk A still aborts
-   honestly because Q5, the slot registry, and the official inventory do not
-   yet exist and 2023 leading token `G13.` resolves to both ER83121 and
-   ER83495. A successful local V93 replay proves interface satisfiability; it
-   does not itself emit future authority or close a current Class-B residual.
+   **Walk A — questionnaire slots and official inventory.** The complete
+   local V93 replay now passes both legs. On the jurisdiction leg, the exact
+   full block yields three assertions: the byte-frozen GSA occurrence is
+   nonselecting history, both PSID occurrences select the same closed system,
+   and the complete domain maps 51 states, one authenticated nonstate, and
+   one missing member. On the format leg, its two silent dictionary rows and
+   codebook `NUM(2.0)` declaration enter the common projection, the complete
+   census uniquely selects ASCII-space padding, and all 4,802 observations
+   classify as range members. V93 is therefore neither an R3-1 jurisdiction
+   blocker nor an additional Class-B format blocker under v3. Overall Walk A
+   still aborts honestly because Q5, the slot registry, and the official
+   inventory do not yet exist and 2023 leading token `G13.` resolves to both
+   ER83121 and ER83495. A successful local full-block replay proves interface
+   satisfiability; it does not itself emit future authority or close a current
+   Class-B residual.
 2. **Construct the Class-A questionnaire closure.** Reproduce the complete
    81-document questionnaire page-text domain, then annotate every page with
    exact UTF-8 occurrences, all flow paths, role/job/component anchors,
@@ -29554,11 +29796,15 @@ accepted authority operand before every named predecessor passes.
    remainder, and every executable value map must deep-equal its normalized
    source projection. Independently expand every `state_of_residence`
    source domain, reconstruct its locator-bound source coding declaration,
-   exact-cover every state, missing, foreign/territory, and numeric-
-   complement member, execute both value and meaning joins, and construct the
-   complete §19.2.3 jurisdiction map against the two fixed state-code
-   documents before the official inventory can independently pass and can
-   supply the legal domain. Class-C downstream gaps remain attached to
+   exact-cover and disposition every declaration/reference assertion by its
+   authenticated locator and byte span, include the complete occurrence
+   relation in the declaration ID, exact-cover every state, missing,
+   foreign/territory, and numeric-complement member, execute both value and
+   meaning joins, and replay all seven hostile vectors. The complete actual
+   V93 block, including both source sentences and all domain rows, must pass
+   before constructing the complete §19.2.3 jurisdiction map against the two
+   fixed state-code documents and before the official inventory can
+   independently pass and supply the legal domain. Class-C downstream gaps remain attached to
    present inventory keys; they neither shrink this inventory nor masquerade
    as structural absence.
 4. **Close the legal-source universe and legal registry.** Place every
@@ -29593,6 +29839,21 @@ accepted authority operand before every named predecessor passes.
    only after those one-way derivations; neither authenticates the other and
    neither configured array selects a projection source. Any required legal
    cell still absent/conflicting blocks.
+
+   **Walk B — legal registry and the 1990 SECA transition.** The complete
+   V93 upstream jurisdiction replay now passes under the assertion-
+   disposition law, as does the ER21004 FIPS vector, so R3-1 no longer aborts
+   this walk. The isolated federal V-B4 chain remains structurally
+   representable as authenticated statute bytes → `[1968,1990)` rule →
+   independently derived cells and partitions → complete `J_p` and `T_p` →
+   rank-1 verified dispositive result → `P_x`/`E_x`/`A_x` → legal result v2
+   → base projection v2 → adjudication preimages v3 → noncapture, cutoff, and
+   domain v4 → bundle v5 → receipt v4. Its endpoint covers earnings years
+   1968 through 1989 exactly. Full construction still aborts honestly while
+   D5, L5, authenticated legal bytes, and the official inventory are absent;
+   midyear transitions still require ratified service-date allocation law,
+   and state/entity/year §218 cells still require their complete executed-
+   instrument bundles.
 5. **Construct the nine registry identities.** The final identity array is
    exactly this order:
 
@@ -29675,7 +29936,17 @@ them.
    proposes a mandatory rank-1 establishing bundle anchored in federal law.
    If legal review rejects that classification, the affected V-B1 cells
    remain required gaps; no source is promoted by convenience.
-3. **All-possible-token completeness versus unproved physical spellings.**
+3. **Historical coding attribution versus an operative reference.** The
+   complete V93 block both attributes the state/county codes to GSA's 1966
+   *Geographical Location Codes* and directs the reader to PSID State Codes.
+   Section 19.2.3 resolves that source distinction only through the exact
+   page-23 occurrence rows: the GSA span is the singleton byte-authorized
+   `nonselecting_historical_provenance` row and both PSID spans are
+   `selecting_system_reference`. There is no authenticated GSA-to-PSID
+   equivalence and none is asserted. An omitted, unsupported, unknown,
+   competing, or multiply disposed occurrence aborts; no extractor may infer
+   provenance from editorial wording or use that arm for another reference.
+4. **All-possible-token completeness versus unproved physical spellings.**
    The old flat-token wording can be read to require silently guessing every
    padding/sentinel spelling or to make a completely scanned present file
    forever unregistrable. Section 19.3.2 expressly replaces it with
@@ -29707,14 +29978,14 @@ them.
    If another field's complete census cannot select exactly one displayed arm,
    that field remains Class B pending a later interface version; no trim,
    missing default, isolated token, or era convention resolves it.
-4. **Unallocated aggregates versus executable allocation laws.** The
+5. **Unallocated aggregates versus executable allocation laws.** The
    existing SE family action requires registered person allocation. Title II
    does not replace it with an unallocated executable path. Its sibling
    residual consequence may preserve authenticated aggregate lineage, but a
    current required allocation gap still aborts. Treating preservation as
    permission to assign or model a person amount would conflict with §4.2
    and is forbidden.
-5. **Residual 9's historical negative versus §18's later positive seam.**
+6. **Residual 9's historical negative versus §18's later positive seam.**
    The adjudication blob truthfully preserves the original
    `registration_required` residual, while §18 later proves that the
    inclusive total needs no source arithmetic allocation. Section 19.3.4
@@ -29722,13 +29993,13 @@ them.
    `documented_no_source_allocation_required` consequence only for that row.
    If §18's registered-byte inference is rejected, residual 9 reverts to a
    required blocker; no broader Class-C exception exists.
-6. **Annual integer intervals versus midyear legal transitions.** The v1
+7. **Annual integer intervals versus midyear legal transitions.** The v1
    schema cannot faithfully represent a midyear transition by rounding it
    to a whole earnings year. Section 19.2.4 leaves that cell a closed gap
    unless separately ratified service-date allocation law exists. This is a
    reported representational limit, not a substantive choice of which
    half-year law wins.
-7. **Existing questionnaire review versus a complete hierarchy authority.**
+8. **Existing questionnaire review versus a complete hierarchy authority.**
    The committed predecessor covers 37 waves, 61 passage locators, and three
    targeted absence proofs, but supplies no all-page occurrence, alias,
    relationship, or hierarchy domain and omits six later waves. Section
@@ -29740,7 +30011,7 @@ them.
    whole-document locator fills that evidence gap; its three selected proofs
    have neither the canonical filtered-H partition nor the complete near-
    match denominator required here.
-8. **Questionnaire semantics versus raw field identity.** The committed
+9. **Questionnaire semantics versus raw field identity.** The committed
    evidence does not establish that every positive has a purpose-prompt
    occurrence containing either an exact printed same-wave raw field ID or a
    byte-identical leading question identifier in a canonical same-wave field
