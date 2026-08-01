@@ -24706,6 +24706,16 @@ equals length and `codebook_value_domain_sha256` hashes that complete array.
 row hash, authored position, or inventory transcription can choose its own
 source authority.
 
+For each dictionary or codebook branch, resolve the complete row-ID array,
+project each canonical row's `source_document_id`, deduplicate by first
+occurrence, and order the result by source-document manifest order. The
+corresponding `*_source_document_ids` array must deep-equal that unique
+projection. Thus every cited canonical row contributes its document exactly
+once, no document without a cited row may enter the field closure, and the
+retained field/file projections cannot exact-copy a row digest while
+omitting or substituting that row's source document. The fixed-width-numeric
+codebook branch yields exact empty projections on both sides.
+
 Across the cited dictionary rows, all nonnull declarations of coordinate,
 width, parse kind, sign, decimal places, scale, type, and unit must agree, and
 their unique coalescence must populate every retained typed-parse member
@@ -25867,6 +25877,7 @@ se_aggregation_group_rule
 G17-C01
 G17-C05
 G17-C06
+G17-C07
 G17-C09
 G17-C10
 G17-C11
