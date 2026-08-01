@@ -21,19 +21,21 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
   `5442fc41ad1eae1a7a1d67bb20d66691514fbab482399620d88486a4f7b6487d`
   to `85f7d1dfd680d7d23975046526f1972774719af302a414e02c2c9f19f53c559b`;
   all 1,870 numeric JSON leaves are unchanged.
+- Finding 3: added exact `row_path` and `column_path` locators to all 32
+  DYNASIM rows, with explicit derivations for the nine Favreault rounded-
+  bucket sums and the Mermin reform ordering.
 
 ## Next
 
-1. Finding 3: complete every DYNASIM row/column/derivation locator.
-2. Finding 4: correct the two SSA published units, the 5.A4 Number-panel
+1. Finding 4: correct the two SSA published units, the 5.A4 Number-panel
    path, and 4.B11 preliminary flags.
-3. Finding 5: split the NRA and age-80--85 COLA mismatch records.
-4. Finding 6: complete WISH page/section locators, derivation metadata,
+2. Finding 5: split the NRA and age-80--85 COLA mismatch records.
+3. Finding 6: complete WISH page/section locators, derivation metadata,
    introduced-bill wording, and by-construction disclosure.
-5. Finding 7: remove certification and completeness overclaims.
-6. Implement fail-closed, non-writing `--check` modes for both builders and
+4. Finding 7: remove certification and completeness overclaims.
+5. Implement fail-closed, non-writing `--check` modes for both builders and
    strengthen the drift test for both files, capture pins, and locators.
-7. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+6. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-8. Write the final closure report to the requested output file.
+7. Write the final closure report to the requested output file.

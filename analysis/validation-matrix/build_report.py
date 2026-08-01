@@ -121,6 +121,9 @@ def display_locator(locator: dict[str, Any]) -> str:
         "definition_or_note_range",
         "row_locator",
         "column_header_path",
+        "row_path",
+        "column_path",
+        "derivation",
         "section",
         "provision",
     ):

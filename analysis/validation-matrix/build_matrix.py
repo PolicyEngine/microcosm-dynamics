@@ -802,35 +802,53 @@ def build_cbo_rows() -> list[dict[str, Any]]:
     ]
 
 
-def mermin_locator(table: str, pdf_page: int) -> list[dict[str, Any]]:
-    return [
-        {
-            "publisher": "Urban Institute",
-            "document": (
-                "Mermin (2005), Distributional Effects of Reforming Social "
-                "Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432"
+def mermin_locator(
+    table: str,
+    pdf_page: int,
+    row_path: str,
+    column_path: str,
+    derivation: str | None = None,
+) -> list[dict[str, Any]]:
+    locator = {
+        "publisher": "Urban Institute",
+        "document": (
+            "Mermin (2005), Distributional Effects of Reforming Social "
+            "Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432"
+        ),
+        "page": {"pdf": pdf_page},
+        "table": table,
+        "row_path": row_path,
+        "column_path": column_path,
+        "url": MERMIN_URL,
+        "capture_status": (
+            "Publisher-controlled bytes missing after REFRESH; this locator "
+            "has not been verified against an accepted capture."
+        ),
+        "unmanifested_corroborating_copy": {
+            "sha256": (
+                "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
             ),
-            "page": {"pdf": pdf_page},
-            "table": table,
-            "url": MERMIN_URL,
-            "capture_status": (
-                "Publisher-controlled bytes missing after REFRESH; this "
-                "locator has not been verified against an accepted capture."
+            "manifested": False,
+            "accepted_as_verified_source": False,
+            "scope": (
+                "Provisionally corroborates only Table 2 progressive-price-"
+                "indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify "
+                "this row or any other Mermin cell under the capture rule."
             ),
-            "unmanifested_corroborating_copy": {
-                "sha256": (
-                    "88934782c267fb0d7f08106ef930a19866c41c89504d04ad7a6d77d454d034ae"
-                ),
-                "manifested": False,
-                "accepted_as_verified_source": False,
-                "scope": (
-                    "Provisionally corroborates only Table 2 progressive-price-"
-                    "indexing Q1 98.7, Q3 81.3, and Q5 71.7; it does not verify "
-                    "this row or any other Mermin cell under the capture rule."
-                ),
-            },
-        }
-    ]
+        },
+    }
+    if derivation is not None:
+        locator["derivation"] = derivation
+    return [locator]
+
+
+MERMIN_QUINTILE_ROW_PATHS = {
+    1: "Shared lifetime income quintile > Lowest",
+    2: "Shared lifetime income quintile > Second",
+    3: "Shared lifetime income quintile > Third",
+    4: "Shared lifetime income quintile > Fourth",
+    5: "Shared lifetime income quintile > Highest",
+}
 
 
 def mermin_reported_value_provenance(
@@ -947,7 +965,12 @@ def build_ppi_rows() -> list[dict[str, Any]]:
                     "runs/replication_ppi_mermin_v1.json",
                     "/three_way_comparison/pi_scalars/dynasim_pct",
                 ),
-                "source_locators": mermin_locator("Table 2", 16),
+                "source_locators": mermin_locator(
+                    "Table 2",
+                    16,
+                    "All",
+                    "Percent of Scheduled Benefits > Price indexing",
+                ),
             },
             "deviation": scalar_deviation(pi_ours, pi_published),
             "concept_mismatch": deepcopy(PPI_GENERATED_MISMATCH),
@@ -988,7 +1011,15 @@ def build_ppi_rows() -> list[dict[str, Any]]:
                         "runs/replication_ppi_mermin_v1.json",
                         f"/three_way_comparison/ppi_by_quintile/{index}/dynasim_pct",
                     ),
-                    "source_locators": mermin_locator("Table 2", 16),
+                    "source_locators": mermin_locator(
+                        "Table 2",
+                        16,
+                        MERMIN_QUINTILE_ROW_PATHS[quintile],
+                        (
+                            "Percent of Scheduled Benefits > Progressive "
+                            "price indexing"
+                        ),
+                    ),
                 },
                 "deviation": scalar_deviation(ours, published),
                 "concept_mismatch": deepcopy(PPI_GENERATED_MISMATCH),
@@ -1027,7 +1058,15 @@ def build_ppi_rows() -> list[dict[str, Any]]:
                         "runs/replication_ppi_shared_v1.json",
                         f"/three_way_comparison/ppi_by_quintile/{index}/anchor_dynasim_ppi_pct",
                     ),
-                    "source_locators": mermin_locator("Table 2", 16),
+                    "source_locators": mermin_locator(
+                        "Table 2",
+                        16,
+                        MERMIN_QUINTILE_ROW_PATHS[quintile],
+                        (
+                            "Percent of Scheduled Benefits > Progressive "
+                            "price indexing"
+                        ),
+                    ),
                 },
                 "deviation": scalar_deviation(ours, published),
                 "concept_mismatch": deepcopy(PPI_SHARED_MISMATCH),
@@ -1121,7 +1160,15 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
                         "runs/replication_mermin_rows_v1.json",
                         f"/nra_raise_to_70/table/by_quintile/{index}/anchor_pct",
                     ),
-                    "source_locators": mermin_locator("Table 2", 16),
+                    "source_locators": mermin_locator(
+                        "Table 2",
+                        16,
+                        MERMIN_QUINTILE_ROW_PATHS[quintile],
+                        (
+                            "Percent of Scheduled Benefits > Normal "
+                            "retirement age raised to 70"
+                        ),
+                    ),
                 },
                 "deviation": scalar_deviation(ours, published),
                 "concept_mismatch": deepcopy(NRA_MISMATCH),
@@ -1152,7 +1199,15 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
                     "runs/replication_mermin_rows_v1.json",
                     "/nra_raise_to_70/table/overall/anchor_pct",
                 ),
-                "source_locators": mermin_locator("Table 2", 16),
+                "source_locators": mermin_locator(
+                    "Table 2",
+                    16,
+                    "All",
+                    (
+                        "Percent of Scheduled Benefits > Normal retirement "
+                        "age raised to 70"
+                    ),
+                ),
             },
             "deviation": scalar_deviation(
                 overall["our_pct_of_scheduled"], overall["anchor_pct"]
@@ -1166,9 +1221,19 @@ def build_mermin_remaining_rows() -> list[dict[str, Any]]:
         ours = item["our_pct_of_scheduled"]
         published = item["anchor_pct"]
         if age_group == "62-67":
-            locator = mermin_locator("Table 2", 16)
+            locator = mermin_locator(
+                "Table 2",
+                16,
+                "All",
+                "Percent of Scheduled Benefits > Reduced cost of living adjustment",
+            )
         else:
-            locator = mermin_locator("Table 4", 18)
+            locator = mermin_locator(
+                "Table 4",
+                18,
+                "All",
+                "Percent of Scheduled Benefits > Reduced cost of living adjustment",
+            )
         rows.append(
             {
                 "row_id": f"dynasim.mermin.cola_minus_0_4pp.age_{age_group.replace('-', '_')}",
@@ -1249,23 +1314,160 @@ SHARING_MISMATCH = {
 }
 
 
-def sharing_locator() -> list[dict[str, Any]]:
-    return [
-        {
-            "publisher": "Urban Institute",
-            "document": (
-                "Favreault and Steuerle (2007), Social Security Spouse and "
-                "Survivor Benefits for the Modern Family, report 311436, "
-                "DYNASIM3 runid 440v2"
-            ),
-            "page": {"pdf": 30, "printed": 20},
-            "table": "Table 3",
-            "url": FAVREAULT_STEUERLE_URL,
-            "reviewed_external_capture": deepcopy(
-                REFRESH_REVIEW["captures"]["favreault_2007"]
-            ),
-        }
-    ]
+SHARING_SOURCE_CELLS = {
+    "married:male:lose_ge_5": {
+        "row_path": (
+            "Married > lose >=20% + lose 10-19.99% + lose 5-9.99%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Men"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 18.1 + 19.9 + 11.2 = 49.2%."
+        ),
+    },
+    "married:male:gain_ge_5": {
+        "row_path": (
+            "Married > gain 5-9.99% + gain 10-19.99% + gain >=20%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Men"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 6.0 + 6.5 + 17.0 = 29.5%."
+        ),
+    },
+    "married:female:lose_ge_5": {
+        "row_path": (
+            "Married > lose >=20% + lose 10-19.99% + lose 5-9.99%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Women"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 8.4 + 7.6 + 6.1 = 22.1%."
+        ),
+    },
+    "married:female:gain_ge_5": {
+        "row_path": (
+            "Married > gain 5-9.99% + gain 10-19.99% + gain >=20%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Women"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 6.5 + 9.7 + 44.1 = 60.3%."
+        ),
+    },
+    "married:female:gain_ge_20": {
+        "row_path": "Married > gain >=20%",
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Women"
+        ),
+    },
+    "divorced:male:lose_ge_5": {
+        "row_path": (
+            "Divorced > lose >=20% + lose 10-19.99% + lose 5-9.99%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Men"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 7.6 + 11.8 + 10.1 = 29.5%."
+        ),
+    },
+    "divorced:male:gain_ge_5": {
+        "row_path": (
+            "Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Men"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 9.8 + 5.7 + 5.6 = 21.1%."
+        ),
+    },
+    "divorced:female:gain_ge_5": {
+        "row_path": (
+            "Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Women"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 16.3 + 11.5 + 16.9 = 44.7%."
+        ),
+    },
+    "widowed:male:lose_ge_20": {
+        "row_path": "Widowed > lose >=20%",
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Men"
+        ),
+    },
+    "widowed:male:lose_ge_5": {
+        "row_path": (
+            "Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Men"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 35.6 + 28.6 + 14.3 = 78.5%."
+        ),
+    },
+    "widowed:female:lose_ge_20": {
+        "row_path": "Widowed > lose >=20%",
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Women"
+        ),
+    },
+    "widowed:female:lose_ge_5": {
+        "row_path": (
+            "Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%"
+        ),
+        "column_path": (
+            "Package 1b: Earnings sharing, no spouse benefit, no survivor "
+            "benefit, 4.5 percent increase > Women"
+        ),
+        "derivation": (
+            "Sum three printed rounded buckets: 38.3 + 17.4 + 11.0 = 66.7%."
+        ),
+    },
+}
+
+
+def sharing_locator(cell: str) -> list[dict[str, Any]]:
+    source_cell = SHARING_SOURCE_CELLS[cell]
+    locator = {
+        "publisher": "Urban Institute",
+        "document": (
+            "Favreault and Steuerle (2007), Social Security Spouse and "
+            "Survivor Benefits for the Modern Family, report 311436, "
+            "DYNASIM3 runid 440v2"
+        ),
+        "page": {"pdf": 30, "printed": 20},
+        "table": "Table 3",
+        "row_path": source_cell["row_path"],
+        "column_path": source_cell["column_path"],
+        "url": FAVREAULT_STEUERLE_URL,
+        "reviewed_external_capture": deepcopy(
+            REFRESH_REVIEW["captures"]["favreault_2007"]
+        ),
+    }
+    if "derivation" in source_cell:
+        locator["derivation"] = source_cell["derivation"]
+    return [locator]
 
 
 def build_sharing_rows() -> list[dict[str, Any]]:
@@ -1304,7 +1506,7 @@ def build_sharing_rows() -> list[dict[str, Any]]:
                         "beneficiaries within the corresponding 2049 "
                         "sex-by-marital-status group"
                     ),
-                    "source_locators": sharing_locator(),
+                    "source_locators": sharing_locator(item["cell"]),
                 },
                 "deviation": scalar_deviation(ours, published),
                 "concept_mismatch": deepcopy(SHARING_MISMATCH),
@@ -1371,7 +1573,20 @@ def build_ordering_row() -> dict[str, Any]:
                 "/tests/T2_mermin_kendall_tau/anchor_order_by_reduction",
             ),
             "source_locators": mermin_locator(
-                "Table 1, 75-year deficit/surplus row", 15
+                "Table 1",
+                15,
+                "75-year deficit/surplus (percentage of taxable payroll)",
+                (
+                    "Scheduled benefits; Price indexing; Progressive price "
+                    "indexing; Normal retirement age raised to 70; Reduced "
+                    "cost of living adjustment"
+                ),
+                (
+                    "Subtract the scheduled deficit (-1.69) from the four "
+                    "printed reform balances (0.68, -0.14, -0.50, -1.12) to "
+                    "obtain deficit reductions (2.37, 1.55, 1.19, 0.57), "
+                    "then sort descending."
+                ),
             ),
         },
         "deviation": {
@@ -1898,6 +2113,22 @@ assert len(rows) == 22
 assert len(reported_not_verified) == 20
 assert len({row["row_id"] for row in all_rows}) == len(all_rows)
 assert not any(".mermin." in row["row_id"] for row in rows)
+dynasim_rows = [
+    row for row in all_rows if row["external_model"].startswith("DYNASIM")
+]
+assert len(dynasim_rows) == 32
+for row in dynasim_rows:
+    for locator in row["published"]["source_locators"]:
+        assert locator["row_path"]
+        assert locator["column_path"]
+assert (
+    sum(
+        "derivation" in locator
+        for row in dynasim_rows
+        for locator in row["published"]["source_locators"]
+    )
+    == 10
+)
 for row in all_rows:
     assert row["our"]["label_state"]["population_alignment_claim"] is False
     assert all(row["concept_mismatch"].values())

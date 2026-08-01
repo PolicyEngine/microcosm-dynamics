@@ -929,11 +929,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "All",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1015,11 +1017,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Lowest",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1101,11 +1105,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Second",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1187,11 +1193,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Third",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1273,11 +1281,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Fourth",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1359,11 +1369,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Highest",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1444,11 +1456,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Lowest",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1529,11 +1543,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Second",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1614,11 +1630,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Third",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1699,11 +1717,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Fourth",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1784,11 +1804,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Progressive price indexing",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Highest",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1870,11 +1892,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Normal retirement age raised to 70",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Lowest",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -1956,11 +1980,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Normal retirement age raised to 70",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Second",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2042,11 +2068,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Normal retirement age raised to 70",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Third",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2128,11 +2156,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Normal retirement age raised to 70",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Fourth",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2214,11 +2244,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Normal retirement age raised to 70",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "Shared lifetime income quintile > Highest",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2299,11 +2331,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Normal retirement age raised to 70",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "All",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2385,11 +2419,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Reduced cost of living adjustment",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 16
               },
               "publisher": "Urban Institute",
+              "row_path": "All",
               "table": "Table 2",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2471,11 +2507,13 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Percent of Scheduled Benefits > Reduced cost of living adjustment",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 18
               },
               "publisher": "Urban Institute",
+              "row_path": "All",
               "table": "Table 4",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
@@ -2560,12 +2598,15 @@
           "source_locators": [
             {
               "capture_status": "Publisher-controlled bytes missing after REFRESH; this locator has not been verified against an accepted capture.",
+              "column_path": "Scheduled benefits; Price indexing; Progressive price indexing; Normal retirement age raised to 70; Reduced cost of living adjustment",
+              "derivation": "Subtract the scheduled deficit (-1.69) from the four printed reform balances (0.68, -0.14, -0.50, -1.12) to obtain deficit reductions (2.37, 1.55, 1.19, 0.57), then sort descending.",
               "document": "Mermin (2005), Distributional Effects of Reforming Social Security through Benefit Reductions, report 411260, DYNASIM3 Runid 432",
               "page": {
                 "pdf": 15
               },
               "publisher": "Urban Institute",
-              "table": "Table 1, 75-year deficit/surplus row",
+              "row_path": "75-year deficit/surplus (percentage of taxable payroll)",
+              "table": "Table 1",
               "unmanifested_corroborating_copy": {
                 "accepted_as_verified_source": false,
                 "manifested": false,
@@ -5344,6 +5385,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Men",
+            "derivation": "Sum three printed rounded buckets: 18.1 + 19.9 + 11.2 = 49.2%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5356,6 +5399,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Married > lose >=20% + lose 10-19.99% + lose 5-9.99%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5423,6 +5467,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Men",
+            "derivation": "Sum three printed rounded buckets: 6.0 + 6.5 + 17.0 = 29.5%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5435,6 +5481,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Married > gain 5-9.99% + gain 10-19.99% + gain >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5502,6 +5549,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Women",
+            "derivation": "Sum three printed rounded buckets: 8.4 + 7.6 + 6.1 = 22.1%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5514,6 +5563,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Married > lose >=20% + lose 10-19.99% + lose 5-9.99%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5581,6 +5631,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Women",
+            "derivation": "Sum three printed rounded buckets: 6.5 + 9.7 + 44.1 = 60.3%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5593,6 +5645,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Married > gain 5-9.99% + gain 10-19.99% + gain >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5660,6 +5713,7 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Women",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5672,6 +5726,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Married > gain >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5739,6 +5794,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Men",
+            "derivation": "Sum three printed rounded buckets: 7.6 + 11.8 + 10.1 = 29.5%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5751,6 +5808,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Divorced > lose >=20% + lose 10-19.99% + lose 5-9.99%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5818,6 +5876,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Men",
+            "derivation": "Sum three printed rounded buckets: 9.8 + 5.7 + 5.6 = 21.1%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5830,6 +5890,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5897,6 +5958,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Women",
+            "derivation": "Sum three printed rounded buckets: 16.3 + 11.5 + 16.9 = 44.7%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5909,6 +5972,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5976,6 +6040,7 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Men",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -5988,6 +6053,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Widowed > lose >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -6055,6 +6121,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Men",
+            "derivation": "Sum three printed rounded buckets: 35.6 + 28.6 + 14.3 = 78.5%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -6067,6 +6135,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -6134,6 +6203,7 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Women",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -6146,6 +6216,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Widowed > lose >=20%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -6213,6 +6284,8 @@
       "published": {
         "source_locators": [
           {
+            "column_path": "Package 1b: Earnings sharing, no spouse benefit, no survivor benefit, 4.5 percent increase > Women",
+            "derivation": "Sum three printed rounded buckets: 38.3 + 17.4 + 11.0 = 66.7%.",
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
               "pdf": 30,
@@ -6225,6 +6298,7 @@
               "size_bytes": 708709,
               "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
             },
+            "row_path": "Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%",
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
