@@ -23670,3 +23670,6450 @@ After ratification but before that registration, step 4 authorizes only the
 separately reviewed authority/implementation preparation and proof-gated
 A1/A3 capture stated above. It authorizes no correction production
 evaluation, path switch, context run, label change, or publication.
+
+## 19. AMENDMENT SECTION — Amendment 5: consolidated legal-registry schema and official-inventory dispositions
+
+### 19.1 Status, titles, precedence, and immutable base
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 7
+  of the design. The present drafting and review commits are not
+  ratification and authorize no legal-source capture, source or inventory
+  row, artifact, registration, implementation, correction execution,
+  context run, or publication. The exact accepted bytes become ratified
+  only at §19.8.3 step 3 and become operative only through the
+  validator-accepted fresh registration in §19.8.3 step 7. No earlier status
+  literal is edited in place.
+- **Immediate base authority.** The immutable base is the complete
+  revision-6 design at Amendment-4 ratification commit
+  `b5878893991fe603c693e711bc48aacfb7c6d08f`. Its design path has mode
+  `100644`, Git blob `b03e31592753cbbee2fddc2360cdd29a4cafe57e`,
+  exactly 1,376,610 raw bytes, and SHA-256
+  `6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8`.
+  Those complete bytes, including ratified §18, are the exact immutable
+  prefix of revision 7.
+- **One amendment, two consolidated titles.** Title I (§19.2) completes the
+  §4.1 legal-registry schema and its future-row authentication law. Title II
+  (§19.3) freezes the evidence sufficiency and closed dispositions for the
+  surviving official-inventory residuals. Sections 19.4–19.8 are the one
+  common replacement, comparator, successor, build, ratification, and
+  fresh-registration frame. Neither title may be ratified or registered
+  separately.
+- **Schema and disposition only.** Title I pins no legal-source row, URL,
+  source-file digest, rule row, manifest count, or legal-registry content
+  digest. Title II ratifies no official slot, inventory, grammar,
+  allocation, reconciliation, or absence-proof row. The staged legal
+  captures and the surviving inventory residuals determine whether the
+  schemas are operable; they do not become authority by being mentioned in
+  this amendment.
+- **No implied repeal.** Sections 1–18 remain visible and controlling except
+  for the exact clauses enumerated in §19.4 and the revision-6 lifecycle
+  consumers expressly replaced in §§19.5–19.7. Silence preserves every
+  other law. In particular, no `registration_required` claim is demoted;
+  §17's comparator definition and completeness law remain binding; and
+  §18's inclusive-total, exact-once, descriptor-only, and no-source-
+  allocation findings remain ratified.
+
+### 19.2 TITLE I — §4.1 legal-registry schema completion
+
+#### 19.2.1 Concrete legal input and complete registry envelope
+
+The singular §8 `legal_rule_input` has exactly these values except for its
+freshly computed digest:
+
+| Member | Exact value |
+|---|---|
+| `path` | `data/registries/historical_coverage_rule_specs_v1.json` |
+| `artifact_vintage_id` | `historical_coverage_rule_specs.v1` |
+| `schema_version` | `historical_coverage_rule_specs.v1` |
+| `sha256` | SHA-256 of the complete canonical raw Git blob |
+
+Its implicit `(input_id,role)` pair remains exactly
+`("historical_coverage_rules","legal_rule_authority")`. The path is a
+literal, not a configurable alias. The raw file is strict-parsed once and
+must be byte-for-byte equal to §10.1 `canonical_json_bytes` of the parsed
+value: sorted object keys, compact separators, ASCII escaping, no NaN, and
+one terminal LF. No BOM, duplicate key, trailing data, alternate
+serialization, floating-point value, or noncanonical integer is admitted.
+`configuration.historical_coverage_rule_specs` is an exact deep copy of the
+complete parsed object, not merely its rule array.
+
+That object is `historical_coverage_rule_specs.v1` and has exactly these
+members:
+
+```text
+schema_version
+artifact_id
+artifact_vintage_id
+source_inventory_identity
+legal_source_manifest
+rule_domain
+ordered_rule_ids
+rows
+row_count
+row_keyset_sha256
+rows_sha256
+rule_interval_partitions
+rule_interval_partition_count
+rule_interval_partition_sha256
+canonical_order
+integrity
+status
+```
+
+The first three values are all the literal
+`historical_coverage_rule_specs.v1`; `canonical_order` is the literal
+`rule_id_unsigned_utf8_v1`; `ordered_rule_ids` is the complete nonempty
+unique rule-ID array in unsigned UTF-8 byte order; `rows` has exactly the
+existing §4.1 20-field rule-row keyset in that same order; `row_count` equals both array
+lengths; `row_keyset_sha256` hashes the canonical ordered ID array; and
+`rows_sha256` hashes the canonical complete ordered row array.
+`rule_interval_partitions` is the complete post-row derivation in §19.2.4;
+its count is the array length and its digest hashes the complete canonical
+ordered partition-row array.
+`source_inventory_identity` has exactly `path`, `artifact_id`,
+`schema_version`, `sha256`, `row_count`, and `row_keyset_sha256` and
+exact-matches the independently ratified official inventory used by the
+configuration. It is an input to domain reconstruction; a rule row is not.
+
+`integrity` has exactly `canonicalization` and `content_sha256`. Its first
+value is `python-json-sort-keys-compact-ascii-no-nan-lf-v1`; its second is
+SHA-256 of the complete object after replacing only that value by exactly 64
+lowercase zeroes, under the same canonicalization. The complete raw-input
+digest is then computed without zeroing. `status` is `pass` only when every
+schema, identity, count, order, digest, domain, interval, foreign-key, join,
+source-byte, authority, joint-binding signature, complete vector table,
+partition truth, and consequence equation in this title
+passes; otherwise the artifact is rejected rather than serialized with a
+favorable status.
+
+This envelope prospectively replaces only §4.1's previously unspecified
+top-level shape and rule order. It preserves the existing rule-row keyset,
+fact bindings, microfacts, ASTs, transforms, presence/action traces,
+verification classes, and optional-row consequence shapes.
+
+#### 19.2.2 Legal-source manifest, rule-to-source join, and raw bytes
+
+`legal_source_manifest` has exactly:
+
+```text
+schema_version
+manifest_id
+source_documents
+source_document_count
+source_document_keyset_sha256
+rule_source_links
+rule_source_link_count
+rule_source_link_domain_sha256
+midyear_transitions
+midyear_transition_count
+midyear_transition_domain_sha256
+claim_establishing_source_projection
+claim_establishing_source_projection_count
+claim_establishing_source_projection_sha256
+canonical_order
+```
+
+Both leading values are the literal
+`historical_coverage_legal_source_manifest.v1`. `canonical_order` is exactly
+`source_document_id_then_rule_order_then_transition_order_then_claim_projection_v1`.
+A `source_documents` row has
+exactly:
+
+```text
+source_document_id
+repository_relative_path
+retrieved_at_utc
+source_url
+media_type
+byte_size
+sha256
+issuing_authority
+authority_class
+```
+
+`source_documents` and `rule_source_links` are both nonempty.
+`source_document_id` is the literal `legal-source:` followed by that row's
+64-lowercase-hex `sha256`. The path is a nonempty, traversal-free,
+repository-relative path whose basename is the capture filename and whose
+authority-cutoff target is one mode-`100644` regular Git blob.
+`retrieved_at_utc` is exact second-resolution RFC 3339 UTC ending in `Z`;
+`source_url` is a nonempty HTTPS provenance string and never a resolver;
+`media_type` is exactly `application/pdf | text/html`; `byte_size` is a
+positive JSON integer excluding booleans; and `sha256` covers all raw source
+bytes. `issuing_authority` is the complete nonempty official issuer name.
+`authority_class` is exactly `federal_statute | federal_regulation |
+executed_section_218_agreement_or_modification |
+state_enactment_or_official_determination | ssa_administering_material |
+irs_administering_material | opm_administering_material |
+rrb_administering_material | corroborating_only`. Rows are unique and
+ordered by unsigned UTF-8 `source_document_id`. Count and keyset hash bind
+the complete ordered document domain.
+
+This row schema accepts each intended staged capture by mapping capture
+timestamp, SHA-256, size, filename, and URL to the corresponding fields and
+deriving media type from the committed suffix. The future legal review adds
+the source-backed issuer and authority class; those are not guessed from a
+URL or filename. Amendment 5 deliberately pins none of those staged values,
+their row count, their order, their aggregate digest, or a staging-area path.
+A later authority lane must commit and authenticate the bytes before a row
+can be legal authority.
+
+A `rule_source_links` row has exactly:
+
+```text
+rule_source_link_id
+rule_id
+source_document_id
+source_relation
+exact_citation
+```
+
+`source_relation` is exactly `primary | additional_establishing |
+corroborating`. Links follow registry rule order and, within a rule, source-
+document manifest order. `rule_source_link_id` is the literal
+`<rule_id>:source:<one-based canonical decimal position>` within that rule.
+The link domain hash covers the complete ordered arrays
+`[rule_source_link_id,rule_id,source_document_id,source_relation]`; its count
+equals the link-array length. Every foreign key resolves exactly once.
+
+Every `verified` rule has exactly one `primary` link. Its existing singular
+`source_document_id`, `source_sha256`, and `exact_citation` fields
+respectively exact-match that primary link's document ID, that complete
+document's SHA-256, and the link citation. Every additional byte necessary
+to establish enactment, execution, effective date, jurisdiction, or
+operative meaning is linked as `additional_establishing`. A corroborating
+link is authenticated evidence but cannot establish `verified`, supply an
+authority rank, fill a required interval, or rescue a missing establishing
+byte. An `authority_absent | authority_conflict` rule has zero links and
+retains the exact null/empty rule-row branch already required by §4.1.
+Every manifest document participates in at least one rule link or the
+midyear-transition array below; an orphan or ambient source is forbidden.
+
+A rank-1 rule's primary document has authority class `federal_statute |
+federal_regulation`; its additional establishing set contains every required
+executed §218 or state instrument. A rank-2 primary has exactly the matching
+SSA/IRS/OPM/RRB administering-material class. A `corroborating_only`
+document can have only corroborating links, and no corroborating link may
+change a document's class. An establishing link with an incompatible class
+or issuer aborts rather than accepting the authored rank.
+
+`midyear_transitions` is the complete source-derived array of operative legal
+changes whose effective date is not an earnings-year boundary and
+therefore cannot be represented by the integer rule endpoints. Each row has
+exactly `midyear_transition_id`, `status_family`, `jurisdiction`,
+`effective_date`, `affected_inventory_keys`, `establishing_source_links`,
+and `annual_allocation_rule_id`. `effective_date` is a
+canonical Gregorian `YYYY-MM-DD` string with month/day other than `01-01`;
+its year is inside the family's frozen interval. The jurisdiction is in the
+independently derived family domain. The affected-key array is the complete
+official-order applicable-key projection for that transition and may be
+empty only when the family has no inventory attachment in that year.
+`establishing_source_links` is a nonempty source-manifest-order array whose
+rows have exactly `source_document_id`, `source_relation`, `exact_citation`,
+and `authority_rank`. Rank is integer 1; relation is `primary |
+additional_establishing`; exactly one primary document has authority class
+`federal_statute | federal_regulation`; and every operative executed §218
+agreement/modification, state enactment, or official determination is an
+additional link. Issuer/class compatibility, exact citation, federal-anchor
+sufficiency, and no-secondary-promotion laws are exactly the rank-1 bundle
+law below. These equations apply whether or not annual allocation exists; a
+corroborating-only or rank-2 source cannot author a transition.
+`annual_allocation_rule_id` is null or one resolving verified rule
+whose source/service-date predicate and transform deterministically allocate
+the annual record across both sides of this exact transition. Projecting that
+rule's `primary | additional_establishing` links to
+`[source_document_id,source_relation,exact_citation,authority_rank=1]` must
+deep-equal this complete transition-link array.
+The transition-local affected-key array is not an `A_x` source and its
+occurrence multiplicity never enters a claim spec; a transition ID never
+enters `G_x`.
+
+The array may be exact empty when the authenticated source universe contains
+no such transition; its zero count and empty-array digest remain explicit.
+
+For a transition row `t`, its exact identity preimage \(M_t\) is the
+six-element JSON value array
+`[t.status_family,t.jurisdiction,t.effective_date,
+t.affected_inventory_keys,t.establishing_source_links,
+t.annual_allocation_rule_id]`. Positions 1–3 are nonnull JSON strings with
+the exact registered family, canonical jurisdiction ID, and canonical date.
+Position 4 is the complete possibly empty official-order array of nonnull
+inventory-key strings. Position 5 is the complete nonempty source-manifest-
+order array of exact four-key link objects. In each object,
+`source_document_id`, `source_relation`, and `exact_citation` are nonnull
+JSON strings under the exact foreign-key, enum, and citation equations above,
+and `authority_rank` is the JSON integer 1 excluding booleans. Position 6 is
+either null or the nonnull resolving rule-
+ID string, under the equation above. No other position may be null.
+
+The transition ID is literal `legal-midyear-transition:` followed by
+SHA-256 of standalone §10.1 `canonical_json_bytes(M_t)`, including its one
+terminal LF. The preimage is the value array just defined, not a tagged or
+wrapped array, an object with the ID deleted, an array of member names, or an
+array of name/value pairs.
+Every nested object and array is included whole; no digest or projection
+substitutes for it. The serialized ID must equal this independently
+recomputed prefix plus 64-lowercase-hex digest exactly. Equal preimages
+produce one equal ID; a malformed or mismatched ID, duplicate row with that
+ID, or one ID resolving unequal preimages aborts as identity failure,
+duplication, or hash collision. Rows follow family order, effective date,
+jurisdiction order, and ID; the count equals array length and the domain
+digest hashes the complete ordered row array. A January-1 change belongs in
+integer rule endpoints and is invalid here; an unproved date, affected-key
+set, or allocation rule aborts rather than being rounded.
+
+For §16.13.2, the successor legal establishing-source projection serialized
+in this manifest is named
+`historical_coverage_rule_specs:establishing_sources.v2`. For each of V-B1,
+V-B2, V-B3, V-B4, and V-B9, let `G_x` be the independently reconstructed
+§19.2.3 governing-rule projection. This manifest construction does not read
+either configured claim-spec array. Its expected binding-key domain is the
+exact concatenation of:
+
+1. every rule resolved from `G_x` exactly once and all that rule's `primary
+   | additional_establishing` links, in `G_x` order and then source-manifest
+   order; and
+2. every `primary | additional_establishing` transition link whose
+   transition family's independently frozen `verification_claim_id` equals
+   that claim, in canonical transition order and then source-manifest order.
+
+`claim_establishing_source_projection` is the flat concatenation of those
+five claim domains in claim order. Each row has exactly `claim_id`,
+`binding_kind`, `binding_id`, `source_document_id`, `source_row_pointer`,
+and `source_row_sha256`. Its exact key is
+`[claim_id,binding_kind,binding_id,source_document_id]`.
+`binding_kind` is `rule | midyear_transition`; `binding_id` is respectively
+the link's resolving `rule_id` or enclosing `midyear_transition_id`. A rule
+row's pointer is
+`/legal_source_manifest/rule_source_links/<zero-based-link-index>`; a
+transition row's pointer is
+`/legal_source_manifest/midyear_transitions/<zero-based-transition-index>/establishing_source_links/<zero-based-link-index>`.
+Each pointer resolves the complete link row; its expected row digest hashes
+the canonical two-element array `[complete_link_row,
+complete_source_document_row]`, and the referenced document must pass the
+complete Git-byte closure. Count equals array length; the projection digest
+hashes the complete canonical ordered row array. The complete expected array
+is reconstructed from the independently derived claim/rule/transition joins
+before the serialized member is read and must deep-equal it.
+
+Each `(binding_kind,binding_id,source_document_id)` occurs once within a
+claim. Corroborating links remain within the authenticated registry but are
+excluded from this establishing-source denominator. A transition for either
+claimless family remains mandatory in the registry, partition, byte-closure,
+and G17 predicates but contributes no §16.13.2 claim key. Thus every
+establishing link that can determine a claim partition's verified,
+unrepresentable, or conflict disposition contributes one expected key; a
+duplicate, omitted, extra, differently ordered, or singular-source
+projection fails.
+
+This manifest member is not an `adjudication_sources` array and never
+constructs a six-field adjudication-source row or a source disposition.
+Sections 16.13.6 and 17.2 continue to require exact-empty serialized
+`adjudication_sources`, match-key domains, and disposition domains for V-B1,
+V-B2, V-B3, V-B4, and V-B9. Their base results are freshly reconstructed
+from the complete §19.2.4 partitions. A transition link authenticates the
+operative date and source bundle; it does not turn an
+`unrepresentable_midyear_transition` partition into `verified` or change an
+optional/required consequence.
+
+The coordinator constructs `legal_source_document_byte_closure.v1` with
+exactly `schema_version`, `legal_rule_input_sha256`,
+`ordered_source_document_ids`, `rows`, `row_count`, `domain_sha256`, and
+`status`. Each row has exactly `source_document_id`,
+`repository_relative_path`, `tree_mode`, `blob_oid`, `byte_size`, `sha256`,
+and `status`. The schema value is its name; the ID array and rows exact-cover
+manifest order; `tree_mode` is the string `100644`; `blob_oid` is the exact
+Git object ID; and every path, size, and full-byte SHA-256 exact-matches the
+manifest and the authority-cutoff tree. `domain_sha256` hashes the complete
+ordered rows. Status passes only on complete equality.
+
+Source documents are therefore referenced, not embedded: the legal JSON
+contains no PDF/HTML base64, extracted text standing in for raw bytes,
+absolute or staging path, symlink, directory, wildcard, URL fetch, filename-
+only lookup, or same-digest file at another path. The byte closure is
+reconstructed from the cutoff Git tree before runner creation. Its members
+are subordinate bytes of the singular legal-authority input closure and are
+not duplicate top-level §8 inputs. Missing, moved, untracked, or differently
+hashed bytes abort registration.
+
+#### 19.2.3 Independent rule-domain derivation
+
+`rule_domain` is `historical_coverage_rule_domain.v1` and has exactly:
+
+```text
+schema_version
+family_specs
+family_count
+family_keyset_sha256
+jurisdiction_mapping
+jurisdiction_ids
+jurisdiction_count
+jurisdiction_keyset_sha256
+inventory_family_dispositions
+inventory_family_disposition_count
+inventory_family_disposition_sha256
+cells
+cell_count
+cell_keyset_sha256
+canonical_order
+```
+
+The domain is constructed in this immutable order:
+
+```text
+official questionnaire slot specs
+official source-field inventory
+inventory-family disposition matrix
+legal-domain cells
+verification-claim affected-key projections
+legal rule rows
+verification-claim governing-rule projections
+```
+
+No authored rule row, transform, claim result, crosswalk use, configured
+affected-key array, or configured governing-rule array can add, omit, or
+select a domain member. The exact ordered 14-family specification is:
+
+| Order | `status_family` | Claim | Class | Earnings-year interval | Exact candidate purposes |
+|---:|---|---|---|---|---|
+| 1 | `section_218_and_mandatory_state_local` | `V-B1` | `registration_required` | `[1968,2023)` | `government_level`, `state_of_residence`, `section_218_group`, `section_218_position`, `public_retirement_system_participation` |
+| 2 | `clergy_religious_service` | `V-B2` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `ministerial_service`, `clergy_remuneration`, `church_employee_service`, `religious_order_service`, `clergy_or_religious_exemption` |
+| 3 | `domestic_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `domestic_service` |
+| 4 | `agricultural_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `agricultural_service` |
+| 5 | `election_work` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `election_work` |
+| 6 | `family_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `family_service` |
+| 7 | `casual_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `casual_service` |
+| 8 | `foreign_government_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `foreign_government_service` |
+| 9 | `international_organization_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `international_organization_service` |
+| 10 | `nonresident_alien_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `nonresident_alien_status` |
+| 11 | `historical_seca` | `V-B4` | `registration_required` | `[1968,1990)` | `amount`, `reporting_unit`, `month_or_exposure`, `employee_self_or_mixed`, `incorporation` |
+| 12 | `student_service` | `V-B9` | `direct_only_optional` | `[1968,2023)` | `enrollment`, `employer_school_nexus`, `statutory_student_service` |
+| 13 | `federal_retirement_service` | null | `direct_only_optional` | `[1968,2023)` | `federal_retirement_system`, `federal_service` |
+| 14 | `railroad_service` | null | `direct_only_optional` | `[1968,2023)` | `railroad_covered_employer`, `railroad_covered_service` |
+
+Each `family_specs` row has exactly `status_family`,
+`verification_claim_id`, `verification_class`, `effective_start`,
+`effective_end`, `candidate_field_purposes`, `candidate_slot_kinds`, and
+`jurisdiction_mode`. Candidate purposes are the table arrays in displayed
+order. Candidate slot kinds are the complete §4.2 five-literal array in its
+ratified order. `jurisdiction_mode` is
+`source_authenticated_psid_state_domain` for family 1 and `federal_only`
+otherwise. Counts and the canonical family-name array
+hash close this table.
+
+The jurisdiction denominator is source-authenticated before any legal rule
+row is read. `jurisdiction_mapping` is
+`historical_coverage_jurisdiction_mapping.v1` with exactly these members in
+this order:
+
+```text
+schema_version
+source_registry_identity
+source_document_ids
+canonical_jurisdiction_ids
+authority_rows
+authority_row_count
+authority_row_sha256
+source_coding_declarations
+source_coding_declaration_count
+source_coding_declaration_sha256
+inventory_domain_rows
+inventory_domain_row_count
+inventory_domain_sha256
+canonicalization
+status
+```
+
+Its `schema_version` is its object name and `canonicalization` is the frozen
+§10.1 canonical-JSON literal.
+
+`source_registry_identity` has exactly `path`, `artifact_id`,
+`schema_version`, and `sha256`. It identifies the complete raw committed
+`data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json`
+artifact authenticated in §18.1, with artifact/schema value
+`psid_questionnaire_corpus_authority_registration_attempt.v1` and SHA-256
+`07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c`.
+The registry must retain `status: pass`, exact count 456, zero failed rows,
+and its complete authenticated document-row domain. `source_document_ids`
+is exactly `psid-corpus-document-0222` then
+`psid-corpus-document-0221`; their complete verified registry rows are,
+respectively, `PSIDStateCodes.pdf` and `FIPSStateCodes.pdf`. Their full-file
+locators, byte sizes, and SHA-256 values are consumed from those rows and
+must reproduce against the source-only staging root. A filename, URL, or
+candidate copy is not an identity.
+
+The source-only page-text implementation pinned in §18.1 is executed on
+each exact PDF. Page 1 must contain the exact centered heading followed by
+exactly 24 nonblank data lines and no other nonspace bytes. For each data
+line, the three code/name pairs are the zero-based UTF-8 character slices
+`[0,5)`/`[5,28)`, `[28,33)`/`[33,50)`, and
+`[50,55)`/`[55,line_length)`. Remove ASCII SPACE only at each slice edge;
+a pair emits no entry only when both resulting slices are empty, and exactly
+one empty slice aborts. A nonempty code is one or two base-10 digits with no
+sign, leading zero, decimal point, exponent, or coercion. A nonempty name is
+made only of ASCII letters and single internal spaces. The code is parsed
+as a JSON integer excluding booleans and the name bytes are preserved.
+Rows are then sorted by numeric code. An unexpected line, unconsumed
+nonspace byte, nonmatching slice, repeated code, repeated name, extra page
+entry, or extraction drift aborts.
+
+`authority_rows` has 51 rows. Each has exactly
+`canonical_jurisdiction_id`, `psid_code`, `fips_code`, `authority_name`,
+`psid_source_document_id`, and `fips_source_document_id`. The final two
+values are respectively the two fixed document IDs above. The first four
+values are exactly this table in displayed order:
+
+| Canonical jurisdiction ID | PSID integer | FIPS integer | Exact authority name |
+|---|---:|---:|---|
+| `inventory-state:psid-01` | 1 | 1 | `Alabama` |
+| `inventory-state:psid-02` | 2 | 4 | `Arizona` |
+| `inventory-state:psid-03` | 3 | 5 | `Arkansas` |
+| `inventory-state:psid-04` | 4 | 6 | `California` |
+| `inventory-state:psid-05` | 5 | 8 | `Colorado` |
+| `inventory-state:psid-06` | 6 | 9 | `Connecticut` |
+| `inventory-state:psid-07` | 7 | 10 | `Delaware` |
+| `inventory-state:psid-08` | 8 | 11 | `District of Columbia` |
+| `inventory-state:psid-09` | 9 | 12 | `Florida` |
+| `inventory-state:psid-10` | 10 | 13 | `Georgia` |
+| `inventory-state:psid-11` | 11 | 16 | `Idaho` |
+| `inventory-state:psid-12` | 12 | 17 | `Illinois` |
+| `inventory-state:psid-13` | 13 | 18 | `Indiana` |
+| `inventory-state:psid-14` | 14 | 19 | `Iowa` |
+| `inventory-state:psid-15` | 15 | 20 | `Kansas` |
+| `inventory-state:psid-16` | 16 | 21 | `Kentucky` |
+| `inventory-state:psid-17` | 17 | 22 | `Louisiana` |
+| `inventory-state:psid-18` | 18 | 23 | `Maine` |
+| `inventory-state:psid-19` | 19 | 24 | `Maryland` |
+| `inventory-state:psid-20` | 20 | 25 | `Massachusetts` |
+| `inventory-state:psid-21` | 21 | 26 | `Michigan` |
+| `inventory-state:psid-22` | 22 | 27 | `Minnesota` |
+| `inventory-state:psid-23` | 23 | 28 | `Mississippi` |
+| `inventory-state:psid-24` | 24 | 29 | `Missouri` |
+| `inventory-state:psid-25` | 25 | 30 | `Montana` |
+| `inventory-state:psid-26` | 26 | 31 | `Nebraska` |
+| `inventory-state:psid-27` | 27 | 32 | `Nevada` |
+| `inventory-state:psid-28` | 28 | 33 | `New Hampshire` |
+| `inventory-state:psid-29` | 29 | 34 | `New Jersey` |
+| `inventory-state:psid-30` | 30 | 35 | `New Mexico` |
+| `inventory-state:psid-31` | 31 | 36 | `New York` |
+| `inventory-state:psid-32` | 32 | 37 | `North Carolina` |
+| `inventory-state:psid-33` | 33 | 38 | `North Dakota` |
+| `inventory-state:psid-34` | 34 | 39 | `Ohio` |
+| `inventory-state:psid-35` | 35 | 40 | `Oklahoma` |
+| `inventory-state:psid-36` | 36 | 41 | `Oregon` |
+| `inventory-state:psid-37` | 37 | 42 | `Pennsylvania` |
+| `inventory-state:psid-38` | 38 | 44 | `Rhode Island` |
+| `inventory-state:psid-39` | 39 | 45 | `South Carolina` |
+| `inventory-state:psid-40` | 40 | 46 | `South Dakota` |
+| `inventory-state:psid-41` | 41 | 47 | `Tennessee` |
+| `inventory-state:psid-42` | 42 | 48 | `Texas` |
+| `inventory-state:psid-43` | 43 | 49 | `Utah` |
+| `inventory-state:psid-44` | 44 | 50 | `Vermont` |
+| `inventory-state:psid-45` | 45 | 51 | `Virginia` |
+| `inventory-state:psid-46` | 46 | 53 | `Washington` |
+| `inventory-state:psid-47` | 47 | 54 | `West Virginia` |
+| `inventory-state:psid-48` | 48 | 55 | `Wisconsin` |
+| `inventory-state:psid-49` | 49 | 56 | `Wyoming` |
+| `inventory-state:psid-50` | 50 | 2 | `Alaska` |
+| `inventory-state:psid-51` | 51 | 15 | `Hawaii` |
+
+The extracted PSID code set must equal every integer 1 through 51 exactly
+once. The extracted FIPS set and both extracted name sets must exact-match
+the displayed columns; joining the two source tables by exact
+`authority_name` must be one-to-one and exact-cover both 51-row tables.
+`canonical_jurisdiction_ids` is the displayed canonical-ID column in order,
+`authority_row_count` is integer 51, and `authority_row_sha256` hashes the
+complete ordered six-member rows. These fixed IDs—not a wave's enum tokens,
+observed values, legal rows, or runner residences—are the canonical state
+vocabulary.
+
+`source_coding_declarations` independently exact-covers every official-
+inventory raw field attached to a `state_of_residence` slot, once each in
+official inventory then raw-field order. Each row has exactly
+`source_coding_declaration_id`, `questionnaire_era`, `interview_wave`,
+`source_inventory_key`, `raw_field_id`, `source_coding_system`,
+`coding_reference_source_document_id`, `source_declaration_projection`,
+`source_declaration_assertion_occurrences`,
+`source_nonstate_member_refs`, and `source_row_sha256s`. The four field
+coordinates exact-copy the slot/inventory/layout join.
+
+`source_declaration_projection` is the nonempty source-manifest and
+source-row-order projection of every complete canonical dictionary or
+codebook row that carries the field's coding declaration or reference. Each
+projection object has exactly `source_document_id`, `canonical_row_id`,
+`source_locator_ids`, `source_label`, `source_description`,
+`normalized_entry_refs`, and `normalized_entry_meanings`; all seven values
+are exact deep copies. Locator arrays are nonempty source-order foreign keys,
+and at least one resolved locator contains the complete declaration or
+reference bytes. The entry-reference and meaning arrays exact-cover the
+complete declaration-bearing normalized source domain positionally,
+including missing and nonstate entries. `source_row_sha256s` is the complete
+nonempty source-manifest-order digest projection of those resolved canonical
+rows. A field ID, dictionary coordinate or numeric format alone, normalized
+value-domain shape, observed value, inventory tag, or candidate mapping is
+not a coding declaration.
+
+`source_declaration_assertion_occurrences` is the complete source-ordered
+per-assertion disposition relation over that projection. Each occurrence row
+has exactly `source_assertion_ordinal`, `source_document_id`,
+`source_document_sha256`, `canonical_row_id`, `source_locator_id`,
+`locator_text_sha256`,
+`locator_utf8_byte_start`, `locator_utf8_byte_end`,
+`source_projection_pointer`, `projection_utf8_byte_start`,
+`projection_utf8_byte_end`, `assertion_text`, `assertion_sha256`,
+`disposition`, `selected_source_coding_system`, and
+`coding_reference_source_document_id`, in this order. The source document
+and canonical-row IDs exact-copy one row of
+`source_declaration_projection`; `source_document_sha256` exact-copies that
+document's independently authenticated manifest digest, and the locator is
+a member of that row's exact locator array. For a PDF page locator,
+`locator_text_sha256` hashes the complete pinned derived-page UTF-8 payload
+and the locator coordinates are absolute half-open byte positions in that
+payload. For a strict-decoded text locator, they are absolute half-open byte
+positions in its complete authenticated decoded payload. The nonempty slice
+must strict-decode to `assertion_text`, and both its SHA-256 and the
+independently resolved source locator must exact-match. The projection
+pointer is exactly `/source_label`, `/source_description`, or
+`/normalized_entry_meanings/<zero-based-position>`; its nonempty half-open
+UTF-8 slice must be byte-equal to the locator slice. Thus matching words on a
+page cannot be detached from the complete projected declaration-bearing
+member.
+
+Before any serialized declaration or `inventory_domain_rows` row is read,
+the source-only extractor and an independent source reviewer separately
+enumerate every maximal source assertion that declares a coding vocabulary,
+directs the reader to a coding reference, or attributes the coding's source
+or history in every complete projected label, description, and normalized
+entry meaning. They exact-compare the complete occurrence denominator and
+its source order. For each assertion, scan its projection row's
+`source_locator_ids` in their already authenticated source order and select
+the first locator whose payload contains the complete byte-equal assertion
+and whose span maps byte-for-byte to the stated projection member. There must
+be exactly one matching span in that selected payload; zero or multiple
+matches abort. Later containing locators are corroboration and emit no row.
+Thus locator choice is a function of the fixed locator array, not an
+extractor preference. Rows follow declaration-projection order, selected-
+locator order, locator start, locator end, and then source-member position;
+ordinals are the consecutive zero-based positions in that order. Repeated
+assertions in different source positions remain separate. Across the
+complete occurrence relation for one canonical row, locator spans are
+nonoverlapping and unique even when projection pointers differ; an equal or
+overlapping span is multiply disposed and aborts. The serialized array must
+deep-equal this independently agreed denominator before any disposition is
+used. A candidate field ID, format, domain, observed value, intended system,
+or favorable disposition cannot add, suppress, merge, split, or reorder an
+assertion. The expected relation has exactly one row per assertion: zero is
+an omitted assertion and more than one is a multiply disposed assertion;
+either aborts. If the two independent enumerations or any asserted boundary
+or order differ, the assertion is competing and aborts rather than choosing
+one review.
+
+Every occurrence has exactly one of the two closed `disposition` values
+`selecting_system_reference | nonselecting_historical_provenance`.
+`selecting_system_reference` must match exactly one of these four closed
+systems and serialize that arm's exact system/reference pair:
+
+- an exact PSID State Codes reference resolves occurrence
+  `coding_reference_source_document_id` to
+  `psid-corpus-document-0222` and selects `psid_state_code`;
+- an exact FIPS State Codes reference—including exact source declaration
+  `Actual state (FIPS code)`—resolves it to
+  `psid-corpus-document-0221` and selects `fips_state_code`;
+- an explicit declaration that source values are the fixed authority names
+  uses null reference document and selects `exact_state_name`; and
+- an explicit declaration that source values are aliases whose complete
+  source meanings name the fixed authority rows uses null reference document
+  and selects `source_labeled_alias`.
+
+`nonselecting_historical_provenance` has null
+`selected_source_coding_system` and null
+`coding_reference_source_document_id` and is permitted only when the
+occurrence's exact document SHA-256, page or raw locator payload digest,
+half-open locator span, assertion bytes, and assertion SHA-256 equal one row
+of the closed historical-provenance occurrence table below. This version's
+table has exactly one row: the displayed V93 GSA occurrence. No wording,
+issuer name, age, origin claim, candidate annotation, or unsupported
+reference can infer this disposition, and it establishes no GSA-to-PSID
+equivalence. Adding another historical-provenance row requires a later
+ratified amendment with its own authenticated byte occurrence.
+
+For each agreed occurrence, both source-only builders apply the four
+selecting matchers and the closed historical table before reading the
+serialized disposition. Exactly one arm must match. Zero matching arms is
+an unknown assertion and two or more are competing dispositions; either
+aborts. The independently equal expected row, including its disposition and
+selected or null pair, must then deep-equal the serialized occurrence row.
+Thus the disposition is authenticated source law, not a candidate-authored
+classification.
+
+The complete V93 replay is pinned independently through committed artifact
+`data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json`,
+mode `100644`, Git blob `7330949776439c2124aba2a6ffa280dbbf02e4af`,
+4,628,883 bytes, and raw SHA-256
+`52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48`.
+Its `/field_evidence/92` row has field key
+`psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9`,
+complete canonical-row SHA-256
+`e26fe968c48a7e5c7fb397140a50c232cb8a3bc9d270798af0199e52a9f0b5eb`,
+and internal `derived_field_block_sha256`
+`9fd5b204ba235d80092ce65a1c9456e6386909e85fb905bd083ac8dafad04813`.
+Its `/source_locators/22` row has ID
+`psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6`,
+complete canonical-row SHA-256
+`59f1bb14fb1c47d8c68a591a94fe007241140bdf8c5c10ce560a371765a21274`,
+page 23, raw PDF content-stream span `[114117,118952)`, range and decoded
+SHA-256
+`4ac45462bc2228a74da38407620f70832ec960ec033067bbaddf18d817145bf8`,
+and complete 2,839-byte derived-page-text SHA-256
+`22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4`.
+The underlying `family/1968/fam1968_codebook.pdf` is exactly 851,348 bytes
+with SHA-256
+`9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6`.
+The historical field key and locator are replay bindings to this committed
+evidence; they do not substitute for the future
+`<source-document-id>#row:<position>` or `psid-source-region:` identities,
+which must independently resolve the same document, page, and byte slices.
+
+The following exact 16-field objects are the complete source-ordered V93
+assertion-occurrence replay; the first object alone is the complete closed
+historical-provenance occurrence table for this version. JSON `\n` decodes
+to one byte `0a`. Every identity, locator payload digest, locator and
+projection span, assertion byte, hash, disposition, and selected/null result
+is inside its occurrence row rather than supplied by editorial prose.
+
+```json
+[
+  {
+    "source_assertion_ordinal": 0,
+    "source_document_id": "psid-family-1968-codebook",
+    "source_document_sha256": "9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6",
+    "canonical_row_id": "psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9",
+    "source_locator_id": "psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6",
+    "locator_text_sha256": "22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4",
+    "locator_utf8_byte_start": 2296,
+    "locator_utf8_byte_end": 2446,
+    "source_projection_pointer": "/source_description",
+    "projection_utf8_byte_start": 22,
+    "projection_utf8_byte_end": 172,
+    "assertion_text": "This and the county code are from U.S. General Services Administration Geographical\nLocation Codes, (Office of Finance) October 1966, Washington, D.C.",
+    "assertion_sha256": "5708fb79a95843cf44aeb0ae5a7d346bb1220da795dd1a51d7cefcea7ff707c6",
+    "disposition": "nonselecting_historical_provenance",
+    "selected_source_coding_system": null,
+    "coding_reference_source_document_id": null
+  },
+  {
+    "source_assertion_ordinal": 1,
+    "source_document_id": "psid-family-1968-codebook",
+    "source_document_sha256": "9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6",
+    "canonical_row_id": "psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9",
+    "source_locator_id": "psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6",
+    "locator_text_sha256": "22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4",
+    "locator_utf8_byte_start": 2447,
+    "locator_utf8_byte_end": 2554,
+    "source_projection_pointer": "/source_description",
+    "projection_utf8_byte_start": 173,
+    "projection_utf8_byte_end": 280,
+    "assertion_text": "Please refer to PSID\nstate codes here http://psidonline.isr.umich.edu/data/Documentation/PSIDStateCodes.pdf",
+    "assertion_sha256": "306f3ac591b2d9660c06731b2b1cc6d84df7d63a8413e66084960c1ff2d90480",
+    "disposition": "selecting_system_reference",
+    "selected_source_coding_system": "psid_state_code",
+    "coding_reference_source_document_id": "psid-corpus-document-0222"
+  },
+  {
+    "source_assertion_ordinal": 2,
+    "source_document_id": "psid-family-1968-codebook",
+    "source_document_sha256": "9a7eee6334fc88fb930def6b0cb0a7710757064bd4fd94c3233b72a7684154e6",
+    "canonical_row_id": "psid-codebook-field:8bb0908642d4506947f43e2644fcbb129bedf4da2757a821a57818ba8f0bd0f9",
+    "source_locator_id": "psid-codebook-page:43c92ebc8195def15e85d47c9495bbc4118eb7c73e3e47cb9d421dcd9b49b7b6",
+    "locator_text_sha256": "22ea3467d32c12e76e2c73f2af20efbc050e2f1f130141d7dec697318ae847d4",
+    "locator_utf8_byte_start": 2711,
+    "locator_utf8_byte_end": 2741,
+    "source_projection_pointer": "/normalized_entry_meanings/1",
+    "projection_utf8_byte_start": 0,
+    "projection_utf8_byte_end": 30,
+    "assertion_text": "Actual state (PSID state code)",
+    "assertion_sha256": "f1d7b57a844bd428ddcca3816abd06282bbdf17d4e54579260fa5c57dc52cd9f",
+    "disposition": "selecting_system_reference",
+    "selected_source_coding_system": "psid_state_code",
+    "coding_reference_source_document_id": "psid-corpus-document-0222"
+  }
+]
+```
+
+The complete actual V93 block is page-text span `[2201,2780)`, including
+the one line feed terminating its final row: exactly 579 bytes with SHA-256
+`2af3fd35952769484959285fe65b6407c03f5a39d68fccabe26af5d88eadfc10`.
+It exact-covers the `V93 "STATE (68)" NUM(2.0)` header; `State where lives
+now`; the complete GSA sentence in occurrence 0; the complete PSID direction
+in occurrence 1; the `Count / % / Value/Range Code / Value/Range Text`
+header; and the complete source rows `0 / Inap.: U.S. territory or foreign
+country`, `1 - 51 / Actual state (PSID state code)`, and `99 / DK; NA`.
+Replaying a sanitized description, either sentence alone, or selected domain
+rows is not this vector.
+
+For every field, stable-unique the source-ordered projection of
+`[selected_source_coding_system,coding_reference_source_document_id]` from
+only selecting occurrences. It must contain exactly one pair. The top-level
+`source_coding_system` and `coding_reference_source_document_id` must
+deep-equal that pair. No integer-set subset, permutation, width, field name,
+source frequency, or majority test participates. An omitted or extra
+assertion, unknown disposition, unknown selecting arm, unsupported selecting
+reference, historical-provenance row absent from the closed table,
+overlapping or duplicate occurrence, occurrence receiving both dispositions,
+two distinct selecting pairs, or competing source rows aborts before a
+domain row is read. Consequently the complete V93 block selects only PSID:
+its GSA occurrence is byte-authorized nonselecting history and its two PSID
+occurrences select the same pair. ER21004's exact FIPS declaration selects
+FIPS from its complete 0/1–56/99 domain. Neither domain is asked whether it
+also contains all codes of another table.
+
+`source_nonstate_member_refs` is the unique source-order array of exact
+two-position values `[source_entry_ref,range_member_index]` for every
+nonmissing member whose locator-bound declaration expressly identifies it
+as foreign, territory, foreign-or-territory, or another nonstate value. The
+second position is null for a literal and the member's nonnegative expansion
+index for a range member. Every reference resolves the same field and exact
+normalized source member. It cannot be inferred from a spelling list,
+candidate annotation, or table miss. Missing members are excluded here and
+retain their separate typed-missing branch. The declaration ID is literal
+`psid-state-coding-declaration:` followed by SHA-256 of §10.1 terminal-LF
+canonical bytes of the exact ten-position JSON value array of the complete
+row after omitting only `source_coding_declaration_id`, in displayed order.
+The full source-ordered occurrence array, every locator/span/text/hash, and
+every assertion disposition and selected/null result therefore enter the ID
+preimage. Unequal occurrence or disposition preimages producing one ID abort
+as a hash collision. Count equals array length and the digest hashes the
+complete ordered declaration rows.
+
+`inventory_domain_rows` independently exact-covers every source-domain
+member of every official-inventory raw field attached to a
+`state_of_residence` slot. Each row has exactly `questionnaire_era`,
+`interview_wave`, `source_inventory_key`, `raw_field_id`,
+`source_domain_ordinal`, `source_entry_ref`, `source_member_kind`,
+`range_member_index`, `source_coding_declaration_id`,
+`source_coding_system`, `source_value_type`,
+`source_value`, `raw_token_hex`, `source_meaning`, `source_negative_tag`,
+`canonical_jurisdiction_id`, `disposition`, and `source_row_sha256s`. The
+first four values exact-copy the official slot/inventory/field join. The
+ordinal is the zero-based position after the complete expansion below.
+`source_entry_ref` exact-copies the normalized entry reference.
+`source_meaning` is the exact string produced by that entry's authenticated
+dictionary/codebook label-description projection, and
+`source_row_sha256s` is its complete nonempty canonical-row digest
+projection in source-manifest order.
+
+The member schema is a closed tagged union:
+
+- `literal_value` has null `range_member_index`, `source_value_type`
+  `integer | string`, a value of exactly that JSON type, the normalized
+  literal's nonempty lowercase-even-length `raw_token_hex`, and initially
+  null `source_negative_tag`;
+- `literal_missing` has null `range_member_index`, null
+  `source_value_type`, null `source_value`, the normalized missing literal's
+  nonempty lowercase-even-length `raw_token_hex`, and exact negative tag
+  `registered_missing`; and
+- `numeric_range_member` has nonnegative integer `range_member_index`,
+  `source_value_type: integer`, its exact expanded JSON-integer value, null
+  `raw_token_hex`, and initially null `source_negative_tag`.
+
+A `literal_missing` row exists if and only if the source normalized literal
+has `typed_disposition: missing`, null value type/unit/canonical value, and a
+nonempty source-backed `missing_reason_code`; it always has null canonical
+jurisdiction and disposition `excluded_source_missing`. A nonmissing literal
+must have `typed_disposition: json_integer | enum` and respectively integer
+or string canonical value. Boolean, rational, mixed, null-valued nonmissing,
+or other typed dispositions abort for this field purpose.
+
+Before any observed-token census is consulted, every normalized literal
+emits exactly one member. Every normalized range must have
+`typed_disposition: json_integer`, integer inclusive bounds, and a positive
+JSON-integer `step`; it emits, in increasing `range_member_index` order,
+exactly `inclusive_min + k * step` for every integer `k >= 0` whose value is
+at most `inclusive_max`. This includes valid but unobserved values and
+neither fills integers between steps nor consults a rendered token.
+Booleans, floats, open or descending bounds, noninteger/nonpositive step,
+coercion, overflow, or an empty expansion abort. Expansion follows source
+entry order and literal rows retain source order. The unexpanded entries and
+expanded tagged members form a bidirectional exact cover. Overlapping
+ranges, a literal contained in a range, repeated literals, or a second
+occurrence of the same typed value within one raw field abort before
+deduplication, even if both occurrences would map identically.
+
+For each raw field, resolve exactly one same-coordinate declaration row `D`
+before reading any serialized domain row. Every member repeats
+`D.source_coding_declaration_id` and `D.source_coding_system`. Remove only
+`literal_missing` members and let `N` be the complete remaining member
+sequence. It must be nonempty and uniformly integer-valued for either
+numeric declaration or uniformly string-valued for either string
+declaration. A type mismatch aborts; the value set cannot change `D`.
+
+For every member, including every negative branch, independently compute
+two joins against the fixed 51-row authority table. `J_v` is null for a
+missing member; otherwise it joins the exact integer `source_value` to the
+selected PSID or FIPS code column on a numeric branch and joins the exact
+string `source_value` to `authority_name` on either string branch. `J_m`
+joins the exact `source_meaning` to `authority_name` on all four branches.
+Each join resolves zero or one row; more than one aborts. Whenever both
+resolve, their complete authority rows and canonical IDs must be equal,
+without exception for names, aliases, missing, or nonstate values.
+
+Disposition is the following exhaustive priority function:
+
+1. A `literal_missing` member must have both joins null, must be absent from
+   `D.source_nonstate_member_refs`, and retains null canonical ID, negative
+   tag `registered_missing`, and disposition `excluded_source_missing`.
+2. A member named by exactly one `D.source_nonstate_member_refs` position
+   must be nonmissing and have both joins null. It has null canonical ID,
+   negative tag `source_authenticated_nonstate_member`, and disposition
+   `excluded_source_authenticated_nonstate`. This is the only string
+   nonstate branch and preserves locator-backed `FOREIGN`, territory, and
+   combined foreign/territory declarations rather than aborting them.
+3. On `psid_state_code`, `fips_state_code`, or `exact_state_name`, `J_v` is
+   the primary join; on `source_labeled_alias`, `J_m` is the primary join.
+   A resolved primary join, and the equal secondary join when nonnull,
+   yields that one canonical ID, null negative tag, and disposition
+   `canonical_state_jurisdiction`. A secondary-only result aborts as
+   conflicting coding evidence rather than changing the selected branch.
+4. If both joins are null on a numeric branch and the member is not an
+   authenticated nonstate reference, it has null canonical ID, negative tag
+   `outside_selected_numeric_state_table`, and disposition
+   `excluded_nonstate_numeric_code`. This is the exact code-set complement
+   under the already selected numeric authority, not a classifier.
+5. Any remaining member—including an unresolved string not explicitly
+   declared nonstate—aborts.
+
+Those five branches exact-cover every expanded enum member once. A missing
+or duplicate nonstate reference, a reference to a state or missing member,
+or any member receiving zero or two dispositions aborts. Across all waves,
+every pair of rows with the same `(source_coding_system,source_value_type,
+source_value)` must have the same ID and disposition, and every pair whose
+exact source meaning is the same authority name must have the same canonical
+ID. That is the complete cross-wave alias-normalization equation. No
+trimming, case folding, punctuation folding, USPS table, fuzzy matching,
+observed-value inference, width heuristic, subset predicate, field-name
+selection, or majority rule is admitted.
+
+The following seven hostile constructor vectors are mandatory and are
+evaluated from complete declarations and domains, not hand-selected rows:
+
+1. **Complete numeric PSID.** Replay the authenticated 579-byte 1968 V93
+   block, not a PSID-only summary. Its three exact occurrence rows cover the
+   GSA source-attribution sentence, PSID direction, and `Actual state (PSID
+   state code)` meaning. The first is the one byte-pinned
+   `nonselecting_historical_provenance` row and the latter two are equal
+   `selecting_system_reference` rows, so the singleton selector is
+   `psid_state_code`. From literal 0, inclusive range 1–51, and typed-missing
+   99, all 51 range members map in PSID order, 0 takes the exact source-
+   authenticated nonstate branch, and 99 takes the missing branch.
+2. **Numeric FIPS.** The authenticated 2003 ER21004 declaration `Actual
+   state (FIPS code)` with literal 0, inclusive range 1–56, and typed-missing
+   99 selects only `fips_state_code`; the 51 displayed FIPS integers map,
+   0 takes its source-authenticated territory/foreign disposition, integers
+   3, 7, 14, 43, and 52 take the closed outside-table disposition, and 99 is
+   missing. The contained PSID 1–51 subset creates no competing result.
+3. **Exact names.** An `exact_state_name` declaration containing all 51
+   exact authority-name values once, with each meaning either nonresolving
+   or equal to the same row, maps all 51 and no predicate is consulted.
+4. **Aliases plus nonstates.** A `source_labeled_alias` declaration with 51
+   source aliases whose meanings exact-name the 51 authority rows plus
+   locator-backed `FOREIGN` and territory members maps the state aliases by
+   `J_m` and gives both additional members their exact nonstate disposition.
+5. **Swapped evidence.** An exact-name value domain in which the
+   authenticated meanings for Alabama and Arizona are swapped makes `J_v`
+   and `J_m` resolve unequal rows for both members and must abort before any
+   domain row, count, or digest can pass.
+6. **Recognized plus unsupported reference.** A complete assertion cover
+   containing one exact selecting PSID reference and a distinct authenticated
+   operative reference to an unsupported coding system must abort. The
+   unsupported row matches no selecting arm and cannot take the historical
+   arm because it is not the exact frozen V93 GSA occurrence; omitting it or
+   candidate-labeling it provenance also aborts.
+7. **Conflicting references.** A complete assertion cover containing exact
+   selecting PSID and FIPS references for one raw field yields two distinct
+   selecting pairs and must abort before either system or any domain member
+   is accepted.
+
+Rows follow official inventory order, raw-field order, then expanded domain
+ordinal. `inventory_domain_row_count` equals array length and is positive;
+its digest hashes the complete array. Status passes only when the two raw
+authority documents, fixed table, tagged-union branches, stepped range
+expansion, declaration exact cover, source-selected system, both joins for
+every branch, assertion-occurrence/disposition exact cover,
+member/disposition exact cover, negative branches, all seven hostile
+vectors, alias equations, counts, and digests all pass, and the stable unique nonnull canonical-ID projection of
+the complete inventory-domain array equals all 51 canonical IDs in authority
+order. A missing or extra field/member, duplicate or overlapping source
+entry, malformed missing literal, partial/incorrect-step range, absent or
+competing declaration, declaration/domain mismatch, unmatched string,
+value/meaning disagreement, negative-tag mismatch, source drift, order
+difference, or hash mismatch aborts before a legal cell exists.
+
+`jurisdiction_ids` is exactly literal `federal` followed by the 51
+`canonical_jurisdiction_ids`; `jurisdiction_count` is integer 52 and its
+keyset digest hashes that complete array. The state/local family uses the
+complete array; every other family uses only `federal`. No inventory
+observation, enum spelling, rule, legal-source row, or candidate mapping can
+choose or shrink this denominator.
+A family-1 rule with jurisdiction `federal` is an umbrella over the federal
+cell and every `inventory-state:` cell in its effective interval; an exact
+state rule supplements only its named state. If no applicable umbrella rule
+exists, every state cell requires its own complete coverage. No partial
+observed-state subset or runner residence distribution can shrink that law.
+
+`inventory_family_dispositions` exact-covers the Cartesian product of all 14
+families and every official inventory row, including negative dispositions;
+its count is exactly `14 * source_inventory_identity.row_count`. Each row
+has exactly `status_family`, `source_inventory_key`, `applicability`,
+`reason_code`, and `source_locator_sha256s`. The locator array exact-copies
+the same-key official slot-spec row. Rows follow family order and official
+inventory order.
+
+The disposition is a closed priority truth table. Test, in order: (1) if the
+inventory row's earnings reference year is outside the family interval, use
+`inapplicable/outside_family_effective_year_domain`; (2) otherwise, if its
+slot kind is outside `candidate_slot_kinds`, use
+`inapplicable/outside_family_slot_kind_domain`; (3) otherwise, if its field
+purpose is outside `candidate_field_purposes`, use
+`inapplicable/outside_family_field_purpose_domain`; and (4) otherwise use
+`applicable/candidate_purpose_slot_and_year`. Those are the only four exact
+`applicability/reason_code` pairs. Structural questionnaire absence remains
+applicable when case (4) holds. Broad shared purposes such as `amount` are
+therefore deliberately included for every family that names them; no
+authored family label, observed use, rule row, or runner distribution may
+narrow that denominator. The complete canonical row-array hash closes both
+positive and negative dispositions.
+
+A domain `cells` row has exactly:
+
+```text
+rule_domain_cell_id
+cell_kind
+verification_claim_id
+verification_class
+status_family
+jurisdiction
+earnings_year
+questionnaire_slot_id
+source_inventory_key
+```
+
+`cell_kind` is `effective_year | inventory_attachment`. For every family,
+applicable jurisdiction, and integer earnings year in its half-open interval
+there is one `effective_year` cell with null questionnaire slot and inventory
+key. For every `applicable` inventory-family disposition in that year there
+is additionally one `inventory_attachment` cell for each applicable family
+jurisdiction, carrying the disposition's exact inventory key and its
+official questionnaire-slot foreign key.
+
+For a cell row `c`, its exact identity preimage \(M_c\) is the eight-element
+JSON value array
+`[c.cell_kind,c.verification_claim_id,c.verification_class,
+c.status_family,c.jurisdiction,c.earnings_year,
+c.questionnaire_slot_id,c.source_inventory_key]`. Positions 1, 3, 4, and 5
+are nonnull JSON strings exact-copying the derived cell-kind enum,
+`registration_required | direct_only_optional` class, family ID, and
+canonical jurisdiction ID. Position 2 is the exact family claim-ID string,
+or null only for either claimless family. Position 6 is a JSON integer
+excluding booleans. For `effective_year`, positions 7 and 8 are both null;
+for `inventory_attachment`, position 7 is the nonnull questionnaire-slot-ID
+string foreign key from the same-key official inventory row, and position 8
+is the nonnull source-inventory-key string exact-copied from the independently
+derived disposition row. No other null pattern is lawful.
+
+The cell ID is literal `legal-rule-domain:` followed by SHA-256 of standalone
+§10.1 `canonical_json_bytes(M_c)`, including its one terminal LF. The
+preimage is exactly that value array, not a tagged or wrapped array, an object
+with the ID deleted, an array of member names, or an array of name/value
+pairs. The serialized ID
+must equal this independently recomputed prefix plus 64-lowercase-hex digest
+exactly. Equal preimages produce one equal ID; a malformed or mismatched ID,
+duplicate row with that ID, or one ID resolving unequal preimages aborts as
+identity failure, duplication, or hash collision.
+
+Cells are ordered by family, numeric earnings year, jurisdiction order,
+`effective_year` before `inventory_attachment`, and then official slot and
+inventory order. `canonical_order` is the literal
+`family_year_jurisdiction_cell_kind_official_inventory_v1`; count and the
+canonical ordered cell-ID hash close the complete denominator. A rule row
+covers an effective-year cell only when family, claim/class, jurisdiction,
+and year match. It covers an attachment cell only when those fields match
+and the cell's inventory key occurs in the rule's
+`affected_inventory_keys`. Every rule must cover at least one cell, every
+cell must have an explicit disposition under §19.2.4, and a rule cannot
+name an out-of-domain year, jurisdiction, claim, or inventory key. Claim
+projection bytes are constructed by the equations below, never by reading a
+configured claim array. For jurisdiction matching, the sole nonidentity case
+is the family-1 federal umbrella just defined; every other rule/cell
+jurisdiction must be identical.
+
+For a rule row `r`, let `F(r)` be the exactly one `family_specs` row whose
+`status_family` equals `r.status_family`. Before either claim registry is
+read, `r.verification_class` must equal `F(r).verification_class`, and
+`r.verification_claim_ids` must be exact `[]` when
+`F(r).verification_claim_id` is null and otherwise the exact singleton array
+`[F(r).verification_claim_id]`. A duplicate, additional, reordered, or
+candidate-selected claim ID aborts. Thus the family table, rather than a rule
+or claim row, fixes the rule-to-claim relation.
+
+Let `I` be the complete official-inventory row sequence in its independently
+ratified dimension order. For each legal claim `x` in exact order V-B1,
+V-B2, V-B3, V-B4, V-B9, let `F_x` be the family-order sequence of
+`family_specs` rows whose `verification_claim_id` is `x`. The five exact
+cardinalities are respectively 1, 1, 8, 1, and 1. Let `D(f,i)` be the
+exactly one `inventory_family_dispositions` row for family `f` and inventory
+row `i`. Construct these ordered source relations before reading either
+configured `affected_inventory_keys` or configured `governing_rule_ids`:
+
+1. `K_x` is every complete `cells` row, retaining canonical cell order and
+   multiplicity, whose `cell_kind` is `inventory_attachment` and whose
+   `verification_claim_id` is `x`.
+2. `E_x` is every ordered pair `[r,c]`, with `r` traversed in registry order
+   and then `c` in canonical cell order, for which `c.cell_kind` is
+   `effective_year`, `F(r).verification_claim_id` and
+   `c.verification_claim_id` are `x`, the row and cell have equal family and
+   verification class, the row interval contains `c.earnings_year`, and the
+   jurisdiction predicate above matches. This predicate does not inspect the
+   rule's affected keys, optional consequences, claim-ID array, transform,
+   authority status, or either claim registry.
+
+`K_x` retains every canonical cell occurrence. `E_x` retains every matching
+Cartesian pair, with each rule/cell position occurring once and no pair
+deduplication; its many-cell-per-rule multiplicity is evidence for, not the
+serialization of, `G_x`.
+
+Define `A_x^D` by traversing `I` once and emitting `i.source_inventory_key`
+exactly when at least one `f` in `F_x` has
+`D(f,i).applicability == "applicable"`. Define `A_x^C` by traversing `I`
+once and emitting that key exactly when at least one row of `K_x` carries
+it. The independently derived disposition and cell exact covers must make
+`A_x^D` and `A_x^C` deep-equal; call their one common value `A_x`. This is
+an existential filter of the globally unique official inventory sequence,
+not a concatenation by family, year, or jurisdiction.
+
+Define `stable_unique(sequence)` by traversing the sequence once and
+appending a value exactly when no earlier projected value is byte-equal; it
+does not sort, count occurrences, or consult the configured destination.
+The governing-rule projection is exactly
+
+\[
+\begin{aligned}
+G_x &= \operatorname{stable\_unique}
+      ([r.\texttt{rule_id}\mid [r,c]\in E_x]).
+\end{aligned}
+\]
+
+`A_x` and `G_x` are nonempty JSON arrays of strings. They are serialized,
+without a wrapper or another normalization pass, as respectively the exact
+`affected_inventory_keys` and `governing_rule_ids` values in the same legal
+claim member of both `verification_claim_specs.v2` and
+`verification_claim_specs.fitting_free.v1`; the two branches therefore
+deep-equal on both arrays. Inside a claim row they are ordinary nested JSON
+array values with no independent terminator; they receive bytes only through
+§10.1 canonical serialization of the complete enclosing row and artifact.
+An empty source relation or projection, null, duplicate,
+omitted, additional, or reordered destination member aborts.
+
+Cell multiplicity is intentionally retained in `K_x` but eliminated by the
+official-inventory-order existential projection. In particular, family 1's
+federal-plus-51 jurisdiction replication contributes each applicable key
+once, and a key applicable to several of V-B3's eight families also appears
+once at its official inventory position; family order never regroups the
+array. A rule spanning several years or jurisdictions contributes its ID
+once, at its first `E_x` pair. No once-per-cell or once-per-family
+serialization is permitted.
+Every rule with a nonnull family claim must contribute at least one pair to
+that claim's `E_x`; a claimless family contributes to neither relation.
+Rule-specific affected keys continue to determine only attachment-cell
+coverage after their independent §4.1 derivation; they cannot shrink `K_x`,
+`E_x`, `A_x`, or `G_x`.
+
+#### 19.2.4 Effective intervals, partitions, overlap, and authority
+
+`effective_start` and `effective_end` are JSON integers excluding booleans.
+They are earnings years, not interview, publication, retrieval, calendar-
+date, or source-document years. They obey
+`effective_start < effective_end`; v1 admits no null, open end, string,
+date, float, coercion, or inclusive end. A rule applies to year `y` if and
+only if `effective_start <= y < effective_end`. Thus end 2023 includes
+production earnings year 2022, and the historical-SECA family interval ends
+at 1990 after covering 1968–1989. A row outside its family's frozen interval
+is invalid rather than clipped.
+
+For each family × jurisdiction effective-year stream, use the family's exact
+bounds and collect every matching rule endpoint plus both integer brackets
+`year(effective_date)` and `year(effective_date)+1` for every matching
+midyear transition. For each inventory-attachment cell with earnings year
+`y`, use only the one-year bounds `[y,y+1)`; an inventory key never creates
+partitions in another year. Within each such stream, retain only split points
+strictly inside its bounds, then sort and deduplicate the integers and form
+every consecutive half-open elementary interval. Thus a midyear transition
+isolates exactly its one earnings-year cell even when no rule endpoint does.
+The post-row
+`rule_interval_partitions` array has one row for every resulting stream and
+interval, with exactly:
+
+```text
+partition_id
+cell_kind
+status_family
+verification_claim_id
+verification_class
+jurisdiction
+questionnaire_slot_id
+source_inventory_key
+effective_start
+effective_end
+covered_rule_domain_cell_ids
+applicable_rule_ids
+midyear_transition_ids
+controlling_authority_rank
+authority_disposition
+optional_consequence_ids
+```
+
+The cell-kind and nullable slot/key branch exact-match the corresponding
+domain-cell stream. Endpoints are the elementary half-open bounds.
+`covered_rule_domain_cell_ids` is the complete nonempty canonical-order
+array of effective-year cell IDs whose integer years lie in the interval, or
+the one attachment-cell ID for a keyed stream. Across same-stream partition
+rows these arrays exact-cover each independently derived domain cell once.
+`applicable_rule_ids` is the complete registry-order array and may be empty
+only for a recorded gap. `midyear_transition_ids` is the complete §19.2.2
+transition-order array whose family/jurisdiction and effective-date year
+intersect this interval; its affected-key array is not a selector for an
+effective-year stream and must contain this attachment key for a keyed
+stream. Federal-umbrella
+matching is exactly §19.2.3; no authored partition selects a transition.
+`controlling_authority_rank` is the JSON integer 1 exactly for
+`verified_dispositive` and null otherwise; no lower rank or table-local rank
+is serialized in a nonverified partition.
+`authority_disposition` is exactly `verified_dispositive |
+authority_absent | authority_conflict |
+unrepresentable_midyear_transition`. For a nonverified
+`direct_only_optional` partition, construct `N_p` by traversing
+`applicable_rule_ids` in registry order, retaining exactly the
+`authority_absent | authority_conflict` rows, and then traversing each row's
+complete `optional_row_consequences` in retained within-rule order. For an
+`inventory_attachment` partition retain exactly consequence rows whose
+`source_inventory_key` equals the partition's nonnull key; for an
+`effective_year` partition retain every consequence row from those negative
+rules. No occurrence is deduplicated. `N_p` must be nonempty, and
+`optional_consequence_ids` is exactly its same-order
+`optional_consequence_id` projection. For every other partition the ID array
+is exact empty. Every ID must resolve exactly once to the same occurrence in
+its originating negative rule row. When `verification_claim_id` is nonnull,
+that occurrence must additionally resolve to the same occurrence in the
+same-claim §19.2.5 consequence stream. When it is null, no `P_x`, `Q_{b,x}`,
+or legal-result stream is constructed; the complete ordered \(N_p\)-to-source-
+row join is instead bound directly by the v2 predicate and G17-C05. A
+missing, extra, duplicated, reordered, or unequal row fails the complete
+partition consequence domain. A transition or verified-rule disagreement
+cannot invent a consequence. A required nonverified partition has no
+fallback ID and aborts.
+
+Let `V`, `A`, and `C` be the complete registry-order projections of
+applicable rows whose `authority_status` is respectively `verified`,
+`authority_absent`, and `authority_conflict` for one partition `p`. All
+members of `V` participate in the joint evaluation below, even when a
+transition, `A`, or `C` will determine a higher-priority final disposition;
+there is no short-circuit that can hide an invalid transform.
+
+For every covered-then-excluded fact-binding occurrence of every row in `V`,
+construct an exact joint-binding signature from authenticated rule bytes.
+First, deep-copy each `micro_fact_slots` row after deleting only
+`micro_fact_id`; the resulting object has exactly `field_purpose`,
+`source_field_ref`, `typed_value_type`, `typed_value_unit`,
+`presence_predicate_ast`, and `missing_reason_code` with all retained nested
+types and nulls. Second, deep-copy `premise_ast` recursively, replacing each
+exact `micro_fact` leaf by
+`{"op":"joint_micro_fact_slot","slot_index":j}`, where `j` is the
+zero-based JSON-integer position of that microfact in the binding's own slot
+array. This replacement object is identity-only and is never an executable
+AST. The signature preimage is the exact three-element JSON array
+`["joint_binding_semantics.v1",normalized_micro_fact_slots,
+normalized_premise_ast]`.
+
+The `joint_binding_id` is literal `legal-joint-binding:` followed by SHA-256
+of §10.1 canonical bytes of that complete signature preimage. Equal
+preimages must have one equal ID; an equal ID with unequal preimages aborts
+as a collision. Within one rule, two occurrences with the same signature
+are a redundant ambiguous premise and abort. Across rules, byte-identical
+signatures share one Boolean coordinate. Any other byte difference,
+including slot order, AST argument order, source reference, type, unit,
+presence predicate, or missing reason, creates a distinct coordinate; no
+algebraic equivalence is inferred.
+
+Traverse `V` in registry order and each rule's covered bindings then excluded
+bindings in retained array order. `J_p` is the stable-unique
+`joint_binding_id` sequence in first-occurrence order, and every binding
+occurrence must map to exactly one position. Let `m = len(J_p)`. The exact
+joint assignment domain is all `2^m` Boolean arrays. Assignment index `k`
+runs from 0 through `2^m - 1`; coordinate `j` is true exactly when
+`floor(k / 2^(m-1-j)) mod 2` is 1. Thus false precedes true and the rightmost
+coordinate varies fastest. When `m` is zero the domain is the singleton
+array containing exact `[]`, never an empty domain. There is no null or
+missing-fact coordinate: runtime missing facts retain the §4.1 skipped-
+transform fold. No observation, candidate claim, PSID joint frequency,
+SAT/source-realizability filter, inferred correlation, sample, cap, or early
+exit may prune this finite Cartesian domain; inability to exhaust it aborts.
+
+For every assignment in index order, construct one derived evaluation row
+with exactly:
+
+```text
+assignment_index
+joint_binding_bits
+rule_evaluations
+dispositive_rule_ids
+controlling_authority_rank
+controlling_classified_status
+vector_disposition
+```
+
+`joint_binding_bits` is the complete same-position Boolean array for `J_p`.
+`assignment_index` is the nonnegative JSON integer excluding booleans equal
+to that row's zero-based `k`.
+`rule_evaluations` contains every row of `V` in registry order. Each has
+exactly `rule_id`, `authority_rank`, `fact_binding_ids`,
+`joint_binding_ids`, `fact_binding_results`, and `transform_result`. The
+three parallel binding arrays are the rule's complete covered-then-excluded
+occurrence order and exact projection from the joint vector; an unconditional
+rule has three exact empty arrays. `rule_id` and `authority_rank` exact-copy
+the rule's string ID and positive JSON-integer rank. Every verified transform executes exactly
+once from those booleans. `transform_result` is the complete existing
+three-key `direct_law_transform_result.v1` object, including family, one of
+the four registered statuses, and reason code. An AST, type, unit,
+foreign-key, evaluation, or output error aborts the registry rather than
+becoming a conflict row.
+
+For vector `v` and each authority rank `q`, let `D(v,q)` be the
+registry-order rule-evaluation sequence at `q` after removing exactly those
+whose `transform_result.classified_status` is `no_disposition`, and let
+`S(v,q)` be its stable-unique `transform_result.classified_status`
+projection. The removed results remain in
+`rule_evaluations` but establish no coverage, rank, agreement, conflict, or
+corroboration. `dispositive_rule_ids` is the complete registry-order ID
+projection of all remaining evaluations. If any remain, the vector's
+controlling rank is the smallest numeric `q` with nonempty `D(v,q)`;
+otherwise it is null. `controlling_classified_status` is the sole member of
+`S(v,q)` at that rank exactly when that set has size one and is null
+otherwise.
+
+`vector_disposition` follows this first-matching total table:
+
+1. `no_dispositive_result` when every `D(v,q)` is empty;
+2. `same_rank_disagreement` when any `S(v,q)` has more than one member;
+3. `lower_rank_disagreement` when the controlling-rank status is unique and
+   any dispositive result at a numerically larger rank differs from it;
+4. `agreed_rank_1_dispositive` when the unique controlling rank is 1; and
+5. `agreed_lower_rank_only` for the remaining agreed vector.
+
+Those five literals are the complete vector-disposition vocabulary;
+`dispositive_rule_ids` is an array of strings, the controlling rank is a
+positive JSON integer or null, and the controlling status is one of the
+three dispositive status strings or null under the equations above.
+
+Agreement is within a vector, never across different vectors; distinct
+vectors may lawfully yield different statuses. Multiple same-rank rules
+agree when their classified statuses agree, while their complete rule,
+family, and reason provenance remains. `no_disposition` beside a dispositive
+result is inert. Rank 1 `no_disposition` with only a rank-2 dispositive
+result is lower-rank-only, not rank-1 coverage. A lower-rank dispositive
+result corroborates only by equaling the controlling status.
+
+Call the complete assignment-index-ordered row array `T_p`.
+`complete_rank_1_dispositive_coverage(p)` is true exactly when every row of
+nonempty `T_p` has `vector_disposition: agreed_rank_1_dispositive`. Thus at
+least one rank-1 rule is dispositive on every vector, but no individual rule
+must be dispositive on every vector. The provisional table and rank result
+are constructed from the partition stream/interval coordinate; after the
+derived partition fields produce `partition_id`, that ID is inserted only in
+the closure row below and is never a transform or rank input.
+
+The derived `partition_overlap_evaluation_closure` used by the v2 predicate
+and G17-C05 has exactly `canonical_order`, `rows`, `row_count`,
+`domain_sha256`, and `status`. `canonical_order` is literal
+`rule_interval_partition_order_v1`. It has one row per partition in final
+partition order, with exactly `partition_id`, `joint_binding_ids`,
+`joint_binding_count`, `vector_count`, `evaluation_rows_sha256`,
+`complete_rank_1_dispositive_coverage`, and
+`partition_controlling_authority_rank`, and
+`partition_authority_disposition`. `rows` is that complete partition-order
+array. The two inner counts are nonnegative JSON
+integers excluding booleans and are respectively `len(J_p)` and
+`2^len(J_p)`; the complete-coverage member is a JSON Boolean, the partition
+rank exact-copies its integer-1-or-null field, `partition_id` and every
+joint-binding ID are strings of their already defined forms, the disposition
+exact-copies the partition enum, and the evaluation digest is a 64-lowercase-
+hex string hashing standalone
+`canonical_json_bytes(T_p)`; and the domain digest hashes the complete
+closure-row array through standalone `canonical_json_bytes(rows)`. The
+top-level `row_count` is a nonnegative JSON integer excluding booleans equal
+to both that array length and the complete partition count; `domain_sha256`
+is its 64-lowercase-hex SHA-256. `status` is exactly `pass | fail` and is pass
+only when every signature, mapping, vector,
+transform, rank, table digest/count, and final partition rank/disposition is
+independently reproduced, and fail otherwise. This closure is a G17 comparison value, not a
+candidate legal-registry member or a partition-ID input.
+
+Disposition is derived, after complete `T_p` evaluation, in this exact
+priority: (1) a referenced transition with null `annual_allocation_rule_id`
+is `unrepresentable_midyear_transition`; (2) nonempty `C` or simultaneous
+nonempty `V` and `A` is `authority_conflict`; (3) nonempty `V`, empty `A`
+and `C`, true `complete_rank_1_dispositive_coverage(p)`, and every nonnull
+transition allocation ID resolving a passing member of `V` is
+`verified_dispositive`; (4) empty `V` and `C` with either nonempty `A` or an
+empty applicable-rule array is `authority_absent`; and (5) every remaining
+case is `authority_conflict`. Branch 5 includes any no-dispositive vector,
+same-rank disagreement, lower-rank disagreement, agreed lower-rank-only
+vector, incomplete rank-1 totality, failed allocation rule, or other mixed
+case.
+
+For a final partition row `p`, its exact identity preimage \(M_p\) is the
+15-element JSON value array
+`[p.cell_kind,p.status_family,p.verification_claim_id,
+p.verification_class,p.jurisdiction,p.questionnaire_slot_id,
+p.source_inventory_key,p.effective_start,p.effective_end,
+p.covered_rule_domain_cell_ids,p.applicable_rule_ids,
+p.midyear_transition_ids,p.controlling_authority_rank,
+p.authority_disposition,p.optional_consequence_ids]`. Positions 1, 2, 4,
+5, and 14 are nonnull JSON strings exact-copying respectively the
+`effective_year | inventory_attachment` enum, frozen family ID,
+`registration_required | direct_only_optional` class, canonical jurisdiction
+ID, and four-value partition disposition. Position 3 is the derived claim-ID
+string or null only for either claimless family.
+Positions 6 and 7 are both null for `effective_year` and both nonnull string
+foreign keys for `inventory_attachment`. Positions 8 and 9 are JSON integers
+excluding booleans and obey the strict endpoint equation. Positions 10–12
+and 15 are complete ordered arrays of nonnull string IDs under their
+respective equations above: position 10 is nonempty, while the other three
+are empty or nonempty only as those equations permit. Position 13 is the
+JSON integer 1 excluding booleans exactly for `verified_dispositive` and is
+null otherwise. No omitted member, other null, coercion, digest substitution,
+or reordered/deduplicated nested array is lawful.
+
+`partition_id` is literal `legal-rule-partition:` followed by SHA-256 of
+standalone §10.1 `canonical_json_bytes(M_p)`, including its one terminal LF.
+The preimage is exactly that value array, not a tagged or wrapped array, an
+object with the ID deleted, an array of member names, or an array of
+name/value pairs. The serialized ID
+must equal this independently recomputed prefix plus 64-lowercase-hex digest
+exactly. Equal preimages produce one equal ID; a malformed or mismatched ID,
+duplicate row with that ID, or one ID resolving unequal preimages aborts as
+identity failure, duplication, or hash collision. Rows are ordered by
+family, jurisdiction, cell kind, official slot/inventory order, and numeric
+start. The top-level count and digest close this complete array. This is a
+post-row registry member, not an input to the independently derived
+`rule_domain`. Neither row order nor an implementation `first`, `last`, or
+`last wins` policy can resolve overlap.
+
+Identity construction is acyclic and one-way: validate every transition ID,
+then every cell ID; derive each partition's complete `J_p`/`T_p`, rank,
+disposition, and consequence fields; validate every referenced transition,
+cell, rule, and consequence ID; compute the final partition ID; and only then
+insert it into the overlap closure. Every direct consumer resolves exactly
+one complete row and independently rechecks its preimage and ID: manifest
+claim-source rows and partition transition arrays for transitions; cell
+keysets, `K_x`/`E_x`, and partition cell covers for cells; and `P_x`, the
+overlap closure, registry partition digest, v2 predicate, and G17-C05 for
+partitions. An unresolved, multiply resolved, cross-namespace, malformed, or
+unequal identity aborts before any enclosing digest can pass.
+
+The `J_p`/`T_p` construction is the sole overlap truth law. It deliberately
+shares only byte-identical normalized binding signatures from authenticated
+rule bytes, because letting provably identical predicates vary independently
+would create false source states. It deliberately takes the full Cartesian
+product for every nonidentical signature, because no authenticated joint
+typed-value/correlation authority exists. A source-realizable or observed-
+value filter could shrink the conflict domain and is forbidden; algebraic
+predicate normalization or rule-local-ID-only independence is likewise not
+an alternate v1 interpretation. This conservative over-approximation may
+reject a future rule set but cannot hide a potential contradiction.
+
+Duplicate rows with the same establishing
+source, rank, family, jurisdiction, interval, fact predicates, affected
+keys, and transform abort. Adjacent rows identical in every operative field
+other than rule ID and endpoints must be merged into one canonical row;
+artificial fragmentation is not a distinct rule. Registration-required
+cells require gap-free verified dispositive rank-1 coverage. A
+direct-only-optional cell requires verified coverage or the complete exact
+`authority_absent | authority_conflict` rule-row consequence already frozen
+by §4.1 for every affected key. The optional branch cannot satisfy a
+registration-required cell.
+
+A transition whose operative date cannot be represented as a whole
+earnings-year boundary is not rounded silently. Unless separately ratified
+source/service-date law deterministically allocates the annual record across
+that transition, the affected annual cell remains a legal-authority gap:
+`registration_required` aborts, while `direct_only_optional` takes its exact
+per-key consequence. The integer interval schema therefore never invents a
+whole-year state-local or service disposition from a midyear effective date.
+
+For this title, `authority_rank: 1` requires an establishing-source set
+anchored by byte-pinned enacted federal statute or regulation. When a
+state/entity/year §218 disposition depends on an executed agreement,
+modification, state enactment, or official state/federal determination, all
+such operative bytes are mandatory `primary | additional_establishing`
+links in the same rank-1 rule; none is demoted to mere corroboration.
+`authority_rank: 2` remains byte-pinned contemporaneous SSA, IRS, OPM, or
+RRB administering material and may operationalize or corroborate but cannot
+override or replace rank 1. No other rank exists in v1. This is an exact
+extension of §4.1's source-set sufficiency, not a promotion of secondary
+literature.
+
+The two claimless optional families are not exempt from domain validation.
+Their empty claim-ID arrays are lawful only when every cell is covered by a
+verified rule or by an absent/conflict row whose affected-key consequence
+exact-covers the cell. Their status is included directly in the historical-
+rules predicate and G17. A missing claim ID therefore cannot create an
+unchecked federal- or railroad-service rule.
+
+#### 19.2.5 Future-row authentication without self-authentication
+
+Amendment 5 freezes the complete schema descriptor but deliberately does not
+freeze future legal-source or rule rows. The existing §16.2 projection
+`ratified_design:historical_coverage_rule_specs` cannot truthfully yield
+those future rows. It is therefore prospectively replaced, for the same
+`historical_coverage_rules` requirement ID and `legal_authority` class, by:
+
+```json
+{
+  "requirement_id": "historical_coverage_rules",
+  "requirement_class": "legal_authority",
+  "verification_predicate_id": "verify_historical_coverage_rules_identity_v2",
+  "expected_preimage_schema_version": "historical_coverage_rule_authority_expected_preimage.v2",
+  "actual_preimage_schema_version": "historical_coverage_rule_authority_actual_preimage.v2",
+  "ordered_source_projections": [
+    "ratified_design:historical_coverage_rule_authority_schema",
+    "configuration:legal_rule_input",
+    "configuration:historical_coverage_rule_specs",
+    "git_cutoff:legal_rule_input_raw_bytes",
+    "coordinator:historical_coverage_rule_specs_append_only_history_projection",
+    "coordinator:historical_coverage_rule_domain_reconstruction",
+    "coordinator:legal_source_document_byte_closure"
+  ],
+  "verification_result_schema_version": "historical_coverage_rule_authority_verification_result.v2",
+  "cross_binding": "legal_registry_schema_history_domain_and_source_byte_closure"
+}
+```
+
+`ratified_design:historical_coverage_rule_authority_schema` is the exact
+`historical_coverage_rule_authority_schema.v1` object with exactly
+`schema_version`, `legal_rule_input_path`, `artifact_vintage_id`,
+`legal_rule_schema_version`, `ordered_schema_clause_ids`,
+`canonicalization`, and `failure_disposition`. The first value is its object
+name; the next three values are the exact §19.2.1 literals;
+`canonicalization` is the §19.2.1 literal; and failure is
+`abort_registration`. The clause-ID array is exactly:
+
+```text
+registry_envelope_keysets_and_rule_order_v1
+legal_source_manifest_join_and_byte_closure_v1
+official_inventory_derived_rule_domain_v1
+half_open_interval_partition_and_overlap_v1
+ranked_establishing_source_bundle_v1
+required_optional_and_midyear_consequence_v1
+```
+
+Each ID dispatches to the complete corresponding law in §§19.2.1–19.2.4;
+the v2 predicate executes those laws directly. The descriptor is therefore
+one unique canonical JSON value without copying prose bytes or containing a
+future document, link, domain-disposition, cell, rule row, artifact digest,
+or four-key design identity.
+
+The future legal-registry commit `L5` is separately reviewed and
+single-parent. It is a strict descendant of the Amendment-5 ratification
+commit `D5`; its parent already contains the immutable official inventory
+and every raw legal-source blob referenced by the candidate manifest; the
+literal legal JSON path is absent from `L5`'s parent and every earlier
+ancestor; `L5` adds exactly that one canonical JSON path and makes no other
+tree change; and its blob remains byte-identical through the selected
+authority cutoff. A later byte change requires a successor path and vintage.
+No draft commit, untracked file, staging capture, merge commit, or favorable
+candidate value can be `L5`.
+
+`historical_coverage_rule_specs_append_only_history_projection.v1` has
+exactly `schema_version`, `path`, `artifact_vintage_id`, `first_add_commit`,
+`authority_cutoff_commit`, `raw_sha256`, `ordered_ancestor_commits`,
+`history_rows`, `history_row_count`, `history_domain_sha256`, and `status`.
+Its commit domain is every Git commit `X` satisfying
+`D5 <= X <= authority_cutoff_commit`. Order is ascending minimum edge count
+from D5, then unsigned lowercase commit hex; this deterministic order need
+not be first-parent order. `ordered_ancestor_commits` is exactly that domain.
+History rows follow it and have exactly `commit`, `parent_commits`,
+`parent_count`, `path_disposition`, `tree_mode`, `blob_oid`, and
+`raw_sha256`; parent commits retain Git order and count equals their length.
+For `absent_before_first_add`, the final three identity values are null. For
+`present_exact`, mode is string `100644` and blob/digest exact-match the one
+authenticated legal input.
+
+D5 and every interval commit not descending from L5 have the absent branch.
+L5 is the unique interval commit with the path absent from every parent and
+present in its tree; it has exactly one parent and adds only that path. Every
+present interval commit descends from L5 and keeps identical bytes through
+cutoff. Other interval commits may be merges and are not rejected merely for
+multiple parents. Count and domain hash cover every complete row. Any
+omitted interval commit, path in any pre-L5 ancestor, nonunique first add,
+L5 second parent or extra tree delta, wrong mode, drift, deletion, re-add,
+or replacement fails.
+
+`historical_coverage_rule_domain_reconstruction.v1` has exactly
+`schema_version`, `source_inventory_identity`, `expected_rule_domain`,
+`actual_rule_domain`, `expected_domain_sha256`, `actual_domain_sha256`,
+`mismatch_count`, and `status`. The expected side is freshly reconstructed
+in the §19.2.3 order, including the fixed 51-jurisdiction authority table,
+both authenticated state-code documents, every locator-bound source coding
+declaration, every expanded inventory state-domain member, both authority
+joins, and every state/missing/nonstate/numeric-complement disposition,
+without consulting any legal-rule row or configured domain; the actual side
+is the strict-parsed registry member. Status passes
+only on deep equality, equal canonical digests, and integer-zero mismatches.
+It also reconstructs the fixed family-to-claim cardinalities and the
+official-inventory-order `A_x^D`/cell-membership `A_x^C` equality for all
+five legal claims; these are derivations from the expected domain, not new
+configured members.
+
+`verify_historical_coverage_rules_identity_v2` passes only when the ratified
+schema descriptor exact-matches; the configured four-key input identity
+hashes the complete canonical raw blob; raw bytes strict-parse and
+canonical-round-trip; the configured deep copy equals the complete object;
+append-only history, independent domain reconstruction, every family-derived
+singleton/empty rule claim array, all five complete `K_x` and `E_x`
+relations and `A_x`/`G_x` projections, every rule/source join, the complete
+claim-establishing-source projection constructed from those `G_x` values,
+every source-byte closure row, every exact \(M_t\), \(M_c\), and \(M_p\)
+value-array preimage and prefixed ID reproduction, every `J_p`/`T_p` table
+and overlap-closure digest, every partition-to-claim propagation, every
+claimed partition's same-claim consequence join, every claimless partition's complete ordered
+\(N_p\)-to-originating-source-row join, and every interval/partition/
+authority consequence pass; and
+every expected/actual member is exact. It is false on
+any missing or additional value. Both expected and actual preimages retain
+the exact §16.2 seven-key shape: `schema_version`, `requirement_id`,
+`verification_predicate_id`, `ordered_source_projections`,
+`source_projection_rows`, `source_projection_count`, and
+`source_projection_domain_sha256`. Their schema values are the v2 names in
+the requirement row; their requirement/predicate IDs and projection order
+exact-copy that row; count is integer seven. Each projection row retains the
+exact §16.2 three-key shape. The first three and final three projections have
+`value_type: canonical_json`; the raw legal-input projection has
+`value_type: raw_git_bytes`. Value and domain digests cover unfavorable
+evidence as usual.
+
+The predicate result retains §16.2's exact seven-key shape:
+`schema_version`, `requirement_id`, `verification_predicate_id`,
+`expected_preimage_sha256`, `actual_preimage_sha256`, `result`, and
+`failure_code`. Its schema value is
+`historical_coverage_rule_authority_verification_result.v2`; `result` is the
+Boolean reconstruction above; and failure is null exactly on true and
+`predicate_mismatch` exactly on false. The enclosing runtime row,
+`fitting_free_requirement_evidence.v1`, `requirement_satisfied`, status,
+failure-ID projection, and 22-row domain laws remain unchanged and consume
+that Boolean.
+
+This v2 predicate and the seven-projection construction prospectively
+replace §16.2's historical-rule requirement row and predicate equation and
+§16.13.6's four-projection construction/equality for that requirement.
+Section 16.13.2's legal-source matching is replaced only by the complete
+serialized manifest-link projection above. That projection is verified
+inside the complete legal-registry/raw-input/deep-copy/source-closure
+comparands; it is not serialized in the verification-claim adjudication
+artifact. Sections 16.13.6 and 17.2's exact-empty `adjudication_sources`
+boundary and independent base-result construction for the five legal claims
+remain controlling. All enclosing requirement, registry, domain, bundle,
+gate, capture, receipt, and result digests must be freshly recomputed; no
+predecessor digest is copied. The replacement does not
+reinterpret the existing `ratified_design:` root as a future Git artifact
+and therefore does not self-authenticate the candidate.
+
+The replacement is type-total through every retained consumer. Let \(E_2\),
+\(A_2\), and \(V_2\) denote, respectively, the complete
+`historical_coverage_rule_authority_expected_preimage.v2`,
+`historical_coverage_rule_authority_actual_preimage.v2`, and
+`historical_coverage_rule_authority_verification_result.v2` just constructed.
+No object having any `exact_identity_*.v1` schema value may stand for one of
+these objects, and no consumer may relabel \(V_2\) without reconstructing the
+successor defined below.
+
+For an Amendment-5 construction, the retained §16.13.6 legal-claim passage
+beginning with its definition of the complete strict-parsed historical-rule
+registry and ending with its legal-result field equations is prospectively
+replaced as follows. Let \(H\) be the complete strict-parsed registry
+authenticated by true \(V_2\). Before reading any candidate claim-registry
+row, reconstruct the five nonempty \(A_x\) and \(G_x\) arrays under §19.2.3.
+For each branch \(b\in\{c,f\}\), independently construct \(S_b\) in its
+retained nine-claim order: each of the five legal members receives exactly
+\(A_x\) and \(G_x\), while every nonlegal member follows its retained
+branch-specific equation. Only after the complete expected artifact exists
+may the same-position candidate member be read and deep-compared. A
+configured destination is only an actual comparand and never an
+expected-value source.
+
+Construct \(Q_{b,x}\) by resolving every member of \(G_x\), in order, to
+exactly one complete row of \(H\). Each row must carry the exact singleton
+family-derived claim array `[x]`; conversely, the registry-order rule-ID
+projection of every \(H\) row whose family claim is `x` must deep-equal
+\(G_x\). Verified, authority-absent, and authority-conflict rows all remain
+in this projection. No source link, transition, rank, partition outcome, or
+authority status filters it. An unresolved, duplicated, additional,
+reordered, cross-claim, empty, or nonexhaustive \(Q_{b,x}\) aborts.
+
+Independently construct `P_x` as the complete canonical-partition-order
+projection of every `rule_interval_partitions` row whose
+`verification_claim_id` is `x`. It is branch-independent, nonempty, and must
+exact-cover every independently derived partition row for all of `x`'s
+families and, through each row's `covered_rule_domain_cell_ids`, exact-cover
+every corresponding §19.2.3 domain cell once under §19.2.4; a missing,
+additional, duplicate, reordered, claimless, or cell-miscovering row aborts.
+The retained three-value legal result disposition is then the exact total
+precedence: `authority_conflict` if any row of \(Q_{b,x}\) has that
+authority status or any row of `P_x` has that authority disposition;
+otherwise `authority_absent` if any \(Q_{b,x}\) row is authority-absent or
+any `P_x` row is `authority_absent | unrepresentable_midyear_transition`;
+otherwise `verified` exactly when every \(Q_{b,x}\) row is verified and
+every `P_x` row is `verified_dispositive`. An empty or nonexhaustive domain
+or any residual combination aborts instead of inventing a fourth result
+status.
+
+The seven-field legal result uses \(A_x\) as the sole
+preimage of `affected_inventory_keyset_sha256`: SHA-256 of the standalone
+`canonical_json_bytes(A_x)`, including its one terminal LF,
+and exact-copies \(G_x\) into `governing_rule_ids`. Its authority-input,
+claim, status, and pass/fail fields retain their exact equations. For an
+absent/conflicting direct-only-optional result, its consequence digest hashes
+the concatenation of complete matched-rule `optional_row_consequences` in
+\(G_x\) order and retained within-rule order, with no key or consequence-row
+deduplication. Every nonverified optional `P_x` row's nonempty consequence-ID
+array must deep-equal that partition's §19.2.4 \(N_p\) ID projection and
+exact-cover its complete \(N_p\) occurrence domain; every occurrence must
+resolve to the same occurrence in that exact \(G_x\)-ordered legal-result
+stream. A transition or derived overlap conflict cannot create a consequence
+row.
+The affected-key array alone has official-inventory-order
+unique membership. The nonlegal claim equations, including the two distinct
+V-B7 literal rows and the §18 V-B6 successor, remain outside this
+replacement.
+
+The authenticated base-result successor is
+`verification_claim_base_result_projection.v2`. It has exactly the nine
+members and member order of `verification_claim_base_result_projection.v1`,
+changes `schema_version` to its v2 name, and changes no row schema or row
+order. Its `historical_coverage_rules_identity_result_sha256` is SHA-256 of
+the complete canonical \(V_2\), not of an `exact_identity_verification_result.v1`
+object. Its `domain_sha256` freshly hashes the complete two-object
+`registry_rows` array. Its status is `pass` exactly when \(V_2\) has
+`result: true` and `failure_code: null`, every §19.2.3–§19.2.4 source,
+domain, rule, cell, claim-projection, joint-binding, complete-vector,
+partition-to-claim, and consequence equation
+passes, both branches' five legal `A_x`/`G_x` values deep-equal the
+independent projections, all five `P_x` domains exact-cover and propagate
+partition truth, the twelve
+base rows exact-cover their two registry/claim domains, and all counts and
+digests reproduce. A v1 base projection is forbidden in an Amendment-5
+adjudication even if its rows happen to deep-equal the v2 rows.
+
+The adjudication-preimage successors are
+`calibrated_verification_claim_adjudication_expected_preimage.v3` and
+`calibrated_verification_claim_adjudication_actual_preimage.v3`. Each has
+exactly its respective v2 keyset and key order and changes its
+`schema_version` to the corresponding v3 name. In both objects the six
+§16.13.6 inserted members retain their names and positions but have exactly
+these values and types:
+
+1. `historical_coverage_rules_expected_preimage` is complete \(E_2\);
+2. `historical_coverage_rules_actual_preimage` is complete \(A_2\);
+3. `historical_coverage_rules_identity_result` is complete \(V_2\);
+4. `historical_coverage_rules_identity_result_sha256` is the 64-lowercase-
+   hex SHA-256 of canonical \(V_2\);
+5. `verification_claim_base_result_projection` is complete
+   `verification_claim_base_result_projection.v2`; and
+6. `verification_claim_base_result_projection_sha256` is the 64-lowercase-
+   hex SHA-256 of that complete v2 object.
+
+Every other expected/actual member is freshly reconstructed under its v2
+equation. The methodology-authority row for
+`covered_earnings_verification_claim_adjudication.vintage1` selects these
+two v3 preimage schema names and the same six named source projections in
+their retained positions; its projection-row count and domain digest cover
+the resulting complete order. The retained
+`calibrated_verification_claim_adjudication_result.v1` schema remains lawful
+because it carries only the two complete preimage digests and its registered
+predicate result: for an Amendment-5 use those digests must hash the v3
+objects, and its candidate/result/status equations are evaluated against
+them. The ten-key adjudication artifact keeps its ratified schema, but its
+expected bytes, actual verification, four envelopes, source projection,
+integrity digest, and `verification_claim_adjudication_identity` are all
+reconstructed through these v3 preimages and the v2 base projection. An
+identity produced from either v2 adjudication preimage is not an
+Amendment-5 identity.
+
+The calibrated noncapture successors are
+`calibrated_noncapture_required_authority_predicate_specs.v4`,
+`calibrated_noncapture_required_authority_preimage.v4`, and
+`calibrated_noncapture_required_authority_result.v4`. The v4 predicate
+registry is the complete v3 registry in the same order, changes its schema
+value to its v4 name, and changes only the verification-claim row's input
+and result schema values to the two v4 names; its predicate equation remains
+`claim_authority_binding_valid&&authenticated_verification_claim_result_satisfied`.
+The v4 preimage has exactly the v3 keyset/order and changes its schema value.
+For V-B1 and V-B4 its `base_legal_authority_binding` uses \(E_2\), \(A_2\),
+\(V_2\), and the calibrated same-claim row of
+`verification_claim_base_result_projection.v2`; for every other requirement
+the binding remains JSON null under the retained equation. The v4 result has
+exactly the v3 keyset/order, changes its schema value, hashes the complete v4
+preimage, and evaluates the registered v4 conjunction. No v3 preimage or
+result is accepted by a v4 predicate row.
+
+For these successors, only §16.13.8's legal-binding digest/type equations
+and v3 outer-result occurrences and §16.14.4's six-legal-binding-conjunct
+paragraph are prospectively replaced as follows. Their \(W\) and \(Z\) are
+the complete verified v3 adjudication expected and actual preimages. Their six separately necessary
+`claim_authority_binding_valid` conjuncts are exactly: the canonical digest
+of \(W\)'s complete \(E_2\); the canonical digest of \(Z\)'s complete \(A_2\);
+deep equality of their complete typed \(V_2\) objects; the canonical digest
+of that complete \(V_2\); deep equality of `base_result_projection_row` to
+the calibrated same-claim seven-field row in
+`verification_claim_base_result_projection.v2`; and the canonical digest of
+that complete row. Passing five of six is insufficient. Every outer
+required-authority row, evidence identity, global-registry row, preliminary
+adjudication, and final adjudication selects and hashes the v4 predicate,
+preimage, and result. The retained availability/status mapping for every
+other requirement is unchanged. Section 16.14.4's separate same-phase scan
+paragraph and its three-way selected-registration-path equality are
+preserved byte-for-byte; none of their operands is a legal-result type and
+this successor creates no replacement or reinterpretation of that law.
+
+The authority-cutoff successor is `calibrated_authority_cutoff_identity.v4`.
+It has exactly the v3 keyset and key order, changes `schema_version` to its
+v4 name, sets
+`noncapture_required_authority_predicate_specs_schema_version` to
+`calibrated_noncapture_required_authority_predicate_specs.v4`, and requires
+its exact `verification_claim_adjudication_identity_sha256` member to be a
+64-lowercase-hex SHA-256 of the complete four-key adjudication identity
+freshly reconstructed through the two v3 preimages. The v4 cutoff contains
+no object-valued adjudication-identity member. Every other value follows the
+v3 equation and is freshly hashed. Every Amendment-5 preliminary/final authority cutoff,
+applicability evidence row, global registry, selected configuration,
+receipt, and validator selects v4; an earlier cutoff or an earlier embedded
+legal type aborts rather than dispatching by candidate choice.
+
+The sole total adjudication construction order is exact. Section 16.14.1
+step 1 remains unchanged. Its steps 2–4, and the corresponding §16.13.6
+steps 2–4, are replaced by exactly these steps:
+
+2. reconstruct the seven source projections, construct and hash \(E_2\) and
+   \(A_2\), execute and serialize \(V_2\), abort on false, and expose only
+   the thereby authenticated \(H\) to the next step;
+3. from authenticated \(H\) and the independently reconstructed domain,
+   reconstruct every `K_x`, `E_x`, \(A_x\), and \(G_x\), then independently
+   construct \(S_c\) followed by \(S_f\), inserting those arrays into the
+   five legal rows and applying every retained branch-specific equation to
+   the four nonlegal rows, without reading the candidate artifact; and
+4. construct and hash `verification_claim_base_result_projection.v2`.
+
+Section 16.14.1 steps 5–9 then execute in their retained order with every
+legal identity, base row, and base projection substituted by the typed v2
+objects above. Section 16.14.5's controlling steps 10–12 remain the sole
+unchanged tail: semantic status is retained before integrity construction,
+the status-free nine-key object is hashed, and status is inserted only
+before the complete expected artifact is serialized and the candidate is
+read. After that complete expected/candidate artifact identity exists, the
+coordinator constructs the two complete v3 adjudication preimages and the
+retained v1 adjudication result, then every preliminary/final v4 noncapture
+preimage and result, and finally the complete v4 authority cutoff. Only
+then may any requirement domain, applicability bundle, selected
+configuration, or receipt consume those values.
+
+No step may consume a predecessor schema, assign a digest before its
+complete typed preimage exists, or use a downstream bundle, configuration,
+receipt, or status to construct an earlier legal result. No other
+construction-order sentence is displaced: the expressly retained
+§16.14.1 step 1 and steps 5–9 and §16.14.5 steps 10–12 control exactly as stated
+after the named type substitutions.
+
+### 19.3 TITLE II — official-inventory disposition laws
+
+#### 19.3.1 Authenticated residual scope and exact three-class partition
+
+The sole scope root is
+`data/external/psid_codebook_inventory_adjudication_v1.json` at source
+commit `b8e8e4f200b362a9661dbc6ef765852496608e49`, whose sole parent is
+`044d2fc789052e89ea0849fa39fea9899317d97e`. The path has mode `100644`,
+Git blob `c956f5e0cdd63a9eefc0c1bde3824cd817950b39`, exactly 1,415,319 raw
+bytes, raw SHA-256
+`df73026bcf649d12ecb606501d64780f41567b6dc09d7029f9191111cab09c62`,
+and independently reconstructed self-zeroed content SHA-256
+`359c7edac8c0b331c1a4d2a77ad2945974fa033e50e104d866e48b39a45b5a84`.
+Its schema and artifact literals are both
+`psid_codebook_inventory_adjudication.v1`. No worktree, staging, report, or
+later edited copy is a scope operand.
+
+Each row digest below hashes the complete strict-parsed
+`registration_required_residuals[index]` row under §10.1 canonical JSON with
+one terminal LF. The rows, indices, IDs, and class membership are an exact
+enumeration, not examples.
+
+| Class | Source index | Exact `residual_id` | Complete row SHA-256 |
+|---|---:|---|---|
+| B | 0 | `wave1968_ry1968_1974_early_totals:fixed_width_missing_token_grammar` | `23d99caf96d768890114c524a109e50f9b6a0fb647cd4581358947a088382041` |
+| B | 4 | `ry1975_1977_spouse_concept_seam:fixed_width_missing_token_grammar` | `758f345fca251795b085cdcd7612a530d55ad0b3c6b86a3038a90518be742573` |
+| B | 10 | `ry1978_1992_pre_er_totals:fixed_width_missing_token_grammar` | `3978ce76bea607de075add3e6c7adf6dfd6fcb4c34b6212c8d2654519f4243d9` |
+| B | 13 | `ry1993_2001_er_transition:fixed_width_missing_token_grammar` | `dfee0aa93e3f625f67a8ce2af1fcfb58fe67acfb87d7ca1e30816ac4d57b6528` |
+| B | 17 | `ry2002_2014_modern_bc_de:fixed_width_missing_token_grammar` | `d4d8a18d8824b7ec1d0d429389783d9f48a451ad08b712a948231895047c69b5` |
+| B | 25 | `ry2015_2022_exclusion_lineage:fixed_width_missing_token_grammar` | `7e3ef6b1c0340ae832a922b60f92091af9642aa7c2ab49f23aacf3e699d748ae` |
+| A | 1 | `wave1968_ry1968_1974_early_totals:questionnaire_slot_closure` | `8b133338fda147b9b48bbc4e48b4cacc7c71eab4879b0adcb2b3adef6cb3835e` |
+| A | 2 | `wave1968_ry1968_1974_early_totals:unsupported_job_context_absence_proofs` | `3a2901825d71ece3e09df3bb80ddc627f30b7fce06e5415b780e14a5abfae8bb` |
+| A | 5 | `ry1975_1977_spouse_concept_seam:questionnaire_slot_closure` | `a8d3111af3a84318ce4b0292c9521e4a32c62fb9463cc4e67aa0ed1bcc8339b3` |
+| A | 11 | `ry1978_1992_pre_er_totals:questionnaire_slot_closure` | `fd3bc863c0775cf05bfe96e0690cf8623e11337207f68f6b8ab826642278a038` |
+| A | 14 | `ry1993_2001_er_transition:questionnaire_slot_closure` | `c3c6e342db0c7c179ae53e3aa5f1e3b38fcda0a8bd3dab6839d4d3cf7323eb98` |
+| A | 18 | `ry2002_2014_modern_bc_de:questionnaire_slot_closure` | `5a779f1d6f1e67bfa3d470d3884f2acba15aa98c5fb6397107a19c370f444325` |
+| A | 26 | `ry2015_2022_exclusion_lineage:questionnaire_slot_closure` | `dbb2de2ee9f4b82db6ce26e35a26e5489f9efab8e5661b038af2217e457349d2` |
+| C | 9 | `ry1975_1977_spouse_concept_seam:V-B6:secondary_job_attachment_and_absence` | `fc5e885dce17e4fcc140e6e0823f7fd8e1b6e7557f52b12112ae617af5fc5b96` |
+| C | 12 | `ry1978_1992_pre_er_totals:early_split_and_inclusion` | `5f452d93c2ae7eba01629dfa82bf95be525f59e9ca38a0941d19258372f7c2e3` |
+| C | 15 | `ry1993_2001_er_transition:role_farm_labor_allocation` | `99972044f0b8c01532f885d29cc4a35985c4bb7df426e37531c7274338e7b8c4` |
+| C | 16 | `ry1993_2001_er_transition:edited_total_reconciliation` | `47ecec93c52ada192aa26d428aa2c9de8e2c7ccef88eedaa05a469e1a67fbaf5` |
+| C | 19 | `ry2002_2014_modern_bc_de:job_chronology_exposure_attachment` | `dce26365515c2750c9b820fd1eacb07cd498f97dbbb44bad5440978409889f56` |
+| C | 20 | `ry2002_2014_modern_bc_de:job_amount_role_total_reconciliation` | `0386c86b7e7c58922747b7af3c548c6fcd71236438464be081b65c24aaed63f9` |
+| C | 21 | `ry2002_2014_modern_bc_de:role_farm_labor_allocation` | `93af3e95ee699e6500953728b3aa95e65b6013fdcac329146da42996a3ee012d` |
+| C | 22 | `ry2002_2014_modern_bc_de:edited_total_reconciliation` | `1aad226827471216abf23db660de84369c0e86dfc21715f052564155bfbc11ec` |
+| C | 27 | `ry2015_2022_exclusion_lineage:job_chronology_exposure_attachment` | `af986b2c8b49b7ba46a3ee40ebb8c218a7a3a3ac964847428d22aaf66cc0b988` |
+| C | 28 | `ry2015_2022_exclusion_lineage:job_amount_role_total_reconciliation` | `2c0ac9ed607cbfc5e8725cba425de22d979aef8c5319c2ca119339c920e8f1ff` |
+| C | 29 | `ry2015_2022_exclusion_lineage:role_farm_labor_allocation` | `552e7b8ffdb7b700260113c4103d53a47855fe371c83115f68c6ea669a1fe227` |
+| C | 30 | `ry2015_2022_exclusion_lineage:edited_total_reconciliation` | `f9682b0811199d632be38061cf733ac72d2e94ba7a27c1a0db6f34523cc7cd08` |
+
+Within each class, the canonical residual-ID array follows the displayed
+source-index order. Their SHA-256 values are respectively:
+
+- Class B, six IDs:
+  `96c4cd39be4cb0cc3a32017972f0f95db34db9d478a7a539e319a65ecf1301af`;
+- Class A, seven IDs:
+  `458c3e184e247b35d524b6800a6333eb1821b905f95322cb09aa5b90c9640b5b`;
+  and
+- Class C, twelve IDs:
+  `7e795fb94c60ed43add537cb283cc474945d742adf9ed41abc6cc9851a6a50e2`.
+
+Concatenating B then A then C produces the exact 25-ID surviving domain with
+canonical SHA-256
+`639af85904b56d59d9a3bf2d943c9a7ada0e1fd50c9c714ac6fb0f5f33da2701`.
+The exact complement in the source 32-row array is
+`[3,6,7,8,23,24,31]`; that canonical integer array has SHA-256
+`b79bd448bb397ed0ac6c91c812aabc809e433882c11e5506cc5bb529c73a8951`.
+Those seven rows remain resolved or otherwise disposed under §§17–18 and
+are not silently reopened. A class row may leave this surviving domain only
+through a source-authenticated successor disposition that exact-references
+its row and closes the applicable law below; omission or relabeling is not
+resolution.
+
+#### 19.3.2 Class B — lawful fixed-width grammar derivation
+
+The §19.3.3 source-document manifest carries one
+`field_source_derivation` object shared by the slot and inventory artifacts.
+It has exactly `implementation_identity`, `document_derivations`,
+`document_derivation_count`, `document_derivation_domain_sha256`,
+`numeric_grammar_derivation_rows`, `numeric_grammar_derivation_row_count`,
+`numeric_grammar_derivation_keyset_sha256`,
+`numeric_grammar_derivation_domain_sha256`, and `status`.
+`implementation_identity` has exactly `path`, `source_commit`,
+`tree_mode`, `blob_oid`, `byte_size`, `raw_sha256`, `interface_version`, and
+`entry_points`. Path is canonical repository-relative; commit and blob are
+40-lowercase-hex Git identities; mode is string `100644`; size is positive;
+and SHA-256 covers the complete implementation blob at that commit. The
+interface literal is
+`dictionary_codebook_fixed_width_source_derivation_v3`, and entry points are
+exactly, in order, `extract_dictionary_layout_rows`,
+`frame_fixed_width_records`, `extract_codebook_rows`, and
+`derive_source_numeric_grammar`. This is a
+separately reviewed source-only extractor: its commit is an ancestor of the
+closure artifact's first-add commit, its imports are structurally unable to
+reach the PSID reader, crosswalk, candidate registries, or configuration,
+and its bytes remain unchanged through the slot/inventory authority cutoff.
+Amendment 5 pins the interface and identity schema, not a future
+implementation value.
+
+The dictionary extraction entry point receives only the complete manifest
+document bytes, its document role/waves/path, this closed interface literal,
+and—for PDF—the pinned page-text result. The raw-record entry point then
+receives each complete raw document and manifest row plus the previously
+reconstructed complete same-wave canonical dictionary rows. It constructs
+the complete record framing and the all-field source census below before a
+codebook or inventory field can be selected. The codebook extraction entry
+point receives its complete document values plus the complete wave-
+intersecting codebook-source, dictionary, and raw-census contexts, without a
+field filter. It must retain its locator-bound
+format declaration and apply the combined-declaration, census-authenticated
+literal-rendering function below while constructing canonical codebook rows.
+The numeric-grammar entry point receives the complete independently ordered
+canonical dictionary, codebook, and raw-data derivation inputs and replays
+the same combined projection, census, renderings, and grammars. No entry
+point receives a candidate decoder, region, row, entry, framing, token,
+inventory, configured census, or grammar value; complete source-derived
+context is not a candidate row. For a text document the applicable extraction entry point attempts
+strict `UTF-8` then strict `windows-1252` in that order and selects the first
+decoder/parser-family pair that consumes the complete required source domain;
+a second pair with a different canonical result is a conflict. Parser family
+is selected by complete source syntax, never filename alone. The expected
+decoder, segmentation, canonical rows, framing, counts, and digests are
+constructed before their serialized comparands are read. The numeric-grammar
+relation is likewise constructed in full before any inventory field,
+`typed_parse_specs`, layout grammar, inventory/configured copy of a normalized
+codebook domain, inventory token census, or configured derivation row is
+read; its own codebook relation and `R` are projected directly from the
+already source-derived canonical codebook rows, while its physical-profile
+evidence is the complete raw-byte field census constructed by the preceding
+entry point. It independently replays every codebook-literal rendering from
+the retained source lexeme, common format projection, and raw census and
+aborts on any unequal `raw_token_hex` before using literal precedence or
+constructing a DFA.
+
+For one codebook document `c`, `codebook_source_context(c)` is the exact
+`U`-ordered filter of the complete codebook-source input array to documents
+whose manifest wave array has a nonempty intersection with
+`c.interview_waves`. Each retained object has exactly `source_document_id`,
+`interview_waves`, `canonical_source_path`, `complete_document_bytes`, and
+`pinned_page_text_or_null`; those values are complete manifest-bound source
+inputs, not previously rendered canonical entries. `dictionary_context(c)` is the exact
+`U`-ordered filter of the complete dictionary-input array to documents whose
+manifest wave array has a nonempty intersection with `c.interview_waves`; each
+retained four-key input and all of its canonical rows remain complete and in
+source order. `raw_census_context(c)` is the corresponding `U`-ordered
+filter of all complete raw-data inputs to the same intersecting waves; every
+retained record-framing and field-census row remains complete and in source
+order. The codebook entry point's call tuple is exactly
+`[interface_version,c.source_document_id,c.interview_waves,
+c.canonical_source_path,complete_document_bytes,pinned_page_text_or_null,
+codebook_source_context(c),dictionary_context(c),raw_census_context(c)]`. The
+byte string is the complete authenticated file;
+the page-text value is the complete pinned derivation for PDF and null for
+text. No field ID, source entry, candidate literal, or consumer can filter the
+context. Before rendering a literal, the entry point parses every retained
+codebook source into one internal source-ordered relation containing every
+field format declaration and every semantic entry member except the derived
+`raw_token_hex`. That relation is a deterministic intermediate, not an admitted
+serialized input or output. The entry point selects the physical arm from its
+complete semantic domains and the raw census, then inserts each derived
+literal token and returns only `c`'s complete canonical rows. Every overlapping
+context parse must deep-equal the same document's intermediate relation, and
+the numeric compiler independently replays the whole construction. Its return
+is the complete canonical codebook-row array plus the count, ordered-ID keyset
+digest, and complete-row domain digest already stored in that document
+derivation. Re-running the tuple must deep-equal all four.
+
+The numeric entry point's call value is exactly the five-position JSON value
+array `[interface_version,W,dictionary_inputs,codebook_inputs,
+raw_data_inputs]`. `interface_version` is the v3 literal above; `W` is the
+complete independent wave array; and each of the first two input arrays
+follows `U` document order with one object having exactly
+`source_document_id`, `interview_waves`, `parser_family`, and
+`canonical_rows`. Those four values exact-copy the manifest/document
+derivation, and the row array is complete. Dictionary inputs exact-cover all
+86 dictionary documents and codebook inputs all 47 codebook documents.
+`raw_data_inputs` exact-covers all 43 raw documents in `U` order; each object
+has exactly `source_document_id`, `interview_waves`, `raw_source_sha256`,
+`record_framing`, `record_count`, `record_keyset_sha256`,
+`record_domain_sha256`, `field_census_rows`, `field_census_row_count`,
+`field_census_keyset_sha256`, and `field_census_domain_sha256`. It exact-copies
+the source manifest and complete passing raw derivation below.
+The return value is exactly the four-position JSON value array
+`[numeric_grammar_derivation_rows,numeric_grammar_derivation_row_count,
+numeric_grammar_derivation_keyset_sha256,
+numeric_grammar_derivation_domain_sha256]` with the equations below. No
+additional argument, callback, environment value, or alternate return shape
+is admitted.
+
+`document_derivations` exact-covers, once each and in independently derived
+`U` order, all 176 nonquestionnaire documents: 86 `dictionary_layout`, 47
+`codebook`, and 43 `raw_fixed_width_data`. The candidate source manifest,
+inventory, selected raw fields, and derivation rows cannot select this
+denominator. Count equals length and the domain digest hashes the complete
+ordered rows. A dictionary/codebook derivation row has
+exactly `source_document_id`, `derivation_kind`, `decoder`,
+`row_segmentation`, `canonical_rows`, `canonical_row_count`,
+`canonical_row_keyset_sha256`, and `canonical_row_domain_sha256`.
+Derivation kind exact-matches `dictionary_layout_rows | codebook_rows`.
+`decoder` has exactly `decoder_kind`, `encoding`, `error_action`,
+`bom_action`, and `newline_action`. Decoder kind is `strict_source_text |
+pinned_pdf_page_text_derivation`. The first has encoding `UTF-8 |
+windows-1252`, error action `abort`, BOM action `forbidden |
+remove_one_source_declared_bom`, and newline action
+`preserve_source_cr_lf_crlf_sequences`. The second exact-uses §19.3.3,
+has encoding `UTF-8`, error action `abort`, BOM action `forbidden`, and
+newline action `preserve_pinned_page_strings`. No other decoder behavior is
+representable.
+
+`row_segmentation` has exactly `parser_family`, `source_region_locators`,
+`row_terminator`, `row_order`, and `unparsed_field_statement_action`.
+Parser family is exactly `psid_spss_setup_statements_v1 |
+psid_stata_setup_statements_v1 | psid_family_codebook_pages_v1` and selects
+the corresponding registered entry point. Region locators are nonempty,
+unique, source order, and exact byte ranges for a text source or exact
+page/occurrence ranges under the pinned PDF derivation; each binds its raw
+or UTF-8 range digest. The terminator is the exact source-declared statement,
+line, or field-block terminator consumed by that parser and is a nonempty
+UTF-8 string. Row order is
+`first_complete_source_occurrence`; any nonwhitespace field statement or
+value-list member in a selected region that the parser does not consume
+causes `abort`. The selected regions must include every layout/label/format
+field statement or every codebook field/value block in the document; a
+search-hit subset is invalid.
+
+Each source-region locator has exactly `source_region_locator_id`,
+`locator_kind`, `byte_start`, `byte_end`, `page_number`, `utf8_start`,
+`utf8_end`, and `range_sha256`. A `raw_byte_range` has nonnegative nonempty
+half-open byte coordinates and null page/UTF-8 coordinates; a
+`pdf_page_text_range` has a positive page number, nonnegative nonempty
+half-open UTF-8 byte coordinates within that pinned page string, and null raw
+coordinates. The digest hashes the exact selected bytes. The ID is
+`psid-source-region:` followed by SHA-256 of canonical bytes of
+`[source_document_id,locator_kind,byte_start,byte_end,page_number,
+utf8_start,utf8_end,range_sha256]`. Locators follow document physical order,
+their coordinates are unique, and every canonical row's locator-ID array is
+a nonempty source-order foreign-key subsequence.
+
+A canonical dictionary row has exactly `dictionary_field_row_id`,
+`source_document_id`, `source_row_position`, `raw_field_id`,
+`source_coordinate_basis`, `source_start`, `source_end`, `start`, `end`,
+`raw_width`, `declared_parse_kind`, `declared_signed`,
+`declared_decimal_places`, `declared_implied_scale`,
+`declared_typed_value_type`, `declared_typed_value_unit`, `source_label`,
+`source_description`, `source_format_text`, `source_missing_literals`, and
+`source_locator_ids`. Source position is zero-based. Coordinate basis is
+`one_based_inclusive | zero_based_half_open`; the displayed `start,end` is
+its unique zero-based half-open conversion, and width is `end - start`.
+The declared sign, decimal, scale, type, and unit members exact-normalize an
+express source value and otherwise are null. The compiler later requires their
+unique complete coalescence only for a derived fixed-width branch; a value-code
+range obtains type/unit from the complete codebook domain and does not fill a
+silent dictionary member by default.
+`declared_parse_kind` is `fixed_width_numeric | value_code_map` only when the
+dictionary source expressly states that semantic distinction and otherwise is
+null; a numeric format statement alone never chooses coded versus uncoded.
+The complete-group compiler below derives the final branch. Each source-missing row has
+exactly `raw_token_hex`, `source_meaning`, and `missing_reason_code`.
+
+A canonical codebook row has exactly `codebook_field_row_id`,
+`source_document_id`, `source_row_position`, `raw_field_id`, `source_label`,
+`source_description`, `source_format_text`, `normalized_entries`,
+`normalized_entry_count`, `normalized_entry_domain_sha256`, and
+`source_locator_ids`. `source_format_text` is the exact extracted JSON string
+or null when that codebook field block is silent. A nonnull value must be
+bound by one dedicated minimal member of `source_locator_ids` whose resolved
+source bytes strict-decode to exactly that declaration lexeme and no leading,
+trailing, or surrounding label bytes; it is never copied from a dictionary
+row. Its entry array
+uses the exact normalized-entry tagged union below, follows complete source
+value-list order, and exact-covers every literal or closed range in the
+field block. Both row IDs are literal
+`<source-document-id>#row:<zero-based-source-row-position>`; canonical rows
+follow source position, IDs are unique, counts agree, keyset hashes cover
+the complete ID arrays, and domain hashes cover the complete §10.1-
+canonical rows. Every source locator resolves within that document's
+selected regions. Duplicate, skipped, reordered, unlocatable, or
+nondeterministically decoded rows/entries abort.
+
+The fourth source-only entry point constructs the complete
+`numeric_grammar_derivation_rows` relation from those canonical dictionary and
+codebook rows and complete raw-data field censuses, not from a field selected
+by a consumer. Let `W` be the independently
+fixed interview-wave order in `U`. For each wave in `W`, scan every
+`dictionary_layout` document whose manifest wave array contains that wave in
+`U` order and its canonical rows in source position. Stable-first unique
+`raw_field_id` values in that stream fix the group order. One group contains
+every same-wave canonical dictionary row and every same-wave canonical
+codebook row having that exact field ID. Each role-specific row array retains
+`U` then source-row order; their common source projection scans `U` once and
+emits each matching dictionary or codebook row at its document and source-row
+position. The
+serialized relation has exactly one row for every such group, including
+value-code groups and groups whose numeric authority fails; no inventory,
+join, codebook entry, observed token, or candidate grammar can select its
+denominator.
+
+Each numeric-grammar derivation row has exactly
+`numeric_grammar_derivation_id`, `interview_wave`, `raw_field_id`,
+`dictionary_field_row_ids`, `dictionary_field_rows_sha256`,
+`codebook_field_row_ids`, `codebook_field_rows_sha256`,
+`source_format_projection`, `source_meaning_projection`,
+`dictionary_field_meaning`, `derived_parse_kind`, `normalized_format_profile`,
+`derivation_status`, `padding_rule`, and `registered_numeric_grammar`.
+The row-ID array is the group's complete dictionary-row projection in the
+order above and is nonempty; its digest is SHA-256 of the resolved complete
+ordered canonical-row array's standalone §10.1 terminal-LF JSON bytes, not
+merely their IDs. The codebook ID array is the group's complete, possibly
+empty projection; its digest is the same canonical SHA-256 construction over
+the resolved codebook rows, including the canonical empty array.
+`source_format_projection` is exactly that common source-ordered tagged
+projection, with one object per dictionary or codebook row having exactly
+`source_kind`, `source_field_row_id`, `parser_family`, and
+`source_format_text`. Kind is `dictionary_layout | codebook`; the generic ID
+resolves exactly one canonical row of that kind; parser family exact-copies
+its containing document derivation; and format exact-copies that row's
+locator-bound string or null. Null, empty, duplicate, and differently spelled
+values are retained rather than normalized away. Null is source silence and
+does not conflict. Across every group, all nonnull declarations must be byte-
+identical. A numeric-required group additionally requires at least one nonnull
+declaration. Any unequal spelling is `conflicting_source_numeric_format`, even when two
+spellings would parse to the same width/decimal tuple. Literal rendering,
+range compilation, profile selection, and replay consume only this common
+projection; neither the dictionary nor codebook role has precedence.
+
+`source_meaning_projection` has exactly one object per member of
+`dictionary_field_row_ids`, in that dictionary projection order, with exactly
+`dictionary_field_row_id`, `source_label`, and `source_description`. The ID
+exact-copies the same-position dictionary ID; the last two members exact-copy
+that canonical dictionary row as a JSON string or null, preserving every
+Unicode scalar, space, line break, empty string, duplicate, and source-row order. Codebook
+labels/descriptions are excluded: they retain their literal/range meanings
+but cannot replace the dictionary field meaning. For a compiled row, at least
+one projected label or description is a nonempty string and
+`dictionary_field_meaning` is exactly the strict UTF-8 decoding of the §10.1
+terminal-LF canonical JSON bytes of the complete
+`source_meaning_projection` after removing exactly that one terminal LF.
+There is no joining punctuation, whitespace folding, label preference,
+stable-first deduplication, or choice among rows. For a noncompiled row the
+field meaning is null.
+
+The only numeric source-format spellings supported by this v3 interface are
+the exact uppercase ASCII strings `NUM(w.d)` and `Fw.d`, where `w` is a
+canonical positive base-10 integer without a leading zero, `d` is canonical
+nonnegative base-10 without a leading zero except the single string `0`, and
+`0 <= d < w`. Parentheses occur only in the `NUM` spelling; neither spelling
+admits a sign, space, tab, line break, decimal byte in the payload, padding
+marker, exponent, grouping character, lowercase letter, or trailing byte.
+At the byte level the forms are exactly
+`4e 55 4d 28 || ASCII(canonical-decimal(w)) || 2e ||
+ASCII(canonical-decimal(d)) || 29` and
+`46 || ASCII(canonical-decimal(w)) || 2e ||
+ASCII(canonical-decimal(d))`, respectively, where `||` is byte concatenation;
+no decoder or regular-expression option may widen them.
+Each spelling maps to the exact tuple `(w,d)` and the ordered candidate-
+profile pair
+`unsigned_ascii_digits_implied_decimal_source_authenticated_zero_left_padding_v1`
+then
+`unsigned_ascii_digits_implied_decimal_source_authenticated_left_ascii_space_padding_v1`.
+The format establishes width and decimal semantics but does not select
+physical padding. This closed syntax is the complete source-format-to-
+candidate-profile mapping—parser-library defaults and other format families
+supply no implicit branch.
+
+For any group whose agreed nonnull format is numeric, the raw entry point
+slices the field from every complete framed record and the compiler tests both candidate profiles against
+that complete frequency-weighted census. Under the zero arm, a value with
+scaled nonnegative integer `M` has exactly
+`0x30^(w-len(canonical_decimal(M))) || ASCII(canonical_decimal(M))`; under
+the space arm it has exactly
+`0x20^(w-len(canonical_decimal(M))) || ASCII(canonical_decimal(M))`. A
+full-width canonical value has the same bytes under both. For an arm test, an
+observed token that exact-matches one unique source missing literal is accepted
+by that source branch before format conformance; every other token must have
+its one canonical spelling under the arm and its decoded scalar must belong to
+exactly one already source-authenticated nonmissing semantic branch. Thus the
+candidate accepted/rejected counts still cover all records, while source
+missing bytes neither select nor defeat an arm. At least one observed shorter canonical value must
+distinguish the arms, and exactly one arm must pass. Zero passing arms, two
+passing arms, mixed padding, an all-full-width nondiagnostic census, an
+all-space token, a noncanonical leading byte, or semantic nonmembership is
+`incomplete_source_numeric_authority` or
+`conflicting_source_numeric_format` under the failure mapping below. The
+census selects one frozen physical arm for the whole field; it cannot invent
+a meaning, value, missing disposition, per-token exception, or candidate map.
+
+For any row whose numeric arm is authenticated, including a numeric-format
+literal-only value map, `normalized_format_profile` has exactly
+`profile_kind`, `payload_width`, `decimal_places`, and
+`physical_authentication`.
+`profile_kind` is the singleton selected literal above; width and decimals
+are `w` and `d`. `physical_authentication` has exactly
+`raw_source_file_id`, `raw_source_sha256`, `record_count`,
+`observed_token_row_count`, `observed_token_rows_sha256`,
+`candidate_arm_results`, and `selected_arm`. The first five exact-copy the
+complete raw derivation and field census. The candidate array has exactly two
+rows, in the displayed zero/space order, each with exactly `profile_kind`,
+`accepted_observation_count`, `diagnostic_observation_count`,
+`rejected_observation_count`, and `status`; counts use record frequencies,
+accepted plus rejected equals `record_count`, and diagnostic is the complete
+frequency of source-valid observations whose canonical scaled decimal has
+fewer than `w` digits and therefore distinguishes the arms. Status is `pass`
+exactly when rejected is zero and diagnostic is positive, and `fail`
+otherwise. Both candidate rows must have the same positive diagnostic count,
+and exactly one row must pass. `selected_arm` exact-equals that sole passing
+profile. The compiler reconstructs and deep-
+compares the complete census and result rows; a digest match alone is
+insufficient.
+
+The exact uppercase ASCII spelling `CHR(w)`, with `w` in the same canonical
+positive-integer syntax, is recognized only as a nonnumeric exact-character
+literal mode. It maps to no numeric profile, scalar operation, range grammar,
+or DFA. Its sole use is the direct-width codebook-literal rule below and the
+explicit outside-numeric/physical-unestablished statuses; any shorter
+character lexeme, numeric range member, padding, or host character-field
+convention remains unrendered. No other source-format spelling is supported.
+
+Codebook literal rendering is the following source-only function, used first
+by `extract_codebook_rows` and replayed by
+`derive_source_numeric_grammar`. The codebook parser isolates the complete
+source value cell before interpreting it. `source_value_lexeme` is the strict
+decoded cell after removing the maximal leading and trailing sequence of ASCII
+space `0x20` and tab `0x09`; no other byte is removed, and an empty result,
+embedded CR/LF, non-ASCII whitespace, decoding substitution, or second cell
+segmentation aborts. The retained lexeme therefore preserves every internal
+byte, including the spaces in a range such as `1 - 51`.
+
+For each `literal` entry, take the complete same-wave/raw-field dictionary,
+codebook, and raw-census context across every wave named by the codebook
+document. Every dictionary row width must equal one positive `w`; the common
+format projection must satisfy the exact agreement law; and its one common
+nonnull spelling must resolve either to numeric `(w,d)` under the closed syntax or to
+the one `CHR(w)` mode. A mixed mode, unequal literal, tuple or width,
+unsupported spelling, missing numeric format, or cross-wave difference
+aborts codebook derivation. Let `L` be the literal's exact
+`source_value_lexeme`. In numeric mode its candidate payload set is
+constructed by exactly two rules: (1) when `L` is exactly `w` ASCII digits,
+include those bytes unchanged; and (2) when `L` is the canonical unsigned
+decimal spelling `(0|[1-9][0-9]*)(\.[0-9]+)?`, parse its exact rational value
+`x`, compute `M = x * 10^d`, and, only when `M` is an integer in `[0,10^w)`,
+include the unique width-`w` spelling under the census-selected zero or ASCII-
+space arm. In `CHR(w)` mode the candidate set contains the exact strict-ASCII
+encoding of `L` if and only if its byte length is `w`; there is no second
+rule. The candidate set after byte deduplication must contain exactly one
+payload. `raw_token_hex` is its lowercase hex. Zero candidates are
+unsupported; two unequal candidates are conflicting. No source meaning,
+typed value, isolated observed token, host formatter, inferred trim, sign
+convention, or shortest/longest choice can supply another rendering. Thus
+source lexeme `0` under `NUM(2.0)` renders as `00` only under an authenticated
+zero arm and as ` 0` only under an authenticated space arm; lexeme `99`
+renders as `99` under either.
+
+The status decision tree is evaluated in this order. Let `C` be the complete
+codebook-document, row, and entry-order concatenation of `normalized_entries`
+from the group's complete codebook rows, retaining every literal, range,
+duplicate, and overlap for the later conflict tests. Let `F` be the complete
+common-source-order projection of nonnull `source_format_text` values from
+`source_format_projection`; let `N`, `H`, and `X` be its order-preserving
+subprojections of closed numeric spellings, exact
+`CHR(w)` spellings, and every other spelling. The compiler,
+not either document extractor, derives `derived_parse_kind`: it is
+`value_code_map` exactly when `C` is nonempty; when `C` is empty it is
+`fixed_width_numeric` exactly when `N` is nonempty and both `H` and `X` are
+empty; otherwise it is null. A `NUM(w.d)` or `Fw.d`
+format therefore establishes the numeric tuple whose physical arm the
+complete census must authenticate, but never, by itself, chooses between a
+code-valued and uncoded field. In particular, a separately
+authenticated nonempty codebook makes a `NUM(2.0)` field value-code without
+requiring a dictionary-authored parser label.
+
+Project every nonnull `declared_parse_kind` in group order without
+deduplication. More than one distinct value, one value unequal to the nonnull
+derived branch, or any nonnull declaration when the derived branch is null is
+`conflicting_source_numeric_format`. A malformed normalized entry, duplicate
+decoded literal, semantic overlap within `C`, literal-rendering replay mismatch,
+or unequal literal candidates is also conflicting before a passing branch is
+assigned. Nonempty `X`, or a literal with no candidate, is unsupported;
+nonempty `N` together with nonempty `H` is conflicting. Before any passing
+status, every dictionary row must also have one common coordinate pair and one
+common positive raw width `w`; every `H` member must be the same `CHR(w)`, and
+every `N` member's tuple width must equal `w`. Any disagreement is conflicting.
+These consistency checks
+cannot select the branch;
+if one fails, none of the passing statuses below applies. Let `R` be the
+complete order-preserving subprojection of `C` whose
+entry kind is `numeric_range`. For derived `value_code_map`, if `R` is empty
+and `N` is nonempty, the row has status
+`value_code_domain_no_numeric_grammar`, the complete selected four-key profile
+and physical authentication above, null meaning and grammar, and the selected
+padding object: exact `operation: none` with empty prefix/suffix hex and payload
+width `w` for the zero arm, or
+`canonicalize_exact_left_ascii_space_padding_to_zero_digits` with those same
+three values for the space arm. Its complete census must uniquely authenticate
+that arm, every literal rendering must replay, and the retained profile and
+padding evidence survives even though no DFA is constructed. If `R` is empty
+and `N` is empty, the row has the same status, null profile, meaning, and
+grammar, and the exact `none` padding object with empty hex strings and payload
+width equal to raw width. If `R` is
+nonempty, `N` is empty, `X` is empty, and either `F` is empty or `H` is
+nonempty, the row has
+status `value_code_range_physical_rendering_unestablished`, the same null
+profile/meaning/grammar and exact `none` padding object; a later observed range
+member aborts. Otherwise a nonempty `R`, or the derived
+`fixed_width_numeric` branch,
+is numeric-required and must compile as follows.
+
+When `C` is empty, `N` is empty, `X` is empty, and `H` is nonempty with one
+common width equal to every dictionary row, the row instead has status
+`nonnumeric_source_field_outside_numeric_grammar`, null derived parse kind,
+profile, meaning, and grammar, and the exact `none` padding object at raw width.
+It records the source-only all-field denominator but cannot be consumed by a
+layout, typed parser, positive-field join, or inventory row. This inert status
+does not create a character parser or relax the unsupported-format abort.
+
+A numeric-required row needs at least one nonnull format; every nonnull format
+must be byte-identical, parse under the closed syntax, and yield the same
+tuple. Its `w`
+must equal every dictionary row's `raw_width` and the group's unique
+coordinates, and at least one projected dictionary label or description must
+be nonempty. On `fixed_width_numeric`, the declarations must additionally
+coalesce to `declared_signed: false`, decimal places `d`, one positive reduced
+rational implied scale, one type `rational | json_integer`, and one nonempty
+unit. Its `value_derivation` binding is `typed_parse_specs` and the other five
+members exact-copy those coalesced declarations. On a value-code range branch,
+every member of `R` must have one common `rational | json_integer` type and one
+common nonempty unit; its binding is `dictionary_range_rendering`, signed is
+false, decimal places is `d`, implied scale is exactly the retained rational
+`{"numerator":1,"denominator":1}`, and type/unit are that common pair.
+For each range, its finite semantic member array is every value
+`inclusive_min + k * step` in ascending integer `k` order that is no greater
+than `inclusive_max`. For every such value `v`, compute
+`M = v * 10^d / implied_scale`; `M` must be an integer in
+`[0,10^w)`, and its unique width-`w` physical spelling under the selected
+zero or ASCII-space arm must canonicalize to the `w`-digit DFA payload and
+must not equal any normalized literal token, which has classification
+precedence. This exact-cover image test must pass for every member of every
+range; the compiler may accept extra canonical digit payloads, but runtime
+semantic membership rejects them. Thus a range cannot be marked source-
+renderable when only its observed subset fits the profile. The complete
+four-key `normalized_format_profile` is populated by the selected literal,
+`w`, `d`, and its full census authentication; `derived_parse_kind` retains
+the source-only branch fixed above;
+`derivation_status` is `compiled_source_numeric_grammar`;
+`padding_rule` is exactly `operation: none` with empty prefix/suffix hex and
+payload width `w` for the zero arm, or operation
+`canonicalize_exact_left_ascii_space_padding_to_zero_digits` with those same
+three values for the space arm; and the grammar is the exact construction
+below.
+
+After the parse-kind decision, the physical-arm and numeric-required failure
+mapping is exact. Every group with nonempty `N`, including a literal-only value
+map, must uniquely select and retain one physical arm. When `C` is empty, an
+empty `F` is incomplete; any `X` is unsupported, and a
+mixed or unequal `N`/`H` projection is conflicting. For derived fixed width, unresolved
+signed/scale/type/unit is incomplete. On either compiled branch, no nonempty
+projected label or
+description is incomplete; on the value-code range branch, an untyped or
+nonunitized `R` is incomplete. On every numeric-format branch, a census with
+no diagnostic shorter value or two passing physical arms is incomplete. Each produces
+`incomplete_source_numeric_authority`. On a numeric-required row, a nonnull
+format outside the two exact numeric syntaxes, a true fixed-width signed
+declaration, or a nonintegral possible result for a
+`json_integer` type, any codebook literal with no rendering candidate,
+or any range member failing the complete physical-image
+test produces `unsupported_source_numeric_format`. Conflicting
+format literals or tuples, coordinate/width/declaration disagreement,
+unequal fixed-width declarations of sign, decimal places, scale, type, or
+unit, unequal range types or units, unequal codebook-literal candidates, a
+literal replay mismatch, a duplicate decoded missing token, an empty
+accepted language, mixed zero/space padding, or zero census-compatible arms produces
+`conflicting_source_numeric_format`. Each failure row has null profile,
+meaning, padding, and grammar; `derived_parse_kind` retains the nonnull branch
+when one was derived and otherwise is null. Satisfying more than one failure
+predicate also
+uses `conflicting_source_numeric_format`. Any row with one of these three
+statuses makes top-level `status: pass` impossible and aborts slot/inventory
+construction; it cannot be reclassified as value-code or repaired from a
+codebook, configured census, inventory parse spec, or runtime parser.
+
+For a compiled group, let `E_raw` be every exact-width decoded
+`source_missing_literals` token in its complete dictionary rows, without a
+byte-class filter. A duplicate decoded raw missing token anywhere in the group
+is a conflict even when its meaning/reason agrees; all missing tokens remain in
+the separate dictionary-missing relation. Before applying padding or entering
+the DFA, runtime exact-matches the complete-width raw token against `E_raw`; a
+unique match yields its missing disposition and numeric parsing does not run.
+For DFA construction, apply the selected padding operation to each `E_raw`
+member for which that operation accepts, and let `E` be the resulting canonical
+payload set. A duplicate canonical image, or a raw or canonical-image collision
+with a normalized codebook literal, is conflicting; a missing token rejected by
+the padding operation remains an exact raw missing token but supplies no DFA
+exclusion. After the selected padding operation, the grammar's accepted
+canonical payload language is exactly `{0x30,...,0x39}^w \ E`, which must be
+nonempty. If accepted bytes are the
+digits of unsigned integer `M`, the exact scalar is
+`M / 10^d * value_derivation.implied_scale`; no binary floating point
+participates. On the space arm the preparse step replaces exactly the maximal
+leading ASCII-space run required by the canonical physical profile with the
+same number of `0x30` bytes; it removes no byte and rejects internal or
+trailing space, zero-filled short values, and any noncanonical leading byte.
+Thus format parsing fixes bytes and the decimal operation while
+the authenticated fixed-width declarations or complete codebook range domain
+fix scale, output type, and unit.
+
+The DFA serializer is also closed. Begin with one prefix state for every byte
+prefix, including empty, that extends to a member of the accepted language;
+add a digit edge exactly when the extended prefix still has an accepted
+completion, set that edge's `position` to the source prefix length, emit the
+corresponding `append_digit_0` through `append_digit_9`, and mark exactly the
+length-`w` prefixes accepting. The value accumulator starts at integer
+`A_0 = 0`; action `append_digit_n` at depth `k` sets
+`A_(k+1) = 10 * A_k + n`; and an accepting path uses `M = A_w` in the scalar
+equation above. No reject sink is serialized and an absent edge rejects
+immediately without emitting an action for that byte or any later byte.
+Quotient only states at the same prefix depth `k` having identical accepting
+status and, for every byte suffix of exactly length `w-k`, identical final
+accept/reject result and identical emitted action sequence up to the first
+absent edge or acceptance. Repeat to the unique fixed point; every retained
+state is reachable from start and can reach acceptance.
+Assign IDs `q:0`, `q:1`, ... by breadth-first traversal from the start,
+visiting outgoing bytes in unsigned order. `state_ids` follows assignment,
+`accepting_state_ids` filters that array, and transition rows follow position,
+numeric state suffix, then unsigned input byte. This action-sensitive quotient
+and ordering, including omission of the sink, are the only lawful
+serialization.
+
+The row's ten-key `registered_numeric_grammar` is populated exactly by that
+automaton, its count, canonical full-row digest, value derivation, and fixed
+invalid-payload action below. The derivation ID is literal
+`psid-numeric-grammar-derivation:` followed by SHA-256 of §10.1 terminal-LF
+canonical bytes of exactly this 14-position JSON value array—not an ID-deleted
+object, keyed map, or concatenated string:
+
+```text
+[
+  interview_wave,
+  raw_field_id,
+  dictionary_field_row_ids,
+  dictionary_field_rows_sha256,
+  codebook_field_row_ids,
+  codebook_field_rows_sha256,
+  source_format_projection,
+  source_meaning_projection,
+  dictionary_field_meaning,
+  derived_parse_kind,
+  normalized_format_profile,
+  derivation_status,
+  padding_rule,
+  registered_numeric_grammar
+]
+```
+
+The first position is a JSON integer excluding booleans; positions 2, 4, 6,
+and 12 are strings; positions 3 and 5 are string arrays; positions 7 and 8
+are arrays with the exact nested object shapes above; positions 9 and 10 are
+respectively string-or-null and `fixed_width_numeric | value_code_map | null`;
+and positions 11, 13, and 14 obey their displayed object-or-null branches.
+Rows follow the fixed group order; IDs and complete preimages are unique.
+`numeric_grammar_derivation_row_count` equals length, its keyset digest hashes
+the ordered derivation-ID array, and its domain digest hashes the complete
+ordered row array. Each is SHA-256 of the standalone §10.1 terminal-LF
+canonical JSON bytes of its named complete array. Re-running the entry point must deep-equal every row and
+all three aggregate values; matching only a grammar ID or transition digest
+is insufficient. Two unequal 14-member preimages producing one derivation
+ID, or two unequal complete rows producing one complete-row digest, abort as
+a hash collision rather than deduplicating.
+
+As a mandatory constructor conformance vector, a fixed-width-numeric group
+with one exact `NUM(2.0)` format, width two, false signed declaration,
+decimal places zero, scale one, integer output, a nonempty unit/meaning, and
+no missing literal, whose complete diagnostic census uniquely authenticates
+the zero arm, accepts exactly the 100 two-byte strings `00` through `99`
+among all 65,536 two-byte strings. It serializes states `q:0`, `q:1`,
+`q:2`, start `q:0`, accepting array `["q:2"]`, and exactly 20 digit
+transitions: ten from `q:0` to `q:1` at position zero and ten from `q:1` to
+`q:2` at position one, with their matching append-digit actions. The other
+65,436 strings reject. Exhaustive disagreement with any one of these facts
+rejects the implementation identity.
+
+The same zero-arm physical vector is mandatory when `NUM(2.0)` belongs to a
+value-code group with a numeric range: the automaton and 100 accepted
+payloads are identical, while `value_derivation` uses
+`dictionary_range_rendering`, false, zero, rational one, and the range
+domain's common type/unit. Classification
+still exact-matches a registered literal first; otherwise the DFA result must
+belong to exactly one normalized range. Thus for a source domain with literal
+lexeme `0`, range lexeme `1 - 51`, and literal lexeme `99`, the rendering
+function produces two-byte ASCII `00` and `99`, with `raw_token_hex` `3030`
+and `3939`; those two tokens take their literal rows,
+`01` through `51` take the one range row, and `52` through `98` abort after a
+valid physical parse but failed semantic membership. No observed-range token
+or codebook meaning can alter the automaton bytes.
+
+The complete canonical 1968 codebook-row array, complete actual V93 block,
+V93 framing, and V93 raw census are a second mandatory regression vector,
+not an illustrative, sanitized, or field-filtered sample. Before format or
+domain replay, reconstruct the exact page-23 `[2201,2780)` 579-byte block
+and SHA-256
+`2af3fd35952769484959285fe65b6407c03f5a39d68fccabe26af5d88eadfc10`
+under the §19.2.3 document/page identities. Exact-cover its three coding
+assertions by the displayed source-ordered occurrences: the GSA span is the
+one authorized `nonselecting_historical_provenance` row, and the PSID
+direction and `Actual state (PSID state code)` meaning are the two agreeing
+`selecting_system_reference` rows. Any missing sentence, selected table-row
+summary, changed span or disposition, unsupported historical row, or
+different selector aborts this regression before compilation. Both
+same-wave dictionary rows fix coordinates 245–246 in their one-based source
+basis and are format-silent. The locator-bound codebook row supplies exact
+`NUM(2.0)` plus the complete source domain literal 0, inclusive range 1–51,
+and literal 99. The common source-ordered format projection therefore
+retains both null dictionary declarations and the codebook declaration. The
+authenticated raw file frames exactly 4,802 records of width 771 with
+separator `0d0a` after
+every record including the terminal record; V93 is exact zero-based slice
+`[244,246)`. Its complete unsigned-byte-ordered census has 41 distinct rows,
+frequency sum 4,802, exactly 1,069 ASCII-space-padded one-digit observations,
+zero zero-padded one-digit observations, and 3,733 two-digit observations.
+Every observation resolves one range member.
+
+The space arm is the sole passing profile and the zero arm rejects exactly
+those 1,069 diagnostic observations: its accepted/rejected counts are
+3,733/1,069, while the space arm's are 4,802/0, and both diagnostic counts
+are 1,069. Literal 0 renders to hex `2030`, literal
+99 to `3939`, range members 1–9 to `2031` through `2039`, and 10–51 to their
+two-digit ASCII bytes. The space arm's physical language is exactly the 100
+canonical raw tokens ` 0` through ` 9` and `10` through `99`; the padding
+operation canonicalizes them to `00` through `99`, so the DFA remains states
+`q:0`, `q:1`, `q:2` with the same 20 digit transitions. Values 52–98 pass
+physical parsing but fail semantic membership. The v3 implementation must
+deep-equal the complete source-ordered 1968 codebook-row array, full V93
+block and assertion-occurrence dispositions, and its full V93 entry domain,
+common format projection, record
+framing, all 41 census rows with their frequencies/order, profile
+authentication, padding rule, literal and range renderings, grammar, counts,
+and digests. A partial codebook or census, changed frequency, changed format
+locator/tag/order, one `01`–`09` observation, or mixed padding rejects the
+implementation identity.
+
+A raw-data derivation row has exactly `source_document_id`,
+`derivation_kind`, `record_framing`, `record_count`,
+`record_keyset_sha256`, `record_domain_sha256`, `field_census_rows`,
+`field_census_row_count`, `field_census_keyset_sha256`, and
+`field_census_domain_sha256`; kind is
+`fixed_width_records`. `record_framing` has exactly `record_width`,
+`header_byte_count`, `header_sha256`, `trailer_byte_count`, `trailer_sha256`,
+`record_separator_hex`, `separator_placement`, and
+`framing_source_row_ids`. Width is the maximum `end` of the complete
+same-wave dictionary layout and is positive. Header/trailer counts are
+nonnegative and must be zero unless the cited authenticated dictionary rows
+expressly declare those bytes; their digests hash the exact removed byte
+ranges, including the SHA-256 of empty bytes when zero. Separator placement
+is `none | between_records | between_records_and_terminal`; the separator
+is empty exactly for `none` and otherwise nonempty.
+`framing_source_row_ids` is the nonempty, unique, source-order exact cover of
+the same-wave canonical dictionary layout rows whose complete coordinate
+domain establishes record width and whose source text, where present,
+establishes header, trailer, or separator treatment. A nonzero header/trailer
+or nonempty separator that is neither expressly declared there nor uniquely
+forced by complete byte consumption is unestablished and aborts.
+
+After removing only the declared header and trailer, framing consumes the
+file from byte zero of the remainder: exactly `record_width` bytes per
+record followed by the exact separator at every position required by the
+placement branch, with no split-on-newline, decoded-character width,
+ignored blank line, or unconsumed terminal byte. Exactly one cited/source-
+consistent framing must consume every raw byte. Record count is the unique
+result; its keyset digest hashes `[0,...,record_count-1]`, and its domain
+digest hashes the complete ordered array of
+`[record_index,SHA-256(complete_record_bytes)]`. This digest array is
+reconstructed, not serialized as a substitute for the raw file. An
+ambiguous framing, short/long record, undeclared header/trailer, or byte
+remainder aborts.
+
+`field_census_rows` has exactly one row for every stable-first unique
+`[interview_wave,raw_field_id]` group in the complete same-wave canonical
+dictionary projection, not one row per duplicate SPSS/Stata declaration and
+not an inventory-selected subset. Rows follow the wave/group order fixed above;
+their two-member keys are unique; and each row has exactly `interview_wave`,
+`raw_field_id`, `start`, `end`, `raw_width`, `observed_token_rows`,
+`observed_token_row_count`, and `observed_token_rows_sha256`. The field
+coordinates and width are the unique complete coalescence of every dictionary
+row in that group and satisfy `end - start == raw_width`; disagreement aborts.
+For every
+framed record in index order the entry point takes exactly
+`record[start:end]`; it neither decodes nor normalizes that slice. An observed
+token row has exactly `raw_token_hex` and `frequency`; rows are unique and
+ordered by unsigned decoded bytes, frequencies are positive JSON integers
+and sum to `record_count`, count equals length, and the digest hashes the
+complete ordered token rows. The outer field count equals array length, its
+keyset digest hashes the complete ordered array of
+`[interview_wave,raw_field_id]` pairs, and its domain digest hashes the complete
+field rows. Independently reslicing
+the authenticated records must deep-equal every token and frequency. Missing,
+duplicate, filtered, differently ordered, or candidate-supplied census rows
+abort before codebook extraction or profile selection.
+
+The derivation status is `pass` exactly when the implementation identity,
+complete document cover, decoder/locator/row schemas, row and record
+reproductions, the complete all-field census, the complete numeric-grammar
+derivation relation and both mandatory conformance vectors, all counts/
+digests, and every byte-consumption equation
+pass, and every grammar row status is `compiled_source_numeric_grammar |
+value_code_domain_no_numeric_grammar |
+value_code_range_physical_rendering_unestablished |
+nonnumeric_source_field_outside_numeric_grammar`. The range-physical status
+does not authorize a range parse; the same complete source census must contain zero members
+of its ranges. The outside-numeric status has no lawful consumer.
+Otherwise the slot and inventory artifacts abort rather than treating a
+candidate canonical row or token census as evidence.
+
+This source-only implementation identity and the retained official-
+inventory `integrity.extraction_implementation_commit` are distinct layers,
+not an equality: the former identifies the restricted canonical-row/grammar/framing
+extractor, while the latter continues to identify the complete inventory
+builder. The builder must consume the passing `field_source_derivation`
+object and cannot replace, reinterpret, or self-supply any of its source-
+derived values. Neither commit may stand in for the other's byte identity.
+
+Every field ending in `_hex` anywhere in §19.3.2 is an even-length lowercase
+ASCII string over `[0-9a-f]` and denotes exactly its decoded bytes; empty is
+allowed only where the applicable branch expressly permits it. Every
+`input_byte_hex` has length two. Equality and uniqueness use decoded bytes,
+so uppercase, odd-length, alternate, or duplicate encodings of the same
+bytes are invalid.
+
+For each `present` official-inventory row, `layout_coordinates` remains
+positional with `raw_field_ids` and `typed_parse_specs` and now has exactly
+one object per raw field with:
+
+```text
+raw_field_id
+start
+end
+raw_width
+dictionary_source_document_ids
+dictionary_field_row_ids
+dictionary_field_rows_sha256
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+codebook_source_document_ids
+codebook_field_row_ids
+codebook_field_rows_sha256
+normalized_codebook_entries
+normalized_codebook_entry_count
+codebook_value_domain_sha256
+raw_data_source_document_id
+raw_token_grammar
+```
+
+`start` and `end` are nonnegative JSON integers excluding booleans and use
+zero-based half-open fixed-width record coordinates; `start < end` and
+`end - start == raw_width == typed_parse_specs.raw_width`, and `end` is no
+greater than the resolved raw file's record width. The ordered,
+nonempty dictionary document IDs and row IDs resolve exact source-manifest
+`dictionary_layout` documents and literal
+`<source-document-id>#row:<zero-based-position>` canonical rows in
+`field_source_derivation`;
+the row-array digest covers those complete canonical rows and establishes
+field identity, coordinates, width, declared type, and any dictionary-carried
+format; the common tagged dictionary/codebook projection establishes the
+numeric format. The unique same-wave/raw-field numeric-grammar derivation row must
+have exactly that dictionary-row array/digest and the complete matching
+codebook-row array/digest below. For a
+layout field, `numeric_grammar_derivation_id` exact-copies its ID and
+`numeric_grammar_derivation_sha256` hashes its complete 15-key row under
+§10.1 with one terminal LF. For a fixed-width-numeric field, profile payload
+width and decimal places equal the positional `typed_parse_specs.raw_width`
+and `.decimal_places`, its complete `physical_authentication` deep-equals a
+fresh seven-key reconstruction under the equations above from the same raw
+document and unique field-census row, and
+the grammar's value-derivation members equal the six-member projection
+specified above. The same physical-authentication equality is mandatory for
+a compiled value-code range and for a no-range value-code map whose common
+format is numeric, even though the latter's grammar is null. The positional
+`typed_parse_specs.parse_kind` must exact-equal the derivation row's nonnull
+`derived_parse_kind`; a null or failure branch cannot be consumed. For every
+branch, the derivation row's
+padding and grammar respectively deep-equal
+`raw_token_grammar.padding_rule` and `.registered_numeric_grammar`. A value-
+code field with ranges takes the compiled range branch exactly when its
+complete source row does, otherwise it takes the physical-unestablished null-
+grammar branch and must have zero observed range members; one without ranges
+takes the value-code/no-grammar null branch. Codebook
+document and row-ID arrays obey the same resolution/order
+law against `codebook` manifest rows and, under §19.3.3, exact-cover every
+same-wave matching canonical codebook row even for a numeric parser. They
+are nonempty for a `value_code_map` parser. For a
+`fixed_width_numeric` parser they are exact empty only when no matching row
+exists; a matching row remains cited as source evidence, but every such row's
+complete `normalized_entries` must be exact empty. Its label and description
+remain authenticated corroborating bytes but cannot contribute the numeric
+language, missing set, `dictionary_field_meaning`, type, unit, or value. Any
+literal, range, categorical, missing, or otherwise nonempty normalized entry
+on this branch aborts rather than being ignored or selecting another parser.
+When the codebook row array is empty, `codebook_field_rows_sha256` hashes the
+canonical empty array; otherwise it hashes the complete ordered source rows.
+Independently, `normalized_codebook_entries` is the complete
+concatenation of their normalized entry arrays in codebook-document,
+source-row, and entry order, with neither deduplication nor selection; count
+equals length and `codebook_value_domain_sha256` hashes that complete array.
+Thus its digest is the canonical-empty-array hash whenever all retained row
+entry arrays are empty, whether or not the row array itself is empty.
+`raw_data_source_document_id` resolves exactly one same-wave
+`raw_fixed_width_data` document and its one record-framing derivation. No bare
+row hash, authored position, or inventory transcription can choose its own
+source authority.
+
+For each dictionary or codebook branch, resolve the complete row-ID array,
+project each canonical row's `source_document_id`, deduplicate by first
+occurrence, and order the result by source-document manifest order. The
+corresponding `*_source_document_ids` array must deep-equal that unique
+projection. Thus every cited canonical row contributes its document exactly
+once, no document without a cited row may enter the field closure, and the
+retained field/file projections cannot exact-copy a row digest while
+omitting or substituting that row's source document. The fixed-width-numeric
+codebook branch yields exact empty row/document projections only when the
+complete matching-row relation is empty; otherwise both projections retain
+the complete cited source even though the parser remains numeric.
+
+Across the cited dictionary rows, all nonnull declarations of coordinate,
+width, sign, decimal places, scale, type, and unit must agree, and their unique
+coalescence must populate every retained typed-parse member required by the
+compiler-derived branch. Nonnull dictionary parse-kind declarations obey the
+corroboration test above but never populate the retained branch; only
+`derived_parse_kind` does. A silent source contributes null, never a default.
+Across cited codebook rows, duplicate raw literals or overlapping ranges are
+conflicts rather than corroboration. Every normalized entry belongs to this
+field and every source value-list entry appears once.
+
+For a present inventory row, the retained `source_file_ids` is
+prospectively the unique source-document-manifest-order projection of every
+layout object's dictionary IDs, codebook IDs, and raw-data ID. The retained
+`source_byte_sha256s` is the same-position projection of those complete
+manifest documents' SHA-256 values. Both arrays are nonempty, equal-length,
+and deep-equal this independent derivation; they are not positionally guessed
+from `raw_field_ids`. Every field-local source ID therefore occurs in the
+retained closure, while a shared document occurs only once.
+
+A normalized codebook entry is exactly one tagged branch. A `literal` entry
+has exactly `entry_ref`, `entry_kind`, `source_value_lexeme`, `raw_token_hex`,
+`source_meaning`, `typed_disposition`, `value_type`, `typed_value_unit`,
+`canonical_value`, and `missing_reason_code`. A `numeric_range` entry has
+exactly `entry_ref`, `entry_kind`, `source_value_lexeme`, `value_type`,
+`typed_value_unit`, `inclusive_min`,
+`inclusive_max`, `step`, `source_meaning`, `typed_disposition`, and
+`missing_reason_code`. An entry reference is literal
+`<codebook-field-row-id>:entry:<zero-based-position>` and resolves one source
+entry. The lexeme obeys the exact source-cell function above. A literal token
+decodes to exact raw width and its bytes must equal that function's unique
+rendering; the numeric compiler rederives both before consuming the entry.
+
+The closed literal `typed_disposition` domain is `employee |
+self_employment | mixed | nonremuneration | rational | json_integer |
+boolean | enum | missing`, with the exact type/unit/value/missing-reason
+equations of the retained §4.2 value-code entry. Thus a missing literal has
+null type, unit, and value and a nonempty source-backed reason; a rational or
+integer has matching type and nonempty unit; Boolean and enum values have
+null unit; and every nonmissing row has null missing reason. A numeric range
+has type and disposition `rational | json_integer`, a nonempty unit, null
+missing reason, and bounds and positive step of that exact canonical
+type/unit. Minimum is no greater than maximum, and a scalar is a member if
+and only if it has the same type/unit, lies inclusively between the bounds,
+and `(value-inclusive_min)/step` is a nonnegative integer. Entries follow
+codebook document, field row, and source entry order. Conflicting overlapping
+entries abort. This normalization is the deterministic parser plus
+dictionary-format rendering output from authenticated source bytes, not a new
+value list.
+
+`raw_token_grammar` has exactly:
+
+```text
+grammar_status
+residual_evidence_identity
+residual_id
+padding_rule
+registered_numeric_grammar
+dictionary_missing_literal_entries
+dictionary_missing_literal_entry_count
+dictionary_missing_literal_domain_sha256
+observed_source_file_id
+observed_source_sha256
+observed_record_count
+observed_token_rows
+observed_token_row_count
+observed_token_rows_sha256
+unobserved_possible_values
+unobserved_possible_value_count
+unobserved_possible_value_domain_sha256
+unknown_token_action
+```
+
+`grammar_status` is exactly `source_declared_complete |
+pinned_observed_domain_complete_with_closed_unobserved_action`.
+`residual_evidence_identity` has exactly `path`, `artifact_id`,
+`schema_version`, and `sha256` and exact-matches §19.3.1; `residual_id` is
+the one displayed Class-B ID for the inventory row's era. Every present
+field in an era repeats that pair. Grouping by era and taking the distinct
+residual IDs in era order must reproduce the exact six-ID Class-B array and
+its pinned digest; a missing, cross-era, or additional ID leaves the
+residual open.
+
+`padding_rule` has exactly `operation`, `prefix_hex`, `suffix_hex`, and
+`payload_width`. `operation` is `none |
+canonicalize_exact_left_ascii_space_padding_to_zero_digits |
+remove_exact_registered_prefix_and_suffix`. For `none`, both hex strings are
+empty and payload width equals raw width. The canonicalization arm likewise
+has empty hex strings and payload width equal to raw width. It validates the
+complete raw width, replaces only the maximal leading run of `0x20` with the
+same number of `0x30` bytes, and passes that still-width-`w` payload to the
+digit DFA. After scalar construction it must re-render the value under the
+space profile and exact-match the original raw token; this rejects `01` for
+one, `00` for zero, all-space, internal/trailing space, and every noncanonical
+spelling while admitting full-width `10` through `99`. For removal, at least one decoded
+prefix/suffix is nonempty, payload width is a positive JSON integer, and the
+two decoded lengths plus payload width equal raw width. Dictionary bytes
+must establish the exact prefix/suffix. The parser first validates the full
+raw width, exact-matches and removes only those registered bytes, and then
+requires the resulting byte count to equal `payload_width`; a mismatch
+aborts. The retained `typed_parse_specs.raw_width` continues to record and
+validate the complete source-field width. For this successor only, its older
+fixed-width-numeric phrase “accepts only the exact-width grammar” is replaced
+by: the registered numeric grammar below accepts only the exact
+`payload_width` payload after the named canonicalization and then applies the retained signed, decimal-place,
+scale, output-type, and unit values. A `value_code_map` literal always matches
+its complete-width raw token before any numeric-range parse; a map miss may
+use `none` or the authenticated space operation exactly when its compiled
+range grammar does. These are closed serialized operations, not generic
+trimming. The v3 constructor emits only `none` for the authenticated zero arm
+or the named space canonicalization for the authenticated space arm; an
+extracted arbitrary prefix/suffix, tab padding, zoned decimal, overpunch, or
+other preparse convention is unsupported. The removal enum remains
+representable for predecessor history but no Amendment-5 authority may
+construct it.
+
+`registered_numeric_grammar` is nonnull exactly for a
+`compiled_source_numeric_grammar` derivation row and its consuming layout
+grammar; it is null on every other branch. When nonnull it is a deterministic finite-state object
+with exactly `grammar_id`, `payload_width`, `state_ids`, `start_state_id`,
+`accepting_state_ids`, `transition_rows`, `transition_row_count`,
+`transition_domain_sha256`, `value_derivation`, and
+`invalid_payload_action`. It is mandatory for every
+`fixed_width_numeric` parser. For a value-code parser it is nonnull exactly
+when the complete normalized domain contains at least one numeric range and
+the v3 source derivation compiles; otherwise it is null and every observed
+range member aborts. `raw_token_grammar.padding_rule` and
+`raw_token_grammar.registered_numeric_grammar` must respectively deep-equal
+the unique same-wave/raw-field derivation row's same-named members; no other
+constructor is admissible. State arrays are nonempty, unique, in the exact
+constructor order above, and contain only states reachable from start and
+co-reachable to acceptance; start and every accepting state resolve. Each
+transition has exactly
+`position`, `state_id`, `input_byte_hex`, `next_state_id`, and
+`value_action`; position is a JSON integer in `[0,payload_width)` and equals
+the unique prefix depth of `state_id` fixed by the quotient above; input is
+one exact byte, states resolve, and action is `append_digit_0 |
+append_digit_1 | append_digit_2 | append_digit_3 | append_digit_4 |
+append_digit_5 | append_digit_6 | append_digit_7 | append_digit_8 |
+append_digit_9 | set_negative | consume_decimal_point | no_op`. There is at
+most one transition for each `(position,state_id,input_byte_hex)` and omitted
+transitions reject. After its authenticated preparse operation, the compiled
+v3 profile permits only byte/action pairs
+`30/append_digit_0` through `39/append_digit_9`; `set_negative`,
+`consume_decimal_point`, and `no_op` are unreachable predecessor-domain enum
+values and cannot occur. Rows follow position, numeric state suffix, then
+unsigned input byte; count equals array length and
+`transition_domain_sha256` hashes the complete ordered transition-row array
+under §10.1 with one terminal LF.
+
+`value_derivation` has exactly `derivation_binding`, `signed`,
+`decimal_places`, `implied_scale`, `typed_value_type`, and
+`typed_value_unit`. For a fixed-width parser, binding is `typed_parse_specs`;
+profile payload width equals `typed_parse_specs.raw_width`, profile decimal
+places equals `typed_parse_specs.decimal_places`, and the remaining five
+value-derivation members positionally equal that parse object's `signed`,
+`decimal_places`, `implied_scale`, `typed_value_type`, and
+`typed_value_unit`. For a value-code range parser, binding is
+`dictionary_range_rendering` and the remaining five equal the compiler values
+fixed above; every normalized range type/unit must equal the last two.
+The grammar `payload_width` equals both profile and padding-rule width. Every
+accepting path consumes exactly `payload_width` transitions at consecutive
+positions zero through `payload_width - 1` and constructs the scalar fixed by
+the accumulator and constructor equations; no shorter, longer, or other path
+accepts. `invalid_payload_action` is
+`abort_before_classification_require_successor_inventory_ratification`.
+The complete DFA, padding operation, physical authentication, and value
+derivation are reconstructed by the authenticated v3 entry point from the
+complete cited dictionary, codebook, framing, and raw-census rows.
+Thus an uncoded numeric token is source-derived, while an inventory-authored
+regex, host numeric formatter, or permissive parser is not.
+`grammar_id` is literal `psid-numeric-grammar:` followed by SHA-256 of
+§10.1 terminal-LF canonical bytes of exactly this nine-position JSON value
+array—not an ID-deleted object, keyed map, or concatenated string:
+
+```text
+[
+  payload_width,
+  state_ids,
+  start_state_id,
+  accepting_state_ids,
+  transition_rows,
+  transition_row_count,
+  transition_domain_sha256,
+  value_derivation,
+  invalid_payload_action
+]
+```
+
+Widths/counts are JSON integers excluding booleans; state arrays are string
+arrays; start, digest, and action are strings; and transition/value members
+have their exact nested object shapes above. Unequal nine-member preimages
+producing one grammar ID abort as a hash collision.
+
+`dictionary_missing_literal_entries` registers source-declared blank or
+sentinel bytes for an uncoded field. Each entry has exactly `entry_ref`,
+`dictionary_field_row_id`, `raw_token_hex`, `source_meaning`, and
+`missing_reason_code`. The row ID resolves above; the entry reference is
+literal `<dictionary-field-row-id>:missing:<zero-based-source-position>`;
+the token decodes to exact raw width; and the nonempty meaning/reason and
+token exact-project the same-position `source_missing_literals` member of
+that authenticated canonical dictionary row. Rows exact-cover the complete
+concatenation of those members in dictionary-row then source-token order and
+are unique; count
+equals length and the domain digest hashes the complete ordered row array.
+An exact empty array/count/hash is required when the dictionary declares no
+such literal. These entries are outside the numeric DFA and can yield only a
+missing disposition; they preserve §4.2's required uncoded exact-width blank
+without inventing a codebook row.
+
+The observed source ID equals this layout object's
+`raw_data_source_document_id`; its complete-file SHA-256 exact-matches that
+manifest row, its resolved record-framing derivation, and the retained
+source-file/digest projection above. `observed_record_count` is a nonnegative
+JSON integer excluding booleans and equals the resolved framing's exact
+`record_count`. For every framed record in index order, the extractor takes
+exactly `record[start:end]` as bytes, without decoding or padding removal;
+the multiset of those slices is the sole census domain. No header, trailer,
+separator, short line, or unframed byte is a record or field token.
+The unique same-wave/raw-field `field_census_rows` member must exact-match
+the layout coordinates and record count. Projecting each semantic observed-
+token row to `[raw_token_hex,frequency]` must deep-equal that source-only
+census row in full unsigned-byte order before any semantic classification;
+neither side may supply the other's expected tokens or frequencies.
+
+Each observed-token row has exactly `raw_token_hex`,
+`frequency`, `source_value`, `source_derivation`, `source_entry_refs`, and
+`disposition`. The lowercase hex decodes to exactly `raw_width` bytes;
+frequency is a positive JSON integer; entry references are unique and
+source-domain ordered; `source_derivation` is `codebook_literal |
+codebook_range_member | dictionary_numeric_grammar |
+dictionary_missing_literal`; and `disposition` is
+exactly `typed_value | missing`. Rows are unique and ordered by unsigned
+decoded raw bytes; counts and the complete canonical row-array digest agree; and
+frequencies sum exactly to `observed_record_count` for that field's complete
+fixed-width census. Independently recounting the same record slices must
+produce exactly the serialized rows, frequencies, count, and digest; a
+candidate token list is never a census input.
+
+Every observed `source_value` has exactly `typed_disposition`, `value_type`,
+`typed_value_unit`, `canonical_value`, and `source_meaning` and obeys the
+normalized-literal type/unit/value equations above. Type is `rational |
+json_integer | boolean | enum` or null; unit is nonempty exactly for a
+rational/integer and null otherwise; canonical value and type are null
+exactly when `typed_disposition` is `missing`. `source_meaning` is one exact
+nonempty branch function: `codebook_literal | codebook_range_member` copies
+the referenced normalized entry's source string;
+`dictionary_missing_literal` copies the referenced dictionary-missing source
+string; and `dictionary_numeric_grammar` copies the compiler-derived canonical
+JSON string from the complete ordered dictionary label/description projection.
+The last is authenticated derived text, not a claim that JSON punctuation or
+row IDs appeared in the dictionary. No other selection, concatenation, or
+free-text branch exists. For
+`codebook_literal`, exactly one reference
+resolves a literal entry that deep-equals that same typed disposition, type,
+unit, canonical value, meaning, and outer missing/typed-value disposition and
+whose `raw_token_hex` equals the observed token. For
+`codebook_range_member`, exactly one reference resolves a
+numeric-range entry, the scalar satisfies the exact membership equation
+above, and its type, unit, numeric disposition, and meaning match. The
+registered range DFA must be the nonnull grammar in the complete v3 source-
+derivation row and its authenticated padding operation plus canonical payload
+must produce that unique scalar. Without a
+compiled grammar the range can represent its unobserved physical uncertainty
+below but cannot classify an observed byte; such an occurrence aborts. For
+`dictionary_numeric_grammar`, the reference array is empty, the
+normalized codebook-entry domain is exact empty even when complete matching
+codebook row/document projections are nonempty, and the scalar is the unique
+DFA result. Its `source_meaning` exact-copies the unique same-wave/raw-field
+derivation row's `dictionary_field_meaning`, its typed disposition equals its
+numeric type, and its outer disposition is `typed_value`. For
+`dictionary_missing_literal`, exactly one reference resolves the same-token
+dictionary entry above; source value has typed disposition `missing`, null
+type, unit, and canonical value, and that entry's exact meaning, and outer
+disposition is `missing`. A
+missing value must use a codebook-literal or dictionary-missing entry.
+Outer `disposition` is `missing` exactly for typed disposition `missing` and
+is `typed_value` otherwise.
+
+The retained parse kind selects one exhaustive branch before any token is
+classified:
+
+| `typed_parse_specs.parse_kind` | Exact codebook/dictionary domain | Required parser state | Permitted observed derivations | Permitted unobserved rows |
+|---|---|---|---|---|
+| `value_code_map` | nonempty normalized codebook domain; dictionary-missing domain exact empty | complete-width literal matching first; a numeric-format literal domain retains its census-authenticated `none | canonicalize_exact_left_ascii_space_padding_to_zero_digits` operation/profile even with a null DFA; a compiled numeric range retains that operation/profile plus its DFA; a character-format or physical-unestablished branch has null profile/DFA and exact `none` padding | `codebook_literal`, plus `codebook_range_member` only with that nonnull v3 DFA | one `codebook_entries` row per unobserved literal/range; literal uses its singleton rendering, range uses the DFA or physical-unestablished branch |
+| `fixed_width_numeric` | complete matching codebook rows permitted but every normalized-entry array exact empty; dictionary-missing domain complete, possibly empty | nonnull v3-derived DFA bound to `typed_parse_specs`; census-authenticated zero or ASCII-space operation | `dictionary_numeric_grammar` or `dictionary_missing_literal` only | one row per unobserved dictionary missing literal plus the one `uncoded_dictionary_numeric_domain` row when nonempty |
+
+These rows are mutually exclusive and complete. A value-code field cannot
+use a dictionary numeric/missing branch, and a fixed-width-numeric field
+cannot use a codebook literal/range or value-map entry. Every nonmissing
+fixed-width-numeric raw token is first exact-matched against the complete
+dictionary-missing relation; only a miss undergoes the selected padding
+operation and traverses the mandatory DFA and exact
+output signature. A value-code token is first matched against its complete
+executable literal map below; only a map miss with a nonnull range DFA may
+take that exact compiler-owned grammar and must then belong to exactly one
+normalized range. A map miss never invokes a host numeric parser or the
+fixed-width field's semantic branch. No first-successful parser or cross-
+branch fallback exists. Within one value-code map, every nonmissing normalized
+entry has the same type/unit signature; all numeric ranges share the one field
+DFA or all lack a source-established DFA, and the latter case requires zero
+observed range members. Mixed signature or grammar availability aborts.
+
+For each `value_code_map` field, derive its executable entry array by
+traversing normalized entries in source order. A literal contributes exactly
+one row. A numeric range contributes exactly one row for each observed-token
+row that references it, in observed-token-row order; an unobserved range
+member is never invented as a literal map row. Each executable row has
+exactly the retained seven keys `raw_code_token`, `source_meaning`,
+`typed_disposition`, `typed_value_type`, `typed_value_unit`,
+`normalized_value`, and `missing_reason_code`. `raw_code_token` is the
+lowercase complete-width `raw_token_hex`; the remaining six members
+exact-project the normalized literal or observed range member, including all
+nullability laws. Rows are unique by decoded raw bytes.
+
+Every value-code field sharing one inventory row's `value_code_map_id` must
+derive the same complete executable array; otherwise the retained v1 row
+cannot represent the source and inventory ratification aborts. The inline
+`value_code_map` is exactly that seven-key array. The unique
+`psid_value_code_specs.v1` row with the same ID deep-copies it as `entries`,
+and its `applicable_source_inventory_keys` is the complete official-
+inventory-order projection of every present row naming that map ID. The
+retained `source_commitments` member is completed in place as one object
+with exactly:
+
+```text
+commitment_kind
+source_inventory_keys
+field_rows
+field_row_count
+field_row_domain_sha256
+```
+
+`commitment_kind` is the literal `source_derived_value_code_fields`.
+`source_inventory_keys` deep-equals the complete
+`applicable_source_inventory_keys` array. `field_rows` exact-covers every
+raw field in those inventory rows whose positional `typed_parse_specs`
+object has `parse_kind: value_code_map` and this outer
+`value_code_map_id`. Rows follow `source_inventory_keys` order and then each
+inventory row's `raw_field_ids` order. Each row has exactly:
+
+```text
+source_inventory_key
+raw_field_id
+dictionary_source_document_ids
+dictionary_field_row_ids
+dictionary_field_rows_sha256
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+codebook_source_document_ids
+codebook_field_row_ids
+codebook_field_rows_sha256
+normalized_codebook_entry_count
+codebook_value_domain_sha256
+raw_data_source_document_id
+raw_data_source_sha256
+record_count
+record_keyset_sha256
+record_domain_sha256
+observed_token_row_count
+observed_token_rows_sha256
+executable_entry_domain_sha256
+```
+
+The first two members resolve the unique inventory/layout field. The next
+ten exact-copy its complete dictionary/codebook document and canonical-
+row arrays, complete-row digests, numeric-grammar derivation ID/complete-row
+digest, and normalized-entry count/domain digest.
+The raw-data ID resolves the same manifest and raw-data derivation as that
+layout field; its SHA-256 exact-matches the source manifest, retained source-
+file projection, and `raw_token_grammar.observed_source_sha256`.
+`record_count`, `record_keyset_sha256`, and `record_domain_sha256` exact-copy
+the complete raw-data framing derivation; the count also equals
+`raw_token_grammar.observed_record_count`. The two observed-token members
+exact-copy that grammar's count and complete ordered-row digest.
+`executable_entry_domain_sha256` hashes the complete seven-key executable
+array independently derived for this field. That array must deep-equal both
+the same-key inventory `value_code_map` and the complete outer registry
+`entries`; equality of their hashes alone is insufficient.
+
+`field_row_count` equals the array length and is positive;
+`field_row_domain_sha256` hashes the complete ordered field rows under
+§10.1 canonical JSON. Missing, extra, duplicate, reordered, differently
+sourced, differently censused, or differently hashed field commitments
+abort. Every field row must derive the same complete executable array, and
+every applicable key and value-code raw field contributes exactly one row;
+there is no authored subset or source-free commitment branch. The complete
+entry-array and source-commitment contributions to the registry and
+inventory content digests are fresh. Missing, extra, reordered, differently
+typed, differently unitized, or differently encoded entries fail both the
+inventory and executable registry; observation can add a physical spelling
+for a source-declared range member but cannot add its meaning, type, unit, or
+disposition.
+
+`unobserved_possible_values` exact-covers every codebook literal with zero
+observed occurrence, every codebook range having at least one constructible
+unobserved member, every dictionary missing literal with zero occurrence,
+and the one uncoded dictionary-numeric domain when it has any valid
+unobserved payload. Each row has exactly `source_value_domain`,
+`rendering_status`, `registered_token_mappings`, and `if_encountered`.
+`source_value_domain` has exactly `domain_kind`, `source_entry_refs`, and
+`observed_member_values_sha256`. Kind is `codebook_entries |
+dictionary_missing_literals | uncoded_dictionary_numeric_domain`;
+references are the singleton normalized codebook-entry or dictionary-
+missing-entry reference for the first two and exact empty for the third.
+There is exactly one row per qualifying source entry and at most one uncoded-
+numeric row. Rows follow complete normalized codebook order, then dictionary-
+missing order, then the uncoded domain;
+`unobserved_possible_value_count` equals array length and
+`unobserved_possible_value_domain_sha256` hashes the complete ordered rows.
+The member digest hashes the complete array of distinct canonical scalar
+values from this domain that occur in `observed_token_rows`, retaining the
+first occurrence of each typed scalar in observed-token-row order, including
+an exact empty array. A later raw spelling of the same typed scalar does not
+create another member. The only lawful combinations are:
+
+| `rendering_status` | `registered_token_mappings` | `if_encountered` |
+|---|---|---|
+| `unique_registered_rendering` | exact singleton source token-mapping array | `parse_under_registered_grammar` |
+| `source_registered_numeric_grammar` | exact empty array | `parse_under_registered_numeric_grammar` |
+| `physical_rendering_unestablished` | exact empty array | `abort_before_classification_require_successor_inventory_ratification` |
+
+Each token mapping has exactly `raw_token_hex`, `source_entry_ref`,
+`source_value`, `source_derivation`, and `disposition`. The reference belongs
+to the domain; derivation is `codebook_literal |
+dictionary_missing_literal`; and value/disposition/raw token obey that exact
+source entry. `unique_registered_rendering` is required for every qualifying
+`literal | dictionary_missing_literal` row and forbidden otherwise; its
+mapping array is that row's exact singleton source rendering. An authored
+range-member token is forbidden. Every `numeric_range` row uses
+`source_registered_numeric_grammar` when the field's v3 range DFA is nonnull
+and otherwise uses `physical_rendering_unestablished`. The uncoded numeric row
+always uses `source_registered_numeric_grammar` with its nonnull dictionary-
+derived DFA. These four source-domain cases are exhaustive and mutually
+exclusive; no authenticated literal token may take the empty physical-
+unestablished branch. The DFA branch parses a future payload uniquely and
+requires that value to belong to the row's referenced numeric range or, for
+the uncoded branch, the dictionary numeric domain. An
+overlapping semantic result or invalid transition aborts. Thus an unseen favorable token has one
+constructible source-derived result; physical or semantic ambiguity takes
+the empty abort branch.
+
+The top-level `unknown_token_action` is always
+`abort_before_classification_require_successor_inventory_ratification`.
+It applies only after exact padding, registered literal mapping, numeric-DFA
+acceptance, and required semantic-domain membership have all failed; it does
+not override a displayed registered-unobserved branch.
+`source_declared_complete` is permitted only when dictionary/codebook bytes
+jointly declare one unambiguous branch for every source-valid token and a
+closed rejection for every other byte sequence, including exact sign,
+padding, blank, and sentinel handling, and the raw-file census
+confirms every observed spelling. The second grammar status is permitted
+when those sources establish meanings and observed spellings but leave one
+or more possible unobserved physical spellings unproved; every such value is
+then represented by one of the three closed rows above. A row or field
+conflict aborts.
+
+The three evidence roles are noninterchangeable. Dictionary/layout files
+prove coordinates, width, and any declarations they actually carry;
+locator-bound dictionary and codebook format text jointly proves the one
+width/decimal tuple under the exact agreement law; and complete codebook
+value lists prove meanings and missing dispositions. The exhaustive census
+of the byte-pinned raw field proves its exact physical spellings,
+frequencies, and—only through the closed two-arm comparison—the one field-
+specific zero or ASCII-space padding profile. Observation cannot invent
+meaning or a third physical arm; a codebook format cannot choose padding by
+itself; an era convention cannot substitute for the complete field census;
+and agreement by two sources cannot override a conflict in the third. This
+exact combination is sufficient for a present row only when every observed
+token is exact-width, has one semantic branch, the census exact-covers the
+pinned file, and exactly one authenticated arm passes.
+
+An unobserved source value with a uniquely source-determined rendering may
+enter the registered grammar. An unobserved value whose physical rendering
+is not established remains outside it with the explicit field-level abort
+action. An observed but unmapped token aborts inventory ratification. A
+later unseen token outside the registered mapping/DFA and semantic domain is
+source drift requiring successor inventory ratification; a registered
+unobserved token follows only its displayed per-field branch. None becomes
+blank, missing, zero, a stripped value,
+`modelable`, `unresolved`, or an optional legal-authority consequence.
+
+For actual field-level presence, every `missing_raw_tokens` member is
+prospectively replaced by an object with exactly `raw_field_id`,
+`raw_token_hex`, `source_meaning`, and `missing_reason_code`. Rows follow
+`raw_field_ids` position and then unsigned token bytes. They exact-project
+only observed or uniquely source-rendered grammar tokens whose codebook
+or dictionary disposition is `missing`. A physically unestablished possible sentinel stays
+only in `unobserved_possible_values` and keeps the abort action; it is never
+silently added as missing. Section 4.1 presence tests the exact
+`(raw_field_id,raw_token_hex)` pair, so the same raw bytes in another field
+cannot inherit the disposition.
+
+No generic whitespace trim, sign inference, decimal inference, locale
+conversion, cross-field padding default, or first-successful parse exists.
+The retained exact-prefix/suffix-removal enum describes predecessor history
+only and is not lawful for an Amendment-5 authority; every v3 `padding_rule`
+uses `none` or
+`canonicalize_exact_left_ascii_space_padding_to_zero_digits` from its
+complete field census. This Class-B law
+closes the disposition-schema gap shared by all six displayed grammar
+residuals; it supplies no
+field grammar row and discharges none of their source-evidence obligations.
+
+#### 19.3.3 Class A — exhaustive slot hierarchy and absence-proof scope
+
+The source-only closure evidence is the future canonical artifact at
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json`, with
+schema literal `psid_questionnaire_slot_closure_evidence.v1`. It is a
+subordinate source-evidence member authenticated by the official slot
+registry's source-authority manifest, not a tenth official registry or a
+production input. Its complete raw blob must strict-parse and byte-equal
+§10.1 canonical JSON. Its top level has exactly `schema_version`,
+`artifact_id`, `residual_evidence_identity`, `source_document_manifest`,
+`hierarchy_annotation_authority`, `era_rows`, `era_row_count`, `era_id_order`,
+`era_domain_sha256`, `integrity`, and `status`. The first two
+values are `psid_questionnaire_slot_closure_evidence.v1`.
+`residual_evidence_identity` has exactly `path`, `artifact_id`,
+`schema_version`, and `sha256` and exact-matches §19.3.1. `integrity` has
+exactly `canonicalization` and `content_sha256` under the common self-zeroed
+law. `era_id_order` is the displayed six-ID array; count is six;
+`era_domain_sha256` hashes the complete ordered `era_rows` array. Status
+passes only when all nested equations and the exact seven-ID Class-A
+residual projection pass.
+
+The closure artifact's `source_document_manifest` has exactly
+`upstream_corpus_registry_identity`, `source_documents`,
+`source_document_count`, `source_document_keyset_sha256`,
+`source_document_domain_sha256`, `field_source_derivation`,
+`questionnaire_page_text_derivation`, `canonical_order`, and `status`.
+`canonical_order` is the literal
+`document_role_wave_canonical_source_path_v1`; status is `pass | fail`.
+Each document row has exactly `source_document_id`, `document_role`,
+`interview_waves`, `canonical_source_path`, `storage_disposition`,
+`storage_identity`, `byte_size`, and `sha256`. Role is
+`questionnaire_flow | dictionary_layout | codebook |
+raw_fixed_width_data`; waves are a complete nonempty official-order array;
+path is nonempty, canonical, and traversal-free; size is a positive JSON
+integer excluding booleans; and SHA-256 is 64 lowercase hex over the complete
+regular-file bytes. Storage is `git_blob | external_registered_file`. Its
+tagged identity is respectively exactly `commit`, `path`, `tree_mode`, and
+`blob_oid` with mode `100644`, or exactly `authority_registry_id`,
+`document_id`, and `registered_path`. Either branch must independently
+reproduce the same canonical path, size, and bytes. The independent expected
+projection below contains only `external_registered_file`; a candidate
+`git_blob` row is therefore additional and fails this version.
+
+`source_document_id` is literal `psid-source-document:` followed by SHA-256
+of canonical JSON bytes of `[document_role,interview_waves,
+canonical_source_path,byte_size,sha256]`. Rows follow the displayed role
+order, first wave, unsigned-UTF-8 path, and ID. IDs, canonical paths, and
+storage identities are unique. `source_document_keyset_sha256` hashes the
+complete ordered ID array; the domain digest hashes the complete ordered row
+array; and count equals both array lengths.
+
+`upstream_corpus_registry_identity` has exactly
+`questionnaire_corpus_root`, `field_corpus_root`, `projection_law`,
+`source_document_count`, `source_document_keyset_sha256`,
+`source_document_domain_sha256`, and `denominator_status`. Its projection
+law is the exact non-identifier literal
+`fixed_two_root_complete_source_document_projection` and
+denominator status is `pass | fail`. This is an exact member object, not a
+separately selectable source or successor schema.
+
+`questionnaire_corpus_root` has exactly `path`, `source_commit`, `tree_mode`,
+`blob_oid`, `byte_size`, `raw_sha256`, `content_sha256`, `registry_pointer`,
+`registry_artifact_id`, `registry_content_sha256`,
+`capture_input_identities_sha256`, `registry_document_count`,
+`registry_document_domain_sha256`, `source_page_index_size_bytes`,
+`source_page_index_sha256`, `source_link_inventory_count`,
+`source_link_inventory_size_bytes`, `source_link_inventory_sha256`, and
+`registry_status`. Its values are, respectively,
+`data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json`,
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, `100644`,
+`825f6c61ef9d4a161886cbc44f5cc914d65160d2`, 520656,
+`07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c`,
+`4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27`,
+`/accepted_authority_registry`,
+`psid_questionnaire_corpus_authority_registry.v1`,
+`c82304267d254e81ab5d7e7e198f89d09056700a7429d7fcfa32fdab6bb99b03`,
+`49246c91428394e3cad712d710b4dd976b95530cc68e076ddbd1c3009b45e877`,
+456,
+`fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3`,
+668104,
+`159ec5a660b2b302ef16153f6570f24252e2f77a2b9297dd111e39002846a5b7`,
+465, 58679,
+`4c18313b66e3afa4737081d186deb9cf5a2cb7ff4355386cbd5c99bfa2fa21bd`,
+and `pass`. The raw artifact and its self-zeroed content digest must
+reproduce; its accepted child, complete 456-row order, capture-input
+identities, counts, row digest, and status must deep-equal the committed
+bytes. All four capture inputs, including the 465-row
+`source_link_inventory`, must resolve at the registered staging root and
+reproduce their complete size and SHA-256 before any document is selected.
+The source-page input is exactly
+`documentation/capture1/psid_documents_index.html`; the link input is exactly
+`documentation/capture1/psid_documents_inventory.json`. The latter must
+strict-parse as one 465-member JSON array whose members have exactly `href`,
+`text`, and `row`, all strings, in physical source order. Neither a later
+HTML fetch nor a regenerated, sorted, stable-first, or href-deduplicated link
+array may substitute for those authenticated bytes.
+
+`field_corpus_root` has exactly `path`, `source_commit`, `tree_mode`,
+`blob_oid`, `byte_size`, `raw_sha256`, `content_sha256`, `manifest_pointer`,
+`manifest_count`, `manifest_domain_sha256`,
+`reported_reproduced_from_source_bytes`, and `reported_registration_status`.
+Its values are, respectively,
+`data/external/psid_questionnaire_dictionary_inventory_registration_required_v1.json`,
+`b8e8e4f200b362a9661dbc6ef765852496608e49`, `100644`,
+`a2e6bfa8b19c35dfde235d8ece7e233a5d833e9e`, 25474435,
+`a974c6fb65a9f3d52387163f2e98b7cd8cfdbd57f5e95d1f766b3aa25d167ac0`,
+`f1f13d9de7dcb2c8a26beafbc60a32390b5a5fb644abb68aeee8df3a5cd1b557`,
+`/source_authority_manifest`, 176,
+`52906f7a36955d20282dbce2dd4bac260395d3ce3961bd0baf763290c3152116`,
+false, and `registration_required`. The raw and self-zeroed content digests,
+schema/artifact literals, exact 43-wave array, complete 176-row manifest,
+count, and manifest digest must reproduce from that pinned Git blob. For
+clarity, the final two root members exact-copy
+`/integrity/reproduced_from_source_bytes` and
+`/inventory_ratification_abort/status`; they are not coordinator-authored
+summaries. For
+this historical root only, reproduce its native canonicalizer exactly:
+strict JSON, set only `integrity.content_sha256` to 64 ASCII zeroes, then
+UTF-8 encode the recursively key-sorted compact serialization with
+`ensure_ascii: false` and no terminal LF. The manifest digest applies that
+same no-terminal-LF serialization to the complete `source_authority_manifest`
+array. It is not silently reinterpreted under §10.1's later canonicalizer.
+The
+historical false and registration-required values are unfavorable evidence
+and must remain exact; this root freezes a denominator and does not promote
+the old audit to passing source authority.
+
+Let `W` be the exact 43-wave concatenation displayed below; standalone
+`canonical_json_bytes(W)` has SHA-256
+`b681b78ebc82110e24fb73878b1a2b72b6bee7924ea3db1413f7acd68e163fda`.
+Before reading the closure artifact, strict-parse both upstream roots and
+reconstruct the expected questionnaire projection from the complete
+authenticated 465-row source-link array and 456-row accepted registry. For
+each `w` in `W`, the core basename is `qYY.pdf` through 1997,
+where `YY` is the final two decimal digits, and `qYYYY.pdf` thereafter. The
+core URL is exactly
+`https://psidonline.isr.umich.edu/documents/psid/questionnaires/` plus that
+basename. Require exactly one source-link row with that URL, exact text
+`Questionnaire`, and exact empty `row`, and resolve it to exactly one
+`availability: verified` accepted document row with the same URL and text.
+All of `digest_row_filename`, `on_disk_filename`, and `locator.filename`
+must equal the basename; the expected, observed, and locator sizes and
+complete-file hashes must agree.
+
+Also test the exact companion URL
+`https://psidonline.isr.umich.edu/data/Documentation/Fam/<w>/QxQs.pdf`.
+Retain it exactly when the source-link array contains one row with that URL,
+text `QxQ`, and empty `row`; it must resolve to exactly one verified accepted
+document row with matching URL/text and internally equal filename, size, and
+hash values. Across `W` this yields exactly 43 core rows and 38 QxQ rows. The
+same core template at wave 2025 is the one explicit authenticated out-of-
+domain row and is not retained. Any other source-link row whose text is
+exactly `Questionnaire` or `QxQ` under either exact main-family URL prefix that cannot
+be uniquely classified as one of those 81 rows or that one 2025 negative row
+aborts; CDS, TAS, and other survey prefixes are outside this family-file
+projection rather than candidate exclusions.
+
+Before constructing a target row, construct two complete disposition
+relations. The first has one row for each of the 465 source-link occurrences,
+in source order; the second has one row for each of the 456 accepted document
+rows, in accepted-registry order. Each relation row carries its upstream
+position or document ID and exactly one disposition:
+`included_family_questionnaire_flow`,
+`excluded_out_of_wave_2025_family_questionnaire`, or
+`excluded_not_family_questionnaire_flow`. Their exact link-side counts are
+81, one, and 383; their exact accepted-row-side counts are 81, one, and 374.
+The first disposition is assigned exactly to the 81 URL/text/empty-row
+occurrences above and their 81 uniquely joined accepted rows; the second
+exactly to the one 2025 row on each side; the third is the exact complement.
+Every link occurrence joins by exact `href` to exactly one accepted row. For
+each href, that accepted row's `source_link_text` and `first_link_position`
+must equal the text and one-based position of the href's first source-link
+occurrence under the root's registered
+`stable_first_occurrence_by_exact_href` law; later same-href text casing does
+not invent another accepted document. The 81 included and one 2025
+occurrences additionally exact-match href, text, and empty `row` on both
+sides and all registered filename/size/digest fields. The two relations must
+exact-cover their respective roots, the included accepted IDs must have the
+displayed 81-row hash below, and inclusion/exclusion overlap, a silent row,
+an included duplicate, stable-first mismatch, or one href assigned both an
+included and excluded disposition aborts. These complete complements, rather than a candidate
+manifest filter, establish that every upstream row received a disposition.
+
+Project each of those 81 rows to `document_role: questionnaire_flow`, the
+exact singleton `interview_waves: [w]`, `canonical_source_path` equal to
+`documentation/capture1/` plus its exact `on_disk_filename`, byte size and
+SHA-256 from the verified row, and `storage_disposition:
+external_registered_file`. Its storage identity has
+`authority_registry_id: psid_questionnaire_corpus_authority_registry.v1`,
+the exact accepted `source_document_id` as `document_id`, and that canonical
+path as `registered_path`. The complete 81-row source-order accepted-
+document-ID projection has canonical SHA-256
+`b4bde71544911441e1c1d05e5ad00d282384a98747627ee19d056dd3ce174293`.
+
+Then traverse all 176 `field_corpus_root` manifest rows in their committed
+order; none is filtered by use, purpose, field, or candidate. Every row's
+`interview_wave` must occur in `W`. Map `stata_setup | spss_setup` to
+`dictionary_layout`; map `family_codebook | stata_value_labels |
+spss_value_labels` to `codebook`; and map `raw_fixed_width` to
+`raw_fixed_width_data`. Any other role aborts. The projected wave array is
+the exact singleton source wave, canonical path exact-copies `path`, size and
+SHA-256 exact-copy their source values, and storage disposition is
+`external_registered_file`. Its storage identity has
+`authority_registry_id:
+psid_questionnaire_dictionary_inventory.registration_required.v1`, the
+source `document_id`, and source `path` as `registered_path`.
+Every one of those 176 paths resolves root-relative to the exact
+`psid_external_staging_root` already authenticated through the questionnaire
+root and the retained staging law. No absolute path is serialized, and no
+current working directory, home expansion, environment variable, path
+alias, or traversal segment may select a byte. The resolved target must be a
+regular non-symlink whose complete size and SHA-256 equal the source row.
+For this denominator only, the storage identity's
+`authority_registry_id` value names the immutable registration-required
+field-corpus artifact while the embedded two-root identity and fresh
+176-file reauthentication supply the passing storage proof. This neither
+changes that historical artifact's status nor promotes it to an official
+slot/inventory authority.
+
+For every projected row, compute `source_document_id` only after all those
+expected values exist. Concatenate the two source projections, sort once by
+the manifest canonical order, and call the resulting array `U`. It has
+exactly 257 rows with exact role counts 81 questionnaire, 86 dictionary
+layout, 47 codebook, and 43 raw fixed width. Each role's stable-unique
+first-occurrence wave projection is exactly `W`; every projected wave array
+is a singleton. Its ordered source-document-ID array and complete row array
+have canonical SHA-256 values, respectively,
+`8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a`
+and
+`9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce`.
+A missing, extra, repeated, aliased, differently editioned,
+out-of-wave, differently roled, path-changed, or byte-changed source aborts.
+
+The upstream identity's count and two digests are independently computed
+from `U`, and `denominator_status` is pass only when both pinned roots,
+capture inputs, source rows, mappings, counts, waves, storage foreign keys,
+and all 257 source bytes reproduce. Only after complete expected `U` and the
+identity exist may the candidate `source_document_manifest` be read.
+Candidate `source_documents` must deep-equal `U`; its count, ID-keyset hash,
+row-domain hash, canonical order, and embedded upstream identity must equal
+the independent values. Manifest status is pass exactly on all those
+equalities and the complete byte reproduction, and fail otherwise. A
+candidate-selected document, role, wave array, path, count, keyset, digest,
+or storage root can never supply an expected value.
+
+Every whole-document and field-stream locator foreign-keys this independently
+derived domain. `field_source_derivation` is the complete §19.3.2 object and
+exact-covers the 176-row nonquestionnaire slice of `U`; its implementation
+and row/numeric-grammar/record derivations are reconstructed before any
+hierarchy, inventory, or locator row is read. Its numeric relation exact-
+covers every wave/field group, including groups no positive join or inventory
+row consumes. Thus a filename, locator, extraction row, candidate
+manifest, or alleged canonical source row cannot invent or suppress a
+document ID, role, wave, source path, field statement, numeric format,
+meaning projection, grammar byte, value entry, or raw record.
+
+`questionnaire_page_text_derivation` has exactly `implementation_path`,
+`source_commit`, `tree_mode`, `blob_oid`, `byte_size`, `raw_sha256`,
+`function_name`, `tool`, `version`, `arguments`, `encoding`, `page_split`,
+and `terminal_page_rule`. It exact-copies §18's #345 derivation authority:
+path `src/populace_dynamics/data/psid_questionnaire_inventory.py`, commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, mode `100644`, blob
+`e461d69cdec35f0ef795a097ac0b9ab9a8f9eaf0`, 205,550 bytes, raw SHA-256
+`b742fb14d62411ed1072cf320ad7cff0b3397a5a7255584964bac4995b6acbee`,
+function `_pdftotext_pages`, tool `Poppler pdftotext`, version `26.04.0`,
+arguments `["-layout","-enc","UTF-8"]`, encoding `UTF-8`, page split `form_feed`,
+and terminal rule
+`remove_exactly_one_terminal_whitespace_only_page_if_present`. Invocation
+appends the uniquely manifest-resolved input path and `-` for standard
+output; output is strictly decoded, split, and trimmed exactly as §18. No
+later worktree implementation, tool version, argument, decoder, or page rule
+is selectable. Branch labels and questionnaire near-match occurrence hashes
+use only these ordered page strings.
+
+`hierarchy_annotation_authority` is the source-only annotation authority for
+all questionnaire hierarchy, positive/source-field-link, and near-match
+source semantics. It has exactly `authority_kind`,
+`questionnaire_document_count`, `questionnaire_document_keyset_sha256`,
+`questionnaire_document_domain_sha256`,
+`questionnaire_page_text_derivation_byte_size`,
+`questionnaire_page_text_derivation_sha256`, `role_node_rows`,
+`role_node_count`, `role_node_domain_sha256`, `job_slot_rows`,
+`job_slot_count`, `job_slot_domain_sha256`,
+`questionnaire_component_slot_rows`, `questionnaire_component_slot_count`,
+`questionnaire_component_slot_domain_sha256`, `node_alias_rows`,
+`node_alias_count`, `node_alias_domain_sha256`, `global_relationship_rows`,
+`global_relationship_count`, `global_relationship_keyset_sha256`,
+`global_relationship_domain_sha256`, `questionnaire_page_count`,
+`questionnaire_page_domain_sha256`, `questionnaire_occurrence_count`,
+`questionnaire_occurrence_domain_sha256`, `flow_branch_count`,
+`flow_branch_domain_sha256`, `hierarchy_row_count`,
+`hierarchy_keyset_sha256`, `hierarchy_domain_sha256`,
+`positive_occurrence_row_count`, `positive_occurrence_keyset_sha256`,
+`positive_occurrence_domain_sha256`,
+`occurrence_raw_field_reference_count`,
+`occurrence_raw_field_reference_keyset_sha256`,
+`occurrence_raw_field_reference_domain_sha256`,
+`positive_field_join_row_count`, `positive_field_join_keyset_sha256`,
+`positive_field_join_domain_sha256`, `expanded_disposition_row_count`,
+`expanded_disposition_keyset_sha256`,
+`expanded_disposition_domain_sha256`, `near_match_source_annotation_count`,
+`near_match_source_annotation_keyset_sha256`,
+`near_match_source_annotation_domain_sha256`, `absence_proof_count`,
+`absence_proof_domain_sha256`, `canonical_order`, and `status`.
+`authority_kind` is the non-schema literal
+`source_only_canonical_questionnaire_annotation`; `canonical_order` is the
+non-ID law literal
+`source_document_page_utf8_span_then_catalog_anchor_then_positive_field_join_then_source_near_match_then_canonical_absence_proof`;
+status is `pass | fail`.
+
+The authority's questionnaire input is exactly the independently derived
+81-row `questionnaire_flow` slice of `U`. Its count is 81; its ordered
+source-document-ID array and complete ordered row array have §10.1 canonical
+SHA-256 values, respectively,
+`3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5`
+and
+`b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543`.
+The accepted upstream-document-ID source-order projection remains the
+independently verified
+`b4bde71544911441e1c1d05e5ad00d282384a98747627ee19d056dd3ce174293`.
+The complete 13-key `questionnaire_page_text_derivation` canonical value is
+566 bytes and has SHA-256
+`8ce4d7e16753aa0a6c2220006c9aea60330acd62de809db5894ad03eb9123da3`.
+All five authority members must equal those independently reconstructed
+values before annotation rows are read; a candidate document, page method,
+or digest cannot select an input.
+
+Every `role_node_rows` member has exactly `role`,
+`canonical_occurrence_id`, and `alias_ids`. The array has exactly two rows,
+for `head_or_reference_person` and `spouse_or_partner` in that order. Each
+canonical occurrence resolves the earliest complete-source-order
+`role_anchor` occurrence assigned by the annotation authority to that role;
+the two canonical occurrences are distinct. `alias_ids` is the complete
+source-order projection of `node_alias_rows` IDs whose domain is `role` and
+whose canonical node is that exact role. Count is two and the domain digest
+hashes the complete ordered row array.
+
+Every `job_slot_rows` member has exactly `job_slot_id`, `job_slot_type`,
+`canonical_occurrence_id`, and `alias_ids`. Type is exactly `source_job |
+role_total_sentinel | farm_aggregate_sentinel |
+business_aggregate_sentinel | no_job_context_sentinel`. A source job's
+canonical occurrence is the earliest complete-source-order resolving
+`job_anchor` occurrence in its authenticated equivalence class, and its ID is literal
+`psid-job-slot:` followed by SHA-256 of the terminal-LF canonical JSON value
+array `[canonical_occurrence_id]`. Its `alias_ids` is the complete
+source-order projection of `node_alias_rows` IDs whose domain is `job_slot`
+and whose canonical node is that job ID. The four sentinel IDs are exactly
+`psid-job-slot:role-total`, `psid-job-slot:farm-aggregate`,
+`psid-job-slot:business-aggregate`, and
+`psid-job-slot:no-job-context`; their canonical occurrence is null and their
+alias array is empty. Source rows follow canonical-occurrence source order;
+the four sentinels then follow in displayed order. Count equals length and
+the domain digest hashes the complete ordered row array.
+
+Every `questionnaire_component_slot_rows` member has exactly
+`questionnaire_component_slot_id`, `component_slot_type`,
+`parent_job_slot_id`, `canonical_occurrence_id`, and `alias_ids`. Type is
+exactly `source_remuneration_component | source_context |
+role_total_sentinel | farm_aggregate_sentinel |
+business_aggregate_sentinel`. A source component has a resolving source job
+or permitted sentinel parent under the exact relationship equations below,
+the earliest complete-source-order matching component or context occurrence
+in its authenticated equivalence class, and ID literal
+`psid-component-slot:` followed by SHA-256 of the terminal-LF canonical JSON
+value array `[parent_job_slot_id,component_slot_type,
+canonical_occurrence_id]`. Its `alias_ids` is the complete source-order
+projection of `node_alias_rows` IDs whose domain is `component_slot` and
+whose canonical node is that component ID. The three sentinel IDs are exactly
+`psid-component-slot:role-total`, `psid-component-slot:farm-aggregate`, and
+`psid-component-slot:business-aggregate`; each has the same-kind job
+sentinel as parent, null canonical occurrence, and an empty alias array.
+Source rows follow canonical-occurrence source order; those sentinels then
+follow in displayed order. Count and complete row-domain digest agree.
+
+Every `node_alias_rows` member has exactly `node_alias_id`, `node_domain`,
+`canonical_node_id`, `alias_occurrence_id`, `alias_relation`, and
+`evidence_occurrence_ids`. Domain is `role | job_slot | component_slot`.
+Canonical role values are exactly `head_or_reference_person` and
+`spouse_or_partner`; job and component values resolve the catalogs above.
+Relation is exactly `explicit_repeat_instruction |
+explicit_cross_reference | same_printed_identifier_and_exact_label`.
+Evidence IDs are a nonempty unique source-order occurrence array that proves
+that exact relation. They contain the alias anchor, the canonical anchor, and
+the complete source-order set of `repeat_or_alias_instruction` or
+cross-reference occurrences on which that relation depends; no unrelated
+occurrence is admitted. The alias ID is literal `psid-node-alias:` followed by
+SHA-256 of the terminal-LF canonical JSON value array
+`[node_domain,canonical_node_id,alias_occurrence_id,alias_relation,
+evidence_occurrence_ids]`. Rows follow alias-occurrence order then role, job,
+component domain order.
+
+The complete occurrence catalogs are exact partitions. The ordered
+`role_anchor` occurrence array equals, without overlap, the two role-row
+canonical occurrences plus every role-domain alias occurrence; the ordered
+`job_anchor` array equals every source-job canonical occurrence plus every
+job-domain alias occurrence; and the combined ordered
+`remuneration_component_anchor | context_anchor` array equals every source-
+component canonical occurrence plus every component-domain alias occurrence.
+Each partition preserves complete occurrence source order. No canonical
+occurrence is an alias, no anchor is omitted or assigned twice, and every
+`repeat_or_alias_instruction` occurrence appears in at least one alias
+evidence array. Each alias ID appears exactly once in the complete
+`alias_ids` projection of its one matching role/job/component catalog row;
+positive and hierarchy rows consume the resulting canonical node rather
+than creating another alias assignment. Case folding, whitespace or
+punctuation normalization, stemming, source-order inference, synonym
+inference, or an unproved `first_job == job_1` equivalence is forbidden;
+differently worded nodes remain distinct absent one displayed source-backed
+relation. Alias count equals row length and the alias domain digest hashes
+the complete ordered alias-row array.
+
+Each `global_relationship_rows` member has exactly `relationship_id`,
+`job_slot_id`, `questionnaire_component_slot_id`, and `slot_kind`. The ID is
+literal `psid-questionnaire-relationship:` followed by SHA-256 of the
+terminal-LF canonical JSON value array
+`[job_slot_id,questionnaire_component_slot_id,slot_kind]`. The exact type
+equations are:
+
+| `slot_kind` | Required job row | Required component row |
+|---|---|---|
+| `remuneration_component` | `source_job` | matching-parent `source_remuneration_component` |
+| `role_total` | exact role-total sentinel | exact role-total sentinel, or a matching-parent source remuneration/context component |
+| `farm_aggregate` | exact farm-aggregate sentinel | exact farm-aggregate sentinel, or a matching-parent source remuneration/context component |
+| `business_aggregate` | exact business-aggregate sentinel | exact business-aggregate sentinel, or a matching-parent source remuneration/context component |
+| `context_only` | `source_job` or no-job-context sentinel | matching-parent `source_context` |
+
+No relationship coordinate is null. A source remuneration component has a
+source-job or one of the three aggregate-sentinel parents; a source context
+has a source-job, no-job-context, or one of the three aggregate-sentinel
+parents. Parent `source_job` derives `remuneration_component` or
+`context_only` from component type; no-job-context permits only
+`source_context` and derives `context_only`; an aggregate parent derives its
+matching aggregate kind for either source component type. The three
+same-kind sentinel component rows derive the three mandatory baseline
+aggregate relationships. Every source job is parent of at least one source
+component row; an anchor-only orphan therefore aborts instead of disappearing
+from the denominator.
+
+Every `role_total_anchor`, `farm_aggregate_anchor`, and
+`business_aggregate_anchor` occurrence is consumed by at least one matching-
+kind observed hierarchy row, and every aggregate anchor cited by such a row
+has that exact kind. Thus an aggregate anchor cannot be silently left outside
+the hierarchy, reused as another aggregate kind, or fabricated from a
+component label.
+
+Call the complete ordered relation `R_Q`. It is exactly the concatenation of
+the three mandatory baseline sentinel relationships in displayed type-table
+order and one relationship derived from every source component row in
+canonical-occurrence source order. Those two branches are disjoint and no
+other relationship exists. Thus every source component occurs exactly once,
+every source job occurs at least once, and the relation is not a Cartesian
+product of invented job and component names. IDs and relationship tuples are
+unique; count equals length; the keyset digest hashes the ordered ID array;
+and the domain digest hashes the complete ordered row array. A missing or
+orphan catalog row, parent/type mismatch, alias conflict, extra relationship,
+ID collision, or candidate-selected subset aborts.
+
+The authority-wide page, occurrence, flow-branch, hierarchy, positive-
+occurrence, occurrence/raw-field-reference, positive-field-join, expanded-
+disposition, near-match-source-annotation, and absence-proof arrays are the direct
+concatenations of the corresponding six era arrays in era order. Every
+authority-wide count is the length of that complete concatenation. Each
+authority-wide keyset digest hashes the complete ordered ID/key projection
+named by the matching per-era law, and every domain digest hashes the
+complete concatenated row array directly; in particular,
+`expanded_disposition_domain_sha256` is not copied from a nonexistent per-era
+member. Authority status is pass only if all 81 documents and every extracted
+page are present, every catalog/alias/relationship equation and complete
+page annotation below passes, every concatenation, count, keyset, and domain
+digest reproduces, the complete source-atom/binding cover and canonical
+filtered-H proof construction pass, and no candidate registry, inventory, crosswalk, reader
+field, or desired ID was an annotation input.
+
+No current artifact is a passing substitute. In particular,
+`data/external/psid_questionnaire_corpus_extraction_v1.json` at commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, blob
+`43d8a1208c6ffa7ab7d7cdbc4b4115947d33df16`, 81177 bytes, raw SHA-256
+`5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347`,
+and content SHA-256
+`18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c`
+contains only 61 passage locators, three absence proofs, and a 37-wave proof
+scope ending in 2011; it has no page-complete hierarchy, node, alias,
+relationship, or occurrence domain. Its favorable structural status cannot
+be generalized to this authority. Until the new complete source-only
+annotation exists, Class A remains `registration_required`.
+
+The retained official slot-registry `source_authority_manifest` is
+prospectively completed as an object with exactly `source_document_manifest`
+and `slot_closure_evidence_identity`. The first is a complete deep copy of
+the closure artifact's passing manifest only after the coordinator has
+independently reconstructed `U` and exact-compared every upstream identity,
+row, count, keyset, order, domain digest, and storage byte. A candidate
+manifest can never be copied first and then treated as expected authority.
+The second has exactly `path`, `artifact_id`, `schema_version`,
+`source_commit`, `tree_mode`, `blob_oid`, `byte_size`, and `sha256`. Call the
+unique first-add commit for the fixed closure path `Q5`. It is a future
+40-lowercase-hex, single-parent strict descendant of D5 that adds only
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json`; the path's
+mode is `100644`. The identity's first three values are the closure path and
+two identity literals above; `source_commit` is `Q5`; and its final four
+values are independently reconstructed from that exact Git tree entry and
+complete raw artifact. `byte_size` is a positive JSON integer excluding
+booleans, and `sha256` covers all raw bytes. The closure artifact does not
+serialize `Q5`, its own blob OID, or its raw SHA-256, so the later slot
+registry can add this identity without self-reference. A multi-path first-
+add, merge first-add, pre-D5 commit, later substituted blob, mode mismatch,
+or noncanonical/raw-hash mismatch aborts.
+
+In `Q5`'s tree, both future consumer paths
+`data/registries/psid_questionnaire_slot_specs_v1.json` and
+`data/external/psid_covered_earnings_source_field_inventory_v1.json` are
+absent. `Q5` must be a strict ancestor of each path's independently
+discovered unique later first-add commit and of every authority cutoff that
+admits either artifact. Consequently neither consumer's rows, identifiers,
+digests, or desired classifications can be annotation inputs; a consumer
+present at `Q5`, an earlier or incomparable consumer first-add, or a cutoff
+that does not prove both ancestry relations aborts.
+
+G17-C01 independently reconstructs and exact-compares this eight-key
+identity before accepting any copied annotation row. This two-stage shape
+makes the already named closure artifact the separately committed source-
+only annotation authority without inventing another schema. Neither the
+slot registry nor the official inventory is independently ratified until
+both the upstream-document denominator and `Q5` annotation-authority
+comparisons pass.
+
+The complete ordered era/wave domain is:
+
+| `era_id` | Exact `interview_waves` |
+|---|---|
+| `wave1968_ry1968_1974_early_totals` | `[1968,1969,1970,1971,1972,1973,1974,1975]` |
+| `ry1975_1977_spouse_concept_seam` | `[1976,1977,1978]` |
+| `ry1978_1992_pre_er_totals` | `[1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993]` |
+| `ry1993_2001_er_transition` | `[1994,1995,1996,1997,1999,2001]` |
+| `ry2002_2014_modern_bc_de` | `[2003,2005,2007,2009,2011,2013,2015]` |
+| `ry2015_2022_exclusion_lineage` | `[2017,2019,2021,2023]` |
+
+The concatenation is the complete unique 43-wave §4.2 interview domain in
+official order and must deep-equal independently reconstructed `W`; a
+candidate era row cannot select or narrow it. Each era row has exactly
+`era_id`, `interview_waves`,
+`residual_ids`, `whole_document_locators`,
+`whole_document_locator_count`, `whole_document_locator_domain_sha256`,
+`field_stream_locators`, `field_stream_locator_count`,
+`field_stream_locator_domain_sha256`,
+`questionnaire_page_rows`, `questionnaire_page_count`,
+`questionnaire_page_domain_sha256`, `questionnaire_occurrence_rows`,
+`questionnaire_occurrence_count`, `questionnaire_occurrence_keyset_sha256`,
+`questionnaire_occurrence_domain_sha256`,
+`flow_branch_rows`, `flow_branch_row_count`, `flow_branch_domain_sha256`,
+`hierarchy_rows`, `hierarchy_row_count`, `hierarchy_keyset_sha256`,
+`hierarchy_domain_sha256`, `positive_occurrence_rows`,
+`positive_occurrence_row_count`, `positive_occurrence_keyset_sha256`,
+`positive_occurrence_domain_sha256`,
+`occurrence_raw_field_reference_rows`,
+`occurrence_raw_field_reference_count`,
+`occurrence_raw_field_reference_keyset_sha256`,
+`occurrence_raw_field_reference_domain_sha256`, `positive_field_join_rows`,
+`positive_field_join_row_count`, `positive_field_join_keyset_sha256`,
+`positive_field_join_domain_sha256`, `expanded_disposition_rows`,
+`expanded_disposition_row_count`, `expanded_disposition_keyset_sha256`,
+`near_match_source_annotation_rows`, `near_match_source_annotation_count`,
+`near_match_source_annotation_keyset_sha256`,
+`near_match_source_annotation_domain_sha256`, `absence_proofs`,
+`absence_proof_count`, `absence_proof_domain_sha256`, and
+`status`. The early era's `residual_ids` is the exact ordered Class-A source
+indices `[1,2]` ID projection; each later era has the singleton Class-A ID at
+source index 5, 11, 14, 18, or 26 respectively. Concatenating the six arrays
+must reproduce §19.3.1's seven IDs and pinned class digest. Counts and
+canonical digests close every nested ordered domain; status passes only when
+every wave, residual reference, and equation below passes.
+
+Each `questionnaire_page_rows` member has exactly `questionnaire_page_id`,
+`source_document_id`, `source_locator_id`, `interview_wave`, `page_number`,
+`page_text_utf8_sha256`, `questionnaire_occurrence_ids`, and
+`annotation_status`. It exact-covers every page produced by the pinned page-
+text derivation for every one of the era's `questionnaire_flow` documents,
+including a page whose occurrence array is empty. Document/wave and locator
+resolve `U` and its whole-document locator; page number is a positive JSON
+integer excluding booleans; the digest hashes the exact complete UTF-8 page
+bytes; occurrence IDs are the complete same-page source-order projection;
+and status is `complete`. The page ID is literal
+`psid-questionnaire-page:` followed by SHA-256 of the terminal-LF canonical
+JSON value array `[source_document_id,interview_wave,page_number,
+page_text_utf8_sha256]`. Rows follow `U` document order then page number;
+IDs and document/page coordinates are unique; count equals length; and the
+domain digest hashes the complete ordered row array.
+
+Each `questionnaire_occurrence_rows` member has exactly
+`questionnaire_occurrence_id`, `source_document_id`, `source_locator_id`,
+`source_locator_sha256`, `interview_wave`, `page_number`, `utf8_byte_start`,
+`utf8_byte_end`, `occurrence_index_on_page`, `semantic_ordinal_at_span`,
+`occurrence_kind`, `matched_text`, `matched_utf8_sha256`, and
+`flow_branch_paths`. Kind is exactly, in this order,
+`flow_branch_label | role_anchor | job_anchor |
+remuneration_component_anchor | role_total_anchor |
+farm_aggregate_anchor | business_aggregate_anchor | context_anchor |
+field_purpose_prompt | repeat_or_alias_instruction`. Offsets are
+nonnegative half-open UTF-8 byte offsets aligned to character boundaries in
+the exact page bytes, start is less than end, matched text is the strict-
+decoded nonempty slice without normalization, and its digest matches. The
+occurrence exact-copies `source_document_id`, `source_locator_id`,
+`interview_wave`, and `page_number` from its unique containing page row, and
+that page row contains its occurrence ID exactly once. Thus its path-based
+locator digest and sliced text can never refer to different documents. The
+occurrence index is the zero-based position among all annotated same-page
+rows ordered by start, end, displayed kind order, and semantic ordinal;
+for every kind except `flow_branch_label`, at most one atomic occurrence may
+share a span and kind and its semantic ordinal is exactly zero. If that one
+printed occurrence supports multiple downstream facts, each fact reuses the
+same occurrence ID rather than inventing another atomic row.
+
+`flow_branch_paths` is a nonempty ordered array of nonempty branch-ID arrays.
+Unconditional text has exactly `[["questionnaire-flow:root"]]`; a
+conditional row has every complete applicable resolving root-to-leaf path,
+sorted only by the exact branch-path order defined below. A
+`flow_branch_label` occurrence carries only its complete parent
+paths, because its branch row appends the new branch ID below. If one printed
+branch label applies under multiple parent paths, the annotation emits one
+same-span atomic occurrence per parent path in path order, distinguished by
+semantic ordinal equal to that parent's zero-based position in the complete
+branch-path-order parent array; each such occurrence therefore has
+exactly one parent path. No other same-span/same-kind multiplicity or ordinal
+assignment is lawful. The occurrence
+locator digest hashes the terminal-LF canonical JSON value array
+`[source_document_id,canonical_source_path,"questionnaire_page_utf8_span",
+[interview_wave,page_number,utf8_byte_start,utf8_byte_end,
+occurrence_index_on_page,semantic_ordinal_at_span,occurrence_kind]]`, where path resolves
+only through `U`. The occurrence ID is literal
+`psid-questionnaire-occurrence:` followed by SHA-256 of the terminal-LF
+canonical JSON value array of the remaining 13 row values in their displayed
+order. Rows follow page-row order and the within-page order above. Repeated
+identical text at different coordinates remains separate; only multi-parent
+branch-label atoms at one span remain separate, with the path-index ordinal
+fixed above. IDs, locator
+digests, and full `(document,page,start,end,kind,semantic_ordinal)`
+coordinates are unique. Count, ordered-ID keyset digest, and complete-row
+domain digest must agree, and every ID occurs exactly once in its page row.
+
+Each `flow_branch_rows` member has exactly `flow_branch_id`,
+`parent_flow_branch_id`, `source_occurrence_id`, `branch_path`,
+`interview_wave`, `source_locator_id`, `page_number`,
+`occurrence_index_on_page`, `branch_label`, and `branch_label_sha256`.
+The source occurrence resolves a `flow_branch_label` row; locator, wave,
+page, occurrence index, exact matched label, and label digest deep-equal it.
+Parent is literal `questionnaire-flow:root` or an earlier resolving same-wave
+branch. The branch ID is literal `questionnaire-flow:` followed by SHA-256
+of the terminal-LF canonical JSON value array
+`[parent_flow_branch_id,interview_wave,source_occurrence_id]`.
+`branch_path` is the source occurrence's one complete parent path followed by
+this ID; multiple or missing parent paths abort. Rows follow source-
+occurrence order; IDs and source occurrences are one-to-one; count and
+complete row-domain digest agree. Every conditional branch-label occurrence
+has exactly one row, every referenced path resolves root-to-leaf without a
+cycle, and an omitted, duplicated, unlabeled, or unlocatable branch aborts.
+
+Branch-path ordering and compatibility are exact functions. Compare two
+branch-ID arrays element by element using unsigned UTF-8 byte order; if one
+is a proper prefix of the other, the shorter sorts first. This total order
+sorts every occurrence's unique `flow_branch_paths` array and every multi-
+parent label's parent paths. For one interview wave, let `F_w` be the unique
+set containing `["questionnaire-flow:root"]` and every resolving
+`branch_path` in that wave. A path is a prefix of itself. A finite nonempty
+same-wave occurrence set `S` is `branch-compatible` if and only if there is
+at least one `P` in `F_w` such that, for every occurrence in `S`, at least one
+of that occurrence's paths is a prefix of `P`. Compatibility is this Boolean
+existence result; no witness path is selected or serialized. An unresolved
+ID, path outside `F_w`, duplicate path, cross-wave set, or use of any other
+compatibility/order rule aborts.
+
+The source-only authority constructs the complete hierarchy denominator
+before reading any slot or inventory row. Let
+
+```text
+H = W
+    x [head_or_reference_person,spouse_or_partner]
+    x R_Q
+```
+
+in that nesting order. Thus `|H| == 43 * 2 * |R_Q|`; no positive occurrence
+can shrink it. The successor `job_slot_ids` and
+`questionnaire_component_slot_ids` arrays deep-equal the stable-unique
+catalog projections of `R_Q`, and slot expansion follows H then the ratified
+35-purpose order. This replaces only §4.2's underdetermined “source-derived”
+ordering with the authenticated catalogs and relationship order above.
+
+Before purpose prompts are classified, construct `O_H` as the complete
+source-only observed-hierarchy subset of H. A member is in `O_H` if and only
+if at least one finite nonempty same-wave branch-compatible anchor witness
+establishes its canonical role and complete `R_Q` relationship: role,
+job, and component anchors resolve only through the role/job/component
+catalogs and alias rows; a baseline aggregate relationship resolves its
+same-kind aggregate anchor; and an aggregate relationship with a source
+component resolves both that aggregate anchor and the cataloged component
+anchor. Context relationships similarly require their cataloged context
+anchor. Evaluate every finite anchor subset of the fixed same-wave
+occurrence domain, apply the exact compatibility predicate above, and retain as the member's evidence
+the complete source-order union of every occurrence participating in at
+least one passing witness; no witness path or subset is selected. No purpose
+prompt is an input to `O_H`.
+
+The reverse cover is total: every canonical or alias `role_anchor` occurs in
+at least one same-wave passing witness for its cataloged role; every canonical
+or alias `job_anchor` occurs in at least one same-wave witness whose
+relationship has its cataloged job; and every canonical or alias
+remuneration-component/context anchor occurs in at least one same-wave
+witness for its exact cataloged component relationship. Together with the
+aggregate-anchor reverse cover above, this dispositions every hierarchy
+anchor. An orphan, wrong-wave, wrong-role, wrong-relationship, or
+branch-incompatible anchor aborts. Consequently an observed hierarchy node
+may lawfully have zero positive purposes, while a relationship absent in a
+wave/role remains in H as a structural node.
+
+A hierarchy row has exactly `questionnaire_slot_id`, `interview_wave`,
+`role`, `relationship_id`, `job_slot`, `questionnaire_component_slot`,
+`slot_kind`, `hierarchy_presence`, `hierarchy_occurrence_ids`,
+`flow_branch_ids`, `flow_branch_paths`, `source_locator_ids`, and
+`hierarchy_absence_proof_id`. Its first seven values are the matching member
+of H; the slot ID is independently recomputed under §4.2. Presence is exactly
+`observed_hierarchy_node | structural_hierarchy_node`. An observed row has
+the complete nonempty occurrence-order unique qualifying anchor set by which
+its member entered `O_H`, the complete stable-unique branch-ID, branch-path,
+and whole-document-locator projections of those occurrences, and null
+absence-proof ID. Every occurrence has the row's interview wave and resolves
+a questionnaire document that contains that wave. A structural row is
+exactly a member outside `O_H`; it has all four evidence arrays exact empty
+and one nonnull resolving hierarchy-absence-proof ID. No purpose-positive
+row selects either branch, and no null job/component coordinate or invented
+aggregate alias is admitted.
+
+Hierarchy rows follow H order. `hierarchy_keyset_sha256` hashes the complete
+ordered array of exact `[questionnaire_slot_id,interview_wave,role,
+job_slot,questionnaire_component_slot,slot_kind]` arrays; count equals row
+length and `hierarchy_domain_sha256` hashes the complete ordered row array.
+For each hierarchy row `h`, after the source-only `O_P` relation below is
+complete and before any hierarchy or expanded row is serialized, let `M_h`
+be the complete purpose-order projection of every purpose `p` for which the
+tuple `(h,p)` is not in `O_P`. Because `O_P` is a subset of
+`O_H × purposes`, an observed row's `M_h` is exactly its missing-purpose
+complement in the 35-purpose array, while a structural row's `M_h` is the
+complete ordered 35-purpose array. An empty `M_h` has no proof. A
+nonempty `M_h` has exactly one proof, called `P_h`; no proof combines two
+hierarchy rows or divides one `M_h`. A structural hierarchy row's proof ID
+resolves `P_h`; an observed row retains its required null hierarchy-proof ID
+even when its missing-purpose expanded rows resolve `P_h`. This supplies
+proof targets even when a relationship is wholly absent in one wave and
+role without making proof grouping selectable.
+
+Each `positive_occurrence_rows` member has exactly
+`positive_occurrence_id`, `source_inventory_key`, `questionnaire_slot_id`,
+`interview_wave`, `role`, `relationship_id`, `field_purpose`,
+`questionnaire_occurrence_ids`, `flow_branch_paths`, and
+`source_locator_ids`. The source key and slot ID are independently computed
+from one member of H and one official purpose. Occurrence IDs are the
+complete nonempty source-order evidence set establishing the role, canonical
+or source-proved-alias job/component relationship, exact slot kind, and that
+purpose. Every occurrence has the row's interview wave and resolves a
+questionnaire document containing that wave. They include every applicable
+prompt and anchor, not a keyword hit; their branch paths and whole-document
+locators are the stable-unique complete projections. The matching hierarchy
+row must be in `O_H`; the anchor-only subset of this row's occurrence array
+is a nonempty subset of its `hierarchy_occurrence_ids` and is fixed by the
+positive-witness union below. Every canonical/alias catalog reference
+resolves those same anchors.
+
+Call the complete annotation classification relation over
+`O_H × 35 purposes` `O_P`. One tuple enters `O_P` if and only if at least one
+same-wave positive witness exists: one passing hierarchy-anchor witness for
+the matching `O_H` member plus one or more `field_purpose_prompt`
+occurrences classified to that purpose form a branch-compatible set under
+the exact predicate above. Evaluate every finite prompt/anchor subset of the
+fixed same-wave occurrence domain. The tuple's evidence is the complete
+source-order union of every prompt and anchor participating in at least one
+passing positive witness; catalog alias evidence remains in its independently
+complete alias row and is not imported from another wave. Every annotated
+`field_purpose_prompt` is consumed by at least one such tuple.
+`positive_occurrence_rows` is exactly the one-row-per-tuple
+ordered serialization of `O_P`; two prompts for one tuple remain in one
+evidence array, and one printed prompt supporting multiple tuples is reused
+in each. Thus `O_P` is a source-only subset of `O_H × purposes`, and neither
+a positive-selected hierarchy nor an omitted reverse classification is
+lawful. The positive ID is literal `psid-positive-occurrence:` followed
+by SHA-256 of the terminal-LF canonical JSON value array
+`[source_inventory_key,questionnaire_occurrence_ids]`. Rows follow H then
+purpose order, source keys and IDs are unique, count equals length, the
+keyset digest hashes the ordered positive-ID array, and the domain digest
+hashes the complete ordered row array. A repeated printed prompt at another
+coordinate remains in the evidence array; no stable-first evidence loss is
+allowed.
+
+The positive/raw-field join is constructed inside the source-only `Q5`
+authority before any slot-registry or official-inventory row is read. For
+one wave, let `D_w` be the stable-first `raw_field_id` projection, in
+`field_source_derivation` document and canonical-row order, of every
+authenticated same-wave dictionary row. It is nonempty and independently
+fixed by `U`; a questionnaire annotation, inventory row, crosswalk, or reader
+cannot add, rename, reorder, or suppress a field ID.
+
+Each `occurrence_raw_field_reference_rows` member has exactly
+`occurrence_raw_field_reference_id`, `positive_occurrence_id`,
+`questionnaire_occurrence_id`, `questionnaire_source_document_id`,
+`questionnaire_source_locator_id`, `interview_wave`, `page_number`,
+`questionnaire_utf8_byte_start`, `questionnaire_utf8_byte_end`,
+`questionnaire_matched_text`, `questionnaire_matched_utf8_sha256`,
+`reference_basis`, `field_source_role`, `field_source_document_id`,
+`field_source_row_id`, `field_source_member`, `field_utf8_byte_start`,
+`field_utf8_byte_end`, `field_matched_text`,
+`field_matched_utf8_sha256`, and `raw_field_id`. Restrict the questionnaire
+denominator to each `field_purpose_prompt` occurrence in its named positive-
+occurrence row; role/job/component/context/aggregate anchors cannot supply a
+purpose's field link. The questionnaire document, locator, wave, and page
+exact-copy that occurrence. Its nonempty half-open UTF-8 span lies within the
+occurrence, slices the exact pinned page bytes, and reproduces its text and
+digest.
+
+The field side resolves one same-wave canonical row whose document role is
+`dictionary_layout | codebook` and whose raw field belongs to `D_w`.
+`field_source_role` matches
+that document role; row ID, document ID, and `raw_field_id` exact-copy the
+canonical row. `field_source_member` is exactly `raw_field_id |
+source_label | source_description`; its nonempty half-open UTF-8 span lies
+within that exact member string and reproduces its text and digest. The
+reference basis is one of two disjoint source-only branches:
+
+- `exact_raw_field_id_token`: field member is `raw_field_id`, its span is the
+  complete member, and both matched texts byte-equal `raw_field_id`. For each
+  prompt, enumerate every exact `D_w` span; discard a match whose
+  questionnaire span is a proper subinterval of another exact field-ID
+  match, then retain every canonical field row for the remaining ID. Any
+  partial overlap among retained field-ID spans aborts.
+- `exact_question_identifier_token`: field member is `source_label` or
+  `source_description`. On each side, remove no bytes but locate the first
+  byte after the maximal leading run of ASCII tab, LF, CR, or space; the
+  matched span is the complete following maximal run of printable nonspace
+  ASCII bytes `0x21..0x7e`. It contains at least one ASCII letter and one
+  digit, starts at that position, and is byte-identical on both sides,
+  including case and punctuation. The row's independently extracted
+  `raw_field_id` supplies the joined field. A later common word,
+  cross-reference, substring, or differently cased/spaced/punctuated label
+  is not a match. For one positive, prompt occurrence, and exact question
+  token, the stable-unique matching raw-field-ID set across all same-wave
+  canonical rows must be a singleton; multiple distinct fields are an
+  unresolved semantic attachment and abort rather than being assigned by
+  role, label similarity, or inventory contents.
+
+For every positive prompt, enumerate both displayed branches against every
+same-wave canonical dictionary/codebook row in `field_source_derivation`
+order. After the question branch's singleton raw-field test, retain one row per matching
+`(canonical field-source row,field_source_member)` pair for that field;
+matching label and description members and dictionary/codebook corroboration
+are not deduplicated. The direct branch has only its one `raw_field_id`
+member. Across both branches, group candidates by exact
+`(positive_occurrence_id,questionnaire_occurrence_id,
+questionnaire_utf8_byte_start,questionnaire_utf8_byte_end,
+questionnaire_matched_text)` coordinate. Each group's stable-unique
+`raw_field_id` array must be a singleton; two fields claiming the same exact
+questionnaire bytes are ambiguous and abort. For the same positive and
+prompt occurrence, any two questionnaire spans from either branch that
+overlap and project distinct raw-field IDs also abort; overlapping
+corroboration of the same field remains explicit. The reference ID is literal
+`psid-occurrence-raw-field-reference:` followed by SHA-256 of the §10.1
+terminal-LF canonical JSON value array of the remaining 20 row values in
+displayed order. Rows follow positive-occurrence order, prompt-occurrence
+order, displayed basis order, questionnaire span, field-source derivation
+order, displayed member order, field span, then unsigned-UTF-8 raw field ID.
+IDs and complete row preimages are unique. Count equals length; the keyset
+digest hashes the ordered ID array; and the domain digest hashes the complete
+ordered row array. Every row is used by exactly its named join. An omitted,
+extra, reordered, unresolved, wrong-wave, or candidate-selected match aborts.
+
+Each `positive_field_join_rows` member has exactly `positive_field_join_id`,
+`positive_occurrence_id`, `source_inventory_key`,
+`questionnaire_slot_id`, `questionnaire_occurrence_ids`,
+`occurrence_raw_field_reference_ids`, `raw_field_projections`,
+`raw_field_count`, `raw_field_keyset_sha256`, and
+`raw_field_domain_sha256`. `positive_occurrence_id`,
+`source_inventory_key`, `questionnaire_slot_id`, and
+`questionnaire_occurrence_ids` deep-copy the same-position positive-
+occurrence row. `occurrence_raw_field_reference_ids` is the complete ordered
+projection of reference rows whose `positive_occurrence_id` equals this row's
+ID. Every referenced prompt occurrence belongs to this positive row and no
+other reference enters. The array is nonempty.
+Stable-first deduplication of the
+referenced `raw_field_id` stream fixes the ordered raw-field domain; repeated
+printed references remain in the reference-ID array but produce one field
+projection.
+
+Each `raw_field_projections` member has exactly:
+
+```text
+raw_field_id
+start
+end
+raw_width
+dictionary_source_document_ids
+dictionary_field_row_ids
+dictionary_field_rows_sha256
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+codebook_source_document_ids
+codebook_field_row_ids
+codebook_field_rows_sha256
+normalized_codebook_entries
+normalized_codebook_entry_count
+codebook_value_domain_sha256
+raw_data_source_document_id
+raw_data_source_sha256
+record_framing_sha256
+```
+
+For the joined wave and field, dictionary row IDs are the complete nonempty
+matching canonical-row projection across all `U` dictionary documents, in
+`U` then source-row order. Codebook row IDs are the complete matching
+projection under the same order. The two numeric-grammar members exact-copy
+the unique same-wave/raw-field derivation ID and SHA-256 of its complete
+15-key terminal-LF canonical row; its dictionary and codebook row IDs and
+complete-row digests must equal this projection. When the complete same-wave codebook domain
+has no matching field and the complete dictionary rows uniquely establish
+the uncoded `fixed_width_numeric` branch,
+`codebook_source_document_ids`, `codebook_field_row_ids`, and
+`normalized_codebook_entries` are exactly `[]`,
+`normalized_codebook_entry_count` is integer zero, and both
+`codebook_field_rows_sha256` and `codebook_value_domain_sha256` hash the
+§10.1 terminal-LF canonical empty array. A missing codebook for any other
+branch aborts; otherwise the codebook row array is nonempty. On the uncoded
+fixed-width-numeric branch, every retained matching codebook row must have an
+exact-empty normalized-entry array, so the entry array/count/domain digest
+remain the canonical empty values even when the codebook row/document arrays
+and complete-row digest are nonempty. Document arrays are the stable-first
+source-manifest-order projections of their complete row arrays. All
+dictionary declarations of start, end, and width agree, and populate the
+displayed zero-based half-open values. The codebook-entry array is the
+complete concatenation in row and entry order. All row and entry digests
+hash the complete ordered canonical values under §10.1.
+
+Exactly one same-wave `raw_fixed_width_data` document and its passing raw-
+data derivation resolve the field. Its source-manifest SHA-256 deep-equals
+`raw_data_source_sha256`; the field range fits its positive record width;
+and `record_framing_sha256` hashes the complete eight-key
+`record_framing` object under §10.1 with one terminal LF. A missing
+dictionary field, zero or multiple raw files, conflicting coordinate,
+thinned source-row array, source-wave mismatch, unresolved framing, or
+candidate-selected projection aborts.
+
+Raw-field projections follow the stable-first field order above.
+`raw_field_count` equals both the length of `raw_field_projections` and the
+length of the stable-first referenced raw-field-ID array and is greater than
+zero. The keyset digest hashes their ordered
+`raw_field_id` array, and the domain digest hashes the complete ordered
+projection array. The join ID is literal `psid-positive-field-join:`
+followed by SHA-256 of the terminal-LF canonical JSON value array of its
+remaining nine members in displayed order. Join rows follow positive-
+occurrence order; join IDs, positive IDs, and source inventory keys are each
+unique; `positive_field_join_row_count` equals both row length and
+`positive_occurrence_row_count`; its keyset hashes the ordered join-ID array; and
+the join-domain digest hashes the complete ordered rows. A positive without
+at least one admitted exact source-token reference remains
+`registration_required`; no
+semantic guess may fill the join.
+
+An expanded-disposition row has exactly `source_inventory_key`,
+`questionnaire_slot_id`, `field_purpose`, `questionnaire_presence`,
+`positive_occurrence_id`, `positive_field_join_id`,
+`positive_locator_ids`, and `absence_proof_id`.
+It positionally exact-covers H × the ordered 35-purpose domain. Let `K_P` be
+the complete positive-row source-key set. The tagged union is exact:
+
+- `questionnaire_presence: asked` if and only if the key is in `K_P`; it has
+  the one resolving positive-occurrence ID and the one same-key resolving
+  positive-field-join ID, its positive locators obey the complete source
+  projection below, and its proof ID is null; or
+- `questionnaire_presence: structural_query_slot` if and only if the key is
+  outside `K_P`; it has null positive-occurrence and positive-field-join IDs,
+  exact-empty positive locators, and one nonnull resolving absence-proof ID.
+
+No third questionnaire-presence state or evidence-free empty branch exists.
+For an observed hierarchy row, missing purposes take the second branch. For
+a structural hierarchy row, all 35 keys take the second branch. Every second-
+branch key under one hierarchy row resolves that row's one `P_h`; for a
+structural row this is also the row's hierarchy proof. The source and
+inventory keys are independently
+recomputed under §4.2; annotation cannot author them. Rows follow hierarchy
+then purpose order; expanded count is exactly `hierarchy_row_count * 35` and
+`expanded_disposition_keyset_sha256` hashes the complete ordered source-key
+array. Every positive-occurrence evidence array is nonempty, unique, and
+occurrence-order sorted; the expanded row's mixed positive-locator array
+instead follows the complete locator-union order defined below. Neither can
+be replaced by a whole-document-only locator.
+
+The retained official `expanded_slots` row is prospectively completed in
+place and has exactly, in order, `source_inventory_key`,
+`questionnaire_slot_id`, `interview_wave`, `earnings_reference_year`,
+`role`, `job_slot`, `questionnaire_component_slot`, `slot_kind`,
+`field_purpose`, `questionnaire_presence`, `positive_occurrence_id`,
+`positive_field_join_id`, `absence_proof_id`, `source_document_ids`, and
+`source_locator_sha256s`. Its first ten values and final source arrays retain
+their §4.2 meanings. The three inserted evidence IDs deep-equal the same-key
+expanded-disposition row, including exact null branches. Thus the ratified
+slot key stream directly names its positive/raw-field join or its structural
+proof; a source-manifest identity or matching key alone cannot substitute
+for that evidence edge.
+
+The structural rows and absence proofs form the canonical filtered-H
+partition, not a freely grouped bipartite cover. Traverse hierarchy rows in H
+order, compute each complete `M_h`, discard exactly the empty sets, and emit
+exactly one `P_h` for every remaining row in that order. Construct the
+ordered array of `[source_inventory_key,absence_proof_id]` pairs from every
+`structural_query_slot` row and the same array by traversing those proofs and
+their complete purpose-order `target_inventory_keys`; the arrays deep-equal,
+not merely as multisets, and every pair has multiplicity one. Each proof is
+referenced by every and only target row under its one `h`; every structural
+hierarchy row's complete 35-key set also resolves its named proof; and an
+asked key occurs in no proof target. Splitting `M_h`, combining hierarchy
+rows, combining waves, selecting a purpose subsequence, retaining an empty
+group, or reordering a group aborts. Across the complete domain, the positive
+keys, observed-hierarchy missing-purpose keys, and structural-hierarchy keys
+are disjoint and their union is exactly H × the 35-purpose array.
+
+Every prefixed-ID preimage in this hierarchy law is the exact displayed
+positional JSON value array, serialized standalone under §10.1 with one
+terminal LF. Strings and arrays have the displayed types; every integer
+excludes booleans; null occurs only in the catalog and hierarchy branches
+that expressly require it. Duplicate preimages, duplicate IDs for different
+preimages, or a SHA-256 collision aborts before an enclosing count or digest
+is computed.
+
+Each `whole_document_locators` member has exactly `locator_id`,
+`source_document_id`, `interview_wave`, `filename`, `location_type`,
+`byte_start`, `byte_end`, `size_bytes`, `full_file_sha256`, `range_sha256`,
+and `pdf_page_domain`. It obeys all of these equations:
+
+```text
+location_type == whole_document_exact_file_range
+byte_start == 0
+byte_end == size_bytes
+range_sha256 == full_file_sha256
+pdf_page_domain == all_pages_and_flow_branches
+```
+
+Each locator resolves one independently expected, manifest-authenticated
+complete regular file and its full byte range. The array exact-covers `U`'s
+complete expansion of every `questionnaire_flow` document and its singleton
+`interview_waves` member that occurs in this era; its source role and wave
+must match, its filename is the canonical-source-path basename, and no other
+document/wave locator is admitted. Across the six eras these arrays
+exact-cover all 81 authenticated family questionnaire/QxQ documents once:
+one core questionnaire for each wave plus every 38-row source-authenticated
+QxQ companion. The era closure separately binds the
+complete paired dictionary/layout and codebook field streams used to
+test field evidence and absence proofs through their source-manifest rows and
+complete keyset hashes below; those streams cannot add, alias, or suppress a
+questionnaire relationship or hierarchy row. A bounded page range, keyword hit, search-result
+snippet, filename-only match, or same-title byte cannot stand in for this
+closure.
+
+`locator_id` is literal `psid-whole-document:` followed by SHA-256 of
+canonical JSON bytes of `[source_document_id,interview_wave,full_file_sha256,
+size_bytes]`. Locators are unique and ordered by interview wave then source-
+manifest document order. `whole_document_locator_count` equals array length
+and `whole_document_locator_domain_sha256` hashes the complete ordered
+locator-row array.
+
+Each `field_stream_locators` member has exactly `locator_id`, `locator_kind`,
+`source_document_id`, `interview_wave`, `raw_field_id`, `source_role`,
+`source_row_position`, `start`, `end`, `codebook_entry_positions`, and
+`source_row_sha256`. Kind is `field_stream_source_row`; role is
+`dictionary_layout | codebook` and exact-matches the referenced document
+role; document and row position resolve one
+manifest-authenticated canonical row in `field_source_derivation`, under its
+exact role-specific row schema; and the row digest hashes that complete row.
+Its raw field, source-row ID/position, locator IDs, normalized entry positions,
+and dictionary coordinates must all exact-match that reconstructed row. A
+dictionary/layout locator has nonnegative half-open integer
+coordinates with `start < end` and an exact empty codebook-position array.
+A codebook locator has null coordinates and `codebook_entry_positions` exactly equal to `[0, …, normalized_entry_count - 1]` in source-entry order. The array is empty if and only if `normalized_entry_count == 0`; otherwise it is nonempty.
+The locator array exact-covers
+every canonical field row in every one of `U`'s 86 dictionary-layout and 47
+codebook documents whose singleton wave occurs in this era, once per source
+row; no candidate-manifest, inventory-use-selected subset, or extra row is
+admitted. The 43 raw-file rows remain exact-covered by their framing
+derivations and do not masquerade as field-stream locators.
+
+The mandatory empty-entry locator regression uses one cited canonical
+codebook row whose `normalized_entries` array is exact empty and whose
+`normalized_entry_count` is `0`. It has exactly these three arms:
+
+- the passing arm emits exactly one field-stream locator for that row with
+  null coordinates and `codebook_entry_positions: []`, and that locator
+  contributes exactly one source atom;
+- the omitted arm emits no locator for that row and aborts on the every-
+  canonical-row exact-cover law; and
+- the invented arm emits one locator with `codebook_entry_positions: [0]`
+  and aborts because that array does not exactly equal the empty position
+  range required by `normalized_entry_count == 0`.
+
+The field locator ID is literal `psid-field-stream:` followed by SHA-256 of
+canonical JSON bytes of `[source_document_id,interview_wave,raw_field_id,
+source_role,source_row_position,source_row_sha256]`. Rows follow interview
+wave, dictionary/layout before codebook, source-manifest document order,
+raw-field order, and source-row position. IDs are unique; count equals array
+length; and `field_stream_locator_domain_sha256` hashes the complete ordered
+row array. The complete locator union is the unique concatenation of
+`whole_document_locators`, then `questionnaire_occurrence_rows`, then
+`field_stream_locators`; every whole-document ID, occurrence ID, and field-
+stream ID used as a locator foreign key resolves exactly once in that union.
+
+`near_match_source_annotation_rows` is the separately authenticated Q5
+annotation denominator from which every proof's near matches are derived. A
+row has exactly `near_match_source_annotation_id`, `source_locator_id`,
+`interview_wave`, `source_occurrence`, `matched_text_or_field_id`,
+`semantic_bindings`, and `annotation_disposition`. `source_occurrence` has
+exactly `occurrence_kind`, `page_number`, `occurrence_index_on_page`,
+`source_row_position`, `codebook_entry_position`, and
+`matched_utf8_sha256`. The complete source-atom domain is fixed before any
+proof is constructed and has exactly these two disjoint branches:
+
+- one atom for every `questionnaire_occurrence_rows` member in the era. Its
+  locator is that occurrence ID, wave, page, same-page index, matched text,
+  and text digest; kind is `questionnaire_page_text`, and its row and
+  codebook-entry positions are null; and
+- one atom for every `field_stream_locators` member in the era. Its locator,
+  wave, and zero-based source-row position exact-copy that field locator;
+  kind is `field_source_row`, page, occurrence-index, and codebook-entry
+  positions are null, `matched_text_or_field_id` is the exact `raw_field_id`,
+  and `matched_utf8_sha256` hashes only that field ID's exact UTF-8 bytes.
+  The locator's complete authenticated canonical-row digest remains the
+  binding to all label, description, format, and value-entry source bytes.
+
+Thus each questionnaire occurrence and each canonical dictionary/codebook
+row contributes exactly one source atom. Whole-document locators do not add
+selected byte spans: their every page is already completely dispositioned by
+the page/occurrence annotation, including pages with no semantic occurrence.
+Raw-data documents contribute framing and census evidence, not questionnaire-
+predicate semantics. Omitting a source atom, creating member-level search
+hits, duplicating a field row for its value entries, or adding an unbound
+locator aborts.
+
+Each `semantic_bindings` member has exactly `role`, `job_slot_id`,
+`questionnaire_component_slot_id`, `slot_kind`, and `field_purpose`. Each
+value is either null or one exact member of its independently fixed catalog;
+at least one is nonnull, and the joint nonnull values must be compatible with
+at least one member of H times the purpose array. The source-only annotation
+first records the complete finite relation of coordinate combinations
+supported jointly by that exact atom; a combination asserts joint support,
+not five independent labels. For two such bindings `b` and `c`, `b` strictly
+subsumes `c` exactly when every nonnull coordinate of `c` is equal and
+nonnull in `b` and `b` has at least one additional nonnull coordinate.
+`semantic_bindings` contains every and only subsumption-maximal member of the
+complete support relation. Consequently a jointly supported role and purpose
+serialize as one two-coordinate maximal object, while two separately
+supported readings serialize as their two maximal objects; singleton versus
+combined grouping is not a writer choice. Equal maximal objects are
+deduplicated, then ordered by unsigned UTF-8 comparison of their complete
+terminal-LF §10.1 canonical bytes.
+
+`annotation_disposition` is exactly `semantically_bound` when that maximal
+array is nonempty, exactly `no_supported_predicate_dimension` when the
+complete source review establishes an empty support relation, and exactly
+`unresolved_semantic_binding` when source bytes do not determine whether
+coordinates are jointly or separately supported. The unresolved branch has
+an exact-empty binding array and fails Q5 status; it cannot be converted to
+the empty-support branch or resolved by a proof target. There is no authored
+reason string. This maximality/subsumption reconstruction is part of the
+independent keyset/domain comparison; an omitted projection, a nonmaximal
+projection, or two alternate groupings aborts.
+
+Completeness is cross-checked rather than inferred from a later proof. Every
+catalog, hierarchy, or positive witness use of a questionnaire occurrence
+must occur in that atom's complete pre-maximal support relation and must be
+equal to or strictly subsumed by at least one serialized maximal binding;
+nonmaximal use projections are not themselves serialized. Every canonical
+field row used by a positive-field join must likewise place each same-key
+complete coordinate in its pre-maximal relation and resolve it through a
+serialized maximal binding. Conversely every serialized maximal binding
+must resolve one or more source-supported members of the pre-maximal relation;
+it cannot appear only because a proof would benefit. The
+source-only reviewer also dispositions every other atom, including partial
+field semantics and exact empty arrays, from the pinned page or canonical-row
+bytes. Conversely a binding unsupported by that atom, a binding supplied by
+an inventory/crosswalk/reader row, or use of this negative-audit annotation
+to create `O_H`, `O_P`, a positive occurrence, or a positive-field join
+aborts. A complete binding may only invalidate an alleged absence; it cannot
+manufacture a positive.
+
+For validation, a separately reviewed source-only lane reconstructs the
+complete source-atom and binding arrays, count, keyset, and domain digest from
+the authenticated page and canonical-row bytes before the candidate Q5
+annotation rows are read. The candidate rows must deep-equal that independent
+relation. Copying Q5's own binding, empty-array, count, order, or digest as the
+expected value is self-authentication and aborts.
+
+The annotation ID is literal `psid-near-match-source-annotation:` followed by
+SHA-256 of the terminal-LF §10.1 canonical JSON value array of the remaining
+six row members in displayed order. Rows follow complete-locator-union order
+after skipping whole-document locators: questionnaire occurrences, then
+field-stream locators. IDs, complete ID preimages, and source locators are
+unique; a duplicate preimage or equal ID for unequal preimages aborts. Count equals the
+row-array length and also equals the integer sum of
+`questionnaire_occurrence_count` and `field_stream_locator_count`; the keyset digest hashes the complete ordered ID
+array and the domain digest hashes the complete ordered row array. Q5 status
+cannot pass unless this exact source cover and all binding cross-checks pass
+and no row has `unresolved_semantic_binding`.
+
+For projection into retained §4.2, each locator has one independently
+reconstructed `source_locator_sha256`. A whole-document locator hashes the
+canonical array `[source_document_id,canonical_source_path,
+"whole_document",[byte_start,byte_end,pdf_page_domain]]`; a questionnaire-
+occurrence locator deep-copies its row's already reconstructed exact page-
+span digest; and a field locator
+hashes `[source_document_id,canonical_source_path,source_role,
+[interview_wave,raw_field_id,source_row_position,start,end,
+codebook_entry_positions]]`. The path comes only from the authenticated
+source manifest. An `asked` expanded-disposition row's
+`positive_locator_ids` is the complete locator-union-order stable union of
+its positive row's questionnaire-occurrence IDs and every field-stream
+locator resolving any dictionary or codebook row ID in its positive-field-
+join raw projections. It is nonempty and includes both an occurrence and at
+least one dictionary locator. The join's raw-data identity, SHA-256, and
+framing digest remain separately mandatory; no invented raw-file locator is
+added to the field-stream domain. A
+`structural_query_slot` row selects its proof's
+complete `searched_locator_ids` followed by every field-stream locator whose
+row participates in either searched keyset digest. The matching retained
+rows for all keys under the same `h` therefore have byte-identical source
+document and locator projections from their one `P_h`. The matching retained
+`expanded_slots` row's `source_document_ids` is the unique source-manifest-
+order document projection of that nonempty selection, and its
+`source_locator_sha256s` is the same-selection-order complete digest
+projection. Every document lookup resolves through independent `U`, not the
+candidate manifest. Both arrays must deep-equal the independently constructed
+slot-registry row; the closure artifact cannot author either.
+
+The existing official-inventory `absence_proof` nested member is
+prospectively completed with exactly `absence_proof_id`, `era_id`,
+`target_inventory_keys`, `target_predicate`, `searched_interview_waves`,
+`searched_locator_ids`, `searched_layout_keyset_sha256`,
+`searched_codebook_keyset_sha256`, `excluded_near_matches`,
+`search_implementation`, and `conclusion`. `search_implementation` is the
+exact annotation-authority object with exactly `authority_kind`,
+`questionnaire_page_text_derivation_sha256`,
+`questionnaire_page_domain_sha256`,
+`questionnaire_occurrence_domain_sha256`,
+`flow_branch_domain_sha256`, `role_node_domain_sha256`,
+`job_slot_domain_sha256`, `questionnaire_component_slot_domain_sha256`,
+`node_alias_domain_sha256`, `global_relationship_domain_sha256`,
+`hierarchy_domain_sha256`, `positive_occurrence_domain_sha256`,
+`near_match_source_annotation_count`,
+`near_match_source_annotation_keyset_sha256`, and
+`near_match_source_annotation_domain_sha256`. It deep-copies the corresponding passing
+`hierarchy_annotation_authority` values for the complete six-era domain and
+derives its authority from the outer `Q5` Git identity; it does not embed the
+outer closure SHA-256. The former unauthenticated literal
+`questionnaire_whole_document_visual_and_flow_review_v1` is not an active
+implementation identity and cannot satisfy this object.
+
+For `P_h`, `era_id` is exactly the one displayed era whose
+`interview_waves` array contains `h.interview_wave`; the six era arrays are
+disjoint, so missing or multiple resolution aborts. `target_predicate` has
+exactly `roles`, `job_slot_ids`,
+`questionnaire_component_slot_ids`, `slot_kinds`, `field_purposes`, and
+`quantifier`. For `P_h`, the first four arrays are exactly the singletons
+`[h.role]`, `[h.job_slot]`, `[h.questionnaire_component_slot]`, and
+`[h.slot_kind]`; the exact relationship tuple must resolve the one same-row
+`R_Q.relationship_id`. `field_purposes` deep-equals `M_h` in ratified purpose
+order. `quantifier` is the literal
+`no_matching_questionnaire_node_in_searched_domain`. No array may be a
+proper subsequence, superset, alternate relationship, or selected Cartesian
+factor. `target_inventory_keys` is exactly the purpose-order projection of
+the `structural_query_slot` expanded rows under `h`, and therefore is the
+complete independent §4.2 key expansion of this predicate. It is nonempty
+and never a proof-selected subset.
+
+`searched_interview_waves` is exactly the singleton `[h.interview_wave]`.
+For that one wave, `searched_locator_ids`
+contains every whole-document locator whose independently reconstructed
+`U` row has role `questionnaire_flow` and contains that wave—both the core
+questionnaire and the QxQ companion where the 81-row projection has one—and
+contains no other whole-document locator. The resulting array is nonempty,
+unique, and in complete-locator-union order; a proof-selected document
+subset, another wave, the containing era array, or a candidate-authored wave
+array aborts.
+`searched_layout_keyset_sha256` hashes the complete ordered canonical arrays
+`[source_document_id,raw_field_id,start,end]`; the codebook digest hashes the
+complete ordered arrays `[source_document_id,raw_field_id,
+codebook_entry_position]`. Both domains are independently selected from the
+one target wave and the complete field-stream-locator/source-manifest join,
+never from search hits; every displayed array element resolves its exact
+field locator and authenticated source row.
+
+Derive `excluded_near_matches` only after the complete near-match annotation
+domain exists. Filter its rows to the proof's singleton wave and traverse
+them in annotation-row order, then each row's `semantic_bindings` by its
+zero-based array index. Compare a binding against `P_h` in the fixed dimension
+order `role`, `job_slot`, `questionnaire_component_slot`, `slot_kind`,
+`field_purpose`. A dimension matches exactly when its nonnull binding value
+equals the corresponding singleton target value, or for purpose is a member
+of `M_h`; null and every unequal value fail that dimension. The matched-
+dimension projection and its failed-dimension complement therefore exact-
+partition all five displayed names in their displayed order.
+
+Atom-local masks do not decide whether a complete questionnaire node exists.
+For every target purpose in `M_h`, independently rerun the exact `O_P`
+positive-witness evaluation over every finite same-wave branch-compatible
+prompt/anchor occurrence set. Let `X_h` be the complete relation of all such
+passing witness sets for those targets, before their occurrence unions are
+projected. This is the same source domain, compatibility predicate, and
+five-coordinate witness law used to construct `O_P`, not a new keyword or
+atom-union test. By the direct complement definition of `M_h`, `X_h` must be
+empty; a nonempty relation proves that `O_P`, `M_h`, or the candidate proof
+is inconsistent and deterministically selects `not_proved`. Thus several
+partial atoms that jointly form a complete branch-compatible witness can
+never pass merely because no individual atom names all five dimensions.
+
+A binding with zero matching dimensions is a canonical nonmatch and emits
+nothing; an annotation row with an empty binding array has that same unique
+zero-match outcome without inventing a placeholder binding. A binding with
+one through four matching dimensions is a canonical
+near match and emits exactly one row. A binding with all five matching
+dimensions is a conservative exact annotation contradiction: it emits no
+excluded row, deterministically makes the conclusion `not_proved`, and fails
+Q5 authority status even if the atom alone is not an `O_P` witness. No binding
+may be ignored, aggregated with another binding, or selected as the preferred
+interpretation.
+
+Each `excluded_near_matches` row has exactly
+`near_match_source_annotation_id`, `semantic_binding_index`,
+`semantic_binding`, `source_locator_id`, `source_occurrence`,
+`matched_text_or_field_id`,
+`matched_predicate_dimensions`,
+`failed_predicate_dimensions`, and `disposition_reason_code`. The annotation
+ID resolves its one Q5 row; the nonnegative JSON integer index excludes
+booleans and resolves its one binding; and `semantic_binding`, locator,
+source-occurrence object, and matched text or field ID deep-copy those exact
+values. The locator has the proof's one wave. Matched and failed arrays are
+the exact projections just defined, with lengths one through four and four
+through one respectively. The reason is the sole literal
+`partial_predicate_binding_only`. Rows retain annotation-row/binding-index
+order and are unique by that pair. The array must deep-equal this complete
+functional projection; exact empty means the complete candidate sweep found
+no partial binding. A selected search hit, alternate token, free-text reason,
+omitted ambiguous binding, wrong-wave locator, extra row, or reordering
+aborts.
+
+`conclusion` has exactly `disposition`, `proved_target_inventory_keys`, and
+`reason_code`. Disposition is `structural_query_slot_proved | not_proved`;
+when `X_h` is empty and the complete same-wave binding traversal has no five-
+dimension match, the first branch is mandatory, the proved array deep-equals
+`target_inventory_keys`, and reason is the literal
+`complete_candidate_domain_has_no_full_target_match`. If one or more complete
+bindings or `X_h` witnesses exist, the second branch is mandatory, the proved array is exact
+empty, and reason is the literal
+`complete_candidate_domain_contains_full_target_match`. Q5 and every
+structural consumer pass only the first branch; there is no authored reason
+or third disposition. `absence_proof_id` is literal
+`psid-absence-proof:` followed by SHA-256 of terminal-LF §10.1 canonical JSON bytes of
+`[era_id,target_predicate,searched_interview_waves,searched_locator_ids,
+searched_layout_keyset_sha256,searched_codebook_keyset_sha256,
+search_implementation]`. The ID therefore binds the canonical target/scope
+and the complete authenticated source-annotation domain; near matches and
+conclusion are unique functions of that preimage. Duplicate preimages, ID
+collisions, or unequal result bytes for one preimage abort. Absence proofs
+are exactly the nonempty-`M_h` filtered-H projection in H order; ordering by
+first target key then ID must reproduce that same array and cannot select it.
+Their count is exactly the number of hierarchy rows with nonempty `M_h`, and
+`absence_proof_domain_sha256` hashes the complete ordered proof-row array.
+
+Class A and Class B are joined by complete keyed relations, not parallel
+status labels. Let `A` and `S` be the `asked` and
+`structural_query_slot` expanded-disposition rows, let `J` be all positive-
+field-join rows, and let `I+` and `I-` be the `present` and
+`structural_missing` official-inventory rows. Each projection preserves the
+complete official source-inventory-key order. The following ordered arrays
+must deep-equal, not merely hash alike:
+
+```text
+keys(A) == keys(J) == keys(I+)
+keys(S) == keys(I-)
+stable merge of keys(A) and keys(S) by original expanded-row position
+  == complete expanded-slot key stream
+  == complete official-inventory key stream
+positive_occurrence_ids(A)
+  == positive_occurrence_ids(positive_occurrence_rows)
+  == positive_occurrence_ids(J)
+```
+
+For the displayed stable merge, tag every filtered row with its unique zero-
+based position in the complete expanded-disposition array, sort by that
+integer, and drop the tag. Every array is an exact cover with multiplicity
+one. In addition, expand the
+complete ordered relation
+`[positive_occurrence_id,source_inventory_key,
+questionnaire_occurrence_id,occurrence_raw_field_reference_id]` first from
+positive rows' purpose-prompt subsets plus exact reference rows and
+independently from `J`; the two
+multisets and their order must be equal. One questionnaire occurrence may be
+reused by distinct positive keys, but every positive and reference ID is
+key-specific and unique; each repeated occurrence therefore remains in its
+complete tuple. No stable-first relationship loss is allowed.
+
+For every same-key member of `J` and `I+`, inventory `raw_field_ids`
+deep-equals the join's ordered raw-field-ID projection. Its
+`layout_coordinates` and `typed_parse_specs` arrays have that same positive
+length and position. Project each layout object through, in order,
+`raw_field_id`, `start`, `end`, `raw_width`,
+`dictionary_source_document_ids`, `dictionary_field_row_ids`,
+`dictionary_field_rows_sha256`, `numeric_grammar_derivation_id`,
+`numeric_grammar_derivation_sha256`, `codebook_source_document_ids`,
+`codebook_field_row_ids`, `codebook_field_rows_sha256`,
+`normalized_codebook_entries`, `normalized_codebook_entry_count`,
+`codebook_value_domain_sha256`, and `raw_data_source_document_id`; it must
+deep-equal the first 16 members of the join's same-position raw-field
+projection. Independently resolve the raw-data manifest SHA-256 and complete
+record-framing digest and require equality to the projection's final two
+members.
+
+Each positional typed-parse object and raw-token grammar must then derive
+only from those complete dictionary/codebook rows and raw-data framing under
+§19.3.2. Labels, descriptions, value maps, reporting/timing metadata,
+`source_file_ids`, and `source_byte_sha256s` must likewise be the complete
+same-source projections already required there. The inventory may not
+select a field, row, document, order, coordinate, parser branch, or source
+digest and then use its own choice as expected join input. A shared raw field
+across distinct keys is lawful; an inventory-only field, questionnaire-only
+positive, reordered field, or partial source projection aborts.
+
+The disposition equations are literal biconditionals over every complete
+key:
+
+```text
+questionnaire_presence == asked
+if and only if source_disposition == present
+
+questionnaire_presence == structural_query_slot
+if and only if source_disposition == structural_missing
+```
+
+The asked/present branch has one positive-occurrence ID, one positive-field-
+join ID, nonempty joined fields and locators, and null slot and inventory
+absence proof. The structural/structural-missing branch has null positive
+and join IDs, the exact-empty field/label/description/value-map/parse/source-
+file/source-digest/layout/missing-token branches required by §4.2, and one
+nonnull slot proof ID. That ID resolves exactly one complete Q5 era
+`absence_proofs` object whose target keys contain this key exactly once. The
+same-key inventory row's nested `absence_proof` must deep-equal that entire
+resolved object—including target predicate, complete searched domains,
+near-match rows, search authority, conclusion, and every null/empty value—
+not merely its ID or digest. Any crossed status pair, missing/extra join,
+proof-ID-only match, or unequal proof byte fails both artifact statuses.
+
+A lawful absence proof therefore has exactly one interview wave and one H
+coordinate. It sweeps all pages and flow branches of every questionnaire
+document in that wave, the complete source-atom/binding annotation, and the
+complete linked layout/codebook streams; its purpose target is exactly that
+row's complete `M_h`. The filtered-H proof array collectively covers every
+unsupported tuple while the positive relation covers its complement. “Not used
+by the existing reader,” a short label, a missing token in data, keyword
+absence, a bounded questionnaire section, or a crosswalk declaration proves
+nothing. No era-wide, cross-wave, per-key, or proof-selected scope exists; in particular,
+§18's through-2011 referee sweep cannot be generalized to the full 43-wave
+slot universe without the additional exact documents and rows.
+
+The six passing era closures discharge the seven Class-A residual IDs only
+because the early era separately exact-covers both its positive
+questionnaire-slot hierarchy and every unsupported early
+job/context/purpose negative. Any missing wave, branch, role, job,
+component, purpose, source stream, near-match disposition, row, count, or
+digest, or positive/raw-field join leaves the corresponding Class-A and
+Class-B residuals `registration_required`. This law
+ratifies the extraction target and proof form; it does not declare any
+future extraction complete.
+
+#### 19.3.4 Class C — rule-registry residual consequences
+
+The existing v1 registry names remain unchanged, but three previously
+underspecified exact row schemas gain one common
+`residual_consequence` member immediately before `failure_disposition`.
+The complete successor reconciliation-row order is:
+
+```text
+reconciliation_rule_id
+applicable_source_inventory_keys
+ordered_operand_selectors
+precedence_order
+exact_once_formula_ast
+residual_disposition
+residual_consequence
+failure_disposition
+reason_code
+```
+
+The complete successor job-match-row order is:
+
+```text
+job_spell_match_rule_id
+applicable_source_inventory_keys
+allowed_wave_reference_pairs
+required_role_fields
+required_job_identifier_fields
+compatibility_predicate_ast
+ambiguity_action
+stable_component_id_preimage_fields
+residual_consequence
+failure_disposition
+reason_code
+```
+
+The complete successor SE-aggregation-row order is:
+
+```text
+se_aggregation_group_rule_id
+applicable_source_inventory_keys
+person_year_key_fields
+same_service_key_fields
+eligible_gain_concepts
+eligible_loss_concepts
+forbidden_cross_group_offsets
+group_id_preimage_fields
+family_aggregate_allocation_rule
+residual_consequence
+failure_disposition
+reason_code
+```
+
+The existing `residual_disposition`, `ambiguity_action`,
+`family_aggregate_allocation_rule`, and all three runtime
+`failure_disposition` members retain their executable meanings. The new
+member records source-authority sufficiency and registration consequence; it
+cannot substitute for an executable AST, matching rule, allocation key, or
+runtime failure action. This explicit keyset replacement retains the outer
+v1 artifact/registry names because no official row has yet been ratified,
+but every enclosing row, registry, nine-registry identity, G17, crosswalk,
+bundle, and receipt digest must be freshly computed.
+
+The common member is `psid_rule_residual_consequence.v1` and has exactly:
+
+```text
+schema_version
+residual_evidence_identity
+authority_status
+verification_class
+verification_claim_ids
+residual_ids
+row_consequences
+```
+
+`residual_evidence_identity` has exactly `path`, `artifact_id`,
+`schema_version`, and `sha256` and exact-matches the raw adjudication
+identity in §19.3.1. `authority_status` is exactly `verified |
+documented_no_source_allocation_required | authority_absent |
+authority_conflict`. `verification_class` is exactly
+`registration_required | direct_only_optional`; it and the complete ordered
+claim-ID array are independently derived from the claim, legal-rule, and
+applicable-inventory-key closure and exact-compared with the row. A row
+cannot select a smaller key domain, omit a claim, or demote a required
+dependency.
+
+Each `row_consequences` member has exactly `consequence_id`, `residual_id`,
+`source_inventory_key`, `source_handling`, `coverage_consequence`, and
+`reason_code`. The ID is the literal
+`<rule-id>:<residual-id>:<source-inventory-key>`. Rows exact-cover the
+Cartesian expansion of the member's complete residual-ID array and every
+independently applicable inventory key, in §19.3.1 residual order and then
+official inventory order. `source_handling` is exactly:
+
+```text
+inclusive_total_exact_once
+edited_total_exact_once_details_lineage_only
+aggregate_unallocated_no_person_assignment
+no_unproved_job_attachment
+```
+
+`coverage_consequence` is exactly `continue_registered_parent | modelable |
+unresolved | abort_registration`. The complete registry allocation is:
+
+| Registry | Exact Class-C source indices |
+|---|---|
+| reconciliation | `[9,12,16,20,22,28,30]` |
+| job spell match | `[19,27]` |
+| SE aggregation | `[15,21,29]` |
+
+Each Class-C residual owns exactly one deterministic gap-carrier rule row in
+the mapped registry. Its independently expected
+`applicable_source_inventory_keys` is every official inventory key whose
+interview wave is in that residual row's §19.3.3 era and whose slot kind and
+field purpose are in the following closed registry domain:
+
+| Registry | Slot kinds | Field purposes |
+|---|---|---|
+| reconciliation | `remuneration_component`, `role_total`, `farm_aggregate`, `business_aggregate` | `amount`, `reporting_unit`, `month_or_exposure`, `assignment`, `employee_self_or_mixed`, `incorporation` |
+| job spell match | `remuneration_component`, `context_only` | `interview_and_role_attachment`, `month_or_exposure`, `assignment`, `job_identifier` |
+| SE aggregation | `remuneration_component`, `farm_aggregate`, `business_aggregate` | `amount`, `employee_self_or_mixed`, `incorporation` |
+
+The array is nonempty and follows official inventory order. The carrier's
+first ID field is literal `psid-rule-residual:` followed by SHA-256 of
+canonical JSON bytes of `[registry_schema_version,residual_id,
+applicable_source_inventory_keys]`. Its `residual_ids` is the singleton
+residual ID and its consequence rows exact-cover that array × the complete
+expected key array. No other row may carry that residual ID.
+
+For `authority_absent | authority_conflict`, the carrier is an exact
+negative tagged branch. A reconciliation carrier has empty operand and
+precedence arrays, null formula and residual disposition, failure
+`abort_registration`, and reason
+`registration_required_source_rule_residual`. A job carrier has empty
+wave/role/job/preimage arrays, null compatibility predicate and ambiguity
+action, and the same failure/reason. An SE carrier has empty person/service/
+gain/loss/offset/preimage arrays, null family allocation rule, and the same
+failure/reason. In each case the ID, applicable keys, and complete
+`residual_consequence` remain populated. A `verified` successor instead must
+populate every retained executable member. Residual 9's special documented-
+no-allocation branch must likewise carry the complete §18 exact-once
+reconciliation operation; it is never an empty executable row.
+
+Across the three registries, the Class-C carrier projection has exactly 12
+rows in §19.3.1 Class-C order. Each projection row has exactly
+`residual_id`, `registry_schema_version`, `carrier_rule_id`,
+`applicable_source_inventory_keys`, and `residual_consequence_sha256`.
+Its residual-ID array must equal the pinned 12-ID array, with no duplicate;
+its count is 12 and its domain digest hashes the complete ordered projection.
+G17-C09 through C11 independently reconstruct and exact-compare their
+registry-specific slices, including count and digest. A missing candidate
+carrier, empty expected key domain, residual on a noncarrier, duplicate
+carrier, or wrong registry fails before the ordinary no-unreferenced-rule
+check; the carrier is referenced by this complete residual domain and is not
+an orphan.
+
+Residual 9 alone may have
+`authority_status: documented_no_source_allocation_required`. It must bind
+the complete §18.2 documented-inclusive-total projection, use
+`inclusive_total_exact_once`, and use
+`coverage_consequence: continue_registered_parent`. `V4379`, `V5289`, or
+`V5788` is consumed once; `V4901`–`V4907` remains descriptor context only.
+No rate × weeks × hours amount, component decomposition, secondary-job
+addition, or new allocation is authorized. This is the §18 inclusive-total
+precedent expressed at the rule-registry stage, not a weakening of V-B6.
+
+Residuals 12, 16, 20, 22, 28, and 30 use
+`edited_total_exact_once_details_lineage_only`; residuals 15, 21, and 29 use
+`aggregate_unallocated_no_person_assignment`; residuals 19 and 27 use
+`no_unproved_job_attachment`. These values preserve an authenticated parent
+total or aggregate and prevent unproved detail/person/job attachment; they
+do not themselves make an unresolved required row executable. Every one of
+the twelve source residual rows has literal `status:
+registration_required` in the authenticated adjudication blob.
+
+A source-resolved successor may use `authority_status: verified` only when
+the complete executable rule and its source closure pass and the residual is
+removed by an exact successor disposition. For `authority_absent |
+authority_conflict`, a `registration_required` row forces
+`abort_registration` for every affected key. `modelable`, `unresolved`, a
+runtime fallback, preservation of a raw parent, or structural nonuse cannot
+cure it. Thus the eleven Class-C residuals other than index 9 remain hard
+official-inventory/registry blockers until source-resolved.
+
+The `direct_only_optional` branch exists only for a key independently proved
+optional under §4.1. It requires exactly one `modelable | unresolved`
+consequence for every applicable key and must exact-match that same key's
+registered `optional_row_consequences` value and reason. The existing
+unresolved-dominates fold remains controlling. None of the twelve displayed
+registration-required residuals can enter this branch without a later
+ratified design-law change; a candidate source or rule row cannot reclassify
+one.
+
+A downstream gap never rewrites an official inventory row from `present` to
+`structural_missing`. No zero, equal/proportional share, row-order match,
+nearest-job match, first-nonmissing choice, context-derived annual amount, or
+silent aggregate-to-person allocation exists. Section 16.3.2's one-half
+mixed split remains a modeled child split after one exact read of its parent
+and is never relabeled as source allocation. G17 may carry complete negative
+objects structurally, but final production, crosswalk, and registry
+registration abort wherever a required gap remains.
+
+### 19.4 Exact replacement, preservation, and closure-sweep ledger
+
+#### 19.4.1 Exhaustive passage disposition
+
+The following table is the complete replacement and composition inventory.
+“Replace” means only the named clause and complete successor stated in this
+section; it never means delete the historical text or reinterpret an
+unnamed consumer.
+
+| Ratified anchor | Revision-7 disposition |
+|---|---|
+| §4.1 historical-rule registry top level and rule ordering | `replaced-by-§19.2.1-successor`: exact envelope, literals, nonempty rule array, unsigned-UTF-8 rule-ID order, counts, row/domain digests, self-zeroed integrity, and status. The existing 20-field rule-row schema is preserved. |
+| §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link/midyear-transition envelopes, the six-position transition-ID value-array preimage with nested types/nulls and collision abort, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
+| §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals; independent 14-family cell denominator; exact eight-position cell-ID and 15-position partition-ID value-array preimages, types, null branches, LF-canonical hashes, and collision aborts; effective-stream or one-year keyed partitions; exact cell cover; authenticated normalized joint-binding identities; complete false-before-true Cartesian vectors; all-transform tables; exact `no_disposition`; per-vector same/lower-rank agreement; rank-1 totality; and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §§4.1, 5.1, and 16.3.1 own-rule Boolean enumeration and `direct_law_controlling_result` runtime law | `composed-with-§19.2.4-joint-overlap-table`: own-rule AST/type/output validation remains; identical cross-rule binding signatures co-vary and all other signatures take the complete Cartesian product for registry overlap proof. At runtime, an all-present record must select one exact `T_p` row before the retained controlling result and one-hot classification; missing facts retain the skipped-transform fold. |
+| §4.1 `verification_claim_specs` legal `affected_inventory_keys` and `governing_rule_ids` | `completed-by-§19.2.3-byte-producing-projections`: the affected-key source is the complete independent disposition/cell relation in official inventory order; the governing-rule source is the complete rule-major effective-cell relation fixed by family claim in registry order; exact uniqueness, five-claim order, cross-family/jurisdiction aggregation, JSON-array serialization, branch equality, and nonempty aborts are explicit. Neither configured destination array selects either source relation. |
+| §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary; exact PSID/FIPS/name authority table; exact-covered locator/span-bound coding assertions with source-ordered selecting-reference or byte-authorized historical-provenance dispositions in every declaration-ID preimage; source-selected PSID, FIPS, exact-name, or alias authority without a domain-subset predicate; inclusive range expansion; complete enum-member cover including authenticated foreign/territory dispositions; value and meaning joins on every branch with mandatory agreement; and seven hostile constructor vectors. Observed values and candidate enums never select the denominator. |
+| §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
+| §8 and §10.1 `legal_rule_input` | `replaced-by-§19.2.1-literals-and-§19.2.2-subordinate-byte-closure`: one concrete path/vintage/schema, canonical complete raw blob, configured complete deep copy, and referenced source blobs closed before runner creation. The implicit input ID/role and every other production-input law are preserved. |
+| §16.2 `historical_coverage_rules` requirement row and item-6 predicate equation | `replaced-by-§19.2.5-v2-successor`: schema descriptor plus configuration, raw bytes, append-only history, independent domain, and source-byte closure. Requirement ID/class remain unchanged. |
+| §16.13.2 legal establishing-source match | `replaced-by-§19.2.2-serialized-complete-link-projection`: the legal manifest carries the exact claim/binding/pointer/row-digest array, reconstructed independently and bound by the v2 legal predicate; every nonlegal source row and matching law is preserved. |
+| §§16.13.6 and 17.2 exact-empty non-PSID `adjudication_sources` boundary | `preserved-byte-for-byte`: the §19.2.2 legal-link projection is not an adjudication-source array, supplies no source disposition, and cannot bypass the independently reconstructed base legal result. |
+| §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate-and-type-total-successor-chain`; the v2 legal result feeds base-result projection v2, adjudication preimages v3, noncapture predicate/preimage/result v4, and authority cutoff v4. Every unrelated singleton-authority requirement is preserved. |
+| §16.13.6 legal-claim result equation over matched-rule rows alone | `replaced-by-§19.2.5-Q-plus-P-total-equation`: each complete matched-rule domain \(Q_{b,x}\) is composed with the independently reconstructed, nonempty, cell-exact-covering partition domain `P_x`; conflict has first precedence, absence and unrepresentable transition have second precedence, and `verified` requires every \(Q_{b,x}\) row verified plus every `P_x` row `verified_dispositive`. Optional negative rows exact-project their complete \(N_p\) occurrence domains into the retained legal-result consequence stream; every residual, empty, or nonexhaustive combination aborts. The retained three-status and seven-field legal-result schemas are unchanged. |
+| §§16.13.6, 16.13.8, and 16.14.4 legal-result/base-binding consumers | `replaced-by-§19.2.5-type-total-consumers`: every old typed identity/base/adjudication/noncapture/cutoff occurrence is replaced by the exact v2/v3/v4 object named there, including all six binding conjuncts, construction order, evidence/global-registry rows, bundles, cutoffs, configurations, receipts, and validators. No structural relabeling or mixed-version object is lawful. |
+| §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2-v3-source-format-compiler`: byte-derived canonical dictionary/codebook rows, including locator-bound codebook `source_format_text`; a tagged common source-ordered dictionary/codebook format projection with byte-exact nonnull agreement; source-manifest-ordered field/file closure; and dependency-ordered dictionary extraction, raw framing/all-field census, codebook extraction, and numeric compilation precede inventory selection. Exact `NUM(w.d)`/`Fw.d` syntax establishes one width/decimal tuple but the complete census uniquely authenticates the zero-left-pad or ASCII-space-left-pad arm. Exact committed `CHR(w)` syntax supports only direct same-width literal copying and an inert outside-numeric or range-physical-unestablished row, never a numeric grammar. The complete combined group derives `value_code_map` for a nonempty normalized codebook domain and `fixed_width_numeric` for an exact-empty domain with supported numeric format; dictionary parse-kind text can only corroborate. Complete dictionary meaning JSON and codebook value lexemes retain their roles; every literal and range rendering is replayed under the selected arm. Action-sensitive prefix quotienting, explicit accumulator/depth, sink omission, BFS numbering, counts/digests, zero-arm constructors, and the complete 4,802-record V93 space-arm replay fix the physical and DFA bytes. Matching fixed-numeric codebook rows remain cited but must have empty normalized entries; value-code numeric ranges use codebook-derived type/unit, exact meaning, and literal-first precedence. Serialized normalized literal domains, exhaustive parse-kind branches, dictionary missing literals, closed unobserved-value rows, and outside-grammar abort remain. The retained whole-inventory builder identity stays distinct. `typed_parse_specs` retains its ratified nine-key shape, exact-matches the source-derived branch, and only its named width/decimal/value-derivation projection is otherwise compared to the source compiler result. |
+| §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
+| §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim. The predecessor padding-removal enum remains representable, but the v3 compiler emits only `none` or its census-authenticated exact ASCII-space canonicalization and never arbitrary removal. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
+| §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3-canonical-proof-partition`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, and reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files). For each H row, the official-order missing-purpose complement `M_h` emits exactly one proof iff nonempty; its four singleton hierarchy coordinates, complete `M_h`, singleton wave, target-key order, and filtered-H proof order are functions. Q5 separately exact-covers every questionnaire occurrence and canonical field row with source-only maximal semantic bindings; a cited codebook row whose `normalized_entry_count == 0` remains exactly one field-stream locator with `codebook_entry_positions: []` and exactly one source atom, while omission or an invented position `0` aborts. Unresolved grouping fails. Atom-level partials produce exact near-match rows, while the complete branch-compatible witness relation used by `O_P` decides full-match truth. Ordering, both reason codes, and conclusions are exact functions. Only this fixed denominator supplies retained slot evidence, and every structural inventory proof deep-equals it. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes and the complete Q5 annotation. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
+| §4.2 source-derived job/component IDs, `slot_kind`, hierarchy, and unsupported-tuple denominator | `replaced-and-completed-by-§19.3.3-source-only-hierarchy-annotation`: the separately first-added `Q5` closure is the authenticated annotation authority over all pages of the fixed 81-document domain. Exact UTF-8 occurrence coordinates, same-wave and branch ancestry, complete role/job/component anchor partitions, repeat/alias and aggregate-anchor reverse covers, coordinate-derived IDs, sentinels, per-kind equations, and the exact all-source-component projection `R_Q` are frozen. The complete hierarchy is `W × two roles × R_Q`; source-only `O_H` is derived before purpose positives, observed and structural-hierarchy rows are explicit, every row expands over all 35 purposes, and complete `O_P` versus structural branches exact-partition that fixed domain. Each nonempty same-H missing-purpose complement has its one canonical singleton-wave proof and complete source-atom annotation denominator. G17-C01 carries the exact authority header plus six era annotation projections. The prior 37-wave/61-passage artifact and unauthenticated review literal cannot satisfy the new authority. Existing official v1 artifact names remain; only their formerly underdetermined nested dimensions and evidence are completed. |
+| §4.2 independent `questionnaire_presence`/`source_disposition` tags and positive/structural evidence | `replaced-and-completed-by-§19.3.3-positive-field-join`: direct raw-ID or byte-identical leading question-identifier spans join each purpose prompt to a unique same-wave `D_w` field; ambiguous multi-field question labels abort. One source-only join per positive carries the complete ordered dictionary/codebook/raw-data projection. Asked, join, and present keys exact-cover each other in both directions; raw fields and layouts compare positionally; `asked iff present` and `structural_query_slot iff structural_missing`; structural inventory proofs deep-equal the complete Q5 proof object. The retained slot row carries the positive, join, or proof IDs, and G17-C01 compares the full join and proof/status bytes. No current artifact is promoted by this schema law. |
+| §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets-and-tagged-branches`: one `residual_consequence` member is inserted at the exact enumerated position. A verified/documented executable row preserves every preexisting member and meaning; only the exact authority-absent/conflict carrier branches set the enumerated executable members empty or null and force `abort_registration`. |
+| §4.2 `family_aggregate_allocation_rule` | `preserved-in-every-executable-SE-row-and-exactly-null-in-a-negative-carrier`: a verified/documented row retains exactly `action` and `allocation_source_inventory_keys`; an authority-absent/conflict carrier has null as expressly enumerated in §19.3.4. Neither branch creates an allocation default. |
+| §§16.2, 16.5.1, 16.11.2, and 16.13 official registry/crosswalk identities and construction | `composed-with-the-completed-nested-schemas`: all v1 official artifact/registry names, nine-registry order, first-add/cutoff history, nonempty/no-unreferenced-row rules, and configuration deep-copy laws remain. Every affected content and identity digest is fresh. |
+| §16.6.4 G17 | `replaced-only-as-enumerated-in-§19.4.2`: comparison count/order and every unnamed domain remain unchanged; C01, C05, C06, C07, C09, C10, and C11 receive the complete successor comparands. |
+| §16.12.5 frozen ten-artifact token sweep | `preserved-byte-for-byte`: Amendment 5 adds no authority row to that historical sweep. The Class-A 43-wave closure and this amendment's normative passage sweep are separate prospective closures. |
+| §18 documented-inclusive-total projection, V-B6 successor, and exact-once/no-source-allocation laws | `preserved-byte-for-byte-and-composed-with-§19.3.4`: residual 9 alone records the same verified no-allocation-required consequence; no arithmetic allocation is introduced. |
+| §§17–18 revision-5/revision-6 comparator tables | `preserved-as-immutable-historical-invariants`; §19.5 is the complete revision-7 successor census. |
+
+All `.v1` official slot, inventory, and six executable-registry names remain
+exactly ratified; the operative crosswalk remains the separately ratified
+`psid_covered_earnings_crosswalk.v3`. All nine registry identities remain in their
+ratified order. No Class-A evidence artifact becomes a registry and no legal
+source blob becomes a generic production input. Every count, key stream,
+canonical order, foreign key, nonempty rule, no-unreferenced-rule,
+strict-parser, content-hash, first-add history, crosswalk exact-cover, gate,
+label, target, model, output, and publication law not expressly listed in
+the table remains controlling by silence.
+
+#### 19.4.2 Exact G17 successor comparands
+
+`g17_fitting_free_inventory_crosswalk_evidence.v1` retains exactly 18
+physical comparison rows in order G17-C01 through G17-C18, the base seven-
+key comparison-row shape, and `comparison_count: 18`. C02–C04, C08,
+C12–C18 retain their complete ratified purposes and payloads. In particular,
+C15 remains the exact nonempty 20-row canonical-empty-child stream; inventory
+grammar or absence evidence never enters that target/model-choice domain.
+
+The seven changed expected/actual payloads are exactly:
+
+- **G17-C01** is a tagged object with exactly `inventory_key_stream`,
+  `slot_source_authority_manifest`, `hierarchy_annotation_authority`,
+  `positive_occurrence_field_join_rows`,
+  `numeric_grammar_source_derivation`, `inventory_layout_grammar_rows`,
+  `inventory_absence_proof_rows`, and `slot_closure_evidence_identity`. The
+  first is the unchanged complete official key stream. The second is the
+  complete two-key §19.3.3 slot-source manifest. On the expected side, before
+  any candidate manifest is read, both immutable upstream roots and all four
+  questionnaire capture inputs are authenticated, both complete source-row
+  disposition relations are reconstructed, all 257 staged source bytes are
+  reproduced, and the exact 81/86/47/43-role `U` array is independently
+  constructed. Its complete row array, role and wave values, paths, storage
+  identities, canonical order, count 257, ordered-ID keyset hash, row-domain
+  hash, and embedded `upstream_corpus_registry_identity` must all exact-match
+  the candidate source manifest. Only then is that passing manifest deep-
+  copied by the slot/inventory artifacts on the actual side. The third value
+  has exactly `authority_header` and `era_annotation_rows`.
+  `authority_header` has exactly the complete displayed
+  `hierarchy_annotation_authority` shape in §19.3.3.
+  `era_annotation_rows` has exactly six rows in `era_id_order`; each has
+  exactly `era_id`, `field_stream_locators`, `field_stream_locator_count`,
+  `field_stream_locator_domain_sha256`, `questionnaire_page_rows`,
+  `questionnaire_occurrence_rows`, `flow_branch_rows`, `hierarchy_rows`,
+  `positive_occurrence_rows`, `occurrence_raw_field_reference_rows`,
+  `positive_field_join_rows`, `expanded_disposition_rows`,
+  `near_match_source_annotation_rows`, and `absence_proofs`, each a complete
+  deep copy of the matching Q5 era member. Each projected field-stream count
+  equals its locator-array length and its projected domain digest hashes that
+  complete ordered locator array. The direct era-order concatenation of each
+  remaining nested array must reproduce the matching header count, keyset
+  where defined, and domain digest. This exact tagged projection therefore
+  contains the independently authenticated
+  81-document/page-text inputs, page and UTF-8 occurrence domains, flow
+  ancestry, role/job/component catalogs and alias proofs, fixed `R_Q`,
+  complete H, positive-occurrence rows, structural-hierarchy branch, the
+  complete source-atom/binding denominator, and canonical absence proofs
+  rather than merely describing them.
+
+  On the expected side, the coordinator authenticates `Q5`, independently
+  reproduces every pinned page byte and all deterministic IDs/projections,
+  then builds this exact projection before a slot/inventory comparand is
+  read. On the actual side, the same projection is rebuilt from the
+  identity-selected closure values consumed by the official slot and
+  inventory artifacts, and every represented catalog, expanded-slot,
+  locator, proof, count, keyset, and digest is reverse-projected from those
+  consumers and required to deep-equal it. For every cited canonical codebook
+  row whose `normalized_entry_count == 0`, both expected and actual
+  projections carry its one field-stream locator with
+  `codebook_entry_positions: []` and that locator's one source atom; neither
+  side may omit the locator or invent position `0`. The expected and actual
+  tagged values, including empty arrays, are then compared byte-for-byte
+  under §10.1; a header-only or rows-only value is invalid.
+
+  The fourth value has exactly `occurrence_raw_field_reference_rows`,
+  `occurrence_raw_field_reference_count`,
+  `occurrence_raw_field_reference_keyset_sha256`,
+  `occurrence_raw_field_reference_domain_sha256`,
+  `positive_field_join_rows`, `positive_field_join_row_count`,
+  `positive_field_join_keyset_sha256`, and
+  `positive_field_join_domain_sha256`. Its arrays are the direct era-order
+  concatenations and its counts/digests equal the authority header. Expected
+  references and joins are reconstructed from pinned occurrence bytes,
+  `D_w`, and complete field-source derivations before an inventory row is
+  read. Actual rows are independently rebuilt from the official asked/present
+  key cover, raw-field order, layout objects, manifest bytes, and framing;
+  copying a candidate join as expected is forbidden. The two complete
+  objects deep-equal under §10.1.
+
+  The fifth value has exactly `implementation_identity`,
+  `raw_field_census_rows`,
+  `numeric_grammar_derivation_rows`, `numeric_grammar_derivation_row_count`,
+  `numeric_grammar_derivation_keyset_sha256`, and
+  `numeric_grammar_derivation_domain_sha256`. `implementation_identity` and the
+  four named numeric-grammar members exact-project the corresponding top-level
+  members of the passing `field_source_derivation`. `raw_field_census_rows` is
+  complete `U`-raw-document-order array of objects having exactly
+  `source_document_id`, `field_census_rows`, `field_census_row_count`,
+  `field_census_keyset_sha256`, and `field_census_domain_sha256`; it is derived
+  separately by projecting those five members from every nested raw derivation.
+  Expected bytes are built by
+  executing the identity-selected v3 source-only compiler on the complete
+  dictionary, codebook, framing, and all-field raw-census denominator before
+  any inventory comparand is read. Every locator-bound format declaration,
+  common tagged projection, exact agreement result, candidate-arm result, and
+  selected physical authentication is inside that reconstruction.
+  Actual full-relation bytes come from the authenticated manifest. Every used
+  layout exact-copies its derivation ID/full-row SHA and the applicable named
+  derived parse branch, parse-profile, padding, grammar, value-derivation, and
+  meaning projections;
+  a value-code range takes the compiled branch when source-renderable and the
+  physical-unestablished null branch otherwise, while a literal-only value-
+  code field takes the no-range null-grammar branch and retains its authenticated
+  profile/padding exactly when its common format is numeric. Rows unused by inventory remain
+  present and are independently recompiled from the complete source
+  denominator, not reverse-projected from a nonexistent consumer. Both complete values,
+  not just counts, IDs, or digests, must deep-equal under §10.1.
+
+  The sixth value is the positional projection of every official inventory
+  row's complete §19.3.2 layout/token grammar, including exact-empty
+  structural branches. The seventh is one row per complete official key, in
+  that order, with exactly `source_inventory_key`,
+  `questionnaire_presence`, `source_disposition`,
+  `closure_absence_proof_id`, `closure_absence_proof`, and
+  `inventory_absence_proof`. Asked/present rows have all three proof values
+  null; structural rows carry the closure ID and two complete deep-equal
+  proof objects. All structural keys under one H row carry its same canonical
+  proof, including the authenticated candidate-domain digests, exact near-
+  match projection, and fixed conclusion bytes. Thus C01 compares the full
+  proof bytes and status pair, not only an ID or digest. The eighth and final
+  identity has exactly `path`, `artifact_id`, `schema_version`,
+  `source_commit`, `tree_mode`, `blob_oid`, `byte_size`, and `sha256`.
+  Its path is
+  `data/external/psid_questionnaire_slot_closure_evidence_v1.json`; its
+  artifact and schema values are both
+  `psid_questionnaire_slot_closure_evidence.v1`; its source commit is the
+  independently discovered single-path first-add `Q5`; and its mode, blob,
+  size, and digest reproduce that exact complete raw byte. It exact-matches the official slot-registry
+  source-authority manifest's `slot_closure_evidence_identity` member. The expected object is
+  freshly reconstructed from the two pinned roots and authenticated
+  dictionary/codebook/raw-file and questionnaire bytes; the actual object
+  comes from the slot registry and inventory. A candidate-selected source
+  row, role, wave, path, order, count, keyset, annotation coordinate, semantic
+  binding, proof partition, alias, relationship, raw field, reference span,
+  status pair, proof value, or
+  digest fails C01. C01's expected/actual count remains the complete official
+  inventory-row count, while its domain hash covers this entire tagged
+  object.
+- **G17-C05** is a tagged object with exactly
+  `historical_coverage_rule_specs`,
+  `partition_overlap_evaluation_closure`,
+  `legal_source_document_byte_closure`, and
+  `legal_authority_verification_result`. The first value is the complete
+  strict-parsed §19.2 registry, including its envelope, manifest, independent
+  domain, locator-bound source coding declarations, fixed source-authenticated
+  assertion occurrence/disposition exact cover and declaration-ID preimages,
+  jurisdiction mapping, expanded state-field domain, both authority joins and
+  every nonstate disposition, rule rows, interval partitions, counts, and digests.
+  Both sides recompute the exact \(M_t\), \(M_c\), and \(M_p\) value arrays,
+  their terminal-LF canonical bytes, and all three prefixed IDs before any
+  enclosing row or domain digest. The expected
+  object freshly reconstructs it from authenticated sources and the actual
+  object deep-copies the configured values; neither side obtains a
+  denominator or expected value from the other. The registry comparison
+  includes successful reconstruction of the complete `K_x`/`E_x` relations
+  and `A_x`/`G_x` expected projections through the registry status. C05 does
+  not embed either claim-spec registry; their exact array comparisons occur
+  in the downstream base-result/adjudication validation dependency. The
+  second value is the complete §19.2.4 closure, freshly reconstructed on
+  each side through every normalized joint signature and every row of every
+  complete Cartesian `T_p`; its table and domain digests must exact-match
+  and its status must pass. It also binds every complete ordered \(N_p\)
+  occurrence to its originating negative source-rule occurrence; a claimed
+  partition additionally binds the same occurrence in its §19.2.5 stream,
+  while a claimless partition constructs no claim stream. The third and
+  fourth values are the complete
+  source-byte closure and exact seven-key v2 predicate
+  result. C05's expected/actual count is the rule-row count; its hash covers
+  the complete four-key object and every nested count/digest.
+- **G17-C06** retains its exact two-key
+  `base_direct_law_closure`/`deterministic_default_application_closure`
+  object. Within `base_direct_law_closure`, every inventory presence lookup
+  and raw-token commitment uses the exact
+  `(raw_field_id,raw_token_hex)` grammar/missing branch from §19.3.2 and the
+  complete §19.2 rule-domain/partition. Every numeric parse first resolves the
+  unique same-wave/raw-field v3 derivation row and exact-compares its complete
+  common format projection, source census, physical profile, padding, DFA,
+  and value derivation before taking a transition. A dictionary-
+  numeric result also compares the compiler's canonical dictionary meaning; a
+  codebook-range result instead compares the one normalized range's meaning,
+  type, and unit. No outer key or deterministic-default law changes.
+  For an all-present record in a verified partition, the independently
+  evaluated covered-then-excluded binding results must map every occurrence
+  of one `joint_binding_id` to one equal Boolean and thereby select exactly
+  one row of that partition's `T_p`. Each rule's actual binding-result array,
+  complete transform result, controlling rank/status, and direct
+  classification must exact-match that row's same-rule projection and rank
+  result. A disagreement between byte-identical signatures or a value not in
+  the complete joint vector fails C06. A missing-fact action row continues
+  the retained skipped-transform fold and is not falsely inserted into the
+  all-present Boolean table.
+- **G17-C07** retains its value-code-registry purpose, complete registry-row
+  payload, independently required registry-row count, and unchanged outer
+  row keyset. Every expected row is reconstructed from the authenticated
+  official inventory, dictionary/codebook canonical rows, raw-record
+  derivation, all-field source census, and physical-profile authentication
+  before any configured registry row is read;
+  every actual row is the configured `psid_value_code_specs.v1` value. The
+  compared complete rows include the exact §19.3.2 `source_commitments`
+  object and `entries`; their domain hashes therefore cover every nested
+  field row, count, source/census digest, and executable-entry digest.
+  Value-code source commitments also require the same field's complete
+  numeric-derivation row to take the compiled range branch exactly when its
+  complete normalized domain has a source-renderable numeric range, and the
+  physical-unestablished or no-range null branch otherwise; the physical-
+  unestablished branch requires zero observed range members. An observed range token must exact-project the
+  compiler result and one normalized range; an alternate numeric constructor
+  cannot enter C07.
+  Expected and actual `entries` must also deep-equal each committed field's
+  independently derived executable array. A matching entry array with an
+  omitted, additional, reordered, or unequal source commitment fails C07.
+- **G17-C09**, **G17-C10**, and **G17-C11** respectively compare every
+  complete reconciliation, job-match, and SE-aggregation row under the
+  successor keysets in §19.3.4, including every complete
+  `psid_rule_residual_consequence.v1` value. Each expected/actual payload
+  has exactly `registry_rows`, `carrier_projection`, `carrier_count`, and
+  `carrier_domain_sha256`. Their comparison-row counts remain the
+  independently required registry-row counts; their hashes cover the
+  complete rows. Each payload also carries its complete registry-specific
+  slice of the 12-row Class-C carrier projection, with `carrier_count` equal
+  to slice length and `carrier_domain_sha256` hashing the complete ordered
+  slice. The three slice concatenation in C09, C10, C11 registry order is
+  reordered by §19.3.1 Class-C order and must deep-equal the complete pinned
+  carrier projection; no row is dropped or duplicated. A structurally
+  present negative consequence is not an omitted rule, and a required
+  `abort_registration` consequence cannot make overall G17 sufficient for
+  production registration.
+
+For all seven, the configured actual never supplies the expected denominator,
+count, key order, authority status, claim class, or consequence. Missing,
+extra, reordered, differently hashed, source-drifted, self-demoted, or
+unequal nested evidence fails the comparison and therefore G17. All 18 rows
+must still be physically present and pass; there is no G17-C19.
+
+#### 19.4.3 Closure-sweep scope determination and silence discipline
+
+Before §19.8.3 step 2 acceptance, the coordinator constructs
+`amendment_5_schema_disposition_closure_sweep.v1`. Its normative design
+corpus is every byte of §§1–19 in the candidate D5 blob except exactly the
+historical ASCII table intervals excluded by §§17.3 and 18.5 and the §19.5
+ASCII table interval defined there. It does not exclude prose surrounding
+those exact intervals, this replacement ledger, code fences, footnotes, or
+a passage because the passage is inconvenient. The historical intervals do
+include their own post-table invariant prose through the stated next-heading
+boundary; §19.4.3 does not silently narrow them. Reports, prompts, staging
+manifests, and uncommitted files are review evidence, not normative corpus
+members.
+
+The sweep has exactly `schema_version`, `design_corpus_ranges`,
+`search_terms`, `consumer_edges`, `consumer_edge_count`,
+`consumer_edge_domain_sha256`, `matched_passages`,
+`matched_passage_count`, `matched_passage_domain_sha256`,
+`unresolved_passage_ids`, and `status`.
+Each `design_corpus_ranges` row has exactly `start_byte`, `end_byte`, and
+`range_sha256`. Ranges are nonempty, disjoint, ascending half-open D5 byte
+intervals whose concatenation is exactly the corpus after the three stated
+exclusions; each digest hashes its complete raw range.
+
+The following is the exact ordered search-term seed array. To construct the
+serialized `search_terms`, split each seed at every maximal nonempty run of
+ASCII space, hyphen, or underscore. For a seed with `n` token gaps, emit the
+complete `3^n` Cartesian separator variants using separator order space,
+hyphen, underscore with the rightmost gap varying fastest; a no-gap seed
+emits itself. Deduplicate across seeds by first occurrence. Matching folds
+ASCII `A`–`Z` to lowercase and otherwise compares each resulting UTF-8
+variant exactly. It performs no stemming, pluralization, other punctuation
+substitution, or fuzzy match. Thus `legal source`, `legal-source`, and
+`legal_source`, and likewise every displayed multi-token identifier, are
+closed members rather than inferred variants:
+
+```text
+historical_coverage_rule_specs
+legal_rule_input
+legal source
+legal registry
+legal manifest
+rule registry
+official inventory
+effective_start
+effective_end
+authority_rank
+controlling_authority_rank
+authority_disposition
+no_disposition
+fact_binding_id
+joint binding
+rule_interval_partitions
+midyear_transition_id
+rule_domain_cell_id
+partition_id
+partition_overlap_evaluation_closure
+direct_law_controlling_result
+jurisdiction_ids
+jurisdiction_mapping
+source_coding_declaration
+source_declaration_assertion_occurrences
+assertion_disposition
+selecting_system_reference
+nonselecting_historical_provenance
+state_of_residence
+PSID state code
+FIPS state code
+affected_inventory_keys
+governing_rule_ids
+verification_claim_specs
+adjudication_sources
+verification_claim_base_result_projection
+calibrated_verification_claim_adjudication_expected_preimage
+calibrated_verification_claim_adjudication_actual_preimage
+calibrated_noncapture_required_authority
+calibrated_authority_cutoff_identity
+layout_coordinates
+typed_parse_specs
+source_file_ids
+field_source_derivation
+field_stream_locators
+codebook_entry_positions
+dictionary_codebook_fixed_width_source_derivation_v3
+derive_source_numeric_grammar
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_id
+psid-numeric-grammar-derivation:
+numeric_grammar_source_derivation
+derived_parse_kind
+source_format_projection
+source_meaning_projection
+source_value_lexeme
+normalized_format_profile
+registered_numeric_grammar
+dictionary_numeric_grammar
+codebook_range_member
+source_meaning
+NUM(2.0)
+Fw.d
+CHR(w)
+nonnumeric_source_field_outside_numeric_grammar
+source_document_manifest
+upstream_corpus_registry_identity
+source_document_keyset_sha256
+canonical_source_path
+interview_waves
+hierarchy_annotation_authority
+questionnaire_occurrence_id
+semantic_ordinal_at_span
+positive_occurrence_id
+occurrence_raw_field_reference_rows
+occurrence_raw_field_reference_id
+positive_field_join_rows
+positive_field_join_id
+positive_occurrence_field_join_rows
+exact_raw_field_id_token
+exact_question_identifier_token
+raw_field_projections
+positive_locator_ids
+questionnaire_presence
+source_disposition
+raw_field_ids
+global_relationship_rows
+role_node_rows
+structural_hierarchy_node
+observed_hierarchy_node
+era_annotation_rows
+job_slot_ids
+questionnaire_component_slot_ids
+node_alias_rows
+flow_branch_paths
+branch-compatible
+record_framing
+normalized_codebook_entries
+value_code_map
+source_commitments
+missing_raw_tokens
+fixed width
+raw token
+absence_proof
+target_predicate
+searched_interview_waves
+near_match_source_annotation_rows
+semantic_bindings
+excluded_near_matches
+canonical absence proof
+questionnaire slot
+slot hierarchy
+source authority
+rule row
+residual_disposition
+ambiguity_action
+family_aggregate_allocation_rule
+reconciliation_rule
+job_spell_match_rule
+se_aggregation_group_rule
+G17-C01
+G17-C05
+G17-C06
+G17-C07
+G17-C09
+G17-C10
+G17-C11
+registration_required
+direct_only_optional
+inclusive total
+exact once
+source allocation
+```
+
+Passage segmentation is deterministic over physical UTF-8 lines and applies
+the following first-matching rule. A fenced code passage runs from a CommonMark
+opening fence through its matching closing fence, inclusive. An ATX heading
+is one line. A table row whose first and last nonspace bytes are `|` is one
+line. A list passage begins with a CommonMark bullet or ordered-list marker
+and includes every immediately following nonblank continuation line through
+the byte before the next same-or-less-indented list marker or any heading,
+table row, or fence. A display equation beginning with `$$` or `\\[` and
+ending at its matching `$$` or `\\]` delimiter is one passage. Every
+remaining maximal run of nonblank lines is
+one paragraph passage. Blank lines belong to no passage. These priority
+rules partition every nonblank corpus byte exactly once; fence delimiters,
+line terminators, and indentation remain inside the selected ranges.
+
+`consumer_edges` exact-covers every directed normative dependency between
+segmented passages where the consumer explicitly names the source section,
+member, schema, row, equation, or anchor, or states that it inherits,
+deep-copies, exact-compares, foreign-keys, hashes, dispatches, validates, or
+takes a consequence from it. Each edge has exactly `source_passage_id`,
+`consumer_passage_id`, and `consumer_relation`; the relation is exactly
+`deep_copy | exact_compare | foreign_key | digest_preimage |
+version_dispatch | validation_dependency | consequence`. Self-edges are
+forbidden. Edges follow source start byte, consumer start byte, then displayed
+relation order; count equals length and the domain digest hashes the complete
+ordered edge array. The coordinator and an independent referee construct the
+edge array separately from the complete segmented corpus and exact-compare
+it; disagreement, an uncited inferred edge, or an omitted stated dependency
+blocks ratification.
+
+Every literal-search passage and every passage reachable from one by the
+directed edge graph is inspected, including branching and intermediate
+consumers even when the exact token is absent. `matched_passages` exact-
+covers that union. Each row has exactly `passage_id`, `start_byte`,
+`end_byte`, `matched_terms`, `consumer_reachable_passage_ids`, `disposition`,
+`successor_anchors`, and `disposition_reason_code`. Ranges are half-open D5 byte offsets;
+`matched_terms` is the complete search-term-order subset hitting that
+passage and is exact empty only for a consumer-only passage.
+`consumer_reachable_passage_ids` is the complete unique transitive closure
+of outgoing consumer edges from that passage, sorted by target start byte
+and then passage ID; it may be empty only at a terminal. `passage_id` is
+literal `amendment-5-passage:` followed by SHA-256 of canonical JSON bytes of
+`[start_byte,end_byte,matched_terms]`. Row order follows starting byte.
+`disposition` is exactly
+`replaced-by-named-successor | composed-with-named-successor |
+lawfully-unchanged-with-reason`. `successor_anchors` is a nonempty unique
+array in corpus-anchor order then unsigned UTF-8 order. Every member uses the
+exact syntax `§<decimal>(.<decimal>)*` with an optional colon followed by a
+nonempty ASCII letter/digit/underscore/hyphen/dot clause ID, and resolves to
+this section or an exact preserved law; singular and multiple-consumer
+successions use the same array shape. `disposition_reason_code` is
+respectively `named_schema_replacement | named_law_composition |
+exact_law_preserved_outside_replacement_scope` for the three displayed
+dispositions. A match cannot be discarded as
+“editorial,” and a repeated passage remains a distinct row.
+
+Status passes only when the ranges reconstruct the declared corpus, passage
+segmentation exact-covers its nonblank bytes, the independently constructed
+edge arrays agree, every literal match and every graph-reachable consumer
+appears once, every reachable array equals graph transitive closure, both
+counts/hashes reproduce, and `unresolved_passage_ids` is exact empty. This
+sweep determines closure; it
+does not decide substantive law. Any unenumerated conflict or a passage that
+cannot truthfully receive one of the three dispositions blocks ratification
+and is reported under §19.8. Silence preserves all nonmatched and
+nonenumerated law; it never authorizes an inferred replacement.
+
+### 19.5 Complete revision-7 design-comparator disposition
+
+Sections 17.3 and 18.5 remain immutable historical censuses. Appending §19
+makes the three revision-6 terminal design predicates nonterminal,
+introduces the exact D4-prefix comparison in §19.1, and adds the D5-to-L5
+legal-registry first-add ancestry comparison in §19.2.5 and the D5-to-Q5
+questionnaire-closure first-add and consumer ancestry comparison in §19.3.3.
+All six require
+explicit revision-7 dispositions.
+
+The revision-7 census corpus is every normative byte of the complete design
+accepted at §19.8.3 step 2 and committed at §19.8.3 step 3, including §§1–19, except
+for exactly three historical/self-referential ASCII table intervals: (a)
+§17.3's table from its header line through the byte immediately before
+`### 17.4 `; (b) §18.5's table from its header line through the byte
+immediately before `### 18.6 `; and (c) this subsection's table from the
+header line immediately following this paragraph through the byte
+immediately before `### 19.6 `. The design-comparator definition,
+mixed-preimage rule, complete-paragraph inspection, and consumer walk are
+exactly §17.3's. Its mechanical searches are augmented by revision 6,
+revision 7, Amendment 5, `D4`, `D5`, `Q5`, `L5`, `prefix`,
+`historical_coverage_rule_authority_schema`, and every new successor name.
+
+Legal-source, inventory-residual, token-row, absence-proof, and rule-
+consequence digests in §§19.2–19.3 do not compare or carry a four-key design
+identity and are outside this census. The §19.4.3 passage sweep inspects
+normative text but neither compares two design identities nor places one in
+its output, so it is also outside. The §19.2.5 D5/L5 ancestry equation does
+order a design ratification commit and is therefore DC-29 below; its source-
+byte and registry-content comparisons remain outside that row. The §19.3.3
+D5/Q5 ancestry and complete Q5-to-slot/inventory/cutoff/G17 consumer chain
+likewise order and consume a design ratification commit and are DC-30; their
+questionnaire-page, annotation-row, and field-source comparisons remain
+outside that row.
+
+| ID | Exact comparator or consumer anchor | Normative revision-7 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration `design` shape and exact-byte digest law | `lawfully-unchanged-with-reason`: the generic four-key shape remains; the ceremony-specific rows below govern retained configuration designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and `HEAD` | `lawfully-unchanged-with-reason`: it remains exact for an ordinary current-design registration; DC-06, DC-10, DC-15, DC-18, and DC-33 close every retained-design case. |
+| DC-03 | §10.4 prelaunch check 1's consumption of the active §10.1 design/repository proof | `lawfully-unchanged-with-reason`: it dispatches to the applicable §19 named proof and cannot restore a displaced D1/D2/D3/D4-to-`HEAD` equality. |
+| DC-04 | §12 context configuration's import of §10.1 committed-design proof | `lawfully-unchanged-with-reason`: an Amendment-5 context registration carries D5 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration's exact four-key Amendment-1 design child D1 | `lawfully-unchanged-with-reason`: configuration preservation retains D1; live revision-7 authority is supplied by DC-31/DC-33. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals `HEAD` proof | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1`. |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | `lawfully-unchanged-with-reason`: these fields authenticate calibrated D1 methodology/configuration, while D5 is separately bound by DC-31–DC-33. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | `replaced-by-named-successor`: `verify_amendment_5_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v4`, `fitting_free_registration_domain_identity.v4`, and `covered_earnings_path_applicability_registry_bundle.v5`. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | `replaced-by-named-successor`: `covered_earnings_path_applicability_receipt_core.v4` plus `verify_amendment_5_selected_registration_design_lineage_v1`. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against `HEAD` | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1`. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration's exact D2 design child | `lawfully-unchanged-with-reason`: the configuration remains D2; position 1, capture, and receipt proofs separately bind D3, D4, and D5. |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to the configuration design | `lawfully-unchanged-with-reason`: provenance continues to record D2, while the receipt records D2, D3, D4, and D5. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | `replaced-by-named-successor`: the D2 check remains (K_f^d=D_2), joined to `verify_amendment_5_fitting_free_design_identity_v1` and `verify_amendment_5_capture_registration_repository_identity_v1`. |
+| DC-14 | §16.10 capture authorization's exact D2 `design` child | `lawfully-unchanged-with-reason`: the child deliberately remains D2; sibling D3/D4/D5 children and DC-32 provide live authority. |
+| DC-15 | §16.10 capture authorization's imported/restated pre-descriptor D2-to-`HEAD` repository equality | `replaced-by-named-successor`: `verify_amendment_5_capture_registration_repository_identity_v1`. |
+| DC-16 | §16.10 capture primary's `design` equality to the capture registration | `lawfully-unchanged-with-reason`: both remain D2, while complete registration/claim hashes bind D3, D4, D5, and DC-32. |
+| DC-17 | §16.10 capture sidecar's `design` equality to the primary | `lawfully-unchanged-with-reason`: both remain D2 and the same hash chain binds D3, D4, D5, and DC-32. |
+| DC-18 | §16.10 selected fitting-free correction configuration's D2-to-`HEAD` proof | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1`, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | `replaced-by-named-successor`: Amendment-5 dispatch to `covered_earnings_path_applicability_receipt_core.v4` and `covered_earnings_path_applicability_receipt.v4`. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | `replaced-by-named-successor`: exact historical-v1, Amendment-3-v2, Amendment-4-v3, or Amendment-5-v4 receipt dispatch and validation below. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_fitting_free_design_identity_v1`. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-`HEAD` predicate and its complete transitive capture consumers | `replaced-by-named-successor`: `verify_amendment_5_capture_registration_repository_identity_v1` and its D2/D3/D4/D5 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/`HEAD` byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1`. |
+| DC-24 | §18.1 D3 four-key identity, exact 1,310,838-byte raw design, and immutable revision-6 prefix comparison | `lawfully-unchanged-with-reason`: D3 remains the immediate immutable base of D4; every D5 reconstruction verifies D3 through the retained exact D4 identity and the DC-28 prefix chain. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v4`, `fitting_free_registration_domain_identity.v4`, and `covered_earnings_path_applicability_registry_bundle.v5`. |
+| DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_5_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5 consumer chain. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1` and Amendment-5 v4 receipt/history dispatch. |
+| DC-28 | §19.1 D4 four-key identity, exact 1,376,610-byte raw design, and immutable revision-7 prefix comparison | `lawfully-unchanged-with-reason`: D4 is the immediate immutable base; every D5 position, capture, and selected-registration proof independently reconstructs D4 and verifies its exact raw prefix of D5. |
+| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its typed v2 result authenticates the registry from which the independent `K_x`/`E_x`, `A_x`/`G_x`, `J_p`/`T_p`, and `P_x` closures are reconstructed, including exact partition-truth propagation, then enters only `verification_claim_base_result_projection.v2`, the v3 adjudication preimages, the v4 noncapture chain, `calibrated_authority_cutoff_identity.v4`, and the v5 bundle dispatch closed in §§19.2.3–19.2.5, 19.4.1–19.4.3, and 19.6.3. |
+| DC-30 | §19.3.3 D5 ratification-commit ordering against the single-parent Q5 questionnaire-closure first-add commit, then Q5 ordering before both slot/inventory first-add commits and every admitting authority cutoff through the G17-C01 consumer | `lawfully-unchanged-with-reason`: the independently reconstructed D5/Q5 Git ancestry predicate and complete eight-key `slot_closure_evidence_identity` together prove D5→Q5 and the unique source-only Q5 tree entry; Q5 is then a strict ancestor of both consumer first-add commits and their authority cutoffs, its identity and complete annotation authority enter the official `source_authority_manifest`, slot registry, and inventory, and G17-C01 reconstructs and exact-compares that full chain before accepting a copied annotation row. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_fitting_free_design_identity_v1`; all registry/domain/bundle consumers are closed in §19.6. |
+| DC-32 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `lawfully-unchanged-with-reason`: terminal receipt-free successor `verify_amendment_5_capture_registration_repository_identity_v1`; every transitive consumer is closed in §§19.6–19.7. |
+| DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-`HEAD` byte, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_selected_registration_design_lineage_v1`; its receipt and history dispatch are closed in §19.7. |
+
+This table is a closed revision-7 ratification invariant. It has exactly 33
+distinct IDs, exactly 15 `replaced-by-named-successor` rows, and exactly 18
+`lawfully-unchanged-with-reason` rows. Section 17.3's ratification-blocking
+conditions apply with its successor-definition and dispatch target replaced
+by §§19.2.5, 19.3.3, 19.6, and 19.7. An in-scope comparator absent from this table,
+an extra or duplicate row, a wrong anchor, an empty or third disposition, a
+named successor not completely defined and dispatched in those subsections,
+or an unchanged reason that fails to preserve every consumer blocks
+Amendment-5 ratification. The validator redoes the complete searches and
+consumer walk over the exact D5 blob; all counts and rows must reproduce.
+
+### 19.6 Revision-7 design, capture, registry, and domain successors
+
+#### 19.6.1 D5 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. Define `D5` as the
+complete Amendment-5 identity with exact values:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the future 40-lowercase-hex commit created only by
+  §19.8.3 step 3, never this draft's authoring commit, a branch name, D4, or a
+  placeholder;
+- `blob_sha256`: SHA-256 of the complete revision-7 design bytes at that
+  exact commit; and
+- `revision`: JSON integer `7`, excluding booleans.
+
+No all-zero, prose token, draft digest, prefix digest, or anticipated value
+may occupy a D5 field. The accepted byte count, Git blob OID, SHA-256, and
+commit are knowable only after §19.8.3 step 3 and are then reconstructed, never
+copied from a reviewer or configuration.
+
+The retained `D2`, `D3`, and `D4` identities are exactly:
+
+```json
+[
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb",
+    "blob_sha256": "29f0cb134e95b6215dc502d0e25392b5c971fdb93dfad40fd5d221e8a482a1b7",
+    "revision": 4
+  },
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "13f84c99fb898eeaf70a8705bffacdf96e9795f4",
+    "blob_sha256": "eb24a36f4baa124f192e99f517982e7e723ca7e899957cd0acf02cf2d7e4a1ed",
+    "revision": 5
+  },
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "b5878893991fe603c693e711bc48aacfb7c6d08f",
+    "blob_sha256": "6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8",
+    "revision": 6
+  }
+]
+```
+
+Their raw sizes are 1,252,209, 1,310,838, and 1,376,610 bytes; their Git
+blobs are respectively `0f3eca3e5e45cb9584711b3ed007c60521902863`,
+`7354dabbef1b768c1fcd34dadaa74f47aa8456a9`, and
+`b03e31592753cbbee2fddc2360cdd29a4cafe57e`. Every D5 predicate below
+independently reconstructs these values, requires D3's complete raw bytes to
+equal D4's first 1,310,838 bytes, and requires D4's complete raw bytes to
+equal D5's first 1,376,610 bytes. Digest-only or transitive-only prefix
+claims are insufficient.
+
+The position-1 registry successor is
+`fitting_free_requirement_verification_specs.v4`. It is the complete §18.6
+v3 registry in the same 22-row order, changes its outer schema value to the
+v4 name, and replaces exactly four same-position rows: position 1,
+`historical_coverage_rules`, A1, and A3. The legal row is exactly §19.2.5;
+the other three are stated here. Every other row—including V-B6 and
+`verify_fitting_free_claim_v_b6_v1`—is byte-for-byte unchanged. Position 1
+is exactly:
+
+```json
+{
+  "requirement_id": "amendment_2_design_identity",
+  "requirement_class": "design",
+  "verification_predicate_id": "verify_amendment_5_fitting_free_design_identity_v1",
+  "expected_preimage_schema_version": "amendment_5_fitting_free_design_identity_expected_preimage.v1",
+  "actual_preimage_schema_version": "amendment_5_fitting_free_design_identity_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:amendment_2_design_identity",
+    "ratified_design:amendment_3_design_identity",
+    "ratified_design:amendment_4_design_identity",
+    "ratified_design:amendment_5_design_identity",
+    "configuration:design",
+    "git_cutoff:docs/design/covered_earnings_correction.md"
+  ],
+  "verification_result_schema_version": "exact_identity_verification_result.v1",
+  "cross_binding": "receipt_core:amendment_2_amendment_3_amendment_4_and_amendment_5_design_identities"
+}
+```
+
+The successor expected and actual preimages retain §18.6's exact top-level
+keysets, projection-row schema, canonical value-digest law, count, order,
+and domain-hash equations, change their schema values to the displayed
+Amendment-5 names, and contain exactly six projection rows. Let `K_f^d` be
+the staged fitting-free configuration design, `C_A` the selected final
+calibrated authority cutoff, `G2` through `G5` the raw design blobs at D2
+through D5, and `G_C_A` the same-path raw bytes at `C_A`. Expected projection
+values are exactly `[D2,D3,D4,D5,D2,G5]`; actual values are independently
+reconstructed `[D2,D3,D4,D5,K_f^d,G_C_A]`. The first five rows have value
+type `canonical_json`; the sixth has `raw_git_bytes`.
+
+`verify_amendment_5_fitting_free_design_identity_v1` is true if and only if
+every shape, type, count, order, value digest, and domain hash passes and:
+
+1. both reconstructions of D2, D3, D4, and D5 deep-equal and each complete
+   raw ratification blob hashes to its identity;
+2. `K_f^d = D2`, without requiring D2's bytes to equal final-cutoff bytes;
+3. D3 is D4's exact 1,310,838-byte prefix and D4 is D5's exact
+   1,376,610-byte prefix, with the pinned D3/D4 digests above;
+4. `G_C_A = G5` byte-for-byte and its SHA-256 equals
+   `D5.blob_sha256`; and
+5. `D2.ratification_commit < D3.ratification_commit <
+   D4.ratification_commit < D5.ratification_commit <= C_A` under strict Git
+   ancestry for `<` and ancestor-or-equal for `<=`.
+
+Unfavorable values serialize the unchanged exact-identity false result and
+`predicate_mismatch`; no predecessor registry version becomes selectable.
+The receipt cross-binding is a later consumer only and never a position-1
+operand.
+
+#### 19.6.2 Capture authorization, proof, claim, and input
+
+Every capture authorization first added after D5 uses
+`fitting_free_model_input_authority_capture_registration.v4`. It is the
+complete §18.6 v3 authorization in the same order, changes only its schema
+value, and inserts `amendment_5_design_identity` immediately after
+`amendment_4_design_identity`. It has exactly 16 keys. Its retained `design`
+child is D2; its three amendment children are D3, D4, and D5. Every other
+preliminary-adjudication, invocation, capability, input, path, and failure
+law remains unchanged. Its complete canonical digest is the post-D5
+`capture_registration_sha256`; v1, v2, and v3 remain selectable only for
+their exact historical pre-D3, Amendment-3, and Amendment-4 cases.
+
+Let `A` be the unique single-parent commit first adding that v4
+authorization and freeze live capture `HEAD` as `H_cap` before any
+environment, claim, broker, or source descriptor opens. The coordinator
+first constructs `amendment_5_capture_registration_repository_proof.v1`
+with exactly these 14 keys in order:
+
+1. `schema_version`;
+2. `capture_registration_sha256`;
+3. `amendment_2_design_identity`;
+4. `amendment_3_design_identity`;
+5. `amendment_4_design_identity`;
+6. `amendment_5_design_identity`;
+7. `authorization_commit`;
+8. `capture_head`;
+9. `ordered_design_blob_rows`;
+10. `design_blob_row_count`;
+11. `design_blob_domain_sha256`;
+12. `canonicalization`;
+13. `status`; and
+14. `failure_disposition`.
+
+The first value is the schema name; the four identities are D2–D5; and the
+two commit fields are `[A,H_cap]`. The exact ordered blob roles are
+`amendment_2_ratification`, `amendment_3_ratification`,
+`amendment_4_ratification`, `amendment_5_ratification`, and `capture_head`.
+Each row retains §18.6's exact six-key shape and independently serializes the
+raw Git object at D2, D3, D4, D5, or `H_cap`. Count is integer five and the
+domain digest hashes the complete five-row array. Canonicalization remains
+the common literal; status is `pass | fail`; failure is
+`abort_without_accepted_authority_pair`.
+
+The closed predicate
+`verify_amendment_5_capture_registration_repository_identity_v1` is true if
+and only if every proof equation passes and:
+
+1. the strict-parsed v4 authorization has its independently reconstructed
+   hash and exact D2/D3/D4/D5 children;
+2. every ratification blob hashes correctly, D3 is D4's exact prefix, D4 is
+   D5's exact prefix, and raw design bytes at `H_cap` equal D5;
+3. `D2 < D3 < D4 < D5 < A <= H_cap` under raw Git ancestry;
+4. authorization bytes are unchanged from A through `H_cap`, and all five
+   proof rows exact-match observed modes, OIDs, commits, and raw bytes; and
+5. every remaining descriptor-free repository, tracked-state, clean-
+   checkout, design/implementation-tree, and authorization-byte conjunct in
+   §§10.1, 16.10, 17.4, and 18.6 passes against `H_cap`.
+
+The proof freezes before any descriptor opens, contains no receipt or future
+commit, and passes or aborts without fallback. `HEAD` remains exactly
+`H_cap` through durable claim reread.
+
+The lifecycle successor
+`fitting_free_model_input_authority_capture_claim.v4` has the complete
+eight-key v3 claim shape/order, changes only `schema_version`, and requires
+`capture_repository_proof` to deep-equal the complete Amendment-5 proof. The
+primary `fitting_free_model_input_authority_capture.v1` and sidecar
+`fitting_free_model_input_authority_capture_environment.v1` retain their
+schemas and D2 design children; their complete v4 registration and claim
+digests transitively bind D3, D4, D5, and `H_cap`.
+
+The four-artifact envelope successor is
+`fitting_free_model_input_authority_capture_input.v4`. It retains the v3
+keyset/order, changes only its schema value, requires claim schema v4, and
+applies every existing path, vintage, canonical-Git-blob, digest, and cross-
+artifact equation to the v4 authorization/claim and unchanged primary and
+sidecar. A successful triple commit `T` has sole parent `H_cap` and adds only
+the complete v4 claim and unchanged-schema primary/sidecar. The exact order
+is `A <= H_cap < T < C`, where `C` is the clean final authority cutoff.
+Every terminal-history, accepted-triple, mode/OID/raw-byte, and no-delete/
+no-readd law selects the v4 claim and proof for a post-D5 case.
+
+The calibrated A1/A3 manifest shapes and inner authority identities remain
+unchanged. For a post-D5 candidate,
+`accepted_capture_primary_by_final_cutoff` additionally requires the v4
+envelope/proof and exact D2/D3/D4/D5 identities. Their unchanged
+`design_identity_sha256` remains D1 methodology provenance; D5 is lifecycle
+provenance and never overwrites it.
+
+#### 19.6.3 A1/A3, domain, and bundle successors
+
+Within `fitting_free_requirement_verification_specs.v4`, the exact A1 row
+is:
+
+```json
+{
+  "requirement_id": "A1",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_5_fitting_free_a1_model_universe_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a1_authority_identity",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary:a1_authority_identity_and_amendment_5_capture_repository_proof"
+}
+```
+
+Its exact A3 row is:
+
+```json
+{
+  "requirement_id": "A3",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_5_fitting_free_a3_weight_source_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a3_authority_identity",
+    "capture_sidecar:input_descriptor_identities",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary_and_sidecar:a3_source_keyset_and_amendment_5_capture_repository_proof"
+}
+```
+
+Their complete projection, preimage, count, digest, evidence, and result
+laws are §18.6's with v4 capture input/claim/proof selected and D5 added to
+the proof conjunction. The claim remains lifecycle nonauthority and enters
+neither inner A1/A3 identity, inner evidence digest, nor substantive model.
+
+The domain successor is `fitting_free_registration_domain_identity.v4`.
+It has the complete v3 keyset/order, changes its schema value, selects the
+complete v4 requirement registry, and freshly reconstructs all 22 rows,
+projection evidence, Booleans, failure IDs, counts, and hashes. In
+particular, position 1, historical rules, A1, and A3 use only their v4
+successors; every other requirement row retains its exact identity and is
+re-evaluated rather than copied.
+
+The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v5`. It retains the
+complete v4 keyset and key order and changes its schema value to the v5 name.
+Its `fitting_free_requirement_verification_specs` child is the complete v4
+registry. Its verification-claim specs retain their ratified schemas, but
+the five legal members of each spec child are freshly reconstructed with
+the exact §19.2.3 `A_x`/`G_x` arrays before any result is built. Both
+calibrated and fitting-free result children, their complete source
+projection, and their adjudication identity are freshly reconstructed from
+the eventual §19.2–§19.3 authorities; the retained §18 positive V-B6
+source/result remains exact. Specifically, the legal children use only
+`historical_coverage_rule_authority_verification_result.v2` through
+`verification_claim_base_result_projection.v2`; the adjudication identity
+uses only the v3 expected/actual preimages; and its exact
+`calibrated_noncapture_required_authority_predicate_specs` child deep-equals
+the complete `calibrated_noncapture_required_authority_predicate_specs.v4`
+registry. The v4 preimage, v4 result, and
+`calibrated_authority_cutoff_identity.v4` are required-authority evidence
+and cutoff consumers; they are not invented as bundle children. An earlier
+or mixed-version child fails bundle construction. Every other child and the
+complete child order remain unchanged. The v4 domain and successor G17 payloads are separate
+receipt/configuration comparands and are not invented as bundle children. A
+negative required Class-C consequence remains a structurally present
+registry value and produces the required false registration Boolean; it is
+never omitted to make the bundle favorable.
+
+Every unchanged child keeps its predecessor schema and exact semantic value
+only after fresh reconstruction. Every changed child carries a fresh digest.
+The complete v5 bundle digest hashes this one object and becomes
+`path_applicability_specs_sha256`; no v4 child digest, configuration digest,
+prose digest, or predecessor result is copied. Every Amendment-5 cutoff,
+22-row domain, applicability result, receipt, and validator selects the v4
+registry, v4 domain, and v5 bundle. No caller, receipt, unfavorable ancestry
+value, or incomplete authority artifact can select an earlier version.
+
+### 19.7 Receipt, selected-registration lineage, and successor inventory
+
+#### 19.7.1 Core, outer receipt, and selected lineage
+
+The common binding successor is
+`covered_earnings_path_applicability_receipt_core.v4`. It is the complete
+§18.7 v3 core in the same order, changes its schema value, and inserts
+`amendment_5_design_identity` immediately after
+`amendment_4_design_identity`. It has exactly 19 keys. Its four amendment
+children are exact D2, D3, D4, and D5; its fitting-free domain is complete
+v4; its applicability-spec digest hashes the complete v5 bundle; and its
+applicability result carries the v4 domain digest. Every other member,
+including the pre-reference configuration and namespace cut edge, is
+unchanged. `receipt_core_sha256` hashes the complete v4 core.
+
+When accepted capture supplies A1/A3, receipt-core validation requires:
+
+- D2 to deep-equal the v4 capture registration's `design`, the proof's D2,
+  and both artifact design children;
+- D3, D4, and D5 to deep-equal their same-named registration and proof
+  children;
+- the calibrated adjudication and fitting-free domain to bind the same v4
+  claim digest, capture input, proof, primary, sidecar, triple, and cutoff;
+  and
+- exact lineage `D2 < D3 < D4 < D5 < A <= H_cap < T < C <= HEAD`.
+
+The outer successor is `covered_earnings_path_applicability_receipt.v4`.
+It retains the complete v3 outer keyset/order and every receipt-ID, suffix,
+namespace, construction, status, Git-delta, and failure law, changes its
+schema value, and requires the complete v4 core. Every prospective
+Amendment-5 use in §§16.13.4, 16.13.7, 16.14.3, 17.4, and 18.7 selects v4.
+Terminal-history dispatch is exact: pre-Amendment-3 registrations retain
+historical v1; Amendment-3 registrations require v2; Amendment-4
+registrations require v3; and an Amendment-5 registration requires exactly
+one v4 receipt carrying D5. No version may bind another revision.
+
+The calibrated and fitting-free configurations remain unchanged with D1 and
+D2 design children. For an Amendment-5 fresh registration,
+`verify_amendment_5_selected_registration_design_lineage_v1` prospectively
+replaces the §18.7 selected-lineage predicate for both branches. It is true
+if and only if:
+
+1. the selected configuration design exact-matches its D1 or D2
+   ratification blob and digest;
+2. the receipt core's D2 child exact-matches the revision-4 ratification
+   identity and raw bytes;
+3. its D3 child exact-matches the revision-5 identity and raw bytes;
+4. its D4 child exact-matches the revision-6 identity and raw bytes;
+5. its D5 child exact-matches the revision-7 ratification commit, complete
+   blob, digest, and same-path raw bytes at registration `HEAD`, while D3 is
+   D4's exact prefix and D4 is D5's exact prefix;
+6. D1 is a strict ancestor of D2, D2 of D3, D3 of D4, D4 of D5, and D5 is
+   ancestor-or-equal to registration `HEAD`; and
+7. every other repository, implementation-tree, configuration, invocation,
+   input, output, history, and validation law passes unchanged.
+
+False fails v4 receipt validation without fallback. For an Amendment-5
+fresh fitting-free selection, §16.9 consequence 2's authority phrase becomes
+“authorized under revision-7 authority while retaining the revision-4
+fitting-free configuration design child.” Section 16.5.5's D2 configuration
+check remains only `K_f^d = D2`, joined to the earlier D5 position-1 proof
+and later v4 receipt proof.
+
+#### 19.7.2 Complete successor identifier inventory
+
+The complete design/capture/receipt lineage successor set introduced in
+§§19.5–19.7 has exactly these 16 object, schema, or predicate identifiers:
+
+1. `amendment_5_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_5_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_5_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v4`;
+5. `verify_amendment_5_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_5_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v4`;
+8. `covered_earnings_path_applicability_registry_bundle.v5`;
+9. `fitting_free_model_input_authority_capture_registration.v4`;
+10. `amendment_5_capture_registration_repository_proof.v1`;
+11. `verify_amendment_5_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v4`;
+13. `fitting_free_model_input_authority_capture_input.v4`;
+14. `covered_earnings_path_applicability_receipt_core.v4`;
+15. `covered_earnings_path_applicability_receipt.v4`; and
+16. `verify_amendment_5_selected_registration_design_lineage_v1`.
+
+The complete non-lifecycle schema/disposition successor set introduced in
+§§19.2–19.4 has exactly these 21 identifiers:
+
+1. `historical_coverage_legal_source_manifest.v1`;
+2. `historical_coverage_rule_domain.v1`;
+3. `historical_coverage_jurisdiction_mapping.v1`;
+4. `legal_source_document_byte_closure.v1`;
+5. `historical_coverage_rule_authority_schema.v1`;
+6. `historical_coverage_rule_authority_expected_preimage.v2`;
+7. `historical_coverage_rule_authority_actual_preimage.v2`;
+8. `historical_coverage_rule_authority_verification_result.v2`;
+9. `verify_historical_coverage_rules_identity_v2`;
+10. `historical_coverage_rule_specs_append_only_history_projection.v1`;
+11. `historical_coverage_rule_domain_reconstruction.v1`;
+12. `verification_claim_base_result_projection.v2`;
+13. `calibrated_verification_claim_adjudication_expected_preimage.v3`;
+14. `calibrated_verification_claim_adjudication_actual_preimage.v3`;
+15. `calibrated_noncapture_required_authority_predicate_specs.v4`;
+16. `calibrated_noncapture_required_authority_preimage.v4`;
+17. `calibrated_noncapture_required_authority_result.v4`;
+18. `calibrated_authority_cutoff_identity.v4`;
+19. `psid_questionnaire_slot_closure_evidence.v1`;
+20. `psid_rule_residual_consequence.v1`; and
+21. `amendment_5_schema_disposition_closure_sweep.v1`.
+
+The two lists are disjoint and their concatenation is the exact 37-name
+Amendment-5 successor identifier inventory. Existing identifiers whose
+schemas are completed in place—notably `historical_coverage_rule_specs.v1`
+and every official v1 registry—are not new names and therefore do not appear.
+The symbolic `K_x`, `E_x`, `A_x`, `G_x`, `J_p`, and `T_p` relations and the
+\(M_t\), \(M_c\), and \(M_p\) preimage metavariables are byte-producing
+equations, not serialized object, schema, or predicate identifiers.
+`joint_binding_semantics.v1`, the `legal-joint-binding:` prefix, and
+`partition_overlap_evaluation_closure` are respectively an identity-preimage
+tag, an ID prefix, and a G17 payload member—not successor schema or predicate
+identifiers. They add no successor name.
+Member names, enum/role literals, projection paths, cross-binding literals,
+and symbolic commit names are likewise outside the inventory. In particular,
+`source_declaration_assertion_occurrences`, `assertion_disposition`,
+`selecting_system_reference`, and
+`nonselecting_historical_provenance` are respectively a retained member,
+closure-search term, and closed disposition values inside the completed
+jurisdiction mapping; none is a separately selectable schema or predicate.
+Likewise,
+`upstream_corpus_registry_identity`, `source_document_manifest`, and
+`source_document_keyset_sha256` are exact member names inside retained
+artifacts, and `fixed_two_root_complete_source_document_projection` is the
+fixed value of their non-ID `projection_law` member; none is a separately
+selectable schema, rule, or predicate identifier. Likewise,
+`dictionary_codebook_fixed_width_source_derivation_v3` is a pinned source-
+only interface literal; `derive_source_numeric_grammar`,
+`numeric_grammar_derivation_rows`, its row/member/status/derived-branch/profile literals,
+`psid-numeric-grammar-derivation:`, and `psid-numeric-grammar:` are an entry
+point, retained member/tag values, and ID prefixes inside
+`field_source_derivation`, not separately selectable schemas or predicates.
+The two `unsigned_ascii_digits_implied_decimal_source_authenticated_*`
+profile literals and G17 member `numeric_grammar_source_derivation` are
+likewise values and a payload member, not identifiers. They add no successor
+name. Likewise,
+`hierarchy_annotation_authority`, its page/occurrence/role/catalog/alias/
+relationship, raw-field-reference, positive-field-join, and
+near-match-source-annotation members, and `era_annotation_rows` members,
+`source_only_canonical_questionnaire_annotation`,
+`exact_raw_field_id_token`, `exact_question_identifier_token`,
+`observed_hierarchy_node`, `structural_hierarchy_node`, and the
+`psid-questionnaire-page:`, `psid-questionnaire-occurrence:`,
+`questionnaire-flow:`, `psid-job-slot:`, `psid-component-slot:`,
+`psid-node-alias:`, `psid-questionnaire-relationship:`, and
+`psid-positive-occurrence:`,
+`psid-occurrence-raw-field-reference:`, and
+`psid-positive-field-join:`, `psid-near-match-source-annotation:`, and
+`psid-absence-proof:` prefixes are member/tag/preimage literals inside
+the already named closure schema, not new schemas or predicates. `O_H`,
+`O_P`, `K_P`, `M_h`, and `P_h` are symbolic byte-producing relations or projections, not
+serialized identifiers. `Q5` is a
+symbolic future Git commit, not a serialized identifier. An omitted,
+extra, duplicated, differently spelled, or undefined identifier blocks
+ratification. These successors create no mutable alias, candidate-selectable
+version, runtime branch, or alternate source fact.
+
+### 19.8 Post-Amendment-5 build order, conflicts, ratification, and fresh registration
+
+#### 19.8.1 Lawful source-to-registry build sequence
+
+Ratification of schema law is not ratification of a future source row. After
+D5 exists, the only lawful authority build order is the following dependency
+order. A later step may be prepared in memory, but it cannot become an
+accepted authority operand before every named predecessor passes.
+
+1. **Authenticate source bytes without promoting them.** In separately
+   reviewed source-only authority lanes, capture and immutably register the
+   complete official questionnaire/flow, dictionary/layout, codebook,
+   raw-data, and legal-source bytes. Repository-governed bytes are committed;
+   externally governed raw data use their already required descriptor and
+   manifest closure. For Class A specifically, first authenticate the two
+   exact §19.3.3 Git-root identities, all four registered questionnaire
+   capture inputs, the complete 465-link/456-accepted-row disposition
+   relations, the 176-row field manifest, and every one of the 257 included
+   staged regular-file bytes. Preserve the field root's historical false and
+   registration-required report values; the new byte reproduction is a
+   separate prerequisite and does not rewrite that evidence. Independently
+   construct the exact 81/86/47/43-role `U` array, count, order, keyset, and
+   row-domain digest before reading any Class-A candidate manifest.
+   Separately review and authenticate the source-only
+   field-extraction implementation; construct every dictionary canonical row;
+   construct every raw-record framing and complete all-field token census;
+   and only then construct every codebook canonical row from its exact
+   wave-intersecting dictionary and raw-census contexts, including its own
+   locator-bound format text. Before any inventory or Q5 field candidate is
+   read, authenticate the complete V93 page locator and 579-byte block,
+   reconstruct all three assertion occurrences and their source-ordered
+   dispositions, and require the singleton PSID selecting pair without
+   treating the GSA provenance span as an equivalence. Then run the exact v3
+   numeric entry point across the full wave/field denominator, replay the
+   common tagged format projection, exact declaration agreement, both
+   candidate-arm results, every literal/range rendering, and every grammar-
+   derivation row. Exhaust both the zero-arm constructor and the complete
+   4,802-record V93 space-arm regression; exact-compare all occurrence,
+   domain, frequency, count, framing, profile, operation, and digest values;
+   and reject every unsupported, incomplete, or conflicting numeric or coding
+   group. A
+   URL, staging row, extraction, report, or candidate
+   digest is still nonauthority. No row from the legal staging universe is
+   grandfathered by Amendment 5.
+
+   **Walk A — questionnaire slots and official inventory.** The complete
+   local V93 replay now passes both legs. On the jurisdiction leg, the exact
+   full block yields three assertions: the byte-frozen GSA occurrence is
+   nonselecting history, both PSID occurrences select the same closed system,
+   and the complete domain maps 51 states, one authenticated nonstate, and
+   one missing member. On the format leg, its two silent dictionary rows and
+   codebook `NUM(2.0)` declaration enter the common projection, the complete
+   census uniquely selects ASCII-space padding, and all 4,802 observations
+   classify as range members. V93 is therefore neither an R3-1 jurisdiction
+   blocker nor an additional Class-B format blocker under v3. Overall Walk A
+   still aborts honestly because Q5, the slot registry, and the official
+   inventory do not yet exist and 2023 leading token `G13.` resolves to both
+   ER83121 and ER83495. A successful local full-block replay proves interface
+   satisfiability; it does not itself emit future authority or close a current
+   Class-B residual.
+2. **Construct the Class-A questionnaire closure.** Reproduce the complete
+   81-document questionnaire page-text domain, then annotate every page with
+   exact UTF-8 occurrences, all flow paths, role/job/component anchors,
+   source-proved aliases, and purpose prompts without reading a slot,
+   inventory, crosswalk, or reader candidate. Exact-partition every role,
+   job, and component anchor into the role/job/component catalogs or its one
+   source-proved alias relation, consume every repeat instruction in complete
+   alias evidence, and reverse-cover every aggregate anchor; build mandatory
+   aggregate/no-job sentinels and the exact component projection `R_Q`;
+   expand complete H as W × two roles × `R_Q`; derive `O_H` independently of
+   purpose prompts; and exact-partition its 35-purpose expansion through
+   complete `O_P` into positive occurrences and structural keys. From the
+   already authenticated field-source derivation, construct
+   each wave's complete `D_w`, enumerate the direct raw-ID and byte-identical
+   leading question-identifier reference branches with the singleton-field
+   ambiguity abort, and build one nonempty complete ordered
+   dictionary/codebook/raw-data join for every positive. Do this before any
+   slot or inventory row exists; a positive with no exact source field link
+   remains a blocking gap.
+   Then derive every purpose-order `M_h`, exact-cover every questionnaire
+   occurrence and canonical field row in the source-only near-match
+   annotation relation, disposition and maximal-normalize every semantic
+   binding or fail unresolved granularity, rerun the complete `O_P` witness
+   relation for every missing target, and construct
+   the one singleton-wave `P_h` exactly when `M_h` is nonempty. Derive every
+   zero/partial/full binding outcome, fixed near-match row, conclusion, ID,
+   proof count, and digest before Q5 is reviewed; a selected proof grouping,
+   search hit, reason string, or candidate consumer value aborts.
+   Independently review the complete
+   `psid_questionnaire_slot_closure_evidence.v1` six-era/43-wave artifact and
+   first-add it alone at the single-parent post-D5 commit `Q5`. Reconstruct
+   its eight-key Git identity before any slot-registry candidate is read,
+   require its source manifest and embedded upstream identity to deep-equal
+   the already reconstructed 257-row `U` denominator in every row, role,
+   wave, path, storage identity, count, keyset, order, and domain digest, and
+   only then accept its whole-document/occurrence/field-stream/flow-branch
+   locators, byte-derived canonical source rows, catalogs, hierarchy, raw-
+   field references and joins, retained-slot projection, source-atom
+   annotations, and canonical absence proofs. For every cited canonical
+   codebook row with `normalized_entry_count == 0`, this acceptance walk
+   requires exactly one field-stream locator with null coordinates and
+   `codebook_entry_positions: []`, followed by exactly one source atom for
+   that locator; omission or an invented position `0` aborts before Q5 can
+   pass. Only after its source-
+   manifest identity, `Q5` identity, and every page/occurrence/catalog/
+   relationship/count/hash equation pass
+   may `psid_questionnaire_slot_specs.v1` be derived and ratified. All seven
+   Class-A residuals must receive exact source-backed successor dispositions.
+3. **Construct and ratify the official inventory.** From the ratified slot
+   domain, paired dictionary/codebook authority, and byte-pinned raw-file
+   censuses, build every §19.3.2 normalized value domain and every present/structural-
+   query row. `asked` slot rows may map only to `present` inventory rows;
+   every structural-query row—including every key under a structural-
+   hierarchy node—may map only to `structural_missing` with its complete
+   source proof. All structural keys under one H row must map to its unique
+   canonical `P_h`; no containing-key proof may be selected. Construct every present row in its same-key Q5 join's exact
+   raw-field order; exact-copy the already compiled same-wave/raw-field
+   derivation ID/full-row SHA and require named equality of its padding,
+   grammar, profile-to-parse members, value-derivation projection, and fixed-
+   numeric dictionary meaning or value-code range meaning/type/unit. A value-
+   code field takes the compiled range, physical-unestablished, or exact no-
+   range null branch as its complete source domain dictates; an unestablished
+   range requires zero observed members, and no branch may be rebuilt from an
+   inventory parse spec. Require the full forward/reverse key covers, both status
+   biconditionals, positional source projections, and complete structural-
+   proof deep equality. Neither the slot registry nor the inventory is independently
+   ratified unless the same two-key source-authority manifest passes the
+   independent `U` comparison and G17-C01. All six Class-B residuals must close, all slot and row arrays
+   exact-cover, every fixed-width file must frame and census without a
+   remainder, and every executable value map must deep-equal its normalized
+   source projection. Independently expand every `state_of_residence`
+   source domain, reconstruct its locator-bound source coding declaration,
+   exact-cover and disposition every declaration/reference assertion by its
+   authenticated locator and byte span, include the complete occurrence
+   relation in the declaration ID, exact-cover every state, missing,
+   foreign/territory, and numeric-complement member, execute both value and
+   meaning joins, and replay all seven hostile vectors. The complete actual
+   V93 block, including both source sentences and all domain rows, must pass
+   before constructing the complete §19.2.3 jurisdiction map against the two
+   fixed state-code documents and before the official inventory can
+   independently pass and supply the legal domain. Class-C downstream gaps remain attached to
+   present inventory keys; they neither shrink this inventory nor masquerade
+   as structural absence.
+4. **Close the legal-source universe and legal registry.** Place every
+   intended legal source blob in the parent of L5; classify and link every
+   establishing/corroborating source; derive the complete 14-family domain
+   from the ratified inventory and the passing fixed federal-plus-51
+   jurisdiction map; construct each legal claim's complete independent
+   attachment-cell relation and affected-key projection; and then construct
+   all rule rows, required/optional consequences, the rule-major
+   effective-cell relation, every transition and cell ID from its exact six-
+   or eight-position value-array preimage, the manifest source projection,
+   provisional partition stream/interval coordinates, normalized joint-
+   binding signatures, and complete Cartesian `T_p` domains and table inputs.
+   Evaluate every transform on every vector, complete `T_p`, then derive
+   every non-ID partition field including rank, disposition, and consequences;
+   no negative row or transition may short-circuit the table. Only then form
+   the 15-position \(M_p\), compute the final partition ID, and hash the
+   enclosing partition row/domain and overlap closure. Reproduce all three ID
+   domains independently.
+   Require each prepared rule claim array to exact-project its family, but
+   accept no claim-spec destination from these unauthenticated rows. After
+   every source byte and inventory dependency exists, the separately
+   reviewed single-parent L5 commit adds only
+   `data/registries/historical_coverage_rule_specs_v1.json`. The v2 legal
+   predicate then reconstructs schema, raw bytes, history, domain, claim
+   relations/projections, every `J_p`/`T_p` table and partition outcome, and
+   source closure. Only after it authenticates `H` are `K_x`, `E_x`, `A_x`,
+   `G_x`, and the complete claim-partition domains `P_x` freshly
+   reconstructed; both claim arrays are serialized into both claim
+   registries and partition truth enters each legal base result. The candidate
+   claim-spec and historical-rule arrays are jointly foreign-key-validated
+   only after those one-way derivations; neither authenticates the other and
+   neither configured array selects a projection source. Any required legal
+   cell still absent/conflicting blocks.
+
+   **Walk B — legal registry and the 1990 SECA transition.** The complete
+   V93 upstream jurisdiction replay now passes under the assertion-
+   disposition law, as does the ER21004 FIPS vector, so R3-1 no longer aborts
+   this walk. The isolated federal V-B4 chain remains structurally
+   representable as authenticated statute bytes → `[1968,1990)` rule →
+   independently derived cells and partitions → complete `J_p` and `T_p` →
+   rank-1 verified dispositive result → `P_x`/`E_x`/`A_x` → legal result v2
+   → base projection v2 → adjudication preimages v3 → noncapture, cutoff, and
+   domain v4 → bundle v5 → receipt v4. Its endpoint covers earnings years
+   1968 through 1989 exactly. Full construction still aborts honestly while
+   D5, L5, authenticated legal bytes, and the official inventory are absent;
+   midyear transitions still require ratified service-date allocation law,
+   and state/entity/year §218 cells still require their complete executed-
+   instrument bundles.
+5. **Construct the nine registry identities.** The final identity array is
+   exactly this order:
+
+   1. `verification_claim_specs.fitting_free.v1`;
+   2. `historical_coverage_rule_specs.v1`;
+   3. `psid_structural_missing_consequence_specs.v1`;
+   4. `psid_value_code_specs.v1`;
+   5. `psid_annualization_rule_specs.v1`;
+   6. `psid_reconciliation_rule_specs.v1`;
+   7. `psid_job_spell_match_rule_specs.v1`;
+   8. `psid_se_aggregation_group_rule_specs.v1`; and
+   9. `psid_coverage_state_group_rule_specs.v1`.
+
+   This is an identity order, not permission for circular derivation. Build
+   value-code rows from the inventory; structural-missing rows from the
+   inventory and verified historical rules; annualization rows from typed
+   amount/unit/exposure keys; reconciliation rows from exact operands and
+   totals; job-match rows from complete hierarchy/timing keys;
+   SE-aggregation rows from verified person/service grouping and allocation
+   evidence; and coverage-state rows from independently applicable service
+   keys. Reconciliation, job-match, and SE rows carry every Class-C
+   consequence. The claim and historical-rule arrays must then pass the
+   independently reconstructed family, `K_x`, `E_x`, `A_x`, and `G_x`
+   foreign-key equations. No registry can select its own domain,
+   hash, verification class, or required consequence.
+6. **Close the crosswalk and successor bundles.** Only after the official
+   inventory and all nine registry values are immutable may the existing
+   separately reviewed `psid_covered_earnings_crosswalk.v3` first-add/
+   cutoff procedure run. Reconstruct its complete identity array, all-key
+   dispositions, component rows, and fresh content digest. Then construct
+   G17's 18 comparisons, including C01's exact positive-field-join and deep
+   proof/status objects, the four-key C05 overlap-evaluation closure, and the
+   four changed v4 requirement rows. From those
+   immutable values, construct, commit, and validate the unique fresh
+   retained ten-key verification-claim adjudication artifact, including its
+   complete calibrated/fitting-free result children, source projection, and
+   `verification_claim_adjudication_identity`; none is copied from a prior
+   amendment. Its legal identity is the typed v2 result, its base projection
+   is v2, and its adjudication preimages are v3. Construct every v4
+   noncapture predicate/preimage/result and the complete v4 authority cutoff
+   from those verified objects before any consumer reads them. Only then
+   construct complete
+   `fitting_free_registration_domain_identity.v4` and hash the complete
+   `covered_earnings_path_applicability_registry_bundle.v5`. The Class-C
+   negative objects must remain present; eleven current required gaps make
+   the corresponding Booleans false until source-resolved.
+7. **Only then construct implementation, capture, and receipt artifacts.**
+   Separately reviewed implementation may consume only the frozen schemas
+   and authorities above. Perform preliminary value-blind adjudication;
+   only if the unchanged narrow capture predicate passes may the D5-aware v4
+   A1/A3 capture ceremony run. Reconstruct the v4 capture input, all 22
+   requirement results, selected path, v4 receipt core/outer, and every gate
+   from their complete predecessors. A receipt cannot cure a failed legal,
+   inventory, registry, or source consequence.
+
+The “nine registries” include the legal registry at position 2; the sequence
+does not build it twice. The legal-registry step is stated separately because
+its raw source corpus, independent domain, and L5 first-add proof precede the
+final nine-identity closure. The official inventory is likewise a distinct
+authority input rather than a tenth registry row.
+
+#### 19.8.2 Reported law tensions and mandatory outcomes
+
+The following tensions are reported explicitly. Amendment 5 proposes only
+the named, reviewable dispositions; it does not silently resolve any one of
+them.
+
+1. **Future legal rows versus the existing `ratified_design:` projection.**
+   The existing §16.2/§16.13.6 four-projection law cannot make D5 contain
+   source/rule rows that D5 deliberately does not pin. Reinterpreting the
+   root as a future artifact would self-authenticate the candidate. The sole
+   proposed resolution is the exact v2 requirement and L5 history predicate
+   in §19.2.5. If referee review rejects that replacement, Title I is
+   inoperable and ratification stops; future rows may instead be pinned only
+   by a later append-only design amendment.
+2. **Executed §218 instruments versus the old two-rank wording.** Existing
+   §4.1 identifies enacted federal law and administering material but does
+   not say how an executed agreement/modification or necessary state
+   determination establishes a state/entity/year inference. Section 19.2.4
+   proposes a mandatory rank-1 establishing bundle anchored in federal law.
+   If legal review rejects that classification, the affected V-B1 cells
+   remain required gaps; no source is promoted by convenience.
+3. **Historical coding attribution versus an operative reference.** The
+   complete V93 block both attributes the state/county codes to GSA's 1966
+   *Geographical Location Codes* and directs the reader to PSID State Codes.
+   Section 19.2.3 resolves that source distinction only through the exact
+   page-23 occurrence rows: the GSA span is the singleton byte-authorized
+   `nonselecting_historical_provenance` row and both PSID spans are
+   `selecting_system_reference`. There is no authenticated GSA-to-PSID
+   equivalence and none is asserted. An omitted, unsupported, unknown,
+   competing, or multiply disposed occurrence aborts; no extractor may infer
+   provenance from editorial wording or use that arm for another reference.
+4. **All-possible-token completeness versus unproved physical spellings.**
+   The old flat-token wording can be read to require silently guessing every
+   padding/sentinel spelling or to make a completely scanned present file
+   forever unregistrable. Section 19.3.2 expressly replaces it with
+   an authenticated v3 source-format compiler, complete observed census, and
+   an explicit abort for every physically unestablished possible token. The
+   deliberately smallest numeric compiler recognizes only exact source-
+   emitted `NUM(w.d)` and `Fw.d` as width/decimal declarations. A tagged
+   source-ordered dictionary/codebook projection retains every declaration,
+   requires byte-exact nonnull agreement, and never lets a silent dictionary
+   row suppress a locator-bound codebook format. The declaration supplies no
+   padding default: only the complete framed field census may uniquely select
+   the closed zero-left-pad or ASCII-space-left-pad arm. Mixed or
+   nondiagnostic padding, signed, overpunched, zoned, explicit-decimal, or
+   differently spelled formats remain unsupported rather than inheriting host
+   behavior.
+   The same smallest-source rule derives coded versus uncoded only after the
+   complete dictionary/codebook group is assembled: any nonempty normalized
+   codebook domain is value-code, while an exact-empty domain can be uncoded
+   numeric only through one of those supported formats plus complete numeric
+   declarations. An isolated dictionary parser label is corroboration, not
+   authority for overriding the codebook domain.
+   The only additional source-authenticated format is exact `CHR(w)`, which may
+   copy an already `w`-byte ASCII literal but constructs no numeric grammar or
+   range spelling. Codebook literals retain their exact source value-cell
+   lexeme and must have one rendering under the applicable tuple and uniquely
+   authenticated arm; the compiler independently replays the complete raw
+   census and rendering. V93's 4,802-record census lawfully authenticates the
+   space arm and therefore no longer leaves that field outside the interface.
+   If another field's complete census cannot select exactly one displayed arm,
+   that field remains Class B pending a later interface version; no trim,
+   missing default, isolated token, or era convention resolves it.
+5. **Unallocated aggregates versus executable allocation laws.** The
+   existing SE family action requires registered person allocation. Title II
+   does not replace it with an unallocated executable path. Its sibling
+   residual consequence may preserve authenticated aggregate lineage, but a
+   current required allocation gap still aborts. Treating preservation as
+   permission to assign or model a person amount would conflict with §4.2
+   and is forbidden.
+6. **Residual 9's historical negative versus §18's later positive seam.**
+   The adjudication blob truthfully preserves the original
+   `registration_required` residual, while §18 later proves that the
+   inclusive total needs no source arithmetic allocation. Section 19.3.4
+   retains both histories and permits the exact
+   `documented_no_source_allocation_required` consequence only for that row.
+   If §18's registered-byte inference is rejected, residual 9 reverts to a
+   required blocker; no broader Class-C exception exists.
+7. **Annual integer intervals versus midyear legal transitions.** The v1
+   schema cannot faithfully represent a midyear transition by rounding it
+   to a whole earnings year. Section 19.2.4 leaves that cell a closed gap
+   unless separately ratified service-date allocation law exists. This is a
+   reported representational limit, not a substantive choice of which
+   half-year law wins.
+8. **Existing questionnaire review versus a complete hierarchy authority.**
+   The committed predecessor covers 37 waves, 61 passage locators, and three
+   targeted absence proofs, but supplies no all-page occurrence, alias,
+   relationship, or hierarchy domain and omits six later waves. Section
+   19.3.3 therefore requires the future separately reviewed source-only `Q5`
+   artifact. Until it exists and every 81-document page and H-domain equation
+   passes, including the exact source-atom annotation cover and canonical
+   one-proof-per-nonempty-`M_h` partition, Class A and every dependent slot/inventory artifact remain
+   nonemittable. Neither the predecessor's favorable structural status nor a
+   whole-document locator fills that evidence gap; its three selected proofs
+   have neither the canonical filtered-H partition nor the complete near-
+   match denominator required here.
+9. **Questionnaire semantics versus raw field identity.** The committed
+   evidence does not establish that every positive has a purpose-prompt
+   occurrence containing either an exact printed same-wave raw field ID or a
+   byte-identical leading question identifier in a canonical same-wave field
+   row. Section 19.3.3 admits only those two coordinate-bound branches;
+   strict-contained raw-ID prefixes are discarded and exact question tokens
+   resolving multiple raw fields abort. It does not infer a field from role,
+   label similarity, or meaning. A positive without a unique source link
+   therefore remains `registration_required`. A future separately
+   authenticated role/relationship/purpose-to-field binding authority could
+   be proposed in a later amendment, but it is not invented or silently
+   admitted here. Q5's complete near-match semantic-binding relation is
+   negative-audit evidence only: it may invalidate an absence proof and may
+   never resolve this positive-field ambiguity or create an asked key.
+
+The two claimless optional federal/Railroad families are not an unresolved
+conflict: §19.2.4 adds their direct cell-validation equation while preserving
+their empty claim-ID arrays. The current absence of future legal, slot,
+inventory, or registry rows is likewise not a contradiction in a
+prospective schema amendment; it is a registration blocker until the build
+sequence succeeds.
+
+#### 19.8.3 Referee, ratification, and fresh-registration protocol
+
+Amendment 5 uses the same referee-rounds-then-ratify discipline as §§15.8,
+16.10, 17.4, and 18.8. The authorized order is:
+
+1. submit the complete append-only §19 bytes to adversarial referee review
+   without source artifact, implementation, registration, capture,
+   correction evaluation, context output, or any other tree change in this
+   amendment lane;
+2. resolve every referee finding in the review record; verify the complete
+   round-to-round diff, exact D4 prefix, every pinned digest and source row,
+   the §19.4 closure sweep, the 33-row comparator census, both successor-name
+   lists, and every cited preservation; continue rounds until the exact final
+   bytes receive an affirmative ratification verdict;
+3. ratify those accepted bytes in one identifiable future commit D5; every
+   authoring or referee-response commit before it is not ratification;
+4. only afterward perform exactly §19.8.1 steps 1–6: the separately reviewed
+   source/authority build, slot/inventory ratification, raw legal-source
+   commits, one-path L5 commit, nine-registry/crosswalk closure, fresh
+   verification-claim adjudication, and all fresh content/identity digests.
+   Do not yet execute any portion of §19.8.1 step 7; no source row or
+   artifact may be smuggled into D5;
+5. run the complete v2 legal predicate, official-inventory reproduction,
+   crosswalk history, nine-registry exact cover, G17, and 22-requirement
+   reconstruction. Any remaining registration-required legal cell, Class-A
+   or Class-B residual, or required Class-C consequence stops here and is
+   reported with its exact ID;
+6. execute the complete pre-receipt portion of §19.8.1 step 7: construct and
+   validate the separately reviewed implementation, construct the
+   preliminary value-blind calibrated adjudication, and only if it satisfies
+   the unchanged narrow capture predicate perform the receipt-free-proof-
+   gated v4 authorization/proof/A1/A3 capture, reviewed triple, clean cutoff,
+   final adjudication, v4 capture input, final 22-row domain, and selected-
+   path reconstruction;
+7. construct and validate the complete v4 receipt core and outer receipt,
+   then obtain a validator-accepted fresh registration binding D5, the complete
+   revision-7 design blob, every required legal/source/inventory/registry/
+   implementation/capture byte, complete v5 bundle, complete v4 receipt, and
+   a fresh output/claim namespace; then
+8. perform the unchanged prelaunch, sealed execution, incident,
+   publication, context, certificate, and external merge sequence.
+
+On the currently authenticated §19.3.1 scope, Amendment 5 itself resolves no
+Class-A or Class-B source row and supplies no future legal rule. Residual 9
+has the preserved §18 disposition; the other eleven Class-C rows remain
+registration-required blockers. A complete production-registration witness
+therefore does **not yet exist** from the presently pinned artifacts. That is
+the correct fail-closed result, not permission to weaken a claim or omit a
+negative registry row. The amendment establishes a finite lawful target and
+build order by which separately reviewed source lanes can change that result.
+
+**Amendment 5 is inoperative unless and until its exact D5 ratification
+commit is bound by the validator-accepted v4 fresh-registration receipt.**
+After ratification but before that registration, §19.8.3 steps 4–6 authorize only
+the separately reviewed source, authority, implementation, and proof-gated
+capture preparation stated above. They authorize no correction production
+evaluation, path switch, context run, label change, or publication.
