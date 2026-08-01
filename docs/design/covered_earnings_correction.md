@@ -24645,6 +24645,14 @@ reproductions, all counts/digests, and every byte-consumption equation pass;
 otherwise the slot and inventory artifacts abort rather than treating a
 candidate canonical row or token census as evidence.
 
+This source-only implementation identity and the retained official-
+inventory `integrity.extraction_implementation_commit` are distinct layers,
+not an equality: the former identifies the restricted canonical-row/framing
+extractor, while the latter continues to identify the complete inventory
+builder. The builder must consume the passing `field_source_derivation`
+object and cannot replace, reinterpret, or self-supply any of its source-
+derived values. Neither commit may stand in for the other's byte identity.
+
 Every field ending in `_hex` anywhere in §19.3.2 is an even-length lowercase
 ASCII string over `[0-9a-f]` and denotes exactly its decoded bytes; empty is
 allowed only where the applicable branch expressly permits it. Every
@@ -24911,7 +24919,7 @@ classified:
 | `typed_parse_specs.parse_kind` | Exact codebook/dictionary domain | Required parser state | Permitted observed derivations | Permitted unobserved rows |
 |---|---|---|---|---|
 | `value_code_map` | nonempty normalized codebook domain; dictionary-missing domain exact empty | padding `none`; numeric DFA null when no range has a source rendering and otherwise the one common source-derived range DFA | `codebook_literal`, plus `codebook_range_member` only when that DFA is nonnull | one `codebook_entries` row per unobserved literal/range; literal uses its singleton rendering, range uses DFA or physical-unestablished branch |
-| `fixed_width_numeric` | normalized codebook domain exact empty; dictionary-missing domain complete, possibly empty | nonnull DFA bound to `typed_parse_specs`; source-declared padding branch | `dictionary_numeric_grammar | dictionary_missing_literal` only | one row per unobserved dictionary missing literal plus the one `uncoded_dictionary_numeric_domain` row when nonempty |
+| `fixed_width_numeric` | normalized codebook domain exact empty; dictionary-missing domain complete, possibly empty | nonnull DFA bound to `typed_parse_specs`; source-declared padding branch | `dictionary_numeric_grammar` or `dictionary_missing_literal` only | one row per unobserved dictionary missing literal plus the one `uncoded_dictionary_numeric_domain` row when nonempty |
 
 These rows are mutually exclusive and complete. A value-code field cannot
 use a dictionary numeric/missing branch, and a fixed-width-numeric field
@@ -24943,10 +24951,72 @@ derive the same complete executable array; otherwise the retained v1 row
 cannot represent the source and inventory ratification aborts. The inline
 `value_code_map` is exactly that seven-key array. The unique
 `psid_value_code_specs.v1` row with the same ID deep-copies it as `entries`,
-includes this inventory key in its complete applicable-key array, and binds
-all cited dictionary/codebook row IDs, row digests, raw-data identity, and
-census digest in `source_commitments`. The complete entry-array contribution
-to the registry and inventory content digests is fresh. Missing, extra, reordered, differently
+and its `applicable_source_inventory_keys` is the complete official-
+inventory-order projection of every present row naming that map ID. The
+retained `source_commitments` member is completed in place as one object
+with exactly:
+
+```text
+commitment_kind
+source_inventory_keys
+field_rows
+field_row_count
+field_row_domain_sha256
+```
+
+`commitment_kind` is the literal `source_derived_value_code_fields`.
+`source_inventory_keys` deep-equals the complete
+`applicable_source_inventory_keys` array. `field_rows` exact-covers every
+raw field in those inventory rows whose positional `typed_parse_specs`
+object has `parse_kind: value_code_map` and this outer
+`value_code_map_id`. Rows follow `source_inventory_keys` order and then each
+inventory row's `raw_field_ids` order. Each row has exactly:
+
+```text
+source_inventory_key
+raw_field_id
+dictionary_source_document_ids
+dictionary_field_row_ids
+dictionary_field_rows_sha256
+codebook_source_document_ids
+codebook_field_row_ids
+codebook_field_rows_sha256
+normalized_codebook_entry_count
+codebook_value_domain_sha256
+raw_data_source_document_id
+raw_data_source_sha256
+record_count
+record_keyset_sha256
+record_domain_sha256
+observed_token_row_count
+observed_token_rows_sha256
+executable_entry_domain_sha256
+```
+
+The first two members resolve the unique inventory/layout field. The next
+eight exact-copy its complete dictionary/codebook document and canonical-
+row arrays, complete-row digests, and normalized-entry count/domain digest.
+The raw-data ID resolves the same manifest and raw-data derivation as that
+layout field; its SHA-256 exact-matches the source manifest, retained source-
+file projection, and `raw_token_grammar.observed_source_sha256`.
+`record_count`, `record_keyset_sha256`, and `record_domain_sha256` exact-copy
+the complete raw-data framing derivation; the count also equals
+`raw_token_grammar.observed_record_count`. The two observed-token members
+exact-copy that grammar's count and complete ordered-row digest.
+`executable_entry_domain_sha256` hashes the complete seven-key executable
+array independently derived for this field. That array must deep-equal both
+the same-key inventory `value_code_map` and the complete outer registry
+`entries`; equality of their hashes alone is insufficient.
+
+`field_row_count` equals the array length and is positive;
+`field_row_domain_sha256` hashes the complete ordered field rows under
+§10.1 canonical JSON. Missing, extra, duplicate, reordered, differently
+sourced, differently censused, or differently hashed field commitments
+abort. Every field row must derive the same complete executable array, and
+every applicable key and value-code raw field contributes exactly one row;
+there is no authored subset or source-free commitment branch. The complete
+entry-array and source-commitment contributions to the registry and
+inventory content digests are fresh. Missing, extra, reordered, differently
 typed, differently unitized, or differently encoded entries fail both the
 inventory and executable registry; observation can add a physical spelling
 for a source-declared range member but cannot add its meaning, type, unit, or
@@ -25615,14 +25685,14 @@ unnamed consumer.
 | §16.13.2 legal establishing-source match | `replaced-by-§19.2.2-serialized-complete-link-projection`: the legal manifest carries the exact claim/binding/pointer/row-digest array, reconstructed independently and bound by the v2 legal predicate; every nonlegal source row and matching law is preserved. |
 | §§16.13.6 and 17.2 exact-empty non-PSID `adjudication_sources` boundary | `preserved-byte-for-byte`: the §19.2.2 legal-link projection is not an adjudication-source array, supplies no source disposition, and cannot bypass the independently reconstructed base legal result. |
 | §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate`; all downstream claim/result/base equations and every unrelated singleton-authority requirement are preserved. |
-| §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, raw-record framing and complete census, serialized normalized literal/range domains, exhaustive parse-kind branches, source-derived finite-state numeric grammar, exact registered padding, dictionary/codebook missing literals, closed unobserved-value rows, and explicit outside-grammar abort. `typed_parse_specs` retains its ratified nine-key shape; its full-width member validates the source field while the exact successor payload-width/DFA and value-code range laws replace only its older parser-width/path predicates. |
-| §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the v1 registry name and outer row keyset remain. |
+| §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, a separately identified source-only extractor, raw-record framing and complete census, serialized normalized literal/range domains, exhaustive parse-kind branches, source-derived finite-state numeric grammar, exact registered padding, dictionary/codebook missing literals, closed unobserved-value rows, and explicit outside-grammar abort. The retained whole-inventory builder identity remains distinct. `typed_parse_specs` retains its ratified nine-key shape; its full-width member validates the source field while the exact successor payload-width/DFA and value-code range laws replace only its older parser-width/path predicates. |
+| §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
 | §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
 | §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3`: exact source-authority manifest, six-era/43-wave hierarchy extraction, whole-document/field/flow/occurrence locator domains, retained slot-source projection, and exact branch, layout, codebook, near-match, and target-key proof. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
 | §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets-and-tagged-branches`: one `residual_consequence` member is inserted at the exact enumerated position. A verified/documented executable row preserves every preexisting member and meaning; only the exact authority-absent/conflict carrier branches set the enumerated executable members empty or null and force `abort_registration`. |
 | §4.2 `family_aggregate_allocation_rule` | `preserved-in-every-executable-SE-row-and-exactly-null-in-a-negative-carrier`: a verified/documented row retains exactly `action` and `allocation_source_inventory_keys`; an authority-absent/conflict carrier has null as expressly enumerated in §19.3.4. Neither branch creates an allocation default. |
 | §§16.2, 16.5.1, 16.11.2, and 16.13 official registry/crosswalk identities and construction | `composed-with-the-completed-nested-schemas`: all v1 official artifact/registry names, nine-registry order, first-add/cutoff history, nonempty/no-unreferenced-row rules, and configuration deep-copy laws remain. Every affected content and identity digest is fresh. |
-| §16.6.4 G17 | `replaced-only-as-enumerated-in-§19.4.2`: comparison count/order and every unnamed domain remain unchanged; C01, C05, C06, C09, C10, and C11 receive the complete successor comparands. |
+| §16.6.4 G17 | `replaced-only-as-enumerated-in-§19.4.2`: comparison count/order and every unnamed domain remain unchanged; C01, C05, C06, C07, C09, C10, and C11 receive the complete successor comparands. |
 | §16.12.5 frozen ten-artifact token sweep | `preserved-byte-for-byte`: Amendment 5 adds no authority row to that historical sweep. The Class-A 43-wave closure and this amendment's normative passage sweep are separate prospective closures. |
 | §18 documented-inclusive-total projection, V-B6 successor, and exact-once/no-source-allocation laws | `preserved-byte-for-byte-and-composed-with-§19.3.4`: residual 9 alone records the same verified no-allocation-required consequence; no arithmetic allocation is introduced. |
 | §§17–18 revision-5/revision-6 comparator tables | `preserved-as-immutable-historical-invariants`; §19.5 is the complete revision-7 successor census. |
@@ -25641,12 +25711,12 @@ the table remains controlling by silence.
 
 `g17_fitting_free_inventory_crosswalk_evidence.v1` retains exactly 18
 physical comparison rows in order G17-C01 through G17-C18, the base seven-
-key comparison-row shape, and `comparison_count: 18`. C02–C04, C07–C08,
+key comparison-row shape, and `comparison_count: 18`. C02–C04, C08,
 C12–C18 retain their complete ratified purposes and payloads. In particular,
 C15 remains the exact nonempty 20-row canonical-empty-child stream; inventory
 grammar or absence evidence never enters that target/model-choice domain.
 
-The six changed expected/actual payloads are exactly:
+The seven changed expected/actual payloads are exactly:
 
 - **G17-C01** is a tagged object with exactly `inventory_key_stream`,
   `slot_source_authority_manifest`, `inventory_layout_grammar_rows`,
@@ -25688,6 +25758,18 @@ The six changed expected/actual payloads are exactly:
   `(raw_field_id,raw_token_hex)` grammar/missing branch from §19.3.2 and the
   complete §19.2 rule-domain/partition. No outer key or deterministic-
   default law changes.
+- **G17-C07** retains its value-code-registry purpose, complete registry-row
+  payload, independently required registry-row count, and unchanged outer
+  row keyset. Every expected row is reconstructed from the authenticated
+  official inventory, dictionary/codebook canonical rows, raw-record
+  derivation, and token census before any configured registry row is read;
+  every actual row is the configured `psid_value_code_specs.v1` value. The
+  compared complete rows include the exact §19.3.2 `source_commitments`
+  object and `entries`; their domain hashes therefore cover every nested
+  field row, count, source/census digest, and executable-entry digest.
+  Expected and actual `entries` must also deep-equal each committed field's
+  independently derived executable array. A matching entry array with an
+  omitted, additional, reordered, or unequal source commitment fails C07.
 - **G17-C09**, **G17-C10**, and **G17-C11** respectively compare every
   complete reconciliation, job-match, and SE-aggregation row under the
   successor keysets in §19.3.4, including every complete
@@ -25705,7 +25787,7 @@ The six changed expected/actual payloads are exactly:
   `abort_registration` consequence cannot make overall G17 sufficient for
   production registration.
 
-For all six, the configured actual never supplies the expected denominator,
+For all seven, the configured actual never supplies the expected denominator,
 count, key order, authority status, claim class, or consequence. Missing,
 extra, reordered, differently hashed, source-drifted, self-demoted, or
 unequal nested evidence fails the comparison and therefore G17. All 18 rows
@@ -25767,6 +25849,7 @@ field_source_derivation
 record_framing
 normalized_codebook_entries
 value_code_map
+source_commitments
 missing_raw_tokens
 fixed width
 raw token
