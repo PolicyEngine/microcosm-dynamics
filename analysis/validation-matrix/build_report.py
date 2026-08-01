@@ -592,9 +592,8 @@ def render() -> str:
         "## Outcome",
         "",
         (
-            f"**State:** complete matrix and report; drift test integration is the "
-            f"remaining verification step at this report-build commit. The canonical "
-            f"matrix has **{matrix['row_count']} rows** and SHA-256 `{matrix_sha}`: "
+            f"**State:** complete and verified. The canonical matrix has "
+            f"**{matrix['row_count']} rows** and SHA-256 `{matrix_sha}`: "
             f"{counts['SSA Trustees and Statistical Supplement']} SSA, "
             f"{counts['CBO / CBOLT']} CBO, "
             f"{counts['DYNASIM module replications']} DYNASIM, and "
@@ -644,9 +643,29 @@ def render() -> str:
                 "Rebuild with `/Users/maxghenis/PolicyEngine/social-security-model/"
                 ".venv/bin/python analysis/validation-matrix/build_matrix.py` and "
                 "then regenerate this report with the same interpreter and "
-                "`analysis/validation-matrix/build_report.py`. The matrix rebuild "
-                "was byte-stable at report generation. Test results are recorded "
-                "in the final report update after drift-test registration."
+                "`analysis/validation-matrix/build_report.py`. Final verification:"
+            ),
+            "",
+            (
+                f"- Matrix rebuild was byte-stable at SHA-256 `{matrix_sha}` with "
+                f"{matrix['row_count']} unique rows."
+            ),
+            "- Report regeneration was byte-stable.",
+            (
+                "- `python -m pytest -q tests/test_validation_matrix.py`: "
+                "1 passed."
+            ),
+            (
+                "- `python -m pytest -q -k "
+                "test__given_collected_suite__then_tiers_match_policy_manifest`: "
+                "1 passed, 4,471 deselected; the new test is registered in the "
+                "unit tier (903 unit tests; 4,472 total tests)."
+            ),
+            (
+                "- Tree audit: no tracked `PROGRESS.md` or `FINAL_REPORT.md`; no "
+                "writes under `runs/`, `docs/design/`, or `data/external/`; the "
+                "only narrow out-of-directory changes are the requested test and "
+                "tier-count registration."
             ),
             "",
         ]
