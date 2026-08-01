@@ -3,12 +3,15 @@
 ## State
 
 Findings 1–10 are closed in order and final integrity, identity, source-byte,
-and satisfiability verification has passed. The worktree starts from
+and satisfiability verification has passed. The round-2 referee report is
+complete. The requested external directory is read-only under the active
+sandbox, so the identical fallback is at
+`/private/tmp/sol-ce-amend5-fix1-report.md`. The worktree starts from
 unratified Amendment 5 commit
 `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
-the ratified 1,376,610-byte prefix exactly. The only remaining action is the
-external round-2 referee report.
+the ratified 1,376,610-byte prefix exactly. No in-scope repository work
+remains.
 
 ## Done
 
@@ -159,11 +162,18 @@ external round-2 referee report.
   unestablished; registration is incomplete; target emission remains zero;
   and no D5/Q5/L5, v4 capture/cutoff/domain, v5 bundle, or v4 receipt witness
   exists. The 11 Class-C residuals other than index 9 remain hard blockers.
+- Wrote the complete per-finding closure inventory, recomputed identity
+  table, design-choice alternatives, mechanical results, satisfiability
+  walks, and remaining-evidence inventory. The requested report path
+  `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-amend5-fix1-report.md` was
+  rejected as outside the writable sandbox; the 25,624-byte fallback at
+  `/private/tmp/sol-ce-amend5-fix1-report.md` has SHA-256
+  `7002ad3902895db4c7ea7fa4239a0c0543248032bd79fecc7dc08b52ba34a3d7`.
 
 ## Next
 
-1. Commit this final verification state after worktree and staged-prefix
-   checks.
-2. Write the round-2 referee report to the requested output path, or report
-   the sandbox limitation and provide the exact fallback file if that path
-   is not writable.
+1. Outside this sandbox, copy the byte-identical fallback report to the
+   requested referee output path.
+2. Submit the clean branch and report for round-2 review. No evidence
+   artifact, registry, ratification, or production action is authorized by
+   this authoring lane.
