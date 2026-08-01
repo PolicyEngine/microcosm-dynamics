@@ -319,6 +319,23 @@ def is_label_array(value: Any) -> bool:
     )
 
 
+def evidence_bound_label_note(
+    labels: list[str] | None, legacy_labels: list[str]
+) -> str:
+    """Derive immutable prose from one pinned artifact's exact label result."""
+
+    if labels is None:
+        return "This report-only module artifact embeds no label array."
+    if labels == legacy_labels:
+        return (
+            "The entry-8 and entry-10 artifacts embed the legacy proxy array."
+        )
+    encoded = json.dumps(
+        labels, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    )
+    return f"The source artifact embeds the exact label array {encoded}."
+
+
 def label_state_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
     """Summarize and consistency-check one evaluation block's label states."""
 
@@ -431,6 +448,13 @@ def validate_registered_label_evidence(
         ),
         "registered label evidence disagrees with the honesty frame",
     )
+    legacy_labels = registered["source_artifact_embedded_labels"]
+    require(
+        is_label_array(legacy_labels)
+        and registered["source_artifact_label_note"]
+        == evidence_bound_label_note(legacy_labels, legacy_labels),
+        "registered source-artifact label note disagrees with its array",
+    )
     evidence_messages = {
         "individual_administrative_truth_claim": (
             "individual-administrative-truth claim disagrees with registered "
@@ -489,6 +513,12 @@ def validate_registered_label_evidence(
             record["label_state"]["source_artifact_embedded_labels"]
             == artifact_labels[path],
             "source-artifact label claim disagrees with registered evidence: "
+            f"{row_id}",
+        )
+        require(
+            record["label_state"]["source_artifact_label_note"]
+            == evidence_bound_label_note(artifact_labels[path], legacy_labels),
+            "source-artifact label note disagrees with registered evidence: "
             f"{row_id}",
         )
 

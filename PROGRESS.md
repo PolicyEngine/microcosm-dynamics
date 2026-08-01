@@ -2,8 +2,8 @@
 
 ## State
 
-Edits 1 through 3 are implemented. Run provenance binding is under its final
-public-check, targeted, and lint gates.
+Edits 1 through 4 are implemented. Evidence-bound label-note validation is
+under its final public-check, targeted, and lint gates.
 
 ## Done
 
@@ -26,10 +26,12 @@ public-check, targeted, and lint gates.
 - Made both Git paths literal, NUL-delimited, exact-cardinality, returned-path
   checked, and bound to the selected blob's exact bytes.
 - Added staged-new, staged-modified, and literal-wildcard regressions.
+- Bound the retained legacy label note to deterministic prose derived from the
+  SHA-verified per-row embedded-array result.
+- Added a public append-check regression for fabricated label prose.
 
 ## Next
 
-1. Bind label prose to the evidence-backed array result.
-2. Enforce exact public and internal history key shapes.
-3. Move rollback-size capture under both append locks.
-4. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.
+1. Enforce exact public and internal history key shapes.
+2. Move rollback-size capture under both append locks.
+3. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.

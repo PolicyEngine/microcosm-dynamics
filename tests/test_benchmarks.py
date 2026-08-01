@@ -861,6 +861,17 @@ def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
     assert result.returncode != 0
     assert "our unit does not match" in result.stderr
 
+    fabricated_label_note, fabricated_label_note_run = write_candidate(
+        tmp_path,
+        "fabricated_label_note",
+        mutate=lambda records: records[0]["label_state"].__setitem__(
+            "source_artifact_label_note", "Fabricated evidence narrative."
+        ),
+    )
+    result = run_append_check(fabricated_label_note, fabricated_label_note_run)
+    assert result.returncode != 0
+    assert "label note disagrees with registered evidence" in result.stderr
+
     published_drift, published_drift_run = write_candidate(
         tmp_path,
         "published_drift",
