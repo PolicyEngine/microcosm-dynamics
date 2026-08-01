@@ -24422,6 +24422,142 @@ predecessor digest is copied. The replacement does not
 reinterpret the existing `ratified_design:` root as a future Git artifact
 and therefore does not self-authenticate the candidate.
 
+The replacement is type-total through every retained consumer. Let \(E_2\),
+\(A_2\), and \(V_2\) denote, respectively, the complete
+`historical_coverage_rule_authority_expected_preimage.v2`,
+`historical_coverage_rule_authority_actual_preimage.v2`, and
+`historical_coverage_rule_authority_verification_result.v2` just constructed.
+No object having any `exact_identity_*.v1` schema value may stand for one of
+these objects, and no consumer may relabel \(V_2\) without reconstructing the
+successor defined below.
+
+The authenticated base-result successor is
+`verification_claim_base_result_projection.v2`. It has exactly the nine
+members and member order of `verification_claim_base_result_projection.v1`,
+changes `schema_version` to its v2 name, and changes no row schema or row
+order. Its `historical_coverage_rules_identity_result_sha256` is SHA-256 of
+the complete canonical \(V_2\), not of an `exact_identity_verification_result.v1`
+object. Its `domain_sha256` freshly hashes the complete two-object
+`registry_rows` array. Its status is `pass` exactly when \(V_2\) has
+`result: true` and `failure_code: null`, every §19.2.3–§19.2.4 source,
+domain, rule, cell, partition, and consequence equation passes, the twelve
+base rows exact-cover their two registry/claim domains, and all counts and
+digests reproduce. A v1 base projection is forbidden in an Amendment-5
+adjudication even if its rows happen to deep-equal the v2 rows.
+
+The adjudication-preimage successors are
+`calibrated_verification_claim_adjudication_expected_preimage.v3` and
+`calibrated_verification_claim_adjudication_actual_preimage.v3`. Each has
+exactly its respective v2 keyset and key order and changes its
+`schema_version` to the corresponding v3 name. In both objects the six
+§16.13.6 inserted members retain their names and positions but have exactly
+these values and types:
+
+1. `historical_coverage_rules_expected_preimage` is complete \(E_2\);
+2. `historical_coverage_rules_actual_preimage` is complete \(A_2\);
+3. `historical_coverage_rules_identity_result` is complete \(V_2\);
+4. `historical_coverage_rules_identity_result_sha256` is the 64-lowercase-
+   hex SHA-256 of canonical \(V_2\);
+5. `verification_claim_base_result_projection` is complete
+   `verification_claim_base_result_projection.v2`; and
+6. `verification_claim_base_result_projection_sha256` is the 64-lowercase-
+   hex SHA-256 of that complete v2 object.
+
+Every other expected/actual member is freshly reconstructed under its v2
+equation. The methodology-authority row for
+`covered_earnings_verification_claim_adjudication.vintage1` selects these
+two v3 preimage schema names and the same six named source projections in
+their retained positions; its projection-row count and domain digest cover
+the resulting complete order. The retained
+`calibrated_verification_claim_adjudication_result.v1` schema remains lawful
+because it carries only the two complete preimage digests and its registered
+predicate result: for an Amendment-5 use those digests must hash the v3
+objects, and its candidate/result/status equations are evaluated against
+them. The ten-key adjudication artifact keeps its ratified schema, but its
+expected bytes, actual verification, four envelopes, source projection,
+integrity digest, and `verification_claim_adjudication_identity` are all
+reconstructed through these v3 preimages and the v2 base projection. An
+identity produced from either v2 adjudication preimage is not an
+Amendment-5 identity.
+
+The calibrated noncapture successors are
+`calibrated_noncapture_required_authority_predicate_specs.v4`,
+`calibrated_noncapture_required_authority_preimage.v4`, and
+`calibrated_noncapture_required_authority_result.v4`. The v4 predicate
+registry is the complete v3 registry in the same order, changes its schema
+value to its v4 name, and changes only the verification-claim row's input
+and result schema values to the two v4 names; its predicate equation remains
+`claim_authority_binding_valid&&authenticated_verification_claim_result_satisfied`.
+The v4 preimage has exactly the v3 keyset/order and changes its schema value.
+For V-B1 and V-B4 its `base_legal_authority_binding` uses \(E_2\), \(A_2\),
+\(V_2\), and the calibrated same-claim row of
+`verification_claim_base_result_projection.v2`; for every other requirement
+the binding remains JSON null under the retained equation. The v4 result has
+exactly the v3 keyset/order, changes its schema value, hashes the complete v4
+preimage, and evaluates the registered v4 conjunction. No v3 preimage or
+result is accepted by a v4 predicate row.
+
+For these successors, only §16.13.8's legal-binding digest/type equations
+and v3 outer-result occurrences and §16.14.4's six-legal-binding-conjunct
+paragraph are prospectively replaced as follows. Their \(W\) and \(Z\) are
+the complete verified v3 adjudication expected and actual preimages. Their six separately necessary
+`claim_authority_binding_valid` conjuncts are exactly: the canonical digest
+of \(W\)'s complete \(E_2\); the canonical digest of \(Z\)'s complete \(A_2\);
+deep equality of their complete typed \(V_2\) objects; the canonical digest
+of that complete \(V_2\); deep equality of `base_result_projection_row` to
+the calibrated same-claim seven-field row in
+`verification_claim_base_result_projection.v2`; and the canonical digest of
+that complete row. Passing five of six is insufficient. Every outer
+required-authority row, evidence identity, global-registry row, preliminary
+adjudication, and final adjudication selects and hashes the v4 predicate,
+preimage, and result. The retained availability/status mapping for every
+other requirement is unchanged. Section 16.14.4's separate same-phase scan
+paragraph and its three-way selected-registration-path equality are
+preserved byte-for-byte; none of their operands is a legal-result type and
+this successor creates no replacement or reinterpretation of that law.
+
+The authority-cutoff successor is `calibrated_authority_cutoff_identity.v4`.
+It has exactly the v3 keyset and key order, changes `schema_version` to its
+v4 name, sets
+`noncapture_required_authority_predicate_specs_schema_version` to
+`calibrated_noncapture_required_authority_predicate_specs.v4`, and requires
+its exact `verification_claim_adjudication_identity_sha256` member to be a
+64-lowercase-hex SHA-256 of the complete four-key adjudication identity
+freshly reconstructed through the two v3 preimages. The v4 cutoff contains
+no object-valued adjudication-identity member. Every other value follows the
+v3 equation and is freshly hashed. Every Amendment-5 preliminary/final authority cutoff,
+applicability evidence row, global registry, selected configuration,
+receipt, and validator selects v4; an earlier cutoff or an earlier embedded
+legal type aborts rather than dispatching by candidate choice.
+
+The sole total adjudication construction order is exact. Section 16.14.1
+steps 1–2 remain unchanged. Its steps 3–4, and the corresponding
+§16.13.6 steps 3–4, are replaced by exactly these steps:
+
+3. reconstruct the seven source projections, construct and hash \(E_2\) and
+   \(A_2\), execute and serialize \(V_2\), and abort on false; and
+4. construct and hash `verification_claim_base_result_projection.v2`.
+
+Section 16.14.1 steps 5–9 then execute in their retained order with every
+legal identity, base row, and base projection substituted by the typed v2
+objects above. Section 16.14.5's controlling steps 10–12 remain the sole
+unchanged tail: semantic status is retained before integrity construction,
+the status-free nine-key object is hashed, and status is inserted only
+before the complete expected artifact is serialized and the candidate is
+read. After that complete expected/candidate artifact identity exists, the
+coordinator constructs the two complete v3 adjudication preimages and the
+retained v1 adjudication result, then every preliminary/final v4 noncapture
+preimage and result, and finally the complete v4 authority cutoff. Only
+then may any requirement domain, applicability bundle, selected
+configuration, or receipt consume those values.
+
+No step may consume a predecessor schema, assign a digest before its
+complete typed preimage exists, or use a downstream bundle, configuration,
+receipt, or status to construct an earlier legal result. No other
+construction-order sentence is displaced: the expressly retained
+§16.14.1 steps 1–2 and 5–9 and §16.14.5 steps 10–12 control exactly as stated
+after the named type substitutions.
+
 ### 19.3 TITLE II — official-inventory disposition laws
 
 #### 19.3.1 Authenticated residual scope and exact three-class partition
@@ -25694,7 +25830,8 @@ unnamed consumer.
 | §16.2 `historical_coverage_rules` requirement row and item-6 predicate equation | `replaced-by-§19.2.5-v2-successor`: schema descriptor plus configuration, raw bytes, append-only history, independent domain, and source-byte closure. Requirement ID/class remain unchanged. |
 | §16.13.2 legal establishing-source match | `replaced-by-§19.2.2-serialized-complete-link-projection`: the legal manifest carries the exact claim/binding/pointer/row-digest array, reconstructed independently and bound by the v2 legal predicate; every nonlegal source row and matching law is preserved. |
 | §§16.13.6 and 17.2 exact-empty non-PSID `adjudication_sources` boundary | `preserved-byte-for-byte`: the §19.2.2 legal-link projection is not an adjudication-source array, supplies no source disposition, and cannot bypass the independently reconstructed base legal result. |
-| §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate`; all downstream claim/result/base equations and every unrelated singleton-authority requirement are preserved. |
+| §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate-and-type-total-successor-chain`; the v2 legal result feeds base-result projection v2, adjudication preimages v3, noncapture predicate/preimage/result v4, and authority cutoff v4. Every unrelated singleton-authority requirement is preserved. |
+| §§16.13.6, 16.13.8, and 16.14.4 legal-result/base-binding consumers | `replaced-by-§19.2.5-type-total-consumers`: every old typed identity/base/adjudication/noncapture/cutoff occurrence is replaced by the exact v2/v3/v4 object named there, including all six binding conjuncts, construction order, evidence/global-registry rows, bundles, cutoffs, configurations, receipts, and validators. No structural relabeling or mixed-version object is lawful. |
 | §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, a separately identified source-only extractor, raw-record framing and complete census, serialized normalized literal/range domains, exhaustive parse-kind branches, source-derived finite-state numeric grammar, exact registered padding, dictionary/codebook missing literals, closed unobserved-value rows, and explicit outside-grammar abort. The retained whole-inventory builder identity remains distinct. `typed_parse_specs` retains its ratified nine-key shape; its full-width member validates the source field while the exact successor payload-width/DFA and value-code range laws replace only its older parser-width/path predicates. |
 | §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
 | §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
@@ -25852,6 +25989,11 @@ effective_end
 authority_rank
 governing_rule_ids
 adjudication_sources
+verification_claim_base_result_projection
+calibrated_verification_claim_adjudication_expected_preimage
+calibrated_verification_claim_adjudication_actual_preimage
+calibrated_noncapture_required_authority
+calibrated_authority_cutoff_identity
 layout_coordinates
 typed_parse_specs
 source_file_ids
@@ -26013,7 +26155,7 @@ byte and registry-content comparisons remain outside that row.
 | DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_5_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5 consumer chain. |
 | DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1` and Amendment-5 v4 receipt/history dispatch. |
 | DC-28 | §19.1 D4 four-key identity, exact 1,376,610-byte raw design, and immutable revision-7 prefix comparison | `lawfully-unchanged-with-reason`: D4 is the immediate immutable base; every D5 position, capture, and selected-registration proof independently reconstructs D4 and verifies its exact raw prefix of D5. |
-| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its schema, history, domain, and source-byte consumers are completely closed in §§19.2.5 and 19.4.2. |
+| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its typed v2 result enters only `verification_claim_base_result_projection.v2`, the v3 adjudication preimages, the v4 noncapture chain, `calibrated_authority_cutoff_identity.v4`, and the v5 bundle dispatch closed in §§19.2.5, 19.4.1–19.4.3, and 19.6.3. |
 | DC-30 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_fitting_free_design_identity_v1`; all registry/domain/bundle consumers are closed in §19.6. |
 | DC-31 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `lawfully-unchanged-with-reason`: terminal receipt-free successor `verify_amendment_5_capture_registration_repository_identity_v1`; every transitive consumer is closed in §§19.6–19.7. |
 | DC-32 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-`HEAD` byte, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_selected_registration_design_lineage_v1`; its receipt and history dispatch are closed in §19.7. |
@@ -26301,8 +26443,17 @@ registry. Its verification-claim specs retain their ratified schemas, but
 both calibrated and fitting-free result children, their complete source
 projection, and their adjudication identity are freshly reconstructed from
 the eventual §19.2–§19.3 authorities; the retained §18 positive V-B6
-source/result remains exact. Every other child and the complete child order
-remain unchanged. The v4 domain and successor G17 payloads are separate
+source/result remains exact. Specifically, the legal children use only
+`historical_coverage_rule_authority_verification_result.v2` through
+`verification_claim_base_result_projection.v2`; the adjudication identity
+uses only the v3 expected/actual preimages; and its exact
+`calibrated_noncapture_required_authority_predicate_specs` child deep-equals
+the complete `calibrated_noncapture_required_authority_predicate_specs.v4`
+registry. The v4 preimage, v4 result, and
+`calibrated_authority_cutoff_identity.v4` are required-authority evidence
+and cutoff consumers; they are not invented as bundle children. An earlier
+or mixed-version child fails bundle construction. Every other child and the
+complete child order remain unchanged. The v4 domain and successor G17 payloads are separate
 receipt/configuration comparands and are not invented as bundle children. A
 negative required Class-C consequence remains a structurally present
 registry value and produces the required false registration Boolean; it is
@@ -26403,7 +26554,7 @@ The complete design/capture/receipt lineage successor set introduced in
 16. `verify_amendment_5_selected_registration_design_lineage_v1`.
 
 The complete non-lifecycle schema/disposition successor set introduced in
-§§19.2–19.4 has exactly these 13 identifiers:
+§§19.2–19.4 has exactly these 20 identifiers:
 
 1. `historical_coverage_legal_source_manifest.v1`;
 2. `historical_coverage_rule_domain.v1`;
@@ -26415,11 +26566,18 @@ The complete non-lifecycle schema/disposition successor set introduced in
 8. `verify_historical_coverage_rules_identity_v2`;
 9. `historical_coverage_rule_specs_append_only_history_projection.v1`;
 10. `historical_coverage_rule_domain_reconstruction.v1`;
-11. `psid_questionnaire_slot_closure_evidence.v1`;
-12. `psid_rule_residual_consequence.v1`; and
-13. `amendment_5_schema_disposition_closure_sweep.v1`.
+11. `verification_claim_base_result_projection.v2`;
+12. `calibrated_verification_claim_adjudication_expected_preimage.v3`;
+13. `calibrated_verification_claim_adjudication_actual_preimage.v3`;
+14. `calibrated_noncapture_required_authority_predicate_specs.v4`;
+15. `calibrated_noncapture_required_authority_preimage.v4`;
+16. `calibrated_noncapture_required_authority_result.v4`;
+17. `calibrated_authority_cutoff_identity.v4`;
+18. `psid_questionnaire_slot_closure_evidence.v1`;
+19. `psid_rule_residual_consequence.v1`; and
+20. `amendment_5_schema_disposition_closure_sweep.v1`.
 
-The two lists are disjoint and their concatenation is the exact 29-name
+The two lists are disjoint and their concatenation is the exact 36-name
 Amendment-5 successor identifier inventory. Existing identifiers whose
 schemas are completed in place—notably `historical_coverage_rule_specs.v1`
 and every official v1 registry—are not new names and therefore do not appear.
@@ -26513,7 +26671,11 @@ accepted authority operand before every named predecessor passes.
    retained ten-key verification-claim adjudication artifact, including its
    complete calibrated/fitting-free result children, source projection, and
    `verification_claim_adjudication_identity`; none is copied from a prior
-   amendment. Only then construct complete
+   amendment. Its legal identity is the typed v2 result, its base projection
+   is v2, and its adjudication preimages are v3. Construct every v4
+   noncapture predicate/preimage/result and the complete v4 authority cutoff
+   from those verified objects before any consumer reads them. Only then
+   construct complete
    `fitting_free_registration_domain_identity.v4` and hash the complete
    `covered_earnings_path_applicability_registry_bundle.v5`. The Class-C
    negative objects must remain present; eleven current required gaps make
