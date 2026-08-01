@@ -5100,7 +5100,7 @@
           {
             "definition_or_note_range": "A127 (actual-data note)",
             "document": "CBO's 2024 Long-Term Projections for Social Security, Long-Term Social Security Projections data workbook",
-            "observation_range": "A40:C47 (calendar years 2015-2022)",
+            "observation_range": "A40:A47+C40:C47 (calendar years 2015-2022)",
             "page": "not applicable (XLSX)",
             "publisher": "Congressional Budget Office",
             "reviewed_external_capture": {
@@ -5294,7 +5294,7 @@
           {
             "definition_or_note_range": "A129 (tax-revenue definition)",
             "document": "CBO's 2024 Long-Term Projections for Social Security, Long-Term Social Security Projections data workbook",
-            "observation_range": "A40:D47 (calendar years 2015-2022)",
+            "observation_range": "A40:A47+B40:B47 (calendar years 2015-2022)",
             "page": "not applicable (XLSX)",
             "publisher": "Congressional Budget Office",
             "reviewed_external_capture": {

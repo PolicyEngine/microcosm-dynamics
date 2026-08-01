@@ -721,7 +721,7 @@ def build_cbo_rows() -> list[dict[str, Any]]:
                 "source_locators": cbo_workbook_locator(
                     "2",
                     "Taxable payroll, title A6; headers A9:C9",
-                    "A40:C47 (calendar years 2015-2022)",
+                    "A40:A47+C40:C47 (calendar years 2015-2022)",
                     "A127 (actual-data note)",
                 ),
             },
@@ -779,7 +779,7 @@ def build_cbo_rows() -> list[dict[str, Any]]:
                 "source_locators": cbo_workbook_locator(
                     "1",
                     "Social Security tax revenues as a percentage of taxable payroll",
-                    "A40:D47 (calendar years 2015-2022)",
+                    "A40:A47+B40:B47 (calendar years 2015-2022)",
                     "A129 (tax-revenue definition)",
                 ),
             },

@@ -38,6 +38,8 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
   `first_estimates_v1.json` certification implications with its
   `/certifies_nothing` boundary, and scoped every honest gap to the committed
   model/comparison artifacts (with certification limited to M6 Family A).
+- Independent source-cell correction: tightened the two CBO workbook ranges
+  to `A40:A47+C40:C47` and `A40:A47+B40:B47`.
 
 ## Next
 
