@@ -23,8 +23,9 @@ The complete §19 draft and both independent substantive/structural correction p
 - Closed the second review findings: one-year keyed partition bounds and structured midyear evidence, source-row-bound literal/range/DFA grammar with executable padding and dictionary missing literals, the Class-A source-manifest/flow/locator/occurrence domains and retained slot projection, punctuation-complete sweep terms and plural successor anchors, explicit fresh adjudication construction, and unambiguous §19.8.1/§19.8.3 step mapping.
 - Reproduced all pinned design/inventory identities, all 25 residual-row and five residual-domain digests, the 32-row comparator census, the 29-name successor inventory, and the 92-row staging-manifest schema compatibility.
 - Ran the broad relevant regression set: 424 tests passed.
+- On the stable-tree re-review, closed the last shared legal-partition edge: midyear years add explicit split points and disposition inspects complete verified/absent/conflict row projections; also unified absence-proof locator order with the serialized locator union.
 
 ## Next
 
-- Commit this correction pass after the mandatory prefix check, then obtain final independent stable-tree re-review.
+- Commit the final narrow correction after the mandatory prefix check, then obtain the final independent stable-tree verdict.
 - Recompute final passage/document digests, remove this temporary file, and write the external final report.

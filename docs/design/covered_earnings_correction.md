@@ -24099,12 +24099,15 @@ at 1990 after covering 1968–1989. A row outside its family's frozen interval
 is invalid rather than clipped.
 
 For each family × jurisdiction effective-year stream, use the family's exact
-bounds. For each inventory-attachment cell with earnings year `y`, use only
-the one-year bounds `[y,y+1)`; an inventory key never creates partitions in
-another year. Within each such stream, independently collect its bounds and
-every matching rule endpoint strictly inside them, sort and deduplicate the
-integers, and form every consecutive half-open elementary interval. The
-post-row
+bounds and collect every matching rule endpoint plus both integer brackets
+`year(effective_date)` and `year(effective_date)+1` for every matching
+midyear transition. For each inventory-attachment cell with earnings year
+`y`, use only the one-year bounds `[y,y+1)`; an inventory key never creates
+partitions in another year. Within each such stream, retain only split points
+strictly inside its bounds, then sort and deduplicate the integers and form
+every consecutive half-open elementary interval. Thus a midyear transition
+isolates exactly its one earnings-year cell even when no rule endpoint does.
+The post-row
 `rule_interval_partitions` array has one row for every resulting stream and
 interval, with exactly:
 
@@ -24145,16 +24148,28 @@ dispositive coverage and null otherwise.
 `authority_disposition` is exactly `verified_dispositive |
 authority_absent | authority_conflict |
 unrepresentable_midyear_transition`. `optional_consequence_ids` is the
-complete applicable §4.1 consequence-ID array exactly for an absent,
-conflicting, or unrepresentable `direct_only_optional` partition and is
-empty otherwise; a required nonverified partition has no fallback ID and
-aborts. Disposition is derived in this exact priority: a referenced
-transition with null `annual_allocation_rule_id` is
-`unrepresentable_midyear_transition`; otherwise an empty applicable-rule
-array is `authority_absent`; otherwise disagreement under the overlap law is
-`authority_conflict`; otherwise complete verified coverage is
-`verified_dispositive`. A nonnull transition allocation ID must occur in the
-applicable rule array and pass before the final branch is possible.
+complete registry-order projection of consequence IDs from applicable
+`authority_absent | authority_conflict` rule rows exactly for a nonverified
+`direct_only_optional` partition and is empty otherwise. Such an optional
+partition is invalid unless those negative rows exact-cover every affected
+key and consequence required by §4.1; a required nonverified partition has
+no fallback ID and aborts.
+
+Let `V`, `A`, and `C` be the complete registry-order projections of
+applicable rows whose `authority_status` is respectively `verified`,
+`authority_absent`, and `authority_conflict`. Disposition is derived in this
+exact priority: (1) a referenced transition with null
+`annual_allocation_rule_id` is `unrepresentable_midyear_transition`; (2) a
+nonempty `C`, same-rank dispositive disagreement, or simultaneous nonempty
+`V` and `A` is `authority_conflict`; (3) complete rank-1 dispositive coverage
+by `V` with empty `A` and `C` is `verified_dispositive`; (4) empty `V` and
+`C` with either nonempty `A` or an empty applicable-rule array is
+`authority_absent`; and (5) every other incomplete, lower-rank-only, or mixed
+case is `authority_conflict`. A nonnull transition allocation ID must occur
+in `V` and pass before branch 3 is possible. For a direct-only-optional
+unrepresentable or derived-conflict branch, at least one applicable negative
+row must supply the complete consequence projection; the transition or
+disagreement cannot invent one.
 
 `partition_id` is literal `legal-rule-partition:` followed by SHA-256 of
 §10.1 canonical bytes of the remaining 15 fields in displayed order. Rows
@@ -24957,7 +24972,8 @@ in official slot order; it is nonempty and never a proof-selected subset.
 `searched_interview_waves` is the
 complete era array for an era-wide claim or the exact claimed wave subset
 for a narrower claim; every corresponding complete questionnaire locator is
-in the nonempty, unique, source-manifest-ordered `searched_locator_ids`.
+in the nonempty, unique, complete-locator-union-order
+`searched_locator_ids`.
 `searched_layout_keyset_sha256` hashes the complete ordered canonical arrays
 `[source_document_id,raw_field_id,start,end]`; the codebook digest hashes the
 complete ordered arrays `[source_document_id,raw_field_id,
