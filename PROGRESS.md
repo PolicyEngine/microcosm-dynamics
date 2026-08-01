@@ -2,8 +2,8 @@
 
 ## State
 
-Round 1 referee corrections are in progress on `claude/validation-matrix`.
-The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
+Round 1 referee corrections are complete on `claude/validation-matrix`.
+The starting revision was `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
 
 ## Done
 
@@ -44,11 +44,18 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
   for both builders and strengthened the drift test to pin both artifacts,
   both row classes, accepted canonical capture pins, Mermin demotion, all 32
   DYNASIM cell paths, and all 10 derivations.
+- Final rebuild is byte-reproducible. `matrix.json` has SHA-256
+  `47c2e33ea799ead379088adf1013a95dfdbd74a634ddc90c7d8039898016e2a6`;
+  `report.md` has SHA-256
+  `9ad213e83760aff235dd47b1b6ade317c36d9f4e5e6f0d51a9eada8972b95d3c`;
+  both builders pass their fail-closed `--check` modes.
+- Final row classes are 22 verified and 20 `reported_not_verified` (42
+  visible rows total). Mermin accounts for all 20 unverified rows.
+- The full affected test set passes with 100 passed and 1 skipped. Full-suite
+  tier synchronization passes with 1 passed and 4,471 deselected.
+- Every touched Python file passes `ruff check --fix` and was formatted with
+  Black 25.12.0 at line length 79 through `uvx`.
 
 ## Next
 
-1. Regenerate `matrix.json` and `report.md`, confirm the updated drift SHA
-   pins, run
-   byte-reproducibility checks, affected tests, tier synchronization, Ruff,
-   and Black.
-2. Write the final closure report to the requested output file.
+1. Coordinator re-audit and PR actions; none were taken in this lane.
