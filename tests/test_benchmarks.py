@@ -306,6 +306,44 @@ def _check_manifest_git_bindings(tmp_path: Path) -> None:
     with pytest.raises(AssertionError, match="not tracked in the Git index"):
         schema.validate_index_manifest_artifact(entry(literal_wildcard), repo)
 
+    # A Git symlink blob whose target text equals the target's bytes must
+    # not impersonate a regular committed evaluation artifact.
+    target = runs / "target"
+    target.write_bytes(b"target")
+    link = runs / "link.json"
+    link.symlink_to("target")
+    git("--literal-pathspecs", "add", "--", "runs/target", "runs/link.json")
+    git(
+        "-c",
+        "user.name=Benchmark Test",
+        "-c",
+        "user.email=benchmark@example.test",
+        "commit",
+        "--quiet",
+        "-m",
+        "symlink artifacts",
+    )
+    link_entry = {
+        "artifact_path": "runs/link.json",
+        "evaluated_at_run": hashlib.sha256(b"target").hexdigest(),
+    }
+    with pytest.raises(AssertionError, match="symlink component"):
+        schema.validate_index_manifest_artifact(link_entry, repo)
+    with pytest.raises(AssertionError, match="symlink component"):
+        schema.validate_manifest_artifact(link_entry, repo)
+    # Defense in depth: even with the worktree link replaced by a regular
+    # file carrying the same bytes, the staged/committed 120000 mode fails.
+    link.unlink()
+    link.write_bytes(b"target")
+    with pytest.raises(
+        AssertionError, match="not a regular (staged|committed) file"
+    ):
+        schema.validate_index_manifest_artifact(link_entry, repo)
+    with pytest.raises(
+        AssertionError, match="not a regular (staged|committed) file"
+    ):
+        schema.validate_manifest_artifact(link_entry, repo)
+
 
 def _check_append_rollback_isolation(tmp_path: Path) -> None:
     """Ensure a failed second appender cannot erase the first append."""

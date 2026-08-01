@@ -633,6 +633,14 @@ def manifest_artifact_bytes(
     validate_run_manifest([entry])
     root = root.resolve()
     relative = entry["artifact_path"]
+    walked = root
+    for part in PurePosixPath(relative).parts:
+        walked = walked / part
+        require(
+            not walked.is_symlink(),
+            "evaluation artifact path contains a symlink component: "
+            f"{relative}",
+        )
     path = (root / relative).resolve()
     require(
         path.is_relative_to(root),
@@ -744,6 +752,11 @@ def validate_index_manifest_artifact(
         len(index_fields) == 3 and index_fields[2] == b"0",
         f"immutable evaluation artifact has an unresolved Git index state: {relative}",
     )
+    require(
+        index_fields[0] in (b"100644", b"100755"),
+        "immutable evaluation artifact is not a regular staged file: "
+        f"{relative}",
+    )
     require_git_blob_bytes(
         root,
         index_fields[1],
@@ -780,6 +793,11 @@ def validate_manifest_artifact(
     require(
         len(head_fields) == 3 and head_fields[1] == b"blob",
         f"immutable evaluation artifact is not a blob at HEAD: {relative}",
+    )
+    require(
+        head_fields[0] in (b"100644", b"100755"),
+        "immutable evaluation artifact is not a regular committed file: "
+        f"{relative}",
     )
     require_git_blob_bytes(
         root,
