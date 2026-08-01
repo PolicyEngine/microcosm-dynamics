@@ -2,7 +2,7 @@
 
 ## State
 
-The complete §19 draft is present, including the build/ratification/conflict law; independent review and full structural/test verification remain.
+The complete §19 draft and the first independent substantive-review correction pass are present; final independent re-review and full structural/test verification remain.
 
 ## Done
 
@@ -19,8 +19,9 @@ The complete §19 draft is present, including the build/ratification/conflict la
 - Closed the revision-7 comparator census at 32 unique rows: 15 named replacements and 17 lawfully unchanged anchors, including the D5-to-L5 legal first-add comparator.
 - Defined D5, the four changed requirement rows, capture registration/proof/claim/input v4, domain v4, bundle v5, receipt v4, selected-lineage predicate, and the exact 29-name successor inventory.
 - Defined the dependency-ordered legal source/registry, Class-A/B official inventory, nine-registry, crosswalk, capture, and receipt build; reported six law tensions and the fail-closed current witness result.
+- Closed the first substantive-review findings: exact v2 result/preimages, legal partitions and independent inventory-family matrix, typed Class-B value/padding grammar, Class-A evidence/proof identities and digest domains, deterministic Class-C gap carriers, concrete G17 successor payloads, bounded D5-to-L5 ancestry, and a branching-consumer closure sweep.
 
 ## Next
 
-- Incorporate independent review findings and run digest, prefix, structural, and relevant test closure.
+- Obtain final independent re-review and run digest, prefix, structural, and relevant test closure.
 - Recompute passage and document digests, run closure checks, and remove this temporary file before final handoff.
