@@ -2117,9 +2117,11 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
             "status": "blocked",
             "reason": (
                 "Two overlapping 2015-2022 share/trajectory rows are built, but "
-                "the certified artifact has no cohort replacement rates, lifetime "
-                "benefit/tax accumulation, age-65 present values, household-earnings "
-                "quintiles, trust-fund, GDP, actuarial-balance, or depletion series."
+                "the committed entry-8 artifact has no cohort replacement rates, "
+                "lifetime benefit/tax accumulation, age-65 present values, "
+                "household-earnings quintiles, trust-fund, GDP, actuarial-balance, "
+                "or depletion series. Its /certifies_nothing block creates no "
+                "certification or verdict."
             ),
             "our_support": (
                 "taxable-payroll trajectory and contribution/payroll share only"
@@ -2308,6 +2310,11 @@ matrix = {
     "certification_context": {
         "entry8_first_estimates": {
             "source": source_pin("runs/first_estimates_v1.json", "/"),
+            "certifies_nothing_source": source_pin(
+                "runs/first_estimates_v1.json", "/certifies_nothing"
+            ),
+            "certifies_nothing": first["certifies_nothing"],
+            "creates_certification_or_verdict": False,
             "configured_engine": first["configuration_echo"][
                 "candidate_specs"
             ],
@@ -2354,14 +2361,40 @@ matrix = {
     "wish_financing_stub": wish,
     "blocked_comparisons": blocked_comparisons(wish),
     "honest_gaps": [
-        "No population-aligned or national-dollar comparison is supported.",
-        "No certified series extends beyond 2022.",
-        "No trust-fund balance, GDP share, actuarial balance, or depletion year is published.",
-        "No lifetime benefit/tax present value or lifetime-earnings denominator is published.",
-        "No comparable MINT or CBOLT distributional replacement-rate output is published.",
-        "No spouse, survivor, auxiliary, or DI benefit output appears in first_estimates.",
-        "No cohort/quintile/race/sex/poverty distribution comparable to published model tables appears in first_estimates.",
-        "No LTSS use, eligibility, spend-down, adequacy, program cost, or financing-sufficiency model exists.",
+        (
+            "The committed model/comparison artifacts contain no comparable "
+            "population-aligned or national-dollar comparison."
+        ),
+        (
+            "Certification here refers only to expressly gated M6 Family-A "
+            "surfaces; no such certified series in the committed model/comparison "
+            "artifacts extends beyond 2022."
+        ),
+        (
+            "The committed model/comparison artifacts contain no comparable "
+            "trust-fund balance, GDP share, actuarial balance, or depletion-year series."
+        ),
+        (
+            "The committed model/comparison artifacts contain no comparable "
+            "lifetime benefit/tax present value or lifetime-earnings denominator."
+        ),
+        (
+            "The committed model/comparison artifacts contain no comparable "
+            "MINT or CBOLT distributional replacement-rate output."
+        ),
+        (
+            "The committed model/comparison artifacts contain no comparable "
+            "spouse, survivor, auxiliary, or DI benefit output."
+        ),
+        (
+            "The committed model/comparison artifacts contain no comparable "
+            "cohort/quintile/race/sex/poverty distribution for the published tables."
+        ),
+        (
+            "The committed model/comparison artifacts contain no comparable LTSS "
+            "use, eligibility, spend-down, adequacy, program-cost, or financing-"
+            "sufficiency model."
+        ),
     ],
 }
 

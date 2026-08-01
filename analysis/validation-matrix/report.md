@@ -2,15 +2,19 @@
 
 ## Outcome
 
-**State:** the canonical verified-source matrix has **22 rows** and SHA-256 `9e7cf0b95f5c037e93f873e4c4006bfaf6117c3251ba2f409fe8bc66df73ab9d`: 7 SSA, 2 CBO, 12 DYNASIM, and 1 WISH statutory row. A separate `reported_not_verified` class contains **20 Mermin rows** (20 DYNASIM) whose publisher-controlled source bytes could not be retrieved.
+**State:** Artifact construction complete; pinned-byte and build checks verified. This is not a calibration or external-validity finding.
 
-**Done:** the supported ratios, shares, and trajectories were built. The Mermin comparisons remain visible only as reported, unverified replication results with their committed-artifact provenance and the unmanifested corroborating-copy SHA disclosed. Displayed numbers are rounded for readability; `matrix.json` is canonical.
+**Rows:** the canonical verified-source matrix has **22 rows** and SHA-256 `c5343d1cc28f38c5bbb91ed3be6230722ef1926ff827f5d9e58099e555183788`: 7 SSA, 2 CBO, 12 DYNASIM, and 1 WISH statutory row. A separate `reported_not_verified` class contains **20 Mermin rows** (20 DYNASIM) whose publisher-controlled source bytes could not be retrieved.
 
-**Next:** obtain the full Morningstar WISH paper, a primary ARC/Oliver Wyman memorandum, SSA/ORP numeric MINT policy-option outputs, and the dead DYNASIM4 workbook if publisher-controlled bytes become available.
+**Done:** the retained ratios, shares, and trajectories were built. The Mermin comparisons remain visible only as reported, unverified replication results with their committed-artifact provenance and the unmanifested corroborating-copy SHA disclosed. Displayed numbers are rounded for readability; `matrix.json` is canonical.
+
+**Next:** obtain publisher-controlled Mermin bytes, the full Morningstar WISH paper, a primary ARC/Oliver Wyman memorandum, SSA/ORP numeric MINT policy-option outputs, and the dead DYNASIM4 workbook if those sources become available.
 
 ## Frame, labels, and certification boundaries
 
 All rows are **frame-relative proxy covered-earnings** results and make **no population-alignment claim**. Absolute national dollar levels are never compared. The committed entry-8/entry-10 artifacts embed `['frame-relative', 'pre-alignment', 'labor-income proxy']`. The exact ratified fitting-free §16.7.1 array is `['frame-relative', 'modeled-covered-earnings', 'deterministic-uncalibrated']`; this report quotes it but does not assert the later activation event.
+
+The committed entry-8 artifact `runs/first_estimates_v1.json` (SHA-256 `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`) states at `/certifies_nothing` that it does not certify forward production and creates no gate, floor, threshold, or verdict. It creates no certification or verdict for this matrix.
 
 M6 source: `runs/gate_m6_candidate3_v1.json` (SHA-256 `caf254925f44b27c1bd1131336055e27fbc311daec00b0050b2f9293a74e82cf`). Verdict `PASS`; 4/5 seeds pass. Family A is gated; Family B and Family C are not gated. M6 forward certification does not transfer to the backward-law module replications.
 
@@ -40,7 +44,7 @@ Committed module replication artifacts:
 
 ## External capture review
 
-The 2026-08-01 REFRESH contained 30 unique manifested files. Every declared size and SHA-256 was verified. The manifest SHA-256 is `72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a`. External source bytes remain outside this repository; canonical extracted cells and source pins are frozen in the committed builder, so reproduction reads only committed repository bytes.
+The 2026-08-01 REFRESH contained 30 unique manifested files. Every declared size and SHA-256 was verified. The manifest SHA-256 is `72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a`. External source bytes remain outside this repository; accepted extracted cells, separately reported unverified values, and source pins are frozen in the committed builder, so reproduction reads only committed repository bytes.
 
 Reviewed capture pins used by the matrix:
 
@@ -64,7 +68,7 @@ Missing after REFRESH:
 
 ## Available-series inventory
 
-The complete inventory comes from `runs/first_estimates_v1.json` (SHA-256 `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`, pointer `/`). The source has 20 draws and calendar years 2015–2022; every annual table also includes an odd-year-carry-aware biennial companion.
+The committed-artifact inventory comes from `runs/first_estimates_v1.json` (SHA-256 `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`, pointer `/`). The source has 20 draws and calendar years 2015–2022; every annual table also includes an odd-year-carry-aware biennial companion.
 
 Projection configuration echo: `{"draw_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], "end_year": 2022, "object": "candidate-3 GATED_REALIZED reproduction panel, unsplit", "root_seeds": [5200, 5201, 5202, 5203, 5204, 5205, 5206, 5207, 5208, 5209, 5210, 5211, 5212, 5213, 5214, 5215, 5216, 5217, 5218, 5219], "split": false, "start_year": 2014}`.
 
@@ -278,7 +282,7 @@ Actuarial side remains blocked. No primary ARC/Oliver Wyman memorandum landed. T
 | `ssa.award_average_at_award`<br>SSA administrative series | available | not in committed anchor extraction | OACT annual award average is not registered in vintage 1. |
 | `ssa.retired_worker_monthly_benefit_per_beneficiary`<br>SSA administrative series | available | not in committed anchor extraction | December total monthly retired-worker benefit numerator is not registered in vintage 1. |
 | `mint.replacement_rates_and_distribution`<br>MINT | not available in comparable concept | MINT8 report and SSA MINT8.23 beneficiary tables captured and reviewed | The REFRESH supplies published MINT quantities, but first_estimates publishes no birth-cohort or age-67 cut, AWI or household-income denominator, benefit percentile, claiming-age distribution, or lifetime-earnings replacement-rate distribution. |
-| `cbo.cohort_lifetime_and_fiscal_outputs`<br>CBOLT / CBO | taxable-payroll trajectory and contribution/payroll share only | 2024 report and data workbooks captured; unsupported tables have exact locators | Two overlapping 2015-2022 share/trajectory rows are built, but the certified artifact has no cohort replacement rates, lifetime benefit/tax accumulation, age-65 present values, household-earnings quintiles, trust-fund, GDP, actuarial-balance, or depletion series. |
+| `cbo.cohort_lifetime_and_fiscal_outputs`<br>CBOLT / CBO | taxable-payroll trajectory and contribution/payroll share only | 2024 report and data workbooks captured; unsupported tables have exact locators | Two overlapping 2015-2022 share/trajectory rows are built, but the committed entry-8 artifact has no cohort replacement rates, lifetime benefit/tax accumulation, age-65 present values, household-earnings quintiles, trust-fund, GDP, actuarial-balance, or depletion series. Its /certifies_nothing block creates no certification or verdict. |
 | `dynasim.lifetime_benefit_tax_and_cohort_tables`<br>DYNASIM | not available in comparable concept | Favreault-Steuerle Table 4 captured; DYNASIM4 workbook remains 404 | The entry-8 artifact has no lifetime accumulation, discounting, post-2022 survival path, or comparable cohort/quintile output. |
 | `wish.financing_and_adequacy`<br>WISH actuaries / Morningstar | single-side 0.3% identity and 2015-2022 proxy-payroll base trajectory only | bill parameter and Morningstar summary captured; primary actuarial memo and paginated Morningstar WISH report absent | No ARC/Oliver Wyman memorandum is present. The full Morningstar WISH report identified by the captured landing page is not staged; the staged technical appendix is generic and contains no WISH analysis. The unpaginated webpage summary cannot supply a page/table-level actuarial revenue, cost, balance, sufficiency, or adequacy row. |
 
@@ -294,20 +298,20 @@ Published-side examples retained as gaps, not rows:
 
 ## Honest gaps
 
-- No population-aligned or national-dollar comparison is supported.
-- No certified series extends beyond 2022.
-- No trust-fund balance, GDP share, actuarial balance, or depletion year is published.
-- No lifetime benefit/tax present value or lifetime-earnings denominator is published.
-- No comparable MINT or CBOLT distributional replacement-rate output is published.
-- No spouse, survivor, auxiliary, or DI benefit output appears in first_estimates.
-- No cohort/quintile/race/sex/poverty distribution comparable to published model tables appears in first_estimates.
-- No LTSS use, eligibility, spend-down, adequacy, program cost, or financing-sufficiency model exists.
+- The committed model/comparison artifacts contain no comparable population-aligned or national-dollar comparison.
+- Certification here refers only to expressly gated M6 Family-A surfaces; no such certified series in the committed model/comparison artifacts extends beyond 2022.
+- The committed model/comparison artifacts contain no comparable trust-fund balance, GDP share, actuarial balance, or depletion-year series.
+- The committed model/comparison artifacts contain no comparable lifetime benefit/tax present value or lifetime-earnings denominator.
+- The committed model/comparison artifacts contain no comparable MINT or CBOLT distributional replacement-rate output.
+- The committed model/comparison artifacts contain no comparable spouse, survivor, auxiliary, or DI benefit output.
+- The committed model/comparison artifacts contain no comparable cohort/quintile/race/sex/poverty distribution for the published tables.
+- The committed model/comparison artifacts contain no comparable LTSS use, eligibility, spend-down, adequacy, program-cost, or financing-sufficiency model.
 
 ## Reproduction and verification
 
 Rebuild with `/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python analysis/validation-matrix/build_matrix.py` and then regenerate this report with the same interpreter and `analysis/validation-matrix/build_report.py`. Final verification:
 
-- Matrix rebuild was byte-stable at SHA-256 `9e7cf0b95f5c037e93f873e4c4006bfaf6117c3251ba2f409fe8bc66df73ab9d` with 22 canonical verified-source rows and 20 separately reported-not-verified rows.
+- Matrix rebuild was byte-stable at SHA-256 `c5343d1cc28f38c5bbb91ed3be6230722ef1926ff827f5d9e58099e555183788` with 22 canonical verified-source rows and 20 separately reported-not-verified rows.
 - Report regeneration was byte-stable.
 - `python -m pytest -q tests/test_validation_matrix.py`: 1 passed.
 - `python -m pytest -q -k test__given_collected_suite__then_tiers_match_policy_manifest`: 1 passed, 4,471 deselected; the new test is registered in the unit tier (903 unit tests; 4,472 total tests).

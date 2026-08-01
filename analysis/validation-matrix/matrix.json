@@ -525,7 +525,7 @@
         }
       ],
       "published_support": "2024 report and data workbooks captured; unsupported tables have exact locators",
-      "reason": "Two overlapping 2015-2022 share/trajectory rows are built, but the certified artifact has no cohort replacement rates, lifetime benefit/tax accumulation, age-65 present values, household-earnings quintiles, trust-fund, GDP, actuarial-balance, or depletion series.",
+      "reason": "Two overlapping 2015-2022 share/trajectory rows are built, but the committed entry-8 artifact has no cohort replacement rates, lifetime benefit/tax accumulation, age-65 present values, household-earnings quintiles, trust-fund, GDP, actuarial-balance, or depletion series. Its /certifies_nothing block creates no certification or verdict.",
       "status": "blocked"
     },
     {
@@ -594,6 +594,18 @@
   "canonicalization": "UTF-8, sorted keys, indent=2, allow_nan=false, one trailing newline",
   "certification_context": {
     "entry8_first_estimates": {
+      "certifies_nothing": [
+        "This report does not certify forward production.",
+        "This report does not estimate national dollars.",
+        "This report does not claim that PSID labor income is OASDI-covered earnings.",
+        "This report does not claim administrative benefit-payment dollars.",
+        "This report creates no gate, floor, threshold, or verdict."
+      ],
+      "certifies_nothing_source": {
+        "json_pointer": "/certifies_nothing",
+        "path": "runs/first_estimates_v1.json",
+        "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+      },
       "configured_engine": {
         "engine": {
           "id": "m6_candidate3_engine_v1",
@@ -604,6 +616,7 @@
           "sha256": "734a5b04f347c5d4904bbc6d5ab9a1c2876272d35284eedd2f450518acf1cec5"
         }
       },
+      "creates_certification_or_verdict": false,
       "source": {
         "json_pointer": "/",
         "path": "runs/first_estimates_v1.json",
@@ -779,14 +792,14 @@
     }
   },
   "honest_gaps": [
-    "No population-aligned or national-dollar comparison is supported.",
-    "No certified series extends beyond 2022.",
-    "No trust-fund balance, GDP share, actuarial balance, or depletion year is published.",
-    "No lifetime benefit/tax present value or lifetime-earnings denominator is published.",
-    "No comparable MINT or CBOLT distributional replacement-rate output is published.",
-    "No spouse, survivor, auxiliary, or DI benefit output appears in first_estimates.",
-    "No cohort/quintile/race/sex/poverty distribution comparable to published model tables appears in first_estimates.",
-    "No LTSS use, eligibility, spend-down, adequacy, program cost, or financing-sufficiency model exists."
+    "The committed model/comparison artifacts contain no comparable population-aligned or national-dollar comparison.",
+    "Certification here refers only to expressly gated M6 Family-A surfaces; no such certified series in the committed model/comparison artifacts extends beyond 2022.",
+    "The committed model/comparison artifacts contain no comparable trust-fund balance, GDP share, actuarial balance, or depletion-year series.",
+    "The committed model/comparison artifacts contain no comparable lifetime benefit/tax present value or lifetime-earnings denominator.",
+    "The committed model/comparison artifacts contain no comparable MINT or CBOLT distributional replacement-rate output.",
+    "The committed model/comparison artifacts contain no comparable spouse, survivor, auxiliary, or DI benefit output.",
+    "The committed model/comparison artifacts contain no comparable cohort/quintile/race/sex/poverty distribution for the published tables.",
+    "The committed model/comparison artifacts contain no comparable LTSS use, eligibility, spend-down, adequacy, program-cost, or financing-sufficiency model."
   ],
   "honesty_frame": {
     "absolute_dollar_level_comparisons": false,

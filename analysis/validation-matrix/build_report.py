@@ -306,7 +306,7 @@ def series_inventory(matrix: dict[str, Any]) -> list[str]:
         "## Available-series inventory",
         "",
         (
-            f"The complete inventory comes from `{source['path']}` "
+            f"The committed-artifact inventory comes from `{source['path']}` "
             f"(SHA-256 `{source['sha256']}`, pointer `{source['json_pointer']}`). "
             "The source has 20 draws and calendar years 2015–2022; every annual "
             "table also includes an odd-year-carry-aware biennial companion."
@@ -545,6 +545,7 @@ def wish_section(matrix: dict[str, Any]) -> list[str]:
 
 def certification_section(matrix: dict[str, Any]) -> list[str]:
     context = matrix["certification_context"]
+    entry8 = context["entry8_first_estimates"]
     m6 = context["m6"]
     gate1 = context["ppi_gate1_generator"]
     output = [
@@ -559,6 +560,14 @@ def certification_section(matrix: dict[str, Any]) -> list[str]:
             "`['frame-relative', 'modeled-covered-earnings', "
             "'deterministic-uncalibrated']`; this report quotes it but does not "
             "assert the later activation event."
+        ),
+        "",
+        (
+            "The committed entry-8 artifact `runs/first_estimates_v1.json` "
+            f"(SHA-256 `{entry8['source']['sha256']}`) states at "
+            "`/certifies_nothing` that it does not certify forward production "
+            "and creates no gate, floor, threshold, or verdict. It creates no "
+            "certification or verdict for this matrix."
         ),
         "",
         (
@@ -606,9 +615,9 @@ def capture_section(matrix: dict[str, Any]) -> list[str]:
             f"The 2026-08-01 REFRESH contained {manifest['entry_count']} unique "
             "manifested files. Every declared size and SHA-256 was verified. The "
             f"manifest SHA-256 is `{manifest['sha256']}`. External source bytes "
-            "remain outside this repository; canonical extracted cells and source "
-            "pins are frozen in the committed builder, so reproduction reads only "
-            "committed repository bytes."
+            "remain outside this repository; accepted extracted cells, separately "
+            "reported unverified values, and source pins are frozen in the committed "
+            "builder, so reproduction reads only committed repository bytes."
         ),
         "",
         "Reviewed capture pins used by the matrix:",
@@ -644,7 +653,12 @@ def render() -> str:
         "## Outcome",
         "",
         (
-            f"**State:** the canonical verified-source matrix has "
+            "**State:** Artifact construction complete; pinned-byte and build "
+            "checks verified. This is not a calibration or external-validity finding."
+        ),
+        "",
+        (
+            f"**Rows:** the canonical verified-source matrix has "
             f"**{matrix['row_count']} rows** and SHA-256 `{matrix_sha}`: "
             f"{counts['SSA Trustees and Statistical Supplement']} SSA, "
             f"{counts['CBO / CBOLT']} CBO, "
@@ -657,7 +671,7 @@ def render() -> str:
         ),
         "",
         (
-            "**Done:** the supported ratios, shares, and trajectories were built. "
+            "**Done:** the retained ratios, shares, and trajectories were built. "
             "The Mermin comparisons remain visible only as reported, unverified "
             "replication results with their committed-artifact provenance and the "
             "unmanifested corroborating-copy SHA disclosed. Displayed numbers are "
@@ -665,9 +679,10 @@ def render() -> str:
         ),
         "",
         (
-            "**Next:** obtain the full Morningstar WISH paper, a primary ARC/Oliver "
-            "Wyman memorandum, SSA/ORP numeric MINT policy-option outputs, and the "
-            "dead DYNASIM4 workbook if publisher-controlled bytes become available."
+            "**Next:** obtain publisher-controlled Mermin bytes, the full Morningstar "
+            "WISH paper, a primary ARC/Oliver Wyman memorandum, SSA/ORP numeric "
+            "MINT policy-option outputs, and the dead DYNASIM4 workbook if those "
+            "sources become available."
         ),
         "",
     ]

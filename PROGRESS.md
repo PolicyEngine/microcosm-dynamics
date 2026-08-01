@@ -34,13 +34,16 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
   combined wage-side 0.6% as derived `0.3 + 0.3` rather than printed,
   replaced operative language with introduced/not-enacted conditionals, and
   disclosed in the main table that zero deviation is by construction.
+- Finding 7: installed the exact non-calibration outcome language, replaced
+  `first_estimates_v1.json` certification implications with its
+  `/certifies_nothing` boundary, and scoped every honest gap to the committed
+  model/comparison artifacts (with certification limited to M6 Family A).
 
 ## Next
 
-1. Finding 7: remove certification and completeness overclaims.
-2. Implement fail-closed, non-writing `--check` modes for both builders and
+1. Implement fail-closed, non-writing `--check` modes for both builders and
    strengthen the drift test for both files, capture pins, and locators.
-3. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+2. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-4. Write the final closure report to the requested output file.
+3. Write the final closure report to the requested output file.
