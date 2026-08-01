@@ -469,7 +469,7 @@ def build_trustees_rows() -> list[dict[str, Any]]:
         locators = [
             official_locator(series_id, role)
             for series_id, role in zip(
-                locator_ids, ["numerator", "denominator"]
+                locator_ids, ["numerator", "denominator"], strict=False
             )
         ]
         rows.append(
@@ -608,7 +608,7 @@ def build_cbo_rows() -> list[dict[str, Any]]:
             "year": year,
             "index_2015_100": 100.0 * value / cbo_payroll_trillions[0],
         }
-        for year, value in zip(years, cbo_payroll_trillions)
+        for year, value in zip(years, cbo_payroll_trillions, strict=False)
     ]
     payroll_deviation = [
         {
@@ -617,7 +617,7 @@ def build_cbo_rows() -> list[dict[str, Any]]:
             - published["index_2015_100"],
         }
         for year, ours, published in zip(
-            years, our_payroll_path, cbo_payroll_path
+            years, our_payroll_path, cbo_payroll_path, strict=False
         )
     ]
 
@@ -651,7 +651,7 @@ def build_cbo_rows() -> list[dict[str, Any]]:
     ]
     cbo_tax_shares = [
         {"year": year, "percent": value}
-        for year, value in zip(years, cbo_tax_share_values)
+        for year, value in zip(years, cbo_tax_share_values, strict=False)
     ]
     tax_share_deviation = [
         {
@@ -659,7 +659,7 @@ def build_cbo_rows() -> list[dict[str, Any]]:
             "percentage_points": ours["mean_percent"] - published,
         }
         for year, ours, published in zip(
-            years, our_tax_shares, cbo_tax_share_values
+            years, our_tax_shares, cbo_tax_share_values, strict=False
         )
     ]
 
