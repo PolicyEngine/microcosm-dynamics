@@ -34,7 +34,8 @@ committed evidence.
 
 2. **Urban Institute, “Modeling Income in the Near Term (MINT), Version 8”**
    - URL: https://www.urban.org/research/publication/modeling-income-near-term
-   - Capture: landing HTML and the report PDF attachment.
+   - Exact PDF URL: https://www.urban.org/sites/default/files/publication/104958/modeling-income-in-the-near-term.pdf
+   - Capture: landing HTML and the PDF at the exact attachment URL.
    - Establishes: exact MINT8 universe and table definitions; inspect the
      captured tables for cohort replacement-rate, benefit-share, and
      distributional quantities that can be matched as ratios or shares.
@@ -86,21 +87,25 @@ committed evidence.
 8. **Mermin (2005), “The Effect of Benefit Reductions on the Distribution
    of Social Security Benefits,” Urban report 411260**
    - URL: https://www.urban.org/research/publication/effect-benefit-reductions-distribution-social-security-benefits
-   - Capture: landing HTML and report PDF.
+   - Exact PDF URL: https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF
+   - Capture: landing HTML and the PDF at the exact attachment URL.
    - Establishes: DYNASIM3 Table 1 and Table 2 source pages for the already
      committed PPI, price-indexing, NRA-to-70, and COLA replication values.
 
 9. **Favreault and Steuerle (2007), “Social Security Spouse and Survivor
    Benefits for the Modern Family,” Urban report 311436**
    - URL: https://www.urban.org/research/publication/social-security-spouse-and-survivor-benefits-modern-family
-   - Capture: landing HTML and report PDF.
+   - Exact PDF URL: https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF
+   - Capture: landing HTML and the PDF at the exact attachment URL.
    - Establishes: DYNASIM3 winner/loser shares and poverty-change tables for the
      committed earnings-sharing replication, including the 2049 population and
      benefit-concept definitions.
 
 10. **Urban Institute DYNASIM4 projections by birth cohort**
     - URL: https://www.urban.org/dynasim4-projections-birth-cohort
-    - Capture: landing HTML and every downloadable cohort table/data file.
+    - Exact workbook URL: https://www.urban.org/sites/default/files/futretsectablongid963.xlsx
+    - Capture: landing HTML, the workbook at the exact attachment URL, and
+      every other downloadable cohort table/data file.
     - Establishes: public DYNASIM cohort trajectories and any lifetime Social
       Security benefit/tax ratios. Capture the data downloads even when the
       landing page renders an interactive chart.
