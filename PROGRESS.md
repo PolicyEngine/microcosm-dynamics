@@ -2,7 +2,8 @@
 
 ## State
 
-Finding 1 is closed in the working tree; finding 2 is next. The worktree starts from unratified Amendment 5
+Findings 1–2 are closed; finding 3 is next. The worktree starts from
+unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
 the ratified 1,376,610-byte prefix exactly.
@@ -21,11 +22,16 @@ the ratified 1,376,610-byte prefix exactly.
   authority cutoff v4. Replaced the retained §16.13.8/§16.14.4 equations and
   every construction, bundle, ledger, closure-sweep, successor-inventory,
   and DC-29 consumer.
+- Closed finding 2 with a fixed 51-jurisdiction PSID-code vocabulary
+  authenticated by the committed PSID/FIPS state-code source rows, exact
+  source-table extraction, inclusive numeric range expansion, exhaustive
+  inventory-domain mapping, source-labeled alias normalization, and explicit
+  missing/duplicate/overlap/ambiguity aborts.
 
 ## Next
 
-1. Close finding 2 with a source-authenticated, exact-cover jurisdiction
-   mapping and fail-closed alias/range law.
-2. Close findings 3–10 in referee order, committing each separately.
+1. Close finding 3 by freezing both claim projections as exact byte-producing
+   equations over the coverage relation.
+2. Close findings 4–10 in referee order, committing each separately.
 3. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.

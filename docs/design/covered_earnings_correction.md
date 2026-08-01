@@ -24016,6 +24016,7 @@ schema_version
 family_specs
 family_count
 family_keyset_sha256
+jurisdiction_mapping
 jurisdiction_ids
 jurisdiction_count
 jurisdiction_keyset_sha256
@@ -24065,16 +24066,260 @@ Each `family_specs` row has exactly `status_family`,
 `effective_end`, `candidate_field_purposes`, `candidate_slot_kinds`, and
 `jurisdiction_mode`. Candidate purposes are the table arrays in displayed
 order. Candidate slot kinds are the complete §4.2 five-literal array in its
-ratified order. `jurisdiction_mode` is `inventory_state_domain` for family 1
-and `federal_only` otherwise. Counts and the canonical family-name array
+ratified order. `jurisdiction_mode` is
+`source_authenticated_psid_state_domain` for family 1 and `federal_only`
+otherwise. Counts and the canonical family-name array
 hash close this table.
 
-`jurisdiction_ids` is the literal `federal` followed by every distinct,
-nonnull canonical enum value independently reconstructed from every official
-inventory `state_of_residence` value map, each encoded as
-`inventory-state:<enum-token>` and ordered by unsigned UTF-8 bytes. The
-state/local family uses the complete array; every other family uses only
-`federal`. No rule or legal-source row chooses the state denominator.
+The jurisdiction denominator is source-authenticated before any legal rule
+row is read. `jurisdiction_mapping` is
+`historical_coverage_jurisdiction_mapping.v1` with exactly these members in
+this order:
+
+```text
+schema_version
+source_registry_identity
+source_document_ids
+canonical_jurisdiction_ids
+authority_rows
+authority_row_count
+authority_row_sha256
+inventory_domain_rows
+inventory_domain_row_count
+inventory_domain_sha256
+canonicalization
+status
+```
+
+Its `schema_version` is its object name and `canonicalization` is the frozen
+§10.1 canonical-JSON literal.
+
+`source_registry_identity` has exactly `path`, `artifact_id`,
+`schema_version`, and `sha256`. It identifies the complete raw committed
+`data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json`
+artifact authenticated in §18.1, with artifact/schema value
+`psid_questionnaire_corpus_authority_registration_attempt.v1` and SHA-256
+`07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c`.
+The registry must retain `status: pass`, exact count 456, zero failed rows,
+and its complete authenticated document-row domain. `source_document_ids`
+is exactly `psid-corpus-document-0222` then
+`psid-corpus-document-0221`; their complete verified registry rows are,
+respectively, `PSIDStateCodes.pdf` and `FIPSStateCodes.pdf`. Their full-file
+locators, byte sizes, and SHA-256 values are consumed from those rows and
+must reproduce against the source-only staging root. A filename, URL, or
+candidate copy is not an identity.
+
+The source-only page-text implementation pinned in §18.1 is executed on
+each exact PDF. Page 1 must contain the exact centered heading followed by
+exactly 24 nonblank data lines and no other nonspace bytes. For each data
+line, the three code/name pairs are the zero-based UTF-8 character slices
+`[0,5)`/`[5,28)`, `[28,33)`/`[33,50)`, and
+`[50,55)`/`[55,line_length)`. Remove ASCII SPACE only at each slice edge;
+a pair emits no entry only when both resulting slices are empty, and exactly
+one empty slice aborts. A nonempty code is one or two base-10 digits with no
+sign, leading zero, decimal point, exponent, or coercion. A nonempty name is
+made only of ASCII letters and single internal spaces. The code is parsed
+as a JSON integer excluding booleans and the name bytes are preserved.
+Rows are then sorted by numeric code. An unexpected line, unconsumed
+nonspace byte, nonmatching slice, repeated code, repeated name, extra page
+entry, or extraction drift aborts.
+
+`authority_rows` has 51 rows. Each has exactly
+`canonical_jurisdiction_id`, `psid_code`, `fips_code`, `authority_name`,
+`psid_source_document_id`, and `fips_source_document_id`. The final two
+values are respectively the two fixed document IDs above. The first four
+values are exactly this table in displayed order:
+
+| Canonical jurisdiction ID | PSID integer | FIPS integer | Exact authority name |
+|---|---:|---:|---|
+| `inventory-state:psid-01` | 1 | 1 | `Alabama` |
+| `inventory-state:psid-02` | 2 | 4 | `Arizona` |
+| `inventory-state:psid-03` | 3 | 5 | `Arkansas` |
+| `inventory-state:psid-04` | 4 | 6 | `California` |
+| `inventory-state:psid-05` | 5 | 8 | `Colorado` |
+| `inventory-state:psid-06` | 6 | 9 | `Connecticut` |
+| `inventory-state:psid-07` | 7 | 10 | `Delaware` |
+| `inventory-state:psid-08` | 8 | 11 | `District of Columbia` |
+| `inventory-state:psid-09` | 9 | 12 | `Florida` |
+| `inventory-state:psid-10` | 10 | 13 | `Georgia` |
+| `inventory-state:psid-11` | 11 | 16 | `Idaho` |
+| `inventory-state:psid-12` | 12 | 17 | `Illinois` |
+| `inventory-state:psid-13` | 13 | 18 | `Indiana` |
+| `inventory-state:psid-14` | 14 | 19 | `Iowa` |
+| `inventory-state:psid-15` | 15 | 20 | `Kansas` |
+| `inventory-state:psid-16` | 16 | 21 | `Kentucky` |
+| `inventory-state:psid-17` | 17 | 22 | `Louisiana` |
+| `inventory-state:psid-18` | 18 | 23 | `Maine` |
+| `inventory-state:psid-19` | 19 | 24 | `Maryland` |
+| `inventory-state:psid-20` | 20 | 25 | `Massachusetts` |
+| `inventory-state:psid-21` | 21 | 26 | `Michigan` |
+| `inventory-state:psid-22` | 22 | 27 | `Minnesota` |
+| `inventory-state:psid-23` | 23 | 28 | `Mississippi` |
+| `inventory-state:psid-24` | 24 | 29 | `Missouri` |
+| `inventory-state:psid-25` | 25 | 30 | `Montana` |
+| `inventory-state:psid-26` | 26 | 31 | `Nebraska` |
+| `inventory-state:psid-27` | 27 | 32 | `Nevada` |
+| `inventory-state:psid-28` | 28 | 33 | `New Hampshire` |
+| `inventory-state:psid-29` | 29 | 34 | `New Jersey` |
+| `inventory-state:psid-30` | 30 | 35 | `New Mexico` |
+| `inventory-state:psid-31` | 31 | 36 | `New York` |
+| `inventory-state:psid-32` | 32 | 37 | `North Carolina` |
+| `inventory-state:psid-33` | 33 | 38 | `North Dakota` |
+| `inventory-state:psid-34` | 34 | 39 | `Ohio` |
+| `inventory-state:psid-35` | 35 | 40 | `Oklahoma` |
+| `inventory-state:psid-36` | 36 | 41 | `Oregon` |
+| `inventory-state:psid-37` | 37 | 42 | `Pennsylvania` |
+| `inventory-state:psid-38` | 38 | 44 | `Rhode Island` |
+| `inventory-state:psid-39` | 39 | 45 | `South Carolina` |
+| `inventory-state:psid-40` | 40 | 46 | `South Dakota` |
+| `inventory-state:psid-41` | 41 | 47 | `Tennessee` |
+| `inventory-state:psid-42` | 42 | 48 | `Texas` |
+| `inventory-state:psid-43` | 43 | 49 | `Utah` |
+| `inventory-state:psid-44` | 44 | 50 | `Vermont` |
+| `inventory-state:psid-45` | 45 | 51 | `Virginia` |
+| `inventory-state:psid-46` | 46 | 53 | `Washington` |
+| `inventory-state:psid-47` | 47 | 54 | `West Virginia` |
+| `inventory-state:psid-48` | 48 | 55 | `Wisconsin` |
+| `inventory-state:psid-49` | 49 | 56 | `Wyoming` |
+| `inventory-state:psid-50` | 50 | 2 | `Alaska` |
+| `inventory-state:psid-51` | 51 | 15 | `Hawaii` |
+
+The extracted PSID code set must equal every integer 1 through 51 exactly
+once. The extracted FIPS set and both extracted name sets must exact-match
+the displayed columns; joining the two source tables by exact
+`authority_name` must be one-to-one and exact-cover both 51-row tables.
+`canonical_jurisdiction_ids` is the displayed canonical-ID column in order,
+`authority_row_count` is integer 51, and `authority_row_sha256` hashes the
+complete ordered six-member rows. These fixed IDs—not a wave's enum tokens,
+observed values, legal rows, or runner residences—are the canonical state
+vocabulary.
+
+`inventory_domain_rows` independently exact-covers every source-domain
+member of every official-inventory raw field attached to a
+`state_of_residence` slot. Each row has exactly `questionnaire_era`,
+`interview_wave`, `source_inventory_key`, `raw_field_id`,
+`source_domain_ordinal`, `source_entry_ref`, `source_member_kind`,
+`range_member_index`, `source_coding_system`, `source_value_type`,
+`source_value`, `raw_token_hex`, `source_meaning`, `source_negative_tag`,
+`canonical_jurisdiction_id`, `disposition`, and `source_row_sha256s`. The
+first four values exact-copy the official slot/inventory/field join. The
+ordinal is the zero-based position after the complete expansion below.
+`source_entry_ref` exact-copies the normalized entry reference.
+`source_meaning` is the exact string produced by that entry's authenticated
+dictionary/codebook label-description projection, and
+`source_row_sha256s` is its complete nonempty canonical-row digest
+projection in source-manifest order.
+
+The member schema is a closed tagged union:
+
+- `literal_value` has null `range_member_index`, `source_value_type`
+  `integer | string`, a value of exactly that JSON type, the normalized
+  literal's nonempty lowercase-even-length `raw_token_hex`, and initially
+  null `source_negative_tag`;
+- `literal_missing` has null `range_member_index`, null
+  `source_value_type`, null `source_value`, the normalized missing literal's
+  nonempty lowercase-even-length `raw_token_hex`, and exact negative tag
+  `registered_missing`; and
+- `numeric_range_member` has nonnegative integer `range_member_index`,
+  `source_value_type: integer`, its exact expanded JSON-integer value, null
+  `raw_token_hex`, and initially null `source_negative_tag`.
+
+A `literal_missing` row exists if and only if the source normalized literal
+has `typed_disposition: missing`, null value type/unit/canonical value, and a
+nonempty source-backed `missing_reason_code`; it always has null canonical
+jurisdiction and disposition `excluded_source_missing`. A nonmissing literal
+must have `typed_disposition: json_integer | enum` and respectively integer
+or string canonical value. Boolean, rational, mixed, null-valued nonmissing,
+or other typed dispositions abort for this field purpose.
+
+Before any observed-token census is consulted, every normalized literal
+emits exactly one member. Every normalized range must have
+`typed_disposition: json_integer`, integer inclusive bounds, and a positive
+JSON-integer `step`; it emits, in increasing `range_member_index` order,
+exactly `inclusive_min + k * step` for every integer `k >= 0` whose value is
+at most `inclusive_max`. This includes valid but unobserved values and
+neither fills integers between steps nor consults a rendered token.
+Booleans, floats, open or descending bounds, noninteger/nonpositive step,
+coercion, overflow, or an empty expansion abort. Expansion follows source
+entry order and literal rows retain source order. The unexpanded entries and
+expanded tagged members form a bidirectional exact cover. Overlapping
+ranges, a literal contained in a range, repeated literals, or a second
+occurrence of the same typed value within one raw field abort before
+deduplication, even if both occurrences would map identically.
+
+For each raw field, remove only `literal_missing` members and let `N` be the
+complete remaining member sequence. It must be nonempty and uniformly
+integer-valued or uniformly string-valued. Construct four Booleans without
+reading any configured `source_coding_system`:
+
+1. `P_psid` is true exactly when `N` is integer-valued, every PSID code 1
+   through 51 occurs exactly once in `N`, and each exact authority-name
+   meaning present on one of those code rows agrees with that PSID row;
+2. `P_fips` is true exactly when `N` is integer-valued, every integer in the
+   displayed 51-member FIPS column occurs exactly once in `N`, and each
+   exact authority-name meaning present on one of those code rows agrees
+   with that FIPS row;
+3. `P_name` is true exactly when `N` is string-valued and its complete value
+   sequence is a permutation containing every displayed authority name
+   exactly once with no other value; and
+4. `P_alias_raw` is true exactly when `N` is string-valued, every member's
+   exact `source_meaning` equals one displayed authority name, and the
+   complete meaning sequence contains each authority name exactly once.
+   `P_alias` is `P_alias_raw && !P_name`.
+
+Exactly one of `P_psid`, `P_fips`, `P_name`, and `P_alias` must be true.
+Zero or two-or-more true predicates abort. `source_coding_system` is then,
+respectively, `psid_state_code | fips_state_code | exact_state_name |
+source_labeled_alias` and is repeated identically on every row for that raw
+field. Thus it is a byte-producing function of the complete authenticated
+domain, not a label/reference guess or candidate field. The alias branch is
+string-only and disjoint from the exact-name branch. For the selected
+numeric system, a nonmissing integer inside its displayed code column maps
+to that one authority row. A nonmissing integer outside that column has null
+canonical ID, negative tag `outside_selected_numeric_state_table`, and
+disposition `excluded_nonstate_numeric_code`; this is a closed code-set
+difference, not a semantic reading of prose. Every nonmissing string must
+map through its exact value or exact meaning under the selected string
+branch; an unmatched string aborts and is never silently called nonstate.
+
+Each actual-state row resolves to exactly one authority row and serializes
+its canonical ID with disposition `canonical_state_jurisdiction` and null
+negative tag. When a numeric row's `source_meaning` is exactly an authority
+name, its code and name joins must resolve to the same row. The only null-ID
+branches are the two exact negative tags and dispositions above; no open
+territory/foreign/missing phrase list or candidate annotation exists.
+Across all waves, every pair of rows with the same
+`(source_coding_system, source_value_type, source_value)` must have the same
+ID and disposition, and every pair whose exact source meaning is the same
+authority name must have the same canonical ID. That is the complete
+cross-wave alias-normalization equation. No trimming, case folding,
+punctuation folding, USPS table, fuzzy matching, observed-value inference,
+width heuristic, label/reference selection, or majority rule is admitted.
+In particular, the authenticated 1968 V93 `NUM(2.0)` width alone proves
+nothing: its complete normalized 0, 1–51, and 99 source domain uniquely makes
+`P_psid` true, expands all 51 valid codes at the source step, maps code 0 by
+the closed outside-table branch, and maps a typed-missing 99 by the closed
+missing branch, whether or not any of those tokens was observed.
+
+Rows follow official inventory order, raw-field order, then expanded domain
+ordinal. `inventory_domain_row_count` equals array length and is positive;
+its digest hashes the complete array. Status passes only when the two raw
+authority documents, fixed table, tagged-union branches, stepped range
+expansion, exact field-domain cover, exactly-one system predicate, canonical
+joins, negative branches, alias equations, counts, and digests all pass, and the stable unique nonnull canonical-ID projection of
+the complete inventory-domain array equals all 51 canonical IDs in authority
+order. A missing or extra field/member, duplicate or overlapping source
+entry, malformed missing literal, partial/incorrect-step range, absent map,
+competing map, zero/multiple system predicates, unmatched string, code/name
+disagreement, negative-tag mismatch, source drift, order difference, or hash
+mismatch aborts before a legal cell exists.
+
+`jurisdiction_ids` is exactly literal `federal` followed by the 51
+`canonical_jurisdiction_ids`; `jurisdiction_count` is integer 52 and its
+keyset digest hashes that complete array. The state/local family uses the
+complete array; every other family uses only `federal`. No inventory
+observation, enum spelling, rule, legal-source row, or candidate mapping can
+choose or shrink this denominator.
 A family-1 rule with jurisdiction `federal` is an umbrella over the federal
 cell and every `inventory-state:` cell in its effective interval; an exact
 state rule supplements only its named state. If no applicable umbrella rule
@@ -24372,8 +24617,11 @@ or replacement fails.
 `schema_version`, `source_inventory_identity`, `expected_rule_domain`,
 `actual_rule_domain`, `expected_domain_sha256`, `actual_domain_sha256`,
 `mismatch_count`, and `status`. The expected side is freshly reconstructed
-in the §19.2.3 order without consulting any legal-rule row or configured
-domain; the actual side is the strict-parsed registry member. Status passes
+in the §19.2.3 order, including the fixed 51-jurisdiction authority table,
+both authenticated state-code documents, every expanded inventory state
+domain member, and every alias/negative disposition, without consulting any
+legal-rule row or configured domain; the actual side is the strict-parsed
+registry member. Status passes
 only on deep equality, equal canonical digests, and integer-zero mismatches.
 
 `verify_historical_coverage_rules_identity_v2` passes only when the ratified
@@ -25825,6 +26073,7 @@ unnamed consumer.
 | §4.1 historical-rule registry top level and rule ordering | `replaced-by-§19.2.1-successor`: exact envelope, literals, nonempty rule array, unsigned-UTF-8 rule-ID order, counts, row/domain digests, self-zeroed integrity, and status. The existing 20-field rule-row schema is preserved. |
 | §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link/midyear-transition envelopes, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
 | §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals, independent 14-family cell denominator, effective-stream or one-year keyed partitions, exact cell cover, all-overlap execution, rank agreement, and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary, exact PSID/FIPS/name authority table, inclusive range expansion, complete field-domain cover, source-labeled cross-wave alias normalization, and aborts for missing, duplicate, overlapping, or ambiguous maps. Observed values and candidate enums never select the denominator. |
 | §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
 | §8 and §10.1 `legal_rule_input` | `replaced-by-§19.2.1-literals-and-§19.2.2-subordinate-byte-closure`: one concrete path/vintage/schema, canonical complete raw blob, configured complete deep copy, and referenced source blobs closed before runner creation. The implicit input ID/role and every other production-input law are preserved. |
 | §16.2 `historical_coverage_rules` requirement row and item-6 predicate equation | `replaced-by-§19.2.5-v2-successor`: schema descriptor plus configuration, raw bytes, append-only history, independent domain, and source-byte closure. Requirement ID/class remain unchanged. |
@@ -25891,7 +26140,8 @@ The seven changed expected/actual payloads are exactly:
   `legal_source_document_byte_closure`, and
   `legal_authority_verification_result`. The first value is the complete
   strict-parsed §19.2 registry, including its envelope, manifest, independent
-  domain, rule rows, interval partitions, counts, and digests. The expected
+  domain, fixed source-authenticated jurisdiction mapping, expanded
+  state-field domain, rule rows, interval partitions, counts, and digests. The expected
   object freshly reconstructs it from authenticated sources and the actual
   object deep-copies the configured values; neither side obtains a
   denominator or expected value from the other. The second and third values
@@ -25987,6 +26237,11 @@ official inventory
 effective_start
 effective_end
 authority_rank
+jurisdiction_ids
+jurisdiction_mapping
+state_of_residence
+PSID state code
+FIPS state code
 governing_rule_ids
 adjudication_sources
 verification_claim_base_result_projection
@@ -26554,30 +26809,31 @@ The complete design/capture/receipt lineage successor set introduced in
 16. `verify_amendment_5_selected_registration_design_lineage_v1`.
 
 The complete non-lifecycle schema/disposition successor set introduced in
-§§19.2–19.4 has exactly these 20 identifiers:
+§§19.2–19.4 has exactly these 21 identifiers:
 
 1. `historical_coverage_legal_source_manifest.v1`;
 2. `historical_coverage_rule_domain.v1`;
-3. `legal_source_document_byte_closure.v1`;
-4. `historical_coverage_rule_authority_schema.v1`;
-5. `historical_coverage_rule_authority_expected_preimage.v2`;
-6. `historical_coverage_rule_authority_actual_preimage.v2`;
-7. `historical_coverage_rule_authority_verification_result.v2`;
-8. `verify_historical_coverage_rules_identity_v2`;
-9. `historical_coverage_rule_specs_append_only_history_projection.v1`;
-10. `historical_coverage_rule_domain_reconstruction.v1`;
-11. `verification_claim_base_result_projection.v2`;
-12. `calibrated_verification_claim_adjudication_expected_preimage.v3`;
-13. `calibrated_verification_claim_adjudication_actual_preimage.v3`;
-14. `calibrated_noncapture_required_authority_predicate_specs.v4`;
-15. `calibrated_noncapture_required_authority_preimage.v4`;
-16. `calibrated_noncapture_required_authority_result.v4`;
-17. `calibrated_authority_cutoff_identity.v4`;
-18. `psid_questionnaire_slot_closure_evidence.v1`;
-19. `psid_rule_residual_consequence.v1`; and
-20. `amendment_5_schema_disposition_closure_sweep.v1`.
+3. `historical_coverage_jurisdiction_mapping.v1`;
+4. `legal_source_document_byte_closure.v1`;
+5. `historical_coverage_rule_authority_schema.v1`;
+6. `historical_coverage_rule_authority_expected_preimage.v2`;
+7. `historical_coverage_rule_authority_actual_preimage.v2`;
+8. `historical_coverage_rule_authority_verification_result.v2`;
+9. `verify_historical_coverage_rules_identity_v2`;
+10. `historical_coverage_rule_specs_append_only_history_projection.v1`;
+11. `historical_coverage_rule_domain_reconstruction.v1`;
+12. `verification_claim_base_result_projection.v2`;
+13. `calibrated_verification_claim_adjudication_expected_preimage.v3`;
+14. `calibrated_verification_claim_adjudication_actual_preimage.v3`;
+15. `calibrated_noncapture_required_authority_predicate_specs.v4`;
+16. `calibrated_noncapture_required_authority_preimage.v4`;
+17. `calibrated_noncapture_required_authority_result.v4`;
+18. `calibrated_authority_cutoff_identity.v4`;
+19. `psid_questionnaire_slot_closure_evidence.v1`;
+20. `psid_rule_residual_consequence.v1`; and
+21. `amendment_5_schema_disposition_closure_sweep.v1`.
 
-The two lists are disjoint and their concatenation is the exact 36-name
+The two lists are disjoint and their concatenation is the exact 37-name
 Amendment-5 successor identifier inventory. Existing identifiers whose
 schemas are completed in place—notably `historical_coverage_rule_specs.v1`
 and every official v1 registry—are not new names and therefore do not appear.
@@ -26622,14 +26878,18 @@ accepted authority operand before every named predecessor passes.
    query row. All six Class-B residuals must close, all slot and row arrays
    exact-cover, every fixed-width file must frame and census without a
    remainder, and every executable value map must deep-equal its normalized
-   source projection before the official inventory can independently pass and
+   source projection. Independently expand every `state_of_residence`
+   source domain, authenticate its coding system and meanings, and construct
+   the complete §19.2.3 jurisdiction map against the two fixed state-code
+   documents before the official inventory can independently pass and
    can supply the legal domain. Class-C downstream gaps remain attached to
    present inventory keys; they neither shrink this inventory nor masquerade
    as structural absence.
 4. **Close the legal-source universe and legal registry.** Place every
    intended legal source blob in the parent of L5; classify and link every
    establishing/corroborating source; derive the complete 14-family domain
-   from the ratified inventory; and construct all rule rows, partitions, and
+   from the ratified inventory and the passing fixed federal-plus-51
+   jurisdiction map; and construct all rule rows, partitions, and
    required/optional consequences. The candidate claim-spec and historical-
    rule arrays are constructed as one reciprocal foreign-key closure, but
    neither authenticates the other. After every source byte and inventory
