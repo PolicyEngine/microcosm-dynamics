@@ -6,6 +6,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import multiprocessing
 import subprocess
 import sys
 from collections import Counter
@@ -103,6 +104,28 @@ def load_wall_builder():
     path = BENCHMARKS / "build_wall.py"
     spec = importlib.util.spec_from_file_location(
         "benchmark_wall_builder", path
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    previous_schema = sys.modules.get("schema")
+    sys.path.insert(0, str(BENCHMARKS))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(str(BENCHMARKS))
+        if previous_schema is None:
+            sys.modules.pop("schema", None)
+        else:
+            sys.modules["schema"] = previous_schema
+    return module
+
+
+def load_append_history():
+    """Load the append tool with its sibling schema import available."""
+
+    path = BENCHMARKS / "append_history.py"
+    spec = importlib.util.spec_from_file_location(
+        "benchmark_append_history", path
     )
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
@@ -282,6 +305,87 @@ def _check_manifest_git_bindings(tmp_path: Path) -> None:
     literal_wildcard.write_bytes(victim.read_bytes())
     with pytest.raises(AssertionError, match="not tracked in the Git index"):
         schema.validate_index_manifest_artifact(entry(literal_wildcard), repo)
+
+
+def _check_append_rollback_isolation(tmp_path: Path) -> None:
+    """Ensure a failed second appender cannot erase the first append."""
+
+    append_history = load_append_history()
+    manifest_path = tmp_path / "concurrent-manifest.jsonl"
+    history_path = tmp_path / "concurrent-history.jsonl"
+    manifest_seed = b'{"seed":"manifest"}\n'
+    history_seed = b'{"seed":"history"}\n'
+    first_manifest = b'{"append":"first-manifest"}\n'
+    first_history = b'{"append":"first-history"}\n'
+    second_manifest = b'{"append":"second-manifest"}\n'
+    second_history = b'{"append":"second-history"}\n'
+    manifest_path.write_bytes(manifest_seed)
+    history_path.write_bytes(history_seed)
+
+    context = multiprocessing.get_context("fork")
+    first_locked = context.Event()
+    second_waiting = context.Event()
+
+    def configure_paths() -> None:
+        append_history.RUN_MANIFEST_PATH = manifest_path
+        append_history.HISTORY_PATH = history_path
+
+    def first_worker() -> None:
+        configure_paths()
+
+        def validate_candidate(_path: Path, _artifact: Path):
+            first_locked.set()
+            if not second_waiting.wait(10):
+                raise TimeoutError("second appender never reached its lock")
+            return first_history, first_manifest
+
+        append_history.validate_candidate = validate_candidate
+        append_history.load_history = lambda **_kwargs: None
+        append_history.append(Path("unused"), Path("unused"))
+
+    def second_worker() -> None:
+        configure_paths()
+        real_flock = append_history.fcntl.flock
+        signaled = False
+
+        def tracked_flock(descriptor: int, operation: int):
+            nonlocal signaled
+            if operation == append_history.fcntl.LOCK_EX and not signaled:
+                signaled = True
+                second_waiting.set()
+            return real_flock(descriptor, operation)
+
+        def validate_candidate(_path: Path, _artifact: Path):
+            return second_history, second_manifest
+
+        def fail_after_write(**_kwargs):
+            raise RuntimeError("injected post-write failure")
+
+        append_history.fcntl.flock = tracked_flock
+        append_history.validate_candidate = validate_candidate
+        append_history.load_history = fail_after_write
+        try:
+            append_history.append(Path("unused"), Path("unused"))
+        except RuntimeError as error:
+            if str(error) == "injected post-write failure":
+                return
+            raise
+        raise AssertionError("second appender did not reach injected failure")
+
+    first = context.Process(target=first_worker)
+    second = context.Process(target=second_worker)
+    first.start()
+    assert first_locked.wait(10), "first appender never acquired both locks"
+    second.start()
+    for process in (first, second):
+        process.join(15)
+        if process.is_alive():
+            process.terminate()
+            process.join(5)
+        assert process.exitcode == 0
+
+    assert manifest_path.read_bytes() == manifest_seed + first_manifest
+    assert history_path.read_bytes() == history_seed + first_history
 
 
 def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
@@ -964,6 +1068,7 @@ def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
         )
 
     _check_manifest_git_bindings(tmp_path)
+    _check_append_rollback_isolation(tmp_path)
     assert {path: path.read_bytes() for path in before} == before
 
 

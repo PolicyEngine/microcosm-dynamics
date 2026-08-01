@@ -2,8 +2,8 @@
 
 ## State
 
-Edits 1 through 5 are implemented. Exact public/internal history-key handling
-is under its final public-check, targeted, and lint gates.
+All six verdict edits are implemented. The append transaction and its
+two-appender failure regression are under targeted and lint gates.
 
 ## Done
 
@@ -32,8 +32,11 @@ is under its final public-check, targeted, and lint gates.
 - Required exact public history keys before loader offset injection and exact
   public-or-paired-offset shapes in the in-memory validator.
 - Added public `_foo`, `_byte_start`, and `_byte_end` rejection regressions.
+- Moved rollback-size capture after acquisition of both append locks.
+- Added a two-process regression where appender 2 fails after writing and must
+  preserve appender 1's successful bytes.
 
 ## Next
 
-1. Move rollback-size capture under both append locks.
-2. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.
+1. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.
+2. Record final artifact hashes and commit inventory, then remove this ledger.

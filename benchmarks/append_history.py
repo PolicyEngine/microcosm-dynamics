@@ -110,13 +110,13 @@ def append(path: Path, run_artifact: Path) -> None:
     manifest_descriptor = os.open(RUN_MANIFEST_PATH, os.O_RDWR | os.O_APPEND)
     history_descriptor = os.open(HISTORY_PATH, os.O_RDWR | os.O_APPEND)
     descriptors = (manifest_descriptor, history_descriptor)
-    original_sizes = tuple(
-        os.fstat(descriptor).st_size for descriptor in descriptors
-    )
     mutated = False
     try:
         for descriptor in descriptors:
             fcntl.flock(descriptor, fcntl.LOCK_EX)
+        original_sizes = tuple(
+            os.fstat(descriptor).st_size for descriptor in descriptors
+        )
         candidate_raw, manifest_raw = validate_candidate(path, run_artifact)
         mutated = True
         manifest_written = os.write(manifest_descriptor, manifest_raw)
