@@ -2,7 +2,7 @@
 
 ## State
 
-The revision-6 evidence and amendment conventions are closed; drafting the two substantive titles and the required revision-7 lifecycle successors.
+Title I's legal-registry schema is drafted; drafting Title II's official-inventory disposition laws before the common revision-7 lifecycle frame.
 
 ## Done
 
@@ -13,10 +13,10 @@ The revision-6 evidence and amendment conventions are closed; drafting the two s
 - Confirmed placement as one §19 amendment with two titles and a common revision-7 successor/ratification frame.
 - Recomputed the immutable 32-row adjudication artifact and the exact surviving residual partition: grammar 6, slot/absence 7, downstream 12.
 - Confirmed that the staged legal captures are schema inputs only; Amendment 5 will pin none of their rows or digests.
+- Drafted the concrete legal input, complete registry and source-manifest schemas, rule/source join, source-byte closure, independent legal-rule domain, interval/partition law, and v2 future-row authentication predicate.
 
 ## Next
 
-- Draft and commit Title I legal schema law.
 - Draft and commit Title II inventory disposition law.
 - Add the replacement ledger, 31-row comparator census, revision-7 successors, build sequence, and ratification law.
 - Recompute passage and document digests, run closure checks, and remove this temporary file before final handoff.

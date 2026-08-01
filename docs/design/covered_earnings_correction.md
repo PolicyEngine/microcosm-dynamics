@@ -23670,3 +23670,499 @@ After ratification but before that registration, step 4 authorizes only the
 separately reviewed authority/implementation preparation and proof-gated
 A1/A3 capture stated above. It authorizes no correction production
 evaluation, path switch, context run, label change, or publication.
+
+## 19. AMENDMENT SECTION — Amendment 5: consolidated legal-registry schema and official-inventory dispositions
+
+### 19.1 Status, titles, precedence, and immutable base
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 7
+  of the design. The present drafting and review commits are not
+  ratification and authorize no legal-source capture, source or inventory
+  row, artifact, registration, implementation, correction execution,
+  context run, or publication. The exact accepted bytes become ratified
+  only at §19.8 step 3 and become operative only through the
+  validator-accepted fresh registration in step 8. No earlier status
+  literal is edited in place.
+- **Immediate base authority.** The immutable base is the complete
+  revision-6 design at Amendment-4 ratification commit
+  `b5878893991fe603c693e711bc48aacfb7c6d08f`. Its design path has mode
+  `100644`, Git blob `b03e31592753cbbee2fddc2360cdd29a4cafe57e`,
+  exactly 1,376,610 raw bytes, and SHA-256
+  `6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8`.
+  Those complete bytes, including ratified §18, are the exact immutable
+  prefix of revision 7.
+- **One amendment, two consolidated titles.** Title I (§19.2) completes the
+  §4.1 legal-registry schema and its future-row authentication law. Title II
+  (§19.3) freezes the evidence sufficiency and closed dispositions for the
+  surviving official-inventory residuals. Sections 19.4–19.8 are the one
+  common replacement, comparator, successor, build, ratification, and
+  fresh-registration frame. Neither title may be ratified or registered
+  separately.
+- **Schema and disposition only.** Title I pins no legal-source row, URL,
+  source-file digest, rule row, manifest count, or legal-registry content
+  digest. Title II ratifies no official slot, inventory, grammar,
+  allocation, reconciliation, or absence-proof row. The staged legal
+  captures and the surviving inventory residuals determine whether the
+  schemas are operable; they do not become authority by being mentioned in
+  this amendment.
+- **No implied repeal.** Sections 1–18 remain visible and controlling except
+  for the exact clauses enumerated in §19.4 and the revision-6 lifecycle
+  consumers expressly replaced in §§19.5–19.7. Silence preserves every
+  other law. In particular, no `registration_required` claim is demoted;
+  §17's comparator definition and completeness law remain binding; and
+  §18's inclusive-total, exact-once, descriptor-only, and no-source-
+  allocation findings remain ratified.
+
+### 19.2 TITLE I — §4.1 legal-registry schema completion
+
+#### 19.2.1 Concrete legal input and complete registry envelope
+
+The singular §8 `legal_rule_input` has exactly these values except for its
+freshly computed digest:
+
+| Member | Exact value |
+|---|---|
+| `path` | `data/registries/historical_coverage_rule_specs_v1.json` |
+| `artifact_vintage_id` | `historical_coverage_rule_specs.v1` |
+| `schema_version` | `historical_coverage_rule_specs.v1` |
+| `sha256` | SHA-256 of the complete canonical raw Git blob |
+
+Its implicit `(input_id,role)` pair remains exactly
+`("historical_coverage_rules","legal_rule_authority")`. The path is a
+literal, not a configurable alias. The raw file is strict-parsed once and
+must be byte-for-byte equal to §10.1 `canonical_json_bytes` of the parsed
+value: sorted object keys, compact separators, ASCII escaping, no NaN, and
+one terminal LF. No BOM, duplicate key, trailing data, alternate
+serialization, floating-point value, or noncanonical integer is admitted.
+`configuration.historical_coverage_rule_specs` is an exact deep copy of the
+complete parsed object, not merely its rule array.
+
+That object is `historical_coverage_rule_specs.v1` and has exactly these
+members:
+
+```text
+schema_version
+artifact_id
+artifact_vintage_id
+source_inventory_identity
+legal_source_manifest
+rule_domain
+ordered_rule_ids
+rows
+row_count
+row_keyset_sha256
+rows_sha256
+canonical_order
+integrity
+status
+```
+
+The first three values are all the literal
+`historical_coverage_rule_specs.v1`; `canonical_order` is the literal
+`rule_id_unsigned_utf8_v1`; `ordered_rule_ids` is the complete unique rule-ID
+array in unsigned UTF-8 byte order; `rows` has exactly the existing §4.1
+20-field rule-row keyset in that same order; `row_count` equals both array
+lengths; `row_keyset_sha256` hashes the canonical ordered ID array; and
+`rows_sha256` hashes the canonical complete ordered row array.
+`source_inventory_identity` has exactly `path`, `artifact_id`,
+`schema_version`, `sha256`, `row_count`, and `row_keyset_sha256` and
+exact-matches the independently ratified official inventory used by the
+configuration. It is an input to domain reconstruction; a rule row is not.
+
+`integrity` has exactly `canonicalization` and `content_sha256`. Its first
+value is `python-json-sort-keys-compact-ascii-no-nan-lf-v1`; its second is
+SHA-256 of the complete object after replacing only that value by exactly 64
+lowercase zeroes, under the same canonicalization. The complete raw-input
+digest is then computed without zeroing. `status` is `pass` only when every
+schema, identity, count, order, digest, domain, interval, foreign-key, join,
+source-byte, authority, partition, and consequence equation in this title
+passes; otherwise the artifact is rejected rather than serialized with a
+favorable status.
+
+This envelope prospectively replaces only §4.1's previously unspecified
+top-level shape and rule order. It preserves the existing rule-row keyset,
+fact bindings, microfacts, ASTs, transforms, presence/action traces,
+verification classes, and optional-row consequence shapes.
+
+#### 19.2.2 Legal-source manifest, rule-to-source join, and raw bytes
+
+`legal_source_manifest` has exactly:
+
+```text
+schema_version
+manifest_id
+source_documents
+source_document_count
+source_document_keyset_sha256
+rule_source_links
+rule_source_link_count
+rule_source_link_domain_sha256
+canonical_order
+```
+
+Both leading values are the literal
+`historical_coverage_legal_source_manifest.v1`. `canonical_order` is exactly
+`source_document_id_then_rule_order_v1`. A `source_documents` row has
+exactly:
+
+```text
+source_document_id
+repository_relative_path
+retrieved_at_utc
+source_url
+media_type
+byte_size
+sha256
+```
+
+`source_document_id` is the literal `legal-source:` followed by that row's
+64-lowercase-hex `sha256`. The path is a nonempty, traversal-free,
+repository-relative path whose basename is the capture filename and whose
+authority-cutoff target is one mode-`100644` regular Git blob.
+`retrieved_at_utc` is exact second-resolution RFC 3339 UTC ending in `Z`;
+`source_url` is a nonempty HTTPS provenance string and never a resolver;
+`media_type` is exactly `application/pdf | text/html`; `byte_size` is a
+positive JSON integer excluding booleans; and `sha256` covers all raw source
+bytes. Rows are unique and ordered by unsigned UTF-8 `source_document_id`.
+Count and keyset hash bind the complete ordered document domain.
+
+This row schema accepts each intended staged capture by mapping capture
+timestamp, SHA-256, size, filename, and URL to the corresponding fields and
+deriving media type from the committed suffix. Amendment 5 deliberately
+pins none of those staged values, their row count, their order, their
+aggregate digest, or a staging-area path. A later authority lane must commit
+and authenticate the bytes before a row can be legal authority.
+
+A `rule_source_links` row has exactly:
+
+```text
+rule_source_link_id
+rule_id
+source_document_id
+source_relation
+exact_citation
+```
+
+`source_relation` is exactly `primary | additional_establishing |
+corroborating`. Links follow registry rule order and, within a rule, source-
+document manifest order. `rule_source_link_id` is the literal
+`<rule_id>:source:<one-based canonical decimal position>` within that rule.
+The link domain hash covers the complete ordered arrays
+`[rule_source_link_id,rule_id,source_document_id,source_relation]`; its count
+equals the link-array length. Every foreign key resolves exactly once.
+
+Every `verified` rule has exactly one `primary` link. Its existing singular
+`source_document_id`, `source_sha256`, and `exact_citation` fields
+respectively exact-match that primary link's document ID, that complete
+document's SHA-256, and the link citation. Every additional byte necessary
+to establish enactment, execution, effective date, jurisdiction, or
+operative meaning is linked as `additional_establishing`. A corroborating
+link is authenticated evidence but cannot establish `verified`, supply an
+authority rank, fill a required interval, or rescue a missing establishing
+byte. An `authority_absent | authority_conflict` rule has zero links and
+retains the exact null/empty rule-row branch already required by §4.1.
+Every manifest document participates in at least one link; an orphan or
+ambient source is forbidden.
+
+For §16.13.2, the independently expected establishing-source projection is
+constructed in governing-rule order and then source-manifest order by
+selecting exactly `primary | additional_establishing`. Each
+`(rule_id,source_document_id)` pair occurs once. Corroborating links remain
+within the authenticated registry but are excluded from that establishing-
+source denominator. The configured projection must deep-equal this complete
+derivation; no singular source pointer may hide a second required source.
+
+The coordinator constructs `legal_source_document_byte_closure.v1` with
+exactly `schema_version`, `legal_rule_input_sha256`,
+`ordered_source_document_ids`, `rows`, `row_count`, `domain_sha256`, and
+`status`. Each row has exactly `source_document_id`,
+`repository_relative_path`, `tree_mode`, `blob_oid`, `byte_size`, `sha256`,
+and `status`. The schema value is its name; the ID array and rows exact-cover
+manifest order; `tree_mode` is the string `100644`; `blob_oid` is the exact
+Git object ID; and every path, size, and full-byte SHA-256 exact-matches the
+manifest and the authority-cutoff tree. `domain_sha256` hashes the complete
+ordered rows. Status passes only on complete equality.
+
+Source documents are therefore referenced, not embedded: the legal JSON
+contains no PDF/HTML base64, extracted text standing in for raw bytes,
+absolute or staging path, symlink, directory, wildcard, URL fetch, filename-
+only lookup, or same-digest file at another path. The byte closure is
+reconstructed from the cutoff Git tree before runner creation. Its members
+are subordinate bytes of the singular legal-authority input closure and are
+not duplicate top-level §8 inputs. Missing, moved, untracked, or differently
+hashed bytes abort registration.
+
+#### 19.2.3 Independent rule-domain derivation
+
+`rule_domain` is `historical_coverage_rule_domain.v1` and has exactly:
+
+```text
+schema_version
+family_specs
+family_count
+family_keyset_sha256
+jurisdiction_ids
+jurisdiction_count
+jurisdiction_keyset_sha256
+inventory_family_dispositions
+inventory_family_disposition_count
+inventory_family_disposition_sha256
+cells
+cell_count
+cell_keyset_sha256
+canonical_order
+```
+
+The domain is constructed in this immutable order:
+
+```text
+official questionnaire slot specs
+official source-field inventory
+inventory-family disposition matrix
+legal-domain cells
+legal rule rows
+verification-claim governing-rule arrays
+```
+
+No authored rule row, transform, claim result, crosswalk use, configured
+affected-key array, or configured governing-rule array can add, omit, or
+select a domain member. The exact ordered 14-family specification is:
+
+| Order | `status_family` | Claim | Class | Earnings-year interval | Exact candidate purposes |
+|---:|---|---|---|---|---|
+| 1 | `section_218_and_mandatory_state_local` | `V-B1` | `registration_required` | `[1968,2023)` | `government_level`, `state_of_residence`, `section_218_group`, `section_218_position`, `public_retirement_system_participation` |
+| 2 | `clergy_religious_service` | `V-B2` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `ministerial_service`, `clergy_remuneration`, `church_employee_service`, `religious_order_service`, `clergy_or_religious_exemption` |
+| 3 | `domestic_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `domestic_service` |
+| 4 | `agricultural_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `agricultural_service` |
+| 5 | `election_work` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `election_work` |
+| 6 | `family_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `family_service` |
+| 7 | `casual_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `casual_service` |
+| 8 | `foreign_government_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `foreign_government_service` |
+| 9 | `international_organization_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `international_organization_service` |
+| 10 | `nonresident_alien_service` | `V-B3` | `direct_only_optional` | `[1968,2023)` | `amount`, `reporting_unit`, `month_or_exposure`, `nonresident_alien_status` |
+| 11 | `historical_seca` | `V-B4` | `registration_required` | `[1968,1990)` | `amount`, `reporting_unit`, `month_or_exposure`, `employee_self_or_mixed`, `incorporation` |
+| 12 | `student_service` | `V-B9` | `direct_only_optional` | `[1968,2023)` | `enrollment`, `employer_school_nexus`, `statutory_student_service` |
+| 13 | `federal_retirement_service` | null | `direct_only_optional` | `[1968,2023)` | `federal_retirement_system`, `federal_service` |
+| 14 | `railroad_service` | null | `direct_only_optional` | `[1968,2023)` | `railroad_covered_employer`, `railroad_covered_service` |
+
+Each `family_specs` row has exactly `status_family`,
+`verification_claim_id`, `verification_class`, `effective_start`,
+`effective_end`, `candidate_field_purposes`, `candidate_slot_kinds`, and
+`jurisdiction_mode`. Candidate purposes are the table arrays in displayed
+order. Candidate slot kinds are the complete §4.2 five-literal array in its
+ratified order. `jurisdiction_mode` is `inventory_state_domain` for family 1
+and `federal_only` otherwise. Counts and the canonical family-name array
+hash close this table.
+
+`jurisdiction_ids` is the literal `federal` followed by every distinct,
+nonnull canonical enum value independently reconstructed from every official
+inventory `state_of_residence` value map, each encoded as
+`inventory-state:<enum-token>` and ordered by unsigned UTF-8 bytes. The
+state/local family uses the complete array; every other family uses only
+`federal`. No rule or legal-source row chooses the state denominator.
+
+`inventory_family_dispositions` exact-covers every family and every official
+inventory row whose field purpose is in that family's candidate-purpose
+array and whose earnings reference year lies in the family interval. Each
+row has exactly `status_family`, `source_inventory_key`, `applicability`,
+`reason_code`, and `source_locator_sha256s`. `applicability` is exactly
+`applicable | inapplicable` and is derived only from the complete slot kind,
+questionnaire hierarchy, source disposition, family purpose, and pinned
+slot/inventory authority. Structural questionnaire absence does not make an
+otherwise family-relevant key disappear. The legal registry cannot author
+or relabel a disposition. Rows follow family order and official inventory
+order; count and complete row-array hash close every candidate key,
+including negative dispositions.
+
+A domain `cells` row has exactly:
+
+```text
+rule_domain_cell_id
+cell_kind
+verification_claim_id
+verification_class
+status_family
+jurisdiction
+earnings_year
+questionnaire_slot_id
+source_inventory_key
+```
+
+`cell_kind` is `effective_year | inventory_attachment`. For every family,
+applicable jurisdiction, and integer earnings year in its half-open interval
+there is one `effective_year` cell with null questionnaire slot and inventory
+key. For every `applicable` inventory-family disposition in that year there
+is additionally one `inventory_attachment` cell for each applicable family
+jurisdiction, carrying the disposition's exact inventory key and its
+official questionnaire-slot foreign key. The cell ID is the literal
+`legal-rule-domain:` followed by SHA-256 of §10.1 canonical bytes of the
+remaining eight fields in the displayed order.
+
+Cells are ordered by family, numeric earnings year, jurisdiction order,
+`effective_year` before `inventory_attachment`, and then official slot and
+inventory order. `canonical_order` is the literal
+`family_year_jurisdiction_cell_kind_official_inventory_v1`; count and the
+canonical ordered cell-ID hash close the complete denominator. A rule row
+covers an effective-year cell only when family, claim/class, jurisdiction,
+and year match. It covers an attachment cell only when those fields match
+and the cell's inventory key occurs in the rule's
+`affected_inventory_keys`. Every rule must cover at least one cell, every
+cell must have an explicit disposition under §19.2.4, and a rule cannot
+name an out-of-domain year, jurisdiction, claim, or inventory key. Claim
+affected-key arrays and `governing_rule_ids` are derived only after this
+coverage relation and must exact-match its complete projections.
+
+#### 19.2.4 Effective intervals, partitions, overlap, and authority
+
+`effective_start` and `effective_end` are JSON integers excluding booleans.
+They are earnings years, not interview, publication, retrieval, calendar-
+date, or source-document years. They obey
+`effective_start < effective_end`; v1 admits no null, open end, string,
+date, float, coercion, or inclusive end. A rule applies to year `y` if and
+only if `effective_start <= y < effective_end`. Thus end 2023 includes
+production earnings year 2022, and the historical-SECA family interval ends
+at 1990 after covering 1968–1989. A row outside its family's frozen interval
+is invalid rather than clipped.
+
+For each family × jurisdiction × inventory-attachment-or-effective-year
+stream, independently collect the family bounds and every matching rule
+endpoint, sort and deduplicate the integers, and form every consecutive
+half-open elementary interval. For every domain cell in each elementary
+interval the complete applicable rule-ID array is explicit, nonempty, and
+in registry order. The partition is hashed as part of domain verification;
+neither row order nor an implementation `first`, `last`, or `last wins`
+policy can resolve overlap.
+
+All overlapping rules execute. Same-rank dispositive transforms must agree
+under the complete constructible Boolean fact-assignment domain; otherwise
+the interval is `authority_conflict`. A lower-rank dispositive result may
+corroborate but must agree with the controlling rank and cannot fill a
+missing rank-1 requirement. Duplicate rows with the same establishing
+source, rank, family, jurisdiction, interval, fact predicates, affected
+keys, and transform abort. Adjacent rows identical in every operative field
+other than rule ID and endpoints must be merged into one canonical row;
+artificial fragmentation is not a distinct rule. Registration-required
+cells require gap-free verified dispositive rank-1 coverage. A
+direct-only-optional cell requires verified coverage or the complete exact
+`authority_absent | authority_conflict` rule-row consequence already frozen
+by §4.1 for every affected key. The optional branch cannot satisfy a
+registration-required cell.
+
+A transition whose operative date cannot be represented as a whole
+earnings-year boundary is not rounded silently. Unless separately ratified
+source/service-date law deterministically allocates the annual record across
+that transition, the affected annual cell remains a legal-authority gap:
+`registration_required` aborts, while `direct_only_optional` takes its exact
+per-key consequence. The integer interval schema therefore never invents a
+whole-year state-local or service disposition from a midyear effective date.
+
+For this title, `authority_rank: 1` requires an establishing-source set
+anchored by byte-pinned enacted federal statute or regulation. When a
+state/entity/year §218 disposition depends on an executed agreement,
+modification, state enactment, or official state/federal determination, all
+such operative bytes are mandatory `primary | additional_establishing`
+links in the same rank-1 rule; none is demoted to mere corroboration.
+`authority_rank: 2` remains byte-pinned contemporaneous SSA, IRS, OPM, or
+RRB administering material and may operationalize or corroborate but cannot
+override or replace rank 1. No other rank exists in v1. This is an exact
+extension of §4.1's source-set sufficiency, not a promotion of secondary
+literature.
+
+The two claimless optional families are not exempt from domain validation.
+Their empty claim-ID arrays are lawful only when every cell is covered by a
+verified rule or by an absent/conflict row whose affected-key consequence
+exact-covers the cell. Their status is included directly in the historical-
+rules predicate and G17. A missing claim ID therefore cannot create an
+unchecked federal- or railroad-service rule.
+
+#### 19.2.5 Future-row authentication without self-authentication
+
+Amendment 5 freezes the complete schema descriptor but deliberately does not
+freeze future legal-source or rule rows. The existing §16.2 projection
+`ratified_design:historical_coverage_rule_specs` cannot truthfully yield
+those future rows. It is therefore prospectively replaced, for the same
+`historical_coverage_rules` requirement ID and `legal_authority` class, by:
+
+```json
+{
+  "requirement_id": "historical_coverage_rules",
+  "requirement_class": "legal_authority",
+  "verification_predicate_id": "verify_historical_coverage_rules_identity_v2",
+  "expected_preimage_schema_version": "historical_coverage_rule_authority_expected_preimage.v2",
+  "actual_preimage_schema_version": "historical_coverage_rule_authority_actual_preimage.v2",
+  "ordered_source_projections": [
+    "ratified_design:historical_coverage_rule_authority_schema",
+    "configuration:legal_rule_input",
+    "configuration:historical_coverage_rule_specs",
+    "git_cutoff:legal_rule_input_raw_bytes",
+    "coordinator:historical_coverage_rule_specs_append_only_history_projection",
+    "coordinator:historical_coverage_rule_domain_reconstruction",
+    "coordinator:legal_source_document_byte_closure"
+  ],
+  "verification_result_schema_version": "historical_coverage_rule_authority_verification_result.v2",
+  "cross_binding": "legal_registry_schema_history_domain_and_source_byte_closure"
+}
+```
+
+`ratified_design:historical_coverage_rule_authority_schema` is the exact
+`historical_coverage_rule_authority_schema.v1` descriptor frozen by
+§§19.2.1–19.2.4: it contains the literal path, artifact/schema/vintage IDs,
+every envelope and nested keyset, field type and enum, canonical order and
+serialization rule, domain algorithm, endpoint/partition/overlap law,
+source-join law, failure consequence, and the complete descriptor's freshly
+computed digest. It contains no future document, link, domain-disposition,
+cell, or rule row and no future artifact digest.
+
+The future legal-registry commit `L5` is separately reviewed and
+single-parent. It is a strict descendant of the Amendment-5 ratification
+commit `D5`; its parent already contains the immutable official inventory
+and every raw legal-source blob referenced by the candidate manifest; the
+literal legal JSON path is absent from `L5`'s parent and every earlier
+ancestor; `L5` adds exactly that one canonical JSON path and makes no other
+tree change; and its blob remains byte-identical through the selected
+authority cutoff. A later byte change requires a successor path and vintage.
+No draft commit, untracked file, staging capture, merge commit, or favorable
+candidate value can be `L5`.
+
+`historical_coverage_rule_specs_append_only_history_projection.v1` has
+exactly `schema_version`, `path`, `artifact_vintage_id`, `first_add_commit`,
+`authority_cutoff_commit`, `raw_sha256`, `ordered_ancestor_commits`,
+`history_rows`, `history_row_count`, `history_domain_sha256`, and `status`.
+The coordinator derives the unique first-add commit and complete ancestry;
+history rows have exactly `commit`, `parent_count`, `path_disposition`,
+`blob_oid`, and `raw_sha256`. Before `L5` the disposition is
+`absent_before_first_add` with null blob/digest; from `L5` through cutoff it
+is `present_exact` with the one authenticated blob/digest. Any omitted
+ancestor, second parent, early path, drift, deletion, replacement, or extra
+`L5` tree change fails.
+
+`historical_coverage_rule_domain_reconstruction.v1` has exactly
+`schema_version`, `source_inventory_identity`, `expected_rule_domain`,
+`actual_rule_domain`, `expected_domain_sha256`, `actual_domain_sha256`,
+`mismatch_count`, and `status`. The expected side is freshly reconstructed
+in the §19.2.3 order without consulting any legal-rule row or configured
+domain; the actual side is the strict-parsed registry member. Status passes
+only on deep equality, equal canonical digests, and integer-zero mismatches.
+
+`verify_historical_coverage_rules_identity_v2` passes only when the ratified
+schema descriptor exact-matches; the configured four-key input identity
+hashes the complete canonical raw blob; raw bytes strict-parse and
+canonical-round-trip; the configured deep copy equals the complete object;
+append-only history, independent domain reconstruction, every rule/source
+join, every source-byte closure row, and every interval/partition/authority
+consequence pass; and every expected/actual member is exact. It is false on
+any missing or additional value. The predicate result has exactly
+`schema_version`, `requirement_id`, `expected_preimage_sha256`,
+`actual_preimage_sha256`, `projection_results`, `mismatch_count`, and
+`status`; the projection array exact-covers the seven listed sources in
+order, mismatch count is a nonnegative JSON integer, and pass requires zero.
+
+This v2 predicate and the seven-projection construction prospectively
+replace §16.2's historical-rule requirement row and predicate equation and
+§16.13.6's four-projection construction/equality for that requirement.
+Section 16.13.2's legal-source matching is replaced only by the complete
+manifest-link projection above. All enclosing requirement, registry,
+domain, bundle, gate, capture, receipt, and result digests must be freshly
+recomputed; no predecessor digest is copied. The replacement does not
+reinterpret the existing `ratified_design:` root as a future Git artifact
+and therefore does not self-authenticate the candidate.
