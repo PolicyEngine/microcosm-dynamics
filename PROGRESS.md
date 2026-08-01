@@ -2,8 +2,9 @@
 
 ## State
 
-All six verdict edits are implemented. A full-suite compatibility failure in
-the append-mostly reorder diagnostic is fixed and passing its targeted gate.
+All six verdict edits and the diagnostic compatibility follow-up are complete.
+The full final gate matrix is green; only ledger removal and the external final
+report remain.
 
 ## Done
 
@@ -40,8 +41,20 @@ the append-mostly reorder diagnostic is fixed and passing its targeted gate.
   registry.
 - Passed the targeted compatibility test plus Ruff 0.15.0, Black 25.11.0, and
   Black 26.5.1 on the follow-up schema change.
+- Passed the full benchmark module: 9 tests.
+- Passed tier-manifest synchronization: 1 test with 4,479 deselected from the
+  4,480-item collected suite.
+- Passed registry, history, and wall builders with `--check` under normal and
+  optimized Python, plus an optimized loader/validator smoke check.
+- Passed Ruff 0.15.0 and both Black 25.11.0 and 26.5.1 on all four touched
+  Python files.
+- Confirmed the registry, history, run manifest, wall, and seed-run artifact
+  bytes are unchanged from `9204bfa`; no pin advancement is required.
+- Confirmed the cumulative diff is whitespace-clean and reviewed the ordered
+  commit subjects and full SHAs.
 
 ## Next
 
-1. Rerun format, lint, builder, tier-sync, and full benchmark gates.
-2. Record final artifact hashes and commit inventory, then remove this ledger.
+1. Commit these final verification results.
+2. Remove this ledger in the final tree-cleanup commit.
+3. Write the final closure report outside the worktree.
