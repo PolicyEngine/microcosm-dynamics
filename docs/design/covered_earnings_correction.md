@@ -22644,3 +22644,398 @@ production-source capture stated above. It authorizes no correction
 production evaluation, context run, path switch, label change, or
 publication. Before ratification, even that Amendment-3 preparation or
 capture is unauthorized.
+
+## 18. AMENDMENT SECTION — Amendment 4: documented-inclusive V-B6 seam and revision-6 successors
+
+### 18.1 Status, scope, precedence, and immutable base
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 6
+  of the design. The present drafting and review commits are not
+  ratification and authorize no implementation, authority artifact,
+  registration, capture, correction execution, context run, or publication.
+  The exact accepted bytes become ratified only at §18.8 step 3 and become
+  operative only through the validator-accepted fresh registration in step
+  5. No earlier status literal is edited in place.
+- **Immediate base authority.** The immutable base is the complete
+  revision-5 design at Amendment-3 ratification commit
+  `13f84c99fb898eeaf70a8705bffacdf96e9795f4`. Its design path has mode
+  `100644`, Git blob `7354dabbef1b768c1fcd34dadaa74f47aa8456a9`,
+  exactly 1,310,838 raw bytes, and SHA-256
+  `eb24a36f4baa124f192e99f517982e7e723ca7e899957cd0acf02cf2d7e4a1ed`.
+  Those complete bytes, including ratified §17, are the exact immutable
+  prefix of revision 6.
+- **Single factual change.** Amendment 4 replaces the over-strong V-B6
+  source adjudication that treated a source arithmetic allocation from
+  `V4901`–`V4906` into annual `V4379`/`V5289`/`V5788` totals as required.
+  The successor fact is the documented-inclusive-total finding below. The
+  absence of that arithmetic allocation remains a true documented-corpus
+  finding; it is not an unresolved requirement because the registered PSID
+  design contains an inclusive annual total and a descriptor-only extra-job
+  block, not an annual component amount awaiting allocation.
+- **Procedural consequences only.** Amendment 4 also replaces the exact
+  V-B6 source projection, disposition, result, failure-array, and
+  satisfiability consequences in §§4.2, 16.12.1, 16.13.1–16.13.2,
+  16.13.6, 17.2, and 17.4, and the revision-5 design/capture/receipt
+  comparators and consumers expressly enumerated in §§18.5–18.7. These
+  replacements are necessary to bind the retained configurations to the
+  revision-6 ratification bytes; they create no additional branch or model.
+- **No implied repeal.** Sections 1–17 remain visible and controlling except
+  for the exact clauses enumerated in §§18.4–18.7. Silence preserves every
+  other law. In particular, V-B6 remains `registration_required`; both
+  complete V-B6 claim-spec rows, the fitting-free V-B6 requirement row and
+  predicate ID, the V-B6 authority role, and every target, model, gate,
+  label, output, and publication law remain unchanged.
+
+This revision is lawful without weakening the eight-field V-B6 claim. The
+§13.2 row requires the complete wave/reference map, source concepts and code
+maps, and exact self/other/incorporation support; it does not require a
+source arithmetic allocation that PSID never encoded. The source projection
+in §17.2 alone turned the absence of such an allocation into the final
+residual. Amendment 4 corrects that source-relative fact while retaining the
+claim, the registered concept/code-map obligation, and every fail-closed
+reader guarantee.
+
+### 18.2 Authenticated documented-inclusive-total evidence projection
+
+The sole `source_adjudication_inputs` member and its §10.1 identity remain
+exactly the §17.2
+`verification_claim_adjudication_source_input_identity.v1` value. Its
+source-input ID remains
+`covered_earnings_questionnaire_closure_attempt.v1`, and its canonical
+identity SHA-256 remains
+`1bb79fba8b752310f99181191d1f5c39bf031a3a11a14852e83c088cdc6bb6b6`.
+No second adjudication source input, ambient browser result, configuration
+member, or producer assertion is admitted.
+
+For V-B6 only, the verifier constructs the dependency-closed derived object
+`amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1`.
+It traverses only the closure input's exact registered dependencies and the
+raw registered document members they authenticate. Every displayed raw
+SHA-256 below hashes the complete file bytes. Every displayed content digest
+is independently reconstructed under that artifact's self-zeroed integrity
+equation. Every displayed row or row-array digest uses
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`; every byte-range digest
+hashes the exact half-open source interval. The three source-artifact
+identity rows are, in this order:
+
+| Path | Git blob | Bytes | Raw SHA-256 | Content SHA-256 |
+|---|---|---:|---|---|
+| `data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json` | `825f6c61ef9d4a161886cbc44f5cc914d65160d2` | 520,656 | `07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c` | `4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27` |
+| `data/external/psid_questionnaire_corpus_extraction_v1.json` | `43d8a1208c6ffa7ab7d7cdbc4b4115947d33df16` | 81,177 | `5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347` | `18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c` |
+| `data/external/covered_earnings_questionnaire_closure_attempt_v1.json` | `0b1a54b02943824405b6fb14cea1d782c9306d92` | 50,657 | `00c4fb1e671503406dfec55d80b29379ad12f7b8bf330dfe74895724ab19a46c` | `47c15dfe9018a4ae91c4f409378d2b85c3cdecf442c1ee752d8f7e8e3b125249` |
+
+All three blobs are read at source commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`; their four-field identity-row
+array has canonical SHA-256
+`f3badf91d5dda7e063bed2d7b1fbfc6470e981a19e32986a3ed50ce194e56504`.
+The source-commit ancestry and immutability law in §17.2 remains unchanged.
+
+The projection takes these eight existing extraction-locator references in
+the displayed order. `row SHA-256` hashes the complete strict-parsed row;
+`range SHA-256` is the row's independently checked registered range:
+
+| Locator ID | Source pointer | Row SHA-256 | Range SHA-256 |
+|---|---|---|---|
+| `vb6_q76_income_p25` | `/passage_locators/30` | `b6e2e8f252aa4a2bc342fc2479bf8487b9cfa60411c0563b6d2233172ce04b68` | `b606cac8423ea88bfa58ef258548059a04da321d4934cf254d640fc54c121f8f` |
+| `vb6_q76_extra_job_p50` | `/passage_locators/29` | `a131288ff5167a3ecf350de17f13e230e859d70cc08403d3c683cb7d6040defa` | `0ed4477febbdba1b63c4fe9bb26b16c4ca1726c0f747b9de16975800c19b808b` |
+| `vb6_1977_worksheet_p55` | `/passage_locators/14` | `16fe26979a18036969affa00142934f09570f19035e579db68f84b6b0807961d` | `d68cc36573cdcd671c4617929b28ed61f48677d4b59a9e57166b2bc1c3db2b2d` |
+| `vb6_1977_label_p84` | `/passage_locators/15` | `ddab1deb9d9fbda5d6ca9411891ae457424bb9e24171652c663b3d4ec96dacc2` | `3659a074c1127016802447d148e1bc7c17eb84c339fc8847194ba50936d41bdf` |
+| `vb6_1977_qxq_p54` | `/passage_locators/18` | `8d14d8b6a0cd1dab0b7f92cb4164fc3961e282f046995361aa150d268b32f8f4` | `14372a04784b4d9edc19dda18e9fae98c3919761399dd6fe812756390e99a45d` |
+| `vb6_1978_worksheet_p74` | `/passage_locators/16` | `149a8479f24f2fd4b910c44ff1596e8340a625fdfcd8a251dca4575f7fc07bab` | `11445c796f8783cf6430e32b45ed1d452a6e3ccc0543e5e76cf07732c3fc5fc1` |
+| `vb6_1978_label_p232` | `/passage_locators/17` | `c7e1cf85260020cd64f73d438e4fb51528488aa152531bea3614cd418e1e42b5` | `f878f7c4db7a6897bde84d1b993ca5f1e448199ac788cfd05e6311ec9a54c6a9` |
+| `vb6_1978_qxq_p70` | `/passage_locators/19` | `acc18348a5a662fb31d3f924fd344d5f81e06b5dd45a25025e4677369b938e27` | `a3e1d35f057322f309df9a9022aecc08d96cbcd6966119073a3b10cb44a17709` |
+
+The complete eight-reference array has canonical SHA-256
+`d170c1cb3b991ff6720b286a672a7a4d6254763ca7e40d2386019e2a746b58dd`.
+The first locator records questionnaire H23–H25: whether the Wife had 1975
+income, whether it was from wages, salary, a business, or another source,
+and H25's exact amount question, “How much was it before deductions?” The
+second locator binds the extra-job branch to work beyond the main job in
+1975. The four worksheet/label locators identify `V5289` and `V5788` as
+annual Wife labor income, and the two QxQ locators record Wife income from
+all sources plus the duplicate-avoidance treatment of family-business
+income.
+
+The registered corpus contains same-title codebooks whose bytes differ from
+the earlier archive editions used by the codebook-inventory extraction.
+They are not interchangeable. Amendment 4 therefore derives fresh page
+locators directly from the #345 registered documents, never copies the
+earlier edition's locator. The derivation uses the repository's
+`_pdf_page_stream_locators` algorithm and Poppler `pdftotext` version
+`26.04.0` with exact arguments `[-layout,-enc,UTF-8]`. The six reference
+rows have exactly `source_document_id`, `source_document_row_pointer`,
+`source_document_row_sha256`, `page_locator_id`,
+`page_locator_row_sha256`, `range_sha256`, and
+`derived_page_text_sha256`, in this order:
+
+| Registered document row | Page | Document-row SHA-256 | Locator-row SHA-256 | Range SHA-256 | Derived-text SHA-256 |
+|---|---:|---|---|---|---|
+| `psid-corpus-document-0046`, `/document_candidates/45` | 20 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `d7a68eadcb5ae32ca6fb239f37e89711474fcd18221d73d39b9d2d93a4afe697` | `87101f3096debb296972dff5c8db32e4b56aa55f9031cbad7d4cf65cef948dae` | `94709e4ab868411b3111bedf867c27d11a75a26edeeac0c12da511c046a88c32` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 180 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `5946933af0f767bff15773e74262973c998938069701835ac68f90c388ca1eb4` | `22f3cef78b2deabb5b570a8a03cee6bc9bd924f461c3621011b3607c14323748` | `3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 181 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `038ac554ae570d1d0d7f152c847840e460a6b88a1db4375d09140c74ae5c767c` | `9b91dd6d54015f614c80124d78ff99a133b834256a2905be2278c4b5f8b290b1` | `8c83a7e42dcf437e47ea27fef97ce97498677a3c5102589294fae49dc681c55a` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 182 | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `cd57bab720ab21c5a58450942e5e1d49376d1c391301e03a67c4471486bfb524` | `6405a708e4ec2305c6aca26b732471ccc4ea906958729fea4a892b584695f97b` | `6b6a1c88b9ffb6d933cc5e17d92c3ac7bc744bb1ab961e567eddd204afc85c04` |
+| `psid-corpus-document-0051`, `/document_candidates/50` | 22 | `13082ddda241aa7d157da67c6503a44d7d83b7bba9a6bd5354a14858cfbb1189` | `a98b3b055c290aa3e3b86f3d0ba563cc27c8142ba7ed92e72c1294c44aa6c8a5` | `cd35f250c75723ccaccb8230ec760d97d70d40b90b65e4b39e9a699f84397805` | `a53592207ba8bd2dc884d61fcd62108a9d23c5492d87133468bd7ed7030de640` |
+| `psid-corpus-document-0056`, `/document_candidates/55` | 22 | `163634bcace0d2c7bbde569c9223dc73d54ec1838c6cd8bbe37a41f77e00e338` | `0991897f973e697eb36c0b7ddd14200339d7d158cb4fc60ac8256b56108a55a4` | `577f558d22dd0a3e010048dc16296a2ca69c5ec4479d8127734671e3630a87b4` | `dccd52e85ad26e6db69ea97e6c8ea7a6fbbcafefb9961fc3d4eadcf2ed2689cf` |
+
+Their locator IDs are the complete `psid-codebook-page:` prefix followed,
+respectively, by
+`63a228eff60ec25053e4e783670be39164e2448f3eeda39e312c237e24fd6577`,
+`4760541a53787c5a2470ea5ebd073c67c50d209f784688465d3cef362eadc955`,
+`93c291418f0cb7266cffd7b6583348e99325b69518e759d3b976e988974ffc69`,
+`6ca89e5daaef56b3e544066965f78d93ef9285b8162c1764cee326519bcc904e`,
+`6b9fdfb50c4d9e32730347edf58786ebf6f0f591ebb349158b851d5a1ca3662a`,
+and
+`0662ef1ecfe5f577d3af1cbd08eadfa3055a9d8a939e5800309ee2024206c493`.
+The complete six-reference array has canonical SHA-256
+`e19f1550e9a92f1761ab3ecaefdb83a9d3c38435f5db148540e2ecd40edd5017`.
+
+Page 20 binds `V4379`, its `V4380` accuracy variable, and the exact
+composition statement “Wife's income, her labor part of unincorporated
+business income is in V4379.” Pages 180–182 bind `V4901`–`V4907`:
+extra-job presence; occupation with not-self-employed and unincorporated-
+self-employed codes; number of jobs; hourly dollars and cents; weeks; average
+hours per week; and more-work availability. None is an annual amount field.
+The two page-22 rows bind `V5289`/`V5290` and `V5788`/`V5789` as annual Wife
+labor-income totals and their accuracy/assignment variables.
+
+The closure child is not relabeled or mutated. The projection retains its
+historical negative and hashes these exact rows:
+
+- extraction `/absence_proofs/1` has row SHA-256
+  `31f85e2eca83d7a2bfe1d5b5ba38516ffde527c6c64532bf057c615a466280ec`;
+- extraction rows `/psid_vb_residual_extractions/1` through `/4` have, in
+  order, row SHA-256 values
+  `29f5b1eadaf8c70edf17ed2edc7b1f9dc8c4e6984e062e3ebd4050d205db84c9`,
+  `db5825c5d8c2dc577359fefcfbec4f0db702f790cf3a55c71523564a3db1e163`,
+  `fb26607b98a3ac2a3772f6f773f999487e2ccb0409c6a638ec20b6162adbd99f`,
+  and `6f0df50f03038af4c3ba10b41367b939147477508301577a26cad8aa0493290e`;
+- closure rows `/psid_questionnaire_evidence_results/1` through `/4` have,
+  in order, row SHA-256 values
+  `0b9a3f59280eed8ef5bb7ef54998cfb70274b48e167744ba904e2b42aa1aaabc`,
+  `cade58fd00e2823c9f544c2ae4150783d836ca678bae11f7e1bc91585fd8a0a2`,
+  `7b7bd44a4da723593276094f3b7186b2ecacd88cd98d2101dd87a3c800492af8`,
+  and `3e3db7ad9a12bf1d04a94b297851aec413714de072d0dcfd1a389d66bff61dee`;
+  and
+- closure `/psid_vb_family_summary/1` has row SHA-256
+  `48726c64a2d2b859e0db3888a290c6fd016f31873d3926126f81dc0f8fe555d2`.
+
+The two four-row reference arrays hash, respectively, to
+`4e1d34fe123304fe7545994ea38da514253e46cddb029c9d2c3b9fc5ac634178`
+and
+`3069a5b6ac62df52fc659c6eb051eea3489480fb1c47b39355c4a76ccf1c30db`.
+Thus the old one-residual finding remains authenticated rather than being
+silently dropped. Its sentence proves that the registered corpus supplies no
+exact allocation; §18 changes only whether such an allocation is a required
+PSID design object.
+
+The independent #345 referee sweep is now a deterministic projection over
+all 456 strict-ordered `/document_candidates`, whose complete row-array
+SHA-256 is
+`fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3`.
+For each registered PDF, derive the complete page sequence with Poppler
+`pdftotext` 26.04.0 and exact arguments `[-layout,-enc,UTF-8]`. A candidate
+has at least one page matching
+`(?<!\\d)(?:4901|4902|4903|4904|4905|4906|4907)(?!\\d)` and at least one
+page matching `(?<!\\d)(?:4379|5289|5788)(?!\\d)`. Each candidate row has
+exactly `source_document_id`, `document_identity_sha256`,
+`full_file_sha256`, `extra_job_token_pages`, `annual_total_token_pages`,
+and `same_page_intersection`. In registered order, the exact 18 document IDs
+are:
+
+```json
+[
+  "psid-corpus-document-0023",
+  "psid-corpus-document-0027",
+  "psid-corpus-document-0043",
+  "psid-corpus-document-0046",
+  "psid-corpus-document-0047",
+  "psid-corpus-document-0048",
+  "psid-corpus-document-0053",
+  "psid-corpus-document-0058",
+  "psid-corpus-document-0063",
+  "psid-corpus-document-0068",
+  "psid-corpus-document-0073",
+  "psid-corpus-document-0078",
+  "psid-corpus-document-0083",
+  "psid-corpus-document-0088",
+  "psid-corpus-document-0093",
+  "psid-corpus-document-0098",
+  "psid-corpus-document-0103",
+  "psid-corpus-document-0109"
+]
+```
+
+That ID array has canonical SHA-256
+`5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed`;
+the complete 18-row array has canonical SHA-256
+`039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7`.
+Seventeen rows have empty `same_page_intersection`. The sole intersection is
+`psid-corpus-document-0098`, page 573, whose complete derived page-text
+SHA-256 is
+`51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed`.
+That page is a 1987 Family-file concordance: the same row uses `4379` for a
+1987 “whether extra job last year” field and `4901` for its 1976 counterpart.
+It is the exact disposition
+`false_positive_family_concordance_crosswave_variable_numbers`, not an
+allocation formula. `formula_candidate_count` is therefore integer zero.
+This bounded lexical sweep corroborates the section-exhaustive closure; it
+does not claim that arbitrary undocumented historical material cannot exist.
+
+The projection's terminal values are exactly these ordered findings:
+
+1. `V4379, V5289, and V5788 preserve one inclusive annual Wife labor-income concept across reference years 1975 through 1977; V4379 expressly includes the Wife labor part of unincorporated-business income.`
+2. `V4380, V5290, and V5789 are the corresponding accuracy/assignment variables.`
+3. `V4901 through V4907 record extra-job presence, occupation/self-employment coding, number of jobs, hourly rate, weeks, hours per week, and work availability; the block contains no annual amount field.`
+4. `The registered corpus documents source inclusion and duplicate avoidance, not a component-level arithmetic decomposition of the annual totals.`
+
+Its exact `expressly_not_established_or_used` array is
+`["No exact arithmetic allocation from V4901 through V4907 to V4379, V5289, or V5788 is established or used."]`. Its exact
+`reader_seam_consequence` is `Consume each annual total once under its documented inclusive/mixed concept; do not add, reconstruct, or allocate a V4901-through-V4907-derived annual amount.` Its
+`successor_residual_ids` is exact empty and its `source_disposition` is
+`verified`.
+
+The complete 13-key projection has, in order,
+`schema_version`, `claim_id`, `source_commit`,
+`ordered_source_artifact_identities`,
+`ordered_existing_extraction_locator_rows`,
+`ordered_derived_registered_codebook_page_rows`, `closure_projection`,
+`corpus_wide_cooccurrence_sweep`, `established_findings`,
+`expressly_not_established_or_used`, `reader_seam_consequence`,
+`successor_residual_ids`, and `source_disposition`. Its schema value is its
+name above, claim is V-B6, and source commit is the displayed #345 commit.
+The exact canonical projection is 10,887 bytes including its terminal LF and
+has SHA-256
+`7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a`.
+Any missing registered byte, different Poppler version or argument, locator,
+row, range, page text, order, regex, count, digest, finding, consequence, or
+disposition makes this projection fail; no favorable value is serialized.
+
+The coordinator's uncaptured PSID Family Public Data Index observation—its
+dynamic pages label the three fields “total (includes wages and other
+labor)”—is consistent corroboration but is not an authority operand. No
+captured HTML byte, locator, or registered digest exists for that check.
+Under §§10, 16.12.1, and 17.2 it cannot establish, repair, or conflict with
+the successor result. The registered questionnaire, codebook, QxQ,
+exhaustion, and sweep bytes above are sufficient without it.
+
+### 18.3 Successor seam fact and exact reader consequence
+
+For revision 6, the 1975–1977 row of §4.2's reference-year seam table is
+prospectively replaced by this exact adjudication:
+
+| Reference years | Frozen source-concept adjudication |
+|---|---|
+| 1975–1977 | Interview waves 1976–1978 supply `V4379`, `V5289`, and `V5788` as one continuous respondent-reported inclusive annual Wife labor-income `role_total` concept. `V4379` expressly includes the Wife labor part of unincorporated-business income; the later total/worksheet/QxQ evidence preserves the inclusive labor concept and duplicate avoidance. The total fields are `mixed`; `V4380`, `V5290`, and `V5789` are accuracy/assignment context, never amount operands. `V4901`–`V4907` are the 1975 extra-job indicator, occupation/self-employment, count, rate, time, and availability context; the block has no annual amount and no source-established component allocation. Register every field, exact code map, attachment, and established structural absence, consume each annual total once, and never synthesize or add a second annual amount from the descriptor block. A missing or conflicting registered concept/code map still aborts under V-B6. |
+
+The successor reader law is exact:
+
+1. Each of `V4379`, `V5289`, and `V5788` occupies one annual spouse
+   `role_total` component row for its reference year and is consumed exactly
+   once. Its sole `amount_field_ids` member is that year's total field.
+2. The corresponding accuracy field has `crosswalk_use:
+   component_context`. It can carry assignment/accuracy provenance but can
+   never enter an amount array or arithmetic operand.
+3. `V4901`–`V4907` have `crosswalk_use: component_context` for the 1975
+   role total. They may supply only their registered indicator,
+   occupation/self-employment, job-count, hourly-rate, weeks,
+   hours-per-week, and availability meanings. None may become a
+   `remuneration_component`, `role_total`, `amount_field_id`, or separate
+   annualized source amount.
+4. In particular, the reader must not multiply `V4904`, `V4905`, and
+   `V4906`; add such a product to a total; subtract it from a total; allocate
+   a total across jobs from it; or treat structural absence of an equivalent
+   1977/1978 Wife branch as zero earnings. Any such operation fails the
+   crosswalk, component exact-cover, reconciliation, and V-B6 predicates.
+5. `mixed` remains a source concept. Only after the inclusive parent is read
+   exactly once may §16.3.2 create its two modeled wage and self-employment
+   children. Those children each receive the ratified one-half deterministic
+   split and sum exactly to the parent. They are not PSID-observed job or
+   component allocations.
+6. Section 16.7.1's exact fitting-free labels remain
+   `frame-relative`, `modeled-covered-earnings`, and
+   `deterministic-uncalibrated`. Section 16.8.4 continues to disclose that
+   the half split is deterministic underidentification unsupported by
+   aggregate or linked micro evidence. Amendment 4 makes no component-level
+   source arithmetic, population-alignment, or individual administrative-
+   truth claim.
+
+An unqualified statement that there is “no component-level arithmetic
+decomposition” would conflict with §16.3.2's downstream modeled split and is
+not adopted. The exact nonclaim is narrower: no **source-established**
+component arithmetic decomposition exists or is used.
+
+### 18.4 Exact V-B6 source/result replacement and preservation ledger
+
+For V-B6 only, `source_projection_name` is prospectively
+`covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total`.
+Its `source_row_pointer` is `/`, denoting the complete derived projection in
+§18.2, and its `source_row_sha256` is the complete projection digest
+`7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a`.
+The source-row match key remains the §17.2 three-tuple, but the exact
+permitted key set is now, in order:
+
+1. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B5);
+2. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total`,
+   V-B6); and
+3. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B8).
+
+The complete V-B6 `adjudication_sources` member in both branches is:
+
+```json
+{
+  "source_identity_sha256": "1bb79fba8b752310f99181191d1f5c39bf031a3a11a14852e83c088cdc6bb6b6",
+  "source_projection_name": "covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total",
+  "source_row_pointer": "/",
+  "source_row_sha256": "7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a",
+  "source_disposition": "verified",
+  "unresolved_evidence_ids": []
+}
+```
+
+The V-B5 and V-B8 source members, pointers, row digests, empty residuals,
+verified dispositions, and positive derivations remain byte-for-byte as
+§17.2 defines them. The historical V-B6 family row and its old residual are
+inputs to the successor projection, not alternate match rows. No candidate
+artifact may simply relabel `/psid_vb_family_summary/1` as verified.
+
+For both calibrated and fitting-free V-B6, the unique seven-field result is
+the §16.12.1 positive: `claim_id` is `V-B6`; `authority_input_ids` is exactly
+`["covered_earnings_questionnaire_closure_attempt.v1"]`;
+`affected_inventory_keyset_sha256` is freshly recomputed from the complete
+unchanged same-branch V-B6 spec array; `governing_rule_ids` exact-copies that
+unchanged spec; `verification_status` is `verified`;
+`optional_consequence_specs_sha256` is JSON null; and `status` is `pass`.
+Both enclosing claim rows have `derivation_status: pass` exactly when they
+faithfully serialize that result and the complete source member above.
+
+Section 16.13.1's set (K) continues to include zero-based position 5.
+Therefore the complete calibrated and fitting-free V-B6 specs, source
+members, results, and derivation status deep-equal. Both result arrays,
+envelopes, the complete source projection, and the ten-key adjudication
+artifact must freshly recompute every row/domain/content digest; no digest
+is copied from a configuration, prior negative, or this prose.
+
+The exact replacement/preservation ledger is:
+
+| Anchor | Revision-6 disposition |
+|---|---|
+| §4.2 1975–1977 seam-table row | `replaced-by-§18.3-successor`: inclusive/mixed annual role totals, descriptor-only extra-job context, exact-once consumption. |
+| §13.2 V-B6 eight-field claim meaning and `registration_required` class | `preserved-byte-for-byte`: exact concepts, code maps, self/other/incorporation support, and wave/reference map remain required. |
+| `verification_claim_specs.v2` and `verification_claim_specs.fitting_free.v1`, including V-B6 | `preserved-byte-for-byte`. |
+| §16.2 V-B6 requirement row and `verify_fitting_free_claim_v_b6_v1` | `preserved-byte-for-byte`; the authenticated producer result now passes. |
+| §16.11.2 `psid_premodern_spouse_secondary_concept_authority` role and all role-map identities | `preserved-byte-for-byte`. |
+| §§16.12.1, 16.13.2, and 17.2 V-B6 source key, projection, pointer, row digest, disposition, unresolved array, and negative-result equation | `replaced-by-§18.2/§18.4-successor`; V-B5/V-B8 and every non-V-B6 row remain unchanged. |
+| §§16.13.1 and 16.13.6 V-B6 cross-branch/result and singleton-authority applications | `composed-with-§18.4`: same laws, now over the positive complete V-B6 row. |
+| §17.4 post-capture `["requirement:V-B6"]`, sole-blocker/null-path conclusion, and “no V-B6 successor” sentence | `replaced-by-§18.8-satisfiability-walk`. |
+| §§16.3.2, 16.7.1, and 16.8.4 mixed split, labels, assumptions, and nonclaims | `preserved-byte-for-byte` and expressly controlling. |
+
+No other claim spec, result equation, authority role, crosswalk identity,
+configuration child, condition, gate, label, or output law changes because
+of the V-B6 fact revision. The revision-6 design/capture/receipt successors
+required solely by appending §18 are exactly enumerated next; silence cannot
+create another replacement.
