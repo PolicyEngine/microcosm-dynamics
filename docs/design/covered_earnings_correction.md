@@ -24859,3 +24859,402 @@ named successor not completely defined and dispatched in those subsections,
 or an unchanged reason that fails to preserve every consumer blocks
 Amendment-5 ratification. The validator redoes the complete searches and
 consumer walk over the exact D5 blob; all counts and rows must reproduce.
+
+### 19.6 Revision-7 design, capture, registry, and domain successors
+
+#### 19.6.1 D5 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. Define `D5` as the
+complete Amendment-5 identity with exact values:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the future 40-lowercase-hex commit created only by
+  §19.8 step 3, never this draft's authoring commit, a branch name, D4, or a
+  placeholder;
+- `blob_sha256`: SHA-256 of the complete revision-7 design bytes at that
+  exact commit; and
+- `revision`: JSON integer `7`, excluding booleans.
+
+No all-zero, prose token, draft digest, prefix digest, or anticipated value
+may occupy a D5 field. The accepted byte count, Git blob OID, SHA-256, and
+commit are knowable only after step 3 and are then reconstructed, never
+copied from a reviewer or configuration.
+
+The retained `D2`, `D3`, and `D4` identities are exactly:
+
+```json
+[
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb",
+    "blob_sha256": "29f0cb134e95b6215dc502d0e25392b5c971fdb93dfad40fd5d221e8a482a1b7",
+    "revision": 4
+  },
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "13f84c99fb898eeaf70a8705bffacdf96e9795f4",
+    "blob_sha256": "eb24a36f4baa124f192e99f517982e7e723ca7e899957cd0acf02cf2d7e4a1ed",
+    "revision": 5
+  },
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "b5878893991fe603c693e711bc48aacfb7c6d08f",
+    "blob_sha256": "6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8",
+    "revision": 6
+  }
+]
+```
+
+Their raw sizes are 1,252,209, 1,310,838, and 1,376,610 bytes; their Git
+blobs are respectively `0f3eca3e5e45cb9584711b3ed007c60521902863`,
+`7354dabbef1b768c1fcd34dadaa74f47aa8456a9`, and
+`b03e31592753cbbee2fddc2360cdd29a4cafe57e`. Every D5 predicate below
+independently reconstructs these values, requires D3's complete raw bytes to
+equal D4's first 1,310,838 bytes, and requires D4's complete raw bytes to
+equal D5's first 1,376,610 bytes. Digest-only or transitive-only prefix
+claims are insufficient.
+
+The position-1 registry successor is
+`fitting_free_requirement_verification_specs.v4`. It is the complete §18.6
+v3 registry in the same 22-row order, changes its outer schema value to the
+v4 name, and replaces exactly four same-position rows: position 1,
+`historical_coverage_rules`, A1, and A3. The legal row is exactly §19.2.5;
+the other three are stated here. Every other row—including V-B6 and
+`verify_fitting_free_claim_v_b6_v1`—is byte-for-byte unchanged. Position 1
+is exactly:
+
+```json
+{
+  "requirement_id": "amendment_2_design_identity",
+  "requirement_class": "design",
+  "verification_predicate_id": "verify_amendment_5_fitting_free_design_identity_v1",
+  "expected_preimage_schema_version": "amendment_5_fitting_free_design_identity_expected_preimage.v1",
+  "actual_preimage_schema_version": "amendment_5_fitting_free_design_identity_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:amendment_2_design_identity",
+    "ratified_design:amendment_3_design_identity",
+    "ratified_design:amendment_4_design_identity",
+    "ratified_design:amendment_5_design_identity",
+    "configuration:design",
+    "git_cutoff:docs/design/covered_earnings_correction.md"
+  ],
+  "verification_result_schema_version": "exact_identity_verification_result.v1",
+  "cross_binding": "receipt_core:amendment_2_amendment_3_amendment_4_and_amendment_5_design_identities"
+}
+```
+
+The successor expected and actual preimages retain §18.6's exact top-level
+keysets, projection-row schema, canonical value-digest law, count, order,
+and domain-hash equations, change their schema values to the displayed
+Amendment-5 names, and contain exactly six projection rows. Let `K_f^d` be
+the staged fitting-free configuration design, `C_A` the selected final
+calibrated authority cutoff, `G2` through `G5` the raw design blobs at D2
+through D5, and `G_C_A` the same-path raw bytes at `C_A`. Expected projection
+values are exactly `[D2,D3,D4,D5,D2,G5]`; actual values are independently
+reconstructed `[D2,D3,D4,D5,K_f^d,G_C_A]`. The first five rows have value
+type `canonical_json`; the sixth has `raw_git_bytes`.
+
+`verify_amendment_5_fitting_free_design_identity_v1` is true if and only if
+every shape, type, count, order, value digest, and domain hash passes and:
+
+1. both reconstructions of D2, D3, D4, and D5 deep-equal and each complete
+   raw ratification blob hashes to its identity;
+2. `K_f^d = D2`, without requiring D2's bytes to equal final-cutoff bytes;
+3. D3 is D4's exact 1,310,838-byte prefix and D4 is D5's exact
+   1,376,610-byte prefix, with the pinned D3/D4 digests above;
+4. `G_C_A = G5` byte-for-byte and its SHA-256 equals
+   `D5.blob_sha256`; and
+5. `D2.ratification_commit < D3.ratification_commit <
+   D4.ratification_commit < D5.ratification_commit <= C_A` under strict Git
+   ancestry for `<` and ancestor-or-equal for `<=`.
+
+Unfavorable values serialize the unchanged exact-identity false result and
+`predicate_mismatch`; no predecessor registry version becomes selectable.
+The receipt cross-binding is a later consumer only and never a position-1
+operand.
+
+#### 19.6.2 Capture authorization, proof, claim, and input
+
+Every capture authorization first added after D5 uses
+`fitting_free_model_input_authority_capture_registration.v4`. It is the
+complete §18.6 v3 authorization in the same order, changes only its schema
+value, and inserts `amendment_5_design_identity` immediately after
+`amendment_4_design_identity`. It has exactly 16 keys. Its retained `design`
+child is D2; its three amendment children are D3, D4, and D5. Every other
+preliminary-adjudication, invocation, capability, input, path, and failure
+law remains unchanged. Its complete canonical digest is the post-D5
+`capture_registration_sha256`; v1, v2, and v3 remain selectable only for
+their exact historical pre-D3, Amendment-3, and Amendment-4 cases.
+
+Let `A` be the unique single-parent commit first adding that v4
+authorization and freeze live capture `HEAD` as `H_cap` before any
+environment, claim, broker, or source descriptor opens. The coordinator
+first constructs `amendment_5_capture_registration_repository_proof.v1`
+with exactly these 14 keys in order:
+
+1. `schema_version`;
+2. `capture_registration_sha256`;
+3. `amendment_2_design_identity`;
+4. `amendment_3_design_identity`;
+5. `amendment_4_design_identity`;
+6. `amendment_5_design_identity`;
+7. `authorization_commit`;
+8. `capture_head`;
+9. `ordered_design_blob_rows`;
+10. `design_blob_row_count`;
+11. `design_blob_domain_sha256`;
+12. `canonicalization`;
+13. `status`; and
+14. `failure_disposition`.
+
+The first value is the schema name; the four identities are D2–D5; and the
+two commit fields are `[A,H_cap]`. The exact ordered blob roles are
+`amendment_2_ratification`, `amendment_3_ratification`,
+`amendment_4_ratification`, `amendment_5_ratification`, and `capture_head`.
+Each row retains §18.6's exact six-key shape and independently serializes the
+raw Git object at D2, D3, D4, D5, or `H_cap`. Count is integer five and the
+domain digest hashes the complete five-row array. Canonicalization remains
+the common literal; status is `pass | fail`; failure is
+`abort_without_accepted_authority_pair`.
+
+The closed predicate
+`verify_amendment_5_capture_registration_repository_identity_v1` is true if
+and only if every proof equation passes and:
+
+1. the strict-parsed v4 authorization has its independently reconstructed
+   hash and exact D2/D3/D4/D5 children;
+2. every ratification blob hashes correctly, D3 is D4's exact prefix, D4 is
+   D5's exact prefix, and raw design bytes at `H_cap` equal D5;
+3. `D2 < D3 < D4 < D5 < A <= H_cap` under raw Git ancestry;
+4. authorization bytes are unchanged from A through `H_cap`, and all five
+   proof rows exact-match observed modes, OIDs, commits, and raw bytes; and
+5. every remaining descriptor-free repository, tracked-state, clean-
+   checkout, design/implementation-tree, and authorization-byte conjunct in
+   §§10.1, 16.10, 17.4, and 18.6 passes against `H_cap`.
+
+The proof freezes before any descriptor opens, contains no receipt or future
+commit, and passes or aborts without fallback. `HEAD` remains exactly
+`H_cap` through durable claim reread.
+
+The lifecycle successor
+`fitting_free_model_input_authority_capture_claim.v4` has the complete
+eight-key v3 claim shape/order, changes only `schema_version`, and requires
+`capture_repository_proof` to deep-equal the complete Amendment-5 proof. The
+primary `fitting_free_model_input_authority_capture.v1` and sidecar
+`fitting_free_model_input_authority_capture_environment.v1` retain their
+schemas and D2 design children; their complete v4 registration and claim
+digests transitively bind D3, D4, D5, and `H_cap`.
+
+The four-artifact envelope successor is
+`fitting_free_model_input_authority_capture_input.v4`. It retains the v3
+keyset/order, changes only its schema value, requires claim schema v4, and
+applies every existing path, vintage, canonical-Git-blob, digest, and cross-
+artifact equation to the v4 authorization/claim and unchanged primary and
+sidecar. A successful triple commit `T` has sole parent `H_cap` and adds only
+the complete v4 claim and unchanged-schema primary/sidecar. The exact order
+is `A <= H_cap < T < C`, where `C` is the clean final authority cutoff.
+Every terminal-history, accepted-triple, mode/OID/raw-byte, and no-delete/
+no-readd law selects the v4 claim and proof for a post-D5 case.
+
+The calibrated A1/A3 manifest shapes and inner authority identities remain
+unchanged. For a post-D5 candidate,
+`accepted_capture_primary_by_final_cutoff` additionally requires the v4
+envelope/proof and exact D2/D3/D4/D5 identities. Their unchanged
+`design_identity_sha256` remains D1 methodology provenance; D5 is lifecycle
+provenance and never overwrites it.
+
+#### 19.6.3 A1/A3, domain, and bundle successors
+
+Within `fitting_free_requirement_verification_specs.v4`, the exact A1 row
+is:
+
+```json
+{
+  "requirement_id": "A1",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_5_fitting_free_a1_model_universe_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a1_authority_identity",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary:a1_authority_identity_and_amendment_5_capture_repository_proof"
+}
+```
+
+Its exact A3 row is:
+
+```json
+{
+  "requirement_id": "A3",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_5_fitting_free_a3_weight_source_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a3_authority_identity",
+    "capture_sidecar:input_descriptor_identities",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary_and_sidecar:a3_source_keyset_and_amendment_5_capture_repository_proof"
+}
+```
+
+Their complete projection, preimage, count, digest, evidence, and result
+laws are §18.6's with v4 capture input/claim/proof selected and D5 added to
+the proof conjunction. The claim remains lifecycle nonauthority and enters
+neither inner A1/A3 identity, inner evidence digest, nor substantive model.
+
+The domain successor is `fitting_free_registration_domain_identity.v4`.
+It has the complete v3 keyset/order, changes its schema value, selects the
+complete v4 requirement registry, and freshly reconstructs all 22 rows,
+projection evidence, Booleans, failure IDs, counts, and hashes. In
+particular, position 1, historical rules, A1, and A3 use only their v4
+successors; every other requirement row retains its exact identity and is
+re-evaluated rather than copied.
+
+The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v5`. It retains the
+complete v4 keyset and key order and changes its schema value to the v5 name.
+Its requirement child is the complete v4 registry and its domain child is
+the complete v4 domain. Its verification-claim specs retain their ratified
+schemas, but both calibrated and fitting-free result children, their source
+projection, their adjudication identity, and every affected legal/inventory/
+crosswalk/nine-registry identity are freshly reconstructed from the eventual
+§19.2–§19.3 artifacts. The bundle binds the complete successor G17 payloads
+in §19.4.2 and the retained §18 positive V-B6 source/result. A negative
+required Class-C consequence remains a passing structural registry value but
+produces the required false registration Boolean; it is never omitted to
+make the bundle favorable.
+
+Every unchanged child keeps its predecessor schema and exact semantic value
+only after fresh reconstruction. Every changed child carries a fresh digest.
+The complete v5 bundle digest hashes this one object and becomes
+`path_applicability_specs_sha256`; no v4 child digest, configuration digest,
+prose digest, or predecessor result is copied. Every Amendment-5 cutoff,
+22-row domain, applicability result, receipt, and validator selects the v4
+registry, v4 domain, and v5 bundle. No caller, receipt, unfavorable ancestry
+value, or incomplete authority artifact can select an earlier version.
+
+### 19.7 Receipt, selected-registration lineage, and successor inventory
+
+#### 19.7.1 Core, outer receipt, and selected lineage
+
+The common binding successor is
+`covered_earnings_path_applicability_receipt_core.v4`. It is the complete
+§18.7 v3 core in the same order, changes its schema value, and inserts
+`amendment_5_design_identity` immediately after
+`amendment_4_design_identity`. It has exactly 19 keys. Its four amendment
+children are exact D2, D3, D4, and D5; its fitting-free domain is complete
+v4; its applicability-spec digest hashes the complete v5 bundle; and its
+applicability result carries the v4 domain digest. Every other member,
+including the pre-reference configuration and namespace cut edge, is
+unchanged. `receipt_core_sha256` hashes the complete v4 core.
+
+When accepted capture supplies A1/A3, receipt-core validation requires:
+
+- D2 to deep-equal the v4 capture registration's `design`, the proof's D2,
+  and both artifact design children;
+- D3, D4, and D5 to deep-equal their same-named registration and proof
+  children;
+- the calibrated adjudication and fitting-free domain to bind the same v4
+  claim digest, capture input, proof, primary, sidecar, triple, and cutoff;
+  and
+- exact lineage `D2 < D3 < D4 < D5 < A <= H_cap < T < C <= HEAD`.
+
+The outer successor is `covered_earnings_path_applicability_receipt.v4`.
+It retains the complete v3 outer keyset/order and every receipt-ID, suffix,
+namespace, construction, status, Git-delta, and failure law, changes its
+schema value, and requires the complete v4 core. Every prospective
+Amendment-5 use in §§16.13.4, 16.13.7, 16.14.3, 17.4, and 18.7 selects v4.
+Terminal-history dispatch is exact: pre-Amendment-3 registrations retain
+historical v1; Amendment-3 registrations require v2; Amendment-4
+registrations require v3; and an Amendment-5 registration requires exactly
+one v4 receipt carrying D5. No version may bind another revision.
+
+The calibrated and fitting-free configurations remain unchanged with D1 and
+D2 design children. For an Amendment-5 fresh registration,
+`verify_amendment_5_selected_registration_design_lineage_v1` prospectively
+replaces the §18.7 selected-lineage predicate for both branches. It is true
+if and only if:
+
+1. the selected configuration design exact-matches its D1 or D2
+   ratification blob and digest;
+2. the receipt core's D2 child exact-matches the revision-4 ratification
+   identity and raw bytes;
+3. its D3 child exact-matches the revision-5 identity and raw bytes;
+4. its D4 child exact-matches the revision-6 identity and raw bytes;
+5. its D5 child exact-matches the revision-7 ratification commit, complete
+   blob, digest, and same-path raw bytes at registration `HEAD`, while D3 is
+   D4's exact prefix and D4 is D5's exact prefix;
+6. D1 is a strict ancestor of D2, D2 of D3, D3 of D4, D4 of D5, and D5 is
+   ancestor-or-equal to registration `HEAD`; and
+7. every other repository, implementation-tree, configuration, invocation,
+   input, output, history, and validation law passes unchanged.
+
+False fails v4 receipt validation without fallback. For an Amendment-5
+fresh fitting-free selection, §16.9 consequence 2's authority phrase becomes
+“authorized under revision-7 authority while retaining the revision-4
+fitting-free configuration design child.” Section 16.5.5's D2 configuration
+check remains only `K_f^d = D2`, joined to the earlier D5 position-1 proof
+and later v4 receipt proof.
+
+#### 19.7.2 Complete successor identifier inventory
+
+The complete design/capture/receipt lineage successor set introduced in
+§§19.5–19.7 has exactly these 16 object, schema, or predicate identifiers:
+
+1. `amendment_5_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_5_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_5_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v4`;
+5. `verify_amendment_5_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_5_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v4`;
+8. `covered_earnings_path_applicability_registry_bundle.v5`;
+9. `fitting_free_model_input_authority_capture_registration.v4`;
+10. `amendment_5_capture_registration_repository_proof.v1`;
+11. `verify_amendment_5_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v4`;
+13. `fitting_free_model_input_authority_capture_input.v4`;
+14. `covered_earnings_path_applicability_receipt_core.v4`;
+15. `covered_earnings_path_applicability_receipt.v4`; and
+16. `verify_amendment_5_selected_registration_design_lineage_v1`.
+
+The complete non-lifecycle schema/disposition successor set introduced in
+§§19.2–19.4 has exactly these 13 identifiers:
+
+1. `historical_coverage_legal_source_manifest.v1`;
+2. `historical_coverage_rule_domain.v1`;
+3. `legal_source_document_byte_closure.v1`;
+4. `historical_coverage_rule_authority_schema.v1`;
+5. `historical_coverage_rule_authority_expected_preimage.v2`;
+6. `historical_coverage_rule_authority_actual_preimage.v2`;
+7. `historical_coverage_rule_authority_verification_result.v2`;
+8. `verify_historical_coverage_rules_identity_v2`;
+9. `historical_coverage_rule_specs_append_only_history_projection.v1`;
+10. `historical_coverage_rule_domain_reconstruction.v1`;
+11. `psid_questionnaire_slot_closure_evidence.v1`;
+12. `psid_rule_residual_consequence.v1`; and
+13. `amendment_5_schema_disposition_closure_sweep.v1`.
+
+The two lists are disjoint and their concatenation is the exact 29-name
+Amendment-5 successor identifier inventory. Existing identifiers whose
+schemas are completed in place—notably `historical_coverage_rule_specs.v1`
+and every official v1 registry—are not new names and therefore do not appear.
+Member names, enum/role literals, projection paths, cross-binding literals,
+and symbolic commit names are likewise outside the inventory. An omitted,
+extra, duplicated, differently spelled, or undefined identifier blocks
+ratification. These successors create no mutable alias, candidate-selectable
+version, runtime branch, or alternate source fact.
