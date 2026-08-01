@@ -14,22 +14,26 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
   `reported_not_verified` class with committed-artifact provenance, the
   explicitly unmanifested corroborating-copy SHA, and Mermin listed under
   `missing_after_refresh`.
+- Finding 2: corrected Favreault Table 3 upstream provenance and all 12
+  matrix rows for the 2049 adult OASDI beneficiary population, OASI-plus-DI
+  scope, 2049 marital-status timing, and conditional denominators. Regenerated
+  `replication_r7_sharing_v1.json` from SHA-256
+  `5442fc41ad1eae1a7a1d67bb20d66691514fbab482399620d88486a4f7b6487d`
+  to `85f7d1dfd680d7d23975046526f1972774719af302a414e02c2c9f19f53c559b`;
+  all 1,870 numeric JSON leaves are unchanged.
 
 ## Next
 
-1. Finding 2: correct Favreault upstream provenance, regenerate the R7
-   artifact without numeric changes, update its pin, and correct all 12
-   population/mismatch disclosures.
-2. Finding 3: complete every DYNASIM row/column/derivation locator.
-3. Finding 4: correct the two SSA published units, the 5.A4 Number-panel
+1. Finding 3: complete every DYNASIM row/column/derivation locator.
+2. Finding 4: correct the two SSA published units, the 5.A4 Number-panel
    path, and 4.B11 preliminary flags.
-4. Finding 5: split the NRA and age-80--85 COLA mismatch records.
-5. Finding 6: complete WISH page/section locators, derivation metadata,
+3. Finding 5: split the NRA and age-80--85 COLA mismatch records.
+4. Finding 6: complete WISH page/section locators, derivation metadata,
    introduced-bill wording, and by-construction disclosure.
-6. Finding 7: remove certification and completeness overclaims.
-7. Implement fail-closed, non-writing `--check` modes for both builders and
+5. Finding 7: remove certification and completeness overclaims.
+6. Implement fail-closed, non-writing `--check` modes for both builders and
    strengthen the drift test for both files, capture pins, and locators.
-8. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+7. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-9. Write the final closure report to the requested output file.
+8. Write the final closure report to the requested output file.

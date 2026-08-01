@@ -1212,25 +1212,36 @@ SHARING_MISMATCH = {
         "No frame or population alignment is claimed."
     ),
     "population": (
-        "Our observed retirees were eligible in 2005-2019 (births 1943-1957); "
-        "DYNASIM reports 1960-1980 cohorts evaluated in 2049. Spouse histories "
-        "are often sparser in our frame."
+        "Our denominator is the scored retirement-beneficiary subgroup for "
+        "the row's sex and marital status classified at age-62 eligibility; "
+        "DYNASIM's denominator is the corresponding sex-by-marital-status "
+        "group among adult current-law scheduled OASDI beneficiaries in 2049, "
+        "including OASI and DI. These conditional groups are not population-"
+        "aligned, and spouse histories are often sparser in our frame."
     ),
     "year_basis": (
-        "Our observed-era careers and expected claim-age reduction are used as "
-        "the analogue; the publication is a 2049 projection with 2050 cost balancing."
+        "Our observed-era careers cover retirement eligibility in 2005-2019 "
+        "and fix marital status at age 62; Table 3 is a 2049 cross-section and "
+        "classifies marital status in 2049. The package is cost-balanced at "
+        "2050, which is not the Table 3 population year."
     ),
     "benefit_concept": (
-        "Both apply package 1b earnings sharing with no survivor benefit and a "
-        "4.5% global increase, but our scalar is borrowed from DYNASIM rather "
-        "than re-derived for cost neutrality and we omit mortality and within-couple claim timing."
+        "DYNASIM Table 3 covers scheduled OASDI beneficiaries, including OASI "
+        "and DI; our calculation is retirement-only and has no DI. Both apply "
+        "package 1b earnings sharing with no survivor benefit and a 4.5% "
+        "global increase, but our scalar is borrowed from DYNASIM rather than "
+        "re-derived for cost neutrality, and we omit mortality and within-"
+        "couple claim timing."
     ),
     "earnings_and_accounting": (
         "Our sharing uses available PSID spouse earnings and the committed proxy "
         "PIA chain; DYNASIM uses its full synthetic careers and family histories."
     ),
     "mismatch_codes": [
-        "observed_psid_couples_vs_dynasim_2049_projection",
+        "observed_retirement_beneficiaries_vs_2049_oasi_di_beneficiaries",
+        "retirement_only_vs_oasi_and_di",
+        "age62_marital_status_vs_2049_marital_status",
+        "conditional_sex_marital_denominators_not_aligned",
         "sparse_spouse_histories",
         "anchor_calibrated_scalar_not_rederived",
         "no_mortality_or_within_couple_claim_timing",
@@ -1275,7 +1286,10 @@ def build_sharing_rows() -> list[dict[str, Any]]:
                 "comparison_scope": ["share", "distributional_incidence"],
                 "our": {
                     "value": ours,
-                    "unit": "percent of current-law scheduled beneficiaries in cell",
+                    "unit": (
+                        "percent of scored model retirement beneficiaries "
+                        "within the row's sex-by-age-62-marital-status cell"
+                    ),
                     "label_state": label_state(False),
                     "source": source_pin(
                         "runs/replication_r7_sharing_v1.json",
@@ -1285,7 +1299,11 @@ def build_sharing_rows() -> list[dict[str, Any]]:
                 },
                 "published": {
                     "value": published,
-                    "unit": "percent of current-law scheduled beneficiaries in cell",
+                    "unit": (
+                        "percent of adult current-law scheduled OASDI "
+                        "beneficiaries within the corresponding 2049 "
+                        "sex-by-marital-status group"
+                    ),
                     "source_locators": sharing_locator(),
                 },
                 "deviation": scalar_deviation(ours, published),
