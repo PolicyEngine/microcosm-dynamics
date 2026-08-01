@@ -23931,13 +23931,36 @@ enters `G_x`.
 The array may be exact empty when the authenticated source universe contains
 no such transition; its zero count and empty-array digest remain explicit.
 
+For a transition row `t`, its exact identity preimage \(M_t\) is the
+six-element JSON value array
+`[t.status_family,t.jurisdiction,t.effective_date,
+t.affected_inventory_keys,t.establishing_source_links,
+t.annual_allocation_rule_id]`. Positions 1–3 are nonnull JSON strings with
+the exact registered family, canonical jurisdiction ID, and canonical date.
+Position 4 is the complete possibly empty official-order array of nonnull
+inventory-key strings. Position 5 is the complete nonempty source-manifest-
+order array of exact four-key link objects. In each object,
+`source_document_id`, `source_relation`, and `exact_citation` are nonnull
+JSON strings under the exact foreign-key, enum, and citation equations above,
+and `authority_rank` is the JSON integer 1 excluding booleans. Position 6 is
+either null or the nonnull resolving rule-
+ID string, under the equation above. No other position may be null.
+
 The transition ID is literal `legal-midyear-transition:` followed by
-SHA-256 of §10.1 canonical bytes of the remaining six fields in displayed
-order. Rows follow family order, effective date, jurisdiction order, and ID;
-the count equals array length and the domain digest hashes the complete
-ordered row array. A January-1 change belongs in integer rule endpoints and
-is invalid here; an unproved date, affected-key set, or allocation rule
-aborts rather than being rounded.
+SHA-256 of standalone §10.1 `canonical_json_bytes(M_t)`, including its one
+terminal LF. The preimage is the value array just defined, not a tagged or
+wrapped array, an object with the ID deleted, an array of member names, or an
+array of name/value pairs.
+Every nested object and array is included whole; no digest or projection
+substitutes for it. The serialized ID must equal this independently
+recomputed prefix plus 64-lowercase-hex digest exactly. Equal preimages
+produce one equal ID; a malformed or mismatched ID, duplicate row with that
+ID, or one ID resolving unequal preimages aborts as identity failure,
+duplication, or hash collision. Rows follow family order, effective date,
+jurisdiction order, and ID; the count equals array length and the domain
+digest hashes the complete ordered row array. A January-1 change belongs in
+integer rule endpoints and is invalid here; an unproved date, affected-key
+set, or allocation rule aborts rather than being rounded.
 
 For §16.13.2, the successor legal establishing-source projection serialized
 in this manifest is named
@@ -24376,9 +24399,32 @@ there is one `effective_year` cell with null questionnaire slot and inventory
 key. For every `applicable` inventory-family disposition in that year there
 is additionally one `inventory_attachment` cell for each applicable family
 jurisdiction, carrying the disposition's exact inventory key and its
-official questionnaire-slot foreign key. The cell ID is the literal
-`legal-rule-domain:` followed by SHA-256 of §10.1 canonical bytes of the
-remaining eight fields in the displayed order.
+official questionnaire-slot foreign key.
+
+For a cell row `c`, its exact identity preimage \(M_c\) is the eight-element
+JSON value array
+`[c.cell_kind,c.verification_claim_id,c.verification_class,
+c.status_family,c.jurisdiction,c.earnings_year,
+c.questionnaire_slot_id,c.source_inventory_key]`. Positions 1, 3, 4, and 5
+are nonnull JSON strings exact-copying the derived cell-kind enum,
+`registration_required | direct_only_optional` class, family ID, and
+canonical jurisdiction ID. Position 2 is the exact family claim-ID string,
+or null only for either claimless family. Position 6 is a JSON integer
+excluding booleans. For `effective_year`, positions 7 and 8 are both null;
+for `inventory_attachment`, position 7 is the nonnull questionnaire-slot-ID
+string foreign key from the same-key official inventory row, and position 8
+is the nonnull source-inventory-key string exact-copied from the independently
+derived disposition row. No other null pattern is lawful.
+
+The cell ID is literal `legal-rule-domain:` followed by SHA-256 of standalone
+§10.1 `canonical_json_bytes(M_c)`, including its one terminal LF. The
+preimage is exactly that value array, not a tagged or wrapped array, an object
+with the ID deleted, an array of member names, or an array of name/value
+pairs. The serialized ID
+must equal this independently recomputed prefix plus 64-lowercase-hex digest
+exactly. Equal preimages produce one equal ID; a malformed or mismatched ID,
+duplicate row with that ID, or one ID resolving unequal preimages aborts as
+identity failure, duplication, or hash collision.
 
 Cells are ordered by family, numeric earnings year, jurisdiction order,
 `effective_year` before `inventory_attachment`, and then official slot and
@@ -24719,13 +24765,55 @@ same-rank disagreement, lower-rank disagreement, agreed lower-rank-only
 vector, incomplete rank-1 totality, failed allocation rule, or other mixed
 case.
 
+For a final partition row `p`, its exact identity preimage \(M_p\) is the
+15-element JSON value array
+`[p.cell_kind,p.status_family,p.verification_claim_id,
+p.verification_class,p.jurisdiction,p.questionnaire_slot_id,
+p.source_inventory_key,p.effective_start,p.effective_end,
+p.covered_rule_domain_cell_ids,p.applicable_rule_ids,
+p.midyear_transition_ids,p.controlling_authority_rank,
+p.authority_disposition,p.optional_consequence_ids]`. Positions 1, 2, 4,
+5, and 14 are nonnull JSON strings exact-copying respectively the
+`effective_year | inventory_attachment` enum, frozen family ID,
+`registration_required | direct_only_optional` class, canonical jurisdiction
+ID, and four-value partition disposition. Position 3 is the derived claim-ID
+string or null only for either claimless family.
+Positions 6 and 7 are both null for `effective_year` and both nonnull string
+foreign keys for `inventory_attachment`. Positions 8 and 9 are JSON integers
+excluding booleans and obey the strict endpoint equation. Positions 10–12
+and 15 are complete ordered arrays of nonnull string IDs under their
+respective equations above: position 10 is nonempty, while the other three
+are empty or nonempty only as those equations permit. Position 13 is the
+JSON integer 1 excluding booleans exactly for `verified_dispositive` and is
+null otherwise. No omitted member, other null, coercion, digest substitution,
+or reordered/deduplicated nested array is lawful.
+
 `partition_id` is literal `legal-rule-partition:` followed by SHA-256 of
-§10.1 canonical bytes of the remaining 15 fields in displayed order. Rows
-are ordered by family, jurisdiction, cell kind, official slot/inventory
-order, and numeric start. The top-level count and digest close this complete
-array. This is a post-row registry member, not an input to the independently
-derived `rule_domain`. Neither row order nor an implementation `first`,
-`last`, or `last wins` policy can resolve overlap.
+standalone §10.1 `canonical_json_bytes(M_p)`, including its one terminal LF.
+The preimage is exactly that value array, not a tagged or wrapped array, an
+object with the ID deleted, an array of member names, or an array of
+name/value pairs. The serialized ID
+must equal this independently recomputed prefix plus 64-lowercase-hex digest
+exactly. Equal preimages produce one equal ID; a malformed or mismatched ID,
+duplicate row with that ID, or one ID resolving unequal preimages aborts as
+identity failure, duplication, or hash collision. Rows are ordered by
+family, jurisdiction, cell kind, official slot/inventory order, and numeric
+start. The top-level count and digest close this complete array. This is a
+post-row registry member, not an input to the independently derived
+`rule_domain`. Neither row order nor an implementation `first`, `last`, or
+`last wins` policy can resolve overlap.
+
+Identity construction is acyclic and one-way: validate every transition ID,
+then every cell ID; derive each partition's complete `J_p`/`T_p`, rank,
+disposition, and consequence fields; validate every referenced transition,
+cell, rule, and consequence ID; compute the final partition ID; and only then
+insert it into the overlap closure. Every direct consumer resolves exactly
+one complete row and independently rechecks its preimage and ID: manifest
+claim-source rows and partition transition arrays for transitions; cell
+keysets, `K_x`/`E_x`, and partition cell covers for cells; and `P_x`, the
+overlap closure, registry partition digest, v2 predicate, and G17-C05 for
+partitions. An unresolved, multiply resolved, cross-namespace, malformed, or
+unequal identity aborts before any enclosing digest can pass.
 
 The `J_p`/`T_p` construction is the sole overlap truth law. It deliberately
 shares only byte-identical normalized binding signatures from authenticated
@@ -24888,9 +24976,10 @@ append-only history, independent domain reconstruction, every family-derived
 singleton/empty rule claim array, all five complete `K_x` and `E_x`
 relations and `A_x`/`G_x` projections, every rule/source join, the complete
 claim-establishing-source projection constructed from those `G_x` values,
-every source-byte closure row, every `J_p`/`T_p` table and overlap-closure
-digest, every partition-to-claim propagation, every claimed partition's
-same-claim consequence join, every claimless partition's complete ordered
+every source-byte closure row, every exact \(M_t\), \(M_c\), and \(M_p\)
+value-array preimage and prefixed ID reproduction, every `J_p`/`T_p` table
+and overlap-closure digest, every partition-to-claim propagation, every
+claimed partition's same-claim consequence join, every claimless partition's complete ordered
 \(N_p\)-to-originating-source-row join, and every interval/partition/
 authority consequence pass; and
 every expected/actual member is exact. It is false on
@@ -26402,8 +26491,8 @@ unnamed consumer.
 | Ratified anchor | Revision-7 disposition |
 |---|---|
 | §4.1 historical-rule registry top level and rule ordering | `replaced-by-§19.2.1-successor`: exact envelope, literals, nonempty rule array, unsigned-UTF-8 rule-ID order, counts, row/domain digests, self-zeroed integrity, and status. The existing 20-field rule-row schema is preserved. |
-| §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link/midyear-transition envelopes, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
-| §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals, independent 14-family cell denominator, effective-stream or one-year keyed partitions, exact cell cover, authenticated normalized joint-binding identities, complete false-before-true Cartesian vectors, all-transform tables, exact `no_disposition`, per-vector same/lower-rank agreement, rank-1 totality, and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link/midyear-transition envelopes, the six-position transition-ID value-array preimage with nested types/nulls and collision abort, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
+| §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals; independent 14-family cell denominator; exact eight-position cell-ID and 15-position partition-ID value-array preimages, types, null branches, LF-canonical hashes, and collision aborts; effective-stream or one-year keyed partitions; exact cell cover; authenticated normalized joint-binding identities; complete false-before-true Cartesian vectors; all-transform tables; exact `no_disposition`; per-vector same/lower-rank agreement; rank-1 totality; and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
 | §§4.1, 5.1, and 16.3.1 own-rule Boolean enumeration and `direct_law_controlling_result` runtime law | `composed-with-§19.2.4-joint-overlap-table`: own-rule AST/type/output validation remains; identical cross-rule binding signatures co-vary and all other signatures take the complete Cartesian product for registry overlap proof. At runtime, an all-present record must select one exact `T_p` row before the retained controlling result and one-hot classification; missing facts retain the skipped-transform fold. |
 | §4.1 `verification_claim_specs` legal `affected_inventory_keys` and `governing_rule_ids` | `completed-by-§19.2.3-byte-producing-projections`: the affected-key source is the complete independent disposition/cell relation in official inventory order; the governing-rule source is the complete rule-major effective-cell relation fixed by family claim in registry order; exact uniqueness, five-claim order, cross-family/jurisdiction aggregation, JSON-array serialization, branch equality, and nonempty aborts are explicit. Neither configured destination array selects either source relation. |
 | §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary, exact PSID/FIPS/name authority table, inclusive range expansion, complete field-domain cover, source-labeled cross-wave alias normalization, and aborts for missing, duplicate, overlapping, or ambiguous maps. Observed values and candidate enums never select the denominator. |
@@ -26476,7 +26565,10 @@ The seven changed expected/actual payloads are exactly:
   `legal_authority_verification_result`. The first value is the complete
   strict-parsed §19.2 registry, including its envelope, manifest, independent
   domain, fixed source-authenticated jurisdiction mapping, expanded
-  state-field domain, rule rows, interval partitions, counts, and digests. The expected
+  state-field domain, rule rows, interval partitions, counts, and digests.
+  Both sides recompute the exact \(M_t\), \(M_c\), and \(M_p\) value arrays,
+  their terminal-LF canonical bytes, and all three prefixed IDs before any
+  enclosing row or domain digest. The expected
   object freshly reconstructs it from authenticated sources and the actual
   object deep-copies the configured values; neither side obtains a
   denominator or expected value from the other. The registry comparison
@@ -26600,6 +26692,8 @@ no_disposition
 fact_binding_id
 joint binding
 rule_interval_partitions
+midyear_transition_id
+rule_domain_cell_id
 partition_id
 partition_overlap_evaluation_closure
 direct_law_controlling_result
@@ -27207,12 +27301,13 @@ The two lists are disjoint and their concatenation is the exact 37-name
 Amendment-5 successor identifier inventory. Existing identifiers whose
 schemas are completed in place—notably `historical_coverage_rule_specs.v1`
 and every official v1 registry—are not new names and therefore do not appear.
-The symbolic `K_x`, `E_x`, `A_x`, `G_x`, `J_p`, and `T_p` relations are
-byte-producing equations, not serialized object, schema, or predicate
-identifiers. `joint_binding_semantics.v1`, the `legal-joint-binding:` prefix,
-and `partition_overlap_evaluation_closure` are respectively an identity-
-preimage tag, an ID prefix, and a G17 payload member—not successor schema or
-predicate identifiers. They add no successor name.
+The symbolic `K_x`, `E_x`, `A_x`, `G_x`, `J_p`, and `T_p` relations and the
+\(M_t\), \(M_c\), and \(M_p\) preimage metavariables are byte-producing
+equations, not serialized object, schema, or predicate identifiers.
+`joint_binding_semantics.v1`, the `legal-joint-binding:` prefix, and
+`partition_overlap_evaluation_closure` are respectively an identity-preimage
+tag, an ID prefix, and a G17 payload member—not successor schema or predicate
+identifiers. They add no successor name.
 Member names, enum/role literals, projection paths, cross-binding literals,
 and symbolic commit names are likewise outside the inventory. An omitted,
 extra, duplicated, differently spelled, or undefined identifier blocks
@@ -27268,11 +27363,16 @@ accepted authority operand before every named predecessor passes.
    jurisdiction map; construct each legal claim's complete independent
    attachment-cell relation and affected-key projection; and then construct
    all rule rows, required/optional consequences, the rule-major
-   effective-cell relation, manifest source projection, normalized joint-
-   binding signatures, complete Cartesian `T_p` tables, and partitions.
-   Evaluate every transform on every vector before deriving each partition's
-   rank and disposition; no negative row or transition may short-circuit the
-   table.
+   effective-cell relation, every transition and cell ID from its exact six-
+   or eight-position value-array preimage, the manifest source projection,
+   provisional partition stream/interval coordinates, normalized joint-
+   binding signatures, and complete Cartesian `T_p` domains and table inputs.
+   Evaluate every transform on every vector, complete `T_p`, then derive
+   every non-ID partition field including rank, disposition, and consequences;
+   no negative row or transition may short-circuit the table. Only then form
+   the 15-position \(M_p\), compute the final partition ID, and hash the
+   enclosing partition row/domain and overlap closure. Reproduce all three ID
+   domains independently.
    Require each prepared rule claim array to exact-project its family, but
    accept no claim-spec destination from these unauthenticated rows. After
    every source byte and inventory dependency exists, the separately

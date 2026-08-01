@@ -2,7 +2,7 @@
 
 ## State
 
-Findings 1–4 are closed; finding 5 is next. The worktree starts from
+Findings 1–5 are closed; finding 6 is next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -37,11 +37,14 @@ the ratified 1,376,610-byte prefix exactly.
   all-transform evaluation rows, exact `no_disposition` and rank truth,
   G17-bound overlap closure, mandatory partition-to-claim propagation, and
   explicit claimed/claimless optional-consequence joins.
+- Closed finding 5 with exact six-, eight-, and 15-position JSON value-array
+  preimages for transition, domain-cell, and partition IDs; complete nested
+  types and null branches; terminal-LF canonical hashing; and duplicate/hash-
+  collision aborts at every direct and transitive consumer.
 
 ## Next
 
-1. Close finding 5 by freezing the three exact identity-preimage JSON
-   containers and member types.
-2. Close findings 6–10 in referee order, committing each separately.
+1. Close finding 6 by freezing the Class-A source-document denominator.
+2. Close findings 7–10 in referee order, committing each separately.
 3. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.
