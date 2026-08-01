@@ -122,7 +122,12 @@ committed evidence.
 12. **Morningstar, “WISH Granted: How a National Long-Term Services and
     Supports Insurance Program Could Boost Retirement Outcomes”**
     - URL: https://www.morningstar.com/business/insights/research/wish-act-national-ltss-insurance-program
-    - Capture: landing HTML, report PDF, and any technical/data appendix.
+    - Exact full-report PDF URL exposed by the landing page's JSON-LD:
+      https://www.morningstar.com/content/cs-assets/v3/assets/blt9415ea4cc4157833/bltbbad12f4cb956f93/68a338a0fd4281840b31bbf3/Morningstar_WISH_Act_Analysis.pdf
+    - Capture: landing HTML, the full report at that exact URL, and any
+      technical/data appendix. The JSON-LD marks the report as not freely
+      accessible; record a failed/authenticated capture explicitly if the
+      coordinator cannot preserve the bytes.
     - Establishes: published WISH adequacy effects and population/outcome
       definitions. This model currently lacks LTSS use, spend-down, retirement
       assets, and adequacy outcomes; the source is needed to document that honest
@@ -134,8 +139,10 @@ committed evidence.
       there.
     - Establishes: statutory payroll-contribution rate, covered earnings,
       effective dates, vesting, benefit eligibility, and benefit concept. This
-      is the authority for the lane's 0.3-percentage-point payroll-surtax
-      scenario; an actuarial memo is not a substitute for bill text.
+      is the authority for the lane's single-side 0.3-percentage-point
+      payroll-surtax scenario; the bill separately levies employees and
+      employers at 0.3 percent each (0.6 percent combined), and an actuarial
+      memo is not a substitute for bill text.
 
 14. **WISH actuarial memoranda by Actuarial Research Corporation (ARC) and
     Oliver Wyman**
@@ -177,3 +184,34 @@ publisher URL to immutable bytes and the document itself exposes page/table (or
 sheet/range) locators. A web summary without its underlying PDF/data attachment
 does not unblock a numeric row. No captured source authorizes population-level
 or absolute-dollar alignment claims in this lane.
+
+## 2026-08-01 REFRESH review
+
+The first staged refresh contained 30 manifested files. All 30 filenames were
+unique, and every byte length and SHA-256 matched the manifest. The reviewed
+manifest SHA-256 is
+`72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a`.
+Some entries leave `media_type` blank, so content identity is accepted by
+URL/hash/size while that manifest field remains incomplete.
+
+Captured and usable: MINT8 method/report and selected SSA MINT tables; the CBO
+2024 report and data workbooks; CBO replacement-rate and CBOLT materials;
+Favreault-Steuerle (2007); the H.R. 4289 official PDF/XML; the Morningstar WISH
+landing page; and generic Morningstar retirement-model documentation.
+
+Still needed in a later refresh:
+
+- Morningstar's full WISH report at the exact PDF URL added to item 12. The
+  staged file named `morningstar-wish-technical-appendix.pdf` is only a generic
+  July 2024 model appendix and contains no WISH analysis.
+- Any primary ARC or Oliver Wyman WISH actuarial memorandum meeting item 14's
+  identity rule. The refresh's `NOT-LOCATED.md` records that none was publicly
+  located.
+- The DYNASIM4 cohort workbook at item 10's exact URL. The publisher link
+  returned 404; do not substitute an unverified mirror.
+- Mermin (2005) at item 8's exact PDF URL and MINT6 at item 3's URL, if they can
+  be recovered from publisher-controlled bytes. Existing committed replication
+  artifacts remain the only Mermin numeric provenance in this lane.
+- Numeric SSA/ORP MINT policy-option attachments containing replacement-rate
+  or benefit/tax ratios. The captured policy-options index describes such
+  outputs, but the linked output bytes did not land.

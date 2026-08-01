@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Build the offline, ratio/share/trajectory-only validation matrix.
 
-This builder reads only committed repository bytes. It deliberately does not
-read the coordinator's external staging directory: captures become eligible
-for a later matrix revision only after they are reviewed and committed.
+At execution time this builder reads only committed repository bytes. Reviewed
+external captures are represented below by frozen source pins and extracted
+cells, so rebuilding does not depend on the coordinator's mutable staging path.
 """
 
 from __future__ import annotations
@@ -44,6 +44,163 @@ FAVREAULT_STEUERLE_URL = (
     "311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-"
     "Family.PDF"
 )
+
+CBO_60392_LONG_TERM_URL = (
+    "https://www.cbo.gov/system/files/2024-08/"
+    "60392-Long-Term-Social-Security-Projections.xlsx"
+)
+WISH_BILL_PDF_URL = (
+    "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+)
+MORNINGSTAR_WISH_REPORT_URL = (
+    "https://www.morningstar.com/content/cs-assets/v3/assets/"
+    "blt9415ea4cc4157833/bltbbad12f4cb956f93/"
+    "68a338a0fd4281840b31bbf3/Morningstar_WISH_Act_Analysis.pdf"
+)
+
+# These pins and extracted cells were reviewed from the coordinator's
+# 2026-08-01 REFRESH. The external bytes remain outside this repository; this
+# committed builder freezes everything used by the canonical output.
+REFRESH_REVIEW = {
+    "staging_manifest": {
+        "external_path": (
+            "~/PolicyEngine/psid-data/validation-sources/manifest.jsonl"
+        ),
+        "sha256": (
+            "72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a"
+        ),
+        "size_bytes": 12042,
+        "entry_count": 30,
+        "unique_filename_count": 30,
+        "all_declared_sha256_and_sizes_verified": True,
+    },
+    "not_located_record": {
+        "external_path": (
+            "~/PolicyEngine/psid-data/validation-sources/NOT-LOCATED.md"
+        ),
+        "sha256": (
+            "2c69cb5c259d5eb3c7f99d60df8ccad5e00e7cad74966f53b2db95a232a6592a"
+        ),
+        "size_bytes": 976,
+    },
+    "captures": {
+        "cbo_60392_long_term": {
+            "filename": "cbo-60392-Long-Term-Projections.xlsx",
+            "url": CBO_60392_LONG_TERM_URL,
+            "sha256": (
+                "8945d7c5599e944e5786801daf3af9ebad318b24b871198708eeff9bb6c46f7b"
+            ),
+            "size_bytes": 85665,
+        },
+        "cbo_60392_additional": {
+            "filename": "cbo-60392-Additional-Info.xlsx",
+            "url": (
+                "https://www.cbo.gov/system/files/2024-08/"
+                "60392-Additional-Info.xlsx"
+            ),
+            "sha256": (
+                "9ff92c8e54e5b873f4b7743e695773876714a23c425c3ccb0c5dbb8d0c4dc739"
+            ),
+            "size_bytes": 67661,
+        },
+        "cbo_55038_supplemental": {
+            "filename": "cbo-att-55038-SupplementalData.xlsx",
+            "url": (
+                "https://www.cbo.gov/system/files/2019-04/"
+                "55038-SupplementalData.xlsx"
+            ),
+            "sha256": (
+                "9403fe44c44b360276d9ccf21a85ef5a55d4e689020ceab715a9e33e38d8429c"
+            ),
+            "size_bytes": 6147155,
+        },
+        "cbolt_overview": {
+            "filename": "cbo-att-53667-cbolt.pdf",
+            "url": (
+                "https://www.cbo.gov/system/files/115th-congress-2017-2018/"
+                "reports/53667-cbolt.pdf"
+            ),
+            "sha256": (
+                "31447365f66ecedeaa15b2337a0f2e4688cca69ca7398922b3f9b0f9bf08d4cd"
+            ),
+            "size_bytes": 193463,
+        },
+        "mint8_report": {
+            "filename": "urban-mint8-report.pdf",
+            "url": (
+                "https://www.urban.org/sites/default/files/publication/104958/"
+                "modeling-income-in-the-near-term.pdf"
+            ),
+            "sha256": (
+                "e0da0a4f0be9e70fa675cfae6a42123bad5d4bc82392aeb9f3ce9ace97f0b77d"
+            ),
+            "size_bytes": 2281292,
+        },
+        "ssa_mint_beneficiary_tables": {
+            "filename": "ssa-mint-tables-beneficiaries.html",
+            "url": (
+                "https://www.ssa.gov/policy/docs/projections/tables/"
+                "beneficiaries.html"
+            ),
+            "sha256": (
+                "a3f6da991356045f165b6517390ab8fbdd84e1de386e2d026ab5dc2ff9009ccf"
+            ),
+            "size_bytes": 1652291,
+        },
+        "favreault_2007": {
+            "filename": "urban-favreault2007-311436.pdf",
+            "url": FAVREAULT_STEUERLE_URL,
+            "sha256": (
+                "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6"
+            ),
+            "size_bytes": 708709,
+        },
+        "wish_bill_pdf": {
+            "filename": "BILLS-117hr4289ih.pdf",
+            "url": WISH_BILL_PDF_URL,
+            "sha256": (
+                "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1"
+            ),
+            "size_bytes": 269364,
+        },
+        "morningstar_wish_landing": {
+            "filename": "morningstar-wish-landing.html",
+            "url": (
+                "https://www.morningstar.com/business/insights/research/"
+                "wish-act-national-ltss-insurance-program"
+            ),
+            "sha256": (
+                "1bd1f2a27ba56e4bca4e6c06d7b01b6f4aad72ea9914b6c5ff483e9986d54011"
+            ),
+            "size_bytes": 146083,
+        },
+        "morningstar_generic_technical_appendix": {
+            "filename": "morningstar-wish-technical-appendix.pdf",
+            "url": (
+                "https://images.mscomm.morningstar.com/Web/MorningstarInc/"
+                "%7B2a14ac78-9500-4062-b8c4-04b85dd25cfd%7D_"
+                "Morningstar_Model_of_US_Retirement_Outcomes-Technical_Appendix.pdf"
+            ),
+            "sha256": (
+                "1c350268c803b427e9e3d0d93f7b01a1d4982c1e873ba1afc28617bfa1f9aec7"
+            ),
+            "size_bytes": 111000,
+            "warning": "Generic July 2024 appendix; contains no WISH analysis.",
+        },
+    },
+    "missing_after_refresh": {
+        "morningstar_full_wish_report": {
+            "url_discovered_in_captured_landing_json_ld": MORNINGSTAR_WISH_REPORT_URL,
+            "status": "not staged; associatedMedia says isAccessibleForFree=false",
+        },
+        "wish_primary_actuarial_memoranda": (
+            "No ARC or Oliver Wyman memorandum was publicly located."
+        ),
+        "dynasim4_cohort_workbook": (
+            "Publisher workbook URL returned 404; no workbook was staged."
+        ),
+    },
+}
 
 RATIFIED_FITTING_FREE_LABELS = [
     "frame-relative",
@@ -378,6 +535,246 @@ def build_trustees_rows() -> list[dict[str, Any]]:
             }
         )
     return rows
+
+
+def cbo_workbook_locator(
+    sheet: str,
+    table: str,
+    observation_range: str,
+    definition_range: str,
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "publisher": "Congressional Budget Office",
+            "document": (
+                "CBO's 2024 Long-Term Projections for Social Security, "
+                "Long-Term Social Security Projections data workbook"
+            ),
+            "page": "not applicable (XLSX)",
+            "table": table,
+            "sheet": sheet,
+            "observation_range": observation_range,
+            "definition_or_note_range": definition_range,
+            "url": CBO_60392_LONG_TERM_URL,
+            "reviewed_external_capture": deepcopy(
+                REFRESH_REVIEW["captures"]["cbo_60392_long_term"]
+            ),
+        }
+    ]
+
+
+def build_cbo_rows() -> list[dict[str, Any]]:
+    revenue_rows = first["tables"]["revenue"]["per_draw"]
+    by_draw: dict[int, dict[int, dict[str, float]]] = {}
+    for item in revenue_rows:
+        by_draw.setdefault(item["draw_index"], {})[item["year"]] = item
+    years = list(range(2015, 2023))
+
+    our_payroll_path = []
+    for year in years:
+        indices = [
+            100.0
+            * values[year]["weighted_taxable_payroll"]
+            / values[2015]["weighted_taxable_payroll"]
+            for values in by_draw.values()
+        ]
+        our_payroll_path.append(
+            {
+                "year": year,
+                "mean_index_2015_100": statistics.mean(indices),
+                "sample_sd_across_paired_draw_indices": statistics.stdev(indices),
+            }
+        )
+
+    cbo_payroll_trillions = [
+        6.448,
+        6.639,
+        6.983,
+        7.312,
+        7.665,
+        7.717,
+        8.349,
+        9.151,
+    ]
+    cbo_payroll_path = [
+        {
+            "year": year,
+            "index_2015_100": 100.0 * value / cbo_payroll_trillions[0],
+        }
+        for year, value in zip(years, cbo_payroll_trillions)
+    ]
+    payroll_deviation = [
+        {
+            "year": year,
+            "index_points": ours["mean_index_2015_100"]
+            - published["index_2015_100"],
+        }
+        for year, ours, published in zip(
+            years, our_payroll_path, cbo_payroll_path
+        )
+    ]
+
+    our_tax_shares = []
+    for year in years:
+        shares = [
+            100.0
+            * values[year]["combined_contributions"]
+            / values[year]["weighted_taxable_payroll"]
+            for values in by_draw.values()
+        ]
+        assert max(shares) - min(shares) < 1e-12
+        assert abs(statistics.mean(shares) - 12.4) < 1e-12
+        our_tax_shares.append(
+            {
+                "year": year,
+                "mean_percent": 12.4,
+                "sample_sd_across_draws": 0.0,
+                "variation_note": "exact mechanical identity; floating noise suppressed",
+            }
+        )
+    cbo_tax_share_values = [12.82, 13.09, 13.05, 12.58, 12.80, 13.50, 12.20, 12.63]
+    cbo_tax_shares = [
+        {"year": year, "percent": value}
+        for year, value in zip(years, cbo_tax_share_values)
+    ]
+    tax_share_deviation = [
+        {
+            "year": year,
+            "percentage_points": ours["mean_percent"] - published,
+        }
+        for year, ours, published in zip(
+            years, our_tax_shares, cbo_tax_share_values
+        )
+    ]
+
+    return [
+        {
+            "row_id": "cbo.taxable_payroll.trajectory_2015_100",
+            "external_model": "CBOLT / CBO (historical actual-data segment)",
+            "quantity": "Taxable-payroll trajectory normalized to 2015",
+            "comparison_scope": ["trajectory"],
+            "our": {
+                "value": our_payroll_path,
+                "unit": "index, 2015 = 100 within each draw",
+                "label_state": label_state(True),
+                "source": source_pin(
+                    "runs/first_estimates_v1.json", "/tables/revenue/per_draw"
+                ),
+                "formula": (
+                    "100 * weighted_taxable_payroll(year) / "
+                    "weighted_taxable_payroll(2015), paired within draw"
+                ),
+            },
+            "published": {
+                "value": cbo_payroll_path,
+                "unit": "index, 2015 = 100",
+                "underlying_published_values_withheld_from_comparison": (
+                    "Dollar levels are retained only as frozen extraction inputs "
+                    "to calculate the allowed index; they are not reported as a comparison."
+                ),
+                "source_locators": cbo_workbook_locator(
+                    "2",
+                    "Taxable payroll, title A6; headers A9:C9",
+                    "A40:C47 (calendar years 2015-2022)",
+                    "A127 (actual-data note)",
+                ),
+            },
+            "deviation": {
+                "signed_index_points": payroll_deviation,
+                "definition": "ours 2015-index minus published 2015-index",
+            },
+            "concept_mismatch": {
+                "frame": (
+                    "Our path is an unaligned, frame-relative taxable-payroll "
+                    "proxy; CBO's path is national OASDI taxable payroll."
+                ),
+                "population": (
+                    "Our closed PSID reproduction panel and survey weights do "
+                    "not represent CBO's national covered-worker population."
+                ),
+                "year_basis": (
+                    "Both paths cover calendar years 2015-2022, but our odd "
+                    "years carry prior even-wave earnings; CBO marks these cells "
+                    "as actual data rather than CBOLT projections."
+                ),
+                "benefit_concept": "Not a benefit measure.",
+                "earnings_and_accounting": (
+                    "Our capped labor-income proxy is not employer-reported "
+                    "wages and self-employment income under CBO's taxable-payroll accounting."
+                ),
+                "mismatch_codes": [
+                    "unaligned_proxy_vs_national_taxable_payroll",
+                    "closed_psid_panel_vs_national_covered_workers",
+                    "odd_year_carry_vs_annual_administrative_data",
+                    "cbo_overlap_is_actual_data_not_projection",
+                ],
+            },
+            "evidential_status": (
+                "scale-free historical trajectory context; no level or population alignment"
+            ),
+        },
+        {
+            "row_id": "cbo.tax_revenue.share_of_taxable_payroll",
+            "external_model": "CBOLT / CBO (historical actual-data segment)",
+            "quantity": "Social Security tax revenues as a share of taxable payroll",
+            "comparison_scope": ["share", "trajectory"],
+            "our": {
+                "value": our_tax_shares,
+                "unit": "percent of frame-relative proxy taxable payroll",
+                "label_state": label_state(True),
+                "source": source_pin(
+                    "runs/first_estimates_v1.json", "/tables/revenue/per_draw"
+                ),
+                "formula": "100 * combined_contributions / weighted_taxable_payroll",
+            },
+            "published": {
+                "value": cbo_tax_shares,
+                "unit": "percent of national taxable payroll",
+                "source_locators": cbo_workbook_locator(
+                    "1",
+                    "Social Security tax revenues as a percentage of taxable payroll",
+                    "A40:D47 (calendar years 2015-2022)",
+                    "A129 (tax-revenue definition)",
+                ),
+            },
+            "deviation": {
+                "signed_percentage_points": tax_share_deviation,
+                "definition": "ours minus published, in percentage points",
+            },
+            "concept_mismatch": {
+                "frame": (
+                    "Our denominator is unaligned frame-relative proxy payroll; "
+                    "CBO's denominator is national OASDI taxable payroll."
+                ),
+                "population": (
+                    "Our closed PSID reproduction panel differs from CBO's "
+                    "national covered-worker and beneficiary populations."
+                ),
+                "year_basis": (
+                    "Both cover calendar 2015-2022, with odd-year earnings carry "
+                    "on our side and CBO actual-data accounting on the published side."
+                ),
+                "benefit_concept": (
+                    "Our numerator has no benefit component; CBO tax revenues "
+                    "include federal income taxes paid on Social Security benefits."
+                ),
+                "earnings_and_accounting": (
+                    "Our 12.4% value is mechanical employee-plus-employer "
+                    "contribution arithmetic. CBO total tax revenue combines "
+                    "payroll taxes with income taxes on benefits and is not a statutory-rate check."
+                ),
+                "mismatch_codes": [
+                    "mechanical_contributions_vs_total_tax_revenue",
+                    "income_tax_on_benefits_absent_from_ours",
+                    "unaligned_proxy_vs_national_taxable_payroll",
+                    "odd_year_carry_vs_annual_administrative_data",
+                ],
+            },
+            "evidential_status": (
+                "qualified share context; numerator concepts differ; no level alignment"
+            ),
+        },
+    ]
 
 
 def mermin_locator(table: str, pdf_page: int) -> list[dict[str, Any]]:
@@ -767,9 +1164,12 @@ def sharing_locator() -> list[dict[str, Any]]:
                 "Survivor Benefits for the Modern Family, report 311436, "
                 "DYNASIM3 runid 440v2"
             ),
-            "page": {"pdf": "29-30", "printed": "19-20"},
+            "page": {"pdf": 30, "printed": 20},
             "table": "Table 3",
             "url": FAVREAULT_STEUERLE_URL,
+            "reviewed_external_capture": deepcopy(
+                REFRESH_REVIEW["captures"]["favreault_2007"]
+            ),
         }
     ]
 
@@ -882,6 +1282,28 @@ def build_ordering_row() -> dict[str, Any]:
     }
 
 
+def wish_bill_locator(
+    page: int, section: str, provision: str
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "publisher": "United States Congress",
+            "document": (
+                "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors "
+                "to be at Home Act, introduced text (H.R. 4289 IH)"
+            ),
+            "page": {"pdf": page, "printed": page},
+            "table": "not applicable (statutory text)",
+            "section": section,
+            "provision": provision,
+            "url": WISH_BILL_PDF_URL,
+            "reviewed_external_capture": deepcopy(
+                REFRESH_REVIEW["captures"]["wish_bill_pdf"]
+            ),
+        }
+    ]
+
+
 def wish_financing_stub() -> dict[str, Any]:
     payroll_rows = first["tables"]["revenue"]["per_draw"]
     by_draw: dict[int, dict[int, float]] = {}
@@ -917,8 +1339,10 @@ def wish_financing_stub() -> dict[str, Any]:
             }
         )
     return {
-        "status": "blocked_published_side_not_in_committed_bytes",
-        "quantity": "Mechanical 0.3-percentage-point payroll surtax",
+        "status": (
+            "statutory_parameter_captured; actuarial_trajectory_and_adequacy_blocked"
+        ),
+        "quantity": "Mechanical single-side 0.3-percentage-point payroll surtax",
         "our": {
             "share_of_proxy_payroll": 0.003,
             "share_of_proxy_payroll_percent": 0.3,
@@ -926,17 +1350,40 @@ def wish_financing_stub() -> dict[str, Any]:
             "annual_relative_trajectory": annual,
             "odd_year_carry_aware_biennial_relative_trajectory": biennial,
             "absolute_revenue_levels_published": False,
+            "trajectory_interpretation": (
+                "A 0.003-times-proxy-payroll base index, not a policy-effective "
+                "revenue forecast. The bill applies after 2021, so only 2022 "
+                "overlaps the certified artifact's calendar span."
+            ),
             "label_state": label_state(True),
             "source": source_pin(
                 "runs/first_estimates_v1.json", "/tables/revenue/per_draw"
             ),
             "formula": "0.003 * weighted_taxable_payroll; trajectory normalized within draw",
         },
-        "published": None,
+        "published": {
+            "employee_rate_percent": 0.3,
+            "employer_rate_percent": 0.3,
+            "combined_wage_rate_percent": 0.6,
+            "self_employment_rate_percent": 0.6,
+            "effective_period": "wages received/paid after 2021",
+            "source_locators": [
+                *wish_bill_locator(
+                    17,
+                    "§5(a)(1)-(2)",
+                    "employee and separate employer applicable percentages",
+                ),
+                *wish_bill_locator(
+                    18,
+                    "§5(a)(3)",
+                    "self-employment applicable percentage",
+                ),
+            ],
+            "actuarial_revenue_or_cost_trajectory": None,
+        },
         "source_needed": [
-            "WISH Act statutory text",
             "primary ARC/Oliver Wyman actuarial memorandum",
-            "Morningstar WISH report",
+            f"Morningstar full WISH report: {MORNINGSTAR_WISH_REPORT_URL}",
         ],
         "concept_mismatch": {
             "frame": (
@@ -956,10 +1403,83 @@ def wish_financing_stub() -> dict[str, Any]:
                 "spend-down, adequacy, trust-fund, or program-cost model."
             ),
             "earnings_and_accounting": (
-                "Multiplying proxy payroll by 0.003 is mechanical arithmetic, not "
-                "an actuarial revenue, solvency, behavioral, or financing-sufficiency estimate."
+                "Multiplying proxy payroll by 0.003 is one statutory wage-tax "
+                "side only. The bill separately imposes 0.3% on employers (0.6% "
+                "combined, and 0.6% for self-employment), so this requested path "
+                "is not total revenue or an actuarial solvency/sufficiency estimate."
             ),
         },
+    }
+
+
+def build_wish_parameter_row() -> dict[str, Any]:
+    return {
+        "row_id": "wish.hr4289.employee_rate.share_of_payroll",
+        "external_model": "WISH Act statutory text (not an actuarial model)",
+        "quantity": "Single-side WISH employee payroll-tax rate",
+        "comparison_scope": ["share"],
+        "our": {
+            "value": 0.3,
+            "unit": "percent of frame-relative proxy taxable payroll",
+            "label_state": label_state(True),
+            "source": source_pin(
+                "runs/first_estimates_v1.json", "/tables/revenue/per_draw"
+            ),
+            "formula": "100 * (0.003 * weighted_taxable_payroll) / weighted_taxable_payroll",
+            "provenance_status": "mechanical single-side parameter check only",
+        },
+        "published": {
+            "value": 0.3,
+            "unit": "percent of IRC §3121(a) wages received after 2021",
+            "companion_parameters": {
+                "separate_employer_rate_percent": 0.3,
+                "combined_employee_employer_rate_percent": 0.6,
+                "self_employment_rate_percent": 0.6,
+            },
+            "source_locators": wish_bill_locator(
+                17,
+                "§5(a)(1)-(2)",
+                "employee rate and separate employer rate after 2021",
+            ),
+        },
+        "deviation": {
+            "signed_percentage_points": 0.0,
+            "our_over_published_ratio": 1.0,
+            "definition": "ours minus published employee-side rate",
+        },
+        "concept_mismatch": {
+            "frame": (
+                "Our denominator is an unaligned frame-relative labor-income "
+                "proxy; the bill applies nationally to IRC §3121(a) wages."
+            ),
+            "population": (
+                "Our closed 2015-2022 PSID reproduction panel is not the national "
+                "employee population subject to the proposed tax."
+            ),
+            "year_basis": (
+                "The scalar parameter matches, but the bill applies after 2021; "
+                "only 2022 overlaps our artifact and no published revenue path exists."
+            ),
+            "benefit_concept": (
+                "The bill finances a new LTSS benefit; our artifact models only "
+                "own-record Social Security retirement benefits and no LTSS outcome."
+            ),
+            "earnings_and_accounting": (
+                "The requested 0.003 calculation represents only the employee "
+                "side. The bill separately levies employers at 0.3% and self-employment "
+                "at 0.6%; this row is not a total-financing or actuarial check."
+            ),
+            "mismatch_codes": [
+                "proxy_payroll_vs_irc_3121a_wages",
+                "closed_panel_vs_national_tax_base",
+                "single_side_vs_combined_financing",
+                "no_actuarial_revenue_or_cost_projection",
+                "no_ltss_benefit_model",
+            ],
+        },
+        "evidential_status": (
+            "statutory single-side parameter identity; not actuarial validation"
+        ),
     }
 
 
@@ -1054,22 +1574,114 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
             "external_model": "MINT",
             "status": "blocked",
             "reason": (
-                "Published MINT table bytes are not committed, and first_estimates "
-                "publishes neither lifetime-earnings denominators nor replacement-rate distributions."
+                "The REFRESH supplies published MINT quantities, but first_estimates "
+                "publishes no birth-cohort or age-67 cut, AWI or household-income "
+                "denominator, benefit percentile, claiming-age distribution, or "
+                "lifetime-earnings replacement-rate distribution."
             ),
             "our_support": "not available in comparable concept",
-            "published_support": "capture requested",
+            "published_support": (
+                "MINT8 report and SSA MINT8.23 beneficiary tables captured and reviewed"
+            ),
+            "published_examples_not_promoted_to_rows": [
+                {
+                    "quantity": (
+                        "Average per-capita Social Security income relative to "
+                        "average wage at age 67"
+                    ),
+                    "cohorts": [
+                        "1936-39",
+                        "1940-49",
+                        "1950-59",
+                        "1960-69",
+                        "1970-79",
+                        "1980-89",
+                        "1990-99",
+                        "2000-09",
+                        "2010-19",
+                        "2020-29",
+                        "2030-32",
+                    ],
+                    "published_values": [
+                        0.26,
+                        0.28,
+                        0.25,
+                        0.21,
+                        0.20,
+                        0.19,
+                        0.19,
+                        0.19,
+                        0.20,
+                        0.20,
+                        0.21,
+                    ],
+                    "locator": {
+                        "document": "Urban Institute MINT8 Final Report",
+                        "page": {"pdf": 16},
+                        "table": "Figure 4",
+                        "reviewed_external_capture": deepcopy(
+                            REFRESH_REVIEW["captures"]["mint8_report"]
+                        ),
+                    },
+                },
+                {
+                    "quantity": (
+                        "Mean household-income share from Social Security, all "
+                        "current-law beneficiaries age 60 or older"
+                    ),
+                    "years": [2024, 2030, 2050, 2070],
+                    "published_percent": [42, 43, 48, 50],
+                    "locator": {
+                        "document": "SSA Projected Profile of Beneficiaries",
+                        "page": "not applicable (HTML)",
+                        "table": (
+                            "tableIncome2024, tableIncome2030, tableIncome2050, "
+                            "tableIncome2070; All beneficiaries > Total"
+                        ),
+                        "reviewed_external_capture": deepcopy(
+                            REFRESH_REVIEW["captures"]["ssa_mint_beneficiary_tables"]
+                        ),
+                    },
+                },
+            ],
         },
         {
-            "comparison_id": "cbo.long_term_social_security",
+            "comparison_id": "cbo.cohort_lifetime_and_fiscal_outputs",
             "external_model": "CBOLT / CBO",
             "status": "blocked",
             "reason": (
-                "CBO report/data bytes are not committed; the certified artifact "
-                "ends in 2022 and has no trust-fund, GDP, actuarial-balance, or depletion series."
+                "Two overlapping 2015-2022 share/trajectory rows are built, but "
+                "the certified artifact has no cohort replacement rates, lifetime "
+                "benefit/tax accumulation, age-65 present values, household-earnings "
+                "quintiles, trust-fund, GDP, actuarial-balance, or depletion series."
             ),
-            "our_support": "not available beyond short normalized trajectory analogues",
-            "published_support": "capture requested",
+            "our_support": (
+                "taxable-payroll trajectory and contribution/payroll share only"
+            ),
+            "published_support": (
+                "2024 report and data workbooks captured; unsupported tables have exact locators"
+            ),
+            "published_examples_not_promoted_to_rows": [
+                {
+                    "quantity": "Initial replacement rates",
+                    "locator": (
+                        "cbo-60392-Long-Term-Projections.xlsx sheet 10, all "
+                        "workers A14:R18, men A20:R24, women A26:R30, definitions A34:A38"
+                    ),
+                },
+                {
+                    "quantity": "Retired-worker lifetime benefits relative to earnings",
+                    "locator": (
+                        "same workbook sheet 11, A14:R30, definitions A34:A38"
+                    ),
+                },
+                {
+                    "quantity": "Lifetime benefit-to-tax ratios",
+                    "locator": (
+                        "same workbook sheet 14, A12:I46, definitions A50:A54"
+                    ),
+                },
+            ],
         },
         {
             "comparison_id": "dynasim.lifetime_benefit_tax_and_cohort_tables",
@@ -1080,30 +1692,83 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
                 "post-2022 survival path, or comparable cohort/quintile output."
             ),
             "our_support": "not available in comparable concept",
-            "published_support": "capture requested",
+            "published_support": (
+                "Favreault-Steuerle Table 4 captured; DYNASIM4 workbook remains 404"
+            ),
+            "published_examples_not_promoted_to_rows": [
+                {
+                    "quantity": "Lifetime benefits / payroll taxes by married cohort",
+                    "locator": {
+                        "document": (
+                            "Favreault and Steuerle (2007), Social Security Spouse "
+                            "and Survivor Benefits for the Modern Family"
+                        ),
+                        "page": {"pdf": 33, "printed": 23},
+                        "table": "Table 4",
+                        "reviewed_external_capture": deepcopy(
+                            REFRESH_REVIEW["captures"]["favreault_2007"]
+                        ),
+                    },
+                }
+            ],
         },
         {
             "comparison_id": "wish.financing_and_adequacy",
             "external_model": "WISH actuaries / Morningstar",
             "status": "blocked",
-            "reason": wish["status"],
-            "our_support": (
-                "0.3% share and 2015-2022 proxy-payroll relative trajectory only"
+            "reason": (
+                "No ARC/Oliver Wyman memorandum is present. The full Morningstar "
+                "WISH report identified by the captured landing page is not staged; "
+                "the staged technical appendix is generic and contains no WISH analysis. "
+                "The unpaginated webpage summary cannot supply a page/table-level "
+                "actuarial revenue, cost, balance, sufficiency, or adequacy row."
             ),
-            "published_support": "primary actuarial and Morningstar captures requested",
+            "our_support": (
+                "single-side 0.3% identity and 2015-2022 proxy-payroll base trajectory only"
+            ),
+            "published_support": (
+                "bill parameter and Morningstar summary captured; primary actuarial "
+                "memo and paginated Morningstar WISH report absent"
+            ),
+            "published_examples_not_promoted_to_rows": [
+                {
+                    "quantity": (
+                        "Retirement-shortfall rates among households projected "
+                        "to qualify for WISH benefits"
+                    ),
+                    "published_values": {
+                        "single_women_percent": {"without": 58, "with": 28},
+                        "single_men_percent": {"without": 34, "with": 16},
+                    },
+                    "locator": {
+                        "document": "Morningstar WISH Granted landing page",
+                        "page": "not applicable (unpaginated HTML)",
+                        "table": "Key Findings, first bullet",
+                        "reviewed_external_capture": deepcopy(
+                            REFRESH_REVIEW["captures"]["morningstar_wish_landing"]
+                        ),
+                    },
+                    "warning": (
+                        "Notes-only: full report/table absent and our artifact "
+                        "has no retirement-shortfall or LTSS model."
+                    ),
+                }
+            ],
         },
     ]
 
 
 rows: list[dict[str, Any]] = []
 rows.extend(build_trustees_rows())
+rows.extend(build_cbo_rows())
 rows.extend(build_ppi_rows())
 rows.extend(build_mermin_remaining_rows())
 rows.extend(build_sharing_rows())
 rows.append(build_ordering_row())
 wish = wish_financing_stub()
+rows.append(build_wish_parameter_row())
 
-assert len(rows) == 39
+assert len(rows) == 42
 assert len({row["row_id"] for row in rows}) == len(rows)
 for row in rows:
     assert row["our"]["label_state"]["population_alignment_claim"] is False
@@ -1115,7 +1780,8 @@ matrix = {
     "canonicalization": "UTF-8, sorted keys, indent=2, allow_nan=false, one trailing newline",
     "purpose": (
         "Frame-relative comparison of ratios, shares, trajectories, and orderings "
-        "against published SSA and DYNASIM quantities; never national dollar levels"
+        "against published SSA, CBO, DYNASIM, and WISH statutory quantities; "
+        "never national dollar levels"
     ),
     "honesty_frame": {
         "allowed_comparison_scopes": ["ratio", "share", "trajectory", "ordering"],
@@ -1137,6 +1803,7 @@ matrix = {
     "inputs": [
         {"path": relative, "sha256": sha256(relative)} for relative in INPUT_PATHS
     ],
+    "external_capture_review": REFRESH_REVIEW,
     "available_series_inventory": available_series_inventory(),
     "certification_context": {
         "entry8_first_estimates": {

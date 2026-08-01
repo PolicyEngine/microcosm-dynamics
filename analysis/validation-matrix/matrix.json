@@ -432,32 +432,162 @@
       "comparison_id": "mint.replacement_rates_and_distribution",
       "external_model": "MINT",
       "our_support": "not available in comparable concept",
-      "published_support": "capture requested",
-      "reason": "Published MINT table bytes are not committed, and first_estimates publishes neither lifetime-earnings denominators nor replacement-rate distributions.",
+      "published_examples_not_promoted_to_rows": [
+        {
+          "cohorts": [
+            "1936-39",
+            "1940-49",
+            "1950-59",
+            "1960-69",
+            "1970-79",
+            "1980-89",
+            "1990-99",
+            "2000-09",
+            "2010-19",
+            "2020-29",
+            "2030-32"
+          ],
+          "locator": {
+            "document": "Urban Institute MINT8 Final Report",
+            "page": {
+              "pdf": 16
+            },
+            "reviewed_external_capture": {
+              "filename": "urban-mint8-report.pdf",
+              "sha256": "e0da0a4f0be9e70fa675cfae6a42123bad5d4bc82392aeb9f3ce9ace97f0b77d",
+              "size_bytes": 2281292,
+              "url": "https://www.urban.org/sites/default/files/publication/104958/modeling-income-in-the-near-term.pdf"
+            },
+            "table": "Figure 4"
+          },
+          "published_values": [
+            0.26,
+            0.28,
+            0.25,
+            0.21,
+            0.2,
+            0.19,
+            0.19,
+            0.19,
+            0.2,
+            0.2,
+            0.21
+          ],
+          "quantity": "Average per-capita Social Security income relative to average wage at age 67"
+        },
+        {
+          "locator": {
+            "document": "SSA Projected Profile of Beneficiaries",
+            "page": "not applicable (HTML)",
+            "reviewed_external_capture": {
+              "filename": "ssa-mint-tables-beneficiaries.html",
+              "sha256": "a3f6da991356045f165b6517390ab8fbdd84e1de386e2d026ab5dc2ff9009ccf",
+              "size_bytes": 1652291,
+              "url": "https://www.ssa.gov/policy/docs/projections/tables/beneficiaries.html"
+            },
+            "table": "tableIncome2024, tableIncome2030, tableIncome2050, tableIncome2070; All beneficiaries > Total"
+          },
+          "published_percent": [
+            42,
+            43,
+            48,
+            50
+          ],
+          "quantity": "Mean household-income share from Social Security, all current-law beneficiaries age 60 or older",
+          "years": [
+            2024,
+            2030,
+            2050,
+            2070
+          ]
+        }
+      ],
+      "published_support": "MINT8 report and SSA MINT8.23 beneficiary tables captured and reviewed",
+      "reason": "The REFRESH supplies published MINT quantities, but first_estimates publishes no birth-cohort or age-67 cut, AWI or household-income denominator, benefit percentile, claiming-age distribution, or lifetime-earnings replacement-rate distribution.",
       "status": "blocked"
     },
     {
-      "comparison_id": "cbo.long_term_social_security",
+      "comparison_id": "cbo.cohort_lifetime_and_fiscal_outputs",
       "external_model": "CBOLT / CBO",
-      "our_support": "not available beyond short normalized trajectory analogues",
-      "published_support": "capture requested",
-      "reason": "CBO report/data bytes are not committed; the certified artifact ends in 2022 and has no trust-fund, GDP, actuarial-balance, or depletion series.",
+      "our_support": "taxable-payroll trajectory and contribution/payroll share only",
+      "published_examples_not_promoted_to_rows": [
+        {
+          "locator": "cbo-60392-Long-Term-Projections.xlsx sheet 10, all workers A14:R18, men A20:R24, women A26:R30, definitions A34:A38",
+          "quantity": "Initial replacement rates"
+        },
+        {
+          "locator": "same workbook sheet 11, A14:R30, definitions A34:A38",
+          "quantity": "Retired-worker lifetime benefits relative to earnings"
+        },
+        {
+          "locator": "same workbook sheet 14, A12:I46, definitions A50:A54",
+          "quantity": "Lifetime benefit-to-tax ratios"
+        }
+      ],
+      "published_support": "2024 report and data workbooks captured; unsupported tables have exact locators",
+      "reason": "Two overlapping 2015-2022 share/trajectory rows are built, but the certified artifact has no cohort replacement rates, lifetime benefit/tax accumulation, age-65 present values, household-earnings quintiles, trust-fund, GDP, actuarial-balance, or depletion series.",
       "status": "blocked"
     },
     {
       "comparison_id": "dynasim.lifetime_benefit_tax_and_cohort_tables",
       "external_model": "DYNASIM",
       "our_support": "not available in comparable concept",
-      "published_support": "capture requested",
+      "published_examples_not_promoted_to_rows": [
+        {
+          "locator": {
+            "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family",
+            "page": {
+              "pdf": 33,
+              "printed": 23
+            },
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
+            "table": "Table 4"
+          },
+          "quantity": "Lifetime benefits / payroll taxes by married cohort"
+        }
+      ],
+      "published_support": "Favreault-Steuerle Table 4 captured; DYNASIM4 workbook remains 404",
       "reason": "The entry-8 artifact has no lifetime accumulation, discounting, post-2022 survival path, or comparable cohort/quintile output.",
       "status": "blocked"
     },
     {
       "comparison_id": "wish.financing_and_adequacy",
       "external_model": "WISH actuaries / Morningstar",
-      "our_support": "0.3% share and 2015-2022 proxy-payroll relative trajectory only",
-      "published_support": "primary actuarial and Morningstar captures requested",
-      "reason": "blocked_published_side_not_in_committed_bytes",
+      "our_support": "single-side 0.3% identity and 2015-2022 proxy-payroll base trajectory only",
+      "published_examples_not_promoted_to_rows": [
+        {
+          "locator": {
+            "document": "Morningstar WISH Granted landing page",
+            "page": "not applicable (unpaginated HTML)",
+            "reviewed_external_capture": {
+              "filename": "morningstar-wish-landing.html",
+              "sha256": "1bd1f2a27ba56e4bca4e6c06d7b01b6f4aad72ea9914b6c5ff483e9986d54011",
+              "size_bytes": 146083,
+              "url": "https://www.morningstar.com/business/insights/research/wish-act-national-ltss-insurance-program"
+            },
+            "table": "Key Findings, first bullet"
+          },
+          "published_values": {
+            "single_men_percent": {
+              "with": 16,
+              "without": 34
+            },
+            "single_women_percent": {
+              "with": 28,
+              "without": 58
+            }
+          },
+          "quantity": "Retirement-shortfall rates among households projected to qualify for WISH benefits",
+          "warning": "Notes-only: full report/table absent and our artifact has no retirement-shortfall or LTSS model."
+        }
+      ],
+      "published_support": "bill parameter and Morningstar summary captured; primary actuarial memo and paginated Morningstar WISH report absent",
+      "reason": "No ARC/Oliver Wyman memorandum is present. The full Morningstar WISH report identified by the captured landing page is not staged; the staged technical appendix is generic and contains no WISH analysis. The unpaginated webpage summary cannot supply a page/table-level actuarial revenue, cost, balance, sufficiency, or adequacy row.",
       "status": "blocked"
     }
   ],
@@ -558,6 +688,92 @@
       "warning": "PPI generated rows use this backward-law generator and are reported-not-gated module replications; M6 certification does not transfer."
     }
   },
+  "external_capture_review": {
+    "captures": {
+      "cbo_55038_supplemental": {
+        "filename": "cbo-att-55038-SupplementalData.xlsx",
+        "sha256": "9403fe44c44b360276d9ccf21a85ef5a55d4e689020ceab715a9e33e38d8429c",
+        "size_bytes": 6147155,
+        "url": "https://www.cbo.gov/system/files/2019-04/55038-SupplementalData.xlsx"
+      },
+      "cbo_60392_additional": {
+        "filename": "cbo-60392-Additional-Info.xlsx",
+        "sha256": "9ff92c8e54e5b873f4b7743e695773876714a23c425c3ccb0c5dbb8d0c4dc739",
+        "size_bytes": 67661,
+        "url": "https://www.cbo.gov/system/files/2024-08/60392-Additional-Info.xlsx"
+      },
+      "cbo_60392_long_term": {
+        "filename": "cbo-60392-Long-Term-Projections.xlsx",
+        "sha256": "8945d7c5599e944e5786801daf3af9ebad318b24b871198708eeff9bb6c46f7b",
+        "size_bytes": 85665,
+        "url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx"
+      },
+      "cbolt_overview": {
+        "filename": "cbo-att-53667-cbolt.pdf",
+        "sha256": "31447365f66ecedeaa15b2337a0f2e4688cca69ca7398922b3f9b0f9bf08d4cd",
+        "size_bytes": 193463,
+        "url": "https://www.cbo.gov/system/files/115th-congress-2017-2018/reports/53667-cbolt.pdf"
+      },
+      "favreault_2007": {
+        "filename": "urban-favreault2007-311436.pdf",
+        "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+        "size_bytes": 708709,
+        "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+      },
+      "mint8_report": {
+        "filename": "urban-mint8-report.pdf",
+        "sha256": "e0da0a4f0be9e70fa675cfae6a42123bad5d4bc82392aeb9f3ce9ace97f0b77d",
+        "size_bytes": 2281292,
+        "url": "https://www.urban.org/sites/default/files/publication/104958/modeling-income-in-the-near-term.pdf"
+      },
+      "morningstar_generic_technical_appendix": {
+        "filename": "morningstar-wish-technical-appendix.pdf",
+        "sha256": "1c350268c803b427e9e3d0d93f7b01a1d4982c1e873ba1afc28617bfa1f9aec7",
+        "size_bytes": 111000,
+        "url": "https://images.mscomm.morningstar.com/Web/MorningstarInc/%7B2a14ac78-9500-4062-b8c4-04b85dd25cfd%7D_Morningstar_Model_of_US_Retirement_Outcomes-Technical_Appendix.pdf",
+        "warning": "Generic July 2024 appendix; contains no WISH analysis."
+      },
+      "morningstar_wish_landing": {
+        "filename": "morningstar-wish-landing.html",
+        "sha256": "1bd1f2a27ba56e4bca4e6c06d7b01b6f4aad72ea9914b6c5ff483e9986d54011",
+        "size_bytes": 146083,
+        "url": "https://www.morningstar.com/business/insights/research/wish-act-national-ltss-insurance-program"
+      },
+      "ssa_mint_beneficiary_tables": {
+        "filename": "ssa-mint-tables-beneficiaries.html",
+        "sha256": "a3f6da991356045f165b6517390ab8fbdd84e1de386e2d026ab5dc2ff9009ccf",
+        "size_bytes": 1652291,
+        "url": "https://www.ssa.gov/policy/docs/projections/tables/beneficiaries.html"
+      },
+      "wish_bill_pdf": {
+        "filename": "BILLS-117hr4289ih.pdf",
+        "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+        "size_bytes": 269364,
+        "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+      }
+    },
+    "missing_after_refresh": {
+      "dynasim4_cohort_workbook": "Publisher workbook URL returned 404; no workbook was staged.",
+      "morningstar_full_wish_report": {
+        "status": "not staged; associatedMedia says isAccessibleForFree=false",
+        "url_discovered_in_captured_landing_json_ld": "https://www.morningstar.com/content/cs-assets/v3/assets/blt9415ea4cc4157833/bltbbad12f4cb956f93/68a338a0fd4281840b31bbf3/Morningstar_WISH_Act_Analysis.pdf"
+      },
+      "wish_primary_actuarial_memoranda": "No ARC or Oliver Wyman memorandum was publicly located."
+    },
+    "not_located_record": {
+      "external_path": "~/PolicyEngine/psid-data/validation-sources/NOT-LOCATED.md",
+      "sha256": "2c69cb5c259d5eb3c7f99d60df8ccad5e00e7cad74966f53b2db95a232a6592a",
+      "size_bytes": 976
+    },
+    "staging_manifest": {
+      "all_declared_sha256_and_sizes_verified": true,
+      "entry_count": 30,
+      "external_path": "~/PolicyEngine/psid-data/validation-sources/manifest.jsonl",
+      "sha256": "72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a",
+      "size_bytes": 12042,
+      "unique_filename_count": 30
+    }
+  },
   "honest_gaps": [
     "No population-aligned or national-dollar comparison is supported.",
     "No certified series extends beyond 2022.",
@@ -641,8 +857,8 @@
       "sha256": "58da13e0409e81b92dc656a082e86a5176ebaceffad663ec531c8e92cc0825dc"
     }
   ],
-  "purpose": "Frame-relative comparison of ratios, shares, trajectories, and orderings against published SSA and DYNASIM quantities; never national dollar levels",
-  "row_count": 39,
+  "purpose": "Frame-relative comparison of ratios, shares, trajectories, and orderings against published SSA, CBO, DYNASIM, and WISH statutory quantities; never national dollar levels",
+  "row_count": 42,
   "rows": [
     {
       "comparison_scope": [
@@ -2958,6 +3174,382 @@
     },
     {
       "comparison_scope": [
+        "trajectory"
+      ],
+      "concept_mismatch": {
+        "benefit_concept": "Not a benefit measure.",
+        "earnings_and_accounting": "Our capped labor-income proxy is not employer-reported wages and self-employment income under CBO's taxable-payroll accounting.",
+        "frame": "Our path is an unaligned, frame-relative taxable-payroll proxy; CBO's path is national OASDI taxable payroll.",
+        "mismatch_codes": [
+          "unaligned_proxy_vs_national_taxable_payroll",
+          "closed_psid_panel_vs_national_covered_workers",
+          "odd_year_carry_vs_annual_administrative_data",
+          "cbo_overlap_is_actual_data_not_projection"
+        ],
+        "population": "Our closed PSID reproduction panel and survey weights do not represent CBO's national covered-worker population.",
+        "year_basis": "Both paths cover calendar years 2015-2022, but our odd years carry prior even-wave earnings; CBO marks these cells as actual data rather than CBOLT projections."
+      },
+      "deviation": {
+        "definition": "ours 2015-index minus published 2015-index",
+        "signed_index_points": [
+          {
+            "index_points": 0.0,
+            "year": 2015
+          },
+          {
+            "index_points": 2.2373853223082847,
+            "year": 2016
+          },
+          {
+            "index_points": -1.9103514689221157,
+            "year": 2017
+          },
+          {
+            "index_points": -5.113385756113772,
+            "year": 2018
+          },
+          {
+            "index_points": -10.378818577627328,
+            "year": 2019
+          },
+          {
+            "index_points": -9.469553679298045,
+            "year": 2020
+          },
+          {
+            "index_points": -18.96132545697901,
+            "year": 2021
+          },
+          {
+            "index_points": -29.98000532281398,
+            "year": 2022
+          }
+        ]
+      },
+      "evidential_status": "scale-free historical trajectory context; no level or population alignment",
+      "external_model": "CBOLT / CBO (historical actual-data segment)",
+      "our": {
+        "formula": "100 * weighted_taxable_payroll(year) / weighted_taxable_payroll(2015), paired within draw",
+        "label_state": {
+          "individual_administrative_truth_claim": false,
+          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+          "population_alignment_claim": false,
+          "ratified_array_activation_asserted_by_this_matrix": false,
+          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+          "ratified_fitting_free_exact_label_array": [
+            "frame-relative",
+            "modeled-covered-earnings",
+            "deterministic-uncalibrated"
+          ],
+          "source_artifact_embedded_labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "source_artifact_label_note": "The entry-8 and entry-10 artifacts embed the legacy proxy array."
+        },
+        "source": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "unit": "index, 2015 = 100 within each draw",
+        "value": [
+          {
+            "mean_index_2015_100": 100.0,
+            "sample_sd_across_paired_draw_indices": 0.0,
+            "year": 2015
+          },
+          {
+            "mean_index_2015_100": 105.19954413124128,
+            "sample_sd_across_paired_draw_indices": 0.5179529633277515,
+            "year": 2016
+          },
+          {
+            "mean_index_2015_100": 106.38679493306299,
+            "sample_sd_across_paired_draw_indices": 0.5435702703634464,
+            "year": 2017
+          },
+          {
+            "mean_index_2015_100": 108.28611796597059,
+            "sample_sd_across_paired_draw_indices": 0.8241003364258447,
+            "year": 2018
+          },
+          {
+            "mean_index_2015_100": 108.49525090128085,
+            "sample_sd_across_paired_draw_indices": 0.8733787909789367,
+            "year": 2019
+          },
+          {
+            "mean_index_2015_100": 110.21096741251336,
+            "sample_sd_across_paired_draw_indices": 0.6961706898450399,
+            "year": 2020
+          },
+          {
+            "mean_index_2015_100": 110.52068446857928,
+            "sample_sd_across_paired_draw_indices": 0.768069437095101,
+            "year": 2021
+          },
+          {
+            "mean_index_2015_100": 111.93996986329023,
+            "sample_sd_across_paired_draw_indices": 0.6977539477969879,
+            "year": 2022
+          }
+        ]
+      },
+      "published": {
+        "source_locators": [
+          {
+            "definition_or_note_range": "A127 (actual-data note)",
+            "document": "CBO's 2024 Long-Term Projections for Social Security, Long-Term Social Security Projections data workbook",
+            "observation_range": "A40:C47 (calendar years 2015-2022)",
+            "page": "not applicable (XLSX)",
+            "publisher": "Congressional Budget Office",
+            "reviewed_external_capture": {
+              "filename": "cbo-60392-Long-Term-Projections.xlsx",
+              "sha256": "8945d7c5599e944e5786801daf3af9ebad318b24b871198708eeff9bb6c46f7b",
+              "size_bytes": 85665,
+              "url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx"
+            },
+            "sheet": "2",
+            "table": "Taxable payroll, title A6; headers A9:C9",
+            "url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx"
+          }
+        ],
+        "underlying_published_values_withheld_from_comparison": "Dollar levels are retained only as frozen extraction inputs to calculate the allowed index; they are not reported as a comparison.",
+        "unit": "index, 2015 = 100",
+        "value": [
+          {
+            "index_2015_100": 100.0,
+            "year": 2015
+          },
+          {
+            "index_2015_100": 102.962158808933,
+            "year": 2016
+          },
+          {
+            "index_2015_100": 108.2971464019851,
+            "year": 2017
+          },
+          {
+            "index_2015_100": 113.39950372208436,
+            "year": 2018
+          },
+          {
+            "index_2015_100": 118.87406947890818,
+            "year": 2019
+          },
+          {
+            "index_2015_100": 119.6805210918114,
+            "year": 2020
+          },
+          {
+            "index_2015_100": 129.4820099255583,
+            "year": 2021
+          },
+          {
+            "index_2015_100": 141.9199751861042,
+            "year": 2022
+          }
+        ]
+      },
+      "quantity": "Taxable-payroll trajectory normalized to 2015",
+      "row_id": "cbo.taxable_payroll.trajectory_2015_100"
+    },
+    {
+      "comparison_scope": [
+        "share",
+        "trajectory"
+      ],
+      "concept_mismatch": {
+        "benefit_concept": "Our numerator has no benefit component; CBO tax revenues include federal income taxes paid on Social Security benefits.",
+        "earnings_and_accounting": "Our 12.4% value is mechanical employee-plus-employer contribution arithmetic. CBO total tax revenue combines payroll taxes with income taxes on benefits and is not a statutory-rate check.",
+        "frame": "Our denominator is unaligned frame-relative proxy payroll; CBO's denominator is national OASDI taxable payroll.",
+        "mismatch_codes": [
+          "mechanical_contributions_vs_total_tax_revenue",
+          "income_tax_on_benefits_absent_from_ours",
+          "unaligned_proxy_vs_national_taxable_payroll",
+          "odd_year_carry_vs_annual_administrative_data"
+        ],
+        "population": "Our closed PSID reproduction panel differs from CBO's national covered-worker and beneficiary populations.",
+        "year_basis": "Both cover calendar 2015-2022, with odd-year earnings carry on our side and CBO actual-data accounting on the published side."
+      },
+      "deviation": {
+        "definition": "ours minus published, in percentage points",
+        "signed_percentage_points": [
+          {
+            "percentage_points": -0.41999999999999993,
+            "year": 2015
+          },
+          {
+            "percentage_points": -0.6899999999999995,
+            "year": 2016
+          },
+          {
+            "percentage_points": -0.6500000000000004,
+            "year": 2017
+          },
+          {
+            "percentage_points": -0.17999999999999972,
+            "year": 2018
+          },
+          {
+            "percentage_points": -0.40000000000000036,
+            "year": 2019
+          },
+          {
+            "percentage_points": -1.0999999999999996,
+            "year": 2020
+          },
+          {
+            "percentage_points": 0.20000000000000107,
+            "year": 2021
+          },
+          {
+            "percentage_points": -0.23000000000000043,
+            "year": 2022
+          }
+        ]
+      },
+      "evidential_status": "qualified share context; numerator concepts differ; no level alignment",
+      "external_model": "CBOLT / CBO (historical actual-data segment)",
+      "our": {
+        "formula": "100 * combined_contributions / weighted_taxable_payroll",
+        "label_state": {
+          "individual_administrative_truth_claim": false,
+          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+          "population_alignment_claim": false,
+          "ratified_array_activation_asserted_by_this_matrix": false,
+          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+          "ratified_fitting_free_exact_label_array": [
+            "frame-relative",
+            "modeled-covered-earnings",
+            "deterministic-uncalibrated"
+          ],
+          "source_artifact_embedded_labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "source_artifact_label_note": "The entry-8 and entry-10 artifacts embed the legacy proxy array."
+        },
+        "source": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "unit": "percent of frame-relative proxy taxable payroll",
+        "value": [
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2015
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2016
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2017
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2018
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2019
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2020
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2021
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "variation_note": "exact mechanical identity; floating noise suppressed",
+            "year": 2022
+          }
+        ]
+      },
+      "published": {
+        "source_locators": [
+          {
+            "definition_or_note_range": "A129 (tax-revenue definition)",
+            "document": "CBO's 2024 Long-Term Projections for Social Security, Long-Term Social Security Projections data workbook",
+            "observation_range": "A40:D47 (calendar years 2015-2022)",
+            "page": "not applicable (XLSX)",
+            "publisher": "Congressional Budget Office",
+            "reviewed_external_capture": {
+              "filename": "cbo-60392-Long-Term-Projections.xlsx",
+              "sha256": "8945d7c5599e944e5786801daf3af9ebad318b24b871198708eeff9bb6c46f7b",
+              "size_bytes": 85665,
+              "url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx"
+            },
+            "sheet": "1",
+            "table": "Social Security tax revenues as a percentage of taxable payroll",
+            "url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx"
+          }
+        ],
+        "unit": "percent of national taxable payroll",
+        "value": [
+          {
+            "percent": 12.82,
+            "year": 2015
+          },
+          {
+            "percent": 13.09,
+            "year": 2016
+          },
+          {
+            "percent": 13.05,
+            "year": 2017
+          },
+          {
+            "percent": 12.58,
+            "year": 2018
+          },
+          {
+            "percent": 12.8,
+            "year": 2019
+          },
+          {
+            "percent": 13.5,
+            "year": 2020
+          },
+          {
+            "percent": 12.2,
+            "year": 2021
+          },
+          {
+            "percent": 12.63,
+            "year": 2022
+          }
+        ]
+      },
+      "quantity": "Social Security tax revenues as a share of taxable payroll",
+      "row_id": "cbo.tax_revenue.share_of_taxable_payroll"
+    },
+    {
+      "comparison_scope": [
         "ratio"
       ],
       "concept_mismatch": {
@@ -4296,10 +4888,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4365,10 +4963,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4434,10 +5038,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4503,10 +5113,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4572,10 +5188,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4641,10 +5263,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4710,10 +5338,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4779,10 +5413,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4848,10 +5488,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4917,10 +5563,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -4986,10 +5638,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5055,10 +5713,16 @@
           {
             "document": "Favreault and Steuerle (2007), Social Security Spouse and Survivor Benefits for the Modern Family, report 311436, DYNASIM3 runid 440v2",
             "page": {
-              "pdf": "29-30",
-              "printed": "19-20"
+              "pdf": 30,
+              "printed": 20
             },
             "publisher": "Urban Institute",
+            "reviewed_external_capture": {
+              "filename": "urban-favreault2007-311436.pdf",
+              "sha256": "78b25f1b785356bf465ad3d5ddfce8c14c577dbdd7d0710fda7b048f5aa63bf6",
+              "size_bytes": 708709,
+              "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
+            },
             "table": "Table 3",
             "url": "https://www.urban.org/sites/default/files/publication/46231/311436-Social-Security-Spouse-and-Survivor-Benefits-for-the-Modern-Family.PDF"
           }
@@ -5144,13 +5808,99 @@
       },
       "quantity": "Ordinal benefit-reduction ordering across four reforms",
       "row_id": "dynasim.mermin.four_reform_cost_ordering"
+    },
+    {
+      "comparison_scope": [
+        "share"
+      ],
+      "concept_mismatch": {
+        "benefit_concept": "The bill finances a new LTSS benefit; our artifact models only own-record Social Security retirement benefits and no LTSS outcome.",
+        "earnings_and_accounting": "The requested 0.003 calculation represents only the employee side. The bill separately levies employers at 0.3% and self-employment at 0.6%; this row is not a total-financing or actuarial check.",
+        "frame": "Our denominator is an unaligned frame-relative labor-income proxy; the bill applies nationally to IRC \u00a73121(a) wages.",
+        "mismatch_codes": [
+          "proxy_payroll_vs_irc_3121a_wages",
+          "closed_panel_vs_national_tax_base",
+          "single_side_vs_combined_financing",
+          "no_actuarial_revenue_or_cost_projection",
+          "no_ltss_benefit_model"
+        ],
+        "population": "Our closed 2015-2022 PSID reproduction panel is not the national employee population subject to the proposed tax.",
+        "year_basis": "The scalar parameter matches, but the bill applies after 2021; only 2022 overlaps our artifact and no published revenue path exists."
+      },
+      "deviation": {
+        "definition": "ours minus published employee-side rate",
+        "our_over_published_ratio": 1.0,
+        "signed_percentage_points": 0.0
+      },
+      "evidential_status": "statutory single-side parameter identity; not actuarial validation",
+      "external_model": "WISH Act statutory text (not an actuarial model)",
+      "our": {
+        "formula": "100 * (0.003 * weighted_taxable_payroll) / weighted_taxable_payroll",
+        "label_state": {
+          "individual_administrative_truth_claim": false,
+          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+          "population_alignment_claim": false,
+          "ratified_array_activation_asserted_by_this_matrix": false,
+          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+          "ratified_fitting_free_exact_label_array": [
+            "frame-relative",
+            "modeled-covered-earnings",
+            "deterministic-uncalibrated"
+          ],
+          "source_artifact_embedded_labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "source_artifact_label_note": "The entry-8 and entry-10 artifacts embed the legacy proxy array."
+        },
+        "provenance_status": "mechanical single-side parameter check only",
+        "source": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "unit": "percent of frame-relative proxy taxable payroll",
+        "value": 0.3
+      },
+      "published": {
+        "companion_parameters": {
+          "combined_employee_employer_rate_percent": 0.6,
+          "self_employment_rate_percent": 0.6,
+          "separate_employer_rate_percent": 0.3
+        },
+        "source_locators": [
+          {
+            "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+            "page": {
+              "pdf": 17,
+              "printed": 17
+            },
+            "provision": "employee rate and separate employer rate after 2021",
+            "publisher": "United States Congress",
+            "reviewed_external_capture": {
+              "filename": "BILLS-117hr4289ih.pdf",
+              "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+              "size_bytes": 269364,
+              "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+            },
+            "section": "\u00a75(a)(1)-(2)",
+            "table": "not applicable (statutory text)",
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          }
+        ],
+        "unit": "percent of IRC \u00a73121(a) wages received after 2021",
+        "value": 0.3
+      },
+      "quantity": "Single-side WISH employee payroll-tax rate",
+      "row_id": "wish.hr4289.employee_rate.share_of_payroll"
     }
   ],
   "schema_version": "cross_model_validation_matrix.v1",
   "wish_financing_stub": {
     "concept_mismatch": {
       "benefit_concept": "The current artifact has no LTSS eligibility, vesting, benefit, spend-down, adequacy, trust-fund, or program-cost model.",
-      "earnings_and_accounting": "Multiplying proxy payroll by 0.003 is mechanical arithmetic, not an actuarial revenue, solvency, behavioral, or financing-sufficiency estimate.",
+      "earnings_and_accounting": "Multiplying proxy payroll by 0.003 is one statutory wage-tax side only. The bill separately imposes 0.3% on employers (0.6% combined, and 0.6% for self-employment), so this requested path is not total revenue or an actuarial solvency/sufficiency estimate.",
       "frame": "Our base is the unaligned frame-relative proxy payroll; WISH actuarial work concerns a national covered-payroll base.",
       "population": "The artifact is a closed 2015-2022 reproduction panel, not the covered workforce or beneficiary population used by WISH actuaries.",
       "year_basis": "Our path ends in 2022 and is normalized to 2015; a WISH financing analysis uses a policy effective date and a long actuarial horizon."
@@ -5259,15 +6009,60 @@
         "json_pointer": "/tables/revenue/per_draw",
         "path": "runs/first_estimates_v1.json",
         "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
-      }
+      },
+      "trajectory_interpretation": "A 0.003-times-proxy-payroll base index, not a policy-effective revenue forecast. The bill applies after 2021, so only 2022 overlaps the certified artifact's calendar span."
     },
-    "published": null,
-    "quantity": "Mechanical 0.3-percentage-point payroll surtax",
+    "published": {
+      "actuarial_revenue_or_cost_trajectory": null,
+      "combined_wage_rate_percent": 0.6,
+      "effective_period": "wages received/paid after 2021",
+      "employee_rate_percent": 0.3,
+      "employer_rate_percent": 0.3,
+      "self_employment_rate_percent": 0.6,
+      "source_locators": [
+        {
+          "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+          "page": {
+            "pdf": 17,
+            "printed": 17
+          },
+          "provision": "employee and separate employer applicable percentages",
+          "publisher": "United States Congress",
+          "reviewed_external_capture": {
+            "filename": "BILLS-117hr4289ih.pdf",
+            "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+            "size_bytes": 269364,
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          "section": "\u00a75(a)(1)-(2)",
+          "table": "not applicable (statutory text)",
+          "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+        },
+        {
+          "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+          "page": {
+            "pdf": 18,
+            "printed": 18
+          },
+          "provision": "self-employment applicable percentage",
+          "publisher": "United States Congress",
+          "reviewed_external_capture": {
+            "filename": "BILLS-117hr4289ih.pdf",
+            "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+            "size_bytes": 269364,
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          "section": "\u00a75(a)(3)",
+          "table": "not applicable (statutory text)",
+          "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+        }
+      ]
+    },
+    "quantity": "Mechanical single-side 0.3-percentage-point payroll surtax",
     "source_needed": [
-      "WISH Act statutory text",
       "primary ARC/Oliver Wyman actuarial memorandum",
-      "Morningstar WISH report"
+      "Morningstar full WISH report: https://www.morningstar.com/content/cs-assets/v3/assets/blt9415ea4cc4157833/bltbbad12f4cb956f93/68a338a0fd4281840b31bbf3/Morningstar_WISH_Act_Analysis.pdf"
     ],
-    "status": "blocked_published_side_not_in_committed_bytes"
+    "status": "statutory_parameter_captured; actuarial_trajectory_and_adequacy_blocked"
   }
 }
