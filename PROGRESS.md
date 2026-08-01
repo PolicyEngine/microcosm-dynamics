@@ -2,7 +2,7 @@
 
 ## State
 
-Findings 1–6 are closed; finding 7 is next. The worktree starts from
+Findings 1–7 are closed; finding 8 is next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -50,9 +50,20 @@ the ratified 1,376,610-byte prefix exactly.
   locator/derivation consumer, G17-C01, ledger, closure sweep, and build order
   now precede the candidate manifest. The field root's historical false and
   registration-required evidence remains exact and is not promoted.
+- Closed finding 7 with the future separately committed, source-only `Q5`
+  questionnaire annotation authority over all 81 authenticated documents.
+  It fixes page and occurrence coordinates, total branch-path ordering and
+  prefix compatibility, complete role/job/component and alias catalogs,
+  aggregate/no-job sentinels, the exact all-component `R_Q` projection, and
+  source-only `O_H`/`O_P` witness relations. The fixed
+  `43 waves × 2 roles × R_Q × 35 purposes` denominator, total anchor reverse
+  covers, structural-hierarchy branch, Q5 ancestry/consumer independence,
+  eight-key closure identity, exact G17-C01 header/era projection, ledger,
+  sweep, and build order now fail closed. No current artifact satisfies Q5,
+  so Class A remains `registration_required` pending new evidence.
 
 ## Next
 
-1. Close findings 7–10 in referee order, committing each separately.
+1. Close findings 8–10 in referee order, committing each separately.
 2. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.

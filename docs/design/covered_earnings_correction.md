@@ -25953,8 +25953,8 @@ registry's source-authority manifest, not a tenth official registry or a
 production input. Its complete raw blob must strict-parse and byte-equal
 §10.1 canonical JSON. Its top level has exactly `schema_version`,
 `artifact_id`, `residual_evidence_identity`, `source_document_manifest`,
-`era_rows`, `era_row_count`, `era_id_order`, `era_domain_sha256`, `integrity`,
-and `status`. The first two
+`hierarchy_annotation_authority`, `era_rows`, `era_row_count`, `era_id_order`,
+`era_domain_sha256`, `integrity`, and `status`. The first two
 values are `psid_questionnaire_slot_closure_evidence.v1`.
 `residual_evidence_identity` has exactly `path`, `artifact_id`,
 `schema_version`, and `sha256` and exact-matches §19.3.1. `integrity` has
@@ -26215,6 +26215,208 @@ later worktree implementation, tool version, argument, decoder, or page rule
 is selectable. Branch labels and questionnaire near-match occurrence hashes
 use only these ordered page strings.
 
+`hierarchy_annotation_authority` is the source-only annotation authority for
+all questionnaire hierarchy semantics. It has exactly `authority_kind`,
+`questionnaire_document_count`, `questionnaire_document_keyset_sha256`,
+`questionnaire_document_domain_sha256`,
+`questionnaire_page_text_derivation_byte_size`,
+`questionnaire_page_text_derivation_sha256`, `role_node_rows`,
+`role_node_count`, `role_node_domain_sha256`, `job_slot_rows`,
+`job_slot_count`, `job_slot_domain_sha256`,
+`questionnaire_component_slot_rows`, `questionnaire_component_slot_count`,
+`questionnaire_component_slot_domain_sha256`, `node_alias_rows`,
+`node_alias_count`, `node_alias_domain_sha256`, `global_relationship_rows`,
+`global_relationship_count`, `global_relationship_keyset_sha256`,
+`global_relationship_domain_sha256`, `questionnaire_page_count`,
+`questionnaire_page_domain_sha256`, `questionnaire_occurrence_count`,
+`questionnaire_occurrence_domain_sha256`, `flow_branch_count`,
+`flow_branch_domain_sha256`, `hierarchy_row_count`,
+`hierarchy_keyset_sha256`, `hierarchy_domain_sha256`,
+`positive_occurrence_row_count`, `positive_occurrence_keyset_sha256`,
+`positive_occurrence_domain_sha256`, `expanded_disposition_row_count`,
+`expanded_disposition_keyset_sha256`,
+`expanded_disposition_domain_sha256`, `absence_proof_count`,
+`absence_proof_domain_sha256`, `canonical_order`, and `status`.
+`authority_kind` is the non-schema literal
+`source_only_canonical_questionnaire_annotation`; `canonical_order` is the
+non-ID law literal
+`source_document_page_utf8_span_then_catalog_anchor`; status is `pass |
+fail`.
+
+The authority's questionnaire input is exactly the independently derived
+81-row `questionnaire_flow` slice of `U`. Its count is 81; its ordered
+source-document-ID array and complete ordered row array have §10.1 canonical
+SHA-256 values, respectively,
+`3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5`
+and
+`b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543`.
+The accepted upstream-document-ID source-order projection remains the
+independently verified
+`b4bde71544911441e1c1d05e5ad00d282384a98747627ee19d056dd3ce174293`.
+The complete 13-key `questionnaire_page_text_derivation` canonical value is
+566 bytes and has SHA-256
+`8ce4d7e16753aa0a6c2220006c9aea60330acd62de809db5894ad03eb9123da3`.
+All five authority members must equal those independently reconstructed
+values before annotation rows are read; a candidate document, page method,
+or digest cannot select an input.
+
+Every `role_node_rows` member has exactly `role`,
+`canonical_occurrence_id`, and `alias_ids`. The array has exactly two rows,
+for `head_or_reference_person` and `spouse_or_partner` in that order. Each
+canonical occurrence resolves the earliest complete-source-order
+`role_anchor` occurrence assigned by the annotation authority to that role;
+the two canonical occurrences are distinct. `alias_ids` is the complete
+source-order projection of `node_alias_rows` IDs whose domain is `role` and
+whose canonical node is that exact role. Count is two and the domain digest
+hashes the complete ordered row array.
+
+Every `job_slot_rows` member has exactly `job_slot_id`, `job_slot_type`,
+`canonical_occurrence_id`, and `alias_ids`. Type is exactly `source_job |
+role_total_sentinel | farm_aggregate_sentinel |
+business_aggregate_sentinel | no_job_context_sentinel`. A source job's
+canonical occurrence is the earliest complete-source-order resolving
+`job_anchor` occurrence in its authenticated equivalence class, and its ID is literal
+`psid-job-slot:` followed by SHA-256 of the terminal-LF canonical JSON value
+array `[canonical_occurrence_id]`. Its `alias_ids` is the complete
+source-order projection of `node_alias_rows` IDs whose domain is `job_slot`
+and whose canonical node is that job ID. The four sentinel IDs are exactly
+`psid-job-slot:role-total`, `psid-job-slot:farm-aggregate`,
+`psid-job-slot:business-aggregate`, and
+`psid-job-slot:no-job-context`; their canonical occurrence is null and their
+alias array is empty. Source rows follow canonical-occurrence source order;
+the four sentinels then follow in displayed order. Count equals length and
+the domain digest hashes the complete ordered row array.
+
+Every `questionnaire_component_slot_rows` member has exactly
+`questionnaire_component_slot_id`, `component_slot_type`,
+`parent_job_slot_id`, `canonical_occurrence_id`, and `alias_ids`. Type is
+exactly `source_remuneration_component | source_context |
+role_total_sentinel | farm_aggregate_sentinel |
+business_aggregate_sentinel`. A source component has a resolving source job
+or permitted sentinel parent under the exact relationship equations below,
+the earliest complete-source-order matching component or context occurrence
+in its authenticated equivalence class, and ID literal
+`psid-component-slot:` followed by SHA-256 of the terminal-LF canonical JSON
+value array `[parent_job_slot_id,component_slot_type,
+canonical_occurrence_id]`. Its `alias_ids` is the complete source-order
+projection of `node_alias_rows` IDs whose domain is `component_slot` and
+whose canonical node is that component ID. The three sentinel IDs are exactly
+`psid-component-slot:role-total`, `psid-component-slot:farm-aggregate`, and
+`psid-component-slot:business-aggregate`; each has the same-kind job
+sentinel as parent, null canonical occurrence, and an empty alias array.
+Source rows follow canonical-occurrence source order; those sentinels then
+follow in displayed order. Count and complete row-domain digest agree.
+
+Every `node_alias_rows` member has exactly `node_alias_id`, `node_domain`,
+`canonical_node_id`, `alias_occurrence_id`, `alias_relation`, and
+`evidence_occurrence_ids`. Domain is `role | job_slot | component_slot`.
+Canonical role values are exactly `head_or_reference_person` and
+`spouse_or_partner`; job and component values resolve the catalogs above.
+Relation is exactly `explicit_repeat_instruction |
+explicit_cross_reference | same_printed_identifier_and_exact_label`.
+Evidence IDs are a nonempty unique source-order occurrence array that proves
+that exact relation. They contain the alias anchor, the canonical anchor, and
+the complete source-order set of `repeat_or_alias_instruction` or
+cross-reference occurrences on which that relation depends; no unrelated
+occurrence is admitted. The alias ID is literal `psid-node-alias:` followed by
+SHA-256 of the terminal-LF canonical JSON value array
+`[node_domain,canonical_node_id,alias_occurrence_id,alias_relation,
+evidence_occurrence_ids]`. Rows follow alias-occurrence order then role, job,
+component domain order.
+
+The complete occurrence catalogs are exact partitions. The ordered
+`role_anchor` occurrence array equals, without overlap, the two role-row
+canonical occurrences plus every role-domain alias occurrence; the ordered
+`job_anchor` array equals every source-job canonical occurrence plus every
+job-domain alias occurrence; and the combined ordered
+`remuneration_component_anchor | context_anchor` array equals every source-
+component canonical occurrence plus every component-domain alias occurrence.
+Each partition preserves complete occurrence source order. No canonical
+occurrence is an alias, no anchor is omitted or assigned twice, and every
+`repeat_or_alias_instruction` occurrence appears in at least one alias
+evidence array. Each alias ID appears exactly once in the complete
+`alias_ids` projection of its one matching role/job/component catalog row;
+positive and hierarchy rows consume the resulting canonical node rather
+than creating another alias assignment. Case folding, whitespace or
+punctuation normalization, stemming, source-order inference, synonym
+inference, or an unproved `first_job == job_1` equivalence is forbidden;
+differently worded nodes remain distinct absent one displayed source-backed
+relation. Alias count equals row length and the alias domain digest hashes
+the complete ordered alias-row array.
+
+Each `global_relationship_rows` member has exactly `relationship_id`,
+`job_slot_id`, `questionnaire_component_slot_id`, and `slot_kind`. The ID is
+literal `psid-questionnaire-relationship:` followed by SHA-256 of the
+terminal-LF canonical JSON value array
+`[job_slot_id,questionnaire_component_slot_id,slot_kind]`. The exact type
+equations are:
+
+| `slot_kind` | Required job row | Required component row |
+|---|---|---|
+| `remuneration_component` | `source_job` | matching-parent `source_remuneration_component` |
+| `role_total` | exact role-total sentinel | exact role-total sentinel, or a matching-parent source remuneration/context component |
+| `farm_aggregate` | exact farm-aggregate sentinel | exact farm-aggregate sentinel, or a matching-parent source remuneration/context component |
+| `business_aggregate` | exact business-aggregate sentinel | exact business-aggregate sentinel, or a matching-parent source remuneration/context component |
+| `context_only` | `source_job` or no-job-context sentinel | matching-parent `source_context` |
+
+No relationship coordinate is null. A source remuneration component has a
+source-job or one of the three aggregate-sentinel parents; a source context
+has a source-job, no-job-context, or one of the three aggregate-sentinel
+parents. Parent `source_job` derives `remuneration_component` or
+`context_only` from component type; no-job-context permits only
+`source_context` and derives `context_only`; an aggregate parent derives its
+matching aggregate kind for either source component type. The three
+same-kind sentinel component rows derive the three mandatory baseline
+aggregate relationships. Every source job is parent of at least one source
+component row; an anchor-only orphan therefore aborts instead of disappearing
+from the denominator.
+
+Every `role_total_anchor`, `farm_aggregate_anchor`, and
+`business_aggregate_anchor` occurrence is consumed by at least one matching-
+kind observed hierarchy row, and every aggregate anchor cited by such a row
+has that exact kind. Thus an aggregate anchor cannot be silently left outside
+the hierarchy, reused as another aggregate kind, or fabricated from a
+component label.
+
+Call the complete ordered relation `R_Q`. It is exactly the concatenation of
+the three mandatory baseline sentinel relationships in displayed type-table
+order and one relationship derived from every source component row in
+canonical-occurrence source order. Those two branches are disjoint and no
+other relationship exists. Thus every source component occurs exactly once,
+every source job occurs at least once, and the relation is not a Cartesian
+product of invented job and component names. IDs and relationship tuples are
+unique; count equals length; the keyset digest hashes the ordered ID array;
+and the domain digest hashes the complete ordered row array. A missing or
+orphan catalog row, parent/type mismatch, alias conflict, extra relationship,
+ID collision, or candidate-selected subset aborts.
+
+The authority-wide page, occurrence, flow-branch, hierarchy, positive-
+occurrence, expanded-disposition, and absence-proof arrays are the direct
+concatenations of the corresponding six era arrays in era order. Every
+authority-wide count is the length of that complete concatenation. Each
+authority-wide keyset digest hashes the complete ordered ID/key projection
+named by the matching per-era law, and every domain digest hashes the
+complete concatenated row array directly; in particular,
+`expanded_disposition_domain_sha256` is not copied from a nonexistent per-era
+member. Authority status is pass only if all 81 documents and every extracted
+page are present, every catalog/alias/relationship equation and complete
+page annotation below passes, every concatenation, count, keyset, and domain
+digest reproduces, and no candidate registry, inventory, crosswalk, reader
+field, or desired ID was an annotation input.
+
+No current artifact is a passing substitute. In particular,
+`data/external/psid_questionnaire_corpus_extraction_v1.json` at commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, blob
+`43d8a1208c6ffa7ab7d7cdbc4b4115947d33df16`, 81177 bytes, raw SHA-256
+`5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347`,
+and content SHA-256
+`18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c`
+contains only 61 passage locators, three absence proofs, and a 37-wave proof
+scope ending in 2011; it has no page-complete hierarchy, node, alias,
+relationship, or occurrence domain. Its favorable structural status cannot
+be generalized to this authority. Until the new complete source-only
+annotation exists, Class A remains `registration_required`.
+
 The retained official slot-registry `source_authority_manifest` is
 prospectively completed as an object with exactly `source_document_manifest`
 and `slot_closure_evidence_identity`. The first is a complete deep copy of
@@ -26222,14 +26424,38 @@ the closure artifact's passing manifest only after the coordinator has
 independently reconstructed `U` and exact-compared every upstream identity,
 row, count, keyset, order, domain digest, and storage byte. A candidate
 manifest can never be copied first and then treated as expected authority.
-The second has exactly `path`, `artifact_id`, `schema_version`, and `sha256`;
-its values are the closure path and two identity literals above and the
-SHA-256 of the complete canonical raw closure artifact. It is added only
-after that artifact exists and is never embedded back into its own digest
-preimage. G17-C01 exact-compares this identity. This two-stage shape
-authenticates the source artifact without a self-reference. Neither the slot
-registry nor the official inventory is independently ratified until this
-upstream-denominator comparison passes.
+The second has exactly `path`, `artifact_id`, `schema_version`,
+`source_commit`, `tree_mode`, `blob_oid`, `byte_size`, and `sha256`. Call the
+unique first-add commit for the fixed closure path `Q5`. It is a future
+40-lowercase-hex, single-parent strict descendant of D5 that adds only
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json`; the path's
+mode is `100644`. The identity's first three values are the closure path and
+two identity literals above; `source_commit` is `Q5`; and its final four
+values are independently reconstructed from that exact Git tree entry and
+complete raw artifact. `byte_size` is a positive JSON integer excluding
+booleans, and `sha256` covers all raw bytes. The closure artifact does not
+serialize `Q5`, its own blob OID, or its raw SHA-256, so the later slot
+registry can add this identity without self-reference. A multi-path first-
+add, merge first-add, pre-D5 commit, later substituted blob, mode mismatch,
+or noncanonical/raw-hash mismatch aborts.
+
+In `Q5`'s tree, both future consumer paths
+`data/registries/psid_questionnaire_slot_specs_v1.json` and
+`data/external/psid_covered_earnings_source_field_inventory_v1.json` are
+absent. `Q5` must be a strict ancestor of each path's independently
+discovered unique later first-add commit and of every authority cutoff that
+admits either artifact. Consequently neither consumer's rows, identifiers,
+digests, or desired classifications can be annotation inputs; a consumer
+present at `Q5`, an earlier or incomparable consumer first-add, or a cutoff
+that does not prove both ancestry relations aborts.
+
+G17-C01 independently reconstructs and exact-compares this eight-key
+identity before accepting any copied annotation row. This two-stage shape
+makes the already named closure artifact the separately committed source-
+only annotation authority without inventing another schema. Neither the
+slot registry nor the official inventory is independently ratified until
+both the upstream-document denominator and `Q5` annotation-authority
+comparisons pass.
 
 The complete ordered era/wave domain is:
 
@@ -26250,8 +26476,15 @@ candidate era row cannot select or narrow it. Each era row has exactly
 `whole_document_locator_count`, `whole_document_locator_domain_sha256`,
 `field_stream_locators`, `field_stream_locator_count`,
 `field_stream_locator_domain_sha256`,
+`questionnaire_page_rows`, `questionnaire_page_count`,
+`questionnaire_page_domain_sha256`, `questionnaire_occurrence_rows`,
+`questionnaire_occurrence_count`, `questionnaire_occurrence_keyset_sha256`,
+`questionnaire_occurrence_domain_sha256`,
 `flow_branch_rows`, `flow_branch_row_count`, `flow_branch_domain_sha256`,
-`hierarchy_rows`, `hierarchy_row_count`, `hierarchy_keyset_sha256`, `expanded_disposition_rows`,
+`hierarchy_rows`, `hierarchy_row_count`, `hierarchy_keyset_sha256`,
+`hierarchy_domain_sha256`, `positive_occurrence_rows`,
+`positive_occurrence_row_count`, `positive_occurrence_keyset_sha256`,
+`positive_occurrence_domain_sha256`, `expanded_disposition_rows`,
 `expanded_disposition_row_count`, `expanded_disposition_keyset_sha256`,
 `absence_proofs`, `absence_proof_count`, `absence_proof_domain_sha256`, and
 `status`. The early era's `residual_ids` is the exact ordered Class-A source
@@ -26261,73 +26494,259 @@ must reproduce §19.3.1's seven IDs and pinned class digest. Counts and
 canonical digests close every nested ordered domain; status passes only when
 every wave, residual reference, and equation below passes.
 
+Each `questionnaire_page_rows` member has exactly `questionnaire_page_id`,
+`source_document_id`, `source_locator_id`, `interview_wave`, `page_number`,
+`page_text_utf8_sha256`, `questionnaire_occurrence_ids`, and
+`annotation_status`. It exact-covers every page produced by the pinned page-
+text derivation for every one of the era's `questionnaire_flow` documents,
+including a page whose occurrence array is empty. Document/wave and locator
+resolve `U` and its whole-document locator; page number is a positive JSON
+integer excluding booleans; the digest hashes the exact complete UTF-8 page
+bytes; occurrence IDs are the complete same-page source-order projection;
+and status is `complete`. The page ID is literal
+`psid-questionnaire-page:` followed by SHA-256 of the terminal-LF canonical
+JSON value array `[source_document_id,interview_wave,page_number,
+page_text_utf8_sha256]`. Rows follow `U` document order then page number;
+IDs and document/page coordinates are unique; count equals length; and the
+domain digest hashes the complete ordered row array.
+
+Each `questionnaire_occurrence_rows` member has exactly
+`questionnaire_occurrence_id`, `source_document_id`, `source_locator_id`,
+`source_locator_sha256`, `interview_wave`, `page_number`, `utf8_byte_start`,
+`utf8_byte_end`, `occurrence_index_on_page`, `semantic_ordinal_at_span`,
+`occurrence_kind`, `matched_text`, `matched_utf8_sha256`, and
+`flow_branch_paths`. Kind is exactly, in this order,
+`flow_branch_label | role_anchor | job_anchor |
+remuneration_component_anchor | role_total_anchor |
+farm_aggregate_anchor | business_aggregate_anchor | context_anchor |
+field_purpose_prompt | repeat_or_alias_instruction`. Offsets are
+nonnegative half-open UTF-8 byte offsets aligned to character boundaries in
+the exact page bytes, start is less than end, matched text is the strict-
+decoded nonempty slice without normalization, and its digest matches. The
+occurrence exact-copies `source_document_id`, `source_locator_id`,
+`interview_wave`, and `page_number` from its unique containing page row, and
+that page row contains its occurrence ID exactly once. Thus its path-based
+locator digest and sliced text can never refer to different documents. The
+occurrence index is the zero-based position among all annotated same-page
+rows ordered by start, end, displayed kind order, and semantic ordinal;
+for every kind except `flow_branch_label`, at most one atomic occurrence may
+share a span and kind and its semantic ordinal is exactly zero. If that one
+printed occurrence supports multiple downstream facts, each fact reuses the
+same occurrence ID rather than inventing another atomic row.
+
+`flow_branch_paths` is a nonempty ordered array of nonempty branch-ID arrays.
+Unconditional text has exactly `[["questionnaire-flow:root"]]`; a
+conditional row has every complete applicable resolving root-to-leaf path,
+sorted only by the exact branch-path order defined below. A
+`flow_branch_label` occurrence carries only its complete parent
+paths, because its branch row appends the new branch ID below. If one printed
+branch label applies under multiple parent paths, the annotation emits one
+same-span atomic occurrence per parent path in path order, distinguished by
+semantic ordinal equal to that parent's zero-based position in the complete
+branch-path-order parent array; each such occurrence therefore has
+exactly one parent path. No other same-span/same-kind multiplicity or ordinal
+assignment is lawful. The occurrence
+locator digest hashes the terminal-LF canonical JSON value array
+`[source_document_id,canonical_source_path,"questionnaire_page_utf8_span",
+[interview_wave,page_number,utf8_byte_start,utf8_byte_end,
+occurrence_index_on_page,semantic_ordinal_at_span,occurrence_kind]]`, where path resolves
+only through `U`. The occurrence ID is literal
+`psid-questionnaire-occurrence:` followed by SHA-256 of the terminal-LF
+canonical JSON value array of the remaining 13 row values in their displayed
+order. Rows follow page-row order and the within-page order above. Repeated
+identical text at different coordinates remains separate; only multi-parent
+branch-label atoms at one span remain separate, with the path-index ordinal
+fixed above. IDs, locator
+digests, and full `(document,page,start,end,kind,semantic_ordinal)`
+coordinates are unique. Count, ordered-ID keyset digest, and complete-row
+domain digest must agree, and every ID occurs exactly once in its page row.
+
 Each `flow_branch_rows` member has exactly `flow_branch_id`,
-`parent_flow_branch_id`, `interview_wave`, `source_locator_id`, `page_number`,
+`parent_flow_branch_id`, `source_occurrence_id`, `branch_path`,
+`interview_wave`, `source_locator_id`, `page_number`,
 `occurrence_index_on_page`, `branch_label`, and `branch_label_sha256`.
-Parent is literal `questionnaire-flow:root` or an earlier resolving branch;
-wave is in the era; locator resolves a whole questionnaire document for that
-wave; page is a positive integer in its complete page domain; occurrence is
-a nonnegative source-order index among branch labels on that page; and the
-digest hashes the exact UTF-8 branch label after the source registry's pinned
-page-text derivation. The branch ID is literal `questionnaire-flow:` followed
-by SHA-256 of canonical JSON bytes of the remaining seven fields in displayed
-order. Rows follow interview wave, locator order, page, occurrence, and ID;
-IDs and `(locator,page,occurrence)` coordinates are unique; count equals
-length; and the domain digest hashes the complete ordered rows. Whole-
-document review must exact-cover every conditional flow-label occurrence
-once and admit no other row. An absent,
-duplicate, cyclic, unlabeled, or unlocatable branch aborts.
+The source occurrence resolves a `flow_branch_label` row; locator, wave,
+page, occurrence index, exact matched label, and label digest deep-equal it.
+Parent is literal `questionnaire-flow:root` or an earlier resolving same-wave
+branch. The branch ID is literal `questionnaire-flow:` followed by SHA-256
+of the terminal-LF canonical JSON value array
+`[parent_flow_branch_id,interview_wave,source_occurrence_id]`.
+`branch_path` is the source occurrence's one complete parent path followed by
+this ID; multiple or missing parent paths abort. Rows follow source-
+occurrence order; IDs and source occurrences are one-to-one; count and
+complete row-domain digest agree. Every conditional branch-label occurrence
+has exactly one row, every referenced path resolves root-to-leaf without a
+cycle, and an omitted, duplicated, unlabeled, or unlocatable branch aborts.
+
+Branch-path ordering and compatibility are exact functions. Compare two
+branch-ID arrays element by element using unsigned UTF-8 byte order; if one
+is a proper prefix of the other, the shorter sorts first. This total order
+sorts every occurrence's unique `flow_branch_paths` array and every multi-
+parent label's parent paths. For one interview wave, let `F_w` be the unique
+set containing `["questionnaire-flow:root"]` and every resolving
+`branch_path` in that wave. A path is a prefix of itself. A finite nonempty
+same-wave occurrence set `S` is `branch-compatible` if and only if there is
+at least one `P` in `F_w` such that, for every occurrence in `S`, at least one
+of that occurrence's paths is a prefix of `P`. Compatibility is this Boolean
+existence result; no witness path is selected or serialized. An unresolved
+ID, path outside `F_w`, duplicate path, cross-wave set, or use of any other
+compatibility/order rule aborts.
+
+The source-only authority constructs the complete hierarchy denominator
+before reading any slot or inventory row. Let
+
+```text
+H = W
+    x [head_or_reference_person,spouse_or_partner]
+    x R_Q
+```
+
+in that nesting order. Thus `|H| == 43 * 2 * |R_Q|`; no positive occurrence
+can shrink it. The successor `job_slot_ids` and
+`questionnaire_component_slot_ids` arrays deep-equal the stable-unique
+catalog projections of `R_Q`, and slot expansion follows H then the ratified
+35-purpose order. This replaces only §4.2's underdetermined “source-derived”
+ordering with the authenticated catalogs and relationship order above.
+
+Before purpose prompts are classified, construct `O_H` as the complete
+source-only observed-hierarchy subset of H. A member is in `O_H` if and only
+if at least one finite nonempty same-wave branch-compatible anchor witness
+establishes its canonical role and complete `R_Q` relationship: role,
+job, and component anchors resolve only through the role/job/component
+catalogs and alias rows; a baseline aggregate relationship resolves its
+same-kind aggregate anchor; and an aggregate relationship with a source
+component resolves both that aggregate anchor and the cataloged component
+anchor. Context relationships similarly require their cataloged context
+anchor. Evaluate every finite anchor subset of the fixed same-wave
+occurrence domain, apply the exact compatibility predicate above, and retain as the member's evidence
+the complete source-order union of every occurrence participating in at
+least one passing witness; no witness path or subset is selected. No purpose
+prompt is an input to `O_H`.
+
+The reverse cover is total: every canonical or alias `role_anchor` occurs in
+at least one same-wave passing witness for its cataloged role; every canonical
+or alias `job_anchor` occurs in at least one same-wave witness whose
+relationship has its cataloged job; and every canonical or alias
+remuneration-component/context anchor occurs in at least one same-wave
+witness for its exact cataloged component relationship. Together with the
+aggregate-anchor reverse cover above, this dispositions every hierarchy
+anchor. An orphan, wrong-wave, wrong-role, wrong-relationship, or
+branch-incompatible anchor aborts. Consequently an observed hierarchy node
+may lawfully have zero positive purposes, while a relationship absent in a
+wave/role remains in H as a structural node.
 
 A hierarchy row has exactly `questionnaire_slot_id`, `interview_wave`,
-`role`, `job_slot`, `questionnaire_component_slot`, `slot_kind`,
-`flow_branch_ids`, and `source_locator_ids`. It exact-covers the source-backed
-remuneration and context nodes in every page and flow branch, both roles,
-every questionnaire-defined job and aggregate, and every component/context
-slot. It is derived from complete official questionnaires, never from fields
-used by the current reader or from the desired inventory shape.
+`role`, `relationship_id`, `job_slot`, `questionnaire_component_slot`,
+`slot_kind`, `hierarchy_presence`, `hierarchy_occurrence_ids`,
+`flow_branch_ids`, `flow_branch_paths`, `source_locator_ids`, and
+`hierarchy_absence_proof_id`. Its first seven values are the matching member
+of H; the slot ID is independently recomputed under §4.2. Presence is exactly
+`observed_hierarchy_node | structural_hierarchy_node`. An observed row has
+the complete nonempty occurrence-order unique qualifying anchor set by which
+its member entered `O_H`, the complete stable-unique branch-ID, branch-path,
+and whole-document-locator projections of those occurrences, and null
+absence-proof ID. Every occurrence has the row's interview wave and resolves
+a questionnaire document that contains that wave. A structural row is
+exactly a member outside `O_H`; it has all four evidence arrays exact empty
+and one nonnull resolving hierarchy-absence-proof ID. No purpose-positive
+row selects either branch, and no null job/component coordinate or invented
+aggregate alias is admitted.
 
-Hierarchy rows follow interview-wave, role, questionnaire job,
-questionnaire component, and slot-kind source order. `flow_branch_ids` is a
-nonempty, unique source-order array; an unconditional node carries only the
-literal `questionnaire-flow:root`, while every conditional ID resolves an
-exact same-wave branch row and the array contains its complete root-to-leaf
-ancestry. `source_locator_ids` is a nonempty unique
-complete-locator-union-order array of foreign keys to the questionnaire or
-layout/codebook locator union. `hierarchy_keyset_sha256` hashes the canonical
-ordered array of exact
-`[questionnaire_slot_id,interview_wave,role,job_slot,
-questionnaire_component_slot,slot_kind]` arrays; count equals row length.
+Hierarchy rows follow H order. `hierarchy_keyset_sha256` hashes the complete
+ordered array of exact `[questionnaire_slot_id,interview_wave,role,
+job_slot,questionnaire_component_slot,slot_kind]` arrays; count equals row
+length and `hierarchy_domain_sha256` hashes the complete ordered row array.
+For a structural row, the referenced proof's target is exactly that one
+wave, role, relationship, and the complete ordered 35-purpose array; it
+therefore supplies proof targets even when the job/component relationship is
+wholly absent in that wave and role.
+
+Each `positive_occurrence_rows` member has exactly
+`positive_occurrence_id`, `source_inventory_key`, `questionnaire_slot_id`,
+`interview_wave`, `role`, `relationship_id`, `field_purpose`,
+`questionnaire_occurrence_ids`, `flow_branch_paths`, and
+`source_locator_ids`. The source key and slot ID are independently computed
+from one member of H and one official purpose. Occurrence IDs are the
+complete nonempty source-order evidence set establishing the role, canonical
+or source-proved-alias job/component relationship, exact slot kind, and that
+purpose. Every occurrence has the row's interview wave and resolves a
+questionnaire document containing that wave. They include every applicable
+prompt and anchor, not a keyword hit; their branch paths and whole-document
+locators are the stable-unique complete projections. The matching hierarchy
+row must be in `O_H`; the anchor-only subset of this row's occurrence array
+is a nonempty subset of its `hierarchy_occurrence_ids` and is fixed by the
+positive-witness union below. Every canonical/alias catalog reference
+resolves those same anchors.
+
+Call the complete annotation classification relation over
+`O_H × 35 purposes` `O_P`. One tuple enters `O_P` if and only if at least one
+same-wave positive witness exists: one passing hierarchy-anchor witness for
+the matching `O_H` member plus one or more `field_purpose_prompt`
+occurrences classified to that purpose form a branch-compatible set under
+the exact predicate above. Evaluate every finite prompt/anchor subset of the
+fixed same-wave occurrence domain. The tuple's evidence is the complete
+source-order union of every prompt and anchor participating in at least one
+passing positive witness; catalog alias evidence remains in its independently
+complete alias row and is not imported from another wave. Every annotated
+`field_purpose_prompt` is consumed by at least one such tuple.
+`positive_occurrence_rows` is exactly the one-row-per-tuple
+ordered serialization of `O_P`; two prompts for one tuple remain in one
+evidence array, and one printed prompt supporting multiple tuples is reused
+in each. Thus `O_P` is a source-only subset of `O_H × purposes`, and neither
+a positive-selected hierarchy nor an omitted reverse classification is
+lawful. The positive ID is literal `psid-positive-occurrence:` followed
+by SHA-256 of the terminal-LF canonical JSON value array
+`[source_inventory_key,questionnaire_occurrence_ids]`. Rows follow H then
+purpose order, source keys and IDs are unique, count equals length, the
+keyset digest hashes the ordered positive-ID array, and the domain digest
+hashes the complete ordered row array. A repeated printed prompt at another
+coordinate remains in the evidence array; no stable-first evidence loss is
+allowed.
 
 An expanded-disposition row has exactly `source_inventory_key`,
 `questionnaire_slot_id`, `field_purpose`, `questionnaire_presence`,
-`positive_locator_ids`, and `absence_proof_id`. It positionally exact-covers
-the hierarchy × ordered 35-purpose domain and is the exact tagged union:
+`positive_occurrence_id`, `positive_locator_ids`, and `absence_proof_id`.
+It positionally exact-covers H × the ordered 35-purpose domain. Let `K_P` be
+the complete positive-row source-key set. The tagged union is exact:
 
-- `questionnaire_presence: asked` requires a nonempty complete positive-
-  locator array and null absence-proof ID; or
-- `questionnaire_presence: structural_query_slot` requires an exact empty
-  positive-locator array and one nonnull, resolving absence-proof ID.
+- `questionnaire_presence: asked` if and only if the key is in `K_P`; it has
+  the one resolving positive-occurrence ID, `positive_locator_ids` deep-equal
+  that row's complete `questionnaire_occurrence_ids`, and null proof ID; or
+- `questionnaire_presence: structural_query_slot` if and only if the key is
+  outside `K_P`; it has null positive-occurrence ID, exact-empty positive
+  locators, and one nonnull resolving absence-proof ID.
 
-No third state or evidence-free empty array exists. The slot and inventory
-keys are independently recomputed under §4.2; the extraction cannot author
-them. Rows follow hierarchy order then the ratified 35-purpose order;
-expanded count is exactly `hierarchy_row_count * 35` and
-`expanded_disposition_keyset_sha256` hashes the complete ordered
-`source_inventory_key` array. Every positive locator array is nonempty,
-unique, complete-locator-union ordered, and foreign-keys the complete
-questionnaire/layout/codebook locator union.
+No third questionnaire-presence state or evidence-free empty branch exists.
+For an observed hierarchy row, missing purposes take the second branch. For
+a structural hierarchy row, all 35 keys take the second branch and resolve
+the row's hierarchy proof. The source and inventory keys are independently
+recomputed under §4.2; annotation cannot author them. Rows follow hierarchy
+then purpose order; expanded count is exactly `hierarchy_row_count * 35` and
+`expanded_disposition_keyset_sha256` hashes the complete ordered source-key
+array. An occurrence ID is an exact-coordinate locator in the complete
+locator union, so every positive array is nonempty, unique, occurrence-order
+sorted, and cannot be replaced by a whole-document-only locator.
 
 The structural rows and absence proofs form one keyed bipartite exact cover.
-Construct the multiset of
-`[source_inventory_key,absence_proof_id]` pairs from every
-`structural_query_slot` row and the multiset of the same pairs by expanding
-each proof's complete `target_inventory_keys` with that proof's ID; the two
-multisets must be equal, every pair has multiplicity one, and both are
-nonempty for every referenced proof. Consequently every structural row's key
-occurs exactly once in its referenced proof, every proof target resolves
-exactly one structural row that references that proof, and every proof is
-referenced. An `asked` row's key occurs in no proof target. A mismatched,
-duplicate, extra, or orphan target/proof/row aborts the era closure.
+Construct the multiset of `[source_inventory_key,absence_proof_id]` pairs
+from every `structural_query_slot` row and the same multiset by expanding
+each proof's complete `target_inventory_keys`; the multisets must be equal,
+every pair has multiplicity one, and both are nonempty for every referenced
+proof. Every structural hierarchy row's complete 35-key set resolves its
+named proof; every other structural key resolves once; every proof is
+referenced; and an asked key occurs in no proof target. A mismatched,
+duplicate, extra, orphan, or positive-only denominator aborts. Across the
+complete domain, the positive keys, observed-hierarchy missing-purpose keys,
+and structural-hierarchy keys are disjoint and their union is exactly
+H × the 35-purpose array.
+
+Every prefixed-ID preimage in this hierarchy law is the exact displayed
+positional JSON value array, serialized standalone under §10.1 with one
+terminal LF. Strings and arrays have the displayed types; every integer
+excludes booleans; null occurs only in the catalog and hierarchy branches
+that expressly require it. Duplicate preimages, duplicate IDs for different
+preimages, or a SHA-256 collision aborts before an enclosing count or digest
+is computed.
 
 Each `whole_document_locators` member has exactly `locator_id`,
 `source_document_id`, `interview_wave`, `filename`, `location_type`,
@@ -26352,8 +26771,9 @@ exact-cover all 81 authenticated family questionnaire/QxQ documents once:
 one core questionnaire for each wave plus every 38-row source-authenticated
 QxQ companion. The era closure separately binds the
 complete paired dictionary/layout and codebook field streams used to
-enumerate the hierarchy through their source-manifest rows and complete
-keyset hashes below. A bounded page range, keyword hit, search-result
+test field evidence and absence proofs through their source-manifest rows and
+complete keyset hashes below; those streams cannot add, alias, or suppress a
+questionnaire relationship or hierarchy row. A bounded page range, keyword hit, search-result
 snippet, filename-only match, or same-title byte cannot stand in for this
 closure.
 
@@ -26391,18 +26811,22 @@ wave, dictionary/layout before codebook, source-manifest document order,
 raw-field order, and source-row position. IDs are unique; count equals array
 length; and `field_stream_locator_domain_sha256` hashes the complete ordered
 row array. The complete locator union is the unique concatenation of
-`whole_document_locators` then `field_stream_locators`; every locator foreign
-key in this artifact resolves exactly once in that union.
+`whole_document_locators`, then `questionnaire_occurrence_rows`, then
+`field_stream_locators`; every whole-document ID, occurrence ID, and field-
+stream ID used as a locator foreign key resolves exactly once in that union.
 
 For projection into retained §4.2, each locator has one independently
 reconstructed `source_locator_sha256`. A whole-document locator hashes the
 canonical array `[source_document_id,canonical_source_path,
-"whole_document",[byte_start,byte_end,pdf_page_domain]]`; a field locator
+"whole_document",[byte_start,byte_end,pdf_page_domain]]`; a questionnaire-
+occurrence locator deep-copies its row's already reconstructed exact page-
+span digest; and a field locator
 hashes `[source_document_id,canonical_source_path,source_role,
 [interview_wave,raw_field_id,source_row_position,start,end,
 codebook_entry_positions]]`. The path comes only from the authenticated
-source manifest. An `asked` expanded-disposition row selects exactly its
-`positive_locator_ids`; a `structural_query_slot` row selects its proof's
+source manifest. An `asked` expanded-disposition row first selects exactly
+its positive row's occurrence-coordinate `positive_locator_ids`; a
+`structural_query_slot` row selects its proof's
 complete `searched_locator_ids` followed by every field-stream locator whose
 row participates in either searched keyset digest. The matching retained
 `expanded_slots` row's `source_document_ids` is the unique source-manifest-
@@ -26418,8 +26842,16 @@ prospectively completed with exactly `absence_proof_id`, `era_id`,
 `searched_locator_ids`, `searched_layout_keyset_sha256`,
 `searched_codebook_keyset_sha256`, `excluded_near_matches`,
 `search_implementation`, and `conclusion`. `search_implementation` is the
-§18/#345 precedent literal
-`questionnaire_whole_document_visual_and_flow_review_v1`.
+exact annotation-authority object with exactly `authority_kind`,
+`questionnaire_page_text_derivation_sha256`,
+`questionnaire_page_domain_sha256`,
+`questionnaire_occurrence_domain_sha256`, and
+`flow_branch_domain_sha256`. It deep-copies the corresponding passing
+`hierarchy_annotation_authority` values for the complete six-era domain and
+derives its authority from the outer `Q5` Git identity; it does not embed the
+outer closure SHA-256. The former unauthenticated literal
+`questionnaire_whole_document_visual_and_flow_review_v1` is not an active
+implementation identity and cannot satisfy this object.
 
 `target_predicate` has exactly `roles`, `job_slot_ids`,
 `questionnaire_component_slot_ids`, `slot_kinds`, `field_purposes`, and
@@ -26730,6 +27162,7 @@ unnamed consumer.
 | §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
 | §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
 | §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files), and exact-compare every row, role, wave, path, storage identity, order, count, keyset, and domain digest. Only that fixed denominator supplies the six-era/43-wave hierarchy extraction, whole-document/field/flow/occurrence locator domains, retained slot-source projection, and exact branch, layout, codebook, near-match, and target-key proof. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
+| §4.2 source-derived job/component IDs, `slot_kind`, hierarchy, and unsupported-tuple denominator | `replaced-and-completed-by-§19.3.3-source-only-hierarchy-annotation`: the separately first-added `Q5` closure is the authenticated annotation authority over all pages of the fixed 81-document domain. Exact UTF-8 occurrence coordinates, same-wave and branch ancestry, complete role/job/component anchor partitions, repeat/alias and aggregate-anchor reverse covers, coordinate-derived IDs, sentinels, per-kind equations, and the exact all-source-component projection `R_Q` are frozen. The complete hierarchy is `W × two roles × R_Q`; source-only `O_H` is derived before purpose positives, observed and structural-hierarchy rows are explicit, every row expands over all 35 purposes, and complete `O_P` versus absence-proof branches exact-partition that fixed domain. G17-C01 carries the exact authority header plus six era annotation projections. The prior 37-wave/61-passage artifact and unauthenticated review literal cannot satisfy the new authority. Existing official v1 artifact names remain; only their formerly underdetermined nested dimensions and evidence are completed. |
 | §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets-and-tagged-branches`: one `residual_consequence` member is inserted at the exact enumerated position. A verified/documented executable row preserves every preexisting member and meaning; only the exact authority-absent/conflict carrier branches set the enumerated executable members empty or null and force `abort_registration`. |
 | §4.2 `family_aggregate_allocation_rule` | `preserved-in-every-executable-SE-row-and-exactly-null-in-a-negative-carrier`: a verified/documented row retains exactly `action` and `allocation_source_inventory_keys`; an authority-absent/conflict carrier has null as expressly enumerated in §19.3.4. Neither branch creates an allocation default. |
 | §§16.2, 16.5.1, 16.11.2, and 16.13 official registry/crosswalk identities and construction | `composed-with-the-completed-nested-schemas`: all v1 official artifact/registry names, nine-registry order, first-add/cutoff history, nonempty/no-unreferenced-row rules, and configuration deep-copy laws remain. Every affected content and identity digest is fresh. |
@@ -26760,8 +27193,9 @@ grammar or absence evidence never enters that target/model-choice domain.
 The seven changed expected/actual payloads are exactly:
 
 - **G17-C01** is a tagged object with exactly `inventory_key_stream`,
-  `slot_source_authority_manifest`, `inventory_layout_grammar_rows`,
-  `inventory_absence_proof_rows`, and `slot_closure_evidence_identity`. The
+  `slot_source_authority_manifest`, `hierarchy_annotation_authority`,
+  `inventory_layout_grammar_rows`, `inventory_absence_proof_rows`, and
+  `slot_closure_evidence_identity`. The
   first is the unchanged complete official key stream. The second is the
   complete two-key §19.3.3 slot-source manifest. On the expected side, before
   any candidate manifest is read, both immutable upstream roots and all four
@@ -26772,20 +27206,49 @@ The seven changed expected/actual payloads are exactly:
   identities, canonical order, count 257, ordered-ID keyset hash, row-domain
   hash, and embedded `upstream_corpus_registry_identity` must all exact-match
   the candidate source manifest. Only then is that passing manifest deep-
-  copied by the slot/inventory artifacts on the actual side. The next two are positional projections of every
+  copied by the slot/inventory artifacts on the actual side. The third value
+  has exactly `authority_header` and `era_annotation_rows`.
+  `authority_header` has exactly the complete displayed
+  `hierarchy_annotation_authority` shape in §19.3.3.
+  `era_annotation_rows` has exactly six rows in `era_id_order`; each has
+  exactly `era_id`, `questionnaire_page_rows`,
+  `questionnaire_occurrence_rows`, `flow_branch_rows`, `hierarchy_rows`,
+  `positive_occurrence_rows`, `expanded_disposition_rows`, and
+  `absence_proofs`, each a complete deep copy of the matching Q5 era member.
+  The direct era-order concatenation of each nested array must reproduce the
+  matching header count, keyset where defined, and domain digest. This exact
+  tagged projection therefore contains the independently authenticated
+  81-document/page-text inputs, page and UTF-8 occurrence domains, flow
+  ancestry, role/job/component catalogs and alias proofs, fixed `R_Q`,
+  complete H, positive-occurrence rows, structural-hierarchy branch, and
+  absence proofs rather than merely describing them.
+
+  On the expected side, the coordinator authenticates `Q5`, independently
+  reproduces every pinned page byte and all deterministic IDs/projections,
+  then builds this exact projection before a slot/inventory comparand is
+  read. On the actual side, the same projection is rebuilt from the
+  identity-selected closure values consumed by the official slot and
+  inventory artifacts, and every represented catalog, expanded-slot,
+  locator, proof, count, keyset, and digest is reverse-projected from those
+  consumers and required to deep-equal it. The expected and actual tagged
+  values, including empty arrays, are then compared byte-for-byte under
+  §10.1; a header-only or rows-only value is invalid. The next two are positional projections of every
   official inventory row's complete §19.3.2 layout/token grammar and
   §19.3.3 absence-proof value, including exact empty branches. The final
-  identity has exactly `path`, `artifact_id`, `schema_version`, and `sha256`.
+  identity has exactly `path`, `artifact_id`, `schema_version`,
+  `source_commit`, `tree_mode`, `blob_oid`, `byte_size`, and `sha256`.
   Its path is
   `data/external/psid_questionnaire_slot_closure_evidence_v1.json`; its
   artifact and schema values are both
-  `psid_questionnaire_slot_closure_evidence.v1`; and its digest hashes the
-  complete canonical raw byte. It exact-matches the official slot-registry
+  `psid_questionnaire_slot_closure_evidence.v1`; its source commit is the
+  independently discovered single-path first-add `Q5`; and its mode, blob,
+  size, and digest reproduce that exact complete raw byte. It exact-matches the official slot-registry
   source-authority manifest's `slot_closure_evidence_identity` member. The expected object is
   freshly reconstructed from the two pinned roots and authenticated
   dictionary/codebook/raw-file and questionnaire bytes; the actual object
   comes from the slot registry and inventory. A candidate-selected source
-  row, role, wave, path, order, count, keyset, or digest fails C01. C01's expected/actual count remains the complete official
+  row, role, wave, path, order, count, keyset, annotation coordinate, alias,
+  relationship, or digest fails C01. C01's expected/actual count remains the complete official
   inventory-row count, while its domain hash covers this entire tagged
   object.
 - **G17-C05** is a tagged object with exactly
@@ -26950,6 +27413,20 @@ upstream_corpus_registry_identity
 source_document_keyset_sha256
 canonical_source_path
 interview_waves
+hierarchy_annotation_authority
+questionnaire_occurrence_id
+semantic_ordinal_at_span
+positive_occurrence_id
+global_relationship_rows
+role_node_rows
+structural_hierarchy_node
+observed_hierarchy_node
+era_annotation_rows
+job_slot_ids
+questionnaire_component_slot_ids
+node_alias_rows
+flow_branch_paths
+branch-compatible
 record_framing
 normalized_codebook_entries
 value_code_map
@@ -27549,7 +28026,19 @@ and symbolic commit names are likewise outside the inventory. In particular,
 `source_document_keyset_sha256` are exact member names inside retained
 artifacts, and `fixed_two_root_complete_source_document_projection` is the
 fixed value of their non-ID `projection_law` member; none is a separately
-selectable schema, rule, or predicate identifier. An omitted,
+selectable schema, rule, or predicate identifier. Likewise,
+`hierarchy_annotation_authority`, its page/occurrence/role/catalog/alias/
+relationship and `era_annotation_rows` members,
+`source_only_canonical_questionnaire_annotation`,
+`observed_hierarchy_node`, `structural_hierarchy_node`, and the
+`psid-questionnaire-page:`, `psid-questionnaire-occurrence:`,
+`questionnaire-flow:`, `psid-job-slot:`, `psid-component-slot:`,
+`psid-node-alias:`, `psid-questionnaire-relationship:`, and
+`psid-positive-occurrence:` prefixes are member/tag/preimage literals inside
+the already named closure schema, not new schemas or predicates. `O_H`,
+`O_P`, and `K_P` are symbolic byte-producing relations or projections, not
+serialized identifiers. `Q5` is a
+symbolic future Git commit, not a serialized identifier. An omitted,
 extra, duplicated, differently spelled, or undefined identifier blocks
 ratification. These successors create no mutable alias, candidate-selectable
 version, runtime branch, or alternate source fact.
@@ -27584,21 +28073,40 @@ accepted authority operand before every named predecessor passes.
    digest is still nonauthority. No row from the legal staging universe is
    grandfathered by Amendment 5.
 2. **Construct the Class-A questionnaire closure.** Reproduce the complete
-   `psid_questionnaire_slot_closure_evidence.v1` six-era/43-wave artifact,
+   81-document questionnaire page-text domain, then annotate every page with
+   exact UTF-8 occurrences, all flow paths, role/job/component anchors,
+   source-proved aliases, and purpose prompts without reading a slot,
+   inventory, crosswalk, or reader candidate. Exact-partition every role,
+   job, and component anchor into the role/job/component catalogs or its one
+   source-proved alias relation, consume every repeat instruction in complete
+   alias evidence, and reverse-cover every aggregate anchor; build mandatory
+   aggregate/no-job sentinels and the exact component projection `R_Q`;
+   expand complete H as W × two roles × `R_Q`; derive `O_H` independently of
+   purpose prompts; and exact-partition its 35-purpose expansion through
+   complete `O_P` into positive occurrences and proof-backed structural
+   keys.
+   Independently review the complete
+   `psid_questionnaire_slot_closure_evidence.v1` six-era/43-wave artifact and
+   first-add it alone at the single-parent post-D5 commit `Q5`. Reconstruct
+   its eight-key Git identity before any slot-registry candidate is read,
    require its source manifest and embedded upstream identity to deep-equal
    the already reconstructed 257-row `U` denominator in every row, role,
    wave, path, storage identity, count, keyset, order, and domain digest, and
-   only then construct whole-document/field-stream/flow-branch locators,
-   byte-derived canonical source rows, hierarchy, 35-purpose expansion,
-   retained-slot projection, and absence
-   proofs. Only after its source-manifest identity and every count/hash pass
+   only then accept its whole-document/occurrence/field-stream/flow-branch
+   locators, byte-derived canonical source rows, catalogs, hierarchy,
+   retained-slot projection, and absence proofs. Only after its source-
+   manifest identity, `Q5` identity, and every page/occurrence/catalog/
+   relationship/count/hash equation pass
    may `psid_questionnaire_slot_specs.v1` be derived and ratified. All seven
    Class-A residuals must receive exact source-backed successor dispositions.
 3. **Construct and ratify the official inventory.** From the ratified slot
    domain, paired dictionary/codebook authority, and byte-pinned raw-file
    censuses, build every §19.3.2 normalized value domain, padding/DFA field
    grammar, and every present/structural-
-   query row. Neither the slot registry nor the inventory is independently
+   query row. `asked` slot rows may map only to `present` inventory rows;
+   every structural-query row—including every key under a structural-
+   hierarchy node—may map only to `structural_missing` with its complete
+   source proof. Neither the slot registry nor the inventory is independently
    ratified unless the same two-key source-authority manifest passes the
    independent `U` comparison and G17-C01. All six Class-B residuals must close, all slot and row arrays
    exact-cover, every fixed-width file must frame and census without a
@@ -27752,6 +28260,15 @@ them.
    unless separately ratified service-date allocation law exists. This is a
    reported representational limit, not a substantive choice of which
    half-year law wins.
+7. **Existing questionnaire review versus a complete hierarchy authority.**
+   The committed predecessor covers 37 waves, 61 passage locators, and three
+   targeted absence proofs, but supplies no all-page occurrence, alias,
+   relationship, or hierarchy domain and omits six later waves. Section
+   19.3.3 therefore requires the future separately reviewed source-only `Q5`
+   artifact. Until it exists and every 81-document page and H-domain equation
+   passes, Class A and every dependent slot/inventory artifact remain
+   nonemittable. Neither the predecessor's favorable structural status nor a
+   whole-document locator fills that evidence gap.
 
 The two claimless optional federal/Railroad families are not an unresolved
 conflict: §19.2.4 adds their direct cell-validation equation while preserving
