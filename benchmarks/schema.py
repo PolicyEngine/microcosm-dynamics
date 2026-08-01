@@ -895,6 +895,11 @@ def validate_migration_context(
     )
     partition = context["reported_not_verified_partition"]
     legacy_entries = legacy_registry_entries(registry)
+    legacy_reported_ids = frozenset(
+        entry["row_id"]
+        for entry in legacy_entries
+        if entry["verification_class"] == "reported_not_verified"
+    )
     require(
         isinstance(partition, dict)
         and set(partition) == {"reason", "row_count"}
@@ -906,6 +911,10 @@ def validate_migration_context(
             for entry in legacy_entries
         ),
         "Mermin partition metadata has drifted",
+    )
+    require(
+        legacy_reported_ids == LEGACY_MERMIN_ROW_IDS,
+        "Mermin partition row IDs have drifted",
     )
     wish = context["wish_financing_stub"]
     require(

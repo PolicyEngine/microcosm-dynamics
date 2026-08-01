@@ -16,6 +16,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from schema import LEGACY_ROW_IDS
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(__file__).with_name("registry.json")
 LEGACY_MATRIX_SHA256 = (
@@ -2238,12 +2240,25 @@ for row in reported_not_verified:
     row["verification_class"] = "reported_not_verified"
 
 all_rows = [*rows, *reported_not_verified]
-assert len(rows) == 22
-assert len(reported_not_verified) == 20
 assert len({row["row_id"] for row in all_rows}) == len(all_rows)
-assert not any(".mermin." in row["row_id"] for row in rows)
+rows_by_id = {row["row_id"]: row for row in all_rows}
+assert set(LEGACY_ROW_IDS) <= set(rows_by_id)
+legacy_all_rows = [rows_by_id[row_id] for row_id in LEGACY_ROW_IDS]
+legacy_rows = [
+    row for row in legacy_all_rows if row["verification_class"] == "verified"
+]
+legacy_reported_not_verified = [
+    row
+    for row in legacy_all_rows
+    if row["verification_class"] == "reported_not_verified"
+]
+assert len(legacy_rows) == 22
+assert len(legacy_reported_not_verified) == 20
+assert not any(".mermin." in row["row_id"] for row in legacy_rows)
 dynasim_rows = [
-    row for row in all_rows if row["external_model"].startswith("DYNASIM")
+    row
+    for row in legacy_all_rows
+    if row["external_model"].startswith("DYNASIM")
 ]
 assert len(dynasim_rows) == 32
 for row in dynasim_rows:
@@ -2338,17 +2353,17 @@ matrix = {
             ),
         },
     },
-    "row_count": len(rows),
-    "total_row_count": len(all_rows),
-    "rows": rows,
+    "row_count": len(legacy_rows),
+    "total_row_count": len(legacy_all_rows),
+    "rows": legacy_rows,
     "reported_not_verified": {
-        "row_count": len(reported_not_verified),
+        "row_count": len(legacy_reported_not_verified),
         "reason": (
             "Mermin publisher-controlled bytes were not retrievable; values "
             "are retained from committed replication artifacts but are not "
             "accepted as verified external-source cells."
         ),
-        "rows": reported_not_verified,
+        "rows": legacy_reported_not_verified,
     },
     "wish_financing_stub": wish,
     "blocked_comparisons": blocked_comparisons(wish),
@@ -2399,52 +2414,9 @@ TIER_ORDER = (
     "model_triangulation",
     "statutory_parameter",
 )
-# Registry order is immutable. Add new row IDs only at the end of this tuple,
+# The legacy prefix is immutable. Add future row IDs only after its expansion,
 # even when their tier would otherwise sort earlier.
-REGISTRY_ROW_ORDER = (
-    "ssa.reported_taxable_earnings_per_worker",
-    "ssa.adjusted_taxable_payroll_per_covered_worker",
-    "ssa.gross_contributions_per_worker",
-    "ssa.net_payroll_tax_contributions_per_covered_worker",
-    "ssa.retired_worker_beneficiaries_per_worker",
-    "ssa.retired_worker_awards_per_worker",
-    "ssa.retired_worker_benefits_per_reported_taxable_earnings",
-    "cbo.taxable_payroll.trajectory_2015_100",
-    "cbo.tax_revenue.share_of_taxable_payroll",
-    "dynasim.favreault_steuerle.package1b.married.male.lose_ge_5",
-    "dynasim.favreault_steuerle.package1b.married.male.gain_ge_5",
-    "dynasim.favreault_steuerle.package1b.married.female.lose_ge_5",
-    "dynasim.favreault_steuerle.package1b.married.female.gain_ge_5",
-    "dynasim.favreault_steuerle.package1b.married.female.gain_ge_20",
-    "dynasim.favreault_steuerle.package1b.divorced.male.lose_ge_5",
-    "dynasim.favreault_steuerle.package1b.divorced.male.gain_ge_5",
-    "dynasim.favreault_steuerle.package1b.divorced.female.gain_ge_5",
-    "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_20",
-    "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_5",
-    "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_20",
-    "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_5",
-    "dynasim.mermin.price_indexing.all",
-    "dynasim.mermin.ppi.generated.q1",
-    "dynasim.mermin.ppi.generated.q2",
-    "dynasim.mermin.ppi.generated.q3",
-    "dynasim.mermin.ppi.generated.q4",
-    "dynasim.mermin.ppi.generated.q5",
-    "dynasim.mermin.ppi.real_shared.q1",
-    "dynasim.mermin.ppi.real_shared.q2",
-    "dynasim.mermin.ppi.real_shared.q3",
-    "dynasim.mermin.ppi.real_shared.q4",
-    "dynasim.mermin.ppi.real_shared.q5",
-    "dynasim.mermin.nra70.q1",
-    "dynasim.mermin.nra70.q2",
-    "dynasim.mermin.nra70.q3",
-    "dynasim.mermin.nra70.q4",
-    "dynasim.mermin.nra70.q5",
-    "dynasim.mermin.nra70.all",
-    "dynasim.mermin.cola_minus_0_4pp.age_62_67",
-    "dynasim.mermin.cola_minus_0_4pp.age_80_85",
-    "dynasim.mermin.four_reform_cost_ordering",
-    "wish.hr4289.employee_rate.share_of_payroll",
-)
+REGISTRY_ROW_ORDER = (*LEGACY_ROW_IDS,)
 TIER_DEFINITIONS = {
     "admin_truth": {
         "definition": (
@@ -2653,12 +2625,12 @@ def gap_class_for(row: dict[str, Any]) -> str:
     """Assign the primary gap class without erasing secondary mismatches."""
 
     row_id = row["row_id"]
+    if row["verification_class"] == "reported_not_verified":
+        return "unverified_source"
     if row_id in LABEL_MISMATCH_ROWS:
         return "label_mismatch"
     if row_id in FRAME_NO_ALIGNMENT_ROWS:
         return "frame_no_alignment"
-    if ".mermin." in row_id:
-        return "unverified_source"
     if row_id.startswith("wish."):
         return "module_missing"
     return "concept_mismatch"
@@ -2834,12 +2806,26 @@ gap_class_counts = {
     )
     for gap_class in GAP_CLASS_ORDER
 }
-assert tier_counts == {
+legacy_registry_entries = registry_entries[: len(LEGACY_ROW_IDS)]
+assert tuple(entry["row_id"] for entry in legacy_registry_entries) == (
+    LEGACY_ROW_IDS
+)
+legacy_tier_counts = {
+    tier: sum(entry["tier"] == tier for entry in legacy_registry_entries)
+    for tier in TIER_ORDER
+}
+legacy_gap_class_counts = {
+    gap_class: sum(
+        entry["gap_class"] == gap_class for entry in legacy_registry_entries
+    )
+    for gap_class in GAP_CLASS_ORDER
+}
+assert legacy_tier_counts == {
     "admin_truth": 7,
     "model_triangulation": 34,
     "statutory_parameter": 1,
 }
-assert gap_class_counts == {
+assert legacy_gap_class_counts == {
     "label_mismatch": 3,
     "frame_no_alignment": 1,
     "concept_mismatch": 17,
@@ -2911,7 +2897,7 @@ def seed_history_records(registry_sha: str) -> list[dict[str, Any]]:
 
     entries_by_id = {entry["row_id"]: entry for entry in registry_entries}
     records = []
-    for row in ordered_rows():
+    for row in legacy_all_rows:
         entry = entries_by_id[row["row_id"]]
         records.append(
             {

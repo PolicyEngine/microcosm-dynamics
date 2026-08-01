@@ -13,6 +13,8 @@ preliminary-source predicate.
 - Froze the merged matrix's exact 42-row ID prefix.
 - Scoped historical Mermin partition and locator rules to that prefix.
 - Decoupled legacy reconstruction from later verified and unverified rows.
+- Decoupled the registry generator's frozen matrix and seed census from the
+  live append order while preserving current registry bytes.
 - Added stable `b102e6fe...` round-trip regressions for both 43rd-row cases.
 - Passed the targeted benchmark tests, Ruff 0.15.0, Black 25.11.0, and
   Black 26.5.1 for the touched Python files.
