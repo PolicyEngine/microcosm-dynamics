@@ -28026,14 +28026,27 @@ exact role-specific row schema; and the row digest hashes that complete row.
 Its raw field, source-row ID/position, locator IDs, normalized entry positions,
 and dictionary coordinates must all exact-match that reconstructed row. A
 dictionary/layout locator has nonnegative half-open integer
-coordinates with `start < end` and an exact empty codebook-position array. A
-codebook locator has null coordinates and the complete nonempty ascending
-zero-based entry-position array for that field row. The array exact-covers
+coordinates with `start < end` and an exact empty codebook-position array.
+A codebook locator has null coordinates and `codebook_entry_positions` exactly equal to `[0, …, normalized_entry_count - 1]` in source-entry order. The array is empty if and only if `normalized_entry_count == 0`; otherwise it is nonempty.
+The locator array exact-covers
 every canonical field row in every one of `U`'s 86 dictionary-layout and 47
 codebook documents whose singleton wave occurs in this era, once per source
 row; no candidate-manifest, inventory-use-selected subset, or extra row is
 admitted. The 43 raw-file rows remain exact-covered by their framing
 derivations and do not masquerade as field-stream locators.
+
+The mandatory empty-entry locator regression uses one cited canonical
+codebook row whose `normalized_entries` array is exact empty and whose
+`normalized_entry_count` is `0`. It has exactly these three arms:
+
+- the passing arm emits exactly one field-stream locator for that row with
+  null coordinates and `codebook_entry_positions: []`, and that locator
+  contributes exactly one source atom;
+- the omitted arm emits no locator for that row and aborts on the every-
+  canonical-row exact-cover law; and
+- the invented arm emits one locator with `codebook_entry_positions: [0]`
+  and aborts because that array does not exactly equal the empty position
+  range required by `normalized_entry_count == 0`.
 
 The field locator ID is literal `psid-field-stream:` followed by SHA-256 of
 canonical JSON bytes of `[source_document_id,interview_wave,raw_field_id,
@@ -28640,7 +28653,7 @@ unnamed consumer.
 | §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2-v3-source-format-compiler`: byte-derived canonical dictionary/codebook rows, including locator-bound codebook `source_format_text`; a tagged common source-ordered dictionary/codebook format projection with byte-exact nonnull agreement; source-manifest-ordered field/file closure; and dependency-ordered dictionary extraction, raw framing/all-field census, codebook extraction, and numeric compilation precede inventory selection. Exact `NUM(w.d)`/`Fw.d` syntax establishes one width/decimal tuple but the complete census uniquely authenticates the zero-left-pad or ASCII-space-left-pad arm. Exact committed `CHR(w)` syntax supports only direct same-width literal copying and an inert outside-numeric or range-physical-unestablished row, never a numeric grammar. The complete combined group derives `value_code_map` for a nonempty normalized codebook domain and `fixed_width_numeric` for an exact-empty domain with supported numeric format; dictionary parse-kind text can only corroborate. Complete dictionary meaning JSON and codebook value lexemes retain their roles; every literal and range rendering is replayed under the selected arm. Action-sensitive prefix quotienting, explicit accumulator/depth, sink omission, BFS numbering, counts/digests, zero-arm constructors, and the complete 4,802-record V93 space-arm replay fix the physical and DFA bytes. Matching fixed-numeric codebook rows remain cited but must have empty normalized entries; value-code numeric ranges use codebook-derived type/unit, exact meaning, and literal-first precedence. Serialized normalized literal domains, exhaustive parse-kind branches, dictionary missing literals, closed unobserved-value rows, and outside-grammar abort remain. The retained whole-inventory builder identity stays distinct. `typed_parse_specs` retains its ratified nine-key shape, exact-matches the source-derived branch, and only its named width/decimal/value-derivation projection is otherwise compared to the source compiler result. |
 | §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
 | §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim. The predecessor padding-removal enum remains representable, but the v3 compiler emits only `none` or its census-authenticated exact ASCII-space canonicalization and never arbitrary removal. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
-| §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3-canonical-proof-partition`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, and reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files). For each H row, the official-order missing-purpose complement `M_h` emits exactly one proof iff nonempty; its four singleton hierarchy coordinates, complete `M_h`, singleton wave, target-key order, and filtered-H proof order are functions. Q5 separately exact-covers every questionnaire occurrence and canonical field row with source-only maximal semantic bindings; unresolved grouping fails. Atom-level partials produce exact near-match rows, while the complete branch-compatible witness relation used by `O_P` decides full-match truth. Ordering, both reason codes, and conclusions are exact functions. Only this fixed denominator supplies retained slot evidence, and every structural inventory proof deep-equals it. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes and the complete Q5 annotation. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
+| §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3-canonical-proof-partition`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, and reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files). For each H row, the official-order missing-purpose complement `M_h` emits exactly one proof iff nonempty; its four singleton hierarchy coordinates, complete `M_h`, singleton wave, target-key order, and filtered-H proof order are functions. Q5 separately exact-covers every questionnaire occurrence and canonical field row with source-only maximal semantic bindings; a cited codebook row whose `normalized_entry_count == 0` remains exactly one field-stream locator with `codebook_entry_positions: []` and exactly one source atom, while omission or an invented position `0` aborts. Unresolved grouping fails. Atom-level partials produce exact near-match rows, while the complete branch-compatible witness relation used by `O_P` decides full-match truth. Ordering, both reason codes, and conclusions are exact functions. Only this fixed denominator supplies retained slot evidence, and every structural inventory proof deep-equals it. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes and the complete Q5 annotation. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
 | §4.2 source-derived job/component IDs, `slot_kind`, hierarchy, and unsupported-tuple denominator | `replaced-and-completed-by-§19.3.3-source-only-hierarchy-annotation`: the separately first-added `Q5` closure is the authenticated annotation authority over all pages of the fixed 81-document domain. Exact UTF-8 occurrence coordinates, same-wave and branch ancestry, complete role/job/component anchor partitions, repeat/alias and aggregate-anchor reverse covers, coordinate-derived IDs, sentinels, per-kind equations, and the exact all-source-component projection `R_Q` are frozen. The complete hierarchy is `W × two roles × R_Q`; source-only `O_H` is derived before purpose positives, observed and structural-hierarchy rows are explicit, every row expands over all 35 purposes, and complete `O_P` versus structural branches exact-partition that fixed domain. Each nonempty same-H missing-purpose complement has its one canonical singleton-wave proof and complete source-atom annotation denominator. G17-C01 carries the exact authority header plus six era annotation projections. The prior 37-wave/61-passage artifact and unauthenticated review literal cannot satisfy the new authority. Existing official v1 artifact names remain; only their formerly underdetermined nested dimensions and evidence are completed. |
 | §4.2 independent `questionnaire_presence`/`source_disposition` tags and positive/structural evidence | `replaced-and-completed-by-§19.3.3-positive-field-join`: direct raw-ID or byte-identical leading question-identifier spans join each purpose prompt to a unique same-wave `D_w` field; ambiguous multi-field question labels abort. One source-only join per positive carries the complete ordered dictionary/codebook/raw-data projection. Asked, join, and present keys exact-cover each other in both directions; raw fields and layouts compare positionally; `asked iff present` and `structural_query_slot iff structural_missing`; structural inventory proofs deep-equal the complete Q5 proof object. The retained slot row carries the positive, join, or proof IDs, and G17-C01 compares the full join and proof/status bytes. No current artifact is promoted by this schema law. |
 | §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets-and-tagged-branches`: one `residual_consequence` member is inserted at the exact enumerated position. A verified/documented executable row preserves every preexisting member and meaning; only the exact authority-absent/conflict carrier branches set the enumerated executable members empty or null and force `abort_registration`. |
@@ -28692,15 +28705,18 @@ The seven changed expected/actual payloads are exactly:
   `authority_header` has exactly the complete displayed
   `hierarchy_annotation_authority` shape in §19.3.3.
   `era_annotation_rows` has exactly six rows in `era_id_order`; each has
-  exactly `era_id`, `questionnaire_page_rows`,
+  exactly `era_id`, `field_stream_locators`, `field_stream_locator_count`,
+  `field_stream_locator_domain_sha256`, `questionnaire_page_rows`,
   `questionnaire_occurrence_rows`, `flow_branch_rows`, `hierarchy_rows`,
   `positive_occurrence_rows`, `occurrence_raw_field_reference_rows`,
   `positive_field_join_rows`, `expanded_disposition_rows`,
   `near_match_source_annotation_rows`, and `absence_proofs`, each a complete
-  deep copy of the matching Q5 era member.
-  The direct era-order concatenation of each nested array must reproduce the
-  matching header count, keyset where defined, and domain digest. This exact
-  tagged projection therefore contains the independently authenticated
+  deep copy of the matching Q5 era member. Each projected field-stream count
+  equals its locator-array length and its projected domain digest hashes that
+  complete ordered locator array. The direct era-order concatenation of each
+  remaining nested array must reproduce the matching header count, keyset
+  where defined, and domain digest. This exact tagged projection therefore
+  contains the independently authenticated
   81-document/page-text inputs, page and UTF-8 occurrence domains, flow
   ancestry, role/job/component catalogs and alias proofs, fixed `R_Q`,
   complete H, positive-occurrence rows, structural-hierarchy branch, the
@@ -28714,9 +28730,13 @@ The seven changed expected/actual payloads are exactly:
   identity-selected closure values consumed by the official slot and
   inventory artifacts, and every represented catalog, expanded-slot,
   locator, proof, count, keyset, and digest is reverse-projected from those
-  consumers and required to deep-equal it. The expected and actual tagged
-  values, including empty arrays, are then compared byte-for-byte under
-  §10.1; a header-only or rows-only value is invalid.
+  consumers and required to deep-equal it. For every cited canonical codebook
+  row whose `normalized_entry_count == 0`, both expected and actual
+  projections carry its one field-stream locator with
+  `codebook_entry_positions: []` and that locator's one source atom; neither
+  side may omit the locator or invent position `0`. The expected and actual
+  tagged values, including empty arrays, are then compared byte-for-byte
+  under §10.1; a header-only or rows-only value is invalid.
 
   The fourth value has exactly `occurrence_raw_field_reference_rows`,
   `occurrence_raw_field_reference_count`,
@@ -28969,6 +28989,8 @@ layout_coordinates
 typed_parse_specs
 source_file_ids
 field_source_derivation
+field_stream_locators
+codebook_entry_positions
 dictionary_codebook_fixed_width_source_derivation_v3
 derive_source_numeric_grammar
 numeric_grammar_derivation_rows
@@ -29767,7 +29789,12 @@ accepted authority operand before every named predecessor passes.
    only then accept its whole-document/occurrence/field-stream/flow-branch
    locators, byte-derived canonical source rows, catalogs, hierarchy, raw-
    field references and joins, retained-slot projection, source-atom
-   annotations, and canonical absence proofs. Only after its source-
+   annotations, and canonical absence proofs. For every cited canonical
+   codebook row with `normalized_entry_count == 0`, this acceptance walk
+   requires exactly one field-stream locator with null coordinates and
+   `codebook_entry_positions: []`, followed by exactly one source atom for
+   that locator; omission or an invented position `0` aborts before Q5 can
+   pass. Only after its source-
    manifest identity, `Q5` identity, and every page/occurrence/catalog/
    relationship/count/hash equation pass
    may `psid_questionnaire_slot_specs.v1` be derived and ratified. All seven
