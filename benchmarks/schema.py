@@ -1715,13 +1715,24 @@ def validate_append_mostly_registry(
         return
 
     validate_registry(previous)
+    previous_entries = previous["entries"]
+    current_entries = current.get("entries")
+    if isinstance(current_entries, list) and all(
+        isinstance(entry, dict) and "row_id" in entry
+        for entry in current_entries
+    ):
+        previous_ids = [entry["row_id"] for entry in previous_entries]
+        current_ids = [entry["row_id"] for entry in current_entries]
+        require(
+            current_ids[: len(previous_ids)] == previous_ids,
+            "existing benchmark rows cannot be removed, reordered, or renamed",
+        )
     validate_registry(current)
     for key in IMMUTABLE_REGISTRY_KEYS:
         require(
             current[key] == previous[key],
             f"immutable registry law changed without a schema migration: {key}",
         )
-    previous_entries = previous["entries"]
     current_entries = current["entries"]
     previous_ids = [entry["row_id"] for entry in previous_entries]
     current_ids = [entry["row_id"] for entry in current_entries]

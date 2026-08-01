@@ -2,8 +2,8 @@
 
 ## State
 
-All six verdict edits are implemented. The append transaction and its
-two-appender failure regression are under targeted and lint gates.
+All six verdict edits are implemented. A full-suite compatibility failure in
+the append-mostly reorder diagnostic is fixed and passing its targeted gate.
 
 ## Done
 
@@ -35,8 +35,13 @@ two-appender failure regression are under targeted and lint gates.
 - Moved rollback-size capture after acquisition of both append locks.
 - Added a two-process regression where appender 2 fails after writing and must
   preserve appender 1's successful bytes.
+- Preserved the established append-mostly reorder diagnostic by checking the
+  prior row-ID prefix before standalone frozen-prefix validation of the new
+  registry.
+- Passed the targeted compatibility test plus Ruff 0.15.0, Black 25.11.0, and
+  Black 26.5.1 on the follow-up schema change.
 
 ## Next
 
-1. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.
+1. Rerun format, lint, builder, tier-sync, and full benchmark gates.
 2. Record final artifact hashes and commit inventory, then remove this ledger.
