@@ -231,8 +231,38 @@ def load_json(relative: str) -> dict[str, Any]:
     return json.loads(read_bytes(relative))
 
 
+# Append-only design documents are frozen at the identity current when
+# the harness registered them; lawful later amendments only append, so
+# the live file must keep the frozen bytes as an exact prefix while the
+# registry keeps emitting the frozen identity. Live-hashing these would
+# turn every amendment branch into a spurious registry-drift failure.
+APPEND_ONLY_DOC_INPUTS = {
+    "docs/design/covered_earnings_correction.md": (
+        "6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8",
+        1_376_610,
+    ),
+    "docs/design/anchor_context_extraction.md": (
+        "58da13e0409e81b92dc656a082e86a5176ebaceffad663ec531c8e92cc0825dc",
+        59_157,
+    ),
+}
+
+
 def sha256(relative: str) -> str:
-    return hashlib.sha256(read_bytes(relative)).hexdigest()
+    frozen = APPEND_ONLY_DOC_INPUTS.get(relative)
+    if frozen is None:
+        return hashlib.sha256(read_bytes(relative)).hexdigest()
+    frozen_sha256, size_bytes = frozen
+    live = read_bytes(relative)
+    prefix = live[:size_bytes]
+    if (
+        len(live) < size_bytes
+        or hashlib.sha256(prefix).hexdigest() != frozen_sha256
+    ):
+        raise AssertionError(
+            f"{relative} violates its append-only frozen prefix"
+        )
+    return frozen_sha256
 
 
 first = load_json("runs/first_estimates_v1.json")
