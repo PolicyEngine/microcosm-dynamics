@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from collections import Counter
@@ -763,4 +764,23 @@ def render() -> str:
     return "\n".join(lines)
 
 
-OUT.write_text(render(), encoding="utf-8")
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="fail if report.md differs; never write",
+    )
+    args = parser.parse_args()
+    expected = render().encode("utf-8")
+    if args.check:
+        if not OUT.exists():
+            raise SystemExit(f"missing generated artifact: {OUT}")
+        if OUT.read_bytes() != expected:
+            raise SystemExit(f"generated artifact is stale: {OUT}")
+        return
+    OUT.write_bytes(expected)
+
+
+if __name__ == "__main__":
+    main()

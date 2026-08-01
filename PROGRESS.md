@@ -40,12 +40,15 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
   model/comparison artifacts (with certification limited to M6 Family A).
 - Independent source-cell correction: tightened the two CBO workbook ranges
   to `A40:A47+C40:C47` and `A40:A47+B40:B47`.
+- Reproduction blocker: implemented fail-closed, non-writing `--check` modes
+  for both builders and strengthened the drift test to pin both artifacts,
+  both row classes, accepted canonical capture pins, Mermin demotion, all 32
+  DYNASIM cell paths, and all 10 derivations.
 
 ## Next
 
-1. Implement fail-closed, non-writing `--check` modes for both builders and
-   strengthen the drift test for both files, capture pins, and locators.
-2. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+1. Regenerate `matrix.json` and `report.md`, confirm the updated drift SHA
+   pins, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-3. Write the final closure report to the requested output file.
+2. Write the final closure report to the requested output file.

@@ -8,6 +8,7 @@ cells, so rebuilding does not depend on the coordinator's mutable staging path.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import statistics
@@ -2398,10 +2399,38 @@ matrix = {
     ],
 }
 
-OUT.write_text(
-    json.dumps(
-        matrix, sort_keys=True, indent=2, ensure_ascii=True, allow_nan=False
+def render() -> bytes:
+    """Return the canonical matrix bytes without mutating the filesystem."""
+
+    return (
+        json.dumps(
+            matrix,
+            sort_keys=True,
+            indent=2,
+            ensure_ascii=True,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode("utf-8")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="fail if matrix.json differs; never write",
     )
-    + "\n",
-    encoding="utf-8",
-)
+    args = parser.parse_args()
+    expected = render()
+    if args.check:
+        if not OUT.exists():
+            raise SystemExit(f"missing generated artifact: {OUT}")
+        if OUT.read_bytes() != expected:
+            raise SystemExit(f"generated artifact is stale: {OUT}")
+        return
+    OUT.write_bytes(expected)
+
+
+if __name__ == "__main__":
+    main()
