@@ -24114,6 +24114,9 @@ canonical_jurisdiction_ids
 authority_rows
 authority_row_count
 authority_row_sha256
+source_coding_declarations
+source_coding_declaration_count
+source_coding_declaration_sha256
 inventory_domain_rows
 inventory_domain_row_count
 inventory_domain_sha256
@@ -24224,12 +24227,78 @@ complete ordered six-member rows. These fixed IDs—not a wave's enum tokens,
 observed values, legal rows, or runner residences—are the canonical state
 vocabulary.
 
+`source_coding_declarations` independently exact-covers every official-
+inventory raw field attached to a `state_of_residence` slot, once each in
+official inventory then raw-field order. Each row has exactly
+`source_coding_declaration_id`, `questionnaire_era`, `interview_wave`,
+`source_inventory_key`, `raw_field_id`, `source_coding_system`,
+`coding_reference_source_document_id`, `source_declaration_projection`,
+`source_nonstate_member_refs`, and `source_row_sha256s`. The four field
+coordinates exact-copy the slot/inventory/layout join.
+
+`source_declaration_projection` is the nonempty source-manifest and
+source-row-order projection of every complete canonical dictionary or
+codebook row that carries the field's coding declaration or reference. Each
+projection object has exactly `source_document_id`, `canonical_row_id`,
+`source_locator_ids`, `source_label`, `source_description`,
+`normalized_entry_refs`, and `normalized_entry_meanings`; all seven values
+are exact deep copies. Locator arrays are nonempty source-order foreign keys,
+and at least one resolved locator contains the complete declaration or
+reference bytes. The entry-reference and meaning arrays exact-cover the
+complete declaration-bearing normalized source domain positionally,
+including missing and nonstate entries. `source_row_sha256s` is the complete
+nonempty source-manifest-order digest projection of those resolved canonical
+rows. A field ID, dictionary coordinate or numeric format alone, normalized
+value-domain shape, observed value, inventory tag, or candidate mapping is
+not a coding declaration.
+
+Before `inventory_domain_rows` is read, the source-only extractor reconstructs
+the complete declaration projection. Every declaration/reference in that
+projection must select the same one of these four closed systems:
+
+- an exact PSID State Codes reference resolves
+  `coding_reference_source_document_id` to
+  `psid-corpus-document-0222` and selects `psid_state_code`;
+- an exact FIPS State Codes reference—including exact source declaration
+  `Actual state (FIPS code)`—resolves it to
+  `psid-corpus-document-0221` and selects `fips_state_code`;
+- an explicit declaration that source values are the fixed authority names
+  uses null reference document and selects `exact_state_name`; and
+- an explicit declaration that source values are aliases whose complete
+  source meanings name the fixed authority rows uses null reference document
+  and selects `source_labeled_alias`.
+
+No integer-set subset, permutation, width, field name, source frequency, or
+majority test participates. The serialized `source_coding_system` and
+reference ID must deep-equal that reconstruction. Zero declarations, two
+systems, an unresolved reference, or conflicting rows abort. Consequently
+V93's exact PSID State Codes reference selects PSID from its complete
+0/1–51/99 domain, while ER21004's exact FIPS declaration selects FIPS from
+its complete 0/1–56/99 domain; neither domain is asked whether it also
+contains all codes of another table.
+
+`source_nonstate_member_refs` is the unique source-order array of exact
+two-position values `[source_entry_ref,range_member_index]` for every
+nonmissing member whose locator-bound declaration expressly identifies it
+as foreign, territory, foreign-or-territory, or another nonstate value. The
+second position is null for a literal and the member's nonnegative expansion
+index for a range member. Every reference resolves the same field and exact
+normalized source member. It cannot be inferred from a spelling list,
+candidate annotation, or table miss. Missing members are excluded here and
+retain their separate typed-missing branch. The declaration ID is literal
+`psid-state-coding-declaration:` followed by SHA-256 of §10.1 terminal-LF
+canonical bytes of the exact nine-position JSON value array of the complete
+row after omitting only `source_coding_declaration_id`, in displayed order.
+Unequal preimages producing one ID abort as a hash collision. Count equals
+array length and the digest hashes the complete ordered declaration rows.
+
 `inventory_domain_rows` independently exact-covers every source-domain
 member of every official-inventory raw field attached to a
 `state_of_residence` slot. Each row has exactly `questionnaire_era`,
 `interview_wave`, `source_inventory_key`, `raw_field_id`,
 `source_domain_ordinal`, `source_entry_ref`, `source_member_kind`,
-`range_member_index`, `source_coding_system`, `source_value_type`,
+`range_member_index`, `source_coding_declaration_id`,
+`source_coding_system`, `source_value_type`,
 `source_value`, `raw_token_hex`, `source_meaning`, `source_negative_tag`,
 `canonical_jurisdiction_id`, `disposition`, and `source_row_sha256s`. The
 first four values exact-copy the official slot/inventory/field join. The
@@ -24277,72 +24346,99 @@ ranges, a literal contained in a range, repeated literals, or a second
 occurrence of the same typed value within one raw field abort before
 deduplication, even if both occurrences would map identically.
 
-For each raw field, remove only `literal_missing` members and let `N` be the
-complete remaining member sequence. It must be nonempty and uniformly
-integer-valued or uniformly string-valued. Construct four Booleans without
-reading any configured `source_coding_system`:
+For each raw field, resolve exactly one same-coordinate declaration row `D`
+before reading any serialized domain row. Every member repeats
+`D.source_coding_declaration_id` and `D.source_coding_system`. Remove only
+`literal_missing` members and let `N` be the complete remaining member
+sequence. It must be nonempty and uniformly integer-valued for either
+numeric declaration or uniformly string-valued for either string
+declaration. A type mismatch aborts; the value set cannot change `D`.
 
-1. `P_psid` is true exactly when `N` is integer-valued, every PSID code 1
-   through 51 occurs exactly once in `N`, and each exact authority-name
-   meaning present on one of those code rows agrees with that PSID row;
-2. `P_fips` is true exactly when `N` is integer-valued, every integer in the
-   displayed 51-member FIPS column occurs exactly once in `N`, and each
-   exact authority-name meaning present on one of those code rows agrees
-   with that FIPS row;
-3. `P_name` is true exactly when `N` is string-valued and its complete value
-   sequence is a permutation containing every displayed authority name
-   exactly once with no other value; and
-4. `P_alias_raw` is true exactly when `N` is string-valued, every member's
-   exact `source_meaning` equals one displayed authority name, and the
-   complete meaning sequence contains each authority name exactly once.
-   `P_alias` is `P_alias_raw && !P_name`.
+For every member, including every negative branch, independently compute
+two joins against the fixed 51-row authority table. `J_v` is null for a
+missing member; otherwise it joins the exact integer `source_value` to the
+selected PSID or FIPS code column on a numeric branch and joins the exact
+string `source_value` to `authority_name` on either string branch. `J_m`
+joins the exact `source_meaning` to `authority_name` on all four branches.
+Each join resolves zero or one row; more than one aborts. Whenever both
+resolve, their complete authority rows and canonical IDs must be equal,
+without exception for names, aliases, missing, or nonstate values.
 
-Exactly one of `P_psid`, `P_fips`, `P_name`, and `P_alias` must be true.
-Zero or two-or-more true predicates abort. `source_coding_system` is then,
-respectively, `psid_state_code | fips_state_code | exact_state_name |
-source_labeled_alias` and is repeated identically on every row for that raw
-field. Thus it is a byte-producing function of the complete authenticated
-domain, not a label/reference guess or candidate field. The alias branch is
-string-only and disjoint from the exact-name branch. For the selected
-numeric system, a nonmissing integer inside its displayed code column maps
-to that one authority row. A nonmissing integer outside that column has null
-canonical ID, negative tag `outside_selected_numeric_state_table`, and
-disposition `excluded_nonstate_numeric_code`; this is a closed code-set
-difference, not a semantic reading of prose. Every nonmissing string must
-map through its exact value or exact meaning under the selected string
-branch; an unmatched string aborts and is never silently called nonstate.
+Disposition is the following exhaustive priority function:
 
-Each actual-state row resolves to exactly one authority row and serializes
-its canonical ID with disposition `canonical_state_jurisdiction` and null
-negative tag. When a numeric row's `source_meaning` is exactly an authority
-name, its code and name joins must resolve to the same row. The only null-ID
-branches are the two exact negative tags and dispositions above; no open
-territory/foreign/missing phrase list or candidate annotation exists.
-Across all waves, every pair of rows with the same
-`(source_coding_system, source_value_type, source_value)` must have the same
-ID and disposition, and every pair whose exact source meaning is the same
-authority name must have the same canonical ID. That is the complete
-cross-wave alias-normalization equation. No trimming, case folding,
-punctuation folding, USPS table, fuzzy matching, observed-value inference,
-width heuristic, label/reference selection, or majority rule is admitted.
-In particular, the authenticated 1968 V93 `NUM(2.0)` width alone proves
-nothing: its complete normalized 0, 1–51, and 99 source domain uniquely makes
-`P_psid` true, expands all 51 valid codes at the source step, maps code 0 by
-the closed outside-table branch, and maps a typed-missing 99 by the closed
-missing branch, whether or not any of those tokens was observed.
+1. A `literal_missing` member must have both joins null, must be absent from
+   `D.source_nonstate_member_refs`, and retains null canonical ID, negative
+   tag `registered_missing`, and disposition `excluded_source_missing`.
+2. A member named by exactly one `D.source_nonstate_member_refs` position
+   must be nonmissing and have both joins null. It has null canonical ID,
+   negative tag `source_authenticated_nonstate_member`, and disposition
+   `excluded_source_authenticated_nonstate`. This is the only string
+   nonstate branch and preserves locator-backed `FOREIGN`, territory, and
+   combined foreign/territory declarations rather than aborting them.
+3. On `psid_state_code`, `fips_state_code`, or `exact_state_name`, `J_v` is
+   the primary join; on `source_labeled_alias`, `J_m` is the primary join.
+   A resolved primary join, and the equal secondary join when nonnull,
+   yields that one canonical ID, null negative tag, and disposition
+   `canonical_state_jurisdiction`. A secondary-only result aborts as
+   conflicting coding evidence rather than changing the selected branch.
+4. If both joins are null on a numeric branch and the member is not an
+   authenticated nonstate reference, it has null canonical ID, negative tag
+   `outside_selected_numeric_state_table`, and disposition
+   `excluded_nonstate_numeric_code`. This is the exact code-set complement
+   under the already selected numeric authority, not a classifier.
+5. Any remaining member—including an unresolved string not explicitly
+   declared nonstate—aborts.
+
+Those five branches exact-cover every expanded enum member once. A missing
+or duplicate nonstate reference, a reference to a state or missing member,
+or any member receiving zero or two dispositions aborts. Across all waves,
+every pair of rows with the same `(source_coding_system,source_value_type,
+source_value)` must have the same ID and disposition, and every pair whose
+exact source meaning is the same authority name must have the same canonical
+ID. That is the complete cross-wave alias-normalization equation. No
+trimming, case folding, punctuation folding, USPS table, fuzzy matching,
+observed-value inference, width heuristic, subset predicate, field-name
+selection, or majority rule is admitted.
+
+The following five hostile constructor vectors are mandatory and are
+evaluated from complete declarations and domains, not hand-selected rows:
+
+1. **Numeric PSID.** The authenticated 1968 V93 PSID declaration with
+   literal 0, inclusive range 1–51, and typed-missing 99 selects only
+   `psid_state_code`; all 51 range members map in PSID order, 0 takes the
+   exact source-authenticated nonstate branch, and 99 takes the missing
+   branch.
+2. **Numeric FIPS.** The authenticated 2003 ER21004 declaration `Actual
+   state (FIPS code)` with literal 0, inclusive range 1–56, and typed-missing
+   99 selects only `fips_state_code`; the 51 displayed FIPS integers map,
+   0 takes its source-authenticated territory/foreign disposition, integers
+   3, 7, 14, 43, and 52 take the closed outside-table disposition, and 99 is
+   missing. The contained PSID 1–51 subset creates no competing result.
+3. **Exact names.** An `exact_state_name` declaration containing all 51
+   exact authority-name values once, with each meaning either nonresolving
+   or equal to the same row, maps all 51 and no predicate is consulted.
+4. **Aliases plus nonstates.** A `source_labeled_alias` declaration with 51
+   source aliases whose meanings exact-name the 51 authority rows plus
+   locator-backed `FOREIGN` and territory members maps the state aliases by
+   `J_m` and gives both additional members their exact nonstate disposition.
+5. **Swapped evidence.** An exact-name value domain in which the
+   authenticated meanings for Alabama and Arizona are swapped makes `J_v`
+   and `J_m` resolve unequal rows for both members and must abort before any
+   domain row, count, or digest can pass.
 
 Rows follow official inventory order, raw-field order, then expanded domain
 ordinal. `inventory_domain_row_count` equals array length and is positive;
 its digest hashes the complete array. Status passes only when the two raw
 authority documents, fixed table, tagged-union branches, stepped range
-expansion, exact field-domain cover, exactly-one system predicate, canonical
-joins, negative branches, alias equations, counts, and digests all pass, and the stable unique nonnull canonical-ID projection of
+expansion, declaration exact cover, source-selected system, both joins for
+every branch, member/disposition exact cover, negative branches, hostile
+vectors, alias equations, counts, and digests all pass, and the stable unique nonnull canonical-ID projection of
 the complete inventory-domain array equals all 51 canonical IDs in authority
 order. A missing or extra field/member, duplicate or overlapping source
-entry, malformed missing literal, partial/incorrect-step range, absent map,
-competing map, zero/multiple system predicates, unmatched string, code/name
-disagreement, negative-tag mismatch, source drift, order difference, or hash
-mismatch aborts before a legal cell exists.
+entry, malformed missing literal, partial/incorrect-step range, absent or
+competing declaration, declaration/domain mismatch, unmatched string,
+value/meaning disagreement, negative-tag mismatch, source drift, order
+difference, or hash mismatch aborts before a legal cell exists.
 
 `jurisdiction_ids` is exactly literal `federal` followed by the 51
 `canonical_jurisdiction_ids`; `jurisdiction_count` is integer 52 and its
@@ -24958,10 +25054,11 @@ or replacement fails.
 `actual_rule_domain`, `expected_domain_sha256`, `actual_domain_sha256`,
 `mismatch_count`, and `status`. The expected side is freshly reconstructed
 in the §19.2.3 order, including the fixed 51-jurisdiction authority table,
-both authenticated state-code documents, every expanded inventory state
-domain member, and every alias/negative disposition, without consulting any
-legal-rule row or configured domain; the actual side is the strict-parsed
-registry member. Status passes
+both authenticated state-code documents, every locator-bound source coding
+declaration, every expanded inventory state-domain member, both authority
+joins, and every state/missing/nonstate/numeric-complement disposition,
+without consulting any legal-rule row or configured domain; the actual side
+is the strict-parsed registry member. Status passes
 only on deep equality, equal canonical digests, and integer-zero mismatches.
 It also reconstructs the fixed family-to-claim cardinalities and the
 official-inventory-order `A_x^D`/cell-membership `A_x^C` equality for all
@@ -28094,7 +28191,7 @@ unnamed consumer.
 | §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals; independent 14-family cell denominator; exact eight-position cell-ID and 15-position partition-ID value-array preimages, types, null branches, LF-canonical hashes, and collision aborts; effective-stream or one-year keyed partitions; exact cell cover; authenticated normalized joint-binding identities; complete false-before-true Cartesian vectors; all-transform tables; exact `no_disposition`; per-vector same/lower-rank agreement; rank-1 totality; and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
 | §§4.1, 5.1, and 16.3.1 own-rule Boolean enumeration and `direct_law_controlling_result` runtime law | `composed-with-§19.2.4-joint-overlap-table`: own-rule AST/type/output validation remains; identical cross-rule binding signatures co-vary and all other signatures take the complete Cartesian product for registry overlap proof. At runtime, an all-present record must select one exact `T_p` row before the retained controlling result and one-hot classification; missing facts retain the skipped-transform fold. |
 | §4.1 `verification_claim_specs` legal `affected_inventory_keys` and `governing_rule_ids` | `completed-by-§19.2.3-byte-producing-projections`: the affected-key source is the complete independent disposition/cell relation in official inventory order; the governing-rule source is the complete rule-major effective-cell relation fixed by family claim in registry order; exact uniqueness, five-claim order, cross-family/jurisdiction aggregation, JSON-array serialization, branch equality, and nonempty aborts are explicit. Neither configured destination array selects either source relation. |
-| §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary, exact PSID/FIPS/name authority table, inclusive range expansion, complete field-domain cover, source-labeled cross-wave alias normalization, and aborts for missing, duplicate, overlapping, or ambiguous maps. Observed values and candidate enums never select the denominator. |
+| §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary; exact PSID/FIPS/name authority table; locator-bound source coding declarations that select PSID, FIPS, exact-name, or alias authority without a domain-subset predicate; inclusive range expansion; complete enum-member cover including authenticated foreign/territory dispositions; value and meaning joins on every branch with mandatory agreement; and five hostile constructor vectors. Observed values and candidate enums never select the denominator. |
 | §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
 | §8 and §10.1 `legal_rule_input` | `replaced-by-§19.2.1-literals-and-§19.2.2-subordinate-byte-closure`: one concrete path/vintage/schema, canonical complete raw blob, configured complete deep copy, and referenced source blobs closed before runner creation. The implicit input ID/role and every other production-input law are preserved. |
 | §16.2 `historical_coverage_rules` requirement row and item-6 predicate equation | `replaced-by-§19.2.5-v2-successor`: schema descriptor plus configuration, raw bytes, append-only history, independent domain, and source-byte closure. Requirement ID/class remain unchanged. |
@@ -28253,8 +28350,9 @@ The seven changed expected/actual payloads are exactly:
   `legal_source_document_byte_closure`, and
   `legal_authority_verification_result`. The first value is the complete
   strict-parsed §19.2 registry, including its envelope, manifest, independent
-  domain, fixed source-authenticated jurisdiction mapping, expanded
-  state-field domain, rule rows, interval partitions, counts, and digests.
+  domain, locator-bound source coding declarations, fixed source-authenticated
+  jurisdiction mapping, expanded state-field domain, both authority joins and
+  every nonstate disposition, rule rows, interval partitions, counts, and digests.
   Both sides recompute the exact \(M_t\), \(M_c\), and \(M_p\) value arrays,
   their terminal-LF canonical bytes, and all three prefixed IDs before any
   enclosing row or domain digest. The expected
@@ -28399,6 +28497,7 @@ partition_overlap_evaluation_closure
 direct_law_controlling_result
 jurisdiction_ids
 jurisdiction_mapping
+source_coding_declaration
 state_of_residence
 PSID state code
 FIPS state code
@@ -29203,10 +29302,12 @@ accepted authority operand before every named predecessor passes.
    exact-cover, every fixed-width file must frame and census without a
    remainder, and every executable value map must deep-equal its normalized
    source projection. Independently expand every `state_of_residence`
-   source domain, authenticate its coding system and meanings, and construct
-   the complete §19.2.3 jurisdiction map against the two fixed state-code
-   documents before the official inventory can independently pass and
-   can supply the legal domain. Class-C downstream gaps remain attached to
+   source domain, reconstruct its locator-bound source coding declaration,
+   exact-cover every state, missing, foreign/territory, and numeric-
+   complement member, execute both value and meaning joins, and construct the
+   complete §19.2.3 jurisdiction map against the two fixed state-code
+   documents before the official inventory can independently pass and can
+   supply the legal domain. Class-C downstream gaps remain attached to
    present inventory keys; they neither shrink this inventory nor masquerade
    as structural absence.
 4. **Close the legal-source universe and legal registry.** Place every
