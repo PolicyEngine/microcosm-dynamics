@@ -100,6 +100,8 @@ earnings, family structure, disability, and claiming dynamics right.
 
 The main planning documents are a Quarto book in [`docs/`](docs/):
 
+- [standing benchmark wall](benchmarks/wall.md):
+  append-only cross-model validation progress tracker
 - [index.md](docs/index.md):
   executive summary, scope, and core project decisions
 - [funder-summary.md](docs/funder-summary.md):

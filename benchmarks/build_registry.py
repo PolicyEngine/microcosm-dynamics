@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the offline, ratio/share/trajectory-only validation matrix.
+"""Build the offline standing benchmark specification registry.
 
 At execution time this builder reads only committed repository bytes. Reviewed
 external captures are represented below by frozen source pins and extracted
@@ -16,8 +16,13 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
-OUT = Path(__file__).with_name("matrix.json")
+from schema import LEGACY_ROW_IDS
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = Path(__file__).with_name("registry.json")
+LEGACY_MATRIX_SHA256 = (
+    "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
+)
 
 INPUT_PATHS = [
     "runs/first_estimates_v1.json",
@@ -2235,12 +2240,25 @@ for row in reported_not_verified:
     row["verification_class"] = "reported_not_verified"
 
 all_rows = [*rows, *reported_not_verified]
-assert len(rows) == 22
-assert len(reported_not_verified) == 20
 assert len({row["row_id"] for row in all_rows}) == len(all_rows)
-assert not any(".mermin." in row["row_id"] for row in rows)
+rows_by_id = {row["row_id"]: row for row in all_rows}
+assert set(LEGACY_ROW_IDS) <= set(rows_by_id)
+legacy_all_rows = [rows_by_id[row_id] for row_id in LEGACY_ROW_IDS]
+legacy_rows = [
+    row for row in legacy_all_rows if row["verification_class"] == "verified"
+]
+legacy_reported_not_verified = [
+    row
+    for row in legacy_all_rows
+    if row["verification_class"] == "reported_not_verified"
+]
+assert len(legacy_rows) == 22
+assert len(legacy_reported_not_verified) == 20
+assert not any(".mermin." in row["row_id"] for row in legacy_rows)
 dynasim_rows = [
-    row for row in all_rows if row["external_model"].startswith("DYNASIM")
+    row
+    for row in legacy_all_rows
+    if row["external_model"].startswith("DYNASIM")
 ]
 assert len(dynasim_rows) == 32
 for row in dynasim_rows:
@@ -2335,17 +2353,17 @@ matrix = {
             ),
         },
     },
-    "row_count": len(rows),
-    "total_row_count": len(all_rows),
-    "rows": rows,
+    "row_count": len(legacy_rows),
+    "total_row_count": len(legacy_all_rows),
+    "rows": legacy_rows,
     "reported_not_verified": {
-        "row_count": len(reported_not_verified),
+        "row_count": len(legacy_reported_not_verified),
         "reason": (
             "Mermin publisher-controlled bytes were not retrievable; values "
             "are retained from committed replication artifacts but are not "
             "accepted as verified external-source cells."
         ),
-        "rows": reported_not_verified,
+        "rows": legacy_reported_not_verified,
     },
     "wish_financing_stub": wish,
     "blocked_comparisons": blocked_comparisons(wish),
@@ -2388,12 +2406,527 @@ matrix = {
 }
 
 
+SEED_EVALUATED_AT_RUN = (
+    "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+)
+TIER_ORDER = (
+    "admin_truth",
+    "model_triangulation",
+    "statutory_parameter",
+)
+# The legacy prefix is immutable. Add future row IDs only after its expansion,
+# even when their tier would otherwise sort earlier.
+REGISTRY_ROW_ORDER = (*LEGACY_ROW_IDS,)
+TIER_DEFINITIONS = {
+    "admin_truth": {
+        "definition": (
+            "Published SSA, Trustees, IRS, or Census administrative "
+            "statistics."
+        ),
+        "gap_law": "Gaps are errors expected to shrink over evaluation runs.",
+    },
+    "model_triangulation": {
+        "definition": (
+            "Published DYNASIM, MINT, CBO, or other actuarial-model "
+            "comparisons."
+        ),
+        "gap_law": (
+            "Gaps are informative and never normative; rows are never fixed "
+            "toward."
+        ),
+    },
+    "statutory_parameter": {
+        "definition": "A parameter stated directly in enacted or proposed law.",
+        "gap_law": (
+            "Identity checks expose implementation coverage but are not "
+            "independent validation."
+        ),
+    },
+}
+GAP_CLASS_ORDER = (
+    "label_mismatch",
+    "frame_no_alignment",
+    "concept_mismatch",
+    "module_missing",
+    "small_cell",
+    "preliminary_source",
+    "unverified_source",
+    "unexplained",
+)
+GAP_CLASS_DEFINITIONS = {
+    "label_mismatch": {
+        "definition": (
+            "The model-side artifact still carries an evidentiary label that "
+            "does not authorize the published comparison."
+        ),
+        "closure_condition": (
+            "Closes when ledger entry 14's corrected covered-earnings label "
+            "activates."
+        ),
+    },
+    "frame_no_alignment": {
+        "definition": (
+            "The model frame has no registered bridge to the published "
+            "population frame."
+        ),
+        "closure_condition": (
+            "Closes when a pre-registered, independently constructed bridge "
+            "aligns the two population frames."
+        ),
+    },
+    "concept_mismatch": {
+        "definition": (
+            "The two sides differ in population, timing, benefit, earnings, "
+            "or accounting concept."
+        ),
+        "closure_condition": (
+            "Closes when both sides implement the same registered population, "
+            "timing, benefit, earnings, and accounting concepts."
+        ),
+    },
+    "module_missing": {
+        "definition": (
+            "The model lacks a module needed to construct the published "
+            "quantity independently."
+        ),
+        "closure_condition": (
+            "Closes when an immutable evaluation artifact supplies the missing modeled "
+            "module and comparable output."
+        ),
+    },
+    "small_cell": {
+        "definition": (
+            "The comparison is dominated by a disclosed small-cell support "
+            "or precision limitation."
+        ),
+        "closure_condition": (
+            "Closes when the pre-registered support and precision minimums are "
+            "met without selecting on the benchmark result."
+        ),
+    },
+    "preliminary_source": {
+        "definition": (
+            "An accepted, provenance-pinned publisher source explicitly marks "
+            "the published value as preliminary."
+        ),
+        "closure_condition": (
+            "Closes when the same provenance-pinned publisher series publishes "
+            "a final value at the exact registered locator."
+        ),
+    },
+    "unverified_source": {
+        "definition": (
+            "No accepted publisher-controlled source verifies the reported "
+            "value at the exact registered locator."
+        ),
+        "closure_condition": (
+            "Closes when an accepted, provenance-pinned publisher source "
+            "verifies the reported value at the exact registered locator."
+        ),
+    },
+    "unexplained": {
+        "definition": "No permitted explanation has yet been assigned.",
+        "closure_condition": (
+            "Closes only when the finding is assigned another gap class and a "
+            "one-sentence evidence-based note; its presence always fails the "
+            "harness."
+        ),
+    },
+}
+ALLOWED_COMPARISON_SCOPES = (
+    "ratio",
+    "share",
+    "trajectory",
+    "ordering",
+)
+# Append a sequential changelog object here whenever an existing specification
+# changes. The schema and tests compare generations and reject silent edits.
+SPEC_REVISIONS: dict[str, list[dict[str, Any]]] = {}
+LABEL_MISMATCH_ROWS = {
+    "ssa.reported_taxable_earnings_per_worker",
+    "ssa.adjusted_taxable_payroll_per_covered_worker",
+    "ssa.gross_contributions_per_worker",
+}
+FRAME_NO_ALIGNMENT_ROWS = {"cbo.taxable_payroll.trajectory_2015_100"}
+
+GAP_NOTES = {
+    "ssa.reported_taxable_earnings_per_worker": (
+        "Our legacy-labeled capped labor-income proxy and positive-proxy-earner "
+        "denominator are not SSA employer-reported taxable earnings and workers."
+    ),
+    "ssa.adjusted_taxable_payroll_per_covered_worker": (
+        "Our legacy-labeled capped proxy and positive-proxy earners omit "
+        "Trustees adjusted-payroll and covered-worker accounting."
+    ),
+    "ssa.gross_contributions_per_worker": (
+        "Our legacy-labeled 12.4-percent arithmetic uses the proxy payroll and "
+        "earner frame rather than SSA taxable-earnings and gross-contribution "
+        "accounting."
+    ),
+    "ssa.net_payroll_tax_contributions_per_covered_worker": (
+        "Our earnings-year rate arithmetic differs from trust-fund cash receipts "
+        "with estimated deposits and later adjustments."
+    ),
+    "ssa.retired_worker_beneficiaries_per_worker": (
+        "Our mechanical annual-presence and opening-backfill stock is not SSA's "
+        "December current-payment stock, and the worker frames differ."
+    ),
+    "ssa.retired_worker_awards_per_worker": (
+        "Our mechanical claim-age crossings are not administratively effectuated "
+        "awards, and the worker frames differ."
+    ),
+    "ssa.retired_worker_benefits_per_reported_taxable_earnings": (
+        "Our annualized statutory own-record amounts and opening backfill are not "
+        "allocated outlays, and proxy earnings are not reported taxable earnings."
+    ),
+    "cbo.taxable_payroll.trajectory_2015_100": (
+        "A closed, unaligned PSID proxy-payroll path cannot be population-aligned "
+        "to CBO's national actual-data taxable-payroll path."
+    ),
+    "cbo.tax_revenue.share_of_taxable_payroll": (
+        "Our mechanical 12.4-percent contributions omit CBO's income tax on "
+        "benefits and use an unaligned proxy-payroll denominator."
+    ),
+    "wish.hr4289.employee_rate.share_of_payroll": (
+        "The scalar is copied by construction, while the model lacks the national "
+        "IRC section 3121(a) base, combined financing, actuarial trajectory, and "
+        "LTSS benefit module."
+    ),
+}
+
+
+def benchmark_tier(row: dict[str, Any]) -> str:
+    """Return the standing-harness tier for one migrated row."""
+
+    if row["row_id"].startswith("ssa."):
+        return "admin_truth"
+    if row["row_id"].startswith("wish."):
+        return "statutory_parameter"
+    return "model_triangulation"
+
+
+def normalized_scope(row: dict[str, Any]) -> list[str]:
+    """Collapse legacy descriptive scope tags into the four-value law."""
+
+    normalized = []
+    for scope in row["comparison_scope"]:
+        if scope in {"distributional_incidence", "distributional_share"}:
+            continue
+        if scope == "age_trajectory":
+            scope = "trajectory"
+        if scope not in normalized:
+            normalized.append(scope)
+    assert normalized
+    assert set(normalized) <= set(ALLOWED_COMPARISON_SCOPES)
+    return normalized
+
+
+def gap_class_for(row: dict[str, Any]) -> str:
+    """Assign the primary gap class without erasing secondary mismatches."""
+
+    row_id = row["row_id"]
+    if row["verification_class"] == "reported_not_verified":
+        return "unverified_source"
+    if row_id in LABEL_MISMATCH_ROWS:
+        return "label_mismatch"
+    if row_id in FRAME_NO_ALIGNMENT_ROWS:
+        return "frame_no_alignment"
+    if row_id.startswith("wish."):
+        return "module_missing"
+    return "concept_mismatch"
+
+
+def gap_note_for(row: dict[str, Any]) -> str:
+    """Return one evidence-based sentence for the primary gap."""
+
+    row_id = row["row_id"]
+    if row_id in GAP_NOTES:
+        return GAP_NOTES[row_id]
+    if row_id.startswith("dynasim.favreault_steuerle."):
+        return (
+            "Our observed-era retirement-only age-62-marital-status subgroup is "
+            "not DYNASIM's 2049 OASI-and-DI current-status population, and the "
+            "spouse histories, scalar, and timing differ."
+        )
+    if row_id.startswith("dynasim.mermin.ppi.generated."):
+        return (
+            "Publisher bytes are unavailable, and our transported generator and "
+            "individual-AIME ranking are not DYNASIM's projected 2050 "
+            "shared-lifetime-income population."
+        )
+    if row_id.startswith("dynasim.mermin.ppi.real_shared."):
+        return (
+            "Publisher bytes are unavailable, and our restricted observed PSID "
+            "support and compressed careers are not DYNASIM's projected 2050 "
+            "population and full careers."
+        )
+    if row_id.startswith("dynasim.mermin.nra70."):
+        return (
+            "Publisher bytes are unavailable, and our observed-era claiming, "
+            "individual-AIME ranking, and person weighting differ from Mermin's "
+            "projected cross-section, shared-income ranking, and dollar weighting."
+        )
+    if row_id.startswith("dynasim.mermin.cola_minus_0_4pp."):
+        return (
+            "Publisher bytes are unavailable, and our claim-age COLA start and "
+            "person weighting differ from Mermin's age-62 start and dollar-weighted "
+            "projection."
+        )
+    if row_id == "dynasim.mermin.price_indexing.all":
+        return (
+            "Publisher bytes are unavailable, and our transported generator is "
+            "not Mermin's projected 2050 retired-worker population."
+        )
+    if row_id == "dynasim.mermin.four_reform_cost_ordering":
+        return (
+            "Publisher bytes are unavailable, and our per-capita benefit-change "
+            "order is only an ordinal analogue of 75-year actuarial-payroll effects."
+        )
+    raise AssertionError(f"missing gap note for {row_id}")
+
+
+def published_source_pin(row: dict[str, Any]) -> dict[str, Any]:
+    """Collect immutable artifacts and retain every exact published locator."""
+
+    artifacts = []
+    for locator in row["published"]["source_locators"]:
+        for field, pin_type in (
+            ("committed_extraction", "committed_extraction"),
+            ("reviewed_external_capture", "sha_manifested_capture"),
+        ):
+            if field in locator:
+                artifacts.append(
+                    {"pin_type": pin_type, **deepcopy(locator[field])}
+                )
+    provenance = row["published"].get("provenance")
+    if provenance:
+        artifacts.append(
+            {
+                "pin_type": "committed_extraction",
+                **deepcopy(provenance["numeric_source"]),
+            }
+        )
+    unique_artifacts = []
+    seen = set()
+    for artifact in artifacts:
+        identity = json.dumps(artifact, sort_keys=True)
+        if identity not in seen:
+            unique_artifacts.append(artifact)
+            seen.add(identity)
+    assert unique_artifacts
+    return {
+        "artifacts": unique_artifacts,
+        "exact_locators": deepcopy(row["published"]["source_locators"]),
+        "reported_value_provenance": deepcopy(provenance),
+    }
+
+
+def registry_entry(row: dict[str, Any]) -> dict[str, Any]:
+    """Separate the immutable comparison spec from evaluated values."""
+
+    gap_class = gap_class_for(row)
+    our_side = {
+        "artifact_pointer": deepcopy(row["our"]["source"]),
+        "formula": row["our"].get("formula"),
+        "unit": row["our"]["unit"],
+    }
+    for key in ("comparison_note", "provenance_status"):
+        if key in row["our"]:
+            our_side[key] = row["our"][key]
+    published_metadata = {
+        key: deepcopy(row["published"][key])
+        for key in (
+            "underlying_published_values_withheld_from_comparison",
+            "legislative_status",
+            "companion_parameters",
+        )
+        if key in row["published"]
+    }
+    return {
+        "comparison_scope": normalized_scope(row),
+        "concept_mismatch": deepcopy(row["concept_mismatch"]),
+        "evidential_status": row["evidential_status"],
+        "external_reference": row["external_model"],
+        "gap_class": gap_class,
+        "gap_note": gap_note_for(row),
+        "legacy_comparison_scope": deepcopy(row["comparison_scope"]),
+        "gap_closure_condition": GAP_CLASS_DEFINITIONS[gap_class][
+            "closure_condition"
+        ],
+        "our_side_artifact": our_side,
+        "published_formula": row["published"].get("formula"),
+        "published_metadata": published_metadata,
+        "published_unit": row["published"]["unit"],
+        "quantity": row["quantity"],
+        "row_id": row["row_id"],
+        "source_pin": published_source_pin(row),
+        "spec_revisions": deepcopy(SPEC_REVISIONS.get(row["row_id"], [])),
+        "tier": benchmark_tier(row),
+        "verification_class": row["verification_class"],
+    }
+
+
+def ordered_rows() -> list[dict[str, Any]]:
+    """Return rows in the explicit append-only registry order."""
+
+    rows_by_id = {row["row_id"]: row for row in all_rows}
+    if len(rows_by_id) != len(all_rows):
+        raise AssertionError("duplicate builder row_id")
+    missing_rows = set(REGISTRY_ROW_ORDER) - set(rows_by_id)
+    if missing_rows:
+        raise AssertionError(
+            "append-mostly registry cannot remove frozen rows: "
+            + ", ".join(sorted(missing_rows))
+        )
+    unordered_rows = set(rows_by_id) - set(REGISTRY_ROW_ORDER)
+    if unordered_rows:
+        raise AssertionError(
+            "append new row IDs to REGISTRY_ROW_ORDER: "
+            + ", ".join(sorted(unordered_rows))
+        )
+    return [rows_by_id[row_id] for row_id in REGISTRY_ROW_ORDER]
+
+
+unknown_spec_revision_rows = set(SPEC_REVISIONS) - {
+    row["row_id"] for row in all_rows
+}
+if unknown_spec_revision_rows:
+    raise AssertionError(
+        "spec revisions name unknown rows: "
+        + ", ".join(sorted(unknown_spec_revision_rows))
+    )
+registry_entries = [registry_entry(row) for row in ordered_rows()]
+tier_counts = {
+    tier: sum(entry["tier"] == tier for entry in registry_entries)
+    for tier in TIER_ORDER
+}
+gap_class_counts = {
+    gap_class: sum(
+        entry["gap_class"] == gap_class for entry in registry_entries
+    )
+    for gap_class in GAP_CLASS_ORDER
+}
+legacy_registry_entries = registry_entries[: len(LEGACY_ROW_IDS)]
+assert tuple(entry["row_id"] for entry in legacy_registry_entries) == (
+    LEGACY_ROW_IDS
+)
+legacy_tier_counts = {
+    tier: sum(entry["tier"] == tier for entry in legacy_registry_entries)
+    for tier in TIER_ORDER
+}
+legacy_gap_class_counts = {
+    gap_class: sum(
+        entry["gap_class"] == gap_class for entry in legacy_registry_entries
+    )
+    for gap_class in GAP_CLASS_ORDER
+}
+assert legacy_tier_counts == {
+    "admin_truth": 7,
+    "model_triangulation": 34,
+    "statutory_parameter": 1,
+}
+assert legacy_gap_class_counts == {
+    "label_mismatch": 3,
+    "frame_no_alignment": 1,
+    "concept_mismatch": 17,
+    "module_missing": 1,
+    "small_cell": 0,
+    "preliminary_source": 0,
+    "unverified_source": 20,
+    "unexplained": 0,
+}
+
+registry = {
+    "allowed_comparison_scopes": list(ALLOWED_COMPARISON_SCOPES),
+    "canonicalization": (
+        "UTF-8, sorted keys, indent=2, allow_nan=false, one trailing newline"
+    ),
+    "deferred_comparisons": matrix["blocked_comparisons"],
+    "entries": registry_entries,
+    "external_capture_review": deepcopy(REFRESH_REVIEW),
+    "gap_class_counts": gap_class_counts,
+    "gap_classes": GAP_CLASS_DEFINITIONS,
+    "honesty_frame": matrix["honesty_frame"],
+    "inputs": matrix["inputs"],
+    "migration_context": {
+        "available_series_inventory": matrix["available_series_inventory"],
+        "certification_context": matrix["certification_context"],
+        "honest_gaps": matrix["honest_gaps"],
+        "reported_not_verified_partition": {
+            "reason": matrix["reported_not_verified"]["reason"],
+            "row_count": matrix["reported_not_verified"]["row_count"],
+        },
+        "source_matrix": {
+            "canonicalization": matrix["canonicalization"],
+            "path_at_merge": "analysis/validation-matrix/matrix.json",
+            "purpose": matrix["purpose"],
+            "schema_version": matrix["schema_version"],
+            "sha256": LEGACY_MATRIX_SHA256,
+        },
+        "wish_financing_stub": matrix["wish_financing_stub"],
+    },
+    "purpose": (
+        "Append-mostly standing benchmark specifications for validation-only "
+        "comparison of ratios, shares, trajectories, and orderings."
+    ),
+    "registry_change_law": (
+        "Changing an existing source pin or exact locator requires a nonempty "
+        "changelog note in that entry's spec_revisions list."
+    ),
+    "row_count": len(registry_entries),
+    "schema_version": "standing_benchmark_registry.v4",
+    "seed_evaluation": {
+        "artifact_pointer": source_pin("runs/first_estimates_v1.json", "/"),
+        "evaluated_at_run": SEED_EVALUATED_AT_RUN,
+        "meaning": (
+            "Immutable seed run-set identifier; it does not transfer a "
+            "certification or production verdict to every row."
+        ),
+    },
+    "tier_counts": tier_counts,
+    "tiers": TIER_DEFINITIONS,
+    "validation_only_law": (
+        "Benchmark values may not inform model construction, calibration "
+        "targets, candidate selection, or tolerance adjudication."
+    ),
+}
+
+
+def seed_history_records(registry_sha: str) -> list[dict[str, Any]]:
+    """Build the one immutable migrated evaluation record set."""
+
+    entries_by_id = {entry["row_id"]: entry for entry in registry_entries}
+    records = []
+    for row in legacy_all_rows:
+        entry = entries_by_id[row["row_id"]]
+        records.append(
+            {
+                "deviation": deepcopy(row["deviation"]),
+                "evaluated_at_run": SEED_EVALUATED_AT_RUN,
+                "gap_class": entry["gap_class"],
+                "gap_note": entry["gap_note"],
+                "label_state": deepcopy(row["our"]["label_state"]),
+                "our": {
+                    "unit": row["our"]["unit"],
+                    "value": deepcopy(row["our"]["value"]),
+                },
+                "published": {
+                    "unit": row["published"]["unit"],
+                    "value": deepcopy(row["published"]["value"]),
+                },
+                "registry_sha": registry_sha,
+                "row_id": row["row_id"],
+            }
+        )
+    return records
+
+
 def render() -> bytes:
     """Return the canonical matrix bytes without mutating the filesystem."""
 
     return (
         json.dumps(
-            matrix,
+            registry,
             sort_keys=True,
             indent=2,
             ensure_ascii=True,
@@ -2408,7 +2941,7 @@ def main() -> None:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="fail if matrix.json differs; never write",
+        help="fail if registry.json differs; never write",
     )
     args = parser.parse_args()
     expected = render()
