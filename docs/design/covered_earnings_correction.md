@@ -21684,7 +21684,7 @@ For \(r=1\), regardless of independently resolved object type, \(p_1\)
 remains occupied: selection is \(p_2\) iff exact \(p_2\) is absent, and
 otherwise is the least absent \(p_{s(X)}\) with \(s(X)\ge3\).
 
-## 17. AMENDMENT SECTION — Amendment 3: replace the sole operative V-B source identity
+## 17. AMENDMENT SECTION — Amendment 3: V-B source and revision-5 design-binding successors
 
 ### 17.1 Status, scope, and precedence
 
@@ -21704,10 +21704,15 @@ otherwise is the least absent \(p_{s(X)}\) with \(s(X)\ge3\).
   source identity and its source-specific projection, key, disposition,
   residual, and derived-result consequences for V-B5, V-B6, and V-B8. It
   activates the questionnaire-closure artifact's evidentiary residual state
-  of zero, one, and zero, respectively.
+  of zero, one, and zero, respectively. It also replaces only §16.2's
+  position-1 fitting-free design-identity row and the registry, domain,
+  applicability-bundle, digest, and receipt consumers expressly enumerated
+  in §17.4 so that the retained revision-4 fitting-free configuration can be
+  validated against the revision-5 authority cutoff without a receipt cycle.
 - **No implied repeal:** Original §§1–16 remain visible and are not edited in
   place. They remain controlling except for the exact source-specific clauses
-  enumerated in §§17.2 and 17.4. Where one of those enumerated clauses
+  and design-binding clauses enumerated in §§17.2 and 17.4. Where one of
+  those enumerated clauses
   conflicts with §17, §17 is its prospective replacement law. Silence in §17
   leaves every other calibrated and fitting-free clause unchanged.
 
@@ -21717,6 +21722,10 @@ a new claim, branch, target, fitting method, model, gate, label, context
 domain, or publication rule; do not alter V-B1, V-B2, V-B3, V-B4, V-B7, or
 V-B9; and do not make the closure artifact's separate B2/B11 membership
 readjudication operative.
+The position-1 successor changes no requirement ID, position, class, count,
+priority, path predicate, or failure-ID equation. It changes only the
+design-identity verification and the exact transitive schema and digest
+consumers enumerated in §17.4.
 
 ### 17.2 Successor V-B source identity
 
@@ -21905,9 +21914,10 @@ merge-request existence has no operative effect. The authorized order is:
    **amendment-3 ratification commit**; all authoring and referee-response
    commits before it are not ratification;
 4. only afterward merge separately reviewed implementation and fixture bytes
-   for this exact successor source projection and create the fresh
-   verification-claim adjudication required by §§16.12.1–16.14, without
-   changing the already pinned source artifact;
+   for the exact successor source projection and the exact position-1
+   design-identity/registry/domain/bundle/receipt dispatch below, and create
+   the fresh verification-claim adjudication required by §§16.12.1–16.14,
+   without changing the already pinned source artifact;
 5. obtain a validator-accepted fresh registration binding the Amendment-3
    ratification commit, the complete revision-5 design blob, the fresh
    adjudication and every other required authority/artifact/registry/
@@ -21926,6 +21936,165 @@ Amendment-3 values are:
   commit; and
 - `revision`: JSON integer `5`, excluding booleans.
 
+The following position-1 successor prospectively replaces the
+`amendment_2_design_identity` row of §16.2's then-operative
+`fitting_free_requirement_verification_specs.v1`, its same-position closed
+predicate equation, its expected and actual preimage selection, its evidence
+digest and cross-binding, and every prospective Amendment-3 use of
+`fitting_free_registration_domain_identity.v1`. It does not replace any
+other requirement row. The ordered requirement-ID array remains the exact
+22-member §16.2 array, with `amendment_2_design_identity` still at position
+1; therefore every unchanged same-position row, including §16.11.1's
+operative A3 projection replacement, retains its then-operative bytes and
+meaning.
+
+The registry successor is
+`fitting_free_requirement_verification_specs.v2`. It is the complete
+then-operative v1 registry with only its outer `schema_version` changed to
+the v2 name and its position-1 row replaced by exactly:
+
+```json
+{
+  "requirement_id": "amendment_2_design_identity",
+  "requirement_class": "design",
+  "verification_predicate_id": "verify_amendment_3_fitting_free_design_identity_v1",
+  "expected_preimage_schema_version": "amendment_3_fitting_free_design_identity_expected_preimage.v1",
+  "actual_preimage_schema_version": "amendment_3_fitting_free_design_identity_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:amendment_2_design_identity",
+    "ratified_design:amendment_3_design_identity",
+    "configuration:design",
+    "git_cutoff:docs/design/covered_earnings_correction.md"
+  ],
+  "verification_result_schema_version": "exact_identity_verification_result.v1",
+  "cross_binding": "receipt_core:amendment_2_and_amendment_3_design_identities"
+}
+```
+
+The two successor preimage schemas retain the exact seven-key expected- and
+actual-preimage shapes, projection-row shape, value-type law, count law, and
+domain-hash law in §16.2; their `schema_version` values are their respective
+names above. The first three ordered projections are `canonical_json` and
+the fourth is `raw_git_bytes`. Define \(D_2\) as the complete independently
+resolved §16.10 revision-4 Amendment-2 identity, \(K_f^d\) as the staged
+fitting-free `configuration:design` value, \(D_3\) as the complete
+independently resolved four-key Amendment-3 identity above, \(G_3\) as the
+raw design bytes at \(D_3.\texttt{ratification_commit}\), and \(C_A\) as the
+selected final calibrated adjudication's
+`authority_cutoff.repository_commit`. Thus \(C_A=B_n\) on the no-capture
+branch and \(C_A=C\) on the capture branch. `git_cutoff` resolves exactly
+to \(\operatorname{Tree}(C_A)\); define \(G_{C_A}\) as that tree's raw
+same-path design bytes.
+
+The value of \(D_2\) is exactly:
+
+```json
+{
+  "path": "docs/design/covered_earnings_correction.md",
+  "ratification_commit": "3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb",
+  "blob_sha256": "29f0cb134e95b6215dc502d0e25392b5c971fdb93dfad40fd5d221e8a482a1b7",
+  "revision": 4
+}
+```
+
+The expected preimage's four projection values, in registered order, are
+exactly \(D_2,D_3,D_2,G_3\). The actual preimage's four projection values are
+exactly the independently reconstructed revision-4 ratified identity, the
+independently reconstructed revision-5 ratified identity, \(K_f^d\), and
+\(G_{C_A}\). Each `value_identity_sha256` hashes its complete projected canonical
+object or raw bytes as typed; each preimage's projection count is integer 4
+and its domain digest hashes its complete four-row array. Unfavorable values
+remain serialized. `ratified_design:amendment_3_design_identity` is
+reconstructed directly from the already-ratified Amendment-3 commit and its
+raw Git blob before path derivation. It is not projected from a receipt,
+registration reference, final configuration, or post-reference namespace
+scan.
+
+The closed position-1 predicate
+`verify_amendment_3_fitting_free_design_identity_v1` is true if and only if
+all preimage schema, projection, type, count, and digest equations pass and
+all of the following conjuncts hold:
+
+1. both independently reconstructed \(D_2\) values deep-equal, have the
+   exact design path and integer revision 4, and the raw blob at
+   \(D_2.\texttt{ratification_commit}\) hashes to
+   \(D_2.\texttt{blob_sha256}\);
+2. \(K_f^d=D_2\), without requiring \(K_f^d\)'s revision-4 blob to equal the
+   final-cutoff design blob;
+3. both independently reconstructed \(D_3\) values deep-equal, have the
+   exact design path and integer revision 5, and
+   \(\operatorname{SHA256}(G_3)=D_3.\texttt{blob_sha256}\);
+4. \(G_{C_A}=G_3\) byte-for-byte and
+   \(\operatorname{SHA256}(G_{C_A})=D_3.\texttt{blob_sha256}\); and
+5. \(D_2.\texttt{ratification_commit}\) is an ancestor of
+   \(D_3.\texttt{ratification_commit}\), which is an ancestor of or equal to
+   \(C_A\).
+
+The existing `exact_identity_verification_result.v1` shape serializes that
+Boolean and its null-or-`predicate_mismatch` failure code. The complete
+same-position `fitting_free_requirement_evidence.v1` retains its exact key
+set and hashes these successor preimages and result. The cross-binding is a
+forward consumer law: position 1 is completely evaluated from the staged
+configuration and frozen Git objects at §16.13.7 construction-order step 7;
+when the receipt core is later constructed at step 9, its
+`amendment_2_design_identity` and `amendment_3_design_identity` children must
+deep-equal \(D_2\) and \(D_3\), respectively, and its complete fitting-free
+domain must contain that exact producer evidence. A receipt field or digest
+is never an operand of the position-1 predicate. A later receipt mismatch
+fails receipt validation and cannot revise the already-derived path.
+
+More exactly, SHA-256 of canonical \(D_2\) must equal the position-1
+expected-preimage projection digests at positions 1 and 3 and the
+actual-preimage projection digests at positions 1 and 3 when the predicate
+is true. SHA-256 of canonical \(D_3\) must equal both position-2 projection
+digests, and \(D_3.\texttt{blob_sha256}\) must equal both position-4 raw-byte
+projection digests. The receipt's two design children must reproduce those
+same canonical-object digests. On fitting-free selection only,
+`selected_configuration_design_identity` and final \(F^0.\texttt{design}\)
+also deep-equal \(D_2\).
+
+The domain successor is
+`fitting_free_registration_domain_identity.v2`. It has the complete v1
+keyset and key order with `schema_version` changed to the v2 name, selects
+the complete v2 registry above, and otherwise retains every §16.2 row,
+evidence, Boolean, status, count, ordering, failure-ID, and hash equation.
+The applicability-bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v3`. It is the complete
+then-operative §16.12.1 v2 bundle with `schema_version` changed to the v3
+name and its `fitting_free_requirement_verification_specs` child replaced by
+the complete v2 registry; every other child and order is unchanged. Every
+Amendment-3 cutoff, 22-row reconstruction, applicability evaluation, receipt
+core, and validator selects the v2 registry, v2 domain, and v3 bundle. The
+v1 registry or domain and the v2 bundle retain only their exact historical
+pre-Amendment-3 cases.
+
+The prospective Amendment-3 ratified-design dispatch unconditionally
+selects those three successors before construction-order step 7. The
+independently evaluated
+\(D_3.\texttt{ratification_commit}\)-to-\(C_A\) ancestry relation is a
+position-1 predicate conjunct, not a version selector: an unfavorable value
+serializes a v2 position-1 false result and cannot restore a v1 dispatch
+case. A staged configuration field, receipt, receipt digest, caller, or
+later artifact cannot select a registry, domain, or bundle version.
+Specifically, §16.5.4's position-21 reference and §16.11.1's A3-position
+reference to `fitting_free_requirement_verification_specs.v1`
+prospectively select the same positions of the complete v2 registry for an
+Amendment-3 attempt. Their copied row semantics remain unchanged; neither
+literal can select the historical v1 registry prospectively.
+
+Digest propagation is exact and transitive. The changed position-1
+projection-domain, expected-preimage, actual-preimage, result, and evidence
+digests enter the complete 22-row `requirement_domain_sha256`; that changes
+the complete v2 `fitting_free_domain_identity_sha256`. The applicability
+result exact-copies that domain digest and faithfully derives the same
+failure-ID array from the 22 Booleans. The v3 bundle digest becomes
+`path_applicability_specs_sha256`. Both complete values enter the v2 receipt
+core, whose `receipt_core_sha256` enters \(\rho\), the final selected
+configuration, its digest, the post-reference namespace scan, and the outer
+v2 receipt under the unchanged §16.13.4 and §16.13.7 cut edge. No digest is
+copied across one of these edges without hashing or exact-comparing its
+complete registered preimage.
+
 The exact common binding successor is
 `covered_earnings_path_applicability_receipt_core.v2`. It has the complete
 operative §16.13.7 v1 core's sixteen keys in the same order except that
@@ -21933,10 +22102,12 @@ operative §16.13.7 v1 core's sixteen keys in the same order except that
 `amendment_3_design_identity` is inserted immediately after
 `amendment_2_design_identity`. The retained Amendment-2 child remains the
 exact §16.10 revision-4 identity. The new child is the complete four-key
-Amendment-3 identity above. Every other core member and equation, including
-the four §16.13.7 pre-reference configuration/namespace members, is
-unchanged, and `receipt_core_sha256` hashes the complete seventeen-key v2
-core.
+Amendment-3 identity above. Its `fitting_free_registration_domain_identity`
+member is the complete v2 domain, its `path_applicability_specs_sha256`
+member hashes the complete v3 bundle, and its applicability result carries
+the v2 domain digest. Every other core member and equation, including the
+four §16.13.7 pre-reference configuration/namespace members, is unchanged,
+and `receipt_core_sha256` hashes the complete seventeen-key v2 core.
 
 The corresponding outer successor is
 `covered_earnings_path_applicability_receipt.v2`. It has the complete v1
@@ -21960,7 +22131,9 @@ must resolve exactly one v2 receipt carrying the registered Amendment-3
 identity. A v1 receipt cannot bind revision 5, and a v2 receipt without the
 exact registered Amendment-3 identity is invalid.
 
-The selected configurations are not revised by this source-only amendment.
+The selected configurations are not revised by this configuration-preserving
+amendment.
+
 A calibrated configuration retains its exact revision-3 Amendment-1
 `design` child, and a fitting-free configuration retains its exact revision-4
 Amendment-2 `design` child. For an Amendment-3 fresh registration, the
@@ -21971,9 +22144,10 @@ equality. For either selected branch, it is exactly:
 1. the selected configuration's design blob exact-matches its applicable
    Amendment-1 or Amendment-2 ratification commit and configured digest;
 2. the receipt core's `amendment_2_design_identity` exact-matches the
-   revision-4 Amendment-2 ratification commit and configured digest;
+   revision-4 Amendment-2 ratification commit and its exact blob digest;
 3. the receipt core's `amendment_3_design_identity` exact-matches the
-   revision-5 Amendment-3 ratification commit, configured digest, and `HEAD`;
+   revision-5 Amendment-3 ratification commit, its exact blob digest, and
+   `HEAD`;
 4. the Amendment-1 ratification commit is an ancestor of the Amendment-2
    ratification commit, the Amendment-2 ratification commit is an ancestor of
    the Amendment-3 ratification commit, and all three are ancestors of
@@ -21981,10 +22155,20 @@ equality. For either selected branch, it is exactly:
 5. every other repository, configuration, implementation-tree, invocation,
    input, output, and validation law remains unchanged.
 
-This receipt successor is the sole procedural design-binding consequence of
-the revision-5 amendment and fresh-registration requirement in §16.10. Its
-new immutable design child is not a mutable alias and creates no
-configuration branch, runtime transition, or alternate design choice.
+For an Amendment-3 fresh selection, this prospectively replaces §16.9
+consequence 2's phrase “authorized under revision 4” with “authorized under
+revision-5 authority while retaining the revision-4 fitting-free
+configuration design child.” Section 16.5.5 step 1's revision-4
+design-identity validation remains the configuration-side \(K_f^d=D_2\)
+conjunct only; it is joined by the position-1 \(D_3/G_{C_A}\) cutoff proof
+and the later v2 receipt proof above and cannot reinstate revision-4
+configured-design/`HEAD` equality.
+
+The position-1, registry/domain/bundle, and receipt successors above are the
+complete procedural design-binding consequences of the revision-5 amendment
+and fresh-registration requirement in §16.10. The new immutable receipt
+design child is not a mutable alias and creates no configuration branch,
+runtime transition, or alternate design choice.
 
 **Amendment 3 is inoperative unless and until its exact ratification commit is
 bound by that validator-accepted v2 fresh-registration receipt.**
