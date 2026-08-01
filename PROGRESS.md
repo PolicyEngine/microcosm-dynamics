@@ -30,15 +30,17 @@ The starting revision is `e9fcf1b013acb7f8fd6584a554fd89944d8fabfc`.
 - Finding 5: split the two COLA mismatch records so ages 62-67 and 80-85
   carry their correct 2050 populations, evaluation ages, year bases, and
   survival-weighting disclosures.
+- Finding 6: completed WISH statutory locators across PDF pp. 16-18, marked
+  combined wage-side 0.6% as derived `0.3 + 0.3` rather than printed,
+  replaced operative language with introduced/not-enacted conditionals, and
+  disclosed in the main table that zero deviation is by construction.
 
 ## Next
 
-1. Finding 6: complete WISH page/section locators, derivation metadata,
-   introduced-bill wording, and by-construction disclosure.
-2. Finding 7: remove certification and completeness overclaims.
-3. Implement fail-closed, non-writing `--check` modes for both builders and
+1. Finding 7: remove certification and completeness overclaims.
+2. Implement fail-closed, non-writing `--check` modes for both builders and
    strengthen the drift test for both files, capture pins, and locators.
-4. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
+3. Regenerate `matrix.json` and `report.md`, update the drift SHA pin, run
    byte-reproducibility checks, affected tests, tier synchronization, Ruff,
    and Black.
-5. Write the final closure report to the requested output file.
+4. Write the final closure report to the requested output file.

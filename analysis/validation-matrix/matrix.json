@@ -6321,9 +6321,9 @@
         "share"
       ],
       "concept_mismatch": {
-        "benefit_concept": "The bill finances a new LTSS benefit; our artifact models only own-record Social Security retirement benefits and no LTSS outcome.",
-        "earnings_and_accounting": "The requested 0.003 calculation represents only the employee side. The bill separately levies employers at 0.3% and self-employment at 0.6%; this row is not a total-financing or actuarial check.",
-        "frame": "Our denominator is an unaligned frame-relative labor-income proxy; the bill applies nationally to IRC \u00a73121(a) wages.",
+        "benefit_concept": "The introduced bill would finance a new LTSS benefit if enacted; our artifact models only own-record Social Security retirement benefits and no LTSS outcome.",
+        "earnings_and_accounting": "The requested 0.003 calculation represents only the employee side. The introduced bill separately specifies employers at 0.3% and self-employment at 0.6%; combined wage-side 0.6% is derived as 0.3% + 0.3% and is not separately printed. This row is not a total-financing or actuarial check.",
+        "frame": "Our denominator is an unaligned frame-relative labor-income proxy; the introduced bill would have applied nationally to IRC \u00a73121(a) wages if enacted.",
         "mismatch_codes": [
           "proxy_payroll_vs_irc_3121a_wages",
           "closed_panel_vs_national_tax_base",
@@ -6332,16 +6332,17 @@
           "no_ltss_benefit_model"
         ],
         "population": "Our closed 2015-2022 PSID reproduction panel is not the national employee population subject to the proposed tax.",
-        "year_basis": "The scalar parameter matches, but the bill applies after 2021; only 2022 overlaps our artifact and no published revenue path exists."
+        "year_basis": "The scalar parameter matches, but the introduced bill specifies wages after 2021 and would have applied only if enacted; only 2022 overlaps our artifact, and no published revenue path exists."
       },
       "deviation": {
-        "definition": "ours minus published employee-side rate",
+        "definition": "By construction: our 0.3% input was copied from the introduced bill, so zero deviation is neither independent validation nor calibration.",
         "our_over_published_ratio": 1.0,
         "signed_percentage_points": 0.0
       },
       "evidential_status": "statutory single-side parameter identity; not actuarial validation",
       "external_model": "WISH Act statutory text (not an actuarial model)",
       "our": {
+        "comparison_note": "The 0.3% parameter was copied from the introduced bill. Zero deviation is by construction, not independent validation or calibration.",
         "formula": "100 * (0.003 * weighted_taxable_payroll) / weighted_taxable_payroll",
         "label_state": {
           "individual_administrative_truth_claim": false,
@@ -6361,7 +6362,7 @@
           ],
           "source_artifact_label_note": "The entry-8 and entry-10 artifacts embed the legacy proxy array."
         },
-        "provenance_status": "mechanical single-side parameter check only",
+        "provenance_status": "0.3% parameter copied from the introduced bill; mechanical single-side identity only",
         "source": {
           "json_pointer": "/tables/revenue/per_draw",
           "path": "runs/first_estimates_v1.json",
@@ -6373,17 +6374,38 @@
       "published": {
         "companion_parameters": {
           "combined_employee_employer_rate_percent": 0.6,
+          "combined_rate_print_status": "derived as 0.3 + 0.3; not separately printed",
           "self_employment_rate_percent": 0.6,
           "separate_employer_rate_percent": 0.3
         },
+        "legislative_status": "introduced and referred; not enacted",
         "source_locators": [
           {
+            "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+            "page": {
+              "pdf": 16,
+              "printed": 16
+            },
+            "provision": "employee wage base: wages as defined in IRC \u00a73121(a)",
+            "publisher": "United States Congress",
+            "reviewed_external_capture": {
+              "filename": "BILLS-117hr4289ih.pdf",
+              "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+              "size_bytes": 269364,
+              "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+            },
+            "section": "\u00a75(a)(1)",
+            "table": "not applicable (statutory text)",
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          {
+            "derivation": "Combined wage-side 0.6% = 0.3% employee + 0.3% employer; derived arithmetic, not separately printed.",
             "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
             "page": {
               "pdf": 17,
               "printed": 17
             },
-            "provision": "employee rate and separate employer rate after 2021",
+            "provision": "introduced bill specifies employee 0.3% and separate employer 0.3% after 2021",
             "publisher": "United States Congress",
             "reviewed_external_capture": {
               "filename": "BILLS-117hr4289ih.pdf",
@@ -6394,9 +6416,27 @@
             "section": "\u00a75(a)(1)-(2)",
             "table": "not applicable (statutory text)",
             "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          {
+            "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+            "page": {
+              "pdf": 18,
+              "printed": 18
+            },
+            "provision": "introduced bill specifies self-employment 0.6%",
+            "publisher": "United States Congress",
+            "reviewed_external_capture": {
+              "filename": "BILLS-117hr4289ih.pdf",
+              "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+              "size_bytes": 269364,
+              "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+            },
+            "section": "\u00a75(a)(3)",
+            "table": "not applicable (statutory text)",
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
           }
         ],
-        "unit": "percent of IRC \u00a73121(a) wages received after 2021",
+        "unit": "percent of IRC \u00a73121(a) wages that the introduced bill specifies after 2021; would have applied only if enacted",
         "value": 0.3
       },
       "quantity": "Single-side WISH employee payroll-tax rate",
@@ -6409,7 +6449,7 @@
   "wish_financing_stub": {
     "concept_mismatch": {
       "benefit_concept": "The current artifact has no LTSS eligibility, vesting, benefit, spend-down, adequacy, trust-fund, or program-cost model.",
-      "earnings_and_accounting": "Multiplying proxy payroll by 0.003 is one statutory wage-tax side only. The bill separately imposes 0.3% on employers (0.6% combined, and 0.6% for self-employment), so this requested path is not total revenue or an actuarial solvency/sufficiency estimate.",
+      "earnings_and_accounting": "Multiplying proxy payroll by 0.003 is one statutory wage-tax side only. The introduced bill separately specifies 0.3% for employers and 0.6% for self-employment; combined wage-side 0.6% is derived as 0.3% + 0.3%, not separately printed. This path is not total revenue or an actuarial solvency/sufficiency estimate.",
       "frame": "Our base is the unaligned frame-relative proxy payroll; WISH actuarial work concerns a national covered-payroll base.",
       "population": "The artifact is a closed 2015-2022 reproduction panel, not the covered workforce or beneficiary population used by WISH actuaries.",
       "year_basis": "Our path ends in 2022 and is normalized to 2015; a WISH financing analysis uses a policy effective date and a long actuarial horizon."
@@ -6519,23 +6559,44 @@
         "path": "runs/first_estimates_v1.json",
         "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
       },
-      "trajectory_interpretation": "A 0.003-times-proxy-payroll base index, not a policy-effective revenue forecast. The bill applies after 2021, so only 2022 overlaps the certified artifact's calendar span."
+      "trajectory_interpretation": "A 0.003-times-proxy-payroll base index, not a policy-effective revenue forecast. The introduced bill specifies wages after 2021; if enacted, only 2022 would overlap the committed entry-8 artifact's calendar span."
     },
     "published": {
       "actuarial_revenue_or_cost_trajectory": null,
+      "combined_wage_rate_derivation": "0.3% employee + 0.3% employer = 0.6%; derived arithmetic, not separately printed in the introduced bill",
       "combined_wage_rate_percent": 0.6,
-      "effective_period": "wages received/paid after 2021",
+      "effective_period": "the introduced bill specifies wages received/paid after 2021; this would have applied only if enacted",
       "employee_rate_percent": 0.3,
       "employer_rate_percent": 0.3,
+      "legislative_status": "introduced and referred; not enacted",
       "self_employment_rate_percent": 0.6,
       "source_locators": [
         {
           "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
           "page": {
+            "pdf": 16,
+            "printed": 16
+          },
+          "provision": "employee wage base: wages as defined in IRC \u00a73121(a)",
+          "publisher": "United States Congress",
+          "reviewed_external_capture": {
+            "filename": "BILLS-117hr4289ih.pdf",
+            "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+            "size_bytes": 269364,
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          "section": "\u00a75(a)(1)",
+          "table": "not applicable (statutory text)",
+          "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+        },
+        {
+          "derivation": "Combined wage-side 0.6% = 0.3% employee + 0.3% employer; derived arithmetic, not separately printed.",
+          "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+          "page": {
             "pdf": 17,
             "printed": 17
           },
-          "provision": "employee and separate employer applicable percentages",
+          "provision": "introduced bill specifies employee 0.3% and separate employer 0.3% after 2021",
           "publisher": "United States Congress",
           "reviewed_external_capture": {
             "filename": "BILLS-117hr4289ih.pdf",
@@ -6553,7 +6614,7 @@
             "pdf": 18,
             "printed": 18
           },
-          "provision": "self-employment applicable percentage",
+          "provision": "introduced bill specifies self-employment 0.6%",
           "publisher": "United States Congress",
           "reviewed_external_capture": {
             "filename": "BILLS-117hr4289ih.pdf",

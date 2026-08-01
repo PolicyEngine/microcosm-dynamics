@@ -157,6 +157,11 @@ def display_published(published: dict[str, Any]) -> str:
         if companions
         else ""
     )
+    legislative_status = published.get("legislative_status")
+    if legislative_status:
+        companion_text += (
+            f"<br>Legislative status: {legislative_status}."
+        )
     provenance = published.get("provenance")
     provenance_text = ""
     if provenance:
@@ -278,6 +283,8 @@ def human_matrix(rows: list[dict[str, Any]]) -> list[str]:
                 f"{display_value(row['our']['value'])} {row['our']['unit']}<br>"
                 + display_label(row["our"]["label_state"])
             )
+            if row["our"].get("comparison_note"):
+                our += f"<br>**Comparison note:** {row['our']['comparison_note']}"
             cells = [
                 f"`{row['row_id']}`<br>{row['quantity']}",
                 our,
@@ -471,10 +478,12 @@ def wish_section(matrix: dict[str, Any]) -> list[str]:
         ),
         "",
         (
-            "H.R. 4289 §5 separately proposes a 0.3% employee tax and a 0.3% "
-            "employer tax after 2021—0.6% combined—and 0.6% on self-employment. "
-            "Therefore this 0.3% path is one side, not total WISH financing. The "
-            "bill is statutory text, not an actuarial estimate."
+            "The introduced H.R. 4289 §5 text specifies a 0.3% employee tax "
+            "and a separate 0.3% employer tax after 2021, plus 0.6% on self-"
+            "employment. The combined wage-side 0.6% is derived as `0.3 + "
+            "0.3`; it is not separately printed. These provisions would have "
+            "applied only if enacted. This 0.3% path is one side, not total "
+            "WISH financing, and the introduced bill is not an actuarial estimate."
         ),
         "",
         "### Annual proxy-base trajectory",
@@ -492,8 +501,9 @@ def wish_section(matrix: dict[str, Any]) -> list[str]:
             "",
             (
                 "This is a proxy-base index, not a policy-effective revenue path. "
-                "The proposed tax applies after 2021, so only 2022 overlaps the "
-                "certified artifact. Odd-year values inherit the artifact's carry rule."
+                "The introduced bill specifies wages after 2021; if enacted, "
+                "only 2022 would overlap the committed entry-8 artifact. Odd-year "
+                "values inherit the artifact's carry rule."
             ),
             "",
             "### Odd-year-carry-aware biennial trajectory",

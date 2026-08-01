@@ -1672,25 +1672,29 @@ def build_ordering_row() -> dict[str, Any]:
 
 
 def wish_bill_locator(
-    page: int, section: str, provision: str
+    page: int,
+    section: str,
+    provision: str,
+    derivation: str | None = None,
 ) -> list[dict[str, Any]]:
-    return [
-        {
-            "publisher": "United States Congress",
-            "document": (
-                "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors "
-                "to be at Home Act, introduced text (H.R. 4289 IH)"
-            ),
-            "page": {"pdf": page, "printed": page},
-            "table": "not applicable (statutory text)",
-            "section": section,
-            "provision": provision,
-            "url": WISH_BILL_PDF_URL,
-            "reviewed_external_capture": deepcopy(
-                REFRESH_REVIEW["captures"]["wish_bill_pdf"]
-            ),
-        }
-    ]
+    locator = {
+        "publisher": "United States Congress",
+        "document": (
+            "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors "
+            "to be at Home Act, introduced text (H.R. 4289 IH)"
+        ),
+        "page": {"pdf": page, "printed": page},
+        "table": "not applicable (statutory text)",
+        "section": section,
+        "provision": provision,
+        "url": WISH_BILL_PDF_URL,
+        "reviewed_external_capture": deepcopy(
+            REFRESH_REVIEW["captures"]["wish_bill_pdf"]
+        ),
+    }
+    if derivation is not None:
+        locator["derivation"] = derivation
+    return [locator]
 
 
 def wish_financing_stub() -> dict[str, Any]:
@@ -1747,8 +1751,9 @@ def wish_financing_stub() -> dict[str, Any]:
             "absolute_revenue_levels_published": False,
             "trajectory_interpretation": (
                 "A 0.003-times-proxy-payroll base index, not a policy-effective "
-                "revenue forecast. The bill applies after 2021, so only 2022 "
-                "overlaps the certified artifact's calendar span."
+                "revenue forecast. The introduced bill specifies wages after "
+                "2021; if enacted, only 2022 would overlap the committed "
+                "entry-8 artifact's calendar span."
             ),
             "label_state": label_state(True),
             "source": source_pin(
@@ -1757,21 +1762,41 @@ def wish_financing_stub() -> dict[str, Any]:
             "formula": "0.003 * weighted_taxable_payroll; trajectory normalized within draw",
         },
         "published": {
+            "legislative_status": "introduced and referred; not enacted",
             "employee_rate_percent": 0.3,
             "employer_rate_percent": 0.3,
             "combined_wage_rate_percent": 0.6,
             "self_employment_rate_percent": 0.6,
-            "effective_period": "wages received/paid after 2021",
+            "combined_wage_rate_derivation": (
+                "0.3% employee + 0.3% employer = 0.6%; derived arithmetic, "
+                "not separately printed in the introduced bill"
+            ),
+            "effective_period": (
+                "the introduced bill specifies wages received/paid after "
+                "2021; this would have applied only if enacted"
+            ),
             "source_locators": [
+                *wish_bill_locator(
+                    16,
+                    "§5(a)(1)",
+                    "employee wage base: wages as defined in IRC §3121(a)",
+                ),
                 *wish_bill_locator(
                     17,
                     "§5(a)(1)-(2)",
-                    "employee and separate employer applicable percentages",
+                    (
+                        "introduced bill specifies employee 0.3% and separate "
+                        "employer 0.3% after 2021"
+                    ),
+                    (
+                        "Combined wage-side 0.6% = 0.3% employee + 0.3% "
+                        "employer; derived arithmetic, not separately printed."
+                    ),
                 ),
                 *wish_bill_locator(
                     18,
                     "§5(a)(3)",
-                    "self-employment applicable percentage",
+                    "introduced bill specifies self-employment 0.6%",
                 ),
             ],
             "actuarial_revenue_or_cost_trajectory": None,
@@ -1799,9 +1824,10 @@ def wish_financing_stub() -> dict[str, Any]:
             ),
             "earnings_and_accounting": (
                 "Multiplying proxy payroll by 0.003 is one statutory wage-tax "
-                "side only. The bill separately imposes 0.3% on employers (0.6% "
-                "combined, and 0.6% for self-employment), so this requested path "
-                "is not total revenue or an actuarial solvency/sufficiency estimate."
+                "side only. The introduced bill separately specifies 0.3% for "
+                "employers and 0.6% for self-employment; combined wage-side "
+                "0.6% is derived as 0.3% + 0.3%, not separately printed. This "
+                "path is not total revenue or an actuarial solvency/sufficiency estimate."
             ),
         },
     }
@@ -1821,48 +1847,89 @@ def build_wish_parameter_row() -> dict[str, Any]:
                 "runs/first_estimates_v1.json", "/tables/revenue/per_draw"
             ),
             "formula": "100 * (0.003 * weighted_taxable_payroll) / weighted_taxable_payroll",
-            "provenance_status": "mechanical single-side parameter check only",
+            "provenance_status": (
+                "0.3% parameter copied from the introduced bill; mechanical "
+                "single-side identity only"
+            ),
+            "comparison_note": (
+                "The 0.3% parameter was copied from the introduced bill. Zero "
+                "deviation is by construction, not independent validation or calibration."
+            ),
         },
         "published": {
             "value": 0.3,
-            "unit": "percent of IRC §3121(a) wages received after 2021",
+            "legislative_status": "introduced and referred; not enacted",
+            "unit": (
+                "percent of IRC §3121(a) wages that the introduced bill "
+                "specifies after 2021; would have applied only if enacted"
+            ),
             "companion_parameters": {
                 "separate_employer_rate_percent": 0.3,
                 "combined_employee_employer_rate_percent": 0.6,
                 "self_employment_rate_percent": 0.6,
+                "combined_rate_print_status": (
+                    "derived as 0.3 + 0.3; not separately printed"
+                ),
             },
-            "source_locators": wish_bill_locator(
-                17,
-                "§5(a)(1)-(2)",
-                "employee rate and separate employer rate after 2021",
-            ),
+            "source_locators": [
+                *wish_bill_locator(
+                    16,
+                    "§5(a)(1)",
+                    "employee wage base: wages as defined in IRC §3121(a)",
+                ),
+                *wish_bill_locator(
+                    17,
+                    "§5(a)(1)-(2)",
+                    (
+                        "introduced bill specifies employee 0.3% and separate "
+                        "employer 0.3% after 2021"
+                    ),
+                    (
+                        "Combined wage-side 0.6% = 0.3% employee + 0.3% "
+                        "employer; derived arithmetic, not separately printed."
+                    ),
+                ),
+                *wish_bill_locator(
+                    18,
+                    "§5(a)(3)",
+                    "introduced bill specifies self-employment 0.6%",
+                ),
+            ],
         },
         "deviation": {
             "signed_percentage_points": 0.0,
             "our_over_published_ratio": 1.0,
-            "definition": "ours minus published employee-side rate",
+            "definition": (
+                "By construction: our 0.3% input was copied from the introduced "
+                "bill, so zero deviation is neither independent validation nor calibration."
+            ),
         },
         "concept_mismatch": {
             "frame": (
                 "Our denominator is an unaligned frame-relative labor-income "
-                "proxy; the bill applies nationally to IRC §3121(a) wages."
+                "proxy; the introduced bill would have applied nationally to "
+                "IRC §3121(a) wages if enacted."
             ),
             "population": (
                 "Our closed 2015-2022 PSID reproduction panel is not the national "
                 "employee population subject to the proposed tax."
             ),
             "year_basis": (
-                "The scalar parameter matches, but the bill applies after 2021; "
-                "only 2022 overlaps our artifact and no published revenue path exists."
+                "The scalar parameter matches, but the introduced bill specifies "
+                "wages after 2021 and would have applied only if enacted; only "
+                "2022 overlaps our artifact, and no published revenue path exists."
             ),
             "benefit_concept": (
-                "The bill finances a new LTSS benefit; our artifact models only "
-                "own-record Social Security retirement benefits and no LTSS outcome."
+                "The introduced bill would finance a new LTSS benefit if enacted; "
+                "our artifact models only own-record Social Security retirement "
+                "benefits and no LTSS outcome."
             ),
             "earnings_and_accounting": (
                 "The requested 0.003 calculation represents only the employee "
-                "side. The bill separately levies employers at 0.3% and self-employment "
-                "at 0.6%; this row is not a total-financing or actuarial check."
+                "side. The introduced bill separately specifies employers at "
+                "0.3% and self-employment at 0.6%; combined wage-side 0.6% is "
+                "derived as 0.3% + 0.3% and is not separately printed. This row "
+                "is not a total-financing or actuarial check."
             ),
             "mismatch_codes": [
                 "proxy_payroll_vs_irc_3121a_wages",
