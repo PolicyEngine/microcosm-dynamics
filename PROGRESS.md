@@ -2,7 +2,7 @@
 
 ## State
 
-Findings 1–5 are closed; finding 6 is next. The worktree starts from
+Findings 1–6 are closed; finding 7 is next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -41,10 +41,18 @@ the ratified 1,376,610-byte prefix exactly.
   preimages for transition, domain-cell, and partition IDs; complete nested
   types and null branches; terminal-LF canonical hashing; and duplicate/hash-
   collision aborts at every direct and transitive consumer.
+- Closed finding 6 with two immutable upstream corpus roots, native root-
+  specific content verification, complete 465-link and 456-accepted-row
+  disposition relations, and an independently reconstructed 257-document
+  denominator: 81 questionnaire/QxQ, 86 dictionary/layout, 47 codebook/value-
+  label, and 43 raw fixed-width files. Fixed role/wave/path/storage mapping,
+  order, count, keyset, row-domain, complete staged-byte reproduction, every
+  locator/derivation consumer, G17-C01, ledger, closure sweep, and build order
+  now precede the candidate manifest. The field root's historical false and
+  registration-required evidence remains exact and is not promoted.
 
 ## Next
 
-1. Close finding 6 by freezing the Class-A source-document denominator.
-2. Close findings 7–10 in referee order, committing each separately.
-3. Recompute identities, sweep stale literals, rerun all satisfiability
+1. Close findings 7–10 in referee order, committing each separately.
+2. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.

@@ -25334,10 +25334,12 @@ is selected by complete source syntax, never filename alone. The expected
 decoder, segmentation, canonical rows, framing, counts, and digests are
 constructed before their serialized comparands are read.
 
-`document_derivations` exact-covers, once each and in source-document-
-manifest order, every `dictionary_layout | codebook |
-raw_fixed_width_data` document. Count equals length and the domain digest
-hashes the complete ordered rows. A dictionary/codebook derivation row has
+`document_derivations` exact-covers, once each and in independently derived
+`U` order, all 176 nonquestionnaire documents: 86 `dictionary_layout`, 47
+`codebook`, and 43 `raw_fixed_width_data`. The candidate source manifest,
+inventory, selected raw fields, and derivation rows cannot select this
+denominator. Count equals length and the domain digest hashes the complete
+ordered rows. A dictionary/codebook derivation row has
 exactly `source_document_id`, `derivation_kind`, `decoder`,
 `row_segmentation`, `canonical_rows`, `canonical_row_count`,
 `canonical_row_keyset_sha256`, and `canonical_row_domain_sha256`.
@@ -25963,33 +25965,237 @@ passes only when all nested equations and the exact seven-ID Class-A
 residual projection pass.
 
 The closure artifact's `source_document_manifest` has exactly
-`source_documents`, `source_document_count`,
+`upstream_corpus_registry_identity`, `source_documents`,
+`source_document_count`, `source_document_keyset_sha256`,
 `source_document_domain_sha256`, `field_source_derivation`,
-`questionnaire_page_text_derivation`, and `canonical_order`; order is the literal
-`document_role_wave_canonical_source_path_v1`. Each document row has exactly
-`source_document_id`, `document_role`, `interview_waves`,
-`canonical_source_path`, `storage_disposition`, `storage_identity`,
-`byte_size`, and `sha256`. Role is `questionnaire_flow |
-dictionary_layout | codebook | raw_fixed_width_data`; waves are the complete
-nonempty official-order array to which the document applies; path is nonempty, canonical,
-traversal-free provenance text; size is positive; and SHA-256 covers the
-complete regular-file bytes. Storage is `git_blob |
-external_registered_file`. Its tagged identity is respectively exactly
-`commit,path,tree_mode,blob_oid` with mode `100644`, or exactly
-`authority_registry_id,document_id,registered_path`; either branch must
-independently reproduce the same canonical path, size, and bytes.
+`questionnaire_page_text_derivation`, `canonical_order`, and `status`.
+`canonical_order` is the literal
+`document_role_wave_canonical_source_path_v1`; status is `pass | fail`.
+Each document row has exactly `source_document_id`, `document_role`,
+`interview_waves`, `canonical_source_path`, `storage_disposition`,
+`storage_identity`, `byte_size`, and `sha256`. Role is
+`questionnaire_flow | dictionary_layout | codebook |
+raw_fixed_width_data`; waves are a complete nonempty official-order array;
+path is nonempty, canonical, and traversal-free; size is a positive JSON
+integer excluding booleans; and SHA-256 is 64 lowercase hex over the complete
+regular-file bytes. Storage is `git_blob | external_registered_file`. Its
+tagged identity is respectively exactly `commit`, `path`, `tree_mode`, and
+`blob_oid` with mode `100644`, or exactly `authority_registry_id`,
+`document_id`, and `registered_path`. Either branch must independently
+reproduce the same canonical path, size, and bytes. The independent expected
+projection below contains only `external_registered_file`; a candidate
+`git_blob` row is therefore additional and fails this version.
 
 `source_document_id` is literal `psid-source-document:` followed by SHA-256
 of canonical JSON bytes of `[document_role,interview_waves,
-canonical_source_path,byte_size,sha256]`. Rows follow role order, first wave,
-path, and ID; IDs and storage identities are unique; count equals length;
-and the domain digest hashes the complete ordered rows. Every whole-document
-and field-stream locator foreign-keys this domain. `field_source_derivation`
-is the complete §19.3.2 object and exact-covers every nonquestionnaire source
-document; its implementation and row/record derivations are reconstructed
-before any hierarchy, inventory, or locator row is read. Thus a filename,
-locator, extraction row, or alleged canonical source row cannot invent a
-document ID, source path, field statement, value entry, or raw record.
+canonical_source_path,byte_size,sha256]`. Rows follow the displayed role
+order, first wave, unsigned-UTF-8 path, and ID. IDs, canonical paths, and
+storage identities are unique. `source_document_keyset_sha256` hashes the
+complete ordered ID array; the domain digest hashes the complete ordered row
+array; and count equals both array lengths.
+
+`upstream_corpus_registry_identity` has exactly
+`questionnaire_corpus_root`, `field_corpus_root`, `projection_law`,
+`source_document_count`, `source_document_keyset_sha256`,
+`source_document_domain_sha256`, and `denominator_status`. Its projection
+law is the exact non-identifier literal
+`fixed_two_root_complete_source_document_projection` and
+denominator status is `pass | fail`. This is an exact member object, not a
+separately selectable source or successor schema.
+
+`questionnaire_corpus_root` has exactly `path`, `source_commit`, `tree_mode`,
+`blob_oid`, `byte_size`, `raw_sha256`, `content_sha256`, `registry_pointer`,
+`registry_artifact_id`, `registry_content_sha256`,
+`capture_input_identities_sha256`, `registry_document_count`,
+`registry_document_domain_sha256`, `source_page_index_size_bytes`,
+`source_page_index_sha256`, `source_link_inventory_count`,
+`source_link_inventory_size_bytes`, `source_link_inventory_sha256`, and
+`registry_status`. Its values are, respectively,
+`data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json`,
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, `100644`,
+`825f6c61ef9d4a161886cbc44f5cc914d65160d2`, 520656,
+`07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c`,
+`4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27`,
+`/accepted_authority_registry`,
+`psid_questionnaire_corpus_authority_registry.v1`,
+`c82304267d254e81ab5d7e7e198f89d09056700a7429d7fcfa32fdab6bb99b03`,
+`49246c91428394e3cad712d710b4dd976b95530cc68e076ddbd1c3009b45e877`,
+456,
+`fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3`,
+668104,
+`159ec5a660b2b302ef16153f6570f24252e2f77a2b9297dd111e39002846a5b7`,
+465, 58679,
+`4c18313b66e3afa4737081d186deb9cf5a2cb7ff4355386cbd5c99bfa2fa21bd`,
+and `pass`. The raw artifact and its self-zeroed content digest must
+reproduce; its accepted child, complete 456-row order, capture-input
+identities, counts, row digest, and status must deep-equal the committed
+bytes. All four capture inputs, including the 465-row
+`source_link_inventory`, must resolve at the registered staging root and
+reproduce their complete size and SHA-256 before any document is selected.
+The source-page input is exactly
+`documentation/capture1/psid_documents_index.html`; the link input is exactly
+`documentation/capture1/psid_documents_inventory.json`. The latter must
+strict-parse as one 465-member JSON array whose members have exactly `href`,
+`text`, and `row`, all strings, in physical source order. Neither a later
+HTML fetch nor a regenerated, sorted, stable-first, or href-deduplicated link
+array may substitute for those authenticated bytes.
+
+`field_corpus_root` has exactly `path`, `source_commit`, `tree_mode`,
+`blob_oid`, `byte_size`, `raw_sha256`, `content_sha256`, `manifest_pointer`,
+`manifest_count`, `manifest_domain_sha256`,
+`reported_reproduced_from_source_bytes`, and `reported_registration_status`.
+Its values are, respectively,
+`data/external/psid_questionnaire_dictionary_inventory_registration_required_v1.json`,
+`b8e8e4f200b362a9661dbc6ef765852496608e49`, `100644`,
+`a2e6bfa8b19c35dfde235d8ece7e233a5d833e9e`, 25474435,
+`a974c6fb65a9f3d52387163f2e98b7cd8cfdbd57f5e95d1f766b3aa25d167ac0`,
+`f1f13d9de7dcb2c8a26beafbc60a32390b5a5fb644abb68aeee8df3a5cd1b557`,
+`/source_authority_manifest`, 176,
+`52906f7a36955d20282dbce2dd4bac260395d3ce3961bd0baf763290c3152116`,
+false, and `registration_required`. The raw and self-zeroed content digests,
+schema/artifact literals, exact 43-wave array, complete 176-row manifest,
+count, and manifest digest must reproduce from that pinned Git blob. For
+clarity, the final two root members exact-copy
+`/integrity/reproduced_from_source_bytes` and
+`/inventory_ratification_abort/status`; they are not coordinator-authored
+summaries. For
+this historical root only, reproduce its native canonicalizer exactly:
+strict JSON, set only `integrity.content_sha256` to 64 ASCII zeroes, then
+UTF-8 encode the recursively key-sorted compact serialization with
+`ensure_ascii: false` and no terminal LF. The manifest digest applies that
+same no-terminal-LF serialization to the complete `source_authority_manifest`
+array. It is not silently reinterpreted under §10.1's later canonicalizer.
+The
+historical false and registration-required values are unfavorable evidence
+and must remain exact; this root freezes a denominator and does not promote
+the old audit to passing source authority.
+
+Let `W` be the exact 43-wave concatenation displayed below; standalone
+`canonical_json_bytes(W)` has SHA-256
+`b681b78ebc82110e24fb73878b1a2b72b6bee7924ea3db1413f7acd68e163fda`.
+Before reading the closure artifact, strict-parse both upstream roots and
+reconstruct the expected questionnaire projection from the complete
+authenticated 465-row source-link array and 456-row accepted registry. For
+each `w` in `W`, the core basename is `qYY.pdf` through 1997,
+where `YY` is the final two decimal digits, and `qYYYY.pdf` thereafter. The
+core URL is exactly
+`https://psidonline.isr.umich.edu/documents/psid/questionnaires/` plus that
+basename. Require exactly one source-link row with that URL, exact text
+`Questionnaire`, and exact empty `row`, and resolve it to exactly one
+`availability: verified` accepted document row with the same URL and text.
+All of `digest_row_filename`, `on_disk_filename`, and `locator.filename`
+must equal the basename; the expected, observed, and locator sizes and
+complete-file hashes must agree.
+
+Also test the exact companion URL
+`https://psidonline.isr.umich.edu/data/Documentation/Fam/<w>/QxQs.pdf`.
+Retain it exactly when the source-link array contains one row with that URL,
+text `QxQ`, and empty `row`; it must resolve to exactly one verified accepted
+document row with matching URL/text and internally equal filename, size, and
+hash values. Across `W` this yields exactly 43 core rows and 38 QxQ rows. The
+same core template at wave 2025 is the one explicit authenticated out-of-
+domain row and is not retained. Any other source-link row whose text is
+exactly `Questionnaire` or `QxQ` under either exact main-family URL prefix that cannot
+be uniquely classified as one of those 81 rows or that one 2025 negative row
+aborts; CDS, TAS, and other survey prefixes are outside this family-file
+projection rather than candidate exclusions.
+
+Before constructing a target row, construct two complete disposition
+relations. The first has one row for each of the 465 source-link occurrences,
+in source order; the second has one row for each of the 456 accepted document
+rows, in accepted-registry order. Each relation row carries its upstream
+position or document ID and exactly one disposition:
+`included_family_questionnaire_flow`,
+`excluded_out_of_wave_2025_family_questionnaire`, or
+`excluded_not_family_questionnaire_flow`. Their exact link-side counts are
+81, one, and 383; their exact accepted-row-side counts are 81, one, and 374.
+The first disposition is assigned exactly to the 81 URL/text/empty-row
+occurrences above and their 81 uniquely joined accepted rows; the second
+exactly to the one 2025 row on each side; the third is the exact complement.
+Every link occurrence joins by exact `href` to exactly one accepted row. For
+each href, that accepted row's `source_link_text` and `first_link_position`
+must equal the text and one-based position of the href's first source-link
+occurrence under the root's registered
+`stable_first_occurrence_by_exact_href` law; later same-href text casing does
+not invent another accepted document. The 81 included and one 2025
+occurrences additionally exact-match href, text, and empty `row` on both
+sides and all registered filename/size/digest fields. The two relations must
+exact-cover their respective roots, the included accepted IDs must have the
+displayed 81-row hash below, and inclusion/exclusion overlap, a silent row,
+an included duplicate, stable-first mismatch, or one href assigned both an
+included and excluded disposition aborts. These complete complements, rather than a candidate
+manifest filter, establish that every upstream row received a disposition.
+
+Project each of those 81 rows to `document_role: questionnaire_flow`, the
+exact singleton `interview_waves: [w]`, `canonical_source_path` equal to
+`documentation/capture1/` plus its exact `on_disk_filename`, byte size and
+SHA-256 from the verified row, and `storage_disposition:
+external_registered_file`. Its storage identity has
+`authority_registry_id: psid_questionnaire_corpus_authority_registry.v1`,
+the exact accepted `source_document_id` as `document_id`, and that canonical
+path as `registered_path`. The complete 81-row source-order accepted-
+document-ID projection has canonical SHA-256
+`b4bde71544911441e1c1d05e5ad00d282384a98747627ee19d056dd3ce174293`.
+
+Then traverse all 176 `field_corpus_root` manifest rows in their committed
+order; none is filtered by use, purpose, field, or candidate. Every row's
+`interview_wave` must occur in `W`. Map `stata_setup | spss_setup` to
+`dictionary_layout`; map `family_codebook | stata_value_labels |
+spss_value_labels` to `codebook`; and map `raw_fixed_width` to
+`raw_fixed_width_data`. Any other role aborts. The projected wave array is
+the exact singleton source wave, canonical path exact-copies `path`, size and
+SHA-256 exact-copy their source values, and storage disposition is
+`external_registered_file`. Its storage identity has
+`authority_registry_id:
+psid_questionnaire_dictionary_inventory.registration_required.v1`, the
+source `document_id`, and source `path` as `registered_path`.
+Every one of those 176 paths resolves root-relative to the exact
+`psid_external_staging_root` already authenticated through the questionnaire
+root and the retained staging law. No absolute path is serialized, and no
+current working directory, home expansion, environment variable, path
+alias, or traversal segment may select a byte. The resolved target must be a
+regular non-symlink whose complete size and SHA-256 equal the source row.
+For this denominator only, the storage identity's
+`authority_registry_id` value names the immutable registration-required
+field-corpus artifact while the embedded two-root identity and fresh
+176-file reauthentication supply the passing storage proof. This neither
+changes that historical artifact's status nor promotes it to an official
+slot/inventory authority.
+
+For every projected row, compute `source_document_id` only after all those
+expected values exist. Concatenate the two source projections, sort once by
+the manifest canonical order, and call the resulting array `U`. It has
+exactly 257 rows with exact role counts 81 questionnaire, 86 dictionary
+layout, 47 codebook, and 43 raw fixed width. Each role's stable-unique
+first-occurrence wave projection is exactly `W`; every projected wave array
+is a singleton. Its ordered source-document-ID array and complete row array
+have canonical SHA-256 values, respectively,
+`8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a`
+and
+`9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce`.
+A missing, extra, repeated, aliased, differently editioned,
+out-of-wave, differently roled, path-changed, or byte-changed source aborts.
+
+The upstream identity's count and two digests are independently computed
+from `U`, and `denominator_status` is pass only when both pinned roots,
+capture inputs, source rows, mappings, counts, waves, storage foreign keys,
+and all 257 source bytes reproduce. Only after complete expected `U` and the
+identity exist may the candidate `source_document_manifest` be read.
+Candidate `source_documents` must deep-equal `U`; its count, ID-keyset hash,
+row-domain hash, canonical order, and embedded upstream identity must equal
+the independent values. Manifest status is pass exactly on all those
+equalities and the complete byte reproduction, and fail otherwise. A
+candidate-selected document, role, wave array, path, count, keyset, digest,
+or storage root can never supply an expected value.
+
+Every whole-document and field-stream locator foreign-keys this independently
+derived domain. `field_source_derivation` is the complete §19.3.2 object and
+exact-covers the 176-row nonquestionnaire slice of `U`; its implementation
+and row/record derivations are reconstructed before any hierarchy, inventory,
+or locator row is read. Thus a filename, locator, extraction row, candidate
+manifest, or alleged canonical source row cannot invent or suppress a
+document ID, role, wave, source path, field statement, value entry, or raw
+record.
 
 `questionnaire_page_text_derivation` has exactly `implementation_path`,
 `source_commit`, `tree_mode`, `blob_oid`, `byte_size`, `raw_sha256`,
@@ -26012,12 +26218,18 @@ use only these ordered page strings.
 The retained official slot-registry `source_authority_manifest` is
 prospectively completed as an object with exactly `source_document_manifest`
 and `slot_closure_evidence_identity`. The first is a complete deep copy of
-the closure artifact's manifest. The second has exactly `path`, `artifact_id`,
-`schema_version`, and `sha256`; its values are the closure path and two
-identity literals above and the SHA-256 of the complete canonical raw closure
-artifact. It is added only after that artifact exists and is never embedded
-back into its own digest preimage. G17-C01 exact-compares this identity. This
-two-stage shape authenticates the source artifact without a self-reference.
+the closure artifact's passing manifest only after the coordinator has
+independently reconstructed `U` and exact-compared every upstream identity,
+row, count, keyset, order, domain digest, and storage byte. A candidate
+manifest can never be copied first and then treated as expected authority.
+The second has exactly `path`, `artifact_id`, `schema_version`, and `sha256`;
+its values are the closure path and two identity literals above and the
+SHA-256 of the complete canonical raw closure artifact. It is added only
+after that artifact exists and is never embedded back into its own digest
+preimage. G17-C01 exact-compares this identity. This two-stage shape
+authenticates the source artifact without a self-reference. Neither the slot
+registry nor the official inventory is independently ratified until this
+upstream-denominator comparison passes.
 
 The complete ordered era/wave domain is:
 
@@ -26031,7 +26243,9 @@ The complete ordered era/wave domain is:
 | `ry2015_2022_exclusion_lineage` | `[2017,2019,2021,2023]` |
 
 The concatenation is the complete unique 43-wave §4.2 interview domain in
-official order. Each era row has exactly `era_id`, `interview_waves`,
+official order and must deep-equal independently reconstructed `W`; a
+candidate era row cannot select or narrow it. Each era row has exactly
+`era_id`, `interview_waves`,
 `residual_ids`, `whole_document_locators`,
 `whole_document_locator_count`, `whole_document_locator_domain_sha256`,
 `field_stream_locators`, `field_stream_locator_count`,
@@ -26128,14 +26342,15 @@ range_sha256 == full_file_sha256
 pdf_page_domain == all_pages_and_flow_branches
 ```
 
-Each locator resolves one manifest-authenticated complete regular file and
-its full byte range. The array exact-covers the source-document manifest's
-complete Cartesian expansion of every `questionnaire_flow` document and each
-of its `interview_waves` that occurs in this era; its source role and wave
+Each locator resolves one independently expected, manifest-authenticated
+complete regular file and its full byte range. The array exact-covers `U`'s
+complete expansion of every `questionnaire_flow` document and its singleton
+`interview_waves` member that occurs in this era; its source role and wave
 must match, its filename is the canonical-source-path basename, and no other
-document/wave locator is admitted. Thus every official family questionnaire
-for every claimed wave is included; where a wave has multiple family
-questionnaire/flow documents, every one is included. The era closure separately binds the
+document/wave locator is admitted. Across the six eras these arrays
+exact-cover all 81 authenticated family questionnaire/QxQ documents once:
+one core questionnaire for each wave plus every 38-row source-authenticated
+QxQ companion. The era closure separately binds the
 complete paired dictionary/layout and codebook field streams used to
 enumerate the hierarchy through their source-manifest rows and complete
 keyset hashes below. A bounded page range, keyword hit, search-result
@@ -26163,9 +26378,11 @@ dictionary/layout locator has nonnegative half-open integer
 coordinates with `start < end` and an exact empty codebook-position array. A
 codebook locator has null coordinates and the complete nonempty ascending
 zero-based entry-position array for that field row. The array exact-covers
-every canonical field row in every `dictionary_layout | codebook` manifest
-document whose wave array intersects this era, once per applicable wave; no
-use-selected subset or extra row is admitted.
+every canonical field row in every one of `U`'s 86 dictionary-layout and 47
+codebook documents whose singleton wave occurs in this era, once per source
+row; no candidate-manifest, inventory-use-selected subset, or extra row is
+admitted. The 43 raw-file rows remain exact-covered by their framing
+derivations and do not masquerade as field-stream locators.
 
 The field locator ID is literal `psid-field-stream:` followed by SHA-256 of
 canonical JSON bytes of `[source_document_id,interview_wave,raw_field_id,
@@ -26191,8 +26408,9 @@ row participates in either searched keyset digest. The matching retained
 `expanded_slots` row's `source_document_ids` is the unique source-manifest-
 order document projection of that nonempty selection, and its
 `source_locator_sha256s` is the same-selection-order complete digest
-projection. Both arrays must deep-equal the independently constructed slot-
-registry row; the closure artifact cannot author either.
+projection. Every document lookup resolves through independent `U`, not the
+candidate manifest. Both arrays must deep-equal the independently constructed
+slot-registry row; the closure artifact cannot author either.
 
 The existing official-inventory `absence_proof` nested member is
 prospectively completed with exactly `absence_proof_id`, `era_id`,
@@ -26215,9 +26433,13 @@ every `searched_interview_waves` member and every tuple in that predicate,
 in official slot order; it is nonempty and never a proof-selected subset.
 `searched_interview_waves` is the
 complete era array for an era-wide claim or the exact claimed wave subset
-for a narrower claim; every corresponding complete questionnaire locator is
-in the nonempty, unique, complete-locator-union-order
-`searched_locator_ids`.
+for a narrower claim. For every selected wave, `searched_locator_ids`
+contains every whole-document locator whose independently reconstructed
+`U` row has role `questionnaire_flow` and contains that wave—both the core
+questionnaire and the QxQ companion where the 81-row projection has one—and
+contains no other whole-document locator. The resulting array is nonempty,
+unique, and in complete-locator-union order; a proof-selected document
+subset or candidate-authored wave array aborts.
 `searched_layout_keyset_sha256` hashes the complete ordered canonical arrays
 `[source_document_id,raw_field_id,start,end]`; the codebook digest hashes the
 complete ordered arrays `[source_document_id,raw_field_id,
@@ -26507,7 +26729,7 @@ unnamed consumer.
 | §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, a separately identified source-only extractor, raw-record framing and complete census, serialized normalized literal/range domains, exhaustive parse-kind branches, source-derived finite-state numeric grammar, exact registered padding, dictionary/codebook missing literals, closed unobserved-value rows, and explicit outside-grammar abort. The retained whole-inventory builder identity remains distinct. `typed_parse_specs` retains its ratified nine-key shape; its full-width member validates the source field while the exact successor payload-width/DFA and value-code range laws replace only its older parser-width/path predicates. |
 | §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
 | §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
-| §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3`: exact source-authority manifest, six-era/43-wave hierarchy extraction, whole-document/field/flow/occurrence locator domains, retained slot-source projection, and exact branch, layout, codebook, near-match, and target-key proof. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
+| §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files), and exact-compare every row, role, wave, path, storage identity, order, count, keyset, and domain digest. Only that fixed denominator supplies the six-era/43-wave hierarchy extraction, whole-document/field/flow/occurrence locator domains, retained slot-source projection, and exact branch, layout, codebook, near-match, and target-key proof. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
 | §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets-and-tagged-branches`: one `residual_consequence` member is inserted at the exact enumerated position. A verified/documented executable row preserves every preexisting member and meaning; only the exact authority-absent/conflict carrier branches set the enumerated executable members empty or null and force `abort_registration`. |
 | §4.2 `family_aggregate_allocation_rule` | `preserved-in-every-executable-SE-row-and-exactly-null-in-a-negative-carrier`: a verified/documented row retains exactly `action` and `allocation_source_inventory_keys`; an authority-absent/conflict carrier has null as expressly enumerated in §19.3.4. Neither branch creates an allocation default. |
 | §§16.2, 16.5.1, 16.11.2, and 16.13 official registry/crosswalk identities and construction | `composed-with-the-completed-nested-schemas`: all v1 official artifact/registry names, nine-registry order, first-add/cutoff history, nonempty/no-unreferenced-row rules, and configuration deep-copy laws remain. Every affected content and identity digest is fresh. |
@@ -26541,9 +26763,16 @@ The seven changed expected/actual payloads are exactly:
   `slot_source_authority_manifest`, `inventory_layout_grammar_rows`,
   `inventory_absence_proof_rows`, and `slot_closure_evidence_identity`. The
   first is the unchanged complete official key stream. The second is the
-  complete two-key §19.3.3 slot-source manifest, independently reconstructed
-  on the expected side and deep-copied by the slot/inventory artifacts on the
-  actual side. The next two are positional projections of every
+  complete two-key §19.3.3 slot-source manifest. On the expected side, before
+  any candidate manifest is read, both immutable upstream roots and all four
+  questionnaire capture inputs are authenticated, both complete source-row
+  disposition relations are reconstructed, all 257 staged source bytes are
+  reproduced, and the exact 81/86/47/43-role `U` array is independently
+  constructed. Its complete row array, role and wave values, paths, storage
+  identities, canonical order, count 257, ordered-ID keyset hash, row-domain
+  hash, and embedded `upstream_corpus_registry_identity` must all exact-match
+  the candidate source manifest. Only then is that passing manifest deep-
+  copied by the slot/inventory artifacts on the actual side. The next two are positional projections of every
   official inventory row's complete §19.3.2 layout/token grammar and
   §19.3.3 absence-proof value, including exact empty branches. The final
   identity has exactly `path`, `artifact_id`, `schema_version`, and `sha256`.
@@ -26553,9 +26782,10 @@ The seven changed expected/actual payloads are exactly:
   `psid_questionnaire_slot_closure_evidence.v1`; and its digest hashes the
   complete canonical raw byte. It exact-matches the official slot-registry
   source-authority manifest's `slot_closure_evidence_identity` member. The expected object is
-  freshly reconstructed from authenticated dictionary/codebook/raw-file and
-  questionnaire sources; the actual object comes from the slot registry and
-  inventory. C01's expected/actual count remains the complete official
+  freshly reconstructed from the two pinned roots and authenticated
+  dictionary/codebook/raw-file and questionnaire bytes; the actual object
+  comes from the slot registry and inventory. A candidate-selected source
+  row, role, wave, path, order, count, keyset, or digest fails C01. C01's expected/actual count remains the complete official
   inventory-row count, while its domain hash covers this entire tagged
   object.
 - **G17-C05** is a tagged object with exactly
@@ -26715,6 +26945,11 @@ layout_coordinates
 typed_parse_specs
 source_file_ids
 field_source_derivation
+source_document_manifest
+upstream_corpus_registry_identity
+source_document_keyset_sha256
+canonical_source_path
+interview_waves
 record_framing
 normalized_codebook_entries
 value_code_map
@@ -27309,7 +27544,12 @@ equations, not serialized object, schema, or predicate identifiers.
 tag, an ID prefix, and a G17 payload member—not successor schema or predicate
 identifiers. They add no successor name.
 Member names, enum/role literals, projection paths, cross-binding literals,
-and symbolic commit names are likewise outside the inventory. An omitted,
+and symbolic commit names are likewise outside the inventory. In particular,
+`upstream_corpus_registry_identity`, `source_document_manifest`, and
+`source_document_keyset_sha256` are exact member names inside retained
+artifacts, and `fixed_two_root_complete_source_document_projection` is the
+fixed value of their non-ID `projection_law` member; none is a separately
+selectable schema, rule, or predicate identifier. An omitted,
 extra, duplicated, differently spelled, or undefined identifier blocks
 ratification. These successors create no mutable alias, candidate-selectable
 version, runtime branch, or alternate source fact.
@@ -27328,7 +27568,16 @@ accepted authority operand before every named predecessor passes.
    complete official questionnaire/flow, dictionary/layout, codebook,
    raw-data, and legal-source bytes. Repository-governed bytes are committed;
    externally governed raw data use their already required descriptor and
-   manifest closure. Separately review and authenticate the source-only
+   manifest closure. For Class A specifically, first authenticate the two
+   exact §19.3.3 Git-root identities, all four registered questionnaire
+   capture inputs, the complete 465-link/456-accepted-row disposition
+   relations, the 176-row field manifest, and every one of the 257 included
+   staged regular-file bytes. Preserve the field root's historical false and
+   registration-required report values; the new byte reproduction is a
+   separate prerequisite and does not rewrite that evidence. Independently
+   construct the exact 81/86/47/43-role `U` array, count, order, keyset, and
+   row-domain digest before reading any Class-A candidate manifest.
+   Separately review and authenticate the source-only
    field-extraction implementation, then construct every dictionary/codebook
    canonical-row and raw-record-framing derivation from those exact bytes. A
    URL, staging row, extraction, report, or candidate
@@ -27336,7 +27585,10 @@ accepted authority operand before every named predecessor passes.
    grandfathered by Amendment 5.
 2. **Construct the Class-A questionnaire closure.** Reproduce the complete
    `psid_questionnaire_slot_closure_evidence.v1` six-era/43-wave artifact,
-   exact source manifest, whole-document/field-stream/flow-branch locators,
+   require its source manifest and embedded upstream identity to deep-equal
+   the already reconstructed 257-row `U` denominator in every row, role,
+   wave, path, storage identity, count, keyset, order, and domain digest, and
+   only then construct whole-document/field-stream/flow-branch locators,
    byte-derived canonical source rows, hierarchy, 35-purpose expansion,
    retained-slot projection, and absence
    proofs. Only after its source-manifest identity and every count/hash pass
@@ -27346,7 +27598,9 @@ accepted authority operand before every named predecessor passes.
    domain, paired dictionary/codebook authority, and byte-pinned raw-file
    censuses, build every §19.3.2 normalized value domain, padding/DFA field
    grammar, and every present/structural-
-   query row. All six Class-B residuals must close, all slot and row arrays
+   query row. Neither the slot registry nor the inventory is independently
+   ratified unless the same two-key source-authority manifest passes the
+   independent `U` comparison and G17-C01. All six Class-B residuals must close, all slot and row arrays
    exact-cover, every fixed-width file must frame and census without a
    remainder, and every executable value map must deep-equal its normalized
    source projection. Independently expand every `state_of_residence`
