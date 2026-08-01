@@ -244,9 +244,8 @@ def _check_benchmark_migration_round_trip():
     schema = load_schema()
     registry, _ = schema.load_registry()
     history, _ = schema.load_history()
-    reconstructed = schema.reconstruct_legacy_matrix(
-        registry, history[:SEED_ROW_COUNT]
-    )
+    seed_records = history[:SEED_ROW_COUNT]
+    reconstructed = schema.reconstruct_legacy_matrix(registry, seed_records)
     assert (
         hashlib.sha256(schema.canonical_json_bytes(reconstructed)).hexdigest()
         == MERGED_MATRIX_SHA256
@@ -282,6 +281,63 @@ def _check_benchmark_migration_round_trip():
         )
         == 11
     )
+
+    future_cases = (
+        (
+            "ssa.adjusted_taxable_payroll_per_covered_worker",
+            "future.publisher.verified.metric",
+        ),
+        (
+            "dynasim.mermin.price_indexing.all",
+            "future.publisher.unverified.metric",
+        ),
+    )
+    for template_id, future_id in future_cases:
+        grown_registry = copy.deepcopy(registry)
+        future_entry = copy.deepcopy(
+            next(
+                entry
+                for entry in grown_registry["entries"]
+                if entry["row_id"] == template_id
+            )
+        )
+        future_entry["row_id"] = future_id
+        future_entry["spec_revisions"] = []
+        if future_entry["verification_class"] == "reported_not_verified":
+            provenance = future_entry["source_pin"][
+                "reported_value_provenance"
+            ]
+            provenance["publisher_capture_status"] = (
+                "publisher_capture_unavailable"
+            )
+            for locator in future_entry["source_pin"]["exact_locators"]:
+                locator["capture_status"] = (
+                    "Publisher-controlled bytes are not currently available."
+                )
+                locator.pop("unmanifested_corroborating_copy")
+        grown_registry["entries"].append(future_entry)
+        grown_registry["row_count"] += 1
+        grown_registry["tier_counts"][future_entry["tier"]] += 1
+        grown_registry["gap_class_counts"][future_entry["gap_class"]] += 1
+        future_record = copy.deepcopy(
+            next(
+                record
+                for record in seed_records
+                if record["row_id"] == template_id
+            )
+        )
+        future_record["row_id"] = future_id
+
+        schema.validate_registry(grown_registry)
+        grown_reconstruction = schema.reconstruct_legacy_matrix(
+            grown_registry, [*seed_records, future_record]
+        )
+        assert (
+            hashlib.sha256(
+                schema.canonical_json_bytes(grown_reconstruction)
+            ).hexdigest()
+            == MERGED_MATRIX_SHA256
+        )
 
 
 def test__benchmark_history__reproduces_frozen_seed_prefix():

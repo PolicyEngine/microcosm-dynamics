@@ -49,6 +49,53 @@ LEGACY_COMPARISON_SCOPES = (
 LEGACY_MATRIX_SHA256 = (
     "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
 )
+LEGACY_ROW_IDS = (
+    "ssa.reported_taxable_earnings_per_worker",
+    "ssa.adjusted_taxable_payroll_per_covered_worker",
+    "ssa.gross_contributions_per_worker",
+    "ssa.net_payroll_tax_contributions_per_covered_worker",
+    "ssa.retired_worker_beneficiaries_per_worker",
+    "ssa.retired_worker_awards_per_worker",
+    "ssa.retired_worker_benefits_per_reported_taxable_earnings",
+    "cbo.taxable_payroll.trajectory_2015_100",
+    "cbo.tax_revenue.share_of_taxable_payroll",
+    "dynasim.favreault_steuerle.package1b.married.male.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.male.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.female.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.female.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.married.female.gain_ge_20",
+    "dynasim.favreault_steuerle.package1b.divorced.male.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.divorced.male.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.divorced.female.gain_ge_5",
+    "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_20",
+    "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_5",
+    "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_20",
+    "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_5",
+    "dynasim.mermin.price_indexing.all",
+    "dynasim.mermin.ppi.generated.q1",
+    "dynasim.mermin.ppi.generated.q2",
+    "dynasim.mermin.ppi.generated.q3",
+    "dynasim.mermin.ppi.generated.q4",
+    "dynasim.mermin.ppi.generated.q5",
+    "dynasim.mermin.ppi.real_shared.q1",
+    "dynasim.mermin.ppi.real_shared.q2",
+    "dynasim.mermin.ppi.real_shared.q3",
+    "dynasim.mermin.ppi.real_shared.q4",
+    "dynasim.mermin.ppi.real_shared.q5",
+    "dynasim.mermin.nra70.q1",
+    "dynasim.mermin.nra70.q2",
+    "dynasim.mermin.nra70.q3",
+    "dynasim.mermin.nra70.q4",
+    "dynasim.mermin.nra70.q5",
+    "dynasim.mermin.nra70.all",
+    "dynasim.mermin.cola_minus_0_4pp.age_62_67",
+    "dynasim.mermin.cola_minus_0_4pp.age_80_85",
+    "dynasim.mermin.four_reform_cost_ordering",
+    "wish.hr4289.employee_rate.share_of_payroll",
+)
+LEGACY_MERMIN_ROW_IDS = frozenset(
+    row_id for row_id in LEGACY_ROW_IDS if ".mermin." in row_id
+)
 HISTORY_SEED_MIGRATIONS = {
     (
         "40ed82ee5ad01b6b36364de2310d45757a8a7dbb5c8f3274e83c46b7f8d514e4",
@@ -165,6 +212,22 @@ def require(condition: bool, message: str) -> None:
 
     if not condition:
         raise AssertionError(message)
+
+
+def legacy_registry_entries(registry: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return the frozen row prefix migrated from the merged #352 matrix."""
+
+    entries = registry.get("entries")
+    require(
+        isinstance(entries, list) and len(entries) >= len(LEGACY_ROW_IDS),
+        "registry is missing the frozen legacy row prefix",
+    )
+    prefix = entries[: len(LEGACY_ROW_IDS)]
+    require(
+        tuple(entry.get("row_id") for entry in prefix) == LEGACY_ROW_IDS,
+        "frozen legacy row prefix has drifted",
+    )
+    return prefix
 
 
 def is_one_sentence(value: Any) -> bool:
@@ -831,6 +894,7 @@ def validate_migration_context(
         "honest-gaps migration context has drifted",
     )
     partition = context["reported_not_verified_partition"]
+    legacy_entries = legacy_registry_entries(registry)
     require(
         isinstance(partition, dict)
         and set(partition) == {"reason", "row_count"}
@@ -839,7 +903,7 @@ def validate_migration_context(
         and partition["row_count"]
         == sum(
             entry["verification_class"] == "reported_not_verified"
-            for entry in registry["entries"]
+            for entry in legacy_entries
         ),
         "Mermin partition metadata has drifted",
     )
@@ -1204,7 +1268,6 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
             )
             used_artifacts.add(identity)
     else:
-        require(".mermin." in row_id, f"unexpected unverified row: {row_id}")
         provenance = source_pin["reported_value_provenance"]
         require(
             isinstance(provenance, dict)
@@ -1217,6 +1280,13 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
             }
             and provenance["classification"] == "reported_not_verified",
             f"unverified provenance class mismatch: {row_id}",
+        )
+        require(
+            isinstance(provenance["numeric_source_note"], str)
+            and provenance["numeric_source_note"].strip()
+            and isinstance(provenance["publisher_capture_status"], str)
+            and provenance["publisher_capture_status"].strip(),
+            f"unverified provenance needs source evidence: {row_id}",
         )
         numeric_source = provenance["numeric_source"]
         require(
@@ -1245,29 +1315,40 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
                 f"unverified locator cannot name an accepted source: {row_id}",
             )
             require(
-                "missing after REFRESH" in locator.get("capture_status", ""),
+                isinstance(locator.get("capture_status"), str)
+                and locator["capture_status"].strip(),
                 f"unverified locator needs capture status: {row_id}",
             )
-            corroboration = locator["unmanifested_corroborating_copy"]
-            require(
-                set(corroboration)
-                == {
-                    "accepted_as_verified_source",
-                    "manifested",
-                    "scope",
-                    "sha256",
-                }
-                and is_sha256(corroboration["sha256"]),
-                f"invalid unmanifested corroboration: {row_id}",
-            )
-            require(
-                corroboration["manifested"] is False,
-                f"unverified corroboration cannot be manifested: {row_id}",
-            )
-            require(
-                corroboration["accepted_as_verified_source"] is False,
-                f"corroboration cannot verify source: {row_id}",
-            )
+            if row_id in LEGACY_MERMIN_ROW_IDS:
+                require(
+                    "missing after REFRESH" in locator["capture_status"],
+                    f"Mermin locator needs refresh capture status: {row_id}",
+                )
+                require(
+                    "unmanifested_corroborating_copy" in locator,
+                    f"Mermin locator needs corroboration metadata: {row_id}",
+                )
+            if "unmanifested_corroborating_copy" in locator:
+                corroboration = locator["unmanifested_corroborating_copy"]
+                require(
+                    set(corroboration)
+                    == {
+                        "accepted_as_verified_source",
+                        "manifested",
+                        "scope",
+                        "sha256",
+                    }
+                    and is_sha256(corroboration["sha256"]),
+                    f"invalid unmanifested corroboration: {row_id}",
+                )
+                require(
+                    corroboration["manifested"] is False,
+                    f"unverified corroboration cannot be manifested: {row_id}",
+                )
+                require(
+                    corroboration["accepted_as_verified_source"] is False,
+                    f"corroboration cannot verify source: {row_id}",
+                )
 
     require(
         used_artifacts == artifact_identities,
@@ -1674,18 +1755,21 @@ def reconstruct_legacy_matrix(
     """Reconstruct the merged #352 matrix from standing-harness artifacts."""
 
     validate_registry(registry)
+    legacy_entries = legacy_registry_entries(registry)
+    legacy_seed_records = seed_records[: len(LEGACY_ROW_IDS)]
     require(
-        len(seed_records) == registry["row_count"],
-        "legacy reconstruction needs one seed record per registry row",
+        tuple(record.get("row_id") for record in legacy_seed_records)
+        == LEGACY_ROW_IDS,
+        "legacy reconstruction needs the exact frozen seed row prefix",
     )
-    seed_by_id = {record["row_id"]: record for record in seed_records}
+    seed_by_id = {record["row_id"]: record for record in legacy_seed_records}
     require(
-        len(seed_by_id) == len(seed_records),
+        len(seed_by_id) == len(legacy_seed_records),
         "legacy reconstruction received duplicate seed rows",
     )
 
     reconstructed_rows = []
-    for entry in registry["entries"]:
+    for entry in legacy_entries:
         row_id = entry["row_id"]
         require(row_id in seed_by_id, f"legacy seed row is missing: {row_id}")
         record = seed_by_id[row_id]
