@@ -30117,3 +30117,601 @@ After ratification but before that registration, §19.8.3 steps 4–6 authorize 
 the separately reviewed source, authority, implementation, and proof-gated
 capture preparation stated above. They authorize no correction production
 evaluation, path switch, context run, label change, or publication.
+
+## 20. AMENDMENT SECTION — Amendment 6: fixed-width numeric grammar-law completion
+
+### 20.1 Status, section map, scope, precedence, and immutable revision-7 base
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 8
+  of the design. These drafting, review, and response commits are not
+  ratification and authorize no extractor, source row, grammar row, Q5 row,
+  slot or inventory artifact, registration, capture, correction execution,
+  context run, or publication. The exact accepted bytes become ratified only
+  at §20.8.4 step 3 as `D6` and become operative only through the
+  validator-accepted fresh registration in §20.8.4 step 8. No historical
+  status literal is edited in place.
+- **Immediate immutable base.** The base is the complete ratified
+  revision-7 design `D5` at commit
+  `985be84fdeec70ffd20aa1e60dec7d300b7a555b`. The path is
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `8b13a2f37a835790bf5504d82e47e1131adfb4f6`, exactly 1,781,491 raw
+  bytes, and SHA-256
+  `8f90dd1aee59e6857418d2a73b617e5cb3991eba3a237a78303586a8c2a9debc`.
+  Those complete bytes, including ratified §19, are the byte-identical
+  prefix of revision 8. A draft digest, working-tree suffix, transitive
+  ancestry assertion, or digest-only comparison cannot substitute for the
+  complete prefix comparison.
+- **Grammar law only.** Amendment 6 completes representability. It ratifies
+  no future `field_source_derivation`, Q5, slot, inventory, value-map, legal,
+  or registration row and promotes neither era audit to runtime authority.
+  Every future row must still be reconstructed from the complete §19 source
+  denominator, pass the successor laws here, and enter only through the
+  existing source-first build with the revised lifecycle below.
+- **Exact replacement boundary.** Sections 1–19 remain visible and
+  controlling except for the passages exhaustively dispositioned in §20.5.
+  In particular, §19's 257-document denominator, dependency order,
+  canonical dictionary/codebook rows, raw framing and all-field census,
+  semantic domains, literal-first precedence, missing-token relation,
+  unknown-token abort, prefix/action-sensitive DFA quotient, Q5 hierarchy,
+  18-row G17 shape, and registration blockers remain. Silence preserves
+  every unnamed law; it never supplies a numeric convention.
+
+The complete section map is:
+
+| Subsection | Complete subject |
+|---|---|
+| §20.1 | status, immutable D5 prefix, scope, and precedence |
+| §20.2 | authenticated era-census identities, findings, and evidence boundary |
+| §20.3 | declaration dispositions, padding, decimal/sign tokens, DFA/replay, identities, and regression vectors |
+| §20.4 | layout, Q5, G17, runtime, value-map, and build-walk propagation |
+| §20.5 | exhaustive passage inventory and Amendment-6 closure sweep |
+| §20.6 | complete revision-8 design-comparator census |
+| §20.7 | D6 lifecycle and complete successor identifier inventory |
+| §20.8 | build order, acceptance walks, alternatives, ratification, and fresh registration |
+
+The map is an exact enumeration. No title may be ratified, implemented, or
+registered separately.
+
+### 20.2 Era-census evidence identities and closed evidence boundary
+
+#### 20.2.1 Audit-ledger and source-artifact identities
+
+The two independently committed audit ledgers are review inputs with these
+exact identities:
+
+| Lane | Commit and path | Mode/blob | Bytes | Raw SHA-256 |
+|---|---|---|---:|---|
+| A, interview waves 1968–1978 | `303a4f669b9d4e683e5ade2129ddaf20ddfa3df6:docs/analysis/era_slot_grammar_extraction_a_progress.md` | `100644` / `5d93a58ce8eff2e6d40bc3cd8f37057baa0ead95` | 3,245 | `54d47d1b78abef9a7a1d93d87dc03b2683642db0fc4e166f6091470379e2cf43` |
+| B, interview waves 1979–2001 | `c3a59ce355c27b44dd4d05299ea78a146b5cbce1:docs/analysis/era_slot_grammar_extraction_b_progress.md` | `100644` / `5a1a6274ad31d28dc4da4b38ecb4937f3fe87e71` | 3,862 | `a6a0e0a44544391ed55653ab3c1edd93555c55949a2da8b7beae0ff2ecc2a714` |
+
+The corresponding local lane reports have respectively 1,719 and 2,518
+bytes and SHA-256
+`fd259179f0fb64088435fd1f91519e6b306794abbbf7b7c158d732a4d7a895db`
+and
+`6dba4793a4092a2c12c76375a7d8d0eea680534767f227230e31ed8856446ac3`.
+They are review records, not Git or source authority. Reports, prompts, this
+prose summary, and audit conclusions never replace a staged source byte,
+canonical row, complete census, or future Q5 identity.
+
+The mandatory vectors below resolve their field IDs through the already
+committed source-evidence artifacts, not by pretending the aggregate audit
+ledgers enumerate exemplar rows:
+
+| Evidence artifact | Mode/blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json` | `100644` / `7330949776439c2124aba2a6ffa280dbbf02e4af` | 4,628,883 | `52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48` |
+| `data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json` | `100644` / `bbc2cba152cef1bf9c54c093d904ca7f329859f8` | 2,203,624 | `0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87` |
+| `data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json` | `100644` / `c1de0ce6cb6374cf67e58f6d8d9c231ed2648d6e` | 21,115,064 | `109d7ecb4dd933fdcd2efaf572d9bbb8378bb8b054badccda1ac52c049afcedf` |
+| `data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json` | `100644` / `4cbbe89bcff24ab5f8179f1c3c295b3b3c71b436` | 19,201,179 | `549508cb31a26a81643339f9cda0824a8f44c9ffc5bac300d7647c34ba78c892` |
+
+These artifacts remain historically unfavorable evidence under §19.3.3;
+their rows pin actual field/source coordinates for regression but do not
+satisfy the future v3 compiler or Q5 reproduction by themselves.
+
+#### 20.2.2 Exact census findings and law consequences
+
+The two fail-closed lanes establish the following complete reported facts:
+
+| Finding | Lane-A result | Lane-B result | Amendment-6 consequence |
+|---|---:|---:|---|
+| complete raw-field observations | 58,357 framed records across 5,706 fields | 255,646,122 observations across 31,728 fields | candidate rows cannot select the census denominator |
+| diagnostic padding | actual V93: 1,069 space-padded, 0 zero-padded, 3,733 full-width | 10,166 diagnostic fields, every one space-padded and zero zero-padded | diagnostic rows may select only the per-field space arm; an observed zero or mixed arm aborts |
+| structurally nondiagnostic width-one `NUM(1.0)` | 3,783 fields | 19,789 fields | serialize an explicit underdetermined-padding exact-replay token; do not claim either arm |
+| positive-decimal formats with literal `0x2e` | 239 fields | the 1,536 unequal-declaration fields are all positive-decimal fields | admit the closed literal-decimal token form; the implied-decimal candidate must fail on those bytes |
+| byte-unequal SPSS/codebook numeric declarations | the same 239 decimal fields carry tuple-equal `F<w>.<d>`/`NUM(w.d)` spellings | 484 pre-ER plus 1,052 ER-transition fields | preserve both bytes and source order; resolve only tuple-equivalent assertions through a frozen disposition relation |
+| signed numeric observations | observed under the source formats although §19 is unsigned-only | independently observed throughout both later eras | admit only the evidenced leading-minus form after left spaces; `+`, trailing sign, overpunch, and every other placement abort |
+
+Across all four committed 1968–2001 field artifacts, an independent exact
+reslice finds 321 fields and 111,305 observations containing a sign: 85,185
+integer and 26,120 literal-decimal observations. Every one is
+`0x20* || 0x2d || magnitude`; there are zero plus, trailing-sign,
+overpunched, or other-placement observations. The 1,775 byte-unequal
+declaration pairs through 2001 all normalize to the same `(w,d)` tuple;
+there is no authenticated tuple-disagreeing exemplar. These facts justify
+only the small arms below. They do not justify source-role precedence,
+locale syntax, rounding, an optional plus, or a conflict waiver.
+
+The decimal census also fixes an exact edge that an `exactly d digits`
+grammar would miss. Every observation of 238 of the 239 Lane-A decimal
+fields has exactly `d` fractional digits. Field V945 in wave 1969 has 4,301
+observations with two fractional digits and 159 large negative observations
+with one fractional digit because the second zero cannot fit width seven;
+all 159 use the greatest positive exact precision that fits. Section
+20.3.3 therefore treats `d` as the source-declared maximum and never rounds
+or silently truncates a nonzero digit.
+
+#### 20.2.3 No evidence laundering
+
+The ledgers prove that §19's old status tree cannot pass; they do not supply
+expected serialized v3 rows. The future source-only implementation must
+independently reproduce all 257 manifest documents, all 176
+nonquestionnaire derivations, every framed record and field slice, the
+complete numeric group relation, and every regression vector before reading
+a candidate row. A vector mismatch invalidates the implementation identity.
+An aggregate count cannot choose an individual field's token form, padding
+disposition, declaration result, meaning, type, unit, or missing status.
+
+### 20.3 §19.3.2 source-format compiler successor
+
+#### 20.3.1 Retained v3 envelope and source-ordered declaration dispositions
+
+The interface literal remains
+`dictionary_codebook_fixed_width_source_derivation_v3`, its four entry-point
+names and dependency order remain exact, and `field_source_derivation`
+retains its nine-key top-level shape. The codebook call tuple, five-position
+numeric call value, four-position numeric return value, complete 176-document
+cover, canonical dictionary/codebook/raw row schemas, framing, census, and
+all aggregate count/digest equations remain. No v4 alias or alternate entry
+point is selectable. This subsection replaces only the exact nested v3 laws
+enumerated here; retaining the interface name does not preserve a displaced
+failure predicate.
+
+Each `numeric_grammar_derivation_rows` member retains the exact 15-key order
+and the 14-position derivation-ID preimage in §19.3.2. Its
+`source_format_projection` member is prospectively replaced by the complete
+source-ordered array whose each object has exactly these ten keys in order:
+
+```text
+source_kind
+source_field_row_id
+parser_family
+source_format_text
+source_format_assertion_id
+normalized_format_kind
+normalized_width
+normalized_decimal_places
+declaration_disposition
+selecting_source_format_assertion_id
+```
+
+The first four values retain §19's exact meanings and exact source bytes.
+For a null `source_format_text`, the next four values are null,
+`declaration_disposition` is `source_silence`, and the final value is null.
+Silence emits its row and never selects, corroborates, or conflicts.
+
+For a nonnull value, `source_format_assertion_id` is literal
+`psid-source-format-assertion:` followed by SHA-256 of §10.1 terminal-LF
+canonical bytes of exactly:
+
+```text
+[
+  interview_wave,
+  raw_field_id,
+  source_kind,
+  source_field_row_id,
+  parser_family,
+  source_format_text,
+  source_locator_ids
+]
+```
+
+The locator array is the complete source-order array on the resolved
+canonical row; every locator and exact format lexeme must reproduce before
+the ID is formed. IDs and complete preimages are unique; collision aborts.
+The only supported normalized kinds are
+`num_parenthesized_numeric_declaration`,
+`spss_f_numeric_declaration`, and `character_declaration`. Exact
+`NUM(w.d)` and `Fw.d` normalize to the same positive width and nonnegative
+decimal tuple under §19's closed ASCII syntax. Exact `CHR(w)` normalizes to
+the character kind, width `w`, and null decimal places. Every other nonnull
+spelling has null normalized members and is conflicting; normalization does
+not rewrite `source_format_text`.
+
+Before a serialized projection or disposition is read, the source-only
+extractor and an independent source reviewer reconstruct the complete
+projection denominator and apply this first-source-order law:
+
+1. the first supported nonnull assertion is
+   `selecting_numeric_declaration` or
+   `selecting_character_declaration` according to its normalized kind, and
+   its final member is its own assertion ID;
+2. a later assertion with byte-equal text and the same normalized branch is
+   `corroborating_byte_equal_declaration` and points to that selector;
+3. a later `NUM(w.d)` or `Fw.d` assertion with byte-unequal text but the
+   selector's exact numeric tuple is
+   `corroborating_tuple_equivalent_numeric_declaration` and points to that
+   selector; and
+4. every later branch mismatch, tuple mismatch, unsupported spelling, or
+   assertion for which the two independent enumerations/dispositions differ
+   is `conflicting_source_declaration` and points to the first selector when
+   one exists, otherwise null.
+
+Those six literals—two selecting, two corroborating, silence, and
+conflicting—are the complete disposition domain. There must be exactly one
+selecting assertion for a non-silent group, every nonnull assertion must
+have exactly one disposition, all corroborators must point to it, and a
+conflicting row makes top-level pass impossible. The complete independently
+derived ten-key array must deep-equal the serialized array before its
+selector is used. A majority, dictionary-over-codebook rule,
+SPSS-over-codebook rule, candidate tuple, byte normalization, or omission
+is forbidden. Thus tuple-equivalent `F6.2` and `NUM(6.2)` remain two
+authenticated assertions but resolve one semantic tuple; `F6.2` and
+`NUM(7.2)` remain a hard conflict.
+
+Every §19 use of the common byte-identical nonnull format, `F`, `N`, `H`,
+or `X` is replaced as follows. `F` remains the complete exact nonnull text
+projection for audit. `N` is the singleton selected numeric tuple only when
+one numeric selector exists, all other nonnull assertions are the two lawful
+corroborating arms, and no conflict exists. `H` is the analogous singleton
+selected `CHR(w)` result. `X` contains every conflicting assertion. Literal
+rendering, parse-kind derivation, profile construction, and DFA compilation
+consume only `N` or `H` after exact-comparing the full disposition array;
+they never discard `F` or derive expected dispositions from a candidate.
+
+#### 20.3.2 Token-form authentication, diagnostic space default, and no-arm dispositions
+
+`normalized_format_profile` retains exactly `profile_kind`,
+`payload_width`, `decimal_places`, and `physical_authentication`.
+`payload_width` remains the complete raw width `w`, and decimal places is
+the selected declaration's `d`. Its `physical_authentication` is
+prospectively replaced by exactly these nine keys:
+
+```text
+raw_source_file_id
+raw_source_sha256
+record_count
+observed_token_row_count
+observed_token_rows_sha256
+token_form_candidate_results
+selected_token_form
+candidate_arm_results
+selected_arm
+```
+
+The first five retain §19's complete-census equations. Each token-form
+candidate row has exactly `token_form_kind`,
+`accepted_observation_count`, `diagnostic_observation_count`,
+`rejected_observation_count`, and `status`; status is `pass | fail`, counts
+use complete record frequencies, and accepted plus rejected equals record
+count. Missing literals are accepted before this test and are
+nondiagnostic.
+
+For `d == 0`, candidate order is exactly
+`unsigned_ascii_integer` then
+`leading_ascii_minus_signed_integer`. The unsigned candidate passes exactly
+when every nonmissing token has the canonical signless integer form and
+there is no minus. The signed candidate passes exactly when every token has
+the canonical signed-or-signless form below and at least one nonmissing
+negative token supplies a sign diagnostic. For `d > 0`, candidate order is
+exactly `unsigned_implied_decimal`,
+`leading_ascii_minus_signed_implied_decimal`,
+`unsigned_literal_ascii_decimal`, and
+`leading_ascii_minus_signed_literal_ascii_decimal`. An implied candidate
+rejects every literal `0x2e`; a literal candidate requires the exact decimal
+law below. A signed candidate additionally requires at least one canonical
+minus observation; an unsigned candidate rejects every minus. Exactly one
+token-form row must pass. `selected_token_form` is that row's kind.
+No observed sign means the smaller unsigned language; a future minus then
+hits the unknown-token abort rather than retroactively widening the field.
+
+After token-form selection, `candidate_arm_results` retains exactly two
+rows in `zero_left_padding` then `left_ascii_space_padding` order. Each row
+has the retained five keys `profile_kind`,
+`accepted_observation_count`, `diagnostic_observation_count`,
+`rejected_observation_count`, and `status`, but status is now
+`pass | fail | indistinguishable`. The render functions below—not a host
+formatter—construct both candidates. A diagnostic observation is a
+nonmissing source-valid value whose zero and space renderings differ. Counts
+again cover every record, and both rows have the same diagnostic count.
+Each candidate row's `profile_kind` is exactly its displayed padding-arm
+literal. The enclosing `normalized_format_profile.profile_kind` exact-equals
+`selected_token_form`; padding selection or nonselection is represented only
+by the separately serialized `selected_arm`. No concatenated or inferred
+profile name is admitted.
+
+The closed disposition is:
+
+- when the diagnostic count is positive, the space row must accept every
+  observation and be `pass`, the zero row must reject every diagnostic
+  observation and be `fail`, and `selected_arm` is the selected token
+  form's exact `left_ascii_space_padding` profile literal;
+- when `w == 1`, `d == 0`, and the selected form is unsigned integer, both
+  arms must accept the same complete one-byte domain with diagnostic count
+  zero and status `indistinguishable`; `selected_arm` is exactly
+  `padding_arm_underdetermined_width_one_exact_replay_v1`;
+- when the selected form is `unsigned_literal_ascii_decimal` and
+  `w == d + 2`, so even canonical `0` plus the point and `d` digits fills
+  the width and no padding position exists, both rows are likewise
+  `indistinguishable` and `selected_arm` is exactly
+  `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`; and
+- every other zero-diagnostic census, any passing zero row, mixed padding,
+  zero/space result not covering all records, or unequal diagnostic count
+  is a hard failure.
+
+The two underdetermined literals are dispositions, never padding arms. They
+authorize only the exact same-width token language and byte replay proved by
+the field. They cannot be projected as zero, space, an era default, or an
+arm for a different width. This is the closed lawful width-one disposition
+requested by the censuses: it records precisely that the arm is unobservable
+in principle and fabricates none.
+
+For an Amendment-6 row, `padding_rule` retains its four-key shape. A selected
+space profile uses operation
+`validate_exact_left_ascii_space_padding_preserve_payload`, empty prefix and
+suffix hex, and payload width `w`; the operation validates canonical leading
+spaces and passes the exact still-width-`w` raw token to the DFA without
+removing, replacing, or reordering a byte. Either underdetermined disposition
+uses `operation: none`, empty hex strings, and width `w`. The predecessor
+operations remain representable only for historical rows; an Amendment-6
+authority emits neither the zero-arm `none` interpretation nor arbitrary
+prefix/suffix removal nor §19's space-to-zero canonicalization. Padding is
+instead visible to the exact-token DFA through `no_op` transitions and is
+checked again by byte-exact rendering.
+
+The diagnostic result is a per-field proof, not cross-field inheritance.
+The universal census determines which branch Amendment 6 makes lawful, but
+each future field must still reproduce its own positive diagnostic and the
+excluded zero-arm failures. A zero-padded future field is source drift and
+aborts; it does not silently select the formerly hypothetical arm.
+
+#### 20.3.3 Exact literal-decimal and signed token/rendering law
+
+Let `x` be a source-authenticated nonmissing scalar and `s` the positive
+reduced rational `implied_scale`. Exact arithmetic first forms `z = x / s`.
+No binary floating point, locale, rounding, grouping, exponent, comma,
+Unicode digit, or host numeric conversion participates.
+
+For an integer token form, `z` must be an integer. Its magnitude is the
+canonical ASCII decimal of `abs(z)`. A negative value is lawful only under
+the signed form and contributes exactly one byte `0x2d` immediately before
+the first magnitude digit; a nonnegative value has no sign. Negative zero
+is noncanonical. Under the space candidate, prepend the maximal number of
+`0x20` bytes needed to reach width `w`, before the optional minus. Under the
+zero candidate, place the optional minus first and then prepend `0x30` bytes
+to the magnitude. A candidate that cannot fit exactly `w` bytes rejects.
+
+For an implied-decimal token form, compute exact `M = abs(z) * 10^d`;
+`M` must be an integer. Its magnitude is the canonical ASCII decimal of
+`M`, and the optional minus and two padding candidates follow the preceding
+integer rule. No `0x2e` occurs. This is §19's retained implied-decimal
+numeric operation with signed placement completed here; it remains
+selectable only when its complete per-field census uniquely authenticates
+that token form and the permitted space/no-arm padding disposition.
+
+For a literal-decimal token form, `d` is positive and is the maximum source
+precision. Let `I` be the canonical unsigned integral digits of `abs(z)` and
+let `sigma` be one for a negative value and zero otherwise. Define
+
+\[
+f = \min(d,\; w-\sigma-|I|-1).
+\]
+
+The scalar is representable only when `1 <= f <= d` and `abs(z)` has an
+exact finite base-10 expansion at `f` fractional digits. Render exactly
+`I || 0x2e || F_f`, where `F_f` is the exactly `f`-digit fractional part,
+including required trailing zeroes. Choosing fewer than the greatest
+fitting `f`, dropping a nonzero digit, or rounding aborts. Apply the same
+minus and candidate padding placements as the integer form. Thus
+`NUM(4.2)` value zero renders `0.00`; `NUM(7.2)` value negative 1040 renders
+`-1040.0`; and neither can be rendered as implied digits.
+
+The exact raw-token regularity is contextual rather than a permissive host
+regex: zero or more leading ASCII spaces only under the space profile,
+followed by the optional single minus only under a selected signed form,
+then at least one canonical integral digit, followed under the literal arm
+by exactly one `0x2e` and the uniquely computed `f` digits. The integral
+part has no leading zero unless it is the single digit zero. A plus, sign
+after a digit, trailing sign, internal/trailing space, tab, second point,
+point without digits on both sides, excess/fewer-than-computed fractional
+digits, implied decimal payload, zoned decimal, overpunch, and non-ASCII byte
+reject before semantic classification.
+
+Codebook literal rendering, range image construction, fixed-width parsing,
+observed classification, and unobserved replay all use this one function.
+A normalized literal still has complete-width exact-match precedence. A
+numeric range must exact-cover every finite member under this rendering;
+one unrepresentable member makes the range branch unsupported. A fixed-width
+numeric token must exact-match a dictionary missing literal before numeric
+parsing. Observation establishes physical spelling and the closed form, not
+meaning, type, unit, missing disposition, or a scalar outside the
+source-authenticated semantic branch.
+
+#### 20.3.4 Exact-token DFA, actions, scalar, and replay
+
+For either compiled derivation status below, the DFA payload is the exact raw
+token after its Amendment-6 `padding_rule`; payload width therefore remains
+`w`. From the source-valid render language subtract every canonical image of
+a registered dictionary missing token and every colliding normalized literal
+under §19's conflict law. The remainder must be nonempty. The DFA accepts
+exactly that finite-width language; it does not accept all strings that a
+generic numeric regex would parse.
+
+The retained transition action enum becomes operative only as follows:
+
+- `no_op` consumes one leading `0x20` and changes no numeric state; it is
+  forbidden after the first sign, digit, or decimal point;
+- `set_negative` consumes the sole `0x2d`, sets sign accumulator `S` from
+  `+1` to `-1`, and is legal only immediately after the complete leading
+  space run and immediately before the first digit;
+- `consume_decimal_point` consumes the sole `0x2e`, changes
+  `decimal_seen` from false to true, and is legal only after at least one
+  integral digit with exactly the constructed positive fractional suffix
+  remaining; and
+- `append_digit_0` through `append_digit_9` retain
+  `A_(k+1) = 10*A_k+n`; after `decimal_seen`, each also increments exact
+  fractional counter `F`.
+
+Accumulators begin `S=+1`, `A=0`, `decimal_seen=false`, and `F=0`.
+Acceptance requires the selected token-form structure, exactly `w`
+transitions, and `F=0` for an integer form or the unique computed positive
+`f` for a literal-decimal form. The scalar is exactly
+`S * A * implied_scale` for an integer form,
+`S * A / 10^d * implied_scale` for an implied-decimal form, or
+`S * A / 10^F * implied_scale` for a literal-decimal form, followed by the
+retained exact type and unit checks. The action sequence contains no emitted
+action after a missing edge.
+
+The §19 prefix-state construction, action-sensitive same-depth quotient,
+fixed point, reachability/co-reachability, sink omission, breadth-first
+state numbering, unsigned-byte edge order, transition order, counts, and
+digests remain byte-controlling. They now operate over the exact-token byte
+alphabet admitted above. Every accepting result must re-render through
+§20.3.3 and byte-equal the original raw token. A scalar equality without
+that replay is failure; this prevents `0001`, `+1`, `1.`, `1.0`, and `  1`
+from becoming interchangeable merely because a host parser assigns equal
+numbers.
+
+`registered_numeric_grammar` retains its ten-key shape and nine-position
+grammar-ID preimage. `value_derivation` retains its six keys; its `signed`
+member equals whether the selected token form is signed, and
+`decimal_places` is the declared maximum `d`, while the transition path's
+`F` supplies the exact observed/replayed precision. The derivation row
+retains its 14-position ID preimage. Activating existing enum actions changes
+the complete transition rows, grammar ID, derivation ID, full-row hashes,
+and every enclosing domain/content digest; no predecessor digest may be
+copied.
+
+#### 20.3.5 Status tree, row identities, and complete consumer-visible branches
+
+The exact passing derivation statuses become:
+
+- `compiled_source_numeric_grammar` for a diagnostic field whose selected
+  padding arm is the source-authenticated ASCII-space profile;
+- `compiled_source_numeric_grammar_padding_underdetermined_exact_replay`
+  for either explicit no-arm disposition;
+- the three retained noncompiled value-code/outside-numeric statuses in
+  §19.3.2, only after their declaration projection obeys §20.3.1.
+
+`registered_numeric_grammar` is nonnull for both compiled statuses and null
+on every retained noncompiled branch. The top-level
+`field_source_derivation.status` may be `pass` only when every row takes one
+of those five lawful statuses and the complete relation plus all seven
+vectors below reproduce. Every layout consumer accepts either compiled
+status when its complete profile, selected-arm-or-disposition, padding rule,
+DFA, and replay exact-match.
+
+The exhaustive numeric failure mapping is prospectively replaced by:
+
+| Failure predicate | Exact row status and consequence |
+|---|---|
+| missing selector, unresolved width/decimal/type/unit/scale, empirically nondiagnostic despite available pad capacity, true sign declaration without an exact negative placement diagnostic, or no unique token form | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
+| unsupported source spelling; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; unrenderable range member; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit disagreement; mixed padding; duplicate/colliding literal or missing image; multiple token forms; unequal replay; multiple failure predicates | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+
+An explicit underdetermined-padding token is not incomplete. Conversely,
+`closed uncertainty`, an era convention, another field's space result, or a
+candidate-authored disposition cannot turn an empirical two-pass field into
+the structural no-arm branch.
+
+The numeric derivation row remains exactly 15 keys, its derivation ID remains
+the SHA-256 of the same 14 ordered positions, the registered grammar remains
+ten keys with the same nine-position ID preimage, and `raw_token_grammar`
+remains 18 keys. All nested successor values are inside those existing
+preimages. Every §19 phrase `complete 15-key row`, `14-position preimage`, or
+`nine-position preimage` remains numerically true and composes with these
+new nested schemas. Hash equality never replaces deep equality.
+
+For a consuming layout, `typed_parse_specs` retains its nine-key shape.
+Its `raw_width`, `decimal_places`, `signed`, scale, type, and unit must
+positionally deep-equal the complete successor profile/value derivation;
+`signed` is true only for a selected signed token form. The complete
+ten-key declaration projection, nine-key physical authentication, explicit
+selected-arm-or-disposition, four-key padding rule, ten-key DFA, observed
+rows, unobserved rows, and all fresh IDs/hashes flow into the existing
+layout and `raw_token_grammar` members. No structural relabeling or mixed
+§19/§20 object is lawful.
+
+#### 20.3.6 Mandatory actual-data regression-vector census
+
+The regression identity relation has exactly these nine keys in this order:
+`vector_id`, `interview_wave`, `raw_field_id`, `evidence_path`,
+`evidence_pointer`, `evidence_row_sha256`, `raw_source_sha256`,
+`observed_token_rows_sha256`, and `required_outcome`. Its complete seven rows
+are:
+
+```json
+[
+  {"vector_id":"A6-R01","interview_wave":1968,"raw_field_id":"V93","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/92","evidence_row_sha256":"e26fe968c48a7e5c7fb397140a50c232cb8a3bc9d270798af0199e52a9f0b5eb","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"0d184b17049ff03bdffe4c462131f126e771108e5588436aa0551e02fd0c80c0","required_outcome":"diagnostic_space_padding_selected"},
+  {"vector_id":"A6-R02","interview_wave":1979,"raw_field_id":"V6302","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/1","evidence_row_sha256":"aa2281bb382c75dd99705cb3dcc46e9bc37536b65a851319274428ba7ee122d0","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"7bf8f994c2cbaa804238ecfd051afee9a801119574c73b6ce14abe7fe66006e0","required_outcome":"diagnostic_space_padding_selected"},
+  {"vector_id":"A6-R03","interview_wave":1979,"raw_field_id":"V6301","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/0","evidence_row_sha256":"4a753ece55dae857917f1b09c75762a2a22d530784806044e7f56e61406bcb27","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"35c4b6fef5d659d611e32a81bce25b10bb9f6b6df354efd02fe1c9ae9d295182","required_outcome":"padding_arm_underdetermined_width_one_exact_replay"},
+  {"vector_id":"A6-R04","interview_wave":1968,"raw_field_id":"V210","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/213","evidence_row_sha256":"9764e1aad9af27bb3a98a13566d096548c244bb255efc629b420606cf201bea9","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4072529f3cab60900f04eb216e73f0ec6307aa8ed60c439dcfaf51b04018a448","required_outcome":"unsigned_literal_decimal_selected_padding_underdetermined_no_capacity"},
+  {"vector_id":"A6-R05","interview_wave":1968,"raw_field_id":"V76","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/75","evidence_row_sha256":"97ad420b1e7bc3fb8ce0f8ad9f07c94f4c54a1e323c7c01fc17bea6a80391b64","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4082fbc67ab457ddad4115b66ab785e816e20b393b195786fbd47ba384b7aa2d","required_outcome":"signed_integer_leading_minus_after_spaces_selected"},
+  {"vector_id":"A6-R06","interview_wave":1979,"raw_field_id":"V6363","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/62","evidence_row_sha256":"61c70014d4ec5b40676a980bf24c042f6cc530649794175a1d15777e379c65f3","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"a56fa8d49cc90e874cd900d689302fe91138dbaaa895db6731e61fbe152989bf","required_outcome":"tuple_equivalent_declaration_dispositions_and_unsigned_literal_decimal_space_padding_selected"},
+  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"signed_literal_decimal_maximum_fitting_exact_precision_selected"}
+]
+```
+
+Every displayed row SHA-256 hashes the complete historical field-evidence
+array row under §10.1 with one terminal LF; every observed-token digest
+hashes the complete unsigned-byte-ordered array of exact two-key
+`raw_token_hex`/`frequency` objects with one terminal LF. The vector count is
+exactly 7. The ordered vector-ID keyset SHA-256 is
+`b3742f1b0685ce453ec1fbee583e34c2be8b14b674f11f138b44050cc8b10a7d`,
+and the complete nine-key row-domain SHA-256 is
+`456ef5862f28209349f6c57bba9aba2a4ca715effd7583b16b513d58149b87bb`.
+Both are over standalone §10.1 terminal-LF canonical JSON arrays. A vector
+may exercise more than one arm, but none may be omitted.
+
+The byte-exact acceptance facts are:
+
+- **A6-R01, V93/1968.** Reproduce §19's complete 4,802-record, width-771,
+  terminal-CRLF source and slice `[244,246)`. Its 41 token rows sum to
+  4,802: 1,069 one-digit tokens have one leading `0x20`, zero have a
+  leading zero, and 3,733 are full-width. Token `2031` occurs 38 times.
+  The space arm passes, the zero arm rejects all 1,069 diagnostics, the
+  exact-token DFA parses the same 100 canonical physical tokens, and every
+  value re-renders byte-for-byte.
+- **A6-R02, V6302/1979.** Reproduce 6,373 width-1,062 terminal-CRLF records
+  and slice one-based coordinates 2–5. Tokens are each integer 1 through
+  6,373 exactly once; record one is `20202031`. Space rendering replays it,
+  while zero candidate `30303031` is rejected. This is the later-lane
+  diagnostic default without a declaration conflict.
+- **A6-R03, V6301/1979.** The same 6,373 records yield only byte `33` at
+  coordinate 1. Both hypothetical arms have the same one-byte language and
+  zero diagnostics. The row must serialize
+  `padding_arm_underdetermined_width_one_exact_replay_v1`, accept exact
+  one-byte digits through the DFA, map `33` to integer 3, and re-render
+  `33`; serializing either arm fails the vector.
+- **A6-R04, V210/1968.** Slice one-based 400–403 has 138 distinct rows; all
+  4,802 contain literal `0x2e` and exactly two fractional digits. Token
+  `302e3030` occurs 4,157 times. `NUM(4.2)` and `F4.2` normalize to `(4,2)`
+  through their source-ordered dispositions; the implied candidates fail,
+  the unsigned literal arm passes, width four has no padding capacity for
+  its source-valid unsigned domain, and `0.00 -> 0 -> 0.00` is exact.
+- **A6-R05, V76/1968.** Slice one-based 193–197 has 1,816 token rows. The
+  sole signed token is record 3,638 bytes `202d323432`; it parses as -242
+  and re-renders exactly. The unsigned form rejects it, the signed form's
+  minus diagnostic selects the one evidenced placement, and `+242`,
+  `242-`, `2-42`, `-0242`, and every other equal-scalar spelling reject.
+- **A6-R06, V6363/1979.** Slice one-based 139–144 has 450 token rows over
+  6,373 records; record one is `2032362e3430`. In source order the first
+  nonnull numeric assertion selects tuple `(6,2)` and the byte-unequal
+  `F6.2`/`NUM(6.2)` peer receives
+  `corroborating_tuple_equivalent_numeric_declaration`; both original byte
+  strings remain in the projection. The literal-decimal and space arms
+  parse 26.40 and replay the same six bytes. Reversing source order,
+  dropping either assertion, or changing either tuple aborts.
+- **A6-R07, V945/1969.** Reproduce 4,460 width-1,079 terminal-CRLF records
+  and slice one-based 912–918. Of 668 token rows, 4,301 observations use two
+  fractional digits and 159 use one; 770 are negative. Token `-1040.0`
+  (`2d313034302e30`) occurs 14 times. For width seven, sign length one,
+  four integral digits, and maximum `d=2`, the exact formula gives `f=1`;
+  the token parses to -1040 and uniquely re-renders `-1040.0`. Requiring
+  two digits, accepting fewer than greatest fitting precision, or rounding
+  fails.
+
+The implementation must deep-equal each full census and constructor result,
+not only the displayed exemplar token or digest. The preexisting synthetic
+zero-arm vectors remain useful only as mandatory rejection constructors:
+an implementation that emits a passing Amendment-6 zero-selected row fails
+its identity.
