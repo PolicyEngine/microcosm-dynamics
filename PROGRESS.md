@@ -2,7 +2,7 @@
 
 ## State
 
-Findings 1–8 are closed; finding 9 is next. The worktree starts from
+Findings 1–9 are closed; finding 10 is next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -75,9 +75,22 @@ the ratified 1,376,610-byte prefix exactly.
   so the normative relation is closed while actual registration remains
   blocked pending a separately authenticated semantic field-binding
   authority.
+- Closed finding 9 with exactly one proof for each H-row whose ordered
+  missing-purpose complement is nonempty. Each proof has four singleton
+  hierarchy dimensions, the complete missing-purpose array, one exact wave,
+  and filtered-H order. The Q5 schema now exact-covers every questionnaire occurrence
+  and canonical dictionary/codebook row in a separately authenticated
+  source-only semantic-binding relation. Zero, partial, and full matches,
+  maximal-binding normalization, complete branch-compatible witness truth,
+  excluded-near-match rows, ordering, reason codes, conclusion bytes, proof
+  IDs, and counts are functions; unresolved binding granularity fails closed,
+  and no proof grouping, wave subset, search hit, or free-text reason remains
+  selectable. The current predecessor has neither
+  this canonical partition nor this complete annotation denominator, so it
+  remains `registration_required` evidence rather than a passing proof.
 
 ## Next
 
-1. Close findings 9–10 in referee order, committing each separately.
+1. Close finding 10 and commit it separately.
 2. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.
