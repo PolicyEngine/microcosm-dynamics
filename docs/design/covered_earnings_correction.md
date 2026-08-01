@@ -21683,3 +21683,312 @@ aborts.
 For \(r=1\), regardless of independently resolved object type, \(p_1\)
 remains occupied: selection is \(p_2\) iff exact \(p_2\) is absent, and
 otherwise is the least absent \(p_{s(X)}\) with \(s(X)\ge3\).
+
+## 17. AMENDMENT SECTION — Amendment 3: replace the sole operative V-B source identity
+
+### 17.1 Status, scope, and precedence
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 5
+  of the design. Before completion of §17.4 step 3 it is unratified and
+  authorizes no action. After step 3 but before step 5, only the step-4
+  authority-adjudication, implementation, and fixture preparation expressly
+  stated below is authorized. It becomes operative only when a
+  validator-accepted fresh registration names the exact amendment-3
+  ratification commit. No status literal is updated in place.
+- **Amended base authority:** The immutable immediate design base is the
+  complete revision-4 text at the Amendment-2 ratification commit
+  `3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb`. The separately committed source
+  evidence is anchored below at its master squash commit; that evidence
+  commit is not the Amendment-3 ratification commit.
+- **Change:** Amendment 3 replaces only the sole operative committed PSID V-B
+  source identity and its source-specific projection, key, disposition,
+  residual, and derived-result consequences for V-B5, V-B6, and V-B8. It
+  activates the questionnaire-closure artifact's evidentiary residual state
+  of zero, one, and zero, respectively.
+- **No implied repeal:** Original §§1–16 remain visible and are not edited in
+  place. They remain controlling except for the exact source-specific clauses
+  enumerated in §§17.2 and 17.4. Where one of those enumerated clauses
+  conflicts with §17, §17 is its prospective replacement law. Silence in §17
+  leaves every other calibrated and fitting-free clause unchanged.
+
+The source-specific projection and disposition replacements below are the
+necessary consequences of changing the operative source. They do not create
+a new claim, branch, target, fitting method, model, gate, label, context
+domain, or publication rule; do not alter V-B1, V-B2, V-B3, V-B4, V-B7, or
+V-B9; and do not make the closure artifact's separate B2/B11 membership
+readjudication operative.
+
+### 17.2 Successor V-B source identity
+
+This subsection prospectively replaces the sole operative source identity in
+§16.14.6, its §10.1 canonical identity digest, the §16.12.1 and §16.13.2
+committed-PSID source-projection, key, pointer, disposition, and residual
+equations, §16.13.6's reasserted singleton disposition, the three displayed
+source-row digests and residual cardinalities, and every downstream use of the
+“displayed singleton identity digest.” No earlier source identity, source
+commit, artifact digest, source-row digest, source-projection key or pointer,
+source disposition, residual array, or residual cardinality has a prospective
+operative case.
+
+The sole operative
+`verification_claim_adjudication_source_input_identity.v1` value is:
+
+```json
+{
+  "source_input_id": "covered_earnings_questionnaire_closure_attempt.v1",
+  "path": "data/external/covered_earnings_questionnaire_closure_attempt_v1.json",
+  "source_commit": "c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e",
+  "tree_mode": "100644",
+  "blob_oid": "0b1a54b02943824405b6fb14cea1d782c9306d92",
+  "raw_sha256": "00c4fb1e671503406dfec55d80b29379ad12f7b8bf330dfe74895724ab19a46c",
+  "schema_version": "covered_earnings_questionnaire_closure_attempt.v1",
+  "artifact_id": "entry11_unit1b_questionnaire_closure_attempt_v1",
+  "content_sha256": "47c15dfe9018a4ae91c4f409378d2b85c3cdecf442c1ee752d8f7e8e3b125249"
+}
+```
+
+Its §10.1 canonical SHA-256, and therefore the exact
+`source_identity_sha256` used by both branch rows for V-B5, V-B6, and V-B8,
+is
+`1bb79fba8b752310f99181191d1f5c39bf031a3a11a14852e83c088cdc6bb6b6`.
+
+The sole source-commit and ancestry anchor is the master squash commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, whose single parent is
+`39613cf3c9372bad2e8741e9e4d528da493b182b` and whose tree carries the
+displayed path, mode, and 50,657-byte blob while its parent tree lacks that
+path. The §16.12.1 adjudication-parent law requires that master commit itself
+to be an ancestor of the future verification-claim-adjudication commit's
+parent. A review head, another commit containing the same bytes, or a
+pre-squash last-change commit is not an admissible source pin or ancestry
+substitute.
+
+The sole successor `source_projection_name` is
+`covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`.
+The complete strict-parsed source rows are the seven-key rows at
+`/psid_vb_family_summary/0`, `/psid_vb_family_summary/1`, and
+`/psid_vb_family_summary/2`, in that order. The source-specific committed-byte
+key prospectively replacing §16.13.2's old key is exactly
+
+\[
+(\text{source input ID},\text{source projection name},
+ \texttt{family_id}).
+\]
+
+Its permitted key set is exactly the following three tuples, in this order:
+
+1. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B5);
+2. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B6); and
+3. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B8).
+
+The complete §10.1-canonical source-row digests, successor residual arrays and
+cardinalities, and source dispositions are exactly:
+
+```json
+[
+  {
+    "claim_id": "V-B5",
+    "source_row_pointer": "/psid_vb_family_summary/0",
+    "source_row_sha256": "1b0b153577b59e04fae60c43dde169a37dbe283aff0d3e19f5328e94718281a1",
+    "residual_ids": [],
+    "residual_count": 0,
+    "source_disposition": "verified"
+  },
+  {
+    "claim_id": "V-B6",
+    "source_row_pointer": "/psid_vb_family_summary/1",
+    "source_row_sha256": "48726c64a2d2b859e0db3888a290c6fd016f31873d3926126f81dc0f8fe555d2",
+    "residual_ids": [
+      "ry1975_1977_spouse_concept_seam:V-B6:secondary_job_attachment_and_absence"
+    ],
+    "residual_count": 1,
+    "source_disposition": "registration_required"
+  },
+  {
+    "claim_id": "V-B8",
+    "source_row_pointer": "/psid_vb_family_summary/2",
+    "source_row_sha256": "0835ccc7ad075699447924350e37ef93b89a54648079994e2d83dc38c706d44c",
+    "residual_ids": [],
+    "residual_count": 0,
+    "source_disposition": "verified"
+  }
+]
+```
+
+For claim \(x\), construct its displayed `residual_ids` by traversing the
+strict-parsed `psid_questionnaire_evidence_results` array in committed order,
+selecting exactly the rows whose `family_id` equals \(x\) and whose
+`remaining_unestablished_facts` array is nonempty, and projecting each
+selected row's `residual_id` without normalization, sorting, or
+deduplication. The matching family row's `targeted_residual_count` equals the
+number of same-family evidence rows; its `evidentially_closed_count` equals
+the number of those rows with
+`evidentiary_verdict: established_by_questionnaire_corpus` and an empty
+`remaining_unestablished_facts` array; and its
+`evidentiary_remaining_residual_count` equals the length of the constructed
+`residual_ids` array. Every equality is exact before a disposition is
+derived. The pinned artifact contains no member literally named
+`residual_ids`; the displayed arrays are this frozen committed-byte
+projection, not a renaming or reuse of `operative_residual_ids`.
+
+The successor source-disposition domain for these three claims is exactly
+`verified | registration_required`. The disposition is `verified` exactly
+when the constructed `residual_ids` array is empty and every same-family
+evidence row has
+`evidentiary_verdict: established_by_questionnaire_corpus`; it is
+`registration_required` exactly when that array is nonempty. No other
+disposition is representable from this source. For V-B6, the sole selected
+evidence row is `/psid_questionnaire_evidence_results/4`, and its complete
+`remaining_unestablished_facts` value is exactly:
+
+```json
+[
+  "No captured questionnaire or editing instruction supplies the exact allocation from V4901-V4906 components to annual V4379/V5289/V5788 totals."
+]
+```
+
+For each branch and claim, `unresolved_evidence_ids` exact-copies the complete
+displayed `residual_ids` array. The displayed cardinality is an additional
+exact check, not a replacement for that array equality. The artifact's
+`operative_psid_vb_rows`, `operative_residuals_by_family`, `operative_*`,
+`operative_change: none`, `operative_effect: none`, and
+`nonoperative_partial_evidentiary_closure` values attest the unchanged law at
+the artifact's pre-Amendment-3 creation cutoff. They are not the prospective
+successor source-row projection or disposition operands and cannot restore
+the displaced 1/4/3 residual state.
+
+For both the calibrated and fitting-free branch rows, V-B5 and V-B8 derive
+the §16.12.1 seven-field positive: `claim_id` and `governing_rule_ids`
+exact-copy the independently reconstructed same-branch spec;
+`authority_input_ids` is exactly
+`["covered_earnings_questionnaire_closure_attempt.v1"]`;
+`affected_inventory_keyset_sha256` hashes the independently expanded
+same-claim spec array; `verification_status` is `verified`;
+`optional_consequence_specs_sha256` is null; and `status` is `pass`.
+V-B6 has the same claim, authority-input, affected-key, governing-rule, and
+null optional-consequence equations, but its faithful one-residual result has
+`verification_status: authority_absent` and `status: fail`. All six enclosing
+claim rows have `derivation_status: pass` when and only when they faithfully
+serialize these outcomes. The §16.13.1 branch-indexed equality and passing-
+envelope law remain unchanged: a faithful V-B6 negative does not make its
+adjudication envelope fail.
+
+### 17.3 Closure-sweep disposition
+
+Section 16.12.5 fixes its extraction corpus as the complete §16 definition
+corpus only through §16.12.4 and excludes the appendix itself; §16.13.5
+prospectively confirms that same scope. Section 17 is outside that fixed
+corpus. It therefore adds no row to, and makes no change in, the corrected
+628-row normative token table or its frozen LF-terminated token-list digest.
+Treating a §17 token as a required merge row would contradict the table's
+frozen corpus and exact union law.
+
+### 17.4 Amendment ratification and fresh-registration protocol
+
+Amendment 3 uses the same referee-rounds-then-ratify discipline as Amendments
+1 and 2. Drafting, review, the already master-carried source artifact, or
+merge-request existence has no operative effect. The authorized order is:
+
+1. submit the complete append-only §17 bytes to adversarial referee review
+   without an implementation, registration, verification-claim-adjudication
+   output, correction evaluation, context output, or other tree change in the
+   amendment lane;
+2. answer every finding in the public review record, repeat referee rounds
+   until the exact final bytes receive an affirmative ratification verdict,
+   and verify the complete round-to-round diff;
+3. ratify those accepted bytes in one identifiable commit. That commit is the
+   **amendment-3 ratification commit**; all authoring and referee-response
+   commits before it are not ratification;
+4. only afterward merge separately reviewed implementation and fixture bytes
+   for this exact successor source projection and create the fresh
+   verification-claim adjudication required by §§16.12.1–16.14, without
+   changing the already pinned source artifact;
+5. obtain a validator-accepted fresh registration binding the Amendment-3
+   ratification commit, the complete revision-5 design blob, the fresh
+   adjudication and every other required authority/artifact/registry/
+   implementation byte, and a fresh output/claim namespace; then
+6. perform the applicable unchanged prelaunch, sealed execution, incident,
+   publication, context, certificate, and external merge sequence.
+
+The four-key registered design-identity shape is not enlarged. Its exact
+Amendment-3 values are:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the 40-lowercase-hex Amendment-3 ratification
+  commit, never the revision-4 base, source commit, authoring commit, branch
+  name, or placeholder;
+- `blob_sha256`: SHA-256 of the complete revision-5 file bytes at that exact
+  commit; and
+- `revision`: JSON integer `5`, excluding booleans.
+
+The exact common binding successor is
+`covered_earnings_path_applicability_receipt_core.v2`. It has the complete
+operative §16.13.7 v1 core's sixteen keys in the same order except that
+`schema_version` is the v2 name and new key
+`amendment_3_design_identity` is inserted immediately after
+`amendment_2_design_identity`. The retained Amendment-2 child remains the
+exact §16.10 revision-4 identity. The new child is the complete four-key
+Amendment-3 identity above. Every other core member and equation, including
+the four §16.13.7 pre-reference configuration/namespace members, is
+unchanged, and `receipt_core_sha256` hashes the complete seventeen-key v2
+core.
+
+The corresponding outer successor is
+`covered_earnings_path_applicability_receipt.v2`. It has the complete v1
+outer receipt's operative §16.13.4 ten keys in the same order, with
+`schema_version` equal to the v2 name and `receipt_core` required to be the
+complete v2 core. The `post_reference_namespace_scan` remains immediately
+after `selected_registration_configuration_sha256` with its complete
+two-phase/cut-edge law. Every other key, receipt-ID/path/suffix rule,
+construction order, status equation, and failure disposition is unchanged.
+A v1 core or outer receipt has no prospective Amendment-3
+fresh-registration case.
+
+For Amendment-3 receipt construction and validation, every
+§§16.13.4, 16.13.7, and 16.14.3 use of the v1 core or outer type is
+prospectively replaced by its v2 successor; \(R_{\rm core}\) and
+\(R_{\rm outer}\) denote those complete v2 values and retain every stated
+hash, cut-edge, construction-order, and Git-delta equation. In §16.13.9's
+terminal-history validation, a pre-Amendment-3 configuration continues to
+resolve its exact historical v1 receipt, while an Amendment-3 configuration
+must resolve exactly one v2 receipt carrying the registered Amendment-3
+identity. A v1 receipt cannot bind revision 5, and a v2 receipt without the
+exact registered Amendment-3 identity is invalid.
+
+The selected configurations are not revised by this source-only amendment.
+A calibrated configuration retains its exact revision-3 Amendment-1
+`design` child, and a fitting-free configuration retains its exact revision-4
+Amendment-2 `design` child. For an Amendment-3 fresh registration, the
+following successor receipt proof prospectively replaces both §16.2's
+calibrated dual-design proof and §16.10's fitting-free configured-design/HEAD
+equality. For either selected branch, it is exactly:
+
+1. the selected configuration's design blob exact-matches its applicable
+   Amendment-1 or Amendment-2 ratification commit and configured digest;
+2. the receipt core's `amendment_2_design_identity` exact-matches the
+   revision-4 Amendment-2 ratification commit and configured digest;
+3. the receipt core's `amendment_3_design_identity` exact-matches the
+   revision-5 Amendment-3 ratification commit, configured digest, and `HEAD`;
+4. the Amendment-1 ratification commit is an ancestor of the Amendment-2
+   ratification commit, the Amendment-2 ratification commit is an ancestor of
+   the Amendment-3 ratification commit, and all three are ancestors of
+   `HEAD`; and
+5. every other repository, configuration, implementation-tree, invocation,
+   input, output, and validation law remains unchanged.
+
+This receipt successor is the sole procedural design-binding consequence of
+the revision-5 amendment and fresh-registration requirement in §16.10. Its
+new immutable design child is not a mutable alias and creates no
+configuration branch, runtime transition, or alternate design choice.
+
+**Amendment 3 is inoperative unless and until its exact ratification commit is
+bound by that validator-accepted v2 fresh-registration receipt.**
+After ratification but before that registration, step 4 authorizes only the
+separately reviewed preparation stated above. It authorizes no production
+evaluation, context run, path switch, label change, or publication. Before
+ratification, even that Amendment-3 preparation is unauthorized.
