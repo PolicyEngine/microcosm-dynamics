@@ -160,9 +160,7 @@ def display_published(published: dict[str, Any]) -> str:
     )
     legislative_status = published.get("legislative_status")
     if legislative_status:
-        companion_text += (
-            f"<br>Legislative status: {legislative_status}."
-        )
+        companion_text += f"<br>Legislative status: {legislative_status}."
     provenance = published.get("provenance")
     provenance_text = ""
     if provenance:
@@ -285,7 +283,9 @@ def human_matrix(rows: list[dict[str, Any]]) -> list[str]:
                 + display_label(row["our"]["label_state"])
             )
             if row["our"].get("comparison_note"):
-                our += f"<br>**Comparison note:** {row['our']['comparison_note']}"
+                our += (
+                    f"<br>**Comparison note:** {row['our']['comparison_note']}"
+                )
             cells = [
                 f"`{row['row_id']}`<br>{row['quantity']}",
                 our,

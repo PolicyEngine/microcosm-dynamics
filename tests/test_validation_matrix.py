@@ -77,9 +77,10 @@ def test__validation_matrix__matches_reviewed_sha_and_row_count():
 
     # Mermin stays visible only in the explicitly unverified class, with its
     # committed numeric provenance and the non-trusted corroborating-copy pin.
-    assert "mermin_2005_publisher_capture" in matrix[
-        "external_capture_review"
-    ]["missing_after_refresh"]
+    assert (
+        "mermin_2005_publisher_capture"
+        in matrix["external_capture_review"]["missing_after_refresh"]
+    )
     for row in reported["rows"]:
         assert row["verification_class"] == "reported_not_verified"
         assert ".mermin." in row["row_id"]
@@ -97,9 +98,7 @@ def test__validation_matrix__matches_reviewed_sha_and_row_count():
     # Favreault rounded-bucket sums and the Mermin ordering carry derivations.
     all_rows = [*matrix["rows"], *reported["rows"]]
     dynasim_rows = [
-        row
-        for row in all_rows
-        if row["external_model"].startswith("DYNASIM")
+        row for row in all_rows if row["external_model"].startswith("DYNASIM")
     ]
     assert len(dynasim_rows) == 32
     derived_ids = set()

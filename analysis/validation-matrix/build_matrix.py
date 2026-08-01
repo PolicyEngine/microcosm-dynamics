@@ -521,7 +521,9 @@ def build_trustees_rows() -> list[dict[str, Any]]:
                 },
                 "published": {
                     "value": published_values,
-                    "unit": definition.get("published_unit", definition["unit"]),
+                    "unit": definition.get(
+                        "published_unit", definition["unit"]
+                    ),
                     "formula": spec["official_formula"],
                     "source_locators": locators,
                 },
@@ -1385,9 +1387,7 @@ SHARING_MISMATCH = {
 
 SHARING_SOURCE_CELLS = {
     "married:male:lose_ge_5": {
-        "row_path": (
-            "Married > lose >=20% + lose 10-19.99% + lose 5-9.99%"
-        ),
+        "row_path": ("Married > lose >=20% + lose 10-19.99% + lose 5-9.99%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Men"
@@ -1397,9 +1397,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "married:male:gain_ge_5": {
-        "row_path": (
-            "Married > gain 5-9.99% + gain 10-19.99% + gain >=20%"
-        ),
+        "row_path": ("Married > gain 5-9.99% + gain 10-19.99% + gain >=20%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Men"
@@ -1409,9 +1407,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "married:female:lose_ge_5": {
-        "row_path": (
-            "Married > lose >=20% + lose 10-19.99% + lose 5-9.99%"
-        ),
+        "row_path": ("Married > lose >=20% + lose 10-19.99% + lose 5-9.99%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Women"
@@ -1421,9 +1417,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "married:female:gain_ge_5": {
-        "row_path": (
-            "Married > gain 5-9.99% + gain 10-19.99% + gain >=20%"
-        ),
+        "row_path": ("Married > gain 5-9.99% + gain 10-19.99% + gain >=20%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Women"
@@ -1440,9 +1434,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "divorced:male:lose_ge_5": {
-        "row_path": (
-            "Divorced > lose >=20% + lose 10-19.99% + lose 5-9.99%"
-        ),
+        "row_path": ("Divorced > lose >=20% + lose 10-19.99% + lose 5-9.99%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Men"
@@ -1452,9 +1444,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "divorced:male:gain_ge_5": {
-        "row_path": (
-            "Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%"
-        ),
+        "row_path": ("Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Men"
@@ -1464,9 +1454,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "divorced:female:gain_ge_5": {
-        "row_path": (
-            "Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%"
-        ),
+        "row_path": ("Divorced > gain 5-9.99% + gain 10-19.99% + gain >=20%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Women"
@@ -1483,9 +1471,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "widowed:male:lose_ge_5": {
-        "row_path": (
-            "Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%"
-        ),
+        "row_path": ("Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Men"
@@ -1502,9 +1488,7 @@ SHARING_SOURCE_CELLS = {
         ),
     },
     "widowed:female:lose_ge_5": {
-        "row_path": (
-            "Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%"
-        ),
+        "row_path": ("Widowed > lose >=20% + lose 10-19.99% + lose 5-9.99%"),
         "column_path": (
             "Package 1b: Earnings sharing, no spouse benefit, no survivor "
             "benefit, 4.5 percent increase > Women"
@@ -2398,6 +2382,7 @@ matrix = {
         ),
     ],
 }
+
 
 def render() -> bytes:
     """Return the canonical matrix bytes without mutating the filesystem."""
