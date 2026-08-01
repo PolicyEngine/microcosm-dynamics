@@ -522,7 +522,9 @@ def _check_future_label_rendering():
     assert "this evaluation asserts that its activation event" in rendered
 
 
-def test__benchmark_registry__retains_source_and_verification_drift_laws():
+def test__benchmark_registry__retains_source_and_verification_drift_laws(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     schema = load_schema()
     registry, _ = schema.load_registry()
     entries = registry["entries"]
@@ -580,7 +582,7 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws():
         )
     )
     unmarked_preliminary["gap_class"] = "preliminary_source"
-    with pytest.raises(AssertionError, match="explicitly marked preliminary"):
+    with pytest.raises(AssertionError, match="structured preliminary status"):
         schema.validate_registry_entry(unmarked_preliminary)
 
     marked_preliminary = copy.deepcopy(
@@ -592,6 +594,50 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws():
     )
     marked_preliminary["gap_class"] = "preliminary_source"
     schema.validate_registry_entry(marked_preliminary)
+
+    monkeypatch.setattr(schema, "ROOT", tmp_path)
+    preliminary_cases = (
+        (
+            "missing",
+            {},
+            "Publisher marks this value preliminary.",
+            "publisher status marker is missing",
+        ),
+        (
+            "false",
+            {"source_status": False},
+            "Publisher marks this value preliminary.",
+            "publisher status marker is invalid",
+        ),
+        (
+            "negated",
+            {"source_status": "historical"},
+            "final; explicitly not preliminary",
+            "structured preliminary status",
+        ),
+    )
+    for name, observation, prose_status, message in preliminary_cases:
+        evidence_path = tmp_path / f"{name}.json"
+        evidence_raw = schema.canonical_json_bytes(
+            {"observations": [observation]}
+        )
+        evidence_path.write_bytes(evidence_raw)
+        extraction = {
+            "json_pointer": "/observations",
+            "path": evidence_path.name,
+            "sha256": hashlib.sha256(evidence_raw).hexdigest(),
+        }
+        candidate = copy.deepcopy(marked_preliminary)
+        locator = copy.deepcopy(candidate["source_pin"]["exact_locators"][0])
+        locator["committed_extraction"] = extraction
+        locator["source_status"] = prose_status
+        candidate["source_pin"] = {
+            "artifacts": [{"pin_type": "committed_extraction", **extraction}],
+            "exact_locators": [locator],
+            "reported_value_provenance": None,
+        }
+        with pytest.raises(AssertionError, match=message):
+            schema.validate_registry_entry(candidate)
     _check_unverified_history_binding()
 
 

@@ -96,6 +96,9 @@ LEGACY_ROW_IDS = (
 LEGACY_MERMIN_ROW_IDS = frozenset(
     row_id for row_id in LEGACY_ROW_IDS if ".mermin." in row_id
 )
+PUBLISHER_SOURCE_STATUSES = frozenset(
+    {"estimated_allocation", "historical", "preliminary"}
+)
 HISTORY_SEED_MIGRATIONS = {
     (
         "40ed82ee5ad01b6b36364de2310d45757a8a7dbb5c8f3274e83c46b7f8d514e4",
@@ -700,6 +703,47 @@ def resolve_json_pointer(document: Any, pointer: str) -> Any:
         else:
             current = current[token]
     return current
+
+
+def pinned_publisher_statuses(
+    locator: dict[str, Any], row_id: str
+) -> tuple[str, ...]:
+    """Read closed publisher statuses from an accepted pinned extraction."""
+
+    extraction = locator["committed_extraction"]
+    relative_path = extraction["path"]
+    root = ROOT.resolve()
+    path = (root / relative_path).resolve()
+    require(
+        path.is_relative_to(root),
+        f"publisher-status path escapes repository: {row_id}",
+    )
+    require(path.is_file(), f"missing publisher-status evidence: {row_id}")
+    raw = path.read_bytes()
+    require(
+        sha256_bytes(raw) == extraction["sha256"],
+        f"publisher-status evidence SHA drift: {row_id}",
+    )
+    observations = resolve_json_pointer(
+        json.loads(raw), extraction["json_pointer"]
+    )
+    require(
+        isinstance(observations, list) and observations,
+        f"publisher-status evidence is not an observation array: {row_id}",
+    )
+    statuses = []
+    for observation in observations:
+        require(
+            isinstance(observation, dict) and "source_status" in observation,
+            f"publisher status marker is missing: {row_id}",
+        )
+        status = observation["source_status"]
+        require(
+            isinstance(status, str) and status in PUBLISHER_SOURCE_STATUSES,
+            f"publisher status marker is invalid: {row_id}",
+        )
+        statuses.append(status)
+    return tuple(statuses)
 
 
 def validate_registry_artifacts(
@@ -1364,14 +1408,17 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
         f"source artifacts and exact locators are not one-to-one: {row_id}",
     )
     if entry["gap_class"] == "preliminary_source":
+        publisher_statuses = tuple(
+            status
+            for locator in locators
+            if "committed_extraction" in locator
+            for status in pinned_publisher_statuses(locator, row_id)
+        )
         require(
             entry["verification_class"] == "verified"
-            and any(
-                "preliminary" in locator.get("source_status", "").lower()
-                for locator in locators
-            ),
+            and "preliminary" in publisher_statuses,
             "preliminary_source requires accepted pinned publisher data "
-            f"explicitly marked preliminary: {row_id}",
+            f"with structured preliminary status: {row_id}",
         )
 
     revisions = entry["spec_revisions"]
