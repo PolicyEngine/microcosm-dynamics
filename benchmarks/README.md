@@ -21,11 +21,14 @@ as [SOURCES-NEEDED.md](SOURCES-NEEDED.md).
   the merged matrix's context blocks and source identity.
 - [history.jsonl](history.jsonl) is append-only. Each line is one compact,
   sorted-key canonical JSON object for one row evaluation.
+- [run_manifest.jsonl](run_manifest.jsonl) is append-only. It maps each
+  `evaluated_at_run` SHA to one normalized repository-relative immutable
+  evaluation artifact.
 - [wall.md](wall.md) is the publishable generated view. It has no external
   assets or external links.
 - `build_registry.py`, `build_history.py`, and `build_wall.py` reproduce-check
   generated artifacts. `append_history.py` validates and appends one complete
-  future record set.
+  future record set plus its run-manifest entry.
 - `schema.py` is the fail-closed schema and alarm-law validator.
 
 `registry.json` is append-mostly. Add new entries; do not silently repurpose an
@@ -39,7 +42,7 @@ builder, and start with no revisions. Never erase an earlier revision note.
 ## Tiers
 
 `admin_truth` contains published SSA, Trustees, IRS, or Census administrative
-statistics. Its gaps are errors expected to shrink over certified runs.
+statistics. Its gaps are errors expected to shrink over evaluation runs.
 
 `model_triangulation` contains DYNASIM, MINT, CBO, and other actuarial-model
 comparisons. Its gaps are informative, never normative. A model-triangulation
@@ -105,6 +108,11 @@ the seed, `evaluated_at_run` is the required immutable run-set identity; it
 does not transfer certification to the anchor-context and replication
 artifacts that supply individual row values.
 
+The first run-manifest line permanently maps that identity to
+`runs/first_estimates_v1.json`. Every committed check confines each manifested
+path to the repository, requires it to be tracked with checkout bytes matching
+the Git index, and hashes those bytes back to `evaluated_at_run`.
+
 The permanent reproduction pin covers exactly the first 42 canonical lines,
 not the whole growing file. `build_history.py --check` verifies that frozen
 prefix independently of the current registry and never writes history. A
@@ -113,18 +121,21 @@ the exact prefix of the current file.
 
 ## Append protocol
 
-For every future certified run:
+For every future evaluation run:
 
 1. Prepare any new registry entries first. For an existing specification
    change, preserve the old specification history through a new
-   `spec_revisions` note. Commit the registry, evaluation set, history append,
-   and regenerated wall together so the harness never lands between states.
-2. Produce the immutable certified evaluation artifact and compute its SHA-256.
+   `spec_revisions` note. Commit the registry, evaluation artifact,
+   run-manifest entry, history append, and regenerated wall together so the
+   harness never lands between states.
+2. Produce the immutable evaluation artifact inside the repository, stage its
+   final bytes, and compute its SHA-256. The append checker rejects missing,
+   untracked, modified, or path-escaping artifacts.
    A run SHA may appear in only one record set and may never be reused.
 3. Evaluate every active registry entry, in registry order, using the exact
    registry bytes whose SHA-256 becomes `registry_sha`. The evaluator is
    responsible for deriving and reviewing the candidate values from the
-   certified artifact; the append tool checks identities and invariants but is
+   immutable artifact; the append tool checks identities and invariants but is
    not a model evaluator.
 4. Emit one canonical JSONL object per row with exactly `evaluated_at_run`,
    `registry_sha`, `row_id`, `our`, `published`, `deviation`, `gap_class`,
@@ -136,16 +147,17 @@ For every future certified run:
 
    ```sh
    python benchmarks/append_history.py candidate.jsonl \
-     --run-artifact runs/certified.json --check
+     --run-artifact runs/evaluation.json --check
    python benchmarks/append_history.py candidate.jsonl \
-     --run-artifact runs/certified.json --append
+     --run-artifact runs/evaluation.json --append
    ```
 
-6. Never edit, replace, reorder, or truncate an existing history byte. A row's
-   deviation moving without a new `evaluated_at_run` SHA is a drift finding by
-   law; the append validator rejects every reused run SHA. The supplied run
-   artifact's bytes must hash to `evaluated_at_run`. Appends revalidate under
-   an exclusive lock and write the complete canonical set as one byte block.
+6. Never edit, replace, reorder, or truncate an existing history or run-manifest
+   byte. A row's deviation moving without a new `evaluated_at_run` SHA is a
+   drift finding by law; the append validator rejects every reused run SHA.
+   The supplied artifact's bytes must hash to `evaluated_at_run`. Appends
+   revalidate under exclusive locks and append the manifest line and complete
+   canonical history set with in-process rollback on failure.
 7. Regenerate `wall.md`, run all checks, and commit the history append and wall
    together. The first evaluation for a row has trend `n/a`; later movement is
    labeled neutrally as `changed` or `unchanged` unless a separate directional

@@ -14,7 +14,7 @@ Seed/latest evaluation artifact SHA: `719604ca4364e7cdef2293329ed0beb0e011e5d4d1
 
 ## Admin Truth
 
-Gaps are errors expected to shrink over certified runs.
+Gaps are errors expected to shrink over evaluation runs.
 
 | Row | Our | Published | Gap | Gap class | Trend |
 |---|---|---|---|---|---|
@@ -84,7 +84,7 @@ Each row receives one primary class; its full secondary mismatch-code ledger rem
 | `label_mismatch` | 3 | Closes when ledger entry 14's corrected covered-earnings label activates. |
 | `frame_no_alignment` | 1 | Closes when a pre-registered, independently constructed bridge aligns the two population frames. |
 | `concept_mismatch` | 17 | Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts. |
-| `module_missing` | 1 | Closes when a certified artifact supplies the missing modeled module and comparable output. |
+| `module_missing` | 1 | Closes when an immutable evaluation artifact supplies the missing modeled module and comparable output. |
 | `small_cell` | 0 | Closes when the pre-registered support and precision minimums are met without selecting on the benchmark result. |
 | `preliminary_source` | 0 | Closes when the same provenance-pinned publisher series publishes a final value at the exact registered locator. |
 | `unverified_source` | 20 | Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator. |

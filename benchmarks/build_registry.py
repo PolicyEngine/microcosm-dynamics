@@ -2451,7 +2451,7 @@ TIER_DEFINITIONS = {
             "Published SSA, Trustees, IRS, or Census administrative "
             "statistics."
         ),
-        "gap_law": "Gaps are errors expected to shrink over certified runs.",
+        "gap_law": "Gaps are errors expected to shrink over evaluation runs.",
     },
     "model_triangulation": {
         "definition": (
@@ -2518,7 +2518,7 @@ GAP_CLASS_DEFINITIONS = {
             "quantity independently."
         ),
         "closure_condition": (
-            "Closes when a certified artifact supplies the missing modeled "
+            "Closes when an immutable evaluation artifact supplies the missing modeled "
             "module and comparable output."
         ),
     },
@@ -2888,7 +2888,7 @@ registry = {
         "changelog note in that entry's spec_revisions list."
     ),
     "row_count": len(registry_entries),
-    "schema_version": "standing_benchmark_registry.v3",
+    "schema_version": "standing_benchmark_registry.v4",
     "seed_evaluation": {
         "artifact_pointer": source_pin("runs/first_estimates_v1.json", "/"),
         "evaluated_at_run": SEED_EVALUATED_AT_RUN,

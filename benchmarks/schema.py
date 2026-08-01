@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import re
+import subprocess
 from collections import Counter, defaultdict
 from copy import deepcopy
 from pathlib import Path, PurePosixPath
@@ -15,6 +16,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 REGISTRY_PATH = HERE / "registry.json"
 HISTORY_PATH = HERE / "history.jsonl"
+RUN_MANIFEST_PATH = HERE / "run_manifest.jsonl"
 
 TIERS = (
     "admin_truth",
@@ -52,6 +54,10 @@ HISTORY_SEED_MIGRATIONS = {
     (
         "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954",
         "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae",
+    ),
+    (
+        "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae",
+        "61b8233b430c80c68a26cd5c1cbda8cb71ed8ef2631d96d0d4b7424f2f430d31",
     ),
 }
 
@@ -106,6 +112,7 @@ HISTORY_KEYS = {
     "registry_sha",
     "row_id",
 }
+RUN_MANIFEST_KEYS = {"artifact_path", "evaluated_at_run"}
 LABEL_STATE_KEYS = {
     "individual_administrative_truth_claim",
     "matrix_display",
@@ -169,17 +176,28 @@ def is_one_sentence(value: Any) -> bool:
     return len(boundaries) == 1 and text[-1] in ".!?"
 
 
-def is_repo_relative_json_path(value: Any) -> bool:
-    """Return whether value is one normalized, repository-relative JSON path."""
+def is_repo_relative_path(value: Any) -> bool:
+    """Return whether value is one normalized repository-relative path."""
 
-    if not isinstance(value, str) or not value.endswith(".json"):
+    if not isinstance(value, str) or not value or "\\" in value:
         return False
     path = PurePosixPath(value)
     return (
         not path.is_absolute()
+        and bool(path.parts)
         and value == path.as_posix()
         and ".." not in path.parts
         and "." not in path.parts
+    )
+
+
+def is_repo_relative_json_path(value: Any) -> bool:
+    """Return whether value is one normalized repository-relative JSON path."""
+
+    return (
+        isinstance(value, str)
+        and value.endswith(".json")
+        and is_repo_relative_path(value)
     )
 
 
@@ -248,6 +266,174 @@ def canonical_jsonl_line(value: Any) -> bytes:
         )
         + "\n"
     ).encode("utf-8")
+
+
+def load_run_manifest(
+    path: Path = RUN_MANIFEST_PATH,
+) -> tuple[list[dict[str, Any]], bytes]:
+    """Load the canonical append-only evaluation-artifact manifest."""
+
+    raw = path.read_bytes()
+    require(
+        bool(raw) and raw.endswith(b"\n"),
+        "run manifest must be nonempty and LF-terminated",
+    )
+    entries = []
+    for line_number, line in enumerate(raw.splitlines(keepends=True), 1):
+        require(
+            line not in {b"\n", b"\r\n"}, f"blank manifest line {line_number}"
+        )
+        entry = json.loads(line)
+        require(
+            line == canonical_jsonl_line(entry),
+            f"run manifest line {line_number} is not canonical sorted JSON",
+        )
+        entries.append(entry)
+    validate_run_manifest(entries)
+    return entries, raw
+
+
+def validate_run_manifest(entries: list[dict[str, Any]]) -> None:
+    """Validate run-manifest shape, order-independent identities, and paths."""
+
+    require(bool(entries), "run manifest must contain at least one entry")
+    run_shas = set()
+    artifact_paths = set()
+    for entry in entries:
+        require(
+            isinstance(entry, dict) and set(entry) == RUN_MANIFEST_KEYS,
+            "run manifest entry keys have drifted",
+        )
+        run_sha = entry["evaluated_at_run"]
+        artifact_path = entry["artifact_path"]
+        require(is_sha256(run_sha), "invalid manifested evaluation run SHA")
+        require(
+            is_repo_relative_path(artifact_path),
+            f"evaluation artifact path escapes or is not normalized: {artifact_path}",
+        )
+        require(
+            run_sha not in run_shas, f"duplicate manifested run SHA: {run_sha}"
+        )
+        require(
+            artifact_path not in artifact_paths,
+            f"evaluation artifact path is reused: {artifact_path}",
+        )
+        run_shas.add(run_sha)
+        artifact_paths.add(artifact_path)
+
+
+def repo_relative_artifact_path(path: Path, root: Path = ROOT) -> str:
+    """Normalize an existing caller path to a confined repository path."""
+
+    root = root.resolve()
+    resolved = path.resolve()
+    require(
+        resolved.is_relative_to(root),
+        f"evaluation artifact path escapes repository: {path}",
+    )
+    relative = resolved.relative_to(root).as_posix()
+    require(
+        is_repo_relative_path(relative),
+        f"evaluation artifact path is not normalized: {relative}",
+    )
+    return relative
+
+
+def validate_manifest_artifact(
+    entry: dict[str, Any], root: Path = ROOT, *, require_git: bool = True
+) -> None:
+    """Resolve one manifested artifact and verify its committed byte identity."""
+
+    validate_run_manifest([entry])
+    root = root.resolve()
+    relative = entry["artifact_path"]
+    path = (root / relative).resolve()
+    require(
+        path.is_relative_to(root),
+        f"evaluation artifact path escapes repository: {relative}",
+    )
+    require(
+        path.is_file(), f"missing immutable evaluation artifact: {relative}"
+    )
+    require(
+        sha256_bytes(path.read_bytes()) == entry["evaluated_at_run"],
+        f"immutable evaluation artifact SHA mismatch: {relative}",
+    )
+    if not require_git:
+        return
+    tracked = subprocess.run(
+        ["git", "ls-files", "--stage", "--error-unmatch", "--", relative],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        tracked.returncode == 0,
+        f"immutable evaluation artifact is not tracked in the Git index: {relative}",
+    )
+    index_fields = tracked.stdout.strip().split(maxsplit=3)
+    require(
+        len(index_fields) == 4 and index_fields[2] == "0",
+        f"immutable evaluation artifact has an unresolved Git index state: {relative}",
+    )
+    worktree_blob = subprocess.run(
+        ["git", "hash-object", "--", relative],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        worktree_blob.returncode == 0
+        and worktree_blob.stdout.strip() == index_fields[1],
+        f"immutable evaluation artifact differs from the Git index: {relative}",
+    )
+
+
+def validate_history_run_artifacts(
+    records: list[dict[str, Any]],
+    manifest: list[dict[str, Any]],
+    root: Path = ROOT,
+    *,
+    require_git: bool = True,
+) -> None:
+    """Bind every history run SHA to one immutable repository artifact."""
+
+    validate_history(records)
+    validate_run_manifest(manifest)
+    history_run_order = []
+    seen = set()
+    for record in records:
+        run_sha = record["evaluated_at_run"]
+        if run_sha not in seen:
+            history_run_order.append(run_sha)
+            seen.add(run_sha)
+    manifest_run_order = [entry["evaluated_at_run"] for entry in manifest]
+    require(
+        manifest_run_order == history_run_order,
+        "run manifest must match history run identities in first-occurrence order",
+    )
+    for entry in manifest:
+        validate_manifest_artifact(entry, root, require_git=require_git)
+
+
+def validate_seed_run_manifest(
+    manifest: list[dict[str, Any]], registry: dict[str, Any]
+) -> None:
+    """Bind the first manifest entry to the registered seed evaluation."""
+
+    seed = registry["seed_evaluation"]
+    pointer = seed["artifact_pointer"]
+    require(
+        manifest[0]
+        == {
+            "artifact_path": pointer["path"],
+            "evaluated_at_run": seed["evaluated_at_run"],
+        }
+        and pointer["sha256"] == seed["evaluated_at_run"],
+        "seed evaluation and run manifest disagree",
+    )
 
 
 def resolve_json_pointer(document: Any, pointer: str) -> Any:
@@ -370,6 +556,11 @@ def load_history(
     for record in records:
         del record["_byte_start"]
         del record["_byte_end"]
+    if path.resolve() == HISTORY_PATH.resolve():
+        manifest, _ = load_run_manifest()
+        validate_history_run_artifacts(records, manifest)
+        registry, _ = load_registry()
+        validate_seed_run_manifest(manifest, registry)
     return records, raw
 
 
@@ -489,7 +680,7 @@ def validate_registry(registry: dict[str, Any]) -> None:
 
     require(set(registry) == REGISTRY_KEYS, "registry keys have drifted")
     require(
-        registry["schema_version"] == "standing_benchmark_registry.v3",
+        registry["schema_version"] == "standing_benchmark_registry.v4",
         "unsupported benchmark registry schema",
     )
     require(
@@ -663,7 +854,8 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
         )
     elif row_id == "wish.hr4289.employee_rate.share_of_payroll":
         require(
-            set(published_metadata) == {"companion_parameters", "legislative_status"},
+            set(published_metadata)
+            == {"companion_parameters", "legislative_status"},
             f"missing WISH published metadata: {row_id}",
         )
         companion = published_metadata["companion_parameters"]
@@ -1020,6 +1212,30 @@ def validate_append_mostly_registry(
         )
         return
 
+    if (
+        previous.get("schema_version") == "standing_benchmark_registry.v3"
+        and current.get("schema_version") == "standing_benchmark_registry.v4"
+    ):
+        validate_registry(current)
+        legacy_projection = deepcopy(current)
+        legacy_projection["schema_version"] = "standing_benchmark_registry.v3"
+        legacy_projection["tiers"]["admin_truth"][
+            "gap_law"
+        ] = "Gaps are errors expected to shrink over certified runs."
+        legacy_projection["gap_classes"]["module_missing"][
+            "closure_condition"
+        ] = "Closes when a certified artifact supplies the missing modeled module and comparable output."
+        for entry in legacy_projection["entries"]:
+            if entry["gap_class"] == "module_missing":
+                entry["gap_closure_condition"] = legacy_projection[
+                    "gap_classes"
+                ]["module_missing"]["closure_condition"]
+        require(
+            legacy_projection == previous,
+            "v3-to-v4 migration changed fields outside artifact terminology",
+        )
+        return
+
     validate_registry(previous)
     validate_registry(current)
     for key in IMMUTABLE_REGISTRY_KEYS:
@@ -1344,7 +1560,9 @@ def reconstruct_legacy_matrix(
         "blocked_comparisons": deepcopy(registry["deferred_comparisons"]),
         "canonicalization": source["canonicalization"],
         "certification_context": deepcopy(context["certification_context"]),
-        "external_capture_review": deepcopy(registry["external_capture_review"]),
+        "external_capture_review": deepcopy(
+            registry["external_capture_review"]
+        ),
         "honest_gaps": deepcopy(context["honest_gaps"]),
         "honesty_frame": deepcopy(registry["honesty_frame"]),
         "inputs": deepcopy(registry["inputs"]),
@@ -1373,6 +1591,17 @@ def validate_append_only_history(
     require(
         migration in HISTORY_SEED_MIGRATIONS,
         "history is append-only; prior committed bytes must remain a prefix",
+    )
+
+
+def validate_append_only_run_manifest(
+    previous_raw: bytes, current_raw: bytes
+) -> None:
+    """Reject every rewrite, reorder, or truncation of the run manifest."""
+
+    require(
+        current_raw.startswith(previous_raw),
+        "run manifest is append-only; prior committed bytes must remain a prefix",
     )
 
 

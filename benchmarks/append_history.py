@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and append one complete certified-run benchmark record set."""
+"""Validate and append one complete benchmark evaluation record set."""
 
 from __future__ import annotations
 
@@ -10,24 +10,26 @@ from pathlib import Path
 
 from schema import (
     HISTORY_PATH,
+    RUN_MANIFEST_PATH,
+    canonical_jsonl_line,
     load_history,
     load_registry,
+    load_run_manifest,
+    repo_relative_artifact_path,
     sha256_bytes,
     validate_history,
     validate_history_against_registry,
+    validate_history_run_artifacts,
 )
 
 
-def validate_candidate(path: Path, run_artifact: Path) -> bytes:
-    """Return candidate bytes after all append-only protocol checks pass."""
+def validate_candidate(path: Path, run_artifact: Path) -> tuple[bytes, bytes]:
+    """Return canonical history and manifest bytes after protocol checks."""
 
     registry, registry_raw = load_registry()
     existing, _ = load_history()
+    manifest, _ = load_run_manifest()
     candidate, candidate_raw = load_history(path)
-
-    if not run_artifact.is_file():
-        raise SystemExit(f"missing certified run artifact: {run_artifact}")
-    artifact_sha = sha256_bytes(run_artifact.read_bytes())
 
     registry_sha = sha256_bytes(registry_raw)
     expected_row_ids = [entry["row_id"] for entry in registry["entries"]]
@@ -43,10 +45,6 @@ def validate_candidate(path: Path, run_artifact: Path) -> bytes:
             "candidate must contain exactly one evaluation run SHA"
         )
     run_sha = next(iter(run_shas))
-    if run_sha != artifact_sha:
-        raise SystemExit(
-            "candidate evaluated_at_run does not match the run artifact SHA"
-        )
     if any(record["evaluated_at_run"] == run_sha for record in existing):
         raise SystemExit(
             "evaluation run SHA already exists; reuse is a drift finding"
@@ -92,24 +90,53 @@ def validate_candidate(path: Path, run_artifact: Path) -> bytes:
     validate_history_against_registry(
         existing + candidate, registry, registry_sha
     )
-    return candidate_raw
+    artifact_entry = {
+        "artifact_path": repo_relative_artifact_path(run_artifact),
+        "evaluated_at_run": run_sha,
+    }
+    validate_history_run_artifacts(
+        existing + candidate,
+        [*manifest, artifact_entry],
+    )
+    return candidate_raw, canonical_jsonl_line(artifact_entry)
 
 
 def append(path: Path, run_artifact: Path) -> None:
-    """Append validated bytes without rewriting existing history."""
+    """Append validated manifest and history bytes as one locked operation."""
 
-    descriptor = os.open(HISTORY_PATH, os.O_WRONLY | os.O_APPEND)
+    manifest_descriptor = os.open(RUN_MANIFEST_PATH, os.O_RDWR | os.O_APPEND)
+    history_descriptor = os.open(HISTORY_PATH, os.O_RDWR | os.O_APPEND)
+    descriptors = (manifest_descriptor, history_descriptor)
+    original_sizes = tuple(
+        os.fstat(descriptor).st_size for descriptor in descriptors
+    )
+    mutated = False
     try:
-        fcntl.flock(descriptor, fcntl.LOCK_EX)
-        candidate_raw = validate_candidate(path, run_artifact)
-        written = os.write(descriptor, candidate_raw)
-        if written != len(candidate_raw):
+        for descriptor in descriptors:
+            fcntl.flock(descriptor, fcntl.LOCK_EX)
+        candidate_raw, manifest_raw = validate_candidate(path, run_artifact)
+        mutated = True
+        manifest_written = os.write(manifest_descriptor, manifest_raw)
+        if manifest_written != len(manifest_raw):
+            raise OSError("short append to benchmark run manifest")
+        history_written = os.write(history_descriptor, candidate_raw)
+        if history_written != len(candidate_raw):
             raise OSError("short append to benchmark history")
-        os.fsync(descriptor)
+        os.fsync(manifest_descriptor)
+        os.fsync(history_descriptor)
         load_history()
+    except BaseException:
+        if mutated:
+            for descriptor, size in zip(
+                descriptors, original_sizes, strict=True
+            ):
+                os.ftruncate(descriptor, size)
+                os.fsync(descriptor)
+        raise
     finally:
-        fcntl.flock(descriptor, fcntl.LOCK_UN)
-        os.close(descriptor)
+        for descriptor in reversed(descriptors):
+            fcntl.flock(descriptor, fcntl.LOCK_UN)
+            os.close(descriptor)
 
 
 def main() -> None:
@@ -119,7 +146,7 @@ def main() -> None:
         "--run-artifact",
         type=Path,
         required=True,
-        help="immutable certified artifact whose SHA identifies the record set",
+        help="immutable evaluation artifact whose SHA identifies the record set",
     )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument(
@@ -130,7 +157,7 @@ def main() -> None:
     mode.add_argument(
         "--append",
         action="store_true",
-        help="append a validated record set to history.jsonl",
+        help="append a validated record set and its run-manifest entry",
     )
     args = parser.parse_args()
     if args.check:

@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BENCHMARKS = ROOT / "benchmarks"
 REGISTRY_PATH = BENCHMARKS / "registry.json"
 HISTORY_PATH = BENCHMARKS / "history.jsonl"
+RUN_MANIFEST_PATH = BENCHMARKS / "run_manifest.jsonl"
 WALL_PATH = BENCHMARKS / "wall.md"
 MERGED_MATRIX_SHA256 = (
     "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
@@ -27,17 +28,24 @@ SEED_RUN_PATH = ROOT / "runs" / "first_estimates_v1.json"
 SEED_RUN_SHA256 = (
     "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
 )
+RUN_MANIFEST_SEED_PREFIX_SHA256 = (
+    "b8cacb139ce67ed1bf5ba1509d4ca9f995d6d5e032ddfa4cb4ec565ba220f82c"
+)
+NON_CERTIFIED_RUN_PATH = ROOT / "runs" / "claiming_reference_v1.json"
+NON_CERTIFIED_RUN_SHA256 = (
+    "ae80d5c2281a15759948fae3e1f7ed3adbd7127d6a243518ff21196b00b99da9"
+)
 REGISTRY_SHA256 = (
-    "d915af609c95fc2616c7ed61760df6efd437e28047ee8800f6b5e19de5bdd48b"
+    "3355f6686d67eb39793fb790327010c21ee852704968c627f0d851c6dd7d1726"
 )
 HISTORY_SEED_PREFIX_SHA256 = (
-    "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae"
+    "61b8233b430c80c68a26cd5c1cbda8cb71ed8ef2631d96d0d4b7424f2f430d31"
 )
 CURRENT_HISTORY_SHA256 = (
-    "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae"
+    "61b8233b430c80c68a26cd5c1cbda8cb71ed8ef2631d96d0d4b7424f2f430d31"
 )
 WALL_SHA256 = (
-    "995548f1c83cb4e23a52cd47a4e1689b004f5b8ab15dd0df824e2506d5700f7f"
+    "a9fd36b7275770d87ebde3f2d965f4d0235e82a54fdee6e142c19e0d8be1ffdb"
 )
 SEED_ROW_COUNT = 42
 TIER_COUNTS = {
@@ -132,6 +140,7 @@ def write_candidate(
     *,
     mutate=None,
     run_artifact: Path | None = None,
+    run_sha: str | None = None,
 ) -> tuple[Path, Path]:
     """Write a canonical synthetic next-run record set for append tests."""
 
@@ -140,11 +149,9 @@ def write_candidate(
     history, _ = schema.load_history()
     latest = schema.latest_records(history)
     if run_artifact is None:
-        run_artifact = tmp_path / f"{name}.run.json"
-        run_artifact.write_bytes(
-            f'{{"certified_test_run":"{name}"}}\n'.encode()
-        )
-    run_sha = sha256(run_artifact)
+        run_artifact = NON_CERTIFIED_RUN_PATH
+    if run_sha is None:
+        run_sha = sha256(run_artifact)
     registry_sha = hashlib.sha256(registry_raw).hexdigest()
     records = []
     for entry in registry["entries"]:
@@ -198,6 +205,14 @@ def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
     assert Counter(entry["tier"] for entry in registry["entries"]) == (
         TIER_COUNTS
     )
+    assert Counter(entry["gap_class"] for entry in registry["entries"]) == {
+        key: value for key, value in GAP_COUNTS.items() if value
+    }
+    assert all(
+        set(entry["comparison_scope"])
+        <= {"ratio", "share", "trajectory", "ordering"}
+        for entry in registry["entries"]
+    )
 
 
 def test__benchmark_migration__round_trips_merged_matrix_losslessly():
@@ -220,9 +235,9 @@ def test__benchmark_migration__round_trips_merged_matrix_losslessly():
         == "Dollar levels are retained only as frozen extraction inputs to "
         "calculate the allowed index; they are not reported as a comparison."
     )
-    wish_metadata = entries[
-        "wish.hr4289.employee_rate.share_of_payroll"
-    ]["published_metadata"]
+    wish_metadata = entries["wish.hr4289.employee_rate.share_of_payroll"][
+        "published_metadata"
+    ]
     assert wish_metadata["legislative_status"] == (
         "introduced and referred; not enacted"
     )
@@ -234,18 +249,13 @@ def test__benchmark_migration__round_trips_merged_matrix_losslessly():
         "self_employment_rate_percent": 0.6,
         "separate_employer_rate_percent": 0.3,
     }
-    assert len(
-        registry["migration_context"]["certification_context"]["m6"][
-            "not_certified"
-        ]
-    ) == 11
-    assert Counter(entry["gap_class"] for entry in registry["entries"]) == {
-        key: value for key, value in GAP_COUNTS.items() if value
-    }
-    assert all(
-        set(entry["comparison_scope"])
-        <= {"ratio", "share", "trajectory", "ordering"}
-        for entry in registry["entries"]
+    assert (
+        len(
+            registry["migration_context"]["certification_context"]["m6"][
+                "not_certified"
+            ]
+        )
+        == 11
     )
 
 
@@ -253,6 +263,7 @@ def test__benchmark_history__reproduces_frozen_seed_prefix():
     schema = load_schema()
     registry, registry_raw = schema.load_registry()
     history, history_raw = schema.load_history()
+    manifest, manifest_raw = schema.load_run_manifest()
     prefix = b"".join(history_raw.splitlines(keepends=True)[:SEED_ROW_COUNT])
     seed = history[:SEED_ROW_COUNT]
 
@@ -260,6 +271,10 @@ def test__benchmark_history__reproduces_frozen_seed_prefix():
     assert hashlib.sha256(registry_raw).hexdigest() == REGISTRY_SHA256
     assert hashlib.sha256(prefix).hexdigest() == HISTORY_SEED_PREFIX_SHA256
     assert hashlib.sha256(history_raw).hexdigest() == CURRENT_HISTORY_SHA256
+    assert (
+        hashlib.sha256(manifest_raw.splitlines(keepends=True)[0]).hexdigest()
+        == RUN_MANIFEST_SEED_PREFIX_SHA256
+    )
     assert len(history) >= SEED_ROW_COUNT
     assert [record["row_id"] for record in seed] == [
         entry["row_id"] for entry in registry["entries"][:SEED_ROW_COUNT]
@@ -268,6 +283,10 @@ def test__benchmark_history__reproduces_frozen_seed_prefix():
     assert {record["registry_sha"] for record in seed} == {REGISTRY_SHA256}
     assert Counter(record["gap_class"] for record in seed) == {
         key: value for key, value in GAP_COUNTS.items() if value
+    }
+    assert manifest[0] == {
+        "artifact_path": "runs/first_estimates_v1.json",
+        "evaluated_at_run": SEED_RUN_SHA256,
     }
 
 
@@ -371,7 +390,9 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws():
         schema.validate_registry_entry(laundered)
 
     unmarked_preliminary = copy.deepcopy(
-        next(entry for entry in verified if entry["row_id"].startswith("wish."))
+        next(
+            entry for entry in verified if entry["row_id"].startswith("wish.")
+        )
     )
     unmarked_preliminary["gap_class"] = "preliminary_source"
     with pytest.raises(AssertionError, match="explicitly marked preliminary"):
@@ -427,6 +448,16 @@ def test__benchmark_registry_and_history__are_append_only_across_commits():
             current_history, current_history[:-1]
         )
 
+    previous_manifest = prior_committed_blob(RUN_MANIFEST_PATH)
+    current_manifest = RUN_MANIFEST_PATH.read_bytes()
+    schema.validate_append_only_run_manifest(
+        previous_manifest, current_manifest
+    )
+    with pytest.raises(AssertionError, match="run manifest is append-only"):
+        schema.validate_append_only_run_manifest(
+            current_manifest, current_manifest[:-1]
+        )
+
     silent_source_change = copy.deepcopy(registry)
     silent_source_change["entries"][0]["source_pin"]["exact_locators"][0][
         "page"
@@ -474,9 +505,15 @@ def test__benchmark_registry_and_history__are_append_only_across_commits():
 
 
 def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
-    before = HISTORY_PATH.read_bytes()
+    before = {
+        HISTORY_PATH: HISTORY_PATH.read_bytes(),
+        RUN_MANIFEST_PATH: RUN_MANIFEST_PATH.read_bytes(),
+    }
 
     valid, valid_run = write_candidate(tmp_path, "valid")
+    assert valid_run == NON_CERTIFIED_RUN_PATH
+    assert sha256(valid_run) == NON_CERTIFIED_RUN_SHA256
+    assert json.loads(valid_run.read_text())["reported_not_gated"] is True
     result = run_append_check(valid, valid_run)
     assert result.returncode == 0, result.stderr
 
@@ -540,19 +577,73 @@ def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
     assert result.returncode != 0
     assert "run SHA already exists" in result.stderr
 
-    wrong_artifact = tmp_path / "wrong-artifact.json"
-    wrong_artifact.write_text('{"wrong":true}\n')
-    result = run_append_check(valid, wrong_artifact)
+    missing_artifact = ROOT / "runs" / ".missing-benchmark-evaluation.json"
+    missing, _ = write_candidate(
+        tmp_path,
+        "missing_artifact",
+        run_artifact=missing_artifact,
+        run_sha=NON_CERTIFIED_RUN_SHA256,
+    )
+    result = run_append_check(missing, missing_artifact)
     assert result.returncode != 0
-    assert "does not match the run artifact SHA" in result.stderr
+    assert "missing immutable evaluation artifact" in result.stderr
 
-    assert HISTORY_PATH.read_bytes() == before
+    untracked_artifact = BENCHMARKS / ".untracked-evaluation-artifact.json"
+    assert not untracked_artifact.exists()
+    try:
+        untracked_artifact.write_text('{"evaluation":"untracked"}\n')
+        untracked, _ = write_candidate(
+            tmp_path,
+            "untracked_artifact",
+            run_artifact=untracked_artifact,
+        )
+        result = run_append_check(untracked, untracked_artifact)
+        assert result.returncode != 0
+        assert "not tracked in the Git index" in result.stderr
+    finally:
+        untracked_artifact.unlink(missing_ok=True)
+
+    escaping_artifact = tmp_path / "path-escaping-evaluation.json"
+    escaping_artifact.write_text('{"evaluation":"outside repository"}\n')
+    escaping, _ = write_candidate(
+        tmp_path,
+        "path_escaping_artifact",
+        run_artifact=escaping_artifact,
+    )
+    result = run_append_check(escaping, escaping_artifact)
+    assert result.returncode != 0
+    assert "path escapes repository" in result.stderr
+
+    hash_mismatch, _ = write_candidate(
+        tmp_path,
+        "hash_mismatch",
+        run_artifact=NON_CERTIFIED_RUN_PATH,
+        run_sha="0" * 64,
+    )
+    result = run_append_check(hash_mismatch, NON_CERTIFIED_RUN_PATH)
+    assert result.returncode != 0
+    assert "artifact SHA mismatch" in result.stderr
+
+    schema = load_schema()
+    history, _ = schema.load_history()
+    manifest, _ = schema.load_run_manifest()
+    direct_records, _ = schema.load_history(valid)
+    with pytest.raises(
+        AssertionError, match="run manifest must match history"
+    ):
+        schema.validate_history_run_artifacts(
+            history + direct_records,
+            manifest,
+        )
+
+    assert {path: path.read_bytes() for path in before} == before
 
 
 def test__benchmark_builders__check_without_mutating_artifacts():
     before = {
         REGISTRY_PATH: REGISTRY_PATH.read_bytes(),
         HISTORY_PATH: HISTORY_PATH.read_bytes(),
+        RUN_MANIFEST_PATH: RUN_MANIFEST_PATH.read_bytes(),
         WALL_PATH: WALL_PATH.read_bytes(),
     }
     builders = (
