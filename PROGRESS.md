@@ -2,8 +2,8 @@
 
 ## State
 
-Edits 1 through 4 are implemented. Evidence-bound label-note validation is
-under its final public-check, targeted, and lint gates.
+Edits 1 through 5 are implemented. Exact public/internal history-key handling
+is under its final public-check, targeted, and lint gates.
 
 ## Done
 
@@ -29,9 +29,11 @@ under its final public-check, targeted, and lint gates.
 - Bound the retained legacy label note to deterministic prose derived from the
   SHA-verified per-row embedded-array result.
 - Added a public append-check regression for fabricated label prose.
+- Required exact public history keys before loader offset injection and exact
+  public-or-paired-offset shapes in the in-memory validator.
+- Added public `_foo`, `_byte_start`, and `_byte_end` rejection regressions.
 
 ## Next
 
-1. Enforce exact public and internal history key shapes.
-2. Move rollback-size capture under both append locks.
-3. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.
+1. Move rollback-size capture under both append locks.
+2. Run format, lint, targeted, builder, tier-sync, and full benchmark gates.

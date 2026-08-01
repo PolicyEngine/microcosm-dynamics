@@ -839,6 +839,22 @@ def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
     assert result.returncode != 0
     assert "does not match registry.json" in result.stderr
 
+    for private_key, value in (
+        ("_foo", "fabricated"),
+        ("_byte_start", 0),
+        ("_byte_end", 1),
+    ):
+        private_key_candidate, private_key_run = write_candidate(
+            tmp_path,
+            private_key.removeprefix("_"),
+            mutate=lambda records, key=private_key, injected=value: records[
+                0
+            ].__setitem__(key, injected),
+        )
+        result = run_append_check(private_key_candidate, private_key_run)
+        assert result.returncode != 0
+        assert "history line 1 keys have drifted" in result.stderr
+
     unexplained, unexplained_run = write_candidate(
         tmp_path,
         "unexplained",

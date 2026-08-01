@@ -166,6 +166,7 @@ HISTORY_KEYS = {
     "registry_sha",
     "row_id",
 }
+HISTORY_OFFSET_KEYS = {"_byte_end", "_byte_start"}
 RUN_MANIFEST_KEYS = {"artifact_path", "evaluated_at_run"}
 LABEL_STATE_KEYS = {
     "individual_administrative_truth_claim",
@@ -985,6 +986,10 @@ def load_history(
         if line in {b"\n", b"\r\n"}:
             raise AssertionError(f"blank history line {line_number}")
         record = json.loads(line)
+        require(
+            isinstance(record, dict) and set(record) == HISTORY_KEYS,
+            f"history line {line_number} keys have drifted",
+        )
         if line != canonical_jsonl_line(record):
             raise AssertionError(
                 f"history line {line_number} is not canonical sorted JSON"
@@ -1780,15 +1785,19 @@ def validate_history(records: list[dict[str, Any]]) -> None:
     run_registry_shas: dict[str, set[str]] = defaultdict(set)
     seen_row_runs = set()
     for record in records:
-        public_record = {
-            key: value
-            for key, value in record.items()
-            if not key.startswith("_")
-        }
+        record_keys = set(record) if isinstance(record, dict) else set()
         require(
-            set(public_record) == HISTORY_KEYS,
+            record_keys == HISTORY_KEYS
+            or record_keys == HISTORY_KEYS | HISTORY_OFFSET_KEYS,
             "history record keys have drifted",
         )
+        if record_keys == HISTORY_KEYS | HISTORY_OFFSET_KEYS:
+            require(
+                type(record["_byte_start"]) is int
+                and type(record["_byte_end"]) is int
+                and 0 <= record["_byte_start"] < record["_byte_end"],
+                "invalid history byte offsets",
+            )
         require(
             is_sha256(record["evaluated_at_run"]), "invalid evaluation run SHA"
         )
