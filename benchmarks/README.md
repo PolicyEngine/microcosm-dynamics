@@ -5,16 +5,20 @@ validation. The registry defines what may be compared; history records what a
 specific immutable evaluation produced; and the generated wall presents the
 latest record for every row. Large gaps are allowed. Unexplained gaps are not.
 
-The original `analysis/validation-matrix/` lane was migrated cleanly into this
-directory. There are no deprecated duplicate artifacts or shims. The original
-offline source-capture request is retained as [SOURCES-NEEDED.md](SOURCES-NEEDED.md).
+The numerical comparison rows from the merged `analysis/validation-matrix/`
+lane were normalized for the standing harness. Their exact legacy scopes,
+row-specific published metadata, and omitted matrix context are retained so the
+merged matrix can be reconstructed losslessly. Superseded presentation artifacts
+and shims were removed. The original offline source-capture request is retained
+as [SOURCES-NEEDED.md](SOURCES-NEEDED.md).
 
 ## Artifacts
 
 - [registry.json](registry.json) contains one specification per `row_id`,
   immutable source pins and exact locators, model-side artifact pointers,
   comparison scope, verification status, primary gap law, and a preserved
-  `spec_revisions` changelog.
+  `spec_revisions` changelog. Its schema-validated `migration_context` preserves
+  the merged matrix's context blocks and source identity.
 - [history.jsonl](history.jsonl) is append-only. Each line is one compact,
   sorted-key canonical JSON object for one row evaluation.
 - [wall.md](wall.md) is the publishable generated view. It has no external

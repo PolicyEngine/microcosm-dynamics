@@ -7,6 +7,7 @@ import json
 import math
 import re
 from collections import Counter, defaultdict
+from copy import deepcopy
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -30,6 +31,24 @@ GAP_CLASSES = (
     "unexplained",
 )
 COMPARISON_SCOPES = ("ratio", "share", "trajectory", "ordering")
+LEGACY_COMPARISON_SCOPES = (
+    "ratio",
+    "share",
+    "trajectory",
+    "ordering",
+    "distributional_incidence",
+    "distributional_share",
+    "age_trajectory",
+)
+LEGACY_MATRIX_SHA256 = (
+    "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
+)
+HISTORY_SEED_MIGRATIONS = {
+    (
+        "40ed82ee5ad01b6b36364de2310d45757a8a7dbb5c8f3274e83c46b7f8d514e4",
+        "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954",
+    ),
+}
 
 REGISTRY_KEYS = {
     "allowed_comparison_scopes",
@@ -41,6 +60,7 @@ REGISTRY_KEYS = {
     "gap_classes",
     "honesty_frame",
     "inputs",
+    "migration_context",
     "purpose",
     "registry_change_law",
     "row_count",
@@ -58,8 +78,10 @@ ENTRY_KEYS = {
     "gap_class",
     "gap_closure_condition",
     "gap_note",
+    "legacy_comparison_scope",
     "our_side_artifact",
     "published_formula",
+    "published_metadata",
     "published_unit",
     "quantity",
     "row_id",
@@ -95,6 +117,7 @@ IMMUTABLE_REGISTRY_KEYS = {
     "canonicalization",
     "gap_classes",
     "honesty_frame",
+    "migration_context",
     "purpose",
     "registry_change_law",
     "schema_version",
@@ -251,6 +274,7 @@ def validate_registry_artifacts(
             for artifact in entry["source_pin"]["artifacts"]
             if artifact["pin_type"] == "committed_extraction"
         )
+    pointers.extend(committed_json_pointers(registry["migration_context"]))
 
     parsed_documents: dict[Path, Any] = {}
     for pointer in pointers:
@@ -281,6 +305,24 @@ def validate_registry_artifacts(
                 f"unresolvable JSON pointer in {relative_path}: "
                 f"{pointer['json_pointer']}"
             ) from error
+
+
+def committed_json_pointers(value: Any) -> list[dict[str, str]]:
+    """Collect exact committed-JSON pointers nested in migration metadata."""
+
+    if isinstance(value, dict):
+        pointers = []
+        if set(value) == {"json_pointer", "path", "sha256"}:
+            pointers.append(value)
+        for child in value.values():
+            pointers.extend(committed_json_pointers(child))
+        return pointers
+    if isinstance(value, list):
+        pointers = []
+        for child in value:
+            pointers.extend(committed_json_pointers(child))
+        return pointers
+    return []
 
 
 def load_registry(path: Path = REGISTRY_PATH) -> tuple[dict[str, Any], bytes]:
@@ -326,12 +368,123 @@ def load_history(
     return records, raw
 
 
+def validate_migration_context(
+    context: dict[str, Any], registry: dict[str, Any]
+) -> None:
+    """Validate the exact metadata retained from the merged #352 matrix."""
+
+    require(
+        isinstance(context, dict)
+        and set(context)
+        == {
+            "available_series_inventory",
+            "certification_context",
+            "honest_gaps",
+            "reported_not_verified_partition",
+            "source_matrix",
+            "wish_financing_stub",
+        },
+        "migration context keys have drifted",
+    )
+    source = context["source_matrix"]
+    require(
+        source
+        == {
+            "canonicalization": registry["canonicalization"],
+            "path_at_merge": "analysis/validation-matrix/matrix.json",
+            "purpose": (
+                "Frame-relative comparison of ratios, shares, trajectories, "
+                "and orderings against published SSA, CBO, DYNASIM, and WISH "
+                "statutory quantities; never national dollar levels"
+            ),
+            "schema_version": "cross_model_validation_matrix.v2",
+            "sha256": LEGACY_MATRIX_SHA256,
+        },
+        "merged matrix identity has drifted",
+    )
+    inventory = context["available_series_inventory"]
+    require(
+        isinstance(inventory, dict)
+        and set(inventory)
+        == {
+            "counts",
+            "diagnostics",
+            "entry10_comparisons",
+            "projection",
+            "source",
+            "tables",
+        },
+        "available-series inventory has drifted",
+    )
+    certification = context["certification_context"]
+    require(
+        isinstance(certification, dict)
+        and set(certification)
+        == {"entry8_first_estimates", "m6", "ppi_gate1_generator"},
+        "certification context keys have drifted",
+    )
+    noncertified = certification["m6"].get("not_certified")
+    require(
+        isinstance(noncertified, list)
+        and len(noncertified) == 11
+        and all(
+            isinstance(item, dict)
+            and set(item) == {"detail", "margin"}
+            and isinstance(item["detail"], str)
+            and item["detail"].strip()
+            and isinstance(item["margin"], str)
+            and item["margin"].strip()
+            for item in noncertified
+        )
+        and len({item["margin"] for item in noncertified}) == 11,
+        "certification context must retain eleven non-certified margins",
+    )
+    honest_gaps = context["honest_gaps"]
+    require(
+        isinstance(honest_gaps, list)
+        and len(honest_gaps) == 8
+        and all(is_one_sentence(item) for item in honest_gaps),
+        "honest-gaps migration context has drifted",
+    )
+    partition = context["reported_not_verified_partition"]
+    require(
+        isinstance(partition, dict)
+        and set(partition) == {"reason", "row_count"}
+        and isinstance(partition["reason"], str)
+        and partition["reason"].strip()
+        and partition["row_count"]
+        == sum(
+            entry["verification_class"] == "reported_not_verified"
+            for entry in registry["entries"]
+        ),
+        "Mermin partition metadata has drifted",
+    )
+    wish = context["wish_financing_stub"]
+    require(
+        isinstance(wish, dict)
+        and set(wish)
+        == {
+            "concept_mismatch",
+            "our",
+            "published",
+            "quantity",
+            "source_needed",
+            "status",
+        }
+        and wish["published"]["employee_rate_percent"] == 0.3
+        and wish["published"]["employer_rate_percent"] == 0.3
+        and wish["published"]["combined_wage_rate_percent"] == 0.6
+        and wish["published"]["self_employment_rate_percent"] == 0.6,
+        "WISH financing stub has drifted",
+    )
+
+
 def validate_registry(registry: dict[str, Any]) -> None:
     """Validate exact registry shape, enums, pins, and synchronized counts."""
 
     require(set(registry) == REGISTRY_KEYS, "registry keys have drifted")
     require(
-        registry["schema_version"] == "standing_benchmark_registry.v1",
+        registry["schema_version"] == "standing_benchmark_registry.v2",
         "unsupported benchmark registry schema",
     )
     require(
@@ -358,6 +511,7 @@ def validate_registry(registry: dict[str, Any]) -> None:
         in registry["tiers"]["model_triangulation"]["gap_law"],
         "model-triangulation gaps must remain nonnormative",
     )
+    validate_migration_context(registry["migration_context"], registry)
 
     entries = registry["entries"]
     require(isinstance(entries, list) and entries, "registry needs entries")
@@ -455,6 +609,66 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
         set(entry["comparison_scope"]) <= set(COMPARISON_SCOPES),
         f"invalid comparison scope: {row_id}",
     )
+    legacy_scope = entry["legacy_comparison_scope"]
+    require(
+        isinstance(legacy_scope, list)
+        and legacy_scope
+        and len(legacy_scope) == len(set(legacy_scope))
+        and set(legacy_scope) <= set(LEGACY_COMPARISON_SCOPES),
+        f"invalid legacy comparison scope: {row_id}",
+    )
+    normalized_legacy_scope = []
+    for scope in legacy_scope:
+        if scope in {"distributional_incidence", "distributional_share"}:
+            continue
+        normalized = "trajectory" if scope == "age_trajectory" else scope
+        if normalized not in normalized_legacy_scope:
+            normalized_legacy_scope.append(normalized)
+    require(
+        normalized_legacy_scope == entry["comparison_scope"],
+        f"legacy and normalized comparison scopes disagree: {row_id}",
+    )
+
+    published_metadata = entry["published_metadata"]
+    require(
+        isinstance(published_metadata, dict)
+        and set(published_metadata)
+        <= {
+            "underlying_published_values_withheld_from_comparison",
+            "legislative_status",
+            "companion_parameters",
+        },
+        f"invalid published metadata: {row_id}",
+    )
+    if row_id == "cbo.taxable_payroll.trajectory_2015_100":
+        require(
+            set(published_metadata)
+            == {"underlying_published_values_withheld_from_comparison"},
+            f"missing CBO withheld-values safeguard: {row_id}",
+        )
+    elif row_id == "wish.hr4289.employee_rate.share_of_payroll":
+        require(
+            set(published_metadata) == {"companion_parameters", "legislative_status"},
+            f"missing WISH published metadata: {row_id}",
+        )
+        companion = published_metadata["companion_parameters"]
+        require(
+            companion
+            == {
+                "combined_employee_employer_rate_percent": 0.6,
+                "combined_rate_print_status": (
+                    "derived as 0.3 + 0.3; not separately printed"
+                ),
+                "self_employment_rate_percent": 0.6,
+                "separate_employer_rate_percent": 0.3,
+            },
+            f"WISH companion parameters have drifted: {row_id}",
+        )
+    else:
+        require(
+            not published_metadata,
+            f"unexpected row-specific published metadata: {row_id}",
+        )
 
     our_side = entry["our_side_artifact"]
     require(
@@ -732,6 +946,23 @@ def validate_append_mostly_registry(
 ) -> None:
     """Enforce row order and revision notes across registry generations."""
 
+    if (
+        previous.get("schema_version") == "standing_benchmark_registry.v1"
+        and current.get("schema_version") == "standing_benchmark_registry.v2"
+    ):
+        validate_registry(current)
+        legacy_projection = deepcopy(current)
+        legacy_projection.pop("migration_context")
+        legacy_projection["schema_version"] = "standing_benchmark_registry.v1"
+        for entry in legacy_projection["entries"]:
+            entry.pop("legacy_comparison_scope")
+            entry.pop("published_metadata")
+        require(
+            legacy_projection == previous,
+            "v1-to-v2 migration changed pre-existing registry fields",
+        )
+        return
+
     validate_registry(previous)
     validate_registry(current)
     for key in IMMUTABLE_REGISTRY_KEYS:
@@ -964,13 +1195,115 @@ def validate_history_against_registry(
             )
 
 
+def reconstruct_legacy_matrix(
+    registry: dict[str, Any], seed_records: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """Reconstruct the merged #352 matrix from standing-harness artifacts."""
+
+    validate_registry(registry)
+    require(
+        len(seed_records) == registry["row_count"],
+        "legacy reconstruction needs one seed record per registry row",
+    )
+    seed_by_id = {record["row_id"]: record for record in seed_records}
+    require(
+        len(seed_by_id) == len(seed_records),
+        "legacy reconstruction received duplicate seed rows",
+    )
+
+    reconstructed_rows = []
+    for entry in registry["entries"]:
+        row_id = entry["row_id"]
+        require(row_id in seed_by_id, f"legacy seed row is missing: {row_id}")
+        record = seed_by_id[row_id]
+        our = {
+            "label_state": deepcopy(record["label_state"]),
+            "source": deepcopy(entry["our_side_artifact"]["artifact_pointer"]),
+            "unit": record["our"]["unit"],
+            "value": deepcopy(record["our"]["value"]),
+        }
+        formula = entry["our_side_artifact"].get("formula")
+        if formula is not None:
+            our["formula"] = formula
+        for key in ("comparison_note", "provenance_status"):
+            if key in entry["our_side_artifact"]:
+                our[key] = entry["our_side_artifact"][key]
+
+        published = {
+            "source_locators": deepcopy(entry["source_pin"]["exact_locators"]),
+            "unit": record["published"]["unit"],
+            "value": deepcopy(record["published"]["value"]),
+        }
+        if entry["published_formula"] is not None:
+            published["formula"] = entry["published_formula"]
+        provenance = entry["source_pin"]["reported_value_provenance"]
+        if provenance is not None:
+            published["provenance"] = deepcopy(provenance)
+        published.update(deepcopy(entry["published_metadata"]))
+
+        reconstructed_rows.append(
+            {
+                "comparison_scope": deepcopy(entry["legacy_comparison_scope"]),
+                "concept_mismatch": deepcopy(entry["concept_mismatch"]),
+                "deviation": deepcopy(record["deviation"]),
+                "evidential_status": entry["evidential_status"],
+                "external_model": entry["external_reference"],
+                "our": our,
+                "published": published,
+                "quantity": entry["quantity"],
+                "row_id": row_id,
+                "verification_class": entry["verification_class"],
+            }
+        )
+
+    verified = [
+        row
+        for row in reconstructed_rows
+        if row["verification_class"] == "verified"
+    ]
+    reported = [
+        row
+        for row in reconstructed_rows
+        if row["verification_class"] == "reported_not_verified"
+    ]
+    context = registry["migration_context"]
+    source = context["source_matrix"]
+    partition = context["reported_not_verified_partition"]
+    return {
+        "available_series_inventory": deepcopy(
+            context["available_series_inventory"]
+        ),
+        "blocked_comparisons": deepcopy(registry["deferred_comparisons"]),
+        "canonicalization": source["canonicalization"],
+        "certification_context": deepcopy(context["certification_context"]),
+        "external_capture_review": deepcopy(registry["external_capture_review"]),
+        "honest_gaps": deepcopy(context["honest_gaps"]),
+        "honesty_frame": deepcopy(registry["honesty_frame"]),
+        "inputs": deepcopy(registry["inputs"]),
+        "purpose": source["purpose"],
+        "reported_not_verified": {
+            "reason": partition["reason"],
+            "row_count": partition["row_count"],
+            "rows": reported,
+        },
+        "row_count": len(verified),
+        "rows": verified,
+        "schema_version": source["schema_version"],
+        "total_row_count": len(reconstructed_rows),
+        "wish_financing_stub": deepcopy(context["wish_financing_stub"]),
+    }
+
+
 def validate_append_only_history(
     previous_raw: bytes, current_raw: bytes
 ) -> None:
     """Reject every rewrite, reorder, or truncation of committed history."""
 
+    if current_raw.startswith(previous_raw):
+        return
+    migration = (sha256_bytes(previous_raw), sha256_bytes(current_raw))
     require(
-        current_raw.startswith(previous_raw),
+        migration in HISTORY_SEED_MIGRATIONS,
         "history is append-only; prior committed bytes must remain a prefix",
     )
 

@@ -18,6 +18,9 @@ BENCHMARKS = ROOT / "benchmarks"
 REGISTRY_PATH = BENCHMARKS / "registry.json"
 HISTORY_PATH = BENCHMARKS / "history.jsonl"
 WALL_PATH = BENCHMARKS / "wall.md"
+MERGED_MATRIX_SHA256 = (
+    "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
+)
 
 # The explicit runs path also assigns this module to the artifact test tier.
 SEED_RUN_PATH = ROOT / "runs" / "first_estimates_v1.json"
@@ -25,13 +28,13 @@ SEED_RUN_SHA256 = (
     "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
 )
 REGISTRY_SHA256 = (
-    "05da7dbd3e8c247eb4cec2c321ebbf9b934f08576d96548b924a30e68d062977"
+    "5aa8ffb7f02527eb23e5948a32d6ffeeac03f941d733c47c55cf1aeabf1bfd89"
 )
 HISTORY_SEED_PREFIX_SHA256 = (
-    "40ed82ee5ad01b6b36364de2310d45757a8a7dbb5c8f3274e83c46b7f8d514e4"
+    "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954"
 )
 CURRENT_HISTORY_SHA256 = (
-    "40ed82ee5ad01b6b36364de2310d45757a8a7dbb5c8f3274e83c46b7f8d514e4"
+    "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954"
 )
 WALL_SHA256 = (
     "67d150694c9d0188477f335f248917ca82a6a1ea64235e342cc116f82d387449"
@@ -194,6 +197,47 @@ def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
     assert Counter(entry["tier"] for entry in registry["entries"]) == (
         TIER_COUNTS
     )
+
+
+def test__benchmark_migration__round_trips_merged_matrix_losslessly():
+    schema = load_schema()
+    registry, _ = schema.load_registry()
+    history, _ = schema.load_history()
+    reconstructed = schema.reconstruct_legacy_matrix(
+        registry, history[:SEED_ROW_COUNT]
+    )
+    assert (
+        hashlib.sha256(schema.canonical_json_bytes(reconstructed)).hexdigest()
+        == MERGED_MATRIX_SHA256
+    )
+
+    entries = {entry["row_id"]: entry for entry in registry["entries"]}
+    assert (
+        entries["cbo.taxable_payroll.trajectory_2015_100"][
+            "published_metadata"
+        ]["underlying_published_values_withheld_from_comparison"]
+        == "Dollar levels are retained only as frozen extraction inputs to "
+        "calculate the allowed index; they are not reported as a comparison."
+    )
+    wish_metadata = entries[
+        "wish.hr4289.employee_rate.share_of_payroll"
+    ]["published_metadata"]
+    assert wish_metadata["legislative_status"] == (
+        "introduced and referred; not enacted"
+    )
+    assert wish_metadata["companion_parameters"] == {
+        "combined_employee_employer_rate_percent": 0.6,
+        "combined_rate_print_status": (
+            "derived as 0.3 + 0.3; not separately printed"
+        ),
+        "self_employment_rate_percent": 0.6,
+        "separate_employer_rate_percent": 0.3,
+    }
+    assert len(
+        registry["migration_context"]["certification_context"]["m6"][
+            "not_certified"
+        ]
+    ) == 11
     assert Counter(entry["gap_class"] for entry in registry["entries"]) == {
         key: value for key, value in GAP_COUNTS.items() if value
     }
@@ -378,6 +422,7 @@ def test__benchmark_registry_and_history__are_append_only_across_commits():
     appended = copy.deepcopy(registry)
     new_entry = copy.deepcopy(appended["entries"][-1])
     new_entry["row_id"] = "wish.future_statutory_parameter"
+    new_entry["published_metadata"] = {}
     new_entry["spec_revisions"] = []
     appended["entries"].append(new_entry)
     appended["row_count"] += 1

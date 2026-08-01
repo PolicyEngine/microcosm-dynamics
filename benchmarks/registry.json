@@ -211,6 +211,10 @@
       "gap_class": "label_mismatch",
       "gap_closure_condition": "Closes when ledger entry 14's corrected covered-earnings label activates.",
       "gap_note": "Our legacy-labeled capped labor-income proxy and positive-proxy-earner denominator are not SSA employer-reported taxable earnings and workers.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/2/annual_rows",
@@ -221,6 +225,7 @@
         "unit": "current dollars per annual worker (ratio, not a dollar total)"
       },
       "published_formula": "official(\"oasdi_reported_taxable_earnings\",y)/official(\"oasdi_workers_with_taxable_earnings\",y)",
+      "published_metadata": {},
       "published_unit": "current dollars per annual worker (ratio, not a dollar total)",
       "quantity": "Reported taxable earnings per worker",
       "row_id": "ssa.reported_taxable_earnings_per_worker",
@@ -315,6 +320,10 @@
       "gap_class": "label_mismatch",
       "gap_closure_condition": "Closes when ledger entry 14's corrected covered-earnings label activates.",
       "gap_note": "Our legacy-labeled capped proxy and positive-proxy earners omit Trustees adjusted-payroll and covered-worker accounting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/3/annual_rows",
@@ -325,6 +334,7 @@
         "unit": "current dollars per annual covered worker (ratio, not a dollar total)"
       },
       "published_formula": "official(\"oasdi_adjusted_taxable_payroll\",y)/official(\"oasdi_covered_workers\",y)",
+      "published_metadata": {},
       "published_unit": "current dollars per annual covered worker (ratio, not a dollar total)",
       "quantity": "Adjusted taxable payroll per covered worker",
       "row_id": "ssa.adjusted_taxable_payroll_per_covered_worker",
@@ -416,6 +426,10 @@
       "gap_class": "label_mismatch",
       "gap_closure_condition": "Closes when ledger entry 14's corrected covered-earnings label activates.",
       "gap_note": "Our legacy-labeled 12.4-percent arithmetic uses the proxy payroll and earner frame rather than SSA taxable-earnings and gross-contribution accounting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/4/annual_rows",
@@ -426,6 +440,7 @@
         "unit": "current dollars per annual worker (ratio, not a dollar total)"
       },
       "published_formula": "official(\"oasdi_gross_contributions\",y)/official(\"oasdi_workers_with_taxable_earnings\",y)",
+      "published_metadata": {},
       "published_unit": "current dollars per annual worker (ratio, not a dollar total)",
       "quantity": "Gross OASDI contributions per worker",
       "row_id": "ssa.gross_contributions_per_worker",
@@ -521,6 +536,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our earnings-year rate arithmetic differs from trust-fund cash receipts with estimated deposits and later adjustments.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/5/annual_rows",
@@ -531,6 +550,7 @@
         "unit": "current dollars per annual covered worker (ratio, not a dollar total)"
       },
       "published_formula": "official(\"oasdi_net_payroll_tax_contributions\",y)/official(\"oasdi_covered_workers\",y)",
+      "published_metadata": {},
       "published_unit": "current dollars per annual covered worker (ratio, not a dollar total)",
       "quantity": "Net payroll-tax contributions per covered worker",
       "row_id": "ssa.net_payroll_tax_contributions_per_covered_worker",
@@ -623,6 +643,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our mechanical annual-presence and opening-backfill stock is not SSA's December current-payment stock, and the worker frames differ.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/6/annual_rows",
@@ -633,6 +657,7 @@
         "unit": "annualized-presence beneficiaries per annual worker"
       },
       "published_formula": "official(\"retired_worker_december_current_payment_stock\",y)/official(\"oasdi_workers_with_taxable_earnings\",y)",
+      "published_metadata": {},
       "published_unit": "December retired-worker current-payment stock per worker with OASDI taxable earnings during the calendar year.",
       "quantity": "Retired-worker beneficiaries per worker",
       "row_id": "ssa.retired_worker_beneficiaries_per_worker",
@@ -724,6 +749,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our mechanical claim-age crossings are not administratively effectuated awards, and the worker frames differ.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/7/annual_rows",
@@ -734,6 +763,7 @@
         "unit": "mechanical claim stamps per annual worker"
       },
       "published_formula": "official(\"retired_worker_awards\",y)/official(\"oasdi_workers_with_taxable_earnings\",y)",
+      "published_metadata": {},
       "published_unit": "Administratively effectuated retired-worker awards per worker with OASDI taxable earnings during the calendar year.",
       "quantity": "Retired-worker awards per worker",
       "row_id": "ssa.retired_worker_awards_per_worker",
@@ -831,6 +861,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our annualized statutory own-record amounts and opening backfill are not allocated outlays, and proxy earnings are not reported taxable earnings.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/results/comparison_results/8/annual_rows",
@@ -841,6 +875,7 @@
         "unit": "benefit-flow share of annual taxable earnings"
       },
       "published_formula": "official(\"retired_worker_benefits_paid_estimated_allocation\",y)/official(\"oasdi_reported_taxable_earnings\",y)",
+      "published_metadata": {},
       "published_unit": "benefit-flow share of annual taxable earnings",
       "quantity": "Retired-worker benefits per reported taxable earnings",
       "row_id": "ssa.retired_worker_benefits_per_reported_taxable_earnings",
@@ -932,6 +967,9 @@
       "gap_class": "frame_no_alignment",
       "gap_closure_condition": "Closes when a pre-registered, independently constructed bridge aligns the two population frames.",
       "gap_note": "A closed, unaligned PSID proxy-payroll path cannot be population-aligned to CBO's national actual-data taxable-payroll path.",
+      "legacy_comparison_scope": [
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/tables/revenue/per_draw",
@@ -942,6 +980,9 @@
         "unit": "index, 2015 = 100 within each draw"
       },
       "published_formula": null,
+      "published_metadata": {
+        "underlying_published_values_withheld_from_comparison": "Dollar levels are retained only as frozen extraction inputs to calculate the allowed index; they are not reported as a comparison."
+      },
       "published_unit": "index, 2015 = 100",
       "quantity": "Taxable-payroll trajectory normalized to 2015",
       "row_id": "cbo.taxable_payroll.trajectory_2015_100",
@@ -1002,6 +1043,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our mechanical 12.4-percent contributions omit CBO's income tax on benefits and use an unaligned proxy-payroll denominator.",
+      "legacy_comparison_scope": [
+        "share",
+        "trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/tables/revenue/per_draw",
@@ -1012,6 +1057,7 @@
         "unit": "percent of frame-relative proxy taxable payroll"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of national taxable payroll",
       "quantity": "Social Security tax revenues as a share of taxable payroll",
       "row_id": "cbo.tax_revenue.share_of_taxable_payroll",
@@ -1074,6 +1120,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/0/our_share_pct",
@@ -1085,6 +1135,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: married, male, lose_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.married.male.lose_ge_5",
@@ -1150,6 +1201,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/1/our_share_pct",
@@ -1161,6 +1216,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: married, male, gain_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.married.male.gain_ge_5",
@@ -1226,6 +1282,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/2/our_share_pct",
@@ -1237,6 +1297,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: married, female, lose_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.married.female.lose_ge_5",
@@ -1302,6 +1363,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/3/our_share_pct",
@@ -1313,6 +1378,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: married, female, gain_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.married.female.gain_ge_5",
@@ -1378,6 +1444,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/4/our_share_pct",
@@ -1389,6 +1459,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: married, female, gain_ge_20",
       "row_id": "dynasim.favreault_steuerle.package1b.married.female.gain_ge_20",
@@ -1453,6 +1524,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/5/our_share_pct",
@@ -1464,6 +1539,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: divorced, male, lose_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.divorced.male.lose_ge_5",
@@ -1529,6 +1605,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/6/our_share_pct",
@@ -1540,6 +1620,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: divorced, male, gain_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.divorced.male.gain_ge_5",
@@ -1605,6 +1686,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/7/our_share_pct",
@@ -1616,6 +1701,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: divorced, female, gain_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.divorced.female.gain_ge_5",
@@ -1681,6 +1767,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/8/our_share_pct",
@@ -1692,6 +1782,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: widowed, male, lose_ge_20",
       "row_id": "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_20",
@@ -1756,6 +1847,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/9/our_share_pct",
@@ -1767,6 +1862,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: widowed, male, lose_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.widowed.male.lose_ge_5",
@@ -1832,6 +1928,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/10/our_share_pct",
@@ -1843,6 +1943,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: widowed, female, lose_ge_20",
       "row_id": "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_20",
@@ -1907,6 +2008,10 @@
       "gap_class": "concept_mismatch",
       "gap_closure_condition": "Closes when both sides implement the same registered population, timing, benefit, earnings, and accounting concepts.",
       "gap_note": "Our observed-era retirement-only age-62-marital-status subgroup is not DYNASIM's 2049 OASI-and-DI current-status population, and the spouse histories, scalar, and timing differ.",
+      "legacy_comparison_scope": [
+        "share",
+        "distributional_incidence"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/package_1b_primary/magnitude_check/cells/11/our_share_pct",
@@ -1918,6 +2023,7 @@
         "unit": "percent of scored model retirement beneficiaries within the row's sex-by-age-62-marital-status cell"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of adult current-law scheduled OASDI beneficiaries within the corresponding 2049 sex-by-marital-status group",
       "quantity": "Package 1b winner/loser share: widowed, female, lose_ge_5",
       "row_id": "dynasim.favreault_steuerle.package1b.widowed.female.lose_ge_5",
@@ -1980,6 +2086,9 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator is not Mermin's projected 2050 retired-worker population.",
+      "legacy_comparison_scope": [
+        "ratio"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/pi_scalars/generated_pooled_mean_pct/mean",
@@ -1991,6 +2100,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Price-indexed benefit as percent of scheduled, all retired workers ages 62-67",
       "row_id": "dynasim.mermin.price_indexing.all",
@@ -2060,6 +2170,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/0/generated_pooled/mean",
@@ -2071,6 +2185,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 1",
       "row_id": "dynasim.mermin.ppi.generated.q1",
@@ -2140,6 +2255,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/1/generated_pooled/mean",
@@ -2151,6 +2270,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 2",
       "row_id": "dynasim.mermin.ppi.generated.q2",
@@ -2220,6 +2340,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/2/generated_pooled/mean",
@@ -2231,6 +2355,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 3",
       "row_id": "dynasim.mermin.ppi.generated.q3",
@@ -2300,6 +2425,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/3/generated_pooled/mean",
@@ -2311,6 +2440,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 4",
       "row_id": "dynasim.mermin.ppi.generated.q4",
@@ -2380,6 +2510,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/4/generated_pooled/mean",
@@ -2391,6 +2525,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, generated individual-AIME quintile 5",
       "row_id": "dynasim.mermin.ppi.generated.q5",
@@ -2459,6 +2594,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/0/shared_ppi_pct",
@@ -2470,6 +2609,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 1",
       "row_id": "dynasim.mermin.ppi.real_shared.q1",
@@ -2538,6 +2678,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/1/shared_ppi_pct",
@@ -2549,6 +2693,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 2",
       "row_id": "dynasim.mermin.ppi.real_shared.q2",
@@ -2617,6 +2762,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/2/shared_ppi_pct",
@@ -2628,6 +2777,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 3",
       "row_id": "dynasim.mermin.ppi.real_shared.q3",
@@ -2696,6 +2846,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/3/shared_ppi_pct",
@@ -2707,6 +2861,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 4",
       "row_id": "dynasim.mermin.ppi.real_shared.q4",
@@ -2775,6 +2930,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/three_way_comparison/ppi_by_quintile/4/shared_ppi_pct",
@@ -2786,6 +2945,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Progressive-price-indexed benefit as percent of scheduled, real-PSID shared-lifetime-income quintile 5",
       "row_id": "dynasim.mermin.ppi.real_shared.q5",
@@ -2855,6 +3015,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/nra_raise_to_70/table/by_quintile/0/our_pct_of_scheduled",
@@ -2866,6 +3030,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 1",
       "row_id": "dynasim.mermin.nra70.q1",
@@ -2935,6 +3100,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/nra_raise_to_70/table/by_quintile/1/our_pct_of_scheduled",
@@ -2946,6 +3115,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 2",
       "row_id": "dynasim.mermin.nra70.q2",
@@ -3015,6 +3185,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/nra_raise_to_70/table/by_quintile/2/our_pct_of_scheduled",
@@ -3026,6 +3200,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 3",
       "row_id": "dynasim.mermin.nra70.q3",
@@ -3095,6 +3270,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/nra_raise_to_70/table/by_quintile/3/our_pct_of_scheduled",
@@ -3106,6 +3285,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 4",
       "row_id": "dynasim.mermin.nra70.q4",
@@ -3175,6 +3355,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "distributional_share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/nra_raise_to_70/table/by_quintile/4/our_pct_of_scheduled",
@@ -3186,6 +3370,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "NRA-to-70 benefit as percent of scheduled, individual-AIME quintile 5",
       "row_id": "dynasim.mermin.nra70.q5",
@@ -3255,6 +3440,9 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
+      "legacy_comparison_scope": [
+        "ratio"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/nra_raise_to_70/table/overall/our_pct_of_scheduled",
@@ -3266,6 +3454,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "NRA-to-70 benefit as percent of scheduled, all scored retirees",
       "row_id": "dynasim.mermin.nra70.all",
@@ -3335,6 +3524,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our claim-age COLA start and person weighting differ from Mermin's age-62 start and dollar-weighted projection.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "age_trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/cola_minus_0_4pp/table/0/our_pct_of_scheduled",
@@ -3346,6 +3539,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Benefit under COLA minus 0.4 percentage points as percent of scheduled, ages 62-67",
       "row_id": "dynasim.mermin.cola_minus_0_4pp.age_62_67",
@@ -3416,6 +3610,10 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our claim-age COLA start and person weighting differ from Mermin's age-62 start and dollar-weighted projection.",
+      "legacy_comparison_scope": [
+        "ratio",
+        "age_trajectory"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/cola_minus_0_4pp/table/1/our_pct_of_scheduled",
@@ -3427,6 +3625,7 @@
         "unit": "percent of scheduled benefit"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "percent of scheduled benefit",
       "quantity": "Benefit under COLA minus 0.4 percentage points as percent of scheduled, ages 80-85",
       "row_id": "dynasim.mermin.cola_minus_0_4pp.age_80_85",
@@ -3495,6 +3694,9 @@
       "gap_class": "preliminary_source",
       "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our per-capita benefit-change order is only an ordinal analogue of 75-year actuarial-payroll effects.",
+      "legacy_comparison_scope": [
+        "ordering"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/tests/T2_mermin_kendall_tau/our_order_by_reduction",
@@ -3506,6 +3708,7 @@
         "unit": "descending ordinal benefit-reduction magnitude"
       },
       "published_formula": null,
+      "published_metadata": {},
       "published_unit": "descending ordinal 75-year deficit reduction",
       "quantity": "Ordinal benefit-reduction ordering across four reforms",
       "row_id": "dynasim.mermin.four_reform_cost_ordering",
@@ -3577,6 +3780,9 @@
       "gap_class": "module_missing",
       "gap_closure_condition": "Closes when a certified artifact supplies the missing modeled module and comparable output.",
       "gap_note": "The scalar is copied by construction, while the model lacks the national IRC section 3121(a) base, combined financing, actuarial trajectory, and LTSS benefit module.",
+      "legacy_comparison_scope": [
+        "share"
+      ],
       "our_side_artifact": {
         "artifact_pointer": {
           "json_pointer": "/tables/revenue/per_draw",
@@ -3589,6 +3795,15 @@
         "unit": "percent of frame-relative proxy taxable payroll"
       },
       "published_formula": null,
+      "published_metadata": {
+        "companion_parameters": {
+          "combined_employee_employer_rate_percent": 0.6,
+          "combined_rate_print_status": "derived as 0.3 + 0.3; not separately printed",
+          "self_employment_rate_percent": 0.6,
+          "separate_employer_rate_percent": 0.3
+        },
+        "legislative_status": "introduced and referred; not enacted"
+      },
       "published_unit": "percent of IRC \u00a73121(a) wages that the introduced bill specifies after 2021; would have applied only if enacted",
       "quantity": "Single-side WISH employee payroll-tax rate",
       "row_id": "wish.hr4289.employee_rate.share_of_payroll",
@@ -3868,10 +4083,743 @@
       "sha256": "58da13e0409e81b92dc656a082e86a5176ebaceffad663ec531c8e92cc0825dc"
     }
   ],
+  "migration_context": {
+    "available_series_inventory": {
+      "counts": {
+        "aggregate_metric_count": 66,
+        "aggregate_metrics": [
+          "birth_source__derived_projection_age__unweighted",
+          "birth_source__derived_projection_age__weighted",
+          "birth_source__exact_marriage__unweighted",
+          "birth_source__exact_marriage__weighted",
+          "birth_source__inferred_period_age__unweighted",
+          "birth_source__inferred_period_age__weighted",
+          "birth_source__synthetic_native__unweighted",
+          "birth_source__synthetic_native__weighted",
+          "birth_source__unresolved__unweighted",
+          "birth_source__unresolved__weighted",
+          "entrant__explicit_2016_2018_row_entrant__unweighted",
+          "entrant__explicit_2016_2018_row_entrant__weighted",
+          "included_birth_source__derived_projection_age__unweighted",
+          "included_birth_source__derived_projection_age__weighted",
+          "included_birth_source__exact_marriage__unweighted",
+          "included_birth_source__exact_marriage__weighted",
+          "included_birth_source__inferred_period_age__unweighted",
+          "included_birth_source__inferred_period_age__weighted",
+          "included_birth_source__synthetic_native__unweighted",
+          "included_birth_source__synthetic_native__weighted",
+          "included_birth_source__unresolved__unweighted",
+          "included_birth_source__unresolved__weighted",
+          "included_origin__modeled_award__unweighted",
+          "included_origin__modeled_award__weighted",
+          "included_origin__opening_backfill__unweighted",
+          "included_origin__opening_backfill__weighted",
+          "inclusion__drawn_never_claimed__unweighted",
+          "inclusion__drawn_never_claimed__weighted",
+          "inclusion__excluded_birth_year_unresolved__unweighted",
+          "inclusion__excluded_birth_year_unresolved__weighted",
+          "inclusion__excluded_chronology_inconsistent__unweighted",
+          "inclusion__excluded_chronology_inconsistent__weighted",
+          "inclusion__excluded_di_conversion__unweighted",
+          "inclusion__excluded_di_conversion__weighted",
+          "inclusion__excluded_di_unknown__unweighted",
+          "inclusion__excluded_di_unknown__weighted",
+          "inclusion__excluded_domain_incomplete__unweighted",
+          "inclusion__excluded_domain_incomplete__weighted",
+          "inclusion__excluded_empty_span__unweighted",
+          "inclusion__excluded_empty_span__weighted",
+          "inclusion__excluded_low_coverage__unweighted",
+          "inclusion__excluded_low_coverage__weighted",
+          "inclusion__excluded_pre1979_eligibility__unweighted",
+          "inclusion__excluded_pre1979_eligibility__weighted",
+          "inclusion__included__unweighted",
+          "inclusion__included__weighted",
+          "inclusion__never_drawn__unweighted",
+          "inclusion__never_drawn__weighted",
+          "inclusion__nonclaimant__unweighted",
+          "inclusion__nonclaimant__weighted",
+          "inclusion__origin_modeled_award__unweighted",
+          "inclusion__origin_modeled_award__weighted",
+          "inclusion__origin_opening_backfill__unweighted",
+          "inclusion__origin_opening_backfill__weighted",
+          "opening_stock_snap__included_opening_backfill__unweighted",
+          "opening_stock_snap__included_opening_backfill__weighted",
+          "opening_stock_snap__lower_endpoint__denominator_weight",
+          "opening_stock_snap__lower_endpoint__numerator_weight",
+          "opening_stock_snap__lower_endpoint__unweighted",
+          "opening_stock_snap__lower_endpoint__weighted",
+          "opening_stock_snap__lower_endpoint__weighted_share",
+          "opening_stock_snap__upper_endpoint__denominator_weight",
+          "opening_stock_snap__upper_endpoint__numerator_weight",
+          "opening_stock_snap__upper_endpoint__unweighted",
+          "opening_stock_snap__upper_endpoint__weighted",
+          "opening_stock_snap__upper_endpoint__weighted_share"
+        ],
+        "per_draw_row_count": 20
+      },
+      "diagnostics": {
+        "additional_objects": [
+          "birth_timing_sensitivity",
+          "common_support_agreement",
+          "context_ratio",
+          "payment_year_convention",
+          "benefit_measure",
+          "revenue_population_basis"
+        ],
+        "aggregate_metric_count": 49,
+        "aggregate_metrics": [
+          "benefit__award_formula_computation_count",
+          "benefit__career_boundary_2014_share_mean_unweighted",
+          "benefit__career_boundary_2014_share_mean_weighted",
+          "benefit__career_boundary_2014_years_unweighted",
+          "benefit__career_gap_imputed_share_mean_unweighted",
+          "benefit__career_gap_imputed_share_mean_weighted",
+          "benefit__career_gap_imputed_years_unweighted",
+          "benefit__career_observed_share_mean_unweighted",
+          "benefit__career_observed_share_mean_weighted",
+          "benefit__career_observed_years_unweighted",
+          "benefit__career_projected_share_mean_unweighted",
+          "benefit__career_projected_share_mean_weighted",
+          "benefit__career_projected_years_unweighted",
+          "benefit__career_unknown_share_mean_unweighted",
+          "benefit__career_unknown_share_mean_weighted",
+          "benefit__career_unknown_years_unweighted",
+          "benefit__included_claimants_unweighted",
+          "benefit__included_claimants_weighted",
+          "benefit__modeled_award_claimants_unweighted",
+          "benefit__modeled_award_claimants_weighted",
+          "benefit__odd_year_carried_share_mean_unweighted",
+          "benefit__odd_year_carried_share_mean_weighted",
+          "benefit__opening_backfill_claimants_unweighted",
+          "benefit__opening_backfill_claimants_weighted",
+          "benefit__positive_post_claim_earnings_unweighted",
+          "benefit__positive_post_claim_earnings_weighted",
+          "benefit__post_claim_recomputation_count",
+          "benefit__realized_payment_person_years_unweighted",
+          "benefit__realized_payment_person_years_weighted",
+          "career__birth_year_inferred__unweighted",
+          "career__birth_year_inferred__weighted",
+          "career__coverage_ratio_mean_unweighted",
+          "career__coverage_ratio_mean_weighted",
+          "career__imputed_year_share_mean_unweighted",
+          "career__imputed_year_share_mean_weighted",
+          "career__top35_reaches_pre_1968__unweighted",
+          "career__top35_reaches_pre_1968__weighted",
+          "revenue__explicit_earnings_person_years_unweighted",
+          "revenue__explicit_earnings_person_years_weighted",
+          "revenue__odd_year_carry_share__combined_contributions",
+          "revenue__odd_year_carry_share__employee_contributions",
+          "revenue__odd_year_carry_share__employer_contributions",
+          "revenue__odd_year_carry_share__unweighted_covered_earner_count",
+          "revenue__odd_year_carry_share__unweighted_person_year_count",
+          "revenue__odd_year_carry_share__weighted_covered_earner_count",
+          "revenue__odd_year_carry_share__weighted_person_year_count",
+          "revenue__odd_year_carry_share__weighted_taxable_payroll",
+          "revenue__projection_rows_missing_earnings_unweighted",
+          "revenue__projection_rows_missing_earnings_weighted"
+        ],
+        "included_career_per_draw_row_count": 30362,
+        "per_draw_row_count": 20
+      },
+      "entry10_comparisons": {
+        "evaluated": [
+          "cmp_reported_taxable_earnings_per_worker",
+          "cmp_adjusted_taxable_payroll_per_covered_worker",
+          "cmp_gross_contributions_per_worker",
+          "cmp_net_payroll_tax_contributions_per_covered_worker",
+          "cmp_retired_worker_beneficiaries_per_worker",
+          "cmp_retired_worker_awards_per_worker",
+          "cmp_retired_worker_benefits_per_reported_taxable_earnings"
+        ],
+        "unavailable": [
+          {
+            "comparison_id": "cmp_award_average_at_award",
+            "reason": "oact_annual_award_average_not_registered_in_v1"
+          },
+          {
+            "comparison_id": "cmp_retired_worker_monthly_benefit_per_beneficiary",
+            "reason": "retired_worker_december_total_monthly_benefit_not_registered_in_vintage1"
+          }
+        ]
+      },
+      "projection": {
+        "draw_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ],
+        "end_year": 2022,
+        "object": "candidate-3 GATED_REALIZED reproduction panel, unsplit",
+        "root_seeds": [
+          5200,
+          5201,
+          5202,
+          5203,
+          5204,
+          5205,
+          5206,
+          5207,
+          5208,
+          5209,
+          5210,
+          5211,
+          5212,
+          5213,
+          5214,
+          5215,
+          5216,
+          5217,
+          5218,
+          5219
+        ],
+        "split": false,
+        "start_year": 2014
+      },
+      "source": {
+        "json_pointer": "/",
+        "path": "runs/first_estimates_v1.json",
+        "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+      },
+      "tables": {
+        "modeled_award_flow": {
+          "aggregate_metrics": [
+            "average_monthly_benefit_at_award",
+            "frame_annualized_benefit",
+            "unweighted_award_count",
+            "unweighted_beneficiary_count",
+            "weighted_award_count",
+            "weighted_beneficiary_count"
+          ],
+          "aggregate_row_count": 48,
+          "biennial_companion_row_count": 104,
+          "draw_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "json_pointer": "/tables/modeled_award_flow",
+          "labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "odd_year_carry_disclosure": "The engine draws even-year earnings and carries the prior even-year value into odd years (2015 repeats 2014, 2017 repeats 2016, and so on).",
+          "per_draw_fields": [
+            "draw_index",
+            "claim_origin",
+            "year",
+            "unweighted_award_count",
+            "weighted_award_count",
+            "average_monthly_benefit_at_award",
+            "unweighted_beneficiary_count",
+            "weighted_beneficiary_count",
+            "frame_annualized_benefit"
+          ],
+          "per_draw_row_count": 160,
+          "unit_label": "annualized statutory benefit, eligibility-PIA with COLA, no recomputation",
+          "years": [
+            2015,
+            2016,
+            2017,
+            2018,
+            2019,
+            2020,
+            2021,
+            2022
+          ]
+        },
+        "opening_stock": {
+          "aggregate_metrics": [
+            "average_monthly_benefit_at_award",
+            "frame_annualized_benefit",
+            "unweighted_award_count",
+            "unweighted_beneficiary_count",
+            "weighted_award_count",
+            "weighted_beneficiary_count"
+          ],
+          "aggregate_row_count": 48,
+          "biennial_companion_row_count": 104,
+          "draw_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "json_pointer": "/tables/opening_stock",
+          "labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "odd_year_carry_disclosure": "The engine draws even-year earnings and carries the prior even-year value into odd years (2015 repeats 2014, 2017 repeats 2016, and so on).",
+          "per_draw_fields": [
+            "draw_index",
+            "claim_origin",
+            "year",
+            "unweighted_award_count",
+            "weighted_award_count",
+            "average_monthly_benefit_at_award",
+            "unweighted_beneficiary_count",
+            "weighted_beneficiary_count",
+            "frame_annualized_benefit"
+          ],
+          "per_draw_row_count": 160,
+          "unit_label": "report-only imputed opening stock; annualized statutory benefit, eligibility-PIA with COLA, no recomputation",
+          "years": [
+            2015,
+            2016,
+            2017,
+            2018,
+            2019,
+            2020,
+            2021,
+            2022
+          ]
+        },
+        "revenue": {
+          "aggregate_metrics": [
+            "combined_contributions",
+            "employee_contributions",
+            "employer_contributions",
+            "unweighted_covered_earner_count",
+            "unweighted_person_year_count",
+            "weighted_covered_earner_count",
+            "weighted_person_year_count",
+            "weighted_taxable_payroll"
+          ],
+          "aggregate_row_count": 64,
+          "biennial_companion_row_count": 112,
+          "draw_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "json_pointer": "/tables/revenue",
+          "labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "odd_year_carry_disclosure": "The engine draws even-year earnings and carries the prior even-year value into odd years (2015 repeats 2014, 2017 repeats 2016, and so on).",
+          "per_draw_fields": [
+            "draw_index",
+            "year",
+            "unweighted_person_year_count",
+            "weighted_person_year_count",
+            "unweighted_covered_earner_count",
+            "weighted_covered_earner_count",
+            "weighted_taxable_payroll",
+            "employee_contributions",
+            "employer_contributions",
+            "combined_contributions",
+            "odd_year_carry_affected"
+          ],
+          "per_draw_row_count": 160,
+          "unit_label": "nominal frame-relative OASDI payroll contributions on the labor-income proxy",
+          "years": [
+            2015,
+            2016,
+            2017,
+            2018,
+            2019,
+            2020,
+            2021,
+            2022
+          ]
+        }
+      }
+    },
+    "certification_context": {
+      "entry8_first_estimates": {
+        "certifies_nothing": [
+          "This report does not certify forward production.",
+          "This report does not estimate national dollars.",
+          "This report does not claim that PSID labor income is OASDI-covered earnings.",
+          "This report does not claim administrative benefit-payment dollars.",
+          "This report creates no gate, floor, threshold, or verdict."
+        ],
+        "certifies_nothing_source": {
+          "json_pointer": "/certifies_nothing",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "configured_engine": {
+          "engine": {
+            "id": "m6_candidate3_engine_v1",
+            "sha256": "c9be28a28d6fcc3911723872386906af559f6d0e0d5c89a87f741a5b2c3eacd6"
+          },
+          "family": {
+            "id": "m6_candidate2_registry_v1",
+            "sha256": "734a5b04f347c5d4904bbc6d5ab9a1c2876272d35284eedd2f450518acf1cec5"
+          }
+        },
+        "creates_certification_or_verdict": false,
+        "source": {
+          "json_pointer": "/",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        }
+      },
+      "m6": {
+        "family_a_gated": true,
+        "family_b_gated": false,
+        "family_c_gated": false,
+        "n_seeds_pass": 4,
+        "not_certified": [
+          {
+            "detail": "Mortality drift is not certified. It remains report-only and is the first limitation named beside the PASS claim.",
+            "margin": "mortality_drift"
+          },
+          {
+            "detail": "Widowhood does not clear the admissible pooled surface and remains report-only.",
+            "margin": "widowhood"
+          },
+          {
+            "detail": "The 2020-2022 shock window is outside the engine model class and is partitioned out of every gated set.",
+            "margin": "shock_window_2020_2022"
+          },
+          {
+            "detail": "The gate covers the closed panel only; synthetic births, immigrant cohorts, and other open additions remain report-only.",
+            "margin": "entrants_open_panel"
+          },
+          {
+            "detail": "Lag-5 persistence exceeds the eight-year holdout span and is not certified.",
+            "margin": "autocorrelation_lag5"
+          },
+          {
+            "detail": "The gate covers the temporal holdout only, not extrapolation through 2100.",
+            "margin": "forward_projection_2100_extrapolation"
+          },
+          {
+            "detail": "End-window marital and disability stock margins are report-only.",
+            "margin": "stock_margins"
+          },
+          {
+            "detail": "Only pooled working-age remarriage is gated; the 65+ tail remains report-only.",
+            "margin": "remarriage_above_pooled_working_age"
+          },
+          {
+            "detail": "Gated earnings use realized support and do not certify mortality's effect on the earnings composition through survivorship.",
+            "margin": "forward_earnings_survivorship"
+          },
+          {
+            "detail": "The gated surface structure was selected on the full window; the holdout is out of sample for fitted parameters, not structure.",
+            "margin": "spec_selection_in_sample"
+          },
+          {
+            "detail": "The forward earnings law is first certified, if at all, by M6; no gate-1 backward-law certificate transfers.",
+            "margin": "forward_earnings_law_not_gate1_certified"
+          }
+        ],
+        "seed_pass": {
+          "0": true,
+          "1": true,
+          "2": false,
+          "3": true,
+          "4": true
+        },
+        "source": {
+          "json_pointer": "/verdict",
+          "path": "runs/gate_m6_candidate3_v1.json",
+          "sha256": "caf254925f44b27c1bd1131336055e27fbc311daec00b0050b2f9293a74e82cf"
+        },
+        "status": "PASS",
+        "valid": true
+      },
+      "ppi_gate1_generator": {
+        "battery_seed_passes": 4,
+        "gate_1_pass": true,
+        "geometry_seed_passes": 5,
+        "source": {
+          "json_pointer": "/verdict",
+          "path": "runs/gate1_rank_knn_v5.json",
+          "sha256": "31f4ed77fc569004e740f94fd098600923e0ab246e4afebb56c3fca4a30f802d"
+        },
+        "warning": "PPI generated rows use this backward-law generator and are reported-not-gated module replications; M6 certification does not transfer."
+      }
+    },
+    "honest_gaps": [
+      "The committed model/comparison artifacts contain no comparable population-aligned or national-dollar comparison.",
+      "Certification here refers only to expressly gated M6 Family-A surfaces; no such certified series in the committed model/comparison artifacts extends beyond 2022.",
+      "The committed model/comparison artifacts contain no comparable trust-fund balance, GDP share, actuarial balance, or depletion-year series.",
+      "The committed model/comparison artifacts contain no comparable lifetime benefit/tax present value or lifetime-earnings denominator.",
+      "The committed model/comparison artifacts contain no comparable MINT or CBOLT distributional replacement-rate output.",
+      "The committed model/comparison artifacts contain no comparable spouse, survivor, auxiliary, or DI benefit output.",
+      "The committed model/comparison artifacts contain no comparable cohort/quintile/race/sex/poverty distribution for the published tables.",
+      "The committed model/comparison artifacts contain no comparable LTSS use, eligibility, spend-down, adequacy, program-cost, or financing-sufficiency model."
+    ],
+    "reported_not_verified_partition": {
+      "reason": "Mermin publisher-controlled bytes were not retrievable; values are retained from committed replication artifacts but are not accepted as verified external-source cells.",
+      "row_count": 20
+    },
+    "source_matrix": {
+      "canonicalization": "UTF-8, sorted keys, indent=2, allow_nan=false, one trailing newline",
+      "path_at_merge": "analysis/validation-matrix/matrix.json",
+      "purpose": "Frame-relative comparison of ratios, shares, trajectories, and orderings against published SSA, CBO, DYNASIM, and WISH statutory quantities; never national dollar levels",
+      "schema_version": "cross_model_validation_matrix.v2",
+      "sha256": "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
+    },
+    "wish_financing_stub": {
+      "concept_mismatch": {
+        "benefit_concept": "The current artifact has no LTSS eligibility, vesting, benefit, spend-down, adequacy, trust-fund, or program-cost model.",
+        "earnings_and_accounting": "Multiplying proxy payroll by 0.003 is one statutory wage-tax side only. The introduced bill separately specifies 0.3% for employers and 0.6% for self-employment; combined wage-side 0.6% is derived as 0.3% + 0.3%, not separately printed. This path is not total revenue or an actuarial solvency/sufficiency estimate.",
+        "frame": "Our base is the unaligned frame-relative proxy payroll; WISH actuarial work concerns a national covered-payroll base.",
+        "population": "The artifact is a closed 2015-2022 reproduction panel, not the covered workforce or beneficiary population used by WISH actuaries.",
+        "year_basis": "Our path ends in 2022 and is normalized to 2015; a WISH financing analysis uses a policy effective date and a long actuarial horizon."
+      },
+      "our": {
+        "absolute_revenue_levels_published": false,
+        "annual_relative_trajectory": [
+          {
+            "mean_index_2015_100": 100.0,
+            "sample_sd_across_paired_draw_indices": 0.0,
+            "year": 2015
+          },
+          {
+            "mean_index_2015_100": 105.19954413124128,
+            "sample_sd_across_paired_draw_indices": 0.5179529633277515,
+            "year": 2016
+          },
+          {
+            "mean_index_2015_100": 106.38679493306299,
+            "sample_sd_across_paired_draw_indices": 0.5435702703634464,
+            "year": 2017
+          },
+          {
+            "mean_index_2015_100": 108.28611796597059,
+            "sample_sd_across_paired_draw_indices": 0.8241003364258447,
+            "year": 2018
+          },
+          {
+            "mean_index_2015_100": 108.49525090128085,
+            "sample_sd_across_paired_draw_indices": 0.8733787909789367,
+            "year": 2019
+          },
+          {
+            "mean_index_2015_100": 110.21096741251336,
+            "sample_sd_across_paired_draw_indices": 0.6961706898450399,
+            "year": 2020
+          },
+          {
+            "mean_index_2015_100": 110.52068446857928,
+            "sample_sd_across_paired_draw_indices": 0.768069437095101,
+            "year": 2021
+          },
+          {
+            "mean_index_2015_100": 111.93996986329023,
+            "sample_sd_across_paired_draw_indices": 0.6977539477969879,
+            "year": 2022
+          }
+        ],
+        "formula": "0.003 * weighted_taxable_payroll; trajectory normalized within draw",
+        "label_state": {
+          "individual_administrative_truth_claim": false,
+          "matrix_display": "frame-relative proxy covered-earnings; no population alignment",
+          "population_alignment_claim": false,
+          "ratified_array_activation_asserted_by_this_matrix": false,
+          "ratified_array_locator": "docs/design/covered_earnings_correction.md \u00a716.7.1",
+          "ratified_fitting_free_exact_label_array": [
+            "frame-relative",
+            "modeled-covered-earnings",
+            "deterministic-uncalibrated"
+          ],
+          "source_artifact_embedded_labels": [
+            "frame-relative",
+            "pre-alignment",
+            "labor-income proxy"
+          ],
+          "source_artifact_label_note": "The entry-8 and entry-10 artifacts embed the legacy proxy array."
+        },
+        "odd_year_carry_aware_biennial_relative_trajectory": [
+          {
+            "component_years": [
+              2015,
+              2016
+            ],
+            "mean_index_2015_2016_100": 100.0,
+            "sample_sd_across_paired_draw_indices": 5.206111787466103e-15
+          },
+          {
+            "component_years": [
+              2017,
+              2018
+            ],
+            "mean_index_2015_2016_100": 104.61635292323223,
+            "sample_sd_across_paired_draw_indices": 0.4225125562529441
+          },
+          {
+            "component_years": [
+              2019,
+              2020
+            ],
+            "mean_index_2015_2016_100": 106.58251744705456,
+            "sample_sd_across_paired_draw_indices": 0.671527340288157
+          },
+          {
+            "component_years": [
+              2021,
+              2022
+            ],
+            "mean_index_2015_2016_100": 108.4125227842359,
+            "sample_sd_across_paired_draw_indices": 0.6545395552752078
+          }
+        ],
+        "share_of_modeled_combined_12_4_percent_contributions": 0.024193548387096774,
+        "share_of_proxy_payroll": 0.003,
+        "share_of_proxy_payroll_percent": 0.3,
+        "source": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "trajectory_interpretation": "A 0.003-times-proxy-payroll base index, not a policy-effective revenue forecast. The introduced bill specifies wages after 2021; if enacted, only 2022 would overlap the committed entry-8 artifact's calendar span."
+      },
+      "published": {
+        "actuarial_revenue_or_cost_trajectory": null,
+        "combined_wage_rate_derivation": "0.3% employee + 0.3% employer = 0.6%; derived arithmetic, not separately printed in the introduced bill",
+        "combined_wage_rate_percent": 0.6,
+        "effective_period": "the introduced bill specifies wages received/paid after 2021; this would have applied only if enacted",
+        "employee_rate_percent": 0.3,
+        "employer_rate_percent": 0.3,
+        "legislative_status": "introduced and referred; not enacted",
+        "self_employment_rate_percent": 0.6,
+        "source_locators": [
+          {
+            "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+            "page": {
+              "pdf": 16,
+              "printed": 16
+            },
+            "provision": "employee wage base: wages as defined in IRC \u00a73121(a)",
+            "publisher": "United States Congress",
+            "reviewed_external_capture": {
+              "filename": "BILLS-117hr4289ih.pdf",
+              "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+              "size_bytes": 269364,
+              "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+            },
+            "section": "\u00a75(a)(1)",
+            "table": "not applicable (statutory text)",
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          {
+            "derivation": "Combined wage-side 0.6% = 0.3% employee + 0.3% employer; derived arithmetic, not separately printed.",
+            "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+            "page": {
+              "pdf": 17,
+              "printed": 17
+            },
+            "provision": "introduced bill specifies employee 0.3% and separate employer 0.3% after 2021",
+            "publisher": "United States Congress",
+            "reviewed_external_capture": {
+              "filename": "BILLS-117hr4289ih.pdf",
+              "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+              "size_bytes": 269364,
+              "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+            },
+            "section": "\u00a75(a)(1)-(2)",
+            "table": "not applicable (statutory text)",
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          },
+          {
+            "document": "H.R. 4289 (117th Congress), Well-Being Insurance for Seniors to be at Home Act, introduced text (H.R. 4289 IH)",
+            "page": {
+              "pdf": 18,
+              "printed": 18
+            },
+            "provision": "introduced bill specifies self-employment 0.6%",
+            "publisher": "United States Congress",
+            "reviewed_external_capture": {
+              "filename": "BILLS-117hr4289ih.pdf",
+              "sha256": "b327b67932b0d4159b956039f1e695cb16330e3429b2b7a1a2e72685bf0641e1",
+              "size_bytes": 269364,
+              "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+            },
+            "section": "\u00a75(a)(3)",
+            "table": "not applicable (statutory text)",
+            "url": "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
+          }
+        ]
+      },
+      "quantity": "Mechanical single-side 0.3-percentage-point payroll surtax",
+      "source_needed": [
+        "primary ARC/Oliver Wyman actuarial memorandum",
+        "Morningstar full WISH report: https://www.morningstar.com/content/cs-assets/v3/assets/blt9415ea4cc4157833/bltbbad12f4cb956f93/68a338a0fd4281840b31bbf3/Morningstar_WISH_Act_Analysis.pdf"
+      ],
+      "status": "statutory_parameter_captured; actuarial_trajectory_and_adequacy_blocked"
+    }
+  },
   "purpose": "Append-mostly standing benchmark specifications for validation-only comparison of ratios, shares, trajectories, and orderings.",
   "registry_change_law": "Changing an existing source pin or exact locator requires a nonempty changelog note in that entry's spec_revisions list.",
   "row_count": 42,
-  "schema_version": "standing_benchmark_registry.v1",
+  "schema_version": "standing_benchmark_registry.v2",
   "seed_evaluation": {
     "artifact_pointer": {
       "json_pointer": "/",

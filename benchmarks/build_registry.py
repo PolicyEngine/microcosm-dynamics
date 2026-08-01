@@ -18,6 +18,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(__file__).with_name("registry.json")
+LEGACY_MATRIX_SHA256 = (
+    "b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183"
+)
 
 INPUT_PATHS = [
     "runs/first_estimates_v1.json",
@@ -2747,6 +2750,15 @@ def registry_entry(row: dict[str, Any]) -> dict[str, Any]:
     for key in ("comparison_note", "provenance_status"):
         if key in row["our"]:
             our_side[key] = row["our"][key]
+    published_metadata = {
+        key: deepcopy(row["published"][key])
+        for key in (
+            "underlying_published_values_withheld_from_comparison",
+            "legislative_status",
+            "companion_parameters",
+        )
+        if key in row["published"]
+    }
     return {
         "comparison_scope": normalized_scope(row),
         "concept_mismatch": deepcopy(row["concept_mismatch"]),
@@ -2754,11 +2766,13 @@ def registry_entry(row: dict[str, Any]) -> dict[str, Any]:
         "external_reference": row["external_model"],
         "gap_class": gap_class,
         "gap_note": gap_note_for(row),
+        "legacy_comparison_scope": deepcopy(row["comparison_scope"]),
         "gap_closure_condition": GAP_CLASS_DEFINITIONS[gap_class][
             "closure_condition"
         ],
         "our_side_artifact": our_side,
         "published_formula": row["published"].get("formula"),
+        "published_metadata": published_metadata,
         "published_unit": row["published"]["unit"],
         "quantity": row["quantity"],
         "row_id": row["row_id"],
@@ -2836,6 +2850,23 @@ registry = {
     "gap_classes": GAP_CLASS_DEFINITIONS,
     "honesty_frame": matrix["honesty_frame"],
     "inputs": matrix["inputs"],
+    "migration_context": {
+        "available_series_inventory": matrix["available_series_inventory"],
+        "certification_context": matrix["certification_context"],
+        "honest_gaps": matrix["honest_gaps"],
+        "reported_not_verified_partition": {
+            "reason": matrix["reported_not_verified"]["reason"],
+            "row_count": matrix["reported_not_verified"]["row_count"],
+        },
+        "source_matrix": {
+            "canonicalization": matrix["canonicalization"],
+            "path_at_merge": "analysis/validation-matrix/matrix.json",
+            "purpose": matrix["purpose"],
+            "schema_version": matrix["schema_version"],
+            "sha256": LEGACY_MATRIX_SHA256,
+        },
+        "wish_financing_stub": matrix["wish_financing_stub"],
+    },
     "purpose": (
         "Append-mostly standing benchmark specifications for validation-only "
         "comparison of ratios, shares, trajectories, and orderings."
@@ -2845,7 +2876,7 @@ registry = {
         "changelog note in that entry's spec_revisions list."
     ),
     "row_count": len(registry_entries),
-    "schema_version": "standing_benchmark_registry.v1",
+    "schema_version": "standing_benchmark_registry.v2",
     "seed_evaluation": {
         "artifact_pointer": source_pin("runs/first_estimates_v1.json", "/"),
         "evaluated_at_run": SEED_EVALUATED_AT_RUN,
