@@ -22644,3 +22644,1029 @@ production-source capture stated above. It authorizes no correction
 production evaluation, context run, path switch, label change, or
 publication. Before ratification, even that Amendment-3 preparation or
 capture is unauthorized.
+
+## 18. AMENDMENT SECTION — Amendment 4: documented-inclusive V-B6 seam and revision-6 successors
+
+### 18.1 Status, scope, precedence, and immutable base
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 6
+  of the design. The present drafting and review commits are not
+  ratification and authorize no implementation, authority artifact,
+  registration, capture, correction execution, context run, or publication.
+  The exact accepted bytes become ratified only at §18.8 step 3 and become
+  operative only through the validator-accepted fresh registration in step
+  5. No earlier status literal is edited in place.
+- **Immediate base authority.** The immutable base is the complete
+  revision-5 design at Amendment-3 ratification commit
+  `13f84c99fb898eeaf70a8705bffacdf96e9795f4`. Its design path has mode
+  `100644`, Git blob `7354dabbef1b768c1fcd34dadaa74f47aa8456a9`,
+  exactly 1,310,838 raw bytes, and SHA-256
+  `eb24a36f4baa124f192e99f517982e7e723ca7e899957cd0acf02cf2d7e4a1ed`.
+  Those complete bytes, including ratified §17, are the exact immutable
+  prefix of revision 6.
+- **Single factual change.** Amendment 4 replaces the over-strong V-B6
+  source adjudication that treated a source arithmetic allocation from
+  `V4901`–`V4906` into annual `V4379`/`V5289`/`V5788` totals as required.
+  The successor fact is the documented-inclusive-total finding below. The
+  absence of that arithmetic allocation remains a true documented-corpus
+  finding; it is not an unresolved requirement because the registered PSID
+  design contains an inclusive annual total and a descriptor-only extra-job
+  block, not an annual component amount awaiting allocation.
+- **Procedural consequences only.** Amendment 4 also replaces the exact
+  V-B6 source projection, disposition, result, failure-array, and
+  satisfiability consequences in §§4.2, 16.12.1, 16.13.1–16.13.2,
+  16.13.6, 17.2, and 17.4, and the revision-5 design/capture/receipt
+  comparators and consumers expressly enumerated in §§18.5–18.7. These
+  replacements are necessary to bind the retained configurations to the
+  revision-6 ratification bytes; they create no additional branch or model.
+- **No implied repeal.** Sections 1–17 remain visible and controlling except
+  for the exact clauses enumerated in §§18.4–18.7. Silence preserves every
+  other law. In particular, V-B6 remains `registration_required`; both
+  complete V-B6 claim-spec rows, the fitting-free V-B6 requirement row and
+  predicate ID, the V-B6 authority role, and every target, model, gate,
+  label, output, and publication law remain unchanged.
+
+This revision is lawful without weakening the eight-field V-B6 claim. The
+§13.2 row requires the complete wave/reference map, source concepts and code
+maps, and exact self/other/incorporation support; it does not require a
+source arithmetic allocation that PSID never encoded. The source projection
+in §17.2 alone turned the absence of such an allocation into the final
+residual. Amendment 4 corrects that source-relative fact while retaining the
+claim, the registered concept/code-map obligation, and every fail-closed
+reader guarantee.
+
+### 18.2 Authenticated documented-inclusive-total evidence projection
+
+The sole `source_adjudication_inputs` member and its §10.1 identity remain
+exactly the §17.2
+`verification_claim_adjudication_source_input_identity.v1` value. Its
+source-input ID remains
+`covered_earnings_questionnaire_closure_attempt.v1`, and its canonical
+identity SHA-256 remains
+`1bb79fba8b752310f99181191d1f5c39bf031a3a11a14852e83c088cdc6bb6b6`.
+No second adjudication source input, ambient browser result, configuration
+member, or producer assertion is admitted.
+
+For V-B6 only, the verifier constructs the dependency-closed derived object
+`amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1`.
+It traverses only the closure input's exact registered dependencies and the
+raw registered document members they authenticate. Every displayed raw
+SHA-256 below hashes the complete file bytes. Every displayed content digest
+is independently reconstructed under that artifact's self-zeroed integrity
+equation. Every displayed row or row-array digest uses
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`; every byte-range digest
+hashes the exact half-open source interval. The three source-artifact
+identity rows are, in this order:
+
+This derived object is not asserted to be a row already serialized inside
+the closure JSON. For V-B6 only, this subsection prospectively replaces the
+§§16.12.1, 16.13.2, and 17.2 rule that the source-row pointer must address a
+strict-parsed row inside the sole source-input blob. The verifier first
+strict-parses and authenticates that sole closure input, exact-matches the
+`corpus_registration_attempt` and `questionnaire_extraction` dependency rows
+it consumes against the closure's complete `source_artifact_identities`, and
+reads those two dependency JSON blobs and the closure blob only at the pinned
+source commit. The 456 raw registered PDFs are not Git members at that
+commit. They resolve only through the strict-passing
+`psid_questionnaire_corpus_authority_registry.v1` child, its
+`psid_external_staging_root` and `documentation/capture1` staging identity,
+and its registered document row; the resolved bytes must exact-match that
+row's `full_file_sha256`, `size_bytes`, full-file range, and range digest.
+An absolute or current-working-directory path, `source_url`, filename-only
+lookup, or same-title document is never an authority resolver. A missing or
+differently hashed staged byte fails the projection. The verifier then checks
+every identity, integrity, row, range, and derived-text equation below and
+constructs the complete 13-key projection in the stated order. No candidate
+adjudication, configuration, result, status, digest, or ambient file supplies
+a projection member. The unchanged closure source identity is the sole
+authenticated root of this dependency-closed derivation and does not admit a
+second source input.
+
+| Path | Git blob | Bytes | Raw SHA-256 | Content SHA-256 |
+|---|---|---:|---|---|
+| `data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json` | `825f6c61ef9d4a161886cbc44f5cc914d65160d2` | 520,656 | `07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c` | `4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27` |
+| `data/external/psid_questionnaire_corpus_extraction_v1.json` | `43d8a1208c6ffa7ab7d7cdbc4b4115947d33df16` | 81,177 | `5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347` | `18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c` |
+| `data/external/covered_earnings_questionnaire_closure_attempt_v1.json` | `0b1a54b02943824405b6fb14cea1d782c9306d92` | 50,657 | `00c4fb1e671503406dfec55d80b29379ad12f7b8bf330dfe74895724ab19a46c` | `47c15dfe9018a4ae91c4f409378d2b85c3cdecf442c1ee752d8f7e8e3b125249` |
+
+All three blobs are read at source commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`; their four-field identity-row
+array has canonical SHA-256
+`f3badf91d5dda7e063bed2d7b1fbfc6470e981a19e32986a3ed50ce194e56504`.
+Each row has exactly `path`, `blob_oid`, `raw_sha256`, and
+`content_sha256`; the table columns with those names are the complete row
+values, while byte count is an additional raw-file check outside that row.
+The source-commit ancestry and immutability law in §17.2 remains unchanged.
+
+The projection takes these eight existing extraction-locator references in
+the displayed order. `row SHA-256` hashes the complete strict-parsed row;
+`range SHA-256` is the row's independently checked registered range:
+
+| Locator ID | Source pointer | Row SHA-256 | Range SHA-256 |
+|---|---|---|---|
+| `vb6_q76_income_p25` | `/passage_locators/30` | `b6e2e8f252aa4a2bc342fc2479bf8487b9cfa60411c0563b6d2233172ce04b68` | `b606cac8423ea88bfa58ef258548059a04da321d4934cf254d640fc54c121f8f` |
+| `vb6_q76_extra_job_p50` | `/passage_locators/29` | `a131288ff5167a3ecf350de17f13e230e859d70cc08403d3c683cb7d6040defa` | `0ed4477febbdba1b63c4fe9bb26b16c4ca1726c0f747b9de16975800c19b808b` |
+| `vb6_1977_worksheet_p55` | `/passage_locators/14` | `16fe26979a18036969affa00142934f09570f19035e579db68f84b6b0807961d` | `d68cc36573cdcd671c4617929b28ed61f48677d4b59a9e57166b2bc1c3db2b2d` |
+| `vb6_1977_label_p84` | `/passage_locators/15` | `ddab1deb9d9fbda5d6ca9411891ae457424bb9e24171652c663b3d4ec96dacc2` | `3659a074c1127016802447d148e1bc7c17eb84c339fc8847194ba50936d41bdf` |
+| `vb6_1977_qxq_p54` | `/passage_locators/18` | `8d14d8b6a0cd1dab0b7f92cb4164fc3961e282f046995361aa150d268b32f8f4` | `14372a04784b4d9edc19dda18e9fae98c3919761399dd6fe812756390e99a45d` |
+| `vb6_1978_worksheet_p74` | `/passage_locators/16` | `149a8479f24f2fd4b910c44ff1596e8340a625fdfcd8a251dca4575f7fc07bab` | `11445c796f8783cf6430e32b45ed1d452a6e3ccc0543e5e76cf07732c3fc5fc1` |
+| `vb6_1978_label_p232` | `/passage_locators/17` | `c7e1cf85260020cd64f73d438e4fb51528488aa152531bea3614cd418e1e42b5` | `f878f7c4db7a6897bde84d1b993ca5f1e448199ac788cfd05e6311ec9a54c6a9` |
+| `vb6_1978_qxq_p70` | `/passage_locators/19` | `acc18348a5a662fb31d3f924fd344d5f81e06b5dd45a25025e4677369b938e27` | `a3e1d35f057322f309df9a9022aecc08d96cbcd6966119073a3b10cb44a17709` |
+
+The complete eight-reference array has canonical SHA-256
+`d170c1cb3b991ff6720b286a672a7a4d6254763ca7e40d2386019e2a746b58dd`.
+Each reference has exactly `locator_id`, `source_pointer`,
+`source_row_sha256`, and `range_sha256`; the table is the complete array
+preimage in displayed order.
+The first locator records questionnaire H23–H25: whether the Wife had 1975
+income, whether it was from wages, salary, a business, or another source,
+and H25's exact amount question, “How much was it before deductions?” The
+second locator binds the extra-job branch to work beyond the main job in
+1975. The four worksheet/label locators identify `V5289` and `V5788` as
+annual Wife labor income, and the two QxQ locators record Wife income from
+all sources plus the duplicate-avoidance treatment of family-business
+income.
+
+The registered corpus contains same-title codebooks whose bytes differ from
+the earlier archive editions used by the codebook-inventory extraction.
+They are not interchangeable. Amendment 4 therefore derives fresh page
+locators directly from the #345 registered documents, never copies the
+earlier edition's locator. The derivation uses only `_pdftotext_pages` to
+construct `derived_pages` and `_pdf_page_stream_locators` to construct the
+locator rows, both from
+`src/populace_dynamics/data/psid_questionnaire_inventory.py` at source
+commit `c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`: mode `100644`, Git blob
+`e461d69cdec35f0ef795a097ac0b9ab9a8f9eaf0`, exactly 205,550 raw bytes,
+and raw SHA-256
+`b742fb14d62411ed1072cf320ad7cff0b3397a5a7255584964bac4995b6acbee`.
+A later worktree implementation is not selectable. Text derivation uses
+Poppler `pdftotext` version `26.04.0` with the exact three-string JSON
+argument array `["-layout","-enc","UTF-8"]`, followed by the uniquely
+registry-resolved input path and `-` for standard output. The pinned
+`_pdftotext_pages` strictly decodes that output as UTF-8, splits it on form
+feed, and removes exactly one terminal whitespace-only page when present;
+no other page segmentation is permitted. The six reference
+rows have exactly `source_document_id`, `source_document_row_pointer`,
+`source_document_row_sha256`, `page_locator_id`,
+`page_locator_row_sha256`, `range_sha256`, and
+`derived_page_text_sha256`, in this order:
+
+| Registered document row | Page | Exact ordered `page_field_ids` / decoded anchors | Document-row SHA-256 | Locator-row SHA-256 | Range SHA-256 | Derived-text SHA-256 |
+|---|---:|---|---|---|---|---|
+| `psid-corpus-document-0046`, `/document_candidates/45` | 20 | `["V4379","V4380","V4381","V4382"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `d7a68eadcb5ae32ca6fb239f37e89711474fcd18221d73d39b9d2d93a4afe697` | `87101f3096debb296972dff5c8db32e4b56aa55f9031cbad7d4cf65cef948dae` | `94709e4ab868411b3111bedf867c27d11a75a26edeeac0c12da511c046a88c32` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 180 | `["V4901","V4902"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `5946933af0f767bff15773e74262973c998938069701835ac68f90c388ca1eb4` | `22f3cef78b2deabb5b570a8a03cee6bc9bd924f461c3621011b3607c14323748` | `3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 181 | `["V4903"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `038ac554ae570d1d0d7f152c847840e460a6b88a1db4375d09140c74ae5c767c` | `9b91dd6d54015f614c80124d78ff99a133b834256a2905be2278c4b5f8b290b1` | `8c83a7e42dcf437e47ea27fef97ce97498677a3c5102589294fae49dc681c55a` |
+| `psid-corpus-document-0046`, `/document_candidates/45` | 182 | `["V4904","V4905","V4906","V4907"]` | `55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78` | `cd57bab720ab21c5a58450942e5e1d49376d1c391301e03a67c4471486bfb524` | `6405a708e4ec2305c6aca26b732471ccc4ea906958729fea4a892b584695f97b` | `6b6a1c88b9ffb6d933cc5e17d92c3ac7bc744bb1ab961e567eddd204afc85c04` |
+| `psid-corpus-document-0051`, `/document_candidates/50` | 22 | `["V5289","V5290","V5291","V5292"]` | `13082ddda241aa7d157da67c6503a44d7d83b7bba9a6bd5354a14858cfbb1189` | `a98b3b055c290aa3e3b86f3d0ba563cc27c8142ba7ed92e72c1294c44aa6c8a5` | `cd35f250c75723ccaccb8230ec760d97d70d40b90b65e4b39e9a699f84397805` | `a53592207ba8bd2dc884d61fcd62108a9d23c5492d87133468bd7ed7030de640` |
+| `psid-corpus-document-0056`, `/document_candidates/55` | 22 | `["V5785","V5786","V5787","V5788","V5789"]` | `163634bcace0d2c7bbde569c9223dc73d54ec1838c6cd8bbe37a41f77e00e338` | `0991897f973e697eb36c0b7ddd14200339d7d158cb4fc60ac8256b56108a55a4` | `577f558d22dd0a3e010048dc16296a2ca69c5ec4479d8127734671e3630a87b4` | `dccd52e85ad26e6db69ea97e6c8ea7a6fbbcafefb9961fc3d4eadcf2ed2689cf` |
+
+For each document, `page_field_ids` has exactly the displayed page keys in
+ascending order and exact displayed string arrays; every unspecified page
+has the empty array. Each output locator's
+`decoded_raw_field_id_anchors` must deep-equal its displayed input array.
+The locator-row digests hash the complete rows, including those arrays, under
+the common LF-terminated canonicalization.
+
+Their locator IDs are the complete `psid-codebook-page:` prefix followed,
+respectively, by
+`63a228eff60ec25053e4e783670be39164e2448f3eeda39e312c237e24fd6577`,
+`4760541a53787c5a2470ea5ebd073c67c50d209f784688465d3cef362eadc955`,
+`93c291418f0cb7266cffd7b6583348e99325b69518e759d3b976e988974ffc69`,
+`6ca89e5daaef56b3e544066965f78d93ef9285b8162c1764cee326519bcc904e`,
+`6b9fdfb50c4d9e32730347edf58786ebf6f0f591ebb349158b851d5a1ca3662a`,
+and
+`0662ef1ecfe5f577d3af1cbd08eadfa3055a9d8a939e5800309ee2024206c493`.
+The complete six-reference array has canonical SHA-256
+`e19f1550e9a92f1761ab3ecaefdb83a9d3c38435f5db148540e2ecd40edd5017`.
+
+Page 20 binds `V4379`, its `V4380` accuracy variable, and the exact
+composition statement “Wife's income, her labor part of unincorporated
+business income is in V4379.” Pages 180–182 bind `V4901`–`V4907`:
+extra-job presence; occupation with not-self-employed and unincorporated-
+self-employed codes; number of jobs; hourly dollars and cents; weeks; average
+hours per week; and more-work availability. None is an annual amount field.
+The two page-22 rows bind `V5289`/`V5290` and `V5788`/`V5789` as annual Wife
+labor-income totals and their accuracy/assignment variables.
+
+The closure child is not relabeled or mutated. The projection retains its
+historical negative and hashes these exact rows:
+
+- extraction `/absence_proofs/1` has row SHA-256
+  `31f85e2eca83d7a2bfe1d5b5ba38516ffde527c6c64532bf057c615a466280ec`;
+- extraction rows `/psid_vb_residual_extractions/1` through `/4` have, in
+  order, row SHA-256 values
+  `29f5b1eadaf8c70edf17ed2edc7b1f9dc8c4e6984e062e3ebd4050d205db84c9`,
+  `db5825c5d8c2dc577359fefcfbec4f0db702f790cf3a55c71523564a3db1e163`,
+  `fb26607b98a3ac2a3772f6f773f999487e2ccb0409c6a638ec20b6162adbd99f`,
+  and `6f0df50f03038af4c3ba10b41367b939147477508301577a26cad8aa0493290e`;
+- closure rows `/psid_questionnaire_evidence_results/1` through `/4` have,
+  in order, row SHA-256 values
+  `0b9a3f59280eed8ef5bb7ef54998cfb70274b48e167744ba904e2b42aa1aaabc`,
+  `cade58fd00e2823c9f544c2ae4150783d836ca678bae11f7e1bc91585fd8a0a2`,
+  `7b7bd44a4da723593276094f3b7186b2ecacd88cd98d2101dd87a3c800492af8`,
+  and `3e3db7ad9a12bf1d04a94b297851aec413714de072d0dcfd1a389d66bff61dee`;
+  and
+- closure `/psid_vb_family_summary/1` has row SHA-256
+  `48726c64a2d2b859e0db3888a290c6fd016f31873d3926126f81dc0f8fe555d2`.
+
+The two four-row reference arrays hash, respectively, to
+`4e1d34fe123304fe7545994ea38da514253e46cddb029c9d2c3b9fc5ac634178`
+and
+`3069a5b6ac62df52fc659c6eb051eea3489480fb1c47b39355c4a76ccf1c30db`.
+The exact `closure_projection` object has, in order,
+`absence_proof_pointer`, `absence_proof_row_sha256`,
+`ordered_extraction_v_b6_rows`, `ordered_closure_v_b6_rows`,
+`closure_family_pointer`, and `closure_family_row_sha256`. Each member of
+either ordered row array has exactly `source_pointer` and
+`source_row_sha256`. The displayed pointers, row digests, and array digests
+are the complete nested-object preimage.
+Thus the old one-residual finding remains authenticated rather than being
+silently dropped. Its sentence proves that the registered corpus supplies no
+exact allocation; §18 changes only whether such an allocation is a required
+PSID design object.
+
+The independent #345 referee sweep is now a deterministic projection over
+all 456 strict-ordered `/document_candidates`, using that same pinned
+`_pdftotext_pages` function and registry-resolved byte domain. Its complete row-array
+SHA-256 is
+`fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3`.
+For each registered PDF, derive the complete page sequence with Poppler
+`pdftotext` 26.04.0 and the exact three-string JSON argument array
+`["-layout","-enc","UTF-8"]`. A candidate
+has at least one page matching
+`(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907)(?!\d)` and at least one
+page matching `(?<!\d)(?:4379|5289|5788)(?!\d)`. Each candidate row has
+exactly `source_document_id`, `document_identity_sha256`,
+`full_file_sha256`, `extra_job_token_pages`, `annual_total_token_pages`,
+and `same_page_intersection`. In registered order, the exact 18 document IDs
+are:
+
+```json
+[
+  "psid-corpus-document-0023",
+  "psid-corpus-document-0027",
+  "psid-corpus-document-0043",
+  "psid-corpus-document-0046",
+  "psid-corpus-document-0047",
+  "psid-corpus-document-0048",
+  "psid-corpus-document-0053",
+  "psid-corpus-document-0058",
+  "psid-corpus-document-0063",
+  "psid-corpus-document-0068",
+  "psid-corpus-document-0073",
+  "psid-corpus-document-0078",
+  "psid-corpus-document-0083",
+  "psid-corpus-document-0088",
+  "psid-corpus-document-0093",
+  "psid-corpus-document-0098",
+  "psid-corpus-document-0103",
+  "psid-corpus-document-0109"
+]
+```
+
+That ID array has canonical SHA-256
+`5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed`;
+the complete 18-row array has canonical SHA-256
+`039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7`.
+Seventeen rows have empty `same_page_intersection`. The sole intersection is
+`psid-corpus-document-0098`, page 573, whose complete derived page-text
+SHA-256 is
+`51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed`.
+That page is a 1987 Family-file concordance: the same row uses `4379` for a
+1987 “whether extra job last year” field and `4901` for its 1976 counterpart.
+It is the exact disposition
+`false_positive_family_concordance_crosswave_variable_numbers`, not an
+allocation formula. `formula_candidate_count` is therefore integer zero.
+This bounded lexical sweep corroborates the section-exhaustive closure; it
+does not claim that arbitrary undocumented historical material cannot exist.
+
+The exact `corpus_wide_cooccurrence_sweep` object has, in order,
+`document_domain_pointer`, `document_count`, `document_rows_sha256`,
+`text_derivation_tool`, `text_derivation_version`,
+`text_derivation_arguments`, `extra_job_token_regex`,
+`annual_total_token_regex`, `candidate_row_field_order`,
+`ordered_candidate_document_ids`, `candidate_count`,
+`candidate_document_ids_sha256`, `candidate_rows_sha256`,
+`sole_same_page_candidate`, and `formula_candidate_count`. Its first three
+values are `/document_candidates`, integer 456, and the displayed complete
+document-row digest. Its `text_derivation_tool` and
+`text_derivation_version` are the exact JSON strings `Poppler pdftotext` and
+`26.04.0`; its `text_derivation_arguments` is the exact three-string JSON
+array above; and its two regex values are the displayed exact JSON strings.
+The row-field order, ID array, counts, and digests are the displayed values.
+`sole_same_page_candidate` has exactly
+`source_document_id`, `pdf_page_number_1_based`,
+`derived_page_text_sha256`, and `disposition`, with the displayed document,
+integer page 573, text digest, and disposition. Those are the complete 15
+values; no unstated sweep member enters the projection.
+
+The projection's terminal values are exactly these ordered findings:
+
+1. `V4379, V5289, and V5788 preserve one inclusive annual Wife labor-income concept across reference years 1975 through 1977; V4379 expressly includes the Wife labor part of unincorporated-business income.`
+2. `V4380, V5290, and V5789 are the corresponding accuracy/assignment variables.`
+3. `V4901 through V4907 record extra-job presence, occupation/self-employment coding, number of jobs, hourly rate, weeks, hours per week, and work availability; the block contains no annual amount field.`
+4. `The registered corpus documents source inclusion and duplicate avoidance, not a component-level arithmetic decomposition of the annual totals.`
+
+Its exact `expressly_not_established_or_used` array is
+`["No exact arithmetic allocation from V4901 through V4907 to V4379, V5289, or V5788 is established or used."]`. Its exact
+`reader_seam_consequence` is `Consume each annual total once under its documented inclusive/mixed concept; do not add, reconstruct, or allocate a V4901-through-V4907-derived annual amount.` Its
+`successor_residual_ids` is exact empty and its `source_disposition` is
+`verified`.
+
+The complete 13-key projection has, in order,
+`schema_version`, `claim_id`, `source_commit`,
+`ordered_source_artifact_identities`,
+`ordered_existing_extraction_locator_rows`,
+`ordered_derived_registered_codebook_page_rows`, `closure_projection`,
+`corpus_wide_cooccurrence_sweep`, `established_findings`,
+`expressly_not_established_or_used`, `reader_seam_consequence`,
+`successor_residual_ids`, and `source_disposition`. Its schema value is its
+name above, claim is V-B6, and source commit is the displayed #345 commit.
+The exact canonical projection is 10,887 bytes including its terminal LF and
+has SHA-256
+`7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a`.
+Any missing registered byte, different Poppler version or argument, locator,
+row, range, page text, order, regex, count, digest, finding, consequence, or
+disposition makes this projection fail; no favorable value is serialized.
+
+The coordinator's uncaptured PSID Family Public Data Index observation—its
+dynamic pages label the three fields “total (includes wages and other
+labor)”—is consistent corroboration but is not an authority operand. No
+captured HTML byte, locator, or registered digest exists for that check.
+Under §§10, 16.12.1, and 17.2 it cannot establish, repair, or conflict with
+the successor result. The registered questionnaire, codebook, QxQ,
+exhaustion, and sweep bytes above are sufficient without it.
+
+### 18.3 Successor seam fact and exact reader consequence
+
+For revision 6, the 1975–1977 row of §4.2's reference-year seam table is
+prospectively replaced by this exact adjudication:
+
+| Reference years | Frozen source-concept adjudication |
+|---|---|
+| 1975–1977 | Interview waves 1976–1978 supply `V4379`, `V5289`, and `V5788` as one continuous respondent-reported inclusive annual Wife labor-income `role_total` concept. `V4379` expressly includes the Wife labor part of unincorporated-business income; the later total/worksheet/QxQ evidence preserves the inclusive labor concept and duplicate avoidance. The total fields are `mixed`; `V4380`, `V5290`, and `V5789` are accuracy/assignment context, never amount operands. `V4901`–`V4907` are the 1975 extra-job indicator, occupation/self-employment, count, rate, time, and availability context; the block has no annual amount and no source-established component allocation. Register every field, exact code map, attachment, and established structural absence, consume each annual total once, and never synthesize or add a second annual amount from the descriptor block. A missing or conflicting registered concept/code map still aborts under V-B6. |
+
+The successor reader law is exact:
+
+1. Each of `V4379`, `V5289`, and `V5788` occupies one annual spouse
+   `role_total` component row for its reference year and is consumed exactly
+   once. Its sole `amount_field_ids` member is that year's total field.
+2. The corresponding accuracy field has `crosswalk_use:
+   component_context`. It can carry assignment/accuracy provenance but can
+   never enter an amount array or arithmetic operand.
+3. `V4901`–`V4907` have `crosswalk_use: component_context` for the 1975
+   role total. They may supply only their registered indicator,
+   occupation/self-employment, job-count, hourly-rate, weeks,
+   hours-per-week, and availability meanings. None may become a
+   `remuneration_component`, `role_total`, `amount_field_id`, or separate
+   annualized source amount.
+4. In particular, the reader must not multiply `V4904`, `V4905`, and
+   `V4906`; add such a product to a total; subtract it from a total; allocate
+   a total across jobs from it; or treat structural absence of an equivalent
+   1977/1978 Wife branch as zero earnings. Any such operation fails the
+   crosswalk, component exact-cover, reconciliation, and V-B6 predicates.
+5. `mixed` remains a source concept. Only after the inclusive parent is read
+   exactly once may §16.3.2 create its two modeled wage and self-employment
+   children. Those children each receive the ratified one-half deterministic
+   split and sum exactly to the parent. They are not PSID-observed job or
+   component allocations.
+6. Section 16.7.1's exact fitting-free labels remain
+   `frame-relative`, `modeled-covered-earnings`, and
+   `deterministic-uncalibrated`. Section 16.8.4 continues to disclose that
+   the half split is deterministic underidentification unsupported by
+   aggregate or linked micro evidence. Amendment 4 makes no component-level
+   source arithmetic, population-alignment, or individual administrative-
+   truth claim.
+
+An unqualified statement that there is “no component-level arithmetic
+decomposition” would conflict with §16.3.2's downstream modeled split and is
+not adopted. The exact nonclaim is narrower: no **source-established**
+component arithmetic decomposition exists or is used.
+
+### 18.4 Exact V-B6 source/result replacement and preservation ledger
+
+For V-B6 only, `source_projection_name` is prospectively
+`covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total`.
+Its `source_row_pointer` is the empty JSON string, the RFC 6901 JSON Pointer
+to the complete derived projection in §18.2; `/` would instead select a
+member whose key is the empty string and is not permitted. Its
+`source_row_sha256` is the complete projection digest
+`7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a`.
+Section 16.13.2's outer source-row match key remains exactly the five-tuple
+
+\[
+(\text{result-registry ID},\text{claim ID},\text{source input ID},
+ \text{source projection name},\text{source row pointer}).
+\]
+
+All five components retain their ratified derivations; for V-B6 the final
+component exact-copies the empty-string pointer above. The more-specific
+§17.2 committed-byte three-key rule is prospectively replaced for the V-B6
+derived projection only by
+
+\[
+(\text{source input ID},\text{source projection name},
+ \texttt{claim_id}).
+\]
+
+The third component exact-copies the projection's `claim_id` member, which
+must be `V-B6`. V-B5 and V-B8 retain §17.2's `family_id` third component and
+their committed family rows. The resulting complete permitted key set is,
+in order:
+
+1. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B5);
+2. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total`,
+   V-B6); and
+3. (`covered_earnings_questionnaire_closure_attempt.v1`,
+   `covered_earnings_questionnaire_closure_attempt:psid_vb_family_summary`,
+   V-B8).
+
+The complete V-B6 `adjudication_sources` member in both branches is:
+
+```json
+{
+  "source_identity_sha256": "1bb79fba8b752310f99181191d1f5c39bf031a3a11a14852e83c088cdc6bb6b6",
+  "source_projection_name": "covered_earnings_questionnaire_closure_attempt:amendment_4_v_b6_documented_inclusive_total",
+  "source_row_pointer": "",
+  "source_row_sha256": "7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a",
+  "source_disposition": "verified",
+  "unresolved_evidence_ids": []
+}
+```
+
+For that V-B6 member, row matching means reconstructing §18.2's complete
+derived value from the authenticated dependency closure, resolving the empty
+pointer to that value, and hashing its canonical bytes. It does not mean
+dereferencing the empty pointer against the closure JSON itself. Failure of
+any dependency, derivation, key, pointer, or digest equation makes the source
+member nonmatching and fails adjudication; it never selects the favorable
+serialized disposition.
+
+The V-B5 and V-B8 source members, pointers, row digests, empty residuals,
+verified dispositions, and positive derivations remain byte-for-byte as
+§17.2 defines them. The historical V-B6 family row and its old residual are
+inputs to the successor projection, not alternate match rows. No candidate
+artifact may simply relabel `/psid_vb_family_summary/1` as verified.
+
+For both calibrated and fitting-free V-B6, the unique seven-field result is
+the §16.12.1 positive: `claim_id` is `V-B6`; `authority_input_ids` is exactly
+`["covered_earnings_questionnaire_closure_attempt.v1"]`;
+`affected_inventory_keyset_sha256` is freshly recomputed from the complete
+unchanged same-branch V-B6 spec array; `governing_rule_ids` exact-copies that
+unchanged spec; `verification_status` is `verified`;
+`optional_consequence_specs_sha256` is JSON null; and `status` is `pass`.
+Both enclosing claim rows have `derivation_status: pass` exactly when they
+faithfully serialize that result and the complete source member above.
+
+Section 16.13.1's set (K) continues to include zero-based position 5.
+Therefore the complete calibrated and fitting-free V-B6 specs, source
+members, results, and derivation status deep-equal. Both result arrays,
+envelopes, the complete source projection, and the ten-key adjudication
+artifact must freshly recompute every row/domain/content digest; no digest
+is copied from a configuration, prior negative, or this prose.
+
+The exact replacement/preservation ledger is:
+
+| Anchor | Revision-6 disposition |
+|---|---|
+| §4.2 1975–1977 seam-table row | `replaced-by-§18.3-successor`: inclusive/mixed annual role totals, descriptor-only extra-job context, exact-once consumption. |
+| §13.2 V-B6 eight-field claim meaning and `registration_required` class | `preserved-byte-for-byte`: exact concepts, code maps, self/other/incorporation support, and wave/reference map remain required. |
+| `verification_claim_specs.v2` and `verification_claim_specs.fitting_free.v1`, including V-B6 | `preserved-byte-for-byte`. |
+| §16.2 V-B6 requirement row and `verify_fitting_free_claim_v_b6_v1` | `preserved-byte-for-byte`; the authenticated producer result now passes. |
+| §16.11.2 `psid_premodern_spouse_secondary_concept_authority` role and all role-map identities | `preserved-byte-for-byte`. |
+| §§16.12.1, 16.13.2, and 17.2 V-B6 source key, projection, pointer, row digest, disposition, unresolved array, and negative-result equation | `replaced-by-§18.2/§18.4-successor`; V-B5/V-B8 and every non-V-B6 row remain unchanged. |
+| §§16.13.1 and 16.13.6 V-B6 cross-branch/result and singleton-authority applications | `composed-with-§18.4`: same laws, now over the positive complete V-B6 row. |
+| §17.4 post-capture `["requirement:V-B6"]`, sole-blocker/null-path conclusion, and “no V-B6 successor” sentence | `replaced-by-§18.8-satisfiability-walk`. |
+| §§16.3.2, 16.7.1, and 16.8.4 mixed split, labels, assumptions, and nonclaims | `preserved-byte-for-byte` and expressly controlling. |
+
+No other claim spec, result equation, authority role, crosswalk identity,
+configuration child, condition, gate, label, or output law changes because
+of the V-B6 fact revision. The revision-6 design/capture/receipt successors
+required solely by appending §18 are exactly enumerated next; silence cannot
+create another replacement.
+
+### 18.5 Complete revision-6 design-comparator disposition
+
+Section 17.3's revision-5 census remains an immutable historical invariant.
+Revision 6 requires a successor census because appending §18 makes the three
+terminal D3-to-cutoff/`HEAD` comparisons nonterminal and introduces the
+immutable D3-prefix comparison in §18.1.
+
+The revision-6 census corpus is every normative byte of the complete design
+accepted at §18.8 step 2 and committed at step 3, including §§1–18, except
+for exactly two table intervals: (a) §17.3's historical ASCII table from its
+header line through the byte immediately before `### 17.4 `, as already
+excluded by §17.3; and (b) this subsection's ASCII table from the header line
+immediately following this paragraph through the byte immediately before
+`### 18.6 `. The design-comparator definition, mixed-preimage rule, search
+terms, complete-paragraph inspection, and consumer-walk law are exactly
+§17.3's, augmented by searches for revision 5, revision 6, Amendment 4,
+`D3`, `D4`, and `prefix`. Source-document, source-locator, and evidence-row
+digests in §18.2 do not compare a four-key design identity and are therefore
+not design comparators.
+
+| ID | Exact comparator or consumer anchor | Normative revision-6 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration `design` shape and exact-byte digest law | `lawfully-unchanged-with-reason`: the generic four-key shape remains; the ceremony-specific rows below govern retained configuration designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and `HEAD` | `lawfully-unchanged-with-reason`: it remains exact for an ordinary current-design registration; DC-06, DC-10, DC-15, DC-18, and DC-27 close every retained-design case. |
+| DC-03 | §10.4 prelaunch check 1's consumption of the active §10.1 design/repository proof | `lawfully-unchanged-with-reason`: it dispatches to the applicable §18 named proof and cannot restore a displaced D1/D2/D3-to-`HEAD` equality. |
+| DC-04 | §12 context configuration's import of §10.1 committed-design proof | `lawfully-unchanged-with-reason`: an Amendment-4 context registration carries D4 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration's exact four-key Amendment-1 design child D1 | `lawfully-unchanged-with-reason`: configuration preservation retains D1; live revision-6 authority is supplied by DC-25/DC-27. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals `HEAD` proof | `replaced-by-named-successor`: `verify_amendment_4_selected_registration_design_lineage_v1`. |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | `lawfully-unchanged-with-reason`: these fields authenticate calibrated D1 methodology/configuration, while D4 is separately bound by DC-25–DC-27. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | `replaced-by-named-successor`: `verify_amendment_4_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v3`, `fitting_free_registration_domain_identity.v3`, and `covered_earnings_path_applicability_registry_bundle.v4`. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | `replaced-by-named-successor`: `covered_earnings_path_applicability_receipt_core.v3` plus `verify_amendment_4_selected_registration_design_lineage_v1`. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against `HEAD` | `replaced-by-named-successor`: `verify_amendment_4_selected_registration_design_lineage_v1`. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration's exact D2 design child | `lawfully-unchanged-with-reason`: the configuration remains D2; position 1, capture, and receipt proofs separately bind D3 and D4. |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to the configuration design | `lawfully-unchanged-with-reason`: provenance continues to record D2, while the receipt records D2, D3, and D4. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | `replaced-by-named-successor`: the D2 check remains (K_f^d=D_2), joined to `verify_amendment_4_fitting_free_design_identity_v1` and `verify_amendment_4_capture_registration_repository_identity_v1`. |
+| DC-14 | §16.10 capture authorization's exact D2 `design` child | `lawfully-unchanged-with-reason`: the child deliberately remains D2; sibling D3/D4 children and DC-26 provide live authority. |
+| DC-15 | §16.10 capture authorization's imported/restated pre-descriptor D2-to-`HEAD` repository equality | `replaced-by-named-successor`: `verify_amendment_4_capture_registration_repository_identity_v1`. |
+| DC-16 | §16.10 capture primary's `design` equality to the capture registration | `lawfully-unchanged-with-reason`: both remain D2, while complete registration/claim hashes bind D3, D4, and DC-26. |
+| DC-17 | §16.10 capture sidecar's `design` equality to the primary | `lawfully-unchanged-with-reason`: both remain D2 and the same hash chain binds D3, D4, and DC-26. |
+| DC-18 | §16.10 selected fitting-free correction configuration's D2-to-`HEAD` proof | `replaced-by-named-successor`: `verify_amendment_4_selected_registration_design_lineage_v1`, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | `replaced-by-named-successor`: Amendment-4 dispatch to `covered_earnings_path_applicability_receipt_core.v3` and `covered_earnings_path_applicability_receipt.v3`. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | `replaced-by-named-successor`: exact historical-v1, Amendment-3-v2, or Amendment-4-v3 receipt dispatch and validation below. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_4_fitting_free_design_identity_v1`. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-`HEAD` predicate and its complete transitive capture consumers | `replaced-by-named-successor`: `verify_amendment_4_capture_registration_repository_identity_v1` and its D2/D3/D4 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/`HEAD` byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_4_selected_registration_design_lineage_v1`. |
+| DC-24 | §18.1 D3 four-key identity, exact 1,310,838-byte raw design, and immutable revision-6 prefix comparison | `lawfully-unchanged-with-reason`: D3 remains the immediate immutable base; every D4 reconstruction independently verifies the exact prefix before using D4. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_4_fitting_free_design_identity_v1`; its operands and all registry/domain/bundle consumers are closed in §18.6. |
+| DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `lawfully-unchanged-with-reason`: terminal receipt-free successor `verify_amendment_4_capture_registration_repository_identity_v1`; every transitive design consumer is closed in §§18.6–18.7. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_4_selected_registration_design_lineage_v1`; its receipt and history dispatch are closed in §18.7. |
+
+This table is a closed revision-6 ratification invariant. It has exactly 27
+distinct IDs, exactly 12 `replaced-by-named-successor` rows, and exactly 15
+`lawfully-unchanged-with-reason` rows. Section 17.3's ratification-blocking
+conditions apply with its literal “in §17.4” successor-definition and
+dispatch target prospectively replaced by “in §§18.6–18.7.” Thus an in-scope
+comparator absent from this table, an extra or duplicate row, a wrong anchor,
+an empty or third disposition, a named successor not completely defined and
+dispatched in §§18.6–18.7, or an unchanged reason that fails to preserve
+every consumer blocks Amendment-4 ratification. The validator must reperform
+the complete searches and consumer walk over the exact D4 blob; the counts
+and every row must reproduce.
+
+### 18.6 Revision-6 design, capture, registry, and domain successors
+
+The four-key design-identity shape remains unchanged. Define (D_4) as the
+complete Amendment-4 identity with exact values:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the future 40-lowercase-hex commit created only by
+  §18.8 step 3, never this draft's authoring commit, a branch name, D3, or a
+  placeholder;
+- `blob_sha256`: SHA-256 of the complete revision-6 design bytes at that
+  exact commit; and
+- `revision`: JSON integer `6`, excluding booleans.
+
+Define the retained identities (D_2) and (D_3) exactly as:
+
+```json
+[
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb",
+    "blob_sha256": "29f0cb134e95b6215dc502d0e25392b5c971fdb93dfad40fd5d221e8a482a1b7",
+    "revision": 4
+  },
+  {
+    "path": "docs/design/covered_earnings_correction.md",
+    "ratification_commit": "13f84c99fb898eeaf70a8705bffacdf96e9795f4",
+    "blob_sha256": "eb24a36f4baa124f192e99f517982e7e723ca7e899957cd0acf02cf2d7e4a1ed",
+    "revision": 5
+  }
+]
+```
+
+The raw D2 and D3 design sizes are respectively 1,252,209 and 1,310,838
+bytes, and their Git blobs are respectively
+`0f3eca3e5e45cb9584711b3ed007c60521902863` and
+`7354dabbef1b768c1fcd34dadaa74f47aa8456a9`. Every D4 predicate below
+independently reconstructs those values and requires D3's complete raw bytes
+to equal the first 1,310,838 bytes of D4. A digest-only prefix claim is
+insufficient.
+
+The position-1 registry successor is
+`fitting_free_requirement_verification_specs.v3`. It is the complete §17.4
+v2 registry with its outer schema value changed to the v3 name and exactly
+three same-position rows replaced: position 1, A1, and A3. Its 22-member
+requirement-ID array, positions, counts, failure-ID equation, and every other
+row—including V-B6 and `verify_fitting_free_claim_v_b6_v1`—are byte-for-byte
+unchanged. Position 1 is exactly:
+
+```json
+{
+  "requirement_id": "amendment_2_design_identity",
+  "requirement_class": "design",
+  "verification_predicate_id": "verify_amendment_4_fitting_free_design_identity_v1",
+  "expected_preimage_schema_version": "amendment_4_fitting_free_design_identity_expected_preimage.v1",
+  "actual_preimage_schema_version": "amendment_4_fitting_free_design_identity_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:amendment_2_design_identity",
+    "ratified_design:amendment_3_design_identity",
+    "ratified_design:amendment_4_design_identity",
+    "configuration:design",
+    "git_cutoff:docs/design/covered_earnings_correction.md"
+  ],
+  "verification_result_schema_version": "exact_identity_verification_result.v1",
+  "cross_binding": "receipt_core:amendment_2_amendment_3_and_amendment_4_design_identities"
+}
+```
+
+The successor expected and actual preimages retain §17.4's exact keysets,
+projection-row type law, and domain-hash equations, with their displayed
+schema names and five projection rows. Let `K_f^d` be the staged fitting-
+free configuration design, `C_A` the selected final calibrated authority
+cutoff, `G_2`, `G_3`, and `G_4` the raw design blobs at D2, D3, and D4, and
+`G_C_A` the same-path raw bytes at `C_A`. Expected projection values
+are exactly `[D2,D3,D4,D2,G4]`; actual values are the independently
+reconstructed D2, D3, D4, `K_f^d`, and `G_C_A`. The first four rows
+have value type `canonical_json`; the fifth is `raw_git_bytes`.
+
+`verify_amendment_4_fitting_free_design_identity_v1` is true if and only if
+every shape, type, count, order, value-digest, and domain-hash equation passes
+and all of these conjuncts hold:
+
+1. both reconstructions of each D2, D3, and D4 deep-equal and each raw
+   ratification blob hashes to its identity's `blob_sha256`;
+2. `K_f^d = D2`, without requiring D2's blob to equal the final-cutoff
+   design bytes;
+3. D3 is the exact 1,310,838-byte prefix of D4 and has the §18.1 digest;
+4. `G_C_A = G4` byte-for-byte and its SHA-256 equals
+   `D4.blob_sha256`; and
+5. `D2.ratification_commit < D3.ratification_commit <
+   D4.ratification_commit <= C_A`, where `<` is strict Git ancestry and
+   `<=` is ancestor-or-equal.
+
+Unfavorable values serialize the unchanged exact-identity false result and
+`predicate_mismatch`; no earlier registry version becomes selectable. The
+receipt cross-binding is a later consumer only and is never a position-1
+operand.
+
+Every capture authorization first added after D4 must use
+`fitting_free_model_input_authority_capture_registration.v3`. It is the
+complete §17.4 v2 authorization in the same order, changes `schema_version`
+to the v3 name, and inserts new key `amendment_4_design_identity`
+immediately after `amendment_3_design_identity`. It has exactly 15 keys.
+Its retained `design` child is D2, and its two amendment children are D3 and
+D4. All other preliminary-adjudication, invocation, capability, input,
+path, and failure laws remain unchanged. The complete v3 authorization
+digest is the post-D4 `capture_registration_sha256`; v1 and v2 have only
+their exact historical pre-D3 and Amendment-3 cases.
+
+Let `A` be the unique single-parent commit first adding that v3
+authorization, and freeze live capture `HEAD` as `H_cap` before any
+environment, claim, broker, or source descriptor opens. The coordinator
+first constructs
+`amendment_4_capture_registration_repository_proof.v1`, with exactly these
+13 keys in order:
+
+1. `schema_version`;
+2. `capture_registration_sha256`;
+3. `amendment_2_design_identity`;
+4. `amendment_3_design_identity`;
+5. `amendment_4_design_identity`;
+6. `authorization_commit`;
+7. `capture_head`;
+8. `ordered_design_blob_rows`;
+9. `design_blob_row_count`;
+10. `design_blob_domain_sha256`;
+11. `canonicalization`;
+12. `status`; and
+13. `failure_disposition`.
+
+The first value is the schema name; the identities are D2, D3, and D4; and
+the authorization/capture commits are `[A,H_cap]`. The exact ordered blob
+roles are `amendment_2_ratification`, `amendment_3_ratification`,
+`amendment_4_ratification`, and `capture_head`. Each row retains §17.4's
+exact six-key shape and independently serializes the raw Git object for D2,
+D3, D4, or `H_cap`. Count is integer four and the domain digest hashes
+the complete four-row array. Canonicalization remains the common literal;
+status is `pass | fail`; failure is
+`abort_without_accepted_authority_pair`.
+
+The closed predicate
+`verify_amendment_4_capture_registration_repository_identity_v1` is true
+if and only if every proof equation passes and:
+
+1. the strict-parsed v3 authorization has its independently reconstructed
+   hash and exact D2/D3/D4 children;
+2. each D2, D3, and D4 raw ratification blob hashes correctly; D3 is D4's
+   exact immutable prefix; and the raw design at `H_cap` equals D4
+   byte-for-byte;
+3. `D2 < D3 < D4 < A <= H_cap` under raw Git ancestry;
+4. the authorization is unchanged from `A` through `H_cap`, and all
+   four proof rows exact-match observed modes, OIDs, commits, and raw bytes;
+   and
+5. every remaining descriptor-free repository, tracked-state, clean-
+   checkout, design/implementation tree, and authorization-byte conjunct in
+   §§10.1, 16.10, and 17.4 passes against `H_cap`.
+
+The proof freezes before any descriptor opens, contains no receipt or future
+commit, and passes or aborts without fallback. `HEAD` must remain exactly
+`H_cap` through durable claim reread.
+
+The lifecycle successor is
+`fitting_free_model_input_authority_capture_claim.v3`. It has the complete
+eight-key v2 claim shape and order, changes only `schema_version` to the v3
+name, and requires `capture_repository_proof` to deep-equal the complete
+Amendment-4 proof. All remaining claim laws are unchanged. The primary
+`fitting_free_model_input_authority_capture.v1` and sidecar
+`fitting_free_model_input_authority_capture_environment.v1` retain their
+schemas and D2 design children; their complete v3 registration and v3 claim
+digests transitively bind D3, D4, and `H_cap`.
+
+The four-artifact envelope successor is
+`fitting_free_model_input_authority_capture_input.v3`. It retains the v2
+keyset and order, changes only its schema value, requires claim schema v3,
+and applies every existing path, vintage, canonical-Git-blob, digest, and
+cross-artifact equation to the v3 authorization/claim and unchanged primary/
+sidecar. A successful triple commit `T` has sole parent `H_cap` and
+adds only the complete v3 claim and unchanged-schema primary/sidecar. The
+exact order is `A <= H_cap < T < C`, where `C` is the clean final authority
+cutoff. Every terminal-history, accepted-triple, mode/OID/raw-byte, and
+no-delete/no-readd law selects the v3 claim and proof for a post-D4 case.
+
+The calibrated A1/A3 manifest shapes and inner authority identities remain
+unchanged. For a post-D4 candidate,
+`accepted_capture_primary_by_final_cutoff` additionally requires the v3
+envelope/proof and exact D2/D3/D4 identities to pass. Their unchanged
+`design_identity_sha256` remains D1 methodology provenance; D4 is joined as
+lifecycle provenance and does not overwrite it.
+
+Within `fitting_free_requirement_verification_specs.v3`, the exact A1 row
+is:
+
+```json
+{
+  "requirement_id": "A1",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_4_fitting_free_a1_model_universe_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a1_authority_identity",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary:a1_authority_identity_and_amendment_4_capture_repository_proof"
+}
+```
+
+Its exact A3 row is:
+
+```json
+{
+  "requirement_id": "A3",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_4_fitting_free_a3_weight_source_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a3_authority_identity",
+    "capture_sidecar:input_descriptor_identities",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary_and_sidecar:a3_source_keyset_and_amendment_4_capture_repository_proof"
+}
+```
+
+Their complete source-projection, preimage, count, digest, evidence, and
+result laws are §17.4's with v3 capture input/claim/proof selected and D4
+added to the proof conjunction. The claim remains lifecycle nonauthority and
+does not enter either inner A1/A3 identity, inner evidence digest, or the
+substantive model.
+
+The domain successor is
+`fitting_free_registration_domain_identity.v3`. It has the complete v2
+keyset/order, changes its schema value, selects the complete v3 requirement
+registry, and freshly recomputes every row, evidence, Boolean, failure ID,
+count, and hash. The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v4`. It retains the
+complete v3 keyset and key order and changes its schema value to the v4 name.
+Its `fitting_free_requirement_verification_specs` child is the complete v3
+registry. Its `verification_claim_results_v2`,
+`verification_claim_results_fitting_free_v1`, and
+`verification_claim_adjudication_source_projection` children are freshly
+reconstructed with §18.4's positive V-B6 result/source rows; neither result
+or projection child may be copied from v3. Its
+`verification_claim_adjudication_identity` child is likewise freshly
+constructed from the unique candidate ten-key adjudication artifact carrying
+those successor children. The `verification_claim_specs_v2` and
+`verification_claim_specs_fitting_free_v1` children remain byte-for-byte
+equal to v3, and every remaining child value and the complete child order
+remain unchanged. The v4 bundle digest hashes this entire reconstructed
+object. Every Amendment-4 cutoff, 22-row reconstruction, applicability
+result, receipt, and validator selects the v3 registry, v3 domain, and v4
+bundle. No configuration, caller, receipt, or unfavorable ancestry value can
+select an earlier version.
+
+The authenticated V-B6 positive in §18.4 propagates through the unchanged
+V-B6 requirement row into the freshly hashed 22-row evidence domain. The
+position-1/A1/A3 successors separately change their projection domains.
+Together these values change the complete v3
+`fitting_free_domain_identity_sha256`; the applicability result exact-copies
+it and derives its failure array from all 22 Booleans. The v4 bundle digest
+becomes `path_applicability_specs_sha256`. Every downstream edge hashes or
+exact-compares its complete preimage; no predecessor digest is copied.
+
+### 18.7 Receipt and selected-registration lineage successors
+
+The common binding successor is
+`covered_earnings_path_applicability_receipt_core.v3`. It is the complete
+§17.4 v2 core in the same order, changes its schema value, and inserts new
+key `amendment_4_design_identity` immediately after
+`amendment_3_design_identity`. It has exactly 18 keys. Its three amendment
+children are exact D2, D3, and D4; its fitting-free domain is complete v3;
+its applicability-spec digest hashes the complete v4 bundle; and its
+applicability result carries the v3 domain digest. Every other member,
+including the pre-reference configuration and namespace cut edge, is
+unchanged. `receipt_core_sha256` hashes the complete v3 core.
+
+When accepted capture supplies A1/A3, receipt-core validation requires:
+
+- D2 to deep-equal the v3 capture registration's `design`, the proof's D2,
+  and both artifact design children;
+- D3 to deep-equal the registration's Amendment-3 child and proof's D3;
+- D4 to deep-equal the registration's Amendment-4 child and proof's D4;
+- the calibrated adjudication and fitting-free domain to bind the same v3
+  claim digest, capture input, proof, primary, sidecar, triple, and cutoff;
+  and
+- exact lineage
+  `D2 < D3 < D4 < A <= H_cap < T < C <= HEAD`.
+
+The outer successor is
+`covered_earnings_path_applicability_receipt.v3`. It retains the complete v2
+outer keyset/order and all receipt-ID, suffix, namespace, construction,
+status, Git-delta, and failure laws, changes its schema value, and requires
+the complete v3 core. Every §§16.13.4, 16.13.7, 16.14.3, and §17.4
+prospective Amendment-4 use of an earlier core/outer type selects v3.
+Terminal-history dispatch is exact: pre-Amendment-3 registrations retain
+their historical v1 receipt; Amendment-3 registrations require v2; and an
+Amendment-4 registration requires exactly one v3 receipt carrying D4. No
+receipt version can bind another revision.
+
+The calibrated and fitting-free configurations remain unchanged: their
+`design` children are D1 and D2, respectively. For an Amendment-4 fresh
+registration,
+`verify_amendment_4_selected_registration_design_lineage_v1` prospectively
+replaces the §17.4 selected-lineage predicate for both branches. It is true
+if and only if:
+
+1. the selected configuration's design exact-matches its D1 or D2
+   ratification blob and digest;
+2. the receipt core's D2 child exact-matches the revision-4 ratification
+   commit, blob, and digest;
+3. its D3 child exact-matches the revision-5 ratification commit, blob, and
+   digest;
+4. its D4 child exact-matches the revision-6 ratification commit, complete
+   blob, digest, and same-path raw bytes at registration `HEAD`, while D3 is
+   D4's exact immutable prefix;
+5. D1 is a strict ancestor of D2, D2 of D3, D3 of D4, and D4 is an ancestor
+   of or equal to registration `HEAD`; and
+6. every other repository, implementation-tree, configuration, invocation,
+   input, output, history, and validation law passes unchanged.
+
+False fails v3 receipt validation without fallback. For an Amendment-4
+fresh fitting-free selection, §16.9 consequence 2's authority phrase becomes
+“authorized under revision-6 authority while retaining the revision-4
+fitting-free configuration design child.” The §16.5.5 D2 configuration
+check remains only `K_f^d = D2`, joined to the earlier D4 position-1 proof
+and later v3 receipt proof.
+
+The exact complete successor object, schema, and predicate identifier set
+introduced by the revision-6 design lineage in §§18.5–18.7 is therefore the
+following 16 names. Member names, enum or role literals, projection-path
+literals, and cross-binding literals are not object, schema, or predicate
+identifiers and are outside this set:
+
+1. `amendment_4_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_4_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_4_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v3`;
+5. `verify_amendment_4_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_4_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v3`;
+8. `covered_earnings_path_applicability_registry_bundle.v4`;
+9. `fitting_free_model_input_authority_capture_registration.v3`;
+10. `amendment_4_capture_registration_repository_proof.v1`;
+11. `verify_amendment_4_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v3`;
+13. `fitting_free_model_input_authority_capture_input.v3`;
+14. `covered_earnings_path_applicability_receipt_core.v3`;
+15. `covered_earnings_path_applicability_receipt.v3`; and
+16. `verify_amendment_4_selected_registration_design_lineage_v1`.
+
+These are the complete design/capture/receipt consequences of appending
+Amendment 4. They create no mutable alias, configuration branch, runtime
+transition, or alternate source fact. The 27-row census is complete; silence
+cannot create another revision-5/`HEAD` or revision-6 comparator.
+
+### 18.8 Satisfiability walk, conflicts, ratification, and fresh registration
+
+Amendment 4 uses the same referee-rounds-then-ratify discipline as §§15.8,
+16.10, and 17.4. The authorized order is:
+
+1. submit the complete append-only §18 bytes to adversarial referee review
+   without implementation, authority artifact, registration, capture,
+   correction evaluation, context output, or any other tree change in this
+   amendment lane;
+2. resolve every referee finding in the public review record, verify the
+   complete round-to-round diff, exact D3 prefix, all evidence derivations,
+   and the 27-row comparator census, and continue rounds until the exact
+   final bytes receive an affirmative ratification verdict;
+3. ratify those accepted bytes in one identifiable future commit D4; every
+   authoring or referee-response commit before it is not ratification;
+4. only afterward merge separately reviewed implementation and fixture bytes
+   for the §18.2 projection, positive V-B6 derivation, revision-6 registry/
+   domain/bundle/receipt dispatch, and post-D4 capture chain; create the
+   fresh verification-claim adjudication and preliminary value-blind
+   calibrated adjudication; and, only if that preliminary artifact satisfies
+   the unchanged capture predicate, perform the sole receipt-free-proof-
+   gated A1/A3 production-source capture ceremony and final adjudication;
+5. obtain a validator-accepted fresh registration binding D4, the complete
+   revision-6 design blob, fresh adjudication, every required authority,
+   registry, implementation and capture byte, the complete v3 receipt, and
+   a fresh output/claim namespace; then
+6. perform the unchanged prelaunch, sealed execution, incident,
+   publication, context, certificate, and external merge sequence.
+
+On the registered source facts before capture, the §16.8.1 static fitting-
+free counterfactual has V-B6 true under §18.4 while A1 and A3 remain false.
+Its exact ordered failure array is therefore:
+
+```json
+["requirement:A1","requirement:A3"]
+```
+
+That display is not permission to bypass construction-order step 4. A live
+post-D4 capture clears the two rows only in this finite order:
+
+1. D4 is ratified. The preliminary calibrated adjudication remains
+   `not_registrable` with a positive qualifying source/methodology/family
+   blockage, so the unchanged narrow capture predicate is true.
+2. At `H_cap`, the v3 authorization retains D2 and separately binds D3
+   and D4. The receipt-free proof passes
+   `D2 < D3 < D4 < A <= H_cap`, verifies D3 as D4's prefix, and verifies
+   live design bytes as exact D4 before any descriptor opens.
+3. The unchanged environment and broker ceremony opens only the registered
+   field/byte domain. The durable v3 claim binds the proof; primary and
+   sidecar bind the v3 claim and authorization; and reviewed `T` has sole
+   parent `H_cap`.
+4. Clean descendant cutoff `C` revalidates the quartet and proof,
+   constructs the final calibrated A1/A3 evidence and adjudication, and
+   supplies exact capture input v3. Both fitting-free A1/A3 predicates pass.
+5. At §16.13.7 construction-order step 7, position 1 passes against D4;
+   V-B5 and V-B8 pass under §17.2; V-B6 passes under §18.4; and every other
+   unchanged fitting-free authority row passes. The exact fitting-free
+   failure array is:
+
+```json
+[]
+```
+
+The 17 partial, 11 unestablished, and 2 established B2/B11 membership facts
+continue to make calibrated registrability false and the qualifying blockage
+count positive; they do not enter the fitting-free failure array. The exact
+post-capture truth-table tuple is therefore: calibrated registrable false;
+qualifying blockage positive; all fitting-free authorities pass true. Under
+§16.8.1 the unique `derived_path` is `DETERMINISTIC_FITTING_FREE`.
+Construction-order steps 8–10 can construct the selected fitting-free
+configuration and complete v3 core/outer receipt. Subject to every unchanged
+gate and lifecycle law, the registration witness therefore **EXISTS**; it is
+not emitted by this prospective doc-only amendment.
+
+No unresolved substantive law conflict prevents ratification. Two apparent
+conflicts have mandatory, non-discretionary boundaries:
+
+- treating rate × weeks × hours as a new annual source amount would violate
+  §4.2's exact-cover/reconciliation laws and risk double-counting the
+  inclusive total, so §18.3 forbids it; and
+- saying that no arithmetic decomposition of any kind exists would conflict
+  with §16.3.2, so §18 denies only a **source-established** component
+  decomposition and preserves the modeled half split and its nonclaim.
+
+The uncaptured Data Center pages cannot be promoted to authority under the
+ratified authentication law; §18.2 reports rather than cures that limitation.
+If referee review rejects the registered-byte inference of inclusive concept
+continuity, the proper outcome is to stop ratification with V-B6 still
+failing, not to weaken a gate, alter a label, or invent an allocation.
+
+**Amendment 4 is inoperative unless and until its exact D4 ratification
+commit is bound by the validator-accepted v3 fresh-registration receipt.**
+After ratification but before that registration, step 4 authorizes only the
+separately reviewed authority/implementation preparation and proof-gated
+A1/A3 capture stated above. It authorizes no correction production
+evaluation, path switch, context run, label change, or publication.
