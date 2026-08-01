@@ -2,7 +2,7 @@
 
 ## State
 
-Both titles, their replacement boundary, comparator census, and revision-7 lifecycle successors are drafted; the remaining work is the final build/ratification/conflict law and verification.
+The complete §19 draft is present, including the build/ratification/conflict law; independent review and full structural/test verification remain.
 
 ## Done
 
@@ -18,8 +18,9 @@ Both titles, their replacement boundary, comparator census, and revision-7 lifec
 - Enumerated every replaced/composed/preserved passage family, the six changed G17 comparands while retaining all 18 domains, and the mandatory candidate-byte closure sweep.
 - Closed the revision-7 comparator census at 32 unique rows: 15 named replacements and 17 lawfully unchanged anchors, including the D5-to-L5 legal first-add comparator.
 - Defined D5, the four changed requirement rows, capture registration/proof/claim/input v4, domain v4, bundle v5, receipt v4, selected-lineage predicate, and the exact 29-name successor inventory.
+- Defined the dependency-ordered legal source/registry, Class-A/B official inventory, nine-registry, crosswalk, capture, and receipt build; reported six law tensions and the fail-closed current witness result.
 
 ## Next
 
-- Add the post-A5 legal/inventory/nine-registry build sequence and ratification/conflict law.
+- Incorporate independent review findings and run digest, prefix, structural, and relevant test closure.
 - Recompute passage and document digests, run closure checks, and remove this temporary file before final handoff.

@@ -25258,3 +25258,204 @@ and symbolic commit names are likewise outside the inventory. An omitted,
 extra, duplicated, differently spelled, or undefined identifier blocks
 ratification. These successors create no mutable alias, candidate-selectable
 version, runtime branch, or alternate source fact.
+
+### 19.8 Post-Amendment-5 build order, conflicts, ratification, and fresh registration
+
+#### 19.8.1 Lawful source-to-registry build sequence
+
+Ratification of schema law is not ratification of a future source row. After
+D5 exists, the only lawful authority build order is the following dependency
+order. A later step may be prepared in memory, but it cannot become an
+accepted authority operand before every named predecessor passes.
+
+1. **Authenticate source bytes without promoting them.** In separately
+   reviewed source-only authority lanes, capture and immutably register the
+   complete official questionnaire/flow, dictionary/layout, codebook,
+   raw-data, and legal-source bytes. Repository-governed bytes are committed;
+   externally governed raw data use their already required descriptor and
+   manifest closure. A URL, staging row, extraction, report, or candidate
+   digest is still nonauthority. No row from the legal staging universe is
+   grandfathered by Amendment 5.
+2. **Construct the Class-A questionnaire closure.** Reproduce the complete
+   `psid_questionnaire_slot_closure_evidence.v1` six-era/43-wave artifact,
+   whole-document locators, hierarchy, 35-purpose expansion, and absence
+   proofs. Only after its source-manifest identity and every count/hash pass
+   may `psid_questionnaire_slot_specs.v1` be derived and ratified. All seven
+   Class-A residuals must receive exact source-backed successor dispositions.
+3. **Construct and ratify the official inventory.** From the ratified slot
+   domain, paired dictionary/codebook authority, and byte-pinned raw-file
+   censuses, build every §19.3.2 field grammar and every present/structural-
+   query row. All six Class-B residuals must close, all slot and row arrays
+   exact-cover, and the official inventory must independently pass before it
+   can supply the legal domain. Class-C downstream gaps remain attached to
+   present inventory keys; they neither shrink this inventory nor masquerade
+   as structural absence.
+4. **Close the legal-source universe and legal registry.** Place every
+   intended legal source blob in the parent of L5; classify and link every
+   establishing/corroborating source; derive the complete 14-family domain
+   from the ratified inventory; and construct all rule rows, partitions, and
+   required/optional consequences. The candidate claim-spec and historical-
+   rule arrays are constructed as one reciprocal foreign-key closure, but
+   neither authenticates the other. After every source byte and inventory
+   dependency exists, the separately reviewed single-parent L5 commit adds
+   only `data/registries/historical_coverage_rule_specs_v1.json`. The v2
+   legal predicate then reconstructs schema, raw bytes, history, domain, and
+   source closure. Any required legal cell still absent/conflicting blocks.
+5. **Construct the nine registry identities.** The final identity array is
+   exactly this order:
+
+   1. `verification_claim_specs.fitting_free.v1`;
+   2. `historical_coverage_rule_specs.v1`;
+   3. `psid_structural_missing_consequence_specs.v1`;
+   4. `psid_value_code_specs.v1`;
+   5. `psid_annualization_rule_specs.v1`;
+   6. `psid_reconciliation_rule_specs.v1`;
+   7. `psid_job_spell_match_rule_specs.v1`;
+   8. `psid_se_aggregation_group_rule_specs.v1`; and
+   9. `psid_coverage_state_group_rule_specs.v1`.
+
+   This is an identity order, not permission for circular derivation. Build
+   value-code rows from the inventory; structural-missing rows from the
+   inventory and verified historical rules; annualization rows from typed
+   amount/unit/exposure keys; reconciliation rows from exact operands and
+   totals; job-match rows from complete hierarchy/timing keys;
+   SE-aggregation rows from verified person/service grouping and allocation
+   evidence; and coverage-state rows from independently applicable service
+   keys. Reconciliation, job-match, and SE rows carry every Class-C
+   consequence. The claim and historical-rule arrays must then pass their
+   reciprocal exact-cover equations. No registry can select its own domain,
+   hash, verification class, or required consequence.
+6. **Close the crosswalk and successor bundles.** Only after the official
+   inventory and all nine registry values are immutable may the existing
+   separately reviewed `psid_covered_earnings_crosswalk.v3` first-add/
+   cutoff procedure run. Reconstruct its complete identity array, all-key
+   dispositions, component rows, and fresh content digest. Then construct
+   G17's 18 comparisons, the four changed v4 requirement rows, complete
+   `fitting_free_registration_domain_identity.v4`, and complete
+   `covered_earnings_path_applicability_registry_bundle.v5`. The Class-C
+   negative objects must remain present; eleven current required gaps make
+   the corresponding Booleans false until source-resolved.
+7. **Only then construct implementation, capture, and receipt artifacts.**
+   Separately reviewed implementation may consume only the frozen schemas
+   and authorities above. Perform preliminary value-blind adjudication;
+   only if the unchanged narrow capture predicate passes may the D5-aware v4
+   A1/A3 capture ceremony run. Reconstruct the v4 capture input, all 22
+   requirement results, selected path, v4 receipt core/outer, and every gate
+   from their complete predecessors. A receipt cannot cure a failed legal,
+   inventory, registry, or source consequence.
+
+The “nine registries” include the legal registry at position 2; the sequence
+does not build it twice. The legal-registry step is stated separately because
+its raw source corpus, independent domain, and L5 first-add proof precede the
+final nine-identity closure. The official inventory is likewise a distinct
+authority input rather than a tenth registry row.
+
+#### 19.8.2 Reported law tensions and mandatory outcomes
+
+The following tensions are reported explicitly. Amendment 5 proposes only
+the named, reviewable dispositions; it does not silently resolve any one of
+them.
+
+1. **Future legal rows versus the existing `ratified_design:` projection.**
+   The existing §16.2/§16.13.6 four-projection law cannot make D5 contain
+   source/rule rows that D5 deliberately does not pin. Reinterpreting the
+   root as a future artifact would self-authenticate the candidate. The sole
+   proposed resolution is the exact v2 requirement and L5 history predicate
+   in §19.2.5. If referee review rejects that replacement, Title I is
+   inoperable and ratification stops; future rows may instead be pinned only
+   by a later append-only design amendment.
+2. **Executed §218 instruments versus the old two-rank wording.** Existing
+   §4.1 identifies enacted federal law and administering material but does
+   not say how an executed agreement/modification or necessary state
+   determination establishes a state/entity/year inference. Section 19.2.4
+   proposes a mandatory rank-1 establishing bundle anchored in federal law.
+   If legal review rejects that classification, the affected V-B1 cells
+   remain required gaps; no source is promoted by convenience.
+3. **All-possible-token completeness versus unproved physical spellings.**
+   The old flat-token wording can be read to require silently guessing every
+   padding/sentinel spelling or to make a completely scanned present file
+   forever unregistrable. Section 19.3.2 expressly replaces it with
+   field-specific source grammar, complete observed census, and an explicit
+   abort for every physically unestablished possible token. If source review
+   requires a positive spelling instead, that field remains Class B; no trim,
+   missing default, or era convention resolves it.
+4. **Unallocated aggregates versus executable allocation laws.** The
+   existing SE family action requires registered person allocation. Title II
+   does not replace it with an unallocated executable path. Its sibling
+   residual consequence may preserve authenticated aggregate lineage, but a
+   current required allocation gap still aborts. Treating preservation as
+   permission to assign or model a person amount would conflict with §4.2
+   and is forbidden.
+5. **Residual 9's historical negative versus §18's later positive seam.**
+   The adjudication blob truthfully preserves the original
+   `registration_required` residual, while §18 later proves that the
+   inclusive total needs no source arithmetic allocation. Section 19.3.4
+   retains both histories and permits the exact
+   `documented_no_source_allocation_required` consequence only for that row.
+   If §18's registered-byte inference is rejected, residual 9 reverts to a
+   required blocker; no broader Class-C exception exists.
+6. **Annual integer intervals versus midyear legal transitions.** The v1
+   schema cannot faithfully represent a midyear transition by rounding it
+   to a whole earnings year. Section 19.2.4 leaves that cell a closed gap
+   unless separately ratified service-date allocation law exists. This is a
+   reported representational limit, not a substantive choice of which
+   half-year law wins.
+
+The two claimless optional federal/Railroad families are not an unresolved
+conflict: §19.2.4 adds their direct cell-validation equation while preserving
+their empty claim-ID arrays. The current absence of future legal, slot,
+inventory, or registry rows is likewise not a contradiction in a
+prospective schema amendment; it is a registration blocker until the build
+sequence succeeds.
+
+#### 19.8.3 Referee, ratification, and fresh-registration protocol
+
+Amendment 5 uses the same referee-rounds-then-ratify discipline as §§15.8,
+16.10, 17.4, and 18.8. The authorized order is:
+
+1. submit the complete append-only §19 bytes to adversarial referee review
+   without source artifact, implementation, registration, capture,
+   correction evaluation, context output, or any other tree change in this
+   amendment lane;
+2. resolve every referee finding in the review record; verify the complete
+   round-to-round diff, exact D4 prefix, every pinned digest and source row,
+   the §19.4 closure sweep, the 32-row comparator census, both successor-name
+   lists, and every cited preservation; continue rounds until the exact final
+   bytes receive an affirmative ratification verdict;
+3. ratify those accepted bytes in one identifiable future commit D5; every
+   authoring or referee-response commit before it is not ratification;
+4. only afterward perform the separately reviewed source/authority build in
+   §19.8.1, including slot/inventory ratification, raw legal-source commits,
+   the one-path L5 commit, nine-registry/crosswalk closure, and all fresh
+   content/identity digests; no source row or artifact may be smuggled into
+   D5;
+5. run the complete v2 legal predicate, official-inventory reproduction,
+   crosswalk history, nine-registry exact cover, G17, and 22-requirement
+   reconstruction. Any remaining registration-required legal cell, Class-A
+   or Class-B residual, or required Class-C consequence stops here and is
+   reported with its exact ID;
+6. only if the preliminary calibrated adjudication satisfies the unchanged
+   narrow capture predicate, perform the receipt-free-proof-gated v4 A1/A3
+   capture, reviewed triple, clean cutoff, and final adjudication;
+7. obtain a validator-accepted fresh registration binding D5, the complete
+   revision-7 design blob, every required legal/source/inventory/registry/
+   implementation/capture byte, complete v5 bundle, complete v4 receipt, and
+   a fresh output/claim namespace; then
+8. perform the unchanged prelaunch, sealed execution, incident,
+   publication, context, certificate, and external merge sequence.
+
+On the currently authenticated §19.3.1 scope, Amendment 5 itself resolves no
+Class-A or Class-B source row and supplies no future legal rule. Residual 9
+has the preserved §18 disposition; the other eleven Class-C rows remain
+registration-required blockers. A complete production-registration witness
+therefore does **not yet exist** from the presently pinned artifacts. That is
+the correct fail-closed result, not permission to weaken a claim or omit a
+negative registry row. The amendment establishes a finite lawful target and
+build order by which separately reviewed source lanes can change that result.
+
+**Amendment 5 is inoperative unless and until its exact D5 ratification
+commit is bound by the validator-accepted v4 fresh-registration receipt.**
+After ratification but before that registration, steps 4–6 authorize only
+the separately reviewed source, authority, implementation, and proof-gated
+capture preparation stated above. They authorize no correction production
+evaluation, path switch, context run, label change, or publication.
