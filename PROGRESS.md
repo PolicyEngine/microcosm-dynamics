@@ -35,6 +35,11 @@ design's completeness, ordering, foreign-key, and fail-closed laws.
 - Confirmed the local #348 repin changes only the revision-5 design binding;
   it adds no registry authority, artifact, builder, or test.
 - Ran the pinned authority/registry verification set: 282 tests passed.
+- Ran the complete focused PSID inventory/corpus suite: 182 tests passed.
+- Verified the collection-wide tier policy (1 passed, 4,470 deselected), the
+  unchanged 4,471-test collection, and all Ruff checks.
+- Wrote the complete law, authority, residual, critical-slot, test, and
+  ratification-path report to `e11-inventory-final-report.md`.
 
 ## Next
 
@@ -47,4 +52,3 @@ design's completeness, ordering, foreign-key, and fail-closed laws.
   render the positionally identical source inventory from that immutable blob.
 - Preserve the 12 downstream semantic residuals for their separately reviewed
   rule registries/crosswalk rather than folding them into source facts.
-- Finish verification and write the final lane report.
