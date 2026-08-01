@@ -25499,11 +25499,17 @@ nonempty dictionary document IDs and row IDs resolve exact source-manifest
 the row-array digest covers those complete canonical rows and establishes
 field identity, coordinates, width, declared type, and declared numeric
 format. Codebook document and row-ID arrays obey the same resolution/order
-law against `codebook` manifest rows. They are nonempty for a
-`value_code_map` parser and are exact empty
-for a `fixed_width_numeric` parser; both codebook digests then hash
-canonical empty arrays. Otherwise `codebook_field_rows_sha256` hashes the
-complete ordered source rows. `normalized_codebook_entries` is the complete
+law against `codebook` manifest rows and, under §19.3.3, exact-cover every
+same-wave matching canonical codebook row even for a numeric parser. They
+are nonempty for a `value_code_map` parser. For a
+`fixed_width_numeric` parser they are exact empty only when no matching row
+exists; a matching row remains cited as source evidence and may contribute
+only numeric-domain, label/description, or missing-literal constraints
+compatible with the independently derived numeric grammar. A categorical or
+otherwise incompatible entry aborts rather than selecting another parser.
+When empty, both codebook digests hash canonical empty arrays; otherwise
+`codebook_field_rows_sha256` hashes the complete ordered source rows.
+`normalized_codebook_entries` is the complete
 concatenation of their normalized entry arrays in codebook-document,
 source-row, and entry order, with neither deduplication nor selection; count
 equals length and `codebook_value_domain_sha256` hashes that complete array.
@@ -25520,7 +25526,9 @@ projection. Thus every cited canonical row contributes its document exactly
 once, no document without a cited row may enter the field closure, and the
 retained field/file projections cannot exact-copy a row digest while
 omitting or substituting that row's source document. The fixed-width-numeric
-codebook branch yields exact empty projections on both sides.
+codebook branch yields exact empty row/document projections only when the
+complete matching-row relation is empty; otherwise both projections retain
+the complete cited source even though the parser remains numeric.
 
 Across the cited dictionary rows, all nonnull declarations of coordinate,
 width, parse kind, sign, decimal places, scale, type, and unit must agree, and
@@ -26216,7 +26224,7 @@ is selectable. Branch labels and questionnaire near-match occurrence hashes
 use only these ordered page strings.
 
 `hierarchy_annotation_authority` is the source-only annotation authority for
-all questionnaire hierarchy semantics. It has exactly `authority_kind`,
+all questionnaire hierarchy and positive/source-field-link semantics. It has exactly `authority_kind`,
 `questionnaire_document_count`, `questionnaire_document_keyset_sha256`,
 `questionnaire_document_domain_sha256`,
 `questionnaire_page_text_derivation_byte_size`,
@@ -26233,15 +26241,20 @@ all questionnaire hierarchy semantics. It has exactly `authority_kind`,
 `flow_branch_domain_sha256`, `hierarchy_row_count`,
 `hierarchy_keyset_sha256`, `hierarchy_domain_sha256`,
 `positive_occurrence_row_count`, `positive_occurrence_keyset_sha256`,
-`positive_occurrence_domain_sha256`, `expanded_disposition_row_count`,
+`positive_occurrence_domain_sha256`,
+`occurrence_raw_field_reference_count`,
+`occurrence_raw_field_reference_keyset_sha256`,
+`occurrence_raw_field_reference_domain_sha256`,
+`positive_field_join_row_count`, `positive_field_join_keyset_sha256`,
+`positive_field_join_domain_sha256`, `expanded_disposition_row_count`,
 `expanded_disposition_keyset_sha256`,
 `expanded_disposition_domain_sha256`, `absence_proof_count`,
 `absence_proof_domain_sha256`, `canonical_order`, and `status`.
 `authority_kind` is the non-schema literal
 `source_only_canonical_questionnaire_annotation`; `canonical_order` is the
 non-ID law literal
-`source_document_page_utf8_span_then_catalog_anchor`; status is `pass |
-fail`.
+`source_document_page_utf8_span_then_catalog_anchor_then_positive_field_join`;
+status is `pass | fail`.
 
 The authority's questionnaire input is exactly the independently derived
 81-row `questionnaire_flow` slice of `U`. Its count is 81; its ordered
@@ -26391,7 +26404,8 @@ orphan catalog row, parent/type mismatch, alias conflict, extra relationship,
 ID collision, or candidate-selected subset aborts.
 
 The authority-wide page, occurrence, flow-branch, hierarchy, positive-
-occurrence, expanded-disposition, and absence-proof arrays are the direct
+occurrence, occurrence/raw-field-reference, positive-field-join, expanded-
+disposition, and absence-proof arrays are the direct
 concatenations of the corresponding six era arrays in era order. Every
 authority-wide count is the length of that complete concatenation. Each
 authority-wide keyset digest hashes the complete ordered ID/key projection
@@ -26484,7 +26498,13 @@ candidate era row cannot select or narrow it. Each era row has exactly
 `hierarchy_rows`, `hierarchy_row_count`, `hierarchy_keyset_sha256`,
 `hierarchy_domain_sha256`, `positive_occurrence_rows`,
 `positive_occurrence_row_count`, `positive_occurrence_keyset_sha256`,
-`positive_occurrence_domain_sha256`, `expanded_disposition_rows`,
+`positive_occurrence_domain_sha256`,
+`occurrence_raw_field_reference_rows`,
+`occurrence_raw_field_reference_count`,
+`occurrence_raw_field_reference_keyset_sha256`,
+`occurrence_raw_field_reference_domain_sha256`, `positive_field_join_rows`,
+`positive_field_join_row_count`, `positive_field_join_keyset_sha256`,
+`positive_field_join_domain_sha256`, `expanded_disposition_rows`,
 `expanded_disposition_row_count`, `expanded_disposition_keyset_sha256`,
 `absence_proofs`, `absence_proof_count`, `absence_proof_domain_sha256`, and
 `status`. The early era's `residual_ids` is the exact ordered Class-A source
@@ -26703,18 +26723,181 @@ hashes the complete ordered row array. A repeated printed prompt at another
 coordinate remains in the evidence array; no stable-first evidence loss is
 allowed.
 
+The positive/raw-field join is constructed inside the source-only `Q5`
+authority before any slot-registry or official-inventory row is read. For
+one wave, let `D_w` be the stable-first `raw_field_id` projection, in
+`field_source_derivation` document and canonical-row order, of every
+authenticated same-wave dictionary row. It is nonempty and independently
+fixed by `U`; a questionnaire annotation, inventory row, crosswalk, or reader
+cannot add, rename, reorder, or suppress a field ID.
+
+Each `occurrence_raw_field_reference_rows` member has exactly
+`occurrence_raw_field_reference_id`, `positive_occurrence_id`,
+`questionnaire_occurrence_id`, `questionnaire_source_document_id`,
+`questionnaire_source_locator_id`, `interview_wave`, `page_number`,
+`questionnaire_utf8_byte_start`, `questionnaire_utf8_byte_end`,
+`questionnaire_matched_text`, `questionnaire_matched_utf8_sha256`,
+`reference_basis`, `field_source_role`, `field_source_document_id`,
+`field_source_row_id`, `field_source_member`, `field_utf8_byte_start`,
+`field_utf8_byte_end`, `field_matched_text`,
+`field_matched_utf8_sha256`, and `raw_field_id`. Restrict the questionnaire
+denominator to each `field_purpose_prompt` occurrence in its named positive-
+occurrence row; role/job/component/context/aggregate anchors cannot supply a
+purpose's field link. The questionnaire document, locator, wave, and page
+exact-copy that occurrence. Its nonempty half-open UTF-8 span lies within the
+occurrence, slices the exact pinned page bytes, and reproduces its text and
+digest.
+
+The field side resolves one same-wave canonical row whose document role is
+`dictionary_layout | codebook` and whose raw field belongs to `D_w`.
+`field_source_role` matches
+that document role; row ID, document ID, and `raw_field_id` exact-copy the
+canonical row. `field_source_member` is exactly `raw_field_id |
+source_label | source_description`; its nonempty half-open UTF-8 span lies
+within that exact member string and reproduces its text and digest. The
+reference basis is one of two disjoint source-only branches:
+
+- `exact_raw_field_id_token`: field member is `raw_field_id`, its span is the
+  complete member, and both matched texts byte-equal `raw_field_id`. For each
+  prompt, enumerate every exact `D_w` span; discard a match whose
+  questionnaire span is a proper subinterval of another exact field-ID
+  match, then retain every canonical field row for the remaining ID. Any
+  partial overlap among retained field-ID spans aborts.
+- `exact_question_identifier_token`: field member is `source_label` or
+  `source_description`. On each side, remove no bytes but locate the first
+  byte after the maximal leading run of ASCII tab, LF, CR, or space; the
+  matched span is the complete following maximal run of printable nonspace
+  ASCII bytes `0x21..0x7e`. It contains at least one ASCII letter and one
+  digit, starts at that position, and is byte-identical on both sides,
+  including case and punctuation. The row's independently extracted
+  `raw_field_id` supplies the joined field. A later common word,
+  cross-reference, substring, or differently cased/spaced/punctuated label
+  is not a match. For one positive, prompt occurrence, and exact question
+  token, the stable-unique matching raw-field-ID set across all same-wave
+  canonical rows must be a singleton; multiple distinct fields are an
+  unresolved semantic attachment and abort rather than being assigned by
+  role, label similarity, or inventory contents.
+
+For every positive prompt, enumerate both displayed branches against every
+same-wave canonical dictionary/codebook row in `field_source_derivation`
+order. After the question branch's singleton raw-field test, retain one row per matching
+`(canonical field-source row,field_source_member)` pair for that field;
+matching label and description members and dictionary/codebook corroboration
+are not deduplicated. The direct branch has only its one `raw_field_id`
+member. Across both branches, group candidates by exact
+`(positive_occurrence_id,questionnaire_occurrence_id,
+questionnaire_utf8_byte_start,questionnaire_utf8_byte_end,
+questionnaire_matched_text)` coordinate. Each group's stable-unique
+`raw_field_id` array must be a singleton; two fields claiming the same exact
+questionnaire bytes are ambiguous and abort. For the same positive and
+prompt occurrence, any two questionnaire spans from either branch that
+overlap and project distinct raw-field IDs also abort; overlapping
+corroboration of the same field remains explicit. The reference ID is literal
+`psid-occurrence-raw-field-reference:` followed by SHA-256 of the §10.1
+terminal-LF canonical JSON value array of the remaining 20 row values in
+displayed order. Rows follow positive-occurrence order, prompt-occurrence
+order, displayed basis order, questionnaire span, field-source derivation
+order, displayed member order, field span, then unsigned-UTF-8 raw field ID.
+IDs and complete row preimages are unique. Count equals length; the keyset
+digest hashes the ordered ID array; and the domain digest hashes the complete
+ordered row array. Every row is used by exactly its named join. An omitted,
+extra, reordered, unresolved, wrong-wave, or candidate-selected match aborts.
+
+Each `positive_field_join_rows` member has exactly `positive_field_join_id`,
+`positive_occurrence_id`, `source_inventory_key`,
+`questionnaire_slot_id`, `questionnaire_occurrence_ids`,
+`occurrence_raw_field_reference_ids`, `raw_field_projections`,
+`raw_field_count`, `raw_field_keyset_sha256`, and
+`raw_field_domain_sha256`. `positive_occurrence_id`,
+`source_inventory_key`, `questionnaire_slot_id`, and
+`questionnaire_occurrence_ids` deep-copy the same-position positive-
+occurrence row. `occurrence_raw_field_reference_ids` is the complete ordered
+projection of reference rows whose `positive_occurrence_id` equals this row's
+ID. Every referenced prompt occurrence belongs to this positive row and no
+other reference enters. The array is nonempty.
+Stable-first deduplication of the
+referenced `raw_field_id` stream fixes the ordered raw-field domain; repeated
+printed references remain in the reference-ID array but produce one field
+projection.
+
+Each `raw_field_projections` member has exactly:
+
+```text
+raw_field_id
+start
+end
+raw_width
+dictionary_source_document_ids
+dictionary_field_row_ids
+dictionary_field_rows_sha256
+codebook_source_document_ids
+codebook_field_row_ids
+codebook_field_rows_sha256
+normalized_codebook_entries
+normalized_codebook_entry_count
+codebook_value_domain_sha256
+raw_data_source_document_id
+raw_data_source_sha256
+record_framing_sha256
+```
+
+For the joined wave and field, dictionary row IDs are the complete nonempty
+matching canonical-row projection across all `U` dictionary documents, in
+`U` then source-row order. Codebook row IDs are the complete matching
+projection under the same order. When the complete same-wave codebook domain
+has no matching field and the complete dictionary rows uniquely establish
+the uncoded `fixed_width_numeric` branch,
+`codebook_source_document_ids`, `codebook_field_row_ids`, and
+`normalized_codebook_entries` are exactly `[]`,
+`normalized_codebook_entry_count` is integer zero, and both
+`codebook_field_rows_sha256` and `codebook_value_domain_sha256` hash the
+§10.1 terminal-LF canonical empty array. A missing codebook for any other
+branch aborts; otherwise the codebook row array is nonempty. Document arrays are the stable-first
+source-manifest-order projections of their complete row arrays. All
+dictionary declarations of start, end, and width agree, and populate the
+displayed zero-based half-open values. The codebook-entry array is the
+complete concatenation in row and entry order. All row and entry digests
+hash the complete ordered canonical values under §10.1.
+
+Exactly one same-wave `raw_fixed_width_data` document and its passing raw-
+data derivation resolve the field. Its source-manifest SHA-256 deep-equals
+`raw_data_source_sha256`; the field range fits its positive record width;
+and `record_framing_sha256` hashes the complete eight-key
+`record_framing` object under §10.1 with one terminal LF. A missing
+dictionary field, zero or multiple raw files, conflicting coordinate,
+thinned source-row array, source-wave mismatch, unresolved framing, or
+candidate-selected projection aborts.
+
+Raw-field projections follow the stable-first field order above.
+`raw_field_count` equals both the length of `raw_field_projections` and the
+length of the stable-first referenced raw-field-ID array and is greater than
+zero. The keyset digest hashes their ordered
+`raw_field_id` array, and the domain digest hashes the complete ordered
+projection array. The join ID is literal `psid-positive-field-join:`
+followed by SHA-256 of the terminal-LF canonical JSON value array of its
+remaining nine members in displayed order. Join rows follow positive-
+occurrence order; join IDs, positive IDs, and source inventory keys are each
+unique; `positive_field_join_row_count` equals both row length and
+`positive_occurrence_row_count`; its keyset hashes the ordered join-ID array; and
+the join-domain digest hashes the complete ordered rows. A positive without
+at least one admitted exact source-token reference remains
+`registration_required`; no
+semantic guess may fill the join.
+
 An expanded-disposition row has exactly `source_inventory_key`,
 `questionnaire_slot_id`, `field_purpose`, `questionnaire_presence`,
-`positive_occurrence_id`, `positive_locator_ids`, and `absence_proof_id`.
+`positive_occurrence_id`, `positive_field_join_id`,
+`positive_locator_ids`, and `absence_proof_id`.
 It positionally exact-covers H × the ordered 35-purpose domain. Let `K_P` be
 the complete positive-row source-key set. The tagged union is exact:
 
 - `questionnaire_presence: asked` if and only if the key is in `K_P`; it has
-  the one resolving positive-occurrence ID, `positive_locator_ids` deep-equal
-  that row's complete `questionnaire_occurrence_ids`, and null proof ID; or
+  the one resolving positive-occurrence ID and the one same-key resolving
+  positive-field-join ID, its positive locators obey the complete source
+  projection below, and its proof ID is null; or
 - `questionnaire_presence: structural_query_slot` if and only if the key is
-  outside `K_P`; it has null positive-occurrence ID, exact-empty positive
-  locators, and one nonnull resolving absence-proof ID.
+  outside `K_P`; it has null positive-occurrence and positive-field-join IDs,
+  exact-empty positive locators, and one nonnull resolving absence-proof ID.
 
 No third questionnaire-presence state or evidence-free empty branch exists.
 For an observed hierarchy row, missing purposes take the second branch. For
@@ -26723,9 +26906,23 @@ the row's hierarchy proof. The source and inventory keys are independently
 recomputed under §4.2; annotation cannot author them. Rows follow hierarchy
 then purpose order; expanded count is exactly `hierarchy_row_count * 35` and
 `expanded_disposition_keyset_sha256` hashes the complete ordered source-key
-array. An occurrence ID is an exact-coordinate locator in the complete
-locator union, so every positive array is nonempty, unique, occurrence-order
-sorted, and cannot be replaced by a whole-document-only locator.
+array. Every positive-occurrence evidence array is nonempty, unique, and
+occurrence-order sorted; the expanded row's mixed positive-locator array
+instead follows the complete locator-union order defined below. Neither can
+be replaced by a whole-document-only locator.
+
+The retained official `expanded_slots` row is prospectively completed in
+place and has exactly, in order, `source_inventory_key`,
+`questionnaire_slot_id`, `interview_wave`, `earnings_reference_year`,
+`role`, `job_slot`, `questionnaire_component_slot`, `slot_kind`,
+`field_purpose`, `questionnaire_presence`, `positive_occurrence_id`,
+`positive_field_join_id`, `absence_proof_id`, `source_document_ids`, and
+`source_locator_sha256s`. Its first ten values and final source arrays retain
+their §4.2 meanings. The three inserted evidence IDs deep-equal the same-key
+expanded-disposition row, including exact null branches. Thus the ratified
+slot key stream directly names its positive/raw-field join or its structural
+proof; a source-manifest identity or matching key alone cannot substitute
+for that evidence edge.
 
 The structural rows and absence proofs form one keyed bipartite exact cover.
 Construct the multiset of `[source_inventory_key,absence_proof_id]` pairs
@@ -26824,8 +27021,14 @@ span digest; and a field locator
 hashes `[source_document_id,canonical_source_path,source_role,
 [interview_wave,raw_field_id,source_row_position,start,end,
 codebook_entry_positions]]`. The path comes only from the authenticated
-source manifest. An `asked` expanded-disposition row first selects exactly
-its positive row's occurrence-coordinate `positive_locator_ids`; a
+source manifest. An `asked` expanded-disposition row's
+`positive_locator_ids` is the complete locator-union-order stable union of
+its positive row's questionnaire-occurrence IDs and every field-stream
+locator resolving any dictionary or codebook row ID in its positive-field-
+join raw projections. It is nonempty and includes both an occurrence and at
+least one dictionary locator. The join's raw-data identity, SHA-256, and
+framing digest remain separately mandatory; no invented raw-file locator is
+added to the field-stream domain. A
 `structural_query_slot` row selects its proof's
 complete `searched_locator_ids` followed by every field-stream locator whose
 row participates in either searched keyset digest. The matching retained
@@ -26913,6 +27116,88 @@ Absence proofs are ordered by their first target inventory key then ID;
 their count equals array length and `absence_proof_domain_sha256` hashes the
 complete ordered proof-row array.
 
+Class A and Class B are joined by complete keyed relations, not parallel
+status labels. Let `A` and `S` be the `asked` and
+`structural_query_slot` expanded-disposition rows, let `J` be all positive-
+field-join rows, and let `I+` and `I-` be the `present` and
+`structural_missing` official-inventory rows. Each projection preserves the
+complete official source-inventory-key order. The following ordered arrays
+must deep-equal, not merely hash alike:
+
+```text
+keys(A) == keys(J) == keys(I+)
+keys(S) == keys(I-)
+stable merge of keys(A) and keys(S) by original expanded-row position
+  == complete expanded-slot key stream
+  == complete official-inventory key stream
+positive_occurrence_ids(A)
+  == positive_occurrence_ids(positive_occurrence_rows)
+  == positive_occurrence_ids(J)
+```
+
+For the displayed stable merge, tag every filtered row with its unique zero-
+based position in the complete expanded-disposition array, sort by that
+integer, and drop the tag. Every array is an exact cover with multiplicity
+one. In addition, expand the
+complete ordered relation
+`[positive_occurrence_id,source_inventory_key,
+questionnaire_occurrence_id,occurrence_raw_field_reference_id]` first from
+positive rows' purpose-prompt subsets plus exact reference rows and
+independently from `J`; the two
+multisets and their order must be equal. One questionnaire occurrence may be
+reused by distinct positive keys, but every positive and reference ID is
+key-specific and unique; each repeated occurrence therefore remains in its
+complete tuple. No stable-first relationship loss is allowed.
+
+For every same-key member of `J` and `I+`, inventory `raw_field_ids`
+deep-equals the join's ordered raw-field-ID projection. Its
+`layout_coordinates` and `typed_parse_specs` arrays have that same positive
+length and position. Project each layout object through, in order,
+`raw_field_id`, `start`, `end`, `raw_width`,
+`dictionary_source_document_ids`, `dictionary_field_row_ids`,
+`dictionary_field_rows_sha256`, `codebook_source_document_ids`,
+`codebook_field_row_ids`, `codebook_field_rows_sha256`,
+`normalized_codebook_entries`, `normalized_codebook_entry_count`,
+`codebook_value_domain_sha256`, and `raw_data_source_document_id`; it must
+deep-equal the first 14 members of the join's same-position raw-field
+projection. Independently resolve the raw-data manifest SHA-256 and complete
+record-framing digest and require equality to the projection's final two
+members.
+
+Each positional typed-parse object and raw-token grammar must then derive
+only from those complete dictionary/codebook rows and raw-data framing under
+§19.3.2. Labels, descriptions, value maps, reporting/timing metadata,
+`source_file_ids`, and `source_byte_sha256s` must likewise be the complete
+same-source projections already required there. The inventory may not
+select a field, row, document, order, coordinate, parser branch, or source
+digest and then use its own choice as expected join input. A shared raw field
+across distinct keys is lawful; an inventory-only field, questionnaire-only
+positive, reordered field, or partial source projection aborts.
+
+The disposition equations are literal biconditionals over every complete
+key:
+
+```text
+questionnaire_presence == asked
+if and only if source_disposition == present
+
+questionnaire_presence == structural_query_slot
+if and only if source_disposition == structural_missing
+```
+
+The asked/present branch has one positive-occurrence ID, one positive-field-
+join ID, nonempty joined fields and locators, and null slot and inventory
+absence proof. The structural/structural-missing branch has null positive
+and join IDs, the exact-empty field/label/description/value-map/parse/source-
+file/source-digest/layout/missing-token branches required by §4.2, and one
+nonnull slot proof ID. That ID resolves exactly one complete Q5 era
+`absence_proofs` object whose target keys contain this key exactly once. The
+same-key inventory row's nested `absence_proof` must deep-equal that entire
+resolved object—including target predicate, complete searched domains,
+near-match rows, search authority, conclusion, and every null/empty value—
+not merely its ID or digest. Any crossed status pair, missing/extra join,
+proof-ID-only match, or unequal proof byte fails both artifact statuses.
+
 A lawful absence proof therefore sweeps all pages and flow branches of every
 document in its claimed wave scope, the complete role/job/component/context
 hierarchy, all 35 purposes, and the complete linked layout/codebook streams.
@@ -26928,7 +27213,8 @@ because the early era separately exact-covers both its positive
 questionnaire-slot hierarchy and every unsupported early
 job/context/purpose negative. Any missing wave, branch, role, job,
 component, purpose, source stream, near-match disposition, row, count, or
-digest leaves the corresponding residual `registration_required`. This law
+digest, or positive/raw-field join leaves the corresponding Class-A and
+Class-B residuals `registration_required`. This law
 ratifies the extraction target and proof form; it does not declare any
 future extraction complete.
 
@@ -27163,6 +27449,7 @@ unnamed consumer.
 | §4.2 flat-string `missing_raw_tokens` and generic no-whitespace parsing sentence | `replaced-by-§19.3.2-field-token-objects`: exact field/token pair and source meaning/reason; no generic trim, with only source-registered exact padding removal admitted. Every presence, commitment, action-trace, and consumer occurrence uses the pair. |
 | §4.2 slot authority and inventory `absence_proof` nested shape | `completed-by-§19.3.3`: before the candidate is read, authenticate the pinned questionnaire-registry and 176-row field-corpus roots, exact-disposition all 465 link occurrences and 456 accepted rows, reconstruct the complete 257-document `U` denominator (81 questionnaire/QxQ, 86 setup/layout, 47 codebook/value-label, and 43 raw files), and exact-compare every row, role, wave, path, storage identity, order, count, keyset, and domain digest. Only that fixed denominator supplies the six-era/43-wave hierarchy extraction, whole-document/field/flow/occurrence locator domains, retained slot-source projection, and exact branch, layout, codebook, near-match, and target-key proof. The field root's historical `reproduced_from_source_bytes: false` and `registration_required` remain unfavorable evidence; a new pass requires fresh reproduction of all 257 staged source bytes. Existing outer slot/inventory v1 names, dimensions, rows, counts, and orders are preserved. |
 | §4.2 source-derived job/component IDs, `slot_kind`, hierarchy, and unsupported-tuple denominator | `replaced-and-completed-by-§19.3.3-source-only-hierarchy-annotation`: the separately first-added `Q5` closure is the authenticated annotation authority over all pages of the fixed 81-document domain. Exact UTF-8 occurrence coordinates, same-wave and branch ancestry, complete role/job/component anchor partitions, repeat/alias and aggregate-anchor reverse covers, coordinate-derived IDs, sentinels, per-kind equations, and the exact all-source-component projection `R_Q` are frozen. The complete hierarchy is `W × two roles × R_Q`; source-only `O_H` is derived before purpose positives, observed and structural-hierarchy rows are explicit, every row expands over all 35 purposes, and complete `O_P` versus absence-proof branches exact-partition that fixed domain. G17-C01 carries the exact authority header plus six era annotation projections. The prior 37-wave/61-passage artifact and unauthenticated review literal cannot satisfy the new authority. Existing official v1 artifact names remain; only their formerly underdetermined nested dimensions and evidence are completed. |
+| §4.2 independent `questionnaire_presence`/`source_disposition` tags and positive/structural evidence | `replaced-and-completed-by-§19.3.3-positive-field-join`: direct raw-ID or byte-identical leading question-identifier spans join each purpose prompt to a unique same-wave `D_w` field; ambiguous multi-field question labels abort. One source-only join per positive carries the complete ordered dictionary/codebook/raw-data projection. Asked, join, and present keys exact-cover each other in both directions; raw fields and layouts compare positionally; `asked iff present` and `structural_query_slot iff structural_missing`; structural inventory proofs deep-equal the complete Q5 proof object. The retained slot row carries the positive, join, or proof IDs, and G17-C01 compares the full join and proof/status bytes. No current artifact is promoted by this schema law. |
 | §4.2 reconciliation, job-match, and SE-aggregation exact row keysets | `replaced-by-§19.3.4-successor-keysets-and-tagged-branches`: one `residual_consequence` member is inserted at the exact enumerated position. A verified/documented executable row preserves every preexisting member and meaning; only the exact authority-absent/conflict carrier branches set the enumerated executable members empty or null and force `abort_registration`. |
 | §4.2 `family_aggregate_allocation_rule` | `preserved-in-every-executable-SE-row-and-exactly-null-in-a-negative-carrier`: a verified/documented row retains exactly `action` and `allocation_source_inventory_keys`; an authority-absent/conflict carrier has null as expressly enumerated in §19.3.4. Neither branch creates an allocation default. |
 | §§16.2, 16.5.1, 16.11.2, and 16.13 official registry/crosswalk identities and construction | `composed-with-the-completed-nested-schemas`: all v1 official artifact/registry names, nine-registry order, first-add/cutoff history, nonempty/no-unreferenced-row rules, and configuration deep-copy laws remain. Every affected content and identity digest is fresh. |
@@ -27194,6 +27481,7 @@ The seven changed expected/actual payloads are exactly:
 
 - **G17-C01** is a tagged object with exactly `inventory_key_stream`,
   `slot_source_authority_manifest`, `hierarchy_annotation_authority`,
+  `positive_occurrence_field_join_rows`,
   `inventory_layout_grammar_rows`, `inventory_absence_proof_rows`, and
   `slot_closure_evidence_identity`. The
   first is the unchanged complete official key stream. The second is the
@@ -27213,7 +27501,8 @@ The seven changed expected/actual payloads are exactly:
   `era_annotation_rows` has exactly six rows in `era_id_order`; each has
   exactly `era_id`, `questionnaire_page_rows`,
   `questionnaire_occurrence_rows`, `flow_branch_rows`, `hierarchy_rows`,
-  `positive_occurrence_rows`, `expanded_disposition_rows`, and
+  `positive_occurrence_rows`, `occurrence_raw_field_reference_rows`,
+  `positive_field_join_rows`, `expanded_disposition_rows`, and
   `absence_proofs`, each a complete deep copy of the matching Q5 era member.
   The direct era-order concatenation of each nested array must reproduce the
   matching header count, keyset where defined, and domain digest. This exact
@@ -27232,9 +27521,33 @@ The seven changed expected/actual payloads are exactly:
   locator, proof, count, keyset, and digest is reverse-projected from those
   consumers and required to deep-equal it. The expected and actual tagged
   values, including empty arrays, are then compared byte-for-byte under
-  §10.1; a header-only or rows-only value is invalid. The next two are positional projections of every
-  official inventory row's complete §19.3.2 layout/token grammar and
-  §19.3.3 absence-proof value, including exact empty branches. The final
+  §10.1; a header-only or rows-only value is invalid.
+
+  The fourth value has exactly `occurrence_raw_field_reference_rows`,
+  `occurrence_raw_field_reference_count`,
+  `occurrence_raw_field_reference_keyset_sha256`,
+  `occurrence_raw_field_reference_domain_sha256`,
+  `positive_field_join_rows`, `positive_field_join_row_count`,
+  `positive_field_join_keyset_sha256`, and
+  `positive_field_join_domain_sha256`. Its arrays are the direct era-order
+  concatenations and its counts/digests equal the authority header. Expected
+  references and joins are reconstructed from pinned occurrence bytes,
+  `D_w`, and complete field-source derivations before an inventory row is
+  read. Actual rows are independently rebuilt from the official asked/present
+  key cover, raw-field order, layout objects, manifest bytes, and framing;
+  copying a candidate join as expected is forbidden. The two complete
+  objects deep-equal under §10.1.
+
+  The fifth value is the positional projection of every official inventory
+  row's complete §19.3.2 layout/token grammar, including exact-empty
+  structural branches. The sixth is one row per complete official key, in
+  that order, with exactly `source_inventory_key`,
+  `questionnaire_presence`, `source_disposition`,
+  `closure_absence_proof_id`, `closure_absence_proof`, and
+  `inventory_absence_proof`. Asked/present rows have all three proof values
+  null; structural rows carry the closure ID and two complete deep-equal
+  proof objects. Thus C01 compares the full proof bytes and status pair, not
+  only an ID or digest. The final
   identity has exactly `path`, `artifact_id`, `schema_version`,
   `source_commit`, `tree_mode`, `blob_oid`, `byte_size`, and `sha256`.
   Its path is
@@ -27248,7 +27561,8 @@ The seven changed expected/actual payloads are exactly:
   dictionary/codebook/raw-file and questionnaire bytes; the actual object
   comes from the slot registry and inventory. A candidate-selected source
   row, role, wave, path, order, count, keyset, annotation coordinate, alias,
-  relationship, or digest fails C01. C01's expected/actual count remains the complete official
+  relationship, raw field, reference span, status pair, proof value, or
+  digest fails C01. C01's expected/actual count remains the complete official
   inventory-row count, while its domain hash covers this entire tagged
   object.
 - **G17-C05** is a tagged object with exactly
@@ -27417,6 +27731,18 @@ hierarchy_annotation_authority
 questionnaire_occurrence_id
 semantic_ordinal_at_span
 positive_occurrence_id
+occurrence_raw_field_reference_rows
+occurrence_raw_field_reference_id
+positive_field_join_rows
+positive_field_join_id
+positive_occurrence_field_join_rows
+exact_raw_field_id_token
+exact_question_identifier_token
+raw_field_projections
+positive_locator_ids
+questionnaire_presence
+source_disposition
+raw_field_ids
 global_relationship_rows
 role_node_rows
 structural_hierarchy_node
@@ -28028,13 +28354,17 @@ artifacts, and `fixed_two_root_complete_source_document_projection` is the
 fixed value of their non-ID `projection_law` member; none is a separately
 selectable schema, rule, or predicate identifier. Likewise,
 `hierarchy_annotation_authority`, its page/occurrence/role/catalog/alias/
-relationship and `era_annotation_rows` members,
+relationship, raw-field-reference, positive-field-join, and
+`era_annotation_rows` members,
 `source_only_canonical_questionnaire_annotation`,
+`exact_raw_field_id_token`, `exact_question_identifier_token`,
 `observed_hierarchy_node`, `structural_hierarchy_node`, and the
 `psid-questionnaire-page:`, `psid-questionnaire-occurrence:`,
 `questionnaire-flow:`, `psid-job-slot:`, `psid-component-slot:`,
 `psid-node-alias:`, `psid-questionnaire-relationship:`, and
-`psid-positive-occurrence:` prefixes are member/tag/preimage literals inside
+`psid-positive-occurrence:`,
+`psid-occurrence-raw-field-reference:`, and
+`psid-positive-field-join:` prefixes are member/tag/preimage literals inside
 the already named closure schema, not new schemas or predicates. `O_H`,
 `O_P`, and `K_P` are symbolic byte-producing relations or projections, not
 serialized identifiers. `Q5` is a
@@ -28084,7 +28414,13 @@ accepted authority operand before every named predecessor passes.
    expand complete H as W × two roles × `R_Q`; derive `O_H` independently of
    purpose prompts; and exact-partition its 35-purpose expansion through
    complete `O_P` into positive occurrences and proof-backed structural
-   keys.
+   keys. From the already authenticated field-source derivation, construct
+   each wave's complete `D_w`, enumerate the direct raw-ID and byte-identical
+   leading question-identifier reference branches with the singleton-field
+   ambiguity abort, and build one nonempty complete ordered
+   dictionary/codebook/raw-data join for every positive. Do this before any
+   slot or inventory row exists; a positive with no exact source field link
+   remains a blocking gap.
    Independently review the complete
    `psid_questionnaire_slot_closure_evidence.v1` six-era/43-wave artifact and
    first-add it alone at the single-parent post-D5 commit `Q5`. Reconstruct
@@ -28093,8 +28429,8 @@ accepted authority operand before every named predecessor passes.
    the already reconstructed 257-row `U` denominator in every row, role,
    wave, path, storage identity, count, keyset, order, and domain digest, and
    only then accept its whole-document/occurrence/field-stream/flow-branch
-   locators, byte-derived canonical source rows, catalogs, hierarchy,
-   retained-slot projection, and absence proofs. Only after its source-
+   locators, byte-derived canonical source rows, catalogs, hierarchy, raw-
+   field references and joins, retained-slot projection, and absence proofs. Only after its source-
    manifest identity, `Q5` identity, and every page/occurrence/catalog/
    relationship/count/hash equation pass
    may `psid_questionnaire_slot_specs.v1` be derived and ratified. All seven
@@ -28106,7 +28442,10 @@ accepted authority operand before every named predecessor passes.
    query row. `asked` slot rows may map only to `present` inventory rows;
    every structural-query row—including every key under a structural-
    hierarchy node—may map only to `structural_missing` with its complete
-   source proof. Neither the slot registry nor the inventory is independently
+   source proof. Construct every present row in its same-key Q5 join's exact
+   raw-field order; require the full forward/reverse key covers, both status
+   biconditionals, positional source projections, and complete structural-
+   proof deep equality. Neither the slot registry nor the inventory is independently
    ratified unless the same two-key source-authority manifest passes the
    independent `U` comparison and G17-C01. All six Class-B residuals must close, all slot and row arrays
    exact-cover, every fixed-width file must frame and census without a
@@ -28180,8 +28519,9 @@ accepted authority operand before every named predecessor passes.
    separately reviewed `psid_covered_earnings_crosswalk.v3` first-add/
    cutoff procedure run. Reconstruct its complete identity array, all-key
    dispositions, component rows, and fresh content digest. Then construct
-   G17's 18 comparisons, including the four-key C05 overlap-evaluation
-   closure, and the four changed v4 requirement rows. From those
+   G17's 18 comparisons, including C01's exact positive-field-join and deep
+   proof/status objects, the four-key C05 overlap-evaluation closure, and the
+   four changed v4 requirement rows. From those
    immutable values, construct, commit, and validate the unique fresh
    retained ten-key verification-claim adjudication artifact, including its
    complete calibrated/fitting-free result children, source projection, and
@@ -28269,6 +28609,18 @@ them.
    passes, Class A and every dependent slot/inventory artifact remain
    nonemittable. Neither the predecessor's favorable structural status nor a
    whole-document locator fills that evidence gap.
+8. **Questionnaire semantics versus raw field identity.** The committed
+   evidence does not establish that every positive has a purpose-prompt
+   occurrence containing either an exact printed same-wave raw field ID or a
+   byte-identical leading question identifier in a canonical same-wave field
+   row. Section 19.3.3 admits only those two coordinate-bound branches;
+   strict-contained raw-ID prefixes are discarded and exact question tokens
+   resolving multiple raw fields abort. It does not infer a field from role,
+   label similarity, or meaning. A positive without a unique source link
+   therefore remains `registration_required`. A future separately
+   authenticated role/relationship/purpose-to-field binding authority could
+   be proposed in a later amendment, but it is not invented or silently
+   admitted here.
 
 The two claimless optional federal/Railroad families are not an unresolved
 conflict: §19.2.4 adds their direct cell-validation equation while preserving

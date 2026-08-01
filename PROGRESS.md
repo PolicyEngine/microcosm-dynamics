@@ -2,7 +2,7 @@
 
 ## State
 
-Findings 1–7 are closed; finding 8 is next. The worktree starts from
+Findings 1–8 are closed; finding 9 is next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -61,9 +61,23 @@ the ratified 1,376,610-byte prefix exactly.
   eight-key closure identity, exact G17-C01 header/era projection, ledger,
   sweep, and build order now fail closed. No current artifact satisfies Q5,
   so Class A remains `registration_required` pending new evidence.
+- Closed finding 8 with positive-keyed questionnaire/source-field reference
+  rows, one complete source-only join per positive, ordered dictionary,
+  codebook, raw-data, and framing projections, and exact slot/inventory
+  consumers. Direct raw IDs and byte-identical leading question identifiers
+  are the only lawful bridges; row/member candidates are complete, and
+  same-coordinate, overlap, or multi-field ambiguity aborts. Asked, join,
+  and present keys exact-cover each other; structural and structural-missing
+  keys exact-cover each other; both status biconditionals are literal; raw
+  fields/layouts compare positionally; and inventory structural proofs deep-
+  equal complete Q5 proof objects through G17-C01. Current q2023 `G13.`
+  evidence maps ambiguously to distinct reference-person/spouse raw fields,
+  so the normative relation is closed while actual registration remains
+  blocked pending a separately authenticated semantic field-binding
+  authority.
 
 ## Next
 
-1. Close findings 8–10 in referee order, committing each separately.
+1. Close findings 9–10 in referee order, committing each separately.
 2. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.
