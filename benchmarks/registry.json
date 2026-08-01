@@ -2083,8 +2083,8 @@
       },
       "evidential_status": "module replication; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator is not Mermin's projected 2050 retired-worker population.",
       "legacy_comparison_scope": [
         "ratio"
@@ -2167,8 +2167,8 @@
       },
       "evidential_status": "module replication; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2252,8 +2252,8 @@
       },
       "evidential_status": "module replication; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2337,8 +2337,8 @@
       },
       "evidential_status": "module replication; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2422,8 +2422,8 @@
       },
       "evidential_status": "module replication; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2507,8 +2507,8 @@
       },
       "evidential_status": "module replication; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our transported generator and individual-AIME ranking are not DYNASIM's projected 2050 shared-lifetime-income population.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2591,8 +2591,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2675,8 +2675,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2759,8 +2759,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2843,8 +2843,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
       "legacy_comparison_scope": [
         "ratio",
@@ -2927,8 +2927,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our restricted observed PSID support and compressed careers are not DYNASIM's projected 2050 population and full careers.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3012,8 +3012,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3097,8 +3097,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3182,8 +3182,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3267,8 +3267,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3352,8 +3352,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3437,8 +3437,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our observed-era claiming, individual-AIME ranking, and person weighting differ from Mermin's projected cross-section, shared-income ranking, and dollar weighting.",
       "legacy_comparison_scope": [
         "ratio"
@@ -3521,8 +3521,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our claim-age COLA start and person weighting differ from Mermin's age-62 start and dollar-weighted projection.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3607,8 +3607,8 @@
       },
       "evidential_status": "module replication; real-data-only; reported-not-gated",
       "external_reference": "DYNASIM3",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our claim-age COLA start and person weighting differ from Mermin's age-62 start and dollar-weighted projection.",
       "legacy_comparison_scope": [
         "ratio",
@@ -3691,8 +3691,8 @@
       },
       "evidential_status": "ordinal synthesis; reported-not-gated",
       "external_reference": "DYNASIM3 / CBO 2005 actuarial scoring",
-      "gap_class": "preliminary_source",
-      "gap_closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
+      "gap_class": "unverified_source",
+      "gap_closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
       "gap_note": "Publisher bytes are unavailable, and our per-capita benefit-change order is only an ordinal analogue of 75-year actuarial-payroll effects.",
       "legacy_comparison_scope": [
         "ordering"
@@ -3976,9 +3976,10 @@
     "frame_no_alignment": 1,
     "label_mismatch": 3,
     "module_missing": 1,
-    "preliminary_source": 20,
+    "preliminary_source": 0,
     "small_cell": 0,
-    "unexplained": 0
+    "unexplained": 0,
+    "unverified_source": 20
   },
   "gap_classes": {
     "concept_mismatch": {
@@ -3998,8 +3999,8 @@
       "definition": "The model lacks a module needed to construct the published quantity independently."
     },
     "preliminary_source": {
-      "closure_condition": "Closes when a final, provenance-pinned publisher source verifies the exact registered locator.",
-      "definition": "The published value is preliminary or lacks an accepted publisher-controlled capture."
+      "closure_condition": "Closes when the same provenance-pinned publisher series publishes a final value at the exact registered locator.",
+      "definition": "An accepted, provenance-pinned publisher source explicitly marks the published value as preliminary."
     },
     "small_cell": {
       "closure_condition": "Closes when the pre-registered support and precision minimums are met without selecting on the benchmark result.",
@@ -4008,6 +4009,10 @@
     "unexplained": {
       "closure_condition": "Closes only when the finding is assigned another gap class and a one-sentence evidence-based note; its presence always fails the harness.",
       "definition": "No permitted explanation has yet been assigned."
+    },
+    "unverified_source": {
+      "closure_condition": "Closes when an accepted, provenance-pinned publisher source verifies the reported value at the exact registered locator.",
+      "definition": "No accepted publisher-controlled source verifies the reported value at the exact registered locator."
     }
   },
   "honesty_frame": {
@@ -4819,7 +4824,7 @@
   "purpose": "Append-mostly standing benchmark specifications for validation-only comparison of ratios, shares, trajectories, and orderings.",
   "registry_change_law": "Changing an existing source pin or exact locator requires a nonempty changelog note in that entry's spec_revisions list.",
   "row_count": 42,
-  "schema_version": "standing_benchmark_registry.v2",
+  "schema_version": "standing_benchmark_registry.v3",
   "seed_evaluation": {
     "artifact_pointer": {
       "json_pointer": "/",

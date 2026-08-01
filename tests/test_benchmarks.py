@@ -28,16 +28,16 @@ SEED_RUN_SHA256 = (
     "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
 )
 REGISTRY_SHA256 = (
-    "5aa8ffb7f02527eb23e5948a32d6ffeeac03f941d733c47c55cf1aeabf1bfd89"
+    "d915af609c95fc2616c7ed61760df6efd437e28047ee8800f6b5e19de5bdd48b"
 )
 HISTORY_SEED_PREFIX_SHA256 = (
-    "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954"
+    "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae"
 )
 CURRENT_HISTORY_SHA256 = (
-    "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954"
+    "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae"
 )
 WALL_SHA256 = (
-    "67d150694c9d0188477f335f248917ca82a6a1ea64235e342cc116f82d387449"
+    "995548f1c83cb4e23a52cd47a4e1689b004f5b8ab15dd0df824e2506d5700f7f"
 )
 SEED_ROW_COUNT = 42
 TIER_COUNTS = {
@@ -51,7 +51,8 @@ GAP_COUNTS = {
     "concept_mismatch": 17,
     "module_missing": 1,
     "small_cell": 0,
-    "preliminary_source": 20,
+    "preliminary_source": 0,
+    "unverified_source": 20,
     "unexplained": 0,
 }
 UNMANIFESTED_MERMIN_SHA256 = (
@@ -299,6 +300,24 @@ def test__benchmark_history__unexplained_or_unnoted_gap_alarms():
         schema.validate_history(reused_run)
 
 
+def test__benchmark_history__binds_unverified_class_to_registry():
+    schema = load_schema()
+    registry, registry_raw = schema.load_registry()
+    history, _ = schema.load_history()
+    laundered = copy.deepcopy(history)
+    mermin = next(
+        record for record in laundered if ".mermin." in record["row_id"]
+    )
+    mermin["gap_class"] = "preliminary_source"
+
+    with pytest.raises(AssertionError, match="gap class disagrees"):
+        schema.validate_history_against_registry(
+            laundered,
+            registry,
+            hashlib.sha256(registry_raw).hexdigest(),
+        )
+
+
 def test__benchmark_registry__retains_source_and_verification_drift_laws():
     schema = load_schema()
     registry, _ = schema.load_registry()
@@ -315,6 +334,7 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws():
     assert len(verified) == 22
     assert len(reported) == 20
     assert not any(".mermin." in entry["row_id"] for entry in verified)
+    assert all(entry["gap_class"] == "unverified_source" for entry in reported)
 
     for entry in entries:
         pointer = entry["our_side_artifact"]["artifact_pointer"]
@@ -344,6 +364,28 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws():
         for locator in entry["source_pin"]["exact_locators"]:
             assert "capture_status" not in locator
             assert "unmanifested_corroborating_copy" not in locator
+
+    laundered = copy.deepcopy(reported[0])
+    laundered["gap_class"] = "preliminary_source"
+    with pytest.raises(AssertionError, match="must use unverified_source"):
+        schema.validate_registry_entry(laundered)
+
+    unmarked_preliminary = copy.deepcopy(
+        next(entry for entry in verified if entry["row_id"].startswith("wish."))
+    )
+    unmarked_preliminary["gap_class"] = "preliminary_source"
+    with pytest.raises(AssertionError, match="explicitly marked preliminary"):
+        schema.validate_registry_entry(unmarked_preliminary)
+
+    marked_preliminary = copy.deepcopy(
+        next(
+            entry
+            for entry in verified
+            if entry["row_id"] == "ssa.reported_taxable_earnings_per_worker"
+        )
+    )
+    marked_preliminary["gap_class"] = "preliminary_source"
+    schema.validate_registry_entry(marked_preliminary)
 
 
 def test__benchmark_registry__retains_exact_dynasim_locators():
@@ -558,4 +600,6 @@ def test__benchmark_wall__is_self_contained_complete_and_seeded():
         '`["frame-relative", "pre-alignment", "labor-income proxy"]`' in wall
     )
     assert "http://" not in wall and "https://" not in wall
+    assert "`preliminary_source` | 0" in wall
+    assert "`unverified_source` | 20" in wall
     assert "`unexplained` | 0" in wall

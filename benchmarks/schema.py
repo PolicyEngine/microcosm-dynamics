@@ -28,6 +28,7 @@ GAP_CLASSES = (
     "module_missing",
     "small_cell",
     "preliminary_source",
+    "unverified_source",
     "unexplained",
 )
 COMPARISON_SCOPES = ("ratio", "share", "trajectory", "ordering")
@@ -47,6 +48,10 @@ HISTORY_SEED_MIGRATIONS = {
     (
         "40ed82ee5ad01b6b36364de2310d45757a8a7dbb5c8f3274e83c46b7f8d514e4",
         "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954",
+    ),
+    (
+        "04bf81ffdbe73d8c47bcc8e7e9fb277f1e8fe126373d441f304f72c0f536f954",
+        "8bf5ee2d519efa225702b30dc38ddefc4a100845d8196d2cf1eb055a058ff1ae",
     ),
 }
 
@@ -484,7 +489,7 @@ def validate_registry(registry: dict[str, Any]) -> None:
 
     require(set(registry) == REGISTRY_KEYS, "registry keys have drifted")
     require(
-        registry["schema_version"] == "standing_benchmark_registry.v2",
+        registry["schema_version"] == "standing_benchmark_registry.v3",
         "unsupported benchmark registry schema",
     )
     require(
@@ -595,6 +600,16 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
     require(
         entry["verification_class"] in {"verified", "reported_not_verified"},
         f"invalid verification class: {row_id}",
+    )
+    require(
+        entry["verification_class"] != "reported_not_verified"
+        or entry["gap_class"] == "unverified_source",
+        f"reported-not-verified row must use unverified_source: {row_id}",
+    )
+    require(
+        entry["gap_class"] != "unverified_source"
+        or entry["verification_class"] == "reported_not_verified",
+        f"unverified_source row must be reported-not-verified: {row_id}",
     )
     require(
         isinstance(entry["comparison_scope"], list)
@@ -878,6 +893,16 @@ def validate_registry_entry(entry: dict[str, Any]) -> None:
         used_artifacts == artifact_identities,
         f"source artifacts and exact locators are not one-to-one: {row_id}",
     )
+    if entry["gap_class"] == "preliminary_source":
+        require(
+            entry["verification_class"] == "verified"
+            and any(
+                "preliminary" in locator.get("source_status", "").lower()
+                for locator in locators
+            ),
+            "preliminary_source requires accepted pinned publisher data "
+            f"explicitly marked preliminary: {row_id}",
+        )
 
     revisions = entry["spec_revisions"]
     require(isinstance(revisions, list), f"invalid spec revisions: {row_id}")
@@ -960,6 +985,38 @@ def validate_append_mostly_registry(
         require(
             legacy_projection == previous,
             "v1-to-v2 migration changed pre-existing registry fields",
+        )
+        return
+
+    if (
+        previous.get("schema_version") == "standing_benchmark_registry.v2"
+        and current.get("schema_version") == "standing_benchmark_registry.v3"
+    ):
+        validate_registry(current)
+        legacy_projection = deepcopy(current)
+        legacy_projection["schema_version"] = "standing_benchmark_registry.v2"
+        legacy_projection["gap_classes"].pop("unverified_source")
+        legacy_projection["gap_classes"]["preliminary_source"] = {
+            "closure_condition": (
+                "Closes when a final, provenance-pinned publisher source "
+                "verifies the exact registered locator."
+            ),
+            "definition": (
+                "The published value is preliminary or lacks an accepted "
+                "publisher-controlled capture."
+            ),
+        }
+        legacy_projection["gap_class_counts"].pop("unverified_source")
+        legacy_projection["gap_class_counts"]["preliminary_source"] = 20
+        for entry in legacy_projection["entries"]:
+            if entry["verification_class"] == "reported_not_verified":
+                entry["gap_class"] = "preliminary_source"
+                entry["gap_closure_condition"] = legacy_projection[
+                    "gap_classes"
+                ]["preliminary_source"]["closure_condition"]
+        require(
+            legacy_projection == previous,
+            "v2-to-v3 migration changed fields outside the source taxonomy",
         )
         return
 
@@ -1175,6 +1232,7 @@ def validate_history_against_registry(
     validate_history(records)
     validate_registry(registry)
     row_order = [entry["row_id"] for entry in registry["entries"]]
+    entries_by_id = {entry["row_id"]: entry for entry in registry["entries"]}
     record_sets: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(
         list
     )
@@ -1193,6 +1251,16 @@ def validate_history_against_registry(
                 record_ids == row_order,
                 "current-registry evaluation must contain every active row",
             )
+            for record in record_set:
+                entry = entries_by_id[record["row_id"]]
+                require(
+                    record["gap_class"] == entry["gap_class"],
+                    f"history gap class disagrees with registry: {record['row_id']}",
+                )
+                require(
+                    record["gap_note"] == entry["gap_note"],
+                    f"history gap note disagrees with registry: {record['row_id']}",
+                )
 
 
 def reconstruct_legacy_matrix(

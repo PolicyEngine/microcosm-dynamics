@@ -2478,6 +2478,7 @@ GAP_CLASS_ORDER = (
     "module_missing",
     "small_cell",
     "preliminary_source",
+    "unverified_source",
     "unexplained",
 )
 GAP_CLASS_DEFINITIONS = {
@@ -2533,12 +2534,22 @@ GAP_CLASS_DEFINITIONS = {
     },
     "preliminary_source": {
         "definition": (
-            "The published value is preliminary or lacks an accepted "
-            "publisher-controlled capture."
+            "An accepted, provenance-pinned publisher source explicitly marks "
+            "the published value as preliminary."
         ),
         "closure_condition": (
-            "Closes when a final, provenance-pinned publisher source verifies "
-            "the exact registered locator."
+            "Closes when the same provenance-pinned publisher series publishes "
+            "a final value at the exact registered locator."
+        ),
+    },
+    "unverified_source": {
+        "definition": (
+            "No accepted publisher-controlled source verifies the reported "
+            "value at the exact registered locator."
+        ),
+        "closure_condition": (
+            "Closes when an accepted, provenance-pinned publisher source "
+            "verifies the reported value at the exact registered locator."
         ),
     },
     "unexplained": {
@@ -2647,7 +2658,7 @@ def gap_class_for(row: dict[str, Any]) -> str:
     if row_id in FRAME_NO_ALIGNMENT_ROWS:
         return "frame_no_alignment"
     if ".mermin." in row_id:
-        return "preliminary_source"
+        return "unverified_source"
     if row_id.startswith("wish."):
         return "module_missing"
     return "concept_mismatch"
@@ -2834,7 +2845,8 @@ assert gap_class_counts == {
     "concept_mismatch": 17,
     "module_missing": 1,
     "small_cell": 0,
-    "preliminary_source": 20,
+    "preliminary_source": 0,
+    "unverified_source": 20,
     "unexplained": 0,
 }
 
@@ -2876,7 +2888,7 @@ registry = {
         "changelog note in that entry's spec_revisions list."
     ),
     "row_count": len(registry_entries),
-    "schema_version": "standing_benchmark_registry.v2",
+    "schema_version": "standing_benchmark_registry.v3",
     "seed_evaluation": {
         "artifact_pointer": source_pin("runs/first_estimates_v1.json", "/"),
         "evaluated_at_run": SEED_EVALUATED_AT_RUN,

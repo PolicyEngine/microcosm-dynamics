@@ -77,6 +77,7 @@ concept_mismatch
 module_missing
 small_cell
 preliminary_source
+unverified_source
 unexplained
 ```
 
@@ -84,12 +85,14 @@ It must also carry a nonempty, one-sentence `gap_note`. The alarm law is
 absolute: any evaluated `unexplained` row or any missing/blank note fails the
 harness. Each row retains its complete mismatch-code ledger in the registry;
 the singular history class identifies the primary blocker. Source authority
-takes precedence for the 20 Mermin rows, which are `preliminary_source` while
-separately retaining `verification_class: reported_not_verified`. Favreault
-population differences are primarily `concept_mismatch`; its disclosed small
-cells remain secondary facts.
+takes precedence for the 20 Mermin rows, which are `unverified_source` and
+retain `verification_class: reported_not_verified`. `preliminary_source` is
+reserved for accepted, provenance-pinned publisher data explicitly marked
+preliminary. The five SSA rows containing preliminary 2021-2022 observations
+have other primary gap classes. Favreault population differences are primarily
+`concept_mismatch`; its disclosed small cells remain secondary facts.
 
-All seven classes, including zero-count classes, appear in the wall's gap
+All eight classes, including zero-count classes, appear in the wall's gap
 ledger with their closure conditions.
 
 ## Seed record set
