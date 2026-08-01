@@ -23896,38 +23896,78 @@ or issuer aborts rather than accepting the authored rank.
 changes whose effective date is not an earnings-year boundary and
 therefore cannot be represented by the integer rule endpoints. Each row has
 exactly `midyear_transition_id`, `status_family`, `jurisdiction`,
-`effective_date`, `affected_inventory_keys`, `source_document_ids`,
-`exact_citations`, and `annual_allocation_rule_id`. `effective_date` is a
+`effective_date`, `affected_inventory_keys`, `establishing_source_links`,
+and `annual_allocation_rule_id`. `effective_date` is a
 canonical Gregorian `YYYY-MM-DD` string with month/day other than `01-01`;
 its year is inside the family's frozen interval. The jurisdiction is in the
 independently derived family domain. The affected-key array is the complete
 official-order applicable-key projection for that transition and may be
-empty only when the family has no inventory attachment in that year. The
-two source arrays are nonempty, equal-length, and source-manifest ordered;
-every document is establishing authority and each same-position citation is
-exact. `annual_allocation_rule_id` is null or one resolving verified rule
+empty only when the family has no inventory attachment in that year.
+`establishing_source_links` is a nonempty source-manifest-order array whose
+rows have exactly `source_document_id`, `source_relation`, `exact_citation`,
+and `authority_rank`. Rank is integer 1; relation is `primary |
+additional_establishing`; exactly one primary document has authority class
+`federal_statute | federal_regulation`; and every operative executed §218
+agreement/modification, state enactment, or official determination is an
+additional link. Issuer/class compatibility, exact citation, federal-anchor
+sufficiency, and no-secondary-promotion laws are exactly the rank-1 bundle
+law below. These equations apply whether or not annual allocation exists; a
+corroborating-only or rank-2 source cannot author a transition.
+`annual_allocation_rule_id` is null or one resolving verified rule
 whose source/service-date predicate and transform deterministically allocate
-the annual record across both sides of this exact transition and whose
-source links exact-cover these documents.
+the annual record across both sides of this exact transition. Projecting that
+rule's `primary | additional_establishing` links to
+`[source_document_id,source_relation,exact_citation,authority_rank=1]` must
+deep-equal this complete transition-link array.
 
 The array may be exact empty when the authenticated source universe contains
 no such transition; its zero count and empty-array digest remain explicit.
 
 The transition ID is literal `legal-midyear-transition:` followed by
-SHA-256 of §10.1 canonical bytes of the remaining seven fields in displayed
+SHA-256 of §10.1 canonical bytes of the remaining six fields in displayed
 order. Rows follow family order, effective date, jurisdiction order, and ID;
 the count equals array length and the domain digest hashes the complete
 ordered row array. A January-1 change belongs in integer rule endpoints and
 is invalid here; an unproved date, affected-key set, or allocation rule
 aborts rather than being rounded.
 
-For §16.13.2, the independently expected establishing-source projection is
-constructed in governing-rule order and then source-manifest order by
-selecting exactly `primary | additional_establishing`. Each
-`(rule_id,source_document_id)` pair occurs once. Corroborating links remain
-within the authenticated registry but are excluded from that establishing-
-source denominator. The configured projection must deep-equal this complete
-derivation; no singular source pointer may hide a second required source.
+For §16.13.2, the successor independently expected legal establishing-source
+projection is named
+`historical_coverage_rule_specs:establishing_sources.v2`. For each of V-B1,
+V-B2, V-B3, V-B4, and V-B9, its expected binding-key domain is the exact
+concatenation of:
+
+1. every claim-matching governing rule's `primary |
+   additional_establishing` link, in governing-rule order and then source-
+   manifest order; and
+2. every `primary | additional_establishing` transition link whose
+   transition family's independently frozen `verification_claim_id` equals
+   that claim, in canonical transition order and then source-manifest order.
+
+Each expected key is exactly
+`[claim_id,binding_kind,binding_id,source_document_id]`.
+`binding_kind` is `rule | midyear_transition`; `binding_id` is respectively
+the link's resolving `rule_id` or enclosing `midyear_transition_id`. A rule
+key points to
+`/legal_source_manifest/rule_source_links/<zero-based-link-index>`; a
+transition key points to
+`/legal_source_manifest/midyear_transitions/<zero-based-transition-index>/establishing_source_links/<zero-based-link-index>`.
+Each pointer resolves the complete link row; its expected row digest hashes
+the canonical two-element array `[complete_link_row,
+complete_source_document_row]`, and the referenced document must pass the
+complete Git-byte closure. The complete ordered expected key array and
+complete ordered expected row-digest array are reconstructed before any
+configured projection is read and must deep-equal it.
+
+Each `(binding_kind,binding_id,source_document_id)` occurs once within a
+claim. Corroborating links remain within the authenticated registry but are
+excluded from this establishing-source denominator. A transition for either
+claimless family remains mandatory in the registry, partition, byte-closure,
+and G17 predicates but contributes no §16.13.2 claim key. Thus every
+establishing link that can determine a claim partition's verified,
+unrepresentable, or conflict disposition contributes one expected key; a
+duplicate, omitted, extra, differently ordered, or singular-source
+projection fails.
 
 The coordinator constructs `legal_source_document_byte_closure.v1` with
 exactly `schema_version`, `legal_rule_input_sha256`,
@@ -24503,6 +24543,8 @@ observed_token_rows
 observed_token_row_count
 observed_token_rows_sha256
 unobserved_possible_values
+unobserved_possible_value_count
+unobserved_possible_value_domain_sha256
 unknown_token_action
 ```
 
@@ -24640,33 +24682,43 @@ unobserved payload. Each row has exactly `source_value_domain`,
 `source_value_domain` has exactly `domain_kind`, `source_entry_refs`, and
 `observed_member_values_sha256`. Kind is `codebook_entries |
 dictionary_missing_literals | uncoded_dictionary_numeric_domain`;
-references are a nonempty ordered subsequence of the normalized codebook
-domain or dictionary-missing domain for the first two and exact empty for
-the third. The digest hashes the complete canonical ordered scalar
-values from this domain that occur in `observed_token_rows`, including an
-exact empty array. The only lawful combinations are:
+references are the singleton normalized codebook-entry or dictionary-
+missing-entry reference for the first two and exact empty for the third.
+There is exactly one row per qualifying source entry and at most one uncoded-
+numeric row. Rows follow complete normalized codebook order, then dictionary-
+missing order, then the uncoded domain;
+`unobserved_possible_value_count` equals array length and
+`unobserved_possible_value_domain_sha256` hashes the complete ordered rows.
+The member digest hashes the complete array of distinct canonical scalar
+values from this domain that occur in `observed_token_rows`, retaining the
+first occurrence of each typed scalar in observed-token-row order, including
+an exact empty array. A later raw spelling of the same typed scalar does not
+create another member. The only lawful combinations are:
 
 | `rendering_status` | `registered_token_mappings` | `if_encountered` |
 |---|---|---|
-| `unique_registered_rendering` | complete nonempty token-mapping array | `parse_under_registered_grammar` |
+| `unique_registered_rendering` | exact singleton source token-mapping array | `parse_under_registered_grammar` |
 | `source_registered_numeric_grammar` | exact empty array | `parse_under_registered_numeric_grammar` |
 | `physical_rendering_unestablished` | exact empty array | `abort_before_classification_require_successor_inventory_ratification` |
 
 Each token mapping has exactly `raw_token_hex`, `source_entry_ref`,
 `source_value`, `source_derivation`, and `disposition`. The reference belongs
-to the domain; derivation is `codebook_literal | codebook_range_member |
-dictionary_missing_literal`; and value/disposition obey the same codebook-
-literal equality, range-membership, or dictionary-missing equation as an
-observed row. The array follows unsigned decoded raw bytes and then
-entry order, every token is exact raw width, and each token maps to exactly
-one canonical source value. For a finite domain without a numeric grammar,
-every accepted unobserved token/value pair is separately enumerated and the
-mapping exact-covers every unobserved scalar. The numeric-grammar branch
-requires the nonnull source-derived DFA; it parses a future payload uniquely,
-then requires that value to belong to one referenced codebook range/literal
-or, for the uncoded branch, the dictionary numeric domain. An overlapping
-semantic result, a valid numeric payload outside a nonempty codebook domain,
-or an invalid transition aborts. Thus an unseen favorable token has one
+to the domain; derivation is `codebook_literal |
+dictionary_missing_literal`; and value/disposition/raw token obey that exact
+source entry. `unique_registered_rendering` is required for every qualifying
+`literal | dictionary_missing_literal` row and forbidden otherwise; its
+mapping array is that row's exact singleton source rendering. An authored
+range-member token is forbidden. A `numeric_range` row with a nonnull
+source-derived DFA must use `source_registered_numeric_grammar`; one without
+such a DFA must use `physical_rendering_unestablished`. The uncoded numeric
+row always uses `source_registered_numeric_grammar` with its nonnull
+dictionary-derived DFA. These four cases are exhaustive and mutually
+exclusive; no authenticated literal token may take the empty physical-
+unestablished branch. The DFA branch parses a future payload uniquely, then requires
+that value to belong to the row's one referenced range or, for the uncoded
+branch, the dictionary numeric domain. An overlapping semantic result, a
+valid numeric payload outside a nonempty codebook domain, or an invalid
+transition aborts. Thus an unseen favorable token has one
 constructible source-derived result; physical or semantic ambiguity takes
 the empty abort branch.
 
@@ -24772,13 +24824,23 @@ and the domain digest hashes the complete ordered rows. Every whole-document
 and field-stream locator foreign-keys this domain. Thus a filename, locator,
 or extraction row cannot invent a document ID or source path.
 
-`questionnaire_page_text_derivation` has exactly `tool`, `version`,
-`arguments`, and `encoding`. Tool/version are pinned nonempty strings;
-arguments is the complete ordered string array; encoding is literal `UTF-8`;
-and the registered implementation must deterministically produce the same
-ordered page strings from every questionnaire byte. It is source authority,
-not a runtime-selected convenience. Branch labels and questionnaire near-
-match occurrence hashes below use only these page strings.
+`questionnaire_page_text_derivation` has exactly `implementation_path`,
+`source_commit`, `tree_mode`, `blob_oid`, `byte_size`, `raw_sha256`,
+`function_name`, `tool`, `version`, `arguments`, `encoding`, `page_split`,
+and `terminal_page_rule`. It exact-copies §18's #345 derivation authority:
+path `src/populace_dynamics/data/psid_questionnaire_inventory.py`, commit
+`c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e`, mode `100644`, blob
+`e461d69cdec35f0ef795a097ac0b9ab9a8f9eaf0`, 205,550 bytes, raw SHA-256
+`b742fb14d62411ed1072cf320ad7cff0b3397a5a7255584964bac4995b6acbee`,
+function `_pdftotext_pages`, tool `Poppler pdftotext`, version `26.04.0`,
+arguments `["-layout","-enc","UTF-8"]`, encoding `UTF-8`, page split `form_feed`,
+and terminal rule
+`remove_exactly_one_terminal_whitespace_only_page_if_present`. Invocation
+appends the uniquely manifest-resolved input path and `-` for standard
+output; output is strictly decoded, split, and trimmed exactly as §18. No
+later worktree implementation, tool version, argument, decoder, or page rule
+is selectable. Branch labels and questionnaire near-match occurrence hashes
+use only these ordered page strings.
 
 The retained official slot-registry `source_authority_manifest` is
 prospectively completed as an object with exactly `source_document_manifest`
@@ -24873,6 +24935,18 @@ expanded count is exactly `hierarchy_row_count * 35` and
 `source_inventory_key` array. Every positive locator array is nonempty,
 unique, complete-locator-union ordered, and foreign-keys the complete
 questionnaire/layout/codebook locator union.
+
+The structural rows and absence proofs form one keyed bipartite exact cover.
+Construct the multiset of
+`[source_inventory_key,absence_proof_id]` pairs from every
+`structural_query_slot` row and the multiset of the same pairs by expanding
+each proof's complete `target_inventory_keys` with that proof's ID; the two
+multisets must be equal, every pair has multiplicity one, and both are
+nonempty for every referenced proof. Consequently every structural row's key
+occurs exactly once in its referenced proof, every proof target resolves
+exactly one structural row that references that proof, and every proof is
+referenced. An `asked` row's key occurs in no proof target. A mismatched,
+duplicate, extra, or orphan target/proof/row aborts the era closure.
 
 Each `whole_document_locators` member has exactly `locator_id`,
 `source_document_id`, `interview_wave`, `filename`, `location_type`,
@@ -25287,9 +25361,12 @@ grammar or absence evidence never enters that target/model-choice domain.
 The six changed expected/actual payloads are exactly:
 
 - **G17-C01** is a tagged object with exactly `inventory_key_stream`,
-  `inventory_layout_grammar_rows`, `inventory_absence_proof_rows`, and
-  `slot_closure_evidence_identity`. The first is the unchanged complete
-  official key stream. The next two are positional projections of every
+  `slot_source_authority_manifest`, `inventory_layout_grammar_rows`,
+  `inventory_absence_proof_rows`, and `slot_closure_evidence_identity`. The
+  first is the unchanged complete official key stream. The second is the
+  complete two-key §19.3.3 slot-source manifest, independently reconstructed
+  on the expected side and deep-copied by the slot/inventory artifacts on the
+  actual side. The next two are positional projections of every
   official inventory row's complete §19.3.2 layout/token grammar and
   §19.3.3 absence-proof value, including exact empty branches. The final
   identity has exactly `path`, `artifact_id`, `schema_version`, and `sha256`.

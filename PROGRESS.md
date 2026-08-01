@@ -2,7 +2,7 @@
 
 ## State
 
-The complete §19 draft and both independent substantive/structural correction passes are present; final stable-tree re-review and final digest/tree cleanup remain.
+The complete §19 draft and all live substantive/structural corrections are present; final stable-tree re-review and final digest/tree cleanup remain.
 
 ## Done
 
@@ -24,8 +24,9 @@ The complete §19 draft and both independent substantive/structural correction p
 - Reproduced all pinned design/inventory identities, all 25 residual-row and five residual-domain digests, the 32-row comparator census, the 29-name successor inventory, and the 92-row staging-manifest schema compatibility.
 - Ran the broad relevant regression set: 424 tests passed.
 - On the stable-tree re-review, closed the last shared legal-partition edge: midyear years add explicit split points and disposition inspects complete verified/absent/conflict row projections; also unified absence-proof locator order with the serialized locator union.
+- Closed the final live source/evidence totality findings: midyear establishing links now enter the claim source-key projection; legal transitions carry complete rank-1 bundles; Class-B literal/range/uncoded branches and observed-member ordering are total; the #345 page derivation is byte-pinned; and Class-A structural rows and proof targets form a bidirectional exact cover.
 
 ## Next
 
-- Commit the final narrow correction after the mandatory prefix check, then obtain the final independent stable-tree verdict.
+- Commit this final correction after the mandatory prefix check, then obtain the final independent stable-tree verdict.
 - Recompute final passage/document digests, remove this temporary file, and write the external final report.
