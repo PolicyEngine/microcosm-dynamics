@@ -2,7 +2,7 @@
 
 ## State
 
-The complete §19 draft and the final legal/Class-B/value-code commitment corrections are present; commit, stable-tree re-review, and final digest/tree cleanup remain.
+The complete §19 draft is independently ratifiable at clean HEAD `6a41c33`; only final progress-file removal and external report writing remain.
 
 ## Done
 
@@ -27,8 +27,10 @@ The complete §19 draft and the final legal/Class-B/value-code commitment correc
 - Closed the final live source/evidence totality findings: midyear establishing links now enter the claim source-key projection; legal transitions carry complete rank-1 bundles; Class-B literal/range/uncoded branches and observed-member ordering are total; the #345 page derivation is byte-pinned; and Class-A structural rows and proof targets form a bidirectional exact cover.
 - Closed the frozen-head audit findings: the legal claim/link projection is now a serialized manifest child while retained non-PSID adjudication-source arrays stay exact empty; Class B now derives canonical dictionary/codebook rows and raw-record framing from an authenticated source-only interface, exact-covers field-to-file identities and censuses, serializes normalized entries, losslessly projects executable value maps, fixes the parse-kind matrix, and canonicalizes every byte-hex spelling.
 - Closed the final value-code operability finding: retained `source_commitments` now has an exact tagged envelope, exhaustive per-key/per-field row schema and order, source/framing/census/executable digest equations, and an explicit changed G17-C07 comparand; repaired the parse-kind table's raw delimiter, added both the nested member and G17-C07 anchor to the closure-sweep seed array, made the source-only extractor versus whole-inventory builder identity layers explicit, and exact-equated each field's document-ID arrays to the unique source-document projection of its cited canonical rows.
+- Obtained independent exact-HEAD substantive and structural RATIFIABLE verdicts with no confirmed blockers; the second cross-check also passed.
+- Re-ran 220 focused design/registry tests and the broad 424-test relevant suite on clean HEAD; both passed.
+- Reverified the 1,376,610-byte immutable prefix, 25 residual-row and five residual-domain digests, 46-seed/288-variant closure expansion, 32-row comparator census, 29-name successor inventory, five JSON blocks, rectangular Markdown tables, 92-row staging-schema compatibility, and revision-6 binding gate/fail-closed in-flight behavior.
 
 ## Next
 
-- Commit this final source-commitment correction after the mandatory prefix check, then obtain the final independent stable-tree verdict.
-- Recompute final passage/document digests, remove this temporary file, and write the external final report.
+- Commit this final verification state, remove this temporary file in its own cleanup commit, and write the external final report.
