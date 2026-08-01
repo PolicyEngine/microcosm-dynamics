@@ -23923,6 +23923,9 @@ the annual record across both sides of this exact transition. Projecting that
 rule's `primary | additional_establishing` links to
 `[source_document_id,source_relation,exact_citation,authority_rank=1]` must
 deep-equal this complete transition-link array.
+The transition-local affected-key array is not an `A_x` source and its
+occurrence multiplicity never enters a claim spec; a transition ID never
+enters `G_x`.
 
 The array may be exact empty when the authenticated source universe contains
 no such transition; its zero count and empty-array digest remain explicit.
@@ -23938,12 +23941,14 @@ aborts rather than being rounded.
 For §16.13.2, the successor legal establishing-source projection serialized
 in this manifest is named
 `historical_coverage_rule_specs:establishing_sources.v2`. For each of V-B1,
-V-B2, V-B3, V-B4, and V-B9, its expected binding-key domain is the exact
-concatenation of:
+V-B2, V-B3, V-B4, and V-B9, let `G_x` be the independently reconstructed
+§19.2.3 governing-rule projection. This manifest construction does not read
+either configured claim-spec array. Its expected binding-key domain is the
+exact concatenation of:
 
-1. every claim-matching governing rule's `primary |
-   additional_establishing` link, in governing-rule order and then source-
-   manifest order; and
+1. every rule resolved from `G_x` exactly once and all that rule's `primary
+   | additional_establishing` links, in `G_x` order and then source-manifest
+   order; and
 2. every `primary | additional_establishing` transition link whose
    transition family's independently frozen `verification_claim_id` equals
    that claim, in canonical transition order and then source-manifest order.
@@ -24036,8 +24041,9 @@ official questionnaire slot specs
 official source-field inventory
 inventory-family disposition matrix
 legal-domain cells
+verification-claim affected-key projections
 legal rule rows
-verification-claim governing-rule arrays
+verification-claim governing-rule projections
 ```
 
 No authored rule row, transform, claim result, crosswalk use, configured
@@ -24384,10 +24390,91 @@ and the cell's inventory key occurs in the rule's
 `affected_inventory_keys`. Every rule must cover at least one cell, every
 cell must have an explicit disposition under §19.2.4, and a rule cannot
 name an out-of-domain year, jurisdiction, claim, or inventory key. Claim
-affected-key arrays and `governing_rule_ids` are derived only after this
-coverage relation and must exact-match its complete projections. For
-jurisdiction matching, the sole nonidentity case is the family-1 federal
-umbrella just defined; every other rule/cell jurisdiction must be identical.
+projection bytes are constructed by the equations below, never by reading a
+configured claim array. For jurisdiction matching, the sole nonidentity case
+is the family-1 federal umbrella just defined; every other rule/cell
+jurisdiction must be identical.
+
+For a rule row `r`, let `F(r)` be the exactly one `family_specs` row whose
+`status_family` equals `r.status_family`. Before either claim registry is
+read, `r.verification_class` must equal `F(r).verification_class`, and
+`r.verification_claim_ids` must be exact `[]` when
+`F(r).verification_claim_id` is null and otherwise the exact singleton array
+`[F(r).verification_claim_id]`. A duplicate, additional, reordered, or
+candidate-selected claim ID aborts. Thus the family table, rather than a rule
+or claim row, fixes the rule-to-claim relation.
+
+Let `I` be the complete official-inventory row sequence in its independently
+ratified dimension order. For each legal claim `x` in exact order V-B1,
+V-B2, V-B3, V-B4, V-B9, let `F_x` be the family-order sequence of
+`family_specs` rows whose `verification_claim_id` is `x`. The five exact
+cardinalities are respectively 1, 1, 8, 1, and 1. Let `D(f,i)` be the
+exactly one `inventory_family_dispositions` row for family `f` and inventory
+row `i`. Construct these ordered source relations before reading either
+configured `affected_inventory_keys` or configured `governing_rule_ids`:
+
+1. `K_x` is every complete `cells` row, retaining canonical cell order and
+   multiplicity, whose `cell_kind` is `inventory_attachment` and whose
+   `verification_claim_id` is `x`.
+2. `E_x` is every ordered pair `[r,c]`, with `r` traversed in registry order
+   and then `c` in canonical cell order, for which `c.cell_kind` is
+   `effective_year`, `F(r).verification_claim_id` and
+   `c.verification_claim_id` are `x`, the row and cell have equal family and
+   verification class, the row interval contains `c.earnings_year`, and the
+   jurisdiction predicate above matches. This predicate does not inspect the
+   rule's affected keys, optional consequences, claim-ID array, transform,
+   authority status, or either claim registry.
+
+`K_x` retains every canonical cell occurrence. `E_x` retains every matching
+Cartesian pair, with each rule/cell position occurring once and no pair
+deduplication; its many-cell-per-rule multiplicity is evidence for, not the
+serialization of, `G_x`.
+
+Define `A_x^D` by traversing `I` once and emitting `i.source_inventory_key`
+exactly when at least one `f` in `F_x` has
+`D(f,i).applicability == "applicable"`. Define `A_x^C` by traversing `I`
+once and emitting that key exactly when at least one row of `K_x` carries
+it. The independently derived disposition and cell exact covers must make
+`A_x^D` and `A_x^C` deep-equal; call their one common value `A_x`. This is
+an existential filter of the globally unique official inventory sequence,
+not a concatenation by family, year, or jurisdiction.
+
+Define `stable_unique(sequence)` by traversing the sequence once and
+appending a value exactly when no earlier projected value is byte-equal; it
+does not sort, count occurrences, or consult the configured destination.
+The governing-rule projection is exactly
+
+\[
+\begin{aligned}
+G_x &= \operatorname{stable\_unique}
+      ([r.\texttt{rule_id}\mid [r,c]\in E_x]).
+\end{aligned}
+\]
+
+`A_x` and `G_x` are nonempty JSON arrays of strings. They are serialized,
+without a wrapper or another normalization pass, as respectively the exact
+`affected_inventory_keys` and `governing_rule_ids` values in the same legal
+claim member of both `verification_claim_specs.v2` and
+`verification_claim_specs.fitting_free.v1`; the two branches therefore
+deep-equal on both arrays. Inside a claim row they are ordinary nested JSON
+array values with no independent terminator; they receive bytes only through
+§10.1 canonical serialization of the complete enclosing row and artifact.
+An empty source relation or projection, null, duplicate,
+omitted, additional, or reordered destination member aborts.
+
+Cell multiplicity is intentionally retained in `K_x` but eliminated by the
+official-inventory-order existential projection. In particular, family 1's
+federal-plus-51 jurisdiction replication contributes each applicable key
+once, and a key applicable to several of V-B3's eight families also appears
+once at its official inventory position; family order never regroups the
+array. A rule spanning several years or jurisdictions contributes its ID
+once, at its first `E_x` pair. No once-per-cell or once-per-family
+serialization is permitted.
+Every rule with a nonnull family claim must contribute at least one pair to
+that claim's `E_x`; a claimless family contributes to neither relation.
+Rule-specific affected keys continue to determine only attachment-cell
+coverage after their independent §4.1 derivation; they cannot shrink `K_x`,
+`E_x`, `A_x`, or `G_x`.
 
 #### 19.2.4 Effective intervals, partitions, overlap, and authority
 
@@ -24623,14 +24710,21 @@ domain member, and every alias/negative disposition, without consulting any
 legal-rule row or configured domain; the actual side is the strict-parsed
 registry member. Status passes
 only on deep equality, equal canonical digests, and integer-zero mismatches.
+It also reconstructs the fixed family-to-claim cardinalities and the
+official-inventory-order `A_x^D`/cell-membership `A_x^C` equality for all
+five legal claims; these are derivations from the expected domain, not new
+configured members.
 
 `verify_historical_coverage_rules_identity_v2` passes only when the ratified
 schema descriptor exact-matches; the configured four-key input identity
 hashes the complete canonical raw blob; raw bytes strict-parse and
 canonical-round-trip; the configured deep copy equals the complete object;
-append-only history, independent domain reconstruction, every rule/source
-join, the complete claim-establishing-source projection, every source-byte
-closure row, and every interval/partition/authority consequence pass; and
+append-only history, independent domain reconstruction, every family-derived
+singleton/empty rule claim array, all five complete `K_x` and `E_x`
+relations and `A_x`/`G_x` projections, every rule/source join, the complete
+claim-establishing-source projection constructed from those `G_x` values,
+every source-byte closure row, and every interval/partition/authority
+consequence pass; and
 every expected/actual member is exact. It is false on
 any missing or additional value. Both expected and actual preimages retain
 the exact §16.2 seven-key shape: `schema_version`, `requirement_id`,
@@ -24679,6 +24773,45 @@ No object having any `exact_identity_*.v1` schema value may stand for one of
 these objects, and no consumer may relabel \(V_2\) without reconstructing the
 successor defined below.
 
+For an Amendment-5 construction, the retained §16.13.6 legal-claim passage
+beginning with its definition of the complete strict-parsed historical-rule
+registry and ending with its legal-result field equations is prospectively
+replaced as follows. Let \(H\) be the complete strict-parsed registry
+authenticated by true \(V_2\). Before reading any candidate claim-registry
+row, reconstruct the five nonempty \(A_x\) and \(G_x\) arrays under §19.2.3.
+For each branch \(b\in\{c,f\}\), independently construct \(S_b\) in its
+retained nine-claim order: each of the five legal members receives exactly
+\(A_x\) and \(G_x\), while every nonlegal member follows its retained
+branch-specific equation. Only after the complete expected artifact exists
+may the same-position candidate member be read and deep-compared. A
+configured destination is only an actual comparand and never an
+expected-value source.
+
+Construct \(Q_{b,x}\) by resolving every member of \(G_x\), in order, to
+exactly one complete row of \(H\). Each row must carry the exact singleton
+family-derived claim array `[x]`; conversely, the registry-order rule-ID
+projection of every \(H\) row whose family claim is `x` must deep-equal
+\(G_x\). Verified, authority-absent, and authority-conflict rows all remain
+in this projection. No source link, transition, rank, partition outcome, or
+authority status filters it. An unresolved, duplicated, additional,
+reordered, cross-claim, empty, or nonexhaustive \(Q_{b,x}\) aborts.
+
+The retained three-branch legal-disposition precedence then applies to this
+complete \(Q_{b,x}\): conflict if any row is `authority_conflict`; otherwise
+absence if any row is `authority_absent`; otherwise verified only if every
+row is `verified`. The seven-field legal result uses \(A_x\) as the sole
+preimage of `affected_inventory_keyset_sha256`: SHA-256 of the standalone
+`canonical_json_bytes(A_x)`, including its one terminal LF,
+and exact-copies \(G_x\) into `governing_rule_ids`. Its authority-input,
+claim, status, and pass/fail fields retain their exact equations. For an
+absent/conflicting direct-only-optional result, its consequence digest hashes
+the concatenation of complete matched-rule `optional_row_consequences` in
+\(G_x\) order and retained within-rule order, with no key or consequence-row
+deduplication. The affected-key array alone has official-inventory-order
+unique membership. The nonlegal claim equations, including the two distinct
+V-B7 literal rows and the §18 V-B6 successor, remain outside this
+replacement.
+
 The authenticated base-result successor is
 `verification_claim_base_result_projection.v2`. It has exactly the nine
 members and member order of `verification_claim_base_result_projection.v1`,
@@ -24688,7 +24821,9 @@ the complete canonical \(V_2\), not of an `exact_identity_verification_result.v1
 object. Its `domain_sha256` freshly hashes the complete two-object
 `registry_rows` array. Its status is `pass` exactly when \(V_2\) has
 `result: true` and `failure_code: null`, every §19.2.3–§19.2.4 source,
-domain, rule, cell, partition, and consequence equation passes, the twelve
+domain, rule, cell, claim-projection, partition, and consequence equation
+passes, both branches' five legal `A_x`/`G_x` values deep-equal the
+independent projections, the twelve
 base rows exact-cover their two registry/claim domains, and all counts and
 digests reproduce. A v1 base projection is forbidden in an Amendment-5
 adjudication even if its rows happen to deep-equal the v2 rows.
@@ -24779,11 +24914,17 @@ receipt, and validator selects v4; an earlier cutoff or an earlier embedded
 legal type aborts rather than dispatching by candidate choice.
 
 The sole total adjudication construction order is exact. Section 16.14.1
-steps 1–2 remain unchanged. Its steps 3–4, and the corresponding
-§16.13.6 steps 3–4, are replaced by exactly these steps:
+step 1 remains unchanged. Its steps 2–4, and the corresponding §16.13.6
+steps 2–4, are replaced by exactly these steps:
 
-3. reconstruct the seven source projections, construct and hash \(E_2\) and
-   \(A_2\), execute and serialize \(V_2\), and abort on false; and
+2. reconstruct the seven source projections, construct and hash \(E_2\) and
+   \(A_2\), execute and serialize \(V_2\), abort on false, and expose only
+   the thereby authenticated \(H\) to the next step;
+3. from authenticated \(H\) and the independently reconstructed domain,
+   reconstruct every `K_x`, `E_x`, \(A_x\), and \(G_x\), then independently
+   construct \(S_c\) followed by \(S_f\), inserting those arrays into the
+   five legal rows and applying every retained branch-specific equation to
+   the four nonlegal rows, without reading the candidate artifact; and
 4. construct and hash `verification_claim_base_result_projection.v2`.
 
 Section 16.14.1 steps 5–9 then execute in their retained order with every
@@ -24803,7 +24944,7 @@ No step may consume a predecessor schema, assign a digest before its
 complete typed preimage exists, or use a downstream bundle, configuration,
 receipt, or status to construct an earlier legal result. No other
 construction-order sentence is displaced: the expressly retained
-§16.14.1 steps 1–2 and 5–9 and §16.14.5 steps 10–12 control exactly as stated
+§16.14.1 step 1 and steps 5–9 and §16.14.5 steps 10–12 control exactly as stated
 after the named type substitutions.
 
 ### 19.3 TITLE II — official-inventory disposition laws
@@ -26073,6 +26214,7 @@ unnamed consumer.
 | §4.1 historical-rule registry top level and rule ordering | `replaced-by-§19.2.1-successor`: exact envelope, literals, nonempty rule array, unsigned-UTF-8 rule-ID order, counts, row/domain digests, self-zeroed integrity, and status. The existing 20-field rule-row schema is preserved. |
 | §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link/midyear-transition envelopes, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
 | §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals, independent 14-family cell denominator, effective-stream or one-year keyed partitions, exact cell cover, all-overlap execution, rank agreement, and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §4.1 `verification_claim_specs` legal `affected_inventory_keys` and `governing_rule_ids` | `completed-by-§19.2.3-byte-producing-projections`: the affected-key source is the complete independent disposition/cell relation in official inventory order; the governing-rule source is the complete rule-major effective-cell relation fixed by family claim in registry order; exact uniqueness, five-claim order, cross-family/jurisdiction aggregation, JSON-array serialization, branch equality, and nonempty aborts are explicit. Neither configured destination array selects either source relation. |
 | §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary, exact PSID/FIPS/name authority table, inclusive range expansion, complete field-domain cover, source-labeled cross-wave alias normalization, and aborts for missing, duplicate, overlapping, or ambiguous maps. Observed values and candidate enums never select the denominator. |
 | §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
 | §8 and §10.1 `legal_rule_input` | `replaced-by-§19.2.1-literals-and-§19.2.2-subordinate-byte-closure`: one concrete path/vintage/schema, canonical complete raw blob, configured complete deep copy, and referenced source blobs closed before runner creation. The implicit input ID/role and every other production-input law are preserved. |
@@ -26144,8 +26286,13 @@ The seven changed expected/actual payloads are exactly:
   state-field domain, rule rows, interval partitions, counts, and digests. The expected
   object freshly reconstructs it from authenticated sources and the actual
   object deep-copies the configured values; neither side obtains a
-  denominator or expected value from the other. The second and third values
-  are the complete source-byte closure and exact seven-key v2 predicate
+  denominator or expected value from the other. The registry comparison
+  includes successful reconstruction of the complete `K_x`/`E_x` relations
+  and `A_x`/`G_x` expected projections through the registry status. C05 does
+  not embed either claim-spec registry; their exact array comparisons occur
+  in the downstream base-result/adjudication validation dependency. The
+  second and third values are the complete source-byte closure and exact
+  seven-key v2 predicate
   result. C05's expected/actual count is the rule-row count; its hash covers
   the complete three-key object and every nested count/digest.
 - **G17-C06** retains its exact two-key
@@ -26242,7 +26389,9 @@ jurisdiction_mapping
 state_of_residence
 PSID state code
 FIPS state code
+affected_inventory_keys
 governing_rule_ids
+verification_claim_specs
 adjudication_sources
 verification_claim_base_result_projection
 calibrated_verification_claim_adjudication_expected_preimage
@@ -26410,7 +26559,7 @@ byte and registry-content comparisons remain outside that row.
 | DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_5_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5 consumer chain. |
 | DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1` and Amendment-5 v4 receipt/history dispatch. |
 | DC-28 | §19.1 D4 four-key identity, exact 1,376,610-byte raw design, and immutable revision-7 prefix comparison | `lawfully-unchanged-with-reason`: D4 is the immediate immutable base; every D5 position, capture, and selected-registration proof independently reconstructs D4 and verifies its exact raw prefix of D5. |
-| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its typed v2 result enters only `verification_claim_base_result_projection.v2`, the v3 adjudication preimages, the v4 noncapture chain, `calibrated_authority_cutoff_identity.v4`, and the v5 bundle dispatch closed in §§19.2.5, 19.4.1–19.4.3, and 19.6.3. |
+| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its typed v2 result authenticates the registry from which the independent `K_x`/`E_x` and `A_x`/`G_x` closure is reconstructed, then enters only `verification_claim_base_result_projection.v2`, the v3 adjudication preimages, the v4 noncapture chain, `calibrated_authority_cutoff_identity.v4`, and the v5 bundle dispatch closed in §§19.2.3, 19.2.5, 19.4.1–19.4.3, and 19.6.3. |
 | DC-30 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_fitting_free_design_identity_v1`; all registry/domain/bundle consumers are closed in §19.6. |
 | DC-31 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `lawfully-unchanged-with-reason`: terminal receipt-free successor `verify_amendment_5_capture_registration_repository_identity_v1`; every transitive consumer is closed in §§19.6–19.7. |
 | DC-32 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-`HEAD` byte, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_selected_registration_design_lineage_v1`; its receipt and history dispatch are closed in §19.7. |
@@ -26695,7 +26844,9 @@ The bundle successor is
 complete v4 keyset and key order and changes its schema value to the v5 name.
 Its `fitting_free_requirement_verification_specs` child is the complete v4
 registry. Its verification-claim specs retain their ratified schemas, but
-both calibrated and fitting-free result children, their complete source
+the five legal members of each spec child are freshly reconstructed with
+the exact §19.2.3 `A_x`/`G_x` arrays before any result is built. Both
+calibrated and fitting-free result children, their complete source
 projection, and their adjudication identity are freshly reconstructed from
 the eventual §19.2–§19.3 authorities; the retained §18 positive V-B6
 source/result remains exact. Specifically, the legal children use only
@@ -26837,6 +26988,9 @@ The two lists are disjoint and their concatenation is the exact 37-name
 Amendment-5 successor identifier inventory. Existing identifiers whose
 schemas are completed in place—notably `historical_coverage_rule_specs.v1`
 and every official v1 registry—are not new names and therefore do not appear.
+The symbolic `K_x`, `E_x`, `A_x`, and `G_x` relations are byte-producing
+equations, not serialized object, schema, or predicate identifiers, and add
+no successor name.
 Member names, enum/role literals, projection paths, cross-binding literals,
 and symbolic commit names are likewise outside the inventory. An omitted,
 extra, duplicated, differently spelled, or undefined identifier blocks
@@ -26889,14 +27043,23 @@ accepted authority operand before every named predecessor passes.
    intended legal source blob in the parent of L5; classify and link every
    establishing/corroborating source; derive the complete 14-family domain
    from the ratified inventory and the passing fixed federal-plus-51
-   jurisdiction map; and construct all rule rows, partitions, and
-   required/optional consequences. The candidate claim-spec and historical-
-   rule arrays are constructed as one reciprocal foreign-key closure, but
-   neither authenticates the other. After every source byte and inventory
-   dependency exists, the separately reviewed single-parent L5 commit adds
-   only `data/registries/historical_coverage_rule_specs_v1.json`. The v2
-   legal predicate then reconstructs schema, raw bytes, history, domain, and
-   source closure. Any required legal cell still absent/conflicting blocks.
+   jurisdiction map; construct each legal claim's complete independent
+   attachment-cell relation and affected-key projection; and then construct
+   all rule rows, required/optional consequences, the rule-major
+   effective-cell relation, manifest source projection, and partitions.
+   Require each prepared rule claim array to exact-project its family, but
+   accept no claim-spec destination from these unauthenticated rows. After
+   every source byte and inventory dependency exists, the separately
+   reviewed single-parent L5 commit adds only
+   `data/registries/historical_coverage_rule_specs_v1.json`. The v2 legal
+   predicate then reconstructs schema, raw bytes, history, domain, claim
+   relations/projections, and source closure. Only after it authenticates
+   `H` are `K_x`, `E_x`, `A_x`, and `G_x` freshly reconstructed and both
+   complete arrays serialized into both claim registries. The candidate
+   claim-spec and historical-rule arrays are jointly foreign-key-validated
+   only after those one-way derivations; neither authenticates the other and
+   neither configured array selects a projection source. Any required legal
+   cell still absent/conflicting blocks.
 5. **Construct the nine registry identities.** The final identity array is
    exactly this order:
 
@@ -26918,8 +27081,9 @@ accepted authority operand before every named predecessor passes.
    SE-aggregation rows from verified person/service grouping and allocation
    evidence; and coverage-state rows from independently applicable service
    keys. Reconciliation, job-match, and SE rows carry every Class-C
-   consequence. The claim and historical-rule arrays must then pass their
-   reciprocal exact-cover equations. No registry can select its own domain,
+   consequence. The claim and historical-rule arrays must then pass the
+   independently reconstructed family, `K_x`, `E_x`, `A_x`, and `G_x`
+   foreign-key equations. No registry can select its own domain,
    hash, verification class, or required consequence.
 6. **Close the crosswalk and successor bundles.** Only after the official
    inventory and all nine registry values are immutable may the existing
