@@ -23781,7 +23781,8 @@ SHA-256 of the complete object after replacing only that value by exactly 64
 lowercase zeroes, under the same canonicalization. The complete raw-input
 digest is then computed without zeroing. `status` is `pass` only when every
 schema, identity, count, order, digest, domain, interval, foreign-key, join,
-source-byte, authority, partition, and consequence equation in this title
+source-byte, authority, joint-binding signature, complete vector table,
+partition truth, and consequence equation in this title
 passes; otherwise the artifact is rejected rather than serialized with a
 favorable status.
 
@@ -24533,33 +24534,190 @@ intersect this interval; its affected-key array is not a selector for an
 effective-year stream and must contain this attachment key for a keyed
 stream. Federal-umbrella
 matching is exactly §19.2.3; no authored partition selects a transition.
-`controlling_authority_rank` is a positive JSON integer exactly for verified
-dispositive coverage and null otherwise.
+`controlling_authority_rank` is the JSON integer 1 exactly for
+`verified_dispositive` and null otherwise; no lower rank or table-local rank
+is serialized in a nonverified partition.
 `authority_disposition` is exactly `verified_dispositive |
 authority_absent | authority_conflict |
-unrepresentable_midyear_transition`. `optional_consequence_ids` is the
-complete registry-order projection of consequence IDs from applicable
-`authority_absent | authority_conflict` rule rows exactly for a nonverified
-`direct_only_optional` partition and is empty otherwise. Such an optional
-partition is invalid unless those negative rows exact-cover every affected
-key and consequence required by §4.1; a required nonverified partition has
-no fallback ID and aborts.
+unrepresentable_midyear_transition`. For a nonverified
+`direct_only_optional` partition, construct `N_p` by traversing
+`applicable_rule_ids` in registry order, retaining exactly the
+`authority_absent | authority_conflict` rows, and then traversing each row's
+complete `optional_row_consequences` in retained within-rule order. For an
+`inventory_attachment` partition retain exactly consequence rows whose
+`source_inventory_key` equals the partition's nonnull key; for an
+`effective_year` partition retain every consequence row from those negative
+rules. No occurrence is deduplicated. `N_p` must be nonempty, and
+`optional_consequence_ids` is exactly its same-order
+`optional_consequence_id` projection. For every other partition the ID array
+is exact empty. Every ID must resolve exactly once to the same occurrence in
+its originating negative rule row. When `verification_claim_id` is nonnull,
+that occurrence must additionally resolve to the same occurrence in the
+same-claim §19.2.5 consequence stream. When it is null, no `P_x`, `Q_{b,x}`,
+or legal-result stream is constructed; the complete ordered \(N_p\)-to-source-
+row join is instead bound directly by the v2 predicate and G17-C05. A
+missing, extra, duplicated, reordered, or unequal row fails the complete
+partition consequence domain. A transition or verified-rule disagreement
+cannot invent a consequence. A required nonverified partition has no
+fallback ID and aborts.
 
 Let `V`, `A`, and `C` be the complete registry-order projections of
 applicable rows whose `authority_status` is respectively `verified`,
-`authority_absent`, and `authority_conflict`. Disposition is derived in this
-exact priority: (1) a referenced transition with null
-`annual_allocation_rule_id` is `unrepresentable_midyear_transition`; (2) a
-nonempty `C`, same-rank dispositive disagreement, or simultaneous nonempty
-`V` and `A` is `authority_conflict`; (3) complete rank-1 dispositive coverage
-by `V` with empty `A` and `C` is `verified_dispositive`; (4) empty `V` and
-`C` with either nonempty `A` or an empty applicable-rule array is
-`authority_absent`; and (5) every other incomplete, lower-rank-only, or mixed
-case is `authority_conflict`. A nonnull transition allocation ID must occur
-in `V` and pass before branch 3 is possible. For a direct-only-optional
-unrepresentable or derived-conflict branch, at least one applicable negative
-row must supply the complete consequence projection; the transition or
-disagreement cannot invent one.
+`authority_absent`, and `authority_conflict` for one partition `p`. All
+members of `V` participate in the joint evaluation below, even when a
+transition, `A`, or `C` will determine a higher-priority final disposition;
+there is no short-circuit that can hide an invalid transform.
+
+For every covered-then-excluded fact-binding occurrence of every row in `V`,
+construct an exact joint-binding signature from authenticated rule bytes.
+First, deep-copy each `micro_fact_slots` row after deleting only
+`micro_fact_id`; the resulting object has exactly `field_purpose`,
+`source_field_ref`, `typed_value_type`, `typed_value_unit`,
+`presence_predicate_ast`, and `missing_reason_code` with all retained nested
+types and nulls. Second, deep-copy `premise_ast` recursively, replacing each
+exact `micro_fact` leaf by
+`{"op":"joint_micro_fact_slot","slot_index":j}`, where `j` is the
+zero-based JSON-integer position of that microfact in the binding's own slot
+array. This replacement object is identity-only and is never an executable
+AST. The signature preimage is the exact three-element JSON array
+`["joint_binding_semantics.v1",normalized_micro_fact_slots,
+normalized_premise_ast]`.
+
+The `joint_binding_id` is literal `legal-joint-binding:` followed by SHA-256
+of §10.1 canonical bytes of that complete signature preimage. Equal
+preimages must have one equal ID; an equal ID with unequal preimages aborts
+as a collision. Within one rule, two occurrences with the same signature
+are a redundant ambiguous premise and abort. Across rules, byte-identical
+signatures share one Boolean coordinate. Any other byte difference,
+including slot order, AST argument order, source reference, type, unit,
+presence predicate, or missing reason, creates a distinct coordinate; no
+algebraic equivalence is inferred.
+
+Traverse `V` in registry order and each rule's covered bindings then excluded
+bindings in retained array order. `J_p` is the stable-unique
+`joint_binding_id` sequence in first-occurrence order, and every binding
+occurrence must map to exactly one position. Let `m = len(J_p)`. The exact
+joint assignment domain is all `2^m` Boolean arrays. Assignment index `k`
+runs from 0 through `2^m - 1`; coordinate `j` is true exactly when
+`floor(k / 2^(m-1-j)) mod 2` is 1. Thus false precedes true and the rightmost
+coordinate varies fastest. When `m` is zero the domain is the singleton
+array containing exact `[]`, never an empty domain. There is no null or
+missing-fact coordinate: runtime missing facts retain the §4.1 skipped-
+transform fold. No observation, candidate claim, PSID joint frequency,
+SAT/source-realizability filter, inferred correlation, sample, cap, or early
+exit may prune this finite Cartesian domain; inability to exhaust it aborts.
+
+For every assignment in index order, construct one derived evaluation row
+with exactly:
+
+```text
+assignment_index
+joint_binding_bits
+rule_evaluations
+dispositive_rule_ids
+controlling_authority_rank
+controlling_classified_status
+vector_disposition
+```
+
+`joint_binding_bits` is the complete same-position Boolean array for `J_p`.
+`assignment_index` is the nonnegative JSON integer excluding booleans equal
+to that row's zero-based `k`.
+`rule_evaluations` contains every row of `V` in registry order. Each has
+exactly `rule_id`, `authority_rank`, `fact_binding_ids`,
+`joint_binding_ids`, `fact_binding_results`, and `transform_result`. The
+three parallel binding arrays are the rule's complete covered-then-excluded
+occurrence order and exact projection from the joint vector; an unconditional
+rule has three exact empty arrays. `rule_id` and `authority_rank` exact-copy
+the rule's string ID and positive JSON-integer rank. Every verified transform executes exactly
+once from those booleans. `transform_result` is the complete existing
+three-key `direct_law_transform_result.v1` object, including family, one of
+the four registered statuses, and reason code. An AST, type, unit,
+foreign-key, evaluation, or output error aborts the registry rather than
+becoming a conflict row.
+
+For vector `v` and each authority rank `q`, let `D(v,q)` be the
+registry-order rule-evaluation sequence at `q` after removing exactly those
+whose `transform_result.classified_status` is `no_disposition`, and let
+`S(v,q)` be its stable-unique `transform_result.classified_status`
+projection. The removed results remain in
+`rule_evaluations` but establish no coverage, rank, agreement, conflict, or
+corroboration. `dispositive_rule_ids` is the complete registry-order ID
+projection of all remaining evaluations. If any remain, the vector's
+controlling rank is the smallest numeric `q` with nonempty `D(v,q)`;
+otherwise it is null. `controlling_classified_status` is the sole member of
+`S(v,q)` at that rank exactly when that set has size one and is null
+otherwise.
+
+`vector_disposition` follows this first-matching total table:
+
+1. `no_dispositive_result` when every `D(v,q)` is empty;
+2. `same_rank_disagreement` when any `S(v,q)` has more than one member;
+3. `lower_rank_disagreement` when the controlling-rank status is unique and
+   any dispositive result at a numerically larger rank differs from it;
+4. `agreed_rank_1_dispositive` when the unique controlling rank is 1; and
+5. `agreed_lower_rank_only` for the remaining agreed vector.
+
+Those five literals are the complete vector-disposition vocabulary;
+`dispositive_rule_ids` is an array of strings, the controlling rank is a
+positive JSON integer or null, and the controlling status is one of the
+three dispositive status strings or null under the equations above.
+
+Agreement is within a vector, never across different vectors; distinct
+vectors may lawfully yield different statuses. Multiple same-rank rules
+agree when their classified statuses agree, while their complete rule,
+family, and reason provenance remains. `no_disposition` beside a dispositive
+result is inert. Rank 1 `no_disposition` with only a rank-2 dispositive
+result is lower-rank-only, not rank-1 coverage. A lower-rank dispositive
+result corroborates only by equaling the controlling status.
+
+Call the complete assignment-index-ordered row array `T_p`.
+`complete_rank_1_dispositive_coverage(p)` is true exactly when every row of
+nonempty `T_p` has `vector_disposition: agreed_rank_1_dispositive`. Thus at
+least one rank-1 rule is dispositive on every vector, but no individual rule
+must be dispositive on every vector. The provisional table and rank result
+are constructed from the partition stream/interval coordinate; after the
+derived partition fields produce `partition_id`, that ID is inserted only in
+the closure row below and is never a transform or rank input.
+
+The derived `partition_overlap_evaluation_closure` used by the v2 predicate
+and G17-C05 has exactly `canonical_order`, `rows`, `row_count`,
+`domain_sha256`, and `status`. `canonical_order` is literal
+`rule_interval_partition_order_v1`. It has one row per partition in final
+partition order, with exactly `partition_id`, `joint_binding_ids`,
+`joint_binding_count`, `vector_count`, `evaluation_rows_sha256`,
+`complete_rank_1_dispositive_coverage`, and
+`partition_controlling_authority_rank`, and
+`partition_authority_disposition`. `rows` is that complete partition-order
+array. The two inner counts are nonnegative JSON
+integers excluding booleans and are respectively `len(J_p)` and
+`2^len(J_p)`; the complete-coverage member is a JSON Boolean, the partition
+rank exact-copies its integer-1-or-null field, `partition_id` and every
+joint-binding ID are strings of their already defined forms, the disposition
+exact-copies the partition enum, and the evaluation digest is a 64-lowercase-
+hex string hashing standalone
+`canonical_json_bytes(T_p)`; and the domain digest hashes the complete
+closure-row array through standalone `canonical_json_bytes(rows)`. The
+top-level `row_count` is a nonnegative JSON integer excluding booleans equal
+to both that array length and the complete partition count; `domain_sha256`
+is its 64-lowercase-hex SHA-256. `status` is exactly `pass | fail` and is pass
+only when every signature, mapping, vector,
+transform, rank, table digest/count, and final partition rank/disposition is
+independently reproduced, and fail otherwise. This closure is a G17 comparison value, not a
+candidate legal-registry member or a partition-ID input.
+
+Disposition is derived, after complete `T_p` evaluation, in this exact
+priority: (1) a referenced transition with null `annual_allocation_rule_id`
+is `unrepresentable_midyear_transition`; (2) nonempty `C` or simultaneous
+nonempty `V` and `A` is `authority_conflict`; (3) nonempty `V`, empty `A`
+and `C`, true `complete_rank_1_dispositive_coverage(p)`, and every nonnull
+transition allocation ID resolving a passing member of `V` is
+`verified_dispositive`; (4) empty `V` and `C` with either nonempty `A` or an
+empty applicable-rule array is `authority_absent`; and (5) every remaining
+case is `authority_conflict`. Branch 5 includes any no-dispositive vector,
+same-rank disagreement, lower-rank disagreement, agreed lower-rank-only
+vector, incomplete rank-1 totality, failed allocation rule, or other mixed
+case.
 
 `partition_id` is literal `legal-rule-partition:` followed by SHA-256 of
 §10.1 canonical bytes of the remaining 15 fields in displayed order. Rows
@@ -24569,11 +24727,18 @@ array. This is a post-row registry member, not an input to the independently
 derived `rule_domain`. Neither row order nor an implementation `first`,
 `last`, or `last wins` policy can resolve overlap.
 
-All overlapping rules execute. Same-rank dispositive transforms must agree
-under the complete constructible Boolean fact-assignment domain; otherwise
-the interval is `authority_conflict`. A lower-rank dispositive result may
-corroborate but must agree with the controlling rank and cannot fill a
-missing rank-1 requirement. Duplicate rows with the same establishing
+The `J_p`/`T_p` construction is the sole overlap truth law. It deliberately
+shares only byte-identical normalized binding signatures from authenticated
+rule bytes, because letting provably identical predicates vary independently
+would create false source states. It deliberately takes the full Cartesian
+product for every nonidentical signature, because no authenticated joint
+typed-value/correlation authority exists. A source-realizable or observed-
+value filter could shrink the conflict domain and is forbidden; algebraic
+predicate normalization or rule-local-ID-only independence is likewise not
+an alternate v1 interpretation. This conservative over-approximation may
+reject a future rule set but cannot hide a potential contradiction.
+
+Duplicate rows with the same establishing
 source, rank, family, jurisdiction, interval, fact predicates, affected
 keys, and transform abort. Adjacent rows identical in every operative field
 other than rule ID and endpoints must be merged into one canonical row;
@@ -24723,8 +24888,11 @@ append-only history, independent domain reconstruction, every family-derived
 singleton/empty rule claim array, all five complete `K_x` and `E_x`
 relations and `A_x`/`G_x` projections, every rule/source join, the complete
 claim-establishing-source projection constructed from those `G_x` values,
-every source-byte closure row, and every interval/partition/authority
-consequence pass; and
+every source-byte closure row, every `J_p`/`T_p` table and overlap-closure
+digest, every partition-to-claim propagation, every claimed partition's
+same-claim consequence join, every claimless partition's complete ordered
+\(N_p\)-to-originating-source-row join, and every interval/partition/
+authority consequence pass; and
 every expected/actual member is exact. It is false on
 any missing or additional value. Both expected and actual preimages retain
 the exact §16.2 seven-key shape: `schema_version`, `requirement_id`,
@@ -24796,10 +24964,24 @@ in this projection. No source link, transition, rank, partition outcome, or
 authority status filters it. An unresolved, duplicated, additional,
 reordered, cross-claim, empty, or nonexhaustive \(Q_{b,x}\) aborts.
 
-The retained three-branch legal-disposition precedence then applies to this
-complete \(Q_{b,x}\): conflict if any row is `authority_conflict`; otherwise
-absence if any row is `authority_absent`; otherwise verified only if every
-row is `verified`. The seven-field legal result uses \(A_x\) as the sole
+Independently construct `P_x` as the complete canonical-partition-order
+projection of every `rule_interval_partitions` row whose
+`verification_claim_id` is `x`. It is branch-independent, nonempty, and must
+exact-cover every independently derived partition row for all of `x`'s
+families and, through each row's `covered_rule_domain_cell_ids`, exact-cover
+every corresponding §19.2.3 domain cell once under §19.2.4; a missing,
+additional, duplicate, reordered, claimless, or cell-miscovering row aborts.
+The retained three-value legal result disposition is then the exact total
+precedence: `authority_conflict` if any row of \(Q_{b,x}\) has that
+authority status or any row of `P_x` has that authority disposition;
+otherwise `authority_absent` if any \(Q_{b,x}\) row is authority-absent or
+any `P_x` row is `authority_absent | unrepresentable_midyear_transition`;
+otherwise `verified` exactly when every \(Q_{b,x}\) row is verified and
+every `P_x` row is `verified_dispositive`. An empty or nonexhaustive domain
+or any residual combination aborts instead of inventing a fourth result
+status.
+
+The seven-field legal result uses \(A_x\) as the sole
 preimage of `affected_inventory_keyset_sha256`: SHA-256 of the standalone
 `canonical_json_bytes(A_x)`, including its one terminal LF,
 and exact-copies \(G_x\) into `governing_rule_ids`. Its authority-input,
@@ -24807,7 +24989,13 @@ claim, status, and pass/fail fields retain their exact equations. For an
 absent/conflicting direct-only-optional result, its consequence digest hashes
 the concatenation of complete matched-rule `optional_row_consequences` in
 \(G_x\) order and retained within-rule order, with no key or consequence-row
-deduplication. The affected-key array alone has official-inventory-order
+deduplication. Every nonverified optional `P_x` row's nonempty consequence-ID
+array must deep-equal that partition's §19.2.4 \(N_p\) ID projection and
+exact-cover its complete \(N_p\) occurrence domain; every occurrence must
+resolve to the same occurrence in that exact \(G_x\)-ordered legal-result
+stream. A transition or derived overlap conflict cannot create a consequence
+row.
+The affected-key array alone has official-inventory-order
 unique membership. The nonlegal claim equations, including the two distinct
 V-B7 literal rows and the §18 V-B6 successor, remain outside this
 replacement.
@@ -24821,9 +25009,11 @@ the complete canonical \(V_2\), not of an `exact_identity_verification_result.v1
 object. Its `domain_sha256` freshly hashes the complete two-object
 `registry_rows` array. Its status is `pass` exactly when \(V_2\) has
 `result: true` and `failure_code: null`, every §19.2.3–§19.2.4 source,
-domain, rule, cell, claim-projection, partition, and consequence equation
+domain, rule, cell, claim-projection, joint-binding, complete-vector,
+partition-to-claim, and consequence equation
 passes, both branches' five legal `A_x`/`G_x` values deep-equal the
-independent projections, the twelve
+independent projections, all five `P_x` domains exact-cover and propagate
+partition truth, the twelve
 base rows exact-cover their two registry/claim domains, and all counts and
 digests reproduce. A v1 base projection is forbidden in an Amendment-5
 adjudication even if its rows happen to deep-equal the v2 rows.
@@ -26213,7 +26403,8 @@ unnamed consumer.
 |---|---|
 | §4.1 historical-rule registry top level and rule ordering | `replaced-by-§19.2.1-successor`: exact envelope, literals, nonempty rule array, unsigned-UTF-8 rule-ID order, counts, row/domain digests, self-zeroed integrity, and status. The existing 20-field rule-row schema is preserved. |
 | §4.1 previously unspecified legal-source manifest and singular source relationship | `replaced-by-§19.2.2-successor`: exact document/link/midyear-transition envelopes, primary/additional/corroborating join, establishing-source projection, and complete Git-byte closure. Existing singular rule source fields now exact-project the one primary link. |
-| §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals, independent 14-family cell denominator, effective-stream or one-year keyed partitions, exact cell cover, all-overlap execution, rank agreement, and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §4.1 effective endpoints, year coverage, overlap, precedence, and required/optional gap treatment | `replaced-and-completed-by-§§19.2.3–19.2.4`: integer half-open earnings-year intervals, independent 14-family cell denominator, effective-stream or one-year keyed partitions, exact cell cover, authenticated normalized joint-binding identities, complete false-before-true Cartesian vectors, all-transform tables, exact `no_disposition`, per-vector same/lower-rank agreement, rank-1 totality, and source-derived midyear consequence. Existing transform, microfact, presence, action-fold, and optional-row schemas are preserved. |
+| §§4.1, 5.1, and 16.3.1 own-rule Boolean enumeration and `direct_law_controlling_result` runtime law | `composed-with-§19.2.4-joint-overlap-table`: own-rule AST/type/output validation remains; identical cross-rule binding signatures co-vary and all other signatures take the complete Cartesian product for registry overlap proof. At runtime, an all-present record must select one exact `T_p` row before the retained controlling result and one-hot classification; missing facts retain the skipped-transform fold. |
 | §4.1 `verification_claim_specs` legal `affected_inventory_keys` and `governing_rule_ids` | `completed-by-§19.2.3-byte-producing-projections`: the affected-key source is the complete independent disposition/cell relation in official inventory order; the governing-rule source is the complete rule-major effective-cell relation fixed by family claim in registry order; exact uniqueness, five-claim order, cross-family/jurisdiction aggregation, JSON-array serialization, branch equality, and nonempty aborts are explicit. Neither configured destination array selects either source relation. |
 | §§4.1–4.2 state/local jurisdiction denominator and numeric/enum `state_of_residence` domains | `replaced-and-completed-by-§19.2.3-source-authenticated-jurisdiction-map`: fixed federal-plus-51 PSID jurisdiction vocabulary, exact PSID/FIPS/name authority table, inclusive range expansion, complete field-domain cover, source-labeled cross-wave alias normalization, and aborts for missing, duplicate, overlapping, or ambiguous maps. Observed values and candidate enums never select the denominator. |
 | §4.1 rank-1 source sufficiency for state/entity/year §218 facts | `composed-with-§19.2.4`: enacted federal law remains the rank-1 anchor and every operative executed agreement/modification/state determination byte becomes a mandatory establishing link; rank 2 and the ban on secondary authority remain. |
@@ -26222,6 +26413,7 @@ unnamed consumer.
 | §16.13.2 legal establishing-source match | `replaced-by-§19.2.2-serialized-complete-link-projection`: the legal manifest carries the exact claim/binding/pointer/row-digest array, reconstructed independently and bound by the v2 legal predicate; every nonlegal source row and matching law is preserved. |
 | §§16.13.6 and 17.2 exact-empty non-PSID `adjudication_sources` boundary | `preserved-byte-for-byte`: the §19.2.2 legal-link projection is not an adjudication-source array, supplies no source disposition, and cannot bypass the independently reconstructed base legal result. |
 | §16.13.6 four-projection historical-rule construction/equality and corresponding construction step | `replaced-by-§19.2.5-seven-projection-predicate-and-type-total-successor-chain`; the v2 legal result feeds base-result projection v2, adjudication preimages v3, noncapture predicate/preimage/result v4, and authority cutoff v4. Every unrelated singleton-authority requirement is preserved. |
+| §16.13.6 legal-claim result equation over matched-rule rows alone | `replaced-by-§19.2.5-Q-plus-P-total-equation`: each complete matched-rule domain \(Q_{b,x}\) is composed with the independently reconstructed, nonempty, cell-exact-covering partition domain `P_x`; conflict has first precedence, absence and unrepresentable transition have second precedence, and `verified` requires every \(Q_{b,x}\) row verified plus every `P_x` row `verified_dispositive`. Optional negative rows exact-project their complete \(N_p\) occurrence domains into the retained legal-result consequence stream; every residual, empty, or nonexhaustive combination aborts. The retained three-status and seven-field legal-result schemas are unchanged. |
 | §§16.13.6, 16.13.8, and 16.14.4 legal-result/base-binding consumers | `replaced-by-§19.2.5-type-total-consumers`: every old typed identity/base/adjudication/noncapture/cutoff occurrence is replaced by the exact v2/v3/v4 object named there, including all six binding conjuncts, construction order, evidence/global-registry rows, bundles, cutoffs, configurations, receipts, and validators. No structural relabeling or mixed-version object is lawful. |
 | §4.2 `layout_coordinates` nested shape, source-file arrays, and parser grammar sufficiency | `replaced-and-completed-by-§19.3.2`: byte-derived canonical dictionary/codebook rows, source-manifest-ordered field/file closure, a separately identified source-only extractor, raw-record framing and complete census, serialized normalized literal/range domains, exhaustive parse-kind branches, source-derived finite-state numeric grammar, exact registered padding, dictionary/codebook missing literals, closed unobserved-value rows, and explicit outside-grammar abort. The retained whole-inventory builder identity remains distinct. `typed_parse_specs` retains its ratified nine-key shape; its full-width member validates the source field while the exact successor payload-width/DFA and value-code range laws replace only its older parser-width/path predicates. |
 | §4.2 inline `value_code_map` and `psid_value_code_specs.v1` entry derivation | `completed-by-§19.3.2-executable-map-and-source-commitment-projection`: every seven-key entry is the lossless normalized-literal or observed-range projection with canonical full-width token hex, type, unit, value, disposition, meaning, and missing reason; the retained `source_commitments` object exact-covers the complete applicable-key/raw-field source derivation, record framing, census, and executable-entry digest; the v1 registry name and outer row keyset remain. |
@@ -26279,6 +26471,7 @@ The seven changed expected/actual payloads are exactly:
   object.
 - **G17-C05** is a tagged object with exactly
   `historical_coverage_rule_specs`,
+  `partition_overlap_evaluation_closure`,
   `legal_source_document_byte_closure`, and
   `legal_authority_verification_result`. The first value is the complete
   strict-parsed §19.2 registry, including its envelope, manifest, independent
@@ -26291,10 +26484,17 @@ The seven changed expected/actual payloads are exactly:
   and `A_x`/`G_x` expected projections through the registry status. C05 does
   not embed either claim-spec registry; their exact array comparisons occur
   in the downstream base-result/adjudication validation dependency. The
-  second and third values are the complete source-byte closure and exact
-  seven-key v2 predicate
+  second value is the complete §19.2.4 closure, freshly reconstructed on
+  each side through every normalized joint signature and every row of every
+  complete Cartesian `T_p`; its table and domain digests must exact-match
+  and its status must pass. It also binds every complete ordered \(N_p\)
+  occurrence to its originating negative source-rule occurrence; a claimed
+  partition additionally binds the same occurrence in its §19.2.5 stream,
+  while a claimless partition constructs no claim stream. The third and
+  fourth values are the complete
+  source-byte closure and exact seven-key v2 predicate
   result. C05's expected/actual count is the rule-row count; its hash covers
-  the complete three-key object and every nested count/digest.
+  the complete four-key object and every nested count/digest.
 - **G17-C06** retains its exact two-key
   `base_direct_law_closure`/`deterministic_default_application_closure`
   object. Within `base_direct_law_closure`, every inventory presence lookup
@@ -26302,6 +26502,16 @@ The seven changed expected/actual payloads are exactly:
   `(raw_field_id,raw_token_hex)` grammar/missing branch from §19.3.2 and the
   complete §19.2 rule-domain/partition. No outer key or deterministic-
   default law changes.
+  For an all-present record in a verified partition, the independently
+  evaluated covered-then-excluded binding results must map every occurrence
+  of one `joint_binding_id` to one equal Boolean and thereby select exactly
+  one row of that partition's `T_p`. Each rule's actual binding-result array,
+  complete transform result, controlling rank/status, and direct
+  classification must exact-match that row's same-rule projection and rank
+  result. A disagreement between byte-identical signatures or a value not in
+  the complete joint vector fails C06. A missing-fact action row continues
+  the retained skipped-transform fold and is not falsely inserted into the
+  all-present Boolean table.
 - **G17-C07** retains its value-code-registry purpose, complete registry-row
   payload, independently required registry-row count, and unchanged outer
   row keyset. Every expected row is reconstructed from the authenticated
@@ -26384,6 +26594,15 @@ official inventory
 effective_start
 effective_end
 authority_rank
+controlling_authority_rank
+authority_disposition
+no_disposition
+fact_binding_id
+joint binding
+rule_interval_partitions
+partition_id
+partition_overlap_evaluation_closure
+direct_law_controlling_result
 jurisdiction_ids
 jurisdiction_mapping
 state_of_residence
@@ -26559,7 +26778,7 @@ byte and registry-content comparisons remain outside that row.
 | DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_5_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5 consumer chain. |
 | DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_5_selected_registration_design_lineage_v1` and Amendment-5 v4 receipt/history dispatch. |
 | DC-28 | §19.1 D4 four-key identity, exact 1,376,610-byte raw design, and immutable revision-7 prefix comparison | `lawfully-unchanged-with-reason`: D4 is the immediate immutable base; every D5 position, capture, and selected-registration proof independently reconstructs D4 and verifies its exact raw prefix of D5. |
-| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its typed v2 result authenticates the registry from which the independent `K_x`/`E_x` and `A_x`/`G_x` closure is reconstructed, then enters only `verification_claim_base_result_projection.v2`, the v3 adjudication preimages, the v4 noncapture chain, `calibrated_authority_cutoff_identity.v4`, and the v5 bundle dispatch closed in §§19.2.3, 19.2.5, 19.4.1–19.4.3, and 19.6.3. |
+| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: terminal legal-authority comparator inside `verify_historical_coverage_rules_identity_v2`; its typed v2 result authenticates the registry from which the independent `K_x`/`E_x`, `A_x`/`G_x`, `J_p`/`T_p`, and `P_x` closures are reconstructed, including exact partition-truth propagation, then enters only `verification_claim_base_result_projection.v2`, the v3 adjudication preimages, the v4 noncapture chain, `calibrated_authority_cutoff_identity.v4`, and the v5 bundle dispatch closed in §§19.2.3–19.2.5, 19.4.1–19.4.3, and 19.6.3. |
 | DC-30 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_fitting_free_design_identity_v1`; all registry/domain/bundle consumers are closed in §19.6. |
 | DC-31 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `lawfully-unchanged-with-reason`: terminal receipt-free successor `verify_amendment_5_capture_registration_repository_identity_v1`; every transitive consumer is closed in §§19.6–19.7. |
 | DC-32 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-`HEAD` byte, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_5_selected_registration_design_lineage_v1`; its receipt and history dispatch are closed in §19.7. |
@@ -26988,9 +27207,12 @@ The two lists are disjoint and their concatenation is the exact 37-name
 Amendment-5 successor identifier inventory. Existing identifiers whose
 schemas are completed in place—notably `historical_coverage_rule_specs.v1`
 and every official v1 registry—are not new names and therefore do not appear.
-The symbolic `K_x`, `E_x`, `A_x`, and `G_x` relations are byte-producing
-equations, not serialized object, schema, or predicate identifiers, and add
-no successor name.
+The symbolic `K_x`, `E_x`, `A_x`, `G_x`, `J_p`, and `T_p` relations are
+byte-producing equations, not serialized object, schema, or predicate
+identifiers. `joint_binding_semantics.v1`, the `legal-joint-binding:` prefix,
+and `partition_overlap_evaluation_closure` are respectively an identity-
+preimage tag, an ID prefix, and a G17 payload member—not successor schema or
+predicate identifiers. They add no successor name.
 Member names, enum/role literals, projection paths, cross-binding literals,
 and symbolic commit names are likewise outside the inventory. An omitted,
 extra, duplicated, differently spelled, or undefined identifier blocks
@@ -27046,16 +27268,22 @@ accepted authority operand before every named predecessor passes.
    jurisdiction map; construct each legal claim's complete independent
    attachment-cell relation and affected-key projection; and then construct
    all rule rows, required/optional consequences, the rule-major
-   effective-cell relation, manifest source projection, and partitions.
+   effective-cell relation, manifest source projection, normalized joint-
+   binding signatures, complete Cartesian `T_p` tables, and partitions.
+   Evaluate every transform on every vector before deriving each partition's
+   rank and disposition; no negative row or transition may short-circuit the
+   table.
    Require each prepared rule claim array to exact-project its family, but
    accept no claim-spec destination from these unauthenticated rows. After
    every source byte and inventory dependency exists, the separately
    reviewed single-parent L5 commit adds only
    `data/registries/historical_coverage_rule_specs_v1.json`. The v2 legal
    predicate then reconstructs schema, raw bytes, history, domain, claim
-   relations/projections, and source closure. Only after it authenticates
-   `H` are `K_x`, `E_x`, `A_x`, and `G_x` freshly reconstructed and both
-   complete arrays serialized into both claim registries. The candidate
+   relations/projections, every `J_p`/`T_p` table and partition outcome, and
+   source closure. Only after it authenticates `H` are `K_x`, `E_x`, `A_x`,
+   `G_x`, and the complete claim-partition domains `P_x` freshly
+   reconstructed; both claim arrays are serialized into both claim
+   registries and partition truth enters each legal base result. The candidate
    claim-spec and historical-rule arrays are jointly foreign-key-validated
    only after those one-way derivations; neither authenticates the other and
    neither configured array selects a projection source. Any required legal
@@ -27090,7 +27318,8 @@ accepted authority operand before every named predecessor passes.
    separately reviewed `psid_covered_earnings_crosswalk.v3` first-add/
    cutoff procedure run. Reconstruct its complete identity array, all-key
    dispositions, component rows, and fresh content digest. Then construct
-   G17's 18 comparisons and the four changed v4 requirement rows. From those
+   G17's 18 comparisons, including the four-key C05 overlap-evaluation
+   closure, and the four changed v4 requirement rows. From those
    immutable values, construct, commit, and validate the unique fresh
    retained ten-key verification-claim adjudication artifact, including its
    complete calibrated/fitting-free result children, source projection, and

@@ -2,7 +2,7 @@
 
 ## State
 
-Findings 1–3 are closed; finding 4 is next. The worktree starts from
+Findings 1–4 are closed; finding 5 is next. The worktree starts from
 unratified Amendment 5
 commit `6f2b1a4068cf2036d8b51de8df1cf6624fcd9562` on
 `claude/ce-design-amendment5`. All work is documentation-only and preserves
@@ -32,11 +32,16 @@ the ratified 1,376,610-byte prefix exactly.
   official-order unique affected keys and registry-order unique governing
   rules; explicit V-B3 family and state/local jurisdiction aggregation;
   nonempty behavior; and exact branch-identical JSON-array serialization.
+- Closed finding 4 with authenticated normalized cross-rule binding
+  identities, a complete false-before-true Cartesian assignment domain,
+  all-transform evaluation rows, exact `no_disposition` and rank truth,
+  G17-bound overlap closure, mandatory partition-to-claim propagation, and
+  explicit claimed/claimless optional-consequence joins.
 
 ## Next
 
-1. Close finding 4 by freezing joint overlap fact assignments and total
-   per-vector authority evaluation.
-2. Close findings 5–10 in referee order, committing each separately.
+1. Close finding 5 by freezing the three exact identity-preimage JSON
+   containers and member types.
+2. Close findings 6–10 in referee order, committing each separately.
 3. Recompute identities, sweep stale literals, rerun all satisfiability
    walks, and write the round-2 referee report.
