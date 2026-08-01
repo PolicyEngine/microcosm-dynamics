@@ -295,6 +295,7 @@ def validate_history(records: list[dict[str, Any]]) -> None:
 
     assert records
     sets: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    run_registry_shas: dict[str, set[str]] = defaultdict(set)
     seen_row_runs = set()
     for record in records:
         public_record = {
@@ -313,6 +314,7 @@ def validate_history(records: list[dict[str, Any]]) -> None:
         assert (
             isinstance(record["gap_note"], str) and record["gap_note"].strip()
         ), f"missing gap note: {record['row_id']}"
+        assert record["gap_note"].rstrip().endswith(".")
         assert set(record["our"]) == {"unit", "value"}
         assert set(record["published"]) == {"unit", "value"}
         assert isinstance(record["deviation"], dict) and record["deviation"]
@@ -321,11 +323,21 @@ def validate_history(records: list[dict[str, Any]]) -> None:
         )
 
         row_run = (record["row_id"], record["evaluated_at_run"])
-        assert row_run not in seen_row_runs
+        assert row_run not in seen_row_runs, (
+            "row/run SHA reused; any deviation movement without a new run SHA "
+            "is a drift finding"
+        )
         seen_row_runs.add(row_run)
         sets[(record["evaluated_at_run"], record["registry_sha"])].append(
             record
         )
+        run_registry_shas[record["evaluated_at_run"]].add(
+            record["registry_sha"]
+        )
+
+    assert all(
+        len(shas) == 1 for shas in run_registry_shas.values()
+    ), "one run SHA cannot be reused against multiple registries"
 
     for record_set in sets.values():
         byte_starts = [record["_byte_start"] for record in record_set]
