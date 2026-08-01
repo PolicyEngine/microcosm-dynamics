@@ -86,14 +86,30 @@ def load_schema():
 
 
 def git_blob(revision: str, relative_path: str) -> bytes:
-    """Read one committed blob without changing the worktree."""
+    """Read one committed blob without changing the worktree.
 
-    return subprocess.run(
+    A path absent at the revision (the harness's first-add commit, or a
+    CI merge ref whose first parent predates benchmarks/) reads as empty
+    bytes: a first add is a pure append.
+    """
+
+    result = subprocess.run(
         ["git", "show", f"{revision}:{relative_path}"],
         cwd=ROOT,
-        check=True,
+        check=False,
         capture_output=True,
-    ).stdout
+    )
+    if result.returncode != 0:
+        stderr = result.stderr.decode(errors="replace")
+        if (
+            "does not exist" in stderr
+            or "exists on disk, but not in" in stderr
+        ):
+            return b""
+        raise subprocess.CalledProcessError(
+            result.returncode, result.args, result.stdout, result.stderr
+        )
+    return result.stdout
 
 
 def prior_committed_blob(path: Path) -> bytes:
@@ -310,15 +326,19 @@ def test__benchmark_registry__retains_exact_dynasim_locators():
 def test__benchmark_registry_and_history__are_append_only_across_commits():
     schema = load_schema()
     registry, _ = schema.load_registry()
-    previous_registry = json.loads(prior_committed_blob(REGISTRY_PATH))
-    schema.validate_append_mostly_registry(previous_registry, registry)
+    previous_registry_raw = prior_committed_blob(REGISTRY_PATH)
+    if previous_registry_raw:
+        previous_registry = json.loads(previous_registry_raw)
+        schema.validate_append_mostly_registry(previous_registry, registry)
 
     previous_history = prior_committed_blob(HISTORY_PATH)
     current_history = HISTORY_PATH.read_bytes()
     schema.validate_append_only_history(previous_history, current_history)
+    # Truncating the current history is a violation against any baseline,
+    # including the empty first-add parent a CI merge ref presents.
     with pytest.raises(AssertionError, match="history is append-only"):
         schema.validate_append_only_history(
-            previous_history, current_history[:-1]
+            current_history, current_history[:-1]
         )
 
     silent_source_change = copy.deepcopy(registry)
