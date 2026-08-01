@@ -110,8 +110,8 @@ artifacts that supply individual row values.
 
 The first run-manifest line permanently maps that identity to
 `runs/first_estimates_v1.json`. Every committed check confines each manifested
-path to the repository, requires it to be tracked with checkout bytes matching
-the Git index, and hashes those bytes back to `evaluated_at_run`.
+path to the repository, requires it to be tracked at `HEAD` with checkout bytes
+matching that `HEAD` blob, and hashes those bytes back to `evaluated_at_run`.
 
 The permanent reproduction pin covers exactly the first 42 canonical lines,
 not the whole growing file. `build_history.py --check` verifies that frozen
