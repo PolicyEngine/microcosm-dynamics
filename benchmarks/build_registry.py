@@ -54,6 +54,13 @@ CBO_60392_LONG_TERM_URL = (
     "https://www.cbo.gov/system/files/2024-08/"
     "60392-Long-Term-Social-Security-Projections.xlsx"
 )
+CBO_60392_DATA_URL = "https://www.cbo.gov/system/files/2024-08/60392-Data.xlsx"
+MINT_BENEFICIARY_TABLES_URL = (
+    "https://www.ssa.gov/policy/docs/projections/tables/beneficiaries.html"
+)
+MINT_TAXPAYER_TABLES_URL = (
+    "https://www.ssa.gov/policy/docs/projections/tables/taxpayers.html"
+)
 WISH_BILL_PDF_URL = (
     "https://www.congress.gov/117/bills/hr4289/BILLS-117hr4289ih.pdf"
 )
@@ -96,6 +103,19 @@ REFRESH_REVIEW = {
                 "8945d7c5599e944e5786801daf3af9ebad318b24b871198708eeff9bb6c46f7b"
             ),
             "size_bytes": 85665,
+        },
+        "cbo_60392_data": {
+            "filename": "cbo-60392-Data.xlsx",
+            "url": CBO_60392_DATA_URL,
+            "sha256": (
+                "1d66e714a8508f698e2528c7d295d76ab4a5659d91fc6cfc685230c536f30607"
+            ),
+            "size_bytes": 2556776,
+            "registration_note": (
+                "Reviewed for the audited tranche but intentionally unused; "
+                "Figure 13 is a sparse ratio-of-averages presentation and is "
+                "not a substitute for Long-Term sheet 14."
+            ),
         },
         "cbo_60392_additional": {
             "filename": "cbo-60392-Additional-Info.xlsx",
@@ -143,14 +163,19 @@ REFRESH_REVIEW = {
         },
         "ssa_mint_beneficiary_tables": {
             "filename": "ssa-mint-tables-beneficiaries.html",
-            "url": (
-                "https://www.ssa.gov/policy/docs/projections/tables/"
-                "beneficiaries.html"
-            ),
+            "url": MINT_BENEFICIARY_TABLES_URL,
             "sha256": (
                 "a3f6da991356045f165b6517390ab8fbdd84e1de386e2d026ab5dc2ff9009ccf"
             ),
             "size_bytes": 1652291,
+        },
+        "ssa_mint_taxpayer_tables": {
+            "filename": "ssa-mint-tables-taxpayers.html",
+            "url": MINT_TAXPAYER_TABLES_URL,
+            "sha256": (
+                "0ee73c8c07639d69b29a69297028b6db12799115579c7ae3b663a8856031152e"
+            ),
+            "size_bytes": 1493313,
         },
         "favreault_2007": {
             "filename": "urban-favreault2007-311436.pdf",
@@ -277,6 +302,31 @@ ppi_shared = load_json("runs/replication_ppi_shared_v1.json")
 mermin_rows = load_json("runs/replication_mermin_rows_v1.json")
 sharing = load_json("runs/replication_r7_sharing_v1.json")
 ordering = load_json("runs/replication_cost_ordering_v1.json")
+ssa_4b7 = load_json("data/external/ssa_supplement2025_4b7_band_shares_v1.json")
+TRANCHE_EVALUATION_PATH = "runs/benchmark_tranche2_evaluation_v1.json"
+tranche_evaluation = (
+    load_json(TRANCHE_EVALUATION_PATH)
+    if (ROOT / TRANCHE_EVALUATION_PATH).is_file()
+    else None
+)
+
+
+def audited_evaluation_row(row_id: str) -> dict[str, Any]:
+    """Return one frozen tranche evaluation row by its unique identifier."""
+
+    if tranche_evaluation is None:
+        raise FileNotFoundError(
+            f"missing committed tranche evaluation: {TRANCHE_EVALUATION_PATH}"
+        )
+    matches = [
+        row for row in tranche_evaluation["rows"] if row["row_id"] == row_id
+    ]
+    if len(matches) != 1:
+        raise AssertionError(
+            f"expected one tranche evaluation row for {row_id}, got {len(matches)}"
+        )
+    return matches[0]
+
 
 SOURCE_ARTIFACT_LABELS = first["tables"]["revenue"]["labels"]
 
@@ -721,6 +771,15 @@ def build_cbo_rows() -> list[dict[str, Any]]:
         {"year": year, "percent": value}
         for year, value in zip(years, cbo_tax_share_values, strict=False)
     ]
+    audited_tax_row = audited_evaluation_row(
+        "cbo.tax_revenue.share_of_taxable_payroll"
+    )
+    audited_tax_values = audited_tax_row["published"]["value"]
+    assert audited_tax_values[: len(cbo_tax_shares)] == cbo_tax_shares
+    assert [item["year"] for item in audited_tax_values] == [
+        *range(2015, 2023),
+        *range(2024, 2099),
+    ]
     tax_share_deviation = [
         {
             "year": year,
@@ -799,7 +858,10 @@ def build_cbo_rows() -> list[dict[str, Any]]:
         },
         {
             "row_id": "cbo.tax_revenue.share_of_taxable_payroll",
-            "external_model": "CBOLT / CBO (historical actual-data segment)",
+            "external_model": (
+                "CBOLT / CBO (historical actual-data and long-term projection "
+                "segments)"
+            ),
             "quantity": "Social Security tax revenues as a share of taxable payroll",
             "comparison_scope": ["share", "trajectory"],
             "our": {
@@ -812,12 +874,15 @@ def build_cbo_rows() -> list[dict[str, Any]]:
                 "formula": "100 * combined_contributions / weighted_taxable_payroll",
             },
             "published": {
-                "value": cbo_tax_shares,
+                "value": deepcopy(audited_tax_values),
                 "unit": "percent of national taxable payroll",
                 "source_locators": cbo_workbook_locator(
                     "1",
                     "Social Security tax revenues as a percentage of taxable payroll",
-                    "A40:A47+B40:B47 (calendar years 2015-2022)",
+                    (
+                        "A40:A47+B40:B47 (calendar years 2015-2022); "
+                        "A49:A123+B49:B123 (calendar years 2024-2098)"
+                    ),
                     "A129 (tax-revenue definition)",
                 ),
             },
@@ -835,8 +900,10 @@ def build_cbo_rows() -> list[dict[str, Any]]:
                     "national covered-worker and beneficiary populations."
                 ),
                 "year_basis": (
-                    "Both cover calendar 2015-2022, with odd-year earnings carry "
-                    "on our side and CBO actual-data accounting on the published side."
+                    "The comparable overlap is calendar 2015-2022, with odd-year "
+                    "earnings carry on our side and CBO actual-data accounting on "
+                    "the published side; only CBO continues through 2098, omitting "
+                    "2023 from this registered path."
                 ),
                 "benefit_concept": (
                     "Our numerator has no benefit component; CBO tax revenues "
@@ -2252,12 +2319,940 @@ def blocked_comparisons(wish: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+# The tranche evaluation is a report-only compilation of already-committed
+# model outputs and audited published cells.  It is deliberately not added to
+# INPUT_PATHS, which is the immutable input inventory of the merged legacy
+# matrix; every registry-side model pointer below still names the original
+# committed artifact that supplies (or most nearly approaches) the quantity.
+def tranche_capture_locator(
+    row: dict[str, Any],
+    *,
+    document: str,
+    table: str,
+    definition_or_note_range: str,
+) -> list[dict[str, Any]]:
+    """Build one exact CBO locator from the audited evaluation metadata."""
+
+    capture_by_id = {
+        "cbo_55038_supplemental": "cbo_55038_supplemental",
+        "cbo_60392_long_term": "cbo_60392_long_term",
+        "cbo_60392_additional": "cbo_60392_additional",
+    }
+    capture_id = capture_by_id[row["source"]["capture_id"]]
+    capture = REFRESH_REVIEW["captures"][capture_id]
+    source_locator = row["source"]["locator"]
+    return [
+        {
+            "publisher": "Congressional Budget Office",
+            "document": document,
+            "page": "not applicable (XLSX)",
+            "table": table,
+            "sheet": source_locator["sheet"],
+            "observation_range": source_locator["cells"],
+            "definition_or_note_range": definition_or_note_range,
+            "url": capture["url"],
+            "reviewed_external_capture": deepcopy(capture),
+        }
+    ]
+
+
+def mint_capture_locator(
+    row: dict[str, Any],
+    *,
+    document: str,
+    table: str,
+    row_locator: str,
+) -> list[dict[str, Any]]:
+    """Build one exact MINT HTML locator with its enclosing table scope."""
+
+    capture_by_id = {
+        "mint_beneficiaries": "ssa_mint_beneficiary_tables",
+        "mint_taxpayers": "ssa_mint_taxpayer_tables",
+    }
+    capture = REFRESH_REVIEW["captures"][
+        capture_by_id[row["source"]["capture_id"]]
+    ]
+    source_locator = row["source"]["locator"]
+    column_header_path = deepcopy(
+        source_locator.get("selectors", source_locator.get("selector"))
+    )
+    assert column_header_path
+    return [
+        {
+            "publisher": "Social Security Administration",
+            "document": document,
+            "page": "not applicable (HTML)",
+            "table": table,
+            "row_locator": row_locator,
+            "column_header_path": column_header_path,
+            "transform": deepcopy(row["source"]["transform"]),
+            "url": capture["url"],
+            "reviewed_external_capture": deepcopy(capture),
+        }
+    ]
+
+
+def ssa_4b7_locator(row: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build one exact Table 4.B7 locator to the committed extraction."""
+
+    source = row["source"]
+    locator = source["locator"]
+    observations = row["published"]["value"]
+    years = [observation["year"] for observation in observations]
+    assert source["committed_extraction"] == source_pin(
+        "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+        f"/rows/{row['row_id']}/observations",
+    )
+    assert observations == [
+        {"year": observation["year"], "share": observation["share"]}
+        for observation in ssa_4b7["rows"][row["row_id"]]["observations"]
+    ]
+    return [
+        {
+            "publisher": "Social Security Administration",
+            "document": "Annual Statistical Supplement, 2025",
+            "page": "not applicable (HTML)",
+            "table": "Table 4.B7, All wage and salary workers",
+            "row_locator": (
+                f"calendar-year rows {years[0]} through {years[-1]}; "
+                "structural N/A cells excluded"
+            ),
+            "column_header_path": (
+                "All wage and salary workers > Total (denominator) and "
+                f"{locator['header']} (one-based data column "
+                f"{locator['one_based_data_column']})"
+            ),
+            "transform": source["transform"],
+            "url": ssa_4b7["source"]["url"],
+            "committed_extraction": deepcopy(source["committed_extraction"]),
+        }
+    ]
+
+
+def audited_row(
+    row_id: str,
+    *,
+    external_model: str,
+    quantity: str,
+    comparison_scope: list[str],
+    source_locators: list[dict[str, Any]],
+    published_formula: str,
+    gap_note: str,
+    concept_mismatch: dict[str, Any],
+    evidential_status: str,
+) -> dict[str, Any]:
+    """Translate one immutable tranche-evaluation row into registry input."""
+
+    evaluated = audited_evaluation_row(row_id)
+    assert evaluated["action"] == "add"
+    assert evaluated["tier"] in {
+        "admin_truth",
+        "model_triangulation",
+        "statutory_parameter",
+    }
+    assert evaluated["gap_class"] in {
+        "label_mismatch",
+        "frame_no_alignment",
+        "concept_mismatch",
+        "module_missing",
+        "small_cell",
+        "preliminary_source",
+        "unverified_source",
+        "unexplained",
+    }
+    pointer = evaluated["our"]["artifact_pointer"]
+    assert pointer["sha256"] == sha256(pointer["path"])
+    has_embedded_labels = pointer["path"] in {
+        "runs/first_estimates_v1.json",
+        "runs/anchor_context_report_v1.json",
+    }
+    required_module = evaluated["our"]["required_module"]
+    return {
+        "row_id": row_id,
+        "external_model": external_model,
+        "quantity": quantity,
+        "comparison_scope": comparison_scope,
+        "tier": evaluated["tier"],
+        "gap_class": evaluated["gap_class"],
+        "gap_note": gap_note,
+        "our": {
+            "value": deepcopy(evaluated["our"]["value"]),
+            "unit": evaluated["our"]["unit"],
+            "formula": evaluated["our"].get("formula"),
+            "label_state": label_state(has_embedded_labels),
+            "source": deepcopy(pointer),
+            "comparison_note": (
+                f"Model-side status is {evaluated['our']['status']}; "
+                f"the absent comparable module is {required_module}."
+            ),
+            "provenance_status": evaluated["our"]["status"],
+        },
+        "published": {
+            "value": deepcopy(evaluated["published"]["value"]),
+            "unit": evaluated["published"]["unit"],
+            "formula": published_formula,
+            "source_locators": source_locators,
+        },
+        "deviation": deepcopy(evaluated["deviation"]),
+        "concept_mismatch": concept_mismatch,
+        "evidential_status": evidential_status,
+    }
+
+
+CBO_55038_ROW_IDS = (
+    "cbo.55038.initial_replacement_rate.all.last5.scheduled.cohort_path",
+    "cbo.55038.initial_replacement_rate.all.last5.payable.cohort_path",
+    "cbo.55038.initial_replacement_rate.all.age22_61.scheduled.cohort_path",
+    "cbo.55038.initial_replacement_rate.all.age22_61.payable.cohort_path",
+    "cbo.55038.initial_replacement_rate.q1.last5.scheduled.cohort_path",
+    "cbo.55038.initial_replacement_rate.q1.last5.payable.cohort_path",
+    "cbo.55038.initial_replacement_rate.q1.age22_61.scheduled.cohort_path",
+    "cbo.55038.initial_replacement_rate.q1.age22_61.payable.cohort_path",
+    "cbo.55038.initial_replacement_rate.q5.last5.scheduled.cohort_path",
+    "cbo.55038.initial_replacement_rate.q5.last5.payable.cohort_path",
+    "cbo.55038.initial_replacement_rate.q5.age22_61.scheduled.cohort_path",
+    "cbo.55038.initial_replacement_rate.q5.age22_61.payable.cohort_path",
+)
+CBO_60392_LIFETIME_ROW_IDS = (
+    "cbo.60392.lifetime_benefit_tax_ratio.all.scheduled.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.all.payable.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q1.scheduled.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q1.payable.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q2.scheduled.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q2.payable.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q3.scheduled.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q3.payable.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q4.scheduled.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q4.payable.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q5.scheduled.cohort_path",
+    "cbo.60392.lifetime_benefit_tax_ratio.q5.payable.cohort_path",
+)
+CBO_ANNUAL_NEW_ROW_IDS = (
+    "cbo.60392.oasdi_outlays_share_taxable_payroll.path",
+    "cbo.60392.oasdi_outlays_share_gdp.path",
+    "cbo.60392.oasdi_beneficiaries.trajectory_2024_100",
+    "cbo.60392.covered_workers.trajectory_2024_100",
+    "cbo.60392.trust_fund_ratios.path",
+)
+MINT_BENEFICIARY_ROW_IDS = (
+    "ssa.mint8.beneficiaries.retired_worker_only."
+    "social_security_income_share.trajectory",
+    "ssa.mint8.beneficiaries.widow_including_dual."
+    "social_security_income_share.trajectory",
+    "ssa.mint8.beneficiaries.spousal_including_dual."
+    "social_security_income_share.trajectory",
+    "ssa.mint8.beneficiaries.disabled_worker_only."
+    "social_security_income_share.trajectory",
+)
+MINT_TAXPAYER_AGES = ("31_39", "40_49", "50_59", "60_69", "70_plus")
+MINT_TAXPAYER_METRICS = ("annual_tax", "covered_earnings", "lifetime_qc")
+MINT_TAXPAYER_ROW_IDS = tuple(
+    "ssa.mint8.taxpayers."
+    f"age_{age}.{metric}_percentile_shape.repeated_cross_section"
+    for metric in MINT_TAXPAYER_METRICS
+    for age in MINT_TAXPAYER_AGES
+)
+SSA_4B7_ROW_IDS = (
+    "ssa_4b7_all_workers_share_1_9999",
+    "ssa_4b7_all_workers_share_10000_19999",
+    "ssa_4b7_all_workers_share_20000_39999",
+    "ssa_4b7_all_workers_share_40000_59999",
+    "ssa_4b7_all_workers_share_60000_79999",
+    "ssa_4b7_all_workers_share_80000_99999",
+    "ssa_4b7_all_workers_share_100000_119999",
+    "ssa_4b7_all_workers_share_120000_139999",
+    "ssa_4b7_all_workers_share_140000_149999",
+    "ssa_4b7_all_workers_share_150000_160199",
+    "ssa_4b7_all_workers_share_at_taxable_maximum",
+)
+AUDITED_NEW_ROW_IDS = (
+    *CBO_55038_ROW_IDS,
+    *CBO_60392_LIFETIME_ROW_IDS,
+    *CBO_ANNUAL_NEW_ROW_IDS,
+    *MINT_BENEFICIARY_ROW_IDS,
+    *MINT_TAXPAYER_ROW_IDS,
+    *SSA_4B7_ROW_IDS,
+)
+AUDITED_ACTION_ROW_IDS = (
+    *CBO_55038_ROW_IDS,
+    *CBO_60392_LIFETIME_ROW_IDS,
+    "cbo.60392.oasdi_outlays_share_taxable_payroll.path",
+    "cbo.tax_revenue.share_of_taxable_payroll",
+    *CBO_ANNUAL_NEW_ROW_IDS[1:],
+    *MINT_BENEFICIARY_ROW_IDS,
+    *MINT_TAXPAYER_ROW_IDS,
+    *SSA_4B7_ROW_IDS,
+)
+assert len(AUDITED_NEW_ROW_IDS) == 59
+assert len(AUDITED_ACTION_ROW_IDS) == 60
+
+
+def build_cbo_55038_rows() -> list[dict[str, Any]]:
+    """Build 12 verified initial-replacement-rate cohort paths."""
+
+    population_labels = {
+        "all": "all people",
+        "q1": "lowest shared-lifetime-household-earnings quintile",
+        "q5": "highest shared-lifetime-household-earnings quintile",
+    }
+    denominator_labels = {
+        "last5": "last five years of substantial earnings",
+        "age22_61": "earnings from ages 22 through 61",
+    }
+    rows = []
+    for row_id in CBO_55038_ROW_IDS:
+        evaluated = audited_evaluation_row(row_id)
+        tokens = row_id.split(".")
+        population = tokens[3]
+        denominator = tokens[4]
+        scenario = tokens[5]
+        rows.append(
+            audited_row(
+                row_id,
+                external_model="CBOLT / CBO",
+                quantity=(
+                    "Initial Social Security replacement-rate birth-cohort "
+                    f"path for {population_labels[population]}, using "
+                    f"{denominator_labels[denominator]} under {scenario} benefits"
+                ),
+                comparison_scope=["ratio", "trajectory"],
+                source_locators=tranche_capture_locator(
+                    evaluated,
+                    document=(
+                        "CBO's Social Security Replacement Rates and Other "
+                        "Benefit Measures: An In-Depth Analysis, Supplemental Data"
+                    ),
+                    table="Exhibit 5, Initial Replacement Rates",
+                    definition_or_note_range=(
+                        "A5:A8 title and definition; A10:F11 headers"
+                    ),
+                ),
+                published_formula="identity percent at the audited cohort cells",
+                gap_note=(
+                    "No committed artifact publishes the CBO cohort, shared-"
+                    "lifetime-household-earnings rank, specified earnings "
+                    "denominator, and scheduled or payable initial-replacement-"
+                    "rate combination required for this row."
+                ),
+                concept_mismatch={
+                    "frame": (
+                        "CBO ranks people by shared lifetime household earnings; "
+                        "the nearest artifact uses a restricted PSID shared-"
+                        "earnings construction."
+                    ),
+                    "population": (
+                        "CBO's national birth cohorts are not the nearest "
+                        "artifact's closed observed-era PSID support."
+                    ),
+                    "year_basis": (
+                        "The published observations are 1940s, 1960s, and 1980s "
+                        "birth-cohort paths, which no committed run publishes."
+                    ),
+                    "benefit_concept": (
+                        "The row distinguishes scheduled from post-exhaustion "
+                        "payable initial benefits."
+                    ),
+                    "earnings_and_accounting": (
+                        "The required last-five or age-22-through-61 earnings "
+                        "denominator is absent from committed outputs."
+                    ),
+                    "mismatch_codes": [
+                        "cohort_path_missing",
+                        "household_lifetime_rank_missing",
+                        "matched_earnings_denominator_missing",
+                        "payable_vintage_missing",
+                    ],
+                },
+                evidential_status=(
+                    "validation-only CBO model-triangulation roadmap row; no "
+                    "comparable model quantity is committed"
+                ),
+            )
+        )
+    return rows
+
+
+def build_cbo_lifetime_rows() -> list[dict[str, Any]]:
+    """Build 12 verified lifetime benefit-to-tax cohort paths."""
+
+    population_labels = {
+        "all": "all people",
+        "q1": "shared-lifetime-household-earnings quintile 1",
+        "q2": "shared-lifetime-household-earnings quintile 2",
+        "q3": "shared-lifetime-household-earnings quintile 3",
+        "q4": "shared-lifetime-household-earnings quintile 4",
+        "q5": "shared-lifetime-household-earnings quintile 5",
+    }
+    rows = []
+    for row_id in CBO_60392_LIFETIME_ROW_IDS:
+        evaluated = audited_evaluation_row(row_id)
+        tokens = row_id.split(".")
+        population = tokens[3]
+        scenario = tokens[4]
+        rows.append(
+            audited_row(
+                row_id,
+                external_model="CBOLT / CBO",
+                quantity=(
+                    "Lifetime benefit-to-tax ratio birth-cohort path for "
+                    f"{population_labels[population]} under {scenario} benefits"
+                ),
+                comparison_scope=["ratio", "trajectory"],
+                source_locators=tranche_capture_locator(
+                    evaluated,
+                    document=(
+                        "CBO's 2024 Long-Term Projections for Social Security, "
+                        "Long-Term Social Security Projections data workbook"
+                    ),
+                    table="Sheet 14, Lifetime Benefits and Taxes",
+                    definition_or_note_range=(
+                        "A6 title; A8:I10 headers; A50 benefit definition; "
+                        "A52 tax definition; A54 discounting and household-"
+                        "quintile definition"
+                    ),
+                ),
+                published_formula=(
+                    "identity dimensionless ratio at the audited cohort cells"
+                ),
+                gap_note=(
+                    "The nearest committed balance analogue is aggregate and "
+                    "does not publish person-level lifetime benefit and payroll-"
+                    "tax present values with CBO's age-65 discounting, benefit-"
+                    "income-tax netting, household quintiles, and payable vintage."
+                ),
+                concept_mismatch={
+                    "frame": (
+                        "CBO uses a person-level national microsimulation ranked "
+                        "by shared lifetime household earnings."
+                    ),
+                    "population": (
+                        "The nearest committed balance analogue is a closed-frame "
+                        "aggregate rather than CBO's person-level birth cohorts."
+                    ),
+                    "year_basis": (
+                        "CBO publishes 1950s through 1990s birth-cohort paths; the "
+                        "nearest artifact publishes no cohort ratios."
+                    ),
+                    "benefit_concept": (
+                        "CBO nets income taxes from lifetime scheduled or payable "
+                        "benefits before forming the ratio."
+                    ),
+                    "earnings_and_accounting": (
+                        "CBO accumulates employee-plus-employer payroll taxes and "
+                        "discounts both sides to age 65."
+                    ),
+                    "mismatch_codes": [
+                        "person_level_present_values_missing",
+                        "age_65_discounting_missing",
+                        "benefit_income_tax_netting_missing",
+                        "household_lifetime_quintiles_missing",
+                        "payable_vintage_missing",
+                    ],
+                },
+                evidential_status=(
+                    "validation-only CBO lifetime-incidence roadmap row; the "
+                    "committed balance analogue is not a model value for this row"
+                ),
+            )
+        )
+    return rows
+
+
+def build_cbo_annual_rows() -> list[dict[str, Any]]:
+    """Build five new annual CBO panels; the sixth action revises a legacy row."""
+
+    definitions = {
+        "cbo.60392.oasdi_outlays_share_taxable_payroll.path": {
+            "quantity": "Social Security outlays as a share of taxable payroll",
+            "scope": ["share", "trajectory"],
+            "table": "Social Security outlays as a percentage of taxable payroll",
+            "definition": "A127 actual-data note; A129 outlay definition",
+            "formula": "identity published percent",
+            "gap_note": (
+                "The committed overlap proxy is own-retired-worker benefits over "
+                "proxy payroll, whereas CBO includes all scheduled OASDI benefits "
+                "and administration over a national payroll frame."
+            ),
+            "evidential_status": (
+                "historical-overlap proxy comparison only; no projection or "
+                "full-OASDI outlay authority"
+            ),
+        },
+        "cbo.60392.oasdi_outlays_share_gdp.path": {
+            "quantity": "Social Security outlays as a share of GDP",
+            "scope": ["share", "trajectory"],
+            "table": "Social Security outlays as a percentage of GDP",
+            "definition": "A127 actual-data note; A129 outlay definition",
+            "formula": "identity published percent",
+            "gap_note": (
+                "No committed GDP series exists, and the nearest benefit "
+                "numerator excludes most OASDI benefits and administration."
+            ),
+            "evidential_status": (
+                "validation-only CBO fiscal roadmap row; both the GDP denominator "
+                "and comparable outlay numerator are missing"
+            ),
+        },
+        "cbo.60392.oasdi_beneficiaries.trajectory_2024_100": {
+            "quantity": "OASDI beneficiary-stock trajectory indexed to 2024",
+            "scope": ["trajectory"],
+            "table": "OASDI Beneficiaries",
+            "definition": "A85:A87 source and rounding notes",
+            "formula": "100 * total beneficiaries / 2024 total beneficiaries",
+            "gap_note": (
+                "CBO begins in 2024 after the committed artifact ends, and the "
+                "nearest model quantity is own-retirement annual presence rather "
+                "than an OASI-plus-DI beneficiary stock."
+            ),
+            "evidential_status": (
+                "validation-only indexed stock roadmap row; no comparable model "
+                "window or beneficiary concept is committed"
+            ),
+        },
+        "cbo.60392.covered_workers.trajectory_2024_100": {
+            "quantity": "Covered-worker trajectory indexed to 2024",
+            "scope": ["trajectory"],
+            "table": "Covered Workers",
+            "definition": "A87 definition; A89 rounding note",
+            "formula": "100 * total covered workers / 2024 total covered workers",
+            "gap_note": (
+                "CBO begins in 2024, and the committed closed-frame positive-proxy-"
+                "earner counts are not a projected national covered-worker stock."
+            ),
+            "evidential_status": (
+                "validation-only indexed worker-stock roadmap row; no comparable "
+                "projection population is committed"
+            ),
+        },
+        "cbo.60392.trust_fund_ratios.path": {
+            "quantity": "OASI, DI, and combined OASDI trust-fund-ratio paths",
+            "scope": ["ratio", "trajectory"],
+            "table": "Trust Fund Ratios",
+            "definition": (
+                "A94 actual-data note; A96 definition; A104 n.a. note; "
+                "A106:A113 exhaustion notes"
+            ),
+            "formula": "identity beginning-of-year asset-to-cost ratios",
+            "gap_note": (
+                "The committed pseudo-projection has a calibrated exhaustion "
+                "analogue but no annual OASI, DI, or combined OASDI beginning-"
+                "balance and scheduled-cost ratio."
+            ),
+            "evidential_status": (
+                "validation-only trust-fund roadmap row; the exhaustion analogue "
+                "is not a model value for this ratio panel"
+            ),
+        },
+    }
+    rows = []
+    for row_id in CBO_ANNUAL_NEW_ROW_IDS:
+        evaluated = audited_evaluation_row(row_id)
+        meta = definitions[row_id]
+        additional = evaluated["source"]["capture_id"] == (
+            "cbo_60392_additional"
+        )
+        document = (
+            "CBO's 2024 Long-Term Projections for Social Security, Additional "
+            "Information workbook"
+            if additional
+            else "CBO's 2024 Long-Term Projections for Social Security, Long-Term "
+            "Social Security Projections data workbook"
+        )
+        rows.append(
+            audited_row(
+                row_id,
+                external_model="CBOLT / CBO",
+                quantity=meta["quantity"],
+                comparison_scope=meta["scope"],
+                source_locators=tranche_capture_locator(
+                    evaluated,
+                    document=document,
+                    table=meta["table"],
+                    definition_or_note_range=meta["definition"],
+                ),
+                published_formula=meta["formula"],
+                gap_note=meta["gap_note"],
+                concept_mismatch={
+                    "frame": (
+                        "CBO publishes national OASDI observations and long-term "
+                        "projections; the nearest committed output is frame-relative."
+                    ),
+                    "population": (
+                        "The closed PSID reproduction panel is not CBO's national "
+                        "covered-worker and beneficiary population."
+                    ),
+                    "year_basis": (
+                        "The committed engine output ends in 2022, while the "
+                        "registered CBO projection segment runs from 2024 onward."
+                    ),
+                    "benefit_concept": (
+                        "CBO's fiscal and stock concepts cover OASI and DI, while "
+                        "the nearest model quantities are retirement-only proxies."
+                    ),
+                    "earnings_and_accounting": (
+                        "CBO uses national taxable-payroll, GDP, beneficiary-stock, "
+                        "worker-stock, or trust-fund accounting as the row requires."
+                    ),
+                    "mismatch_codes": [
+                        "closed_frame_vs_national_projection",
+                        "model_window_ends_2022",
+                        "full_oasdi_concept_missing",
+                        "projection_vintage_unaligned",
+                    ],
+                },
+                evidential_status=meta["evidential_status"],
+            )
+        )
+    return rows
+
+
+def build_mint_beneficiary_rows() -> list[dict[str, Any]]:
+    """Build four benefit-type-conditioned household-income-share paths."""
+
+    beneficiary_labels = {
+        MINT_BENEFICIARY_ROW_IDS[0]: "retired-worker-only beneficiaries",
+        MINT_BENEFICIARY_ROW_IDS[1]: (
+            "widow beneficiaries, including dually entitled people"
+        ),
+        MINT_BENEFICIARY_ROW_IDS[2]: (
+            "spousal beneficiaries, including dually entitled people"
+        ),
+        MINT_BENEFICIARY_ROW_IDS[3]: "disabled-worker-only beneficiaries",
+    }
+    row_numbers = {
+        MINT_BENEFICIARY_ROW_IDS[0]: "r40",
+        MINT_BENEFICIARY_ROW_IDS[1]: "r41",
+        MINT_BENEFICIARY_ROW_IDS[2]: "r42",
+        MINT_BENEFICIARY_ROW_IDS[3]: "r43",
+    }
+    rows = []
+    for row_id in MINT_BENEFICIARY_ROW_IDS:
+        evaluated = audited_evaluation_row(row_id)
+        rows.append(
+            audited_row(
+                row_id,
+                external_model="SSA MINT 8.23",
+                quantity=(
+                    "Social Security share of household income for "
+                    f"{beneficiary_labels[row_id]}"
+                ),
+                comparison_scope=["share", "trajectory"],
+                source_locators=mint_capture_locator(
+                    evaluated,
+                    document=(
+                        "MINT Projected Characteristics of Social Security "
+                        "Beneficiaries"
+                    ),
+                    table=(
+                        "zero-based tables 8-11, "
+                        "div#tableIncome{2024,2030,2050,2070} > table"
+                    ),
+                    row_locator=(
+                        "All beneficiaries (r1) > Current-law benefit type "
+                        f"(r39) > {beneficiary_labels[row_id]} "
+                        f"({row_numbers[row_id]})"
+                    ),
+                ),
+                published_formula="parse printed percent and divide by 100",
+                gap_note=(
+                    "The committed award-flow artifact ends in 2022 and has no "
+                    "benefit-type stock, household-income denominator, source "
+                    "decomposition, or future projection for this MINT share."
+                ),
+                concept_mismatch={
+                    "frame": (
+                        "MINT is a national projected beneficiary population, "
+                        "whereas the nearest committed output is an observed-era "
+                        "award flow."
+                    ),
+                    "population": (
+                        "The published category is a beneficiary stock by current-"
+                        "law type rather than the model's own-worker award flow."
+                    ),
+                    "year_basis": (
+                        "MINT publishes 2024, 2030, 2050, and 2070; the committed "
+                        "model artifact ends in 2022."
+                    ),
+                    "benefit_concept": (
+                        "Widow and spousal rows include dually entitled people but "
+                        "do not publish a dual-only numerator or rate."
+                    ),
+                    "earnings_and_accounting": (
+                        "The denominator is total household income and the numerator "
+                        "is Social Security income, neither of which is committed by type."
+                    ),
+                    "mismatch_codes": [
+                        "beneficiary_type_stock_missing",
+                        "household_income_denominator_missing",
+                        "future_projection_missing",
+                        "not_a_population_share_or_dual_rate",
+                    ],
+                },
+                evidential_status=(
+                    "validation-only MINT household-income-share roadmap row; it "
+                    "is not a beneficiary-type population share"
+                ),
+            )
+        )
+    return rows
+
+
+def build_mint_taxpayer_rows() -> list[dict[str, Any]]:
+    """Build 15 repeated-age-cross-section percentile-shape paths."""
+
+    metric_meta = {
+        "annual_tax": {
+            "quantity": "Annual Social Security tax percentile shape",
+            "table": "zero-based tables 0-3, div#tableTaxes{YEAR} > table",
+            "gap_note": (
+                "Only aggregate contributions are committed, so no individual "
+                "annual-tax percentiles with taxable-maximum mechanics exist for "
+                "the MINT age cross-sections after 2022."
+            ),
+            "accounting": (
+                "MINT publishes individual annual Social Security taxes whose "
+                "upper tail reflects taxable-maximum compression."
+            ),
+        },
+        "covered_earnings": {
+            "quantity": "Uncapped covered-earnings percentile shape",
+            "table": "zero-based tables 4-7, div#tableEarnings{YEAR} > table",
+            "gap_note": (
+                "The committed revenue artifact contains aggregate capped proxy "
+                "payroll but no age-stratified uncapped individual covered-"
+                "earnings percentiles for the MINT cross-sections."
+            ),
+            "accounting": (
+                "MINT publishes uncapped individual covered earnings rather than "
+                "the committed aggregate capped proxy payroll."
+            ),
+        },
+        "lifetime_qc": {
+            "quantity": "Projected lifetime quarters-of-coverage percentile shape",
+            "table": "zero-based tables 8-11, div#tableQuarters{YEAR} > table",
+            "gap_note": (
+                "Committed career diagnostics do not publish statutory lifetime "
+                "quarters-of-coverage distributions, including MINT's projected "
+                "future quarters, by age cross-section."
+            ),
+            "accounting": (
+                "MINT's lifetime-quarter measure includes projected future "
+                "statutory quarters that the committed diagnostics do not construct."
+            ),
+        },
+    }
+    age_labels = {
+        "31_39": "31-39",
+        "40_49": "40-49",
+        "50_59": "50-59",
+        "60_69": "60-69",
+        "70_plus": "70+",
+    }
+    rows = []
+    for metric in MINT_TAXPAYER_METRICS:
+        meta = metric_meta[metric]
+        for age in MINT_TAXPAYER_AGES:
+            row_id = (
+                "ssa.mint8.taxpayers."
+                f"age_{age}.{metric}_percentile_shape.repeated_cross_section"
+            )
+            evaluated = audited_evaluation_row(row_id)
+            rows.append(
+                audited_row(
+                    row_id,
+                    external_model="SSA MINT 8.23",
+                    quantity=(
+                        f"{meta['quantity']} for taxpayers age "
+                        f"{age_labels[age]} in repeated cross-sections"
+                    ),
+                    comparison_scope=["ratio", "trajectory"],
+                    source_locators=mint_capture_locator(
+                        evaluated,
+                        document="MINT Projected Characteristics of Taxpayers",
+                        table=meta["table"],
+                        row_locator=(
+                            "All taxpayers (r1) > Age (r14) > "
+                            f"{age_labels[age]}; repeated age cross-section, "
+                            "not a birth cohort"
+                        ),
+                    ),
+                    published_formula=(
+                        "within each age-year cell, p10 / median and p90 / median"
+                    ),
+                    gap_note=meta["gap_note"],
+                    concept_mismatch={
+                        "frame": (
+                            "MINT publishes national taxpayer cross-sections; the "
+                            "nearest committed artifacts use a closed PSID frame."
+                        ),
+                        "population": (
+                            "The table conditions on current taxpayers in an age "
+                            "band rather than following a taxpayer birth cohort."
+                        ),
+                        "year_basis": (
+                            "The four observations are repeated 2024, 2030, 2050, "
+                            "and 2070 age cross-sections beyond the model window."
+                        ),
+                        "benefit_concept": (
+                            "This is a taxpayer distribution and does not measure "
+                            "benefits or beneficiary-type population shares."
+                        ),
+                        "earnings_and_accounting": meta["accounting"],
+                        "mismatch_codes": [
+                            "age_cross_section_not_birth_cohort",
+                            "individual_percentiles_missing",
+                            "model_window_ends_2022",
+                            f"{metric}_module_missing",
+                        ],
+                    },
+                    evidential_status=(
+                        "validation-only MINT percentile-shape roadmap row; the "
+                        "registered trajectory is a repeated age cross-section"
+                    ),
+                )
+            )
+    return rows
+
+
+def build_ssa_4b7_rows() -> list[dict[str, Any]]:
+    """Build 11 administrative taxable-earnings-band share paths."""
+
+    gap_notes = {
+        "ssa_4b7_all_workers_share_1_9999": (
+            "No fixed-band model output exists, and PSID labor income is not the "
+            "administrative wage-and-salary taxable-earnings universe."
+        ),
+        "ssa_4b7_all_workers_share_10000_19999": (
+            "Committed artifacts expose aggregate payroll and quantile "
+            "diagnostics rather than this fixed-dollar administrative share."
+        ),
+        "ssa_4b7_all_workers_share_20000_39999": (
+            "A fixed-band series is absent, and the model proxy is not the Master "
+            "Earnings File taxable-earnings concept."
+        ),
+        "ssa_4b7_all_workers_share_40000_59999": (
+            "No annual band share is committed, and the closed PSID frame cannot "
+            "be treated as an administrative worker distribution."
+        ),
+        "ssa_4b7_all_workers_share_60000_79999": (
+            "The nearest artifacts contain aggregates and quantile ratios rather "
+            "than this fixed-dollar worker share."
+        ),
+        "ssa_4b7_all_workers_share_80000_99999": (
+            "No annual band output exists, and the upper-tail cell would require "
+            "a separately registered support and precision assessment."
+        ),
+        "ssa_4b7_all_workers_share_100000_119999": (
+            "This band is cap-truncated in early source years, and no cap-aware "
+            "fixed-band model output is committed."
+        ),
+        "ssa_4b7_all_workers_share_120000_139999": (
+            "This band becomes applicable only in 2017, and no comparable cap-aware "
+            "series is committed."
+        ),
+        "ssa_4b7_all_workers_share_140000_149999": (
+            "Only two source years overlap, and no comparable cap-aware upper-tail "
+            "model series is committed."
+        ),
+        "ssa_4b7_all_workers_share_150000_160199": (
+            "The sole non-N/A source year is 2023, outside the committed model "
+            "window, and no fixed-band output exists."
+        ),
+        "ssa_4b7_all_workers_share_at_taxable_maximum": (
+            "Aggregate taxable payroll cannot recover the person share at the "
+            "annual wage base, and no at-maximum indicator is committed."
+        ),
+    }
+    rows = []
+    for row_id in SSA_4B7_ROW_IDS:
+        evaluated = audited_evaluation_row(row_id)
+        header = evaluated["source"]["locator"]["header"]
+        rows.append(
+            audited_row(
+                row_id,
+                external_model="SSA Annual Statistical Supplement",
+                quantity=(
+                    "Share of all wage and salary workers with OASDI taxable "
+                    f"earnings in {header}"
+                ),
+                comparison_scope=["share", "trajectory"],
+                source_locators=ssa_4b7_locator(evaluated),
+                published_formula=(
+                    "printed band count divided by same-year same-panel Total"
+                ),
+                gap_note=gap_notes[row_id],
+                concept_mismatch={
+                    "frame": (
+                        "Table 4.B7 is an administrative wage-and-salary worker "
+                        "universe, while the nearest model output uses a closed "
+                        "survey proxy frame."
+                    ),
+                    "population": (
+                        "SSA counts workers with OASDI taxable wage and salary "
+                        "earnings; positive proxy earners are not that population."
+                    ),
+                    "year_basis": (
+                        "The source uses annual nominal bands whose applicability "
+                        "changes with the taxable maximum."
+                    ),
+                    "benefit_concept": (
+                        "This is an earnings-distribution statistic and contains no "
+                        "benefit quantity."
+                    ),
+                    "earnings_and_accounting": (
+                        "The numerator and denominator are same-panel Master "
+                        "Earnings File thousand-counts, not model quantiles or payroll."
+                    ),
+                    "mismatch_codes": [
+                        "fixed_nominal_band_module_missing",
+                        "administrative_worker_frame_missing",
+                        "taxable_maximum_applicability",
+                        "same_panel_denominator_required",
+                    ],
+                },
+                evidential_status=(
+                    "validation-only administrative distribution row; no model "
+                    "fixed-band quantity is committed"
+                ),
+            )
+        )
+    return rows
+
+
+def build_audited_tranche_rows() -> list[dict[str, Any]]:
+    """Build all 59 append-only rows after validating the 60 action inventory."""
+
+    assert tranche_evaluation is not None
+    assert tranche_evaluation["schema_version"] == (
+        "benchmark_tranche2_evaluation.v1"
+    )
+    evaluation_ids = tuple(row["row_id"] for row in tranche_evaluation["rows"])
+    assert evaluation_ids == AUDITED_ACTION_ROW_IDS
+    assert tranche_evaluation["inventory"]["action_counts"] == {
+        "add": 59,
+        "revise": 1,
+    }
+    rows = [
+        *build_cbo_55038_rows(),
+        *build_cbo_lifetime_rows(),
+        *build_cbo_annual_rows(),
+        *build_mint_beneficiary_rows(),
+        *build_mint_taxpayer_rows(),
+        *build_ssa_4b7_rows(),
+    ]
+    assert tuple(row["row_id"] for row in rows) == AUDITED_NEW_ROW_IDS
+    assert sum(row["our"]["value"] is not None for row in rows) == 1
+    assert sum(row["gap_class"] == "module_missing" for row in rows) == 58
+    return rows
+
+
 rows: list[dict[str, Any]] = []
 rows.extend(build_trustees_rows())
 rows.extend(build_cbo_rows())
 rows.extend(build_sharing_rows())
 wish = wish_financing_stub()
 rows.append(build_wish_parameter_row())
+rows.extend(build_audited_tranche_rows())
 
 reported_not_verified: list[dict[str, Any]] = []
 reported_not_verified.extend(build_ppi_rows())
@@ -2446,7 +3441,7 @@ TIER_ORDER = (
 )
 # The legacy prefix is immutable. Add future row IDs only after its expansion,
 # even when their tier would otherwise sort earlier.
-REGISTRY_ROW_ORDER = (*LEGACY_ROW_IDS,)
+REGISTRY_ROW_ORDER = (*LEGACY_ROW_IDS, *AUDITED_NEW_ROW_IDS)
 TIER_DEFINITIONS = {
     "admin_truth": {
         "definition": (
@@ -2571,7 +3566,23 @@ ALLOWED_COMPARISON_SCOPES = (
 )
 # Append a sequential changelog object here whenever an existing specification
 # changes. The schema and tests compare generations and reject silent edits.
-SPEC_REVISIONS: dict[str, list[dict[str, Any]]] = {}
+SPEC_REVISIONS: dict[str, list[dict[str, Any]]] = {
+    "cbo.tax_revenue.share_of_taxable_payroll": [
+        {
+            "changed_fields": [
+                "/concept_mismatch/year_basis",
+                "/external_reference",
+                "/gap_note",
+                "/source_pin/exact_locators/0/observation_range",
+            ],
+            "note": (
+                "Extended the verified CBO tax-revenue path through 2098 "
+                "while retaining model comparison only on the 2015-2022 overlap."
+            ),
+            "revision": 1,
+        }
+    ]
+}
 LABEL_MISMATCH_ROWS = {
     "ssa.reported_taxable_earnings_per_worker",
     "ssa.adjusted_taxable_payroll_per_covered_worker",
@@ -2615,7 +3626,8 @@ GAP_NOTES = {
     ),
     "cbo.tax_revenue.share_of_taxable_payroll": (
         "Our mechanical 12.4-percent contributions omit CBO's income tax on "
-        "benefits and use an unaligned proxy-payroll denominator."
+        "benefits, use an unaligned proxy-payroll denominator, and stop in "
+        "2022 before the registered CBO projection."
     ),
     "wish.hr4289.employee_rate.share_of_payroll": (
         "The scalar is copied by construction, while the model lacks the national "
@@ -2628,7 +3640,12 @@ GAP_NOTES = {
 def benchmark_tier(row: dict[str, Any]) -> str:
     """Return the standing-harness tier for one migrated row."""
 
-    if row["row_id"].startswith("ssa."):
+    if "tier" in row:
+        assert row["tier"] in TIER_ORDER
+        return row["tier"]
+    if row["row_id"].startswith("ssa.mint8."):
+        return "model_triangulation"
+    if row["row_id"].startswith(("ssa.", "ssa_4b7_")):
         return "admin_truth"
     if row["row_id"].startswith("wish."):
         return "statutory_parameter"
@@ -2655,6 +3672,9 @@ def gap_class_for(row: dict[str, Any]) -> str:
     """Assign the primary gap class without erasing secondary mismatches."""
 
     row_id = row["row_id"]
+    if "gap_class" in row:
+        assert row["gap_class"] in GAP_CLASS_ORDER
+        return row["gap_class"]
     if row["verification_class"] == "reported_not_verified":
         return "unverified_source"
     if row_id in LABEL_MISMATCH_ROWS:
@@ -2670,6 +3690,8 @@ def gap_note_for(row: dict[str, Any]) -> str:
     """Return one evidence-based sentence for the primary gap."""
 
     row_id = row["row_id"]
+    if "gap_note" in row:
+        return row["gap_note"]
     if row_id in GAP_NOTES:
         return GAP_NOTES[row_id]
     if row_id.startswith("dynasim.favreault_steuerle."):
@@ -2860,6 +3882,21 @@ assert legacy_gap_class_counts == {
     "frame_no_alignment": 1,
     "concept_mismatch": 17,
     "module_missing": 1,
+    "small_cell": 0,
+    "preliminary_source": 0,
+    "unverified_source": 20,
+    "unexplained": 0,
+}
+assert tier_counts == {
+    "admin_truth": 18,
+    "model_triangulation": 82,
+    "statutory_parameter": 1,
+}
+assert gap_class_counts == {
+    "label_mismatch": 3,
+    "frame_no_alignment": 1,
+    "concept_mismatch": 18,
+    "module_missing": 59,
     "small_cell": 0,
     "preliminary_source": 0,
     "unverified_source": 20,

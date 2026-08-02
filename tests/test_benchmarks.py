@@ -170,13 +170,22 @@ def git_blob(revision: str, relative_path: str) -> bytes:
 
 
 def prior_committed_blob(path: Path) -> bytes:
-    """Return the blob immediately before the current working artifact."""
+    """Return the most recent committed blob differing from the worktree."""
 
     relative_path = path.relative_to(ROOT).as_posix()
-    head = git_blob("HEAD", relative_path)
-    if head != path.read_bytes():
-        return head
-    return git_blob("HEAD^", relative_path)
+    current = path.read_bytes()
+    revisions = subprocess.run(
+        ["git", "rev-list", "--first-parent", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    for revision in revisions:
+        candidate = git_blob(revision, relative_path)
+        if candidate != current:
+            return candidate
+    return b""
 
 
 def write_candidate(

@@ -101,6 +101,20 @@ LEGACY_ROW_IDS = (
 LEGACY_MERMIN_ROW_IDS = frozenset(
     row_id for row_id in LEGACY_ROW_IDS if ".mermin." in row_id
 )
+LEGACY_EXTERNAL_CAPTURE_IDS = frozenset(
+    {
+        "cbo_60392_long_term",
+        "cbo_60392_additional",
+        "cbo_55038_supplemental",
+        "cbolt_overview",
+        "mint8_report",
+        "ssa_mint_beneficiary_tables",
+        "favreault_2007",
+        "wish_bill_pdf",
+        "morningstar_wish_landing",
+        "morningstar_generic_technical_appendix",
+    }
+)
 PUBLISHER_SOURCE_STATUSES = frozenset(
     {"estimated_allocation", "historical", "preliminary"}
 )
@@ -2029,7 +2043,22 @@ def reconstruct_legacy_matrix(
 
     reconstructed_rows = []
     for entry in legacy_entries:
+        entry = deepcopy(entry)
         row_id = entry["row_id"]
+        # Revisions remain visible in the standing registry, while this
+        # compatibility projection reproduces the exact matrix merged in #352.
+        if row_id == "cbo.tax_revenue.share_of_taxable_payroll":
+            entry["external_reference"] = (
+                "CBOLT / CBO (historical actual-data segment)"
+            )
+            entry["concept_mismatch"]["year_basis"] = (
+                "Both cover calendar 2015-2022, with odd-year earnings carry "
+                "on our side and CBO actual-data accounting on the published "
+                "side."
+            )
+            entry["source_pin"]["exact_locators"][0][
+                "observation_range"
+            ] = "A40:A47+B40:B47 (calendar years 2015-2022)"
         require(row_id in seed_by_id, f"legacy seed row is missing: {row_id}")
         record = seed_by_id[row_id]
         our = {
@@ -2085,6 +2114,17 @@ def reconstruct_legacy_matrix(
     context = registry["migration_context"]
     source = context["source_matrix"]
     partition = context["reported_not_verified_partition"]
+    legacy_capture_review = deepcopy(registry["external_capture_review"])
+    captures = legacy_capture_review["captures"]
+    require(
+        LEGACY_EXTERNAL_CAPTURE_IDS <= set(captures),
+        "legacy external-capture review is incomplete",
+    )
+    legacy_capture_review["captures"] = {
+        capture_id: deepcopy(captures[capture_id])
+        for capture_id in captures
+        if capture_id in LEGACY_EXTERNAL_CAPTURE_IDS
+    }
     return {
         "available_series_inventory": deepcopy(
             context["available_series_inventory"]
@@ -2092,9 +2132,7 @@ def reconstruct_legacy_matrix(
         "blocked_comparisons": deepcopy(registry["deferred_comparisons"]),
         "canonicalization": source["canonicalization"],
         "certification_context": deepcopy(context["certification_context"]),
-        "external_capture_review": deepcopy(
-            registry["external_capture_review"]
-        ),
+        "external_capture_review": legacy_capture_review,
         "honest_gaps": deepcopy(context["honest_gaps"]),
         "honesty_frame": deepcopy(registry["honesty_frame"]),
         "inputs": deepcopy(registry["inputs"]),

@@ -9,8 +9,8 @@
   `43cec7d1ff2373f70d661f4557e9eecbc9be041a939882a3ee209918a7d5d029`.
 - Its complete tranche is 30 CBO model-triangulation rows, 19 MINT
   model-triangulation rows, and 11 SSA 4.B7 admin-truth rows.
-- The audited 60-action evaluation artifact is generated and checked; the
-  standing registry is not yet expanded.
+- The audited 60-action evaluation artifact is generated and checked, and the
+  standing registry is expanded to 101 active rows.
 - GitNexus repository resources are unavailable in this session; harness
   behavior will be verified from repository source and tests.
 - The history validator now permits a null model measurement only for a
@@ -60,10 +60,21 @@
   actions, and 58 null `module_missing` actions.
 - Tightened its exact provenance selectors to include the CBO population/group
   cells and each distinct MINT taxpayer p10, median, and p90 cell selector.
+- Expanded the generated registry from 42 to 101 active rows with 18
+  admin-truth, 82 model-triangulation, and one statutory-parameter row; the gap
+  census is 3 label mismatches, one frame non-alignment, 18 concept mismatches,
+  59 missing modules, 20 unverified sources, and zero in every other class.
+- The canonical registry is 527,968 bytes with SHA-256
+  `7231b3065468c35a97f918732a607e1925845a022ba419cf8baa9a7324ab1016`;
+  its builder check and schema load pass.
+- Validated the append-mostly revision directly against starting commit
+  `e6866bfaef5fc81771236ce58b9b6d166fb3aaf9` and reproduced the frozen
+  317,414-byte legacy matrix at SHA-256
+  `b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183`.
 
 ## Next
 
-- Expand and validate the registry to 101 active rows, append one complete
-  history evaluation, and bind the run manifest to the committed artifact.
+- Append one complete 101-row history evaluation and bind the run manifest to
+  the committed evaluation artifact.
 - Remove this ledger before final delivery while preserving its committed
   history.
