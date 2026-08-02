@@ -32,33 +32,60 @@ SEED_RUN_SHA256 = (
 RUN_MANIFEST_SEED_PREFIX_SHA256 = (
     "b8cacb139ce67ed1bf5ba1509d4ca9f995d6d5e032ddfa4cb4ec565ba220f82c"
 )
+CURRENT_RUN_MANIFEST_SHA256 = (
+    "38e99cdf0efade6d81de2296f7e4deb373689c335e770aa899f1abb64c699048"
+)
+TRANCHE2_RUN_PATH = ROOT / "runs" / "benchmark_tranche2_evaluation_v1.json"
+TRANCHE2_RUN_SHA256 = (
+    "ead482c559903ae27cc21b2a92528335834dc67e6d567c25e37f47990974b524"
+)
 NON_CERTIFIED_RUN_PATH = ROOT / "runs" / "claiming_reference_v1.json"
 NON_CERTIFIED_RUN_SHA256 = (
     "ae80d5c2281a15759948fae3e1f7ed3adbd7127d6a243518ff21196b00b99da9"
 )
-REGISTRY_SHA256 = (
+SEED_REGISTRY_SHA256 = (
     "3355f6686d67eb39793fb790327010c21ee852704968c627f0d851c6dd7d1726"
+)
+CURRENT_REGISTRY_SHA256 = (
+    "7231b3065468c35a97f918732a607e1925845a022ba419cf8baa9a7324ab1016"
 )
 HISTORY_SEED_PREFIX_SHA256 = (
     "61b8233b430c80c68a26cd5c1cbda8cb71ed8ef2631d96d0d4b7424f2f430d31"
 )
 CURRENT_HISTORY_SHA256 = (
-    "61b8233b430c80c68a26cd5c1cbda8cb71ed8ef2631d96d0d4b7424f2f430d31"
+    "cddf67ddebbe8611971797fd8bce3f91b132b9b4bb0378edb2b714931792aa0f"
 )
 WALL_SHA256 = (
-    "88658e92030aaf7003ef19a5d5ec33748ea170e2daf3e146ae34d465f4628281"
+    "09cfb2b8540f12de56e061653ba719bc5ebbdd614e9ee98992fd371b91b0417a"
 )
 SEED_ROW_COUNT = 42
-TIER_COUNTS = {
+CURRENT_ROW_COUNT = 101
+TRANCHE2_ACTION_COUNT = 60
+SEED_TIER_COUNTS = {
     "admin_truth": 7,
     "model_triangulation": 34,
     "statutory_parameter": 1,
 }
-GAP_COUNTS = {
+CURRENT_TIER_COUNTS = {
+    "admin_truth": 18,
+    "model_triangulation": 82,
+    "statutory_parameter": 1,
+}
+SEED_GAP_COUNTS = {
     "label_mismatch": 3,
     "frame_no_alignment": 1,
     "concept_mismatch": 17,
     "module_missing": 1,
+    "small_cell": 0,
+    "preliminary_source": 0,
+    "unverified_source": 20,
+    "unexplained": 0,
+}
+CURRENT_GAP_COUNTS = {
+    "label_mismatch": 3,
+    "frame_no_alignment": 1,
+    "concept_mismatch": 18,
+    "module_missing": 59,
     "small_cell": 0,
     "preliminary_source": 0,
     "unverified_source": 20,
@@ -439,15 +466,15 @@ def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
     schema = load_schema()
     registry, raw = schema.load_registry()
 
-    assert hashlib.sha256(raw).hexdigest() == REGISTRY_SHA256
-    assert registry["row_count"] == SEED_ROW_COUNT
-    assert registry["tier_counts"] == TIER_COUNTS
-    assert registry["gap_class_counts"] == GAP_COUNTS
+    assert hashlib.sha256(raw).hexdigest() == CURRENT_REGISTRY_SHA256
+    assert registry["row_count"] == CURRENT_ROW_COUNT
+    assert registry["tier_counts"] == CURRENT_TIER_COUNTS
+    assert registry["gap_class_counts"] == CURRENT_GAP_COUNTS
     assert Counter(entry["tier"] for entry in registry["entries"]) == (
-        TIER_COUNTS
+        CURRENT_TIER_COUNTS
     )
     assert Counter(entry["gap_class"] for entry in registry["entries"]) == {
-        key: value for key, value in GAP_COUNTS.items() if value
+        key: value for key, value in CURRENT_GAP_COUNTS.items() if value
     }
     assert all(
         set(entry["comparison_scope"])
@@ -455,6 +482,123 @@ def test__benchmark_registry__has_strict_schema_tiers_and_gap_census():
         for entry in registry["entries"]
     )
     _check_benchmark_migration_round_trip()
+
+
+def test__audited_tranche2__retains_inventory_corrections_and_selectors():
+    registry = json.loads(REGISTRY_PATH.read_text())
+    evaluation = json.loads(TRANCHE2_RUN_PATH.read_text())
+    rows = evaluation["rows"]
+    entries = {entry["row_id"]: entry for entry in registry["entries"]}
+
+    assert sha256(TRANCHE2_RUN_PATH) == TRANCHE2_RUN_SHA256
+    assert evaluation["validation_only"] is True
+    assert len(rows) == TRANCHE2_ACTION_COUNT
+    assert len({row["row_id"] for row in rows}) == TRANCHE2_ACTION_COUNT
+    assert Counter(row["action"] for row in rows) == {"add": 59, "revise": 1}
+    assert Counter(row["source_family"] for row in rows) == {
+        "cbo": 30,
+        "mint": 19,
+        "ssa_supplement_4b7": 11,
+    }
+    assert Counter(row["tier"] for row in rows) == {
+        "admin_truth": 11,
+        "model_triangulation": 49,
+    }
+    assert {
+        row["row_id"] for row in rows if row["our"]["value"] is not None
+    } == {
+        "cbo.60392.oasdi_outlays_share_taxable_payroll.path",
+        "cbo.tax_revenue.share_of_taxable_payroll",
+    }
+    null_rows = [row for row in rows if row["our"]["value"] is None]
+    assert len(null_rows) == 58
+    assert all(row["gap_class"] == "module_missing" for row in null_rows)
+    assert all(
+        row["deviation"] == {"model_value": None, "status": "not_computable"}
+        for row in null_rows
+    )
+
+    corrections = evaluation["standing_corrections"]
+    assert len(corrections) == 2
+    assert "CBO 55038 has no lifetime benefit-to-tax ratios" in corrections[0]
+    assert "CBO 60392 Long-Term sheet 14" in corrections[0]
+    assert "neither beneficiary-type population shares" in corrections[1]
+    assert "nor taxpayer birth-cohort distributions" in corrections[1]
+
+    cbo_55038_ids = {
+        row["row_id"]
+        for row in rows
+        if row["source"]["capture_id"] == "cbo_55038_supplemental"
+    }
+    assert len(cbo_55038_ids) == 12
+    assert all(
+        "initial_replacement_rate" in row_id for row_id in cbo_55038_ids
+    )
+    lifetime_ids = {
+        row["row_id"]
+        for row in rows
+        if ".lifetime_benefit_tax_ratio." in row["row_id"]
+    }
+    assert len(lifetime_ids) == 12
+    assert all(row_id.startswith("cbo.60392.") for row_id in lifetime_ids)
+
+    initial_locator = entries[
+        "cbo.55038.initial_replacement_rate.all.last5.scheduled.cohort_path"
+    ]["source_pin"]["exact_locators"][0]
+    assert (
+        initial_locator["sheet"],
+        initial_locator["observation_range"],
+    ) == (
+        "Exhibit 5",
+        "B12; B13; A14:A16+B14:B16",
+    )
+    lifetime_locator = entries[
+        "cbo.60392.lifetime_benefit_tax_ratio.all.scheduled.cohort_path"
+    ]["source_pin"]["exact_locators"][0]
+    assert (
+        lifetime_locator["sheet"],
+        lifetime_locator["observation_range"],
+    ) == (
+        "14",
+        "B11; A12:A16+B12:B16",
+    )
+
+    beneficiary_locator = entries[
+        "ssa.mint8.beneficiaries.retired_worker_only."
+        "social_security_income_share.trajectory"
+    ]["source_pin"]["exact_locators"][0]
+    assert beneficiary_locator["row_locator"] == (
+        "All beneficiaries (r1) > Current-law benefit type (r39) > "
+        "retired-worker-only beneficiaries (r40)"
+    )
+    assert beneficiary_locator["column_header_path"] == (
+        "div#tableIncome{YEAR} > table td[headers='r1 r39 r40 c3 c7']"
+    )
+    taxpayer_locator = entries[
+        "ssa.mint8.taxpayers.age_31_39.annual_tax_percentile_shape."
+        "repeated_cross_section"
+    ]["source_pin"]["exact_locators"][0]
+    assert taxpayer_locator["row_locator"].endswith(
+        "repeated age cross-section, not a birth cohort"
+    )
+    assert taxpayer_locator["column_header_path"] == {
+        "median": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c4']",
+        "p10": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c3']",
+        "p90": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c5']",
+    }
+    assert all(
+        "repeated_cross_section" in row["row_id"]
+        for row in rows
+        if row["source"]["capture_id"] == "mint_taxpayers"
+    )
+
+    tax_locator = entries["cbo.tax_revenue.share_of_taxable_payroll"][
+        "source_pin"
+    ]["exact_locators"][0]
+    assert tax_locator["observation_range"] == (
+        "A40:A47+B40:B47 (calendar years 2015-2022); "
+        "A49:A123+B49:B123 (calendar years 2024-2098)"
+    )
 
 
 def _check_benchmark_migration_round_trip():
@@ -568,26 +712,60 @@ def test__benchmark_history__reproduces_frozen_seed_prefix():
     seed = history[:SEED_ROW_COUNT]
 
     assert sha256(SEED_RUN_PATH) == SEED_RUN_SHA256
-    assert hashlib.sha256(registry_raw).hexdigest() == REGISTRY_SHA256
+    assert hashlib.sha256(registry_raw).hexdigest() == CURRENT_REGISTRY_SHA256
     assert hashlib.sha256(prefix).hexdigest() == HISTORY_SEED_PREFIX_SHA256
     assert hashlib.sha256(history_raw).hexdigest() == CURRENT_HISTORY_SHA256
+    assert hashlib.sha256(manifest_raw).hexdigest() == (
+        CURRENT_RUN_MANIFEST_SHA256
+    )
     assert (
         hashlib.sha256(manifest_raw.splitlines(keepends=True)[0]).hexdigest()
         == RUN_MANIFEST_SEED_PREFIX_SHA256
     )
-    assert len(history) >= SEED_ROW_COUNT
+    assert len(history) == SEED_ROW_COUNT + CURRENT_ROW_COUNT
     assert [record["row_id"] for record in seed] == [
         entry["row_id"] for entry in registry["entries"][:SEED_ROW_COUNT]
     ]
+    assert (
+        Counter(
+            entry["tier"] for entry in registry["entries"][:SEED_ROW_COUNT]
+        )
+        == SEED_TIER_COUNTS
+    )
     assert {record["evaluated_at_run"] for record in seed} == {SEED_RUN_SHA256}
-    assert {record["registry_sha"] for record in seed} == {REGISTRY_SHA256}
+    assert {record["registry_sha"] for record in seed} == {
+        SEED_REGISTRY_SHA256
+    }
     assert Counter(record["gap_class"] for record in seed) == {
-        key: value for key, value in GAP_COUNTS.items() if value
+        key: value for key, value in SEED_GAP_COUNTS.items() if value
     }
     assert manifest[0] == {
         "artifact_path": "runs/first_estimates_v1.json",
         "evaluated_at_run": SEED_RUN_SHA256,
     }
+    assert manifest[-1] == {
+        "artifact_path": "runs/benchmark_tranche2_evaluation_v1.json",
+        "evaluated_at_run": TRANCHE2_RUN_SHA256,
+    }
+
+    latest = history[-CURRENT_ROW_COUNT:]
+    assert [record["row_id"] for record in latest] == [
+        entry["row_id"] for entry in registry["entries"]
+    ]
+    assert {record["evaluated_at_run"] for record in latest} == {
+        TRANCHE2_RUN_SHA256
+    }
+    assert {record["registry_sha"] for record in latest} == {
+        CURRENT_REGISTRY_SHA256
+    }
+    assert Counter(record["gap_class"] for record in latest) == {
+        key: value for key, value in CURRENT_GAP_COUNTS.items() if value
+    }
+    assert sum(record["our"]["value"] is None for record in latest) == 58
+    assert Counter(
+        record["label_state"]["source_artifact_embedded_labels"] is None
+        for record in latest
+    ) == {False: 44, True: 57}
 
 
 def test__benchmark_history__unexplained_or_unnoted_gap_alarms():
@@ -658,7 +836,9 @@ def _check_unverified_history_binding():
     history, _ = schema.load_history()
     laundered = copy.deepcopy(history)
     mermin = next(
-        record for record in laundered if ".mermin." in record["row_id"]
+        record
+        for record in reversed(laundered)
+        if ".mermin." in record["row_id"]
     )
     mermin["gap_class"] = "preliminary_source"
 
@@ -739,7 +919,7 @@ def _check_future_label_evidence_binding():
             )
 
     false_embedded_claim = copy.deepcopy(history)
-    false_embedded_claim[0]["label_state"][
+    false_embedded_claim[-CURRENT_ROW_COUNT]["label_state"][
         "source_artifact_embedded_labels"
     ] = ["future-label"]
     with pytest.raises(AssertionError, match="source-artifact label claim"):
@@ -787,7 +967,7 @@ def test__benchmark_registry__retains_source_and_verification_drift_laws(
         for entry in entries
         if entry["verification_class"] == "reported_not_verified"
     ]
-    assert len(verified) == 22
+    assert len(verified) == 81
     assert len(reported) == 20
     assert not any(".mermin." in entry["row_id"] for entry in verified)
     assert all(entry["gap_class"] == "unverified_source" for entry in reported)
@@ -1150,21 +1330,35 @@ def test__benchmark_append_checker__fails_closed_and_never_mutates(tmp_path):
     assert {path: path.read_bytes() for path in before} == before
 
 
-def test__benchmark_builders__check_without_mutating_artifacts():
+def test__benchmark_builders__check_without_mutating_artifacts(
+    tmp_path: Path,
+):
     before = {
         REGISTRY_PATH: REGISTRY_PATH.read_bytes(),
         HISTORY_PATH: HISTORY_PATH.read_bytes(),
         RUN_MANIFEST_PATH: RUN_MANIFEST_PATH.read_bytes(),
         WALL_PATH: WALL_PATH.read_bytes(),
     }
+    candidate = tmp_path / "benchmark_tranche2_history_candidate.jsonl"
+    history_lines = HISTORY_PATH.read_bytes().splitlines(keepends=True)
+    candidate.write_bytes(b"".join(history_lines[-CURRENT_ROW_COUNT:]))
     builders = (
         (BENCHMARKS / "build_registry.py", "--check"),
         (BENCHMARKS / "build_history.py", "--check"),
         (BENCHMARKS / "build_wall.py", "--check"),
+        (
+            ROOT / "scripts/extract_ssa_supplement_4b7_band_shares.py",
+            "--check",
+        ),
+        (
+            ROOT / "scripts/build_benchmark_tranche2_history_candidate.py",
+            str(candidate),
+            "--check",
+        ),
     )
-    for builder, mode in builders:
+    for builder, *arguments in builders:
         subprocess.run(
-            [sys.executable, "-O", str(builder), mode],
+            [sys.executable, "-O", str(builder), *arguments],
             cwd=ROOT,
             check=True,
             capture_output=True,
@@ -1203,9 +1397,9 @@ def test__benchmark_wall__is_self_contained_complete_and_seeded():
     )
     assert (
         '`["frame-relative", "pre-alignment", "labor-income proxy"]` '
-        "(10 rows)" in wall
+        "(44 rows)" in wall
     )
-    assert "Rows with no embedded label array: 32." in wall
+    assert "Rows with no embedded label array: 57." in wall
     assert "certified run set" not in wall
     assert "http://" not in wall and "https://" not in wall
     assert "`preliminary_source` | 0" in wall

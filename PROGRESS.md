@@ -13,6 +13,8 @@
   standing registry is expanded to 101 active rows.
 - One complete 101-record current-registry evaluation is appended to history
   and bound to the committed evaluation artifact in the run manifest.
+- The publishable wall and current/seed regression expectations are rebuilt;
+  the full benchmark suite and dedicated alarm test pass.
 - GitNexus repository resources are unavailable in this session; harness
   behavior will be verified from repository source and tests.
 - The history validator now permits a null model measurement only for a
@@ -83,10 +85,22 @@
 - Schema/history/registry binding, committed-HEAD run-artifact binding, and
   explicit append-only validation against the starting history and manifest
   all pass.
+- Rebuilt the 85,044-byte wall at SHA-256
+  `09cfb2b8540f12de56e061653ba719bc5ebbdd614e9ee98992fd371b91b0417a`;
+  it displays all 101 rows, the 44/57 embedded-label split, and the complete
+  gap ledger with zero unexplained rows.
+- Split frozen seed identities from current registry/history/manifest/wall
+  identities in the regression suite and added direct coverage for the audited
+  60-action census, both standing corrections, exact CBO/MINT locators, 58
+  null model measurements, and all generator checks that use committed bytes.
+- The full benchmark suite passes with 10 tests in 324.11 seconds; the focused
+  unexplained-gap alarm passes separately with one test in 3.23 seconds.
+- Repository-wide Ruff passes across the Python inventory, and Black at line
+  length 79 passes for every Python file added or changed by this lane.
 
 ## Next
 
-- Rebuild the benchmark wall, update the standing identity/census tests, and
-  run the complete required check suite.
+- Commit the wall/test checkpoint, finish repository hygiene, remove this
+  ledger, and write the final lane report.
 - Remove this ledger before final delivery while preserving its committed
   history.
