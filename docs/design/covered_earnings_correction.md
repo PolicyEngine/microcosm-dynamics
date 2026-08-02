@@ -33399,3 +33399,302 @@ After ratification but before that registration, steps 4–6 authorize only
 the separately reviewed source, authority, implementation, and proof-gated
 capture preparation stated above. They authorize no correction production
 evaluation, path switch, context run, label change, output, or publication.
+
+
+## 21. AMENDMENT SECTION — Amendment 7: closed-failure completion and consumer-boundary enforcement
+
+### 21.1 Pre-law empirical grounding
+
+This subsection records the completed empirical work that precedes and
+constrains every operative sentence below. It is evidence, not a prospective
+compiler shortcut. All document claims were read from the exact revision-8
+blob at commit 5d69788a35f3e415e841ecbe4a22acb843dab70c; all external-data claims
+were read with git show at the pinned identities below. No live-worktree
+document or mutable data path supplied an authority claim.
+
+#### 21.1.1 Frozen roots and canonical projection rule
+
+The immutable revision-8 prefix is the first 2,049,769 bytes of this file.
+It has Git blob fd7f5f48413da3713114befdc2f021768f81063d, mode 100644,
+and SHA-256
+ade1a757c0b29226e7ba12f13dbe9fed7192bc85ffd67b4081bd297107e6cf4c.
+The six census inputs at the same commit are:
+
+| Ordinal | Evidence path | Fields | Raw bytes | Git blob | Raw SHA-256 |
+|---:|---|---:|---:|---|---|
+| 1 | data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json | 3,868 | 4,628,883 | 7330949776439c2124aba2a6ffa280dbbf02e4af | 52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48 |
+| 2 | data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json | 1,838 | 2,203,624 | bbc2cba152cef1bf9c54c093d904ca7f329859f8 | 0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87 |
+| 3 | data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json | 15,745 | 21,115,064 | c1de0ce6cb6374cf67e58f6d8d9c231ed2648d6e | 109d7ecb4dd933fdcd2efaf572d9bbb8378bb8b054badccda1ac52c049afcedf |
+| 4 | data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json | 15,983 | 19,201,179 | 4cbbe89bcff24ab5f8179f1c3c295b3b3c71b436 | 549508cb31a26a81643339f9cda0824a8f44c9ffc5bac300d7647c34ba78c892 |
+| 5 | data/external/psid_codebook_field_evidence/ry2002_2014_modern_bc_de_v1.json | 33,154 | 45,941,875 | 15e3cc283688c211f69d8ead9f30c1dc47a782d5 | d56356b4a34b32489b5b2e1cc6c782479e910b9711eeff8b74d22d483d8880fe |
+| 6 | data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json | 19,011 | 28,227,120 | 754a4434c50b8b5bdcc8bb737b87a066e20338ac | d7018a633ec8127ab799d07db58f63d1582e5417c305c9c03d63b08c41803f78 |
+
+The §19.3.1 scope root is
+data/external/psid_codebook_inventory_adjudication_v1.json at commit
+b8e8e4f200b362a9661dbc6ef765852496608e49, parent
+044d2fc789052e89ea0849fa39fea9899317d97e, mode 100644, Git blob
+c956f5e0cdd63a9eefc0c1bde3824cd817950b39, 1,415,319 raw bytes, raw
+SHA-256
+df73026bcf649d12ecb606501d64780f41567b6dc09d7029f9191111cab09c62,
+and self-zeroed content SHA-256
+359c7edac8c0b331c1a4d2a77ad2945974fa033e50e104d866e48b39a45b5a84.
+
+For this subsection, K(S) means the array of every
+[interview_wave,raw_field_id] key in set S, retaining the §20.3.7 canonical
+six-artifact, interview-wave, and field_evidence-row order. Canonical JSON
+means UTF-8, sorted object keys, compact separators, ASCII escaping, no
+nonfinite number, and exactly one terminal LF. Every SHA-256 below is over
+that serialization unless an explicit vector order or complete source row is
+named. The empty key array is [] and hashes to
+37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570.
+
+#### 21.1.2 Exact closed-failure membership
+
+Let F be the union of the field_keys members in the following exact
+seven-row artifact. The fenced payload, including its one terminal LF, is
+21,034 bytes with SHA-256
+66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324.
+It is reproduced here so every later negative-census and intersection claim
+has a complete field list rather than examples.
+
+~~~json
+[{"derivation_status":"conflicting_source_numeric_format","field_keys":[[1970,"V1714"]],"resolution_reason":"conflict:overlapping_numeric_ranges"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[2019,"ER76782"],[2019,"ER76783"],[2019,"ER76788"],[2019,"ER76789"],[2019,"ER76842"],[2019,"ER76843"],[2019,"ER76848"],[2019,"ER76849"],[2019,"ER76927"],[2019,"ER76928"],[2019,"ER76933"],[2019,"ER76934"],[2019,"ER76987"],[2019,"ER76988"],[2019,"ER76993"],[2019,"ER76994"]],"resolution_reason":"character_raw_replay_unknown_token"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[1968,"V95"],[1968,"V189"],[1968,"V412"],[1968,"V413"],[1968,"V414"],[1968,"V415"],[1968,"V416"],[1968,"V417"],[1969,"V807"],[1969,"V809"],[1970,"V1496"],[1970,"V1498"],[1970,"V1506"],[1970,"V1619"],[1970,"V1620"],[1970,"V1621"],[1970,"V1622"],[1970,"V1623"],[1970,"V1624"],[1970,"V1625"],[1970,"V1626"],[1970,"V1627"],[1971,"V1816"],[1971,"V2208"],[1971,"V2210"],[1971,"V2331"],[1971,"V2332"],[1971,"V2333"],[1971,"V2334"],[1971,"V2336"],[1971,"V2339"],[1971,"V2340"],[1971,"V2341"],[1971,"V2342"],[1971,"V2343"],[1971,"V2344"],[1972,"V2406"],[1972,"V2834"],[1972,"V2836"],[1972,"V2960"],[1972,"V2961"],[1972,"V2962"],[1972,"V2963"],[1972,"V2965"],[1973,"V3006"],[1973,"V3251"],[1973,"V3304"],[1973,"V3305"],[1973,"V3306"],[1973,"V3307"],[1973,"V3309"],[1974,"V3406"],[1974,"V3673"],[1974,"V3724"],[1974,"V3725"],[1974,"V3726"],[1974,"V3727"],[1974,"V3729"],[1975,"V3806"],[1975,"V3934"],[1975,"V4151"],[1975,"V4225"],[1975,"V4226"],[1975,"V4227"],[1975,"V4228"],[1975,"V4230"],[1976,"V4306"],[1976,"V4702"],[1976,"V5107"],[1976,"V5108"],[1976,"V5109"],[1976,"V5110"],[1976,"V5112"],[1977,"V5206"],[1977,"V5666"],[1977,"V5667"],[1977,"V5668"],[1977,"V5669"],[1977,"V5671"],[1978,"V5706"],[1978,"V6167"],[1978,"V6213"],[1978,"V6214"],[1978,"V6215"],[1978,"V6216"],[1978,"V6218"],[1979,"V6306"],[1979,"V6469"],[1979,"V6806"],[1979,"V6807"],[1979,"V6808"],[1979,"V6809"],[1979,"V6811"],[1980,"V6906"],[1980,"V7074"],[1980,"V7452"],[1980,"V7453"],[1980,"V7454"],[1981,"V7506"],[1981,"V7665"],[1981,"V8104"],[1981,"V8105"],[1981,"V8106"],[1982,"V8206"],[1982,"V8728"],[1982,"V8729"],[1982,"V8730"],[1983,"V8806"],[1983,"V9415"],[1983,"V9416"],[1983,"V9417"],[1984,"V10006"],[1984,"V11061"],[1984,"V11062"],[1984,"V11063"],[1985,"V11106"],[1985,"V12422"],[1985,"V12423"],[1985,"V12424"],[1986,"V12506"],[1986,"V13662"],[1986,"V13663"],[1986,"V13664"],[1987,"V13706"],[1987,"V14709"],[1987,"V14710"],[1987,"V14711"],[1988,"V14806"],[1988,"V16183"],[1988,"V16184"],[1988,"V16185"],[1988,"V16186"],[1989,"V16306"],[1989,"V17561"],[1989,"V17562"],[1989,"V17563"],[1989,"V17564"],[1990,"V17706"],[1990,"V18915"],[1991,"V19006"],[1991,"V20215"],[1992,"V20306"],[1992,"V21521"],[1993,"V21605"]],"resolution_reason":"observed_token_outside_all_candidate_forms_or_semantics"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[1993,"V22506"],[1993,"V22545"],[1993,"V22552"],[1993,"V22585"],[1993,"V22611"],[1993,"V22672"],[1993,"V22711"],[1993,"V22718"],[1993,"V22751"],[1993,"V22777"],[1993,"V22859"],[1993,"V22898"],[1993,"V22905"],[1993,"V22964"],[1993,"V23025"],[1993,"V23064"],[1993,"V23071"],[1993,"V23104"],[1994,"ER3203"],[1995,"ER6203"],[1995,"ER6974"],[1996,"ER8320"],[1997,"ER11213"],[2001,"ER17429"],[2001,"ER17455"],[2001,"ER17684"],[2001,"ER17710"],[2001,"ER17972"],[2001,"ER17999"],[2001,"ER18025"],[2001,"ER18255"],[2003,"ER21246"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21464"],[2003,"ER21496"],[2003,"ER21528"],[2005,"ER25267"],[2005,"ER25525"],[2007,"ER36272"],[2007,"ER36498"],[2007,"ER36530"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53575"],[2013,"ER57889"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60590"],[2015,"ER65069"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72607"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78649"],[2021,"ER81519"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82641"]],"resolution_reason":"selected_space_literal_unrenderable"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[1971,"V2226"],[1981,"V7585"],[1982,"V8278"],[1983,"V8886"],[1984,"V10268"],[1984,"V10275"],[1985,"V11409"],[1986,"V12808"],[1987,"V13910"],[1987,"V13918"],[1987,"V14056"],[1987,"V14061"],[1987,"V14066"],[1988,"V14925"],[1988,"V14933"],[1988,"V15071"],[1988,"V15076"],[1988,"V15081"],[1989,"V16425"],[1989,"V16566"],[1989,"V16571"],[1989,"V16576"],[1989,"V16581"],[1989,"V17590"],[1989,"V17592"],[1989,"V17595"],[1989,"V17598"],[1989,"V17604"],[1990,"V17841"],[1990,"V17982"],[1990,"V17987"],[1990,"V17992"],[1990,"V17997"],[1991,"V19141"],[1991,"V19282"],[1991,"V19287"],[1991,"V19292"],[1991,"V19297"],[1992,"V20449"],[1992,"V20582"],[1992,"V20587"],[1992,"V20592"],[1992,"V20597"],[1993,"V21813"],[1993,"V21829"],[1993,"V21943"],[1993,"V22373"],[1994,"ER3095"],[1994,"ER3722"],[1994,"ER3726"],[1994,"ER3731"],[1994,"ER3736"],[1994,"ER3748"],[1994,"ER3779"],[1994,"ER4134"],[1994,"ER4150"],[1995,"ER6095"],[1995,"ER6990"],[1996,"ER8192"],[1996,"ER9225"],[1996,"ER9241"],[1997,"ER11087"],[1997,"ER12065"],[1997,"ER12073"],[1997,"ER12208"],[1999,"ER14479"],[1999,"ER14993"],[1999,"ER14997"],[1999,"ER15002"],[1999,"ER15026"],[1999,"ER15057"],[1999,"ER16456"],[1999,"ER16505"],[2001,"ER19189"],[2001,"ER19193"],[2001,"ER19198"],[2001,"ER19222"],[2001,"ER19253"],[2001,"ER20437"],[2001,"ER20453"],[2003,"ER21912"],[2003,"ER22336"],[2003,"ER22568"],[2003,"ER22617"],[2003,"ER22662"],[2003,"ER23702L4"],[2005,"ER26549"],[2005,"ER26598"],[2007,"ER36897"],[2007,"ER36925"],[2007,"ER36965"],[2007,"ER37335"],[2007,"ER37616"],[2007,"ER40915"],[2007,"ER40997"],[2007,"ER40999"],[2009,"ER42902"],[2009,"ER42916"],[2009,"ER42956"],[2009,"ER43607"],[2009,"ER43638"],[2009,"ER43652"],[2009,"ER43670"],[2009,"ER46673"],[2009,"ER46823"],[2009,"ER46960"],[2011,"ER48224"],[2011,"ER48278"],[2011,"ER48315"],[2011,"ER48883"],[2011,"ER48932"],[2011,"ER48997"],[2011,"ER49015"],[2011,"ER52231"],[2011,"ER52238"],[2011,"ER52358"],[2011,"ER52364"],[2013,"ER53904"],[2013,"ER53918"],[2013,"ER53972"],[2013,"ER54345"],[2013,"ER54682"],[2013,"ER54759"],[2013,"ER58032"],[2013,"ER58052"],[2013,"ER58120"],[2013,"ER58177"],[2015,"ER60963"],[2015,"ER60977"],[2015,"ER60991"],[2015,"ER61034"],[2015,"ER61421"],[2015,"ER61793"],[2015,"ER61870"],[2015,"ER65217"],[2015,"ER65245"],[2015,"ER65317"],[2015,"ER65321"],[2015,"ER65358"],[2015,"ER65374"],[2017,"ER67086"],[2017,"ER67441"],[2017,"ER67847"],[2017,"ER67924"],[2017,"ER71294"],[2017,"ER71322"],[2017,"ER71394"],[2017,"ER71398"],[2017,"ER71435"],[2017,"ER71451"],[2019,"ER73038"],[2019,"ER73052"],[2019,"ER73066"],[2019,"ER73109"],[2019,"ER73464"],[2019,"ER73875"],[2019,"ER73952"],[2019,"ER77316"],[2019,"ER77344"],[2019,"ER77416"],[2019,"ER77461"],[2019,"ER77477"],[2021,"ER79206"],[2021,"ER79586"],[2021,"ER79997"],[2021,"ER80074"],[2021,"ER81471"],[2021,"ER81643"],[2021,"ER81671"],[2021,"ER81743"],[2021,"ER81788"],[2021,"ER81804"],[2023,"ER83181"],[2023,"ER83555"],[2023,"ER84044"],[2023,"ER85328"],[2023,"ER85376"],[2023,"ER85497"],[2023,"ER85525"],[2023,"ER85597"],[2023,"ER85599"],[2023,"ER85601"],[2023,"ER85642"]],"resolution_reason":"selected_space_range_zero_renderable"},{"derivation_status":"incomplete_source_numeric_authority","field_keys":[[1988,"V15713"],[1988,"V15736"],[1989,"V16949"],[1990,"V18652"],[1990,"V18675"],[1991,"V19673"],[1992,"V21252"],[1994,"ER4031"],[1994,"ER4043"],[1994,"ER4045"],[1994,"ER4060"],[1994,"ER4074"],[1995,"ER6869"],[1995,"ER6871"],[1995,"ER6883"],[1995,"ER6885"],[1995,"ER6900"],[1995,"ER6908"],[1995,"ER6914"],[1995,"ER6916"],[1995,"ER6918"],[1996,"ER9122"],[1996,"ER9134"],[1996,"ER9151"],[1996,"ER9159"],[1996,"ER9163"],[1997,"ER12097"],[1997,"ER12099"],[1997,"ER12111"],[1997,"ER12128"],[1997,"ER12140"],[1999,"ER13418"],[1999,"ER13442"],[1999,"ER13906"],[1999,"ER14134"],[2001,"ER17454"],[2001,"ER17709"],[2001,"ER18024"],[2001,"ER18254"],[2001,"ER20008"],[2013,"ER53565"],[2015,"ER60579"],[2019,"ER72596"],[2021,"ER78639"],[2023,"ER82630"],[2023,"ER82631"]],"resolution_reason":"finite_no_arm_no_lawful_complete_disposition"},{"derivation_status":"incomplete_source_numeric_authority","field_keys":[[1971,"V1985"],[1971,"V2037"],[1971,"V2059"],[1971,"V2075"],[1972,"V2583"],[1972,"V2637"],[1972,"V2657"],[1972,"V2673"],[1973,"V3116"],[1973,"V3154"],[1973,"V3170"],[1973,"V3184"],[1973,"V3194"],[1974,"V3531"],[1974,"V3570"],[1974,"V3587"],[1974,"V3602"],[1975,"V3969"],[1975,"V4024"],[1975,"V4042"],[1975,"V4056"],[1976,"V4459"],[1976,"V4460"],[1976,"V4519"],[1976,"V4542"],[1976,"V4553"],[1976,"V4554"],[1976,"V4578"],[1976,"V4579"],[1976,"V4605"],[1976,"V4606"],[1976,"V4746"],[1976,"V4747"],[1976,"V4842"],[1976,"V4843"],[1976,"V4902"],[1976,"V4925"],[1976,"V4937"],[1976,"V4938"],[1976,"V4962"],[1976,"V4963"],[1976,"V4993"],[1977,"V5374"],[1977,"V5375"],[1977,"V5429"],[1977,"V5441"],[1977,"V5455"],[1977,"V5456"],[1977,"V5482"],[1977,"V5483"],[1977,"V5507"],[1977,"V5508"],[1978,"V5873"],[1978,"V5874"],[1978,"V5916"],[1978,"V5958"],[1978,"V5984"],[1978,"V5985"],[1978,"V6018"],[1978,"V6019"],[1978,"V6039"],[1978,"V6040"],[1979,"V6497"],[1979,"V6498"],[1979,"V6527"],[1979,"V6545"],[1979,"V6557"],[1979,"V6558"],[1979,"V6578"],[1979,"V6579"],[1979,"V6596"],[1979,"V6597"],[1979,"V6619"],[1979,"V6624"],[1979,"V6629"],[1979,"V6630"],[1979,"V6650"],[1979,"V6651"],[1980,"V7100"],[1980,"V7101"],[1980,"V7130"],[1980,"V7148"],[1980,"V7159"],[1980,"V7160"],[1980,"V7180"],[1980,"V7181"],[1980,"V7198"],[1980,"V7199"],[1980,"V7221"],[1980,"V7226"],[1980,"V7231"],[1980,"V7232"],[1980,"V7252"],[1980,"V7253"],[1981,"V7745"],[1981,"V7799"],[1981,"V7908"],[1981,"V7915"],[1982,"V8407"],[1982,"V8461"],[1982,"V8566"],[1982,"V8570"],[1983,"V9038"],[1983,"V9098"],[1983,"V9122"],[1983,"V9216"],[1983,"V9229"],[1983,"V9251"],[1983,"V9422"],[1983,"V9423"],[1984,"V10566"],[1984,"V10570"],[1984,"V10598"],[1984,"V10633"],[1984,"V10637"],[1984,"V10780"],[1984,"V10783"],[1984,"V10800"],[1984,"V10833"],[1984,"V10873"],[1984,"V11068"],[1984,"V11069"],[1985,"V11122"],[1985,"V11448"],[1985,"V11710"],[1985,"V11714"],[1985,"V11726"],[1985,"V11729"],[1985,"V11745"],[1985,"V11806"],[1985,"V11822"],[1985,"V11889"],[1985,"V11898"],[1985,"V11899"],[1985,"V11900"],[1985,"V12073"],[1985,"V12077"],[1985,"V12089"],[1985,"V12092"],[1985,"V12108"],[1985,"V12169"],[1985,"V12173"],[1985,"V12185"],[1985,"V12429"],[1985,"V12430"],[1986,"V12521"],[1986,"V12855"],[1986,"V13110"],[1986,"V13114"],[1986,"V13126"],[1986,"V13129"],[1986,"V13141"],[1986,"V13202"],[1986,"V13206"],[1986,"V13218"],[1986,"V13287"],[1986,"V13291"],[1986,"V13303"],[1986,"V13306"],[1986,"V13311"],[1986,"V13370"],[1986,"V13374"],[1986,"V13386"],[1986,"V13400"],[1986,"V13409"],[1986,"V13410"],[1986,"V13411"],[1986,"V13668"],[1986,"V13669"],[1987,"V13721"],[1987,"V13951"],[1987,"V13957"],[1987,"V13965"],[1987,"V14208"],[1987,"V14212"],[1987,"V14224"],[1987,"V14227"],[1987,"V14239"],[1987,"V14298"],[1987,"V14302"],[1987,"V14314"],[1987,"V14381"],[1987,"V14385"],[1987,"V14397"],[1987,"V14400"],[1987,"V14405"],[1987,"V14462"],[1987,"V14466"],[1987,"V14478"],[1987,"V14497"],[1987,"V14506"],[1987,"V14507"],[1987,"V14508"],[1987,"V14715"],[1988,"V14821"],[1988,"V15186"],[1988,"V15188"],[1988,"V15191"],[1988,"V15239"],[1988,"V15284"],[1988,"V15307"],[1988,"V15333"],[1988,"V15338"],[1988,"V15386"],[1988,"V15431"],[1988,"V15454"],[1988,"V15488"],[1988,"V15493"],[1988,"V15541"],[1988,"V15586"],[1988,"V15609"],[1988,"V15635"],[1988,"V15640"],[1988,"V15688"],[1988,"V15733"],[1988,"V15755"],[1988,"V15756"],[1988,"V15765"],[1988,"V16190"],[1988,"V16191"],[1989,"V16321"],[1989,"V16472"],[1989,"V16687"],[1989,"V16692"],[1989,"V16740"],[1989,"V16785"],[1989,"V16808"],[1989,"V16848"],[1989,"V16853"],[1989,"V16901"],[1989,"V16946"],[1989,"V16969"],[1989,"V17006"],[1989,"V17011"],[1989,"V17059"],[1989,"V17104"],[1989,"V17127"],[1989,"V17172"],[1989,"V17220"],[1989,"V17265"],[1989,"V17300"],[1989,"V17310"],[1989,"V17311"],[1989,"V17312"],[1989,"V17383"],[1989,"V17386"],[1989,"V17569"],[1990,"V17721"],[1990,"V17896"],[1990,"V18125"],[1990,"V18130"],[1990,"V18178"],[1990,"V18223"],[1990,"V18246"],[1990,"V18272"],[1990,"V18277"],[1990,"V18325"],[1990,"V18370"],[1990,"V18427"],[1990,"V18432"],[1990,"V18480"],[1990,"V18525"],[1990,"V18548"],[1990,"V18574"],[1990,"V18579"],[1990,"V18627"],[1990,"V18672"],[1990,"V18694"],[1990,"V18695"],[1990,"V18704"],[1990,"V18714"],[1990,"V18715"],[1990,"V18716"],[1991,"V19021"],[1991,"V19188"],[1991,"V19425"],[1991,"V19430"],[1991,"V19478"],[1991,"V19523"],[1991,"V19546"],[1991,"V19572"],[1991,"V19577"],[1991,"V19625"],[1991,"V19670"],[1991,"V19693"],[1991,"V19727"],[1991,"V19732"],[1991,"V19780"],[1991,"V19825"],[1991,"V19848"],[1991,"V19874"],[1991,"V19879"],[1991,"V19927"],[1991,"V19972"],[1991,"V20004"],[1991,"V20014"],[1991,"V20015"],[1991,"V20016"],[1992,"V20321"],[1992,"V20488"],[1992,"V20725"],[1992,"V20730"],[1992,"V20778"],[1992,"V20823"],[1992,"V20846"],[1992,"V20872"],[1992,"V20877"],[1992,"V20925"],[1992,"V20970"],[1992,"V20992"],[1992,"V20993"],[1992,"V21027"],[1992,"V21032"],[1992,"V21080"],[1992,"V21125"],[1992,"V21148"],[1992,"V21174"],[1992,"V21179"],[1992,"V21227"],[1992,"V21272"],[1992,"V21304"],[1992,"V21314"],[1992,"V21315"],[1992,"V21316"],[1993,"V22499"],[1993,"V22550"],[1993,"V22607"],[1993,"V22633"],[1993,"V22665"],[1993,"V22716"],[1993,"V22773"],[1993,"V22799"],[1993,"V22852"],[1993,"V22903"],[1993,"V22960"],[1993,"V22986"],[1993,"V23018"],[1993,"V23069"],[1993,"V23126"],[1993,"V23164"],[1993,"V23173"],[1993,"V23174"],[1993,"V23175"],[1993,"V23339"],[1993,"V23340"],[1994,"ER2161"],[1994,"ER2250"],[1994,"ER2272"],[1994,"ER2294"],[1994,"ER2315"],[1994,"ER2316"],[1994,"ER2406"],[1994,"ER2495"],[1994,"ER2517"],[1994,"ER2601"],[1994,"ER2655"],[1994,"ER2744"],[1994,"ER2766"],[1994,"ER2787"],[1994,"ER2788"],[1994,"ER2900"],[1994,"ER2988"],[1994,"ER3010"],[1994,"ER3071"],[1994,"ER3072"],[1994,"ER3073"],[1994,"ER4079"],[1994,"ER4080"],[1994,"ER4081"],[1994,"ER4082"],[1994,"ER4083"],[1995,"ER5160"],[1995,"ER5249"],[1995,"ER5271"],[1995,"ER5293"],[1995,"ER5315"],[1995,"ER5405"],[1995,"ER5494"],[1995,"ER5516"],[1995,"ER5522"],[1995,"ER5537"],[1995,"ER5538"],[1995,"ER5654"],[1995,"ER5743"],[1995,"ER5765"],[1995,"ER5786"],[1995,"ER5787"],[1995,"ER5899"],[1995,"ER5987"],[1995,"ER5993"],[1995,"ER6009"],[1995,"ER6031"],[1995,"ER6053"],[1995,"ER6710"],[1995,"ER6711"],[1995,"ER6712"],[1995,"ER6713"],[1995,"ER6714"],[1995,"ER6919"],[1995,"ER6920"],[1995,"ER6921"],[1995,"ER6922"],[1995,"ER6923"],[1996,"ER7256"],[1996,"ER7345"],[1996,"ER7361"],[1996,"ER7362"],[1996,"ER7363"],[1996,"ER7367"],[1996,"ER7381"],[1996,"ER7389"],[1996,"ER7410"],[1996,"ER7411"],[1996,"ER7501"],[1996,"ER7585"],[1996,"ER7586"],[1996,"ER7590"],[1996,"ER7602"],[1996,"ER7611"],[1996,"ER7612"],[1996,"ER7750"],[1996,"ER7839"],[1996,"ER7861"],[1996,"ER7883"],[1996,"ER7995"],[1996,"ER8084"],[1996,"ER8828"],[1996,"ER8829"],[1996,"ER8830"],[1996,"ER9170"],[1996,"ER9171"],[1996,"ER9172"],[1996,"ER9173"],[1996,"ER9174"],[1997,"ER10007"],[1997,"ER10179"],[1997,"ER10257"],[1997,"ER10280"],[1997,"ER10302"],[1997,"ER10416"],[1997,"ER10496"],[1997,"ER10502"],[1997,"ER10517"],[1997,"ER10518"],[1997,"ER10661"],[1997,"ER10739"],[1997,"ER10762"],[1997,"ER10898"],[1997,"ER10978"],[1997,"ER11710"],[1997,"ER11711"],[1997,"ER11712"],[1997,"ER11713"],[1997,"ER11714"],[1997,"ER12147"],[1997,"ER12148"],[1997,"ER12149"],[1997,"ER12150"],[1999,"ER13008"],[1999,"ER13101"],[1999,"ER13131"],[1999,"ER13161"],[1999,"ER13309"],[1999,"ER13390"],[1999,"ER13415"],[1999,"ER13439"],[1999,"ER13462"],[1999,"ER13463"],[1999,"ER13562"],[1999,"ER13643"],[1999,"ER13667"],[1999,"ER13691"],[1999,"ER13714"],[1999,"ER13715"],[1999,"ER13821"],[1999,"ER13902"],[1999,"ER13927"],[1999,"ER14074"],[1999,"ER14155"],[1999,"ER14350"],[1999,"ER14363"],[1999,"ER14376"],[1999,"ER14389"],[1999,"ER14978"],[1999,"ER14979"],[1999,"ER14980"],[1999,"ER14981"],[1999,"ER14982"],[1999,"ER15150"],[1999,"ER15776"],[1999,"ER15777"],[2001,"ER17011"],[2001,"ER17112"],[2001,"ER17142"],[2001,"ER17172"],[2001,"ER17320"],[2001,"ER17424"],[2001,"ER17451"],[2001,"ER17476"],[2001,"ER17602"],[2001,"ER17706"],[2001,"ER17732"],[2001,"ER17890"],[2001,"ER17994"],[2001,"ER18021"],[2001,"ER18047"],[2001,"ER18173"],[2001,"ER18277"],[2001,"ER18490"],[2001,"ER18504"],[2001,"ER18518"],[2001,"ER18532"],[2001,"ER19174"],[2001,"ER19175"],[2001,"ER19176"],[2001,"ER19177"],[2001,"ER19178"],[2003,"ER21014"],[2003,"ER21119"],[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21252"],[2003,"ER21438"],[2003,"ER21470"],[2003,"ER21502"],[2003,"ER21751"],[2003,"ER21780"],[2003,"ER21809"],[2003,"ER21858"],[2003,"ER21872"],[2003,"ER21886"],[2003,"ER21900"],[2003,"ER21914"],[2003,"ER22539"],[2003,"ER22540"],[2003,"ER22541"],[2003,"ER22542"],[2003,"ER22543"],[2003,"ER24153"],[2003,"ER24154"],[2005,"ER25014"],[2005,"ER25100"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25710"],[2005,"ER25738"],[2005,"ER25766"],[2005,"ER25839"],[2005,"ER25853"],[2005,"ER25867"],[2005,"ER25881"],[2005,"ER26520"],[2005,"ER26521"],[2005,"ER26522"],[2005,"ER26523"],[2005,"ER26524"],[2005,"ER28052"],[2005,"ER28053"],[2007,"ER36014"],[2007,"ER36105"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36504"],[2007,"ER36728"],[2007,"ER36756"],[2007,"ER36784"],[2007,"ER36857"],[2007,"ER36871"],[2007,"ER36885"],[2007,"ER36899"],[2007,"ER36913"],[2007,"ER37538"],[2007,"ER37539"],[2007,"ER37540"],[2007,"ER37541"],[2007,"ER37542"],[2007,"ER38344"],[2007,"ER38662"],[2007,"ER38980"],[2007,"ER39441"],[2007,"ER39759"],[2007,"ER40077"],[2007,"ER41042"],[2007,"ER41043"],[2009,"ER42014"],[2009,"ER42134"],[2009,"ER42734"],[2009,"ER42757"],[2009,"ER42780"],[2009,"ER42848"],[2009,"ER42862"],[2009,"ER42876"],[2009,"ER42890"],[2009,"ER42904"],[2009,"ER43529"],[2009,"ER43530"],[2009,"ER43531"],[2009,"ER43532"],[2009,"ER43533"],[2009,"ER46986"],[2009,"ER46987"],[2011,"ER47314"],[2011,"ER47442"],[2011,"ER48050"],[2011,"ER48075"],[2011,"ER48100"],[2011,"ER48170"],[2011,"ER48184"],[2011,"ER48198"],[2011,"ER48212"],[2011,"ER48226"],[2011,"ER48854"],[2011,"ER48855"],[2011,"ER48856"],[2011,"ER48857"],[2011,"ER48858"],[2011,"ER52410"],[2011,"ER52411"],[2013,"ER53014"],[2013,"ER53142"],[2013,"ER53747"],[2013,"ER53771"],[2013,"ER53795"],[2013,"ER53864"],[2013,"ER53878"],[2013,"ER53892"],[2013,"ER53906"],[2013,"ER54597"],[2013,"ER54598"],[2013,"ER54599"],[2013,"ER54600"],[2013,"ER54601"],[2013,"ER57557"],[2013,"ER57609"],[2013,"ER57611"],[2013,"ER57614"],[2013,"ER57667"],[2013,"ER57719"],[2013,"ER57721"],[2013,"ER57724"],[2013,"ER58228"],[2013,"ER58229"],[2015,"ER60014"],[2015,"ER60084"],[2015,"ER60157"],[2015,"ER60806"],[2015,"ER60830"],[2015,"ER60854"],[2015,"ER60923"],[2015,"ER60937"],[2015,"ER60951"],[2015,"ER60965"],[2015,"ER60979"],[2015,"ER61708"],[2015,"ER61709"],[2015,"ER61710"],[2015,"ER61711"],[2015,"ER61712"],[2015,"ER64745"],[2015,"ER64881"],[2015,"ER65464"],[2015,"ER65465"],[2017,"ER66158"],[2017,"ER66854"],[2017,"ER66878"],[2017,"ER66902"],[2017,"ER66975"],[2017,"ER66989"],[2017,"ER67003"],[2017,"ER67017"],[2017,"ER67031"],[2017,"ER67761"],[2017,"ER67762"],[2017,"ER67763"],[2017,"ER67764"],[2017,"ER67765"],[2017,"ER70815"],[2017,"ER70986"],[2017,"ER70991"],[2017,"ER70996"],[2017,"ER71002"],[2017,"ER71025"],[2017,"ER71030"],[2017,"ER71543"],[2017,"ER71544"],[2019,"ER72014"],[2019,"ER72158"],[2019,"ER72858"],[2019,"ER72882"],[2019,"ER72906"],[2019,"ER72998"],[2019,"ER73012"],[2019,"ER73026"],[2019,"ER73040"],[2019,"ER73054"],[2019,"ER73784"],[2019,"ER73785"],[2019,"ER73786"],[2019,"ER73787"],[2019,"ER73788"],[2019,"ER76971"],[2019,"ER77041"],[2019,"ER77047"],[2019,"ER77052"],[2019,"ER77604"],[2019,"ER77605"],[2021,"ER78014"],[2021,"ER78160"],[2021,"ER78678"],[2021,"ER78935"],[2021,"ER78959"],[2021,"ER78983"],[2021,"ER79075"],[2021,"ER79089"],[2021,"ER79103"],[2021,"ER79117"],[2021,"ER79131"],[2021,"ER79905"],[2021,"ER79906"],[2021,"ER79907"],[2021,"ER79908"],[2021,"ER79909"],[2021,"ER81046"],[2021,"ER81072"],[2021,"ER81075"],[2021,"ER81087"],[2021,"ER81092"],[2021,"ER81093"],[2021,"ER81173"],[2021,"ER81220"],[2021,"ER81247"],[2021,"ER81252"],[2021,"ER81931"],[2021,"ER81932"],[2023,"ER82014"],[2023,"ER82143"],[2023,"ER82928"],[2023,"ER82952"],[2023,"ER82976"],[2023,"ER83050"],[2023,"ER83064"],[2023,"ER83078"],[2023,"ER83092"],[2023,"ER83106"],[2023,"ER83874"],[2023,"ER83875"],[2023,"ER83876"],[2023,"ER83877"],[2023,"ER83878"],[2023,"ER85049"],[2023,"ER85050"],[2023,"ER85052"],[2023,"ER85064"],[2023,"ER85070"],[2023,"ER85150"],[2023,"ER85176"],[2023,"ER85191"],[2023,"ER85197"],[2023,"ER85785"],[2023,"ER85786"]],"resolution_reason":"literal_only_zero_diagnostic_padding_capacity"}]
+~~~
+
+The seven rows are mutually exclusive and their union has 1,235 keys.
+K(F) is 20,074 bytes and hashes to
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed.
+The corresponding canonical
+[interview_wave,raw_field_id,derivation_status] array is 66,160 bytes and
+hashes to
+1c83a26cad466354a0738ac1d4b0a4b6c282ccc447d410b5ae324808e79fe2ae.
+Its terminal partition is exactly one conflict with digest
+a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1,
+421 unsupported with digest
+fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010,
+and 813 incomplete with digest
+93cf0ce814f22883c6e249c25f6375893bfc3a213cc5ebb79243ce2b8be9086e.
+
+This is the ratified final classifier, not the earlier shorthand in the
+Amendment-7 problem statement. In particular, the final §20.3.7 rerun
+retains 78 selected-space literal-unrenderable rows, including ER6974, and
+183 selected-space range-zero-renderable rows. It reallocated 77 rows that
+were already unsupported between diagnostic reasons without moving any row
+between terminals. The immutable total remains 421 unsupported; no law below
+uses the obsolete one-plus-260 diagnostic split.
+
+#### 21.1.3 Directly named and established-fact domains
+
+The eleven A6 vectors, in A6-R01 through A6-R11 order, have exact field array:
+
+~~~json
+[[1968,"V93"],[1979,"V6302"],[1988,"V15133"],[1968,"V210"],[1968,"V76"],[1979,"V6363"],[1969,"V945"],[1968,"V97"],[1985,"V11811"],[1968,"V117"],[1985,"V11812"]]
+~~~
+
+With its terminal LF it hashes to
+0542d9500bd9d6a2b3a0ae28efe80e1348503c87a710ab2dcce964f3f74dd003.
+Its intersection with F is exactly [] and therefore has the empty-array
+digest above.
+
+A token-boundary scan of every revision-8 byte from the §16 heading through
+the end of §20, restricted to identifiers that resolve uniquely in the
+89,599-key denominator and then returned in canonical denominator order,
+finds 693 distinct raw fields. V3 and V4 are excluded after inspection
+because those two matched literals denote schema-version aliases rather than
+PSID raw fields. The 693-key domain hashes to
+d1ffcfe70a54c8656a9623bc57a6160f18fb35b1887f632caff9053f030897ce.
+Its exact intersection is:
+
+~~~json
+[[1976,"V4902"],[1995,"ER6974"]]
+~~~
+
+That two-key array hashes to
+55c3acaea3e9f746b053f2ab824b99bee4baaee80e3cc4e26bf4eeb90e30199d.
+V4902 is incomplete under
+literal_only_zero_diagnostic_padding_capacity; ER6974 is unsupported under
+selected_space_literal_unrenderable.
+
+The union of all raw_field_ids attached to all era_facts in the six frozen
+evidence artifacts has 3,375 keys, domain SHA-256
+e5b6cf54d6f2f45e01f77e2fa390a2845514d7b72a8799bb773986c5dc64df51,
+and an 81-key intersection with F—zero conflict, 53 unsupported, and 28
+incomplete—SHA-256
+09e4b9827f73cdae4f1f67f58b956c4a69fdbbaa40a1e1f9a196175426f3d865.
+The exact intersection is:
+
+~~~json
+[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"],[1994,"ER4134"],[1995,"ER6974"],[1996,"ER9225"],[1999,"ER16505"],[2001,"ER20437"],[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21246"],[2003,"ER21252"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21438"],[2003,"ER21464"],[2003,"ER21470"],[2003,"ER21496"],[2003,"ER21502"],[2003,"ER21528"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25267"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25525"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36272"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36498"],[2007,"ER36504"],[2007,"ER36530"],[2007,"ER40915"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2009,"ER46823"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2011,"ER52231"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53565"],[2013,"ER53575"],[2013,"ER58032"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60579"],[2015,"ER60590"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72596"],[2019,"ER72607"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78639"],[2021,"ER78649"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82630"],[2023,"ER82631"],[2023,"ER82641"]]
+~~~
+
+The family-level exact dispositions are:
+
+| fact_id prefix | Domain count | Domain SHA-256 | F count | Exact F-list digest |
+|---|---:|---|---:|---|
+| early-industry | 16 | 69ea407baa34c3fa821c53539d289362c9f8ba237ae9692966770ab9310d4479 | 0 | empty-array digest |
+| early-occupation | 16 | 698e045d2fe31985a4e85217097213e5c083609a37557a1c8bd149864782ff98 | 0 | empty-array digest |
+| early-role-total | 16 | b3fe780f9a6414cc56637db9a559f07c58ddef8d65503516114482b1c7b15a03 | 0 | empty-array digest |
+| early-secondary-occupation | 8 | ba19d4838fed56046846b22a92ba1d09f483385e60e733552284dd31568cc56c | 0 | empty-array digest |
+| er-role-total | 258 | e10e861b59199917f85d32523743fa91b8140bb25ba2ed1429771e20798f5762 | 9 | 5a358e373403e8f5759731f96101f9f85846b1a62773b4763321c611426eb1ec |
+| modern-job-context | 2,868 | 19bc12d7c659ff2f17cc5d3fa135d8bf6f2e5a8d0e305fc14125830216ab839b | 68 | cf70f39a06a3240ffe92d65131ece1994a40fc9d20c7d7d89b3bad527d6004d0 |
+| pre-2013-enrollment-like | 72 | 11914e5121c1adad5dc60753c129c347e4d57c394f1c16d5d562d00212abe00d | 0 | empty-array digest |
+| pre-er-role-total | 30 | 943c16dda913395af192932284b78f7a2677a0f54dc96a23b062322fbb0d27e3 | 0 | empty-array digest |
+| pre-er-split-rule | 8 | 1a02aaa3df72de1ba2ca7e01b47c796b9b9ddd1e8cc5c62df75bb79e53034d0b | 0 | empty-array digest |
+| regular-school | 52 | 5c59ab2206257b51e7bd82717929314a92660e625bdd632ccb74b3a5193273b9 | 0 | empty-array digest |
+| secondary-job-context | 24 | f989b4f0f481e3e7e5e58abdb27b203b4cdf6c3657177578aa6eba9773e593f4 | 4 | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+| spouse-1976-context | 5 | 121e13abca5cb93e86a823742eaa011258fd9696d524705700102c8ff1285eaf | 0 | empty-array digest |
+| spouse-seam-amount | 4 | 2c97a069e2fdd7eb6b122fa07c45646a4e2827cd3389ec196d037c4b6501160f | 0 | empty-array digest |
+
+The nine er-role-total failures are the nine such keys in the displayed
+81-key array and are all unsupported. The 68 modern-job-context failures are
+its modern-job-context keys, 44 unsupported and 24 incomplete. The four
+secondary-job-context failures are all incomplete and are:
+
+~~~json
+[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]]
+~~~
+
+Those three filtered lists have the respective digests displayed in the
+table; all ten other family lists are exactly [].
+
+#### 21.1.4 Residual-family and V-B evidentiary domains
+
+For each Class-B residual, its presently defined raw-field search domain is
+the complete corresponding evidence artifact. The seven Class-A rows use
+the same six domains; the two early Class-A rows both use the early domain.
+Thus every Class-A and Class-B intersection list is exactly the filter of
+the complete §21.1.2 field_keys artifact by the named evidence path:
+
+| Era scope | Domain count | Domain SHA-256 | F count (conflict/unsupported/incomplete) | Exact F-list digest |
+|---|---:|---|---:|---|
+| early, Class-B index 0, Class-A indices 1 and 2, and resolved V-B5 index 3 | 3,868 | e4cd6e1741d1e73d27ac15987ba5b7f7601ae6b882353f600c24655086950275 | 89 (1/67/21) | 4573273193287c74c639bf723a70301a8feddb5a47b79742bf4e9b391d9a32b8 |
+| spouse seam, Class-B index 4 and Class-A index 5 | 1,838 | 0e7a6c49ea56e420c9fe3a4e42392b7d147d162e0c209cb30bfbe4cc11ba26cf | 61 (0/20/41) | 9a4df0f550edf054817cf6a1319634fedbb8ae81f090c3e24f083e5877f6aa25 |
+| pre-ER, Class-B index 10 and Class-A index 11 | 15,745 | 59d414a7f5eb538b605efe6bd2f69eb014445d34d6dd48af60bec0d15221e5bc | 412 (0/122/290) | 0e16a4477f8d0814cb078e950192cf8d050439001aa1c9e94ec952812b24d98c |
+| ER transition, Class-B index 13 and Class-A index 14 | 15,983 | c5b6592e02a455b73e8a50db044d1fa7d6aeba2cba0dc20116b260778acafc25 | 251 (0/46/205) | 4438faec2a37ee83efff4e6e6ae4e7353518b5bc8f9dbed385bcc867771c28b0 |
+| modern, Class-B index 17 and Class-A index 18 | 33,154 | 727ece2e55a38b83006f864da01f0f20a2fa6b9716ab68bf06dc8f02681b5e6d | 244 (0/90/154) | fd92b240ec1917e49ebe9f5e3adb6d29cf25670c3337594af62d1888d87b4a01 |
+| exclusion, Class-B index 25 and Class-A index 26 | 19,011 | 1e744432e5c4d5948a1b407fa4e4c0893fc9c44b042e172784219245573c4206 | 178 (0/76/102) | 6cb15f9d04760390e4473ee0e62675f7d47dd58ff3dd420db5e484c9f8ec1ca4 |
+
+The scope root has six rows with an explicit finite raw-field projection.
+Their exact domain arrays, preserving canonical denominator order, and
+intersections are:
+
+| Source index and residual suffix | Exact domain | Domain SHA-256 | Exact F intersection | F SHA-256 |
+|---|---|---|---|---|
+| 6, V5289_V5788_concept | [[1977,"V5289"],[1978,"V5788"]] | 8ee60051edc0e80ed2a79946e95be01f460d08d61fa6673ba8e205c98b41dc75 | [] | empty-array digest |
+| 7, 1977_1978_spouse_current_job_context_absence | [[1976,"V4844"],[1976,"V4845"],[1976,"V4850"],[1976,"V4855"],[1976,"V4858"]] | 121e13abca5cb93e86a823742eaa011258fd9696d524705700102c8ff1285eaf | [] | empty-array digest |
+| 8, government_level_absence | [[1976,"V4845"],[1976,"V4850"]] | eef076b3b0f11c13afcd5744f8baefdbe602ae7f7d9f6181460596441d40624d | [] | empty-array digest |
+| 9, secondary_job_attachment_and_absence | the 24-key secondary-job-context array defined above | f989b4f0f481e3e7e5e58abdb27b203b4cdf6c3657177578aa6eba9773e593f4 | [[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]] | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+| 12, early_split_and_inclusion | [[1979,"V6398"],[1980,"V6988"],[1981,"V7580"],[1982,"V8273"],[1982,"V8690"],[1983,"V8881"]] | bb0ccb5baaff2b3a5f1b1efe0fd69f8333752f078b54e714f2cd8c271c843e95 | [] | empty-array digest |
+| 21, role_farm_labor_allocation | [[2003,"ER21855"],[2003,"ER21870"],[2003,"ER24109"],[2003,"ER24111"]] | 591e9cd4704e5c72c2c508184e8fa90972614b0e754810050da45a57cc6d48f5 | [] | empty-array digest |
+
+The remaining Class-C rows define official-inventory slot, purpose,
+chronology, allocation, or reconciliation domains over named wave sets.
+They do not define a raw-field projection before Q5 and an official
+inventory exist. Their raw-field intersection is therefore not an empty set;
+it is presently uninstantiated. Treating it as [] would silently convert an
+unknown future positive join into structural absence. Section 21.3 instead
+places the closed guard on every eventual positive raw-field reference.
+
+Resolving the established_fact_ids in the three pinned verdict rows through
+the six frozen era_facts produces these complete evidentiary raw-field
+domains:
+
+| Verdict row | Domain count | Domain SHA-256 | Exact F intersection | F SHA-256 |
+|---|---:|---|---|---|
+| V-B5 | 40 | 9e9a8d3d15b4ccf0a1f3f80c4844a7ed7dd69dc474d311e8df01fa707dbb9cc1 | [] | empty-array digest |
+| V-B6 | 33 | 6f61124cb3a8f95cd4baf4a4efe5cc288b47e62af381cca8996651d3e86bb3fd | [[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]] | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+| V-B8 | 52 | 5c59ab2206257b51e7bd82717929314a92660e625bdd632ccb74b3a5193273b9 | [] | empty-array digest |
+| union | 125 | 882063a30bab66b3f0740305f254581cfcd42038b2161ac278ea16bbdec43378 | same four-key array | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+
+These four V-B6 keys are evidentiary references, not permission to parse,
+map, correct, or emit them. Their non-passing terminals remain controlling
+at every consumption boundary.
+
+#### 21.1.5 Q5 dictionary/codebook join universes
+
+Sections 19.3.3 and 20.4.2 define one stable-first dictionary/codebook
+universe D_w for each of the 43 waves. Collectively those universes exact-
+cover the 89,599-key denominator and therefore intersect F in all 1,235
+keys. The complete-domain digest is
+7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764;
+the complete F-list digest is
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed.
+For each table row, the exact F list is K(F) filtered to the displayed wave:
+
+| Wave | D_w count | D_w SHA-256 | F count | Exact F-list SHA-256 |
+|---:|---:|---|---:|---|
+| 1968 | 447 | 9a5a53dc0ee15c717638be553df0a79103b54f6c27816bc394619bd2dcd3202b | 8 | 2e9f1438582280e21e4cbfa6e1f2ce0b680920265880b8565148adcf163f82fc |
+| 1969 | 584 | 8703448e5f3ede4c539be8d420086fb86be989fa4fc899c3148cd1d38b12c1a6 | 2 | c0ba0932d3bc28ba05bd9972f2debf623a7fdb276185da33190789e3bde743c7 |
+| 1970 | 602 | ed6cba445482a4795ab7b797896173b52da5065304ce0de78d3e75d5242feb5c | 13 | e2fba98168987a68605ead96ded295faad9d082a0b061b2438f8fa86d50d9c0c |
+| 1971 | 555 | c38b863c57dd3d3c51ec1166a57e8056107216f70f2f6ad4a8734adce891cfad | 19 | 7f223e5c338e3fced95b16776e423f657e8c7644f82725b2a3fcfecf8b923230 |
+| 1972 | 589 | e8d05d0c28c7903fec0869eb25303b78bb650eb88978f3eb889239d657ae7d0d | 12 | b0840f03157db0c75c93a319d5e5ec0bf02b7ef0a3f0f1d119efe4b3e1e860b6 |
+| 1973 | 316 | 3230a38d998f131ac304fb1a1daf8a5b1ff6f508301a3f8182484030834c5d46 | 12 | 50f46177f48622ccea81fc72a61b26853f61391ffe09b762724705dd85046894 |
+| 1974 | 337 | c74add0a0c1d355aab3fa14d8d694a608d58aed5a8bfba9ba77054218f89884e | 11 | b757a8402d232434a4fadc5050e3ae0fc43635451cccc08c4f5ea0a282712f97 |
+| 1975 | 438 | bf12a67dbc540f3e7253d1ca53103c661e27339110d67e8817d78701e34f30a8 | 12 | 018ed8d13b56ba83ecce47f44d08fbb5ff49605c61a92500bb9abfeda2e20487 |
+| 1976 | 825 | 02e432a96b05bf0167a99f80c3470d877fdc8123def7810005b0cd69e680ef8e | 28 | 9968c6a609701fca452de052658b862105dbd2cba4e29063a6845ad0dc56f833 |
+| 1977 | 487 | af2d9412d64e5092d812dca899f7cdab5d83a0a23f93cd9d430d7f5d119311ce | 16 | a0aa8e9b9d68d6e9f821a374396a38f88e269352da98b83adb29e82aeecb815d |
+| 1978 | 526 | 8dd78a7590289fdec8cf3c045a0d340ba4b4137edb756e5f8cb67b00d5530fe2 | 17 | 6c853bd9ac2794316ddd292c4f8c0688d2d496aba80c6a7bc1299dd64f24819d |
+| 1979 | 520 | 0c2ae768b25d1e85bcb25e946aafa0b5fc703eb959eb9e5f2d3a1987d3433641 | 23 | 868668c7f14c7f38524b3f8550d2e5a26876aa03777e892f23249cafb48bc0e1 |
+| 1980 | 562 | 070def488c2c08aff65c4d7d867870c853287374d4636704c70933e69750c1ab | 21 | e08fc8a89e19fd6413c2ecde37917c8be4dd2f9ec359845ab1603cb826b34b23 |
+| 1981 | 612 | b145582c15f403397f8a65e544afefdd1e13ebd7169bad85886b9e4ac12eed78 | 10 | 58ea0a892e65d712b2fae2d616bc9f2e42e3feb3aaa27be5f8a6c101c07c4e0f |
+| 1982 | 540 | b17dd493180997787fb7f2bec3762d48f72442e9d86d372348ac41f37a834f0b | 9 | d9293fbb1ee93ed8916cd69ede675209084f7b89d7432a9e98b5c1d731569ce3 |
+| 1983 | 634 | 7b133efcab3c4111e1d85cd245a5cf8880e32b5d5dbee7348a02e15b2085c4d0 | 13 | 9a52d3f6bdb60a5e6077799f68bab0f96f1db96e00c5dc7f71b8fec3120ce11f |
+| 1984 | 1,080 | 75b23e7e25efd2b54ac56c6bbd1c09c4ccaa9620a69927a68378f1bf9deec834 | 18 | b48dadb8e52ff57cf3fbcea39ebc818d986551fb732375533d568e199f88f93d |
+| 1985 | 1,347 | 7fa726acb559d15f765a0c449fd0737c05f5ad9b502a10596c1478381de03fa5 | 28 | 75e98caec49639cc7048a012e02cee051b6f876e32f2564feea2f7edc3a18b26 |
+| 1986 | 1,188 | fcf378ed0232283baaca23404c33d961c548f41226a98a2748ce0552ad6bbb18 | 29 | 84a657ef54297063194b5c6de4da5237d8e62400e591b19d3bb1f4e544189475 |
+| 1987 | 1,038 | 080cb91d993243bf34f2749007a08dac6315b92ff73f8272584230d68bf0d0fd | 34 | d1f9b361e26ca7c602da1055dfb53a5c4e1778970954066f815f9033d2d4393c |
+| 1988 | 1,409 | 04ac35e1f4da7ccbf2edc79ddef5c5b61b74c19b33ce60f964a93a5c93b05c78 | 38 | c9c35c932a80295142c8b6f52305e637fdca441d46bba28fa6e94980ca9d579f |
+| 1989 | 1,313 | ecbf551346adb945d98754e37c3f09fbe89938d0b4aca4042fee8155ed06890e | 43 | e650713437e592e966078855539909e5ce42bdfe6a9c1bb1464cce13542583a9 |
+| 1990 | 1,245 | 828395d199ad241cd85a2846b34956efa4e20bbc8c23ffb7b89cd932a0c0c7a6 | 35 | c64f9871a8c162b8998bea0856a965ec3bc4af91997cbec7edd48f1dee891b72 |
+| 1991 | 1,245 | f88e9b2ee1ef79185a66ed279b86a83649718fc0efd6b24b6e049df820317521 | 33 | 1a92c8d5ef53fbe14b10f22035ee370f9bea8987da92e99b19c0b23b25dffbce |
+| 1992 | 1,249 | fd3cbf16b855ca4641fcccae658e874444949d50f6d315c01ede56719f6299f6 | 34 | 90c500565dc77060f26f916ddc8d82316530e8d1a4a1d9b3f1093fce740a373e |
+| 1993 | 1,763 | 5d4caf9aee8baf9cf3e650d1b3aa5f9a40654f1322c1e2d9c480b5dc5ae0ffd9 | 44 | bf3cc10e05d8625c41324ba7b9013a0e7460518c2024b0df2e1633c007dacbc4 |
+| 1994 | 2,204 | c0ddd6723b463ac263329cb4b39ed8c9343b78c28cb31c48bd01a5349db7e3e8 | 41 | c8c70a590f0c4b9f73b5b8ac806b114f5fa0c90370d1b1c6e72ec0fecf16264e |
+| 1995 | 2,046 | e697e824b04870b53c4f1f98afab62fcfc3d0a0e274dac0e3724cb2e6f4f2132 | 45 | 6a57a035b602a72f89f0ce92e2999f48afd8af32944d998533cca33ea53cdafe |
+| 1996 | 2,292 | d4e5e0f6bd13fe1b079cc9df7e5fc5b2237548856dfc9f30d40060c374165230 | 40 | 814739dc09f6ff604662e91566262588bc9d8976cd6227557b907d4b1f782045 |
+| 1997 | 2,263 | f9cabd76c5a281ca225fb9cf456bcfe6f92ff755f2f90e87562eeeb63b661d7a | 34 | 0dd11b395124e8da1e128b9841942e69d78a882130db259168137b6583201784 |
+| 1999 | 3,619 | 9e80e8952d9f832cdcea877402f3ff1489c626cd56b3e02a31e4a475dd9e7f7b | 45 | 94a02f7bb7c3e08acd4f056eb414b12fc003dd43447528e0945e6dc5942ed63c |
+| 2001 | 3,559 | 2df0b61e323d620afe3709f940f1ceed2b5d998375147e2af44dcb8716c74e33 | 46 | c6b91fef7e88e83d7f6612b8347e172af951350694c014adc3ac69f231ed9f65 |
+| 2003 | 3,379 | b483bba6bf67af572ec167ba78d4a5ad7ff0afa358a9aa406d2de1863f87cbf3 | 35 | ee3ef74ac64a674a45447eb64ee3d2ed4d9f28b9ad75f68383fe84fe3bda875b |
+| 2005 | 3,235 | bd2baae277c648b44dd5cc3fdee29ef4619a41b0e6ecced83003693f2533d2f8 | 26 | dc51b05bdb86cb99983ae84817737bd171b13fa79c0a96062ca3cfd2c403726c |
+| 2007 | 5,240 | ac9d35f3932183a9bacfe05b416e9577e535f418b5413e9c14a26f4e0e2e4302 | 40 | 3f45fea7a8123f6881dc708f46f6810eb8241418efd4aa61d48a895aaf80acba |
+| 2009 | 5,161 | f6d4f1013ede30ca3db782bc6d83d60466b79ffb899e9944497d040c812c1562 | 31 | f9cbd27c90b684e66a45cc72e80dc699d38b02f2acc63d74255ea0c90f4cb7a1 |
+| 2011 | 5,287 | 53f4dc78ea7db4730b67e88dbb567acfab65c552e07e6b0ee407a8af34b4dead | 32 | fa05b772c8d6c775a7f20494d8a8efaf893e066680e400a1ede6022110723adb |
+| 2013 | 5,328 | dbedd71538ea600feb24dfbb1d0ecb021d789988b956312f85d5919f7fc89e76 | 41 | 8851100e293ea7d8eee026b509cf880b5e99437adfe34dce01ffe31b187be72f |
+| 2015 | 5,524 | a61dd9d4c1e0a22e342ebc9ddb749ec2e2357747a6e3bfb4a86ebacc5d99d4ba | 39 | e2e14d7bcbfddca8c97b8b72c162eb15ffd64f12d95fe2f935d74da6a20c51af |
+| 2017 | 5,606 | f7a791d0f4ac130f023dbd2a3cc38033272b4ba2ba882ea52c8046cdcf9ca1ee | 37 | 0aecfc948b6e15eab84b54d4043d173a4b166f75c997452d4020d98558d5cd42 |
+| 2019 | 5,632 | 035c937d15f40a6141e23c0f899af961a0759e49fbf4489595eea770026a0210 | 53 | 0b5d3fea96e8122880310f055594a72d40baca39fb882b3faaa9887edbe68126 |
+| 2021 | 3,960 | 972ae7524c552a01e750995d88717f08c889b661dea5c1f5f103399360f8c38e | 44 | 4e5b62c63320a48f9e98903a2fca80428486869e0c21829d828d3c6683568557 |
+| 2023 | 3,813 | f9dd8cdd49f8ca641af9faf28cccaab8960ef2d86823c4fc9ad3bb3294be0934 | 44 | 8dd2416edcb783408b73d83ccedd8059f0e673092f5484f6df3d35851a9123c0 |
+
+The table does not claim that positive_field_join_rows presently exist.
+They do not: the first inventory lane correctly emitted no Q5, slot,
+inventory, registry, value-map, crosswalk, correction-input, or context-
+output artifact. Embedding the complete source relation is evidentiary
+totality; selecting a raw field into a positive join is consumption and is
+governed separately below.
+
+#### 21.1.6 Fixability partition and empirical conclusion
+
+The 1,235 failures divide into exactly two authority classes.
+
+| Authority class | Included terminal/reasons | Count | Exact K-list SHA-256 | Why |
+|---|---|---:|---|---|
+| Unfixable by any future authority capture over this frozen corpus | conflicting_source_numeric_format / overlapping ranges; all four unsupported reasons | 422 | 2c82525c49a3a175d51dac7083d4cb4a0281eaeb47d529a1591c12ebbd41d0fa | V1714's source ranges overlap; the 16 character fields contain observed unknown raw tokens; 144 fields contain observed tokens outside all candidate languages or source semantics; and 78 literal plus 183 range failures have no exact-width selected-space rendering. Those are byte, code-map, semantic-set, or mathematical renderability facts. More documentation cannot change the frozen bytes or make a nonexistent exact-width image exist. |
+| Potentially resolvable by a future, separately authenticated authority capture | both incomplete reasons | 813 | 93cf0ce814f22883c6e249c25f6375893bfc3a213cc5ebb79243ce2b8be9086e | The 46 finite-no-arm rows require field/file-specific primary authority that selects one complete finite-domain padding arm or supplies an equally exact complete member-rendering relation. The 767 literal-only rows require field/file-specific primary authority that selects ASCII-space versus zero padding or supplies an equally exact encoding rule. Such authority could exist in uncaptured documentation, but this amendment does not assert that it does. Era defaults, peer fields, inference, or additional copies of nondiagnostic data are insufficient. |
+
+The unfixable array is K(F) restricted to the conflict and unsupported
+terminals; the potentially resolvable array is K(F) restricted to the
+incomplete terminal. No row defaults to the unfixable class merely because
+authority has not yet been found.
+
+The empirical answer is therefore affirmative: presently defined source,
+evidentiary, residual-search, and Q5 dictionary/codebook domains do touch
+non-passing fields. The smallest named-law intersection is the two-key
+V4902/ER6974 list; the established-fact intersection has 81 keys; V-B6 has
+four; and the 43 Q5 join universes collectively contain all 1,235. At the
+same time, no operational positive Q5 join or downstream artifact exists.
+The law must therefore permit the complete disposition relation to exist
+while making every future positive consumption of any F member abort at
+that consumer. The remaining subsections implement exactly that boundary
+relocation.
