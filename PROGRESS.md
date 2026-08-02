@@ -11,6 +11,8 @@
   model-triangulation rows, and 11 SSA 4.B7 admin-truth rows.
 - The audited 60-action evaluation artifact is generated and checked, and the
   standing registry is expanded to 101 active rows.
+- One complete 101-record current-registry evaluation is appended to history
+  and bound to the committed evaluation artifact in the run manifest.
 - GitNexus repository resources are unavailable in this session; harness
   behavior will be verified from repository source and tests.
 - The history validator now permits a null model measurement only for a
@@ -71,10 +73,20 @@
   `e6866bfaef5fc81771236ce58b9b6d166fb3aaf9` and reproduced the frozen
   317,414-byte legacy matrix at SHA-256
   `b102e6fe9cda44462a6f198f876d3cbf2a11827974d8aa447fcc2e152e336183`.
+- Added a deterministic history-candidate builder and used the harness writer
+  to append exactly 101 records for run SHA-256
+  `ead482c559903ae27cc21b2a92528335834dc67e6d567c25e37f47990974b524`.
+- The append-only history is now 272,763 bytes at SHA-256
+  `cddf67ddebbe8611971797fd8bce3f91b132b9b4bb0378edb2b714931792aa0f`;
+  the two-line run manifest is 284 bytes at SHA-256
+  `38e99cdf0efade6d81de2296f7e4deb373689c335e770aa899f1abb64c699048`.
+- Schema/history/registry binding, committed-HEAD run-artifact binding, and
+  explicit append-only validation against the starting history and manifest
+  all pass.
 
 ## Next
 
-- Append one complete 101-row history evaluation and bind the run manifest to
-  the committed evaluation artifact.
+- Rebuild the benchmark wall, update the standing identity/census tests, and
+  run the complete required check suite.
 - Remove this ledger before final delivery while preserving its committed
   history.
