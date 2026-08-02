@@ -8,8 +8,8 @@
   43-wave hierarchy, and exhaustive absence domain. Class-B grammar rows are
   out of scope.
 - Status: stopped at the lawful non-authority boundary for Q5, with the
-  reproducible global source/catalog prerequisite and the first four era
-  evidence slices complete. Two era slices remain. No Q5 or downstream slot
+  reproducible global source/catalog prerequisite and the first five era
+  evidence slices complete. One era slice remains. No Q5 or downstream slot
   artifact has been emitted.
 
 ## Done
@@ -58,10 +58,14 @@
   1,622 pages. Its 36 design-fixed baseline coordinates (1,260 expanded)
   remain a lower bound; artifact SHA-256:
   `d96442d6fff960a3297fa6ca76471a58e766c26421a8e65f9779ff7e2d1d744f`.
+- Built the 2003--2015 modern B/C--D/E slice from 14 registered documents and
+  2,337 pages. Its 42 design-fixed baseline coordinates (1,470 expanded)
+  remain a lower bound; artifact SHA-256:
+  `a46e6a2f14192558178bf1bea34baf68af4ae14cf6ddcbda436f0afb16c56c57`.
 
 ## Next
 
-- Build and commit the remaining two era source/page and design-fixed
+- Build and commit the remaining era source/page and design-fixed
   baseline hierarchy evidence slices in order, without representing those
   lower bounds as complete era rows.
 - Record the exact absence-domain dependency stop: `O_H`, `O_P`, `M_h`, and
