@@ -2,7 +2,7 @@
 
 ## State
 
-The empirical grounding and the operative completion/consumer-boundary law are appended. Regression, comparator, lifecycle, and build-order closure remain.
+The complete §21 draft is appended. Final byte, identity, internal-census, and scope verification remains.
 
 ## Done
 
@@ -20,8 +20,9 @@ The empirical grounding and the operative completion/consumer-boundary law are a
 - Added nine exact Amendment-7 regressions covering all seven failure reasons/boundary kinds, top-level acceptance, and silent-row deletion.
 - Added the complete design-family replacement inventory and a mandatory physical-passage closure sweep.
 - Added the complete 43-row revision-9 comparator census with 21 replaced and 22 unchanged dispositions.
+- Added the exact D7 lifecycle: eight position projections, 18-key capture registration, 16-key/seven-blob proof, 21-key receipt core, and 16+1 identifiers.
+- Replaced the build/ratification walk with the post-D7 `pass_with_closed_failures`, guarded-consumer, v6 receipt sequence.
 
 ## Next
 
-- Add lifecycle successors and the revised build/ratification walk.
 - Verify all bytes and remove this transient ledger before final handoff.
