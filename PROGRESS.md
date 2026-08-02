@@ -11,6 +11,9 @@
 - The audited 60-row tranche is not yet added to the registry.
 - GitNexus repository resources are unavailable in this session; harness
   behavior will be verified from repository source and tests.
+- The current history validator rejects null model measurements and numeric-free
+  missing-module deviations, so it must be narrowed to permit those only for
+  `module_missing` records while retaining fail-closed behavior elsewhere.
 
 ## Done
 
@@ -23,12 +26,17 @@
   nor taxpayer birth cohorts.
 - Recorded the seven verified capture identities and manifest SHA-256
   `72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a`.
+- Traced schema v4 registry validation, append-mostly revision law, exact source
+  pin requirements, one-sentence gap-note alarm, complete-prefix history sets,
+  append-only run manifests, staged-artifact checks, and committed-HEAD binding.
+- Confirmed benchmark tests live in `tests/test_benchmarks.py`; their frozen seed
+  prefix identities stay fixed while current registry/history/wall identities
+  and census expectations must advance with the tranche.
 
 ## Next
 
-- Inspect the benchmark schema, builders, tests, and existing external-source
-  provenance patterns.
 - Verify every referenced capture against `manifest.jsonl` before reading it.
+- Add focused schema tests for null model values restricted to missing modules.
 - Add and validate all 60 rows, append one history evaluation, and bind the run
   manifest to the final registry commit.
 - Remove this ledger before final delivery while preserving its committed
