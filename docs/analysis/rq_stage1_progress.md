@@ -73,8 +73,25 @@
 - Sealed candidate batch 9: document 81, 523 pages, 13,293 occurrence
   candidates, and batch-manifest raw SHA-256
   `0f7347ccff0623393e896ab7f5b751f261d804ec7d16732f8589d19117b2ff34`.
+- Sealed the global candidate index over all nine batches. It exact-covers 81
+  documents and 10,190 pages, with 234,911 occurrence candidates, 133,387
+  flow-path candidates, and 90,629 anchor-classification candidates. Its raw
+  SHA-256 is
+  `a90dfea13cdd74a7d612acdee76c91d6c9e2fd2ed9f9a6befc6a99d9f773a446`
+  and its self-zeroed content SHA-256 is
+  `ed80f518b0d2150b9d2c2f4d2e94ca517fc40d1dcd5e29a0c75833d40e86be64`.
+- Published the nonauthority stage-2 per-document protocol with the exact
+  whole-file locator equations, complete page cover, occurrence schemas and
+  spans, branch ancestry and one-to-one label laws, path/cycle rejection,
+  local alias restrictions, candidate disposition relation, manual-add law,
+  and one-document seal checklist.
+- Added eight always-runnable candidate artifact tests and one capture-backed
+  reproduction test. The artifact audit streams all 81 committed documents;
+  the reproduction gate rebuilds every document from the authenticated PDFs
+  and byte-compares all documents, nine batch manifests, and the global index.
+  All nine new tests pass.
 
 ## Next
 
-- Generate the 81 per-document artifacts in ten-document commit batches, publish
-  the stage-2 protocol, and run reproduction plus tier-sync tests.
+- Run final source-replay, candidate, tier-policy, formatting, and clean-tree
+  verification; record the final tooling identities and readiness report.

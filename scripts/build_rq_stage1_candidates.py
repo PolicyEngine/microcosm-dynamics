@@ -1830,12 +1830,217 @@ def build_candidate_index(
 def validate_candidate_index(
     value: Mapping[str, Any], replay_artifact: Mapping[str, Any]
 ) -> None:
+    _expect_keys(
+        value,
+        {
+            "schema_version",
+            "artifact_id",
+            "generator_spec_identity",
+            "source_replay_identity",
+            "batch_manifest_rows",
+            "batch_manifest_count",
+            "batch_manifest_domain_sha256",
+            "document_candidate_manifest_rows",
+            "document_candidate_manifest_count",
+            "document_candidate_manifest_domain_sha256",
+            "questionnaire_page_count",
+            "candidate_occurrence_count",
+            "candidate_occurrence_counts_by_kind",
+            "candidate_flow_path_count",
+            "candidate_anchor_classification_count",
+            "era_candidate_census_rows",
+            "era_candidate_census_domain_sha256",
+            "candidate_payload_domain_sha256",
+            "candidate_nonselection_law",
+            "integrity",
+            "status",
+        },
+        "global candidate index",
+    )
     document_rows = value["document_candidate_manifest_rows"]
     batch_rows = value["batch_manifest_rows"]
     era_rows = value["era_candidate_census_rows"]
+    batch_row_keys = {
+        "batch_index",
+        "path",
+        "byte_size",
+        "raw_sha256",
+        "content_sha256",
+        "document_count",
+        "questionnaire_page_count",
+        "candidate_occurrence_counts_by_kind",
+    }
+    document_row_keys = {
+        "document_source_position",
+        "source_document_id",
+        "path",
+        "byte_size",
+        "raw_sha256",
+        "content_sha256",
+        "candidate_payload_sha256",
+        "era_id",
+        "interview_wave",
+        "canonical_source_path",
+        "page_count",
+        "empty_candidate_page_count",
+        "candidate_occurrence_count",
+        "candidate_occurrence_counts_by_kind",
+        "candidate_flow_path_count",
+        "candidate_anchor_classification_count",
+    }
+    era_row_keys = {
+        "era_id",
+        "interview_waves",
+        "questionnaire_document_count",
+        "questionnaire_page_count",
+        "candidate_occurrence_count",
+        "candidate_occurrence_counts_by_kind",
+        "candidate_flow_path_count",
+        "candidate_anchor_classification_count",
+        "document_candidate_payload_domain_sha256",
+    }
+    documents = replay_artifact["source_document_replay"][
+        "questionnaire_documents"
+    ]
+    replay_page_counts = {
+        row["source_document_id"]: row["page_count"]
+        for row in replay_artifact["questionnaire_page_replay"][
+            "document_page_rows"
+        ]
+    }
+    expected_document_paths = [
+        str(document_output_path(position, document).relative_to(ROOT))
+        for position, document in enumerate(documents, start=1)
+    ]
     counts: Counter[str] = Counter()
     for row in document_rows:
         counts.update(row["candidate_occurrence_counts_by_kind"])
+    valid_sha256 = re.compile(r"[0-9a-f]{64}", re.ASCII).fullmatch
+
+    expected_era_rows: list[dict[str, Any]] = []
+    for spec in source_tools.ERA_SPECS:
+        rows = [
+            row for row in document_rows if row["era_id"] == spec["era_id"]
+        ]
+        era_counts: Counter[str] = Counter()
+        for row in rows:
+            era_counts.update(row["candidate_occurrence_counts_by_kind"])
+        expected_era_rows.append(
+            {
+                "era_id": spec["era_id"],
+                "interview_waves": list(spec["interview_waves"]),
+                "questionnaire_document_count": len(rows),
+                "questionnaire_page_count": sum(
+                    row["page_count"] for row in rows
+                ),
+                "candidate_occurrence_count": sum(era_counts.values()),
+                "candidate_occurrence_counts_by_kind": {
+                    kind: era_counts[kind] for kind in OCCURRENCE_KINDS
+                },
+                "candidate_flow_path_count": sum(
+                    row["candidate_flow_path_count"] for row in rows
+                ),
+                "candidate_anchor_classification_count": sum(
+                    row["candidate_anchor_classification_count"]
+                    for row in rows
+                ),
+                "document_candidate_payload_domain_sha256": (
+                    _canonical_digest(
+                        [row["candidate_payload_sha256"] for row in rows]
+                    )
+                ),
+            }
+        )
+
+    batch_rows_by_index = {
+        row["batch_index"]: row
+        for row in batch_rows
+        if isinstance(row, Mapping) and "batch_index" in row
+    }
+    expected_batch_summaries: list[dict[str, Any]] = []
+    for batch_index in range(1, 10):
+        first, last = batch_bounds(batch_index)
+        rows = document_rows[first - 1 : last]
+        batch_counts: Counter[str] = Counter()
+        for row in rows:
+            batch_counts.update(row["candidate_occurrence_counts_by_kind"])
+        expected_batch_summaries.append(
+            {
+                "batch_index": batch_index,
+                "path": str(
+                    batch_manifest_path(batch_index).relative_to(ROOT)
+                ),
+                "document_count": len(rows),
+                "questionnaire_page_count": sum(
+                    row["page_count"] for row in rows
+                ),
+                "candidate_occurrence_counts_by_kind": {
+                    kind: batch_counts[kind] for kind in OCCURRENCE_KINDS
+                },
+            }
+        )
+
+    invalid_document_rows = any(
+        set(row) != document_row_keys
+        or row["source_document_id"]
+        != documents[position - 1]["source_document_id"]
+        or row["path"] != expected_document_paths[position - 1]
+        or row["interview_wave"]
+        != documents[position - 1]["interview_waves"][0]
+        or row["canonical_source_path"]
+        != documents[position - 1]["canonical_source_path"]
+        or row["era_id"] != _era_id_for_wave(row["interview_wave"])
+        or row["page_count"] != replay_page_counts[row["source_document_id"]]
+        or not 0 <= row["empty_candidate_page_count"] <= row["page_count"]
+        or set(row["candidate_occurrence_counts_by_kind"])
+        != set(OCCURRENCE_KINDS)
+        or any(
+            not isinstance(count, int) or isinstance(count, bool) or count < 0
+            for count in row["candidate_occurrence_counts_by_kind"].values()
+        )
+        or row["candidate_occurrence_count"]
+        != sum(row["candidate_occurrence_counts_by_kind"].values())
+        or any(
+            not isinstance(row[key], int)
+            or isinstance(row[key], bool)
+            or row[key] < 0
+            for key in (
+                "candidate_flow_path_count",
+                "candidate_anchor_classification_count",
+            )
+        )
+        or not isinstance(row["byte_size"], int)
+        or isinstance(row["byte_size"], bool)
+        or row["byte_size"] <= 0
+        or any(
+            valid_sha256(row[key]) is None
+            for key in (
+                "raw_sha256",
+                "content_sha256",
+                "candidate_payload_sha256",
+            )
+        )
+        for position, row in enumerate(document_rows, start=1)
+    )
+    invalid_batch_rows = any(
+        set(row) != batch_row_keys
+        or row["byte_size"] <= 0
+        or valid_sha256(row["raw_sha256"]) is None
+        or valid_sha256(row["content_sha256"]) is None
+        or any(
+            row[key] != expected[key]
+            for key in (
+                "batch_index",
+                "path",
+                "document_count",
+                "questionnaire_page_count",
+                "candidate_occurrence_counts_by_kind",
+            )
+        )
+        for row, expected in zip(
+            batch_rows, expected_batch_summaries, strict=False
+        )
+    )
     if (
         value["schema_version"] != INDEX_SCHEMA_VERSION
         or value["artifact_id"] != INDEX_SCHEMA_VERSION
@@ -1844,6 +2049,8 @@ def validate_candidate_index(
         or value["batch_manifest_count"] != len(batch_rows)
         or value["batch_manifest_count"] != 9
         or [row["batch_index"] for row in batch_rows] != list(range(1, 10))
+        or len(batch_rows_by_index) != 9
+        or invalid_batch_rows
         or value["batch_manifest_domain_sha256"]
         != _canonical_digest(batch_rows)
         or value["document_candidate_manifest_count"] != len(document_rows)
@@ -1857,6 +2064,7 @@ def validate_candidate_index(
                 "questionnaire_documents"
             ]
         ]
+        or invalid_document_rows
         or value["document_candidate_manifest_domain_sha256"]
         != _canonical_digest(document_rows)
         or value["questionnaire_page_count"]
@@ -1873,8 +2081,10 @@ def validate_candidate_index(
             for row in document_rows
         )
         or len(era_rows) != 6
+        or any(set(row) != era_row_keys for row in era_rows)
         or [row["era_id"] for row in era_rows]
         != [spec["era_id"] for spec in source_tools.ERA_SPECS]
+        or era_rows != expected_era_rows
         or value["era_candidate_census_domain_sha256"]
         != _canonical_digest(era_rows)
         or value["candidate_payload_domain_sha256"]
