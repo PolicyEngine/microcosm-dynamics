@@ -4,7 +4,8 @@
 
 - Branch `claude/bench-rows-tranche2` starts clean at
   `e6866bfaef5fc81771236ce58b9b6d166fb3aaf9`, matching `origin/master`.
-- The audited inventory is 996 lines / 43,614 bytes with SHA-256
+- The audited inventory is 997 logical lines (996 newline terminators) / 43,614
+  bytes with SHA-256
   `43cec7d1ff2373f70d661f4557e9eecbc9be041a939882a3ee209918a7d5d029`.
 - Its complete tranche is 30 CBO model-triangulation rows, 19 MINT
   model-triangulation rows, and 11 SSA 4.B7 admin-truth rows.
@@ -37,11 +38,18 @@
 - Verified all seven audited capture hashes before parsing: CBO 55038
   supplemental, all three CBO 60392 workbooks, both MINT table pages, and the
   committed SSA Supplement 4.B snapshot all match the inventory exactly.
+- Independently reproduced every omitted selector/transform value: the 15 MINT
+  percentile-shape trajectories, 11 SSA 4.B7 same-panel band shares, and six CBO
+  annual/indexed panels all agree with the audited locators and corrections.
+- Added a deterministic SSA 4.B7 extractor that verifies both the committed HTML
+  snapshot and its local capture manifest before emitting a 14,840-byte JSON
+  extraction with SHA-256
+  `c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb`.
+- Resolved the nonduplication note as 59 new IDs plus one revision of the legacy
+  CBO tax-revenue row; the final registry should therefore contain 101 rows.
 
 ## Next
 
-- Parse and independently cross-check every registered source value and exact
-  locator from the now-verified captures.
 - Add focused schema tests for null model values restricted to missing modules.
 - Add and validate all 60 rows, append one history evaluation, and bind the run
   manifest to the final registry commit.
