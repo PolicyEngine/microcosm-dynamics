@@ -31438,12 +31438,12 @@ its identity.
 #### 20.3.7 Complete 89,599-field totality census
 
 The all-field disposition law is a total function over the authenticated
-evidence denominator, not an exemplar list. The completed Amendment-6 law
-specified by these draft bytes was executed over all six committed
-field-evidence artifacts and every one of their 43 authenticated raw files.
-The artifact order below, each artifact's `interview_waves` order, and then
-the retained `field_evidence` row order within a wave define the one
-canonical denominator order:
+evidence denominator, not an exemplar list. The completed Amendment-6
+disposition predicates specified by these draft bytes were evaluated over
+all six committed field-evidence artifacts and every one of their 43
+authenticated raw files. The artifact order below, each artifact's
+`interview_waves` order, and then the retained `field_evidence` row order
+within a wave define the one canonical denominator order:
 
 | Evidence artifact | Fields | Bytes | Evidence-artifact SHA-256 |
 |---|---:|---:|---|
@@ -31477,13 +31477,14 @@ The census reconstruction is exact:
    raw-file size and SHA-256; derive record width from the complete wave
    coordinates, require fixed-width records with terminal CRLF, reslice every
    field, and reproduce its complete ordered raw-token/frequency relation;
-2. independently reconstruct each context-complete code-map cell before
-   interpreting its semantics. Grouping commas are removed only while
+2. reconstruct the semantic tagged union from each retained context-complete
+   code-map row, using its complete meaning text rather than treating the
+   value column in isolation. Grouping commas are removed only while
    constructing source numeric scalars and never from a raw token. When a
    negative first endpoint, positive-looking second endpoint, and leading
-   `- ` in the complete source meaning jointly establish negative-range
-   shorthand, the second endpoint inherits that sign. The 17 PDF
-   column-continuation cells in the
+   `- ` in the retained complete meaning jointly establish negative-range
+   shorthand, the second endpoint inherits that sign. The 17 retained PDF
+   column-continuation rows in the
    seven 1969 fields `V922`, `V925`, `V926`, `V929`, `V930`, `V944`,
    and `V955` are meanings continuing with `to `, not invented numeric
    ranges;
@@ -31492,17 +31493,20 @@ The census reconstruction is exact:
    normalized range, and apply semantic-overlap and duplicate-image conflict
    predicates before any later terminal;
 4. for a numeric declaration, execute the missing-first pre-profile
-   constructor and serialize the exact nonmissing count. Route a zero-count
+   constructor and derive the exact nonmissing count. Route a zero-count
    range to the physical-unestablished branch with every short ordinary
    literal and range member retained semantically but unrendered. Otherwise
-   evaluate the complete token-form relation, both padding candidates, every
-   finite-domain arm member, every exhaustive range partition, the
-   partition-defined DFA, and all observed and unobserved replay exactly in
+   evaluate the exact necessary-and-sufficient disposition predicates over
+   the complete candidate token languages, both padding renderers, every
+   finite-domain arm member, analytic exhaustive range
+   cardinality/renderability, semantic membership, and observed replay in
    §§20.3.2–20.3.5. For a character declaration, retain only exact-width
    source literal images; an unknown observed byte is unsupported, an
    applicable range is physical-unestablished, a nonempty literal-only
    domain is value-code-only, and only an empty domain is outside numeric
-   grammar;
+   grammar. This census classification does not serialize the future
+   derivation rows or substitute for §20.8.1's complete member partitions,
+   DFA construction, and observed/unobserved replay;
 5. emit exactly one of the ten terminals in §20.3.5. Exclude every applicable
    failure predicate before admitting a passing branch, and apply the closed
    mutually exclusive failure precedence—conflict, then unsupported, then
@@ -31546,8 +31550,9 @@ The first seven terminals contain 88,364 fields and the three closed failure
 terminals contain 1,235. Those 1,235 failures correctly prevent a current
 top-level pass; they do not make the disposition function partial.
 
-The closed failures independently reduce to these seven complete reason
-buckets. Each hash covers its ordered canonical field-key subarray:
+The canonical classifier partitions the closed failures into these seven
+complete diagnostic reason buckets. Each hash covers its ordered canonical
+field-key subarray:
 
 | Terminal | Exact `resolution_reason` | Count | Field-key SHA-256 |
 |---|---|---:|---|
@@ -31572,18 +31577,24 @@ The referee's 763-field all-missing numeric-range denominator and exact
 `c34434caa24dfa760423ac649c1f5a8a7ee340c2c9909dab67a000513f2c4f69`;
 all 66 map to
 `value_code_range_physical_rendering_unestablished`. The broader
-source-semantic predicate finds 69 such fields and hashes its ordered key
-array to
+source-semantic predicate—numeric declaration, exact missing registration
+leaving zero nonmissing observations, at least one normalized range, and at
+least one short ordinary literal—finds 69 such fields and hashes its ordered
+key array to
 `33320d3158ca5c6bb3444f87e4c9f1f0e62e1a19b32da688fcce3e10a9cb0cfe`.
 Its three additional keys are `[1970,"V1701"]`, `[1970,"V1725"]`, and
 `[1996,"ER7747"]`; all three take the same physical-unestablished branch.
 V117/1968 and V5092/1976 both take the finite-domain arm-ambiguous compiled
 branch, so neither named repair is a special-case override.
 
-Two independently written classifiers reproduced the 43 raw identities,
-all 89,599 field assignments, every artifact/status count, the exact-empty
-unmapped set, and the complete disposition SHA-256 above. At this draft
-review their respective source files were 58,884 bytes with SHA-256
+Two independently written classifiers authenticated the same 43 raw files
+and agreed on all 89,599 field assignments, every artifact/status count, the
+exact-empty unmapped set, and the complete disposition SHA-256 above. The
+primary classifier alone defines the canonical six-key raw-identity and
+`derivation_status` count-row projections displayed here; agreement does
+not require a differently shaped audit projection to share their hashes. At
+this draft review the classifiers' respective source files were 58,884
+bytes with SHA-256
 `a554937bf9dca8d586850c4441045ead90d91ad8cc43be4b1ba009aeb9d50326`
 and 40,142 bytes with SHA-256
 `2a4ae24f0efaf0622a827e18e8a0d753813115096ada214c5f4c4a519184e980`.
