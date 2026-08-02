@@ -91,8 +91,8 @@ def test_unicode_spans_are_exact_half_open_utf8_bytes():
     for row in rows:
         matched = page_bytes[row["utf8_byte_start"] : row["utf8_byte_end"]]
         assert matched.decode("utf-8") == row["matched_text"]
-        assert (
-            hashlib.sha256(matched).hexdigest() == (row["matched_utf8_sha256"])
+        assert hashlib.sha256(matched).hexdigest() == (
+            row["matched_utf8_sha256"]
         )
     role = next(
         row

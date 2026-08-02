@@ -309,9 +309,9 @@ def _expect_keys(
         raise ValueError(f"{label} keyset drift")
 
 
-def _compiled_detector_rules() -> tuple[
-    tuple[Mapping[str, Any], re.Pattern], ...
-]:
+def _compiled_detector_rules() -> (
+    tuple[tuple[Mapping[str, Any], re.Pattern], ...]
+):
     result: list[tuple[Mapping[str, Any], re.Pattern]] = []
     for row in DETECTOR_RULE_ROWS:
         flags = re.ASCII | re.VERBOSE
@@ -1301,9 +1301,8 @@ def _validate_flow_rows(
         ):
             raise ValueError("occurrence flow-context candidates drift")
         for path_id in context_ids[1:]:
-            if (
-                occurrence_order[path_source_occurrence[path_id]]
-                >= (occurrence_order[occurrence["candidate_occurrence_id"]])
+            if occurrence_order[path_source_occurrence[path_id]] >= (
+                occurrence_order[occurrence["candidate_occurrence_id"]]
             ):
                 raise ValueError("flow-context candidate is not earlier")
 

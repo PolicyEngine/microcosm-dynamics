@@ -31,7 +31,7 @@ EXPECTED_REPLAY_TOOL_SHA256 = (
     "76a6ae27dda399b5a2576849ae7e2b068b3743c30d4ecc9450746de083f927af"
 )
 EXPECTED_CANDIDATE_TOOL_SHA256 = (
-    "86ff8e50be0947cbb25c9b637fd1c08474ae4b278320ef8b45c52a159033d7d6"
+    "b8b33f2d95eb75b14330848609eb75868ff7d735cafa444a527b1861da9e524d"
 )
 EXPECTED_GLOBAL_COUNTS = {
     "flow_branch_label": 54_424,
@@ -263,9 +263,8 @@ def test_batch_manifests_exact_cover_nine_fixed_batches(
         )
         assert len(raw) == index_row["byte_size"]
         assert hashlib.sha256(raw).hexdigest() == index_row["raw_sha256"]
-        assert (
-            manifest["integrity"]["content_sha256"]
-            == (index_row["content_sha256"])
+        assert manifest["integrity"]["content_sha256"] == (
+            index_row["content_sha256"]
         )
         assert manifest["candidate_nonselection_law"] == (
             builder.CANDIDATE_NONSELECTION_LAW

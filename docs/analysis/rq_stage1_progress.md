@@ -6,11 +6,11 @@
 - Starting commit: `2bb14b514983254b5af78d74ce728ac598a319b7`
 - Scope: the section 19 source replay and explicitly nonauthority candidate
   preparation consumed by per-document stage-2 annotation lanes.
-- Status: source-replay parent and deterministic candidate tooling complete;
-  all nine candidate batches are sealed (81 documents and 10,190 pages). No candidate is an annotation,
-  no candidate may select the source
-  denominator, and no Q5, relationship catalog, or other authority artifact is
-  emitted by this lane.
+- Status: stage 1 complete and ready for the 81-document stage-2 fan-out. The
+  source-replay parent, deterministic tooling, nine candidate batches, global
+  index, protocol, and reproduction gates are sealed. No candidate is an
+  annotation, no candidate may select the source denominator, and no Q5,
+  relationship catalog, or other authority artifact is emitted by this lane.
 - External final-report target:
   `/Users/maxghenis/m6-sol-lanes/sol-ce-rq-stage1.out`.
 
@@ -90,8 +90,21 @@
   the reproduction gate rebuilds every document from the authenticated PDFs
   and byte-compares all documents, nine batch manifests, and the global index.
   All nine new tests pass.
+- Final verification reproduced the source-replay parent, all nine candidate
+  batches, and the global index in check mode. Seventy-one distinct targeted
+  source-replay, candidate, and downstream nonauthority tests pass, including
+  the full 81-document candidate reproduction. The 4,531-test tier policy
+  inventory passes with 910 unit, 2,121 artifact, 821 PSID integration, 520
+  legacy reproduction, and 159 oracle tests.
+- Black 25.11, invoked through the mandated virtual-environment Python 3.14,
+  leaves all seven touched Python files unchanged; Ruff 0.15 passes them. The
+  final replay-tool raw SHA-256 is
+  `76a6ae27dda399b5a2576849ae7e2b068b3743c30d4ecc9450746de083f927af`
+  and the final candidate-tool raw SHA-256 is
+  `b8b33f2d95eb75b14330848609eb75868ff7d735cafa444a527b1861da9e524d`.
 
 ## Next
 
-- Run final source-replay, candidate, tier-policy, formatting, and clean-tree
-  verification; record the final tooling identities and readiness report.
+- Fan out one sealed nonauthority annotation lane per document under
+  `docs/analysis/rq_stage2_protocol.md`; global catalog, alias, and `R_Q`
+  assembly remains a later stage after every shard is adjudicated.
