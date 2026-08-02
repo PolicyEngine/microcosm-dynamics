@@ -394,7 +394,7 @@ def build_initial_replacement_rows(raw: bytes) -> list[dict[str, Any]]:
                     "cbo_55038_supplemental",
                     sheet="Exhibit 5",
                     locator=(
-                        "A10:F11 headers; "
+                        f"B{first_row - 2}; B{first_row - 1}; "
                         f"A{first_row}:A{first_row + 2}+"
                         f"{sheet.cell(first_row, column).coordinate}:"
                         f"{sheet.cell(first_row + 2, column).coordinate}"
@@ -470,11 +470,10 @@ def build_lifetime_ratio_rows(raw: bytes) -> list[dict[str, Any]]:
                         "cbo_60392_long_term",
                         sheet="14",
                         locator=(
-                            "A8:I10 headers; "
+                            f"B{first_row - 1}; "
                             f"A{first_row}:A{first_row + 4}+"
                             f"{sheet.cell(first_row, column).coordinate}:"
-                            f"{sheet.cell(first_row + 4, column).coordinate}; "
-                            "definitions A50, A52, A54"
+                            f"{sheet.cell(first_row + 4, column).coordinate}"
                         ),
                         transform="identity_dimensionless_ratio",
                     ),
@@ -1059,11 +1058,18 @@ def build_mint_rows(
                         "capture_id": "mint_taxpayers",
                         "locator": {
                             "panel": "All taxpayers r1 > Age r14",
-                            "selector": (
-                                f"div#table{stem}{{YEAR}} > table "
-                                "td[headers='r1 r14 "
-                                f"{row_header} c2 c{{3,4,5}}']"
-                            ),
+                            "selectors": {
+                                name: (
+                                    f"div#table{stem}{{YEAR}} > table "
+                                    "td[headers='r1 r14 "
+                                    f"{row_header} c2 {column}']"
+                                )
+                                for name, column in (
+                                    ("p10", "c3"),
+                                    ("median", "c4"),
+                                    ("p90", "c5"),
+                                )
+                            },
                         },
                         "transform": {
                             "lower_tail": "p10 / median",

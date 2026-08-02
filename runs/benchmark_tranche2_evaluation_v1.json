@@ -143,7 +143,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A14:A16+B14:B16",
+          "cells": "B12; B13; A14:A16+B14:B16",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -190,7 +190,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A14:A16+C14:C16",
+          "cells": "B12; B13; A14:A16+C14:C16",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -237,7 +237,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A14:A16+E14:E16",
+          "cells": "B12; B13; A14:A16+E14:E16",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -284,7 +284,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A14:A16+F14:F16",
+          "cells": "B12; B13; A14:A16+F14:F16",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -331,7 +331,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A20:A22+B20:B22",
+          "cells": "B18; B19; A20:A22+B20:B22",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -378,7 +378,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A20:A22+C20:C22",
+          "cells": "B18; B19; A20:A22+C20:C22",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -425,7 +425,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A20:A22+E20:E22",
+          "cells": "B18; B19; A20:A22+E20:E22",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -472,7 +472,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A20:A22+F20:F22",
+          "cells": "B18; B19; A20:A22+F20:F22",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -519,7 +519,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A26:A28+B26:B28",
+          "cells": "B24; B25; A26:A28+B26:B28",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -566,7 +566,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A26:A28+C26:C28",
+          "cells": "B24; B25; A26:A28+C26:C28",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -613,7 +613,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A26:A28+E26:E28",
+          "cells": "B24; B25; A26:A28+E26:E28",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -660,7 +660,7 @@
       "source": {
         "capture_id": "cbo_55038_supplemental",
         "locator": {
-          "cells": "A10:F11 headers; A26:A28+F26:F28",
+          "cells": "B24; B25; A26:A28+F26:F28",
           "sheet": "Exhibit 5"
         },
         "transform": "identity_percent"
@@ -715,7 +715,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A12:A16+B12:B16; definitions A50, A52, A54",
+          "cells": "B11; A12:A16+B12:B16",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -770,7 +770,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A12:A16+C12:C16; definitions A50, A52, A54",
+          "cells": "B11; A12:A16+C12:C16",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -825,7 +825,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A18:A22+B18:B22; definitions A50, A52, A54",
+          "cells": "B17; A18:A22+B18:B22",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -880,7 +880,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A18:A22+C18:C22; definitions A50, A52, A54",
+          "cells": "B17; A18:A22+C18:C22",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -935,7 +935,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A24:A28+B24:B28; definitions A50, A52, A54",
+          "cells": "B23; A24:A28+B24:B28",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -990,7 +990,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A24:A28+C24:C28; definitions A50, A52, A54",
+          "cells": "B23; A24:A28+C24:C28",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -1045,7 +1045,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A30:A34+B30:B34; definitions A50, A52, A54",
+          "cells": "B29; A30:A34+B30:B34",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -1100,7 +1100,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A30:A34+C30:C34; definitions A50, A52, A54",
+          "cells": "B29; A30:A34+C30:C34",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -1155,7 +1155,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A36:A40+B36:B40; definitions A50, A52, A54",
+          "cells": "B35; A36:A40+B36:B40",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -1210,7 +1210,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A36:A40+C36:C40; definitions A50, A52, A54",
+          "cells": "B35; A36:A40+C36:C40",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -1265,7 +1265,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A42:A46+B42:B46; definitions A50, A52, A54",
+          "cells": "B41; A42:A46+B42:B46",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -1320,7 +1320,7 @@
       "source": {
         "capture_id": "cbo_60392_long_term",
         "locator": {
-          "cells": "A8:I10 headers; A42:A46+C42:C46; definitions A50, A52, A54",
+          "cells": "B41; A42:A46+C42:C46",
           "sheet": "14"
         },
         "transform": "identity_dimensionless_ratio"
@@ -3836,7 +3836,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c4']",
+            "p10": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c3']",
+            "p90": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -3894,7 +3898,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r16 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r16 c2 c4']",
+            "p10": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r16 c2 c3']",
+            "p90": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r16 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -3952,7 +3960,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r17 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r17 c2 c4']",
+            "p10": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r17 c2 c3']",
+            "p90": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r17 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4010,7 +4022,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r18 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r18 c2 c4']",
+            "p10": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r18 c2 c3']",
+            "p90": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r18 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4068,7 +4084,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r19 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r19 c2 c4']",
+            "p10": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r19 c2 c3']",
+            "p90": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r19 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4126,7 +4146,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r15 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r15 c2 c4']",
+            "p10": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r15 c2 c3']",
+            "p90": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r15 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4184,7 +4208,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r16 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r16 c2 c4']",
+            "p10": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r16 c2 c3']",
+            "p90": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r16 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4242,7 +4270,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r17 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r17 c2 c4']",
+            "p10": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r17 c2 c3']",
+            "p90": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r17 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4300,7 +4332,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r18 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r18 c2 c4']",
+            "p10": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r18 c2 c3']",
+            "p90": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r18 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4358,7 +4394,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r19 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r19 c2 c4']",
+            "p10": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r19 c2 c3']",
+            "p90": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r19 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4416,7 +4456,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r15 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r15 c2 c4']",
+            "p10": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r15 c2 c3']",
+            "p90": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r15 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4474,7 +4518,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r16 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r16 c2 c4']",
+            "p10": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r16 c2 c3']",
+            "p90": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r16 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4532,7 +4580,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r17 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r17 c2 c4']",
+            "p10": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r17 c2 c3']",
+            "p90": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r17 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4590,7 +4642,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r18 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r18 c2 c4']",
+            "p10": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r18 c2 c3']",
+            "p90": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r18 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
@@ -4648,7 +4704,11 @@
         "capture_id": "mint_taxpayers",
         "locator": {
           "panel": "All taxpayers r1 > Age r14",
-          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r19 c2 c{3,4,5}']"
+          "selectors": {
+            "median": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r19 c2 c4']",
+            "p10": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r19 c2 c3']",
+            "p90": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r19 c2 c5']"
+          }
         },
         "transform": {
           "lower_tail": "p10 / median",
