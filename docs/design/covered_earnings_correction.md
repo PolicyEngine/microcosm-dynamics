@@ -30499,8 +30499,9 @@ of every observation not classified as exactly one member of the complete
 registered missing-literal relation. That relation is independently rebuilt
 from all dictionary missing literals and all normalized codebook entries
 whose `typed_disposition` is `missing`; missing-versus-ordinary-literal and
-duplicate/unequal-meaning conflicts take precedence over use of the count for
-a passing branch. The count is nevertheless serialized on every successor
+duplicate-missing-image conflicts, plus duplicate ordinary literal images
+with unequal values or meanings, take precedence over use of the count for a
+passing branch. The count is nevertheless serialized on every successor
 row from exact-one classification. It is at most the complete raw
 `record_count`; on a conflict-free relation, the difference is exactly the
 frequency sum of the uniquely classified missing observations. The
@@ -30892,17 +30893,27 @@ branch.
 
 For any compiled derivation status below, the DFA payload is the exact raw
 token after its Amendment-6 `padding_rule`; payload width therefore remains
-`w`. From the source-valid render language subtract every canonical image of
-a registered dictionary missing token. A missing image that collides with a
-normalized codebook literal remains a conflict. An ordinary normalized
-codebook literal that does not collide with missing remains inside the
-physical DFA language, but runtime's retained literal-first classification
-terminates before the DFA; it is not subtracted and cannot become a numeric
-result. The remainder after missing-image subtraction must be nonempty. The
-DFA accepts exactly that finite-width physical language; it does not accept
-all strings that a generic numeric regex would parse. This exclusion set is
-the retained §19 `E` construction completed for the new token forms, and it
-fixes one transition-domain digest.
+`w`. From the source-valid render language subtract every canonical image in
+the complete registered missing-literal relation reconstructed in §20.3.2,
+including dictionary and normalized-codebook missing literals. A missing
+image's overlap with the otherwise numeric language is the reason for this
+subtraction and is not alone a conflict. A missing image that byte-equals an
+ordinary nonmissing normalized codebook literal is a missing-versus-literal
+conflict. Duplicate ordinary literal images with unequal source values or
+meanings are conflicts; every retained duplicate normalized-entry or
+semantic-overlap prohibition also remains independently controlling.
+
+An ordinary nonmissing normalized codebook literal that does not collide
+with missing remains inside the physical DFA language even when its bytes
+are also accepted by the numeric DFA. Runtime's retained literal-first
+classification terminates before DFA traversal, so the token takes its
+literal meaning and cannot become a numeric result. This ordinary-literal/
+DFA overlap is lawful by itself: it is neither subtracted nor a conflict.
+The remainder after missing-image subtraction must be nonempty. The DFA
+accepts exactly that finite-width physical language; it does not accept all
+strings that a generic numeric regex would parse. This exclusion set is the
+retained §19 `E` construction completed for the new token forms, and it fixes
+one transition-domain digest.
 
 For `compiled_source_numeric_grammar_partial_range_exact_replay`, the
 source-valid numeric portion of that language is exactly the set of
@@ -31015,7 +31026,7 @@ status is emitted.
 
 | Failure predicate | Exact row status and consequence |
 |---|---|
-| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms after a positive nonmissing count; a complete positive-nonmissing census whose remaining nonliteral tokens each belong to at least one candidate language but for which no single token form covers the census; unequal independent range partitions; missing, duplicate, overlapping, or reordered partition members; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; a duplicate registered missing image, a missing-versus-ordinary-literal image collision, duplicate ordinary literal images with unequal source values or meanings, or any retained duplicate-entry/semantic-overlap violation; multiple passing token forms after a positive nonmissing count; a complete positive-nonmissing census whose remaining nonliteral tokens each belong to at least one candidate language but for which no single token form covers the census; unequal independent range partitions; missing, duplicate, overlapping, or reordered partition members; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
 | any `unsupported_source_declaration`; any observed nonmissing/nonliteral token rejected by every closed candidate token language, including every malformed sign/space/point/digit/precision, grouping, exponent, zoned, overpunched, or non-ASCII form enumerated in §20.3.3; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
 | missing required numeric selector on a numeric-required branch after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; token-form evaluation that cannot be completed because required authenticated evidence is unavailable or unevaluable; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
 
@@ -31027,6 +31038,11 @@ forms cannot cohere to one field language, the exact status is conflict. Only
 a missing or unauthenticated prerequisite that prevents candidate evaluation
 altogether is incomplete. A derivation status, row ID, full-row hash, or
 consumer digest that serializes another classification is unequal.
+
+No conflict predicate is satisfied merely because one ordinary nonmissing
+literal image is also an accepted DFA image. Only the missing/literal,
+unequal-meaning duplicate, or independently retained duplicate-entry cases
+above conflict; the ordinary overlap is resolved literal-first.
 
 An explicit underdetermined-padding token is not incomplete. Conversely,
 `closed uncertainty`, an era convention, another field's space result, or a
@@ -31286,10 +31302,16 @@ Specifically:
    zero-count physical-unestablished branch, registered literal images replay
    literal-first, every range member retains the inherited unestablished-
    rendering abort, and no range partition, image, or DFA is constructed.
-6. A normalized codebook literal retains complete-width precedence and a
-   dictionary missing literal retains missing precedence. A literal or
-   missing image that collides with the numeric language remains a conflict;
-   decimal punctuation or a minus never silently changes a source meaning.
+6. The complete registered missing-literal relation retains exact-match
+   missing precedence, and an ordinary normalized codebook literal then
+   retains complete-width literal-first precedence over DFA traversal. A
+   missing-versus-ordinary-literal byte collision, duplicate missing image,
+   or duplicate ordinary literal image with unequal value/meaning is a
+   conflict. A missing image's numeric-language overlap is removed from the
+   DFA; an ordinary nonmissing literal's numeric-language overlap remains in
+   the DFA and is lawful by itself because literal-first classification
+   terminates. Decimal punctuation, a minus, or DFA membership never silently
+   changes a source meaning.
 
 The layout's source-document arrays, canonical dictionary/codebook row
 arrays, normalized entry arrays, raw-data document, coordinates, framing,
@@ -31429,8 +31451,10 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   and value derivation. For the zero-count retained branch they instead
   compare null profile/grammar, absence of those relations, and exact
   missing-literal replay.
-  Missing/literal precedence and
-  all retained legal/default folds follow only after that pass. A host
+  Missing/literal precedence and all retained legal/default folds follow only
+  after that pass. Missing-versus-literal and unequal-meaning duplicates
+  conflict, while ordinary literal/DFA overlap exact-compares and terminates
+  literal-first without conflict. A host
   parse, trimmed token, rounded decimal, unsigned coercion, or predecessor
   grammar fails C06. For a source-census rejection, both sides must serialize
   the exact conflict/unsupported/incomplete distinction in §20.3.5 before
@@ -31503,7 +31527,7 @@ affected prose is dismissed as merely explanatory.
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural or complete-domain equality proofs. Amendment-6 rows never select or canonicalize a zero-padding arm. |
 | §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
 | §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; add the explicit all-missing retained branch, underdetermined and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language is unsupported, mixed individually lawful forms conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
-| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; partial ranges carry both member relations and the closed unrenderable-member action; an all-missing retained range replays registered literals with no profile/partition/DFA; precedence and source semantics remain exact. |
+| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.3.4-and-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; missing-versus-ordinary-literal and unequal-meaning duplicate literals conflict, while ordinary nonmissing literal/DFA overlap is lawful and terminates literal-first; partial ranges carry both member relations and the closed unrenderable-member action; an all-missing retained range replays registered literals with no profile/partition/DFA; precedence and source semantics remain exact. |
 | §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-nine-vector-census`: V93 remains mandatory; actual later-era space, width-one, decimal, signed, conflict, precision-edge, complete-domain-no-capacity, and all-missing vectors are added; zero-arm constructors are rejection-only. |
 | §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the complete 16-key successor row/count and either its nonnull physical members or its all-missing null/absent branch flow positionally through every layout and value-map consumer. |
 | §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
@@ -31576,6 +31600,10 @@ selecting_source_format_assertion_id
 source_value_lexeme
 declared_signed
 normalized_format_profile
+source_missing_literals
+normalized_codebook_entries
+dictionary_missing_literal_entries
+observed_token_rows
 nonmissing_observation_count
 unsupported_source_numeric_format
 physical_authentication
@@ -32145,8 +32173,11 @@ dependency order before Q5 or an official consumer is read:
    structural no-arm disposition, or the finite-complete-domain no-capacity
    disposition after both complete candidate relations and every observed
    replay deep-equal; no other field's result enters;
-5. for each nonnull-profile row, construct the exact-token DFA and action
-   rows, replay every observed numeric token and normalized literal/missing
+5. for each nonnull-profile row, conflict-check missing-versus-literal and
+   unequal-meaning duplicate literal images, subtract every missing image
+   from the numeric language, and retain every ordinary literal/DFA overlap
+   for literal-first termination; then construct the exact-token DFA and
+   action rows, replay every observed numeric token and normalized literal/missing
    token, enumerate every source-declared unobserved value, construct every
    applicable exhaustive ordered renderable/unrenderable range partition,
    and apply its exact replay or closed unrenderable-member action plus the
@@ -32364,6 +32395,16 @@ smallest dispositions for round one and records the rejected alternatives:
    unsupported under the already closed excluded-arm predicate. Trim,
    permissive host parsing, unknown-token reclassification, and an
    incomplete catch-all are rejected alternatives.
+12. **Literal/DFA overlap.** Treating every literal-shaped DFA image as a
+   conflict would reject an unambiguous ordinary source literal such as
+   V945's literal-first zero image; subtracting every ordinary literal would
+   also alter the authenticated physical language without need. The fail-
+   closed-smallest law conflicts a missing-versus-ordinary-literal collision
+   and duplicate ordinary literal images with unequal meanings, subtracts
+   registered missing images, but retains an ordinary nonmissing literal's
+   DFA overlap and terminates literal-first. Letting a missing/literal
+   collision choose either meaning, letting unequal meanings deduplicate, or
+   letting DFA traversal override the ordinary literal is rejected.
 
 The resulting mandatory-abort matrix is closed:
 
@@ -32372,6 +32413,7 @@ The resulting mandatory-abort matrix is closed:
 | diagnostic field selects zero, accepts both arms, mixes zero/space, or lacks a positive diagnostic despite available capacity | numeric authority failure under §20.3.5; no layout/Q5/G17 consumer |
 | width-one or no-capacity row serializes an arm instead of its exact disposition, or a finite-domain no-capacity row omits/unequally serializes either complete candidate relation | conflict/replay failure; vector and derivation identity fail |
 | zero nonmissing observations construct or select any token form, padding arm, physical profile, or grammar; omit the serialized zero; or fail exact missing-literal replay | derivation/vector identity failure; an applicable range remains `value_code_range_physical_rendering_unestablished` and no physical scalar result exists |
+| a missing image byte-equals an ordinary literal, a registered missing image is duplicated, or duplicate ordinary literal images carry unequal source values/meanings | `conflicting_source_numeric_format`; an ordinary nonmissing literal's overlap with the DFA alone is expressly excluded and terminates literal-first |
 | any observed nonmissing/nonliteral token with plus, misplaced minus, negative zero, a noncanonical magnitude not generated by an evaluated padding constructor, illegal space/tab, absent/repeated/malpositioned point, wrong precision, grouping, exponent, zoned/overpunched form, or non-ASCII byte that lies outside every closed candidate language | `unsupported_source_numeric_format`; only a separately satisfied earlier conflict predicate changes the row to `conflicting_source_numeric_format`; no scalar result |
 | an observed token is accepted only by the excluded zero-padding candidate, including a leading-zero magnitude such as `-0242` for -242 | `unsupported_source_numeric_format` under the zero-selected/excluded-arm predicate; it is not incomplete and authorizes no zero arm |
 | every remaining nonmissing/nonliteral token is individually admitted by at least one candidate language, but no single form covers the complete census | `conflicting_source_numeric_format`; mixed physical forms are complete contradictory evidence, not incomplete authority |
