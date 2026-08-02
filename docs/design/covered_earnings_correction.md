@@ -33399,3 +33399,4264 @@ After ratification but before that registration, steps 4–6 authorize only
 the separately reviewed source, authority, implementation, and proof-gated
 capture preparation stated above. They authorize no correction production
 evaluation, path switch, context run, label change, output, or publication.
+
+
+## 21. AMENDMENT SECTION — Amendment 7: closed-failure completion and consumer-boundary enforcement
+
+### 21.1 Pre-law empirical grounding
+
+This subsection records the completed empirical work that precedes and
+constrains every operative sentence below. It is evidence, not a prospective
+compiler shortcut. All document claims were read from the exact revision-8
+blob at commit 5d69788a35f3e415e841ecbe4a22acb843dab70c; all external-data claims
+were read with git show at the pinned identities below. No live-worktree
+document or mutable data path supplied an authority claim.
+
+#### 21.1.1 Frozen roots and canonical projection rule
+
+The immutable revision-8 prefix is the first 2,049,769 bytes of this file.
+It has Git blob fd7f5f48413da3713114befdc2f021768f81063d, mode 100644,
+and SHA-256
+ade1a757c0b29226e7ba12f13dbe9fed7192bc85ffd67b4081bd297107e6cf4c.
+The six census inputs at the same commit are:
+
+| Ordinal | Evidence path | Fields | Raw bytes | Git blob | Raw SHA-256 |
+|---:|---|---:|---:|---|---|
+| 1 | data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json | 3,868 | 4,628,883 | 7330949776439c2124aba2a6ffa280dbbf02e4af | 52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48 |
+| 2 | data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json | 1,838 | 2,203,624 | bbc2cba152cef1bf9c54c093d904ca7f329859f8 | 0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87 |
+| 3 | data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json | 15,745 | 21,115,064 | c1de0ce6cb6374cf67e58f6d8d9c231ed2648d6e | 109d7ecb4dd933fdcd2efaf572d9bbb8378bb8b054badccda1ac52c049afcedf |
+| 4 | data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json | 15,983 | 19,201,179 | 4cbbe89bcff24ab5f8179f1c3c295b3b3c71b436 | 549508cb31a26a81643339f9cda0824a8f44c9ffc5bac300d7647c34ba78c892 |
+| 5 | data/external/psid_codebook_field_evidence/ry2002_2014_modern_bc_de_v1.json | 33,154 | 45,941,875 | 15e3cc283688c211f69d8ead9f30c1dc47a782d5 | d56356b4a34b32489b5b2e1cc6c782479e910b9711eeff8b74d22d483d8880fe |
+| 6 | data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json | 19,011 | 28,227,120 | 754a4434c50b8b5bdcc8bb737b87a066e20338ac | d7018a633ec8127ab799d07db58f63d1582e5417c305c9c03d63b08c41803f78 |
+
+The §19.3.1 scope root is
+data/external/psid_codebook_inventory_adjudication_v1.json at commit
+b8e8e4f200b362a9661dbc6ef765852496608e49, parent
+044d2fc789052e89ea0849fa39fea9899317d97e, mode 100644, Git blob
+c956f5e0cdd63a9eefc0c1bde3824cd817950b39, 1,415,319 raw bytes, raw
+SHA-256
+df73026bcf649d12ecb606501d64780f41567b6dc09d7029f9191111cab09c62,
+and self-zeroed content SHA-256
+359c7edac8c0b331c1a4d2a77ad2945974fa033e50e104d866e48b39a45b5a84.
+
+For this subsection, K(S) means the array of every
+[interview_wave,raw_field_id] key in set S, retaining the §20.3.7 canonical
+six-artifact, interview-wave, and field_evidence-row order. Canonical JSON
+means UTF-8, sorted object keys, compact separators, ASCII escaping, no
+nonfinite number, and exactly one terminal LF. Every SHA-256 below is over
+that serialization unless an explicit vector order or complete source row is
+named. The empty key array is [] and hashes to
+37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570.
+
+#### 21.1.2 Exact closed-failure membership
+
+Let F be the union of the field_keys members in the following exact
+seven-row artifact. The fenced payload, including its one terminal LF, is
+21,034 bytes with SHA-256
+66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324.
+It is reproduced here so every later negative-census and intersection claim
+has a complete field list rather than examples.
+
+~~~json
+[{"derivation_status":"conflicting_source_numeric_format","field_keys":[[1970,"V1714"]],"resolution_reason":"conflict:overlapping_numeric_ranges"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[2019,"ER76782"],[2019,"ER76783"],[2019,"ER76788"],[2019,"ER76789"],[2019,"ER76842"],[2019,"ER76843"],[2019,"ER76848"],[2019,"ER76849"],[2019,"ER76927"],[2019,"ER76928"],[2019,"ER76933"],[2019,"ER76934"],[2019,"ER76987"],[2019,"ER76988"],[2019,"ER76993"],[2019,"ER76994"]],"resolution_reason":"character_raw_replay_unknown_token"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[1968,"V95"],[1968,"V189"],[1968,"V412"],[1968,"V413"],[1968,"V414"],[1968,"V415"],[1968,"V416"],[1968,"V417"],[1969,"V807"],[1969,"V809"],[1970,"V1496"],[1970,"V1498"],[1970,"V1506"],[1970,"V1619"],[1970,"V1620"],[1970,"V1621"],[1970,"V1622"],[1970,"V1623"],[1970,"V1624"],[1970,"V1625"],[1970,"V1626"],[1970,"V1627"],[1971,"V1816"],[1971,"V2208"],[1971,"V2210"],[1971,"V2331"],[1971,"V2332"],[1971,"V2333"],[1971,"V2334"],[1971,"V2336"],[1971,"V2339"],[1971,"V2340"],[1971,"V2341"],[1971,"V2342"],[1971,"V2343"],[1971,"V2344"],[1972,"V2406"],[1972,"V2834"],[1972,"V2836"],[1972,"V2960"],[1972,"V2961"],[1972,"V2962"],[1972,"V2963"],[1972,"V2965"],[1973,"V3006"],[1973,"V3251"],[1973,"V3304"],[1973,"V3305"],[1973,"V3306"],[1973,"V3307"],[1973,"V3309"],[1974,"V3406"],[1974,"V3673"],[1974,"V3724"],[1974,"V3725"],[1974,"V3726"],[1974,"V3727"],[1974,"V3729"],[1975,"V3806"],[1975,"V3934"],[1975,"V4151"],[1975,"V4225"],[1975,"V4226"],[1975,"V4227"],[1975,"V4228"],[1975,"V4230"],[1976,"V4306"],[1976,"V4702"],[1976,"V5107"],[1976,"V5108"],[1976,"V5109"],[1976,"V5110"],[1976,"V5112"],[1977,"V5206"],[1977,"V5666"],[1977,"V5667"],[1977,"V5668"],[1977,"V5669"],[1977,"V5671"],[1978,"V5706"],[1978,"V6167"],[1978,"V6213"],[1978,"V6214"],[1978,"V6215"],[1978,"V6216"],[1978,"V6218"],[1979,"V6306"],[1979,"V6469"],[1979,"V6806"],[1979,"V6807"],[1979,"V6808"],[1979,"V6809"],[1979,"V6811"],[1980,"V6906"],[1980,"V7074"],[1980,"V7452"],[1980,"V7453"],[1980,"V7454"],[1981,"V7506"],[1981,"V7665"],[1981,"V8104"],[1981,"V8105"],[1981,"V8106"],[1982,"V8206"],[1982,"V8728"],[1982,"V8729"],[1982,"V8730"],[1983,"V8806"],[1983,"V9415"],[1983,"V9416"],[1983,"V9417"],[1984,"V10006"],[1984,"V11061"],[1984,"V11062"],[1984,"V11063"],[1985,"V11106"],[1985,"V12422"],[1985,"V12423"],[1985,"V12424"],[1986,"V12506"],[1986,"V13662"],[1986,"V13663"],[1986,"V13664"],[1987,"V13706"],[1987,"V14709"],[1987,"V14710"],[1987,"V14711"],[1988,"V14806"],[1988,"V16183"],[1988,"V16184"],[1988,"V16185"],[1988,"V16186"],[1989,"V16306"],[1989,"V17561"],[1989,"V17562"],[1989,"V17563"],[1989,"V17564"],[1990,"V17706"],[1990,"V18915"],[1991,"V19006"],[1991,"V20215"],[1992,"V20306"],[1992,"V21521"],[1993,"V21605"]],"resolution_reason":"observed_token_outside_all_candidate_forms_or_semantics"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[1993,"V22506"],[1993,"V22545"],[1993,"V22552"],[1993,"V22585"],[1993,"V22611"],[1993,"V22672"],[1993,"V22711"],[1993,"V22718"],[1993,"V22751"],[1993,"V22777"],[1993,"V22859"],[1993,"V22898"],[1993,"V22905"],[1993,"V22964"],[1993,"V23025"],[1993,"V23064"],[1993,"V23071"],[1993,"V23104"],[1994,"ER3203"],[1995,"ER6203"],[1995,"ER6974"],[1996,"ER8320"],[1997,"ER11213"],[2001,"ER17429"],[2001,"ER17455"],[2001,"ER17684"],[2001,"ER17710"],[2001,"ER17972"],[2001,"ER17999"],[2001,"ER18025"],[2001,"ER18255"],[2003,"ER21246"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21464"],[2003,"ER21496"],[2003,"ER21528"],[2005,"ER25267"],[2005,"ER25525"],[2007,"ER36272"],[2007,"ER36498"],[2007,"ER36530"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53575"],[2013,"ER57889"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60590"],[2015,"ER65069"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72607"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78649"],[2021,"ER81519"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82641"]],"resolution_reason":"selected_space_literal_unrenderable"},{"derivation_status":"unsupported_source_numeric_format","field_keys":[[1971,"V2226"],[1981,"V7585"],[1982,"V8278"],[1983,"V8886"],[1984,"V10268"],[1984,"V10275"],[1985,"V11409"],[1986,"V12808"],[1987,"V13910"],[1987,"V13918"],[1987,"V14056"],[1987,"V14061"],[1987,"V14066"],[1988,"V14925"],[1988,"V14933"],[1988,"V15071"],[1988,"V15076"],[1988,"V15081"],[1989,"V16425"],[1989,"V16566"],[1989,"V16571"],[1989,"V16576"],[1989,"V16581"],[1989,"V17590"],[1989,"V17592"],[1989,"V17595"],[1989,"V17598"],[1989,"V17604"],[1990,"V17841"],[1990,"V17982"],[1990,"V17987"],[1990,"V17992"],[1990,"V17997"],[1991,"V19141"],[1991,"V19282"],[1991,"V19287"],[1991,"V19292"],[1991,"V19297"],[1992,"V20449"],[1992,"V20582"],[1992,"V20587"],[1992,"V20592"],[1992,"V20597"],[1993,"V21813"],[1993,"V21829"],[1993,"V21943"],[1993,"V22373"],[1994,"ER3095"],[1994,"ER3722"],[1994,"ER3726"],[1994,"ER3731"],[1994,"ER3736"],[1994,"ER3748"],[1994,"ER3779"],[1994,"ER4134"],[1994,"ER4150"],[1995,"ER6095"],[1995,"ER6990"],[1996,"ER8192"],[1996,"ER9225"],[1996,"ER9241"],[1997,"ER11087"],[1997,"ER12065"],[1997,"ER12073"],[1997,"ER12208"],[1999,"ER14479"],[1999,"ER14993"],[1999,"ER14997"],[1999,"ER15002"],[1999,"ER15026"],[1999,"ER15057"],[1999,"ER16456"],[1999,"ER16505"],[2001,"ER19189"],[2001,"ER19193"],[2001,"ER19198"],[2001,"ER19222"],[2001,"ER19253"],[2001,"ER20437"],[2001,"ER20453"],[2003,"ER21912"],[2003,"ER22336"],[2003,"ER22568"],[2003,"ER22617"],[2003,"ER22662"],[2003,"ER23702L4"],[2005,"ER26549"],[2005,"ER26598"],[2007,"ER36897"],[2007,"ER36925"],[2007,"ER36965"],[2007,"ER37335"],[2007,"ER37616"],[2007,"ER40915"],[2007,"ER40997"],[2007,"ER40999"],[2009,"ER42902"],[2009,"ER42916"],[2009,"ER42956"],[2009,"ER43607"],[2009,"ER43638"],[2009,"ER43652"],[2009,"ER43670"],[2009,"ER46673"],[2009,"ER46823"],[2009,"ER46960"],[2011,"ER48224"],[2011,"ER48278"],[2011,"ER48315"],[2011,"ER48883"],[2011,"ER48932"],[2011,"ER48997"],[2011,"ER49015"],[2011,"ER52231"],[2011,"ER52238"],[2011,"ER52358"],[2011,"ER52364"],[2013,"ER53904"],[2013,"ER53918"],[2013,"ER53972"],[2013,"ER54345"],[2013,"ER54682"],[2013,"ER54759"],[2013,"ER58032"],[2013,"ER58052"],[2013,"ER58120"],[2013,"ER58177"],[2015,"ER60963"],[2015,"ER60977"],[2015,"ER60991"],[2015,"ER61034"],[2015,"ER61421"],[2015,"ER61793"],[2015,"ER61870"],[2015,"ER65217"],[2015,"ER65245"],[2015,"ER65317"],[2015,"ER65321"],[2015,"ER65358"],[2015,"ER65374"],[2017,"ER67086"],[2017,"ER67441"],[2017,"ER67847"],[2017,"ER67924"],[2017,"ER71294"],[2017,"ER71322"],[2017,"ER71394"],[2017,"ER71398"],[2017,"ER71435"],[2017,"ER71451"],[2019,"ER73038"],[2019,"ER73052"],[2019,"ER73066"],[2019,"ER73109"],[2019,"ER73464"],[2019,"ER73875"],[2019,"ER73952"],[2019,"ER77316"],[2019,"ER77344"],[2019,"ER77416"],[2019,"ER77461"],[2019,"ER77477"],[2021,"ER79206"],[2021,"ER79586"],[2021,"ER79997"],[2021,"ER80074"],[2021,"ER81471"],[2021,"ER81643"],[2021,"ER81671"],[2021,"ER81743"],[2021,"ER81788"],[2021,"ER81804"],[2023,"ER83181"],[2023,"ER83555"],[2023,"ER84044"],[2023,"ER85328"],[2023,"ER85376"],[2023,"ER85497"],[2023,"ER85525"],[2023,"ER85597"],[2023,"ER85599"],[2023,"ER85601"],[2023,"ER85642"]],"resolution_reason":"selected_space_range_zero_renderable"},{"derivation_status":"incomplete_source_numeric_authority","field_keys":[[1988,"V15713"],[1988,"V15736"],[1989,"V16949"],[1990,"V18652"],[1990,"V18675"],[1991,"V19673"],[1992,"V21252"],[1994,"ER4031"],[1994,"ER4043"],[1994,"ER4045"],[1994,"ER4060"],[1994,"ER4074"],[1995,"ER6869"],[1995,"ER6871"],[1995,"ER6883"],[1995,"ER6885"],[1995,"ER6900"],[1995,"ER6908"],[1995,"ER6914"],[1995,"ER6916"],[1995,"ER6918"],[1996,"ER9122"],[1996,"ER9134"],[1996,"ER9151"],[1996,"ER9159"],[1996,"ER9163"],[1997,"ER12097"],[1997,"ER12099"],[1997,"ER12111"],[1997,"ER12128"],[1997,"ER12140"],[1999,"ER13418"],[1999,"ER13442"],[1999,"ER13906"],[1999,"ER14134"],[2001,"ER17454"],[2001,"ER17709"],[2001,"ER18024"],[2001,"ER18254"],[2001,"ER20008"],[2013,"ER53565"],[2015,"ER60579"],[2019,"ER72596"],[2021,"ER78639"],[2023,"ER82630"],[2023,"ER82631"]],"resolution_reason":"finite_no_arm_no_lawful_complete_disposition"},{"derivation_status":"incomplete_source_numeric_authority","field_keys":[[1971,"V1985"],[1971,"V2037"],[1971,"V2059"],[1971,"V2075"],[1972,"V2583"],[1972,"V2637"],[1972,"V2657"],[1972,"V2673"],[1973,"V3116"],[1973,"V3154"],[1973,"V3170"],[1973,"V3184"],[1973,"V3194"],[1974,"V3531"],[1974,"V3570"],[1974,"V3587"],[1974,"V3602"],[1975,"V3969"],[1975,"V4024"],[1975,"V4042"],[1975,"V4056"],[1976,"V4459"],[1976,"V4460"],[1976,"V4519"],[1976,"V4542"],[1976,"V4553"],[1976,"V4554"],[1976,"V4578"],[1976,"V4579"],[1976,"V4605"],[1976,"V4606"],[1976,"V4746"],[1976,"V4747"],[1976,"V4842"],[1976,"V4843"],[1976,"V4902"],[1976,"V4925"],[1976,"V4937"],[1976,"V4938"],[1976,"V4962"],[1976,"V4963"],[1976,"V4993"],[1977,"V5374"],[1977,"V5375"],[1977,"V5429"],[1977,"V5441"],[1977,"V5455"],[1977,"V5456"],[1977,"V5482"],[1977,"V5483"],[1977,"V5507"],[1977,"V5508"],[1978,"V5873"],[1978,"V5874"],[1978,"V5916"],[1978,"V5958"],[1978,"V5984"],[1978,"V5985"],[1978,"V6018"],[1978,"V6019"],[1978,"V6039"],[1978,"V6040"],[1979,"V6497"],[1979,"V6498"],[1979,"V6527"],[1979,"V6545"],[1979,"V6557"],[1979,"V6558"],[1979,"V6578"],[1979,"V6579"],[1979,"V6596"],[1979,"V6597"],[1979,"V6619"],[1979,"V6624"],[1979,"V6629"],[1979,"V6630"],[1979,"V6650"],[1979,"V6651"],[1980,"V7100"],[1980,"V7101"],[1980,"V7130"],[1980,"V7148"],[1980,"V7159"],[1980,"V7160"],[1980,"V7180"],[1980,"V7181"],[1980,"V7198"],[1980,"V7199"],[1980,"V7221"],[1980,"V7226"],[1980,"V7231"],[1980,"V7232"],[1980,"V7252"],[1980,"V7253"],[1981,"V7745"],[1981,"V7799"],[1981,"V7908"],[1981,"V7915"],[1982,"V8407"],[1982,"V8461"],[1982,"V8566"],[1982,"V8570"],[1983,"V9038"],[1983,"V9098"],[1983,"V9122"],[1983,"V9216"],[1983,"V9229"],[1983,"V9251"],[1983,"V9422"],[1983,"V9423"],[1984,"V10566"],[1984,"V10570"],[1984,"V10598"],[1984,"V10633"],[1984,"V10637"],[1984,"V10780"],[1984,"V10783"],[1984,"V10800"],[1984,"V10833"],[1984,"V10873"],[1984,"V11068"],[1984,"V11069"],[1985,"V11122"],[1985,"V11448"],[1985,"V11710"],[1985,"V11714"],[1985,"V11726"],[1985,"V11729"],[1985,"V11745"],[1985,"V11806"],[1985,"V11822"],[1985,"V11889"],[1985,"V11898"],[1985,"V11899"],[1985,"V11900"],[1985,"V12073"],[1985,"V12077"],[1985,"V12089"],[1985,"V12092"],[1985,"V12108"],[1985,"V12169"],[1985,"V12173"],[1985,"V12185"],[1985,"V12429"],[1985,"V12430"],[1986,"V12521"],[1986,"V12855"],[1986,"V13110"],[1986,"V13114"],[1986,"V13126"],[1986,"V13129"],[1986,"V13141"],[1986,"V13202"],[1986,"V13206"],[1986,"V13218"],[1986,"V13287"],[1986,"V13291"],[1986,"V13303"],[1986,"V13306"],[1986,"V13311"],[1986,"V13370"],[1986,"V13374"],[1986,"V13386"],[1986,"V13400"],[1986,"V13409"],[1986,"V13410"],[1986,"V13411"],[1986,"V13668"],[1986,"V13669"],[1987,"V13721"],[1987,"V13951"],[1987,"V13957"],[1987,"V13965"],[1987,"V14208"],[1987,"V14212"],[1987,"V14224"],[1987,"V14227"],[1987,"V14239"],[1987,"V14298"],[1987,"V14302"],[1987,"V14314"],[1987,"V14381"],[1987,"V14385"],[1987,"V14397"],[1987,"V14400"],[1987,"V14405"],[1987,"V14462"],[1987,"V14466"],[1987,"V14478"],[1987,"V14497"],[1987,"V14506"],[1987,"V14507"],[1987,"V14508"],[1987,"V14715"],[1988,"V14821"],[1988,"V15186"],[1988,"V15188"],[1988,"V15191"],[1988,"V15239"],[1988,"V15284"],[1988,"V15307"],[1988,"V15333"],[1988,"V15338"],[1988,"V15386"],[1988,"V15431"],[1988,"V15454"],[1988,"V15488"],[1988,"V15493"],[1988,"V15541"],[1988,"V15586"],[1988,"V15609"],[1988,"V15635"],[1988,"V15640"],[1988,"V15688"],[1988,"V15733"],[1988,"V15755"],[1988,"V15756"],[1988,"V15765"],[1988,"V16190"],[1988,"V16191"],[1989,"V16321"],[1989,"V16472"],[1989,"V16687"],[1989,"V16692"],[1989,"V16740"],[1989,"V16785"],[1989,"V16808"],[1989,"V16848"],[1989,"V16853"],[1989,"V16901"],[1989,"V16946"],[1989,"V16969"],[1989,"V17006"],[1989,"V17011"],[1989,"V17059"],[1989,"V17104"],[1989,"V17127"],[1989,"V17172"],[1989,"V17220"],[1989,"V17265"],[1989,"V17300"],[1989,"V17310"],[1989,"V17311"],[1989,"V17312"],[1989,"V17383"],[1989,"V17386"],[1989,"V17569"],[1990,"V17721"],[1990,"V17896"],[1990,"V18125"],[1990,"V18130"],[1990,"V18178"],[1990,"V18223"],[1990,"V18246"],[1990,"V18272"],[1990,"V18277"],[1990,"V18325"],[1990,"V18370"],[1990,"V18427"],[1990,"V18432"],[1990,"V18480"],[1990,"V18525"],[1990,"V18548"],[1990,"V18574"],[1990,"V18579"],[1990,"V18627"],[1990,"V18672"],[1990,"V18694"],[1990,"V18695"],[1990,"V18704"],[1990,"V18714"],[1990,"V18715"],[1990,"V18716"],[1991,"V19021"],[1991,"V19188"],[1991,"V19425"],[1991,"V19430"],[1991,"V19478"],[1991,"V19523"],[1991,"V19546"],[1991,"V19572"],[1991,"V19577"],[1991,"V19625"],[1991,"V19670"],[1991,"V19693"],[1991,"V19727"],[1991,"V19732"],[1991,"V19780"],[1991,"V19825"],[1991,"V19848"],[1991,"V19874"],[1991,"V19879"],[1991,"V19927"],[1991,"V19972"],[1991,"V20004"],[1991,"V20014"],[1991,"V20015"],[1991,"V20016"],[1992,"V20321"],[1992,"V20488"],[1992,"V20725"],[1992,"V20730"],[1992,"V20778"],[1992,"V20823"],[1992,"V20846"],[1992,"V20872"],[1992,"V20877"],[1992,"V20925"],[1992,"V20970"],[1992,"V20992"],[1992,"V20993"],[1992,"V21027"],[1992,"V21032"],[1992,"V21080"],[1992,"V21125"],[1992,"V21148"],[1992,"V21174"],[1992,"V21179"],[1992,"V21227"],[1992,"V21272"],[1992,"V21304"],[1992,"V21314"],[1992,"V21315"],[1992,"V21316"],[1993,"V22499"],[1993,"V22550"],[1993,"V22607"],[1993,"V22633"],[1993,"V22665"],[1993,"V22716"],[1993,"V22773"],[1993,"V22799"],[1993,"V22852"],[1993,"V22903"],[1993,"V22960"],[1993,"V22986"],[1993,"V23018"],[1993,"V23069"],[1993,"V23126"],[1993,"V23164"],[1993,"V23173"],[1993,"V23174"],[1993,"V23175"],[1993,"V23339"],[1993,"V23340"],[1994,"ER2161"],[1994,"ER2250"],[1994,"ER2272"],[1994,"ER2294"],[1994,"ER2315"],[1994,"ER2316"],[1994,"ER2406"],[1994,"ER2495"],[1994,"ER2517"],[1994,"ER2601"],[1994,"ER2655"],[1994,"ER2744"],[1994,"ER2766"],[1994,"ER2787"],[1994,"ER2788"],[1994,"ER2900"],[1994,"ER2988"],[1994,"ER3010"],[1994,"ER3071"],[1994,"ER3072"],[1994,"ER3073"],[1994,"ER4079"],[1994,"ER4080"],[1994,"ER4081"],[1994,"ER4082"],[1994,"ER4083"],[1995,"ER5160"],[1995,"ER5249"],[1995,"ER5271"],[1995,"ER5293"],[1995,"ER5315"],[1995,"ER5405"],[1995,"ER5494"],[1995,"ER5516"],[1995,"ER5522"],[1995,"ER5537"],[1995,"ER5538"],[1995,"ER5654"],[1995,"ER5743"],[1995,"ER5765"],[1995,"ER5786"],[1995,"ER5787"],[1995,"ER5899"],[1995,"ER5987"],[1995,"ER5993"],[1995,"ER6009"],[1995,"ER6031"],[1995,"ER6053"],[1995,"ER6710"],[1995,"ER6711"],[1995,"ER6712"],[1995,"ER6713"],[1995,"ER6714"],[1995,"ER6919"],[1995,"ER6920"],[1995,"ER6921"],[1995,"ER6922"],[1995,"ER6923"],[1996,"ER7256"],[1996,"ER7345"],[1996,"ER7361"],[1996,"ER7362"],[1996,"ER7363"],[1996,"ER7367"],[1996,"ER7381"],[1996,"ER7389"],[1996,"ER7410"],[1996,"ER7411"],[1996,"ER7501"],[1996,"ER7585"],[1996,"ER7586"],[1996,"ER7590"],[1996,"ER7602"],[1996,"ER7611"],[1996,"ER7612"],[1996,"ER7750"],[1996,"ER7839"],[1996,"ER7861"],[1996,"ER7883"],[1996,"ER7995"],[1996,"ER8084"],[1996,"ER8828"],[1996,"ER8829"],[1996,"ER8830"],[1996,"ER9170"],[1996,"ER9171"],[1996,"ER9172"],[1996,"ER9173"],[1996,"ER9174"],[1997,"ER10007"],[1997,"ER10179"],[1997,"ER10257"],[1997,"ER10280"],[1997,"ER10302"],[1997,"ER10416"],[1997,"ER10496"],[1997,"ER10502"],[1997,"ER10517"],[1997,"ER10518"],[1997,"ER10661"],[1997,"ER10739"],[1997,"ER10762"],[1997,"ER10898"],[1997,"ER10978"],[1997,"ER11710"],[1997,"ER11711"],[1997,"ER11712"],[1997,"ER11713"],[1997,"ER11714"],[1997,"ER12147"],[1997,"ER12148"],[1997,"ER12149"],[1997,"ER12150"],[1999,"ER13008"],[1999,"ER13101"],[1999,"ER13131"],[1999,"ER13161"],[1999,"ER13309"],[1999,"ER13390"],[1999,"ER13415"],[1999,"ER13439"],[1999,"ER13462"],[1999,"ER13463"],[1999,"ER13562"],[1999,"ER13643"],[1999,"ER13667"],[1999,"ER13691"],[1999,"ER13714"],[1999,"ER13715"],[1999,"ER13821"],[1999,"ER13902"],[1999,"ER13927"],[1999,"ER14074"],[1999,"ER14155"],[1999,"ER14350"],[1999,"ER14363"],[1999,"ER14376"],[1999,"ER14389"],[1999,"ER14978"],[1999,"ER14979"],[1999,"ER14980"],[1999,"ER14981"],[1999,"ER14982"],[1999,"ER15150"],[1999,"ER15776"],[1999,"ER15777"],[2001,"ER17011"],[2001,"ER17112"],[2001,"ER17142"],[2001,"ER17172"],[2001,"ER17320"],[2001,"ER17424"],[2001,"ER17451"],[2001,"ER17476"],[2001,"ER17602"],[2001,"ER17706"],[2001,"ER17732"],[2001,"ER17890"],[2001,"ER17994"],[2001,"ER18021"],[2001,"ER18047"],[2001,"ER18173"],[2001,"ER18277"],[2001,"ER18490"],[2001,"ER18504"],[2001,"ER18518"],[2001,"ER18532"],[2001,"ER19174"],[2001,"ER19175"],[2001,"ER19176"],[2001,"ER19177"],[2001,"ER19178"],[2003,"ER21014"],[2003,"ER21119"],[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21252"],[2003,"ER21438"],[2003,"ER21470"],[2003,"ER21502"],[2003,"ER21751"],[2003,"ER21780"],[2003,"ER21809"],[2003,"ER21858"],[2003,"ER21872"],[2003,"ER21886"],[2003,"ER21900"],[2003,"ER21914"],[2003,"ER22539"],[2003,"ER22540"],[2003,"ER22541"],[2003,"ER22542"],[2003,"ER22543"],[2003,"ER24153"],[2003,"ER24154"],[2005,"ER25014"],[2005,"ER25100"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25710"],[2005,"ER25738"],[2005,"ER25766"],[2005,"ER25839"],[2005,"ER25853"],[2005,"ER25867"],[2005,"ER25881"],[2005,"ER26520"],[2005,"ER26521"],[2005,"ER26522"],[2005,"ER26523"],[2005,"ER26524"],[2005,"ER28052"],[2005,"ER28053"],[2007,"ER36014"],[2007,"ER36105"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36504"],[2007,"ER36728"],[2007,"ER36756"],[2007,"ER36784"],[2007,"ER36857"],[2007,"ER36871"],[2007,"ER36885"],[2007,"ER36899"],[2007,"ER36913"],[2007,"ER37538"],[2007,"ER37539"],[2007,"ER37540"],[2007,"ER37541"],[2007,"ER37542"],[2007,"ER38344"],[2007,"ER38662"],[2007,"ER38980"],[2007,"ER39441"],[2007,"ER39759"],[2007,"ER40077"],[2007,"ER41042"],[2007,"ER41043"],[2009,"ER42014"],[2009,"ER42134"],[2009,"ER42734"],[2009,"ER42757"],[2009,"ER42780"],[2009,"ER42848"],[2009,"ER42862"],[2009,"ER42876"],[2009,"ER42890"],[2009,"ER42904"],[2009,"ER43529"],[2009,"ER43530"],[2009,"ER43531"],[2009,"ER43532"],[2009,"ER43533"],[2009,"ER46986"],[2009,"ER46987"],[2011,"ER47314"],[2011,"ER47442"],[2011,"ER48050"],[2011,"ER48075"],[2011,"ER48100"],[2011,"ER48170"],[2011,"ER48184"],[2011,"ER48198"],[2011,"ER48212"],[2011,"ER48226"],[2011,"ER48854"],[2011,"ER48855"],[2011,"ER48856"],[2011,"ER48857"],[2011,"ER48858"],[2011,"ER52410"],[2011,"ER52411"],[2013,"ER53014"],[2013,"ER53142"],[2013,"ER53747"],[2013,"ER53771"],[2013,"ER53795"],[2013,"ER53864"],[2013,"ER53878"],[2013,"ER53892"],[2013,"ER53906"],[2013,"ER54597"],[2013,"ER54598"],[2013,"ER54599"],[2013,"ER54600"],[2013,"ER54601"],[2013,"ER57557"],[2013,"ER57609"],[2013,"ER57611"],[2013,"ER57614"],[2013,"ER57667"],[2013,"ER57719"],[2013,"ER57721"],[2013,"ER57724"],[2013,"ER58228"],[2013,"ER58229"],[2015,"ER60014"],[2015,"ER60084"],[2015,"ER60157"],[2015,"ER60806"],[2015,"ER60830"],[2015,"ER60854"],[2015,"ER60923"],[2015,"ER60937"],[2015,"ER60951"],[2015,"ER60965"],[2015,"ER60979"],[2015,"ER61708"],[2015,"ER61709"],[2015,"ER61710"],[2015,"ER61711"],[2015,"ER61712"],[2015,"ER64745"],[2015,"ER64881"],[2015,"ER65464"],[2015,"ER65465"],[2017,"ER66158"],[2017,"ER66854"],[2017,"ER66878"],[2017,"ER66902"],[2017,"ER66975"],[2017,"ER66989"],[2017,"ER67003"],[2017,"ER67017"],[2017,"ER67031"],[2017,"ER67761"],[2017,"ER67762"],[2017,"ER67763"],[2017,"ER67764"],[2017,"ER67765"],[2017,"ER70815"],[2017,"ER70986"],[2017,"ER70991"],[2017,"ER70996"],[2017,"ER71002"],[2017,"ER71025"],[2017,"ER71030"],[2017,"ER71543"],[2017,"ER71544"],[2019,"ER72014"],[2019,"ER72158"],[2019,"ER72858"],[2019,"ER72882"],[2019,"ER72906"],[2019,"ER72998"],[2019,"ER73012"],[2019,"ER73026"],[2019,"ER73040"],[2019,"ER73054"],[2019,"ER73784"],[2019,"ER73785"],[2019,"ER73786"],[2019,"ER73787"],[2019,"ER73788"],[2019,"ER76971"],[2019,"ER77041"],[2019,"ER77047"],[2019,"ER77052"],[2019,"ER77604"],[2019,"ER77605"],[2021,"ER78014"],[2021,"ER78160"],[2021,"ER78678"],[2021,"ER78935"],[2021,"ER78959"],[2021,"ER78983"],[2021,"ER79075"],[2021,"ER79089"],[2021,"ER79103"],[2021,"ER79117"],[2021,"ER79131"],[2021,"ER79905"],[2021,"ER79906"],[2021,"ER79907"],[2021,"ER79908"],[2021,"ER79909"],[2021,"ER81046"],[2021,"ER81072"],[2021,"ER81075"],[2021,"ER81087"],[2021,"ER81092"],[2021,"ER81093"],[2021,"ER81173"],[2021,"ER81220"],[2021,"ER81247"],[2021,"ER81252"],[2021,"ER81931"],[2021,"ER81932"],[2023,"ER82014"],[2023,"ER82143"],[2023,"ER82928"],[2023,"ER82952"],[2023,"ER82976"],[2023,"ER83050"],[2023,"ER83064"],[2023,"ER83078"],[2023,"ER83092"],[2023,"ER83106"],[2023,"ER83874"],[2023,"ER83875"],[2023,"ER83876"],[2023,"ER83877"],[2023,"ER83878"],[2023,"ER85049"],[2023,"ER85050"],[2023,"ER85052"],[2023,"ER85064"],[2023,"ER85070"],[2023,"ER85150"],[2023,"ER85176"],[2023,"ER85191"],[2023,"ER85197"],[2023,"ER85785"],[2023,"ER85786"]],"resolution_reason":"literal_only_zero_diagnostic_padding_capacity"}]
+~~~
+
+The seven rows are mutually exclusive and their union has 1,235 keys.
+K(F) is 20,074 bytes and hashes to
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed.
+The corresponding canonical
+[interview_wave,raw_field_id,derivation_status] array is 66,160 bytes and
+hashes to
+1c83a26cad466354a0738ac1d4b0a4b6c282ccc447d410b5ae324808e79fe2ae.
+Its terminal partition is exactly one conflict with digest
+a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1,
+421 unsupported with digest
+fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010,
+and 813 incomplete with digest
+93cf0ce814f22883c6e249c25f6375893bfc3a213cc5ebb79243ce2b8be9086e.
+
+This is the ratified final classifier, not the earlier shorthand in the
+Amendment-7 problem statement. In particular, the final §20.3.7 rerun
+retains 78 selected-space literal-unrenderable rows, including ER6974, and
+183 selected-space range-zero-renderable rows. It reallocated 77 rows that
+were already unsupported between diagnostic reasons without moving any row
+between terminals. The immutable total remains 421 unsupported; no law below
+uses the obsolete one-plus-260 diagnostic split.
+
+#### 21.1.3 Directly named and established-fact domains
+
+The eleven A6 vectors, in A6-R01 through A6-R11 order, have exact field array:
+
+~~~json
+[[1968,"V93"],[1979,"V6302"],[1988,"V15133"],[1968,"V210"],[1968,"V76"],[1979,"V6363"],[1969,"V945"],[1968,"V97"],[1985,"V11811"],[1968,"V117"],[1985,"V11812"]]
+~~~
+
+With its terminal LF it hashes to
+0542d9500bd9d6a2b3a0ae28efe80e1348503c87a710ab2dcce964f3f74dd003.
+Its intersection with F is exactly [] and therefore has the empty-array
+digest above.
+
+A token-boundary scan of every revision-8 byte from the §16 heading through
+the end of §20, restricted to identifiers that resolve uniquely in the
+89,599-key denominator and then returned in canonical denominator order,
+finds 693 distinct raw fields. V3 and V4 are excluded after inspection
+because those two matched literals denote schema-version aliases rather than
+PSID raw fields. The 693-key domain hashes to
+d1ffcfe70a54c8656a9623bc57a6160f18fb35b1887f632caff9053f030897ce.
+Its exact intersection is:
+
+~~~json
+[[1976,"V4902"],[1995,"ER6974"]]
+~~~
+
+That two-key array hashes to
+55c3acaea3e9f746b053f2ab824b99bee4baaee80e3cc4e26bf4eeb90e30199d.
+V4902 is incomplete under
+literal_only_zero_diagnostic_padding_capacity; ER6974 is unsupported under
+selected_space_literal_unrenderable.
+
+The union of all raw_field_ids attached to all era_facts in the six frozen
+evidence artifacts has 3,375 keys, domain SHA-256
+e5b6cf54d6f2f45e01f77e2fa390a2845514d7b72a8799bb773986c5dc64df51,
+and an 81-key intersection with F—zero conflict, 53 unsupported, and 28
+incomplete—SHA-256
+09e4b9827f73cdae4f1f67f58b956c4a69fdbbaa40a1e1f9a196175426f3d865.
+The exact intersection is:
+
+~~~json
+[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"],[1994,"ER4134"],[1995,"ER6974"],[1996,"ER9225"],[1999,"ER16505"],[2001,"ER20437"],[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21246"],[2003,"ER21252"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21438"],[2003,"ER21464"],[2003,"ER21470"],[2003,"ER21496"],[2003,"ER21502"],[2003,"ER21528"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25267"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25525"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36272"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36498"],[2007,"ER36504"],[2007,"ER36530"],[2007,"ER40915"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2009,"ER46823"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2011,"ER52231"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53565"],[2013,"ER53575"],[2013,"ER58032"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60579"],[2015,"ER60590"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72596"],[2019,"ER72607"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78639"],[2021,"ER78649"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82630"],[2023,"ER82631"],[2023,"ER82641"]]
+~~~
+
+The family-level exact dispositions are:
+
+| fact_id prefix | Domain count | Domain SHA-256 | F count | Exact F-list digest |
+|---|---:|---|---:|---|
+| early-industry | 16 | 69ea407baa34c3fa821c53539d289362c9f8ba237ae9692966770ab9310d4479 | 0 | empty-array digest |
+| early-occupation | 16 | 698e045d2fe31985a4e85217097213e5c083609a37557a1c8bd149864782ff98 | 0 | empty-array digest |
+| early-role-total | 16 | b3fe780f9a6414cc56637db9a559f07c58ddef8d65503516114482b1c7b15a03 | 0 | empty-array digest |
+| early-secondary-occupation | 8 | ba19d4838fed56046846b22a92ba1d09f483385e60e733552284dd31568cc56c | 0 | empty-array digest |
+| er-role-total | 258 | e10e861b59199917f85d32523743fa91b8140bb25ba2ed1429771e20798f5762 | 9 | 5a358e373403e8f5759731f96101f9f85846b1a62773b4763321c611426eb1ec |
+| modern-job-context | 2,868 | 19bc12d7c659ff2f17cc5d3fa135d8bf6f2e5a8d0e305fc14125830216ab839b | 68 | cf70f39a06a3240ffe92d65131ece1994a40fc9d20c7d7d89b3bad527d6004d0 |
+| pre-2013-enrollment-like | 72 | 11914e5121c1adad5dc60753c129c347e4d57c394f1c16d5d562d00212abe00d | 0 | empty-array digest |
+| pre-er-role-total | 30 | 943c16dda913395af192932284b78f7a2677a0f54dc96a23b062322fbb0d27e3 | 0 | empty-array digest |
+| pre-er-split-rule | 8 | 1a02aaa3df72de1ba2ca7e01b47c796b9b9ddd1e8cc5c62df75bb79e53034d0b | 0 | empty-array digest |
+| regular-school | 52 | 5c59ab2206257b51e7bd82717929314a92660e625bdd632ccb74b3a5193273b9 | 0 | empty-array digest |
+| secondary-job-context | 24 | f989b4f0f481e3e7e5e58abdb27b203b4cdf6c3657177578aa6eba9773e593f4 | 4 | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+| spouse-1976-context | 5 | 121e13abca5cb93e86a823742eaa011258fd9696d524705700102c8ff1285eaf | 0 | empty-array digest |
+| spouse-seam-amount | 4 | 2c97a069e2fdd7eb6b122fa07c45646a4e2827cd3389ec196d037c4b6501160f | 0 | empty-array digest |
+
+The nine er-role-total failures are the nine such keys in the displayed
+81-key array and are all unsupported. The 68 modern-job-context failures are
+its modern-job-context keys, 44 unsupported and 24 incomplete. The four
+secondary-job-context failures are all incomplete and are:
+
+~~~json
+[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]]
+~~~
+
+Those three filtered lists have the respective digests displayed in the
+table; all ten other family lists are exactly [].
+
+#### 21.1.4 Residual-family and V-B evidentiary domains
+
+For each Class-B residual, its presently defined raw-field search domain is
+the complete corresponding evidence artifact. The seven Class-A rows use
+the same six domains; the two early Class-A rows both use the early domain.
+Thus every Class-A and Class-B intersection list is exactly the filter of
+the complete §21.1.2 field_keys artifact by the named evidence path:
+
+| Era scope | Domain count | Domain SHA-256 | F count (conflict/unsupported/incomplete) | Exact F-list digest |
+|---|---:|---|---:|---|
+| early, Class-B index 0, Class-A indices 1 and 2, and resolved V-B5 index 3 | 3,868 | e4cd6e1741d1e73d27ac15987ba5b7f7601ae6b882353f600c24655086950275 | 89 (1/67/21) | 4573273193287c74c639bf723a70301a8feddb5a47b79742bf4e9b391d9a32b8 |
+| spouse seam, Class-B index 4 and Class-A index 5 | 1,838 | 0e7a6c49ea56e420c9fe3a4e42392b7d147d162e0c209cb30bfbe4cc11ba26cf | 61 (0/20/41) | 9a4df0f550edf054817cf6a1319634fedbb8ae81f090c3e24f083e5877f6aa25 |
+| pre-ER, Class-B index 10 and Class-A index 11 | 15,745 | 59d414a7f5eb538b605efe6bd2f69eb014445d34d6dd48af60bec0d15221e5bc | 412 (0/122/290) | 0e16a4477f8d0814cb078e950192cf8d050439001aa1c9e94ec952812b24d98c |
+| ER transition, Class-B index 13 and Class-A index 14 | 15,983 | c5b6592e02a455b73e8a50db044d1fa7d6aeba2cba0dc20116b260778acafc25 | 251 (0/46/205) | 4438faec2a37ee83efff4e6e6ae4e7353518b5bc8f9dbed385bcc867771c28b0 |
+| modern, Class-B index 17 and Class-A index 18 | 33,154 | 727ece2e55a38b83006f864da01f0f20a2fa6b9716ab68bf06dc8f02681b5e6d | 244 (0/90/154) | fd92b240ec1917e49ebe9f5e3adb6d29cf25670c3337594af62d1888d87b4a01 |
+| exclusion, Class-B index 25 and Class-A index 26 | 19,011 | 1e744432e5c4d5948a1b407fa4e4c0893fc9c44b042e172784219245573c4206 | 178 (0/76/102) | 6cb15f9d04760390e4473ee0e62675f7d47dd58ff3dd420db5e484c9f8ec1ca4 |
+
+The scope root has six rows with an explicit finite raw-field projection.
+Their exact domain arrays, preserving canonical denominator order, and
+intersections are:
+
+| Source index and residual suffix | Exact domain | Domain SHA-256 | Exact F intersection | F SHA-256 |
+|---|---|---|---|---|
+| 6, V5289_V5788_concept | [[1977,"V5289"],[1978,"V5788"]] | 8ee60051edc0e80ed2a79946e95be01f460d08d61fa6673ba8e205c98b41dc75 | [] | empty-array digest |
+| 7, 1977_1978_spouse_current_job_context_absence established comparator fields | [[1976,"V4844"],[1976,"V4845"],[1976,"V4850"],[1976,"V4855"],[1976,"V4858"]] | 121e13abca5cb93e86a823742eaa011258fd9696d524705700102c8ff1285eaf | [] | empty-array digest |
+| 8, government_level_absence | [[1976,"V4845"],[1976,"V4850"]] | eef076b3b0f11c13afcd5744f8baefdbe602ae7f7d9f6181460596441d40624d | [] | empty-array digest |
+| 9, secondary_job_attachment_and_absence | the 24-key secondary-job-context array defined above | f989b4f0f481e3e7e5e58abdb27b203b4cdf6c3657177578aa6eba9773e593f4 | [[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]] | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+| 12, early_split_and_inclusion | [[1979,"V6398"],[1980,"V6988"],[1981,"V7580"],[1982,"V8273"],[1982,"V8690"],[1983,"V8881"]] | bb0ccb5baaff2b3a5f1b1efe0fd69f8333752f078b54e714f2cd8c271c843e95 | [] | empty-array digest |
+| 21, role_farm_labor_allocation | [[2003,"ER21855"],[2003,"ER21870"],[2003,"ER24109"],[2003,"ER24111"]] | 591e9cd4704e5c72c2c508184e8fa90972614b0e754810050da45a57cc6d48f5 | [] | empty-array digest |
+
+The remaining Class-C rows define official-inventory slot, purpose,
+chronology, allocation, or reconciliation domains over named wave sets.
+They do not define a raw-field projection before Q5 and an official
+inventory exist. Their raw-field intersection is therefore not an empty set;
+it is presently uninstantiated. Treating it as [] would silently convert an
+unknown future positive join into structural absence. Section 21.3 instead
+places the closed guard on every eventual positive raw-field reference.
+
+Resolving the established_fact_ids in the three pinned verdict rows through
+the six frozen era_facts produces these complete evidentiary raw-field
+domains:
+
+| Verdict row | Domain count | Domain SHA-256 | Exact F intersection | F SHA-256 |
+|---|---:|---|---|---|
+| V-B5 | 40 | 9e9a8d3d15b4ccf0a1f3f80c4844a7ed7dd69dc474d311e8df01fa707dbb9cc1 | [] | empty-array digest |
+| V-B6 | 33 | 6f61124cb3a8f95cd4baf4a4efe5cc288b47e62af381cca8996651d3e86bb3fd | [[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]] | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+| V-B8 | 52 | 5c59ab2206257b51e7bd82717929314a92660e625bdd632ccb74b3a5193273b9 | [] | empty-array digest |
+| union | 125 | 882063a30bab66b3f0740305f254581cfcd42038b2161ac278ea16bbdec43378 | same four-key array | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
+
+Reverification under the commitment/derivation layer law in §21.4.2 has a
+decisive result: **a layer-2 derivation basis for V4902 is physical.** The
+guarded-retraction fallback is therefore mandatory. The forcing input is
+root 5, `corpus_wide_cooccurrence_sweep`: its page-number arrays,
+page-reset occurrence ordinals, same-page intersection, sole-candidate
+classification, and dependent count are layout-derived layer-2 content.
+Changing only authenticated document 0068, decoded page 519, UTF-8 byte
+`[3775:3776]` from `20` (ASCII space) to `30` (`0`) leaves the `V4902`
+token at `[3771:3775]` unchanged but makes the target digit-adjacent.
+V4902 is the sole extra-job target on that page, so the required document-0068
+candidate row loses page 519 and the complete §18.2 18-row candidate array
+changes. The page is 4,070 bytes with SHA-256
+`00e6e31d5c40032eaac220ac4fea8ce986445a0db956c422cd00ec53763b1da6`.
+That one-datum nonconstancy reaches an actual member of the historical result
+and is enough to bar a favorable result.
+
+This is not caused by the page or artifact hashes. Treating the complete
+10,887-byte projection, a whole page, or the 2,203,624-byte spouse-seam
+artifact as one indivisible derived node remains forbidden. The hashes are
+lawful layer-1 commitments even when their preimages include Count/% or
+other physical cells. The defect is that member 5 affirmatively derives
+page-positioned content at layer 2.
+
+Only V4902 occurs directly in §18.2: its registered page-180 semantic field
+membership and meaning establish descriptor context for the V4901–V4907
+block. V4519, V5429, and V5916 enter through the §19.3.1
+verdicts[1].established_fact_ids reference stream, the corresponding
+spouse-seam era_fact, residual 9's searched-field domain, and the
+§13.2/§18.3 semantic concept-and-code-map obligation. Their exact layer-2
+semantic bases are:
+
+| Reference | Exact frozen selectors | Complete era_fact row SHA-256, layer 1 only | Direct §18.2 semantic basis | Layer-2 disposition |
+|---|---|---|---|---|
+| [1976,"V4519"] | /era_facts/9 and /field_evidence/220 | e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46 | none; preserved head/reference-person secondary-job occupation meaning for reference year 1975 | semantic-only |
+| [1976,"V4902"] | /era_facts/15 and /field_evidence/609 | f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a | the direct field-heading/description and opaque code-lexeme/meaning projection is semantic-only; root 5 separately reads page layout for this reference | **physical layer-2 basis; fallback-forcing** |
+| [1977,"V5429"] | /era_facts/21 and /field_evidence/1055 | 683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d | none; preserved head/reference-person secondary-job occupation meaning for reference year 1976 | semantic-only |
+| [1978,"V5916"] | /era_facts/27 and /field_evidence/1529 | b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c | none; preserved head/reference-person secondary-job occupation meaning for reference year 1977 | semantic-only |
+
+The four whole-era_fact hashes and the complete spouse-seam artifact's Git
+blob, 2,203,624-byte length, raw SHA-256, and content SHA-256 are layer-1
+commitments. They may cover physical coordinates, declared formats,
+Count/% cells, missing-code classifications, and derived block hashes. They
+assert only that the committed bytes existed; those commitments do not cause
+the fallback. The four semantic rows separately select these exact
+source portions: identity values deep-equal era_fact and field-evidence
+members 1, 2, and 3; fact meaning values select only the named era_fact keys;
+exact_codebook_short_label selects field-evidence member 4;
+full_source_description selects member 10; and every semantic_code_map entry
+selects only members 2 and 3 of the corresponding member-11 entry. Members
+5 through 9, each code-map entry's members 0 and 1, members 12 through 14,
+and member 17 are excluded from every layer-2 basis.
+
+For V4902 specifically, code 20's layer-2 basis is exactly
+/field_evidence/609/11/11/2 and /3, and code 31's is exactly
+/field_evidence/609/11/12/2 and /3. The physical count and percentage
+"5" and ".09" at /field_evidence/609/11/11/0 and /1, declared format at
+/5, layout at /6 and /7, and width at /8 remain outside the basis. The same
+member-position rule applies to all 28 entries of each of the four rows.
+raw_value_or_range remains an opaque displayed codebook lexeme; applying it
+to a record would create another forbidden executable layer-2 dependency.
+These four rows do not cure the independent member-5 layout dependency.
+
+For a machine-reconstructable boundary witness, the four rows above, in
+displayed order, project exactly these 19 members in this semantic schema
+order:
+
+~~~text
+era_fact_pointer
+field_evidence_pointer
+interview_wave
+raw_field_id
+earnings_reference_year
+fact_id
+fact_class
+role
+job_slot
+field_purpose
+information_date_basis
+reference_periodicity
+job_match_timing
+reporting_unit
+annual_role_total_attachment_status
+exact_codebook_short_label
+full_source_description
+semantic_code_map
+fact_source_status
+~~~
+
+fact_source_status exact-copies the selected era_fact's status. Under the
+§21.1.1 canonical serialization, the four complete row digests are,
+respectively,
+aea1e7808740a2130edd4582af2b7890e2154171e6d8c96fb52de07e2c586837,
+79f6fb1ca38e7f6556bcd216c6e450cab109265828bd2689fa1413be15b64cf3,
+e265107049464fcf7f7cd22961eed40b9215e178dc0782ce28c8c2c5f6e57ba3,
+and
+7a3a9ac9cbce33fb32af0f0e0b65310a427b393bf57eaa917579168013a2c786.
+The complete four-row array is 16,933 bytes including its terminal LF and
+has SHA-256
+a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75.
+
+The 13 serialized keys form the exact eleven-member input grouping below:
+the first group contains the three leading scalar keys, followed by the ten
+remaining top-level members in order. A mixed serialized group is decomposed
+into separate nodes; it never receives a mixed layer label.
+
+| Eleven-member input root | Layer classification | Exact layer-2 derivation basis, when any | Four-field proof |
+|---|---|---|---|
+| 0. schema_version, claim_id, source_commit | schema_version and claim_id are layer-2 law literals; source_commit is a layer-1 locator | the exact ratified schema-name and V-B6 claim literals only | no field content |
+| 1. ordered_source_artifact_identities | layer 1 only | none | paths, blob OIDs, and raw/content hashes may commit mixed bytes without reading them |
+| 2. ordered_existing_extraction_locator_rows | locator/pointer/row/range hashes are layer 1; separately reconstructed passage extractions are layer 2 | only the questionnaire/codebook semantic statement spans identified by the eight locators | no raw record, format, Count/%, profile, grammar, parsed value, or executable map |
+| 3. ordered_derived_registered_codebook_page_rows | all six document/page/row/range/page-text hash rows are layer 1; six semantic span extractions are layer 2 | only the position-typed spans enumerated below, plus each interview wave obtained by exact equality against that document's committed registered filename-to-wave row | complete page hashes may cover mixed physical text, but no layer-2 basis contains it |
+| 4. closure_projection | the pointer/hash object is layer 1; pointed absence/extraction/closure/family semantic statements are layer 2 | the exact source-allocation absence and historical family-disposition statements at the ten pointed rows | row hashes are not read as proxies for row content |
+| 5. corpus_wide_cooccurrence_sweep | document, row, full-file, page-text, serialized-row, classifier-specification, and candidate-enumeration-specification commitments are layer 1; page arrays, candidate classification/count, same-page intersection, sole-candidate disposition, and formula-candidate count are layer 2 | committed raw target-token occurrences and the exact committed classifier/enumerator specifications are read to classify page boundaries, whitespace/line structure, page-reset order, and page grouping | **physical for V4902**: the document-0068 ASCII-space byte `[3775:3776]` witness changes the required candidate page array with every semantic token byte fixed; the grammar/executable specification bases are also expressly physical |
+| 6. established_findings | layer 2 | the four historical findings read roots 2–5, including member 5's sole-candidate and zero-count conclusions | inherits the forbidden V4902 layout basis; the historical findings cannot be freshly accepted |
+| 7. expressly_not_established_or_used | layer 2 | closure absence statements plus member 5's zero formula-candidate conclusion | inherits the forbidden V4902 layout basis; the historical nonclaim cannot be freshly accepted |
+| 8. reader_seam_consequence | layer 2 | established_findings plus expressly_not_established_or_used | transitively contaminated and prospectively retracted |
+| 9. successor_residual_ids | layer 2 | historical closure classification under roots 6–8 | the historical empty array is not a presently lawful result; the successor state retains V-B6 as guarded and unresolved |
+| 10. source_disposition | layer 2 | all preceding layer-2 nodes; successful layer-1 authentication is only an admission gate | historical `verified` is prospectively replaced by `nonpassing_forbidden_physical_dependency` |
+
+The six layer-1 page rows retain every exact nested member ratified in
+§18.2. Their distinct layer-2 children read only these portions:
+
+| Page-row position | Committed page fields | Exact semantic extraction basis |
+|---:|---|---|
+| 0 | V4379, V4380, V4381, V4382 | field identifiers, quoted labels without the trailing NUM format, descriptions, and the V4382 sentence that the Wife labor part of unincorporated-business income is in V4379 |
+| 1 | V4901, V4902 | field identifiers, quoted labels without NUM, D64/D65 question text, and V4902 code lexeme/meaning columns, including 20 and 31; the Count and % columns remain committed but unselected |
+| 2 | V4903 | the semantic continuation of V4902 and V4903's identifier, label, question, and total-number-of-extra-jobs description; no Count/% or format cell |
+| 3 | V4904, V4905, V4906, V4907 | identifiers, labels without NUM, question/description text, and semantic units such as dollars-and-cents per hour, weeks, hours, and availability; no layout, numeric format, Count/%, or value execution |
+| 4 | V5289, V5290, V5291, V5292 | identifiers, labels without NUM, descriptions, assignment/accuracy meaning, and unincorporated-business context; no physical cell |
+| 5 | V5785, V5786, V5787, V5788, V5789 | identifiers, labels without NUM, descriptions, and assignment/accuracy meaning; no physical cell |
+
+Those six layer-2 page-extraction rows select only normalized semantic
+content. Their interview waves come from exact equality with the six
+committed registered-filename-to-wave rows, not by parsing a page coordinate
+or field grammar. Their document ID, page number, field-reference position,
+locator, raw range, and every document/page/row/range digest remain separate
+layer-1 members. The layer-2 row has exactly interview_wave, raw_field_id,
+normalized_semantic_short_label, normalized_semantic_description, and
+semantic_code_lexeme_and_meaning. Normalization splits a selected semantic
+span on Unicode whitespace and rejoins it with one U+0020; it never retains
+a line boundary, column width, declared NUM format, Count, %, raw position,
+or page coordinate. The complete 20-row semantic array is 5,165 canonical
+bytes with SHA-256
+3a86353af979ac46f3506fe89e38184251432ad23a69fa48cc2082fcaf741a5f.
+
+~~~json
+[{"interview_wave":1976,"normalized_semantic_description":"Wife's income from work in 1975","normalized_semantic_short_label":"WIFES ANNUAL WAGE H25","raw_field_id":"V4379","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"Accuracy of V4379 (Wife's income from work in 1975)","normalized_semantic_short_label":"ACC WIFES ANN WAG","raw_field_id":"V4380","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"Head's asset part of farm income in 1975","normalized_semantic_short_label":"ASSET FARM INCOME H4","raw_field_id":"V4381","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"Head's/Wife's asset part of unincorporated business income in 1975 (Wife's income, her labor part of unincorporated business income is in V4379)","normalized_semantic_short_label":"ASSET BUSI INCOME H7","raw_field_id":"V4382","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D64. Did you have any extra jobs or other ways of making money in addition to your main job in 1975?","normalized_semantic_short_label":"WTR XTRA JOB(E)-WF D64","raw_field_id":"V4901","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D65. What did you do?","normalized_semantic_short_label":"OCC-XTRA JOB-WF D65","raw_field_id":"V4902","semantic_code_lexeme_and_meaning":[["20","Not self-employed"],["31","Self-employed (unincorporated businesses)"]]},{"interview_wave":1976,"normalized_semantic_description":"D64, D66. Anything else? Total number of extra jobs","normalized_semantic_short_label":"TOTAL # XTRA JOBS-WF D66","raw_field_id":"V4903","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D67. About how much did you make per hour at this? Actual dollars and cents per hour","normalized_semantic_short_label":"PAY/HR ON XTRA JOB-WFD67","raw_field_id":"V4904","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D68. And how many weeks did you work on your extra job(s) in 1975? Actual number of weeks","normalized_semantic_short_label":"WKS WKD ON XTRA JOB D68","raw_field_id":"V4905","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D69. On the average, how many hours a week did you work at your extra job(s)? Actual number of hours","normalized_semantic_short_label":"HR/WK WKD-XTRA JOB(E)D69","raw_field_id":"V4906","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D70. Was there more work available on (your job) (any of your jobs) so that you could have worked more if you had wanted to?","normalized_semantic_short_label":"MORE WK AVAILABLE?(E)D70","raw_field_id":"V4907","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Wife's labor income in 1976 All missing data were assigned","normalized_semantic_short_label":"WIFE 1976 WAGES","raw_field_id":"V5289","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Accuracy of V5289 (Wife's labor income in 1976)","normalized_semantic_short_label":"ACC WIFE 1976 WAGES","raw_field_id":"V5290","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Head's asset part of farm income in 1976 All missing data were assigned","normalized_semantic_short_label":"ASSET PART FARM Y 1976","raw_field_id":"V5291","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Head's/Wife's asset part of unincorporated business income in 1976 All missing data were assigned","normalized_semantic_short_label":"ASSET PART BUS Y 1976","raw_field_id":"V5292","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Head's income from professional practice or trade in 1977 All missing data are assigned.","normalized_semantic_short_label":"HD PROF PRAC/TRADE 1977","raw_field_id":"V5785","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Head's labor part of roomers and boarders, farming or market gardening in 1977 All missing data are assigned.","normalized_semantic_short_label":"LAB PART ROOMER 1977","raw_field_id":"V5786","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Accuracy of V5780-V5781, V5784-V5786 (Head's labor income excluding wages in 1977)","normalized_semantic_short_label":"ACC HD LABOR Y EXCL WAGE","raw_field_id":"V5787","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Wife's labor income in 1977 All missing data are assigned.","normalized_semantic_short_label":"WIFE 1977 WAGE","raw_field_id":"V5788","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Accuracy of V5788 (Wife's labor income in 1977)","normalized_semantic_short_label":"ACC WIFE 1977 WAGE","raw_field_id":"V5789","semantic_code_lexeme_and_meaning":[]}]
+~~~
+
+That fixture proves root 3's six page-text hashes are lawful commitments and
+its distinct semantic extractions are semantic-only. It does not repair root
+5. Root 5's historical scan emitted a five-key occurrence relation whose
+members are source_document_id, pdf_page_number_1_based,
+page_semantic_row_position, raw_field_id, and
+semantic_reference_position. The first and fourth/fifth members identify a
+document/reference and asserted semantic role; the page number and
+page-reset ordinal are physical layout. The exact mixed relation has 348
+rows, 72,325 canonical bytes, and SHA-256
+0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411.
+Its exact category counts are 12 codebook headers, 157 V-prefixed
+references, 40 parenthesized references, 110 labelled table/prose
+references, 27 unlabelled concordance references, and two lexical false
+positives. The corresponding layer-1 locator relation has 348 rows, 117,337
+canonical bytes, and SHA-256
+4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d.
+Both complete arrays are pinned by the normative graph fixture and source
+walk in §21.4.2; neither digest may substitute for reconstructing its array.
+
+V4902 occupies 33 of those mixed rows on 33 pages in 17 documents. The
+exact nine-key occurrence-output domain is 12,608 canonical bytes with
+SHA-256
+cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c.
+It is an output census, not a dependency census, and enters only after the
+source scan has independently discovered the rows. No claim is made that 33
+is the number of atomic physical dependencies or transitive consumers.
+
+The independent document-0068/page-519 whitespace mutation is the executable
+nonconstancy witness. Its authenticated PDF is `psid81w14.pdf`, 13,344,220
+bytes with SHA-256
+6852b258ebf010bb3e0747abc31a8760e65c8f63bba475907c2498536b0f1d08.
+The page bytes `[3771:3777]` begin `V4902 ` after the preceding `V` at byte
+3770. Replacing only trailing byte 3775 from `20` to `30` makes `V49020`;
+the exact target regex no longer admits V4902 on that page. The original
+document-0068 candidate row is 358 bytes with SHA-256
+78a08e6640b993f14117af67d0ed4eccada395d79a816b13d67283421bb1819d;
+the shadow row, whose extra-job page array alone loses 519, is 354 bytes with
+SHA-256
+cc4c36285b1d4bdeedb799270a15c0edeb704a7560b8d5979bb694b99f164165.
+The complete required candidate array changes from 6,209 bytes and SHA-256
+039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7
+to 6,205 bytes and SHA-256
+77175376157cf483cf3941be42fcfca34e527c13dde0d3f3bfd025c010afa4f7.
+The four token bytes and every semantic lexeme remain fixed. A layer-1 page
+hash would merely recommit the changed page; root 5 instead changes an actual
+layer-2 candidate member, so this is consumption.
+
+The historical target scan still reproduces the exact 18 candidate IDs,
+their 5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed
+digest, the sole document-0098/page-573 same-page candidate, and the exact
+6,209-byte candidate array with SHA-256
+039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7.
+Those empirical values remain authenticated history, but their page arrays,
+same-page intersection, sole-candidate disposition, and
+formula_candidate_count are physical layer-2 derivations and cannot support
+a fresh favorable V-B6 result.
+
+The nested schemas remain exact. Source-artifact identity rows retain path,
+blob_oid, raw_sha256, and content_sha256; existing-locator rows retain
+locator_id, source_pointer, source_row_sha256, and range_sha256; and page
+rows retain source_document_id, source_document_row_pointer,
+source_document_row_sha256, page_locator_id, page_locator_row_sha256,
+range_sha256, and derived_page_text_sha256. The closure projection retains
+its six members and two-member pointer/hash rows. The sweep retains all 15
+members and its exact six-member candidate and four-member sole-candidate
+rows. The serialized members are preserved while their assertions are
+decomposed across layers; no member is excised or relabelled to evade value
+flow.
+
+document_count is a structural corpus count and is not a field's raw-data
+frequency, percentage, or nonmissing-observation count. But candidate_count
+and formula_candidate_count classify page-grouped scan results and therefore
+inherit member 5's physical layout basis. The frequency/percentage exclusion
+is exact: a Count/% cell may sit inside a lawful layer-1 page commitment, but
+no layer-2 node may read it directly, through a digest, or as a count proxy
+for a non-passing field. That exclusion does not legalize a distinct page-
+layout read. Each of the four fields retains
+incomplete_source_numeric_authority,
+literal_only_zero_diagnostic_padding_capacity, and null physical authority;
+V-B6 is presently non-passing and unregistrable.
+
+#### 21.1.5 Q5 dictionary/codebook join universes
+
+Sections 19.3.3 and 20.4.2 define one stable-first dictionary/codebook
+universe D_w for each of the 43 waves. Collectively those universes exact-
+cover the 89,599-key denominator and therefore intersect F in all 1,235
+keys. The complete-domain digest is
+7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764;
+the complete F-list digest is
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed.
+For each table row, the exact F list is K(F) filtered to the displayed wave:
+
+| Wave | D_w count | D_w SHA-256 | F count | Exact F-list SHA-256 |
+|---:|---:|---|---:|---|
+| 1968 | 447 | 9a5a53dc0ee15c717638be553df0a79103b54f6c27816bc394619bd2dcd3202b | 8 | 2e9f1438582280e21e4cbfa6e1f2ce0b680920265880b8565148adcf163f82fc |
+| 1969 | 584 | 8703448e5f3ede4c539be8d420086fb86be989fa4fc899c3148cd1d38b12c1a6 | 2 | c0ba0932d3bc28ba05bd9972f2debf623a7fdb276185da33190789e3bde743c7 |
+| 1970 | 602 | ed6cba445482a4795ab7b797896173b52da5065304ce0de78d3e75d5242feb5c | 13 | e2fba98168987a68605ead96ded295faad9d082a0b061b2438f8fa86d50d9c0c |
+| 1971 | 555 | c38b863c57dd3d3c51ec1166a57e8056107216f70f2f6ad4a8734adce891cfad | 19 | 7f223e5c338e3fced95b16776e423f657e8c7644f82725b2a3fcfecf8b923230 |
+| 1972 | 589 | e8d05d0c28c7903fec0869eb25303b78bb650eb88978f3eb889239d657ae7d0d | 12 | b0840f03157db0c75c93a319d5e5ec0bf02b7ef0a3f0f1d119efe4b3e1e860b6 |
+| 1973 | 316 | 3230a38d998f131ac304fb1a1daf8a5b1ff6f508301a3f8182484030834c5d46 | 12 | 50f46177f48622ccea81fc72a61b26853f61391ffe09b762724705dd85046894 |
+| 1974 | 337 | c74add0a0c1d355aab3fa14d8d694a608d58aed5a8bfba9ba77054218f89884e | 11 | b757a8402d232434a4fadc5050e3ae0fc43635451cccc08c4f5ea0a282712f97 |
+| 1975 | 438 | bf12a67dbc540f3e7253d1ca53103c661e27339110d67e8817d78701e34f30a8 | 12 | 018ed8d13b56ba83ecce47f44d08fbb5ff49605c61a92500bb9abfeda2e20487 |
+| 1976 | 825 | 02e432a96b05bf0167a99f80c3470d877fdc8123def7810005b0cd69e680ef8e | 28 | 9968c6a609701fca452de052658b862105dbd2cba4e29063a6845ad0dc56f833 |
+| 1977 | 487 | af2d9412d64e5092d812dca899f7cdab5d83a0a23f93cd9d430d7f5d119311ce | 16 | a0aa8e9b9d68d6e9f821a374396a38f88e269352da98b83adb29e82aeecb815d |
+| 1978 | 526 | 8dd78a7590289fdec8cf3c045a0d340ba4b4137edb756e5f8cb67b00d5530fe2 | 17 | 6c853bd9ac2794316ddd292c4f8c0688d2d496aba80c6a7bc1299dd64f24819d |
+| 1979 | 520 | 0c2ae768b25d1e85bcb25e946aafa0b5fc703eb959eb9e5f2d3a1987d3433641 | 23 | 868668c7f14c7f38524b3f8550d2e5a26876aa03777e892f23249cafb48bc0e1 |
+| 1980 | 562 | 070def488c2c08aff65c4d7d867870c853287374d4636704c70933e69750c1ab | 21 | e08fc8a89e19fd6413c2ecde37917c8be4dd2f9ec359845ab1603cb826b34b23 |
+| 1981 | 612 | b145582c15f403397f8a65e544afefdd1e13ebd7169bad85886b9e4ac12eed78 | 10 | 58ea0a892e65d712b2fae2d616bc9f2e42e3feb3aaa27be5f8a6c101c07c4e0f |
+| 1982 | 540 | b17dd493180997787fb7f2bec3762d48f72442e9d86d372348ac41f37a834f0b | 9 | d9293fbb1ee93ed8916cd69ede675209084f7b89d7432a9e98b5c1d731569ce3 |
+| 1983 | 634 | 7b133efcab3c4111e1d85cd245a5cf8880e32b5d5dbee7348a02e15b2085c4d0 | 13 | 9a52d3f6bdb60a5e6077799f68bab0f96f1db96e00c5dc7f71b8fec3120ce11f |
+| 1984 | 1,080 | 75b23e7e25efd2b54ac56c6bbd1c09c4ccaa9620a69927a68378f1bf9deec834 | 18 | b48dadb8e52ff57cf3fbcea39ebc818d986551fb732375533d568e199f88f93d |
+| 1985 | 1,347 | 7fa726acb559d15f765a0c449fd0737c05f5ad9b502a10596c1478381de03fa5 | 28 | 75e98caec49639cc7048a012e02cee051b6f876e32f2564feea2f7edc3a18b26 |
+| 1986 | 1,188 | fcf378ed0232283baaca23404c33d961c548f41226a98a2748ce0552ad6bbb18 | 29 | 84a657ef54297063194b5c6de4da5237d8e62400e591b19d3bb1f4e544189475 |
+| 1987 | 1,038 | 080cb91d993243bf34f2749007a08dac6315b92ff73f8272584230d68bf0d0fd | 34 | d1f9b361e26ca7c602da1055dfb53a5c4e1778970954066f815f9033d2d4393c |
+| 1988 | 1,409 | 04ac35e1f4da7ccbf2edc79ddef5c5b61b74c19b33ce60f964a93a5c93b05c78 | 38 | c9c35c932a80295142c8b6f52305e637fdca441d46bba28fa6e94980ca9d579f |
+| 1989 | 1,313 | ecbf551346adb945d98754e37c3f09fbe89938d0b4aca4042fee8155ed06890e | 43 | e650713437e592e966078855539909e5ce42bdfe6a9c1bb1464cce13542583a9 |
+| 1990 | 1,245 | 828395d199ad241cd85a2846b34956efa4e20bbc8c23ffb7b89cd932a0c0c7a6 | 35 | c64f9871a8c162b8998bea0856a965ec3bc4af91997cbec7edd48f1dee891b72 |
+| 1991 | 1,245 | f88e9b2ee1ef79185a66ed279b86a83649718fc0efd6b24b6e049df820317521 | 33 | 1a92c8d5ef53fbe14b10f22035ee370f9bea8987da92e99b19c0b23b25dffbce |
+| 1992 | 1,249 | fd3cbf16b855ca4641fcccae658e874444949d50f6d315c01ede56719f6299f6 | 34 | 90c500565dc77060f26f916ddc8d82316530e8d1a4a1d9b3f1093fce740a373e |
+| 1993 | 1,763 | 5d4caf9aee8baf9cf3e650d1b3aa5f9a40654f1322c1e2d9c480b5dc5ae0ffd9 | 44 | bf3cc10e05d8625c41324ba7b9013a0e7460518c2024b0df2e1633c007dacbc4 |
+| 1994 | 2,204 | c0ddd6723b463ac263329cb4b39ed8c9343b78c28cb31c48bd01a5349db7e3e8 | 41 | c8c70a590f0c4b9f73b5b8ac806b114f5fa0c90370d1b1c6e72ec0fecf16264e |
+| 1995 | 2,046 | e697e824b04870b53c4f1f98afab62fcfc3d0a0e274dac0e3724cb2e6f4f2132 | 45 | 6a57a035b602a72f89f0ce92e2999f48afd8af32944d998533cca33ea53cdafe |
+| 1996 | 2,292 | d4e5e0f6bd13fe1b079cc9df7e5fc5b2237548856dfc9f30d40060c374165230 | 40 | 814739dc09f6ff604662e91566262588bc9d8976cd6227557b907d4b1f782045 |
+| 1997 | 2,263 | f9cabd76c5a281ca225fb9cf456bcfe6f92ff755f2f90e87562eeeb63b661d7a | 34 | 0dd11b395124e8da1e128b9841942e69d78a882130db259168137b6583201784 |
+| 1999 | 3,619 | 9e80e8952d9f832cdcea877402f3ff1489c626cd56b3e02a31e4a475dd9e7f7b | 45 | 94a02f7bb7c3e08acd4f056eb414b12fc003dd43447528e0945e6dc5942ed63c |
+| 2001 | 3,559 | 2df0b61e323d620afe3709f940f1ceed2b5d998375147e2af44dcb8716c74e33 | 46 | c6b91fef7e88e83d7f6612b8347e172af951350694c014adc3ac69f231ed9f65 |
+| 2003 | 3,379 | b483bba6bf67af572ec167ba78d4a5ad7ff0afa358a9aa406d2de1863f87cbf3 | 35 | ee3ef74ac64a674a45447eb64ee3d2ed4d9f28b9ad75f68383fe84fe3bda875b |
+| 2005 | 3,235 | bd2baae277c648b44dd5cc3fdee29ef4619a41b0e6ecced83003693f2533d2f8 | 26 | dc51b05bdb86cb99983ae84817737bd171b13fa79c0a96062ca3cfd2c403726c |
+| 2007 | 5,240 | ac9d35f3932183a9bacfe05b416e9577e535f418b5413e9c14a26f4e0e2e4302 | 40 | 3f45fea7a8123f6881dc708f46f6810eb8241418efd4aa61d48a895aaf80acba |
+| 2009 | 5,161 | f6d4f1013ede30ca3db782bc6d83d60466b79ffb899e9944497d040c812c1562 | 31 | f9cbd27c90b684e66a45cc72e80dc699d38b02f2acc63d74255ea0c90f4cb7a1 |
+| 2011 | 5,287 | 53f4dc78ea7db4730b67e88dbb567acfab65c552e07e6b0ee407a8af34b4dead | 32 | fa05b772c8d6c775a7f20494d8a8efaf893e066680e400a1ede6022110723adb |
+| 2013 | 5,328 | dbedd71538ea600feb24dfbb1d0ecb021d789988b956312f85d5919f7fc89e76 | 41 | 8851100e293ea7d8eee026b509cf880b5e99437adfe34dce01ffe31b187be72f |
+| 2015 | 5,524 | a61dd9d4c1e0a22e342ebc9ddb749ec2e2357747a6e3bfb4a86ebacc5d99d4ba | 39 | e2e14d7bcbfddca8c97b8b72c162eb15ffd64f12d95fe2f935d74da6a20c51af |
+| 2017 | 5,606 | f7a791d0f4ac130f023dbd2a3cc38033272b4ba2ba882ea52c8046cdcf9ca1ee | 37 | 0aecfc948b6e15eab84b54d4043d173a4b166f75c997452d4020d98558d5cd42 |
+| 2019 | 5,632 | 035c937d15f40a6141e23c0f899af961a0759e49fbf4489595eea770026a0210 | 53 | 0b5d3fea96e8122880310f055594a72d40baca39fb882b3faaa9887edbe68126 |
+| 2021 | 3,960 | 972ae7524c552a01e750995d88717f08c889b661dea5c1f5f103399360f8c38e | 44 | 4e5b62c63320a48f9e98903a2fca80428486869e0c21829d828d3c6683568557 |
+| 2023 | 3,813 | f9dd8cdd49f8ca641af9faf28cccaab8960ef2d86823c4fc9ad3bb3294be0934 | 44 | 8dd2416edcb783408b73d83ccedd8059f0e673092f5484f6df3d35851a9123c0 |
+
+
+
+#### 21.1.6 Complete machine-readable nonempty intersection lists
+
+The following 52-row artifact physically serializes every nonempty list that
+the preceding residual-era, era-fact-family, and per-wave tables define by
+an exact filter. Each row has exactly consumer_domain, field_key_count,
+field_keys, and field_keys_sha256; row order is the six residual-era scopes,
+the three nonempty fact families, and the 43 waves in numeric order. A field
+properly repeats when distinct consumer domains contain it. The fenced
+payload has 50492 bytes and, with its one terminal LF, SHA-256
+a9004d7863b832ce1dd3d29e80af55ad1778fc867039bfa7df29048f6d9da6b8. Together with the explicitly displayed A6, named-law,
+finite-residual, and V-B arrays and every table row marked [], it is the
+complete physical field-list report for §21.1.
+
+~~~json
+[{"consumer_domain":"residual-era:early","field_key_count":89,"field_keys":[[1968,"V95"],[1968,"V189"],[1968,"V412"],[1968,"V413"],[1968,"V414"],[1968,"V415"],[1968,"V416"],[1968,"V417"],[1969,"V807"],[1969,"V809"],[1970,"V1496"],[1970,"V1498"],[1970,"V1506"],[1970,"V1619"],[1970,"V1620"],[1970,"V1621"],[1970,"V1622"],[1970,"V1623"],[1970,"V1624"],[1970,"V1625"],[1970,"V1626"],[1970,"V1627"],[1970,"V1714"],[1971,"V1816"],[1971,"V1985"],[1971,"V2037"],[1971,"V2059"],[1971,"V2075"],[1971,"V2208"],[1971,"V2210"],[1971,"V2226"],[1971,"V2331"],[1971,"V2332"],[1971,"V2333"],[1971,"V2334"],[1971,"V2336"],[1971,"V2339"],[1971,"V2340"],[1971,"V2341"],[1971,"V2342"],[1971,"V2343"],[1971,"V2344"],[1972,"V2406"],[1972,"V2583"],[1972,"V2637"],[1972,"V2657"],[1972,"V2673"],[1972,"V2834"],[1972,"V2836"],[1972,"V2960"],[1972,"V2961"],[1972,"V2962"],[1972,"V2963"],[1972,"V2965"],[1973,"V3006"],[1973,"V3116"],[1973,"V3154"],[1973,"V3170"],[1973,"V3184"],[1973,"V3194"],[1973,"V3251"],[1973,"V3304"],[1973,"V3305"],[1973,"V3306"],[1973,"V3307"],[1973,"V3309"],[1974,"V3406"],[1974,"V3531"],[1974,"V3570"],[1974,"V3587"],[1974,"V3602"],[1974,"V3673"],[1974,"V3724"],[1974,"V3725"],[1974,"V3726"],[1974,"V3727"],[1974,"V3729"],[1975,"V3806"],[1975,"V3934"],[1975,"V3969"],[1975,"V4024"],[1975,"V4042"],[1975,"V4056"],[1975,"V4151"],[1975,"V4225"],[1975,"V4226"],[1975,"V4227"],[1975,"V4228"],[1975,"V4230"]],"field_keys_sha256":"4573273193287c74c639bf723a70301a8feddb5a47b79742bf4e9b391d9a32b8"},{"consumer_domain":"residual-era:spouse-seam","field_key_count":61,"field_keys":[[1976,"V4306"],[1976,"V4459"],[1976,"V4460"],[1976,"V4519"],[1976,"V4542"],[1976,"V4553"],[1976,"V4554"],[1976,"V4578"],[1976,"V4579"],[1976,"V4605"],[1976,"V4606"],[1976,"V4702"],[1976,"V4746"],[1976,"V4747"],[1976,"V4842"],[1976,"V4843"],[1976,"V4902"],[1976,"V4925"],[1976,"V4937"],[1976,"V4938"],[1976,"V4962"],[1976,"V4963"],[1976,"V4993"],[1976,"V5107"],[1976,"V5108"],[1976,"V5109"],[1976,"V5110"],[1976,"V5112"],[1977,"V5206"],[1977,"V5374"],[1977,"V5375"],[1977,"V5429"],[1977,"V5441"],[1977,"V5455"],[1977,"V5456"],[1977,"V5482"],[1977,"V5483"],[1977,"V5507"],[1977,"V5508"],[1977,"V5666"],[1977,"V5667"],[1977,"V5668"],[1977,"V5669"],[1977,"V5671"],[1978,"V5706"],[1978,"V5873"],[1978,"V5874"],[1978,"V5916"],[1978,"V5958"],[1978,"V5984"],[1978,"V5985"],[1978,"V6018"],[1978,"V6019"],[1978,"V6039"],[1978,"V6040"],[1978,"V6167"],[1978,"V6213"],[1978,"V6214"],[1978,"V6215"],[1978,"V6216"],[1978,"V6218"]],"field_keys_sha256":"9a4df0f550edf054817cf6a1319634fedbb8ae81f090c3e24f083e5877f6aa25"},{"consumer_domain":"residual-era:pre-ER","field_key_count":412,"field_keys":[[1979,"V6306"],[1979,"V6469"],[1979,"V6497"],[1979,"V6498"],[1979,"V6527"],[1979,"V6545"],[1979,"V6557"],[1979,"V6558"],[1979,"V6578"],[1979,"V6579"],[1979,"V6596"],[1979,"V6597"],[1979,"V6619"],[1979,"V6624"],[1979,"V6629"],[1979,"V6630"],[1979,"V6650"],[1979,"V6651"],[1979,"V6806"],[1979,"V6807"],[1979,"V6808"],[1979,"V6809"],[1979,"V6811"],[1980,"V6906"],[1980,"V7074"],[1980,"V7100"],[1980,"V7101"],[1980,"V7130"],[1980,"V7148"],[1980,"V7159"],[1980,"V7160"],[1980,"V7180"],[1980,"V7181"],[1980,"V7198"],[1980,"V7199"],[1980,"V7221"],[1980,"V7226"],[1980,"V7231"],[1980,"V7232"],[1980,"V7252"],[1980,"V7253"],[1980,"V7452"],[1980,"V7453"],[1980,"V7454"],[1981,"V7506"],[1981,"V7585"],[1981,"V7665"],[1981,"V7745"],[1981,"V7799"],[1981,"V7908"],[1981,"V7915"],[1981,"V8104"],[1981,"V8105"],[1981,"V8106"],[1982,"V8206"],[1982,"V8278"],[1982,"V8407"],[1982,"V8461"],[1982,"V8566"],[1982,"V8570"],[1982,"V8728"],[1982,"V8729"],[1982,"V8730"],[1983,"V8806"],[1983,"V8886"],[1983,"V9038"],[1983,"V9098"],[1983,"V9122"],[1983,"V9216"],[1983,"V9229"],[1983,"V9251"],[1983,"V9415"],[1983,"V9416"],[1983,"V9417"],[1983,"V9422"],[1983,"V9423"],[1984,"V10006"],[1984,"V10268"],[1984,"V10275"],[1984,"V10566"],[1984,"V10570"],[1984,"V10598"],[1984,"V10633"],[1984,"V10637"],[1984,"V10780"],[1984,"V10783"],[1984,"V10800"],[1984,"V10833"],[1984,"V10873"],[1984,"V11061"],[1984,"V11062"],[1984,"V11063"],[1984,"V11068"],[1984,"V11069"],[1985,"V11106"],[1985,"V11122"],[1985,"V11409"],[1985,"V11448"],[1985,"V11710"],[1985,"V11714"],[1985,"V11726"],[1985,"V11729"],[1985,"V11745"],[1985,"V11806"],[1985,"V11822"],[1985,"V11889"],[1985,"V11898"],[1985,"V11899"],[1985,"V11900"],[1985,"V12073"],[1985,"V12077"],[1985,"V12089"],[1985,"V12092"],[1985,"V12108"],[1985,"V12169"],[1985,"V12173"],[1985,"V12185"],[1985,"V12422"],[1985,"V12423"],[1985,"V12424"],[1985,"V12429"],[1985,"V12430"],[1986,"V12506"],[1986,"V12521"],[1986,"V12808"],[1986,"V12855"],[1986,"V13110"],[1986,"V13114"],[1986,"V13126"],[1986,"V13129"],[1986,"V13141"],[1986,"V13202"],[1986,"V13206"],[1986,"V13218"],[1986,"V13287"],[1986,"V13291"],[1986,"V13303"],[1986,"V13306"],[1986,"V13311"],[1986,"V13370"],[1986,"V13374"],[1986,"V13386"],[1986,"V13400"],[1986,"V13409"],[1986,"V13410"],[1986,"V13411"],[1986,"V13662"],[1986,"V13663"],[1986,"V13664"],[1986,"V13668"],[1986,"V13669"],[1987,"V13706"],[1987,"V13721"],[1987,"V13910"],[1987,"V13918"],[1987,"V13951"],[1987,"V13957"],[1987,"V13965"],[1987,"V14056"],[1987,"V14061"],[1987,"V14066"],[1987,"V14208"],[1987,"V14212"],[1987,"V14224"],[1987,"V14227"],[1987,"V14239"],[1987,"V14298"],[1987,"V14302"],[1987,"V14314"],[1987,"V14381"],[1987,"V14385"],[1987,"V14397"],[1987,"V14400"],[1987,"V14405"],[1987,"V14462"],[1987,"V14466"],[1987,"V14478"],[1987,"V14497"],[1987,"V14506"],[1987,"V14507"],[1987,"V14508"],[1987,"V14709"],[1987,"V14710"],[1987,"V14711"],[1987,"V14715"],[1988,"V14806"],[1988,"V14821"],[1988,"V14925"],[1988,"V14933"],[1988,"V15071"],[1988,"V15076"],[1988,"V15081"],[1988,"V15186"],[1988,"V15188"],[1988,"V15191"],[1988,"V15239"],[1988,"V15284"],[1988,"V15307"],[1988,"V15333"],[1988,"V15338"],[1988,"V15386"],[1988,"V15431"],[1988,"V15454"],[1988,"V15488"],[1988,"V15493"],[1988,"V15541"],[1988,"V15586"],[1988,"V15609"],[1988,"V15635"],[1988,"V15640"],[1988,"V15688"],[1988,"V15713"],[1988,"V15733"],[1988,"V15736"],[1988,"V15755"],[1988,"V15756"],[1988,"V15765"],[1988,"V16183"],[1988,"V16184"],[1988,"V16185"],[1988,"V16186"],[1988,"V16190"],[1988,"V16191"],[1989,"V16306"],[1989,"V16321"],[1989,"V16425"],[1989,"V16472"],[1989,"V16566"],[1989,"V16571"],[1989,"V16576"],[1989,"V16581"],[1989,"V16687"],[1989,"V16692"],[1989,"V16740"],[1989,"V16785"],[1989,"V16808"],[1989,"V16848"],[1989,"V16853"],[1989,"V16901"],[1989,"V16946"],[1989,"V16949"],[1989,"V16969"],[1989,"V17006"],[1989,"V17011"],[1989,"V17059"],[1989,"V17104"],[1989,"V17127"],[1989,"V17172"],[1989,"V17220"],[1989,"V17265"],[1989,"V17300"],[1989,"V17310"],[1989,"V17311"],[1989,"V17312"],[1989,"V17383"],[1989,"V17386"],[1989,"V17561"],[1989,"V17562"],[1989,"V17563"],[1989,"V17564"],[1989,"V17569"],[1989,"V17590"],[1989,"V17592"],[1989,"V17595"],[1989,"V17598"],[1989,"V17604"],[1990,"V17706"],[1990,"V17721"],[1990,"V17841"],[1990,"V17896"],[1990,"V17982"],[1990,"V17987"],[1990,"V17992"],[1990,"V17997"],[1990,"V18125"],[1990,"V18130"],[1990,"V18178"],[1990,"V18223"],[1990,"V18246"],[1990,"V18272"],[1990,"V18277"],[1990,"V18325"],[1990,"V18370"],[1990,"V18427"],[1990,"V18432"],[1990,"V18480"],[1990,"V18525"],[1990,"V18548"],[1990,"V18574"],[1990,"V18579"],[1990,"V18627"],[1990,"V18652"],[1990,"V18672"],[1990,"V18675"],[1990,"V18694"],[1990,"V18695"],[1990,"V18704"],[1990,"V18714"],[1990,"V18715"],[1990,"V18716"],[1990,"V18915"],[1991,"V19006"],[1991,"V19021"],[1991,"V19141"],[1991,"V19188"],[1991,"V19282"],[1991,"V19287"],[1991,"V19292"],[1991,"V19297"],[1991,"V19425"],[1991,"V19430"],[1991,"V19478"],[1991,"V19523"],[1991,"V19546"],[1991,"V19572"],[1991,"V19577"],[1991,"V19625"],[1991,"V19670"],[1991,"V19673"],[1991,"V19693"],[1991,"V19727"],[1991,"V19732"],[1991,"V19780"],[1991,"V19825"],[1991,"V19848"],[1991,"V19874"],[1991,"V19879"],[1991,"V19927"],[1991,"V19972"],[1991,"V20004"],[1991,"V20014"],[1991,"V20015"],[1991,"V20016"],[1991,"V20215"],[1992,"V20306"],[1992,"V20321"],[1992,"V20449"],[1992,"V20488"],[1992,"V20582"],[1992,"V20587"],[1992,"V20592"],[1992,"V20597"],[1992,"V20725"],[1992,"V20730"],[1992,"V20778"],[1992,"V20823"],[1992,"V20846"],[1992,"V20872"],[1992,"V20877"],[1992,"V20925"],[1992,"V20970"],[1992,"V20992"],[1992,"V20993"],[1992,"V21027"],[1992,"V21032"],[1992,"V21080"],[1992,"V21125"],[1992,"V21148"],[1992,"V21174"],[1992,"V21179"],[1992,"V21227"],[1992,"V21252"],[1992,"V21272"],[1992,"V21304"],[1992,"V21314"],[1992,"V21315"],[1992,"V21316"],[1992,"V21521"],[1993,"V21605"],[1993,"V21813"],[1993,"V21829"],[1993,"V21943"],[1993,"V22373"],[1993,"V22499"],[1993,"V22506"],[1993,"V22545"],[1993,"V22550"],[1993,"V22552"],[1993,"V22585"],[1993,"V22607"],[1993,"V22611"],[1993,"V22633"],[1993,"V22665"],[1993,"V22672"],[1993,"V22711"],[1993,"V22716"],[1993,"V22718"],[1993,"V22751"],[1993,"V22773"],[1993,"V22777"],[1993,"V22799"],[1993,"V22852"],[1993,"V22859"],[1993,"V22898"],[1993,"V22903"],[1993,"V22905"],[1993,"V22960"],[1993,"V22964"],[1993,"V22986"],[1993,"V23018"],[1993,"V23025"],[1993,"V23064"],[1993,"V23069"],[1993,"V23071"],[1993,"V23104"],[1993,"V23126"],[1993,"V23164"],[1993,"V23173"],[1993,"V23174"],[1993,"V23175"],[1993,"V23339"],[1993,"V23340"]],"field_keys_sha256":"0e16a4477f8d0814cb078e950192cf8d050439001aa1c9e94ec952812b24d98c"},{"consumer_domain":"residual-era:ER-transition","field_key_count":251,"field_keys":[[1994,"ER2161"],[1994,"ER2250"],[1994,"ER2272"],[1994,"ER2294"],[1994,"ER2315"],[1994,"ER2316"],[1994,"ER2406"],[1994,"ER2495"],[1994,"ER2517"],[1994,"ER2601"],[1994,"ER2655"],[1994,"ER2744"],[1994,"ER2766"],[1994,"ER2787"],[1994,"ER2788"],[1994,"ER2900"],[1994,"ER2988"],[1994,"ER3010"],[1994,"ER3071"],[1994,"ER3072"],[1994,"ER3073"],[1994,"ER3095"],[1994,"ER3203"],[1994,"ER3722"],[1994,"ER3726"],[1994,"ER3731"],[1994,"ER3736"],[1994,"ER3748"],[1994,"ER3779"],[1994,"ER4031"],[1994,"ER4043"],[1994,"ER4045"],[1994,"ER4060"],[1994,"ER4074"],[1994,"ER4079"],[1994,"ER4080"],[1994,"ER4081"],[1994,"ER4082"],[1994,"ER4083"],[1994,"ER4134"],[1994,"ER4150"],[1995,"ER5160"],[1995,"ER5249"],[1995,"ER5271"],[1995,"ER5293"],[1995,"ER5315"],[1995,"ER5405"],[1995,"ER5494"],[1995,"ER5516"],[1995,"ER5522"],[1995,"ER5537"],[1995,"ER5538"],[1995,"ER5654"],[1995,"ER5743"],[1995,"ER5765"],[1995,"ER5786"],[1995,"ER5787"],[1995,"ER5899"],[1995,"ER5987"],[1995,"ER5993"],[1995,"ER6009"],[1995,"ER6031"],[1995,"ER6053"],[1995,"ER6095"],[1995,"ER6203"],[1995,"ER6710"],[1995,"ER6711"],[1995,"ER6712"],[1995,"ER6713"],[1995,"ER6714"],[1995,"ER6869"],[1995,"ER6871"],[1995,"ER6883"],[1995,"ER6885"],[1995,"ER6900"],[1995,"ER6908"],[1995,"ER6914"],[1995,"ER6916"],[1995,"ER6918"],[1995,"ER6919"],[1995,"ER6920"],[1995,"ER6921"],[1995,"ER6922"],[1995,"ER6923"],[1995,"ER6974"],[1995,"ER6990"],[1996,"ER7256"],[1996,"ER7345"],[1996,"ER7361"],[1996,"ER7362"],[1996,"ER7363"],[1996,"ER7367"],[1996,"ER7381"],[1996,"ER7389"],[1996,"ER7410"],[1996,"ER7411"],[1996,"ER7501"],[1996,"ER7585"],[1996,"ER7586"],[1996,"ER7590"],[1996,"ER7602"],[1996,"ER7611"],[1996,"ER7612"],[1996,"ER7750"],[1996,"ER7839"],[1996,"ER7861"],[1996,"ER7883"],[1996,"ER7995"],[1996,"ER8084"],[1996,"ER8192"],[1996,"ER8320"],[1996,"ER8828"],[1996,"ER8829"],[1996,"ER8830"],[1996,"ER9122"],[1996,"ER9134"],[1996,"ER9151"],[1996,"ER9159"],[1996,"ER9163"],[1996,"ER9170"],[1996,"ER9171"],[1996,"ER9172"],[1996,"ER9173"],[1996,"ER9174"],[1996,"ER9225"],[1996,"ER9241"],[1997,"ER10007"],[1997,"ER10179"],[1997,"ER10257"],[1997,"ER10280"],[1997,"ER10302"],[1997,"ER10416"],[1997,"ER10496"],[1997,"ER10502"],[1997,"ER10517"],[1997,"ER10518"],[1997,"ER10661"],[1997,"ER10739"],[1997,"ER10762"],[1997,"ER10898"],[1997,"ER10978"],[1997,"ER11087"],[1997,"ER11213"],[1997,"ER11710"],[1997,"ER11711"],[1997,"ER11712"],[1997,"ER11713"],[1997,"ER11714"],[1997,"ER12065"],[1997,"ER12073"],[1997,"ER12097"],[1997,"ER12099"],[1997,"ER12111"],[1997,"ER12128"],[1997,"ER12140"],[1997,"ER12147"],[1997,"ER12148"],[1997,"ER12149"],[1997,"ER12150"],[1997,"ER12208"],[1999,"ER13008"],[1999,"ER13101"],[1999,"ER13131"],[1999,"ER13161"],[1999,"ER13309"],[1999,"ER13390"],[1999,"ER13415"],[1999,"ER13418"],[1999,"ER13439"],[1999,"ER13442"],[1999,"ER13462"],[1999,"ER13463"],[1999,"ER13562"],[1999,"ER13643"],[1999,"ER13667"],[1999,"ER13691"],[1999,"ER13714"],[1999,"ER13715"],[1999,"ER13821"],[1999,"ER13902"],[1999,"ER13906"],[1999,"ER13927"],[1999,"ER14074"],[1999,"ER14134"],[1999,"ER14155"],[1999,"ER14350"],[1999,"ER14363"],[1999,"ER14376"],[1999,"ER14389"],[1999,"ER14479"],[1999,"ER14978"],[1999,"ER14979"],[1999,"ER14980"],[1999,"ER14981"],[1999,"ER14982"],[1999,"ER14993"],[1999,"ER14997"],[1999,"ER15002"],[1999,"ER15026"],[1999,"ER15057"],[1999,"ER15150"],[1999,"ER15776"],[1999,"ER15777"],[1999,"ER16456"],[1999,"ER16505"],[2001,"ER17011"],[2001,"ER17112"],[2001,"ER17142"],[2001,"ER17172"],[2001,"ER17320"],[2001,"ER17424"],[2001,"ER17429"],[2001,"ER17451"],[2001,"ER17454"],[2001,"ER17455"],[2001,"ER17476"],[2001,"ER17602"],[2001,"ER17684"],[2001,"ER17706"],[2001,"ER17709"],[2001,"ER17710"],[2001,"ER17732"],[2001,"ER17890"],[2001,"ER17972"],[2001,"ER17994"],[2001,"ER17999"],[2001,"ER18021"],[2001,"ER18024"],[2001,"ER18025"],[2001,"ER18047"],[2001,"ER18173"],[2001,"ER18254"],[2001,"ER18255"],[2001,"ER18277"],[2001,"ER18490"],[2001,"ER18504"],[2001,"ER18518"],[2001,"ER18532"],[2001,"ER19174"],[2001,"ER19175"],[2001,"ER19176"],[2001,"ER19177"],[2001,"ER19178"],[2001,"ER19189"],[2001,"ER19193"],[2001,"ER19198"],[2001,"ER19222"],[2001,"ER19253"],[2001,"ER20008"],[2001,"ER20437"],[2001,"ER20453"]],"field_keys_sha256":"4438faec2a37ee83efff4e6e6ae4e7353518b5bc8f9dbed385bcc867771c28b0"},{"consumer_domain":"residual-era:modern","field_key_count":244,"field_keys":[[2003,"ER21014"],[2003,"ER21119"],[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21246"],[2003,"ER21252"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21438"],[2003,"ER21464"],[2003,"ER21470"],[2003,"ER21496"],[2003,"ER21502"],[2003,"ER21528"],[2003,"ER21751"],[2003,"ER21780"],[2003,"ER21809"],[2003,"ER21858"],[2003,"ER21872"],[2003,"ER21886"],[2003,"ER21900"],[2003,"ER21912"],[2003,"ER21914"],[2003,"ER22336"],[2003,"ER22539"],[2003,"ER22540"],[2003,"ER22541"],[2003,"ER22542"],[2003,"ER22543"],[2003,"ER22568"],[2003,"ER22617"],[2003,"ER22662"],[2003,"ER23702L4"],[2003,"ER24153"],[2003,"ER24154"],[2005,"ER25014"],[2005,"ER25100"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25267"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25525"],[2005,"ER25710"],[2005,"ER25738"],[2005,"ER25766"],[2005,"ER25839"],[2005,"ER25853"],[2005,"ER25867"],[2005,"ER25881"],[2005,"ER26520"],[2005,"ER26521"],[2005,"ER26522"],[2005,"ER26523"],[2005,"ER26524"],[2005,"ER26549"],[2005,"ER26598"],[2005,"ER28052"],[2005,"ER28053"],[2007,"ER36014"],[2007,"ER36105"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36272"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36498"],[2007,"ER36504"],[2007,"ER36530"],[2007,"ER36728"],[2007,"ER36756"],[2007,"ER36784"],[2007,"ER36857"],[2007,"ER36871"],[2007,"ER36885"],[2007,"ER36897"],[2007,"ER36899"],[2007,"ER36913"],[2007,"ER36925"],[2007,"ER36965"],[2007,"ER37335"],[2007,"ER37538"],[2007,"ER37539"],[2007,"ER37540"],[2007,"ER37541"],[2007,"ER37542"],[2007,"ER37616"],[2007,"ER38344"],[2007,"ER38662"],[2007,"ER38980"],[2007,"ER39441"],[2007,"ER39759"],[2007,"ER40077"],[2007,"ER40915"],[2007,"ER40997"],[2007,"ER40999"],[2007,"ER41042"],[2007,"ER41043"],[2009,"ER42014"],[2009,"ER42134"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2009,"ER42734"],[2009,"ER42757"],[2009,"ER42780"],[2009,"ER42848"],[2009,"ER42862"],[2009,"ER42876"],[2009,"ER42890"],[2009,"ER42902"],[2009,"ER42904"],[2009,"ER42916"],[2009,"ER42956"],[2009,"ER43529"],[2009,"ER43530"],[2009,"ER43531"],[2009,"ER43532"],[2009,"ER43533"],[2009,"ER43607"],[2009,"ER43638"],[2009,"ER43652"],[2009,"ER43670"],[2009,"ER46673"],[2009,"ER46823"],[2009,"ER46960"],[2009,"ER46986"],[2009,"ER46987"],[2011,"ER47314"],[2011,"ER47442"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2011,"ER48050"],[2011,"ER48075"],[2011,"ER48100"],[2011,"ER48170"],[2011,"ER48184"],[2011,"ER48198"],[2011,"ER48212"],[2011,"ER48224"],[2011,"ER48226"],[2011,"ER48278"],[2011,"ER48315"],[2011,"ER48854"],[2011,"ER48855"],[2011,"ER48856"],[2011,"ER48857"],[2011,"ER48858"],[2011,"ER48883"],[2011,"ER48932"],[2011,"ER48997"],[2011,"ER49015"],[2011,"ER52231"],[2011,"ER52238"],[2011,"ER52358"],[2011,"ER52364"],[2011,"ER52410"],[2011,"ER52411"],[2013,"ER53014"],[2013,"ER53142"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53565"],[2013,"ER53575"],[2013,"ER53747"],[2013,"ER53771"],[2013,"ER53795"],[2013,"ER53864"],[2013,"ER53878"],[2013,"ER53892"],[2013,"ER53904"],[2013,"ER53906"],[2013,"ER53918"],[2013,"ER53972"],[2013,"ER54345"],[2013,"ER54597"],[2013,"ER54598"],[2013,"ER54599"],[2013,"ER54600"],[2013,"ER54601"],[2013,"ER54682"],[2013,"ER54759"],[2013,"ER57557"],[2013,"ER57609"],[2013,"ER57611"],[2013,"ER57614"],[2013,"ER57667"],[2013,"ER57719"],[2013,"ER57721"],[2013,"ER57724"],[2013,"ER57889"],[2013,"ER58032"],[2013,"ER58052"],[2013,"ER58120"],[2013,"ER58177"],[2013,"ER58228"],[2013,"ER58229"],[2015,"ER60014"],[2015,"ER60084"],[2015,"ER60157"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60579"],[2015,"ER60590"],[2015,"ER60806"],[2015,"ER60830"],[2015,"ER60854"],[2015,"ER60923"],[2015,"ER60937"],[2015,"ER60951"],[2015,"ER60963"],[2015,"ER60965"],[2015,"ER60977"],[2015,"ER60979"],[2015,"ER60991"],[2015,"ER61034"],[2015,"ER61421"],[2015,"ER61708"],[2015,"ER61709"],[2015,"ER61710"],[2015,"ER61711"],[2015,"ER61712"],[2015,"ER61793"],[2015,"ER61870"],[2015,"ER64745"],[2015,"ER64881"],[2015,"ER65069"],[2015,"ER65217"],[2015,"ER65245"],[2015,"ER65317"],[2015,"ER65321"],[2015,"ER65358"],[2015,"ER65374"],[2015,"ER65464"],[2015,"ER65465"]],"field_keys_sha256":"fd92b240ec1917e49ebe9f5e3adb6d29cf25670c3337594af62d1888d87b4a01"},{"consumer_domain":"residual-era:exclusion","field_key_count":178,"field_keys":[[2017,"ER66158"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2017,"ER66854"],[2017,"ER66878"],[2017,"ER66902"],[2017,"ER66975"],[2017,"ER66989"],[2017,"ER67003"],[2017,"ER67017"],[2017,"ER67031"],[2017,"ER67086"],[2017,"ER67441"],[2017,"ER67761"],[2017,"ER67762"],[2017,"ER67763"],[2017,"ER67764"],[2017,"ER67765"],[2017,"ER67847"],[2017,"ER67924"],[2017,"ER70815"],[2017,"ER70986"],[2017,"ER70991"],[2017,"ER70996"],[2017,"ER71002"],[2017,"ER71025"],[2017,"ER71030"],[2017,"ER71294"],[2017,"ER71322"],[2017,"ER71394"],[2017,"ER71398"],[2017,"ER71435"],[2017,"ER71451"],[2017,"ER71543"],[2017,"ER71544"],[2019,"ER72014"],[2019,"ER72158"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72596"],[2019,"ER72607"],[2019,"ER72858"],[2019,"ER72882"],[2019,"ER72906"],[2019,"ER72998"],[2019,"ER73012"],[2019,"ER73026"],[2019,"ER73038"],[2019,"ER73040"],[2019,"ER73052"],[2019,"ER73054"],[2019,"ER73066"],[2019,"ER73109"],[2019,"ER73464"],[2019,"ER73784"],[2019,"ER73785"],[2019,"ER73786"],[2019,"ER73787"],[2019,"ER73788"],[2019,"ER73875"],[2019,"ER73952"],[2019,"ER76782"],[2019,"ER76783"],[2019,"ER76788"],[2019,"ER76789"],[2019,"ER76842"],[2019,"ER76843"],[2019,"ER76848"],[2019,"ER76849"],[2019,"ER76927"],[2019,"ER76928"],[2019,"ER76933"],[2019,"ER76934"],[2019,"ER76971"],[2019,"ER76987"],[2019,"ER76988"],[2019,"ER76993"],[2019,"ER76994"],[2019,"ER77041"],[2019,"ER77047"],[2019,"ER77052"],[2019,"ER77316"],[2019,"ER77344"],[2019,"ER77416"],[2019,"ER77461"],[2019,"ER77477"],[2019,"ER77604"],[2019,"ER77605"],[2021,"ER78014"],[2021,"ER78160"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78639"],[2021,"ER78649"],[2021,"ER78678"],[2021,"ER78935"],[2021,"ER78959"],[2021,"ER78983"],[2021,"ER79075"],[2021,"ER79089"],[2021,"ER79103"],[2021,"ER79117"],[2021,"ER79131"],[2021,"ER79206"],[2021,"ER79586"],[2021,"ER79905"],[2021,"ER79906"],[2021,"ER79907"],[2021,"ER79908"],[2021,"ER79909"],[2021,"ER79997"],[2021,"ER80074"],[2021,"ER81046"],[2021,"ER81072"],[2021,"ER81075"],[2021,"ER81087"],[2021,"ER81092"],[2021,"ER81093"],[2021,"ER81173"],[2021,"ER81220"],[2021,"ER81247"],[2021,"ER81252"],[2021,"ER81471"],[2021,"ER81519"],[2021,"ER81643"],[2021,"ER81671"],[2021,"ER81743"],[2021,"ER81788"],[2021,"ER81804"],[2021,"ER81931"],[2021,"ER81932"],[2023,"ER82014"],[2023,"ER82143"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82630"],[2023,"ER82631"],[2023,"ER82641"],[2023,"ER82928"],[2023,"ER82952"],[2023,"ER82976"],[2023,"ER83050"],[2023,"ER83064"],[2023,"ER83078"],[2023,"ER83092"],[2023,"ER83106"],[2023,"ER83181"],[2023,"ER83555"],[2023,"ER83874"],[2023,"ER83875"],[2023,"ER83876"],[2023,"ER83877"],[2023,"ER83878"],[2023,"ER84044"],[2023,"ER85049"],[2023,"ER85050"],[2023,"ER85052"],[2023,"ER85064"],[2023,"ER85070"],[2023,"ER85150"],[2023,"ER85176"],[2023,"ER85191"],[2023,"ER85197"],[2023,"ER85328"],[2023,"ER85376"],[2023,"ER85497"],[2023,"ER85525"],[2023,"ER85597"],[2023,"ER85599"],[2023,"ER85601"],[2023,"ER85642"],[2023,"ER85785"],[2023,"ER85786"]],"field_keys_sha256":"6cb15f9d04760390e4473ee0e62675f7d47dd58ff3dd420db5e484c9f8ec1ca4"},{"consumer_domain":"era-fact-family:er-role-total","field_key_count":9,"field_keys":[[1994,"ER4134"],[1995,"ER6974"],[1996,"ER9225"],[1999,"ER16505"],[2001,"ER20437"],[2007,"ER40915"],[2009,"ER46823"],[2011,"ER52231"],[2013,"ER58032"]],"field_keys_sha256":"5a358e373403e8f5759731f96101f9f85846b1a62773b4763321c611426eb1ec"},{"consumer_domain":"era-fact-family:modern-job-context","field_key_count":68,"field_keys":[[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21246"],[2003,"ER21252"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21438"],[2003,"ER21464"],[2003,"ER21470"],[2003,"ER21496"],[2003,"ER21502"],[2003,"ER21528"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25267"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25525"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36272"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36498"],[2007,"ER36504"],[2007,"ER36530"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53565"],[2013,"ER53575"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60579"],[2015,"ER60590"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72596"],[2019,"ER72607"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78639"],[2021,"ER78649"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82630"],[2023,"ER82631"],[2023,"ER82641"]],"field_keys_sha256":"cf70f39a06a3240ffe92d65131ece1994a40fc9d20c7d7d89b3bad527d6004d0"},{"consumer_domain":"era-fact-family:secondary-job-context","field_key_count":4,"field_keys":[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]],"field_keys_sha256":"23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45"},{"consumer_domain":"q5-dictionary-universe:1968","field_key_count":8,"field_keys":[[1968,"V95"],[1968,"V189"],[1968,"V412"],[1968,"V413"],[1968,"V414"],[1968,"V415"],[1968,"V416"],[1968,"V417"]],"field_keys_sha256":"2e9f1438582280e21e4cbfa6e1f2ce0b680920265880b8565148adcf163f82fc"},{"consumer_domain":"q5-dictionary-universe:1969","field_key_count":2,"field_keys":[[1969,"V807"],[1969,"V809"]],"field_keys_sha256":"c0ba0932d3bc28ba05bd9972f2debf623a7fdb276185da33190789e3bde743c7"},{"consumer_domain":"q5-dictionary-universe:1970","field_key_count":13,"field_keys":[[1970,"V1496"],[1970,"V1498"],[1970,"V1506"],[1970,"V1619"],[1970,"V1620"],[1970,"V1621"],[1970,"V1622"],[1970,"V1623"],[1970,"V1624"],[1970,"V1625"],[1970,"V1626"],[1970,"V1627"],[1970,"V1714"]],"field_keys_sha256":"e2fba98168987a68605ead96ded295faad9d082a0b061b2438f8fa86d50d9c0c"},{"consumer_domain":"q5-dictionary-universe:1971","field_key_count":19,"field_keys":[[1971,"V1816"],[1971,"V1985"],[1971,"V2037"],[1971,"V2059"],[1971,"V2075"],[1971,"V2208"],[1971,"V2210"],[1971,"V2226"],[1971,"V2331"],[1971,"V2332"],[1971,"V2333"],[1971,"V2334"],[1971,"V2336"],[1971,"V2339"],[1971,"V2340"],[1971,"V2341"],[1971,"V2342"],[1971,"V2343"],[1971,"V2344"]],"field_keys_sha256":"7f223e5c338e3fced95b16776e423f657e8c7644f82725b2a3fcfecf8b923230"},{"consumer_domain":"q5-dictionary-universe:1972","field_key_count":12,"field_keys":[[1972,"V2406"],[1972,"V2583"],[1972,"V2637"],[1972,"V2657"],[1972,"V2673"],[1972,"V2834"],[1972,"V2836"],[1972,"V2960"],[1972,"V2961"],[1972,"V2962"],[1972,"V2963"],[1972,"V2965"]],"field_keys_sha256":"b0840f03157db0c75c93a319d5e5ec0bf02b7ef0a3f0f1d119efe4b3e1e860b6"},{"consumer_domain":"q5-dictionary-universe:1973","field_key_count":12,"field_keys":[[1973,"V3006"],[1973,"V3116"],[1973,"V3154"],[1973,"V3170"],[1973,"V3184"],[1973,"V3194"],[1973,"V3251"],[1973,"V3304"],[1973,"V3305"],[1973,"V3306"],[1973,"V3307"],[1973,"V3309"]],"field_keys_sha256":"50f46177f48622ccea81fc72a61b26853f61391ffe09b762724705dd85046894"},{"consumer_domain":"q5-dictionary-universe:1974","field_key_count":11,"field_keys":[[1974,"V3406"],[1974,"V3531"],[1974,"V3570"],[1974,"V3587"],[1974,"V3602"],[1974,"V3673"],[1974,"V3724"],[1974,"V3725"],[1974,"V3726"],[1974,"V3727"],[1974,"V3729"]],"field_keys_sha256":"b757a8402d232434a4fadc5050e3ae0fc43635451cccc08c4f5ea0a282712f97"},{"consumer_domain":"q5-dictionary-universe:1975","field_key_count":12,"field_keys":[[1975,"V3806"],[1975,"V3934"],[1975,"V3969"],[1975,"V4024"],[1975,"V4042"],[1975,"V4056"],[1975,"V4151"],[1975,"V4225"],[1975,"V4226"],[1975,"V4227"],[1975,"V4228"],[1975,"V4230"]],"field_keys_sha256":"018ed8d13b56ba83ecce47f44d08fbb5ff49605c61a92500bb9abfeda2e20487"},{"consumer_domain":"q5-dictionary-universe:1976","field_key_count":28,"field_keys":[[1976,"V4306"],[1976,"V4459"],[1976,"V4460"],[1976,"V4519"],[1976,"V4542"],[1976,"V4553"],[1976,"V4554"],[1976,"V4578"],[1976,"V4579"],[1976,"V4605"],[1976,"V4606"],[1976,"V4702"],[1976,"V4746"],[1976,"V4747"],[1976,"V4842"],[1976,"V4843"],[1976,"V4902"],[1976,"V4925"],[1976,"V4937"],[1976,"V4938"],[1976,"V4962"],[1976,"V4963"],[1976,"V4993"],[1976,"V5107"],[1976,"V5108"],[1976,"V5109"],[1976,"V5110"],[1976,"V5112"]],"field_keys_sha256":"9968c6a609701fca452de052658b862105dbd2cba4e29063a6845ad0dc56f833"},{"consumer_domain":"q5-dictionary-universe:1977","field_key_count":16,"field_keys":[[1977,"V5206"],[1977,"V5374"],[1977,"V5375"],[1977,"V5429"],[1977,"V5441"],[1977,"V5455"],[1977,"V5456"],[1977,"V5482"],[1977,"V5483"],[1977,"V5507"],[1977,"V5508"],[1977,"V5666"],[1977,"V5667"],[1977,"V5668"],[1977,"V5669"],[1977,"V5671"]],"field_keys_sha256":"a0aa8e9b9d68d6e9f821a374396a38f88e269352da98b83adb29e82aeecb815d"},{"consumer_domain":"q5-dictionary-universe:1978","field_key_count":17,"field_keys":[[1978,"V5706"],[1978,"V5873"],[1978,"V5874"],[1978,"V5916"],[1978,"V5958"],[1978,"V5984"],[1978,"V5985"],[1978,"V6018"],[1978,"V6019"],[1978,"V6039"],[1978,"V6040"],[1978,"V6167"],[1978,"V6213"],[1978,"V6214"],[1978,"V6215"],[1978,"V6216"],[1978,"V6218"]],"field_keys_sha256":"6c853bd9ac2794316ddd292c4f8c0688d2d496aba80c6a7bc1299dd64f24819d"},{"consumer_domain":"q5-dictionary-universe:1979","field_key_count":23,"field_keys":[[1979,"V6306"],[1979,"V6469"],[1979,"V6497"],[1979,"V6498"],[1979,"V6527"],[1979,"V6545"],[1979,"V6557"],[1979,"V6558"],[1979,"V6578"],[1979,"V6579"],[1979,"V6596"],[1979,"V6597"],[1979,"V6619"],[1979,"V6624"],[1979,"V6629"],[1979,"V6630"],[1979,"V6650"],[1979,"V6651"],[1979,"V6806"],[1979,"V6807"],[1979,"V6808"],[1979,"V6809"],[1979,"V6811"]],"field_keys_sha256":"868668c7f14c7f38524b3f8550d2e5a26876aa03777e892f23249cafb48bc0e1"},{"consumer_domain":"q5-dictionary-universe:1980","field_key_count":21,"field_keys":[[1980,"V6906"],[1980,"V7074"],[1980,"V7100"],[1980,"V7101"],[1980,"V7130"],[1980,"V7148"],[1980,"V7159"],[1980,"V7160"],[1980,"V7180"],[1980,"V7181"],[1980,"V7198"],[1980,"V7199"],[1980,"V7221"],[1980,"V7226"],[1980,"V7231"],[1980,"V7232"],[1980,"V7252"],[1980,"V7253"],[1980,"V7452"],[1980,"V7453"],[1980,"V7454"]],"field_keys_sha256":"e08fc8a89e19fd6413c2ecde37917c8be4dd2f9ec359845ab1603cb826b34b23"},{"consumer_domain":"q5-dictionary-universe:1981","field_key_count":10,"field_keys":[[1981,"V7506"],[1981,"V7585"],[1981,"V7665"],[1981,"V7745"],[1981,"V7799"],[1981,"V7908"],[1981,"V7915"],[1981,"V8104"],[1981,"V8105"],[1981,"V8106"]],"field_keys_sha256":"58ea0a892e65d712b2fae2d616bc9f2e42e3feb3aaa27be5f8a6c101c07c4e0f"},{"consumer_domain":"q5-dictionary-universe:1982","field_key_count":9,"field_keys":[[1982,"V8206"],[1982,"V8278"],[1982,"V8407"],[1982,"V8461"],[1982,"V8566"],[1982,"V8570"],[1982,"V8728"],[1982,"V8729"],[1982,"V8730"]],"field_keys_sha256":"d9293fbb1ee93ed8916cd69ede675209084f7b89d7432a9e98b5c1d731569ce3"},{"consumer_domain":"q5-dictionary-universe:1983","field_key_count":13,"field_keys":[[1983,"V8806"],[1983,"V8886"],[1983,"V9038"],[1983,"V9098"],[1983,"V9122"],[1983,"V9216"],[1983,"V9229"],[1983,"V9251"],[1983,"V9415"],[1983,"V9416"],[1983,"V9417"],[1983,"V9422"],[1983,"V9423"]],"field_keys_sha256":"9a52d3f6bdb60a5e6077799f68bab0f96f1db96e00c5dc7f71b8fec3120ce11f"},{"consumer_domain":"q5-dictionary-universe:1984","field_key_count":18,"field_keys":[[1984,"V10006"],[1984,"V10268"],[1984,"V10275"],[1984,"V10566"],[1984,"V10570"],[1984,"V10598"],[1984,"V10633"],[1984,"V10637"],[1984,"V10780"],[1984,"V10783"],[1984,"V10800"],[1984,"V10833"],[1984,"V10873"],[1984,"V11061"],[1984,"V11062"],[1984,"V11063"],[1984,"V11068"],[1984,"V11069"]],"field_keys_sha256":"b48dadb8e52ff57cf3fbcea39ebc818d986551fb732375533d568e199f88f93d"},{"consumer_domain":"q5-dictionary-universe:1985","field_key_count":28,"field_keys":[[1985,"V11106"],[1985,"V11122"],[1985,"V11409"],[1985,"V11448"],[1985,"V11710"],[1985,"V11714"],[1985,"V11726"],[1985,"V11729"],[1985,"V11745"],[1985,"V11806"],[1985,"V11822"],[1985,"V11889"],[1985,"V11898"],[1985,"V11899"],[1985,"V11900"],[1985,"V12073"],[1985,"V12077"],[1985,"V12089"],[1985,"V12092"],[1985,"V12108"],[1985,"V12169"],[1985,"V12173"],[1985,"V12185"],[1985,"V12422"],[1985,"V12423"],[1985,"V12424"],[1985,"V12429"],[1985,"V12430"]],"field_keys_sha256":"75e98caec49639cc7048a012e02cee051b6f876e32f2564feea2f7edc3a18b26"},{"consumer_domain":"q5-dictionary-universe:1986","field_key_count":29,"field_keys":[[1986,"V12506"],[1986,"V12521"],[1986,"V12808"],[1986,"V12855"],[1986,"V13110"],[1986,"V13114"],[1986,"V13126"],[1986,"V13129"],[1986,"V13141"],[1986,"V13202"],[1986,"V13206"],[1986,"V13218"],[1986,"V13287"],[1986,"V13291"],[1986,"V13303"],[1986,"V13306"],[1986,"V13311"],[1986,"V13370"],[1986,"V13374"],[1986,"V13386"],[1986,"V13400"],[1986,"V13409"],[1986,"V13410"],[1986,"V13411"],[1986,"V13662"],[1986,"V13663"],[1986,"V13664"],[1986,"V13668"],[1986,"V13669"]],"field_keys_sha256":"84a657ef54297063194b5c6de4da5237d8e62400e591b19d3bb1f4e544189475"},{"consumer_domain":"q5-dictionary-universe:1987","field_key_count":34,"field_keys":[[1987,"V13706"],[1987,"V13721"],[1987,"V13910"],[1987,"V13918"],[1987,"V13951"],[1987,"V13957"],[1987,"V13965"],[1987,"V14056"],[1987,"V14061"],[1987,"V14066"],[1987,"V14208"],[1987,"V14212"],[1987,"V14224"],[1987,"V14227"],[1987,"V14239"],[1987,"V14298"],[1987,"V14302"],[1987,"V14314"],[1987,"V14381"],[1987,"V14385"],[1987,"V14397"],[1987,"V14400"],[1987,"V14405"],[1987,"V14462"],[1987,"V14466"],[1987,"V14478"],[1987,"V14497"],[1987,"V14506"],[1987,"V14507"],[1987,"V14508"],[1987,"V14709"],[1987,"V14710"],[1987,"V14711"],[1987,"V14715"]],"field_keys_sha256":"d1f9b361e26ca7c602da1055dfb53a5c4e1778970954066f815f9033d2d4393c"},{"consumer_domain":"q5-dictionary-universe:1988","field_key_count":38,"field_keys":[[1988,"V14806"],[1988,"V14821"],[1988,"V14925"],[1988,"V14933"],[1988,"V15071"],[1988,"V15076"],[1988,"V15081"],[1988,"V15186"],[1988,"V15188"],[1988,"V15191"],[1988,"V15239"],[1988,"V15284"],[1988,"V15307"],[1988,"V15333"],[1988,"V15338"],[1988,"V15386"],[1988,"V15431"],[1988,"V15454"],[1988,"V15488"],[1988,"V15493"],[1988,"V15541"],[1988,"V15586"],[1988,"V15609"],[1988,"V15635"],[1988,"V15640"],[1988,"V15688"],[1988,"V15713"],[1988,"V15733"],[1988,"V15736"],[1988,"V15755"],[1988,"V15756"],[1988,"V15765"],[1988,"V16183"],[1988,"V16184"],[1988,"V16185"],[1988,"V16186"],[1988,"V16190"],[1988,"V16191"]],"field_keys_sha256":"c9c35c932a80295142c8b6f52305e637fdca441d46bba28fa6e94980ca9d579f"},{"consumer_domain":"q5-dictionary-universe:1989","field_key_count":43,"field_keys":[[1989,"V16306"],[1989,"V16321"],[1989,"V16425"],[1989,"V16472"],[1989,"V16566"],[1989,"V16571"],[1989,"V16576"],[1989,"V16581"],[1989,"V16687"],[1989,"V16692"],[1989,"V16740"],[1989,"V16785"],[1989,"V16808"],[1989,"V16848"],[1989,"V16853"],[1989,"V16901"],[1989,"V16946"],[1989,"V16949"],[1989,"V16969"],[1989,"V17006"],[1989,"V17011"],[1989,"V17059"],[1989,"V17104"],[1989,"V17127"],[1989,"V17172"],[1989,"V17220"],[1989,"V17265"],[1989,"V17300"],[1989,"V17310"],[1989,"V17311"],[1989,"V17312"],[1989,"V17383"],[1989,"V17386"],[1989,"V17561"],[1989,"V17562"],[1989,"V17563"],[1989,"V17564"],[1989,"V17569"],[1989,"V17590"],[1989,"V17592"],[1989,"V17595"],[1989,"V17598"],[1989,"V17604"]],"field_keys_sha256":"e650713437e592e966078855539909e5ce42bdfe6a9c1bb1464cce13542583a9"},{"consumer_domain":"q5-dictionary-universe:1990","field_key_count":35,"field_keys":[[1990,"V17706"],[1990,"V17721"],[1990,"V17841"],[1990,"V17896"],[1990,"V17982"],[1990,"V17987"],[1990,"V17992"],[1990,"V17997"],[1990,"V18125"],[1990,"V18130"],[1990,"V18178"],[1990,"V18223"],[1990,"V18246"],[1990,"V18272"],[1990,"V18277"],[1990,"V18325"],[1990,"V18370"],[1990,"V18427"],[1990,"V18432"],[1990,"V18480"],[1990,"V18525"],[1990,"V18548"],[1990,"V18574"],[1990,"V18579"],[1990,"V18627"],[1990,"V18652"],[1990,"V18672"],[1990,"V18675"],[1990,"V18694"],[1990,"V18695"],[1990,"V18704"],[1990,"V18714"],[1990,"V18715"],[1990,"V18716"],[1990,"V18915"]],"field_keys_sha256":"c64f9871a8c162b8998bea0856a965ec3bc4af91997cbec7edd48f1dee891b72"},{"consumer_domain":"q5-dictionary-universe:1991","field_key_count":33,"field_keys":[[1991,"V19006"],[1991,"V19021"],[1991,"V19141"],[1991,"V19188"],[1991,"V19282"],[1991,"V19287"],[1991,"V19292"],[1991,"V19297"],[1991,"V19425"],[1991,"V19430"],[1991,"V19478"],[1991,"V19523"],[1991,"V19546"],[1991,"V19572"],[1991,"V19577"],[1991,"V19625"],[1991,"V19670"],[1991,"V19673"],[1991,"V19693"],[1991,"V19727"],[1991,"V19732"],[1991,"V19780"],[1991,"V19825"],[1991,"V19848"],[1991,"V19874"],[1991,"V19879"],[1991,"V19927"],[1991,"V19972"],[1991,"V20004"],[1991,"V20014"],[1991,"V20015"],[1991,"V20016"],[1991,"V20215"]],"field_keys_sha256":"1a92c8d5ef53fbe14b10f22035ee370f9bea8987da92e99b19c0b23b25dffbce"},{"consumer_domain":"q5-dictionary-universe:1992","field_key_count":34,"field_keys":[[1992,"V20306"],[1992,"V20321"],[1992,"V20449"],[1992,"V20488"],[1992,"V20582"],[1992,"V20587"],[1992,"V20592"],[1992,"V20597"],[1992,"V20725"],[1992,"V20730"],[1992,"V20778"],[1992,"V20823"],[1992,"V20846"],[1992,"V20872"],[1992,"V20877"],[1992,"V20925"],[1992,"V20970"],[1992,"V20992"],[1992,"V20993"],[1992,"V21027"],[1992,"V21032"],[1992,"V21080"],[1992,"V21125"],[1992,"V21148"],[1992,"V21174"],[1992,"V21179"],[1992,"V21227"],[1992,"V21252"],[1992,"V21272"],[1992,"V21304"],[1992,"V21314"],[1992,"V21315"],[1992,"V21316"],[1992,"V21521"]],"field_keys_sha256":"90c500565dc77060f26f916ddc8d82316530e8d1a4a1d9b3f1093fce740a373e"},{"consumer_domain":"q5-dictionary-universe:1993","field_key_count":44,"field_keys":[[1993,"V21605"],[1993,"V21813"],[1993,"V21829"],[1993,"V21943"],[1993,"V22373"],[1993,"V22499"],[1993,"V22506"],[1993,"V22545"],[1993,"V22550"],[1993,"V22552"],[1993,"V22585"],[1993,"V22607"],[1993,"V22611"],[1993,"V22633"],[1993,"V22665"],[1993,"V22672"],[1993,"V22711"],[1993,"V22716"],[1993,"V22718"],[1993,"V22751"],[1993,"V22773"],[1993,"V22777"],[1993,"V22799"],[1993,"V22852"],[1993,"V22859"],[1993,"V22898"],[1993,"V22903"],[1993,"V22905"],[1993,"V22960"],[1993,"V22964"],[1993,"V22986"],[1993,"V23018"],[1993,"V23025"],[1993,"V23064"],[1993,"V23069"],[1993,"V23071"],[1993,"V23104"],[1993,"V23126"],[1993,"V23164"],[1993,"V23173"],[1993,"V23174"],[1993,"V23175"],[1993,"V23339"],[1993,"V23340"]],"field_keys_sha256":"bf3cc10e05d8625c41324ba7b9013a0e7460518c2024b0df2e1633c007dacbc4"},{"consumer_domain":"q5-dictionary-universe:1994","field_key_count":41,"field_keys":[[1994,"ER2161"],[1994,"ER2250"],[1994,"ER2272"],[1994,"ER2294"],[1994,"ER2315"],[1994,"ER2316"],[1994,"ER2406"],[1994,"ER2495"],[1994,"ER2517"],[1994,"ER2601"],[1994,"ER2655"],[1994,"ER2744"],[1994,"ER2766"],[1994,"ER2787"],[1994,"ER2788"],[1994,"ER2900"],[1994,"ER2988"],[1994,"ER3010"],[1994,"ER3071"],[1994,"ER3072"],[1994,"ER3073"],[1994,"ER3095"],[1994,"ER3203"],[1994,"ER3722"],[1994,"ER3726"],[1994,"ER3731"],[1994,"ER3736"],[1994,"ER3748"],[1994,"ER3779"],[1994,"ER4031"],[1994,"ER4043"],[1994,"ER4045"],[1994,"ER4060"],[1994,"ER4074"],[1994,"ER4079"],[1994,"ER4080"],[1994,"ER4081"],[1994,"ER4082"],[1994,"ER4083"],[1994,"ER4134"],[1994,"ER4150"]],"field_keys_sha256":"c8c70a590f0c4b9f73b5b8ac806b114f5fa0c90370d1b1c6e72ec0fecf16264e"},{"consumer_domain":"q5-dictionary-universe:1995","field_key_count":45,"field_keys":[[1995,"ER5160"],[1995,"ER5249"],[1995,"ER5271"],[1995,"ER5293"],[1995,"ER5315"],[1995,"ER5405"],[1995,"ER5494"],[1995,"ER5516"],[1995,"ER5522"],[1995,"ER5537"],[1995,"ER5538"],[1995,"ER5654"],[1995,"ER5743"],[1995,"ER5765"],[1995,"ER5786"],[1995,"ER5787"],[1995,"ER5899"],[1995,"ER5987"],[1995,"ER5993"],[1995,"ER6009"],[1995,"ER6031"],[1995,"ER6053"],[1995,"ER6095"],[1995,"ER6203"],[1995,"ER6710"],[1995,"ER6711"],[1995,"ER6712"],[1995,"ER6713"],[1995,"ER6714"],[1995,"ER6869"],[1995,"ER6871"],[1995,"ER6883"],[1995,"ER6885"],[1995,"ER6900"],[1995,"ER6908"],[1995,"ER6914"],[1995,"ER6916"],[1995,"ER6918"],[1995,"ER6919"],[1995,"ER6920"],[1995,"ER6921"],[1995,"ER6922"],[1995,"ER6923"],[1995,"ER6974"],[1995,"ER6990"]],"field_keys_sha256":"6a57a035b602a72f89f0ce92e2999f48afd8af32944d998533cca33ea53cdafe"},{"consumer_domain":"q5-dictionary-universe:1996","field_key_count":40,"field_keys":[[1996,"ER7256"],[1996,"ER7345"],[1996,"ER7361"],[1996,"ER7362"],[1996,"ER7363"],[1996,"ER7367"],[1996,"ER7381"],[1996,"ER7389"],[1996,"ER7410"],[1996,"ER7411"],[1996,"ER7501"],[1996,"ER7585"],[1996,"ER7586"],[1996,"ER7590"],[1996,"ER7602"],[1996,"ER7611"],[1996,"ER7612"],[1996,"ER7750"],[1996,"ER7839"],[1996,"ER7861"],[1996,"ER7883"],[1996,"ER7995"],[1996,"ER8084"],[1996,"ER8192"],[1996,"ER8320"],[1996,"ER8828"],[1996,"ER8829"],[1996,"ER8830"],[1996,"ER9122"],[1996,"ER9134"],[1996,"ER9151"],[1996,"ER9159"],[1996,"ER9163"],[1996,"ER9170"],[1996,"ER9171"],[1996,"ER9172"],[1996,"ER9173"],[1996,"ER9174"],[1996,"ER9225"],[1996,"ER9241"]],"field_keys_sha256":"814739dc09f6ff604662e91566262588bc9d8976cd6227557b907d4b1f782045"},{"consumer_domain":"q5-dictionary-universe:1997","field_key_count":34,"field_keys":[[1997,"ER10007"],[1997,"ER10179"],[1997,"ER10257"],[1997,"ER10280"],[1997,"ER10302"],[1997,"ER10416"],[1997,"ER10496"],[1997,"ER10502"],[1997,"ER10517"],[1997,"ER10518"],[1997,"ER10661"],[1997,"ER10739"],[1997,"ER10762"],[1997,"ER10898"],[1997,"ER10978"],[1997,"ER11087"],[1997,"ER11213"],[1997,"ER11710"],[1997,"ER11711"],[1997,"ER11712"],[1997,"ER11713"],[1997,"ER11714"],[1997,"ER12065"],[1997,"ER12073"],[1997,"ER12097"],[1997,"ER12099"],[1997,"ER12111"],[1997,"ER12128"],[1997,"ER12140"],[1997,"ER12147"],[1997,"ER12148"],[1997,"ER12149"],[1997,"ER12150"],[1997,"ER12208"]],"field_keys_sha256":"0dd11b395124e8da1e128b9841942e69d78a882130db259168137b6583201784"},{"consumer_domain":"q5-dictionary-universe:1999","field_key_count":45,"field_keys":[[1999,"ER13008"],[1999,"ER13101"],[1999,"ER13131"],[1999,"ER13161"],[1999,"ER13309"],[1999,"ER13390"],[1999,"ER13415"],[1999,"ER13418"],[1999,"ER13439"],[1999,"ER13442"],[1999,"ER13462"],[1999,"ER13463"],[1999,"ER13562"],[1999,"ER13643"],[1999,"ER13667"],[1999,"ER13691"],[1999,"ER13714"],[1999,"ER13715"],[1999,"ER13821"],[1999,"ER13902"],[1999,"ER13906"],[1999,"ER13927"],[1999,"ER14074"],[1999,"ER14134"],[1999,"ER14155"],[1999,"ER14350"],[1999,"ER14363"],[1999,"ER14376"],[1999,"ER14389"],[1999,"ER14479"],[1999,"ER14978"],[1999,"ER14979"],[1999,"ER14980"],[1999,"ER14981"],[1999,"ER14982"],[1999,"ER14993"],[1999,"ER14997"],[1999,"ER15002"],[1999,"ER15026"],[1999,"ER15057"],[1999,"ER15150"],[1999,"ER15776"],[1999,"ER15777"],[1999,"ER16456"],[1999,"ER16505"]],"field_keys_sha256":"94a02f7bb7c3e08acd4f056eb414b12fc003dd43447528e0945e6dc5942ed63c"},{"consumer_domain":"q5-dictionary-universe:2001","field_key_count":46,"field_keys":[[2001,"ER17011"],[2001,"ER17112"],[2001,"ER17142"],[2001,"ER17172"],[2001,"ER17320"],[2001,"ER17424"],[2001,"ER17429"],[2001,"ER17451"],[2001,"ER17454"],[2001,"ER17455"],[2001,"ER17476"],[2001,"ER17602"],[2001,"ER17684"],[2001,"ER17706"],[2001,"ER17709"],[2001,"ER17710"],[2001,"ER17732"],[2001,"ER17890"],[2001,"ER17972"],[2001,"ER17994"],[2001,"ER17999"],[2001,"ER18021"],[2001,"ER18024"],[2001,"ER18025"],[2001,"ER18047"],[2001,"ER18173"],[2001,"ER18254"],[2001,"ER18255"],[2001,"ER18277"],[2001,"ER18490"],[2001,"ER18504"],[2001,"ER18518"],[2001,"ER18532"],[2001,"ER19174"],[2001,"ER19175"],[2001,"ER19176"],[2001,"ER19177"],[2001,"ER19178"],[2001,"ER19189"],[2001,"ER19193"],[2001,"ER19198"],[2001,"ER19222"],[2001,"ER19253"],[2001,"ER20008"],[2001,"ER20437"],[2001,"ER20453"]],"field_keys_sha256":"c6b91fef7e88e83d7f6612b8347e172af951350694c014adc3ac69f231ed9f65"},{"consumer_domain":"q5-dictionary-universe:2003","field_key_count":35,"field_keys":[[2003,"ER21014"],[2003,"ER21119"],[2003,"ER21188"],[2003,"ER21220"],[2003,"ER21246"],[2003,"ER21252"],[2003,"ER21278"],[2003,"ER21432"],[2003,"ER21438"],[2003,"ER21464"],[2003,"ER21470"],[2003,"ER21496"],[2003,"ER21502"],[2003,"ER21528"],[2003,"ER21751"],[2003,"ER21780"],[2003,"ER21809"],[2003,"ER21858"],[2003,"ER21872"],[2003,"ER21886"],[2003,"ER21900"],[2003,"ER21912"],[2003,"ER21914"],[2003,"ER22336"],[2003,"ER22539"],[2003,"ER22540"],[2003,"ER22541"],[2003,"ER22542"],[2003,"ER22543"],[2003,"ER22568"],[2003,"ER22617"],[2003,"ER22662"],[2003,"ER23702L4"],[2003,"ER24153"],[2003,"ER24154"]],"field_keys_sha256":"ee3ef74ac64a674a45447eb64ee3d2ed4d9f28b9ad75f68383fe84fe3bda875b"},{"consumer_domain":"q5-dictionary-universe:2005","field_key_count":26,"field_keys":[[2005,"ER25014"],[2005,"ER25100"],[2005,"ER25177"],[2005,"ER25209"],[2005,"ER25241"],[2005,"ER25267"],[2005,"ER25435"],[2005,"ER25467"],[2005,"ER25499"],[2005,"ER25525"],[2005,"ER25710"],[2005,"ER25738"],[2005,"ER25766"],[2005,"ER25839"],[2005,"ER25853"],[2005,"ER25867"],[2005,"ER25881"],[2005,"ER26520"],[2005,"ER26521"],[2005,"ER26522"],[2005,"ER26523"],[2005,"ER26524"],[2005,"ER26549"],[2005,"ER26598"],[2005,"ER28052"],[2005,"ER28053"]],"field_keys_sha256":"dc51b05bdb86cb99983ae84817737bd171b13fa79c0a96062ca3cfd2c403726c"},{"consumer_domain":"q5-dictionary-universe:2007","field_key_count":40,"field_keys":[[2007,"ER36014"],[2007,"ER36105"],[2007,"ER36182"],[2007,"ER36214"],[2007,"ER36246"],[2007,"ER36272"],[2007,"ER36440"],[2007,"ER36472"],[2007,"ER36498"],[2007,"ER36504"],[2007,"ER36530"],[2007,"ER36728"],[2007,"ER36756"],[2007,"ER36784"],[2007,"ER36857"],[2007,"ER36871"],[2007,"ER36885"],[2007,"ER36897"],[2007,"ER36899"],[2007,"ER36913"],[2007,"ER36925"],[2007,"ER36965"],[2007,"ER37335"],[2007,"ER37538"],[2007,"ER37539"],[2007,"ER37540"],[2007,"ER37541"],[2007,"ER37542"],[2007,"ER37616"],[2007,"ER38344"],[2007,"ER38662"],[2007,"ER38980"],[2007,"ER39441"],[2007,"ER39759"],[2007,"ER40077"],[2007,"ER40915"],[2007,"ER40997"],[2007,"ER40999"],[2007,"ER41042"],[2007,"ER41043"]],"field_keys_sha256":"3f45fea7a8123f6881dc708f46f6810eb8241418efd4aa61d48a895aaf80acba"},{"consumer_domain":"q5-dictionary-universe:2009","field_key_count":31,"field_keys":[[2009,"ER42014"],[2009,"ER42134"],[2009,"ER42269"],[2009,"ER42299"],[2009,"ER42521"],[2009,"ER42551"],[2009,"ER42734"],[2009,"ER42757"],[2009,"ER42780"],[2009,"ER42848"],[2009,"ER42862"],[2009,"ER42876"],[2009,"ER42890"],[2009,"ER42902"],[2009,"ER42904"],[2009,"ER42916"],[2009,"ER42956"],[2009,"ER43529"],[2009,"ER43530"],[2009,"ER43531"],[2009,"ER43532"],[2009,"ER43533"],[2009,"ER43607"],[2009,"ER43638"],[2009,"ER43652"],[2009,"ER43670"],[2009,"ER46673"],[2009,"ER46823"],[2009,"ER46960"],[2009,"ER46986"],[2009,"ER46987"]],"field_keys_sha256":"f9cbd27c90b684e66a45cc72e80dc699d38b02f2acc63d74255ea0c90f4cb7a1"},{"consumer_domain":"q5-dictionary-universe:2011","field_key_count":32,"field_keys":[[2011,"ER47314"],[2011,"ER47442"],[2011,"ER47612"],[2011,"ER47779"],[2011,"ER47839"],[2011,"ER47869"],[2011,"ER48050"],[2011,"ER48075"],[2011,"ER48100"],[2011,"ER48170"],[2011,"ER48184"],[2011,"ER48198"],[2011,"ER48212"],[2011,"ER48224"],[2011,"ER48226"],[2011,"ER48278"],[2011,"ER48315"],[2011,"ER48854"],[2011,"ER48855"],[2011,"ER48856"],[2011,"ER48857"],[2011,"ER48858"],[2011,"ER48883"],[2011,"ER48932"],[2011,"ER48997"],[2011,"ER49015"],[2011,"ER52231"],[2011,"ER52238"],[2011,"ER52358"],[2011,"ER52364"],[2011,"ER52410"],[2011,"ER52411"]],"field_keys_sha256":"fa05b772c8d6c775a7f20494d8a8efaf893e066680e400a1ede6022110723adb"},{"consumer_domain":"q5-dictionary-universe:2013","field_key_count":41,"field_keys":[[2013,"ER53014"],[2013,"ER53142"],[2013,"ER53312"],[2013,"ER53485"],[2013,"ER53515"],[2013,"ER53545"],[2013,"ER53565"],[2013,"ER53575"],[2013,"ER53747"],[2013,"ER53771"],[2013,"ER53795"],[2013,"ER53864"],[2013,"ER53878"],[2013,"ER53892"],[2013,"ER53904"],[2013,"ER53906"],[2013,"ER53918"],[2013,"ER53972"],[2013,"ER54345"],[2013,"ER54597"],[2013,"ER54598"],[2013,"ER54599"],[2013,"ER54600"],[2013,"ER54601"],[2013,"ER54682"],[2013,"ER54759"],[2013,"ER57557"],[2013,"ER57609"],[2013,"ER57611"],[2013,"ER57614"],[2013,"ER57667"],[2013,"ER57719"],[2013,"ER57721"],[2013,"ER57724"],[2013,"ER57889"],[2013,"ER58032"],[2013,"ER58052"],[2013,"ER58120"],[2013,"ER58177"],[2013,"ER58228"],[2013,"ER58229"]],"field_keys_sha256":"8851100e293ea7d8eee026b509cf880b5e99437adfe34dce01ffe31b187be72f"},{"consumer_domain":"q5-dictionary-universe:2015","field_key_count":39,"field_keys":[[2015,"ER60014"],[2015,"ER60084"],[2015,"ER60157"],[2015,"ER60327"],[2015,"ER60530"],[2015,"ER60560"],[2015,"ER60579"],[2015,"ER60590"],[2015,"ER60806"],[2015,"ER60830"],[2015,"ER60854"],[2015,"ER60923"],[2015,"ER60937"],[2015,"ER60951"],[2015,"ER60963"],[2015,"ER60965"],[2015,"ER60977"],[2015,"ER60979"],[2015,"ER60991"],[2015,"ER61034"],[2015,"ER61421"],[2015,"ER61708"],[2015,"ER61709"],[2015,"ER61710"],[2015,"ER61711"],[2015,"ER61712"],[2015,"ER61793"],[2015,"ER61870"],[2015,"ER64745"],[2015,"ER64881"],[2015,"ER65069"],[2015,"ER65217"],[2015,"ER65245"],[2015,"ER65317"],[2015,"ER65321"],[2015,"ER65358"],[2015,"ER65374"],[2015,"ER65464"],[2015,"ER65465"]],"field_keys_sha256":"e2e14d7bcbfddca8c97b8b72c162eb15ffd64f12d95fe2f935d74da6a20c51af"},{"consumer_domain":"q5-dictionary-universe:2017","field_key_count":37,"field_keys":[[2017,"ER66158"],[2017,"ER66330"],[2017,"ER66545"],[2017,"ER66575"],[2017,"ER66605"],[2017,"ER66854"],[2017,"ER66878"],[2017,"ER66902"],[2017,"ER66975"],[2017,"ER66989"],[2017,"ER67003"],[2017,"ER67017"],[2017,"ER67031"],[2017,"ER67086"],[2017,"ER67441"],[2017,"ER67761"],[2017,"ER67762"],[2017,"ER67763"],[2017,"ER67764"],[2017,"ER67765"],[2017,"ER67847"],[2017,"ER67924"],[2017,"ER70815"],[2017,"ER70986"],[2017,"ER70991"],[2017,"ER70996"],[2017,"ER71002"],[2017,"ER71025"],[2017,"ER71030"],[2017,"ER71294"],[2017,"ER71322"],[2017,"ER71394"],[2017,"ER71398"],[2017,"ER71435"],[2017,"ER71451"],[2017,"ER71543"],[2017,"ER71544"]],"field_keys_sha256":"0aecfc948b6e15eab84b54d4043d173a4b166f75c997452d4020d98558d5cd42"},{"consumer_domain":"q5-dictionary-universe:2019","field_key_count":53,"field_keys":[[2019,"ER72014"],[2019,"ER72158"],[2019,"ER72330"],[2019,"ER72547"],[2019,"ER72596"],[2019,"ER72607"],[2019,"ER72858"],[2019,"ER72882"],[2019,"ER72906"],[2019,"ER72998"],[2019,"ER73012"],[2019,"ER73026"],[2019,"ER73038"],[2019,"ER73040"],[2019,"ER73052"],[2019,"ER73054"],[2019,"ER73066"],[2019,"ER73109"],[2019,"ER73464"],[2019,"ER73784"],[2019,"ER73785"],[2019,"ER73786"],[2019,"ER73787"],[2019,"ER73788"],[2019,"ER73875"],[2019,"ER73952"],[2019,"ER76782"],[2019,"ER76783"],[2019,"ER76788"],[2019,"ER76789"],[2019,"ER76842"],[2019,"ER76843"],[2019,"ER76848"],[2019,"ER76849"],[2019,"ER76927"],[2019,"ER76928"],[2019,"ER76933"],[2019,"ER76934"],[2019,"ER76971"],[2019,"ER76987"],[2019,"ER76988"],[2019,"ER76993"],[2019,"ER76994"],[2019,"ER77041"],[2019,"ER77047"],[2019,"ER77052"],[2019,"ER77316"],[2019,"ER77344"],[2019,"ER77416"],[2019,"ER77461"],[2019,"ER77477"],[2019,"ER77604"],[2019,"ER77605"]],"field_keys_sha256":"0b5d3fea96e8122880310f055594a72d40baca39fb882b3faaa9887edbe68126"},{"consumer_domain":"q5-dictionary-universe:2021","field_key_count":44,"field_keys":[[2021,"ER78014"],[2021,"ER78160"],[2021,"ER78335"],[2021,"ER78559"],[2021,"ER78619"],[2021,"ER78639"],[2021,"ER78649"],[2021,"ER78678"],[2021,"ER78935"],[2021,"ER78959"],[2021,"ER78983"],[2021,"ER79075"],[2021,"ER79089"],[2021,"ER79103"],[2021,"ER79117"],[2021,"ER79131"],[2021,"ER79206"],[2021,"ER79586"],[2021,"ER79905"],[2021,"ER79906"],[2021,"ER79907"],[2021,"ER79908"],[2021,"ER79909"],[2021,"ER79997"],[2021,"ER80074"],[2021,"ER81046"],[2021,"ER81072"],[2021,"ER81075"],[2021,"ER81087"],[2021,"ER81092"],[2021,"ER81093"],[2021,"ER81173"],[2021,"ER81220"],[2021,"ER81247"],[2021,"ER81252"],[2021,"ER81471"],[2021,"ER81519"],[2021,"ER81643"],[2021,"ER81671"],[2021,"ER81743"],[2021,"ER81788"],[2021,"ER81804"],[2021,"ER81931"],[2021,"ER81932"]],"field_keys_sha256":"4e5b62c63320a48f9e98903a2fca80428486869e0c21829d828d3c6683568557"},{"consumer_domain":"q5-dictionary-universe:2023","field_key_count":44,"field_keys":[[2023,"ER82014"],[2023,"ER82143"],[2023,"ER82262"],[2023,"ER82322"],[2023,"ER82551"],[2023,"ER82611"],[2023,"ER82630"],[2023,"ER82631"],[2023,"ER82641"],[2023,"ER82928"],[2023,"ER82952"],[2023,"ER82976"],[2023,"ER83050"],[2023,"ER83064"],[2023,"ER83078"],[2023,"ER83092"],[2023,"ER83106"],[2023,"ER83181"],[2023,"ER83555"],[2023,"ER83874"],[2023,"ER83875"],[2023,"ER83876"],[2023,"ER83877"],[2023,"ER83878"],[2023,"ER84044"],[2023,"ER85049"],[2023,"ER85050"],[2023,"ER85052"],[2023,"ER85064"],[2023,"ER85070"],[2023,"ER85150"],[2023,"ER85176"],[2023,"ER85191"],[2023,"ER85197"],[2023,"ER85328"],[2023,"ER85376"],[2023,"ER85497"],[2023,"ER85525"],[2023,"ER85597"],[2023,"ER85599"],[2023,"ER85601"],[2023,"ER85642"],[2023,"ER85785"],[2023,"ER85786"]],"field_keys_sha256":"8dd2416edcb783408b73d83ccedd8059f0e673092f5484f6df3d35851a9123c0"}]
+~~~
+
+The table does not claim that positive_field_join_rows presently exist.
+They do not: the first inventory lane correctly emitted no Q5, slot,
+inventory, registry, value-map, crosswalk, correction-input, or context-
+output artifact. Embedding the complete source relation is evidentiary
+totality; selecting a raw field into a positive join is consumption and is
+governed separately below.
+
+#### 21.1.7 Fixability partition and empirical conclusion
+
+The 1,235 failures divide into exactly two authority classes.
+
+| Authority class | Included terminal/reasons | Count | Exact K-list SHA-256 | Why |
+|---|---|---:|---|---|
+| Unfixable by any future authority capture over this frozen corpus | conflicting_source_numeric_format / overlapping ranges; all four unsupported reasons | 422 | 2c82525c49a3a175d51dac7083d4cb4a0281eaeb47d529a1591c12ebbd41d0fa | V1714's source ranges overlap; the 16 character fields contain observed unknown raw tokens; 144 fields contain observed tokens outside all candidate languages or source semantics; and 78 literal plus 183 range failures have no exact-width selected-space rendering. Those are byte, code-map, semantic-set, or mathematical renderability facts. More documentation cannot change the frozen bytes or make a nonexistent exact-width image exist. |
+| Potentially resolvable by a future, separately authenticated authority capture | both incomplete reasons | 813 | 93cf0ce814f22883c6e249c25f6375893bfc3a213cc5ebb79243ce2b8be9086e | The 46 finite-no-arm rows require field/file-specific primary authority that selects one complete finite-domain padding arm or supplies an equally exact complete member-rendering relation. The 767 literal-only rows require field/file-specific primary authority that selects ASCII-space versus zero padding or supplies an equally exact encoding rule. Such authority could exist in uncaptured documentation, but this amendment does not assert that it does. Era defaults, peer fields, inference, or additional copies of nondiagnostic data are insufficient. |
+
+The unfixable array is K(F) restricted to the conflict and unsupported
+terminals; the potentially resolvable array is K(F) restricted to the
+incomplete terminal. No row defaults to the unfixable class merely because
+authority has not yet been found.
+
+The empirical answer is therefore affirmative: presently defined source,
+evidentiary, residual-search, and Q5 dictionary/codebook domains do touch
+non-passing fields. The smallest named-law intersection is the two-key
+V4902/ER6974 list; the established-fact intersection has 81 keys; V-B6 has
+four; and the 43 Q5 join universes collectively contain all 1,235. At the
+same time, no operational positive Q5 join or downstream artifact exists.
+The law must therefore permit the complete disposition relation to exist
+while making every future positive physical or executable consumption of any
+F member abort at that consumer. Section 21.4.2 separately proves that the
+historical V-B6 chain already has such a forbidden dependency and invokes
+the prospective-retraction fallback. The remaining subsections implement
+both that boundary relocation and its transitive non-passing result.
+
+
+### 21.2 Status, scope, preservation, and precedence
+
+Amendment 7 changes one boundary and its transitive lifecycle consequences.
+It does not reclassify a field, alter a raw byte or code-map authority,
+change a derivation-row schema, reopen a regression result, or narrow an
+official slot domain. The exact 2,049,769-byte revision-8 prefix, A6-R01
+through A6-R11, the ten terminal names, the complete §20.3.7 assignment, and
+the seven-row failure-reason artifact remain immutable ratified history.
+
+Let D7 denote only a future document-only ratification commit whose design
+blob is this exact revision-9 candidate after accepted review. No draft,
+authoring, audit, or referee-response commit is D7. At these bytes D7, the
+successor compiler, Q5, the official inventory, and every downstream
+artifact remain unclaimed.
+
+For a post-D7 construction, the specific law below prospectively supersedes
+only these revision-8 conclusions:
+
+1. an unsupported, conflicting, or incomplete source assertion still
+   prevents that field from taking a passing row terminal, but it no longer
+   prevents the complete all-field relation from taking
+   pass_with_closed_failures;
+2. the three §20.3.5 failure-table consequences written as top-level abort
+   become closed row-local consumer-boundary aborts after the failure row has
+   been serialized into the complete relation;
+3. the §20.3.7 sentence that the 1,235 mapped failures prevent top-level pass
+   is replaced by the exact-cover acceptance law in §21.3;
+4. every §§20.4 and 20.8 prerequisite written as top-level all-field pass
+   means the exact pass_with_closed_failures predicate below;
+5. every §19 or §20 phrase requiring a passing field derivation at a positive
+   physical raw-field consumer means a row whose derivation_status is in
+   T-plus below, not merely a top-level relation whose status is
+   pass_with_closed_failures; and
+6. the exact V-B6 source-adjudication chain in §13.2, §16.2's V-B6
+   predicate/result and every fresh 22-row consumer, §§18.2–18.8,
+   §§19.3.1, 19.3.4, 19.4, 19.6, and 19.8, and every dependent lifecycle,
+   bundle, receipt, registration, and final-success claim is prospectively
+   replaced by the guarded result in §21.4.2. Layer-1 commitments may cover
+   mixed bytes, but member 5 supplies a forbidden physical layer-2 basis for
+   V4902. V-B6 is therefore presently non-passing and unregistrable; its
+   historical §18 `verified/pass`, empty successor array, `verified`
+   disposition, §19 residual-9 carrier, and all copied or dependent successes
+   are not fresh results. A7-R10a proves the pre-Q5 rejection. A7-R11
+   discovers the complete concrete forbidden-route probe domain. A7-R10b,
+   strictly after official-inventory construction, proves that no residual-9
+   carrier or passing/accepted V-B6 requirement result is built. A later
+   nonpassing diagnostic row may be constructed only to make the complete
+   22-row evaluation deterministically fail. The separately
+   passing V4379, V5289, and V5788 amount fields retain their required lawful
+   exact-once physical reads; those passing-field reads are not the cause of
+   the V-B6 retraction.
+
+The failure precedence, all source reconstruction, exact token/rendering
+laws, complete row shapes, branch-specific consumer restrictions, and every
+other abort remain. In particular, a top-level accepted relation does not
+make each passing terminal admissible to every consumer:
+nonnumeric_source_field_outside_numeric_grammar and every other retained
+branch keep their narrower §19–§20 consumption law. Section 21 supplies a
+necessary closed-failure guard, never sufficient permission to bypass an
+existing consumer predicate. At any conflict on the six points above, this
+section is the later and more specific rule. Silence changes nothing else.
+
+For V-B6, the §13.2 and §18.3 commands to register every field and exact
+code map retain a semantic_code_map_registration sense: layer-2 authentication of
+variable membership, concept, meaning text, non-executable displayed code
+lexemes and meanings, attachment, and wave/reference-year identity from the
+exact semantic bases admitted by §21.4.2. Section 20's pre-profile/literal
+registration, registered_numeric_grammar, token, padding, and parser laws
+mean physical_numeric_grammar_registration: separately admitted layer-2
+physical content. These are two distinct, independently ratified senses of
+registration. A shared layer-1 artifact, page, row, or digest commitment may
+authenticate the bytes from which either is lawfully derived, but establishes
+neither registration by itself. Neither sense supplies, defaults, upgrades,
+or substitutes for the other, and the shared word "register" cannot
+conflate them. Direct semantic rows may authenticate without physical
+numeric authority, but V-B6 registration is a result-level obligation and
+cannot complete while its source-adjudication graph contains the member-5
+physical basis. No narrow semantic-registration sense exempts or cures that
+contaminated result.
+
+### 21.3 Complete relation with closed failures
+
+#### 21.3.1 Terminal partition and preserved row shape
+
+T-plus is exactly this seven-position array, in §20.3.7 order:
+
+~~~json
+["compiled_source_numeric_grammar","compiled_source_numeric_grammar_padding_underdetermined_exact_replay","compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay","compiled_source_numeric_grammar_partial_range_exact_replay","value_code_domain_no_numeric_grammar","value_code_range_physical_rendering_unestablished","nonnumeric_source_field_outside_numeric_grammar"]
+~~~
+
+T-minus is exactly:
+
+~~~json
+["conflicting_source_numeric_format","unsupported_source_numeric_format","incomplete_source_numeric_authority"]
+~~~
+
+No eleventh terminal or terminal alias exists. The
+field_source_derivation object retains its exact nine-key §19.3.2 shape.
+Every numeric_grammar_derivation_rows member retains the exact 16-key order
+and 15-position ID preimage in §20.3.1. This amendment adds no member to
+either object. It changes only the admitted top-level status literal and the
+site at which physical consumption of a T-minus row aborts.
+
+For every T-minus row, normalized_format_profile, padding_rule, and
+registered_numeric_grammar are each JSON null. They are not omitted, replaced
+by an empty object, populated with an inferred profile, or confused with a
+passing null-profile branch's four-key none padding object. All other
+16-key members remain present and are reconstructed under §§19–20. The
+derivation_status exact-equals the row's terminal in the preserved
+§20.3.7 assignment. The exact seven-row §21.1.2 artifact supplies the
+unique resolution_reason for audit and diagnostics without becoming a
+seventeenth derivation-row member.
+
+#### 21.3.2 Exact pass_with_closed_failures predicate
+
+Before reading a serialized top-level status, the compiler and an
+independent validator reconstruct the complete source relation. Let D be the
+§20.3.7 89,599-key denominator, R the serialized derivation-row relation,
+and key(r) the [interview_wave,raw_field_id] key of row r. They construct
+these three complete diagnostic arrays in canonical denominator or row
+order:
+
+- duplicate_keys: every D key having more than one matching R row;
+- outside_denominator_rows: every complete R row whose key is not in D; and
+- unmapped_keys: every D key having zero matching R rows.
+
+Acceptance requires each array to be exactly [], with the empty-array digest
+in §21.1.1. It also requires all of the following, without short-circuit
+omission:
+
+1. D has exactly 89,599 unique keys and digest
+   7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764;
+2. R has exactly 89,599 complete 16-key rows, one for every D key, in the
+   inherited order; every row ID, 15-position ID preimage, complete-row
+   digest, nested count, keyset, domain, and foreign key reproduces;
+3. the ten terminal counts are exactly 17,329, 1,853, 674, 47, 67,316,
+   1,145, 0, 1, 421, and 813 in T-plus-then-T-minus order; the canonical
+   count array hashes to
+   421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624;
+4. the complete ordered [interview_wave,raw_field_id,derivation_status]
+   assignment hashes to
+   5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e;
+5. exactly 1,235 rows take T-minus. Their K-list and status-tagged-list
+   digests are respectively
+   26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed
+   and
+   1c83a26cad466354a0738ac1d4b0a4b6c282ccc447d410b5ae324808e79fe2ae;
+   their terminal counts/digests and seven resolution-reason
+   counts/digests exactly reproduce §21.1.2;
+6. every one of those 1,235 rows physically serializes its exact T-minus
+   terminal and the three required null members in §21.3.1. No such row is
+   absent, projected away, replaced by a digest, or serialized only in a
+   diagnostic side relation;
+7. every T-plus row satisfies its complete inherited branch predicate, and
+   every T-minus row satisfies its complete inherited closed failure
+   predicate and conflict-before-unsupported-before-incomplete precedence;
+8. document_derivations and all enclosing source-manifest counts, keysets,
+   domains, identities, deep equalities, and complete-source predicates pass;
+   and
+9. A6-R01 through A6-R11 execute unchanged and reproduce the exact vector
+   keyset and complete row-domain digests in §20.3.6. Only after this complete
+   relation is accepted does the exact eleven-member pre-Q5 Amendment-7
+   array in §21.5 execute; no member can substitute for an A6 row. A7-R10b
+   executes only at its later post-inventory gate.
+
+If and only if all nine requirements pass,
+field_source_derivation.status is the exact literal
+pass_with_closed_failures. Otherwise it is fail. Bare pass,
+pass_with_failures, partial_pass, or any other value is invalid in a
+post-D7 relation. A faithful T-minus row therefore proves complete
+classification and permits top-level completion; it never becomes a passing
+physical/numeric row. Deleting even one such row creates a nonempty
+unmapped_keys array and
+forces fail. Adding a replacement or duplicate cannot cure the deletion
+because the outside and duplicate arrays are independently exact-empty
+requirements.
+
+A later authority capture cannot mutate a D7 row in place. Any proposed
+resolution of one of the 813 incomplete rows requires separately authorized,
+field-specific primary authority, a successor design amendment, a fresh
+complete 89,599-row reconstruction, fresh IDs and digests, and a new
+ratified census. The 422 frozen-corpus conflict/unsupported rows cannot be
+promoted by capture. Until a successor law actually changes a terminal, the
+D7 T-minus disposition remains exact at every physical boundary. It does not
+revoke a distinct semantic codebook authority that independently satisfies
+§21.4.2.
+
+### 21.4 Exact consumption-boundary guard
+
+#### 21.4.1 Complete physical reference resolution and atomic abort
+
+A physical consumption boundary is any operation that uses a raw
+fixed-width record or token; a layout coordinate, declared format, or width
+to parse data; a raw-data frequency, percentage, or nonmissing-observation
+count; a token form, normalized profile, padding rule, grammar arm, DFA,
+partition, or action trace; a registered numeric grammar; a parsed or
+canonical numeric value; an executable literal/range/missing/value map; or a
+projection of any of those values to construct, validate, register, compare,
+correct, or emit something other than the complete field_source_derivation
+evidence relation itself. Applying a codebook lexeme-to-meaning entry to a
+record is executable physical consumption. Merely authenticating a variable,
+concept, meaning, or non-executable codebook entry is governed separately by
+§21.4.2 and is not silently exempt.
+
+Before a physical consumer c reads any such value, it constructs its complete ordered
+raw-field reference stream. Direct raw_field_id values, derivation IDs,
+complete-row hashes, Q5 join foreign keys, layouts, value-map entries,
+crosswalk members, registry references, and transitive nested projections
+must all resolve to the unique complete R row. At layer 2, a digest or
+enclosing object cannot hide a raw-field reference; a layer-1-only
+commitment creates no such content reference unless a layer-2 node reads
+through it. Missing resolution, duplicate resolution,
+an outside-denominator key, an unequal ID/full-row hash, or a reference
+stream that does not exact-cover the consumer's independently derived
+references aborts before terminal testing.
+
+The consumer then constructs
+closed_failure_reference_rows(c), preserving its independently fixed
+reference order. It contains one row for every resolved reference whose
+derivation_status is in T-minus. Each diagnostic row has exactly these nine
+keys in this order:
+
+~~~text
+consumer_kind
+consumer_row_identity
+consumer_reference_position
+interview_wave
+raw_field_id
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+derivation_status
+resolution_reason
+~~~
+
+consumer_kind is one of the boundary kinds enumerated below.
+consumer_row_identity is the existing consumer row ID when one exists and
+otherwise the canonical [artifact_or_output_identity,zero_based_row_position]
+pair. consumer_reference_position is zero-based within the complete resolved
+reference stream. numeric_grammar_derivation_sha256 is SHA-256 of the unique
+complete terminal-LF canonical 16-key row. derivation_status and
+resolution_reason exact-resolve through the complete R relation and the
+§21.1.2 failure artifact. No free-text paraphrase substitutes for either.
+
+The guard accepts only when closed_failure_reference_rows(c) is exactly [].
+A nonempty result atomically aborts c at that site before any candidate row,
+partial artifact, accepted registry state, correction value, context value,
+or publication output is emitted or treated as passing. Its diagnostic
+reports every offending row, not merely the first. The diagnostic is
+verification evidence and is not a partially accepted consumer artifact.
+That exact guard-abort diagnostic is not a context_output consumption of the
+failed field and is exempt from recursive guarding solely so the closed abort
+can be reported; using any field value beyond the nine diagnostic members
+remains forbidden.
+
+The guard is closed. No consumer may omit the reference, reinterpret a
+T-minus terminal, infer or default a profile/padding/grammar, trim or
+zero-pad a token, treat a source conflict as a priority rule, treat
+incomplete as zero or missing, convert a failure to structural_missing,
+borrow authority from a peer field or era, truncate a value-map subset to
+evade a T-minus member, or weaken the terminal because the top-level relation says
+pass_with_closed_failures. Complete-relation evidence embedding and a
+layer-1 commitment are not themselves physical consumption. A search,
+census, or classification is consumption whenever its layer-2 result changes
+under the §21.4.2 fixed-elsewhere physical mutation test. Selection into a
+physical or executable positive reference is likewise consumption.
+
+#### 21.4.2 Commitment/derivation layer law and source-adjudication boundary
+
+Every evidentiary assertion node in a DAG belongs to exactly one of two
+layers; addressable structural nodes are neutral containers or content
+portions and receive their role only through typed edges.
+**Layer 1 — provenance commitment** consists only of a path, commit or blob
+identity, locator, byte range, size, or digest asserting that exact bytes
+existed at the stated identity or location. A layer-1 node may commit mixed
+semantic and physical bytes, including physical content of a non-passing
+field. A commitment is not a content read. All six §18.2 page-text hashes
+cover pages containing Count/% tables, including the page-180 V4902 table,
+and the frozen 2,203,624-byte spouse-seam artifact hash covers mixed physical
+and semantic content. They are nevertheless lawful commitments because
+§18's finding does not read those Count/% values or other physical portions.
+
+**Layer 2 — derived content** consists of every fact, finding,
+registration, classification, count, format claim, value, disposition, or
+other content that enters a result. Every layer-2 node declares its complete
+ordered derivation basis: the exact committed content portions it reads and
+the selectors applied to them. For V4519, V4902, V5429, and V5916, and
+generally for every non-passing field, every layer-2 basis must be
+semantic-only. It must not read a raw record or token; layout, format, or
+width; a frequency, percentage, or raw-data/nonmissing count; a profile or
+padding rule; a grammar, DFA, partition, or action; a parsed or canonical
+numeric value; or an executable literal, range, missing-value, or value map.
+
+A physical datum is consumed if and only if some layer-2 node's content
+would change when that datum changes with all else fixed. **Digests hide
+nothing at layer 2:** a value read through a digest is consumption. Layer-1
+commitments over mixed bytes are lawful because no layer-2 basis reads the
+physical portion; a digest change caused solely by recommitting changed
+bytes is layer-1 commitment tracking, not consumption.
+
+A proposed semantic source result is lawful if and only if all three
+conditions hold:
+
+1. its exact eleven roots, node/edge topology, root closure, ordered basis
+   manifest, canonical serialization, and expected counts/digests match the
+   pinned fixtures below;
+2. the complete transitive value-flow walk proves that every layer-2 basis
+   for V4519, V4902, V5429, and V5916 is semantic-only under the exclusions
+   above, including the frequency/percentage/count and digest-proxy
+   exclusions; and
+3. every layer-1 commitment authenticates and every layer-2 value is freshly
+   rederived from its declared portions rather than a candidate fixture,
+   predecessor pass bit, copied digest, or commitment result.
+
+The exact §18.2 eleven-member input was re-walked under that law. This is the
+complete layer classification and the complete basis disposition by member:
+
+| Root position and member | Layer-1 assertion nodes and their committed neutral targets | Layer-2 assertion nodes and exact derivation basis | Four-field result |
+|---|---|---|---|
+| 0 `identity_triple` | one source-commit assertion over the three frozen Git-artifact identities | one identity assertion from two law literals | semantic-only |
+| 1 `ordered_source_artifact_identities` | three identity commitments over the neutral path/blob/raw/content-digest rows | none | no content derivation |
+| 2 `ordered_existing_extraction_locator_rows` | commitments over eight neutral locator/range/page rows and their output array | eight normalized-passage assertions read only the selected semantic spans; one array assertion reads those eight results | semantic-only |
+| 3 `ordered_derived_registered_codebook_page_rows` | page-text-hash and range commitments over six neutral page rows and decoded-page targets, plus output-row/array commitments | six page-extraction assertions read the 20 addressable semantic field-reference portions, and only their `interview_wave`, `raw_field_id`, normalized semantic label/description, and semantic code lexeme/meaning; one array assertion reads those six results | semantic-only; Count/% and layout portions are committed but not bases |
+| 4 `closure_projection` | commitments over ten neutral extraction/closure source rows | ten assertions read the stated semantic-key projections | semantic-only |
+| 5 `corpus_wide_cooccurrence_sweep` | commitments over 456 neutral registered-PDF artifacts; every document, page, locator, occurrence-output, candidate-output, and sole-page target; and the exact classifier/enumeration specification artifacts | document count/ID, classifier-specification, full-corpus scanner, complete candidate enumeration, per-candidate, candidate-array/count/ID, sole-disposition, formula-count, and sweep assertions. The scanner owns its 348 addressable baseline occurrence-output portions and reads decoded lexical/layout context, page membership, page-reset row position, and same-page grouping; its committed classifier and enumeration specifications are expressly classified as grammar/DFA or executable mapping, not semantic law | **physical** for V4902; fails the semantic-only condition |
+| 6 `established_findings` | commitments over the neutral spouse-seam artifact, four source-pointer rows, four mixed output rows, and their array | four direct semantic assertions read the enumerated semantic members; their array and the established-finding assertion read those results, and the finding also reads member 5 | direct four-row projection is semantic-only, but the finding inherits member 5's physical dependency |
+| 7 `expressly_not_established_or_used` | none beyond reachable commitments above | closure projections and the formula count from member 5 | inherits the physical dependency |
+| 8 `reader_seam_consequence` | none beyond reachable commitments above | members 6 and 7 | inherits the physical dependency |
+| 9 `successor_residual_ids` | none beyond reachable commitments above | members 6, 7, and 8 | inherits the physical dependency |
+| 10 `source_disposition` | none beyond reachable commitments above | members 5 through 9 | inherits the physical dependency |
+
+Thus at least one layer-2 basis for the four references is physical. The
+prospective-retraction branch required by Amendment 7 applies. The lawful
+layer-1 commitments and the four direct semantic rows remain evidence; they
+do not make the former §18/§19 V-B6 finding, `verified/pass` disposition,
+empty successor-residual array, residual-9 carrier, requirement pass,
+domain, bundle, final acceptance, receipt, or registration lawful.
+
+The re-walk uses the following exact graph. A node row has exactly
+`node_id` and `node_type`; the closed node-type order is `artifact`, `page`,
+`extraction-row`, `field-reference`, `layer-1 commitment`, `layer-2 derived
+node`. An edge row has exactly `edge_type`, `from_node_id`, and `to_node_id`;
+the closed edge-type order is `contains`, `commits-to`, `derives-from`.
+`contains` points from an envelope, structural container, or layer-2
+aggregate assertion to its direct structural member or addressable output
+portion; it never denotes a content read. `commits-to` points from a
+layer-1 commitment to the exact structural
+or derived bytes authenticated. `derives-from` points from a layer-2 node to
+the content node it reads. Only `derives-from` is value flow. Unknown types,
+duplicate IDs or edges, dangling endpoints, and self-edges fail.
+Every `commits-to` source must be layer 1 and every `derives-from` source
+must be layer 2.
+The first four node types are addressable source/content structure; only the
+last two types are assertion layers. A neutral node becomes a declared basis
+only as the target of a `derives-from` edge, and every such non-layer-2 target
+must be reachable from some layer-1 assertion by exactly one `commits-to`
+edge followed by zero or more `contains` edges. The executable preimage
+asserts that coverage. A neutral `field-reference` target of `contains` from
+a layer-2 node is an addressable portion of that owner's asserted output, not
+an extra assertion without a basis. The 20 codebook-page portions are
+committed page subparts read by the six page-extraction assertions; each
+extraction's interview wave is separately derived from its committed
+registered-document filename row. The 348 occurrence portions are DSCAN's
+addressable baseline outputs. DSCAN's complete 622-position direct basis
+consists of the ordered registered-document-ID result, the executable
+classifier specification, all 456 registered PDFs, and all 164 materialized
+decoded pages. The PDFs close the exhaustive no-hit domain, while the decoded
+pages expose exact positive-output byte value flow. The complete-candidate-
+enumeration node, rather than the 18 materialized candidate witnesses,
+controls dynamic candidate membership and cardinality under every shadow.
+
+The roots are exactly the §18.2 eleven-member input, in this order:
+
+~~~json
+["root:18.2:00:identity_triple","root:18.2:01:ordered_source_artifact_identities","root:18.2:02:ordered_existing_extraction_locator_rows","root:18.2:03:ordered_derived_registered_codebook_page_rows","root:18.2:04:closure_projection","root:18.2:05:corpus_wide_cooccurrence_sweep","root:18.2:06:established_findings","root:18.2:07:expressly_not_established_or_used","root:18.2:08:reader_seam_consequence","root:18.2:09:successor_residual_ids","root:18.2:10:source_disposition"]
+~~~
+
+The following terminal-LF Python source is the sole canonical preimage for
+the graph topology and ordered basis fixture. Its embedded occurrence arrays
+name expected output children for topology comparison only; the normative
+scanner below must rediscover them from the PDFs, and no occurrence child is
+a scanner basis. The program is 93,657 bytes with SHA-256
+`3ff2f3191b8b23ae5f1b70346b889a9853720dd8677f528ab9d3314ab12f42c7`
+and executes from the repository root with the mandated repository
+interpreter.
+
+~~~python
+import base64
+import collections
+import hashlib
+import json
+import zlib
+from pathlib import Path
+
+TYPES = [
+    "artifact",
+    "page",
+    "extraction-row",
+    "field-reference",
+    "layer-1 commitment",
+    "layer-2 derived node",
+]
+ETYPES = ["contains", "commits-to", "derives-from"]
+nodes = {}
+edges = set()
+
+
+def N(node_id, node_type):
+    nodes.setdefault(node_id, node_type)
+    assert nodes[node_id] == node_type
+    return node_id
+
+
+def E(from_node, to_node, edge_type):
+    assert from_node in nodes and to_node in nodes and edge_type in ETYPES
+    edge = (edge_type, from_node, to_node)
+    assert edge not in edges
+    edges.add(edge)
+
+
+def canon(value):
+    return (
+        json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode()
+
+
+def row_hash(row):
+    return hashlib.sha256(canon(row)).hexdigest()
+
+
+# Exact independently reconstructed fixtures. Whitespace inside each base85
+# string is discarded; zlib output is the byte-exact canonical payload.
+def unpack_bytes(payload):
+    return zlib.decompress(base64.b85decode("".join(payload.split())))
+
+
+def unpack_json(payload):
+    return json.loads(unpack_bytes(payload))
+
+
+OCCURRENCE_LOCATOR_B85 = """c-rlq-;QlJj^6L{7`~nXD2k-Sd6ghA^fwtK)7|KH2NMK&_k1cRb2F9>YI?1`YP-vZkL|On)~@rDM1GVg@<0FYpZfUoKmX6sfBsYX
+ujA)m#=rjZ^I!g3VYQ$B=_d=pLuV<b65{M5vW1#rDBL<bHx;i{WJ<~+)U8#TntP4ToUQ)!4?lgp^{>Co{B!+Zzl@*9ANo)K#FXjZ
+J^9No<<GyYXUXua&tHF@Km7Gy>iF}|;pbZZGVrZY^&fuv%OC&x=Qe)se{6sKm+^;Re*R}X_~}o7`RD$R?T>%{(_jDckN^M4KN5w6
+AL5rk{`c{RpZ~}B*YPg{Un(*Azy0pVPw;Pl;_SnR%$jqVt(whV%P6UFbS<?e7yP?dkN8`(=QJq=^$=zw5idXepMN+Kb)MDD`{>S8
+W@pnu);(LGF}?L1Xo|<sr$|fexrQXs3O<NDwGGkWaZ5BfpNIzfBvB4uis*<6b`}QrR>YgfKCEdNnN#al%_9emLutk`=a^Efr7^ir
+!VlDUbCg}SbCjJ9M2*rXiN-HQR7Ro{le7SkW-J7%8dOF##f%iuLWO3HT^bjeJ;Owl+~<%wHEic-*iO-$PCOG`z|$#gcs46s4bZ0Q
+#Oz@#rk;wJ^YF<O0GTUhS+_!!QqiU@a?iDuFk^m-Cua5*sAYcvQQi;@$zsmAg`yP}PCa3gGPO7|{<uM_aKU0MG1tx+W^UAiDVsqP
+FNp0qqIpmB!yepCG;WA?4+%yqC5^4lYQ?}eRs438T!zQgW_FscZIlsWs<Yd4vS<J<Kb)i9ms1iT9WX6%i~%n%V`i8kr`{$O2mJkj
+1aN9pG>QgF_*~eS5P4@sW7r$f^O_HDJwtEfX<MF=U%>OJ`PsNm_fYV2VX;FE)evh?4z73!&0u5}dkb8tF1I%VYb&kys<|}X^4vT5
+c=Yj!-+F%D#?$va^#weCXY(`dMQHL@%um_yjBv1dAlxen;Y@`Z#RSaoxp^ky%o*~ON`*M@vqN{LUNnVjE$i&?)DQ85W!)N3JmVJ-
+)!mBET@no)spb+}i6c&f=P<<4<T1wz2NK(ySz~F*Ymq25&Qdj|5aSO$QuR=Y;e$AEoDE{An+y%hh^Th48hrGE&@?4P6O}Q;Nb*qC
+2z|9x^?S+m1H}|C;b|M5=A)&`1rgv3HH;GQr<jHi8#0~|F4D|J5FCR60`QWv7-1%NPMFy<KgBccT|A!g3y7u-Q7tN1S}>JCv7CF%
+l8VPTyQe^cFq6H9UTYm>BTDJsS?181BXN=+5e=!?((o`DSm#|z>LL;cPZBJC=`m?{&5Br_Twq>$C<xQK&xmy`S8Jwp1yAL?i{qI)
+$uxNP;D}Jj!^|m4!g{Y#2lx@gga!f@s(2VIgqm85sap{H5l_Uh7^x{@2x9S?Ng1};x;4RTiuZ}RMx~UwKBgj;#aC1eut1rbmhBA9
+`z4?9Y0a~L5@`BTf&5KCBNOj{#$WC0%|M@0q4xnzTcAwwexOgu&=N|dVNpiOO+3$%rRM~f<^|EF1EP?$Qd@Hy@Iv^6SV~}SYXo;D
+G;CF9IEm00E`j-!2E7TU?){M-{n14@pAw*V%}oybZBQn^ALvsG^d_KeX}>A*vCnxo(5D1wW`pL+145ng`UJDve5o@?&(^d+?@zp)
+TgISy4J`$k7(RrdBjmAlM{%o{Vm!$ux4#|dgZfhfY)7oa1J)r7HQtGDbIiOUFvl~7Sn7n77@F56Jq(US%wNL?U}(1yQV9FA&Oq0m
+b>`n73jMn?p|gb~ASzHGJR3xc=h!-;np6j7h#`Dw)^tcthz?`I^2MLKjXCkZKV0zuU#aH_jG7Qk4(gJ*Iz+AZ5e=fjTk5?BnC`l4
+49!%?;Q3%Bj5b8YwhJB>>9pSS=Ws^;QaClIjBg2E9MJ%ml+8O{9JyqKooVJ+d`uf7H&*F$!k7$-F%_6okGly<`v{&+4xagw3qIyA
+b#OdkEv-OVF}@l~!Mj>s)@4X1a1+=f$qnz#wZaGLnv(_(2-^e4vOS6qwoexcYDYP*Z%uS0ouxMf6o?Bj7mcc>2|KwwUxI?@%k5Rg
+L`_o==`zOv9T4+?A<er4oVe`Z#v@TUZ83dvg38xAiN6bH-ky5ItoP%5Dtx~Qr^wcRitzn7p9<b@!l`My8KNoPkMpVU{U)4gf8deM
+2Oihpd@6ju2`9pV9Zp16_v3sjc)tl}2vPUJQG9`Ke=2zA=@6G1m6A1lUufMMUV@mR5|n<zaHfFZ(-AkYGh)p&1M|`qb(xdR{0v*3
+kZ~vJnciC~bxIYX5u!+I_^#PX!_=eXWhsuB8-g&Mxkas15pLDq5p0fDW;U_t+tWDSXM`P(I#POTvDA}CphNuHTK1Vc!rEFQY)Y>o
+PoLt|DmTUaOs-u-YoeGqg@TB8n{i|N3_DFnp82hL28aTVV~)c34_M>a@s2XP=%{PE4)9{<NlI7<@PP1f(+#$vM=%}RU^DGw&Ev^Y
+^0!u>H}TAA>)&&d7w~*ae%{10i0>V|cz6NPrxfU2E1op&ZzGAnfap^qG_ybr6oU9#yLM>+A&iW+G`e=`4W7NXlvpr&u-w3b!JHjm
+qTXn3x0m(@9&}vunciB1mQcuBE)&YK(wc(HKwE<pE0~FZR$CY;_hC9cR|i{oN#ijz6xpu%LkJ(vF}wu6far4@pdGqBiltx8M`;zP
+Fi1-~t^0@#t}irhj(ABidW7Xd1O<hV3Yx0t?M)BbUq*sdIT2-kZ(V;A(G>T`@QM8eM4wak_Ylp8JiC0%v%8AuQ(6?0Jfw9L7n|xR
+>Vn@7Ijqp$vvOyaVDLilG<8f0nxQ)oG&xLlNZai1#D@!WN1pMmwdhSe<KBq!4{T_BYbAOUPucH<3d;+4KBYr%;;DOKui`J@`IHWY
+M`Ei%wW@~J#^@`dXGBCx#bOv4qJa=1NrPN72|*3NA)JgObgS+oCEZ6#dWt<o>8({0BtjCgzG?}0?TVR7Y1CeV4oG?_6EC${Fg*th
+beyxyJg8<%2+G?oRYZJya{OzYzvmg=S~K0mQ}?NhddytBisw^`=_Z~g+xcnoiuw7JV!DZE(rqSF5_<v9rxepoJoBDsehJT~6w^&S
+eSezd$J3;%cs`|=Kq_QwkPOrtK8Fy+&k-xPNL7cCXvqp+r_Cr(3t$))Rc#C#v#ThQ^EQ<!=Tj<^y!mO;O+0;HPsES)M6TlblwP`v
+=YB`T&pRR)@q9|pw=@OZF)$PmX!a2!XOEnQs~L|O&C*OZroepET0C^v@t%3vn@Za~JKLYmWjjVlZ+`ZHX+BtLswGgt<c}fOP&rND
+><J?nwdGK~z=$x$wBi#5)0i-UGc?CGnLh3JmC24#e17u;Mnva5uz_IIOn@6pXXu75(!CAC!Y7D^F~ce#R8r)1KXyVsaB;V7irC@o
+gU<VQIlXt%-CacGkaQ>E1w^0H^%i1n?6Zax1_VV333gi}6htNNvy5(Bq?VFp-L-*t<TyQ-WL*O9PLOqf#Y>Mjyd>whwxX7aS{bkp
+nA}8`6ka1rht=q%tcoKM4=^p^`Z+_5xy(>_!usS@g>`%0Y5O}#FwiHW{@y3ZU+oIbr#C|7`wGqdIKQvZT#EDi3eBZBzpv0-iu3yl
+&80ZMuh3i!^sx{gvmaWl)V!>1z--4aqt9%RW2uKwk`}hn$0&_jVEhmvK!zE{u5F9fhC{~kIbr#;IPGiI`o9OK<}FUm-#9-#JLRy!
+B*zV=HwQ|L(9u1t8kP~?kZCp@t6)r3)!r-&in>y4%Bs);3pxVA&E*vHh-F(v{ntID-Tu<?4o!G#pmC6>LW=<s{7!(xBD`(p(D1vl
+PfLZ0ledP@AxHn%SJJkU>~)UamASOt3$bIdn|#Ied@j<wiKgz4JoI?vaTU*}Le1Qk5E{b0O)QcjX%vQDnx5M5g!OMJLG}VOYjy_r
+GQ?pA7V&*KP_cBdpYcdEy!8ydi>MvyE!wf-;y2L^QQpr{<5$elr*=ecBFb{OCoAFiyy_9ome6vpJ~3V$@mGUv3aLA{wJlIv5~($m
+>QGQ>Y4i>|F3=o#W!YZs<@pktPi-;XMAKyJ<t^qH@cf<4PSfp%vMIlS=VJ$)_wWpdIvC+x2;+N(Ziw#BJn-xlbM&c=(7TA{Lo13L
+`FoCjp6EVbIh+%guOj+bVnfdZA|aVO#3qFhja$Pin2lG`%?Kk%MdY3Z?;g!4ulrvKLUeT4_^qGM`wI$k<Qczt{#L1h;QNd5LBEN9
+mMGJqLK7X6>ffGdUfcB1E8CdlMa!TdGHKQpRo8992K(u`^DHfQvzD4l<`k<VV%-tlA0M-y*Svi5{H+pATPd1<up|23Jhi3lnM8We
+G1W3c&+1TQ9IUNUfvH53+Mp&zFt>?7xUmp^5<&2=x1n^{5IxraPH%nwQ5MftcX7tRBe;(qVNRz;&BdumZ_)BB;*|h8N+YGgp|(~y
+<!#A8@`C|A@r?4#^EXaF_UG|>K97HMo|T6cm=jaWU2E|g4e(|IUMzK()0U`YHNuN~3yH@}aQfU<Yr1KduXokA-n*0Hb9C?-C5qMD
+Ou`t6*XjFAh{!y$=H|ns)i$hm3c!n>CNNAp?Jp?Up~1(ogTiOCzth(`ktf$!tdBJN+QLe$I)Y1Sv(qpv?4lIm2!qM=fuMB6;HxZa
+FJqO(*ybwxzQG*jql=Gv0nz6I`MZc(-X@JiOa20)PaPvCfz}$02H}^mS_l=`m)L?^?3nYAo6@6~R+?+zsWR}8X^a}E&uvcVz6VV@
+_MizdUBdIJ1G<}d2H9Vgg~d)UAo`SBx``+UI@Aeue*w{_4ngiBnhskdNnbHXpW3p&iD(qw-=h)M7Z80an1{j&X%=58W5a5K5gAYk
+o@#)zE)185kxUu7z94pw1s<Ld`3G1Qcz@s8Q9YzL=_%3S)4L=2OSSK-F+#usC#-Inwsd?k#)O;_plfTwuQ}rLA?jOII7!A5z?vQq
+6JuM<Hs`c2i4iZ2KEGD;zLDVMWFQzwt5|4PF9EAr9CjINA3s^Fwu-P-o>E(aXtO4qh2Z#l*<I~CbmRU(Gwx6CF6S?H*XtIZnYX(m
+nZpZsK6e%I9-g}ONLlp-JRi$nCP$npOP0CW$cnM)bF^sC2vQJw=Ha2PW94-pexx2vN`e7OF0qDv>FPr+<GH!{6&~r)^6CQ<uF%Mt
+ECqaTbe|Bm7P-PuM;@9xTqa%(-8)vj%B7r^E{kPbu0HRJFy><sMs~V{=Tm`_OM=PJs&MD*0rncK;OV5!!UYp^#)cW3JEaE4m{=WS
+ioqo1sN4Nz-#6s;V?S>8a0$<+MEzYnWxL>EC|<zxsj#z6#UF4LX-WcsV_ojF;#RuCKGyv4Q6<9)&}<G3%2+3vYfo$b)7Z8<-WOf9
+^LppEwx1o;nc;R6Awi=_tFXxA-lugMz}I@I@c5QzhfHf8B*ap9*r=6#Zd-cMp{JK0n|gh=#kqW~{=D}Q-KRMGpoPj6L?4VgO<)<I
+%El<rL>1GViWFFCh1Z9QqU;vo-5XTx(o?N<si9NrFrk&VXG*&7rJyICG59yn-@5-{`|BTkH_r!Gyim^wQ%9Gjyz;Q9k>LLZ7kDc;
+_5lS?2w^J%S*Bq<B7`t}G~q`I+X77=w+nY?p6PUo9L3*yU!-VMXS^HQ7LjXjkX@MCvvuP@xxmN8rs9aamS})2g@YeG5yG`$+f(HK
+;C-6Uc23dorI!0mFm)eu>N(_mZ=90n>L7=ZKLxCGS^eOIBJ@|SFf0vU<^^#=f!jqe-vllmX2o-34O8O&aBiPvEAgDu^wvPx)K-`(
+VI&yc(N=p?i1`7e@JEf|i8{G!?<qNAC6`G(u10j=Z`;m3lK0nXBpovx*uIJW)>Q>LTvdqnJ0>at%DjE-1!`X{XJ&!>tHX?QsCfBe
+DscBa20pTjttuLERac+654yU$4}UUYMEPqe(BYg%h`k|_jf)&?=&CkSRu{y&GI1b6AwydlA!X<XkJ)-+a`Uz?BDTMgn2t9R(<e7U
+HGVC*l(o)Lo6RyYR;8C@OJ_!o!Zrah$5qD~Z(P-`5&}*{puNW)A^mih1n&E7dOvQ{$4GxW&j*i@ZsHkepS6r<uORx=LDFqRb?@Uz
+@(YMQb(B=rSFVb`!ZB#X;N%s}_BML8s-eu)Xf}=_VYQgdnxW>0#ASXQ8h;nW^S*Qop2Z{4a0$`JuF_ChmuF0ejad+vx6llqRHDP%
+uN-DWOfM_#oAGtkpm|cuF~d1kjr&UAhg|S;GI;!K{*8XIj!B_9q992M6=dd-!#X)}S_wC+Ne#u^YxelD`tuAq*UAxeBUz@c4&{BJ
+WjqT<qWKb{kM;Pui|D?o7oO=0h(2|o#E|S2BAz-WBf)3IDhgR&T_7ZKR5Ds|Q_9f)7_3fZDOTeG#TLTVUFTx-x3;3tTayZ2Vby!Z
+^oI-Ty(<T0fxjDg4>UfaqR_>|x?TexMhU)&gM1_qUfP8!$_3i~$qQe1@!TIEpS}DQJfGYRy@}_(VyGVrhF-(-x!4nu$P5~ZS*e0#
+<rW4^T&rmg#@njSP#Uy8LF)Em>{DSq;hn1Wy6rN#?~-Q6E@{#1o9BghX)fXU<OR>0c<$GGI<NOj=I3+vv$qCgxl$K9+W;X*-r|_#
+4Rb#gn-u}<s?O@Z&X{5s*w==L316PQ&3(V5aHz1Jt~^h&FSX$B0;+nb+H%gaeQ%&EB$EE|euYnOTE@_hFeU*>Q<7EH0kRidSG^3e
+b@ovZp%v<@LBQ3!p)7BWGd1O!A`@&5CL+SC)sHG@7(_xG5yoa)AzED@fDo*SgKVCRxk{F<uHX<p9U%Q(@YKEi)R=z9JX;^NiN%y^
+q$yzMtIZ^l$AW((1Xt*XmRBEuRPnzcAKWao9^rMiJhw-4daNS$X`Jax;k3#n%k)|2tZC%lI*-^|34KaOgoK5wcmgqjSZQrxcMuKk
+9g}(1eb?iCL80SWywGQlI=|MHq?>qpq<w=QdjZd<PLl58>HGLS`wMtJc8+8kLkcB1X^CJdzUo^cEDJJvV~kho8s})iTAS`E#DRb+
+txHNn({@LBf8!%Cor&5dM4#(=Trt_%YmgQZzDcP)PbyH|uo{TMuqt}(DLR7A#Jv&2@yCLoF7O=Ng7xnE769&aB%0ouDC|cn(^|?O
+cR29BcvYHpV8!Qky+dLY{L?h)x=NEfydMI4Fl|ZawhW{1Z++m|NrXy}ONc&JVtuecVKPi}EzTOOzz4#7LY)$?+W*=;=Ha8)JYXPL
+F@!|Lr@?OTf=)?ce~sqYMLJwFLmw-*d=F3MePf!CU%>OJQ@M`GKLIl)rjO#v1)3Hid=rR@W_1Qg1-L0%LllXUV9-Fmbmj(?zuQ#~
++k;~Z$DZ6FzqJKTm2!YCb8l3*r%@UgU41?>jTFZWi*)tgCl6kw?<&;56hssP3#<E<AAV^0akQX(g_nPBU->qo`x;GruF-S}(Fb>y
+ZzH<TS_W;qo#=D1Jp3Hg0To-muEF%y?6Wmd*ylcBN!GQ*w(0~A_^MWV6NDEG8^bUzwoS7QTd$Pp=#`?r^_stn=ibYwa68WjSNvT(
+<Nj=p{dS%YZiP~atM0{;W=VVZVXFyZSxTw(GQDsdjPSH%e2^xLR9h+c$slnXZEq>;Tb;|X)wxJ`>%FEz2IsMy4@4_rprA^-;+Jet
+YO2w>)tOQ#gm@mZmeyA~qJR!x#@ifQI;bW(t0s$YZ9#7%x^L!(XYp>LPv$e-MKsEuXr$YTK4(RJoybpJ^{Ze<G|gTDM+}xr%iLzj
+x^hWkE^1+UBz%;#u_~_vsqIRPK-%tiMB}kOuza@7>=)Z(zKf{FLj{K@FChAqXS$2%LE48OX#0zZKDFa?7tx&eX*fCS3y3~;SE093
+3p}GL%&>J0uo}kRF;?(>QzYdov>MKb;c<vyAuOFiX>{H8lK)%woIYEu>5H8umkz73E*-hMVDKai>J!dy+PdXkKh8i%$7Ht5T?RD1
+Vem?;+yQ-iQ(pEbOTX@(Y>B2%?vPmg`ylH3b`>A9@OGk)ozG9r#61B}TDsRP<+-kZ!nCeqP-3W24ltWz#+C<+X(H#f)g6?4XGec+
+pzzx}_vyIiQ@(`fQ#<zv4zxRTZJYyEw2Hd3rBPPpRi83BBpo#ghO%T^Sx#|KE^v|~blRUL9~!DSooA@OHBnlzs^`)1z7c9|(<e2y
+RV{oK$`NbKqsWIvk<4)<cCYJ*$>ACI`^<*|Z9-=?dJWO1PLtz6puhynOkQjyD!^7o9SAi&wLY-!8N*azvbEQbP(!53kf{hMxb9n{
+9<-BQ>gnxk-SfPQsK@=yS&!ibL?1g*4sd5lrDI_i3`woP2MwBa7<D&M*wc=GwE+t=Dpoy-Mv8$P#$i{1K=-BA^;l|MT;AG>rbKaa
+4p0mYQ)gYDNzGtPb6M?B;nWi~g0N4VjMQLWhb)rAj7H(@JrF<Kmd~ftI;AU!K6s*h8_~TL4aZ{Emk@pOMENG7y!Z5YCbtuPZf`XA
+*w_<-_AK~LpX?v!cGFkkkkR0dIF_!Rv`DF|M!{;pvPO`jjBRn-p!+^bK~8(49}TGAc-7xV)O1hO!req4T=lmR-IsL0GrFDVgC`=B
+YKaI25ZTxA5!jbyCUZ}cducoiqJ<o!nO1lF7+4%oM)-4!4QkuA6>%SfT0F&|`q`S7Uu>5Iv4ClZ=4>TdihX2g+d{Qz56uTDGeUbj
+o)&|5$X+$YEQ_^uOzE_5JG<BSdaR72N^fmPZzFm*5z*s`$R$J{w4=8X<^4@>4e55G586?R%B{gct-a}q09G@?uay)YDa=x4idtZM
+>Z}Zl3MbWK)phr#d(LxP%VmFeNsrpeuGt%X>|FUCo+0r5JOl#&1w<b^SH6kpuMH|TxexRTqK};`-$YdMp$Fx$Y2sBxpV}LpeGYAT
+bjxcOpWBk4g`4NJ2C-^dvZ4=|=^hiLM$0)yqnQ%y&o*n6B^>g^>A3Th!&{$%_U1*_35czedS)0Ib%=!s?LJ^?x*8l^Z8?>Z5j}Q}
+y}J_p{A%#I%OQ(-zn2FqW>@AuSpK^p>iaTIct$TE`jlt7iKx)tj^bH-0nw+_Q(M<%Q<<yKU6`_p0|%ayp?@uF_7rAUh+711#ae+6
+<1nXb6c1$X`$|rS{bo65Jn<z&pE?s61;K@vffyD#F|;@_56i4r0Nz!6bzorlboSNLvnfprIznEBmEGgEIi2orFo~XTFnzY&pM9-+
+$_e7AuEyvzW9bnxVpSiobp#qgPbHg+h<k;MqBaqlX2wT*gGnjA+riKK8x8q<qv6x1c3&&YaZ*AEuOV7dhI*=Xu3eawC7vgwTIw=Q
+TI@XIbVyX;<ra$+UERF5Yu@%DXs}}pDz0z6=AjI7ZzXYQ-h7t6_BV)D^Ya$5vO}A0ee__ltbE5cXQ{Wi3No+0LEHM5ai8zxm!2?v
+wOgR~@bvx7Zx6TgeDXGfBzU4QqE)B{Sm>VPY$>L+Dr&3@vT7OgANG4SsGEbAO@$&}QC!_-JMliR8PATV$|1h>484nJq<CnV>bDbp
+ZjKTSnBLH}2~p%xN@J$dV1`R>W7WeG2#sD{S9^JG9pABRIs|{{W!HHD1F~K8cy>Mm_4kgJG}}y}%z+UCE*nXmW7ff|!F-DdmOQnZ
+m<QLuv_56k&sZ5^wyl8~LO4`urQ_bc*abu%Z0may(YP<<7UHpz+c(h-Q9azVJLi&ILG;P{-`;YfStUU-S=5y?o~J{_R+^CTL?Ell
+VN8ts$Z>!=accnsp|Wj6d+0VF&h6$k>08^;n}~AoLoUg&mfKZCpNc^5A}VsY6?WWpx{Byi=OH`>ckZiSRi7EUmNP->I-=Xvf)XkU
+!TabiJPvW1x#l@m=Hp0h39W5I+IZN<i)W(Q-g@_bxU3ebs{y)<+GDX&GH_N5n!qf_<^`+3QV!haGAGdW`0RjSF^z3|N?59}KMzUA
++D`eCb2NRiJ2#R#0;K4fv?Qa|stOaajNY;QxvY)tRUfk$Og1s5f7Xvqfmv4(sIqP7z0V~{bj~FS;jM|zScJ8Q)MQ{Pwh4`pu&lF(
+b@&Ngr!YHXNGlU+D$OZvP3an82zcz9&L6UK!Vie@B}5-PSH6en-%x+-Dx#0&KGYO-RcD(W-o_@ByW>}y1jh~!#4zzNor7AdjVY|g
+$)QX1zWmiT|6bg-IeCaljyZWue>>49_nvMe>U*NcO1PI0ee%}LI^UcY2Nx)Vpz9iP^wqt4_EAY`YOqEDMrKx6h^nh@!Dv0N)o;5f
+H0r*74xSwqe!RxlKNU0O25rA?&PI-N8bs;9@HEJGkanvT0)LrufgC6n3+6OFvp|`Ku<kE!Peka@66|<mS<Nq4^$*^<xr=B>d!ixU
+PV~V$B6ktxd}v!IcN2Zkj;?7wmWk93*W(blh|w5YY;bey1p~Uuli{~!VFUiv#Q~<a_go63)wb5?UOhpAoU`)e5<B`-eh$$B<kg3z
+YQ158mlj01<2@;N#h~RRtNC{heN1IWgbPcK53fYqY?6J^EIHQ9()`|j=_a1ZY~KlxU%>Mzb$=7j5OjaL79RBlL?5e|Wv%sOunq+l
+GxumR91-VgVrK+P2_r(bYC4u&x_~mGb%drJKSZwEYD6MoJ4NyAI7j`xcS*|X=}DApzz>l#R2V*l#@ZE48Ri?KL%}P?ZdMmah{-*{
+$4f)l-YD$PLHDbEJ>)AhO48TL8&!fgkFnJnxK$Ywfv8Qqfv5D)W|h^S$!fun!h6rIq6!5U0}MdQX}|8%Vcj3q=x2K{rLVQ$Ot7JX
+6%Y4@2y|5F&r#PFes38o5V1rNs?ecR2+;%dE@OCWp(L7T+SYjb_565uwtT){d(9kuDsR-+9<zi*=F?Y=K@O`$AO-{hS-@wcSZt)Y
+^2Ec(h>n$F#;`SreCmFV201vVaBK{ypY0})zE-9qv3B;gPXbI(Wtv&xJsd#;P4PC#S}Lh${5{jki=w65IvkePxXsexxZlm=_=DZN
+bP3U?{QXTt#dyD)XRI$E`jjS(-5M#>sHXyZxw<V`>Qgj%3q8_06LsN{n<7>ooJYvZc&A$7rs{4FKkv&q=3_O-kL>)vmFI)|BscN&
+{Z%_Z-?Y1e=YzW>tMlKSTy$W`L(s#$i6|5Uh_(a^-lne3^qE#+OmC~>jW(ukk)q9A%oM{uT|9<!zPN@<R{T>@J%?2e585^l=UQ84
+DG@ffw(1$HBCdi?JV;<Z5r#qxVD6IGgy*+Dw+i16=b(N*2hHz2M<GUCLrJs3{ffaoQQ}o|l-jyMD~RtS=Q{I8A2uxkfk1W`iV9U)
+w{gA2{l*iXos^SNeCvqmE~3fv;gZNJh(5LIZz7sF?prZ2=NAxtN;%y{H0}G+r*v#ge-+WE)O`}+X(aihES5OpQ5maF)?mo&>ax1o
+$w(t-!>~4(n88x#y7nNj*E=n0vKON!d?adbJx6aMiYdZ-IjZ>uM4z&wcM-MyJrOrbFChBVUY^!b*LF$*ow(!#j4DhFW3~&V{V2s(
+-Fry?IVI*&TN}}#BVrR0-Put-oYnLBtll`kwI0niifU^FoCHgZY5B1yLL@Cpuo1hf7lRpTAC+7gc8I-#*lJ+EyR#hkMO@>thU>@f
+$~Vt{$8+!K<Jr%D^ZZTawBK_|$33S@cs`k%a}UqJy04AN8or5so@hSQ!Orqc^s_{n(mq$5%x)+8T#h5&3&TsHmojHU`~`SYDM2+Y
+XvI^2=?<gM9;;-=0IV`lGEC!0y31_lk4nKCq93=s_e5iQYrkY(dRzO;O=;ybOhgh<0k#xsBU_5*lN%4rW5{6YwT0Y>W3?8%Z~L$1
+{S-~d85;99&)<mW_h%uQZs+-+4ZVqHh=<Nr@t7z6?nH~MAhpHSrAnkLLRXHRN~Vez$tpX#dVc#rq`xZNBbs*_bv0sJUGB>Ec1Ygm
+k9oc{k0gJs%=_Dj?sx9jf$Hr<e|K|KiMBZpc&2v~eb6tpOg*h8mNkZnm&P_qc2LInS$C?OsI@+L^|>tF!<fn3@dK<3tFY^A6(}6q
+GvMKI-AlZH>4UW~?_#R^g})xk3z$B&GkO=(Kz1nCPRFXaS22BR{~lg#r7ZJAxI`t+469;T7%&^_vSRc;X-K5CP{xP|q;gvO`ZJi8
+7`N7R-zHFxT>@3)5}r?;Fx|v65bblDiQ)^0K6a;pgBLc#hv2>5R>9i7{Qb&NZE$~my3FQlyfQu?f&FS9f+6r03zzNvTH(X}+GEzJ
+#kcnNHxY$`-frMy{L?ql&l64Cy(eMwZ=#<j>icSW;^%64R}g(LZn}x6>b{Pv>bZ{VH__iDYPPkbYMOq>M019YP}r3by-s&Z&7i&3
+WiiOGvhI9?X-cWD)(Wl!8>GCn93qdD_nlex_n7dEugrbOUu(~qgAxU8!EDvK4hWY<gdS@x&E%$BRJEB3f+X)HBTSN!Ja`L2=5ec@
+_B(obb|h+Y0nz6o`@4wdef4HcAAbSSr{emXhzjlZ@$u{xbM&dG9+B2)r6Op=Fq8q)I0iAdWS%4oH^rLBb0&r*X^i<FeN<le8WDw#
+ZT-QR_8B_I3^LP8cs_L-^d_EZpEjD#S)&*6d}^2ECZ3+Q3*HmIfag<tB)P*tmpNNDf)@)dQ4|W3dz{TI$uiN^sZLOb#88kPB6an;
+iOTz3r+xpmK*#=TW_AhDr|v2TXnRajpv1J##dQQ3u)lK*$<!1kWWZzMFDF>+$;t+i!Ek;ad0Y2^4^7pNJ=HDQTdSs4q?<$HHVH5q
+JV*z;tk#JI@ll%@<1<1j!&c>Cyg$T1J#gomMfY7S_jeia?6~Iry_Nl4ME%eK+>af=zlrXu-|wxcA1jc36WvsNIP?yR$33S@h(5SO
+au?Aohua~?4h`Q#H$?NkDoIZHcT99NOEr}lAZJrHr5R#{qzEbY)xL75Qd=d48Br~C)<hsC2#FC37iQ_(o{RfD$75!*rcXxm9{(<Q
+?wbjmdkI{^^T`?-r3sbdsoF;aU|DT}v;!AsM7lv&ib;;4H<4Asb!Z4Z^@x#Vx4gd(=DxoW=Esu|_X~(VSkdh!qQd(PC*k-4qL1AI
+y@_bjLr1&g9j2>@KD8%$6Vd<I<9oBqe6E~x5z(i1Meic&`;!pK{tBXxbytQ`$kMyVxYC%pt-=|N*=NCj$2x4n`KFTAFV$8}*OW1&
+3`siiQ*C>#+MzS3p6@X6Tl@N(h(-$g>@lMJP4x3b_nY^4#@|FgP4v)9Af9^(Ttf80i0LMx>n7>eGwCsA`X;)mG`iovmmkz3`X>6D
+*<&8IzFwVf_w^6nwL|2<W?<P<4NWj?i4#Pwa>b_+6XYl_{p%$p4h=(9gO0E+kW>h@{q4ncxV?CaLRmhmN59toec@1}2i5h(CZj|I
+u}Rvf>IS$iHN!+5t1(Ltg}Lg?9lE!bqGQPRTv_%VmMNY)Ea$(S=#%$B?;@&lxE4mY6MgVL=v_qZaO1|}-9(?<9}U%O3OUr(;UY(i
+HI35d%1((R&tR#S)V;!U<ytC!2E;?7uJ#Qhj@^E<hJEq_o*nm|Qv4?R8$^GN-G7_tuhoj~CHmlw^G!r8?dPba@B*Tb?Ks~<)M%ei
+f@iNF`q+;1O+@4VaxI>{g6LyA&i4>a!45qF)m}jKsU7FLh{`^5G)aC1(Z_Oe%VdWc2LikZzczv6a2=kri`6bu@RzOpTxH1)9Wf#m
+SzSYm#_b+H%YF}^=~xk0-da7~Mb!5#*w~G~iGG%7O#7H=_0GDR=#w`W?;$E5z5aGP&P2asqTE}_N^GM`mr+NCXP6_xT8ES!V%H=T
+s0Ya0VQqSj2=>ia<?(32wmBvH0y=nhJQew5C5=E|Yk%}EqIxKVt#mulCo4MknGm-sVNiO(`qng-o>k?#T7!p=Oo!H2X@LL~P#$CU
+NTW}zfVQhS3dOhYzm|@*$Sj8oh&~tB-$Ya?$iBK;pcfE*Dy~nN%SSPSK}+aT?)cVBRJ=Aw+-|Tb&5SVj3lS^}BgAbiJ?Gw%=55TB
+_aW19&1b%Z=TkB0O+14gijbMn3y3}yF*Uq4;;RFBlBB8~(x{D5imo0aGQ{Au*7ou0!8+60t%0@>Mwp9NY%}m-oAwb?KAke9$ZzeJ
+ZXz0KUkf`@_$K-vAbO~yLB~28-$XZAPlwFBe9X+dgy@quneHJfy6?M)XYx(-^F;SIMet0&iGG&oYJ9!b_nE`(M4yZ5hYc+V#YmvU
+Y}TnfVhtS{7!-Tx-V_#k!uH8r4Z(X#ImFHui&HN9npyic4H8Z}_#uB1sQ;Y+O@|_6@ou0G-e0^6XxyKONTi#AKABE3W1{KCtHrl5
+Q5a;YWkjI8uiQ{XoSZ!O;T@rFGvP^tDoMlwpl$L)+`A<_J8nDC1wbFnCb<Wwg}9BEEU@1X^s!`;dw}MUwo4w*=zgG2?K)M8Ehmaq
+B*T0{)AY%e-PbvN4R~$KLNf(0E@s(#z-l3?b!LMB-vaeL&*Op*m*9M?S@k_Q!><QOn{q@>_XB-u50BStqk0;wL~}}IiX|kh=_F9{
+wJJwuRmVU%S1bYZLS48LMtRq@_E4_*T&+2T@YXK=CZ6HYv^Jc()_xP+5S4wstY2H&eiQv1(X>}hAstoIB}AXhdANrthkZA74##fl
+-$XY=CGUxfd=vdN(X^LNct*DqeQv|4a<t)=Bg0TTBC^&CUdH&uhzJ(%AJC?(!#ERu!$u3e1s<zwFv8odXVU!*rl_Y4r~JwNk@&Ty
+XtvaY<y7F(Jd^dRNikcSBVfn~6BwdCt>`>(Y7VDp(zQuVm;}kg{z}-P9PTkqoTFbr^tmaDC0r4yhbD}fvzGS~5q%1R*qM29vW2dD
+5Uo%or9g0ug3s?vBk0!E^TE}JbAuasYoeu>XjPPQcPH|~NgI!vxaI`Pr7b<S+KNDx4FtXTMMiE|GOdud-ImjS&D(Lw>nBTKzn<rR
+`A`2Brxpt1"""
+OCCURRENCE_ROWS_B85 = """c-q~a!EPHz42JK044o5Thcm;O&4ct(6oPE68=;P6$aWI6=(|^GnxqHq!pmRV{W-V5kz{@5PY%hM;r{aH=5hDiuzean>>i#Ex7*Y4
+)AsTBba*}-A2#p0H=D=(-S(fCJiL6k8BW`<z1ckt`^~$U^PA0S_i1}~81DDm!}&*>pHnRT=FR5E#|?MGX?VCD{_~;d-+2Df^ZViH
+@W-(K@vFan&i8kG`IzI&>HOCH@%H7z`5j+>$K%ss|MvEHdVG0$`|W?;c3mi&zuwqsLPtd-0iw~aP|-w;rgRr*`YzDY1OtuG(ujd3
+I#pUQ+U9<DGu+>wL7sOv_rvyh+CH9+PXmqSg3(Irb4}Yz8nu_WwU-#U5^c1I2Ab?N_Qi`d>U5R8OjBIird*=QQhnxg(o>~#1rpi_
+jL^c!e3(cJGg+Vps<j4_*$7N_DYFq6rG<&}VTwzi>6L1oS)iwrORX!>R4klTCYUH#3Lt81P~9H)!_D#d`@ipeKkW9yY3`S=VE$t5
+6)s$zfn2J_yzJu{W4JqfzMi}inEk6UDO-g^=95HDk~p6vagwC@B$<;W&nHn%5}i*{I7uc~m!eGNF-%jK>SLIuHbp~K?t^Ro7)_$3
+5d%%8rHKX__31aYV=DPUniPbynnAfljO*z7T*1I44!Fd?72WGF8rLOu9Y*5{#jZo^KIr;f(ZE%_`&aJV#`$Tk;5N<&16TAOH*#<r
+=c9qkL!3_rE)Q`&8@SxZd2_ddZhK-3#o_+M7)tQhcunTAo)E>=X3I26@w7(~3@F*7RcbT7(p&pqbSUOZXaSN0xk~PM7RUrGkh$Z@
+S`t(UjF2Qwk~E(rbCTrwB+5ym^GOOP$>jD>x8l*Zq}V2E$FmkHwt?!3WKvIobbk)R3e}pe5ctX1mlu{VKmC^vJb5B&2UjR!K#44p
+itX58+B>XwR4L+;wBrxf+qD$_;K~lkfTApR$nDrc4JgG&$`N_WJ2b?)LXmb*rUjPT5m;))Dk7zsDm*4nD4`vcNvm8OLbp;=8bql~
+Bij;q^*Uy%OHA1Cg)tg&YMVlJ?FY3@p}O{iO~x3b$+R@lK%=xY$v{(FMuAI7=6aJpQoVk1_Nw6+SE-G`FF#U+t#U-5VwvR#ig2Qc
+0VQyvObd*tphQQn5FJ86Q3B7|4bbiTz;mDmwTiUkE6P*mqXM(eC8M)S480L$>Ej#~98lPk9#aABm3m`p$<1}?w)LxIc#VuX2P_;2
+O*F^>EL=E)0f-euJy|HUgEHMLXDazKHbJsjEB*z{g5BDPk>`p)#%?%`p$I367*K*ofd!hH21Y3~^*@YKY3hI2?JG_F4_l>g##a*0
+Ha{w`lz5Uba9v65BrcbRt}>LysM=IHTN$YIR7tDNc>Pw!|F!v-_4=)hm7)Q7ekqX#1MpyJ>^)g1w1YCa^z=**!^qfCjMQbG1^~7T
+Foq(WC}KbfoG8-*<C%^Rqm*V)LgMLVpeQ^;n$QRqc!o5=R;kVSitwCeKn2FMp#(0GqC5#DD6p8D5m?O42rTAi1eSuQ%y<$-BWZsO
+bR1<pjRAVmMJ|TcOkHGPYw)f^^Kc<@9oCL>lK3mQqJc}j`&Uo;L>82*@H|vg(MjSwPdZg}zB^B~s>_V3_lQz^nkJRTMZ%dnbo*Xt
+npCh=QY*faJDvkKpujGotkgr$2oB)pIdFptEaYYc7IHHJ3%MDANo*yZ%(>%iQlXA>iHo60g?iCNE`lZ%sza@uO)6A}S~;6ks1CJq
+HmMYQjNcfSdiSqN`Z!5l=4oWBG^y6=XRm@Hi)=Zpf-)^Io=F!dN*{QdRCSSdNcM=5TM?MO9kTQyQx|CStW>&!CJK?Kp#WMXknY#R
+Ch9%q0h1_+^okfNJ;z)!m#YPrDw(tj2X#2YmA&h5giF2auqtU4juuJQ9QNhmJK62=;rzw+yDzV}5>`Psl0utU)*b%Uv4R0BJGYit
+cQUxGWq$G~x3$dAK;Xtw((#U{3YB!sXhFAUNXLw#IvknN9o%z~7AUBHRnh_l^{+}=prAVJtr;&lS7(hI3opxP!`(U(gBwe%SN_Sd
+l(U>fu?lB73HH{caF&yxwW4yClc2Sta+Z^zwQ}GrCzt4hGL$D6mv)h~Ji)wcj7uDFiGeFS;EDz=b?;y5bxjTiEdTCBy4{7!(EJeM
+>z~koQF>1(p&b;Ni?Y%wEp#dJg_7Dq$+J<`Injtlu#3;S@EMF_Z6+9BLgDolX$NI?W0heWx1xs$NDrP@aGOaIXP=~k+cAl>PlD<&
+Mb3f;)nOv-|G+v-oc$kIhl#WQgWAhHQuF#tF=`@TDAEo}oQtwjuJ;O*)DB8+2W6So;nI;AEM1lKU|t35*b%PifJ+Qq;$DZ@cyx$e
+holE7VI7hlq=a>-oChgUu8~Q)!8=#a(|Scig)bCo2PMu$Su2MH_rZLj<aSV|@3@opz<aP!Qb>E?J$lum=UhoqdyQ~K2V7#{5(iw-
+z?B?uB?DJ>9yc@!O-=-c3TG(N4oaMhvQkb2#sFt1xg8Xpjk3<+GcXuSBE4tdql4Qj=Ru(!9o$w)izIY#TWwQ^CA#Gbv$+_GKXh;#
+=>e!7>)wrVi36@=;7Sg-vVki*;8FvZI*;>8^h~fGz0BtdMdqTcRdb*>VqKw3`by$F#2-4a8<aR3{jcGgwAaX^SAutYkv>uex0g`n
+M7X_#GIv1jRd`yjsEM4RNINKTF3LK&!)s7dJ1Dsw6rGK-N<$nC#=+V*UUWc9=z1tFhsroJ?KM;~lWP5uX|JK0ZY3~I`a~6|9pj)+
+RDmN@$+-dp<B%#?fq`+#Cu*y3@ev;@rK#W|<qJjHL5Xuw)=E=*sCaOOlG{Pi*(fU&4_Gj+)-?P0{Qmqo-`;lqE{F5KPuu(9^Wk=P
+zrEYtKYe@s$GJ=qW0Gi{v_%Y+HBpv%Fjl6;`t_&30r0&8CI"""
+PASSAGE_ROWS_B85 = """c-qZYU5}eq5Pk2j7@<h9S6=GHVC=lCQte8P+A2}3cps7oUBhLe3tW~9CRUaI-ZOkS-m1Z|x|RB3+04D?%$%7y_~V~OqI^-R!ixjr
+m9g8-y+?QM#hI^C>E)JVOpH7Ty<FT&FRRk6EW9gkE40LM%b6HjrXnk2-_xopd|XjQ8LLbiuRa<pYi80-9MB#ys^d^nBzBTSwx^bX
+f~ttKd%9Y>&NZl3mTl6V&=i;biLg*9)u7iC(jpPXenNt_m5wv1@k{|Z5@mbaF=?f0N-ICYod#wrLsfuC29@7rc5Qq{+HJOh@~c#4
+Wm|o&<KWU)MPBL4K5{vo+P3j^@*Sb%m$DGvA8PC6&U8pCXF9Ca&D=g{^-ZM)o&c}8PE|${)rviSg_Md1mM&G9WI0I$LCkPes#fsP
+#$HaZ#yE&5F!)d}^v&F1p-T!n%0OMW7p!p;o}2VK+m{hj$VAI7I%}gYqFYs!6!mKNILJy;jx-}q0R({1*Ytu$?{44I>g|X3;}*$o
+krvDov^ZRGE#-qgpw+5)Ae7Y9a}Z;s$A?;Iba#9E>$(GVTF|9QZ=pj35qGjcJ0{-<I4_L}VxrSLUD<QsbM9;6Dwwe$a;NRIa$h7m
+fsY1B>_nW1Z6ayZg97eneCG_%yZ#Xh(F)h06Q|K|xnuHGl?3e+FrExr>^SVEBft=3B_5aR*`^t4x*oIXNXio9Jh=MKiPg7E`b}&x
+v+qPva>c)N3rlaBwZ5R0OPhrS4wp5=dea>n#LBwD^CfMTyiRE3YprED470S(7GW_U0y-xXFJIV00xaxd0l1i#nvzC@&dS=Eozuv%
+7R&Lo=KT2O5iJ|c*g28$l}W$z^6Cns#=Fy%aO}e(NvOSw=b8$MG~ui!cwzN#LIiOX74t!~tB0YNbO6G=*3)@Y;&x3#k;cjX$kk!o
+sn`RikRm{U#q*O2Tzmyh@7N}ksZ!D><2c;Ibc~;jo+cH=J-%|fb_3AlhAL#dLq&cheV9)w0@MI=gORe~HrcL~AB%+6(#IRC+;ffV
+D$f(i-8l+Om`Fp#sM%qWV84+)XBkjq6LKdrUgf^FCxs<R$k2F+;aD+g?X>AgE$JbHiPe#8UIS35dBgR$!Gj~dfXD0<Y%Nd~8xX7n
+4Tp)F=gu46XWyH*#j#PigHz|)r;Ora&?wOBfA9$G(8h5Wi*e%-7lR(b2<MhQ8z{ZA2Ww^x{x_OgC)N#X`_vv(H;<zY7xtVfH}2pL
+{y%Z2XSzfEx3wPf2O2bp`ial{fIZNU`vd(;gQ)*+24PJ@GXDdAINu%|<Ll?2{sN}nC5H"""
+PAGE_SEMANTIC_ROWS_B85 = """c-qC8TW{h<6vyBDDURHS5(yF@fK6T^2S}6VLIh;lRTNo+X9(`v9&5%9p;f<o&)7g<mnFs!`NfJabFhE^bDNW=f3>m0Txtn6W`g-P
+vjQ%i(BZyzRx4_bA2RXku&FgAuS`3uH1$SN^SSVd>-@v0C7DP3(6KGbq%E8vS*Z=3G5bS;<J;V0Fc#c{DHq@I0-%Yyw%LZ9a1mNA
+88KJcxW4T4!MwkJG;d*O{@H=6s#+P)u@#UPX8DmfV#2CeBO)2q&Z_02CdkxEzR1BV+Lzj?-o!P_pRhS)mdoCl$1LJg%VWfM{1@%)
+=^3Bmkw5~J+mXloFfkEGhn8$Ef=HGYcS_}Qt)cx_+(xgSot|miks$UA_!#0ZfWikrk5UmeTP;{pRY-TIX_WJ!*~m`wiV=$Fh?FdZ
+fQV3G9TVX#Xzt>aX20JVz@^!{gX{ZN_YR%1mVsg=ABy_E6i?=UxDGS&6-g0rK|)4h6iLTtQvSgA2PZDVgb6^dT%<On{z@X^Xa}_}
+9{blzwe$>XRr68H$gWnqQ9FjVLt(}vnBY<%{tVb#C<y$`M-mV^50wB@GLs6uN511%fX96{Q<Mp%@oPZHl@Wmt;8k3^kn=oU5+C&7
+>!4@CU)_sB=cqKi1bnw`8dQu;A~ef6g-mlF5$eY<oRARcTnWn4QR}u^r3JMFSv?D~lz#i9RaI8M=OIYuj!Vo7Ts}j?&&4P0RB`XG
+UWURi!j#D)?fKCBE9JeSpor`m$6)%iaH9O1xssj3fQQ6|1fz2P_rORc&!9WNmgM)PWA_t{8rwChY}Dv9AGfYl_Q9$n(GibAnD8lh
+kv&;@IHnN>0aBf)oPn;7*yTBxb{HXX%3YTTEFV4v8{bqeA5F#m!Tfe|)r0OmtON(X&35k9jofQFaj)*f-B6xP6Y46VPZ|3zm+a$)
+5Hoh1u9q%dkVnguz0l#^^J5F?GWks(hBxh1`snjU7WVa=*q`phzIhB?tcDXTrLRoj=N8{}P#%n49n)Nw10&!kIX1`;8%QO?RqteY
+ql74}lvRAYEIKrD(qWH{Wm_*}O(jwZAsDtRct}9M5(gQ%OhrH;W{$LvprG_Y!iy^y4U*&PL>RDn<kF-=Qf9E4#U`EcymO-1Ao;4u
+g(*w-UANakdBFT)Uf-G*x1DpPk6zBAkDil0o42m|4jccZtzYZ^8(_LFc#f2+4pS1Ua6#0#m2h5s#E^C-kQh?~f&SKBego5b)%cug
+K)v!2(?)itYvTa*3Co?-Cd|8y0``L0EawDM&ki%?G~giKnruHG%-(!r@GZ8SfpaA%&c?o+_m~$PT7iqles%$>ISH_N_i60l=&KXM
+K=3hg#{1ZO1ej8A6;q=C>`mx`yZ$qGvV#3MU6;~^hhFy*4`%BG`;>N^X!M=Q>&EBwiuI3bV70tA`SsD3;3&g<>oej+P&_HdiAQ1P
+YQBQ)M+h(Kminke%7KkY5(K?&_pZ~+szoCwEh^cySg)PBQ7)-tr5K;o;*$mx))bpZ412TPh$`q)L?jn-q%W@+1IWGG!>rT!+DiU~
+kpa4%6ZC3!=)dkx4&u#=zD3W9)W`|x>EZm?*wzE;yZ3;ZSvEh7<@0a<1H8cgZ~"""
+CLASSIFIER_SOURCE_B85 = """c-oy=`)}Ju68>F(#U2mEk%>gVl2|dS7D4J30q)Ykc^vL!l~|K2Yio*Rxuk8?@&A6`%r0M+oTO*Kw8Wj6ot^pSwbtt*FDnt}X{zE%
+=b0I4`)Vc4D%BUw*WXQ^HJ?k>d@}V#QRcBSX0$BxwJ2moOu{X{!`IR1!>hAjPCtkl_`*0}7dln`NZ_aR{2#yn+j$cBKb|~$xqt8(
+k3)JK(c>9Cp3~z6J&r#=J34;(`T5}#kK^eSOvLJqg3;TL|2jQ;^Ln^LEBrip>PUmpe@<VWJwgT@4qm>Pe#YY^9>@FiIH1QNJ&x${
+j2_SF@q!-5^dOF7;+PW0lsKluF(r;EaZHJ0N*q(-m=eeIWzZ`1?_bY;dZ^U=)#Sf&^5^32XnYTn(I`<%k>%xDrut8nM5)e{e=XBm
+1t->)s;bLOc)|;R&vj<kLQ|x=@`F}Dy;h};qe7M{t5&Mgu}q`OGOr8clgOd4`K?&yrMMM3Bkh(tOJtftyK~>4{}wEs1m}S_7R)I0
+l4y*QWxOJi1S_|}!tETV(ipwm_=UVwmL-BXbvqVoS;ec!RI;p^FDgr%CPZjp9AdMl;WvKJu40j2%{!S3UaayfmATb<Z<CXD4@-BU
+aL7i?{G>-|*X6QO<xmcIPwZmn5>Pz!4;yC0bblAG^F&?b`4wWV&Z@mal`(v<$9@uJeq#ijf)A;hz&(|wV1!hsoy<03sa2XdX;AM{
+RYDt4DO0H=6yn25=@LYxsYG>?i&&+p6<Vw|hCB@&XzTBqrL2{<Qux(nLIR~QYArKh1F9xUr0Q0!;j=8Su*OQj(@O;i#mer>YJ=B_
+)7iBwHAKJ%EZgBu*u&;=To)UiUGk~&B}j6ktWqJ1u=<h7P31e}X?THf_5NuCIg0_{E>)S&EP?o8CXVP}jMq9%*<T#wCzH?f^JKhu
+N|0sh`Ting>?1(7d02RprNE2_GD+~`d5Axs@%vpT=%5wETn@YRL-9j26hfBv<Y>_?y93Zl$dK~`@%^kH60BH@I$C66eD;H(oPHK)
+JRap`l;v6LuBgcX92{PQ%~#~13!q$QMkk7WmMFw*2?Qd$(lMZez+ohySE#*IZt|MyMqVa5lU2|A&E9+cje(Ol3|E&3bO&ul)TE^p
+Wt}RAgS=1~sqCUJEC~p{2aSB#et(cV#8Yw5BBEsk9`-vk#VLT+7ii^?BO8uj)b~qE|HG_v!qDu0)#RLVVAyD-WWtFBuxnuY+qrq-
+6U@%dQ~bSqHogbc?heLB_hbA$x~GK(|IJ}LsP^Qx?+8D=_YP)<4{<i2AK<OeOt3rL0{Q=qx<Be1xl6oz|K=yLlxv-CCUKJ{oq2`{
+$z~r5O-UItY>dzuamiNvbjO?B!(QiJW3g?Oo9!Z&?2g%L_-jfkG&DvOfIP(pnM81oyGT_NJDhpP2$eL=ZwTHSA)TCcomP61=u6Ep
+gfhRD6V4c*qj(Z&9`kwF{MaJHAx&KBqSDt$;3aSvwq|S6II0FkYz3vMU4x-u8I2MoTy;Uwq{M^N4&8I3cU!D8iZxwlInH@^ghGZP
+<B)*}BswUz%w%Bu%_dXoYMOR{OXy#={;N!=TNzj4)1&~F^eq{Si~0~0EzZV*%0B`*!P#wLQBKy)3iZPjGHz3sg!!SSu8^93eSP*1
+BR-|nVY2e4XVhnkB<HHfW@_zb(-wt-xzW|i_q|WRmv`;CD$?1L>XM}n#B3%G$oC}AzMD@D7oj#X1%CWTW9m9;&K@-fcGhZ--5Tsv
+mgz>s0E@YiDdDx$Fhn6W<?%dC_A+(T;a1&3G?Foze%Rnl{ZVVsUp74fT8O4@5Bfy|#yG8kPdFh(lhQ65?t^US$x>`*NuAMG8_#|%
+x9_=_9}Y_?uMngy$yOolb)ZXb>|GzdKY6(b9Ijp8J+?BwR7Cs7`nvUBQCt_PqKtNfve>n5qRt)wcrCABK1wCr!orU70%ct_4H*ag
+Ud3+Os*m{%+{HP-kSUsMz|`b(6)RiA`@+Op$;|d#oM1|;oI|)l@-fSe%@kCCTeSDX*kO4aq>c6w>p<zB_xv`SWigB;>0|}xD+*p}
+5O6pg5R+-WMmEgX5@)4=6KF(IC8^6@m8v;pf>u#yNESf6DzCM=nQWl7wKw7Wt-~@l1YvEntsO6P27BnLXR-{e=&PME$!uM=LDJ>(
+3SU0-c+U8}gpSmQ2G)qAhOK-Q2}V^uO`+{HMTZ`?vONad&<<k&L7kU8lF97S4jFdr5fgDR78Cw`0P7fD*9o<0yQdU0XQ_+eVL%Z$
+TITIgamG{++4`ty*}o8Kb=E?t2Z(RMj~j$cePJrfUP7T5CkZ^FshH*jbs^JY1^MK@7GAcsaB^DjV%XtHX^A|iT+O_0ho5$k>g70U
+z}iSp+T4C%b368>=>iV3MUZLu6HOl-#db`w=I-E~(vedzVg;i{L1z%h`xZ&r&D|6=emm7)B1lxpvnt)^glR4lpE_UPgM;Lry2Wya
+*1f<O5dBdj1P~<|)erckENT<U8q*qrWfNI(whfD9RjGARMb`%*N%kC~O<toBiFmx--gB>77klzJLKs9e6qf8<GmvnxiIO}<?4pp(
+`u9{JjwjJqB|5Hr8Wb%(MTqT-`kQy=?a7;CW$rnu<|S<HEf%3HsEzPJ5%g?VZX)n&vftgK%qP5mPmj*-bFZarqr!NLdpq>X0^Xwt
+rE4=-=c7@j*;~uoOZ0=<?7hoV9dAyvO9U)?Xu?iwM6x6HoRkC4>fIZ+W@5f*P1MtPOpO4Hir8a6LF1m0Li9~*)1Ni%nR#yM+hpDo
+x#-X=Z$RlcXWMh!a}St7%BIc_DNnAIw+O-#{U3x??fnkVBL-%uI59#PH&Ts^R&T1%meE^0WOVnKp;^hp=Py`BxKg)h#({4C5qV78
+lT{%yD0#QnoncvL{ve&ry&_pwIZ;wOII(Ree*~)O@5c{6Pp0?)n|+%>h}T<;hnak(;;Y$*vR1?Qrb@8gtf%3-H}6ijXjEA~P7{Py
+3POuIbKk40B{c4QLA8nknGWgh7QOSOH<+0%4W&8Cnf#5jA*JWy;hhC9heclW9Nu_=g3K@3tP#;gcFu|pq6=vh0&Og4l~$nVl>KjK
++1*QsXV?_cX=9UcJ^=oGhj7Ighg7PAVd?GE7`tu-Lb$m_By%Y@V{x$KkX8kxIFr-Jzds-#(fu1y{!Fb7kKkKd^zT8h6wf<`5fSXD
+u)QnNR%BROXL#r3dFBOMJfsiLJhZpFT<`AS9!%1Mle!s`GWAz3e4Fd8<||)l1v{m>HpKoLp?5=P8Jiot-5NdGq;xSscSo~rCq3nq
+)4LOHG+sd0L3r%enq2oyV)^9XDD+BgD4h;)=x)yG&U`12%Y($)gZyKbZe57(i28`f&C0{2?|ppx`k$}fzkl=do710=+y;eZpy$rp
+@!cwSRjVn)cTb))n$K|(1i05Whuu9>qr7+0p5uP^4iw^{OcDgpW}9N$YqQpET@*d)F=ug`Mr<Bwlz&*2LrAYkiCHSw7m1{v;Y9d5
+n~U~zl-`KoOPP_^AIpujh(g$Qm&l7&F(iMw;{wFES4-+O=JQTlfDP(KP}e3Ld{+hC#O0-#`QDhS+=&+u7!9ghBu%WfO-%s4N6DtK
+n%&QJI<61wHrmk+hBxRsU6uE(p03BN*K1i)T->!D@F<}J1^l0ZR%+0dI<I>RGKlbR=U+tBf&zll5Cui|Z?Q*&^KcHqcU0@IP;{=D
+<!X!%#MNtKd3;A&{p$X^_H4Sd``+fZ53*->cIvIV*5>44U*stJt&!!rf80@<$k~4ABI*wM_;Ezr;L&_hH#=;>G3xS)W1|0DA}d7^
+wM0=w;p9aTO*K*E+1zADoYDUP+IzqL"""
+
+occurrence_locator_rows = unpack_json(OCCURRENCE_LOCATOR_B85)
+occurrence_rows = unpack_json(OCCURRENCE_ROWS_B85)
+passage_rows = unpack_json(PASSAGE_ROWS_B85)
+page_semantic_rows = unpack_json(PAGE_SEMANTIC_ROWS_B85)
+classifier_source = unpack_bytes(CLASSIFIER_SOURCE_B85)
+classifier_behavior_source = classifier_source[
+    : classifier_source.index(b"\ndef main():")
+]
+
+source_paths = {
+    "registration": Path("data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json"),
+    "extraction": Path("data/external/psid_questionnaire_corpus_extraction_v1.json"),
+    "closure": Path("data/external/covered_earnings_questionnaire_closure_attempt_v1.json"),
+    "semantic": Path("data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json"),
+}
+source_objects = {name: json.loads(path.read_bytes()) for name, path in source_paths.items()}
+source_specs = {
+    "registration": {
+        "path": str(source_paths["registration"]),
+        "blob_oid": "825f6c61ef9d4a161886cbc44f5cc914d65160d2",
+        "bytes": 520656,
+        "raw_sha256": "07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c",
+        "content_sha256": "4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27",
+    },
+    "extraction": {
+        "path": str(source_paths["extraction"]),
+        "blob_oid": "43d8a1208c6ffa7ab7d7cdbc4b4115947d33df16",
+        "bytes": 81177,
+        "raw_sha256": "5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347",
+        "content_sha256": "18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c",
+    },
+    "closure": {
+        "path": str(source_paths["closure"]),
+        "blob_oid": "0b1a54b02943824405b6fb14cea1d782c9306d92",
+        "bytes": 50657,
+        "raw_sha256": "00c4fb1e671503406dfec55d80b29379ad12f7b8bf330dfe74895724ab19a46c",
+        "content_sha256": "47c15dfe9018a4ae91c4f409378d2b85c3cdecf442c1ee752d8f7e8e3b125249",
+    },
+    "semantic": {
+        "path": str(source_paths["semantic"]),
+        "blob_oid": "bbc2cba152cef1bf9c54c093d904ca7f329859f8",
+        "bytes": 2203624,
+        "raw_sha256": "0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87",
+        "content_sha256": "086a69e006a102f44cc512b4615a137559e6ac97d3c0bee2be630dcff094e228",
+    },
+}
+for name, spec in source_specs.items():
+    raw = source_paths[name].read_bytes()
+    assert len(raw) == spec["bytes"]
+    assert hashlib.sha256(raw).hexdigest() == spec["raw_sha256"]
+    assert source_objects[name]["integrity"]["content_sha256"] == spec["content_sha256"]
+
+assert len(occurrence_locator_rows) == len(occurrence_rows) == 348
+assert len(canon(occurrence_locator_rows)) == 117337
+assert hashlib.sha256(canon(occurrence_locator_rows)).hexdigest() == "4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d"
+assert len(canon(occurrence_rows)) == 72325
+assert hashlib.sha256(canon(occurrence_rows)).hexdigest() == "0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411"
+assert collections.Counter(
+    row["semantic_reference_position"] for row in occurrence_rows
+) == {
+    "codebook_field_header": 12,
+    "v_prefixed_semantic_field_reference": 157,
+    "parenthesized_semantic_field_reference": 40,
+    "labelled_table_or_prose_semantic_field_reference": 110,
+    "unlabelled_concordance_semantic_field_reference": 27,
+    "other_field_identifier_lexical_false_positive": 2,
+}
+assert len(passage_rows) == 8 and len(canon(passage_rows)) == 3137
+assert hashlib.sha256(canon(passage_rows)).hexdigest() == "ff04a2143f78aa59579b3ce76592a40f8deca1382c4c727057f12b5fe63e3709"
+assert len(page_semantic_rows) == 20 and len(canon(page_semantic_rows)) == 7326
+assert hashlib.sha256(canon(page_semantic_rows)).hexdigest() == "864b2077172ef3c429386829a602bf017f4cd90b5c6735ba86ce1b4c8cbf58b2"
+assert len(classifier_source) == 7882
+assert hashlib.sha256(classifier_source).hexdigest() == "f6a6e5963fc20fd2d1a6f27d04dd88573b3c75154d73f28fe5edc311402c10fa"
+assert len(classifier_behavior_source) == 4571
+assert hashlib.sha256(classifier_behavior_source).hexdigest() == "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb"
+
+root_names = [
+    "identity_triple",
+    "ordered_source_artifact_identities",
+    "ordered_existing_extraction_locator_rows",
+    "ordered_derived_registered_codebook_page_rows",
+    "closure_projection",
+    "corpus_wide_cooccurrence_sweep",
+    "established_findings",
+    "expressly_not_established_or_used",
+    "reader_seam_consequence",
+    "successor_residual_ids",
+    "source_disposition",
+]
+roots = [
+    N(f"root:18.2:{position:02d}:{name}", "artifact")
+    for position, name in enumerate(root_names)
+]
+
+# Exact Git artifacts and all 456 registered PDFs.  An artifact identity
+# includes every byte-authentication value; changing a source preimage changes
+# the topology rather than merely failing an out-of-graph side assertion.
+ART = {}
+for name, spec in source_specs.items():
+    ART[name] = N(
+        "artifact:git:"
+        + ":".join(
+            [
+                spec["path"],
+                spec["blob_oid"],
+                str(spec["bytes"]),
+                spec["raw_sha256"],
+                spec["content_sha256"],
+            ]
+        ),
+        "artifact",
+    )
+A_REG, A_EXT, A_CLO, A_SEM = (
+    ART["registration"],
+    ART["extraction"],
+    ART["closure"],
+    ART["semantic"],
+)
+
+registered_rows = source_objects["registration"]["document_candidates"]
+assert len(registered_rows) == 456
+assert hashlib.sha256(canon(registered_rows)).hexdigest() == "fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3"
+DOC = {}
+for position, row in enumerate(registered_rows, 1):
+    document_id = f"psid-corpus-document-{position:04d}"
+    assert row["source_document_id"] == document_id
+    assert row["availability"] == "verified"
+    assert row["locator"]["full_file_sha256"] == row["expected_sha256"]
+    assert row["locator"]["size_bytes"] == row["expected_size_bytes"]
+    DOC[position] = N(
+        f"artifact:registered-pdf:{document_id}:"
+        f"{row['document_identity_sha256']}:{row['expected_size_bytes']}:"
+        f"{row['expected_sha256']}",
+        "artifact",
+    )
+
+# Root 0 and root 1: literal identity plus exact Git provenance.
+DID = N("l2:identity:schema-version-and-claim-id", "layer-2 derived node")
+CSRC = N(
+    "l1:source-commit:c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e",
+    "layer-1 commitment",
+)
+CART = []
+XART = []
+source_identity_rows = []
+for position, name in enumerate(["registration", "extraction", "closure"]):
+    spec = source_specs[name]
+    identity_row = {key: spec[key] for key in ["path", "blob_oid", "raw_sha256", "content_sha256"]}
+    identity_sha = row_hash(identity_row)
+    source_identity_rows.append(identity_row)
+    content = N(
+        f"extraction-row:source-artifact-identity:{position:02d}:{identity_sha}",
+        "extraction-row",
+    )
+    commitment = N(
+        f"l1:source-artifact-identity:{position:02d}:{identity_sha}",
+        "layer-1 commitment",
+    )
+    XART.append(content)
+    CART.append(commitment)
+assert hashlib.sha256(canon(source_identity_rows)).hexdigest() == "f3badf91d5dda7e063bed2d7b1fbfc6470e981a19e32986a3ed50ce194e56504"
+for child in [DID, CSRC]:
+    E(roots[0], child, "contains")
+for child in CART:
+    E(roots[1], child, "contains")
+for artifact in [A_REG, A_EXT, A_CLO]:
+    E(CSRC, artifact, "commits-to")
+for content, commitment, artifact in zip(XART, CART, [A_REG, A_EXT, A_CLO]):
+    E(content, artifact, "contains")
+    E(commitment, content, "commits-to")
+
+# Shared exact decoded-page nodes.  Every node ID includes the page-text hash;
+# PAGE_META supplies the exact decoded representation selected by layer 2.
+PAGE = {}
+PAGE_META = {}
+
+
+def page_node(document_id, page_number, page_sha256):
+    key = (document_id, page_number)
+    node = N(
+        f"page:decoded-utf8:{document_id}:{page_number}:{page_sha256}",
+        "page",
+    )
+    if key in PAGE:
+        assert PAGE[key] == node
+    else:
+        PAGE[key] = node
+        PAGE_META[node] = {
+            "source_document_id": document_id,
+            "pdf_page_number_1_based": page_number,
+        }
+        document_position = int(document_id.rsplit("-", 1)[1])
+        E(DOC[document_position], node, "contains")
+    return node
+
+
+# Root 2: exact locator rows/ranges remain layer 1; exact normalized semantic
+# passage portions are freshly derived layer 2 from authenticated page text.
+locator_specs = [
+    ("vb6_q76_income_p25", "/passage_locators/30", "b6e2e8f252aa4a2bc342fc2479bf8487b9cfa60411c0563b6d2233172ce04b68", "b606cac8423ea88bfa58ef258548059a04da321d4934cf254d640fc54c121f8f"),
+    ("vb6_q76_extra_job_p50", "/passage_locators/29", "a131288ff5167a3ecf350de17f13e230e859d70cc08403d3c683cb7d6040defa", "0ed4477febbdba1b63c4fe9bb26b16c4ca1726c0f747b9de16975800c19b808b"),
+    ("vb6_1977_worksheet_p55", "/passage_locators/14", "16fe26979a18036969affa00142934f09570f19035e579db68f84b6b0807961d", "d68cc36573cdcd671c4617929b28ed61f48677d4b59a9e57166b2bc1c3db2b2d"),
+    ("vb6_1977_label_p84", "/passage_locators/15", "ddab1deb9d9fbda5d6ca9411891ae457424bb9e24171652c663b3d4ec96dacc2", "3659a074c1127016802447d148e1bc7c17eb84c339fc8847194ba50936d41bdf"),
+    ("vb6_1977_qxq_p54", "/passage_locators/18", "8d14d8b6a0cd1dab0b7f92cb4164fc3961e282f046995361aa150d268b32f8f4", "14372a04784b4d9edc19dda18e9fae98c3919761399dd6fe812756390e99a45d"),
+    ("vb6_1978_worksheet_p74", "/passage_locators/16", "149a8479f24f2fd4b910c44ff1596e8340a625fdfcd8a251dca4575f7fc07bab", "11445c796f8783cf6430e32b45ed1d452a6e3ccc0543e5e76cf07732c3fc5fc1"),
+    ("vb6_1978_label_p232", "/passage_locators/17", "c7e1cf85260020cd64f73d438e4fb51528488aa152531bea3614cd418e1e42b5", "f878f7c4db7a6897bde84d1b993ca5f1e448199ac788cfd05e6311ec9a54c6a9"),
+    ("vb6_1978_qxq_p70", "/passage_locators/19", "acc18348a5a662fb31d3f924fd344d5f81e06b5dd45a25025e4677369b938e27", "a3e1d35f057322f309df9a9022aecc08d96cbcd6966119073a3b10cb44a17709"),
+]
+q_page_specs = [
+    ("psid-corpus-document-0044", 25, "48755f27efca205ee57eb1cb6a53ddf2b21da6ae00e625cc90495c6e0eb2af0f"),
+    ("psid-corpus-document-0044", 50, "e75fadc903cf8a9e60b57fe34847a7e20d047fb583a7f4a462231fa838e8728b"),
+    ("psid-corpus-document-0048", 55, "dea811fafe051c3cc42140b798f0f8dac01969f4f8037d5b2fb6ab980bc507d7"),
+    ("psid-corpus-document-0048", 84, "c0417fa955a7e6b7fb8e8bc97b1683a288cf1b78dc1a7143adae04dd11b61649"),
+    ("psid-corpus-document-0050", 54, "39fb78a67c4c77acebea5415f61d0a5acc6a22f0e37e67c253bfb03be926ae25"),
+    ("psid-corpus-document-0053", 74, "6e928e13dc33f3b04a4944980ae65fbcfd0089896c7e178e379386d720969c8b"),
+    ("psid-corpus-document-0053", 232, "88d16456a3ec1920cff508d74c830b9ee0e79a21922e7e9b1a5c41ae89dc58dd"),
+    ("psid-corpus-document-0055", 70, "b0fe565e317924d8e5e707a1f9654bdf5f9843820a658cfab9b74b6bba539048"),
+]
+DPASSPEC = N("l2:passage-semantic-projection-specification", "layer-2 derived node")
+DLOC = []
+X_PASS = []
+for position, ((locator_id, pointer, row_sha, range_sha), passage, page_spec) in enumerate(zip(locator_specs, passage_rows, q_page_specs)):
+    assert passage["locator_id"] == locator_id
+    document_id, page_number, page_sha = page_spec
+    assert passage["source_document_id"] == document_id
+    assert passage["pdf_page_number_1_based"] == page_number
+    source_row = N(
+        f"extraction-row:existing-locator:{pointer}:{row_sha}",
+        "extraction-row",
+    )
+    raw_range = N(
+        f"page:raw-pdf-range:{document_id}:{locator_id}:{range_sha}",
+        "page",
+    )
+    page = page_node(document_id, page_number, page_sha)
+    commitment = N(
+        f"l1:existing-locator:{position:02d}:{locator_id}",
+        "layer-1 commitment",
+    )
+    page_commitment = N(
+        f"l1:passage-decoded-page:{position:02d}:{page_sha}",
+        "layer-1 commitment",
+    )
+    derived = N(
+        f"l2:passage-semantic-content:{position:02d}:{locator_id}:"
+        f"{hashlib.sha256(canon(passage['semantic_source_portions'])).hexdigest()}",
+        "layer-2 derived node",
+    )
+    mixed = N(
+        f"extraction-row:passage-semantic-witness:{position:02d}:{row_hash(passage)}",
+        "extraction-row",
+    )
+    DLOC.append(derived)
+    X_PASS.append(mixed)
+    for child in [commitment, page_commitment, mixed]:
+        E(roots[2], child, "contains")
+    for child in [commitment, page_commitment, derived]:
+        E(mixed, child, "contains")
+    E(A_EXT, source_row, "contains")
+    document_position = int(document_id.rsplit("-", 1)[1])
+    E(DOC[document_position], raw_range, "contains")
+    E(commitment, source_row, "commits-to")
+    E(commitment, raw_range, "commits-to")
+    E(page_commitment, page, "commits-to")
+    E(derived, page, "derives-from")
+    E(derived, DPASSPEC, "derives-from")
+D_PASSARR = N("l2:passage-semantic-extraction-array", "layer-2 derived node")
+X_PASSARR = N(
+    "extraction-row:passage-semantic-extraction-array:"
+    "ff04a2143f78aa59579b3ce76592a40f8deca1382c4c727057f12b5fe63e3709",
+    "extraction-row",
+)
+C_PASSARR = N(
+    "l1:passage-semantic-extraction-array:ff04a2143f78aa59579b3ce76592a40f8deca1382c4c727057f12b5fe63e3709",
+    "layer-1 commitment",
+)
+for child in [DPASSPEC, D_PASSARR, X_PASSARR, C_PASSARR]:
+    E(roots[2], child, "contains")
+for child in DLOC:
+    E(D_PASSARR, child, "derives-from")
+for child in X_PASS:
+    E(X_PASSARR, child, "contains")
+E(C_PASSARR, X_PASSARR, "commits-to")
+
+# Root 3: each original seven-key page row is layer 1.  Four commits-to
+# targets make every constituent digest byte-exact.  Semantic cells are
+# separate field-reference nodes and six layer-2 extraction rows.
+page_defs = [
+    ("psid-corpus-document-0046", 20, 1976, ["V4379", "V4380", "V4381", "V4382"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "d7a68eadcb5ae32ca6fb239f37e89711474fcd18221d73d39b9d2d93a4afe697", "87101f3096debb296972dff5c8db32e4b56aa55f9031cbad7d4cf65cef948dae", "94709e4ab868411b3111bedf867c27d11a75a26edeeac0c12da511c046a88c32"),
+    ("psid-corpus-document-0046", 180, 1976, ["V4901", "V4902"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "5946933af0f767bff15773e74262973c998938069701835ac68f90c388ca1eb4", "22f3cef78b2deabb5b570a8a03cee6bc9bd924f461c3621011b3607c14323748", "3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9"),
+    ("psid-corpus-document-0046", 181, 1976, ["V4903"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "038ac554ae570d1d0d7f152c847840e460a6b88a1db4375d09140c74ae5c767c", "9b91dd6d54015f614c80124d78ff99a133b834256a2905be2278c4b5f8b290b1", "8c83a7e42dcf437e47ea27fef97ce97498677a3c5102589294fae49dc681c55a"),
+    ("psid-corpus-document-0046", 182, 1976, ["V4904", "V4905", "V4906", "V4907"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "cd57bab720ab21c5a58450942e5e1d49376d1c391301e03a67c4471486bfb524", "6405a708e4ec2305c6aca26b732471ccc4ea906958729fea4a892b584695f97b", "6b6a1c88b9ffb6d933cc5e17d92c3ac7bc744bb1ab961e567eddd204afc85c04"),
+    ("psid-corpus-document-0051", 22, 1977, ["V5289", "V5290", "V5291", "V5292"], "13082ddda241aa7d157da67c6503a44d7d83b7bba9a6bd5354a14858cfbb1189", "a98b3b055c290aa3e3b86f3d0ba563cc27c8142ba7ed92e72c1294c44aa6c8a5", "cd35f250c75723ccaccb8230ec760d97d70d40b90b65e4b39e9a699f84397805", "a53592207ba8bd2dc884d61fcd62108a9d23c5492d87133468bd7ed7030de640"),
+    ("psid-corpus-document-0056", 22, 1978, ["V5785", "V5786", "V5787", "V5788", "V5789"], "163634bcace0d2c7bbde569c9223dc73d54ec1838c6cd8bbe37a41f77e00e338", "0991897f973e697eb36c0b7ddd14200339d7d158cb4fc60ac8256b56108a55a4", "577f558d22dd0a3e010048dc16296a2ca69c5ec4479d8127734671e3630a87b4", "dccd52e85ad26e6db69ea97e6c8ea7a6fbbcafefb9961fc3d4eadcf2ed2689cf"),
+]
+PF = []
+DPAGE = []
+DPAGE_WAVE_SOURCE = {}
+X_PAGE_SEMANTIC = []
+page_semantic_content_rows = []
+field_position = 4
+semantic_index = 0
+for page_position, (document_id, page_number, wave, fields, docrow_sha, locator_sha, range_sha, page_sha) in enumerate(page_defs):
+    page = page_node(document_id, page_number, page_sha)
+    document_row = N(
+        f"extraction-row:registered-document:{document_id}:{docrow_sha}",
+        "extraction-row",
+    )
+    locator_row = N(
+        f"extraction-row:derived-page-locator:{document_id}:{page_number}:{locator_sha}",
+        "extraction-row",
+    )
+    raw_range = N(
+        f"page:raw-codebook-range:{document_id}:{page_number}:{range_sha}",
+        "page",
+    )
+    commitment = N(
+        f"l1:page-row:{page_position:02d}:{document_id}:{page_number}",
+        "layer-1 commitment",
+    )
+    derived_page = N(
+        f"l2:page-semantic-extraction:{page_position:02d}:{document_id}:{page_number}",
+        "layer-2 derived node",
+    )
+    DPAGE.append(derived_page)
+    document_position = int(document_id.rsplit("-", 1)[1])
+    registered_filename = f"FAM{wave}_codebook.pdf"
+    assert registered_rows[document_position - 1]["digest_row_filename"] == registered_filename
+    DPAGE_WAVE_SOURCE[derived_page] = {
+        "basis_node": document_row,
+        "registered_filename": registered_filename,
+        "source_document_id": document_id,
+        "interview_wave": wave,
+    }
+    for child in [commitment, derived_page]:
+        E(roots[3], child, "contains")
+    registered_document_edge = ("contains", A_REG, document_row)
+    if registered_document_edge not in edges:
+        E(A_REG, document_row, "contains")
+    E(DOC[document_position], locator_row, "contains")
+    E(DOC[document_position], raw_range, "contains")
+    for target in [document_row, locator_row, raw_range, page]:
+        E(commitment, target, "commits-to")
+    E(derived_page, document_row, "derives-from")
+    for field_id in fields:
+        semantic_row = page_semantic_rows[semantic_index]
+        assert semantic_row["raw_field_id"] == field_id
+        assert semantic_row["field_reference_position"] == field_position
+        semantic_content = {
+            key: semantic_row[key]
+            for key in [
+                "interview_wave",
+                "raw_field_id",
+                "normalized_semantic_short_label",
+                "normalized_semantic_description",
+                "semantic_code_lexeme_and_meaning",
+            ]
+        }
+        page_semantic_content_rows.append(semantic_content)
+        field_reference = N(
+            f"field-reference:{field_position:02d}:page-semantic-cells:"
+            f"{document_id}:{page_number}:{field_id}:{row_hash(semantic_content)}",
+            "field-reference",
+        )
+        mixed_row = N(
+            f"extraction-row:page-semantic-witness:{field_position:02d}:"
+            f"{row_hash(semantic_row)}",
+            "extraction-row",
+        )
+        PF.append(field_reference)
+        X_PAGE_SEMANTIC.append(mixed_row)
+        E(page, field_reference, "contains")
+        E(derived_page, field_reference, "derives-from")
+        E(mixed_row, commitment, "contains")
+        E(mixed_row, field_reference, "contains")
+        field_position += 1
+        semantic_index += 1
+assert field_position == 24 and semantic_index == 20
+assert len(canon(page_semantic_content_rows)) == 5165
+assert hashlib.sha256(canon(page_semantic_content_rows)).hexdigest() == "3a86353af979ac46f3506fe89e38184251432ad23a69fa48cc2082fcaf741a5f"
+D_PAGEARR = N(
+    "l2:page-semantic-extraction-array:"
+    "3a86353af979ac46f3506fe89e38184251432ad23a69fa48cc2082fcaf741a5f",
+    "layer-2 derived node",
+)
+X_PAGEARR = N(
+    "extraction-row:page-semantic-extraction-array:"
+    "864b2077172ef3c429386829a602bf017f4cd90b5c6735ba86ce1b4c8cbf58b2",
+    "extraction-row",
+)
+C_PAGEARR = N(
+    "l1:page-semantic-extraction-array:864b2077172ef3c429386829a602bf017f4cd90b5c6735ba86ce1b4c8cbf58b2",
+    "layer-1 commitment",
+)
+for child in [D_PAGEARR, X_PAGEARR, C_PAGEARR]:
+    E(roots[3], child, "contains")
+for child in DPAGE:
+    E(D_PAGEARR, child, "derives-from")
+for child in X_PAGE_SEMANTIC:
+    E(X_PAGEARR, child, "contains")
+E(C_PAGEARR, X_PAGEARR, "commits-to")
+
+# Root 4: exact mixed closure rows are committed layer 1; exact semantic-key
+# projections are independent layer-2 children.
+closure_defs = [
+    ("extraction", "/absence_proofs/1", "31f85e2eca83d7a2bfe1d5b5ba38516ffde527c6c64532bf057c615a466280ec"),
+    ("extraction", "/psid_vb_residual_extractions/1", "29f5b1eadaf8c70edf17ed2edc7b1f9dc8c4e6984e062e3ebd4050d205db84c9"),
+    ("extraction", "/psid_vb_residual_extractions/2", "db5825c5d8c2dc577359fefcfbec4f0db702f790cf3a55c71523564a3db1e163"),
+    ("extraction", "/psid_vb_residual_extractions/3", "fb26607b98a3ac2a3772f6f773f999487e2ccb0409c6a638ec20b6162adbd99f"),
+    ("extraction", "/psid_vb_residual_extractions/4", "6f0df50f03038af4c3ba10b41367b939147477508301577a26cad8aa0493290e"),
+    ("closure", "/psid_questionnaire_evidence_results/1", "0b9a3f59280eed8ef5bb7ef54998cfb70274b48e167744ba904e2b42aa1aaabc"),
+    ("closure", "/psid_questionnaire_evidence_results/2", "cade58fd00e2823c9f544c2ae4150783d836ca678bae11f7e1bc91585fd8a0a2"),
+    ("closure", "/psid_questionnaire_evidence_results/3", "7b7bd44a4da723593276094f3b7186b2ecacd88cd98d2101dd87a3c800492af8"),
+    ("closure", "/psid_questionnaire_evidence_results/4", "3e3db7ad9a12bf1d04a94b297851aec413714de072d0dcfd1a389d66bff61dee"),
+    ("closure", "/psid_vb_family_summary/1", "48726c64a2d2b859e0db3888a290c6fd016f31873d3926126f81dc0f8fe555d2"),
+]
+XCLO = []
+DCLO = []
+for position, (source, pointer, source_sha) in enumerate(closure_defs):
+    source_row = N(
+        f"extraction-row:{source}:{pointer}:{source_sha}",
+        "extraction-row",
+    )
+    commitment = N(
+        f"l1:closure-row:{position:02d}:{source}:{pointer}",
+        "layer-1 commitment",
+    )
+    derived = N(
+        f"l2:closure-semantic-projection:{position:02d}:{source}:{pointer}",
+        "layer-2 derived node",
+    )
+    XCLO.append(source_row)
+    DCLO.append(derived)
+    for child in [commitment, derived]:
+        E(roots[4], child, "contains")
+    E(A_EXT if source == "extraction" else A_CLO, source_row, "contains")
+    E(commitment, source_row, "commits-to")
+    E(derived, source_row, "derives-from")
+
+# Root 5: exact source domain, exact semantic occurrence extractor, exact
+# candidate mixed rows, and exact semantic sweep values.
+XDOCDOM = N(
+    "extraction-row:registration:/document_candidates:fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3",
+    "extraction-row",
+)
+C_DOMAIN_POINTER = N(
+    "l1:sweep:document-domain-pointer:/document_candidates",
+    "layer-1 commitment",
+)
+C_DOCROWS = N(
+    "l1:sweep:document-rows:fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3",
+    "layer-1 commitment",
+)
+E(A_REG, XDOCDOM, "contains")
+for child in [C_DOMAIN_POINTER, C_DOCROWS]:
+    E(roots[5], child, "contains")
+E(C_DOMAIN_POINTER, XDOCDOM, "commits-to")
+E(C_DOCROWS, XDOCDOM, "commits-to")
+CDOC = {}
+XDOCROW = {}
+for position, row in enumerate(registered_rows, 1):
+    document_id = f"psid-corpus-document-{position:04d}"
+    source_row = N(
+        f"extraction-row:registration:/document_candidates/{position - 1}:"
+        f"{row_hash(row)}",
+        "extraction-row",
+    )
+    commitment = N(
+        f"l1:registered-pdf:/document_candidates/{position - 1}:"
+        f"{row['document_identity_sha256']}:{row['expected_sha256']}",
+        "layer-1 commitment",
+    )
+    XDOCROW[position] = source_row
+    CDOC[position] = commitment
+    E(XDOCDOM, source_row, "contains")
+    E(XDOCDOM, commitment, "contains")
+    E(commitment, source_row, "commits-to")
+    E(commitment, DOC[position], "commits-to")
+
+registered_document_ids = [row["source_document_id"] for row in registered_rows]
+assert len(canon(registered_document_ids)) == 12770
+assert hashlib.sha256(canon(registered_document_ids)).hexdigest() == "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"
+D_DOC_COUNT = N("l2:sweep:document-count:456", "layer-2 derived node")
+D_DOC_IDS = N(
+    "l2:sweep:ordered-registered-document-ids:"
+    "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd",
+    "layer-2 derived node",
+)
+DSPEC_CONTENT = {
+    "classifier_behavior_source": {
+        "encoding": "UTF-8",
+        "source_utf8": classifier_behavior_source.decode("utf-8"),
+        "source_byte_range": [0, len(classifier_behavior_source)],
+        "source_sha256": hashlib.sha256(classifier_behavior_source).hexdigest(),
+    },
+    "classifier_call": "classify(decoded_page_text, zero_based_line_index, match_start_character, match_end_character)",
+    "known_physical_reads": [
+        "splitlines and line starts",
+        "same-line word and table-cell position",
+        "nearest preceding labelled line",
+        "page number",
+        "page-reset row ordinal",
+        "same-page grouping",
+    ],
+    "output_schema_and_order": [
+        [
+            "source_document_id",
+            "pdf_page_number_1_based",
+            "page_semantic_row_position",
+            "raw_field_id",
+            "semantic_reference_position",
+        ],
+        "registered document, page, then page-local emitted-row position",
+    ],
+    "specification_id": "position_classifier_specification.v1",
+    "target_matching": r"(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907|4379|5289|5788)(?!\d)",
+    "text_reconstruction": [
+        "Poppler pdftotext",
+        "26.04.0",
+        ["-layout", "-enc", "UTF-8"],
+        "form-feed split; remove exactly one terminal whitespace-only page",
+    ],
+}
+DSPEC_CONTENT_BYTES = canon(DSPEC_CONTENT)
+DSPEC_CONTENT_SHA = hashlib.sha256(DSPEC_CONTENT_BYTES).hexdigest()
+assert len(DSPEC_CONTENT_BYTES) == 5770
+assert DSPEC_CONTENT_SHA == "2f6de69baeb5cdc4f2c0d04a725144940bc21ca434c4c18a4338cb31eb90ba00"
+A_DSPEC = N(
+    f"artifact:root5-projection:/position_classifier_specification:"
+    f"{len(DSPEC_CONTENT_BYTES)}:{DSPEC_CONTENT_SHA}",
+    "artifact",
+)
+X_DSPEC = N(
+    f"extraction-row:root5-projection:/position_classifier_specification:"
+    f"utf8-bytes[0:{len(DSPEC_CONTENT_BYTES)}]:{DSPEC_CONTENT_SHA}",
+    "extraction-row",
+)
+C_DSPEC = N(
+    f"l1:root5-projection:/position_classifier_specification:"
+    f"utf8-bytes[0:{len(DSPEC_CONTENT_BYTES)}]:{DSPEC_CONTENT_SHA}",
+    "layer-1 commitment",
+)
+DSPEC = N(
+    "l2:sweep:position-classifier-specification:"
+    "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb",
+    "layer-2 derived node",
+)
+DSCAN = N(
+    "l2:sweep:semantic-occurrence-relation:"
+    "0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411",
+    "layer-2 derived node",
+)
+for child in [D_DOC_COUNT, D_DOC_IDS, C_DSPEC, DSPEC, DSCAN]:
+    E(roots[5], child, "contains")
+E(C_DSPEC, A_DSPEC, "commits-to")
+E(A_DSPEC, X_DSPEC, "contains")
+E(D_DOC_COUNT, XDOCDOM, "derives-from")
+E(D_DOC_IDS, XDOCDOM, "derives-from")
+E(DSPEC, X_DSPEC, "derives-from")
+E(DSCAN, D_DOC_IDS, "derives-from")
+E(DSCAN, DSPEC, "derives-from")
+for position in range(1, 457):
+    E(DSCAN, DOC[position], "derives-from")
+
+XOCCLOC = N(
+    "extraction-row:semantic-occurrence-source-locators:4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d",
+    "extraction-row",
+)
+C_OCCLOC = N(
+    "l1:sweep:semantic-occurrence-source-locators:4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d",
+    "layer-1 commitment",
+)
+C_OCC = N(
+    "l1:sweep:semantic-occurrence-rows:0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411",
+    "layer-1 commitment",
+)
+X_OCCARR = N(
+    "extraction-row:semantic-occurrence-mixed-relation:"
+    "0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411",
+    "extraction-row",
+)
+for child in [C_OCCLOC, C_OCC, X_OCCARR]:
+    E(roots[5], child, "contains")
+E(C_OCCLOC, XOCCLOC, "commits-to")
+E(C_OCC, X_OCCARR, "commits-to")
+E(C_OCC, DSCAN, "commits-to")
+
+page_commitments = {}
+OCC = []
+X_OCC = []
+for occurrence_position, (locator, occurrence) in enumerate(zip(occurrence_locator_rows, occurrence_rows)):
+    assert locator["source_document_id"] == occurrence["source_document_id"]
+    assert locator["pdf_page_number_1_based"] == occurrence["pdf_page_number_1_based"]
+    assert "V" + locator["token_lexeme"] == occurrence["raw_field_id"]
+    document_id = locator["source_document_id"]
+    page_number = locator["pdf_page_number_1_based"]
+    page_sha = locator["derived_page_text_sha256"]
+    page = page_node(document_id, page_number, page_sha)
+    page_key = (document_id, page_number)
+    if page_key not in page_commitments:
+        page_commitment = N(
+            f"l1:sweep:derived-page:{document_id}:{page_number}:{page_sha}",
+            "layer-1 commitment",
+        )
+        page_commitments[page_key] = page_commitment
+        E(XOCCLOC, page_commitment, "contains")
+        E(page_commitment, page, "commits-to")
+    locator_row = N(
+        f"extraction-row:semantic-occurrence-source-locator:"
+        f"{occurrence_position:03d}:{row_hash(locator)}",
+        "extraction-row",
+    )
+    locator_commitment = N(
+        f"l1:semantic-occurrence-source-locator:"
+        f"{occurrence_position:03d}:{row_hash(locator)}",
+        "layer-1 commitment",
+    )
+    # All five members enter the historical sweep audit relation.  The page
+    # number and page-local row ordinal are physical layout values; retaining
+    # them here is the forcing layer-2 dependency that invokes fallback.
+    semantic_content = {
+        key: occurrence[key]
+        for key in [
+            "source_document_id",
+            "pdf_page_number_1_based",
+            "page_semantic_row_position",
+            "raw_field_id",
+            "semantic_reference_position",
+        ]
+    }
+    field_reference = N(
+        f"field-reference:semantic-occurrence:{occurrence_position:03d}:"
+        f"{row_hash(semantic_content)}",
+        "field-reference",
+    )
+    mixed_row = N(
+        f"extraction-row:semantic-occurrence-mixed-row:"
+        f"{occurrence_position:03d}:{row_hash(occurrence)}",
+        "extraction-row",
+    )
+    OCC.append(field_reference)
+    X_OCC.append(mixed_row)
+    E(XOCCLOC, locator_row, "contains")
+    E(locator_commitment, locator_row, "commits-to")
+    E(locator_commitment, page, "commits-to")
+    E(mixed_row, locator_commitment, "contains")
+    E(mixed_row, field_reference, "contains")
+    E(X_OCCARR, mixed_row, "contains")
+    E(page, field_reference, "contains")
+    E(DSCAN, field_reference, "contains")
+
+# The registered PDFs remain the exhaustive no-hit domain, while every
+# materialized decoded page is also a direct value-flow basis.  This makes a
+# decoded-byte witness walkable without pretending that its byte offset is an
+# offset in the compressed PDF preimage.
+for page in PAGE.values():
+    E(DSCAN, page, "derives-from")
+
+extra_ids = {f"V{value}" for value in range(4901, 4908)}
+annual_ids = {"V4379", "V5289", "V5788"}
+occurrence_pages = collections.defaultdict(lambda: {"extra": set(), "annual": set()})
+for occurrence in occurrence_rows:
+    if occurrence["raw_field_id"] in extra_ids:
+        occurrence_pages[occurrence["source_document_id"]]["extra"].add(
+            occurrence["pdf_page_number_1_based"]
+        )
+    if occurrence["raw_field_id"] in annual_ids:
+        occurrence_pages[occurrence["source_document_id"]]["annual"].add(
+            occurrence["pdf_page_number_1_based"]
+        )
+registered_by_id = {row["source_document_id"]: row for row in registered_rows}
+candidate_rows = []
+for registered_row in registered_rows:
+    document_id = registered_row["source_document_id"]
+    pages = occurrence_pages[document_id]
+    if pages["extra"] and pages["annual"]:
+        candidate_rows.append(
+            {
+                "source_document_id": document_id,
+                "document_identity_sha256": registered_row["document_identity_sha256"],
+                "full_file_sha256": registered_row["expected_sha256"],
+                "extra_job_token_pages": sorted(pages["extra"]),
+                "annual_total_token_pages": sorted(pages["annual"]),
+                "same_page_intersection": sorted(pages["extra"] & pages["annual"]),
+            }
+        )
+assert len(candidate_rows) == 18
+assert len(canon(candidate_rows)) == 6209
+assert hashlib.sha256(canon(candidate_rows)).hexdigest() == "039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7"
+candidate_docs = [row["source_document_id"] for row in candidate_rows]
+assert hashlib.sha256(canon(candidate_docs)).hexdigest() == "5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed"
+candidate_semantic_rows = [
+    {
+        key: candidate_row[key]
+        for key in [
+            "source_document_id",
+            "extra_job_token_pages",
+            "annual_total_token_pages",
+            "same_page_intersection",
+        ]
+    }
+    for candidate_row in candidate_rows
+]
+candidate_semantic_rows_sha = hashlib.sha256(canon(candidate_semantic_rows)).hexdigest()
+DENUMSPEC_CONTENT = {
+    "complete_candidate_enumeration": {
+        "admission": "emit exactly one row for every domain document having both page arrays nonempty",
+        "annual_total_raw_field_ids": ["V4379", "V5289", "V5788"],
+        "extra_job_raw_field_ids": [
+            "V4901",
+            "V4902",
+            "V4903",
+            "V4904",
+            "V4905",
+            "V4906",
+            "V4907",
+        ],
+        "order": "registered-document order",
+        "ordered_domain": "all 456 registered source_document_id values",
+        "per_document_projection": [
+            "source_document_id",
+            "ascending distinct extra-job page numbers",
+            "ascending distinct annual-total page numbers",
+            "ascending same-page intersection",
+        ],
+    },
+    "shadow_node_correspondence": (
+        "hold the pinned baseline topology, logical node IDs, edges, and node "
+        "positions fixed; under the stored consumer-to-basis derives-from "
+        "orientation, re-evaluate in reverse topological order so every basis "
+        "target precedes its consumer; arrays may gain, lose, or change rows "
+        "without minting topology nodes; baseline materialized row nodes are "
+        "witnesses, while the complete-enumeration node is the dynamic "
+        "cardinality authority"
+    ),
+    "specification_id": "complete_candidate_enumeration_specification.v1",
+}
+DENUMSPEC_CONTENT_BYTES = canon(DENUMSPEC_CONTENT)
+DENUMSPEC_CONTENT_SHA = hashlib.sha256(DENUMSPEC_CONTENT_BYTES).hexdigest()
+assert len(DENUMSPEC_CONTENT_BYTES) == 1068
+assert DENUMSPEC_CONTENT_SHA == "a91d461b2b42a63ef3e63ac7f370dca5a8c8cb21bac07876cf716b78e4e122fa"
+A_DENUMSPEC = N(
+    f"artifact:root5-projection:/complete_candidate_enumeration_specification:"
+    f"{len(DENUMSPEC_CONTENT_BYTES)}:{DENUMSPEC_CONTENT_SHA}",
+    "artifact",
+)
+X_DENUMSPEC = N(
+    f"extraction-row:root5-projection:/complete_candidate_enumeration_specification:"
+    f"utf8-bytes[0:{len(DENUMSPEC_CONTENT_BYTES)}]:{DENUMSPEC_CONTENT_SHA}",
+    "extraction-row",
+)
+C_DENUMSPEC = N(
+    f"l1:root5-projection:/complete_candidate_enumeration_specification:"
+    f"utf8-bytes[0:{len(DENUMSPEC_CONTENT_BYTES)}]:{DENUMSPEC_CONTENT_SHA}",
+    "layer-1 commitment",
+)
+DENUMSPEC = N(
+    "l2:sweep:complete-candidate-enumeration-specification",
+    "layer-2 derived node",
+)
+D_CAND_ENUM = N(
+    f"l2:sweep:complete-candidate-enumeration:{candidate_semantic_rows_sha}",
+    "layer-2 derived node",
+)
+D_CAND_IDS = N(
+    "l2:sweep:ordered-candidate-document-ids:"
+    "5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed",
+    "layer-2 derived node",
+)
+D_CAND_COUNT = N(
+    "l2:sweep:candidate-count:18:"
+    "7ee29791fc17e986b97128845622b077fb45e349fdb80523fac9dba879b4ad60",
+    "layer-2 derived node",
+)
+D_CAND_ARR = N(
+    "l2:sweep:candidate-semantic-row-array", "layer-2 derived node"
+)
+C_CAND_IDS = N(
+    "l1:sweep:candidate-document-ids:5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed",
+    "layer-1 commitment",
+)
+X_CAND_ARR = N(
+    "extraction-row:sweep:candidate-rows:039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7",
+    "extraction-row",
+)
+C_CAND_ROWS = N(
+    "l1:sweep:candidate-rows:039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7",
+    "layer-1 commitment",
+)
+for child in [C_DENUMSPEC, DENUMSPEC, D_CAND_ENUM, D_CAND_IDS, D_CAND_COUNT, D_CAND_ARR, C_CAND_IDS, X_CAND_ARR, C_CAND_ROWS]:
+    E(roots[5], child, "contains")
+E(C_DENUMSPEC, A_DENUMSPEC, "commits-to")
+E(A_DENUMSPEC, X_DENUMSPEC, "contains")
+E(DENUMSPEC, X_DENUMSPEC, "derives-from")
+for source in [DSCAN, D_DOC_IDS, DENUMSPEC]:
+    E(D_CAND_ENUM, source, "derives-from")
+E(D_CAND_ARR, D_CAND_ENUM, "derives-from")
+E(D_CAND_IDS, D_CAND_ARR, "derives-from")
+E(D_CAND_COUNT, D_CAND_IDS, "derives-from")
+E(C_CAND_IDS, D_CAND_IDS, "commits-to")
+E(C_CAND_ROWS, X_CAND_ARR, "commits-to")
+DCAND = []
+X_CAND = []
+for position, candidate_row in enumerate(candidate_rows):
+    document_id = candidate_row["source_document_id"]
+    document_position = int(document_id.rsplit("-", 1)[1])
+    semantic_candidate = candidate_semantic_rows[position]
+    derived = N(
+        f"l2:sweep:candidate-semantic-pages:{position:02d}:{document_id}:"
+        f"{row_hash(semantic_candidate)}",
+        "layer-2 derived node",
+    )
+    mixed_row = N(
+        f"extraction-row:sweep:candidate-mixed-row:{position:02d}:"
+        f"{document_id}:{row_hash(candidate_row)}",
+        "extraction-row",
+    )
+    DCAND.append(derived)
+    X_CAND.append(mixed_row)
+    E(derived, D_CAND_ENUM, "derives-from")
+    for child in [CDOC[document_position], derived]:
+        E(mixed_row, child, "contains")
+    E(X_CAND_ARR, mixed_row, "contains")
+    E(D_CAND_ARR, derived, "derives-from")
+
+sole_row = {
+    "source_document_id": "psid-corpus-document-0098",
+    "pdf_page_number_1_based": 573,
+    "derived_page_text_sha256": "51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed",
+    "disposition": "false_positive_family_concordance_crosswave_variable_numbers",
+}
+sole_derived_content = {
+    key: sole_row[key]
+    for key in [
+        "source_document_id",
+        "pdf_page_number_1_based",
+        "disposition",
+    ]
+}
+sole_page = PAGE[("psid-corpus-document-0098", 573)]
+C_SOLE_PAGE = N(
+    "l1:sweep:sole-page-text:51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed",
+    "layer-1 commitment",
+)
+D_SOLE = N(
+    "l2:sweep:sole-candidate-disposition:psid-corpus-document-0098:573:"
+    + row_hash(sole_derived_content),
+    "layer-2 derived node",
+)
+X_SOLE = N(
+    f"extraction-row:sweep:sole-candidate-mixed-row:{row_hash(sole_row)}",
+    "extraction-row",
+)
+D_FORMULA_COUNT = N(
+    "l2:sweep:formula-candidate-count:0:"
+    "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "layer-2 derived node",
+)
+D_SWEEP = N("l2:corpus-wide-cooccurrence-sweep-semantic-members", "layer-2 derived node")
+for child in [C_SOLE_PAGE, X_SOLE, D_FORMULA_COUNT, D_SWEEP]:
+    E(roots[5], child, "contains")
+E(C_SOLE_PAGE, sole_page, "commits-to")
+E(D_SOLE, D_CAND_ARR, "derives-from")
+E(D_SOLE, sole_page, "derives-from")
+E(X_SOLE, C_SOLE_PAGE, "contains")
+E(X_SOLE, D_SOLE, "contains")
+E(D_FORMULA_COUNT, D_SOLE, "derives-from")
+for child in [D_DOC_COUNT, D_DOC_IDS, DSPEC, D_CAND_ARR, D_CAND_IDS, D_CAND_COUNT, D_SOLE, D_FORMULA_COUNT]:
+    E(D_SWEEP, child, "derives-from")
+
+# Four non-passing semantic references: exact source rows and exact pointer
+# selectors, never an already-joined opaque node.
+semantic_defs = [
+    (0, 1976, "V4519", 9, 220, "e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46", "aea1e7808740a2130edd4582af2b7890e2154171e6d8c96fb52de07e2c586837"),
+    (1, 1976, "V4902", 15, 609, "f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a", "79f6fb1ca38e7f6556bcd216c6e450cab109265828bd2689fa1413be15b64cf3"),
+    (2, 1977, "V5429", 21, 1055, "683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d", "e265107049464fcf7f7cd22961eed40b9215e178dc0782ce28c8c2c5f6e57ba3"),
+    (3, 1978, "V5916", 27, 1529, "b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c", "7a3a9ac9cbce33fb32af0f0e0b65310a427b393bf57eaa917579168013a2c786"),
+]
+CSEMART = N(
+    "l1:semantic-source-artifact:2203624:"
+    "0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87:"
+    "086a69e006a102f44cc512b4615a137559e6ac97d3c0bee2be630dcff094e228",
+    "layer-1 commitment",
+)
+E(roots[6], CSEMART, "contains")
+E(CSEMART, A_SEM, "commits-to")
+SF = []
+DSEM = []
+X_SEM = []
+semantic_projection_rows = []
+semantic_content_rows = []
+for position, wave, field_id, era_index, field_index, era_sha, output_sha in semantic_defs:
+    era_value = source_objects["semantic"]["era_facts"][era_index]
+    field_value = source_objects["semantic"]["field_evidence"][field_index]
+    assert row_hash(era_value) == era_sha
+    assert era_value["interview_wave"] == wave
+    assert era_value["raw_field_ids"] == [field_id]
+    assert field_value[1:4] == [wave, era_value["earnings_reference_year"], field_id]
+    field_sha = row_hash(field_value)
+    projection_row = {
+        "era_fact_pointer": f"/era_facts/{era_index}",
+        "field_evidence_pointer": f"/field_evidence/{field_index}",
+        "interview_wave": era_value["interview_wave"],
+        "raw_field_id": field_value[3],
+        "earnings_reference_year": era_value["earnings_reference_year"],
+        "fact_id": era_value["fact_id"],
+        "fact_class": era_value["fact_class"],
+        "role": era_value["role"],
+        "job_slot": era_value["job_slot"],
+        "field_purpose": era_value["field_purpose"],
+        "information_date_basis": era_value["information_date_basis"],
+        "reference_periodicity": era_value["reference_periodicity"],
+        "job_match_timing": era_value["job_match_timing"],
+        "reporting_unit": era_value["reporting_unit"],
+        "annual_role_total_attachment_status": era_value[
+            "annual_role_total_attachment_status"
+        ],
+        "exact_codebook_short_label": field_value[4],
+        "full_source_description": field_value[10],
+        "semantic_code_map": [
+            {"raw_value_or_range": entry[2], "source_meaning": entry[3]}
+            for entry in field_value[11]
+        ],
+        "fact_source_status": era_value["status"],
+    }
+    assert row_hash(projection_row) == output_sha
+    semantic_projection_rows.append(projection_row)
+    semantic_projection = {
+        key: value
+        for key, value in projection_row.items()
+        if key not in ["era_fact_pointer", "field_evidence_pointer"]
+    }
+    semantic_content_rows.append(semantic_projection)
+    semantic_sha = row_hash(semantic_projection)
+    era_row = N(
+        f"extraction-row:semantic-source:/era_facts/{era_index}:{era_sha}",
+        "extraction-row",
+    )
+    field_row = N(
+        f"extraction-row:semantic-source:/field_evidence/{field_index}:{field_sha}",
+        "extraction-row",
+    )
+    reference = N(
+        f"field-reference:{position:02d}:semantic-identity:{wave}:{field_id}",
+        "field-reference",
+    )
+    derived = N(
+        f"l2:semantic-projection-content:{position:02d}:{wave}:{field_id}:"
+        f"{semantic_sha}",
+        "layer-2 derived node",
+    )
+    era_commitment = N(
+        f"l1:semantic-source-pointer:/era_facts/{era_index}:{era_sha}",
+        "layer-1 commitment",
+    )
+    field_commitment = N(
+        f"l1:semantic-source-pointer:/field_evidence/{field_index}:{field_sha}",
+        "layer-1 commitment",
+    )
+    mixed_output = N(
+        f"extraction-row:semantic-projection-mixed-row:{position:02d}:{output_sha}",
+        "extraction-row",
+    )
+    output_commitment = N(
+        f"l1:semantic-projection-row:{position:02d}:{output_sha}",
+        "layer-1 commitment",
+    )
+    SF.append(reference)
+    DSEM.append(derived)
+    X_SEM.append(mixed_output)
+    E(A_SEM, era_row, "contains")
+    E(A_SEM, field_row, "contains")
+    for child in [reference, era_commitment, field_commitment, mixed_output, output_commitment]:
+        E(roots[6], child, "contains")
+    E(era_commitment, era_row, "commits-to")
+    E(field_commitment, field_row, "commits-to")
+    E(field_row, reference, "contains")
+    for child in [era_commitment, field_commitment, derived]:
+        E(mixed_output, child, "contains")
+    E(output_commitment, mixed_output, "commits-to")
+    for source in [reference, era_row, field_row]:
+        E(derived, source, "derives-from")
+assert len(canon(semantic_projection_rows)) == 16933
+assert hashlib.sha256(canon(semantic_projection_rows)).hexdigest() == "a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75"
+semantic_content_array_sha = hashlib.sha256(canon(semantic_content_rows)).hexdigest()
+D_SEMARR = N(
+    f"l2:semantic-projection-content-array:{semantic_content_array_sha}",
+    "layer-2 derived node",
+)
+X_SEMARR = N(
+    "extraction-row:semantic-projection-mixed-array:"
+    "a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75",
+    "extraction-row",
+)
+C_SEMARR = N(
+    "l1:semantic-projection-array:a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75",
+    "layer-1 commitment",
+)
+for child in [D_SEMARR, X_SEMARR, C_SEMARR]:
+    E(roots[6], child, "contains")
+for child in DSEM:
+    E(D_SEMARR, child, "derives-from")
+for child in X_SEM:
+    E(X_SEMARR, child, "contains")
+E(C_SEMARR, X_SEMARR, "commits-to")
+
+# Terminal semantic findings and result members.
+DEST = N(
+    "l2:established-findings:"
+    "998757fb11188b18d15840f103440b68a5174928f62bc941c943e75a5338fb9b",
+    "layer-2 derived node",
+)
+DNOT = N(
+    "l2:expressly-not-established-or-used:"
+    "2eadfbd56c76871b093d8ab3c13006dbc62aafed42e268c92a3b20440e34fa2d",
+    "layer-2 derived node",
+)
+DREAD = N(
+    "l2:reader-seam-consequence:"
+    "b37656cba512ef50b5b1f6b4a2fa2ee0632ace3f4ba47f85a79c674f521719b5",
+    "layer-2 derived node",
+)
+DRES = N(
+    "l2:successor-residual-ids:"
+    "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "layer-2 derived node",
+)
+DDISP = N(
+    "l2:source-disposition:verified:"
+    "5ea8378ca586ef8ffacf1af3e8f8ff07a8062dcdd423d4f60ac21cfb3b7ab339",
+    "layer-2 derived node",
+)
+for root, child in zip(roots[6:], [DEST, DNOT, DREAD, DRES, DDISP]):
+    E(root, child, "contains")
+for source in DPAGE + DLOC + DCLO + [D_SEMARR, D_SWEEP]:
+    E(DEST, source, "derives-from")
+for source in DCLO + [D_FORMULA_COUNT]:
+    E(DNOT, source, "derives-from")
+for source in [DEST, DNOT]:
+    E(DREAD, source, "derives-from")
+    E(DRES, source, "derives-from")
+E(DRES, DREAD, "derives-from")
+for source in [DEST, DNOT, DREAD, DRES, D_SWEEP]:
+    E(DDISP, source, "derives-from")
+
+# These are the exact layer-2 assertion owners whose content enters the
+# eleven serialized §18.2 roots. Internal audit outputs do not suffice.
+RESULT_ENTRY_NODES = [
+    DID,
+    D_PASSARR,
+    D_PAGEARR,
+    *DCLO,
+    D_SWEEP,
+    DEST,
+    DNOT,
+    DREAD,
+    DRES,
+    DDISP,
+]
+assert len(RESULT_ENTRY_NODES) == len(set(RESULT_ENTRY_NODES)) == 19
+
+# Exact-derivability guards: the interview-wave scalar, decoded witness byte,
+# complete candidate domain, and sole-candidate disposition must each be
+# walkable through derives-from rather than inferred from structural edges.
+assert all(
+    ("derives-from", derived_page, source["basis_node"]) in edges
+    for derived_page, source in DPAGE_WAVE_SOURCE.items()
+)
+assert all(("derives-from", DSCAN, page) in edges for page in PAGE.values())
+assert ("derives-from", DSCAN, PAGE[("psid-corpus-document-0068", 519)]) in edges
+assert ("contains", roots[5], C_DSPEC) in edges
+assert ("commits-to", C_DSPEC, A_DSPEC) in edges
+assert ("contains", A_DSPEC, X_DSPEC) in edges
+assert ("derives-from", DSPEC, X_DSPEC) in edges
+assert ("contains", roots[5], C_DENUMSPEC) in edges
+assert ("commits-to", C_DENUMSPEC, A_DENUMSPEC) in edges
+assert ("contains", A_DENUMSPEC, X_DENUMSPEC) in edges
+assert ("derives-from", DENUMSPEC, X_DENUMSPEC) in edges
+assert {
+    to_node
+    for edge_type, from_node, to_node in edges
+    if edge_type == "derives-from" and from_node == D_CAND_ENUM
+} == {DSCAN, D_DOC_IDS, DENUMSPEC}
+assert {
+    to_node
+    for edge_type, from_node, to_node in edges
+    if edge_type == "derives-from" and from_node == D_SOLE
+} == {D_CAND_ARR, sole_page}
+assert "derived_page_text_sha256" not in sole_derived_content
+
+# Canonical topology fixture.
+for edge_type, from_node, to_node in edges:
+    if edge_type == "commits-to":
+        assert nodes[from_node] == "layer-1 commitment"
+    if edge_type == "derives-from":
+        assert nodes[from_node] == "layer-2 derived node"
+for node_id, node_type in nodes.items():
+    if node_type == "layer-1 commitment":
+        assert any(
+            edge_type == "commits-to" and from_node == node_id
+            for edge_type, from_node, _ in edges
+        ), node_id
+
+# Every non-layer-2 content basis is reachable from a provenance commitment
+# by one commits-to edge followed by zero or more structural contains edges.
+committed_content = set()
+commitment_queue = collections.deque()
+for edge_type, from_node, to_node in edges:
+    if edge_type == "commits-to":
+        committed_content.add(to_node)
+        commitment_queue.append(to_node)
+while commitment_queue:
+    from_node = commitment_queue.popleft()
+    for edge_type, edge_source, to_node in edges:
+        if edge_type == "contains" and edge_source == from_node and to_node not in committed_content:
+            committed_content.add(to_node)
+            commitment_queue.append(to_node)
+non_layer_2_bases = {
+    to_node
+    for edge_type, _, to_node in edges
+    if edge_type == "derives-from" and nodes[to_node] != "layer-2 derived node"
+}
+assert non_layer_2_bases <= committed_content
+node_rows = sorted(
+    ({"node_id": node_id, "node_type": node_type} for node_id, node_type in nodes.items()),
+    key=lambda row: (TYPES.index(row["node_type"]), row["node_id"].encode("utf-8")),
+)
+edge_rows = sorted(
+    (
+        {"edge_type": edge_type, "from_node_id": from_node, "to_node_id": to_node}
+        for edge_type, from_node, to_node in edges
+    ),
+    key=lambda row: (
+        ETYPES.index(row["edge_type"]),
+        row["from_node_id"].encode("utf-8"),
+        row["to_node_id"].encode("utf-8"),
+    ),
+)
+fixture = {"edges": edge_rows, "nodes": node_rows, "roots": roots}
+fixture_bytes = canon(fixture)
+
+# Exact root-reachability and DAG algorithms.
+adjacency = collections.defaultdict(list)
+indegree = {node_id: 0 for node_id in nodes}
+for edge_type, from_node, to_node in edges:
+    adjacency[from_node].append(to_node)
+    indegree[to_node] += 1
+reachable = set(roots)
+queue = list(roots)
+while queue:
+    for target in adjacency[queue.pop()]:
+        if target not in reachable:
+            reachable.add(target)
+            queue.append(target)
+topological_queue = collections.deque(
+    node_id for node_id, degree in indegree.items() if degree == 0
+)
+visited = 0
+while topological_queue:
+    node_id = topological_queue.popleft()
+    visited += 1
+    for target in adjacency[node_id]:
+        indegree[target] -= 1
+        if indegree[target] == 0:
+            topological_queue.append(target)
+
+# Exact layer-2 basis manifest.  A derives-from edge is insufficient by
+# itself: every basis row names the exact semantic projection of its target.
+node_position = {row["node_id"]: position for position, row in enumerate(node_rows)}
+derived_nodes = [
+    row["node_id"]
+    for row in node_rows
+    if row["node_type"] == "layer-2 derived node"
+]
+derived_targets = collections.defaultdict(list)
+for edge_type, from_node, to_node in edges:
+    if edge_type == "derives-from":
+        derived_targets[from_node].append(to_node)
+
+primitive_selectors = {
+    DID: [
+        {"selector_kind": "law_literal", "selector_value": ["schema_version", "amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"]},
+        {"selector_kind": "law_literal", "selector_value": ["claim_id", "V-B6"]},
+    ],
+    DPASSPEC: [
+        {"selector_kind": "law_literal", "selector_value": ["semantic_normalization", "split each authenticated decoded page on Unicode whitespace; join tokens with one U+0020; page whitespace and line boundaries are not selected"]},
+        {"selector_kind": "law_literal", "selector_value": ["semantic_selection", "select only the exact normalized questionnaire/codebook statement strings enumerated in the eight passage witness rows"]},
+    ],
+}
+
+PHYSICAL_SPEC_CONTENT_CLASS = {
+    DSPEC: "grammar_dfa_partition_or_action",
+    DENUMSPEC: "executable_mapping",
+}
+
+
+def exact_selector(derived_node, basis_node):
+    if derived_node == DSPEC and basis_node == X_DSPEC:
+        return [{"selector_kind": "grammar_dfa_partition_or_action_byte_range", "selector_value": {"artifact_node_id": A_DSPEC, "root_member": "corpus_wide_cooccurrence_sweep", "json_pointer": "/position_classifier_specification", "canonicalization": "RFC-8259 JSON, sorted keys, compact separators, ensure_ascii=true, LF terminator", "utf8_byte_range": [0, len(DSPEC_CONTENT_BYTES)], "bytes": len(DSPEC_CONTENT_BYTES), "sha256": DSPEC_CONTENT_SHA, "selection": "whole canonical object"}}]
+    if derived_node == DENUMSPEC and basis_node == X_DENUMSPEC:
+        return [{"selector_kind": "executable_mapping_byte_range", "selector_value": {"artifact_node_id": A_DENUMSPEC, "root_member": "corpus_wide_cooccurrence_sweep", "json_pointer": "/complete_candidate_enumeration_specification", "canonicalization": "RFC-8259 JSON, sorted keys, compact separators, ensure_ascii=true, LF terminator", "utf8_byte_range": [0, len(DENUMSPEC_CONTENT_BYTES)], "bytes": len(DENUMSPEC_CONTENT_BYTES), "sha256": DENUMSPEC_CONTENT_SHA, "selection": "whole canonical object"}}]
+    if derived_node in DLOC and basis_node in PAGE.values():
+        passage = passage_rows[DLOC.index(derived_node)]
+        return [{"selector_kind": "normalized_page_semantic_substrings", "selector_value": passage["semantic_source_portions"]}]
+    if derived_node in DPAGE and basis_node == DPAGE_WAVE_SOURCE[derived_node]["basis_node"]:
+        wave_source = DPAGE_WAVE_SOURCE[derived_node]
+        return [{"selector_kind": "registered_codebook_interview_wave_exact_equality", "selector_value": {"source_document_id": wave_source["source_document_id"], "registered_filename": wave_source["registered_filename"], "projected_interview_wave": wave_source["interview_wave"], "exact_registered_pair": [wave_source["registered_filename"], wave_source["interview_wave"]]}}]
+    if derived_node in DPAGE and basis_node in PF:
+        row = page_semantic_rows[PF.index(basis_node)]
+        return [{"selector_kind": "normalized_codebook_semantic_fragments", "selector_value": {"normalization": "Unicode-whitespace split and one-U+0020 join", "raw_field_id": row["raw_field_id"], "normalized_semantic_short_label": row["normalized_semantic_short_label"], "normalized_semantic_description": row["normalized_semantic_description"], "semantic_code_lexeme_and_meaning": row["semantic_code_lexeme_and_meaning"], "excluded_source_roles": ["Count", "%", "declared_format", "layout", "width", "raw_position", "value_execution"], "independent_source_test": "all selected normalized fragments must be reconstructed from the authenticated page before comparison with the expected row"}}]
+    if derived_node in DCLO and basis_node in XCLO:
+        position = DCLO.index(derived_node)
+        if position == 0:
+            keys = ["absence_proof_id", "conclusion", "excluded_near_matches", "search_domain", "searched_interview_waves", "searched_locator_ids"]
+        elif position in range(1, 5):
+            keys = ["established_findings", "evidentiary_verdict", "family_id", "operative_effect", "remaining_unestablished_facts", "residual_id", "source_missing_fact", "source_status"]
+        elif position in range(5, 9):
+            keys = ["established_findings", "evidentiary_verdict", "family_id", "operative_effect", "remaining_unestablished_facts", "residual_id", "source_missing_fact"]
+        else:
+            keys = ["evidentially_closed_count", "evidentiary_remaining_residual_count", "family_id", "operative_change", "operative_residual_count", "operative_source_disposition", "targeted_residual_count"]
+        return [{"selector_kind": "json_object_keys", "selector_value": keys}]
+    if derived_node in DSEM:
+        position = DSEM.index(derived_node)
+        if basis_node == SF[position]:
+            return [{"selector_kind": "semantic_reference_identity", "selector_value": [semantic_defs[position][1], semantic_defs[position][2]]}]
+        if basis_node.startswith("extraction-row:semantic-source:/era_facts/"):
+            return [{"selector_kind": "json_object_keys", "selector_value": ["annual_role_total_attachment_status", "earnings_reference_year", "fact_class", "fact_id", "field_purpose", "information_date_basis", "interview_wave", "job_match_timing", "job_slot", "raw_field_ids", "reference_periodicity", "reporting_unit", "role", "status"]}]
+        return [{"selector_kind": "field_evidence_semantic_members", "selector_value": {"row_members": [1, 2, 3, 4, 10], "each_semantic_code_map_entry_members": [2, 3], "excluded_row_members": [0, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17], "excluded_semantic_code_map_entry_members": [0, 1]}}]
+    if derived_node == D_DOC_COUNT:
+        return [{"selector_kind": "array_cardinality", "selector_value": "/document_candidates"}]
+    if derived_node == D_DOC_IDS:
+        return [{"selector_kind": "json_pointer_projection", "selector_value": "/document_candidates/*/source_document_id"}]
+    if derived_node == DSCAN and basis_node == D_DOC_IDS:
+        return [{"selector_kind": "complete_registered_document_domain", "selector_value": {"document_count": 456, "ordered_document_ids_sha256": "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"}}]
+    if derived_node == DSCAN and basis_node in PAGE_META:
+        page_meta = PAGE_META[basis_node]
+        selector_value = {
+            "source_document_id": page_meta["source_document_id"],
+            "pdf_page_number_1_based": page_meta["pdf_page_number_1_based"],
+            "selected_representation": "all decoded-page UTF-8 bytes",
+            "classifier_node": DSPEC,
+            "physical_reads": ["page-local byte offsets", "line boundaries", "token boundaries", "table-cell and labelled-line position", "page-reset emitted-row ordinal"],
+        }
+        if (
+            page_meta["source_document_id"] == "psid-corpus-document-0068"
+            and page_meta["pdf_page_number_1_based"] == 519
+        ):
+            selector_value["pinned_shadow_witness"] = {
+                "decoded_page_utf8_byte_range": [3775, 3776],
+                "original_byte_hex": "20",
+                "shadow_byte_hex": "30",
+                "affected_token": "V4902 -> V49020",
+            }
+        return [{"selector_kind": "committed_decoded_page_full_scan", "selector_value": selector_value}]
+    if derived_node == DSCAN and basis_node in DOC.values():
+        document_position = next(position for position, node in DOC.items() if node == basis_node)
+        document_id = f"psid-corpus-document-{document_position:04d}"
+        return [{"selector_kind": "registered_pdf_exhaustive_no_hit_scan", "selector_value": {"source_document_id": document_id, "classifier_node": DSPEC, "text_derivation": ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"]], "coverage": "every decoded page and every numeric token, including pages with no emitted occurrence; materialized decoded-page nodes additionally expose exact positive-row byte value-flow; no expected occurrence row may be loaded as output"}}]
+    if derived_node == D_CAND_ENUM and basis_node == DSCAN:
+        return [{"selector_kind": "whole_semantic_occurrence_relation", "selector_value": "/"}]
+    if derived_node == D_CAND_ENUM and basis_node == D_DOC_IDS:
+        return [{"selector_kind": "complete_registered_document_domain", "selector_value": {"document_count": 456, "ordered_document_ids_sha256": "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"}}]
+    if derived_node in DCAND:
+        return [{"selector_kind": "semantic_occurrence_group_and_filter", "selector_value": {"source_document_id": candidate_docs[DCAND.index(derived_node)], "extra_job_raw_field_ids": sorted(extra_ids), "annual_total_raw_field_ids": sorted(annual_ids), "extra_job_pages": "ascending distinct pdf_page_number_1_based for extra_job_raw_field_ids", "annual_total_pages": "ascending distinct pdf_page_number_1_based for annual_total_raw_field_ids", "same_page_intersection": "ascending set intersection", "admission": "both page arrays nonempty"}}]
+    if derived_node == D_CAND_IDS:
+        return [{"selector_kind": "candidate_document_id_projection", "selector_value": "/source_document_id"}]
+    if derived_node == D_CAND_COUNT:
+        return [{"selector_kind": "array_cardinality", "selector_value": "ordered_candidate_document_ids"}]
+    if derived_node == D_SOLE and basis_node == D_CAND_ARR:
+        return [{"selector_kind": "unique_same_page_candidate_selection", "selector_value": {"admission": "exactly one complete-enumeration row has a nonempty same_page_intersection", "expected_source_document_id": "psid-corpus-document-0098", "expected_same_page_intersection": [573], "counterfactual_behavior": "any zero-or-multiple selection changes this layer-2 result to a non-sole marker"}}]
+    if derived_node == D_SOLE and basis_node == sole_page:
+        return [{"selector_kind": "family_concordance_crosswave_disposition", "selector_value": {"source_document_id": "psid-corpus-document-0098", "pdf_page_number_1_based": 573, "normalized_page_header": "FAMILY CONCORDANCE FOR 1987 (continued)", "normalized_row_label": "WHETHER EXTRA JOB LAST YEAR (E)", "year_column_tokens": [{"interview_wave": 1987, "raw_field_id": "V4379"}, {"interview_wave": 1976, "raw_field_id": "V4901"}], "physical_reads": ["page identity", "header year", "year-column alignment", "row label", "same-row token placement"], "disposition": "false_positive_family_concordance_crosswave_variable_numbers", "digest_selected_as_content": False}}]
+    if derived_node == D_FORMULA_COUNT:
+        return [{"selector_kind": "semantic_disposition_count", "selector_value": "formula_candidate"}]
+    if nodes[basis_node] == "layer-2 derived node":
+        return [{"selector_kind": "whole_prior_layer_2_result", "selector_value": "/"}]
+    if nodes[basis_node] == "field-reference":
+        return [{"selector_kind": "whole_semantic_field_reference", "selector_value": "/"}]
+    raise AssertionError((derived_node, basis_node, nodes[basis_node]))
+
+
+basis_rows = []
+for derived_node in derived_nodes:
+    if derived_node in primitive_selectors:
+        content_class = PHYSICAL_SPEC_CONTENT_CLASS.get(derived_node, "law_literal")
+        basis_rows.append({"basis_content_class": content_class, "basis_node_id": None, "basis_position": 0, "basis_selectors": primitive_selectors[derived_node], "derived_node_id": derived_node})
+        continue
+    targets = sorted(derived_targets[derived_node], key=lambda node_id: node_position[node_id])
+    assert targets, derived_node
+    for basis_position, basis_node in enumerate(targets):
+        selectors = exact_selector(derived_node, basis_node)
+        if derived_node in PHYSICAL_SPEC_CONTENT_CLASS:
+            content_class = PHYSICAL_SPEC_CONTENT_CLASS[derived_node]
+        elif basis_node in PHYSICAL_SPEC_CONTENT_CLASS:
+            content_class = PHYSICAL_SPEC_CONTENT_CLASS[basis_node]
+        elif (
+            (derived_node == DSCAN and basis_node in DOC.values())
+            or (derived_node == DSCAN and basis_node in PAGE_META)
+            or (derived_node == D_SOLE and basis_node == sole_page)
+        ):
+            content_class = "layout_format_or_width"
+        elif nodes[basis_node] == "layer-2 derived node":
+            content_class = "prior_layer_2_result"
+        elif nodes[basis_node] == "field-reference":
+            content_class = "semantic_field_reference"
+        else:
+            content_class = "semantic_source_projection"
+        basis_rows.append({"basis_content_class": content_class, "basis_node_id": basis_node, "basis_position": basis_position, "basis_selectors": selectors, "derived_node_id": derived_node})
+basis_bytes = canon(basis_rows)
+assert {
+    row["derived_node_id"]
+    for row in basis_rows
+    if row["basis_node_id"] is None
+} == {DID, DPASSPEC}
+assert collections.Counter(row["basis_content_class"] for row in basis_rows) == {
+    "law_literal": 2,
+    "semantic_source_projection": 34,
+    "semantic_field_reference": 24,
+    "prior_layer_2_result": 124,
+    "layout_format_or_width": 621,
+    "grammar_dfa_partition_or_action": 3,
+    "executable_mapping": 2,
+}
+
+v4902_output_rows = []
+for occurrence_position, (locator, occurrence) in enumerate(
+    zip(occurrence_locator_rows, occurrence_rows)
+):
+    if occurrence["raw_field_id"] != "V4902":
+        continue
+    v4902_output_rows.append({
+        "derived_page_text_sha256": locator["derived_page_text_sha256"],
+        "occurrence_position": occurrence_position,
+        "page_semantic_row_position": occurrence["page_semantic_row_position"],
+        "page_utf8_byte_end": locator["page_utf8_byte_end"],
+        "page_utf8_byte_start": locator["page_utf8_byte_start"],
+        "pdf_page_number_1_based": occurrence["pdf_page_number_1_based"],
+        "raw_field_id": occurrence["raw_field_id"],
+        "semantic_reference_position": occurrence["semantic_reference_position"],
+        "source_document_id": occurrence["source_document_id"],
+    })
+v4902_output_bytes = canon(v4902_output_rows)
+
+pinned_forbidden_dependency_witness = {
+    "dependency_graph_node_position": node_position[DSCAN],
+    "derivation_status": "incomplete_source_numeric_authority",
+    "field_reference_position": 1,
+    "forbidden_dependency_class": "layout_or_declared_format_used_for_parsing",
+    "forbidden_dependency_locator": [
+        "psid-corpus-document-0068",
+        "decoded-page-519 UTF-8 bytes[3775:3776]",
+    ],
+    "interview_wave": 1976,
+    "original_byte_hex": "20",
+    "physical_dependency_position": [
+        9,
+        "psid-corpus-document-0068",
+        "decoded-page-519 UTF-8 bytes[3775:3776]",
+    ],
+    "raw_field_id": "V4902",
+    "resolution_reason": "literal_only_zero_diagnostic_padding_capacity",
+    "shadow_byte_hex": "30",
+    "source_adjudication_consumer_id": "amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1",
+}
+witness_bytes = canon(pinned_forbidden_dependency_witness)
+
+assert len(node_rows) == 3365
+assert collections.Counter(row["node_type"] for row in node_rows) == {
+    "artifact": 473,
+    "page": 178,
+    "extraction-row": 1250,
+    "field-reference": 372,
+    "layer-1 commitment": 1024,
+    "layer-2 derived node": 68,
+}
+assert len(edge_rows) == 6351
+assert collections.Counter(row["edge_type"] for row in edge_rows) == {
+    "contains": 3686,
+    "commits-to": 1857,
+    "derives-from": 808,
+}
+assert len(fixture_bytes) == 2525885
+assert hashlib.sha256(fixture_bytes).hexdigest() == "cbd1632412d7283d00fc01102ad044701648440417bb590b84435439fa82e5e2"
+assert len(reachable) == visited == 3365
+assert len(basis_rows) == 810 and len(basis_bytes) == 689268
+assert hashlib.sha256(basis_bytes).hexdigest() == "5778368cb852d3b5883b23efb4563b6a3a4b424e863017de99c5bcb189a901e3"
+assert len(v4902_output_rows) == 33 and len(v4902_output_bytes) == 12608
+assert hashlib.sha256(v4902_output_bytes).hexdigest() == "cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c"
+assert node_position[DSCAN] == 3363
+assert len(witness_bytes) == 673
+assert hashlib.sha256(witness_bytes).hexdigest() == "567298f791d4506c8ae463f6bf9ccf5a7861cd449800d9836c357068361301a3"
+
+print("nodes", len(node_rows), collections.Counter(row["node_type"] for row in node_rows))
+print("edges", len(edge_rows), collections.Counter(row["edge_type"] for row in edge_rows))
+print("fixture", len(fixture_bytes), hashlib.sha256(fixture_bytes).hexdigest())
+print("reachable", len(reachable), "topological", visited)
+print("basis", len(basis_rows), len(basis_bytes), hashlib.sha256(basis_bytes).hexdigest())
+print("v4902_output", len(v4902_output_rows), len(v4902_output_bytes), hashlib.sha256(v4902_output_bytes).hexdigest())
+print("dscan_position", node_position[DSCAN])
+print("pages", len(PAGE), "occurrence_pages", len(page_commitments))
+~~~
+
+The graph domain is constructed without loading an expected classified
+occurrence as scanner input. It contains the 11 root artifacts; the four
+frozen Git artifacts; all 456 registered PDF artifacts with their registered
+identity, size, and full-file SHA-256 in the node IDs; every exact page,
+range, JSON-pointer row, field-reference row, and layer-1 commitment reached
+from roots 0–6; and every historical layer-2 intermediate and terminal
+reached from the eleven roots. Root 5 also contains two separately
+committed canonical projection artifacts. The
+`/position_classifier_specification` artifact is 5,770 terminal-LF canonical
+JSON UTF-8 bytes with SHA-256
+`2f6de69baeb5cdc4f2c0d04a725144940bc21ca434c4c18a4338cb31eb90ba00`;
+its extraction row selects exactly bytes `[0:5770]`. The
+`/complete_candidate_enumeration_specification` artifact is 1,068 bytes with
+SHA-256
+`a91d461b2b42a63ef3e63ac7f370dca5a8c8cb21bac07876cf716b78e4e122fa`;
+its extraction row selects exactly bytes `[0:1068]`. Each layer-1 node commits
+the artifact, the artifact contains the exact extraction row, and DSPEC or
+DENUMSPEC derives from that row's whole-object byte range. Neither physical
+specification is an unlocated primitive or a hidden governing-law input.
+They are addressable neutral projections of the existing 15-member sweep,
+not added sixteenth or seventeenth serialized members.
+
+In particular, the full-corpus scanner has
+exactly 622 direct bases: the ordered registered-document-ID node, the
+classifier-specification node, all 456 registered PDFs, and all 164
+independently committed decoded pages that contain materialized occurrence
+outputs. The 348 classified occurrence rows are scanner output children,
+never `derives-from` bases. The registered PDFs still require scanning every
+decoded page, including pages having no output; the 164 page nodes give the
+positive pages exact decoded-byte coordinates. The complete enumeration
+result dynamically derives every candidate from the newly scanned output and
+registered-document domain. The 18 baseline candidate nodes are comparison
+witnesses, never an exhaustive input. This direction is mandatory: injecting
+a pre-labelled occurrence or candidate fixture as a scanner basis fails.
+
+The scanner first authenticates every registered PDF's byte size and
+SHA-256, decodes it with Poppler `pdftotext` 26.04.0 and arguments
+`-layout -enc UTF-8`, splits the UTF-8 output on form feed, removes exactly
+one terminal whitespace-only page, numbers pages from one, and visits
+documents in registered order and pages in decoded order. Within each page
+it uses `splitlines(keepends=True)`, strips only CR/LF for classification,
+preserves the line endings when advancing the page-local UTF-8 cursor, and
+scans left-to-right every token matching
+`(?<!\d)\d+(?!\d)`. It retains only
+`(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907|4379|5289|5788)(?!\d)`.
+For each retained token it applies these rules in order, with Python regular
+expression semantics:
+
+1. Split the containing line into `\S+` cells. If there are at least three,
+   cell 0 fully matches `(?:-|[\d,]+)`, cell 1 fully matches
+   `(?:-|(?:\d+)?\.\d+|\d+%)`, and the token is wholly within one of cells
+   0–2, classify `physical_or_nonreference_numeric_token`.
+2. If the token is inside a `NUM(` ... `)` span, or inside group 2 of the
+   line-start match `^\s*(\d+)\s+(\d{4,}|\d{1,3},\d{3})\s+`, give that same
+   physical/nonreference classification.
+3. If the line matches `^\s*V{token}\s+"`, classify
+   `codebook_field_header`; otherwise, if it matches
+   `^\s*{token}\s+(?:\d{4,}|\d{1,3},\d{3})\s+` and the suffix contains
+   `[A-Za-z]{3,}`, give the same header classification.
+4. If the prefix ends in `V` or `v` and the character before that prefix is
+   absent or nonalphanumeric, classify
+   `v_prefixed_semantic_field_reference`.
+5. Extract every `\(([^)]*)\)` group containing a digit. If at least two
+   exist and one contains the token under
+   `(?<![A-Za-z0-9]){token}(?!\d)`, classify
+   `parenthesized_semantic_field_reference`.
+6. If the prefix contains `[A-Za-z]{3,}`, classify
+   `labelled_table_or_prose_semantic_field_reference`.
+7. If the page contains at least three distinct boundary-delimited year
+   tokens from 1968 through 1989, scan all preceding lines backward,
+   normalize each as `" ".join(line.split())`, skip empty and word-free
+   lines, and on the first line containing `[A-Za-z]{3,}` classify
+   `unlabelled_concordance_semantic_field_reference`.
+8. If an immediately adjacent character is alphabetic, classify
+   `other_field_identifier_lexical_false_positive`; otherwise set the
+   classification to null and abort the scan; a retained target is never
+   silently omitted.
+
+After classification, the scanner groups retained target rows by registered
+document and decoded page and assigns `page_semantic_row_position` from zero
+in increasing page-UTF-8 token-start order, breaking an impossible equal
+start by `raw_field_id`. It serializes in registered-document, page, and row
+position order. Each output row has exactly `source_document_id`,
+`pdf_page_number_1_based`, `page_semantic_row_position`, `raw_field_id`, and
+`semantic_reference_position`; `raw_field_id` is `V` concatenated with the
+matched token. The empirical audit harness whose pure `classify` function
+supplied these rules is 7,882 bytes with SHA-256
+`f6a6e5963fc20fd2d1a6f27d04dd88573b3c75154d73f28fe5edc311402c10fa`.
+Its pure behavior preimage is exactly the first 4,571 bytes ending
+immediately before `def main():`, with SHA-256
+`763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb`;
+only that pure ordered classifier behavior is adopted. The harness's
+expected-locator join is not authority and is forbidden in the normative
+full-PDF reconstruction. The complete rules above are normative if an
+external path differs. Page number, page-reset ordinal, line
+classification, and later same-page intersection are physical layer-2
+content. The independently authenticated 348 locator rows remain layer 1;
+their 117,337 canonical bytes have SHA-256
+`4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d`.
+The resulting five-key output has 348 rows on 159 pages, 72,325 canonical
+bytes, and SHA-256
+`0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411`.
+
+Node rows order by the node-type ordinal above and then UTF-8 `node_id`.
+Edge rows order by edge-type ordinal, UTF-8 `from_node_id`, then UTF-8
+`to_node_id`. The envelope has exactly the three keys `edges`, `nodes`, and
+`roots`, with those arrays as their values, and is serialized as strict JSON
+with recursively sorted keys, separators `(',',':')`, ASCII escaping, no
+NaN, and one terminal LF.
+Starting with the eleven roots, root closure repeatedly follows every
+outgoing edge until no unseen target remains. Separately, Kahn's algorithm
+computes indegree over all edges, repeatedly removes every zero-indegree
+node and decrements its outgoing targets, and must visit every node. Because
+`derives-from` is stored consumer-to-basis, a shadow rederivation traverses
+the resulting order in reverse so every basis is evaluated before its
+consumer.
+
+The ordered basis manifest has exactly
+`basis_content_class`, `basis_node_id`, `basis_position`,
+`basis_selectors`, and `derived_node_id`. Derived nodes order by canonical
+node position; their direct `derives-from` targets order by canonical node
+position and receive zero-based basis positions. Only the identity and
+semantic-passage law specifications receive a row with null `basis_node_id`;
+each is `law_literal`, its exact adopted literal is serialized in
+`basis_selectors`, and it reads no external content. DSPEC and DENUMSPEC are
+not primitive: each reads the complete committed root-5 projection portion
+identified above. DSPEC, its DSCAN and D_SWEEP consumers are the three
+`grammar_dfa_partition_or_action` basis rows; DENUMSPEC and its D_CAND_ENUM
+consumer are the two `executable_mapping` rows. They independently force the
+fallback. Every other row exact-copies one graph edge and the selectors
+stated in §21.1.4 and above. No nonprimitive layer-2 node may lack a basis.
+Thus the 808 `derives-from` edges plus two primitive law rows produce exactly
+810 rows. The value-flow
+closure for a layer-2 node recursively follows its declared bases, applying
+every selector; structural `contains` and layer-1 `commits-to` edges
+authenticate identity but do not propagate values.
+
+The expected historical V-B6 attempt must exact-match this fixture before
+any dependency diagnostic has meaning:
+
+~~~json
+{"basis":{"basis_content_class_counts":{"executable_mapping":2,"grammar_dfa_partition_or_action":3,"law_literal":2,"layout_format_or_width":621,"prior_layer_2_result":124,"semantic_field_reference":24,"semantic_source_projection":34},"canonical_bytes":689268,"derived_node_count":68,"primitive_basis_row_count":2,"row_count":810,"sha256":"5778368cb852d3b5883b23efb4563b6a3a4b424e863017de99c5bcb189a901e3"},"edges":{"commits-to":1857,"contains":3686,"derives-from":808,"total":6351},"fixture_id":"amendment_7_v_b6_dependency_graph_attempt_v5","nodes":{"artifact":473,"extraction-row":1250,"field-reference":372,"layer-1 commitment":1024,"layer-2 derived node":68,"page":178,"total":3365},"root_count":11,"root_reachable_count":3365,"scanner_direct_basis_count":622,"scanner_node_position":3363,"topological_visit_count":3365,"topology_canonical_bytes":2525885,"topology_sha256":"cbd1632412d7283d00fc01102ad044701648440417bb590b84435439fa82e5e2"}
+~~~
+
+The V4902 occurrence-output domain is an output census, not a basis or
+dependency census. Each row has exactly, in canonical-key order,
+`derived_page_text_sha256`, `occurrence_position`,
+`page_semantic_row_position`, `page_utf8_byte_end`,
+`page_utf8_byte_start`, `pdf_page_number_1_based`, `raw_field_id`,
+`semantic_reference_position`, and `source_document_id`.
+Its nine-key projection has 33 rows, 12,608 canonical bytes, and SHA-256
+`cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c`.
+It spans 17 documents and 33 pages. It may be used only after the source
+walk to compare discovered outputs; loading it before scanning fails.
+
+The diagnostic position successor is `physical_dependency_position`; it
+supersedes any use of the occurrence-classification
+`semantic_reference_position` as a dependency coordinate. Its field domain,
+in order, is:
+
+~~~json
+[[0,1976,"V4519",null,null],[1,1976,"V4902",null,null],[2,1977,"V5429",null,null],[3,1978,"V5916",null,null],[4,null,"V4901",null,null],[5,null,"V4903",null,null],[6,null,"V4904",null,null],[7,null,"V4905",null,null],[8,null,"V4906",null,null],[9,null,"V4907",null,null],[10,null,"V4379",null,null],[11,null,"V5289",null,null],[12,null,"V5788",null,null],[13,1976,"V4379","psid-corpus-document-0046",20],[14,1976,"V4380","psid-corpus-document-0046",20],[15,1976,"V4381","psid-corpus-document-0046",20],[16,1976,"V4382","psid-corpus-document-0046",20],[17,1976,"V4901","psid-corpus-document-0046",180],[18,1976,"V4902","psid-corpus-document-0046",180],[19,1976,"V4903","psid-corpus-document-0046",181],[20,1976,"V4904","psid-corpus-document-0046",182],[21,1976,"V4905","psid-corpus-document-0046",182],[22,1976,"V4906","psid-corpus-document-0046",182],[23,1976,"V4907","psid-corpus-document-0046",182],[24,1977,"V5289","psid-corpus-document-0051",22],[25,1977,"V5290","psid-corpus-document-0051",22],[26,1977,"V5291","psid-corpus-document-0051",22],[27,1977,"V5292","psid-corpus-document-0051",22],[28,1978,"V5785","psid-corpus-document-0056",22],[29,1978,"V5786","psid-corpus-document-0056",22],[30,1978,"V5787","psid-corpus-document-0056",22],[31,1978,"V5788","psid-corpus-document-0056",22],[32,1978,"V5789","psid-corpus-document-0056",22],[33,null,null,null,null]]
+~~~
+
+Positions 0–3 are the four global non-passing-field coordinates. Positions
+4–12 are generic scanner-target coordinates: respectively V4901, V4903,
+V4904, V4905, V4906, V4907, V4379, V5289, and V5788; a generic V4902
+dependency uses global position 1. Positions 13–32 are the exact 20
+field-reference rows on the six committed codebook pages. Position selection
+uses strict precedence: an exact `(source_document_id,
+pdf_page_number_1_based, raw_field_id)` match takes its position in 13–32;
+otherwise a scanner-target match takes its generic position in 1 or 4–12;
+otherwise position 33 applies. Thus V4902 on document 0046 page 180 uses
+position 18, while V4902 anywhere without that exact page-row match uses
+position 1. The null interview wave on generic positions 4–12 means the
+coordinate applies across the complete registered scanner corpus, not that
+the wave may be omitted from an available source locator.
+
+Its physical-class domain, in order, is:
+
+~~~json
+[["raw_record_or_token","raw_fixed_width_record_or_token"],["layout_format_or_width","layout_or_declared_format_used_for_parsing"],["frequency_percentage_or_raw_count","raw_data_frequency_percentage_or_nonmissing_count"],["profile_or_padding","profile_or_padding_rule"],["grammar_dfa_partition_or_action","numeric_grammar_or_dfa_partition_action"],["parsed_or_canonical_value","parsed_or_canonical_numeric_value"],["executable_mapping","executable_literal_range_missing_or_value_map"],["layer_2_digest_proxy","layer_2_digest_or_mixed_derived_node_reading_physical_member"]]
+~~~
+
+Cross every field-domain position with every physical-class position in
+field-major order. `physical_domain_position` is
+`8 * field_position + physical_class_position`. The resulting row has
+exactly `basis_content_class`, `field_reference_position` (null only for
+position 33), `forbidden_dependency_class`, `interview_wave`,
+`pdf_page_number_1_based`, `physical_class_position`,
+`physical_domain_position`, `raw_field_id`, and `source_document_id`.
+For positions 0–263, `field_reference_position` is
+`physical_domain_position // 8` and the physical-class position is
+`physical_domain_position % 8`; for sentinel positions 264–271 the field
+reference is null. Field-domain position 33 is the exact closed sentinel for
+every field not selected by positions 0–32 and for every
+non-field physical portion. Its real artifact/locator coordinate, not a
+synthetic field label, distinguishes those dependencies.
+
+~~~json
+{"canonical_bytes":88492,"field_or_nonfield_position_count":34,"fixture_id":"amendment_7_v_b6_physical_dependency_position_domain_v2","physical_class_count":8,"row_count":272,"sha256":"55e4a6e71e56b7d3c6902fabb8329fece96253c17477787a8cff00aead9f9229"}
+~~~
+
+This total domain defines generic positions for every scanner target,
+exact-page positions for V4379, V5289, V5788 and every other field on the six
+committed pages, and the sentinel position for every remaining field and all
+non-field physical content. A concrete
+dependency coordinate is the three-member array
+`[physical_domain_position,artifact_identity,JSON_pointer_or_zero_based_half_open_byte_range]`.
+The locator must identify real authenticated source bytes. Unknown or
+synthetic coordinates fail rather than vanish.
+For structured JSON, the third member is the exact form
+`raw-json UTF-8 bytes[i:i+1] at /pointer`, where `i` is the absolute raw-byte
+offset and the pointer identifies the containing scalar. In every diagnostic,
+`forbidden_dependency_locator` must exact-equal
+`physical_dependency_position[1:]`.
+The guarded V4902/layout coordinate is 9. The distinct page-row
+V4902/layout coordinate is 145; an implementation may not conflate or omit
+either position.
+
+The two committed specification portions are non-field physical content and
+therefore take sentinel field position 33, not a fabricated field label. For
+every integer `i` with `0 <= i < 5770`, the DSPEC datum has flat physical
+position 268 and the exact coordinate
+`[268,"artifact:root5-projection:/position_classifier_specification:5770:2f6de69baeb5cdc4f2c0d04a725144940bc21ca434c4c18a4338cb31eb90ba00","/position_classifier_specification canonical UTF-8 bytes[i:i+1]"]`.
+For every integer `i` with `0 <= i < 1068`, the DENUMSPEC datum has flat
+physical position 270 and the exact coordinate
+`[270,"artifact:root5-projection:/complete_candidate_enumeration_specification:1068:a91d461b2b42a63ef3e63ac7f370dca5a8c8cb21bac07876cf716b78e4e122fa","/complete_candidate_enumeration_specification canonical UTF-8 bytes[i:i+1]"]`.
+Positions 268 and 270 are respectively sentinel/grammar-DFA and
+sentinel/executable-mapping. Their diagnostic `field_reference_position`,
+`interview_wave`, and `raw_field_id` are null because the direct source
+portion is a non-field specification; its downstream field effects are still
+walked. The exact root-5 JSON pointer, artifact identity, and one-byte range
+are the real locator. Invalid JSON or an invalid specification under a shadow
+is a distinguished layer-2 abort, not an omitted datum.
+
+The atomic physical source-member domain is closed. It contains exactly the
+primitive bytes read with one of the eight forbidden physical roles above;
+a byte read only as a semantic field ID, normalized label/description, or
+semantic code lexeme/meaning is not a physical member. If one byte is read on
+both a semantic route and a physical route, the latter route places it in the
+physical domain. Because DSPEC and DENUMSPEC select their complete canonical
+objects, their domains include all 5,770 and 1,068 bytes respectively,
+including JSON structure and terminal LF. In any strict-parsed structured
+artifact the domain contains
+every individual authenticated raw-JSON UTF-8 byte of each physical scalar
+leaf reachable through a basis selector, at its exact
+absolute `[i:i+1]` range and JSON pointer, with array positions explicit. In a
+decoded page it contains every page-local UTF-8 byte read for a token,
+cell, line, row ordinal, page boundary, or classification and addresses that
+byte as `[i:i+1]`. In a raw fixed-width source it contains every byte in
+each registered field slice. A profile, padding rule, grammar, DFA,
+partition/action, parsed value, executable map, or digest-proxy route is
+anchored to every primitive scalar or byte it reads. The direct-dependency
+frontier contains one row for each distinct `(physical-domain position,
+artifact and locator, physical class, direct consuming layer-2 node)` tuple.
+An identical tuple may not repeat, but the same real byte may lawfully fan
+out to different physical classes or direct consumers. Every executed route
+to that direct dependency is walked; multiple routes reaching the identical
+tuple collapse to that one dependency row. A consumed
+member that cannot be assigned a domain row and real locator makes the
+diagnostic fail rather than disappear. Frontier rows order by complete
+physical position, consuming-node position, and physical-class position.
+
+Shadow evaluation holds the pinned baseline topology, logical node IDs,
+edges, and canonical node positions fixed. Hash-bearing IDs identify their
+baseline logical nodes; the shadow payload is compared at that same node
+position even when its bytes or digest change. Dynamic arrays may gain, lose,
+or change rows without minting topology nodes. The 348 occurrence and 18
+candidate children are baseline materialization witnesses only; DSCAN and the
+complete-candidate-enumeration node remain the dynamic content and
+cardinality authorities. A shadow that cannot be associated with this fixed
+logical graph fails instead of silently dropping the changed or newly
+created content.
+
+After the graph and basis fixtures match, the runner performs the exhaustive
+byte shadow walk. For each atomic source byte in domain order, it substitutes
+each of the 255 unequal byte values in ascending hexadecimal order, changes
+no byte length or other source content, recomputes every layer-1 commitment,
+and rederives every reachable layer-2 node. Decode or parse failure is a
+distinguished layer-2 abort content, not an omitted trial. A trial proves
+consumption if and only if any layer-2 node changes. A change confined to
+layer 1 is ignored. For every proved byte, the canonical displayed shadow is
+the lowest unequal value that changes a layer-2 node. The exact 19
+result-entry nodes named by `RESULT_ENTRY_NODES` are an additional outcome
+test: a change in one proves contamination reaches the historical favorable
+result, but result entry is not required for consumption.
+
+Instrumentation records the first layer-2 node that directly reads that
+primitive byte on each route. Downstream changes reached solely through that
+prior-layer-2 basis do not create duplicate frontier rows. The walk continues
+through every byte, every alternative, and every direct route and reports the
+complete frontier. It cannot emit an empty forbidden-dependency array merely
+because the expected array was absent, because a changed classifier was
+mislabelled internal, or because a commitment digest was treated as content. Emptiness has
+meaning only after the 3,365-node, 6,351-edge graph and 810-row basis match
+their fixtures and this complete walk finishes.
+
+Each source-adjudication diagnostic row has exactly these twelve keys in
+canonical schema order: `source_adjudication_consumer_id`,
+`dependency_graph_node_position`, `field_reference_position`,
+`physical_dependency_position`, `interview_wave`, `raw_field_id`,
+`forbidden_dependency_class`, `forbidden_dependency_locator`,
+`original_byte_hex`, `shadow_byte_hex`, `derivation_status`, and
+`resolution_reason`. Canonical JSON still sorts object keys. Original and
+shadow bytes are two-digit lowercase hexadecimal strings. Rows order by the
+complete `physical_dependency_position` array, consuming-node position, and
+physical-class position. All discovered rows are reported.
+
+The following independently reproduced mutation is a mandatory existential
+witness. Registered `psid-corpus-document-0068` is `psid81w14.pdf`, exactly
+13,344,220 bytes with SHA-256
+`6852b258ebf010bb3e0747abc31a8760e65c8f63bba475907c2498536b0f1d08`.
+Its pinned-Poppler decoded page 519 has 4,070 bytes and SHA-256
+`00e6e31d5c40032eaac220ac4fea8ce986445a0db956c422cd00ec53763b1da6`.
+The context contains `V4902 (E)`: bytes `[3771:3775]` are the fixed numeric
+semantic lexeme `4902`, and byte `[3775:3776]` is its trailing ASCII space.
+Holding the token, every semantic lexeme, and all other content fixed while
+changing that space from hex `20` to hex `30` makes the digit-adjacent token
+`V49020`, so the exact target regex no longer admits V4902. V4902 is the sole
+extra-job target on page 519. The required document-0068 candidate row
+therefore changes from 358 bytes/SHA-256
+`78a08e6640b993f14117af67d0ed4eccada395d79a816b13d67283421bb1819d`
+to 354 bytes/SHA-256
+`cc4c36285b1d4bdeedb799270a15c0edeb704a7560b8d5979bb694b99f164165`;
+its semantic projection changes from 178 bytes/SHA-256
+`6390ab53b6f65a6d2996892493ed4e3ab50cfbadb7212005bde893f0e30a57bf`
+to 174 bytes/SHA-256
+`476050c0c9443873df5e8753d670d7a85c152ee973d1923822e7164cdab8497c`.
+The required 18-row candidate array changes from 6,209 bytes/SHA-256
+`039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7`
+to 6,205 bytes/SHA-256
+`77175376157cf483cf3941be42fcfca34e527c13dde0d3f3bfd025c010afa4f7`.
+This changes an actual §18.2 result-entry member and proves that the physical
+consumption contaminates the favorable result. A change only in any layer-2
+classification would already prove consumption; this stronger witness also
+reaches the result. As cross-checks, the complete scan changes from 348 rows/72,325
+bytes/SHA-256 `0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411`
+to 347 rows/72,122 bytes/SHA-256
+`96c5c1596d024734c84b1fbb6697f4164260aae9e4bf6b2f15d9b699f81be349`,
+and its V4902 nine-key projection changes from 33 rows/12,608 bytes/SHA-256
+`cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c`
+to 32 rows/12,231 bytes/SHA-256
+`6a8534a5f765b7ac09ace83c06a4028f3c13f9b9024b9f149ddb10011a10f008`.
+
+~~~json
+{"dependency_graph_node_position":3363,"derivation_status":"incomplete_source_numeric_authority","field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","forbidden_dependency_locator":["psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"interview_wave":1976,"original_byte_hex":"20","physical_dependency_position":[9,"psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","shadow_byte_hex":"30","source_adjudication_consumer_id":"amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"}
+~~~
+
+That terminal-LF row is 673 canonical bytes with SHA-256
+`567298f791d4506c8ae463f6bf9ccf5a7861cd449800d9836c357068361301a3`.
+It is a pinned mandatory witness, not a claim that the complete dependency
+array has one member or that this is its first canonical member. Because the
+graph must match and be walked, and because this authenticated mutation must
+be rediscovered, no implementation can lawfully serialize an empty
+forbidden-dependency array.
+
+The source-adjudication outcome is therefore exactly
+`nonpassing_forbidden_physical_dependency`; V-B6 is unregistrable and its
+historical `verified/pass` values are prospectively retracted. All four
+numeric-grammar rows remain `incomplete_source_numeric_authority` with null
+physical grammar. Direct semantic registration means only that a codebook
+concept may be cited as semantic evidence; physical numeric-grammar
+registration independently authorizes executable parsing. Neither sense
+implies the other, and the former cannot cure this contaminated derivation.
+No residual-9 carrier, applicable-key array, carrier ID, requirement pass,
+22-row passing domain, bundle, final acceptance, receipt, registration, or
+output may be constructed from this failed path.
+
+The exact four-reference stream remains useful only as guarded semantic
+evidence:
+
+~~~json
+[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]]
+~~~
+
+Its direct semantic projection retains the exact §21.1.4 members and digest;
+it is not an accepted V-B6 result. V4379, V5289, and V5788 are passing
+fields. Their separately guarded exact-once physical reads remain lawful in
+principle, but the blocked V-B6 path never reaches or executes those reads.
+
+#### 21.4.3 Boundary enumeration
+
+The guard applies independently at every row and every transitive consumer
+in this complete minimum domain:
+
+| consumer_kind | Boundary at which a nonempty guard aborts |
+|---|---|
+| q5_positive_field_join | before a positive_field_join_rows member or any raw_field_projections member is accepted |
+| slot_registry_row | before a slot, questionnaire, source-field, applicability, or other registry row that resolves the field is accepted |
+| official_inventory_row | before a present row, layout_coordinates member, typed_parse_specs member, raw_token_grammar member, or source commitment is accepted |
+| value_map | before a literal, missing, range, observed/unobserved, or registered grammar mapping is consumed outside the complete evidence relation |
+| crosswalk | before a G17, source-to-inventory, inventory-to-reader, component, role, job, wave, or other crosswalk row is accepted |
+| correction_input | before any candidate-path or production correction reads or derives an input value from the field |
+| context_output | before any context, certificate, diagnostic-label, external-merge, publication, or other output includes or derives a value from the field |
+
+A consumer that spans multiple kinds must pass each applicable boundary; a
+prior empty guard is not reusable after its reference stream changes.
+Nested construction order cannot move the abort downstream. All inherited
+schema, semantic, exact-cover, history, and runtime-token gates execute in
+addition to this guard.
+
+#### 21.4.4 Q5 complete evidence and positive-join law
+
+Q5 retains its §19.3.3 v1 schema. Its source_document_manifest embeds the
+complete nine-key field_source_derivation object with all 89,599 rows,
+including all 1,235 T-minus rows, their exact IDs, and their complete null
+failure members.
+source_document_manifest.field_source_derivation.status must exact-equal
+pass_with_closed_failures; source_document_manifest.status and Q5.status
+retain their inherited pass-or-fail schemas. The complete manifest must
+deep-equal an independent reconstruction. A manifest filtered to joined,
+passing, inventory-relevant, named, or observed fields is invalid. Totality
+is the evidence; pass/failure is per row.
+
+Embedding, hashing, or validating that complete relation does not invoke the
+consumer guard merely because T-minus rows are present. For each proposed
+positive_field_join_rows member, however, the
+q5_positive_field_join guard exact-resolves every raw_field_projections
+reference before that member is admitted. Every referenced derivation status
+must therefore lie in T-plus and must separately satisfy the narrower
+§§19–20 join law. A T-minus reference aborts Q5 construction or validation
+with its exact row identity and terminal; the implementation may not delete
+that positive row, delete the failure from the manifest, or continue with a
+partial Q5.
+
+Q5 may be first-created and read only after the exact D7 ratification and the
+complete §21.3 predicate pass. Its own status may be pass only when its full
+manifest, all positive joins, all source histories, and every inherited Q5
+predicate pass. The 43 D_w search universes in §21.1.5 remain complete:
+finding a T-minus candidate in D_w is not itself consumption, but selecting
+it into a positive join is the guarded abort.
+
+#### 21.4.5 Slot and official-inventory domain integrity
+
+Let E remain the complete §19.3.3 expanded official-source-inventory key
+stream; A the asked rows; J the positive joins; and I-plus and I-minus the
+official-inventory rows whose source_disposition is respectively present and
+structural_missing. Their schemas, order, and exact equations remain:
+
+~~~text
+keys(A) == keys(J) == keys(I-plus)
+keys(E excluding A) == keys(I-minus)
+keys(I-plus) union keys(I-minus) == keys(E)
+keys(I-plus) intersect keys(I-minus) == empty
+~~~
+
+Every E key still has exactly one inventory row. The only inventory
+dispositions remain present and structural_missing. A structural_missing row
+remains field-empty and requires its exact questionnaire/slot absence proof;
+it cannot absorb a failed raw field. A present row remains joined to its
+complete nonempty source-field projection and must pass both the slot and
+official-inventory guards before any layout, parser, grammar, commitment, or
+row is accepted.
+
+The 1,235 members of F are raw-field keys, not E inventory keys and not a
+third inventory disposition. They are excluded by law from the raw-field
+projection of every lawful I-plus row. For each candidate inventory the
+validator reconstructs a closed negative census with exactly K(F), count
+1,235, and digest
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed,
+then independently requires:
+
+~~~text
+raw_field_keys(I-plus) intersect F == []
+raw_field_keys(I-minus) == []
+~~~
+
+It also resolves every F member back to the complete Q5 manifest and requires
+the exact terminal, row identity, null failure members, and seven-row reason
+cover in §21.1.2. This negative census is a validator relation, not a new
+inventory member or disposition. The official inventory's completeness
+claim is therefore true over its unchanged lawful E domain and auditable
+against every excluded failure key.
+
+If an asked slot's proposed positive join contains a member of F, the whole
+candidate Q5/slot/inventory build aborts. It may not drop the E key, truncate
+the field list, relabel the row structural_missing, or publish a smaller
+inventory. Excluded-by-law means excluded from accepted positive raw-field
+consumption, not erased from source evidence and not counted as questionnaire
+absence.
+
+#### 21.4.6 Downstream propagation
+
+Every slot registry, value map, crosswalk, correction input, and context
+output derives its complete raw-field reference stream from accepted Q5 and
+inventory relations and reruns its own guard. No downstream consumer may
+trust an upstream pass bit or empty guard without resolving the complete
+rows again. G17-C01's complete fifth-value compiler relation and any complete
+source-manifest copy in C01 or a slot authority are evidence projections:
+they retain all 1,235 T-minus rows and do not abort merely by embedding them.
+C01's positive joins, layouts, value maps, and crosswalk references remain
+consumption and run the guard. G17-C06, C07, every consuming C01 projection,
+and every enclosing G17 digest remain complete comparands; a T-minus
+consumption reference aborts the affected row and hence the complete G17
+result. The same rule applies to every configured reader,
+candidate path, selected path, correction calculation, context run,
+certificate, and publication.
+
+This propagation preserves the ordinary runtime unknown-token and
+unrenderable-member aborts on otherwise admitted T-plus fields. The closed
+failure guard acts earlier, at authority consumption, and cannot be deferred
+until a raw record happens to exercise the bad field. Conversely, a field
+that remains only in the complete source manifest or a closed negative
+census has not been consumed and does not prevent construction of unrelated
+lawful consumers.
+
+The direct four-row V-B6 semantic projection in §21.4.2 remains lawful
+evidence, but the complete V-B6 layer-2 result is nonpassing because its
+corpus sweep consumes physical layout for V4902. The later amount operands
+V4379, V5289, and V5788 lie in T-plus: each is a passing physical field whose
+separately guarded exact-once read remains lawful in principle and is not
+physical consumption of a non-passing field. The V-B6 abort occurs before
+those reads execute. None of the four T-minus occupation fields is an amount
+operand. Any attempt to read a raw token, layout, code as data, parsed value,
+or other forbidden physical member for V4519, V4902, V5429, or V5916
+constructs the ordinary nonempty guard and aborts before a source result,
+requirement row, registry row, correction value, or output is accepted.
+
+
+### 21.5 Amendment-7 mandatory regression vectors
+
+The successor implementation runs A6-R01 through A6-R11 unchanged, then the
+exact A7-R01 through A7-R09 core artifact below, followed before Q5 by
+procedural vectors A7-R10a and A7-R11. A7-R10b is the required staged
+continuation after accepted official-inventory construction; it is not a
+twelfth pre-Q5 vector. Each core-artifact row has exactly these fifteen
+members in the following semantic schema order. The exact artifact retains
+the canonical §21.1.1 serialization and therefore writes each object with
+its keys in canonical sorted order, not in the semantic order displayed here:
+
+~~~text
+vector_id
+vector_kind
+mutation
+interview_wave
+raw_field_id
+evidence_path
+field_evidence_row_pointer
+field_evidence_row_sha256
+derivation_status
+resolution_reason
+consumer_kind
+expected_top_level_status
+expected_consumer_result
+expected_closed_failure_reference_count
+expected_unmapped_keys
+~~~
+
+A nonnull field_evidence_row_sha256 hashes the complete strict-parsed
+field_evidence array row under the §21.1 canonical rule. All paths and row
+pointers resolve against the six frozen inputs at the revision-8 source
+commit. Null means inapplicable, never unavailable authority. The exact
+nine-row vector artifact is:
+
+~~~json
+[{"consumer_kind":"value_map","derivation_status":"conflicting_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/1578","field_evidence_row_sha256":"57fd2d0128222ac90fcd9ee19846a53ea7653551a0786a1fece5a24c461f421b","interview_wave":1970,"mutation":"none","raw_field_id":"V1714","resolution_reason":"conflict:overlapping_numeric_ranges","vector_id":"A7-R01","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"context_output","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/10387","field_evidence_row_sha256":"703cb042505feb2b2452d6274c918001a9a3f05db11b48ef91024707fa661704","interview_wave":2019,"mutation":"none","raw_field_id":"ER76782","resolution_reason":"character_raw_replay_unknown_token","vector_id":"A7-R02","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"correction_input","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/94","field_evidence_row_sha256":"cba6421de807c7f1aa5aa206b51f61970188e5d219e80af2dd926caa9a98fc9b","interview_wave":1968,"mutation":"none","raw_field_id":"V95","resolution_reason":"observed_token_outside_all_candidate_forms_or_semantics","vector_id":"A7-R03","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"q5_positive_field_join","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/4193","field_evidence_row_sha256":"57d80ab633abb3ae9dc66618ac935d32058e9cb7514194b7a2037d2beb65e65a","interview_wave":1995,"mutation":"none","raw_field_id":"ER6974","resolution_reason":"selected_space_literal_unrenderable","vector_id":"A7-R04","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"crosswalk","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/2066","field_evidence_row_sha256":"abe9ddbeefb5059902a769d871a50d942551897d3312a2e31d8a8eac67490441","interview_wave":1971,"mutation":"none","raw_field_id":"V2226","resolution_reason":"selected_space_range_zero_renderable","vector_id":"A7-R05","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"slot_registry_row","derivation_status":"incomplete_source_numeric_authority","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/8433","field_evidence_row_sha256":"6148fe33308fc2e5c155c9d0161a1eefb2491cc74cc19d87942e25ded029aaca","interview_wave":1988,"mutation":"none","raw_field_id":"V15713","resolution_reason":"finite_no_arm_no_lawful_complete_disposition","vector_id":"A7-R06","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"official_inventory_row","derivation_status":"incomplete_source_numeric_authority","evidence_path":"data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/609","field_evidence_row_sha256":"6de3ab2e45e131b4103057d4e2a85a05d6bb956ea90018bfaf3034e9f7ae944f","interview_wave":1976,"mutation":"none","raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","vector_id":"A7-R07","vector_kind":"consumer_boundary_abort"},{"consumer_kind":null,"derivation_status":null,"evidence_path":null,"expected_closed_failure_reference_count":null,"expected_consumer_result":"not_evaluated","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":null,"field_evidence_row_sha256":null,"interview_wave":null,"mutation":"none","raw_field_id":null,"resolution_reason":null,"vector_id":"A7-R08","vector_kind":"top_level_acceptance"},{"consumer_kind":null,"derivation_status":"conflicting_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":null,"expected_consumer_result":"not_evaluated","expected_top_level_status":"fail","expected_unmapped_keys":[[1970,"V1714"]],"field_evidence_row_pointer":"/field_evidence/1578","field_evidence_row_sha256":"57fd2d0128222ac90fcd9ee19846a53ea7653551a0786a1fece5a24c461f421b","interview_wave":1970,"mutation":"delete_complete_derivation_row","raw_field_id":"V1714","resolution_reason":"conflict:overlapping_numeric_ranges","vector_id":"A7-R09","vector_kind":"exact_cover_rejection"}]
+~~~
+
+The fenced payload has 6117 bytes and, with its terminal LF, SHA-256
+68697967ddf8f065b051acef17c87afae7b033600d502bc1207890b253f2b1e0. Its vector-ID array is exactly
+["A7-R01","A7-R02","A7-R03","A7-R04","A7-R05","A7-R06","A7-R07","A7-R08","A7-R09"]
+and hashes to
+2465bf08eb1751c25bad8cace391c611f4b88bde099f73967dea4464a5480c94.
+
+For A7-R01 through A7-R07, begin with an otherwise accepted complete
+pass_with_closed_failures relation and construct exactly one hypothetical
+consumer row whose complete reference stream contains only the displayed
+field. Its consumer_row_identity is exactly
+["amendment_7_a7_core_consumer_fixture.v1",zero_based_vector_position], with
+positions 0 through 6 for A7-R01 through A7-R07, and its
+consumer_reference_position is zero. The top-level relation must remain
+accepted; the displayed consumer must construct one exact nine-key
+closed_failure_reference_rows member and abort before acceptance. These seven
+rows cover, once each, the conflict reason, all four unsupported reasons, both
+incomplete reasons, and all seven minimum boundary kinds. A different
+terminal, reason, witness identity, consumer kind, successful consumer,
+missing diagnostic member, or accepted partial artifact fails the vector.
+
+A7-R08 reconstructs the unmodified 89,599-row relation. It must reproduce
+the exact-empty duplicate_keys, outside_denominator_rows, and unmapped_keys
+arrays; the ten terminal counts; count-array digest
+421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624;
+assignment digest
+5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e;
+1,235-key F count; F-list digest
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed;
+status-tagged F digest
+1c83a26cad466354a0738ac1d4b0a4b6c282ccc447d410b5ae324808e79fe2ae;
+all 1,235 exact null failure triplets; and top-level
+pass_with_closed_failures.
+
+A7-R09 begins with that same accepted relation and deletes only the complete
+V1714/1970 derivation row, without reclassifying or replacing another row.
+R then has 89,598 rows; unmapped_keys is exactly
+[[1970,"V1714"]] with SHA-256
+a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1;
+and top-level status is fail. A digest-only placeholder, a duplicate V1714,
+a fabricated outside row, a reduced denominator, or an accepted 1,234-row
+failure census must also fail. This is the mandatory proof that a silent
+missing failure never becomes a lawful exclusion.
+
+A7-R10a has vector_kind
+`semantic_source_adjudication_pre_carrier_expected_abort`. It runs in the
+pre-Q5 vector gate without reading a serialized expected result. Its vector
+status is pass only when the expected negative is observed; its adjudicated
+V-B6 status is always nonpassing. In order, it must:
+
+1. authenticate every frozen §18 root and the spouse-seam authority, then
+   reconstruct the exact four-row §21.1.4 direct semantic projection, its
+   four row digests, 16,933-byte length, and
+   a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75
+   array digest;
+2. reconstruct the historical 10,887-byte §18.2 candidate projection with
+   SHA-256
+   7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
+   then independently rebuild the exact §21.4.2 3,365-node/6,351-edge graph,
+   810-row basis manifest, four-reference order, complete physical-position
+   domain, and value-flow walk. The scanner must use the frozen PDFs, not
+   pre-labelled occurrence or candidate rows;
+3. rediscover at least the pinned V4902 result-reaching whitespace witness, retain all
+   four `incomplete_source_numeric_authority` rows and their null profile,
+   padding, and registered grammar, and reject the historical
+   `source_disposition=verified`, `verification_status=verified`,
+   `status=pass`, empty unresolved-evidence, and branch `derivation_status`
+   values before any §18.4 result is accepted; and
+4. stop at the pre-carrier boundary and emit only this test trace marker:
+
+~~~json
+{"carrier_stage":"carrier_deferred","next_stage":"A7-R10b_expected_absence_gate","source_adjudication_status":"nonpassing_forbidden_physical_dependency"}
+~~~
+
+The marker is 154 terminal-LF canonical bytes with SHA-256
+9a80d56587beb49afeafa3b897ba5e4351fc59f1c4cb870f28cb4e0e99be4429.
+It is diagnostic test evidence, not a §18 member, source authority, carrier,
+registry value, or pass bit. `carrier_deferred` means only that the ordered
+post-inventory absence gate has not yet run; it does not promise later
+construction. A7-R10a must not read or construct the official inventory,
+`applicable_source_inventory_keys`, residual 9, any carrier or carrier ID, a
+requirement row, domain, or bundle. A missing root, semantic row, graph
+member, basis, shadow walk, or pinned witness; acceptance of the historical
+candidate; or crossing that boundary fails the vector.
+
+A7-R10b has vector_kind
+`post_inventory_residual_9_carrier_expected_absence`. It is ineligible until
+the actual future
+`data/external/psid_covered_earnings_source_field_inventory_v1.json` has
+been constructed in official order and has passed §21.4.5's complete
+E-domain equations, 1,235-key negative census, and every applicable guard.
+It runs strictly after that inventory and before correction final acceptance.
+It must:
+
+1. reauthenticate every R10a frozen input and freshly reproduce R10a's
+   exact expected-negative graph walk, witness, and V-B6 nonpassing status;
+   no marker, pass bit, row hash, or enclosing digest is authority;
+2. inspect the actual inventory in official order under §19.3.4's era,
+   reconciliation slot-kind, and field-purpose filters, but reject before an
+   `applicable_source_inventory_keys` array, carrier preimage, carrier ID,
+   executable residual-9 row, amount read, consequence row, or passing
+   requirement result is emitted or accepted; and
+3. prove that residual 9 and every V-B6 carrier/success namespace is absent
+   and that no historical/synthetic carrier fixture or pre-enumerated key
+   array was substituted.
+
+R10b's vector status is pass only when that expected absence and rejection
+are observed. R10b cannot gate Q5 and cannot turn V-B6 into a passing result.
+Final correction acceptance requires the staged R10b vector to pass, but a
+passing R10b proves the V-B6 carrier is absent, so the complete correction
+still cannot obtain final acceptance, a receipt, or registration under this
+amendment. V4379, V5289, and V5788 remain lawful passing-field operands in
+principle; R10b proves that their residual-9 reads do not execute on this
+blocked path. No synthetic inventory or carrier fixture is permitted.
+
+A7-R11 has vector_kind `physical_consumption_still_aborts`. It independently
+reconstructs the authenticated R10a frozen-input set and successful
+expected-negative audit; neither arm reads a serialized R10a result or
+invokes A7-R10b. Every baseline run must rediscover the pinned V4902
+result-reaching whitespace witness. Its exact mutation-class order is:
+
+~~~text
+raw_fixed_width_record_or_token
+layout_or_declared_format_used_for_parsing
+raw_data_frequency_percentage_or_nonmissing_count
+profile_or_padding_rule
+numeric_grammar_or_dfa_partition_action
+parsed_or_canonical_numeric_value
+executable_literal_range_missing_or_value_map
+layer_2_digest_or_mixed_derived_node_reading_physical_member
+~~~
+
+The 32 cases use only these already registered source identities. The raw
+members need not be copied into this repository; each runner must obtain the
+registered bytes, then authenticate their complete size and SHA-256 before
+making an in-memory shadow:
+
+| source_artifact_id | Registered path | Bytes | SHA-256 |
+|---|---|---:|---|
+| psid-family-1976-raw_fixed_width | family/1976/FAM1976.txt | 8,798,862 | b35387e2b04bb9515f5edc1a31cc4b55a5bf018f9aa102ead4d7399e5d8b0824 |
+| psid-family-1977-raw_fixed_width | family/1977/FAM1977.txt | 5,796,755 | 6314e1ae1784a6d5267ec863c96432c11a8b22a45a09170d7c7322ff0faaa1d8 |
+| psid-family-1978-raw_fixed_width | family/1978/FAM1978.txt | 6,092,460 | 39764f180bf8431e7947027ef656c7910e832c01facfb86c8534735bdf42e12d |
+| psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam | data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json | 2,203,624 | 0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87 |
+
+The case number is 8 * field_reference_position + mutation_position. Every
+row below identifies the actual member or zero-based half-open byte range,
+the one byte changed, and the physical route the runner must exercise. Hex
+20 is ASCII space; hex 30 through 39 are ASCII digits. The exact canonical
+32-row manifest is:
+
+~~~json
+[{"byte_offset_zero_based":252709,"case_number":0,"field_reference_position":0,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[252708:252710]"},{"byte_offset_zero_based":217719,"case_number":1,"field_reference_position":0,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/5"},{"byte_offset_zero_based":218978,"case_number":2,"field_reference_position":0,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39","mutation_position":2,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":540,"case_number":3,"field_reference_position":0,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":764550,"case_number":4,"field_reference_position":0,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[764549:764551]"},{"byte_offset_zero_based":365284,"case_number":5,"field_reference_position":0,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[365283:365285]"},{"byte_offset_zero_based":5423654,"case_number":6,"field_reference_position":0,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[5423653:5423655]"},{"byte_offset_zero_based":218978,"case_number":7,"field_reference_position":0,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39_then_recommit","mutation_position":7,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":717153,"case_number":8,"field_reference_position":1,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[717152:717154]"},{"byte_offset_zero_based":608511,"case_number":9,"field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/5"},{"byte_offset_zero_based":609802,"case_number":10,"field_reference_position":1,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6","mutation_position":2,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":1175,"case_number":11,"field_reference_position":1,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[1175:1177]"},{"byte_offset_zero_based":3503009,"case_number":12,"field_reference_position":1,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[3503008:3503010]"},{"byte_offset_zero_based":2489834,"case_number":13,"field_reference_position":1,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[2489833:2489835]"},{"byte_offset_zero_based":1356579,"case_number":14,"field_reference_position":1,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[1356578:1356580]"},{"byte_offset_zero_based":609802,"case_number":15,"field_reference_position":1,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6_then_recommit","mutation_position":7,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":10227,"case_number":16,"field_reference_position":2,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[10226:10228]"},{"byte_offset_zero_based":1045936,"case_number":17,"field_reference_position":2,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/5"},{"byte_offset_zero_based":1047211,"case_number":18,"field_reference_position":2,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34","mutation_position":2,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":576,"case_number":19,"field_reference_position":2,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1977,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[576:578]"},{"byte_offset_zero_based":4437,"case_number":20,"field_reference_position":2,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1977,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[4436:4438]"},{"byte_offset_zero_based":142432,"case_number":21,"field_reference_position":2,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[142431:142433]"},{"byte_offset_zero_based":318062,"case_number":22,"field_reference_position":2,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[318061:318063]"},{"byte_offset_zero_based":1047211,"case_number":23,"field_reference_position":2,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34_then_recommit","mutation_position":7,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":827191,"case_number":24,"field_reference_position":3,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[827190:827192]"},{"byte_offset_zero_based":1503209,"case_number":25,"field_reference_position":3,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/5"},{"byte_offset_zero_based":1504480,"case_number":26,"field_reference_position":3,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27","mutation_position":2,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"},{"byte_offset_zero_based":540,"case_number":27,"field_reference_position":3,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1978,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":150031,"case_number":28,"field_reference_position":3,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1978,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[150030:150032]"},{"byte_offset_zero_based":909361,"case_number":29,"field_reference_position":3,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[909360:909362]"},{"byte_offset_zero_based":324271,"case_number":30,"field_reference_position":3,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[324270:324272]"},{"byte_offset_zero_based":1504480,"case_number":31,"field_reference_position":3,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27_then_recommit","mutation_position":7,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"}]
+~~~
+
+The fenced payload is 13,650 bytes including its terminal LF and has
+SHA-256
+14eb875a8bb21203059a172ff24f3377cad89159274c6c480c14841786e03b68.
+
+The exact executable route-probe preimage is the zlib-compressed RFC 4648
+Base64 payload below. Concatenate its ASCII lines, Base64-decode, and
+zlib-decompress it to exactly 36,601 terminal-LF Python bytes with SHA-256
+`3287c293b3e7f954f044fdc70176f169dbae9416232fbf1f1f72284c1bda9e4f`.
+The compressed stream is 8,632 bytes with SHA-256
+`99cd07791a36a6c7a30fd1151674821166cf495c528babd7959a170408f99615`;
+the 11,512 Base64 characters plus terminal LF have SHA-256
+`ddd5a010aa12f79e8f217f77adaa0a155fd66275e1d1204abdbe11050ea0c3fe`.
+Run the decoded source from the repository root with the mandated
+interpreter. It authenticates every complete source, reconstructs every
+structured member span and every fixed-width record/slice locator, executes
+all eight routes against baseline and one-byte shadow content, and emits a
+diagnostic only after a declared layer-2 output is nonconstant.
+
+~~~text
+eNrtPf2P2zayv/uv0PPhULv1eiX52+/2Ablkcxcg7QZpcneFawiyRO+qtS1Xknezb+H+7W84JCV+Sfam6aEPuAOuWUuc4cxwZjgc
+cqg//dflx5xk+eU2/HR7R3ZJfvku3STR4/XuNtmRyzyNknBzkZPokCXF48U2jcnmsn9PdveXq2R3uX8s7tJdq91u//WQbGIn3MXO
+PcmS9aNT3BHnxZbsYvh/cTFxXkwu3nuekxGKLz1kEXGy9FCQi32WroizTj4Vh4z0AVWrtc7SrRME6wN9FAROst2nWQHYd2kRFkm6
+y1st/ixKNxsSsWf80V2Y322Slfj5Uw4U8r8zIv7KH3PWzT4saGvRxzv42Wq13v3w4e833zlX+LvT/hJSandb76/f3XCc/egh7nT7
+GcnTzT3pdFuvbl7CK2xx6bTjNMovY5Int7vLKAWRkjggYbZLdrd5EKVZxnjub+N26/ofb15df/fyWgYPi/CSfCpItgs3l/s8iQEo
+Jqs0/TlYJ2QDyO6TmOwicpk9erPJKID/TIJ8nx5yAk3hxb4IchJug3uvTyXYbr1/8c/g/c3NhzOFQju9QDrW4TbZPAL7rW9ffPfm
+9fX3H4K//vDh+ntA5A2C8citnn//9xf+aAwv2t6QrKaTUThdrXzPdwfuaBZ6E3+99ofrwWAyicJ4OvNGM38yjMbRcOpG3nA69CbT
+MXEHq/G03Xr98e3b4PWbf334+P667HDmBzNvpr6rOg0B1Soahv7EXQ9jEg7hz1kIP30viteTmevHrk/ikT+Yrcfu2vO8MYknYzIa
+z4beMIJOX958++7Fyw9Gv94smI1Gxuuq69ifrePZwI+m63A8GfrryTgcTVwyjaej8Tj04BkZDfwwDKPR2h0PQn+wHq8GIyB04MWr
+dbv1/cc3H66DDzfvbt7e/O2HsuexF3gjX39bdbxyvdhfASsEup/O3Ol47U0jj4rZXU1jL3ZBAN50tpqOx2Tqz0ZkBDKZTtdA3Xg6
+cUXHf33x/ZvvK3596HWovKq6HBJ/CDq38kNvFQ/c2cj117Phisz80Wy6mvnhAIS/mnrA7pAMXHfmDt2V74JIvHEUD8bgIb6/+fge
+Nf6p5cD/2qhtTNEuQJXHF1n4AJr+CczmIYmLu/act2StQ3xSajRYDAW6fP3iW/pvv/hUtHtV89VjQXJoPw0ms2kwHfvSu/wuBK7g
+ZRsGYzCdEH/lDler2cgbrUckjrxw4EXRcDUahaPV2vWma1AoD7QojIfxZDCbkVE8XblTf8h7PPasHE0+h6MJ52hSx9EIOBoHk9HI
+ytF4AFbohQSsahiOQe3HExJNx4NoNh6CpnoeWKcPYzQK3Zk3ceNJNBn4YKLuGtTUi6fNHE0/h6Mp52hax9E4cMHGh2PXytEARncI
++u2u1lOwGzKZDSeuPyHr8WgcTWYe2Bsw5nrrMFqDwkfT0WA4GYxW8XroE8+PLRzVOdb+vTc/4VutDAtvbuHND8ARBmN/aOXN9Xx/
+MJ7F/nq6jsdRNI2HZDKcRmuPzAbrcAB+NCJeNJ6NohkZroDlwWAK5uSS0BuQ6aTi7dgq55TgzStqsb+V0dbrN9dvX8FA/pOarAus
++G7P8WC43FnP8eeO54IOOgP4A7wL9P8n5wPED+EBoohdkURhQWIHVeUCVQX+3pAcZvp74hx2yTrNts7L929fwwQPk2Oc9yl4Thzy
+KYwKQJbDxATtaXjCWjjJLsZH8C/ZQ5QC3Wwe8eUuL7JDVDgEZl14Ej44LFwJtmS7IhlgA/ZiZ/XI4pfcAU4GPWfYc4AD2sP4vzH4
+2R5YrOJsQ6CQ5IWT5A4EMA6gzyk/RUopO+z30HFS5E76sHM2KfCaZn2cbZnQ3r744ebjh8rV/WM48maq6nACw6xIQHOLIImpQpz0
+iZIaMakEQtO8kev1ZNV83KSh9Ho4m0mvmT6gjOHlYjQEiYyG/tLET6X9CdAEKDrKBOiCN57i0APUEFwS1YgRaMgQhDqeO4OxNziq
+ZvePIczEf2QJeN4EdAH+OzlXBsPJRJKBPxgMUAjeeDRFKcxcQwgg4c9Rg8kzhDAbjxpkMBsPGpRgMgYOJtOzlcCV+B8y5ocTpgHg
+EXTeZ974M3ifPof3mdvE+3T65QxgOhhJzHsjD9mfeVPO/uQou+b34A2qyMdVpLA+7HBdwNmn3Bbpz2QX3JFP4KeVCTPME7qU2BXg
++oJoE+a5AOG0phkDlqGEs4weVRBJpk3gwPT+AHNCdEe2IRWVSmJ7qYyz18RbTIAAuizaHbYBnQDCItiHWU7O43MTPgIxAhBoNfTB
+xiqHguZl9xwDnRPo30gDrNKauQboZBtugv0mhEmo3ZPYYfjoI+QmDnhbfEKXylxcYR4lCX3ICFcl55/Siig9gDQSEMotyc6T2Doj
+vxxQHHsCprYrwltCJVGiO0dP6IIwqMO0S3fbJKfSMxHaNQfRMV5KeWjPOY+agAZNAioeUjR0GMs4ptSA3GnAcZ6ceOMAdQHhTwnG
+hAiyw4Y0sx+FIC6IjDbUAEiWRMF9uDkQpjgK2UIodWY2PCWLOLlNirKbeB2eJ4jbLNxuw4wCUKsoEkQLTIbYwSmpiP4EmlTHZKIx
+pRRGNAglMZVBQbJtsgOBCUB4pJpSkYW7nCGHP8GZq4IaNQnKHI9neCNu6sBihYYP5wnVsQBq+vCZSlRpDBOPKopxkygw6obAHwJf
+iN1x3RBsw32wgcXDYX+eRMgnEkEAvdog6P4MK5IgNgmMNTAFwwmeRfgUEBJyRxE2i4WhImzJQ4VBSYCfpXBK3ihb+5T6GN3DTJok
+BPMIyQIf8G+3SUEzpNTIYI0Ak2cYnz2DIQ4OCMb+6fGM+UuGAYlsceKOYezv6VxKh4qSgO7j7jFH3WALnxPeGIBkdvi6dClHLt/d
+vLoObt6/un5frWZEwNam4Q97RD5R46PSusjSBxps8xdI/YXnVN3QRbHy0nc4Kw5lBV4PaM/Xr/4mddymogyTXY59guUiuvyiSLEv
+KjmKIr+g+WHaA5DeisnakawlDTbrDqpDd479Z6Q4ZDtMNvfjw3afd0ppYbNKeHmaFcHP5DG/+pApzwkYM1385Veddo9q2bzdrV6T
+XU6T4WiMGmS42aQPwS7cXb0ONzl/0e3D0IMMOm1mv12dCRv5dg6db5xV+8ddm2NgQ9uhc+zcwYC461z8jwPLZgUXT8P3pebdPsw+
+TPc6gh4+2oFYJXc4RXEawWC9unnZR9XCfgCIvrpjCgqvV1/9+uuvVOY/7hZPmCcJ0vU6J0XwvySDSTwE59ie+yN/AqtK8HY5oY6O
+KvPc7X2FyPICVBBQQX99jM47HD1le0N2nVW77KPN+gezUgCwBQwYomJN+HqBNVvgizmALfElGCOBPily3q7rXF05anZcbslFaG3M
+0qpM8OlDDj2iDtKGeQmhd0tbIpqBL79aZAtFSEsHolEnc5Id4l5SiE0CY4SOtTPwu115xGkbPqo4LwnP2OH/zqmO8OHlPfI3fZRQ
+/pDgvkJbYM0PGzo0CyY2pCV8oNRwsIU3X/bzPbh7hJqXFoETF0BCc1AfjLI77V89alTQTnrk0ke/8g6rTvvU3+/iDvTSQVxdJ1kz
+rP0kx3io03UIGBt7qIoBUQhBMErZ1MHsqedY5EGZY1RT9mzSk9hDNMAe/rtAsKVMAT43nFa+D3clBWFxxxX2yuWY2+32ewZP01d3
+4WZ9kYIU0MQdCuykawSkJNo9BW7fUVwgLZrqoq3nkmwRO/bKO+c2ZsfGpIrs9ahUqS5QjAt3yTig4y+6S2COB5S7qJQy1VRJaFzj
+pHYcM0i3i4k71/nLFR+EvyBZjIwSQ3TIwHkDEYJ0r3xFhw+dQc+J7uhOKIiIYEwVFkTxtOJ/lGQKoD6VuvnmSsIvQ1ArRCpNUMON
+45gjRUyCPY6927L3aBsMBO9KJhImoPcvUJwwSV9nWZp12ocd+OnojsZf3JysgxIn0VmDQi0DB6U0CqbUzxsLmGbVkaCTL4mFfv3W
+EWmWG3Te7SqUIQyqh7BdaLPUiaBE/z8ZYmu7TvG4FzrP7LQrJnsWSfLJHKaLnsit45PyV7r6iUTF1XfpTlgNA6QePX1YtJWEfJsJ
+cBsW0R1tQPrrw2aDPzsZ2zv5cdH5Mf6mO8f//rgEn89ASz3F1pWsuYdi8zyE+HQe6LFG/dssPUB0JwuLjUinguqqfEnzf8+hTClz
+u8yy2CIoG6G7vdImBJl49MtXujooSPkYtOSZQ52WtOYyfpVKzg50AT7YmWPvC2+JgYHdh8vTEm3dO4Wqp8xeuCBJYlQWrgo0QBGK
+oAQr5VsAgAbr9hP9MXf9+MgmpRyfyxokp4v5DErzsvQkBc2yLrCt2MgB+bPkQHvJZ504LxcyLMmbpnRJsi5XNfOwOgFzEU4uMs+7
+kE69zJ84uUd5ccVoU/E8Ae3HOYsD509s93sBz5aLr9jDr5YKDm4aFIe6nLJQVFExR1ZJzA/oXJgLP2XptbasyJ6DX0aM8pBwqgu5
+ZqxPKNLFV9IiuxLHUdh43VhS3R1Xts+nWKfcsWRKwFL8GVmTjG56GrrA9aF/2Md0nlF875PhxNUEQjngHaMhzmeSGkj7soY6SO8U
+tTCQSqtKO0Gl9tQR9BydatfgED1e0FXqBXQ7v9SOJj3hWBwvPe8zeFA0tY6P5+qvQfNJwo7lL8UVgqpwD3ebhfu7ACKdAPM8kqNj
+7kXxgGxOSHPhxizqjE0oEG20KHt/anNEIA3AtmC+Crwte06nbJogKtMxx149KNfXzwMWk7YOrGV9mlBIQ2ugseSImlAxt1ODRUsm
+cTxMwiS+NSRMn5UoyiRTj26dpNugTv5FGtTIVyH8SyGXhfe7dMBF+vm4JfUysQv1kdErBqf3Veb2VLu09qwoltq8fpTo3IImeeVM
+WEpA1fMSj6I/FZA096DZ9um5zV2suqyF4WdMq7RMKWeZ6HkYn2+39dMfSrSps/qBUMEbrN4E00hbap65tOpzB8BOV42q2xs3mJYd
+wKKG1mE/xfwflYHmgf83MnGmWM/hyfQEv5mfGqd2PkdnGNiX4kq2M831TSrXt/ExW69OqfR/Zuh2wlVXu0H1m2OVy6PJ8nIHD2R7
+yTeu2GmLn9gx+0ro8lZdAX5C93eVK+FhAswHUl6BrTpzQksWMHulLRTYFgZm16FPW67DoItttsqJlfZRzyjZECkpd7YYb6spI5zL
+DAmdRVQehZsw4xKy+Nn60dZiRLYMB3VZLqz7oMueLlR9BGon29+42JPZENsFhn7Z1x3PMSZ1YcN5lYRth7B7Eb6Cj+nh3M1hu1M2
+yRy/Vw+k6cC63bBUa0CzJeGOne4xux80wNk0HvkAHyVwssMFNb1bHG1Xs1v8iSqm7jgxrRMa0HM67EES9xxFFUERhQaqKWehJFK2
+mYUZNqWxpAoU169sTVv8ns3xizVOq9nFl3w1rl9LKZ1Lvv30giq6OqhTxElNSxOd6yNWByGGi5KzED9sUlIOR5wQ61Gf7KRN16fd
+ogx62c4q7mtg0H/E3VjaCn8aG7ZPHbKQNAHcHvxWBps9kkZ02cU+CGojVbiqD/zZrTIFfbotQvcrrjbhdhWHzm7udKrTGgtBOOsb
+epI5EecMujwlzpQbMZbCkFATPRtTHc5YqDxqojUYLjs22slSsLRidLL/YvoFT4Ug3TC4+C9f5dDf+G+PJXdRV6Qgd3lko/wn5z38
+dqJNSg9p4L5VGD1GmyRKikcnhEegLXu6SQJzXrp26DYKtYEoIwVhNPQRUXooblN2tkGqbOzHZB0eNgXdPOvgtmZLzF63GaHpakW3
+5o6rq1fpzih3pUZUHkn0u6DPdUEvha2zl4qOKXlTSszCbLSsds7KDSS6c0eKDrK+4LJdig3fOHX4QQPb+4e7ZEOw1VzeDoSpmm4Q
+0+f9fbrvdJUNQQh2bklBOS9Z5TBLYxeQt6UbMfTkgyDZthfHX/XDOO4wsK7RCiniEpTbyOcxBCKbG6DTpKEPvxzKzcyfkcGfe849
+JVeMQz8pyDbv4MGFe4rV5fZ5n4BjJHQnxJXESTuxiZM+p+LckHUhiVQgUbZEnydnoS8MYulc1Ox3K40oH+Y4IJH1Ei45NkQrJgnT
+ghK2jdxjRlTN5gz4qOVye8yGe2zu6ZV4F/JMseQZ3/AWWLoFZEF+ALo6mF1G+FzkgctoAVsEVP2xPvW8baULhJrf87Q5kkxrDnD7
+q5qiK9xzJfdTPa/PHklbK+hJKHrct3aejnWRFBcRsste4zkSC/NzRaUoCbQp9wXML2vatM8gFE0PImHO2e2Di+GuEwdOGuEetlON
+VZxJKnExZAoxwn9yYtikoRHDBMG9pTppW7yreGp3qxpzsrBl7uAnw3OSI9qosnMqfa5dqqtduEslXFU05+wUix6PSqrVkF4tqZJy
+p63fQ7hcPBQld/ayfNVwnT/EExuOJkYWEPO0YaXfPAQUmzHcXavZXq6ouOedy0HKb47GelKUI3YrdBIUdWqk4Y8QtskcKZ5bNe05
+X9ZL54CEC7H7cTZ8tREr3eHUmC/9O6YL9AWCLgJspC1Tll8sHK1sSkSjnx9E6oJ0FQf8xw0lnyohHOUYUhbOf2LH/8SOXzJ25NGf
+PfCDUA9TG841lpLAE+mMLZao4yFbFgYJIPasXBayIgtHnGqBFWVxCDdYpR7GObspB0/KQ0wZBMkuKYKgk5PNmh+hkjNO9DF38OLs
+Ya6+xFP2FSUYuZXo6UuOWvVjehcqFiFXDcY4EFwRt1CbipCZpfM9aduiw11Cz8kjWFn3+NYfLdphJQlKLYJ0Rivc3KZZUtxtMU/N
+k/3qXQsBjPQtXsaAZyU1xMZpqELJDQm6pPNclEAa/CChlqsb+PF+e0fHsk4Ca5JY4XAHBNTjj6huVWpG05BmbZJ8lLJKhrvmgfkS
+JY5kxzXG6kkrJZzzU/Hwd6d71Drwqg60+tbGrmqOcn738dsfO+wIZ5/90233dMRGcIfQ5UMslkUgWlObn3O8Uyq6pWsw323rXWAh
+R9VKL7xBv4wdSzMcFqUCPlphIMFK3WJlHx5wzjq8PTrkinYYQbZJs24/CYyXTsdzna+/Lpt15/0n8fdxLZ0GM0yDJzuVyuR5iadn
+tFPqlef6QGjttWLmOedPb2UUOM9l+Wutxa0xbFC1tUKlhb40N9GS4Ebd40OqqR5oW7vHoGsswqhEnrPm9QXJcxx7hlMnefAcy5S0
+kNeqUKarw/MLb+4vq7IVeVeMvXfnHs6Oq7bT1pfVWEFM9X7DqwLzPS2MrVYQGwsatx4N7vnAehQvDJDR5KQWJoVpMQuqqmxe1nxC
+k+tqW5ncmaWCOiqWaiitWkg9F1Rp7RpcYr1aDr/kGFuGVy9mNvZaF+1faPkTOA8+fsu563860q3vXzxW9K1vbyyqNxKgJwH6ASu5
+liGXJ0aqLNKeO2phI0sNaGXb9CYBAtLAFVcYxD+3S01m2jebtZlbbJNtVbfeNjIOspOxqoMOoVeHzw0Z14/26DNGu25kfzd912u+
+T8rlWH+W7TSXuIPLaxa1Vp7ayrmyEyJNlkmGMSs9Jbvwlz1ccw/4Fhj8jalG0d/SZlZPNAuEiyGaSgtYGR5grXbN8KccpWBZOi3x
+pCtq7S3HHPGlM298YgjVuvM5QmtDpFSizwXeBW2pH1m0FqnPrfFh/YhO5MlTBN/nKC9fYFZAKMeFZvllMK7RLofh2isz6Nb5xnhb
+f6hH+ktzqASlC4kunNEEdBMI65U1h+ew6C2k+hJ2MMciSn6YCNfoEjJePX8iLFm4F7PwYr18Gg+P7Z6J1Rar2Ov05ybwsb7CC3RD
+VHSt6L2vHbWoF68HzR9pRlRcySDddEolxK5XrZ71HLW5jI2WgMOSkE67tCH8lIudzfJxtmqVq4yqXQml0El6Tu0+p4vJLSlCGqtR
+m2VlFSIXMpecjajtFq0X7PK+pVmq3lDuXQEz5TAG21L1XcEYGqKWVSXxEsvGEFSO+LAG6sqRakXUsAtE01BCrut/eZcAgCGBeo+m
+0AVt8LNVyp7dq0SFrt97V2albfJXeGY47KVdcgRS3fJFN5k5kHL511LvymiuXgdmjJwK9g0EaldXSs+NuvFnjUiRbJPah5uNlpBm
+wAtRDatSMC+rZGXMPFj/MaNXOyh1MdQaEICmMLHU3+0pNPYURF390Is4FhYwbdIUQK5TYhrA7n6udgutm4LaRQBsTqdeYK5sZ9WX
+Bp5ZO6PoN8V35Uydr50TBwOpzFNjXPkkinj+7EwrYz2jEhGtMYPQD2JfXdepDVWN8MYLga/mEgyDN4F6wcHnAs83jrdkaxfUWopT
+tGXrL7xBqmXQKEpY9fHu35KiAwR3TQhWEFr+ZKcgpQeiWlUpG9a3Vqr2PZ0Wy9k1jftAFKD+5Urw/xftpWecIwW9e5Iv/RwfVR/K
+vdmV4czYdhG7L48qkuqaZNfPvHSTS1PFIN0uaHo17dLBJZ6nVS2eXWDICpj50U4sfhaY5BsOVVDyaQ+ShmiMVyJ3LDsdEnFf17hc
+UDuZiN+IBIivO5ddpwS4Ny7zYoOwHX6mgCbTa36m+knBCZp2nGuPvOVx2bYdRkVHcRfG6QOMfBbSbW+KE//uCNq71qbcqJc8wVj5
+O55c5rfAOd5Yh+ed5B0ZnTWWYQ3K1ZFJUBXGQLvFvCTpqvI94mENTOWRnLkKqLzRRVA6IimMEdRaQyCWLiiL7iVUvGSd/RD+if+0
+eid2qQE26Kn01AimVD5FG2v9Fb8I4b+uVKJachGycRoJM6jSjrmt5lQ9E6JPvmInpyNjlpLkDKMIk6q4EJ9rJ4ctzeTjEmwvia9R
++foUGqujI97zVYDysva0vwWr5SS7WgvwVd2U/9VyaVYm63Sp1yzIYVHPoEa7r4MfGnmSUS58dm5YfkZnI6Xbo81xPbWHeNXR0Gsf
+6VyH6FsWkU205YDQu43HZgN9G85enSOVH9athavJusFRcx3/HTpnmBu6VoMQjD4lYSxtZFYtS7qXDRnuz5StVHTDKiGqCkw6/oZ4
+hYf4wlI+lwzVTdUTsc+SbZg9BlLIqzs90FItNExyNH3mv9V3VuTlHKdQhZOC7NMVtPKbUxqiM3FCTVSyjIuA7F7M0rXwzoofMA+T
+KP3XwLQs2lnlqKSHthSE0KMKoHxkay4nImWgZ3pzHfx8R3FeCVajfpt3RWnX4Kjy1aJSSSryHEk2yY4EZYoVeCr39zva0Bvxnx1K
+Gfqu2Rc/a3JlO2ZgEtQ0eYmYpwGhTmkTOjWbrNGLwadcIqjeS7qswaKQeDYOrW97FKNQZ5eJBVAlSKfa3nEVAcqPa3KIVhRdjoM2
+sKCqp0PN/cuHhpTrIfHyTBYn1sW+n4OpRMW+EVJ+XWMTrsiGum4YuOhnEjvpbvPohGsa6MlfHasMBKJbCRnXWBgT/AZIuIse2QdG
+1E+ExEnOP8iFp7XYfVF41qtfHXYp27ACN0fVMONmXjPPj8mmNFslMbQLTAAqIL2XSjLiY2pnluixg2UBS14r569yVk7XPOz2CjsG
+I3xxuc1gTitN4GxMZCLYk9Mw5ZcauO5Y1P8MJPoRrecgolWP5VygUSMWQfWgdIphl+BLQPXNLYQ29aHchIsrPlvdY6Vflrukde2z
+IOAL43LIK3GwYxJafKcfmNDxcJ+hY1FCuVoc4holVr1pacBHVL2oW7Za+c2yHkF5J3bDnGKBLi/blkQt1bQucIzYHpUtCWVFict+
+ZFzCpCYDTt2iZdivPeqyoRH5I77w0jWUJ2TqIc2utfCyHrR0G8rvU+0VI7VNiCcR2Hk8jUQey0C9ypGSQydCJTvUtdZy79NNevtY
+43SkBE0jNBZyyI5HLXRqhN2xqwUMWF6x1Qiri66eXqPEmp3x54kp9oMnvtgPKfF1Xukdv0+UxRU0b873lZ7MjSW8D0PfkDrqu1R8
+Pp5LZ0c48gxXo3pfC7MjaQcTzZ9xZrFwmvNV+WbYSge4lAoSq4AlvN2lOdi1WeclOSQ2KLpHOUWQcXI0S+7ZzhtEWcUBP0yQ7MpU
+DbcGcYiJfgOOnsV4NErL6vbi5op4mzbtdIz1ARfnsmlKPAsb/74b9eiGMahU2/Z8eufB2JeyOn240LpPyEPwAFGuITXttQ5tbgnq
+CCybhvrxyuY5D7E0tllazq+VO2s6Peq2mw5JT6Ic2OKehDk7Zig+I0IXEmwvtbKT8ks9UbgPI4t6ct9fKx7LdkzLNiuE8U+HmH4B
+kdJGVybULhh/HUsoLwqDg2FwH6zGQZxGB/qb0L2zaHPIk3t6mLoAtsp0dHW9Sv9eS2h3bSWYYg1Hik4lEFxHPz2Phd6zPM259v8c
+LWu2iSb1Ot93PMcvnLSyE1p20tee1HvbgEtqbyYvJBVQ5yjZWZZtcH6qfp4BUW7usn1G/cU5nZZfo3HKhIcdjRRK2NI01Vu5ed2m
+lvRWaq7eGN20TjSwd42PAumrRLlLo7ERnTbhZ3Eg1V/WAVvyRVoqtTzkWZUXvqStSabdV1NdRSMJsYoqxSG7bsvieNpGTGrFoXyP
+EeMt/rGlyidOgnASZJ7HkpE8WpHHXP3wUlll/ZkiUAu1qytZFPJFcNwsAiO0tuLoqVeR1wOI+1R0gLKW9Fl9nVh6GEZlhbVrpwl1
+VK6lZxZ1lkkZnylvtKbBuN5+zK+anzCcJ/UbU4DbkT9C5U1886tTg/GxzgT84fDfoux6mUb1qa7BpKefXNe+2SXLr7qRUf94V00r
+8ytevnGNrmkW3tCrMwDvtKKr0A0qzUb/w827m7c3f/vBUCVToTUAWWOOrTM/v8QHufYLTOWBdNMLZQvrCt1EziI4+unlac+Zzp3h
+8TmoJQ2tQz1mqD2vxC1015w8BaBe7a5AINrXH9++DV6/+deHj++vaz+ddQJM/ogWOynPAXoqiTylID6tBEtWujSr4udOCYbtxBcr
+8LpD9bJLZaCNjz/U5IJsaiYNqe21NCznqHeDIusfa6iNzhtyAQ0ut3fKg9f5Y/mThw3x48lmllrwml0MtYbbkqu04VByjA0Navuo
+Q2BNQZrv9USsfBk5P620wEwR01Zmw+xvVjyFOry0pLWWNZX2HARrS/CvZ01ahCo9MwZ5AlMnLUo4yxTkuv6J24bUKvotTLmilqDR
+xOk5SFbaIgqi2hcXvGEbg7jHvB9mt/fSBQjwJC9iILa/OqxhWdp/yGiSUfU9WkkOdxDoSFgR0AmXIgNY/CZ/Y/hNBQId4Mubb9+9
+ePnhpOs8DSl5TyYn5FtIK68RF1YJtS+L7f7SEqgIodFypz49x9nuMnHyc5Y1Qj0PKWfJhlflVroEgJ6jbT9kKajGM2j+PAQqfTaN
+YXLm7T5TL2tYlXrhRKOV9eTpl0cd/L3hqS0ztQJQ3rFtnZ1V3JxIex8qC1ZAva8GEOY3euYRHjQ8o3hWArXMmoifZdokj5Uftuw0
+du0MbPOw6s1XjFhp3S56qbDbZ1Ar6u7JzQqNxTLVooSqlhuvLDuqNRdj2SZAW1PrVKfcpNVqJfQynB3MKEGAtZhBQH1+EPArCdgE
+0Po/RTwVGg==
+~~~
+
+The executable's exact result domain is pinned here:
+
+~~~json
+{"compact_fixture":{"canonical_bytes":19955,"sha256":"d29fd932c8fa6742f76a570e8d8566a1674e532aaac5f063a23f6b350f431dbf"},"full_fixture":{"canonical_bytes":92919,"row_count":32,"sha256":"ac6cbc4a270f4dea44a29aa2721cdf7902d02ed5239f60f1116ed76e569414c8"},"suite_graph":{"basis_canonical_bytes":12154,"basis_row_count":36,"basis_sha256":"4e24975b2a1bd309502f94be92598b92a34deb8132a4e3009040b20f7616cd36","edge_class_counts":{"commits-to":36,"contains":172,"derives-from":36},"edge_count":244,"node_count":141,"node_type_counts":{"artifact":37,"extraction-row":36,"layer-1 commitment":36,"layer-2 derived node":32},"root_count":1,"root_reachable_count":141,"topology_canonical_bytes":61152,"topology_sha256":"b01d2b111ed9389086f18c124f30b8d1d0aa2189b866e8295e529a88f5706870"}}
+~~~
+
+The suite probe positions are exactly 109 through 140 in case order. Its
+graph and basis must match before its 32 discovered diagnostic rows have
+meaning. This isolated source-adjudication counterfactual suite runs only
+after the historical 3,365-node/6,351-edge graph and 810-row basis have
+matched; the suite graph does not replace or mutate that historical graph.
+It is source evidence, not a prelabelled expected diagnostic: the runner must
+verify that every original byte is present, apply exactly the displayed
+one-byte mutation only after complete-source authentication, and discover
+the dependency by instrumenting the proposed value flow.
+
+The route graph gives every case a distinct layer-2 probe node. These are the
+eight exact executable route functions; their outputs, rather than the
+manifest's supplied class label, establish nonconstancy:
+
+| Position | Function ID | Exact read and operation | Exact output members |
+|---:|---|---|---|
+| 0 | `raw_token_hex.v1` | read the real two-byte registered field slice and hex-encode it | `raw_token_hex` |
+| 1 | `declared_num_format_parse.v1` | read the real `NUM(w.d)` scalar, full-match `NUM\((\d+)\.(\d+)\)`, require probe token `20` to have width `w`, and parse it at `d` decimal places | `decimal_places`, `declared_format`, `parsed_decimal`, `probe_token_ascii`, `width` |
+| 2 | `raw_count_integer.v1` | read the real digit-only Count scalar and convert it to an integer | `raw_data_count_ascii`, `raw_data_count_integer` |
+| 3 | `two_byte_padding_profile.v1` | read the real two-byte field slice, classify its first byte as leading-space, zero-prefixed, or other, and parse its numeric value | `canonical_numeric_value`, `padding_profile`, `raw_token_hex` |
+| 4 | `two_digit_numeric_dfa.v1` | read the real two-digit field slice, execute `q0 -> q1_digit -> q2_accept`, and select `reserved_na_dk` exactly for `99`, otherwise `emit_numeric` | `accepted`, `terminal_action`, `token_ascii`, `transition_trace` |
+| 5 | `canonical_numeric_parse.v1` | read the real digit-only field slice and carry its parsed base-10 integer | `canonical_numeric_value`, `raw_token_ascii` |
+| 6 | `exact_semantic_code_map_lookup.v1` | read the real `40`/`41` field slice and the real semantic-map row `/field_evidence/{220,609,1055,1529}/11`, build its unique column-2-to-column-3 map, and execute the lookup | `executed_code`, `mapped_value`, `semantic_map_pointer` |
+| 7 | `layer_2_commitment_digest_read.v1` | recompute the five-key layer-1 commitment over the complete mutated artifact, then make layer 2 explicitly read its `/sha256` text | `read_commitment_sha256` |
+
+Positions 5 and 6 mutate authenticated raw records, not semantic codebook
+lexemes, so the direct semantic projection stays fixed. Position 7 is a
+negative only because layer 2 explicitly reads the digest. Recommitting a
+changed artifact solely at layer 1 changes no layer-2 probe and is lawful.
+
+For raw routes 0, 3, 4, 5, and 6, the executable does not trust the manifest's
+displayed range. It first proves uniform CRLF records and independently
+reconstructs the range from this closed layout:
+
+| Field | Record bytes / payload bytes | Zero-based field slice | Record indices for routes 0, 3, 4, 5, 6 |
+|---|---:|---|---|
+| V4519 | 1,501 / 1,499 | `[540:542]` | 168, 0, 509, 243, 3,613 |
+| V4902 | 1,501 / 1,499 | `[1175:1177]` | 477, 0, 2,333, 1,658, 903 |
+| V5429 | 965 / 963 | `[576:578]` | 10, 0, 4, 147, 329 |
+| V5916 | 990 / 988 | `[540:542]` | 835, 0, 151, 918, 327 |
+
+For routes 1, 2, and 7 it strict-parses the authenticated canonical JSON,
+reconstructs the pointer scalar's raw half-open canonical byte span, and
+requires the displayed byte offset to lie inside it. Thus every route is
+grounded in an independently discovered real member. The one-byte shadow is
+never reauthenticated or accepted as frozen authority. The executable
+records the basis positions actually read, requires baseline and shadow
+layer-2 output bytes and hashes to differ, and only then compares the
+discovered class with the manifest label and constructs the exact 12-key
+diagnostic. Supplying a case number or label as output fails.
+
+Each case has two ordered, independent arms:
+
+1. The isolated source-adjudication counterfactual arm first reproduces
+   A7-R10a's historical graph, complete walk, pinned V4902 whitespace
+   witness, and expected abort. Only after those fixtures match, it constructs
+   and matches the separate 141-node/244-edge route-probe suite, executes the
+   named baseline and shadow function, and discovers exactly the case's
+   diagnostic at suite node position `109 + case_number`. It rejects the
+   shadow and accepts no §18, carrier, requirement, or consumer result.
+2. The physical-consumer arm independently reconstructs the frozen reference
+   stream containing only the case's field and invokes the ordinary §21.4.1
+   guard **before** calling the route function, reading/carrying the physical
+   datum, or constructing a crosswalk. Its `consumer_row_identity` is
+   `["amendment_7_a7_r11_physical_consumer_fixture.v1",case_number]`. The
+   nonempty one-row guard aborts, and an instrumented route-function
+   invocation count must remain zero. The source-adjudication probe explains
+   why the guard row exists; it never authorizes this arm to consume.
+
+The aggregate case executes the isolated class-0 probes for cases 0, 8, 16,
+and 24 and requires exactly their four discovered rows in physical-position
+order. Its separate consumer arm uses identity
+`["amendment_7_a7_r11_physical_consumer_fixture.v1",32]`, reconstructs the
+four-field reference stream in that order, invokes the guard, emits four
+nine-key guard rows with consumer-reference positions 0 through 3, and
+aborts with all four route invocation counts still zero. Any successful arm,
+missing or reordered diagnostic, wrong graph or field position, synthetic
+locator, semantic-allowlist expansion, partial result, guard-after-read,
+nonzero consumer-route count, or drop/relabel of an offending reference
+fails A7-R11. The source diagnostic cannot stand in for the ordinary guard.
+
+The vector implementation constructs expected results before serialized
+actual results are read. Core-artifact row order/count/digests and every
+procedural step, expansion case, witness, source hash, terminal, reason,
+diagnostic, and mutation must reproduce. The exact pre-Q5 Amendment-7 vector
+ID array is:
+
+~~~json
+["A7-R01","A7-R02","A7-R03","A7-R04","A7-R05","A7-R06","A7-R07","A7-R08","A7-R09","A7-R10a","A7-R11"]
+~~~
+
+It is 102 LF-terminated canonical bytes with SHA-256
+05a58e886c7d9d30db8797b8e1d987156476d18e4444224a0f301d38e7529245.
+Omission or failure of one unchanged A6 vector or one member of that exact
+array blocks Q5. R10b is a mandatory post-inventory staged continuation, not
+a Q5 predecessor. The A7 pre-Q5 suite begins only after §21.3 has accepted
+the complete relation; it is not an input to that top-level status.
+
+### 21.6 Exact replacement inventory and closure sweep
+
+#### 21.6.1 Complete design-family disposition
+
+The following inventory is complete at design-family level. It does not
+edit or erase the historical source passages; it gives every affected family
+one prospective revision-9 disposition.
+
+| Source anchors | Exact Amendment-7 disposition |
+|---|---|
+| §13.2 V-B6 registration-or-abort row and §18.3 "register every field, exact code map" command | prospectively-replaced-and-composed-with-§21.2-item-6-and-§21.4.2: direct semantic_code_map_registration remains lawful evidence for the exact concept/map projection and neither requires nor confers physical_numeric_grammar_registration. V-B6's result-level registration nevertheless fails because the complete source adjudication is contaminated and unregistrable. |
+| §18.2 complete 13-key documented-inclusive-total projection and §18.4 V-B6 source member, positive result, and branch equality | prospectively-retracted-by-§21.4.2-and-§21.5-A7-R10a/R11: the historical candidate bytes remain authenticated, but `verified/pass`, the positive source member, branch equality, and empty forbidden-dependency conclusion are not fresh results. The exact graph walk must rediscover the pinned physical witness and return `nonpassing_forbidden_physical_dependency` before acceptance. |
+| §19.3.1 V-B6 verdict/established-fact references and §19.3.4 residual-9 carrier | prospectively-retracted-and-composed-with-§21.4.2-and-§21.5-A7-R10b: the four occupation references retain narrow semantic evidence only; residual 9, its key array, carrier, ID, consequence, and accepted result are not constructed. The passing V4379/V5289/V5788 exact-once reads remain lawful but do not execute on the blocked path. |
+| §16.2 verify_fitting_free_claim_v_b6_v1, the V-B6 result consumer, and every fresh 22-row requirement-domain evaluation | prospectively-replaced-by-§21.4.2, §21.5-A7-R10a/R10b/R11, and §21.8: the predicate ID and row position remain, but every fresh evaluation reconstructs the source graph, returns V-B6 nonpassing, proves the carrier absent at R10b, and makes the enclosing 22-row domain nonpassing. No predecessor result, pass bit, key array, carrier, or digest is copied. |
+| §§18.6–18.8 and §§19.4, 19.6, and 19.8 V-B6 lifecycle, bundle, satisfiability, registration, and final-success claims | prospectively-retracted-by-§21.4.2-and-§21.8–§21.9: every dependent V-B6 requirement, domain, bundle, correction final acceptance, receipt, registration, and final-success claim is nonpassing. The scoped prohibition is any forbidden physical dependency of V4519, V4902, V5429, or V5916—generally, physical consumption of a non-passing field—not any physical use. Exact-once reads of passing V4379, V5289, and V5788 remain lawful in principle and are expressly outside that prohibition. |
+| §19.3.2 nine-key field_source_derivation, all-field compiler return, status, and failure/top-level conclusions | replaced-by-§21.3-complete-relation-with-closed-failures; preserve all outer and row schemas, replace only the admitted top status and global failure consequence. |
+| §19.3.3 source_document_manifest and complete field_source_derivation embedding | composed-with-§21.4.4-complete-evidence; all 89,599 rows, including F, remain mandatory. |
+| §19.3.3 D_w search, positive_field_join_rows, raw_field_projections, and Q5 status/history | composed-with-§21.4.1–§21.4.4; search remains total, each positive reference is guarded, and D7 replaces D6 as the live Q5 predecessor. |
+| §19.3.3 expanded slot stream and present/structural_missing inventory equations | composed-with-§21.4.5; E and the two dispositions remain exact, positive raw-field projections exclude F under the closed negative census. |
+| §19.4.2 G17-C01, C06, C07, and enclosing G17 result | composed-with-§21.4.6; complete relation copies are evidence, every positive consumer projection is guarded. |
+| §20.3.1 assertion disagreements and unsupported/conflicting top-level blockers | replaced-only-by-§21.2-item-1; row classification still fails locally, complete serialization no longer fails globally. |
+| §20.3.5 seven passing terminals, three failure rows, and top-level abort consequences | replaced-and-composed-with-§21.3–§21.4; ten terminals and precedence remain, top-level abort moves to the consuming site. |
+| §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason; §21.5 adds the exact eleven-member pre-Q5 array ending in A7-R10a/A7-R11 plus staged post-inventory A7-R10b, and none can alter or substitute for A6. |
+| §20.3.7 complete census, assignment, counts, reasons, and sentence preventing pass | preserved except replaced-by-§21.3.2 for that one global conclusion; all bytes, memberships, counts, and digests remain exact evidence. |
+| §20.4.1 layout, parse, raw-token, value-map, and unobserved consumers | composed-with-§21.4; every retained branch rule remains and every T-minus positive reference aborts at this boundary. |
+| §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.4, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
+| §20.4.3 G17 propagation | composed-with-§21.4.6; evidence-only full relations remain complete and consuming projections are guarded. |
+| §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler, A6, and exact eleven-member R01–R09/R10a/R11 array precede Q5 under pass_with_closed_failures; R10a passes only by observing the V-B6 abort, and R10b is the later post-inventory expected-absence gate. |
+| §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | lawfully-unchanged-with-reason as immutable D5 history; §21.6.2 inherits the sweep machinery without altering its historical result. |
+| §19.3.4 Class-C consequences other than the separately enumerated residual-9 V-B6 semantic path, G17-C09–C11, and every correction/context/publication or other transitive consumer passage reached from them | composed-with-§21.4; each actual physical raw-field consumption runs its applicable boundary guard, complete evidence relations retain their narrow nonconsuming disposition, and all non-field predicates remain exact. This generic row cannot authorize V-B6. |
+| §20.5 Amendment-6 replacement inventory and closure sweep | lawfully-unchanged-with-reason as immutable D6 history; the distinct Amendment-7 sweep below covers the revision-9 corpus. |
+| §20.6 revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §21.7 supplies the complete 43-row successor census. |
+| §20.7 revision-8 lifecycle and v5 receipt chain | replaced-by-§21.8 revision-9 successors for a post-D7 registration; historical version dispatch remains. |
+| §20.8.1 compiler walk and every top-level all-field-pass prerequisite | replaced-only-by-§21.3.2 and §21.5; exact totality plus A6 and the exact eleven-member R01–R09/R10a/R11 array under pass_with_closed_failures is the Q5 gate. |
+| §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete, and actual-inventory acceptance is followed immediately by R10b's proof that no residual-9 carrier or V-B6 requirement is accepted. That expected-negative pass blocks the dependent residual/requirement/final-success path. |
+| §20.8.3 alternatives and mandatory-abort matrix | replaced only where it globally forbids all Q5/layout/G17 construction because F is nonempty; every listed row-level, boundary, capture, and production abort otherwise remains. |
+| §20.8.4 referee, D6, build, and registration protocol | replaced-by-§21.9 for D7 ratification, pass_with_closed_failures, the exact pre-Q5 vector array, staged R10b, the V-B6 layer boundary, physically guarded consumers, v6 receipt, and revision-9 registration. |
+| Any sweep-matched or transitively reached passage not otherwise named above | lawfully-unchanged-with-reason when it neither changes nor consumes the moved predicate; its exact reason must identify the matched seed and prove no raw-field consumption or lifecycle dependency was omitted. |
+| §§1–20 passages not reached by the deterministic sweep | lawfully-unchanged-with-reason; they neither define nor consume the moved global/boundary predicate or its lifecycle identities. |
+
+The inventory is a design-level index, not permission to merge distinct
+physical passages. Repeated wording at different byte ranges remains
+distinct and must receive its own closure-sweep row.
+
+#### 21.6.2 Amendment-7 closure-sweep law
+
+Before D7 ratification, the coordinator constructs
+amendment_7_closed_failure_boundary_closure_sweep.v1. It inherits the exact
+11-key schema, terminal-LF canonicalization, line-based passage segmentation,
+half-open byte-range law, canonical row and edge order, direct/transitive
+consumer closure, count/digest equations, and three-disposition domain from
+§19.4.3. Its matched passage IDs use literal prefix
+amendment-7-passage: followed by SHA-256 of the inherited exact
+[start_byte,end_byte,matched_terms] preimage.
+
+The normative corpus is every revision-9 candidate byte in §§1–21 except
+exactly the historical/self-referential comparator-table intervals defined
+by §§17.3, 18.5, 19.5, 20.6, and 21.7. Each exclusion begins at that
+subsection's table header and ends immediately before its expressly named
+next heading. No replacement inventory, regression fence, repeated prose,
+surrounding paragraph, or non-comparator table is excluded.
+
+The exact 51-position initial literal seed array is:
+
+~~~text
+field_source_derivation
+numeric_grammar_derivation_rows
+derivation_status
+pass_with_closed_failures
+conflicting_source_numeric_format
+unsupported_source_numeric_format
+incomplete_source_numeric_authority
+top-level pass
+top-level abort
+all-field pass
+source_document_manifest
+positive_field_join_rows
+raw_field_projections
+source_disposition
+structural_missing
+layout_coordinates
+typed_parse_specs
+raw_token_grammar
+value_code_map
+registered_numeric_grammar
+V-B6
+source_adjudication
+semantic_code_map_registration
+physical_numeric_grammar_registration
+layer-1 commitment
+layer-2 derived node
+contains
+commits-to
+derives-from
+physical_dependency_position
+pinned_forbidden_dependency_witness
+nonpassing_forbidden_physical_dependency
+A7-R10a
+A7-R11
+A7-R10b
+amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1
+G17-C01
+G17-C06
+G17-C07
+Q5
+fitting_free_requirement_verification_specs
+fitting_free_registration_domain_identity
+covered_earnings_path_applicability_registry_bundle
+fitting_free_model_input_authority_capture_registration
+covered_earnings_path_applicability_receipt_core
+covered_earnings_path_applicability_receipt
+D6
+D7
+correction
+context
+publication
+~~~
+
+Search is exact and case-sensitive, then closes over schema inclusion,
+ID-preimage inclusion, source-manifest embedding, field/derivation foreign
+keys, candidate-to-positive selection, slot/inventory joins, layout/parser/
+grammar/value-map projection, registry and crosswalk inclusion, G17 expected
+and actual construction, correction/context/output dataflow, digest
+inclusion, lifecycle/receipt selection, Git ancestry, and every direct or
+transitive consumer edge in §§19.4.3 and 20.5.2. A seed is not a ceiling.
+
+The closure must in particular walk from §13.2 through the complete
+§18.2/§18.4 historical candidate and R10a pre-carrier abort, its
+carrier-deferred marker, the A7-R11 32-case route-probe suite and aggregate
+case, both arms and their guard-before-read edges, Q5, actual
+official-inventory construction, R10b's
+carrier-absence proof, the nonpassing V-B6 row in every preliminary and final
+22-row evaluation, every blocked domain/bundle, and correction final
+acceptance's resulting failure. It also walks every §18/§19 lifecycle,
+satisfiability/final-success consumer, and every physical consumer of the
+four references. The ordering edges R10a -> A7-R11 -> Q5 -> actual inventory -> R10b
+-> each preliminary/final evaluation -> correction final-acceptance gate
+must all appear in forward and reverse closure with their negative outcomes.
+A generic Class-C or evidence-only row cannot close that subgraph.
+
+Every matched passage receives exactly one of
+replaced-by-named-successor, composed-with-named-successor, or
+lawfully-unchanged-with-reason and a nonempty exact successor/reason resolving
+to §21.6.1, §21.7, §21.8, or §21.9. Acceptance requires status pass,
+exact-empty unresolved_passage_ids, exact forward and reverse edge cover,
+complete agreement with an independently implemented second sweep, and
+reproduction from the accepted D7 blob. Missing, extra, merged, differently
+segmented, silently retained, or candidate-excluded passages block
+ratification. No anticipated D7 byte offset, row count, or sweep digest is
+ratified by these draft bytes.
+
+
+### 21.7 Complete revision-9 design-comparator disposition
+
+The comparator definition, mixed-preimage rule, complete-paragraph
+inspection, direct/transitive consumer walk, and failure discipline remain
+exactly §17.3. The revision-9 census corpus is every normative byte accepted
+at §21.9.2 step 2 and committed at step 3, including §§1–21, except exactly
+the five historical/self-referential comparator-table intervals in §§17.3,
+18.5, 19.5, 20.6, and this subsection. Each interval starts at its table
+header and ends at the first byte of the next heading named by its own corpus
+law. For this subsection, the interval begins at the first byte of the table
+header line below and ends immediately before the ASCII heading prefix
+`### 21.8 `. Mechanical searches include revision 9, Amendment 7, D6, D7, Q5,
+prefix, pass_with_closed_failures, and every exact identifier in §21.8.4.
+
+D6 is now the exact ratified revision-8 identity at commit
+5d69788a35f3e415e841ecbe4a22acb843dab70c, Git blob
+fd7f5f48413da3713114befdc2f021768f81063d, 2,049,769 raw bytes, and
+SHA-256
+ade1a757c0b29226e7ba12f13dbe9fed7192bc85ffd67b4081bd297107e6cf4c.
+The new base comparison independently requires those complete bytes to
+equal the first 2,049,769 bytes of D7. The new live Q5 comparison discovers
+the unique single-parent commit first adding only
+data/external/psid_questionnaire_slot_closure_evidence_v1.json, requires
+D7.ratification_commit to be its strict ancestor, and retains all inherited
+Q5-before-slot/inventory/cutoff edges through G17-C01. Before reading Q5,
+the coordinator independently reconstructs and exact-compares its complete
+eight-key slot_closure_evidence_identity; an unequal member or digest-only
+agreement fails the D7/Q5 predicate. D5/Q5 and D6/Q5 remain independently
+required historical edges and cannot substitute for D7/Q5.
+
+The full comparator search and consumer walk treats the §21.2 equality
+between the accepted revision-9 candidate bytes and the future same-path D7
+raw Git blob as the construction-time arm of DC-39, not as a separate
+family. Section 21.9.2 step 2 fixes that exact candidate byte sequence; step
+3 permits only the same sequence to become D7; §21.8.1 verifies the complete
+blob hash and D6-prefix equality; and DC-41 through DC-43 carry that same D7
+identity through position, capture, receipt, and selected-registration
+consumers. The rerun therefore retains the same 43-family census.
+
+| ID | Exact comparator or consumer anchor | Normative revision-9 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: the generic shape remains; the ceremony-specific rows below govern post-D7 designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and HEAD | lawfully-unchanged-with-reason: the ordinary current-design proof remains; DC-06, DC-10, DC-15, DC-18, and terminal DC-43 close retained-design cases. |
+| DC-03 | §10.4 prelaunch check 1 consumption of the active §10.1 design/repository proof | lawfully-unchanged-with-reason: it dispatches to the applicable Amendment-7 proof and cannot restore a displaced predecessor-to-HEAD equality. |
+| DC-04 | §12 context configuration import of §10.1 committed-design proof | lawfully-unchanged-with-reason: a post-D7 context registration carries D7 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration exact four-key Amendment-1 design child D1 | lawfully-unchanged-with-reason: configuration preservation retains D1; live revision-9 authority is supplied by DC-41–DC-43. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals HEAD proof | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-07 | §16.2 then_operative_calibrated_design_identity and its adjudication, manifest, cutoff, and design_identity_sha256 consumers, as closed by §16.11.2 | lawfully-unchanged-with-reason: these authenticate calibrated D1 methodology/configuration while D7 is separately bound by DC-41–DC-43. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, fitting_free_requirement_verification_specs.v6, fitting_free_registration_domain_identity.v6, and covered_earnings_path_applicability_registry_bundle.v7. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | replaced-by-named-successor: covered_earnings_path_applicability_receipt_core.v6 plus verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against HEAD | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration exact D2 design child | lawfully-unchanged-with-reason: the configuration remains D2; position-1, capture, and receipt proofs separately bind D3 through D7. |
+| DC-12 | §16.5.3 full_fitting_free_evaluation_provenance.design_identity equality to configuration design | lawfully-unchanged-with-reason: provenance continues to record D2 while the receipt records D2 through D7. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | replaced-by-named-successor: retain K_f^d = D2, joined to verify_amendment_7_fitting_free_design_identity_v1 and verify_amendment_7_capture_registration_repository_identity_v1. |
+| DC-14 | §16.10 capture authorization exact D2 design child | lawfully-unchanged-with-reason: the child remains D2; sibling D3–D7 children and DC-42 supply live authority. |
+| DC-15 | §16.10 capture authorization imported/restated pre-descriptor D2-to-HEAD repository equality | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1. |
+| DC-16 | §16.10 capture primary design equality to capture registration | lawfully-unchanged-with-reason: both remain D2 while the complete registration/claim chain binds D3 through D7 and DC-42. |
+| DC-17 | §16.10 capture sidecar design equality to primary | lawfully-unchanged-with-reason: both remain D2 and the same hash chain binds D3 through D7 and DC-42. |
+| DC-18 | §16.10 selected fitting-free correction configuration D2-to-HEAD proof | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | replaced-by-named-successor: Amendment-7 dispatch to covered_earnings_path_applicability_receipt_core.v6 and covered_earnings_path_applicability_receipt.v6. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt complete design bindings | replaced-by-named-successor: exact historical-v1, Amendment-3-v2, Amendment-4-v3, Amendment-5-v4, Amendment-6-v5, or Amendment-7-v6 receipt dispatch and validation. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-HEAD predicate and complete transitive capture consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/HEAD byte and ancestry predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-24 | §18.1 D3 identity, exact 1,310,838-byte design, and immutable revision-6 prefix comparison | lawfully-unchanged-with-reason: D3 remains the exact prefix of D4 and the D4/D5/D6/D7 chain independently extends it. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
+| DC-26 | §18.6 terminal post-D4 capture-registration predicate and all registration-hash, claim, primary/sidecar, history, capture-input, A1/A3, and receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 consumer chain. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
+| DC-28 | §19.1 D4 identity, exact 1,376,610-byte design, and immutable revision-7 prefix comparison | lawfully-unchanged-with-reason: D4 remains the exact prefix of D5 and the retained D4/D5 plus D5/D6 and D6/D7 comparisons extend the raw-byte chain. |
+| DC-29 | §19.2.5 D5 ratification ordering against the single-parent L5 legal-registry first-add and authority cutoff | lawfully-unchanged-with-reason: the legal comparator remains in verify_historical_coverage_rules_identity_v2; its consumers enter the freshly rebuilt v7 bundle and v6 receipt. |
+| DC-30 | §19.3.3 D5 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D5/Q5 remains independently required; DC-35 and DC-40 prove the stronger D6/Q5 and D7/Q5 edges. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
+| DC-32 | §19.6 terminal post-D5 capture-registration predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 consumer chain. |
+| DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
+| DC-34 | §20.1 D5 identity, exact 1,781,491-byte design, and immutable revision-8 prefix comparison | lawfully-unchanged-with-reason: D5 remains the exact prefix of ratified D6; DC-39 adds the independently checked D6/D7 edge. |
+| DC-35 | §§20.4.2 and 20.6 D6 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D6/Q5 remains independently required; DC-40 additionally proves the live D7/Q5 edge and guarded consumer chain. |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
+| DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
+| DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-future-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: these are one live D7 raw-byte identity family. Step 2 fixes the exact accepted candidate byte sequence and step 3 permits only that sequence to become D7; validation exact-compares the same-path raw Git blob at D7 to those accepted candidate bytes, verifies its complete hash and the independent D6-prefix equality, and carries that proof into every Amendment-7 position, capture, and selected proof. Any byte inequality, or digest-, ancestry-, or transitive-only substitution, aborts. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding composed with the post-inventory R10b gate. D7/Q5 or staging failure aborts at that edge; an expected-negative R10b pass proves carrier absence and still blocks residual 9 and every dependent V-B6 consumer. |
+| DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
+| DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
+| DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_selected_registration_design_lineage_v1 closes the v6 receipt and history dispatch. |
+
+This is the complete revision-9 comparator census: exactly 43 consecutive,
+unique IDs, exactly 21 replaced-by-named-successor rows, and exactly 22
+lawfully-unchanged-with-reason rows. Every anchor, disposition, reason, and
+named successor is nonempty and resolves. The validator mechanically
+reconstructs the full census corpus, repeats every search, compares the
+ordered table, walks every consumer, and reproduces those counts. An omitted,
+extra, duplicate, misanchored, third-disposition, undefined-successor, or
+incompletely closed comparator blocks ratification. This table becomes an
+immutable revision-9 invariant only at D7.
+
+
+### 21.8 Revision-9 lifecycle successors and identifier inventory
+
+#### 21.8.1 D7 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. D7 is exactly:
+
+- path: docs/design/covered_earnings_correction.md;
+- ratification_commit: the future 40-lowercase-hex commit created only by
+  §21.9.2 step 3;
+- blob_sha256: SHA-256 of the complete revision-9 document bytes at that
+  commit; and
+- revision: JSON integer 9, excluding booleans.
+
+D2 through D5 retain every exact identity in §20.7.1. The terminal two rows
+of the known/future chain are:
+
+| Symbol | Revision | Ratification commit | Raw bytes | Git blob | Complete raw SHA-256 |
+|---|---:|---|---:|---|---|
+| D6 | 8 | 5d69788a35f3e415e841ecbe4a22acb843dab70c | 2,049,769 | fd7f5f48413da3713114befdc2f021768f81063d | ade1a757c0b29226e7ba12f13dbe9fed7192bc85ffd67b4081bd297107e6cf4c |
+| D7 | 9 | future value fixed only by §21.9.2 step 3 | complete accepted revision-9 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
+
+The prose in the D7 row is not a serialized value. No zero, draft hash,
+suffix hash, D6 hash, working-tree byte count, anticipated commit, or review
+report may populate D7. Every lifecycle predicate reads raw Git objects and
+independently verifies the retained D3/D4, D4/D5, and D5/D6 complete-prefix
+equalities and the new equality between all D6 bytes and D7's first
+2,049,769 bytes. Digest-only, ancestry-only, or transitive-only proof is
+insufficient.
+
+The position-1 registry successor is
+fitting_free_requirement_verification_specs.v6. It retains the complete
+22-row order and replaces exactly the same-position position-1, A1, and A3
+rows; every other row retains its identity and semantics but is freshly
+evaluated.
+
+V-B6 retains requirement_id V-B6 and predicate ID
+verify_fitting_free_claim_v_b6_v1, but retaining that identity never retains
+its prior result. Every preliminary and final evaluation occurs after actual
+official-inventory acceptance. It freshly reruns R10a from the frozen roots,
+reconstructs the complete historical graph/basis attempt, rediscovers the
+pinned physical witness, and obtains only the expected source-adjudication
+abort. It then reruns R10b against the accepted actual inventory and proves
+that no residual-9 key array, carrier, ID, amount read, or passing/accepted
+requirement result was constructed. It may not copy an R10a/R10b test pass
+bit, source member,
+marker, row hash, or enclosing digest. The exact A7-R11 suite must also pass
+by observing its expected aborts. Consequently every fresh V-B6 row is
+nonpassing and every enclosing 22-row requirement domain and bundle is
+nonpassing; `verified/pass` cannot be produced. The three passing amount
+operands retain lawful exact-once-read authority, but those reads do not
+execute on the blocked path.
+
+Position 1 is exactly:
+
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_7_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_7_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_7_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_and_amendment_7_design_identities"}
+~~~
+
+The expected and actual preimages retain §20.7.1's top-level keysets,
+projection-row schema, canonical value-digest law, order/count/domain
+equations, and change only to the displayed Amendment-7 schema names. They
+have exactly eight projection rows. Let G2 through G7 be the complete raw
+design blobs at D2 through D7, K_f^d the staged fitting-free configuration
+design, C_A the final calibrated authority cutoff, and G_C_A the same-path
+raw bytes there. Expected values are
+[D2,D3,D4,D5,D6,D7,D2,G7]; actual values are
+[D2,D3,D4,D5,D6,D7,K_f^d,G_C_A]. The first seven rows have value type
+canonical_json and the eighth raw_git_bytes.
+
+verify_amendment_7_fitting_free_design_identity_v1 is true if and only if
+every inherited shape/order/count/digest equation passes and:
+
+1. both reconstructions of D2 through D7 deep-equal and all six ratification
+   blobs hash to their identities;
+2. K_f^d equals D2 without requiring the configuration bytes to equal the
+   final cutoff;
+3. all four retained/new raw-prefix comparisons through D7 pass;
+4. G_C_A byte-equals G7 and hashes to D7.blob_sha256; and
+5. D2 < D3 < D4 < D5 < D6 < D7 <= C_A under strict Git ancestry for
+   each less-than edge and ancestor-or-equal for the final edge.
+
+False serializes the inherited exact-identity false result with
+predicate_mismatch and cannot select a predecessor registry or receipt.
+
+#### 21.8.2 Capture, A1/A3, domain, and bundle successors
+
+Every capture authorization first added after D7 uses
+fitting_free_model_input_authority_capture_registration.v6. It is the
+complete v5 authorization with its schema value advanced and
+amendment_7_design_identity inserted immediately after
+amendment_6_design_identity. It has exactly 18 keys. design remains D2; its
+amendment children are D3, D4, D5, D6, and D7. Every other
+preliminary-adjudication, invocation, capability, input, path, and failure
+law remains unchanged.
+
+Let A be the unique single-parent commit, strictly after D7, first adding
+only that v6 authorization, and freeze capture HEAD as H_cap before any
+environment, claim, broker, source descriptor, or model input opens. The
+coordinator first constructs
+amendment_7_capture_registration_repository_proof.v1 with exactly these 16
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+The six identities are D2 through D7 and the commit fields are [A,H_cap].
+The seven six-key blob rows have roles amendment_2_ratification through
+amendment_7_ratification, followed by capture_head. Count is integer seven.
+canonicalization retains the inherited common literal; status is exactly
+pass or fail; failure_disposition is exactly
+abort_without_accepted_authority_pair.
+
+verify_amendment_7_capture_registration_repository_identity_v1 is true if
+and only if every inherited proof equation passes and:
+
+1. the strict-parsed v6 authorization has its independently reconstructed
+   digest and exact D2–D7 children;
+2. all six ratification blobs hash correctly, all four prefix comparisons
+   pass, and same-path design bytes at H_cap equal D7;
+3. D2 < D3 < D4 < D5 < D6 < D7 < A <= H_cap;
+4. authorization bytes are unchanged from A through H_cap and all seven
+   blob rows exact-match observed commits, modes, OIDs, and raw bytes; and
+5. every retained descriptor-free repository, tracked-state, clean-checkout,
+   design/implementation-tree, and authorization-byte conjunct passes.
+
+The proof freezes before descriptors, contains no receipt or future commit,
+and passes or aborts without fallback. HEAD remains H_cap through durable
+claim reread.
+
+fitting_free_model_input_authority_capture_claim.v6 retains the complete
+eight-key v5 claim shape/order, advances only schema_version, and embeds the
+complete Amendment-7 proof.
+fitting_free_model_input_authority_capture_input.v6 retains the v5 envelope
+keyset/order, advances only its schema value, and selects the v6
+registration, claim, and proof. The unchanged primary
+fitting_free_model_input_authority_capture.v1 and sidecar
+fitting_free_model_input_authority_capture_environment.v1 retain D2 design
+children; complete hashes transitively bind D3 through D7 and H_cap. A
+successful triple commit T has sole parent H_cap and adds only the v6 claim
+and unchanged primary/sidecar. Exact order remains
+A <= H_cap < T < C, with C the clean final authority cutoff. Historical
+v1–v5 registration, claim, and input versions remain selectable only for
+their exact historical revision cases.
+
+Within fitting_free_requirement_verification_specs.v6, the A1 and A3 rows
+retain their exact §20.7.2 classes, expected/actual preimage schemas,
+ordered source projections, result schema, and authority meanings. Their
+predicate IDs become respectively
+verify_amendment_7_fitting_free_a1_model_universe_authority_v1 and
+verify_amendment_7_fitting_free_a3_weight_source_authority_v1. Their
+cross-bindings change only from the Amendment-6 proof suffix to
+and_amendment_7_capture_repository_proof, and every projection selects the
+v6 capture input/claim/proof. The claim remains lifecycle nonauthority and
+enters no substantive value or inner A1/A3 authority identity.
+
+The domain successor is fitting_free_registration_domain_identity.v6. It
+retains the v5 keyset/order, advances its schema value, selects the complete
+v6 requirement registry, and freshly reconstructs all 22 rows, projection
+evidence, Booleans, failure IDs, counts, and hashes. Position 1, A1, and A3
+use only the successors above; the legal row retains its typed v2 result;
+all others are re-evaluated. V-B6 is one of those freshly reconstructed 22
+rows and must reproduce R10a's complete frozen-source-to-pre-carrier abort,
+R11's concrete frozen-source route/guard suite, and R10b's actual-inventory
+carrier-absence proof in that order. Its four
+numeric-grammar derivation rows remain T-minus and null. The pinned
+nonempty dependency witness makes V-B6 nonpassing in every fresh
+reconstruction; therefore no accepted complete v6 domain instance exists.
+A serialized historical `verified/pass`, empty forbidden-dependency array,
+carrier, residual 9, or predecessor domain is an immediate failure.
+
+The bundle successor is
+covered_earnings_path_applicability_registry_bundle.v7. It retains the v6
+keyset/order, advances its schema value, and embeds the complete v6
+requirement registry. Every source-derived child affected through §21.6 is
+freshly reconstructed from accepted post-D7 Q5, inventory, value maps, legal
+authorities, pass_with_closed_failures relation, and exact-empty applicable
+consumer guards—never from G17 or a configuration. Legal children retain
+their v2/v3/v4 chain. The v6 domain and G17 comparands remain separate
+downstream values and cannot construct an expected bundle. Its complete
+digest becomes path_applicability_specs_sha256. No v6 predecessor bundle,
+filtered source relation, failed consumer, draft Q5, or copied digest is
+admitted.
+
+No accepted v7 bundle instance exists while its required v6 domain is
+nonpassing. A construction attempt must instead cross-bind R10a's
+source-adjudication abort and R10b's carrier-absence proof, confirm that no
+`applicable_source_inventory_keys`, carrier ID, or V-B6 pass is present, and
+abort before emitting a bundle. An empty ordinary consumer guard for a
+passing field cannot erase the source-adjudication witness. The T-plus
+V4379/V5289/V5788 exact-once reads remain lawful in principle but are not
+executed. Copying either historical stage result or manufacturing a carrier
+fails.
+
+#### 21.8.3 Receipt and selected-registration lineage
+
+The following schemas and predicates remain the exact revision-9 lifecycle
+successors, but the V-B6 nonpassing domain means no accepted Amendment-7
+receipt or selected registration can presently instantiate them.
+
+covered_earnings_path_applicability_receipt_core.v6 is the complete v5 core
+with schema_version advanced and amendment_7_design_identity inserted
+immediately after amendment_6_design_identity. It has exactly 21 keys. Its
+six amendment children are D2 through D7; its fitting-free domain is v6; its
+applicability-spec digest hashes the complete v7 bundle; and its
+applicability result carries the v6 domain digest. Every other member and
+the namespace cut edge remain unchanged. receipt_core_sha256 hashes this
+complete v6 core.
+
+When capture supplies A1/A3, validation requires every D2–D7 child to
+deep-equal the corresponding v6 registration/proof identity and reproduce
+its raw blob and complete prefix chain. The calibrated adjudication and
+fitting-free domain bind the same v6 claim, capture input, proof, primary,
+sidecar, triple, and cutoff. Exact lineage is
+D2 < D3 < D4 < D5 < D6 < D7 < A <= H_cap < T < C <= HEAD.
+
+The outer covered_earnings_path_applicability_receipt.v6 retains the complete
+v5 outer keyset/order and every receipt-ID, suffix, namespace, construction,
+status, Git-delta, and failure law, changes only its schema value, and
+requires the complete v6 core. Terminal history dispatch is exact:
+pre-Amendment-3 uses historical v1; Amendment 3 uses v2; Amendment 4 uses v3;
+Amendment 5 uses v4; Amendment 6 uses v5; and Amendment 7 uses v6. No receipt
+version binds another revision.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+verify_amendment_7_selected_registration_design_lineage_v1 is true if and
+only if:
+
+1. selected configuration design exact-matches its D1 or D2 ratification
+   blob and digest;
+2. receipt-core D2 exact-matches revision 4;
+3. D3 exact-matches revision 5;
+4. D4 exact-matches revision 6;
+5. D5 exact-matches revision 7;
+6. D6 exact-matches the pinned revision-8 identity and raw blob;
+7. D7 exact-matches revision 9 and same-path raw bytes at registration HEAD,
+   while all four D3/D4 through D6/D7 prefix comparisons pass;
+8. D1 < D2 < D3 < D4 < D5 < D6 < D7 <= registration HEAD; and
+9. every retained repository, implementation-tree, configuration,
+   invocation, input, output, history, authority, and validation law passes.
+
+False fails v6 receipt validation without fallback. A fresh fitting-free
+selection is authorized under revision-9 authority while retaining the
+revision-4 fitting-free configuration design child. The configuration check
+remains K_f^d = D2, joined to the earlier D7 position-1 proof and later v6
+receipt proof.
+
+#### 21.8.4 Complete successor identifier inventory
+
+The complete lifecycle successor set introduced by Amendment 7 has exactly
+these 16 identifiers:
+
+1. amendment_7_fitting_free_design_identity_expected_preimage.v1;
+2. amendment_7_fitting_free_design_identity_actual_preimage.v1;
+3. verify_amendment_7_fitting_free_design_identity_v1;
+4. fitting_free_requirement_verification_specs.v6;
+5. verify_amendment_7_fitting_free_a1_model_universe_authority_v1;
+6. verify_amendment_7_fitting_free_a3_weight_source_authority_v1;
+7. fitting_free_registration_domain_identity.v6;
+8. covered_earnings_path_applicability_registry_bundle.v7;
+9. fitting_free_model_input_authority_capture_registration.v6;
+10. amendment_7_capture_registration_repository_proof.v1;
+11. verify_amendment_7_capture_registration_repository_identity_v1;
+12. fitting_free_model_input_authority_capture_claim.v6;
+13. fitting_free_model_input_authority_capture_input.v6;
+14. covered_earnings_path_applicability_receipt_core.v6;
+15. covered_earnings_path_applicability_receipt.v6; and
+16. verify_amendment_7_selected_registration_design_lineage_v1.
+
+The complete nonlifecycle schema set newly introduced by Amendment 7 is the
+one identifier amendment_7_closed_failure_boundary_closure_sweep.v1.
+Concatenating the displayed lifecycle order and that singleton is the exact
+17-name successor inventory. The lists are disjoint and contain no alias.
+An omitted, extra, duplicate, misspelled, undefined, or candidate-selectable
+identifier blocks ratification.
+
+The v3 source interface and all official v1 source/Q5/slot/inventory
+artifacts remain completed in place. pass_with_closed_failures, T-plus,
+T-minus, the ten terminals, resolution reasons, consumer_kind values,
+A7-R01 through A7-R09, A7-R10a, A7-R10b, A7-R11,
+semantic_code_map_registration,
+physical_numeric_grammar_registration, the inline §21.4.2 predicate, and
+diagnostic member names are enum, row-ID, defined-term, or schema-member
+values, not independently selectable schemas. D7, Q5, A,
+H_cap, T, C, and K_f^d are context-bound symbols; DC-01 through DC-43 are
+comparator row keys. None enlarges the identifier inventory.
+
+### 21.9 Post-Amendment-7 build, ratification, and registration order
+
+#### 21.9.1 Compiler-to-Q5 and guarded-consumer walk
+
+After D7, the separately reviewed source-only v3 implementation constructs
+all 176 document derivations and all 89,599 complete 16-key field rows before
+reading a serialized comparand or consumer. It reproduces the complete §20
+source law, runs A6-R01 through A6-R11, applies §21.3, and requires the
+complete relation to be `pass_with_closed_failures`. Only then does the exact
+eleven-member pre-Q5 Amendment-7 array run: A7-R01 through A7-R09, R10a, and
+R11. R10a passes as a vector only by rebuilding the historical V-B6 attempt,
+rediscovering the pinned physical dependency, and aborting its
+`verified/pass` candidate at the pre-carrier boundary. R11 reanchors on that
+successful expected-negative audit and discovers every concrete mutation
+route. No inventory or carrier is read at this gate.
+
+Q5 may then be first-created in its one-path, one-parent post-D7 commit. It
+embeds the complete source relation, including all T-minus evidence, but no
+positive join may consume a T-minus field. DC-30, DC-35, and DC-40
+independently prove the D5/Q5, D6/Q5, and D7/Q5 edges and the complete
+eight-key artifact identity. The V-B6 source-adjudication abort does not
+prevent unrelated lawful Q5 construction; it does prevent a V-B6 positive
+source result.
+
+Only after Q5 passes may the guarded slot authority, official slot registry,
+and actual official inventory be constructed. The inventory must satisfy
+the unchanged E-domain equations, exact 1,235-key negative census, and every
+applicable guard. R10b runs immediately after that actual inventory passes,
+strictly before any residual-9 registry, V-B6 requirement result,
+preliminary/final 22-row domain, bundle, or correction final-acceptance gate.
+It passes only by rederiving R10a's source abort and proving that no
+residual-9 key array, carrier, ID, consequence, amount read, or
+passing/accepted V-B6 result is constructed. No synthetic inventory or
+carrier fixture may appear.
+
+Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
+comparands may continue when their own laws pass. The V-B6 branch cannot.
+Every preliminary and final 22-row reconstruction must keep V-B6 in its
+same row position, rerun R10a, rerun both R11 arms from the authenticated
+frozen inputs, then rerun post-inventory R10b, and obtain a
+nonpassing V-B6 row; therefore the complete domain, v7 bundle, correction
+final acceptance, receipt, and registration cannot pass. Final acceptance
+requires R10b's vector status to be pass, but that pass is the expected
+carrier-absence proof and cannot supply the separately required V-B6
+requirement pass.
+
+A dormant T-minus evidence row is not physical consumption. The scoped
+stop is any forbidden physical dependency of V4519, V4902, V5429, or V5916,
+and generally any physical consumption of a non-passing field. V4379,
+V5289, and V5788 are passing fields; their separately guarded exact-once
+physical reads remain lawful in principle, but the blocked residual-9 path
+does not execute them. No consumer may be dropped or relabelled to continue.
+
+#### 21.9.2 Referee, D7, implementation, capture, receipt, and production
+
+This subsection replaces the §20.8.4 ordered protocol for revision 9:
+
+1. Submit the complete append-only §21 candidate bytes to adversarial
+   referee review without a source implementation, Q5, slot, inventory,
+   registry, capture, correction evaluation, output, or other non-document
+   tree change in this authoring lane.
+2. Resolve every finding and verify the complete round-to-round diff; the
+   exact 2,049,769-byte D6 prefix and identity; all frozen sources; the
+   round-1 counts, partitions, precision repairs, A6 vectors, and DC-39; the
+   exact eleven-member §18.2 classification; the 3,365-node/6,351-edge graph
+   and 810-row basis fixtures; the classifier and physical-position domains;
+   the pinned V4902 witness and prospective retraction; both registration
+   senses; the repaired 32-route R11 manifest; the exact pre-Q5 vector array;
+   staged R10b expected-absence gate; every fresh 22-row nonpassing outcome;
+   §21.6 closure sweep; 43-row comparator census; successor inventory; and
+   every compiler, consumer, lifecycle, and build walk. Continue until the
+   exact final bytes receive affirmative ratification.
+3. Ratify only those accepted bytes in one identifiable future document-only
+   commit D7. No authoring, audit, review-response, source, artifact, or
+   runtime change may be included in D7.
+4. After D7, separately review and commit the source-only v3 implementation.
+   Reconstruct the complete relation, run all unchanged A6 vectors, require
+   §21.3 `pass_with_closed_failures`, and run A7-R01 through A7-R09, R10a's
+   expected pre-carrier abort, and both R11 arms. Only that exact suite may
+   precede Q5. First-add Q5 alone at its strict post-D7 commit. After Q5
+   passes, construct and accept only the guarded slot authority, official
+   slot registry, and complete actual official inventory in official order,
+   including its E-domain equations and negative census. Construct no
+   synthetic carrier, residual-9 registry, or 22-row result in this step.
+5. Immediately after the actual inventory in step 4 passes, run A7-R10b.
+   Reauthenticate R10a's frozen inputs and graph, rediscover the source
+   witness, inspect the actual inventory, and prove the absence of every
+   residual-9 key array, carrier, ID, consequence, amount read, and passing
+   or accepted V-B6 result. R10b must pass this expected-negative test before any correction
+   final-acceptance gate is evaluated. A constructed carrier or synthetic
+   fixture fails R10b.
+6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain.
+   Rerun R10a, both R11 arms, and R10b from their proper inputs, never copied
+   outputs. The
+   V-B6 row must be nonpassing and the domain must abort. This is the
+   required terminal outcome under the present evidence; no residual-9
+   registry, V-B6 bundle, correction final acceptance, receipt, registration,
+   production correction, context output, certificate, publication, or
+   external merge may follow from this path.
+7. The v6 capture, domain, receipt, and registration schemas in §21.8 remain
+   defined for exact lifecycle closure and future lawful authority. They may
+   be instantiated only after a later ratified authority changes the
+   presently nonpassing V-B6 result without weakening this layer law,
+   fabricating a carrier, or copying a predecessor result. That later work is
+   outside Amendment 7.
+
+At these draft bytes none of steps 3–7 has occurred. No D7, successor
+implementation, Q5, official inventory, guarded consumer artifact,
+lifecycle instance, carrier, receipt, registration, correction result, or
+output is claimed. The empirical source evidence establishes lawful layer-1
+commitments and narrow direct semantic projections, but also establishes the
+forbidden layer-2 dependency that forces the prospective retraction.
+
+**Amendment 7 is inoperative unless and until its exact D7 ratification
+commit is bound by a validator-accepted v6 fresh-registration receipt.** The
+current V-B6 nonpassing result prevents that receipt. Ratification alone
+authorizes only the separately reviewed source, artifact, implementation,
+and expected-negative checks stated above; it authorizes no correction
+production evaluation, path switch, context run, label change, output, or
+publication.
