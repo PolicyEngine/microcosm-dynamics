@@ -2,9 +2,9 @@
 
 ## State
 
-The substantive round-1 rewrite is complete and entering final mechanical
-verification. Both blockers, both precision repairs, the regressions, and
-all required lifecycle/build consumers are now closed in the document.
+The Amendment-7 round-1 rewrite and final verification are complete. Both
+blockers, both precision repairs, the regressions, and all required
+lifecycle/build consumers are closed in the document.
 
 ## Done
 
@@ -41,8 +41,15 @@ all required lifecycle/build consumers are now closed in the document.
 - Removed the compiler/vector circularity: §21.3 accepts only after unchanged
   A6, then A7-R01–R11 gate Q5; complete preliminary/final 22-row domains remain
   in their §21.8/§21.9 lifecycle positions.
+- Reconstructed all four semantic rows from the frozen source: 28 code-map
+  entries per row, 112 total; all row hashes and the 16,933-byte projection
+  digest reproduce exactly.
+- Reverified the 2,247,088-byte document at SHA-256
+  `4c631be85577ef71d4c48976c343e7c0824f5e9ea01a7ad47f7d88aa3d6f77c2`;
+  the revision-8 prefix, 6,117-byte A7 core, JSON fences, tables, 40 closure
+  seeds, 43-row comparator census, and `git diff --check` all pass.
+- Wrote the final handoff report to `amendment7-r1-fix-report.md`.
 
 ## Next
 
-- Reverify document structure, comparator coverage, immutable prefix, bytes,
-  digest, and commit history; write the final report file.
+- None. Hand off the committed Markdown-only range without pushing it.
