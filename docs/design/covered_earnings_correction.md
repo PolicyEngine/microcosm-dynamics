@@ -33606,40 +33606,52 @@ domains:
 | V-B8 | 52 | 5c59ab2206257b51e7bd82717929314a92660e625bdd632ccb74b3a5193273b9 | [] | empty-array digest |
 | union | 125 | 882063a30bab66b3f0740305f254581cfcd42038b2161ac278ea16bbdec43378 | same four-key array | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
 
-The required ratified-input walk distinguishes direct §18 construction from
-transitive V-B6 semantic registration before classifying any input. Only
-V4902 occurs directly in §18.2: its registered codebook page-180 membership
-and meaning establish descriptor context for the V4901–V4907 block. V4519,
-V5429, and V5916 do not occur as direct §18 projection members. They enter
-the preserved V-B6 authority domain only through the §19.3.1
+Reverification under the commitment/derivation layer law in §21.4.2 has a
+decisive result: **no layer-2 derivation basis for V4519, V4902, V5429, or
+V5916 is physical.** The guarded-retraction fallback is therefore not
+invoked. This conclusion depends on decomposing the ratified mixed-byte
+containers into provenance commitments and derived content before applying
+the value-flow test. Treating the complete 10,887-byte projection, a whole
+page, or the 2,203,624-byte spouse-seam artifact as one indivisible derived
+node is forbidden.
+
+Only V4902 occurs directly in §18.2: its registered page-180 semantic field
+membership and meaning establish descriptor context for the V4901–V4907
+block. V4519, V5429, and V5916 enter through the §19.3.1
 verdicts[1].established_fact_ids reference stream, the corresponding
-spouse-seam era_fact, residual 9's searched-field domain, and the §13.2/§18.3
-semantic concept-and-code-map registration obligation.
+spouse-seam era_fact, residual 9's searched-field domain, and the
+§13.2/§18.3 semantic concept-and-code-map obligation. Their exact layer-2
+semantic bases are:
 
-The exact four-reference audit is:
-
-| Reference | Exact frozen selectors | Complete era_fact row SHA-256 (audit-only) | Direct §18.2 input | Input class |
+| Reference | Exact frozen selectors | Complete era_fact row SHA-256, layer 1 only | Direct §18.2 semantic basis | Layer-2 disposition |
 |---|---|---|---|---|
-| [1976,"V4519"] | /era_facts/9 and /field_evidence/220 | e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46 | none; preserved head/reference-person secondary-job occupation meaning for reference year 1975 | (a), codebook-semantic |
-| [1976,"V4902"] | /era_facts/15 and /field_evidence/609 | f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a | registered page-180 field membership, spouse secondary-job occupation/self-employment meaning, and absence of an annual amount or source allocation | (a), codebook-semantic |
-| [1977,"V5429"] | /era_facts/21 and /field_evidence/1055 | 683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d | none; preserved head/reference-person secondary-job occupation meaning for reference year 1976 | (a), codebook-semantic |
-| [1978,"V5916"] | /era_facts/27 and /field_evidence/1529 | b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c | none; preserved head/reference-person secondary-job occupation meaning for reference year 1977 | (a), codebook-semantic |
+| [1976,"V4519"] | /era_facts/9 and /field_evidence/220 | e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46 | none; preserved head/reference-person secondary-job occupation meaning for reference year 1975 | semantic-only |
+| [1976,"V4902"] | /era_facts/15 and /field_evidence/609 | f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a | page-180 field heading and description; code lexeme/meaning pairs 20/Not self-employed and 31/Self-employed (unincorporated businesses); descriptor-block absence of an annual amount or source allocation | semantic-only |
+| [1977,"V5429"] | /era_facts/21 and /field_evidence/1055 | 683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d | none; preserved head/reference-person secondary-job occupation meaning for reference year 1976 | semantic-only |
+| [1978,"V5916"] | /era_facts/27 and /field_evidence/1529 | b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c | none; preserved head/reference-person secondary-job occupation meaning for reference year 1977 | semantic-only |
 
-The four whole-era_fact hashes authenticate this audit table only; they are
-not favorable-predicate inputs. Each whole row also commits
-codebook_field_keys with physical start/end coordinates. The authority
-predicate instead authenticates the frozen artifact identity, selects the
-exact displayed pointers, and consumes only the 19-member semantic
-projection and its four row digests below. No whole era_fact or
-field_evidence row hash can smuggle a denied member through a digest.
+The four whole-era_fact hashes and the complete spouse-seam artifact's Git
+blob, 2,203,624-byte length, raw SHA-256, and content SHA-256 are layer-1
+commitments. They may cover physical coordinates, declared formats,
+Count/% cells, missing-code classifications, and derived block hashes. They
+assert only that the committed bytes existed; no favorable layer-2 node
+reads those mixed members. The four semantic rows instead select these exact
+source portions: identity values deep-equal era_fact and field-evidence
+members 1, 2, and 3; fact meaning values select only the named era_fact keys;
+exact_codebook_short_label selects field-evidence member 4;
+full_source_description selects member 10; and every semantic_code_map entry
+selects only members 2 and 3 of the corresponding member-11 entry. Members
+5 through 9, each code-map entry's members 0 and 1, members 12 through 14,
+and member 17 are excluded from every layer-2 basis.
 
-Each fact establishes only variable/concept membership, role, job slot,
-purpose, reference timing, reporting unit, attachment status, meaning text,
-and displayed code-map semantics. Each field's exact semantic code-map
-projection has 28 entries in source order, 112 entries across the four rows;
-each entry has only raw_value_or_range and source_meaning. The former is an
-opaque codebook lexeme, not a parsed data value, and the pair is never
-executed against a raw record. Frequencies and percentages are not projected.
+For V4902 specifically, code 20's layer-2 basis is exactly
+/field_evidence/609/11/11/2 and /3, and code 31's is exactly
+/field_evidence/609/11/12/2 and /3. The physical count and percentage
+"5" and ".09" at /field_evidence/609/11/11/0 and /1, declared format at
+/5, layout at /6 and /7, and width at /8 remain outside the basis. The same
+member-position rule applies to all 28 entries of each of the four rows.
+raw_value_or_range remains an opaque displayed codebook lexeme; applying it
+to a record would create a forbidden executable layer-2 dependency.
 
 For a machine-reconstructable boundary witness, the four rows above, in
 displayed order, project exactly these 19 members in this semantic schema
@@ -33679,58 +33691,86 @@ The complete four-row array is 16,933 bytes including its terminal LF and
 has SHA-256
 a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75.
 
-The complete §18.2 13-member construction audit is:
+The 13 serialized keys form the exact eleven-member input grouping below:
+the first group contains the three leading scalar keys, followed by the ten
+remaining top-level members in order. A mixed serialized group is decomposed
+into separate nodes; it never receives a mixed layer label.
 
-| Projection member | Complete consumed input or derivation | Input class |
-|---|---|---|
-| schema_version | exact semantic projection identity | (a), codebook-semantic |
-| claim_id | V-B6 concept identity | (a), codebook-semantic |
-| source_commit | authenticated source-authority selector | (a), codebook-semantic |
-| ordered_source_artifact_identities | the three frozen questionnaire/codebook/closure paths, blobs, and raw/content hashes | (a), codebook-semantic authentication |
-| ordered_existing_extraction_locator_rows | eight semantic questionnaire/codebook locators and their row/range hashes | (a), codebook-semantic |
-| ordered_derived_registered_codebook_page_rows | six registered-document page rows, field-identifier membership, decoded codebook text, and authentication hashes | (a), codebook-semantic |
-| closure_projection | the authenticated absence proof, four extraction rows, four closure rows, and family-summary negative finding | (a), codebook-semantic adjudication history |
-| corpus_wide_cooccurrence_sweep | the complete registered-document/page audit, codebook field-identifier regex matches, candidate rows, and false-positive disposition | (a), codebook-semantic corpus audit |
-| established_findings | four exact concept/meaning findings | (a), codebook-semantic |
-| expressly_not_established_or_used | the exact source-allocation nonclaim | (a), codebook-semantic |
-| reader_seam_consequence | the exact inclusive-total semantic reader consequence | (a), codebook-semantic |
-| successor_residual_ids | exact-empty semantic residual disposition | (a), codebook-semantic |
-| source_disposition | freshly derived verified semantic disposition; no candidate or predecessor result supplies it | (a), codebook-semantic |
+| Eleven-member input root | Layer classification | Exact layer-2 derivation basis, when any | Four-field proof |
+|---|---|---|---|
+| 0. schema_version, claim_id, source_commit | schema_version and claim_id are layer-2 law literals; source_commit is a layer-1 locator | the exact ratified schema-name and V-B6 claim literals only | no field content |
+| 1. ordered_source_artifact_identities | layer 1 only | none | paths, blob OIDs, and raw/content hashes may commit mixed bytes without reading them |
+| 2. ordered_existing_extraction_locator_rows | locator/pointer/row/range hashes are layer 1; separately reconstructed passage extractions are layer 2 | only the questionnaire/codebook semantic statement spans identified by the eight locators | no raw record, format, Count/%, profile, grammar, parsed value, or executable map |
+| 3. ordered_derived_registered_codebook_page_rows | all six document/page/row/range/page-text hash rows are layer 1; six semantic span extractions are layer 2 | only the position-typed spans enumerated below | complete page hashes may cover mixed physical text, but no layer-2 basis contains it |
+| 4. closure_projection | the pointer/hash object is layer 1; pointed absence/extraction/closure/family semantic statements are layer 2 | the exact source-allocation absence and historical family-disposition statements at the ten pointed rows | row hashes are not read as proxies for row content |
+| 5. corpus_wide_cooccurrence_sweep | document/page/row/full-file/page-text hashes are layer 1; semantic occurrence rows, their structural counts, candidate rows, and false-positive disposition are layer 2 | the position-aware 348-row semantic occurrence projection below | Count/% and format text never enters target matching |
+| 6. established_findings | layer 2 | finding 1 derives from the semantic V4379/V5289/V5788 page and questionnaire spans; finding 2 from their accuracy-variable spans; finding 3 from the page-180–182 V4901–V4907 semantic spans; finding 4 from the eight passage extractions, closure semantic statements, and position-aware sweep | all cited bases are semantic-only |
+| 7. expressly_not_established_or_used | layer 2 | closure absence statements plus the semantic sweep's zero formula-candidate disposition | no physical value or observation count |
+| 8. reader_seam_consequence | layer 2 | established_findings plus expressly_not_established_or_used | semantic consequence only |
+| 9. successor_residual_ids | layer 2 | exact closure classification under the findings, nonclaim, and reader consequence | empty classification is derived without a physical field member |
+| 10. source_disposition | layer 2 | successful layer-1 authentication plus all preceding semantic layer-2 nodes; a predecessor pass bit or digest is not a basis | verified is emitted only from the complete lawful walk |
 
-Members 4 through 8 exact-deep-equal the nested schemas already ratified in
-§18.2. In particular, source-artifact identity rows retain exactly path,
+The six layer-1 page rows retain every exact nested member ratified in
+§18.2. Their distinct layer-2 children read only these portions:
+
+| Page-row position | Committed page fields | Exact semantic extraction basis |
+|---:|---|---|
+| 0 | V4379, V4380, V4381, V4382 | field identifiers, quoted labels without the trailing NUM format, descriptions, and the V4382 sentence that the Wife labor part of unincorporated-business income is in V4379 |
+| 1 | V4901, V4902 | field identifiers, quoted labels without NUM, D64/D65 question text, and V4902 code lexeme/meaning columns, including 20 and 31, after removing Count and % columns |
+| 2 | V4903 | the semantic continuation of V4902 and V4903's identifier, label, question, and total-number-of-extra-jobs description; no Count/% or format cell |
+| 3 | V4904, V4905, V4906, V4907 | identifiers, labels without NUM, question/description text, and semantic units such as dollars-and-cents per hour, weeks, hours, and availability; no layout, numeric format, Count/%, or value execution |
+| 4 | V5289, V5290, V5291, V5292 | identifiers, labels without NUM, descriptions, assignment/accuracy meaning, and unincorporated-business context; no physical cell |
+| 5 | V5785, V5786, V5787, V5788, V5789 | identifiers, labels without NUM, descriptions, and assignment/accuracy meaning; no physical cell |
+
+For every decoded page, the position classifier runs before target-value
+matching. Its exact allowed positions, in order, are
+codebook_field_header, v_prefixed_semantic_field_reference,
+parenthesized_semantic_field_reference,
+labelled_table_or_prose_semantic_field_reference,
+unlabelled_concordance_semantic_field_reference, and
+other_field_identifier_lexical_false_positive. A Count/% cell, declared
+format, layout coordinate, raw position, value cell, or other physical
+position is classified outside that list and is never presented to either
+field-ID regular expression. The resulting inline validation fixture is:
+
+~~~json
+{"fixture_id":"amendment_7_v_b6_semantic_occurrence_positions","position_order":["codebook_field_header","v_prefixed_semantic_field_reference","parenthesized_semantic_field_reference","labelled_table_or_prose_semantic_field_reference","unlabelled_concordance_semantic_field_reference","other_field_identifier_lexical_false_positive"],"position_counts":[11,156,36,117,26,2],"occurrence_count":348,"canonical_bytes":91562,"occurrence_rows_sha256":"c19ced36464bfaeb2b4ff16633efd471494641fa6fe8bb54931542648f8e7ef0"}
+~~~
+
+Applying the two §18.2 field-ID expressions only to those 348 semantic
+occurrences reproduces the exact 18 candidate IDs and
+5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed ID
+digest, the sole psid-corpus-document-0098/page-573 same-page candidate, and
+the exact six-key candidate rows. Those 18 rows remain exactly 6,209
+canonical bytes with SHA-256
+039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7.
+This prospectively replaces only the sweep's layer-2 derivation basis; it
+does not alter a §18 member or the 10,887-byte projection. A counterfactual
+equal-width page-180 change from the physical Count cell "      5" to
+"   4379" makes the old page-wide regex invent an annual match, while the
+position-aware semantic rows remain byte-equal. A full-page regex is
+therefore forbidden at layer 2.
+
+The nested schemas remain exact. Source-artifact identity rows retain path,
 blob_oid, raw_sha256, and content_sha256; existing-locator rows retain
-exactly locator_id, source_pointer, source_row_sha256, and range_sha256; and
-derived-codebook-page rows retain exactly source_document_id,
-source_document_row_pointer, source_document_row_sha256, page_locator_id,
-page_locator_row_sha256, range_sha256, and derived_page_text_sha256. The
-closure projection retains its exact six members and the exact two-member
-source_pointer/source_row_sha256 nested rows: absence_proof_pointer,
-absence_proof_row_sha256, ordered_extraction_v_b6_rows,
-ordered_closure_v_b6_rows, closure_family_pointer, and
-closure_family_row_sha256. The cooccurrence sweep retains all 15 ratified
-members: document_domain_pointer, document_count, document_rows_sha256,
-text_derivation_tool, text_derivation_version, text_derivation_arguments,
-extra_job_token_regex, annual_total_token_regex, candidate_row_field_order,
-ordered_candidate_document_ids, candidate_count,
-candidate_document_ids_sha256, candidate_rows_sha256,
-sole_same_page_candidate, and formula_candidate_count. Its candidate rows
-retain source_document_id, document_identity_sha256, full_file_sha256,
-extra_job_token_pages, annual_total_token_pages, and same_page_intersection;
-its sole-candidate row retains source_document_id, pdf_page_number_1_based,
-derived_page_text_sha256, and disposition. No nested member is elided.
+locator_id, source_pointer, source_row_sha256, and range_sha256; and page
+rows retain source_document_id, source_document_row_pointer,
+source_document_row_sha256, page_locator_id, page_locator_row_sha256,
+range_sha256, and derived_page_text_sha256. The closure projection retains
+its six members and two-member pointer/hash rows. The sweep retains all 15
+members and its exact six-member candidate and four-member sole-candidate
+rows. This is node-level classification, not member-list surgery.
 
-The document/page/candidate counts in that audit authenticate the semantic
-source-document corpus; they are not nonmissing-observation counts parsed
-from raw data. Likewise, the matched field identifiers are codebook text,
-not raw fixed-width data tokens. No raw fixed-width record or data token,
-padding rule, numeric profile, DFA traversal, parsed numeric value, raw-data
-observation count, or executable mapping is an input. Thus every projection
-member and every field-specific input above is class (a); there is no
-class-(b) input forcing the guarded fallback. Each field nevertheless keeps
-its exact incomplete_source_numeric_authority terminal and
-literal_only_zero_diagnostic_padding_capacity reason for the independently
-ratified physical/numeric authority.
+document_count, candidate_count, and formula_candidate_count count committed
+documents or position-typed semantic occurrence results. They are not a
+field's raw-data frequency, percentage, or nonmissing-observation count and
+do not change when a Count/% cell changes. No raw fixed-width record or data
+token, layout/format/width, raw-data frequency/percentage/count,
+profile/padding, grammar/DFA/partition/action, parsed or canonical numeric
+value, or executable mapping is in a four-reference layer-2 basis. Each
+field nevertheless retains incomplete_source_numeric_authority,
+literal_only_zero_diagnostic_padding_capacity, and its null physical
+members under the independently ratified physical authority.
 
 #### 21.1.5 Q5 dictionary/codebook join universes
 
@@ -33877,9 +33917,14 @@ only these revision-8 conclusions:
    pass_with_closed_failures; and
 6. the exact V-B6 source-adjudication chain in §13.2, §§18.2–18.4,
    §19.3.1, and residual 9 in §19.3.4 is composed with the independently
-   ratified semantic/physical authority boundary in §21.4.2. Its exact
-   semantic-only construction may retain verified/pass; any physical use of
-   the four references remains guarded and non-passing.
+   ratified commitment/derivation layer law in §21.4.2. Its layer-1
+   commitments may cover mixed bytes, but every favorable layer-2 basis for
+   V4519, V4902, V5429, and V5916 is semantic-only. A7-R10a closes the
+   pre-carrier result before Q5; A7-R10b constructs residual 9 only from the
+   later accepted official inventory. Any forbidden physical layer-2
+   dependency of those four non-passing references remains guarded and
+   non-passing. The separately passing V4379, V5289, and V5788 amount fields
+   retain their required guarded exact-once physical reads.
 
 The failure precedence, all source reconstruction, exact token/rendering
 laws, complete row shapes, branch-specific consumer restrictions, and every
@@ -33892,14 +33937,18 @@ existing consumer predicate. At any conflict on the six points above, this
 section is the later and more specific rule. Silence changes nothing else.
 
 For V-B6, the §13.2 and §18.3 commands to register every field and exact
-code map mean semantic_code_map_registration: authentication of variable
-membership, concept, meaning text, non-executable displayed code lexemes and
-meanings, attachment, and wave/reference-year identity. Section 20's
-pre-profile/literal registration, registered_numeric_grammar, token, padding,
-and parser laws mean physical_numeric_grammar_registration. These are two
-distinct, independently ratified senses of registration. Neither supplies,
-defaults, upgrades, or substitutes for the other, and the shared word
-"register" cannot conflate them.
+code map mean semantic_code_map_registration: layer-2 authentication of
+variable membership, concept, meaning text, non-executable displayed code
+lexemes and meanings, attachment, and wave/reference-year identity from the
+exact semantic bases admitted by §21.4.2. Section 20's pre-profile/literal
+registration, registered_numeric_grammar, token, padding, and parser laws
+mean physical_numeric_grammar_registration: separately admitted layer-2
+physical content. These are two distinct, independently ratified senses of
+registration. A shared layer-1 artifact, page, row, or digest commitment may
+authenticate the bytes from which either is lawfully derived, but establishes
+neither registration by itself. Neither sense supplies, defaults, upgrades,
+or substitutes for the other, and the shared word "register" cannot
+conflate them.
 
 ### 21.3 Complete relation with closed failures
 
@@ -34028,8 +34077,10 @@ Before a physical consumer c reads any such value, it constructs its complete or
 raw-field reference stream. Direct raw_field_id values, derivation IDs,
 complete-row hashes, Q5 join foreign keys, layouts, value-map entries,
 crosswalk members, registry references, and transitive nested projections
-must all resolve to the unique complete R row. A digest or enclosing object
-cannot hide a raw-field reference. Missing resolution, duplicate resolution,
+must all resolve to the unique complete R row. At layer 2, a digest or
+enclosing object cannot hide a raw-field reference; a layer-1-only
+commitment creates no such content reference unless a layer-2 node reads
+through it. Missing resolution, duplicate resolution,
 an outside-denominator key, an unequal ID/full-row hash, or a reference
 stream that does not exact-cover the consumer's independently derived
 references aborts before terminal testing.
@@ -34082,34 +34133,226 @@ pass_with_closed_failures. Search, census, complete-relation evidence
 embedding, and the exact lawful semantic disposition below are not physical
 consumption. Selection into a physical or executable positive reference is.
 
-#### 21.4.2 Semantic/physical source-adjudication authority boundary
+#### 21.4.2 Commitment/derivation layer law and source-adjudication boundary
 
-Semantic codebook authority and physical numeric-grammar authority are
-distinct, independently ratified authorities. The closed-failure guard in
-§21.4.1 quantifies over physical consumption. A semantic-only consumption
-is lawful if and only if all three conditions hold:
+Every evidentiary-DAG assertion belongs to exactly one layer. **Layer 1 —
+provenance commitment** consists only of paths, commit or blob identities,
+locators, byte ranges, and digests asserting that exact bytes existed at the
+stated identity or location. A layer-1 commitment may cover mixed semantic
+and physical bytes, including physical content of a non-passing field.
+Constructing, validating, or propagating that commitment is not a content
+read. Thus the six complete page-text hashes in §18.2 and the frozen
+2,203,624-byte spouse-seam artifact hash are lawful layer-1 commitments.
 
-1. the consuming law enumerates its complete ordered semantic reference
-   stream, exact source selectors, complete permitted member projection, and
-   downstream result;
-2. a machine-reconstructed dependency walk proves that no raw record or
-   token, physical layout or format used for parsing, raw-data count, profile,
-   padding rule, grammar, DFA, parsed numeric value, or executable mapping is
-   read directly, transitively, or through a digest; and
-3. the semantic authority independently exact-matches its ratified source
-   artifact, fact rows, meaning/code-map projection, and governing ratified
-   result. A candidate assertion, predecessor pass bit, or copied digest is
-   not authority.
+**Layer 2 — derived content** consists of every fact, finding, registration,
+classification, count, format claim, disposition, consequence, or other
+value that enters a result. Every layer-2 node declares the complete ordered
+derivation basis of exact portions of layer-1-committed content that it
+reads. A canonical object may contain nodes from both layers; neither its
+serialization nor a digest over that serialization collapses them into one
+layer-2 node.
 
-For a proposed semantic-only consumption s, the machine predicate constructs
-source_adjudication_forbidden_dependency_rows(s) from an independently
-derived, complete dependency graph before accepting a semantic result. It
-contains every forbidden dependency in dependency-walk order. Each row has
-exactly these eleven keys in this order:
+For a non-passing field, every layer-2 basis excludes raw records or tokens,
+layout/format/width, source Count/% or raw-data/nonmissing counts,
+profile/padding, grammar/DFA/partition/action, parsed or canonical numeric
+values, and executable mappings. A physical datum is consumed if and only if
+some layer-2 node's content would change when that datum changes with all
+other content fixed. **Digests hide nothing at layer 2:** a value read
+through a digest to derive layer-2 content is consumption. A layer-1
+commitment over mixed bytes is nevertheless lawful because no layer-2 basis
+reads its physical portion. A digest change caused solely by recommitting
+changed bytes is layer-1 commitment tracking, not consumption.
+
+Semantic codebook authority and physical numeric-grammar authority therefore
+remain distinct. A semantic layer-2 result is lawful if and only if all
+three conditions hold:
+
+1. the law enumerates its exact eleven §18.2 roots, complete reference
+   stream, source selectors, member projection, layer assignments, ordered
+   layer-2 basis manifest, and downstream result;
+2. the graph defined below exact-matches its pinned node/edge domain, and a
+   complete value-flow walk of every layer-2 basis proves that every basis
+   for V4519, V4902, V5429, and V5916 is semantic-only. No raw token,
+   layout/format/width, Count/% or raw-data count, profile/padding,
+   grammar/DFA/partition/action, parsed/canonical value, executable mapping,
+   or layer-2 digest proxy may be read directly or transitively; and
+3. every layer-1 source commitment exact-matches and every layer-2 semantic
+   value is freshly rederived from its declared content portions. A
+   candidate assertion, predecessor pass bit, copied digest, or commitment
+   result is not content authority.
+
+The graph node row has exactly node_id and node_type. node_type has this
+closed canonical order:
+
+~~~text
+artifact
+page
+extraction-row
+field-reference
+layer-1 commitment
+layer-2 derived node
+~~~
+
+artifact, page, extraction-row, and field-reference are addressable
+structural nodes; only the last two node types make layer assertions. An edge
+row has exactly edge_type, from_node_id, and to_node_id. edge_type has the
+closed order contains, commits-to, derives-from. contains points from a
+container to its direct member, commits-to points from a layer-1 commitment
+to the exact structural or derived bytes it authenticates, and derives-from
+points from a layer-2 node to a declared basis node. Unknown types, duplicate
+node IDs, duplicate edges, dangling endpoints, and self-edges fail.
+
+The exact root array, in order, is:
+
+~~~json
+["root:18.2:00:identity_triple","root:18.2:01:ordered_source_artifact_identities","root:18.2:02:ordered_existing_extraction_locator_rows","root:18.2:03:ordered_derived_registered_codebook_page_rows","root:18.2:04:closure_projection","root:18.2:05:corpus_wide_cooccurrence_sweep","root:18.2:06:established_findings","root:18.2:07:expressly_not_established_or_used","root:18.2:08:reader_seam_consequence","root:18.2:09:successor_residual_ids","root:18.2:10:source_disposition"]
+~~~
+
+The following generative domain is normative. Its eleven root nodes are
+artifact containers. The other eight artifact nodes are
+data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json,
+data/external/psid_questionnaire_corpus_extraction_v1.json,
+data/external/covered_earnings_questionnaire_closure_attempt_v1.json,
+data/external/psid_codebook_field_evidence/
+ry1975_1977_spouse_concept_seam_v1.json, the 456-document corpus, and PDF
+artifacts psid-corpus-document-0046, -0051, and -0056. The seven page
+nodes are the six displayed §21.1.4 pages plus
+psid-corpus-document-0098/page 573. The 26 extraction-row nodes are the eight
+existing locator rows, the ten closure pointers /absence_proofs/1,
+/psid_vb_residual_extractions/1 through /4,
+/psid_questionnaire_evidence_results/1 through /4, and
+/psid_vb_family_summary/1, plus /era_facts/9, /15, /21, /27 and
+/field_evidence/220, /609, /1055, /1529 in the spouse-seam artifact.
+
+The 24 field-reference nodes, and their field_reference_position values,
+are exactly:
+
+~~~text
+0  1976 V4519 semantic row       12 1976 V4905 page 182
+1  1976 V4902 semantic row       13 1976 V4906 page 182
+2  1977 V5429 semantic row       14 1976 V4907 page 182
+3  1978 V5916 semantic row       15 1977 V5289 page 22
+4  1976 V4379 page 20            16 1977 V5290 page 22
+5  1976 V4380 page 20            17 1977 V5291 page 22
+6  1976 V4381 page 20            18 1977 V5292 page 22
+7  1976 V4382 page 20            19 1978 V5785 page 22
+8  1976 V4901 page 180           20 1978 V5786 page 22
+9  1976 V4902 page 180           21 1978 V5787 page 22
+10 1976 V4903 page 181           22 1978 V5788 page 22
+11 1976 V4904 page 182           23 1978 V5789 page 22
+~~~
+
+The 38 layer-1 commitment nodes are one source-commit node; three ordered
+source-artifact commitments; eight locator commitments; six page-row
+commitments; ten closure-row commitments; four sweep commitments for the
+document rows, candidate IDs, candidate rows, and sole-page text; and six
+spouse-seam commitments for the complete artifact, four semantic rows, and
+their array. The 36 layer-2 nodes are the identity literal; six page semantic
+extractions; four spouse-seam semantic rows; the following 18 cooccurrence
+candidate documents in order; sole-candidate and sweep results; and the five
+terminal nodes established_findings, expressly_not_established_or_used,
+reader_seam_consequence, successor_residual_ids, and source_disposition:
+
+~~~json
+["psid-corpus-document-0023","psid-corpus-document-0027","psid-corpus-document-0043","psid-corpus-document-0046","psid-corpus-document-0047","psid-corpus-document-0048","psid-corpus-document-0053","psid-corpus-document-0058","psid-corpus-document-0063","psid-corpus-document-0068","psid-corpus-document-0073","psid-corpus-document-0078","psid-corpus-document-0083","psid-corpus-document-0088","psid-corpus-document-0093","psid-corpus-document-0098","psid-corpus-document-0103","psid-corpus-document-0109"]
+~~~
+
+Node IDs use exactly the displayed root IDs and these prefixes:
+artifact:, page:, extraction-row:, field-reference:, l1:, and l2:. The
+semantic field IDs are
+field-reference:{position:02d}:semantic:{wave}:{field}; page field IDs are
+field-reference:{position:02d}:page:{document}:{page}:{wave}:{field}.
+Page-extraction IDs are l2:page-semantic-extraction:{document}:{page};
+semantic-row IDs are l2:semantic-projection-row:{position:02d}:{wave}:{field};
+candidate IDs are l2:cooccurrence-candidate:{position:02d}:{document}.
+Commitment IDs carry their displayed group and zero-based position. No
+implementation-selected alias is permitted.
+
+contains edges connect each root to every node serialized in that root;
+the three supporting JSON artifacts contain their named extraction rows; the
+three PDF artifacts and six pages contain their pages/field references; the corpus
+contains the sole-candidate page; and each era and field extraction contains
+its matching semantic field reference. commits-to edges connect every
+commitment to exactly its named target: page commitments additionally commit
+to their PDF artifact, both candidate-ID and candidate-row commitments commit
+to all 18 candidate nodes, and the semantic-array commitment commits to all
+four semantic rows. derives-from edges connect: each page extraction to its
+page and all its field references; each candidate to the corpus; the sole
+candidate to page 573; the sweep to all candidates and the sole result;
+established_findings to all six page extractions, all four semantic rows, and
+the sweep; expressly_not_established_or_used to all ten closure extractions
+and the sweep; reader_seam_consequence and successor_residual_ids each to
+the findings and nonclaim; source_disposition to those four terminal results
+and the sweep; and each spouse-seam semantic row to the spouse-seam artifact,
+its era row, its field row, and its semantic field reference. These rules
+produce this exact fixture:
+
+~~~json
+{"fixture_id":"amendment_7_v_b6_dependency_graph_topology_v1","root_count":11,"node_count":150,"node_type_counts":{"artifact":19,"page":7,"extraction-row":26,"field-reference":24,"layer-1 commitment":38,"layer-2 derived node":36},"edge_count":325,"edge_type_counts":{"contains":131,"commits-to":83,"derives-from":111},"reachable_node_count":150,"topological_visit_count":150,"canonical_bytes":65263,"sha256":"29cfaf32c9800ff6db41a503c1d8ed97f9fbf5569d932c8711069968445e9006"}
+~~~
+
+Canonical node order is node-type ordinal then UTF-8 node_id. Canonical edge
+order is edge-type ordinal, UTF-8 from_node_id, then UTF-8 to_node_id. Roots
+remain in displayed order. The serialized envelope has exactly edges, nodes,
+and roots; Python JSON uses sorted keys, compact separators, ASCII escaping,
+no NaN, and one terminal LF. Directed closure seeds the eleven roots and
+repeatedly adds the to-node of every outgoing edge from a reached node until
+a fixed point. It must reach 150 nodes. Kahn's algorithm over the same edge
+set must visit 150 nodes; a cycle fails.
+
+Topology is necessary but not content authority. Each of the 111
+derives-from edges has exactly one ordered_derivation_basis_rows member with
+these five keys:
+
+~~~text
+derived_node_id
+basis_position
+basis_node_id
+basis_selector
+basis_content_class
+~~~
+
+Within a derived node, basis_position follows canonical target-node order.
+basis_selector is one exact JSON pointer, page-local zero-based UTF-8
+half-open span, or prior layer-2 node ID. basis_content_class is exactly one
+of law_literal, layer_1_admission_only, semantic_identity,
+semantic_statement, semantic_code_lexeme_and_meaning,
+semantic_occurrence_relation, semantic_structural_count,
+prior_layer_2_result, raw_record_or_token, layout_format_or_width,
+frequency_percentage_or_raw_count, profile_or_padding,
+grammar_dfa_partition_or_action, parsed_or_canonical_value,
+executable_mapping, or layer_2_digest_proxy. The last eight are physical.
+
+The basis selector table is exact: page-extraction bases are precisely the
+six semantic span sets in §21.1.4 and their 20 header field-reference spans;
+candidate and sole-candidate bases are the applicable rows of the 348-row
+c19ced36464bfaeb2b4ff16633efd471494641fa6fe8bb54931542648f8e7ef0
+semantic-occurrence fixture; sweep and terminal bases are their named prior
+layer-2 rows; closure bases are the ten exact displayed pointers; and each
+spouse-seam row uses layer_1_admission_only for the artifact edge,
+semantic_statement for the exact named era-fact keys and field members 4 and
+10, semantic_code_lexeme_and_meaning for every field member-11 submember 2
+and 3, and semantic_identity for the field-reference edge. This table, the
+eleven-member audit and six-page selector table in §21.1.4, and the
+derives-from edges must exact-deep-equal one-to-one. A target without a row,
+an extra row, unequal selector, unequal class, nonconsecutive basis_position,
+or selector that addresses a whole page or mixed row fails before value-flow
+testing.
+
+For each possible physical basis, the diagnostic must define a position even
+when the favorable walk does not contain it. This includes physical members
+associated with V4379, V5289, V5788, and every other field on the six
+committed pages. A proposed source adjudication s therefore constructs
+source_adjudication_forbidden_dependency_rows(s) by walking the verified
+graph and its complete basis rows, not from a prelabelled fixture. Every
+physical basis whose value flows to a layer-2 result appears once, ordered by
+canonical dependency_graph_node_position and then basis_position. Each row
+has exactly these twelve keys:
 
 ~~~text
 source_adjudication_consumer_id
-semantic_reference_position
+dependency_graph_node_position
+field_reference_position
 forbidden_dependency_position
 interview_wave
 raw_field_id
@@ -34123,85 +34366,61 @@ resolution_reason
 
 source_adjudication_consumer_id is exactly
 amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1.
-semantic_reference_position is zero-based in the complete semantic reference
-stream; forbidden_dependency_position is zero-based in the filtered
-forbidden-dependency stream. forbidden_dependency_class is one of the eight
-exact A7-R11 classes in §21.5. forbidden_dependency_locator is the exact
-two-string [artifact_or_fixture_identity,JSON_pointer_or_member_path] pair.
-The final four members exact-resolve the reference's complete R row and
-§21.1.2 disposition. A digest or enclosing object cannot hide an occurrence,
-and every occurrence is reported rather than only the first.
+dependency_graph_node_position is the zero-based position of the consuming
+layer-2 node in the canonical node array. field_reference_position uses the
+complete 0–23 table above; it is null only for a physical portion not
+attributable to a field. Thus page-row format, Count/%, and layout members
+have defined positions for all 20 page fields, including the distinct V4902
+page occurrence at position 9. forbidden_dependency_position is zero-based
+in this filtered order. forbidden_dependency_class is one of the eight exact
+A7-R11 classes in §21.5. forbidden_dependency_locator is the real two-string
+[artifact_identity, JSON_pointer_or_zero_based_half_open_byte_range] pair,
+never a case ID or synthetic locator. The last four members exact-resolve the
+field's complete R row; they are null only for a non-field physical portion.
+All occurrences are reported.
 
-The predicate accepts only when that array is exactly []. A missing or
-reordered semantic enumeration fails condition 1; a nonempty forbidden array
-fails condition 2. Either failure atomically aborts source adjudication before
-any source member, result, requirement row, carrier, registry row, correction
-value, or output is accepted. Failure of condition 3 likewise aborts semantic
-adjudication. The eleven-key diagnostic is evidence only and never reads or
-serializes the forbidden value itself.
+The predicate accepts only when the topology count, digest, root closure,
+acyclic visit, and complete 111-row basis manifest pass and the forbidden
+array reconstructed by the walk is exactly []. An implementation must not
+serialize or accept [] without walking that graph. A missing or reordered
+root/reference/basis fails condition 1; a topology mismatch, basis mismatch,
+or nonempty array fails condition 2; an authentication or rederivation
+failure fails condition 3. Failure aborts before any source member or result
+is accepted. The diagnostic is evidence only and does not serialize the
+forbidden value. If the dependency reaches an actual physical consumer, that
+consumer separately runs §21.4.1. Passing-field physical reads may be lawful
+there; they are still forbidden bases for this semantic-only source result.
 
-This source-boundary diagnostic is not an eighth consumer_kind and cannot be
-used by an actual physical consumer. If a forbidden dependency is presented
-to any physical consumer, that consumer must also run the ordinary §21.4.1
-guard with its exact one-of-seven consumer_kind and row identity. This
-disposition is not a generic evidence exemption and cannot be inferred for an
-unlisted semantic consumer.
-
-The sole revision-9 favorable instance is the complete §18.2 source
-projection through the §18.4 V-B6 source member and verified/pass result,
-the §19.3.4 residual-9
-documented_no_source_allocation_required/inclusive_total_exact_once/
-continue_registered_parent consequence, and the freshly evaluated V-B6
-requirement row. Its complete semantic failure-reference stream is exactly:
+The sole favorable instance at the pre-carrier boundary is the complete
+§18.2 projection through the §18.4 V-B6 source member and verified/pass
+result. Residual 9, its inventory-derived carrier, the V-B6 requirement row,
+and every domain or bundle are deferred to A7-R10b after official-inventory
+construction. The complete four-field stream remains:
 
 ~~~json
 [[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]]
 ~~~
 
-The permitted field-specific value is exactly the 19-member, four-row
-semantic projection in §21.1.4, with semantic_code_map entries limited to
-raw_value_or_range and source_meaning and treated as non-executable evidence.
-The authority proof may additionally consume only the frozen source path,
-commit, Git blob, raw/content hashes, displayed fact-row pointers, the four
-19-member semantic-row hashes, and ratified §18 projection/source/result
-identities needed to authenticate that projection. It may not consume a
-whole era_fact or mixed field_evidence row or either whole-row digest.
+Its permitted content is exactly the 19-member, four-row semantic projection
+in §21.1.4. For V4902, the direct §18.2 content is only page-180 field
+membership and meaning: code lexemes 20 and 31 express not-self-employed and
+unincorporated-self-employed concepts, and V4901–V4907 is descriptor context
+with no annual amount or source-established allocation. The lexemes are
+never applied to raw data. The other three references enter only through the
+exact transitive semantic rows in §21.1.4.
 
-In particular, codebook_field_key, codebook_field_keys, declared_format,
-layout_start, layout_end, raw_width, spss_numeric_format, code-map frequency
-and percent, an executable missing_code_map_indices use,
-missing_raw_token_grammar_status, any raw-fixed-width source-document member,
-derived_field_block_sha256, and any whole field_evidence row hash are outside
-the permitted projection. So are every downstream typed_parse_specs,
-raw_token_grammar, normalized_format_profile, padding_rule,
-registered_numeric_grammar, DFA/partition/action member, parsed/canonical
-value, raw-token-to-value entry, and observation count. A digest or locator
-cannot hide one of these inputs.
-
-For V4902, the allowed direct §18.2 input is only the authenticated
-registered codebook-page-180 membership and meaning: occupation codebook
-entries 20 and 31 express not-self-employed and unincorporated-self-employed
-concepts, and V4901–V4907 is descriptor context with no annual amount or
-source-established allocation. The code lexemes are never applied to raw
-data. The other three references have no direct §18.2 input; their permitted
-values are only the exact transitive semantic rows in §21.1.4.
-
-The machine predicate therefore accepts this chain only when its consumer
-chain, four-reference order, 19-member projection, 16,933-byte projection
-digest, ratified semantic authority proof, exact-empty
-source_adjudication_forbidden_dependency_rows array, complete 10,887-byte
+Acceptance requires the exact graph and basis walk, four-reference order,
+19-member projection, 16,933-byte projection with SHA-256
+a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75,
+position-aware sweep fixture, exact-empty diagnostic, complete 10,887-byte
 §18.2 projection with SHA-256
 7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
-and exact §18.4/§19.3.4 result all agree. The four numeric-grammar rows
-remain incomplete_source_numeric_authority with null physical grammar.
-Nothing in the favorable result may parse or map them.
-
-This also fixes the two registration senses prospectively. The §13.2/§18.3
-"register every field/code map" command is satisfied only by the ratified
-semantic projection and its complete semantic authority. It grants no
-physical parser. Conversely, physical_numeric_grammar_registration can make
-a raw value executable only after its independently passing §19–§20 law; it
-cannot establish a source concept or cure missing semantic authority.
+and exact §18.4 result. All four numeric-grammar rows remain
+incomplete_source_numeric_authority with null physical grammar. The
+§13.2/§18.3 semantic registration grants no physical parser;
+physical_numeric_grammar_registration requires its independently passing
+§19–§20 law and cannot establish a source concept or cure missing semantic
+authority.
 
 #### 21.4.3 Boundary enumeration
 
