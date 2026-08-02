@@ -37449,7 +37449,7 @@ This subsection replaces the §20.8.4 ordered protocol for revision 9:
 2. Resolve every finding and verify the complete round-to-round diff; the
    exact 2,049,769-byte D6 prefix and identity; all frozen sources; the
    round-1 counts, partitions, precision repairs, A6 vectors, and DC-39; the
-	   exact eleven-member §18.2 classification; the 3,359-node/6,343-edge graph
+   exact eleven-member §18.2 classification; the 3,359-node/6,343-edge graph
    and 810-row basis fixtures; the classifier and physical-position domains;
    the pinned V4902 witness and prospective retraction; both registration
    senses; the repaired 32-route R11 manifest; the exact pre-Q5 vector array;
