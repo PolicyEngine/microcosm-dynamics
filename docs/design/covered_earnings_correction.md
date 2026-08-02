@@ -33607,13 +33607,26 @@ domains:
 | union | 125 | 882063a30bab66b3f0740305f254581cfcd42038b2161ac278ea16bbdec43378 | same four-key array | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
 
 Reverification under the commitment/derivation layer law in §21.4.2 has a
-decisive result: **no layer-2 derivation basis for V4519, V4902, V5429, or
-V5916 is physical.** The guarded-retraction fallback is therefore not
-invoked. This conclusion depends on decomposing the ratified mixed-byte
-containers into provenance commitments and derived content before applying
-the value-flow test. Treating the complete 10,887-byte projection, a whole
-page, or the 2,203,624-byte spouse-seam artifact as one indivisible derived
-node is forbidden.
+decisive result: **a layer-2 derivation basis for V4902 is physical.** The
+guarded-retraction fallback is therefore mandatory. The forcing input is
+root 5, `corpus_wide_cooccurrence_sweep`: its page-number arrays,
+page-reset occurrence ordinals, same-page intersection, sole-candidate
+classification, and dependent count are layout-derived layer-2 content.
+Changing only authenticated document 0046, decoded page 180, UTF-8 byte
+`[572:573]` from `20` to `0a` leaves the `V4902` token at `[568:572]`
+unchanged but changes its layer-2 position classification from
+`codebook_field_header` to
+`v_prefixed_semantic_field_reference`. The page is 3,166 bytes with SHA-256
+`3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9`.
+That one-datum nonconstancy satisfies the value-flow definition and is
+enough to bar a favorable result.
+
+This is not caused by the page or artifact hashes. Treating the complete
+10,887-byte projection, a whole page, or the 2,203,624-byte spouse-seam
+artifact as one indivisible derived node remains forbidden. The hashes are
+lawful layer-1 commitments even when their preimages include Count/% or
+other physical cells. The defect is that member 5 affirmatively derives
+page-positioned content at layer 2.
 
 Only V4902 occurs directly in §18.2: its registered page-180 semantic field
 membership and meaning establish descriptor context for the V4901–V4907
@@ -33626,7 +33639,7 @@ semantic bases are:
 | Reference | Exact frozen selectors | Complete era_fact row SHA-256, layer 1 only | Direct §18.2 semantic basis | Layer-2 disposition |
 |---|---|---|---|---|
 | [1976,"V4519"] | /era_facts/9 and /field_evidence/220 | e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46 | none; preserved head/reference-person secondary-job occupation meaning for reference year 1975 | semantic-only |
-| [1976,"V4902"] | /era_facts/15 and /field_evidence/609 | f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a | page-180 field heading and description; code lexeme/meaning pairs 20/Not self-employed and 31/Self-employed (unincorporated businesses); descriptor-block absence of an annual amount or source allocation | semantic-only |
+| [1976,"V4902"] | /era_facts/15 and /field_evidence/609 | f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a | the direct field-heading/description and opaque code-lexeme/meaning projection is semantic-only; root 5 separately reads page layout for this reference | **physical layer-2 basis; fallback-forcing** |
 | [1977,"V5429"] | /era_facts/21 and /field_evidence/1055 | 683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d | none; preserved head/reference-person secondary-job occupation meaning for reference year 1976 | semantic-only |
 | [1978,"V5916"] | /era_facts/27 and /field_evidence/1529 | b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c | none; preserved head/reference-person secondary-job occupation meaning for reference year 1977 | semantic-only |
 
@@ -33634,8 +33647,8 @@ The four whole-era_fact hashes and the complete spouse-seam artifact's Git
 blob, 2,203,624-byte length, raw SHA-256, and content SHA-256 are layer-1
 commitments. They may cover physical coordinates, declared formats,
 Count/% cells, missing-code classifications, and derived block hashes. They
-assert only that the committed bytes existed; no favorable layer-2 node
-reads those mixed members. The four semantic rows instead select these exact
+assert only that the committed bytes existed; those commitments do not cause
+the fallback. The four semantic rows separately select these exact
 source portions: identity values deep-equal era_fact and field-evidence
 members 1, 2, and 3; fact meaning values select only the named era_fact keys;
 exact_codebook_short_label selects field-evidence member 4;
@@ -33651,7 +33664,8 @@ For V4902 specifically, code 20's layer-2 basis is exactly
 /5, layout at /6 and /7, and width at /8 remain outside the basis. The same
 member-position rule applies to all 28 entries of each of the four rows.
 raw_value_or_range remains an opaque displayed codebook lexeme; applying it
-to a record would create a forbidden executable layer-2 dependency.
+to a record would create another forbidden executable layer-2 dependency.
+These four rows do not cure the independent member-5 layout dependency.
 
 For a machine-reconstructable boundary witness, the four rows above, in
 displayed order, project exactly these 19 members in this semantic schema
@@ -33703,12 +33717,12 @@ into separate nodes; it never receives a mixed layer label.
 | 2. ordered_existing_extraction_locator_rows | locator/pointer/row/range hashes are layer 1; separately reconstructed passage extractions are layer 2 | only the questionnaire/codebook semantic statement spans identified by the eight locators | no raw record, format, Count/%, profile, grammar, parsed value, or executable map |
 | 3. ordered_derived_registered_codebook_page_rows | all six document/page/row/range/page-text hash rows are layer 1; six semantic span extractions are layer 2 | only the position-typed spans enumerated below | complete page hashes may cover mixed physical text, but no layer-2 basis contains it |
 | 4. closure_projection | the pointer/hash object is layer 1; pointed absence/extraction/closure/family semantic statements are layer 2 | the exact source-allocation absence and historical family-disposition statements at the ten pointed rows | row hashes are not read as proxies for row content |
-| 5. corpus_wide_cooccurrence_sweep | document/page/row/full-file/page-text hashes are layer 1; semantic occurrence rows, their structural counts, candidate rows, and false-positive disposition are layer 2 | the position-aware 348-row semantic occurrence projection below | Count/% and format text never enters target matching |
-| 6. established_findings | layer 2 | finding 1 derives from the semantic V4379/V5289/V5788 page and questionnaire spans; finding 2 from their accuracy-variable spans; finding 3 from the page-180–182 V4901–V4907 semantic spans; finding 4 from the eight passage extractions, closure semantic statements, and position-aware sweep | all cited bases are semantic-only |
-| 7. expressly_not_established_or_used | layer 2 | closure absence statements plus the semantic sweep's zero formula-candidate disposition | no physical value or observation count |
-| 8. reader_seam_consequence | layer 2 | established_findings plus expressly_not_established_or_used | semantic consequence only |
-| 9. successor_residual_ids | layer 2 | exact closure classification under the findings, nonclaim, and reader consequence | empty classification is derived without a physical field member |
-| 10. source_disposition | layer 2 | successful layer-1 authentication plus all preceding semantic layer-2 nodes; a predecessor pass bit or digest is not a basis | verified is emitted only from the complete lawful walk |
+| 5. corpus_wide_cooccurrence_sweep | document, row, full-file, page-text, and serialized-row hashes are layer 1; page arrays, candidate classification/count, same-page intersection, sole-candidate disposition, and formula-candidate count are layer 2 | raw target-token occurrences classified with page boundaries, line structure, and page-reset order, then grouped by page | **physical for V4902**: the byte `[572:573]` witness changes a layer-2 row with all semantic token bytes fixed |
+| 6. established_findings | layer 2 | the four historical findings read roots 2–5, including member 5's sole-candidate and zero-count conclusions | inherits the forbidden V4902 layout basis; the historical findings cannot be freshly accepted |
+| 7. expressly_not_established_or_used | layer 2 | closure absence statements plus member 5's zero formula-candidate conclusion | inherits the forbidden V4902 layout basis; the historical nonclaim cannot be freshly accepted |
+| 8. reader_seam_consequence | layer 2 | established_findings plus expressly_not_established_or_used | transitively contaminated and prospectively retracted |
+| 9. successor_residual_ids | layer 2 | historical closure classification under roots 6–8 | the historical empty array is not a presently lawful result; the successor state retains V-B6 as guarded and unresolved |
+| 10. source_disposition | layer 2 | all preceding layer-2 nodes; successful layer-1 authentication is only an admission gate | historical `verified` is prospectively replaced by `nonpassing_forbidden_physical_dependency` |
 
 The six layer-1 page rows retain every exact nested member ratified in
 §18.2. Their distinct layer-2 children read only these portions:
@@ -33716,40 +33730,75 @@ The six layer-1 page rows retain every exact nested member ratified in
 | Page-row position | Committed page fields | Exact semantic extraction basis |
 |---:|---|---|
 | 0 | V4379, V4380, V4381, V4382 | field identifiers, quoted labels without the trailing NUM format, descriptions, and the V4382 sentence that the Wife labor part of unincorporated-business income is in V4379 |
-| 1 | V4901, V4902 | field identifiers, quoted labels without NUM, D64/D65 question text, and V4902 code lexeme/meaning columns, including 20 and 31, after removing Count and % columns |
+| 1 | V4901, V4902 | field identifiers, quoted labels without NUM, D64/D65 question text, and V4902 code lexeme/meaning columns, including 20 and 31; the Count and % columns remain committed but unselected |
 | 2 | V4903 | the semantic continuation of V4902 and V4903's identifier, label, question, and total-number-of-extra-jobs description; no Count/% or format cell |
 | 3 | V4904, V4905, V4906, V4907 | identifiers, labels without NUM, question/description text, and semantic units such as dollars-and-cents per hour, weeks, hours, and availability; no layout, numeric format, Count/%, or value execution |
 | 4 | V5289, V5290, V5291, V5292 | identifiers, labels without NUM, descriptions, assignment/accuracy meaning, and unincorporated-business context; no physical cell |
 | 5 | V5785, V5786, V5787, V5788, V5789 | identifiers, labels without NUM, descriptions, and assignment/accuracy meaning; no physical cell |
 
-For every decoded page, the position classifier runs before target-value
-matching. Its exact allowed positions, in order, are
-codebook_field_header, v_prefixed_semantic_field_reference,
-parenthesized_semantic_field_reference,
-labelled_table_or_prose_semantic_field_reference,
-unlabelled_concordance_semantic_field_reference, and
-other_field_identifier_lexical_false_positive. A Count/% cell, declared
-format, layout coordinate, raw position, value cell, or other physical
-position is classified outside that list and is never presented to either
-field-ID regular expression. The resulting inline validation fixture is:
+Those six layer-2 page-extraction rows select only normalized semantic
+content. Their document ID, page number, field-reference position, locator,
+raw range, and every document/page/row/range digest remain separate layer-1
+members. The layer-2 row has exactly interview_wave, raw_field_id,
+normalized_semantic_short_label, normalized_semantic_description, and
+semantic_code_lexeme_and_meaning. Normalization splits a selected semantic
+span on Unicode whitespace and rejoins it with one U+0020; it never retains
+a line boundary, column width, declared NUM format, Count, %, raw position,
+or page coordinate. The complete 20-row semantic array is 5,165 canonical
+bytes with SHA-256
+3a86353af979ac46f3506fe89e38184251432ad23a69fa48cc2082fcaf741a5f.
 
 ~~~json
-{"fixture_id":"amendment_7_v_b6_semantic_occurrence_positions","position_order":["codebook_field_header","v_prefixed_semantic_field_reference","parenthesized_semantic_field_reference","labelled_table_or_prose_semantic_field_reference","unlabelled_concordance_semantic_field_reference","other_field_identifier_lexical_false_positive"],"position_counts":[11,156,36,117,26,2],"occurrence_count":348,"canonical_bytes":91562,"occurrence_rows_sha256":"c19ced36464bfaeb2b4ff16633efd471494641fa6fe8bb54931542648f8e7ef0"}
+[{"interview_wave":1976,"normalized_semantic_description":"Wife's income from work in 1975","normalized_semantic_short_label":"WIFES ANNUAL WAGE H25","raw_field_id":"V4379","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"Accuracy of V4379 (Wife's income from work in 1975)","normalized_semantic_short_label":"ACC WIFES ANN WAG","raw_field_id":"V4380","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"Head's asset part of farm income in 1975","normalized_semantic_short_label":"ASSET FARM INCOME H4","raw_field_id":"V4381","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"Head's/Wife's asset part of unincorporated business income in 1975 (Wife's income, her labor part of unincorporated business income is in V4379)","normalized_semantic_short_label":"ASSET BUSI INCOME H7","raw_field_id":"V4382","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D64. Did you have any extra jobs or other ways of making money in addition to your main job in 1975?","normalized_semantic_short_label":"WTR XTRA JOB(E)-WF D64","raw_field_id":"V4901","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D65. What did you do?","normalized_semantic_short_label":"OCC-XTRA JOB-WF D65","raw_field_id":"V4902","semantic_code_lexeme_and_meaning":[["20","Not self-employed"],["31","Self-employed (unincorporated businesses)"]]},{"interview_wave":1976,"normalized_semantic_description":"D64, D66. Anything else? Total number of extra jobs","normalized_semantic_short_label":"TOTAL # XTRA JOBS-WF D66","raw_field_id":"V4903","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D67. About how much did you make per hour at this? Actual dollars and cents per hour","normalized_semantic_short_label":"PAY/HR ON XTRA JOB-WFD67","raw_field_id":"V4904","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D68. And how many weeks did you work on your extra job(s) in 1975? Actual number of weeks","normalized_semantic_short_label":"WKS WKD ON XTRA JOB D68","raw_field_id":"V4905","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D69. On the average, how many hours a week did you work at your extra job(s)? Actual number of hours","normalized_semantic_short_label":"HR/WK WKD-XTRA JOB(E)D69","raw_field_id":"V4906","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1976,"normalized_semantic_description":"D70. Was there more work available on (your job) (any of your jobs) so that you could have worked more if you had wanted to?","normalized_semantic_short_label":"MORE WK AVAILABLE?(E)D70","raw_field_id":"V4907","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Wife's labor income in 1976 All missing data were assigned","normalized_semantic_short_label":"WIFE 1976 WAGES","raw_field_id":"V5289","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Accuracy of V5289 (Wife's labor income in 1976)","normalized_semantic_short_label":"ACC WIFE 1976 WAGES","raw_field_id":"V5290","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Head's asset part of farm income in 1976 All missing data were assigned","normalized_semantic_short_label":"ASSET PART FARM Y 1976","raw_field_id":"V5291","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1977,"normalized_semantic_description":"Head's/Wife's asset part of unincorporated business income in 1976 All missing data were assigned","normalized_semantic_short_label":"ASSET PART BUS Y 1976","raw_field_id":"V5292","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Head's income from professional practice or trade in 1977 All missing data are assigned.","normalized_semantic_short_label":"HD PROF PRAC/TRADE 1977","raw_field_id":"V5785","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Head's labor part of roomers and boarders, farming or market gardening in 1977 All missing data are assigned.","normalized_semantic_short_label":"LAB PART ROOMER 1977","raw_field_id":"V5786","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Accuracy of V5780-V5781, V5784-V5786 (Head's labor income excluding wages in 1977)","normalized_semantic_short_label":"ACC HD LABOR Y EXCL WAGE","raw_field_id":"V5787","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Wife's labor income in 1977 All missing data are assigned.","normalized_semantic_short_label":"WIFE 1977 WAGE","raw_field_id":"V5788","semantic_code_lexeme_and_meaning":[]},{"interview_wave":1978,"normalized_semantic_description":"Accuracy of V5788 (Wife's labor income in 1977)","normalized_semantic_short_label":"ACC WIFE 1977 WAGE","raw_field_id":"V5789","semantic_code_lexeme_and_meaning":[]}]
 ~~~
 
-Applying the two §18.2 field-ID expressions only to those 348 semantic
-occurrences reproduces the exact 18 candidate IDs and
-5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed ID
-digest, the sole psid-corpus-document-0098/page-573 same-page candidate, and
-the exact six-key candidate rows. Those 18 rows remain exactly 6,209
-canonical bytes with SHA-256
+That fixture proves root 3's six page-text hashes are lawful commitments and
+its distinct semantic extractions are semantic-only. It does not repair root
+5. Root 5's historical scan emitted a five-key occurrence relation whose
+members are source_document_id, pdf_page_number_1_based,
+page_semantic_row_position, raw_field_id, and
+semantic_reference_position. The first and fourth/fifth members identify a
+document/reference and asserted semantic role; the page number and
+page-reset ordinal are physical layout. The exact mixed relation has 348
+rows, 72,325 canonical bytes, and SHA-256
+0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411.
+Its exact category counts are 12 codebook headers, 157 V-prefixed
+references, 40 parenthesized references, 110 labelled table/prose
+references, 27 unlabelled concordance references, and two lexical false
+positives. The corresponding layer-1 locator relation has 348 rows, 117,337
+canonical bytes, and SHA-256
+4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d.
+Both complete arrays are pinned by the normative graph fixture and source
+walk in §21.4.2; neither digest may substitute for reconstructing its array.
+
+V4902 occupies 33 of those mixed rows on 33 pages in 17 documents. The
+exact nine-key occurrence-output domain is 12,608 canonical bytes with
+SHA-256
+cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c.
+It is an output census, not a dependency census, and enters only after the
+source scan has independently discovered the rows. No claim is made that 33
+is the number of atomic physical dependencies or transitive consumers.
+
+The independent page-180 one-byte reflow is the executable nonconstancy
+witness. The original canonical V4902 occurrence row is 189 bytes with
+SHA-256
+aad92342670157f7835067a029d415a5c71025641574c2fbb91bcc6dea908510;
+after replacing only byte [572:573] from 20 to 0a it is 203 bytes with
+SHA-256
+9d97a0e631ab31cd06642a227e69f2e1d26191bff8bc01470a4b130a4c2be4ba.
+The token bytes and every semantic lexeme remain fixed. A layer-1 page hash
+would merely recommit the changed page; root 5 instead changes layer-2
+content, so this is consumption.
+
+The historical target scan still reproduces the exact 18 candidate IDs,
+their 5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed
+digest, the sole document-0098/page-573 same-page candidate, and the exact
+6,209-byte candidate array with SHA-256
 039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7.
-This prospectively replaces only the sweep's layer-2 derivation basis; it
-does not alter a §18 member or the 10,887-byte projection. A counterfactual
-equal-width page-180 change from the physical Count cell "      5" to
-"   4379" makes the old page-wide regex invent an annual match, while the
-position-aware semantic rows remain byte-equal. A full-page regex is
-therefore forbidden at layer 2.
+Those empirical values remain authenticated history, but their page arrays,
+same-page intersection, sole-candidate disposition, and
+formula_candidate_count are physical layer-2 derivations and cannot support
+a fresh favorable V-B6 result.
 
 The nested schemas remain exact. Source-artifact identity rows retain path,
 blob_oid, raw_sha256, and content_sha256; existing-locator rows retain
@@ -33761,16 +33810,17 @@ its six members and two-member pointer/hash rows. The sweep retains all 15
 members and its exact six-member candidate and four-member sole-candidate
 rows. This is node-level classification, not member-list surgery.
 
-document_count, candidate_count, and formula_candidate_count count committed
-documents or position-typed semantic occurrence results. They are not a
-field's raw-data frequency, percentage, or nonmissing-observation count and
-do not change when a Count/% cell changes. No raw fixed-width record or data
-token, layout/format/width, raw-data frequency/percentage/count,
-profile/padding, grammar/DFA/partition/action, parsed or canonical numeric
-value, or executable mapping is in a four-reference layer-2 basis. Each
-field nevertheless retains incomplete_source_numeric_authority,
-literal_only_zero_diagnostic_padding_capacity, and its null physical
-members under the independently ratified physical authority.
+document_count is a structural corpus count and is not a field's raw-data
+frequency, percentage, or nonmissing-observation count. But candidate_count
+and formula_candidate_count classify page-grouped scan results and therefore
+inherit member 5's physical layout basis. The frequency/percentage exclusion
+is exact: a Count/% cell may sit inside a lawful layer-1 page commitment, but
+no layer-2 node may read it directly, through a digest, or as a count proxy
+for a non-passing field. That exclusion does not legalize a distinct page-
+layout read. Each of the four fields retains
+incomplete_source_numeric_authority,
+literal_only_zero_diagnostic_padding_capacity, and null physical authority;
+V-B6 is presently non-passing and unregistrable.
 
 #### 21.1.5 Q5 dictionary/codebook join universes
 
@@ -33877,9 +33927,10 @@ four; and the 43 Q5 join universes collectively contain all 1,235. At the
 same time, no operational positive Q5 join or downstream artifact exists.
 The law must therefore permit the complete disposition relation to exist
 while making every future positive physical or executable consumption of any
-F member abort at that consumer. The exact semantic-only V-B6 disposition is
-separately closed under §21.4.2. The remaining subsections implement exactly
-that boundary relocation.
+F member abort at that consumer. Section 21.4.2 separately proves that the
+historical V-B6 chain already has such a forbidden dependency and invokes
+the prospective-retraction fallback. The remaining subsections implement
+both that boundary relocation and its transitive non-passing result.
 
 
 ### 21.2 Status, scope, preservation, and precedence
@@ -33915,16 +33966,22 @@ only these revision-8 conclusions:
    physical raw-field consumer means a row whose derivation_status is in
    T-plus below, not merely a top-level relation whose status is
    pass_with_closed_failures; and
-6. the exact V-B6 source-adjudication chain in §13.2, §§18.2–18.4,
-   §19.3.1, and residual 9 in §19.3.4 is composed with the independently
-   ratified commitment/derivation layer law in §21.4.2. Its layer-1
-   commitments may cover mixed bytes, but every favorable layer-2 basis for
-   V4519, V4902, V5429, and V5916 is semantic-only. A7-R10a closes the
-   pre-carrier result before Q5; A7-R10b constructs residual 9 only from the
-   later accepted official inventory. Any forbidden physical layer-2
-   dependency of those four non-passing references remains guarded and
-   non-passing. The separately passing V4379, V5289, and V5788 amount fields
-   retain their required guarded exact-once physical reads.
+6. the exact V-B6 source-adjudication chain in §13.2, §§18.2–18.8,
+   §§19.3.1, 19.3.4, 19.4, 19.6, and 19.8, and every dependent lifecycle,
+   bundle, receipt, registration, and final-success claim is prospectively
+   replaced by the guarded result in §21.4.2. Layer-1 commitments may cover
+   mixed bytes, but member 5 supplies a forbidden physical layer-2 basis for
+   V4902. V-B6 is therefore presently non-passing and unregistrable; its
+   historical §18 `verified/pass`, empty successor array, `verified`
+   disposition, §19 residual-9 carrier, and all copied or dependent successes
+   are not fresh results. A7-R10a proves the pre-Q5 rejection. A7-R10b,
+   strictly after official-inventory construction, proves that no residual-9
+   carrier or passing/accepted V-B6 requirement result is built. A later
+   nonpassing diagnostic row may be constructed only to make the complete
+   22-row evaluation deterministically fail. The separately
+   passing V4379, V5289, and V5788 amount fields retain their required lawful
+   exact-once physical reads; those passing-field reads are not the cause of
+   the V-B6 retraction.
 
 The failure precedence, all source reconstruction, exact token/rendering
 laws, complete row shapes, branch-specific consumer restrictions, and every
@@ -33937,7 +33994,7 @@ existing consumer predicate. At any conflict on the six points above, this
 section is the later and more specific rule. Silence changes nothing else.
 
 For V-B6, the §13.2 and §18.3 commands to register every field and exact
-code map mean semantic_code_map_registration: layer-2 authentication of
+code map retain a semantic_code_map_registration sense: layer-2 authentication of
 variable membership, concept, meaning text, non-executable displayed code
 lexemes and meanings, attachment, and wave/reference-year identity from the
 exact semantic bases admitted by §21.4.2. Section 20's pre-profile/literal
@@ -33948,7 +34005,11 @@ registration. A shared layer-1 artifact, page, row, or digest commitment may
 authenticate the bytes from which either is lawfully derived, but establishes
 neither registration by itself. Neither sense supplies, defaults, upgrades,
 or substitutes for the other, and the shared word "register" cannot
-conflate them.
+conflate them. Direct semantic rows may authenticate without physical
+numeric authority, but V-B6 registration is a result-level obligation and
+cannot complete while its source-adjudication graph contains the member-5
+physical basis. No narrow semantic-registration sense exempts or cures that
+contaminated result.
 
 ### 21.3 Complete relation with closed failures
 
@@ -34130,340 +34191,328 @@ zero-pad a token, treat a source conflict as a priority rule, treat
 incomplete as zero or missing, convert a failure to structural_missing,
 borrow authority from a peer field or era, truncate a value-map subset to
 evade a T-minus member, or weaken the terminal because the top-level relation says
-pass_with_closed_failures. Search, census, complete-relation evidence
-embedding, and the exact lawful semantic disposition below are not physical
-consumption. Selection into a physical or executable positive reference is.
+pass_with_closed_failures. Complete-relation evidence embedding and a
+layer-1 commitment are not themselves physical consumption. A search,
+census, or classification is consumption whenever its layer-2 result changes
+under the §21.4.2 fixed-elsewhere physical mutation test. Selection into a
+physical or executable positive reference is likewise consumption.
 
 #### 21.4.2 Commitment/derivation layer law and source-adjudication boundary
 
-Every evidentiary-DAG assertion belongs to exactly one layer. **Layer 1 —
-provenance commitment** consists only of paths, commit or blob identities,
-locators, byte ranges, and digests asserting that exact bytes existed at the
-stated identity or location. A layer-1 commitment may cover mixed semantic
-and physical bytes, including physical content of a non-passing field.
-Constructing, validating, or propagating that commitment is not a content
-read. Thus the six complete page-text hashes in §18.2 and the frozen
-2,203,624-byte spouse-seam artifact hash are lawful layer-1 commitments.
+Every node in an evidentiary DAG belongs to exactly one of two layers.
+**Layer 1 — provenance commitment** consists only of a path, commit or blob
+identity, locator, byte range, size, or digest asserting that exact bytes
+existed at the stated identity or location. A layer-1 node may commit mixed
+semantic and physical bytes, including physical content of a non-passing
+field. A commitment is not a content read. The six §18.2 page-text hashes,
+including the page-180 hash over bytes that also contain the Count/% table,
+and the frozen 2,203,624-byte spouse-seam artifact hash are therefore lawful
+commitments. Section 18's finding does not read those Count/% values.
 
-**Layer 2 — derived content** consists of every fact, finding, registration,
-classification, count, format claim, disposition, consequence, or other
-value that enters a result. Every layer-2 node declares the complete ordered
-derivation basis of exact portions of layer-1-committed content that it
-reads. A canonical object may contain nodes from both layers; neither its
-serialization nor a digest over that serialization collapses them into one
-layer-2 node.
+**Layer 2 — derived content** consists of every fact, finding,
+registration, classification, count, format claim, value, disposition, or
+other content that enters a result. Every layer-2 node declares its complete
+ordered derivation basis: the exact committed content portions it reads and
+the selectors applied to them. For V4519, V4902, V5429, and V5916, and
+generally for every non-passing field, every layer-2 basis must be
+semantic-only. It must not read a raw record or token; layout, format, or
+width; a frequency, percentage, or raw-data/nonmissing count; a profile or
+padding rule; a grammar, DFA, partition, or action; a parsed or canonical
+numeric value; or an executable literal, range, missing-value, or value map.
 
-For a non-passing field, every layer-2 basis excludes raw records or tokens,
-layout/format/width, source Count/% or raw-data/nonmissing counts,
-profile/padding, grammar/DFA/partition/action, parsed or canonical numeric
-values, and executable mappings. A physical datum is consumed if and only if
-some layer-2 node's content would change when that datum changes with all
-other content fixed. **Digests hide nothing at layer 2:** a value read
-through a digest to derive layer-2 content is consumption. A layer-1
-commitment over mixed bytes is nevertheless lawful because no layer-2 basis
-reads its physical portion. A digest change caused solely by recommitting
-changed bytes is layer-1 commitment tracking, not consumption.
+A physical datum is consumed if and only if some layer-2 node's content
+would change when that datum changes with all else fixed. **Digests hide
+nothing at layer 2:** a value read through a digest is consumption. Layer-1
+commitments over mixed bytes are lawful because no layer-2 basis reads the
+physical portion; a digest change caused solely by recommitting changed
+bytes is layer-1 commitment tracking, not consumption.
 
-Semantic codebook authority and physical numeric-grammar authority therefore
-remain distinct. A semantic layer-2 result is lawful if and only if all
-three conditions hold:
+The exact §18.2 eleven-member input was re-walked under that law. This is the
+complete layer classification and the complete basis disposition by member:
 
-1. the law enumerates its exact eleven §18.2 roots, complete reference
-   stream, source selectors, member projection, layer assignments, ordered
-   layer-2 basis manifest, and downstream result;
-2. the graph defined below exact-matches its pinned node/edge domain, and a
-   complete value-flow walk of every layer-2 basis proves that every basis
-   for V4519, V4902, V5429, and V5916 is semantic-only. No raw token,
-   layout/format/width, Count/% or raw-data count, profile/padding,
-   grammar/DFA/partition/action, parsed/canonical value, executable mapping,
-   or layer-2 digest proxy may be read directly or transitively; and
-3. every layer-1 source commitment exact-matches and every layer-2 semantic
-   value is freshly rederived from its declared content portions. A
-   candidate assertion, predecessor pass bit, copied digest, or commitment
-   result is not content authority.
+| Root position and member | Layer-1 commitments | Layer-2 nodes and exact derivation basis | Four-field result |
+|---|---|---|---|
+| 0 `identity_triple` | one source-commit commitment to the three frozen Git artifacts | schema version and claim ID from two law literals | semantic-only |
+| 1 `ordered_source_artifact_identities` | three path/blob/raw/content-digest identity rows | none | no content derivation |
+| 2 `ordered_existing_extraction_locator_rows` | eight source locator rows, raw ranges, decoded pages, and the committed output array | eight normalized passage-content rows from their selected semantic spans plus their array | semantic-only |
+| 3 `ordered_derived_registered_codebook_page_rows` | six complete page rows, raw ranges, decoded-page bytes, page-text hashes, and the committed output array | six page extractions, 20 field-reference rows, and their array, each reading only `interview_wave`, `raw_field_id`, normalized semantic label/description, and semantic code lexeme/meaning | semantic-only; Count/% and layout members are not bases |
+| 4 `closure_projection` | ten exact extraction/closure source rows | ten stated semantic-key projections | semantic-only |
+| 5 `corpus_wide_cooccurrence_sweep` | the 456 registered PDFs and all document, page, locator, occurrence-output, candidate-output, and sole-page commitments | document count/IDs, classifier specification, full-corpus scanner, occurrence classifications, page-number groupings, candidate rows/count, sole-candidate disposition, formula count, and sweep result. The scanner reads decoded line layout, page membership, page-reset row position, and same-page intersection | **physical** for V4902; fails the semantic-only condition |
+| 6 `established_findings` | spouse-seam artifact, four exact source-pointer rows, their mixed output rows, and array commitments | four direct semantic projections from the enumerated semantic members, their array, and the established-finding node; the last also derives from member 5 | direct four-row projection is semantic-only, but the finding inherits member 5's physical dependency |
+| 7 `expressly_not_established_or_used` | none beyond reachable commitments above | closure projections and the formula count from member 5 | inherits the physical dependency |
+| 8 `reader_seam_consequence` | none beyond reachable commitments above | members 6 and 7 | inherits the physical dependency |
+| 9 `successor_residual_ids` | none beyond reachable commitments above | members 6, 7, and 8 | inherits the physical dependency |
+| 10 `source_disposition` | none beyond reachable commitments above | members 5 through 9 | inherits the physical dependency |
 
-The graph node row has exactly node_id and node_type. node_type has this
-closed canonical order:
+Thus at least one layer-2 basis for the four references is physical. The
+prospective-retraction branch required by Amendment 7 applies. The lawful
+layer-1 commitments and the four direct semantic rows remain evidence; they
+do not make the former §18/§19 V-B6 finding, `verified/pass` disposition,
+empty successor-residual array, residual-9 carrier, requirement pass,
+domain, bundle, final acceptance, receipt, or registration lawful.
 
-~~~text
-artifact
-page
-extraction-row
-field-reference
-layer-1 commitment
-layer-2 derived node
-~~~
+The re-walk uses the following exact graph. A node row has exactly
+`node_id` and `node_type`; the closed node-type order is `artifact`, `page`,
+`extraction-row`, `field-reference`, `layer-1 commitment`, `layer-2 derived
+node`. An edge row has exactly `edge_type`, `from_node_id`, and `to_node_id`;
+the closed edge-type order is `contains`, `commits-to`, `derives-from`.
+`contains` points from an envelope or structural container to its direct
+member. `commits-to` points from a layer-1 commitment to the exact structural
+or derived bytes authenticated. `derives-from` points from a layer-2 node to
+the content node it reads. Only `derives-from` is value flow. Unknown types,
+duplicate IDs or edges, dangling endpoints, and self-edges fail.
+Every `commits-to` source must be layer 1 and every `derives-from` source
+must be layer 2.
 
-artifact, page, extraction-row, and field-reference are addressable
-structural nodes; only the last two node types make layer assertions. An edge
-row has exactly edge_type, from_node_id, and to_node_id. edge_type has the
-closed order contains, commits-to, derives-from. contains points from a
-container to its direct member, commits-to points from a layer-1 commitment
-to the exact structural or derived bytes it authenticates, and derives-from
-points from a layer-2 node to a declared basis node. Unknown types, duplicate
-node IDs, duplicate edges, dangling endpoints, and self-edges fail.
-
-The exact root array, in order, is:
+The roots are exactly the §18.2 eleven-member input, in this order:
 
 ~~~json
 ["root:18.2:00:identity_triple","root:18.2:01:ordered_source_artifact_identities","root:18.2:02:ordered_existing_extraction_locator_rows","root:18.2:03:ordered_derived_registered_codebook_page_rows","root:18.2:04:closure_projection","root:18.2:05:corpus_wide_cooccurrence_sweep","root:18.2:06:established_findings","root:18.2:07:expressly_not_established_or_used","root:18.2:08:reader_seam_consequence","root:18.2:09:successor_residual_ids","root:18.2:10:source_disposition"]
 ~~~
 
-The following generative domain is normative. Its eleven root nodes are
-artifact containers. The other eight artifact nodes are
-data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json,
-data/external/psid_questionnaire_corpus_extraction_v1.json,
-data/external/covered_earnings_questionnaire_closure_attempt_v1.json,
-data/external/psid_codebook_field_evidence/
-ry1975_1977_spouse_concept_seam_v1.json, the 456-document corpus, and PDF
-artifacts psid-corpus-document-0046, -0051, and -0056. The seven page
-nodes are the six displayed §21.1.4 pages plus
-psid-corpus-document-0098/page 573. The 26 extraction-row nodes are the eight
-existing locator rows, the ten closure pointers /absence_proofs/1,
-/psid_vb_residual_extractions/1 through /4,
-/psid_questionnaire_evidence_results/1 through /4, and
-/psid_vb_family_summary/1, plus /era_facts/9, /15, /21, /27 and
-/field_evidence/220, /609, /1055, /1529 in the spouse-seam artifact.
+The graph domain is constructed without loading an expected classified
+occurrence as scanner input. It contains the 11 root artifacts; the four
+frozen Git artifacts; all 456 registered PDF artifacts with their registered
+identity, size, and full-file SHA-256 in the node IDs; every exact page,
+range, JSON-pointer row, field-reference row, and layer-1 commitment reached
+from roots 0–6; and every historical layer-2 intermediate and terminal
+reached from the eleven roots. In particular, the full-corpus scanner has
+exactly 458 direct bases: the ordered registered-document-ID node, the
+classifier-specification node, and all 456 registered PDFs. The 348
+classified occurrence rows are scanner output children, never
+`derives-from` bases. Candidate rows derive from the newly scanned output.
+This direction is mandatory: injecting a pre-labelled occurrence or
+candidate fixture as a scanner basis fails.
 
-The 24 field-reference nodes, and their field_reference_position values,
-are exactly:
+The scanner first authenticates every registered PDF's byte size and
+SHA-256, decodes it with Poppler `pdftotext` 26.04.0 and arguments
+`-layout -enc UTF-8`, splits the UTF-8 output on form feed, removes exactly
+one terminal whitespace-only page, numbers pages from one, and visits
+documents in registered order and pages in decoded order. Within each page
+it uses `splitlines(keepends=True)`, strips only CR/LF for classification,
+preserves the line endings when advancing the page-local UTF-8 cursor, and
+scans left-to-right every token matching
+`(?<!\d)\d+(?!\d)`. It retains only
+`(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907|4379|5289|5788)(?!\d)`.
+For each retained token it applies these rules in order, with Python regular
+expression semantics:
 
-~~~text
-0  1976 V4519 semantic row       12 1976 V4905 page 182
-1  1976 V4902 semantic row       13 1976 V4906 page 182
-2  1977 V5429 semantic row       14 1976 V4907 page 182
-3  1978 V5916 semantic row       15 1977 V5289 page 22
-4  1976 V4379 page 20            16 1977 V5290 page 22
-5  1976 V4380 page 20            17 1977 V5291 page 22
-6  1976 V4381 page 20            18 1977 V5292 page 22
-7  1976 V4382 page 20            19 1978 V5785 page 22
-8  1976 V4901 page 180           20 1978 V5786 page 22
-9  1976 V4902 page 180           21 1978 V5787 page 22
-10 1976 V4903 page 181           22 1978 V5788 page 22
-11 1976 V4904 page 182           23 1978 V5789 page 22
-~~~
+1. Split the containing line into `\S+` cells. If there are at least three,
+   cell 0 fully matches `(?:-|[\d,]+)`, cell 1 fully matches
+   `(?:-|(?:\d+)?\.\d+|\d+%)`, and the token is wholly within one of cells
+   0–2, classify `physical_or_nonreference_numeric_token`.
+2. If the token is inside a `NUM(` ... `)` span, or inside group 2 of the
+   line-start match `^\s*(\d+)\s+(\d{4,}|\d{1,3},\d{3})\s+`, give that same
+   physical/nonreference classification.
+3. If the line matches `^\s*V{token}\s+"`, classify
+   `codebook_field_header`; otherwise, if it matches
+   `^\s*{token}\s+(?:\d{4,}|\d{1,3},\d{3})\s+` and the suffix contains
+   `[A-Za-z]{3,}`, give the same header classification.
+4. If the prefix ends in `V` or `v` and the character before that prefix is
+   absent or nonalphanumeric, classify
+   `v_prefixed_semantic_field_reference`.
+5. Extract every `\(([^)]*)\)` group containing a digit. If at least two
+   exist and one contains the token under
+   `(?<![A-Za-z0-9]){token}(?!\d)`, classify
+   `parenthesized_semantic_field_reference`.
+6. If the prefix contains `[A-Za-z]{3,}`, classify
+   `labelled_table_or_prose_semantic_field_reference`.
+7. If the page contains at least three distinct boundary-delimited year
+   tokens from 1968 through 1989, scan all preceding lines backward,
+   normalize each as `" ".join(line.split())`, skip empty and word-free
+   lines, and on the first line containing `[A-Za-z]{3,}` classify
+   `unlabelled_concordance_semantic_field_reference`.
+8. If an immediately adjacent character is alphabetic, classify
+   `other_field_identifier_lexical_false_positive`; otherwise set the
+   classification to null and abort the scan; a retained target is never
+   silently omitted.
 
-The 38 layer-1 commitment nodes are one source-commit node; three ordered
-source-artifact commitments; eight locator commitments; six page-row
-commitments; ten closure-row commitments; four sweep commitments for the
-document rows, candidate IDs, candidate rows, and sole-page text; and six
-spouse-seam commitments for the complete artifact, four semantic rows, and
-their array. The 36 layer-2 nodes are the identity literal; six page semantic
-extractions; four spouse-seam semantic rows; the following 18 cooccurrence
-candidate documents in order; sole-candidate and sweep results; and the five
-terminal nodes established_findings, expressly_not_established_or_used,
-reader_seam_consequence, successor_residual_ids, and source_disposition:
+After classification, the scanner groups retained target rows by registered
+document and decoded page and assigns `page_semantic_row_position` from zero
+in increasing page-UTF-8 token-start order, breaking an impossible equal
+start by `raw_field_id`. It serializes in registered-document, page, and row
+position order. Each output row has exactly `source_document_id`,
+`pdf_page_number_1_based`, `page_semantic_row_position`, `raw_field_id`, and
+`semantic_reference_position`; `raw_field_id` is `V` concatenated with the
+matched token. The empirical audit harness whose pure `classify` function
+supplied these rules is 7,882 bytes with SHA-256
+`f6a6e5963fc20fd2d1a6f27d04dd88573b3c75154d73f28fe5edc311402c10fa`;
+only that pure ordered classifier behavior is adopted. The harness's
+expected-locator join is not authority and is forbidden in the normative
+full-PDF reconstruction. The complete rules above are normative if an
+external path differs. Page number, page-reset ordinal, line
+classification, and later same-page intersection are physical layer-2
+content. The independently authenticated 348 locator rows remain layer 1;
+their 117,337 canonical bytes have SHA-256
+`4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d`.
+The resulting five-key output has 348 rows on 159 pages, 72,325 canonical
+bytes, and SHA-256
+`0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411`.
 
-~~~json
-["psid-corpus-document-0023","psid-corpus-document-0027","psid-corpus-document-0043","psid-corpus-document-0046","psid-corpus-document-0047","psid-corpus-document-0048","psid-corpus-document-0053","psid-corpus-document-0058","psid-corpus-document-0063","psid-corpus-document-0068","psid-corpus-document-0073","psid-corpus-document-0078","psid-corpus-document-0083","psid-corpus-document-0088","psid-corpus-document-0093","psid-corpus-document-0098","psid-corpus-document-0103","psid-corpus-document-0109"]
-~~~
+Node rows order by the node-type ordinal above and then UTF-8 `node_id`.
+Edge rows order by edge-type ordinal, UTF-8 `from_node_id`, then UTF-8
+`to_node_id`. The envelope has exactly the three keys `edges`, `nodes`, and
+`roots`, with those arrays as their values, and is serialized as strict JSON
+with recursively sorted keys, separators `(',',':')`, ASCII escaping, no
+NaN, and one terminal LF.
+Starting with the eleven roots, root closure repeatedly follows every
+outgoing edge until no unseen target remains. Separately, Kahn's algorithm
+computes indegree over all edges, repeatedly removes every zero-indegree
+node and decrements its outgoing targets, and must visit every node.
 
-Node IDs use exactly the displayed root IDs and these prefixes:
-artifact:, page:, extraction-row:, field-reference:, l1:, and l2:. The
-semantic field IDs are
-field-reference:{position:02d}:semantic:{wave}:{field}; page field IDs are
-field-reference:{position:02d}:page:{document}:{page}:{wave}:{field}.
-Page-extraction IDs are l2:page-semantic-extraction:{document}:{page};
-semantic-row IDs are l2:semantic-projection-row:{position:02d}:{wave}:{field};
-candidate IDs are l2:cooccurrence-candidate:{position:02d}:{document}.
-Commitment IDs carry their displayed group and zero-based position. No
-implementation-selected alias is permitted.
+The ordered basis manifest has exactly
+`basis_content_class`, `basis_node_id`, `basis_position`,
+`basis_selectors`, and `derived_node_id`. Derived nodes order by canonical
+node position; their direct `derives-from` targets order by canonical node
+position and receive zero-based basis positions. The three primitive
+law-literal nodes each receive one row with null `basis_node_id`; all other
+rows exact-copy one graph edge and the selectors stated in §21.1.4 and
+above. No nonprimitive layer-2 node may lack a basis. Thus the 632
+`derives-from` edges plus three primitive rows produce exactly 635 rows.
+The value-flow closure for a layer-2 node recursively follows only its
+declared prior-layer-2 bases, applying every selector; structural
+`contains` and layer-1 `commits-to` edges authenticate identity but do not
+propagate values.
 
-For exact edge generation, R0 through R10 are the displayed roots; ART3,
-LOC8, PAGE6, and CLO10 are the ordered layer-1 commitments for the three
-artifact rows, eight locator rows, six page rows, and ten closure pointers;
-SW4 is [document-rows, candidate-document-ids, candidate-rows,
-sole-page-text]; SEM6 is [semantic-artifact, semantic-row-0,
-semantic-row-1, semantic-row-2, semantic-row-3, semantic-array]. P6 and PF20
-are the six pages and positions 4–23; SF4 is positions 0–3; PX8 and CX10 are
-the eight locator and ten closure extraction nodes. DP6, DS4, DC18, DSOLE,
-DSWEEP, DID, DEST, DNOT, DREAD, DRES, and DDISP are the layer-2 page,
-semantic-row, candidate, sole, sweep, identity, and five terminal groups
-named above. AREG, AEXT, ACLO, ASEM, ACORP, and PDF0046/PDF0051/PDF0056 are
-the supporting artifacts. With listwise meaning equal-position pairs and
-cross meaning every pair, the complete edge relation is exactly:
-
-~~~text
-contains:
-R0 -> [DID,source-commit]
-R1 -> ART3
-R2 -> LOC8
-R3 -> PAGE6 + DP6
-R4 -> CLO10
-R5 -> SW4 + DC18 + [DSOLE,DSWEEP]
-[R6,R7,R8,R9,R10] -> [DEST,DNOT,DREAD,DRES,DDISP] listwise
-AEXT -> PX8 + CX10[0:5]
-ACLO -> CX10[5:10]
-ASEM -> four era rows + four field rows
-[PDF0046,PDF0051,PDF0056] -> P6 by displayed document
-ACORP -> page psid-corpus-document-0098:573
-P6 -> PF20 by displayed page
-each era row and matching field row -> its SF4 member
-DEST -> SEM6
-
-commits-to:
-source-commit -> [AREG,AEXT,ACLO]
-ART3 -> [AREG,AEXT,ACLO] listwise
-LOC8 -> PX8 listwise
-each PAGE6 member -> its P6 page and its PDF artifact
-CLO10 -> CX10 listwise
-SW4[0] -> ACORP
-SW4[1] -> DC18 cross
-SW4[2] -> DC18 cross
-SW4[3] -> page psid-corpus-document-0098:573
-SEM6[0] -> ASEM
-SEM6[1:5] -> DS4 listwise
-SEM6[5] -> DS4 cross
-
-derives-from:
-each DP6 member -> its P6 page and every PF20 member on that page
-DC18 -> ACORP cross
-DSOLE -> page psid-corpus-document-0098:573
-DSWEEP -> DC18 + [DSOLE]
-DEST -> DP6 + DS4 + [DSWEEP]
-DNOT -> CX10 + [DSWEEP]
-DREAD -> [DEST,DNOT]
-DRES -> [DEST,DNOT]
-DDISP -> [DEST,DNOT,DREAD,DRES,DSWEEP]
-each DS4 member -> [ASEM,its era row,its field row,its SF4 member]
-~~~
-
-No other pair is an edge. These rules produce this exact fixture:
+The expected historical V-B6 attempt must exact-match this fixture before
+any dependency diagnostic has meaning:
 
 ~~~json
-{"fixture_id":"amendment_7_v_b6_dependency_graph_topology_v1","root_count":11,"node_count":150,"node_type_counts":{"artifact":19,"page":7,"extraction-row":26,"field-reference":24,"layer-1 commitment":38,"layer-2 derived node":36},"edge_count":325,"edge_type_counts":{"contains":131,"commits-to":83,"derives-from":111},"reachable_node_count":150,"topological_visit_count":150,"canonical_bytes":65263,"sha256":"29cfaf32c9800ff6db41a503c1d8ed97f9fbf5569d932c8711069968445e9006"}
+{"basis":{"basis_content_class_counts":{"law_literal":3,"layout_format_or_width":456,"prior_layer_2_result":124,"semantic_field_reference":24,"semantic_source_projection":28},"canonical_bytes":482620,"derived_node_count":66,"primitive_literal_row_count":3,"row_count":635,"sha256":"29ee09877a07ffd9a8e00e1df06e52a72ea8fbaa729deeca011be52bb277e5c3"},"edges":{"commits-to":1855,"contains":3676,"derives-from":632,"total":6163},"fixture_id":"amendment_7_v_b6_dependency_graph_attempt_v3","nodes":{"artifact":471,"extraction-row":1248,"field-reference":372,"layer-1 commitment":1022,"layer-2 derived node":66,"page":178,"total":3357},"root_count":11,"root_reachable_count":3357,"topological_visit_count":3357,"topology_canonical_bytes":2472885,"topology_sha256":"72920947e8d46eb6bc414551a7371be8d826b445aca5f02661dfa7b5e1711c04"}
 ~~~
 
-Canonical node order is node-type ordinal then UTF-8 node_id. Canonical edge
-order is edge-type ordinal, UTF-8 from_node_id, then UTF-8 to_node_id. Roots
-remain in displayed order. The serialized envelope has exactly edges, nodes,
-and roots; Python JSON uses sorted keys, compact separators, ASCII escaping,
-no NaN, and one terminal LF. Directed closure seeds the eleven roots and
-repeatedly adds the to-node of every outgoing edge from a reached node until
-a fixed point. It must reach 150 nodes. Kahn's algorithm over the same edge
-set must visit 150 nodes; a cycle fails.
+The V4902 occurrence-output domain is an output census, not a basis or
+dependency census. Its nine-key projection has 33 rows, 12,608 canonical
+bytes, and SHA-256
+`cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c`.
+It spans 17 documents and 33 pages. It may be used only after the source
+walk to compare discovered outputs; loading it before scanning fails.
 
-Topology is necessary but not content authority. Each of the 111
-derives-from edges has exactly one ordered_derivation_basis_rows member with
-these five keys:
+The diagnostic position successor is `physical_dependency_position`; it
+supersedes any use of the occurrence-classification
+`semantic_reference_position` as a dependency coordinate. Its field domain,
+in order, is:
 
-~~~text
-derived_node_id
-basis_position
-basis_node_id
-basis_selector
-basis_content_class
+~~~json
+[[0,1976,"V4519",null,null],[1,1976,"V4902",null,null],[2,1977,"V5429",null,null],[3,1978,"V5916",null,null],[4,1976,"V4379","psid-corpus-document-0046",20],[5,1976,"V4380","psid-corpus-document-0046",20],[6,1976,"V4381","psid-corpus-document-0046",20],[7,1976,"V4382","psid-corpus-document-0046",20],[8,1976,"V4901","psid-corpus-document-0046",180],[9,1976,"V4902","psid-corpus-document-0046",180],[10,1976,"V4903","psid-corpus-document-0046",181],[11,1976,"V4904","psid-corpus-document-0046",182],[12,1976,"V4905","psid-corpus-document-0046",182],[13,1976,"V4906","psid-corpus-document-0046",182],[14,1976,"V4907","psid-corpus-document-0046",182],[15,1977,"V5289","psid-corpus-document-0051",22],[16,1977,"V5290","psid-corpus-document-0051",22],[17,1977,"V5291","psid-corpus-document-0051",22],[18,1977,"V5292","psid-corpus-document-0051",22],[19,1978,"V5785","psid-corpus-document-0056",22],[20,1978,"V5786","psid-corpus-document-0056",22],[21,1978,"V5787","psid-corpus-document-0056",22],[22,1978,"V5788","psid-corpus-document-0056",22],[23,1978,"V5789","psid-corpus-document-0056",22],[24,null,null,null,null]]
 ~~~
 
-Within a derived node, basis_position follows canonical target-node order.
-basis_selector is one exact JSON pointer, page-local zero-based UTF-8
-half-open span, or prior layer-2 node ID. basis_content_class is exactly one
-of law_literal, layer_1_admission_only, semantic_identity,
-semantic_statement, semantic_code_lexeme_and_meaning,
-semantic_occurrence_relation, semantic_structural_count,
-prior_layer_2_result, raw_record_or_token, layout_format_or_width,
-frequency_percentage_or_raw_count, profile_or_padding,
-grammar_dfa_partition_or_action, parsed_or_canonical_value,
-executable_mapping, or layer_2_digest_proxy. The last eight are physical.
+Its physical-class domain, in order, is:
 
-The basis selector table is exact: page-extraction bases are precisely the
-six semantic span sets in §21.1.4 and their 20 header field-reference spans;
-candidate and sole-candidate bases are the applicable rows of the 348-row
-c19ced36464bfaeb2b4ff16633efd471494641fa6fe8bb54931542648f8e7ef0
-semantic-occurrence fixture; sweep and terminal bases are their named prior
-layer-2 rows; closure bases are the ten exact displayed pointers; and each
-spouse-seam row uses layer_1_admission_only for the artifact edge,
-semantic_statement for the exact named era-fact keys and field members 4 and
-10, semantic_code_lexeme_and_meaning for every field member-11 submember 2
-and 3, and semantic_identity for the field-reference edge. This table, the
-eleven-member audit and six-page selector table in §21.1.4, and the
-derives-from edges must exact-deep-equal one-to-one. A target without a row,
-an extra row, unequal selector, unequal class, nonconsecutive basis_position,
-or selector that addresses a whole page or mixed row fails before value-flow
-testing.
-
-For each possible physical basis, the diagnostic must define a position even
-when the favorable walk does not contain it. This includes physical members
-associated with V4379, V5289, V5788, and every other field on the six
-committed pages. A proposed source adjudication s therefore constructs
-source_adjudication_forbidden_dependency_rows(s) by walking the verified
-graph and its complete basis rows, not from a prelabelled fixture. Every
-physical basis whose value flows to a layer-2 result appears once, ordered by
-canonical dependency_graph_node_position and then basis_position. Each row
-has exactly these twelve keys:
-
-~~~text
-source_adjudication_consumer_id
-dependency_graph_node_position
-field_reference_position
-forbidden_dependency_position
-interview_wave
-raw_field_id
-forbidden_dependency_class
-forbidden_dependency_locator
-numeric_grammar_derivation_id
-numeric_grammar_derivation_sha256
-derivation_status
-resolution_reason
+~~~json
+[["raw_record_or_token","raw_fixed_width_record_or_token"],["layout_format_or_width","layout_or_declared_format_used_for_parsing"],["frequency_percentage_or_raw_count","raw_data_frequency_percentage_or_nonmissing_count"],["profile_or_padding","profile_or_padding_rule"],["grammar_dfa_partition_or_action","numeric_grammar_or_dfa_partition_action"],["parsed_or_canonical_value","parsed_or_canonical_numeric_value"],["executable_mapping","executable_literal_range_missing_or_value_map"],["layer_2_digest_proxy","layer_2_digest_or_mixed_derived_node_reading_physical_member"]]
 ~~~
 
-source_adjudication_consumer_id is exactly
-amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1.
-dependency_graph_node_position is the zero-based position of the consuming
-layer-2 node in the canonical node array. field_reference_position uses the
-complete 0–23 table above; it is null only for a physical portion not
-attributable to a field. Thus page-row format, Count/%, and layout members
-have defined positions for all 20 page fields, including the distinct V4902
-page occurrence at position 9. forbidden_dependency_position is zero-based
-in this filtered order. forbidden_dependency_class is one of the eight exact
-A7-R11 classes in §21.5. forbidden_dependency_locator is the real two-string
-[artifact_identity, JSON_pointer_or_zero_based_half_open_byte_range] pair,
-never a case ID or synthetic locator. The last four members exact-resolve the
-field's complete R row; they are null only for a non-field physical portion.
-All occurrences are reported.
+Cross every field-domain position with every physical-class position in
+field-major order. `physical_domain_position` is
+`8 * field_position + physical_class_position`. The resulting row has
+exactly `basis_content_class`, `field_reference_position` (null only for
+position 24), `forbidden_dependency_class`, `interview_wave`,
+`pdf_page_number_1_based`, `physical_class_position`,
+`physical_domain_position`, `raw_field_id`, and `source_document_id`.
+For positions 0–191, `field_reference_position` is
+`physical_domain_position // 8` and the physical-class position is
+`physical_domain_position % 8`; for sentinel positions 192–199 the field
+reference is null.
 
-The predicate accepts only when the topology count, digest, root closure,
-acyclic visit, and complete 111-row basis manifest pass and the forbidden
-array reconstructed by the walk is exactly []. An implementation must not
-serialize or accept [] without walking that graph. A missing or reordered
-root/reference/basis fails condition 1; a topology mismatch, basis mismatch,
-or nonempty array fails condition 2; an authentication or rederivation
-failure fails condition 3. Failure aborts before any source member or result
-is accepted. The diagnostic is evidence only and does not serialize the
-forbidden value. If the dependency reaches an actual physical consumer, that
-consumer separately runs §21.4.1. Passing-field physical reads may be lawful
-there; they are still forbidden bases for this semantic-only source result.
+~~~json
+{"canonical_bytes":65920,"field_or_nonfield_position_count":25,"fixture_id":"amendment_7_v_b6_physical_dependency_position_domain_v1","physical_class_count":8,"row_count":200,"sha256":"fe708584bc61fd29b6748deee7dcd14612419bdc0611226dc4df06a4f233deae"}
+~~~
 
-The sole favorable instance at the pre-carrier boundary is the complete
-§18.2 projection through the §18.4 V-B6 source member and verified/pass
-result. Residual 9, its inventory-derived carrier, the V-B6 requirement row,
-and every domain or bundle are deferred to A7-R10b after official-inventory
-construction. The complete four-field stream remains:
+This total domain defines positions for V4379, V5289, V5788, every other
+field on the six committed pages, and non-field physical content. A concrete
+dependency coordinate is the three-member array
+`[physical_domain_position,artifact_identity,JSON_pointer_or_zero_based_half_open_byte_range]`.
+The locator must identify real authenticated source bytes. Unknown,
+duplicate, overlapping, or synthetic coordinates fail rather than vanish.
+The guarded V4902/layout coordinate is 9. The distinct page-row
+V4902/layout coordinate is 73; an implementation may not conflate or omit
+either position.
+
+The atomic source-member domain is closed. In a strict-parsed structured
+artifact it contains every scalar leaf actually reachable through a basis
+selector, at its exact JSON pointer, with array positions explicit. In a
+decoded page it contains every page-local UTF-8 byte read for a token,
+cell, line, row ordinal, page boundary, or classification and addresses that
+byte as `[i:i+1]`. In a raw fixed-width source it contains every byte in
+each registered field slice. A profile, padding rule, grammar, DFA,
+partition/action, parsed value, executable map, or digest-proxy route is
+anchored to every primitive scalar or byte it reads. Atomic members order by
+physical-domain position, UTF-8 artifact identity, locator bytes, then
+canonical consuming-node position. Duplicate coordinates fail. A consumed
+member that cannot be assigned exactly one domain row and one real locator
+makes the diagnostic fail rather than disappear.
+
+After the graph and basis fixtures match, the runner performs a complete
+value-flow shadow walk. It varies each atomic physical datum in authenticated
+memory while holding all other content fixed, recomputes layer-1
+commitments, and rederives every reachable layer-2 node. A change confined
+to layer 1 is ignored; any layer-2 change records the consuming node and
+route. The walk must continue through the complete atomic domain and report
+all discovered dependencies. It cannot emit an empty forbidden-dependency
+array merely because the expected array was absent or because a commitment
+digest was treated as content.
+
+Each source-adjudication diagnostic row has exactly these twelve keys in
+canonical schema order: `source_adjudication_consumer_id`,
+`dependency_graph_node_position`, `field_reference_position`,
+`physical_dependency_position`, `interview_wave`, `raw_field_id`,
+`forbidden_dependency_class`, `forbidden_dependency_locator`,
+`original_byte_hex`, `shadow_byte_hex`, `derivation_status`, and
+`resolution_reason`. Canonical JSON still sorts object keys. Original and
+shadow bytes are two-digit lowercase hexadecimal strings. Rows order by the
+complete `physical_dependency_position` array and then consuming-node
+position. All discovered rows are reported.
+
+The following independently reproduced mutation is a mandatory existential
+witness. In registered `psid-corpus-document-0046`, decoded page 180 has
+3,166 bytes and SHA-256
+`3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9`.
+V4902 occupies UTF-8 bytes `[568:572]`. Holding that token and all semantic
+content fixed while changing the following layout byte `[572:573]` from
+hex `20` to hex `0a` changes the scanner classification from
+`codebook_field_header` to `v_prefixed_semantic_field_reference`. The
+original occurrence row is 189 canonical bytes with SHA-256
+`aad92342670157f7835067a029d415a5c71025641574c2fbb91bcc6dea908510`;
+the shadow row is 203 canonical bytes with SHA-256
+`9d97a0e631ab31cd06642a227e69f2e1d26191bff8bc01470a4b130a4c2be4ba`.
+The changed scanner output proves physical consumption at layer 2.
+
+~~~json
+{"dependency_graph_node_position":3355,"derivation_status":"incomplete_source_numeric_authority","field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","forbidden_dependency_locator":["psid-corpus-document-0046","decoded-page-180 UTF-8 bytes[572:573]"],"interview_wave":1976,"original_byte_hex":"20","physical_dependency_position":[9,"psid-corpus-document-0046","decoded-page-180 UTF-8 bytes[572:573]"],"raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","shadow_byte_hex":"0a","source_adjudication_consumer_id":"amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"}
+~~~
+
+That terminal-LF row is 669 canonical bytes with SHA-256
+`f9e4952e73e37ee0eb6fbbaf0dc595f8a1e12e8147f89e21f9702846b323ed90`.
+It is a pinned mandatory witness, not a claim that the complete dependency
+array has one member or that this is its first canonical member. Because the
+graph must match and be walked, and because this authenticated mutation must
+be rediscovered, no implementation can lawfully serialize an empty
+forbidden-dependency array.
+
+The source-adjudication outcome is therefore exactly
+`nonpassing_forbidden_physical_dependency`; V-B6 is unregistrable and its
+historical `verified/pass` values are prospectively retracted. All four
+numeric-grammar rows remain `incomplete_source_numeric_authority` with null
+physical grammar. Direct semantic registration means only that a codebook
+concept may be cited as semantic evidence; physical numeric-grammar
+registration independently authorizes executable parsing. Neither sense
+implies the other, and the former cannot cure this contaminated derivation.
+No residual-9 carrier, applicable-key array, carrier ID, requirement pass,
+22-row passing domain, bundle, final acceptance, receipt, registration, or
+output may be constructed from this failed path.
+
+The exact four-reference stream remains useful only as guarded semantic
+evidence:
 
 ~~~json
 [[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]]
 ~~~
 
-Its permitted content is exactly the 19-member, four-row semantic projection
-in §21.1.4. For V4902, the direct §18.2 content is only page-180 field
-membership and meaning: code lexemes 20 and 31 express not-self-employed and
-unincorporated-self-employed concepts, and V4901–V4907 is descriptor context
-with no annual amount or source-established allocation. The lexemes are
-never applied to raw data. The other three references enter only through the
-exact transitive semantic rows in §21.1.4.
-
-Acceptance requires the exact graph and basis walk, four-reference order,
-19-member projection, 16,933-byte projection with SHA-256
-a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75,
-position-aware sweep fixture, exact-empty diagnostic, complete 10,887-byte
-§18.2 projection with SHA-256
-7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
-and exact §18.4 result. All four numeric-grammar rows remain
-incomplete_source_numeric_authority with null physical grammar. The
-§13.2/§18.3 semantic registration grants no physical parser;
-physical_numeric_grammar_registration requires its independently passing
-§19–§20 law and cannot establish a source concept or cure missing semantic
-authority.
+Its direct semantic projection retains the exact §21.1.4 members and digest;
+it is not an accepted V-B6 result. V4379, V5289, and V5788 are passing
+fields. Their separately guarded exact-once physical reads remain lawful in
+principle, but the blocked V-B6 path never reaches or executes those reads.
 
 #### 21.4.3 Boundary enumeration
 
@@ -34591,17 +34640,17 @@ that remains only in the complete source manifest or a closed negative
 census has not been consumed and does not prevent construction of unrelated
 lawful consumers.
 
-The exact V-B6 layer-2 semantic chain in §21.4.2 is the only additional
-lawful case. Its later amount operands are V4379, V5289, and V5788. Those
-three complete derivation rows lie in T-plus: each is a passing physical
-field read exactly once under the retained §18/§19 guards, so its applicable
-closed_failure_reference_rows array is empty. Those reads remain lawful and
-mandatory and are not physical consumption of a non-passing field. None of
-the four T-minus occupation fields is an amount operand. Any later attempt
-to read a raw token, layout, code as data, parsed value, or other forbidden
-physical member for V4519, V4902, V5429, or V5916 constructs the ordinary
-nonempty guard and aborts before a source result, requirement row, registry
-row, correction value, or output is accepted.
+The direct four-row V-B6 semantic projection in §21.4.2 remains lawful
+evidence, but the complete V-B6 layer-2 result is nonpassing because its
+corpus sweep consumes physical layout for V4902. The later amount operands
+V4379, V5289, and V5788 lie in T-plus: each is a passing physical field whose
+separately guarded exact-once read remains lawful in principle and is not
+physical consumption of a non-passing field. The V-B6 abort occurs before
+those reads execute. None of the four T-minus occupation fields is an amount
+operand. Any attempt to read a raw token, layout, code as data, parsed value,
+or other forbidden physical member for V4519, V4902, V5429, or V5916
+constructs the ordinary nonempty guard and aborts before a source result,
+requirement row, registry row, correction value, or output is accepted.
 
 
 ### 21.5 Amendment-7 mandatory regression vectors
@@ -34687,75 +34736,81 @@ failure census must also fail. This is the mandatory proof that a silent
 missing failure never becomes a lawful exclusion.
 
 A7-R10a has vector_kind
-semantic_source_adjudication_pre_carrier_end_to_end. It runs in the pre-Q5
-vector gate without reading a serialized expected result. In order, it must:
+`semantic_source_adjudication_pre_carrier_expected_abort`. It runs in the
+pre-Q5 vector gate without reading a serialized expected result. Its vector
+status is pass only when the expected negative is observed; its adjudicated
+V-B6 status is always nonpassing. In order, it must:
 
 1. authenticate every frozen §18 root and the spouse-seam authority, then
-   reconstruct the exact four-row §21.1.4 semantic projection, its four row
-   digests, 16,933-byte length, and
+   reconstruct the exact four-row §21.1.4 direct semantic projection, its
+   four row digests, 16,933-byte length, and
    a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75
    array digest;
-2. reconstruct the complete 10,887-byte §18.2 projection with SHA-256
+2. reconstruct the historical 10,887-byte §18.2 candidate projection with
+   SHA-256
    7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
-   then reproduce the exact §21.4.2 150-node/325-edge graph fixture,
-   111-row basis manifest, four-reference order, position-aware sweep, and
-   exact-empty source_adjudication_forbidden_dependency_rows array. All four
-   field rows simultaneously retain incomplete_source_numeric_authority,
-   their exact literal_only_zero_diagnostic_padding_capacity reasons, and
-   null profile, padding, and registered grammar;
-3. construct the exact §18.4 source member, resolve the empty pointer to the
-   derived projection, and freshly obtain source_disposition verified,
-   verification_status verified, status pass, empty unresolved evidence,
-   and derivation_status pass in both V-B6 branches; and
-4. stop at that pre-carrier boundary and emit only this trace marker:
+   then independently rebuild the exact §21.4.2 3,357-node/6,163-edge graph,
+   635-row basis manifest, four-reference order, complete physical-position
+   domain, and value-flow walk. The scanner must use the frozen PDFs, not
+   pre-labelled occurrence or candidate rows;
+3. rediscover at least the pinned V4902 page-180 layout witness, retain all
+   four `incomplete_source_numeric_authority` rows and their null profile,
+   padding, and registered grammar, and reject the historical
+   `source_disposition=verified`, `verification_status=verified`,
+   `status=pass`, empty unresolved-evidence, and branch `derivation_status`
+   values before any §18.4 result is accepted; and
+4. stop at the pre-carrier boundary and emit only this test trace marker:
 
 ~~~json
-{"carrier_stage":"carrier_deferred","next_stage":"A7-R10b"}
+{"carrier_stage":"carrier_deferred","next_stage":"A7-R10b_expected_absence_gate","source_adjudication_status":"nonpassing_forbidden_physical_dependency"}
 ~~~
 
-The trace marker is exactly 60 LF-terminated canonical bytes with SHA-256
-b0e3c013ccea0321d9c28d94120073f55be1117bf9ce628caa3b872de160ac50.
-It is not a §18 projection/result member, authority evidence, a carrier, or
-an accepted registry value. A7-R10a must not read or construct the official
-inventory, applicable_source_inventory_keys, residual 9, any carrier or
-carrier ID, a requirement row, domain, or bundle. Omitting a semantic basis,
-admitting a forbidden dependency, changing the §18 result, or crossing that
-boundary fails A7-R10a.
+The marker is 154 terminal-LF canonical bytes with SHA-256
+9a80d56587beb49afeafa3b897ba5e4351fc59f1c4cb870f28cb4e0e99be4429.
+It is diagnostic test evidence, not a §18 member, source authority, carrier,
+registry value, or pass bit. `carrier_deferred` means only that the ordered
+post-inventory absence gate has not yet run; it does not promise later
+construction. A7-R10a must not read or construct the official inventory,
+`applicable_source_inventory_keys`, residual 9, any carrier or carrier ID, a
+requirement row, domain, or bundle. A missing root, semantic row, graph
+member, basis, shadow walk, or pinned witness; acceptance of the historical
+candidate; or crossing that boundary fails the vector.
 
-A7-R10b has vector_kind post_inventory_residual_9_carrier_reconstruction. It
-is ineligible until the actual future
-data/external/psid_covered_earnings_source_field_inventory_v1.json has been
-constructed in official order and passed §21.4.5's complete E-domain
-equations, 1,235-key negative census, and every applicable guard. It then:
+A7-R10b has vector_kind
+`post_inventory_residual_9_carrier_expected_absence`. It is ineligible until
+the actual future
+`data/external/psid_covered_earnings_source_field_inventory_v1.json` has
+been constructed in official order and has passed §21.4.5's complete
+E-domain equations, 1,235-key negative census, and every applicable guard.
+It runs strictly after that inventory and before correction final acceptance.
+It must:
 
-1. reauthenticates every R10a frozen input and freshly reconstructs its
-   pre-carrier result; neither the trace marker nor an R10a pass bit, row
-   hash, or enclosing digest is authority;
-2. derives residual 9's complete nonempty applicable_source_inventory_keys
-   directly from that accepted actual inventory, preserving official order
-   and applying §19.3.4's exact era, reconciliation slot-kind, and
-   field-purpose filters;
-3. computes the carrier ID only from
-   [registry_schema_version,residual_id,applicable_source_inventory_keys],
-   constructs the complete executable residual-9 reconciliation row and
-   exact-cover consequence rows, and binds the exact §18 projection,
-   documented_no_source_allocation_required,
-   inclusive_total_exact_once, and continue_registered_parent values;
-4. resolves V4379, V5289, and V5788 as the only annual amount operands,
-   requires their T-plus rows and empty guards, and reads each exactly once;
-   and
-5. independently compares the complete carrier, key array, ID, consequence
-   projection, counts, and digests before acceptance.
+1. reauthenticate every R10a frozen input and freshly reproduce R10a's
+   exact expected-negative graph walk, witness, and V-B6 nonpassing status;
+   no marker, pass bit, row hash, or enclosing digest is authority;
+2. inspect the actual inventory in official order under §19.3.4's era,
+   reconciliation slot-kind, and field-purpose filters, but reject before an
+   `applicable_source_inventory_keys` array, carrier preimage, carrier ID,
+   executable residual-9 row, amount read, consequence row, or passing
+   requirement result is emitted or accepted; and
+3. prove that residual 9 and every V-B6 carrier/success namespace is absent
+   and that no historical/synthetic carrier fixture or pre-enumerated key
+   array was substituted.
 
-No synthetic inventory, carrier fixture, pre-enumerated key array, or
-fixture-derived carrier ID is permitted. R10b cannot gate Q5. Its failure
-blocks residual-9 registry acceptance and every preliminary or final V-B6
-requirement pass, domain, bundle, correction final acceptance, receipt, and
-registration.
+R10b's vector status is pass only when that expected absence and rejection
+are observed. R10b cannot gate Q5 and cannot turn V-B6 into a passing result.
+Final correction acceptance requires the staged R10b vector to pass, but a
+passing R10b proves the V-B6 carrier is absent, so the complete correction
+still cannot obtain final acceptance, a receipt, or registration under this
+amendment. V4379, V5289, and V5788 remain lawful passing-field operands in
+principle; R10b proves that their residual-9 reads do not execute on this
+blocked path. No synthetic inventory or carrier fixture is permitted.
 
-A7-R11 has vector_kind physical_consumption_still_aborts and independently
-reconstructs the accepted A7-R10a frozen-input set; neither arm reads a
-serialized R10a result or invokes A7-R10b. Its exact mutation-class order is:
+A7-R11 has vector_kind `physical_consumption_still_aborts`. It independently
+reconstructs the authenticated R10a frozen-input set and successful
+expected-negative audit; neither arm reads a serialized R10a result or
+invokes A7-R10b. Every baseline run must rediscover the pinned page-180
+witness. Its exact mutation-class order is:
 
 ~~~text
 raw_fixed_width_record_or_token
@@ -34787,12 +34842,12 @@ the one byte changed, and the physical route the runner must exercise. Hex
 32-row manifest is:
 
 ~~~json
-[{"byte_offset_zero_based":252709,"case_number":0,"field_reference_position":0,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[252708:252710]"},{"byte_offset_zero_based":217719,"case_number":1,"field_reference_position":0,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/5"},{"byte_offset_zero_based":218978,"case_number":2,"field_reference_position":0,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39","mutation_position":2,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":540,"case_number":3,"field_reference_position":0,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":764550,"case_number":4,"field_reference_position":0,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[764549:764551]"},{"byte_offset_zero_based":218989,"case_number":5,"field_reference_position":0,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/2"},{"byte_offset_zero_based":219027,"case_number":6,"field_reference_position":0,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/12/2"},{"byte_offset_zero_based":218978,"case_number":7,"field_reference_position":0,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39_then_recommit","mutation_position":7,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":717153,"case_number":8,"field_reference_position":1,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[717152:717154]"},{"byte_offset_zero_based":608511,"case_number":9,"field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/5"},{"byte_offset_zero_based":609802,"case_number":10,"field_reference_position":1,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6","mutation_position":2,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":1175,"case_number":11,"field_reference_position":1,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[1175:1177]"},{"byte_offset_zero_based":3503009,"case_number":12,"field_reference_position":1,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[3503008:3503010]"},{"byte_offset_zero_based":609813,"case_number":13,"field_reference_position":1,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/2"},{"byte_offset_zero_based":609848,"case_number":14,"field_reference_position":1,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/12/2"},{"byte_offset_zero_based":609802,"case_number":15,"field_reference_position":1,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6_then_recommit","mutation_position":7,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":10227,"case_number":16,"field_reference_position":2,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[10226:10228]"},{"byte_offset_zero_based":1045936,"case_number":17,"field_reference_position":2,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/5"},{"byte_offset_zero_based":1047211,"case_number":18,"field_reference_position":2,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34","mutation_position":2,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":576,"case_number":19,"field_reference_position":2,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1977,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[576:578]"},{"byte_offset_zero_based":4437,"case_number":20,"field_reference_position":2,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1977,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[4436:4438]"},{"byte_offset_zero_based":1047222,"case_number":21,"field_reference_position":2,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/2"},{"byte_offset_zero_based":1047260,"case_number":22,"field_reference_position":2,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1977,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/12/2"},{"byte_offset_zero_based":1047211,"case_number":23,"field_reference_position":2,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34_then_recommit","mutation_position":7,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":827191,"case_number":24,"field_reference_position":3,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[827190:827192]"},{"byte_offset_zero_based":1503209,"case_number":25,"field_reference_position":3,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/5"},{"byte_offset_zero_based":1504480,"case_number":26,"field_reference_position":3,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27","mutation_position":2,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"},{"byte_offset_zero_based":540,"case_number":27,"field_reference_position":3,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1978,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":150031,"case_number":28,"field_reference_position":3,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1978,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[150030:150032]"},{"byte_offset_zero_based":1504491,"case_number":29,"field_reference_position":3,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/2"},{"byte_offset_zero_based":1504529,"case_number":30,"field_reference_position":3,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1978,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/12/2"},{"byte_offset_zero_based":1504480,"case_number":31,"field_reference_position":3,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27_then_recommit","mutation_position":7,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"}]
+[{"byte_offset_zero_based":252709,"case_number":0,"field_reference_position":0,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[252708:252710]"},{"byte_offset_zero_based":217719,"case_number":1,"field_reference_position":0,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/5"},{"byte_offset_zero_based":218978,"case_number":2,"field_reference_position":0,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39","mutation_position":2,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":540,"case_number":3,"field_reference_position":0,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":764550,"case_number":4,"field_reference_position":0,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[764549:764551]"},{"byte_offset_zero_based":365284,"case_number":5,"field_reference_position":0,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[365283:365285]"},{"byte_offset_zero_based":5423654,"case_number":6,"field_reference_position":0,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[5423653:5423655]"},{"byte_offset_zero_based":218978,"case_number":7,"field_reference_position":0,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39_then_recommit","mutation_position":7,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":717153,"case_number":8,"field_reference_position":1,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[717152:717154]"},{"byte_offset_zero_based":608511,"case_number":9,"field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/5"},{"byte_offset_zero_based":609802,"case_number":10,"field_reference_position":1,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6","mutation_position":2,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":1175,"case_number":11,"field_reference_position":1,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[1175:1177]"},{"byte_offset_zero_based":3503009,"case_number":12,"field_reference_position":1,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[3503008:3503010]"},{"byte_offset_zero_based":2489834,"case_number":13,"field_reference_position":1,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[2489833:2489835]"},{"byte_offset_zero_based":1356579,"case_number":14,"field_reference_position":1,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[1356578:1356580]"},{"byte_offset_zero_based":609802,"case_number":15,"field_reference_position":1,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6_then_recommit","mutation_position":7,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":10227,"case_number":16,"field_reference_position":2,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[10226:10228]"},{"byte_offset_zero_based":1045936,"case_number":17,"field_reference_position":2,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/5"},{"byte_offset_zero_based":1047211,"case_number":18,"field_reference_position":2,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34","mutation_position":2,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":576,"case_number":19,"field_reference_position":2,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1977,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[576:578]"},{"byte_offset_zero_based":4437,"case_number":20,"field_reference_position":2,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1977,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[4436:4438]"},{"byte_offset_zero_based":142432,"case_number":21,"field_reference_position":2,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[142431:142433]"},{"byte_offset_zero_based":318062,"case_number":22,"field_reference_position":2,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[318061:318063]"},{"byte_offset_zero_based":1047211,"case_number":23,"field_reference_position":2,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34_then_recommit","mutation_position":7,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":827191,"case_number":24,"field_reference_position":3,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[827190:827192]"},{"byte_offset_zero_based":1503209,"case_number":25,"field_reference_position":3,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/5"},{"byte_offset_zero_based":1504480,"case_number":26,"field_reference_position":3,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27","mutation_position":2,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"},{"byte_offset_zero_based":540,"case_number":27,"field_reference_position":3,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1978,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":150031,"case_number":28,"field_reference_position":3,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1978,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[150030:150032]"},{"byte_offset_zero_based":909361,"case_number":29,"field_reference_position":3,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21_then_parse_canonical_numeric","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[909360:909362]"},{"byte_offset_zero_based":324271,"case_number":30,"field_reference_position":3,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_40_to_41_then_execute_code_map","mutation_position":6,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[324270:324272]"},{"byte_offset_zero_based":1504480,"case_number":31,"field_reference_position":3,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27_then_recommit","mutation_position":7,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"}]
 ~~~
 
-The fenced payload is 13,765 bytes including its terminal LF and has
+The fenced payload is 13,650 bytes including its terminal LF and has
 SHA-256
-8ec4849f7ba783fa8d59503ca71243f3aaaf3a0c92b3a6d17c2e9cf30798a909.
+14eb875a8bb21203059a172ff24f3377cad89159274c6c480c14841786e03b68.
 It is source evidence, not a prelabelled expected diagnostic: the runner must
 verify that every original byte is present, apply exactly the displayed
 one-byte mutation only after complete-source authentication, and discover
@@ -34801,8 +34856,11 @@ the dependency by instrumenting the proposed value flow.
 Mutation positions 0 through 6 respectively make the proposed layer-2 node
 read the raw token, use declared format in parsing, use the displayed source
 count, normalize the leading-space token under a padding rule, traverse a
-numeric-grammar/DFA arm for the 99/98 token, carry a parsed value from the
-20/21 lexeme, or execute the 31/32 literal mapping against data. Position 7
+numeric-grammar/DFA arm for the 99/98 token, parse and carry a canonical
+numeric value from the displayed raw 20/21 token, or execute the code map
+against the displayed raw 40/41 token. Positions 5 and 6 deliberately mutate
+authenticated raw records rather than semantic codebook lexemes, so the
+direct semantic projection remains fixed. Position 7
 recomputes the shadow commitment after the displayed count mutation and then
 adds a layer-2 read of that digest or its mixed preimage. A changed digest
 that remains only a layer-1 commitment is not a dependency and must not
@@ -34811,20 +34869,25 @@ node's content changes because it reads through that commitment.
 
 The authenticated original remains the authority in both baseline and
 shadow runs. The shadow is never reauthenticated or accepted as frozen
-source. The baseline must reproduce A7-R10a. The shadow walk builds the
-candidate topology and basis manifest, reports its topology/basis mismatch
-against the pinned favorable fixture, and derives the diagnostic from the
-actual changed layer-2 node. Supplying the manifest's class label or case
-number directly to the diagnostic fails.
+source. The baseline must reproduce A7-R10a's exact graph, complete walk,
+pinned V4902 witness, and expected abort. The shadow independently rebuilds
+the candidate topology and basis manifest and compares their node, edge,
+row, and selector domains with the pinned historical-attempt fixture. The
+negative harness continues its instrumented walk far enough to derive the
+new diagnostic route from the actual changed layer-2 content, then rejects;
+a topology/basis mismatch is reported but cannot substitute for discovering
+that value flow. Supplying the manifest's class label or case number directly
+to the diagnostic fails.
 
 Each case has two independent arms:
 
 1. the source-adjudication arm leaves the complete top-level relation at
-   pass_with_closed_failures, resolves exactly one twelve-key
-   source_adjudication_forbidden_dependency_rows member with the real
-   [source_artifact_id,source_member] locator and
-   forbidden_dependency_position zero, and aborts before any §18 source
-   result or future A7-R10b carrier/requirement result is accepted; and
+   pass_with_closed_failures, reproduces the complete baseline diagnostic
+   including the pinned page-180 witness, and discovers exactly one
+   additional mutation-route row in the shadow-minus-baseline set. That row
+   uses the real `[source_artifact_id,source_member]` locator and
+   `physical_dependency_position[0] == case_number`; it aborts before any
+   §18 source result or future carrier/requirement result is accepted; and
 2. the physical-consumer arm independently reconstructs the same frozen
    inputs, carries the mutated datum through the named route, and constructs
    one hypothetical crosswalk whose reference stream is only that field.
@@ -34834,10 +34897,11 @@ Each case has two independent arms:
    aborts before the crosswalk or dependent value is accepted.
 
 The aggregate case applies the four class-0 mutations in cases 0, 8, 16, and
-24 simultaneously. Its source diagnostic contains exactly four twelve-key
-rows in field_reference_position order 0 through 3 and assigns
-forbidden_dependency_position 0 through 3 after the graph walk. Its physical
-arm uses consumer_row_identity
+24 simultaneously. Its source diagnostic reproduces the complete baseline
+including the pinned page-180 witness and has exactly four additional rows
+in its shadow-minus-baseline set, ordered by
+`physical_dependency_position`; their domain positions are 0, 8, 16, and
+24. Its physical arm uses consumer_row_identity
 ["amendment_7_a7_r11_physical_consumer_fixture.v1",32], resolves all four
 real raw-byte locators in the same order, emits four nine-key guard rows with
 consumer_reference_position 0 through 3, and aborts. Any successful arm,
@@ -34873,11 +34937,11 @@ one prospective revision-9 disposition.
 
 | Source anchors | Exact Amendment-7 disposition |
 |---|---|
-| §13.2 V-B6 registration-or-abort row and §18.3 "register every field, exact code map" command | prospectively-replaced-and-composed-with-§21.2-item-6-and-§21.4.2: these commands mean semantic_code_map_registration for the exact concept/map projection. They neither require nor confer physical_numeric_grammar_registration; missing semantic authority still aborts. |
-| §18.2 complete 13-key documented-inclusive-total projection and §18.4 V-B6 source member, positive result, and branch equality | composed-with-§21.4.2-and-§21.5-A7-R10a/R11: verified/pass is lawful at the pre-carrier boundary only after the exact layer graph, four-row semantic projection, and exact-empty source-adjudication forbidden-dependency predicate pass. A forbidden source dependency invokes the twelve-key source-boundary abort; any actual physical consumer separately invokes the ordinary guard. |
-| §19.3.1 V-B6 verdict/established-fact references and §19.3.4 residual-9 carrier | prospectively-replaced-and-composed-with-§21.4.2-and-§21.5-A7-R10b: the four T-minus occupation references supply semantic evidence only. Residual 9 is reconstructed after accepted actual-inventory construction; documented_no_source_allocation_required, inclusive_total_exact_once, and continue_registered_parent remain exact, with the T-plus V4379/V5289/V5788 rows as the sole exact-once amount operands. |
-| §16.2 verify_fitting_free_claim_v_b6_v1, the V-B6 result consumer, and every fresh 22-row requirement-domain evaluation | composed-with-§21.4.2, §21.5-A7-R10a/R10b/R11, and §21.8: the predicate ID and row identity remain, but every result freshly reconstructs the pre-carrier layer walk and the actual-inventory carrier at their ordered gates; no predecessor result, pass bit, key array, carrier, or digest is copied. |
-| §§18.6–18.8 and §§19.4, 19.6, and 19.8 V-B6 lifecycle, bundle, satisfiability, registration, and final-success claims | prospectively-composed-with-§21.4.2-and-§21.8–§21.9: each claim remains reachable only through accepted R10a, actual-inventory R10b, and fresh requirement/domain/bundle reconstruction. A failed semantic authority or any forbidden physical dependency of V4519, V4902, V5429, or V5916 makes every dependent claim non-passing. The required exact-once physical reads of the passing fields V4379, V5289, and V5788 remain lawful and mandatory under their retained guards. |
+| §13.2 V-B6 registration-or-abort row and §18.3 "register every field, exact code map" command | prospectively-replaced-and-composed-with-§21.2-item-6-and-§21.4.2: direct semantic_code_map_registration remains lawful evidence for the exact concept/map projection and neither requires nor confers physical_numeric_grammar_registration. V-B6's result-level registration nevertheless fails because the complete source adjudication is contaminated and unregistrable. |
+| §18.2 complete 13-key documented-inclusive-total projection and §18.4 V-B6 source member, positive result, and branch equality | prospectively-retracted-by-§21.4.2-and-§21.5-A7-R10a/R11: the historical candidate bytes remain authenticated, but `verified/pass`, the positive source member, branch equality, and empty forbidden-dependency conclusion are not fresh results. The exact graph walk must rediscover the pinned physical witness and return `nonpassing_forbidden_physical_dependency` before acceptance. |
+| §19.3.1 V-B6 verdict/established-fact references and §19.3.4 residual-9 carrier | prospectively-retracted-and-composed-with-§21.4.2-and-§21.5-A7-R10b: the four occupation references retain narrow semantic evidence only; residual 9, its key array, carrier, ID, consequence, and accepted result are not constructed. The passing V4379/V5289/V5788 exact-once reads remain lawful but do not execute on the blocked path. |
+| §16.2 verify_fitting_free_claim_v_b6_v1, the V-B6 result consumer, and every fresh 22-row requirement-domain evaluation | prospectively-replaced-by-§21.4.2, §21.5-A7-R10a/R10b/R11, and §21.8: the predicate ID and row position remain, but every fresh evaluation reconstructs the source graph, returns V-B6 nonpassing, proves the carrier absent at R10b, and makes the enclosing 22-row domain nonpassing. No predecessor result, pass bit, key array, carrier, or digest is copied. |
+| §§18.6–18.8 and §§19.4, 19.6, and 19.8 V-B6 lifecycle, bundle, satisfiability, registration, and final-success claims | prospectively-retracted-by-§21.4.2-and-§21.8–§21.9: every dependent V-B6 requirement, domain, bundle, correction final acceptance, receipt, registration, and final-success claim is nonpassing. The scoped prohibition is any forbidden physical dependency of V4519, V4902, V5429, or V5916—generally, physical consumption of a non-passing field—not any physical use. Exact-once reads of passing V4379, V5289, and V5788 remain lawful in principle and are expressly outside that prohibition. |
 | §19.3.2 nine-key field_source_derivation, all-field compiler return, status, and failure/top-level conclusions | replaced-by-§21.3-complete-relation-with-closed-failures; preserve all outer and row schemas, replace only the admitted top status and global failure consequence. |
 | §19.3.3 source_document_manifest and complete field_source_derivation embedding | composed-with-§21.4.4-complete-evidence; all 89,599 rows, including F, remain mandatory. |
 | §19.3.3 D_w search, positive_field_join_rows, raw_field_projections, and Q5 status/history | composed-with-§21.4.1–§21.4.4; search remains total, each positive reference is guarded, and D7 replaces D6 as the live Q5 predecessor. |
@@ -34890,14 +34954,14 @@ one prospective revision-9 disposition.
 | §20.4.1 layout, parse, raw-token, value-map, and unobserved consumers | composed-with-§21.4; every retained branch rule remains and every T-minus positive reference aborts at this boundary. |
 | §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.4, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
 | §20.4.3 G17 propagation | composed-with-§21.4.6; evidence-only full relations remain complete and consuming projections are guarded. |
-| §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler, A6, and exact eleven-member R01–R09/R10a/R11 array precede Q5 under pass_with_closed_failures; R10b is reserved for the later actual-inventory gate. |
+| §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler, A6, and exact eleven-member R01–R09/R10a/R11 array precede Q5 under pass_with_closed_failures; R10a passes only by observing the V-B6 abort, and R10b is the later post-inventory expected-absence gate. |
 | §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | lawfully-unchanged-with-reason as immutable D5 history; §21.6.2 inherits the sweep machinery without altering its historical result. |
 | §19.3.4 Class-C consequences other than the separately enumerated residual-9 V-B6 semantic path, G17-C09–C11, and every correction/context/publication or other transitive consumer passage reached from them | composed-with-§21.4; each actual physical raw-field consumption runs its applicable boundary guard, complete evidence relations retain their narrow nonconsuming disposition, and all non-field predicates remain exact. This generic row cannot authorize V-B6. |
 | §20.5 Amendment-6 replacement inventory and closure sweep | lawfully-unchanged-with-reason as immutable D6 history; the distinct Amendment-7 sweep below covers the revision-9 corpus. |
 | §20.6 revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §21.7 supplies the complete 43-row successor census. |
 | §20.7 revision-8 lifecycle and v5 receipt chain | replaced-by-§21.8 revision-9 successors for a post-D7 registration; historical version dispatch remains. |
 | §20.8.1 compiler walk and every top-level all-field-pass prerequisite | replaced-only-by-§21.3.2 and §21.5; exact totality plus A6 and the exact eleven-member R01–R09/R10a/R11 array under pass_with_closed_failures is the Q5 gate. |
-| §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete, and actual-inventory acceptance is followed immediately by R10b before residual-registry or requirement acceptance. |
+| §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete, and actual-inventory acceptance is followed immediately by R10b's proof that no residual-9 carrier or V-B6 requirement is accepted. That expected-negative pass blocks the dependent residual/requirement/final-success path. |
 | §20.8.3 alternatives and mandatory-abort matrix | replaced only where it globally forbids all Q5/layout/G17 construction because F is nonempty; every listed row-level, boundary, capture, and production abort otherwise remains. |
 | §20.8.4 referee, D6, build, and registration protocol | replaced-by-§21.9 for D7 ratification, pass_with_closed_failures, the exact pre-Q5 vector array, staged R10b, the V-B6 layer boundary, physically guarded consumers, v6 receipt, and revision-9 registration. |
 | Any sweep-matched or transitively reached passage not otherwise named above | lawfully-unchanged-with-reason when it neither changes nor consumes the moved predicate; its exact reason must identify the matched seed and prove no raw-field consumption or lifecycle dependency was omitted. |
@@ -34925,7 +34989,7 @@ subsection's table header and ends immediately before its expressly named
 next heading. No replacement inventory, regression fence, repeated prose,
 surrounding paragraph, or non-comparator table is excluded.
 
-The exact 40-position initial literal seed array is:
+The exact 50-position initial literal seed array is:
 
 ~~~text
 field_source_derivation
@@ -34952,6 +35016,16 @@ V-B6
 source_adjudication
 semantic_code_map_registration
 physical_numeric_grammar_registration
+layer-1 commitment
+layer-2 derived node
+contains
+commits-to
+derives-from
+physical_dependency_position
+pinned_forbidden_dependency_witness
+nonpassing_forbidden_physical_dependency
+A7-R10a
+A7-R10b
 amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1
 G17-C01
 G17-C06
@@ -34979,15 +35053,16 @@ inclusion, lifecycle/receipt selection, Git ancestry, and every direct or
 transitive consumer edge in §§19.4.3 and 20.5.2. A seed is not a ceiling.
 
 The closure must in particular walk from §13.2 through the complete
-§18.2/§18.4 R10a pre-carrier path, its carrier-deferred boundary, Q5,
-actual official-inventory construction, R10b, residual 9, the V-B6 row in
-every preliminary and final 22-row evaluation, every domain and bundle, and
-correction final acceptance. It also walks every §18/§19 lifecycle,
+§18.2/§18.4 historical candidate and R10a pre-carrier abort, its
+carrier-deferred marker, Q5, actual official-inventory construction, R10b's
+carrier-absence proof, the nonpassing V-B6 row in every preliminary and final
+22-row evaluation, every blocked domain/bundle, and correction final
+acceptance's resulting failure. It also walks every §18/§19 lifecycle,
 satisfiability/final-success consumer, and every physical consumer of the
 four references. The ordering edges R10a -> Q5 -> actual inventory -> R10b
--> each preliminary/final evaluation -> correction final acceptance must
-all appear in forward and reverse closure. A generic Class-C or
-evidence-only row cannot close that subgraph.
+-> each preliminary/final evaluation -> correction final-acceptance gate
+must all appear in forward and reverse closure with their negative outcomes.
+A generic Class-C or evidence-only row cannot close that subgraph.
 
 Every matched passage receives exactly one of
 replaced-by-named-successor, composed-with-named-successor, or
@@ -35081,7 +35156,7 @@ consumers. The rerun therefore retains the same 43-family census.
 | DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
 | DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
 | DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-future-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: these are one live D7 raw-byte identity family. Step 2 fixes the exact accepted candidate byte sequence and step 3 permits only that sequence to become D7; validation exact-compares the same-path raw Git blob at D7 to those accepted candidate bytes, verifies its complete hash and the independent D6-prefix equality, and carries that proof into every Amendment-7 position, capture, and selected proof. Any byte inequality, or digest-, ancestry-, or transitive-only substitution, aborts. |
-| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding composed with the post-inventory R10b gate; failure blocks Q5 at its applicable predecessor edge and blocks every residual-9 or later consumer when R10b has not passed. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding composed with the post-inventory R10b gate; D7/Q5 failure blocks Q5, while failure of the actual-inventory-to-R10b gate blocks residual 9 and every later consumer. |
 | DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
 | DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
 | DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_selected_registration_design_lineage_v1 closes the v6 receipt and history dispatch. |
@@ -35135,17 +35210,18 @@ evaluated.
 V-B6 retains requirement_id V-B6 and predicate ID
 verify_fitting_free_claim_v_b6_v1, but retaining that identity never retains
 its prior result. Every preliminary and final evaluation occurs after actual
-official-inventory acceptance. It freshly reruns R10a from the frozen roots
-through the complete graph/basis walk and §18.4 pre-carrier result, then
-reruns R10b from the accepted actual inventory through the complete
-residual-9 carrier before it may produce verified/pass. It may not copy an
-R10a/R10b pass bit, source member, marker, applicable-source key array,
-carrier, row hash, or enclosing digest. The exact A7-R11 suite must also
-remain accepted. Failure of semantic authority or any forbidden physical
-dependency of the four T-minus references, or failure of actual-inventory
-R10b, makes the V-B6 evaluation non-passing and aborts its dependent domain
-and bundle. The three passing amount operands retain their lawful exact-once
-physical reads.
+official-inventory acceptance. It freshly reruns R10a from the frozen roots,
+reconstructs the complete historical graph/basis attempt, rediscovers the
+pinned physical witness, and obtains only the expected source-adjudication
+abort. It then reruns R10b against the accepted actual inventory and proves
+that no residual-9 key array, carrier, ID, amount read, or requirement result
+was constructed. It may not copy an R10a/R10b test pass bit, source member,
+marker, row hash, or enclosing digest. The exact A7-R11 suite must also pass
+by observing its expected aborts. Consequently every fresh V-B6 row is
+nonpassing and every enclosing 22-row requirement domain and bundle is
+nonpassing; `verified/pass` cannot be produced. The three passing amount
+operands retain lawful exact-once-read authority, but those reads do not
+execute on the blocked path.
 
 Position 1 is exactly:
 
@@ -35272,12 +35348,13 @@ v6 requirement registry, and freshly reconstructs all 22 rows, projection
 evidence, Booleans, failure IDs, counts, and hashes. Position 1, A1, and A3
 use only the successors above; the legal row retains its typed v2 result;
 all others are re-evaluated. V-B6 is one of those freshly reconstructed 22
-rows and must reproduce R10a's complete frozen-source-to-pre-carrier walk and
-R10b's actual-inventory-to-residual-9 walk in that order. Its four
-numeric-grammar derivation rows remain T-minus and null; the domain fails
-rather than copying verified/pass if layer-1 authentication, any layer-2
-basis, the source_adjudication_forbidden_dependency_rows exact-empty
-predicate, actual-inventory carrier, residual 9, or A7-R11 fails.
+rows and must reproduce R10a's complete frozen-source-to-pre-carrier abort
+and R10b's actual-inventory carrier-absence proof in that order. Its four
+numeric-grammar derivation rows remain T-minus and null. The pinned
+nonempty dependency witness makes V-B6 nonpassing in every fresh
+reconstruction; therefore no accepted complete v6 domain instance exists.
+A serialized historical `verified/pass`, empty forbidden-dependency array,
+carrier, residual 9, or predecessor domain is an immediate failure.
 
 The bundle successor is
 covered_earnings_path_applicability_registry_bundle.v7. It retains the v6
@@ -35292,18 +35369,21 @@ digest becomes path_applicability_specs_sha256. No v6 predecessor bundle,
 filtered source relation, failed consumer, draft Q5, or copied digest is
 admitted.
 
-The bundle separately embeds and cross-binds the freshly accepted V-B6 R10a
-pre-carrier layer-2 result and the R10b actual-inventory carrier result,
-including the complete ordered applicable_source_inventory_keys and carrier
-ID. Neither stage can be reconstructed from the other. Exact-empty
-applicable guards means guards for actual physical consumers; it does not
-require an empty physical guard over the four semantic-only references or
-treat their codebook meanings as parsed values. Conversely, the accepted
-semantic result grants no physical admission. The T-plus V4379/V5289/V5788
-reads remain exact-once. A bundle that conflates either direction or copies
-a stage result fails.
+No accepted v7 bundle instance exists while its required v6 domain is
+nonpassing. A construction attempt must instead cross-bind R10a's
+source-adjudication abort and R10b's carrier-absence proof, confirm that no
+`applicable_source_inventory_keys`, carrier ID, or V-B6 pass is present, and
+abort before emitting a bundle. An empty ordinary consumer guard for a
+passing field cannot erase the source-adjudication witness. The T-plus
+V4379/V5289/V5788 exact-once reads remain lawful in principle but are not
+executed. Copying either historical stage result or manufacturing a carrier
+fails.
 
 #### 21.8.3 Receipt and selected-registration lineage
+
+The following schemas and predicates remain the exact revision-9 lifecycle
+successors, but the V-B6 nonpassing domain means no accepted Amendment-7
+receipt or selected registration can presently instantiate them.
 
 covered_earnings_path_applicability_receipt_core.v6 is the complete v5 core
 with schema_version advanced and amendment_7_design_identity inserted
@@ -35398,145 +35478,114 @@ comparator row keys. None enlarges the identifier inventory.
 
 After D7, the separately reviewed source-only v3 implementation constructs
 all 176 document derivations and all 89,599 complete 16-key field rows before
-reading a serialized comparand or any consumer. It reproduces the complete
-§20 source law, runs A6-R01 through A6-R11, then applies §21.3. Only after the
-complete relation is accepted as pass_with_closed_failures does the exact
-eleven-member pre-Q5 array run: A7-R01 through A7-R09, R10a through the
-carrier-deferred §18.4 boundary, and R11's source and physical mutation
-arms. Q5 cannot be created, read, or used unless the relation has exact-empty
-duplicate, outside, and unmapped arrays, every closed failure is serialized,
-and that exact array passes. R10b is not run and no inventory, carrier, or
-22-row fixture exists at this gate.
+reading a serialized comparand or consumer. It reproduces the complete §20
+source law, runs A6-R01 through A6-R11, applies §21.3, and requires the
+complete relation to be `pass_with_closed_failures`. Only then does the exact
+eleven-member pre-Q5 Amendment-7 array run: A7-R01 through A7-R09, R10a, and
+R11. R10a passes as a vector only by rebuilding the historical V-B6 attempt,
+rediscovering the pinned physical dependency, and aborting its
+`verified/pass` candidate at the pre-carrier boundary. R11 reanchors on that
+successful expected-negative audit and discovers every concrete mutation
+route. No inventory or carrier is read at this gate.
 
-The Q5 first-add commit is a strict descendant of D7, has one parent, and
-adds exactly the one regular 100644 Q5 path and no other delta. Q5 embeds the
-complete relation. DC-30, DC-35, and DC-40 must each independently pass:
-D5/Q5, D6/Q5, and D7/Q5 plus the complete eight-key artifact identity and
-all downstream ancestry edges are reconstructed rather than inferred from
-one another. Each positive join runs its guard before acceptance.
-R10a's accepted V-B6 pre-carrier result is independently reconstructed
-before any downstream consumer reads it; no Q5 or inventory row constructs
-that expected result.
+Q5 may then be first-created in its one-path, one-parent post-D7 commit. It
+embeds the complete source relation, including all T-minus evidence, but no
+positive join may consume a T-minus field. DC-30, DC-35, and DC-40
+independently prove the D5/Q5, D6/Q5, and D7/Q5 edges and the complete
+eight-key artifact identity. The V-B6 source-adjudication abort does not
+prevent unrelated lawful Q5 construction; it does prevent a V-B6 positive
+source result.
 
-Only after Q5 passes may the slot authority, official slot registry, and
-actual official inventory be constructed. Each performs its own guard; the
-inventory additionally proves the exact 1,235-row negative census and
-unchanged complete E-domain equations. Immediately after that actual
-inventory passes, and before any residual registry or preliminary V-B6
-requirement result is accepted, R10b derives the complete residual-9 carrier
-from the inventory's official order. Only an accepted R10b permits residual
-registries, layouts, typed parsers, raw-token grammars, value maps,
-crosswalks, C01/C06/C07 source comparands, and the preliminary 22-row
-registry/domain/bundle to proceed. Correction-path and capture work then
-precedes a separate final 22-row registry/domain reconstruction, which
-reruns R10a and R10b. G17 cannot be claimed until all 18 rows, including
-capture-dependent C16/C17 and final-adjudication C18, exist and pass.
+Only after Q5 passes may the guarded slot authority, official slot registry,
+and actual official inventory be constructed. The inventory must satisfy
+the unchanged E-domain equations, exact 1,235-key negative census, and every
+applicable guard. R10b runs immediately after that actual inventory passes,
+strictly before any residual-9 registry, V-B6 requirement result,
+preliminary/final 22-row domain, bundle, or correction final-acceptance gate.
+It passes only by rederiving R10a's source abort and proving that no
+residual-9 key array, carrier, ID, consequence, amount read, or V-B6 result
+is constructed. No synthetic inventory or carrier fixture may appear.
 
-A T-minus row in a D_w search, the complete manifest, a full C01 evidence
-projection, or the closed negative census is dormant evidence and does not
-stop this walk. The exact four-row V-B6 semantic projection is likewise a
-lawful semantic layer-2 use only while §21.4.2 and A7-R10a pass. A
-malformed/missing/extra/reclassified derivation row, an
-unequal census, a nonempty actual consumer guard, a failed Class-A authority
-or Class-C rule consequence, an unresolved source/slot/inventory key, or any
-other retained prerequisite aborts at its exact site. In particular,
-§20.8.4 step 5's global stop for any unsupported/conflicting declaration or
-remaining Class-B residual is prospectively replaced: a faithfully
-serialized T-minus row is the closed Class-B disposition and does not stop
-unrelated construction; attempted positive physical consumption of a
-non-passing field still does. Any forbidden V-B6 dependency invokes
-A7-R11's abort, and a missing or failed post-inventory R10b blocks every
-residual-9 and later acceptance. The lawful exact-once T-plus amount reads
-remain required. No consumer may be dropped or relabeled to continue.
+Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
+comparands may continue when their own laws pass. The V-B6 branch cannot.
+Every preliminary and final 22-row reconstruction must keep V-B6 in its
+same row position, rerun R10a and post-inventory R10b, and obtain a
+nonpassing V-B6 row; therefore the complete domain, v7 bundle, correction
+final acceptance, receipt, and registration cannot pass. Final acceptance
+requires R10b's vector status to be pass, but that pass is the expected
+carrier-absence proof and cannot supply the separately required V-B6
+requirement pass.
+
+A dormant T-minus evidence row is not physical consumption. The scoped
+stop is any forbidden physical dependency of V4519, V4902, V5429, or V5916,
+and generally any physical consumption of a non-passing field. V4379,
+V5289, and V5788 are passing fields; their separately guarded exact-once
+physical reads remain lawful in principle, but the blocked residual-9 path
+does not execute them. No consumer may be dropped or relabelled to continue.
 
 #### 21.9.2 Referee, D7, implementation, capture, receipt, and production
 
 This subsection replaces the §20.8.4 ordered protocol for revision 9:
 
-1. submit the complete append-only §21 candidate bytes to adversarial
-   referee review without source implementation, Q5, slot, inventory,
-   registry, registration, capture, correction evaluation, context output,
-   or other non-document tree change in this authoring lane;
-2. resolve every finding and verify the complete round-to-round diff; the
-   exact 2,049,769-byte D6 prefix and identity; all six frozen source
-   artifacts and the §19.3.1 scope root; the complete 1,235-key membership,
-   every physical intersection list/digest, the 422/813 fixability partition,
-   A6, the exact eleven-member pre-Q5 A7 array, and staged A7-R10b; the exact
-   four-reference/19-member semantic projection and its digest; the complete
-   commitment/derivation graph and §18.2-to-pre-carrier V-B6 walk; the two
-   registration senses; the nine-key/16-key schemas; top predicate; seven
-   physical boundary guards; fresh post-inventory R10a/R10b V-B6 evaluation
-   in all 22 rows; unchanged inventory domain; §21.6 closure sweep; exact
-   43-row/21-replaced/22-unchanged comparator census, exact 16+1 successor
-   inventory, and every compiler/consumer/lifecycle/build walk. Continue
-   until the exact final bytes receive affirmative ratification;
-3. ratify only those accepted bytes in one identifiable future document-only
+1. Submit the complete append-only §21 candidate bytes to adversarial
+   referee review without a source implementation, Q5, slot, inventory,
+   registry, capture, correction evaluation, output, or other non-document
+   tree change in this authoring lane.
+2. Resolve every finding and verify the complete round-to-round diff; the
+   exact 2,049,769-byte D6 prefix and identity; all frozen sources; the
+   round-1 counts, partitions, precision repairs, A6 vectors, and DC-39; the
+   exact eleven-member §18.2 classification; the 3,357-node/6,163-edge graph
+   and 635-row basis fixtures; the classifier and physical-position domains;
+   the pinned V4902 witness and prospective retraction; both registration
+   senses; the repaired 32-route R11 manifest; the exact pre-Q5 vector array;
+   staged R10b expected-absence gate; every fresh 22-row nonpassing outcome;
+   §21.6 closure sweep; 43-row comparator census; successor inventory; and
+   every compiler, consumer, lifecycle, and build walk. Continue until the
+   exact final bytes receive affirmative ratification.
+3. Ratify only those accepted bytes in one identifiable future document-only
    commit D7. No authoring, audit, review-response, source, artifact, or
-   runtime change may be smuggled into D7;
-4. afterward separately review and commit the source-only v3 implementation,
-   reconstruct the complete relation, run every unchanged A6, and require
-   §21.3 pass_with_closed_failures. Only then run the exact pre-Q5 array:
-   A7-R01 through A7-R09, R10a through its carrier-deferred marker, and both
-   A7-R11 arms. First-add Q5 alone at its strict post-D7 commit. After Q5
+   runtime change may be included in D7.
+4. After D7, separately review and commit the source-only v3 implementation.
+   Reconstruct the complete relation, run all unchanged A6 vectors, require
+   §21.3 `pass_with_closed_failures`, and run A7-R01 through A7-R09, R10a's
+   expected pre-carrier abort, and both R11 arms. Only that exact suite may
+   precede Q5. First-add Q5 alone at its strict post-D7 commit. After Q5
    passes, construct and accept only the guarded slot authority, official
    slot registry, and complete actual official inventory in official order,
-   including its E-domain equations and negative census. No synthetic
-   carrier, residual registry, value map, crosswalk, C01/C06/C07 comparand,
-   or 22-row result is constructed in this step;
-5. immediately after the actual inventory in step 4 passes, run A7-R10b.
-   Reauthenticate R10a's frozen inputs, derive residual 9's nonempty
-   applicable_source_inventory_keys from that inventory, construct and
-   compare its carrier and exact consequence, and require the three passing
-   amount operands exact-once. R10b must pass before any residual-9 registry,
-   preliminary V-B6 result, domain, bundle, or correction final acceptance;
-6. only after step 5 passes, construct the guarded residual registries,
-   layouts, typed parsers, raw-token grammars, value maps, crosswalks, and
-   complete C01/C06/C07 source comparands, then run every source, legal,
-   inventory, registry, history, noncapture G17,
-   closure, comparator, consumer-guard, v6 requirement-specification, v7
-   bundle, position-1, and preliminary domain prerequisite. The complete
-   R10a graph/basis walk and §18.4 result and the actual-inventory R10b
-   carrier/residual-9 result are each freshly rerun before the V-B6 row,
-   preliminary domain, or bundle can pass. A1/A3 results and the final v6
-   domain remain pending, never false. A faithful dormant
-   T-minus row is not a failure here; a nonempty positive-consumer guard or
-   any malformed totality/retained prerequisite stops and reports exact
-   rows;
-7. only after step 6 passes, construct and validate the separately reviewed
-   correction-path implementation—distinct from the source-only v3 compiler
-   in step 4—and the preliminary value-blind adjudication, then execute the
-   receipt-free-proof-gated v6 authorization/proof/A1/A3 capture under the
-   unchanged narrow capture predicate, validate the claim/primary/sidecar
-   triple and clean cutoff, construct the v6 capture input, all 22 final
-   requirement results and final v6 domain, freshly rerunning R10a and R10b
-   from their proper frozen-source and actual-inventory inputs rather than
-   copying the preliminary pass or carrier. Correction final acceptance
-   expressly requires that fresh R10b pass. Then complete and validate all
-   18 G17 rows before any receipt is read;
-8. construct and validate the complete v6 receipt core and outer receipt,
-   then obtain a validator-accepted fresh registration binding D7, the
-   complete revision-9 design blob, every required source/compiler/Q5/
-   inventory/legal/registry/implementation/capture byte, the complete v7
-   bundle, complete v6 receipt, the exact V-B6 R10a and R10b dispositions,
-   all exact-empty applicable physical consumer guards, and a fresh
-   output/claim namespace; and
-9. only then perform the unchanged prelaunch, sealed execution, incident,
-   correction, publication, context, certificate, and external-merge
-   sequence, rerunning correction_input and context_output guards before
-   each actual physical field-derived value is consumed or emitted.
+   including its E-domain equations and negative census. Construct no
+   synthetic carrier, residual-9 registry, or 22-row result in this step.
+5. Immediately after the actual inventory in step 4 passes, run A7-R10b.
+   Reauthenticate R10a's frozen inputs and graph, rediscover the source
+   witness, inspect the actual inventory, and prove the absence of every
+   residual-9 key array, carrier, ID, consequence, amount read, and passing
+   or accepted V-B6 result. R10b must pass this expected-negative test before any correction
+   final-acceptance gate is evaluated. A constructed carrier or synthetic
+   fixture fails R10b.
+6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain.
+   Rerun R10a and R10b from their proper inputs, never copied outputs. The
+   V-B6 row must be nonpassing and the domain must abort. This is the
+   required terminal outcome under the present evidence; no residual-9
+   registry, V-B6 bundle, correction final acceptance, receipt, registration,
+   production correction, context output, certificate, publication, or
+   external merge may follow from this path.
+7. The v6 capture, domain, receipt, and registration schemas in §21.8 remain
+   defined for exact lifecycle closure and future lawful authority. They may
+   be instantiated only after a later ratified authority changes the
+   presently nonpassing V-B6 result without weakening this layer law,
+   fabricating a carrier, or copying a predecessor result. That later work is
+   outside Amendment 7.
 
-At these draft bytes none of steps 3–9 has occurred. No D7, successor
-implementation, Q5, official inventory, guarded consumer artifact, lifecycle
-successor, R10b carrier, receipt, registration, correction result, or output
-is claimed.
-The empirical source evidence establishes only that the full disposition is
-total and the exact V-B6 semantic layer-2 use is independently lawful.
-Positive physical consumption of any non-passing field must remain closed;
-the separately passing V4379/V5289/V5788 reads remain mandatory.
+At these draft bytes none of steps 3–7 has occurred. No D7, successor
+implementation, Q5, official inventory, guarded consumer artifact,
+lifecycle instance, carrier, receipt, registration, correction result, or
+output is claimed. The empirical source evidence establishes lawful layer-1
+commitments and narrow direct semantic projections, but also establishes the
+forbidden layer-2 dependency that forces the prospective retraction.
 
 **Amendment 7 is inoperative unless and until its exact D7 ratification
-commit is bound by a validator-accepted v6 fresh-registration receipt.**
-After ratification but before that registration, steps 4–7 authorize only
-the separately reviewed source, artifact, implementation, proof, and narrow
-capture preparation stated above. They authorize no correction production
-evaluation, path switch, context run, label change, output, or publication.
+commit is bound by a validator-accepted v6 fresh-registration receipt.** The
+current V-B6 nonpassing result prevents that receipt. Ratification alone
+authorizes only the separately reviewed source, artifact, implementation,
+and expected-negative checks stated above; it authorizes no correction
+production evaluation, path switch, context run, label change, output, or
+publication.
