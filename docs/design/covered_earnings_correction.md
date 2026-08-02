@@ -30457,8 +30457,9 @@ the selected form's Boolean. All retained scale, type, unit, and
 range-membership coalescence laws remain exact.
 
 After token-form selection, `candidate_arm_results` retains exactly two
-rows in `zero_left_padding` then `left_ascii_space_padding` order. Each row
-has the retained five keys `profile_kind`,
+rows in `zero_left_padding` then `left_ascii_space_padding` order. Except for
+the explicitly tagged complete-domain extension below, each row has the
+retained five keys `profile_kind`,
 `accepted_observation_count`, `diagnostic_observation_count`,
 `rejected_observation_count`, and `status`, but status is now
 `pass | fail | indistinguishable`. The render functions below—not a host
@@ -30494,17 +30495,57 @@ The closed disposition is:
   `w == d + 2`, so even canonical `0` plus the point and `d` digits fills
   the width and no padding position exists, both rows are likewise
   `indistinguishable` and `selected_arm` is exactly
+  `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`;
+- independently, when the derived branch is `value_code_map`, its complete
+  normalized semantic domain is nonempty, finite, and closed, the width-one
+  rule above does not apply, both observational rows are
+  `indistinguishable`, and the complete-domain relations below are exactly
+  equal with exact observed replay, `selected_arm` is the same literal
   `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`; and
 - every other zero-diagnostic census, any passing zero row, mixed padding,
   zero/space result not covering all records, or unequal diagnostic count
   is a hard failure.
 
+On that additional complete-domain arm, each `candidate_arm_results` row is
+the retained five-key row followed by exactly
+`complete_domain_member_results`, `complete_domain_member_result_count`, and
+`complete_domain_member_result_domain_sha256`. Enumerate every normalized
+literal once and every numeric-range member once in complete source-entry
+then ascending member order. Each result has exactly
+`source_entry_ref`, `source_member_index`, `source_value`,
+`source_derivation`, `candidate_result`,
+`physical_image_raw_token_hex`, `transition_value_actions`, and
+`failure_reason`. The member index is null for a literal and its zero-based
+range index otherwise. `source_value` has the retained exact five-key shape;
+derivation is `codebook_literal | codebook_range_member`; and result is
+`registered_literal_first_bypass | exact_numeric_image | no_exact_image`.
+A literal-first bypass carries its registered exact-width token, empty action
+array, and null failure. An exact numeric image carries the candidate's
+unique exact-width token, complete DFA-path `value_action` array, and null
+failure. A failed image carries null token, empty actions, and the exact
+nonempty renderer failure reason.
+
+The count equals the complete finite semantic-domain cardinality and the
+digest hashes the complete named array under §10.1 with one terminal LF.
+After projecting away the parent rows' unequal `profile_kind`, the zero and
+space complete-domain arrays, counts, and digests must deep-equal. Every
+nonnull numeric member must be `exact_numeric_image`; every literal must be
+the identical registered bypass; no failure may remain. Every observed
+token must then exact-match its same-domain image or literal, classify under
+the retained missing/literal precedence, and byte-replay. Equality over the
+observed subset, an aggregate era result, or a zero-record census is
+insufficient. This proof selects no padding arm and authorizes no scalar or
+token outside the complete normalized value-code domain; such a token takes
+semantic-membership or unknown-token abort.
+
 The two underdetermined literals are dispositions, never padding arms. They
 authorize only the exact same-width token language and byte replay proved by
 the field. They cannot be projected as zero, space, an era default, or an
-arm for a different width. This is the closed lawful width-one disposition
-requested by the censuses: it records precisely that the arm is unobservable
-in principle and fabricates none.
+arm for a different width. The complete-domain arm likewise cannot be
+generalized to an uncoded field or a value outside its closed source domain.
+These are the closed lawful dispositions requested by the censuses: each
+records precisely that the arm is unobservable in principle and fabricates
+none.
 
 For an Amendment-6 row, `padding_rule` retains its four-key shape. A selected
 space profile uses operation
@@ -30754,7 +30795,7 @@ The exact passing derivation statuses become:
 `registered_numeric_grammar` is nonnull for all three compiled statuses and
 null on every retained noncompiled branch. The top-level
 `field_source_derivation.status` may be `pass` only when every row takes one
-of those six lawful statuses and the complete relation plus all seven
+of those six lawful statuses and the complete relation plus all eight
 vectors below reproduce. Every layout consumer accepts any compiled status
 when its complete profile, selected-arm-or-disposition, range partitions,
 padding rule, DFA, and replay exact-match.
@@ -30810,7 +30851,7 @@ flow into the existing layout and `raw_token_grammar` members. No structural rel
 The regression identity relation has exactly these nine keys in this order:
 `vector_id`, `interview_wave`, `raw_field_id`, `evidence_path`,
 `evidence_pointer`, `evidence_row_sha256`, `raw_source_sha256`,
-`observed_token_rows_sha256`, and `required_outcome`. Its complete seven rows
+`observed_token_rows_sha256`, and `required_outcome`. Its complete eight rows
 are:
 
 ```json
@@ -30821,7 +30862,8 @@ are:
   {"vector_id":"A6-R04","interview_wave":1968,"raw_field_id":"V210","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/213","evidence_row_sha256":"9764e1aad9af27bb3a98a13566d096548c244bb255efc629b420606cf201bea9","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4072529f3cab60900f04eb216e73f0ec6307aa8ed60c439dcfaf51b04018a448","required_outcome":"unsigned_literal_decimal_selected_padding_underdetermined_no_capacity"},
   {"vector_id":"A6-R05","interview_wave":1968,"raw_field_id":"V76","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/75","evidence_row_sha256":"97ad420b1e7bc3fb8ce0f8ad9f07c94f4c54a1e323c7c01fc17bea6a80391b64","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4082fbc67ab457ddad4115b66ab785e816e20b393b195786fbd47ba384b7aa2d","required_outcome":"signed_integer_leading_minus_after_spaces_selected"},
   {"vector_id":"A6-R06","interview_wave":1979,"raw_field_id":"V6363","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/62","evidence_row_sha256":"61c70014d4ec5b40676a980bf24c042f6cc530649794175a1d15777e379c65f3","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"a56fa8d49cc90e874cd900d689302fe91138dbaaa895db6731e61fbe152989bf","required_outcome":"tuple_equivalent_declaration_dispositions_and_unsigned_literal_decimal_space_padding_selected"},
-  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"exhaustive_partial_range_partition_and_observed_exact_replay"}
+  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"exhaustive_partial_range_partition_and_observed_exact_replay"},
+  {"vector_id":"A6-R08","interview_wave":1968,"raw_field_id":"V97","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/96","evidence_row_sha256":"3086bf6ef0f0c4a478c031417d3f29df752c00e93745807e7e1cb7b15ef77932","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"7728fee41416e99342a836afc5ce9710f91599c333c8f533620cf2f53009b2e9","required_outcome":"complete_domain_no_padding_capacity_exact_replay_without_arm_selection"}
 ]
 ```
 
@@ -30829,10 +30871,10 @@ Every displayed row SHA-256 hashes the complete historical field-evidence
 array row under §10.1 with one terminal LF; every observed-token digest
 hashes the complete unsigned-byte-ordered array of exact two-key
 `raw_token_hex`/`frequency` objects with one terminal LF. The vector count is
-exactly 7. The ordered vector-ID keyset SHA-256 is
-`b3742f1b0685ce453ec1fbee583e34c2be8b14b674f11f138b44050cc8b10a7d`,
+exactly 8. The ordered vector-ID keyset SHA-256 is
+`bf81b8cb3d0fbb6c160cb319cc821baf4569f2b71b6fba680d4453036dfd39d0`,
 and the complete nine-key row-domain SHA-256 is
-`3c4c655ccf6282b7777ddd39160827645b0462a836662e4855c19170eb927d3a`.
+`ff503e1ba4b21d0f8240f81ec7830ff7a7cb807e91308bb712f2f6256095e598`.
 Both are over standalone §10.1 terminal-LF canonical JSON arrays. A vector
 may exercise more than one arm, but none may be omitted.
 
@@ -30904,6 +30946,22 @@ The byte-exact regression facts are:
   two observed digits, accepting fewer than the greatest fitting precision,
   rounding or omitting a range member, or promoting only the observed subset
   fails the vector.
+- **A6-R08, V97/1968.** Authenticate evidence pointer
+  `/field_evidence/96` and reproduce 4,802 width-771 terminal-CRLF records,
+  slice one-based 250–258, and all 283 token rows. `NUM(9.0)` governs the
+  complete finite range `100000001` through `100000880`; registered missing
+  literal `999999999` completes the 881-member semantic domain but has zero
+  observations. Every numeric member occupies all nine bytes under both
+  candidate constructors, yields the same nine append-digit actions and no
+  failure, and the literal takes the same missing-first bypass. Thus both
+  complete-domain result arrays have 881 rows—880 exact numeric images and
+  one registered-literal bypass—and deep-equal after the candidate label is
+  removed. All 4,802 observed values belong to the range and replay exactly.
+  The row must serialize
+  `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`, select
+  neither padding arm, and retain exact source-domain membership. Inferring
+  an era arm, omitting the unobserved missing member, using only the 283
+  observed tokens, or authorizing uncoded `100000881` fails the vector.
 
 The implementation must deep-equal each full census and constructor result,
 not only the displayed exemplar token or digest. The preexisting synthetic
@@ -30928,8 +30986,8 @@ complete nested values, never an outer key count. Specifically:
    successor row. The latter hashes the complete 15-key row, including the
    ten-key declaration projection, twelve-key physical authentication,
    selected token form, selected arm or no-arm disposition, complete range
-   partitions, exact-token DFA, and every source-derived status. A digest of
-   a §19 row
+   partitions, any complete-domain candidate relations, exact-token DFA, and
+   every source-derived status. A digest of a §19 row
    or a row with one nested member projected away is unequal.
 2. `typed_parse_specs.raw_width` equals `payload_width == w`;
    `.decimal_places` equals the selected declaration's maximum `d` even
@@ -30998,8 +31056,8 @@ subdomain.
 For `psid_value_code_specs.v1`, the exact `source_commitments` and `entries`
 outer schemas remain. Each numeric-range commitment now carries the same
 successor row ID/full-row digest, declaration dispositions, token-form
-result, arm or no-arm disposition, both range relations, padding rule, DFA,
-census, and replay as
+result, arm or no-arm disposition, both range relations, any complete-domain
+candidate relations, padding rule, DFA, census, and replay as
 the matching layout. Literal-only, physical-unestablished, and
 outside-numeric branches retain their closed null-grammar behavior after
 their declarations have passed §20.3.1. The value-code registry may neither
@@ -31037,8 +31095,8 @@ The Q5 acceptance walk for each positive is exact:
    the six lawful statuses in §20.3.5;
 3. deep-compare its complete source-row arrays, coordinates, declaration
    assertions/dispositions, token census, profile, form, arm/disposition,
-   both range relations, padding rule, DFA, and replay before projecting its
-   ID and full-row hash;
+   both range relations, any complete-domain candidate relations, padding
+   rule, DFA, and replay before projecting its ID and full-row hash;
 4. independently rebuild the complete 18-key raw-field projection, the
    nine remaining join members, join ID, and all row/keyset/domain digests;
    and
@@ -31066,7 +31124,8 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   comparand is read. Actual bytes come from the authenticated Q5 manifest.
   The complete relation includes every ten-key declaration projection,
   profile, form, arm/disposition, complete renderable/unrenderable range
-  relation, padding rule, DFA, replay, failure branch, and all seven
+  relation, complete-domain candidate relation, padding rule, DFA, replay,
+  failure branch, and all eight
   regression vectors through the implementation-identity
   acceptance requirement. Used rows then reverse-project through the sixth
   C01 value, the complete positional inventory layout/token-grammar rows;
@@ -31081,8 +31140,9 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
 - **G17-C06.** Before direct-law classification, the expected and actual
   sides independently resolve the unique successor row and compare its
   complete declaration disposition relation, census, token-form selection,
-  arm or no-arm disposition, both range relations, padding operation,
-  transition rows, value derivation, and raw-to-value-to-raw replay.
+  arm or no-arm disposition, both range relations, any complete-domain
+  candidate relations, padding operation, transition rows, value derivation,
+  and raw-to-value-to-raw replay.
   Missing/literal precedence and
   all retained legal/default folds follow only after that pass. A host
   parse, trimmed token, rounded decimal, unsigned coercion, or predecessor
@@ -31091,7 +31151,8 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   source bytes through the same successor compiler. Actual
   `source_commitments` and entries must deep-equal every declaration
   assertion/disposition, normalized entry, both numeric-range partition
-  relations, profile, grammar, and replay. Tuple-equivalent SPSS/codebook
+  relations, any complete-domain candidate relations, profile, grammar, and
+  replay. Tuple-equivalent SPSS/codebook
   declarations remain
   separately visible; neither is discarded because their semantic tuples
   agree.
@@ -31106,8 +31167,9 @@ complete ordered 18-row array. All 18 physical rows must still pass.
 In §19.8.1 the source-format compiler step is composed with §§20.3–20.4:
 compile all declaration assertions and dispositions, all candidate token
 forms, the per-field space or no-arm result, every exhaustive range
-partition, exact-token DFAs, replays, and seven vectors before building Q5,
-the official artifacts, or G17. Every
+partition, every applicable complete-domain candidate relation, exact-token
+DFAs, replays, and eight vectors before building Q5, the official artifacts,
+or G17. Every
 later reference to a v3 derivation row means this completed v3 row.
 
 Section 19.8.2 item 4 is prospectively replaced only where it says that
@@ -31138,12 +31200,12 @@ affected prose is dismissed as merely explanatory.
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, outer schemas, source denominator, and dependency order remain exact; only the nested grammar laws named below are completed. |
 | §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion; disposition byte-equal and tuple-equivalent peers; abort every unsupported, true-conflict, or missing disposition. |
 | §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
-| §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-twelve-key-authentication`: add complete token-form results and selection plus exhaustive range-partition rows/counts/digests; diagnostic fields select only the evidenced ASCII-space arm; the two exact structural no-arm dispositions replace fabrication or failure where an arm is unobservable in principle. |
-| §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm for either structural underdetermination. Amendment-6 rows never select or canonicalize a zero-padding arm. |
+| §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-twelve-key-authentication`: add complete token-form results and selection plus exhaustive range-partition rows/counts/digests; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, and finite-complete-domain no-capacity proofs serialize no arm where the candidates are unobservable in principle. |
+| §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural or complete-domain equality proofs. Amendment-6 rows never select or canonicalize a zero-padding arm. |
 | §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
 | §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `composed-with-§20.3.5`: add the explicit underdetermined and exhaustive partial-range passing statuses and closed failures while preserving all outer key counts and ordered ID preimages; every nested ID/digest is fresh. |
 | §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every branch uses the same successor declaration/form/arm/DFA renderer; partial ranges carry both member relations and the closed unrenderable-member action; precedence and source semantics remain exact. |
-| §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-seven-vector-census`: V93 remains mandatory, actual later-era space, width-one, decimal, signed, conflict, and precision-edge vectors are added; zero-arm constructors are rejection-only. |
+| §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-eight-vector-census`: V93 remains mandatory, actual later-era space, width-one, decimal, signed, conflict, precision-edge, and complete-domain-no-capacity vectors are added; zero-arm constructors are rejection-only. |
 | §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer schemas remain; complete successor nested rows and hashes flow positionally through every layout and value-map consumer. |
 | §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
 | §19.3.3 positive join `raw_field_projections`, numeric derivation ID/full-row hash, join identity, and Q5 digest | `composed-with-§20.4.2`: the 18-key projection is unchanged in shape and covers the complete successor 15-key row; all enclosing identities/digests are rebuilt. |
@@ -31213,6 +31275,7 @@ physical_authentication
 token_form_candidate_results
 selected_token_form
 candidate_arm_results
+complete_domain_member_results
 selected_arm
 range_renderability_partition_rows
 padding_rule
@@ -31705,14 +31768,14 @@ The v3 source-only interface and all official v1 artifact/registry names are
 completed in place and therefore are not new identifiers. In particular,
 `psid-source-format-assertion:` and the retained numeric-grammar prefixes are
 ID prefixes; `source_format_assertion_id`, disposition members, token-form
-members, padding members, range-partition members, and DFA actions are
-schema members;
+members, padding members, complete-domain candidate members, range-partition
+members, and DFA actions are schema members;
 `padding_arm_underdetermined_width_one_exact_replay_v1`,
 `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`,
 `validate_exact_left_ascii_space_padding_preserve_payload`, the token-form
 and status strings—including
 `compiled_source_numeric_grammar_partial_range_exact_replay`—and the
-`A6-R01` through `A6-R07` values are closed enum
+`A6-R01` through `A6-R08` values are closed enum
 or row-ID values. None is a separately selectable object, schema, or
 predicate identifier. `D6`, `Q5`, authorization commit `A`, `H_cap`, `T`,
 and `C` are symbolic Git commits; the `F`/`N`/`H`/`X` projections and the
@@ -31723,7 +31786,7 @@ version branch.
 
 ### 20.8 Post-Amendment-6 build order, walks, alternatives, ratification, and fresh registration
 
-#### 20.8.1 Source-to-compiler build and seven-vector walk
+#### 20.8.1 Source-to-compiler build and eight-vector walk
 
 Ratification of this grammar law is not ratification of a source-derived
 grammar. After D6 exists, the source-only build executes in exactly this
@@ -31746,8 +31809,10 @@ dependency order before Q5 or an official consumer is read:
 4. missing-first, evaluate every token-form candidate and its complete
    `B_o` vectors/counts, require one passing form, coalesce the explicit sign
    declarations, evaluate both padding-arm renderers, and serialize exactly
-   the per-field space arm or one structural no-arm disposition; no other
-   field's result enters;
+   the per-field space arm, one structural no-arm disposition, or the finite-
+   complete-domain no-capacity disposition after both complete candidate
+   relations and every observed replay deep-equal; no other field's result
+   enters;
 5. construct the exact-token DFA and action rows, replay every observed
    numeric token and normalized literal/missing token, enumerate every
    source-declared unobserved value, construct every exhaustive ordered
@@ -31755,7 +31820,7 @@ dependency order before Q5 or an official consumer is read:
    closed unrenderable-member action plus the unknown-token abort law; then
    compute every grammar ID, derivation ID, full-row digest, relation digest,
    and implementation result from complete canonical bytes; and
-6. independently reproduce the seven-row vector relation and all full
+6. independently reproduce the eight-row vector relation and all full
    field/token censuses. The implementation identity is unacceptable if a
    displayed exemplar happens to match but its complete row, census,
    constructor result, rejection branch, or enclosing digest differs.
@@ -31771,16 +31836,17 @@ The required actual-evidence walk is:
 | A6-R05 | lane A, §20.2.1 | V76 / 1968 | `202d323432` executes leading `no_op`, `set_negative`, and digit actions, yields -242, and re-renders the same five bytes; all plus, trailing, internal, overpunched, and leading-zero sign spellings reject. |
 | A6-R06 | lane B, §20.2.1 | V6363 / 1979 | source-ordered null/SPSS/codebook assertions preserve `F6.2` and `NUM(6.2)`, select one `(6,2)` tuple and one corroborating tuple-equivalent disposition; `2032362e3430` maps to 26.40 and byte-replays under the space/literal form. |
 | A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; both complete cent-step ranges partition 429,270 renderable from 263,430 unrenderable members, `-1040.01` has a null image, and the field passes only as `compiled_source_numeric_grammar_partial_range_exact_replay`. |
+| A6-R08 | lane A, §20.2.1 | V97 / 1968 | the complete 880-member numeric range plus missing literal yields two equal 881-row candidate image/action/failure relations and all 4,802 observations replay; serialize the no-capacity disposition without selecting an arm or authorizing an uncoded value. |
 
-The first six rows supply at least one actual exemplar for every newly
-lawful arm or disposition requested by this amendment; R07 is the mandatory
-hostile precision/range partition. The lane ledgers identify the census finding,
+The first six rows supply the original form, sign, declaration, and no-arm
+exemplars; R07 is the mandatory hostile precision/range partition and R08
+the complete-domain no-capacity proof. The lane ledgers identify the census finding,
 while the exact evidence pointers, row hashes, raw-file hashes, token-domain
 hashes, coordinates, counts, and outcomes are the normative relation in
 §20.3.6. Neither ledger summary supplies a row value.
 
 At draft review, independently slicing the authenticated raw files at all
-seven evidence pointers reproduces the seven complete token-row digests and
+eight evidence pointers reproduces the eight complete token-row digests and
 the vector keyset/domain digests in §20.3.6. That is a reproducibility check,
 not a passing future `field_source_derivation`: the complete source-only
 compiler identity and every all-field result must still be built after D6.
@@ -31805,8 +31871,9 @@ consumer walk is:
    passing Q5 hierarchy, and derive every present or structural inventory
    row under the retained exact key biconditionals. Every present layout
    positionally deep-copies the complete successor profile,
-   selected-arm-or-disposition, padding rule, DFA/null branch, observed and
-   unobserved domains, and value derivation from its same-wave source row.
+   selected-arm-or-disposition, any complete-domain candidate relations,
+   padding rule, DFA/null branch, observed and unobserved domains, and value
+   derivation from its same-wave source row.
    The slot/inventory first-add and admitting-cutoff ancestry predicates must
    pass before either artifact is authority.
 4. **Value maps and pre-capture G17 source comparands.** Rebuild every
@@ -31859,12 +31926,19 @@ smallest dispositions for round one and records the rejected alternatives:
    would turn aggregate evidence into per-field authority, so each field
    must still reproduce a positive diagnostic and zero-arm rejection. A
    zero default, “accept either,” trim, and host formatting are rejected.
-2. **Width one.** Inheriting the era's space result would fabricate an arm;
-   serializing zero would contradict the diagnostic census; and failing all
-   19,789 later width-one fields would preserve an in-principle artifact.
-   The smallest choice is the explicit no-arm token with one-byte exact
-   replay and no authority at another width. V15133 proves the compiled
-   range/literal consumer path.
+2. **No padding capacity.** Inheriting the era's space result would
+   fabricate an arm; serializing zero would contradict the diagnostic
+   census; and failing all 19,789 later width-one fields would preserve an
+   in-principle artifact. The width-one choice is therefore the explicit no-
+   arm token with one-byte exact replay and no authority at another width;
+   V15133 proves its compiled range/literal consumer path. V97 exposes the
+   distinct finite-domain case: width exceeds one, but every one of the 880
+   range members fills all nine bytes and the missing literal bypasses both
+   candidates identically. The fail-closed-smallest extension reuses the
+   existing no-capacity disposition only after both complete 881-row image/
+   action/failure relations deep-equal and all observations replay. An
+   observed-subset proof, era arm, uncoded-domain generalization, or new
+   selectable disposition literal is rejected.
 3. **Literal decimal precision.** Requiring exactly `d` fractional bytes
    rejects 159 authenticated V945 observations; allowing arbitrary fewer
    digits, optional points, rounding, or host shortest-format output admits
@@ -31924,7 +31998,7 @@ The resulting mandatory-abort matrix is closed:
 | Condition | Mandatory result |
 |---|---|
 | diagnostic field selects zero, accepts both arms, mixes zero/space, or lacks a positive diagnostic despite available capacity | numeric authority failure under §20.3.5; no layout/Q5/G17 consumer |
-| width-one or no-capacity row serializes an arm instead of its exact disposition | conflict/replay failure; vector and derivation identity fail |
+| width-one or no-capacity row serializes an arm instead of its exact disposition, or a finite-domain no-capacity row omits/unequally serializes either complete candidate relation | conflict/replay failure; vector and derivation identity fail |
 | plus/trailing/internal/overpunched sign, negative zero, noncanonical magnitude, optional/second decimal point, rounding, or unequal replay | unsupported or conflict by §20.3.5 precedence; no scalar result |
 | declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing selector pointer | complete declaration relation fails; top-level abort |
 | complete normalized range has both renderable and unrenderable members but either ordered relation/count/digest is absent or unequal, its DFA admits an unrenderable image, or an observed range token does not replay through the renderable relation | partition/grammar identity failure; no observed-subset, rounded, omitted, or synthesized repair |
@@ -31946,7 +32020,7 @@ Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
    other tree change in this amendment lane;
 2. resolve every referee finding in the review record and verify the
    complete round-to-round diff; the exact D5 mode/blob/1,781,491-byte
-   prefix; both ledger and all four evidence-artifact identities; all seven
+   prefix; both ledger and all four evidence-artifact identities; all eight
    evidence rows, raw files, token censuses, vector rows, and vector digests;
    the passage inventory and independently reproduced §20.5 closure sweep;
    the exact 38-row/18-replaced/20-unchanged comparator census; the exact
@@ -31966,7 +32040,7 @@ Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
    Recompute every source, compiler, Q5, inventory, registry, crosswalk, and
    constructed comparand digest from complete bytes;
 5. run the complete legal predicate, source-manifest and all-field compiler
-   reproduction, seven vectors, Q5 history, official-inventory reproduction,
+   reproduction, eight vectors, Q5 history, official-inventory reproduction,
    crosswalk history, nine-registry exact cover, the complete C01/C06/C07
    source comparands and every genuinely noncapture G17 prerequisite, the
    complete 22-row v5 requirement-specification registry, the v6 bundle,
