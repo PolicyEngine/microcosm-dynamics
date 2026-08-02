@@ -33606,9 +33606,85 @@ domains:
 | V-B8 | 52 | 5c59ab2206257b51e7bd82717929314a92660e625bdd632ccb74b3a5193273b9 | [] | empty-array digest |
 | union | 125 | 882063a30bab66b3f0740305f254581cfcd42038b2161ac278ea16bbdec43378 | same four-key array | 23d306facc264bc9b94ba5e16b74a3ceef444b2d7bc8fc6c2a8de5feac9e2e45 |
 
-These four V-B6 keys are evidentiary references, not permission to parse,
-map, correct, or emit them. Their non-passing terminals remain controlling
-at every consumption boundary.
+The required ratified-input walk distinguishes direct §18 construction from
+transitive V-B6 semantic registration before classifying any input. Only
+V4902 occurs directly in §18.2: its registered codebook page-180 membership
+and meaning establish descriptor context for the V4901–V4907 block. V4519,
+V5429, and V5916 do not occur as direct §18 projection members. They enter
+the preserved V-B6 authority domain only through the §19.3.1
+verdicts[1].established_fact_ids reference stream, the corresponding
+spouse-seam era_fact, residual 9's searched-field domain, and the §13.2/§18.3
+semantic concept-and-code-map registration obligation.
+
+The exact four-reference audit is:
+
+| Reference | Exact frozen selectors | Complete era_fact row SHA-256 | Direct §18.2 input | Input class |
+|---|---|---|---|---|
+| [1976,"V4519"] | /era_facts/9 and /field_evidence/220 | e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46 | none; preserved head/reference-person secondary-job occupation meaning for reference year 1975 | (a), codebook-semantic |
+| [1976,"V4902"] | /era_facts/15 and /field_evidence/609 | f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a | registered page-180 field membership, spouse secondary-job occupation/self-employment meaning, and absence of an annual amount or source allocation | (a), codebook-semantic |
+| [1977,"V5429"] | /era_facts/21 and /field_evidence/1055 | 683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d | none; preserved head/reference-person secondary-job occupation meaning for reference year 1976 | (a), codebook-semantic |
+| [1978,"V5916"] | /era_facts/27 and /field_evidence/1529 | b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c | none; preserved head/reference-person secondary-job occupation meaning for reference year 1977 | (a), codebook-semantic |
+
+Each fact establishes only variable/concept membership, role, job slot,
+purpose, reference timing, reporting unit, attachment status, meaning text,
+and displayed code-map semantics. For the four fields, the exact semantic
+code-map projection has 28 entries in source order; each entry has only
+raw_value_or_range and source_meaning. The former is an opaque codebook
+lexeme, not a parsed data value, and the pair is never executed against a raw
+record. Frequencies and percentages are not projected.
+
+For a machine-reconstructable boundary witness, the four rows above, in
+displayed order, project exactly these 19 members in this semantic schema
+order:
+
+~~~text
+era_fact_pointer
+field_evidence_pointer
+interview_wave
+raw_field_id
+earnings_reference_year
+fact_id
+fact_class
+role
+job_slot
+field_purpose
+information_date_basis
+reference_periodicity
+job_match_timing
+reporting_unit
+annual_role_total_attachment_status
+exact_codebook_short_label
+full_source_description
+semantic_code_map
+fact_source_status
+~~~
+
+fact_source_status exact-copies the selected era_fact's status. Under the
+§21.1.1 canonical serialization, the four complete row digests are,
+respectively,
+aea1e7808740a2130edd4582af2b7890e2154171e6d8c96fb52de07e2c586837,
+79f6fb1ca38e7f6556bcd216c6e450cab109265828bd2689fa1413be15b64cf3,
+e265107049464fcf7f7cd22961eed40b9215e178dc0782ce28c8c2c5f6e57ba3,
+and
+7a3a9ac9cbce33fb32af0f0e0b65310a427b393bf57eaa917579168013a2c786.
+The complete four-row array is 16,933 bytes including its terminal LF and
+has SHA-256
+a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75.
+
+The complete §18.2 13-key projection input walk reaches only authenticated
+questionnaire/codebook document identities and text, semantic locators and
+row pointers, the closure's negative-history rows, the document/field-ID
+cooccurrence audit, established meaning findings and nonclaims, the reader
+consequence, empty successor residuals, and the verified disposition. The
+document/page/candidate counts authenticate the source-document audit; they
+are not nonmissing-observation counts parsed from raw data. No raw
+fixed-width record or token, padding rule, numeric profile, DFA traversal,
+parsed numeric value, raw-data observation count, or executable mapping is
+an input. Thus every field-specific input above is class (a); there is no
+class-(b) input forcing the guarded fallback. Each field nevertheless keeps
+its exact incomplete_source_numeric_authority terminal and
+literal_only_zero_diagnostic_padding_capacity reason for the independently
+ratified physical/numeric authority.
 
 #### 21.1.5 Q5 dictionary/codebook join universes
 
@@ -33747,11 +33823,16 @@ only these revision-8 conclusions:
 3. the §20.3.7 sentence that the 1,235 mapped failures prevent top-level pass
    is replaced by the exact-cover acceptance law in §21.3;
 4. every §§20.4 and 20.8 prerequisite written as top-level all-field pass
-   means the exact pass_with_closed_failures predicate below; and
+   means the exact pass_with_closed_failures predicate below;
 5. every §19 or §20 phrase requiring a passing field derivation at a positive
-   raw-field consumer means a row whose derivation_status is in T-plus below,
-   not merely a top-level relation whose status is
-   pass_with_closed_failures.
+   physical raw-field consumer means a row whose derivation_status is in
+   T-plus below, not merely a top-level relation whose status is
+   pass_with_closed_failures; and
+6. the exact V-B6 source-adjudication chain in §13.2, §§18.2–18.4,
+   §19.3.1, and residual 9 in §19.3.4 is composed with the independently
+   ratified semantic/physical authority boundary in §21.4.2. Its exact
+   semantic-only construction may retain verified/pass; any physical use of
+   the four references remains guarded and non-passing.
 
 The failure precedence, all source reconstruction, exact token/rendering
 laws, complete row shapes, branch-specific consumer restrictions, and every
@@ -33760,8 +33841,18 @@ make each passing terminal admissible to every consumer:
 nonnumeric_source_field_outside_numeric_grammar and every other retained
 branch keep their narrower §19–§20 consumption law. Section 21 supplies a
 necessary closed-failure guard, never sufficient permission to bypass an
-existing consumer predicate. At any conflict on the five points above, this
+existing consumer predicate. At any conflict on the six points above, this
 section is the later and more specific rule. Silence changes nothing else.
+
+For V-B6, the §13.2 and §18.3 commands to register every field and exact
+code map mean semantic_code_map_registration: authentication of variable
+membership, concept, meaning text, non-executable displayed code lexemes and
+meanings, attachment, and wave/reference-year identity. Section 20's
+pre-profile/literal registration, registered_numeric_grammar, token, padding,
+and parser laws mean physical_numeric_grammar_registration. These are two
+distinct, independently ratified senses of registration. Neither supplies,
+defaults, upgrades, or substitutes for the other, and the shared word
+"register" cannot conflate them.
 
 ### 21.3 Complete relation with closed failures
 
@@ -33784,7 +33875,7 @@ field_source_derivation object retains its exact nine-key §19.3.2 shape.
 Every numeric_grammar_derivation_rows member retains the exact 16-key order
 and 15-position ID preimage in §20.3.1. This amendment adds no member to
 either object. It changes only the admitted top-level status literal and the
-site at which a T-minus row aborts.
+site at which physical consumption of a T-minus row aborts.
 
 For every T-minus row, normalized_format_profile, padding_rule, and
 registered_numeric_grammar are each JSON null. They are not omitted, replaced
@@ -33852,7 +33943,8 @@ pass_with_closed_failures. Otherwise it is fail. Bare pass,
 pass_with_failures, partial_pass, or any other value is invalid in a
 post-D7 relation. A faithful T-minus row therefore proves complete
 classification and permits top-level completion; it never becomes a passing
-row. Deleting even one such row creates a nonempty unmapped_keys array and
+physical/numeric row. Deleting even one such row creates a nonempty
+unmapped_keys array and
 forces fail. Adding a replacement or duplicate cannot cure the deletion
 because the outside and duplicate arrays are independently exact-empty
 requirements.
@@ -33863,19 +33955,28 @@ field-specific primary authority, a successor design amendment, a fresh
 complete 89,599-row reconstruction, fresh IDs and digests, and a new
 ratified census. The 422 frozen-corpus conflict/unsupported rows cannot be
 promoted by capture. Until a successor law actually changes a terminal, the
-D7 T-minus disposition remains exact at every boundary.
+D7 T-minus disposition remains exact at every physical boundary. It does not
+revoke a distinct semantic codebook authority that independently satisfies
+§21.4.2.
 
 ### 21.4 Exact consumption-boundary guard
 
-#### 21.4.1 Complete reference resolution and atomic abort
+#### 21.4.1 Complete physical reference resolution and atomic abort
 
-A consumption boundary is any operation that uses a raw field, its source
-meaning, physical profile, padding rule, grammar, literal/range value map,
-parsed value, slot attachment, or a projection of any of those values to
-construct, validate, register, compare, correct, or emit something other
-than the complete field_source_derivation evidence relation itself.
+A physical consumption boundary is any operation that uses a raw
+fixed-width record or token; a layout coordinate, declared format, or width
+to parse data; a raw-data frequency, percentage, or nonmissing-observation
+count; a token form, normalized profile, padding rule, grammar arm, DFA,
+partition, or action trace; a registered numeric grammar; a parsed or
+canonical numeric value; an executable literal/range/missing/value map; or a
+projection of any of those values to construct, validate, register, compare,
+correct, or emit something other than the complete field_source_derivation
+evidence relation itself. Applying a codebook lexeme-to-meaning entry to a
+record is executable physical consumption. Merely authenticating a variable,
+concept, meaning, or non-executable codebook entry is governed separately by
+§21.4.2 and is not silently exempt.
 
-Before a consumer c reads any such value, it constructs its complete ordered
+Before a physical consumer c reads any such value, it constructs its complete ordered
 raw-field reference stream. Direct raw_field_id values, derivation IDs,
 complete-row hashes, Q5 join foreign keys, layouts, value-map entries,
 crosswalk members, registry references, and transitive nested projections
@@ -33929,10 +34030,91 @@ zero-pad a token, treat a source conflict as a priority rule, treat
 incomplete as zero or missing, convert a failure to structural_missing,
 borrow authority from a peer field or era, truncate a value-map subset to
 evade a T-minus member, or weaken the terminal because the top-level relation says
-pass_with_closed_failures. Search, census, and evidence embedding are not
-positive consumption; selection into a positive reference is.
+pass_with_closed_failures. Search, census, complete-relation evidence
+embedding, and the exact lawful semantic disposition below are not physical
+consumption. Selection into a physical or executable positive reference is.
 
-#### 21.4.2 Boundary enumeration
+#### 21.4.2 Semantic/physical source-adjudication authority boundary
+
+Semantic codebook authority and physical numeric-grammar authority are
+distinct, independently ratified authorities. The closed-failure guard in
+§21.4.1 quantifies over physical consumption. A semantic-only consumption
+is lawful if and only if all three conditions hold:
+
+1. the consuming law enumerates its complete ordered semantic reference
+   stream, exact source selectors, complete permitted member projection, and
+   downstream result;
+2. a machine-reconstructed dependency walk proves that no raw record or
+   token, physical layout or format used for parsing, raw-data count, profile,
+   padding rule, grammar, DFA, parsed numeric value, or executable mapping is
+   read directly, transitively, or through a digest; and
+3. the semantic authority independently exact-matches its ratified source
+   artifact, fact rows, meaning/code-map projection, and governing ratified
+   result. A candidate assertion, predecessor pass bit, or copied digest is
+   not authority.
+
+Failure of condition 3 aborts semantic adjudication. Failure of condition 1
+or 2 makes the attempted operation physical consumption and invokes the
+ordinary §21.4.1 guard. This disposition is not a generic evidence exemption,
+does not add an eighth consumer_kind, and cannot be inferred for an
+unlisted consumer.
+
+The sole revision-9 favorable instance is the complete §18.2 source
+projection through the §18.4 V-B6 source member and verified/pass result,
+the §19.3.4 residual-9
+documented_no_source_allocation_required/inclusive_total_exact_once/
+continue_registered_parent consequence, and the freshly evaluated V-B6
+requirement row. Its complete semantic failure-reference stream is exactly:
+
+~~~json
+[[1976,"V4519"],[1976,"V4902"],[1977,"V5429"],[1978,"V5916"]]
+~~~
+
+The permitted field-specific value is exactly the 19-member, four-row
+semantic projection in §21.1.4, with semantic_code_map entries limited to
+raw_value_or_range and source_meaning and treated as non-executable evidence.
+The authority proof may additionally consume only the frozen source path,
+commit, Git blob, raw/content hashes, displayed fact-row pointers and hashes,
+and ratified §18 projection/source/result identities needed to authenticate
+that projection. It may not consume the whole mixed field_evidence row or
+its digest.
+
+In particular, codebook_field_key, declared_format, layout_start,
+layout_end, raw_width, spss_numeric_format, code-map frequency and percent,
+an executable missing_code_map_indices use,
+missing_raw_token_grammar_status, any raw-fixed-width source-document member,
+derived_field_block_sha256, and any whole field_evidence row hash are outside
+the permitted projection. So are every downstream typed_parse_specs,
+raw_token_grammar, normalized_format_profile, padding_rule,
+registered_numeric_grammar, DFA/partition/action member, parsed/canonical
+value, raw-token-to-value entry, and observation count. A digest or locator
+cannot hide one of these inputs.
+
+For V4902, the allowed direct §18.2 input is only the authenticated
+registered codebook-page-180 membership and meaning: occupation codebook
+entries 20 and 31 express not-self-employed and unincorporated-self-employed
+concepts, and V4901–V4907 is descriptor context with no annual amount or
+source-established allocation. The code lexemes are never applied to raw
+data. The other three references have no direct §18.2 input; their permitted
+values are only the exact transitive semantic rows in §21.1.4.
+
+The machine predicate therefore accepts this chain only when its consumer
+chain, four-reference order, 19-member projection, 16,933-byte projection
+digest, ratified semantic authority proof, empty forbidden-dependency list,
+complete 10,887-byte §18.2 projection with SHA-256
+7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
+and exact §18.4/§19.3.4 result all agree. The four numeric-grammar rows
+remain incomplete_source_numeric_authority with null physical grammar.
+Nothing in the favorable result may parse or map them.
+
+This also fixes the two registration senses prospectively. The §13.2/§18.3
+"register every field/code map" command is satisfied only by the ratified
+semantic projection and its complete semantic authority. It grants no
+physical parser. Conversely, physical_numeric_grammar_registration can make
+a raw value executable only after its independently passing §19–§20 law; it
+cannot establish a source concept or cure missing semantic authority.
+
+#### 21.4.3 Boundary enumeration
 
 The guard applies independently at every row and every transitive consumer
 in this complete minimum domain:
@@ -33953,7 +34135,7 @@ Nested construction order cannot move the abort downstream. All inherited
 schema, semantic, exact-cover, history, and runtime-token gates execute in
 addition to this guard.
 
-#### 21.4.3 Q5 complete evidence and positive-join law
+#### 21.4.4 Q5 complete evidence and positive-join law
 
 Q5 retains its §19.3.3 v1 schema. Its source_document_manifest embeds the
 complete nine-key field_source_derivation object with all 89,599 rows,
@@ -33984,7 +34166,7 @@ predicate pass. The 43 D_w search universes in §21.1.5 remain complete:
 finding a T-minus candidate in D_w is not itself consumption, but selecting
 it into a positive join is the guarded abort.
 
-#### 21.4.4 Slot and official-inventory domain integrity
+#### 21.4.5 Slot and official-inventory domain integrity
 
 Let E remain the complete §19.3.3 expanded official-source-inventory key
 stream; A the asked rows; J the positive joins; and I-plus and I-minus the
@@ -34033,7 +34215,7 @@ inventory. Excluded-by-law means excluded from accepted positive raw-field
 consumption, not erased from source evidence and not counted as questionnaire
 absence.
 
-#### 21.4.5 Downstream propagation
+#### 21.4.6 Downstream propagation
 
 Every slot registry, value map, crosswalk, correction input, and context
 output derives its complete raw-field reference stream from accepted Q5 and
@@ -34057,6 +34239,15 @@ until a raw record happens to exercise the bad field. Conversely, a field
 that remains only in the complete source manifest or a closed negative
 census has not been consumed and does not prevent construction of unrelated
 lawful consumers.
+
+The exact V-B6 semantic chain in §21.4.2 is the only additional lawful
+case. Its amount operands remain V4379, V5289, and V5788, each consumed once
+under the inherited §18/§19 laws; none of the four failed occupation fields
+is an amount operand. Any later attempt to read a raw token, layout, code as
+data, parsed value, or other forbidden physical member for V4519, V4902,
+V5429, or V5916 constructs the ordinary nonempty guard and aborts before a
+source result, requirement row, registry row, correction value, or output is
+accepted.
 
 
 ### 21.5 Amendment-7 mandatory regression vectors
@@ -34152,17 +34343,17 @@ one prospective revision-9 disposition.
 | Source anchors | Exact Amendment-7 disposition |
 |---|---|
 | §19.3.2 nine-key field_source_derivation, all-field compiler return, status, and failure/top-level conclusions | replaced-by-§21.3-complete-relation-with-closed-failures; preserve all outer and row schemas, replace only the admitted top status and global failure consequence. |
-| §19.3.3 source_document_manifest and complete field_source_derivation embedding | composed-with-§21.4.3-complete-evidence; all 89,599 rows, including F, remain mandatory. |
-| §19.3.3 D_w search, positive_field_join_rows, raw_field_projections, and Q5 status/history | composed-with-§21.4.1–§21.4.3; search remains total, each positive reference is guarded, and D7 replaces D6 as the live Q5 predecessor. |
-| §19.3.3 expanded slot stream and present/structural_missing inventory equations | composed-with-§21.4.4; E and the two dispositions remain exact, positive raw-field projections exclude F under the closed negative census. |
-| §19.4.2 G17-C01, C06, C07, and enclosing G17 result | composed-with-§21.4.5; complete relation copies are evidence, every positive consumer projection is guarded. |
+| §19.3.3 source_document_manifest and complete field_source_derivation embedding | composed-with-§21.4.4-complete-evidence; all 89,599 rows, including F, remain mandatory. |
+| §19.3.3 D_w search, positive_field_join_rows, raw_field_projections, and Q5 status/history | composed-with-§21.4.1–§21.4.4; search remains total, each positive reference is guarded, and D7 replaces D6 as the live Q5 predecessor. |
+| §19.3.3 expanded slot stream and present/structural_missing inventory equations | composed-with-§21.4.5; E and the two dispositions remain exact, positive raw-field projections exclude F under the closed negative census. |
+| §19.4.2 G17-C01, C06, C07, and enclosing G17 result | composed-with-§21.4.6; complete relation copies are evidence, every positive consumer projection is guarded. |
 | §20.3.1 assertion disagreements and unsupported/conflicting top-level blockers | replaced-only-by-§21.2-item-1; row classification still fails locally, complete serialization no longer fails globally. |
 | §20.3.5 seven passing terminals, three failure rows, and top-level abort consequences | replaced-and-composed-with-§21.3–§21.4; ten terminals and precedence remain, top-level abort moves to the consuming site. |
 | §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason; §21.5 adds A7 and cannot alter or substitute for A6. |
 | §20.3.7 complete census, assignment, counts, reasons, and sentence preventing pass | preserved except replaced-by-§21.3.2 for that one global conclusion; all bytes, memberships, counts, and digests remain exact evidence. |
 | §20.4.1 layout, parse, raw-token, value-map, and unobserved consumers | composed-with-§21.4; every retained branch rule remains and every T-minus positive reference aborts at this boundary. |
-| §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.3, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
-| §20.4.3 G17 propagation | composed-with-§21.4.5; evidence-only full relations remain complete and consuming projections are guarded. |
+| §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.4, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
+| §20.4.3 G17 propagation | composed-with-§21.4.6; evidence-only full relations remain complete and consuming projections are guarded. |
 | §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler and A6/A7 precede Q5 under pass_with_closed_failures. |
 | §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | lawfully-unchanged-with-reason as immutable D5 history; §21.6.2 inherits the sweep machinery without altering its historical result. |
 | §19.3.4 Class-C consequences, G17-C09–C11, and every correction/context/publication or other transitive consumer passage reached from them | composed-with-§21.4; each actual raw-field consumption runs its applicable boundary guard, evidence-only relations retain their exemption, and all non-field predicates remain exact. |
@@ -34338,7 +34529,7 @@ consumers. The rerun therefore retains the same 43-family census.
 | DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
 | DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
 | DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-future-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: these are one live D7 raw-byte identity family. Step 2 fixes the exact accepted candidate byte sequence and step 3 permits only that sequence to become D7; validation exact-compares the same-path raw Git blob at D7 to those accepted candidate bytes, verifies its complete hash and the independent D6-prefix equality, and carries that proof into every Amendment-7 position, capture, and selected proof. Any byte inequality, or digest-, ancestry-, or transitive-only substitution, aborts. |
-| DC-40 | §§21.4.3, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding; failure blocks Q5 and every consumer. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding; failure blocks Q5 and every consumer. |
 | DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
 | DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
 | DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_selected_registration_design_lineage_v1 closes the v6 receipt and history dispatch. |

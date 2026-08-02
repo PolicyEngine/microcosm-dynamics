@@ -3,8 +3,8 @@
 ## State
 
 The round-1 rewrite is in progress. The comparator blocker and precision
-repairs are drafted; the exact V-B6 source-to-result dependency audit is
-finishing the option-2 semantic/physical authority boundary.
+repairs are committed, and the decisive class-(a) V-B6 audit is now embodied
+in the option-2 semantic/physical authority boundary.
 
 ## Done
 
@@ -22,10 +22,15 @@ finishing the option-2 semantic/physical authority boundary.
 - Extended DC-39 through §21.2 and §21.9.2 steps 2–3, corrected both
   ambiguous §21.9 step references, and distinguished A7 semantic schema
   order from canonical sorted-key serialization without changing its bytes.
+- Verified all four V-B6 references are class (a). Only V4902 is a direct
+  §18.2 input; V4519, V5429, and V5916 are transitive semantic references.
+- Added the exact four-row, 19-member semantic projection and the first-class
+  §21.4.2 boundary. Semantic and physical registration are non-conflatable;
+  every forbidden physical dependency still invokes the atomic abort guard.
 
 ## Next
 
-- Ratify the resulting exact semantic/physical boundary or guarded fallback
-  throughout §21.2, §21.4, regressions, ledger, fresh evaluation, and build order.
+- Add the positive end-to-end and negative physical-consumption regressions,
+  then close the replacement ledger, 22-row fresh evaluation, and build order.
 - Reverify document structure, comparator coverage, immutable prefix, bytes,
   digest, and commit history; write the final report file.
