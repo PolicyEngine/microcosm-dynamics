@@ -34063,7 +34063,9 @@ lawful consumers.
 
 The successor implementation runs A6-R01 through A6-R11 unchanged, then
 exactly A7-R01 through A7-R09 below. Each A7 row has exactly these fifteen
-members in this schema order:
+members in the following semantic schema order. The exact artifact retains
+the canonical §21.1.1 serialization and therefore writes each object with
+its keys in canonical sorted order, not in the semantic order displayed here:
 
 ~~~text
 vector_id
@@ -34286,6 +34288,15 @@ eight-key slot_closure_evidence_identity; an unequal member or digest-only
 agreement fails the D7/Q5 predicate. D5/Q5 and D6/Q5 remain independently
 required historical edges and cannot substitute for D7/Q5.
 
+The full comparator search and consumer walk treats the §21.2 equality
+between the accepted revision-9 candidate bytes and the future same-path D7
+raw Git blob as the construction-time arm of DC-39, not as a separate
+family. Section 21.9.2 step 2 fixes that exact candidate byte sequence; step
+3 permits only the same sequence to become D7; §21.8.1 verifies the complete
+blob hash and D6-prefix equality; and DC-41 through DC-43 carry that same D7
+identity through position, capture, receipt, and selected-registration
+consumers. The rerun therefore retains the same 43-family census.
+
 | ID | Exact comparator or consumer anchor | Normative revision-9 disposition |
 |---|---|---|
 | DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: the generic shape remains; the ceremony-specific rows below govern post-D7 designs. |
@@ -34326,7 +34337,7 @@ required historical edges and cannot substitute for D7/Q5.
 | DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
 | DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
 | DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
-| DC-39 | §§21.1.1 and 21.8.1 exact D6 identity and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: this is the live immutable-base comparison and is included in every Amendment-7 position, capture, and selected proof. |
+| DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-future-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: these are one live D7 raw-byte identity family. Step 2 fixes the exact accepted candidate byte sequence and step 3 permits only that sequence to become D7; validation exact-compares the same-path raw Git blob at D7 to those accepted candidate bytes, verifies its complete hash and the independent D6-prefix equality, and carries that proof into every Amendment-7 position, capture, and selected proof. Any byte inequality, or digest-, ancestry-, or transitive-only substitution, aborts. |
 | DC-40 | §§21.4.3, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding; failure blocks Q5 and every consumer. |
 | DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
 | DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
@@ -34351,7 +34362,7 @@ The four-key design-identity shape remains unchanged. D7 is exactly:
 
 - path: docs/design/covered_earnings_correction.md;
 - ratification_commit: the future 40-lowercase-hex commit created only by
-  §21.9 step 3;
+  §21.9.2 step 3;
 - blob_sha256: SHA-256 of the complete revision-9 document bytes at that
   commit; and
 - revision: JSON integer 9, excluding booleans.
@@ -34362,7 +34373,7 @@ of the known/future chain are:
 | Symbol | Revision | Ratification commit | Raw bytes | Git blob | Complete raw SHA-256 |
 |---|---:|---|---:|---|---|
 | D6 | 8 | 5d69788a35f3e415e841ecbe4a22acb843dab70c | 2,049,769 | fd7f5f48413da3713114befdc2f021768f81063d | ade1a757c0b29226e7ba12f13dbe9fed7192bc85ffd67b4081bd297107e6cf4c |
-| D7 | 9 | future value fixed only by §21.9 step 3 | complete accepted revision-9 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
+| D7 | 9 | future value fixed only by §21.9.2 step 3 | complete accepted revision-9 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
 
 The prose in the D7 row is not a serialized value. No zero, draft hash,
 suffix hash, D6 hash, working-tree byte count, anticipated commit, or review
