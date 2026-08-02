@@ -31391,9 +31391,10 @@ The byte-exact regression facts are:
   range members `10` through `96` and literals `97`, `98`, and `99`. Range
   members `1` through `9` are the exact nine arm-ambiguous members. The
   range partition therefore contains 87 renderable and nine
-  arm-ambiguous members; compile the numeric DFA from only the 87 invariant
-  range images, retain ordinary literal `97` literal-first, and exclude
-  missing images `98` and `99`. The row must serialize
+  arm-ambiguous members. After missing images `98` and `99` are excluded,
+  the physical DFA language has exactly 88 images: a numeric portion of 87
+  invariant range images plus ordinary literal `97`, which terminates
+  literal-first. The row must serialize
   `padding_arm_underdetermined_finite_domain_arm_ambiguous_exact_replay_v1`
   and `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
   select neither arm, and give each value `1` through `9` a null
@@ -31410,8 +31411,10 @@ The byte-exact regression facts are:
   all observations replay missing-first and `nonmissing_observation_count`
   is zero. Exact-width missing `99` retains its source bytes; short ordinary
   literal `1` retains its source semantics and complete normalized row with
-  null `raw_token_hex`; and it and every range member retain the four-key
-  physical-unestablished unobserved abort row. The result must remain
+  null `raw_token_hex` and its singleton four-key physical-unestablished
+  unobserved abort row. The one range entry covering members `2` through
+  `52` retains its own four-key physical-unestablished unobserved abort row.
+  The result must remain
   `value_code_range_physical_rendering_unestablished` with null profile and
   grammar, the exact `none` padding object, and no token-form, arm, range
   partition, DFA, executable literal entry, or missing-token entry for
@@ -32500,7 +32503,7 @@ The required actual-evidence walk is:
 | A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; both complete cent-step ranges partition 429,270 renderable from 263,430 unrenderable members, `-1040.01` has a null image, and the field passes only as `compiled_source_numeric_grammar_partial_range_exact_replay`. |
 | A6-R08 | lane A, §20.2.1 | V97 / 1968 | the complete 880-member numeric range plus missing literal yields two equal 881-row candidate image/action/failure relations and all 4,802 observations replay; serialize the no-capacity disposition without selecting an arm or authorizing an uncoded value. |
 | A6-R09 | referee R1, blocker 3 | V11811 / 1985 | all 7,032 observations exact-match and replay as registered missing `20302e3030`; serialize zero nonmissing observations and the retained range-physical-unestablished null-profile/null-grammar branch without evaluating or selecting a form or arm. |
-| A6-R10 | referee R2, blocker 1 | V117 / 1968 | both 99-row candidates replay every observation; partition 90 invariant from nine arm-ambiguous semantic members, compile only the 87 invariant range images, and give values `1`–`9` null authoritative images and closed per-member aborts without selecting an arm. |
+| A6-R10 | referee R2, blocker 1 | V117 / 1968 | both 99-row candidates replay every observation; partition 90 invariant from nine arm-ambiguous semantic members, compile the 88-image physical DFA language from 87 invariant range images plus literal `97`, and give values `1`–`9` null authoritative images and closed per-member aborts without selecting an arm. |
 | A6-R11 | referee R2, blocker 2 | V11812 / 1985 | all 7,032 observations replay as uniquely registered missing `2030`; retain short ordinary literal `1` semantically with null rendering and closed unobserved abort, and construct no form, arm, profile, range partition, or DFA. |
 
 The first six rows supply the original form, sign, declaration, and no-arm
