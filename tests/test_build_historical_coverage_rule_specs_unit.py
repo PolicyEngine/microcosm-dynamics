@@ -249,6 +249,25 @@ def test_build_registry_surfaces_every_fail_closed_category(monkeypatch):
     )
 
 
+def test_syntax_validation_cannot_open_terminal_registry_emission_gate(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        builder,
+        "build_registration_required_audit",
+        lambda capture_root=builder.DEFAULT_CAPTURE_ROOT: {
+            "dependency_rows": [],
+            "source_gap_rows": [],
+            "evidence_constraint_rows": [],
+        },
+    )
+
+    with pytest.raises(builder.RegistrationRequiredError) as error:
+        builder.build_registry()
+    assert error.value.registration_required_ids == ()
+    assert not (builder.ROOT / builder.TARGET_REGISTRY_PATH).exists()
+
+
 def test_full_file_locator_freezes_complete_staged_identity():
     raw = b"registered bytes"
     digest = hashlib.sha256(raw).hexdigest()

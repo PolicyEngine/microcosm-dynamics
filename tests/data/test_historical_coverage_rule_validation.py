@@ -433,6 +433,28 @@ def test_row_array_rejects_order_and_artificial_fragmentation():
         rules.validate_rule_rows_syntax([second, first])
 
 
+def test_rows_syntax_does_not_claim_partition_or_joint_overlap_validation():
+    gap_first = _unconditional_rule(
+        rule_id="gap-a", effective_start=1968, effective_end=1978
+    )
+    gap_second = _unconditional_rule(
+        rule_id="gap-b", effective_start=1979, effective_end=1990
+    )
+    rules.validate_rule_rows_syntax([gap_first, gap_second])
+
+    overlap_first = _unconditional_rule(
+        rule_id="overlap-a", effective_start=1968, effective_end=1980
+    )
+    overlap_second = _unconditional_rule(
+        rule_id="overlap-b", effective_start=1979, effective_end=1990
+    )
+    overlap_second["source_sha256"] = "c" * 64
+    overlap_second["source_document_id"] = f"legal-source:{'c' * 64}"
+    overlap_second["transform"] = _literal("noncovered")
+    overlap_second["reason_code"] = "historical_seca_excluded_concept_v1"
+    rules.validate_rule_rows_syntax([overlap_first, overlap_second])
+
+
 def test_exact_duplicate_semantics_abort_with_distinct_rule_ids():
     first = _unconditional_rule(rule_id="seca-a")
     second = _unconditional_rule(rule_id="seca-b")
@@ -600,6 +622,8 @@ def test_controlling_primitive_does_not_pretend_to_validate_a_partition():
         ([_result("a", 1, "no_disposition")], "no dispositive"),
     ],
 )
-def test_authority_conflicts_and_empty_disposition_abort(results, match):
+def test_caller_supplied_result_conflicts_and_empty_disposition_abort(
+    results, match
+):
     with pytest.raises(rules.LegalRuleValidationError, match=match):
         rules.derive_controlling_result(results)

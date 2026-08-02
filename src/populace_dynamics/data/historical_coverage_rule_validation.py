@@ -1,10 +1,12 @@
 """Pure validators for historical coverage legal-rule rows.
 
-This module implements the source-independent parts of the row law in
-sections 4.1 and 19.2 of the covered-earnings design.  It deliberately does
-not manufacture the official PSID source-field inventory, legal-domain
-cells, interval partitions, or a passing registry.  Those objects can be
-validated only after their independently ratified inputs exist.
+This module implements the source-independent row-local syntax and
+canonicality parts of sections 4.1 and 19.2 of the covered-earnings design.
+It deliberately does not manufacture the official PSID source-field
+inventory, legal-domain cells, interval partitions, or a passing registry.
+Registered enum-value and unit membership, complete interval partitions, and
+section 19.2.4 joint-overlap evaluation require those independently ratified
+inventory and domain inputs and are deferred until the inputs exist.
 """
 
 from __future__ import annotations
@@ -764,11 +766,12 @@ def validate_rule_row_syntax(
     *,
     global_micro_fact_ids: MutableSet[str] | None = None,
 ) -> None:
-    """Validate one 20-field row without pretending to validate its domain.
+    """Validate one row's local syntax and canonical representation.
 
-    Inventory foreign keys, attachment cells, source links, and partitions are
-    intentionally outside this function.  A syntactically valid row is not an
-    authenticated legal rule.
+    Authenticated inventory foreign keys, attachment cells, registered enum
+    values and units, source links, and partitions are intentionally outside
+    this function.  A syntactically valid row is not an authenticated legal
+    rule.
     """
 
     row = _exact_keys(row, RULE_ROW_KEYS, "legal rule row")
@@ -1007,7 +1010,11 @@ def _verified_duplicate_signature(row: Mapping[str, Any]) -> bytes | None:
 
 
 def validate_rule_rows_syntax(rows: Any) -> None:
-    """Validate canonical rule ordering, IDs, and row-local semantics."""
+    """Validate array ordering plus row-local syntax and canonicality.
+
+    This function does not discover jointly applicable rows or validate
+    complete interval partitions or cross-rule overlaps.
+    """
 
     if not isinstance(rows, list) or not rows:
         raise _fail("rows", "must be a nonempty array")
@@ -1050,10 +1057,12 @@ def validate_rule_rows_syntax(rows: Any) -> None:
 
 
 def derive_controlling_result(results: Any) -> dict[str, Any]:
-    """Apply the row-result fold, without claiming §19 partition coverage.
+    """Fold caller-supplied result rows by authority rank.
 
-    In particular, this primitive may return rank 2.  The unavailable
-    inventory-derived partition validator must separately require complete
+    The caller, not this primitive, selects the results and establishes that
+    they are jointly applicable.  This fold neither discovers nor evaluates
+    cross-rule overlaps.  In particular, it may return rank 2; the deferred
+    inventory-derived domain validator must separately require complete
     verified dispositive rank-1 coverage for registration-required cells.
     """
 

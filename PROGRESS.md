@@ -8,7 +8,7 @@
 - Worktree was clean at start.
 - Network-disabled sandbox prevented refreshing `origin/master`; the local tracking ref
   shows this branch five commits ahead and zero behind.
-- Referee edits 1 and 2 are implemented and verified; edit 3 remains.
+- All three referee edits are implemented and their focused unit tests pass.
 
 ## Done
 
@@ -31,8 +31,14 @@
 - Removed Python object aliasing from rule fixtures and added a JSON-round-tripped
   colliding-authored-ID regression for adjacent artificial fragmentation.
 - Passed all 30 historical rule-validation tests.
+- Reworded `validate_rule_rows_syntax` as array ordering plus row-local
+  syntax/canonicality and `derive_controlling_result` as a caller-supplied fold.
+- Explicitly deferred registered enum/unit membership, complete partitions, and
+  section 19.2.4 joint-overlap evaluation to authenticated inventory/domain inputs.
+- Added scope-behavior tripwires and proved the terminal registry-emission gate still
+  aborts even when all mocked blocker arrays are empty.
+- Passed the combined 84 validator and builder-unit tests.
 
 ## Next
 
-1. Correct validator scope wording and preserve/test the terminal emission gate.
-2. Run focused suites, tier sync, builder `--check`, formatting, and final verification.
+1. Run focused suites, tier sync, builder `--check`, formatting, and final verification.
