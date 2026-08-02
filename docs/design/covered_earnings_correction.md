@@ -32543,6 +32543,13 @@ blocks ratification. This table is excluded only from its own census as
 specified above and becomes an immutable revision-8 invariant only when D6
 is ratified.
 
+The rebuilt current-byte closure artifact for these exact D6 bytes has
+`3684862` bytes and SHA-256
+`e2efbe865f0da26f1db89ffefc933c0ab9b1d100ff98737fb52d9cfcdbd87201`.
+Its corpus has exactly `5214` passages, `40` seeds, `207` direct hits,
+`3718` edges, and `443` reached passages; its dispositions are `20`
+replaced, `43` composed, and `380` preserved, with `0` unresolved passages.
+
 ### 20.7 Revision-8 lifecycle successors and identifier inventory
 
 #### 20.7.1 D6 and the position-1 successor
