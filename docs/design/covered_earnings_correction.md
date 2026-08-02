@@ -31264,7 +31264,8 @@ Specifically:
    its inherited null-physical-member law and cannot fill any member from a
    nonexistent profile.
 3. `raw_token_grammar.padding_rule` and
-   `.registered_numeric_grammar` deep-equal the successor derivation row.
+   `.registered_numeric_grammar` respectively deep-equal the same-named
+   members of the successor derivation row.
    `grammar_status`, residual identity, dictionary missing literals,
    observed source/file/count values, token rows, closed unobserved rows,
    and `unknown_token_action` retain their §19 meanings. The three compiled
@@ -31341,13 +31342,19 @@ unobserved row, not an authored token map or omission of the unfavorable
 subdomain.
 
 For `psid_value_code_specs.v1`, the exact `source_commitments` and `entries`
-outer schemas remain. Each numeric-range commitment carries the same
-successor row ID/full-row digest, declaration dispositions, nonmissing count,
-padding rule, census, and replay as the matching layout. When its profile is
-nonnull it also carries the token-form result, arm or no-arm disposition,
-both range relations, any complete-domain candidate relations, and DFA. The
-zero-count physical-unestablished commitment instead resolves the null
-profile/grammar and proves that all such nested relations are absent.
+outer schemas remain. The actual five-key `source_commitments` object and
+complete array of seven-key `entries` respectively deep-equal independently
+rebuilt expected objects of those same schemas. Every
+`source_commitments.field_rows` member carries its retained
+`numeric_grammar_derivation_id` and `numeric_grammar_derivation_sha256`;
+both references resolve the independently reconstructed complete 16-key
+successor row. The resolved row, rather than the five-key commitment object,
+carries the declaration dispositions, nonmissing count, padding rule, census,
+and replay. When its profile is nonnull the resolved row also carries the
+token-form result, arm or no-arm disposition, both range relations, any
+complete-domain candidate relations, and DFA. A zero-count physical-
+unestablished field-row reference instead resolves a row with null profile/
+grammar and proves that all such nested relations are absent.
 Literal-only, physical-unestablished, and
 outside-numeric branches retain their closed null-grammar behavior after
 their declarations have passed §20.3.1. The value-code registry may neither
@@ -31463,13 +31470,20 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   source bytes through the same successor compiler, with every later
   reconstruction-agreed declaration compared directly to the first
   reconstruction-agreed supported selector after the disagreement gate. Actual
-  `source_commitments` and entries must deep-equal every declaration
-  assertion/disposition, normalized entry, both numeric-range partition
-  relations, any complete-domain candidate relations, profile, grammar, and
-  replay when those members are present. A zero-count physical-unestablished
-  row instead requires the same resolved successor row/count, null
-  profile/grammar, absent candidate/partition relations, and exact missing
-  replay. Tuple-equivalent SPSS/codebook
+  `source_commitments` and `entries` must respectively deep-equal the
+  independently rebuilt expected five-key commitment object and complete
+  expected array of seven-key entry objects. Each commitment field row's
+  `numeric_grammar_derivation_id` and `numeric_grammar_derivation_sha256`
+  must resolve to the independently reconstructed complete 16-key successor
+  row. Within that
+  resolved row, the declaration-disposition projection, profile, padding
+  rule, grammar, and replay members must deep-equal their independently
+  rebuilt values, including both numeric-range partition relations and any
+  complete-domain candidate relations when present. A zero-count physical-
+  unestablished row instead requires the same resolved successor row/count,
+  null profile/grammar, absent candidate/partition relations, and exact
+  missing replay. No five-key commitment or seven-key entry is compared
+  directly with an out-of-schema compiler member. Tuple-equivalent SPSS/codebook
   declarations remain
   separately visible; neither is discarded because their semantic tuples
   agree.
@@ -31529,12 +31543,12 @@ affected prose is dismissed as merely explanatory.
 | §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; add the explicit all-missing retained branch, underdetermined and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language is unsupported, mixed individually lawful forms conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
 | §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.3.4-and-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; missing-versus-ordinary-literal and unequal-meaning duplicate literals conflict, while ordinary nonmissing literal/DFA overlap is lawful and terminates literal-first; partial ranges carry both member relations and the closed unrenderable-member action; an all-missing retained range replays registered literals with no profile/partition/DFA; precedence and source semantics remain exact. |
 | §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-nine-vector-census`: V93 remains mandatory; actual later-era space, width-one, decimal, signed, conflict, precision-edge, complete-domain-no-capacity, and all-missing vectors are added; zero-arm constructors are rejection-only. |
-| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the complete 16-key successor row/count and either its nonnull physical members or its all-missing null/absent branch flow positionally through every layout and value-map consumer. |
+| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; layout and raw-token consumers respectively compare their same-named members with the complete 16-key successor row, while actual five-key commitments and seven-key entries compare only with independently rebuilt like-shaped expected objects and every commitment field-row derivation reference resolves that complete row before nested members are compared. |
 | §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
 | §19.3.3 positive join `raw_field_projections`, numeric derivation ID/full-row hash, join identity, and Q5 digest | `composed-with-§20.4.2`: the 18-key projection is unchanged in shape and resolves the complete successor 16-key row; all enclosing identities/digests are rebuilt. |
 | §16.6.4 and §19.4.2 G17-C01 | `composed-with-§20.4.3`: the fourth, fifth, and sixth values carry the complete successor joins, compiler relation, layouts, and independent reverse projections; 18-row order remains. |
 | §16.6.4 and §19.4.2 G17-C06 | `composed-with-§20.4.3`: independent direct-law evaluation compares and replays the complete successor grammar before classification. |
-| §16.6.4 and §19.4.2 G17-C07 | `composed-with-§20.4.3`: value-code source commitments and entries carry the same declaration dispositions, ranges, grammar, and replay. |
+| §16.6.4 and §19.4.2 G17-C07 | `composed-with-§20.4.3`: independently rebuilt five-key source commitments and seven-key entries compare only to like-shaped actual objects; each commitment's derivation reference resolves the complete 16-key successor row before its nested declaration dispositions, ranges, grammar, and replay are independently compared. |
 | §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | `lawfully-unchanged-with-reason`: both remain immutable historical D5 results; this amendment supplies the separate successor inventory and sweep below. |
 | §19.5 complete revision-7 comparator census | `lawfully-unchanged-with-reason`: it remains the exact D5 historical table; §20.6 supplies the revision-8 successor census. |
 | §19.6–§19.7 terminal lifecycle, capture, receipt, and selected-registration predicates | `replaced-by-§20.7-revision-8-successors`: D5 remains an immutable predecessor; D6 and all affected successor envelopes receive fresh versioned identities. |
