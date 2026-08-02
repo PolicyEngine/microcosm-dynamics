@@ -30117,3 +30117,3285 @@ After ratification but before that registration, §19.8.3 steps 4–6 authorize 
 the separately reviewed source, authority, implementation, and proof-gated
 capture preparation stated above. They authorize no correction production
 evaluation, path switch, context run, label change, or publication.
+
+## 20. AMENDMENT SECTION — Amendment 6: fixed-width numeric grammar-law completion
+
+### 20.1 Status, section map, scope, precedence, and immutable revision-7 base
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 8
+  of the design. These drafting, review, and response commits are not
+  ratification and authorize no extractor, source row, grammar row, Q5 row,
+  slot or inventory artifact, registration, capture, correction execution,
+  context run, or publication. The exact accepted bytes become ratified only
+  at §20.8.4 step 3 as `D6` and become operative only through the
+  validator-accepted fresh registration in §20.8.4 step 7. No historical
+  status literal is edited in place.
+- **Immediate immutable base.** The base is the complete ratified
+  revision-7 design `D5` at commit
+  `985be84fdeec70ffd20aa1e60dec7d300b7a555b`. The path is
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `8b13a2f37a835790bf5504d82e47e1131adfb4f6`, exactly 1,781,491 raw
+  bytes, and SHA-256
+  `8f90dd1aee59e6857418d2a73b617e5cb3991eba3a237a78303586a8c2a9debc`.
+  Those complete bytes, including ratified §19, are the byte-identical
+  prefix of revision 8. A draft digest, working-tree suffix, transitive
+  ancestry assertion, or digest-only comparison cannot substitute for the
+  complete prefix comparison.
+- **Grammar law only.** Amendment 6 completes representability. It ratifies
+  no future `field_source_derivation`, Q5, slot, inventory, value-map, legal,
+  or registration row and promotes neither era audit to runtime authority.
+  Every future row must still be reconstructed from the complete §19 source
+  denominator, pass the successor laws here, and enter only through the
+  existing source-first build with the revised lifecycle below.
+- **Exact replacement boundary.** Sections 1–19 remain visible and
+  controlling except for the passages exhaustively dispositioned in §20.5.
+  In particular, §19's 257-document denominator, dependency order,
+  canonical dictionary/codebook rows, raw framing and all-field census,
+  semantic domains, literal-first precedence, missing-token relation,
+  unknown-token abort, prefix/action-sensitive DFA quotient, Q5 hierarchy,
+  18-row G17 shape, and registration blockers remain. Silence preserves
+  every unnamed law; it never supplies a numeric convention.
+
+The complete section map is:
+
+| Subsection | Complete subject |
+|---|---|
+| §20.1 | status, immutable D5 prefix, scope, and precedence |
+| §20.2 | authenticated era-census identities, findings, and evidence boundary |
+| §20.3 | declaration dispositions, padding, decimal/sign tokens, DFA/replay, identities, regression vectors, and complete 89,599-field totality census |
+| §20.4 | layout, Q5, G17, runtime, value-map, and build-walk propagation |
+| §20.5 | exhaustive design-family inventory and per-physical-passage Amendment-6 closure sweep |
+| §20.6 | complete revision-8 design-comparator census |
+| §20.7 | D6 lifecycle and complete successor identifier inventory |
+| §20.8 | build order, acceptance walks, alternatives, ratification, and fresh registration |
+
+The map is an exact enumeration. No title may be ratified, implemented, or
+registered separately.
+
+### 20.2 Era-census evidence identities and closed evidence boundary
+
+#### 20.2.1 Audit-ledger and source-artifact identities
+
+The two independently committed audit ledgers are review inputs with these
+exact identities:
+
+| Lane | Commit and path | Mode/blob | Bytes | Raw SHA-256 |
+|---|---|---|---:|---|
+| A, interview waves 1968–1978 | `303a4f669b9d4e683e5ade2129ddaf20ddfa3df6:docs/analysis/era_slot_grammar_extraction_a_progress.md` | `100644` / `5d93a58ce8eff2e6d40bc3cd8f37057baa0ead95` | 3,245 | `54d47d1b78abef9a7a1d93d87dc03b2683642db0fc4e166f6091470379e2cf43` |
+| B, interview waves 1979–2001 | `c3a59ce355c27b44dd4d05299ea78a146b5cbce1:docs/analysis/era_slot_grammar_extraction_b_progress.md` | `100644` / `5a1a6274ad31d28dc4da4b38ecb4937f3fe87e71` | 3,862 | `a6a0e0a44544391ed55653ab3c1edd93555c55949a2da8b7beae0ff2ecc2a714` |
+
+The corresponding local lane reports have respectively 1,719 and 2,518
+bytes and SHA-256
+`fd259179f0fb64088435fd1f91519e6b306794abbbf7b7c158d732a4d7a895db`
+and
+`6dba4793a4092a2c12c76375a7d8d0eea680534767f227230e31ed8856446ac3`.
+They are review records, not Git or source authority. Reports, prompts, this
+prose summary, and audit conclusions never replace a staged source byte,
+canonical row, complete census, or future Q5 identity.
+
+The mandatory vectors below resolve their field IDs through the already
+committed source-evidence artifacts, not by pretending the aggregate audit
+ledgers enumerate exemplar rows:
+
+| Evidence artifact | Mode/blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json` | `100644` / `7330949776439c2124aba2a6ffa280dbbf02e4af` | 4,628,883 | `52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48` |
+| `data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json` | `100644` / `bbc2cba152cef1bf9c54c093d904ca7f329859f8` | 2,203,624 | `0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87` |
+| `data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json` | `100644` / `c1de0ce6cb6374cf67e58f6d8d9c231ed2648d6e` | 21,115,064 | `109d7ecb4dd933fdcd2efaf572d9bbb8378bb8b054badccda1ac52c049afcedf` |
+| `data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json` | `100644` / `4cbbe89bcff24ab5f8179f1c3c295b3b3c71b436` | 19,201,179 | `549508cb31a26a81643339f9cda0824a8f44c9ffc5bac300d7647c34ba78c892` |
+
+These artifacts remain historically unfavorable evidence under §19.3.3;
+their rows pin actual field/source coordinates for regression but do not
+satisfy the future v3 compiler or Q5 reproduction by themselves.
+
+#### 20.2.2 Exact census findings and law consequences
+
+The two fail-closed lanes establish the following complete reported facts:
+
+| Finding | Lane-A result | Lane-B result | Amendment-6 consequence |
+|---|---:|---:|---|
+| complete raw-field observations | 58,357 framed records across 5,706 fields | 255,646,122 observations across 31,728 fields | candidate rows cannot select the census denominator |
+| diagnostic padding | actual V93: 1,069 space-padded, 0 zero-padded, 3,733 full-width | 10,166 diagnostic fields, every one space-padded and zero zero-padded | diagnostic rows may select only the per-field space arm; an observed zero or mixed arm aborts |
+| structurally nondiagnostic width-one `NUM(1.0)` | 3,783 fields | 19,789 fields | serialize an explicit underdetermined-padding exact-replay token; do not claim either arm |
+| positive-decimal formats with literal `0x2e` | 239 fields | the 1,536 unequal-declaration fields are all positive-decimal fields | admit the closed literal-decimal token form; the implied-decimal candidate must fail on those bytes |
+| byte-unequal SPSS/codebook numeric declarations | the same 239 decimal fields carry tuple-equal `F<w>.<d>`/`NUM(w.d)` spellings | 484 pre-ER plus 1,052 ER-transition fields | preserve both bytes and source order; resolve only tuple-equivalent assertions through a frozen disposition relation |
+| signed numeric observations | observed under the source formats although §19 is unsigned-only | independently observed throughout both later eras | admit only the evidenced leading-minus form after left spaces; `+`, trailing sign, overpunch, and every other placement abort |
+
+Across all four committed 1968–2001 field artifacts, an independent exact
+reslice finds 321 fields and 111,305 observations containing a sign: 85,185
+integer and 26,120 literal-decimal observations. Every one is
+`0x20* || 0x2d || magnitude`; there are zero plus, trailing-sign,
+overpunched, or other-placement observations. The 1,775 byte-unequal
+declaration pairs through 2001 all normalize to the same `(w,d)` tuple;
+there is no authenticated tuple-disagreeing exemplar. These facts justify
+only the small arms below. They do not justify source-role precedence,
+locale syntax, rounding, an optional plus, or a conflict waiver.
+
+The decimal census also fixes an exact edge that an `exactly d digits`
+grammar would miss. Every observation of 238 of the 239 Lane-A decimal
+fields has exactly `d` fractional digits. Field V945 in wave 1969 has 4,301
+observations with two fractional digits and 159 large negative observations
+with one fractional digit because the second zero cannot fit width seven;
+all 159 use the greatest positive exact precision that fits. Section
+20.3.3 therefore treats `d` as the source-declared maximum and never rounds
+or silently truncates a nonzero digit.
+
+#### 20.2.3 No evidence laundering
+
+The ledgers prove that §19's old status tree cannot pass; they do not supply
+expected serialized v3 rows. The future source-only implementation must
+independently reproduce all 257 manifest documents, all 176
+nonquestionnaire derivations, every framed record and field slice, the
+complete numeric group relation, and every regression vector before reading
+a candidate row. A vector mismatch invalidates the implementation identity.
+An aggregate count cannot choose an individual field's token form, padding
+disposition, declaration result, meaning, type, unit, or missing status.
+
+### 20.3 §19.3.2 source-format compiler successor
+
+#### 20.3.1 Retained v3 envelope and source-ordered declaration dispositions
+
+The interface literal remains
+`dictionary_codebook_fixed_width_source_derivation_v3`, its four entry-point
+names and dependency order remain exact, and `field_source_derivation`
+retains its nine-key top-level shape. The codebook call tuple, five-position
+numeric call value, four-position numeric return value, complete 176-document
+cover, canonical dictionary/codebook/raw row schemas, framing, census, and
+all aggregate count/digest equations remain. No v4 alias or alternate entry
+point is selectable. This subsection replaces only the exact nested v3 laws
+enumerated here; retaining the interface name does not preserve a displaced
+failure predicate.
+
+Each `numeric_grammar_derivation_rows` member prospectively inserts
+`nonmissing_observation_count` immediately after
+`normalized_format_profile`, producing this exact 16-key order:
+
+```text
+numeric_grammar_derivation_id
+interview_wave
+raw_field_id
+dictionary_field_row_ids
+dictionary_field_rows_sha256
+codebook_field_row_ids
+codebook_field_rows_sha256
+source_format_projection
+source_meaning_projection
+dictionary_field_meaning
+derived_parse_kind
+normalized_format_profile
+nonmissing_observation_count
+derivation_status
+padding_rule
+registered_numeric_grammar
+```
+
+Its derivation-ID preimage inserts the same member in the same relative
+position and therefore has exactly 15 positions: the 14-position §19.3.2
+preimage with `nonmissing_observation_count` between
+`normalized_format_profile` and `derivation_status`:
+
+```text
+[
+  interview_wave,
+  raw_field_id,
+  dictionary_field_row_ids,
+  dictionary_field_rows_sha256,
+  codebook_field_row_ids,
+  codebook_field_rows_sha256,
+  source_format_projection,
+  source_meaning_projection,
+  dictionary_field_meaning,
+  derived_parse_kind,
+  normalized_format_profile,
+  nonmissing_observation_count,
+  derivation_status,
+  padding_rule,
+  registered_numeric_grammar
+]
+```
+
+Every Amendment-6 derivation ID and complete-row digest is rebuilt from this
+successor shape;
+no 15-key predecessor row or 14-position predecessor preimage is accepted.
+Its `source_format_projection` member is prospectively replaced by the
+complete source-ordered array whose each object has exactly these ten keys
+in order:
+
+```text
+source_kind
+source_field_row_id
+parser_family
+source_format_text
+source_format_assertion_id
+normalized_format_kind
+normalized_width
+normalized_decimal_places
+declaration_disposition
+selecting_source_format_assertion_id
+```
+
+The first four values retain §19's exact meanings and exact source bytes.
+For a null `source_format_text`, the next four values are null,
+`declaration_disposition` is `source_silence`, and the final value is null.
+Silence emits its row and never selects, corroborates, or conflicts.
+
+For a nonnull value, `source_format_assertion_id` is literal
+`psid-source-format-assertion:` followed by SHA-256 of §10.1 terminal-LF
+canonical bytes of exactly:
+
+```text
+[
+  interview_wave,
+  raw_field_id,
+  source_kind,
+  source_field_row_id,
+  parser_family,
+  source_format_text,
+  source_locator_ids
+]
+```
+
+The locator array is the complete source-order array on the resolved
+canonical row; every locator and exact format lexeme must reproduce before
+the ID is formed. IDs and complete preimages are unique; collision aborts.
+The only supported normalized kinds are
+`num_parenthesized_numeric_declaration`,
+`spss_f_numeric_declaration`, and `character_declaration`. Exact
+`NUM(w.d)` and `Fw.d` normalize to the same positive width and nonnegative
+decimal tuple under §19's closed ASCII syntax. Exact `CHR(w)` normalizes to
+the character kind, width `w`, and null decimal places. Every other nonnull
+spelling has null normalized members and is unsupported; normalization does
+not rewrite `source_format_text`.
+
+Before a serialized projection or disposition is read, the source-only
+extractor and an independent source reviewer reconstruct the complete
+projection denominator and apply this first-source-order law. This is the
+§17 per-assertion disposition device applied to format declarations: every
+assertion remains present and receives one frozen row-level disposition
+before any aggregate result is selected. First align the two complete
+reconstructions by assertion identity and source order. Any assertion for
+which their enumeration, exact members, or proposed disposition differs
+receives `conflicting_source_declaration` at a prior exclusive disagreement
+gate, cannot satisfy any numbered arm below, and makes top-level pass
+impossible. The selector is the first reconstruction-agreed supported
+assertion. The remaining exact rows are:
+
+1. that first reconstruction-agreed supported nonnull assertion is
+   `selecting_numeric_declaration` or
+   `selecting_character_declaration` according to its normalized kind, and
+   its final member is its own assertion ID;
+2. a later supported assertion whose exact `source_format_text` byte-equals
+   the selector's exact text and whose normalized kind/width/decimal
+   projection deep-equals the selector's projection is
+   `corroborating_byte_equal_declaration` and points to that selector;
+3. otherwise, a later supported `NUM(w.d)` or `Fw.d` assertion whose exact
+   text is byte-unequal to the selector's text but whose normalized numeric
+   tuple deep-equals the selector's exact tuple is
+   `corroborating_tuple_equivalent_numeric_declaration` and points to that
+   selector; and
+4. every unsupported spelling, whether before or after the selector, is
+   `unsupported_source_declaration`; and
+5. every remaining supported later assertion—hence a selector-relative
+   branch/tuple mismatch—is
+   `conflicting_source_declaration`.
+
+The prior gate and numbered tests are mutually exclusive, and every
+comparison in steps 2, 3, and 5 is against the unique step-1 selector, never
+the immediately preceding assertion or any corroborator. Thus hostile source order `F6.2`, `NUM(6.2)`,
+`NUM(6.2)` yields one selector followed by two
+`corroborating_tuple_equivalent_numeric_declaration` rows: the third row's
+byte equality to the second cannot relabel it as byte-equal to the selector.
+
+For a prior-gate row or a row in steps 4 and 5,
+`selecting_source_format_assertion_id` points to the unique first
+reconstruction-agreed supported selector if one exists and is null otherwise,
+regardless of whether the row occurs before or after that selector. Those seven literals—two selecting,
+two corroborating, silence, unsupported, and conflicting—are the complete
+disposition domain. There must be exactly one selecting assertion for a
+group having at least one reconstruction-agreed supported assertion; a group
+with only silence, unsupported, or disagreement-gated assertions has none.
+Every nonnull assertion must have exactly
+one disposition, all corroborators must point to the selector, and an
+unsupported or conflicting row makes top-level pass impossible. The
+complete independently derived ten-key array must deep-equal the serialized
+array before its selector is used. A majority, dictionary-over-codebook rule,
+SPSS-over-codebook rule, candidate tuple, byte normalization, or omission
+is forbidden. Thus tuple-equivalent `F6.2` and `NUM(6.2)` remain two
+authenticated assertions but resolve one semantic tuple; `F6.2` and
+`NUM(7.2)` remain a hard conflict.
+
+Selector necessity is branch-relative. A branch whose independent source
+law requires a numeric selector must have exactly one supported numeric
+selector, and every first reconstruction-agreed supported assertion—including
+`CHR(w)`—selects
+whenever one exists. When the complete assertion projection is all
+`source_silence`, every row's `selecting_source_format_assertion_id` is null
+under the law above. That null selector does not trigger incomplete failure
+if and only if the independent requirements of either
+`value_code_domain_no_numeric_grammar` or
+`value_code_range_physical_rendering_unestablished` pass. On either such
+retained passing branch, `normalized_format_profile` and
+`registered_numeric_grammar` are also null; the exact retained padding/null
+members remain as that branch specifies. Other all-null selector arrays
+retain their exact row dispositions but fail under the applicable earlier
+predicate and establish no retained passing branch.
+Silence cannot be promoted to a numeric declaration, profile, or grammar.
+Conversely, a branch that requires numeric physical authority cannot use a
+retained source-silent status to evade its required selector.
+
+Every §19 use of the common byte-identical nonnull format, `F`, `N`, `H`,
+or `X` is replaced as follows. `F` remains the complete exact nonnull text
+projection for audit. `N` is the singleton selected numeric tuple only when
+one numeric selector exists, all other nonnull assertions are the two lawful
+corroborating arms, and no conflict exists. `H` is the analogous singleton
+selected `CHR(w)` result. `X` contains every unsupported or conflicting
+assertion. Literal
+rendering, parse-kind derivation, profile construction, and DFA compilation
+consume only `N` or `H` after exact-comparing the full disposition array;
+they never discard `F` or derive expected dispositions from a candidate.
+
+#### 20.3.2 Token-form authentication, diagnostic space default, and no-arm dispositions
+
+For this subsection, §19's statement that `extract_codebook_rows` must first
+select one physical arm before inserting every normalized literal is
+prospectively conditional. For every group with a supported numeric tuple,
+both `extract_codebook_rows` and `derive_source_numeric_grammar` first parse
+the complete semantic codebook relation without `raw_token_hex` and
+independently run this closed pre-profile literal constructor. Every inherited
+dictionary missing row remains a strict unchanged-width registration and joins
+the collision and classification relations below. The deferred constructor
+exact-covers every normalized codebook literal, whether missing or ordinary;
+no codebook literal may be omitted because its frequency is zero, its lexeme is
+short, or its eventual branch is not yet known.
+
+For each normalized codebook literal in complete source-entry order, enumerate
+the internal relation `deferred_literal_candidate_rows`: one row for every
+source-tuple-consistent token form in the form order below and, within form,
+`zero_left_padding` then `left_ascii_space_padding`. Each row has exactly
+`source_entry_ref`,
+`source_value_lexeme`, `typed_disposition`, `token_form_kind`, `profile_kind`,
+`candidate_physical_image_raw_token_hex`, `candidate_failure_reason`, and
+`observed_frequency`, in that order. The first three values exact-copy the
+source-normalized entry. The candidate image is the exact-width result of the
+one §20.3.3 renderer, or null with exact reason
+`no_exact_width_candidate_form_image`; observed frequency is the complete
+census frequency of the nonnull exact bytes and is zero for a null image.
+This rendering deliberately ignores the later observed sign diagnostic and
+token-form pass condition; those select a form but do not limit the lawful
+candidate forms enumerated here.
+For candidate-scalar construction only, ASCII grouping commas are removed and
+an exact source lexeme `\.[0-9]+` receives the required integral zero. Neither
+operation rewrites `source_value_lexeme` or supplies physical raw bytes,
+meaning, type, unit, missing status, or a nonmissing value. The complete row
+relation, including failures and duplicate images across forms or arms, is
+retained for independent deep comparison. Separately byte-deduplicate its
+nonnull images for each source literal before applying the following
+registration law.
+
+Pre-profile registration is total and ordered. First, if the strict unchanged
+ASCII source lexeme itself has exactly `w` bytes and byte-equals at least one
+nonnull candidate image, register those source bytes; a grouped display lexeme
+is never shortened for this test. Otherwise, if the byte-deduplicated nonnull
+candidate set is a singleton, register that image even when its observed
+frequency is zero. Otherwise, register the sole distinct candidate image with
+positive observed frequency. More than one byte-unequal observed candidate is
+mixed physical evidence and conflicts. A multiple-image set with zero total
+hits remains deferred with null `raw_token_hex`; a literal with no nonnull
+candidate likewise remains deferred for the selected-form fail-closed test
+below. These tests apply identically to missing and ordinary literals. A
+candidate row is evidence rather than registration unless one of these exact
+producer transitions or a post-selection transition below promotes it.
+
+The complete semantic entries, deferred candidate rows, byte-deduplicated
+image sets, census match relation, registration/defer result, and resulting
+normalized rows must deep-equal between the two entry points before the
+codebook-row digest or derivation row is accepted. Pre-profile registration
+binds only exact literal bytes for literal-first replay: it selects no physical
+numeric token form or padding arm and supplies no range image, DFA edge, or
+uncoded value. Thus V11811's exact-width `99.98` and `99.99` lexemes remain
+their source bytes, while its missing `.00` has the unique observed image
+`20302e3030`; no profile is fabricated.
+
+On the zero-nonmissing physical-unestablished branch specifically, every
+literal still executes the same complete pre-profile relation. A strict
+unchanged-width image, a byte-deduplicated singleton image, or the sole
+observed candidate registers under the law above. Every remaining
+multiple-image zero-hit ordinary literal instead retains its complete ten-key
+normalized `literal` row with `raw_token_hex: null`, unchanged source lexeme,
+meaning, typed disposition, type, unit, canonical value, and null missing
+reason. It is physical-rendering-unestablished, not malformed and not missing.
+Its deferred candidate rows are proof inputs only and create no selected token
+form, padding arm, profile, range partition, DFA edge, executable value-map
+entry, or `missing_raw_tokens` member. Its sole physical consumer is the
+closed unobserved-value row in §20.4.1. A deferred missing literal likewise
+has no missing-token authority; every observed missing token must already have
+registered uniquely for this branch to apply. Thus V11812's short ordinary
+literal `1` retains its two zero-hit candidates and source semantics with a
+null authoritative rendering, while the uniquely evidenced missing `0`
+registers as `2030`; neither entry can select a form or arm.
+
+Before constructing a profile or evaluating any token-form candidate, the
+compiler performs the first duplicate-missing, missing-versus-ordinary, and
+unequal-ordinary collision pass over the pre-profile registrations. It then
+computes a provisional missing classification over every observed-token row.
+The provisional nonmissing count is the frequency sum of observations not
+classified as exactly one member of that registered missing relation. It is
+used only to choose the zero-nonmissing termination or the positive-evidence
+token-form path; it is not a separately serialized member or authority.
+Because every deferred candidate has zero observed hits, a valid later
+promotion cannot change that provisional count. Any unequal observed images
+have already conflicted.
+
+After the applicable post-selection promotion and second collision pass below,
+`nonmissing_observation_count` is rebuilt and serialized as the nonnegative
+JSON integer, excluding booleans, equal to the frequency sum of every
+observation not classified as exactly one member of the final complete
+registered missing-literal relation. That relation is independently rebuilt
+from all dictionary missing literals and all normalized codebook entries whose
+`typed_disposition` is `missing`; missing-versus-ordinary-literal and
+duplicate-missing-image conflicts, plus duplicate ordinary literal images
+with unequal values or meanings, take precedence over use of the final count
+for a passing branch. It is at most the complete raw `record_count`; on a
+conflict-free relation, the difference is exactly the frequency sum of the
+uniquely classified missing observations. The provisional and final counts
+must equal on every passing row. The source-only compiler and independent
+reviewer reconstruct both classifications from the complete token and literal
+candidate relations, not from a profile, consumer, zero-record default, or
+aggregate field census.
+
+When the provisional nonmissing count is zero and the complete missing/literal
+relation and the complete semantic entry relation are conflict-free, numeric
+form authentication terminates before any token-form or padding-arm candidate
+relation is constructed. The final collision pass and missing classification
+then repeat over the unchanged pre-profile registrations and must reproduce
+`nonmissing_observation_count == 0`. The row has null
+`normalized_format_profile`, hence no
+`physical_authentication`; selects neither token form nor padding arm; has
+null `registered_numeric_grammar`; and uses the exact retained `none`
+padding object with empty prefix/suffix hex and payload width equal to raw
+width. If its independently derived `value_code_map` has at least one
+applicable normalized numeric range and every observation exact-matches and
+replays through a unique registered missing literal, its status is the
+retained `value_code_range_physical_rendering_unestablished`. No range member
+or still-deferred multiple-image zero-hit ordinary literal acquires an
+authoritative physical image or DFA edge; each retains its source semantics
+with the closed physical-unestablished encounter abort. Any other numeric-required
+zero-nonmissing row is genuinely unresolved numeric authority rather than a
+form conflict and takes the applicable incomplete branch. A zero-record
+census follows this same no-authentication law and cannot select a form or
+arm. A retained source-only nonnumeric or no-range value-code branch remains
+available only under its independently satisfied §19 conditions; zero
+nonmissing evidence never promotes it to a compiled status.
+
+Only when the provisional nonmissing count is positive **and the independently derived
+branch otherwise requires or adopts numeric physical authentication** does
+the following token-form and padding authentication run. Retained
+nonnumeric, source-silent, or other independently lawful null-profile
+branches do not evaluate numeric candidates merely because their raw census
+contains a nonmissing token.
+
+`normalized_format_profile` retains exactly `profile_kind`,
+`payload_width`, `decimal_places`, and `physical_authentication`.
+`payload_width` remains the complete raw width `w`, and decimal places is
+the selected declaration's `d`. Its `physical_authentication` is
+prospectively replaced by exactly these thirteen keys:
+
+```text
+raw_source_file_id
+raw_source_sha256
+record_count
+observed_token_row_count
+observed_token_rows_sha256
+token_form_candidate_results
+selected_token_form
+candidate_arm_results
+selected_arm
+range_renderability_partition_rows
+range_renderability_partition_row_count
+range_renderability_partition_domain_sha256
+complete_domain_arm_disposition
+```
+
+The first five retain §19's complete-census equations. Each token-form
+candidate row has exactly `token_form_kind`,
+`accepted_observation_count`, `diagnostic_observation_count`,
+`rejected_observation_count`, and `status`; status is `pass | fail`, counts
+use complete record frequencies. For each nonmissing exact raw observation,
+evaluate byte acceptance under every candidate: true means the token has
+that form's exact sign/point/digit structure and byte-equals its source value
+rendering under at least one of the two padding-arm constructors below,
+without selecting that arm or applying the candidate's later sign-diagnostic
+pass condition. Call that ordered Boolean vector `B_o`. A missing
+observation is accepted by every candidate before this test and its vector
+is all true. For every candidate row,
+`accepted_observation_count` is the frequency sum of its true positions,
+`rejected_observation_count` is the frequency sum of its false positions,
+and their sum equals `record_count`. The single exact
+`diagnostic_observation_count`, repeated identically in every candidate row,
+is the frequency sum of nonmissing observations whose `B_o` contains both
+true and false. Thus a minus, literal point, or implied-versus-literal byte
+pattern contributes exactly once per observation even if it distinguishes
+both axes; missing values never contribute. Unequal repeated diagnostic
+counts abort.
+
+For `d == 0`, candidate order is exactly
+`unsigned_ascii_integer` then
+`leading_ascii_minus_signed_integer`. The unsigned candidate passes exactly
+when every nonmissing token has the canonical signless integer form and
+there is no minus. The signed candidate passes exactly when every nonmissing
+token has the canonical signed-or-signless form below and at least one
+nonmissing negative token supplies a sign diagnostic. For `d > 0`, candidate
+order is
+exactly `unsigned_implied_decimal`,
+`leading_ascii_minus_signed_implied_decimal`,
+`unsigned_literal_ascii_decimal`, and
+`leading_ascii_minus_signed_literal_ascii_decimal`. An implied candidate
+rejects every literal `0x2e`; a literal candidate requires the exact decimal
+law below. A signed candidate additionally requires at least one canonical
+minus observation; an unsigned candidate rejects every minus. Exactly one
+token-form row must pass. `selected_token_form` is that row's kind.
+No observed sign means the smaller unsigned language; a future minus then
+hits the unknown-token abort rather than retroactively widening the field.
+
+The provisional missing classification has completed and the zero-nonmissing
+branch has already terminated before this point; final missing classification
+still awaits the promotion and collision law below. More formally, a candidate's
+`status` is `pass` exactly when its accepted count is
+`record_count` and its sign polarity satisfies the stated condition: zero
+canonical minus observations for an unsigned candidate and a positive count
+for a signed candidate. Otherwise it is `fail`. This status rule plus the
+raw `B_o` equations fixes all serialized counts without conflating a decimal
+diagnostic and a sign diagnostic.
+
+Project every nonnull canonical dictionary `declared_signed` value in group
+order. More than one distinct Boolean is conflicting. If a selected signed
+form has a positive minus diagnostic, that projection may be empty or the
+singleton value true; any false is a source/census conflict. If the selected
+form is unsigned, an empty projection or singleton false corroborates it; a
+singleton true with no observed minus is
+`incomplete_source_numeric_authority` because the source has not established
+the placement it declares. Source silence is null and never rewritten as a
+declaration, but the complete negative-token census may select the exact
+signed form. This prospectively replaces §19's fixed-width requirement that
+`declared_signed` coalesce to false and its value-code-range constant
+`signed: false`. On every compiled branch,
+`value_derivation.signed` and the consuming `typed_parse_specs.signed` equal
+the selected form's Boolean. All retained scale, type, unit, and
+range-membership coalescence laws remain exact.
+
+Immediately after token-form selection, retain every authoritative pre-profile
+registration and project every still-deferred literal through both padding
+constructors for that selected form. Literal-first authority established from
+the complete lawful-form relation is independent of the form later selected
+for numeric values. For each still-deferred literal, a common nonnull
+zero/space image is immediately promoted to a registered literal even when
+unobserved. Unequal nonnull images remain deferred through padding disposition,
+and a null selected-form image remains an unrenderable candidate. This pass
+does not select an arm, alter source semantics, or authorize a range member.
+
+After token-form selection, `candidate_arm_results` retains exactly two
+rows in `zero_left_padding` then `left_ascii_space_padding` order. Except for
+the explicitly tagged complete-domain extension below, each row has the
+retained five keys `profile_kind`,
+`accepted_observation_count`, `diagnostic_observation_count`,
+`rejected_observation_count`, and `status`, but status is now
+`pass | fail | indistinguishable`. The render functions below—not a host
+formatter—construct both candidates. A diagnostic observation is a
+nonmissing source-valid value whose zero and space renderings differ. Counts
+again cover every record. A source missing observation is accepted by both
+arms before arm conformance and is nondiagnostic. For each other
+observation, one arm's accepted Boolean is true exactly when its renderer for
+the source-valid scalar byte-equals the raw token; rejected is its negation.
+Each row's accepted/rejected counts are the corresponding frequency sums and
+sum to `record_count`; both rows repeat the same diagnostic frequency sum.
+For every candidate row, status is totally determined:
+`indistinguishable` if rejected count is zero and diagnostic count is zero;
+`pass` if rejected count is zero and diagnostic count is positive; and
+`fail` otherwise. Each candidate row's `profile_kind` is exactly its
+displayed padding-arm literal. The enclosing
+`normalized_format_profile.profile_kind` exact-equals
+`selected_token_form`; padding selection or nonselection is represented only
+by the separately serialized `selected_arm`. No concatenated or inferred
+profile name is admitted.
+
+The closed disposition is:
+
+- when the diagnostic count is positive, the space row must accept every
+  observation and be `pass`, the zero row must reject every diagnostic
+  observation and be `fail`, and `selected_arm` is exactly the literal
+  `left_ascii_space_padding`;
+- when `w == 1`, `d == 0`, and the selected form is unsigned integer, both
+  arms must accept the same complete one-byte domain with diagnostic count
+  zero and status `indistinguishable`; `selected_arm` is exactly
+  `padding_arm_underdetermined_width_one_exact_replay_v1`;
+- when the selected form is `unsigned_literal_ascii_decimal` and
+  `w == d + 2`, so even canonical `0` plus the point and `d` digits fills
+  the width and no padding position exists, both rows are likewise
+  `indistinguishable` and `selected_arm` is exactly
+  `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`;
+- independently, when the derived branch is `value_code_map`, its complete
+  normalized semantic domain is nonempty, finite, and closed, it has at least
+  one applicable normalized numeric range, the width-one rule above does not
+  apply, both observational rows are
+  `indistinguishable`, and the complete-domain relations below are exactly
+  equal with exact observed replay, `selected_arm` is the same literal
+  `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`;
+- independently, under those same finite-domain and observational
+  preconditions, when the two complete candidate relations are unequal but
+  the invariant/ambiguous partition below exact-covers the domain, every
+  normalized numeric range has at least one invariant exact numeric image,
+  observation resolves to an invariant authoritative image and byte-replays,
+  and the ambiguous relation is nonempty, `selected_arm` is exactly the
+  disposition literal
+  `padding_arm_underdetermined_finite_domain_arm_ambiguous_exact_replay_v1`;
+- every other zero-diagnostic census, any passing zero row, mixed padding,
+  zero/space result not covering all records, or unequal diagnostic count
+  is a hard failure.
+
+The padding disposition completes the literal producer transitions before any
+profile, partition, grammar, consumer row, ID, or hash is accepted. On a
+diagnostic `left_ascii_space_padding` selection, every remaining renderable
+deferred literal is promoted under its selected-space image; the zero image
+remains counterfactual evidence only. On either finite-complete-domain no-arm
+branch, every literal whose two candidate rows have one common nonnull image is
+promoted to a registered literal and both complete-domain rows become
+`registered_literal_first_bypass` before their arrays or invariant rows are
+hashed. This includes every invariant literal on the finite-domain
+arm-ambiguous branch. A literal with unequal nonnull finite-domain images
+remains `candidate_literal_image` under both parents, has null authoritative
+image and no actions, and takes
+`abort_before_classification_arm_ambiguous_source_member`; neither spelling is
+registered. The structural width-one and no-padding-capacity branches likewise
+register their necessarily common literal image. Any literal still lacking a
+selected-form image, or any deferred literal not assigned either an exact
+promotion or the express finite-domain unequal-image abort, fails closed.
+Under a selected space
+branch its exact census reason is `selected_space_literal_unrenderable`; the
+corresponding structural or finite no-arm reason remains the exact closed
+unsupported reason named by the totality census. In particular,
+ER36928/2007's eight-byte source lexeme `-999,999` under `NUM(7.0)` yields the
+singleton seven-byte signed candidate `-999999` (`2d393939393939`) across the
+complete lawful-form relation. Grouping removal never rewrites the source
+lexeme, but the zero-hit singleton producer transition registers those bytes
+before the field selects its unsigned numeric form, so the literal remains an
+authoritative literal-first bypass. By contrast, ER6974/1995's deferred
+`-99,999` has no image under its selected unsigned space form and is the
+mandatory witness for `selected_space_literal_unrenderable`; no unrenderable
+literal survives on a passing branch.
+
+After all applicable promotions, independently rerun duplicate registered
+missing, registered missing-versus-ordinary, and duplicate registered ordinary
+image checks over the final relations. Unequal ordinary values or meanings at
+one image conflict; every retained semantic-overlap prohibition remains. Then
+rebuild missing classification and `nonmissing_observation_count`, require its
+equality to the provisional value, rebuild the complete-domain invariant and
+ambiguous relations, every exhaustive range partition, missing subtraction and
+exact-token DFA, all observed and unobserved consumers, grammar and derivation
+IDs, full-row hashes, and every enclosing domain/content hash. No candidate-
+only row, pre-promotion partition, provisional count, or predecessor identity
+may be copied across this finalization barrier.
+
+On either finite-complete-domain no-arm branch, each
+`candidate_arm_results` row is
+the retained five-key row followed by exactly
+`complete_domain_member_results`, `complete_domain_member_result_count`, and
+`complete_domain_member_result_domain_sha256`. Enumerate every normalized
+literal once and every numeric-range member once in complete source-entry
+then ascending member order. Each result has exactly
+`source_entry_ref`, `source_member_index`, `source_value`,
+`source_derivation`, `candidate_result`,
+`physical_image_raw_token_hex`, `transition_value_actions`, and
+`failure_reason`. The member index is null for a literal and its zero-based
+range index otherwise. `source_value` has the retained exact five-key shape;
+derivation is `codebook_literal | codebook_range_member`; and result is
+`registered_literal_first_bypass | candidate_literal_image |
+exact_numeric_image | no_exact_image`.
+A literal-first bypass carries its registered exact-width token, empty action
+array, and null failure. A candidate literal image carries the exact-width
+image constructed for an unregistered unequal-image literal under that parent
+arm, an empty action array, and null failure; it is candidate evidence, not an
+authoritative registration, and is lawful only on the finite-domain
+arm-ambiguous branch. Every common or selected literal image has already been
+promoted and instead uses the registered bypass result in every serialized
+parent. An exact numeric image carries the
+candidate's unique exact-width token, complete DFA-path `value_action` array,
+and null failure. A failed image carries null token, empty actions, and the
+exact nonempty renderer failure reason.
+
+The count equals the complete finite semantic-domain cardinality and the
+digest hashes the complete named array under §10.1 with one terminal LF.
+`complete_domain_arm_disposition` has exactly
+`arm_invariant_member_rows`, `arm_invariant_member_count`,
+`arm_invariant_member_domain_sha256`, `arm_ambiguous_member_rows`,
+`arm_ambiguous_member_count`, and
+`arm_ambiguous_member_domain_sha256`, in that order. Every member appears
+once in each candidate relation with identical source
+identity/value members. Compare its two candidate result/image/action/failure
+projections after removing only the parent `profile_kind`. If they deep-equal,
+emit one arm-invariant row with exactly `source_entry_ref`,
+`source_member_index`, `source_value`, `source_derivation`,
+`authoritative_result`, `authoritative_physical_image_raw_token_hex`,
+`authoritative_transition_value_actions`, and `failure_reason`; those last
+four values exact-copy the common candidate values. If the two projections
+differ, emit instead one arm-ambiguous row with exactly `source_entry_ref`,
+`source_member_index`, `source_value`, `source_derivation`,
+`zero_candidate_result`, `zero_physical_image_raw_token_hex`,
+`zero_transition_value_actions`, `zero_failure_reason`,
+`space_candidate_result`, `space_physical_image_raw_token_hex`,
+`space_transition_value_actions`, `space_failure_reason`,
+`authoritative_physical_image_raw_token_hex`, and `if_encountered`. Its
+authoritative image is JSON null and its action is exactly
+`abort_before_classification_arm_ambiguous_source_member`. Both partition arrays preserve complete
+source-entry/member order; their ordered merge exact-equals the candidate
+domain, their counts sum to its cardinality, and each displayed digest hashes
+the complete named array under §10.1 with one terminal LF. On every other
+nonnull-profile branch the six object members are respectively exact
+empty arrays, integer zeroes, and the canonical empty-array SHA-256.
+
+For the complete-equality disposition, the invariant relation is the entire
+domain and the ambiguous relation is empty. After projecting away the parent
+labels, both candidate arrays, counts, and digests must deep-equal; every
+numeric member is `exact_numeric_image`, every literal is the identical
+registered bypass, and no failure remains. For the finite-domain partial
+disposition, the invariant relation is nonempty, the ambiguous relation is
+nonempty, the two complete candidate arrays are deliberately unequal, and
+every observed token exact-matches an invariant authoritative image or
+registered literal and byte-replays. An ambiguous numeric or short-literal
+member has no authoritative physical token, yields no runtime scalar result,
+and always takes its per-member
+abort. Equality over the observed subset, an aggregate era result, or a
+zero-record census is insufficient on either branch. Neither proof selects a
+padding arm or authorizes a scalar or token outside the complete normalized
+value-code domain; such a token takes semantic-membership or unknown-token
+abort.
+
+V117/1968 fixes the mandatory finite-domain partial constructor. Its
+`NUM(2.0)` domain is range `1`–`96`, ordinary literal `97`, and missing
+literals `98` and `99`. Both arms replay all 4,802 observations, but the
+complete 99-member candidate relations partition into exactly 90 invariant
+members (`10`–`96` and the three exact-width literal bypasses) and nine
+ambiguous members (`1`–`9`). The DFA contains only the invariant authoritative
+images after missing subtraction; each ambiguous member has a null image and
+the closed abort. V5092/1976 is the all-field companion: its missing literal
+`0` and range members `1`–`9` are the ten ambiguous members, while range
+members `10`–`28` plus missing literal `99` are the 20 invariant members.
+The unobserved short `0` has candidate images `3030` and `2030`, neither is
+registered, and either encounter aborts. Selecting an arm for either field,
+omitting either complete candidate relation, or treating an ambiguous member
+as authoritative fails the derivation.
+
+The three underdetermined literals are dispositions, never padding arms. They
+authorize only the exact same-width token language and byte replay proved by
+the field. They cannot be projected as zero, space, an era default, or an
+arm for a different width. The complete-domain arm likewise cannot be
+generalized to an uncoded field or a value outside its closed source domain;
+the partial finite-domain disposition additionally authorizes only invariant
+images and makes every ambiguous member abort.
+These are the closed lawful dispositions requested by the censuses: each
+records precisely that the arm is unobservable in principle and fabricates
+none.
+
+For an Amendment-6 row, `padding_rule` retains its four-key shape. A selected
+space profile uses operation
+`validate_exact_left_ascii_space_padding_preserve_payload`, empty prefix and
+suffix hex, and payload width `w`; the operation validates canonical leading
+spaces and passes the exact still-width-`w` raw token to the DFA without
+removing, replacing, or reordering a byte. Any underdetermined disposition
+uses `operation: none`, empty hex strings, and width `w`. The predecessor
+operations remain representable only for historical rows; an Amendment-6
+authority emits neither the zero-arm `none` interpretation nor arbitrary
+prefix/suffix removal nor §19's space-to-zero canonicalization. Padding is
+instead visible to the exact-token DFA through `no_op` transitions and is
+checked again by byte-exact rendering.
+
+The diagnostic result is a per-field proof, not cross-field inheritance.
+The universal census determines which branch Amendment 6 makes lawful, but
+each future field must still reproduce its own positive diagnostic and the
+excluded zero-arm failures. A zero-padded future field is source drift and
+aborts; it does not silently select the formerly hypothetical arm.
+
+The three range-partition members are an exact empty array, integer zero,
+and the §10.1 terminal-LF canonical SHA-256 of that empty array when the
+complete normalized codebook domain has no `numeric_range`. Otherwise they
+contain exactly one row per normalized numeric-range entry in source order.
+Each row has exactly these nine keys in order:
+
+```text
+source_entry_ref
+source_member_count
+source_member_domain_sha256
+renderable_member_rows
+renderable_member_count
+renderable_member_domain_sha256
+unrenderable_member_rows
+unrenderable_member_count
+unrenderable_member_domain_sha256
+```
+
+The complete source-member relation is the ascending finite member array
+fixed by the normalized entry, represented as exact two-key
+`source_member_index`/`source_value` rows. The index is zero-based within
+that entry. `source_value` has the retained observed-source-value five-key
+shape and is the exact range-derived `typed_disposition`, `value_type`,
+`typed_value_unit`, `canonical_value`, and `source_meaning`. Its count and
+digest cover that complete reconstructed array; the array is not separately
+serialized beside the count/digest because its two subrelations serialize
+every same indexed/value row exactly once. The normalized range, bounds,
+step, type, unit, meaning, and entry reference remain unchanged.
+
+For the selected token form and selected arm or no-arm disposition, evaluate
+the one §20.3.3 renderer on every complete source member before reading a
+partition row. Under the finite-domain partial disposition, a numeric member
+is renderable only when its arm-invariant row supplies the common exact image;
+an arm-ambiguous member is unrenderable under the authoritative relation even
+when each nonauthoritative candidate has its own exact image. A renderable
+member row has exactly
+`source_member_index`, `source_value`, `physical_image_raw_token_hex`,
+`rendered_decimal_places`, `transition_value_actions`, `parsed_scalar`, and
+`replay_raw_token_hex`. The image and replay are the same unique exact-width
+bytes; precision is the unique constructed fractional-byte count, zero for
+an integer form; the action array is the complete DFA-path `value_action`
+projection; the parsed scalar deep-equals `source_value.canonical_value`;
+and the transition result's type and unit equal the source value's.
+An unrenderable member row has exactly
+`source_member_index`, `source_value`, `physical_image_raw_token_hex`, and
+`unrenderable_reason`; its image is JSON null and its reason is exactly
+`no_exact_width_selected_form_image` or, only for a member in the
+arm-ambiguous relation, `arm_ambiguous_no_authoritative_image`.
+
+Both member arrays preserve source-member order. Their index sets are
+disjoint, their ordered merge is exactly every index from zero through
+`source_member_count - 1`, their values deep-equal the corresponding source
+members, and their counts sum to `source_member_count`. Each displayed
+domain digest hashes its complete named array under §10.1 with one terminal
+LF; the enclosing partition count and digest cover the complete ordered
+nine-key partition rows. Independent reconstruction disagreement, a missing
+or duplicate member, a fabricated image, or digest-only agreement aborts.
+
+#### 20.3.3 Exact literal-decimal and signed token/rendering law
+
+Let `x` be a source-authenticated nonmissing scalar and `s` the positive
+reduced rational `implied_scale`. Exact arithmetic first forms `z = x / s`.
+No binary floating point, locale, rounding, grouping, exponent, comma,
+Unicode digit, or host numeric conversion participates.
+
+For an integer token form, `z` must be an integer. Its magnitude is the
+canonical ASCII decimal of `abs(z)`. A negative value is lawful only under
+the signed form and contributes exactly one byte `0x2d` immediately before
+the first magnitude digit; a nonnegative value has no sign. Negative zero
+is noncanonical. Under the space candidate, prepend the maximal number of
+`0x20` bytes needed to reach width `w`, before the optional minus. Under the
+zero candidate, place the optional minus first and then prepend `0x30` bytes
+to the magnitude. A candidate that cannot fit exactly `w` bytes rejects.
+
+For an implied-decimal token form, compute exact `M = abs(z) * 10^d`;
+`M` must be an integer. Its magnitude is the canonical ASCII decimal of
+`M`, and the optional minus and two padding candidates follow the preceding
+integer rule. No `0x2e` occurs. This is §19's retained implied-decimal
+numeric operation with signed placement completed here; it remains
+selectable only when its complete per-field census uniquely authenticates
+that token form and the permitted space/no-arm padding disposition.
+
+For a literal-decimal token form, `d` is positive and is the maximum source
+precision. Let `I` be the canonical unsigned integral digits of `abs(z)` and
+let `sigma` be one for a negative value and zero otherwise. Define
+
+\[
+f = \min(d,\; w-\sigma-|I|-1).
+\]
+
+The scalar is representable only when `1 <= f <= d` and `abs(z)` has an
+exact finite base-10 expansion at `f` fractional digits. Render exactly
+`I || 0x2e || F_f`, where `F_f` is the exactly `f`-digit fractional part,
+including required trailing zeroes. Choosing fewer than the greatest
+fitting `f`, dropping a nonzero digit, or rounding aborts. Apply the same
+minus and candidate padding placements as the integer form. Thus
+`NUM(4.2)` value zero renders `0.00`; `NUM(7.2)` value negative 1040 renders
+`-1040.0`; and neither can be rendered as implied digits.
+
+The exact raw-token regularity is contextual rather than a permissive host
+regex: zero or more leading ASCII spaces only under the space profile,
+followed by the optional single minus only under a selected signed form,
+then at least one canonical integral digit, followed under the literal arm
+by exactly one `0x2e` and the uniquely computed `f` digits. The integral
+part has no leading zero unless it is the single digit zero. A plus, sign
+after a digit, trailing sign, internal/trailing space, tab, second point,
+point without digits on both sides, excess/fewer-than-computed fractional
+digits, implied decimal payload, zoned decimal, overpunch, and non-ASCII byte
+reject before semantic classification. During source compilation, any
+observed nonmissing token that does not exact-match a registered ordinary
+literal and is rejected by this closed physical-token language is exactly
+`unsupported_source_numeric_format`, subject only to an earlier conflict
+predicate in §20.3.5. That conclusion includes an all-space token; a plus in
+any position; a minus outside the sole selected leading-minus placement;
+negative zero; a noncanonical leading-zero magnitude that no evaluated
+padding constructor generates; internal/trailing space or tab; under a
+literal form, an absent/repeated/malpositioned point, a
+missing digit on either side, unequal fractional precision, or an implied
+payload; under an implied form, any literal point; comma/grouping, exponent,
+zoned decimal, overpunch, and every non-ASCII byte. It is never incomplete
+merely because no candidate form accepts it. During source compilation, a
+token accepted only by the evaluated zero-padding constructor—including
+`-0242` for scalar -242—is likewise exact
+`unsupported_source_numeric_format`, but under §20.3.5's excluded-padding-arm
+predicate rather than the outside-language predicate. After a source row has
+lawfully compiled, a later previously
+unobserved token outside its selected language still takes the retained
+unknown-token abort and does not retroactively change the source-row status.
+
+Codebook literal rendering, range image construction, fixed-width parsing,
+observed classification, and unobserved replay all use this one function.
+A normalized literal still has complete-width exact-match precedence. For
+each numeric range, enumerate the complete finite source-member relation in
+ascending source order and apply this renderer once to every member. Retain
+the complete normalized range without narrowing it, and serialize the exact
+renderable and unrenderable partition in §20.3.2. A member is renderable only
+when it has the one exact-width image, greatest fitting precision, DFA action
+sequence, scalar, and byte-equal replay fixed above. Otherwise its physical
+image is null with exact reason
+`no_exact_width_selected_form_image`.
+
+When the finite-domain arm-ambiguous disposition applies, its distinct
+compiled status applies whether the ambiguity occurs in a range, a short
+literal, or both; every observation must resolve to the invariant relation.
+Otherwise, if every range member is renderable, the applicable
+diagnostic-space or padding-underdetermined compiled status applies.
+If no arm-ambiguous member exists, every range has at least one renderable
+member, and the complete numeric-range domain has at least one unrenderable member,
+the passing status is
+`compiled_source_numeric_grammar_partial_range_exact_replay`. Every observed
+nonmissing range member must be in the renderable relation and replay
+exactly. If any normalized range has no renderable member, no compiled status
+applies; an otherwise numeric-required branch is unsupported, while the
+retained physical-unestablished branch remains available only under its
+independently satisfied null-profile conditions. The rejected broader
+alternative would allow another range's renderable members to rescue an
+all-unrenderable range.
+Missing, duplicating, reordering, rounding, truncating, synthesizing, or
+omitting a source member, choosing less than the greatest fitting precision,
+or promoting only the observed subset aborts. A fixed-width numeric token must
+exact-match a dictionary missing literal before numeric parsing. Observation
+establishes physical spelling and the closed form, not meaning, type, unit,
+missing disposition, or a scalar outside the source-authenticated semantic
+branch.
+
+#### 20.3.4 Exact-token DFA, actions, scalar, and replay
+
+For any compiled derivation status below, DFA construction occurs only after
+the §20.3.2 finalization barrier: every applicable post-selection literal
+promotion, the second three-way collision pass, and reconstruction of final
+missing classification and `nonmissing_observation_count` have completed.
+Only the final registered relations are authoritative; no provisional
+classification, pre-promotion partition, or candidate-only image enters a
+DFA. The DFA payload is the exact raw token after its Amendment-6
+`padding_rule`; payload width therefore remains `w`. From the source-valid render language subtract
+every canonical image in the final complete registered missing-literal
+relation reconstructed in §20.3.2, including dictionary and normalized-
+codebook missing literals. A missing
+image's overlap with the otherwise numeric language is the reason for this
+subtraction and is not alone a conflict. A final registered missing image that
+byte-equals a final registered ordinary nonmissing normalized codebook literal
+is a missing-versus-literal conflict. Duplicate final registered ordinary
+literal images with unequal source values or meanings are conflicts; every
+retained duplicate normalized-entry or semantic-overlap prohibition also
+remains independently controlling.
+
+An ordinary nonmissing normalized codebook literal with a final registered
+image that does not collide with missing remains inside the physical DFA
+language even when its bytes are also accepted by the numeric DFA. Runtime's retained literal-first
+classification terminates before DFA traversal, so the token takes its
+literal meaning and cannot become a numeric result. This ordinary-literal/
+DFA overlap is lawful by itself: it is neither subtracted nor a conflict.
+The remainder after missing-image subtraction must be nonempty. The DFA
+accepts exactly that finite-width physical language; it does not accept all
+strings that a generic numeric regex would parse. This exclusion set is the
+retained §19 `E` construction completed for the new token forms, and it fixes
+one transition-domain digest.
+
+For `compiled_source_numeric_grammar_partial_range_exact_replay`, the
+source-valid numeric portion of that language is exactly the set of
+`physical_image_raw_token_hex` values in the complete renderable-member
+relations; no unrenderable source member or grammar-shaped value outside
+those relations contributes an edge or accepting path. Finally registered
+ordinary nonmissing literal images may remain in the physical language under
+the literal-first law above. A deferred or candidate-only ordinary image
+never does so. Final registered missing images are then subtracted as usual.
+The DFA and every accepting action sequence are reconstructed from those
+exact images, never from the observed subset, a generic numeric language,
+the pre-promotion relation, or the unrenderable relation.
+
+For
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
+the source-valid numeric portion is instead exactly the nonnull authoritative
+images in `arm_invariant_member_rows`. No image from
+`arm_ambiguous_member_rows` contributes an edge or accepting path; an
+ambiguous short literal likewise remains candidate-only outside the
+registered literal relation and always takes its closed member abort. Every
+invariant ordinary literal image promoted by the §20.3.2 producer transition
+remains literal-first, every invariant missing image promoted by that
+transition is subtracted, and every observed numeric token must belong to an
+invariant accepting path. Candidate-specific unequal zero/space images are
+proof rows only and cannot enlarge the authoritative language.
+
+The retained transition action enum becomes operative only as follows:
+
+- `no_op` consumes one leading `0x20` and changes no numeric state; it is
+  forbidden after the first sign, digit, or decimal point;
+- `set_negative` consumes the sole `0x2d`, sets sign accumulator `S` from
+  `+1` to `-1`, and is legal only immediately after the complete leading
+  space run and immediately before the first digit;
+- `consume_decimal_point` consumes the sole `0x2e`, changes
+  `decimal_seen` from false to true, and is legal only after at least one
+  integral digit with exactly the constructed positive fractional suffix
+  remaining; and
+- `append_digit_0` through `append_digit_9` retain
+  `A_(k+1) = 10*A_k+n`; after `decimal_seen`, each also increments exact
+  fractional counter `F`.
+
+Accumulators begin `S=+1`, `A=0`, `decimal_seen=false`, and `F=0`.
+Acceptance requires the selected token-form structure, exactly `w`
+transitions, and `F=0` for an integer form or the unique computed positive
+`f` for a literal-decimal form. The scalar is exactly
+`S * A * implied_scale` for an integer form,
+`S * A / 10^d * implied_scale` for an implied-decimal form, or
+`S * A / 10^F * implied_scale` for a literal-decimal form, followed by the
+retained exact type and unit checks. The action sequence contains no emitted
+action after a missing edge.
+
+The §19 prefix-state construction, action-sensitive same-depth quotient,
+fixed point, reachability/co-reachability, sink omission, breadth-first
+state numbering, unsigned-byte edge order, transition order, counts, and
+digests remain byte-controlling. They now operate over the exact-token byte
+alphabet admitted above. Every accepting result must re-render through
+§20.3.3 and byte-equal the original raw token. A scalar equality without
+that replay is failure; this prevents `0001`, `+1`, `1.`, `1.0`, and `  1`
+from becoming interchangeable merely because a host parser assigns equal
+numbers.
+
+`registered_numeric_grammar` retains its ten-key shape and nine-position
+grammar-ID preimage. `value_derivation` retains its six keys; its `signed`
+member equals whether the selected token form is signed, and
+`decimal_places` is the declared maximum `d`, while the transition path's
+`F` supplies the exact observed/replayed precision. The successor derivation
+row uses the 15-position ID preimage in §20.3.1, including its independently
+reconstructed positive final `nonmissing_observation_count` on every compiled
+branch. Only values reconstructed after the finalization barrier enter the
+complete transition rows, grammar ID, derivation ID, full-row hashes, and
+every enclosing domain/content digest; no provisional or predecessor digest
+may be copied.
+
+#### 20.3.5 Status tree, row identities, and complete consumer-visible branches
+
+The exact passing derivation statuses become:
+
+- `compiled_source_numeric_grammar` for a diagnostic field whose selected
+  padding arm is the source-authenticated ASCII-space profile;
+- `compiled_source_numeric_grammar_padding_underdetermined_exact_replay`
+  for either structural/complete-equality no-arm disposition;
+- `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+  for the finite closed domain whose complete padding-arm relations partition
+  into nonempty invariant and ambiguous members, whose observations all
+  resolve to invariant authoritative images, and whose ambiguous members
+  retain null authoritative images and closed per-member aborts;
+- `compiled_source_numeric_grammar_partial_range_exact_replay` for a
+  complete normalized range domain whose exhaustive ordered partitions each
+  have at least one renderable member and collectively have at least one
+  unrenderable member, with every observed
+  range token in the renderable relation and byte-replaying exactly;
+- the three retained noncompiled value-code/outside-numeric statuses in
+  §19.3.2, only after their declaration projection obeys §20.3.1.
+
+`registered_numeric_grammar` is nonnull for all four compiled statuses and
+null on every retained noncompiled branch. The top-level
+`field_source_derivation.status` may be `pass` only when every row takes one
+of those seven lawful statuses, the complete ten-terminal disposition
+function exact-covers the all-field denominator as required by §20.3.7, and
+the complete relation plus all eleven vectors below reproduce. A mapped
+conflict, unsupported, or incomplete terminal proves classification
+totality but still prevents top-level pass. Every layout consumer accepts any
+compiled status when its complete profile, selected-arm-or-disposition,
+complete-domain arm disposition and candidate relations when present, range
+partitions, padding rule, DFA, and replay exact-match.
+
+Before any passing status is emitted, every normalized codebook literal
+governed by the §20.3.2 deferred constructor must have exactly one final
+disposition: a registered authoritative image produced by the strict,
+singleton, sole-observed, selected-space, common-image, or finite-invariant
+transition; a candidate-only null authoritative image with the finite
+unequal-arm member abort; a still-deferred multiple-image zero-hit ordinary
+literal with the zero-count physical-unestablished abort; or a field-level
+closed failure. These dispositions are mutually exclusive and exact-cover the
+complete applicable source-entry relation. No other null-authority literal,
+unrenderable selected literal, or unproduced promotion may survive on a
+passing row.
+
+A retained `value_code_domain_no_numeric_grammar` row may likewise carry an
+explicit underdetermined selected-arm disposition and complete physical
+profile while its grammar remains null; its normalized literal is classified
+and replayed literal-first. A
+`value_code_range_physical_rendering_unestablished` row and an outside-
+numeric row retain their exact null-profile/null-grammar branches. Thus no
+consumer invents a DFA merely because a no-arm token is present.
+
+The all-missing range case is one exact retained branch, not a failure-row
+exception. It requires `nonmissing_observation_count == 0`, nonempty
+applicable normalized numeric ranges, and exact missing-first replay of every
+record. It serializes `value_code_range_physical_rendering_unestablished`,
+null profile and grammar, the retained `none` padding object, no candidate
+form/arm results, and no selected form or arm. Every strict unchanged-width,
+byte-deduplicated singleton, or sole-observed ordinary literal retains its
+registered image. Only a still-deferred multiple-image zero-hit ordinary
+literal retains its complete normalized semantics with `raw_token_hex: null`
+and the closed unobserved physical-rendering abort; no such deferred literal
+enters an executable map or missing-token relation. Conversely, a positive
+nonmissing count on a branch requiring numeric physical authentication must
+execute the complete candidate laws; zero records or registered missing
+records cannot authenticate either candidate form. Retained nonnumeric and
+source-silent branches remain governed by their independent status laws.
+
+The complete six-artifact/all-43-raw-file census identifies 763
+metadata-qualified all-missing numeric-range fields. Exactly 66, spanning
+interview waves 1979–1997, contain at least one short ordinary literal; every
+one takes the same physical-unestablished branch above and none is omitted or
+promoted to an executable token. The standalone canonical JSON array of
+their `(interview_wave,raw_field_id)` two-position arrays in complete
+six-artifact field order, with one terminal LF, has SHA-256
+`c34434caa24dfa760423ac649c1f5a8a7ee340c2c9909dab67a000513f2c4f69`.
+V11812/1985 is the mandatory regression witness, not a singleton exception.
+The complete audit projection is:
+
+| Interview wave | Count | Raw field IDs in evidence order |
+|---:|---:|---|
+| 1979 | 1 | `V6640` |
+| 1980 | 1 | `V7242` |
+| 1981 | 1 | `V7931` |
+| 1982 | 1 | `V8586` |
+| 1983 | 1 | `V9245` |
+| 1984 | 3 | `V10824`, `V10837`, `V10838` |
+| 1985 | 7 | `V11812`, `V11813`, `V11826`, `V11827`, `V12160`, `V12189`, `V12190` |
+| 1986 | 6 | `V13193`, `V13222`, `V13223`, `V13361`, `V13390`, `V13391` |
+| 1987 | 4 | `V14318`, `V14319`, `V14482`, `V14483` |
+| 1988 | 1 | `V15701` |
+| 1989 | 5 | `V16914`, `V17072`, `V17233`, `V17270`, `V17271` |
+| 1990 | 4 | `V18338`, `V18375`, `V18376`, `V18640` |
+| 1991 | 4 | `V19638`, `V19940`, `V19977`, `V19978` |
+| 1992 | 3 | `V21240`, `V21277`, `V21278` |
+| 1993 | 2 | `V23132`, `V23134` |
+| 1994 | 5 | `ER2522`, `ER2544`, `ER2793`, `ER3015`, `ER3037` |
+| 1995 | 2 | `ER5543`, `ER5792` |
+| 1996 | 9 | `ER7253`, `ER7498`, `ER7617`, `ER7639`, `ER7888`, `ER7992`, `ER8089`, `ER8111`, `ER8133` |
+| 1997 | 6 | `ER10523`, `ER10545`, `ER10789`, `ER10983`, `ER11005`, `ER11027` |
+| **Total** | **66** | complete canonical pair projection |
+
+For each of the 66 fields, independent raw reslicing yields exactly one
+observed token: width-canonical space-padded zero (`2030` at width two or
+`202030` at width three), with its frequency equal to the raw record count.
+The unique missing image therefore replays every record while each listed
+short ordinary literal remains unobserved and physical-unestablished.
+
+The exhaustive numeric failure mapping is prospectively replaced by:
+
+The three rows below are evaluated in displayed precedence and are mutually
+exclusive at serialization: conflict first, then unsupported only when no
+conflict predicate holds, then incomplete only when neither earlier class
+holds. Multiple predicates inside one class do not create a fourth status;
+predicates spanning classes take the earliest class. Exactly one failure
+status is emitted.
+
+| Failure predicate | Exact row status and consequence |
+|---|---|
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; on either the pre-profile or final post-promotion collision pass, a duplicate registered missing image, a registered missing-versus-ordinary-literal image collision, duplicate registered ordinary literal images with unequal source values or meanings, or any retained duplicate-entry/semantic-overlap violation; multiple passing token forms after a positive nonmissing count; a complete positive-nonmissing census whose remaining nonliteral tokens each belong to at least one candidate language but for which no single token form covers the census; unequal independent range partitions; missing, duplicate, overlapping, or reordered range or arm-disposition members; an observed token resolving only to an arm-ambiguous member; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `unsupported_source_declaration`; any observed nonmissing/nonliteral token rejected by every closed candidate token language, including every malformed sign/space/point/digit/precision, grouping, exponent, zoned, overpunched, or non-ASCII form enumerated in §20.3.3; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm; or any literal left without an authoritative image after the applicable post-selection transition and without the exact finite unequal-arm or zero-count physical-unestablished candidate-only disposition | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| missing required numeric selector on a numeric-required branch after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; token-form evaluation that cannot be completed because required authenticated evidence is unavailable or unevaluable; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
+
+Accordingly, a positive-nonmissing complete candidate evaluation has no
+incomplete zero-pass outcome. If at least one observed nonmissing/nonliteral
+token lies outside the union of the closed candidate languages, the exact
+status is unsupported. If every such token is individually lawful but their
+forms cannot cohere to one field language, the exact status is conflict. Only
+a missing or unauthenticated prerequisite that prevents candidate evaluation
+altogether is incomplete. A derivation status, row ID, full-row hash, or
+consumer digest that serializes another classification is unequal.
+
+No conflict predicate is satisfied merely because one ordinary nonmissing
+literal image is also an accepted DFA image. Only the missing/literal,
+unequal-meaning duplicate, or independently retained duplicate-entry cases
+above conflict; the ordinary overlap is resolved literal-first.
+
+An explicit underdetermined-padding token is not incomplete. Conversely,
+`closed uncertainty`, an era convention, another field's space result, or a
+candidate-authored disposition cannot turn an empirical two-pass field into
+the structural no-arm branch. A null selector on an all-`source_silence`
+`value_code_domain_no_numeric_grammar` or
+`value_code_range_physical_rendering_unestablished` row is likewise not
+incomplete; consumers must preserve its null profile and grammar rather than
+inventing a declaration.
+
+The numeric derivation row is exactly the 16 keys and its derivation ID is
+the SHA-256 of the 15 ordered positions in §20.3.1. The registered grammar
+remains ten keys with the same nine-position ID preimage, and
+`raw_token_grammar` remains 18 keys. Every §19 phrase `complete 15-key row`
+or `14-position preimage` describes only the displaced predecessor; every
+Amendment-6 consumer uses the successor count and shapes. The inherited
+`nine-position preimage` remains numerically true only for the registered
+grammar. Hash equality never replaces deep equality.
+
+For a consuming inventory row, the corresponding object in the parallel
+`typed_parse_specs` array retains its nine-key shape. Its `raw_width`,
+`decimal_places`, `signed`, scale, type, and unit must
+positionally deep-equal the complete successor profile/value derivation;
+`signed` is true only for a selected signed token form. The complete
+fixed-shape layout copies only its existing source/coordinate/entry members,
+the successor derivation ID and complete-row SHA-256 references, and its
+same-shaped `raw_token_grammar`; it gains no profile, arm/disposition,
+candidate-relation, partition, or direct DFA sibling key. Consumers resolve
+those two references and independently compare the complete 16-key derivation row,
+including its ten-key declaration projection, serialized nonmissing count,
+and every applicable nested physical member. The four-key padding rule,
+observed rows, unobserved rows, and grammar project only through the existing
+same-named raw-token members; a compiled DFA therefore remains nested inside
+the existing `raw_token_grammar.registered_numeric_grammar`, never beside it
+on the layout. The zero-count retained branch projects the explicit
+absence/null values, every registered literal image, and each still-deferred
+multiple-image zero-hit ordinary literal's normalized-entry null rendering
+and four-key unobserved abort row through those same fixed shapes. No
+structural relabeling or mixed §19/§20 object is lawful.
+
+#### 20.3.6 Mandatory actual-data regression-vector census
+
+The regression identity relation has exactly these nine keys in this order:
+`vector_id`, `interview_wave`, `raw_field_id`, `evidence_path`,
+`evidence_pointer`, `evidence_row_sha256`, `raw_source_sha256`,
+`observed_token_rows_sha256`, and `required_outcome`. Its complete eleven rows
+are:
+
+```json
+[
+  {"vector_id":"A6-R01","interview_wave":1968,"raw_field_id":"V93","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/92","evidence_row_sha256":"e26fe968c48a7e5c7fb397140a50c232cb8a3bc9d270798af0199e52a9f0b5eb","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"0d184b17049ff03bdffe4c462131f126e771108e5588436aa0551e02fd0c80c0","required_outcome":"diagnostic_space_padding_selected"},
+  {"vector_id":"A6-R02","interview_wave":1979,"raw_field_id":"V6302","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/1","evidence_row_sha256":"aa2281bb382c75dd99705cb3dcc46e9bc37536b65a851319274428ba7ee122d0","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"7bf8f994c2cbaa804238ecfd051afee9a801119574c73b6ce14abe7fe66006e0","required_outcome":"diagnostic_space_padding_selected"},
+  {"vector_id":"A6-R03","interview_wave":1988,"raw_field_id":"V15133","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/7853","evidence_row_sha256":"ed5ed97010cb2d76c226c95038b826e38694e8dd7021e9dda3727ffa8d9e31ab","raw_source_sha256":"e30bd0ead4bba2238108a51eb2e24eee935a4a38e0d4257efdd1cff1bd23389c","observed_token_rows_sha256":"c41db6073cbcbc51b73e5d035f611a4f13314b713017bf640685441bf5b03c49","required_outcome":"padding_arm_underdetermined_width_one_exact_replay"},
+  {"vector_id":"A6-R04","interview_wave":1968,"raw_field_id":"V210","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/213","evidence_row_sha256":"9764e1aad9af27bb3a98a13566d096548c244bb255efc629b420606cf201bea9","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4072529f3cab60900f04eb216e73f0ec6307aa8ed60c439dcfaf51b04018a448","required_outcome":"unsigned_literal_decimal_selected_padding_underdetermined_no_capacity"},
+  {"vector_id":"A6-R05","interview_wave":1968,"raw_field_id":"V76","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/75","evidence_row_sha256":"97ad420b1e7bc3fb8ce0f8ad9f07c94f4c54a1e323c7c01fc17bea6a80391b64","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4082fbc67ab457ddad4115b66ab785e816e20b393b195786fbd47ba384b7aa2d","required_outcome":"signed_integer_leading_minus_after_spaces_selected"},
+  {"vector_id":"A6-R06","interview_wave":1979,"raw_field_id":"V6363","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/62","evidence_row_sha256":"61c70014d4ec5b40676a980bf24c042f6cc530649794175a1d15777e379c65f3","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"a56fa8d49cc90e874cd900d689302fe91138dbaaa895db6731e61fbe152989bf","required_outcome":"tuple_equivalent_declaration_dispositions_and_unsigned_literal_decimal_space_padding_selected"},
+  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"exhaustive_partial_range_partition_and_observed_exact_replay"},
+  {"vector_id":"A6-R08","interview_wave":1968,"raw_field_id":"V97","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/96","evidence_row_sha256":"3086bf6ef0f0c4a478c031417d3f29df752c00e93745807e7e1cb7b15ef77932","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"7728fee41416e99342a836afc5ce9710f91599c333c8f533620cf2f53009b2e9","required_outcome":"complete_domain_no_padding_capacity_exact_replay_without_arm_selection"},
+  {"vector_id":"A6-R09","interview_wave":1985,"raw_field_id":"V11811","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/4658","evidence_row_sha256":"193b78d98b414f3123890dfc128cd3436fa49a93af304a148b557e5a524dd468","raw_source_sha256":"db0daa1860e69fce5c66567a5d64b0bd07be3d31e0c70046bc7e474d22119f51","observed_token_rows_sha256":"e7c597b7362015d7443a5eb921efce6ea041df1f795bd4e2cbb4e75a1106445e","required_outcome":"all_missing_range_physical_rendering_unestablished_without_form_or_arm"},
+  {"vector_id":"A6-R10","interview_wave":1968,"raw_field_id":"V117","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/116","evidence_row_sha256":"7661bac2f2fc1d22f085ed4031695092539776a9e9b5e3e9e8f7a7b3233be2f3","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"09422b1415d0c4b7d281ab156451fb733dc204827fa98dbe93a0e53f94065998","required_outcome":"finite_domain_arm_invariant_ambiguous_partition_exact_replay_without_arm_selection"},
+  {"vector_id":"A6-R11","interview_wave":1985,"raw_field_id":"V11812","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/4659","evidence_row_sha256":"189d3a92404b5479035d5a0e054affd5a906fbd770badb0ce508aeeabb4d6244","raw_source_sha256":"db0daa1860e69fce5c66567a5d64b0bd07be3d31e0c70046bc7e474d22119f51","observed_token_rows_sha256":"294a0d815f3fa92ddcf3bd79e2578e57acf6b0926143116f4f8f7459a80e29ce","required_outcome":"all_missing_short_ordinary_literal_physical_rendering_unestablished_without_form_or_arm"}
+]
+```
+
+Every displayed row SHA-256 hashes the complete historical field-evidence
+array row under §10.1 with one terminal LF; every observed-token digest
+hashes the complete unsigned-byte-ordered array of exact two-key
+`raw_token_hex`/`frequency` objects with one terminal LF. The vector count is
+exactly 11. The ordered vector-ID keyset SHA-256 is
+`7842a1b13306a4672ae8b21033273e745468c8ba09fa5d511e8daf3a3ba193ee`,
+and the complete nine-key row-domain SHA-256 is
+`a9e457cb781cf05ffdd24d5a80ff71a8ac0923e1b2d56a7e19fa69095d0a25c5`.
+Both are over standalone §10.1 terminal-LF canonical JSON arrays. A vector
+may exercise more than one arm, but none may be omitted.
+
+The byte-exact regression facts are:
+
+- **A6-R01, V93/1968.** Reproduce §19's complete 4,802-record, width-771,
+  terminal-CRLF source and slice `[244,246)`. Its 41 token rows sum to
+  4,802: 1,069 one-digit tokens have one leading `0x20`, zero have a
+  leading zero, and 3,733 are full-width. Token `2031` occurs 38 times.
+  The space arm passes, the zero arm rejects all 1,069 diagnostics, the
+  complete source domain has 100 renderings, and literal-first subtraction
+  removes the two registered missing images—selected-space `0` as `2030`
+  and exact-width `99` as `3939`. The exact-token DFA therefore has 98
+  images, and every value re-renders byte-for-byte.
+- **A6-R02, V6302/1979.** Reproduce 6,373 width-1,062 terminal-CRLF records
+  and slice one-based coordinates 2–5. Tokens are each integer 1 through
+  6,373 exactly once; record one is `20202031`. Space rendering replays it,
+  while zero candidate `30303031` is rejected. This is the later-lane
+  diagnostic default without a declaration conflict.
+- **A6-R03, V15133/1988.** Reproduce 7,114 width-2,730 terminal-CRLF
+  records and slice one-based coordinate 797. The ten rows `30` through
+  `39` have frequencies 3,742, 1,301, 1,244, 581, 184, 46, 10, 2, 3, and
+  1. The source domain is literal `0` plus numeric range `1 - 9`, with no
+  missing entry. Both hypothetical arms have the same one-byte language and
+  zero padding diagnostics. The row must serialize
+  `padding_arm_underdetermined_width_one_exact_replay_v1`, accept exact
+  range bytes `31` through `39` through the DFA, and re-render each exact
+  byte; literal `30` classifies and replays before the DFA. Serializing
+  either padding arm fails the vector.
+- **A6-R04, V210/1968.** Slice one-based 400–403 has 138 distinct rows; all
+  4,802 contain literal `0x2e` and exactly two fractional digits. Token
+  `302e3030` occurs 4,157 times and is the source-declared missing literal,
+  so it classifies and replays before numeric parsing. Nonmissing token
+  `322e3630` (`2.60`) occurs three times. `NUM(4.2)` and `F4.2` normalize to
+  `(4,2)` through their source-ordered dispositions; the implied candidates
+  fail, the unsigned literal form passes, width four has no padding capacity
+  for its source-valid unsigned domain, and
+  `2.60 -> 13/5 -> 2.60` is byte-exact.
+- **A6-R05, V76/1968.** Slice one-based 193–197 has 1,816 token rows. The
+  sole signed token is record 3,638 bytes `202d323432`; it parses as -242
+  and re-renders exactly. The unsigned form rejects it, the signed form's
+  minus diagnostic selects the one evidenced placement, and `+242`,
+  `242-`, `2-42`, `-0242`, and every other equal-scalar spelling reject; if
+  observed in a source census, each makes the derivation exactly
+  `unsupported_source_numeric_format` absent an earlier conflict predicate.
+- **A6-R06, V6363/1979.** Slice one-based 139–144 has 450 token rows over
+  6,373 records; record one is `2032362e3430`. In source order the first
+  nonnull numeric assertion selects tuple `(6,2)` and the byte-unequal
+  `F6.2`/`NUM(6.2)` peer receives
+  `corroborating_tuple_equivalent_numeric_declaration`; both original byte
+  strings remain in the projection. The literal-decimal and space arms
+  parse 26.40 and replay the same six bytes. Reversing source order,
+  dropping either assertion, or changing either tuple aborts. Every
+  disposition compares directly with the first reconstruction-agreed
+  supported selector; under
+  hostile order `F6.2`, `NUM(6.2)`, `NUM(6.2)`, both later rows are tuple-
+  equivalent to the selector rather than the third borrowing the second as a
+  byte-equal anchor. That triple is a declaration-law adversarial constructor,
+  not V6363's authenticated source sequence; A6-R06's normative JSON row,
+  required outcome, and the eleven-vector identities remain unchanged.
+- **A6-R07, V945/1969.** Reproduce 4,460 width-1,079 terminal-CRLF records
+  and slice one-based 912–918. Of 668 token rows, 4,301 observations use two
+  fractional digits and 159 use one; 770 are negative. Token `-1040.0`
+  (`2d313034302e30`) occurs 14 times. For width seven, sign length one,
+  four integral digits, and maximum `d=2`, the exact formula gives `f=1`;
+  the observed constructor parses -1040 and uniquely re-renders `-1040.0`.
+  Exhaustively enumerate the complete cent-step ranges `-3927.00` through
+  `-0.01` and `0.01` through `3000.00`, retaining all 692,700 members. The
+  negative range partitions into 129,270 renderable and 263,430
+  unrenderable members; the positive range partitions into 300,000 and
+  zero, for complete totals 429,270 and 263,430. In particular,
+  `-1040.00` has unique image `-1040.0`, while `-1040.01` has null physical
+  image and reason `no_exact_width_selected_form_image`. Every one of the
+  4,460 observations belongs to a renderable image or the retained literal
+  branch and replays byte-for-byte. The row must pass as
+  `compiled_source_numeric_grammar_partial_range_exact_replay`.
+  The physical DFA language has exactly the 429,270 range images plus the
+  ordinary literal-first image `202020302e3030`, hence 429,271 images and no
+  missing-image exclusion. Requiring
+  two observed digits, accepting fewer than the greatest fitting precision,
+  rounding or omitting a range member, or promoting only the observed subset
+  fails the vector.
+- **A6-R08, V97/1968.** Authenticate evidence pointer
+  `/field_evidence/96` and reproduce 4,802 width-771 terminal-CRLF records,
+  slice one-based 250–258, and all 283 token rows. `NUM(9.0)` governs the
+  complete finite range `100000001` through `100000880`; registered missing
+  literal source lexeme `999,999,999` completes the 881-member semantic
+  domain but has zero observations. Pre-profile candidate-scalar construction
+  removes the grouping commas without rewriting that lexeme; every lawful
+  form/arm produces the singleton nine-byte image `393939393939393939`, so
+  the zero-hit literal registers under the singleton producer transition.
+  Every numeric member occupies all nine bytes under both
+  candidate constructors, yields the same nine append-digit actions and no
+  failure, and the literal takes the same missing-first bypass. Thus both
+  complete-domain result arrays have 881 rows—880 exact numeric images and
+  one registered-literal bypass—and deep-equal after the candidate label is
+  removed. All 4,802 observed values belong to the range and replay exactly.
+  The row must serialize
+  `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`, select
+  neither padding arm, and retain exact source-domain membership. Inferring
+  an era arm, omitting the unobserved missing member, using only the 283
+  observed tokens, or authorizing uncoded `100000881` fails the vector.
+- **A6-R09, V11811/1985.** Authenticate evidence pointer
+  `/field_evidence/4658`, slice one-based 1359–1363, and all 7,032
+  observations. The complete observed-token relation is the single row
+  `{"raw_token_hex":"20302e3030","frequency":7032}`. The token is the
+  uniquely registered missing literal ` 0.00`; therefore its missing-first
+  replay succeeds 7,032 times and `nonmissing_observation_count` is exactly
+  zero. The source declarations `NUM(5.2)` and `F5.2` establish one tuple and
+  the applicable normalized value-code domain contains a numeric range, but
+  no observation authenticates its physical rendering. The row must retain
+  `value_code_range_physical_rendering_unestablished`, null profile and
+  grammar, the exact `none` padding object, and neither a token form nor a
+  padding arm. Treating the all-missing records as evidence for two passing
+  forms, selecting either form or arm, constructing a DFA, or using a
+  zero-record census to authenticate any of them fails the vector.
+
+- **A6-R10, V117/1968.** Authenticate evidence pointer
+  `/field_evidence/116`, reproduce 4,802 width-771 terminal-CRLF records,
+  slice one-based 283–284, and all 76 token rows. The source domain is range
+  `1` through `96`, ordinary literal `97`, and missing literals `98` and
+  `99`; 4,799 observations are range values, `98` occurs once, `99` occurs
+  twice, and every observed token is a full-width value from `17` through
+  `99`. Both complete 99-row padding candidate relations replay every
+  observation, but their images agree for exactly 90 semantic members:
+  range members `10` through `96` and literals `97`, `98`, and `99`. Range
+  members `1` through `9` are the exact nine arm-ambiguous members. The
+  range partition therefore contains 87 renderable and nine
+  arm-ambiguous members. After missing images `98` and `99` are excluded,
+  the physical DFA language has exactly 88 images: a numeric portion of 87
+  invariant range images plus ordinary literal `97`, which terminates
+  literal-first. The row must serialize
+  `padding_arm_underdetermined_finite_domain_arm_ambiguous_exact_replay_v1`
+  and `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
+  select neither arm, and give each value `1` through `9` a null
+  authoritative image and
+  `abort_before_classification_arm_ambiguous_source_member`. Selecting an
+  arm, authorizing either short image, or narrowing to the observed subset
+  fails the vector.
+- **A6-R11, V11812/1985.** Authenticate evidence pointer
+  `/field_evidence/4659`, reproduce 7,032 width-2,472 terminal-CRLF records,
+  slice one-based 1364–1365, and the sole token row
+  `{"raw_token_hex":"2030","frequency":7032}`. The source domain contains
+  missing `0`, short ordinary literal `1`, range `2` through `52`, and
+  missing `99`. Observation uniquely registers missing `0` as `2030`, so
+  all observations replay missing-first and `nonmissing_observation_count`
+  is zero. Exact-width missing `99` retains its source bytes; short ordinary
+  literal `1` retains its source semantics and complete normalized row with
+  null `raw_token_hex` and its singleton four-key physical-unestablished
+  unobserved abort row. The one range entry covering members `2` through
+  `52` retains its own four-key physical-unestablished unobserved abort row.
+  The result must remain
+  `value_code_range_physical_rendering_unestablished` with null profile and
+  grammar, the exact `none` padding object, and no token-form, arm, range
+  partition, DFA, executable literal entry, or missing-token entry for
+  literal `1`. Dropping the literal, treating it as missing, supplying it a
+  candidate image, or selecting a form or arm fails the vector.
+
+The implementation must deep-equal each full census and constructor result,
+not only the displayed exemplar token or digest. The preexisting synthetic
+zero-arm vectors remain useful only as mandatory rejection constructors:
+an implementation that emits a passing Amendment-6 zero-selected row fails
+its identity.
+
+##### 20.3.6.1 Exhaustive deferred-literal regression projections
+
+The following five projections exact-cover the five passing/control domains
+enumerated by the round-three rewrite. The complete failure-reason artifact
+in §20.3.7 separately exact-covers every selected-space
+literal-unrenderable failure field exposed by finalization. A member row has
+exactly
+`[interview_wave,raw_field_id,source_value_lexeme]`; its field projection
+has exactly `[interview_wave,raw_field_id]` and keeps the first member
+occurrence. Order is the six-artifact denominator order, then artifact wave,
+field-evidence row, and source-entry order. Each displayed indented array
+removes its four Markdown indentation bytes before §10.1 canonicalization;
+the closing bracket is followed by exactly one LF. These relations are
+exhaustive regression evidence, not field-key exceptions or additional
+runtime authority.
+
+1. **Diagnostic selected-space promotion.** All 23 members are missing
+   literals with multiple lawful zero/space images and zero candidate
+   observations. The 23-member array is 544 bytes with SHA-256
+   `fbcf26a63a2f00d2c00c5e8a9fbf9f9570466414d6954df7490514ae9e7d0bbc`;
+   its 16-field projection is 259 bytes with SHA-256
+   `13b7d76b1023000e037788244b6ff5f337a47e86c1f0778220c97238620605ae`.
+   Every field selects diagnostic space, promotes the selected-space image,
+   reruns the final collisions and missing classification, and retains the
+   canonical empty arm-ambiguity object.
+
+    [[1968,"V93","0"],[1968,"V357","98"],[1969,"V537","0"],[1969,"V962","9.99"],[1970,"V1128","0"],[2001,"ER19031","99,999"],[2003,"ER22886","50"],[2003,"ER23132","0"],[2003,"ER23559","6,250"],[2003,"ER23559","7,300"],[2003,"ER23559","8,112"],[2003,"ER23559","9,271"],[2003,"ER23559","9,360"],[2003,"ER23578","6,500"],[2003,"ER23578","8,760"],[2003,"ER23578","8,906"],[2013,"ER54804","9,999,998"],[2013,"ER54809","9,999,998"],[2013,"ER54809","9,999,999"],[2017,"ER71491",".00"],[2019,"ER77520",".00"],[2021,"ER81847",".00"],[2023,"ER85701",".00"]]
+
+    [[1968,"V93"],[1968,"V357"],[1969,"V537"],[1969,"V962"],[1970,"V1128"],[2001,"ER19031"],[2003,"ER22886"],[2003,"ER23132"],[2003,"ER23559"],[2003,"ER23578"],[2013,"ER54804"],[2013,"ER54809"],[2017,"ER71491"],[2019,"ER77520"],[2021,"ER81847"],[2023,"ER85701"]]
+
+2. **Complete-equality promotion.** Exactly 978 zero-hit singleton candidates
+   across 521 fields register pre-profile under the all-lawful-forms/arms
+   byte-deduplicated singleton producer: 955 are missing and 23 are ordinary.
+   The member array is 24,319 bytes with SHA-256
+   `6cf73e0393003bb84133cc4d68da60728964674b97c3627398f75afe3602cc8d`;
+   the field array is 8,778 bytes with SHA-256
+   `f1d29a4c9773ee842f564187dfbfee0b5deee578f6d516fdfe9c6cc126f9ac71`.
+   A6-R08/V97 and its source lexeme `999,999,999` are included and therefore
+   cannot pass by an unproduced registered bypass.
+
+    [[1968,"V97","999,999,999"],[1973,"V3090","999,999,999"],[1974,"V3503","999,999,999"],[1976,"V4431","999,999,999"],[1993,"V22494","9,998"],[1993,"V22494","9,999"],[1993,"V22618","9,997"],[1993,"V22657","9,996"],[1993,"V22660","9,998"],[1993,"V22660","9,999"],[1993,"V22709","9,998"],[1993,"V22758","9,998"],[1993,"V22784","9,997"],[1993,"V22784","9,998"],[1993,"V22784","9,999"],[1993,"V22844","9,996"],[1993,"V22847","9,998"],[1993,"V22847","9,999"],[1993,"V22854","9,996"],[1993,"V22971","9,997"],[1993,"V22971","9,998"],[1993,"V22999","9,998"],[1993,"V23010","9,996"],[1993,"V23013","9,998"],[1993,"V23013","9,999"],[1993,"V23020","9,996"],[1993,"V23062","9,997"],[1993,"V23111","9,998"],[1993,"V23111","9,999"],[1994,"ER3842","9,997"],[1994,"ER3842","9,999"],[1994,"ER3847","9,997"],[1994,"ER3847","9,998"],[1994,"ER3847","9,999"],[1995,"ER5104","9,996"],[1995,"ER5104","9,997"],[1995,"ER5104","9,998"],[1995,"ER5104","9,999"],[1995,"ER5109","9,999"],[1995,"ER5256","9,997"],[1995,"ER5256","9,999"],[1995,"ER5278","9,997"],[1995,"ER5278","9,998"],[1995,"ER5278","9,999"],[1995,"ER5300","9,997"],[1995,"ER5300","9,998"],[1995,"ER5300","9,999"],[1995,"ER5346","9,996"],[1995,"ER5349","9,996"],[1995,"ER5349","9,997"],[1995,"ER5349","9,998"],[1995,"ER5349","9,999"],[1995,"ER5354","9,996"],[1995,"ER5354","9,997"],[1995,"ER5354","9,999"],[1995,"ER5399","9,999"],[1995,"ER5479","9,998"],[1995,"ER5479","9,999"],[1995,"ER5501","9,997"],[1995,"ER5501","9,998"],[1995,"ER5501","9,999"],[1995,"ER5523","9,997"],[1995,"ER5523","9,998"],[1995,"ER5523","9,999"],[1995,"ER5595","9,996"],[1995,"ER5598","9,996"],[1995,"ER5598","9,997"],[1995,"ER5598","9,999"],[1995,"ER5603","9,996"],[1995,"ER5603","9,998"],[1995,"ER5603","9,999"],[1995,"ER5605","9,996"],[1995,"ER5648","9,999"],[1995,"ER5728","9,999"],[1995,"ER5750","9,997"],[1995,"ER5750","9,998"],[1995,"ER5750","9,999"],[1995,"ER5772","9,997"],[1995,"ER5772","9,998"],[1995,"ER5772","9,999"],[1995,"ER5819","9,996"],[1995,"ER5840","9,996"],[1995,"ER5840","9,999"],[1995,"ER5843","9,996"],[1995,"ER5843","9,997"],[1995,"ER5843","9,998"],[1995,"ER5843","9,999"],[1995,"ER5848","9,996"],[1995,"ER5848","9,997"],[1995,"ER5848","9,998"],[1995,"ER5848","9,999"],[1995,"ER5850","9,996"],[1995,"ER5850","9,999"],[1995,"ER5893","9,997"],[1995,"ER5893","9,998"],[1995,"ER5893","9,999"],[1995,"ER5972","9,998"],[1995,"ER5972","9,999"],[1995,"ER5994","9,997"],[1995,"ER5994","9,998"],[1995,"ER5994","9,999"],[1995,"ER6016","9,997"],[1995,"ER6016","9,998"],[1995,"ER6016","9,999"],[1995,"ER6038","9,997"],[1995,"ER6038","9,998"],[1995,"ER6038","9,999"],[1995,"ER6847","9,997"],[1996,"ER7052","9,999"],[1996,"ER7167","9,999"],[1996,"ER7200","9,996"],[1996,"ER7200","9,997"],[1996,"ER7200","9,998"],[1996,"ER7200","9,999"],[1996,"ER7205","9,998"],[1996,"ER7205","9,999"],[1996,"ER7250","9,999"],[1996,"ER7442","9,996"],[1996,"ER7445","9,996"],[1996,"ER7445","9,997"],[1996,"ER7445","9,998"],[1996,"ER7445","9,999"],[1996,"ER7450","9,996"],[1996,"ER7450","9,997"],[1996,"ER7450","9,998"],[1996,"ER7450","9,999"],[1996,"ER7452","9,996"],[1996,"ER7495","9,997"],[1996,"ER7495","9,999"],[1996,"ER7694","9,996"],[1996,"ER7694","9,997"],[1996,"ER7694","9,998"],[1996,"ER7694","9,999"],[1996,"ER7699","9,999"],[1996,"ER7701","9,996"],[1996,"ER7744","9,999"],[1996,"ER7915","9,996"],[1996,"ER7915","9,999"],[1996,"ER7939","9,996"],[1996,"ER7939","9,997"],[1996,"ER7939","9,998"],[1996,"ER7939","9,999"],[1996,"ER7944","9,997"],[1996,"ER7944","9,998"],[1996,"ER7944","9,999"],[1996,"ER7946","9,996"],[1996,"ER7989","9,997"],[1996,"ER7989","9,998"],[1996,"ER7989","9,999"],[1996,"ER8917","9,999"],[1996,"ER9009","9,999"],[1997,"ER10053","9,999"],[1997,"ER10084","9,998"],[1997,"ER10124","9,996"],[1997,"ER10124","9,997"],[1997,"ER10129","9,998"],[1997,"ER10129","9,999"],[1997,"ER10265","9,998"],[1997,"ER10265","9,999"],[1997,"ER10287","9,997"],[1997,"ER10287","9,998"],[1997,"ER10287","9,999"],[1997,"ER10309","9,997"],[1997,"ER10309","9,998"],[1997,"ER10309","9,999"],[1997,"ER10358","9,996"],[1997,"ER10358","9,999"],[1997,"ER10361","9,996"],[1997,"ER10361","9,997"],[1997,"ER10361","9,998"],[1997,"ER10361","9,999"],[1997,"ER10366","9,996"],[1997,"ER10366","9,997"],[1997,"ER10366","9,998"],[1997,"ER10366","9,999"],[1997,"ER10368","9,996"],[1997,"ER10368","9,999"],[1997,"ER10410","9,997"],[1997,"ER10410","9,998"],[1997,"ER10410","9,999"],[1997,"ER10481","9,999"],[1997,"ER10503","9,997"],[1997,"ER10503","9,998"],[1997,"ER10503","9,999"],[1997,"ER10606","9,996"],[1997,"ER10606","9,997"],[1997,"ER10606","9,998"],[1997,"ER10606","9,999"],[1997,"ER10611","9,998"],[1997,"ER10611","9,999"],[1997,"ER10613","9,996"],[1997,"ER10747","9,998"],[1997,"ER10747","9,999"],[1997,"ER10769","9,997"],[1997,"ER10769","9,998"],[1997,"ER10769","9,999"],[1997,"ER10840","9,996"],[1997,"ER10840","9,999"],[1997,"ER10843","9,996"],[1997,"ER10843","9,997"],[1997,"ER10843","9,998"],[1997,"ER10843","9,999"],[1997,"ER10848","9,996"],[1997,"ER10848","9,997"],[1997,"ER10848","9,998"],[1997,"ER10848","9,999"],[1997,"ER10850","9,996"],[1997,"ER10850","9,999"],[1997,"ER10892","9,997"],[1997,"ER10892","9,998"],[1997,"ER10892","9,999"],[1997,"ER10963","9,997"],[1997,"ER10963","9,998"],[1997,"ER10963","9,999"],[1997,"ER11773","9,999"],[1997,"ER11955","9,999"],[1997,"ER11973","9,999"],[1997,"ER11986","9,999"],[1997,"ER11988","9,999"],[1997,"ER12037","9,998"],[1997,"ER12037","9,999"],[1997,"ER12055","9,999"],[1999,"ER13250","9,996"],[1999,"ER13250","9,997"],[1999,"ER13250","9,998"],[1999,"ER13250","9,999"],[1999,"ER13255","9,998"],[1999,"ER13257","9,996"],[1999,"ER13400","9,997"],[1999,"ER13424","9,997"],[1999,"ER13424","9,998"],[1999,"ER13424","9,999"],[1999,"ER13448","9,997"],[1999,"ER13448","9,998"],[1999,"ER13448","9,999"],[1999,"ER13500","9,999"],[1999,"ER13503","9,996"],[1999,"ER13503","9,997"],[1999,"ER13503","9,998"],[1999,"ER13503","9,999"],[1999,"ER13508","9,997"],[1999,"ER13508","9,998"],[1999,"ER13508","9,999"],[1999,"ER13510","9,996"],[1999,"ER13555","9,998"],[1999,"ER13555","9,999"],[1999,"ER13628","9,998"],[1999,"ER13628","9,999"],[1999,"ER13652","9,997"],[1999,"ER13652","9,998"],[1999,"ER13652","9,999"],[1999,"ER13676","9,997"],[1999,"ER13676","9,998"],[1999,"ER13676","9,999"],[1999,"ER13700","9,997"],[1999,"ER13700","9,998"],[1999,"ER13700","9,999"],[1999,"ER13762","9,996"],[1999,"ER13762","9,997"],[1999,"ER13762","9,998"],[1999,"ER13762","9,999"],[1999,"ER13767","9,996"],[1999,"ER13767","9,999"],[1999,"ER13814","9,999"],[1999,"ER13912","9,997"],[1999,"ER13912","9,998"],[1999,"ER13912","9,999"],[1999,"ER13990","9,996"],[1999,"ER14012","9,996"],[1999,"ER14015","9,996"],[1999,"ER14015","9,997"],[1999,"ER14015","9,998"],[1999,"ER14015","9,999"],[1999,"ER14020","9,996"],[1999,"ER14020","9,997"],[1999,"ER14020","9,998"],[1999,"ER14020","9,999"],[1999,"ER14022","9,996"],[1999,"ER14067","9,998"],[1999,"ER14067","9,999"],[1999,"ER14140","9,997"],[1999,"ER14140","9,998"],[1999,"ER15116","9,997"],[1999,"ER15121","9,997"],[1999,"ER15121","9,998"],[1999,"ER15121","9,999"],[1999,"ER15126","9,997"],[1999,"ER15126","9,998"],[1999,"ER15126","9,999"],[1999,"ER15234","9,999"],[1999,"ER15275","9,999"],[1999,"ER15307","9,999"],[1999,"ER15357","9,999"],[1999,"ER15380","9,999"],[1999,"ER15852","9,999"],[1999,"ER15989","9,999"],[1999,"ER16041","9,998"],[1999,"ER16041","9,999"],[1999,"ER16061","9,998"],[1999,"ER16061","9,999"],[1999,"ER16069","9,999"],[1999,"ER16093","9,999"],[1999,"ER16095","9,999"],[1999,"ER16128","9,998"],[1999,"ER16128","9,999"],[1999,"ER16134","9,998"],[1999,"ER16134","9,999"],[1999,"ER16148","9,998"],[1999,"ER16148","9,999"],[1999,"ER16156","9,998"],[1999,"ER16156","9,999"],[2001,"ER17258","9,996"],[2001,"ER17261","9,996"],[2001,"ER17261","9,997"],[2001,"ER17261","9,998"],[2001,"ER17261","9,999"],[2001,"ER17266","9,998"],[2001,"ER17268","9,996"],[2001,"ER17436","9,997"],[2001,"ER17461","9,997"],[2001,"ER17461","9,998"],[2001,"ER17461","9,999"],[2001,"ER17517","9,996"],[2001,"ER17540","9,996"],[2001,"ER17543","9,996"],[2001,"ER17543","9,997"],[2001,"ER17543","9,998"],[2001,"ER17543","9,999"],[2001,"ER17548","9,996"],[2001,"ER17548","9,997"],[2001,"ER17548","9,998"],[2001,"ER17548","9,999"],[2001,"ER17550","9,996"],[2001,"ER17595","9,997"],[2001,"ER17595","9,998"],[2001,"ER17691","9,998"],[2001,"ER17717","9,997"],[2001,"ER17717","9,998"],[2001,"ER17717","9,999"],[2001,"ER17828","9,996"],[2001,"ER17831","9,996"],[2001,"ER17831","9,997"],[2001,"ER17831","9,998"],[2001,"ER17831","9,999"],[2001,"ER17836","9,996"],[2001,"ER17836","9,998"],[2001,"ER17836","9,999"],[2001,"ER17838","9,996"],[2001,"ER18006","9,997"],[2001,"ER18032","9,997"],[2001,"ER18032","9,998"],[2001,"ER18032","9,999"],[2001,"ER18114","9,996"],[2001,"ER18114","9,997"],[2001,"ER18114","9,998"],[2001,"ER18114","9,999"],[2001,"ER18119","9,997"],[2001,"ER18119","9,998"],[2001,"ER18119","9,999"],[2001,"ER18121","9,996"],[2001,"ER18121","9,999"],[2001,"ER18166","9,998"],[2001,"ER18262","9,997"],[2001,"ER18262","9,998"],[2001,"ER18262","9,999"],[2001,"ER19317","9,997"],[2001,"ER19317","9,998"],[2001,"ER19322","9,997"],[2001,"ER19322","9,998"],[2001,"ER19322","9,999"],[2001,"ER19329","9,999"],[2001,"ER19381","9,999"],[2001,"ER19402","9,999"],[2001,"ER19443","9,998"],[2001,"ER19443","9,999"],[2001,"ER19472","9,999"],[2001,"ER19586","9,998"],[2001,"ER19586","9,999"],[2003,"ER21132","9,998"],[2003,"ER21218","9,998"],[2003,"ER21250","9,998"],[2003,"ER21359","9,998"],[2003,"ER21382","9,998"],[2003,"ER21436","9,998"],[2003,"ER21468","9,998"],[2003,"ER21500","9,997"],[2003,"ER21500","9,998"],[2003,"ER21500","9,999"],[2003,"ER21609","9,998"],[2003,"ER21817","9,999"],[2003,"ER22707","2,000"],[2003,"ER22712","9,997"],[2003,"ER22712","9,998"],[2003,"ER22712","9,999"],[2003,"ER22717","9,997"],[2003,"ER22717","9,998"],[2003,"ER22717","9,999"],[2003,"ER22797","9,999"],[2003,"ER22838","9,998"],[2003,"ER22838","9,999"],[2003,"ER22868","9,998"],[2003,"ER22918","9,999"],[2003,"ER22941","9,998"],[2003,"ER22941","9,999"],[2005,"ER25112","9,996"],[2005,"ER25112","9,998"],[2005,"ER25112","9,999"],[2005,"ER25114","9,998"],[2005,"ER25207","9,998"],[2005,"ER25239","9,998"],[2005,"ER25239","9,999"],[2005,"ER25348","9,998"],[2005,"ER25370","9,998"],[2005,"ER25370","9,999"],[2005,"ER25372","9,998"],[2005,"ER25433","9,998"],[2005,"ER25465","9,998"],[2005,"ER25465","9,999"],[2005,"ER25497","9,998"],[2005,"ER25497","9,999"],[2005,"ER25606","9,998"],[2005,"ER26688","9,997"],[2005,"ER26688","9,999"],[2005,"ER26693","9,997"],[2005,"ER26693","9,998"],[2005,"ER26693","9,999"],[2005,"ER26698","9,997"],[2005,"ER26698","9,998"],[2005,"ER26698","9,999"],[2005,"ER26778","9,999"],[2005,"ER26819","9,999"],[2005,"ER26849","9,999"],[2005,"ER26901","9,999"],[2005,"ER26922","9,999"],[2005,"ER26963","9,998"],[2005,"ER26963","9,999"],[2007,"ER36112","2,200"],[2007,"ER36117","9,998"],[2007,"ER36117","9,999"],[2007,"ER36119","9,998"],[2007,"ER36180","9,998"],[2007,"ER36212","9,998"],[2007,"ER36212","9,999"],[2007,"ER36244","9,998"],[2007,"ER36244","9,999"],[2007,"ER36353","2,007"],[2007,"ER36353","9,998"],[2007,"ER36375","9,998"],[2007,"ER36375","9,999"],[2007,"ER36377","9,998"],[2007,"ER36377","9,999"],[2007,"ER36438","9,998"],[2007,"ER36438","9,999"],[2007,"ER36470","9,998"],[2007,"ER36470","9,999"],[2007,"ER36502","9,997"],[2007,"ER36502","9,998"],[2007,"ER36502","9,999"],[2007,"ER36611","9,998"],[2007,"ER36611","9,999"],[2007,"ER37706","9,997"],[2007,"ER37706","9,999"],[2007,"ER37711","9,997"],[2007,"ER37711","9,998"],[2007,"ER37711","9,999"],[2007,"ER37716","9,997"],[2007,"ER37716","9,998"],[2007,"ER37716","9,999"],[2007,"ER37741","9,999"],[2007,"ER37799","9,999"],[2007,"ER37834","9,999"],[2007,"ER37915","9,999"],[2007,"ER37973","9,999"],[2007,"ER38031","9,999"],[2007,"ER38066","9,999"],[2007,"ER38147","9,999"],[2009,"ER42056","9,999"],[2009,"ER42075","9,998"],[2009,"ER42075","9,999"],[2009,"ER42101","9,998"],[2009,"ER42101","9,999"],[2009,"ER42152","9,998"],[2009,"ER42154","9,998"],[2009,"ER42213","9,998"],[2009,"ER42215","9,997"],[2009,"ER42215","9,998"],[2009,"ER42215","9,999"],[2009,"ER42243","9,998"],[2009,"ER42243","9,999"],[2009,"ER42245","9,996"],[2009,"ER42245","9,997"],[2009,"ER42245","9,998"],[2009,"ER42245","9,999"],[2009,"ER42273","9,996"],[2009,"ER42273","9,997"],[2009,"ER42273","9,998"],[2009,"ER42273","9,999"],[2009,"ER42275","9,996"],[2009,"ER42275","9,997"],[2009,"ER42275","9,998"],[2009,"ER42275","9,999"],[2009,"ER42378","9,998"],[2009,"ER42395","9,999"],[2009,"ER42404","9,998"],[2009,"ER42406","9,996"],[2009,"ER42406","9,998"],[2009,"ER42465","9,998"],[2009,"ER42467","9,996"],[2009,"ER42467","9,997"],[2009,"ER42467","9,998"],[2009,"ER42467","9,999"],[2009,"ER42495","9,998"],[2009,"ER42495","9,999"],[2009,"ER42497","9,996"],[2009,"ER42497","9,997"],[2009,"ER42497","9,998"],[2009,"ER42497","9,999"],[2009,"ER42525","9,996"],[2009,"ER42525","9,997"],[2009,"ER42525","9,998"],[2009,"ER42525","9,999"],[2009,"ER42527","9,996"],[2009,"ER42527","9,997"],[2009,"ER42527","9,998"],[2009,"ER42527","9,999"],[2009,"ER42630","9,998"],[2009,"ER43697","9,997"],[2009,"ER43697","9,999"],[2009,"ER43702","9,997"],[2009,"ER43702","9,998"],[2009,"ER43702","9,999"],[2009,"ER43707","9,997"],[2009,"ER43707","9,998"],[2009,"ER43707","9,999"],[2009,"ER43714","9,999"],[2009,"ER43772","9,999"],[2009,"ER43774","9,999"],[2009,"ER43807","9,999"],[2009,"ER43888","9,999"],[2009,"ER43946","9,999"],[2009,"ER44004","9,999"],[2009,"ER44039","9,999"],[2009,"ER44120","9,998"],[2009,"ER44120","9,999"],[2009,"ER46463","9,999"],[2009,"ER46465","9,999"],[2009,"ER46468","9,999"],[2009,"ER46484","9,999"],[2009,"ER46490","9,999"],[2009,"ER46496","9,999"],[2009,"ER46557","9,999"],[2009,"ER46559","9,999"],[2009,"ER46565","9,999"],[2009,"ER46584","9,999"],[2009,"ER46590","9,999"],[2011,"ER47363","9,999"],[2011,"ER47384","9,998"],[2011,"ER47384","9,999"],[2011,"ER47409","9,998"],[2011,"ER47409","9,999"],[2011,"ER47464","9,998"],[2011,"ER47466","9,996"],[2011,"ER47466","9,998"],[2011,"ER47526","9,998"],[2011,"ER47528","9,996"],[2011,"ER47528","9,997"],[2011,"ER47528","9,998"],[2011,"ER47528","9,999"],[2011,"ER47556","9,996"],[2011,"ER47556","9,998"],[2011,"ER47556","9,999"],[2011,"ER47558","9,996"],[2011,"ER47558","9,997"],[2011,"ER47558","9,998"],[2011,"ER47558","9,999"],[2011,"ER47586","9,996"],[2011,"ER47586","9,998"],[2011,"ER47588","9,996"],[2011,"ER47588","9,997"],[2011,"ER47588","9,998"],[2011,"ER47691","9,998"],[2011,"ER47721","9,998"],[2011,"ER47723","9,996"],[2011,"ER47723","9,998"],[2011,"ER47783","9,996"],[2011,"ER47783","9,998"],[2011,"ER47785","9,996"],[2011,"ER47785","9,997"],[2011,"ER47785","9,998"],[2011,"ER47785","9,999"],[2011,"ER47813","9,996"],[2011,"ER47813","9,998"],[2011,"ER47813","9,999"],[2011,"ER47815","9,996"],[2011,"ER47815","9,997"],[2011,"ER47815","9,998"],[2011,"ER47815","9,999"],[2011,"ER47843","9,996"],[2011,"ER47843","9,997"],[2011,"ER47843","9,998"],[2011,"ER47843","9,999"],[2011,"ER47845","9,996"],[2011,"ER47845","9,997"],[2011,"ER47845","9,998"],[2011,"ER47845","9,999"],[2011,"ER47948","9,998"],[2011,"ER49042","9,998"],[2011,"ER49047","9,997"],[2011,"ER49047","9,998"],[2011,"ER49052","9,997"],[2011,"ER49052","9,998"],[2011,"ER49052","9,999"],[2011,"ER49060","9,999"],[2011,"ER49141","9,999"],[2011,"ER49221","9,999"],[2011,"ER49279","9,998"],[2011,"ER49279","9,999"],[2011,"ER49360","9,999"],[2011,"ER49440","9,998"],[2011,"ER49440","9,999"],[2011,"ER51824","9,999"],[2011,"ER51826","9,999"],[2011,"ER51829","9,999"],[2011,"ER51845","9,999"],[2011,"ER51851","9,999"],[2011,"ER51857","9,999"],[2011,"ER51945","9,999"],[2011,"ER51951","9,999"],[2013,"ER53063","9,998"],[2013,"ER53084","9,998"],[2013,"ER53084","9,999"],[2013,"ER53109","9,998"],[2013,"ER53109","9,999"],[2013,"ER53164","9,998"],[2013,"ER53166","9,996"],[2013,"ER53166","9,998"],[2013,"ER53228","9,997"],[2013,"ER53228","9,998"],[2013,"ER53228","9,999"],[2013,"ER53256","9,996"],[2013,"ER53256","9,998"],[2013,"ER53256","9,999"],[2013,"ER53258","9,996"],[2013,"ER53258","9,997"],[2013,"ER53258","9,998"],[2013,"ER53258","9,999"],[2013,"ER53286","9,996"],[2013,"ER53286","9,998"],[2013,"ER53286","9,999"],[2013,"ER53288","9,996"],[2013,"ER53288","9,997"],[2013,"ER53288","9,998"],[2013,"ER53391","9,998"],[2013,"ER53414","9,999"],[2013,"ER53427","9,998"],[2013,"ER53427","9,999"],[2013,"ER53429","9,996"],[2013,"ER53429","9,998"],[2013,"ER53489","9,996"],[2013,"ER53489","9,998"],[2013,"ER53489","9,999"],[2013,"ER53491","9,997"],[2013,"ER53491","9,998"],[2013,"ER53491","9,999"],[2013,"ER53519","9,996"],[2013,"ER53519","9,998"],[2013,"ER53519","9,999"],[2013,"ER53521","9,996"],[2013,"ER53521","9,997"],[2013,"ER53521","9,998"],[2013,"ER53521","9,999"],[2013,"ER53549","9,996"],[2013,"ER53549","9,997"],[2013,"ER53549","9,998"],[2013,"ER53549","9,999"],[2013,"ER53551","9,996"],[2013,"ER53551","9,997"],[2013,"ER53551","9,998"],[2013,"ER53551","9,999"],[2013,"ER53654","9,998"],[2013,"ER54798","9,999"],[2013,"ER54803","9,997"],[2013,"ER54803","9,998"],[2013,"ER54803","9,999"],[2013,"ER54808","9,997"],[2013,"ER54808","9,998"],[2013,"ER54808","9,999"],[2013,"ER54816","9,999"],[2013,"ER54974","9,998"],[2013,"ER54974","9,999"],[2013,"ER55032","9,999"],[2013,"ER55110","9,999"],[2013,"ER55190","9,998"],[2013,"ER55190","9,999"],[2013,"ER57585","9,999"],[2013,"ER57591","9,999"],[2013,"ER57597","9,999"],[2013,"ER57707","9,999"],[2015,"ER60064","9,998"],[2015,"ER60064","9,999"],[2015,"ER60085","9,998"],[2015,"ER60085","9,999"],[2015,"ER60103","9,999"],[2015,"ER60179","9,998"],[2015,"ER60179","9,999"],[2015,"ER60181","9,998"],[2015,"ER60243","9,997"],[2015,"ER60243","9,998"],[2015,"ER60243","9,999"],[2015,"ER60271","9,996"],[2015,"ER60271","9,999"],[2015,"ER60273","9,997"],[2015,"ER60273","9,998"],[2015,"ER60273","9,999"],[2015,"ER60301","9,996"],[2015,"ER60301","9,998"],[2015,"ER60301","9,999"],[2015,"ER60303","9,996"],[2015,"ER60303","9,997"],[2015,"ER60303","9,998"],[2015,"ER60303","9,999"],[2015,"ER60406","9,998"],[2015,"ER60442","9,998"],[2015,"ER60444","9,996"],[2015,"ER60444","9,998"],[2015,"ER60504","9,998"],[2015,"ER60506","9,996"],[2015,"ER60506","9,997"],[2015,"ER60506","9,998"],[2015,"ER60534","9,996"],[2015,"ER60534","9,998"],[2015,"ER60534","9,999"],[2015,"ER60536","9,996"],[2015,"ER60536","9,997"],[2015,"ER60536","9,998"],[2015,"ER60536","9,999"],[2015,"ER60564","9,996"],[2015,"ER60564","9,997"],[2015,"ER60564","9,998"],[2015,"ER60564","9,999"],[2015,"ER60566","9,996"],[2015,"ER60566","9,997"],[2015,"ER60566","9,998"],[2015,"ER60566","9,999"],[2015,"ER60669","9,998"],[2015,"ER61936","9,999"],[2015,"ER62015","9,999"],[2015,"ER62095","9,998"],[2015,"ER62095","9,999"],[2015,"ER62153","9,998"],[2015,"ER62153","9,999"],[2015,"ER62232","9,998"],[2015,"ER62232","9,999"],[2015,"ER64746","9,999"],[2015,"ER64749","9,999"],[2015,"ER64752","9,999"],[2017,"ER66066","9,999"],[2017,"ER66087","9,998"],[2017,"ER66087","9,999"],[2017,"ER66105","9,999"],[2017,"ER66180","9,998"],[2017,"ER66182","9,996"],[2017,"ER66246","9,997"],[2017,"ER66246","9,998"],[2017,"ER66276","9,997"],[2017,"ER66276","9,998"],[2017,"ER66304","9,996"],[2017,"ER66304","9,997"],[2017,"ER66306","9,996"],[2017,"ER66306","9,997"],[2017,"ER66306","9,998"],[2017,"ER66306","9,999"],[2017,"ER66455","9,998"],[2017,"ER66457","9,996"],[2017,"ER66457","9,998"],[2017,"ER66519","9,998"],[2017,"ER66521","9,997"],[2017,"ER66521","9,998"],[2017,"ER66521","9,999"],[2017,"ER66549","9,998"],[2017,"ER66549","9,999"],[2017,"ER66551","9,996"],[2017,"ER66551","9,997"],[2017,"ER66551","9,998"],[2017,"ER66551","9,999"],[2017,"ER66579","9,996"],[2017,"ER66579","9,998"],[2017,"ER66579","9,999"],[2017,"ER66581","9,996"],[2017,"ER66581","9,997"],[2017,"ER66581","9,998"],[2017,"ER66581","9,999"],[2017,"ER66690","9,998"],[2017,"ER67990","9,998"],[2017,"ER67990","9,999"],[2017,"ER68069","9,998"],[2017,"ER68069","9,999"],[2017,"ER68149","9,998"],[2017,"ER68149","9,999"],[2017,"ER68207","9,998"],[2017,"ER68207","9,999"],[2017,"ER68286","9,998"],[2017,"ER68286","9,999"],[2017,"ER68366","9,998"],[2017,"ER68366","9,999"],[2017,"ER70814","9,999"],[2017,"ER70819","9,999"],[2017,"ER70825","9,999"],[2017,"ER70832","9,999"],[2017,"ER70836","9,999"],[2019,"ER72066","9,998"],[2019,"ER72066","9,999"],[2019,"ER72180","9,998"],[2019,"ER72182","9,998"],[2019,"ER72246","9,997"],[2019,"ER72246","9,998"],[2019,"ER72246","9,999"],[2019,"ER72274","9,998"],[2019,"ER72276","9,996"],[2019,"ER72276","9,997"],[2019,"ER72276","9,998"],[2019,"ER72304","9,996"],[2019,"ER72304","9,998"],[2019,"ER72304","9,999"],[2019,"ER72306","9,996"],[2019,"ER72306","9,997"],[2019,"ER72306","9,998"],[2019,"ER72306","9,999"],[2019,"ER72415","9,998"],[2019,"ER72457","9,998"],[2019,"ER72459","9,996"],[2019,"ER72459","9,998"],[2019,"ER72521","9,998"],[2019,"ER72523","9,997"],[2019,"ER72523","9,998"],[2019,"ER72523","9,999"],[2019,"ER72551","9,996"],[2019,"ER72551","9,998"],[2019,"ER72553","9,996"],[2019,"ER72553","9,997"],[2019,"ER72553","9,998"],[2019,"ER72553","9,999"],[2019,"ER72581","9,999"],[2019,"ER72583","9,997"],[2019,"ER72583","9,998"],[2019,"ER72583","9,999"],[2019,"ER72692","9,998"],[2019,"ER74018","9,999"],[2019,"ER74091","9,999"],[2019,"ER74225","9,998"],[2019,"ER74225","9,999"],[2019,"ER74298","9,998"],[2019,"ER74298","9,999"],[2019,"ER76828","9,999"],[2019,"ER76833","9,999"],[2019,"ER76970","9,999"],[2019,"ER76973","9,999"],[2019,"ER76975","9,999"],[2019,"ER76981","9,999"],[2019,"ER76996","9,999"],[2021,"ER78067","9,998"],[2021,"ER78106","9,998"],[2021,"ER78183","9,998"],[2021,"ER78185","9,998"],[2021,"ER78249","9,998"],[2021,"ER78251","9,997"],[2021,"ER78251","9,998"],[2021,"ER78279","9,998"],[2021,"ER78279","9,999"],[2021,"ER78281","9,997"],[2021,"ER78281","9,998"],[2021,"ER78281","9,999"],[2021,"ER78309","9,998"],[2021,"ER78309","9,999"],[2021,"ER78311","9,997"],[2021,"ER78311","9,998"],[2021,"ER78311","9,999"],[2021,"ER78354","9,998"],[2021,"ER78354","9,999"],[2021,"ER78360","9,998"],[2021,"ER78360","9,999"],[2021,"ER78366","9,998"],[2021,"ER78366","9,999"],[2021,"ER78454","9,998"],[2021,"ER78497","9,998"],[2021,"ER78499","9,998"],[2021,"ER78563","9,998"],[2021,"ER78565","9,997"],[2021,"ER78565","9,998"],[2021,"ER78593","9,998"],[2021,"ER78593","9,999"],[2021,"ER78595","9,997"],[2021,"ER78595","9,998"],[2021,"ER78623","9,997"],[2021,"ER78623","9,998"],[2021,"ER78623","9,999"],[2021,"ER78625","9,996"],[2021,"ER78625","9,997"],[2021,"ER78625","9,998"],[2021,"ER78625","9,999"],[2021,"ER78668","9,998"],[2021,"ER78668","9,999"],[2021,"ER78674","9,998"],[2021,"ER78674","9,999"],[2021,"ER78680","9,998"],[2021,"ER78680","9,999"],[2021,"ER78768","9,998"],[2021,"ER80141","9,998"],[2021,"ER80213","9,999"],[2021,"ER80291","9,998"],[2021,"ER80291","9,999"],[2021,"ER80347","9,998"],[2021,"ER80419","9,998"],[2021,"ER80419","9,999"],[2021,"ER80497","9,998"],[2021,"ER80497","9,999"],[2021,"ER80760","9,998"],[2021,"ER81071","9,999"],[2021,"ER81074","9,999"],[2021,"ER81076","9,999"],[2021,"ER81091","9,999"],[2021,"ER81201","9,999"],[2021,"ER81203","9,999"],[2023,"ER82068","9,998"],[2023,"ER82068","9,999"],[2023,"ER82168","9,998"],[2023,"ER82236","9,998"],[2023,"ER82238","9,997"],[2023,"ER82238","9,998"],[2023,"ER82266","9,998"],[2023,"ER82268","9,997"],[2023,"ER82268","9,998"],[2023,"ER82296","9,998"],[2023,"ER82296","9,999"],[2023,"ER82298","9,997"],[2023,"ER82298","9,998"],[2023,"ER82298","9,999"],[2023,"ER82347","9,998"],[2023,"ER82347","9,999"],[2023,"ER82353","9,998"],[2023,"ER82353","9,999"],[2023,"ER82441","9,996"],[2023,"ER82441","9,998"],[2023,"ER82485","9,998"],[2023,"ER82487","9,998"],[2023,"ER82555","9,998"],[2023,"ER82557","9,998"],[2023,"ER82585","9,998"],[2023,"ER82585","9,999"],[2023,"ER82587","9,997"],[2023,"ER82587","9,998"],[2023,"ER82587","9,999"],[2023,"ER82615","9,998"],[2023,"ER82615","9,999"],[2023,"ER82617","9,996"],[2023,"ER82617","9,997"],[2023,"ER82617","9,998"],[2023,"ER82617","9,999"],[2023,"ER82654","9,998"],[2023,"ER82660","9,998"],[2023,"ER82660","9,999"],[2023,"ER82666","9,998"],[2023,"ER82666","9,999"],[2023,"ER82760","9,996"],[2023,"ER82760","9,998"],[2023,"ER84111","9,998"],[2023,"ER84183","9,999"],[2023,"ER84261","9,998"],[2023,"ER84261","9,999"],[2023,"ER84389","9,998"],[2023,"ER84389","9,999"],[2023,"ER84467","9,998"],[2023,"ER84467","9,999"],[2023,"ER85051","9,999"],[2023,"ER85053","9,999"],[2023,"ER85068","9,999"],[2023,"ER85175","9,999"],[2023,"ER85180","9,999"]]
+
+    [[1968,"V97"],[1973,"V3090"],[1974,"V3503"],[1976,"V4431"],[1993,"V22494"],[1993,"V22618"],[1993,"V22657"],[1993,"V22660"],[1993,"V22709"],[1993,"V22758"],[1993,"V22784"],[1993,"V22844"],[1993,"V22847"],[1993,"V22854"],[1993,"V22971"],[1993,"V22999"],[1993,"V23010"],[1993,"V23013"],[1993,"V23020"],[1993,"V23062"],[1993,"V23111"],[1994,"ER3842"],[1994,"ER3847"],[1995,"ER5104"],[1995,"ER5109"],[1995,"ER5256"],[1995,"ER5278"],[1995,"ER5300"],[1995,"ER5346"],[1995,"ER5349"],[1995,"ER5354"],[1995,"ER5399"],[1995,"ER5479"],[1995,"ER5501"],[1995,"ER5523"],[1995,"ER5595"],[1995,"ER5598"],[1995,"ER5603"],[1995,"ER5605"],[1995,"ER5648"],[1995,"ER5728"],[1995,"ER5750"],[1995,"ER5772"],[1995,"ER5819"],[1995,"ER5840"],[1995,"ER5843"],[1995,"ER5848"],[1995,"ER5850"],[1995,"ER5893"],[1995,"ER5972"],[1995,"ER5994"],[1995,"ER6016"],[1995,"ER6038"],[1995,"ER6847"],[1996,"ER7052"],[1996,"ER7167"],[1996,"ER7200"],[1996,"ER7205"],[1996,"ER7250"],[1996,"ER7442"],[1996,"ER7445"],[1996,"ER7450"],[1996,"ER7452"],[1996,"ER7495"],[1996,"ER7694"],[1996,"ER7699"],[1996,"ER7701"],[1996,"ER7744"],[1996,"ER7915"],[1996,"ER7939"],[1996,"ER7944"],[1996,"ER7946"],[1996,"ER7989"],[1996,"ER8917"],[1996,"ER9009"],[1997,"ER10053"],[1997,"ER10084"],[1997,"ER10124"],[1997,"ER10129"],[1997,"ER10265"],[1997,"ER10287"],[1997,"ER10309"],[1997,"ER10358"],[1997,"ER10361"],[1997,"ER10366"],[1997,"ER10368"],[1997,"ER10410"],[1997,"ER10481"],[1997,"ER10503"],[1997,"ER10606"],[1997,"ER10611"],[1997,"ER10613"],[1997,"ER10747"],[1997,"ER10769"],[1997,"ER10840"],[1997,"ER10843"],[1997,"ER10848"],[1997,"ER10850"],[1997,"ER10892"],[1997,"ER10963"],[1997,"ER11773"],[1997,"ER11955"],[1997,"ER11973"],[1997,"ER11986"],[1997,"ER11988"],[1997,"ER12037"],[1997,"ER12055"],[1999,"ER13250"],[1999,"ER13255"],[1999,"ER13257"],[1999,"ER13400"],[1999,"ER13424"],[1999,"ER13448"],[1999,"ER13500"],[1999,"ER13503"],[1999,"ER13508"],[1999,"ER13510"],[1999,"ER13555"],[1999,"ER13628"],[1999,"ER13652"],[1999,"ER13676"],[1999,"ER13700"],[1999,"ER13762"],[1999,"ER13767"],[1999,"ER13814"],[1999,"ER13912"],[1999,"ER13990"],[1999,"ER14012"],[1999,"ER14015"],[1999,"ER14020"],[1999,"ER14022"],[1999,"ER14067"],[1999,"ER14140"],[1999,"ER15116"],[1999,"ER15121"],[1999,"ER15126"],[1999,"ER15234"],[1999,"ER15275"],[1999,"ER15307"],[1999,"ER15357"],[1999,"ER15380"],[1999,"ER15852"],[1999,"ER15989"],[1999,"ER16041"],[1999,"ER16061"],[1999,"ER16069"],[1999,"ER16093"],[1999,"ER16095"],[1999,"ER16128"],[1999,"ER16134"],[1999,"ER16148"],[1999,"ER16156"],[2001,"ER17258"],[2001,"ER17261"],[2001,"ER17266"],[2001,"ER17268"],[2001,"ER17436"],[2001,"ER17461"],[2001,"ER17517"],[2001,"ER17540"],[2001,"ER17543"],[2001,"ER17548"],[2001,"ER17550"],[2001,"ER17595"],[2001,"ER17691"],[2001,"ER17717"],[2001,"ER17828"],[2001,"ER17831"],[2001,"ER17836"],[2001,"ER17838"],[2001,"ER18006"],[2001,"ER18032"],[2001,"ER18114"],[2001,"ER18119"],[2001,"ER18121"],[2001,"ER18166"],[2001,"ER18262"],[2001,"ER19317"],[2001,"ER19322"],[2001,"ER19329"],[2001,"ER19381"],[2001,"ER19402"],[2001,"ER19443"],[2001,"ER19472"],[2001,"ER19586"],[2003,"ER21132"],[2003,"ER21218"],[2003,"ER21250"],[2003,"ER21359"],[2003,"ER21382"],[2003,"ER21436"],[2003,"ER21468"],[2003,"ER21500"],[2003,"ER21609"],[2003,"ER21817"],[2003,"ER22707"],[2003,"ER22712"],[2003,"ER22717"],[2003,"ER22797"],[2003,"ER22838"],[2003,"ER22868"],[2003,"ER22918"],[2003,"ER22941"],[2005,"ER25112"],[2005,"ER25114"],[2005,"ER25207"],[2005,"ER25239"],[2005,"ER25348"],[2005,"ER25370"],[2005,"ER25372"],[2005,"ER25433"],[2005,"ER25465"],[2005,"ER25497"],[2005,"ER25606"],[2005,"ER26688"],[2005,"ER26693"],[2005,"ER26698"],[2005,"ER26778"],[2005,"ER26819"],[2005,"ER26849"],[2005,"ER26901"],[2005,"ER26922"],[2005,"ER26963"],[2007,"ER36112"],[2007,"ER36117"],[2007,"ER36119"],[2007,"ER36180"],[2007,"ER36212"],[2007,"ER36244"],[2007,"ER36353"],[2007,"ER36375"],[2007,"ER36377"],[2007,"ER36438"],[2007,"ER36470"],[2007,"ER36502"],[2007,"ER36611"],[2007,"ER37706"],[2007,"ER37711"],[2007,"ER37716"],[2007,"ER37741"],[2007,"ER37799"],[2007,"ER37834"],[2007,"ER37915"],[2007,"ER37973"],[2007,"ER38031"],[2007,"ER38066"],[2007,"ER38147"],[2009,"ER42056"],[2009,"ER42075"],[2009,"ER42101"],[2009,"ER42152"],[2009,"ER42154"],[2009,"ER42213"],[2009,"ER42215"],[2009,"ER42243"],[2009,"ER42245"],[2009,"ER42273"],[2009,"ER42275"],[2009,"ER42378"],[2009,"ER42395"],[2009,"ER42404"],[2009,"ER42406"],[2009,"ER42465"],[2009,"ER42467"],[2009,"ER42495"],[2009,"ER42497"],[2009,"ER42525"],[2009,"ER42527"],[2009,"ER42630"],[2009,"ER43697"],[2009,"ER43702"],[2009,"ER43707"],[2009,"ER43714"],[2009,"ER43772"],[2009,"ER43774"],[2009,"ER43807"],[2009,"ER43888"],[2009,"ER43946"],[2009,"ER44004"],[2009,"ER44039"],[2009,"ER44120"],[2009,"ER46463"],[2009,"ER46465"],[2009,"ER46468"],[2009,"ER46484"],[2009,"ER46490"],[2009,"ER46496"],[2009,"ER46557"],[2009,"ER46559"],[2009,"ER46565"],[2009,"ER46584"],[2009,"ER46590"],[2011,"ER47363"],[2011,"ER47384"],[2011,"ER47409"],[2011,"ER47464"],[2011,"ER47466"],[2011,"ER47526"],[2011,"ER47528"],[2011,"ER47556"],[2011,"ER47558"],[2011,"ER47586"],[2011,"ER47588"],[2011,"ER47691"],[2011,"ER47721"],[2011,"ER47723"],[2011,"ER47783"],[2011,"ER47785"],[2011,"ER47813"],[2011,"ER47815"],[2011,"ER47843"],[2011,"ER47845"],[2011,"ER47948"],[2011,"ER49042"],[2011,"ER49047"],[2011,"ER49052"],[2011,"ER49060"],[2011,"ER49141"],[2011,"ER49221"],[2011,"ER49279"],[2011,"ER49360"],[2011,"ER49440"],[2011,"ER51824"],[2011,"ER51826"],[2011,"ER51829"],[2011,"ER51845"],[2011,"ER51851"],[2011,"ER51857"],[2011,"ER51945"],[2011,"ER51951"],[2013,"ER53063"],[2013,"ER53084"],[2013,"ER53109"],[2013,"ER53164"],[2013,"ER53166"],[2013,"ER53228"],[2013,"ER53256"],[2013,"ER53258"],[2013,"ER53286"],[2013,"ER53288"],[2013,"ER53391"],[2013,"ER53414"],[2013,"ER53427"],[2013,"ER53429"],[2013,"ER53489"],[2013,"ER53491"],[2013,"ER53519"],[2013,"ER53521"],[2013,"ER53549"],[2013,"ER53551"],[2013,"ER53654"],[2013,"ER54798"],[2013,"ER54803"],[2013,"ER54808"],[2013,"ER54816"],[2013,"ER54974"],[2013,"ER55032"],[2013,"ER55110"],[2013,"ER55190"],[2013,"ER57585"],[2013,"ER57591"],[2013,"ER57597"],[2013,"ER57707"],[2015,"ER60064"],[2015,"ER60085"],[2015,"ER60103"],[2015,"ER60179"],[2015,"ER60181"],[2015,"ER60243"],[2015,"ER60271"],[2015,"ER60273"],[2015,"ER60301"],[2015,"ER60303"],[2015,"ER60406"],[2015,"ER60442"],[2015,"ER60444"],[2015,"ER60504"],[2015,"ER60506"],[2015,"ER60534"],[2015,"ER60536"],[2015,"ER60564"],[2015,"ER60566"],[2015,"ER60669"],[2015,"ER61936"],[2015,"ER62015"],[2015,"ER62095"],[2015,"ER62153"],[2015,"ER62232"],[2015,"ER64746"],[2015,"ER64749"],[2015,"ER64752"],[2017,"ER66066"],[2017,"ER66087"],[2017,"ER66105"],[2017,"ER66180"],[2017,"ER66182"],[2017,"ER66246"],[2017,"ER66276"],[2017,"ER66304"],[2017,"ER66306"],[2017,"ER66455"],[2017,"ER66457"],[2017,"ER66519"],[2017,"ER66521"],[2017,"ER66549"],[2017,"ER66551"],[2017,"ER66579"],[2017,"ER66581"],[2017,"ER66690"],[2017,"ER67990"],[2017,"ER68069"],[2017,"ER68149"],[2017,"ER68207"],[2017,"ER68286"],[2017,"ER68366"],[2017,"ER70814"],[2017,"ER70819"],[2017,"ER70825"],[2017,"ER70832"],[2017,"ER70836"],[2019,"ER72066"],[2019,"ER72180"],[2019,"ER72182"],[2019,"ER72246"],[2019,"ER72274"],[2019,"ER72276"],[2019,"ER72304"],[2019,"ER72306"],[2019,"ER72415"],[2019,"ER72457"],[2019,"ER72459"],[2019,"ER72521"],[2019,"ER72523"],[2019,"ER72551"],[2019,"ER72553"],[2019,"ER72581"],[2019,"ER72583"],[2019,"ER72692"],[2019,"ER74018"],[2019,"ER74091"],[2019,"ER74225"],[2019,"ER74298"],[2019,"ER76828"],[2019,"ER76833"],[2019,"ER76970"],[2019,"ER76973"],[2019,"ER76975"],[2019,"ER76981"],[2019,"ER76996"],[2021,"ER78067"],[2021,"ER78106"],[2021,"ER78183"],[2021,"ER78185"],[2021,"ER78249"],[2021,"ER78251"],[2021,"ER78279"],[2021,"ER78281"],[2021,"ER78309"],[2021,"ER78311"],[2021,"ER78354"],[2021,"ER78360"],[2021,"ER78366"],[2021,"ER78454"],[2021,"ER78497"],[2021,"ER78499"],[2021,"ER78563"],[2021,"ER78565"],[2021,"ER78593"],[2021,"ER78595"],[2021,"ER78623"],[2021,"ER78625"],[2021,"ER78668"],[2021,"ER78674"],[2021,"ER78680"],[2021,"ER78768"],[2021,"ER80141"],[2021,"ER80213"],[2021,"ER80291"],[2021,"ER80347"],[2021,"ER80419"],[2021,"ER80497"],[2021,"ER80760"],[2021,"ER81071"],[2021,"ER81074"],[2021,"ER81076"],[2021,"ER81091"],[2021,"ER81201"],[2021,"ER81203"],[2023,"ER82068"],[2023,"ER82168"],[2023,"ER82236"],[2023,"ER82238"],[2023,"ER82266"],[2023,"ER82268"],[2023,"ER82296"],[2023,"ER82298"],[2023,"ER82347"],[2023,"ER82353"],[2023,"ER82441"],[2023,"ER82485"],[2023,"ER82487"],[2023,"ER82555"],[2023,"ER82557"],[2023,"ER82585"],[2023,"ER82587"],[2023,"ER82615"],[2023,"ER82617"],[2023,"ER82654"],[2023,"ER82660"],[2023,"ER82666"],[2023,"ER82760"],[2023,"ER84111"],[2023,"ER84183"],[2023,"ER84261"],[2023,"ER84389"],[2023,"ER84467"],[2023,"ER85051"],[2023,"ER85053"],[2023,"ER85068"],[2023,"ER85175"],[2023,"ER85180"]]
+
+3. **Finite-arm invariant promotion and unequal control.** Eleven zero-hit
+   invariant literal candidates across five fields—six missing and five
+   ordinary—register by the singleton producer. Their member array is 267
+   bytes with SHA-256
+   `eedb033df9cb01d6baed6573cddd5a97a1c6814010bf40030c185f97d32145fd`;
+   their 80-byte field array hashes to
+   `55007246f1d4851cd64a5065b46e06c802167a123ed98bf3f7abc96730e419b4`.
+   Separately, the exhaustive 26-member genuinely unequal control remains
+   candidate-only with null authority and the closed finite-member abort.
+   Its 517-byte member array hashes to
+   `3a13c124912f37a1506cc56c9949b0c1eb28313f71752c39761b0949ca513933`;
+   its 413-byte 26-field array hashes to
+   `fb2fafdf9d483e787eef85a1cadb61b74fac5e977bc4837fc0b2a1308d3c57ef`.
+
+    [[1980,"V7042","9,999"],[1983,"V9372","9,999"],[1994,"ER2768","99,997"],[1994,"ER2768","99,998"],[1994,"ER2768","99,999"],[1994,"ER3848","9,997"],[1994,"ER3848","9,998"],[1994,"ER3848","9,999"],[1996,"ER8884","9,997"],[1996,"ER8884","9,998"],[1996,"ER8884","9,999"]]
+
+    [[1980,"V7042"],[1983,"V9372"],[1994,"ER2768"],[1994,"ER3848"],[1996,"ER8884"]]
+
+    [[1971,"V2040","1"],[1976,"V4941","1"],[1976,"V5092","0"],[1979,"V6644","1"],[1982,"V8590","1"],[1984,"V10813","1"],[1984,"V10830","1"],[1985,"V12176","1"],[1985,"V12186","1"],[1985,"V12187","1"],[1986,"V13209","1"],[1986,"V13376","1"],[1986,"V13377","1"],[1987,"V14275","1"],[1987,"V14468","1"],[1987,"V14479","1"],[1988,"V15389","1"],[1989,"V16952","1"],[1990,"V18677","1"],[1991,"V19676","1"],[1992,"V20938","1"],[1992,"V20976","1"],[1993,"V22508","1"],[1993,"V22674","1"],[1993,"V22779","1"],[1993,"V22781","1"]]
+
+    [[1971,"V2040"],[1976,"V4941"],[1976,"V5092"],[1979,"V6644"],[1982,"V8590"],[1984,"V10813"],[1984,"V10830"],[1985,"V12176"],[1985,"V12186"],[1985,"V12187"],[1986,"V13209"],[1986,"V13376"],[1986,"V13377"],[1987,"V14275"],[1987,"V14468"],[1987,"V14479"],[1988,"V15389"],[1989,"V16952"],[1990,"V18677"],[1991,"V19676"],[1992,"V20938"],[1992,"V20976"],[1993,"V22508"],[1993,"V22674"],[1993,"V22779"],[1993,"V22781"]]
+
+4. **Structural/no-capacity ordinary promotion.** The union has exactly 39
+   zero-hit ordinary equal-image members in 39 fields. Its 935-byte member
+   array hashes to
+   `832eff32a229da6a68a089c5a7c32437e493f7c1749442847597c143f490b80c`;
+   its 656-byte field array hashes to
+   `deb10d0aafa61e28015483f8c346bad6bcd9cd1c72ece3616416300e4aef4206`.
+   The true structural subset has 16 members/fields: its 363-byte member
+   array hashes to
+   `38f949f73d71cac9186b5d8c6214c6c38bca8185e473936d20859911d0269e2e`
+   and its 268-byte field array hashes to
+   `75f42eeaba158e5def9244202b2869a78d76c5b1b187b5ec81e022d78536cf3d`.
+   The other 23 members are the ordinary complete-equality/no-capacity
+   overlap; no member is double-counted within the 39-member union.
+
+    [[1973,"V3202",".01"],[1976,"V5017",".01"],[1979,"V6783",".0"],[1994,"ER3842","9,997"],[1994,"ER3847","9,997"],[1995,"ER6847","9,997"],[1999,"ER15116","9,997"],[1999,"ER15121","9,997"],[1999,"ER15126","9,997"],[2001,"ER19317","9,997"],[2001,"ER19322","9,997"],[2003,"ER22712","9,997"],[2003,"ER22717","9,997"],[2005,"ER26688","9,997"],[2005,"ER26693","9,997"],[2005,"ER26698","9,997"],[2007,"ER37706","9,997"],[2007,"ER37711","9,997"],[2007,"ER37716","9,997"],[2009,"ER43697","9,997"],[2009,"ER43702","9,997"],[2009,"ER43707","9,997"],[2011,"ER49047","9,997"],[2011,"ER49052","9,997"],[2011,"ER49635",".60"],[2011,"ER50753",".60"],[2013,"ER54803","9,997"],[2013,"ER54808","9,997"],[2013,"ER55383",".60"],[2013,"ER56499",".60"],[2015,"ER62505",".60"],[2015,"ER63621",".60"],[2017,"ER68570",".60"],[2019,"ER74578",".60"],[2019,"ER75705",".60"],[2021,"ER80729",".60"],[2021,"ER80927",".60"],[2023,"ER84702",".60"],[2023,"ER84903",".60"]]
+
+    [[1973,"V3202"],[1976,"V5017"],[1979,"V6783"],[1994,"ER3842"],[1994,"ER3847"],[1995,"ER6847"],[1999,"ER15116"],[1999,"ER15121"],[1999,"ER15126"],[2001,"ER19317"],[2001,"ER19322"],[2003,"ER22712"],[2003,"ER22717"],[2005,"ER26688"],[2005,"ER26693"],[2005,"ER26698"],[2007,"ER37706"],[2007,"ER37711"],[2007,"ER37716"],[2009,"ER43697"],[2009,"ER43702"],[2009,"ER43707"],[2011,"ER49047"],[2011,"ER49052"],[2011,"ER49635"],[2011,"ER50753"],[2013,"ER54803"],[2013,"ER54808"],[2013,"ER55383"],[2013,"ER56499"],[2015,"ER62505"],[2015,"ER63621"],[2017,"ER68570"],[2019,"ER74578"],[2019,"ER75705"],[2021,"ER80729"],[2021,"ER80927"],[2023,"ER84702"],[2023,"ER84903"]]
+
+    [[1973,"V3202",".01"],[1976,"V5017",".01"],[1979,"V6783",".0"],[2011,"ER49635",".60"],[2011,"ER50753",".60"],[2013,"ER55383",".60"],[2013,"ER56499",".60"],[2015,"ER62505",".60"],[2015,"ER63621",".60"],[2017,"ER68570",".60"],[2019,"ER74578",".60"],[2019,"ER75705",".60"],[2021,"ER80729",".60"],[2021,"ER80927",".60"],[2023,"ER84702",".60"],[2023,"ER84903",".60"]]
+
+    [[1973,"V3202"],[1976,"V5017"],[1979,"V6783"],[2011,"ER49635"],[2011,"ER50753"],[2013,"ER55383"],[2013,"ER56499"],[2015,"ER62505"],[2015,"ER63621"],[2017,"ER68570"],[2019,"ER74578"],[2019,"ER75705"],[2021,"ER80729"],[2021,"ER80927"],[2023,"ER84702"],[2023,"ER84903"]]
+
+5. **Signed singleton and fail-closed control.** ER36928/2007's exact source
+   projection `[[2007,"ER36928","-999,999"]]` is 30 bytes with SHA-256
+   `a48caca4ed4c74d48418c0256aebeff206e2d5156bb588799f9ad7b2a111d253`;
+   its 19-byte field projection hashes to
+   `960ca65742ca040cc9c3469b200f6c483d65556400089d0e1da11fc761dc7d1e`.
+   Its all-lawful-form singleton image is `2d393939393939`, has zero
+   observations, registers pre-profile, and remains literal-first even though
+   the numeric field later selects unsigned. ER6974/1995 is the negative
+   control: `[[1995,"ER6974","-99,999"]]` is 28 bytes with SHA-256
+   `4623295e29b8e6812187d4609d2db3af42fe581ae9ea075cbd2f1566fd0d39b4`;
+   its 18-byte field projection hashes to
+   `42b762fc56ec7dd4ba836e89fadd46034a64f1fb22a9500f0613b39973f56d3c`.
+   Its unequal signed candidates remain deferred, its selected unsigned space
+   form has no image, and it takes
+   `selected_space_literal_unrenderable`; it never passes silently.
+
+    [[2007,"ER36928","-999,999"]]
+
+    [[2007,"ER36928"]]
+
+    [[1995,"ER6974","-99,999"]]
+
+    [[1995,"ER6974"]]
+
+
+#### 20.3.7 Complete 89,599-field totality census
+
+The all-field disposition law is a total function over the authenticated
+evidence denominator, not an exemplar list. The completed Amendment-6
+disposition predicates specified by these draft bytes were evaluated over
+all six committed field-evidence artifacts and every one of their 43
+authenticated raw files. The artifact order below, each artifact's
+`interview_waves` order, and then the retained `field_evidence` row order
+within a wave define the one canonical denominator order:
+
+| Evidence artifact | Fields | Bytes | Evidence-artifact SHA-256 |
+|---|---:|---:|---|
+| `data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json` | 3,868 | 4,628,883 | `52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48` |
+| `data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json` | 1,838 | 2,203,624 | `0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87` |
+| `data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json` | 15,745 | 21,115,064 | `109d7ecb4dd933fdcd2efaf572d9bbb8378bb8b054badccda1ac52c049afcedf` |
+| `data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json` | 15,983 | 19,201,179 | `549508cb31a26a81643339f9cda0824a8f44c9ffc5bac300d7647c34ba78c892` |
+| `data/external/psid_codebook_field_evidence/ry2002_2014_modern_bc_de_v1.json` | 33,154 | 45,941,875 | `d56356b4a34b32489b5b2e1cc6c782479e910b9711eeff8b74d22d483d8880fe` |
+| `data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json` | 19,011 | 28,227,120 | `d7018a633ec8127ab799d07db58f63d1582e5417c305c9c03d63b08c41803f78` |
+| **Complete denominator** | **89,599** | — | six artifacts |
+
+For reproducibility, every census hash in this subsection is SHA-256 over
+UTF-8 JSON serialized with sorted object keys, no insignificant whitespace,
+ASCII escaping, no nonfinite number, and exactly one terminal LF. The
+six-position artifact-identity array has one object
+`{"evidence_path", "field_evidence_count", "raw_sha256"}` per displayed
+row and hashes to
+`235b568b54ba04e43d5be85aa4a922148e9ca01f431b94c95ca5fa1976403d9a`.
+The 43-position raw-identity array is reconstructed from each authenticated
+manifest and raw byte stream in the same order; each object has exactly
+`interview_wave`, `path`, `record_count`, `record_width`, `sha256`, and
+`size_bytes`. It hashes to
+`079811364c1ea8f6fbaa624cd4e624570b082ad911307401f8222b73a0affc8d`.
+The ordered 89,599-position `[interview_wave,raw_field_id]` array has no
+duplicate and hashes to
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`.
+
+The census reconstruction is exact:
+
+1. authenticate every displayed evidence-artifact byte and every manifest
+   raw-file size and SHA-256; derive record width from the complete wave
+   coordinates, require fixed-width records with terminal CRLF, reslice every
+   field, and reproduce its complete ordered raw-token/frequency relation;
+2. reconstruct the semantic tagged union from each retained context-complete
+   code-map row, using its complete meaning text rather than treating the
+   value column in isolation. Grouping commas are removed only while
+   constructing source numeric scalars and never from a raw token. When a
+   negative first endpoint, positive-looking second endpoint, and leading
+   `- ` in the retained complete meaning jointly establish negative-range
+   shorthand, the second endpoint inherits that sign. The 17 retained PDF
+   column-continuation rows in the
+   seven 1969 fields `V922`, `V925`, `V926`, `V929`, `V930`, `V944`,
+   and `V955` are meanings continuing with `to `, not invented numeric
+   ranges;
+3. require each field's exact `NUM(w.d)` or `CHR(w)` declaration and
+   coordinate width, and reconstruct every literal, missing designation, and
+   normalized range. For a numeric declaration, construct every deferred
+   literal candidate and apply semantic-overlap plus the first duplicate-
+   registered-image collision pass before any later terminal; retain the
+   independent exact-width character-literal law for a character declaration;
+4. for a numeric declaration, execute the complete pre-profile registration
+   constructor, provisionally classify missing tokens, and derive the
+   provisional nonmissing count. Route a zero-count range to the physical-
+   unestablished branch with every pre-profile registered literal retained
+   authoritative, each still-deferred multiple-image zero-hit ordinary
+   literal retained semantically but unrendered, and every range member
+   retained semantically but unrendered. Otherwise evaluate the exact
+   necessary-and-sufficient disposition predicates over the complete
+   candidate token languages, both padding renderers, every finite-domain arm
+   member, analytic exhaustive range cardinality/renderability, semantic
+   membership, and observed replay in §§20.3.2–20.3.5. Apply every applicable
+   selected-space, common-image, structural, or finite-invariant literal
+   promotion and every candidate-only or unrenderable disposition; then rerun
+   duplicate missing, missing-versus-ordinary, and unequal-ordinary collision
+   checks over final registrations. Rebuild missing classification and
+   `nonmissing_observation_count`, require equality to the provisional count,
+   and only then rebuild the invariant/ambiguous and range partitions, missing
+   subtraction, DFA, consumers, IDs, and hashes. For a character declaration,
+   retain only exact-width
+   source literal images; an unknown observed byte is unsupported, an
+   applicable range is physical-unestablished, a nonempty literal-only
+   domain is value-code-only, and only an empty domain is outside numeric
+   grammar. This census classification does not serialize the future
+   derivation rows or substitute for §20.8.1's complete member partitions,
+   DFA construction, and observed/unobserved replay;
+5. require the four-way literal-disposition exact cover in §20.3.5, then emit
+   exactly one of its ten terminals. Exclude every applicable failure predicate
+   before admitting a passing branch, and apply the closed mutually exclusive
+   failure precedence—conflict, then unsupported, then incomplete. The matrix
+   order below is the canonical serialization order, not a license to evaluate
+   a passing status before a failure predicate. No observed subset, exemplar,
+   era default, other field, or hand-coded field key participates.
+
+The result is the following complete status-by-artifact matrix. Each final
+column hashes the ordered `[interview_wave,raw_field_id]` subarray for that
+status in canonical denominator order:
+
+| Exact `derivation_status` | Early | Spouse seam | Pre-ER | ER transition | Modern | Exclusion | Total | Field-key SHA-256 |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| `compiled_source_numeric_grammar` | 960 | 556 | 4,421 | 3,170 | 5,248 | 2,974 | **17,329** | `e6e1847b7985bfde184b12fbb5c3f05f3fa5e83412feb34e19dc9a2c3c432f78` |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 119 | 52 | 241 | 422 | 595 | 424 | **1,853** | `479c233cdc0a1ccaa7bdfe8a93ddf8fe464a5716c444e0b5ae8fb22601094eb9` |
+| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 4 | 23 | 480 | 100 | 38 | 29 | **674** | `dafbba26c2fa6dc66a821b8c0d544d5478ceda6fd8134cd466104f83f6975ec9` |
+| `compiled_source_numeric_grammar_partial_range_exact_replay` | 1 | 0 | 0 | 1 | 9 | 36 | **47** | `9da41538a14b664f3f69e3bd087dbe704bf17f4809864095c587c1fb1db4df00` |
+| `value_code_domain_no_numeric_grammar` | 2,606 | 1,130 | 10,064 | 11,668 | 26,700 | 15,148 | **67,316** | `6ee97ba9db16520c734a21094623376714a468c3148977666f8e107dbd35e05f` |
+| `value_code_range_physical_rendering_unestablished` | 89 | 16 | 127 | 371 | 320 | 222 | **1,145** | `75296e361be3c9b0afb99cd74afb29849305010a93c2c1a9de3da6b54fd5054e` |
+| `nonnumeric_source_field_outside_numeric_grammar` | 0 | 0 | 0 | 0 | 0 | 0 | **0** | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
+| `conflicting_source_numeric_format` | 1 | 0 | 0 | 0 | 0 | 0 | **1** | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
+| `unsupported_source_numeric_format` | 67 | 20 | 122 | 46 | 90 | 76 | **421** | `fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010` |
+| `incomplete_source_numeric_authority` | 21 | 41 | 290 | 205 | 154 | 102 | **813** | `93cf0ce814f22883c6e249c25f6375893bfc3a213cc5ebb79243ce2b8be9086e` |
+| **Artifact total** | **3,868** | **1,838** | **15,745** | **15,983** | **33,154** | **19,011** | **89,599** | exact cover |
+
+The canonical ten-row count array, in the displayed terminal order, is:
+
+```json
+[{"derivation_status":"compiled_source_numeric_grammar","field_count":17329},{"derivation_status":"compiled_source_numeric_grammar_padding_underdetermined_exact_replay","field_count":1853},{"derivation_status":"compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay","field_count":674},{"derivation_status":"compiled_source_numeric_grammar_partial_range_exact_replay","field_count":47},{"derivation_status":"value_code_domain_no_numeric_grammar","field_count":67316},{"derivation_status":"value_code_range_physical_rendering_unestablished","field_count":1145},{"derivation_status":"nonnumeric_source_field_outside_numeric_grammar","field_count":0},{"derivation_status":"conflicting_source_numeric_format","field_count":1},{"derivation_status":"unsupported_source_numeric_format","field_count":421},{"derivation_status":"incomplete_source_numeric_authority","field_count":813}]
+```
+
+With its terminal LF that array hashes to
+`421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624`.
+The corresponding complete ordered
+`[interview_wave,raw_field_id,derivation_status]` array hashes to
+`5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e`.
+The branch counts sum to exactly 89,599; there are zero unmapped keys, zero
+multiply mapped keys, and zero keys outside the authenticated denominator.
+The first seven terminals contain 88,364 fields and the three closed failure
+terminals contain 1,235. Those 1,235 failures correctly prevent a current
+top-level pass; they do not make the disposition function partial.
+
+The round-three rerun executed the complete deferred relation, every new
+producer transition, both collision passes, and the final rebuild barrier over
+all 89,599 fields. It moved **zero fields** between terminals. The independently
+re-derived denominator remains
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`,
+the ten-row count array remains
+`421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624`,
+and the complete ordered assignment remains
+`5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e`.
+ER36928 remains in `compiled_source_numeric_grammar` because its all-lawful-
+form singleton is authoritative before unsigned numeric-form selection;
+ER6974 is the mandatory witness among 78
+`selected_space_literal_unrenderable` failures. Thus unchanged terminal
+identities are a re-derived no-movement result, not copied predecessor
+evidence. Within one failure terminal, the earliest failed construction gate
+supplies `resolution_reason`: final literal disposition precedes range
+partitioning. The raw-lexeme correction therefore reallocates 77 fields that
+were already unsupported from the range-zero diagnostic to the unrenderable-
+literal diagnostic; it moves no field between `derivation_status` terminals.
+
+The canonical classifier partitions the closed failures into these seven
+complete diagnostic reason buckets. Each hash covers its ordered canonical
+field-key subarray:
+
+| Terminal | Exact `resolution_reason` | Count | Field-key SHA-256 |
+|---|---|---:|---|
+| `conflicting_source_numeric_format` | `conflict:overlapping_numeric_ranges` | 1 | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
+| `unsupported_source_numeric_format` | `character_raw_replay_unknown_token` | 16 | `91c03e030cf4dc4af9a4047993bd6eb597147f8044f5997d6ce7d57ce64a17b3` |
+| `unsupported_source_numeric_format` | `observed_token_outside_all_candidate_forms_or_semantics` | 144 | `364a627823569d3a69411a525ad37e9197e399e3c257436c335d26f96c488fd9` |
+| `unsupported_source_numeric_format` | `selected_space_literal_unrenderable` | 78 | `6bba712ad8fe4ce41414c7a29b8827d55d63be6254e7b6e0c81a77b9614448b2` |
+| `unsupported_source_numeric_format` | `selected_space_range_zero_renderable` | 183 | `011d09ddc62d96b9e21af54e499e318d3fb00bc13f7d31b163237fa2066a0965` |
+| `incomplete_source_numeric_authority` | `finite_no_arm_no_lawful_complete_disposition` | 46 | `a928dde66beb0f2d81bddfd63a945fe6bb340669db45c81e735fc54e8c573d82` |
+| `incomplete_source_numeric_authority` | `literal_only_zero_diagnostic_padding_capacity` | 767 | `3de8fd6495e00f09e5e9bc6691c59851e08c0375e528f650c7841c88af7961e3` |
+
+The canonical seven-row failure-reason artifact contains exactly
+`derivation_status`, `resolution_reason`, and the complete `field_keys`
+array per row, ordered by failure-terminal precedence and then reason
+lexically. It is 21,034 bytes and hashes to
+`66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324`.
+Thus the failure table is itself exact-covered rather than summarized by
+examples.
+
+The referee's 763-field all-missing numeric-range denominator and exact
+66-field short-ordinary-literal subset reproduce, including subset SHA-256
+`c34434caa24dfa760423ac649c1f5a8a7ee340c2c9909dab67a000513f2c4f69`;
+all 66 map to
+`value_code_range_physical_rendering_unestablished`. The broader
+source-semantic predicate—numeric declaration, exact missing registration
+leaving zero nonmissing observations, at least one normalized range, and at
+least one short ordinary literal—finds 69 such fields and hashes its ordered
+key array to
+`33320d3158ca5c6bb3444f87e4c9f1f0e62e1a19b32da688fcce3e10a9cb0cfe`.
+Its three additional keys are `[1970,"V1701"]`, `[1970,"V1725"]`, and
+`[1996,"ER7747"]`; all three take the same physical-unestablished branch.
+V117/1968 and V5092/1976 both take the finite-domain arm-ambiguous compiled
+branch, so neither named repair is a special-case override.
+
+Two independently written classifiers authenticated the same 43 raw files
+and agreed on all 89,599 field assignments, every artifact/status count, the
+exact-empty unmapped set, and the complete disposition SHA-256 above. The
+primary classifier alone defines the canonical six-key raw-identity and
+`derivation_status` count-row projections displayed here; agreement does
+not require a differently shaped audit projection to share their hashes. At
+this round-three rerun the classifiers' respective source files were 73,310
+bytes with SHA-256
+`bed8f76e79c0ac0ca0cc5210b63ad8e79da575d3a10a1efb6942ae565af80dcf`
+and 45,511 bytes with SHA-256
+`0da292e25d369ba2324337760f2402745a5f97103a94d37016c1553cae52b5b2`.
+The latter was executed in its explicit `census` mode. Those audit
+implementation identities are evidence, not authority;
+the authenticated sources and the closed law above are sufficient for a
+fresh independent reproduction.
+
+### 20.4 Exact consumer propagation
+
+#### 20.4.1 Layout, typed-parse, raw-token, value-map, and unobserved domains
+
+Every §19.3.2 consumer is prospectively completed in place. The official
+inventory `layout_coordinates` object retains the exact 17 direct keys
+enumerated in §19.3.2 and its position; the parallel `typed_parse_specs`
+object retains its exact nine-key shape; `raw_token_grammar` retains its exact
+18-key shape; the Q5 raw-field projection separately retains its exact 18-key
+shape; and the numeric
+derivation row uses the 16-key/15-position successor in §20.3, while the
+registered grammar, value derivation, and padding rule retain their outer
+shapes and ID preimages. The successor changes that one derivation-row
+envelope and the complete nested values; no other outer key count changes.
+Specifically:
+
+1. `numeric_grammar_derivation_id` and
+   `numeric_grammar_derivation_sha256` resolve the unique same-wave/raw-field
+   successor row. Before accepting either value, every layout, raw-token, and
+   value-map consumer independently rebuilds the complete ten-key assertion
+   array, applies the reconstruction-disagreement gate, and compares each
+   remaining later supported assertion directly and mutually exclusively
+   with the first reconstruction-agreed supported selector; a corroborator is
+   never an anchor. Each consumer then reconstructs the complete
+   `deferred_literal_candidate_rows` relation, the pre-profile registrations
+   and provisional count, every applicable post-selection producer
+   transition, the final three-way collision pass, and the rebuilt missing
+   classification and count. The latter hashes the complete 16-key row,
+   including the ten-key declaration projection and serialized final
+   nonmissing count. Only when
+   the profile is nonnull does it also contain thirteen-key physical
+   authentication, selected token form, selected arm or no-arm disposition,
+   complete range partitions, the complete-domain arm disposition, any
+   complete-domain candidate relations, and exact-token DFA. The zero-count
+   retained branch instead commits null profile/grammar and the absence of
+   all those nested relations while retaining each pre-profile registered
+   literal image and each still-deferred multiple-image zero-hit ordinary
+   literal's null image and closed unobserved-value row. Every source-derived
+   status remains covered. A digest of a §19 row
+   or a row with one nested member projected away is unequal.
+2. On a nonnull numeric physical profile,
+   `typed_parse_specs.raw_width` equals `payload_width == w`;
+   `.decimal_places` equals the selected declaration's maximum `d` even
+   when a literal token uses the uniquely computed smaller `F`; `.signed`
+   is true exactly for either selected leading-minus form; and its scale,
+   value type, and unit positionally equal `value_derivation`. The parse
+   kind is `fixed_width_numeric` or the retained value-code branch fixed by
+   the complete source domain, never by a token's punctuation. On the
+   all-missing retained branch, the positional value-code parse spec obeys
+   its inherited null-physical-member law. It consumes any literal image
+   already registered by the pre-profile constructor but cannot manufacture a
+   rendering for a still-deferred literal from a nonexistent profile.
+3. `raw_token_grammar.padding_rule` and
+   `.registered_numeric_grammar` respectively deep-equal the same-named
+   members of the successor derivation row.
+   `grammar_status`, residual identity, dictionary missing literals,
+   observed source/file/count values, token rows, closed unobserved rows,
+   and `unknown_token_action` retain their §19 meanings. The four compiled
+   derivation statuses in §20.3.5 all require a nonnull grammar; every
+   noncompiled branch requires null. No consumer may reject the
+   underdetermined status merely because §19 formerly admitted only the
+   diagnostic compiled status.
+   Independently summing its observed-token frequencies outside the final
+   complete registered missing-literal relation must equal the resolved row's
+   `nonmissing_observation_count`; zero requires the retained null-profile,
+   null-grammar range branch and never an inferred form or arm.
+   An all-`source_silence` `value_code_domain_no_numeric_grammar` or
+   `value_code_range_physical_rendering_unestablished` row likewise preserves
+   null selector/profile/grammar values; its null selector is not a missing
+   consumer field and cannot be filled from an inventory or peer row.
+4. After independently reconstructing the complete deferred candidate
+   relation, post-selection promotions, final collision pass, and final
+   registered relations, every `observed_token_rows` member is classified
+   literal-first and missing-first as §19 requires. During source
+   reconstruction, a remaining
+   token outside every closed candidate language yields the exact unsupported
+   failure row and its fresh ID/hash; it cannot appear as an incomplete
+   consumer row. On a passing derivation, a numeric member then traverses the
+   successor DFA, applies its exact action stream, deep-equals type/unit,
+   and re-renders under §20.3.3 to its original `raw_token_hex`. Its
+   `source_derivation`, source entry references, and disposition remain
+   source-derived. The exact raw bytes—not a normalized spelling—remain
+   the lookup key.
+5. When the profile is nonnull, every `unobserved_possible_values` member
+   receives its final disposition from the same selected form and arm/
+   disposition: a final registered literal terminates literal-first, while an
+   authoritative numeric image is rendered once, traversed through the same
+   DFA, and replayed. A width-one no-arm row authorizes only its exact one-byte
+   image; a no-capacity decimal row authorizes only the unique full-width
+   image; neither authorizes a hypothetical wider rendering. On the finite-
+   domain arm-ambiguous status, only an invariant member with a nonnull
+   authoritative image traverses the DFA or terminates through a registered
+   literal; every ambiguous numeric or short-literal member takes
+   `abort_before_classification_arm_ambiguous_source_member` with null
+   authoritative image and no runtime scalar result. On the partial-
+   range status, only a member in the exact renderable relation traverses the
+   DFA; a member in the unrenderable relation takes the exact closed abort
+   below. An additional precision spelling, plus form, zero-padded form, or
+   physical image absent from the renderable relation aborts. On the
+   zero-count physical-unestablished branch, registered literal images replay
+   literal-first, each still-deferred multiple-image zero-hit ordinary literal
+   and every range member retains the inherited unestablished-rendering abort,
+   and no token-form/arm candidate, range partition, or DFA is constructed.
+6. The final complete registered missing-literal relation retains exact-match
+   missing precedence, and an ordinary normalized codebook literal then
+   retains complete-width literal-first precedence over DFA traversal. A
+   candidate-only short missing literal on the arm-ambiguous branch is not a
+   registered missing image and cannot enter `missing_raw_tokens`; either
+   candidate spelling takes the member's closed pre-classification abort.
+   An invariant registered missing image retains the missing-first rule.
+   On both the pre-profile and final post-promotion collision passes, a
+   missing-versus-ordinary-literal byte collision, duplicate missing image,
+   or duplicate ordinary literal image with unequal value/meaning is a
+   conflict. A final registered missing image's numeric-language overlap is
+   removed from the
+   DFA; an ordinary nonmissing literal's numeric-language overlap remains in
+   the DFA and is lawful by itself because literal-first classification
+   terminates. Decimal punctuation, a minus, or DFA membership never silently
+   changes a source meaning.
+
+The layout's source-document arrays, canonical dictionary/codebook row
+arrays, normalized entry arrays, raw-data document, coordinates, framing,
+and complete field/file closure remain unchanged in shape and source order.
+Their content hashes are nevertheless fresh whenever an enclosing value
+contains a successor derivation ID or row hash. The retained official
+inventory builder identity remains distinct from the source-only compiler
+identity and must consume, not recreate, the passing successor
+`field_source_derivation`.
+
+For the partial-range status only, the qualifying numeric-range member of
+`unobserved_possible_values` retains its four inherited keys and appends
+exactly `renderable_member_count`, `renderable_member_domain_sha256`,
+`unrenderable_member_count`, and
+`unrenderable_member_domain_sha256`. The four values deep-equal the same-
+entry partition row in the resolved derivation profile. Its
+`rendering_status` is
+`source_registered_numeric_grammar_partial_range_exact_replay`, its token-
+mapping array is exact empty, and `if_encountered` is
+`parse_if_renderable_else_abort_unrenderable_source_member`. The row's
+source-domain reference continues to denote the complete unchanged range;
+it resolves both complete member relations through the derivation ID and
+full-row digest. A renderable member parses and replays under the registered
+grammar. An unrenderable member terminates before classification with no
+physical image or scalar. This is one tagged extension of the retained
+unobserved row, not an authored token map or omission of the unfavorable
+subdomain.
+
+For the finite-domain arm-ambiguous status, the analogous numeric-range
+`unobserved_possible_values` row carries the same four partition counts and
+digests and additionally resolves the complete six-key
+`complete_domain_arm_disposition` through the derivation references. Its
+`rendering_status` is
+`source_registered_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
+its token-mapping array is exact empty, and `if_encountered` is
+`parse_if_arm_invariant_else_abort_before_classification_arm_ambiguous_source_member`.
+Every ambiguous short-literal normalized entry remains source-visible with
+`raw_token_hex: null` and has an `unobserved_possible_values` row whose
+mapping array is empty, whose rendering status is
+`source_literal_physical_rendering_arm_ambiguous`, and whose encounter action
+is `abort_before_classification_arm_ambiguous_source_member`. It is omitted
+from the executable seven-key `psid_value_code_specs.v1.entries` array and
+from `missing_raw_tokens`; neither candidate image becomes a value-map key.
+
+For the zero-nonmissing physical-unestablished status, a still-deferred
+multiple-image zero-hit ordinary literal instead retains the exact inherited
+four-key
+`unobserved_possible_values` shape. Its `source_value_domain` resolves the
+singleton normalized entry with `raw_token_hex: null`; its
+`rendering_status` is exactly `physical_rendering_unestablished`; its
+`registered_token_mappings` is exact empty; and `if_encountered` is the
+retained
+`abort_before_classification_require_successor_inventory_ratification`.
+This branch expressly replaces §19's requirement that every such still-
+deferred unobserved literal have `unique_registered_rendering` and contribute
+a seven-key executable entry. A strict unchanged-width image, a byte-
+deduplicated singleton image, or a sole-observed candidate remains registered
+under the pre-profile law, whether its literal is missing or ordinary. Only a
+still-deferred multiple-image zero-hit ordinary literal contributes neither an
+executable entry nor `missing_raw_tokens`; every range member remains under
+the same physical-unestablished range abort.
+The complete normalized-entry and unobserved-value arrays, counts, and
+digests nevertheless retain all such source members in source order.
+
+For `psid_value_code_specs.v1`, the exact `source_commitments` and `entries`
+outer schemas remain. The actual five-key `source_commitments` object and
+complete array of seven-key `entries` respectively deep-equal independently
+rebuilt expected objects of those same schemas. Every
+`source_commitments.field_rows` member carries its retained
+`numeric_grammar_derivation_id` and `numeric_grammar_derivation_sha256`;
+both references resolve the independently reconstructed complete 16-key
+successor row. The resolved row, rather than the five-key commitment object,
+carries the declaration dispositions, nonmissing count, padding rule, census,
+and replay. When its profile is nonnull the resolved row also carries the
+token-form result, arm or no-arm disposition, both range relations, the
+complete-domain arm disposition, any complete-domain candidate relations,
+and DFA. A zero-count physical-
+unestablished field-row reference instead resolves a row with null profile/
+grammar, proves that all such nested relations are absent, and compares the
+complete normalized short-literal/null-rendering and unobserved-abort rows.
+Literal-only, physical-unestablished, and
+outside-numeric branches retain their closed null-grammar behavior after
+their declarations have passed §20.3.1. The value-code registry may neither
+compile a separate decimal/sign parser nor choose a declaration source.
+
+#### 20.4.2 Q5 field joins and acceptance walk
+
+The separately first-added questionnaire closure `Q5` remains
+`psid_questionnaire_slot_closure_evidence.v1`, and its top-level,
+source-manifest, era, occurrence-reference, positive-join, hierarchy, and
+absence-proof shapes remain exact. Its `source_document_manifest` must,
+however, embed the complete passing Amendment-6 successor
+`field_source_derivation`. Consequently Q5 must be first added strictly
+after the future D6 ratification commit under §20.6. A pre-D6 Q5, a Q5 that
+copies a §19 grammar relation, or a Q5 constructed from these draft bytes is
+not admissible.
+
+Each `positive_field_join_rows[*].raw_field_projections` member retains the
+exact 18 keys listed in §19.3.3. Its two numeric-grammar members exact-copy
+the successor derivation ID and terminal-LF complete-16-key-row SHA-256.
+The remaining dictionary, codebook, entry, raw-data, framing, coordinate,
+count, keyset, and domain members retain their exact independent
+construction. Thus the raw-field projection's complete row-domain digest,
+its enclosing join ID and domain digest, every era digest, and Q5's
+self-zeroed content digest are recomputed from successor bytes. The
+16-key-row hash is complete: the declaration assertion dispositions,
+nonmissing count, and all new form/arm results enter through the resolved row
+and are not added as nineteenth projection keys.
+
+The Q5 acceptance walk for each positive is exact:
+
+1. authenticate both upstream roots and all 257 source documents; rebuild
+   the complete v3 field-source relation, including every unconsumed field;
+   reproduce its all-field totality census, require every denominator key to
+   map exactly once and no key to remain unmapped, and require every row to
+   take one of the seven passing terminals before Q5 is read;
+2. locate the unique same-wave/raw-field successor row and require one of
+   the seven lawful statuses in §20.3.5;
+3. deep-compare its complete source-row arrays, coordinates, declaration
+   assertions/dispositions after independently applying the disagreement
+   gate and rebuilding every remaining later row directly against the first-
+   supported selector, token census, complete deferred-literal candidate
+   relation, pre-profile registrations and provisional count, applicable
+   post-selection promotions, final collision results, final registered
+   literal relations, rebuilt nonmissing count, profile, padding rule, and
+   replay; when the profile is nonnull, also compare form, arm/disposition,
+   both range relations, the complete-domain arm disposition, any complete-
+   domain candidate relations, and the post-subtraction DFA; when it is the
+   zero-count retained range branch, require those profile-dependent values
+   absent and the grammar null, then compare every registered literal and
+   every still-deferred multiple-image zero-hit ordinary literal's source-
+   visible null rendering before projecting its ID and full-row hash;
+4. independently rebuild the complete 18-key raw-field projection, the
+   nine remaining join members, join ID, and all row/keyset/domain digests;
+   and
+5. exact-compare the complete asked/join/present reverse cover and the
+   official inventory layout, including every zero-count still-deferred
+   literal's four-key unobserved-abort row and every registered literal-first
+   mapping. Any missing, extra, reordered, predecessor, or digest-only-equal
+   nested value fails Q5 and G17-C01.
+
+The historical §19.3.3 D5-before-Q5 comparison remains true as history.
+Amendment 6 adds the stronger live D6-before-Q5 comparison; the two are not
+alternatives and neither permits an already-existing artifact to be
+promoted.
+
+#### 20.4.3 G17-C01, G17-C06, G17-C07, and v3-row closure
+
+`g17_fitting_free_inventory_crosswalk_evidence.v1` retains exactly 18
+physical rows, G17-C01 through G17-C18, in their existing order. There is
+no G17-C19. Only these already-bound comparands are prospectively completed:
+
+- **G17-C01 fifth value.** The exact six-key
+  `numeric_grammar_source_derivation` object retains
+  `implementation_identity`, `raw_field_census_rows`,
+  `numeric_grammar_derivation_rows`, its row count, keyset SHA-256, and
+  domain SHA-256. Expected bytes execute the identity-selected v3 compiler
+  under §§20.3–20.4 over the complete source denominator before an inventory
+  comparand is read. Actual bytes come from the authenticated Q5 manifest.
+  Expected construction applies the prior disagreement gate and mutually
+  exclusive selector-relative law to every assertion; the actual ten-key
+  arrays must deep-equal those rows,
+  including every selector pointer and exact disposition. Expected and actual
+  construction also deep-compare the complete deferred-literal candidate
+  relation, pre-profile producer results and provisional count, post-selection
+  producer results, final collision outcomes, final registered literal
+  relations, and rebuilt final count.
+  The complete relation includes every ten-key declaration projection,
+  nonmissing count, profile/null-profile branch, padding rule, replay,
+  failure branch, the zero-count branch's registered literal mappings and
+  still-deferred multiple-image zero-hit ordinary null renderings, and, when present, form,
+  arm/disposition, complete
+  renderable/unrenderable range relation, complete-domain arm disposition,
+  complete-domain candidate relation, and DFA. It also includes all eleven
+  regression vectors through the implementation-identity
+  acceptance requirement. Used rows then reverse-project through the sixth
+  C01 value, the complete positional inventory layout/token-grammar rows;
+  unused rows remain in the fifth value. Both complete values deep-equal.
+- **G17-C01 fourth and sixth values.** The fourth value's complete
+  positive-field joins retain every 18-key raw-field projection and its
+  fresh derivation ID and complete-row hash. The sixth preserves every exact-
+  empty structural branch. For a present row it retains only each official
+  17-key layout object's fixed same-shaped source/coordinate/entry members,
+  derivation references, and 18-key `raw_token_grammar`, together with the
+  corresponding object in the parallel positional nine-key
+  `typed_parse_specs` array; it adds no direct compiler-profile,
+  arm/disposition, candidate-relation, range-partition, or DFA sibling key to
+  the layout. On both expected and actual sides, each derivation ID/full-row
+  hash resolves the unique same-wave/raw-field 16-key successor row, which is then
+  independently reconstructed and compared in full. That resolved row carries
+  the profile, explicit no-arm disposition, candidate and range relations,
+  and DFA. Only its named padding, grammar, observed, and unobserved
+  projections enter the fixed layout through the existing raw-token member;
+  the full DFA and exact `no_op`, `set_negative`, and
+  `consume_decimal_point` transitions remain nested inside
+  `raw_token_grammar.registered_numeric_grammar`. A zero-count reference
+  instead resolves the null-profile/null-grammar row with profile-dependent
+  relations absent, while the existing same-shaped raw-token member retains
+  every pre-profile registered literal and every still-deferred multiple-
+  image zero-hit ordinary-literal and range unobserved row. A fourth- or sixth-value pair
+  that agrees only on width, scalar, grammar ID, or reference hash without
+  this resolution and complete-row comparison fails.
+- **G17-C06.** Before direct-law classification, the expected and actual
+  sides independently resolve the unique successor row and compare its
+  complete declaration disposition relation, including every later row's
+  direct comparison and pointer to the first reconstruction-agreed supported
+  selector, census,
+  provisional nonmissing count, complete deferred candidate and pre-profile
+  registration relations, every post-selection promotion, final three-way
+  collision result, rebuilt final nonmissing count, padding operation, and
+  raw-to-value-to-raw replay. For a nonnull profile
+  they also compare token-form selection, arm or no-arm disposition, both
+  range relations, the complete-domain arm disposition, any complete-domain
+  candidate relations, transition rows, and value derivation. For the
+  zero-count retained branch they instead
+  compare null profile/grammar, absence of profile-dependent relations, exact
+  registered-literal replay, and every still-deferred multiple-image zero-hit
+  ordinary literal's null rendering and closed unobserved abort.
+  Missing/literal precedence and all retained legal/default folds follow only
+  after that pass. Missing-versus-literal and unequal-meaning duplicates
+  conflict, while ordinary literal/DFA overlap exact-compares and terminates
+  literal-first without conflict. A host
+  parse, trimmed token, rounded decimal, unsigned coercion, or predecessor
+  grammar fails C06. For a source-census rejection, both sides must serialize
+  the exact conflict/unsupported/incomplete distinction in §20.3.5 before
+  comparing the complete derivation row and enclosing digest.
+- **G17-C07.** Expected value-code rows are rebuilt from authenticated
+  source bytes through the same successor compiler, with every later
+  reconstruction-agreed declaration compared directly to the first
+  reconstruction-agreed supported selector after the disagreement gate. Actual
+  `source_commitments` and `entries` must respectively deep-equal the
+  independently rebuilt expected five-key commitment object and complete
+  expected array of seven-key entry objects. Each commitment field row's
+  `numeric_grammar_derivation_id` and `numeric_grammar_derivation_sha256`
+  must resolve to the independently reconstructed complete 16-key successor
+  row. Within that
+  resolved row, the declaration-disposition projection, complete deferred
+  candidate and staged registration relations, final collision and count,
+  profile, padding rule, grammar, and replay members must deep-equal their
+  independently rebuilt values, including both numeric-range partition relations, the
+  complete-domain arm disposition, and any complete-domain candidate
+  relations when present. A zero-count physical-
+  unestablished row instead requires the same resolved successor row/count,
+  null profile/grammar, absent profile-dependent candidate/partition
+  relations, and exact registered-literal replay; its independently rebuilt
+  executable seven-key entry array omits every still-deferred multiple-image
+  zero-hit ordinary literal while its normalized source/domain commitment
+  retains them. No five-key commitment or seven-key entry is compared
+  directly with an out-of-schema compiler member. Tuple-equivalent SPSS/codebook
+  declarations remain
+  separately visible; neither is discarded because their semantic tuples
+  agree.
+
+Every affected C01/C06/C07 expected/actual count and hash covers the complete
+successor value. C02–C05, C08–C18 retain their existing purposes and
+payload law; changes to an enclosing G17 content digest arise only from the
+complete ordered 18-row array. All 18 physical rows must still pass.
+
+#### 20.4.4 §19.8 build and tension successor
+
+In §19.8.1 the source-format compiler step is composed with §§20.3–20.4:
+compile all declaration assertions, apply the prior independent-
+reconstruction disagreement gate, and assign each remaining later supported
+row its one mutually exclusive disposition by direct comparison with the
+first reconstruction-agreed supported selector. Next build the complete
+deferred-literal candidate relation and pre-profile registrations, run the
+first collision pass, provisionally classify missing observations, and derive
+the provisional nonmissing count. A zero count retains every registered
+literal and only each still-deferred multiple-image zero-hit ordinary
+literal's null rendering and closed unobserved abort. On an applicable
+positive-nonmissing numeric branch, compile all candidate token forms, select
+the per-field space or no-arm result, execute every applicable literal
+promotion or closed candidate-only/unrenderable disposition, rerun all three
+literal collision checks, and rebuild final missing classification and the
+serialized nonmissing count. Only after that finalization barrier build every
+applicable exhaustive range partition and complete-domain arm disposition,
+exact-token DFA with final missing subtraction, replay, consumer, ID, and
+hash. Require the complete literal-disposition exact cover, the all-field
+totality census with an exact-empty unmapped set, and all mandatory vectors
+before building Q5, the official artifacts, or G17. Every later reference to
+a v3 derivation row means this completed v3 row.
+
+Section 19.8.2 item 4 is prospectively replaced only where it says that
+nonnull declarations must be byte-equal, that every nondiagnostic field is
+unsupported, or that signed and explicit-decimal formats are unsupported.
+Its source-only, complete-census, literal-first, no-host-default,
+unestablished-token-abort, and character-format limits remain controlling.
+The replacement is the closed law in §20.3: source-ordered per-assertion
+dispositions; field-local diagnostic ASCII-space selection; explicit
+width-one, no-padding-capacity, and finite-domain arm-ambiguous no-arm
+dispositions; exact
+maximum-fitting literal decimal; exhaustive partial-range exact replay;
+exact leading-minus placement; exact unsupported status for every observed
+nonmissing/nonliteral closed-language rejection; conflict for a complete
+mixed-form census; complete staged literal registration and final collision
+reconstruction; closed candidate-only dispositions; fail-closed unrenderable
+literals; and incomplete status only for unevaluable authority. This
+amendment establishes representability,
+not that Q5, an official inventory, G17, or a production registration now
+passes.
+
+### 20.5 Exact replacement, preservation, and closure sweep
+
+#### 20.5.1 Exhaustive design-family disposition inventory
+
+The following is the complete human-readable design-family inventory. A row
+may group multiple physical passages or source anchors that share one exact
+disposition; that grouping does not merge their byte ranges or identities.
+Section 20.5.3 instead emits one distinct machine row for every segmented
+physical passage, including every repetition, and no affected prose is
+dismissed as merely explanatory. The lawful but larger alternative was to
+split every grouped family into separate human rows; it is not selected
+because the machine relation already supplies the stricter physical-passage
+enumeration and exact reverse cover.
+
+| Design family / source anchors | Exact Amendment-6 disposition |
+|---|---|
+| §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `composed-with-§20.3.7-complete-totality-census`: the interface literal, entry points, nine-key top-level envelope, source denominator, and dependency order remain exact; the nested numeric derivation row is expressly replaced by the 16-key successor named below, and the successor ten-terminal function must exact-cover every field once with an exact-empty unmapped set before top-level pass. |
+| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; conflict-gate any independent reconstruction disagreement before the numbered arms; select the first reconstruction-agreed supported assertion whenever one exists; compare every remaining later assertion directly and mutually exclusively against that selector for byte/deep equality, then byte-unequal numeric-tuple equality, never against a corroborator; preserve null selector/profile/grammar only for an all-`source_silence` `value_code_domain_no_numeric_grammar` or `value_code_range_physical_rendering_unestablished` row whose independent conditions pass; abort every unsupported, true-conflict, or missing disposition. |
+| §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
+| §19.3.2 seven-key `physical_authentication`, literal insertion, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-staged-literal-constructor-and-thirteen-key-authentication`: before profile construction, exact-cover every missing and ordinary codebook literal with the complete deferred candidate relation, apply strict/singleton/sole-observed registration, run the first collision pass, and derive the provisional count; add complete token-form results and selection, exhaustive range-partition rows/counts/digests, and the nested complete-domain invariant/ambiguous arm disposition when the profile is nonnull; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, finite-complete-domain equality, and finite-domain partial-ambiguity proofs serialize no arm; after the selected-space/common-image/invariant promotions or exact candidate-only disposition, rerun all three collision checks and rebuild final classification, partitions, DFA, consumers, IDs, and hashes; zero nonmissing evidence bypasses the profile/token-form/arm object but not the pre-profile literal constructor. |
+| §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural, complete-domain equality, or finite-domain invariant/ambiguous proof. Amendment-6 rows never select or canonicalize a zero-padding arm. |
+| §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
+| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize the rebuilt final `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; require the complete four-way literal-disposition exact cover and both collision passes; add the explicit all-missing retained branch, structural/equality no-arm, finite-domain arm-ambiguous, and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language or a remaining unrenderable literal without an express candidate-only disposition is unsupported, mixed individually lawful forms or a final registered collision conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
+| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.3.2–§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer after staged literal finalization; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; registered missing-versus-ordinary-literal and unequal-meaning duplicate literals conflict, while registered ordinary nonmissing literal/DFA overlap is lawful and terminates literal-first; partial ranges carry both member relations and the closed unrenderable-member action; a finite-domain arm-ambiguous row registers invariant literal images and retains only unequal finite-arm images as candidate-only null-authority members with closed aborts; an all-missing retained range replays pre-profile registered literals, preserves only still-deferred multiple-image zero-hit ordinary literals as source-semantic with a null rendering and closed unobserved abort, and constructs no profile/partition/DFA; precedence and source semantics remain exact. |
+| §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-eleven-vector-census`: V93 remains mandatory; actual later-era space, width-one, decimal, signed, conflict, precision-edge, complete-domain no-capacity, finite-domain arm ambiguity, all-missing range, and all-missing short-ordinary-literal vectors are added; zero-arm constructors are rejection-only. |
+| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the layout retains its 17 direct keys, the parallel typed-parse object retains nine, and the nested raw-token grammar retains 18. A layout copies only its fixed same-shaped members and derivation references, its parallel positional typed-parse and raw-token projections compare only their named successor members, and resolving the ID/full-row hash independently compares the complete 16-key row after reconstructing deferred candidates, staged registrations, both collision passes, final missing classification/count, and missing subtraction, including registered zero-count literal mappings and only still-deferred multiple-image zero-hit literal null-rendering/unobserved-abort rows. No profile, arm/disposition, candidate, partition, or direct DFA sibling key is added to the layout; a compiled DFA remains inside the existing `raw_token_grammar.registered_numeric_grammar`. Actual five-key commitments and seven-key entries compare only with independently rebuilt like-shaped expected objects, omit only those unexecutable deferred literals, and resolve every commitment field-row derivation reference before nested members are compared. |
+| §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and independently reconstructs the complete staged literal relation and finalization barrier before it compares any projection; Q5 is first-added only after D6. |
+| §19.3.3 positive join `raw_field_projections`, numeric derivation ID/full-row hash, join identity, and Q5 digest | `composed-with-§20.4.2`: the 18-key projection is unchanged in shape and resolves the complete successor 16-key row; all enclosing identities/digests are rebuilt. |
+| §16.6.4 and §19.4.2 G17-C01 | `composed-with-§20.4.3`: the fourth, fifth, and sixth values carry the complete successor joins, compiler relation, layouts, independently reconstructed deferred-literal and final-registration results, and reverse projections; 18-row order remains. |
+| §16.6.4 and §19.4.2 G17-C06 | `composed-with-§20.4.3`: independent direct-law evaluation compares both literal collision passes, final registered relations and count, and replays the complete post-subtraction successor grammar before classification. |
+| §16.6.4 and §19.4.2 G17-C07 | `composed-with-§20.4.3`: independently rebuilt five-key source commitments and seven-key entries compare only to like-shaped actual objects; each commitment's derivation reference resolves the complete 16-key successor row before its nested declaration dispositions, deferred candidates, staged literal registrations, final collisions/count, ranges, grammar, and replay are independently compared. |
+| §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | `lawfully-unchanged-with-reason`: both remain immutable historical D5 results; this amendment supplies the separate successor inventory and sweep below. |
+| §19.5 complete revision-7 comparator census | `lawfully-unchanged-with-reason`: it remains the exact D5 historical table; §20.6 supplies the revision-8 successor census. |
+| §19.6–§19.7 terminal lifecycle, capture, receipt, and selected-registration predicates | `replaced-by-§20.7-revision-8-successors`: D5 remains an immutable predecessor; D6 and all affected successor envelopes receive fresh versioned identities. |
+| §19.8.1 build order and every downstream phrase “v3 derivation row” | `composed-with-§20.4.4`: completed declarations, deferred candidates, pre-profile registrations and provisional count, forms, arms, literal promotions/dispositions, final collision/classification/count rebuild, partitions, DFA/replay, consumers, IDs/hashes, and vectors precede Q5 and all consumers. |
+| §19.8.2 item 4 grammar tension | `replaced-only-as-enumerated-in-§20.4.4`: the named byte-equality/nondiagnostic/signed/explicit-decimal conclusions are displaced; every retained fail-closed source and replay constraint survives. |
+| §§1–19 passages not reached by the deterministic sweep below | `lawfully-unchanged-with-reason`: they neither define nor consume the changed declaration, token-form, padding, decimal/sign, DFA, Q5, G17, comparator, or lifecycle identities; silence preserves them. |
+
+#### 20.5.2 Exact G17 and schema-consumer disposition
+
+The design-family inventory above is exhaustive at design level, but it does
+not replace machine enumeration. For each matched passage, the coordinator records all
+direct consumers and every transitive consumer through these closed edge
+classes: schema-member inclusion; ordered ID-preimage inclusion;
+declaration-selector resolution and selector-relative disposition
+reconstruction;
+deferred-literal candidate construction; pre-profile registration and
+collision/classification; post-selection promotion or closed candidate-only/
+unrenderable disposition; final collision, classification, count, and
+partition reconstruction; count/keyset/domain/content digest inclusion;
+source projection and reverse projection; foreign-key resolution; compiler
+invocation; final missing subtraction, DFA construction and replay; Q5 field
+join; inventory layout or value-map consumption; G17
+expected/actual reconstruction; applicability/capture/receipt/lineage
+selection; and ratification ancestry. An affected consumer with no named
+disposition is unresolved and aborts.
+
+G17-C01, C06, and C07 are the only physical G17 row purposes changed by the
+grammar completion. The complete G17 ordered-row array and every enclosing
+content or receipt identity are transitive consumers. This rule does not
+invent G17-C19, alter an unaffected row's payload, or allow the changed rows
+to pass when any other one of the 18 rows fails.
+
+#### 20.5.3 Amendment-6 closure-sweep scope and silence discipline
+
+Before §20.8 acceptance, the coordinator constructs
+`amendment_6_numeric_grammar_completion_closure_sweep.v1`. Its normative
+design corpus is every byte of §§1–20 in the candidate D6 blob except
+exactly the complete historical/self-referential comparator-table intervals
+excluded by §§17.3, 18.5, and 19.5 and the §20.6 comparator-table interval.
+Each excluded interval begins at its table header's first byte and ends at
+the first byte of the next heading expressly named by that subsection,
+including the table's own invariant prose where the subsection says so.
+No surrounding prose, replacement ledger, code fence, repeated occurrence,
+or inconvenient match is excluded. Review transcripts, audit ledgers,
+draft commits, and unstaged files are outside the normative corpus.
+
+The sweep uses exactly the 11-key schema, line-based passage segmentation,
+byte-range law, canonical ordering, edge-row schema, exact three-disposition
+domain, hash rules, and empty-unresolved acceptance rule of §19.4.3. Its
+`schema_version` is
+`amendment_6_numeric_grammar_completion_closure_sweep.v1`. For this sweep,
+each `matched_passages[*].passage_id` is literal `amendment-6-passage:`
+followed by SHA-256 of the §10.1 terminal-LF canonical JSON bytes of exactly
+the three-position value array `[start_byte,end_byte,matched_terms]`. This
+replaces only §19.4.3's `amendment-5-passage:` literal prefix; the inherited
+preimage, member meanings, and row order remain exact. The sweep independently
+computes every corpus interval, matched half-open byte range, passage ID,
+consumer edge, row count, ordered keyset where required, and complete
+terminal-LF domain SHA-256 from accepted D6 bytes. No digest from the §19
+sweep is copied, and this draft supplies no anticipated D6 byte offset or
+hash.
+
+The exact 40-member initial literal search-term array, in this order, is:
+
+```text
+dictionary_codebook_fixed_width_source_derivation_v3
+source_format_projection
+source_format_text
+source_format_assertion_id
+declaration_disposition
+selecting_source_format_assertion_id
+source_value_lexeme
+declared_signed
+normalized_format_profile
+source_missing_literals
+normalized_codebook_entries
+dictionary_missing_literal_entries
+observed_token_rows
+nonmissing_observation_count
+unsupported_source_numeric_format
+physical_authentication
+token_form_candidate_results
+selected_token_form
+candidate_arm_results
+complete_domain_member_results
+selected_arm
+range_renderability_partition_rows
+padding_rule
+registered_numeric_grammar
+set_negative
+consume_decimal_point
+no_op
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+raw_token_grammar
+field_source_derivation
+positive_field_join_rows
+raw_field_projections
+G17-C01
+G17-C06
+G17-C07
+fitting_free_requirement_verification_specs
+fitting_free_model_input_authority_capture_registration
+covered_earnings_path_applicability_registry_bundle
+```
+
+Search is exact and case-sensitive over passage bytes, then closes
+transitively over the edge classes in §20.5.2. The search array is a seed,
+not a ceiling: every transitively reached passage receives its own row even
+when it contains no seed literal. A bare search for the English word
+“signed” is intentionally not used because unrelated signatures and signed
+legal instruments would create false candidates; all numeric-sign consumers
+are reached from the exact schema/action seeds. Conversely, a zero literal
+is not a license to omit a reached zero-arm passage.
+
+Each matched row's disposition is exactly
+`replaced-by-named-successor`, `composed-with-named-successor`, or
+`lawfully-unchanged-with-reason`, with a nonempty exact successor/reason that
+maps to §20.5.1 or the lifecycle inventory below. Repeated text at distinct
+byte ranges yields distinct rows. Acceptance requires `status: pass`, an
+exact-empty `unresolved_passage_ids`, complete reverse cover of every
+consumer edge, and exact agreement with an independent second sweep. A
+missing, extra, merged, differently segmented, silently preserved, or
+candidate-excluded passage aborts. Only after this result passes does
+silence preserve the genuinely unmatched and unreachable law of §§1–19.
+
+### 20.6 Complete revision-8 design-comparator disposition
+
+Sections 17.3, 18.5, and 19.5 remain immutable historical comparator
+censuses. Appending §20 makes the three revision-7 terminal predicates
+nonterminal, introduces the exact D5-prefix comparison in §20.1, and adds
+the live D6-to-Q5 first-add/consumer ancestry comparison required by
+§20.4.2. All five receive explicit revision-8 dispositions below.
+
+The revision-8 census corpus is every normative byte of the complete design
+accepted at §20.8.4 step 2 and committed at step 3, including §§1–20, except
+exactly four historical/self-referential ASCII table intervals: (a) §17.3's
+table from its header through the byte immediately before `### 17.4 `;
+(b) §18.5's table through the byte immediately before `### 18.6 `;
+(c) §19.5's table through the byte immediately before `### 19.6 `; and
+(d) this subsection's table from the header immediately following the
+D6/Q5 paragraph below through the byte immediately before `### 20.7 `.
+The design-comparator definition, mixed-preimage rule, complete-paragraph
+inspection, and consumer walk are exactly §17.3's. Mechanical searches add
+revision 8, Amendment 6, `D5`, `D6`, `Q5`, `prefix`, and every exact
+successor identifier in §20.7.4.
+
+Grammar rows, declaration assertions, token rows, DFAs, replay rows,
+regression vectors, audit identities, Q5 annotations, inventory rows, and
+the §20.5 passage sweep do not compare or carry the four-key design identity
+and therefore do not independently enter this census. Their enclosing Q5,
+G17, domain, bundle, receipt, and cutoff consumers enter through the named
+design predicates. The new D6/Q5 comparator is in scope because it orders a
+design ratification commit against the unique artifact first-add commit.
+
+For that comparator, let `Q5` be the independently discovered unique
+single-parent commit first adding only
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json` at that
+path. The coordinator reconstructs D6 from its four-key identity and raw Git
+blob before reading the artifact, requires
+`D6.ratification_commit < Q5` by strict Git ancestry, requires Q5's parent
+to contain no entry at that path and its tree delta to add exactly that one
+regular `100644` blob, and reconstructs the complete eight-key
+`slot_closure_evidence_identity`. Q5 must then be a strict ancestor of both
+official slot/inventory first-add commits and every cutoff that admits their
+bytes through G17-C01. D5/Q5 history remains true by the independently
+verified D5-prefix/D5<D6 chain; it is not used as a substitute for D6<Q5.
+
+| ID | Exact comparator or consumer anchor | Normative revision-8 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration `design` shape and exact-byte digest law | `lawfully-unchanged-with-reason`: the generic four-key shape remains; the ceremony-specific rows below govern retained configuration designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and `HEAD` | `lawfully-unchanged-with-reason`: it remains exact for an ordinary current-design registration; DC-06, DC-10, DC-15, DC-18, and DC-38 close every retained-design case. |
+| DC-03 | §10.4 prelaunch check 1's consumption of the active §10.1 design/repository proof | `lawfully-unchanged-with-reason`: it dispatches to the applicable §20 named proof and cannot restore a displaced D1/D2/D3/D4/D5-to-`HEAD` equality. |
+| DC-04 | §12 context configuration's import of §10.1 committed-design proof | `lawfully-unchanged-with-reason`: an Amendment-6 context registration carries D6 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration's exact four-key Amendment-1 design child D1 | `lawfully-unchanged-with-reason`: configuration preservation retains D1; live revision-8 authority is supplied by DC-36/DC-38. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals `HEAD` proof | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1`. |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | `lawfully-unchanged-with-reason`: these fields authenticate calibrated D1 methodology/configuration, while D6 is separately bound by DC-36–DC-38. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | `replaced-by-named-successor`: `verify_amendment_6_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v5`, `fitting_free_registration_domain_identity.v5`, and `covered_earnings_path_applicability_registry_bundle.v6`. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | `replaced-by-named-successor`: `covered_earnings_path_applicability_receipt_core.v5` plus `verify_amendment_6_selected_registration_design_lineage_v1`. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against `HEAD` | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1`. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration's exact D2 design child | `lawfully-unchanged-with-reason`: the configuration remains D2; position 1, capture, and receipt proofs separately bind D3, D4, D5, and D6. |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to the configuration design | `lawfully-unchanged-with-reason`: provenance continues to record D2, while the receipt records D2 through D6. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | `replaced-by-named-successor`: the D2 check remains (`K_f^d=D_2`), joined to `verify_amendment_6_fitting_free_design_identity_v1` and `verify_amendment_6_capture_registration_repository_identity_v1`. |
+| DC-14 | §16.10 capture authorization's exact D2 `design` child | `lawfully-unchanged-with-reason`: the child deliberately remains D2; sibling D3/D4/D5/D6 children and DC-37 provide live authority. |
+| DC-15 | §16.10 capture authorization's imported/restated pre-descriptor D2-to-`HEAD` repository equality | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1`. |
+| DC-16 | §16.10 capture primary's `design` equality to the capture registration | `lawfully-unchanged-with-reason`: both remain D2, while complete registration/claim hashes bind D3 through D6 and DC-37. |
+| DC-17 | §16.10 capture sidecar's `design` equality to the primary | `lawfully-unchanged-with-reason`: both remain D2 and the same hash chain binds D3 through D6 and DC-37. |
+| DC-18 | §16.10 selected fitting-free correction configuration's D2-to-`HEAD` proof | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1`, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | `replaced-by-named-successor`: Amendment-6 dispatch to `covered_earnings_path_applicability_receipt_core.v5` and `covered_earnings_path_applicability_receipt.v5`. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | `replaced-by-named-successor`: exact historical-v1, Amendment-3-v2, Amendment-4-v3, Amendment-5-v4, or Amendment-6-v5 receipt dispatch and validation below. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_fitting_free_design_identity_v1`. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-`HEAD` predicate and its complete transitive capture consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5/D6 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/`HEAD` byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1`. |
+| DC-24 | §18.1 D3 four-key identity, exact 1,310,838-byte raw design, and immutable revision-6 prefix comparison | `lawfully-unchanged-with-reason`: D3 remains the exact immutable prefix of D4; the D4/D5/D6 prefix chain and every live proof reconstruct it. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v5`, `fitting_free_registration_domain_identity.v5`, and `covered_earnings_path_applicability_registry_bundle.v6`. |
+| DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5/D6 consumer chain. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1` and Amendment-6 v5 receipt/history dispatch. |
+| DC-28 | §19.1 D4 four-key identity, exact 1,376,610-byte raw design, and immutable revision-7 prefix comparison | `lawfully-unchanged-with-reason`: D4 remains the exact immutable prefix of D5, and the retained D4/D5 plus new D5/D6 comparisons form an independently checked raw-byte chain. |
+| DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: the terminal legal-authority comparator remains inside `verify_historical_coverage_rules_identity_v2`; its complete source/domain/partition/result consumers are unchanged and enter the freshly rebuilt v6 bundle and v5 receipt chain. |
+| DC-30 | §19.3.3 D5 ratification-commit ordering against the single-parent Q5 questionnaire-closure first-add commit, then Q5 ordering before both slot/inventory first-add commits and every admitting authority cutoff through the G17-C01 consumer | `lawfully-unchanged-with-reason`: the D5/Q5 historical comparison remains necessary and is implied only after its own reconstruction; DC-35 additionally proves the stronger live D6/Q5 edge and completed grammar consumer chain. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_fitting_free_design_identity_v1`, the v5 requirement/domain registries, and v6 bundle. |
+| DC-32 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2–D6 consumer chain. |
+| DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1` and Amendment-6 v5 receipt/history dispatch. |
+| DC-34 | §20.1 D5 four-key identity, exact 1,781,491-byte raw design, and immutable revision-8 prefix comparison | `lawfully-unchanged-with-reason`: D5 is the immediate immutable base; every D6 position, capture, and selected-registration proof independently reconstructs D5 and verifies its exact raw prefix of D6. |
+| DC-35 | §§20.4.2 and 20.6 D6 ratification-commit ordering against the single-parent Q5 first-add commit, then Q5 ordering before slot/inventory first-add commits and every admitting cutoff through G17-C01 | `lawfully-unchanged-with-reason`: the independently reconstructed D6/Q5 predicate and complete eight-key artifact identity prove the live source-only artifact and its full completed-grammar consumer chain; failure blocks every Q5 consumer. |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal named successor `verify_amendment_6_fitting_free_design_identity_v1`; all registry/domain/bundle consumers are closed in §20.7. |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2/D3/D4/D5/D6/live-capture-`HEAD` predicate and all transitive capture/receipt consumers | `lawfully-unchanged-with-reason`: terminal receipt-free successor `verify_amendment_6_capture_registration_repository_identity_v1`; every consumer is closed in §20.7. |
+| DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/D6/registration-`HEAD` byte, prefix, and ancestry predicate | `lawfully-unchanged-with-reason`: terminal successor `verify_amendment_6_selected_registration_design_lineage_v1`; its v5 receipt and history dispatch are closed in §§20.7–20.8. |
+
+This is the complete revision-8 comparator census: exactly 38 distinct IDs,
+exactly 18 `replaced-by-named-successor` rows, and exactly 20
+`lawfully-unchanged-with-reason` rows. IDs are consecutive and unique;
+anchors, dispositions, and named successors are nonempty. The validator
+reconstructs the exact D6 census corpus, mechanically repeats all searches,
+compares the full ordered table, walks every direct and transitive consumer,
+and reproduces these counts. An omitted, extra, duplicate, misanchored,
+third-disposition, undefined-successor, or incompletely closed comparator
+blocks ratification. This table is excluded only from its own census as
+specified above and becomes an immutable revision-8 invariant only when D6
+is ratified.
+
+The rebuilt current-byte closure artifact for these exact D6 bytes has
+`3684862` bytes and SHA-256
+`e2efbe865f0da26f1db89ffefc933c0ab9b1d100ff98737fb52d9cfcdbd87201`.
+Its corpus has exactly `5214` passages, `40` seeds, `207` direct hits,
+`3718` edges, and `443` reached passages; its dispositions are `20`
+replaced, `43` composed, and `380` preserved, with `0` unresolved passages.
+
+### 20.7 Revision-8 lifecycle successors and identifier inventory
+
+#### 20.7.1 D6 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. Define `D6` as the
+complete Amendment-6 identity with exactly:
+
+- `path`: `docs/design/covered_earnings_correction.md`;
+- `ratification_commit`: the future 40-lowercase-hex commit created only by
+  §20.8.4 step 3, never an authoring/review commit, branch, predecessor, or
+  placeholder;
+- `blob_sha256`: SHA-256 of the complete revision-8 design bytes at that
+  exact commit; and
+- `revision`: JSON integer `8`, excluding booleans.
+
+The complete known design chain and the one future row are:
+
+| Symbol | Revision | Ratification commit | Raw bytes | Git blob | Complete raw SHA-256 |
+|---|---:|---|---:|---|---|
+| D2 | 4 | `3aeceb392e3fe8a0ae93a7cb82ceeb3f38ab51cb` | 1,252,209 | `0f3eca3e5e45cb9584711b3ed007c60521902863` | `29f0cb134e95b6215dc502d0e25392b5c971fdb93dfad40fd5d221e8a482a1b7` |
+| D3 | 5 | `13f84c99fb898eeaf70a8705bffacdf96e9795f4` | 1,310,838 | `7354dabbef1b768c1fcd34dadaa74f47aa8456a9` | `eb24a36f4baa124f192e99f517982e7e723ca7e899957cd0acf02cf2d7e4a1ed` |
+| D4 | 6 | `b5878893991fe603c693e711bc48aacfb7c6d08f` | 1,376,610 | `b03e31592753cbbee2fddc2360cdd29a4cafe57e` | `6e6995483d8cf144703bc3c6ed9645af5c25b44303685a5c2dac4465587c94d8` |
+| D5 | 7 | `985be84fdeec70ffd20aa1e60dec7d300b7a555b` | 1,781,491 | `8b13a2f37a835790bf5504d82e47e1131adfb4f6` | `8f90dd1aee59e6857418d2a73b617e5cb3991eba3a237a78303586a8c2a9debc` |
+| D6 | 8 | future value fixed only by §20.8.4 step 3 | complete accepted revision-8 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
+
+The prose in the D6 row is not a serialized value. No all-zero value, draft
+digest, suffix digest, D5 digest, working-tree size, anticipated commit, or
+review report may occupy a D6 field. Every predicate independently reads the
+raw Git objects and verifies that D3's complete bytes equal D4's first
+1,310,838 bytes, D4's complete bytes equal D5's first 1,376,610 bytes, and
+D5's complete bytes equal D6's first 1,781,491 bytes. Digest-only or
+transitive-only prefix claims are insufficient.
+
+The position-1 registry successor is
+`fitting_free_requirement_verification_specs.v5`. It is the complete §19.6
+v4 registry in the same 22-row order, changes its outer schema value, and
+replaces exactly three same-position rows: position 1, A1, and A3. The
+`historical_coverage_rules` row retains its exact v2 predicate/result and
+every other row—including V-B6—retains its exact identifier and semantics;
+all 22 are nevertheless re-evaluated. Position 1 is exactly:
+
+```json
+{
+  "requirement_id": "amendment_2_design_identity",
+  "requirement_class": "design",
+  "verification_predicate_id": "verify_amendment_6_fitting_free_design_identity_v1",
+  "expected_preimage_schema_version": "amendment_6_fitting_free_design_identity_expected_preimage.v1",
+  "actual_preimage_schema_version": "amendment_6_fitting_free_design_identity_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:amendment_2_design_identity",
+    "ratified_design:amendment_3_design_identity",
+    "ratified_design:amendment_4_design_identity",
+    "ratified_design:amendment_5_design_identity",
+    "ratified_design:amendment_6_design_identity",
+    "configuration:design",
+    "git_cutoff:docs/design/covered_earnings_correction.md"
+  ],
+  "verification_result_schema_version": "exact_identity_verification_result.v1",
+  "cross_binding": "receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_and_amendment_6_design_identities"
+}
+```
+
+The expected and actual preimages retain §19.6's exact top-level keysets,
+projection-row schema, canonical value-digest law, order, count, and domain
+hash equations, change only to the displayed Amendment-6 schema names, and
+contain exactly seven projection rows. Let `K_f^d` be the staged fitting-free
+configuration design, `C_A` the selected final calibrated authority cutoff,
+`G2` through `G6` the raw blobs at D2 through D6, and `G_C_A` the same-path
+raw bytes at `C_A`. Expected projection values are exactly
+`[D2,D3,D4,D5,D6,D2,G6]`; actual values are independently reconstructed
+`[D2,D3,D4,D5,D6,K_f^d,G_C_A]`. The first six rows use value type
+`canonical_json`; the seventh uses `raw_git_bytes`.
+
+`verify_amendment_6_fitting_free_design_identity_v1` is true if and only if
+every shape, type, count, order, value digest, and domain hash passes and:
+
+1. both reconstructions of D2 through D6 deep-equal and every complete
+   ratification blob hashes to its identity;
+2. `K_f^d = D2`, without requiring D2 bytes to equal final-cutoff bytes;
+3. the exact D3/D4, D4/D5, and D5/D6 raw-prefix comparisons above pass;
+4. `G_C_A = G6` byte-for-byte and hashes to `D6.blob_sha256`; and
+5. `D2.ratification_commit < D3.ratification_commit <
+   D4.ratification_commit < D5.ratification_commit <
+   D6.ratification_commit <= C_A` under strict Git ancestry for `<` and
+   ancestor-or-equal for `<=`.
+
+An unfavorable value serializes the retained exact-identity false result and
+`predicate_mismatch`; it never selects a predecessor registry or receipt.
+The receipt cross-binding is a later consumer and not a position-1 operand.
+
+#### 20.7.2 Capture, A1/A3, domain, and bundle successors
+
+Every capture authorization first added after D6 uses
+`fitting_free_model_input_authority_capture_registration.v5`. It is the
+complete §19.6 v4 authorization in the same order, changes only its schema
+value, and inserts `amendment_6_design_identity` immediately after
+`amendment_5_design_identity`. It has exactly 17 keys. Its retained `design`
+child is D2 and its amendment children are D3, D4, D5, and D6. Every other
+preliminary-adjudication, invocation, capability, input, path, and failure
+law remains unchanged. Its complete canonical digest is the post-D6
+`capture_registration_sha256`; v1 through v4 remain selectable only for
+their exact historical revision cases.
+
+Let `A` be the unique single-parent commit first adding that v5
+authorization and freeze live capture `HEAD` as `H_cap` before any
+environment, claim, broker, or source descriptor opens. The coordinator
+first constructs `amendment_6_capture_registration_repository_proof.v1`
+with exactly these 15 keys in order:
+
+1. `schema_version`;
+2. `capture_registration_sha256`;
+3. `amendment_2_design_identity`;
+4. `amendment_3_design_identity`;
+5. `amendment_4_design_identity`;
+6. `amendment_5_design_identity`;
+7. `amendment_6_design_identity`;
+8. `authorization_commit`;
+9. `capture_head`;
+10. `ordered_design_blob_rows`;
+11. `design_blob_row_count`;
+12. `design_blob_domain_sha256`;
+13. `canonicalization`;
+14. `status`; and
+15. `failure_disposition`.
+
+The five identities are D2–D6 and the commit fields are `[A,H_cap]`. Exact
+blob roles are `amendment_2_ratification`,
+`amendment_3_ratification`, `amendment_4_ratification`,
+`amendment_5_ratification`, `amendment_6_ratification`, and `capture_head`.
+Each row retains §19.6's six-key shape and independently identifies and
+serializes the raw Git object at its named commit. Count is integer six and
+the domain digest hashes the complete ordered six-row array.
+Canonicalization, status domain, and failure disposition remain exact.
+
+`verify_amendment_6_capture_registration_repository_identity_v1` is true if
+and only if every proof equation passes and:
+
+1. the strict-parsed v5 authorization has its independently reconstructed
+   digest and exact D2–D6 children;
+2. all five ratification blobs hash correctly, all three raw-prefix
+   comparisons pass, and same-path raw design bytes at `H_cap` equal D6;
+3. `D2 < D3 < D4 < D5 < D6 < A <= H_cap` under raw Git ancestry;
+4. authorization bytes are unchanged from A through `H_cap`, and all six
+   blob rows exact-match observed commits, modes, OIDs, and raw bytes;
+   and
+5. every retained descriptor-free repository, tracked-state,
+   clean-checkout, design/implementation-tree, and authorization-byte
+   conjunct passes at `H_cap`.
+
+The proof freezes before any descriptor opens, contains no receipt or future
+commit, and passes or aborts without fallback. `HEAD` remains exactly
+`H_cap` through durable claim reread.
+
+`fitting_free_model_input_authority_capture_claim.v5` has the complete
+eight-key v4 claim shape/order, changes only `schema_version`, and requires
+`capture_repository_proof` to deep-equal the complete Amendment-6 proof.
+The unchanged-schema primary
+`fitting_free_model_input_authority_capture.v1` and sidecar
+`fitting_free_model_input_authority_capture_environment.v1` retain their D2
+design children; the complete registration and claim digests transitively
+bind D3 through D6 and `H_cap`.
+
+`fitting_free_model_input_authority_capture_input.v5` retains the complete
+v4 envelope keyset/order, changes only its schema value, requires claim v5,
+and applies every path, vintage, canonical-Git-blob, digest, and
+cross-artifact equation to the v5 registration/claim and unchanged primary
+and sidecar. A successful triple commit `T` has sole parent `H_cap` and adds
+only the complete v5 claim and unchanged-schema primary/sidecar. Exact order
+is `A <= H_cap < T < C`, where `C` is the clean final authority cutoff.
+Every terminal-history, accepted-triple, mode/OID/raw-byte, and
+no-delete/no-readd law selects v5 for a post-D6 case.
+
+The calibrated A1/A3 manifest shapes and their inner authority identities
+remain unchanged. For a post-D6 candidate,
+`accepted_capture_primary_by_final_cutoff` additionally requires the
+complete v5 envelope/proof and exact D2–D6 identities. Their retained
+`design_identity_sha256` remains D1 methodology provenance; D6 is lifecycle
+provenance and never overwrites it.
+
+Within `fitting_free_requirement_verification_specs.v5`, the exact A1 row
+is:
+
+```json
+{
+  "requirement_id": "A1",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_6_fitting_free_a1_model_universe_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.rows/0",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a1_authority_identity",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary:a1_authority_identity_and_amendment_6_capture_repository_proof"
+}
+```
+
+Its exact A3 row is:
+
+```json
+{
+  "requirement_id": "A3",
+  "requirement_class": "registration_authority",
+  "verification_predicate_id": "verify_amendment_6_fitting_free_a3_weight_source_authority_v1",
+  "expected_preimage_schema_version": "authority_predicate_expected_preimage.v1",
+  "actual_preimage_schema_version": "authority_predicate_actual_preimage.v1",
+  "ordered_source_projections": [
+    "ratified_design:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.rows/2",
+    "configuration:fitting_free_model_input_authority_results.authority_capture_input",
+    "capture_primary:a3_authority_identity",
+    "capture_sidecar:input_descriptor_identities",
+    "capture_primary:capture_claim_sha256",
+    "capture_claim:capture_repository_proof"
+  ],
+  "verification_result_schema_version": "authority_predicate_verification_result.v1",
+  "cross_binding": "capture_primary_and_sidecar:a3_source_keyset_and_amendment_6_capture_repository_proof"
+}
+```
+
+Their complete projection, preimage, count, digest, evidence, and result
+laws remain §19.6's with v5 capture input/claim/proof selected and D6 added
+to the proof conjunction. The claim remains lifecycle nonauthority and
+enters neither inner A1/A3 authority identity, inner evidence digest, nor a
+substantive model value.
+
+The domain successor is `fitting_free_registration_domain_identity.v5`.
+It retains the complete v4 keyset/order, changes its schema value, selects
+the complete v5 requirement registry, and freshly reconstructs all 22 rows,
+projection evidence, Booleans, failure IDs, counts, and hashes. Position 1,
+A1, and A3 use only their Amendment-6 successors; the legal row retains its
+typed v2 result; all other requirement rows retain their identities and are
+re-evaluated rather than copied.
+
+The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v6`. It retains the
+complete v5 keyset/key order, changes its schema value, and embeds the
+complete v5 requirement registry. Every source-derived child affected by
+§§20.3–20.5 is freshly reconstructed from the accepted post-D6 Q5,
+inventory, value maps, and legal source authorities—never from a G17 result.
+The legal children retain their exact v2/v3/v4 schema chain. The v5 domain
+and completed C01/C06/C07/G17 comparands are separate downstream
+receipt/configuration comparisons and are not bundle children or bundle
+construction inputs. G17 pass may gate later acceptance but cannot supply an
+expected bundle value. Every unchanged child keeps its schema and semantic
+value only after fresh reconstruction. The complete v6 bundle digest hashes
+this one object and becomes `path_applicability_specs_sha256`; no v5 bundle,
+pre-Amendment-6 grammar, draft-Q5, G17 payload, configuration, or prose digest
+is copied. Every revision-8 cutoff, domain, applicability result, receipt,
+and validator selects v5 registry/domain and the v6 bundle without fallback.
+
+#### 20.7.3 Receipt and selected-registration lineage
+
+The common binding successor is
+`covered_earnings_path_applicability_receipt_core.v5`. It is the complete
+§19.7 v4 core in the same order, changes its schema value, and inserts
+`amendment_6_design_identity` immediately after
+`amendment_5_design_identity`. It has exactly 20 keys. Its five amendment
+children are exact D2, D3, D4, D5, and D6; its fitting-free domain is
+complete v5; its applicability-spec digest hashes the complete v6 bundle;
+and its applicability result carries the v5 domain digest. Every other
+member, including the pre-reference configuration and namespace cut edge,
+remains unchanged. `receipt_core_sha256` hashes the complete v5 core.
+
+When accepted capture supplies A1/A3, receipt-core validation requires:
+
+- D2 to deep-equal the v5 capture registration's `design`, the proof's D2,
+  and both captured artifact design children;
+- D3, D4, D5, and D6 to deep-equal their same-named registration and proof
+  children and reproduce their complete raw blobs and prefix chain;
+- the calibrated adjudication and fitting-free domain to bind the same v5
+  claim digest, capture input, proof, primary, sidecar, triple, and cutoff;
+  and
+- exact lineage `D2 < D3 < D4 < D5 < D6 < A <= H_cap < T < C <= HEAD`.
+
+The outer successor is
+`covered_earnings_path_applicability_receipt.v5`. It retains the complete
+v4 outer keyset/order and every receipt-ID, suffix, namespace, construction,
+status, Git-delta, and failure law, changes only its schema value, and
+requires the complete v5 core. Terminal-history dispatch is exact:
+pre-Amendment-3 registrations retain historical v1; Amendment-3 requires
+v2; Amendment-4 requires v3; Amendment-5 requires v4; and an Amendment-6
+registration requires exactly one v5 receipt carrying D6. No receipt version
+may bind another revision.
+
+The calibrated and fitting-free configurations remain unchanged with D1 and
+D2 design children. For an Amendment-6 fresh registration,
+`verify_amendment_6_selected_registration_design_lineage_v1`
+prospectively replaces the §19.7 predicate for both branches. It is true if
+and only if:
+
+1. the selected configuration design exact-matches its D1 or D2
+   ratification blob and digest;
+2. the receipt core's D2 child exact-matches the revision-4 identity and raw
+   bytes;
+3. its D3 child exact-matches the revision-5 identity and raw bytes;
+4. its D4 child exact-matches the revision-6 identity and raw bytes;
+5. its D5 child exact-matches the pinned revision-7 identity and raw bytes;
+6. its D6 child exact-matches the revision-8 ratification commit, complete
+   blob, digest, and same-path raw bytes at registration `HEAD`, while all
+   three D3/D4, D4/D5, and D5/D6 prefix comparisons pass;
+7. D1 is a strict ancestor of D2, D2 of D3, D3 of D4, D4 of D5, D5 of D6,
+   and D6 is ancestor-or-equal to registration `HEAD`; and
+8. every retained repository, implementation-tree, configuration,
+   invocation, input, output, history, authority, and validation law passes.
+
+False fails v5 receipt validation without fallback. For an Amendment-6
+fresh fitting-free selection, §16.9 consequence 2's authority phrase becomes
+“authorized under revision-8 authority while retaining the revision-4
+fitting-free configuration design child.” Section 16.5.5's configuration
+check remains only `K_f^d = D2`, joined to the earlier D6 position-1 proof
+and later v5 receipt proof.
+
+#### 20.7.4 Complete successor identifier inventory
+
+The complete lifecycle successor set introduced in §§20.6–20.7 has exactly
+these 16 object, schema, or predicate identifiers:
+
+1. `amendment_6_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_6_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_6_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v5`;
+5. `verify_amendment_6_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_6_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v5`;
+8. `covered_earnings_path_applicability_registry_bundle.v6`;
+9. `fitting_free_model_input_authority_capture_registration.v5`;
+10. `amendment_6_capture_registration_repository_proof.v1`;
+11. `verify_amendment_6_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v5`;
+13. `fitting_free_model_input_authority_capture_input.v5`;
+14. `covered_earnings_path_applicability_receipt_core.v5`;
+15. `covered_earnings_path_applicability_receipt.v5`; and
+16. `verify_amendment_6_selected_registration_design_lineage_v1`.
+
+The complete nonlifecycle schema set newly introduced by Amendment 6 has
+exactly one identifier:
+
+1. `amendment_6_numeric_grammar_completion_closure_sweep.v1`.
+
+The concatenation is the exact 17-name Amendment-6 successor identifier
+inventory. The lists are disjoint, ordered as displayed, and contain no
+alias. An omitted, extra, duplicate, misspelled, undefined, or
+candidate-selectable identifier blocks ratification.
+
+The v3 source-only interface and all official v1 artifact/registry names are
+completed in place and therefore are not new identifiers. In particular,
+`psid-source-format-assertion:` and the retained numeric-grammar prefixes are
+ID prefixes; `source_format_assertion_id`, disposition members, token-form
+members, padding members, complete-domain candidate and arm-disposition
+members, range-partition members, and DFA actions are schema members;
+`padding_arm_underdetermined_width_one_exact_replay_v1`,
+`padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`,
+`padding_arm_underdetermined_finite_domain_arm_ambiguous_exact_replay_v1`,
+`validate_exact_left_ascii_space_padding_preserve_payload`, the token-form
+and status strings—including
+`compiled_source_numeric_grammar_partial_range_exact_replay` and
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`—and the
+`A6-R01` through `A6-R11` values are closed enum
+or row-ID values. None is a separately selectable object, schema, or
+predicate identifier. `D6`, `Q5`, authorization commit `A`, `H_cap`, `T`,
+and `C` are symbolic Git commits; the `F`/`N`/`H`/`X` projections and the
+`S`/`A`/`F` arithmetic accumulators in §20.3 are context-bound
+metavariables. Comparator IDs DC-01 through DC-38 are fixed table-row
+keys, not schemas. These distinctions create no mutable alias or runtime
+version branch.
+
+### 20.8 Post-Amendment-6 build order, walks, alternatives, ratification, and fresh registration
+
+#### 20.8.1 Source-to-compiler build and eleven-vector walk
+
+Ratification of this grammar law is not ratification of a source-derived
+grammar. After D6 exists, the source-only build executes in exactly this
+dependency order before Q5 or an official consumer is read:
+
+1. authenticate the two upstream corpus roots, all four capture inputs, the
+   complete 257-row `U` source-document array, and every staged regular-file
+   byte; independently authenticate the v3 implementation identity and its
+   closed imports;
+2. run dictionary extraction over all 86 dictionary documents, then raw
+   framing and complete all-field census over all 43 raw documents, then
+   context-complete codebook extraction over all 47 codebook documents,
+   including the complete `deferred_literal_candidate_rows` relation and
+   closed pre-profile registration constructor for every normalized codebook
+   literal in every supported numeric group;
+   exact-cover every source row and reproduce every count/keyset/domain
+   digest before a target field can be selected;
+3. for every wave/field group in the retained denominator order, enumerate
+   the complete ten-key declaration assertion relation, reconstruct every
+   assertion ID and source pointer, conflict-gate any independent-
+   reconstruction disagreement, and apply exactly one of the seven
+   dispositions in §20.3.1. Compare every remaining later supported assertion
+   directly
+   with the unique first reconstruction-agreed supported selector, never with
+   another later row;
+   silence and unsupported rows take their own exact dispositions without
+   becoming comparison anchors. Any unsupported assertion or true conflict
+   records its exact failure and prevents top-level pass; make every first
+   reconstruction-agreed supported assertion select, and allow all selector
+   pointers to remain null only for an all-`source_silence`
+   `value_code_domain_no_numeric_grammar` or
+   `value_code_range_physical_rendering_unestablished` row whose independent
+   conditions pass;
+4. independently replay the complete deferred-literal relation and
+   pre-profile registration constructor in the numeric entry point against
+   the canonical codebook result. Run the first duplicate-missing,
+   missing-versus-ordinary, and unequal-ordinary collision pass; provisionally
+   classify every observation missing-first and derive the internal
+   nonmissing count. When it is zero, construct no token-form or arm candidate,
+   select neither, repeat the collision and missing-classification pass over
+   the unchanged registrations, serialize
+   `nonmissing_observation_count == 0`, replay every registered missing token,
+   and retain only each still-deferred multiple-image zero-hit ordinary
+   literal with unchanged semantics, null rendering, no executable/missing
+   entry, and closed unobserved abort. Route an applicable range to the
+   retained null-profile/null-grammar physical-unestablished branch. Only for
+   a positive provisional count on a branch that otherwise requires or adopts
+   numeric physical authentication evaluate every token-form candidate and
+   its complete `B_o` vectors/counts. Before requiring one passing form,
+   classify a fully evaluated zero-pass census as unsupported when any
+   nonmissing/nonliteral token is outside every closed language, or conflict
+   when individually lawful forms cannot cohere; use incomplete only when
+   authenticated evidence cannot be evaluated. Otherwise require exactly one
+   passing form, coalesce the explicit sign declarations, and evaluate both
+   padding-arm renderers. Promote every common zero/space literal image;
+   promote the selected-space image on a diagnostic space branch; and promote
+   every invariant literal image on a finite no-arm branch. Retain unequal
+   finite images only as candidate-only null-authority members with their
+   closed abort, and fail any remaining unrenderable literal. Rerun all three
+   literal collision checks, missing classification, and the final serialized
+   `nonmissing_observation_count`; require equality with the provisional
+   value. Only then rebuild the two complete final candidate relations and
+   invariant/ambiguous partition and serialize the per-field space arm,
+   structural no-arm disposition, finite-complete-domain equality
+   disposition, or finite-domain arm-ambiguous disposition. Byte replay
+   follows only after the DFA is compiled in step 5. No other field's result
+   enters;
+5. after that final-registration barrier, for each nonnull-profile row,
+   enumerate every member of the
+   complete source-declared semantic domain including every unobserved value,
+   and first construct and validate every applicable exhaustive ordered range
+   partition. Each partition must cover its unchanged source range exactly;
+   each applicable member image, action, failure, and replay value is
+   constructed under the selected arm or exact no-arm disposition. On the
+   finite-domain arm-ambiguous branch, the partition parent's
+   `source_entry_ref` and each
+   member's index/value, authoritative image, and transition actions equal
+   the corresponding fields of the already serialized invariant row; the
+   partition-only precision, scalar, and replay values are independently
+   derived. An ambiguous member instead carries the same parent/index/value,
+   null image, and exact reason `arm_ambiguous_no_authoritative_image`, while
+   its arm-disposition row separately retains both candidates and
+   `abort_before_classification_arm_ambiguous_source_member`. For a compiled
+   status only, after those defining partitions
+   pass, form the
+   source-valid render language under §20.3.4: each applicable range
+   contributes only its renderable or arm-invariant authoritative images,
+   every no-range numeric domain retains its independently derived closed
+   language, and retained literals contribute their established images.
+   Subtract every registered missing image and retain every ordinary-literal
+   overlap for literal-first termination; then compile the exact-token DFA
+   and action rows from that resulting language. Replay every observed
+   numeric token and normalized literal/missing token, replay every
+   unobserved renderable or arm-invariant member, apply the exact closed
+   action to every unrenderable or arm-ambiguous member, and finally apply the
+   unknown-token abort law. Thus a partial-range DFA is necessarily compiled
+   after, and only from, its defining renderable partition. A noncompiled
+   `value_code_domain_no_numeric_grammar` row retains its null grammar/DFA
+   and replays only its established literals literal-first through its
+   independently established profile/padding or retained null-profile branch.
+   Separately, for a zero-count retained range, replay the pre-profile
+   registered literals, compare every still-deferred multiple-image zero-hit
+   ordinary literal's null rendering and closed unobserved-value row, and
+   verify that profile, candidate, partition, and DFA members are absent and
+   every such literal and every range rendering remains unestablished; then
+   compute every grammar ID, derivation ID, full-row digest, relation digest,
+   and implementation result from complete canonical bytes; and
+6. independently reproduce the complete all-field totality relation before
+   the eleven-row vector relation: exact-cover the authenticated denominator,
+   require exactly one of the ten §20.3.7 terminals for every field, compare
+   the complete status counts and disposition digest, and require empty
+   duplicate, outside-denominator, and unmapped sets. Reproduce every member,
+   field list, count, byte length, and digest in the five exhaustive
+   §20.3.6.1 deferred-literal projections, including the unequal finite-arm
+   controls; then reproduce all eleven vectors and their full field/token
+   censuses. The implementation
+   identity is unacceptable if an aggregate count or displayed exemplar
+   happens to match but any complete field assignment, row, census,
+   constructor result, rejection branch, or enclosing digest differs.
+
+The required actual-evidence walk is:
+
+| Vector | Audit ledger | Exact field/wave | Mandatory source-to-replay result |
+|---|---|---|---|
+| A6-R01 | lane A, §20.2.1 | V93 / 1968 | `2031` and the complete 4,802-row census select `left_ascii_space_padding`; zero rejects every one of the 1,069 diagnostics; 100 source renderings minus registered missing-first images `2030` and `3939` produce exactly 98 DFA images; value/rendering replay all bytes. |
+| A6-R02 | lane B, §20.2.1 | V6302 / 1979 | `20202031` and all 6,373 distinct tokens independently select the same space arm in the later era; `30303031` is excluded. |
+| A6-R03 | lane B, §20.2.1 | V15133 / 1988 | all ten one-byte digit tokens force `padding_arm_underdetermined_width_one_exact_replay_v1`; literal `30` replays first and range bytes `31`–`39` traverse/replay through the compiled DFA; neither arm is serialized. |
+| A6-R04 | lane A, §20.2.1 | V210 / 1968 | `NUM(4.2)`/`F4.2` dispositions select literal decimal; missing `0.00` remains missing-first; nonmissing `2.60` maps to exact `13/5` and back; full width forces `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`. |
+| A6-R05 | lane A, §20.2.1 | V76 / 1968 | `202d323432` executes leading `no_op`, `set_negative`, and digit actions, yields -242, and re-renders the same five bytes; if observed, every plus, trailing, internal, overpunched, or leading-zero sign spelling makes the source derivation `unsupported_source_numeric_format` absent an earlier conflict. |
+| A6-R06 | lane B, §20.2.1 | V6363 / 1979 | source-ordered null/SPSS/codebook assertions preserve `F6.2` and `NUM(6.2)`, select one `(6,2)` tuple and one corroborating tuple-equivalent disposition; `2032362e3430` maps to 26.40 and byte-replays under the space/literal form. |
+| A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; both complete cent-step ranges partition 429,270 renderable from 263,430 unrenderable members, `-1040.01` has a null image, and the field passes only as `compiled_source_numeric_grammar_partial_range_exact_replay`. |
+| A6-R08 | lane A, §20.2.1 | V97 / 1968 | the complete 880-member numeric range plus missing literal yields two equal 881-row candidate image/action/failure relations and all 4,802 observations replay; serialize the no-capacity disposition without selecting an arm or authorizing an uncoded value. |
+| A6-R09 | referee R1, blocker 3 | V11811 / 1985 | all 7,032 observations exact-match and replay as registered missing `20302e3030`; serialize zero nonmissing observations and the retained range-physical-unestablished null-profile/null-grammar branch without evaluating or selecting a form or arm. |
+| A6-R10 | referee R2, blocker 1 | V117 / 1968 | both 99-row candidates replay every observation; partition 90 invariant from nine arm-ambiguous semantic members, compile the 88-image physical DFA language from 87 invariant range images plus literal `97`, and give values `1`–`9` null authoritative images and closed per-member aborts without selecting an arm. |
+| A6-R11 | referee R2, blocker 2 | V11812 / 1985 | all 7,032 observations replay as uniquely registered missing `2030`; retain short ordinary literal `1` semantically with null rendering and closed unobserved abort, and construct no form, arm, profile, range partition, or DFA. |
+
+The first six rows supply the original form, sign, declaration, and no-arm
+exemplars; R07 is the mandatory hostile precision/range partition, R08 the
+complete-domain no-capacity proof, R09 the all-missing false-conflict guard,
+R10 the finite-domain partial arm-ambiguity proof, and R11 the all-missing
+short-ordinary-literal retention proof. The lane ledgers and referee identify the census finding,
+while the exact evidence pointers, row hashes, raw-file hashes, token-domain
+hashes, coordinates, counts, and outcomes are the normative relation in
+§20.3.6. Neither ledger summary supplies a row value.
+
+At draft review, independently slicing the authenticated raw files at all
+eleven evidence pointers reproduces the eleven complete token-row digests and
+the vector keyset/domain digests in §20.3.6. That is a reproducibility check,
+not a passing future `field_source_derivation`: the complete source-only
+compiler identity and every all-field result must still be built after D6.
+
+#### 20.8.2 Q5 → inventory → G17 → receipt acceptance walk
+
+After §20.8.1 completes without a top-level failure, the only lawful
+consumer walk is:
+
+1. **D6 and Q5 ancestry.** Reconstruct the complete D6 blob and all raw
+   prefixes, then first-add the independently reviewed one-path Q5 artifact
+   at its unique single-parent commit. DC-30 and DC-35 must both pass; the
+   complete eight-key Q5 identity, not a symbolic commit or content digest,
+   enters every downstream authority.
+2. **Q5 source and joins.** Reauthenticate the complete 257-document
+   denominator and v3 compiler before reading Q5; require its embedded
+   `field_source_derivation` to deep-equal all rows only after independently
+   reproducing the exact-cover totality relation and exact-empty duplicate,
+   outside-denominator, and unmapped sets. Rebuild every positive's
+   18-key raw-field projection with the successor derivation ID/full-row
+   digest, then rebuild all join IDs, era aggregates, hierarchy rows,
+   source-atom annotations, absence proofs, and Q5's self-zeroed digest.
+3. **Slot and inventory.** Derive the official slot registry only from the
+   passing Q5 hierarchy, and derive every present or structural inventory
+   row under the retained exact key biconditionals. Every present layout
+   retains its fixed 17-key schema and copies only its existing same-shaped
+   source/coordinate/entry members, successor derivation ID and full-row hash,
+   and 18-key `raw_token_grammar`; the corresponding object in the parallel
+   positional nine-key `typed_parse_specs` array copies only the named
+   parse/value projection. Resolve the derivation ID and
+   hash to the unique same-wave/raw-field row, independently reconstruct that
+   complete 16-key successor row, and require deep equality before accepting
+   either projection. The profile, selected arm/disposition, complete-domain
+   candidate and arm-disposition relations, range partitions, and DFA remain
+   compiler members of that resolved row; they are not added to the 18-key
+   raw-field projection or as direct sibling keys on the 17-key layout. Only
+   the padding, registered grammar, observed/unobserved domains,
+   and other already-named raw-token values project through the layout's
+   same-shaped `raw_token_grammar` member; when nonnull, the DFA remains
+   nested inside its existing `registered_numeric_grammar`. Every structural
+   layout and typed-parse branch remains exact empty.
+   The slot/inventory first-add and admitting-cutoff ancestry predicates must
+   pass before either artifact is authority.
+4. **Value maps and pre-capture G17 source comparands.** Rebuild every
+   value-code source commitment and executable entry from source. Construct
+   and validate the Amendment-6-changed source comparands: G17-C01
+   independently compares the complete compiler relation, joins, layouts,
+   and reverse projections; C06 replays each exact raw token before
+   direct-law classification; C07 deep-compares every source commitment and
+   entry. Other genuinely noncapture G17 rows may be prepared, but the
+   complete 18-row G17 result is not yet constructible: C16/C17 require the
+   captured A1/A3 authorities and C18 requires final adjudication/
+   applicability. There is no C19.
+5. **Pre-capture gates and bundle.** Rebuild the complete 22-row v5
+   requirement-*specification* registry and the v6 bundle from fresh child
+   bytes, then evaluate every source, legal, Q5, inventory, C01/C06/C07, and
+   noncapture prerequisite required by the preliminary value-blind
+   adjudication. A1/A3 result rows are deliberately pending because their
+   evidence does not exist until authorized capture; they are not treated as
+   false or inserted into a final domain at this step. Any other false
+   required row, residual, source drift, digest mismatch, or missing consumer
+   stops before capture.
+6. **Capture, final domain, and receipt.** Only the unchanged narrow
+   value-blind capture predicate may open the v5 receipt-free
+   authorization/proof/claim/input ceremony. Reconstruct D2–D6, all raw
+   prefix/ancestry comparisons, A1/A3, and the clean cutoff; then evaluate
+   all 22 final requirement results and construct the v5 registration
+   domain and selected path. Then construct and validate the complete
+   ordered 18-row G17 result, including capture-dependent C16/C17 and final-
+   adjudication/applicability C18, before constructing the v5 receipt
+   core/outer, selected-lineage predicate, or fresh registration. A receipt
+   cannot cure an earlier failure.
+
+The present draft walk stops lawfully before step 1 because D6 and Q5 do not
+yet exist. After D6, step 1 remains unreachable until §20.8.1 completes with
+a top-level all-field pass, including A6-R01 through A6-R11. A6-R07's
+exhaustive partition is passing compiler evidence: an unrenderable member
+retains its closed per-member action, but its existence is not a whole-field
+abort and never permits omission, rounding, synthesis, or a fabricated
+physical image. No production registration is claimed here.
+
+#### 20.8.3 Round-one law choices, alternatives, and mandatory aborts
+
+The evidence plus retained law does not uniquely decide every broader
+grammar policy. Amendment 6 therefore chooses the following fail-closed-
+smallest dispositions for round one and records the rejected alternatives:
+
+1. **Diagnostic padding.** The era censuses support ASCII-space as the only
+   lawful default arm for a diagnostic Amendment-6 field: 10,166 later-era
+   diagnostic fields and every audited earlier diagnostic use space, with
+   zero zero-padded fields. A universal renderer that skips the field census
+   would turn aggregate evidence into per-field authority, so each field
+   must still reproduce a positive diagnostic and zero-arm rejection; only
+   then does it promote every still-deferred literal's selected-space image
+   before the final collision and missing-classification pass. A
+   zero default, “accept either,” trim, and host formatting are rejected.
+2. **No padding capacity.** Inheriting the era's space result would
+   fabricate an arm; serializing zero would contradict the diagnostic
+   census; and failing all 19,789 later width-one fields would preserve an
+   in-principle artifact. The width-one choice is therefore the explicit no-
+   arm token with one-byte exact replay and no authority at another width;
+   V15133 proves its compiled range/literal consumer path. V97 exposes the
+   distinct finite-domain case: width exceeds one, but every one of the 880
+   range members fills all nine bytes and the missing literal bypasses both
+   candidates identically. The fail-closed-smallest extension reuses the
+   existing no-capacity disposition only after both complete 881-row image/
+   action/failure relations deep-equal, every common literal image is promoted
+   to registration, the final collision pass succeeds, and all observations
+   replay. An
+   observed-subset proof, era arm, or uncoded-domain generalization is
+   rejected. V117 and V5092 expose the remaining finite-domain case: all
+   observations are arm-invariant although the candidates disagree for
+   unobserved members. The smallest lawful extension serializes both complete
+   candidate relations and their exhaustive invariant/ambiguous partition,
+   promotes every invariant literal image, compiles only authoritative
+   invariant images, and gives every ambiguous numeric or literal member a
+   null authoritative image and closed abort. Arbitrarily
+   selecting an arm, admitting both spellings, or omitting the disagreeing
+   subdomain is rejected.
+3. **Literal decimal precision.** Requiring exactly `d` fractional bytes
+   rejects 159 authenticated V945 observations; allowing arbitrary fewer
+   digits, optional points, rounding, or host shortest-format output admits
+   unevidenced spellings. The chosen law requires the greatest positive
+   precision no greater than `d` that both fits and represents the exact
+   scalar. V210 proves ordinary full precision; V945 proves the sole observed
+   reduced-precision edge.
+4. **Signed placement.** A generic signed-number grammar would admit plus,
+   trailing sign, internal sign, negative zero, leading-zero magnitude,
+   zoned decimal, or overpunch. All 111,305 audited signed observations use
+   leading spaces, then exactly one minus, then magnitude. The selected form
+   is therefore that one placement, requires a positive minus diagnostic,
+   and otherwise keeps the smaller unsigned language. A silent sign
+   declaration may be completed by that full census; an express false value
+   conflicts, while an express true value without a placement diagnostic is
+   incomplete.
+5. **Competing declarations.** Dictionary priority, SPSS priority, majority,
+   and byte-normalized collapse are all unsupported by the evidence. The
+   closed source-order relation selects the first reconstruction-agreed
+   supported assertion only
+   as semantic anchor, preserves byte-equal and tuple-equivalent peers with
+   their own dispositions, preserves unsupported assertions, and aborts a
+   true branch/tuple conflict or any missing disposition. Reversing
+   authenticated source order remains source drift, even when the tuple is
+   unchanged. A rolling comparison would let a corroborator replace the
+   semantic anchor, so every later byte/tuple test is mutually exclusive and
+   selector-relative; in `F6.2`, `NUM(6.2)`, `NUM(6.2)`, both `NUM` rows are
+   tuple-equivalent to `F6.2`. Every first reconstruction-agreed supported
+   assertion still selects.
+   Requiring an
+   all-silent group to fabricate a numeric selector would erase the two
+   retained source-silent value-code branches, so only those independently
+   lawful all-`source_silence` rows preserve null selector/profile/grammar.
+6. **Unsupported versus conflicting declarations.** Treating every unknown
+   spelling as a tuple conflict gave one row two failure statuses; treating
+   it as silence would erase evidence. Round one uses the explicit
+   `unsupported_source_declaration` disposition and the precedence
+   conflict → unsupported → incomplete, so one input serializes one exact
+   failure while a true supported-tuple disagreement remains conflict.
+7. **Complete decimal ranges.** Rounding or dropping unrenderable V945
+   cent-step members would violate exact replay, while whole-field failure
+   would discard 429,270 uniquely renderable authenticated members. The
+   adjudicated fail-closed-smallest choice is the nested exhaustive partition
+   in §§20.3.2–20.3.5: retain all source ranges, enumerate every member once,
+   serialize both ordered relations with counts/digests, compile only the
+   exact renderable images, and give an unrenderable member a null image and
+   closed abort. V945 therefore passes only under
+   `compiled_source_numeric_grammar_partial_range_exact_replay`. Narrowing a
+   source range, promoting the observed subset, rounding, truncating,
+   omitting, or synthesizing a member is rejected. A separate top-level
+   partition artifact and a new v4 interface were considered but rejected as
+   larger selectable surfaces; the successor 16-key row and its nested
+   hashes already bind the complete partition.
+8. **Interface version.** A v4 entry-point name would suggest a second
+   selectable compiler although no implementation or artifact exists. The
+   outer v3 call/return and derivation-row envelopes already commit every
+   changed nested value through their complete hashes, so round one
+   completes v3 in place and forbids a v4 alias.
+9. **Q5 ordering.** Retaining only D5<Q5 would permit the first-added
+   artifact to predate the grammar law it embeds. DC-35 adds D6<Q5 while
+   retaining the independently reconstructed D5/Q5 historical edge. No
+   existing draft or predecessor artifact is promoted.
+10. **Zero numeric evidence.** Treating registered missing records as form
+   evidence produces a false conflict, while choosing one of the passing
+   forms or an era arm fabricates physical authority. The fail-closed-
+   smallest choice serializes the independently counted zero in the
+   derivation-row envelope, lets both source entry points run the complete
+   deferred relation and bind strict conforming unchanged-width images, a
+   byte-deduplicated singleton across all lawful forms/arms even when
+   unobserved, or the sole observed candidate. It retains only each remaining
+   multiple-image zero-hit ordinary literal with source semantics but null
+   physical rendering and closed unobserved abort, constructs no profile/arm-candidate
+   relation, and reuses the retained range-physical-
+   unestablished null-profile/null-grammar branch while replaying the missing
+   literal exactly. Putting the count
+   inside `physical_authentication` would make the required null profile
+   unrepresentable; a new profile, grammar, status, or selector literal, an
+   empty-census default, a candidate-authored tie break, and deletion or
+   executable registration of a short ordinary literal are rejected as
+   larger, fabricated, or source-narrowing alternatives.
+11. **Rejected physical tokens.** Calling a completed zero-pass candidate
+   census incomplete would misstate hostile bytes as absent authority. The
+   fail-closed-smallest classification gives an observed nonmissing/
+   nonliteral token outside every closed candidate language the existing
+   exact status `unsupported_source_numeric_format`; no new token or status
+   literal is introduced. A complete census of individually lawful but
+   mutually incompatible forms is conflicting, while incomplete is reserved
+   for a missing authenticated prerequisite that prevents evaluation. A
+   token accepted only by the zero-padding candidate remains exact
+   unsupported under the already closed excluded-arm predicate. Trim,
+   permissive host parsing, unknown-token reclassification, and an
+   incomplete catch-all are rejected alternatives.
+12. **Literal/DFA overlap.** Treating every literal-shaped DFA image as a
+   conflict would reject an unambiguous ordinary source literal such as
+   V945's literal-first zero image; subtracting every ordinary literal would
+   also alter the authenticated physical language without need. The fail-
+   closed-smallest law conflicts a missing-versus-ordinary-literal collision
+   and duplicate ordinary literal images with unequal meanings, subtracts
+   registered missing images only after post-selection promotion and the final
+   rerun of all three collision checks, but retains an ordinary nonmissing literal's
+   DFA overlap and terminates literal-first. Letting a missing/literal
+   collision choose either meaning, letting unequal meanings deduplicate, or
+   letting DFA traversal override the ordinary literal is rejected.
+
+The resulting mandatory-abort matrix is closed:
+
+| Condition | Mandatory result |
+|---|---|
+| diagnostic field selects zero, accepts both arms, mixes zero/space, or lacks a positive diagnostic despite available capacity | numeric authority failure under §20.3.5; no layout/Q5/G17 consumer |
+| width-one or no-capacity row serializes an arm instead of its exact disposition; a finite-domain equality row omits or unequally serializes either complete candidate relation; an invariant literal is not promoted; or a finite-domain arm-ambiguous row selects an arm, omits either candidate or either partition relation, assigns an ambiguous member a nonnull authoritative image or runtime scalar result, or admits it to the DFA | conflict/replay failure; vector and derivation identity fail; every ambiguous member retains its exact closed abort |
+| zero nonmissing observations construct or select any token form, padding arm, physical profile, partition, or grammar; omit the serialized zero; fail exact missing-literal replay; omit a source literal; leave an exact/singleton/sole-observed literal unregistered; or give a still-deferred multiple-image zero-hit literal a physical/executable/missing mapping | derivation/vector identity failure; an applicable range remains `value_code_range_physical_rendering_unestablished`; the still-deferred literal retains null rendering and the closed unobserved abort; no physical scalar result exists |
+| a missing image byte-equals an ordinary literal, a registered missing image is duplicated, or duplicate ordinary literal images carry unequal source values/meanings | `conflicting_source_numeric_format`; an ordinary nonmissing literal's overlap with the DFA alone is expressly excluded and terminates literal-first |
+| any observed nonmissing/nonliteral token with plus, misplaced minus, negative zero, a noncanonical magnitude not generated by an evaluated padding constructor, illegal space/tab, absent/repeated/malpositioned point, wrong precision, grouping, exponent, zoned/overpunched form, or non-ASCII byte that lies outside every closed candidate language | `unsupported_source_numeric_format`; only a separately satisfied earlier conflict predicate changes the row to `conflicting_source_numeric_format`; no scalar result |
+| an observed token is accepted only by the excluded zero-padding candidate, including a leading-zero magnitude such as `-0242` for -242 | `unsupported_source_numeric_format` under the zero-selected/excluded-arm predicate; it is not incomplete and authorizes no zero arm |
+| every remaining nonmissing/nonliteral token is individually admitted by at least one candidate language, but no single form covers the complete census | `conflicting_source_numeric_format`; mixed physical forms are complete contradictory evidence, not incomplete authority |
+| rounding, truncation, synthesis, or nonexact precision reduction; or unequal raw-to-value-to-raw replay | unsupported for the nonexact constructor or conflict for unequal replay under §20.3.5 precedence; no scalar result |
+| declaration assertion omitted, reordered, compared against a corroborator or other nonselector, assigned the wrong mutually exclusive byte-equal/tuple-equivalent disposition relative to the selector, unsupported without its disposition, tuple-conflicting, or missing a selector pointer required by its row disposition | complete declaration relation fails; top-level abort; an all-`source_silence` row in either exact retained selector-null status is excluded from this condition |
+| complete normalized range has both renderable and unrenderable members but either ordered relation/count/digest is absent or unequal, its DFA admits an unrenderable image, or an observed range token does not replay through the renderable relation | partition/grammar identity failure; no observed-subset, rounded, omitted, or synthesized repair |
+| any numeric-required normalized range has zero exactly renderable members; or a deferred literal has no image under the selected form/arm disposition or survives finalization without registration, an expressly lawful finite unequal candidate-only abort, or a zero-count physical-unestablished abort | `unsupported_source_numeric_format`; another range cannot rescue a zero-renderable entry, and a remaining unrenderable literal permits no passing profile, partition, grammar, consumer, ID, or hash |
+| predecessor row ID/hash, mixed §19/§20 nested object, omitted consumer, or digest-only equality without deep equality | Q5/inventory/G17 and every enclosing identity fail |
+| D6/Q5 ancestry, any comparator row, closure-sweep row, lifecycle successor, or fresh digest is absent/unequal | ratification or registration stops at the earliest applicable gate |
+
+No “close enough,” editorial waiver, host behavior, era inference, candidate
+configuration, or later receipt is an additional branch.
+
+#### 20.8.4 Referee, D6 ratification, and fresh-registration protocol
+
+Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
+16.10, 17.4, 18.8, and 19.8.3. The authorized order is:
+
+1. submit the complete append-only §20 bytes to adversarial referee review
+   without source artifact, implementation, Q5, slot, inventory, registry,
+   registration, capture, correction evaluation, context output, or any
+   other tree change in this amendment lane;
+2. resolve every referee finding in the review record and verify the
+   complete round-to-round diff; the exact D5 mode/blob/1,781,491-byte
+   prefix; both ledger and all four mandatory-vector evidence-artifact
+   identities; all eleven evidence rows, raw files, token censuses, vector
+   rows, and vector digests;
+   the independently reproduced six-artifact/43-raw-file/89,599-field
+   totality census, every per-branch count and digest, and exact-empty
+   duplicate, outside-denominator, and unmapped sets;
+   the design-family inventory and independently reproduced per-physical-
+   passage §20.5 closure sweep;
+   the exact 38-row/18-replaced/20-unchanged comparator census; the exact
+   16+1 successor identifier inventory; every consumer/build walk; and every
+   pinned count, byte, ID, and digest. Continue rounds until the exact final
+   bytes receive an affirmative ratification verdict;
+3. ratify only those accepted design bytes in one identifiable future,
+   document-only commit D6. Every authoring, audit, or referee-response
+   commit before it is not ratification, and no source or runtime artifact
+   may be smuggled into D6;
+4. only afterward separately review the source-only v3 implementation and
+   complete source relation and perform all of §20.8.1. Require a complete
+   ten-terminal exact-cover totality relation and top-level all-field pass,
+   including every A6-R01 through A6-R11 result and
+   specifically A6-R07's exhaustive partial-range disposition, A6-R08's V97
+   complete-domain no-capacity disposition, A6-R09's V11811 zero-nonmissing
+   retained branch, A6-R10's V117 finite-domain arm-ambiguity disposition,
+   and A6-R11's V11812 short-literal retained branch, before Q5 is created or read. Only after that
+   pass perform §20.8.2 steps 1–4: first-add Q5 alone at its strict post-D6
+   single-parent commit, then derive and ratify the official slot/inventory/
+   value-map artifacts and construct the complete C01/C06/C07 source
+   comparands. Do not claim the full G17 result before capture-dependent
+   C16/C17 and final-adjudication C18 exist. Recompute every source, compiler,
+   Q5, inventory, registry, crosswalk, and constructed comparand digest from
+   complete bytes;
+5. run the complete legal predicate, source-manifest and all-field compiler
+   reproduction, eleven vectors, Q5 history, official-inventory reproduction,
+   crosswalk history, nine-registry exact cover, the complete C01/C06/C07
+   source comparands and every genuinely noncapture G17 prerequisite, the
+   complete 22-row v5 requirement-specification registry, the v6 bundle,
+   and every source/legal/noncapture preliminary prerequisite. A1/A3 results
+   and the final v5 domain are expressly deferred to step 6. Any unsupported
+   or conflicting declaration, missing or unequal exhaustive source-range
+   partition, unrenderable member admitted to the DFA or assigned a nonnull
+   physical image, remaining Class-A/Class-B residual, required Class-C
+   consequence, non-A1/A3 prerequisite failure, comparator, sweep, or digest
+   failure stops here and is reported by exact row/ID;
+6. only if step 5 passes, construct and validate the separately reviewed
+   implementation and preliminary value-blind adjudication, then, only if
+   the unchanged narrow capture predicate passes, execute the receipt-free-
+   proof-gated v5 authorization/proof/A1/A3 capture, reviewed triple, clean
+   cutoff, final adjudication, v5 capture input, all 22 final requirement
+   results, the final v5 domain, and selected-path reconstruction; then
+   construct and validate all 18 G17 rows, including C16–C18, before any
+   receipt is read;
+7. construct and validate the complete v5 receipt core and outer receipt,
+   then obtain a validator-accepted fresh registration binding D6, the
+   complete revision-8 design blob, every required source/compiler/Q5/
+   inventory/legal/registry/implementation/capture byte, the complete v6
+   bundle, complete v5 receipt, and a fresh output/claim namespace; and
+8. only then perform the unchanged prelaunch, sealed execution, incident,
+   publication, context, certificate, and external-merge sequence.
+
+At these draft bytes, steps 3–8 have not occurred. Q5, a passing future
+all-field source relation, and a production-registration witness are not
+claimed. The source evidence reproduces V945's hostile range edge and the
+adjudicated closed A6-R07 disposition, but the future relation remains
+unavailable until §20.8.1 passes every field and all eleven vectors. Nothing
+permits omission of V945 from the complete denominator.
+
+**Amendment 6 is inoperative unless and until its exact D6 ratification
+commit is bound by a validator-accepted v5 fresh-registration receipt.**
+After ratification but before that registration, steps 4–6 authorize only
+the separately reviewed source, authority, implementation, and proof-gated
+capture preparation stated above. They authorize no correction production
+evaluation, path switch, context run, label change, output, or publication.
