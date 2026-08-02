@@ -34162,6 +34162,8 @@ one prospective revision-9 disposition.
 | §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.3, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
 | §20.4.3 G17 propagation | composed-with-§21.4.5; evidence-only full relations remain complete and consuming projections are guarded. |
 | §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler and A6/A7 precede Q5 under pass_with_closed_failures. |
+| §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | lawfully-unchanged-with-reason as immutable D5 history; §21.6.2 inherits the sweep machinery without altering its historical result. |
+| §19.3.4 Class-C consequences, G17-C09–C11, and every correction/context/publication or other transitive consumer passage reached from them | composed-with-§21.4; each actual raw-field consumption runs its applicable boundary guard, evidence-only relations retain their exemption, and all non-field predicates remain exact. |
 | §20.5 Amendment-6 replacement inventory and closure sweep | lawfully-unchanged-with-reason as immutable D6 history; the distinct Amendment-7 sweep below covers the revision-9 corpus. |
 | §20.6 revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §21.7 supplies the complete 43-row successor census. |
 | §20.7 revision-8 lifecycle and v5 receipt chain | replaced-by-§21.8 revision-9 successors for a post-D7 registration; historical version dispatch remains. |
@@ -34169,6 +34171,7 @@ one prospective revision-9 disposition.
 | §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete. |
 | §20.8.3 alternatives and mandatory-abort matrix | replaced only where it globally forbids all Q5/layout/G17 construction because F is nonempty; every listed row-level, boundary, capture, and production abort otherwise remains. |
 | §20.8.4 referee, D6, build, and registration protocol | replaced-by-§21.9 for D7 ratification, pass_with_closed_failures, A7, guarded consumers, v6 receipt, and revision-9 registration. |
+| Any sweep-matched or transitively reached passage not otherwise named above | lawfully-unchanged-with-reason when it neither changes nor consumes the moved predicate; its exact reason must identify the matched seed and prove no raw-field consumption or lifecycle dependency was omitted. |
 | §§1–20 passages not reached by the deterministic sweep | lawfully-unchanged-with-reason; they neither define nor consume the moved global/boundary predicate or its lifecycle identities. |
 
 The inventory is a design-level index, not permission to merge distinct
@@ -34251,3 +34254,85 @@ reproduction from the accepted D7 blob. Missing, extra, merged, differently
 segmented, silently retained, or candidate-excluded passages block
 ratification. No anticipated D7 byte offset, row count, or sweep digest is
 ratified by these draft bytes.
+
+
+### 21.7 Complete revision-9 design-comparator disposition
+
+The comparator definition, mixed-preimage rule, complete-paragraph
+inspection, direct/transitive consumer walk, and failure discipline remain
+exactly §17.3. The revision-9 census corpus is every normative byte accepted
+at §21.9 step 2 and committed at step 3, including §§1–21, except exactly
+the five historical/self-referential comparator-table intervals in §§17.3,
+18.5, 19.5, 20.6, and this subsection. Each interval starts at its table
+header and ends at the first byte of the next heading named by its own corpus
+law. Mechanical searches include revision 9, Amendment 7, D6, D7, Q5,
+prefix, pass_with_closed_failures, and every exact identifier in §21.8.4.
+
+D6 is now the exact ratified revision-8 identity at commit
+5d69788a35f3e415e841ecbe4a22acb843dab70c, Git blob
+fd7f5f48413da3713114befdc2f021768f81063d, 2,049,769 raw bytes, and
+SHA-256
+ade1a757c0b29226e7ba12f13dbe9fed7192bc85ffd67b4081bd297107e6cf4c.
+The new base comparison independently requires those complete bytes to
+equal the first 2,049,769 bytes of D7. The new live Q5 comparison discovers
+the unique single-parent commit first adding only
+data/external/psid_questionnaire_slot_closure_evidence_v1.json, requires
+D7.ratification_commit to be its strict ancestor, and retains all inherited
+Q5-before-slot/inventory/cutoff edges. D5/Q5 and D6/Q5 remain independently
+required historical edges and cannot substitute for D7/Q5.
+
+| ID | Exact comparator or consumer anchor | Normative revision-9 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: the generic shape remains; the ceremony-specific rows below govern post-D7 designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and HEAD | lawfully-unchanged-with-reason: the ordinary current-design proof remains; DC-06, DC-10, DC-15, DC-18, DC-38, and DC-43 close retained-design cases. |
+| DC-03 | §10.4 prelaunch check 1 consumption of the active §10.1 design/repository proof | lawfully-unchanged-with-reason: it dispatches to the applicable Amendment-7 proof and cannot restore a displaced predecessor-to-HEAD equality. |
+| DC-04 | §12 context configuration import of §10.1 committed-design proof | lawfully-unchanged-with-reason: a post-D7 context registration carries D7 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration exact four-key Amendment-1 design child D1 | lawfully-unchanged-with-reason: configuration preservation retains D1; live revision-9 authority is supplied by DC-41–DC-43. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals HEAD proof | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-07 | §16.2 then_operative_calibrated_design_identity and its adjudication, manifest, cutoff, and design_identity_sha256 consumers | lawfully-unchanged-with-reason: these authenticate calibrated D1 methodology/configuration while D7 is separately bound by DC-41–DC-43. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, fitting_free_requirement_verification_specs.v6, fitting_free_registration_domain_identity.v6, and covered_earnings_path_applicability_registry_bundle.v7. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | replaced-by-named-successor: covered_earnings_path_applicability_receipt_core.v6 plus verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against HEAD | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration exact D2 design child | lawfully-unchanged-with-reason: the configuration remains D2; position-1, capture, and receipt proofs separately bind D3 through D7. |
+| DC-12 | §16.5.3 full_fitting_free_evaluation_provenance.design_identity equality to configuration design | lawfully-unchanged-with-reason: provenance continues to record D2 while the receipt records D2 through D7. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | replaced-by-named-successor: retain K_f^d = D2, joined to verify_amendment_7_fitting_free_design_identity_v1 and verify_amendment_7_capture_registration_repository_identity_v1. |
+| DC-14 | §16.10 capture authorization exact D2 design child | lawfully-unchanged-with-reason: the child remains D2; sibling D3–D7 children and DC-42 supply live authority. |
+| DC-15 | §16.10 capture authorization imported/restated pre-descriptor D2-to-HEAD repository equality | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1. |
+| DC-16 | §16.10 capture primary design equality to capture registration | lawfully-unchanged-with-reason: both remain D2 while the complete registration/claim chain binds D3 through D7 and DC-42. |
+| DC-17 | §16.10 capture sidecar design equality to primary | lawfully-unchanged-with-reason: both remain D2 and the same hash chain binds D3 through D7 and DC-42. |
+| DC-18 | §16.10 selected fitting-free correction configuration D2-to-HEAD proof | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | replaced-by-named-successor: Amendment-7 dispatch to covered_earnings_path_applicability_receipt_core.v6 and covered_earnings_path_applicability_receipt.v6. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt complete design bindings | replaced-by-named-successor: exact historical-v1, Amendment-3-v2, Amendment-4-v3, Amendment-5-v4, Amendment-6-v5, or Amendment-7-v6 receipt dispatch and validation. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-HEAD predicate and complete transitive capture consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/HEAD byte and ancestry predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1. |
+| DC-24 | §18.1 D3 identity, exact 1,310,838-byte design, and immutable revision-6 prefix comparison | lawfully-unchanged-with-reason: D3 remains the exact prefix of D4 and the D4/D5/D6/D7 chain independently extends it. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
+| DC-26 | §18.6 terminal post-D4 capture-registration predicate and all registration-hash, claim, primary/sidecar, history, capture-input, A1/A3, and receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 consumer chain. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
+| DC-28 | §19.1 D4 identity, exact 1,376,610-byte design, and immutable revision-7 prefix comparison | lawfully-unchanged-with-reason: D4 remains the exact prefix of D5 and the retained D4/D5 plus D5/D6 and D6/D7 comparisons extend the raw-byte chain. |
+| DC-29 | §19.2.5 D5 ratification ordering against the single-parent L5 legal-registry first-add and authority cutoff | lawfully-unchanged-with-reason: the legal comparator remains in verify_historical_coverage_rules_identity_v2; its consumers enter the freshly rebuilt v7 bundle and v6 receipt. |
+| DC-30 | §19.3.3 D5 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D5/Q5 remains independently required; DC-35 and DC-40 prove the stronger D6/Q5 and D7/Q5 edges. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
+| DC-32 | §19.6 terminal post-D5 capture-registration predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 consumer chain. |
+| DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
+| DC-34 | §20.1 D5 identity, exact 1,781,491-byte design, and immutable revision-8 prefix comparison | lawfully-unchanged-with-reason: D5 remains the exact prefix of ratified D6; DC-39 adds the independently checked D6/D7 edge. |
+| DC-35 | §§20.4.2 and 20.6 D6 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D6/Q5 remains independently required; DC-40 additionally proves the live D7/Q5 edge and guarded consumer chain. |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: verify_amendment_7_fitting_free_design_identity_v1, the v6 requirement/domain registries, and v7 bundle. |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
+| DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
+| DC-39 | §§21.1.1 and 21.8.1 exact D6 identity and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: this is the live immutable-base comparison and is included in every Amendment-7 position, capture, and selected proof. |
+| DC-40 | §§21.4.3, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds and every admitting cutoff | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate; failure blocks Q5 and every consumer. |
+| DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
+| DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
+| DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_selected_registration_design_lineage_v1 closes the v6 receipt and history dispatch. |
+
+This is the complete revision-9 comparator census: exactly 43 consecutive,
+unique IDs, exactly 21 replaced-by-named-successor rows, and exactly 22
+lawfully-unchanged-with-reason rows. Every anchor, disposition, reason, and
+named successor is nonempty and resolves. The validator mechanically
+reconstructs the full census corpus, repeats every search, compares the
+ordered table, walks every consumer, and reproduces those counts. An omitted,
+extra, duplicate, misanchored, third-disposition, undefined-successor, or
+incompletely closed comparator blocks ratification. This table becomes an
+immutable revision-9 invariant only at D7.

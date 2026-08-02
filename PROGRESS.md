@@ -19,8 +19,9 @@ The empirical grounding and the operative completion/consumer-boundary law are a
 - Clarified that complete Q5/G17/slot-authority relation copies are evidence embeddings, while their positive projections remain guarded consumers.
 - Added nine exact Amendment-7 regressions covering all seven failure reasons/boundary kinds, top-level acceptance, and silent-row deletion.
 - Added the complete design-family replacement inventory and a mandatory physical-passage closure sweep.
+- Added the complete 43-row revision-9 comparator census with 21 replaced and 22 unchanged dispositions.
 
 ## Next
 
-- Add the complete comparator census, lifecycle successors, and revised build/ratification walk.
+- Add lifecycle successors and the revised build/ratification walk.
 - Verify all bytes and remove this transient ledger before final handoff.
