@@ -34269,24 +34269,66 @@ candidate IDs are l2:cooccurrence-candidate:{position:02d}:{document}.
 Commitment IDs carry their displayed group and zero-based position. No
 implementation-selected alias is permitted.
 
-contains edges connect each root to every node serialized in that root;
-the three supporting JSON artifacts contain their named extraction rows; the
-three PDF artifacts and six pages contain their pages/field references; the corpus
-contains the sole-candidate page; and each era and field extraction contains
-its matching semantic field reference. commits-to edges connect every
-commitment to exactly its named target: page commitments additionally commit
-to their PDF artifact, both candidate-ID and candidate-row commitments commit
-to all 18 candidate nodes, and the semantic-array commitment commits to all
-four semantic rows. derives-from edges connect: each page extraction to its
-page and all its field references; each candidate to the corpus; the sole
-candidate to page 573; the sweep to all candidates and the sole result;
-established_findings to all six page extractions, all four semantic rows, and
-the sweep; expressly_not_established_or_used to all ten closure extractions
-and the sweep; reader_seam_consequence and successor_residual_ids each to
-the findings and nonclaim; source_disposition to those four terminal results
-and the sweep; and each spouse-seam semantic row to the spouse-seam artifact,
-its era row, its field row, and its semantic field reference. These rules
-produce this exact fixture:
+For exact edge generation, R0 through R10 are the displayed roots; ART3,
+LOC8, PAGE6, and CLO10 are the ordered layer-1 commitments for the three
+artifact rows, eight locator rows, six page rows, and ten closure pointers;
+SW4 is [document-rows, candidate-document-ids, candidate-rows,
+sole-page-text]; SEM6 is [semantic-artifact, semantic-row-0,
+semantic-row-1, semantic-row-2, semantic-row-3, semantic-array]. P6 and PF20
+are the six pages and positions 4–23; SF4 is positions 0–3; PX8 and CX10 are
+the eight locator and ten closure extraction nodes. DP6, DS4, DC18, DSOLE,
+DSWEEP, DID, DEST, DNOT, DREAD, DRES, and DDISP are the layer-2 page,
+semantic-row, candidate, sole, sweep, identity, and five terminal groups
+named above. AREG, AEXT, ACLO, ASEM, ACORP, and PDF0046/PDF0051/PDF0056 are
+the supporting artifacts. With listwise meaning equal-position pairs and
+cross meaning every pair, the complete edge relation is exactly:
+
+~~~text
+contains:
+R0 -> [DID,source-commit]
+R1 -> ART3
+R2 -> LOC8
+R3 -> PAGE6 + DP6
+R4 -> CLO10
+R5 -> SW4 + DC18 + [DSOLE,DSWEEP]
+[R6,R7,R8,R9,R10] -> [DEST,DNOT,DREAD,DRES,DDISP] listwise
+AEXT -> PX8 + CX10[0:5]
+ACLO -> CX10[5:10]
+ASEM -> four era rows + four field rows
+[PDF0046,PDF0051,PDF0056] -> P6 by displayed document
+ACORP -> page psid-corpus-document-0098:573
+P6 -> PF20 by displayed page
+each era row and matching field row -> its SF4 member
+DEST -> SEM6
+
+commits-to:
+source-commit -> [AREG,AEXT,ACLO]
+ART3 -> [AREG,AEXT,ACLO] listwise
+LOC8 -> PX8 listwise
+each PAGE6 member -> its P6 page and its PDF artifact
+CLO10 -> CX10 listwise
+SW4[0] -> ACORP
+SW4[1] -> DC18 cross
+SW4[2] -> DC18 cross
+SW4[3] -> page psid-corpus-document-0098:573
+SEM6[0] -> ASEM
+SEM6[1:5] -> DS4 listwise
+SEM6[5] -> DS4 cross
+
+derives-from:
+each DP6 member -> its P6 page and every PF20 member on that page
+DC18 -> ACORP cross
+DSOLE -> page psid-corpus-document-0098:573
+DSWEEP -> DC18 + [DSOLE]
+DEST -> DP6 + DS4 + [DSWEEP]
+DNOT -> CX10 + [DSWEEP]
+DREAD -> [DEST,DNOT]
+DRES -> [DEST,DNOT]
+DDISP -> [DEST,DNOT,DREAD,DRES,DSWEEP]
+each DS4 member -> [ASEM,its era row,its field row,its SF4 member]
+~~~
+
+No other pair is an edge. These rules produce this exact fixture:
 
 ~~~json
 {"fixture_id":"amendment_7_v_b6_dependency_graph_topology_v1","root_count":11,"node_count":150,"node_type_counts":{"artifact":19,"page":7,"extraction-row":26,"field-reference":24,"layer-1 commitment":38,"layer-2 derived node":36},"edge_count":325,"edge_type_counts":{"contains":131,"commits-to":83,"derives-from":111},"reachable_node_count":150,"topological_visit_count":150,"canonical_bytes":65263,"sha256":"29cfaf32c9800ff6db41a503c1d8ed97f9fbf5569d932c8711069968445e9006"}
@@ -34832,10 +34874,10 @@ one prospective revision-9 disposition.
 | Source anchors | Exact Amendment-7 disposition |
 |---|---|
 | §13.2 V-B6 registration-or-abort row and §18.3 "register every field, exact code map" command | prospectively-replaced-and-composed-with-§21.2-item-6-and-§21.4.2: these commands mean semantic_code_map_registration for the exact concept/map projection. They neither require nor confer physical_numeric_grammar_registration; missing semantic authority still aborts. |
-| §18.2 complete 13-key documented-inclusive-total projection and §18.4 V-B6 source member, positive result, and branch equality | composed-with-§21.4.2-and-§21.5-A7-R10/R11: verified/pass is lawful only after the exact four-row semantic projection and exact-empty source-adjudication forbidden-dependency predicate pass. A forbidden source dependency invokes the eleven-key source-boundary abort; any actual physical consumer separately invokes the ordinary guard. |
-| §19.3.1 V-B6 verdict/established-fact references and §19.3.4 residual-9 carrier | prospectively-replaced-and-composed-with-§21.4.2: the four failed occupation references supply semantic evidence only; documented_no_source_allocation_required, inclusive_total_exact_once, and continue_registered_parent remain exact, with V4379/V5289/V5788 as the sole amount operands. |
-| §16.2 verify_fitting_free_claim_v_b6_v1, the V-B6 result consumer, and every fresh 22-row requirement-domain evaluation | composed-with-§21.4.2, §21.5-A7-R10/R11, and §21.8: the predicate ID and row identity remain, but the result is freshly reconstructed only after the semantic boundary passes; no predecessor verified/pass value or digest is copied. |
-| §§18.6–18.8 and §§19.4, 19.6, and 19.8 V-B6 lifecycle, bundle, satisfiability, registration, and final-success claims | prospectively-composed-with-§21.4.2-and-§21.8–§21.9: each claim remains reachable only through the exact favorable semantic path and fresh requirement/domain/bundle reconstruction. A failed semantic authority or any physical use makes every dependent claim non-passing. |
+| §18.2 complete 13-key documented-inclusive-total projection and §18.4 V-B6 source member, positive result, and branch equality | composed-with-§21.4.2-and-§21.5-A7-R10a/R11: verified/pass is lawful at the pre-carrier boundary only after the exact layer graph, four-row semantic projection, and exact-empty source-adjudication forbidden-dependency predicate pass. A forbidden source dependency invokes the twelve-key source-boundary abort; any actual physical consumer separately invokes the ordinary guard. |
+| §19.3.1 V-B6 verdict/established-fact references and §19.3.4 residual-9 carrier | prospectively-replaced-and-composed-with-§21.4.2-and-§21.5-A7-R10b: the four T-minus occupation references supply semantic evidence only. Residual 9 is reconstructed after accepted actual-inventory construction; documented_no_source_allocation_required, inclusive_total_exact_once, and continue_registered_parent remain exact, with the T-plus V4379/V5289/V5788 rows as the sole exact-once amount operands. |
+| §16.2 verify_fitting_free_claim_v_b6_v1, the V-B6 result consumer, and every fresh 22-row requirement-domain evaluation | composed-with-§21.4.2, §21.5-A7-R10a/R10b/R11, and §21.8: the predicate ID and row identity remain, but every result freshly reconstructs the pre-carrier layer walk and the actual-inventory carrier at their ordered gates; no predecessor result, pass bit, key array, carrier, or digest is copied. |
+| §§18.6–18.8 and §§19.4, 19.6, and 19.8 V-B6 lifecycle, bundle, satisfiability, registration, and final-success claims | prospectively-composed-with-§21.4.2-and-§21.8–§21.9: each claim remains reachable only through accepted R10a, actual-inventory R10b, and fresh requirement/domain/bundle reconstruction. A failed semantic authority or any forbidden physical dependency of V4519, V4902, V5429, or V5916 makes every dependent claim non-passing. The required exact-once physical reads of the passing fields V4379, V5289, and V5788 remain lawful and mandatory under their retained guards. |
 | §19.3.2 nine-key field_source_derivation, all-field compiler return, status, and failure/top-level conclusions | replaced-by-§21.3-complete-relation-with-closed-failures; preserve all outer and row schemas, replace only the admitted top status and global failure consequence. |
 | §19.3.3 source_document_manifest and complete field_source_derivation embedding | composed-with-§21.4.4-complete-evidence; all 89,599 rows, including F, remain mandatory. |
 | §19.3.3 D_w search, positive_field_join_rows, raw_field_projections, and Q5 status/history | composed-with-§21.4.1–§21.4.4; search remains total, each positive reference is guarded, and D7 replaces D6 as the live Q5 predecessor. |
@@ -34843,21 +34885,21 @@ one prospective revision-9 disposition.
 | §19.4.2 G17-C01, C06, C07, and enclosing G17 result | composed-with-§21.4.6; complete relation copies are evidence, every positive consumer projection is guarded. |
 | §20.3.1 assertion disagreements and unsupported/conflicting top-level blockers | replaced-only-by-§21.2-item-1; row classification still fails locally, complete serialization no longer fails globally. |
 | §20.3.5 seven passing terminals, three failure rows, and top-level abort consequences | replaced-and-composed-with-§21.3–§21.4; ten terminals and precedence remain, top-level abort moves to the consuming site. |
-| §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason; §21.5 adds A7-R01 through A7-R11 and cannot alter or substitute for A6. |
+| §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason; §21.5 adds the exact eleven-member pre-Q5 array ending in A7-R10a/A7-R11 plus staged post-inventory A7-R10b, and none can alter or substitute for A6. |
 | §20.3.7 complete census, assignment, counts, reasons, and sentence preventing pass | preserved except replaced-by-§21.3.2 for that one global conclusion; all bytes, memberships, counts, and digests remain exact evidence. |
 | §20.4.1 layout, parse, raw-token, value-map, and unobserved consumers | composed-with-§21.4; every retained branch rule remains and every T-minus positive reference aborts at this boundary. |
 | §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.4, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
 | §20.4.3 G17 propagation | composed-with-§21.4.6; evidence-only full relations remain complete and consuming projections are guarded. |
-| §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler, A6, and A7-R01 through A7-R11 precede Q5 under pass_with_closed_failures. |
+| §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler, A6, and exact eleven-member R01–R09/R10a/R11 array precede Q5 under pass_with_closed_failures; R10b is reserved for the later actual-inventory gate. |
 | §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | lawfully-unchanged-with-reason as immutable D5 history; §21.6.2 inherits the sweep machinery without altering its historical result. |
 | §19.3.4 Class-C consequences other than the separately enumerated residual-9 V-B6 semantic path, G17-C09–C11, and every correction/context/publication or other transitive consumer passage reached from them | composed-with-§21.4; each actual physical raw-field consumption runs its applicable boundary guard, complete evidence relations retain their narrow nonconsuming disposition, and all non-field predicates remain exact. This generic row cannot authorize V-B6. |
 | §20.5 Amendment-6 replacement inventory and closure sweep | lawfully-unchanged-with-reason as immutable D6 history; the distinct Amendment-7 sweep below covers the revision-9 corpus. |
 | §20.6 revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §21.7 supplies the complete 43-row successor census. |
 | §20.7 revision-8 lifecycle and v5 receipt chain | replaced-by-§21.8 revision-9 successors for a post-D7 registration; historical version dispatch remains. |
-| §20.8.1 compiler walk and every top-level all-field-pass prerequisite | replaced-only-by-§21.3.2 and §21.5; exact totality plus A6 and A7-R01 through A7-R11 under pass_with_closed_failures is the Q5 gate. |
-| §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete. |
+| §20.8.1 compiler walk and every top-level all-field-pass prerequisite | replaced-only-by-§21.3.2 and §21.5; exact totality plus A6 and the exact eleven-member R01–R09/R10a/R11 array under pass_with_closed_failures is the Q5 gate. |
+| §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete, and actual-inventory acceptance is followed immediately by R10b before residual-registry or requirement acceptance. |
 | §20.8.3 alternatives and mandatory-abort matrix | replaced only where it globally forbids all Q5/layout/G17 construction because F is nonempty; every listed row-level, boundary, capture, and production abort otherwise remains. |
-| §20.8.4 referee, D6, build, and registration protocol | replaced-by-§21.9 for D7 ratification, pass_with_closed_failures, A7-R01 through A7-R11, the V-B6 semantic boundary, physically guarded consumers, v6 receipt, and revision-9 registration. |
+| §20.8.4 referee, D6, build, and registration protocol | replaced-by-§21.9 for D7 ratification, pass_with_closed_failures, the exact pre-Q5 vector array, staged R10b, the V-B6 layer boundary, physically guarded consumers, v6 receipt, and revision-9 registration. |
 | Any sweep-matched or transitively reached passage not otherwise named above | lawfully-unchanged-with-reason when it neither changes nor consumes the moved predicate; its exact reason must identify the matched seed and prove no raw-field consumption or lifecycle dependency was omitted. |
 | §§1–20 passages not reached by the deterministic sweep | lawfully-unchanged-with-reason; they neither define nor consume the moved global/boundary predicate or its lifecycle identities. |
 
@@ -34937,11 +34979,15 @@ inclusion, lifecycle/receipt selection, Git ancestry, and every direct or
 transitive consumer edge in §§19.4.3 and 20.5.2. A seed is not a ceiling.
 
 The closure must in particular walk from §13.2 through the complete
-§18.2/§18.4 source/result path, every §18/§19 lifecycle, bundle,
-satisfiability, and final-success consumer, residual 9, the V-B6 requirement
-row in every preliminary/final 22-row evaluation, and every physical
-consumer of the four references. A generic Class-C or evidence-only row
-cannot close that subgraph.
+§18.2/§18.4 R10a pre-carrier path, its carrier-deferred boundary, Q5,
+actual official-inventory construction, R10b, residual 9, the V-B6 row in
+every preliminary and final 22-row evaluation, every domain and bundle, and
+correction final acceptance. It also walks every §18/§19 lifecycle,
+satisfiability/final-success consumer, and every physical consumer of the
+four references. The ordering edges R10a -> Q5 -> actual inventory -> R10b
+-> each preliminary/final evaluation -> correction final acceptance must
+all appear in forward and reverse closure. A generic Class-C or
+evidence-only row cannot close that subgraph.
 
 Every matched passage receives exactly one of
 replaced-by-named-successor, composed-with-named-successor, or
@@ -35035,7 +35081,7 @@ consumers. The rerun therefore retains the same 43-family census.
 | DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
 | DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
 | DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-future-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: these are one live D7 raw-byte identity family. Step 2 fixes the exact accepted candidate byte sequence and step 3 permits only that sequence to become D7; validation exact-compares the same-path raw Git blob at D7 to those accepted candidate bytes, verifies its complete hash and the independent D6-prefix equality, and carries that proof into every Amendment-7 position, capture, and selected proof. Any byte inequality, or digest-, ancestry-, or transitive-only substitution, aborts. |
-| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding; failure blocks Q5 and every consumer. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding composed with the post-inventory R10b gate; failure blocks Q5 at its applicable predecessor edge and blocks every residual-9 or later consumer when R10b has not passed. |
 | DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
 | DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
 | DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_selected_registration_design_lineage_v1 closes the v6 receipt and history dispatch. |
@@ -35088,14 +35134,18 @@ evaluated.
 
 V-B6 retains requirement_id V-B6 and predicate ID
 verify_fitting_free_claim_v_b6_v1, but retaining that identity never retains
-its prior result. Every preliminary and final evaluation freshly rebuilds
-the complete §18.2 projection, the exact four-row semantic projection, the
-exact-empty source_adjudication_forbidden_dependency_rows predicate, the
-§18.4 source/result, and residual 9 before it may produce verified/pass. No
-predecessor branch result, pass bit, source member, carrier, row hash, or
-enclosing digest may be copied.
-Failure of semantic authority or any forbidden physical dependency makes the
-V-B6 evaluation non-passing and aborts its dependent domain and bundle.
+its prior result. Every preliminary and final evaluation occurs after actual
+official-inventory acceptance. It freshly reruns R10a from the frozen roots
+through the complete graph/basis walk and §18.4 pre-carrier result, then
+reruns R10b from the accepted actual inventory through the complete
+residual-9 carrier before it may produce verified/pass. It may not copy an
+R10a/R10b pass bit, source member, marker, applicable-source key array,
+carrier, row hash, or enclosing digest. The exact A7-R11 suite must also
+remain accepted. Failure of semantic authority or any forbidden physical
+dependency of the four T-minus references, or failure of actual-inventory
+R10b, makes the V-B6 evaluation non-passing and aborts its dependent domain
+and bundle. The three passing amount operands retain their lawful exact-once
+physical reads.
 
 Position 1 is exactly:
 
@@ -35222,11 +35272,12 @@ v6 requirement registry, and freshly reconstructs all 22 rows, projection
 evidence, Booleans, failure IDs, counts, and hashes. Position 1, A1, and A3
 use only the successors above; the legal row retains its typed v2 result;
 all others are re-evaluated. V-B6 is one of those freshly reconstructed 22
-rows and must reproduce A7-R10's complete source-to-result walk. Its four
-physical derivation rows remain T-minus and null; the domain fails rather
-than copying verified/pass if semantic authority, the member allowlist, the
-source_adjudication_forbidden_dependency_rows exact-empty predicate,
-residual 9, or A7-R11 fails.
+rows and must reproduce R10a's complete frozen-source-to-pre-carrier walk and
+R10b's actual-inventory-to-residual-9 walk in that order. Its four
+numeric-grammar derivation rows remain T-minus and null; the domain fails
+rather than copying verified/pass if layer-1 authentication, any layer-2
+basis, the source_adjudication_forbidden_dependency_rows exact-empty
+predicate, actual-inventory carrier, residual 9, or A7-R11 fails.
 
 The bundle successor is
 covered_earnings_path_applicability_registry_bundle.v7. It retains the v6
@@ -35241,12 +35292,16 @@ digest becomes path_applicability_specs_sha256. No v6 predecessor bundle,
 filtered source relation, failed consumer, draft Q5, or copied digest is
 admitted.
 
-The bundle also embeds and cross-binds the freshly accepted V-B6 semantic
-boundary result. Exact-empty applicable guards means guards for actual
-physical consumers; it does not require an empty physical guard over the
-four semantic-only references or treat their codebook meanings as parsed
-values. Conversely, the accepted semantic result grants no physical
-admission. A bundle that conflates either direction fails.
+The bundle separately embeds and cross-binds the freshly accepted V-B6 R10a
+pre-carrier layer-2 result and the R10b actual-inventory carrier result,
+including the complete ordered applicable_source_inventory_keys and carrier
+ID. Neither stage can be reconstructed from the other. Exact-empty
+applicable guards means guards for actual physical consumers; it does not
+require an empty physical guard over the four semantic-only references or
+treat their codebook meanings as parsed values. Conversely, the accepted
+semantic result grants no physical admission. The T-plus V4379/V5289/V5788
+reads remain exact-once. A bundle that conflates either direction or copies
+a stage result fails.
 
 #### 21.8.3 Receipt and selected-registration lineage
 
@@ -35329,7 +35384,8 @@ identifier blocks ratification.
 The v3 source interface and all official v1 source/Q5/slot/inventory
 artifacts remain completed in place. pass_with_closed_failures, T-plus,
 T-minus, the ten terminals, resolution reasons, consumer_kind values,
-A7-R01 through A7-R11, semantic_code_map_registration,
+A7-R01 through A7-R09, A7-R10a, A7-R10b, A7-R11,
+semantic_code_map_registration,
 physical_numeric_grammar_registration, the inline §21.4.2 predicate, and
 diagnostic member names are enum, row-ID, defined-term, or schema-member
 values, not independently selectable schemas. D7, Q5, A,
@@ -35344,11 +35400,13 @@ After D7, the separately reviewed source-only v3 implementation constructs
 all 176 document derivations and all 89,599 complete 16-key field rows before
 reading a serialized comparand or any consumer. It reproduces the complete
 §20 source law, runs A6-R01 through A6-R11, then applies §21.3. Only after the
-complete relation is accepted as pass_with_closed_failures do A7-R01 through
-A7-R09 run, followed by A7-R10's exact V-B6 semantic source-to-result chain
-and A7-R11's physical-mutation aborts. Q5 cannot be created, read, or used
-unless the relation has exact-empty duplicate, outside, and unmapped arrays,
-every closed failure is serialized, and all eleven A7 vectors pass.
+complete relation is accepted as pass_with_closed_failures does the exact
+eleven-member pre-Q5 array run: A7-R01 through A7-R09, R10a through the
+carrier-deferred §18.4 boundary, and R11's source and physical mutation
+arms. Q5 cannot be created, read, or used unless the relation has exact-empty
+duplicate, outside, and unmapped arrays, every closed failure is serialized,
+and that exact array passes. R10b is not run and no inventory, carrier, or
+22-row fixture exists at this gate.
 
 The Q5 first-add commit is a strict descendant of D7, has one parent, and
 adds exactly the one regular 100644 Q5 path and no other delta. Q5 embeds the
@@ -35356,21 +35414,28 @@ complete relation. DC-30, DC-35, and DC-40 must each independently pass:
 D5/Q5, D6/Q5, and D7/Q5 plus the complete eight-key artifact identity and
 all downstream ancestry edges are reconstructed rather than inferred from
 one another. Each positive join runs its guard before acceptance.
-The accepted V-B6 semantic result is reconstructed before any downstream
-requirement/domain/bundle consumer reads it; no Q5 or inventory row can
-construct that expected result.
-Only after Q5 passes may the slot authority, official slot registry,
-inventory, layouts, typed parsers, raw-token grammars, value maps, and
-C01/C06/C07 source comparands be constructed. Each performs its own guard;
-the inventory additionally proves the exact 1,235-row negative census and
-unchanged complete E-domain equations. G17 cannot be claimed until all 18
-rows, including capture-dependent C16/C17 and final-adjudication C18, exist
-and pass.
+R10a's accepted V-B6 pre-carrier result is independently reconstructed
+before any downstream consumer reads it; no Q5 or inventory row constructs
+that expected result.
+
+Only after Q5 passes may the slot authority, official slot registry, and
+actual official inventory be constructed. Each performs its own guard; the
+inventory additionally proves the exact 1,235-row negative census and
+unchanged complete E-domain equations. Immediately after that actual
+inventory passes, and before any residual registry or preliminary V-B6
+requirement result is accepted, R10b derives the complete residual-9 carrier
+from the inventory's official order. Only an accepted R10b permits residual
+registries, layouts, typed parsers, raw-token grammars, value maps,
+crosswalks, C01/C06/C07 source comparands, and the preliminary 22-row
+registry/domain/bundle to proceed. Correction-path and capture work then
+precedes a separate final 22-row registry/domain reconstruction, which
+reruns R10a and R10b. G17 cannot be claimed until all 18 rows, including
+capture-dependent C16/C17 and final-adjudication C18, exist and pass.
 
 A T-minus row in a D_w search, the complete manifest, a full C01 evidence
 projection, or the closed negative census is dormant evidence and does not
 stop this walk. The exact four-row V-B6 semantic projection is likewise a
-lawful nonphysical use only while §21.4.2 and A7-R10 pass. A
+lawful semantic layer-2 use only while §21.4.2 and A7-R10a pass. A
 malformed/missing/extra/reclassified derivation row, an
 unequal census, a nonempty actual consumer guard, a failed Class-A authority
 or Class-C rule consequence, an unresolved source/slot/inventory key, or any
@@ -35378,9 +35443,11 @@ other retained prerequisite aborts at its exact site. In particular,
 §20.8.4 step 5's global stop for any unsupported/conflicting declaration or
 remaining Class-B residual is prospectively replaced: a faithfully
 serialized T-minus row is the closed Class-B disposition and does not stop
-unrelated construction; attempted positive physical consumption still does.
-Any forbidden V-B6 member invokes A7-R11's abort. No consumer may be dropped
-or relabeled to continue.
+unrelated construction; attempted positive physical consumption of a
+non-passing field still does. Any forbidden V-B6 dependency invokes
+A7-R11's abort, and a missing or failed post-inventory R10b blocks every
+residual-9 and later acceptance. The lawful exact-once T-plus amount reads
+remain required. No consumer may be dropped or relabeled to continue.
 
 #### 21.9.2 Referee, D7, implementation, capture, receipt, and production
 
@@ -35394,11 +35461,12 @@ This subsection replaces the §20.8.4 ordered protocol for revision 9:
    exact 2,049,769-byte D6 prefix and identity; all six frozen source
    artifacts and the §19.3.1 scope root; the complete 1,235-key membership,
    every physical intersection list/digest, the 422/813 fixability partition,
-   A6 and A7-R01 through A7-R11, the exact four-reference/19-member semantic
-   projection and its digest, the complete §18.2-to-V-B6-result walk, the
-   semantic/physical registration distinction, the nine-key/16-key schemas,
-   top predicate, seven physical boundary guards, fresh V-B6 evaluation in
-   all 22 rows, unchanged inventory domain, §21.6 closure sweep, exact
+   A6, the exact eleven-member pre-Q5 A7 array, and staged A7-R10b; the exact
+   four-reference/19-member semantic projection and its digest; the complete
+   commitment/derivation graph and §18.2-to-pre-carrier V-B6 walk; the two
+   registration senses; the nine-key/16-key schemas; top predicate; seven
+   physical boundary guards; fresh post-inventory R10a/R10b V-B6 evaluation
+   in all 22 rows; unchanged inventory domain; §21.6 closure sweep; exact
    43-row/21-replaced/22-unchanged comparator census, exact 16+1 successor
    inventory, and every compiler/consumer/lifecycle/build walk. Continue
    until the exact final bytes receive affirmative ratification;
@@ -35407,54 +35475,68 @@ This subsection replaces the §20.8.4 ordered protocol for revision 9:
    runtime change may be smuggled into D7;
 4. afterward separately review and commit the source-only v3 implementation,
    reconstruct the complete relation, run every unchanged A6, and require
-   §21.3 pass_with_closed_failures. Only then run A7-R01 through A7-R09,
-   reconstruct and accept the exact §21.4.2 V-B6 semantic boundary under
-   A7-R10, and pass both A7-R11 source-boundary and physical-consumer arms
-   before first-adding Q5 alone at its strict post-D7 commit. Construct guarded
-   slot/inventory/value-map/crosswalk artifacts and complete C01/C06/C07
-   source comparands only after Q5 passes; recompute every identity and
-   digest from complete bytes;
-5. run every source, legal, inventory, registry, history, noncapture G17,
+   §21.3 pass_with_closed_failures. Only then run the exact pre-Q5 array:
+   A7-R01 through A7-R09, R10a through its carrier-deferred marker, and both
+   A7-R11 arms. First-add Q5 alone at its strict post-D7 commit. After Q5
+   passes, construct and accept only the guarded slot authority, official
+   slot registry, and complete actual official inventory in official order,
+   including its E-domain equations and negative census. No synthetic
+   carrier, residual registry, value map, crosswalk, C01/C06/C07 comparand,
+   or 22-row result is constructed in this step;
+5. immediately after the actual inventory in step 4 passes, run A7-R10b.
+   Reauthenticate R10a's frozen inputs, derive residual 9's nonempty
+   applicable_source_inventory_keys from that inventory, construct and
+   compare its carrier and exact consequence, and require the three passing
+   amount operands exact-once. R10b must pass before any residual-9 registry,
+   preliminary V-B6 result, domain, bundle, or correction final acceptance;
+6. only after step 5 passes, construct the guarded residual registries,
+   layouts, typed parsers, raw-token grammars, value maps, crosswalks, and
+   complete C01/C06/C07 source comparands, then run every source, legal,
+   inventory, registry, history, noncapture G17,
    closure, comparator, consumer-guard, v6 requirement-specification, v7
    bundle, position-1, and preliminary domain prerequisite. The complete
-   §18.2 projection, four-row semantic projection, §18.4 result, residual 9,
-   and freshly evaluated V-B6 requirement row must pass before the
-   preliminary domain or bundle can pass. A1/A3 results and the final v6
+   R10a graph/basis walk and §18.4 result and the actual-inventory R10b
+   carrier/residual-9 result are each freshly rerun before the V-B6 row,
+   preliminary domain, or bundle can pass. A1/A3 results and the final v6
    domain remain pending, never false. A faithful dormant
    T-minus row is not a failure here; a nonempty positive-consumer guard or
    any malformed totality/retained prerequisite stops and reports exact
    rows;
-6. only after step 5 passes, construct and validate the separately reviewed
+7. only after step 6 passes, construct and validate the separately reviewed
    correction-path implementation—distinct from the source-only v3 compiler
    in step 4—and the preliminary value-blind adjudication, then execute the
    receipt-free-proof-gated v6 authorization/proof/A1/A3 capture under the
    unchanged narrow capture predicate, validate the claim/primary/sidecar
    triple and clean cutoff, construct the v6 capture input, all 22 final
-   requirement results and final v6 domain, freshly rerunning the entire
-   V-B6 semantic boundary rather than copying its preliminary pass, and then
-   complete and validate all 18 G17 rows before any receipt is read;
-7. construct and validate the complete v6 receipt core and outer receipt,
+   requirement results and final v6 domain, freshly rerunning R10a and R10b
+   from their proper frozen-source and actual-inventory inputs rather than
+   copying the preliminary pass or carrier. Correction final acceptance
+   expressly requires that fresh R10b pass. Then complete and validate all
+   18 G17 rows before any receipt is read;
+8. construct and validate the complete v6 receipt core and outer receipt,
    then obtain a validator-accepted fresh registration binding D7, the
    complete revision-9 design blob, every required source/compiler/Q5/
    inventory/legal/registry/implementation/capture byte, the complete v7
-   bundle, complete v6 receipt, the exact V-B6 semantic-boundary disposition,
+   bundle, complete v6 receipt, the exact V-B6 R10a and R10b dispositions,
    all exact-empty applicable physical consumer guards, and a fresh
    output/claim namespace; and
-8. only then perform the unchanged prelaunch, sealed execution, incident,
+9. only then perform the unchanged prelaunch, sealed execution, incident,
    correction, publication, context, certificate, and external-merge
    sequence, rerunning correction_input and context_output guards before
    each actual physical field-derived value is consumed or emitted.
 
-At these draft bytes none of steps 3–8 has occurred. No D7, successor
+At these draft bytes none of steps 3–9 has occurred. No D7, successor
 implementation, Q5, official inventory, guarded consumer artifact, lifecycle
-successor, receipt, registration, correction result, or output is claimed.
+successor, R10b carrier, receipt, registration, correction result, or output
+is claimed.
 The empirical source evidence establishes only that the full disposition is
-total, the exact V-B6 semantic use is independently lawful, and positive
-physical consumption must remain closed.
+total and the exact V-B6 semantic layer-2 use is independently lawful.
+Positive physical consumption of any non-passing field must remain closed;
+the separately passing V4379/V5289/V5788 reads remain mandatory.
 
 **Amendment 7 is inoperative unless and until its exact D7 ratification
 commit is bound by a validator-accepted v6 fresh-registration receipt.**
-After ratification but before that registration, steps 4–6 authorize only
+After ratification but before that registration, steps 4–7 authorize only
 the separately reviewed source, artifact, implementation, proof, and narrow
 capture preparation stated above. They authorize no correction production
 evaluation, path switch, context run, label change, output, or publication.
