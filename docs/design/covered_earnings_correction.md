@@ -30164,7 +30164,7 @@ The complete section map is:
 | §20.2 | authenticated era-census identities, findings, and evidence boundary |
 | §20.3 | declaration dispositions, padding, decimal/sign tokens, DFA/replay, identities, and regression vectors |
 | §20.4 | layout, Q5, G17, runtime, value-map, and build-walk propagation |
-| §20.5 | exhaustive passage inventory and Amendment-6 closure sweep |
+| §20.5 | exhaustive design-family inventory and per-physical-passage Amendment-6 closure sweep |
 | §20.6 | complete revision-8 design-comparator census |
 | §20.7 | D6 lifecycle and complete successor identifier inventory |
 | §20.8 | build order, acceptance walks, alternatives, ratification, and fresh registration |
@@ -31525,14 +31525,19 @@ passes.
 
 ### 20.5 Exact replacement, preservation, and closure sweep
 
-#### 20.5.1 Exhaustive passage-disposition inventory
+#### 20.5.1 Exhaustive design-family disposition inventory
 
-The following is the complete human-readable passage inventory. Each row
-names a design passage whose operative reading changes or whose consumer
-must carry the change. Repetition in another passage is a separate row; no
-affected prose is dismissed as merely explanatory.
+The following is the complete human-readable design-family inventory. A row
+may group multiple physical passages or source anchors that share one exact
+disposition; that grouping does not merge their byte ranges or identities.
+Section 20.5.3 instead emits one distinct machine row for every segmented
+physical passage, including every repetition, and no affected prose is
+dismissed as merely explanatory. The lawful but larger alternative was to
+split every grouped family into separate human rows; it is not selected
+because the machine relation already supplies the stricter physical-passage
+enumeration and exact reverse cover.
 
-| Passage | Exact Amendment-6 disposition |
+| Design family / source anchors | Exact Amendment-6 disposition |
 |---|---|
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, nine-key top-level envelope, source denominator, and dependency order remain exact; the nested numeric derivation row is expressly replaced by the 16-key successor named below. |
 | §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; conflict-gate any independent reconstruction disagreement before the numbered arms; select the first reconstruction-agreed supported assertion whenever one exists; compare every remaining later assertion directly and mutually exclusively against that selector for byte/deep equality, then byte-unequal numeric-tuple equality, never against a corroborator; preserve null selector/profile/grammar only for an all-`source_silence` `value_code_domain_no_numeric_grammar` or `value_code_range_physical_rendering_unestablished` row whose independent conditions pass; abort every unsupported, true-conflict, or missing disposition. |
@@ -31558,8 +31563,8 @@ affected prose is dismissed as merely explanatory.
 
 #### 20.5.2 Exact G17 and schema-consumer disposition
 
-The inventory above is exhaustive at design level, but it does not replace
-machine enumeration. For each matched passage, the coordinator records all
+The design-family inventory above is exhaustive at design level, but it does
+not replace machine enumeration. For each matched passage, the coordinator records all
 direct consumers and every transitive consumer through these closed edge
 classes: schema-member inclusion; ordered ID-preimage inclusion;
 declaration-selector resolution and selector-relative disposition
@@ -31595,14 +31600,19 @@ The sweep uses exactly the 11-key schema, line-based passage segmentation,
 byte-range law, canonical ordering, edge-row schema, exact three-disposition
 domain, hash rules, and empty-unresolved acceptance rule of §19.4.3. Its
 `schema_version` is
-`amendment_6_numeric_grammar_completion_closure_sweep.v1`. It independently
+`amendment_6_numeric_grammar_completion_closure_sweep.v1`. For this sweep,
+each `matched_passages[*].passage_id` is literal `amendment-6-passage:`
+followed by SHA-256 of the §10.1 terminal-LF canonical JSON bytes of exactly
+the three-position value array `[start_byte,end_byte,matched_terms]`. This
+replaces only §19.4.3's `amendment-5-passage:` literal prefix; the inherited
+preimage, member meanings, and row order remain exact. The sweep independently
 computes every corpus interval, matched half-open byte range, passage ID,
 consumer edge, row count, ordered keyset where required, and complete
 terminal-LF domain SHA-256 from accepted D6 bytes. No digest from the §19
 sweep is copied, and this draft supplies no anticipated D6 byte offset or
 hash.
 
-The exact initial literal search-term array, in this order, is:
+The exact 40-member initial literal search-term array, in this order, is:
 
 ```text
 dictionary_codebook_fixed_width_source_derivation_v3
@@ -31637,7 +31647,6 @@ numeric_grammar_derivation_id
 numeric_grammar_derivation_sha256
 raw_token_grammar
 field_source_derivation
-source_document_manifest
 positive_field_join_rows
 raw_field_projections
 G17-C01
@@ -32454,7 +32463,8 @@ Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
    complete round-to-round diff; the exact D5 mode/blob/1,781,491-byte
    prefix; both ledger and all four evidence-artifact identities; all nine
    evidence rows, raw files, token censuses, vector rows, and vector digests;
-   the passage inventory and independently reproduced §20.5 closure sweep;
+   the design-family inventory and independently reproduced per-physical-
+   passage §20.5 closure sweep;
    the exact 38-row/18-replaced/20-unchanged comparator census; the exact
    16+1 successor identifier inventory; every consumer/build walk; and every
    pinned count, byte, ID, and digest. Continue rounds until the exact final
