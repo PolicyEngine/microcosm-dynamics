@@ -235,9 +235,25 @@
    "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
    "p50": "2026-08-06",
    "p80": "2026-08-10",
-   "status": "open",
+   "status": "superseded",
    "supersedes": 13,
    "revision_reason": "Material evidence from three completed units after Amendment-2 ratification (merged 2026-07-31). (1) The prerequisite-registry lane proved all nine crosswalk registries foreign-key the official PSID inventory, which the operative source adjudication declares not emitted, so registries cannot precede a source repin. (2) The questionnaire-extraction unit (merged, referee-confirmed SHIP) closed the V-B5 and V-B8 evidentiary residuals entirely but left one genuine V-B6 residual: no document among the 456 captured questionnaire/procedures volumes supplies the exact allocation from V4901-V4906 secondary-job components to the annual V4379/V5289/V5788 wife labor-income totals, confirmed by two independent corpus-wide sweeps. (3) The design's own registration truth table aborts the fitting-free witness while any V-B row fails, so resolution now requires: an outside-corpus evidence hunt for the allocation rule, a prospectively-replacing source-identity amendment (Amendment 3, drafting), its ratification and registry repin, the nine prerequisite registries with separate reviews, the crosswalk commit ceremony, the value-blind registrability adjudication, and the A1/A3 capture ceremony before registration and the sealed run. p50 moves two days on the amendment-and-registries stack; the p80 tail carries the risk that the allocation rule is unrecoverable outside the corpus and the V-B6 requirement needs its own ratified revision.",
+   "resolution": null,
+   "superseded_by": [
+    15
+   ]
+  },
+  {
+   "id": 15,
+   "registered_at": "2026-08-02T16:15:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-10",
+   "p80": "2026-08-14",
+   "status": "open",
+   "supersedes": 14,
+   "revision_reason": "Material evidence from the amendment cascade and the measured R_Q scale wall, all landed after entry 14 registered. (1) Four further design amendments proved necessary and were ratified through adversarial rounds: A3 (successor V-B source identity + comparator census, revision 5), A4 (V-B6 inclusive-total fact revision, revision 6), A5 (consolidated legal schema and official-inventory dispositions, five rounds, revision 7), and A6 (fixed-width missing-token grammar completion, four rounds, revision 8, merged 2026-08-02 via #356/#358) whose ratified totality census maps all 89,599 inventory fields with total literal registration. (2) A5's schema law requires ONE global six-era 43-wave Q5 annotation artifact; stage 1 sealed 469,198 candidate review rows over 81 questionnaire documents and the per-document annotation factory has sealed 12 of 81 with a measured cadence of ~12 documents/day on three lanes, putting corpus completion near 2026-08-05 with era seals, the global catalog, reverse-cover, and independent reconstruction review behind it. (3) The legal-registry lane (merged #357) narrowed six source gaps to two, both still registration-blocking until captured (Section 218 instrument universe, inventory-gated; base determinations 1975-77 and 1982-89). (4) Official-inventory emission became lawful only with revision 8 and its first attempt is in flight. The remaining chain - inventory, nine crosswalk registries, the single-add crosswalk ceremony, value-blind registrability adjudication, capture ceremony, fresh registration, sealed run, publication - sits behind the R_Q long pole, moving p50 from 2026-08-06 to 2026-08-10.",
    "resolution": null
   }
  ]
