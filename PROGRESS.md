@@ -54,8 +54,8 @@
 - Added an offline tranche evaluator that verifies the staging manifest, all
   six audited external capture files, the committed SSA capture/extraction,
   and four committed model artifacts before parsing any bytes.
-- Generated the canonical 156,477-byte evaluation artifact with SHA-256
-  `fffe112c3b9eeda52f636052a897b9a64d23a7f8fa489e326fbf2f56250f4ecf`;
+- Generated the canonical 156,488-byte evaluation artifact with SHA-256
+  `ead482c559903ae27cc21b2a92528335834dc67e6d567c25e37f47990974b524`;
   its closed census is 59 additions plus one revision, two model-valued
   actions, and 58 null `module_missing` actions.
 - Tightened its exact provenance selectors to include the CBO population/group

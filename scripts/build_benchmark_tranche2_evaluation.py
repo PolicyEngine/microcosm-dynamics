@@ -1255,7 +1255,11 @@ def build() -> dict[str, Any]:
             "model_value_count": 2,
             "null_module_missing_count": 58,
             "row_action_count": 60,
-            "source_counts": {"cbo": 30, "mint": 19, "ssa_4b7": 11},
+            "source_counts": {
+                "cbo": 30,
+                "mint": 19,
+                "ssa_supplement_4b7": 11,
+            },
             "tier_counts": {
                 "admin_truth": 11,
                 "model_triangulation": 49,
