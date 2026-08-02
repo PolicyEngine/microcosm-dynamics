@@ -13,8 +13,12 @@ import json
 import re
 from collections import deque
 from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass
 from fractions import Fraction
+from pathlib import Path
 from typing import Any
+
+import numpy as np
 
 INTERFACE_VERSION = "dictionary_codebook_fixed_width_source_derivation_v3"
 ENTRY_POINTS = (
@@ -40,6 +44,70 @@ T_MINUS = (
 )
 TERMINAL_ORDER = T_PLUS + T_MINUS
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_PSID_ROOT = Path("~/PolicyEngine/psid-data").expanduser()
+
+EVIDENCE_SPECS = (
+    (
+        "data/external/psid_codebook_field_evidence/"
+        "wave1968_ry1968_1974_early_totals_v1.json",
+        3_868,
+        4_628_883,
+        "52c22edacb8d492348479c609da6ce5c0f73285881e0768c25470bd95864fc48",
+    ),
+    (
+        "data/external/psid_codebook_field_evidence/"
+        "ry1975_1977_spouse_concept_seam_v1.json",
+        1_838,
+        2_203_624,
+        "0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87",
+    ),
+    (
+        "data/external/psid_codebook_field_evidence/"
+        "ry1978_1992_pre_er_totals_v1.json",
+        15_745,
+        21_115_064,
+        "109d7ecb4dd933fdcd2efaf572d9bbb8378bb8b054badccda1ac52c049afcedf",
+    ),
+    (
+        "data/external/psid_codebook_field_evidence/"
+        "ry1993_2001_er_transition_v1.json",
+        15_983,
+        19_201_179,
+        "549508cb31a26a81643339f9cda0824a8f44c9ffc5bac300d7647c34ba78c892",
+    ),
+    (
+        "data/external/psid_codebook_field_evidence/"
+        "ry2002_2014_modern_bc_de_v1.json",
+        33_154,
+        45_941_875,
+        "d56356b4a34b32489b5b2e1cc6c782479e910b9711eeff8b74d22d483d8880fe",
+    ),
+    (
+        "data/external/psid_codebook_field_evidence/"
+        "ry2015_2022_exclusion_lineage_v1.json",
+        19_011,
+        28_227_120,
+        "d7018a633ec8127ab799d07db58f63d1582e5417c305c9c03d63b08c41803f78",
+    ),
+)
+
+EXPECTED_EVIDENCE_IDENTITY_SHA256 = (
+    "235b568b54ba04e43d5be85aa4a922148e9ca01f431b94c95ca5fa1976403d9a"
+)
+EXPECTED_RAW_IDENTITY_SHA256 = (
+    "079811364c1ea8f6fbaa624cd4e624570b082ad911307401f8222b73a0affc8d"
+)
+EXPECTED_DENOMINATOR_SHA256 = (
+    "7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764"
+)
+EXPECTED_COUNT_ARRAY_SHA256 = (
+    "421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624"
+)
+EXPECTED_ASSIGNMENT_SHA256 = (
+    "5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e"
+)
+
 NUMERIC_FORM_KINDS = (
     "unsigned_ascii_integer",
     "leading_ascii_minus_signed_integer",
@@ -56,19 +124,73 @@ _CHR = re.compile(r"CHR\(([1-9][0-9]*)\)\Z")
 _SOURCE_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?\Z")
 
 
+@dataclass(frozen=True)
+class SourceField:
+    """One authenticated field-evidence row in denominator order."""
+
+    denominator_position: int
+    evidence_path: str
+    evidence_pointer: str
+    evidence_row_sha256: str
+    codebook_field_key: str
+    interview_wave: int
+    earnings_reference_year: int
+    raw_field_id: str
+    short_label: str
+    declared_format: str
+    layout_start: int
+    layout_end: int
+    raw_width: int
+    spss_numeric_format: str | None
+    description: str
+    code_map: tuple[tuple[Any, ...], ...]
+    missing_code_map_indices: tuple[int, ...]
+    source_document_ids: tuple[str, ...]
+    source_locator_ids: tuple[str, ...]
+    derived_field_block_sha256: str
+
+    @property
+    def key(self) -> tuple[int, str]:
+        """Return the canonical two-position field key."""
+
+        return self.interview_wave, self.raw_field_id
+
+    @property
+    def start(self) -> int:
+        """Return the zero-based half-open start coordinate."""
+
+        return self.layout_start - 1
+
+    @property
+    def end(self) -> int:
+        """Return the zero-based half-open end coordinate."""
+
+        return self.layout_end
+
+
+@dataclass(frozen=True)
+class EvidenceCorpus:
+    """Authenticated six-artifact source denominator."""
+
+    fields: tuple[SourceField, ...]
+    source_manifest: tuple[dict[str, Any], ...]
+    artifact_identity_rows: tuple[dict[str, Any], ...]
+
+
+def _canonical_compact_bytes(value: Any) -> bytes:
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        allow_nan=False,
+    ).encode("utf-8")
+
+
 def canonical_json_bytes(value: Any) -> bytes:
     """Return the section 10.1 canonical JSON encoding with one final LF."""
 
-    return (
-        json.dumps(
-            value,
-            sort_keys=True,
-            separators=(",", ":"),
-            ensure_ascii=True,
-            allow_nan=False,
-        )
-        + "\n"
-    ).encode("utf-8")
+    return _canonical_compact_bytes(value) + b"\n"
 
 
 def canonical_sha256(value: Any) -> str:
@@ -81,6 +203,230 @@ def sha256_bytes(value: bytes) -> str:
     """Return the lowercase SHA-256 of *value*."""
 
     return hashlib.sha256(value).hexdigest()
+
+
+def sha256_file(path: Path, chunk_size: int = 4 * 1024 * 1024) -> str:
+    """Hash a file without retaining its bytes."""
+
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        while chunk := source.read(chunk_size):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _canonical_array_sha256(values: Iterable[Any]) -> str:
+    """Hash an iterable as one canonical JSON array without materializing it."""
+
+    digest = hashlib.sha256()
+    digest.update(b"[")
+    for index, value in enumerate(values):
+        if index:
+            digest.update(b",")
+        digest.update(_canonical_compact_bytes(value))
+    digest.update(b"]\n")
+    return digest.hexdigest()
+
+
+def _project_document_role(dictionary_role: str) -> str:
+    if dictionary_role in {"stata_setup", "spss_setup"}:
+        return "dictionary_layout"
+    if dictionary_role in {
+        "family_codebook",
+        "stata_value_labels",
+        "spss_value_labels",
+    }:
+        return "codebook"
+    if dictionary_role == "raw_fixed_width":
+        return "raw_fixed_width_data"
+    raise ValueError(f"unsupported source role: {dictionary_role}")
+
+
+def _project_source_manifest_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    role = _project_document_role(row["dictionary_role"])
+    waves = [row["interview_wave"]]
+    preimage = [
+        role,
+        waves,
+        row["path"],
+        row["size_bytes"],
+        row["sha256"],
+    ]
+    return {
+        "source_document_id": "psid-source-document:"
+        + canonical_sha256(preimage),
+        "upstream_document_id": row["document_id"],
+        "document_role": role,
+        "interview_waves": waves,
+        "canonical_source_path": row["path"],
+        "encoding": row["encoding"],
+        "byte_size": row["size_bytes"],
+        "sha256": row["sha256"],
+    }
+
+
+def load_authenticated_evidence(
+    repo_root: Path = REPO_ROOT,
+    psid_root: Path = DEFAULT_PSID_ROOT,
+    *,
+    authenticate_source_files: bool = True,
+) -> EvidenceCorpus:
+    """Load the six pinned evidence artifacts and authenticate their corpus.
+
+    Field rows are returned in the §20.3.7 denominator order: artifact,
+    declared wave, then physical field-evidence position within that wave.
+    Source files are hashed incrementally and are never retained in memory.
+    """
+
+    fields: list[SourceField] = []
+    artifact_identities: list[dict[str, Any]] = []
+    upstream_documents: dict[str, dict[str, Any]] = {}
+    denominator_position = 0
+    for (
+        relative_path,
+        expected_count,
+        expected_size,
+        expected_sha,
+    ) in EVIDENCE_SPECS:
+        path = repo_root / relative_path
+        raw_bytes = path.read_bytes()
+        if len(raw_bytes) != expected_size:
+            raise ValueError(f"evidence size mismatch: {relative_path}")
+        if sha256_bytes(raw_bytes) != expected_sha:
+            raise ValueError(f"evidence SHA-256 mismatch: {relative_path}")
+        artifact = json.loads(raw_bytes)
+        rows = artifact["field_evidence"]
+        if (
+            artifact["field_evidence_count"] != expected_count
+            or len(rows) != expected_count
+        ):
+            raise ValueError(f"evidence count mismatch: {relative_path}")
+        artifact_identities.append(
+            {
+                "evidence_path": relative_path,
+                "field_evidence_count": expected_count,
+                "raw_sha256": expected_sha,
+            }
+        )
+        for document in artifact["source_authority_manifest"]:
+            old = upstream_documents.setdefault(
+                document["document_id"], document
+            )
+            if old != document:
+                raise ValueError(
+                    "unequal repeated source manifest row: "
+                    f"{document['document_id']}"
+                )
+
+        columns = {
+            name: index
+            for index, name in enumerate(artifact["field_evidence_columns"])
+        }
+        physical_rows = list(enumerate(rows))
+        ordered_rows = [
+            item
+            for wave in artifact["interview_waves"]
+            for item in physical_rows
+            if item[1][columns["interview_wave"]] == wave
+        ]
+        if len(ordered_rows) != len(rows):
+            raise ValueError(f"field wave cover mismatch: {relative_path}")
+        for physical_index, row in ordered_rows:
+            row_width = (
+                row[columns["layout_end"]] - row[columns["layout_start"]] + 1
+            )
+            if row_width != row[columns["raw_width"]]:
+                raise ValueError(
+                    "field coordinate mismatch: "
+                    f"{row[columns['interview_wave']]}/"
+                    f"{row[columns['raw_field_id']]}"
+                )
+            fields.append(
+                SourceField(
+                    denominator_position=denominator_position,
+                    evidence_path=relative_path,
+                    evidence_pointer=f"/field_evidence/{physical_index}",
+                    evidence_row_sha256=canonical_sha256(row),
+                    codebook_field_key=row[columns["codebook_field_key"]],
+                    interview_wave=row[columns["interview_wave"]],
+                    earnings_reference_year=row[
+                        columns["earnings_reference_year"]
+                    ],
+                    raw_field_id=row[columns["raw_field_id"]],
+                    short_label=row[columns["exact_codebook_short_label"]],
+                    declared_format=row[columns["declared_format"]],
+                    layout_start=row[columns["layout_start"]],
+                    layout_end=row[columns["layout_end"]],
+                    raw_width=row[columns["raw_width"]],
+                    spss_numeric_format=row[columns["spss_numeric_format"]],
+                    description=row[columns["full_source_description"]],
+                    code_map=tuple(
+                        tuple(code_row)
+                        for code_row in row[columns["code_map"]]
+                    ),
+                    missing_code_map_indices=tuple(
+                        row[columns["missing_code_map_indices"]]
+                    ),
+                    source_document_ids=tuple(
+                        row[columns["source_document_ids"]]
+                    ),
+                    source_locator_ids=tuple(
+                        row[columns["source_locator_ids"]]
+                    ),
+                    derived_field_block_sha256=row[
+                        columns["derived_field_block_sha256"]
+                    ],
+                )
+            )
+            denominator_position += 1
+
+    if canonical_sha256(artifact_identities) != (
+        EXPECTED_EVIDENCE_IDENTITY_SHA256
+    ):
+        raise ValueError("complete evidence identity mismatch")
+    keys = [list(field.key) for field in fields]
+    if len(fields) != 89_599 or len(set(field.key for field in fields)) != len(
+        fields
+    ):
+        raise ValueError("field denominator is not an 89,599-key exact cover")
+    if canonical_sha256(keys) != EXPECTED_DENOMINATOR_SHA256:
+        raise ValueError("field denominator SHA-256 mismatch")
+
+    source_manifest = sorted(
+        (
+            _project_source_manifest_row(row)
+            for row in upstream_documents.values()
+        ),
+        key=lambda row: (
+            (
+                "questionnaire_flow",
+                "dictionary_layout",
+                "codebook",
+                "raw_fixed_width_data",
+            ).index(row["document_role"]),
+            row["interview_waves"][0],
+            row["canonical_source_path"].encode("utf-8"),
+            row["source_document_id"],
+        ),
+    )
+    if len(source_manifest) != 176:
+        raise ValueError("source manifest is not a 176-document exact cover")
+    if authenticate_source_files:
+        for document in source_manifest:
+            source_path = psid_root / document["canonical_source_path"]
+            if not source_path.is_file() or source_path.is_symlink():
+                raise ValueError(
+                    f"source is not a regular file: {source_path}"
+                )
+            if source_path.stat().st_size != document["byte_size"]:
+                raise ValueError(f"source size mismatch: {source_path}")
+            if sha256_file(source_path) != document["sha256"]:
+                raise ValueError(f"source SHA-256 mismatch: {source_path}")
+    return EvidenceCorpus(
+        fields=tuple(fields),
+        source_manifest=tuple(source_manifest),
+        artifact_identity_rows=tuple(artifact_identities),
+    )
 
 
 def parse_format_declaration(
@@ -621,10 +967,148 @@ def extract_dictionary_layout_rows(*args: Any, **kwargs: Any) -> Any:
     )
 
 
-def frame_fixed_width_records(*args: Any, **kwargs: Any) -> Any:
-    """Revision-9 raw framing entry point (implemented below)."""
+def frame_fixed_width_records(
+    source_document: Mapping[str, Any],
+    fields: Sequence[SourceField],
+    psid_root: Path = DEFAULT_PSID_ROOT,
+    *,
+    framing_source_row_ids: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Frame one authenticated raw file and derive every field census row.
 
-    raise NotImplementedError("all-source raw framing is not built yet")
+    The raw file remains a read-only memory map.  Each field is sliced from
+    the fixed-width record matrix independently, so memory use is bounded by
+    one wave plus one field-column copy rather than all 255.6M observations.
+    """
+
+    if source_document["document_role"] != "raw_fixed_width_data":
+        raise ValueError("frame input is not raw_fixed_width_data")
+    waves = source_document["interview_waves"]
+    if len(waves) != 1:
+        raise ValueError("raw source must name exactly one wave")
+    wave = waves[0]
+    wave_fields = [field for field in fields if field.interview_wave == wave]
+    if not wave_fields:
+        raise ValueError(f"raw source has no fields: {wave}")
+    record_width = max(field.end for field in wave_fields)
+    if any(field.end > record_width for field in wave_fields):
+        raise AssertionError("unreachable coordinate error")
+    source_path = psid_root / source_document["canonical_source_path"]
+    size_bytes = source_path.stat().st_size
+    record_size = record_width + 2
+    record_count, remainder = divmod(size_bytes, record_size)
+    if remainder or record_count <= 0:
+        raise ValueError(f"raw framing remainder: {source_path}")
+
+    raw = np.memmap(source_path, dtype=np.uint8, mode="r")
+    physical_records = raw.reshape(record_count, record_size)
+    if not (
+        np.all(physical_records[:, record_width] == 0x0D)
+        and np.all(physical_records[:, record_width + 1] == 0x0A)
+    ):
+        raise ValueError(f"raw separator mismatch: {source_path}")
+    records = physical_records[:, :record_width]
+
+    record_domain_sha256 = _canonical_array_sha256(
+        [
+            record_index,
+            sha256_bytes(bytes(records[record_index])),
+        ]
+        for record_index in range(record_count)
+    )
+    field_census_rows: list[dict[str, Any]] = []
+    for field in wave_fields:
+        observed, frequencies = np.unique(
+            records[:, field.start : field.end],
+            axis=0,
+            return_counts=True,
+        )
+        observed_token_rows = [
+            {
+                "raw_token_hex": bytes(token).hex(),
+                "frequency": int(frequency),
+            }
+            for token, frequency in zip(observed, frequencies, strict=True)
+        ]
+        field_census_rows.append(
+            {
+                "interview_wave": field.interview_wave,
+                "raw_field_id": field.raw_field_id,
+                "start": field.start,
+                "end": field.end,
+                "raw_width": field.raw_width,
+                "observed_token_rows": observed_token_rows,
+                "observed_token_row_count": len(observed_token_rows),
+                "observed_token_rows_sha256": canonical_sha256(
+                    observed_token_rows
+                ),
+            }
+        )
+    del records
+    del physical_records
+    del raw
+
+    empty_sha256 = sha256_bytes(b"")
+    record_framing = {
+        "record_width": record_width,
+        "header_byte_count": 0,
+        "header_sha256": empty_sha256,
+        "trailer_byte_count": 0,
+        "trailer_sha256": empty_sha256,
+        "record_separator_hex": "0d0a",
+        "separator_placement": "between_records_and_terminal",
+        "framing_source_row_ids": list(framing_source_row_ids),
+    }
+    return {
+        "source_document_id": source_document["source_document_id"],
+        "derivation_kind": "fixed_width_records",
+        "record_framing": record_framing,
+        "record_count": record_count,
+        "record_keyset_sha256": _canonical_array_sha256(range(record_count)),
+        "record_domain_sha256": record_domain_sha256,
+        "field_census_rows": field_census_rows,
+        "field_census_row_count": len(field_census_rows),
+        "field_census_keyset_sha256": canonical_sha256(
+            [
+                [row["interview_wave"], row["raw_field_id"]]
+                for row in field_census_rows
+            ]
+        ),
+        "field_census_domain_sha256": canonical_sha256(field_census_rows),
+    }
+
+
+def derive_all_raw_censuses(
+    corpus: EvidenceCorpus,
+    psid_root: Path = DEFAULT_PSID_ROOT,
+) -> tuple[dict[str, Any], ...]:
+    """Derive all 43 raw document rows in canonical document order."""
+
+    raw_documents = [
+        row
+        for row in corpus.source_manifest
+        if row["document_role"] == "raw_fixed_width_data"
+    ]
+    derivations = tuple(
+        frame_fixed_width_records(document, corpus.fields, psid_root)
+        for document in raw_documents
+    )
+    raw_identity_rows = [
+        {
+            "interview_wave": document["interview_waves"][0],
+            "path": document["canonical_source_path"],
+            "record_count": derivation["record_count"],
+            "record_width": derivation["record_framing"]["record_width"],
+            "sha256": document["sha256"],
+            "size_bytes": document["byte_size"],
+        }
+        for document, derivation in zip(
+            raw_documents, derivations, strict=True
+        )
+    ]
+    if canonical_sha256(raw_identity_rows) != EXPECTED_RAW_IDENTITY_SHA256:
+        raise ValueError("complete raw identity mismatch")
+    return derivations
 
 
 def extract_codebook_rows(*args: Any, **kwargs: Any) -> Any:
