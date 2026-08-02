@@ -38,7 +38,11 @@
 - Added scope-behavior tripwires and proved the terminal registry-emission gate still
   aborts even when all mocked blocker arrays are empty.
 - Passed the combined 84 validator and builder-unit tests.
+- Passed all 114 tests in the five-file referee-focused suite.
+- Recollected 4,585 tests and synchronized the tier census to
+  `986 / 2,103 / 817 / 520 / 159`; the 19 new tests are all unit-tier.
+- Passed the full-collection tier-policy manifest test.
 
 ## Next
 
-1. Run focused suites, tier sync, builder `--check`, formatting, and final verification.
+1. Rerun builder `--check`, formatting, SHA checks, and final repository audit.
