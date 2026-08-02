@@ -30374,7 +30374,7 @@ they never discard `F` or derive expected dispositions from a candidate.
 `payload_width`, `decimal_places`, and `physical_authentication`.
 `payload_width` remains the complete raw width `w`, and decimal places is
 the selected declaration's `d`. Its `physical_authentication` is
-prospectively replaced by exactly these nine keys:
+prospectively replaced by exactly these twelve keys:
 
 ```text
 raw_source_file_id
@@ -30386,6 +30386,9 @@ token_form_candidate_results
 selected_token_form
 candidate_arm_results
 selected_arm
+range_renderability_partition_rows
+range_renderability_partition_row_count
+range_renderability_partition_domain_sha256
 ```
 
 The first five retain §19's complete-census equations. Each token-form
@@ -30448,7 +30451,7 @@ the placement it declares. Source silence is null and never rewritten as a
 declaration, but the complete negative-token census may select the exact
 signed form. This prospectively replaces §19's fixed-width requirement that
 `declared_signed` coalesce to false and its value-code-range constant
-`signed: false`. On either compiled branch,
+`signed: false`. On every compiled branch,
 `value_derivation.signed` and the consuming `typed_parse_specs.signed` equal
 the selected form's Boolean. All retained scale, type, unit, and
 range-membership coalescence laws remain exact.
@@ -30522,6 +30525,59 @@ each future field must still reproduce its own positive diagnostic and the
 excluded zero-arm failures. A zero-padded future field is source drift and
 aborts; it does not silently select the formerly hypothetical arm.
 
+The three range-partition members are an exact empty array, integer zero,
+and the §10.1 terminal-LF canonical SHA-256 of that empty array when the
+complete normalized codebook domain has no `numeric_range`. Otherwise they
+contain exactly one row per normalized numeric-range entry in source order.
+Each row has exactly these nine keys in order:
+
+```text
+source_entry_ref
+source_member_count
+source_member_domain_sha256
+renderable_member_rows
+renderable_member_count
+renderable_member_domain_sha256
+unrenderable_member_rows
+unrenderable_member_count
+unrenderable_member_domain_sha256
+```
+
+The complete source-member relation is the ascending finite member array
+fixed by the normalized entry, represented as exact two-key
+`source_member_index`/`source_value` rows. The index is zero-based within
+that entry. `source_value` has the retained observed-source-value five-key
+shape and is the exact range-derived `typed_disposition`, `value_type`,
+`typed_value_unit`, `canonical_value`, and `source_meaning`. Its count and
+digest cover that complete reconstructed array; the array is not separately
+serialized beside the count/digest because its two subrelations serialize
+every same indexed/value row exactly once. The normalized range, bounds,
+step, type, unit, meaning, and entry reference remain unchanged.
+
+For the selected token form and selected arm or no-arm disposition, evaluate
+the one §20.3.3 renderer on every complete source member before reading a
+partition row. A renderable member row has exactly
+`source_member_index`, `source_value`, `physical_image_raw_token_hex`,
+`rendered_decimal_places`, `transition_value_actions`, `parsed_scalar`, and
+`replay_raw_token_hex`. The image and replay are the same unique exact-width
+bytes; precision is the unique constructed fractional-byte count, zero for
+an integer form; the action array is the complete DFA-path `value_action`
+projection; the parsed scalar deep-equals `source_value.canonical_value`;
+and the transition result's type and unit equal the source value's.
+An unrenderable member row has exactly
+`source_member_index`, `source_value`, `physical_image_raw_token_hex`, and
+`unrenderable_reason`; its image is JSON null and its reason is exactly
+`no_exact_width_selected_form_image`.
+
+Both member arrays preserve source-member order. Their index sets are
+disjoint, their ordered merge is exactly every index from zero through
+`source_member_count - 1`, their values deep-equal the corresponding source
+members, and their counts sum to `source_member_count`. Each displayed
+domain digest hashes its complete named array under §10.1 with one terminal
+LF; the enclosing partition count and digest cover the complete ordered
+nine-key partition rows. Independent reconstruction disagreement, a missing
+or duplicate member, a fabricated image, or digest-only agreement aborts.
+
 #### 20.3.3 Exact literal-decimal and signed token/rendering law
 
 Let `x` be a source-authenticated nonmissing scalar and `s` the positive
@@ -30576,17 +30632,40 @@ reject before semantic classification.
 
 Codebook literal rendering, range image construction, fixed-width parsing,
 observed classification, and unobserved replay all use this one function.
-A normalized literal still has complete-width exact-match precedence. A
-numeric range must exact-cover every finite member under this rendering;
-one unrepresentable member makes the range branch unsupported. A fixed-width
-numeric token must exact-match a dictionary missing literal before numeric
-parsing. Observation establishes physical spelling and the closed form, not
-meaning, type, unit, missing disposition, or a scalar outside the
-source-authenticated semantic branch.
+A normalized literal still has complete-width exact-match precedence. For
+each numeric range, enumerate the complete finite source-member relation in
+ascending source order and apply this renderer once to every member. Retain
+the complete normalized range without narrowing it, and serialize the exact
+renderable and unrenderable partition in §20.3.2. A member is renderable only
+when it has the one exact-width image, greatest fitting precision, DFA action
+sequence, scalar, and byte-equal replay fixed above. Otherwise its physical
+image is null with exact reason
+`no_exact_width_selected_form_image`.
+
+If every range member is renderable, the applicable diagnostic-space or
+padding-underdetermined compiled status applies.
+If every range has at least one renderable member and the complete numeric-
+range domain has at least one unrenderable member,
+the passing status is
+`compiled_source_numeric_grammar_partial_range_exact_replay`. Every observed
+nonmissing range member must be in the renderable relation and replay
+exactly. If any normalized range has no renderable member, no compiled status
+applies; an otherwise numeric-required branch is unsupported, while the
+retained physical-unestablished branch remains available only under its
+independently satisfied null-profile conditions. The rejected broader
+alternative would allow another range's renderable members to rescue an
+all-unrenderable range.
+Missing, duplicating, reordering, rounding, truncating, synthesizing, or
+omitting a source member, choosing less than the greatest fitting precision,
+or promoting only the observed subset aborts. A fixed-width numeric token must
+exact-match a dictionary missing literal before numeric parsing. Observation
+establishes physical spelling and the closed form, not meaning, type, unit,
+missing disposition, or a scalar outside the source-authenticated semantic
+branch.
 
 #### 20.3.4 Exact-token DFA, actions, scalar, and replay
 
-For either compiled derivation status below, the DFA payload is the exact raw
+For any compiled derivation status below, the DFA payload is the exact raw
 token after its Amendment-6 `padding_rule`; payload width therefore remains
 `w`. From the source-valid render language subtract every canonical image of
 a registered dictionary missing token. A missing image that collides with a
@@ -30599,6 +30678,17 @@ DFA accepts exactly that finite-width physical language; it does not accept
 all strings that a generic numeric regex would parse. This exclusion set is
 the retained §19 `E` construction completed for the new token forms, and it
 fixes one transition-domain digest.
+
+For `compiled_source_numeric_grammar_partial_range_exact_replay`, the
+source-valid numeric portion of that language is exactly the set of
+`physical_image_raw_token_hex` values in the complete renderable-member
+relations; no unrenderable source member or grammar-shaped value outside
+those relations contributes an edge or accepting path. Independently
+rendered ordinary nonmissing literals may remain in the physical language
+under the literal-first law above. Missing images are then subtracted as
+usual. The DFA and every accepting action sequence are reconstructed from
+those exact images, never from the observed subset, a generic numeric
+language, or the unrenderable relation.
 
 The retained transition action enum becomes operative only as follows:
 
@@ -30653,16 +30743,21 @@ The exact passing derivation statuses become:
   padding arm is the source-authenticated ASCII-space profile;
 - `compiled_source_numeric_grammar_padding_underdetermined_exact_replay`
   for either explicit no-arm disposition;
+- `compiled_source_numeric_grammar_partial_range_exact_replay` for a
+  complete normalized range domain whose exhaustive ordered partitions each
+  have at least one renderable member and collectively have at least one
+  unrenderable member, with every observed
+  range token in the renderable relation and byte-replaying exactly;
 - the three retained noncompiled value-code/outside-numeric statuses in
   §19.3.2, only after their declaration projection obeys §20.3.1.
 
-`registered_numeric_grammar` is nonnull for both compiled statuses and null
-on every retained noncompiled branch. The top-level
+`registered_numeric_grammar` is nonnull for all three compiled statuses and
+null on every retained noncompiled branch. The top-level
 `field_source_derivation.status` may be `pass` only when every row takes one
-of those five lawful statuses and the complete relation plus all seven
-vectors below reproduce. Every layout consumer accepts either compiled
-status when its complete profile, selected-arm-or-disposition, padding rule,
-DFA, and replay exact-match.
+of those six lawful statuses and the complete relation plus all seven
+vectors below reproduce. Every layout consumer accepts any compiled status
+when its complete profile, selected-arm-or-disposition, range partitions,
+padding rule, DFA, and replay exact-match.
 
 A retained `value_code_domain_no_numeric_grammar` row may likewise carry an
 explicit underdetermined selected-arm disposition and complete physical
@@ -30683,8 +30778,8 @@ status is emitted.
 
 | Failure predicate | Exact row status and consequence |
 |---|---|
-| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
-| any `unsupported_source_declaration`; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; unrenderable range member; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms; unequal independent range partitions; missing, duplicate, overlapping, or reordered partition members; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `unsupported_source_declaration`; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
 | missing selector after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; no passing token form; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
 
 An explicit underdetermined-padding token is not incomplete. Conversely,
@@ -30704,10 +30799,10 @@ For a consuming layout, `typed_parse_specs` retains its nine-key shape.
 Its `raw_width`, `decimal_places`, `signed`, scale, type, and unit must
 positionally deep-equal the complete successor profile/value derivation;
 `signed` is true only for a selected signed token form. The complete
-ten-key declaration projection, nine-key physical authentication, explicit
-selected-arm-or-disposition, four-key padding rule, ten-key DFA, observed
-rows, unobserved rows, and all fresh IDs/hashes flow into the existing
-layout and `raw_token_grammar` members. No structural relabeling or mixed
+ten-key declaration projection, twelve-key physical authentication, explicit
+selected-arm-or-disposition, complete range partitions, four-key padding
+rule, ten-key DFA, observed rows, unobserved rows, and all fresh IDs/hashes
+flow into the existing layout and `raw_token_grammar` members. No structural relabeling or mixed
 §19/§20 object is lawful.
 
 #### 20.3.6 Mandatory actual-data regression-vector census
@@ -30726,7 +30821,7 @@ are:
   {"vector_id":"A6-R04","interview_wave":1968,"raw_field_id":"V210","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/213","evidence_row_sha256":"9764e1aad9af27bb3a98a13566d096548c244bb255efc629b420606cf201bea9","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4072529f3cab60900f04eb216e73f0ec6307aa8ed60c439dcfaf51b04018a448","required_outcome":"unsigned_literal_decimal_selected_padding_underdetermined_no_capacity"},
   {"vector_id":"A6-R05","interview_wave":1968,"raw_field_id":"V76","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/75","evidence_row_sha256":"97ad420b1e7bc3fb8ce0f8ad9f07c94f4c54a1e323c7c01fc17bea6a80391b64","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4082fbc67ab457ddad4115b66ab785e816e20b393b195786fbd47ba384b7aa2d","required_outcome":"signed_integer_leading_minus_after_spaces_selected"},
   {"vector_id":"A6-R06","interview_wave":1979,"raw_field_id":"V6363","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/62","evidence_row_sha256":"61c70014d4ec5b40676a980bf24c042f6cc530649794175a1d15777e379c65f3","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"a56fa8d49cc90e874cd900d689302fe91138dbaaa895db6731e61fbe152989bf","required_outcome":"tuple_equivalent_declaration_dispositions_and_unsigned_literal_decimal_space_padding_selected"},
-  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"observed_signed_literal_decimal_precision_edge_replays_and_unrenderable_complete_range_aborts"}
+  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"exhaustive_partial_range_partition_and_observed_exact_replay"}
 ]
 ```
 
@@ -30737,7 +30832,7 @@ hashes the complete unsigned-byte-ordered array of exact two-key
 exactly 7. The ordered vector-ID keyset SHA-256 is
 `b3742f1b0685ce453ec1fbee583e34c2be8b14b674f11f138b44050cc8b10a7d`,
 and the complete nine-key row-domain SHA-256 is
-`5efd74477cd16c1d79121ed4f6dbd985189c05d8d0bb85e51eba99f165ee7283`.
+`3c4c655ccf6282b7777ddd39160827645b0462a836662e4855c19170eb927d3a`.
 Both are over standalone §10.1 terminal-LF canonical JSON arrays. A vector
 may exercise more than one arm, but none may be omitted.
 
@@ -30793,12 +30888,22 @@ The byte-exact regression facts are:
   (`2d313034302e30`) occurs 14 times. For width seven, sign length one,
   four integral digits, and maximum `d=2`, the exact formula gives `f=1`;
   the observed constructor parses -1040 and uniquely re-renders `-1040.0`.
-  But the complete source range `-3,927.00 - .01` includes cent-step member
-  `-1040.01`, which cannot fit without losing precision. The whole field
-  must therefore end `unsupported_source_numeric_format` under the complete
-  range-image law. Requiring two observed digits, accepting fewer than the
-  greatest fitting precision, rounding the range member, or promoting the
-  observed subset to a passing field fails this rejection vector.
+  Exhaustively enumerate the complete cent-step ranges `-3927.00` through
+  `-0.01` and `0.01` through `3000.00`, retaining all 692,700 members. The
+  negative range partitions into 129,270 renderable and 263,430
+  unrenderable members; the positive range partitions into 300,000 and
+  zero, for complete totals 429,270 and 263,430. In particular,
+  `-1040.00` has unique image `-1040.0`, while `-1040.01` has null physical
+  image and reason `no_exact_width_selected_form_image`. Every one of the
+  4,460 observations belongs to a renderable image or the retained literal
+  branch and replays byte-for-byte. The row must pass as
+  `compiled_source_numeric_grammar_partial_range_exact_replay`.
+  The physical DFA language has exactly the 429,270 range images plus the
+  ordinary literal-first image `202020302e3030`, hence 429,271 images and no
+  missing-image exclusion. Requiring
+  two observed digits, accepting fewer than the greatest fitting precision,
+  rounding or omitting a range member, or promoting only the observed subset
+  fails the vector.
 
 The implementation must deep-equal each full census and constructor result,
 not only the displayed exemplar token or digest. The preexisting synthetic
@@ -30821,9 +30926,10 @@ complete nested values, never an outer key count. Specifically:
 1. `numeric_grammar_derivation_id` and
    `numeric_grammar_derivation_sha256` resolve the unique same-wave/raw-field
    successor row. The latter hashes the complete 15-key row, including the
-   ten-key declaration projection, nine-key physical authentication,
-   selected token form, selected arm or no-arm disposition, complete
-   exact-token DFA, and every source-derived status. A digest of a §19 row
+   ten-key declaration projection, twelve-key physical authentication,
+   selected token form, selected arm or no-arm disposition, complete range
+   partitions, exact-token DFA, and every source-derived status. A digest of
+   a §19 row
    or a row with one nested member projected away is unequal.
 2. `typed_parse_specs.raw_width` equals `payload_width == w`;
    `.decimal_places` equals the selected declaration's maximum `d` even
@@ -30836,8 +30942,8 @@ complete nested values, never an outer key count. Specifically:
    `.registered_numeric_grammar` deep-equal the successor derivation row.
    `grammar_status`, residual identity, dictionary missing literals,
    observed source/file/count values, token rows, closed unobserved rows,
-   and `unknown_token_action` retain their §19 meanings. The two compiled
-   derivation statuses in §20.3.5 both require a nonnull grammar; every
+   and `unknown_token_action` retain their §19 meanings. The three compiled
+   derivation statuses in §20.3.5 all require a nonnull grammar; every
    noncompiled branch requires null. No consumer may reject the
    underdetermined status merely because §19 formerly admitted only the
    diagnostic compiled status.
@@ -30852,9 +30958,11 @@ complete nested values, never an outer key count. Specifically:
    selected form and arm/disposition, traversed through the same DFA, and
    replayed. A width-one no-arm row authorizes only its exact one-byte
    image; a no-capacity decimal row authorizes only the unique full-width
-   image; neither authorizes a hypothetical wider rendering. An
-   unrenderable range member, additional precision spelling, plus form,
-   zero-padded form, or other physical image aborts the entire range branch.
+   image; neither authorizes a hypothetical wider rendering. On the partial-
+   range status, only a member in the exact renderable relation traverses the
+   DFA; a member in the unrenderable relation takes the exact closed abort
+   below. An additional precision spelling, plus form, zero-padded form, or
+   physical image absent from the renderable relation aborts.
 6. A normalized codebook literal retains complete-width precedence and a
    dictionary missing literal retains missing precedence. A literal or
    missing image that collides with the numeric language remains a conflict;
@@ -30869,10 +30977,29 @@ inventory builder identity remains distinct from the source-only compiler
 identity and must consume, not recreate, the passing successor
 `field_source_derivation`.
 
+For the partial-range status only, the qualifying numeric-range member of
+`unobserved_possible_values` retains its four inherited keys and appends
+exactly `renderable_member_count`, `renderable_member_domain_sha256`,
+`unrenderable_member_count`, and
+`unrenderable_member_domain_sha256`. The four values deep-equal the same-
+entry partition row in the resolved derivation profile. Its
+`rendering_status` is
+`source_registered_numeric_grammar_partial_range_exact_replay`, its token-
+mapping array is exact empty, and `if_encountered` is
+`parse_if_renderable_else_abort_unrenderable_source_member`. The row's
+source-domain reference continues to denote the complete unchanged range;
+it resolves both complete member relations through the derivation ID and
+full-row digest. A renderable member parses and replays under the registered
+grammar. An unrenderable member terminates before classification with no
+physical image or scalar. This is one tagged extension of the retained
+unobserved row, not an authored token map or omission of the unfavorable
+subdomain.
+
 For `psid_value_code_specs.v1`, the exact `source_commitments` and `entries`
 outer schemas remain. Each numeric-range commitment now carries the same
 successor row ID/full-row digest, declaration dispositions, token-form
-result, arm or no-arm disposition, padding rule, DFA, census, and replay as
+result, arm or no-arm disposition, both range relations, padding rule, DFA,
+census, and replay as
 the matching layout. Literal-only, physical-unestablished, and
 outside-numeric branches retain their closed null-grammar behavior after
 their declarations have passed §20.3.1. The value-code registry may neither
@@ -30907,10 +31034,11 @@ The Q5 acceptance walk for each positive is exact:
 1. authenticate both upstream roots and all 257 source documents; rebuild
    the complete v3 field-source relation, including every unconsumed field;
 2. locate the unique same-wave/raw-field successor row and require one of
-   the five lawful statuses in §20.3.5;
+   the six lawful statuses in §20.3.5;
 3. deep-compare its complete source-row arrays, coordinates, declaration
    assertions/dispositions, token census, profile, form, arm/disposition,
-   padding rule, DFA, and replay before projecting its ID and full-row hash;
+   both range relations, padding rule, DFA, and replay before projecting its
+   ID and full-row hash;
 4. independently rebuild the complete 18-key raw-field projection, the
    nine remaining join members, join ID, and all row/keyset/domain digests;
    and
@@ -30937,8 +31065,9 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   under §§20.3–20.4 over the complete source denominator before an inventory
   comparand is read. Actual bytes come from the authenticated Q5 manifest.
   The complete relation includes every ten-key declaration projection,
-  profile, form, arm/disposition, padding rule, DFA, replay, failure branch,
-  and all seven regression vectors through the implementation-identity
+  profile, form, arm/disposition, complete renderable/unrenderable range
+  relation, padding rule, DFA, replay, failure branch, and all seven
+  regression vectors through the implementation-identity
   acceptance requirement. Used rows then reverse-project through the sixth
   C01 value, the complete positional inventory layout/token-grammar rows;
   unused rows remain in the fifth value. Both complete values deep-equal.
@@ -30946,22 +31075,24 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   positive-field joins retain every 18-key raw-field projection and its
   fresh derivation row hash. The sixth retains each official layout's
   complete successor parse profile and raw-token grammar, including explicit
-  no-arm tokens and exact `no_op`, `set_negative`, and
-  `consume_decimal_point` transitions. A join/layout pair that agrees only
+  no-arm tokens, both partial-range relations, and exact `no_op`,
+  `set_negative`, and `consume_decimal_point` transitions. A join/layout pair that agrees only
   on width, scalar, or grammar ID fails.
 - **G17-C06.** Before direct-law classification, the expected and actual
   sides independently resolve the unique successor row and compare its
   complete declaration disposition relation, census, token-form selection,
-  arm or no-arm disposition, padding operation, transition rows, value
-  derivation, and raw-to-value-to-raw replay. Missing/literal precedence and
+  arm or no-arm disposition, both range relations, padding operation,
+  transition rows, value derivation, and raw-to-value-to-raw replay.
+  Missing/literal precedence and
   all retained legal/default folds follow only after that pass. A host
   parse, trimmed token, rounded decimal, unsigned coercion, or predecessor
   grammar fails C06.
 - **G17-C07.** Expected value-code rows are rebuilt from authenticated
   source bytes through the same successor compiler. Actual
   `source_commitments` and entries must deep-equal every declaration
-  assertion/disposition, normalized entry, numeric-range image, profile,
-  grammar, and replay. Tuple-equivalent SPSS/codebook declarations remain
+  assertion/disposition, normalized entry, both numeric-range partition
+  relations, profile, grammar, and replay. Tuple-equivalent SPSS/codebook
+  declarations remain
   separately visible; neither is discarded because their semantic tuples
   agree.
 
@@ -30974,8 +31105,9 @@ complete ordered 18-row array. All 18 physical rows must still pass.
 
 In §19.8.1 the source-format compiler step is composed with §§20.3–20.4:
 compile all declaration assertions and dispositions, all candidate token
-forms, the per-field space or no-arm result, exact-token DFAs, replays, and
-seven vectors before building Q5, the official artifacts, or G17. Every
+forms, the per-field space or no-arm result, every exhaustive range
+partition, exact-token DFAs, replays, and seven vectors before building Q5,
+the official artifacts, or G17. Every
 later reference to a v3 derivation row means this completed v3 row.
 
 Section 19.8.2 item 4 is prospectively replaced only where it says that
@@ -30986,8 +31118,9 @@ unestablished-token-abort, and character-format limits remain controlling.
 The replacement is the closed law in §20.3: source-ordered per-assertion
 dispositions; field-local diagnostic ASCII-space selection; explicit
 width-one and no-padding-capacity no-arm dispositions; exact
-maximum-fitting literal decimal; exact leading-minus placement; and failure
-for every unenumerated form. This amendment establishes representability,
+maximum-fitting literal decimal; exhaustive partial-range exact replay;
+exact leading-minus placement; and failure for every unenumerated form. This
+amendment establishes representability,
 not that Q5, an official inventory, G17, or a production registration now
 passes.
 
@@ -31005,11 +31138,11 @@ affected prose is dismissed as merely explanatory.
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, outer schemas, source denominator, and dependency order remain exact; only the nested grammar laws named below are completed. |
 | §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion; disposition byte-equal and tuple-equivalent peers; abort every unsupported, true-conflict, or missing disposition. |
 | §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
-| §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-nine-key-authentication`: add complete token-form results and selection; diagnostic fields select only the evidenced ASCII-space arm; the two exact structural no-arm dispositions replace fabrication or failure where an arm is unobservable in principle. |
+| §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-twelve-key-authentication`: add complete token-form results and selection plus exhaustive range-partition rows/counts/digests; diagnostic fields select only the evidenced ASCII-space arm; the two exact structural no-arm dispositions replace fabrication or failure where an arm is unobservable in principle. |
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm for either structural underdetermination. Amendment-6 rows never select or canonicalize a zero-padding arm. |
 | §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
-| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `composed-with-§20.3.5`: add the explicit underdetermined passing status and closed failures while preserving all outer key counts and ordered ID preimages; every nested ID/digest is fresh. |
-| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every branch uses the same successor declaration/form/arm/DFA renderer; precedence and source semantics remain exact. |
+| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `composed-with-§20.3.5`: add the explicit underdetermined and exhaustive partial-range passing statuses and closed failures while preserving all outer key counts and ordered ID preimages; every nested ID/digest is fresh. |
+| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every branch uses the same successor declaration/form/arm/DFA renderer; partial ranges carry both member relations and the closed unrenderable-member action; precedence and source semantics remain exact. |
 | §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-seven-vector-census`: V93 remains mandatory, actual later-era space, width-one, decimal, signed, conflict, and precision-edge vectors are added; zero-arm constructors are rejection-only. |
 | §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer schemas remain; complete successor nested rows and hashes flow positionally through every layout and value-map consumer. |
 | §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
@@ -31081,6 +31214,7 @@ token_form_candidate_results
 selected_token_form
 candidate_arm_results
 selected_arm
+range_renderability_partition_rows
 padding_rule
 registered_numeric_grammar
 set_negative
@@ -31571,11 +31705,14 @@ The v3 source-only interface and all official v1 artifact/registry names are
 completed in place and therefore are not new identifiers. In particular,
 `psid-source-format-assertion:` and the retained numeric-grammar prefixes are
 ID prefixes; `source_format_assertion_id`, disposition members, token-form
-members, padding members, and DFA actions are schema members;
+members, padding members, range-partition members, and DFA actions are
+schema members;
 `padding_arm_underdetermined_width_one_exact_replay_v1`,
 `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`,
 `validate_exact_left_ascii_space_padding_preserve_payload`, the token-form
-and status strings, and the `A6-R01` through `A6-R07` values are closed enum
+and status strings—including
+`compiled_source_numeric_grammar_partial_range_exact_replay`—and the
+`A6-R01` through `A6-R07` values are closed enum
 or row-ID values. None is a separately selectable object, schema, or
 predicate identifier. `D6`, `Q5`, authorization commit `A`, `H_cap`, `T`,
 and `C` are symbolic Git commits; the `F`/`N`/`H`/`X` projections and the
@@ -31613,10 +31750,11 @@ dependency order before Q5 or an official consumer is read:
    field's result enters;
 5. construct the exact-token DFA and action rows, replay every observed
    numeric token and normalized literal/missing token, enumerate every
-   source-declared unobserved value, and apply the complete range-image and
-   unknown-token abort laws; then compute every grammar ID, derivation ID,
-   full-row digest, relation digest, and implementation result from complete
-   canonical bytes; and
+   source-declared unobserved value, construct every exhaustive ordered
+   renderable/unrenderable range partition, and apply its exact replay or
+   closed unrenderable-member action plus the unknown-token abort law; then
+   compute every grammar ID, derivation ID, full-row digest, relation digest,
+   and implementation result from complete canonical bytes; and
 6. independently reproduce the seven-row vector relation and all full
    field/token censuses. The implementation identity is unacceptable if a
    displayed exemplar happens to match but its complete row, census,
@@ -31632,11 +31770,11 @@ The required actual-evidence walk is:
 | A6-R04 | lane A, §20.2.1 | V210 / 1968 | `NUM(4.2)`/`F4.2` dispositions select literal decimal; missing `0.00` remains missing-first; nonmissing `2.60` maps to exact `13/5` and back; full width forces `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`. |
 | A6-R05 | lane A, §20.2.1 | V76 / 1968 | `202d323432` executes leading `no_op`, `set_negative`, and digit actions, yields -242, and re-renders the same five bytes; all plus, trailing, internal, overpunched, and leading-zero sign spellings reject. |
 | A6-R06 | lane B, §20.2.1 | V6363 / 1979 | source-ordered null/SPSS/codebook assertions preserve `F6.2` and `NUM(6.2)`, select one `(6,2)` tuple and one corroborating tuple-equivalent disposition; `2032362e3430` maps to 26.40 and byte-replays under the space/literal form. |
-| A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; the complete cent-step range also contains unrenderable -1040.01, so the field takes the required unsupported abort rather than rounding or observed-subset promotion. |
+| A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; both complete cent-step ranges partition 429,270 renderable from 263,430 unrenderable members, `-1040.01` has a null image, and the field passes only as `compiled_source_numeric_grammar_partial_range_exact_replay`. |
 
 The first six rows supply at least one actual exemplar for every newly
 lawful arm or disposition requested by this amendment; R07 is the mandatory
-hostile precision/range edge. The lane ledgers identify the census finding,
+hostile precision/range partition. The lane ledgers identify the census finding,
 while the exact evidence pointers, row hashes, raw-file hashes, token-domain
 hashes, coordinates, counts, and outcomes are the normative relation in
 §20.3.6. Neither ledger summary supplies a row value.
@@ -31758,11 +31896,19 @@ smallest dispositions for round one and records the rejected alternatives:
    conflict → unsupported → incomplete, so one input serializes one exact
    failure while a true supported-tuple disagreement remains conflict.
 7. **Complete decimal ranges.** Rounding or dropping unrenderable V945
-   cent-step members would violate exact replay. A new partial-range schema
-   with separately enumerated renderable and unrenderable member relations
-   could be proposed later, but neither census ledger freezes that schema or
-   its consumer shape. Round one therefore keeps the retained all-member
-   image requirement and aborts V945 after proving its observed constructor.
+   cent-step members would violate exact replay, while whole-field failure
+   would discard 429,270 uniquely renderable authenticated members. The
+   adjudicated fail-closed-smallest choice is the nested exhaustive partition
+   in §§20.3.2–20.3.5: retain all source ranges, enumerate every member once,
+   serialize both ordered relations with counts/digests, compile only the
+   exact renderable images, and give an unrenderable member a null image and
+   closed abort. V945 therefore passes only under
+   `compiled_source_numeric_grammar_partial_range_exact_replay`. Narrowing a
+   source range, promoting the observed subset, rounding, truncating,
+   omitting, or synthesizing a member is rejected. A separate top-level
+   partition artifact and a new v4 interface were considered but rejected as
+   larger selectable surfaces; the existing 15-key row and its nested
+   hashes already bind the complete partition.
 8. **Interface version.** A v4 entry-point name would suggest a second
    selectable compiler although no implementation or artifact exists. The
    outer v3 call/return and derivation-row envelopes already commit every
@@ -31781,7 +31927,8 @@ The resulting mandatory-abort matrix is closed:
 | width-one or no-capacity row serializes an arm instead of its exact disposition | conflict/replay failure; vector and derivation identity fail |
 | plus/trailing/internal/overpunched sign, negative zero, noncanonical magnitude, optional/second decimal point, rounding, or unequal replay | unsupported or conflict by §20.3.5 precedence; no scalar result |
 | declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing selector pointer | complete declaration relation fails; top-level abort |
-| complete normalized range contains any member with no exact selected-form image | `unsupported_source_numeric_format`; observed-subset success cannot cure it |
+| complete normalized range has both renderable and unrenderable members but either ordered relation/count/digest is absent or unequal, its DFA admits an unrenderable image, or an observed range token does not replay through the renderable relation | partition/grammar identity failure; no observed-subset, rounded, omitted, or synthesized repair |
+| any numeric-required normalized range has zero exactly renderable members | `unsupported_source_numeric_format`; another range cannot rescue it and no partial-range scalar result exists for that entry |
 | predecessor row ID/hash, mixed §19/§20 nested object, omitted consumer, or digest-only equality without deep equality | Q5/inventory/G17 and every enclosing identity fail |
 | D6/Q5 ancestry, any comparator row, closure-sweep row, lifecycle successor, or fresh digest is absent/unequal | ratification or registration stops at the earliest applicable gate |
 
