@@ -9,7 +9,8 @@
   `43cec7d1ff2373f70d661f4557e9eecbc9be041a939882a3ee209918a7d5d029`.
 - Its complete tranche is 30 CBO model-triangulation rows, 19 MINT
   model-triangulation rows, and 11 SSA 4.B7 admin-truth rows.
-- The audited 60-row tranche is not yet added to the registry.
+- The audited 60-action evaluation artifact is generated and checked; the
+  standing registry is not yet expanded.
 - GitNexus repository resources are unavailable in this session; harness
   behavior will be verified from repository source and tests.
 - The history validator now permits a null model measurement only for a
@@ -50,10 +51,17 @@
 - Added focused schema/alarm coverage for honest missing-module nulls and for
   rejection of misclassified nulls, malformed missing deviations, and null
   published values; the dedicated alarm test passes.
+- Added an offline tranche evaluator that verifies the staging manifest, all
+  six audited external capture files, the committed SSA capture/extraction,
+  and four committed model artifacts before parsing any bytes.
+- Generated the canonical 154,032-byte evaluation artifact with SHA-256
+  `75eb813309e343c8f628bf396b9f886f9508d021d8df7dccc2c59cb81c682d07`;
+  its closed census is 59 additions plus one revision, two model-valued
+  actions, and 58 null `module_missing` actions.
 
 ## Next
 
-- Add and validate all 60 rows, append one history evaluation, and bind the run
-  manifest to the final registry commit.
+- Expand and validate the registry to 101 active rows, append one complete
+  history evaluation, and bind the run manifest to the committed artifact.
 - Remove this ledger before final delivery while preserving its committed
   history.

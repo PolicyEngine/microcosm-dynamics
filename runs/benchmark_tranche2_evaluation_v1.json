@@ -1,0 +1,5428 @@
+{
+  "capture_identities": {
+    "cbo_55038_supplemental": {
+      "filename": "cbo-att-55038-SupplementalData.xlsx",
+      "final_url": "https://www.cbo.gov/system/files/2019-04/55038-SupplementalData.xlsx",
+      "media_type": "",
+      "requested_url": "https://www.cbo.gov/system/files/2019-04/55038-SupplementalData.xlsx",
+      "retrieved_utc": "2026-08-01T12:00:02Z",
+      "sha256": "9403fe44c44b360276d9ccf21a85ef5a55d4e689020ceab715a9e33e38d8429c",
+      "size_bytes": 6147155
+    },
+    "cbo_60392_additional": {
+      "filename": "cbo-60392-Additional-Info.xlsx",
+      "final_url": "https://www.cbo.gov/system/files/2024-08/60392-Additional-Info.xlsx",
+      "media_type": "",
+      "requested_url": "https://www.cbo.gov/system/files/2024-08/60392-Additional-Info.xlsx",
+      "retrieved_utc": "2026-08-01T12:00:02Z",
+      "sha256": "9ff92c8e54e5b873f4b7743e695773876714a23c425c3ccb0c5dbb8d0c4dc739",
+      "size_bytes": 67661
+    },
+    "cbo_60392_data": {
+      "filename": "cbo-60392-Data.xlsx",
+      "final_url": "https://www.cbo.gov/system/files/2024-08/60392-Data.xlsx",
+      "media_type": "",
+      "requested_url": "https://www.cbo.gov/system/files/2024-08/60392-Data.xlsx",
+      "retrieved_utc": "2026-08-01T12:00:02Z",
+      "sha256": "1d66e714a8508f698e2528c7d295d76ab4a5659d91fc6cfc685230c536f30607",
+      "size_bytes": 2556776
+    },
+    "cbo_60392_long_term": {
+      "filename": "cbo-60392-Long-Term-Projections.xlsx",
+      "final_url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx",
+      "media_type": "",
+      "requested_url": "https://www.cbo.gov/system/files/2024-08/60392-Long-Term-Social-Security-Projections.xlsx",
+      "retrieved_utc": "2026-08-01T12:00:02Z",
+      "sha256": "8945d7c5599e944e5786801daf3af9ebad318b24b871198708eeff9bb6c46f7b",
+      "size_bytes": 85665
+    },
+    "mint_beneficiaries": {
+      "filename": "ssa-mint-tables-beneficiaries.html",
+      "final_url": "https://www.ssa.gov/policy/docs/projections/tables/beneficiaries.html",
+      "media_type": "",
+      "requested_url": "https://www.ssa.gov/policy/docs/projections/tables/beneficiaries.html",
+      "retrieved_utc": "2026-08-01T12:00:02Z",
+      "sha256": "a3f6da991356045f165b6517390ab8fbdd84e1de386e2d026ab5dc2ff9009ccf",
+      "size_bytes": 1652291
+    },
+    "mint_taxpayers": {
+      "filename": "ssa-mint-tables-taxpayers.html",
+      "final_url": "https://www.ssa.gov/policy/docs/projections/tables/taxpayers.html",
+      "media_type": "",
+      "requested_url": "https://www.ssa.gov/policy/docs/projections/tables/taxpayers.html",
+      "retrieved_utc": "2026-08-01T12:00:02Z",
+      "sha256": "0ee73c8c07639d69b29a69297028b6db12799115579c7ae3b663a8856031152e",
+      "size_bytes": 1493313
+    },
+    "ssa_supplement_4b": {
+      "filename": "data/external/snapshots/ssa_level_anchors_vintage1/supplement2025_4b.html",
+      "sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+      "size_bytes": 488165,
+      "snapshot_manifest": {
+        "path": "data/external/snapshots/ssa_level_anchors_vintage1/capture_manifest.txt",
+        "sha256": "569dbed5922c2192277eb671685a5859ba1440e30289e8c252e1762956c150ca",
+        "size_bytes": 698
+      },
+      "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html#table4.b7"
+    }
+  },
+  "inventory": {
+    "action_counts": {
+      "add": 59,
+      "revise": 1
+    },
+    "audited_capture_count": 7,
+    "model_value_count": 2,
+    "null_module_missing_count": 58,
+    "row_action_count": 60,
+    "source_counts": {
+      "cbo": 30,
+      "mint": 19,
+      "ssa_4b7": 11
+    },
+    "tier_counts": {
+      "admin_truth": 11,
+      "model_triangulation": 49
+    }
+  },
+  "model_artifacts": {
+    "anchor_context": {
+      "path": "runs/anchor_context_report_v1.json",
+      "sha256": "1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34"
+    },
+    "first_estimates": {
+      "path": "runs/first_estimates_v1.json",
+      "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+    },
+    "m2_pseudo_projection": {
+      "path": "runs/m2_pseudo_projection_v1.json",
+      "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+    },
+    "replication_ppi_shared": {
+      "path": "runs/replication_ppi_shared_v1.json",
+      "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+    }
+  },
+  "rows": [
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 38
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 36
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 39
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.all.last5.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A14:A16+B14:B16",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 38
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 34
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 28
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.all.last5.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A14:A16+C14:C16",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 59
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 55
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 60
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.all.age22_61.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A14:A16+E14:E16",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 59
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 52
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 43
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.all.age22_61.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A14:A16+F14:F16",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 49
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 50
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 61
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q1.last5.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A20:A22+B20:B22",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 49
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 47
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 44
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q1.last5.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A20:A22+C20:C22",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 81
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 80
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 94
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q1.age22_61.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A20:A22+E20:E22",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 81
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 75
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 67
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q1.age22_61.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A20:A22+F20:F22",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 25
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 22
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 21
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q5.last5.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A26:A28+B26:B28",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 25
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 21
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 15
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q5.last5.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A26:A28+C26:C28",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 40
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 34
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 36
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q5.age22_61.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A26:A28+E26:E28",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/full_sample/by_shared_quintile",
+          "path": "runs/replication_ppi_shared_v1.json",
+          "sha256": "36d6f9d1086d7884e11b2d828fa0ffb6ee7abe7940de881ebd477fd88f9630b5"
+        },
+        "required_module": "cohort-by-shared-lifetime-earnings-quintile initial replacement rates with matched earnings denominators and scheduled/payable scenarios",
+        "status": "module_missing",
+        "unit": "percent",
+        "value": null
+      },
+      "published": {
+        "unit": "percent",
+        "value": [
+          {
+            "birth_cohort": "1940s",
+            "percent": 40
+          },
+          {
+            "birth_cohort": "1960s",
+            "percent": 32
+          },
+          {
+            "birth_cohort": "1980s",
+            "percent": 26
+          }
+        ]
+      },
+      "row_id": "cbo.55038.initial_replacement_rate.q5.age22_61.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_55038_supplemental",
+        "locator": {
+          "cells": "A10:F11 headers; A26:A28+F26:F28",
+          "sheet": "Exhibit 5"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.19
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.27
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.31
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.27
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.22
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.all.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A12:A16+B12:B16; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.11
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.08
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.02
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 0.97
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 0.93
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.all.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A12:A16+C12:C16; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 2.34
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 2.57
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 2.65
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 2.55
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 2.45
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q1.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A18:A22+B18:B22; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 2.24
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 2.3
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 2.18
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.99
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.91
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q1.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A18:A22+C18:C22; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.5
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.69
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.82
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.8
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.72
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q2.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A24:A28+B24:B28; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.42
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.47
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.45
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.38
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.32
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q2.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A24:A28+C24:C28; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.24
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.41
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.51
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.47
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.39
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q3.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A30:A34+B30:B34; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.16
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.2
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.18
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.13
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.06
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q3.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A30:A34+C30:C34; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.13
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.23
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 1.26
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 1.22
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 1.17
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q4.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A36:A40+B36:B40; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 1.05
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 1.03
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 0.97
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 0.94
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 0.89
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q4.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A36:A40+C36:C40; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 0.96
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 0.97
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 0.97
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 0.93
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 0.88
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q5.scheduled.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A42:A46+B42:B46; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/balance_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "person-level lifetime benefit and payroll-tax present values with age-65 discounting, benefit-income-tax netting, household quintiles, and payable vintages",
+        "status": "module_missing",
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "dimensionless lifetime benefit-to-tax ratio",
+        "value": [
+          {
+            "birth_cohort": "1950s",
+            "ratio": 0.88
+          },
+          {
+            "birth_cohort": "1960s",
+            "ratio": 0.8
+          },
+          {
+            "birth_cohort": "1970s",
+            "ratio": 0.75
+          },
+          {
+            "birth_cohort": "1980s",
+            "ratio": 0.71
+          },
+          {
+            "birth_cohort": "1990s",
+            "ratio": 0.68
+          }
+        ]
+      },
+      "row_id": "cbo.60392.lifetime_benefit_tax_ratio.q5.payable.cohort_path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A8:I10 headers; A42:A46+C42:C46; definitions A50, A52, A54",
+          "sheet": "14"
+        },
+        "transform": "identity_dimensionless_ratio"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "definition": "ours minus published, in percentage points",
+        "signed_percentage_points": [
+          {
+            "percentage_points": -8.440474227503683,
+            "year": 2015
+          },
+          {
+            "percentage_points": -8.556143584814652,
+            "year": 2016
+          },
+          {
+            "percentage_points": -8.17975509001467,
+            "year": 2017
+          },
+          {
+            "percentage_points": -8.093520435629486,
+            "year": 2018
+          },
+          {
+            "percentage_points": -7.966463092841919,
+            "year": 2019
+          },
+          {
+            "percentage_points": -8.303590105105826,
+            "year": 2020
+          },
+          {
+            "percentage_points": -7.401545855142178,
+            "year": 2021
+          },
+          {
+            "percentage_points": -6.843125021830617,
+            "year": 2022
+          }
+        ]
+      },
+      "gap_class": "concept_mismatch",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/results/comparison_results/8/annual_rows",
+          "path": "runs/anchor_context_report_v1.json",
+          "sha256": "1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34"
+        },
+        "formula": "100 * model_statistic_mean",
+        "required_module": "projection-vintage full-OASDI outlay path",
+        "status": "available_proxy_overlap_only",
+        "unit": "percent of frame-relative proxy taxable payroll",
+        "value": [
+          {
+            "mean_percent": 5.469525772496317,
+            "sample_sd_across_draws": 0.0889531409746567,
+            "year": 2015
+          },
+          {
+            "mean_percent": 5.333856415185348,
+            "sample_sd_across_draws": 0.08277473626574183,
+            "year": 2016
+          },
+          {
+            "mean_percent": 5.460244909985331,
+            "sample_sd_across_draws": 0.07607207031932241,
+            "year": 2017
+          },
+          {
+            "mean_percent": 5.5864795643705145,
+            "sample_sd_across_draws": 0.10008142010139227,
+            "year": 2018
+          },
+          {
+            "mean_percent": 5.853536907158081,
+            "sample_sd_across_draws": 0.10719739791212682,
+            "year": 2019
+          },
+          {
+            "mean_percent": 6.046409894894174,
+            "sample_sd_across_draws": 0.10087028551657386,
+            "year": 2020
+          },
+          {
+            "mean_percent": 6.308454144857823,
+            "sample_sd_across_draws": 0.08745374963613627,
+            "year": 2021
+          },
+          {
+            "mean_percent": 6.746874978169383,
+            "sample_sd_across_draws": 0.09252531082661898,
+            "year": 2022
+          }
+        ]
+      },
+      "published": {
+        "unit": "percent of national taxable payroll",
+        "value": [
+          {
+            "percent": 13.91,
+            "year": 2015
+          },
+          {
+            "percent": 13.89,
+            "year": 2016
+          },
+          {
+            "percent": 13.64,
+            "year": 2017
+          },
+          {
+            "percent": 13.68,
+            "year": 2018
+          },
+          {
+            "percent": 13.82,
+            "year": 2019
+          },
+          {
+            "percent": 14.35,
+            "year": 2020
+          },
+          {
+            "percent": 13.71,
+            "year": 2021
+          },
+          {
+            "percent": 13.59,
+            "year": 2022
+          },
+          {
+            "percent": 14.2,
+            "year": 2024
+          },
+          {
+            "percent": 14.68,
+            "year": 2025
+          },
+          {
+            "percent": 14.97,
+            "year": 2026
+          },
+          {
+            "percent": 15.26,
+            "year": 2027
+          },
+          {
+            "percent": 15.53,
+            "year": 2028
+          },
+          {
+            "percent": 15.79,
+            "year": 2029
+          },
+          {
+            "percent": 16,
+            "year": 2030
+          },
+          {
+            "percent": 16.25,
+            "year": 2031
+          },
+          {
+            "percent": 16.42,
+            "year": 2032
+          },
+          {
+            "percent": 16.61,
+            "year": 2033
+          },
+          {
+            "percent": 16.78,
+            "year": 2034
+          },
+          {
+            "percent": 16.8,
+            "year": 2035
+          },
+          {
+            "percent": 16.86,
+            "year": 2036
+          },
+          {
+            "percent": 16.88,
+            "year": 2037
+          },
+          {
+            "percent": 16.88,
+            "year": 2038
+          },
+          {
+            "percent": 16.83,
+            "year": 2039
+          },
+          {
+            "percent": 16.8,
+            "year": 2040
+          },
+          {
+            "percent": 16.84,
+            "year": 2041
+          },
+          {
+            "percent": 16.92,
+            "year": 2042
+          },
+          {
+            "percent": 16.91,
+            "year": 2043
+          },
+          {
+            "percent": 16.92,
+            "year": 2044
+          },
+          {
+            "percent": 16.96,
+            "year": 2045
+          },
+          {
+            "percent": 17.04,
+            "year": 2046
+          },
+          {
+            "percent": 17.09,
+            "year": 2047
+          },
+          {
+            "percent": 17.16,
+            "year": 2048
+          },
+          {
+            "percent": 17.17,
+            "year": 2049
+          },
+          {
+            "percent": 17.29,
+            "year": 2050
+          },
+          {
+            "percent": 17.42,
+            "year": 2051
+          },
+          {
+            "percent": 17.53,
+            "year": 2052
+          },
+          {
+            "percent": 17.57,
+            "year": 2053
+          },
+          {
+            "percent": 17.77,
+            "year": 2054
+          },
+          {
+            "percent": 17.79,
+            "year": 2055
+          },
+          {
+            "percent": 17.94,
+            "year": 2056
+          },
+          {
+            "percent": 17.92,
+            "year": 2057
+          },
+          {
+            "percent": 18.04,
+            "year": 2058
+          },
+          {
+            "percent": 18.12,
+            "year": 2059
+          },
+          {
+            "percent": 18.03,
+            "year": 2060
+          },
+          {
+            "percent": 18.21,
+            "year": 2061
+          },
+          {
+            "percent": 18.24,
+            "year": 2062
+          },
+          {
+            "percent": 18.4,
+            "year": 2063
+          },
+          {
+            "percent": 18.44,
+            "year": 2064
+          },
+          {
+            "percent": 18.49,
+            "year": 2065
+          },
+          {
+            "percent": 18.54,
+            "year": 2066
+          },
+          {
+            "percent": 18.69,
+            "year": 2067
+          },
+          {
+            "percent": 18.88,
+            "year": 2068
+          },
+          {
+            "percent": 18.94,
+            "year": 2069
+          },
+          {
+            "percent": 19,
+            "year": 2070
+          },
+          {
+            "percent": 19.17,
+            "year": 2071
+          },
+          {
+            "percent": 19.3,
+            "year": 2072
+          },
+          {
+            "percent": 19.23,
+            "year": 2073
+          },
+          {
+            "percent": 19.41,
+            "year": 2074
+          },
+          {
+            "percent": 19.51,
+            "year": 2075
+          },
+          {
+            "percent": 19.58,
+            "year": 2076
+          },
+          {
+            "percent": 19.6,
+            "year": 2077
+          },
+          {
+            "percent": 19.66,
+            "year": 2078
+          },
+          {
+            "percent": 19.69,
+            "year": 2079
+          },
+          {
+            "percent": 19.69,
+            "year": 2080
+          },
+          {
+            "percent": 19.83,
+            "year": 2081
+          },
+          {
+            "percent": 19.75,
+            "year": 2082
+          },
+          {
+            "percent": 19.87,
+            "year": 2083
+          },
+          {
+            "percent": 19.69,
+            "year": 2084
+          },
+          {
+            "percent": 19.82,
+            "year": 2085
+          },
+          {
+            "percent": 19.9,
+            "year": 2086
+          },
+          {
+            "percent": 19.84,
+            "year": 2087
+          },
+          {
+            "percent": 19.88,
+            "year": 2088
+          },
+          {
+            "percent": 19.89,
+            "year": 2089
+          },
+          {
+            "percent": 19.94,
+            "year": 2090
+          },
+          {
+            "percent": 19.96,
+            "year": 2091
+          },
+          {
+            "percent": 19.93,
+            "year": 2092
+          },
+          {
+            "percent": 20.06,
+            "year": 2093
+          },
+          {
+            "percent": 20.01,
+            "year": 2094
+          },
+          {
+            "percent": 20.08,
+            "year": 2095
+          },
+          {
+            "percent": 20.06,
+            "year": 2096
+          },
+          {
+            "percent": 20.16,
+            "year": 2097
+          },
+          {
+            "percent": 20.17,
+            "year": 2098
+          }
+        ]
+      },
+      "row_id": "cbo.60392.oasdi_outlays_share_taxable_payroll.path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A9:D9 headers; A40:A47+C40:C47; A49:A123+C49:C123; notes A127, A129",
+          "sheet": "1"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "revise",
+      "deviation": {
+        "definition": "ours minus published, in percentage points",
+        "signed_percentage_points": [
+          {
+            "percentage_points": -0.41999999999999993,
+            "year": 2015
+          },
+          {
+            "percentage_points": -0.6899999999999995,
+            "year": 2016
+          },
+          {
+            "percentage_points": -0.6500000000000004,
+            "year": 2017
+          },
+          {
+            "percentage_points": -0.17999999999999972,
+            "year": 2018
+          },
+          {
+            "percentage_points": -0.40000000000000036,
+            "year": 2019
+          },
+          {
+            "percentage_points": -1.0999999999999996,
+            "year": 2020
+          },
+          {
+            "percentage_points": 0.20000000000000107,
+            "year": 2021
+          },
+          {
+            "percentage_points": -0.23000000000000043,
+            "year": 2022
+          }
+        ]
+      },
+      "gap_class": "concept_mismatch",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "formula": "100 * combined_contributions / weighted_taxable_payroll",
+        "required_module": "future tax-revenue path including benefit-income-tax revenue",
+        "status": "available_overlap_only",
+        "unit": "percent of frame-relative proxy taxable payroll",
+        "value": [
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2015
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2016
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2017
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2018
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2019
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2020
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2021
+          },
+          {
+            "mean_percent": 12.4,
+            "sample_sd_across_draws": 0.0,
+            "year": 2022
+          }
+        ]
+      },
+      "published": {
+        "unit": "percent of national taxable payroll",
+        "value": [
+          {
+            "percent": 12.82,
+            "year": 2015
+          },
+          {
+            "percent": 13.09,
+            "year": 2016
+          },
+          {
+            "percent": 13.05,
+            "year": 2017
+          },
+          {
+            "percent": 12.58,
+            "year": 2018
+          },
+          {
+            "percent": 12.8,
+            "year": 2019
+          },
+          {
+            "percent": 13.5,
+            "year": 2020
+          },
+          {
+            "percent": 12.2,
+            "year": 2021
+          },
+          {
+            "percent": 12.63,
+            "year": 2022
+          },
+          {
+            "percent": 12.87,
+            "year": 2024
+          },
+          {
+            "percent": 12.97,
+            "year": 2025
+          },
+          {
+            "percent": 13.08,
+            "year": 2026
+          },
+          {
+            "percent": 13.08,
+            "year": 2027
+          },
+          {
+            "percent": 13.1,
+            "year": 2028
+          },
+          {
+            "percent": 13.12,
+            "year": 2029
+          },
+          {
+            "percent": 13.12,
+            "year": 2030
+          },
+          {
+            "percent": 13.13,
+            "year": 2031
+          },
+          {
+            "percent": 13.13,
+            "year": 2032
+          },
+          {
+            "percent": 13.14,
+            "year": 2033
+          },
+          {
+            "percent": 13.16,
+            "year": 2034
+          },
+          {
+            "percent": 13.16,
+            "year": 2035
+          },
+          {
+            "percent": 13.17,
+            "year": 2036
+          },
+          {
+            "percent": 13.17,
+            "year": 2037
+          },
+          {
+            "percent": 13.18,
+            "year": 2038
+          },
+          {
+            "percent": 13.18,
+            "year": 2039
+          },
+          {
+            "percent": 13.18,
+            "year": 2040
+          },
+          {
+            "percent": 13.19,
+            "year": 2041
+          },
+          {
+            "percent": 13.19,
+            "year": 2042
+          },
+          {
+            "percent": 13.2,
+            "year": 2043
+          },
+          {
+            "percent": 13.2,
+            "year": 2044
+          },
+          {
+            "percent": 13.21,
+            "year": 2045
+          },
+          {
+            "percent": 13.22,
+            "year": 2046
+          },
+          {
+            "percent": 13.23,
+            "year": 2047
+          },
+          {
+            "percent": 13.23,
+            "year": 2048
+          },
+          {
+            "percent": 13.24,
+            "year": 2049
+          },
+          {
+            "percent": 13.25,
+            "year": 2050
+          },
+          {
+            "percent": 13.26,
+            "year": 2051
+          },
+          {
+            "percent": 13.28,
+            "year": 2052
+          },
+          {
+            "percent": 13.29,
+            "year": 2053
+          },
+          {
+            "percent": 13.3,
+            "year": 2054
+          },
+          {
+            "percent": 13.31,
+            "year": 2055
+          },
+          {
+            "percent": 13.32,
+            "year": 2056
+          },
+          {
+            "percent": 13.33,
+            "year": 2057
+          },
+          {
+            "percent": 13.34,
+            "year": 2058
+          },
+          {
+            "percent": 13.36,
+            "year": 2059
+          },
+          {
+            "percent": 13.36,
+            "year": 2060
+          },
+          {
+            "percent": 13.38,
+            "year": 2061
+          },
+          {
+            "percent": 13.39,
+            "year": 2062
+          },
+          {
+            "percent": 13.4,
+            "year": 2063
+          },
+          {
+            "percent": 13.41,
+            "year": 2064
+          },
+          {
+            "percent": 13.42,
+            "year": 2065
+          },
+          {
+            "percent": 13.43,
+            "year": 2066
+          },
+          {
+            "percent": 13.45,
+            "year": 2067
+          },
+          {
+            "percent": 13.47,
+            "year": 2068
+          },
+          {
+            "percent": 13.48,
+            "year": 2069
+          },
+          {
+            "percent": 13.49,
+            "year": 2070
+          },
+          {
+            "percent": 13.51,
+            "year": 2071
+          },
+          {
+            "percent": 13.53,
+            "year": 2072
+          },
+          {
+            "percent": 13.53,
+            "year": 2073
+          },
+          {
+            "percent": 13.55,
+            "year": 2074
+          },
+          {
+            "percent": 13.57,
+            "year": 2075
+          },
+          {
+            "percent": 13.58,
+            "year": 2076
+          },
+          {
+            "percent": 13.59,
+            "year": 2077
+          },
+          {
+            "percent": 13.6,
+            "year": 2078
+          },
+          {
+            "percent": 13.61,
+            "year": 2079
+          },
+          {
+            "percent": 13.62,
+            "year": 2080
+          },
+          {
+            "percent": 13.64,
+            "year": 2081
+          },
+          {
+            "percent": 13.64,
+            "year": 2082
+          },
+          {
+            "percent": 13.66,
+            "year": 2083
+          },
+          {
+            "percent": 13.66,
+            "year": 2084
+          },
+          {
+            "percent": 13.68,
+            "year": 2085
+          },
+          {
+            "percent": 13.69,
+            "year": 2086
+          },
+          {
+            "percent": 13.7,
+            "year": 2087
+          },
+          {
+            "percent": 13.71,
+            "year": 2088
+          },
+          {
+            "percent": 13.72,
+            "year": 2089
+          },
+          {
+            "percent": 13.73,
+            "year": 2090
+          },
+          {
+            "percent": 13.74,
+            "year": 2091
+          },
+          {
+            "percent": 13.75,
+            "year": 2092
+          },
+          {
+            "percent": 13.77,
+            "year": 2093
+          },
+          {
+            "percent": 13.77,
+            "year": 2094
+          },
+          {
+            "percent": 13.79,
+            "year": 2095
+          },
+          {
+            "percent": 13.79,
+            "year": 2096
+          },
+          {
+            "percent": 13.81,
+            "year": 2097
+          },
+          {
+            "percent": 13.82,
+            "year": 2098
+          }
+        ]
+      },
+      "row_id": "cbo.tax_revenue.share_of_taxable_payroll",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A9:D9 headers; A40:A47+B40:B47; A49:A123+B49:B123; notes A127, A129",
+          "sheet": "1"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/results/comparison_results/8/annual_rows",
+          "path": "runs/anchor_context_report_v1.json",
+          "sha256": "1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34"
+        },
+        "required_module": "GDP denominator plus full-OASDI outlay projection",
+        "status": "module_missing",
+        "unit": "percent of GDP",
+        "value": null
+      },
+      "published": {
+        "unit": "percent of GDP",
+        "value": [
+          {
+            "percent": 4.9,
+            "year": 2015
+          },
+          {
+            "percent": 4.9,
+            "year": 2016
+          },
+          {
+            "percent": 4.86,
+            "year": 2017
+          },
+          {
+            "percent": 4.84,
+            "year": 2018
+          },
+          {
+            "percent": 4.92,
+            "year": 2019
+          },
+          {
+            "percent": 5.19,
+            "year": 2020
+          },
+          {
+            "percent": 4.85,
+            "year": 2021
+          },
+          {
+            "percent": 4.83,
+            "year": 2022
+          },
+          {
+            "percent": 5.131,
+            "year": 2024
+          },
+          {
+            "percent": 5.254,
+            "year": 2025
+          },
+          {
+            "percent": 5.378,
+            "year": 2026
+          },
+          {
+            "percent": 5.495,
+            "year": 2027
+          },
+          {
+            "percent": 5.591,
+            "year": 2028
+          },
+          {
+            "percent": 5.689,
+            "year": 2029
+          },
+          {
+            "percent": 5.763,
+            "year": 2030
+          },
+          {
+            "percent": 5.847,
+            "year": 2031
+          },
+          {
+            "percent": 5.904,
+            "year": 2032
+          },
+          {
+            "percent": 5.967,
+            "year": 2033
+          },
+          {
+            "percent": 6.016,
+            "year": 2034
+          },
+          {
+            "percent": 5.999,
+            "year": 2035
+          },
+          {
+            "percent": 5.997,
+            "year": 2036
+          },
+          {
+            "percent": 5.983,
+            "year": 2037
+          },
+          {
+            "percent": 5.963,
+            "year": 2038
+          },
+          {
+            "percent": 5.922,
+            "year": 2039
+          },
+          {
+            "percent": 5.884,
+            "year": 2040
+          },
+          {
+            "percent": 5.88,
+            "year": 2041
+          },
+          {
+            "percent": 5.882,
+            "year": 2042
+          },
+          {
+            "percent": 5.856,
+            "year": 2043
+          },
+          {
+            "percent": 5.835,
+            "year": 2044
+          },
+          {
+            "percent": 5.825,
+            "year": 2045
+          },
+          {
+            "percent": 5.831,
+            "year": 2046
+          },
+          {
+            "percent": 5.83,
+            "year": 2047
+          },
+          {
+            "percent": 5.831,
+            "year": 2048
+          },
+          {
+            "percent": 5.812,
+            "year": 2049
+          },
+          {
+            "percent": 5.829,
+            "year": 2050
+          },
+          {
+            "percent": 5.854,
+            "year": 2051
+          },
+          {
+            "percent": 5.867,
+            "year": 2052
+          },
+          {
+            "percent": 5.86,
+            "year": 2053
+          },
+          {
+            "percent": 5.905,
+            "year": 2054
+          },
+          {
+            "percent": 5.897,
+            "year": 2055
+          },
+          {
+            "percent": 5.942,
+            "year": 2056
+          },
+          {
+            "percent": 5.937,
+            "year": 2057
+          },
+          {
+            "percent": 5.98,
+            "year": 2058
+          },
+          {
+            "percent": 6.003,
+            "year": 2059
+          },
+          {
+            "percent": 5.974,
+            "year": 2060
+          },
+          {
+            "percent": 6.029,
+            "year": 2061
+          },
+          {
+            "percent": 6.039,
+            "year": 2062
+          },
+          {
+            "percent": 6.098,
+            "year": 2063
+          },
+          {
+            "percent": 6.107,
+            "year": 2064
+          },
+          {
+            "percent": 6.122,
+            "year": 2065
+          },
+          {
+            "percent": 6.141,
+            "year": 2066
+          },
+          {
+            "percent": 6.187,
+            "year": 2067
+          },
+          {
+            "percent": 6.252,
+            "year": 2068
+          },
+          {
+            "percent": 6.266,
+            "year": 2069
+          },
+          {
+            "percent": 6.286,
+            "year": 2070
+          },
+          {
+            "percent": 6.342,
+            "year": 2071
+          },
+          {
+            "percent": 6.389,
+            "year": 2072
+          },
+          {
+            "percent": 6.37,
+            "year": 2073
+          },
+          {
+            "percent": 6.428,
+            "year": 2074
+          },
+          {
+            "percent": 6.462,
+            "year": 2075
+          },
+          {
+            "percent": 6.486,
+            "year": 2076
+          },
+          {
+            "percent": 6.495,
+            "year": 2077
+          },
+          {
+            "percent": 6.512,
+            "year": 2078
+          },
+          {
+            "percent": 6.521,
+            "year": 2079
+          },
+          {
+            "percent": 6.52,
+            "year": 2080
+          },
+          {
+            "percent": 6.568,
+            "year": 2081
+          },
+          {
+            "percent": 6.533,
+            "year": 2082
+          },
+          {
+            "percent": 6.575,
+            "year": 2083
+          },
+          {
+            "percent": 6.517,
+            "year": 2084
+          },
+          {
+            "percent": 6.559,
+            "year": 2085
+          },
+          {
+            "percent": 6.585,
+            "year": 2086
+          },
+          {
+            "percent": 6.562,
+            "year": 2087
+          },
+          {
+            "percent": 6.576,
+            "year": 2088
+          },
+          {
+            "percent": 6.574,
+            "year": 2089
+          },
+          {
+            "percent": 6.594,
+            "year": 2090
+          },
+          {
+            "percent": 6.598,
+            "year": 2091
+          },
+          {
+            "percent": 6.584,
+            "year": 2092
+          },
+          {
+            "percent": 6.627,
+            "year": 2093
+          },
+          {
+            "percent": 6.609,
+            "year": 2094
+          },
+          {
+            "percent": 6.632,
+            "year": 2095
+          },
+          {
+            "percent": 6.625,
+            "year": 2096
+          },
+          {
+            "percent": 6.657,
+            "year": 2097
+          },
+          {
+            "percent": 6.662,
+            "year": 2098
+          }
+        ]
+      },
+      "row_id": "cbo.60392.oasdi_outlays_share_gdp.path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A9:D9 headers; A40:A47+C40:C47; A49:A123+C49:C123; notes A127, A129",
+          "sheet": "3"
+        },
+        "transform": "identity_percent"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/results/comparison_results/6/annual_rows",
+          "path": "runs/anchor_context_report_v1.json",
+          "sha256": "1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34"
+        },
+        "required_module": "projection-vintage all-OASDI beneficiary stock",
+        "status": "module_missing",
+        "unit": "index, 2024 = 100",
+        "value": null
+      },
+      "published": {
+        "unit": "index, 2024 = 100",
+        "value": [
+          {
+            "index_2024_100": 100.0,
+            "year": 2024
+          },
+          {
+            "index_2024_100": 102.19619326500732,
+            "year": 2025
+          },
+          {
+            "index_2024_100": 104.53879941434846,
+            "year": 2026
+          },
+          {
+            "index_2024_100": 106.73499267935578,
+            "year": 2027
+          },
+          {
+            "index_2024_100": 108.93118594436311,
+            "year": 2028
+          },
+          {
+            "index_2024_100": 110.83455344070278,
+            "year": 2029
+          },
+          {
+            "index_2024_100": 112.59150805270863,
+            "year": 2030
+          },
+          {
+            "index_2024_100": 114.20204978038068,
+            "year": 2031
+          },
+          {
+            "index_2024_100": 115.8125915080527,
+            "year": 2032
+          },
+          {
+            "index_2024_100": 117.13030746705711,
+            "year": 2033
+          },
+          {
+            "index_2024_100": 118.15519765739386,
+            "year": 2034
+          },
+          {
+            "index_2024_100": 120.35139092240117,
+            "year": 2035
+          },
+          {
+            "index_2024_100": 122.40117130307468,
+            "year": 2036
+          },
+          {
+            "index_2024_100": 124.30453879941435,
+            "year": 2037
+          },
+          {
+            "index_2024_100": 125.91508052708639,
+            "year": 2038
+          },
+          {
+            "index_2024_100": 127.67203513909224,
+            "year": 2039
+          },
+          {
+            "index_2024_100": 129.2825768667643,
+            "year": 2040
+          },
+          {
+            "index_2024_100": 130.01464128843338,
+            "year": 2041
+          },
+          {
+            "index_2024_100": 130.60029282576866,
+            "year": 2042
+          },
+          {
+            "index_2024_100": 131.18594436310394,
+            "year": 2043
+          },
+          {
+            "index_2024_100": 131.91800878477306,
+            "year": 2044
+          },
+          {
+            "index_2024_100": 132.50366032210835,
+            "year": 2045
+          },
+          {
+            "index_2024_100": 133.23572474377744,
+            "year": 2046
+          },
+          {
+            "index_2024_100": 133.96778916544656,
+            "year": 2047
+          },
+          {
+            "index_2024_100": 134.8462664714495,
+            "year": 2048
+          },
+          {
+            "index_2024_100": 135.5783308931186,
+            "year": 2049
+          },
+          {
+            "index_2024_100": 136.60322108345534,
+            "year": 2050
+          },
+          {
+            "index_2024_100": 137.48169838945827,
+            "year": 2051
+          },
+          {
+            "index_2024_100": 138.3601756954612,
+            "year": 2052
+          },
+          {
+            "index_2024_100": 139.23865300146412,
+            "year": 2053
+          },
+          {
+            "index_2024_100": 140.11713030746705,
+            "year": 2054
+          },
+          {
+            "index_2024_100": 141.1420204978038,
+            "year": 2055
+          },
+          {
+            "index_2024_100": 142.16691068814055,
+            "year": 2056
+          },
+          {
+            "index_2024_100": 143.1918008784773,
+            "year": 2057
+          },
+          {
+            "index_2024_100": 144.36310395314788,
+            "year": 2058
+          },
+          {
+            "index_2024_100": 145.38799414348463,
+            "year": 2059
+          },
+          {
+            "index_2024_100": 146.26647144948757,
+            "year": 2060
+          },
+          {
+            "index_2024_100": 147.58418740849194,
+            "year": 2061
+          },
+          {
+            "index_2024_100": 148.6090775988287,
+            "year": 2062
+          },
+          {
+            "index_2024_100": 149.63396778916544,
+            "year": 2063
+          },
+          {
+            "index_2024_100": 150.80527086383603,
+            "year": 2064
+          },
+          {
+            "index_2024_100": 151.83016105417278,
+            "year": 2065
+          },
+          {
+            "index_2024_100": 153.14787701317715,
+            "year": 2066
+          },
+          {
+            "index_2024_100": 154.1727672035139,
+            "year": 2067
+          },
+          {
+            "index_2024_100": 155.4904831625183,
+            "year": 2068
+          },
+          {
+            "index_2024_100": 156.66178623718886,
+            "year": 2069
+          },
+          {
+            "index_2024_100": 157.83308931185945,
+            "year": 2070
+          },
+          {
+            "index_2024_100": 159.15080527086383,
+            "year": 2071
+          },
+          {
+            "index_2024_100": 160.32210834553442,
+            "year": 2072
+          },
+          {
+            "index_2024_100": 161.20058565153732,
+            "year": 2073
+          },
+          {
+            "index_2024_100": 162.3718887262079,
+            "year": 2074
+          },
+          {
+            "index_2024_100": 163.25036603221085,
+            "year": 2075
+          },
+          {
+            "index_2024_100": 163.98243045387994,
+            "year": 2076
+          },
+          {
+            "index_2024_100": 164.71449487554904,
+            "year": 2077
+          },
+          {
+            "index_2024_100": 165.30014641288435,
+            "year": 2078
+          },
+          {
+            "index_2024_100": 165.88579795021963,
+            "year": 2079
+          },
+          {
+            "index_2024_100": 166.3250366032211,
+            "year": 2080
+          },
+          {
+            "index_2024_100": 166.76427525622256,
+            "year": 2081
+          },
+          {
+            "index_2024_100": 167.0571010248902,
+            "year": 2082
+          },
+          {
+            "index_2024_100": 167.49633967789165,
+            "year": 2083
+          },
+          {
+            "index_2024_100": 167.64275256222547,
+            "year": 2084
+          },
+          {
+            "index_2024_100": 167.93557833089312,
+            "year": 2085
+          },
+          {
+            "index_2024_100": 168.22840409956075,
+            "year": 2086
+          },
+          {
+            "index_2024_100": 168.5212298682284,
+            "year": 2087
+          },
+          {
+            "index_2024_100": 168.66764275256222,
+            "year": 2088
+          },
+          {
+            "index_2024_100": 168.96046852122987,
+            "year": 2089
+          },
+          {
+            "index_2024_100": 169.54612005856515,
+            "year": 2090
+          },
+          {
+            "index_2024_100": 169.8389458272328,
+            "year": 2091
+          },
+          {
+            "index_2024_100": 169.98535871156662,
+            "year": 2092
+          },
+          {
+            "index_2024_100": 170.4245973645681,
+            "year": 2093
+          },
+          {
+            "index_2024_100": 170.86383601756955,
+            "year": 2094
+          },
+          {
+            "index_2024_100": 171.30307467057102,
+            "year": 2095
+          },
+          {
+            "index_2024_100": 171.8887262079063,
+            "year": 2096
+          },
+          {
+            "index_2024_100": 172.32796486090777,
+            "year": 2097
+          },
+          {
+            "index_2024_100": 172.91361639824305,
+            "year": 2098
+          }
+        ]
+      },
+      "row_id": "cbo.60392.oasdi_beneficiaries.trajectory_2024_100",
+      "source": {
+        "capture_id": "cbo_60392_additional",
+        "locator": {
+          "cells": "A8:D8 headers; A9:A83+D9:D83; notes A85:A87",
+          "sheet": "3. OASDI Beneficiaries"
+        },
+        "transform": "100 * total / 2024 total"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "projection-vintage covered-worker population",
+        "status": "module_missing",
+        "unit": "index, 2024 = 100",
+        "value": null
+      },
+      "published": {
+        "unit": "index, 2024 = 100",
+        "value": [
+          {
+            "index_2024_100": 100.0,
+            "year": 2024
+          },
+          {
+            "index_2024_100": 100.8422234699607,
+            "year": 2025
+          },
+          {
+            "index_2024_100": 101.40370578326782,
+            "year": 2026
+          },
+          {
+            "index_2024_100": 101.74059517125211,
+            "year": 2027
+          },
+          {
+            "index_2024_100": 102.07748455923638,
+            "year": 2028
+          },
+          {
+            "index_2024_100": 102.41437394722067,
+            "year": 2029
+          },
+          {
+            "index_2024_100": 102.69511510387423,
+            "year": 2030
+          },
+          {
+            "index_2024_100": 103.0320044918585,
+            "year": 2031
+          },
+          {
+            "index_2024_100": 103.31274564851208,
+            "year": 2032
+          },
+          {
+            "index_2024_100": 103.53733857383493,
+            "year": 2033
+          },
+          {
+            "index_2024_100": 103.70578326782706,
+            "year": 2034
+          },
+          {
+            "index_2024_100": 103.93037619314991,
+            "year": 2035
+          },
+          {
+            "index_2024_100": 104.15496911847276,
+            "year": 2036
+          },
+          {
+            "index_2024_100": 104.37956204379562,
+            "year": 2037
+          },
+          {
+            "index_2024_100": 104.60415496911847,
+            "year": 2038
+          },
+          {
+            "index_2024_100": 104.77259966311061,
+            "year": 2039
+          },
+          {
+            "index_2024_100": 104.94104435710275,
+            "year": 2040
+          },
+          {
+            "index_2024_100": 105.1094890510949,
+            "year": 2041
+          },
+          {
+            "index_2024_100": 105.27793374508703,
+            "year": 2042
+          },
+          {
+            "index_2024_100": 105.50252667040988,
+            "year": 2043
+          },
+          {
+            "index_2024_100": 105.67097136440202,
+            "year": 2044
+          },
+          {
+            "index_2024_100": 105.83941605839416,
+            "year": 2045
+          },
+          {
+            "index_2024_100": 106.12015721504773,
+            "year": 2046
+          },
+          {
+            "index_2024_100": 106.28860190903987,
+            "year": 2047
+          },
+          {
+            "index_2024_100": 106.56934306569343,
+            "year": 2048
+          },
+          {
+            "index_2024_100": 106.79393599101628,
+            "year": 2049
+          },
+          {
+            "index_2024_100": 106.96238068500843,
+            "year": 2050
+          },
+          {
+            "index_2024_100": 107.24312184166199,
+            "year": 2051
+          },
+          {
+            "index_2024_100": 107.46771476698484,
+            "year": 2052
+          },
+          {
+            "index_2024_100": 107.6923076923077,
+            "year": 2053
+          },
+          {
+            "index_2024_100": 107.97304884896126,
+            "year": 2054
+          },
+          {
+            "index_2024_100": 108.1414935429534,
+            "year": 2055
+          },
+          {
+            "index_2024_100": 108.36608646827625,
+            "year": 2056
+          },
+          {
+            "index_2024_100": 108.5345311622684,
+            "year": 2057
+          },
+          {
+            "index_2024_100": 108.70297585626052,
+            "year": 2058
+          },
+          {
+            "index_2024_100": 108.87142055025267,
+            "year": 2059
+          },
+          {
+            "index_2024_100": 108.9837170129141,
+            "year": 2060
+          },
+          {
+            "index_2024_100": 109.09601347557552,
+            "year": 2061
+          },
+          {
+            "index_2024_100": 109.20830993823695,
+            "year": 2062
+          },
+          {
+            "index_2024_100": 109.32060640089837,
+            "year": 2063
+          },
+          {
+            "index_2024_100": 109.48905109489051,
+            "year": 2064
+          },
+          {
+            "index_2024_100": 109.54519932622122,
+            "year": 2065
+          },
+          {
+            "index_2024_100": 109.65749578888266,
+            "year": 2066
+          },
+          {
+            "index_2024_100": 109.71364402021337,
+            "year": 2067
+          },
+          {
+            "index_2024_100": 109.71364402021337,
+            "year": 2068
+          },
+          {
+            "index_2024_100": 109.76979225154408,
+            "year": 2069
+          },
+          {
+            "index_2024_100": 109.76979225154408,
+            "year": 2070
+          },
+          {
+            "index_2024_100": 109.76979225154408,
+            "year": 2071
+          },
+          {
+            "index_2024_100": 109.82594048287478,
+            "year": 2072
+          },
+          {
+            "index_2024_100": 109.88208871420551,
+            "year": 2073
+          },
+          {
+            "index_2024_100": 109.93823694553622,
+            "year": 2074
+          },
+          {
+            "index_2024_100": 109.99438517686693,
+            "year": 2075
+          },
+          {
+            "index_2024_100": 110.05053340819764,
+            "year": 2076
+          },
+          {
+            "index_2024_100": 110.05053340819764,
+            "year": 2077
+          },
+          {
+            "index_2024_100": 110.10668163952836,
+            "year": 2078
+          },
+          {
+            "index_2024_100": 110.21897810218978,
+            "year": 2079
+          },
+          {
+            "index_2024_100": 110.27512633352049,
+            "year": 2080
+          },
+          {
+            "index_2024_100": 110.38742279618192,
+            "year": 2081
+          },
+          {
+            "index_2024_100": 110.44357102751263,
+            "year": 2082
+          },
+          {
+            "index_2024_100": 110.55586749017407,
+            "year": 2083
+          },
+          {
+            "index_2024_100": 110.66816395283549,
+            "year": 2084
+          },
+          {
+            "index_2024_100": 110.78046041549692,
+            "year": 2085
+          },
+          {
+            "index_2024_100": 110.89275687815834,
+            "year": 2086
+          },
+          {
+            "index_2024_100": 111.00505334081977,
+            "year": 2087
+          },
+          {
+            "index_2024_100": 111.11734980348119,
+            "year": 2088
+          },
+          {
+            "index_2024_100": 111.1734980348119,
+            "year": 2089
+          },
+          {
+            "index_2024_100": 111.28579449747333,
+            "year": 2090
+          },
+          {
+            "index_2024_100": 111.39809096013475,
+            "year": 2091
+          },
+          {
+            "index_2024_100": 111.45423919146548,
+            "year": 2092
+          },
+          {
+            "index_2024_100": 111.5665356541269,
+            "year": 2093
+          },
+          {
+            "index_2024_100": 111.6226838854576,
+            "year": 2094
+          },
+          {
+            "index_2024_100": 111.67883211678833,
+            "year": 2095
+          },
+          {
+            "index_2024_100": 111.79112857944975,
+            "year": 2096
+          },
+          {
+            "index_2024_100": 111.84727681078046,
+            "year": 2097
+          },
+          {
+            "index_2024_100": 111.84727681078046,
+            "year": 2098
+          }
+        ]
+      },
+      "row_id": "cbo.60392.covered_workers.trajectory_2024_100",
+      "source": {
+        "capture_id": "cbo_60392_additional",
+        "locator": {
+          "cells": "A8:D8 headers; A9:A83+D9:D83; notes A85:A89",
+          "sheet": "1. Covered Workers"
+        },
+        "transform": "100 * total / 2024 total"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/exhaustion_analogue",
+          "path": "runs/m2_pseudo_projection_v1.json",
+          "sha256": "c55cf1ef34548fb75a7f27150f54e3b0b35db38ea3853ee71860e5d80964a715"
+        },
+        "required_module": "annual trust-fund balances and scheduled-payment denominators by fund",
+        "status": "module_missing",
+        "unit": "beginning-of-year asset-to-cost ratio",
+        "value": null
+      },
+      "published": {
+        "unit": "beginning-of-year asset-to-cost ratio",
+        "value": [
+          {
+            "di_ratio": 0.41,
+            "oasdi_ratio": 3.11,
+            "oasi_ratio": 3.64,
+            "year": 2015
+          },
+          {
+            "di_ratio": 0.22,
+            "oasdi_ratio": 3.05,
+            "oasi_ratio": 3.58,
+            "year": 2016
+          },
+          {
+            "di_ratio": 0.32,
+            "oasdi_ratio": 2.99,
+            "oasi_ratio": 3.47,
+            "year": 2017
+          },
+          {
+            "di_ratio": 0.49,
+            "oasdi_ratio": 2.89,
+            "oasi_ratio": 3.3,
+            "year": 2018
+          },
+          {
+            "di_ratio": 0.66,
+            "oasdi_ratio": 2.73,
+            "oasi_ratio": 3.07,
+            "year": 2019
+          },
+          {
+            "di_ratio": 0.64,
+            "oasdi_ratio": 2.62,
+            "oasi_ratio": 2.92,
+            "year": 2020
+          },
+          {
+            "di_ratio": 0.68,
+            "oasdi_ratio": 2.54,
+            "oasi_ratio": 2.81,
+            "year": 2021
+          },
+          {
+            "di_ratio": 0.68,
+            "oasdi_ratio": 2.29,
+            "oasi_ratio": 2.51,
+            "year": 2022
+          },
+          {
+            "di_ratio": 0.93,
+            "oasdi_ratio": 1.88,
+            "oasi_ratio": 1.99,
+            "year": 2024
+          },
+          {
+            "di_ratio": 1.09,
+            "oasdi_ratio": 1.71,
+            "oasi_ratio": 1.79,
+            "year": 2025
+          },
+          {
+            "di_ratio": 1.23,
+            "oasdi_ratio": 1.54,
+            "oasi_ratio": 1.58,
+            "year": 2026
+          },
+          {
+            "di_ratio": 1.36,
+            "oasdi_ratio": 1.37,
+            "oasi_ratio": 1.37,
+            "year": 2027
+          },
+          {
+            "di_ratio": 1.5,
+            "oasdi_ratio": 1.19,
+            "oasi_ratio": 1.15,
+            "year": 2028
+          },
+          {
+            "di_ratio": 1.63,
+            "oasdi_ratio": 1,
+            "oasi_ratio": 0.93,
+            "year": 2029
+          },
+          {
+            "di_ratio": 1.78,
+            "oasdi_ratio": 0.82,
+            "oasi_ratio": 0.71,
+            "year": 2030
+          },
+          {
+            "di_ratio": 1.92,
+            "oasdi_ratio": 0.62,
+            "oasi_ratio": 0.48,
+            "year": 2031
+          },
+          {
+            "di_ratio": 2.06,
+            "oasdi_ratio": 0.42,
+            "oasi_ratio": 0.25,
+            "year": 2032
+          },
+          {
+            "di_ratio": 2.19,
+            "oasdi_ratio": 0.22,
+            "oasi_ratio": 0.01,
+            "year": 2033
+          },
+          {
+            "di_ratio": 2.32,
+            "oasdi_ratio": 0.02,
+            "oasi_ratio": null,
+            "year": 2034
+          },
+          {
+            "di_ratio": 2.42,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2035
+          },
+          {
+            "di_ratio": 2.48,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2036
+          },
+          {
+            "di_ratio": 2.57,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2037
+          },
+          {
+            "di_ratio": 2.63,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2038
+          },
+          {
+            "di_ratio": 2.63,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2039
+          },
+          {
+            "di_ratio": 2.63,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2040
+          },
+          {
+            "di_ratio": 2.58,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2041
+          },
+          {
+            "di_ratio": 2.56,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2042
+          },
+          {
+            "di_ratio": 2.5,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2043
+          },
+          {
+            "di_ratio": 2.44,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2044
+          },
+          {
+            "di_ratio": 2.39,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2045
+          },
+          {
+            "di_ratio": 2.29,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2046
+          },
+          {
+            "di_ratio": 2.22,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2047
+          },
+          {
+            "di_ratio": 2.1,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2048
+          },
+          {
+            "di_ratio": 2.02,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2049
+          },
+          {
+            "di_ratio": 1.91,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2050
+          },
+          {
+            "di_ratio": 1.78,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2051
+          },
+          {
+            "di_ratio": 1.66,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2052
+          },
+          {
+            "di_ratio": 1.54,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2053
+          },
+          {
+            "di_ratio": 1.4,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2054
+          },
+          {
+            "di_ratio": 1.25,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2055
+          },
+          {
+            "di_ratio": 1.1,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2056
+          },
+          {
+            "di_ratio": 0.97,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2057
+          },
+          {
+            "di_ratio": 0.84,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2058
+          },
+          {
+            "di_ratio": 0.7,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2059
+          },
+          {
+            "di_ratio": 0.57,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2060
+          },
+          {
+            "di_ratio": 0.44,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2061
+          },
+          {
+            "di_ratio": 0.29,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2062
+          },
+          {
+            "di_ratio": 0.16,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2063
+          },
+          {
+            "di_ratio": 0.02,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2064
+          },
+          {
+            "di_ratio": null,
+            "oasdi_ratio": null,
+            "oasi_ratio": null,
+            "year": 2065
+          }
+        ]
+      },
+      "row_id": "cbo.60392.trust_fund_ratios.path",
+      "source": {
+        "capture_id": "cbo_60392_long_term",
+        "locator": {
+          "cells": "A9:D9 headers; A40:A47+B40:D47; A49:A90+B49:D90; notes A94, A96, A104, A106:A113",
+          "sheet": "8"
+        },
+        "transform": "identity_ratio; preserve printed n.a. as null"
+      },
+      "source_family": "cbo",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/modeled_award_flow/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "beneficiary-type stock plus household-income denominator and source decomposition",
+        "status": "module_missing",
+        "unit": "fraction of household income",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of household income",
+        "value": [
+          {
+            "share": 0.4,
+            "year": 2024
+          },
+          {
+            "share": 0.41,
+            "year": 2030
+          },
+          {
+            "share": 0.46,
+            "year": 2050
+          },
+          {
+            "share": 0.48,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.beneficiaries.retired_worker_only.social_security_income_share.trajectory",
+      "source": {
+        "capture_id": "mint_beneficiaries",
+        "locator": {
+          "selector": "div#tableIncome{YEAR} > table td[headers='r1 r39 r40 c3 c7']",
+          "tables": "zero-based ordinals 8-11"
+        },
+        "transform": "parse printed percent and divide by 100"
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/modeled_award_flow/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "beneficiary-type stock plus household-income denominator and source decomposition",
+        "status": "module_missing",
+        "unit": "fraction of household income",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of household income",
+        "value": [
+          {
+            "share": 0.51,
+            "year": 2024
+          },
+          {
+            "share": 0.51,
+            "year": 2030
+          },
+          {
+            "share": 0.54,
+            "year": 2050
+          },
+          {
+            "share": 0.59,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.beneficiaries.widow_including_dual.social_security_income_share.trajectory",
+      "source": {
+        "capture_id": "mint_beneficiaries",
+        "locator": {
+          "selector": "div#tableIncome{YEAR} > table td[headers='r1 r39 r41 c3 c7']",
+          "tables": "zero-based ordinals 8-11"
+        },
+        "transform": "parse printed percent and divide by 100"
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/modeled_award_flow/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "beneficiary-type stock plus household-income denominator and source decomposition",
+        "status": "module_missing",
+        "unit": "fraction of household income",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of household income",
+        "value": [
+          {
+            "share": 0.41,
+            "year": 2024
+          },
+          {
+            "share": 0.42,
+            "year": 2030
+          },
+          {
+            "share": 0.5,
+            "year": 2050
+          },
+          {
+            "share": 0.54,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.beneficiaries.spousal_including_dual.social_security_income_share.trajectory",
+      "source": {
+        "capture_id": "mint_beneficiaries",
+        "locator": {
+          "selector": "div#tableIncome{YEAR} > table td[headers='r1 r39 r42 c3 c7']",
+          "tables": "zero-based ordinals 8-11"
+        },
+        "transform": "parse printed percent and divide by 100"
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/modeled_award_flow/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "beneficiary-type stock plus household-income denominator and source decomposition",
+        "status": "module_missing",
+        "unit": "fraction of household income",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of household income",
+        "value": [
+          {
+            "share": 0.53,
+            "year": 2024
+          },
+          {
+            "share": 0.51,
+            "year": 2030
+          },
+          {
+            "share": 0.53,
+            "year": 2050
+          },
+          {
+            "share": 0.56,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.beneficiaries.disabled_worker_only.social_security_income_share.trajectory",
+      "source": {
+        "capture_id": "mint_beneficiaries",
+        "locator": {
+          "selector": "div#tableIncome{YEAR} > table td[headers='r1 r39 r43 c3 c7']",
+          "tables": "zero-based ordinals 8-11"
+        },
+        "transform": "parse printed percent and divide by 100"
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "individual annual tax percentiles with taxable-maximum mechanics",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.1730886850152905,
+            "p90_to_median": 2.7307339449541286,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.19082391843483054,
+            "p90_to_median": 2.725544227059796,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.20468148781530568,
+            "p90_to_median": 2.737601539119282,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.1928216549597396,
+            "p90_to_median": 2.7501284906630117,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_31_39.annual_tax_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r15 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "individual annual tax percentiles with taxable-maximum mechanics",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.18453303282152417,
+            "p90_to_median": 2.9292858149035075,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.18463697843562588,
+            "p90_to_median": 2.918974097231083,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.18538360456888708,
+            "p90_to_median": 2.9653290205195595,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.18462157809983898,
+            "p90_to_median": 2.950805152979066,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_40_49.annual_tax_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r16 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "individual annual tax percentiles with taxable-maximum mechanics",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.22881930323979938,
+            "p90_to_median": 2.7946319642130946,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.2025528623001547,
+            "p90_to_median": 2.8879577101598763,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.20518092105263158,
+            "p90_to_median": 2.9552837171052633,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.19609125848393164,
+            "p90_to_median": 2.996892632267561,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_50_59.annual_tax_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r17 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "individual annual tax percentiles with taxable-maximum mechanics",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.18245264207377868,
+            "p90_to_median": 3.0442671984047855,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.20460006865774116,
+            "p90_to_median": 3.015447991761071,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.17701180994232354,
+            "p90_to_median": 3.257758857456743,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.18162162162162163,
+            "p90_to_median": 3.2475675675675677,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_60_69.annual_tax_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r18 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "individual annual tax percentiles with taxable-maximum mechanics",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.01567398119122257,
+            "p90_to_median": 2.712336345196386,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.015460526315789473,
+            "p90_to_median": 2.6657894736842107,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.014685918795507836,
+            "p90_to_median": 2.505368382080711,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.013677253534055443,
+            "p90_to_median": 2.403341288782816,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_70_plus.annual_tax_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableTaxes{YEAR} > table td[headers='r1 r14 r19 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "age-stratified uncapped individual covered-earnings percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.17313563017880507,
+            "p90_to_median": 2.7309391531883427,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.19079104732615754,
+            "p90_to_median": 2.725696224158551,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.2047129300747495,
+            "p90_to_median": 2.7375417483963314,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.19283430525902084,
+            "p90_to_median": 2.7501779208225785,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_31_39.covered_earnings_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r15 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "age-stratified uncapped individual covered-earnings percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.18460033538289547,
+            "p90_to_median": 2.97367593627725,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.18459274729447503,
+            "p90_to_median": 3.101117017910259,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.1854122012058311,
+            "p90_to_median": 3.0920668346306672,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.18465086559773167,
+            "p90_to_median": 3.127074139893373,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_40_49.covered_earnings_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r16 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "age-stratified uncapped individual covered-earnings percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.22875871922010252,
+            "p90_to_median": 2.7945205479452055,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.20249400479616306,
+            "p90_to_median": 2.88792965627498,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.20514193211222007,
+            "p90_to_median": 2.9552088511592927,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.19608797493383628,
+            "p90_to_median": 3.032914549934597,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_50_59.covered_earnings_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r17 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "age-stratified uncapped individual covered-earnings percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.18239584621090368,
+            "p90_to_median": 3.044059834342935,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.20468670185595098,
+            "p90_to_median": 3.0153669334241444,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.17700546596965622,
+            "p90_to_median": 3.257751970984385,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.1816365927554495,
+            "p90_to_median": 3.2477142933748024,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_60_69.covered_earnings_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r18 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "age-stratified uncapped individual covered-earnings percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.015686812558596875,
+            "p90_to_median": 2.7125151494363267,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.015417873312395481,
+            "p90_to_median": 2.6657013500836153,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.014675052410901468,
+            "p90_to_median": 2.5053022999586836,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.013659491639252825,
+            "p90_to_median": 2.4034330855653323,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_70_plus.covered_earnings_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableEarnings{YEAR} > table td[headers='r1 r14 r19 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/diagnostics",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "statutory quarters-of-coverage and projected lifetime-career percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.5149700598802395,
+            "p90_to_median": 1.4191616766467066,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.5151515151515151,
+            "p90_to_median": 1.4363636363636363,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.5151515151515151,
+            "p90_to_median": 1.412121212121212,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.535483870967742,
+            "p90_to_median": 1.2,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_31_39.lifetime_qc_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r15 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/diagnostics",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "statutory quarters-of-coverage and projected lifetime-career percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.5798816568047337,
+            "p90_to_median": 1.3964497041420119,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.5680473372781065,
+            "p90_to_median": 1.4082840236686391,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.5595238095238095,
+            "p90_to_median": 1.4285714285714286,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.5602409638554217,
+            "p90_to_median": 1.2771084337349397,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_40_49.lifetime_qc_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r16 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/diagnostics",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "statutory quarters-of-coverage and projected lifetime-career percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.5780346820809249,
+            "p90_to_median": 1.3815028901734103,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.5606936416184971,
+            "p90_to_median": 1.3815028901734103,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.5352941176470588,
+            "p90_to_median": 1.4176470588235295,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.5321637426900585,
+            "p90_to_median": 1.3801169590643274,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_50_59.lifetime_qc_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r17 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/diagnostics",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "statutory quarters-of-coverage and projected lifetime-career percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.5473684210526316,
+            "p90_to_median": 1.3105263157894738,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.5502645502645502,
+            "p90_to_median": 1.3227513227513228,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.49732620320855614,
+            "p90_to_median": 1.3475935828877006,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.4919786096256685,
+            "p90_to_median": 1.374331550802139,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_60_69.lifetime_qc_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r18 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/diagnostics",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "statutory quarters-of-coverage and projected lifetime-career percentiles",
+        "status": "module_missing",
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": null
+      },
+      "published": {
+        "unit": "within-age p10/median and p90/median ratios",
+        "value": [
+          {
+            "p10_to_median": 0.5701357466063348,
+            "p90_to_median": 1.2307692307692308,
+            "year": 2024
+          },
+          {
+            "p10_to_median": 0.6044444444444445,
+            "p90_to_median": 1.2266666666666666,
+            "year": 2030
+          },
+          {
+            "p10_to_median": 0.5877192982456141,
+            "p90_to_median": 1.25,
+            "year": 2050
+          },
+          {
+            "p10_to_median": 0.5646551724137931,
+            "p90_to_median": 1.2413793103448276,
+            "year": 2070
+          }
+        ]
+      },
+      "row_id": "ssa.mint8.taxpayers.age_70_plus.lifetime_qc_percentile_shape.repeated_cross_section",
+      "source": {
+        "capture_id": "mint_taxpayers",
+        "locator": {
+          "panel": "All taxpayers r1 > Age r14",
+          "selector": "div#tableQuarters{YEAR} > table td[headers='r1 r14 r19 c2 c{3,4,5}']"
+        },
+        "transform": {
+          "lower_tail": "p10 / median",
+          "upper_tail": "p90 / median"
+        }
+      },
+      "source_family": "mint",
+      "tier": "model_triangulation"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.21280429951413962,
+            "year": 2015
+          },
+          {
+            "share": 0.20777364782278943,
+            "year": 2016
+          },
+          {
+            "share": 0.20165745856353592,
+            "year": 2017
+          },
+          {
+            "share": 0.19340542457011167,
+            "year": 2018
+          },
+          {
+            "share": 0.18527080181543115,
+            "year": 2019
+          },
+          {
+            "share": 0.20115532107178624,
+            "year": 2020
+          },
+          {
+            "share": 0.17911109222372648,
+            "year": 2021
+          },
+          {
+            "share": 0.16016239412627092,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_1_9999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_1_9999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "1-9,999",
+          "one_based_data_column": 2,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.15345037283257237,
+            "year": 2015
+          },
+          {
+            "share": 0.1494493509424028,
+            "year": 2016
+          },
+          {
+            "share": 0.14489755469117757,
+            "year": 2017
+          },
+          {
+            "share": 0.13914749769238763,
+            "year": 2018
+          },
+          {
+            "share": 0.13321633888048412,
+            "year": 2019
+          },
+          {
+            "share": 0.12947290002686793,
+            "year": 2020
+          },
+          {
+            "share": 0.11917265160667562,
+            "year": 2021
+          },
+          {
+            "share": 0.11181215463054743,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_10000_19999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_10000_19999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "10,000-19,999",
+          "one_based_data_column": 3,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.24950172248011665,
+            "year": 2015
+          },
+          {
+            "share": 0.2513680040617028,
+            "year": 2016
+          },
+          {
+            "share": 0.2491019002551842,
+            "year": 2017
+          },
+          {
+            "share": 0.2477244802523397,
+            "year": 2018
+          },
+          {
+            "share": 0.2455552193645991,
+            "year": 2019
+          },
+          {
+            "share": 0.22696074839403044,
+            "year": 2020
+          },
+          {
+            "share": 0.22643410899774769,
+            "year": 2021
+          },
+          {
+            "share": 0.21727930483917876,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_20000_39999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_20000_39999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "20,000-39,999",
+          "one_based_data_column": 4,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.15694627517654625,
+            "year": 2015
+          },
+          {
+            "share": 0.15937168968089307,
+            "year": 2016
+          },
+          {
+            "share": 0.1619180933032728,
+            "year": 2017
+          },
+          {
+            "share": 0.1645281773224361,
+            "year": 2018
+          },
+          {
+            "share": 0.16744931921331316,
+            "year": 2019
+          },
+          {
+            "share": 0.16396766078014705,
+            "year": 2020
+          },
+          {
+            "share": 0.17183810003703276,
+            "year": 2021
+          },
+          {
+            "share": 0.17795096124739582,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_40000_59999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_40000_59999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "40,000-59,999",
+          "one_based_data_column": 5,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.0872383645035373,
+            "year": 2015
+          },
+          {
+            "share": 0.08855514952456767,
+            "year": 2016
+          },
+          {
+            "share": 0.09172385600673884,
+            "year": 2017
+          },
+          {
+            "share": 0.09521422589538417,
+            "year": 2018
+          },
+          {
+            "share": 0.09879576399394856,
+            "year": 2019
+          },
+          {
+            "share": 0.0995945384822061,
+            "year": 2020
+          },
+          {
+            "share": 0.10658758248896606,
+            "year": 2021
+          },
+          {
+            "share": 0.11425756325714184,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_60000_79999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_60000_79999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "60,000-79,999",
+          "one_based_data_column": 6,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.049057252564616884,
+            "year": 2015
+          },
+          {
+            "share": 0.049943900864365454,
+            "year": 2016
+          },
+          {
+            "share": 0.05190397145900949,
+            "year": 2017
+          },
+          {
+            "share": 0.054251813997273655,
+            "year": 2018
+          },
+          {
+            "share": 0.056895612708018156,
+            "year": 2019
+          },
+          {
+            "share": 0.05871253755404118,
+            "year": 2020
+          },
+          {
+            "share": 0.06344744686405333,
+            "year": 2021
+          },
+          {
+            "share": 0.06875634352055746,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_80000_99999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_80000_99999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "80,000-99,999",
+          "one_based_data_column": 7,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.027782553600652057,
+            "year": 2015
+          },
+          {
+            "share": 0.028218805433154276,
+            "year": 2016
+          },
+          {
+            "share": 0.030646879567921115,
+            "year": 2017
+          },
+          {
+            "share": 0.03248384671340983,
+            "year": 2018
+          },
+          {
+            "share": 0.03407564296520424,
+            "year": 2019
+          },
+          {
+            "share": 0.035654966903592974,
+            "year": 2020
+          },
+          {
+            "share": 0.03888440313503603,
+            "year": 2021
+          },
+          {
+            "share": 0.04269968364009758,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_100000_119999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_100000_119999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "100,000-119,999",
+          "one_based_data_column": 8,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.008609369967544533,
+            "year": 2017
+          },
+          {
+            "share": 0.010550831657385277,
+            "year": 2018
+          },
+          {
+            "share": 0.01590317700453858,
+            "year": 2019
+          },
+          {
+            "share": 0.021445494736327887,
+            "year": 2020
+          },
+          {
+            "share": 0.02499408082856258,
+            "year": 2021
+          },
+          {
+            "share": 0.027985683675710325,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_120000_139999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_120000_139999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "120,000-139,999",
+          "one_based_data_column": 9,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.0034907934118104163,
+            "year": 2021
+          },
+          {
+            "share": 0.008202802723188053,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_140000_149999",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_140000_149999/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "140,000-149,999",
+          "one_based_data_column": 10,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.010320238710586908,
+            "year": 2023
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_150000_160199",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_150000_160199/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "150,000-160,199",
+          "one_based_data_column": 11,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    },
+    {
+      "action": "add",
+      "deviation": {
+        "model_value": null,
+        "status": "not_computable"
+      },
+      "gap_class": "module_missing",
+      "our": {
+        "artifact_pointer": {
+          "json_pointer": "/tables/revenue/per_draw",
+          "path": "runs/first_estimates_v1.json",
+          "sha256": "719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977"
+        },
+        "required_module": "weighted nominal taxable-earnings bands, wage-and-salary membership, sex, and at-maximum indicator",
+        "status": "module_missing",
+        "unit": "fraction of same-year all-worker total",
+        "value": null
+      },
+      "published": {
+        "unit": "fraction of same-year all-worker total",
+        "value": [
+          {
+            "share": 0.06321915932781885,
+            "year": 2015
+          },
+          {
+            "share": 0.06531945167012454,
+            "year": 2016
+          },
+          {
+            "share": 0.059540916185615536,
+            "year": 2017
+          },
+          {
+            "share": 0.06269370189927195,
+            "year": 2018
+          },
+          {
+            "share": 0.06283812405446293,
+            "year": 2019
+          },
+          {
+            "share": 0.06303583205100022,
+            "year": 2020
+          },
+          {
+            "share": 0.06603974040638906,
+            "year": 2021
+          },
+          {
+            "share": 0.0708931083399118,
+            "year": 2022
+          }
+        ]
+      },
+      "row_id": "ssa_4b7_all_workers_share_at_taxable_maximum",
+      "source": {
+        "capture_id": "ssa_supplement_4b",
+        "committed_extraction": {
+          "json_pointer": "/rows/ssa_4b7_all_workers_share_at_taxable_maximum/observations",
+          "path": "data/external/ssa_supplement2025_4b7_band_shares_v1.json",
+          "sha256": "c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb"
+        },
+        "locator": {
+          "denominator": "same-panel all-worker Total",
+          "header": "Workers with maximum earnings",
+          "one_based_data_column": 12,
+          "table": "div#table4.b7 > table"
+        },
+        "transform": "printed band count / same-year same-panel Total; discard structural N/A cells"
+      },
+      "source_family": "ssa_supplement_4b7",
+      "tier": "admin_truth"
+    }
+  ],
+  "schema_version": "benchmark_tranche2_evaluation.v1",
+  "standing_corrections": [
+    "CBO 55038 has no lifetime benefit-to-tax ratios; its present-value material is replacement-rate material, and the ratio paths come from CBO 60392 Long-Term sheet 14.",
+    "The captured MINT pages identify neither beneficiary-type population shares, dual-entitlement rates, nor taxpayer birth-cohort distributions, so no such denominators are registered."
+  ],
+  "validation_only": true,
+  "validation_source_manifest": {
+    "entry_count": 30,
+    "external_path": "~/PolicyEngine/psid-data/validation-sources/manifest.jsonl",
+    "sha256": "72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a",
+    "size_bytes": 12042
+  }
+}
