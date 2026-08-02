@@ -31222,20 +31222,25 @@ Amendment-6 consumer uses the successor count and shapes. The inherited
 `nine-position preimage` remains numerically true only for the registered
 grammar. Hash equality never replaces deep equality.
 
-For a consuming layout, `typed_parse_specs` retains its nine-key shape.
-Its `raw_width`, `decimal_places`, `signed`, scale, type, and unit must
+For a consuming inventory row, the corresponding object in the parallel
+`typed_parse_specs` array retains its nine-key shape. Its `raw_width`,
+`decimal_places`, `signed`, scale, type, and unit must
 positionally deep-equal the complete successor profile/value derivation;
 `signed` is true only for a selected signed token form. The complete
-ten-key declaration projection, serialized nonmissing count, thirteen-key
-physical authentication, selected-arm-or-disposition, complete finite-domain
-arm disposition, complete range partitions, and ten-key DFA when the profile
-is nonnull, plus the four-key
-padding rule, observed rows, unobserved rows, and all fresh IDs/hashes flow
-into the existing layout and `raw_token_grammar` members. The zero-count
-retained branch flows the explicit absence/null values instead of any
-profile-dependent member and flows every short ordinary literal through the
-normalized-entry null rendering and four-key unobserved abort row. No structural relabeling or mixed
-§19/§20 object is lawful.
+fixed-shape layout copies only its existing source/coordinate/entry members,
+the successor derivation ID and complete-row SHA-256 references, and its
+same-shaped `raw_token_grammar`; it gains no profile, arm/disposition,
+candidate-relation, partition, or direct DFA sibling key. Consumers resolve
+those two references and independently compare the complete 16-key derivation row,
+including its ten-key declaration projection, serialized nonmissing count,
+and every applicable nested physical member. The four-key padding rule,
+observed rows, unobserved rows, and grammar project only through the existing
+same-named raw-token members; a compiled DFA therefore remains nested inside
+the existing `raw_token_grammar.registered_numeric_grammar`, never beside it
+on the layout. The zero-count retained branch projects the
+explicit absence/null values and every short ordinary literal's normalized-
+entry null rendering and four-key unobserved abort row through those same
+fixed shapes. No structural relabeling or mixed §19/§20 object is lawful.
 
 #### 20.3.6 Mandatory actual-data regression-vector census
 
@@ -31432,9 +31437,11 @@ its identity.
 #### 20.4.1 Layout, typed-parse, raw-token, value-map, and unobserved domains
 
 Every §19.3.2 consumer is prospectively completed in place. The official
-inventory `layout_coordinates` row retains its exact 18-key shape and
-position; `typed_parse_specs` retains its exact nine-key shape;
-`raw_token_grammar` retains its exact 18-key shape; and the numeric
+inventory `layout_coordinates` object retains the exact 17 direct keys
+enumerated in §19.3.2 and its position; the parallel `typed_parse_specs`
+object retains its exact nine-key shape; `raw_token_grammar` retains its exact
+18-key shape; the Q5 raw-field projection separately retains its exact 18-key
+shape; and the numeric
 derivation row uses the 16-key/15-position successor in §20.3, while the
 registered grammar, value derivation, and padding rule retain their outer
 shapes and ID preimages. The successor changes that one derivation-row
@@ -31698,14 +31705,27 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   unused rows remain in the fifth value. Both complete values deep-equal.
 - **G17-C01 fourth and sixth values.** The fourth value's complete
   positive-field joins retain every 18-key raw-field projection and its
-  fresh derivation row hash. The sixth retains each official layout's
-  complete successor parse profile and raw-token grammar, including explicit
-  no-arm tokens, both partial-range relations, and exact `no_op`,
-  `set_negative`, and `consume_decimal_point` transitions; a zero-count
-  physical-unestablished layout instead carries the resolved nulls, no such
-  nested relations, and the same-shaped raw-token unobserved rows for every
-  short ordinary literal and range. A join/layout pair that agrees only
-  on width, scalar, or grammar ID fails.
+  fresh derivation ID and complete-row hash. The sixth preserves every exact-
+  empty structural branch. For a present row it retains only each official
+  17-key layout object's fixed same-shaped source/coordinate/entry members,
+  derivation references, and 18-key `raw_token_grammar`, together with the
+  corresponding object in the parallel positional nine-key
+  `typed_parse_specs` array; it adds no direct compiler-profile,
+  arm/disposition, candidate-relation, range-partition, or DFA sibling key to
+  the layout. On both expected and actual sides, each derivation ID/full-row
+  hash resolves the unique same-wave/raw-field 16-key successor row, which is then
+  independently reconstructed and compared in full. That resolved row carries
+  the profile, explicit no-arm disposition, candidate and range relations,
+  and DFA. Only its named padding, grammar, observed, and unobserved
+  projections enter the fixed layout through the existing raw-token member;
+  the full DFA and exact `no_op`, `set_negative`, and
+  `consume_decimal_point` transitions remain nested inside
+  `raw_token_grammar.registered_numeric_grammar`. A zero-count reference
+  instead resolves the null-profile/null-grammar row with those relations absent,
+  while the existing same-shaped raw-token member retains every short-
+  ordinary-literal and range unobserved row. A fourth- or sixth-value pair
+  that agrees only on width, scalar, grammar ID, or reference hash without
+  this resolution and complete-row comparison fails.
 - **G17-C06.** Before direct-law classification, the expected and actual
   sides independently resolve the unique successor row and compare its
   complete declaration disposition relation, including every later row's
@@ -31816,7 +31836,7 @@ enumeration and exact reverse cover.
 | §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; add the explicit all-missing retained branch, structural/equality no-arm, finite-domain arm-ambiguous, and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language is unsupported, mixed individually lawful forms conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
 | §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.3.4-and-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; missing-versus-ordinary-literal and unequal-meaning duplicate literals conflict, while ordinary nonmissing literal/DFA overlap is lawful and terminates literal-first; partial ranges carry both member relations and the closed unrenderable-member action; a finite-domain arm-ambiguous row serializes both complete candidates, compiles only invariant authoritative images, and gives every ambiguous numeric or short-literal member a null image and closed abort; an all-missing retained range replays registered literals, preserves every short ordinary literal as source-semantic with a null rendering and closed unobserved abort, and constructs no profile/partition/DFA; precedence and source semantics remain exact. |
 | §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-eleven-vector-census`: V93 remains mandatory; actual later-era space, width-one, decimal, signed, conflict, precision-edge, complete-domain no-capacity, finite-domain arm ambiguity, all-missing range, and all-missing short-ordinary-literal vectors are added; zero-arm constructors are rejection-only. |
-| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; layout and raw-token consumers respectively compare their same-named members with the complete 16-key successor row, including zero-count short-literal null-rendering/unobserved-abort rows, while actual five-key commitments and seven-key entries compare only with independently rebuilt like-shaped expected objects, omit those unexecutable short literals, and resolve every commitment field-row derivation reference before nested members are compared. |
+| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the layout retains its 17 direct keys, the parallel typed-parse object retains nine, and the nested raw-token grammar retains 18. A layout copies only its fixed same-shaped members and derivation references, its parallel positional typed-parse and raw-token projections compare only their named successor members, and resolving the ID/full-row hash independently compares the complete 16-key row, including zero-count short-literal null-rendering/unobserved-abort rows. No profile, arm/disposition, candidate, partition, or direct DFA sibling key is added to the layout; a compiled DFA remains inside the existing `raw_token_grammar.registered_numeric_grammar`. Actual five-key commitments and seven-key entries compare only with independently rebuilt like-shaped expected objects, omit those unexecutable short literals, and resolve every commitment field-row derivation reference before nested members are compared. |
 | §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
 | §19.3.3 positive join `raw_field_projections`, numeric derivation ID/full-row hash, join identity, and Q5 digest | `composed-with-§20.4.2`: the 18-key projection is unchanged in shape and resolves the complete successor 16-key row; all enclosing identities/digests are rebuilt. |
 | §16.6.4 and §19.4.2 G17-C01 | `composed-with-§20.4.3`: the fourth, fifth, and sixth values carry the complete successor joins, compiler relation, layouts, and independent reverse projections; 18-row order remains. |
@@ -32468,21 +32488,48 @@ dependency order before Q5 or an official consumer is read:
    structural no-arm disposition, the finite-complete-domain equality
    disposition, or the finite-domain arm-ambiguous disposition after both
    complete candidate relations and the invariant/ambiguous partition are
-   serialized and every observation resolves to an invariant replay; no
+   serialized and every observation resolves to an invariant authoritative
+   image; byte replay follows only after the DFA is compiled in step 5. No
    other field's result enters;
 5. for each nonnull-profile row, conflict-check missing-versus-literal and
-   unequal-meaning duplicate literal images, subtract every missing image
-   from the numeric language, and retain every ordinary literal/DFA overlap
-   for literal-first termination; then construct the exact-token DFA and
-   action rows, replay every observed numeric token and normalized literal/missing
-   token, enumerate every source-declared unobserved value, construct every
-   applicable exhaustive ordered renderable/unrenderable range partition,
-   and apply its exact replay or closed unrenderable-member action plus the
-   unknown-token abort law. For a zero-count retained range, replay the
-   pre-profile registered literals, compare every short ordinary literal's
-   null rendering and closed unobserved-value row, and verify that profile,
-   candidate, partition, and DFA members are absent and every such literal
-   and range rendering remains unestablished; then
+   unequal-meaning duplicate literal images, enumerate every member of the
+   complete source-declared semantic domain including every unobserved value,
+   and first construct and validate every applicable exhaustive ordered range
+   partition. Each partition must cover its unchanged source range exactly;
+   each applicable member image, action, failure, and replay value is
+   constructed under the selected arm or exact no-arm disposition. On the
+   finite-domain arm-ambiguous branch, the partition parent's
+   `source_entry_ref` and each
+   member's index/value, authoritative image, and transition actions equal
+   the corresponding fields of the already serialized invariant row; the
+   partition-only precision, scalar, and replay values are independently
+   derived. An ambiguous member instead carries the same parent/index/value,
+   null image, and exact reason `arm_ambiguous_no_authoritative_image`, while
+   its arm-disposition row separately retains both candidates and
+   `abort_before_classification_arm_ambiguous_source_member`. For a compiled
+   status only, after those defining partitions
+   pass, form the
+   source-valid render language under §20.3.4: each applicable range
+   contributes only its renderable or arm-invariant authoritative images,
+   every no-range numeric domain retains its independently derived closed
+   language, and retained literals contribute their established images.
+   Subtract every registered missing image and retain every ordinary-literal
+   overlap for literal-first termination; then compile the exact-token DFA
+   and action rows from that resulting language. Replay every observed
+   numeric token and normalized literal/missing token, replay every
+   unobserved renderable or arm-invariant member, apply the exact closed
+   action to every unrenderable or arm-ambiguous member, and finally apply the
+   unknown-token abort law. Thus a partial-range DFA is necessarily compiled
+   after, and only from, its defining renderable partition. A noncompiled
+   `value_code_domain_no_numeric_grammar` row retains its null grammar/DFA
+   and replays only its established literals literal-first through its
+   independently established profile/padding or retained null-profile branch.
+   Separately, for a zero-count retained range, replay the pre-profile
+   registered literals,
+   compare every short ordinary literal's null rendering and closed
+   unobserved-value row, and verify that profile, candidate, partition, and
+   DFA members are absent and every such literal and range rendering remains
+   unestablished; then
    compute every grammar ID, derivation ID, full-row digest, relation digest,
    and implementation result from complete canonical bytes; and
 6. independently reproduce the eleven-row vector relation and all full
@@ -32540,10 +32587,22 @@ consumer walk is:
 3. **Slot and inventory.** Derive the official slot registry only from the
    passing Q5 hierarchy, and derive every present or structural inventory
    row under the retained exact key biconditionals. Every present layout
-   positionally deep-copies the complete successor profile,
-   selected-arm-or-disposition, any complete-domain candidate relations,
-   padding rule, DFA/null branch, observed and unobserved domains, and value
-   derivation from its same-wave source row.
+   retains its fixed 17-key schema and copies only its existing same-shaped
+   source/coordinate/entry members, successor derivation ID and full-row hash,
+   and 18-key `raw_token_grammar`; the corresponding object in the parallel
+   positional nine-key `typed_parse_specs` array copies only the named
+   parse/value projection. Resolve the derivation ID and
+   hash to the unique same-wave/raw-field row, independently reconstruct that
+   complete 16-key successor row, and require deep equality before accepting
+   either projection. The profile, selected arm/disposition, complete-domain
+   candidate and arm-disposition relations, range partitions, and DFA remain
+   compiler members of that resolved row; they are not added to the 18-key
+   raw-field projection or as direct sibling keys on the 17-key layout. Only
+   the padding, registered grammar, observed/unobserved domains,
+   and other already-named raw-token values project through the layout's
+   same-shaped `raw_token_grammar` member; when nonnull, the DFA remains
+   nested inside its existing `registered_numeric_grammar`. Every structural
+   layout and typed-parse branch remains exact empty.
    The slot/inventory first-add and admitting-cutoff ancestry predicates must
    pass before either artifact is authority.
 4. **Value maps and pre-capture G17 source comparands.** Rebuild every
