@@ -95,8 +95,9 @@
   null model measurements, and all generator checks that use committed bytes.
 - The full benchmark suite passes with 10 tests in 324.11 seconds; the focused
   unexplained-gap alarm passes separately with one test in 3.23 seconds.
-- Repository-wide Ruff passes across the Python inventory, and Black at line
-  length 79 passes for every Python file added or changed by this lane.
+- Repository-wide Ruff and Black at line length 79 pass across all 559 Python
+  files; Black's two mechanical reflows outside the benchmark files are covered
+  by five focused anchor-context tests, all passing in 28.00 seconds.
 
 ## Next
 

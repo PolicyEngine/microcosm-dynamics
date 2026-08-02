@@ -2148,7 +2148,9 @@ def test_real_production_vault_accepts_pretty_and_reparses_strictly(
         str(registration),
     ]
     exercise = isolated / "exercise_production_vault.py"
-    exercise.write_text(textwrap.dedent("""
+    exercise.write_text(
+        textwrap.dedent(
+            """
             import hashlib
             import json
             from pathlib import Path
@@ -2287,7 +2289,9 @@ def test_real_production_vault_accepts_pretty_and_reparses_strictly(
             assert result.status == "incident"
             assert result.phase == "compute"
             assert result.reason == "compute_abort"
-            """).replace("__INVOCATION__", repr(invocation)))
+            """
+        ).replace("__INVOCATION__", repr(invocation))
+    )
 
     _real_git(isolated, "init", "-q")
     implementation_commit = _commit_real_git_fixture(
@@ -2341,7 +2345,9 @@ def test_public_runner_owns_fail_once_report_first_retry(
         )
     )
     script = isolated / "exercise_public_retry.py"
-    script.write_text(textwrap.dedent("""
+    script.write_text(
+        textwrap.dedent(
+            """
             import hashlib
             import inspect
             import json
@@ -2511,7 +2517,9 @@ def test_public_runner_owns_fail_once_report_first_retry(
             assert artifact["prior_incidents"] == [
                 "runs/anchor_context_report_incident_1.json"
             ]
-            """))
+            """
+        )
+    )
     completed = subprocess.run(
         [sys.executable, str(script)],
         cwd=isolated,

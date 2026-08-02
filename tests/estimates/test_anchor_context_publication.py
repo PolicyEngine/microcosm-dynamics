@@ -599,7 +599,8 @@ def test_production_verifier_binding_surface_is_consumed_during_import():
 
 def test_fake_coordinator_cannot_preempt_publication_bootstrap():
     source_root = REPOSITORY_ROOT / "src"
-    script = textwrap.dedent(f"""
+    script = textwrap.dedent(
+        f"""
         import importlib
         import sys
         import types
@@ -616,7 +617,8 @@ def test_fake_coordinator_cannot_preempt_publication_bootstrap():
             assert "canonical coordinator import" in str(error)
         else:
             raise AssertionError("fake coordinator preempted the bootstrap")
-        """)
+        """
+    )
     completed = subprocess.run(
         [sys.executable, "-I", "-B", "-c", script],
         check=False,
@@ -640,7 +642,8 @@ def test_forged_canonical_filename_frame_cannot_preempt_bootstrap():
         "'populace_dynamics.estimates.anchor_context_publication')\n"
         "p._take_coordinator_capability_verifier_binding()\n"
     )
-    script = textwrap.dedent(f"""
+    script = textwrap.dedent(
+        f"""
         import importlib.machinery
         import sys
         import types
@@ -670,7 +673,8 @@ def test_forged_canonical_filename_frame_cannot_preempt_bootstrap():
             )
         else:
             raise AssertionError("forged canonical frame took the bootstrap")
-        """)
+        """
+    )
     completed = subprocess.run(
         [sys.executable, "-I", "-B", "-c", script],
         check=False,
@@ -682,7 +686,8 @@ def test_forged_canonical_filename_frame_cannot_preempt_bootstrap():
 
 def test_fake_coordinator_and_code_clone_cannot_rebind_after_import():
     source_root = REPOSITORY_ROOT / "src"
-    script = textwrap.dedent(f"""
+    script = textwrap.dedent(
+        f"""
         import sys
         import types
 
@@ -708,7 +713,8 @@ def test_fake_coordinator_and_code_clone_cannot_rebind_after_import():
             assert "live ceremony capability" in str(error)
         else:
             raise AssertionError("cloned verifier accepted fake authority")
-        """)
+        """
+    )
     completed = subprocess.run(
         [sys.executable, "-I", "-B", "-c", script],
         check=False,
