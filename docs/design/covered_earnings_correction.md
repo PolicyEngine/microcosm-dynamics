@@ -30715,3 +30715,318 @@ not only the displayed exemplar token or digest. The preexisting synthetic
 zero-arm vectors remain useful only as mandatory rejection constructors:
 an implementation that emits a passing Amendment-6 zero-selected row fails
 its identity.
+
+### 20.4 Exact consumer propagation
+
+#### 20.4.1 Layout, typed-parse, raw-token, value-map, and unobserved domains
+
+Every §19.3.2 consumer is prospectively completed in place. The official
+inventory `layout_coordinates` row retains its exact 18-key shape and
+position; `typed_parse_specs` retains its exact nine-key shape;
+`raw_token_grammar` retains its exact 18-key shape; and the numeric
+derivation row, registered grammar, value derivation, and padding rule retain
+the outer shapes and ID preimages fixed in §20.3. The successor changes the
+complete nested values, never an outer key count. Specifically:
+
+1. `numeric_grammar_derivation_id` and
+   `numeric_grammar_derivation_sha256` resolve the unique same-wave/raw-field
+   successor row. The latter hashes the complete 15-key row, including the
+   ten-key declaration projection, nine-key physical authentication,
+   selected token form, selected arm or no-arm disposition, complete
+   exact-token DFA, and every source-derived status. A digest of a §19 row
+   or a row with one nested member projected away is unequal.
+2. `typed_parse_specs.raw_width` equals `payload_width == w`;
+   `.decimal_places` equals the selected declaration's maximum `d` even
+   when a literal token uses the uniquely computed smaller `F`; `.signed`
+   is true exactly for either selected leading-minus form; and its scale,
+   value type, and unit positionally equal `value_derivation`. The parse
+   kind is `fixed_width_numeric` or the retained value-code branch fixed by
+   the complete source domain, never by a token's punctuation.
+3. `raw_token_grammar.padding_rule` and
+   `.registered_numeric_grammar` deep-equal the successor derivation row.
+   `grammar_status`, residual identity, dictionary missing literals,
+   observed source/file/count values, token rows, closed unobserved rows,
+   and `unknown_token_action` retain their §19 meanings. The two compiled
+   derivation statuses in §20.3.5 both require a nonnull grammar; every
+   noncompiled branch requires null. No consumer may reject the
+   underdetermined status merely because §19 formerly admitted only the
+   diagnostic compiled status.
+4. Every `observed_token_rows` member is classified literal-first and
+   missing-first as §19 requires. A numeric member then traverses the
+   successor DFA, applies its exact action stream, deep-equals type/unit,
+   and re-renders under §20.3.3 to its original `raw_token_hex`. Its
+   `source_derivation`, source entry references, and disposition remain
+   source-derived. The exact raw bytes—not a normalized spelling—remain
+   the lookup key.
+5. Every `unobserved_possible_values` member is rendered once by the same
+   selected form and arm/disposition, traversed through the same DFA, and
+   replayed. A width-one no-arm row authorizes only its exact one-byte
+   image; a no-capacity decimal row authorizes only the unique full-width
+   image; neither authorizes a hypothetical wider rendering. An
+   unrenderable range member, additional precision spelling, plus form,
+   zero-padded form, or other physical image aborts the entire range branch.
+6. A normalized codebook literal retains complete-width precedence and a
+   dictionary missing literal retains missing precedence. A literal or
+   missing image that collides with the numeric language remains a conflict;
+   decimal punctuation or a minus never silently changes a source meaning.
+
+The layout's source-document arrays, canonical dictionary/codebook row
+arrays, normalized entry arrays, raw-data document, coordinates, framing,
+and complete field/file closure remain unchanged in shape and source order.
+Their content hashes are nevertheless fresh whenever an enclosing value
+contains a successor derivation ID or row hash. The retained official
+inventory builder identity remains distinct from the source-only compiler
+identity and must consume, not recreate, the passing successor
+`field_source_derivation`.
+
+For `psid_value_code_specs.v1`, the exact `source_commitments` and `entries`
+outer schemas remain. Each numeric-range commitment now carries the same
+successor row ID/full-row digest, declaration dispositions, token-form
+result, arm or no-arm disposition, padding rule, DFA, census, and replay as
+the matching layout. Literal-only, physical-unestablished, and
+outside-numeric branches retain their closed null-grammar behavior after
+their declarations have passed §20.3.1. The value-code registry may neither
+compile a separate decimal/sign parser nor choose a declaration source.
+
+#### 20.4.2 Q5 field joins and acceptance walk
+
+The separately first-added questionnaire closure `Q5` remains
+`psid_questionnaire_slot_closure_evidence.v1`, and its top-level,
+source-manifest, era, occurrence-reference, positive-join, hierarchy, and
+absence-proof shapes remain exact. Its `source_document_manifest` must,
+however, embed the complete passing Amendment-6 successor
+`field_source_derivation`. Consequently Q5 must be first added strictly
+after the future D6 ratification commit under §20.6. A pre-D6 Q5, a Q5 that
+copies a §19 grammar relation, or a Q5 constructed from these draft bytes is
+not admissible.
+
+Each `positive_field_join_rows[*].raw_field_projections` member retains the
+exact 18 keys listed in §19.3.3. Its two numeric-grammar members exact-copy
+the successor derivation ID and terminal-LF complete-15-key-row SHA-256.
+The remaining dictionary, codebook, entry, raw-data, framing, coordinate,
+count, keyset, and domain members retain their exact independent
+construction. Thus the raw-field projection's complete row-domain digest,
+its enclosing join ID and domain digest, every era digest, and Q5's
+self-zeroed content digest are recomputed from successor bytes. The
+15-key-row hash is still complete: the declaration assertion dispositions
+and all new form/arm results enter through nested members and are not added
+as nineteenth projection keys.
+
+The Q5 acceptance walk for each positive is exact:
+
+1. authenticate both upstream roots and all 257 source documents; rebuild
+   the complete v3 field-source relation, including every unconsumed field;
+2. locate the unique same-wave/raw-field successor row and require one of
+   the five lawful statuses in §20.3.5;
+3. deep-compare its complete source-row arrays, coordinates, declaration
+   assertions/dispositions, token census, profile, form, arm/disposition,
+   padding rule, DFA, and replay before projecting its ID and full-row hash;
+4. independently rebuild the complete 18-key raw-field projection, the
+   nine remaining join members, join ID, and all row/keyset/domain digests;
+   and
+5. exact-compare the complete asked/join/present reverse cover and the
+   official inventory layout. Any missing, extra, reordered, predecessor,
+   or digest-only-equal nested value fails Q5 and G17-C01.
+
+The historical §19.3.3 D5-before-Q5 comparison remains true as history.
+Amendment 6 adds the stronger live D6-before-Q5 comparison; the two are not
+alternatives and neither permits an already-existing artifact to be
+promoted.
+
+#### 20.4.3 G17-C01, G17-C06, G17-C07, and v3-row closure
+
+`g17_fitting_free_inventory_crosswalk_evidence.v1` retains exactly 18
+physical rows, G17-C01 through G17-C18, in their existing order. There is
+no G17-C19. Only these already-bound comparands are prospectively completed:
+
+- **G17-C01 fifth value.** The exact six-key
+  `numeric_grammar_source_derivation` object retains
+  `implementation_identity`, `raw_field_census_rows`,
+  `numeric_grammar_derivation_rows`, its row count, keyset SHA-256, and
+  domain SHA-256. Expected bytes execute the identity-selected v3 compiler
+  under §§20.3–20.4 over the complete source denominator before an inventory
+  comparand is read. Actual bytes come from the authenticated Q5 manifest.
+  The complete relation includes every ten-key declaration projection,
+  profile, form, arm/disposition, padding rule, DFA, replay, failure branch,
+  and all seven regression vectors through the implementation-identity
+  acceptance requirement. Used rows then reverse-project through the sixth
+  C01 value, the complete positional inventory layout/token-grammar rows;
+  unused rows remain in the fifth value. Both complete values deep-equal.
+- **G17-C01 fourth and sixth values.** The fourth value's complete
+  positive-field joins retain every 18-key raw-field projection and its
+  fresh derivation row hash. The sixth retains each official layout's
+  complete successor parse profile and raw-token grammar, including explicit
+  no-arm tokens and exact `no_op`, `set_negative`, and
+  `consume_decimal_point` transitions. A join/layout pair that agrees only
+  on width, scalar, or grammar ID fails.
+- **G17-C06.** Before direct-law classification, the expected and actual
+  sides independently resolve the unique successor row and compare its
+  complete declaration disposition relation, census, token-form selection,
+  arm or no-arm disposition, padding operation, transition rows, value
+  derivation, and raw-to-value-to-raw replay. Missing/literal precedence and
+  all retained legal/default folds follow only after that pass. A host
+  parse, trimmed token, rounded decimal, unsigned coercion, or predecessor
+  grammar fails C06.
+- **G17-C07.** Expected value-code rows are rebuilt from authenticated
+  source bytes through the same successor compiler. Actual
+  `source_commitments` and entries must deep-equal every declaration
+  assertion/disposition, normalized entry, numeric-range image, profile,
+  grammar, and replay. Tuple-equivalent SPSS/codebook declarations remain
+  separately visible; neither is discarded because their semantic tuples
+  agree.
+
+Every affected C01/C06/C07 expected/actual count and hash covers the complete
+successor value. C02–C05, C08–C18 retain their existing purposes and
+payload law; changes to an enclosing G17 content digest arise only from the
+complete ordered 18-row array. All 18 physical rows must still pass.
+
+#### 20.4.4 §19.8 build and tension successor
+
+In §19.8.1 the source-format compiler step is composed with §§20.3–20.4:
+compile all declaration assertions and dispositions, all candidate token
+forms, the per-field space or no-arm result, exact-token DFAs, replays, and
+seven vectors before building Q5, the official artifacts, or G17. Every
+later reference to a v3 derivation row means this completed v3 row.
+
+Section 19.8.2 item 4 is prospectively replaced only where it says that
+nonnull declarations must be byte-equal, that every nondiagnostic field is
+unsupported, or that signed and explicit-decimal formats are unsupported.
+Its source-only, complete-census, literal-first, no-host-default,
+unestablished-token-abort, and character-format limits remain controlling.
+The replacement is the closed law in §20.3: source-ordered per-assertion
+dispositions; field-local diagnostic ASCII-space selection; explicit
+width-one and no-padding-capacity no-arm dispositions; exact
+maximum-fitting literal decimal; exact leading-minus placement; and failure
+for every unenumerated form. This amendment establishes representability,
+not that Q5, an official inventory, G17, or a production registration now
+passes.
+
+### 20.5 Exact replacement, preservation, and closure sweep
+
+#### 20.5.1 Exhaustive passage-disposition inventory
+
+The following is the complete human-readable passage inventory. Each row
+names a design passage whose operative reading changes or whose consumer
+must carry the change. Repetition in another passage is a separate row; no
+affected prose is dismissed as merely explanatory.
+
+| Passage | Exact Amendment-6 disposition |
+|---|---|
+| §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, outer schemas, source denominator, and dependency order remain exact; only the nested grammar laws named below are completed. |
+| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion; disposition byte-equal and tuple-equivalent peers; abort every true conflict or missing disposition. |
+| §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax and unsigned implied-digit-only interpretation | `composed-with-§20.3.2–§20.3.4-token-form-law`: the syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal token form under the closed constructor. |
+| §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-nine-key-authentication`: add complete token-form results and selection; diagnostic fields select only the evidenced ASCII-space arm; the two exact structural no-arm dispositions replace fabrication or failure where an arm is unobservable in principle. |
+| §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm for either structural underdetermination. Amendment-6 rows never select or canonicalize a zero-padding arm. |
+| §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
+| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `composed-with-§20.3.5`: add the explicit underdetermined passing status and closed failures while preserving all outer key counts and ordered ID preimages; every nested ID/digest is fresh. |
+| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every branch uses the same successor declaration/form/arm/DFA renderer; precedence and source semantics remain exact. |
+| §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-seven-vector-census`: V93 remains mandatory, actual later-era space, width-one, decimal, signed, conflict, and precision-edge vectors are added; zero-arm constructors are rejection-only. |
+| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer schemas remain; complete successor nested rows and hashes flow positionally through every layout and value-map consumer. |
+| §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
+| §19.3.3 positive join `raw_field_projections`, numeric derivation ID/full-row hash, join identity, and Q5 digest | `composed-with-§20.4.2`: the 18-key projection is unchanged in shape and covers the complete successor 15-key row; all enclosing identities/digests are rebuilt. |
+| §16.6.4 and §19.4.2 G17-C01 | `composed-with-§20.4.3`: the fourth, fifth, and sixth values carry the complete successor joins, compiler relation, layouts, and independent reverse projections; 18-row order remains. |
+| §16.6.4 and §19.4.2 G17-C06 | `composed-with-§20.4.3`: independent direct-law evaluation compares and replays the complete successor grammar before classification. |
+| §16.6.4 and §19.4.2 G17-C07 | `composed-with-§20.4.3`: value-code source commitments and entries carry the same declaration dispositions, ranges, grammar, and replay. |
+| §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | `lawfully-unchanged-with-reason`: both remain immutable historical D5 results; this amendment supplies the separate successor inventory and sweep below. |
+| §19.5 complete revision-7 comparator census | `lawfully-unchanged-with-reason`: it remains the exact D5 historical table; §20.6 supplies the revision-8 successor census. |
+| §19.6–§19.7 terminal lifecycle, capture, receipt, and selected-registration predicates | `replaced-by-§20.7-revision-8-successors`: D5 remains an immutable predecessor; D6 and all affected successor envelopes receive fresh versioned identities. |
+| §19.8.1 build order and every downstream phrase “v3 derivation row” | `composed-with-§20.4.4`: completed declarations, forms, arms, DFA/replay, and vectors precede Q5 and all consumers. |
+| §19.8.2 item 4 grammar tension | `replaced-only-as-enumerated-in-§20.4.4`: the named byte-equality/nondiagnostic/signed/explicit-decimal conclusions are displaced; every retained fail-closed source and replay constraint survives. |
+| §§1–19 passages not reached by the deterministic sweep below | `lawfully-unchanged-with-reason`: they neither define nor consume the changed declaration, token-form, padding, decimal/sign, DFA, Q5, G17, comparator, or lifecycle identities; silence preserves them. |
+
+#### 20.5.2 Exact G17 and schema-consumer disposition
+
+The inventory above is exhaustive at design level, but it does not replace
+machine enumeration. For each matched passage, the coordinator records all
+direct consumers and every transitive consumer through these closed edge
+classes: schema-member inclusion; ordered ID-preimage inclusion;
+count/keyset/domain/content digest inclusion; source projection and reverse
+projection; foreign-key resolution; compiler invocation; DFA construction
+and replay; Q5 field join; inventory layout or value-map consumption; G17
+expected/actual reconstruction; applicability/capture/receipt/lineage
+selection; and ratification ancestry. An affected consumer with no named
+disposition is unresolved and aborts.
+
+G17-C01, C06, and C07 are the only physical G17 row purposes changed by the
+grammar completion. The complete G17 ordered-row array and every enclosing
+content or receipt identity are transitive consumers. This rule does not
+invent G17-C19, alter an unaffected row's payload, or allow the changed rows
+to pass when any other one of the 18 rows fails.
+
+#### 20.5.3 Amendment-6 closure-sweep scope and silence discipline
+
+Before §20.8 acceptance, the coordinator constructs
+`amendment_6_numeric_grammar_completion_closure_sweep.v1`. Its normative
+design corpus is every byte of §§1–20 in the candidate D6 blob except
+exactly the complete historical/self-referential comparator-table intervals
+excluded by §§17.3, 18.5, and 19.5 and the §20.6 comparator-table interval.
+Each excluded interval begins at its table header's first byte and ends at
+the first byte of the next heading expressly named by that subsection,
+including the table's own invariant prose where the subsection says so.
+No surrounding prose, replacement ledger, code fence, repeated occurrence,
+or inconvenient match is excluded. Review transcripts, audit ledgers,
+draft commits, and unstaged files are outside the normative corpus.
+
+The sweep uses exactly the 11-key schema, line-based passage segmentation,
+byte-range law, canonical ordering, edge-row schema, exact three-disposition
+domain, hash rules, and empty-unresolved acceptance rule of §19.4.3. Its
+`schema_version` is
+`amendment_6_numeric_grammar_completion_closure_sweep.v1`. It independently
+computes every corpus interval, matched half-open byte range, passage ID,
+consumer edge, row count, ordered keyset where required, and complete
+terminal-LF domain SHA-256 from accepted D6 bytes. No digest from the §19
+sweep is copied, and this draft supplies no anticipated D6 byte offset or
+hash.
+
+The exact initial literal search-term array, in this order, is:
+
+```text
+dictionary_codebook_fixed_width_source_derivation_v3
+source_format_projection
+source_format_text
+normalized_format_profile
+physical_authentication
+token_form_candidate_results
+selected_token_form
+candidate_arm_results
+selected_arm
+padding_rule
+registered_numeric_grammar
+set_negative
+consume_decimal_point
+no_op
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+raw_token_grammar
+field_source_derivation
+source_document_manifest
+positive_field_join_rows
+raw_field_projections
+G17-C01
+G17-C06
+G17-C07
+fitting_free_requirement_verification_specs
+fitting_free_model_input_authority_capture_registration
+covered_earnings_path_applicability_registry_bundle
+```
+
+Search is exact and case-sensitive over passage bytes, then closes
+transitively over the edge classes in §20.5.2. The search array is a seed,
+not a ceiling: every transitively reached passage receives its own row even
+when it contains no seed literal. A bare search for the English word
+“signed” is intentionally not used because unrelated signatures and signed
+legal instruments would create false candidates; all numeric-sign consumers
+are reached from the exact schema/action seeds. Conversely, a zero literal
+is not a license to omit a reached zero-arm passage.
+
+Each matched row's disposition is exactly
+`replaced-by-named-successor`, `composed-with-named-successor`, or
+`lawfully-unchanged-with-reason`, with a nonempty exact successor/reason that
+maps to §20.5.1 or the lifecycle inventory below. Repeated text at distinct
+byte ranges yields distinct rows. Acceptance requires `status: pass`, an
+exact-empty `unresolved_passage_ids`, complete reverse cover of every
+consumer edge, and exact agreement with an independent second sweep. A
+missing, extra, merged, differently segmented, silently preserved, or
+candidate-excluded passage aborts. Only after this result passes does
+silence preserve the genuinely unmatched and unreachable law of §§1–19.
