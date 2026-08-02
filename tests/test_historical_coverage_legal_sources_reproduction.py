@@ -24,7 +24,9 @@ if str(SCRIPTS) not in sys.path:
 
 import build_historical_coverage_rule_specs as builder  # noqa: E402
 
-STAGED_CAPTURE = builder.DEFAULT_CAPTURE_ROOT
+STAGED_CAPTURE = Path(
+    "~/PolicyEngine/psid-data/legal-capture-staging"
+).expanduser()
 
 
 def _sha256(path: Path) -> str:
@@ -72,6 +74,7 @@ def _reseal_sources(value: dict[str, Any]) -> None:
 
 def test_staged_112_document_capture_reproduces_committed_audit():
     staged_manifest = _require_staged_capture()
+    assert STAGED_CAPTURE == builder.DEFAULT_CAPTURE_ROOT
     raw = staged_manifest.read_bytes()
     assert len(raw) == builder.EXPECTED_CAPTURE_MANIFEST_SIZE == 18_835
     assert hashlib.sha256(raw).hexdigest() == (
