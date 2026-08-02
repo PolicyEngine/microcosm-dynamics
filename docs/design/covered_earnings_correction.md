@@ -33717,3 +33717,330 @@ The law must therefore permit the complete disposition relation to exist
 while making every future positive consumption of any F member abort at
 that consumer. The remaining subsections implement exactly that boundary
 relocation.
+
+
+### 21.2 Status, scope, preservation, and precedence
+
+Amendment 7 changes one boundary and its transitive lifecycle consequences.
+It does not reclassify a field, alter a raw byte or code-map authority,
+change a derivation-row schema, reopen a regression result, or narrow an
+official slot domain. The exact 2,049,769-byte revision-8 prefix, A6-R01
+through A6-R11, the ten terminal names, the complete §20.3.7 assignment, and
+the seven-row failure-reason artifact remain immutable ratified history.
+
+Let D7 denote only a future document-only ratification commit whose design
+blob is this exact revision-9 candidate after accepted review. No draft,
+authoring, audit, or referee-response commit is D7. At these bytes D7, the
+successor compiler, Q5, the official inventory, and every downstream
+artifact remain unclaimed.
+
+For a post-D7 construction, the specific law below prospectively supersedes
+only these revision-8 conclusions:
+
+1. an unsupported or conflicting source assertion still prevents that field
+   from taking a passing row terminal, but it no longer prevents the complete
+   all-field relation from taking pass_with_closed_failures;
+2. the three §20.3.5 failure-table consequences written as top-level abort
+   become closed row-local consumer-boundary aborts after the failure row has
+   been serialized into the complete relation;
+3. the §20.3.7 sentence that the 1,235 mapped failures prevent top-level pass
+   is replaced by the exact-cover acceptance law in §21.3;
+4. every §§20.4 and 20.8 prerequisite written as top-level all-field pass
+   means the exact pass_with_closed_failures predicate below; and
+5. every §19 or §20 phrase requiring a passing field derivation at a positive
+   raw-field consumer means a row whose derivation_status is in T-plus below,
+   not merely a top-level relation whose status is
+   pass_with_closed_failures.
+
+The failure precedence, all source reconstruction, exact token/rendering
+laws, complete row shapes, branch-specific consumer restrictions, and every
+other abort remain. In particular, a top-level accepted relation does not
+make each passing terminal admissible to every consumer:
+nonnumeric_source_field_outside_numeric_grammar and every other retained
+branch keep their narrower §19–§20 consumption law. Section 21 supplies a
+necessary closed-failure guard, never sufficient permission to bypass an
+existing consumer predicate. At any conflict on the five points above, this
+section is the later and more specific rule. Silence changes nothing else.
+
+### 21.3 Complete relation with closed failures
+
+#### 21.3.1 Terminal partition and preserved row shape
+
+T-plus is exactly this seven-position array, in §20.3.7 order:
+
+~~~json
+["compiled_source_numeric_grammar","compiled_source_numeric_grammar_padding_underdetermined_exact_replay","compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay","compiled_source_numeric_grammar_partial_range_exact_replay","value_code_domain_no_numeric_grammar","value_code_range_physical_rendering_unestablished","nonnumeric_source_field_outside_numeric_grammar"]
+~~~
+
+T-minus is exactly:
+
+~~~json
+["conflicting_source_numeric_format","unsupported_source_numeric_format","incomplete_source_numeric_authority"]
+~~~
+
+No eleventh terminal or terminal alias exists. The
+field_source_derivation object retains its exact nine-key §19.3.2 shape.
+Every numeric_grammar_derivation_rows member retains the exact 16-key order
+and 15-position ID preimage in §20.3.1. This amendment adds no member to
+either object. It changes only the admitted top-level status literal and the
+site at which a T-minus row aborts.
+
+For every T-minus row, normalized_format_profile, padding_rule, and
+registered_numeric_grammar are each JSON null. They are not omitted, replaced
+by an empty object, populated with an inferred profile, or confused with a
+passing null-profile branch's four-key none padding object. All other
+16-key members remain present and are reconstructed under §§19–20. The
+derivation_status exact-equals the row's terminal in the preserved
+§20.3.7 assignment. The exact seven-row §21.1.2 artifact supplies the
+unique resolution_reason for audit and diagnostics without becoming a
+seventeenth derivation-row member.
+
+#### 21.3.2 Exact pass_with_closed_failures predicate
+
+Before reading a serialized top-level status, the compiler and an
+independent validator reconstruct the complete source relation. Let D be the
+§20.3.7 89,599-key denominator, R the serialized derivation-row relation,
+and key(r) the [interview_wave,raw_field_id] key of row r. They construct
+these three complete diagnostic arrays in canonical denominator or row
+order:
+
+- duplicate_keys: every D key having more than one matching R row;
+- outside_denominator_rows: every complete R row whose key is not in D; and
+- unmapped_keys: every D key having zero matching R rows.
+
+Acceptance requires each array to be exactly [], with the empty-array digest
+in §21.1.1. It also requires all of the following, without short-circuit
+omission:
+
+1. D has exactly 89,599 unique keys and digest
+   7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764;
+2. R has exactly 89,599 complete 16-key rows, one for every D key, in the
+   inherited order; every row ID, 15-position ID preimage, complete-row
+   digest, nested count, keyset, domain, and foreign key reproduces;
+3. the ten terminal counts are exactly 17,329, 1,853, 674, 47, 67,316,
+   1,145, 0, 1, 421, and 813 in T-plus-then-T-minus order; the canonical
+   count array hashes to
+   421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624;
+4. the complete ordered [interview_wave,raw_field_id,derivation_status]
+   assignment hashes to
+   5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e;
+5. exactly 1,235 rows take T-minus. Their K-list and status-tagged-list
+   digests are respectively
+   26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed
+   and
+   1c83a26cad466354a0738ac1d4b0a4b6c282ccc447d410b5ae324808e79fe2ae;
+   their terminal counts/digests and seven resolution-reason
+   counts/digests exactly reproduce §21.1.2;
+6. every one of those 1,235 rows physically serializes its exact T-minus
+   terminal and the three required null members in §21.3.1. No such row is
+   absent, projected away, replaced by a digest, or serialized only in a
+   diagnostic side relation;
+7. every T-plus row satisfies its complete inherited branch predicate, and
+   every T-minus row satisfies its complete inherited closed failure
+   predicate and conflict-before-unsupported-before-incomplete precedence;
+8. document_derivations and all enclosing source-manifest counts, keysets,
+   domains, identities, deep equalities, and complete-source predicates pass;
+   and
+9. A6-R01 through A6-R11 execute unchanged and reproduce the exact vector
+   keyset and complete row-domain digests in §20.3.6. Amendment-7 vectors are
+   additional and cannot substitute for an A6 row.
+
+If and only if all nine requirements pass,
+field_source_derivation.status is the exact literal
+pass_with_closed_failures. Otherwise it is fail. Bare pass,
+pass_with_failures, partial_pass, or any other value is invalid in a
+post-D7 relation. A faithful T-minus row therefore proves complete
+classification and permits top-level completion; it never becomes a passing
+row. Deleting even one such row creates a nonempty unmapped_keys array and
+forces fail. Adding a replacement or duplicate cannot cure the deletion
+because the outside and duplicate arrays are independently exact-empty
+requirements.
+
+A later authority capture cannot mutate a D7 row in place. Any proposed
+resolution of one of the 813 incomplete rows requires separately authorized,
+field-specific primary authority, a successor design amendment, a fresh
+complete 89,599-row reconstruction, fresh IDs and digests, and a new
+ratified census. The 422 frozen-corpus conflict/unsupported rows cannot be
+promoted by capture. Until a successor law actually changes a terminal, the
+D7 T-minus disposition remains exact at every boundary.
+
+### 21.4 Exact consumption-boundary guard
+
+#### 21.4.1 Complete reference resolution and atomic abort
+
+A consumption boundary is any operation that uses a raw field, its source
+meaning, physical profile, padding rule, grammar, literal/range value map,
+parsed value, slot attachment, or a projection of any of those values to
+construct, validate, register, compare, correct, or emit something other
+than the complete field_source_derivation evidence relation itself.
+
+Before a consumer c reads any such value, it constructs its complete ordered
+raw-field reference stream. Direct raw_field_id values, derivation IDs,
+complete-row hashes, Q5 join foreign keys, layouts, value-map entries,
+crosswalk members, registry references, and transitive nested projections
+must all resolve to the unique complete R row. A digest or enclosing object
+cannot hide a raw-field reference. Missing resolution, duplicate resolution,
+an outside-denominator key, an unequal ID/full-row hash, or a reference
+stream that does not exact-cover the consumer's independently derived
+references aborts before terminal testing.
+
+The consumer then constructs
+closed_failure_reference_rows(c), preserving its independently fixed
+reference order. It contains one row for every resolved reference whose
+derivation_status is in T-minus. Each diagnostic row has exactly these nine
+keys in this order:
+
+~~~text
+consumer_kind
+consumer_row_identity
+consumer_reference_position
+interview_wave
+raw_field_id
+numeric_grammar_derivation_id
+numeric_grammar_derivation_sha256
+derivation_status
+resolution_reason
+~~~
+
+consumer_kind is one of the boundary kinds enumerated below.
+consumer_row_identity is the existing consumer row ID when one exists and
+otherwise the canonical [artifact_or_output_identity,zero_based_row_position]
+pair. consumer_reference_position is zero-based within the complete resolved
+reference stream. numeric_grammar_derivation_sha256 is SHA-256 of the unique
+complete terminal-LF canonical 16-key row. derivation_status and
+resolution_reason exact-resolve through the complete R relation and the
+§21.1.2 failure artifact. No free-text paraphrase substitutes for either.
+
+The guard accepts only when closed_failure_reference_rows(c) is exactly [].
+A nonempty result atomically aborts c at that site before any candidate row,
+partial artifact, accepted registry state, correction value, context value,
+or publication output is emitted or treated as passing. Its diagnostic
+reports every offending row, not merely the first. The diagnostic is
+verification evidence and is not a partially accepted consumer artifact.
+
+The guard is closed. No consumer may omit the reference, reinterpret a
+T-minus terminal, infer or default a profile/padding/grammar, trim or
+zero-pad a token, treat a source conflict as a priority rule, treat
+incomplete as zero or missing, convert a failure to structural_missing,
+borrow authority from a peer field or era, accept a value-map subset, or
+weaken the terminal because the top-level relation says
+pass_with_closed_failures. Search, census, and evidence embedding are not
+positive consumption; selection into a positive reference is.
+
+#### 21.4.2 Boundary enumeration
+
+The guard applies independently at every row and every transitive consumer
+in this complete minimum domain:
+
+| consumer_kind | Boundary at which a nonempty guard aborts |
+|---|---|
+| q5_positive_field_join | before a positive_field_join_rows member or any raw_field_projections member is accepted |
+| slot_registry_row | before a slot, questionnaire, source-field, applicability, or other registry row that resolves the field is accepted |
+| official_inventory_row | before a present row, layout_coordinates member, typed_parse_specs member, raw_token_grammar member, or source commitment is accepted |
+| value_map | before a literal, missing, range, observed/unobserved, or registered grammar mapping is consumed outside the complete evidence relation |
+| crosswalk | before a G17, source-to-inventory, inventory-to-reader, component, role, job, wave, or other crosswalk row is accepted |
+| correction_input | before any candidate-path or production correction reads or derives an input value from the field |
+| context_output | before any context, certificate, diagnostic-label, external-merge, publication, or other output includes or derives a value from the field |
+
+A consumer that spans multiple kinds must pass each applicable boundary; a
+prior empty guard is not reusable after its reference stream changes.
+Nested construction order cannot move the abort downstream. All inherited
+schema, semantic, exact-cover, history, and runtime-token gates execute in
+addition to this guard.
+
+#### 21.4.3 Q5 complete evidence and positive-join law
+
+Q5 retains its §19.3.3 v1 schema. Its source_document_manifest embeds the
+complete nine-key field_source_derivation object with all 89,599 rows,
+including all 1,235 T-minus rows, their exact IDs, and their complete null
+failure members. It must carry status pass_with_closed_failures and must
+deep-equal an independent reconstruction. A manifest filtered to joined,
+passing, inventory-relevant, named, or observed fields is invalid. Totality
+is the evidence; pass/failure is per row.
+
+Embedding, hashing, or validating that complete relation does not invoke the
+consumer guard merely because T-minus rows are present. For each proposed
+positive_field_join_rows member, however, the
+q5_positive_field_join guard exact-resolves every raw_field_projections
+reference before that member is admitted. Every referenced derivation status
+must therefore lie in T-plus and must separately satisfy the narrower
+§§19–20 join law. A T-minus reference aborts Q5 construction or validation
+with its exact row identity and terminal; the implementation may not delete
+that positive row, delete the failure from the manifest, or continue with a
+partial Q5.
+
+Q5 may be first-created and read only after the exact D7 ratification and the
+complete §21.3 predicate pass. Its own status may be pass only when its full
+manifest, all positive joins, all source histories, and every inherited Q5
+predicate pass. The 43 D_w search universes in §21.1.5 remain complete:
+finding a T-minus candidate in D_w is not itself consumption, but selecting
+it into a positive join is the guarded abort.
+
+#### 21.4.4 Slot and official-inventory domain integrity
+
+Let E remain the complete §19.3.3 expanded official-source-inventory key
+stream; A the asked rows; J the positive joins; and I-plus and I-minus the
+official-inventory rows whose source_disposition is respectively present and
+structural_missing. Their schemas, order, and exact equations remain:
+
+~~~text
+keys(A) == keys(J) == keys(I-plus)
+keys(E excluding A) == keys(I-minus)
+keys(I-plus) union keys(I-minus) == keys(E)
+keys(I-plus) intersect keys(I-minus) == empty
+~~~
+
+Every E key still has exactly one inventory row. The only inventory
+dispositions remain present and structural_missing. A structural_missing row
+remains field-empty and requires its exact questionnaire/slot absence proof;
+it cannot absorb a failed raw field. A present row remains joined to its
+complete nonempty source-field projection and must pass both the slot and
+official-inventory guards before any layout, parser, grammar, commitment, or
+row is accepted.
+
+The 1,235 members of F are raw-field keys, not E inventory keys and not a
+third inventory disposition. They are excluded by law from the raw-field
+projection of every lawful I-plus row. For each candidate inventory the
+validator reconstructs a closed negative census with exactly K(F), count
+1,235, and digest
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed,
+then independently requires:
+
+~~~text
+raw_field_keys(I-plus) intersect F == []
+raw_field_keys(I-minus) == []
+~~~
+
+It also resolves every F member back to the complete Q5 manifest and requires
+the exact terminal, row identity, null failure members, and seven-row reason
+cover in §21.1.2. This negative census is a validator relation, not a new
+inventory member or disposition. The official inventory's completeness
+claim is therefore true over its unchanged lawful E domain and auditable
+against every excluded failure key.
+
+If an asked slot's proposed positive join contains a member of F, the whole
+candidate Q5/slot/inventory build aborts. It may not drop the E key, truncate
+the field list, relabel the row structural_missing, or publish a smaller
+inventory. Excluded-by-law means excluded from accepted positive raw-field
+consumption, not erased from source evidence and not counted as questionnaire
+absence.
+
+#### 21.4.5 Downstream propagation
+
+Every slot registry, value map, crosswalk, correction input, and context
+output derives its complete raw-field reference stream from accepted Q5 and
+inventory relations and reruns its own guard. No downstream consumer may
+trust an upstream pass bit or empty guard without resolving the complete
+rows again. G17-C01, C06, and C07 and every enclosing G17 digest remain
+complete comparands; a T-minus reference aborts the affected row and hence
+the complete G17 result. The same rule applies to every configured reader,
+candidate path, selected path, correction calculation, context run,
+certificate, and publication.
+
+This propagation preserves the ordinary runtime unknown-token and
+unrenderable-member aborts on otherwise admitted T-plus fields. The closed
+failure guard acts earlier, at authority consumption, and cannot be deferred
+until a raw record happens to exercise the bad field. Conversely, a field
+that remains only in the complete source manifest or a closed negative
+census has not been consumed and does not prevent construction of unrelated
+lawful consumers.
