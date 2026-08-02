@@ -12,9 +12,9 @@
 - The audited 60-row tranche is not yet added to the registry.
 - GitNexus repository resources are unavailable in this session; harness
   behavior will be verified from repository source and tests.
-- The current history validator rejects null model measurements and numeric-free
-  missing-module deviations, so it must be narrowed to permit those only for
-  `module_missing` records while retaining fail-closed behavior elsewhere.
+- The history validator now permits a null model measurement only for a
+  `module_missing` record with the exact non-computable deviation sentinel;
+  published and other model measurements remain numeric.
 
 ## Done
 
@@ -47,10 +47,12 @@
   `c856acfc7d5fad8cb4143134f10fa48471255c87848194276ac8a9c46ec07bcb`.
 - Resolved the nonduplication note as 59 new IDs plus one revision of the legacy
   CBO tax-revenue row; the final registry should therefore contain 101 rows.
+- Added focused schema/alarm coverage for honest missing-module nulls and for
+  rejection of misclassified nulls, malformed missing deviations, and null
+  published values; the dedicated alarm test passes.
 
 ## Next
 
-- Add focused schema tests for null model values restricted to missing modules.
 - Add and validate all 60 rows, append one history evaluation, and bind the run
   manifest to the final registry commit.
 - Remove this ledger before final delivery while preserving its committed

@@ -605,6 +605,37 @@ def test__benchmark_history__unexplained_or_unnoted_gap_alarms():
     with pytest.raises(AssertionError, match="invalid our value"):
         schema.validate_history(invalid_measurement)
 
+    missing_module = [copy.deepcopy(history[0])]
+    missing_module[0]["gap_class"] = "module_missing"
+    missing_module[0][
+        "gap_note"
+    ] = "No committed model module supplies this published quantity."
+    missing_module[0]["our"]["value"] = None
+    missing_module[0]["deviation"] = copy.deepcopy(
+        schema.MISSING_MODULE_DEVIATION
+    )
+    schema.validate_history(missing_module)
+
+    null_without_missing_module = [copy.deepcopy(history[0])]
+    null_without_missing_module[0]["our"]["value"] = None
+    null_without_missing_module[0]["deviation"] = copy.deepcopy(
+        schema.MISSING_MODULE_DEVIATION
+    )
+    with pytest.raises(AssertionError, match="invalid our value"):
+        schema.validate_history(null_without_missing_module)
+
+    fabricated_missing_deviation = copy.deepcopy(missing_module)
+    fabricated_missing_deviation[0]["deviation"] = {"status": "not_computable"}
+    with pytest.raises(
+        AssertionError, match="invalid missing-module deviation"
+    ):
+        schema.validate_history(fabricated_missing_deviation)
+
+    missing_published_value = copy.deepcopy(missing_module)
+    missing_published_value[0]["published"]["value"] = None
+    with pytest.raises(AssertionError, match="invalid published value"):
+        schema.validate_history(missing_published_value)
+
     reused_run = [copy.deepcopy(history[0]), copy.deepcopy(history[0])]
     with pytest.raises(AssertionError, match="row/run SHA reused"):
         schema.validate_history(reused_run)

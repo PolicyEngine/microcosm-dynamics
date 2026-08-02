@@ -34,6 +34,10 @@ GAP_CLASSES = (
     "unverified_source",
     "unexplained",
 )
+MISSING_MODULE_DEVIATION = {
+    "model_value": None,
+    "status": "not_computable",
+}
 COMPARISON_SCOPES = ("ratio", "share", "trajectory", "ordering")
 MATRIX_DISPLAY = (
     "frame-relative proxy covered-earnings; no population alignment"
@@ -1853,11 +1857,15 @@ def validate_history(records: list[dict[str, Any]]) -> None:
             is_one_sentence(record["gap_note"]),
             f"gap note must be one sentence: {row_id}",
         )
+        our_value = record["our"]["value"]
+        missing_module_value = (
+            our_value is None and record["gap_class"] == "module_missing"
+        )
         require(
             set(record["our"]) == {"unit", "value"}
             and isinstance(record["our"]["unit"], str)
             and record["our"]["unit"].strip()
-            and is_measurement_value(record["our"]["value"]),
+            and (is_measurement_value(our_value) or missing_module_value),
             f"invalid our value: {row_id}",
         )
         require(
@@ -1867,12 +1875,21 @@ def validate_history(records: list[dict[str, Any]]) -> None:
             and is_measurement_value(record["published"]["value"]),
             f"invalid published value: {row_id}",
         )
+        deviation = record["deviation"]
         require(
-            isinstance(record["deviation"], dict)
-            and record["deviation"]
-            and any_numeric_leaf(record["deviation"]),
+            isinstance(deviation, dict) and deviation,
             f"missing deviation: {row_id}",
         )
+        if missing_module_value:
+            require(
+                deviation == MISSING_MODULE_DEVIATION,
+                f"invalid missing-module deviation: {row_id}",
+            )
+        else:
+            require(
+                any_numeric_leaf(deviation),
+                f"missing deviation: {row_id}",
+            )
         require(
             isinstance(record["label_state"], dict)
             and set(record["label_state"]) == LABEL_STATE_KEYS,
