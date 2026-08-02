@@ -4,7 +4,9 @@
 
 - Revision-9 authority identity is verified.
 - The complete registered source corpus is authenticated.
-- Detailed §20/§21 implementation and vector audit is in progress.
+- The §20/§21 implementation and vector audit is complete.
+- The source compiler byte-law foundation is implemented and tested.
+- Corpus-wide derivation and artifact construction are in progress.
 
 ## Done
 
@@ -21,10 +23,17 @@
   artifacts: 43 Stata setups, 43 SPSS setups, four value-label sources,
   43 codebooks, and 43 fixed-width raw files (1,514,409,083 source bytes).
 - The streaming identity pass peaked at 454,279,168 bytes RSS.
+- Extracted the complete retained nine-key relation, 16-key field row,
+  declaration, deferred-literal, token-form, padding, partition, DFA,
+  terminal, consumer-guard, and pre-Q5 vector laws.
+- Implemented §10.1 canonical JSON, source-ordered declaration
+  dispositions, exact rational render/replay for every admitted numeric
+  form, and deterministic action-sensitive exact-token DFA construction.
+- Added 13 passing primitive tests, including A6-R04 through A6-R07
+  rendering edges and the mandatory two-digit DFA vector; focused Ruff and
+  Black checks pass.
 
 ## Next
 
-- Finish extracting the complete §20 and §21 implementation contract and
-  vector law.
-- Implement the source-only compiler before creating or reading any Q5
-  material.
+- Implement the streaming all-field classifier and exact terminal census.
+- Serialize the complete source relation and keep Q5 unread and uncreated.
