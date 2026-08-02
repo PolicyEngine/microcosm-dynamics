@@ -8,7 +8,7 @@
 - Worktree was clean at start.
 - Network-disabled sandbox prevented refreshing `origin/master`; the local tracking ref
   shows this branch five commits ahead and zero behind.
-- All three referee edits are implemented and their focused unit tests pass.
+- Complete: all three referee edits and verdict-tail checks pass.
 
 ## Done
 
@@ -42,7 +42,15 @@
 - Recollected 4,585 tests and synchronized the tier census to
   `986 / 2,103 / 817 / 520 / 159`; the 19 new tests are all unit-tier.
 - Passed the full-collection tier-policy manifest test.
+- Passed the final builder `--check`, Ruff 0.15.0, Black 25.11.0 at line length
+  79, and `git diff --check`.
+- Confirmed the 112-row, 18,835-byte capture manifest SHA-256 remains
+  `58951b038ac6bc5122952e5db8d76e3e78572b8c1bac403d2c0b561af16b68ac`.
+- Reconfirmed the artifact raw/content, source-gap, and evidence-constraint SHA-256
+  values and the absence of the target registry.
+- Three independent post-implementation reviews found no actionable issues.
 
 ## Next
 
-1. Rerun builder `--check`, formatting, SHA checks, and final repository audit.
+1. Remove this ledger so the final tree contains no progress/report file.
+2. Write the final report outside the repository.
