@@ -71,6 +71,9 @@ def test_context_report_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/data/psid_job_context.py"),
         Path("src/populace_dynamics/data/psid_job_context_registry.py"),
         Path("src/populace_dynamics/data/psid_questionnaire_inventory.py"),
+        Path(
+            "src/populace_dynamics/data/historical_coverage_rule_validation.py"
+        ),
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
         Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
