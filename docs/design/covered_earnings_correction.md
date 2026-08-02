@@ -33716,7 +33716,7 @@ into separate nodes; it never receives a mixed layer label.
 | 0. schema_version, claim_id, source_commit | schema_version and claim_id are layer-2 law literals; source_commit is a layer-1 locator | the exact ratified schema-name and V-B6 claim literals only | no field content |
 | 1. ordered_source_artifact_identities | layer 1 only | none | paths, blob OIDs, and raw/content hashes may commit mixed bytes without reading them |
 | 2. ordered_existing_extraction_locator_rows | locator/pointer/row/range hashes are layer 1; separately reconstructed passage extractions are layer 2 | only the questionnaire/codebook semantic statement spans identified by the eight locators | no raw record, format, Count/%, profile, grammar, parsed value, or executable map |
-| 3. ordered_derived_registered_codebook_page_rows | all six document/page/row/range/page-text hash rows are layer 1; six semantic span extractions are layer 2 | only the position-typed spans enumerated below | complete page hashes may cover mixed physical text, but no layer-2 basis contains it |
+| 3. ordered_derived_registered_codebook_page_rows | all six document/page/row/range/page-text hash rows are layer 1; six semantic span extractions are layer 2 | only the position-typed spans enumerated below, plus each interview wave obtained by exact equality against that document's committed registered filename-to-wave row | complete page hashes may cover mixed physical text, but no layer-2 basis contains it |
 | 4. closure_projection | the pointer/hash object is layer 1; pointed absence/extraction/closure/family semantic statements are layer 2 | the exact source-allocation absence and historical family-disposition statements at the ten pointed rows | row hashes are not read as proxies for row content |
 | 5. corpus_wide_cooccurrence_sweep | document, row, full-file, page-text, and serialized-row hashes are layer 1; page arrays, candidate classification/count, same-page intersection, sole-candidate disposition, and formula-candidate count are layer 2 | raw target-token occurrences classified with page boundaries, whitespace/line structure, and page-reset order, then grouped by page | **physical for V4902**: the document-0068 ASCII-space byte `[3775:3776]` witness changes the required candidate page array with every semantic token byte fixed |
 | 6. established_findings | layer 2 | the four historical findings read roots 2–5, including member 5's sole-candidate and zero-count conclusions | inherits the forbidden V4902 layout basis; the historical findings cannot be freshly accepted |
@@ -33738,9 +33738,11 @@ The six layer-1 page rows retain every exact nested member ratified in
 | 5 | V5785, V5786, V5787, V5788, V5789 | identifiers, labels without NUM, descriptions, and assignment/accuracy meaning; no physical cell |
 
 Those six layer-2 page-extraction rows select only normalized semantic
-content. Their document ID, page number, field-reference position, locator,
-raw range, and every document/page/row/range digest remain separate layer-1
-members. The layer-2 row has exactly interview_wave, raw_field_id,
+content. Their interview waves come from exact equality with the six
+committed registered-filename-to-wave rows, not by parsing a page coordinate
+or field grammar. Their document ID, page number, field-reference position,
+locator, raw range, and every document/page/row/range digest remain separate
+layer-1 members. The layer-2 row has exactly interview_wave, raw_field_id,
 normalized_semantic_short_label, normalized_semantic_description, and
 semantic_code_lexeme_and_meaning. Normalization splits a selected semantic
 span on Unicode whitespace and rejoins it with one U+0020; it never retains
@@ -34218,10 +34220,11 @@ portions and receive their role only through typed edges.
 identity, locator, byte range, size, or digest asserting that exact bytes
 existed at the stated identity or location. A layer-1 node may commit mixed
 semantic and physical bytes, including physical content of a non-passing
-field. A commitment is not a content read. The six §18.2 page-text hashes,
-including the page-180 hash over bytes that also contain the Count/% table,
-and the frozen 2,203,624-byte spouse-seam artifact hash are therefore lawful
-commitments. Section 18's finding does not read those Count/% values.
+field. A commitment is not a content read. All six §18.2 page-text hashes
+cover pages containing Count/% tables, including the page-180 V4902 table,
+and the frozen 2,203,624-byte spouse-seam artifact hash covers mixed physical
+and semantic content. They are nevertheless lawful commitments because
+§18's finding does not read those Count/% values or other physical portions.
 
 **Layer 2 — derived content** consists of every fact, finding,
 registration, classification, count, format claim, value, disposition, or
@@ -34265,7 +34268,7 @@ complete layer classification and the complete basis disposition by member:
 | 2 `ordered_existing_extraction_locator_rows` | commitments over eight neutral locator/range/page rows and their output array | eight normalized-passage assertions read only the selected semantic spans; one array assertion reads those eight results | semantic-only |
 | 3 `ordered_derived_registered_codebook_page_rows` | page-text-hash and range commitments over six neutral page rows and decoded-page targets, plus output-row/array commitments | six page-extraction assertions read the 20 addressable semantic field-reference portions, and only their `interview_wave`, `raw_field_id`, normalized semantic label/description, and semantic code lexeme/meaning; one array assertion reads those six results | semantic-only; Count/% and layout portions are committed but not bases |
 | 4 `closure_projection` | commitments over ten neutral extraction/closure source rows | ten assertions read the stated semantic-key projections | semantic-only |
-| 5 `corpus_wide_cooccurrence_sweep` | commitments over 456 neutral registered-PDF artifacts and every document, page, locator, occurrence-output, candidate-output, and sole-page target | document count/ID, classifier-specification, full-corpus scanner, per-candidate, candidate-array/count/ID, sole-disposition, formula-count, and sweep assertions. The scanner owns its 348 addressable occurrence-output portions and reads decoded lexical/layout context, page membership, page-reset row position, and same-page grouping | **physical** for V4902; fails the semantic-only condition |
+| 5 `corpus_wide_cooccurrence_sweep` | commitments over 456 neutral registered-PDF artifacts and every document, page, locator, occurrence-output, candidate-output, and sole-page target | document count/ID, classifier-specification, full-corpus scanner, complete candidate enumeration, per-candidate, candidate-array/count/ID, sole-disposition, formula-count, and sweep assertions. The scanner owns its 348 addressable baseline occurrence-output portions and reads decoded lexical/layout context, page membership, page-reset row position, and same-page grouping; its classifier and enumeration specifications are expressly classified as grammar/DFA or executable mapping, not semantic law | **physical** for V4902; fails the semantic-only condition |
 | 6 `established_findings` | commitments over the neutral spouse-seam artifact, four source-pointer rows, four mixed output rows, and their array | four direct semantic assertions read the enumerated semantic members; their array and the established-finding assertion read those results, and the finding also reads member 5 | direct four-row projection is semantic-only, but the finding inherits member 5's physical dependency |
 | 7 `expressly_not_established_or_used` | none beyond reachable commitments above | closure projections and the formula count from member 5 | inherits the physical dependency |
 | 8 `reader_seam_consequence` | none beyond reachable commitments above | members 6 and 7 | inherits the physical dependency |
@@ -34301,10 +34304,16 @@ edge followed by zero or more `contains` edges. The executable preimage
 asserts that coverage. A neutral `field-reference` target of `contains` from
 a layer-2 node is an addressable portion of that owner's asserted output, not
 an extra assertion without a basis. The 20 codebook-page portions are
-committed page subparts read by the six page-extraction assertions. The 348
-occurrence portions are DSCAN's addressable outputs. DSCAN's complete
-458-position direct basis therefore governs every occurrence classification,
-page, ordinal, and field-reference portion.
+committed page subparts read by the six page-extraction assertions; each
+extraction's interview wave is separately derived from its committed
+registered-document filename row. The 348 occurrence portions are DSCAN's
+addressable baseline outputs. DSCAN's complete 622-position direct basis
+consists of the ordered registered-document-ID result, the executable
+classifier specification, all 456 registered PDFs, and all 164 materialized
+decoded pages. The PDFs close the exhaustive no-hit domain, while the decoded
+pages expose exact positive-output byte value flow. The complete-candidate-
+enumeration node, rather than the 18 materialized candidate witnesses,
+controls dynamic candidate membership and cardinality under every shadow.
 
 The roots are exactly the §18.2 eleven-member input, in this order:
 
@@ -34316,8 +34325,8 @@ The following terminal-LF Python source is the sole canonical preimage for
 the graph topology and ordered basis fixture. Its embedded occurrence arrays
 name expected output children for topology comparison only; the normative
 scanner below must rediscover them from the PDFs, and no occurrence child is
-a scanner basis. The program is 82,364 bytes with SHA-256
-`0ecd18bb7c6d6df09ba108fbf25c9255222f479bec13a9b5355198b0d91edf09`
+a scanner basis. The program is 90,153 bytes with SHA-256
+`5cd7f43b335e50631f44df2b39173cfea08afecbf5a14d698a9348af2e212715`
 and executes from the repository root with the mandated repository
 interpreter.
 
@@ -34795,8 +34804,10 @@ for content, commitment, artifact in zip(XART, CART, [A_REG, A_EXT, A_CLO]):
     E(content, artifact, "contains")
     E(commitment, content, "commits-to")
 
-# Shared exact decoded-page nodes.  Every node ID includes the page-text hash.
+# Shared exact decoded-page nodes.  Every node ID includes the page-text hash;
+# PAGE_META supplies the exact decoded representation selected by layer 2.
 PAGE = {}
+PAGE_META = {}
 
 
 def page_node(document_id, page_number, page_sha256):
@@ -34809,6 +34820,10 @@ def page_node(document_id, page_number, page_sha256):
         assert PAGE[key] == node
     else:
         PAGE[key] = node
+        PAGE_META[node] = {
+            "source_document_id": document_id,
+            "pdf_page_number_1_based": page_number,
+        }
         document_position = int(document_id.rsplit("-", 1)[1])
         E(DOC[document_position], node, "contains")
     return node
@@ -34915,6 +34930,7 @@ page_defs = [
 ]
 PF = []
 DPAGE = []
+DPAGE_WAVE_SOURCE = {}
 X_PAGE_SEMANTIC = []
 page_semantic_content_rows = []
 field_position = 4
@@ -34942,16 +34958,25 @@ for page_position, (document_id, page_number, wave, fields, docrow_sha, locator_
         "layer-2 derived node",
     )
     DPAGE.append(derived_page)
+    document_position = int(document_id.rsplit("-", 1)[1])
+    registered_filename = f"FAM{wave}_codebook.pdf"
+    assert registered_rows[document_position - 1]["digest_row_filename"] == registered_filename
+    DPAGE_WAVE_SOURCE[derived_page] = {
+        "basis_node": document_row,
+        "registered_filename": registered_filename,
+        "source_document_id": document_id,
+        "interview_wave": wave,
+    }
     for child in [commitment, derived_page]:
         E(roots[3], child, "contains")
     registered_document_edge = ("contains", A_REG, document_row)
     if registered_document_edge not in edges:
         E(A_REG, document_row, "contains")
-    document_position = int(document_id.rsplit("-", 1)[1])
     E(DOC[document_position], locator_row, "contains")
     E(DOC[document_position], raw_range, "contains")
     for target in [document_row, locator_row, raw_range, page]:
         E(commitment, target, "commits-to")
+    E(derived_page, document_row, "derives-from")
     for field_id in fields:
         semantic_row = page_semantic_rows[semantic_index]
         assert semantic_row["raw_field_id"] == field_id
@@ -35202,6 +35227,13 @@ for occurrence_position, (locator, occurrence) in enumerate(zip(occurrence_locat
     E(page, field_reference, "contains")
     E(DSCAN, field_reference, "contains")
 
+# The registered PDFs remain the exhaustive no-hit domain, while every
+# materialized decoded page is also a direct value-flow basis.  This makes a
+# decoded-byte witness walkable without pretending that its byte offset is an
+# offset in the compressed PDF preimage.
+for page in PAGE.values():
+    E(DSCAN, page, "derives-from")
+
 extra_ids = {f"V{value}" for value in range(4901, 4908)}
 annual_ids = {"V4379", "V5289", "V5788"}
 occurrence_pages = collections.defaultdict(lambda: {"extra": set(), "annual": set()})
@@ -35235,6 +35267,27 @@ assert len(canon(candidate_rows)) == 6209
 assert hashlib.sha256(canon(candidate_rows)).hexdigest() == "039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7"
 candidate_docs = [row["source_document_id"] for row in candidate_rows]
 assert hashlib.sha256(canon(candidate_docs)).hexdigest() == "5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed"
+candidate_semantic_rows = [
+    {
+        key: candidate_row[key]
+        for key in [
+            "source_document_id",
+            "extra_job_token_pages",
+            "annual_total_token_pages",
+            "same_page_intersection",
+        ]
+    }
+    for candidate_row in candidate_rows
+]
+candidate_semantic_rows_sha = hashlib.sha256(canon(candidate_semantic_rows)).hexdigest()
+DENUMSPEC = N(
+    "l2:sweep:complete-candidate-enumeration-specification",
+    "layer-2 derived node",
+)
+D_CAND_ENUM = N(
+    f"l2:sweep:complete-candidate-enumeration:{candidate_semantic_rows_sha}",
+    "layer-2 derived node",
+)
 D_CAND_IDS = N(
     "l2:sweep:ordered-candidate-document-ids:"
     "5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed",
@@ -35260,8 +35313,11 @@ C_CAND_ROWS = N(
     "l1:sweep:candidate-rows:039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7",
     "layer-1 commitment",
 )
-for child in [D_CAND_IDS, D_CAND_COUNT, D_CAND_ARR, C_CAND_IDS, X_CAND_ARR, C_CAND_ROWS]:
+for child in [DENUMSPEC, D_CAND_ENUM, D_CAND_IDS, D_CAND_COUNT, D_CAND_ARR, C_CAND_IDS, X_CAND_ARR, C_CAND_ROWS]:
     E(roots[5], child, "contains")
+for source in [DSCAN, D_DOC_IDS, DENUMSPEC]:
+    E(D_CAND_ENUM, source, "derives-from")
+E(D_CAND_ARR, D_CAND_ENUM, "derives-from")
 E(D_CAND_IDS, D_CAND_ARR, "derives-from")
 E(D_CAND_COUNT, D_CAND_IDS, "derives-from")
 E(C_CAND_IDS, D_CAND_IDS, "commits-to")
@@ -35271,15 +35327,7 @@ X_CAND = []
 for position, candidate_row in enumerate(candidate_rows):
     document_id = candidate_row["source_document_id"]
     document_position = int(document_id.rsplit("-", 1)[1])
-    semantic_candidate = {
-        key: candidate_row[key]
-        for key in [
-            "source_document_id",
-            "extra_job_token_pages",
-            "annual_total_token_pages",
-            "same_page_intersection",
-        ]
-    }
+    semantic_candidate = candidate_semantic_rows[position]
     derived = N(
         f"l2:sweep:candidate-semantic-pages:{position:02d}:{document_id}:"
         f"{row_hash(semantic_candidate)}",
@@ -35292,7 +35340,7 @@ for position, candidate_row in enumerate(candidate_rows):
     )
     DCAND.append(derived)
     X_CAND.append(mixed_row)
-    E(derived, DSCAN, "derives-from")
+    E(derived, D_CAND_ENUM, "derives-from")
     for child in [CDOC[document_position], derived]:
         E(mixed_row, child, "contains")
     E(X_CAND_ARR, mixed_row, "contains")
@@ -35304,6 +35352,14 @@ sole_row = {
     "derived_page_text_sha256": "51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed",
     "disposition": "false_positive_family_concordance_crosswave_variable_numbers",
 }
+sole_derived_content = {
+    key: sole_row[key]
+    for key in [
+        "source_document_id",
+        "pdf_page_number_1_based",
+        "disposition",
+    ]
+}
 sole_page = PAGE[("psid-corpus-document-0098", 573)]
 C_SOLE_PAGE = N(
     "l1:sweep:sole-page-text:51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed",
@@ -35311,7 +35367,7 @@ C_SOLE_PAGE = N(
 )
 D_SOLE = N(
     "l2:sweep:sole-candidate-disposition:psid-corpus-document-0098:573:"
-    + row_hash(sole_row),
+    + row_hash(sole_derived_content),
     "layer-2 derived node",
 )
 X_SOLE = N(
@@ -35328,7 +35384,7 @@ for child in [C_SOLE_PAGE, X_SOLE, D_FORMULA_COUNT, D_SWEEP]:
     E(roots[5], child, "contains")
 E(C_SOLE_PAGE, sole_page, "commits-to")
 E(D_SOLE, D_CAND_ARR, "derives-from")
-E(D_SOLE, DSCAN, "derives-from")
+E(D_SOLE, sole_page, "derives-from")
 E(X_SOLE, C_SOLE_PAGE, "contains")
 E(X_SOLE, D_SOLE, "contains")
 E(D_FORMULA_COUNT, D_SOLE, "derives-from")
@@ -35526,6 +35582,27 @@ RESULT_ENTRY_NODES = [
 ]
 assert len(RESULT_ENTRY_NODES) == len(set(RESULT_ENTRY_NODES)) == 19
 
+# Exact-derivability guards: the interview-wave scalar, decoded witness byte,
+# complete candidate domain, and sole-candidate disposition must each be
+# walkable through derives-from rather than inferred from structural edges.
+assert all(
+    ("derives-from", derived_page, source["basis_node"]) in edges
+    for derived_page, source in DPAGE_WAVE_SOURCE.items()
+)
+assert all(("derives-from", DSCAN, page) in edges for page in PAGE.values())
+assert ("derives-from", DSCAN, PAGE[("psid-corpus-document-0068", 519)]) in edges
+assert {
+    to_node
+    for edge_type, from_node, to_node in edges
+    if edge_type == "derives-from" and from_node == D_CAND_ENUM
+} == {DSCAN, D_DOC_IDS, DENUMSPEC}
+assert {
+    to_node
+    for edge_type, from_node, to_node in edges
+    if edge_type == "derives-from" and from_node == D_SOLE
+} == {D_CAND_ARR, sole_page}
+assert "derived_page_text_sha256" not in sole_derived_content
+
 # Canonical topology fixture.
 for edge_type, from_node, to_node in edges:
     if edge_type == "commits-to":
@@ -35625,13 +35702,22 @@ primitive_selectors = {
         {"selector_kind": "law_literal", "selector_value": ["semantic_selection", "select only the exact normalized questionnaire/codebook statement strings enumerated in the eight passage witness rows"]},
     ],
     DSPEC: [
-        {"selector_kind": "law_literal", "selector_value": ["layer_1_text_reconstruction_metadata", ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"], "form-feed split; remove exactly one terminal whitespace-only page"]]},
-        {"selector_kind": "law_literal", "selector_value": ["classifier_behavior_source", {"source_slice": "classifier harness UTF-8 bytes[0:4571] ending before def main()", "bytes": 4571, "sha256": "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb"}]},
-        {"selector_kind": "law_literal", "selector_value": ["classifier_call", "classify(decoded_page_text, zero_based_line_index, match_start_character, match_end_character), with the ordered rules and exact regular expressions in classifier_behavior_source"]},
-        {"selector_kind": "law_literal", "selector_value": ["target_matching", [r"(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907|4379|5289|5788)(?!\d)"]]},
-        {"selector_kind": "law_literal", "selector_value": ["output_schema_and_order", [["source_document_id", "pdf_page_number_1_based", "page_semantic_row_position", "raw_field_id", "semantic_reference_position"], "registered document, page, then page-local emitted-row position"]]},
-        {"selector_kind": "law_literal", "selector_value": ["known_physical_reads", ["splitlines and line starts", "same-line word and table-cell position", "nearest preceding labelled line", "page number", "page-reset row ordinal", "same-page grouping"]]},
+        {"selector_kind": "grammar_dfa_partition_or_action_specification", "selector_value": ["layer_1_text_reconstruction_metadata", ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"], "form-feed split; remove exactly one terminal whitespace-only page"]]},
+        {"selector_kind": "grammar_dfa_partition_or_action_specification", "selector_value": ["classifier_behavior_source", {"source_slice": "classifier harness UTF-8 bytes[0:4571] ending before def main()", "bytes": 4571, "sha256": "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb"}]},
+        {"selector_kind": "grammar_dfa_partition_or_action_specification", "selector_value": ["classifier_call", "classify(decoded_page_text, zero_based_line_index, match_start_character, match_end_character), with the ordered rules and exact regular expressions in classifier_behavior_source"]},
+        {"selector_kind": "grammar_dfa_partition_or_action_specification", "selector_value": ["target_matching", [r"(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907|4379|5289|5788)(?!\d)"]]},
+        {"selector_kind": "grammar_dfa_partition_or_action_specification", "selector_value": ["output_schema_and_order", [["source_document_id", "pdf_page_number_1_based", "page_semantic_row_position", "raw_field_id", "semantic_reference_position"], "registered document, page, then page-local emitted-row position"]]},
+        {"selector_kind": "grammar_dfa_partition_or_action_specification", "selector_value": ["known_physical_reads", ["splitlines and line starts", "same-line word and table-cell position", "nearest preceding labelled line", "page number", "page-reset row ordinal", "same-page grouping"]]},
     ],
+    DENUMSPEC: [
+        {"selector_kind": "executable_mapping_specification", "selector_value": ["complete_candidate_enumeration", {"ordered_domain": "all 456 registered source_document_id values", "extra_job_raw_field_ids": ["V4901", "V4902", "V4903", "V4904", "V4905", "V4906", "V4907"], "annual_total_raw_field_ids": ["V4379", "V5289", "V5788"], "per_document_projection": ["source_document_id", "ascending distinct extra-job page numbers", "ascending distinct annual-total page numbers", "ascending same-page intersection"], "admission": "emit exactly one row for every domain document having both page arrays nonempty", "order": "registered-document order"}]},
+        {"selector_kind": "executable_mapping_specification", "selector_value": ["shadow_node_correspondence", "hold the pinned baseline topology, logical node IDs, edges, and node positions fixed; under the stored consumer-to-basis derives-from orientation, re-evaluate in reverse topological order so every basis target precedes its consumer; arrays may gain, lose, or change rows without minting topology nodes; baseline materialized row nodes are witnesses, while the complete-enumeration node is the dynamic cardinality authority"]},
+    ],
+}
+
+PHYSICAL_SPEC_CONTENT_CLASS = {
+    DSPEC: "grammar_dfa_partition_or_action",
+    DENUMSPEC: "executable_mapping",
 }
 
 
@@ -35639,6 +35725,9 @@ def exact_selector(derived_node, basis_node):
     if derived_node in DLOC and basis_node in PAGE.values():
         passage = passage_rows[DLOC.index(derived_node)]
         return [{"selector_kind": "normalized_page_semantic_substrings", "selector_value": passage["semantic_source_portions"]}]
+    if derived_node in DPAGE and basis_node == DPAGE_WAVE_SOURCE[derived_node]["basis_node"]:
+        wave_source = DPAGE_WAVE_SOURCE[derived_node]
+        return [{"selector_kind": "registered_codebook_interview_wave_exact_equality", "selector_value": {"source_document_id": wave_source["source_document_id"], "registered_filename": wave_source["registered_filename"], "projected_interview_wave": wave_source["interview_wave"], "exact_registered_pair": [wave_source["registered_filename"], wave_source["interview_wave"]]}}]
     if derived_node in DPAGE and basis_node in PF:
         row = page_semantic_rows[PF.index(basis_node)]
         return [{"selector_kind": "normalized_codebook_semantic_fragments", "selector_value": {"normalization": "Unicode-whitespace split and one-U+0020 join", "raw_field_id": row["raw_field_id"], "normalized_semantic_short_label": row["normalized_semantic_short_label"], "normalized_semantic_description": row["normalized_semantic_description"], "semantic_code_lexeme_and_meaning": row["semantic_code_lexeme_and_meaning"], "excluded_source_roles": ["Count", "%", "declared_format", "layout", "width", "raw_position", "value_execution"], "independent_source_test": "all selected normalized fragments must be reconstructed from the authenticated page before comparison with the expected row"}}]
@@ -35666,18 +35755,44 @@ def exact_selector(derived_node, basis_node):
         return [{"selector_kind": "json_pointer_projection", "selector_value": "/document_candidates/*/source_document_id"}]
     if derived_node == DSCAN and basis_node == D_DOC_IDS:
         return [{"selector_kind": "complete_registered_document_domain", "selector_value": {"document_count": 456, "ordered_document_ids_sha256": "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"}}]
+    if derived_node == DSCAN and basis_node in PAGE_META:
+        page_meta = PAGE_META[basis_node]
+        selector_value = {
+            "source_document_id": page_meta["source_document_id"],
+            "pdf_page_number_1_based": page_meta["pdf_page_number_1_based"],
+            "selected_representation": "all decoded-page UTF-8 bytes",
+            "classifier_node": DSPEC,
+            "physical_reads": ["page-local byte offsets", "line boundaries", "token boundaries", "table-cell and labelled-line position", "page-reset emitted-row ordinal"],
+        }
+        if (
+            page_meta["source_document_id"] == "psid-corpus-document-0068"
+            and page_meta["pdf_page_number_1_based"] == 519
+        ):
+            selector_value["pinned_shadow_witness"] = {
+                "decoded_page_utf8_byte_range": [3775, 3776],
+                "original_byte_hex": "20",
+                "shadow_byte_hex": "30",
+                "affected_token": "V4902 -> V49020",
+            }
+        return [{"selector_kind": "committed_decoded_page_full_scan", "selector_value": selector_value}]
     if derived_node == DSCAN and basis_node in DOC.values():
         document_position = next(position for position, node in DOC.items() if node == basis_node)
         document_id = f"psid-corpus-document-{document_position:04d}"
-        return [{"selector_kind": "registered_pdf_full_page_scan", "selector_value": {"source_document_id": document_id, "classifier_node": DSPEC, "text_derivation": ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"]], "coverage": "every decoded page and every numeric token; no expected occurrence row may be loaded as output"}}]
+        return [{"selector_kind": "registered_pdf_exhaustive_no_hit_scan", "selector_value": {"source_document_id": document_id, "classifier_node": DSPEC, "text_derivation": ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"]], "coverage": "every decoded page and every numeric token, including pages with no emitted occurrence; materialized decoded-page nodes additionally expose exact positive-row byte value-flow; no expected occurrence row may be loaded as output"}}]
+    if derived_node == D_CAND_ENUM and basis_node == DSCAN:
+        return [{"selector_kind": "whole_semantic_occurrence_relation", "selector_value": "/"}]
+    if derived_node == D_CAND_ENUM and basis_node == D_DOC_IDS:
+        return [{"selector_kind": "complete_registered_document_domain", "selector_value": {"document_count": 456, "ordered_document_ids_sha256": "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"}}]
     if derived_node in DCAND:
         return [{"selector_kind": "semantic_occurrence_group_and_filter", "selector_value": {"source_document_id": candidate_docs[DCAND.index(derived_node)], "extra_job_raw_field_ids": sorted(extra_ids), "annual_total_raw_field_ids": sorted(annual_ids), "extra_job_pages": "ascending distinct pdf_page_number_1_based for extra_job_raw_field_ids", "annual_total_pages": "ascending distinct pdf_page_number_1_based for annual_total_raw_field_ids", "same_page_intersection": "ascending set intersection", "admission": "both page arrays nonempty"}}]
     if derived_node == D_CAND_IDS:
         return [{"selector_kind": "candidate_document_id_projection", "selector_value": "/source_document_id"}]
     if derived_node == D_CAND_COUNT:
         return [{"selector_kind": "array_cardinality", "selector_value": "ordered_candidate_document_ids"}]
-    if derived_node == D_SOLE:
-        return [{"selector_kind": "exact_sole_candidate_disposition", "selector_value": {"source_document_id": "psid-corpus-document-0098", "pdf_page_number_1_based": 573, "derived_page_text_sha256": "51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed", "disposition": "false_positive_family_concordance_crosswave_variable_numbers", "canonical_bytes": 252, "sha256": "0d9b8e28c68132c0efdfc51b708f9217eaf81e0940238989eff68e8144ebe66b"}}]
+    if derived_node == D_SOLE and basis_node == D_CAND_ARR:
+        return [{"selector_kind": "unique_same_page_candidate_selection", "selector_value": {"admission": "exactly one complete-enumeration row has a nonempty same_page_intersection", "expected_source_document_id": "psid-corpus-document-0098", "expected_same_page_intersection": [573], "counterfactual_behavior": "any zero-or-multiple selection changes this layer-2 result to a non-sole marker"}}]
+    if derived_node == D_SOLE and basis_node == sole_page:
+        return [{"selector_kind": "family_concordance_crosswave_disposition", "selector_value": {"source_document_id": "psid-corpus-document-0098", "pdf_page_number_1_based": 573, "normalized_page_header": "FAMILY CONCORDANCE FOR 1987 (continued)", "normalized_row_label": "WHETHER EXTRA JOB LAST YEAR (E)", "year_column_tokens": [{"interview_wave": 1987, "raw_field_id": "V4379"}, {"interview_wave": 1976, "raw_field_id": "V4901"}], "physical_reads": ["page identity", "header year", "year-column alignment", "row label", "same-row token placement"], "disposition": "false_positive_family_concordance_crosswave_variable_numbers", "digest_selected_as_content": False}}]
     if derived_node == D_FORMULA_COUNT:
         return [{"selector_kind": "semantic_disposition_count", "selector_value": "formula_candidate"}]
     if nodes[basis_node] == "layer-2 derived node":
@@ -35690,13 +35805,20 @@ def exact_selector(derived_node, basis_node):
 basis_rows = []
 for derived_node in derived_nodes:
     if derived_node in primitive_selectors:
-        basis_rows.append({"basis_content_class": "law_literal", "basis_node_id": None, "basis_position": 0, "basis_selectors": primitive_selectors[derived_node], "derived_node_id": derived_node})
+        content_class = PHYSICAL_SPEC_CONTENT_CLASS.get(derived_node, "law_literal")
+        basis_rows.append({"basis_content_class": content_class, "basis_node_id": None, "basis_position": 0, "basis_selectors": primitive_selectors[derived_node], "derived_node_id": derived_node})
         continue
     targets = sorted(derived_targets[derived_node], key=lambda node_id: node_position[node_id])
     assert targets, derived_node
     for basis_position, basis_node in enumerate(targets):
         selectors = exact_selector(derived_node, basis_node)
-        if derived_node == DSCAN and basis_node in DOC.values():
+        if basis_node in PHYSICAL_SPEC_CONTENT_CLASS:
+            content_class = PHYSICAL_SPEC_CONTENT_CLASS[basis_node]
+        elif (
+            (derived_node == DSCAN and basis_node in DOC.values())
+            or (derived_node == DSCAN and basis_node in PAGE_META)
+            or (derived_node == D_SOLE and basis_node == sole_page)
+        ):
             content_class = "layout_format_or_width"
         elif nodes[basis_node] == "layer-2 derived node":
             content_class = "prior_layer_2_result"
@@ -35706,6 +35828,15 @@ for derived_node in derived_nodes:
             content_class = "semantic_source_projection"
         basis_rows.append({"basis_content_class": content_class, "basis_node_id": basis_node, "basis_position": basis_position, "basis_selectors": selectors, "derived_node_id": derived_node})
 basis_bytes = canon(basis_rows)
+assert collections.Counter(row["basis_content_class"] for row in basis_rows) == {
+    "law_literal": 2,
+    "semantic_source_projection": 34,
+    "semantic_field_reference": 24,
+    "prior_layer_2_result": 124,
+    "layout_format_or_width": 621,
+    "grammar_dfa_partition_or_action": 3,
+    "executable_mapping": 2,
+}
 
 v4902_output_rows = []
 for occurrence_position, (locator, occurrence) in enumerate(
@@ -35749,31 +35880,31 @@ pinned_forbidden_dependency_witness = {
 }
 witness_bytes = canon(pinned_forbidden_dependency_witness)
 
-assert len(node_rows) == 3357
+assert len(node_rows) == 3359
 assert collections.Counter(row["node_type"] for row in node_rows) == {
     "artifact": 471,
     "page": 178,
     "extraction-row": 1248,
     "field-reference": 372,
     "layer-1 commitment": 1022,
-    "layer-2 derived node": 66,
+    "layer-2 derived node": 68,
 }
-assert len(edge_rows) == 6167
+assert len(edge_rows) == 6343
 assert collections.Counter(row["edge_type"] for row in edge_rows) == {
-    "contains": 3680,
+    "contains": 3682,
     "commits-to": 1855,
-    "derives-from": 632,
+    "derives-from": 806,
 }
-assert len(fixture_bytes) == 2473771
-assert hashlib.sha256(fixture_bytes).hexdigest() == "5115680945d04accf58165b2de8048ac8729cd5d12396d9e758c61799dd5a11e"
-assert len(reachable) == visited == 3357
-assert len(basis_rows) == 635 and len(basis_bytes) == 482705
-assert hashlib.sha256(basis_bytes).hexdigest() == "fa052efa294ce36924d37b87cdc749121daedcba56eabfb5e67ac884363c630f"
+assert len(fixture_bytes) == 2522288
+assert hashlib.sha256(fixture_bytes).hexdigest() == "dbc909246ad307dfbd541e6be7e3705d3d3f8dc33f07309bdc772742bf1d7a40"
+assert len(reachable) == visited == 3359
+assert len(basis_rows) == 810 and len(basis_bytes) == 690490
+assert hashlib.sha256(basis_bytes).hexdigest() == "234e4a8780167c63d1fbed54586b1f6b7f62aa7e892b9e3b357c9ce761fd5867"
 assert len(v4902_output_rows) == 33 and len(v4902_output_bytes) == 12608
 assert hashlib.sha256(v4902_output_bytes).hexdigest() == "cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c"
-assert node_position[DSCAN] == 3355
+assert node_position[DSCAN] == 3357
 assert len(witness_bytes) == 673
-assert hashlib.sha256(witness_bytes).hexdigest() == "096172e67148b44262194c4a16192ac49c0217b7c9defbcf032739e3df37dadf"
+assert hashlib.sha256(witness_bytes).hexdigest() == "fe400ff9c8e1015c2c038ff21a4005a67dda2fa6f30f4f4b01652211db46353a"
 
 print("nodes", len(node_rows), collections.Counter(row["node_type"] for row in node_rows))
 print("edges", len(edge_rows), collections.Counter(row["edge_type"] for row in edge_rows))
@@ -35792,12 +35923,17 @@ identity, size, and full-file SHA-256 in the node IDs; every exact page,
 range, JSON-pointer row, field-reference row, and layer-1 commitment reached
 from roots 0–6; and every historical layer-2 intermediate and terminal
 reached from the eleven roots. In particular, the full-corpus scanner has
-exactly 458 direct bases: the ordered registered-document-ID node, the
-classifier-specification node, and all 456 registered PDFs. The 348
-classified occurrence rows are scanner output children, never
-`derives-from` bases. Candidate rows derive from the newly scanned output.
-This direction is mandatory: injecting a pre-labelled occurrence or
-candidate fixture as a scanner basis fails.
+exactly 622 direct bases: the ordered registered-document-ID node, the
+classifier-specification node, all 456 registered PDFs, and all 164
+independently committed decoded pages that contain materialized occurrence
+outputs. The 348 classified occurrence rows are scanner output children,
+never `derives-from` bases. The registered PDFs still require scanning every
+decoded page, including pages having no output; the 164 page nodes give the
+positive pages exact decoded-byte coordinates. The complete enumeration
+result dynamically derives every candidate from the newly scanned output and
+registered-document domain. The 18 baseline candidate nodes are comparison
+witnesses, never an exhaustive input. This direction is mandatory: injecting
+a pre-labelled occurrence or candidate fixture as a scanner basis fails.
 
 The scanner first authenticates every registered PDF's byte size and
 SHA-256, decodes it with Poppler `pdftotext` 26.04.0 and arguments
@@ -35876,27 +36012,37 @@ NaN, and one terminal LF.
 Starting with the eleven roots, root closure repeatedly follows every
 outgoing edge until no unseen target remains. Separately, Kahn's algorithm
 computes indegree over all edges, repeatedly removes every zero-indegree
-node and decrements its outgoing targets, and must visit every node.
+node and decrements its outgoing targets, and must visit every node. Because
+`derives-from` is stored consumer-to-basis, a shadow rederivation traverses
+the resulting order in reverse so every basis is evaluated before its
+consumer.
 
 The ordered basis manifest has exactly
 `basis_content_class`, `basis_node_id`, `basis_position`,
 `basis_selectors`, and `derived_node_id`. Derived nodes order by canonical
 node position; their direct `derives-from` targets order by canonical node
-position and receive zero-based basis positions. The three primitive
-law-literal nodes each receive one row with null `basis_node_id`; all other
-rows exact-copy one graph edge and the selectors stated in §21.1.4 and
-above. No nonprimitive layer-2 node may lack a basis. Thus the 632
-`derives-from` edges plus three primitive rows produce exactly 635 rows.
-The value-flow closure for a layer-2 node recursively follows only its
-declared prior-layer-2 bases, applying every selector; structural
-`contains` and layer-1 `commits-to` edges authenticate identity but do not
-propagate values.
+position and receive zero-based basis positions. Four primitive adopted
+specification nodes each receive one row with null `basis_node_id`: the
+identity and semantic-passage specifications are `law_literal`, while the
+classifier and complete-candidate-enumeration specifications are
+`grammar_dfa_partition_or_action` and `executable_mapping`, respectively.
+Null here means that the exact literal
+serialized in `basis_selectors` reads no external committed content; it does
+not mean that the specification is invisible or semantic. The latter two
+specifications, and all three direct consumers that read them, are expressly
+physical bases and independently force the fallback. Every other row
+exact-copies one graph edge and the selectors stated in §21.1.4 and above.
+No nonprimitive layer-2 node may lack a basis. Thus the 806 `derives-from`
+edges plus four primitive rows produce exactly 810 rows. The value-flow
+closure for a layer-2 node recursively follows its declared bases, applying
+every selector; structural `contains` and layer-1 `commits-to` edges
+authenticate identity but do not propagate values.
 
 The expected historical V-B6 attempt must exact-match this fixture before
 any dependency diagnostic has meaning:
 
 ~~~json
-{"basis":{"basis_content_class_counts":{"law_literal":3,"layout_format_or_width":456,"prior_layer_2_result":124,"semantic_field_reference":24,"semantic_source_projection":28},"canonical_bytes":482705,"derived_node_count":66,"primitive_literal_row_count":3,"row_count":635,"sha256":"fa052efa294ce36924d37b87cdc749121daedcba56eabfb5e67ac884363c630f"},"edges":{"commits-to":1855,"contains":3680,"derives-from":632,"total":6167},"fixture_id":"amendment_7_v_b6_dependency_graph_attempt_v3","nodes":{"artifact":471,"extraction-row":1248,"field-reference":372,"layer-1 commitment":1022,"layer-2 derived node":66,"page":178,"total":3357},"root_count":11,"root_reachable_count":3357,"scanner_direct_basis_count":458,"scanner_node_position":3355,"topological_visit_count":3357,"topology_canonical_bytes":2473771,"topology_sha256":"5115680945d04accf58165b2de8048ac8729cd5d12396d9e758c61799dd5a11e"}
+{"basis":{"basis_content_class_counts":{"executable_mapping":2,"grammar_dfa_partition_or_action":3,"law_literal":2,"layout_format_or_width":621,"prior_layer_2_result":124,"semantic_field_reference":24,"semantic_source_projection":34},"canonical_bytes":690490,"derived_node_count":68,"primitive_basis_row_count":4,"row_count":810,"sha256":"234e4a8780167c63d1fbed54586b1f6b7f62aa7e892b9e3b357c9ce761fd5867"},"edges":{"commits-to":1855,"contains":3682,"derives-from":806,"total":6343},"fixture_id":"amendment_7_v_b6_dependency_graph_attempt_v4","nodes":{"artifact":471,"extraction-row":1248,"field-reference":372,"layer-1 commitment":1022,"layer-2 derived node":68,"page":178,"total":3359},"root_count":11,"root_reachable_count":3359,"scanner_direct_basis_count":622,"scanner_node_position":3357,"topological_visit_count":3359,"topology_canonical_bytes":2522288,"topology_sha256":"dbc909246ad307dfbd541e6be7e3705d3d3f8dc33f07309bdc772742bf1d7a40"}
 ~~~
 
 The V4902 occurrence-output domain is an output census, not a basis or
@@ -35916,8 +36062,22 @@ supersedes any use of the occurrence-classification
 in order, is:
 
 ~~~json
-[[0,1976,"V4519",null,null],[1,1976,"V4902",null,null],[2,1977,"V5429",null,null],[3,1978,"V5916",null,null],[4,1976,"V4379","psid-corpus-document-0046",20],[5,1976,"V4380","psid-corpus-document-0046",20],[6,1976,"V4381","psid-corpus-document-0046",20],[7,1976,"V4382","psid-corpus-document-0046",20],[8,1976,"V4901","psid-corpus-document-0046",180],[9,1976,"V4902","psid-corpus-document-0046",180],[10,1976,"V4903","psid-corpus-document-0046",181],[11,1976,"V4904","psid-corpus-document-0046",182],[12,1976,"V4905","psid-corpus-document-0046",182],[13,1976,"V4906","psid-corpus-document-0046",182],[14,1976,"V4907","psid-corpus-document-0046",182],[15,1977,"V5289","psid-corpus-document-0051",22],[16,1977,"V5290","psid-corpus-document-0051",22],[17,1977,"V5291","psid-corpus-document-0051",22],[18,1977,"V5292","psid-corpus-document-0051",22],[19,1978,"V5785","psid-corpus-document-0056",22],[20,1978,"V5786","psid-corpus-document-0056",22],[21,1978,"V5787","psid-corpus-document-0056",22],[22,1978,"V5788","psid-corpus-document-0056",22],[23,1978,"V5789","psid-corpus-document-0056",22],[24,null,null,null,null]]
+[[0,1976,"V4519",null,null],[1,1976,"V4902",null,null],[2,1977,"V5429",null,null],[3,1978,"V5916",null,null],[4,null,"V4901",null,null],[5,null,"V4903",null,null],[6,null,"V4904",null,null],[7,null,"V4905",null,null],[8,null,"V4906",null,null],[9,null,"V4907",null,null],[10,null,"V4379",null,null],[11,null,"V5289",null,null],[12,null,"V5788",null,null],[13,1976,"V4379","psid-corpus-document-0046",20],[14,1976,"V4380","psid-corpus-document-0046",20],[15,1976,"V4381","psid-corpus-document-0046",20],[16,1976,"V4382","psid-corpus-document-0046",20],[17,1976,"V4901","psid-corpus-document-0046",180],[18,1976,"V4902","psid-corpus-document-0046",180],[19,1976,"V4903","psid-corpus-document-0046",181],[20,1976,"V4904","psid-corpus-document-0046",182],[21,1976,"V4905","psid-corpus-document-0046",182],[22,1976,"V4906","psid-corpus-document-0046",182],[23,1976,"V4907","psid-corpus-document-0046",182],[24,1977,"V5289","psid-corpus-document-0051",22],[25,1977,"V5290","psid-corpus-document-0051",22],[26,1977,"V5291","psid-corpus-document-0051",22],[27,1977,"V5292","psid-corpus-document-0051",22],[28,1978,"V5785","psid-corpus-document-0056",22],[29,1978,"V5786","psid-corpus-document-0056",22],[30,1978,"V5787","psid-corpus-document-0056",22],[31,1978,"V5788","psid-corpus-document-0056",22],[32,1978,"V5789","psid-corpus-document-0056",22],[33,null,null,null,null]]
 ~~~
+
+Positions 0–3 are the four global non-passing-field coordinates. Positions
+4–12 are generic scanner-target coordinates: respectively V4901, V4903,
+V4904, V4905, V4906, V4907, V4379, V5289, and V5788; a generic V4902
+dependency uses global position 1. Positions 13–32 are the exact 20
+field-reference rows on the six committed codebook pages. Position selection
+uses strict precedence: an exact `(source_document_id,
+pdf_page_number_1_based, raw_field_id)` match takes its position in 13–32;
+otherwise a scanner-target match takes its generic position in 1 or 4–12;
+otherwise position 33 applies. Thus V4902 on document 0046 page 180 uses
+position 18, while V4902 anywhere without that exact page-row match uses
+position 1. The null interview wave on generic positions 4–12 means the
+coordinate applies across the complete registered scanner corpus, not that
+the wave may be omitted from an available source locator.
 
 Its physical-class domain, in order, is:
 
@@ -35929,23 +36089,25 @@ Cross every field-domain position with every physical-class position in
 field-major order. `physical_domain_position` is
 `8 * field_position + physical_class_position`. The resulting row has
 exactly `basis_content_class`, `field_reference_position` (null only for
-position 24), `forbidden_dependency_class`, `interview_wave`,
+position 33), `forbidden_dependency_class`, `interview_wave`,
 `pdf_page_number_1_based`, `physical_class_position`,
 `physical_domain_position`, `raw_field_id`, and `source_document_id`.
-For positions 0–191, `field_reference_position` is
+For positions 0–263, `field_reference_position` is
 `physical_domain_position // 8` and the physical-class position is
-`physical_domain_position % 8`; for sentinel positions 192–199 the field
-reference is null. Field-domain position 24 is the exact closed sentinel for
-every field not separately enumerated at positions 0–23 and for every
+`physical_domain_position % 8`; for sentinel positions 264–271 the field
+reference is null. Field-domain position 33 is the exact closed sentinel for
+every field not selected by positions 0–32 and for every
 non-field physical portion. Its real artifact/locator coordinate, not a
 synthetic field label, distinguishes those dependencies.
 
 ~~~json
-{"canonical_bytes":65920,"field_or_nonfield_position_count":25,"fixture_id":"amendment_7_v_b6_physical_dependency_position_domain_v1","physical_class_count":8,"row_count":200,"sha256":"fe708584bc61fd29b6748deee7dcd14612419bdc0611226dc4df06a4f233deae"}
+{"canonical_bytes":88492,"field_or_nonfield_position_count":34,"fixture_id":"amendment_7_v_b6_physical_dependency_position_domain_v2","physical_class_count":8,"row_count":272,"sha256":"55e4a6e71e56b7d3c6902fabb8329fece96253c17477787a8cff00aead9f9229"}
 ~~~
 
-This total domain defines positions for V4379, V5289, V5788, every other
-field on the six committed pages, and non-field physical content. A concrete
+This total domain defines generic positions for every scanner target,
+exact-page positions for V4379, V5289, V5788 and every other field on the six
+committed pages, and the sentinel position for every remaining field and all
+non-field physical content. A concrete
 dependency coordinate is the three-member array
 `[physical_domain_position,artifact_identity,JSON_pointer_or_zero_based_half_open_byte_range]`.
 The locator must identify real authenticated source bytes. Unknown or
@@ -35956,7 +36118,7 @@ offset and the pointer identifies the containing scalar. In every diagnostic,
 `forbidden_dependency_locator` must exact-equal
 `physical_dependency_position[1:]`.
 The guarded V4902/layout coordinate is 9. The distinct page-row
-V4902/layout coordinate is 73; an implementation may not conflate or omit
+V4902/layout coordinate is 145; an implementation may not conflate or omit
 either position.
 
 The atomic physical source-member domain is closed. It contains exactly the
@@ -35984,6 +36146,17 @@ member that cannot be assigned a domain row and real locator makes the
 diagnostic fail rather than disappear. Frontier rows order by complete
 physical position, consuming-node position, and physical-class position.
 
+Shadow evaluation holds the pinned baseline topology, logical node IDs,
+edges, and canonical node positions fixed. Hash-bearing IDs identify their
+baseline logical nodes; the shadow payload is compared at that same node
+position even when its bytes or digest change. Dynamic arrays may gain, lose,
+or change rows without minting topology nodes. The 348 occurrence and 18
+candidate children are baseline materialization witnesses only; DSCAN and the
+complete-candidate-enumeration node remain the dynamic content and
+cardinality authorities. A shadow that cannot be associated with this fixed
+logical graph fails instead of silently dropping the changed or newly
+created content.
+
 After the graph and basis fixtures match, the runner performs the exhaustive
 byte shadow walk. For each atomic source byte in domain order, it substitutes
 each of the 255 unequal byte values in ascending hexadecimal order, changes
@@ -36004,7 +36177,7 @@ through every byte, every alternative, and every direct route and reports the
 complete frontier. It cannot emit an empty forbidden-dependency array merely
 because the expected array was absent, because a changed classifier was
 mislabelled internal, or because a commitment digest was treated as content. Emptiness has
-meaning only after the 3,357-node, 6,167-edge graph and 635-row basis match
+meaning only after the 3,359-node, 6,343-edge graph and 810-row basis match
 their fixtures and this complete walk finishes.
 
 Each source-adjudication diagnostic row has exactly these twelve keys in
@@ -36055,11 +36228,11 @@ to 32 rows/12,231 bytes/SHA-256
 `6a8534a5f765b7ac09ace83c06a4028f3c13f9b9024b9f149ddb10011a10f008`.
 
 ~~~json
-{"dependency_graph_node_position":3355,"derivation_status":"incomplete_source_numeric_authority","field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","forbidden_dependency_locator":["psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"interview_wave":1976,"original_byte_hex":"20","physical_dependency_position":[9,"psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","shadow_byte_hex":"30","source_adjudication_consumer_id":"amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"}
+{"dependency_graph_node_position":3357,"derivation_status":"incomplete_source_numeric_authority","field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","forbidden_dependency_locator":["psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"interview_wave":1976,"original_byte_hex":"20","physical_dependency_position":[9,"psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","shadow_byte_hex":"30","source_adjudication_consumer_id":"amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"}
 ~~~
 
 That terminal-LF row is 673 canonical bytes with SHA-256
-`096172e67148b44262194c4a16192ac49c0217b7c9defbcf032739e3df37dadf`.
+`fe400ff9c8e1015c2c038ff21a4005a67dda2fa6f30f4f4b01652211db46353a`.
 It is a pinned mandatory witness, not a claim that the complete dependency
 array has one member or that this is its first canonical member. Because the
 graph must match and be walked, and because this authenticated mutation must
@@ -36325,8 +36498,8 @@ V-B6 status is always nonpassing. In order, it must:
 2. reconstruct the historical 10,887-byte §18.2 candidate projection with
    SHA-256
    7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
-   then independently rebuild the exact §21.4.2 3,357-node/6,167-edge graph,
-   635-row basis manifest, four-reference order, complete physical-position
+   then independently rebuild the exact §21.4.2 3,359-node/6,343-edge graph,
+   810-row basis manifest, four-reference order, complete physical-position
    domain, and value-flow walk. The scanner must use the frozen PDFs, not
    pre-labelled occurrence or candidate rows;
 3. rediscover at least the pinned V4902 result-reaching whitespace witness, retain all
@@ -36567,7 +36740,7 @@ The executable's exact result domain is pinned here:
 The suite probe positions are exactly 109 through 140 in case order. Its
 graph and basis must match before its 32 discovered diagnostic rows have
 meaning. This isolated source-adjudication counterfactual suite runs only
-after the historical 3,357-node/6,167-edge graph and 635-row basis have
+after the historical 3,359-node/6,343-edge graph and 810-row basis have
 matched; the suite graph does not replace or mutate that historical graph.
 It is source evidence, not a prelabelled expected diagnostic: the runner must
 verify that every original byte is present, apply exactly the displayed
@@ -37276,8 +37449,8 @@ This subsection replaces the §20.8.4 ordered protocol for revision 9:
 2. Resolve every finding and verify the complete round-to-round diff; the
    exact 2,049,769-byte D6 prefix and identity; all frozen sources; the
    round-1 counts, partitions, precision repairs, A6 vectors, and DC-39; the
-	   exact eleven-member §18.2 classification; the 3,357-node/6,167-edge graph
-   and 635-row basis fixtures; the classifier and physical-position domains;
+	   exact eleven-member §18.2 classification; the 3,359-node/6,343-edge graph
+   and 810-row basis fixtures; the classifier and physical-position domains;
    the pinned V4902 witness and prospective retraction; both registration
    senses; the repaired 32-route R11 manifest; the exact pre-Q5 vector array;
    staged R10b expected-absence gate; every fresh 22-row nonpassing outcome;
