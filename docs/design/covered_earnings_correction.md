@@ -30458,93 +30458,128 @@ they never discard `F` or derive expected dispositions from a candidate.
 
 For this subsection, §19's statement that `extract_codebook_rows` must first
 select one physical arm before inserting every normalized literal is
-prospectively conditional. For a group with a supported numeric tuple and an
-applicable normalized range that could take the zero-nonmissing branch, both
-`extract_codebook_rows` and `derive_source_numeric_grammar` first parse the
-complete semantic codebook relation without `raw_token_hex` and
-independently run this closed pre-profile literal constructor. A literal
-whose strict source lexeme already decodes to
-exactly `w` bytes and conforms to at least one source-tuple-consistent closed
-token form is registered at those unchanged bytes. Otherwise, only a source
-entry with `typed_disposition: missing` may use the missing-only constructor:
-enumerate every exact-width image supplied by every source-tuple-consistent
-Amendment-6 token-form and padding constructor, byte-deduplicate the images,
-and compare them with the complete observed-token census. For this
-rendering-only enumeration, an exact source lexeme `\.[0-9]+` is interpreted
-as the same decimal digits with the required integral zero prepended; it
-does not acquire a canonical scalar, type, unit, or nonmissing meaning.
+prospectively conditional. For every group with a supported numeric tuple,
+both `extract_codebook_rows` and `derive_source_numeric_grammar` first parse
+the complete semantic codebook relation without `raw_token_hex` and
+independently run this closed pre-profile literal constructor. Every inherited
+dictionary missing row remains a strict unchanged-width registration and joins
+the collision and classification relations below. The deferred constructor
+exact-covers every normalized codebook literal, whether missing or ordinary;
+no codebook literal may be omitted because its frequency is zero, its lexeme is
+short, or its eventual branch is not yet known.
 
-A shorter missing literal registers `raw_token_hex` only when exactly one of
-its candidate images occurs in the census and no other registered missing
-entry can generate that token. An exact-width literal remains fixed directly
-and is not selected by observation. On a positive-nonmissing finite-domain
-branch, an unobserved short literal for which both padding constructors
-produce lawful but unequal images is not registered under either image and
-does not fail merely because it is unobserved. Instead, both candidate images
-remain in the complete candidate relations below and the member enters the
-arm-ambiguous relation with a null authoritative image and closed encounter
-abort. Observation of exactly one candidate image instead registers the
-literal under the unique evidenced image before arm comparison; observation
-of both unequal images is mixed padding and conflicts. The zero-nonmissing
-physical-unestablished branch has the separate closed law below.
-The complete semantic entries, candidate images, census match relation, and
-resulting normalized rows must deep-equal between the two entry points before
-the codebook-row digest or derivation row is accepted. This constructor binds
-only exact literal bytes for literal-first replay: it selects no physical
+For each normalized codebook literal in complete source-entry order, enumerate
+the internal relation `deferred_literal_candidate_rows`: one row for every
+source-tuple-consistent token form in the form order below and, within form,
+`zero_left_padding` then `left_ascii_space_padding`. Each row has exactly
+`source_entry_ref`,
+`source_value_lexeme`, `typed_disposition`, `token_form_kind`, `profile_kind`,
+`candidate_physical_image_raw_token_hex`, `candidate_failure_reason`, and
+`observed_frequency`, in that order. The first three values exact-copy the
+source-normalized entry. The candidate image is the exact-width result of the
+one §20.3.3 renderer, or null with exact reason
+`no_exact_width_candidate_form_image`; observed frequency is the complete
+census frequency of the nonnull exact bytes and is zero for a null image.
+This rendering deliberately ignores the later observed sign diagnostic and
+token-form pass condition; those select a form but do not limit the lawful
+candidate forms enumerated here.
+For candidate-scalar construction only, ASCII grouping commas are removed and
+an exact source lexeme `\.[0-9]+` receives the required integral zero. Neither
+operation rewrites `source_value_lexeme` or supplies physical raw bytes,
+meaning, type, unit, missing status, or a nonmissing value. The complete row
+relation, including failures and duplicate images across forms or arms, is
+retained for independent deep comparison. Separately byte-deduplicate its
+nonnull images for each source literal before applying the following
+registration law.
+
+Pre-profile registration is total and ordered. First, if the strict unchanged
+ASCII source lexeme itself has exactly `w` bytes and byte-equals at least one
+nonnull candidate image, register those source bytes; a grouped display lexeme
+is never shortened for this test. Otherwise, if the byte-deduplicated nonnull
+candidate set is a singleton, register that image even when its observed
+frequency is zero. Otherwise, register the sole distinct candidate image with
+positive observed frequency. More than one byte-unequal observed candidate is
+mixed physical evidence and conflicts. A multiple-image set with zero total
+hits remains deferred with null `raw_token_hex`; a literal with no nonnull
+candidate likewise remains deferred for the selected-form fail-closed test
+below. These tests apply identically to missing and ordinary literals. A
+candidate row is evidence rather than registration unless one of these exact
+producer transitions or a post-selection transition below promotes it.
+
+The complete semantic entries, deferred candidate rows, byte-deduplicated
+image sets, census match relation, registration/defer result, and resulting
+normalized rows must deep-equal between the two entry points before the
+codebook-row digest or derivation row is accepted. Pre-profile registration
+binds only exact literal bytes for literal-first replay: it selects no physical
 numeric token form or padding arm and supplies no range image, DFA edge, or
 uncoded value. Thus V11811's exact-width `99.98` and `99.99` lexemes remain
 their source bytes, while its missing `.00` has the unique observed image
 `20302e3030`; no profile is fabricated.
 
-On the zero-nonmissing physical-unestablished branch specifically, an
-exact-width ordinary literal still retains its source bytes, and only a
-missing literal may observationally complete a shorter source lexeme under
-the unique-evidenced-image rule. Every shorter ordinary nonmissing literal
-instead retains its complete ten-key normalized `literal` row with
-`raw_token_hex: null`, unchanged source lexeme, meaning, typed disposition,
-type, unit, canonical value, and null missing reason. It is physical-
-rendering-unestablished, not malformed and not missing. It creates no
-candidate image, token form, padding arm, profile, range partition, DFA edge,
-executable value-map entry, or `missing_raw_tokens` member. Its sole physical
-consumer is the closed unobserved-value row in §20.4.1. Thus V11812's short
-ordinary literal `1` remains semantically present with a null rendering while
-the uniquely evidenced missing `0` registers as `2030`; neither entry can
-select a form or arm.
+On the zero-nonmissing physical-unestablished branch specifically, every
+literal still executes the same complete pre-profile relation. A strict
+unchanged-width image, a byte-deduplicated singleton image, or the sole
+observed candidate registers under the law above. Every remaining
+multiple-image zero-hit ordinary literal instead retains its complete ten-key
+normalized `literal` row with `raw_token_hex: null`, unchanged source lexeme,
+meaning, typed disposition, type, unit, canonical value, and null missing
+reason. It is physical-rendering-unestablished, not malformed and not missing.
+Its deferred candidate rows are proof inputs only and create no selected token
+form, padding arm, profile, range partition, DFA edge, executable value-map
+entry, or `missing_raw_tokens` member. Its sole physical consumer is the
+closed unobserved-value row in §20.4.1. A deferred missing literal likewise
+has no missing-token authority; every observed missing token must already have
+registered uniquely for this branch to apply. Thus V11812's short ordinary
+literal `1` retains its two zero-hit candidates and source semantics with a
+null authoritative rendering, while the uniquely evidenced missing `0`
+registers as `2030`; neither entry can select a form or arm.
 
 Before constructing a profile or evaluating any token-form candidate, the
-compiler completes missing-literal uniqueness, missing-versus-literal
-collision, and exact-width classification over every observed-token row.
-`nonmissing_observation_count` is the nonnegative JSON integer, excluding
-booleans, equal to the frequency sum
-of every observation not classified as exactly one member of the complete
-registered missing-literal relation. That relation is independently rebuilt
-from all dictionary missing literals and all normalized codebook entries
-whose `typed_disposition` is `missing`; missing-versus-ordinary-literal and
-duplicate-missing-image conflicts, plus duplicate ordinary literal images
-with unequal values or meanings, take precedence over use of the count for a
-passing branch. The count is nevertheless serialized on every successor
-row from exact-one classification. It is at most the complete raw
-`record_count`; on a conflict-free relation, the difference is exactly the
-frequency sum of the uniquely classified missing observations. The
-source-only compiler and independent reviewer reconstruct this count from
-the complete token relation, not from a profile, candidate, consumer,
-zero-record default, or aggregate field census.
+compiler performs the first duplicate-missing, missing-versus-ordinary, and
+unequal-ordinary collision pass over the pre-profile registrations. It then
+computes a provisional missing classification over every observed-token row.
+The provisional nonmissing count is the frequency sum of observations not
+classified as exactly one member of that registered missing relation. It is
+used only to choose the zero-nonmissing termination or the positive-evidence
+token-form path; it is not a separately serialized member or authority.
+Because every deferred candidate has zero observed hits, a valid later
+promotion cannot change that provisional count. Any unequal observed images
+have already conflicted.
 
-When `nonmissing_observation_count == 0` and the complete missing/literal
-relation and the complete semantic entry relation are conflict-free, missing
-classification terminates before any
-token-form or padding-arm candidate relation is constructed. The
-row has null `normalized_format_profile`, hence no
+After the applicable post-selection promotion and second collision pass below,
+`nonmissing_observation_count` is rebuilt and serialized as the nonnegative
+JSON integer, excluding booleans, equal to the frequency sum of every
+observation not classified as exactly one member of the final complete
+registered missing-literal relation. That relation is independently rebuilt
+from all dictionary missing literals and all normalized codebook entries whose
+`typed_disposition` is `missing`; missing-versus-ordinary-literal and
+duplicate-missing-image conflicts, plus duplicate ordinary literal images
+with unequal values or meanings, take precedence over use of the final count
+for a passing branch. It is at most the complete raw `record_count`; on a
+conflict-free relation, the difference is exactly the frequency sum of the
+uniquely classified missing observations. The provisional and final counts
+must equal on every passing row. The source-only compiler and independent
+reviewer reconstruct both classifications from the complete token and literal
+candidate relations, not from a profile, consumer, zero-record default, or
+aggregate field census.
+
+When the provisional nonmissing count is zero and the complete missing/literal
+relation and the complete semantic entry relation are conflict-free, numeric
+form authentication terminates before any token-form or padding-arm candidate
+relation is constructed. The final collision pass and missing classification
+then repeat over the unchanged pre-profile registrations and must reproduce
+`nonmissing_observation_count == 0`. The row has null
+`normalized_format_profile`, hence no
 `physical_authentication`; selects neither token form nor padding arm; has
 null `registered_numeric_grammar`; and uses the exact retained `none`
 padding object with empty prefix/suffix hex and payload width equal to raw
 width. If its independently derived `value_code_map` has at least one
 applicable normalized numeric range and every observation exact-matches and
 replays through a unique registered missing literal, its status is the
-retained `value_code_range_physical_rendering_unestablished`. No range
-member or short ordinary literal acquires a physical image or DFA edge; each
-retains its source semantics with the closed physical-unestablished encounter
-abort. Any other numeric-required
+retained `value_code_range_physical_rendering_unestablished`. No range member
+or still-deferred multiple-image zero-hit ordinary literal acquires an
+authoritative physical image or DFA edge; each retains its source semantics
+with the closed physical-unestablished encounter abort. Any other numeric-required
 zero-nonmissing row is genuinely unresolved numeric authority rather than a
 form conflict and takes the applicable incomplete branch. A zero-record
 census follows this same no-authentication law and cannot select a form or
@@ -30552,7 +30587,7 @@ arm. A retained source-only nonnumeric or no-range value-code branch remains
 available only under its independently satisfied §19 conditions; zero
 nonmissing evidence never promotes it to a compiled status.
 
-Only when `nonmissing_observation_count > 0` **and the independently derived
+Only when the provisional nonmissing count is positive **and the independently derived
 branch otherwise requires or adopts numeric physical authentication** does
 the following token-form and padding authentication run. Retained
 nonnumeric, source-silent, or other independently lawful null-profile
@@ -30622,8 +30657,9 @@ token-form row must pass. `selected_token_form` is that row's kind.
 No observed sign means the smaller unsigned language; a future minus then
 hits the unknown-token abort rather than retroactively widening the field.
 
-Missing classification has already completed and the zero-nonmissing branch
-has already terminated before this point. More formally, a candidate's
+The provisional missing classification has completed and the zero-nonmissing
+branch has already terminated before this point; final missing classification
+still awaits the promotion and collision law below. More formally, a candidate's
 `status` is `pass` exactly when its accepted count is
 `record_count` and its sign polarity satisfies the stated condition: zero
 canonical minus observations for an unsigned candidate and a positive count
@@ -30646,6 +30682,16 @@ signed form. This prospectively replaces §19's fixed-width requirement that
 `value_derivation.signed` and the consuming `typed_parse_specs.signed` equal
 the selected form's Boolean. All retained scale, type, unit, and
 range-membership coalescence laws remain exact.
+
+Immediately after token-form selection, retain every authoritative pre-profile
+registration and project every still-deferred literal through both padding
+constructors for that selected form. Literal-first authority established from
+the complete lawful-form relation is independent of the form later selected
+for numeric values. For each still-deferred literal, a common nonnull
+zero/space image is immediately promoted to a registered literal even when
+unobserved. Unequal nonnull images remain deferred through padding disposition,
+and a null selected-form image remains an unrenderable candidate. This pass
+does not select an arm, alter source semantics, or authorize a range member.
 
 After token-form selection, `candidate_arm_results` retains exactly two
 rows in `zero_left_padding` then `left_ascii_space_padding` order. Except for
@@ -30706,6 +30752,49 @@ The closed disposition is:
   zero/space result not covering all records, or unequal diagnostic count
   is a hard failure.
 
+The padding disposition completes the literal producer transitions before any
+profile, partition, grammar, consumer row, ID, or hash is accepted. On a
+diagnostic `left_ascii_space_padding` selection, every remaining renderable
+deferred literal is promoted under its selected-space image; the zero image
+remains counterfactual evidence only. On either finite-complete-domain no-arm
+branch, every literal whose two candidate rows have one common nonnull image is
+promoted to a registered literal and both complete-domain rows become
+`registered_literal_first_bypass` before their arrays or invariant rows are
+hashed. This includes every invariant literal on the finite-domain
+arm-ambiguous branch. A literal with unequal nonnull finite-domain images
+remains `candidate_literal_image` under both parents, has null authoritative
+image and no actions, and takes
+`abort_before_classification_arm_ambiguous_source_member`; neither spelling is
+registered. The structural width-one and no-padding-capacity branches likewise
+register their necessarily common literal image. Any literal still lacking a
+selected-form image, or any deferred literal not assigned either an exact
+promotion or the express finite-domain unequal-image abort, fails closed.
+Under a selected space
+branch its exact census reason is `selected_space_literal_unrenderable`; the
+corresponding structural or finite no-arm reason remains the exact closed
+unsupported reason named by the totality census. In particular,
+ER36928/2007's eight-byte source lexeme `-999,999` under `NUM(7.0)` yields the
+singleton seven-byte signed candidate `-999999` (`2d393939393939`) across the
+complete lawful-form relation. Grouping removal never rewrites the source
+lexeme, but the zero-hit singleton producer transition registers those bytes
+before the field selects its unsigned numeric form, so the literal remains an
+authoritative literal-first bypass. By contrast, ER6974/1995's deferred
+`-99,999` has no image under its selected unsigned space form and takes the
+one `selected_space_literal_unrenderable` closed failure; no unrenderable
+literal survives on a passing branch.
+
+After all applicable promotions, independently rerun duplicate registered
+missing, registered missing-versus-ordinary, and duplicate registered ordinary
+image checks over the final relations. Unequal ordinary values or meanings at
+one image conflict; every retained semantic-overlap prohibition remains. Then
+rebuild missing classification and `nonmissing_observation_count`, require its
+equality to the provisional value, rebuild the complete-domain invariant and
+ambiguous relations, every exhaustive range partition, missing subtraction and
+exact-token DFA, all observed and unobserved consumers, grammar and derivation
+IDs, full-row hashes, and every enclosing domain/content hash. No candidate-
+only row, pre-promotion partition, provisional count, or predecessor identity
+may be copied across this finalization barrier.
+
 On either finite-complete-domain no-arm branch, each
 `candidate_arm_results` row is
 the retained five-key row followed by exactly
@@ -30723,9 +30812,12 @@ derivation is `codebook_literal | codebook_range_member`; and result is
 exact_numeric_image | no_exact_image`.
 A literal-first bypass carries its registered exact-width token, empty action
 array, and null failure. A candidate literal image carries the exact-width
-image constructed for an otherwise unregistered short literal under that
-parent arm, an empty action array, and null failure; it is candidate evidence,
-not an authoritative registration. An exact numeric image carries the
+image constructed for an unregistered unequal-image literal under that parent
+arm, an empty action array, and null failure; it is candidate evidence, not an
+authoritative registration, and is lawful only on the finite-domain
+arm-ambiguous branch. Every common or selected literal image has already been
+promoted and instead uses the registered bypass result in every serialized
+parent. An exact numeric image carries the
 candidate's unique exact-width token, complete DFA-path `value_action` array,
 and null failure. A failed image carries null token, empty actions, and the
 exact nonempty renderer failure reason.
@@ -30989,21 +31081,28 @@ branch.
 
 #### 20.3.4 Exact-token DFA, actions, scalar, and replay
 
-For any compiled derivation status below, the DFA payload is the exact raw
-token after its Amendment-6 `padding_rule`; payload width therefore remains
-`w`. From the source-valid render language subtract every canonical image in
-the complete registered missing-literal relation reconstructed in §20.3.2,
-including dictionary and normalized-codebook missing literals. A missing
+For any compiled derivation status below, DFA construction occurs only after
+the §20.3.2 finalization barrier: every applicable post-selection literal
+promotion, the second three-way collision pass, and reconstruction of final
+missing classification and `nonmissing_observation_count` have completed.
+Only the final registered relations are authoritative; no provisional
+classification, pre-promotion partition, or candidate-only image enters a
+DFA. The DFA payload is the exact raw token after its Amendment-6
+`padding_rule`; payload width therefore remains `w`. From the source-valid render language subtract
+every canonical image in the final complete registered missing-literal
+relation reconstructed in §20.3.2, including dictionary and normalized-
+codebook missing literals. A missing
 image's overlap with the otherwise numeric language is the reason for this
-subtraction and is not alone a conflict. A missing image that byte-equals an
-ordinary nonmissing normalized codebook literal is a missing-versus-literal
-conflict. Duplicate ordinary literal images with unequal source values or
-meanings are conflicts; every retained duplicate normalized-entry or
-semantic-overlap prohibition also remains independently controlling.
+subtraction and is not alone a conflict. A final registered missing image that
+byte-equals a final registered ordinary nonmissing normalized codebook literal
+is a missing-versus-literal conflict. Duplicate final registered ordinary
+literal images with unequal source values or meanings are conflicts; every
+retained duplicate normalized-entry or semantic-overlap prohibition also
+remains independently controlling.
 
-An ordinary nonmissing normalized codebook literal that does not collide
-with missing remains inside the physical DFA language even when its bytes
-are also accepted by the numeric DFA. Runtime's retained literal-first
+An ordinary nonmissing normalized codebook literal with a final registered
+image that does not collide with missing remains inside the physical DFA
+language even when its bytes are also accepted by the numeric DFA. Runtime's retained literal-first
 classification terminates before DFA traversal, so the token takes its
 literal meaning and cannot become a numeric result. This ordinary-literal/
 DFA overlap is lawful by itself: it is neither subtracted nor a conflict.
@@ -31017,23 +31116,25 @@ For `compiled_source_numeric_grammar_partial_range_exact_replay`, the
 source-valid numeric portion of that language is exactly the set of
 `physical_image_raw_token_hex` values in the complete renderable-member
 relations; no unrenderable source member or grammar-shaped value outside
-those relations contributes an edge or accepting path. Independently
-rendered ordinary nonmissing literals may remain in the physical language
-under the literal-first law above. Missing images are then subtracted as
-usual. The DFA and every accepting action sequence are reconstructed from
-those exact images, never from the observed subset, a generic numeric
-language, or the unrenderable relation.
+those relations contributes an edge or accepting path. Finally registered
+ordinary nonmissing literal images may remain in the physical language under
+the literal-first law above. A deferred or candidate-only ordinary image
+never does so. Final registered missing images are then subtracted as usual.
+The DFA and every accepting action sequence are reconstructed from those
+exact images, never from the observed subset, a generic numeric language,
+the pre-promotion relation, or the unrenderable relation.
 
 For
 `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
 the source-valid numeric portion is instead exactly the nonnull authoritative
 images in `arm_invariant_member_rows`. No image from
 `arm_ambiguous_member_rows` contributes an edge or accepting path; an
-ambiguous short literal likewise remains outside the registered literal
-relation and always takes its closed member abort. Independently registered
-invariant ordinary literals remain literal-first, registered invariant
-missing images are subtracted, and every observed numeric token must belong
-to an invariant accepting path. Candidate-specific zero/space images are
+ambiguous short literal likewise remains candidate-only outside the
+registered literal relation and always takes its closed member abort. Every
+invariant ordinary literal image promoted by the §20.3.2 producer transition
+remains literal-first, every invariant missing image promoted by that
+transition is subtracted, and every observed numeric token must belong to an
+invariant accepting path. Candidate-specific unequal zero/space images are
 proof rows only and cannot enlarge the authoritative language.
 
 The retained transition action enum becomes operative only as follows:
@@ -31077,10 +31178,11 @@ member equals whether the selected token form is signed, and
 `decimal_places` is the declared maximum `d`, while the transition path's
 `F` supplies the exact observed/replayed precision. The successor derivation
 row uses the 15-position ID preimage in §20.3.1, including its independently
-reconstructed positive `nonmissing_observation_count` on every compiled
-branch. Activating existing enum actions changes the complete transition
-rows, grammar ID, derivation ID, full-row hashes, and every enclosing
-domain/content digest; no predecessor digest may be copied.
+reconstructed positive final `nonmissing_observation_count` on every compiled
+branch. Only values reconstructed after the finalization barrier enter the
+complete transition rows, grammar ID, derivation ID, full-row hashes, and
+every enclosing domain/content digest; no provisional or predecessor digest
+may be copied.
 
 #### 20.3.5 Status tree, row identities, and complete consumer-visible branches
 
@@ -31115,6 +31217,18 @@ compiled status when its complete profile, selected-arm-or-disposition,
 complete-domain arm disposition and candidate relations when present, range
 partitions, padding rule, DFA, and replay exact-match.
 
+Before any passing status is emitted, every normalized codebook literal
+governed by the §20.3.2 deferred constructor must have exactly one final
+disposition: a registered authoritative image produced by the strict,
+singleton, sole-observed, selected-space, common-image, or finite-invariant
+transition; a candidate-only null authoritative image with the finite
+unequal-arm member abort; a still-deferred multiple-image zero-hit ordinary
+literal with the zero-count physical-unestablished abort; or a field-level
+closed failure. These dispositions are mutually exclusive and exact-cover the
+complete applicable source-entry relation. No other null-authority literal,
+unrenderable selected literal, or unproduced promotion may survive on a
+passing row.
+
 A retained `value_code_domain_no_numeric_grammar` row may likewise carry an
 explicit underdetermined selected-arm disposition and complete physical
 profile while its grammar remains null; its normalized literal is classified
@@ -31128,11 +31242,12 @@ exception. It requires `nonmissing_observation_count == 0`, nonempty
 applicable normalized numeric ranges, and exact missing-first replay of every
 record. It serializes `value_code_range_physical_rendering_unestablished`,
 null profile and grammar, the retained `none` padding object, no candidate
-form/arm results, and no selected form or arm. An exact-width ordinary literal
-may retain its source image, but every short ordinary literal retains its
-complete normalized semantics with `raw_token_hex: null` and the closed
-unobserved physical-rendering abort; no such short literal enters an
-executable map or missing-token relation. Conversely, a positive
+form/arm results, and no selected form or arm. Every strict unchanged-width,
+byte-deduplicated singleton, or sole-observed ordinary literal retains its
+registered image. Only a still-deferred multiple-image zero-hit ordinary
+literal retains its complete normalized semantics with `raw_token_hex: null`
+and the closed unobserved physical-rendering abort; no such deferred literal
+enters an executable map or missing-token relation. Conversely, a positive
 nonmissing count on a branch requiring numeric physical authentication must
 execute the complete candidate laws; zero records or registered missing
 records cannot authenticate either candidate form. Retained nonnumeric and
@@ -31189,8 +31304,8 @@ status is emitted.
 
 | Failure predicate | Exact row status and consequence |
 |---|---|
-| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; a duplicate registered missing image, a missing-versus-ordinary-literal image collision, duplicate ordinary literal images with unequal source values or meanings, or any retained duplicate-entry/semantic-overlap violation; multiple passing token forms after a positive nonmissing count; a complete positive-nonmissing census whose remaining nonliteral tokens each belong to at least one candidate language but for which no single token form covers the census; unequal independent range partitions; missing, duplicate, overlapping, or reordered range or arm-disposition members; an observed token resolving only to an arm-ambiguous member; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
-| any `unsupported_source_declaration`; any observed nonmissing/nonliteral token rejected by every closed candidate token language, including every malformed sign/space/point/digit/precision, grouping, exponent, zoned, overpunched, or non-ASCII form enumerated in §20.3.3; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; on either the pre-profile or final post-promotion collision pass, a duplicate registered missing image, a registered missing-versus-ordinary-literal image collision, duplicate registered ordinary literal images with unequal source values or meanings, or any retained duplicate-entry/semantic-overlap violation; multiple passing token forms after a positive nonmissing count; a complete positive-nonmissing census whose remaining nonliteral tokens each belong to at least one candidate language but for which no single token form covers the census; unequal independent range partitions; missing, duplicate, overlapping, or reordered range or arm-disposition members; an observed token resolving only to an arm-ambiguous member; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `unsupported_source_declaration`; any observed nonmissing/nonliteral token rejected by every closed candidate token language, including every malformed sign/space/point/digit/precision, grouping, exponent, zoned, overpunched, or non-ASCII form enumerated in §20.3.3; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm; or any literal left without an authoritative image after the applicable post-selection transition and without the exact finite unequal-arm or zero-count physical-unestablished candidate-only disposition | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
 | missing required numeric selector on a numeric-required branch after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; token-form evaluation that cannot be completed because required authenticated evidence is unavailable or unevaluable; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
 
 Accordingly, a positive-nonmissing complete candidate evaluation has no
@@ -31240,10 +31355,11 @@ and every applicable nested physical member. The four-key padding rule,
 observed rows, unobserved rows, and grammar project only through the existing
 same-named raw-token members; a compiled DFA therefore remains nested inside
 the existing `raw_token_grammar.registered_numeric_grammar`, never beside it
-on the layout. The zero-count retained branch projects the
-explicit absence/null values and every short ordinary literal's normalized-
-entry null rendering and four-key unobserved abort row through those same
-fixed shapes. No structural relabeling or mixed §19/§20 object is lawful.
+on the layout. The zero-count retained branch projects the explicit
+absence/null values, every registered literal image, and each still-deferred
+multiple-image zero-hit ordinary literal's normalized-entry null rendering
+and four-key unobserved abort row through those same fixed shapes. No
+structural relabeling or mixed §19/§20 object is lawful.
 
 #### 20.3.6 Mandatory actual-data regression-vector census
 
@@ -31287,8 +31403,10 @@ The byte-exact regression facts are:
   4,802: 1,069 one-digit tokens have one leading `0x20`, zero have a
   leading zero, and 3,733 are full-width. Token `2031` occurs 38 times.
   The space arm passes, the zero arm rejects all 1,069 diagnostics, the
-  exact-token DFA parses the same 100 canonical physical tokens, and every
-  value re-renders byte-for-byte.
+  complete source domain has 100 renderings, and literal-first subtraction
+  removes the two registered missing images—selected-space `0` as `2030`
+  and exact-width `99` as `3939`. The exact-token DFA therefore has 98
+  images, and every value re-renders byte-for-byte.
 - **A6-R02, V6302/1979.** Reproduce 6,373 width-1,062 terminal-CRLF records
   and slice one-based coordinates 2–5. Tokens are each integer 1 through
   6,373 exactly once; record one is `20202031`. Space rendering replays it,
@@ -31361,8 +31479,12 @@ The byte-exact regression facts are:
   `/field_evidence/96` and reproduce 4,802 width-771 terminal-CRLF records,
   slice one-based 250–258, and all 283 token rows. `NUM(9.0)` governs the
   complete finite range `100000001` through `100000880`; registered missing
-  literal `999999999` completes the 881-member semantic domain but has zero
-  observations. Every numeric member occupies all nine bytes under both
+  literal source lexeme `999,999,999` completes the 881-member semantic
+  domain but has zero observations. Pre-profile candidate-scalar construction
+  removes the grouping commas without rewriting that lexeme; every lawful
+  form/arm produces the singleton nine-byte image `393939393939393939`, so
+  the zero-hit literal registers under the singleton producer transition.
+  Every numeric member occupies all nine bytes under both
   candidate constructors, yields the same nine append-digit actions and no
   failure, and the literal takes the same missing-first bypass. Thus both
   complete-domain result arrays have 881 rows—880 exact numeric images and
@@ -31489,31 +31611,43 @@ The census reconstruction is exact:
    and `V955` are meanings continuing with `to `, not invented numeric
    ranges;
 3. require each field's exact `NUM(w.d)` or `CHR(w)` declaration and
-   coordinate width, reconstruct every literal, missing designation, and
-   normalized range, and apply semantic-overlap and duplicate-image conflict
-   predicates before any later terminal;
-4. for a numeric declaration, execute the missing-first pre-profile
-   constructor and derive the exact nonmissing count. Route a zero-count
-   range to the physical-unestablished branch with every short ordinary
-   literal and range member retained semantically but unrendered. Otherwise
-   evaluate the exact necessary-and-sufficient disposition predicates over
-   the complete candidate token languages, both padding renderers, every
-   finite-domain arm member, analytic exhaustive range
-   cardinality/renderability, semantic membership, and observed replay in
-   §§20.3.2–20.3.5. For a character declaration, retain only exact-width
+   coordinate width, and reconstruct every literal, missing designation, and
+   normalized range. For a numeric declaration, construct every deferred
+   literal candidate and apply semantic-overlap plus the first duplicate-
+   registered-image collision pass before any later terminal; retain the
+   independent exact-width character-literal law for a character declaration;
+4. for a numeric declaration, execute the complete pre-profile registration
+   constructor, provisionally classify missing tokens, and derive the
+   provisional nonmissing count. Route a zero-count range to the physical-
+   unestablished branch with every pre-profile registered literal retained
+   authoritative, each still-deferred multiple-image zero-hit ordinary
+   literal retained semantically but unrendered, and every range member
+   retained semantically but unrendered. Otherwise evaluate the exact
+   necessary-and-sufficient disposition predicates over the complete
+   candidate token languages, both padding renderers, every finite-domain arm
+   member, analytic exhaustive range cardinality/renderability, semantic
+   membership, and observed replay in §§20.3.2–20.3.5. Apply every applicable
+   selected-space, common-image, structural, or finite-invariant literal
+   promotion and every candidate-only or unrenderable disposition; then rerun
+   duplicate missing, missing-versus-ordinary, and unequal-ordinary collision
+   checks over final registrations. Rebuild missing classification and
+   `nonmissing_observation_count`, require equality to the provisional count,
+   and only then rebuild the invariant/ambiguous and range partitions, missing
+   subtraction, DFA, consumers, IDs, and hashes. For a character declaration,
+   retain only exact-width
    source literal images; an unknown observed byte is unsupported, an
    applicable range is physical-unestablished, a nonempty literal-only
    domain is value-code-only, and only an empty domain is outside numeric
    grammar. This census classification does not serialize the future
    derivation rows or substitute for §20.8.1's complete member partitions,
    DFA construction, and observed/unobserved replay;
-5. emit exactly one of the ten terminals in §20.3.5. Exclude every applicable
-   failure predicate before admitting a passing branch, and apply the closed
-   mutually exclusive failure precedence—conflict, then unsupported, then
-   incomplete. The matrix order below is the canonical serialization order,
-   not a license to evaluate a passing status before a failure predicate. No
-   observed subset, exemplar, era default, other field, or hand-coded field
-   key participates.
+5. require the four-way literal-disposition exact cover in §20.3.5, then emit
+   exactly one of its ten terminals. Exclude every applicable failure predicate
+   before admitting a passing branch, and apply the closed mutually exclusive
+   failure precedence—conflict, then unsupported, then incomplete. The matrix
+   order below is the canonical serialization order, not a license to evaluate
+   a passing status before a failure predicate. No observed subset, exemplar,
+   era default, other field, or hand-coded field key participates.
 
 The result is the following complete status-by-artifact matrix. Each final
 column hashes the ordered `[interview_wave,raw_field_id]` subarray for that
@@ -31626,16 +31760,22 @@ Specifically:
    array, applies the reconstruction-disagreement gate, and compares each
    remaining later supported assertion directly and mutually exclusively
    with the first reconstruction-agreed supported selector; a corroborator is
-   never an anchor. The latter hashes the complete 16-key row, including the
-   ten-key declaration projection and serialized nonmissing count. Only when
+   never an anchor. Each consumer then reconstructs the complete
+   `deferred_literal_candidate_rows` relation, the pre-profile registrations
+   and provisional count, every applicable post-selection producer
+   transition, the final three-way collision pass, and the rebuilt missing
+   classification and count. The latter hashes the complete 16-key row,
+   including the ten-key declaration projection and serialized final
+   nonmissing count. Only when
    the profile is nonnull does it also contain thirteen-key physical
    authentication, selected token form, selected arm or no-arm disposition,
    complete range partitions, the complete-domain arm disposition, any
    complete-domain candidate relations, and exact-token DFA. The zero-count
    retained branch instead commits null profile/grammar and the absence of
-   all those nested relations while retaining every source-semantic short
-   ordinary literal with a null image and its closed unobserved-value row. Every
-   source-derived status remains covered. A digest of a §19 row
+   all those nested relations while retaining each pre-profile registered
+   literal image and each still-deferred multiple-image zero-hit ordinary
+   literal's null image and closed unobserved-value row. Every source-derived
+   status remains covered. A digest of a §19 row
    or a row with one nested member projected away is unequal.
 2. On a nonnull numeric physical profile,
    `typed_parse_specs.raw_width` equals `payload_width == w`;
@@ -31646,8 +31786,9 @@ Specifically:
    kind is `fixed_width_numeric` or the retained value-code branch fixed by
    the complete source domain, never by a token's punctuation. On the
    all-missing retained branch, the positional value-code parse spec obeys
-   its inherited null-physical-member law and cannot fill any member,
-   including a short ordinary literal, from a nonexistent profile.
+   its inherited null-physical-member law. It consumes any literal image
+   already registered by the pre-profile constructor but cannot manufacture a
+   rendering for a still-deferred literal from a nonexistent profile.
 3. `raw_token_grammar.padding_rule` and
    `.registered_numeric_grammar` respectively deep-equal the same-named
    members of the successor derivation row.
@@ -31658,16 +31799,19 @@ Specifically:
    noncompiled branch requires null. No consumer may reject the
    underdetermined status merely because §19 formerly admitted only the
    diagnostic compiled status.
-   Independently summing its observed-token frequencies outside the complete
-   missing-literal relation must equal the resolved derivation row's
+   Independently summing its observed-token frequencies outside the final
+   complete registered missing-literal relation must equal the resolved row's
    `nonmissing_observation_count`; zero requires the retained null-profile,
    null-grammar range branch and never an inferred form or arm.
    An all-`source_silence` `value_code_domain_no_numeric_grammar` or
    `value_code_range_physical_rendering_unestablished` row likewise preserves
    null selector/profile/grammar values; its null selector is not a missing
    consumer field and cannot be filled from an inventory or peer row.
-4. Every `observed_token_rows` member is classified literal-first and
-   missing-first as §19 requires. During source reconstruction, a remaining
+4. After independently reconstructing the complete deferred candidate
+   relation, post-selection promotions, final collision pass, and final
+   registered relations, every `observed_token_rows` member is classified
+   literal-first and missing-first as §19 requires. During source
+   reconstruction, a remaining
    token outside every closed candidate language yields the exact unsupported
    failure row and its fresh ID/hash; it cannot appear as an incomplete
    consumer row. On a passing derivation, a numeric member then traverses the
@@ -31676,9 +31820,11 @@ Specifically:
    `source_derivation`, source entry references, and disposition remain
    source-derived. The exact raw bytes—not a normalized spelling—remain
    the lookup key.
-5. When the profile is nonnull, every `unobserved_possible_values` member is
-   rendered once by the same selected form and arm/disposition, traversed
-   through the same DFA, and replayed. A width-one no-arm row authorizes only its exact one-byte
+5. When the profile is nonnull, every `unobserved_possible_values` member
+   receives its final disposition from the same selected form and arm/
+   disposition: a final registered literal terminates literal-first, while an
+   authoritative numeric image is rendered once, traversed through the same
+   DFA, and replayed. A width-one no-arm row authorizes only its exact one-byte
    image; a no-capacity decimal row authorizes only the unique full-width
    image; neither authorizes a hypothetical wider rendering. On the finite-
    domain arm-ambiguous status, only an invariant member with a nonnull
@@ -31691,20 +31837,21 @@ Specifically:
    below. An additional precision spelling, plus form, zero-padded form, or
    physical image absent from the renderable relation aborts. On the
    zero-count physical-unestablished branch, registered literal images replay
-   literal-first, every short ordinary literal and range member retains the
-   inherited unestablished-rendering abort, and no candidate, range partition,
-   image, or DFA is constructed.
-6. The complete registered missing-literal relation retains exact-match
+   literal-first, each still-deferred multiple-image zero-hit ordinary literal
+   and every range member retains the inherited unestablished-rendering abort,
+   and no token-form/arm candidate, range partition, or DFA is constructed.
+6. The final complete registered missing-literal relation retains exact-match
    missing precedence, and an ordinary normalized codebook literal then
    retains complete-width literal-first precedence over DFA traversal. A
    candidate-only short missing literal on the arm-ambiguous branch is not a
    registered missing image and cannot enter `missing_raw_tokens`; either
    candidate spelling takes the member's closed pre-classification abort.
-   An invariant registered missing image retains the ordinary rule.
-   A
+   An invariant registered missing image retains the missing-first rule.
+   On both the pre-profile and final post-promotion collision passes, a
    missing-versus-ordinary-literal byte collision, duplicate missing image,
    or duplicate ordinary literal image with unequal value/meaning is a
-   conflict. A missing image's numeric-language overlap is removed from the
+   conflict. A final registered missing image's numeric-language overlap is
+   removed from the
    DFA; an ordinary nonmissing literal's numeric-language overlap remains in
    the DFA and is lawful by itself because literal-first classification
    terminates. Decimal punctuation, a minus, or DFA membership never silently
@@ -31753,21 +31900,23 @@ is `abort_before_classification_arm_ambiguous_source_member`. It is omitted
 from the executable seven-key `psid_value_code_specs.v1.entries` array and
 from `missing_raw_tokens`; neither candidate image becomes a value-map key.
 
-For the zero-nonmissing physical-unestablished status, a short ordinary
-literal instead retains the exact inherited four-key
+For the zero-nonmissing physical-unestablished status, a still-deferred
+multiple-image zero-hit ordinary literal instead retains the exact inherited
+four-key
 `unobserved_possible_values` shape. Its `source_value_domain` resolves the
 singleton normalized entry with `raw_token_hex: null`; its
 `rendering_status` is exactly `physical_rendering_unestablished`; its
 `registered_token_mappings` is exact empty; and `if_encountered` is the
 retained
 `abort_before_classification_require_successor_inventory_ratification`.
-This branch expressly replaces §19's requirement that every unobserved
-literal have `unique_registered_rendering` and contribute a seven-key
-executable entry. An exact-width ordinary literal still uses its directly
-source-established singleton rendering, and a uniquely evidenced short
-missing literal uses its registered missing rendering. Every short ordinary
-literal contributes neither an executable entry nor `missing_raw_tokens`;
-every range member remains under the same physical-unestablished range abort.
+This branch expressly replaces §19's requirement that every such still-
+deferred unobserved literal have `unique_registered_rendering` and contribute
+a seven-key executable entry. A strict unchanged-width image, a byte-
+deduplicated singleton image, or a sole-observed candidate remains registered
+under the pre-profile law, whether its literal is missing or ordinary. Only a
+still-deferred multiple-image zero-hit ordinary literal contributes neither an
+executable entry nor `missing_raw_tokens`; every range member remains under
+the same physical-unestablished range abort.
 The complete normalized-entry and unobserved-value arrays, counts, and
 digests nevertheless retain all such source members in source order.
 
@@ -31828,21 +31977,25 @@ The Q5 acceptance walk for each positive is exact:
 3. deep-compare its complete source-row arrays, coordinates, declaration
    assertions/dispositions after independently applying the disagreement
    gate and rebuilding every remaining later row directly against the first-
-   supported selector, token census, nonmissing count, profile, padding
-   rule, and replay; when the profile is nonnull, also compare form,
-   arm/disposition, both range relations, the complete-domain arm
-   disposition, any complete-domain candidate relations, and DFA; when it is
-   the zero-count retained range branch,
-   require those values absent and the grammar null, then compare every
-   source-visible short-literal null rendering before projecting its ID and
-   full-row hash;
+   supported selector, token census, complete deferred-literal candidate
+   relation, pre-profile registrations and provisional count, applicable
+   post-selection promotions, final collision results, final registered
+   literal relations, rebuilt nonmissing count, profile, padding rule, and
+   replay; when the profile is nonnull, also compare form, arm/disposition,
+   both range relations, the complete-domain arm disposition, any complete-
+   domain candidate relations, and the post-subtraction DFA; when it is the
+   zero-count retained range branch, require those profile-dependent values
+   absent and the grammar null, then compare every registered literal and
+   every still-deferred multiple-image zero-hit ordinary literal's source-
+   visible null rendering before projecting its ID and full-row hash;
 4. independently rebuild the complete 18-key raw-field projection, the
    nine remaining join members, join ID, and all row/keyset/domain digests;
    and
 5. exact-compare the complete asked/join/present reverse cover and the
-   official inventory layout, including every zero-count short-literal
-   four-key unobserved-abort row. Any missing, extra, reordered, predecessor,
-   or digest-only-equal nested value fails Q5 and G17-C01.
+   official inventory layout, including every zero-count still-deferred
+   literal's four-key unobserved-abort row and every registered literal-first
+   mapping. Any missing, extra, reordered, predecessor, or digest-only-equal
+   nested value fails Q5 and G17-C01.
 
 The historical §19.3.3 D5-before-Q5 comparison remains true as history.
 Amendment 6 adds the stronger live D6-before-Q5 comparison; the two are not
@@ -31865,11 +32018,15 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   Expected construction applies the prior disagreement gate and mutually
   exclusive selector-relative law to every assertion; the actual ten-key
   arrays must deep-equal those rows,
-  including every selector pointer and exact disposition.
+  including every selector pointer and exact disposition. Expected and actual
+  construction also deep-compare the complete deferred-literal candidate
+  relation, pre-profile producer results and provisional count, post-selection
+  producer results, final collision outcomes, final registered literal
+  relations, and rebuilt final count.
   The complete relation includes every ten-key declaration projection,
   nonmissing count, profile/null-profile branch, padding rule, replay,
-  failure branch, the zero-count branch's source-semantic short-literal null
-  renderings, and, when present, form,
+  failure branch, the zero-count branch's registered literal mappings and
+  still-deferred multiple-image zero-hit ordinary null renderings, and, when present, form,
   arm/disposition, complete
   renderable/unrenderable range relation, complete-domain arm disposition,
   complete-domain candidate relation, and DFA. It also includes all eleven
@@ -31895,9 +32052,10 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   the full DFA and exact `no_op`, `set_negative`, and
   `consume_decimal_point` transitions remain nested inside
   `raw_token_grammar.registered_numeric_grammar`. A zero-count reference
-  instead resolves the null-profile/null-grammar row with those relations absent,
-  while the existing same-shaped raw-token member retains every short-
-  ordinary-literal and range unobserved row. A fourth- or sixth-value pair
+  instead resolves the null-profile/null-grammar row with profile-dependent
+  relations absent, while the existing same-shaped raw-token member retains
+  every pre-profile registered literal and every still-deferred multiple-
+  image zero-hit ordinary-literal and range unobserved row. A fourth- or sixth-value pair
   that agrees only on width, scalar, grammar ID, or reference hash without
   this resolution and complete-row comparison fails.
 - **G17-C06.** Before direct-law classification, the expected and actual
@@ -31905,15 +32063,17 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   complete declaration disposition relation, including every later row's
   direct comparison and pointer to the first reconstruction-agreed supported
   selector, census,
-  nonmissing count,
-  padding operation, and raw-to-value-to-raw replay. For a nonnull profile
+  provisional nonmissing count, complete deferred candidate and pre-profile
+  registration relations, every post-selection promotion, final three-way
+  collision result, rebuilt final nonmissing count, padding operation, and
+  raw-to-value-to-raw replay. For a nonnull profile
   they also compare token-form selection, arm or no-arm disposition, both
   range relations, the complete-domain arm disposition, any complete-domain
   candidate relations, transition rows, and value derivation. For the
   zero-count retained branch they instead
-  compare null profile/grammar, absence of those relations, exact
-  missing-literal replay, and every source-semantic short-literal null
-  rendering and closed unobserved abort.
+  compare null profile/grammar, absence of profile-dependent relations, exact
+  registered-literal replay, and every still-deferred multiple-image zero-hit
+  ordinary literal's null rendering and closed unobserved abort.
   Missing/literal precedence and all retained legal/default folds follow only
   after that pass. Missing-versus-literal and unequal-meaning duplicates
   conflict, while ordinary literal/DFA overlap exact-compares and terminates
@@ -31932,16 +32092,18 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   `numeric_grammar_derivation_id` and `numeric_grammar_derivation_sha256`
   must resolve to the independently reconstructed complete 16-key successor
   row. Within that
-  resolved row, the declaration-disposition projection, profile, padding
-  rule, grammar, and replay members must deep-equal their independently
-  rebuilt values, including both numeric-range partition relations, the
+  resolved row, the declaration-disposition projection, complete deferred
+  candidate and staged registration relations, final collision and count,
+  profile, padding rule, grammar, and replay members must deep-equal their
+  independently rebuilt values, including both numeric-range partition relations, the
   complete-domain arm disposition, and any complete-domain candidate
   relations when present. A zero-count physical-
   unestablished row instead requires the same resolved successor row/count,
-  null profile/grammar, absent candidate/partition relations, and exact
-  missing replay; its independently rebuilt executable seven-key entry array
-  omits every short ordinary literal while its normalized source/domain
-  commitment retains them. No five-key commitment or seven-key entry is compared
+  null profile/grammar, absent profile-dependent candidate/partition
+  relations, and exact registered-literal replay; its independently rebuilt
+  executable seven-key entry array omits every still-deferred multiple-image
+  zero-hit ordinary literal while its normalized source/domain commitment
+  retains them. No five-key commitment or seven-key entry is compared
   directly with an out-of-schema compiler member. Tuple-equivalent SPSS/codebook
   declarations remain
   separately visible; neither is discarded because their semantic tuples
@@ -31958,15 +32120,23 @@ In §19.8.1 the source-format compiler step is composed with §§20.3–20.4:
 compile all declaration assertions, apply the prior independent-
 reconstruction disagreement gate, and assign each remaining later supported
 row its one mutually exclusive disposition by direct comparison with the
-first reconstruction-agreed supported selector, then compile all candidate token forms on applicable
-positive-nonmissing numeric branches, every serialized
-nonmissing count and all-missing retained branch including every short
-ordinary literal's null rendering and closed unobserved abort, the per-field space or no-
-arm result, every applicable nonnull-profile exhaustive range partition and
-complete-domain arm disposition and candidate relation, exact-token DFAs,
-replays, the complete all-field totality census with an exact-empty unmapped
-set, and eleven vectors before building Q5, the official artifacts, or G17. Every
-later reference to a v3 derivation row means this completed v3 row.
+first reconstruction-agreed supported selector. Next build the complete
+deferred-literal candidate relation and pre-profile registrations, run the
+first collision pass, provisionally classify missing observations, and derive
+the provisional nonmissing count. A zero count retains every registered
+literal and only each still-deferred multiple-image zero-hit ordinary
+literal's null rendering and closed unobserved abort. On an applicable
+positive-nonmissing numeric branch, compile all candidate token forms, select
+the per-field space or no-arm result, execute every applicable literal
+promotion or closed candidate-only/unrenderable disposition, rerun all three
+literal collision checks, and rebuild final missing classification and the
+serialized nonmissing count. Only after that finalization barrier build every
+applicable exhaustive range partition and complete-domain arm disposition,
+exact-token DFA with final missing subtraction, replay, consumer, ID, and
+hash. Require the complete literal-disposition exact cover, the all-field
+totality census with an exact-empty unmapped set, and all mandatory vectors
+before building Q5, the official artifacts, or G17. Every later reference to
+a v3 derivation row means this completed v3 row.
 
 Section 19.8.2 item 4 is prospectively replaced only where it says that
 nonnull declarations must be byte-equal, that every nondiagnostic field is
@@ -31980,7 +32150,9 @@ dispositions; exact
 maximum-fitting literal decimal; exhaustive partial-range exact replay;
 exact leading-minus placement; exact unsupported status for every observed
 nonmissing/nonliteral closed-language rejection; conflict for a complete
-mixed-form census; and incomplete status only for unevaluable authority. This
+mixed-form census; complete staged literal registration and final collision
+reconstruction; closed candidate-only dispositions; fail-closed unrenderable
+literals; and incomplete status only for unevaluable authority. This
 amendment establishes representability,
 not that Q5, an official inventory, G17, or a production registration now
 passes.
@@ -32004,22 +32176,22 @@ enumeration and exact reverse cover.
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `composed-with-§20.3.7-complete-totality-census`: the interface literal, entry points, nine-key top-level envelope, source denominator, and dependency order remain exact; the nested numeric derivation row is expressly replaced by the 16-key successor named below, and the successor ten-terminal function must exact-cover every field once with an exact-empty unmapped set before top-level pass. |
 | §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; conflict-gate any independent reconstruction disagreement before the numbered arms; select the first reconstruction-agreed supported assertion whenever one exists; compare every remaining later assertion directly and mutually exclusively against that selector for byte/deep equality, then byte-unequal numeric-tuple equality, never against a corroborator; preserve null selector/profile/grammar only for an all-`source_silence` `value_code_domain_no_numeric_grammar` or `value_code_range_physical_rendering_unestablished` row whose independent conditions pass; abort every unsupported, true-conflict, or missing disposition. |
 | §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
-| §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-thirteen-key-authentication`: add complete token-form results and selection, exhaustive range-partition rows/counts/digests, and the nested complete-domain invariant/ambiguous arm disposition when the profile is nonnull; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, finite-complete-domain equality, and finite-domain partial-ambiguity proofs serialize no arm; zero nonmissing evidence bypasses the entire profile/candidate object. |
+| §19.3.2 seven-key `physical_authentication`, literal insertion, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-staged-literal-constructor-and-thirteen-key-authentication`: before profile construction, exact-cover every missing and ordinary codebook literal with the complete deferred candidate relation, apply strict/singleton/sole-observed registration, run the first collision pass, and derive the provisional count; add complete token-form results and selection, exhaustive range-partition rows/counts/digests, and the nested complete-domain invariant/ambiguous arm disposition when the profile is nonnull; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, finite-complete-domain equality, and finite-domain partial-ambiguity proofs serialize no arm; after the selected-space/common-image/invariant promotions or exact candidate-only disposition, rerun all three collision checks and rebuild final classification, partitions, DFA, consumers, IDs, and hashes; zero nonmissing evidence bypasses the profile/token-form/arm object but not the pre-profile literal constructor. |
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural, complete-domain equality, or finite-domain invariant/ambiguous proof. Amendment-6 rows never select or canonicalize a zero-padding arm. |
 | §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
-| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; add the explicit all-missing retained branch, structural/equality no-arm, finite-domain arm-ambiguous, and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language is unsupported, mixed individually lawful forms conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
-| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.3.4-and-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; missing-versus-ordinary-literal and unequal-meaning duplicate literals conflict, while ordinary nonmissing literal/DFA overlap is lawful and terminates literal-first; partial ranges carry both member relations and the closed unrenderable-member action; a finite-domain arm-ambiguous row serializes both complete candidates, compiles only invariant authoritative images, and gives every ambiguous numeric or short-literal member a null image and closed abort; an all-missing retained range replays registered literals, preserves every short ordinary literal as source-semantic with a null rendering and closed unobserved abort, and constructs no profile/partition/DFA; precedence and source semantics remain exact. |
+| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize the rebuilt final `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; require the complete four-way literal-disposition exact cover and both collision passes; add the explicit all-missing retained branch, structural/equality no-arm, finite-domain arm-ambiguous, and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language or a remaining unrenderable literal without an express candidate-only disposition is unsupported, mixed individually lawful forms or a final registered collision conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
+| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.3.2–§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer after staged literal finalization; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; registered missing-versus-ordinary-literal and unequal-meaning duplicate literals conflict, while registered ordinary nonmissing literal/DFA overlap is lawful and terminates literal-first; partial ranges carry both member relations and the closed unrenderable-member action; a finite-domain arm-ambiguous row registers invariant literal images and retains only unequal finite-arm images as candidate-only null-authority members with closed aborts; an all-missing retained range replays pre-profile registered literals, preserves only still-deferred multiple-image zero-hit ordinary literals as source-semantic with a null rendering and closed unobserved abort, and constructs no profile/partition/DFA; precedence and source semantics remain exact. |
 | §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-eleven-vector-census`: V93 remains mandatory; actual later-era space, width-one, decimal, signed, conflict, precision-edge, complete-domain no-capacity, finite-domain arm ambiguity, all-missing range, and all-missing short-ordinary-literal vectors are added; zero-arm constructors are rejection-only. |
-| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the layout retains its 17 direct keys, the parallel typed-parse object retains nine, and the nested raw-token grammar retains 18. A layout copies only its fixed same-shaped members and derivation references, its parallel positional typed-parse and raw-token projections compare only their named successor members, and resolving the ID/full-row hash independently compares the complete 16-key row, including zero-count short-literal null-rendering/unobserved-abort rows. No profile, arm/disposition, candidate, partition, or direct DFA sibling key is added to the layout; a compiled DFA remains inside the existing `raw_token_grammar.registered_numeric_grammar`. Actual five-key commitments and seven-key entries compare only with independently rebuilt like-shaped expected objects, omit those unexecutable short literals, and resolve every commitment field-row derivation reference before nested members are compared. |
-| §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
+| §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the layout retains its 17 direct keys, the parallel typed-parse object retains nine, and the nested raw-token grammar retains 18. A layout copies only its fixed same-shaped members and derivation references, its parallel positional typed-parse and raw-token projections compare only their named successor members, and resolving the ID/full-row hash independently compares the complete 16-key row after reconstructing deferred candidates, staged registrations, both collision passes, final missing classification/count, and missing subtraction, including registered zero-count literal mappings and only still-deferred multiple-image zero-hit literal null-rendering/unobserved-abort rows. No profile, arm/disposition, candidate, partition, or direct DFA sibling key is added to the layout; a compiled DFA remains inside the existing `raw_token_grammar.registered_numeric_grammar`. Actual five-key commitments and seven-key entries compare only with independently rebuilt like-shaped expected objects, omit only those unexecutable deferred literals, and resolve every commitment field-row derivation reference before nested members are compared. |
+| §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and independently reconstructs the complete staged literal relation and finalization barrier before it compares any projection; Q5 is first-added only after D6. |
 | §19.3.3 positive join `raw_field_projections`, numeric derivation ID/full-row hash, join identity, and Q5 digest | `composed-with-§20.4.2`: the 18-key projection is unchanged in shape and resolves the complete successor 16-key row; all enclosing identities/digests are rebuilt. |
-| §16.6.4 and §19.4.2 G17-C01 | `composed-with-§20.4.3`: the fourth, fifth, and sixth values carry the complete successor joins, compiler relation, layouts, and independent reverse projections; 18-row order remains. |
-| §16.6.4 and §19.4.2 G17-C06 | `composed-with-§20.4.3`: independent direct-law evaluation compares and replays the complete successor grammar before classification. |
-| §16.6.4 and §19.4.2 G17-C07 | `composed-with-§20.4.3`: independently rebuilt five-key source commitments and seven-key entries compare only to like-shaped actual objects; each commitment's derivation reference resolves the complete 16-key successor row before its nested declaration dispositions, ranges, grammar, and replay are independently compared. |
+| §16.6.4 and §19.4.2 G17-C01 | `composed-with-§20.4.3`: the fourth, fifth, and sixth values carry the complete successor joins, compiler relation, layouts, independently reconstructed deferred-literal and final-registration results, and reverse projections; 18-row order remains. |
+| §16.6.4 and §19.4.2 G17-C06 | `composed-with-§20.4.3`: independent direct-law evaluation compares both literal collision passes, final registered relations and count, and replays the complete post-subtraction successor grammar before classification. |
+| §16.6.4 and §19.4.2 G17-C07 | `composed-with-§20.4.3`: independently rebuilt five-key source commitments and seven-key entries compare only to like-shaped actual objects; each commitment's derivation reference resolves the complete 16-key successor row before its nested declaration dispositions, deferred candidates, staged literal registrations, final collisions/count, ranges, grammar, and replay are independently compared. |
 | §19.4.1 Amendment-5 replacement ledger and §19.4.3 Amendment-5 closure sweep | `lawfully-unchanged-with-reason`: both remain immutable historical D5 results; this amendment supplies the separate successor inventory and sweep below. |
 | §19.5 complete revision-7 comparator census | `lawfully-unchanged-with-reason`: it remains the exact D5 historical table; §20.6 supplies the revision-8 successor census. |
 | §19.6–§19.7 terminal lifecycle, capture, receipt, and selected-registration predicates | `replaced-by-§20.7-revision-8-successors`: D5 remains an immutable predecessor; D6 and all affected successor envelopes receive fresh versioned identities. |
-| §19.8.1 build order and every downstream phrase “v3 derivation row” | `composed-with-§20.4.4`: completed declarations, forms, arms, DFA/replay, and vectors precede Q5 and all consumers. |
+| §19.8.1 build order and every downstream phrase “v3 derivation row” | `composed-with-§20.4.4`: completed declarations, deferred candidates, pre-profile registrations and provisional count, forms, arms, literal promotions/dispositions, final collision/classification/count rebuild, partitions, DFA/replay, consumers, IDs/hashes, and vectors precede Q5 and all consumers. |
 | §19.8.2 item 4 grammar tension | `replaced-only-as-enumerated-in-§20.4.4`: the named byte-equality/nondiagnostic/signed/explicit-decimal conclusions are displaced; every retained fail-closed source and replay constraint survives. |
 | §§1–19 passages not reached by the deterministic sweep below | `lawfully-unchanged-with-reason`: they neither define nor consume the changed declaration, token-form, padding, decimal/sign, DFA, Q5, G17, comparator, or lifecycle identities; silence preserves them. |
 
@@ -32031,9 +32203,13 @@ direct consumers and every transitive consumer through these closed edge
 classes: schema-member inclusion; ordered ID-preimage inclusion;
 declaration-selector resolution and selector-relative disposition
 reconstruction;
-count/keyset/domain/content digest inclusion; source projection and reverse
-projection; foreign-key resolution; compiler invocation; DFA construction
-and replay; Q5 field join; inventory layout or value-map consumption; G17
+deferred-literal candidate construction; pre-profile registration and
+collision/classification; post-selection promotion or closed candidate-only/
+unrenderable disposition; final collision, classification, count, and
+partition reconstruction; count/keyset/domain/content digest inclusion;
+source projection and reverse projection; foreign-key resolution; compiler
+invocation; final missing subtraction, DFA construction and replay; Q5 field
+join; inventory layout or value-map consumption; G17
 expected/actual reconstruction; applicability/capture/receipt/lineage
 selection; and ratification ancestry. An affected consumer with no named
 disposition is unresolved and aborts.
@@ -32621,8 +32797,9 @@ dependency order before Q5 or an official consumer is read:
 2. run dictionary extraction over all 86 dictionary documents, then raw
    framing and complete all-field census over all 43 raw documents, then
    context-complete codebook extraction over all 47 codebook documents,
-   including the closed pre-profile literal constructor wherever the
-   zero-nonmissing range branch may apply;
+   including the complete `deferred_literal_candidate_rows` relation and
+   closed pre-profile registration constructor for every normalized codebook
+   literal in every supported numeric group;
    exact-cover every source row and reproduce every count/keyset/domain
    digest before a target field can be selected;
 3. for every wave/field group in the retained denominator order, enumerate
@@ -32641,32 +32818,41 @@ dependency order before Q5 or an official consumer is read:
    `value_code_domain_no_numeric_grammar` or
    `value_code_range_physical_rendering_unestablished` row whose independent
    conditions pass;
-4. independently replay the pre-profile literal constructor in the numeric
-   entry point against the canonical codebook result, then missing-first
-   serialize each field's complete
-   `nonmissing_observation_count`; when it is zero, construct no token-form or
-   arm candidate, select neither, replay every registered missing token, and
-   retain every short ordinary literal with its unchanged semantics, null
-   rendering, no executable/missing entry, and closed unobserved abort, then
-   route an applicable range to the retained null-profile/null-grammar
-   physical-unestablished branch. Only for a positive count on a branch that
-   otherwise requires or adopts numeric physical authentication evaluate
-   every token-form candidate and its complete `B_o` vectors/counts. Before
-   requiring one passing form, classify a fully evaluated zero-pass census as
-   unsupported when any nonmissing/nonliteral token is outside every closed
-   language, or conflict when individually lawful forms cannot cohere; use
-   incomplete only when authenticated evidence cannot be evaluated.
-   Otherwise require exactly one passing form, coalesce the explicit sign
-   declarations, and evaluate both
-   padding-arm renderers, and serialize exactly the per-field space arm, one
-   structural no-arm disposition, the finite-complete-domain equality
-   disposition, or the finite-domain arm-ambiguous disposition after both
-   complete candidate relations and the invariant/ambiguous partition are
-   serialized and every observation resolves to an invariant authoritative
-   image; byte replay follows only after the DFA is compiled in step 5. No
-   other field's result enters;
-5. for each nonnull-profile row, conflict-check missing-versus-literal and
-   unequal-meaning duplicate literal images, enumerate every member of the
+4. independently replay the complete deferred-literal relation and
+   pre-profile registration constructor in the numeric entry point against
+   the canonical codebook result. Run the first duplicate-missing,
+   missing-versus-ordinary, and unequal-ordinary collision pass; provisionally
+   classify every observation missing-first and derive the internal
+   nonmissing count. When it is zero, construct no token-form or arm candidate,
+   select neither, repeat the collision and missing-classification pass over
+   the unchanged registrations, serialize
+   `nonmissing_observation_count == 0`, replay every registered missing token,
+   and retain only each still-deferred multiple-image zero-hit ordinary
+   literal with unchanged semantics, null rendering, no executable/missing
+   entry, and closed unobserved abort. Route an applicable range to the
+   retained null-profile/null-grammar physical-unestablished branch. Only for
+   a positive provisional count on a branch that otherwise requires or adopts
+   numeric physical authentication evaluate every token-form candidate and
+   its complete `B_o` vectors/counts. Before requiring one passing form,
+   classify a fully evaluated zero-pass census as unsupported when any
+   nonmissing/nonliteral token is outside every closed language, or conflict
+   when individually lawful forms cannot cohere; use incomplete only when
+   authenticated evidence cannot be evaluated. Otherwise require exactly one
+   passing form, coalesce the explicit sign declarations, and evaluate both
+   padding-arm renderers. Promote every common zero/space literal image;
+   promote the selected-space image on a diagnostic space branch; and promote
+   every invariant literal image on a finite no-arm branch. Retain unequal
+   finite images only as candidate-only null-authority members with their
+   closed abort, and fail any remaining unrenderable literal. Rebuild the two
+   complete candidate relations and invariant/ambiguous partition, then rerun
+   all three literal collision checks, missing classification, and the final
+   serialized `nonmissing_observation_count`; require equality with the
+   provisional value. Only then serialize the per-field space arm, structural
+   no-arm disposition, finite-complete-domain equality disposition, or
+   finite-domain arm-ambiguous disposition. Byte replay follows only after the
+   DFA is compiled in step 5. No other field's result enters;
+5. after that final-registration barrier, for each nonnull-profile row,
+   enumerate every member of the
    complete source-declared semantic domain including every unobserved value,
    and first construct and validate every applicable exhaustive ordered range
    partition. Each partition must cover its unchanged source range exactly;
@@ -32699,11 +32885,10 @@ dependency order before Q5 or an official consumer is read:
    and replays only its established literals literal-first through its
    independently established profile/padding or retained null-profile branch.
    Separately, for a zero-count retained range, replay the pre-profile
-   registered literals,
-   compare every short ordinary literal's null rendering and closed
-   unobserved-value row, and verify that profile, candidate, partition, and
-   DFA members are absent and every such literal and range rendering remains
-   unestablished; then
+   registered literals, compare every still-deferred multiple-image zero-hit
+   ordinary literal's null rendering and closed unobserved-value row, and
+   verify that profile, candidate, partition, and DFA members are absent and
+   every such literal and every range rendering remains unestablished; then
    compute every grammar ID, derivation ID, full-row digest, relation digest,
    and implementation result from complete canonical bytes; and
 6. independently reproduce the complete all-field totality relation before
@@ -32720,7 +32905,7 @@ The required actual-evidence walk is:
 
 | Vector | Audit ledger | Exact field/wave | Mandatory source-to-replay result |
 |---|---|---|---|
-| A6-R01 | lane A, §20.2.1 | V93 / 1968 | `2031` and the complete 4,802-row census select `left_ascii_space_padding`; zero rejects every one of the 1,069 diagnostics; DFA/value/rendering replay all bytes. |
+| A6-R01 | lane A, §20.2.1 | V93 / 1968 | `2031` and the complete 4,802-row census select `left_ascii_space_padding`; zero rejects every one of the 1,069 diagnostics; 100 source renderings minus registered missing-first images `2030` and `3939` produce exactly 98 DFA images; value/rendering replay all bytes. |
 | A6-R02 | lane B, §20.2.1 | V6302 / 1979 | `20202031` and all 6,373 distinct tokens independently select the same space arm in the later era; `30303031` is excluded. |
 | A6-R03 | lane B, §20.2.1 | V15133 / 1988 | all ten one-byte digit tokens force `padding_arm_underdetermined_width_one_exact_replay_v1`; literal `30` replays first and range bytes `31`–`39` traverse/replay through the compiled DFA; neither arm is serialized. |
 | A6-R04 | lane A, §20.2.1 | V210 / 1968 | `NUM(4.2)`/`F4.2` dispositions select literal decimal; missing `0.00` remains missing-first; nonmissing `2.60` maps to exact `13/5` and back; full width forces `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`. |
@@ -32835,7 +33020,9 @@ smallest dispositions for round one and records the rejected alternatives:
    diagnostic fields and every audited earlier diagnostic use space, with
    zero zero-padded fields. A universal renderer that skips the field census
    would turn aggregate evidence into per-field authority, so each field
-   must still reproduce a positive diagnostic and zero-arm rejection. A
+   must still reproduce a positive diagnostic and zero-arm rejection; only
+   then does it promote every still-deferred literal's selected-space image
+   before the final collision and missing-classification pass. A
    zero default, “accept either,” trim, and host formatting are rejected.
 2. **No padding capacity.** Inheriting the era's space result would
    fabricate an arm; serializing zero would contradict the diagnostic
@@ -32847,14 +33034,17 @@ smallest dispositions for round one and records the rejected alternatives:
    range members fills all nine bytes and the missing literal bypasses both
    candidates identically. The fail-closed-smallest extension reuses the
    existing no-capacity disposition only after both complete 881-row image/
-   action/failure relations deep-equal and all observations replay. An
+   action/failure relations deep-equal, every common literal image is promoted
+   to registration, the final collision pass succeeds, and all observations
+   replay. An
    observed-subset proof, era arm, or uncoded-domain generalization is
    rejected. V117 and V5092 expose the remaining finite-domain case: all
    observations are arm-invariant although the candidates disagree for
    unobserved members. The smallest lawful extension serializes both complete
    candidate relations and their exhaustive invariant/ambiguous partition,
-   compiles only invariant images, and gives every ambiguous numeric or short-
-   literal member a null authoritative image and closed abort. Arbitrarily
+   promotes every invariant literal image, compiles only authoritative
+   invariant images, and gives every ambiguous numeric or literal member a
+   null authoritative image and closed abort. Arbitrarily
    selecting an arm, admitting both spellings, or omitting the disagreeing
    subdomain is rejected.
 3. **Literal decimal precision.** Requiring exactly `d` fractional bytes
@@ -32923,10 +33113,12 @@ smallest dispositions for round one and records the rejected alternatives:
    evidence produces a false conflict, while choosing one of the passing
    forms or an era arm fabricates physical authority. The fail-closed-
    smallest choice serializes the independently counted zero in the
-   derivation-row envelope, lets both source entry points bind only exact-
-   width literals plus a uniquely observed shorter missing literal, retains
-   every shorter ordinary literal with its source semantics but null physical
-   rendering and closed unobserved abort, constructs no profile/candidate
+   derivation-row envelope, lets both source entry points run the complete
+   deferred relation and bind strict conforming unchanged-width images, a
+   byte-deduplicated singleton across all lawful forms/arms even when
+   unobserved, or the sole observed candidate. It retains only each remaining
+   multiple-image zero-hit ordinary literal with source semantics but null
+   physical rendering and closed unobserved abort, constructs no profile/arm-candidate
    relation, and reuses the retained range-physical-
    unestablished null-profile/null-grammar branch while replaying the missing
    literal exactly. Putting the count
@@ -32953,7 +33145,8 @@ smallest dispositions for round one and records the rejected alternatives:
    also alter the authenticated physical language without need. The fail-
    closed-smallest law conflicts a missing-versus-ordinary-literal collision
    and duplicate ordinary literal images with unequal meanings, subtracts
-   registered missing images, but retains an ordinary nonmissing literal's
+   registered missing images only after post-selection promotion and the final
+   rerun of all three collision checks, but retains an ordinary nonmissing literal's
    DFA overlap and terminates literal-first. Letting a missing/literal
    collision choose either meaning, letting unequal meanings deduplicate, or
    letting DFA traversal override the ordinary literal is rejected.
@@ -32963,8 +33156,9 @@ The resulting mandatory-abort matrix is closed:
 | Condition | Mandatory result |
 |---|---|
 | diagnostic field selects zero, accepts both arms, mixes zero/space, or lacks a positive diagnostic despite available capacity | numeric authority failure under §20.3.5; no layout/Q5/G17 consumer |
-| width-one or no-capacity row serializes an arm instead of its exact disposition; a finite-domain equality row omits or unequally serializes either complete candidate relation; or a finite-domain arm-ambiguous row selects an arm, omits either candidate or either partition relation, assigns an ambiguous member a nonnull authoritative image or runtime scalar result, or admits it to the DFA | conflict/replay failure; vector and derivation identity fail; every ambiguous member retains its exact closed abort |
-| zero nonmissing observations construct or select any token form, padding arm, physical profile, partition, or grammar; omit the serialized zero; fail exact missing-literal replay; omit a short ordinary literal; or give that literal a physical/executable/missing mapping | derivation/vector identity failure; an applicable range remains `value_code_range_physical_rendering_unestablished`; every short ordinary literal retains null rendering and the closed unobserved abort; no physical scalar result exists |
+| width-one or no-capacity row serializes an arm instead of its exact disposition; a finite-domain equality row omits or unequally serializes either complete candidate relation; an invariant literal is not promoted; or a finite-domain arm-ambiguous row selects an arm, omits either candidate or either partition relation, assigns an ambiguous member a nonnull authoritative image or runtime scalar result, or admits it to the DFA | conflict/replay failure; vector and derivation identity fail; every ambiguous member retains its exact closed abort |
+| a deferred literal has no image under the selected form/arm disposition, or survives finalization without registration, an expressly lawful finite unequal candidate-only abort, or a zero-count physical-unestablished abort | exact closed unsupported literal failure; no passing profile, partition, grammar, consumer, ID, or hash |
+| zero nonmissing observations construct or select any token form, padding arm, physical profile, partition, or grammar; omit the serialized zero; fail exact missing-literal replay; omit a source literal; leave an exact/singleton/sole-observed literal unregistered; or give a still-deferred multiple-image zero-hit literal a physical/executable/missing mapping | derivation/vector identity failure; an applicable range remains `value_code_range_physical_rendering_unestablished`; the still-deferred literal retains null rendering and the closed unobserved abort; no physical scalar result exists |
 | a missing image byte-equals an ordinary literal, a registered missing image is duplicated, or duplicate ordinary literal images carry unequal source values/meanings | `conflicting_source_numeric_format`; an ordinary nonmissing literal's overlap with the DFA alone is expressly excluded and terminates literal-first |
 | any observed nonmissing/nonliteral token with plus, misplaced minus, negative zero, a noncanonical magnitude not generated by an evaluated padding constructor, illegal space/tab, absent/repeated/malpositioned point, wrong precision, grouping, exponent, zoned/overpunched form, or non-ASCII byte that lies outside every closed candidate language | `unsupported_source_numeric_format`; only a separately satisfied earlier conflict predicate changes the row to `conflicting_source_numeric_format`; no scalar result |
 | an observed token is accepted only by the excluded zero-padding candidate, including a leading-zero magnitude such as `-0242` for -242 | `unsupported_source_numeric_format` under the zero-selected/excluded-arm predicate; it is not incomplete and authorizes no zero arm |
