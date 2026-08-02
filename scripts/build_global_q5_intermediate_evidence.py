@@ -42,6 +42,9 @@ CATALOG_PATH = (
     / "global_relationship_catalog_evidence_v1.json"
 )
 ERA_OUTPUT_DIRECTORY = CATALOG_PATH.parent
+ABSENCE_STOP_PATH = (
+    ERA_OUTPUT_DIRECTORY / "global_absence_domain_stop_evidence_v1.json"
+)
 CANONICAL_Q5_PATH = (
     ROOT
     / "data"
@@ -1489,12 +1492,434 @@ def validate_era_evidence(
         raise ValueError("era evidence integrity drift")
 
 
+def _committed_input_identity(
+    path: Path, value: Mapping[str, Any]
+) -> dict[str, Any]:
+    raw = path.read_bytes()
+    if raw != canonical_json_bytes(value):
+        raise ValueError(f"noncanonical committed input: {path}")
+    return {
+        "path": str(path.relative_to(ROOT)),
+        "raw_sha256": _sha256(raw),
+        "content_sha256": value["integrity"]["content_sha256"],
+    }
+
+
+def _constructed_absence_stop_evidence(
+    catalog: Mapping[str, Any],
+    era_evidence_by_id: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Construct the complete dependency stop without asserting an absence."""
+
+    if CANONICAL_Q5_PATH.exists():
+        raise ValueError("canonical Q5 path already exists")
+    validate_catalog_evidence(catalog)
+    if set(era_evidence_by_id) != set(ERA_BY_ID):
+        raise ValueError("absence-stop era input domain drift")
+
+    era_inputs: list[dict[str, Any]] = []
+    era_cardinalities: list[dict[str, Any]] = []
+    wave_projection: list[int] = []
+    document_count = 0
+    page_count = 0
+    baseline_hierarchy_count = 0
+    baseline_expanded_count = 0
+    for spec in ERA_SPECS:
+        era_id = spec["era_id"]
+        era = era_evidence_by_id[era_id]
+        validate_era_evidence(era, catalog)
+        wave_projection.extend(era["interview_waves"])
+        document_count += era["questionnaire_document_count"]
+        page_count += era["questionnaire_page_count"]
+        baseline_hierarchy_count += era["baseline_hierarchy_row_count"]
+        baseline_expanded_count += era["complete_hierarchy_cardinality"][
+            "design_fixed_baseline_expanded_lower_bound"
+        ]
+        identity = _committed_input_identity(era_output_path(era_id), era)
+        era_inputs.append({"era_id": era_id, **identity})
+        cardinality = era["complete_hierarchy_cardinality"]
+        era_cardinalities.append(
+            {
+                "era_id": era_id,
+                "interview_wave_count": len(era["interview_waves"]),
+                "hierarchy_multiplier_times_r_q": cardinality[
+                    "hierarchy_multiplier_times_r_q"
+                ],
+                "expanded_multiplier_times_r_q": cardinality[
+                    "expanded_multiplier_times_r_q"
+                ],
+                "design_fixed_baseline_hierarchy_lower_bound": cardinality[
+                    "design_fixed_baseline_hierarchy_lower_bound"
+                ],
+                "design_fixed_baseline_expanded_lower_bound": cardinality[
+                    "design_fixed_baseline_expanded_lower_bound"
+                ],
+                "complete_hierarchy_row_count": None,
+                "absence_proof_count": None,
+                "status": BLOCKED_STATUS,
+            }
+        )
+    if (
+        wave_projection != list(INTERVIEW_WAVES)
+        or document_count != 81
+        or page_count != 10_190
+        or baseline_hierarchy_count != 258
+        or baseline_expanded_count != 9_030
+    ):
+        raise ValueError("absence-stop global era projection drift")
+
+    class_a_rows = [
+        {
+            "residual_source_index": index,
+            "residual_id": residual_id,
+            "residual_row_sha256": row_sha256,
+            "closed_by_intermediate_evidence": False,
+        }
+        for index, residual_id, row_sha256 in CLASS_A_RESIDUAL_ROWS
+    ]
+    value: dict[str, Any] = {
+        "evidence_format": EVIDENCE_FORMAT,
+        "evidence_kind": "global_absence_domain_dependency_stop_evidence",
+        "design_binding": copy.deepcopy(DESIGN_BINDING),
+        "input_artifact_identities": {
+            "global_relationship_catalog": _committed_input_identity(
+                CATALOG_PATH, catalog
+            ),
+            "era_evidence": era_inputs,
+        },
+        "authenticated_scope": {
+            "interview_wave_count": 43,
+            "role_count": 2,
+            "purpose_count": 35,
+            "questionnaire_document_count": document_count,
+            "questionnaire_page_count": page_count,
+            "source_document_count": catalog["source_denominator"][
+                "source_document_count"
+            ],
+            "source_document_keyset_sha256": catalog["source_denominator"][
+                "source_document_keyset_sha256"
+            ],
+            "source_document_domain_sha256": catalog["source_denominator"][
+                "source_document_domain_sha256"
+            ],
+            "questionnaire_page_keyset_sha256": catalog[
+                "questionnaire_page_evidence"
+            ]["questionnaire_page_keyset_sha256"],
+            "questionnaire_page_domain_sha256": catalog[
+                "questionnaire_page_evidence"
+            ]["questionnaire_page_domain_sha256"],
+            "status": "pass_source_denominator_only",
+        },
+        "relationship_catalog_stop": {
+            "mandatory_baseline_relationship_count": 3,
+            "mandatory_baseline_relationship_keyset_sha256": catalog[
+                "relationship_catalog_evidence"
+            ]["mandatory_baseline_relationship_keyset_sha256"],
+            "mandatory_baseline_relationship_domain_sha256": catalog[
+                "relationship_catalog_evidence"
+            ]["mandatory_baseline_relationship_domain_sha256"],
+            "source_component_relationship_count": None,
+            "global_r_q_count": None,
+            "global_r_q_keyset_sha256": None,
+            "global_r_q_domain_sha256": None,
+            "source_component_relation_definition": (
+                "C_source=hierarchy_annotation_authority."
+                "questionnaire_component_slot_rows_filtered_to_"
+                "component_slot_type_in_{source_remuneration_component,"
+                "source_context}"
+            ),
+            "cardinality_equation": "|R_Q|=3+|C_source|",
+            "status": BLOCKED_STATUS,
+        },
+        "hierarchy_domain_stop": {
+            "global_hierarchy_count": None,
+            "global_hierarchy_keyset_sha256": None,
+            "global_hierarchy_domain_sha256": None,
+            "global_expanded_row_count": None,
+            "global_expanded_keyset_sha256": None,
+            "global_expanded_domain_sha256": None,
+            "global_hierarchy_cardinality_equation": "|H|=86*|R_Q|",
+            "global_expanded_cardinality_equation": ("|expanded|=3010*|R_Q|"),
+            "design_fixed_baseline_hierarchy_lower_bound": (
+                baseline_hierarchy_count
+            ),
+            "design_fixed_baseline_expanded_lower_bound": (
+                baseline_expanded_count
+            ),
+            "era_cardinalities": era_cardinalities,
+            "status": BLOCKED_STATUS,
+        },
+        "absence_domain_stop": {
+            "symbolic_relation_statuses": {
+                "O_H": "not_constructed",
+                "O_P": "not_constructed",
+                "M_h": "not_constructed",
+                "P_h": "not_constructed",
+            },
+            "observed_hierarchy_row_count": None,
+            "positive_occurrence_row_count": None,
+            "structural_expanded_key_count": None,
+            "near_match_source_annotation_count": None,
+            "absence_proofs": None,
+            "absence_proof_count": None,
+            "absence_proof_domain_sha256": None,
+            "relation_equations": {
+                "observed_hierarchy_count": "|observed_H|=|O_H|",
+                "positive_occurrence_count": "|positive|=|O_P|",
+                "structural_expanded_key_count": "|structural|=sum_h|M_h|",
+                "expanded_partition": "|O_P|+sum_h|M_h|=35*|H|",
+                "absence_proof_count": "|P|=|{h_in_H:M_h_is_nonempty}|",
+                "near_match_annotation_count": (
+                    "|near_match_source_annotation|="
+                    "|questionnaire_occurrence|+|field_stream_locator|"
+                ),
+            },
+            "proof_scope_law": {
+                "proof_partition": "exactly_one_P_h_per_nonempty_M_h",
+                "proof_order": "nonempty_M_h_filtered_H_order",
+                "searched_interview_waves": (
+                    "exact_singleton_matching_h_interview_wave"
+                ),
+                "target_h_coordinate_count": 1,
+                "target_field_purposes": "complete_M_h_in_ratified_order",
+                "searched_questionnaire_domain": (
+                    "all_questionnaire_documents_and_pages_in_target_wave"
+                ),
+                "searched_field_domain": (
+                    "complete_target_wave_layout_and_codebook_keysets"
+                ),
+                "near_match_domain": (
+                    "complete_target_wave_source_annotation_bindings"
+                ),
+                "era_wide_proof_allowed": False,
+                "cross_wave_proof_allowed": False,
+                "per_inventory_key_proof_allowed": False,
+                "proof_selected_source_subset_allowed": False,
+            },
+            "absence_proof_member_order": [
+                "absence_proof_id",
+                "era_id",
+                "target_inventory_keys",
+                "target_predicate",
+                "searched_interview_waves",
+                "searched_locator_ids",
+                "searched_layout_keyset_sha256",
+                "searched_codebook_keyset_sha256",
+                "excluded_near_matches",
+                "search_implementation",
+                "conclusion",
+            ],
+            "target_predicate_member_order": [
+                "roles",
+                "job_slot_ids",
+                "questionnaire_component_slot_ids",
+                "slot_kinds",
+                "field_purposes",
+                "quantifier",
+            ],
+            "search_implementation_member_order": [
+                "authority_kind",
+                "questionnaire_page_text_derivation_sha256",
+                "questionnaire_page_domain_sha256",
+                "questionnaire_occurrence_domain_sha256",
+                "flow_branch_domain_sha256",
+                "role_node_domain_sha256",
+                "job_slot_domain_sha256",
+                "questionnaire_component_slot_domain_sha256",
+                "node_alias_domain_sha256",
+                "global_relationship_domain_sha256",
+                "hierarchy_domain_sha256",
+                "positive_occurrence_domain_sha256",
+                "near_match_source_annotation_count",
+                "near_match_source_annotation_keyset_sha256",
+                "near_match_source_annotation_domain_sha256",
+            ],
+            "conclusion_member_order": [
+                "disposition",
+                "proved_target_inventory_keys",
+                "reason_code",
+            ],
+            "unsupported_zero_or_empty_claim_emitted": False,
+            "status": BLOCKED_STATUS,
+        },
+        "blocking_members": [
+            {
+                "section_19_anchor": "19.3.3_complete_R_Q_and_H",
+                "members": [
+                    "era_rows[].questionnaire_occurrence_rows",
+                    "era_rows[].flow_branch_rows",
+                    "hierarchy_annotation_authority.role_node_rows",
+                    "hierarchy_annotation_authority.job_slot_rows",
+                    "hierarchy_annotation_authority.questionnaire_component_slot_rows",
+                    "hierarchy_annotation_authority.node_alias_rows",
+                    "hierarchy_annotation_authority.global_relationship_rows",
+                    "era_rows[].hierarchy_rows",
+                ],
+            },
+            {
+                "section_19_anchor": "19.3.2_and_19.3.3_field_source_derivation",
+                "members": [
+                    "source_document_manifest.field_source_derivation",
+                    "source_document_manifest.field_source_derivation.numeric_grammar_derivation_rows",
+                    "source_document_manifest.field_source_derivation.numeric_grammar_derivation_row_count",
+                    "source_document_manifest.field_source_derivation.numeric_grammar_derivation_keyset_sha256",
+                    "source_document_manifest.field_source_derivation.numeric_grammar_derivation_domain_sha256",
+                    "era_rows[].positive_field_join_rows[].raw_field_projections[].numeric_grammar_derivation_id",
+                    "era_rows[].positive_field_join_rows[].raw_field_projections[].numeric_grammar_derivation_sha256",
+                ],
+            },
+            {
+                "section_19_anchor": "19.3.3_complete_O_H_O_P_M_h_and_P_h",
+                "members": [
+                    "era_rows[].positive_occurrence_rows",
+                    "era_rows[].occurrence_raw_field_reference_rows",
+                    "era_rows[].positive_field_join_rows",
+                    "era_rows[].expanded_disposition_rows",
+                    "era_rows[].near_match_source_annotation_rows",
+                    "era_rows[].absence_proofs",
+                ],
+            },
+            {
+                "section_19_anchor": "19.4.2_G17-C01_and_19.5_DC-30",
+                "members": [
+                    "G17-C01.slot_source_authority_manifest",
+                    "G17-C01.hierarchy_annotation_authority",
+                    "source_authority_manifest.slot_closure_evidence_identity",
+                ],
+            },
+        ],
+        "blocking_predicates": [
+            {
+                "section_19_anchor": "19.8.1_walk_A_and_19.8.2_tension_9",
+                "predicate": (
+                    "unique_same_wave_leading_question_identifier_resolution"
+                ),
+                "status": "failed_ambiguous",
+                "ambiguity_evidence": [
+                    "2023:G13.:ER83121",
+                    "2023:G13.:ER83495",
+                ],
+            },
+            {
+                "section_19_anchor": "19.4.2_G17-C01",
+                "predicate": "complete_successor_comparand_pass",
+                "status": "not_constructed",
+                "ambiguity_evidence": [],
+            },
+            {
+                "section_19_anchor": "19.5_DC-30",
+                "predicate": "D5_to_Q5_and_Q5_to_consumer_ancestry",
+                "status": "not_constructed_no_Q5",
+                "ambiguity_evidence": [],
+            },
+        ],
+        "class_a_inventory_blocker_disposition": {
+            "residual_rows": class_a_rows,
+            "residual_domain_sha256": EXPECTED_CLASS_A_DIGEST,
+            "source_indices_closed": [],
+            "source_indices_surviving": [1, 2, 5, 11, 14, 18, 26],
+            "intermediate_artifacts_close_authority_blockers": False,
+            "status": "registration_required",
+        },
+        "authority_disposition": {
+            "canonical_q5_path": str(CANONICAL_Q5_PATH.relative_to(ROOT)),
+            "canonical_q5_emitted": False,
+            "class_b_grammar_rows_emitted": False,
+            "q5_status": "not_emitted_blocked",
+            "section_19_stop_anchors": [
+                "19.3.2_complete_field_source_derivation",
+                "19.3.3_R_Q_H_O_H_O_P_M_h_P_h",
+                "19.4.2_G17-C01",
+                "19.5_DC-30",
+                "19.8.1_steps_1_and_2_including_walk_A",
+                "19.8.2_tensions_8_and_9",
+            ],
+            "status": BLOCKED_STATUS,
+        },
+        "integrity": {
+            "canonicalization": CANONICALIZATION,
+            "content_sha256": "0" * 64,
+        },
+        "status": BLOCKED_STATUS,
+    }
+    value["integrity"]["content_sha256"] = _content_sha256(value)
+    return value
+
+
+def build_absence_stop_evidence(
+    catalog: Mapping[str, Any],
+    era_evidence_by_id: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Build the section-19 absence-domain dependency stop."""
+
+    value = _constructed_absence_stop_evidence(catalog, era_evidence_by_id)
+    validate_absence_stop_evidence(value, catalog, era_evidence_by_id)
+    return value
+
+
+def validate_absence_stop_evidence(
+    value: Mapping[str, Any],
+    catalog: Mapping[str, Any],
+    era_evidence_by_id: Mapping[str, Mapping[str, Any]],
+) -> None:
+    """Mirror every fixed absence-stop member and dependency equation."""
+
+    expected = _constructed_absence_stop_evidence(catalog, era_evidence_by_id)
+    if set(value) != set(expected):
+        raise ValueError("absence-stop top-level schema drift")
+    for key, expected_value in expected.items():
+        if key == "integrity":
+            continue
+        if value[key] != expected_value:
+            raise ValueError(f"absence-stop {key} drift")
+    if (
+        set(value["integrity"]) != {"canonicalization", "content_sha256"}
+        or value["integrity"]["canonicalization"] != CANONICALIZATION
+        or value["integrity"]["content_sha256"] != _content_sha256(value)
+    ):
+        raise ValueError("absence-stop integrity drift")
+
+
+def _read_committed_catalog() -> Mapping[str, Any]:
+    if not CATALOG_PATH.is_file():
+        raise SystemExit(f"catalog evidence unavailable: {CATALOG_PATH}")
+    catalog = strict_parse_document(
+        CATALOG_PATH.read_bytes(), "committed global catalog evidence"
+    )
+    if not isinstance(catalog, Mapping):
+        raise SystemExit("catalog evidence is not an object")
+    return catalog
+
+
+def _read_committed_eras() -> dict[str, Mapping[str, Any]]:
+    values: dict[str, Mapping[str, Any]] = {}
+    for spec in ERA_SPECS:
+        era_id = spec["era_id"]
+        path = era_output_path(era_id)
+        if not path.is_file():
+            raise SystemExit(f"era evidence unavailable: {path}")
+        value = strict_parse_document(path.read_bytes(), f"committed {era_id}")
+        if not isinstance(value, Mapping):
+            raise SystemExit(f"era evidence is not an object: {path}")
+        values[era_id] = value
+    return values
+
+
 def render_catalog(capture_root: Path = DEFAULT_CAPTURE_ROOT) -> bytes:
     return canonical_json_bytes(build_catalog_evidence(capture_root))
 
 
 def render_era(catalog: Mapping[str, Any], era_id: str) -> bytes:
     return canonical_json_bytes(build_era_evidence(catalog, era_id))
+
+
+def render_absence_stop(
+    catalog: Mapping[str, Any],
+    era_evidence_by_id: Mapping[str, Mapping[str, Any]],
+) -> bytes:
+    return canonical_json_bytes(
+        build_absence_stop_evidence(catalog, era_evidence_by_id)
+    )
 
 
 def _write_or_check(path: Path, raw: bytes, check: bool) -> None:
@@ -1514,8 +1939,24 @@ def main() -> int:
     parser.add_argument("--catalog-output", type=Path, default=CATALOG_PATH)
     parser.add_argument("--era", choices=tuple(ERA_BY_ID))
     parser.add_argument("--era-output", type=Path)
+    parser.add_argument("--absence-stop", action="store_true")
+    parser.add_argument(
+        "--absence-output", type=Path, default=ABSENCE_STOP_PATH
+    )
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
+
+    if args.era is not None and args.absence_stop:
+        parser.error("--era and --absence-stop are mutually exclusive")
+    if args.absence_stop:
+        catalog = _read_committed_catalog()
+        eras = _read_committed_eras()
+        _write_or_check(
+            args.absence_output,
+            render_absence_stop(catalog, eras),
+            args.check,
+        )
+        return 0
 
     if args.era is None:
         _write_or_check(

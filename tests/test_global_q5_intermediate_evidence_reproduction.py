@@ -18,6 +18,9 @@ EVIDENCE_DIRECTORY = ROOT / "docs" / "analysis" / "global_q5_evidence"
 CATALOG_PATH = (
     EVIDENCE_DIRECTORY / "global_relationship_catalog_evidence_v1.json"
 )
+ABSENCE_STOP_PATH = (
+    EVIDENCE_DIRECTORY / "global_absence_domain_stop_evidence_v1.json"
+)
 
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
@@ -55,3 +58,23 @@ def test_all_six_era_artifacts_reproduce_from_catalog_capture(
         era_path = EVIDENCE_DIRECTORY / f"{era_id}_slot_evidence_v1.json"
         era = builder.build_era_evidence(reproduced_catalog, era_id)
         assert builder.canonical_json_bytes(era) == era_path.read_bytes()
+
+
+@pytest.mark.skipif(
+    not all(path.is_file() for path in ERA_PATHS),
+    reason="all six staged era artifacts have not landed yet",
+)
+def test_absence_stop_reproduces_from_committed_intermediates(
+    reproduced_catalog: dict,
+):
+    eras = {
+        spec["era_id"]: builder.build_era_evidence(
+            reproduced_catalog, spec["era_id"]
+        )
+        for spec in builder.ERA_SPECS
+    }
+    artifact = builder.build_absence_stop_evidence(reproduced_catalog, eras)
+    assert (
+        builder.canonical_json_bytes(artifact)
+        == ABSENCE_STOP_PATH.read_bytes()
+    )

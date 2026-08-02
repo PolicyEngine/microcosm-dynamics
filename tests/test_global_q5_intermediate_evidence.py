@@ -21,6 +21,9 @@ EVIDENCE_DIRECTORY = ROOT / "docs" / "analysis" / "global_q5_evidence"
 CATALOG_PATH = (
     EVIDENCE_DIRECTORY / "global_relationship_catalog_evidence_v1.json"
 )
+ABSENCE_STOP_PATH = (
+    EVIDENCE_DIRECTORY / "global_absence_domain_stop_evidence_v1.json"
+)
 CANONICAL_Q5_PATH = (
     ROOT
     / "data"
@@ -47,6 +50,12 @@ CATALOG_RAW_SHA256 = (
 )
 CATALOG_CONTENT_SHA256 = (
     "6b939e8aa7681469014aff5a87f9f925ab56acbace8bc2aecfffaad336fd0266"
+)
+ABSENCE_STOP_RAW_SHA256 = (
+    "8fa57c10c08ad6726f848e087503f453e2704760b2f1fe2c8e1ee46dd0293f90"
+)
+ABSENCE_STOP_CONTENT_SHA256 = (
+    "9a64846c879b90b8500672d32ebb0ce4d5ae15ed1f27d4fea87bead9f3d843e3"
 )
 
 ERA_EXPECTATIONS = (
@@ -138,6 +147,18 @@ def _era(era_id: str) -> dict:
 
 def _reseal(value: dict) -> None:
     value["integrity"]["content_sha256"] = builder._content_sha256(value)
+
+
+def _all_eras() -> dict[str, dict]:
+    return {era_id: _era(era_id) for era_id, *_ in ERA_EXPECTATIONS}
+
+
+def _absence_stop() -> dict:
+    value = builder.strict_parse_document(
+        ABSENCE_STOP_PATH.read_bytes(), "committed absence-domain stop"
+    )
+    assert isinstance(value, dict)
+    return value
 
 
 def test_strict_parser_and_canonical_json_reject_ambiguous_documents():
@@ -323,3 +344,111 @@ def test_era_validator_rejects_a_coherently_resealed_mutation():
     _reseal(artifact)
     with pytest.raises(ValueError):
         builder.validate_era_evidence(artifact, _catalog())
+
+
+def test_absence_stop_is_canonical_mirrored_and_pinned():
+    raw = ABSENCE_STOP_PATH.read_bytes()
+    artifact = _absence_stop()
+    assert raw == builder.canonical_json_bytes(artifact)
+    builder.validate_absence_stop_evidence(artifact, _catalog(), _all_eras())
+    assert hashlib.sha256(raw).hexdigest() == ABSENCE_STOP_RAW_SHA256
+    assert artifact["integrity"]["content_sha256"] == (
+        ABSENCE_STOP_CONTENT_SHA256
+    )
+
+
+def test_absence_stop_preserves_every_unknown_and_scope_constraint():
+    artifact = _absence_stop()
+    relationships = artifact["relationship_catalog_stop"]
+    assert relationships["mandatory_baseline_relationship_count"] == 3
+    assert relationships["global_r_q_count"] is None
+
+    hierarchy = artifact["hierarchy_domain_stop"]
+    assert hierarchy["global_hierarchy_cardinality_equation"] == (
+        "|H|=86*|R_Q|"
+    )
+    assert hierarchy["global_expanded_cardinality_equation"] == (
+        "|expanded|=3010*|R_Q|"
+    )
+    assert hierarchy["design_fixed_baseline_hierarchy_lower_bound"] == 258
+    assert hierarchy["design_fixed_baseline_expanded_lower_bound"] == 9_030
+    assert all(
+        row["complete_hierarchy_row_count"] is None
+        and row["absence_proof_count"] is None
+        for row in hierarchy["era_cardinalities"]
+    )
+
+    absence = artifact["absence_domain_stop"]
+    for key in (
+        "observed_hierarchy_row_count",
+        "positive_occurrence_row_count",
+        "structural_expanded_key_count",
+        "near_match_source_annotation_count",
+        "absence_proofs",
+        "absence_proof_count",
+        "absence_proof_domain_sha256",
+    ):
+        assert absence[key] is None
+    assert absence["unsupported_zero_or_empty_claim_emitted"] is False
+    scope = absence["proof_scope_law"]
+    assert scope["target_h_coordinate_count"] == 1
+    assert scope["searched_interview_waves"] == (
+        "exact_singleton_matching_h_interview_wave"
+    )
+    assert scope["era_wide_proof_allowed"] is False
+    assert scope["cross_wave_proof_allowed"] is False
+    assert scope["per_inventory_key_proof_allowed"] is False
+    assert absence["relation_equations"] == {
+        "observed_hierarchy_count": "|observed_H|=|O_H|",
+        "positive_occurrence_count": "|positive|=|O_P|",
+        "structural_expanded_key_count": "|structural|=sum_h|M_h|",
+        "expanded_partition": "|O_P|+sum_h|M_h|=35*|H|",
+        "absence_proof_count": "|P|=|{h_in_H:M_h_is_nonempty}|",
+        "near_match_annotation_count": (
+            "|near_match_source_annotation|="
+            "|questionnaire_occurrence|+|field_stream_locator|"
+        ),
+    }
+    assert len(absence["absence_proof_member_order"]) == 11
+    assert len(absence["target_predicate_member_order"]) == 6
+    assert len(absence["search_implementation_member_order"]) == 15
+    assert len(absence["conclusion_member_order"]) == 3
+
+
+def test_absence_stop_rejects_closure_and_coherently_resealed_mutation():
+    artifact = _absence_stop()
+    disposition = artifact["class_a_inventory_blocker_disposition"]
+    assert disposition["source_indices_closed"] == []
+    assert disposition["source_indices_surviving"] == [1, 2, 5, 11, 14, 18, 26]
+    assert all(
+        row["closed_by_intermediate_evidence"] is False
+        for row in disposition["residual_rows"]
+    )
+    blocking_members = {
+        member
+        for group in artifact["blocking_members"]
+        for member in group["members"]
+    }
+    assert (
+        "source_document_manifest.field_source_derivation."
+        "numeric_grammar_derivation_rows"
+    ) in blocking_members
+    predicates = {
+        row["predicate"]: row for row in artifact["blocking_predicates"]
+    }
+    assert predicates[
+        "unique_same_wave_leading_question_identifier_resolution"
+    ]["ambiguity_evidence"] == [
+        "2023:G13.:ER83121",
+        "2023:G13.:ER83495",
+    ]
+
+    mutated = copy.deepcopy(artifact)
+    mutated["hierarchy_domain_stop"][
+        "design_fixed_baseline_hierarchy_lower_bound"
+    ] -= 1
+    _reseal(mutated)
+    with pytest.raises(ValueError):
+        builder.validate_absence_stop_evidence(
+            mutated, _catalog(), _all_eras()
+        )

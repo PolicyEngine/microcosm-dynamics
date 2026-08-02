@@ -9,8 +9,9 @@
   out of scope.
 - Status: stopped at the lawful non-authority boundary for Q5, with the
   reproducible global source/catalog prerequisite and all six era evidence
-  slices complete. The explicit global absence-domain stop remains. No Q5 or
-  downstream slot artifact has been emitted.
+  slices plus the explicit global absence-domain dependency stop complete.
+  Final verification remains. No Q5 or downstream slot artifact has been
+  emitted.
 
 ## Done
 
@@ -69,12 +70,15 @@
 - Across all six slices, the registered denominator remains exactly 81
   documents and 10,190 pages. The 258 design-fixed baseline coordinates
   (9,030 expanded) are the global lower bound implied by the three sentinels.
+- Recorded the global absence-domain dependency stop without emitting a zero,
+  empty-domain digest, unsupported proof, or Class-B grammar row. It fixes the
+  `R_Q`, H, expansion, `O_H`, `O_P`, `M_h`, `P_h`, and near-match equations,
+  all proof-scope member lists, and the exact unresolved §19 paths/predicates;
+  artifact SHA-256:
+  `8fa57c10c08ad6726f848e087503f453e2704760b2f1fe2c8e1ee46dd0293f90`.
 
 ## Next
 
-- Record the exact absence-domain dependency stop: `O_H`, `O_P`, `M_h`, and
-  `P_h` counts remain unknown until the global catalog, positive-field joins,
-  and complete near-match source annotation exist.
-- Add mirrored validators, strict parsing, digest pins, mutation rejections,
-  and tier synchronization; run Black, Ruff, and focused/full tests as
-  proportionate to the resulting implementation.
+- Run the final builder/reproduction, mutation, tier-policy, formatting, and
+  broader regression checks; record exact test counts and final artifact
+  identities.
