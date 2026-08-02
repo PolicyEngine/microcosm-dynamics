@@ -33612,14 +33612,15 @@ guarded-retraction fallback is therefore mandatory. The forcing input is
 root 5, `corpus_wide_cooccurrence_sweep`: its page-number arrays,
 page-reset occurrence ordinals, same-page intersection, sole-candidate
 classification, and dependent count are layout-derived layer-2 content.
-Changing only authenticated document 0046, decoded page 180, UTF-8 byte
-`[572:573]` from `20` to `0a` leaves the `V4902` token at `[568:572]`
-unchanged but changes its layer-2 position classification from
-`codebook_field_header` to
-`v_prefixed_semantic_field_reference`. The page is 3,166 bytes with SHA-256
-`3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9`.
-That one-datum nonconstancy satisfies the value-flow definition and is
-enough to bar a favorable result.
+Changing only authenticated document 0068, decoded page 519, UTF-8 byte
+`[3775:3776]` from `20` (ASCII space) to `30` (`0`) leaves the `V4902`
+token at `[3771:3775]` unchanged but makes the target digit-adjacent.
+V4902 is the sole extra-job target on that page, so the required document-0068
+candidate row loses page 519 and the complete §18.2 18-row candidate array
+changes. The page is 4,070 bytes with SHA-256
+`00e6e31d5c40032eaac220ac4fea8ce986445a0db956c422cd00ec53763b1da6`.
+That one-datum nonconstancy reaches an actual member of the historical result
+and is enough to bar a favorable result.
 
 This is not caused by the page or artifact hashes. Treating the complete
 10,887-byte projection, a whole page, or the 2,203,624-byte spouse-seam
@@ -33717,7 +33718,7 @@ into separate nodes; it never receives a mixed layer label.
 | 2. ordered_existing_extraction_locator_rows | locator/pointer/row/range hashes are layer 1; separately reconstructed passage extractions are layer 2 | only the questionnaire/codebook semantic statement spans identified by the eight locators | no raw record, format, Count/%, profile, grammar, parsed value, or executable map |
 | 3. ordered_derived_registered_codebook_page_rows | all six document/page/row/range/page-text hash rows are layer 1; six semantic span extractions are layer 2 | only the position-typed spans enumerated below | complete page hashes may cover mixed physical text, but no layer-2 basis contains it |
 | 4. closure_projection | the pointer/hash object is layer 1; pointed absence/extraction/closure/family semantic statements are layer 2 | the exact source-allocation absence and historical family-disposition statements at the ten pointed rows | row hashes are not read as proxies for row content |
-| 5. corpus_wide_cooccurrence_sweep | document, row, full-file, page-text, and serialized-row hashes are layer 1; page arrays, candidate classification/count, same-page intersection, sole-candidate disposition, and formula-candidate count are layer 2 | raw target-token occurrences classified with page boundaries, line structure, and page-reset order, then grouped by page | **physical for V4902**: the byte `[572:573]` witness changes a layer-2 row with all semantic token bytes fixed |
+| 5. corpus_wide_cooccurrence_sweep | document, row, full-file, page-text, and serialized-row hashes are layer 1; page arrays, candidate classification/count, same-page intersection, sole-candidate disposition, and formula-candidate count are layer 2 | raw target-token occurrences classified with page boundaries, whitespace/line structure, and page-reset order, then grouped by page | **physical for V4902**: the document-0068 ASCII-space byte `[3775:3776]` witness changes the required candidate page array with every semantic token byte fixed |
 | 6. established_findings | layer 2 | the four historical findings read roots 2–5, including member 5's sole-candidate and zero-count conclusions | inherits the forbidden V4902 layout basis; the historical findings cannot be freshly accepted |
 | 7. expressly_not_established_or_used | layer 2 | closure absence statements plus member 5's zero formula-candidate conclusion | inherits the forbidden V4902 layout basis; the historical nonclaim cannot be freshly accepted |
 | 8. reader_seam_consequence | layer 2 | established_findings plus expressly_not_established_or_used | transitively contaminated and prospectively retracted |
@@ -33779,16 +33780,25 @@ It is an output census, not a dependency census, and enters only after the
 source scan has independently discovered the rows. No claim is made that 33
 is the number of atomic physical dependencies or transitive consumers.
 
-The independent page-180 one-byte reflow is the executable nonconstancy
-witness. The original canonical V4902 occurrence row is 189 bytes with
+The independent document-0068/page-519 whitespace mutation is the executable
+nonconstancy witness. Its authenticated PDF is `psid81w14.pdf`, 13,344,220
+bytes with SHA-256
+6852b258ebf010bb3e0747abc31a8760e65c8f63bba475907c2498536b0f1d08.
+The page bytes `[3771:3777]` begin `V4902 ` after the preceding `V` at byte
+3770. Replacing only trailing byte 3775 from `20` to `30` makes `V49020`;
+the exact target regex no longer admits V4902 on that page. The original
+document-0068 candidate row is 358 bytes with SHA-256
+78a08e6640b993f14117af67d0ed4eccada395d79a816b13d67283421bb1819d;
+the shadow row, whose extra-job page array alone loses 519, is 354 bytes with
 SHA-256
-aad92342670157f7835067a029d415a5c71025641574c2fbb91bcc6dea908510;
-after replacing only byte [572:573] from 20 to 0a it is 203 bytes with
-SHA-256
-9d97a0e631ab31cd06642a227e69f2e1d26191bff8bc01470a4b130a4c2be4ba.
-The token bytes and every semantic lexeme remain fixed. A layer-1 page hash
-would merely recommit the changed page; root 5 instead changes layer-2
-content, so this is consumption.
+cc4c36285b1d4bdeedb799270a15c0edeb704a7560b8d5979bb694b99f164165.
+The complete required candidate array changes from 6,209 bytes and SHA-256
+039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7
+to 6,205 bytes and SHA-256
+77175376157cf483cf3941be42fcfca34e527c13dde0d3f3bfd025c010afa4f7.
+The four token bytes and every semantic lexeme remain fixed. A layer-1 page
+hash would merely recommit the changed page; root 5 instead changes an actual
+layer-2 candidate member, so this is consumption.
 
 The historical target scan still reproduces the exact 18 candidate IDs,
 their 5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed
@@ -33966,7 +33976,8 @@ only these revision-8 conclusions:
    physical raw-field consumer means a row whose derivation_status is in
    T-plus below, not merely a top-level relation whose status is
    pass_with_closed_failures; and
-6. the exact V-B6 source-adjudication chain in §13.2, §§18.2–18.8,
+6. the exact V-B6 source-adjudication chain in §13.2, §16.2's V-B6
+   predicate/result and every fresh 22-row consumer, §§18.2–18.8,
    §§19.3.1, 19.3.4, 19.4, 19.6, and 19.8, and every dependent lifecycle,
    bundle, receipt, registration, and final-success claim is prospectively
    replaced by the guarded result in §21.4.2. Layer-1 commitments may cover
@@ -33974,7 +33985,8 @@ only these revision-8 conclusions:
    V4902. V-B6 is therefore presently non-passing and unregistrable; its
    historical §18 `verified/pass`, empty successor array, `verified`
    disposition, §19 residual-9 carrier, and all copied or dependent successes
-   are not fresh results. A7-R10a proves the pre-Q5 rejection. A7-R10b,
+   are not fresh results. A7-R10a proves the pre-Q5 rejection. A7-R11
+   discovers the complete concrete forbidden-route probe domain. A7-R10b,
    strictly after official-inventory construction, proves that no residual-9
    carrier or passing/accepted V-B6 requirement result is built. A later
    nonpassing diagnostic row may be constructed only to make the complete
@@ -34199,7 +34211,9 @@ physical or executable positive reference is likewise consumption.
 
 #### 21.4.2 Commitment/derivation layer law and source-adjudication boundary
 
-Every node in an evidentiary DAG belongs to exactly one of two layers.
+Every evidentiary assertion node in a DAG belongs to exactly one of two
+layers; addressable structural nodes are neutral containers or content
+portions and receive their role only through typed edges.
 **Layer 1 — provenance commitment** consists only of a path, commit or blob
 identity, locator, byte range, size, or digest asserting that exact bytes
 existed at the stated identity or location. A layer-1 node may commit mixed
@@ -34227,18 +34241,32 @@ commitments over mixed bytes are lawful because no layer-2 basis reads the
 physical portion; a digest change caused solely by recommitting changed
 bytes is layer-1 commitment tracking, not consumption.
 
+A proposed semantic source result is lawful if and only if all three
+conditions hold:
+
+1. its exact eleven roots, node/edge topology, root closure, ordered basis
+   manifest, canonical serialization, and expected counts/digests match the
+   pinned fixtures below;
+2. the complete transitive value-flow walk proves that every layer-2 basis
+   for V4519, V4902, V5429, and V5916 is semantic-only under the exclusions
+   above, including the frequency/percentage/count and digest-proxy
+   exclusions; and
+3. every layer-1 commitment authenticates and every layer-2 value is freshly
+   rederived from its declared portions rather than a candidate fixture,
+   predecessor pass bit, copied digest, or commitment result.
+
 The exact §18.2 eleven-member input was re-walked under that law. This is the
 complete layer classification and the complete basis disposition by member:
 
-| Root position and member | Layer-1 commitments | Layer-2 nodes and exact derivation basis | Four-field result |
+| Root position and member | Layer-1 assertion nodes and their committed neutral targets | Layer-2 assertion nodes and exact derivation basis | Four-field result |
 |---|---|---|---|
-| 0 `identity_triple` | one source-commit commitment to the three frozen Git artifacts | schema version and claim ID from two law literals | semantic-only |
-| 1 `ordered_source_artifact_identities` | three path/blob/raw/content-digest identity rows | none | no content derivation |
-| 2 `ordered_existing_extraction_locator_rows` | eight source locator rows, raw ranges, decoded pages, and the committed output array | eight normalized passage-content rows from their selected semantic spans plus their array | semantic-only |
-| 3 `ordered_derived_registered_codebook_page_rows` | six complete page rows, raw ranges, decoded-page bytes, page-text hashes, and the committed output array | six page extractions, 20 field-reference rows, and their array, each reading only `interview_wave`, `raw_field_id`, normalized semantic label/description, and semantic code lexeme/meaning | semantic-only; Count/% and layout members are not bases |
-| 4 `closure_projection` | ten exact extraction/closure source rows | ten stated semantic-key projections | semantic-only |
-| 5 `corpus_wide_cooccurrence_sweep` | the 456 registered PDFs and all document, page, locator, occurrence-output, candidate-output, and sole-page commitments | document count/IDs, classifier specification, full-corpus scanner, occurrence classifications, page-number groupings, candidate rows/count, sole-candidate disposition, formula count, and sweep result. The scanner reads decoded line layout, page membership, page-reset row position, and same-page intersection | **physical** for V4902; fails the semantic-only condition |
-| 6 `established_findings` | spouse-seam artifact, four exact source-pointer rows, their mixed output rows, and array commitments | four direct semantic projections from the enumerated semantic members, their array, and the established-finding node; the last also derives from member 5 | direct four-row projection is semantic-only, but the finding inherits member 5's physical dependency |
+| 0 `identity_triple` | one source-commit assertion over the three frozen Git-artifact identities | one identity assertion from two law literals | semantic-only |
+| 1 `ordered_source_artifact_identities` | three identity commitments over the neutral path/blob/raw/content-digest rows | none | no content derivation |
+| 2 `ordered_existing_extraction_locator_rows` | commitments over eight neutral locator/range/page rows and their output array | eight normalized-passage assertions read only the selected semantic spans; one array assertion reads those eight results | semantic-only |
+| 3 `ordered_derived_registered_codebook_page_rows` | page-text-hash and range commitments over six neutral page rows and decoded-page targets, plus output-row/array commitments | six page-extraction assertions read the 20 addressable semantic field-reference portions, and only their `interview_wave`, `raw_field_id`, normalized semantic label/description, and semantic code lexeme/meaning; one array assertion reads those six results | semantic-only; Count/% and layout portions are committed but not bases |
+| 4 `closure_projection` | commitments over ten neutral extraction/closure source rows | ten assertions read the stated semantic-key projections | semantic-only |
+| 5 `corpus_wide_cooccurrence_sweep` | commitments over 456 neutral registered-PDF artifacts and every document, page, locator, occurrence-output, candidate-output, and sole-page target | document count/ID, classifier-specification, full-corpus scanner, per-candidate, candidate-array/count/ID, sole-disposition, formula-count, and sweep assertions. The scanner owns its 348 addressable occurrence-output portions and reads decoded lexical/layout context, page membership, page-reset row position, and same-page grouping | **physical** for V4902; fails the semantic-only condition |
+| 6 `established_findings` | commitments over the neutral spouse-seam artifact, four source-pointer rows, four mixed output rows, and their array | four direct semantic assertions read the enumerated semantic members; their array and the established-finding assertion read those results, and the finding also reads member 5 | direct four-row projection is semantic-only, but the finding inherits member 5's physical dependency |
 | 7 `expressly_not_established_or_used` | none beyond reachable commitments above | closure projections and the formula count from member 5 | inherits the physical dependency |
 | 8 `reader_seam_consequence` | none beyond reachable commitments above | members 6 and 7 | inherits the physical dependency |
 | 9 `successor_residual_ids` | none beyond reachable commitments above | members 6, 7, and 8 | inherits the physical dependency |
@@ -34256,18 +34284,1505 @@ The re-walk uses the following exact graph. A node row has exactly
 `extraction-row`, `field-reference`, `layer-1 commitment`, `layer-2 derived
 node`. An edge row has exactly `edge_type`, `from_node_id`, and `to_node_id`;
 the closed edge-type order is `contains`, `commits-to`, `derives-from`.
-`contains` points from an envelope or structural container to its direct
-member. `commits-to` points from a layer-1 commitment to the exact structural
+`contains` points from an envelope, structural container, or layer-2
+aggregate assertion to its direct structural member or addressable output
+portion; it never denotes a content read. `commits-to` points from a
+layer-1 commitment to the exact structural
 or derived bytes authenticated. `derives-from` points from a layer-2 node to
 the content node it reads. Only `derives-from` is value flow. Unknown types,
 duplicate IDs or edges, dangling endpoints, and self-edges fail.
 Every `commits-to` source must be layer 1 and every `derives-from` source
 must be layer 2.
+The first four node types are addressable source/content structure; only the
+last two types are assertion layers. A neutral node becomes a declared basis
+only as the target of a `derives-from` edge, and every such non-layer-2 target
+must be reachable from some layer-1 assertion by exactly one `commits-to`
+edge followed by zero or more `contains` edges. The executable preimage
+asserts that coverage. A neutral `field-reference` target of `contains` from
+a layer-2 node is an addressable portion of that owner's asserted output, not
+an extra assertion without a basis. The 20 codebook-page portions are
+committed page subparts read by the six page-extraction assertions. The 348
+occurrence portions are DSCAN's addressable outputs. DSCAN's complete
+458-position direct basis therefore governs every occurrence classification,
+page, ordinal, and field-reference portion.
 
 The roots are exactly the §18.2 eleven-member input, in this order:
 
 ~~~json
 ["root:18.2:00:identity_triple","root:18.2:01:ordered_source_artifact_identities","root:18.2:02:ordered_existing_extraction_locator_rows","root:18.2:03:ordered_derived_registered_codebook_page_rows","root:18.2:04:closure_projection","root:18.2:05:corpus_wide_cooccurrence_sweep","root:18.2:06:established_findings","root:18.2:07:expressly_not_established_or_used","root:18.2:08:reader_seam_consequence","root:18.2:09:successor_residual_ids","root:18.2:10:source_disposition"]
+~~~
+
+The following terminal-LF Python source is the sole canonical preimage for
+the graph topology and ordered basis fixture. Its embedded occurrence arrays
+name expected output children for topology comparison only; the normative
+scanner below must rediscover them from the PDFs, and no occurrence child is
+a scanner basis. The program is 82,364 bytes with SHA-256
+`0ecd18bb7c6d6df09ba108fbf25c9255222f479bec13a9b5355198b0d91edf09`
+and executes from the repository root with the mandated repository
+interpreter.
+
+~~~python
+import base64
+import collections
+import hashlib
+import json
+import zlib
+from pathlib import Path
+
+TYPES = [
+    "artifact",
+    "page",
+    "extraction-row",
+    "field-reference",
+    "layer-1 commitment",
+    "layer-2 derived node",
+]
+ETYPES = ["contains", "commits-to", "derives-from"]
+nodes = {}
+edges = set()
+
+
+def N(node_id, node_type):
+    nodes.setdefault(node_id, node_type)
+    assert nodes[node_id] == node_type
+    return node_id
+
+
+def E(from_node, to_node, edge_type):
+    assert from_node in nodes and to_node in nodes and edge_type in ETYPES
+    edge = (edge_type, from_node, to_node)
+    assert edge not in edges
+    edges.add(edge)
+
+
+def canon(value):
+    return (
+        json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode()
+
+
+def row_hash(row):
+    return hashlib.sha256(canon(row)).hexdigest()
+
+
+# Exact independently reconstructed fixtures. Whitespace inside each base85
+# string is discarded; zlib output is the byte-exact canonical payload.
+def unpack_bytes(payload):
+    return zlib.decompress(base64.b85decode("".join(payload.split())))
+
+
+def unpack_json(payload):
+    return json.loads(unpack_bytes(payload))
+
+
+OCCURRENCE_LOCATOR_B85 = """c-rlq-;QlJj^6L{7`~nXD2k-Sd6ghA^fwtK)7|KH2NMK&_k1cRb2F9>YI?1`YP-vZkL|On)~@rDM1GVg@<0FYpZfUoKmX6sfBsYX
+ujA)m#=rjZ^I!g3VYQ$B=_d=pLuV<b65{M5vW1#rDBL<bHx;i{WJ<~+)U8#TntP4ToUQ)!4?lgp^{>Co{B!+Zzl@*9ANo)K#FXjZ
+J^9No<<GyYXUXua&tHF@Km7Gy>iF}|;pbZZGVrZY^&fuv%OC&x=Qe)se{6sKm+^;Re*R}X_~}o7`RD$R?T>%{(_jDckN^M4KN5w6
+AL5rk{`c{RpZ~}B*YPg{Un(*Azy0pVPw;Pl;_SnR%$jqVt(whV%P6UFbS<?e7yP?dkN8`(=QJq=^$=zw5idXepMN+Kb)MDD`{>S8
+W@pnu);(LGF}?L1Xo|<sr$|fexrQXs3O<NDwGGkWaZ5BfpNIzfBvB4uis*<6b`}QrR>YgfKCEdNnN#al%_9emLutk`=a^Efr7^ir
+!VlDUbCg}SbCjJ9M2*rXiN-HQR7Ro{le7SkW-J7%8dOF##f%iuLWO3HT^bjeJ;Owl+~<%wHEic-*iO-$PCOG`z|$#gcs46s4bZ0Q
+#Oz@#rk;wJ^YF<O0GTUhS+_!!QqiU@a?iDuFk^m-Cua5*sAYcvQQi;@$zsmAg`yP}PCa3gGPO7|{<uM_aKU0MG1tx+W^UAiDVsqP
+FNp0qqIpmB!yepCG;WA?4+%yqC5^4lYQ?}eRs438T!zQgW_FscZIlsWs<Yd4vS<J<Kb)i9ms1iT9WX6%i~%n%V`i8kr`{$O2mJkj
+1aN9pG>QgF_*~eS5P4@sW7r$f^O_HDJwtEfX<MF=U%>OJ`PsNm_fYV2VX;FE)evh?4z73!&0u5}dkb8tF1I%VYb&kys<|}X^4vT5
+c=Yj!-+F%D#?$va^#weCXY(`dMQHL@%um_yjBv1dAlxen;Y@`Z#RSaoxp^ky%o*~ON`*M@vqN{LUNnVjE$i&?)DQ85W!)N3JmVJ-
+)!mBET@no)spb+}i6c&f=P<<4<T1wz2NK(ySz~F*Ymq25&Qdj|5aSO$QuR=Y;e$AEoDE{An+y%hh^Th48hrGE&@?4P6O}Q;Nb*qC
+2z|9x^?S+m1H}|C;b|M5=A)&`1rgv3HH;GQr<jHi8#0~|F4D|J5FCR60`QWv7-1%NPMFy<KgBccT|A!g3y7u-Q7tN1S}>JCv7CF%
+l8VPTyQe^cFq6H9UTYm>BTDJsS?181BXN=+5e=!?((o`DSm#|z>LL;cPZBJC=`m?{&5Br_Twq>$C<xQK&xmy`S8Jwp1yAL?i{qI)
+$uxNP;D}Jj!^|m4!g{Y#2lx@gga!f@s(2VIgqm85sap{H5l_Uh7^x{@2x9S?Ng1};x;4RTiuZ}RMx~UwKBgj;#aC1eut1rbmhBA9
+`z4?9Y0a~L5@`BTf&5KCBNOj{#$WC0%|M@0q4xnzTcAwwexOgu&=N|dVNpiOO+3$%rRM~f<^|EF1EP?$Qd@Hy@Iv^6SV~}SYXo;D
+G;CF9IEm00E`j-!2E7TU?){M-{n14@pAw*V%}oybZBQn^ALvsG^d_KeX}>A*vCnxo(5D1wW`pL+145ng`UJDve5o@?&(^d+?@zp)
+TgISy4J`$k7(RrdBjmAlM{%o{Vm!$ux4#|dgZfhfY)7oa1J)r7HQtGDbIiOUFvl~7Sn7n77@F56Jq(US%wNL?U}(1yQV9FA&Oq0m
+b>`n73jMn?p|gb~ASzHGJR3xc=h!-;np6j7h#`Dw)^tcthz?`I^2MLKjXCkZKV0zuU#aH_jG7Qk4(gJ*Iz+AZ5e=fjTk5?BnC`l4
+49!%?;Q3%Bj5b8YwhJB>>9pSS=Ws^;QaClIjBg2E9MJ%ml+8O{9JyqKooVJ+d`uf7H&*F$!k7$-F%_6okGly<`v{&+4xagw3qIyA
+b#OdkEv-OVF}@l~!Mj>s)@4X1a1+=f$qnz#wZaGLnv(_(2-^e4vOS6qwoexcYDYP*Z%uS0ouxMf6o?Bj7mcc>2|KwwUxI?@%k5Rg
+L`_o==`zOv9T4+?A<er4oVe`Z#v@TUZ83dvg38xAiN6bH-ky5ItoP%5Dtx~Qr^wcRitzn7p9<b@!l`My8KNoPkMpVU{U)4gf8deM
+2Oihpd@6ju2`9pV9Zp16_v3sjc)tl}2vPUJQG9`Ke=2zA=@6G1m6A1lUufMMUV@mR5|n<zaHfFZ(-AkYGh)p&1M|`qb(xdR{0v*3
+kZ~vJnciC~bxIYX5u!+I_^#PX!_=eXWhsuB8-g&Mxkas15pLDq5p0fDW;U_t+tWDSXM`P(I#POTvDA}CphNuHTK1Vc!rEFQY)Y>o
+PoLt|DmTUaOs-u-YoeGqg@TB8n{i|N3_DFnp82hL28aTVV~)c34_M>a@s2XP=%{PE4)9{<NlI7<@PP1f(+#$vM=%}RU^DGw&Ev^Y
+^0!u>H}TAA>)&&d7w~*ae%{10i0>V|cz6NPrxfU2E1op&ZzGAnfap^qG_ybr6oU9#yLM>+A&iW+G`e=`4W7NXlvpr&u-w3b!JHjm
+qTXn3x0m(@9&}vunciB1mQcuBE)&YK(wc(HKwE<pE0~FZR$CY;_hC9cR|i{oN#ijz6xpu%LkJ(vF}wu6far4@pdGqBiltx8M`;zP
+Fi1-~t^0@#t}irhj(ABidW7Xd1O<hV3Yx0t?M)BbUq*sdIT2-kZ(V;A(G>T`@QM8eM4wak_Ylp8JiC0%v%8AuQ(6?0Jfw9L7n|xR
+>Vn@7Ijqp$vvOyaVDLilG<8f0nxQ)oG&xLlNZai1#D@!WN1pMmwdhSe<KBq!4{T_BYbAOUPucH<3d;+4KBYr%;;DOKui`J@`IHWY
+M`Ei%wW@~J#^@`dXGBCx#bOv4qJa=1NrPN72|*3NA)JgObgS+oCEZ6#dWt<o>8({0BtjCgzG?}0?TVR7Y1CeV4oG?_6EC${Fg*th
+beyxyJg8<%2+G?oRYZJya{OzYzvmg=S~K0mQ}?NhddytBisw^`=_Z~g+xcnoiuw7JV!DZE(rqSF5_<v9rxepoJoBDsehJT~6w^&S
+eSezd$J3;%cs`|=Kq_QwkPOrtK8Fy+&k-xPNL7cCXvqp+r_Cr(3t$))Rc#C#v#ThQ^EQ<!=Tj<^y!mO;O+0;HPsES)M6TlblwP`v
+=YB`T&pRR)@q9|pw=@OZF)$PmX!a2!XOEnQs~L|O&C*OZroepET0C^v@t%3vn@Za~JKLYmWjjVlZ+`ZHX+BtLswGgt<c}fOP&rND
+><J?nwdGK~z=$x$wBi#5)0i-UGc?CGnLh3JmC24#e17u;Mnva5uz_IIOn@6pXXu75(!CAC!Y7D^F~ce#R8r)1KXyVsaB;V7irC@o
+gU<VQIlXt%-CacGkaQ>E1w^0H^%i1n?6Zax1_VV333gi}6htNNvy5(Bq?VFp-L-*t<TyQ-WL*O9PLOqf#Y>Mjyd>whwxX7aS{bkp
+nA}8`6ka1rht=q%tcoKM4=^p^`Z+_5xy(>_!usS@g>`%0Y5O}#FwiHW{@y3ZU+oIbr#C|7`wGqdIKQvZT#EDi3eBZBzpv0-iu3yl
+&80ZMuh3i!^sx{gvmaWl)V!>1z--4aqt9%RW2uKwk`}hn$0&_jVEhmvK!zE{u5F9fhC{~kIbr#;IPGiI`o9OK<}FUm-#9-#JLRy!
+B*zV=HwQ|L(9u1t8kP~?kZCp@t6)r3)!r-&in>y4%Bs);3pxVA&E*vHh-F(v{ntID-Tu<?4o!G#pmC6>LW=<s{7!(xBD`(p(D1vl
+PfLZ0ledP@AxHn%SJJkU>~)UamASOt3$bIdn|#Ied@j<wiKgz4JoI?vaTU*}Le1Qk5E{b0O)QcjX%vQDnx5M5g!OMJLG}VOYjy_r
+GQ?pA7V&*KP_cBdpYcdEy!8ydi>MvyE!wf-;y2L^QQpr{<5$elr*=ecBFb{OCoAFiyy_9ome6vpJ~3V$@mGUv3aLA{wJlIv5~($m
+>QGQ>Y4i>|F3=o#W!YZs<@pktPi-;XMAKyJ<t^qH@cf<4PSfp%vMIlS=VJ$)_wWpdIvC+x2;+N(Ziw#BJn-xlbM&c=(7TA{Lo13L
+`FoCjp6EVbIh+%guOj+bVnfdZA|aVO#3qFhja$Pin2lG`%?Kk%MdY3Z?;g!4ulrvKLUeT4_^qGM`wI$k<Qczt{#L1h;QNd5LBEN9
+mMGJqLK7X6>ffGdUfcB1E8CdlMa!TdGHKQpRo8992K(u`^DHfQvzD4l<`k<VV%-tlA0M-y*Svi5{H+pATPd1<up|23Jhi3lnM8We
+G1W3c&+1TQ9IUNUfvH53+Mp&zFt>?7xUmp^5<&2=x1n^{5IxraPH%nwQ5MftcX7tRBe;(qVNRz;&BdumZ_)BB;*|h8N+YGgp|(~y
+<!#A8@`C|A@r?4#^EXaF_UG|>K97HMo|T6cm=jaWU2E|g4e(|IUMzK()0U`YHNuN~3yH@}aQfU<Yr1KduXokA-n*0Hb9C?-C5qMD
+Ou`t6*XjFAh{!y$=H|ns)i$hm3c!n>CNNAp?Jp?Up~1(ogTiOCzth(`ktf$!tdBJN+QLe$I)Y1Sv(qpv?4lIm2!qM=fuMB6;HxZa
+FJqO(*ybwxzQG*jql=Gv0nz6I`MZc(-X@JiOa20)PaPvCfz}$02H}^mS_l=`m)L?^?3nYAo6@6~R+?+zsWR}8X^a}E&uvcVz6VV@
+_MizdUBdIJ1G<}d2H9Vgg~d)UAo`SBx``+UI@Aeue*w{_4ngiBnhskdNnbHXpW3p&iD(qw-=h)M7Z80an1{j&X%=58W5a5K5gAYk
+o@#)zE)185kxUu7z94pw1s<Ld`3G1Qcz@s8Q9YzL=_%3S)4L=2OSSK-F+#usC#-Inwsd?k#)O;_plfTwuQ}rLA?jOII7!A5z?vQq
+6JuM<Hs`c2i4iZ2KEGD;zLDVMWFQzwt5|4PF9EAr9CjINA3s^Fwu-P-o>E(aXtO4qh2Z#l*<I~CbmRU(Gwx6CF6S?H*XtIZnYX(m
+nZpZsK6e%I9-g}ONLlp-JRi$nCP$npOP0CW$cnM)bF^sC2vQJw=Ha2PW94-pexx2vN`e7OF0qDv>FPr+<GH!{6&~r)^6CQ<uF%Mt
+ECqaTbe|Bm7P-PuM;@9xTqa%(-8)vj%B7r^E{kPbu0HRJFy><sMs~V{=Tm`_OM=PJs&MD*0rncK;OV5!!UYp^#)cW3JEaE4m{=WS
+ioqo1sN4Nz-#6s;V?S>8a0$<+MEzYnWxL>EC|<zxsj#z6#UF4LX-WcsV_ojF;#RuCKGyv4Q6<9)&}<G3%2+3vYfo$b)7Z8<-WOf9
+^LppEwx1o;nc;R6Awi=_tFXxA-lugMz}I@I@c5QzhfHf8B*ap9*r=6#Zd-cMp{JK0n|gh=#kqW~{=D}Q-KRMGpoPj6L?4VgO<)<I
+%El<rL>1GViWFFCh1Z9QqU;vo-5XTx(o?N<si9NrFrk&VXG*&7rJyICG59yn-@5-{`|BTkH_r!Gyim^wQ%9Gjyz;Q9k>LLZ7kDc;
+_5lS?2w^J%S*Bq<B7`t}G~q`I+X77=w+nY?p6PUo9L3*yU!-VMXS^HQ7LjXjkX@MCvvuP@xxmN8rs9aamS})2g@YeG5yG`$+f(HK
+;C-6Uc23dorI!0mFm)eu>N(_mZ=90n>L7=ZKLxCGS^eOIBJ@|SFf0vU<^^#=f!jqe-vllmX2o-34O8O&aBiPvEAgDu^wvPx)K-`(
+VI&yc(N=p?i1`7e@JEf|i8{G!?<qNAC6`G(u10j=Z`;m3lK0nXBpovx*uIJW)>Q>LTvdqnJ0>at%DjE-1!`X{XJ&!>tHX?QsCfBe
+DscBa20pTjttuLERac+654yU$4}UUYMEPqe(BYg%h`k|_jf)&?=&CkSRu{y&GI1b6AwydlA!X<XkJ)-+a`Uz?BDTMgn2t9R(<e7U
+HGVC*l(o)Lo6RyYR;8C@OJ_!o!Zrah$5qD~Z(P-`5&}*{puNW)A^mih1n&E7dOvQ{$4GxW&j*i@ZsHkepS6r<uORx=LDFqRb?@Uz
+@(YMQb(B=rSFVb`!ZB#X;N%s}_BML8s-eu)Xf}=_VYQgdnxW>0#ASXQ8h;nW^S*Qop2Z{4a0$`JuF_ChmuF0ejad+vx6llqRHDP%
+uN-DWOfM_#oAGtkpm|cuF~d1kjr&UAhg|S;GI;!K{*8XIj!B_9q992M6=dd-!#X)}S_wC+Ne#u^YxelD`tuAq*UAxeBUz@c4&{BJ
+WjqT<qWKb{kM;Pui|D?o7oO=0h(2|o#E|S2BAz-WBf)3IDhgR&T_7ZKR5Ds|Q_9f)7_3fZDOTeG#TLTVUFTx-x3;3tTayZ2Vby!Z
+^oI-Ty(<T0fxjDg4>UfaqR_>|x?TexMhU)&gM1_qUfP8!$_3i~$qQe1@!TIEpS}DQJfGYRy@}_(VyGVrhF-(-x!4nu$P5~ZS*e0#
+<rW4^T&rmg#@njSP#Uy8LF)Em>{DSq;hn1Wy6rN#?~-Q6E@{#1o9BghX)fXU<OR>0c<$GGI<NOj=I3+vv$qCgxl$K9+W;X*-r|_#
+4Rb#gn-u}<s?O@Z&X{5s*w==L316PQ&3(V5aHz1Jt~^h&FSX$B0;+nb+H%gaeQ%&EB$EE|euYnOTE@_hFeU*>Q<7EH0kRidSG^3e
+b@ovZp%v<@LBQ3!p)7BWGd1O!A`@&5CL+SC)sHG@7(_xG5yoa)AzED@fDo*SgKVCRxk{F<uHX<p9U%Q(@YKEi)R=z9JX;^NiN%y^
+q$yzMtIZ^l$AW((1Xt*XmRBEuRPnzcAKWao9^rMiJhw-4daNS$X`Jax;k3#n%k)|2tZC%lI*-^|34KaOgoK5wcmgqjSZQrxcMuKk
+9g}(1eb?iCL80SWywGQlI=|MHq?>qpq<w=QdjZd<PLl58>HGLS`wMtJc8+8kLkcB1X^CJdzUo^cEDJJvV~kho8s})iTAS`E#DRb+
+txHNn({@LBf8!%Cor&5dM4#(=Trt_%YmgQZzDcP)PbyH|uo{TMuqt}(DLR7A#Jv&2@yCLoF7O=Ng7xnE769&aB%0ouDC|cn(^|?O
+cR29BcvYHpV8!Qky+dLY{L?h)x=NEfydMI4Fl|ZawhW{1Z++m|NrXy}ONc&JVtuecVKPi}EzTOOzz4#7LY)$?+W*=;=Ha8)JYXPL
+F@!|Lr@?OTf=)?ce~sqYMLJwFLmw-*d=F3MePf!CU%>OJQ@M`GKLIl)rjO#v1)3Hid=rR@W_1Qg1-L0%LllXUV9-Fmbmj(?zuQ#~
++k;~Z$DZ6FzqJKTm2!YCb8l3*r%@UgU41?>jTFZWi*)tgCl6kw?<&;56hssP3#<E<AAV^0akQX(g_nPBU->qo`x;GruF-S}(Fb>y
+ZzH<TS_W;qo#=D1Jp3Hg0To-muEF%y?6Wmd*ylcBN!GQ*w(0~A_^MWV6NDEG8^bUzwoS7QTd$Pp=#`?r^_stn=ibYwa68WjSNvT(
+<Nj=p{dS%YZiP~atM0{;W=VVZVXFyZSxTw(GQDsdjPSH%e2^xLR9h+c$slnXZEq>;Tb;|X)wxJ`>%FEz2IsMy4@4_rprA^-;+Jet
+YO2w>)tOQ#gm@mZmeyA~qJR!x#@ifQI;bW(t0s$YZ9#7%x^L!(XYp>LPv$e-MKsEuXr$YTK4(RJoybpJ^{Ze<G|gTDM+}xr%iLzj
+x^hWkE^1+UBz%;#u_~_vsqIRPK-%tiMB}kOuza@7>=)Z(zKf{FLj{K@FChAqXS$2%LE48OX#0zZKDFa?7tx&eX*fCS3y3~;SE093
+3p}GL%&>J0uo}kRF;?(>QzYdov>MKb;c<vyAuOFiX>{H8lK)%woIYEu>5H8umkz73E*-hMVDKai>J!dy+PdXkKh8i%$7Ht5T?RD1
+Vem?;+yQ-iQ(pEbOTX@(Y>B2%?vPmg`ylH3b`>A9@OGk)ozG9r#61B}TDsRP<+-kZ!nCeqP-3W24ltWz#+C<+X(H#f)g6?4XGec+
+pzzx}_vyIiQ@(`fQ#<zv4zxRTZJYyEw2Hd3rBPPpRi83BBpo#ghO%T^Sx#|KE^v|~blRUL9~!DSooA@OHBnlzs^`)1z7c9|(<e2y
+RV{oK$`NbKqsWIvk<4)<cCYJ*$>ACI`^<*|Z9-=?dJWO1PLtz6puhynOkQjyD!^7o9SAi&wLY-!8N*azvbEQbP(!53kf{hMxb9n{
+9<-BQ>gnxk-SfPQsK@=yS&!ibL?1g*4sd5lrDI_i3`woP2MwBa7<D&M*wc=GwE+t=Dpoy-Mv8$P#$i{1K=-BA^;l|MT;AG>rbKaa
+4p0mYQ)gYDNzGtPb6M?B;nWi~g0N4VjMQLWhb)rAj7H(@JrF<Kmd~ftI;AU!K6s*h8_~TL4aZ{Emk@pOMENG7y!Z5YCbtuPZf`XA
+*w_<-_AK~LpX?v!cGFkkkkR0dIF_!Rv`DF|M!{;pvPO`jjBRn-p!+^bK~8(49}TGAc-7xV)O1hO!req4T=lmR-IsL0GrFDVgC`=B
+YKaI25ZTxA5!jbyCUZ}cducoiqJ<o!nO1lF7+4%oM)-4!4QkuA6>%SfT0F&|`q`S7Uu>5Iv4ClZ=4>TdihX2g+d{Qz56uTDGeUbj
+o)&|5$X+$YEQ_^uOzE_5JG<BSdaR72N^fmPZzFm*5z*s`$R$J{w4=8X<^4@>4e55G586?R%B{gct-a}q09G@?uay)YDa=x4idtZM
+>Z}Zl3MbWK)phr#d(LxP%VmFeNsrpeuGt%X>|FUCo+0r5JOl#&1w<b^SH6kpuMH|TxexRTqK};`-$YdMp$Fx$Y2sBxpV}LpeGYAT
+bjxcOpWBk4g`4NJ2C-^dvZ4=|=^hiLM$0)yqnQ%y&o*n6B^>g^>A3Th!&{$%_U1*_35czedS)0Ib%=!s?LJ^?x*8l^Z8?>Z5j}Q}
+y}J_p{A%#I%OQ(-zn2FqW>@AuSpK^p>iaTIct$TE`jlt7iKx)tj^bH-0nw+_Q(M<%Q<<yKU6`_p0|%ayp?@uF_7rAUh+711#ae+6
+<1nXb6c1$X`$|rS{bo65Jn<z&pE?s61;K@vffyD#F|;@_56i4r0Nz!6bzorlboSNLvnfprIznEBmEGgEIi2orFo~XTFnzY&pM9-+
+$_e7AuEyvzW9bnxVpSiobp#qgPbHg+h<k;MqBaqlX2wT*gGnjA+riKK8x8q<qv6x1c3&&YaZ*AEuOV7dhI*=Xu3eawC7vgwTIw=Q
+TI@XIbVyX;<ra$+UERF5Yu@%DXs}}pDz0z6=AjI7ZzXYQ-h7t6_BV)D^Ya$5vO}A0ee__ltbE5cXQ{Wi3No+0LEHM5ai8zxm!2?v
+wOgR~@bvx7Zx6TgeDXGfBzU4QqE)B{Sm>VPY$>L+Dr&3@vT7OgANG4SsGEbAO@$&}QC!_-JMliR8PATV$|1h>484nJq<CnV>bDbp
+ZjKTSnBLH}2~p%xN@J$dV1`R>W7WeG2#sD{S9^JG9pABRIs|{{W!HHD1F~K8cy>Mm_4kgJG}}y}%z+UCE*nXmW7ff|!F-DdmOQnZ
+m<QLuv_56k&sZ5^wyl8~LO4`urQ_bc*abu%Z0may(YP<<7UHpz+c(h-Q9azVJLi&ILG;P{-`;YfStUU-S=5y?o~J{_R+^CTL?Ell
+VN8ts$Z>!=accnsp|Wj6d+0VF&h6$k>08^;n}~AoLoUg&mfKZCpNc^5A}VsY6?WWpx{Byi=OH`>ckZiSRi7EUmNP->I-=Xvf)XkU
+!TabiJPvW1x#l@m=Hp0h39W5I+IZN<i)W(Q-g@_bxU3ebs{y)<+GDX&GH_N5n!qf_<^`+3QV!haGAGdW`0RjSF^z3|N?59}KMzUA
++D`eCb2NRiJ2#R#0;K4fv?Qa|stOaajNY;QxvY)tRUfk$Og1s5f7Xvqfmv4(sIqP7z0V~{bj~FS;jM|zScJ8Q)MQ{Pwh4`pu&lF(
+b@&Ngr!YHXNGlU+D$OZvP3an82zcz9&L6UK!Vie@B}5-PSH6en-%x+-Dx#0&KGYO-RcD(W-o_@ByW>}y1jh~!#4zzNor7AdjVY|g
+$)QX1zWmiT|6bg-IeCaljyZWue>>49_nvMe>U*NcO1PI0ee%}LI^UcY2Nx)Vpz9iP^wqt4_EAY`YOqEDMrKx6h^nh@!Dv0N)o;5f
+H0r*74xSwqe!RxlKNU0O25rA?&PI-N8bs;9@HEJGkanvT0)LrufgC6n3+6OFvp|`Ku<kE!Peka@66|<mS<Nq4^$*^<xr=B>d!ixU
+PV~V$B6ktxd}v!IcN2Zkj;?7wmWk93*W(blh|w5YY;bey1p~Uuli{~!VFUiv#Q~<a_go63)wb5?UOhpAoU`)e5<B`-eh$$B<kg3z
+YQ158mlj01<2@;N#h~RRtNC{heN1IWgbPcK53fYqY?6J^EIHQ9()`|j=_a1ZY~KlxU%>Mzb$=7j5OjaL79RBlL?5e|Wv%sOunq+l
+GxumR91-VgVrK+P2_r(bYC4u&x_~mGb%drJKSZwEYD6MoJ4NyAI7j`xcS*|X=}DApzz>l#R2V*l#@ZE48Ri?KL%}P?ZdMmah{-*{
+$4f)l-YD$PLHDbEJ>)AhO48TL8&!fgkFnJnxK$Ywfv8Qqfv5D)W|h^S$!fun!h6rIq6!5U0}MdQX}|8%Vcj3q=x2K{rLVQ$Ot7JX
+6%Y4@2y|5F&r#PFes38o5V1rNs?ecR2+;%dE@OCWp(L7T+SYjb_565uwtT){d(9kuDsR-+9<zi*=F?Y=K@O`$AO-{hS-@wcSZt)Y
+^2Ec(h>n$F#;`SreCmFV201vVaBK{ypY0})zE-9qv3B;gPXbI(Wtv&xJsd#;P4PC#S}Lh${5{jki=w65IvkePxXsexxZlm=_=DZN
+bP3U?{QXTt#dyD)XRI$E`jjS(-5M#>sHXyZxw<V`>Qgj%3q8_06LsN{n<7>ooJYvZc&A$7rs{4FKkv&q=3_O-kL>)vmFI)|BscN&
+{Z%_Z-?Y1e=YzW>tMlKSTy$W`L(s#$i6|5Uh_(a^-lne3^qE#+OmC~>jW(ukk)q9A%oM{uT|9<!zPN@<R{T>@J%?2e585^l=UQ84
+DG@ffw(1$HBCdi?JV;<Z5r#qxVD6IGgy*+Dw+i16=b(N*2hHz2M<GUCLrJs3{ffaoQQ}o|l-jyMD~RtS=Q{I8A2uxkfk1W`iV9U)
+w{gA2{l*iXos^SNeCvqmE~3fv;gZNJh(5LIZz7sF?prZ2=NAxtN;%y{H0}G+r*v#ge-+WE)O`}+X(aihES5OpQ5maF)?mo&>ax1o
+$w(t-!>~4(n88x#y7nNj*E=n0vKON!d?adbJx6aMiYdZ-IjZ>uM4z&wcM-MyJrOrbFChBVUY^!b*LF$*ow(!#j4DhFW3~&V{V2s(
+-Fry?IVI*&TN}}#BVrR0-Put-oYnLBtll`kwI0niifU^FoCHgZY5B1yLL@Cpuo1hf7lRpTAC+7gc8I-#*lJ+EyR#hkMO@>thU>@f
+$~Vt{$8+!K<Jr%D^ZZTawBK_|$33S@cs`k%a}UqJy04AN8or5so@hSQ!Orqc^s_{n(mq$5%x)+8T#h5&3&TsHmojHU`~`SYDM2+Y
+XvI^2=?<gM9;;-=0IV`lGEC!0y31_lk4nKCq93=s_e5iQYrkY(dRzO;O=;ybOhgh<0k#xsBU_5*lN%4rW5{6YwT0Y>W3?8%Z~L$1
+{S-~d85;99&)<mW_h%uQZs+-+4ZVqHh=<Nr@t7z6?nH~MAhpHSrAnkLLRXHRN~Vez$tpX#dVc#rq`xZNBbs*_bv0sJUGB>Ec1Ygm
+k9oc{k0gJs%=_Dj?sx9jf$Hr<e|K|KiMBZpc&2v~eb6tpOg*h8mNkZnm&P_qc2LInS$C?OsI@+L^|>tF!<fn3@dK<3tFY^A6(}6q
+GvMKI-AlZH>4UW~?_#R^g})xk3z$B&GkO=(Kz1nCPRFXaS22BR{~lg#r7ZJAxI`t+469;T7%&^_vSRc;X-K5CP{xP|q;gvO`ZJi8
+7`N7R-zHFxT>@3)5}r?;Fx|v65bblDiQ)^0K6a;pgBLc#hv2>5R>9i7{Qb&NZE$~my3FQlyfQu?f&FS9f+6r03zzNvTH(X}+GEzJ
+#kcnNHxY$`-frMy{L?ql&l64Cy(eMwZ=#<j>icSW;^%64R}g(LZn}x6>b{Pv>bZ{VH__iDYPPkbYMOq>M019YP}r3by-s&Z&7i&3
+WiiOGvhI9?X-cWD)(Wl!8>GCn93qdD_nlex_n7dEugrbOUu(~qgAxU8!EDvK4hWY<gdS@x&E%$BRJEB3f+X)HBTSN!Ja`L2=5ec@
+_B(obb|h+Y0nz6o`@4wdef4HcAAbSSr{emXhzjlZ@$u{xbM&dG9+B2)r6Op=Fq8q)I0iAdWS%4oH^rLBb0&r*X^i<FeN<le8WDw#
+ZT-QR_8B_I3^LP8cs_L-^d_EZpEjD#S)&*6d}^2ECZ3+Q3*HmIfag<tB)P*tmpNNDf)@)dQ4|W3dz{TI$uiN^sZLOb#88kPB6an;
+iOTz3r+xpmK*#=TW_AhDr|v2TXnRajpv1J##dQQ3u)lK*$<!1kWWZzMFDF>+$;t+i!Ek;ad0Y2^4^7pNJ=HDQTdSs4q?<$HHVH5q
+JV*z;tk#JI@ll%@<1<1j!&c>Cyg$T1J#gomMfY7S_jeia?6~Iry_Nl4ME%eK+>af=zlrXu-|wxcA1jc36WvsNIP?yR$33S@h(5SO
+au?Aohua~?4h`Q#H$?NkDoIZHcT99NOEr}lAZJrHr5R#{qzEbY)xL75Qd=d48Br~C)<hsC2#FC37iQ_(o{RfD$75!*rcXxm9{(<Q
+?wbjmdkI{^^T`?-r3sbdsoF;aU|DT}v;!AsM7lv&ib;;4H<4Asb!Z4Z^@x#Vx4gd(=DxoW=Esu|_X~(VSkdh!qQd(PC*k-4qL1AI
+y@_bjLr1&g9j2>@KD8%$6Vd<I<9oBqe6E~x5z(i1Meic&`;!pK{tBXxbytQ`$kMyVxYC%pt-=|N*=NCj$2x4n`KFTAFV$8}*OW1&
+3`siiQ*C>#+MzS3p6@X6Tl@N(h(-$g>@lMJP4x3b_nY^4#@|FgP4v)9Af9^(Ttf80i0LMx>n7>eGwCsA`X;)mG`iovmmkz3`X>6D
+*<&8IzFwVf_w^6nwL|2<W?<P<4NWj?i4#Pwa>b_+6XYl_{p%$p4h=(9gO0E+kW>h@{q4ncxV?CaLRmhmN59toec@1}2i5h(CZj|I
+u}Rvf>IS$iHN!+5t1(Ltg}Lg?9lE!bqGQPRTv_%VmMNY)Ea$(S=#%$B?;@&lxE4mY6MgVL=v_qZaO1|}-9(?<9}U%O3OUr(;UY(i
+HI35d%1((R&tR#S)V;!U<ytC!2E;?7uJ#Qhj@^E<hJEq_o*nm|Qv4?R8$^GN-G7_tuhoj~CHmlw^G!r8?dPba@B*Tb?Ks~<)M%ei
+f@iNF`q+;1O+@4VaxI>{g6LyA&i4>a!45qF)m}jKsU7FLh{`^5G)aC1(Z_Oe%VdWc2LikZzczv6a2=kri`6bu@RzOpTxH1)9Wf#m
+SzSYm#_b+H%YF}^=~xk0-da7~Mb!5#*w~G~iGG%7O#7H=_0GDR=#w`W?;$E5z5aGP&P2asqTE}_N^GM`mr+NCXP6_xT8ES!V%H=T
+s0Ya0VQqSj2=>ia<?(32wmBvH0y=nhJQew5C5=E|Yk%}EqIxKVt#mulCo4MknGm-sVNiO(`qng-o>k?#T7!p=Oo!H2X@LL~P#$CU
+NTW}zfVQhS3dOhYzm|@*$Sj8oh&~tB-$Ya?$iBK;pcfE*Dy~nN%SSPSK}+aT?)cVBRJ=Aw+-|Tb&5SVj3lS^}BgAbiJ?Gw%=55TB
+_aW19&1b%Z=TkB0O+14gijbMn3y3}yF*Uq4;;RFBlBB8~(x{D5imo0aGQ{Au*7ou0!8+60t%0@>Mwp9NY%}m-oAwb?KAke9$ZzeJ
+ZXz0KUkf`@_$K-vAbO~yLB~28-$XZAPlwFBe9X+dgy@quneHJfy6?M)XYx(-^F;SIMet0&iGG&oYJ9!b_nE`(M4yZ5hYc+V#YmvU
+Y}TnfVhtS{7!-Tx-V_#k!uH8r4Z(X#ImFHui&HN9npyic4H8Z}_#uB1sQ;Y+O@|_6@ou0G-e0^6XxyKONTi#AKABE3W1{KCtHrl5
+Q5a;YWkjI8uiQ{XoSZ!O;T@rFGvP^tDoMlwpl$L)+`A<_J8nDC1wbFnCb<Wwg}9BEEU@1X^s!`;dw}MUwo4w*=zgG2?K)M8Ehmaq
+B*T0{)AY%e-PbvN4R~$KLNf(0E@s(#z-l3?b!LMB-vaeL&*Op*m*9M?S@k_Q!><QOn{q@>_XB-u50BStqk0;wL~}}IiX|kh=_F9{
+wJJwuRmVU%S1bYZLS48LMtRq@_E4_*T&+2T@YXK=CZ6HYv^Jc()_xP+5S4wstY2H&eiQv1(X>}hAstoIB}AXhdANrthkZA74##fl
+-$XY=CGUxfd=vdN(X^LNct*DqeQv|4a<t)=Bg0TTBC^&CUdH&uhzJ(%AJC?(!#ERu!$u3e1s<zwFv8odXVU!*rl_Y4r~JwNk@&Ty
+XtvaY<y7F(Jd^dRNikcSBVfn~6BwdCt>`>(Y7VDp(zQuVm;}kg{z}-P9PTkqoTFbr^tmaDC0r4yhbD}fvzGS~5q%1R*qM29vW2dD
+5Uo%or9g0ug3s?vBk0!E^TE}JbAuasYoeu>XjPPQcPH|~NgI!vxaI`Pr7b<S+KNDx4FtXTMMiE|GOdud-ImjS&D(Lw>nBTKzn<rR
+`A`2Brxpt1"""
+OCCURRENCE_ROWS_B85 = """c-q~a!EPHz42JK044o5Thcm;O&4ct(6oPE68=;P6$aWI6=(|^GnxqHq!pmRV{W-V5kz{@5PY%hM;r{aH=5hDiuzean>>i#Ex7*Y4
+)AsTBba*}-A2#p0H=D=(-S(fCJiL6k8BW`<z1ckt`^~$U^PA0S_i1}~81DDm!}&*>pHnRT=FR5E#|?MGX?VCD{_~;d-+2Df^ZViH
+@W-(K@vFan&i8kG`IzI&>HOCH@%H7z`5j+>$K%ss|MvEHdVG0$`|W?;c3mi&zuwqsLPtd-0iw~aP|-w;rgRr*`YzDY1OtuG(ujd3
+I#pUQ+U9<DGu+>wL7sOv_rvyh+CH9+PXmqSg3(Irb4}Yz8nu_WwU-#U5^c1I2Ab?N_Qi`d>U5R8OjBIird*=QQhnxg(o>~#1rpi_
+jL^c!e3(cJGg+Vps<j4_*$7N_DYFq6rG<&}VTwzi>6L1oS)iwrORX!>R4klTCYUH#3Lt81P~9H)!_D#d`@ipeKkW9yY3`S=VE$t5
+6)s$zfn2J_yzJu{W4JqfzMi}inEk6UDO-g^=95HDk~p6vagwC@B$<;W&nHn%5}i*{I7uc~m!eGNF-%jK>SLIuHbp~K?t^Ro7)_$3
+5d%%8rHKX__31aYV=DPUniPbynnAfljO*z7T*1I44!Fd?72WGF8rLOu9Y*5{#jZo^KIr;f(ZE%_`&aJV#`$Tk;5N<&16TAOH*#<r
+=c9qkL!3_rE)Q`&8@SxZd2_ddZhK-3#o_+M7)tQhcunTAo)E>=X3I26@w7(~3@F*7RcbT7(p&pqbSUOZXaSN0xk~PM7RUrGkh$Z@
+S`t(UjF2Qwk~E(rbCTrwB+5ym^GOOP$>jD>x8l*Zq}V2E$FmkHwt?!3WKvIobbk)R3e}pe5ctX1mlu{VKmC^vJb5B&2UjR!K#44p
+itX58+B>XwR4L+;wBrxf+qD$_;K~lkfTApR$nDrc4JgG&$`N_WJ2b?)LXmb*rUjPT5m;))Dk7zsDm*4nD4`vcNvm8OLbp;=8bql~
+Bij;q^*Uy%OHA1Cg)tg&YMVlJ?FY3@p}O{iO~x3b$+R@lK%=xY$v{(FMuAI7=6aJpQoVk1_Nw6+SE-G`FF#U+t#U-5VwvR#ig2Qc
+0VQyvObd*tphQQn5FJ86Q3B7|4bbiTz;mDmwTiUkE6P*mqXM(eC8M)S480L$>Ej#~98lPk9#aABm3m`p$<1}?w)LxIc#VuX2P_;2
+O*F^>EL=E)0f-euJy|HUgEHMLXDazKHbJsjEB*z{g5BDPk>`p)#%?%`p$I367*K*ofd!hH21Y3~^*@YKY3hI2?JG_F4_l>g##a*0
+Ha{w`lz5Uba9v65BrcbRt}>LysM=IHTN$YIR7tDNc>Pw!|F!v-_4=)hm7)Q7ekqX#1MpyJ>^)g1w1YCa^z=**!^qfCjMQbG1^~7T
+Foq(WC}KbfoG8-*<C%^Rqm*V)LgMLVpeQ^;n$QRqc!o5=R;kVSitwCeKn2FMp#(0GqC5#DD6p8D5m?O42rTAi1eSuQ%y<$-BWZsO
+bR1<pjRAVmMJ|TcOkHGPYw)f^^Kc<@9oCL>lK3mQqJc}j`&Uo;L>82*@H|vg(MjSwPdZg}zB^B~s>_V3_lQz^nkJRTMZ%dnbo*Xt
+npCh=QY*faJDvkKpujGotkgr$2oB)pIdFptEaYYc7IHHJ3%MDANo*yZ%(>%iQlXA>iHo60g?iCNE`lZ%sza@uO)6A}S~;6ks1CJq
+HmMYQjNcfSdiSqN`Z!5l=4oWBG^y6=XRm@Hi)=Zpf-)^Io=F!dN*{QdRCSSdNcM=5TM?MO9kTQyQx|CStW>&!CJK?Kp#WMXknY#R
+Ch9%q0h1_+^okfNJ;z)!m#YPrDw(tj2X#2YmA&h5giF2auqtU4juuJQ9QNhmJK62=;rzw+yDzV}5>`Psl0utU)*b%Uv4R0BJGYit
+cQUxGWq$G~x3$dAK;Xtw((#U{3YB!sXhFAUNXLw#IvknN9o%z~7AUBHRnh_l^{+}=prAVJtr;&lS7(hI3opxP!`(U(gBwe%SN_Sd
+l(U>fu?lB73HH{caF&yxwW4yClc2Sta+Z^zwQ}GrCzt4hGL$D6mv)h~Ji)wcj7uDFiGeFS;EDz=b?;y5bxjTiEdTCBy4{7!(EJeM
+>z~koQF>1(p&b;Ni?Y%wEp#dJg_7Dq$+J<`Injtlu#3;S@EMF_Z6+9BLgDolX$NI?W0heWx1xs$NDrP@aGOaIXP=~k+cAl>PlD<&
+Mb3f;)nOv-|G+v-oc$kIhl#WQgWAhHQuF#tF=`@TDAEo}oQtwjuJ;O*)DB8+2W6So;nI;AEM1lKU|t35*b%PifJ+Qq;$DZ@cyx$e
+holE7VI7hlq=a>-oChgUu8~Q)!8=#a(|Scig)bCo2PMu$Su2MH_rZLj<aSV|@3@opz<aP!Qb>E?J$lum=UhoqdyQ~K2V7#{5(iw-
+z?B?uB?DJ>9yc@!O-=-c3TG(N4oaMhvQkb2#sFt1xg8Xpjk3<+GcXuSBE4tdql4Qj=Ru(!9o$w)izIY#TWwQ^CA#Gbv$+_GKXh;#
+=>e!7>)wrVi36@=;7Sg-vVki*;8FvZI*;>8^h~fGz0BtdMdqTcRdb*>VqKw3`by$F#2-4a8<aR3{jcGgwAaX^SAutYkv>uex0g`n
+M7X_#GIv1jRd`yjsEM4RNINKTF3LK&!)s7dJ1Dsw6rGK-N<$nC#=+V*UUWc9=z1tFhsroJ?KM;~lWP5uX|JK0ZY3~I`a~6|9pj)+
+RDmN@$+-dp<B%#?fq`+#Cu*y3@ev;@rK#W|<qJjHL5Xuw)=E=*sCaOOlG{Pi*(fU&4_Gj+)-?P0{Qmqo-`;lqE{F5KPuu(9^Wk=P
+zrEYtKYe@s$GJ=qW0Gi{v_%Y+HBpv%Fjl6;`t_&30r0&8CI"""
+PASSAGE_ROWS_B85 = """c-qZYU5}eq5Pk2j7@<h9S6=GHVC=lCQte8P+A2}3cps7oUBhLe3tW~9CRUaI-ZOkS-m1Z|x|RB3+04D?%$%7y_~V~OqI^-R!ixjr
+m9g8-y+?QM#hI^C>E)JVOpH7Ty<FT&FRRk6EW9gkE40LM%b6HjrXnk2-_xopd|XjQ8LLbiuRa<pYi80-9MB#ys^d^nBzBTSwx^bX
+f~ttKd%9Y>&NZl3mTl6V&=i;biLg*9)u7iC(jpPXenNt_m5wv1@k{|Z5@mbaF=?f0N-ICYod#wrLsfuC29@7rc5Qq{+HJOh@~c#4
+Wm|o&<KWU)MPBL4K5{vo+P3j^@*Sb%m$DGvA8PC6&U8pCXF9Ca&D=g{^-ZM)o&c}8PE|${)rviSg_Md1mM&G9WI0I$LCkPes#fsP
+#$HaZ#yE&5F!)d}^v&F1p-T!n%0OMW7p!p;o}2VK+m{hj$VAI7I%}gYqFYs!6!mKNILJy;jx-}q0R({1*Ytu$?{44I>g|X3;}*$o
+krvDov^ZRGE#-qgpw+5)Ae7Y9a}Z;s$A?;Iba#9E>$(GVTF|9QZ=pj35qGjcJ0{-<I4_L}VxrSLUD<QsbM9;6Dwwe$a;NRIa$h7m
+fsY1B>_nW1Z6ayZg97eneCG_%yZ#Xh(F)h06Q|K|xnuHGl?3e+FrExr>^SVEBft=3B_5aR*`^t4x*oIXNXio9Jh=MKiPg7E`b}&x
+v+qPva>c)N3rlaBwZ5R0OPhrS4wp5=dea>n#LBwD^CfMTyiRE3YprED470S(7GW_U0y-xXFJIV00xaxd0l1i#nvzC@&dS=Eozuv%
+7R&Lo=KT2O5iJ|c*g28$l}W$z^6Cns#=Fy%aO}e(NvOSw=b8$MG~ui!cwzN#LIiOX74t!~tB0YNbO6G=*3)@Y;&x3#k;cjX$kk!o
+sn`RikRm{U#q*O2Tzmyh@7N}ksZ!D><2c;Ibc~;jo+cH=J-%|fb_3AlhAL#dLq&cheV9)w0@MI=gORe~HrcL~AB%+6(#IRC+;ffV
+D$f(i-8l+Om`Fp#sM%qWV84+)XBkjq6LKdrUgf^FCxs<R$k2F+;aD+g?X>AgE$JbHiPe#8UIS35dBgR$!Gj~dfXD0<Y%Nd~8xX7n
+4Tp)F=gu46XWyH*#j#PigHz|)r;Ora&?wOBfA9$G(8h5Wi*e%-7lR(b2<MhQ8z{ZA2Ww^x{x_OgC)N#X`_vv(H;<zY7xtVfH}2pL
+{y%Z2XSzfEx3wPf2O2bp`ial{fIZNU`vd(;gQ)*+24PJ@GXDdAINu%|<Ll?2{sN}nC5H"""
+PAGE_SEMANTIC_ROWS_B85 = """c-qC8TW{h<6vyBDDURHS5(yF@fK6T^2S}6VLIh;lRTNo+X9(`v9&5%9p;f<o&)7g<mnFs!`NfJabFhE^bDNW=f3>m0Txtn6W`g-P
+vjQ%i(BZyzRx4_bA2RXku&FgAuS`3uH1$SN^SSVd>-@v0C7DP3(6KGbq%E8vS*Z=3G5bS;<J;V0Fc#c{DHq@I0-%Yyw%LZ9a1mNA
+88KJcxW4T4!MwkJG;d*O{@H=6s#+P)u@#UPX8DmfV#2CeBO)2q&Z_02CdkxEzR1BV+Lzj?-o!P_pRhS)mdoCl$1LJg%VWfM{1@%)
+=^3Bmkw5~J+mXloFfkEGhn8$Ef=HGYcS_}Qt)cx_+(xgSot|miks$UA_!#0ZfWikrk5UmeTP;{pRY-TIX_WJ!*~m`wiV=$Fh?FdZ
+fQV3G9TVX#Xzt>aX20JVz@^!{gX{ZN_YR%1mVsg=ABy_E6i?=UxDGS&6-g0rK|)4h6iLTtQvSgA2PZDVgb6^dT%<On{z@X^Xa}_}
+9{blzwe$>XRr68H$gWnqQ9FjVLt(}vnBY<%{tVb#C<y$`M-mV^50wB@GLs6uN511%fX96{Q<Mp%@oPZHl@Wmt;8k3^kn=oU5+C&7
+>!4@CU)_sB=cqKi1bnw`8dQu;A~ef6g-mlF5$eY<oRARcTnWn4QR}u^r3JMFSv?D~lz#i9RaI8M=OIYuj!Vo7Ts}j?&&4P0RB`XG
+UWURi!j#D)?fKCBE9JeSpor`m$6)%iaH9O1xssj3fQQ6|1fz2P_rORc&!9WNmgM)PWA_t{8rwChY}Dv9AGfYl_Q9$n(GibAnD8lh
+kv&;@IHnN>0aBf)oPn;7*yTBxb{HXX%3YTTEFV4v8{bqeA5F#m!Tfe|)r0OmtON(X&35k9jofQFaj)*f-B6xP6Y46VPZ|3zm+a$)
+5Hoh1u9q%dkVnguz0l#^^J5F?GWks(hBxh1`snjU7WVa=*q`phzIhB?tcDXTrLRoj=N8{}P#%n49n)Nw10&!kIX1`;8%QO?RqteY
+ql74}lvRAYEIKrD(qWH{Wm_*}O(jwZAsDtRct}9M5(gQ%OhrH;W{$LvprG_Y!iy^y4U*&PL>RDn<kF-=Qf9E4#U`EcymO-1Ao;4u
+g(*w-UANakdBFT)Uf-G*x1DpPk6zBAkDil0o42m|4jccZtzYZ^8(_LFc#f2+4pS1Ua6#0#m2h5s#E^C-kQh?~f&SKBego5b)%cug
+K)v!2(?)itYvTa*3Co?-Cd|8y0``L0EawDM&ki%?G~giKnruHG%-(!r@GZ8SfpaA%&c?o+_m~$PT7iqles%$>ISH_N_i60l=&KXM
+K=3hg#{1ZO1ej8A6;q=C>`mx`yZ$qGvV#3MU6;~^hhFy*4`%BG`;>N^X!M=Q>&EBwiuI3bV70tA`SsD3;3&g<>oej+P&_HdiAQ1P
+YQBQ)M+h(Kminke%7KkY5(K?&_pZ~+szoCwEh^cySg)PBQ7)-tr5K;o;*$mx))bpZ412TPh$`q)L?jn-q%W@+1IWGG!>rT!+DiU~
+kpa4%6ZC3!=)dkx4&u#=zD3W9)W`|x>EZm?*wzE;yZ3;ZSvEh7<@0a<1H8cgZ~"""
+CLASSIFIER_SOURCE_B85 = """c-oy=`)}Ju68>F(#U2mEk%>gVl2|dS7D4J30q)Ykc^vL!l~|K2Yio*Rxuk8?@&A6`%r0M+oTO*Kw8Wj6ot^pSwbtt*FDnt}X{zE%
+=b0I4`)Vc4D%BUw*WXQ^HJ?k>d@}V#QRcBSX0$BxwJ2moOu{X{!`IR1!>hAjPCtkl_`*0}7dln`NZ_aR{2#yn+j$cBKb|~$xqt8(
+k3)JK(c>9Cp3~z6J&r#=J34;(`T5}#kK^eSOvLJqg3;TL|2jQ;^Ln^LEBrip>PUmpe@<VWJwgT@4qm>Pe#YY^9>@FiIH1QNJ&x${
+j2_SF@q!-5^dOF7;+PW0lsKluF(r;EaZHJ0N*q(-m=eeIWzZ`1?_bY;dZ^U=)#Sf&^5^32XnYTn(I`<%k>%xDrut8nM5)e{e=XBm
+1t->)s;bLOc)|;R&vj<kLQ|x=@`F}Dy;h};qe7M{t5&Mgu}q`OGOr8clgOd4`K?&yrMMM3Bkh(tOJtftyK~>4{}wEs1m}S_7R)I0
+l4y*QWxOJi1S_|}!tETV(ipwm_=UVwmL-BXbvqVoS;ec!RI;p^FDgr%CPZjp9AdMl;WvKJu40j2%{!S3UaayfmATb<Z<CXD4@-BU
+aL7i?{G>-|*X6QO<xmcIPwZmn5>Pz!4;yC0bblAG^F&?b`4wWV&Z@mal`(v<$9@uJeq#ijf)A;hz&(|wV1!hsoy<03sa2XdX;AM{
+RYDt4DO0H=6yn25=@LYxsYG>?i&&+p6<Vw|hCB@&XzTBqrL2{<Qux(nLIR~QYArKh1F9xUr0Q0!;j=8Su*OQj(@O;i#mer>YJ=B_
+)7iBwHAKJ%EZgBu*u&;=To)UiUGk~&B}j6ktWqJ1u=<h7P31e}X?THf_5NuCIg0_{E>)S&EP?o8CXVP}jMq9%*<T#wCzH?f^JKhu
+N|0sh`Ting>?1(7d02RprNE2_GD+~`d5Axs@%vpT=%5wETn@YRL-9j26hfBv<Y>_?y93Zl$dK~`@%^kH60BH@I$C66eD;H(oPHK)
+JRap`l;v6LuBgcX92{PQ%~#~13!q$QMkk7WmMFw*2?Qd$(lMZez+ohySE#*IZt|MyMqVa5lU2|A&E9+cje(Ol3|E&3bO&ul)TE^p
+Wt}RAgS=1~sqCUJEC~p{2aSB#et(cV#8Yw5BBEsk9`-vk#VLT+7ii^?BO8uj)b~qE|HG_v!qDu0)#RLVVAyD-WWtFBuxnuY+qrq-
+6U@%dQ~bSqHogbc?heLB_hbA$x~GK(|IJ}LsP^Qx?+8D=_YP)<4{<i2AK<OeOt3rL0{Q=qx<Be1xl6oz|K=yLlxv-CCUKJ{oq2`{
+$z~r5O-UItY>dzuamiNvbjO?B!(QiJW3g?Oo9!Z&?2g%L_-jfkG&DvOfIP(pnM81oyGT_NJDhpP2$eL=ZwTHSA)TCcomP61=u6Ep
+gfhRD6V4c*qj(Z&9`kwF{MaJHAx&KBqSDt$;3aSvwq|S6II0FkYz3vMU4x-u8I2MoTy;Uwq{M^N4&8I3cU!D8iZxwlInH@^ghGZP
+<B)*}BswUz%w%Bu%_dXoYMOR{OXy#={;N!=TNzj4)1&~F^eq{Si~0~0EzZV*%0B`*!P#wLQBKy)3iZPjGHz3sg!!SSu8^93eSP*1
+BR-|nVY2e4XVhnkB<HHfW@_zb(-wt-xzW|i_q|WRmv`;CD$?1L>XM}n#B3%G$oC}AzMD@D7oj#X1%CWTW9m9;&K@-fcGhZ--5Tsv
+mgz>s0E@YiDdDx$Fhn6W<?%dC_A+(T;a1&3G?Foze%Rnl{ZVVsUp74fT8O4@5Bfy|#yG8kPdFh(lhQ65?t^US$x>`*NuAMG8_#|%
+x9_=_9}Y_?uMngy$yOolb)ZXb>|GzdKY6(b9Ijp8J+?BwR7Cs7`nvUBQCt_PqKtNfve>n5qRt)wcrCABK1wCr!orU70%ct_4H*ag
+Ud3+Os*m{%+{HP-kSUsMz|`b(6)RiA`@+Op$;|d#oM1|;oI|)l@-fSe%@kCCTeSDX*kO4aq>c6w>p<zB_xv`SWigB;>0|}xD+*p}
+5O6pg5R+-WMmEgX5@)4=6KF(IC8^6@m8v;pf>u#yNESf6DzCM=nQWl7wKw7Wt-~@l1YvEntsO6P27BnLXR-{e=&PME$!uM=LDJ>(
+3SU0-c+U8}gpSmQ2G)qAhOK-Q2}V^uO`+{HMTZ`?vONad&<<k&L7kU8lF97S4jFdr5fgDR78Cw`0P7fD*9o<0yQdU0XQ_+eVL%Z$
+TITIgamG{++4`ty*}o8Kb=E?t2Z(RMj~j$cePJrfUP7T5CkZ^FshH*jbs^JY1^MK@7GAcsaB^DjV%XtHX^A|iT+O_0ho5$k>g70U
+z}iSp+T4C%b368>=>iV3MUZLu6HOl-#db`w=I-E~(vedzVg;i{L1z%h`xZ&r&D|6=emm7)B1lxpvnt)^glR4lpE_UPgM;Lry2Wya
+*1f<O5dBdj1P~<|)erckENT<U8q*qrWfNI(whfD9RjGARMb`%*N%kC~O<toBiFmx--gB>77klzJLKs9e6qf8<GmvnxiIO}<?4pp(
+`u9{JjwjJqB|5Hr8Wb%(MTqT-`kQy=?a7;CW$rnu<|S<HEf%3HsEzPJ5%g?VZX)n&vftgK%qP5mPmj*-bFZarqr!NLdpq>X0^Xwt
+rE4=-=c7@j*;~uoOZ0=<?7hoV9dAyvO9U)?Xu?iwM6x6HoRkC4>fIZ+W@5f*P1MtPOpO4Hir8a6LF1m0Li9~*)1Ni%nR#yM+hpDo
+x#-X=Z$RlcXWMh!a}St7%BIc_DNnAIw+O-#{U3x??fnkVBL-%uI59#PH&Ts^R&T1%meE^0WOVnKp;^hp=Py`BxKg)h#({4C5qV78
+lT{%yD0#QnoncvL{ve&ry&_pwIZ;wOII(Ree*~)O@5c{6Pp0?)n|+%>h}T<;hnak(;;Y$*vR1?Qrb@8gtf%3-H}6ijXjEA~P7{Py
+3POuIbKk40B{c4QLA8nknGWgh7QOSOH<+0%4W&8Cnf#5jA*JWy;hhC9heclW9Nu_=g3K@3tP#;gcFu|pq6=vh0&Og4l~$nVl>KjK
++1*QsXV?_cX=9UcJ^=oGhj7Ighg7PAVd?GE7`tu-Lb$m_By%Y@V{x$KkX8kxIFr-Jzds-#(fu1y{!Fb7kKkKd^zT8h6wf<`5fSXD
+u)QnNR%BROXL#r3dFBOMJfsiLJhZpFT<`AS9!%1Mle!s`GWAz3e4Fd8<||)l1v{m>HpKoLp?5=P8Jiot-5NdGq;xSscSo~rCq3nq
+)4LOHG+sd0L3r%enq2oyV)^9XDD+BgD4h;)=x)yG&U`12%Y($)gZyKbZe57(i28`f&C0{2?|ppx`k$}fzkl=do710=+y;eZpy$rp
+@!cwSRjVn)cTb))n$K|(1i05Whuu9>qr7+0p5uP^4iw^{OcDgpW}9N$YqQpET@*d)F=ug`Mr<Bwlz&*2LrAYkiCHSw7m1{v;Y9d5
+n~U~zl-`KoOPP_^AIpujh(g$Qm&l7&F(iMw;{wFES4-+O=JQTlfDP(KP}e3Ld{+hC#O0-#`QDhS+=&+u7!9ghBu%WfO-%s4N6DtK
+n%&QJI<61wHrmk+hBxRsU6uE(p03BN*K1i)T->!D@F<}J1^l0ZR%+0dI<I>RGKlbR=U+tBf&zll5Cui|Z?Q*&^KcHqcU0@IP;{=D
+<!X!%#MNtKd3;A&{p$X^_H4Sd``+fZ53*->cIvIV*5>44U*stJt&!!rf80@<$k~4ABI*wM_;Ezr;L&_hH#=;>G3xS)W1|0DA}d7^
+wM0=w;p9aTO*K*E+1zADoYDUP+IzqL"""
+
+occurrence_locator_rows = unpack_json(OCCURRENCE_LOCATOR_B85)
+occurrence_rows = unpack_json(OCCURRENCE_ROWS_B85)
+passage_rows = unpack_json(PASSAGE_ROWS_B85)
+page_semantic_rows = unpack_json(PAGE_SEMANTIC_ROWS_B85)
+classifier_source = unpack_bytes(CLASSIFIER_SOURCE_B85)
+classifier_behavior_source = classifier_source[
+    : classifier_source.index(b"\ndef main():")
+]
+
+source_paths = {
+    "registration": Path("data/external/psid_questionnaire_corpus_authority_registration_attempt_v1.json"),
+    "extraction": Path("data/external/psid_questionnaire_corpus_extraction_v1.json"),
+    "closure": Path("data/external/covered_earnings_questionnaire_closure_attempt_v1.json"),
+    "semantic": Path("data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json"),
+}
+source_objects = {name: json.loads(path.read_bytes()) for name, path in source_paths.items()}
+source_specs = {
+    "registration": {
+        "path": str(source_paths["registration"]),
+        "blob_oid": "825f6c61ef9d4a161886cbc44f5cc914d65160d2",
+        "bytes": 520656,
+        "raw_sha256": "07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c",
+        "content_sha256": "4c91ae30ef8b7ab8c776d4372a4717e7352913e8dd825ba85181ff02b11cef27",
+    },
+    "extraction": {
+        "path": str(source_paths["extraction"]),
+        "blob_oid": "43d8a1208c6ffa7ab7d7cdbc4b4115947d33df16",
+        "bytes": 81177,
+        "raw_sha256": "5fb39a0ada3ccb0da0883e4db7bb6b36edeb60865d90ed061bc0b74e1fd12347",
+        "content_sha256": "18ec2e023152d179de68d72ebf1966549a6e46ef48743aa9ec607f565de3128c",
+    },
+    "closure": {
+        "path": str(source_paths["closure"]),
+        "blob_oid": "0b1a54b02943824405b6fb14cea1d782c9306d92",
+        "bytes": 50657,
+        "raw_sha256": "00c4fb1e671503406dfec55d80b29379ad12f7b8bf330dfe74895724ab19a46c",
+        "content_sha256": "47c15dfe9018a4ae91c4f409378d2b85c3cdecf442c1ee752d8f7e8e3b125249",
+    },
+    "semantic": {
+        "path": str(source_paths["semantic"]),
+        "blob_oid": "bbc2cba152cef1bf9c54c093d904ca7f329859f8",
+        "bytes": 2203624,
+        "raw_sha256": "0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87",
+        "content_sha256": "086a69e006a102f44cc512b4615a137559e6ac97d3c0bee2be630dcff094e228",
+    },
+}
+for name, spec in source_specs.items():
+    raw = source_paths[name].read_bytes()
+    assert len(raw) == spec["bytes"]
+    assert hashlib.sha256(raw).hexdigest() == spec["raw_sha256"]
+    assert source_objects[name]["integrity"]["content_sha256"] == spec["content_sha256"]
+
+assert len(occurrence_locator_rows) == len(occurrence_rows) == 348
+assert len(canon(occurrence_locator_rows)) == 117337
+assert hashlib.sha256(canon(occurrence_locator_rows)).hexdigest() == "4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d"
+assert len(canon(occurrence_rows)) == 72325
+assert hashlib.sha256(canon(occurrence_rows)).hexdigest() == "0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411"
+assert collections.Counter(
+    row["semantic_reference_position"] for row in occurrence_rows
+) == {
+    "codebook_field_header": 12,
+    "v_prefixed_semantic_field_reference": 157,
+    "parenthesized_semantic_field_reference": 40,
+    "labelled_table_or_prose_semantic_field_reference": 110,
+    "unlabelled_concordance_semantic_field_reference": 27,
+    "other_field_identifier_lexical_false_positive": 2,
+}
+assert len(passage_rows) == 8 and len(canon(passage_rows)) == 3137
+assert hashlib.sha256(canon(passage_rows)).hexdigest() == "ff04a2143f78aa59579b3ce76592a40f8deca1382c4c727057f12b5fe63e3709"
+assert len(page_semantic_rows) == 20 and len(canon(page_semantic_rows)) == 7326
+assert hashlib.sha256(canon(page_semantic_rows)).hexdigest() == "864b2077172ef3c429386829a602bf017f4cd90b5c6735ba86ce1b4c8cbf58b2"
+assert len(classifier_source) == 7882
+assert hashlib.sha256(classifier_source).hexdigest() == "f6a6e5963fc20fd2d1a6f27d04dd88573b3c75154d73f28fe5edc311402c10fa"
+assert len(classifier_behavior_source) == 4571
+assert hashlib.sha256(classifier_behavior_source).hexdigest() == "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb"
+
+root_names = [
+    "identity_triple",
+    "ordered_source_artifact_identities",
+    "ordered_existing_extraction_locator_rows",
+    "ordered_derived_registered_codebook_page_rows",
+    "closure_projection",
+    "corpus_wide_cooccurrence_sweep",
+    "established_findings",
+    "expressly_not_established_or_used",
+    "reader_seam_consequence",
+    "successor_residual_ids",
+    "source_disposition",
+]
+roots = [
+    N(f"root:18.2:{position:02d}:{name}", "artifact")
+    for position, name in enumerate(root_names)
+]
+
+# Exact Git artifacts and all 456 registered PDFs.  An artifact identity
+# includes every byte-authentication value; changing a source preimage changes
+# the topology rather than merely failing an out-of-graph side assertion.
+ART = {}
+for name, spec in source_specs.items():
+    ART[name] = N(
+        "artifact:git:"
+        + ":".join(
+            [
+                spec["path"],
+                spec["blob_oid"],
+                str(spec["bytes"]),
+                spec["raw_sha256"],
+                spec["content_sha256"],
+            ]
+        ),
+        "artifact",
+    )
+A_REG, A_EXT, A_CLO, A_SEM = (
+    ART["registration"],
+    ART["extraction"],
+    ART["closure"],
+    ART["semantic"],
+)
+
+registered_rows = source_objects["registration"]["document_candidates"]
+assert len(registered_rows) == 456
+assert hashlib.sha256(canon(registered_rows)).hexdigest() == "fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3"
+DOC = {}
+for position, row in enumerate(registered_rows, 1):
+    document_id = f"psid-corpus-document-{position:04d}"
+    assert row["source_document_id"] == document_id
+    assert row["availability"] == "verified"
+    assert row["locator"]["full_file_sha256"] == row["expected_sha256"]
+    assert row["locator"]["size_bytes"] == row["expected_size_bytes"]
+    DOC[position] = N(
+        f"artifact:registered-pdf:{document_id}:"
+        f"{row['document_identity_sha256']}:{row['expected_size_bytes']}:"
+        f"{row['expected_sha256']}",
+        "artifact",
+    )
+
+# Root 0 and root 1: literal identity plus exact Git provenance.
+DID = N("l2:identity:schema-version-and-claim-id", "layer-2 derived node")
+CSRC = N(
+    "l1:source-commit:c1899c9e3f156c411a6e62d2d9b57514c0d6bb2e",
+    "layer-1 commitment",
+)
+CART = []
+XART = []
+source_identity_rows = []
+for position, name in enumerate(["registration", "extraction", "closure"]):
+    spec = source_specs[name]
+    identity_row = {key: spec[key] for key in ["path", "blob_oid", "raw_sha256", "content_sha256"]}
+    identity_sha = row_hash(identity_row)
+    source_identity_rows.append(identity_row)
+    content = N(
+        f"extraction-row:source-artifact-identity:{position:02d}:{identity_sha}",
+        "extraction-row",
+    )
+    commitment = N(
+        f"l1:source-artifact-identity:{position:02d}:{identity_sha}",
+        "layer-1 commitment",
+    )
+    XART.append(content)
+    CART.append(commitment)
+assert hashlib.sha256(canon(source_identity_rows)).hexdigest() == "f3badf91d5dda7e063bed2d7b1fbfc6470e981a19e32986a3ed50ce194e56504"
+for child in [DID, CSRC]:
+    E(roots[0], child, "contains")
+for child in CART:
+    E(roots[1], child, "contains")
+for artifact in [A_REG, A_EXT, A_CLO]:
+    E(CSRC, artifact, "commits-to")
+for content, commitment, artifact in zip(XART, CART, [A_REG, A_EXT, A_CLO]):
+    E(content, artifact, "contains")
+    E(commitment, content, "commits-to")
+
+# Shared exact decoded-page nodes.  Every node ID includes the page-text hash.
+PAGE = {}
+
+
+def page_node(document_id, page_number, page_sha256):
+    key = (document_id, page_number)
+    node = N(
+        f"page:decoded-utf8:{document_id}:{page_number}:{page_sha256}",
+        "page",
+    )
+    if key in PAGE:
+        assert PAGE[key] == node
+    else:
+        PAGE[key] = node
+        document_position = int(document_id.rsplit("-", 1)[1])
+        E(DOC[document_position], node, "contains")
+    return node
+
+
+# Root 2: exact locator rows/ranges remain layer 1; exact normalized semantic
+# passage portions are freshly derived layer 2 from authenticated page text.
+locator_specs = [
+    ("vb6_q76_income_p25", "/passage_locators/30", "b6e2e8f252aa4a2bc342fc2479bf8487b9cfa60411c0563b6d2233172ce04b68", "b606cac8423ea88bfa58ef258548059a04da321d4934cf254d640fc54c121f8f"),
+    ("vb6_q76_extra_job_p50", "/passage_locators/29", "a131288ff5167a3ecf350de17f13e230e859d70cc08403d3c683cb7d6040defa", "0ed4477febbdba1b63c4fe9bb26b16c4ca1726c0f747b9de16975800c19b808b"),
+    ("vb6_1977_worksheet_p55", "/passage_locators/14", "16fe26979a18036969affa00142934f09570f19035e579db68f84b6b0807961d", "d68cc36573cdcd671c4617929b28ed61f48677d4b59a9e57166b2bc1c3db2b2d"),
+    ("vb6_1977_label_p84", "/passage_locators/15", "ddab1deb9d9fbda5d6ca9411891ae457424bb9e24171652c663b3d4ec96dacc2", "3659a074c1127016802447d148e1bc7c17eb84c339fc8847194ba50936d41bdf"),
+    ("vb6_1977_qxq_p54", "/passage_locators/18", "8d14d8b6a0cd1dab0b7f92cb4164fc3961e282f046995361aa150d268b32f8f4", "14372a04784b4d9edc19dda18e9fae98c3919761399dd6fe812756390e99a45d"),
+    ("vb6_1978_worksheet_p74", "/passage_locators/16", "149a8479f24f2fd4b910c44ff1596e8340a625fdfcd8a251dca4575f7fc07bab", "11445c796f8783cf6430e32b45ed1d452a6e3ccc0543e5e76cf07732c3fc5fc1"),
+    ("vb6_1978_label_p232", "/passage_locators/17", "c7e1cf85260020cd64f73d438e4fb51528488aa152531bea3614cd418e1e42b5", "f878f7c4db7a6897bde84d1b993ca5f1e448199ac788cfd05e6311ec9a54c6a9"),
+    ("vb6_1978_qxq_p70", "/passage_locators/19", "acc18348a5a662fb31d3f924fd344d5f81e06b5dd45a25025e4677369b938e27", "a3e1d35f057322f309df9a9022aecc08d96cbcd6966119073a3b10cb44a17709"),
+]
+q_page_specs = [
+    ("psid-corpus-document-0044", 25, "48755f27efca205ee57eb1cb6a53ddf2b21da6ae00e625cc90495c6e0eb2af0f"),
+    ("psid-corpus-document-0044", 50, "e75fadc903cf8a9e60b57fe34847a7e20d047fb583a7f4a462231fa838e8728b"),
+    ("psid-corpus-document-0048", 55, "dea811fafe051c3cc42140b798f0f8dac01969f4f8037d5b2fb6ab980bc507d7"),
+    ("psid-corpus-document-0048", 84, "c0417fa955a7e6b7fb8e8bc97b1683a288cf1b78dc1a7143adae04dd11b61649"),
+    ("psid-corpus-document-0050", 54, "39fb78a67c4c77acebea5415f61d0a5acc6a22f0e37e67c253bfb03be926ae25"),
+    ("psid-corpus-document-0053", 74, "6e928e13dc33f3b04a4944980ae65fbcfd0089896c7e178e379386d720969c8b"),
+    ("psid-corpus-document-0053", 232, "88d16456a3ec1920cff508d74c830b9ee0e79a21922e7e9b1a5c41ae89dc58dd"),
+    ("psid-corpus-document-0055", 70, "b0fe565e317924d8e5e707a1f9654bdf5f9843820a658cfab9b74b6bba539048"),
+]
+DPASSPEC = N("l2:passage-semantic-projection-specification", "layer-2 derived node")
+DLOC = []
+X_PASS = []
+for position, ((locator_id, pointer, row_sha, range_sha), passage, page_spec) in enumerate(zip(locator_specs, passage_rows, q_page_specs)):
+    assert passage["locator_id"] == locator_id
+    document_id, page_number, page_sha = page_spec
+    assert passage["source_document_id"] == document_id
+    assert passage["pdf_page_number_1_based"] == page_number
+    source_row = N(
+        f"extraction-row:existing-locator:{pointer}:{row_sha}",
+        "extraction-row",
+    )
+    raw_range = N(
+        f"page:raw-pdf-range:{document_id}:{locator_id}:{range_sha}",
+        "page",
+    )
+    page = page_node(document_id, page_number, page_sha)
+    commitment = N(
+        f"l1:existing-locator:{position:02d}:{locator_id}",
+        "layer-1 commitment",
+    )
+    page_commitment = N(
+        f"l1:passage-decoded-page:{position:02d}:{page_sha}",
+        "layer-1 commitment",
+    )
+    derived = N(
+        f"l2:passage-semantic-content:{position:02d}:{locator_id}:"
+        f"{hashlib.sha256(canon(passage['semantic_source_portions'])).hexdigest()}",
+        "layer-2 derived node",
+    )
+    mixed = N(
+        f"extraction-row:passage-semantic-witness:{position:02d}:{row_hash(passage)}",
+        "extraction-row",
+    )
+    DLOC.append(derived)
+    X_PASS.append(mixed)
+    for child in [commitment, page_commitment, mixed]:
+        E(roots[2], child, "contains")
+    for child in [commitment, page_commitment, derived]:
+        E(mixed, child, "contains")
+    E(A_EXT, source_row, "contains")
+    document_position = int(document_id.rsplit("-", 1)[1])
+    E(DOC[document_position], raw_range, "contains")
+    E(commitment, source_row, "commits-to")
+    E(commitment, raw_range, "commits-to")
+    E(page_commitment, page, "commits-to")
+    E(derived, page, "derives-from")
+    E(derived, DPASSPEC, "derives-from")
+D_PASSARR = N("l2:passage-semantic-extraction-array", "layer-2 derived node")
+X_PASSARR = N(
+    "extraction-row:passage-semantic-extraction-array:"
+    "ff04a2143f78aa59579b3ce76592a40f8deca1382c4c727057f12b5fe63e3709",
+    "extraction-row",
+)
+C_PASSARR = N(
+    "l1:passage-semantic-extraction-array:ff04a2143f78aa59579b3ce76592a40f8deca1382c4c727057f12b5fe63e3709",
+    "layer-1 commitment",
+)
+for child in [DPASSPEC, D_PASSARR, X_PASSARR, C_PASSARR]:
+    E(roots[2], child, "contains")
+for child in DLOC:
+    E(D_PASSARR, child, "derives-from")
+for child in X_PASS:
+    E(X_PASSARR, child, "contains")
+E(C_PASSARR, X_PASSARR, "commits-to")
+
+# Root 3: each original seven-key page row is layer 1.  Four commits-to
+# targets make every constituent digest byte-exact.  Semantic cells are
+# separate field-reference nodes and six layer-2 extraction rows.
+page_defs = [
+    ("psid-corpus-document-0046", 20, 1976, ["V4379", "V4380", "V4381", "V4382"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "d7a68eadcb5ae32ca6fb239f37e89711474fcd18221d73d39b9d2d93a4afe697", "87101f3096debb296972dff5c8db32e4b56aa55f9031cbad7d4cf65cef948dae", "94709e4ab868411b3111bedf867c27d11a75a26edeeac0c12da511c046a88c32"),
+    ("psid-corpus-document-0046", 180, 1976, ["V4901", "V4902"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "5946933af0f767bff15773e74262973c998938069701835ac68f90c388ca1eb4", "22f3cef78b2deabb5b570a8a03cee6bc9bd924f461c3621011b3607c14323748", "3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9"),
+    ("psid-corpus-document-0046", 181, 1976, ["V4903"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "038ac554ae570d1d0d7f152c847840e460a6b88a1db4375d09140c74ae5c767c", "9b91dd6d54015f614c80124d78ff99a133b834256a2905be2278c4b5f8b290b1", "8c83a7e42dcf437e47ea27fef97ce97498677a3c5102589294fae49dc681c55a"),
+    ("psid-corpus-document-0046", 182, 1976, ["V4904", "V4905", "V4906", "V4907"], "55a798fd0cc934e1ec8ff0d359e9d5049cf5b891574e1a2df92060bf0dc9ca78", "cd57bab720ab21c5a58450942e5e1d49376d1c391301e03a67c4471486bfb524", "6405a708e4ec2305c6aca26b732471ccc4ea906958729fea4a892b584695f97b", "6b6a1c88b9ffb6d933cc5e17d92c3ac7bc744bb1ab961e567eddd204afc85c04"),
+    ("psid-corpus-document-0051", 22, 1977, ["V5289", "V5290", "V5291", "V5292"], "13082ddda241aa7d157da67c6503a44d7d83b7bba9a6bd5354a14858cfbb1189", "a98b3b055c290aa3e3b86f3d0ba563cc27c8142ba7ed92e72c1294c44aa6c8a5", "cd35f250c75723ccaccb8230ec760d97d70d40b90b65e4b39e9a699f84397805", "a53592207ba8bd2dc884d61fcd62108a9d23c5492d87133468bd7ed7030de640"),
+    ("psid-corpus-document-0056", 22, 1978, ["V5785", "V5786", "V5787", "V5788", "V5789"], "163634bcace0d2c7bbde569c9223dc73d54ec1838c6cd8bbe37a41f77e00e338", "0991897f973e697eb36c0b7ddd14200339d7d158cb4fc60ac8256b56108a55a4", "577f558d22dd0a3e010048dc16296a2ca69c5ec4479d8127734671e3630a87b4", "dccd52e85ad26e6db69ea97e6c8ea7a6fbbcafefb9961fc3d4eadcf2ed2689cf"),
+]
+PF = []
+DPAGE = []
+X_PAGE_SEMANTIC = []
+page_semantic_content_rows = []
+field_position = 4
+semantic_index = 0
+for page_position, (document_id, page_number, wave, fields, docrow_sha, locator_sha, range_sha, page_sha) in enumerate(page_defs):
+    page = page_node(document_id, page_number, page_sha)
+    document_row = N(
+        f"extraction-row:registered-document:{document_id}:{docrow_sha}",
+        "extraction-row",
+    )
+    locator_row = N(
+        f"extraction-row:derived-page-locator:{document_id}:{page_number}:{locator_sha}",
+        "extraction-row",
+    )
+    raw_range = N(
+        f"page:raw-codebook-range:{document_id}:{page_number}:{range_sha}",
+        "page",
+    )
+    commitment = N(
+        f"l1:page-row:{page_position:02d}:{document_id}:{page_number}",
+        "layer-1 commitment",
+    )
+    derived_page = N(
+        f"l2:page-semantic-extraction:{page_position:02d}:{document_id}:{page_number}",
+        "layer-2 derived node",
+    )
+    DPAGE.append(derived_page)
+    for child in [commitment, derived_page]:
+        E(roots[3], child, "contains")
+    registered_document_edge = ("contains", A_REG, document_row)
+    if registered_document_edge not in edges:
+        E(A_REG, document_row, "contains")
+    document_position = int(document_id.rsplit("-", 1)[1])
+    E(DOC[document_position], locator_row, "contains")
+    E(DOC[document_position], raw_range, "contains")
+    for target in [document_row, locator_row, raw_range, page]:
+        E(commitment, target, "commits-to")
+    for field_id in fields:
+        semantic_row = page_semantic_rows[semantic_index]
+        assert semantic_row["raw_field_id"] == field_id
+        assert semantic_row["field_reference_position"] == field_position
+        semantic_content = {
+            key: semantic_row[key]
+            for key in [
+                "interview_wave",
+                "raw_field_id",
+                "normalized_semantic_short_label",
+                "normalized_semantic_description",
+                "semantic_code_lexeme_and_meaning",
+            ]
+        }
+        page_semantic_content_rows.append(semantic_content)
+        field_reference = N(
+            f"field-reference:{field_position:02d}:page-semantic-cells:"
+            f"{document_id}:{page_number}:{field_id}:{row_hash(semantic_content)}",
+            "field-reference",
+        )
+        mixed_row = N(
+            f"extraction-row:page-semantic-witness:{field_position:02d}:"
+            f"{row_hash(semantic_row)}",
+            "extraction-row",
+        )
+        PF.append(field_reference)
+        X_PAGE_SEMANTIC.append(mixed_row)
+        E(page, field_reference, "contains")
+        E(derived_page, field_reference, "derives-from")
+        E(mixed_row, commitment, "contains")
+        E(mixed_row, field_reference, "contains")
+        field_position += 1
+        semantic_index += 1
+assert field_position == 24 and semantic_index == 20
+assert len(canon(page_semantic_content_rows)) == 5165
+assert hashlib.sha256(canon(page_semantic_content_rows)).hexdigest() == "3a86353af979ac46f3506fe89e38184251432ad23a69fa48cc2082fcaf741a5f"
+D_PAGEARR = N(
+    "l2:page-semantic-extraction-array:"
+    "3a86353af979ac46f3506fe89e38184251432ad23a69fa48cc2082fcaf741a5f",
+    "layer-2 derived node",
+)
+X_PAGEARR = N(
+    "extraction-row:page-semantic-extraction-array:"
+    "864b2077172ef3c429386829a602bf017f4cd90b5c6735ba86ce1b4c8cbf58b2",
+    "extraction-row",
+)
+C_PAGEARR = N(
+    "l1:page-semantic-extraction-array:864b2077172ef3c429386829a602bf017f4cd90b5c6735ba86ce1b4c8cbf58b2",
+    "layer-1 commitment",
+)
+for child in [D_PAGEARR, X_PAGEARR, C_PAGEARR]:
+    E(roots[3], child, "contains")
+for child in DPAGE:
+    E(D_PAGEARR, child, "derives-from")
+for child in X_PAGE_SEMANTIC:
+    E(X_PAGEARR, child, "contains")
+E(C_PAGEARR, X_PAGEARR, "commits-to")
+
+# Root 4: exact mixed closure rows are committed layer 1; exact semantic-key
+# projections are independent layer-2 children.
+closure_defs = [
+    ("extraction", "/absence_proofs/1", "31f85e2eca83d7a2bfe1d5b5ba38516ffde527c6c64532bf057c615a466280ec"),
+    ("extraction", "/psid_vb_residual_extractions/1", "29f5b1eadaf8c70edf17ed2edc7b1f9dc8c4e6984e062e3ebd4050d205db84c9"),
+    ("extraction", "/psid_vb_residual_extractions/2", "db5825c5d8c2dc577359fefcfbec4f0db702f790cf3a55c71523564a3db1e163"),
+    ("extraction", "/psid_vb_residual_extractions/3", "fb26607b98a3ac2a3772f6f773f999487e2ccb0409c6a638ec20b6162adbd99f"),
+    ("extraction", "/psid_vb_residual_extractions/4", "6f0df50f03038af4c3ba10b41367b939147477508301577a26cad8aa0493290e"),
+    ("closure", "/psid_questionnaire_evidence_results/1", "0b9a3f59280eed8ef5bb7ef54998cfb70274b48e167744ba904e2b42aa1aaabc"),
+    ("closure", "/psid_questionnaire_evidence_results/2", "cade58fd00e2823c9f544c2ae4150783d836ca678bae11f7e1bc91585fd8a0a2"),
+    ("closure", "/psid_questionnaire_evidence_results/3", "7b7bd44a4da723593276094f3b7186b2ecacd88cd98d2101dd87a3c800492af8"),
+    ("closure", "/psid_questionnaire_evidence_results/4", "3e3db7ad9a12bf1d04a94b297851aec413714de072d0dcfd1a389d66bff61dee"),
+    ("closure", "/psid_vb_family_summary/1", "48726c64a2d2b859e0db3888a290c6fd016f31873d3926126f81dc0f8fe555d2"),
+]
+XCLO = []
+DCLO = []
+for position, (source, pointer, source_sha) in enumerate(closure_defs):
+    source_row = N(
+        f"extraction-row:{source}:{pointer}:{source_sha}",
+        "extraction-row",
+    )
+    commitment = N(
+        f"l1:closure-row:{position:02d}:{source}:{pointer}",
+        "layer-1 commitment",
+    )
+    derived = N(
+        f"l2:closure-semantic-projection:{position:02d}:{source}:{pointer}",
+        "layer-2 derived node",
+    )
+    XCLO.append(source_row)
+    DCLO.append(derived)
+    for child in [commitment, derived]:
+        E(roots[4], child, "contains")
+    E(A_EXT if source == "extraction" else A_CLO, source_row, "contains")
+    E(commitment, source_row, "commits-to")
+    E(derived, source_row, "derives-from")
+
+# Root 5: exact source domain, exact semantic occurrence extractor, exact
+# candidate mixed rows, and exact semantic sweep values.
+XDOCDOM = N(
+    "extraction-row:registration:/document_candidates:fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3",
+    "extraction-row",
+)
+C_DOMAIN_POINTER = N(
+    "l1:sweep:document-domain-pointer:/document_candidates",
+    "layer-1 commitment",
+)
+C_DOCROWS = N(
+    "l1:sweep:document-rows:fa4125a3f1d175628a1ab76dec43edde02960c2e0687b7a6ab9b7d90708133f3",
+    "layer-1 commitment",
+)
+E(A_REG, XDOCDOM, "contains")
+for child in [C_DOMAIN_POINTER, C_DOCROWS]:
+    E(roots[5], child, "contains")
+E(C_DOMAIN_POINTER, XDOCDOM, "commits-to")
+E(C_DOCROWS, XDOCDOM, "commits-to")
+CDOC = {}
+XDOCROW = {}
+for position, row in enumerate(registered_rows, 1):
+    document_id = f"psid-corpus-document-{position:04d}"
+    source_row = N(
+        f"extraction-row:registration:/document_candidates/{position - 1}:"
+        f"{row_hash(row)}",
+        "extraction-row",
+    )
+    commitment = N(
+        f"l1:registered-pdf:/document_candidates/{position - 1}:"
+        f"{row['document_identity_sha256']}:{row['expected_sha256']}",
+        "layer-1 commitment",
+    )
+    XDOCROW[position] = source_row
+    CDOC[position] = commitment
+    E(XDOCDOM, source_row, "contains")
+    E(XDOCDOM, commitment, "contains")
+    E(commitment, source_row, "commits-to")
+    E(commitment, DOC[position], "commits-to")
+
+registered_document_ids = [row["source_document_id"] for row in registered_rows]
+assert len(canon(registered_document_ids)) == 12770
+assert hashlib.sha256(canon(registered_document_ids)).hexdigest() == "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"
+D_DOC_COUNT = N("l2:sweep:document-count:456", "layer-2 derived node")
+D_DOC_IDS = N(
+    "l2:sweep:ordered-registered-document-ids:"
+    "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd",
+    "layer-2 derived node",
+)
+DSPEC = N(
+    "l2:sweep:position-classifier-specification:"
+    "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb",
+    "layer-2 derived node",
+)
+DSCAN = N(
+    "l2:sweep:semantic-occurrence-relation:"
+    "0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411",
+    "layer-2 derived node",
+)
+for child in [D_DOC_COUNT, D_DOC_IDS, DSPEC, DSCAN]:
+    E(roots[5], child, "contains")
+E(D_DOC_COUNT, XDOCDOM, "derives-from")
+E(D_DOC_IDS, XDOCDOM, "derives-from")
+E(DSCAN, D_DOC_IDS, "derives-from")
+E(DSCAN, DSPEC, "derives-from")
+for position in range(1, 457):
+    E(DSCAN, DOC[position], "derives-from")
+
+XOCCLOC = N(
+    "extraction-row:semantic-occurrence-source-locators:4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d",
+    "extraction-row",
+)
+C_OCCLOC = N(
+    "l1:sweep:semantic-occurrence-source-locators:4f73e63cce14f036565e7786908cc85c08dd14dbf048065515a59548c288a19d",
+    "layer-1 commitment",
+)
+C_OCC = N(
+    "l1:sweep:semantic-occurrence-rows:0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411",
+    "layer-1 commitment",
+)
+X_OCCARR = N(
+    "extraction-row:semantic-occurrence-mixed-relation:"
+    "0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411",
+    "extraction-row",
+)
+for child in [C_OCCLOC, C_OCC, X_OCCARR]:
+    E(roots[5], child, "contains")
+E(C_OCCLOC, XOCCLOC, "commits-to")
+E(C_OCC, X_OCCARR, "commits-to")
+E(C_OCC, DSCAN, "commits-to")
+
+page_commitments = {}
+OCC = []
+X_OCC = []
+for occurrence_position, (locator, occurrence) in enumerate(zip(occurrence_locator_rows, occurrence_rows)):
+    assert locator["source_document_id"] == occurrence["source_document_id"]
+    assert locator["pdf_page_number_1_based"] == occurrence["pdf_page_number_1_based"]
+    assert "V" + locator["token_lexeme"] == occurrence["raw_field_id"]
+    document_id = locator["source_document_id"]
+    page_number = locator["pdf_page_number_1_based"]
+    page_sha = locator["derived_page_text_sha256"]
+    page = page_node(document_id, page_number, page_sha)
+    page_key = (document_id, page_number)
+    if page_key not in page_commitments:
+        page_commitment = N(
+            f"l1:sweep:derived-page:{document_id}:{page_number}:{page_sha}",
+            "layer-1 commitment",
+        )
+        page_commitments[page_key] = page_commitment
+        E(XOCCLOC, page_commitment, "contains")
+        E(page_commitment, page, "commits-to")
+    locator_row = N(
+        f"extraction-row:semantic-occurrence-source-locator:"
+        f"{occurrence_position:03d}:{row_hash(locator)}",
+        "extraction-row",
+    )
+    locator_commitment = N(
+        f"l1:semantic-occurrence-source-locator:"
+        f"{occurrence_position:03d}:{row_hash(locator)}",
+        "layer-1 commitment",
+    )
+    # All five members enter the historical sweep audit relation.  The page
+    # number and page-local row ordinal are physical layout values; retaining
+    # them here is the forcing layer-2 dependency that invokes fallback.
+    semantic_content = {
+        key: occurrence[key]
+        for key in [
+            "source_document_id",
+            "pdf_page_number_1_based",
+            "page_semantic_row_position",
+            "raw_field_id",
+            "semantic_reference_position",
+        ]
+    }
+    field_reference = N(
+        f"field-reference:semantic-occurrence:{occurrence_position:03d}:"
+        f"{row_hash(semantic_content)}",
+        "field-reference",
+    )
+    mixed_row = N(
+        f"extraction-row:semantic-occurrence-mixed-row:"
+        f"{occurrence_position:03d}:{row_hash(occurrence)}",
+        "extraction-row",
+    )
+    OCC.append(field_reference)
+    X_OCC.append(mixed_row)
+    E(XOCCLOC, locator_row, "contains")
+    E(locator_commitment, locator_row, "commits-to")
+    E(locator_commitment, page, "commits-to")
+    E(mixed_row, locator_commitment, "contains")
+    E(mixed_row, field_reference, "contains")
+    E(X_OCCARR, mixed_row, "contains")
+    E(page, field_reference, "contains")
+    E(DSCAN, field_reference, "contains")
+
+extra_ids = {f"V{value}" for value in range(4901, 4908)}
+annual_ids = {"V4379", "V5289", "V5788"}
+occurrence_pages = collections.defaultdict(lambda: {"extra": set(), "annual": set()})
+for occurrence in occurrence_rows:
+    if occurrence["raw_field_id"] in extra_ids:
+        occurrence_pages[occurrence["source_document_id"]]["extra"].add(
+            occurrence["pdf_page_number_1_based"]
+        )
+    if occurrence["raw_field_id"] in annual_ids:
+        occurrence_pages[occurrence["source_document_id"]]["annual"].add(
+            occurrence["pdf_page_number_1_based"]
+        )
+registered_by_id = {row["source_document_id"]: row for row in registered_rows}
+candidate_rows = []
+for registered_row in registered_rows:
+    document_id = registered_row["source_document_id"]
+    pages = occurrence_pages[document_id]
+    if pages["extra"] and pages["annual"]:
+        candidate_rows.append(
+            {
+                "source_document_id": document_id,
+                "document_identity_sha256": registered_row["document_identity_sha256"],
+                "full_file_sha256": registered_row["expected_sha256"],
+                "extra_job_token_pages": sorted(pages["extra"]),
+                "annual_total_token_pages": sorted(pages["annual"]),
+                "same_page_intersection": sorted(pages["extra"] & pages["annual"]),
+            }
+        )
+assert len(candidate_rows) == 18
+assert len(canon(candidate_rows)) == 6209
+assert hashlib.sha256(canon(candidate_rows)).hexdigest() == "039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7"
+candidate_docs = [row["source_document_id"] for row in candidate_rows]
+assert hashlib.sha256(canon(candidate_docs)).hexdigest() == "5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed"
+D_CAND_IDS = N(
+    "l2:sweep:ordered-candidate-document-ids:"
+    "5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed",
+    "layer-2 derived node",
+)
+D_CAND_COUNT = N(
+    "l2:sweep:candidate-count:18:"
+    "7ee29791fc17e986b97128845622b077fb45e349fdb80523fac9dba879b4ad60",
+    "layer-2 derived node",
+)
+D_CAND_ARR = N(
+    "l2:sweep:candidate-semantic-row-array", "layer-2 derived node"
+)
+C_CAND_IDS = N(
+    "l1:sweep:candidate-document-ids:5aa6dd96d2f909ffc946d032d4bc54e285ff42ce41ecb89529886f7fe76895ed",
+    "layer-1 commitment",
+)
+X_CAND_ARR = N(
+    "extraction-row:sweep:candidate-rows:039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7",
+    "extraction-row",
+)
+C_CAND_ROWS = N(
+    "l1:sweep:candidate-rows:039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7",
+    "layer-1 commitment",
+)
+for child in [D_CAND_IDS, D_CAND_COUNT, D_CAND_ARR, C_CAND_IDS, X_CAND_ARR, C_CAND_ROWS]:
+    E(roots[5], child, "contains")
+E(D_CAND_IDS, D_CAND_ARR, "derives-from")
+E(D_CAND_COUNT, D_CAND_IDS, "derives-from")
+E(C_CAND_IDS, D_CAND_IDS, "commits-to")
+E(C_CAND_ROWS, X_CAND_ARR, "commits-to")
+DCAND = []
+X_CAND = []
+for position, candidate_row in enumerate(candidate_rows):
+    document_id = candidate_row["source_document_id"]
+    document_position = int(document_id.rsplit("-", 1)[1])
+    semantic_candidate = {
+        key: candidate_row[key]
+        for key in [
+            "source_document_id",
+            "extra_job_token_pages",
+            "annual_total_token_pages",
+            "same_page_intersection",
+        ]
+    }
+    derived = N(
+        f"l2:sweep:candidate-semantic-pages:{position:02d}:{document_id}:"
+        f"{row_hash(semantic_candidate)}",
+        "layer-2 derived node",
+    )
+    mixed_row = N(
+        f"extraction-row:sweep:candidate-mixed-row:{position:02d}:"
+        f"{document_id}:{row_hash(candidate_row)}",
+        "extraction-row",
+    )
+    DCAND.append(derived)
+    X_CAND.append(mixed_row)
+    E(derived, DSCAN, "derives-from")
+    for child in [CDOC[document_position], derived]:
+        E(mixed_row, child, "contains")
+    E(X_CAND_ARR, mixed_row, "contains")
+    E(D_CAND_ARR, derived, "derives-from")
+
+sole_row = {
+    "source_document_id": "psid-corpus-document-0098",
+    "pdf_page_number_1_based": 573,
+    "derived_page_text_sha256": "51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed",
+    "disposition": "false_positive_family_concordance_crosswave_variable_numbers",
+}
+sole_page = PAGE[("psid-corpus-document-0098", 573)]
+C_SOLE_PAGE = N(
+    "l1:sweep:sole-page-text:51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed",
+    "layer-1 commitment",
+)
+D_SOLE = N(
+    "l2:sweep:sole-candidate-disposition:psid-corpus-document-0098:573:"
+    + row_hash(sole_row),
+    "layer-2 derived node",
+)
+X_SOLE = N(
+    f"extraction-row:sweep:sole-candidate-mixed-row:{row_hash(sole_row)}",
+    "extraction-row",
+)
+D_FORMULA_COUNT = N(
+    "l2:sweep:formula-candidate-count:0:"
+    "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "layer-2 derived node",
+)
+D_SWEEP = N("l2:corpus-wide-cooccurrence-sweep-semantic-members", "layer-2 derived node")
+for child in [C_SOLE_PAGE, X_SOLE, D_FORMULA_COUNT, D_SWEEP]:
+    E(roots[5], child, "contains")
+E(C_SOLE_PAGE, sole_page, "commits-to")
+E(D_SOLE, D_CAND_ARR, "derives-from")
+E(D_SOLE, DSCAN, "derives-from")
+E(X_SOLE, C_SOLE_PAGE, "contains")
+E(X_SOLE, D_SOLE, "contains")
+E(D_FORMULA_COUNT, D_SOLE, "derives-from")
+for child in [D_DOC_COUNT, D_DOC_IDS, DSPEC, D_CAND_ARR, D_CAND_IDS, D_CAND_COUNT, D_SOLE, D_FORMULA_COUNT]:
+    E(D_SWEEP, child, "derives-from")
+
+# Four non-passing semantic references: exact source rows and exact pointer
+# selectors, never an already-joined opaque node.
+semantic_defs = [
+    (0, 1976, "V4519", 9, 220, "e5fa1a81880efce0b44d4475e8ce7cddb0ed548a790560a74ef3648fb327ae46", "aea1e7808740a2130edd4582af2b7890e2154171e6d8c96fb52de07e2c586837"),
+    (1, 1976, "V4902", 15, 609, "f735fb2231993913d9c8b355a13dc33c16c4e834838987a34f3b872a24a9754a", "79f6fb1ca38e7f6556bcd216c6e450cab109265828bd2689fa1413be15b64cf3"),
+    (2, 1977, "V5429", 21, 1055, "683b1aa82c8b0c140c476876074081eda7e97e043af4e234ec19971ceff7bd7d", "e265107049464fcf7f7cd22961eed40b9215e178dc0782ce28c8c2c5f6e57ba3"),
+    (3, 1978, "V5916", 27, 1529, "b279c04461c0e6704d39de25931e05b366fe7bb936e457a0748a88c56655c20c", "7a3a9ac9cbce33fb32af0f0e0b65310a427b393bf57eaa917579168013a2c786"),
+]
+CSEMART = N(
+    "l1:semantic-source-artifact:2203624:"
+    "0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87:"
+    "086a69e006a102f44cc512b4615a137559e6ac97d3c0bee2be630dcff094e228",
+    "layer-1 commitment",
+)
+E(roots[6], CSEMART, "contains")
+E(CSEMART, A_SEM, "commits-to")
+SF = []
+DSEM = []
+X_SEM = []
+semantic_projection_rows = []
+semantic_content_rows = []
+for position, wave, field_id, era_index, field_index, era_sha, output_sha in semantic_defs:
+    era_value = source_objects["semantic"]["era_facts"][era_index]
+    field_value = source_objects["semantic"]["field_evidence"][field_index]
+    assert row_hash(era_value) == era_sha
+    assert era_value["interview_wave"] == wave
+    assert era_value["raw_field_ids"] == [field_id]
+    assert field_value[1:4] == [wave, era_value["earnings_reference_year"], field_id]
+    field_sha = row_hash(field_value)
+    projection_row = {
+        "era_fact_pointer": f"/era_facts/{era_index}",
+        "field_evidence_pointer": f"/field_evidence/{field_index}",
+        "interview_wave": era_value["interview_wave"],
+        "raw_field_id": field_value[3],
+        "earnings_reference_year": era_value["earnings_reference_year"],
+        "fact_id": era_value["fact_id"],
+        "fact_class": era_value["fact_class"],
+        "role": era_value["role"],
+        "job_slot": era_value["job_slot"],
+        "field_purpose": era_value["field_purpose"],
+        "information_date_basis": era_value["information_date_basis"],
+        "reference_periodicity": era_value["reference_periodicity"],
+        "job_match_timing": era_value["job_match_timing"],
+        "reporting_unit": era_value["reporting_unit"],
+        "annual_role_total_attachment_status": era_value[
+            "annual_role_total_attachment_status"
+        ],
+        "exact_codebook_short_label": field_value[4],
+        "full_source_description": field_value[10],
+        "semantic_code_map": [
+            {"raw_value_or_range": entry[2], "source_meaning": entry[3]}
+            for entry in field_value[11]
+        ],
+        "fact_source_status": era_value["status"],
+    }
+    assert row_hash(projection_row) == output_sha
+    semantic_projection_rows.append(projection_row)
+    semantic_projection = {
+        key: value
+        for key, value in projection_row.items()
+        if key not in ["era_fact_pointer", "field_evidence_pointer"]
+    }
+    semantic_content_rows.append(semantic_projection)
+    semantic_sha = row_hash(semantic_projection)
+    era_row = N(
+        f"extraction-row:semantic-source:/era_facts/{era_index}:{era_sha}",
+        "extraction-row",
+    )
+    field_row = N(
+        f"extraction-row:semantic-source:/field_evidence/{field_index}:{field_sha}",
+        "extraction-row",
+    )
+    reference = N(
+        f"field-reference:{position:02d}:semantic-identity:{wave}:{field_id}",
+        "field-reference",
+    )
+    derived = N(
+        f"l2:semantic-projection-content:{position:02d}:{wave}:{field_id}:"
+        f"{semantic_sha}",
+        "layer-2 derived node",
+    )
+    era_commitment = N(
+        f"l1:semantic-source-pointer:/era_facts/{era_index}:{era_sha}",
+        "layer-1 commitment",
+    )
+    field_commitment = N(
+        f"l1:semantic-source-pointer:/field_evidence/{field_index}:{field_sha}",
+        "layer-1 commitment",
+    )
+    mixed_output = N(
+        f"extraction-row:semantic-projection-mixed-row:{position:02d}:{output_sha}",
+        "extraction-row",
+    )
+    output_commitment = N(
+        f"l1:semantic-projection-row:{position:02d}:{output_sha}",
+        "layer-1 commitment",
+    )
+    SF.append(reference)
+    DSEM.append(derived)
+    X_SEM.append(mixed_output)
+    E(A_SEM, era_row, "contains")
+    E(A_SEM, field_row, "contains")
+    for child in [reference, era_commitment, field_commitment, mixed_output, output_commitment]:
+        E(roots[6], child, "contains")
+    E(era_commitment, era_row, "commits-to")
+    E(field_commitment, field_row, "commits-to")
+    E(field_row, reference, "contains")
+    for child in [era_commitment, field_commitment, derived]:
+        E(mixed_output, child, "contains")
+    E(output_commitment, mixed_output, "commits-to")
+    for source in [reference, era_row, field_row]:
+        E(derived, source, "derives-from")
+assert len(canon(semantic_projection_rows)) == 16933
+assert hashlib.sha256(canon(semantic_projection_rows)).hexdigest() == "a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75"
+semantic_content_array_sha = hashlib.sha256(canon(semantic_content_rows)).hexdigest()
+D_SEMARR = N(
+    f"l2:semantic-projection-content-array:{semantic_content_array_sha}",
+    "layer-2 derived node",
+)
+X_SEMARR = N(
+    "extraction-row:semantic-projection-mixed-array:"
+    "a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75",
+    "extraction-row",
+)
+C_SEMARR = N(
+    "l1:semantic-projection-array:a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75",
+    "layer-1 commitment",
+)
+for child in [D_SEMARR, X_SEMARR, C_SEMARR]:
+    E(roots[6], child, "contains")
+for child in DSEM:
+    E(D_SEMARR, child, "derives-from")
+for child in X_SEM:
+    E(X_SEMARR, child, "contains")
+E(C_SEMARR, X_SEMARR, "commits-to")
+
+# Terminal semantic findings and result members.
+DEST = N(
+    "l2:established-findings:"
+    "998757fb11188b18d15840f103440b68a5174928f62bc941c943e75a5338fb9b",
+    "layer-2 derived node",
+)
+DNOT = N(
+    "l2:expressly-not-established-or-used:"
+    "2eadfbd56c76871b093d8ab3c13006dbc62aafed42e268c92a3b20440e34fa2d",
+    "layer-2 derived node",
+)
+DREAD = N(
+    "l2:reader-seam-consequence:"
+    "b37656cba512ef50b5b1f6b4a2fa2ee0632ace3f4ba47f85a79c674f521719b5",
+    "layer-2 derived node",
+)
+DRES = N(
+    "l2:successor-residual-ids:"
+    "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "layer-2 derived node",
+)
+DDISP = N(
+    "l2:source-disposition:verified:"
+    "5ea8378ca586ef8ffacf1af3e8f8ff07a8062dcdd423d4f60ac21cfb3b7ab339",
+    "layer-2 derived node",
+)
+for root, child in zip(roots[6:], [DEST, DNOT, DREAD, DRES, DDISP]):
+    E(root, child, "contains")
+for source in DPAGE + DLOC + DCLO + [D_SEMARR, D_SWEEP]:
+    E(DEST, source, "derives-from")
+for source in DCLO + [D_FORMULA_COUNT]:
+    E(DNOT, source, "derives-from")
+for source in [DEST, DNOT]:
+    E(DREAD, source, "derives-from")
+    E(DRES, source, "derives-from")
+E(DRES, DREAD, "derives-from")
+for source in [DEST, DNOT, DREAD, DRES, D_SWEEP]:
+    E(DDISP, source, "derives-from")
+
+# These are the exact layer-2 assertion owners whose content enters the
+# eleven serialized §18.2 roots. Internal audit outputs do not suffice.
+RESULT_ENTRY_NODES = [
+    DID,
+    D_PASSARR,
+    D_PAGEARR,
+    *DCLO,
+    D_SWEEP,
+    DEST,
+    DNOT,
+    DREAD,
+    DRES,
+    DDISP,
+]
+assert len(RESULT_ENTRY_NODES) == len(set(RESULT_ENTRY_NODES)) == 19
+
+# Canonical topology fixture.
+for edge_type, from_node, to_node in edges:
+    if edge_type == "commits-to":
+        assert nodes[from_node] == "layer-1 commitment"
+    if edge_type == "derives-from":
+        assert nodes[from_node] == "layer-2 derived node"
+for node_id, node_type in nodes.items():
+    if node_type == "layer-1 commitment":
+        assert any(
+            edge_type == "commits-to" and from_node == node_id
+            for edge_type, from_node, _ in edges
+        ), node_id
+
+# Every non-layer-2 content basis is reachable from a provenance commitment
+# by one commits-to edge followed by zero or more structural contains edges.
+committed_content = set()
+commitment_queue = collections.deque()
+for edge_type, from_node, to_node in edges:
+    if edge_type == "commits-to":
+        committed_content.add(to_node)
+        commitment_queue.append(to_node)
+while commitment_queue:
+    from_node = commitment_queue.popleft()
+    for edge_type, edge_source, to_node in edges:
+        if edge_type == "contains" and edge_source == from_node and to_node not in committed_content:
+            committed_content.add(to_node)
+            commitment_queue.append(to_node)
+non_layer_2_bases = {
+    to_node
+    for edge_type, _, to_node in edges
+    if edge_type == "derives-from" and nodes[to_node] != "layer-2 derived node"
+}
+assert non_layer_2_bases <= committed_content
+node_rows = sorted(
+    ({"node_id": node_id, "node_type": node_type} for node_id, node_type in nodes.items()),
+    key=lambda row: (TYPES.index(row["node_type"]), row["node_id"].encode("utf-8")),
+)
+edge_rows = sorted(
+    (
+        {"edge_type": edge_type, "from_node_id": from_node, "to_node_id": to_node}
+        for edge_type, from_node, to_node in edges
+    ),
+    key=lambda row: (
+        ETYPES.index(row["edge_type"]),
+        row["from_node_id"].encode("utf-8"),
+        row["to_node_id"].encode("utf-8"),
+    ),
+)
+fixture = {"edges": edge_rows, "nodes": node_rows, "roots": roots}
+fixture_bytes = canon(fixture)
+
+# Exact root-reachability and DAG algorithms.
+adjacency = collections.defaultdict(list)
+indegree = {node_id: 0 for node_id in nodes}
+for edge_type, from_node, to_node in edges:
+    adjacency[from_node].append(to_node)
+    indegree[to_node] += 1
+reachable = set(roots)
+queue = list(roots)
+while queue:
+    for target in adjacency[queue.pop()]:
+        if target not in reachable:
+            reachable.add(target)
+            queue.append(target)
+topological_queue = collections.deque(
+    node_id for node_id, degree in indegree.items() if degree == 0
+)
+visited = 0
+while topological_queue:
+    node_id = topological_queue.popleft()
+    visited += 1
+    for target in adjacency[node_id]:
+        indegree[target] -= 1
+        if indegree[target] == 0:
+            topological_queue.append(target)
+
+# Exact layer-2 basis manifest.  A derives-from edge is insufficient by
+# itself: every basis row names the exact semantic projection of its target.
+node_position = {row["node_id"]: position for position, row in enumerate(node_rows)}
+derived_nodes = [
+    row["node_id"]
+    for row in node_rows
+    if row["node_type"] == "layer-2 derived node"
+]
+derived_targets = collections.defaultdict(list)
+for edge_type, from_node, to_node in edges:
+    if edge_type == "derives-from":
+        derived_targets[from_node].append(to_node)
+
+primitive_selectors = {
+    DID: [
+        {"selector_kind": "law_literal", "selector_value": ["schema_version", "amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"]},
+        {"selector_kind": "law_literal", "selector_value": ["claim_id", "V-B6"]},
+    ],
+    DPASSPEC: [
+        {"selector_kind": "law_literal", "selector_value": ["semantic_normalization", "split each authenticated decoded page on Unicode whitespace; join tokens with one U+0020; page whitespace and line boundaries are not selected"]},
+        {"selector_kind": "law_literal", "selector_value": ["semantic_selection", "select only the exact normalized questionnaire/codebook statement strings enumerated in the eight passage witness rows"]},
+    ],
+    DSPEC: [
+        {"selector_kind": "law_literal", "selector_value": ["layer_1_text_reconstruction_metadata", ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"], "form-feed split; remove exactly one terminal whitespace-only page"]]},
+        {"selector_kind": "law_literal", "selector_value": ["classifier_behavior_source", {"source_slice": "classifier harness UTF-8 bytes[0:4571] ending before def main()", "bytes": 4571, "sha256": "763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb"}]},
+        {"selector_kind": "law_literal", "selector_value": ["classifier_call", "classify(decoded_page_text, zero_based_line_index, match_start_character, match_end_character), with the ordered rules and exact regular expressions in classifier_behavior_source"]},
+        {"selector_kind": "law_literal", "selector_value": ["target_matching", [r"(?<!\d)(?:4901|4902|4903|4904|4905|4906|4907|4379|5289|5788)(?!\d)"]]},
+        {"selector_kind": "law_literal", "selector_value": ["output_schema_and_order", [["source_document_id", "pdf_page_number_1_based", "page_semantic_row_position", "raw_field_id", "semantic_reference_position"], "registered document, page, then page-local emitted-row position"]]},
+        {"selector_kind": "law_literal", "selector_value": ["known_physical_reads", ["splitlines and line starts", "same-line word and table-cell position", "nearest preceding labelled line", "page number", "page-reset row ordinal", "same-page grouping"]]},
+    ],
+}
+
+
+def exact_selector(derived_node, basis_node):
+    if derived_node in DLOC and basis_node in PAGE.values():
+        passage = passage_rows[DLOC.index(derived_node)]
+        return [{"selector_kind": "normalized_page_semantic_substrings", "selector_value": passage["semantic_source_portions"]}]
+    if derived_node in DPAGE and basis_node in PF:
+        row = page_semantic_rows[PF.index(basis_node)]
+        return [{"selector_kind": "normalized_codebook_semantic_fragments", "selector_value": {"normalization": "Unicode-whitespace split and one-U+0020 join", "raw_field_id": row["raw_field_id"], "normalized_semantic_short_label": row["normalized_semantic_short_label"], "normalized_semantic_description": row["normalized_semantic_description"], "semantic_code_lexeme_and_meaning": row["semantic_code_lexeme_and_meaning"], "excluded_source_roles": ["Count", "%", "declared_format", "layout", "width", "raw_position", "value_execution"], "independent_source_test": "all selected normalized fragments must be reconstructed from the authenticated page before comparison with the expected row"}}]
+    if derived_node in DCLO and basis_node in XCLO:
+        position = DCLO.index(derived_node)
+        if position == 0:
+            keys = ["absence_proof_id", "conclusion", "excluded_near_matches", "search_domain", "searched_interview_waves", "searched_locator_ids"]
+        elif position in range(1, 5):
+            keys = ["established_findings", "evidentiary_verdict", "family_id", "operative_effect", "remaining_unestablished_facts", "residual_id", "source_missing_fact", "source_status"]
+        elif position in range(5, 9):
+            keys = ["established_findings", "evidentiary_verdict", "family_id", "operative_effect", "remaining_unestablished_facts", "residual_id", "source_missing_fact"]
+        else:
+            keys = ["evidentially_closed_count", "evidentiary_remaining_residual_count", "family_id", "operative_change", "operative_residual_count", "operative_source_disposition", "targeted_residual_count"]
+        return [{"selector_kind": "json_object_keys", "selector_value": keys}]
+    if derived_node in DSEM:
+        position = DSEM.index(derived_node)
+        if basis_node == SF[position]:
+            return [{"selector_kind": "semantic_reference_identity", "selector_value": [semantic_defs[position][1], semantic_defs[position][2]]}]
+        if basis_node.startswith("extraction-row:semantic-source:/era_facts/"):
+            return [{"selector_kind": "json_object_keys", "selector_value": ["annual_role_total_attachment_status", "earnings_reference_year", "fact_class", "fact_id", "field_purpose", "information_date_basis", "interview_wave", "job_match_timing", "job_slot", "raw_field_ids", "reference_periodicity", "reporting_unit", "role", "status"]}]
+        return [{"selector_kind": "field_evidence_semantic_members", "selector_value": {"row_members": [1, 2, 3, 4, 10], "each_semantic_code_map_entry_members": [2, 3], "excluded_row_members": [0, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17], "excluded_semantic_code_map_entry_members": [0, 1]}}]
+    if derived_node == D_DOC_COUNT:
+        return [{"selector_kind": "array_cardinality", "selector_value": "/document_candidates"}]
+    if derived_node == D_DOC_IDS:
+        return [{"selector_kind": "json_pointer_projection", "selector_value": "/document_candidates/*/source_document_id"}]
+    if derived_node == DSCAN and basis_node == D_DOC_IDS:
+        return [{"selector_kind": "complete_registered_document_domain", "selector_value": {"document_count": 456, "ordered_document_ids_sha256": "32d5b0fbdbf7dc04c15147d55b23fd861bb2b0e37f7090c42f279987ba666ebd"}}]
+    if derived_node == DSCAN and basis_node in DOC.values():
+        document_position = next(position for position, node in DOC.items() if node == basis_node)
+        document_id = f"psid-corpus-document-{document_position:04d}"
+        return [{"selector_kind": "registered_pdf_full_page_scan", "selector_value": {"source_document_id": document_id, "classifier_node": DSPEC, "text_derivation": ["Poppler pdftotext", "26.04.0", ["-layout", "-enc", "UTF-8"]], "coverage": "every decoded page and every numeric token; no expected occurrence row may be loaded as output"}}]
+    if derived_node in DCAND:
+        return [{"selector_kind": "semantic_occurrence_group_and_filter", "selector_value": {"source_document_id": candidate_docs[DCAND.index(derived_node)], "extra_job_raw_field_ids": sorted(extra_ids), "annual_total_raw_field_ids": sorted(annual_ids), "extra_job_pages": "ascending distinct pdf_page_number_1_based for extra_job_raw_field_ids", "annual_total_pages": "ascending distinct pdf_page_number_1_based for annual_total_raw_field_ids", "same_page_intersection": "ascending set intersection", "admission": "both page arrays nonempty"}}]
+    if derived_node == D_CAND_IDS:
+        return [{"selector_kind": "candidate_document_id_projection", "selector_value": "/source_document_id"}]
+    if derived_node == D_CAND_COUNT:
+        return [{"selector_kind": "array_cardinality", "selector_value": "ordered_candidate_document_ids"}]
+    if derived_node == D_SOLE:
+        return [{"selector_kind": "exact_sole_candidate_disposition", "selector_value": {"source_document_id": "psid-corpus-document-0098", "pdf_page_number_1_based": 573, "derived_page_text_sha256": "51b9b7181b8a2b8363b7eacf24e53e8f167da7d9b33e8babcb6301eb2f4de3ed", "disposition": "false_positive_family_concordance_crosswave_variable_numbers", "canonical_bytes": 252, "sha256": "0d9b8e28c68132c0efdfc51b708f9217eaf81e0940238989eff68e8144ebe66b"}}]
+    if derived_node == D_FORMULA_COUNT:
+        return [{"selector_kind": "semantic_disposition_count", "selector_value": "formula_candidate"}]
+    if nodes[basis_node] == "layer-2 derived node":
+        return [{"selector_kind": "whole_prior_layer_2_result", "selector_value": "/"}]
+    if nodes[basis_node] == "field-reference":
+        return [{"selector_kind": "whole_semantic_field_reference", "selector_value": "/"}]
+    raise AssertionError((derived_node, basis_node, nodes[basis_node]))
+
+
+basis_rows = []
+for derived_node in derived_nodes:
+    if derived_node in primitive_selectors:
+        basis_rows.append({"basis_content_class": "law_literal", "basis_node_id": None, "basis_position": 0, "basis_selectors": primitive_selectors[derived_node], "derived_node_id": derived_node})
+        continue
+    targets = sorted(derived_targets[derived_node], key=lambda node_id: node_position[node_id])
+    assert targets, derived_node
+    for basis_position, basis_node in enumerate(targets):
+        selectors = exact_selector(derived_node, basis_node)
+        if derived_node == DSCAN and basis_node in DOC.values():
+            content_class = "layout_format_or_width"
+        elif nodes[basis_node] == "layer-2 derived node":
+            content_class = "prior_layer_2_result"
+        elif nodes[basis_node] == "field-reference":
+            content_class = "semantic_field_reference"
+        else:
+            content_class = "semantic_source_projection"
+        basis_rows.append({"basis_content_class": content_class, "basis_node_id": basis_node, "basis_position": basis_position, "basis_selectors": selectors, "derived_node_id": derived_node})
+basis_bytes = canon(basis_rows)
+
+v4902_output_rows = []
+for occurrence_position, (locator, occurrence) in enumerate(
+    zip(occurrence_locator_rows, occurrence_rows)
+):
+    if occurrence["raw_field_id"] != "V4902":
+        continue
+    v4902_output_rows.append({
+        "derived_page_text_sha256": locator["derived_page_text_sha256"],
+        "occurrence_position": occurrence_position,
+        "page_semantic_row_position": occurrence["page_semantic_row_position"],
+        "page_utf8_byte_end": locator["page_utf8_byte_end"],
+        "page_utf8_byte_start": locator["page_utf8_byte_start"],
+        "pdf_page_number_1_based": occurrence["pdf_page_number_1_based"],
+        "raw_field_id": occurrence["raw_field_id"],
+        "semantic_reference_position": occurrence["semantic_reference_position"],
+        "source_document_id": occurrence["source_document_id"],
+    })
+v4902_output_bytes = canon(v4902_output_rows)
+
+pinned_forbidden_dependency_witness = {
+    "dependency_graph_node_position": node_position[DSCAN],
+    "derivation_status": "incomplete_source_numeric_authority",
+    "field_reference_position": 1,
+    "forbidden_dependency_class": "layout_or_declared_format_used_for_parsing",
+    "forbidden_dependency_locator": [
+        "psid-corpus-document-0068",
+        "decoded-page-519 UTF-8 bytes[3775:3776]",
+    ],
+    "interview_wave": 1976,
+    "original_byte_hex": "20",
+    "physical_dependency_position": [
+        9,
+        "psid-corpus-document-0068",
+        "decoded-page-519 UTF-8 bytes[3775:3776]",
+    ],
+    "raw_field_id": "V4902",
+    "resolution_reason": "literal_only_zero_diagnostic_padding_capacity",
+    "shadow_byte_hex": "30",
+    "source_adjudication_consumer_id": "amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1",
+}
+witness_bytes = canon(pinned_forbidden_dependency_witness)
+
+assert len(node_rows) == 3357
+assert collections.Counter(row["node_type"] for row in node_rows) == {
+    "artifact": 471,
+    "page": 178,
+    "extraction-row": 1248,
+    "field-reference": 372,
+    "layer-1 commitment": 1022,
+    "layer-2 derived node": 66,
+}
+assert len(edge_rows) == 6167
+assert collections.Counter(row["edge_type"] for row in edge_rows) == {
+    "contains": 3680,
+    "commits-to": 1855,
+    "derives-from": 632,
+}
+assert len(fixture_bytes) == 2473771
+assert hashlib.sha256(fixture_bytes).hexdigest() == "5115680945d04accf58165b2de8048ac8729cd5d12396d9e758c61799dd5a11e"
+assert len(reachable) == visited == 3357
+assert len(basis_rows) == 635 and len(basis_bytes) == 482705
+assert hashlib.sha256(basis_bytes).hexdigest() == "fa052efa294ce36924d37b87cdc749121daedcba56eabfb5e67ac884363c630f"
+assert len(v4902_output_rows) == 33 and len(v4902_output_bytes) == 12608
+assert hashlib.sha256(v4902_output_bytes).hexdigest() == "cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c"
+assert node_position[DSCAN] == 3355
+assert len(witness_bytes) == 673
+assert hashlib.sha256(witness_bytes).hexdigest() == "096172e67148b44262194c4a16192ac49c0217b7c9defbcf032739e3df37dadf"
+
+print("nodes", len(node_rows), collections.Counter(row["node_type"] for row in node_rows))
+print("edges", len(edge_rows), collections.Counter(row["edge_type"] for row in edge_rows))
+print("fixture", len(fixture_bytes), hashlib.sha256(fixture_bytes).hexdigest())
+print("reachable", len(reachable), "topological", visited)
+print("basis", len(basis_rows), len(basis_bytes), hashlib.sha256(basis_bytes).hexdigest())
+print("v4902_output", len(v4902_output_rows), len(v4902_output_bytes), hashlib.sha256(v4902_output_bytes).hexdigest())
+print("dscan_position", node_position[DSCAN])
+print("pages", len(PAGE), "occurrence_pages", len(page_commitments))
 ~~~
 
 The graph domain is constructed without loading an expected classified
@@ -34336,7 +35851,10 @@ position order. Each output row has exactly `source_document_id`,
 `semantic_reference_position`; `raw_field_id` is `V` concatenated with the
 matched token. The empirical audit harness whose pure `classify` function
 supplied these rules is 7,882 bytes with SHA-256
-`f6a6e5963fc20fd2d1a6f27d04dd88573b3c75154d73f28fe5edc311402c10fa`;
+`f6a6e5963fc20fd2d1a6f27d04dd88573b3c75154d73f28fe5edc311402c10fa`.
+Its pure behavior preimage is exactly the first 4,571 bytes ending
+immediately before `def main():`, with SHA-256
+`763c8c6962c1fdd5eba1cef91cfe26cc36e4b377dbd43ebd32a65673038284cb`;
 only that pure ordered classifier behavior is adopted. The harness's
 expected-locator join is not authority and is forbidden in the normative
 full-PDF reconstruction. The complete rules above are normative if an
@@ -34378,12 +35896,16 @@ The expected historical V-B6 attempt must exact-match this fixture before
 any dependency diagnostic has meaning:
 
 ~~~json
-{"basis":{"basis_content_class_counts":{"law_literal":3,"layout_format_or_width":456,"prior_layer_2_result":124,"semantic_field_reference":24,"semantic_source_projection":28},"canonical_bytes":482620,"derived_node_count":66,"primitive_literal_row_count":3,"row_count":635,"sha256":"29ee09877a07ffd9a8e00e1df06e52a72ea8fbaa729deeca011be52bb277e5c3"},"edges":{"commits-to":1855,"contains":3676,"derives-from":632,"total":6163},"fixture_id":"amendment_7_v_b6_dependency_graph_attempt_v3","nodes":{"artifact":471,"extraction-row":1248,"field-reference":372,"layer-1 commitment":1022,"layer-2 derived node":66,"page":178,"total":3357},"root_count":11,"root_reachable_count":3357,"topological_visit_count":3357,"topology_canonical_bytes":2472885,"topology_sha256":"72920947e8d46eb6bc414551a7371be8d826b445aca5f02661dfa7b5e1711c04"}
+{"basis":{"basis_content_class_counts":{"law_literal":3,"layout_format_or_width":456,"prior_layer_2_result":124,"semantic_field_reference":24,"semantic_source_projection":28},"canonical_bytes":482705,"derived_node_count":66,"primitive_literal_row_count":3,"row_count":635,"sha256":"fa052efa294ce36924d37b87cdc749121daedcba56eabfb5e67ac884363c630f"},"edges":{"commits-to":1855,"contains":3680,"derives-from":632,"total":6167},"fixture_id":"amendment_7_v_b6_dependency_graph_attempt_v3","nodes":{"artifact":471,"extraction-row":1248,"field-reference":372,"layer-1 commitment":1022,"layer-2 derived node":66,"page":178,"total":3357},"root_count":11,"root_reachable_count":3357,"scanner_direct_basis_count":458,"scanner_node_position":3355,"topological_visit_count":3357,"topology_canonical_bytes":2473771,"topology_sha256":"5115680945d04accf58165b2de8048ac8729cd5d12396d9e758c61799dd5a11e"}
 ~~~
 
 The V4902 occurrence-output domain is an output census, not a basis or
-dependency census. Its nine-key projection has 33 rows, 12,608 canonical
-bytes, and SHA-256
+dependency census. Each row has exactly, in canonical-key order,
+`derived_page_text_sha256`, `occurrence_position`,
+`page_semantic_row_position`, `page_utf8_byte_end`,
+`page_utf8_byte_start`, `pdf_page_number_1_based`, `raw_field_id`,
+`semantic_reference_position`, and `source_document_id`.
+Its nine-key projection has 33 rows, 12,608 canonical bytes, and SHA-256
 `cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c`.
 It spans 17 documents and 33 pages. It may be used only after the source
 walk to compare discovered outputs; loading it before scanning fails.
@@ -34413,7 +35935,10 @@ position 24), `forbidden_dependency_class`, `interview_wave`,
 For positions 0–191, `field_reference_position` is
 `physical_domain_position // 8` and the physical-class position is
 `physical_domain_position % 8`; for sentinel positions 192–199 the field
-reference is null.
+reference is null. Field-domain position 24 is the exact closed sentinel for
+every field not separately enumerated at positions 0–23 and for every
+non-field physical portion. Its real artifact/locator coordinate, not a
+synthetic field label, distinguishes those dependencies.
 
 ~~~json
 {"canonical_bytes":65920,"field_or_nonfield_position_count":25,"fixture_id":"amendment_7_v_b6_physical_dependency_position_domain_v1","physical_class_count":8,"row_count":200,"sha256":"fe708584bc61fd29b6748deee7dcd14612419bdc0611226dc4df06a4f233deae"}
@@ -34423,35 +35948,63 @@ This total domain defines positions for V4379, V5289, V5788, every other
 field on the six committed pages, and non-field physical content. A concrete
 dependency coordinate is the three-member array
 `[physical_domain_position,artifact_identity,JSON_pointer_or_zero_based_half_open_byte_range]`.
-The locator must identify real authenticated source bytes. Unknown,
-duplicate, overlapping, or synthetic coordinates fail rather than vanish.
+The locator must identify real authenticated source bytes. Unknown or
+synthetic coordinates fail rather than vanish.
+For structured JSON, the third member is the exact form
+`raw-json UTF-8 bytes[i:i+1] at /pointer`, where `i` is the absolute raw-byte
+offset and the pointer identifies the containing scalar. In every diagnostic,
+`forbidden_dependency_locator` must exact-equal
+`physical_dependency_position[1:]`.
 The guarded V4902/layout coordinate is 9. The distinct page-row
 V4902/layout coordinate is 73; an implementation may not conflate or omit
 either position.
 
-The atomic source-member domain is closed. In a strict-parsed structured
-artifact it contains every scalar leaf actually reachable through a basis
-selector, at its exact JSON pointer, with array positions explicit. In a
+The atomic physical source-member domain is closed. It contains exactly the
+primitive bytes read with one of the eight forbidden physical roles above;
+a byte read only as a semantic field ID, normalized label/description, or
+semantic code lexeme/meaning is not a physical member. If one byte is read on
+both a semantic route and a physical route, the latter route places it in the
+physical domain. In a strict-parsed structured artifact the domain contains
+every individual authenticated raw-JSON UTF-8 byte of each physical scalar
+leaf reachable through a basis selector, at its exact
+absolute `[i:i+1]` range and JSON pointer, with array positions explicit. In a
 decoded page it contains every page-local UTF-8 byte read for a token,
 cell, line, row ordinal, page boundary, or classification and addresses that
 byte as `[i:i+1]`. In a raw fixed-width source it contains every byte in
 each registered field slice. A profile, padding rule, grammar, DFA,
 partition/action, parsed value, executable map, or digest-proxy route is
-anchored to every primitive scalar or byte it reads. Atomic members order by
-physical-domain position, UTF-8 artifact identity, locator bytes, then
-canonical consuming-node position. Duplicate coordinates fail. A consumed
-member that cannot be assigned exactly one domain row and one real locator
-makes the diagnostic fail rather than disappear.
+anchored to every primitive scalar or byte it reads. The direct-dependency
+frontier contains one row for each distinct `(physical-domain position,
+artifact and locator, physical class, direct consuming layer-2 node)` tuple.
+An identical tuple may not repeat, but the same real byte may lawfully fan
+out to different physical classes or direct consumers. Every executed route
+to that direct dependency is walked; multiple routes reaching the identical
+tuple collapse to that one dependency row. A consumed
+member that cannot be assigned a domain row and real locator makes the
+diagnostic fail rather than disappear. Frontier rows order by complete
+physical position, consuming-node position, and physical-class position.
 
-After the graph and basis fixtures match, the runner performs a complete
-value-flow shadow walk. It varies each atomic physical datum in authenticated
-memory while holding all other content fixed, recomputes layer-1
-commitments, and rederives every reachable layer-2 node. A change confined
-to layer 1 is ignored; any layer-2 change records the consuming node and
-route. The walk must continue through the complete atomic domain and report
-all discovered dependencies. It cannot emit an empty forbidden-dependency
-array merely because the expected array was absent or because a commitment
-digest was treated as content.
+After the graph and basis fixtures match, the runner performs the exhaustive
+byte shadow walk. For each atomic source byte in domain order, it substitutes
+each of the 255 unequal byte values in ascending hexadecimal order, changes
+no byte length or other source content, recomputes every layer-1 commitment,
+and rederives every reachable layer-2 node. Decode or parse failure is a
+distinguished abort content, not an omitted trial. A trial proves consumption
+only if at least one of the exact 19 result-entry nodes named by
+`RESULT_ENTRY_NODES` in the canonical graph source changes. A change confined
+to layer 1 or to an internal audit/classification node is ignored. For every
+proved byte, the canonical displayed shadow is the lowest unequal value that
+changes a result-entry node.
+
+Instrumentation records the first layer-2 node that directly reads that
+primitive byte on each route. Downstream changes reached solely through that
+prior-layer-2 basis do not create duplicate frontier rows. The walk continues
+through every byte, every alternative, and every direct route and reports the
+complete frontier. It cannot emit an empty forbidden-dependency array merely
+because the expected array was absent, because only an internal classifier
+changed, or because a commitment digest was treated as content. Emptiness has
+meaning only after the 3,357-node, 6,167-edge graph and 635-row basis match
+their fixtures and this complete walk finishes.
 
 Each source-adjudication diagnostic row has exactly these twelve keys in
 canonical schema order: `source_adjudication_consumer_id`,
@@ -34461,29 +36014,50 @@ canonical schema order: `source_adjudication_consumer_id`,
 `original_byte_hex`, `shadow_byte_hex`, `derivation_status`, and
 `resolution_reason`. Canonical JSON still sorts object keys. Original and
 shadow bytes are two-digit lowercase hexadecimal strings. Rows order by the
-complete `physical_dependency_position` array and then consuming-node
-position. All discovered rows are reported.
+complete `physical_dependency_position` array, consuming-node position, and
+physical-class position. All discovered rows are reported.
 
 The following independently reproduced mutation is a mandatory existential
-witness. In registered `psid-corpus-document-0046`, decoded page 180 has
-3,166 bytes and SHA-256
-`3e0455a794fefb51d510b93f81c5a73df67a0a909cc415839ef82a5cbfdc5fe9`.
-V4902 occupies UTF-8 bytes `[568:572]`. Holding that token and all semantic
-content fixed while changing the following layout byte `[572:573]` from
-hex `20` to hex `0a` changes the scanner classification from
-`codebook_field_header` to `v_prefixed_semantic_field_reference`. The
-original occurrence row is 189 canonical bytes with SHA-256
-`aad92342670157f7835067a029d415a5c71025641574c2fbb91bcc6dea908510`;
-the shadow row is 203 canonical bytes with SHA-256
-`9d97a0e631ab31cd06642a227e69f2e1d26191bff8bc01470a4b130a4c2be4ba`.
-The changed scanner output proves physical consumption at layer 2.
+witness. Registered `psid-corpus-document-0068` is `psid81w14.pdf`, exactly
+13,344,220 bytes with SHA-256
+`6852b258ebf010bb3e0747abc31a8760e65c8f63bba475907c2498536b0f1d08`.
+Its pinned-Poppler decoded page 519 has 4,070 bytes and SHA-256
+`00e6e31d5c40032eaac220ac4fea8ce986445a0db956c422cd00ec53763b1da6`.
+The context contains `V4902 (E)`: bytes `[3771:3775]` are the fixed numeric
+semantic lexeme `4902`, and byte `[3775:3776]` is its trailing ASCII space.
+Holding the token, every semantic lexeme, and all other content fixed while
+changing that space from hex `20` to hex `30` makes the digit-adjacent token
+`V49020`, so the exact target regex no longer admits V4902. V4902 is the sole
+extra-job target on page 519. The required document-0068 candidate row
+therefore changes from 358 bytes/SHA-256
+`78a08e6640b993f14117af67d0ed4eccada395d79a816b13d67283421bb1819d`
+to 354 bytes/SHA-256
+`cc4c36285b1d4bdeedb799270a15c0edeb704a7560b8d5979bb694b99f164165`;
+its semantic projection changes from 178 bytes/SHA-256
+`6390ab53b6f65a6d2996892493ed4e3ab50cfbadb7212005bde893f0e30a57bf`
+to 174 bytes/SHA-256
+`476050c0c9443873df5e8753d670d7a85c152ee973d1923822e7164cdab8497c`.
+The required 18-row candidate array changes from 6,209 bytes/SHA-256
+`039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7`
+to 6,205 bytes/SHA-256
+`77175376157cf483cf3941be42fcfca34e527c13dde0d3f3bfd025c010afa4f7`.
+This changes an actual §18.2 result-entry member and proves physical
+consumption; a change only in DSCAN's richer audit classification would not
+suffice. As cross-checks, the complete scan changes from 348 rows/72,325
+bytes/SHA-256 `0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411`
+to 347 rows/72,122 bytes/SHA-256
+`96c5c1596d024734c84b1fbb6697f4164260aae9e4bf6b2f15d9b699f81be349`,
+and its V4902 nine-key projection changes from 33 rows/12,608 bytes/SHA-256
+`cbdab0ecde07231e68e8b4799d40738e978fb774ff330ccdd30a9117464ade9c`
+to 32 rows/12,231 bytes/SHA-256
+`6a8534a5f765b7ac09ace83c06a4028f3c13f9b9024b9f149ddb10011a10f008`.
 
 ~~~json
-{"dependency_graph_node_position":3355,"derivation_status":"incomplete_source_numeric_authority","field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","forbidden_dependency_locator":["psid-corpus-document-0046","decoded-page-180 UTF-8 bytes[572:573]"],"interview_wave":1976,"original_byte_hex":"20","physical_dependency_position":[9,"psid-corpus-document-0046","decoded-page-180 UTF-8 bytes[572:573]"],"raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","shadow_byte_hex":"0a","source_adjudication_consumer_id":"amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"}
+{"dependency_graph_node_position":3355,"derivation_status":"incomplete_source_numeric_authority","field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","forbidden_dependency_locator":["psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"interview_wave":1976,"original_byte_hex":"20","physical_dependency_position":[9,"psid-corpus-document-0068","decoded-page-519 UTF-8 bytes[3775:3776]"],"raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","shadow_byte_hex":"30","source_adjudication_consumer_id":"amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1"}
 ~~~
 
-That terminal-LF row is 669 canonical bytes with SHA-256
-`f9e4952e73e37ee0eb6fbbaf0dc595f8a1e12e8147f89e21f9702846b323ed90`.
+That terminal-LF row is 673 canonical bytes with SHA-256
+`096172e67148b44262194c4a16192ac49c0217b7c9defbcf032739e3df37dadf`.
 It is a pinned mandatory witness, not a claim that the complete dependency
 array has one member or that this is its first canonical member. Because the
 graph must match and be walked, and because this authenticated mutation must
@@ -34749,11 +36323,11 @@ V-B6 status is always nonpassing. In order, it must:
 2. reconstruct the historical 10,887-byte §18.2 candidate projection with
    SHA-256
    7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
-   then independently rebuild the exact §21.4.2 3,357-node/6,163-edge graph,
+   then independently rebuild the exact §21.4.2 3,357-node/6,167-edge graph,
    635-row basis manifest, four-reference order, complete physical-position
    domain, and value-flow walk. The scanner must use the frozen PDFs, not
    pre-labelled occurrence or candidate rows;
-3. rediscover at least the pinned V4902 page-180 layout witness, retain all
+3. rediscover at least the pinned V4902 result-reaching delimiter witness, retain all
    four `incomplete_source_numeric_authority` rows and their null profile,
    padding, and registered grammar, and reject the historical
    `source_disposition=verified`, `verification_status=verified`,
@@ -34809,7 +36383,8 @@ blocked path. No synthetic inventory or carrier fixture is permitted.
 A7-R11 has vector_kind `physical_consumption_still_aborts`. It independently
 reconstructs the authenticated R10a frozen-input set and successful
 expected-negative audit; neither arm reads a serialized R10a result or
-invokes A7-R10b. Every baseline run must rediscover the pinned page-180
+invokes A7-R10b. Every baseline run must rediscover the pinned V4902
+result-reaching delimiter
 witness. Its exact mutation-class order is:
 
 ~~~text
@@ -34883,7 +36458,7 @@ Each case has two independent arms:
 
 1. the source-adjudication arm leaves the complete top-level relation at
    pass_with_closed_failures, reproduces the complete baseline diagnostic
-   including the pinned page-180 witness, and discovers exactly one
+   including the pinned V4902 result-reaching witness, and discovers exactly one
    additional mutation-route row in the shadow-minus-baseline set. That row
    uses the real `[source_artifact_id,source_member]` locator and
    `physical_dependency_position[0] == case_number`; it aborts before any
@@ -34898,7 +36473,7 @@ Each case has two independent arms:
 
 The aggregate case applies the four class-0 mutations in cases 0, 8, 16, and
 24 simultaneously. Its source diagnostic reproduces the complete baseline
-including the pinned page-180 witness and has exactly four additional rows
+including the pinned V4902 result-reaching witness and has exactly four additional rows
 in its shadow-minus-baseline set, ordered by
 `physical_dependency_position`; their domain positions are 0, 8, 16, and
 24. Its physical arm uses consumer_row_identity
@@ -35156,7 +36731,7 @@ consumers. The rerun therefore retains the same 43-family census.
 | DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: verify_amendment_7_capture_registration_repository_identity_v1 and its complete D2–D7 chain. |
 | DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: verify_amendment_7_selected_registration_design_lineage_v1 and Amendment-7 v6 receipt/history dispatch. |
 | DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-future-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: these are one live D7 raw-byte identity family. Step 2 fixes the exact accepted candidate byte sequence and step 3 permits only that sequence to become D7; validation exact-compares the same-path raw Git blob at D7 to those accepted candidate bytes, verifies its complete hash and the independent D6-prefix equality, and carries that proof into every Amendment-7 position, capture, and selected proof. Any byte inequality, or digest-, ancestry-, or transitive-only substitution, aborts. |
-| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding composed with the post-inventory R10b gate; D7/Q5 failure blocks Q5, while failure of the actual-inventory-to-R10b gate blocks residual 9 and every later consumer. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate and complete eight-key slot_closure_evidence_identity binding composed with the post-inventory R10b gate. D7/Q5 or staging failure aborts at that edge; an expected-negative R10b pass proves carrier absence and still blocks residual 9 and every dependent V-B6 consumer. |
 | DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_fitting_free_design_identity_v1 closes all v6 registry/domain and v7 bundle consumers. |
 | DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor verify_amendment_7_capture_registration_repository_identity_v1 closes every consumer. |
 | DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor verify_amendment_7_selected_registration_design_lineage_v1 closes the v6 receipt and history dispatch. |
@@ -35214,8 +36789,9 @@ official-inventory acceptance. It freshly reruns R10a from the frozen roots,
 reconstructs the complete historical graph/basis attempt, rediscovers the
 pinned physical witness, and obtains only the expected source-adjudication
 abort. It then reruns R10b against the accepted actual inventory and proves
-that no residual-9 key array, carrier, ID, amount read, or requirement result
-was constructed. It may not copy an R10a/R10b test pass bit, source member,
+that no residual-9 key array, carrier, ID, amount read, or passing/accepted
+requirement result was constructed. It may not copy an R10a/R10b test pass
+bit, source member,
 marker, row hash, or enclosing digest. The exact A7-R11 suite must also pass
 by observing its expected aborts. Consequently every fresh V-B6 row is
 nonpassing and every enclosing 22-row requirement domain and bundle is
@@ -35503,8 +37079,9 @@ applicable guard. R10b runs immediately after that actual inventory passes,
 strictly before any residual-9 registry, V-B6 requirement result,
 preliminary/final 22-row domain, bundle, or correction final-acceptance gate.
 It passes only by rederiving R10a's source abort and proving that no
-residual-9 key array, carrier, ID, consequence, amount read, or V-B6 result
-is constructed. No synthetic inventory or carrier fixture may appear.
+residual-9 key array, carrier, ID, consequence, amount read, or
+passing/accepted V-B6 result is constructed. No synthetic inventory or
+carrier fixture may appear.
 
 Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
 comparands may continue when their own laws pass. The V-B6 branch cannot.
@@ -35534,7 +37111,7 @@ This subsection replaces the §20.8.4 ordered protocol for revision 9:
 2. Resolve every finding and verify the complete round-to-round diff; the
    exact 2,049,769-byte D6 prefix and identity; all frozen sources; the
    round-1 counts, partitions, precision repairs, A6 vectors, and DC-39; the
-   exact eleven-member §18.2 classification; the 3,357-node/6,163-edge graph
+	   exact eleven-member §18.2 classification; the 3,357-node/6,167-edge graph
    and 635-row basis fixtures; the classifier and physical-position domains;
    the pinned V4902 witness and prospective retraction; both registration
    senses; the repaired 32-route R11 manifest; the exact pre-Q5 vector array;
