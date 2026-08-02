@@ -45,6 +45,9 @@
   unsigned-byte token censuses, and canonical incremental record hashing.
 - Reproduced the A6-R01/R04/R05/R08/R10 observed-token digests directly from
   the 1968 raw file; the focused compiler suite now has 15 passing tests.
+- Authenticated and executed the embedded A7-R11 source-only runner, covered
+  all 32 forbidden physical routes plus the four-field aggregate through the
+  real atomic guard, and authenticated the A7-R10a graph/marker preimages.
 
 ## Next
 
