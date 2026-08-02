@@ -31743,7 +31743,7 @@ terminal-LF domain SHA-256 from accepted D6 bytes. No digest from the §19
 sweep is copied, and this draft supplies no anticipated D6 byte offset or
 hash.
 
-The exact 42-member initial literal search-term array, in this order, is:
+The exact 40-member initial literal search-term array, in this order, is:
 
 ```text
 dictionary_codebook_fixed_width_source_derivation_v3
@@ -31766,8 +31766,6 @@ token_form_candidate_results
 selected_token_form
 candidate_arm_results
 complete_domain_member_results
-complete_domain_arm_disposition
-arm_ambiguous_member_rows
 selected_arm
 range_renderability_partition_rows
 padding_rule
