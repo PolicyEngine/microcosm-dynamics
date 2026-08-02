@@ -934,7 +934,6 @@ def _normalized_row(row: Mapping[str, Any]) -> dict[str, Any]:
     """Remove authored identity spelling while retaining complete semantics."""
 
     normalized = copy.deepcopy(dict(row))
-    micro_fact_ids: dict[str, str] = {}
     fact_binding_ids: dict[str, str] = {}
     for kind in ("covered", "excluded"):
         for binding_position, binding in enumerate(
@@ -952,12 +951,6 @@ def _normalized_row(row: Mapping[str, Any]) -> dict[str, Any]:
                 canonical_micro_fact_id = (
                     f"micro:{kind}:{binding_position}:{slot_position}"
                 )
-                micro_fact_ids[original_micro_fact_id] = (
-                    canonical_micro_fact_id
-                )
-                micro_fact_ids[canonical_micro_fact_id] = (
-                    canonical_micro_fact_id
-                )
                 binding_micro_fact_ids[original_micro_fact_id] = (
                     canonical_micro_fact_id
                 )
@@ -969,8 +962,12 @@ def _normalized_row(row: Mapping[str, Any]) -> dict[str, Any]:
                 replacement_op="micro_fact",
                 replacement_id_key="micro_fact_id",
             )
-    for slot in normalized["required_micro_facts"]:
-        slot["micro_fact_id"] = micro_fact_ids[slot["micro_fact_id"]]
+    normalized["required_micro_facts"] = [
+        copy.deepcopy(slot)
+        for kind in ("covered", "excluded")
+        for binding in normalized[f"{kind}_facts"]
+        for slot in binding["micro_fact_slots"]
+    ]
     if normalized["transform"] is not None:
         normalized["transform"] = _normalized_ast_leaf_references(
             normalized["transform"],

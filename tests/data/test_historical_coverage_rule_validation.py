@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import json
 
 import pytest
 
@@ -96,7 +97,7 @@ def _fact_bearing_student_rule() -> dict:
         "exact_citation": "PDF p. 2: exact student-service span",
         "covered_facts": [binding],
         "excluded_facts": [],
-        "required_micro_facts": [slot],
+        "required_micro_facts": [copy.deepcopy(slot)],
         "transform": {
             "op": "case",
             "args": [
@@ -185,6 +186,7 @@ def test_structural_missing_and_conflict_branches_are_representable():
     slot = structural["covered_facts"][0]["micro_fact_slots"][0]
     slot["source_field_ref"]["raw_field_id"] = None
     slot["presence_predicate_ast"] = {"op": "literal_false"}
+    structural["required_micro_facts"][0] = copy.deepcopy(slot)
     rules.validate_rule_row_syntax(structural)
 
     conflict = _negative_student_rule()
@@ -256,7 +258,7 @@ def test_coherent_row_mutations_fail_closed(mutation: str, match: str):
         second_slot = copy.deepcopy(first_slot)
         second_slot["micro_fact_id"] = "student-nexus-fact-unused"
         row["covered_facts"][0]["micro_fact_slots"].append(second_slot)
-        row["required_micro_facts"].append(second_slot)
+        row["required_micro_facts"].append(copy.deepcopy(second_slot))
     elif mutation == "presence_default":
         row["covered_facts"][0]["micro_fact_slots"][0][
             "presence_predicate_ast"
@@ -374,7 +376,7 @@ def test_duplicate_normalized_bindings_abort_despite_distinct_authored_ids():
         "micro_fact_id"
     ] = "student-nexus-fact-copy"
     row["covered_facts"].append(second)
-    row["required_micro_facts"].append(second_slot)
+    row["required_micro_facts"].append(copy.deepcopy(second_slot))
     row["transform"]["args"][0] = {
         "op": "and",
         "args": [
@@ -460,6 +462,78 @@ def test_nonconsecutive_and_fact_bearing_fragments_cannot_escape_merge_law():
         match="operatively identical rules must be merged",
     ):
         rules.validate_rule_rows_syntax([first, unrelated, last])
+
+
+def test_colliding_authored_micro_fact_id_cannot_hide_adjacent_fragmentation():
+    def two_slot_rule(
+        *,
+        rule_id: str,
+        effective_start: int,
+        effective_end: int,
+        first_micro_fact_id: str,
+        second_micro_fact_id: str,
+    ) -> dict:
+        row = _retag_student_rule(
+            _fact_bearing_student_rule(),
+            rule_id=rule_id,
+            micro_fact_id=first_micro_fact_id,
+        )
+        row["effective_start"] = effective_start
+        row["effective_end"] = effective_end
+        binding = row["covered_facts"][0]
+        first_slot = binding["micro_fact_slots"][0]
+        second_slot = copy.deepcopy(first_slot)
+        second_slot["micro_fact_id"] = second_micro_fact_id
+        binding["micro_fact_slots"].append(second_slot)
+        row["required_micro_facts"].append(copy.deepcopy(second_slot))
+        binding["premise_ast"] = {
+            "op": "and",
+            "args": [
+                {
+                    "op": "equal",
+                    "args": [
+                        {
+                            "op": "micro_fact",
+                            "micro_fact_id": first_micro_fact_id,
+                        },
+                        _literal("school_is_employer"),
+                    ],
+                },
+                {
+                    "op": "equal",
+                    "args": [
+                        {
+                            "op": "micro_fact",
+                            "micro_fact_id": second_micro_fact_id,
+                        },
+                        _literal("school_is_employer"),
+                    ],
+                },
+            ],
+        }
+        return row
+
+    first = two_slot_rule(
+        rule_id="student-a",
+        effective_start=1968,
+        effective_end=1980,
+        first_micro_fact_id="micro:covered:1:2",
+        second_micro_fact_id="student-a-second-fact",
+    )
+    second = two_slot_rule(
+        rule_id="student-b",
+        effective_start=1980,
+        effective_end=2023,
+        first_micro_fact_id="student-b-first-fact",
+        second_micro_fact_id="student-b-second-fact",
+    )
+    first, second = json.loads(json.dumps([first, second]))
+
+    with pytest.raises(
+        rules.LegalRuleValidationError,
+        match="adjacent operatively identical rules must be merged",
+    ):
+        rules.validate_rule_rows_syntax([first, second])
 
 
 def _result(
