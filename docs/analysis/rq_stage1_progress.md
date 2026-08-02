@@ -6,8 +6,9 @@
 - Starting commit: `2bb14b514983254b5af78d74ce728ac598a319b7`
 - Scope: the section 19 source replay and explicitly nonauthority candidate
   preparation consumed by per-document stage-2 annotation lanes.
-- Status: source-replay parent complete; deterministic candidate tooling is in
-  progress. No candidate is an annotation, no candidate may select the source
+- Status: source-replay parent and deterministic candidate tooling complete;
+  fixed ten-document candidate batches are next. No candidate is an annotation,
+  no candidate may select the source
   denominator, and no Q5, relationship catalog, or other authority artifact is
   emitted by this lane.
 - External final-report target:
@@ -35,10 +36,18 @@
   keysets, domains, role/page/era covers, candidate nonselection, and coherent
   mutation rejection. Twelve always-runnable tests and two capture-backed
   reproduction tests pass.
+- Built deterministic candidate detection for all ten section 19 occurrence
+  kinds with exact UTF-8 byte spans and hashes, complete candidate page cover,
+  bounded acyclic flow-path alternatives, local anchor-classification and
+  possible-parent rows, per-document payload manifests, fixed ten-document
+  batch manifests, and a global per-era census index builder.
+- Every candidate identifier uses an `rq-candidate-*` namespace. Candidate
+  artifacts prohibit auto-promotion, assign no canonical node IDs, and require
+  explicit stage-2 adjudication for every eventual annotation row. Eight
+  synthetic unit tests cover kind order, Unicode spans, deterministic IDs,
+  empty pages, flow alternatives, anchor parents, manifests, and nonpromotion.
 
 ## Next
 
-- Build deterministic occurrence, flow-path, and anchor-classification candidate
-  tooling with an explicit adjudication-only boundary.
 - Generate the 81 per-document artifacts in ten-document commit batches, publish
   the stage-2 protocol, and run reproduction plus tier-sync tests.
