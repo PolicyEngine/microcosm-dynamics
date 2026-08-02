@@ -35989,20 +35989,21 @@ byte shadow walk. For each atomic source byte in domain order, it substitutes
 each of the 255 unequal byte values in ascending hexadecimal order, changes
 no byte length or other source content, recomputes every layer-1 commitment,
 and rederives every reachable layer-2 node. Decode or parse failure is a
-distinguished abort content, not an omitted trial. A trial proves consumption
-only if at least one of the exact 19 result-entry nodes named by
-`RESULT_ENTRY_NODES` in the canonical graph source changes. A change confined
-to layer 1 or to an internal audit/classification node is ignored. For every
-proved byte, the canonical displayed shadow is the lowest unequal value that
-changes a result-entry node.
+distinguished layer-2 abort content, not an omitted trial. A trial proves
+consumption if and only if any layer-2 node changes. A change confined to
+layer 1 is ignored. For every proved byte, the canonical displayed shadow is
+the lowest unequal value that changes a layer-2 node. The exact 19
+result-entry nodes named by `RESULT_ENTRY_NODES` are an additional outcome
+test: a change in one proves contamination reaches the historical favorable
+result, but result entry is not required for consumption.
 
 Instrumentation records the first layer-2 node that directly reads that
 primitive byte on each route. Downstream changes reached solely through that
 prior-layer-2 basis do not create duplicate frontier rows. The walk continues
 through every byte, every alternative, and every direct route and reports the
 complete frontier. It cannot emit an empty forbidden-dependency array merely
-because the expected array was absent, because only an internal classifier
-changed, or because a commitment digest was treated as content. Emptiness has
+because the expected array was absent, because a changed classifier was
+mislabelled internal, or because a commitment digest was treated as content. Emptiness has
 meaning only after the 3,357-node, 6,167-edge graph and 635-row basis match
 their fixtures and this complete walk finishes.
 
@@ -36041,9 +36042,10 @@ The required 18-row candidate array changes from 6,209 bytes/SHA-256
 `039db17bdc73e187376b712f1514ee9bb7a0746421504c0396b1518b703953e7`
 to 6,205 bytes/SHA-256
 `77175376157cf483cf3941be42fcfca34e527c13dde0d3f3bfd025c010afa4f7`.
-This changes an actual §18.2 result-entry member and proves physical
-consumption; a change only in DSCAN's richer audit classification would not
-suffice. As cross-checks, the complete scan changes from 348 rows/72,325
+This changes an actual §18.2 result-entry member and proves that the physical
+consumption contaminates the favorable result. A change only in any layer-2
+classification would already prove consumption; this stronger witness also
+reaches the result. As cross-checks, the complete scan changes from 348 rows/72,325
 bytes/SHA-256 `0e96254f5f33fab0f03d5c3284c71d238e8c636a1443533be888d49357746411`
 to 347 rows/72,122 bytes/SHA-256
 `96c5c1596d024734c84b1fbb6697f4164260aae9e4bf6b2f15d9b699f81be349`,
@@ -36327,7 +36329,7 @@ V-B6 status is always nonpassing. In order, it must:
    635-row basis manifest, four-reference order, complete physical-position
    domain, and value-flow walk. The scanner must use the frozen PDFs, not
    pre-labelled occurrence or candidate rows;
-3. rediscover at least the pinned V4902 result-reaching delimiter witness, retain all
+3. rediscover at least the pinned V4902 result-reaching whitespace witness, retain all
    four `incomplete_source_numeric_authority` rows and their null profile,
    padding, and registered grammar, and reject the historical
    `source_disposition=verified`, `verification_status=verified`,
@@ -36384,8 +36386,7 @@ A7-R11 has vector_kind `physical_consumption_still_aborts`. It independently
 reconstructs the authenticated R10a frozen-input set and successful
 expected-negative audit; neither arm reads a serialized R10a result or
 invokes A7-R10b. Every baseline run must rediscover the pinned V4902
-result-reaching delimiter
-witness. Its exact mutation-class order is:
+result-reaching whitespace witness. Its exact mutation-class order is:
 
 ~~~text
 raw_fixed_width_record_or_token
@@ -36423,67 +36424,226 @@ the one byte changed, and the physical route the runner must exercise. Hex
 The fenced payload is 13,650 bytes including its terminal LF and has
 SHA-256
 14eb875a8bb21203059a172ff24f3377cad89159274c6c480c14841786e03b68.
+
+The exact executable route-probe preimage is the zlib-compressed RFC 4648
+Base64 payload below. Concatenate its ASCII lines, Base64-decode, and
+zlib-decompress it to exactly 36,601 terminal-LF Python bytes with SHA-256
+`3287c293b3e7f954f044fdc70176f169dbae9416232fbf1f1f72284c1bda9e4f`.
+The compressed stream is 8,632 bytes with SHA-256
+`99cd07791a36a6c7a30fd1151674821166cf495c528babd7959a170408f99615`;
+the 11,512 Base64 characters plus terminal LF have SHA-256
+`ddd5a010aa12f79e8f217f77adaa0a155fd66275e1d1204abdbe11050ea0c3fe`.
+Run the decoded source from the repository root with the mandated
+interpreter. It authenticates every complete source, reconstructs every
+structured member span and every fixed-width record/slice locator, executes
+all eight routes against baseline and one-byte shadow content, and emits a
+diagnostic only after a declared layer-2 output is nonconstant.
+
+~~~text
+eNrtPf2P2zayv/uv0PPhULv1eiX52+/2Ablkcxcg7QZpcneFawiyRO+qtS1Xknezb+H+7W84JCV+Sfam6aEPuAOuWUuc4cxwZjgc
+cqg//dflx5xk+eU2/HR7R3ZJfvku3STR4/XuNtmRyzyNknBzkZPokCXF48U2jcnmsn9PdveXq2R3uX8s7tJdq91u//WQbGIn3MXO
+PcmS9aNT3BHnxZbsYvh/cTFxXkwu3nuekxGKLz1kEXGy9FCQi32WroizTj4Vh4z0AVWrtc7SrRME6wN9FAROst2nWQHYd2kRFkm6
+y1st/ixKNxsSsWf80V2Y322Slfj5Uw4U8r8zIv7KH3PWzT4saGvRxzv42Wq13v3w4e833zlX+LvT/hJSandb76/f3XCc/egh7nT7
+GcnTzT3pdFuvbl7CK2xx6bTjNMovY5Int7vLKAWRkjggYbZLdrd5EKVZxnjub+N26/ofb15df/fyWgYPi/CSfCpItgs3l/s8iQEo
+Jqs0/TlYJ2QDyO6TmOwicpk9erPJKID/TIJ8nx5yAk3hxb4IchJug3uvTyXYbr1/8c/g/c3NhzOFQju9QDrW4TbZPAL7rW9ffPfm
+9fX3H4K//vDh+ntA5A2C8citnn//9xf+aAwv2t6QrKaTUThdrXzPdwfuaBZ6E3+99ofrwWAyicJ4OvNGM38yjMbRcOpG3nA69CbT
+MXEHq/G03Xr98e3b4PWbf334+P667HDmBzNvpr6rOg0B1Soahv7EXQ9jEg7hz1kIP30viteTmevHrk/ikT+Yrcfu2vO8MYknYzIa
+z4beMIJOX958++7Fyw9Gv94smI1Gxuuq69ifrePZwI+m63A8GfrryTgcTVwyjaej8Tj04BkZDfwwDKPR2h0PQn+wHq8GIyB04MWr
+dbv1/cc3H66DDzfvbt7e/O2HsuexF3gjX39bdbxyvdhfASsEup/O3Ol47U0jj4rZXU1jL3ZBAN50tpqOx2Tqz0ZkBDKZTtdA3Xg6
+cUXHf33x/ZvvK3596HWovKq6HBJ/CDq38kNvFQ/c2cj117Phisz80Wy6mvnhAIS/mnrA7pAMXHfmDt2V74JIvHEUD8bgIb6/+fge
+Nf6p5cD/2qhtTNEuQJXHF1n4AJr+CczmIYmLu/act2StQ3xSajRYDAW6fP3iW/pvv/hUtHtV89VjQXJoPw0ms2kwHfvSu/wuBK7g
+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
+0Po/RTwVGg==
+~~~
+
+The executable's exact result domain is pinned here:
+
+~~~json
+{"compact_fixture":{"canonical_bytes":19955,"sha256":"d29fd932c8fa6742f76a570e8d8566a1674e532aaac5f063a23f6b350f431dbf"},"full_fixture":{"canonical_bytes":92919,"row_count":32,"sha256":"ac6cbc4a270f4dea44a29aa2721cdf7902d02ed5239f60f1116ed76e569414c8"},"suite_graph":{"basis_canonical_bytes":12154,"basis_row_count":36,"basis_sha256":"4e24975b2a1bd309502f94be92598b92a34deb8132a4e3009040b20f7616cd36","edge_class_counts":{"commits-to":36,"contains":172,"derives-from":36},"edge_count":244,"node_count":141,"node_type_counts":{"artifact":37,"extraction-row":36,"layer-1 commitment":36,"layer-2 derived node":32},"root_count":1,"root_reachable_count":141,"topology_canonical_bytes":61152,"topology_sha256":"b01d2b111ed9389086f18c124f30b8d1d0aa2189b866e8295e529a88f5706870"}}
+~~~
+
+The suite probe positions are exactly 109 through 140 in case order. Its
+graph and basis must match before its 32 discovered diagnostic rows have
+meaning. This isolated source-adjudication counterfactual suite runs only
+after the historical 3,357-node/6,167-edge graph and 635-row basis have
+matched; the suite graph does not replace or mutate that historical graph.
 It is source evidence, not a prelabelled expected diagnostic: the runner must
 verify that every original byte is present, apply exactly the displayed
 one-byte mutation only after complete-source authentication, and discover
 the dependency by instrumenting the proposed value flow.
 
-Mutation positions 0 through 6 respectively make the proposed layer-2 node
-read the raw token, use declared format in parsing, use the displayed source
-count, normalize the leading-space token under a padding rule, traverse a
-numeric-grammar/DFA arm for the 99/98 token, parse and carry a canonical
-numeric value from the displayed raw 20/21 token, or execute the code map
-against the displayed raw 40/41 token. Positions 5 and 6 deliberately mutate
-authenticated raw records rather than semantic codebook lexemes, so the
-direct semantic projection remains fixed. Position 7
-recomputes the shadow commitment after the displayed count mutation and then
-adds a layer-2 read of that digest or its mixed preimage. A changed digest
-that remains only a layer-1 commitment is not a dependency and must not
-produce a negative; position 7 passes as a negative only when the layer-2
-node's content changes because it reads through that commitment.
+The route graph gives every case a distinct layer-2 probe node. These are the
+eight exact executable route functions; their outputs, rather than the
+manifest's supplied class label, establish nonconstancy:
 
-The authenticated original remains the authority in both baseline and
-shadow runs. The shadow is never reauthenticated or accepted as frozen
-source. The baseline must reproduce A7-R10a's exact graph, complete walk,
-pinned V4902 witness, and expected abort. The shadow independently rebuilds
-the candidate topology and basis manifest and compares their node, edge,
-row, and selector domains with the pinned historical-attempt fixture. The
-negative harness continues its instrumented walk far enough to derive the
-new diagnostic route from the actual changed layer-2 content, then rejects;
-a topology/basis mismatch is reported but cannot substitute for discovering
-that value flow. Supplying the manifest's class label or case number directly
-to the diagnostic fails.
+| Position | Function ID | Exact read and operation | Exact output members |
+|---:|---|---|---|
+| 0 | `raw_token_hex.v1` | read the real two-byte registered field slice and hex-encode it | `raw_token_hex` |
+| 1 | `declared_num_format_parse.v1` | read the real `NUM(w.d)` scalar, full-match `NUM\((\d+)\.(\d+)\)`, require probe token `20` to have width `w`, and parse it at `d` decimal places | `decimal_places`, `declared_format`, `parsed_decimal`, `probe_token_ascii`, `width` |
+| 2 | `raw_count_integer.v1` | read the real digit-only Count scalar and convert it to an integer | `raw_data_count_ascii`, `raw_data_count_integer` |
+| 3 | `two_byte_padding_profile.v1` | read the real two-byte field slice, classify its first byte as leading-space, zero-prefixed, or other, and parse its numeric value | `canonical_numeric_value`, `padding_profile`, `raw_token_hex` |
+| 4 | `two_digit_numeric_dfa.v1` | read the real two-digit field slice, execute `q0 -> q1_digit -> q2_accept`, and select `reserved_na_dk` exactly for `99`, otherwise `emit_numeric` | `accepted`, `terminal_action`, `token_ascii`, `transition_trace` |
+| 5 | `canonical_numeric_parse.v1` | read the real digit-only field slice and carry its parsed base-10 integer | `canonical_numeric_value`, `raw_token_ascii` |
+| 6 | `exact_semantic_code_map_lookup.v1` | read the real `40`/`41` field slice and the real semantic-map row `/field_evidence/{220,609,1055,1529}/11`, build its unique column-2-to-column-3 map, and execute the lookup | `executed_code`, `mapped_value`, `semantic_map_pointer` |
+| 7 | `layer_2_commitment_digest_read.v1` | recompute the five-key layer-1 commitment over the complete mutated artifact, then make layer 2 explicitly read its `/sha256` text | `read_commitment_sha256` |
 
-Each case has two independent arms:
+Positions 5 and 6 mutate authenticated raw records, not semantic codebook
+lexemes, so the direct semantic projection stays fixed. Position 7 is a
+negative only because layer 2 explicitly reads the digest. Recommitting a
+changed artifact solely at layer 1 changes no layer-2 probe and is lawful.
 
-1. the source-adjudication arm leaves the complete top-level relation at
-   pass_with_closed_failures, reproduces the complete baseline diagnostic
-   including the pinned V4902 result-reaching witness, and discovers exactly one
-   additional mutation-route row in the shadow-minus-baseline set. That row
-   uses the real `[source_artifact_id,source_member]` locator and
-   `physical_dependency_position[0] == case_number`; it aborts before any
-   §18 source result or future carrier/requirement result is accepted; and
-2. the physical-consumer arm independently reconstructs the same frozen
-   inputs, carries the mutated datum through the named route, and constructs
-   one hypothetical crosswalk whose reference stream is only that field.
-   consumer_row_identity is
-   ["amendment_7_a7_r11_physical_consumer_fixture.v1",case_number]. It
-   constructs one exact nine-key closed_failure_reference_rows member and
-   aborts before the crosswalk or dependent value is accepted.
+For raw routes 0, 3, 4, 5, and 6, the executable does not trust the manifest's
+displayed range. It first proves uniform CRLF records and independently
+reconstructs the range from this closed layout:
 
-The aggregate case applies the four class-0 mutations in cases 0, 8, 16, and
-24 simultaneously. Its source diagnostic reproduces the complete baseline
-including the pinned V4902 result-reaching witness and has exactly four additional rows
-in its shadow-minus-baseline set, ordered by
-`physical_dependency_position`; their domain positions are 0, 8, 16, and
-24. Its physical arm uses consumer_row_identity
-["amendment_7_a7_r11_physical_consumer_fixture.v1",32], resolves all four
-real raw-byte locators in the same order, emits four nine-key guard rows with
-consumer_reference_position 0 through 3, and aborts. Any successful arm,
+| Field | Record bytes / payload bytes | Zero-based field slice | Record indices for routes 0, 3, 4, 5, 6 |
+|---|---:|---|---|
+| V4519 | 1,501 / 1,499 | `[540:542]` | 168, 0, 509, 243, 3,613 |
+| V4902 | 1,501 / 1,499 | `[1175:1177]` | 477, 0, 2,333, 1,658, 903 |
+| V5429 | 965 / 963 | `[576:578]` | 10, 0, 4, 147, 329 |
+| V5916 | 990 / 988 | `[540:542]` | 835, 0, 151, 918, 327 |
+
+For routes 1, 2, and 7 it strict-parses the authenticated canonical JSON,
+reconstructs the pointer scalar's raw half-open canonical byte span, and
+requires the displayed byte offset to lie inside it. Thus every route is
+grounded in an independently discovered real member. The one-byte shadow is
+never reauthenticated or accepted as frozen authority. The executable
+records the basis positions actually read, requires baseline and shadow
+layer-2 output bytes and hashes to differ, and only then compares the
+discovered class with the manifest label and constructs the exact 12-key
+diagnostic. Supplying a case number or label as output fails.
+
+Each case has two ordered, independent arms:
+
+1. The isolated source-adjudication counterfactual arm first reproduces
+   A7-R10a's historical graph, complete walk, pinned V4902 whitespace
+   witness, and expected abort. Only after those fixtures match, it constructs
+   and matches the separate 141-node/244-edge route-probe suite, executes the
+   named baseline and shadow function, and discovers exactly the case's
+   diagnostic at suite node position `109 + case_number`. It rejects the
+   shadow and accepts no §18, carrier, requirement, or consumer result.
+2. The physical-consumer arm independently reconstructs the frozen reference
+   stream containing only the case's field and invokes the ordinary §21.4.1
+   guard **before** calling the route function, reading/carrying the physical
+   datum, or constructing a crosswalk. Its `consumer_row_identity` is
+   `["amendment_7_a7_r11_physical_consumer_fixture.v1",case_number]`. The
+   nonempty one-row guard aborts, and an instrumented route-function
+   invocation count must remain zero. The source-adjudication probe explains
+   why the guard row exists; it never authorizes this arm to consume.
+
+The aggregate case executes the isolated class-0 probes for cases 0, 8, 16,
+and 24 and requires exactly their four discovered rows in physical-position
+order. Its separate consumer arm uses identity
+`["amendment_7_a7_r11_physical_consumer_fixture.v1",32]`, reconstructs the
+four-field reference stream in that order, invokes the guard, emits four
+nine-key guard rows with consumer-reference positions 0 through 3, and
+aborts with all four route invocation counts still zero. Any successful arm,
 missing or reordered diagnostic, wrong graph or field position, synthetic
-source locator, semantic-allowlist expansion, partial result, or
-drop/relabel of an offending reference fails A7-R11. The source diagnostic
-cannot stand in for the ordinary physical-consumer guard.
+locator, semantic-allowlist expansion, partial result, guard-after-read,
+nonzero consumer-route count, or drop/relabel of an offending reference
+fails A7-R11. The source diagnostic cannot stand in for the ordinary guard.
 
 The vector implementation constructs expected results before serialized
 actual results are read. Core-artifact row order/count/digests and every
@@ -36564,7 +36724,7 @@ subsection's table header and ends immediately before its expressly named
 next heading. No replacement inventory, regression fence, repeated prose,
 surrounding paragraph, or non-comparator table is excluded.
 
-The exact 50-position initial literal seed array is:
+The exact 51-position initial literal seed array is:
 
 ~~~text
 field_source_derivation
@@ -36600,6 +36760,7 @@ physical_dependency_position
 pinned_forbidden_dependency_witness
 nonpassing_forbidden_physical_dependency
 A7-R10a
+A7-R11
 A7-R10b
 amendment_4_v_b6_documented_inclusive_total_evidence_projection.v1
 G17-C01
@@ -36629,12 +36790,14 @@ transitive consumer edge in §§19.4.3 and 20.5.2. A seed is not a ceiling.
 
 The closure must in particular walk from §13.2 through the complete
 §18.2/§18.4 historical candidate and R10a pre-carrier abort, its
-carrier-deferred marker, Q5, actual official-inventory construction, R10b's
+carrier-deferred marker, the A7-R11 32-case route-probe suite and aggregate
+case, both arms and their guard-before-read edges, Q5, actual
+official-inventory construction, R10b's
 carrier-absence proof, the nonpassing V-B6 row in every preliminary and final
 22-row evaluation, every blocked domain/bundle, and correction final
 acceptance's resulting failure. It also walks every §18/§19 lifecycle,
 satisfiability/final-success consumer, and every physical consumer of the
-four references. The ordering edges R10a -> Q5 -> actual inventory -> R10b
+four references. The ordering edges R10a -> A7-R11 -> Q5 -> actual inventory -> R10b
 -> each preliminary/final evaluation -> correction final-acceptance gate
 must all appear in forward and reverse closure with their negative outcomes.
 A generic Class-C or evidence-only row cannot close that subgraph.
@@ -36924,8 +37087,9 @@ v6 requirement registry, and freshly reconstructs all 22 rows, projection
 evidence, Booleans, failure IDs, counts, and hashes. Position 1, A1, and A3
 use only the successors above; the legal row retains its typed v2 result;
 all others are re-evaluated. V-B6 is one of those freshly reconstructed 22
-rows and must reproduce R10a's complete frozen-source-to-pre-carrier abort
-and R10b's actual-inventory carrier-absence proof in that order. Its four
+rows and must reproduce R10a's complete frozen-source-to-pre-carrier abort,
+R11's concrete frozen-source route/guard suite, and R10b's actual-inventory
+carrier-absence proof in that order. Its four
 numeric-grammar derivation rows remain T-minus and null. The pinned
 nonempty dependency witness makes V-B6 nonpassing in every fresh
 reconstruction; therefore no accepted complete v6 domain instance exists.
@@ -37086,7 +37250,8 @@ carrier fixture may appear.
 Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
 comparands may continue when their own laws pass. The V-B6 branch cannot.
 Every preliminary and final 22-row reconstruction must keep V-B6 in its
-same row position, rerun R10a and post-inventory R10b, and obtain a
+same row position, rerun R10a, rerun both R11 arms from the authenticated
+frozen inputs, then rerun post-inventory R10b, and obtain a
 nonpassing V-B6 row; therefore the complete domain, v7 bundle, correction
 final acceptance, receipt, and registration cannot pass. Final acceptance
 requires R10b's vector status to be pass, but that pass is the expected
@@ -37139,7 +37304,8 @@ This subsection replaces the §20.8.4 ordered protocol for revision 9:
    final-acceptance gate is evaluated. A constructed carrier or synthetic
    fixture fails R10b.
 6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain.
-   Rerun R10a and R10b from their proper inputs, never copied outputs. The
+   Rerun R10a, both R11 arms, and R10b from their proper inputs, never copied
+   outputs. The
    V-B6 row must be nonpassing and the domain must abort. This is the
    required terminal outcome under the present evidence; no residual-9
    registry, V-B6 bundle, correction final acceptance, receipt, registration,
