@@ -34031,8 +34031,9 @@ omission:
    and
 9. A6-R01 through A6-R11 execute unchanged and reproduce the exact vector
    keyset and complete row-domain digests in §20.3.6. Only after this complete
-   relation is accepted do Amendment-7 vectors execute under §21.5; they
-   cannot substitute for an A6 row.
+   relation is accepted does the exact eleven-member pre-Q5 Amendment-7
+   array in §21.5 execute; no member can substitute for an A6 row. A7-R10b
+   executes only at its later post-inventory gate.
 
 If and only if all nine requirements pass,
 field_source_derivation.status is the exact literal
@@ -34548,21 +34549,26 @@ that remains only in the complete source manifest or a closed negative
 census has not been consumed and does not prevent construction of unrelated
 lawful consumers.
 
-The exact V-B6 semantic chain in §21.4.2 is the only additional lawful
-case. Its amount operands remain V4379, V5289, and V5788, each consumed once
-under the inherited §18/§19 laws; none of the four failed occupation fields
-is an amount operand. Any later attempt to read a raw token, layout, code as
-data, parsed value, or other forbidden physical member for V4519, V4902,
-V5429, or V5916 constructs the ordinary nonempty guard and aborts before a
-source result, requirement row, registry row, correction value, or output is
-accepted.
+The exact V-B6 layer-2 semantic chain in §21.4.2 is the only additional
+lawful case. Its later amount operands are V4379, V5289, and V5788. Those
+three complete derivation rows lie in T-plus: each is a passing physical
+field read exactly once under the retained §18/§19 guards, so its applicable
+closed_failure_reference_rows array is empty. Those reads remain lawful and
+mandatory and are not physical consumption of a non-passing field. None of
+the four T-minus occupation fields is an amount operand. Any later attempt
+to read a raw token, layout, code as data, parsed value, or other forbidden
+physical member for V4519, V4902, V5429, or V5916 constructs the ordinary
+nonempty guard and aborts before a source result, requirement row, registry
+row, correction value, or output is accepted.
 
 
 ### 21.5 Amendment-7 mandatory regression vectors
 
 The successor implementation runs A6-R01 through A6-R11 unchanged, then the
-exact A7-R01 through A7-R09 core artifact below, followed by procedural
-vectors A7-R10 and A7-R11. Each core-artifact row has exactly these fifteen
+exact A7-R01 through A7-R09 core artifact below, followed before Q5 by
+procedural vectors A7-R10a and A7-R11. A7-R10b is the required staged
+continuation after accepted official-inventory construction; it is not a
+twelfth pre-Q5 vector. Each core-artifact row has exactly these fifteen
 members in the following semantic schema order. The exact artifact retains
 the canonical §21.1.1 serialization and therefore writes each object with
 its keys in canonical sorted order, not in the semantic order displayed here:
@@ -34638,44 +34644,72 @@ a fabricated outside row, a reduced denominator, or an accepted 1,234-row
 failure census must also fail. This is the mandatory proof that a silent
 missing failure never becomes a lawful exclusion.
 
-A7-R10 has vector_kind semantic_source_adjudication_end_to_end and executes
-the complete favorable V-B6 path without reading a serialized expected
-result. In order, it must:
+A7-R10a has vector_kind
+semantic_source_adjudication_pre_carrier_end_to_end. It runs in the pre-Q5
+vector gate without reading a serialized expected result. In order, it must:
 
-1. authenticate the frozen semantic codebook authority and reconstruct the
-   exact four-row §21.1.4 projection, including its four row digests,
-   16,933-byte length, and
+1. authenticate every frozen §18 root and the spouse-seam authority, then
+   reconstruct the exact four-row §21.1.4 semantic projection, its four row
+   digests, 16,933-byte length, and
    a152aa03e61498550696e5e9ad0ba1e6e144ab375945b0452234cff0611c3b75
    array digest;
-2. reconstruct the complete 10,887-byte §18.2 projection with digest
+2. reconstruct the complete 10,887-byte §18.2 projection with SHA-256
    7637be0fbaaf0bcb4b4e2fe7feefb6ee1efbe5c56d779f609f343ba03db9a28a,
-   then prove the exact §21.4.2 four-reference order and exact-empty
-   source_adjudication_forbidden_dependency_rows array. All four field rows
-   must simultaneously retain
-   incomplete_source_numeric_authority, their exact
-   literal_only_zero_diagnostic_padding_capacity reasons, and null profile,
-   padding, and registered grammar;
+   then reproduce the exact §21.4.2 150-node/325-edge graph fixture,
+   111-row basis manifest, four-reference order, position-aware sweep, and
+   exact-empty source_adjudication_forbidden_dependency_rows array. All four
+   field rows simultaneously retain incomplete_source_numeric_authority,
+   their exact literal_only_zero_diagnostic_padding_capacity reasons, and
+   null profile, padding, and registered grammar;
 3. construct the exact §18.4 source member, resolve the empty pointer to the
    derived projection, and freshly obtain source_disposition verified,
    verification_status verified, status pass, empty unresolved evidence,
-   and derivation_status pass in both V-B6 branches;
-4. reconstruct residual 9's §19.3.4 carrier with authority_status
-   documented_no_source_allocation_required, source_handling
-   inclusive_total_exact_once, and coverage_consequence
-   continue_registered_parent. V4379, V5289, and V5788 are the only annual
-   amount operands, each exact-once; and
-5. freshly evaluate verify_fitting_free_claim_v_b6_v1 at its exact position
-   in a complete 22-row requirement-registry fixture. The expected outcome is
-   the same verified/pass V-B6 row identity and result, with no copied
-   predecessor result or digest. A7-R10 neither constructs nor accepts a
-   preliminary or final requirement domain or bundle; those complete fresh
-   evaluations remain ordered by §§21.8 and 21.9.2 steps 5–6.
+   and derivation_status pass in both V-B6 branches; and
+4. stop at that pre-carrier boundary and emit only this trace marker:
 
-Every step must pass in one source-projection-to-result walk. Treating the
-four-row semantic projection as a physical reference stream, omitting any
-semantic row or permitted member, admitting any forbidden dependency,
-changing the §18 result, or bypassing residual 9 or the fresh V-B6
-requirement-row evaluation fails A7-R10.
+~~~json
+{"carrier_stage":"carrier_deferred","next_stage":"A7-R10b"}
+~~~
+
+The trace marker is exactly 60 LF-terminated canonical bytes with SHA-256
+b0e3c013ccea0321d9c28d94120073f55be1117bf9ce628caa3b872de160ac50.
+It is not a §18 projection/result member, authority evidence, a carrier, or
+an accepted registry value. A7-R10a must not read or construct the official
+inventory, applicable_source_inventory_keys, residual 9, any carrier or
+carrier ID, a requirement row, domain, or bundle. Omitting a semantic basis,
+admitting a forbidden dependency, changing the §18 result, or crossing that
+boundary fails A7-R10a.
+
+A7-R10b has vector_kind post_inventory_residual_9_carrier_reconstruction. It
+is ineligible until the actual future
+data/external/psid_covered_earnings_source_field_inventory_v1.json has been
+constructed in official order and passed §21.4.5's complete E-domain
+equations, 1,235-key negative census, and every applicable guard. It then:
+
+1. reauthenticates every R10a frozen input and freshly reconstructs its
+   pre-carrier result; neither the trace marker nor an R10a pass bit, row
+   hash, or enclosing digest is authority;
+2. derives residual 9's complete nonempty applicable_source_inventory_keys
+   directly from that accepted actual inventory, preserving official order
+   and applying §19.3.4's exact era, reconciliation slot-kind, and
+   field-purpose filters;
+3. computes the carrier ID only from
+   [registry_schema_version,residual_id,applicable_source_inventory_keys],
+   constructs the complete executable residual-9 reconciliation row and
+   exact-cover consequence rows, and binds the exact §18 projection,
+   documented_no_source_allocation_required,
+   inclusive_total_exact_once, and continue_registered_parent values;
+4. resolves V4379, V5289, and V5788 as the only annual amount operands,
+   requires their T-plus rows and empty guards, and reads each exactly once;
+   and
+5. independently compares the complete carrier, key array, ID, consequence
+   projection, counts, and digests before acceptance.
+
+No synthetic inventory, carrier fixture, pre-enumerated key array, or
+fixture-derived carrier ID is permitted. R10b cannot gate Q5. Its failure
+blocks residual-9 registry acceptance and every preliminary or final V-B6
+requirement pass, domain, bundle, correction final acceptance, receipt, and
+registration.
 
 A7-R11 has vector_kind physical_consumption_still_aborts and independently
 reconstructs the accepted A7-R10a frozen-input set; neither arm reads a
@@ -34773,9 +34807,19 @@ cannot stand in for the ordinary physical-consumer guard.
 The vector implementation constructs expected results before serialized
 actual results are read. Core-artifact row order/count/digests and every
 procedural step, expansion case, witness, source hash, terminal, reason,
-diagnostic, and mutation must reproduce. Omission of one A6 or A7-R01 through
-A7-R11 vector blocks Q5. The A7 suite begins only after §21.3 has accepted the
-complete relation; it is not an input to that top-level status.
+diagnostic, and mutation must reproduce. The exact pre-Q5 Amendment-7 vector
+ID array is:
+
+~~~json
+["A7-R01","A7-R02","A7-R03","A7-R04","A7-R05","A7-R06","A7-R07","A7-R08","A7-R09","A7-R10a","A7-R11"]
+~~~
+
+It is 102 LF-terminated canonical bytes with SHA-256
+05a58e886c7d9d30db8797b8e1d987156476d18e4444224a0f301d38e7529245.
+Omission or failure of one unchanged A6 vector or one member of that exact
+array blocks Q5. R10b is a mandatory post-inventory staged continuation, not
+a Q5 predecessor. The A7 pre-Q5 suite begins only after §21.3 has accepted
+the complete relation; it is not an input to that top-level status.
 
 ### 21.6 Exact replacement inventory and closure sweep
 
