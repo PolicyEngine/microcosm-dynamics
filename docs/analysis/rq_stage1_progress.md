@@ -6,9 +6,10 @@
 - Starting commit: `2bb14b514983254b5af78d74ce728ac598a319b7`
 - Scope: the section 19 source replay and explicitly nonauthority candidate
   preparation consumed by per-document stage-2 annotation lanes.
-- Status: source-replay parent implementation in progress. No candidate is an
-  annotation, no candidate may select the source denominator, and no Q5,
-  relationship catalog, or other authority artifact is emitted by this lane.
+- Status: source-replay parent complete; deterministic candidate tooling is in
+  progress. No candidate is an annotation, no candidate may select the source
+  denominator, and no Q5, relationship catalog, or other authority artifact is
+  emitted by this lane.
 - External final-report target:
   `/Users/maxghenis/m6-sol-lanes/sol-ce-rq-stage1.out`.
 
@@ -22,10 +23,21 @@
   documents, pinned Poppler extraction, and 10,190 pages.
 - Confirmed the stage-1 build must expose those mechanics as an independently
   validated parent before any candidate artifact is read.
+- Built the dedicated nonauthority source-replay parent. It reconstructs both
+  pinned Git roots and all four capture inputs, exact-covers the 465 link and
+  456 accepted-document disposition relations, reproduces all 257 U files and
+  the exact 81-document questionnaire slice, and re-extracts all 10,190 pages.
+- Corrected the replayed Poppler authority member from the prior evidence's
+  legacy `path` spelling to section 19's exact `implementation_path`; the
+  resulting 13-key value is 566 canonical bytes with SHA-256
+  `8ce4d7e16753aa0a6c2220006c9aea60330acd62de809db5894ad03eb9123da3`.
+- Added mirrored validation for row schemas, ID preimages, order, counts,
+  keysets, domains, role/page/era covers, candidate nonselection, and coherent
+  mutation rejection. Twelve always-runnable tests and two capture-backed
+  reproduction tests pass.
 
 ## Next
 
-- Build and SHA-pin the dedicated source-replay artifact and mirrored validator.
 - Build deterministic occurrence, flow-path, and anchor-classification candidate
   tooling with an explicit adjudication-only boundary.
 - Generate the 81 per-document artifacts in ten-document commit batches, publish
