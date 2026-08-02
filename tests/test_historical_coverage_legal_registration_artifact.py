@@ -21,9 +21,9 @@ ARTIFACT = (
 TARGET_REGISTRY = (
     ROOT / "data" / "registries" / "historical_coverage_rule_specs_v1.json"
 )
-ARTIFACT_SIZE_BYTES = 104_115
+ARTIFACT_SIZE_BYTES = 104_197
 ARTIFACT_SHA256 = (
-    "22d495904da30b5991a507f90231c598b53ba915ff197f17027177a3fa49a69f"
+    "e7415d55cb419c5e47560648a140f982fc5800c821f42729506b35ffe5648179"
 )
 
 if str(SCRIPTS) not in sys.path:
@@ -253,7 +253,17 @@ def test_fail_closed_dependencies_gaps_constraints_and_zero_row_census():
     }
     assert value["source_gap_count"] == 2
     assert value["source_gap_sha256"] == (
-        "3f3345ec8fb41ecffc7efdef857128581cad736a00835ba7f0742763cb8fc134"
+        "11b8bde7dd1fae23584f463c6daf8d21baf323111e48fbaeef29ccbb4d182f9b"
+    )
+    annual_base_gap = next(
+        row
+        for row in value["source_gap_rows"]
+        if row["gap_id"] == "v_b4_missing_annual_base_determination_bytes"
+    )
+    assert "1975-1977 and 1982-1989" in annual_base_gap["missing_authority"]
+    assert (
+        "supplies enacted 1978-1981 bases"
+        in annual_base_gap["missing_authority"]
     )
     assert {
         row["constraint_id"] for row in value["evidence_constraint_rows"]

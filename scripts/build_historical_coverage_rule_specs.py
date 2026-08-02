@@ -383,13 +383,18 @@ SOURCE_GAP_ROWS: tuple[dict[str, Any], ...] = (
         "missing_authority": (
             "No complete contemporaneous Federal Register determination "
             "byte chain establishes formula-set contribution and benefit "
-            "bases for 1975-1978 and 1982-1989; annual IRS forms are rank-2 "
-            "operational evidence only."
+            "bases for 1975-1977 and 1982-1989. P.L. 95-216 section 103(b), "
+            "91 Stat. 1513-1514, supplies enacted 1978-1981 bases; annual "
+            "IRS forms are rank-2 operational evidence only."
         ),
         "consequence": "abort_registration",
     },
 )
 
+# The former ``v_b4_1990_transition_source_mismatch`` is resolved, not an
+# active constraint: P.L. 98-21 section 124(a), (c)(2)-(3), and (d)(2),
+# 97 Stat. 89-91 supplies the post-1989 0.9235/half-SE-tax transition.  The
+# mismatched P.L. 101-239 section 10204 citation is not carried forward.
 EVIDENCE_CONSTRAINT_ROWS: tuple[dict[str, Any], ...] = (
     {
         "constraint_id": "v_b4_se_aggregation_domain_unresolved",
