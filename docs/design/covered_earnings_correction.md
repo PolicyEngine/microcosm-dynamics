@@ -33737,9 +33737,10 @@ artifact remain unclaimed.
 For a post-D7 construction, the specific law below prospectively supersedes
 only these revision-8 conclusions:
 
-1. an unsupported or conflicting source assertion still prevents that field
-   from taking a passing row terminal, but it no longer prevents the complete
-   all-field relation from taking pass_with_closed_failures;
+1. an unsupported, conflicting, or incomplete source assertion still
+   prevents that field from taking a passing row terminal, but it no longer
+   prevents the complete all-field relation from taking
+   pass_with_closed_failures;
 2. the three §20.3.5 failure-table consequences written as top-level abort
    become closed row-local consumer-boundary aborts after the failure row has
    been serialized into the complete relation;
@@ -33917,13 +33918,17 @@ partial artifact, accepted registry state, correction value, context value,
 or publication output is emitted or treated as passing. Its diagnostic
 reports every offending row, not merely the first. The diagnostic is
 verification evidence and is not a partially accepted consumer artifact.
+That exact guard-abort diagnostic is not a context_output consumption of the
+failed field and is exempt from recursive guarding solely so the closed abort
+can be reported; using any field value beyond the nine diagnostic members
+remains forbidden.
 
 The guard is closed. No consumer may omit the reference, reinterpret a
 T-minus terminal, infer or default a profile/padding/grammar, trim or
 zero-pad a token, treat a source conflict as a priority rule, treat
 incomplete as zero or missing, convert a failure to structural_missing,
-borrow authority from a peer field or era, accept a value-map subset, or
-weaken the terminal because the top-level relation says
+borrow authority from a peer field or era, truncate a value-map subset to
+evade a T-minus member, or weaken the terminal because the top-level relation says
 pass_with_closed_failures. Search, census, and evidence embedding are not
 positive consumption; selection into a positive reference is.
 
@@ -33953,7 +33958,10 @@ addition to this guard.
 Q5 retains its §19.3.3 v1 schema. Its source_document_manifest embeds the
 complete nine-key field_source_derivation object with all 89,599 rows,
 including all 1,235 T-minus rows, their exact IDs, and their complete null
-failure members. It must carry status pass_with_closed_failures and must
+failure members.
+source_document_manifest.field_source_derivation.status must exact-equal
+pass_with_closed_failures; source_document_manifest.status and Q5.status
+retain their inherited pass-or-fail schemas. The complete manifest must
 deep-equal an independent reconstruction. A manifest filtered to joined,
 passing, inventory-relevant, named, or observed fields is invalid. Totality
 is the evidence; pass/failure is per row.
@@ -34031,9 +34039,14 @@ Every slot registry, value map, crosswalk, correction input, and context
 output derives its complete raw-field reference stream from accepted Q5 and
 inventory relations and reruns its own guard. No downstream consumer may
 trust an upstream pass bit or empty guard without resolving the complete
-rows again. G17-C01, C06, and C07 and every enclosing G17 digest remain
-complete comparands; a T-minus reference aborts the affected row and hence
-the complete G17 result. The same rule applies to every configured reader,
+rows again. G17-C01's complete fifth-value compiler relation and any complete
+source-manifest copy in C01 or a slot authority are evidence projections:
+they retain all 1,235 T-minus rows and do not abort merely by embedding them.
+C01's positive joins, layouts, value maps, and crosswalk references remain
+consumption and run the guard. G17-C06, C07, every consuming C01 projection,
+and every enclosing G17 digest remain complete comparands; a T-minus
+consumption reference aborts the affected row and hence the complete G17
+result. The same rule applies to every configured reader,
 candidate path, selected path, correction calculation, context run,
 certificate, and publication.
 

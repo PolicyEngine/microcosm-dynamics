@@ -16,6 +16,7 @@ The empirical grounding and the operative completion/consumer-boundary law are a
 - Defined the exact `pass_with_closed_failures` predicate without changing the ten row terminals or 16-key row shape.
 - Added atomic guards for Q5, slots, inventory rows, value maps, crosswalks, correction inputs, and context outputs.
 - Preserved the official inventory key domain and two dispositions while binding its accepted positive-field projection to an exact-empty intersection with the 1,235-row negative census.
+- Clarified that complete Q5/G17/slot-authority relation copies are evidence embeddings, while their positive projections remain guarded consumers.
 
 ## Next
 
