@@ -30128,7 +30128,7 @@ evaluation, path switch, context run, label change, or publication.
   slot or inventory artifact, registration, capture, correction execution,
   context run, or publication. The exact accepted bytes become ratified only
   at §20.8.4 step 3 as `D6` and become operative only through the
-  validator-accepted fresh registration in §20.8.4 step 8. No historical
+  validator-accepted fresh registration in §20.8.4 step 7. No historical
   status literal is edited in place.
 - **Immediate immutable base.** The base is the complete ratified
   revision-7 design `D5` at commit
@@ -30319,7 +30319,10 @@ not rewrite `source_format_text`.
 
 Before a serialized projection or disposition is read, the source-only
 extractor and an independent source reviewer reconstruct the complete
-projection denominator and apply this first-source-order law:
+projection denominator and apply this first-source-order law. This is the
+§17 per-assertion disposition device applied to format declarations: every
+assertion remains present and receives one frozen row-level disposition
+before any aggregate result is selected. The exact rows are:
 
 1. the first supported nonnull assertion is
    `selecting_numeric_declaration` or
@@ -30458,9 +30461,18 @@ has the retained five keys `profile_kind`,
 `pass | fail | indistinguishable`. The render functions below—not a host
 formatter—construct both candidates. A diagnostic observation is a
 nonmissing source-valid value whose zero and space renderings differ. Counts
-again cover every record, and both rows have the same diagnostic count.
-Each candidate row's `profile_kind` is exactly its displayed padding-arm
-literal. The enclosing `normalized_format_profile.profile_kind` exact-equals
+again cover every record. A source missing observation is accepted by both
+arms before arm conformance and is nondiagnostic. For each other
+observation, one arm's accepted Boolean is true exactly when its renderer for
+the source-valid scalar byte-equals the raw token; rejected is its negation.
+Each row's accepted/rejected counts are the corresponding frequency sums and
+sum to `record_count`; both rows repeat the same diagnostic frequency sum.
+For every candidate row, status is totally determined:
+`indistinguishable` if rejected count is zero and diagnostic count is zero;
+`pass` if rejected count is zero and diagnostic count is positive; and
+`fail` otherwise. Each candidate row's `profile_kind` is exactly its
+displayed padding-arm literal. The enclosing
+`normalized_format_profile.profile_kind` exact-equals
 `selected_token_form`; padding selection or nonselection is represented only
 by the separately serialized `selected_arm`. No concatenated or inferred
 profile name is admitted.
@@ -31062,6 +31074,7 @@ The exact initial literal search-term array, in this order, is:
 dictionary_codebook_fixed_width_source_derivation_v3
 source_format_projection
 source_format_text
+declared_signed
 normalized_format_profile
 physical_authentication
 token_form_candidate_results
@@ -31347,7 +31360,7 @@ and only if every proof equation passes and:
    comparisons pass, and same-path raw design bytes at `H_cap` equal D6;
 3. `D2 < D3 < D4 < D5 < D6 < A <= H_cap` under raw Git ancestry;
 4. authorization bytes are unchanged from A through `H_cap`, and all six
-   blob rows exact-match observed commits, modes, OIDs, sizes, and raw bytes;
+   blob rows exact-match observed commits, modes, OIDs, and raw bytes;
    and
 5. every retained descriptor-free repository, tracked-state,
    clean-checkout, design/implementation-tree, and authorization-byte
@@ -31375,6 +31388,13 @@ only the complete v5 claim and unchanged-schema primary/sidecar. Exact order
 is `A <= H_cap < T < C`, where `C` is the clean final authority cutoff.
 Every terminal-history, accepted-triple, mode/OID/raw-byte, and
 no-delete/no-readd law selects v5 for a post-D6 case.
+
+The calibrated A1/A3 manifest shapes and their inner authority identities
+remain unchanged. For a post-D6 candidate,
+`accepted_capture_primary_by_final_cutoff` additionally requires the
+complete v5 envelope/proof and exact D2–D6 identities. Their retained
+`design_identity_sha256` remains D1 methodology provenance; D6 is lifecycle
+provenance and never overwrites it.
 
 Within `fitting_free_requirement_verification_specs.v5`, the exact A1 row
 is:
@@ -31441,15 +31461,17 @@ The bundle successor is
 complete v5 keyset/key order, changes its schema value, and embeds the
 complete v5 requirement registry. Every source-derived child affected by
 §§20.3–20.5 is freshly reconstructed from the accepted post-D6 Q5,
-inventory, value maps, legal rows, and complete 18-row G17 result. The legal
-children retain their exact v2/v3/v4 schema chain; the v5 requirement/domain
-values and completed C01/C06/C07 comparands are new consumers, not alternate
-bundle children. Every unchanged child keeps its schema and semantic value
-only after fresh reconstruction. The complete v6 bundle digest hashes this
-one object and becomes `path_applicability_specs_sha256`; no v5 bundle,
-pre-Amendment-6 grammar, draft-Q5, configuration, or prose digest is copied.
-Every revision-8 cutoff, domain, applicability result, receipt, and validator
-selects v5 registry/domain and the v6 bundle without fallback.
+inventory, value maps, and legal source authorities—never from a G17 result.
+The legal children retain their exact v2/v3/v4 schema chain. The v5 domain
+and completed C01/C06/C07/G17 comparands are separate downstream
+receipt/configuration comparisons and are not bundle children or bundle
+construction inputs. G17 pass may gate later acceptance but cannot supply an
+expected bundle value. Every unchanged child keeps its schema and semantic
+value only after fresh reconstruction. The complete v6 bundle digest hashes
+this one object and becomes `path_applicability_specs_sha256`; no v5 bundle,
+pre-Amendment-6 grammar, draft-Q5, G17 payload, configuration, or prose digest
+is copied. Every revision-8 cutoff, domain, applicability result, receipt,
+and validator selects v5 registry/domain and the v6 bundle without fallback.
 
 #### 20.7.3 Receipt and selected-registration lineage
 
@@ -31561,3 +31583,279 @@ and `C` are symbolic Git commits; the `F`/`N`/`H`/`X` projections and the
 metavariables. Comparator IDs DC-01 through DC-38 are fixed table-row
 keys, not schemas. These distinctions create no mutable alias or runtime
 version branch.
+
+### 20.8 Post-Amendment-6 build order, walks, alternatives, ratification, and fresh registration
+
+#### 20.8.1 Source-to-compiler build and seven-vector walk
+
+Ratification of this grammar law is not ratification of a source-derived
+grammar. After D6 exists, the source-only build executes in exactly this
+dependency order before Q5 or an official consumer is read:
+
+1. authenticate the two upstream corpus roots, all four capture inputs, the
+   complete 257-row `U` source-document array, and every staged regular-file
+   byte; independently authenticate the v3 implementation identity and its
+   closed imports;
+2. run dictionary extraction over all 86 dictionary documents, then raw
+   framing and complete all-field census over all 43 raw documents, then
+   context-complete codebook extraction over all 47 codebook documents;
+   exact-cover every source row and reproduce every count/keyset/domain
+   digest before a target field can be selected;
+3. for every wave/field group in the retained denominator order, enumerate
+   the complete ten-key declaration assertion relation, reconstruct every
+   assertion ID and source pointer, and apply exactly one of the seven
+   dispositions in §20.3.1; any unsupported assertion or true conflict
+   records its exact failure and prevents top-level pass;
+4. missing-first, evaluate every token-form candidate and its complete
+   `B_o` vectors/counts, require one passing form, coalesce the explicit sign
+   declarations, evaluate both padding-arm renderers, and serialize exactly
+   the per-field space arm or one structural no-arm disposition; no other
+   field's result enters;
+5. construct the exact-token DFA and action rows, replay every observed
+   numeric token and normalized literal/missing token, enumerate every
+   source-declared unobserved value, and apply the complete range-image and
+   unknown-token abort laws; then compute every grammar ID, derivation ID,
+   full-row digest, relation digest, and implementation result from complete
+   canonical bytes; and
+6. independently reproduce the seven-row vector relation and all full
+   field/token censuses. The implementation identity is unacceptable if a
+   displayed exemplar happens to match but its complete row, census,
+   constructor result, rejection branch, or enclosing digest differs.
+
+The required actual-evidence walk is:
+
+| Vector | Audit ledger | Exact field/wave | Mandatory source-to-replay result |
+|---|---|---|---|
+| A6-R01 | lane A, §20.2.1 | V93 / 1968 | `2031` and the complete 4,802-row census select `left_ascii_space_padding`; zero rejects every one of the 1,069 diagnostics; DFA/value/rendering replay all bytes. |
+| A6-R02 | lane B, §20.2.1 | V6302 / 1979 | `20202031` and all 6,373 distinct tokens independently select the same space arm in the later era; `30303031` is excluded. |
+| A6-R03 | lane B, §20.2.1 | V15133 / 1988 | all ten one-byte digit tokens force `padding_arm_underdetermined_width_one_exact_replay_v1`; literal `30` replays first and range bytes `31`–`39` traverse/replay through the compiled DFA; neither arm is serialized. |
+| A6-R04 | lane A, §20.2.1 | V210 / 1968 | `NUM(4.2)`/`F4.2` dispositions select literal decimal; missing `0.00` remains missing-first; nonmissing `2.60` maps to exact `13/5` and back; full width forces `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`. |
+| A6-R05 | lane A, §20.2.1 | V76 / 1968 | `202d323432` executes leading `no_op`, `set_negative`, and digit actions, yields -242, and re-renders the same five bytes; all plus, trailing, internal, overpunched, and leading-zero sign spellings reject. |
+| A6-R06 | lane B, §20.2.1 | V6363 / 1979 | source-ordered null/SPSS/codebook assertions preserve `F6.2` and `NUM(6.2)`, select one `(6,2)` tuple and one corroborating tuple-equivalent disposition; `2032362e3430` maps to 26.40 and byte-replays under the space/literal form. |
+| A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; the complete cent-step range also contains unrenderable -1040.01, so the field takes the required unsupported abort rather than rounding or observed-subset promotion. |
+
+The first six rows supply at least one actual exemplar for every newly
+lawful arm or disposition requested by this amendment; R07 is the mandatory
+hostile precision/range edge. The lane ledgers identify the census finding,
+while the exact evidence pointers, row hashes, raw-file hashes, token-domain
+hashes, coordinates, counts, and outcomes are the normative relation in
+§20.3.6. Neither ledger summary supplies a row value.
+
+At draft review, independently slicing the authenticated raw files at all
+seven evidence pointers reproduces the seven complete token-row digests and
+the vector keyset/domain digests in §20.3.6. That is a reproducibility check,
+not a passing future `field_source_derivation`: the complete source-only
+compiler identity and every all-field result must still be built after D6.
+
+#### 20.8.2 Q5 → inventory → G17 → receipt acceptance walk
+
+After §20.8.1 completes without a top-level failure, the only lawful
+consumer walk is:
+
+1. **D6 and Q5 ancestry.** Reconstruct the complete D6 blob and all raw
+   prefixes, then first-add the independently reviewed one-path Q5 artifact
+   at its unique single-parent commit. DC-30 and DC-35 must both pass; the
+   complete eight-key Q5 identity, not a symbolic commit or content digest,
+   enters every downstream authority.
+2. **Q5 source and joins.** Reauthenticate the complete 257-document
+   denominator and v3 compiler before reading Q5; require its embedded
+   `field_source_derivation` to deep-equal all rows. Rebuild every positive's
+   18-key raw-field projection with the successor derivation ID/full-row
+   digest, then rebuild all join IDs, era aggregates, hierarchy rows,
+   source-atom annotations, absence proofs, and Q5's self-zeroed digest.
+3. **Slot and inventory.** Derive the official slot registry only from the
+   passing Q5 hierarchy, and derive every present or structural inventory
+   row under the retained exact key biconditionals. Every present layout
+   positionally deep-copies the complete successor profile,
+   selected-arm-or-disposition, padding rule, DFA/null branch, observed and
+   unobserved domains, and value derivation from its same-wave source row.
+   The slot/inventory first-add and admitting-cutoff ancestry predicates must
+   pass before either artifact is authority.
+4. **Value maps and pre-capture G17 source comparands.** Rebuild every
+   value-code source commitment and executable entry from source. Construct
+   and validate the Amendment-6-changed source comparands: G17-C01
+   independently compares the complete compiler relation, joins, layouts,
+   and reverse projections; C06 replays each exact raw token before
+   direct-law classification; C07 deep-compares every source commitment and
+   entry. Other genuinely noncapture G17 rows may be prepared, but the
+   complete 18-row G17 result is not yet constructible: C16/C17 require the
+   captured A1/A3 authorities and C18 requires final adjudication/
+   applicability. There is no C19.
+5. **Pre-capture gates and bundle.** Rebuild the complete 22-row v5
+   requirement-*specification* registry and the v6 bundle from fresh child
+   bytes, then evaluate every source, legal, Q5, inventory, C01/C06/C07, and
+   noncapture prerequisite required by the preliminary value-blind
+   adjudication. A1/A3 result rows are deliberately pending because their
+   evidence does not exist until authorized capture; they are not treated as
+   false or inserted into a final domain at this step. Any other false
+   required row, residual, source drift, digest mismatch, or missing consumer
+   stops before capture.
+6. **Capture, final domain, and receipt.** Only the unchanged narrow
+   value-blind capture predicate may open the v5 receipt-free
+   authorization/proof/claim/input ceremony. Reconstruct D2–D6, all raw
+   prefix/ancestry comparisons, A1/A3, and the clean cutoff; then evaluate
+   all 22 final requirement results and construct the v5 registration
+   domain and selected path. Then construct and validate the complete
+   ordered 18-row G17 result, including capture-dependent C16/C17 and final-
+   adjudication/applicability C18, before constructing the v5 receipt
+   core/outer, selected-lineage predicate, or fresh registration. A receipt
+   cannot cure an earlier failure.
+
+The present draft walk stops lawfully before step 1 because D6 and Q5 do not
+yet exist. Even after D6, A6-R07 requires the complete V945 range to abort
+under this round-one law unless later accepted design law supplies a closed
+representable source disposition; no such law is inferred here. Those are
+reported blockers, not permission to skip the row, weaken its range, or
+claim that a production registration now exists.
+
+#### 20.8.3 Round-one law choices, alternatives, and mandatory aborts
+
+The evidence plus retained law does not uniquely decide every broader
+grammar policy. Amendment 6 therefore chooses the following fail-closed-
+smallest dispositions for round one and records the rejected alternatives:
+
+1. **Diagnostic padding.** The era censuses support ASCII-space as the only
+   lawful default arm for a diagnostic Amendment-6 field: 10,166 later-era
+   diagnostic fields and every audited earlier diagnostic use space, with
+   zero zero-padded fields. A universal renderer that skips the field census
+   would turn aggregate evidence into per-field authority, so each field
+   must still reproduce a positive diagnostic and zero-arm rejection. A
+   zero default, “accept either,” trim, and host formatting are rejected.
+2. **Width one.** Inheriting the era's space result would fabricate an arm;
+   serializing zero would contradict the diagnostic census; and failing all
+   19,789 later width-one fields would preserve an in-principle artifact.
+   The smallest choice is the explicit no-arm token with one-byte exact
+   replay and no authority at another width. V15133 proves the compiled
+   range/literal consumer path.
+3. **Literal decimal precision.** Requiring exactly `d` fractional bytes
+   rejects 159 authenticated V945 observations; allowing arbitrary fewer
+   digits, optional points, rounding, or host shortest-format output admits
+   unevidenced spellings. The chosen law requires the greatest positive
+   precision no greater than `d` that both fits and represents the exact
+   scalar. V210 proves ordinary full precision; V945 proves the sole observed
+   reduced-precision edge.
+4. **Signed placement.** A generic signed-number grammar would admit plus,
+   trailing sign, internal sign, negative zero, leading-zero magnitude,
+   zoned decimal, or overpunch. All 111,305 audited signed observations use
+   leading spaces, then exactly one minus, then magnitude. The selected form
+   is therefore that one placement, requires a positive minus diagnostic,
+   and otherwise keeps the smaller unsigned language. A silent sign
+   declaration may be completed by that full census; an express false value
+   conflicts, while an express true value without a placement diagnostic is
+   incomplete.
+5. **Competing declarations.** Dictionary priority, SPSS priority, majority,
+   and byte-normalized collapse are all unsupported by the evidence. The
+   closed source-order relation selects the first supported assertion only
+   as semantic anchor, preserves byte-equal and tuple-equivalent peers with
+   their own dispositions, preserves unsupported assertions, and aborts a
+   true branch/tuple conflict or any missing disposition. Reversing
+   authenticated source order remains source drift, even when the tuple is
+   unchanged.
+6. **Unsupported versus conflicting declarations.** Treating every unknown
+   spelling as a tuple conflict gave one row two failure statuses; treating
+   it as silence would erase evidence. Round one uses the explicit
+   `unsupported_source_declaration` disposition and the precedence
+   conflict → unsupported → incomplete, so one input serializes one exact
+   failure while a true supported-tuple disagreement remains conflict.
+7. **Complete decimal ranges.** Rounding or dropping unrenderable V945
+   cent-step members would violate exact replay. A new partial-range schema
+   with separately enumerated renderable and unrenderable member relations
+   could be proposed later, but neither census ledger freezes that schema or
+   its consumer shape. Round one therefore keeps the retained all-member
+   image requirement and aborts V945 after proving its observed constructor.
+8. **Interface version.** A v4 entry-point name would suggest a second
+   selectable compiler although no implementation or artifact exists. The
+   outer v3 call/return and derivation-row envelopes already commit every
+   changed nested value through their complete hashes, so round one
+   completes v3 in place and forbids a v4 alias.
+9. **Q5 ordering.** Retaining only D5<Q5 would permit the first-added
+   artifact to predate the grammar law it embeds. DC-35 adds D6<Q5 while
+   retaining the independently reconstructed D5/Q5 historical edge. No
+   existing draft or predecessor artifact is promoted.
+
+The resulting mandatory-abort matrix is closed:
+
+| Condition | Mandatory result |
+|---|---|
+| diagnostic field selects zero, accepts both arms, mixes zero/space, or lacks a positive diagnostic despite available capacity | numeric authority failure under §20.3.5; no layout/Q5/G17 consumer |
+| width-one or no-capacity row serializes an arm instead of its exact disposition | conflict/replay failure; vector and derivation identity fail |
+| plus/trailing/internal/overpunched sign, negative zero, noncanonical magnitude, optional/second decimal point, rounding, or unequal replay | unsupported or conflict by §20.3.5 precedence; no scalar result |
+| declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing selector pointer | complete declaration relation fails; top-level abort |
+| complete normalized range contains any member with no exact selected-form image | `unsupported_source_numeric_format`; observed-subset success cannot cure it |
+| predecessor row ID/hash, mixed §19/§20 nested object, omitted consumer, or digest-only equality without deep equality | Q5/inventory/G17 and every enclosing identity fail |
+| D6/Q5 ancestry, any comparator row, closure-sweep row, lifecycle successor, or fresh digest is absent/unequal | ratification or registration stops at the earliest applicable gate |
+
+No “close enough,” editorial waiver, host behavior, era inference, candidate
+configuration, or later receipt is an additional branch.
+
+#### 20.8.4 Referee, D6 ratification, and fresh-registration protocol
+
+Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
+16.10, 17.4, 18.8, and 19.8.3. The authorized order is:
+
+1. submit the complete append-only §20 bytes to adversarial referee review
+   without source artifact, implementation, Q5, slot, inventory, registry,
+   registration, capture, correction evaluation, context output, or any
+   other tree change in this amendment lane;
+2. resolve every referee finding in the review record and verify the
+   complete round-to-round diff; the exact D5 mode/blob/1,781,491-byte
+   prefix; both ledger and all four evidence-artifact identities; all seven
+   evidence rows, raw files, token censuses, vector rows, and vector digests;
+   the passage inventory and independently reproduced §20.5 closure sweep;
+   the exact 38-row/18-replaced/20-unchanged comparator census; the exact
+   16+1 successor identifier inventory; every consumer/build walk; and every
+   pinned count, byte, ID, and digest. Continue rounds until the exact final
+   bytes receive an affirmative ratification verdict;
+3. ratify only those accepted design bytes in one identifiable future,
+   document-only commit D6. Every authoring, audit, or referee-response
+   commit before it is not ratification, and no source or runtime artifact
+   may be smuggled into D6;
+4. only afterward perform §20.8.1 and §20.8.2 steps 1–4: separately review
+   the source-only v3 implementation and complete source relation, first-add
+   Q5 alone at its strict post-D6 single-parent commit, then derive and
+   ratify the official slot/inventory/value-map artifacts and construct the
+   complete C01/C06/C07 source comparands. Do not claim the full G17 result
+   before capture-dependent C16/C17 and final-adjudication C18 exist.
+   Recompute every source, compiler, Q5, inventory, registry, crosswalk, and
+   constructed comparand digest from complete bytes;
+5. run the complete legal predicate, source-manifest and all-field compiler
+   reproduction, seven vectors, Q5 history, official-inventory reproduction,
+   crosswalk history, nine-registry exact cover, the complete C01/C06/C07
+   source comparands and every genuinely noncapture G17 prerequisite, the
+   complete 22-row v5 requirement-specification registry, the v6 bundle,
+   and every source/legal/noncapture preliminary prerequisite. A1/A3 results
+   and the final v5 domain are expressly deferred to step 6. Any unsupported
+   or conflicting declaration, unrenderable source-range member—including
+   the round-one V945 edge—remaining Class-A/Class-B residual, required
+   Class-C consequence, non-A1/A3 prerequisite failure, comparator, sweep,
+   or digest failure stops here and is reported by exact row/ID;
+6. only if step 5 passes, construct and validate the separately reviewed
+   implementation and preliminary value-blind adjudication, then, only if
+   the unchanged narrow capture predicate passes, execute the receipt-free-
+   proof-gated v5 authorization/proof/A1/A3 capture, reviewed triple, clean
+   cutoff, final adjudication, v5 capture input, all 22 final requirement
+   results, the final v5 domain, and selected-path reconstruction; then
+   construct and validate all 18 G17 rows, including C16–C18, before any
+   receipt is read;
+7. construct and validate the complete v5 receipt core and outer receipt,
+   then obtain a validator-accepted fresh registration binding D6, the
+   complete revision-8 design blob, every required source/compiler/Q5/
+   inventory/legal/registry/implementation/capture byte, the complete v6
+   bundle, complete v5 receipt, and a fresh output/claim namespace; and
+8. only then perform the unchanged prelaunch, sealed execution, incident,
+   publication, context, certificate, and external-merge sequence.
+
+At these draft bytes, steps 3–8 have not occurred. Q5, a passing future
+all-field source relation, and a production-registration witness are not
+claimed. The source evidence currently proves the V945 hostile range edge,
+so round-one step 5 is expected to stop unless a later ratified amendment
+supplies a closed disposition without rounding or fabricated bytes. That
+honest blocker does not weaken the five requested grammar completions or
+permit omission of V945 from the complete denominator.
+
+**Amendment 6 is inoperative unless and until its exact D6 ratification
+commit is bound by a validator-accepted v5 fresh-registration receipt.**
+After ratification but before that registration, steps 4–6 authorize only
+the separately reviewed source, authority, implementation, and proof-gated
+capture preparation stated above. They authorize no correction production
+evaluation, path switch, context run, label change, output, or publication.
