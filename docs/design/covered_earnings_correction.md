@@ -30314,7 +30314,7 @@ The only supported normalized kinds are
 `NUM(w.d)` and `Fw.d` normalize to the same positive width and nonnegative
 decimal tuple under §19's closed ASCII syntax. Exact `CHR(w)` normalizes to
 the character kind, width `w`, and null decimal places. Every other nonnull
-spelling has null normalized members and is conflicting; normalization does
+spelling has null normalized members and is unsupported; normalization does
 not rewrite `source_format_text`.
 
 Before a serialized projection or disposition is read, the source-only
@@ -30331,18 +30331,24 @@ projection denominator and apply this first-source-order law:
    selector's exact numeric tuple is
    `corroborating_tuple_equivalent_numeric_declaration` and points to that
    selector; and
-4. every later branch mismatch, tuple mismatch, unsupported spelling, or
-   assertion for which the two independent enumerations/dispositions differ
-   is `conflicting_source_declaration` and points to the first selector when
-   one exists, otherwise null.
+4. every unsupported spelling, whether before or after the selector, is
+   `unsupported_source_declaration`; and
+5. every supported later branch or tuple mismatch, or assertion for which
+   the two independent enumerations/dispositions differ, is
+   `conflicting_source_declaration`.
 
-Those six literals—two selecting, two corroborating, silence, and
-conflicting—are the complete disposition domain. There must be exactly one
-selecting assertion for a non-silent group, every nonnull assertion must
-have exactly one disposition, all corroborators must point to it, and a
-conflicting row makes top-level pass impossible. The complete independently
-derived ten-key array must deep-equal the serialized array before its
-selector is used. A majority, dictionary-over-codebook rule,
+For rows in steps 4 and 5,
+`selecting_source_format_assertion_id` points to the unique first supported
+selector if one exists and is null otherwise, regardless of whether the row
+occurs before or after that selector. Those seven literals—two selecting,
+two corroborating, silence, unsupported, and conflicting—are the complete
+disposition domain. There must be exactly one selecting assertion for a
+group having at least one supported assertion; a group with only silence or
+unsupported assertions has none. Every nonnull assertion must have exactly
+one disposition, all corroborators must point to the selector, and an
+unsupported or conflicting row makes top-level pass impossible. The
+complete independently derived ten-key array must deep-equal the serialized
+array before its selector is used. A majority, dictionary-over-codebook rule,
 SPSS-over-codebook rule, candidate tuple, byte normalization, or omission
 is forbidden. Thus tuple-equivalent `F6.2` and `NUM(6.2)` remain two
 authenticated assertions but resolve one semantic tuple; `F6.2` and
@@ -30353,7 +30359,8 @@ or `X` is replaced as follows. `F` remains the complete exact nonnull text
 projection for audit. `N` is the singleton selected numeric tuple only when
 one numeric selector exists, all other nonnull assertions are the two lawful
 corroborating arms, and no conflict exists. `H` is the analogous singleton
-selected `CHR(w)` result. `X` contains every conflicting assertion. Literal
+selected `CHR(w)` result. `X` contains every unsupported or conflicting
+assertion. Literal
 rendering, parse-kind derivation, profile construction, and DFA compilation
 consume only `N` or `H` after exact-comparing the full disposition array;
 they never discard `F` or derive expected dispositions from a candidate.
@@ -30382,17 +30389,32 @@ The first five retain §19's complete-census equations. Each token-form
 candidate row has exactly `token_form_kind`,
 `accepted_observation_count`, `diagnostic_observation_count`,
 `rejected_observation_count`, and `status`; status is `pass | fail`, counts
-use complete record frequencies, and accepted plus rejected equals record
-count. Missing literals are accepted before this test and are
-nondiagnostic.
+use complete record frequencies. For each nonmissing exact raw observation,
+evaluate byte acceptance under every candidate: true means the token has
+that form's exact sign/point/digit structure and byte-equals its source value
+rendering under at least one of the two padding-arm constructors below,
+without selecting that arm or applying the candidate's later sign-diagnostic
+pass condition. Call that ordered Boolean vector `B_o`. A missing
+observation is accepted by every candidate before this test and its vector
+is all true. For every candidate row,
+`accepted_observation_count` is the frequency sum of its true positions,
+`rejected_observation_count` is the frequency sum of its false positions,
+and their sum equals `record_count`. The single exact
+`diagnostic_observation_count`, repeated identically in every candidate row,
+is the frequency sum of nonmissing observations whose `B_o` contains both
+true and false. Thus a minus, literal point, or implied-versus-literal byte
+pattern contributes exactly once per observation even if it distinguishes
+both axes; missing values never contribute. Unequal repeated diagnostic
+counts abort.
 
 For `d == 0`, candidate order is exactly
 `unsigned_ascii_integer` then
 `leading_ascii_minus_signed_integer`. The unsigned candidate passes exactly
 when every nonmissing token has the canonical signless integer form and
-there is no minus. The signed candidate passes exactly when every token has
-the canonical signed-or-signless form below and at least one nonmissing
-negative token supplies a sign diagnostic. For `d > 0`, candidate order is
+there is no minus. The signed candidate passes exactly when every nonmissing
+token has the canonical signed-or-signless form below and at least one
+nonmissing negative token supplies a sign diagnostic. For `d > 0`, candidate
+order is
 exactly `unsigned_implied_decimal`,
 `leading_ascii_minus_signed_implied_decimal`,
 `unsigned_literal_ascii_decimal`, and
@@ -30403,6 +30425,30 @@ minus observation; an unsigned candidate rejects every minus. Exactly one
 token-form row must pass. `selected_token_form` is that row's kind.
 No observed sign means the smaller unsigned language; a future minus then
 hits the unknown-token abort rather than retroactively widening the field.
+
+Missing classification has already terminated. More formally, a candidate's
+`status` is `pass` exactly when its accepted count is
+`record_count` and its sign polarity satisfies the stated condition: zero
+canonical minus observations for an unsigned candidate and a positive count
+for a signed candidate. Otherwise it is `fail`. This status rule plus the
+raw `B_o` equations fixes all serialized counts without conflating a decimal
+diagnostic and a sign diagnostic.
+
+Project every nonnull canonical dictionary `declared_signed` value in group
+order. More than one distinct Boolean is conflicting. If a selected signed
+form has a positive minus diagnostic, that projection may be empty or the
+singleton value true; any false is a source/census conflict. If the selected
+form is unsigned, an empty projection or singleton false corroborates it; a
+singleton true with no observed minus is
+`incomplete_source_numeric_authority` because the source has not established
+the placement it declares. Source silence is null and never rewritten as a
+declaration, but the complete negative-token census may select the exact
+signed form. This prospectively replaces §19's fixed-width requirement that
+`declared_signed` coalesce to false and its value-code-range constant
+`signed: false`. On either compiled branch,
+`value_derivation.signed` and the consuming `typed_parse_specs.signed` equal
+the selected form's Boolean. All retained scale, type, unit, and
+range-membership coalescence laws remain exact.
 
 After token-form selection, `candidate_arm_results` retains exactly two
 rows in `zero_left_padding` then `left_ascii_space_padding` order. Each row
@@ -30423,8 +30469,8 @@ The closed disposition is:
 
 - when the diagnostic count is positive, the space row must accept every
   observation and be `pass`, the zero row must reject every diagnostic
-  observation and be `fail`, and `selected_arm` is the selected token
-  form's exact `left_ascii_space_padding` profile literal;
+  observation and be `fail`, and `selected_arm` is exactly the literal
+  `left_ascii_space_padding`;
 - when `w == 1`, `d == 0`, and the selected form is unsigned integer, both
   arms must accept the same complete one-byte domain with diagnostic count
   zero and status `indistinguishable`; `selected_arm` is exactly
@@ -30531,10 +30577,16 @@ source-authenticated semantic branch.
 For either compiled derivation status below, the DFA payload is the exact raw
 token after its Amendment-6 `padding_rule`; payload width therefore remains
 `w`. From the source-valid render language subtract every canonical image of
-a registered dictionary missing token and every colliding normalized literal
-under §19's conflict law. The remainder must be nonempty. The DFA accepts
-exactly that finite-width language; it does not accept all strings that a
-generic numeric regex would parse.
+a registered dictionary missing token. A missing image that collides with a
+normalized codebook literal remains a conflict. An ordinary normalized
+codebook literal that does not collide with missing remains inside the
+physical DFA language, but runtime's retained literal-first classification
+terminates before the DFA; it is not subtracted and cannot become a numeric
+result. The remainder after missing-image subtraction must be nonempty. The
+DFA accepts exactly that finite-width physical language; it does not accept
+all strings that a generic numeric regex would parse. This exclusion set is
+the retained §19 `E` construction completed for the new token forms, and it
+fixes one transition-domain digest.
 
 The retained transition action enum becomes operative only as follows:
 
@@ -30600,13 +30652,28 @@ vectors below reproduce. Every layout consumer accepts either compiled
 status when its complete profile, selected-arm-or-disposition, padding rule,
 DFA, and replay exact-match.
 
+A retained `value_code_domain_no_numeric_grammar` row may likewise carry an
+explicit underdetermined selected-arm disposition and complete physical
+profile while its grammar remains null; its normalized literal is classified
+and replayed literal-first. A
+`value_code_range_physical_rendering_unestablished` row and an outside-
+numeric row retain their exact null-profile/null-grammar branches. Thus no
+consumer invents a DFA merely because a no-arm token is present.
+
 The exhaustive numeric failure mapping is prospectively replaced by:
+
+The three rows below are evaluated in displayed precedence and are mutually
+exclusive at serialization: conflict first, then unsupported only when no
+conflict predicate holds, then incomplete only when neither earlier class
+holds. Multiple predicates inside one class do not create a fourth status;
+predicates spanning classes take the earliest class. Exactly one failure
+status is emitted.
 
 | Failure predicate | Exact row status and consequence |
 |---|---|
-| missing selector, unresolved width/decimal/type/unit/scale, empirically nondiagnostic despite available pad capacity, true sign declaration without an exact negative placement diagnostic, or no unique token form | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
-| unsupported source spelling; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; unrenderable range member; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
-| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit disagreement; mixed padding; duplicate/colliding literal or missing image; multiple token forms; unequal replay; multiple failure predicates | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `unsupported_source_declaration`; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; unrenderable range member; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| missing selector after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; no passing token form; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
 
 An explicit underdetermined-padding token is not incomplete. Conversely,
 `closed uncertainty`, an era convention, another field's space result, or a
@@ -30643,11 +30710,11 @@ are:
 [
   {"vector_id":"A6-R01","interview_wave":1968,"raw_field_id":"V93","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/92","evidence_row_sha256":"e26fe968c48a7e5c7fb397140a50c232cb8a3bc9d270798af0199e52a9f0b5eb","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"0d184b17049ff03bdffe4c462131f126e771108e5588436aa0551e02fd0c80c0","required_outcome":"diagnostic_space_padding_selected"},
   {"vector_id":"A6-R02","interview_wave":1979,"raw_field_id":"V6302","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/1","evidence_row_sha256":"aa2281bb382c75dd99705cb3dcc46e9bc37536b65a851319274428ba7ee122d0","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"7bf8f994c2cbaa804238ecfd051afee9a801119574c73b6ce14abe7fe66006e0","required_outcome":"diagnostic_space_padding_selected"},
-  {"vector_id":"A6-R03","interview_wave":1979,"raw_field_id":"V6301","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/0","evidence_row_sha256":"4a753ece55dae857917f1b09c75762a2a22d530784806044e7f56e61406bcb27","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"35c4b6fef5d659d611e32a81bce25b10bb9f6b6df354efd02fe1c9ae9d295182","required_outcome":"padding_arm_underdetermined_width_one_exact_replay"},
+  {"vector_id":"A6-R03","interview_wave":1988,"raw_field_id":"V15133","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/7853","evidence_row_sha256":"ed5ed97010cb2d76c226c95038b826e38694e8dd7021e9dda3727ffa8d9e31ab","raw_source_sha256":"e30bd0ead4bba2238108a51eb2e24eee935a4a38e0d4257efdd1cff1bd23389c","observed_token_rows_sha256":"c41db6073cbcbc51b73e5d035f611a4f13314b713017bf640685441bf5b03c49","required_outcome":"padding_arm_underdetermined_width_one_exact_replay"},
   {"vector_id":"A6-R04","interview_wave":1968,"raw_field_id":"V210","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/213","evidence_row_sha256":"9764e1aad9af27bb3a98a13566d096548c244bb255efc629b420606cf201bea9","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4072529f3cab60900f04eb216e73f0ec6307aa8ed60c439dcfaf51b04018a448","required_outcome":"unsigned_literal_decimal_selected_padding_underdetermined_no_capacity"},
   {"vector_id":"A6-R05","interview_wave":1968,"raw_field_id":"V76","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/75","evidence_row_sha256":"97ad420b1e7bc3fb8ce0f8ad9f07c94f4c54a1e323c7c01fc17bea6a80391b64","raw_source_sha256":"9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78","observed_token_rows_sha256":"4082fbc67ab457ddad4115b66ab785e816e20b393b195786fbd47ba384b7aa2d","required_outcome":"signed_integer_leading_minus_after_spaces_selected"},
   {"vector_id":"A6-R06","interview_wave":1979,"raw_field_id":"V6363","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","evidence_pointer":"/field_evidence/62","evidence_row_sha256":"61c70014d4ec5b40676a980bf24c042f6cc530649794175a1d15777e379c65f3","raw_source_sha256":"6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529","observed_token_rows_sha256":"a56fa8d49cc90e874cd900d689302fe91138dbaaa895db6731e61fbe152989bf","required_outcome":"tuple_equivalent_declaration_dispositions_and_unsigned_literal_decimal_space_padding_selected"},
-  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"signed_literal_decimal_maximum_fitting_exact_precision_selected"}
+  {"vector_id":"A6-R07","interview_wave":1969,"raw_field_id":"V945","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","evidence_pointer":"/field_evidence/958","evidence_row_sha256":"d477d8c07819760f3fcffd4c1cd0b17a201d9ff9cc1be25b5da4b3a04e671a4f","raw_source_sha256":"f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd","observed_token_rows_sha256":"a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5","required_outcome":"observed_signed_literal_decimal_precision_edge_replays_and_unrenderable_complete_range_aborts"}
 ]
 ```
 
@@ -30658,11 +30725,11 @@ hashes the complete unsigned-byte-ordered array of exact two-key
 exactly 7. The ordered vector-ID keyset SHA-256 is
 `b3742f1b0685ce453ec1fbee583e34c2be8b14b674f11f138b44050cc8b10a7d`,
 and the complete nine-key row-domain SHA-256 is
-`456ef5862f28209349f6c57bba9aba2a4ca715effd7583b16b513d58149b87bb`.
+`5efd74477cd16c1d79121ed4f6dbd985189c05d8d0bb85e51eba99f165ee7283`.
 Both are over standalone §10.1 terminal-LF canonical JSON arrays. A vector
 may exercise more than one arm, but none may be omitted.
 
-The byte-exact acceptance facts are:
+The byte-exact regression facts are:
 
 - **A6-R01, V93/1968.** Reproduce §19's complete 4,802-record, width-771,
   terminal-CRLF source and slice `[244,246)`. Its 41 token rows sum to
@@ -30676,18 +30743,25 @@ The byte-exact acceptance facts are:
   6,373 exactly once; record one is `20202031`. Space rendering replays it,
   while zero candidate `30303031` is rejected. This is the later-lane
   diagnostic default without a declaration conflict.
-- **A6-R03, V6301/1979.** The same 6,373 records yield only byte `33` at
-  coordinate 1. Both hypothetical arms have the same one-byte language and
-  zero diagnostics. The row must serialize
+- **A6-R03, V15133/1988.** Reproduce 7,114 width-2,730 terminal-CRLF
+  records and slice one-based coordinate 797. The ten rows `30` through
+  `39` have frequencies 3,742, 1,301, 1,244, 581, 184, 46, 10, 2, 3, and
+  1. The source domain is literal `0` plus numeric range `1 - 9`, with no
+  missing entry. Both hypothetical arms have the same one-byte language and
+  zero padding diagnostics. The row must serialize
   `padding_arm_underdetermined_width_one_exact_replay_v1`, accept exact
-  one-byte digits through the DFA, map `33` to integer 3, and re-render
-  `33`; serializing either arm fails the vector.
+  range bytes `31` through `39` through the DFA, and re-render each exact
+  byte; literal `30` classifies and replays before the DFA. Serializing
+  either padding arm fails the vector.
 - **A6-R04, V210/1968.** Slice one-based 400–403 has 138 distinct rows; all
   4,802 contain literal `0x2e` and exactly two fractional digits. Token
-  `302e3030` occurs 4,157 times. `NUM(4.2)` and `F4.2` normalize to `(4,2)`
-  through their source-ordered dispositions; the implied candidates fail,
-  the unsigned literal arm passes, width four has no padding capacity for
-  its source-valid unsigned domain, and `0.00 -> 0 -> 0.00` is exact.
+  `302e3030` occurs 4,157 times and is the source-declared missing literal,
+  so it classifies and replays before numeric parsing. Nonmissing token
+  `322e3630` (`2.60`) occurs three times. `NUM(4.2)` and `F4.2` normalize to
+  `(4,2)` through their source-ordered dispositions; the implied candidates
+  fail, the unsigned literal form passes, width four has no padding capacity
+  for its source-valid unsigned domain, and
+  `2.60 -> 13/5 -> 2.60` is byte-exact.
 - **A6-R05, V76/1968.** Slice one-based 193–197 has 1,816 token rows. The
   sole signed token is record 3,638 bytes `202d323432`; it parses as -242
   and re-renders exactly. The unsigned form rejects it, the signed form's
@@ -30706,9 +30780,13 @@ The byte-exact acceptance facts are:
   fractional digits and 159 use one; 770 are negative. Token `-1040.0`
   (`2d313034302e30`) occurs 14 times. For width seven, sign length one,
   four integral digits, and maximum `d=2`, the exact formula gives `f=1`;
-  the token parses to -1040 and uniquely re-renders `-1040.0`. Requiring
-  two digits, accepting fewer than greatest fitting precision, or rounding
-  fails.
+  the observed constructor parses -1040 and uniquely re-renders `-1040.0`.
+  But the complete source range `-3,927.00 - .01` includes cent-step member
+  `-1040.01`, which cannot fit without losing precision. The whole field
+  must therefore end `unsupported_source_numeric_format` under the complete
+  range-image law. Requiring two observed digits, accepting fewer than the
+  greatest fitting precision, rounding the range member, or promoting the
+  observed subset to a passing field fails this rejection vector.
 
 The implementation must deep-equal each full census and constructor result,
 not only the displayed exemplar token or digest. The preexisting synthetic
@@ -30913,8 +30991,8 @@ affected prose is dismissed as merely explanatory.
 | Passage | Exact Amendment-6 disposition |
 |---|---|
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, outer schemas, source denominator, and dependency order remain exact; only the nested grammar laws named below are completed. |
-| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion; disposition byte-equal and tuple-equivalent peers; abort every true conflict or missing disposition. |
-| §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax and unsigned implied-digit-only interpretation | `composed-with-§20.3.2–§20.3.4-token-form-law`: the syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal token form under the closed constructor. |
+| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion; disposition byte-equal and tuple-equivalent peers; abort every unsupported, true-conflict, or missing disposition. |
+| §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
 | §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-nine-key-authentication`: add complete token-form results and selection; diagnostic fields select only the evidenced ASCII-space arm; the two exact structural no-arm dispositions replace fabrication or failure where an arm is unobservable in principle. |
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm for either structural underdetermination. Amendment-6 rows never select or canonicalize a zero-padding arm. |
 | §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
@@ -31100,13 +31178,13 @@ verified D5-prefix/D5<D6 chain; it is not used as a substitute for D6<Q5.
 | DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/`HEAD` byte and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1`. |
 | DC-24 | §18.1 D3 four-key identity, exact 1,310,838-byte raw design, and immutable revision-6 prefix comparison | `lawfully-unchanged-with-reason`: D3 remains the exact immutable prefix of D4; the D4/D5/D6 prefix chain and every live proof reconstruct it. |
 | DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v5`, `fitting_free_registration_domain_identity.v5`, and `covered_earnings_path_applicability_registry_bundle.v6`. |
-| DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and all registration-hash through receipt consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5/D6 consumer chain. |
+| DC-26 | §18.6 terminal post-D4 capture-registration D2/D3/D4/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2/D3/D4/D5/D6 consumer chain. |
 | DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1` and Amendment-6 v5 receipt/history dispatch. |
 | DC-28 | §19.1 D4 four-key identity, exact 1,376,610-byte raw design, and immutable revision-7 prefix comparison | `lawfully-unchanged-with-reason`: D4 remains the exact immutable prefix of D5, and the retained D4/D5 plus new D5/D6 comparisons form an independently checked raw-byte chain. |
 | DC-29 | §19.2.5 D5 ratification-commit ordering against the single-parent L5 legal-registry first-add commit and authority cutoff | `lawfully-unchanged-with-reason`: the terminal legal-authority comparator remains inside `verify_historical_coverage_rules_identity_v2`; its complete source/domain/partition/result consumers are unchanged and enter the freshly rebuilt v6 bundle and v5 receipt chain. |
-| DC-30 | §19.3.3 D5 ratification-commit ordering against the single-parent Q5 first-add commit, then Q5 ordering before slot/inventory first-add commits and every admitting cutoff through G17-C01 | `lawfully-unchanged-with-reason`: the D5/Q5 historical comparison remains necessary and is implied only after its own reconstruction; DC-35 additionally proves the stronger live D6/Q5 edge and completed grammar consumer chain. |
+| DC-30 | §19.3.3 D5 ratification-commit ordering against the single-parent Q5 questionnaire-closure first-add commit, then Q5 ordering before both slot/inventory first-add commits and every admitting authority cutoff through the G17-C01 consumer | `lawfully-unchanged-with-reason`: the D5/Q5 historical comparison remains necessary and is implied only after its own reconstruction; DC-35 additionally proves the stronger live D6/Q5 edge and completed grammar consumer chain. |
 | DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_fitting_free_design_identity_v1`, the v5 requirement/domain registries, and v6 bundle. |
-| DC-32 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and all transitive capture/receipt consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2–D6 consumer chain. |
+| DC-32 | §19.6 terminal post-D5 capture-registration D2/D3/D4/D5/live-capture-`HEAD` predicate and registration-hash → claim → primary/sidecar → history → capture-input → A1/A3 evidence → receipt consumers | `replaced-by-named-successor`: `verify_amendment_6_capture_registration_repository_identity_v1` and its complete D2–D6 consumer chain. |
 | DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-`HEAD` byte, prefix, and ancestry predicate | `replaced-by-named-successor`: `verify_amendment_6_selected_registration_design_lineage_v1` and Amendment-6 v5 receipt/history dispatch. |
 | DC-34 | §20.1 D5 four-key identity, exact 1,781,491-byte raw design, and immutable revision-8 prefix comparison | `lawfully-unchanged-with-reason`: D5 is the immediate immutable base; every D6 position, capture, and selected-registration proof independently reconstructs D5 and verifies its exact raw prefix of D6. |
 | DC-35 | §§20.4.2 and 20.6 D6 ratification-commit ordering against the single-parent Q5 first-add commit, then Q5 ordering before slot/inventory first-add commits and every admitting cutoff through G17-C01 | `lawfully-unchanged-with-reason`: the independently reconstructed D6/Q5 predicate and complete eight-key artifact identity prove the live source-only artifact and its full completed-grammar consumer chain; failure blocks every Q5 consumer. |
