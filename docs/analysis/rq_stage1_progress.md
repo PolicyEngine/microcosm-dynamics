@@ -7,7 +7,7 @@
 - Scope: the section 19 source replay and explicitly nonauthority candidate
   preparation consumed by per-document stage-2 annotation lanes.
 - Status: source-replay parent and deterministic candidate tooling complete;
-  fixed ten-document candidate batches are next. No candidate is an annotation,
+  candidate generation is sealed through batch 1 of 9 (documents 1--10). No candidate is an annotation,
   no candidate may select the source
   denominator, and no Q5, relationship catalog, or other authority artifact is
   emitted by this lane.
@@ -46,6 +46,9 @@
   explicit stage-2 adjudication for every eventual annotation row. Eight
   synthetic unit tests cover kind order, Unicode spans, deterministic IDs,
   empty pages, flow alternatives, anchor parents, manifests, and nonpromotion.
+- Sealed candidate batch 1: documents 1--10, 559 pages, 10,679 occurrence
+  candidates, and batch-manifest raw SHA-256
+  `b3a4152a838fcd4c9aba4f6e71c608e430367fd1d6237c7fe5f25b5a68d6fd40`.
 
 ## Next
 
