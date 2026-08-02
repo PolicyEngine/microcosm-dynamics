@@ -30372,32 +30372,49 @@ extractor and an independent source reviewer reconstruct the complete
 projection denominator and apply this first-source-order law. This is the
 §17 per-assertion disposition device applied to format declarations: every
 assertion remains present and receives one frozen row-level disposition
-before any aggregate result is selected. The exact rows are:
+before any aggregate result is selected. First align the two complete
+reconstructions by assertion identity and source order. Any assertion for
+which their enumeration, exact members, or proposed disposition differs
+receives `conflicting_source_declaration` at a prior exclusive disagreement
+gate, cannot satisfy any numbered arm below, and makes top-level pass
+impossible. The selector is the first reconstruction-agreed supported
+assertion. The remaining exact rows are:
 
-1. the first supported nonnull assertion is
+1. that first reconstruction-agreed supported nonnull assertion is
    `selecting_numeric_declaration` or
    `selecting_character_declaration` according to its normalized kind, and
    its final member is its own assertion ID;
-2. a later assertion with byte-equal text and the same normalized branch is
+2. a later supported assertion whose exact `source_format_text` byte-equals
+   the selector's exact text and whose normalized kind/width/decimal
+   projection deep-equals the selector's projection is
    `corroborating_byte_equal_declaration` and points to that selector;
-3. a later `NUM(w.d)` or `Fw.d` assertion with byte-unequal text but the
-   selector's exact numeric tuple is
+3. otherwise, a later supported `NUM(w.d)` or `Fw.d` assertion whose exact
+   text is byte-unequal to the selector's text but whose normalized numeric
+   tuple deep-equals the selector's exact tuple is
    `corroborating_tuple_equivalent_numeric_declaration` and points to that
    selector; and
 4. every unsupported spelling, whether before or after the selector, is
    `unsupported_source_declaration`; and
-5. every supported later branch or tuple mismatch, or assertion for which
-   the two independent enumerations/dispositions differ, is
+5. every remaining supported later assertion—hence a selector-relative
+   branch/tuple mismatch—is
    `conflicting_source_declaration`.
 
-For rows in steps 4 and 5,
-`selecting_source_format_assertion_id` points to the unique first supported
-selector if one exists and is null otherwise, regardless of whether the row
-occurs before or after that selector. Those seven literals—two selecting,
+The prior gate and numbered tests are mutually exclusive, and every
+comparison in steps 2, 3, and 5 is against the unique step-1 selector, never
+the immediately preceding assertion or any corroborator. Thus hostile source order `F6.2`, `NUM(6.2)`,
+`NUM(6.2)` yields one selector followed by two
+`corroborating_tuple_equivalent_numeric_declaration` rows: the third row's
+byte equality to the second cannot relabel it as byte-equal to the selector.
+
+For a prior-gate row or a row in steps 4 and 5,
+`selecting_source_format_assertion_id` points to the unique first
+reconstruction-agreed supported selector if one exists and is null otherwise,
+regardless of whether the row occurs before or after that selector. Those seven literals—two selecting,
 two corroborating, silence, unsupported, and conflicting—are the complete
 disposition domain. There must be exactly one selecting assertion for a
-group having at least one supported assertion; a group with only silence or
-unsupported assertions has none. Every nonnull assertion must have exactly
+group having at least one reconstruction-agreed supported assertion; a group
+with only silence, unsupported, or disagreement-gated assertions has none.
+Every nonnull assertion must have exactly
 one disposition, all corroborators must point to the selector, and an
 unsupported or conflicting row makes top-level pass impossible. The
 complete independently derived ten-key array must deep-equal the serialized
@@ -30409,7 +30426,8 @@ authenticated assertions but resolve one semantic tuple; `F6.2` and
 
 Selector necessity is branch-relative. A branch whose independent source
 law requires a numeric selector must have exactly one supported numeric
-selector, and every first supported assertion—including `CHR(w)`—selects
+selector, and every first reconstruction-agreed supported assertion—including
+`CHR(w)`—selects
 whenever one exists. When the complete assertion projection is all
 `source_silence`, every row's `selecting_source_format_assertion_id` is null
 under the law above. That null selector does not trigger incomplete failure
@@ -31121,7 +31139,14 @@ The byte-exact regression facts are:
   `corroborating_tuple_equivalent_numeric_declaration`; both original byte
   strings remain in the projection. The literal-decimal and space arms
   parse 26.40 and replay the same six bytes. Reversing source order,
-  dropping either assertion, or changing either tuple aborts.
+  dropping either assertion, or changing either tuple aborts. Every
+  disposition compares directly with the first reconstruction-agreed
+  supported selector; under
+  hostile order `F6.2`, `NUM(6.2)`, `NUM(6.2)`, both later rows are tuple-
+  equivalent to the selector rather than the third borrowing the second as a
+  byte-equal anchor. That triple is a declaration-law adversarial constructor,
+  not V6363's authenticated source sequence; A6-R06's normative JSON row,
+  required outcome, and the nine-vector identities remain unchanged.
 - **A6-R07, V945/1969.** Reproduce 4,460 width-1,079 terminal-CRLF records
   and slice one-based 912–918. Of 668 token rows, 4,301 observations use two
   fractional digits and 159 use one; 770 are negative. Token `-1040.0`
@@ -31197,7 +31222,12 @@ Specifically:
 
 1. `numeric_grammar_derivation_id` and
    `numeric_grammar_derivation_sha256` resolve the unique same-wave/raw-field
-   successor row. The latter hashes the complete 16-key row, including the
+   successor row. Before accepting either value, every layout, raw-token, and
+   value-map consumer independently rebuilds the complete ten-key assertion
+   array, applies the reconstruction-disagreement gate, and compares each
+   remaining later supported assertion directly and mutually exclusively
+   with the first reconstruction-agreed supported selector; a corroborator is
+   never an anchor. The latter hashes the complete 16-key row, including the
    ten-key declaration projection and serialized nonmissing count. Only when
    the profile is nonnull does it also contain twelve-key physical
    authentication, selected token form, selected arm or no-arm disposition,
@@ -31332,7 +31362,9 @@ The Q5 acceptance walk for each positive is exact:
 2. locate the unique same-wave/raw-field successor row and require one of
    the six lawful statuses in §20.3.5;
 3. deep-compare its complete source-row arrays, coordinates, declaration
-   assertions/dispositions, token census, nonmissing count, profile, padding
+   assertions/dispositions after independently applying the disagreement
+   gate and rebuilding every remaining later row directly against the first-
+   supported selector, token census, nonmissing count, profile, padding
    rule, and replay; when the profile is nonnull, also compare form,
    arm/disposition, both range relations, any complete-domain candidate
    relations, and DFA; when it is the zero-count retained range branch,
@@ -31363,6 +31395,10 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   domain SHA-256. Expected bytes execute the identity-selected v3 compiler
   under §§20.3–20.4 over the complete source denominator before an inventory
   comparand is read. Actual bytes come from the authenticated Q5 manifest.
+  Expected construction applies the prior disagreement gate and mutually
+  exclusive selector-relative law to every assertion; the actual ten-key
+  arrays must deep-equal those rows,
+  including every selector pointer and exact disposition.
   The complete relation includes every ten-key declaration projection,
   nonmissing count, profile/null-profile branch, padding rule, replay,
   failure branch, and, when present, form, arm/disposition, complete
@@ -31383,7 +31419,10 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   on width, scalar, or grammar ID fails.
 - **G17-C06.** Before direct-law classification, the expected and actual
   sides independently resolve the unique successor row and compare its
-  complete declaration disposition relation, census, nonmissing count,
+  complete declaration disposition relation, including every later row's
+  direct comparison and pointer to the first reconstruction-agreed supported
+  selector, census,
+  nonmissing count,
   padding operation, and raw-to-value-to-raw replay. For a nonnull profile
   they also compare token-form selection, arm or no-arm disposition, both
   range relations, any complete-domain candidate relations, transition rows,
@@ -31397,7 +31436,9 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   the exact conflict/unsupported/incomplete distinction in §20.3.5 before
   comparing the complete derivation row and enclosing digest.
 - **G17-C07.** Expected value-code rows are rebuilt from authenticated
-  source bytes through the same successor compiler. Actual
+  source bytes through the same successor compiler, with every later
+  reconstruction-agreed declaration compared directly to the first
+  reconstruction-agreed supported selector after the disagreement gate. Actual
   `source_commitments` and entries must deep-equal every declaration
   assertion/disposition, normalized entry, both numeric-range partition
   relations, any complete-domain candidate relations, profile, grammar, and
@@ -31417,13 +31458,15 @@ complete ordered 18-row array. All 18 physical rows must still pass.
 #### 20.4.4 §19.8 build and tension successor
 
 In §19.8.1 the source-format compiler step is composed with §§20.3–20.4:
-compile all declaration assertions and dispositions, all candidate token
-forms on applicable positive-nonmissing numeric branches, every serialized
+compile all declaration assertions, apply the prior independent-
+reconstruction disagreement gate, and assign each remaining later supported
+row its one mutually exclusive disposition by direct comparison with the
+first reconstruction-agreed supported selector, then compile all candidate token forms on applicable
+positive-nonmissing numeric branches, every serialized
 nonmissing count and all-missing retained branch, the per-field space or no-
 arm result, every applicable nonnull-profile exhaustive range partition and
-complete-domain candidate relation, exact-token DFAs, replays, and nine vectors before
-building Q5, the official artifacts,
-or G17. Every
+complete-domain candidate relation, exact-token DFAs, replays, and nine
+vectors before building Q5, the official artifacts, or G17. Every
 later reference to a v3 derivation row means this completed v3 row.
 
 Section 19.8.2 item 4 is prospectively replaced only where it says that
@@ -31454,7 +31497,7 @@ affected prose is dismissed as merely explanatory.
 | Passage | Exact Amendment-6 disposition |
 |---|---|
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, nine-key top-level envelope, source denominator, and dependency order remain exact; the nested numeric derivation row is expressly replaced by the 16-key successor named below. |
-| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion whenever one exists; preserve null selector/profile/grammar only for an all-`source_silence` `value_code_domain_no_numeric_grammar` or `value_code_range_physical_rendering_unestablished` row whose independent conditions pass; disposition byte-equal and tuple-equivalent peers; abort every unsupported, true-conflict, or missing disposition. |
+| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; conflict-gate any independent reconstruction disagreement before the numbered arms; select the first reconstruction-agreed supported assertion whenever one exists; compare every remaining later assertion directly and mutually exclusively against that selector for byte/deep equality, then byte-unequal numeric-tuple equality, never against a corroborator; preserve null selector/profile/grammar only for an all-`source_silence` `value_code_domain_no_numeric_grammar` or `value_code_range_physical_rendering_unestablished` row whose independent conditions pass; abort every unsupported, true-conflict, or missing disposition. |
 | §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
 | §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-twelve-key-authentication`: add complete token-form results and selection plus exhaustive range-partition rows/counts/digests when the profile is nonnull; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, and finite-complete-domain no-capacity proofs serialize no arm where the candidates are unobservable in principle; zero nonmissing evidence bypasses the entire profile/candidate object. |
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural or complete-domain equality proofs. Amendment-6 rows never select or canonicalize a zero-padding arm. |
@@ -31481,6 +31524,8 @@ The inventory above is exhaustive at design level, but it does not replace
 machine enumeration. For each matched passage, the coordinator records all
 direct consumers and every transitive consumer through these closed edge
 classes: schema-member inclusion; ordered ID-preimage inclusion;
+declaration-selector resolution and selector-relative disposition
+reconstruction;
 count/keyset/domain/content digest inclusion; source projection and reverse
 projection; foreign-key resolution; compiler invocation; DFA construction
 and replay; Q5 field join; inventory layout or value-map consumption; G17
@@ -31525,6 +31570,9 @@ The exact initial literal search-term array, in this order, is:
 dictionary_codebook_fixed_width_source_derivation_v3
 source_format_projection
 source_format_text
+source_format_assertion_id
+declaration_disposition
+selecting_source_format_assertion_id
 source_value_lexeme
 declared_signed
 normalized_format_profile
@@ -32064,11 +32112,17 @@ dependency order before Q5 or an official consumer is read:
    digest before a target field can be selected;
 3. for every wave/field group in the retained denominator order, enumerate
    the complete ten-key declaration assertion relation, reconstruct every
-   assertion ID and source pointer, and apply exactly one of the seven
-   dispositions in §20.3.1; any unsupported assertion or true conflict
+   assertion ID and source pointer, conflict-gate any independent-
+   reconstruction disagreement, and apply exactly one of the seven
+   dispositions in §20.3.1. Compare every remaining later supported assertion
+   directly
+   with the unique first reconstruction-agreed supported selector, never with
+   another later row;
+   silence and unsupported rows take their own exact dispositions without
+   becoming comparison anchors. Any unsupported assertion or true conflict
    records its exact failure and prevents top-level pass; make every first
-   supported assertion select, and allow all selector pointers to remain
-   null only for an all-`source_silence`
+   reconstruction-agreed supported assertion select, and allow all selector
+   pointers to remain null only for an all-`source_silence`
    `value_code_domain_no_numeric_grammar` or
    `value_code_range_physical_rendering_unestablished` row whose independent
    conditions pass;
@@ -32241,12 +32295,18 @@ smallest dispositions for round one and records the rejected alternatives:
    incomplete.
 5. **Competing declarations.** Dictionary priority, SPSS priority, majority,
    and byte-normalized collapse are all unsupported by the evidence. The
-   closed source-order relation selects the first supported assertion only
+   closed source-order relation selects the first reconstruction-agreed
+   supported assertion only
    as semantic anchor, preserves byte-equal and tuple-equivalent peers with
    their own dispositions, preserves unsupported assertions, and aborts a
    true branch/tuple conflict or any missing disposition. Reversing
    authenticated source order remains source drift, even when the tuple is
-   unchanged. Every first supported assertion still selects. Requiring an
+   unchanged. A rolling comparison would let a corroborator replace the
+   semantic anchor, so every later byte/tuple test is mutually exclusive and
+   selector-relative; in `F6.2`, `NUM(6.2)`, `NUM(6.2)`, both `NUM` rows are
+   tuple-equivalent to `F6.2`. Every first reconstruction-agreed supported
+   assertion still selects.
+   Requiring an
    all-silent group to fabricate a numeric selector would erase the two
    retained source-silent value-code branches, so only those independently
    lawful all-`source_silence` rows preserve null selector/profile/grammar.
@@ -32316,7 +32376,7 @@ The resulting mandatory-abort matrix is closed:
 | an observed token is accepted only by the excluded zero-padding candidate, including a leading-zero magnitude such as `-0242` for -242 | `unsupported_source_numeric_format` under the zero-selected/excluded-arm predicate; it is not incomplete and authorizes no zero arm |
 | every remaining nonmissing/nonliteral token is individually admitted by at least one candidate language, but no single form covers the complete census | `conflicting_source_numeric_format`; mixed physical forms are complete contradictory evidence, not incomplete authority |
 | rounding, truncation, synthesis, or nonexact precision reduction; or unequal raw-to-value-to-raw replay | unsupported for the nonexact constructor or conflict for unequal replay under §20.3.5 precedence; no scalar result |
-| declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing a selector pointer required by its row disposition | complete declaration relation fails; top-level abort; an all-`source_silence` row in either exact retained selector-null status is excluded from this condition |
+| declaration assertion omitted, reordered, compared against a corroborator or other nonselector, assigned the wrong mutually exclusive byte-equal/tuple-equivalent disposition relative to the selector, unsupported without its disposition, tuple-conflicting, or missing a selector pointer required by its row disposition | complete declaration relation fails; top-level abort; an all-`source_silence` row in either exact retained selector-null status is excluded from this condition |
 | complete normalized range has both renderable and unrenderable members but either ordered relation/count/digest is absent or unequal, its DFA admits an unrenderable image, or an observed range token does not replay through the renderable relation | partition/grammar identity failure; no observed-subset, rounded, omitted, or synthesized repair |
 | any numeric-required normalized range has zero exactly renderable members | `unsupported_source_numeric_format`; another range cannot rescue it and no partial-range scalar result exists for that entry |
 | predecessor row ID/hash, mixed §19/§20 nested object, omitted consumer, or digest-only equality without deep equality | Q5/inventory/G17 and every enclosing identity fail |
