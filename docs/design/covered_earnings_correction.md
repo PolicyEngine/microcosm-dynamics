@@ -30407,6 +30407,24 @@ is forbidden. Thus tuple-equivalent `F6.2` and `NUM(6.2)` remain two
 authenticated assertions but resolve one semantic tuple; `F6.2` and
 `NUM(7.2)` remain a hard conflict.
 
+Selector necessity is branch-relative. A branch whose independent source
+law requires a numeric selector must have exactly one supported numeric
+selector, and every first supported assertion—including `CHR(w)`—selects
+whenever one exists. When the complete assertion projection is all
+`source_silence`, every row's `selecting_source_format_assertion_id` is null
+under the law above. That null selector does not trigger incomplete failure
+if and only if the independent requirements of either
+`value_code_domain_no_numeric_grammar` or
+`value_code_range_physical_rendering_unestablished` pass. On either such
+retained passing branch, `normalized_format_profile` and
+`registered_numeric_grammar` are also null; the exact retained padding/null
+members remain as that branch specifies. Other all-null selector arrays
+retain their exact row dispositions but fail under the applicable earlier
+predicate and establish no retained passing branch.
+Silence cannot be promoted to a numeric declaration, profile, or grammar.
+Conversely, a branch that requires numeric physical authority cannot use a
+retained source-silent status to evade its required selector.
+
 Every §19 use of the common byte-identical nonnull format, `F`, `N`, `H`,
 or `X` is replaced as follows. `F` remains the complete exact nonnull text
 projection for audit. `N` is the singleton selected numeric tuple only when
@@ -30962,12 +30980,16 @@ status is emitted.
 |---|---|
 | any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms after a positive nonmissing count; unequal independent range partitions; missing, duplicate, overlapping, or reordered partition members; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
 | any `unsupported_source_declaration`; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
-| missing selector after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; no passing token form after a positive nonmissing count; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
+| missing required numeric selector on a numeric-required branch after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; no passing token form after a positive nonmissing count; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
 
 An explicit underdetermined-padding token is not incomplete. Conversely,
 `closed uncertainty`, an era convention, another field's space result, or a
 candidate-authored disposition cannot turn an empirical two-pass field into
-the structural no-arm branch.
+the structural no-arm branch. A null selector on an all-`source_silence`
+`value_code_domain_no_numeric_grammar` or
+`value_code_range_physical_rendering_unestablished` row is likewise not
+incomplete; consumers must preserve its null profile and grammar rather than
+inventing a declaration.
 
 The numeric derivation row is exactly the 16 keys and its derivation ID is
 the SHA-256 of the 15 ordered positions in §20.3.1. The registered grammar
@@ -31178,6 +31200,10 @@ Specifically:
    missing-literal relation must equal the resolved derivation row's
    `nonmissing_observation_count`; zero requires the retained null-profile,
    null-grammar range branch and never an inferred form or arm.
+   An all-`source_silence` `value_code_domain_no_numeric_grammar` or
+   `value_code_range_physical_rendering_unestablished` row likewise preserves
+   null selector/profile/grammar values; its null selector is not a missing
+   consumer field and cannot be filled from an inventory or peer row.
 4. Every `observed_token_rows` member is classified literal-first and
    missing-first as §19 requires. A numeric member then traverses the
    successor DFA, applies its exact action stream, deep-equals type/unit,
@@ -31391,7 +31417,7 @@ affected prose is dismissed as merely explanatory.
 | Passage | Exact Amendment-6 disposition |
 |---|---|
 | §19.3.2 v3 interface envelope, call/return values, top-level relation, canonical source rows, framing, and census | `lawfully-unchanged-with-reason`: the interface literal, entry points, nine-key top-level envelope, source denominator, and dependency order remain exact; the nested numeric derivation row is expressly replaced by the 16-key successor named below. |
-| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion; disposition byte-equal and tuple-equivalent peers; abort every unsupported, true-conflict, or missing disposition. |
+| §19.3.2 common `source_format_projection`, byte-agreement test, and `F`/`N`/`H`/`X` projections | `replaced-by-§20.3.1-source-ordered-assertion-dispositions`: retain every exact declaration byte and locator; select the first supported assertion whenever one exists; preserve null selector/profile/grammar only for an all-`source_silence` `value_code_domain_no_numeric_grammar` or `value_code_range_physical_rendering_unestablished` row whose independent conditions pass; disposition byte-equal and tuple-equivalent peers; abort every unsupported, true-conflict, or missing disposition. |
 | §19.3.2 exact `NUM(w.d)`/`Fw.d` syntax, unsigned implied-digit-only interpretation, fixed-width `declared_signed:false` requirement, and value-code-range `signed:false` constant | `replaced-and-composed-with-§20.3.2–§20.3.4-token-form-and-sign-coalescence-law`: syntax and tuple normalization remain; exact census evidence chooses unsigned/signed and implied/literal form; null/true/false sign declarations receive the exact corroboration, incomplete, or conflict disposition in §20.3.2. |
 | §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-twelve-key-authentication`: add complete token-form results and selection plus exhaustive range-partition rows/counts/digests when the profile is nonnull; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, and finite-complete-domain no-capacity proofs serialize no arm where the candidates are unobservable in principle; zero nonmissing evidence bypasses the entire profile/candidate object. |
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural or complete-domain equality proofs. Amendment-6 rows never select or canonicalize a zero-padding arm. |
@@ -32002,7 +32028,12 @@ dependency order before Q5 or an official consumer is read:
    the complete ten-key declaration assertion relation, reconstruct every
    assertion ID and source pointer, and apply exactly one of the seven
    dispositions in §20.3.1; any unsupported assertion or true conflict
-   records its exact failure and prevents top-level pass;
+   records its exact failure and prevents top-level pass; make every first
+   supported assertion select, and allow all selector pointers to remain
+   null only for an all-`source_silence`
+   `value_code_domain_no_numeric_grammar` or
+   `value_code_range_physical_rendering_unestablished` row whose independent
+   conditions pass;
 4. independently replay the pre-profile literal constructor in the numeric
    entry point against the canonical codebook result, then missing-first
    serialize each field's complete
@@ -32172,7 +32203,10 @@ smallest dispositions for round one and records the rejected alternatives:
    their own dispositions, preserves unsupported assertions, and aborts a
    true branch/tuple conflict or any missing disposition. Reversing
    authenticated source order remains source drift, even when the tuple is
-   unchanged.
+   unchanged. Every first supported assertion still selects. Requiring an
+   all-silent group to fabricate a numeric selector would erase the two
+   retained source-silent value-code branches, so only those independently
+   lawful all-`source_silence` rows preserve null selector/profile/grammar.
 6. **Unsupported versus conflicting declarations.** Treating every unknown
    spelling as a tuple conflict gave one row two failure statuses; treating
    it as silence would erase evidence. Round one uses the explicit
@@ -32224,7 +32258,7 @@ The resulting mandatory-abort matrix is closed:
 | width-one or no-capacity row serializes an arm instead of its exact disposition, or a finite-domain no-capacity row omits/unequally serializes either complete candidate relation | conflict/replay failure; vector and derivation identity fail |
 | zero nonmissing observations construct or select any token form, padding arm, physical profile, or grammar; omit the serialized zero; or fail exact missing-literal replay | derivation/vector identity failure; an applicable range remains `value_code_range_physical_rendering_unestablished` and no physical scalar result exists |
 | plus/trailing/internal/overpunched sign, negative zero, noncanonical magnitude, optional/second decimal point, rounding, or unequal replay | unsupported or conflict by §20.3.5 precedence; no scalar result |
-| declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing selector pointer | complete declaration relation fails; top-level abort |
+| declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing a selector pointer required by its row disposition | complete declaration relation fails; top-level abort; an all-`source_silence` row in either exact retained selector-null status is excluded from this condition |
 | complete normalized range has both renderable and unrenderable members but either ordered relation/count/digest is absent or unequal, its DFA admits an unrenderable image, or an observed range token does not replay through the renderable relation | partition/grammar identity failure; no observed-subset, rounded, omitted, or synthesized repair |
 | any numeric-required normalized range has zero exactly renderable members | `unsupported_source_numeric_format`; another range cannot rescue it and no partial-range scalar result exists for that entry |
 | predecessor row ID/hash, mixed §19/§20 nested object, omitted consumer, or digest-only equality without deep equality | Q5/inventory/G17 and every enclosing identity fail |
