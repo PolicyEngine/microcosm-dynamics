@@ -30816,7 +30816,26 @@ part has no leading zero unless it is the single digit zero. A plus, sign
 after a digit, trailing sign, internal/trailing space, tab, second point,
 point without digits on both sides, excess/fewer-than-computed fractional
 digits, implied decimal payload, zoned decimal, overpunch, and non-ASCII byte
-reject before semantic classification.
+reject before semantic classification. During source compilation, any
+observed nonmissing token that does not exact-match a registered ordinary
+literal and is rejected by this closed physical-token language is exactly
+`unsupported_source_numeric_format`, subject only to an earlier conflict
+predicate in §20.3.5. That conclusion includes an all-space token; a plus in
+any position; a minus outside the sole selected leading-minus placement;
+negative zero; a noncanonical leading-zero magnitude that no evaluated
+padding constructor generates; internal/trailing space or tab; under a
+literal form, an absent/repeated/malpositioned point, a
+missing digit on either side, unequal fractional precision, or an implied
+payload; under an implied form, any literal point; comma/grouping, exponent,
+zoned decimal, overpunch, and every non-ASCII byte. It is never incomplete
+merely because no candidate form accepts it. During source compilation, a
+token accepted only by the evaluated zero-padding constructor—including
+`-0242` for scalar -242—is likewise exact
+`unsupported_source_numeric_format`, but under §20.3.5's excluded-padding-arm
+predicate rather than the outside-language predicate. After a source row has
+lawfully compiled, a later previously
+unobserved token outside its selected language still takes the retained
+unknown-token abort and does not retroactively change the source-row status.
 
 Codebook literal rendering, range image construction, fixed-width parsing,
 observed classification, and unobserved replay all use this one function.
@@ -30978,9 +30997,18 @@ status is emitted.
 
 | Failure predicate | Exact row status and consequence |
 |---|---|
-| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms after a positive nonmissing count; unequal independent range partitions; missing, duplicate, overlapping, or reordered partition members; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
-| any `unsupported_source_declaration`; plus/trailing/overpunched sign; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
-| missing required numeric selector on a numeric-required branch after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; no passing token form after a positive nonmissing count; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
+| any `conflicting_source_declaration`; tuple/branch/coordinate/type/unit or distinct-Boolean-sign disagreement; a false sign declaration with an observed minus; mixed padding; duplicate/colliding literal or missing image; multiple passing token forms after a positive nonmissing count; a complete positive-nonmissing census whose remaining nonliteral tokens each belong to at least one candidate language but for which no single token form covers the census; unequal independent range partitions; missing, duplicate, overlapping, or reordered partition members; or unequal replay | `conflicting_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| any `unsupported_source_declaration`; any observed nonmissing/nonliteral token rejected by every closed candidate token language, including every malformed sign/space/point/digit/precision, grouping, exponent, zoned, overpunched, or non-ASCII form enumerated in §20.3.3; literal decimal outside the exact maximum-fitting rule; nonexact precision reduction; a numeric-required normalized range with zero exactly renderable members; rounding, truncation, synthesis, or observed-subset promotion; zero-selected or other excluded padding arm | `unsupported_source_numeric_format`; null profile/padding/grammar; top-level abort |
+| missing required numeric selector on a numeric-required branch after the complete assertion relation contains no unsupported/conflicting row; unresolved width/decimal/type/unit/scale; empirically nondiagnostic despite available pad capacity; true sign declaration without an exact negative placement diagnostic; token-form evaluation that cannot be completed because required authenticated evidence is unavailable or unevaluable; or another unestablished required source value | `incomplete_source_numeric_authority`; null profile/padding/grammar; top-level abort |
+
+Accordingly, a positive-nonmissing complete candidate evaluation has no
+incomplete zero-pass outcome. If at least one observed nonmissing/nonliteral
+token lies outside the union of the closed candidate languages, the exact
+status is unsupported. If every such token is individually lawful but their
+forms cannot cohere to one field language, the exact status is conflict. Only
+a missing or unauthenticated prerequisite that prevents candidate evaluation
+altogether is incomplete. A derivation status, row ID, full-row hash, or
+consumer digest that serializes another classification is unequal.
 
 An explicit underdetermined-padding token is not incomplete. Conversely,
 `closed uncertainty`, an era convention, another field's space result, or a
@@ -31083,7 +31111,9 @@ The byte-exact regression facts are:
   sole signed token is record 3,638 bytes `202d323432`; it parses as -242
   and re-renders exactly. The unsigned form rejects it, the signed form's
   minus diagnostic selects the one evidenced placement, and `+242`,
-  `242-`, `2-42`, `-0242`, and every other equal-scalar spelling reject.
+  `242-`, `2-42`, `-0242`, and every other equal-scalar spelling reject; if
+  observed in a source census, each makes the derivation exactly
+  `unsupported_source_numeric_format` absent an earlier conflict predicate.
 - **A6-R06, V6363/1979.** Slice one-based 139–144 has 450 token rows over
   6,373 records; record one is `2032362e3430`. In source order the first
   nonnull numeric assertion selects tuple `(6,2)` and the byte-unequal
@@ -31205,7 +31235,10 @@ Specifically:
    null selector/profile/grammar values; its null selector is not a missing
    consumer field and cannot be filled from an inventory or peer row.
 4. Every `observed_token_rows` member is classified literal-first and
-   missing-first as §19 requires. A numeric member then traverses the
+   missing-first as §19 requires. During source reconstruction, a remaining
+   token outside every closed candidate language yields the exact unsupported
+   failure row and its fresh ID/hash; it cannot appear as an incomplete
+   consumer row. On a passing derivation, a numeric member then traverses the
    successor DFA, applies its exact action stream, deep-equals type/unit,
    and re-renders under §20.3.3 to its original `raw_token_hex`. Its
    `source_derivation`, source entry references, and disposition remain
@@ -31360,7 +31393,9 @@ no G17-C19. Only these already-bound comparands are prospectively completed:
   Missing/literal precedence and
   all retained legal/default folds follow only after that pass. A host
   parse, trimmed token, rounded decimal, unsigned coercion, or predecessor
-  grammar fails C06.
+  grammar fails C06. For a source-census rejection, both sides must serialize
+  the exact conflict/unsupported/incomplete distinction in §20.3.5 before
+  comparing the complete derivation row and enclosing digest.
 - **G17-C07.** Expected value-code rows are rebuilt from authenticated
   source bytes through the same successor compiler. Actual
   `source_commitments` and entries must deep-equal every declaration
@@ -31400,7 +31435,9 @@ The replacement is the closed law in §20.3: source-ordered per-assertion
 dispositions; field-local diagnostic ASCII-space selection; explicit
 width-one and no-padding-capacity no-arm dispositions; exact
 maximum-fitting literal decimal; exhaustive partial-range exact replay;
-exact leading-minus placement; and failure for every unenumerated form. This
+exact leading-minus placement; exact unsupported status for every observed
+nonmissing/nonliteral closed-language rejection; conflict for a complete
+mixed-form census; and incomplete status only for unevaluable authority. This
 amendment establishes representability,
 not that Q5, an official inventory, G17, or a production registration now
 passes.
@@ -31422,8 +31459,8 @@ affected prose is dismissed as merely explanatory.
 | §19.3.2 seven-key `physical_authentication`, two candidate arms, exactly-one-pass requirement, and nondiagnostic failure | `replaced-by-§20.3.2-twelve-key-authentication`: add complete token-form results and selection plus exhaustive range-partition rows/counts/digests when the profile is nonnull; diagnostic fields select only the evidenced ASCII-space arm; width-one, structural no-capacity, and finite-complete-domain no-capacity proofs serialize no arm where the candidates are unobservable in principle; zero nonmissing evidence bypasses the entire profile/candidate object. |
 | §19.3.2 profile/padding construction and space-to-zero preprocessing | `replaced-by-§20.3.2-exact-token-padding`: preserve exact width, validate and preserve leading spaces, expose them as DFA `no_op` bytes, and serialize no arm only under the exact structural or complete-domain equality proofs. Amendment-6 rows never select or canonicalize a zero-padding arm. |
 | §19.3.2 unsigned digit DFA and unreachable `set_negative`, `consume_decimal_point`, and `no_op` enum values | `replaced-and-completed-by-§20.3.3–§20.3.4`: exact leading-minus, literal-point, maximum-fitting precision, action semantics, scalar equations, and byte replay activate only the enumerated paths. |
-| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; add the explicit all-missing retained branch, underdetermined and exhaustive partial-range passing statuses, and closed failures; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
-| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; partial ranges carry both member relations and the closed unrenderable-member action; an all-missing retained range replays registered literals with no profile/partition/DFA; precedence and source semantics remain exact. |
+| §19.3.2 numeric status/failure map, 15-key row, 14-position derivation preimage, ten-key grammar, and nine-position grammar preimage | `replaced-and-composed-with-§20.3.1–§20.3.5`: serialize `nonmissing_observation_count` in the successor 16-key row and 15-position derivation preimage; add the explicit all-missing retained branch, underdetermined and exhaustive partial-range passing statuses, and closed failures; an observed nonmissing/nonliteral token outside the closed language is unsupported, mixed individually lawful forms conflict, and only unevaluable authority is incomplete; preserve the ten-key grammar/nine-position grammar preimage; every ID/digest is fresh. |
+| §19.3.2 observed/unobserved token, missing/literal/range, meaning/type/unit, and exact replay law | `composed-with-§20.4.1`: every nonnull-profile branch uses the same successor declaration/form/arm/DFA renderer; an observed nonmissing/nonliteral closed-language rejection has exact unsupported status, while a future unknown token takes the runtime abort; partial ranges carry both member relations and the closed unrenderable-member action; an all-missing retained range replays registered literals with no profile/partition/DFA; precedence and source semantics remain exact. |
 | §19.3.2 V93 and synthetic arm regressions | `replaced-and-completed-by-§20.3.6-nine-vector-census`: V93 remains mandatory; actual later-era space, width-one, decimal, signed, conflict, precision-edge, complete-domain-no-capacity, and all-missing vectors are added; zero-arm constructors are rejection-only. |
 | §4.2 and §19.3.2 `layout_coordinates`, `typed_parse_specs`, `raw_token_grammar`, source commitments, and value-code entries | `composed-with-§20.4.1`: all outer consumer schemas remain; the complete 16-key successor row/count and either its nonnull physical members or its all-missing null/absent branch flow positionally through every layout and value-map consumer. |
 | §19.3.3 source manifest `field_source_derivation` and complete all-field denominator | `composed-with-§20.4.2`: Q5 embeds the completed relation, including unconsumed fields, and is first-added only after D6. |
@@ -31492,6 +31529,7 @@ source_value_lexeme
 declared_signed
 normalized_format_profile
 nonmissing_observation_count
+unsupported_source_numeric_format
 physical_authentication
 token_form_candidate_results
 selected_token_form
@@ -32042,8 +32080,13 @@ dependency order before Q5 or an official consumer is read:
    route an applicable range to the retained null-profile/null-grammar
    physical-unestablished branch. Only for a positive count on a branch that
    otherwise requires or adopts numeric physical authentication evaluate
-   every token-form candidate and its complete `B_o` vectors/counts, require one
-   passing form, coalesce the explicit sign declarations, evaluate both
+   every token-form candidate and its complete `B_o` vectors/counts. Before
+   requiring one passing form, classify a fully evaluated zero-pass census as
+   unsupported when any nonmissing/nonliteral token is outside every closed
+   language, or conflict when individually lawful forms cannot cohere; use
+   incomplete only when authenticated evidence cannot be evaluated.
+   Otherwise require exactly one passing form, coalesce the explicit sign
+   declarations, and evaluate both
    padding-arm renderers, and serialize exactly the per-field space arm, one
    structural no-arm disposition, or the finite-complete-domain no-capacity
    disposition after both complete candidate relations and every observed
@@ -32072,7 +32115,7 @@ The required actual-evidence walk is:
 | A6-R02 | lane B, §20.2.1 | V6302 / 1979 | `20202031` and all 6,373 distinct tokens independently select the same space arm in the later era; `30303031` is excluded. |
 | A6-R03 | lane B, §20.2.1 | V15133 / 1988 | all ten one-byte digit tokens force `padding_arm_underdetermined_width_one_exact_replay_v1`; literal `30` replays first and range bytes `31`–`39` traverse/replay through the compiled DFA; neither arm is serialized. |
 | A6-R04 | lane A, §20.2.1 | V210 / 1968 | `NUM(4.2)`/`F4.2` dispositions select literal decimal; missing `0.00` remains missing-first; nonmissing `2.60` maps to exact `13/5` and back; full width forces `padding_arm_underdetermined_no_padding_capacity_exact_replay_v1`. |
-| A6-R05 | lane A, §20.2.1 | V76 / 1968 | `202d323432` executes leading `no_op`, `set_negative`, and digit actions, yields -242, and re-renders the same five bytes; all plus, trailing, internal, overpunched, and leading-zero sign spellings reject. |
+| A6-R05 | lane A, §20.2.1 | V76 / 1968 | `202d323432` executes leading `no_op`, `set_negative`, and digit actions, yields -242, and re-renders the same five bytes; if observed, every plus, trailing, internal, overpunched, or leading-zero sign spelling makes the source derivation `unsupported_source_numeric_format` absent an earlier conflict. |
 | A6-R06 | lane B, §20.2.1 | V6363 / 1979 | source-ordered null/SPSS/codebook assertions preserve `F6.2` and `NUM(6.2)`, select one `(6,2)` tuple and one corroborating tuple-equivalent disposition; `2032362e3430` maps to 26.40 and byte-replays under the space/literal form. |
 | A6-R07 | lane A, §20.2.1 | V945 / 1969 | observed `2d313034302e30` uses greatest fitting `f=1` and replays -1040 exactly; both complete cent-step ranges partition 429,270 renderable from 263,430 unrenderable members, `-1040.01` has a null image, and the field passes only as `compiled_source_numeric_grammar_partial_range_exact_replay`. |
 | A6-R08 | lane A, §20.2.1 | V97 / 1968 | the complete 880-member numeric range plus missing literal yields two equal 881-row candidate image/action/failure relations and all 4,802 observations replay; serialize the no-capacity disposition without selecting an arm or authorizing an uncoded value. |
@@ -32249,6 +32292,18 @@ smallest dispositions for round one and records the rejected alternatives:
    unrepresentable; a new profile, grammar, status, or selector literal, an
    empty-census default, and a candidate-authored tie break are rejected as
    larger or fabricated alternatives.
+11. **Rejected physical tokens.** Calling a completed zero-pass candidate
+   census incomplete would misstate hostile bytes as absent authority. The
+   fail-closed-smallest classification gives an observed nonmissing/
+   nonliteral token outside every closed candidate language the existing
+   exact status `unsupported_source_numeric_format`; no new token or status
+   literal is introduced. A complete census of individually lawful but
+   mutually incompatible forms is conflicting, while incomplete is reserved
+   for a missing authenticated prerequisite that prevents evaluation. A
+   token accepted only by the zero-padding candidate remains exact
+   unsupported under the already closed excluded-arm predicate. Trim,
+   permissive host parsing, unknown-token reclassification, and an
+   incomplete catch-all are rejected alternatives.
 
 The resulting mandatory-abort matrix is closed:
 
@@ -32257,7 +32312,10 @@ The resulting mandatory-abort matrix is closed:
 | diagnostic field selects zero, accepts both arms, mixes zero/space, or lacks a positive diagnostic despite available capacity | numeric authority failure under §20.3.5; no layout/Q5/G17 consumer |
 | width-one or no-capacity row serializes an arm instead of its exact disposition, or a finite-domain no-capacity row omits/unequally serializes either complete candidate relation | conflict/replay failure; vector and derivation identity fail |
 | zero nonmissing observations construct or select any token form, padding arm, physical profile, or grammar; omit the serialized zero; or fail exact missing-literal replay | derivation/vector identity failure; an applicable range remains `value_code_range_physical_rendering_unestablished` and no physical scalar result exists |
-| plus/trailing/internal/overpunched sign, negative zero, noncanonical magnitude, optional/second decimal point, rounding, or unequal replay | unsupported or conflict by §20.3.5 precedence; no scalar result |
+| any observed nonmissing/nonliteral token with plus, misplaced minus, negative zero, a noncanonical magnitude not generated by an evaluated padding constructor, illegal space/tab, absent/repeated/malpositioned point, wrong precision, grouping, exponent, zoned/overpunched form, or non-ASCII byte that lies outside every closed candidate language | `unsupported_source_numeric_format`; only a separately satisfied earlier conflict predicate changes the row to `conflicting_source_numeric_format`; no scalar result |
+| an observed token is accepted only by the excluded zero-padding candidate, including a leading-zero magnitude such as `-0242` for -242 | `unsupported_source_numeric_format` under the zero-selected/excluded-arm predicate; it is not incomplete and authorizes no zero arm |
+| every remaining nonmissing/nonliteral token is individually admitted by at least one candidate language, but no single form covers the complete census | `conflicting_source_numeric_format`; mixed physical forms are complete contradictory evidence, not incomplete authority |
+| rounding, truncation, synthesis, or nonexact precision reduction; or unequal raw-to-value-to-raw replay | unsupported for the nonexact constructor or conflict for unequal replay under §20.3.5 precedence; no scalar result |
 | declaration assertion omitted, reordered, unsupported without its disposition, tuple-conflicting, or missing a selector pointer required by its row disposition | complete declaration relation fails; top-level abort; an all-`source_silence` row in either exact retained selector-null status is excluded from this condition |
 | complete normalized range has both renderable and unrenderable members but either ordered relation/count/digest is absent or unequal, its DFA admits an unrenderable image, or an observed range token does not replay through the renderable relation | partition/grammar identity failure; no observed-subset, rounded, omitted, or synthesized repair |
 | any numeric-required normalized range has zero exactly renderable members | `unsupported_source_numeric_format`; another range cannot rescue it and no partial-range scalar result exists for that entry |
