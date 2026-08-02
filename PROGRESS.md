@@ -2,9 +2,9 @@
 
 ## State
 
-The round-1 rewrite is in progress. The comparator blocker and precision
-repairs are committed, and the decisive class-(a) V-B6 audit is now embodied
-in the option-2 semantic/physical authority boundary.
+The substantive round-1 rewrite is complete and entering final mechanical
+verification. Both blockers, both precision repairs, the regressions, and
+all required lifecycle/build consumers are now closed in the document.
 
 ## Done
 
@@ -27,10 +27,22 @@ in the option-2 semantic/physical authority boundary.
 - Added the exact four-row, 19-member semantic projection and the first-class
   §21.4.2 boundary. Semantic and physical registration are non-conflatable;
   every forbidden physical dependency still invokes the atomic abort guard.
+- Enumerated and classified all 13 §18.2 projection members and their nested
+  inputs; whole era_fact hashes are audit-only, so physical coordinates cannot
+  enter the favorable semantic predicate through a digest.
+- Added A7-R10's complete §18-projection-to-verified/pass regression and
+  A7-R11's 32 per-field physical mutations plus four-reference aggregate
+  abort. The negative vector proves both the exact eleven-key source-boundary
+  diagnostic and the ordinary nine-key physical-consumer guard, without
+  changing the exact nine-row A7 core payload.
+- Updated §21.6's explicit V-B6 dispositions and closure seeds, the V-B6
+  result in every fresh 22-row evaluation and bundle, and every §21.9 build,
+  ratification, receipt, registration, and production step.
+- Removed the compiler/vector circularity: §21.3 accepts only after unchanged
+  A6, then A7-R01–R11 gate Q5; complete preliminary/final 22-row domains remain
+  in their §21.8/§21.9 lifecycle positions.
 
 ## Next
 
-- Add the positive end-to-end and negative physical-consumption regressions,
-  then close the replacement ledger, 22-row fresh evaluation, and build order.
 - Reverify document structure, comparator coverage, immutable prefix, bytes,
   digest, and commit history; write the final report file.
