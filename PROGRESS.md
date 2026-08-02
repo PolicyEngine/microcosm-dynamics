@@ -32,6 +32,12 @@
 - Added 13 passing primitive tests, including A6-R04 through A6-R07
   rendering edges and the mandatory two-digit DFA vector; focused Ruff and
   Black checks pass.
+- Implemented the §21.4 consumer-boundary guard with exact seven-kind
+  consumer domain, complete ordered reference resolution, nine-key closed
+  diagnostics, full-row hashes, and atomic abort-before-callback behavior.
+- Added 12 passing guard tests, including lawful V4379/V5289/V5788 reads,
+  forbidden V4519/V4902/V5429/V5916 references, aggregate diagnostics, and
+  mismatch negatives; focused Ruff and Black checks pass.
 
 ## Next
 
