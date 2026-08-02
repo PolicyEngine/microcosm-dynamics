@@ -34057,3 +34057,197 @@ until a raw record happens to exercise the bad field. Conversely, a field
 that remains only in the complete source manifest or a closed negative
 census has not been consumed and does not prevent construction of unrelated
 lawful consumers.
+
+
+### 21.5 Amendment-7 mandatory regression vectors
+
+The successor implementation runs A6-R01 through A6-R11 unchanged, then
+exactly A7-R01 through A7-R09 below. Each A7 row has exactly these fifteen
+members in this schema order:
+
+~~~text
+vector_id
+vector_kind
+mutation
+interview_wave
+raw_field_id
+evidence_path
+field_evidence_row_pointer
+field_evidence_row_sha256
+derivation_status
+resolution_reason
+consumer_kind
+expected_top_level_status
+expected_consumer_result
+expected_closed_failure_reference_count
+expected_unmapped_keys
+~~~
+
+A nonnull field_evidence_row_sha256 hashes the complete strict-parsed
+field_evidence array row under the §21.1 canonical rule. All paths and row
+pointers resolve against the six frozen inputs at the revision-8 source
+commit. Null means inapplicable, never unavailable authority. The exact
+nine-row vector artifact is:
+
+~~~json
+[{"consumer_kind":"value_map","derivation_status":"conflicting_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/1578","field_evidence_row_sha256":"57fd2d0128222ac90fcd9ee19846a53ea7653551a0786a1fece5a24c461f421b","interview_wave":1970,"mutation":"none","raw_field_id":"V1714","resolution_reason":"conflict:overlapping_numeric_ranges","vector_id":"A7-R01","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"context_output","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/10387","field_evidence_row_sha256":"703cb042505feb2b2452d6274c918001a9a3f05db11b48ef91024707fa661704","interview_wave":2019,"mutation":"none","raw_field_id":"ER76782","resolution_reason":"character_raw_replay_unknown_token","vector_id":"A7-R02","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"correction_input","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/94","field_evidence_row_sha256":"cba6421de807c7f1aa5aa206b51f61970188e5d219e80af2dd926caa9a98fc9b","interview_wave":1968,"mutation":"none","raw_field_id":"V95","resolution_reason":"observed_token_outside_all_candidate_forms_or_semantics","vector_id":"A7-R03","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"q5_positive_field_join","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/4193","field_evidence_row_sha256":"57d80ab633abb3ae9dc66618ac935d32058e9cb7514194b7a2037d2beb65e65a","interview_wave":1995,"mutation":"none","raw_field_id":"ER6974","resolution_reason":"selected_space_literal_unrenderable","vector_id":"A7-R04","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"crosswalk","derivation_status":"unsupported_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/2066","field_evidence_row_sha256":"abe9ddbeefb5059902a769d871a50d942551897d3312a2e31d8a8eac67490441","interview_wave":1971,"mutation":"none","raw_field_id":"V2226","resolution_reason":"selected_space_range_zero_renderable","vector_id":"A7-R05","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"slot_registry_row","derivation_status":"incomplete_source_numeric_authority","evidence_path":"data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/8433","field_evidence_row_sha256":"6148fe33308fc2e5c155c9d0161a1eefb2491cc74cc19d87942e25ded029aaca","interview_wave":1988,"mutation":"none","raw_field_id":"V15713","resolution_reason":"finite_no_arm_no_lawful_complete_disposition","vector_id":"A7-R06","vector_kind":"consumer_boundary_abort"},{"consumer_kind":"official_inventory_row","derivation_status":"incomplete_source_numeric_authority","evidence_path":"data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json","expected_closed_failure_reference_count":1,"expected_consumer_result":"abort_before_acceptance","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":"/field_evidence/609","field_evidence_row_sha256":"6de3ab2e45e131b4103057d4e2a85a05d6bb956ea90018bfaf3034e9f7ae944f","interview_wave":1976,"mutation":"none","raw_field_id":"V4902","resolution_reason":"literal_only_zero_diagnostic_padding_capacity","vector_id":"A7-R07","vector_kind":"consumer_boundary_abort"},{"consumer_kind":null,"derivation_status":null,"evidence_path":null,"expected_closed_failure_reference_count":null,"expected_consumer_result":"not_evaluated","expected_top_level_status":"pass_with_closed_failures","expected_unmapped_keys":[],"field_evidence_row_pointer":null,"field_evidence_row_sha256":null,"interview_wave":null,"mutation":"none","raw_field_id":null,"resolution_reason":null,"vector_id":"A7-R08","vector_kind":"top_level_acceptance"},{"consumer_kind":null,"derivation_status":"conflicting_source_numeric_format","evidence_path":"data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json","expected_closed_failure_reference_count":null,"expected_consumer_result":"not_evaluated","expected_top_level_status":"fail","expected_unmapped_keys":[[1970,"V1714"]],"field_evidence_row_pointer":"/field_evidence/1578","field_evidence_row_sha256":"57fd2d0128222ac90fcd9ee19846a53ea7653551a0786a1fece5a24c461f421b","interview_wave":1970,"mutation":"delete_complete_derivation_row","raw_field_id":"V1714","resolution_reason":"conflict:overlapping_numeric_ranges","vector_id":"A7-R09","vector_kind":"exact_cover_rejection"}]
+~~~
+
+The fenced payload has 6117 bytes and, with its terminal LF, SHA-256
+68697967ddf8f065b051acef17c87afae7b033600d502bc1207890b253f2b1e0. Its vector-ID array is exactly
+["A7-R01","A7-R02","A7-R03","A7-R04","A7-R05","A7-R06","A7-R07","A7-R08","A7-R09"]
+and hashes to
+2465bf08eb1751c25bad8cace391c611f4b88bde099f73967dea4464a5480c94.
+
+For A7-R01 through A7-R07, begin with an otherwise accepted complete
+pass_with_closed_failures relation and construct exactly one hypothetical
+consumer row whose complete reference stream contains only the displayed
+field. The top-level relation must remain accepted; the displayed consumer
+must construct one exact nine-key closed_failure_reference_rows member and
+abort before acceptance. These seven rows cover, once each, the conflict
+reason, all four unsupported reasons, both incomplete reasons, and all seven
+minimum boundary kinds. A different terminal, reason, witness identity,
+consumer kind, successful consumer, missing diagnostic member, or accepted
+partial artifact fails the vector.
+
+A7-R08 reconstructs the unmodified 89,599-row relation. It must reproduce
+the exact-empty duplicate_keys, outside_denominator_rows, and unmapped_keys
+arrays; the ten terminal counts; count-array digest
+421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624;
+assignment digest
+5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e;
+1,235-key F count; F-list digest
+26ceca16ba9c22f0c9111c9fe8e044dac8bb0d0f32aa4a39e3772bd11f68d6ed;
+status-tagged F digest
+1c83a26cad466354a0738ac1d4b0a4b6c282ccc447d410b5ae324808e79fe2ae;
+all 1,235 exact null failure triplets; and top-level
+pass_with_closed_failures.
+
+A7-R09 begins with that same accepted relation and deletes only the complete
+V1714/1970 derivation row, without reclassifying or replacing another row.
+R then has 89,598 rows; unmapped_keys is exactly
+[[1970,"V1714"]] with SHA-256
+a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1;
+and top-level status is fail. A digest-only placeholder, a duplicate V1714,
+a fabricated outside row, a reduced denominator, or an accepted 1,234-row
+failure census must also fail. This is the mandatory proof that a silent
+missing failure never becomes a lawful exclusion.
+
+The vector implementation constructs expected results before serialized
+actual results are read. Vector order, count, every complete row, keyset
+digest, domain digest, witness row, source row hash, terminal, reason,
+diagnostic, and negative mutation must reproduce. Omission of one A6 or A7
+vector blocks Q5.
+
+### 21.6 Exact replacement inventory and closure sweep
+
+#### 21.6.1 Complete design-family disposition
+
+The following inventory is complete at design-family level. It does not
+edit or erase the historical source passages; it gives every affected family
+one prospective revision-9 disposition.
+
+| Source anchors | Exact Amendment-7 disposition |
+|---|---|
+| §19.3.2 nine-key field_source_derivation, all-field compiler return, status, and failure/top-level conclusions | replaced-by-§21.3-complete-relation-with-closed-failures; preserve all outer and row schemas, replace only the admitted top status and global failure consequence. |
+| §19.3.3 source_document_manifest and complete field_source_derivation embedding | composed-with-§21.4.3-complete-evidence; all 89,599 rows, including F, remain mandatory. |
+| §19.3.3 D_w search, positive_field_join_rows, raw_field_projections, and Q5 status/history | composed-with-§21.4.1–§21.4.3; search remains total, each positive reference is guarded, and D7 replaces D6 as the live Q5 predecessor. |
+| §19.3.3 expanded slot stream and present/structural_missing inventory equations | composed-with-§21.4.4; E and the two dispositions remain exact, positive raw-field projections exclude F under the closed negative census. |
+| §19.4.2 G17-C01, C06, C07, and enclosing G17 result | composed-with-§21.4.5; complete relation copies are evidence, every positive consumer projection is guarded. |
+| §20.3.1 assertion disagreements and unsupported/conflicting top-level blockers | replaced-only-by-§21.2-item-1; row classification still fails locally, complete serialization no longer fails globally. |
+| §20.3.5 seven passing terminals, three failure rows, and top-level abort consequences | replaced-and-composed-with-§21.3–§21.4; ten terminals and precedence remain, top-level abort moves to the consuming site. |
+| §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason; §21.5 adds A7 and cannot alter or substitute for A6. |
+| §20.3.7 complete census, assignment, counts, reasons, and sentence preventing pass | preserved except replaced-by-§21.3.2 for that one global conclusion; all bytes, memberships, counts, and digests remain exact evidence. |
+| §20.4.1 layout, parse, raw-token, value-map, and unobserved consumers | composed-with-§21.4; every retained branch rule remains and every T-minus positive reference aborts at this boundary. |
+| §20.4.2 Q5 propagation, D6/Q5 ordering, and all-field gate | replaced-and-composed-with-§21.3, §21.4.3, and the D7/Q5 comparator; Q5 embeds failures but its positive joins cannot consume them. |
+| §20.4.3 G17 propagation | composed-with-§21.4.5; evidence-only full relations remain complete and consuming projections are guarded. |
+| §20.4.4 source-format/compiler build and grammar-tension replacement | composed-with-§21.3–§21.5; the complete compiler and A6/A7 precede Q5 under pass_with_closed_failures. |
+| §20.5 Amendment-6 replacement inventory and closure sweep | lawfully-unchanged-with-reason as immutable D6 history; the distinct Amendment-7 sweep below covers the revision-9 corpus. |
+| §20.6 revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §21.7 supplies the complete 43-row successor census. |
+| §20.7 revision-8 lifecycle and v5 receipt chain | replaced-by-§21.8 revision-9 successors for a post-D7 registration; historical version dispatch remains. |
+| §20.8.1 compiler walk and every top-level all-field-pass prerequisite | replaced-only-by-§21.3.2 and §21.5; exact totality plus A6/A7 pass_with_closed_failures is the Q5 gate. |
+| §20.8.2 Q5, inventory, G17, receipt walk | composed-with-§21.4 and replaced-by-§21.9 ordering; each positive consumer guard is local and complete. |
+| §20.8.3 alternatives and mandatory-abort matrix | replaced only where it globally forbids all Q5/layout/G17 construction because F is nonempty; every listed row-level, boundary, capture, and production abort otherwise remains. |
+| §20.8.4 referee, D6, build, and registration protocol | replaced-by-§21.9 for D7 ratification, pass_with_closed_failures, A7, guarded consumers, v6 receipt, and revision-9 registration. |
+| §§1–20 passages not reached by the deterministic sweep | lawfully-unchanged-with-reason; they neither define nor consume the moved global/boundary predicate or its lifecycle identities. |
+
+The inventory is a design-level index, not permission to merge distinct
+physical passages. Repeated wording at different byte ranges remains
+distinct and must receive its own closure-sweep row.
+
+#### 21.6.2 Amendment-7 closure-sweep law
+
+Before D7 ratification, the coordinator constructs
+amendment_7_closed_failure_boundary_closure_sweep.v1. It inherits the exact
+11-key schema, terminal-LF canonicalization, line-based passage segmentation,
+half-open byte-range law, canonical row and edge order, direct/transitive
+consumer closure, count/digest equations, and three-disposition domain from
+§19.4.3. Its matched passage IDs use literal prefix
+amendment-7-passage: followed by SHA-256 of the inherited exact
+[start_byte,end_byte,matched_terms] preimage.
+
+The normative corpus is every revision-9 candidate byte in §§1–21 except
+exactly the historical/self-referential comparator-table intervals defined
+by §§17.3, 18.5, 19.5, 20.6, and 21.7. Each exclusion begins at that
+subsection's table header and ends immediately before its expressly named
+next heading. No replacement inventory, regression fence, repeated prose,
+surrounding paragraph, or non-comparator table is excluded.
+
+The exact 35-position initial literal seed array is:
+
+~~~text
+field_source_derivation
+numeric_grammar_derivation_rows
+derivation_status
+pass_with_closed_failures
+conflicting_source_numeric_format
+unsupported_source_numeric_format
+incomplete_source_numeric_authority
+top-level pass
+top-level abort
+all-field pass
+source_document_manifest
+positive_field_join_rows
+raw_field_projections
+source_disposition
+structural_missing
+layout_coordinates
+typed_parse_specs
+raw_token_grammar
+value_code_map
+registered_numeric_grammar
+G17-C01
+G17-C06
+G17-C07
+Q5
+fitting_free_requirement_verification_specs
+fitting_free_registration_domain_identity
+covered_earnings_path_applicability_registry_bundle
+fitting_free_model_input_authority_capture_registration
+covered_earnings_path_applicability_receipt_core
+covered_earnings_path_applicability_receipt
+D6
+D7
+correction
+context
+publication
+~~~
+
+Search is exact and case-sensitive, then closes over schema inclusion,
+ID-preimage inclusion, source-manifest embedding, field/derivation foreign
+keys, candidate-to-positive selection, slot/inventory joins, layout/parser/
+grammar/value-map projection, registry and crosswalk inclusion, G17 expected
+and actual construction, correction/context/output dataflow, digest
+inclusion, lifecycle/receipt selection, Git ancestry, and every direct or
+transitive consumer edge in §§19.4.3 and 20.5.2. A seed is not a ceiling.
+
+Every matched passage receives exactly one of
+replaced-by-named-successor, composed-with-named-successor, or
+lawfully-unchanged-with-reason and a nonempty exact successor/reason resolving
+to §21.6.1, §21.7, §21.8, or §21.9. Acceptance requires status pass,
+exact-empty unresolved_passage_ids, exact forward and reverse edge cover,
+complete agreement with an independently implemented second sweep, and
+reproduction from the accepted D7 blob. Missing, extra, merged, differently
+segmented, silently retained, or candidate-excluded passages block
+ratification. No anticipated D7 byte offset, row count, or sweep digest is
+ratified by these draft bytes.

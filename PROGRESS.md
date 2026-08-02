@@ -17,8 +17,10 @@ The empirical grounding and the operative completion/consumer-boundary law are a
 - Added atomic guards for Q5, slots, inventory rows, value maps, crosswalks, correction inputs, and context outputs.
 - Preserved the official inventory key domain and two dispositions while binding its accepted positive-field projection to an exact-empty intersection with the 1,235-row negative census.
 - Clarified that complete Q5/G17/slot-authority relation copies are evidence embeddings, while their positive projections remain guarded consumers.
+- Added nine exact Amendment-7 regressions covering all seven failure reasons/boundary kinds, top-level acceptance, and silent-row deletion.
+- Added the complete design-family replacement inventory and a mandatory physical-passage closure sweep.
 
 ## Next
 
-- Add regression vectors, replacement/comparator census, lifecycle successors, and the revised build walk.
+- Add the complete comparator census, lifecycle successors, and revised build/ratification walk.
 - Verify all bytes and remove this transient ledger before final handoff.
