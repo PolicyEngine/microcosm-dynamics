@@ -34677,8 +34677,9 @@ semantic row or permitted member, admitting any forbidden dependency,
 changing the §18 result, or bypassing residual 9 or the fresh V-B6
 requirement-row evaluation fails A7-R10.
 
-A7-R11 has vector_kind physical_consumption_still_aborts. Its exact mutation
-class order is:
+A7-R11 has vector_kind physical_consumption_still_aborts and independently
+reconstructs the accepted A7-R10a frozen-input set; neither arm reads a
+serialized R10a result or invokes A7-R10b. Its exact mutation-class order is:
 
 ~~~text
 raw_fixed_width_record_or_token
@@ -34688,46 +34689,84 @@ profile_or_padding_rule
 numeric_grammar_or_dfa_partition_action
 parsed_or_canonical_numeric_value
 executable_literal_range_missing_or_value_map
-mixed_row_or_digest_hiding_a_forbidden_member
+layer_2_digest_or_mixed_derived_node_reading_physical_member
 ~~~
 
-Starting independently from the accepted A7-R10 inputs, the runner expands
-the four references in §21.4.2 order crossed with these eight mutations in
-displayed order, exactly 32 cases. Each case adds only the named physical
-dependency for only that field. The zero-based case number is
-8 * semantic_reference_position + mutation_position. Its exact
-forbidden_dependency_locator is ["A7-R11","/cases/NN"], where NN is that
-number encoded as two decimal digits. Each case has two independent arms:
+The 32 cases use only these already registered source identities. The raw
+members need not be copied into this repository; each runner must obtain the
+registered bytes, then authenticate their complete size and SHA-256 before
+making an in-memory shadow:
 
-1. the source-adjudication arm leaves the top-level relation at
-   pass_with_closed_failures, resolves exactly one eleven-key
-   source_adjudication_forbidden_dependency_rows member for the mutated
-   reference with forbidden_dependency_position zero, and atomically aborts
-   before any §18 source member/result, V-B6 requirement result, residual-9
-   carrier, registry row, correction value, or output is accepted; and
-2. the physical-consumer arm starts from the accepted A7-R10 result and
-   constructs one hypothetical crosswalk whose complete reference stream is
-   only the mutated reference. consumer_kind is crosswalk and
-   consumer_row_identity is exactly
-   ["amendment_7_a7_r11_physical_consumer_fixture.v1",case_number], with the
-   case number as an integer. It constructs one exact nine-key
-   closed_failure_reference_rows member, then aborts before accepting the
-   crosswalk or any dependent value.
+| source_artifact_id | Registered path | Bytes | SHA-256 |
+|---|---|---:|---|
+| psid-family-1976-raw_fixed_width | family/1976/FAM1976.txt | 8,798,862 | b35387e2b04bb9515f5edc1a31cc4b55a5bf018f9aa102ead4d7399e5d8b0824 |
+| psid-family-1977-raw_fixed_width | family/1977/FAM1977.txt | 5,796,755 | 6314e1ae1784a6d5267ec863c96432c11a8b22a45a09170d7c7322ff0faaa1d8 |
+| psid-family-1978-raw_fixed_width | family/1978/FAM1978.txt | 6,092,460 | 39764f180bf8431e7947027ef656c7910e832c01facfb86c8534735bdf42e12d |
+| psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam | data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json | 2,203,624 | 0122369d2f8fd6cc8d4e748cf1e93fa3b21ce1c695c9e4bf65338cd30ea13e87 |
 
-A 33rd aggregate case requests the
-raw_fixed_width_record_or_token dependency class for all four references at
-once. Its four locators are ["A7-R11","/aggregate/0"] through
-["A7-R11","/aggregate/3"]. Its diagnostic contains exactly four eleven-key
-rows in the displayed reference order, each with forbidden_dependency_class
-raw_fixed_width_record_or_token and with semantic_reference_position and
-forbidden_dependency_position both 0 through 3, and it atomically aborts.
-Its independent physical-consumer arm requests that same class, uses
-consumer_kind crosswalk, and has consumer_row_identity
+The case number is 8 * field_reference_position + mutation_position. Every
+row below identifies the actual member or zero-based half-open byte range,
+the one byte changed, and the physical route the runner must exercise. Hex
+20 is ASCII space; hex 30 through 39 are ASCII digits. The exact canonical
+32-row manifest is:
+
+~~~json
+[{"byte_offset_zero_based":252709,"case_number":0,"field_reference_position":0,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[252708:252710]"},{"byte_offset_zero_based":217719,"case_number":1,"field_reference_position":0,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/5"},{"byte_offset_zero_based":218978,"case_number":2,"field_reference_position":0,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39","mutation_position":2,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":540,"case_number":3,"field_reference_position":0,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":764550,"case_number":4,"field_reference_position":0,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4519","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[764549:764551]"},{"byte_offset_zero_based":218989,"case_number":5,"field_reference_position":0,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/2"},{"byte_offset_zero_based":219027,"case_number":6,"field_reference_position":0,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/12/2"},{"byte_offset_zero_based":218978,"case_number":7,"field_reference_position":0,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"39","mutation_effect":"code_20_count_38_to_39_then_recommit","mutation_position":7,"original_byte_hex":"38","raw_field_id":"V4519","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/220/11/11/0"},{"byte_offset_zero_based":717153,"case_number":8,"field_reference_position":1,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[717152:717154]"},{"byte_offset_zero_based":608511,"case_number":9,"field_reference_position":1,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/5"},{"byte_offset_zero_based":609802,"case_number":10,"field_reference_position":1,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6","mutation_position":2,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":1175,"case_number":11,"field_reference_position":1,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1976,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[1175:1177]"},{"byte_offset_zero_based":3503009,"case_number":12,"field_reference_position":1,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1976,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V4902","source_artifact_id":"psid-family-1976-raw_fixed_width","source_member":"bytes[3503008:3503010]"},{"byte_offset_zero_based":609813,"case_number":13,"field_reference_position":1,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1976,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/2"},{"byte_offset_zero_based":609848,"case_number":14,"field_reference_position":1,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1976,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/12/2"},{"byte_offset_zero_based":609802,"case_number":15,"field_reference_position":1,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1976,"mutated_byte_hex":"36","mutation_effect":"code_20_count_5_to_6_then_recommit","mutation_position":7,"original_byte_hex":"35","raw_field_id":"V4902","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/609/11/11/0"},{"byte_offset_zero_based":10227,"case_number":16,"field_reference_position":2,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[10226:10228]"},{"byte_offset_zero_based":1045936,"case_number":17,"field_reference_position":2,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/5"},{"byte_offset_zero_based":1047211,"case_number":18,"field_reference_position":2,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34","mutation_position":2,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":576,"case_number":19,"field_reference_position":2,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1977,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[576:578]"},{"byte_offset_zero_based":4437,"case_number":20,"field_reference_position":2,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1977,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5429","source_artifact_id":"psid-family-1977-raw_fixed_width","source_member":"bytes[4436:4438]"},{"byte_offset_zero_based":1047222,"case_number":21,"field_reference_position":2,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1977,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/2"},{"byte_offset_zero_based":1047260,"case_number":22,"field_reference_position":2,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1977,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/12/2"},{"byte_offset_zero_based":1047211,"case_number":23,"field_reference_position":2,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1977,"mutated_byte_hex":"34","mutation_effect":"code_20_count_33_to_34_then_recommit","mutation_position":7,"original_byte_hex":"33","raw_field_id":"V5429","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1055/11/11/0"},{"byte_offset_zero_based":827191,"case_number":24,"field_reference_position":3,"forbidden_dependency_class":"raw_fixed_width_record_or_token","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"raw_token_20_to_21","mutation_position":0,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[827190:827192]"},{"byte_offset_zero_based":1503209,"case_number":25,"field_reference_position":3,"forbidden_dependency_class":"layout_or_declared_format_used_for_parsing","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"declared_format_NUM_2_0_to_NUM_2_1","mutation_position":1,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/5"},{"byte_offset_zero_based":1504480,"case_number":26,"field_reference_position":3,"forbidden_dependency_class":"raw_data_frequency_percentage_or_nonmissing_count","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27","mutation_position":2,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"},{"byte_offset_zero_based":540,"case_number":27,"field_reference_position":3,"forbidden_dependency_class":"profile_or_padding_rule","interview_wave":1978,"mutated_byte_hex":"30","mutation_effect":"raw_token_space_0_to_00","mutation_position":3,"original_byte_hex":"20","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[540:542]"},{"byte_offset_zero_based":150031,"case_number":28,"field_reference_position":3,"forbidden_dependency_class":"numeric_grammar_or_dfa_partition_action","interview_wave":1978,"mutated_byte_hex":"38","mutation_effect":"raw_token_99_to_98","mutation_position":4,"original_byte_hex":"39","raw_field_id":"V5916","source_artifact_id":"psid-family-1978-raw_fixed_width","source_member":"bytes[150030:150032]"},{"byte_offset_zero_based":1504491,"case_number":29,"field_reference_position":3,"forbidden_dependency_class":"parsed_or_canonical_numeric_value","interview_wave":1978,"mutated_byte_hex":"31","mutation_effect":"code_lexeme_20_to_21","mutation_position":5,"original_byte_hex":"30","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/2"},{"byte_offset_zero_based":1504529,"case_number":30,"field_reference_position":3,"forbidden_dependency_class":"executable_literal_range_missing_or_value_map","interview_wave":1978,"mutated_byte_hex":"32","mutation_effect":"code_lexeme_31_to_32","mutation_position":6,"original_byte_hex":"31","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/12/2"},{"byte_offset_zero_based":1504480,"case_number":31,"field_reference_position":3,"forbidden_dependency_class":"layer_2_digest_or_mixed_derived_node_reading_physical_member","interview_wave":1978,"mutated_byte_hex":"37","mutation_effect":"code_20_count_26_to_27_then_recommit","mutation_position":7,"original_byte_hex":"36","raw_field_id":"V5916","source_artifact_id":"psid_codebook_field_evidence.v1:ry1975_1977_spouse_concept_seam","source_member":"/field_evidence/1529/11/11/0"}]
+~~~
+
+The fenced payload is 13,765 bytes including its terminal LF and has
+SHA-256
+8ec4849f7ba783fa8d59503ca71243f3aaaf3a0c92b3a6d17c2e9cf30798a909.
+It is source evidence, not a prelabelled expected diagnostic: the runner must
+verify that every original byte is present, apply exactly the displayed
+one-byte mutation only after complete-source authentication, and discover
+the dependency by instrumenting the proposed value flow.
+
+Mutation positions 0 through 6 respectively make the proposed layer-2 node
+read the raw token, use declared format in parsing, use the displayed source
+count, normalize the leading-space token under a padding rule, traverse a
+numeric-grammar/DFA arm for the 99/98 token, carry a parsed value from the
+20/21 lexeme, or execute the 31/32 literal mapping against data. Position 7
+recomputes the shadow commitment after the displayed count mutation and then
+adds a layer-2 read of that digest or its mixed preimage. A changed digest
+that remains only a layer-1 commitment is not a dependency and must not
+produce a negative; position 7 passes as a negative only when the layer-2
+node's content changes because it reads through that commitment.
+
+The authenticated original remains the authority in both baseline and
+shadow runs. The shadow is never reauthenticated or accepted as frozen
+source. The baseline must reproduce A7-R10a. The shadow walk builds the
+candidate topology and basis manifest, reports its topology/basis mismatch
+against the pinned favorable fixture, and derives the diagnostic from the
+actual changed layer-2 node. Supplying the manifest's class label or case
+number directly to the diagnostic fails.
+
+Each case has two independent arms:
+
+1. the source-adjudication arm leaves the complete top-level relation at
+   pass_with_closed_failures, resolves exactly one twelve-key
+   source_adjudication_forbidden_dependency_rows member with the real
+   [source_artifact_id,source_member] locator and
+   forbidden_dependency_position zero, and aborts before any §18 source
+   result or future A7-R10b carrier/requirement result is accepted; and
+2. the physical-consumer arm independently reconstructs the same frozen
+   inputs, carries the mutated datum through the named route, and constructs
+   one hypothetical crosswalk whose reference stream is only that field.
+   consumer_row_identity is
+   ["amendment_7_a7_r11_physical_consumer_fixture.v1",case_number]. It
+   constructs one exact nine-key closed_failure_reference_rows member and
+   aborts before the crosswalk or dependent value is accepted.
+
+The aggregate case applies the four class-0 mutations in cases 0, 8, 16, and
+24 simultaneously. Its source diagnostic contains exactly four twelve-key
+rows in field_reference_position order 0 through 3 and assigns
+forbidden_dependency_position 0 through 3 after the graph walk. Its physical
+arm uses consumer_row_identity
 ["amendment_7_a7_r11_physical_consumer_fixture.v1",32], resolves all four
-references in displayed order, constructs exactly four nine-key guard rows
-with consumer_reference_position 0 through 3, and atomically aborts. Any
-successful arm, missing or reordered diagnostic, wrong kind, identity,
-locator, or position, semantic-allowlist expansion, partial result, or
+real raw-byte locators in the same order, emits four nine-key guard rows with
+consumer_reference_position 0 through 3, and aborts. Any successful arm,
+missing or reordered diagnostic, wrong graph or field position, synthetic
+source locator, semantic-allowlist expansion, partial result, or
 drop/relabel of an offending reference fails A7-R11. The source diagnostic
 cannot stand in for the ordinary physical-consumer guard.
 
