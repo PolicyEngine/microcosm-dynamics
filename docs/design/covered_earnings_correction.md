@@ -32299,11 +32299,12 @@ consumer walk is:
    cannot cure an earlier failure.
 
 The present draft walk stops lawfully before step 1 because D6 and Q5 do not
-yet exist. Even after D6, A6-R07 requires the complete V945 range to abort
-under this round-one law unless later accepted design law supplies a closed
-representable source disposition; no such law is inferred here. Those are
-reported blockers, not permission to skip the row, weaken its range, or
-claim that a production registration now exists.
+yet exist. After D6, step 1 remains unreachable until §20.8.1 completes with
+a top-level all-field pass, including A6-R01 through A6-R09. A6-R07's
+exhaustive partition is passing compiler evidence: an unrenderable member
+retains its closed per-member action, but its existence is not a whole-field
+abort and never permits omission, rounding, synthesis, or a fabricated
+physical image. No production registration is claimed here.
 
 #### 20.8.3 Round-one law choices, alternatives, and mandatory aborts
 
@@ -32473,14 +32474,19 @@ Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
    document-only commit D6. Every authoring, audit, or referee-response
    commit before it is not ratification, and no source or runtime artifact
    may be smuggled into D6;
-4. only afterward perform §20.8.1 and §20.8.2 steps 1–4: separately review
-   the source-only v3 implementation and complete source relation, first-add
-   Q5 alone at its strict post-D6 single-parent commit, then derive and
-   ratify the official slot/inventory/value-map artifacts and construct the
-   complete C01/C06/C07 source comparands. Do not claim the full G17 result
-   before capture-dependent C16/C17 and final-adjudication C18 exist.
-   Recompute every source, compiler, Q5, inventory, registry, crosswalk, and
-   constructed comparand digest from complete bytes;
+4. only afterward separately review the source-only v3 implementation and
+   complete source relation and perform all of §20.8.1. Require a complete
+   top-level all-field pass, including every A6-R01 through A6-R09 result and
+   specifically A6-R07's exhaustive partial-range disposition, A6-R08's V97
+   complete-domain no-capacity disposition, and A6-R09's V11811 zero-
+   nonmissing retained branch, before Q5 is created or read. Only after that
+   pass perform §20.8.2 steps 1–4: first-add Q5 alone at its strict post-D6
+   single-parent commit, then derive and ratify the official slot/inventory/
+   value-map artifacts and construct the complete C01/C06/C07 source
+   comparands. Do not claim the full G17 result before capture-dependent
+   C16/C17 and final-adjudication C18 exist. Recompute every source, compiler,
+   Q5, inventory, registry, crosswalk, and constructed comparand digest from
+   complete bytes;
 5. run the complete legal predicate, source-manifest and all-field compiler
    reproduction, nine vectors, Q5 history, official-inventory reproduction,
    crosswalk history, nine-registry exact cover, the complete C01/C06/C07
@@ -32488,10 +32494,11 @@ Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
    complete 22-row v5 requirement-specification registry, the v6 bundle,
    and every source/legal/noncapture preliminary prerequisite. A1/A3 results
    and the final v5 domain are expressly deferred to step 6. Any unsupported
-   or conflicting declaration, unrenderable source-range member—including
-   the round-one V945 edge—remaining Class-A/Class-B residual, required
-   Class-C consequence, non-A1/A3 prerequisite failure, comparator, sweep,
-   or digest failure stops here and is reported by exact row/ID;
+   or conflicting declaration, missing or unequal exhaustive source-range
+   partition, unrenderable member admitted to the DFA or assigned a nonnull
+   physical image, remaining Class-A/Class-B residual, required Class-C
+   consequence, non-A1/A3 prerequisite failure, comparator, sweep, or digest
+   failure stops here and is reported by exact row/ID;
 6. only if step 5 passes, construct and validate the separately reviewed
    implementation and preliminary value-blind adjudication, then, only if
    the unchanged narrow capture predicate passes, execute the receipt-free-
@@ -32510,11 +32517,10 @@ Amendment 6 uses the same referee-rounds-then-ratify discipline as §§15.8,
 
 At these draft bytes, steps 3–8 have not occurred. Q5, a passing future
 all-field source relation, and a production-registration witness are not
-claimed. The source evidence currently proves the V945 hostile range edge,
-so round-one step 5 is expected to stop unless a later ratified amendment
-supplies a closed disposition without rounding or fabricated bytes. That
-honest blocker does not weaken the five requested grammar completions or
-permit omission of V945 from the complete denominator.
+claimed. The source evidence reproduces V945's hostile range edge and the
+adjudicated closed A6-R07 disposition, but the future relation remains
+unavailable until §20.8.1 passes every field and all nine vectors. Nothing
+permits omission of V945 from the complete denominator.
 
 **Amendment 6 is inoperative unless and until its exact D6 ratification
 commit is bound by a validator-accepted v5 fresh-registration receipt.**
