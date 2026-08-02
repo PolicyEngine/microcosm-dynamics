@@ -10,8 +10,9 @@
 - Status: stopped at the lawful non-authority boundary for Q5, with the
   reproducible global source/catalog prerequisite and all six era evidence
   slices plus the explicit global absence-domain dependency stop complete.
-  Final verification remains. No Q5 or downstream slot artifact has been
-  emitted.
+  Final verification is complete. No Q5 or downstream slot artifact has been
+  emitted, and Class-A source indices 1, 2, 5, 11, 14, 18, and 26 all remain
+  `registration_required`.
 
 ## Done
 
@@ -38,7 +39,9 @@
 - Constructed the three mandatory baseline sentinel relationships with exact
   section 19 ID preimages. The complete `R_Q` count and rows remain explicitly
   null: an honest global catalog requires the still-absent complete occurrence,
-  flow, anchor, source-component, and alias annotation.
+  flow, anchor, source-component, and alias annotation. Catalog-prerequisite
+  artifact SHA-256:
+  `3cb612aa73388fa4929a5f5531d6ef2919bb2764a5150d3f3ea8ee75da6a0e2e`.
 - Confirmed Q5 cannot be emitted in this Class-A-only lane because its
   `source_document_manifest.field_source_derivation` must carry the complete
   section 19.3.2 numeric-grammar relation. The separate 2023 `G13.` to
@@ -76,9 +79,20 @@
   all proof-scope member lists, and the exact unresolved §19 paths/predicates;
   artifact SHA-256:
   `8fa57c10c08ad6726f848e087503f453e2704760b2f1fe2c8e1ee46dd0293f90`.
+- Reproduced the catalog, all six era slices, and the absence stop from their
+  pinned inputs; all mirrored validators and coherently resealed mutation
+  rejections pass. Black and Ruff pass on all touched Python files.
+- Collected the complete 4,500-test suite with synchronized tier counts. The
+  directly affected unit/artifact/registry batch passed 361 tests; the five
+  capture-backed reproduction modules passed 7; and tier policy passed with
+  4,499 deselections. A broader all-repository run reached 135 passed and 2
+  skipped before an intentional interrupt in unrelated hours-scale real-data
+  tests; it is not represented as a full-suite pass.
 
 ## Next
 
-- Run the final builder/reproduction, mutation, tier-policy, formatting, and
-  broader regression checks; record exact test counts and final artifact
-  identities.
+- A future separately reviewed Class-A/Class-B authority lane must construct
+  the complete source component catalog, `R_Q`, H, `O_H`, `O_P`, every
+  `M_h`/`P_h`, the complete §19.3.2 field-source derivation, and resolve the
+  2023 `G13.` ambiguity. Only then may it emit and first-add the canonical Q5
+  artifact and attempt G17-C01/DC-30 closure.
