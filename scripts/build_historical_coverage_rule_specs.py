@@ -21,7 +21,9 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import re
+import stat
 import subprocess
 from collections import Counter
 from collections.abc import Mapping, Sequence
@@ -697,8 +699,129 @@ def _full_file_locator(filename: str, raw: bytes) -> dict[str, Any]:
     }
 
 
-def _verified_staged_file(
+_STAGED_READ_CHUNK_SIZE = 1024 * 1024
+
+
+def _required_open_flags(*names: str) -> int:
+    flags = os.O_RDONLY
+    for name in names:
+        flag = getattr(os, name, None)
+        if type(flag) is not int:
+            raise ValueError(
+                f"sealed staged reads require operating-system flag {name}"
+            )
+        flags |= flag
+    return flags
+
+
+def _stat_signature(value: os.stat_result) -> tuple[int, ...]:
+    return (
+        value.st_dev,
+        value.st_ino,
+        value.st_mode,
+        value.st_nlink,
+        value.st_size,
+        value.st_mtime_ns,
+        value.st_ctime_ns,
+    )
+
+
+def _open_capture_root(
     capture_root: Path,
+) -> tuple[
+    int,
+    list[int],
+    list[tuple[int, str, int, tuple[int, ...]]],
+]:
+    capture_root = Path(capture_root)
+    if (
+        not capture_root.is_absolute()
+        or ".." in capture_root.parts
+        or not capture_root.parts
+    ):
+        raise ValueError("legal capture root must be a lexical absolute path")
+    directory_flags = _required_open_flags(
+        "O_DIRECTORY", "O_NOFOLLOW", "O_NONBLOCK", "O_CLOEXEC"
+    )
+    descriptors: list[int] = []
+    chain: list[tuple[int, str, int, tuple[int, ...]]] = []
+    try:
+        current_fd = os.open("/", directory_flags)
+        descriptors.append(current_fd)
+        for component in capture_root.parts[1:]:
+            try:
+                named_before = os.stat(
+                    component,
+                    dir_fd=current_fd,
+                    follow_symlinks=False,
+                )
+                child_fd = os.open(
+                    component, directory_flags, dir_fd=current_fd
+                )
+            except (OSError, TypeError, NotImplementedError) as error:
+                raise ValueError(
+                    "legal capture root is unavailable or symlinked"
+                ) from error
+            descriptors.append(child_fd)
+            opened = os.fstat(child_fd)
+            try:
+                named_after = os.stat(
+                    component,
+                    dir_fd=current_fd,
+                    follow_symlinks=False,
+                )
+            except (OSError, TypeError, NotImplementedError) as error:
+                raise ValueError(
+                    "legal capture root changed during sealed open"
+                ) from error
+            signatures = {
+                _stat_signature(named_before),
+                _stat_signature(opened),
+                _stat_signature(named_after),
+            }
+            if (
+                len(signatures) != 1
+                or not stat.S_ISDIR(opened.st_mode)
+                or stat.S_ISLNK(named_before.st_mode)
+            ):
+                raise ValueError(
+                    "legal capture root is unavailable or symlinked"
+                )
+            signature = _stat_signature(opened)
+            chain.append((current_fd, component, child_fd, signature))
+            current_fd = child_fd
+        return current_fd, descriptors, chain
+    except Exception:
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
+        raise
+
+
+def _verify_capture_root_chain(
+    chain: list[tuple[int, str, int, tuple[int, ...]]],
+) -> None:
+    for parent_fd, component, child_fd, expected in chain:
+        try:
+            descriptor_after = os.fstat(child_fd)
+            named_after = os.stat(
+                component,
+                dir_fd=parent_fd,
+                follow_symlinks=False,
+            )
+        except (OSError, TypeError, NotImplementedError) as error:
+            raise ValueError(
+                "legal capture root changed during sealed read"
+            ) from error
+        if (
+            _stat_signature(descriptor_after) != expected
+            or _stat_signature(named_after) != expected
+            or not stat.S_ISDIR(descriptor_after.st_mode)
+        ):
+            raise ValueError("legal capture root changed during sealed read")
+
+
+def _verified_staged_file(
+    capture_root_fd: int,
     filename: str,
     *,
     expected_size: int,
@@ -712,17 +835,70 @@ def _verified_staged_file(
         or filename in {"", ".", ".."}
     ):
         raise ValueError(f"unsafe staged filename {filename!r}")
-    if not capture_root.is_dir() or capture_root.is_symlink():
-        raise ValueError("legal capture root is unavailable or symlinked")
-    path = capture_root / filename
-    if not path.is_file() or path.is_symlink():
+    try:
+        named_before = os.stat(
+            filename,
+            dir_fd=capture_root_fd,
+            follow_symlinks=False,
+        )
+        file_descriptor = os.open(
+            filename,
+            _required_open_flags("O_NOFOLLOW", "O_NONBLOCK", "O_CLOEXEC"),
+            dir_fd=capture_root_fd,
+        )
+    except (OSError, TypeError, NotImplementedError) as error:
         raise ValueError(
             f"{filename} is unavailable, nonregular, or symlinked"
-        )
-    raw = path.read_bytes()
-    if len(raw) != expected_size or _sha256(raw) != expected_sha256:
-        raise ValueError(f"{filename} staged identity mismatch")
-    return raw
+        ) from error
+    try:
+        opened = os.fstat(file_descriptor)
+        if _stat_signature(named_before) != _stat_signature(opened):
+            raise ValueError(f"{filename} changed during sealed open")
+        if not stat.S_ISREG(opened.st_mode):
+            raise ValueError(f"{filename} must be a regular file")
+        if stat.S_IMODE(opened.st_mode) != 0o644:
+            raise ValueError(f"{filename} mode 0644 is required")
+        if opened.st_nlink != 1:
+            raise ValueError(f"{filename} link count must be one")
+        if opened.st_size != expected_size:
+            raise ValueError(f"{filename} staged identity mismatch")
+
+        digest = hashlib.sha256()
+        raw = bytearray()
+        read_limit = expected_size + 1
+        while len(raw) < read_limit:
+            chunk = os.read(
+                file_descriptor,
+                min(_STAGED_READ_CHUNK_SIZE, read_limit - len(raw)),
+            )
+            if not chunk:
+                break
+            raw.extend(chunk)
+            digest.update(chunk)
+
+        descriptor_after = os.fstat(file_descriptor)
+        try:
+            named_after = os.stat(
+                filename,
+                dir_fd=capture_root_fd,
+                follow_symlinks=False,
+            )
+        except (OSError, TypeError, NotImplementedError) as error:
+            raise ValueError(
+                f"{filename} changed during sealed read"
+            ) from error
+        expected_signature = _stat_signature(opened)
+        if (
+            _stat_signature(named_before) != expected_signature
+            or _stat_signature(descriptor_after) != expected_signature
+            or _stat_signature(named_after) != expected_signature
+        ):
+            raise ValueError(f"{filename} changed during sealed read")
+        if len(raw) != expected_size or digest.hexdigest() != expected_sha256:
+            raise ValueError(f"{filename} staged identity mismatch")
+        return bytes(raw)
+    finally:
+        os.close(file_descriptor)
 
 
 def _capture_manifest_rows(raw: bytes) -> list[dict[str, Any]]:
@@ -814,86 +990,98 @@ def _observed_media_type(raw: bytes) -> str:
 def _verified_capture(
     capture_root: Path = DEFAULT_CAPTURE_ROOT,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
-    manifest_raw = _verified_staged_file(
-        capture_root,
-        CAPTURE_MANIFEST_FILENAME,
-        expected_size=EXPECTED_CAPTURE_MANIFEST_SIZE,
-        expected_sha256=EXPECTED_CAPTURE_MANIFEST_SHA256,
+    capture_root_fd, descriptors, directory_chain = _open_capture_root(
+        capture_root
     )
-    manifest_rows = _capture_manifest_rows(manifest_raw)
-    candidates: list[dict[str, Any]] = []
-    rejected: list[dict[str, Any]] = []
-    for row in manifest_rows:
-        filename = row["filename"]
-        raw = _verified_staged_file(
-            capture_root,
-            filename,
-            expected_size=row["byte_size"],
-            expected_sha256=row["sha256"],
+    try:
+        manifest_raw = _verified_staged_file(
+            capture_root_fd,
+            CAPTURE_MANIFEST_FILENAME,
+            expected_size=EXPECTED_CAPTURE_MANIFEST_SIZE,
+            expected_sha256=EXPECTED_CAPTURE_MANIFEST_SHA256,
         )
-        locator = _full_file_locator(filename, raw)
-        declared_media_type = _declared_media_type(filename)
-        observed_media_type = _observed_media_type(raw)
-        source_document_id = f"legal-source:{row['sha256']}"
-        if declared_media_type != observed_media_type:
-            if filename != REJECTED_CAPTURE_FILENAME:
-                raise ValueError(
-                    f"{filename} has an unreviewed media-type mismatch"
+        manifest_rows = _capture_manifest_rows(manifest_raw)
+        candidates: list[dict[str, Any]] = []
+        rejected: list[dict[str, Any]] = []
+        for row in manifest_rows:
+            filename = row["filename"]
+            raw = _verified_staged_file(
+                capture_root_fd,
+                filename,
+                expected_size=row["byte_size"],
+                expected_sha256=row["sha256"],
+            )
+            locator = _full_file_locator(filename, raw)
+            declared_media_type = _declared_media_type(filename)
+            observed_media_type = _observed_media_type(raw)
+            source_document_id = f"legal-source:{row['sha256']}"
+            if declared_media_type != observed_media_type:
+                if filename != REJECTED_CAPTURE_FILENAME:
+                    raise ValueError(
+                        f"{filename} has an unreviewed media-type mismatch"
+                    )
+                issuer, authority_class = REJECTED_SOURCE_METADATA[filename]
+                rejected.append(
+                    {
+                        "source_document_id": source_document_id,
+                        "manifest_position": row["manifest_position"],
+                        "locator": locator,
+                        "retrieved_at_utc": row["retrieved_at_utc"],
+                        "source_url": row["source_url"],
+                        "declared_media_type": declared_media_type,
+                        "observed_media_type": observed_media_type,
+                        "byte_size": row["byte_size"],
+                        "sha256": row["sha256"],
+                        "issuing_authority": issuer,
+                        "authority_class": authority_class,
+                        "rejection_code": "media_type_magic_mismatch",
+                        "rejection_detail": (
+                            "GovInfo Link Service HTML error bytes were "
+                            "captured under a .pdf filename"
+                        ),
+                    }
                 )
-            issuer, authority_class = REJECTED_SOURCE_METADATA[filename]
-            rejected.append(
+                continue
+            issuer, authority_class = REVIEWED_SOURCE_METADATA[filename]
+            candidates.append(
                 {
                     "source_document_id": source_document_id,
                     "manifest_position": row["manifest_position"],
                     "locator": locator,
                     "retrieved_at_utc": row["retrieved_at_utc"],
                     "source_url": row["source_url"],
-                    "declared_media_type": declared_media_type,
-                    "observed_media_type": observed_media_type,
+                    "media_type": declared_media_type,
                     "byte_size": row["byte_size"],
                     "sha256": row["sha256"],
                     "issuing_authority": issuer,
                     "authority_class": authority_class,
-                    "rejection_code": "media_type_magic_mismatch",
-                    "rejection_detail": (
-                        "GovInfo Link Service HTML error bytes were captured "
-                        "under a .pdf filename"
-                    ),
                 }
             )
-            continue
-        issuer, authority_class = REVIEWED_SOURCE_METADATA[filename]
-        candidates.append(
-            {
-                "source_document_id": source_document_id,
-                "manifest_position": row["manifest_position"],
-                "locator": locator,
-                "retrieved_at_utc": row["retrieved_at_utc"],
-                "source_url": row["source_url"],
-                "media_type": declared_media_type,
-                "byte_size": row["byte_size"],
-                "sha256": row["sha256"],
-                "issuing_authority": issuer,
-                "authority_class": authority_class,
-            }
+        candidates.sort(
+            key=lambda item: item["source_document_id"].encode("utf-8")
         )
-    candidates.sort(
-        key=lambda item: item["source_document_id"].encode("utf-8")
-    )
-    rejected.sort(key=lambda item: item["source_document_id"].encode("utf-8"))
-    if (
-        len(candidates) != EXPECTED_SOURCE_DOCUMENT_CANDIDATE_COUNT
-        or len(rejected) != EXPECTED_REJECTED_SOURCE_DOCUMENT_COUNT
-    ):
-        raise ValueError("legal source acceptance/rejection census drift")
-    manifest_identity = {
-        "locator": _full_file_locator(CAPTURE_MANIFEST_FILENAME, manifest_raw),
-        "row_count": len(manifest_rows),
-        "declared_source_byte_size": sum(
-            row["byte_size"] for row in manifest_rows
-        ),
-    }
-    return manifest_identity, candidates, rejected
+        rejected.sort(
+            key=lambda item: item["source_document_id"].encode("utf-8")
+        )
+        if (
+            len(candidates) != EXPECTED_SOURCE_DOCUMENT_CANDIDATE_COUNT
+            or len(rejected) != EXPECTED_REJECTED_SOURCE_DOCUMENT_COUNT
+        ):
+            raise ValueError("legal source acceptance/rejection census drift")
+        manifest_identity = {
+            "locator": _full_file_locator(
+                CAPTURE_MANIFEST_FILENAME, manifest_raw
+            ),
+            "row_count": len(manifest_rows),
+            "declared_source_byte_size": sum(
+                row["byte_size"] for row in manifest_rows
+            ),
+        }
+        _verify_capture_root_chain(directory_chain)
+        return manifest_identity, candidates, rejected
+    finally:
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
 
 
 def source_document_candidates(

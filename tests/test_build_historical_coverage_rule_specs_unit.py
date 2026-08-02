@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -67,6 +68,30 @@ def _configure_single_capture(
         {filename: (FIXTURE_ISSUER, "federal_statute")},
     )
     monkeypatch.setattr(builder, "REJECTED_SOURCE_METADATA", {})
+
+
+def _write_mode_0644(path: Path, raw: bytes) -> None:
+    path.write_bytes(raw)
+    path.chmod(0o644)
+
+
+def _single_capture_fixture(
+    capture_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> tuple[bytes, Path, Path]:
+    capture_root.mkdir(parents=True)
+    source_raw = b"%PDF-fixture\n"
+    manifest_raw = _manifest_row(source_raw)
+    _configure_single_capture(
+        monkeypatch,
+        manifest_raw,
+        declared_source_size=len(source_raw),
+    )
+    manifest_path = capture_root / builder.CAPTURE_MANIFEST_FILENAME
+    source_path = capture_root / "source.pdf"
+    _write_mode_0644(manifest_path, manifest_raw)
+    _write_mode_0644(source_path, source_raw)
+    return manifest_raw, manifest_path, source_path
 
 
 def _minimal_registry() -> dict:
@@ -285,8 +310,9 @@ def test_staged_manifest_must_match_frozen_identity(tmp_path, monkeypatch):
         manifest_raw,
         declared_source_size=len(source_raw),
     )
-    (capture_root / builder.CAPTURE_MANIFEST_FILENAME).write_bytes(
-        b"x" * len(manifest_raw)
+    _write_mode_0644(
+        capture_root / builder.CAPTURE_MANIFEST_FILENAME,
+        b"x" * len(manifest_raw),
     )
     with pytest.raises(ValueError, match="staged identity mismatch"):
         builder._verified_capture(capture_root)
@@ -346,18 +372,19 @@ def test_source_bytes_are_verified_before_media_classification(
         manifest_raw,
         declared_source_size=len(source_raw),
     )
-    (capture_root / builder.CAPTURE_MANIFEST_FILENAME).write_bytes(
-        manifest_raw
+    _write_mode_0644(
+        capture_root / builder.CAPTURE_MANIFEST_FILENAME,
+        manifest_raw,
     )
     source_path = capture_root / "source.pdf"
     if mutation == "symlink":
         target = tmp_path / "source-target.pdf"
-        target.write_bytes(source_raw)
+        _write_mode_0644(target, source_raw)
         source_path.symlink_to(target)
     elif mutation == "size":
-        source_path.write_bytes(source_raw + b"x")
+        _write_mode_0644(source_path, source_raw + b"x")
     elif mutation == "sha":
-        source_path.write_bytes(source_raw[:-2] + b"x\n")
+        _write_mode_0644(source_path, source_raw[:-2] + b"x\n")
 
     classified: list[bytes] = []
 
@@ -381,10 +408,11 @@ def test_verified_capture_uses_only_manifested_rows(tmp_path, monkeypatch):
         manifest_raw,
         declared_source_size=len(source_raw),
     )
-    (capture_root / builder.CAPTURE_MANIFEST_FILENAME).write_bytes(
-        manifest_raw
+    _write_mode_0644(
+        capture_root / builder.CAPTURE_MANIFEST_FILENAME,
+        manifest_raw,
     )
-    (capture_root / "source.pdf").write_bytes(source_raw)
+    _write_mode_0644(capture_root / "source.pdf", source_raw)
     (capture_root / "ambient-unmanifested.pdf").write_bytes(b"ignored")
 
     manifest, candidates, rejected = builder._verified_capture(capture_root)
@@ -403,3 +431,171 @@ def test_verified_capture_uses_only_manifested_rows(tmp_path, monkeypatch):
         "source.pdf", source_raw
     )
     assert candidates[0]["sha256"] == digest
+
+
+@pytest.mark.parametrize("target", ["manifest", "payload"])
+@pytest.mark.parametrize("mode", [0o600, 0o755])
+def test_staged_manifest_and_payload_require_exact_mode_0644(
+    target, mode, tmp_path, monkeypatch
+):
+    capture_root = tmp_path / "capture"
+    _, manifest_path, source_path = _single_capture_fixture(
+        capture_root, monkeypatch
+    )
+    {"manifest": manifest_path, "payload": source_path}[target].chmod(mode)
+
+    with pytest.raises(ValueError, match="mode 0644"):
+        builder._verified_capture(capture_root)
+
+
+@pytest.mark.parametrize("target", ["manifest", "payload"])
+def test_staged_manifest_and_payload_reject_hardlinks(
+    target, tmp_path, monkeypatch
+):
+    capture_root = tmp_path / "capture"
+    _, manifest_path, source_path = _single_capture_fixture(
+        capture_root, monkeypatch
+    )
+    target_path = {"manifest": manifest_path, "payload": source_path}[target]
+    os.link(target_path, tmp_path / f"{target}-hardlink")
+
+    with pytest.raises(ValueError, match="link count must be one"):
+        builder._verified_capture(capture_root)
+
+
+@pytest.mark.parametrize("target", ["manifest", "payload"])
+@pytest.mark.parametrize("kind", ["fifo", "directory"])
+def test_staged_manifest_and_payload_reject_nonregular_files(
+    target, kind, tmp_path, monkeypatch
+):
+    capture_root = tmp_path / "capture"
+    _, manifest_path, source_path = _single_capture_fixture(
+        capture_root, monkeypatch
+    )
+    target_path = {"manifest": manifest_path, "payload": source_path}[target]
+    target_path.unlink()
+    if kind == "fifo":
+        os.mkfifo(target_path, mode=0o644)
+    else:
+        target_path.mkdir(mode=0o644)
+
+    with pytest.raises(ValueError, match="regular file"):
+        builder._verified_capture(capture_root)
+
+
+@pytest.mark.parametrize("symlink_position", ["root", "intermediate"])
+def test_capture_path_rejects_symlinked_root_or_intermediate(
+    symlink_position, tmp_path, monkeypatch
+):
+    real_parent = tmp_path / "real-parent"
+    capture_root = real_parent / "capture"
+    _single_capture_fixture(capture_root, monkeypatch)
+    if symlink_position == "root":
+        supplied_root = tmp_path / "capture-link"
+        supplied_root.symlink_to(capture_root, target_is_directory=True)
+    else:
+        linked_parent = tmp_path / "linked-parent"
+        linked_parent.symlink_to(real_parent, target_is_directory=True)
+        supplied_root = linked_parent / "capture"
+
+    with pytest.raises(ValueError, match="root.*symlinked"):
+        builder._verified_capture(supplied_root)
+
+
+@pytest.mark.parametrize("target", ["manifest", "payload"])
+def test_staged_name_replacement_during_read_is_rejected(
+    target, tmp_path, monkeypatch
+):
+    capture_root = tmp_path / "capture"
+    manifest_raw, manifest_path, source_path = _single_capture_fixture(
+        capture_root, monkeypatch
+    )
+    target_path = {"manifest": manifest_path, "payload": source_path}[target]
+    target_raw = manifest_raw if target == "manifest" else b"%PDF-fixture\n"
+    target_inode = target_path.stat().st_ino
+    replacement = tmp_path / f"{target}-replacement"
+    _write_mode_0644(replacement, target_raw)
+    original_read = os.read
+    replaced = False
+
+    def replace_named_leaf(file_descriptor: int, size: int) -> bytes:
+        nonlocal replaced
+        if not replaced and os.fstat(file_descriptor).st_ino == target_inode:
+            replacement.replace(target_path)
+            replaced = True
+        return original_read(file_descriptor, size)
+
+    monkeypatch.setattr(builder.os, "read", replace_named_leaf)
+    with pytest.raises(ValueError, match="changed during sealed read"):
+        builder._verified_capture(capture_root)
+    assert replaced
+
+
+def test_descriptor_relative_opens_use_required_security_flags(
+    tmp_path, monkeypatch
+):
+    capture_root = tmp_path / "capture"
+    _single_capture_fixture(capture_root, monkeypatch)
+    original_open = os.open
+    calls: list[tuple[object, int, int | None]] = []
+
+    def record_open(
+        path: object,
+        flags: int,
+        mode: int = 0o777,
+        *,
+        dir_fd: int | None = None,
+    ) -> int:
+        calls.append((path, flags, dir_fd))
+        return original_open(path, flags, mode, dir_fd=dir_fd)
+
+    monkeypatch.setattr(builder.os, "open", record_open)
+    builder._verified_capture(capture_root)
+
+    assert calls[0][0] == "/"
+    assert calls[0][2] is None
+    assert all(dir_fd is not None for _, _, dir_fd in calls[1:])
+    directory_calls = [call for call in calls if call[1] & os.O_DIRECTORY]
+    leaf_calls = [call for call in calls if not call[1] & os.O_DIRECTORY]
+    assert directory_calls
+    assert {call[0] for call in leaf_calls} == {
+        builder.CAPTURE_MANIFEST_FILENAME,
+        "source.pdf",
+    }
+    for _, flags, _ in directory_calls:
+        assert flags & os.O_NOFOLLOW
+        assert flags & os.O_CLOEXEC
+    for _, flags, _ in leaf_calls:
+        assert flags & os.O_NOFOLLOW
+        assert flags & os.O_NONBLOCK
+        assert flags & os.O_CLOEXEC
+
+
+def test_leaf_swap_to_fifo_between_stat_and_open_cannot_block(
+    tmp_path, monkeypatch
+):
+    capture_root = tmp_path / "capture"
+    _single_capture_fixture(capture_root, monkeypatch)
+    source_path = capture_root / "source.pdf"
+    original_open = os.open
+    swapped = False
+
+    def replace_with_fifo_before_open(
+        path: object,
+        flags: int,
+        mode: int = 0o777,
+        *,
+        dir_fd: int | None = None,
+    ) -> int:
+        nonlocal swapped
+        if path == "source.pdf" and not swapped:
+            source_path.unlink()
+            os.mkfifo(source_path, mode=0o644)
+            swapped = True
+            assert flags & os.O_NONBLOCK
+        return original_open(path, flags, mode, dir_fd=dir_fd)
+
+    monkeypatch.setattr(builder.os, "open", replace_with_fifo_before_open)
+    with pytest.raises(ValueError, match="changed during sealed open"):
+        builder._verified_capture(capture_root)
+    assert swapped
