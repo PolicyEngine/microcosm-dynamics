@@ -32,10 +32,16 @@
 - Confirmed benchmark tests live in `tests/test_benchmarks.py`; their frozen seed
   prefix identities stay fixed while current registry/history/wall identities
   and census expectations must advance with the tranche.
+- Verified the staging manifest before reading it: 12,042 bytes, 30 canonical
+  entries, SHA-256 `72c180e8d162d9cc09017c355214ba0f9e1175b2d79f294ec2de96ee28cb2e1a`.
+- Verified all seven audited capture hashes before parsing: CBO 55038
+  supplemental, all three CBO 60392 workbooks, both MINT table pages, and the
+  committed SSA Supplement 4.B snapshot all match the inventory exactly.
 
 ## Next
 
-- Verify every referenced capture against `manifest.jsonl` before reading it.
+- Parse and independently cross-check every registered source value and exact
+  locator from the now-verified captures.
 - Add focused schema tests for null model values restricted to missing modules.
 - Add and validate all 60 rows, append one history evaluation, and bind the run
   manifest to the final registry commit.
