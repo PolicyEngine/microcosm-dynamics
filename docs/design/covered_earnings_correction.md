@@ -43228,8 +43228,9 @@ only the completed successor assignment:
 | mandatory logical members | 820,709,179,087 | 263,680,073,870 |
 | explicit-arm members / containers | 4,736,892 / 58,517 | 1,021,487 / 8,614 |
 | analytic-arm members | 820,704,442,195 | 263,679,052,383 |
-| analytic renderable members / containers / intervals | 820,701,994,620 / 9,019 / 67,594 | 263,679,052,383 / 1,638 / 1,638 |
-| analytic unrenderable members / containers | 2,447,575 / 36 | 0 / 0 |
+| analytic renderable members / containers / intervals | 820,701,994,620 / 9,019 / 38,289 | 263,679,052,383 / 1,638 / 1,638 |
+| analytic unrenderable members / containers / intervals | 2,447,575 / 36 / 29,305 | 0 / 0 / 0 |
+| all analytic intervals | 67,594 | 1,638 |
 | threshold identity | 4,736,892 + 820,704,442,195 | 1,021,487 + 263,679,052,383 |
 | all-member empty-object floor `3N+2` | 2,462,127,537,263 bytes | 791,040,221,612 bytes |
 | exact binary TiB of that successor floor | — | 0.71944689044539700262248516082763671875 |
@@ -43296,6 +43297,40 @@ therefore 73,489 T-plus, 16,110 T-minus, 5,028 compiled fields, 5,126 numeric
 range entries, and 263,680,073,870 logical members. The physical artifact
 remains unconstructible and may not be truncated, sampled, or replaced by an
 analytic surrogate.
+
+#### 24.5.4 Revision-12 full-relation identity
+
+`revision_12_full_relation_identity` is the closed six-position JSON value
+array:
+
+~~~text
+[
+  "revision_12_full_relation_identity",
+  numeric_grammar_derivation_row_count,
+  numeric_grammar_derivation_keyset_sha256,
+  numeric_grammar_derivation_domain_sha256,
+  field_source_derivation_canonical_byte_count,
+  field_source_derivation_canonical_sha256
+]
+~~~
+
+Positions are zero-based and retain §22.5.2's construction. Position 1 is the
+JSON integer 89,599, excluding booleans. Position 2 hashes the terminal-LF
+§10.1 canonical array of every `numeric_grammar_derivation_id` in complete
+successor-row order. Position 3 hashes the terminal-LF §10.1 canonical array
+of all 89,599 complete threshold-selected 16-key successor rows in that same
+order, including §24's unit and terminal consequences. Positions 4 and 5 are
+the byte length and SHA-256 of terminal-LF §10.1 canonical bytes of the
+complete nine-key `field_source_derivation`. The identity is not inside either
+preimage and creates no self-reference. Hashes are lowercase 64-hex strings;
+byte counts are nonnegative JSON integers excluding booleans.
+
+D10 fixes this construction, not guessed future values. After D10, a normal
+build and a separately implemented fresh `--check` must exact-match all six
+positions before Q5; that matched array then becomes the immutable
+revision-12 aggregate pin. It cannot be copied from revision 11: the completed
+unit relation changes terminal and member-row bytes. A later mismatch requires
+a design successor and cannot be repaired by repinning revision 12.
 
 ### 24.6 Mandatory Amendment-10 vectors
 
@@ -43403,27 +43438,106 @@ The exact design-family dispositions are:
 | §23 `missing_reason_code` under-determination | escalated unresolved by §24.10 |
 | earlier comparator and lifecycle successors | historical dispatch unchanged; replaced only for post-D10 registration by §§24.8-24.9 |
 
-`amendment_10_derived_unit_authority_closure_sweep.v1` has exactly these ten
-keys in order: `schema_version`, `ordered_passage_ids`, `rows`,
-`passage_count`, `source_interval_domain_sha256`, `forward_edge_sha256`,
-`reverse_edge_sha256`, `unresolved_passage_ids`, `status`, and
-`failure_disposition`. Each row has exactly `passage_id`, `source_section`,
-`start_byte`, `end_byte`, `source_sha256`, `disposition`, `successor_id`, and
-`reason`, in that order. Rows are ordered by `(start_byte,end_byte,passage_id)`,
-use nonnegative JSON-integer half-open intervals in the accepted D10 blob,
-exclude booleans, and exact-cover every passage reached by the closure search.
+Before §24.10.2 step 2 accepts candidate bytes, construct
+`amendment_10_derived_unit_authority_closure_sweep.v1`. It retains §19.4.3's
+exact 11-key schema and order: `schema_version`, `design_corpus_ranges`,
+`search_terms`, `consumer_edges`, `consumer_edge_count`,
+`consumer_edge_domain_sha256`, `matched_passages`, `matched_passage_count`,
+`matched_passage_domain_sha256`, `unresolved_passage_ids`, and `status`.
+Corpus-range rows retain exact keys `start_byte`, `end_byte`, and
+`range_sha256`; edge rows retain `source_passage_id`, `consumer_passage_id`,
+and `consumer_relation`; matched rows retain `passage_id`, `start_byte`,
+`end_byte`, `matched_terms`, `consumer_reachable_passage_ids`, `disposition`,
+`successor_anchors`, and `disposition_reason_code`, all in inherited order.
+All §19.4.3 exact types, terminal-LF §10.1 canonicalization, count/domain-hash
+equations, and lowercase-hex laws remain.
 
-The closed disposition vocabulary is `replaced_by_named_successor`,
-`composed_with_named_successor`,
-`superseded_by_construction_by_named_successor`,
-`escalated_unresolved_by_named_successor`, and
-`lawfully_unchanged_with_reason`. The first four require a nonempty defined
-`successor_id`; the last requires a nonempty `reason`. Both edge digests cover
-the complete passage/successor bipartite relation in their named directions.
-Acceptance requires exact-empty `unresolved_passage_ids`, `status: "pass"`,
-`failure_disposition: "abort_ratification"`, independent second-sweep
-agreement, and reproduction from accepted D10 bytes. Missing, overlapping,
-merged, extra, undefined, or differently dispositioned rows abort.
+The normative corpus is every candidate byte in §§1-24 except exactly the
+eight comparator-table intervals named by §24.8. Its ascending, nonempty,
+disjoint half-open ranges concatenate to precisely those bytes. Passage
+segmentation is §19.4.3's first-matching physical-line law for fenced blocks,
+ATX headings, table rows, lists with continuations, display equations,
+paragraph runs, and excluded blank lines; it exact-partitions every nonblank
+corpus byte.
+
+For this sweep `search_terms` is exactly the following case-sensitive literal
+array in displayed order, without case folding, separator substitution,
+stemming, pluralization, or fuzzy matching:
+
+~~~text
+typed_value_unit
+missing_reason_code
+source_description
+declared_typed_value_unit
+value-denotation
+Actual
+no_unit_derivable
+unadjudicated_no_denotation
+defeated_denotation_statement
+conflicting_statement_units
+UNIT_VOCABULARY
+CLAUSE_TABLE
+ANCHORS
+normalize_description
+statement_disposition
+field_unit
+successor_status
+derivation_status
+unresolved_typed_value_unit_no_source_authority
+incomplete_source_numeric_authority
+numeric_grammar_derivation_rows
+field_source_derivation
+pass_with_closed_failures
+renderable_member_rows
+unrenderable_member_rows
+arm_ambiguous_member_rows
+revision_11_full_relation_identity
+revision_12_full_relation_identity
+Q5
+D9
+D10
+--check
+fitting_free_requirement_verification_specs
+fitting_free_model_input_authority_capture_registration
+covered_earnings_path_applicability_registry_bundle
+covered_earnings_path_applicability_receipt
+~~~
+
+Literal matches are seeds, not a ceiling. `consumer_edges` exact-covers every
+direct normative dependency where a passage names, inherits, copies,
+exact-compares, foreign-keys, hashes, version-dispatches, validates, or takes a
+consequence from another. Relations and ordering are exactly §19.4.3's seven
+member vocabulary and source-start/consumer-start/relation order. Every seed
+passage and every transitively reachable consumer appears once in
+`matched_passages`; its reachable array is the complete unique transitive
+closure in target-start then passage-ID order.
+
+Each passage ID is literal `amendment-10-passage:` plus SHA-256 of terminal-LF
+§10.1 canonical bytes of `[start_byte,end_byte,matched_terms]`. Rows follow
+start byte. This sweep replaces only §19.4.3's three-value disposition and
+reason domains with these five exact pairs:
+
+| `disposition` | `disposition_reason_code` |
+|---|---|
+| `replaced-by-named-successor` | `named_schema_or_law_replacement` |
+| `composed-with-named-successor` | `named_law_composition` |
+| `superseded-by-construction-by-named-successor` | `named_successor_census_supersession` |
+| `escalated-unresolved-by-named-successor` | `named_unresolved_successor_escalation` |
+| `lawfully-unchanged-with-reason` | `exact_law_preserved_outside_replacement_scope` |
+
+`successor_anchors` remains a nonempty unique array in corpus-anchor then
+unsigned-UTF-8 order and every member resolves to §§24.3-24.10 or exact
+preserved law. Repeated physical passages remain separate rows.
+
+Status passes exactly when ranges reconstruct the candidate corpus,
+segmentation covers every nonblank byte, two independently constructed edge
+arrays exact-match, every seed and graph-reachable passage occurs once, every
+reachable array equals graph closure, both counts and domain hashes reproduce,
+all dispositions resolve, and `unresolved_passage_ids` is exact empty. Step 2
+uses the exact candidate bytes it proposes to accept; after step 3, validation
+requires the D10 blob to byte-equal that candidate and reproduces the same
+sweep. Missing, overlapping, merged, extra, undefined, silently retained, or
+differently dispositioned passages abort ratification.
 
 ### 24.8 Complete revision-12 design-comparator disposition
 
@@ -43653,19 +43767,24 @@ Its identity children are D2-D10 and commits are `[A,H_cap]`. Each of its ten
 ordered blob rows—roles `amendment_2_ratification` through
 `amendment_10_ratification`, then `capture_head`—has exactly `role`, `commit`,
 `path`, `tree_mode`, `blob_oid`, and `raw_sha256`, in that order. Count is
-integer ten; status is `pass | fail`; failure is
-`abort_without_accepted_authority_pair`.
+integer ten excluding booleans; `design_blob_domain_sha256` is lowercase
+64-hex SHA-256 of the terminal-LF §10.1 canonical complete ten-row array;
+`canonicalization` is the frozen common inherited literal; status is
+`pass | fail`; failure is `abort_without_accepted_authority_pair`.
 
 `verify_amendment_10_capture_registration_repository_identity_v1` is true
-exactly when the strict v9 authorization reproduces its digest and D2-D10
-children; all nine ratification blobs and seven prefix comparisons pass;
+exactly when every proof shape, scalar type, member order, row order, count,
+canonicalization, and domain-hash equation passes; the strict v9 authorization
+reproduces its digest and D2-D10 children; all nine ratification blobs and
+seven prefix comparisons pass;
 same-path bytes at H_cap equal D10;
 `D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < A <= H_cap`;
 authorization bytes remain unchanged A-through-H_cap; all ten blob rows match
 observed commits, modes, OIDs, hashes, and raw bytes; and every inherited
-descriptor-free repository, tracked-state, clean-checkout, implementation-tree,
-and authorization-byte conjunct passes. The proof freezes before descriptors
-and has no receipt or future commit.
+descriptor-free repository, tracked-state, clean-checkout,
+implementation-tree, and authorization-byte conjunct passes. Proof status is
+`pass` exactly when that Boolean is true and `fail` otherwise. The proof
+freezes before descriptors and has no receipt or future commit.
 
 `fitting_free_model_input_authority_capture_claim.v9` has exactly these eight
 keys in order:
@@ -43743,6 +43862,19 @@ and hashes. `authority_status` passes iff all 22 Booleans do. V-B6 remains
 nonpassing, so no accepted v9 domain presently exists; predecessor, copied,
 carrier, empty-dependency, stale-unit, or stale-member-row reads fail.
 
+It also retains every inherited preimage/result keyset and equation, evidence
+identity, row-order, count, domain-digest, authority-cutoff, and top-status
+law. `ordered_requirement_ids` is exactly the registry's 22-member array and
+`requirement_count` is the JSON integer 22 excluding booleans and equals both
+array lengths. `requirement_domain_sha256` hashes the terminal-LF §10.1
+canonical complete 22-row array; every row's `evidence_identity_sha256`
+hashes its complete ordered evidence preimage under the inherited
+construction; and `authority_cutoff_sha256` binds the accepted authority
+cutoff rather than a proposed or predecessor cutoff. Top `status` is `pass`
+exactly when schema, type, order, count, canonicalization, evidence, cutoff,
+domain-hash, and all authority equations pass and `authority_status` is
+`pass`; it is `fail` otherwise.
+
 `covered_earnings_path_applicability_registry_bundle.v10` has exactly these 16
 keys in order:
 
@@ -43772,6 +43904,10 @@ exact-empty applicable consumer guards—never G17, configuration, or a
 predecessor bundle. No accepted v10 bundle exists while v9 domain is
 nonpassing or the required physical artifact is unconstructible; attempted
 construction aborts before bundle emission.
+The bundle retains every v9 child's exact schema, scalar and member types,
+equations, member order, row order, count and digest bindings, and cross-child
+identity law except that its own `schema_version` is v10 and the embedded
+fitting-free registry is the freshly reconstructed complete v9 registry.
 
 #### 24.9.3 Receipt and selected-registration successors
 
@@ -43858,6 +43994,8 @@ The complete lifecycle set has exactly these 16 identifiers in order:
 The sole nonlifecycle schema is the fully defined
 `amendment_10_derived_unit_authority_closure_sweep.v1`. The exact successor
 inventory is therefore those 16 followed by that singleton: 17 total.
+`revision_12_full_relation_identity` is the six-position aggregate value
+defined by §24.5.4, not a schema, registered identifier, or new relation.
 `psid_derived_typed_value_unit_relation.v1` and
 `psid_successor_terminal_census.v1` are not identifiers and may not enter a
 registry, receipt, payload, or version dispatch. The statement, candidate,

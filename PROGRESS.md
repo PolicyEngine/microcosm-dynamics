@@ -4,8 +4,8 @@
 
 Round-1 remediation is in progress. The frozen input relation, source-wide
 semantic census, strict reproduction gate, downstream storage join, and full
-§24 rewrite are complete. Independent prose audit and final verification
-remain.
+§24 rewrite are complete. The independent arithmetic and lifecycle prose audit
+is incorporated. Selector-semantic closure and final verification remain.
 
 ## Done
 
@@ -57,8 +57,14 @@ remain.
   two-under-determination lifecycle account. The four embedded source-relation
   fences byte-match the final machinery outputs and all three authored JSON
   fences strict-parse.
+- Corrected the analytic-interval split to 38,289 renderable and 29,305
+  unrenderable intervals (67,594 total), defined the revision-12 aggregate
+  relation identity, restored the inherited closure-sweep construction, and
+  made every capture/domain/bundle shape, ordering, count, digest, status, and
+  cross-binding equation explicit.
 
 ## Next
 
-- Resolve independent rewrite-audit findings; rerun verification after the
-  document commit; write the external report; remove this ledger.
+- Close the semantic-selector and general longer-phrase laws; regenerate every
+  affected relation and pin; rerun verification; write the external report;
+  remove this ledger.
