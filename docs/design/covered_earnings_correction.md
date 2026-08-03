@@ -41516,8 +41516,8 @@ positive law — a field keeps a unit under §24 exactly when its normalized
 description contains one of these byte strings and no other statement of its
 own names a different one. The fence has exactly 1,227 lines and
 184,780 bytes, with SHA-256
-`a613bf1fbdfe4110fdb87be0d9a12668dd9187137325bd24bfb1b26f2d71fd92`; the same rows as one canonical
-JSON array hash to
+`a613bf1fbdfe4110fdb87be0d9a12668dd9187137325bd24bfb1b26f2d71fd92`;
+the same rows as one canonical JSON array hash to
 `0661174c427f66b4dfc22d6734f7c6e85ff6836b201a7fbcd94c3908d92d9df8`.
 Every line is pure ASCII, contains no backtick and no tilde run, and parses as
 exactly one three-position JSON array; a line failing any of those blocks
@@ -42779,8 +42779,10 @@ descending size, are:
 The contrast that shows the discipline is internal to the corpus: `the actual
 age in years (45-96) at which Head may retire with full benefits` takes `year`
 because the prose writes `in years`, and `the actual age (01-97) of the
-householder` takes nothing because it does not. Both spellings are in the
-statement relation above and below.
+householder` takes nothing because it does not. The first is a verbatim row
+of the unit-bearing relation above; the second is not, because a statement
+that names no unit is law only through the default and appears in the
+digest-pinned complete statement table rather than in that fence.
 
 ### 24.4 The unit-absent disposition and the successor census
 
@@ -42978,7 +42980,7 @@ under the closed clause table. Every moved field's successor
 the unit precondition is the only construction gate that failed — every
 earlier gate passed, which is why the ratified classification compiled it.
 
-The complete movement relation is the ordered array of six-member objects
+The complete movement relation is the ordered array of seven-member objects
 `interview_wave`, `raw_field_id`, `source_artifact`, `ratified_status`,
 `successor_status`, `resolution_reason`, `unit_absence_reason` in denominator
 order; it hashes to
@@ -43004,10 +43006,11 @@ and gains exactly one row:
 | `incomplete_source_numeric_authority` | `literal_only_zero_diagnostic_padding_capacity` | 767 |
 | `incomplete_source_numeric_authority` | `unresolved_typed_value_unit_no_source_authority` | 15,251 |
 
-The seven inherited rows are byte-identical in reason literal and, for the six
-that §24 does not touch, in field-key membership. The eighth row is new. The
-complete successor artifact is 272,300
-bytes and hashes to
+All seven inherited rows are byte-identical in reason literal and in
+field-key membership: no field leaves a failure terminal under §24, and the
+813 fields already at `incomplete_source_numeric_authority` keep the earlier
+construction gate §20.3.7's rule assigns them. The eighth row is new. The
+complete successor artifact is 272,300 bytes and hashes to
 `6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e`.
 The ratified 21,034-byte seven-row artifact hashing to
 `66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324`
@@ -43065,6 +43068,15 @@ one is of the ratified relation.
 | arm-ambiguous renderable members of the arm-ambiguous branch | 56,480 | 13,303 |
 | arm-invariant renderable members of that branch | 327,655 | 106,795 |
 | rejected counterfactual pair, arm-ambiguous counted unrenderable | 4,753,875 and 820,704,425,212 | 974,926 and 263,612,627,002 |
+
+Two of those rows carry a ratified value §22.4.5 does not itself publish:
+the explicit-arm container count and the analytic-arm interval count are
+recomputed here for both columns so that the successor column has a stated
+predecessor, and neither is asserted to be a pinned §22.4.5 figure. Every
+other ratified value in the table is byte-for-byte the figure §22.4.5 pins,
+and the 0.719-TiB successor entry is the exact quotient
+0.719265522808200330473482608795166015625 rounded down for display exactly as
+§22.4.5 displays 2.239 for its own quotient.
 
 The 325-byte and 260-byte per-shape multipliers are unchanged: they are
 serializations of the inherited seven-key renderable row and four-key
@@ -43144,8 +43156,8 @@ range members.
 **What it does not repair.** The `pass_with_closed_failures` artifact remains
 physically unconstructible, and Amendment 10 does not claim otherwise. The
 successor shortest lawful member-row floor is 85,674,104,100,325 bytes,
-which is 77.9201437583878941950388252735137939453125 TiB and above 59 times the
-measured ~1.304 TiB capacity. Amendment 8's third discovered unsatisfiable law
+which is 77.9201437583878941950388252735137939453125 TiB and
+above 59 times the measured ~1.304 TiB capacity. Amendment 8's third discovered unsatisfiable law
 is a fact about the explicit-array requirement and the surviving member
 population, not about the unit; shrinking the compiled relation by 76.6 per
 cent of its fields leaves the floor two orders of magnitude above capacity.
@@ -43162,9 +43174,8 @@ per-status field-key digests remain exactly as ratified, and §24 publishes new
 values under new names rather than replacing the old ones in place. It does
 not scope §19.3.2's requirement: the requirement reaches every
 numeric-required row with nonempty `R`, exactly as written, and 15,251 fields
-fail it. It does
-not define a default unit, a tolerated unit, an inherited unit, or an
-evidence-sourced unit. And it does not repair `missing_reason_code`, the
+fail it. It does not define a default unit, a tolerated unit, an inherited
+unit, or an evidence-sourced unit. And it does not repair `missing_reason_code`, the
 second member the codebook derivation lane found under-determined for the same
 reason; that member is outside Amendment 10 and is escalated at §24.10.
 
@@ -43303,7 +43314,8 @@ This is the gate the whole section rests on and it can fail.
    changed denominator falsifies the whole section rather than being absorbed
    by it.
 3. Derive every field's unit under §24.3, apply §24.4.2's extension, and
-   require the ten successor counts `4,491 / 119 / 42 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 16,064`,
+   require the ten successor counts
+   `4,491 / 119 / 42 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 16,064`,
    the count-array digest
    `b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a`, and the
    ordered-assignment digest
