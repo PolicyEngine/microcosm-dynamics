@@ -39,6 +39,9 @@ from typing import Any
 
 __all__ = [
     "ANCHORS",
+    "ACTUAL_CANDIDATES",
+    "ACTUAL_CLAUSE_TABLE",
+    "ACTUAL_NO_DENOTATION_CANDIDATES",
     "ARTIFACT_PARTITION",
     "CLAUSE_TABLE",
     "COMPILED_TERMINALS",
@@ -50,10 +53,17 @@ __all__ = [
     "UNIT_VOCABULARY",
     "VALUE_SUBJECT_ANCHORS",
     "VARIABLE_DENOTATION_ANCHORS",
+    "actual_candidate_disposition",
+    "actual_candidate_table",
+    "actual_candidates",
     "artifact_of_position",
     "canonical_json_bytes",
     "canonical_sha256",
     "clause_occurrences",
+    "description_statements",
+    "denotation_candidate_disposition",
+    "denotation_candidate_table",
+    "denotation_candidates",
     "extract_statements",
     "failure_reason_rows",
     "field_unit",
@@ -144,10 +154,196 @@ VARIABLE_DENOTATION_ANCHORS: tuple[str, ...] = (
     "this variable represents ",
 )
 
-ANCHORS: tuple[str, ...] = VALUE_SUBJECT_ANCHORS + VARIABLE_DENOTATION_ANCHORS
+#: Additional exact openers whose verb or construction directly states what
+#: the complete value domain denotes.  The deliberately narrow weekly-food
+#: opener is the only ``The actual ...`` family admitted by a wildcard-free
+#: anchor; the other ``Actual ...`` source lines are closed below one spelling
+#: at a time.
+DIRECT_DENOTATION_ANCHORS: tuple[str, ...] = (
+    *VARIABLE_DENOTATION_ANCHORS,
+    "Coded value represents ",
+    "The data coded here represent ",
+    "The code value represents ",
+    "The code values for this variable represent ",
+    "These values represent ",
+    "The code values represent ",
+    "The range of values for this variable represents ",
+    "The values here represent ",
+    "The values in this variable represent ",
+    "The values represent ",
+    "This four digit variable represents ",
+    "Values represent ",
+    "The actual weekly food needs ",
+)
+
+_SEQUENCE_NUMBER_DENOTATIONS: tuple[str, ...] = (
+    "The actual 1985 sequence number (V30490) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1986 sequence number (V30517) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1987 sequence number (V30555) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1988 sequence number (V30591) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1989 sequence number (V30607) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1990 sequence number (V30643) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1991 sequence number (V30643) of the individual who produced "
+    "the income is coded here.",
+    "The actual 1992 sequence number (V30734) of the individual who produced "
+    "the income is coded here.",
+)
+
+#: Exact or prefix openers whose unit-bearing predicate includes the opener
+#: itself.  Keeping the opener prevents phrases such as ``number of minutes``
+#: and ``month coded here`` from being stripped before clause matching.
+FULL_PREDICATE_ANCHORS: tuple[str, ...] = (
+    "The actual number of minutes taken by the interviewer to administer the "
+    "questionnaire is coded here.",
+    "The condition of the car in best shape is coded here",
+    "The month coded here ",
+    "The values in this variable refer ",
+    "This variable contains ",
+    "This variable indicates ",
+    "This variable refers to ",
+    *_SEQUENCE_NUMBER_DENOTATIONS,
+)
+
+#: Openers that name only a stated subrange.  They are selected so the
+#: spelling relation records their explicit no-whole-domain adjudication, but
+#: they can never establish the common unit of the complete domain.
+SUBRANGE_DENOTATION_ANCHORS: tuple[str, ...] = (
+    "Each family involved in such a living arrangement has nonzero values "
+    "here that represent ",
+    "The negative values indicate ",
+    "The values for this variable are in the range ",
+    "Values in the range ",
+    "the value here represents ",
+    "values in the range ",
+)
+
+ANCHORS: tuple[str, ...] = (
+    VALUE_SUBJECT_ANCHORS
+    + DIRECT_DENOTATION_ANCHORS
+    + FULL_PREDICATE_ANCHORS
+    + SUBRANGE_DENOTATION_ANCHORS
+)
 
 #: Verbs that make a value-subject opener a whole-domain denotation.
-DENOTATION_VERBS: tuple[str, ...] = ("represent ", "represents ")
+DENOTATION_VERBS: tuple[str, ...] = (
+    "denote ",
+    "denotes ",
+    "indicate ",
+    "indicates ",
+    "refer to ",
+    "refers to ",
+    "represent ",
+    "represents ",
+    "simply equal ",
+    "sum ",
+)
+
+#: Exhaustive frozen-corpus adjudication of every raw description-line tail
+#: beginning with the exact bytes ``Actual ``.  Unknown future spellings are
+#: still selected by the residual selector, but fail closed as unadjudicated
+#: no-denotations until this table is amended and re-ratified.
+ACTUAL_CANDIDATES: tuple[str, ...] = (
+    "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)",
+    "Actual - Required rooms V381 = 5 - 9",
+    "Actual Minus Required Rooms for Family",
+    "Actual Minus Required Rooms for Family (1969)",
+    "Actual Minus Required Rooms for Family (1981)",
+    "Actual Minus Required Rooms for Family of This Size, Age and Sex "
+    "Composition (V102, V124)",
+    "Actual Minus Required Rooms for the 1983 Family",
+    "Actual Minus Required Rooms for the 1984 Family",
+    "Actual Minus Required Rooms for the 1985 Family",
+    "Actual Minus Required Rooms for the FU (1982)",
+    "Actual age",
+    "Actual age in years",
+    "Actual age of Head",
+    "Actual age of Head 98",
+    "Actual age of Head's oldest child",
+    "Actual age of Head's second oldest child",
+    "Actual age of Head's third oldest child",
+    "Actual age of Wife",
+    "Actual age of Wife or Permanent Friend",
+    "Actual age of youngest child",
+    "Actual average income",
+    "Actual dollar amount",
+    "Actual dollar amount of Head's labor income",
+    "Actual dollar amount of transfers",
+    "Actual dollar and cents per hour",
+    "Actual dollars and cents per hour",
+    "Actual dollars and cents per hour.",
+    "Actual dollars per week",
+    "Actual expenditure in hundreds of dollars",
+    "Actual expenditure in hundreds of dollars.",
+    "Actual hourly amount",
+    "Actual hourly rate",
+    "Actual hourly wage",
+    "Actual hours per week",
+    "Actual hours worked per week",
+    "Actual income/needs ratio",
+    "Actual interview number was coded: 0001-6620)",
+    "Actual marginal tax rate",
+    "Actual minus required rooms for family",
+    "Actual number",
+    "Actual number in FU",
+    "Actual number in Family Unit",
+    "Actual number in family unit",
+    "Actual number of children",
+    "Actual number of days",
+    "Actual number of dollars",
+    "Actual number of exemptions",
+    "Actual number of hours",
+    "Actual number of hours per week",
+    "Actual number of hours per year",
+    "Actual number of hours worked",
+    "Actual number of miles",
+    "Actual number of miles to work",
+    "Actual number of minutes",
+    "Actual number of months",
+    "Actual number of people",
+    "Actual number of persons",
+    "Actual number of persons in FU",
+    "Actual number of states and/ or countries)",
+    "Actual number of weeks",
+    "Actual number of weeks in 1979",
+    "Actual number of weeks missed because Wife ill in 1979",
+    "Actual number of weeks missed because someone else was ill in 1979",
+    "Actual number of weeks missed because someone else was ill in 1980",
+    "Actual number of weeks missed in 1979",
+    "Actual number of weeks missed in 1980",
+    "Actual number of weeks of vacation in 1979",
+    "Actual number of weeks of vacation in 1980",
+    "Actual number of weeks on strike in 1979",
+    "Actual number of weeks on strike in 1980",
+    "Actual number of weeks unemployed in 1979",
+    "Actual number of weeks unemployed in 1980",
+    "Actual number of weeks worked",
+    "Actual number of weeks worked in 1979",
+    "Actual number of weeks worked in 1980",
+    "Actual number of years",
+    "Actual number of years from now",
+    "Actual number of years later",
+    "Actual percent",
+    "Actual percent of time Wife/friend worked",
+    "Actual score:",
+    "Actual year",
+)
+
+#: These two tails occur inside a composite-index recipe and describe an
+#: input predicate, not the value of the field whose description carries
+#: them.  Every other member of ``ACTUAL_CANDIDATES`` is an adjudicated
+#: whole-domain denotation, including those that name no lawful unit.
+ACTUAL_NO_DENOTATION_CANDIDATES: frozenset[str] = frozenset(
+    {
+        "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)",
+        "Actual - Required rooms V381 = 5 - 9",
+    }
+)
 
 
 def _statement_end(text: str, index: int) -> int:
@@ -195,9 +391,80 @@ def extract_statements(text: str) -> tuple[str, ...]:
     return tuple(found)
 
 
+def actual_candidates(description: str | None) -> tuple[str, ...]:
+    """Return every residual raw-line tail beginning with ``Actual ``.
+
+    The source derivation preserves LF line boundaries.  This selector scans
+    every line, including four corpus lines where questionnaire text precedes
+    the candidate, and returns the bytes from the first exact ``Actual `` on
+    that line through its end.  It therefore sees every residual candidate;
+    the closed adjudication decides whether the candidate is a denotation.
+    """
+
+    if description is None:
+        return ()
+    found: list[str] = []
+    for line in description.split("\n"):
+        index = line.find("Actual ")
+        if index >= 0:
+            found.append(line[index:])
+    return tuple(found)
+
+
+def denotation_candidates(description: str | None) -> tuple[str, ...]:
+    """Return the exhaustive source-wide semantic-audit candidates.
+
+    The normalized prose is partitioned unconditionally under the same
+    period/end law used by ``extract_statements``.  No opener or lexeme gates
+    selection: every byte belongs to one selected segment.  Exact raw-line
+    ``Actual ...`` residuals are appended because LF, unlike U+0020, is a
+    semantic boundary for that source family.  Consequently every possible
+    word-boundary statement under §24's own end law lies inside a candidate;
+    a future spelling also changes the pinned candidate relation before it can
+    affect production.
+    """
+
+    normalized = normalize_description(description)
+    found: list[str] = []
+    start = 0
+    while start < len(normalized):
+        stop = _statement_end(normalized, start)
+        found.append(normalized[start:stop])
+        if stop == len(normalized):
+            break
+        start = stop + 1
+    found.extend(actual_candidates(description))
+    return tuple(found)
+
+
+def actual_candidate_disposition(candidate: str) -> str:
+    """Return one residual candidate's closed semantic adjudication."""
+
+    if candidate in ACTUAL_NO_DENOTATION_CANDIDATES:
+        return "explicit_no_denotation"
+    if candidate in ACTUAL_CANDIDATES:
+        return "whole_domain_denotation"
+    return "unadjudicated_no_denotation"
+
+
+def description_statements(description: str | None) -> tuple[str, ...]:
+    """Return the union of primary and residual description selectors."""
+
+    primary = extract_statements(normalize_description(description))
+    residual = tuple(
+        candidate
+        for candidate in actual_candidates(description)
+        if actual_candidate_disposition(candidate)
+        != "explicit_no_denotation"
+    )
+    return tuple(dict.fromkeys((*primary, *residual)))
+
+
 def statement_anchor(statement: str) -> str:
     """Return the longest closed anchor that opens *statement*."""
 
+    if statement.startswith("Actual "):
+        return "Actual "
     return max((a for a in ANCHORS if statement.startswith(a)), key=len)
 
 
@@ -211,14 +478,70 @@ def statement_predicate(statement: str) -> str | None:
     predicate here and fails closed.
     """
 
+    if statement.startswith("Actual "):
+        if actual_candidate_disposition(statement) != (
+            "whole_domain_denotation"
+        ):
+            return None
+        return statement
     anchor = statement_anchor(statement)
     rest = statement[len(anchor) :]
-    if anchor in VARIABLE_DENOTATION_ANCHORS:
+    if anchor in SUBRANGE_DENOTATION_ANCHORS:
+        return None
+    if anchor in FULL_PREDICATE_ANCHORS:
+        return statement
+    if anchor in DIRECT_DENOTATION_ANCHORS:
         return rest
     for verb in DENOTATION_VERBS:
         if rest.startswith(verb):
             return rest[len(verb) :]
     return None
+
+
+def denotation_candidate_disposition(candidate: str) -> str:
+    """Return one exhaustive audit candidate's closed adjudication."""
+
+    actual_disposition: str | None = None
+    if candidate.startswith("Actual "):
+        prefixes = [
+            spelling
+            for spelling in ACTUAL_CANDIDATES
+            if candidate == spelling or candidate.startswith(spelling + " ")
+        ]
+        if not prefixes:
+            return "unadjudicated_no_denotation"
+        actual_disposition = actual_candidate_disposition(max(prefixes, key=len))
+        if candidate in ACTUAL_CANDIDATES:
+            return actual_disposition
+
+    found_whole = actual_disposition == "whole_domain_denotation"
+    found_nonwhole = actual_disposition == "explicit_no_denotation"
+    for index in range(len(candidate)):
+        if index and candidate[index - 1] != " ":
+            continue
+        anchor = max(
+            (a for a in ANCHORS if candidate.startswith(a, index)),
+            key=len,
+            default=None,
+        )
+        if anchor is None:
+            continue
+        if anchor in SUBRANGE_DENOTATION_ANCHORS:
+            found_nonwhole = True
+            continue
+        if anchor in DIRECT_DENOTATION_ANCHORS + FULL_PREDICATE_ANCHORS:
+            found_whole = True
+            continue
+        rest = candidate[index + len(anchor) :]
+        if any(rest.startswith(verb) for verb in DENOTATION_VERBS):
+            found_whole = True
+        else:
+            found_nonwhole = True
+    if found_whole:
+        return "contains_whole_domain_denotation"
+    if found_nonwhole:
+        return "explicit_no_whole_domain_denotation"
+    return "explicit_no_denotation"
 
 
 # --------------------------------------------------------------------------
@@ -233,6 +556,7 @@ NO_UNIT = "no_unit_derivable"
 UNIT_VOCABULARY: tuple[str, ...] = (
     "count",
     "day",
+    "hundreds_of_united_states_dollars",
     "hour",
     "hour_per_week",
     "hour_per_year",
@@ -243,8 +567,130 @@ UNIT_VOCABULARY: tuple[str, ...] = (
     "percent",
     "united_states_dollar",
     "united_states_dollar_per_hour",
+    "united_states_dollar_per_week",
     "week",
     "year",
+)
+
+#: The complete source-attested residual family.  Each adjudicated
+#: whole-domain ``Actual ...`` spelling has one verbatim full-span clause, so
+#: it cannot obtain a unit merely by inheriting a shorter substring.  The two
+#: explicit no-denotations are deliberately absent: they never reach clause
+#: matching at all.
+ACTUAL_CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
+    ("Actual Minus Required Rooms for Family", NO_UNIT),
+    ("Actual Minus Required Rooms for Family (1969)", NO_UNIT),
+    ("Actual Minus Required Rooms for Family (1981)", NO_UNIT),
+    (
+        "Actual Minus Required Rooms for Family of This Size, Age and Sex "
+        "Composition (V102, V124)",
+        NO_UNIT,
+    ),
+    ("Actual Minus Required Rooms for the 1983 Family", NO_UNIT),
+    ("Actual Minus Required Rooms for the 1984 Family", NO_UNIT),
+    ("Actual Minus Required Rooms for the 1985 Family", NO_UNIT),
+    ("Actual Minus Required Rooms for the FU (1982)", NO_UNIT),
+    ("Actual age", NO_UNIT),
+    ("Actual age in years", "year"),
+    ("Actual age of Head", NO_UNIT),
+    ("Actual age of Head 98", NO_UNIT),
+    ("Actual age of Head's oldest child", NO_UNIT),
+    ("Actual age of Head's second oldest child", NO_UNIT),
+    ("Actual age of Head's third oldest child", NO_UNIT),
+    ("Actual age of Wife", NO_UNIT),
+    ("Actual age of Wife or Permanent Friend", NO_UNIT),
+    ("Actual age of youngest child", NO_UNIT),
+    ("Actual average income", NO_UNIT),
+    ("Actual dollar amount", "united_states_dollar"),
+    (
+        "Actual dollar amount of Head's labor income",
+        "united_states_dollar",
+    ),
+    ("Actual dollar amount of transfers", "united_states_dollar"),
+    (
+        "Actual dollar and cents per hour",
+        "united_states_dollar_per_hour",
+    ),
+    (
+        "Actual dollars and cents per hour",
+        "united_states_dollar_per_hour",
+    ),
+    (
+        "Actual dollars and cents per hour.",
+        "united_states_dollar_per_hour",
+    ),
+    ("Actual dollars per week", "united_states_dollar_per_week"),
+    (
+        "Actual expenditure in hundreds of dollars",
+        "hundreds_of_united_states_dollars",
+    ),
+    (
+        "Actual expenditure in hundreds of dollars.",
+        "hundreds_of_united_states_dollars",
+    ),
+    ("Actual hourly amount", NO_UNIT),
+    ("Actual hourly rate", NO_UNIT),
+    ("Actual hourly wage", NO_UNIT),
+    ("Actual hours per week", "hour_per_week"),
+    ("Actual hours worked per week", "hour_per_week"),
+    ("Actual income/needs ratio", NO_UNIT),
+    ("Actual interview number was coded: 0001-6620)", NO_UNIT),
+    ("Actual marginal tax rate", NO_UNIT),
+    ("Actual minus required rooms for family", NO_UNIT),
+    ("Actual number", NO_UNIT),
+    ("Actual number in FU", "count"),
+    ("Actual number in Family Unit", "count"),
+    ("Actual number in family unit", "count"),
+    ("Actual number of children", "count"),
+    ("Actual number of days", "day"),
+    ("Actual number of dollars", "united_states_dollar"),
+    ("Actual number of exemptions", "count"),
+    ("Actual number of hours", "hour"),
+    ("Actual number of hours per week", "hour_per_week"),
+    ("Actual number of hours per year", "hour_per_year"),
+    ("Actual number of hours worked", "hour"),
+    ("Actual number of miles", "mile"),
+    ("Actual number of miles to work", "mile"),
+    ("Actual number of minutes", "minute"),
+    ("Actual number of months", "month"),
+    ("Actual number of people", "count"),
+    ("Actual number of persons", "count"),
+    ("Actual number of persons in FU", "count"),
+    ("Actual number of states and/ or countries)", "count"),
+    ("Actual number of weeks", "week"),
+    ("Actual number of weeks in 1979", "week"),
+    (
+        "Actual number of weeks missed because Wife ill in 1979",
+        "week",
+    ),
+    (
+        "Actual number of weeks missed because someone else was ill in "
+        "1979",
+        "week",
+    ),
+    (
+        "Actual number of weeks missed because someone else was ill in "
+        "1980",
+        "week",
+    ),
+    ("Actual number of weeks missed in 1979", "week"),
+    ("Actual number of weeks missed in 1980", "week"),
+    ("Actual number of weeks of vacation in 1979", "week"),
+    ("Actual number of weeks of vacation in 1980", "week"),
+    ("Actual number of weeks on strike in 1979", "week"),
+    ("Actual number of weeks on strike in 1980", "week"),
+    ("Actual number of weeks unemployed in 1979", "week"),
+    ("Actual number of weeks unemployed in 1980", "week"),
+    ("Actual number of weeks worked", "week"),
+    ("Actual number of weeks worked in 1979", "week"),
+    ("Actual number of weeks worked in 1980", "week"),
+    ("Actual number of years", "year"),
+    ("Actual number of years from now", "year"),
+    ("Actual number of years later", "year"),
+    ("Actual percent", "percent"),
+    ("Actual percent of time Wife/friend worked", "percent"),
+    ("Actual score:", NO_UNIT),
+    ("Actual year", "year"),
 )
 
 #: The closed clause table.  Displayed order is the ratified order; matching
@@ -253,6 +699,7 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     # money
     ("dollars and cents per hour", "united_states_dollar_per_hour"),
     ("dollars and cents", "united_states_dollar"),
+    ("dollar and cents per hour", "united_states_dollar_per_hour"),
     ("dollar and cents", "united_states_dollar"),
     ("dollar and cents amount per hour", "united_states_dollar_per_hour"),
     ("whole dollars", "united_states_dollar"),
@@ -262,10 +709,15 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("dollar lump sum amount", "united_states_dollar"),
     ("value in dollars", "united_states_dollar"),
     ("tax credit dollars", "united_states_dollar"),
+    ("number of dollars", "united_states_dollar"),
+    ("hundreds of dollars", "hundreds_of_united_states_dollars"),
+    ("dollars per week", "united_states_dollar_per_week"),
     # time
     ("number of hours per week", "hour_per_week"),
+    ("number of hours per year", "hour_per_year"),
     ("hours per week", "hour_per_week"),
     ("weekly work hours", "hour_per_week"),
+    ("hours worked per week", "hour_per_week"),
     ("hours per year", "hour_per_year"),
     ("number of hours (0001-2080) per year", "hour_per_year"),
     ("number of hours", "hour"),
@@ -289,6 +741,7 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("number of reported months", "month"),
     ("number of years", "year"),
     ("number of additional years", "year"),
+    ("This variable contains the year of data collection", "year"),
     ("in whole years", "year"),
     ("in years", "year"),
     ("number of minutes", "minute"),
@@ -297,6 +750,9 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("number of miles per year", "mile_per_year"),
     # dimensionless
     ("number of", "count"),
+    ("number in FU", "count"),
+    ("number in Family Unit", "count"),
+    ("number in family unit", "count"),
     ("percent", "percent"),
     ("percentage", "percent"),
     ("percentange", "percent"),
@@ -311,6 +767,23 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("persons per room", NO_UNIT),
     ('number of Wife/"Wife" missed', NO_UNIT),
     ("dollars and cents amount per hour", NO_UNIT),
+    ("Actual interview number", NO_UNIT),
+    ("Actual - Required rooms", NO_UNIT),
+    ("Actual Minus Required Rooms", NO_UNIT),
+    ("Actual minus required rooms", NO_UNIT),
+    ("Actual score", NO_UNIT),
+    ("This variable contains the last two digits of the year", NO_UNIT),
+    ("This variable contains", NO_UNIT),
+    ("This variable indicates", NO_UNIT),
+    ("This variable refers to", NO_UNIT),
+    ("The values in this variable refer", NO_UNIT),
+    ("The actual number of minutes", "minute"),
+    ("The month coded here", "month"),
+    ("The condition of the car in best shape is coded here", NO_UNIT),
+    ("sequence number", NO_UNIT),
+    ("month and day", NO_UNIT),
+    ("case ID", NO_UNIT),
+    *ACTUAL_CLAUSE_TABLE,
 )
 
 
@@ -369,7 +842,7 @@ def clause_occurrences(predicate: str) -> tuple[tuple[int, int, str], ...]:
             hits.append((index, index + len(clause), unit))
             start = index + 1
     hits.extend(_unenumerated_ratio_extensions(predicate, hits))
-    return tuple(
+    unnested = tuple(
         hit
         for position, hit in enumerate(hits)
         if not any(
@@ -380,11 +853,28 @@ def clause_occurrences(predicate: str) -> tuple[tuple[int, int, str], ...]:
             for other_position, other in enumerate(hits)
         )
     )
+    longest_by_disposition = {
+        unit: max(
+            end - start
+            for start, end, found_unit in unnested
+            if found_unit == unit
+        )
+        for unit in {unit for _start, _end, unit in unnested}
+    }
+    return tuple(
+        hit
+        for hit in unnested
+        if hit[1] - hit[0] == longest_by_disposition[hit[2]]
+    )
 
 
 def statement_disposition(statement: str) -> tuple[str | None, str]:
     """Return ``(unit, reason)`` for one extracted statement."""
 
+    if statement.startswith("Actual ") and actual_candidate_disposition(
+        statement
+    ) == "unadjudicated_no_denotation":
+        return None, "unadjudicated_denotation_candidate"
     predicate = statement_predicate(statement)
     if predicate is None:
         return None, "not_a_whole_domain_denotation"
@@ -406,12 +896,17 @@ def field_unit(description: str | None) -> tuple[str | None, str]:
     closed, because §19.3.2 needs one unit common to every member of ``R``.
     """
 
-    found = extract_statements(normalize_description(description))
+    found = description_statements(description)
     if not found:
         return None, "no_denotation_statement"
     dispositions = [statement_disposition(statement) for statement in found]
     if any(
-        reason in {"defeating_clause", "conflicting_unit_clauses"}
+        reason
+        in {
+            "conflicting_unit_clauses",
+            "defeating_clause",
+            "unadjudicated_denotation_candidate",
+        }
         for _unit, reason in dispositions
     ):
         return None, "defeated_denotation_statement"
@@ -719,9 +1214,7 @@ def statement_table(
     witness: dict[str, Sequence[Any]] = {}
     for row in field_rows:
         wave, field, _status, _reason, description = _row_view(row)
-        for statement in set(
-            extract_statements(normalize_description(description))
-        ):
+        for statement in set(description_statements(description)):
             if statement not in counts:
                 order.append(statement)
                 counts[statement] = 0
@@ -740,3 +1233,54 @@ def statement_table(
             }
         )
     return table
+
+
+def actual_candidate_table(
+    field_rows: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return the complete residual-candidate adjudication table."""
+
+    counts: dict[str, int] = {}
+    witness: dict[str, list[Any]] = {}
+    for row in field_rows:
+        wave, field, _status, _reason, description = _row_view(row)
+        for candidate in set(actual_candidates(description)):
+            counts[candidate] = counts.get(candidate, 0) + 1
+            witness.setdefault(candidate, [wave, field])
+    return [
+        {
+            "candidate": candidate,
+            "adjudication": actual_candidate_disposition(candidate),
+            "field_count": counts[candidate],
+            "witness_field_key": witness[candidate],
+        }
+        for candidate in sorted(counts)
+    ]
+
+
+def denotation_candidate_table(
+    field_rows: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return the exhaustive candidate-selector adjudication relation."""
+
+    counts: dict[str, int] = {}
+    occurrences: dict[str, int] = {}
+    witness: dict[str, list[Any]] = {}
+    for row in field_rows:
+        wave, field, _status, _reason, description = _row_view(row)
+        candidates = denotation_candidates(description)
+        for candidate in candidates:
+            occurrences[candidate] = occurrences.get(candidate, 0) + 1
+        for candidate in set(candidates):
+            counts[candidate] = counts.get(candidate, 0) + 1
+            witness.setdefault(candidate, [wave, field])
+    return [
+        {
+            "candidate": candidate,
+            "adjudication": denotation_candidate_disposition(candidate),
+            "occurrence_count": occurrences[candidate],
+            "field_count": counts[candidate],
+            "witness_field_key": witness[candidate],
+        }
+        for candidate in sorted(counts)
+    ]

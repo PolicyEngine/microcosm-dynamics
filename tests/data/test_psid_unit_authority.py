@@ -6,6 +6,9 @@ import pytest
 
 from populace_dynamics.data.psid_unit_authority import (
     ANCHORS,
+    ACTUAL_CANDIDATES,
+    ACTUAL_CLAUSE_TABLE,
+    ACTUAL_NO_DENOTATION_CANDIDATES,
     ARTIFACT_PARTITION,
     CLAUSE_TABLE,
     COMPILED_TERMINALS,
@@ -14,10 +17,17 @@ from populace_dynamics.data.psid_unit_authority import (
     TERMINAL_ORDER,
     UNIT_ABSENT_RESOLUTION_REASON,
     UNIT_VOCABULARY,
+    actual_candidate_disposition,
+    actual_candidate_table,
+    actual_candidates,
     artifact_of_position,
     canonical_json_bytes,
     canonical_sha256,
     clause_occurrences,
+    description_statements,
+    denotation_candidate_disposition,
+    denotation_candidate_table,
+    denotation_candidates,
     extract_statements,
     failure_reason_rows,
     field_unit,
@@ -123,6 +133,95 @@ def test_every_anchor_is_reachable() -> None:
         assert extract_statements(text) == (text,)
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        "The actual weekly food needs in dollars and cents are coded here.",
+        (
+            "The code values represent the actual number of persons "
+            "currently in the FU."
+        ),
+        (
+            "The values represent the actual annual food standard in whole "
+            "dollars for the 1983 family."
+        ),
+    ],
+)
+def test_omitted_denotation_families_are_selected(text: str) -> None:
+    assert extract_statements(text) == (text,)
+    assert statement_disposition(text)[0] is not None
+
+
+def test_actual_residual_selector_covers_line_start_and_embedded_tail() -> None:
+    description = (
+        "Question text Actual number of weeks\n"
+        "Actual dollars and cents per hour"
+    )
+    assert actual_candidates(description) == (
+        "Actual number of weeks",
+        "Actual dollars and cents per hour",
+    )
+    assert description_statements(description) == actual_candidates(
+        description
+    )
+
+
+def test_actual_explicit_no_denotation_is_not_a_statement() -> None:
+    description = "Actual - Required rooms V381 = 5 - 9"
+    assert actual_candidates(description) == (description,)
+    assert description_statements(description) == ()
+
+
+def test_actual_candidate_adjudication_is_closed_and_fail_closed() -> None:
+    assert len(ACTUAL_CANDIDATES) == len(set(ACTUAL_CANDIDATES)) == 82
+    assert ACTUAL_NO_DENOTATION_CANDIDATES < set(ACTUAL_CANDIDATES)
+    assert (
+        actual_candidate_disposition("Actual number of weeks")
+        == "whole_domain_denotation"
+    )
+
+
+def test_exhaustive_candidate_selector_covers_lexemes_and_actual_lines() -> None:
+    description = (
+        "A component represents a lookup value.\n"
+        "Actual number of weeks\n"
+        "Question text without a denotation."
+    )
+    assert denotation_candidates(description) == (
+        "A component represents a lookup value.",
+        "Actual number of weeks Question text without a denotation.",
+        "Actual number of weeks",
+    )
+    assert denotation_candidate_disposition(
+        "A component represents a lookup value."
+    ) == "explicit_no_denotation"
+    assert denotation_candidate_disposition(
+        "Actual number of weeks"
+    ) == "whole_domain_denotation"
+    assert (
+        actual_candidate_disposition(
+            "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)"
+        )
+        == "explicit_no_denotation"
+    )
+    assert (
+        actual_candidate_disposition("Actual furlongs per fortnight")
+        == "unadjudicated_no_denotation"
+    )
+    assert statement_disposition("Actual furlongs per fortnight") == (
+        None,
+        "unadjudicated_denotation_candidate",
+    )
+
+
+def test_every_actual_denotation_has_one_full_span_clause() -> None:
+    clause_map = dict(ACTUAL_CLAUSE_TABLE)
+    expected = set(ACTUAL_CANDIDATES) - ACTUAL_NO_DENOTATION_CANDIDATES
+    assert set(clause_map) == expected
+    for candidate in expected:
+        assert statement_disposition(candidate)[1] != "no_unit_naming_clause"
+
+
 # --------------------------------------------------------------------------
 # Stage 2 — whole-domain predicate
 # --------------------------------------------------------------------------
@@ -141,11 +240,120 @@ def test_range_scoped_statement_has_no_whole_domain_predicate() -> None:
     )
 
 
+def test_values_in_range_family_is_selected_but_subrange_scoped() -> None:
+    text = "Values in the range 001-998 represent number of hours per year."
+    assert extract_statements(text) == (text,)
+    assert statement_disposition(text) == (
+        None,
+        "not_a_whole_domain_denotation",
+    )
+
+
 def test_whole_domain_predicate_strips_subject_and_verb() -> None:
     assert statement_predicate(DOLLARS) == "dollars and cents."
     assert (
         statement_predicate("This variable represents whole dollars.")
         == "whole dollars."
+    )
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Coded value represents the last two digits of the year.",
+        "The code value represents the actual number of persons in the FU.",
+        (
+            "The code values for this variable represent the actual number "
+            "of miles per year."
+        ),
+        (
+            "The range of values for this variable represents actual age "
+            "in years."
+        ),
+        "The values in this variable refer to the state and county.",
+        "This four digit variable represents the month and day.",
+        "The values for this variable indicate the year of graduation.",
+    ],
+)
+def test_audited_direct_denotation_openers_are_selected(text: str) -> None:
+    assert extract_statements(text) == (text,)
+    assert statement_predicate(text) is not None
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "The data coded here represent income in whole dollars.",
+            "united_states_dollar",
+        ),
+        (
+            "This variable contains the year of data collection.",
+            "year",
+        ),
+        (
+            "The actual number of minutes taken by the interviewer to "
+            "administer the questionnaire is coded here.",
+            "minute",
+        ),
+        ("The month coded here is that of the most recent move.", "month"),
+        (
+            "The values for this variable sum the total number of reports.",
+            "count",
+        ),
+    ],
+)
+def test_coded_and_value_subject_families_name_units(
+    text: str,
+    expected: str,
+) -> None:
+    assert statement_disposition(text) == (
+        expected,
+        "unit_naming_clause",
+    )
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "This variable contains the last two digits of the year.",
+        "This variable contains the total number of records.",
+        "This variable indicates whether a record exists.",
+        "This variable refers to the first mention of ownership.",
+        "The values in this variable refer to the state and county.",
+        "The condition of the car in best shape is coded here",
+        (
+            "The actual 1985 sequence number (V30490) of the individual who "
+            "produced the income is coded here."
+        ),
+    ],
+)
+def test_explicit_coded_and_direct_defeaters(text: str) -> None:
+    assert statement_disposition(text) == (None, "defeating_clause")
+
+
+def test_include_is_selected_but_explicitly_not_a_denotation() -> None:
+    text = "The values for this variable include all children living here."
+    assert extract_statements(text) == (text,)
+    assert statement_disposition(text) == (
+        None,
+        "not_a_whole_domain_denotation",
+    )
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Values in the range 0001-9998 denote interview identifiers.",
+        "the value here represents a weighted average hourly wage.",
+        "The negative values indicate a loss in whole dollars.",
+    ],
+)
+def test_audited_subrange_families_cannot_establish_a_unit(text: str) -> None:
+    assert extract_statements(text) == (text,)
+    assert statement_disposition(text) == (
+        None,
+        "not_a_whole_domain_denotation",
     )
 
 
@@ -262,11 +470,54 @@ def test_a_density_is_defeated_rather_than_counted() -> None:
     assert statement_disposition(text) == (None, "defeating_clause")
 
 
+@pytest.mark.parametrize(
+    ("statement", "unit"),
+    [
+        ("Actual dollar and cents per hour", "united_states_dollar_per_hour"),
+        ("Actual number of dollars", "united_states_dollar"),
+        (
+            "Actual expenditure in hundreds of dollars",
+            "hundreds_of_united_states_dollars",
+        ),
+        ("Actual dollars per week", "united_states_dollar_per_week"),
+        ("Actual hours worked per week", "hour_per_week"),
+        ("Actual number of hours per year", "hour_per_year"),
+        ("Actual number in FU", "count"),
+        ("Actual number in Family Unit", "count"),
+        ("Actual number in family unit", "count"),
+        ("Actual year", "year"),
+    ],
+)
+def test_supplemental_actual_clauses_resolve(
+    statement: str,
+    unit: str,
+) -> None:
+    assert statement_disposition(statement) == (unit, "unit_naming_clause")
+
+
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "Actual interview number was coded: 0001-6620)",
+        "Actual Minus Required Rooms for Family",
+        "Actual minus required rooms for family",
+        "Actual score:",
+    ],
+)
+def test_supplemental_actual_defeaters_resolve(statement: str) -> None:
+    assert statement_disposition(statement) == (None, "defeating_clause")
+
+
 def test_clause_occurrences_drop_only_strictly_contained_matches() -> None:
     hits = clause_occurrences("dollars and cents per hour")
     assert [unit for _start, _end, unit in hits] == [
         "united_states_dollar_per_hour"
     ]
+
+
+def test_longest_non_nested_same_disposition_clause_wins() -> None:
+    hits = clause_occurrences("total weeks and weeks worked")
+    assert hits == ((16, 28, "week"),)
 
 
 def test_clause_matching_is_invariant_to_table_enumeration_order(
@@ -315,6 +566,14 @@ def test_field_with_two_distinct_statement_units_fails_closed() -> None:
     )
 
 
+def test_primary_and_residual_selectors_union_and_conflict() -> None:
+    description = (
+        "The values for this variable represent the actual number of years.\n"
+        "Actual number of months"
+    )
+    assert field_unit(description) == (None, "conflicting_statement_units")
+
+
 def test_defeated_statement_blocks_a_positive_statement() -> None:
     defeated = (
         "The values for this variable represent the number of persons per "
@@ -322,6 +581,11 @@ def test_defeated_statement_blocks_a_positive_statement() -> None:
     )
     for text in (f"{DOLLARS} {defeated}", f"{defeated} {DOLLARS}"):
         assert field_unit(text) == (None, "defeated_denotation_statement")
+
+
+def test_unadjudicated_actual_candidate_blocks_a_positive_statement() -> None:
+    text = f"{DOLLARS}\nActual furlongs per fortnight"
+    assert field_unit(text) == (None, "defeated_denotation_statement")
 
 
 def test_conflicting_statement_blocks_a_positive_statement() -> None:
@@ -531,6 +795,45 @@ def test_statement_table_is_sorted_and_carries_a_witness() -> None:
     assert by_statement[HOURS]["witness_field_key"] == [1968, "B"]
     assert by_statement[DOLLARS]["typed_value_unit"] == (
         "united_states_dollar"
+    )
+
+
+def test_actual_candidate_table_is_sorted_and_carries_adjudication() -> None:
+    rows = [
+        _row(1968, "B", COMPILED, "Actual number of weeks"),
+        _row(1968, "A", COMPILED, "Actual number of weeks"),
+        _row(1968, "C", COMPILED, "Actual made-up measure"),
+    ]
+    table = actual_candidate_table(rows)
+    assert [row["candidate"] for row in table] == sorted(
+        {"Actual number of weeks", "Actual made-up measure"}
+    )
+    by_candidate = {row["candidate"]: row for row in table}
+    assert by_candidate["Actual number of weeks"]["field_count"] == 2
+    assert by_candidate["Actual number of weeks"]["witness_field_key"] == [
+        1968,
+        "B",
+    ]
+    assert by_candidate["Actual made-up measure"]["adjudication"] == (
+        "unadjudicated_no_denotation"
+    )
+
+
+def test_denotation_candidate_table_covers_selected_and_rejected_rows() -> None:
+    rows = [
+        _row(1968, "A", COMPILED, DOLLARS),
+        _row(1968, "B", COMPILED, "A component represents a code."),
+    ]
+    table = denotation_candidate_table(rows)
+    assert [row["candidate"] for row in table] == sorted(
+        {DOLLARS, "A component represents a code."}
+    )
+    by_candidate = {row["candidate"]: row for row in table}
+    assert by_candidate[DOLLARS]["adjudication"] == (
+        "contains_whole_domain_denotation"
+    )
+    assert by_candidate["A component represents a code."]["adjudication"] == (
+        "explicit_no_denotation"
     )
 
 
