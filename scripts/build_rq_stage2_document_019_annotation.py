@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import re
 import sys
 from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
@@ -37,6 +38,11 @@ STATUS = "sealed_complete_nonauthority_document_annotation"
 AUTHORITY_KIND = "document_local_source_annotation_nonauthority"
 CANONICALIZATION = source_tools.CANONICALIZATION
 FLOW_ROOT = "questionnaire-flow:root"
+LOCAL_PRINTED_IDENTIFIER_RE = re.compile(
+    r"^\s*(?:\([^\r\n)]{0,24}\)\s*)?"
+    r"([A-Z]{1,10}\d[A-Za-z0-9_.-]{0,22})\s*\.",
+    re.ASCII,
+)
 
 ANNOTATION_ROOT = ROOT / "docs" / "analysis" / "rq_stage2_annotations"
 REVIEW_PATH = (
@@ -395,14 +401,15 @@ def _source_printed_identifier(page_text: str, byte_start: int) -> str | None:
             # Multi-column PDF text can place several question identifiers
             # on one physical line.  Resolve the nearest identifier at or
             # before this occurrence rather than taking the line's first.
+            # The 1977 OCR commonly inserts whitespace before the period, so
+            # this source-local derivation deliberately does not reuse the
+            # stricter stage-1 candidate heuristic.
             for character_start in range(relative_start, -1, -1):
-                identifier = stage1_candidates._printed_identifier(
+                match = LOCAL_PRINTED_IDENTIFIER_RE.search(
                     line["text"][character_start:]
                 )
-                if identifier is not None and any(
-                    character.isdigit() for character in identifier
-                ):
-                    return identifier
+                if match is not None:
+                    return match.group(1)
             return None
     raise ValueError(
         "source review occurrence does not resolve to a physical line"

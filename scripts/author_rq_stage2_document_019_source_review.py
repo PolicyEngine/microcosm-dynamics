@@ -2890,6 +2890,23 @@ CROSS_REFERENCES = (
         "already be included in H7.",
     ),
     _xref(
+        54,
+        ("block", 41, 45),
+        "p54_xref_h20_h24_social_security_no_double_count",
+        (
+            "p53_h20_income_source",
+            "p53_h21_wife_income_amount",
+            "p53_h24_social_security",
+        ),
+        (),
+        "The wife-income objective says Social or Supplemental Security "
+        "checks must be recorded while identifying prior inclusion to avoid "
+        "double counting. H11f and an OCR-lost continuation prevent complete "
+        "document-local endpoint resolution.",
+        target_scope="unresolved",
+        resolution_status="preserved_for_global_resolution",
+    ),
+    _xref(
         66,
         ("line", 24),
         "p66_xref_k4_to_d2_d3",
