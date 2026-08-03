@@ -5,7 +5,8 @@
 Round-1 remediation is in progress. The frozen input relation, source-wide
 semantic census, strict reproduction gate, downstream storage join, and full
 §24 rewrite are complete. The independent arithmetic and lifecycle prose audit
-is incorporated. Selector-semantic closure and final verification remain.
+is incorporated. The selector and full-phrase laws are now exact in source;
+pin regeneration, document synchronization, and final verification remain.
 
 ## Done
 
@@ -62,9 +63,19 @@ is incorporated. Selector-semantic closure and final verification remain.
   relation identity, restored the inherited closure-sweep construction, and
   made every capture/domain/bundle shape, ordering, count, digest, status, and
   cross-binding equation explicit.
+- Replaced the circular residual default with 53,255 exact frozen
+  no-denotation hashes and enumerated 2,558 verbatim whole-domain predicates.
+  Added every audited construction, identity, encoded-value, and specific-code
+  family; unknown candidates now remain unadjudicated and abort the census.
+- Made any unenumerated strict extension of a positive clause inject a
+  full-span defeat, independent of extension direction or spelling, while
+  exact predicate rows resolve 1,521 positive, 812 defeating, 224 no-naming,
+  and one conflicting predicate. Exhaustive mutation regressions cover every
+  positive row. The newly completed draft census is
+  `4,692 / 170 / 49 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 15,805`.
 
 ## Next
 
-- Close the semantic-selector and general longer-phrase laws; regenerate every
-  affected relation and pin; rerun verification; write the external report;
-  remove this ledger.
+- Regenerate every affected relation, gate pin, downstream storage figure, and
+  document fence; rerun verification; write the external report; remove this
+  ledger.

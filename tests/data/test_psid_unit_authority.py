@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import pytest
 
+import populace_dynamics.data.psid_unit_authority as unit_authority
+
 from populace_dynamics.data.psid_unit_authority import (
     ANCHORS,
     ACTUAL_CANDIDATES,
@@ -40,6 +42,14 @@ from populace_dynamics.data.psid_unit_authority import (
     statement_table,
     successor_census,
     successor_terminal,
+)
+from populace_dynamics.data.psid_unit_predicate_authority import (
+    EXPLICIT_NO_DENOTATION_CANDIDATE_COUNT,
+    EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES,
+    EXPLICIT_NO_DENOTATION_CANDIDATE_RELATION_SHA256,
+    PREDICATE_AUTHORITY,
+    PREDICATE_AUTHORITY_ROW_COUNT,
+    PREDICATE_AUTHORITY_SHA256,
 )
 
 COMPILED = "compiled_source_numeric_grammar"
@@ -196,7 +206,7 @@ def test_exhaustive_candidate_selector_covers_lexemes_and_actual_lines() -> None
     )
     assert denotation_candidate_disposition(
         "A component represents a lookup value."
-    ) == "explicit_no_denotation"
+    ) == "unadjudicated_no_denotation"
     assert denotation_candidate_disposition(
         "Actual number of weeks"
     ) == "whole_domain_denotation"
@@ -294,10 +304,6 @@ def test_audited_direct_denotation_openers_are_selected(text: str) -> None:
     ("text", "expected"),
     [
         (
-            "The data coded here represent income in whole dollars.",
-            "united_states_dollar",
-        ),
-        (
             "This variable contains the year of data collection.",
             "year",
         ),
@@ -306,11 +312,12 @@ def test_audited_direct_denotation_openers_are_selected(text: str) -> None:
             "administer the questionnaire is coded here.",
             "minute",
         ),
-        ("The month coded here is that of the most recent move.", "month"),
         (
-            "The values for this variable sum the total number of reports.",
+            "This is the number of businesses owned by either the Head, "
+            'the Wife/"Wife", or both.',
             "count",
         ),
+        ("The values are in 1967 dollars.", "united_states_dollar"),
     ],
 )
 def test_coded_and_value_subject_families_name_units(
@@ -321,6 +328,18 @@ def test_coded_and_value_subject_families_name_units(
         expected,
         "unit_naming_clause",
     )
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "The data coded here represent income in whole dollars.",
+        "The month coded here is that of the most recent move.",
+        "The values for this variable sum the total number of reports.",
+    ],
+)
+def test_unenumerated_longer_source_like_predicates_defeat(text: str) -> None:
+    assert statement_disposition(text) == (None, "defeating_clause")
 
 
 @pytest.mark.parametrize(
@@ -430,6 +449,10 @@ def test_a_per_hour_tail_outranks_the_bare_money_clause() -> None:
     "predicate",
     [
         "dollars and cents amount per hour",
+        "nominal whole dollars",
+        "whole dollars nominal amount",
+        "whole dollars / hour",
+        "whole dollars\N{NO-BREAK SPACE}per hour",
         "whole dollars per hour",
         "number of hours per day",
         "number of miles per week",
@@ -438,11 +461,35 @@ def test_a_per_hour_tail_outranks_the_bare_money_clause() -> None:
         "whole dollars (nominal) per hour",
     ],
 )
-def test_unenumerated_longer_ratio_phrase_fails_closed(
+def test_every_unenumerated_longer_phrase_fails_closed(
     predicate: str,
 ) -> None:
     text = f"This variable represents {predicate}."
     assert statement_disposition(text) == (None, "defeating_clause")
+
+
+def test_explicit_and_general_plural_defeat_is_one_full_span_hit() -> None:
+    predicate = "dollars and cents amount per hour"
+    assert clause_occurrences(predicate) == ((0, len(predicate), NO_UNIT),)
+
+
+def test_every_authorized_positive_defeats_unknown_left_and_right_extensions(
+) -> None:
+    positive_rows = [
+        (predicate, unit)
+        for predicate, unit, reason in PREDICATE_AUTHORITY
+        if reason == "unit_naming_clause"
+    ]
+    assert len(positive_rows) == 1_521
+    for predicate, unit in positive_rows:
+        assert unit is not None
+        assert unit in {
+            found for _start, _end, found in clause_occurrences(predicate)
+        }
+        for extension in (f"unknown {predicate}", f"{predicate} unknown"):
+            assert {found for _start, _end, found in clause_occurrences(extension)} == {
+                NO_UNIT
+            }
 
 
 @pytest.mark.parametrize(
@@ -525,8 +572,18 @@ def test_clause_occurrences_drop_only_strictly_contained_matches() -> None:
     ]
 
 
-def test_longest_non_nested_same_disposition_clause_wins() -> None:
-    hits = clause_occurrences("total weeks and weeks worked")
+def test_longest_non_nested_same_disposition_clause_wins(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    predicate = "total weeks and weeks worked"
+    # A registered conflict leaves nonnested lexical rows to the tie-break;
+    # an unregistered complete phrase would instead fail closed first.
+    monkeypatch.setitem(
+        unit_authority._PREDICATE_AUTHORITY,
+        predicate,
+        (None, "conflicting_unit_clauses"),
+    )
+    hits = clause_occurrences(predicate)
     assert hits == ((16, 28, "week"),)
 
 
@@ -600,8 +657,9 @@ def test_unadjudicated_actual_candidate_blocks_a_positive_statement() -> None:
 
 def test_conflicting_statement_blocks_a_positive_statement() -> None:
     conflict = (
-        "The values for this variable represent dollars and cents and "
-        "number of weeks."
+        "The values for this variable represent dollars and cents per hour; "
+        "if salary is given as an annual figure, it is divided by 2000 hours "
+        "per year; if weekly, by 40 hours per week."
     )
     assert statement_disposition(conflict) == (
         None,
@@ -843,7 +901,24 @@ def test_denotation_candidate_table_covers_selected_and_rejected_rows() -> None:
         "contains_whole_domain_denotation"
     )
     assert by_candidate["A component represents a code."]["adjudication"] == (
-        "explicit_no_denotation"
+        "unadjudicated_no_denotation"
+    )
+
+
+def test_frozen_semantic_authorities_have_exact_identity() -> None:
+    assert len(PREDICATE_AUTHORITY) == PREDICATE_AUTHORITY_ROW_COUNT == 2_558
+    assert len({row[0] for row in PREDICATE_AUTHORITY}) == len(
+        PREDICATE_AUTHORITY
+    )
+    assert canonical_sha256(PREDICATE_AUTHORITY) == PREDICATE_AUTHORITY_SHA256
+    assert (
+        len(EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES)
+        == EXPLICIT_NO_DENOTATION_CANDIDATE_COUNT
+        == 53_255
+    )
+    assert (
+        canonical_sha256(sorted(EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES))
+        == EXPLICIT_NO_DENOTATION_CANDIDATE_RELATION_SHA256
     )
 
 
