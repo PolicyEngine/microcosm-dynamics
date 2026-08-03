@@ -2,9 +2,9 @@
 
 ## State
 
-Core §22 representation and consumer law is drafted as an append-only
-successor to revision 9. The pinned prefix remains 2,423,590 bytes with
-SHA-256
+Core law, evidence vectors, scale/check requirements, and the replacement
+closure are drafted as an append-only successor to revision 9. The pinned
+prefix remains 2,423,590 bytes with SHA-256
 `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
 
 ## Done
@@ -16,11 +16,15 @@ SHA-256
   consumers from the pinned D7 blob.
 - Defined the 4,096-member explicit/analytic threshold, exact interval
   bijection, canonical streaming digest, and analytic-equivalent reads.
+- Added four byte-pinned A8 vectors and reproduced every displayed payload
+  byte count/SHA-256.
+- Embedded the 820,709,179,087-member storage contradiction and exact
+  passing-status decomposition.
+- Defined expected MB/GiB scale, mandatory fresh `--check`, replacement
+  inventory, and the Amendment-8 closure sweep.
 
 ## Next
 
-- Add evidence tables and regression vectors.
-- Add the replacement inventory and closure-sweep law.
 - Add the 48-row comparator census and D8 lifecycle successors.
 - Complete the post-D8 build/ratification/Q5 order.
 - Reverify the immutable prefix, document digest, and diff hygiene.

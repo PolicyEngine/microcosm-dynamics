@@ -38064,3 +38064,385 @@ consumption boundary, slot and inventory integrity, R10a/R10b/R11 ordering,
 and V-B6 nonpassing result remain. Analytic enumeration is physical
 partition consumption whenever the corresponding explicit member read was;
 calling it a compact representation does not evade the guard.
+
+### 22.4 Mandatory Amendment-8 vectors and physical-storage facts
+
+#### 22.4.1 Exact vector relation and inherited-suite order
+
+The Amendment-8 representation suite contains exactly four rows in the
+displayed order. Each row has exactly `vector_id`, `vector_kind`,
+`member_count`, `primary_sha256`, and `required_result`; the SHA is null only
+for the deliberately unconstructed storage lower bound in A8-R04. The
+canonical sorted-key compact JSON below includes one terminal LF, is exactly
+907 bytes, and has SHA-256
+`c405b3a7f228b3e3286714d21aadedcdd6e3df990714e2ddaef85c861e13a8c4`.
+
+~~~json
+[{"member_count":3,"primary_sha256":"fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78","required_result":"pass_byte_exact_bijection_and_equal_member_digest","vector_id":"A8-R01","vector_kind":"small_explicit_analytic_equivalence"},{"member_count":4097,"primary_sha256":"063204ad9b973e0c74681aea5b7015cd1e5e868a6664de45de50943361eaac4e","required_result":"pass_two_independent_digest_derivations","vector_id":"A8-R02","vector_kind":"large_analytic_two_way_streaming_digest"},{"member_count":3,"primary_sha256":"3160774b10614665daaa4222251fd5fa894a7c627fc04ebfa40444464d3e0ab9","required_result":"reject_before_semantic_digest","vector_id":"A8-R03","vector_kind":"lossy_ambiguous_analytic_rejection"},{"member_count":820709179087,"primary_sha256":null,"required_result":"prove_explicit_storage_exceeds_available_storage","vector_id":"A8-R04","vector_kind":"revision_9_storage_impossibility"}]
+~~~
+
+The terminal-LF canonical ID array is exactly
+`["A8-R01","A8-R02","A8-R03","A8-R04"]` and hashes to
+`0d6a8061baf6378bbb2ac20d05410dc2a12c0f096344445798159437238154f1`.
+The source compiler must first run A6-R01 through A6-R11 unchanged, then the
+exact pre-Q5 A7 array A7-R01 through A7-R09, A7-R10a, and A7-R11, and then
+A8-R01 through A8-R04. A7-R10b remains at its inherited post-inventory gate.
+No A8 vector can replace, relabel, or satisfy an A6/A7 vector.
+
+#### 22.4.2 A8-R01 — small explicit/analytic byte-equivalence witness
+
+The synthetic normalized `json_integer` range is values 10, 12, and 14,
+source indexes 0, 1, and 2, with exact source step 2, unit
+`a8_fixture_unit`, and meaning
+`A8 small analytic partition fixture`. Under the fixture renderer all three
+members have null physical image and exact reason
+`no_exact_width_selected_form_image`. The canonical inherited explicit
+member array is the following one line plus terminal LF:
+
+~~~json
+[{"physical_image_raw_token_hex":null,"source_member_index":0,"source_value":{"canonical_value":10,"source_meaning":"A8 small analytic partition fixture","typed_disposition":"json_integer","typed_value_unit":"a8_fixture_unit","value_type":"json_integer"},"unrenderable_reason":"no_exact_width_selected_form_image"},{"physical_image_raw_token_hex":null,"source_member_index":1,"source_value":{"canonical_value":12,"source_meaning":"A8 small analytic partition fixture","typed_disposition":"json_integer","typed_value_unit":"a8_fixture_unit","value_type":"json_integer"},"unrenderable_reason":"no_exact_width_selected_form_image"},{"physical_image_raw_token_hex":null,"source_member_index":2,"source_value":{"canonical_value":14,"source_meaning":"A8 small analytic partition fixture","typed_disposition":"json_integer","typed_value_unit":"a8_fixture_unit","value_type":"json_integer"},"unrenderable_reason":"no_exact_width_selected_form_image"}]
+~~~
+
+It is exactly 944 bytes and hashes to
+`fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78`.
+The canonical analytic-form fixture is:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2,3]],"member_count":3,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+With its terminal LF it is 207 bytes and has raw-storage SHA-256
+`bc5a85e43ba6e26345bbf3e49fc9a9915b0fe4912580103c4f2172acc4ed338e`.
+Expansion must reproduce all 944 explicit bytes above, so its streaming
+logical-member SHA-256 must also be
+`fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78`.
+The two raw storage hashes intentionally differ; equality is at the complete
+virtual-member byte layer. Because three is below the threshold, the
+production representation is the explicit array. The analytic fixture is
+still mandatory proof that the inverse is byte-exact, not an alternate
+production tie-break.
+
+#### 22.4.3 A8-R02 — large analytic row and two independent digest derivations
+
+The synthetic parent is the exact `json_integer` range 0 through 14,096 at
+step one. This unrenderable logical subset is indexes/values 10,000 through
+14,096 inclusive, with unit `a8_fixture_unit`, meaning
+`A8 large analytic partition fixture`, null physical image, and the same
+unrenderable reason as R01. Its required analytic storage is:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10000,14096,1,4097]],"member_count":4097,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":4097}
+~~~
+
+With one terminal LF it is exactly 222 bytes and has raw-storage SHA-256
+`6fe2c1613e97f6258873163601a61aa7737c34e60e62116ddac8863a595d15d5`.
+Its virtual inherited array is exactly 1,315,139 canonical bytes and hashes
+to
+`063204ad9b973e0c74681aea5b7015cd1e5e868a6664de45de50943361eaac4e`.
+
+Two independently implemented derivations are mandatory:
+
+1. materialize the 4,097 fixture rows in ascending `v` using
+   `source_member_index: v`, the exact five-key fixture `source_value`, null
+   image, and exact reason, then hash §10.1 canonical bytes of the complete
+   array; and
+2. hold no array, feed `[`, then for each same independently generated row
+   feed a comma except before the first plus its canonical member-object
+   bytes, and finish with `]\n` as §22.2.4 requires.
+
+Both procedures must independently report 1,315,139 bytes and the displayed
+logical-member digest. Reusing one procedure's rows, byte buffer, digest
+state, or output as the other's expected value fails the independence arm.
+
+#### 22.4.4 A8-R03 — lossy, ambiguous, and count-inconsistent negatives
+
+The validator must reject each following terminal-LF canonical object before
+constructing or accepting a semantic member digest.
+
+The arity-three interval omits the interval member count:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2]],"member_count":3,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+It is 205 bytes with SHA-256
+`3160774b10614665daaa4222251fd5fa894a7c627fc04ebfa40444464d3e0ab9`.
+The split encoding is information-complete but ambiguous/noncanonical because
+it divides the unique maximal run:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,12,2,2],[14,14,2,1]],"member_count":3,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+It is 219 bytes with SHA-256
+`661df9d3afb6ec2dfa711727ae6d9ed890751db17f054a988cca951be9f848a7`.
+The count-inconsistent form is:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2,2]],"member_count":2,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":2}
+~~~
+
+It is 207 bytes with SHA-256
+`560aa8ad616851bb14e1e15d9b411f1258fed769c171652d7b9660fc2decf66f`;
+the equation yields upper bound 12 rather than 14. Accepting any one of the
+three, repairing it silently, hashing a guessed expansion, or treating the
+second form as an alternate canonical split fails R03.
+
+#### 22.4.5 A8-R04 — exact storage contradiction and source-derived census
+
+The blocked implementation report is a 1,325-byte review record at
+`/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-v3compiler-blocked-report.md`
+with SHA-256
+`4addef1a8b8bbc0694d17bd46c763ea94fce9cdced4056fa44e7faa7e3f15b0e`.
+The source-derived classifier implementation at commit
+`b78e4b5d0878dfd192a3d6060f2f801d2bfe2b0d` is empirical evidence, not
+design or future implementation authority. It authenticates the same D7
+bytes and sources, reproduces all ten field counts, all three aggregate
+digests, A6-R01–R11, and the pre-Q5 A7 vectors, and peaked at 1,334,181,888
+RSS bytes. It emitted no invalid artifact and did not read or create Q5.
+
+The exact passing-compiled range-member decomposition is:
+
+| `derivation_status` | Fields | Numeric-range entries | Logical source-range members |
+|---|---:|---:|---:|
+| `compiled_source_numeric_grammar` | 17,329 | 30,452 | 820,025,893,984 |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 | 1,853 | 865,268 |
+| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 674 | 1,433 | 384,135 |
+| `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 | 48 | 682,035,700 |
+| **Complete compiled relation** | **19,903** | **33,786** | **820,709,179,087** |
+
+The physical lower-bound facts are:
+
+| Fact | Exact measured or derived value |
+|---|---:|
+| mandatory logical range members in compiled rows | 820,709,179,087 |
+| bytes even if each member were `{}` plus only minimum array commas/brackets, `3N + 2` | 2,462,127,537,263 bytes |
+| preceding impossible empty-object lower bound | 2.239 TiB |
+| shortest lawful inherited member-row lower bound | at least 241.642 TiB |
+| available storage at the blocked lane | approximately 1.304 TiB |
+
+The 2.239-TiB lower bound already exceeds available storage while containing
+none of the mandatory row information; the shortest lawful-row bound is
+over 185 times available capacity. Revision 9 simultaneously requires the
+explicit arrays and forbids an analytic replacement. The required artifact
+is therefore physically unconstructible on the measured system and
+implausible hardware. This is the third discovered unsatisfiable law after
+Amendment 6's registration-totality defect and Amendment 7's all-field-pass
+defect. R04 passes only by reproducing the count/arithmetic and refusing to
+emit the unlawful truncated artifact.
+
+### 22.5 Untouched census, expected scale, identities, and mandatory check
+
+#### 22.5.1 Complete §20.3.7 and §21 relation history is unchanged
+
+The §20.3.7 census denominator is 89,599 authenticated
+`[interview_wave,raw_field_id]` field keys. Its matrix `field_count` values
+count fields assigned to terminals; they do not count source-range members,
+renderable rows, unrenderable rows, candidate rows, invariant rows, ambiguous
+rows, intervals, or serialized bytes. Its own step 4 already uses analytic
+exhaustive cardinality/renderability for classification and then says that
+classification did not serialize future rows. Amendment 8 replaces only the
+later explicit-only wire conclusion; it does not rerun or alter the terminal
+function.
+
+The exact ten counts remain, in order,
+`17,329 / 1,853 / 674 / 47 / 67,316 / 1,145 / 0 / 1 / 421 / 813`.
+The denominator, count-array, and ordered-assignment SHA-256 values remain
+respectively:
+
+~~~text
+7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764
+421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624
+5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e
+~~~
+
+The seven failure-reason rows, all per-terminal field-key digests, 1,235
+T-minus rows, T-plus/T-minus arrays, `pass_with_closed_failures` predicate,
+complete-row null laws, and every §21 consumer-boundary result remain exact.
+A storage representation cannot move a field, repair a failure, promote a
+T-minus row, change V-B6, or make an otherwise forbidden consumer pass.
+
+#### 22.5.2 Expected artifact scale and byte-stable reproduction
+
+The expected complete threshold-selected artifact is in the **hundreds of
+MiB to low-single-digit GiB** class, not TiB. The planning envelope is at
+least 100 MiB and less than 8 GiB: 89,599 complete field rows and their
+ordinary nested evidence remain, while more than 820 billion repeated
+range-member rows collapse to tens of thousands of exact source-entry/
+interval records plus explicit small relations. This envelope is an
+auditable scale expectation, never permission to omit a row to hit a size.
+The exact accepted byte length and every fresh aggregate/content digest are
+whatever the closed source law and canonical threshold rule produce. A
+result outside the envelope forces a representation/closure audit and
+cannot be accepted merely because its field census matches.
+
+The builder has one canonical choice at every member container, so two
+conforming builds from the same sources produce byte-identical 16-key rows
+and enclosing artifact. The existing logical member digests remain the
+explicit-equivalent streaming hashes; the actual representation bytes
+produce fresh complete-row and full-relation digests. Both layers are
+mandatory. The three full-field aggregate pins in §22.2.4, the A8 vector
+array/hash, every per-relation count/digest, and the fresh actual artifact
+identities together form the required reproducibility check; none is an
+alternative to another.
+
+#### 22.5.3 Mandatory `--check` mode
+
+The separately reviewed v3 builder must implement an exact `--check` mode.
+After one canonical artifact is built, a fresh process with the same pinned
+implementation blob runs that mode before Q5 is read. It authenticates all
+six evidence artifacts, 176 source-document derivations, 43 raw files, and
+89,599 field keys; independently rebuilds every normalized domain, terminal,
+explicit/analytic choice, interval, literal row, virtual member, renderer
+result, candidate/arm relation, streaming digest, DFA, consumer row, ID, and
+enclosing digest; runs A6, the pre-Q5 A7 suite, and A8 in required order; and
+byte-compares the complete rebuilt canonical artifact with the candidate.
+
+`--check` must report the exact candidate byte length, SHA-256, all three
+retained aggregate pins, fresh row/keyset/domain/content digests, logical
+member counts/digests, representation counts, and exact-empty mismatch
+arrays. It must use bounded working storage for analytic enumeration, emit
+no replacement artifact, mutate no source or candidate byte, read no Q5,
+and exit nonzero on any missing, extra, reordered, alternate-threshold,
+noncanonical, digest-only-equal, or byte-unequal value. A normal build
+success without the subsequent successful fresh `--check` is not a
+constructible `pass_with_closed_failures` relation and cannot precede Q5.
+
+### 22.6 Exact replacement inventory and closure sweep
+
+#### 22.6.1 Complete design-family disposition
+
+The following table is the complete design-family inventory. It does not
+erase historical text or merge repeated physical passages; the closure
+sweep below gives every reached byte range its own row.
+
+| Source anchors | Exact Amendment-8 disposition |
+|---|---|
+| §20.3.2 `candidate_arm_results[*].complete_domain_member_results`, counts, and digests | replaced-only-at-the-wire-by-§22.2: each logical eight-key array uses the threshold-selected explicit or analytic container; analytic literal rows remain full and range intervals regenerate every candidate result/image/action/failure. Both candidate domains remain complete and independently comparable. |
+| §20.3.2 `complete_domain_arm_disposition` invariant/ambiguous arrays, counts, and digests | replaced-only-at-the-wire-by-§22.2–§22.3: both logical relations retain their exact row schemas and ordered-merge cover; analytic intervals independently rerun both candidates and cannot promote an ambiguous member. |
+| §20.3.2 nine-key range-partition rows and explicit `renderable_member_rows`/`unrenderable_member_rows` requirement | replaced-only-at-the-wire-by-§22.2: parent keys/counts/digests and logical rows remain; each container follows the 4,096-member rule and its virtual ordered merge reproduces the complete source range. The former digest-only-agreement prohibition remains. |
+| §20.3.2 finalization barrier and §20.3.5 complete-row/status/failure laws | composed-with-§22.2–§22.3: final promotions/collisions/counts still precede reconstruction; actual representation bytes and virtual rows both enter validation. Malformed/lossy/ambiguous analytic encoding is the same closed conflict class as unequal partitions. |
+| §20.3.3 exact renderer and exhaustive source-member application | lawfully-unchanged-in-semantics-and-composed-with-§22.2.3: analytic expansion calls that same renderer for every member and retains every image, precision, action, scalar/reason, and replay. |
+| §20.3.4 DFA, final missing subtraction, literal-first overlap, transitions, and replay | lawfully-unchanged-in-semantics-and-composed-with-§22.3.2: construction streams virtual authoritative members only; intervals never authorize a generic numeric language. |
+| §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason: their source identities, row-domain digests, status results, member counts, images, and DFA outcomes remain; their partition reads use §22's virtual relation. A8 adds, never replaces, vectors. |
+| §20.3.7 complete field census, terminal matrix, reasons, and aggregate digests | lawfully-unchanged-with-reason except its explicit statement that analytic classification cannot substitute for serialized partitions is composed with §22.2: a lawful bijective analytic wire form now is the serialized exhaustive partition. Field counts and all ratified digests remain untouched. |
+| §20.4.1 layout, typed parse, raw token, membership, unobserved, commitment, and value-map consumers | composed-with-§22.3: fixed outer schemas remain and every derivation reference validates actual representation bytes plus the virtual exhaustive relation before projection or use. |
+| §20.4.2 Q5 embedding, joins, D6/Q5 edge, and acceptance walk | composed-with-§22.3.3 and replaced-only-in-live-order-by-§22.9: Q5 embeds actual analytic-capable rows and guards virtual member reads; historical D6/Q5 remains, while D8 becomes the live predecessor. |
+| §20.4.3 G17-C01/C06/C07 and complete 18-row G17 | composed-with-§22.3.3: expected and actual sides independently resolve both representation layers; no G17 schema or nineteenth row is added. |
+| §20.4.4 and §§20.8.1–20.8.4 compiler construction, Q5/inventory/G17 walks, alternatives, and ratification protocol | explicit physical materialization clauses are replaced-by-§22.2, §22.5.3, and §22.9; logical exhaustive enumeration, vector/replay/abort law, consumer order, and every unrelated alternative remain. `--check` is mandatory before Q5. |
+| §§20.5–20.6 Amendment-6 replacement/closure and revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §§22.6–22.7 provide distinct revision-10 successors. |
+| §20.7 revision-8 lifecycle and §20.8 terminal registration lineage | replaced only for a post-D8 registration by §§22.8–22.9; historical version dispatch remains exact. |
+| §§21.2–21.3 scope, 16-key row, T-plus/T-minus, `pass_with_closed_failures`, and complete relation validation | composed-with-§22.1–§22.3: the outer row/status laws remain; a complete row now validates its threshold-selected nested representation and virtual explicit-equivalent arrays. No T-minus row is projected away. |
+| §§21.4.1–21.4.6 evidence/physical boundary, seven consumer kinds, Q5, inventory, and downstream guards | composed-with-§22.3: analytic membership/enumeration is the same physical consumption as the former array read; evidence-only complete embedding remains nonconsuming, and every positive read remains guarded. |
+| §21.5 A7-R01–R11 and staged R10b | lawfully-unchanged-with-reason: the vectors retain identities, source bytes, results, and pre-/post-Q5 positions. R08 validates actual analytic-capable rows; R11's partition/action class includes analytic reads. |
+| §§21.6–21.7 Amendment-7 replacement/closure and revision-9 comparator census | lawfully-unchanged-with-reason as immutable D7 history; the distinct Amendment-8 sweep and 48-row comparator census follow. |
+| §§21.8–21.9 revision-9 terminal lifecycle, compiler/Q5 order, and registration protocol | replaced for revision 10 by §§22.8–22.9: D7 remains the exact immutable predecessor, D8 becomes live, the analytic-capable checked relation precedes post-D8 Q5, and all V-B6/R10b stops remain. |
+| Any sweep-reached passage not separately named above | lawfully-unchanged-with-reason only when its row names the triggering seed and proves it neither assumes explicit-only storage nor consumes a representation-dependent value without §22.3. |
+| §§1–21 passages not reached by the deterministic sweep | lawfully-unchanged-with-reason: they neither define nor consume exhaustive range-member storage, its identities, or the affected lifecycle. Silence is not a disposition for a reached passage. |
+
+#### 22.6.2 Amendment-8 analytic-range closure-sweep law
+
+Before D8 ratification the coordinator constructs
+`amendment_8_analytic_range_partition_closure_sweep.v1`. It inherits the
+exact 11-key schema, terminal-LF canonicalization, line-based passage
+segmentation, half-open byte ranges, row/edge order, direct/transitive
+consumer closure, count/digest equations, and closed three-disposition
+domain from §19.4.3. Matched IDs use literal prefix
+`amendment-8-passage:` followed by SHA-256 of the inherited exact
+`[start_byte,end_byte,matched_terms]` preimage.
+
+The normative corpus is every revision-10 candidate byte in §§1–22 except
+exactly the six historical/self-referential comparator-table intervals in
+§§17.3, 18.5, 19.5, 20.6, 21.7, and 22.7. Each interval begins at its table
+header and ends immediately before the next heading named by its own corpus
+law. No vector fence, storage table, replacement row, surrounding paragraph,
+or non-comparator table is excluded.
+
+The exact initial case-sensitive literal seed array is:
+
+~~~text
+complete_domain_member_results
+arm_invariant_member_rows
+arm_ambiguous_member_rows
+renderable_member_rows
+unrenderable_member_rows
+source_member_count
+source_member_domain_sha256
+renderable_member_count
+renderable_member_domain_sha256
+unrenderable_member_count
+unrenderable_member_domain_sha256
+candidate_arm_results
+complete_domain_arm_disposition
+range partition
+exhaustive range
+explicit member array
+analytic_closed_intervals_v1
+literal_member_rows
+range_interval_rows
+total_member_count
+lower_bound
+upper_bound
+step
+member_count
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_domain_sha256
+normalized_format_profile
+physical_authentication
+registered_numeric_grammar
+missing_raw_tokens
+unobserved_possible_values
+layout_coordinates
+typed_parse_specs
+raw_token_grammar
+value_code_map
+source_commitments
+positive_field_join_rows
+raw_field_projections
+G17-C01
+G17-C06
+G17-C07
+field_source_derivation
+pass_with_closed_failures
+q5_positive_field_join
+slot_registry
+official_inventory
+crosswalk
+correction_input
+context_output
+Q5
+D7
+D8
+--check
+~~~
+
+The exact search then closes over schema/member inclusion; normalized-entry
+and source-member derivation; candidate/invariant/ambiguous and renderable/
+unrenderable construction; actual and virtual digest inclusion; ID/full-row/
+manifest/Q5 hash inclusion; renderer, DFA, missing subtraction, membership,
+replay, and abort edges; derivation foreign keys; layout/parser/raw-token/
+value-map projection; Q5 joins; slot/inventory/value-map/crosswalk/G17 and
+all seven guarded consumer kinds; evidence-versus-consumption classification;
+compiler and `--check` invocation; vector ordering; Git ancestry; lifecycle,
+receipt, and selected registration; and every direct/transitive edge class
+in §§19.4.3, 20.5.2, and 21.6.2. A seed is not a ceiling.
+
+The sweep must walk all three affected relation families through the
+finalization barrier, complete-row ID/hash, source manifest, Q5, C01/C06/C07,
+every fixed layout/value-map reference, and every physical consumer. It must
+also walk D7-prefix-to-D8, D8-before-Q5, actual inventory before A7-R10b,
+the unchanged V-B6 nonpassing branch, all blocked domain/bundle/receipt
+consumers, and the new D8 lifecycle. Forward and reverse closure must prove
+that no consumer still indexes a value as a mandatory bare member array and
+that no analytic reader bypasses the §21 guard.
+
+Every matched passage receives exactly one of
+`replaced-by-named-successor`, `composed-with-named-successor`, or
+`lawfully-unchanged-with-reason`, plus one nonempty exact successor/reason
+resolving to §22.6.1, §22.7, §22.8, or §22.9. Acceptance requires status
+pass, exact-empty `unresolved_passage_ids`, exact forward/reverse edge cover,
+agreement with an independently implemented second sweep, and reproduction
+from the accepted D8 blob. A missing, extra, merged, differently segmented,
+silently retained, explicit-only, digest-only, or candidate-excluded passage
+blocks ratification. No anticipated D8 byte offset, row count, closure digest,
+or implementation identity is ratified by these draft bytes.
