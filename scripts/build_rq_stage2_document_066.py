@@ -2440,9 +2440,9 @@ UNRESOLVED_ALIAS_SPECS: tuple[dict[str, Any], ...] = (
 )
 
 
-def _expand_items() -> tuple[
-    tuple[dict[str, Any], ...], tuple[dict[str, Any], ...]
-]:
+def _expand_items() -> (
+    tuple[tuple[dict[str, Any], ...], tuple[dict[str, Any], ...]]
+):
     anchors: list[dict[str, Any]] = []
     prompts: list[dict[str, Any]] = []
     for spec in ITEM_SPECS:
