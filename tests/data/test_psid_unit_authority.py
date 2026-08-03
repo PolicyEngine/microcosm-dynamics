@@ -193,6 +193,23 @@ def test_administration_does_not_match_a_ratio_defeater() -> None:
     assert statement_disposition(text)[0] == "united_states_dollar"
 
 
+def test_a_per_hour_tail_outranks_the_bare_money_clause() -> None:
+    text = "This variable represents dollar and cents amount per hour."
+    assert statement_disposition(text) == (
+        "united_states_dollar_per_hour",
+        "unit_naming_clause",
+    )
+
+
+def test_a_density_is_defeated_rather_than_counted() -> None:
+    text = (
+        "The values for this variable represent the number of persons per "
+        "room with one implied decimal place; e.g., a value of 20 here "
+        "represents 2.0 persons per room."
+    )
+    assert statement_disposition(text) == (None, "defeating_clause")
+
+
 def test_clause_occurrences_drop_only_strictly_contained_matches() -> None:
     hits = clause_occurrences("dollars and cents per hour")
     assert [unit for _start, _end, unit in hits] == [

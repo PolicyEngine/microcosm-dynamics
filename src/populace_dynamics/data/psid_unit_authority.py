@@ -254,6 +254,7 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("dollars and cents per hour", "united_states_dollar_per_hour"),
     ("dollars and cents", "united_states_dollar"),
     ("dollar and cents", "united_states_dollar"),
+    ("dollar and cents amount per hour", "united_states_dollar_per_hour"),
     ("whole dollars", "united_states_dollar"),
     ("dollar amount", "united_states_dollar"),
     ("dollar income amount", "united_states_dollar"),
@@ -307,6 +308,7 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("value per room", NO_UNIT),
     ("income/needs ratio", NO_UNIT),
     ("the ratio of", NO_UNIT),
+    ("persons per room", NO_UNIT),
     ('number of Wife/"Wife" missed', NO_UNIT),
 )
 

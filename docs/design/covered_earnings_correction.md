@@ -41118,41 +41118,43 @@ Every statement's field set, source document, page number, and derived
 page-text SHA-256 are fixed by that locator array together with the pinned
 input relation of §24.4.2; no statement is admitted without one.
 
-By disposition under §24.3, the 2,476 distinct statements partition exactly:
+By disposition under §24.3, the 2,476 distinct statements partition
+exactly:
 
 | Statement disposition | Distinct statements | Statement-field occurrences |
 |---|---:|---:|
-| `united_states_dollar` | 352 | 1,145 |
 | `week` | 333 | 1,294 |
-| `count` | 196 | 653 |
+| `united_states_dollar` | 351 | 1,144 |
+| `count` | 194 | 651 |
 | `hour_per_week` | 77 | 601 |
+| `united_states_dollar_per_hour` | 10 | 389 |
 | `month` | 69 | 318 |
 | `day` | 62 | 286 |
 | `year` | 59 | 219 |
 | `hour` | 45 | 133 |
 | `percent` | 20 | 34 |
-| `united_states_dollar_per_hour` | 9 | 388 |
 | `mile` | 2 | 18 |
 | `hour_per_year` | 2 | 4 |
 | `minute` | 2 | 2 |
 | `mile_per_year` | 1 | 1 |
-| **subtotal, unit-bearing** | **1,229** | **5,096** |
+| **subtotal, unit-bearing** | **1,227** | **5,094** |
 | `no_unit_derivable`, reason `not_a_whole_domain_denotation` | 946 | 2,480 |
 | `no_unit_derivable`, reason `no_unit_naming_clause` | 166 | 501 |
-| `no_unit_derivable`, reason `defeating_clause` | 134 | 278 |
+| `no_unit_derivable`, reason `defeating_clause` | 136 | 280 |
 | `no_unit_derivable`, reason `conflicting_unit_clauses` | 1 | 22 |
-| **subtotal, no unit derivable** | **1,247** | **3,281** |
+| **subtotal, no unit derivable** | **1,249** | **3,283** |
 | **complete statement census** | **2,476** | **8,377** |
 
-The two subtotals sum to 2,476 distinct statements and 8,377 occurrences with
+The two subtotals sum to 2,476 distinct statements and 8,377
+occurrences with
 no statement in two rows and none outside the table. At field level the same
 law partitions the complete denominator:
 
 | Field disposition | Reason | Fields |
 |---|---|---:|
-| unit derived | `derived_from_denotation_statement` | 5,096 |
+| unit derived | `derived_from_denotation_statement` | 5,094 |
 | no unit derived | `no_denotation_statement` | 81,259 |
-| no unit derived | `no_statement_names_a_unit` | 3,244 |
+| no unit derived | `no_statement_names_a_unit` | 3,246 |
 | no unit derived | `conflicting_statement_units` | 0 |
 | **complete denominator** | | **89,599** |
 
@@ -41271,7 +41273,7 @@ largest fail-closed refusal in the law and it is deliberate.
 
 #### 24.3.4 Stage 3 — the closed unit clause table
 
-A **unit clause** is one of exactly these 53 byte strings, and the
+A **unit clause** is one of exactly these 55 byte strings, and the
 table is the operative law: nothing outside it can contribute a unit, and no
 reading of a predicate other than exact byte occurrence of a listed clause is
 lawful. Displayed order is the ratified order; matching is order-independent
@@ -41284,57 +41286,59 @@ law, and a clause is lawful whether or not the frozen corpus exercises it.
 |---:|---|---|---:|---:|
 | 1 | `dollars and cents per hour` | `united_states_dollar_per_hour` | 9 | 388 |
 | 2 | `dollars and cents` | `united_states_dollar` | 2 | 488 |
-| 3 | `dollar and cents` | `united_states_dollar` | 1 | 1 |
-| 4 | `whole dollars` | `united_states_dollar` | 331 | 619 |
-| 5 | `dollar amount` | `united_states_dollar` | 4 | 21 |
-| 6 | `dollar income amount` | `united_states_dollar` | 1 | 1 |
-| 7 | `dollar value` | `united_states_dollar` | 6 | 8 |
-| 8 | `dollar lump sum amount` | `united_states_dollar` | 1 | 1 |
-| 9 | `value in dollars` | `united_states_dollar` | 5 | 5 |
-| 10 | `tax credit dollars` | `united_states_dollar` | 1 | 1 |
-| 11 | `number of hours per week` | `hour_per_week` | 59 | 564 |
-| 12 | `hours per week` | `hour_per_week` | 2 | 3 |
-| 13 | `weekly work hours` | `hour_per_week` | 16 | 34 |
-| 14 | `hours per year` | `hour_per_year` | 1 | 2 |
-| 15 | `number of hours (0001-2080) per year` | `hour_per_year` | 1 | 2 |
-| 16 | `number of hours` | `hour` | 0 | 0 |
-| 17 | `annual hours` | `hour` | 6 | 42 |
-| 18 | `annual work hours` | `hour` | 17 | 27 |
-| 19 | `annual overtime hours` | `hour` | 13 | 49 |
-| 20 | `annualized hours` | `hour` | 2 | 2 |
-| 21 | `annualized work hours` | `hour` | 2 | 5 |
-| 22 | `annual extra job hours` | `hour` | 2 | 2 |
-| 23 | `annual hours worked` | `hour` | 3 | 6 |
-| 24 | `extra job hours` | `hour` | 0 | 0 |
-| 25 | `number of weeks` | `week` | 223 | 884 |
-| 26 | `number of reported weeks` | `week` | 58 | 292 |
-| 27 | `expressed as weeks` | `week` | 20 | 72 |
-| 28 | `duration in weeks` | `week` | 3 | 12 |
-| 29 | `total weeks` | `week` | 13 | 13 |
-| 30 | `weeks worked` | `week` | 16 | 21 |
-| 31 | `number of days` | `day` | 6 | 6 |
-| 32 | `number of reported days` | `day` | 56 | 280 |
-| 33 | `number of months` | `month` | 14 | 26 |
-| 34 | `number of reported months` | `month` | 55 | 292 |
-| 35 | `number of years` | `year` | 20 | 36 |
-| 36 | `number of additional years` | `year` | 2 | 2 |
-| 37 | `in whole years` | `year` | 10 | 49 |
-| 38 | `in years` | `year` | 27 | 132 |
-| 39 | `number of minutes` | `minute` | 2 | 2 |
-| 40 | `number of miles` | `mile` | 2 | 18 |
-| 41 | `number of miles per year` | `mile_per_year` | 1 | 1 |
-| 42 | `number of` | `count` | 196 | 653 |
-| 43 | `percent` | `percent` | 15 | 23 |
-| 44 | `percentage` | `percent` | 4 | 10 |
-| 45 | `percentange` | `percent` | 1 | 1 |
-| 46 | `the last two digits` | `no_unit_derivable` | 49 | 133 |
-| 47 | `ID number of` | `no_unit_derivable` | 73 | 73 |
-| 48 | `interview number of` | `no_unit_derivable` | 2 | 17 |
-| 49 | `marginal tax rate` | `no_unit_derivable` | 5 | 50 |
-| 50 | `value per room` | `no_unit_derivable` | 2 | 2 |
-| 51 | `income/needs ratio` | `no_unit_derivable` | 1 | 1 |
-| 52 | `the ratio of` | `no_unit_derivable` | 1 | 1 |
-| 53 | `number of Wife/"Wife" missed` | `no_unit_derivable` | 1 | 1 |
+| 3 | `dollar and cents` | `united_states_dollar` | 0 | 0 |
+| 4 | `dollar and cents amount per hour` | `united_states_dollar_per_hour` | 1 | 1 |
+| 5 | `whole dollars` | `united_states_dollar` | 331 | 619 |
+| 6 | `dollar amount` | `united_states_dollar` | 4 | 21 |
+| 7 | `dollar income amount` | `united_states_dollar` | 1 | 1 |
+| 8 | `dollar value` | `united_states_dollar` | 6 | 8 |
+| 9 | `dollar lump sum amount` | `united_states_dollar` | 1 | 1 |
+| 10 | `value in dollars` | `united_states_dollar` | 5 | 5 |
+| 11 | `tax credit dollars` | `united_states_dollar` | 1 | 1 |
+| 12 | `number of hours per week` | `hour_per_week` | 59 | 564 |
+| 13 | `hours per week` | `hour_per_week` | 2 | 3 |
+| 14 | `weekly work hours` | `hour_per_week` | 16 | 34 |
+| 15 | `hours per year` | `hour_per_year` | 1 | 2 |
+| 16 | `number of hours (0001-2080) per year` | `hour_per_year` | 1 | 2 |
+| 17 | `number of hours` | `hour` | 0 | 0 |
+| 18 | `annual hours` | `hour` | 6 | 42 |
+| 19 | `annual work hours` | `hour` | 17 | 27 |
+| 20 | `annual overtime hours` | `hour` | 13 | 49 |
+| 21 | `annualized hours` | `hour` | 2 | 2 |
+| 22 | `annualized work hours` | `hour` | 2 | 5 |
+| 23 | `annual extra job hours` | `hour` | 2 | 2 |
+| 24 | `annual hours worked` | `hour` | 3 | 6 |
+| 25 | `extra job hours` | `hour` | 0 | 0 |
+| 26 | `number of weeks` | `week` | 223 | 884 |
+| 27 | `number of reported weeks` | `week` | 58 | 292 |
+| 28 | `expressed as weeks` | `week` | 20 | 72 |
+| 29 | `duration in weeks` | `week` | 3 | 12 |
+| 30 | `total weeks` | `week` | 13 | 13 |
+| 31 | `weeks worked` | `week` | 16 | 21 |
+| 32 | `number of days` | `day` | 6 | 6 |
+| 33 | `number of reported days` | `day` | 56 | 280 |
+| 34 | `number of months` | `month` | 14 | 26 |
+| 35 | `number of reported months` | `month` | 55 | 292 |
+| 36 | `number of years` | `year` | 20 | 36 |
+| 37 | `number of additional years` | `year` | 2 | 2 |
+| 38 | `in whole years` | `year` | 10 | 49 |
+| 39 | `in years` | `year` | 27 | 132 |
+| 40 | `number of minutes` | `minute` | 2 | 2 |
+| 41 | `number of miles` | `mile` | 2 | 18 |
+| 42 | `number of miles per year` | `mile_per_year` | 1 | 1 |
+| 43 | `number of` | `count` | 194 | 651 |
+| 44 | `percent` | `percent` | 15 | 23 |
+| 45 | `percentage` | `percent` | 4 | 10 |
+| 46 | `percentange` | `percent` | 1 | 1 |
+| 47 | `the last two digits` | `no_unit_derivable` | 49 | 133 |
+| 48 | `ID number of` | `no_unit_derivable` | 73 | 73 |
+| 49 | `interview number of` | `no_unit_derivable` | 2 | 17 |
+| 50 | `marginal tax rate` | `no_unit_derivable` | 5 | 50 |
+| 51 | `value per room` | `no_unit_derivable` | 2 | 2 |
+| 52 | `income/needs ratio` | `no_unit_derivable` | 1 | 1 |
+| 53 | `the ratio of` | `no_unit_derivable` | 1 | 1 |
+| 54 | `persons per room` | `no_unit_derivable` | 2 | 2 |
+| 55 | `number of Wife/"Wife" missed` | `no_unit_derivable` | 1 | 1 |
 
 `no_unit_derivable` rows are **defeating clauses**. Their presence in a
 predicate removes any unit reading of that predicate, and each is grounded in
@@ -41352,12 +41356,14 @@ the same way a positive clause is:
 - `income/needs ratio` and `the ratio of` — a ratio's unit is not the unit of
   either operand, and one source statement reads "the actual income/needs ratio
   in dollars and cents";
+- `persons per room` — a density is not a count, and §24.3.5's vocabulary
+  fixes no person-per-room unit, so `number of` may not read it as one;
 - `number of Wife/"Wife" missed` — the source spelling omits the counted noun
   entirely, so no measure is named.
 
-Exactly 2 clause
+Exactly 3 clause
 rows are inert on the frozen corpus, meaning no distinct statement is decided
-by either — `number of hours`, `extra job hours`.
+by any of them — `dollar and cents`, `number of hours`, `extra job hours`.
 Each is retained because it fixes the intended reading of a longer phrase
 against a shorter clause that would otherwise capture it, and because removing
 a clause from a ratified closed table is a change of law rather than a
@@ -41370,13 +41376,14 @@ witness-field-key, witness-locator]`, in the ratified clause order, where the
 witness is the highest-field-count distinct statement the clause decides and
 the locator is `<document> p.<page> <derived-page-text-sha256>`. An inert
 clause carries an empty witness by construction. The fence is exactly
-14,570 bytes with SHA-256
-`0f703983f578862158d4afd8347984dc65fd090a866840eafae03b57b7d23094`.
+14,981 bytes with SHA-256
+`694eea9ec96e17dcbf80a9787062f1c2a620c85479b63f6e5dd544637e48655d`.
 
 ~~~text
 ["dollars and cents per hour","united_states_dollar_per_hour",9,388,"The values for this variable represent dollars and cents per hour.",[1982,"V8385"],"family/1982/FAM1982_codebook.pdf p.48 d920ee970a94a5e87e780950f9915c6d259b7a2dd519429a63c14372c45bcc8e"]
 ["dollars and cents","united_states_dollar",2,488,"The values for this variable represent dollars and cents.",[1993,"V22474"],"family/1993/fam1993_codebook.pdf p.183 8516babee041bf30460ad0631cc874cbfaefe8ec68cbc1eb4be6e1a92c45cfac"]
-["dollar and cents","united_states_dollar",1,1,"This variable represents dollar and cents amount per hour.",[1976,"V4794"],"family/1976/FAM1976_codebook.pdf p.147 1ac3515c7fde316b3456233aebd4bfb12aabb226ee7a792717d6c94ed8595a85"]
+["dollar and cents","united_states_dollar",0,0,"",[],""]
+["dollar and cents amount per hour","united_states_dollar_per_hour",1,1,"This variable represents dollar and cents amount per hour.",[1976,"V4794"],"family/1976/FAM1976_codebook.pdf p.147 1ac3515c7fde316b3456233aebd4bfb12aabb226ee7a792717d6c94ed8595a85"]
 ["whole dollars","united_states_dollar",331,619,"The values for this variable represent total receipts from the business in whole dollars.",[2003,"ER21868"],"family/2003/FAM2003ER_codebook.pdf p.271 5578a785416cc97ed7ed166b6939748930beea843b22cef4475e1f34ff7073ec"]
 ["dollar amount","united_states_dollar",4,21,"The values for this variable represent the annual dollar amount of homeowner's insurance premiums.",[1993,"V21619"],"family/1993/fam1993_codebook.pdf p.6 043cabeae7f01fac36d709e7b419a89c8c01f0257641990e3a6e1fe072c248bb"]
 ["dollar income amount","united_states_dollar",1,1,"The values for this variable represent the actual annual dollar income amount (00001- 99996) expected.",[1984,"V10928"],"family/1984/FAM1984_codebook.pdf p.349 1ea77edbcd4a373a318c21e6d92859e4c00995014bad6becaa5bb21f1519032a"]
@@ -41415,7 +41422,7 @@ clause carries an empty witness by construction. The fence is exactly
 ["number of minutes","minute",2,2,"The values for this variable represent the actual number of minutes taken by the interviewer to administer the questionnaire.",[1979,"V6460"],"family/1979/FAM1979_codebook.pdf p.38 378f96fb5bed834ab352666853b0023c82c7e7827b9636174413dcaad1342a17"]
 ["number of miles","mile",2,18,"The values for this variable represent the actual number of miles to work one way.",[1982,"V8454"],"family/1982/FAM1982_codebook.pdf p.72 2ce7b7da77dccc6aadb2ae261dd90346a58c1a09e7b5d2e90a8992731c249f86"]
 ["number of miles per year","mile_per_year",1,1,"values for this variable represent the actual number of miles per year.",[1974,"V3520"],"family/1974/FAM1974_codebook.pdf p.30 675d746563c35bbc431137711bb8ea1d8c7273744ff97c713e4ab4c4f4a8120f"]
-["number of","count",196,653,"The values for this variable represent the actual number of Head's brothers.",[1985,"V11925"],"family/1985/FAM1985_codebook.pdf p.274 af77f500d8551b8c1d03d8262eac925a89f5e8d971b4b96b8b97bcd7e94df6ff"]
+["number of","count",194,651,"The values for this variable represent the actual number of Head's brothers.",[1985,"V11925"],"family/1985/FAM1985_codebook.pdf p.274 af77f500d8551b8c1d03d8262eac925a89f5e8d971b4b96b8b97bcd7e94df6ff"]
 ["percent","percent",15,23,"The values for this variable represent the annual average unemployment rate, to the nearest whole percent, reported by the U.S.",[1990,"V18915"],"family/1990/FAM1990_codebook.pdf p.400 7254e45c30ea4810fcceeb7b9452e9a4237b256114da105500bff4b087bdcbf3"]
 ["percentage","percent",4,10,"The values for this variable represent the percentage of heating/cooling costs covered by government subsidies.",[2015,"ER60130"],"family/2015/FAM2015ER_codebook.pdf p.41 c7f06619aa242cc2733c04f6f16f21bc5ba5d53d50f9aa687b08a842d511427f"]
 ["percentange","percent",1,1,"The values for this variable represent the percentange of heating/cooling costs covered by government subsidies.",[2019,"ER72131"],"family/2019/fam2019er_codebook.pdf p.42 33075a34f0052912148db19adab5ede207608da287322e147647fec118ca30e9"]
@@ -41426,6 +41433,7 @@ clause carries an empty witness by construction. The fence is exactly
 ["value per room","no_unit_derivable",2,2,"The values for this variable represent the actual value per room, calculated according to the following formula: V11018 + [(V10026 + V10028) x 10] / V10432 (1984 (1984 (1984 Value (Number of House Rent of Rent Rooms in Value) Paid) Received) 1984) The following rules were used for each case, depending on the value of V10437: Homeowners (V10437=1): House value (V11018) divided by the number of rooms (V10432) Renters (V10437=5): Dwelling value, assumed to be 10 times the annual rent (V10026), divided by the number of rooms (V10432) Those neither owning nor renting (V10437=8): Dwelling value, assumed to be 10 times the value of rent received free in return for services (V10028), divided by the number of rooms (V10432) Note that the maximum value for V10432, excluding missing data, is 8, so data values in this variable are inflated for a few cases.",[1984,"V11036"],"family/1984/FAM1984_codebook.pdf p.388 bfcb090fb3d79b9ab0db2ad247e827884170d48fcc4cb85d2f5902f1ca3dcee8"]
 ["income/needs ratio","no_unit_derivable",1,1,"values for this variable represent the actual income/needs ratio in dollars and cents.",[1974,"V3692"],"family/1974/FAM1974_codebook.pdf p.91 5ffe2977caffac7671a57abc09c658f9bdca41cca3889a8bbc2e225af6081f12"]
 ["the ratio of","no_unit_derivable",1,1,"The values for this variable represent the ratio of 1970 family net real income net of cost of housing to 1970 family food need standard.",[1971,"V2266"],"family/1971/FAM1971_codebook.pdf p.140 c9849a6eea631c565eaaf13987628e261d33454f02f44a4f6c1951998a5475da"]
+["persons per room","no_unit_derivable",2,2,"The values for this variable represent the number of persons per room with one implied decimal place; e.g., a value of 20 here represents 2.0 persons per room.",[1985,"V12396"],"family/1985/FAM1985_codebook.pdf p.456 6587e65580e380e23395f2e9612e3f4230baeb8bbbdcca3d3d2536097cded50c"]
 ["number of Wife/\"Wife\" missed","no_unit_derivable",1,1,"The values for this variable represent the actual number of Wife/\"Wife\" missed due to temporary layoff.",[2003,"ER24096"],"family/2003/FAM2003ER_codebook.pdf p.970 d453cb0315686f244052351665a41823f7749ab7500c80a069c0c334984bc200"]
 ~~~
 
@@ -41506,11 +41514,11 @@ that names a unit, in ascending byte order, as one canonical JSON array
 `[statement, unit, field-count]` per line. It is the auditable form of the
 positive law — a field keeps a unit under §24 exactly when its normalized
 description contains one of these byte strings and no other statement of its
-own names a different one. The fence has exactly 1,229 lines and
-185,030 bytes, with SHA-256
-`f8049bb25e561c447a60784fe4289435d8d2bd9678352daceceb2090e5e1ee67`; the same rows as one canonical
+own names a different one. The fence has exactly 1,227 lines and
+184,780 bytes, with SHA-256
+`a613bf1fbdfe4110fdb87be0d9a12668dd9187137325bd24bfb1b26f2d71fd92`; the same rows as one canonical
 JSON array hash to
-`0a128f5f19d4fe5bab63e73d5b72d503a26138717f87f2ebed886628e198895c`.
+`0661174c427f66b4dfc22d6734f7c6e85ff6836b201a7fbcd94c3908d92d9df8`.
 Every line is pure ASCII, contains no backtick and no tilde run, and parses as
 exactly one three-position JSON array; a line failing any of those blocks
 ratification.
@@ -42569,8 +42577,6 @@ ratification.
 ["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1989, that is, all persons in the family in 1989 and any institutionalized individuals associated with the family, as well as any movers-out between 1988 and 1989 who did not move into another responding family.","count",1]
 ["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1990, that is, all persons in the family in 1990 and any institutionalized individuals associated with the family, as well as any movers-out between 1989 and 1990 who are not included in another responding family.","count",1]
 ["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1991, that is, all persons in the family in 1991 and any institutionalized individuals associated with the family, as well as any movers-out between 1990 and 1991 who are not included in another responding family.","count",1]
-["The values for this variable represent the number of persons per room with one implied decimal place; e.g., a value of 20 here represents 2.0 persons per room.","count",1]
-["The values for this variable represent the number of persons per room.","count",1]
 ["The values for this variable represent the number of years left on the longest-term mortgage that the FU has.","year",13]
 ["The values for this variable represent the number of years.","year",1]
 ["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
@@ -42711,7 +42717,7 @@ ratification.
 ["The values for this variable represent total consumption as a percent of food need standard (V2271/V2317).","percent",1]
 ["The values for this variable represent total receipts from farming in whole dollars.","united_states_dollar",18]
 ["The values for this variable represent total receipts from the business in whole dollars.","united_states_dollar",55]
-["This variable represents dollar and cents amount per hour.","united_states_dollar",1]
+["This variable represents dollar and cents amount per hour.","united_states_dollar_per_hour",1]
 ["This variable represents the actual number of non-FU members (01-20) sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count",9]
 ["This variable represents the actual number of non-FU members sharing the housing unit with this FU (01-20) but who were included in other responding FUs.","count",1]
 ["This variable represents the actual number of non-FU members sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count",18]
@@ -42751,24 +42757,24 @@ ratification.
 
 The refusals are the load-bearing part and are inventoried here so that no
 reader mistakes coverage for completeness. On the frozen corpus the law
-withholds a unit from 84,503 of 89,599 fields. The reasons, in descending
-size, are:
+withholds a unit from 84,505 of 89,599 fields. The reasons, in
+descending size, are:
 
 1. **no denotation statement at all** — 81,259 fields. The PSID codebook
    states what a value denotes for a minority of fields and is silent for the
    rest. Silence is not a unit.
-2. **a subrange-scoped denotation** — 946 distinct statements and 2,480
-   statement-field occurrences. §24.3.3.
-3. **a denotation naming no measure** — 166 distinct statements and 501
-   statement-field occurrences: `overall income profits or losses`, `the
+2. **a subrange-scoped denotation** — 946 distinct statements and
+   2,480 statement-field occurrences. §24.3.3.
+3. **a denotation naming no measure** — 166 distinct statements and
+   501 statement-field occurrences: `overall income profits or losses`, `the
    annual amount contributed`, `the actual wage rate`, `the actual age of the
    Head`, `the actual unemployment rate in whole numbers`, and the calendar
    years. Several of these are obviously money or obviously years to a reader;
    the law does not take obviously.
-4. **a defeating clause** — 134 distinct statements and 278 statement-field
-   occurrences. §24.3.4.
-5. **two units in one statement** — 1 distinct statement and 22
-   statement-field occurrences. §24.3.5.
+4. **a defeating clause** — 136 distinct statements and
+   280 statement-field occurrences. §24.3.4.
+5. **two units in one statement** — 1 distinct statement and
+   22 statement-field occurrences. §24.3.5.
 
 The contrast that shows the discipline is internal to the corpus: `the actual
 age in years (45-96) at which Head may retire with full benefits` takes `year`
@@ -42895,7 +42901,7 @@ denominator order:
 | Exact successor `derivation_status` | Early | Spouse seam | Pre-ER | ER transition | Modern | Exclusion | Total | Field-key SHA-256 |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | `compiled_source_numeric_grammar` | 15 | 0 | 1,482 | 1,210 | 1,066 | 718 | **4,491** | `dd79ada32264e2d96103c66a299b4f19f471aa650abd4b21ffe6a4e9c3e6c536` |
-| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 0 | 1 | 105 | 4 | 7 | 4 | **121** | `b298a325ce51d7b841383002952a636082b7aeca06daaee466d68f1bfa1f0d1b` |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 0 | 1 | 103 | 4 | 7 | 4 | **119** | `1562faced2b09444f66c4fdc5f938d71450056c670cfea33b3fee367687262c7` |
 | `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 0 | 0 | 29 | 11 | 0 | 2 | **42** | `56ba8178d03b8398130b77c975f0b6655f20928125a46eaf48e6d15adf70c8ab` |
 | `compiled_source_numeric_grammar_partial_range_exact_replay` | 0 | 0 | 0 | 0 | 0 | 0 | **0** | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
 | `value_code_domain_no_numeric_grammar` | 2,606 | 1,130 | 10,064 | 11,668 | 26,700 | 15,148 | **67,316** | `6ee97ba9db16520c734a21094623376714a468c3148977666f8e107dbd35e05f` |
@@ -42903,26 +42909,26 @@ denominator order:
 | `nonnumeric_source_field_outside_numeric_grammar` | 0 | 0 | 0 | 0 | 0 | 0 | **0** | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
 | `conflicting_source_numeric_format` | 1 | 0 | 0 | 0 | 0 | 0 | **1** | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
 | `unsupported_source_numeric_format` | 67 | 20 | 122 | 46 | 90 | 76 | **421** | `fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010` |
-| `incomplete_source_numeric_authority` | 1,090 | 671 | 3,816 | 2,673 | 4,971 | 2,841 | **16,062** | `debecfa09727109f0374469ed9109a667de14014c0333552bda7e0713ac3562b` |
+| `incomplete_source_numeric_authority` | 1,090 | 671 | 3,818 | 2,673 | 4,971 | 2,841 | **16,064** | `87c6c74d35665625cdf8156bf0e070799271bcb5a630be75732ed111cd279f1a` |
 | **Artifact total** | **3,868** | **1,838** | **15,745** | **15,983** | **33,154** | **19,011** | **89,599** | exact cover |
 
 The canonical ten-row count array, in the displayed terminal order, is:
 
 ```json
-[{"derivation_status":"compiled_source_numeric_grammar","field_count":4491},{"derivation_status":"compiled_source_numeric_grammar_padding_underdetermined_exact_replay","field_count":121},{"derivation_status":"compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay","field_count":42},{"derivation_status":"compiled_source_numeric_grammar_partial_range_exact_replay","field_count":0},{"derivation_status":"value_code_domain_no_numeric_grammar","field_count":67316},{"derivation_status":"value_code_range_physical_rendering_unestablished","field_count":1145},{"derivation_status":"nonnumeric_source_field_outside_numeric_grammar","field_count":0},{"derivation_status":"conflicting_source_numeric_format","field_count":1},{"derivation_status":"unsupported_source_numeric_format","field_count":421},{"derivation_status":"incomplete_source_numeric_authority","field_count":16062}]
+[{"derivation_status":"compiled_source_numeric_grammar","field_count":4491},{"derivation_status":"compiled_source_numeric_grammar_padding_underdetermined_exact_replay","field_count":119},{"derivation_status":"compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay","field_count":42},{"derivation_status":"compiled_source_numeric_grammar_partial_range_exact_replay","field_count":0},{"derivation_status":"value_code_domain_no_numeric_grammar","field_count":67316},{"derivation_status":"value_code_range_physical_rendering_unestablished","field_count":1145},{"derivation_status":"nonnumeric_source_field_outside_numeric_grammar","field_count":0},{"derivation_status":"conflicting_source_numeric_format","field_count":1},{"derivation_status":"unsupported_source_numeric_format","field_count":421},{"derivation_status":"incomplete_source_numeric_authority","field_count":16064}]
 ```
 
 With its terminal LF that array hashes to
-`d41933c87e61767539790565501d468308ccd944788b43503590355a43e22f83`.
+`b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a`.
 The corresponding complete ordered `[interview_wave,raw_field_id,successor
 derivation_status]` array hashes to
-`344488616b2e5b02ab805f726bd177774f8a2a9ac7bd2293362dc9e25333aa6e`.
+`7ccdbda9a13c3a428a9f48dd7fd57b0d72956c8ad2b1705fbb6667d7907ed90d`.
 The independently recomputed denominator remains
 `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`.
 The branch counts sum to exactly 89,599; there are zero unmapped keys, zero
 multiply mapped keys, and zero keys outside the authenticated denominator.
-The first seven terminals now contain 73,115 fields and the three closed
-failure terminals contain 16,484.
+The first seven terminals now contain 73,113 fields and the three
+closed failure terminals contain 16,486.
 
 The two empty terminals,
 `compiled_source_numeric_grammar_partial_range_exact_replay` and
@@ -42934,14 +42940,14 @@ the ten-position shape is unchanged.
 
 #### 24.4.4 The exact movement table
 
-Exactly 15,249 fields move, all of them from a
+Exactly 15,251 fields move, all of them from a
 compiled terminal to `incomplete_source_numeric_authority`, and no field moves
 in any other direction:
 
 | Terminal | Ratified | Successor | Delta |
 |---|---:|---:|---:|
 | `compiled_source_numeric_grammar` | 17,329 | 4,491 | -12,838 |
-| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 | 121 | -1,732 |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 | 119 | -1,734 |
 | `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 674 | 42 | -632 |
 | `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 | 0 | -47 |
 | `value_code_domain_no_numeric_grammar` | 67,316 | 67,316 | +0 |
@@ -42949,17 +42955,17 @@ in any other direction:
 | `nonnumeric_source_field_outside_numeric_grammar` | 0 | 0 | +0 |
 | `conflicting_source_numeric_format` | 1 | 1 | +0 |
 | `unsupported_source_numeric_format` | 421 | 421 | +0 |
-| `incomplete_source_numeric_authority` | 813 | 16,062 | +15,249 |
+| `incomplete_source_numeric_authority` | 813 | 16,064 | +15,251 |
 
 By ratified terminal the movement decomposes as 12,838 from
-`compiled_source_numeric_grammar`, 1,732 from
+`compiled_source_numeric_grammar`, 1,734 from
 `compiled_source_numeric_grammar_padding_underdetermined_exact_replay`, 632
 from `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
 and all 47 from
 `compiled_source_numeric_grammar_partial_range_exact_replay`. By evidence
-artifact it decomposes as 1,069 / 630 / 3,526 / 2,468 / 4,817 / 2,739 in the
+artifact it decomposes as 1,069 / 630 / 3,528 / 2,468 / 4,817 / 2,739 in the
 displayed artifact order. By §24.3.6 reason it decomposes as 12,378 with
-`no_denotation_statement` and 2,871 with `no_statement_names_a_unit`; zero
+`no_denotation_statement` and 2,873 with `no_statement_names_a_unit`; zero
 moved fields carry `conflicting_statement_units`, because no field in the
 corpus does.
 
@@ -42976,9 +42982,9 @@ The complete movement relation is the ordered array of six-member objects
 `interview_wave`, `raw_field_id`, `source_artifact`, `ratified_status`,
 `successor_status`, `resolution_reason`, `unit_absence_reason` in denominator
 order; it hashes to
-`40c56ff569799f3e7c2498aa9e9baca5a5f65b6b9af078efe838a6660f083c3c`,
+`5d33f37ffacc05061354227e4358f8a81a4055afcb26557acc5675471031c8ac`,
 and its ordered `[interview_wave,raw_field_id]` key projection hashes to
-`b44e607c6d87d133062f4e94d8b980ab992bab08ee6aed8e2ce8e69c5ac8a500`.
+`67b1685b8119e315f39a4ef48908ac620b68e2bccce8295f53aa9f68a7e92f8c`.
 
 #### 24.4.5 The successor failure-reason artifact
 
@@ -42996,13 +43002,13 @@ and gains exactly one row:
 | `unsupported_source_numeric_format` | `selected_space_range_zero_renderable` | 183 |
 | `incomplete_source_numeric_authority` | `finite_no_arm_no_lawful_complete_disposition` | 46 |
 | `incomplete_source_numeric_authority` | `literal_only_zero_diagnostic_padding_capacity` | 767 |
-| `incomplete_source_numeric_authority` | `unresolved_typed_value_unit_no_source_authority` | 15,249 |
+| `incomplete_source_numeric_authority` | `unresolved_typed_value_unit_no_source_authority` | 15,251 |
 
 The seven inherited rows are byte-identical in reason literal and, for the six
 that §24 does not touch, in field-key membership. The eighth row is new. The
-complete successor artifact is 272,268
+complete successor artifact is 272,300
 bytes and hashes to
-`fa680c717a9bef93db1cf6ed13278dca45c721267af1bd4f34ebdb1d4489827a`.
+`6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e`.
 The ratified 21,034-byte seven-row artifact hashing to
 `66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324`
 remains the exact artifact of the classification that did not evaluate the
@@ -43011,7 +43017,7 @@ unit precondition, and is superseded as law by this one at D10.
 The complete Amendment-10 census payload — input-relation digest, statement
 table digest, count array, assignment, matrix, movement rows, failure-reason
 rows, and unit tallies — hashes to
-`42cb7cb03ad4daff391136a823300f335e6c6a77486cb24795e6769332c465cc`.
+`b70259e92b4b0e69247845265d35b6d4f71cc83605fd311202fdb18d0fba15d5`.
 
 ### 24.5 The complete downstream supersession table
 
@@ -43029,13 +43035,13 @@ successor column.
 | `derivation_status` | Ratified fields / entries / members | Successor fields / entries / members |
 |---|---:|---:|
 | `compiled_source_numeric_grammar` | 17,329 / 30,452 / 820,025,893,984 | 4,491 / 4,546 / 263,613,479,209 |
-| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 / 1,853 / 865,268 | 121 / 121 / 2,731 |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 / 1,853 / 865,268 | 119 / 119 / 2,621 |
 | `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 674 / 1,433 / 384,135 | 42 / 42 / 120,098 |
 | `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 / 48 / 682,035,700 | 0 / 0 / 0 |
-| **Complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **4,654 / 4,709 / 263,613,602,038** |
+| **Complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **4,652 / 4,707 / 263,613,601,928** |
 
-The four successor member subtotals sum to 263,613,602,038 exactly, and the
-four successor entry subtotals sum to 4,709, so the successor decomposition is
+The four successor member subtotals sum to 263,613,601,928 exactly, and the
+four successor entry subtotals sum to 4,707, so the successor decomposition is
 an exact cover of the successor compiled relation in the same way the ratified
 one is of the ratified relation.
 
@@ -43043,22 +43049,22 @@ one is of the ratified relation.
 
 | Fact | Ratified value | Successor value |
 |---|---:|---:|
-| mandatory logical range members in compiled rows | 820,709,179,087 | 263,613,602,038 |
-| members in explicit-arm relation containers (`N <= 4,096`) | 4,736,892 | 974,037 |
-| explicit-arm containers | 58,517 | 7,918 |
+| mandatory logical range members in compiled rows | 820,709,179,087 | 263,613,601,928 |
+| members in explicit-arm relation containers (`N <= 4,096`) | 4,736,892 | 973,927 |
+| explicit-arm containers | 58,517 | 7,914 |
 | members in analytic-arm relation containers (`N > 4,096`) | 820,704,442,195 | 263,612,628,001 |
 | analytic-arm `renderable_member_rows` members / containers | 820,701,994,620 / 9,019 | 263,612,628,001 / 1,500 |
 | analytic-arm `unrenderable_member_rows` members / containers | 2,447,575 / 36 | 0 / 0 |
 | analytic-arm intervals | 67,594 | 1,500 |
-| threshold-partition identity | `4,736,892 + 820,704,442,195 = 820,709,179,087` | `974,037 + 263,612,628,001 = 263,613,602,038` |
-| all-member empty-object floor `3N + 2` | 2,462,127,537,263 bytes | 790,840,806,116 bytes |
+| threshold-partition identity | `4,736,892 + 820,704,442,195 = 820,709,179,087` | `973,927 + 263,612,628,001 = 263,613,601,928` |
+| all-member empty-object floor `3N + 2` | 2,462,127,537,263 bytes | 790,840,805,786 bytes |
 | that floor in binary TiB | 2.239 TiB | 0.719 TiB |
 | shortest lawful inherited member-row floor | `820,701,994,620 × 325 + 2,447,575 × 260 = 266,728,784,621,000` bytes | `263,612,628,001 × 325 + 0 × 260 = 85,674,104,100,325` bytes |
 | that floor divided by `2^40` | 242.5884164231320028193295001983642578125 TiB | 77.9201437583878941950388252735137939453125 TiB |
 | multiple of the measured ~1.304 TiB capacity | above 185 | above 59 |
 | arm-ambiguous renderable members of the arm-ambiguous branch | 56,480 | 13,303 |
 | arm-invariant renderable members of that branch | 327,655 | 106,795 |
-| rejected counterfactual pair, arm-ambiguous counted unrenderable | 4,753,875 and 820,704,425,212 | 975,036 and 263,612,627,002 |
+| rejected counterfactual pair, arm-ambiguous counted unrenderable | 4,753,875 and 820,704,425,212 | 974,926 and 263,612,627,002 |
 
 The 325-byte and 260-byte per-shape multipliers are unchanged: they are
 serializations of the inherited seven-key renderable row and four-key
@@ -43096,15 +43102,15 @@ and its two named witnesses are outside it.
 
 | Figure | Ratified value | Successor value |
 |---|---:|---:|
-| fields in the first seven terminals | 88,364 | 73,115 |
-| fields in the three closed failure terminals, the T-minus population | 1,235 | 16,484 |
-| closed failure-reason artifact rows / bytes | 7 / 21,034 | 8 / 272,268 |
-| ten-terminal count array digest | `421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624` | `d41933c87e61767539790565501d468308ccd944788b43503590355a43e22f83` |
-| complete ordered assignment digest | `5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e` | `344488616b2e5b02ab805f726bd177774f8a2a9ac7bd2293362dc9e25333aa6e` |
-| closed failure-reason artifact digest | `66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324` | `fa680c717a9bef93db1cf6ed13278dca45c721267af1bd4f34ebdb1d4489827a` |
+| fields in the first seven terminals | 88,364 | 73,113 |
+| fields in the three closed failure terminals, the T-minus population | 1,235 | 16,486 |
+| closed failure-reason artifact rows / bytes | 7 / 21,034 | 8 / 272,300 |
+| ten-terminal count array digest | `421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624` | `b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a` |
+| complete ordered assignment digest | `5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e` | `7ccdbda9a13c3a428a9f48dd7fd57b0d72956c8ad2b1705fbb6667d7907ed90d` |
+| closed failure-reason artifact digest | `66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324` | `6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e` |
 | denominator digest | `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764` | unchanged, recomputed |
 
-73,115 + 16,484 = 89,599, so the successor T-plus/T-minus split is an exact
+73,113 + 16,486 = 89,599, so the successor T-plus/T-minus split is an exact
 cover of the same denominator. Every §21 law that ranges over the T-minus
 population — the complete null-member laws, the negative census over T-minus
 keys, the prohibition on projecting a T-minus row away, and the
@@ -43131,14 +43137,14 @@ run this section publishes: the denominator digest reproduces, the successor
 count array and ordered assignment are pinned, the movement is exact-covered
 by an explicit relation, and the failure-reason artifact is complete. The
 expected populations for the artifact are exactly those of §24.4.3 and
-§24.5.1: 73,115 T-plus and 16,484 T-minus fields, a compiled relation of 4,654
-fields and 4,709 numeric-range entries, and 263,613,602,038 logical range
-members.
+§24.5.1: 73,113 T-plus and 16,486 T-minus fields, a compiled relation of
+4,652 fields and 4,707 numeric-range entries, and 263,613,601,928 logical
+range members.
 
 **What it does not repair.** The `pass_with_closed_failures` artifact remains
 physically unconstructible, and Amendment 10 does not claim otherwise. The
-successor shortest lawful member-row floor is 85,674,104,100,325 bytes, which
-is 77.9201437583878941950388252735137939453125 TiB and above 59 times the
+successor shortest lawful member-row floor is 85,674,104,100,325 bytes,
+which is 77.9201437583878941950388252735137939453125 TiB and above 59 times the
 measured ~1.304 TiB capacity. Amendment 8's third discovered unsatisfiable law
 is a fact about the explicit-array requirement and the surviving member
 population, not about the unit; shrinking the compiled relation by 76.6 per
@@ -43154,8 +43160,9 @@ build.
 The §20.3.7 count array, ordered assignment, failure-reason artifact, and
 per-status field-key digests remain exactly as ratified, and §24 publishes new
 values under new names rather than replacing the old ones in place. It does
-not scope §19.3.2's requirement: the requirement reaches every numeric-required
-row with nonempty `R`, exactly as written, and 15,249 fields fail it. It does
+not scope §19.3.2's requirement: the requirement reaches every
+numeric-required row with nonempty `R`, exactly as written, and 15,251 fields
+fail it. It does
 not define a default unit, a tolerated unit, an inherited unit, or an
 evidence-sourced unit. And it does not repair `missing_reason_code`, the
 second member the codebook derivation lane found under-determined for the same
@@ -43190,7 +43197,7 @@ format `NUM(3.0)`.
    anchor 1 and terminated by its own final `.`; under §24.3.3 its predicate
    is `the actual tax credit dollars.`.
 3. **Clause.** The only surviving clause occurrence is `tax credit dollars`,
-   clause row 10, disposition `united_states_dollar`. `U` has one member, so
+   clause row 11, disposition `united_states_dollar`. `U` has one member, so
    the statement's unit is `united_states_dollar` with reason
    `unit_naming_clause`, and the field's unit is `united_states_dollar` with
    reason `derived_from_denotation_statement`.
@@ -43249,7 +43256,8 @@ on derived page 31 whose complete pinned page text hashes to
    §23.2.2's derivation is untouched; the population it governs is smaller.
 5. **The contrast that proves the rule is not vacuous.** In the same corpus
    `the actual age in years (45-96) at which Head may retire with full
-   benefits` derives `year` from clause row 38, because it writes `in years`.
+   benefits` derives `year` from clause row 39, because it writes
+   `in years`.
    The law distinguishes the two spellings on their bytes and on nothing else.
 
 #### 24.6.3 A10-R03 — negative: an uncited unit assignment must fail validation
@@ -43295,31 +43303,31 @@ This is the gate the whole section rests on and it can fail.
    changed denominator falsifies the whole section rather than being absorbed
    by it.
 3. Derive every field's unit under §24.3, apply §24.4.2's extension, and
-   require the ten successor counts `4,491 / 121 / 42 / 0 / 67,316 / 1,145 /
-   0 / 1 / 421 / 16,062`, the count-array digest
-   `d41933c87e61767539790565501d468308ccd944788b43503590355a43e22f83`, and the
+   require the ten successor counts `4,491 / 119 / 42 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 16,064`,
+   the count-array digest
+   `b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a`, and the
    ordered-assignment digest
-   `344488616b2e5b02ab805f726bd177774f8a2a9ac7bd2293362dc9e25333aa6e`.
+   `7ccdbda9a13c3a428a9f48dd7fd57b0d72956c8ad2b1705fbb6667d7907ed90d`.
 4. Require the complete status-by-artifact matrix of §24.4.3, cell for cell,
    and all ten per-status field-key digests.
-5. Require the movement relation to hold exactly 15,249 rows, to hash to
-   `40c56ff569799f3e7c2498aa9e9baca5a5f65b6b9af078efe838a6660f083c3c`, to
+5. Require the movement relation to hold exactly 15,251 rows, to hash to
+   `5d33f37ffacc05061354227e4358f8a81a4055afcb26557acc5675471031c8ac`, to
    contain no row whose ratified status is outside the four compiled
    terminals, and to contain no row whose successor status is anything but
    `incomplete_source_numeric_authority`.
-6. Require the eight-row failure-reason artifact to be exactly 272,268 bytes
-   and to hash to
-   `fa680c717a9bef93db1cf6ed13278dca45c721267af1bd4f34ebdb1d4489827a`, with
+6. Require the eight-row failure-reason artifact to be exactly
+   272,300 bytes and to hash to
+   `6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e`, with
    its seven inherited rows carrying their ratified reason literals.
 7. Require the statement census of §24.2.4 and §24.3: 2,476 distinct
    statements hashing to
-   `246e80213a69aa3146d0dce3691e0c88b5d5c71c46a640619e5f60ffec950cd2`,
-   1,229 of them unit-bearing, the unit-bearing fence hashing to
-   `f8049bb25e561c447a60784fe4289435d8d2bd9678352daceceb2090e5e1ee67`, and the
+   `e2b1cf47d49a836c8b3c5320983a42f9cca2ff2631da036f33b841a26e5dae5f`,
+   1,227 of them unit-bearing, the unit-bearing fence hashing to
+   `a613bf1fbdfe4110fdb87be0d9a12668dd9187137325bd24bfb1b26f2d71fd92`, and the
    same rows as one canonical array hashing to
-   `0a128f5f19d4fe5bab63e73d5b72d503a26138717f87f2ebed886628e198895c`.
+   `0661174c427f66b4dfc22d6734f7c6e85ff6836b201a7fbcd94c3908d92d9df8`.
 8. Require the complete §24 census payload digest
-   `42cb7cb03ad4daff391136a823300f335e6c6a77486cb24795e6769332c465cc`.
+   `b70259e92b4b0e69247845265d35b6d4f71cc83605fd311202fdb18d0fba15d5`.
 
 Any inequality fails A10-R04. A10-R04 does not pass by adjusting a threshold,
 widening the clause table, adding an anchor, or repinning a digest in this
@@ -43330,8 +43338,8 @@ escalate under §24.10, exactly as §23.3.2 requires of its own gates.
 
 1. Recompute the §22.4.5 fact table restricted to the successor compiled
    relation and require every successor figure in §24.5.1 and §24.5.2,
-   including the threshold identity `974,037 + 263,612,628,001 =
-   263,613,602,038` and the exact row floor `85,674,104,100,325` bytes.
+   including the threshold identity `973,927 + 263,612,628,001 =
+   263,613,601,928` and the exact row floor `85,674,104,100,325` bytes.
 2. Recompute the same fact table over the ratified compiled relation and
    require every ratified figure in those tables, including 4,736,892,
    820,704,442,195, 56,480, 327,655, the rejected counterfactual pair
@@ -43340,9 +43348,9 @@ escalate under §24.10, exactly as §23.3.2 requires of its own gates.
    limb: a measurement procedure that cannot reproduce §22.4.5 may not be
    trusted to supersede it.
 3. State the expected populations of the `pass_with_closed_failures` artifact
-   under §24: 73,115 T-plus fields, 16,484 T-minus fields, a compiled relation
-   of 4,654 fields and 4,709 numeric-range entries, and 263,613,602,038
-   logical range members.
+   under §24: 73,113 T-plus fields, 16,486 T-minus fields, a compiled
+   relation of 4,652 fields and 4,707 numeric-range entries, and
+   263,613,601,928 logical range members.
 4. **Emit nothing.** The successor floor of
    77.9201437583878941950388252735137939453125 TiB remains above 59 times the
    measured ~1.304 TiB capacity, so the artifact remains physically
@@ -43369,7 +43377,7 @@ below gives every reached byte range its own row.
 | §20.3.5 three-class failure precedence table and its `unresolved width/decimal/type/unit/scale` incomplete predicate | `lawfully-unchanged-with-reason`: this is the operative mapping and §24 applies it verbatim. Its `unit` term is the term Amendment 10 makes evaluable. |
 | §20.3.7 complete field census, status-by-artifact matrix, ten count rows, three aggregate digests, seven failure-reason rows, and per-status field-key digests | `superseded-by-construction-by-§24.4.3-and-§24.4.5`: every ratified figure remains exactly as ratified and remains the true census of a classification that did not evaluate §19.3.2's unit precondition. §24 publishes the census of the same denominator with that precondition evaluated, under new names and new digests, and repins nothing in place. |
 | §20.3.6 A6-R01 through A6-R11 and §20.3.2-§20.3.4 renderer, partition, DFA, replay, and collision laws | `lawfully-unchanged-with-reason`: §24 evaluates no gate they own, changes no image, action, scalar, bound, step, or replay, and moves no member between the renderable and unrenderable relations of a field that stays compiled. |
-| §21.1.2 seven-reason closed-failure artifact and §21.2-§21.3 T-plus/T-minus, 16-key row, `pass_with_closed_failures` predicate, and complete-relation validation | `composed-with-§24.4.5-and-§24.5.4`: the outer row, the status law, the null-member laws, and the prohibition on projecting a T-minus row away are unchanged and now range over 16,484 T-minus fields. The closed reason set gains exactly one literal, `unresolved_typed_value_unit_no_source_authority`. |
+| §21.1.2 seven-reason closed-failure artifact and §21.2-§21.3 T-plus/T-minus, 16-key row, `pass_with_closed_failures` predicate, and complete-relation validation | `composed-with-§24.4.5-and-§24.5.4`: the outer row, the status law, the null-member laws, and the prohibition on projecting a T-minus row away are unchanged and now range over 16,486 T-minus fields. The closed reason set gains exactly one literal, `unresolved_typed_value_unit_no_source_authority`. |
 | §21.4.3-§21.4.5 consumer boundary, negative census, and Q5 embedding | `lawfully-unchanged-with-reason`: every consumer kind, guard, and abort is unchanged. The negative census ranges over the larger T-minus population and remains structurally incapable of reaching a T-plus status. |
 | §22.2 member-row shapes, §22.2.2 representation threshold, §22.2.3 lossiness test, and §22.3 consumer surface | `lawfully-unchanged-with-reason`: §24 changes no key, no shape, no threshold, and no serialization. A member row's `typed_value_unit` is now derived rather than undetermined, which is what §22 always required of it. |
 | §22.4.5 storage fact table, per-status decomposition, threshold partition, byte floors, and capacity multiple | `superseded-by-construction-by-§24.5.1-and-§24.5.2`: every ratified figure remains the exact fact of the ratified compiled relation; §24 publishes the same measurements over the successor compiled relation. The 325-byte and 260-byte per-shape multipliers, the `3N+2` expression, and the analytic/explicit threshold are unchanged. |
@@ -43606,9 +43614,9 @@ This subsection replaces §23.9.2 as the live revision-12 protocol:
    authenticated digests; the five quoted governing sentences and the applied
    contradiction; §20.3.5's replacing precedence and the exact movable
    population; the complete statement census and its locator digest; the
-   58-row comparator census; the 53-row clause table, its grounding
-   fence, and its two inert rows; the closed 14-identifier unit vocabulary;
-   the 1,229-row unit-bearing statement fence and both of its digests; the
+   58-row comparator census; the 55-row clause table, its grounding
+   fence, and its 3 inert rows; the closed 14-identifier unit vocabulary;
+   the 1,227-row unit-bearing statement fence and both of its digests; the
    successor matrix, count array, ordered assignment, movement relation, and
    eight-row failure-reason artifact; every superseding row in §24.5; A10-R01
    through A10-R05 including both limbs of A10-R05; §24.7's closure sweep;
@@ -43627,7 +43635,7 @@ This subsection replaces §23.9.2 as the live revision-12 protocol:
    strict post-D10 single-parent commit.
 5. After Q5 passes, construct and accept only the guarded slot authority,
    official slot registry, and complete actual official inventory in official
-   order, including its E-domain equations, negative census over the 16,484
+   order, including its E-domain equations, negative census over the 16,486
    T-minus keys, and derived-unit member-row reads. Immediately after actual
    inventory acceptance, run A7-R10b from fresh inputs and prove absence of
    every residual-9 key array, carrier, ID, consequence, amount read, and
