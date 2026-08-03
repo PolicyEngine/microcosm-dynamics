@@ -971,6 +971,69 @@ def test_gate_opens_input_relation_once(tmp_path: Path, monkeypatch) -> None:
     assert count == 1
 
 
+def test_second_destination_replace_failure_restores_every_output(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    rows = _rows()
+    field_rows = tmp_path / "rows.jsonl"
+    _write_rows(field_rows, rows)
+    output, statements = _sentinel_outputs(tmp_path)
+    original_output = output.read_bytes()
+    original_statements = statements.read_bytes()
+    original_replace = runner.os.replace
+    replacement_count = 0
+
+    def fail_after_second_replace(source, destination) -> None:
+        nonlocal replacement_count
+        original_replace(source, destination)
+        replacement_count += 1
+        if replacement_count == 2:
+            raise OSError("injected failure after second replacement")
+
+    monkeypatch.setattr(runner.os, "replace", fail_after_second_replace)
+
+    with pytest.raises(
+        runner.GateError,
+        match="output transaction failed; prior destinations restored",
+    ):
+        runner.execute_gate(
+            field_rows,
+            output=output,
+            statements=statements,
+            pins=_pins(rows),
+        )
+
+    assert replacement_count == 4
+    assert output.read_bytes() == original_output
+    assert statements.read_bytes() == original_statements
+    assert not tuple(tmp_path.glob(".*.a10-r04-*"))
+
+
+def test_cli_success_emits_complete_json(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys,
+) -> None:
+    rows = _rows()
+    field_rows = tmp_path / "rows.jsonl"
+    _write_rows(field_rows, rows)
+    expected_build = runner.build_payload(rows)
+    monkeypatch.setattr(
+        runner,
+        "EXPECTED_A10_R04_PINS",
+        runner.pins_from_build(expected_build),
+    )
+
+    result = runner.main(["--field-rows", str(field_rows)])
+    captured = capsys.readouterr()
+
+    assert result == 0
+    assert len(captured.out) > 4_000
+    assert json.loads(captured.out) == expected_build.payload
+    assert captured.err == ""
+
+
 def test_cli_failure_has_empty_stdout_and_preserves_output(
     tmp_path: Path,
     monkeypatch,

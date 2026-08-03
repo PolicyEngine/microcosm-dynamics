@@ -22,7 +22,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
+import tempfile
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -1466,6 +1468,166 @@ def _validate_output_paths(
         inodes[inode] = label
 
 
+def _stage_output(label: str, destination: Path, content: bytes) -> Path:
+    """Write and validate one same-filesystem staging file."""
+
+    descriptor = -1
+    staged: Path | None = None
+    staged_is_valid = False
+    try:
+        descriptor, raw_path = tempfile.mkstemp(
+            dir=destination.parent,
+            prefix=f".{destination.name}.a10-r04-stage-",
+        )
+        staged = Path(raw_path)
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = -1
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        digest = hashlib.sha256()
+        byte_count = 0
+        with staged.open("rb") as stream:
+            while chunk := stream.read(1024 * 1024):
+                byte_count += len(chunk)
+                digest.update(chunk)
+        expected_digest = hashlib.sha256(content).hexdigest()
+        if byte_count != len(content) or digest.hexdigest() != expected_digest:
+            raise GateError(f"staged {label} failed byte validation")
+        staged_is_valid = True
+        return staged
+    except GateError:
+        raise
+    except OSError as error:
+        raise GateError(
+            f"cannot stage {label} at {destination}: {error}"
+        ) from error
+    finally:
+        if descriptor >= 0:
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+        if staged is not None and not staged_is_valid:
+            try:
+                staged.unlink()
+            except OSError:
+                pass
+
+
+def _backup_destination(label: str, destination: Path) -> Path | None:
+    """Hard-link an existing destination so rollback preserves its bytes."""
+
+    if not os.path.lexists(destination):
+        return None
+    descriptor = -1
+    backup: Path | None = None
+    backup_is_valid = False
+    try:
+        descriptor, raw_path = tempfile.mkstemp(
+            dir=destination.parent,
+            prefix=f".{destination.name}.a10-r04-backup-",
+        )
+        os.close(descriptor)
+        descriptor = -1
+        backup = Path(raw_path)
+        backup.unlink()
+        os.link(destination, backup, follow_symlinks=False)
+        backup_is_valid = True
+        return backup
+    except OSError as error:
+        raise GateError(
+            f"cannot back up {label} at {destination}: {error}"
+        ) from error
+    finally:
+        if descriptor >= 0:
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+        if backup is not None and not backup_is_valid:
+            try:
+                backup.unlink()
+            except OSError:
+                pass
+
+
+def _unlink_if_present(path: Path) -> None:
+    try:
+        path.unlink()
+    except FileNotFoundError:
+        pass
+
+
+def _discard_temporary(path: Path) -> None:
+    """Best-effort cleanup that cannot turn a completed commit into failure."""
+
+    try:
+        path.unlink()
+    except OSError:
+        pass
+
+
+def _emit_outputs_transactionally(
+    outputs: Sequence[tuple[str, Path, bytes]],
+) -> None:
+    """Commit all requested files or restore every prior destination.
+
+    Every new file is staged and byte-validated in its destination directory
+    before any destination changes.  Existing destinations are retained by
+    hard link.  If any atomic replacement raises, all destinations are
+    restored, including the destination whose replacement may have completed
+    immediately before the exception was raised.
+    """
+
+    if not outputs:
+        return
+    staged: list[tuple[str, Path, Path]] = []
+    backups: list[tuple[str, Path, Path | None]] = []
+    try:
+        for label, destination, content in outputs:
+            staged.append(
+                (
+                    label,
+                    destination,
+                    _stage_output(label, destination, content),
+                )
+            )
+        for label, destination, _staged_path in staged:
+            backups.append(
+                (label, destination, _backup_destination(label, destination))
+            )
+        try:
+            for _label, destination, staged_path in staged:
+                os.replace(staged_path, destination)
+        except Exception as commit_error:
+            rollback_errors: list[str] = []
+            for label, destination, backup in backups:
+                try:
+                    if backup is None:
+                        _unlink_if_present(destination)
+                    else:
+                        os.replace(backup, destination)
+                except Exception as rollback_error:
+                    rollback_errors.append(f"{label}: {rollback_error}")
+            if rollback_errors:
+                joined = "; ".join(rollback_errors)
+                raise GateError(
+                    "output transaction failed and rollback failed for "
+                    f"{joined}"
+                ) from commit_error
+            raise GateError(
+                f"output transaction failed; prior destinations restored: "
+                f"{commit_error}"
+            ) from commit_error
+    finally:
+        for _label, _destination, staged_path in staged:
+            _discard_temporary(staged_path)
+        for _label, _destination, backup in backups:
+            if backup is not None:
+                _discard_temporary(backup)
+
+
 def execute_gate(
     field_rows: Path,
     *,
@@ -1502,10 +1664,12 @@ def execute_gate(
         ).encode("ascii")
         + b"\n"
     )
+    requested_outputs: list[tuple[str, Path, bytes]] = []
     if statements is not None:
-        statements.write_bytes(statement_bytes)
+        requested_outputs.append(("statements", statements, statement_bytes))
     if output is not None:
-        output.write_bytes(payload_bytes)
+        requested_outputs.append(("output", output, payload_bytes))
+    _emit_outputs_transactionally(requested_outputs)
     return build
 
 
@@ -1533,7 +1697,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     except GateError as error:
         print(f"A10-R04 abort: {error}", file=sys.stderr)
         return 1
-    print(json.dumps(build.payload, indent=2, sort_keys=True)[:4000])
+    print(
+        json.dumps(
+            build.payload,
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=True,
+            allow_nan=False,
+        )
+    )
     return 0
 
 
