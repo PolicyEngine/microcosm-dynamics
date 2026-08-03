@@ -46260,8 +46260,6 @@ unit_reason_field_counts
 ~~~
 
 No inequality may be cured by copying current output into the expected pins.
-
-No inequality may be cured by copying current output into the expected pins.
 Failure leaves every pre-existing destination byte-identical.
 
 #### 24.6.5 A10-R05 — constructibility and exactness

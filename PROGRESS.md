@@ -15,8 +15,8 @@ pass. The production census has been regenerated and frozen on the repaired
 relations. Its successor vector is
 `[4842,171,49,0,67316,1145,0,1,421,15654]`; the production gate passes.
 Section 24 has now been regenerated from those final artifacts. The document
-is 3,435,126 bytes with SHA-256
-`58a56be9f62e5aabfe5ac648c96e4939f31c5bb66158c23b91e7c03cac95b549`;
+is 3,435,048 bytes with SHA-256
+`ab4f132b6ba655054f4dbd64672b5275f99fe822406df4103c9dff70df84ca72`;
 all six embedded authority fences match their source relations byte for byte,
 and every frozen gate pin appears in the document. The final 89,599-row gate
 reproduction exits zero and matches the frozen payload and statement outputs
@@ -106,6 +106,8 @@ byte for byte at 1,126,612,992-byte peak RSS.
 - Rechecked every complete raw food description in the lawful relation: all
   22 weekly fields, all nine later annual fields, and V3694 derive dollars;
   V31 remains `no_denotation_statement`.
+- Removed a duplicated A10-R04 fail-closed sentence found during the final
+  narrative read-through.
 
 ## Next
 
