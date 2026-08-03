@@ -607,3 +607,54 @@ def test_document_056_nested_branch_ancestry_is_exact():
     target["parent_flow_branch_id"] = target["flow_branch_id"]
     with pytest.raises(ValueError):
         builder.validate_annotation(_reseal(cyclic), capture_root)
+
+
+def test_document_056_branch_compatibility_is_existential_only():
+    """The prefix law returns a Boolean and never exposes a witness path."""
+
+    _capture_root()
+    committed = json.loads(builder.OUTPUT_PATH.read_text(encoding="utf-8"))
+    occurrences = committed["questionnaire_occurrence_rows"]
+    branches = committed["flow_branch_rows"]
+    by_path: dict[tuple[str, ...], list[dict]] = {}
+    for row in occurrences:
+        if row["occurrence_kind"] == "flow_branch_label":
+            continue
+        by_path.setdefault(tuple(row["flow_branch_paths"][0]), []).append(row)
+
+    root_only = [
+        row
+        for path, rows in by_path.items()
+        if len(path) == 1
+        for row in rows[:1]
+    ]
+    assert branch_compatible_result(root_only, branches) is True
+
+    deepest = max(by_path, key=len)
+    assert len(deepest) == 3
+    nested = by_path[deepest][:1]
+    ancestor_path = deepest[:2]
+    ancestor = by_path[ancestor_path][:1]
+    assert branch_compatible_result(nested + ancestor, branches) is True
+
+    sibling_path = next(
+        path
+        for path in by_path
+        if len(path) == 2 and path[:2] != ancestor_path
+    )
+    sibling = by_path[sibling_path][:1]
+    assert branch_compatible_result(nested + sibling, branches) is False
+
+    with pytest.raises(ValueError):
+        builder.branch_compatible([], branches)
+
+    cross_wave = copy.deepcopy(occurrences[:1])
+    cross_wave[0]["interview_wave"] = builder.INTERVIEW_WAVE + 1
+    with pytest.raises(ValueError):
+        builder.branch_compatible(cross_wave, branches)
+
+
+def branch_compatible_result(rows, branches):
+    result = builder.branch_compatible(rows, branches)
+    assert isinstance(result, bool)
+    return result

@@ -3182,6 +3182,44 @@ def _identifier_slice(
     return matched, [spec["page"], start, end]
 
 
+def _path_is_prefix(prefix: Sequence[str], path: Sequence[str]) -> bool:
+    return len(prefix) <= len(path) and list(path[: len(prefix)]) == list(
+        prefix
+    )
+
+
+def branch_compatible(
+    occurrence_rows: Sequence[Mapping[str, Any]],
+    branch_rows: Sequence[Mapping[str, Any]],
+) -> bool:
+    """Section 19's existential prefix law for a same-wave occurrence set.
+
+    Compatibility holds if and only if some resolved path in the wave has at
+    least one path of every occurrence as a prefix.  Only that Boolean is
+    returned: no witness path is selected, returned, or serialized anywhere in
+    the sealed shard.
+    """
+
+    rows = list(occurrence_rows)
+    if not rows:
+        raise ValueError("branch compatibility needs a nonempty set")
+    waves = {row["interview_wave"] for row in rows}
+    if waves != {INTERVIEW_WAVE}:
+        raise ValueError("branch compatibility is a same-wave relation")
+    resolved: list[list[str]] = [[FLOW_ROOT]]
+    resolved.extend(list(row["branch_path"]) for row in branch_rows)
+    for path in resolved:
+        if all(
+            any(
+                _path_is_prefix(occurrence_path, path)
+                for occurrence_path in row["flow_branch_paths"]
+            )
+            for row in rows
+        ):
+            return True
+    return False
+
+
 def _local_anchor_rows(
     page_texts: Sequence[str],
     occurrence_id_by_key: Mapping[str, str],
