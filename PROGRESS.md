@@ -2,11 +2,12 @@
 
 ## State
 
-Round-1 remediation is in progress. The frozen input relation, source-wide
-semantic census, strict reproduction gate, downstream storage join, and full
-§24 rewrite are complete. The independent arithmetic and lifecycle prose audit
-is incorporated. The selector and full-phrase laws are now exact in source;
-pin regeneration, document synchronization, and final verification remain.
+Round-1 remediation is in final verification. The frozen input relation,
+source-wide semantic census, strict reproduction gate, downstream storage
+join, and full §24 rewrite are complete. The independent arithmetic and
+lifecycle prose audit is incorporated. All final relations, pins, document
+fences, counts, and storage floors are synchronized; final test aggregation,
+the external report, and removal of this ledger remain.
 
 ## Done
 
@@ -75,11 +76,18 @@ pin regeneration, document synchronization, and final verification remain.
   `4,692 / 170 / 49 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 15,805`.
 - Bound the semantic registries and every regenerated relation into A10-R04.
   The production gate passes on 89,599 rows with assignment digest
-  `a37d958f...`, 14,992 movements, 3,403 statement rows, and payload digest
-  `02ea701e...`; abort-before-emission remains enforced on every inequality.
+  `59b1dfd2...`, 14,992 movements, 3,403 statement rows, and payload digest
+  `fda959bf...`; abort-before-emission remains enforced on every inequality.
+- Replaced every stale §24 descendant with the completed final census:
+  `4,692 / 170 / 49 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 15,805`, 14,992
+  movements, and the exact 85,695,051,837,442-byte four-minimum successor
+  floor. The anchor, clause, predicate-authority, and positive fences now
+  byte-equal the generated 100-, 163-, 2,558-, and 1,532-row relations.
+- Extended A10-R04 to pin the raw bytes, row ordering, and canonical arrays of
+  the anchor and clause relations and the raw bytes and four-way partition of
+  the predicate authority, preserving abort-before-emission.
 
 ## Next
 
-- Regenerate every affected relation, gate pin, downstream storage figure, and
-  document fence; rerun verification; write the external report; remove this
-  ledger.
+- Complete the production-gate replay and aggregate verification; write the
+  external report; remove this ledger in the final committed step.

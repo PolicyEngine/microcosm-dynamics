@@ -1250,8 +1250,7 @@ def successor_census(
     """
 
     keys: list[list[Any]] = []
-    assignment: list[list[Any]] = []
-    successor_reasons: list[tuple[int, str, str, str]] = []
+    assignment: list[tuple[int, str, str, str]] = []
     movements: list[dict[str, Any]] = []
     counts = dict.fromkeys(TERMINAL_ORDER, 0)
     ratified_counts = dict.fromkeys(TERMINAL_ORDER, 0)
@@ -1273,9 +1272,12 @@ def successor_census(
         if unit is not None and unit not in UNIT_VOCABULARY:
             raise ValueError(f"unit outside the vocabulary: {unit!r}")
         successor, moved = successor_terminal(status, unit)
+        successor_reason = (
+            UNIT_ABSENT_RESOLUTION_REASON if moved else reason
+        )
         artifact = artifact_of_position(position)
         keys.append([wave, field])
-        assignment.append([wave, field, successor])
+        assignment.append((wave, field, successor, successor_reason))
         status_keys[successor].append([wave, field])
         matrix[(successor, artifact)] = (
             matrix.get((successor, artifact), 0) + 1
@@ -1284,14 +1286,6 @@ def successor_census(
         counts[successor] += 1
         unit_counts[unit or NO_UNIT] = unit_counts.get(unit or NO_UNIT, 0) + 1
         reason_counts[unit_reason] = reason_counts.get(unit_reason, 0) + 1
-        successor_reasons.append(
-            (
-                wave,
-                field,
-                successor,
-                UNIT_ABSENT_RESOLUTION_REASON if moved else reason,
-            )
-        )
         if moved:
             movements.append(
                 {
@@ -1300,7 +1294,7 @@ def successor_census(
                     "source_artifact": artifact,
                     "ratified_status": status,
                     "successor_status": successor,
-                    "resolution_reason": UNIT_ABSENT_RESOLUTION_REASON,
+                    "resolution_reason": successor_reason,
                     "unit_absence_reason": unit_reason,
                 }
             )
@@ -1308,7 +1302,7 @@ def successor_census(
         {"derivation_status": status, "field_count": counts[status]}
         for status in TERMINAL_ORDER
     ]
-    reason_rows = failure_reason_rows(successor_reasons)
+    reason_rows = failure_reason_rows(assignment)
     return {
         "field_count": len(keys),
         "denominator_sha256": canonical_sha256(keys),

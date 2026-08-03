@@ -174,6 +174,164 @@ def test_each_gate_family_aborts_without_emission(
     assert statements.read_bytes() == b"statements sentinel\n"
 
 
+@pytest.mark.parametrize(
+    ("message", "mutate"),
+    [
+        (
+            "anchor relation row count",
+            lambda pins: replace(
+                pins,
+                anchor_relation_row_count=pins.anchor_relation_row_count - 1,
+            ),
+        ),
+        (
+            "anchor relation byte count",
+            lambda pins: replace(
+                pins,
+                anchor_relation_byte_count=(
+                    pins.anchor_relation_byte_count - 1
+                ),
+            ),
+        ),
+        (
+            "anchor relation digest",
+            lambda pins: replace(pins, anchor_relation_sha256="0" * 64),
+        ),
+        (
+            "anchor relation canonical-array digest",
+            lambda pins: replace(
+                pins,
+                anchor_relation_array_sha256="0" * 64,
+            ),
+        ),
+        (
+            "clause relation row count",
+            lambda pins: replace(
+                pins,
+                clause_relation_row_count=pins.clause_relation_row_count - 1,
+            ),
+        ),
+        (
+            "clause relation byte count",
+            lambda pins: replace(
+                pins,
+                clause_relation_byte_count=(
+                    pins.clause_relation_byte_count - 1
+                ),
+            ),
+        ),
+        (
+            "clause relation digest",
+            lambda pins: replace(pins, clause_relation_sha256="0" * 64),
+        ),
+        (
+            "clause relation canonical-array digest",
+            lambda pins: replace(
+                pins,
+                clause_relation_array_sha256="0" * 64,
+            ),
+        ),
+        (
+            "predicate-authority row count",
+            lambda pins: replace(
+                pins,
+                predicate_authority_row_count=(
+                    pins.predicate_authority_row_count - 1
+                ),
+            ),
+        ),
+        (
+            "predicate-authority relation byte count",
+            lambda pins: replace(
+                pins,
+                predicate_authority_relation_byte_count=(
+                    pins.predicate_authority_relation_byte_count - 1
+                ),
+            ),
+        ),
+        (
+            "predicate-authority relation digest",
+            lambda pins: replace(
+                pins,
+                predicate_authority_relation_sha256="0" * 64,
+            ),
+        ),
+        (
+            "predicate-authority canonical-array digest",
+            lambda pins: replace(
+                pins,
+                predicate_authority_sha256="0" * 64,
+            ),
+        ),
+        (
+            "predicate-authority four-way partition",
+            lambda pins: replace(
+                pins,
+                predicate_authority_partition_rows=(
+                    *pins.predicate_authority_partition_rows[:-1],
+                    ("conflicting_unit_clauses", 2),
+                ),
+            ),
+        ),
+    ],
+)
+def test_each_semantic_registry_pin_aborts_without_emission(
+    tmp_path: Path,
+    message: str,
+    mutate,
+) -> None:
+    rows = _rows()
+    field_rows = tmp_path / "rows.jsonl"
+    _write_rows(field_rows, rows)
+    output, statements = _sentinel_outputs(tmp_path)
+
+    with pytest.raises(runner.GateError, match=message):
+        runner.execute_gate(
+            field_rows,
+            output=output,
+            statements=statements,
+            pins=mutate(_pins(rows)),
+        )
+
+    assert output.read_bytes() == b"payload sentinel\n"
+    assert statements.read_bytes() == b"statements sentinel\n"
+
+
+@pytest.mark.parametrize("relation", ["anchor", "clause", "predicate"])
+def test_semantic_registry_reordering_aborts_without_emission(
+    tmp_path: Path,
+    monkeypatch,
+    relation: str,
+) -> None:
+    rows = _rows()
+    pins = _pins(rows)
+    source_name = {
+        "anchor": "ANCHORS",
+        "clause": "CLAUSE_TABLE",
+        "predicate": "PREDICATE_AUTHORITY",
+    }[relation]
+    source_rows = getattr(runner, source_name)
+    monkeypatch.setattr(
+        runner,
+        source_name,
+        (source_rows[1], source_rows[0], *source_rows[2:]),
+    )
+    field_rows = tmp_path / "rows.jsonl"
+    _write_rows(field_rows, rows)
+    output, statements = _sentinel_outputs(tmp_path)
+
+    with pytest.raises(runner.GateError, match=relation):
+        runner.execute_gate(
+            field_rows,
+            output=output,
+            statements=statements,
+            pins=pins,
+        )
+
+    assert output.read_bytes() == b"payload sentinel\n"
+    assert statements.read_bytes() == b"statements sentinel\n"
+
+
 @pytest.mark.parametrize("mutation", ["short", "reordered"])
 def test_wrong_count_or_reordering_is_rejected_without_emission(
     tmp_path: Path,

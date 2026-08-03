@@ -32,6 +32,8 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY_ROOT / "src"))
 
 from populace_dynamics.data.psid_unit_authority import (  # noqa: E402
+    ANCHORS,
+    CLAUSE_TABLE,
     COMPILED_TERMINALS,
     INCOMPLETE,
     UNIT_ABSENT_RESOLUTION_REASON,
@@ -74,6 +76,14 @@ FAILURE_REASON_KEYS = (
 CountPin = tuple[str, int]
 MatrixPin = tuple[str, tuple[int, ...], int, str]
 FailureReasonPin = tuple[str, str, int]
+PredicatePartitionPin = tuple[str, int]
+
+PREDICATE_DISPOSITION_ORDER = (
+    "unit_naming_clause",
+    "defeating_clause",
+    "no_unit_naming_clause",
+    "conflicting_unit_clauses",
+)
 
 
 class GateError(ValueError):
@@ -113,8 +123,19 @@ class GatePins:
     denotation_candidate_unselected_count: int
     denotation_candidate_unadjudicated_count: int
     denotation_candidate_table_sha256: str
+    anchor_relation_row_count: int
+    anchor_relation_byte_count: int
+    anchor_relation_sha256: str
+    anchor_relation_array_sha256: str
+    clause_relation_row_count: int
+    clause_relation_byte_count: int
+    clause_relation_sha256: str
+    clause_relation_array_sha256: str
     predicate_authority_row_count: int
+    predicate_authority_relation_byte_count: int
+    predicate_authority_relation_sha256: str
     predicate_authority_sha256: str
+    predicate_authority_partition_rows: tuple[PredicatePartitionPin, ...]
     explicit_no_denotation_candidate_count: int
     explicit_no_denotation_candidate_sha256: str
     statement_table_row_count: int
@@ -133,6 +154,12 @@ class CensusBuild:
     field_rows: tuple[dict[str, Any], ...]
     actual_candidate_rows: tuple[dict[str, Any], ...]
     denotation_candidate_rows: tuple[dict[str, Any], ...]
+    anchor_rows: tuple[str, ...]
+    anchor_relation_bytes: bytes
+    clause_rows: tuple[tuple[str, str], ...]
+    clause_relation_bytes: bytes
+    predicate_authority_rows: tuple[tuple[str, str | None, str], ...]
+    predicate_authority_relation_bytes: bytes
     statement_rows: tuple[dict[str, Any], ...]
     unit_bearing_rows: tuple[tuple[Any, ...], ...]
     unit_bearing_relation_bytes: bytes
@@ -200,7 +227,7 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         "4eedf3845787cabb8132b7cec5ac3fc12c81a9da1a9f33fcec340ec954d335da"
     ),
     ordered_assignment_sha256=(
-        "a37d958fde17b520913c9ceae8444f89a3b9914a9797ca7b1e8efe2c7ac82bc2"
+        "59b1dfd231a9bcfacd333776e6b5ce8ea6115bb4397bcb34d561601818b5aee1"
     ),
     status_matrix_rows=(
         (
@@ -333,9 +360,35 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
     denotation_candidate_table_sha256=(
         "a8a61db0f8b9663a60a493f3c20ea1c4ff2256f060dc22962eeb814b88275d6a"
     ),
+    anchor_relation_row_count=100,
+    anchor_relation_byte_count=4_223,
+    anchor_relation_sha256=(
+        "8faeb560d9e4b393c9e676c442fbd98513d8c0e23c94ccb0bcf8a1386f0c2973"
+    ),
+    anchor_relation_array_sha256=(
+        "5373bdbdedf0fe49eed6c8e73c3ec6678a7f740febb134f5605b84e256ce248f"
+    ),
+    clause_relation_row_count=163,
+    clause_relation_byte_count=7_481,
+    clause_relation_sha256=(
+        "2bfd45a533b7e9c7dc70ec51106feadd9579bb421b4b3ebd990ad8f9fceb4936"
+    ),
+    clause_relation_array_sha256=(
+        "a3534c737a882154b9aebea878451a05c484803ac263f5b63ebe0f1d85a5c0da"
+    ),
     predicate_authority_row_count=2_558,
+    predicate_authority_relation_byte_count=396_466,
+    predicate_authority_relation_sha256=(
+        "fdef124391bda73b33bc5b310a78a9dc073eb27a8115e83e9d2b59fa32ac44f7"
+    ),
     predicate_authority_sha256=(
         "482decde64943c421a8e04c556e08c9120bbf427874624152f2d93e057eeabda"
+    ),
+    predicate_authority_partition_rows=(
+        ("unit_naming_clause", 1_521),
+        ("defeating_clause", 812),
+        ("no_unit_naming_clause", 224),
+        ("conflicting_unit_clauses", 1),
     ),
     explicit_no_denotation_candidate_count=53_255,
     explicit_no_denotation_candidate_sha256=(
@@ -354,7 +407,7 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         "ba7244b3a7539eb54a81353c52008e709458c8e4b906cf84c41ed4374c91d6b3"
     ),
     census_payload_sha256=(
-        "02ea701ef59b8a5b5cacc2c17bedb4e82f4ca63a01b875931d9c889ae9772e5d"
+        "fda959bf84f5d5ec6cdeff2c5937d705003f4fbf4c5c0fccc94897360912bdb2"
     ),
 )
 
@@ -478,10 +531,8 @@ def _unit_bearing_relation(
     )
 
 
-def _unit_bearing_relation_bytes(
-    rows: Sequence[Sequence[Any]],
-) -> bytes:
-    """Serialize the §24.3 fence: one compact three-position row per LF."""
+def _jsonl_relation_bytes(rows: Sequence[Any]) -> bytes:
+    """Serialize a §24 fence as one compact JSON value per terminal LF."""
 
     return b"".join(
         json.dumps(
@@ -493,6 +544,48 @@ def _unit_bearing_relation_bytes(
         + b"\n"
         for row in rows
     )
+
+
+def _unit_bearing_relation_bytes(
+    rows: Sequence[Sequence[Any]],
+) -> bytes:
+    """Serialize the §24.3 fence: one compact three-position row per LF."""
+
+    return _jsonl_relation_bytes(rows)
+
+
+def _predicate_authority_partition(
+    rows: Sequence[Sequence[Any]],
+) -> tuple[PredicatePartitionPin, ...]:
+    """Return the closed four-way full-predicate disposition partition."""
+
+    counts = {reason: 0 for reason in PREDICATE_DISPOSITION_ORDER}
+    for position, row in enumerate(rows):
+        if len(row) != 3:
+            raise GateError(
+                f"predicate-authority row {position}: noncanonical shape"
+            )
+        predicate, unit, reason = row
+        if type(predicate) is not str or not predicate:
+            raise GateError(
+                f"predicate-authority row {position}: invalid predicate"
+            )
+        if type(reason) is not str or reason not in counts:
+            raise GateError(
+                f"predicate-authority row {position}: invalid disposition"
+            )
+        if reason == "unit_naming_clause":
+            if type(unit) is not str or not unit:
+                raise GateError(
+                    f"predicate-authority row {position}: invalid unit"
+                )
+        elif unit is not None:
+            raise GateError(
+                f"predicate-authority row {position}: "
+                "non-unit disposition carries a unit"
+            )
+        counts[reason] += 1
+    return tuple((reason, counts[reason]) for reason in counts)
 
 
 def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
@@ -508,6 +601,12 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         raise GateError(f"census construction failed: {error}") from error
     unit_rows = _unit_bearing_relation(table)
     unit_bytes = _unit_bearing_relation_bytes(unit_rows)
+    anchor_rows = tuple(ANCHORS)
+    anchor_bytes = _jsonl_relation_bytes(anchor_rows)
+    clause_rows = tuple(CLAUSE_TABLE)
+    clause_bytes = _jsonl_relation_bytes(clause_rows)
+    predicate_rows = tuple(PREDICATE_AUTHORITY)
+    predicate_bytes = _jsonl_relation_bytes(predicate_rows)
     actual_occurrences = sum(row["field_count"] for row in actual_rows)
     candidate_occurrences = sum(
         row["occurrence_count"] for row in candidate_rows
@@ -538,8 +637,8 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "denotation_candidate_unselected_count": unselected_candidates,
         "denotation_candidate_unadjudicated_count": unadjudicated,
         "denotation_candidate_table_sha256": canonical_sha256(candidate_rows),
-        "predicate_authority_row_count": len(PREDICATE_AUTHORITY),
-        "predicate_authority_sha256": canonical_sha256(PREDICATE_AUTHORITY),
+        "predicate_authority_row_count": len(predicate_rows),
+        "predicate_authority_sha256": canonical_sha256(predicate_rows),
         "explicit_no_denotation_candidate_count": len(
             EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES
         ),
@@ -556,6 +655,12 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         field_rows=frozen_rows,
         actual_candidate_rows=actual_rows,
         denotation_candidate_rows=candidate_rows,
+        anchor_rows=anchor_rows,
+        anchor_relation_bytes=anchor_bytes,
+        clause_rows=clause_rows,
+        clause_relation_bytes=clause_bytes,
+        predicate_authority_rows=predicate_rows,
+        predicate_authority_relation_bytes=predicate_bytes,
         statement_rows=table,
         unit_bearing_rows=unit_rows,
         unit_bearing_relation_bytes=unit_bytes,
@@ -652,8 +757,29 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         denotation_candidate_table_sha256=(
             payload["denotation_candidate_table_sha256"]
         ),
+        anchor_relation_row_count=len(build.anchor_rows),
+        anchor_relation_byte_count=len(build.anchor_relation_bytes),
+        anchor_relation_sha256=hashlib.sha256(
+            build.anchor_relation_bytes
+        ).hexdigest(),
+        anchor_relation_array_sha256=canonical_sha256(build.anchor_rows),
+        clause_relation_row_count=len(build.clause_rows),
+        clause_relation_byte_count=len(build.clause_relation_bytes),
+        clause_relation_sha256=hashlib.sha256(
+            build.clause_relation_bytes
+        ).hexdigest(),
+        clause_relation_array_sha256=canonical_sha256(build.clause_rows),
         predicate_authority_row_count=payload["predicate_authority_row_count"],
+        predicate_authority_relation_byte_count=len(
+            build.predicate_authority_relation_bytes
+        ),
+        predicate_authority_relation_sha256=hashlib.sha256(
+            build.predicate_authority_relation_bytes
+        ).hexdigest(),
         predicate_authority_sha256=payload["predicate_authority_sha256"],
+        predicate_authority_partition_rows=_predicate_authority_partition(
+            build.predicate_authority_rows
+        ),
         explicit_no_denotation_candidate_count=(
             payload["explicit_no_denotation_candidate_count"]
         ),
@@ -873,16 +999,76 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
     )
 
     # Step 8: exact semantic registries, complete statement table, and both
-    # forms of the positive fence.
+    # forms of the positive fence.  The raw JSONL pins bind the displayed
+    # fences byte for byte; the canonical-array pins independently bind row
+    # order and membership.
+    anchor_bytes = build.anchor_relation_bytes
+    _require_equal(
+        "anchor relation row count",
+        len(build.anchor_rows),
+        pins.anchor_relation_row_count,
+    )
+    _require_equal(
+        "anchor relation byte count",
+        len(anchor_bytes),
+        pins.anchor_relation_byte_count,
+    )
+    _require_equal(
+        "anchor relation digest",
+        hashlib.sha256(anchor_bytes).hexdigest(),
+        pins.anchor_relation_sha256,
+    )
+    _require_equal(
+        "anchor relation canonical-array digest",
+        canonical_sha256(build.anchor_rows),
+        pins.anchor_relation_array_sha256,
+    )
+    clause_bytes = build.clause_relation_bytes
+    _require_equal(
+        "clause relation row count",
+        len(build.clause_rows),
+        pins.clause_relation_row_count,
+    )
+    _require_equal(
+        "clause relation byte count",
+        len(clause_bytes),
+        pins.clause_relation_byte_count,
+    )
+    _require_equal(
+        "clause relation digest",
+        hashlib.sha256(clause_bytes).hexdigest(),
+        pins.clause_relation_sha256,
+    )
+    _require_equal(
+        "clause relation canonical-array digest",
+        canonical_sha256(build.clause_rows),
+        pins.clause_relation_array_sha256,
+    )
+    predicate_bytes = build.predicate_authority_relation_bytes
     _require_equal(
         "predicate-authority row count",
         payload["predicate_authority_row_count"],
         pins.predicate_authority_row_count,
     )
     _require_equal(
-        "predicate-authority digest",
+        "predicate-authority relation byte count",
+        len(predicate_bytes),
+        pins.predicate_authority_relation_byte_count,
+    )
+    _require_equal(
+        "predicate-authority relation digest",
+        hashlib.sha256(predicate_bytes).hexdigest(),
+        pins.predicate_authority_relation_sha256,
+    )
+    _require_equal(
+        "predicate-authority canonical-array digest",
         payload["predicate_authority_sha256"],
         pins.predicate_authority_sha256,
+    )
+    _require_equal(
+        "predicate-authority four-way partition",
+        _predicate_authority_partition(build.predicate_authority_rows),
+        pins.predicate_authority_partition_rows,
     )
     _require_equal(
         "explicit no-denotation candidate count",

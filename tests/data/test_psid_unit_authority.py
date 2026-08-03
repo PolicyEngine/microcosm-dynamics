@@ -781,6 +781,24 @@ def test_successor_census_moves_only_unitless_compiled_fields() -> None:
     )
 
 
+def test_ordered_assignment_binds_a_retained_resolution_reason() -> None:
+    row = _row(1968, "A", COMPILED, DOLLARS)
+    row["resolution_reason"] = "first_retained_reason"
+    first = successor_census([row])
+    changed_row = dict(row)
+    changed_row["resolution_reason"] = "changed_retained_reason"
+    changed = successor_census([changed_row])
+
+    assert first["denominator_sha256"] == changed["denominator_sha256"]
+    assert first["count_array_sha256"] == changed["count_array_sha256"]
+    assert first["ordered_assignment_sha256"] == canonical_sha256(
+        [(1968, "A", COMPILED, "first_retained_reason")]
+    )
+    assert first["ordered_assignment_sha256"] != (
+        changed["ordered_assignment_sha256"]
+    )
+
+
 def test_successor_census_rejects_a_duplicate_field_key() -> None:
     rows = [
         _row(1968, "A", COMPILED, None),
