@@ -3,8 +3,9 @@
 ## State
 
 Round-1 remediation is in progress. The frozen input relation, source-wide
-semantic census, strict reproduction gate, and downstream storage join are
-complete. Documentation and final verification remain.
+semantic census, strict reproduction gate, downstream storage join, and full
+§24 rewrite are complete. Independent prose audit and final verification
+remain.
 
 ## Done
 
@@ -50,9 +51,14 @@ complete. Documentation and final verification remain.
 - Rejoined the final successor assignment to the 19,903-row downstream cache.
   The 5,028 surviving fields hold 263,680,073,870 logical members; the corrected
   four-shape exact floor is 85,695,692,636,367 bytes.
+- Replaced §24 with the completed candidate and statement relations, final
+  census/movement/artifact pins, corrected floor and provenance, executable
+  A10-R04 contract, fully defined 17-name scoped successor inventory, and the
+  two-under-determination lifecycle account. The four embedded source-relation
+  fences byte-match the final machinery outputs and all three authored JSON
+  fences strict-parse.
 
 ## Next
 
-- Replace §24 with the completed census, executable pins, corrected lifecycle,
-  provenance, and floor arithmetic; run full verification; write the external
-  report; remove this ledger before completion.
+- Resolve independent rewrite-audit findings; rerun verification after the
+  document commit; write the external report; remove this ledger.

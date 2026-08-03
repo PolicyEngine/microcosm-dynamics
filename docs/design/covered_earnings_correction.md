@@ -40941,597 +40941,870 @@ canonical relation build, `--check`, Q5, and expected-negative guarded steps
 stated above; it authorizes no correction production evaluation, path switch,
 context run, label change, output, or publication.
 
-## 24. AMENDMENT SECTION — Amendment 10: the derived unit authority and the successor census
+## 24. AMENDMENT SECTION — Amendment 10: derived unit authority and the completed successor census
 
-### 24.1 Status, immutable revision-11 base, scope, precedence, and section map
+### 24.1 Status, immutable revision-11 base, scope, and precedence
 
-- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 12 of
-  the design. Drafting, audit, review, and response commits are not
-  ratification and authorize no source compiler, derivation row, Q5, slot,
-  inventory, value map, crosswalk, capture, correction execution, context run,
-  output, or publication. Only the exact bytes accepted under §24.10.2 may
-  become `D10`, and they become operative only through the fresh registration
-  successor in §24.9.
-- **Immediate immutable base.** The base is the complete ratified revision-11
-  design `D9` at commit
-  `3941e2eec27ca9c8c986c74742eb43dd62a3f830`. The path is
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 12.
+  Drafting, audit, review, and response commits are not ratification and
+  authorize no source compiler, derivation row, Q5, slot, inventory, value
+  map, crosswalk, capture, correction evaluation, context run, output, or
+  publication. Only the exact bytes accepted under §24.10.2 may become D10,
+  and they become operative only through the fresh registration successor in
+  §24.9.
+- **Immediate immutable base.** D9 is the complete ratified revision-11 design
+  at commit `3941e2eec27ca9c8c986c74742eb43dd62a3f830`, path
   `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
   `bb11f807e7683086b55703ea28346dacec9d192e`, exactly 2,653,817 raw bytes,
   and SHA-256
   `4f6219ba7162bcc53d390a107e8db2ebe289565c6776fbda2c4acdffd0ba4609`.
-  Those complete bytes are the byte-identical prefix of revision 12. A
-  digest-only, ancestry-only, transitive, working-tree, or candidate-prefix
-  assertion cannot substitute for comparing every one of those bytes.
-- **Sole inherited illustrative-fence exception.** The one inherited exception
-  is unchanged and is now stated against the revision-11 base: D9 one-based
-  lines 3,834-3,837 are the exact 171-byte LF-terminated fenced block at D9
-  byte interval `[241728,241899)`, including delimiters, with SHA-256
-  `82118279750eea3f5f84f7dc7a458d8a0030d897d262dc756d1b635d513c4f34`. Its two
-  content lines 3,835-3,836 are exactly 159 LF-terminated bytes with SHA-256
-  `a94110a196a77420652d9a0e8c92cda38c225107aa4156279dd7e78b2cace23d`. That
-  fence alone is excluded from the whole-document strict-JSON-fence parse
-  obligation. Every `json` fence authored in §24 must strict-parse as exactly
-  one JSON value after duplicate-key rejection. Amendment 10 creates no second
-  exception; its bulk relations are `text` fences of canonical JSON lines,
-  which are not `json` fences and are governed by their own stated line law.
-- **One under-determination only.** Amendment 10 supplies the one value that
-  §19.3.2 requires and no registered source states — the numeric-required
-  row's common nonempty `typed_value_unit` — and then publishes, rather than
-  suppresses, the terminal movement that evaluating that ratified requirement
-  produces. It creates no new source, no new evidence artifact, no new
-  representation arm, no new relation, and no new consumer. It changes no
-  authenticated byte, page-text digest, normalized entry, lexeme, scalar,
-  bound, step, literal disposition, missing classification, padding arm,
-  renderer, DFA construction, replay, range partition, member row shape, or
-  §22.2/§23.2 representation law. It moves fields between terminals only where
-  ratified §19.3.2 and §20.3.5 already command it.
-- **This section supersedes by construction, never by edit.** §§1-23 remain
-  byte-identical and visible. Where §24 publishes a superseding figure, the
-  predecessor figure remains ratified as the census of a classification that
-  did not evaluate the unit precondition, and §24's figure is the census of
-  the same denominator with that precondition evaluated. The A6 census at
-  §20.3.7, the A8 fact table at §22.4.5, and every A9 figure at §23 are
-  ratified **history**; §24's are the operative law from D10.
-- **Exact precedence.** Sections 1-22 and 23 remain visible and controlling
-  except for the passages expressly dispositioned in §24.7. At a conflict, §24
-  is later and more specific; silence changes nothing else. In particular
-  §23.3.2's prohibitions survive in full: §24 does not scope §19.3.2's unit
-  requirement to fit the corpus, does not define a default or tolerated unit,
-  does not repin any predecessor aggregate to accommodate a movement, and does
-  not source a member-row field from an evidence artifact.
+  Those complete bytes must byte-equal D10's half-open range `[0,2653817)`.
+  A digest, ancestry edge, transitive consumer, working-tree file, or
+  candidate-prefix assertion cannot substitute for comparing all bytes.
+- **Illustrative-fence exception.** D9 lines 3,834-3,837 remain the sole
+  inherited strict-JSON-fence exception, exactly as §23.1 fixes. Every `json`
+  fence authored here strict-parses as one value after recursive duplicate-key
+  rejection. Bulk relations below use `text` fences of canonical JSON lines
+  and obey the separately stated line laws.
+- **Two under-determined members; one resolved.** The codebook derivation lane
+  identified exactly two source-required members that registered sources did
+  not determine: `typed_value_unit` and `missing_reason_code`. Amendment 10
+  resolves only `typed_value_unit`, from verbatim field-description prose
+  under §24.3. It neither invents nor defaults `missing_reason_code`; §24.10
+  records and escalates that unresolved authority.
+- **Exact scope.** Amendment 10 creates no registered source, evidence
+  relation, canonical source relation, member-row representation arm, or
+  production consumer. It defines derived audit relations, a successor census
+  payload, and lifecycle schemas. None is selectable as source authority or
+  as a new production relation. It changes no authenticated byte, page-text
+  digest, entry, lexeme, scalar, bound, step, padding arm, renderer, DFA,
+  replay, range partition, or member-row shape.
+- **Supersession by construction.** §§1-23 remain byte-identical and visible.
+  The §20, §22, and §23 figures remain the true history of a classifier that
+  did not evaluate the unit precondition. §24 recomputes the same ordered
+  denominator after evaluating that precondition and gives the descendants
+  new identities. Its supersession rests on the completed source census and
+  pinned relations, not merely on use of a different selector.
+- **Precedence.** Earlier law controls except where §24 expressly composes,
+  supersedes, or replaces it. §23.3.2's prohibitions survive: no scope is
+  narrowed to fit the corpus, no predecessor aggregate is repinned to tolerate
+  movement, no default unit is invented, and no member-row value is sourced
+  from an evidence artifact.
 
-The complete section map is:
+The section is indivisible: §24.2 completes the semantic census; §24.3 fixes
+the extraction law; §24.4 fixes the successor census and pins; §24.5
+recomputes every downstream population; §24.6 supplies five mandatory gates;
+§§24.7-24.9 close replacement, comparator, and lifecycle identifiers; and
+§24.10 fixes the post-amendment order.
 
-| Subsection | Complete subject |
-|---|---|
-| §24.1 | status, D9 identity and prefix, inherited illustrative-fence exception, scope, precedence, and section map |
-| §24.2 | the applied contradiction, the complete unit-absence census over all 47 registered codebook documents, and the complete free-prose statement census |
-| §24.3 | the prose-to-unit extraction law: normalization, the closed anchor set, the whole-domain denotation test, the closed clause table, the closed unit vocabulary, and the complete unit-bearing statement relation |
-| §24.4 | the unit-absent disposition, the successor terminal function, the classifier extension specification, and the complete successor census |
-| §24.5 | the complete downstream supersession table |
-| §24.6 | mandatory Amendment-10 vectors |
-| §24.7 | exact replacement inventory and Amendment-10 closure sweep |
-| §24.8 | complete revision-12 design-comparator census |
-| §24.9 | D10 lifecycle successors and complete identifier inventory |
-| §24.10 | post-Amendment-10 build, ratification, Q5, and registration order |
+### 24.2 The applied contradiction and the completed semantic census
 
-The map is exact. No subsection may be ratified, implemented, or registered
-separately.
+#### 24.2.1 Governing law and empirical absence
 
-### 24.2 The applied contradiction and the complete unit-absence census
+The immutable prefix requires every value-code range member to carry one
+common `rational | json_integer` type and one common nonempty unit; says that a
+range obtains type and unit from the complete codebook domain and never fills
+a silent dictionary member by default; and maps a nonunitized `R` to
+`incomplete_source_numeric_authority`. §23.3.1 applies that rule directly to
+an undetermined `typed_value_unit`. Amendment 10 creates none of those rules.
 
-#### 24.2.1 Exact governing sentences
+The complete codebook domain nonetheless has no unit column. All 43 family
+codebook PDFs use one four-column value-block shape—count, percent,
+value/range code, and value/range text—once for each of the 89,599 fields.
+The two 2021 and two 2023 value-label pairs have 3,212 + 3,212 + 3,078 +
+3,078 rows with null `source_description`, null `source_format_text`, and zero
+nonnull `typed_value_unit`. All 179,198 canonical `dictionary_layout` rows
+have null `declared_typed_value_unit`; all 89,599 fields take the
+`value_code_map` rather than the empty-code-map escape. The ratified compiler
+and classifier contain zero case-insensitive occurrences of `unit`. The only
+registered bytes capable of naming a unit are therefore the field's own free
+description prose.
 
-The defect is discovered, not hypothetical. Amendment 9 identified it,
-correctly refused to resolve it inside a scope that excluded terminal changes,
-and routed it to a design successor. Five ratified sentences govern, quoted
-here exactly as they stand in the byte-identical prefix.
+#### 24.2.2 Two selectors and the completeness theorem
 
-From §19.3.2, fixing the requirement on the value-code range branch:
+Normalization is §24.3.1's exact byte transformation. A word start is byte
+zero or a byte immediately following U+0020. A statement ends at the first
+period followed by U+0020 or end of description, inclusive, or at the end when
+there is no such period.
 
-> On a value-code range branch, every member of `R` must have one common
-> `rational | json_integer` type and one common nonempty unit
+The **primary selector** tests all 2,240,669 normalized word starts for the 41
+enumerated anchors in §24.3.2 and emits the longest anchor match through the
+statement end. The **residual selector** does not consult an opener, unit word,
+or candidate grammar: it unconditionally partitions every nonempty normalized
+description under that same end law and separately emits the exact tail from
+the first `Actual ` on every raw LF-delimited source line before LF is folded.
+The residual universe has 59,521 distinct rows and 195,835 occurrences:
+195,513 unconditional normalized segments plus 322 raw `Actual...` tails.
 
-From §19.3.2, fixing the sole source of that unit and forbidding a silent
-default:
+Each residual row has exactly `candidate`, `adjudication`,
+`occurrence_count`, `field_count`, and `witness_field_key`. Its adjudication is
+exactly one of `contains_whole_domain_denotation`,
+`whole_domain_denotation`, `explicit_no_whole_domain_denotation`,
+`explicit_no_denotation`, or the fail-closed
+`unadjudicated_no_denotation`. The canonical 59,521-row array hashes to
+`75406f57f3b25dbfa9b096acb6d299ccaf2e3fa3657f7371c14f08aada467a10`.
+The final two counts are both zero: zero unadjudicated occurrences and zero
+whole-domain candidates not emitted by either production selector.
 
-> a value-code range obtains type/unit from the complete codebook domain and
-> does not fill a silent dictionary member by default.
+**Why a missed denotation is impossible.** Every normalized byte belongs to
+an unconditional segment and every admissible word start is counted without
+an opener filter. LF-specific `Actual...` tails are independently selected
+before LF is folded. Every distinct frozen-corpus candidate spelling has one
+pinned semantic adjudication, every candidate adjudicated whole-domain is
+cross-checked against an emitted anchor or raw-LF span, and both the
+unadjudicated and unselected counts must be zero. A new or changed spelling
+changes the input or candidate pins and A10-R04 aborts before stdout or file
+emission. Thus, under this section's own start, end, and whole-domain laws, a
+value-denotation statement seen by neither selector cannot enter a successful
+build. This is an exhaustive candidate construction plus adjudication, not a
+circular definition of denotation as whatever an opener happened to select.
 
-From §19.3.2, on where the numeric authority comes from at all:
+#### 24.2.3 The reviewed omissions and the complete `Actual...` family
 
-> the authenticated fixed-width declarations or complete codebook range domain
-> fix scale, output type, and unit.
+The completed census expressly repairs the two proved omissions:
 
-From §19.3.2, mapping the failure:
+| Field | Verbatim source prose | Grounding | Result |
+|---|---|---|---|
+| `[1976,"V4904"]` | `Actual dollars and cents per hour` | family 1976 page 182; page-text SHA-256 `0a005fd22b0a5aee80e5726d46b5d366b89476b8f817a0ddbfcd5a27ab9cf7eb` | `united_states_dollar_per_hour`; padding-compiled status preserved |
+| `[1979,"V6546"]` | `Actual dollars and cents per hour.` | family 1979 page 69; page-text SHA-256 `c74dbab33cfee61b5073e6f2724676588676c9c648b51c2ebd3ea1d14d04e72b` | `united_states_dollar_per_hour`; compiled status preserved |
 
-> on the value-code range branch, an untyped or nonunitized `R` is incomplete.
-> […] Each produces `incomplete_source_numeric_authority`.
+It also repairs all three omitted sentence families: 20 fields carrying `The
+actual weekly food needs in dollars and cents are coded here.`, 11 fields whose
+`The code value represents ...` statement denotes the actual number of persons
+in the current FU, and nine fields whose `The values represent ...` statement
+denotes the annual food standard in whole dollars. Their representative keys
+are `[1970,"V1169"]`, `[1982,"V8249"]`, and `[1983,"V9378"]`; the three
+results are respectively `united_states_dollar`, `count`, and
+`united_states_dollar`.
 
-From §23.3.1, applying that mapping to an undetermined member:
+The broader raw-LF sweep finds 82 distinct `Actual...` spellings in 322 field
+occurrences. Eighty spellings are whole-domain denotations and each has one
+verbatim full-span clause row; two recipe predicates are explicit
+no-denotations and never reach clause matching. The referee's 225 no-anchor
+fields were a status-filtered positive subset, not the residual universe.
+Every one lies in the 322-occurrence relation below and therefore has either a
+full-span unit/no-unit clause or an explicit no-denotation disposition.
 
-> an undetermined `typed_value_unit` on a normalized numeric-range entry is
-> exactly §19's nonunitized `R`. The field takes
-> `incomplete_source_numeric_authority` and is not a member-row field at all
-
-Every one of those sentences is ratified law in the immutable prefix.
-Amendment 10 creates none of it and repeals none of it.
-
-#### 24.2.2 The empirical absence, measured over all 47 registered codebook documents
-
-The complete codebook domain does not contain a unit. The measurement ranges
-over every registered `codebook` document under the §19.3.2 derivation and is
-exhaustive rather than sampled:
-
-- a codebook value block displays exactly four columns — `Count`, `%`,
-  `Value/Range Code`, and `Value/Range Text`. Across all 43 family codebook
-  PDFs there is exactly **one distinct** value-block header line, and it
-  occurs exactly **89,599** times, once per field of the denominator. There
-  is no unit column in any of them, in any era;
-- the two 2021 and two 2023 value-label documents display value and meaning
-  only: their 3,212 + 3,212 + 3,078 + 3,078 canonical rows carry null
-  `source_description` and null `source_format_text` throughout, and zero
-  nonnull `typed_value_unit` on any normalized entry;
-- `declared_typed_value_unit` is null on every one of the 179,198 canonical
-  `dictionary_layout` rows, and §19.3.2 makes that correct: those members
-  "exact-normalize an express source value and otherwise are null";
-- all 89,599 fields carry a nonempty normalized-entry array, so
-  `derived_parse_kind` is `value_code_map` for every field and the
-  `fixed_width_numeric` escape — the only other branch that could coalesce a
-  declared unit — is empirically closed.
-
-The design also fixes no unit vocabulary and no text-to-unit function anywhere
-in the immutable prefix. Amendment 10 therefore introduces both, as §24.3
-fixes them, or the requirement is unsatisfiable for every numeric-required
-row.
-
-#### 24.2.3 The ratified census is not evidence that a unit exists
-
-The classification that produced the ratified count array never evaluated
-§19.3.2's unit precondition. Its two implementation source files contain zero
-case-insensitive occurrences of `unit` — 0 in 1,330 lines of the compiler and
-0 in 1,421 lines of the classifier. That is a direct observation about the
-audit implementation, which §20.3.7 already labels evidence rather than
-authority; it is recorded here because it explains the whole discrepancy. The
-ratified ten-terminal census is evidence that every gate the classifier
-evaluated passed, and it is silent on the one gate it did not evaluate. A
-conformant implementation that evaluates the precondition, as §23.3.1 and
-A9-R04 step 3 require, cannot reproduce that census. §24.4 publishes the
-census it can reproduce.
-
-#### 24.2.4 The complete free-prose statement census
-
-The only unit-bearing bytes any registered source holds are the free prose of
-the codebook field description. That prose is censused here completely, from
-the frozen §19.3.2 derivation and from nothing else.
-
-The census unit is the **value-denotation statement** fixed by §24.3.2. Over
-the complete 89,599-field denominator:
-
-| Quantity | Exact value |
-|---|---:|
-| fields in the denominator | 89,599 |
-| fields whose derived description carries at least one value-denotation statement | 8,340 |
-| distinct value-denotation statement byte strings | 2,476 |
-| statement-field occurrences | 8,377 |
-| registered codebook PDFs contributing at least one statement | 37 of 43 |
-| distinct derived pages carrying at least one statement | 5,740 |
-| ordered `[document,page,page-text-sha256]` locator array digest | `aa93e2a2ffedf85fa4d8954d0c3b6cd17b6fc8dca5e6a4ac93f48ce65789fd32` |
-
-Every statement's field set, source document, page number, and derived
-page-text SHA-256 are fixed by that locator array together with the pinned
-input relation of §24.4.2; no statement is admitted without one.
-
-By disposition under §24.3, the 2,476 distinct statements partition
-exactly:
-
-| Statement disposition | Distinct statements | Statement-field occurrences |
-|---|---:|---:|
-| `week` | 333 | 1,294 |
-| `united_states_dollar` | 351 | 1,144 |
-| `count` | 194 | 651 |
-| `hour_per_week` | 77 | 601 |
-| `united_states_dollar_per_hour` | 10 | 389 |
-| `month` | 69 | 318 |
-| `day` | 62 | 286 |
-| `year` | 59 | 219 |
-| `hour` | 45 | 133 |
-| `percent` | 20 | 34 |
-| `mile` | 2 | 18 |
-| `hour_per_year` | 2 | 4 |
-| `minute` | 2 | 2 |
-| `mile_per_year` | 1 | 1 |
-| **subtotal, unit-bearing** | **1,227** | **5,094** |
-| `no_unit_derivable`, reason `not_a_whole_domain_denotation` | 946 | 2,480 |
-| `no_unit_derivable`, reason `no_unit_naming_clause` | 166 | 501 |
-| `no_unit_derivable`, reason `defeating_clause` | 136 | 280 |
-| `no_unit_derivable`, reason `conflicting_unit_clauses` | 1 | 22 |
-| **subtotal, no unit derivable** | **1,249** | **3,283** |
-| **complete statement census** | **2,476** | **8,377** |
-
-The two subtotals sum to 2,476 distinct statements and 8,377
-occurrences with
-no statement in two rows and none outside the table. At field level the same
-law partitions the complete denominator:
-
-| Field disposition | Reason | Fields |
-|---|---|---:|
-| unit derived | `derived_from_denotation_statement` | 5,094 |
-| no unit derived | `no_denotation_statement` | 81,259 |
-| no unit derived | `no_statement_names_a_unit` | 3,246 |
-| no unit derived | `conflicting_statement_units` | 0 |
-| **complete denominator** | | **89,599** |
-
-The `conflicting_statement_units` count is exactly zero on the frozen corpus:
-no field carries two whole-domain statements naming different units. That is a
-measured result, not a design assumption, and §24.3.6 keeps the fail-closed
-rule that would catch one.
-
-The predecessor lane reported "5,469 of 89,599 fields, in 577 distinct
-spellings" without stating the selector that produced those two numbers. That
-report is repository-external and pins nothing. The figures above supersede it
-because they carry a stated, closed, reproducible selector; the discrepancy is
-a difference of selector, not of corpus, and §24 takes no position on the
-predecessor's arithmetic.
-
-### 24.3 The prose-to-unit extraction law
-
-The law has three stages and one disposition rule. Each stage is exact, closed,
-and byte-level. Nothing in it consults an evidence artifact, an inventory, an
-observed token, a candidate grammar, a value label, or another field.
-
-#### 24.3.1 Stage 1 — description normalization
-
-The input is the canonical codebook row's `source_description`: the pinned
-page bytes with only leading and trailing ASCII space and tab removed per
-line, joined with LF, or JSON null when the field block carries no description
-line. The normalized description is that value under exactly three steps, in
-order, and no other:
-
-1. every LF byte becomes exactly one U+0020;
-2. every maximal run of U+0020 becomes exactly one U+0020;
-3. leading and trailing U+0020 are removed.
-
-A null description normalizes to the empty string.
-
-Each step is justified and none is discretionary. Step 1 is required because
-the derived description retains the pinned page's own line breaks, and where
-`pdftotext -layout` wrapped a sentence is a property of the page's column
-geometry, not of the sentence: the same sentence appears in the corpus broken
-at different columns on different pages. Step 2 is required for the same
-reason at the intra-line level, because `-layout` inserts alignment runs whose
-width depends on the page. Step 3 is the closure of steps 1 and 2 at the two
-ends. No further normalization is lawful: case folding, punctuation removal,
-quote substitution, Unicode normalization, and digit masking would each merge
-byte-distinct source spellings and would therefore silently widen the closed
-clause table of §24.3.4 beyond the spellings the corpus actually contains.
-Tabs are not folded, because the derivation has already stripped the only tabs
-that are layout rather than content.
-
-#### 24.3.2 Stage 2 — the closed anchor set and statement extraction
-
-A **value-denotation anchor** is one of exactly these seven byte strings, each
-including its trailing U+0020:
-
-| # | Anchor bytes | Family |
-|---:|---|---|
-| 1 | `The values for this variable ` | value subject |
-| 2 | `Values for this variable ` | value subject |
-| 3 | `values for this variable ` | value subject |
-| 4 | `The value for this variable ` | value subject |
-| 5 | `the value for this variable ` | value subject |
-| 6 | `This variable represents ` | variable subject, denotation verb |
-| 7 | `this variable represents ` | variable subject, denotation verb |
-
-The set is closed. `This variable is`, `This variable was`, and `This variable
-contains` are deliberately outside it: in this corpus those openers carry
-provenance and construction prose ("This variable was computed by
-multiplying", "This variable is suppressed", "This variable contains the first
-two digits"), not a statement about what a value denotes. Excluding them can
-only withhold a unit and can never grant one, so the exclusion is
-fail-closed.
-
-A **value-denotation statement** of a normalized description is a substring
-selected by exactly this procedure. Scan the normalized description left to
-right by byte index. An index is *admissible* when it is 0 or the preceding
-byte is U+0020, and it is not inside the anchor span of an already-selected
-statement. At each admissible index at which at least one anchor matches, take
-the longest matching anchor and emit the substring beginning at that index and
-ending at the first `.` that either ends the description or is followed by
-U+0020, inclusive of that `.`; if no such `.` exists the statement runs to the
-end of the description. The anchor-span guard is what makes `The value for
-this variable represents X.` one statement rather than also yielding its
-`this variable represents X.` tail. The terminator rule is what keeps
-`1.5 hours per week` and `(000001-999997)` inside one statement while ending
-the statement at a genuine sentence break; it is exact, and where a source
-abbreviation such as `U.S.` ends a statement early the truncation is
-deterministic and is recorded verbatim in the statement relation.
-
-Statements are returned in ascending start index. A description may carry
-several.
-
-#### 24.3.3 Stage 2b — the whole-domain denotation test
-
-A statement has a **predicate** only when it denotes the whole value domain.
-For an anchor of family *variable subject* the predicate is the statement's
-bytes after the anchor. For an anchor of family *value subject* the predicate
-is the statement's bytes after the anchor and after exactly one of the two
-denotation verbs `represent ` and `represents `; if the bytes after the anchor
-begin with neither verb, the statement has no predicate and its disposition is
-`no_unit_derivable` with reason `not_a_whole_domain_denotation`.
-
-That is the rule that disposes of the corpus's second-largest statement
-family. The verbatim shape is
-
-> The values for this variable in the range 00001-99998 represent the amount
-> of child support received in whole dollars; all missing data were assigned.
-
-Such a statement names a unit for a stated subrange of the value domain and
-says nothing about the domain outside it. §19.3.2 requires one unit common to
-**every** member of `R`, so a subrange-scoped statement cannot discharge it.
-Reading the stated bounds and comparing them to `R` would be a second
-derivation over prose numerals, and this amendment declines to author one:
-946 distinct statements and 2,480 statement-field occurrences take
-`not_a_whole_domain_denotation` and contribute no unit. That is the single
-largest fail-closed refusal in the law and it is deliberate.
-
-#### 24.3.4 Stage 3 — the closed unit clause table
-
-A **unit clause** is one of exactly these 55 byte strings, and the
-table is the operative law: nothing outside it can contribute a unit, and no
-reading of a predicate other than exact byte occurrence of a listed clause is
-lawful. Displayed order is the ratified order; matching is order-independent
-because §24.3.5 resolves nesting by maximal munch. The two count columns are
-the measured frequency of the clause as the *deciding* clause of a distinct
-statement and the summed field count of those statements; they are census, not
-law, and a clause is lawful whether or not the frozen corpus exercises it.
-
-| # | Clause bytes | Disposition | Deciding statements | Fields |
-|---:|---|---|---:|---:|
-| 1 | `dollars and cents per hour` | `united_states_dollar_per_hour` | 9 | 388 |
-| 2 | `dollars and cents` | `united_states_dollar` | 2 | 488 |
-| 3 | `dollar and cents` | `united_states_dollar` | 0 | 0 |
-| 4 | `dollar and cents amount per hour` | `united_states_dollar_per_hour` | 1 | 1 |
-| 5 | `whole dollars` | `united_states_dollar` | 331 | 619 |
-| 6 | `dollar amount` | `united_states_dollar` | 4 | 21 |
-| 7 | `dollar income amount` | `united_states_dollar` | 1 | 1 |
-| 8 | `dollar value` | `united_states_dollar` | 6 | 8 |
-| 9 | `dollar lump sum amount` | `united_states_dollar` | 1 | 1 |
-| 10 | `value in dollars` | `united_states_dollar` | 5 | 5 |
-| 11 | `tax credit dollars` | `united_states_dollar` | 1 | 1 |
-| 12 | `number of hours per week` | `hour_per_week` | 59 | 564 |
-| 13 | `hours per week` | `hour_per_week` | 2 | 3 |
-| 14 | `weekly work hours` | `hour_per_week` | 16 | 34 |
-| 15 | `hours per year` | `hour_per_year` | 1 | 2 |
-| 16 | `number of hours (0001-2080) per year` | `hour_per_year` | 1 | 2 |
-| 17 | `number of hours` | `hour` | 0 | 0 |
-| 18 | `annual hours` | `hour` | 6 | 42 |
-| 19 | `annual work hours` | `hour` | 17 | 27 |
-| 20 | `annual overtime hours` | `hour` | 13 | 49 |
-| 21 | `annualized hours` | `hour` | 2 | 2 |
-| 22 | `annualized work hours` | `hour` | 2 | 5 |
-| 23 | `annual extra job hours` | `hour` | 2 | 2 |
-| 24 | `annual hours worked` | `hour` | 3 | 6 |
-| 25 | `extra job hours` | `hour` | 0 | 0 |
-| 26 | `number of weeks` | `week` | 223 | 884 |
-| 27 | `number of reported weeks` | `week` | 58 | 292 |
-| 28 | `expressed as weeks` | `week` | 20 | 72 |
-| 29 | `duration in weeks` | `week` | 3 | 12 |
-| 30 | `total weeks` | `week` | 13 | 13 |
-| 31 | `weeks worked` | `week` | 16 | 21 |
-| 32 | `number of days` | `day` | 6 | 6 |
-| 33 | `number of reported days` | `day` | 56 | 280 |
-| 34 | `number of months` | `month` | 14 | 26 |
-| 35 | `number of reported months` | `month` | 55 | 292 |
-| 36 | `number of years` | `year` | 20 | 36 |
-| 37 | `number of additional years` | `year` | 2 | 2 |
-| 38 | `in whole years` | `year` | 10 | 49 |
-| 39 | `in years` | `year` | 27 | 132 |
-| 40 | `number of minutes` | `minute` | 2 | 2 |
-| 41 | `number of miles` | `mile` | 2 | 18 |
-| 42 | `number of miles per year` | `mile_per_year` | 1 | 1 |
-| 43 | `number of` | `count` | 194 | 651 |
-| 44 | `percent` | `percent` | 15 | 23 |
-| 45 | `percentage` | `percent` | 4 | 10 |
-| 46 | `percentange` | `percent` | 1 | 1 |
-| 47 | `the last two digits` | `no_unit_derivable` | 49 | 133 |
-| 48 | `ID number of` | `no_unit_derivable` | 73 | 73 |
-| 49 | `interview number of` | `no_unit_derivable` | 2 | 17 |
-| 50 | `marginal tax rate` | `no_unit_derivable` | 5 | 50 |
-| 51 | `value per room` | `no_unit_derivable` | 2 | 2 |
-| 52 | `income/needs ratio` | `no_unit_derivable` | 1 | 1 |
-| 53 | `the ratio of` | `no_unit_derivable` | 1 | 1 |
-| 54 | `persons per room` | `no_unit_derivable` | 2 | 2 |
-| 55 | `number of Wife/"Wife" missed` | `no_unit_derivable` | 1 | 1 |
-
-`no_unit_derivable` rows are **defeating clauses**. Their presence in a
-predicate removes any unit reading of that predicate, and each is grounded in
-the same way a positive clause is:
-
-- `the last two digits` — the value is a two-digit truncation of a calendar
-  year, so the prose names neither a magnitude nor a coordinate the vocabulary
-  fixes;
-- `ID number of` and `interview number of` — the value is a family or
-  interview identifier, and `number of` would otherwise read it as a count;
-- `marginal tax rate` — the prose names a rate whose base it does not state,
-  and its subordinate clause mentions both `percent` and `number of`;
-- `value per room` — the prose names a per-room value whose measure it does not
-  state, and the formula that follows mentions `number of rooms`;
-- `income/needs ratio` and `the ratio of` — a ratio's unit is not the unit of
-  either operand, and one source statement reads "the actual income/needs ratio
-  in dollars and cents";
-- `persons per room` — a density is not a count, and §24.3.5's vocabulary
-  fixes no person-per-room unit, so `number of` may not read it as one;
-- `number of Wife/"Wife" missed` — the source spelling omits the counted noun
-  entirely, so no measure is named.
-
-Exactly 3 clause
-rows are inert on the frozen corpus, meaning no distinct statement is decided
-by any of them — `dollar and cents`, `number of hours`, `extra job hours`.
-Each is retained because it fixes the intended reading of a longer phrase
-against a shorter clause that would otherwise capture it, and because removing
-a clause from a ratified closed table is a change of law rather than a
-tidying. On the frozen corpus every inert row moves zero fields, which the
-census above shows directly.
-
-The complete clause grounding relation follows. Each line is one canonical
-JSON array `[clause, unit, deciding-statements, fields, witness-statement,
-witness-field-key, witness-locator]`, in the ratified clause order, where the
-witness is the highest-field-count distinct statement the clause decides and
-the locator is `<document> p.<page> <derived-page-text-sha256>`. An inert
-clause carries an empty witness by construction. The fence is exactly
-14,981 bytes with SHA-256
-`694eea9ec96e17dcbf80a9787062f1c2a620c85479b63f6e5dd544637e48655d`.
+The following fence is the complete 82-row adjudication relation in ascending
+candidate-byte order. Each line is one compact, ASCII, duplicate-free JSON
+object followed by LF; the whole fence content is 11,588 bytes with SHA-256
+`9f03a793f25f64f03425bcc817fc18d7717bf2731a2f4325628eac2283280825`,
+and the same rows as one §10.1 canonical array hash to
+`88f5b25a52d8ea524d1e0c19ea90c9e1a8f9d26c1da437511678342abd2e0e5c`.
 
 ~~~text
-["dollars and cents per hour","united_states_dollar_per_hour",9,388,"The values for this variable represent dollars and cents per hour.",[1982,"V8385"],"family/1982/FAM1982_codebook.pdf p.48 d920ee970a94a5e87e780950f9915c6d259b7a2dd519429a63c14372c45bcc8e"]
-["dollars and cents","united_states_dollar",2,488,"The values for this variable represent dollars and cents.",[1993,"V22474"],"family/1993/fam1993_codebook.pdf p.183 8516babee041bf30460ad0631cc874cbfaefe8ec68cbc1eb4be6e1a92c45cfac"]
-["dollar and cents","united_states_dollar",0,0,"",[],""]
-["dollar and cents amount per hour","united_states_dollar_per_hour",1,1,"This variable represents dollar and cents amount per hour.",[1976,"V4794"],"family/1976/FAM1976_codebook.pdf p.147 1ac3515c7fde316b3456233aebd4bfb12aabb226ee7a792717d6c94ed8595a85"]
-["whole dollars","united_states_dollar",331,619,"The values for this variable represent total receipts from the business in whole dollars.",[2003,"ER21868"],"family/2003/FAM2003ER_codebook.pdf p.271 5578a785416cc97ed7ed166b6939748930beea843b22cef4475e1f34ff7073ec"]
-["dollar amount","united_states_dollar",4,21,"The values for this variable represent the annual dollar amount of homeowner's insurance premiums.",[1993,"V21619"],"family/1993/fam1993_codebook.pdf p.6 043cabeae7f01fac36d709e7b419a89c8c01f0257641990e3a6e1fe072c248bb"]
-["dollar income amount","united_states_dollar",1,1,"The values for this variable represent the actual annual dollar income amount (00001- 99996) expected.",[1984,"V10928"],"family/1984/FAM1984_codebook.pdf p.349 1ea77edbcd4a373a318c21e6d92859e4c00995014bad6becaa5bb21f1519032a"]
-["dollar value","united_states_dollar",6,8,"The values for this variable represent the actual dollar value (000001-999997) of the settlement/inheritance.",[1985,"V11894"],"family/1985/FAM1985_codebook.pdf p.261 0bc2aa802b7fef81877f8aa65d566c8879bc0cfbb4fc6cf2876d6ff578179d67"]
-["dollar lump sum amount","united_states_dollar",1,1,"The values for this variable represent the total dollar lump sum amount (000001-999996).",[1984,"V10930"],"family/1984/FAM1984_codebook.pdf p.350 2755ec353732fa7d221084484ba84e1fa81c9b4abf23ac2954c3c208307bb6da"]
-["value in dollars","united_states_dollar",5,5,"The values for this variable represent the actual net value in dollars (0000001-9999995) of farms or businesses owned.",[1984,"V10908"],"family/1984/FAM1984_codebook.pdf p.344 f4556e172c4df336da5e0969eff2e9441435f2746411cba48610faf2a995cabf"]
-["tax credit dollars","united_states_dollar",1,1,"The values for this variable represent the actual tax credit dollars.",[1979,"V6789"],"family/1979/FAM1979_codebook.pdf p.156 02bdc975582d0c7faeeb764c9a59f0790a938c070eb0d497017c8bc59400a324"]
-["number of hours per week","hour_per_week",59,564,"The values for this variable represent the actual number of hours per week Head worked.",[1982,"V8529"],"family/1982/FAM1982_codebook.pdf p.99 d69d29385b8d6c1d8ac53d2f732642efd79d6ec8d87643034dfd66d06e4a32fd"]
-["hours per week","hour_per_week",2,3,"Values for this variable represent the actual hours per week.",[1979,"V6663"],"family/1979/FAM1979_codebook.pdf p.115 800916ccdcab5549042575f0e176bca6ef74c07529e5f53c0ee1e2854c0e98d9"]
-["weekly work hours","hour_per_week",16,34,"The values for this variable represent the total weekly work hours on all jobs.",[2005,"ER27884"],"family/2005/FAM2005ER_codebook.pdf p.900 c16ccd769d8cd92bd82dfb9d5ba93bcd3d53d8ea3281c1f29965fffbdee6ccc6"]
-["hours per year","hour_per_year",1,2,"The values for this variable represent hours per year.",[1981,"V7911"],"family/1981/FAM1981_codebook.pdf p.118 3310ea0d77fe3ebedc0233379461004282e06afb73c41995c99304fe1dbce7ce"]
-["number of hours (0001-2080) per year","hour_per_year",1,2,"The values for this variable represent the actual number of hours (0001-2080) per year.",[1984,"V10475"],"family/1984/FAM1984_codebook.pdf p.171 827cfabec5a9f3598659c8f4315ea770c0f8f39ea8cb0b2e10dce484fa60c100"]
-["number of hours","hour",0,0,"",[],""]
-["annual hours","hour",6,42,"The values for this variable represent the actual annual hours; all missing data were assigned.",[1982,"V8234"],"family/1982/FAM1982_codebook.pdf p.10 5f92d717cd87fa64c488841c2b08b6f56d95d7d007d682dadd6689edec5011af"]
-["annual work hours","hour",17,27,"The values for this variable represent Head's total annual work hours on all jobs, including overtime.",[1994,"ER4096"],"family/1994/FAM1994ER_codebook_public.pdf p.647 705196cf93f6d00b66f2e182dde0d71ded902788cfb9fd577d5b0daa02b58c8e"]
-["annual overtime hours","hour",13,49,"The values for this variable represent the annual overtime hours worked on all jobs if reported separately from regular work hours.",[1994,"ER4094"],"family/1994/FAM1994ER_codebook_public.pdf p.646 2cabfec342a0c3a1e86dd293adc322005bc6b106ccf593764d51cdb5850500dc"]
-["annualized hours","hour",2,2,"The values for this variable represent the actual annualized hours spent by the Head on housework at the time of the interview.",[1993,"V21701"],"family/1993/fam1993_codebook.pdf p.22 09a593f7dfb5270f470381e28d2ce48b20293b45fa8e4647acad9ffa83fbb450"]
-["annualized work hours","hour",2,5,"The values for this variable represent the annualized work hours on all extra jobs.",[1993,"V21668"],"family/1993/fam1993_codebook.pdf p.16 314912afba21916fe0ca1aa00bef9623c0a35d84f23373af105ddd4ff2a15a9d"]
-["annual extra job hours","hour",2,2,"The values for this variable represent the annual extra job hours worked on all jobs.",[1994,"ER4106"],"family/1994/FAM1994ER_codebook_public.pdf p.649 6dd4372a10320112dddb68dfaa75d4da41ec09e684e5de757a7c889737ae0cc3"]
-["annual hours worked","hour",3,6,"The values for this variable represent the annual hours worked on all extra jobs.",[1994,"ER4095"],"family/1994/FAM1994ER_codebook_public.pdf p.646 2cabfec342a0c3a1e86dd293adc322005bc6b106ccf593764d51cdb5850500dc"]
-["extra job hours","hour",0,0,"",[],""]
-["number of weeks","week",223,884,"The values for this variable represent the actual number of weeks (01-52) Head worked on all of his/her extra jobs except the first one.",[1984,"V10572"],"family/1984/FAM1984_codebook.pdf p.212 f98dbd336f3a9e5924daccc13f105d5536426670a9efe420fffcfd095df933d6"]
-["number of reported weeks","week",58,292,"The values for this variable represent the actual number of reported weeks missed because Head was on strike.",[1994,"ER2186"],"family/1994/FAM1994ER_codebook_public.pdf p.60 2b370130b6e7cc871dd82fc4a702ed80925cacb6b04a3b4825d45f989483e63e"]
-["expressed as weeks","week",20,72,"The values for this variable represent the total amount of time Head missed due to strikes, expressed as weeks.",[1994,"ER2184"],"family/1994/FAM1994ER_codebook_public.pdf p.59 4d748f8d48113d1917115bf854dd713e41173efbe90c319a1653a0c186b3b05c"]
-["duration in weeks","week",3,12,"The values for this variable represent the actual duration in weeks of the most recent spell of unemployment.",[1982,"V8414"],"family/1982/FAM1982_codebook.pdf p.58 c55738ee53038fca7f394960bb1c8921993d54bc73f38fc91c8cc4475195cd67"]
-["total weeks","week",13,13,"The values for this variable represent the total weeks Head worked on all jobs in 2002.",[2003,"ER24077"],"family/2003/FAM2003ER_codebook.pdf p.966 cd4a4edd02a7a1062b7b250fbc219e49d87d3985bf02df7825e5ec31798ee081"]
-["weeks worked","week",16,21,"The values for this variable represent the total weeks worked on all jobs in 2004.",[2005,"ER27883"],"family/2005/FAM2005ER_codebook.pdf p.899 99b2f6b8e78a0be78c80b8537c4cfcbbc019f4f3b1c0872688677f2d7bb60ba5"]
-["number of days","day",6,6,"The values for this variable represent the actual number of days Head reported being unemployed, in 2012.",[2013,"ER53352"],"family/2013/FAM2013ER_codebook.pdf p.127 0b5b6dc89fddd8095478dc45f14450a7b0b0bf06d7a17a5c9e9b5571fe3e0ff3"]
-["number of reported days","day",56,280,"The values for this variable represent the actual number of reported days missed because Head was on strike.",[1994,"ER2185"],"family/1994/FAM1994ER_codebook_public.pdf p.60 2b370130b6e7cc871dd82fc4a702ed80925cacb6b04a3b4825d45f989483e63e"]
-["number of months","month",14,26,"The values for this variable represent the actual number of months Head has worked for the present employer.",[1994,"ER2099"],"family/1994/FAM1994ER_codebook_public.pdf p.33 340582a7c9b414526f74f6e452cf93040926da5356c673392a0738a39706298e"]
-["number of reported months","month",55,292,"The values for this variable represent the actual number of reported months missed because Head was on strike.",[1994,"ER2187"],"family/1994/FAM1994ER_codebook_public.pdf p.60 2b370130b6e7cc871dd82fc4a702ed80925cacb6b04a3b4825d45f989483e63e"]
-["number of years","year",20,36,"The values for this variable represent the number of years left on the longest-term mortgage that the FU has.",[1993,"V22429"],"family/1993/fam1993_codebook.pdf p.171 e6123bfa2ee4037deb7c7af4790a45ad70faa4923c5a8a058b88d924151b1976"]
-["number of additional years","year",2,2,"The values for this variable represent the actual number of additional years (01-96) Head must be in this plan in order to become vested.",[1984,"V10485"],"family/1984/FAM1984_codebook.pdf p.174 9760025ddccabf245bc2fdcf46206027ab3a4664edec8a390b3bd9e3469b349e"]
-["in whole years","year",10,49,"The values for this variable represent in whole years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.",[1985,"V11740"],"family/1985/FAM1985_codebook.pdf p.204 0c408b00873cf68ba000de3f0ea55d5d36ceb9c1239571c499f342c91fc6f679"]
-["in years","year",27,132,"The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.",[1994,"ER3986"],"family/1994/FAM1994ER_codebook_public.pdf p.585 be1f93b07e82403ed9a156d73d86d55c541fad3c254460874ebaba6885896eb9"]
-["number of minutes","minute",2,2,"The values for this variable represent the actual number of minutes taken by the interviewer to administer the questionnaire.",[1979,"V6460"],"family/1979/FAM1979_codebook.pdf p.38 378f96fb5bed834ab352666853b0023c82c7e7827b9636174413dcaad1342a17"]
-["number of miles","mile",2,18,"The values for this variable represent the actual number of miles to work one way.",[1982,"V8454"],"family/1982/FAM1982_codebook.pdf p.72 2ce7b7da77dccc6aadb2ae261dd90346a58c1a09e7b5d2e90a8992731c249f86"]
-["number of miles per year","mile_per_year",1,1,"values for this variable represent the actual number of miles per year.",[1974,"V3520"],"family/1974/FAM1974_codebook.pdf p.30 675d746563c35bbc431137711bb8ea1d8c7273744ff97c713e4ab4c4f4a8120f"]
-["number of","count",194,651,"The values for this variable represent the actual number of Head's brothers.",[1985,"V11925"],"family/1985/FAM1985_codebook.pdf p.274 af77f500d8551b8c1d03d8262eac925a89f5e8d971b4b96b8b97bcd7e94df6ff"]
-["percent","percent",15,23,"The values for this variable represent the annual average unemployment rate, to the nearest whole percent, reported by the U.S.",[1990,"V18915"],"family/1990/FAM1990_codebook.pdf p.400 7254e45c30ea4810fcceeb7b9452e9a4237b256114da105500bff4b087bdcbf3"]
-["percentage","percent",4,10,"The values for this variable represent the percentage of heating/cooling costs covered by government subsidies.",[2015,"ER60130"],"family/2015/FAM2015ER_codebook.pdf p.41 c7f06619aa242cc2733c04f6f16f21bc5ba5d53d50f9aa687b08a842d511427f"]
-["percentange","percent",1,1,"The values for this variable represent the percentange of heating/cooling costs covered by government subsidies.",[2019,"ER72131"],"family/2019/fam2019er_codebook.pdf p.42 33075a34f0052912148db19adab5ede207608da287322e147647fec118ca30e9"]
-["the last two digits","no_unit_derivable",49,133,"The values for this variable represent the last two digits of the year in which Wife/\"Wife\" retired.",[1983,"V9265"],"family/1983/FAM1983_codebook.pdf p.152 4db4b1d0579881d0c9987efc4222b757548d8a57ddfce102f7900936096815e5"]
-["ID number of","no_unit_derivable",73,73,"The values for this variable represent the actual 1982 ID number of the third other family living with this one.",[1982,"V8738"],"family/1982/FAM1982_codebook.pdf p.171 b94eeddbdcaada34431d76737662bd844750da23218dacb9c07a03524bcf3753"]
-["interview number of","no_unit_derivable",2,17,"The values for this variable represent the actual interview number of the main family associated with each splitoff.",[1982,"V8733"],"family/1982/FAM1982_codebook.pdf p.169 571b1bc0238998702c766d01edf7c3af147ad445e5af1b544511fe4cd50d1dda"]
-["marginal tax rate","no_unit_derivable",5,50,"The values for this variable represent the actual marginal tax rate based on this person's percent proration, taxable income, number of exemptions, and tax table used.",[1986,"V13617"],"family/1986/FAM1986_codebook.pdf p.402 103edbe77b5a35382d8e3396004f6d87fa6236d66fec27aa75b9e532cc4103f7"]
-["value per room","no_unit_derivable",2,2,"The values for this variable represent the actual value per room, calculated according to the following formula: V11018 + [(V10026 + V10028) x 10] / V10432 (1984 (1984 (1984 Value (Number of House Rent of Rent Rooms in Value) Paid) Received) 1984) The following rules were used for each case, depending on the value of V10437: Homeowners (V10437=1): House value (V11018) divided by the number of rooms (V10432) Renters (V10437=5): Dwelling value, assumed to be 10 times the annual rent (V10026), divided by the number of rooms (V10432) Those neither owning nor renting (V10437=8): Dwelling value, assumed to be 10 times the value of rent received free in return for services (V10028), divided by the number of rooms (V10432) Note that the maximum value for V10432, excluding missing data, is 8, so data values in this variable are inflated for a few cases.",[1984,"V11036"],"family/1984/FAM1984_codebook.pdf p.388 bfcb090fb3d79b9ab0db2ad247e827884170d48fcc4cb85d2f5902f1ca3dcee8"]
-["income/needs ratio","no_unit_derivable",1,1,"values for this variable represent the actual income/needs ratio in dollars and cents.",[1974,"V3692"],"family/1974/FAM1974_codebook.pdf p.91 5ffe2977caffac7671a57abc09c658f9bdca41cca3889a8bbc2e225af6081f12"]
-["the ratio of","no_unit_derivable",1,1,"The values for this variable represent the ratio of 1970 family net real income net of cost of housing to 1970 family food need standard.",[1971,"V2266"],"family/1971/FAM1971_codebook.pdf p.140 c9849a6eea631c565eaaf13987628e261d33454f02f44a4f6c1951998a5475da"]
-["persons per room","no_unit_derivable",2,2,"The values for this variable represent the number of persons per room with one implied decimal place; e.g., a value of 20 here represents 2.0 persons per room.",[1985,"V12396"],"family/1985/FAM1985_codebook.pdf p.456 6587e65580e380e23395f2e9612e3f4230baeb8bbbdcca3d3d2536097cded50c"]
-["number of Wife/\"Wife\" missed","no_unit_derivable",1,1,"The values for this variable represent the actual number of Wife/\"Wife\" missed due to temporary layoff.",[2003,"ER24096"],"family/2003/FAM2003ER_codebook.pdf p.970 d453cb0315686f244052351665a41823f7749ab7500c80a069c0c334984bc200"]
+{"adjudication":"explicit_no_denotation","candidate":"Actual - Required rooms = 2 or more (V891 EQ 5 - 8)","field_count":1,"witness_field_key":[1969,"V896"]}
+{"adjudication":"explicit_no_denotation","candidate":"Actual - Required rooms V381 = 5 - 9","field_count":1,"witness_field_key":[1968,"V418"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family","field_count":4,"witness_field_key":[1977,"V5642"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family (1969)","field_count":1,"witness_field_key":[1969,"V891"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family (1981)","field_count":1,"witness_field_key":[1981,"V8080"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family of This Size, Age and Sex Composition (V102, V124)","field_count":1,"witness_field_key":[1968,"V381"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the 1983 Family","field_count":1,"witness_field_key":[1983,"V9390"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the 1984 Family","field_count":1,"witness_field_key":[1984,"V11037"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the 1985 Family","field_count":1,"witness_field_key":[1985,"V12395"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the FU (1982)","field_count":1,"witness_field_key":[1982,"V8704"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age","field_count":6,"witness_field_key":[1976,"V4629"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age in years","field_count":1,"witness_field_key":[1969,"V1011"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head","field_count":6,"witness_field_key":[1972,"V2542"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head 98","field_count":1,"witness_field_key":[1976,"V4436"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head's oldest child","field_count":1,"witness_field_key":[1980,"V7365"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head's second oldest child","field_count":1,"witness_field_key":[1980,"V7366"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head's third oldest child","field_count":1,"witness_field_key":[1980,"V7367"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Wife","field_count":6,"witness_field_key":[1972,"V2544"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Wife or Permanent Friend","field_count":1,"witness_field_key":[1981,"V7660"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of youngest child","field_count":2,"witness_field_key":[1980,"V7071"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual average income","field_count":1,"witness_field_key":[1972,"V2970"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar amount","field_count":1,"witness_field_key":[1976,"V4617"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar amount of Head's labor income","field_count":1,"witness_field_key":[1980,"V7413"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar amount of transfers","field_count":5,"witness_field_key":[1975,"V4168"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar and cents per hour","field_count":1,"witness_field_key":[1976,"V4790"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollars and cents per hour","field_count":32,"witness_field_key":[1976,"V4591"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollars and cents per hour.","field_count":5,"witness_field_key":[1979,"V6519"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollars per week","field_count":2,"witness_field_key":[1976,"V4782"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual expenditure in hundreds of dollars","field_count":2,"witness_field_key":[1976,"V5089"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual expenditure in hundreds of dollars.","field_count":2,"witness_field_key":[1975,"V4217"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hourly amount","field_count":2,"witness_field_key":[1976,"V4510"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hourly rate","field_count":1,"witness_field_key":[1977,"V5442"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hourly wage","field_count":6,"witness_field_key":[1976,"V4513"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hours per week","field_count":4,"witness_field_key":[1976,"V4571"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hours worked per week","field_count":1,"witness_field_key":[1980,"V7246"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual income/needs ratio","field_count":4,"witness_field_key":[1975,"V4171"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual interview number was coded: 0001-6620)","field_count":1,"witness_field_key":[1981,"V8109"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual marginal tax rate","field_count":2,"witness_field_key":[1977,"V5302"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual minus required rooms for family","field_count":7,"witness_field_key":[1970,"V1588"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number","field_count":4,"witness_field_key":[1978,"V5845"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number in FU","field_count":7,"witness_field_key":[1972,"V2468"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number in Family Unit","field_count":1,"witness_field_key":[1975,"V3920"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number in family unit","field_count":1,"witness_field_key":[1976,"V4435"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of children","field_count":15,"witness_field_key":[1972,"V2545"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of days","field_count":1,"witness_field_key":[1981,"V7980"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of dollars","field_count":1,"witness_field_key":[1976,"V4770"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of exemptions","field_count":2,"witness_field_key":[1980,"V7001"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours","field_count":4,"witness_field_key":[1976,"V4523"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours per week","field_count":24,"witness_field_key":[1976,"V4581"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours per year","field_count":1,"witness_field_key":[1981,"V7789"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours worked","field_count":1,"witness_field_key":[1980,"V7255"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of miles","field_count":8,"witness_field_key":[1976,"V4447"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of miles to work","field_count":1,"witness_field_key":[1980,"V7247"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of minutes","field_count":8,"witness_field_key":[1972,"V2540"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of months","field_count":10,"witness_field_key":[1976,"V4488"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of people","field_count":1,"witness_field_key":[1977,"V5380"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of persons","field_count":9,"witness_field_key":[1976,"V4464"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of persons in FU","field_count":4,"witness_field_key":[1977,"V5349"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of states and/ or countries)","field_count":1,"witness_field_key":[1982,"V8652"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks","field_count":54,"witness_field_key":[1976,"V4505"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks in 1979","field_count":1,"witness_field_key":[1980,"V7182"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed because Wife ill in 1979","field_count":1,"witness_field_key":[1980,"V7206"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed because someone else was ill in 1979","field_count":1,"witness_field_key":[1980,"V7204"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed because someone else was ill in 1980","field_count":1,"witness_field_key":[1981,"V7895"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed in 1979","field_count":4,"witness_field_key":[1980,"V7238"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed in 1980","field_count":1,"witness_field_key":[1981,"V7927"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks of vacation in 1979","field_count":1,"witness_field_key":[1980,"V7208"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks of vacation in 1980","field_count":1,"witness_field_key":[1981,"V7899"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks on strike in 1979","field_count":1,"witness_field_key":[1980,"V7210"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks on strike in 1980","field_count":1,"witness_field_key":[1981,"V7901"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks unemployed in 1979","field_count":1,"witness_field_key":[1980,"V7212"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks unemployed in 1980","field_count":1,"witness_field_key":[1981,"V7903"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks worked","field_count":1,"witness_field_key":[1980,"V7245"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks worked in 1979","field_count":4,"witness_field_key":[1980,"V7213"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks worked in 1980","field_count":3,"witness_field_key":[1981,"V7868"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of years","field_count":7,"witness_field_key":[1976,"V4630"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of years from now","field_count":3,"witness_field_key":[1976,"V4577"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of years later","field_count":1,"witness_field_key":[1976,"V4536"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual percent","field_count":2,"witness_field_key":[1976,"V4632"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual percent of time Wife/friend worked","field_count":1,"witness_field_key":[1980,"V7355"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual score:","field_count":1,"witness_field_key":[1968,"V434"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual year","field_count":7,"witness_field_key":[1976,"V4803"]}
 ~~~
 
-#### 24.3.5 Maximal munch, defeat, conflict, and the closed unit vocabulary
+#### 24.2.4 Completed statement and field censuses
 
-Given a predicate, collect every occurrence of every clause at every position
-as a half-open byte interval. Discard every occurrence strictly contained in a
-strictly longer occurrence. Let `U` be the set of dispositions of the
-surviving occurrences. Then:
+The production relation reaches 9,170 fields and contains 2,791 distinct
+verbatim statements and 9,507 statement-field occurrences; its canonical
+array hashes to
+`235c582abc4bfa96cfe1ff6e7d518a8b6ad2e480977464315b68477ea97a1253`.
+Its disposition is an exact partition:
 
-- `U` empty — `no_unit_derivable`, reason `no_unit_naming_clause`;
-- `no_unit_derivable` in `U` — `no_unit_derivable`, reason `defeating_clause`;
-- `|U| > 1` — `no_unit_derivable`, reason `conflicting_unit_clauses`;
-- otherwise the single member of `U` is the statement's unit, reason
-  `unit_naming_clause`.
+| Disposition | Distinct | Occurrences |
+|---|---:|---:|
+| `count` | 359 | 884 |
+| `day` | 63 | 287 |
+| `hour` | 47 | 138 |
+| `hour_per_week` | 80 | 630 |
+| `hour_per_year` | 3 | 5 |
+| `hundreds_of_united_states_dollars` | 2 | 4 |
+| `mile` | 4 | 27 |
+| `mile_per_year` | 1 | 1 |
+| `minute` | 4 | 25 |
+| `month` | 95 | 353 |
+| `percent` | 22 | 37 |
+| `united_states_dollar` | 394 | 1,235 |
+| `united_states_dollar_per_hour` | 13 | 427 |
+| `united_states_dollar_per_week` | 1 | 2 |
+| `week` | 349 | 1,371 |
+| `year` | 88 | 262 |
+| **unit-bearing subtotal** | **1,525** | **5,688** |
+| `not_a_whole_domain_denotation` | 812 | 2,312 |
+| `no_unit_naming_clause` | 225 | 859 |
+| `defeating_clause` | 228 | 626 |
+| `conflicting_unit_clauses` | 1 | 22 |
+| **no-unit subtotal** | **1,266** | **3,819** |
+| **complete relation** | **2,791** | **9,507** |
 
-Maximal munch is what makes `dollars and cents per hour` a single
-`united_states_dollar_per_hour` reading rather than a manufactured conflict
-with the `dollars and cents` inside it, and what makes `number of hours per
-week` outrank the generic `number of`. Containment must be strict on length:
-two equal-length occurrences at the same position cannot arise because clause
-bytes are unique.
+At field level the completed relation partitions the denominator as follows:
 
-The conflict rule is not decorative. Exactly one distinct statement in the
-corpus, carried by 22 fields, is refused by it:
+| Field result | Fields |
+|---|---:|
+| `derived_from_denotation_statement` | 5,682 |
+| `no_denotation_statement` | 80,429 |
+| `no_statement_names_a_unit` | 2,839 |
+| `defeated_denotation_statement` | 648 |
+| `conflicting_statement_units` | 1 |
+| **complete denominator** | **89,599** |
 
-> The values for this variable represent dollars and cents per hour; if salary
-> is given as an annual figure, it is divided by 2000 hours per year; if
-> weekly, by 40 hours per week.
+The predecessor lane's repository-external 5,469/577 figures are superseded
+because Amendment 10 now publishes an exhaustive candidate universe, an
+explicit semantic adjudication for every candidate in the frozen denominator,
+and a digest-pinned production relation over the same 89,599 ordered fields.
+No claim rests merely on a selector being different.
 
-Three surviving occurrences name three different units, so the statement
-yields none, and those 22 fields take no unit even though the sentence opens
-by naming one. That is the fail-closed posture applied against its own
-interest, and it is recorded rather than special-cased.
+### 24.3 The prose-to-unit authority
 
-The closed canonical unit vocabulary is exactly these 14 identifiers:
-`count`, `day`, `hour`, `hour_per_week`, `hour_per_year`, `mile`,
-`mile_per_year`, `minute`, `month`, `percent`, `united_states_dollar`,
-`united_states_dollar_per_hour`, `week`, and `year`. §19.3.2 fixes no unit
-vocabulary anywhere in the immutable prefix; every member here is introduced
-by Amendment 10 and every clause disposition resolves into it. A
-`typed_value_unit` outside this set, including the empty string, is unlawful
-in any post-D10 derivation row, member row, or consumer read, and a row
-carrying one is a closed conflict.
+#### 24.3.1 Exact normalization
 
-Two vocabulary decisions are stated rather than assumed. First, a denominator
-enters the unit only when the prose writes it: `dollars and cents per hour`,
-`hours per week`, `hours per year`, and `number of miles per year` name
-ratios, while `annual hours` and `the current annual property tax liability in
-whole dollars` name a magnitude accumulated over a stated reference period and
-take `hour` and `united_states_dollar`. Second, no calendar-year coordinate is
-in the vocabulary: `in years` and `number of years` name a duration and take
-`year`, while `the year Head started working for his/her extra job employer`
-names a calendar coordinate, is decided by no clause, and takes no unit. Both
-decisions withhold rather than grant, and both are visible in the clause
-table.
+For JSON null, the result is the empty string. Otherwise perform exactly these
+three operations, in order: replace each LF with U+0020; collapse each maximal
+run of U+0020 to one U+0020; remove leading and trailing U+0020 only. No other
+code point—including tab—is stripped, folded, or normalized. There is no case
+folding, punctuation removal, quote substitution, Unicode normalization, or
+digit masking.
 
-#### 24.3.6 The field disposition
+#### 24.3.2 Anchors, predicates, and whole-domain adjudication
 
-A field's `typed_value_unit` is derived from its normalized description alone:
-
-- zero value-denotation statements — no unit, reason `no_denotation_statement`;
-- statements present but none names a unit — no unit, reason
-  `no_statement_names_a_unit`;
-- statements naming two or more distinct units — no unit, reason
-  `conflicting_statement_units`;
-- otherwise the single named unit, reason
-  `derived_from_denotation_statement`.
-
-A derived unit is the field's unit for every member of `R` and for every
-member row §22 builds from it. It is not a per-entry value, is never defaulted,
-is never inherited from another field or wave, and is never read from an
-evidence artifact: §20.2.1's evidence-not-authority status is untouched, and
-§20.2.3 continues to forbid the evidence from supplying a canonical row.
-
-The complete unit-bearing statement relation follows: every distinct statement
-that names a unit, in ascending byte order, as one canonical JSON array
-`[statement, unit, field-count]` per line. It is the auditable form of the
-positive law — a field keeps a unit under §24 exactly when its normalized
-description contains one of these byte strings and no other statement of its
-own names a different one. The fence has exactly 1,227 lines and
-184,780 bytes, with SHA-256
-`a613bf1fbdfe4110fdb87be0d9a12668dd9187137325bd24bfb1b26f2d71fd92`;
-the same rows as one canonical JSON array hash to
-`0661174c427f66b4dfc22d6734f7c6e85ff6836b201a7fbcd94c3908d92d9df8`.
-Every line is pure ASCII, contains no backtick and no tilde run, and parses as
-exactly one three-position JSON array; a line failing any of those blocks
-ratification.
+The 41 anchors consist of five value-subject anchors, 15 direct-denotation
+anchors, 15 full-predicate anchors, and six subrange anchors, in that order.
+The complete ordered relation follows. Each line is one JSON string plus LF;
+the content is 1,980 bytes, SHA-256
+`6db9467c5c8629a5c1b95c55d98f864405da72a6b372093d81e68ae8ab7555ed`,
+and its §10.1 canonical-array SHA-256 is
+`705b596f0241634e6449d69ce9fd92c51a534cb0017ef3183d12121c3c74f184`.
 
 ~~~text
+"The values for this variable "
+"Values for this variable "
+"values for this variable "
+"The value for this variable "
+"the value for this variable "
+"This variable represents "
+"this variable represents "
+"Coded value represents "
+"The data coded here represent "
+"The code value represents "
+"The code values for this variable represent "
+"These values represent "
+"The code values represent "
+"The range of values for this variable represents "
+"The values here represent "
+"The values in this variable represent "
+"The values represent "
+"This four digit variable represents "
+"Values represent "
+"The actual weekly food needs "
+"The actual number of minutes taken by the interviewer to administer the questionnaire is coded here."
+"The condition of the car in best shape is coded here"
+"The month coded here "
+"The values in this variable refer "
+"This variable contains "
+"This variable indicates "
+"This variable refers to "
+"The actual 1985 sequence number (V30490) of the individual who produced the income is coded here."
+"The actual 1986 sequence number (V30517) of the individual who produced the income is coded here."
+"The actual 1987 sequence number (V30555) of the individual who produced the income is coded here."
+"The actual 1988 sequence number (V30591) of the individual who produced the income is coded here."
+"The actual 1989 sequence number (V30607) of the individual who produced the income is coded here."
+"The actual 1990 sequence number (V30643) of the individual who produced the income is coded here."
+"The actual 1991 sequence number (V30643) of the individual who produced the income is coded here."
+"The actual 1992 sequence number (V30734) of the individual who produced the income is coded here."
+"Each family involved in such a living arrangement has nonzero values here that represent "
+"The negative values indicate "
+"The values for this variable are in the range "
+"Values in the range "
+"the value here represents "
+"values in the range "
+~~~
+
+At an admissible start, the longest anchor wins. A value-subject anchor is a
+whole-domain statement only when the remaining bytes begin with exactly one of
+`denote `, `denotes `, `indicate `, `indicates `, `refer to `, `refers to `,
+`represent `, `represents `, `simply equal `, or `sum `; its predicate follows
+that verb. A direct anchor's predicate follows the anchor. A full-predicate
+anchor retains the whole statement as its predicate. A subrange anchor is
+selected for audit but never establishes the common unit of the complete
+domain. The raw `Actual...` adjudication is fixed by §24.2.3.
+
+#### 24.3.3 Closed clauses and unit vocabulary
+
+The clause table has exactly 162 ordered rows: 111 unit rows and 51
+`no_unit_derivable` rows. It includes one full-span row for each of the 80
+whole-domain `Actual...` spellings. The following fence is the complete table;
+each line is one compact JSON array `[clause,disposition]` plus LF. Its content
+is 7,441 bytes, SHA-256
+`b954749779d59bddb65cb190548aa88b6a56eb0bfec8213f8d05918a8c631a1d`,
+and the same rows as one canonical array hash to
+`27b424532ca9a9242d4cfe4a4ffad45c785188488c6563f8612e52992aa96eb1`.
+
+~~~text
+["dollars and cents per hour","united_states_dollar_per_hour"]
+["dollars and cents","united_states_dollar"]
+["dollar and cents per hour","united_states_dollar_per_hour"]
+["dollar and cents","united_states_dollar"]
+["dollar and cents amount per hour","united_states_dollar_per_hour"]
+["whole dollars","united_states_dollar"]
+["dollar amount","united_states_dollar"]
+["dollar income amount","united_states_dollar"]
+["dollar value","united_states_dollar"]
+["dollar lump sum amount","united_states_dollar"]
+["value in dollars","united_states_dollar"]
+["tax credit dollars","united_states_dollar"]
+["number of dollars","united_states_dollar"]
+["hundreds of dollars","hundreds_of_united_states_dollars"]
+["dollars per week","united_states_dollar_per_week"]
+["number of hours per week","hour_per_week"]
+["number of hours per year","hour_per_year"]
+["hours per week","hour_per_week"]
+["weekly work hours","hour_per_week"]
+["hours worked per week","hour_per_week"]
+["hours per year","hour_per_year"]
+["number of hours (0001-2080) per year","hour_per_year"]
+["number of hours","hour"]
+["annual hours","hour"]
+["annual work hours","hour"]
+["annual overtime hours","hour"]
+["annualized hours","hour"]
+["annualized work hours","hour"]
+["annual extra job hours","hour"]
+["annual hours worked","hour"]
+["extra job hours","hour"]
+["number of weeks","week"]
+["number of reported weeks","week"]
+["expressed as weeks","week"]
+["duration in weeks","week"]
+["total weeks","week"]
+["weeks worked","week"]
+["number of days","day"]
+["number of reported days","day"]
+["number of months","month"]
+["number of reported months","month"]
+["number of years","year"]
+["number of additional years","year"]
+["This variable contains the year of data collection","year"]
+["in whole years","year"]
+["in years","year"]
+["number of minutes","minute"]
+["number of miles","mile"]
+["number of miles per year","mile_per_year"]
+["number of","count"]
+["number in FU","count"]
+["number in Family Unit","count"]
+["number in family unit","count"]
+["percent","percent"]
+["percentage","percent"]
+["percentange","percent"]
+["the last two digits","no_unit_derivable"]
+["ID number of","no_unit_derivable"]
+["interview number of","no_unit_derivable"]
+["marginal tax rate","no_unit_derivable"]
+["value per room","no_unit_derivable"]
+["income/needs ratio","no_unit_derivable"]
+["the ratio of","no_unit_derivable"]
+["persons per room","no_unit_derivable"]
+["number of Wife/\"Wife\" missed","no_unit_derivable"]
+["dollars and cents amount per hour","no_unit_derivable"]
+["Actual interview number","no_unit_derivable"]
+["Actual - Required rooms","no_unit_derivable"]
+["Actual Minus Required Rooms","no_unit_derivable"]
+["Actual minus required rooms","no_unit_derivable"]
+["Actual score","no_unit_derivable"]
+["This variable contains the last two digits of the year","no_unit_derivable"]
+["This variable contains","no_unit_derivable"]
+["This variable indicates","no_unit_derivable"]
+["This variable refers to","no_unit_derivable"]
+["The values in this variable refer","no_unit_derivable"]
+["The actual number of minutes","minute"]
+["The month coded here","month"]
+["The condition of the car in best shape is coded here","no_unit_derivable"]
+["sequence number","no_unit_derivable"]
+["month and day","no_unit_derivable"]
+["case ID","no_unit_derivable"]
+["Actual Minus Required Rooms for Family","no_unit_derivable"]
+["Actual Minus Required Rooms for Family (1969)","no_unit_derivable"]
+["Actual Minus Required Rooms for Family (1981)","no_unit_derivable"]
+["Actual Minus Required Rooms for Family of This Size, Age and Sex Composition (V102, V124)","no_unit_derivable"]
+["Actual Minus Required Rooms for the 1983 Family","no_unit_derivable"]
+["Actual Minus Required Rooms for the 1984 Family","no_unit_derivable"]
+["Actual Minus Required Rooms for the 1985 Family","no_unit_derivable"]
+["Actual Minus Required Rooms for the FU (1982)","no_unit_derivable"]
+["Actual age","no_unit_derivable"]
+["Actual age in years","year"]
+["Actual age of Head","no_unit_derivable"]
+["Actual age of Head 98","no_unit_derivable"]
+["Actual age of Head's oldest child","no_unit_derivable"]
+["Actual age of Head's second oldest child","no_unit_derivable"]
+["Actual age of Head's third oldest child","no_unit_derivable"]
+["Actual age of Wife","no_unit_derivable"]
+["Actual age of Wife or Permanent Friend","no_unit_derivable"]
+["Actual age of youngest child","no_unit_derivable"]
+["Actual average income","no_unit_derivable"]
+["Actual dollar amount","united_states_dollar"]
+["Actual dollar amount of Head's labor income","united_states_dollar"]
+["Actual dollar amount of transfers","united_states_dollar"]
+["Actual dollar and cents per hour","united_states_dollar_per_hour"]
+["Actual dollars and cents per hour","united_states_dollar_per_hour"]
+["Actual dollars and cents per hour.","united_states_dollar_per_hour"]
+["Actual dollars per week","united_states_dollar_per_week"]
+["Actual expenditure in hundreds of dollars","hundreds_of_united_states_dollars"]
+["Actual expenditure in hundreds of dollars.","hundreds_of_united_states_dollars"]
+["Actual hourly amount","no_unit_derivable"]
+["Actual hourly rate","no_unit_derivable"]
+["Actual hourly wage","no_unit_derivable"]
+["Actual hours per week","hour_per_week"]
+["Actual hours worked per week","hour_per_week"]
+["Actual income/needs ratio","no_unit_derivable"]
+["Actual interview number was coded: 0001-6620)","no_unit_derivable"]
+["Actual marginal tax rate","no_unit_derivable"]
+["Actual minus required rooms for family","no_unit_derivable"]
+["Actual number","no_unit_derivable"]
+["Actual number in FU","count"]
+["Actual number in Family Unit","count"]
+["Actual number in family unit","count"]
+["Actual number of children","count"]
+["Actual number of days","day"]
+["Actual number of dollars","united_states_dollar"]
+["Actual number of exemptions","count"]
+["Actual number of hours","hour"]
+["Actual number of hours per week","hour_per_week"]
+["Actual number of hours per year","hour_per_year"]
+["Actual number of hours worked","hour"]
+["Actual number of miles","mile"]
+["Actual number of miles to work","mile"]
+["Actual number of minutes","minute"]
+["Actual number of months","month"]
+["Actual number of people","count"]
+["Actual number of persons","count"]
+["Actual number of persons in FU","count"]
+["Actual number of states and/ or countries)","count"]
+["Actual number of weeks","week"]
+["Actual number of weeks in 1979","week"]
+["Actual number of weeks missed because Wife ill in 1979","week"]
+["Actual number of weeks missed because someone else was ill in 1979","week"]
+["Actual number of weeks missed because someone else was ill in 1980","week"]
+["Actual number of weeks missed in 1979","week"]
+["Actual number of weeks missed in 1980","week"]
+["Actual number of weeks of vacation in 1979","week"]
+["Actual number of weeks of vacation in 1980","week"]
+["Actual number of weeks on strike in 1979","week"]
+["Actual number of weeks on strike in 1980","week"]
+["Actual number of weeks unemployed in 1979","week"]
+["Actual number of weeks unemployed in 1980","week"]
+["Actual number of weeks worked","week"]
+["Actual number of weeks worked in 1979","week"]
+["Actual number of weeks worked in 1980","week"]
+["Actual number of years","year"]
+["Actual number of years from now","year"]
+["Actual number of years later","year"]
+["Actual percent","percent"]
+["Actual percent of time Wife/friend worked","percent"]
+["Actual score:","no_unit_derivable"]
+["Actual year","year"]
+~~~
+
+The closed unit vocabulary is exactly, in byte order of this displayed list:
+`count`, `day`, `hundreds_of_united_states_dollars`, `hour`,
+`hour_per_week`, `hour_per_year`, `mile`, `mile_per_year`, `minute`, `month`,
+`percent`, `united_states_dollar`, `united_states_dollar_per_hour`,
+`united_states_dollar_per_week`, `week`, and `year`. Neither the empty string
+nor a spelling outside these 16 identifiers is a unit.
+
+#### 24.3.4 Fail-closed phrase extension, maximal munch, and tie-break
+
+Find every exact byte occurrence of every clause in the predicate. Before
+containment munch, extend each positive hit through an immediately following
+ASCII phrase tail matching zero or more ` TOKEN` groups followed by
+` per TOKEN`, where `TOKEN` is exactly `[A-Za-z0-9()/'"-]+`. If an enumerated
+clause hit does not cover that complete extended span from the same start,
+insert a synthetic `no_unit_derivable` hit over the span. A longer ratio phrase
+containing an enumerated clause but not itself enumerated therefore defeats;
+it can never inherit the shorter clause's unit.
+
+Then discard a hit only when it is strictly contained in a strictly longer
+hit. This containment predicate is independent of clause enumeration order.
+For non-nested co-surviving hits with the same disposition, the longest clause
+byte string wins deciding-clause attribution; equal-length, same-disposition
+hits are semantically identical and displayed table order is the final witness
+tie-break. Distinct surviving unit identifiers conflict. Any surviving
+`no_unit_derivable` defeats the whole statement.
+
+The required prospective regressions all return defeat:
+`dollars and cents amount per hour`, `whole dollars per hour`, `number of
+hours per day`, `number of miles per week`, and `number of persons per acre`.
+The singular source-attested `dollar and cents amount per hour` remains an
+enumerated positive row; the plural form is both expressly defeated and
+covered by the general fail-closed extension law.
+
+#### 24.3.5 Field aggregation and complete positive relation
+
+A statement returns no unit when it is non-whole-domain, names no clause, has
+a defeating hit, has conflicting unit hits, or is unadjudicated. At field
+aggregation, an internally conflicting, defeated, or unadjudicated
+whole-domain statement vetoes unit establishment even if another statement
+positively names a unit; null results are not discarded before this veto. If
+there is no veto, exactly one distinct positive unit establishes the field;
+zero positive units fail with `no_statement_names_a_unit`, and two distinct
+positive units fail with `conflicting_statement_units`.
+
+The next fence is the complete positive relation, ascending by statement
+bytes. Each of its 1,525 lines is one compact ASCII JSON array
+`[statement,typed_value_unit,field_count]` plus LF. The content is 237,067
+bytes with SHA-256
+`da7b72fb26258eb2f9071f66544c979c43b2e5e6ebd5052e4a26c6b50ff12624`;
+the same rows as one canonical array hash to
+`21f4393d3f348658f496c9bdc4504e3ac6bd30c62f99b399f092638522d3fdf4`.
+
+~~~text
+["Actual age in years","year",1]
+["Actual dollar amount","united_states_dollar",1]
+["Actual dollar amount of Head's labor income","united_states_dollar",1]
+["Actual dollar amount of transfers","united_states_dollar",5]
+["Actual dollar and cents per hour","united_states_dollar_per_hour",1]
+["Actual dollars and cents per hour","united_states_dollar_per_hour",32]
+["Actual dollars and cents per hour.","united_states_dollar_per_hour",5]
+["Actual dollars per week","united_states_dollar_per_week",2]
+["Actual expenditure in hundreds of dollars","hundreds_of_united_states_dollars",2]
+["Actual expenditure in hundreds of dollars.","hundreds_of_united_states_dollars",2]
+["Actual hours per week","hour_per_week",4]
+["Actual hours worked per week","hour_per_week",1]
+["Actual number in FU","count",7]
+["Actual number in Family Unit","count",1]
+["Actual number in family unit","count",1]
+["Actual number of children","count",15]
+["Actual number of days","day",1]
+["Actual number of dollars","united_states_dollar",1]
+["Actual number of exemptions","count",2]
+["Actual number of hours","hour",4]
+["Actual number of hours per week","hour_per_week",24]
+["Actual number of hours per year","hour_per_year",1]
+["Actual number of hours worked","hour",1]
+["Actual number of miles","mile",8]
+["Actual number of miles to work","mile",1]
+["Actual number of minutes","minute",8]
+["Actual number of months","month",10]
+["Actual number of people","count",1]
+["Actual number of persons","count",9]
+["Actual number of persons in FU","count",4]
+["Actual number of states and/ or countries)","count",1]
+["Actual number of weeks","week",54]
+["Actual number of weeks in 1979","week",1]
+["Actual number of weeks missed because Wife ill in 1979","week",1]
+["Actual number of weeks missed because someone else was ill in 1979","week",1]
+["Actual number of weeks missed because someone else was ill in 1980","week",1]
+["Actual number of weeks missed in 1979","week",4]
+["Actual number of weeks missed in 1980","week",1]
+["Actual number of weeks of vacation in 1979","week",1]
+["Actual number of weeks of vacation in 1980","week",1]
+["Actual number of weeks on strike in 1979","week",1]
+["Actual number of weeks on strike in 1980","week",1]
+["Actual number of weeks unemployed in 1979","week",1]
+["Actual number of weeks unemployed in 1980","week",1]
+["Actual number of weeks worked","week",1]
+["Actual number of weeks worked in 1979","week",4]
+["Actual number of weeks worked in 1980","week",3]
+["Actual number of years","year",7]
+["Actual number of years from now","year",3]
+["Actual number of years later","year",1]
+["Actual percent","percent",2]
+["Actual percent of time Wife/friend worked","percent",1]
+["Actual year","year",7]
+["The actual number of minutes taken by the interviewer to administer the questionnaire is coded here.","minute",15]
+["The actual weekly food needs in dollars and cents are coded here.","united_states_dollar",20]
+["The code value represents the actual number of persons in the FU, and has the same value as V10418.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V11605.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V13010.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V14113.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V15129.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V16630.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V18048.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V19348.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V20650.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V8351.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V8960.","count",1]
+["The code value represents the actual number of persons in the first other FU.","count",8]
+["The code value represents the actual number of persons in the fourth other FU.","count",6]
+["The code value represents the actual number of persons in the second other FU.","count",8]
+["The code value represents the actual number of persons in the third other FU.","count",8]
+["The code values for this variable represent the actual dollar amount of transfers.","united_states_dollar",1]
+["The code values for this variable represent the actual number of children 17 years of age or less.","count",1]
+["The code values for this variable represent the actual number of miles per year.","mile_per_year",1]
+["The code values for this variable represent the actual number of persons currently in the FU.","count",1]
+["The code values for this variable represent the food standard for the 1974 family in whole dollars.","united_states_dollar",1]
+["The code values represent the actual number of persons currently in the FU.","count",11]
+["The data coded here represent Head's asset portion of the income reported at G11a and b in whole dollars.","united_states_dollar",1]
+["The data coded here represent both Head's and Wife's/\"Wife's\" asset portion of the income reported at F11 in whole dollars.","united_states_dollar",1]
+["The data coded here represent both Head's and Wife's/\"Wife's\" asset portion of the income reported at G11 in whole dollars.","united_states_dollar",7]
+["The data coded here represent both Head's and Wife's/\"Wife's\" asset portion of the income reported at K7 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Head's asset portion of the income reported at G19b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Head's asset portion of the income reported at G4 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V11406-V11409 (questions F5, F11, F19b, and F19c) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V12806-V12807 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V13908-V13909 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V14923-V14924 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V16423-V16424 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V17839-V17840 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V19139-V19140 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V20439-V20440 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion of the income reported at G11a in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion of the income reported at G4 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at F19:b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at F19:c in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at F5 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at G19:b in whole dollars.","united_states_dollar",7]
+["The data coded here represent the asset portion of the income reported at G19:c in whole dollars.","united_states_dollar",7]
+["The data coded here represent the asset portion of the income reported at G5 in whole dollars.","united_states_dollar",7]
+["The data coded here represent the asset portion of the income reported at K12-13:b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K12-13:c in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K16-17:b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K16-17:c in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K4 in whole dollars.","united_states_dollar",2]
+["The data coded here represent the asset portion of the income reported at K7 in whole dollars.","united_states_dollar",1]
+["The month coded here is that of the most recent move since the 1985 interview.","month",1]
+["The month coded here is that of the most recent move since the 1986 interview.","month",1]
+["The month coded here is that of the most recent move since the 1987 interview.","month",1]
+["The month coded here is that of the most recent move since the 1988 interview.","month",1]
+["The month coded here is that of the most recent move since the 1989 interview.","month",1]
+["The month coded here is that of the most recent move since the 1990 interview.","month",1]
+["The month coded here is that of the most recent move since the 1991 interview.","month",1]
+["The month coded here is that of the most recent move since the 1992 interview.","month",1]
+["The month coded here is that of the most recent move since the 1993 interview.","month",1]
+["The month coded here is that of the most recent move since the 1994 interview.","month",1]
+["The month coded here is that of the most recent move since the 1995 interview.","month",1]
+["The month coded here is that of the most recent move since the 1996 interview.","month",1]
+["The month coded here is that of the most recent move since the 1997 interview.","month",1]
+["The month coded here is that of the most recent move since the 1999 interview.","month",1]
+["The month coded here is that of the most recent move since the 2001 interview.","month",1]
+["The month coded here is that of the most recent move since the 2003 interview.","month",1]
+["The month coded here is that of the most recent move since the 2005 interview.","month",1]
+["The month coded here is that of the most recent move since the 2007 interview.","month",1]
+["The month coded here is that of the most recent move since the 2009 interview.","month",1]
+["The month coded here is that of the most recent move since the 2011 interview.","month",1]
+["The month coded here is that of the most recent move since the 2015 interview.","month",1]
+["The month coded here is that of the most recent move since the 2017 interview.","month",1]
+["The month coded here is that of the most recent move since the 2019 interview.","month",1]
+["The month coded here is that of the most recent move since the 2021 interview.","month",1]
+["The month coded here is that of the most recent move since the 2023 interview.","month",1]
+["The range of values for this variable represents actual age in years (1 through 17) and excludes Heads and Wives; note that a child's age is not coded 02 (two years old) until he reaches his second birthday.","year",1]
+["The range of values for this variable represents the actual age in years (01 through 17) of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",10]
+["The range of values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Heads and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",1]
+["The range of values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",13]
+["The range of values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Reference Persons and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",4]
 ["The value for this variable represents the actual number of persons in the first other FU.","count",18]
 ["The value for this variable represents the actual number of persons in the fourth other FU.","count",17]
 ["The value for this variable represents the actual number of persons in the second other FU.","count",17]
 ["The value for this variable represents the actual number of persons in the third other FU.","count",17]
+["The values for this variable indicate the number of children born between January 1, 1985 and December 31, 1985 whose parents are Head and Wife/\"Wife\".","count",1]
+["The values for this variable indicate the number of children born between January 1, 1986 and December 31, 1986 whose parents are Head and Wife/\"Wife\", as reported from 1987 data.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30608=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30608=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30608=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30608=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30644=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30644=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30644=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30644=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30691=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30691=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30691=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30691=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30735=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30735=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30735=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30735=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (V30808=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 to the Head but notjointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (V30808=20, V22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 to the Wife, \"Wife\", husband of Head, or first-year cohabitor (V30808=20, V22, 90 or 88 respectively) but notjointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (V30808=20, V22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1993, and December 31, 1993, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1993, and December 31, 1993, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1993, and December 31, 1993, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1994, and December 31, 1994, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1994, and December 31, 1994, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1994, and December 31, 1994, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1995, and December 31, 1995, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1995, and December 31, 1995, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1995, and December 31, 1995, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1996, and December 31, 1996, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1996, and December 31, 1996, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1996, and December 31, 1996, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33603=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33603=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33603=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33603=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33803=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33803=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33803=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33803=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34003=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34003=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2008, and December 31, 2008, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34003=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2008, and December 31, 2008, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2008, and December 31, 2008, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34003=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2010, and December 31, 2010, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2010, and December 31, 2010, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2010, and December 31, 2010, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, to other FU membersage 15-44 who were neither husband of Head nor first-year cohabitor (ER34203=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34203=20, 22, 90, or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2012, and December 31, 2012, to other FU membersage 15-44 who were neither husband of Head nor first-year cohabitor (ER34203=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2012, and December 31, 2012, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2012, and December 31, 2012, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34203=20, 22, 90, or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, to other FU members age 15-44 who were neither husband of Head nor first-year cohabitor (ER34303=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, to the Head but not jointly with the Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, to the Spouse, Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, whose parents are Head and Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2014, and December 31, 2014, to other FU members age 15-44 who were neither husband of Head nor first-year cohabitor (ER34303=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2014, and December 31, 2014, to the Spouse, Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2014, and December 31, 2014, whose parents are Head and Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2016, and December 31, 2016, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2016, and December 31, 2016, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2016, and December 31, 2016, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2018, and December 31, 2018, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2018, and December 31, 2018, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2018, and December 31, 2018, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER35103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2020, and December 31, 2020, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2020, and December 31, 2020, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2020, and December 31, 2020, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2022, and December 31, 2022, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER35103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2022, and December 31, 2022, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2022, and December 31, 2022, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born to other FU members age 12-44 between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count",1]
+["The values for this variable indicate the number of children born to other FU members between January 1, 1985 and December 31, 1985.","count",1]
+["The values for this variable indicate the number of children born to the Head (but not the Wife/\"Wife\" if there is one) between January 1, 1985 and December 31, 1985.","count",1]
+["The values for this variable indicate the number of children born to the Head (but not the Wife/\"Wife\" if there is one) between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count",1]
+["The values for this variable indicate the number of children born to the Wife/\"Wife\" (but not the Head) between January 1, 1985 and December 31, 1985.","count",1]
+["The values for this variable indicate the number of children born to the Wife/\"Wife\" (but not the Head) between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count",1]
 ["The values for this variable represent Head's SSI income, in 2014, in whole dollars.","united_states_dollar",1]
 ["The values for this variable represent Head's Veterans Administration pension income, in 2014, in whole dollars.","united_states_dollar",1]
 ["The values for this variable represent Head's actual number of weeks of vacation or time off in 2014.","week",1]
@@ -42721,6 +42994,43 @@ ratification.
 ["The values for this variable represent total consumption as a percent of food need standard (V2271/V2317).","percent",1]
 ["The values for this variable represent total receipts from farming in whole dollars.","united_states_dollar",18]
 ["The values for this variable represent total receipts from the business in whole dollars.","united_states_dollar",55]
+["The values for this variable sum the total number of reports of help; each \"yes\" to question G159, G185, G212, G258, G284 or G311 counted as one instance.","count",1]
+["The values for this variable sum the total number of reports of help; each \"yes\" to questions G161, G187, G214, G260, G286 and G313 counted as one instance.","count",1]
+["The values for this variable sum the total number of reports of help; each \"yes\" to questions G163, G189, G216, G262, G288 and G315 counted as one instance.","count",1]
+["The values here represent the total number of extra jobs held by Head during 1982.","count",1]
+["The values represent the actual annual food standard in whole dollars for the 1983 family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1984 family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1985 family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1986 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1987 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1988 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1990 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1991 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1992 (current) family.","united_states_dollar",1]
+["This variable contains the year of data collection in which background information in ER23303-ER23387 was most recently gathered for the 2003 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is reasked.","year",1]
+["This variable contains the year of data collection in which background information in ER23388-ER23480 was most recently gathered for the 2003 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER27263-ER27351 was most recently gathered for the 2005 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER27352-ER27448 was most recently gathered for the 2005 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER40438-ER40526 was most recently gathered for the 2007 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER40527-ER40619 was most recently gathered for the 2007 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER46410-ER46503 was most recently gathered for the 2009 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER46504-ER46597 was most recently gathered for the 2009 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER51771- ER51864 was most recently gathered for the 2011 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER51865- ER51958 was most recently gathered for the 2011 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER57508-ER57604 was most recently gathered for the 2013 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER57618-ER57714 was most recently gathered for the 2013 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER64630-ER64735 was most recently gathered for the 2015 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER64769-ER64874 was most recently gathered for the 2015 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER70703-ER70808 was most recently gathered for the 2017 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER70841-ER70946 was most recently gathered for the 2017 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in ER76711-ER76819 was most recently gathered for the 2019 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER76856-ER76964 was most recently gathered for the 2019 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in ER80976-ER81065 was most recently gathered for the 2021 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER81103-ER81192 was most recently gathered for the 2021 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in ER84953-ER85042 was most recently gathered for the 2023 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER85080-ER85169 was most recently gathered for the 2023 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in V23246-V23261 was most recently gathered for the 1993 Head.","year",1]
+["This variable contains the year of data collection in which background information was most recently gathered for the 1993 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is reasked.","year",1]
 ["This variable represents dollar and cents amount per hour.","united_states_dollar_per_hour",1]
 ["This variable represents the actual number of non-FU members (01-20) sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count",9]
 ["This variable represents the actual number of non-FU members sharing the housing unit with this FU (01-20) but who were included in other responding FUs.","count",1]
@@ -42744,682 +43054,376 @@ ratification.
 ["Values for this variable represent the actual percent of time worked.","percent",2]
 ["Values for this variable represent the amount paid in whole dollars.","united_states_dollar",5]
 ["Values for this variable represent the annual expenditure in whole dollars.","united_states_dollar",1]
-["values for this variable represent the actual dollar amount of transfers.","united_states_dollar",1]
-["values for this variable represent the actual number of children 17 years of age or less.","count",1]
+["Values represent the annual food expenditure in whole dollars.","united_states_dollar",1]
 ["values for this variable represent the actual number of hours per week Head worked.","hour_per_week",1]
-["values for this variable represent the actual number of miles per year.","mile_per_year",1]
-["values for this variable represent the actual number of persons currently in the FU.","count",1]
-["values for this variable represent the food standard for the 1974 family in whole dollars.","united_states_dollar",1]
-["values for this variable represents actual age in years (1 through 17) and excludes Heads and Wives; note that a child's age is not coded 02 (two years old) until he reaches his second birthday.","year",1]
-["values for this variable represents the actual age in years (01 through 17) of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",10]
-["values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Heads and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",1]
-["values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",13]
-["values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Reference Persons and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",4]
 ~~~
 
-#### 24.3.7 What the law refuses
+The relation is authority only for the exact accepted corpus under these
+rules. It licenses no sibling inference, age/year default, currency default,
+inheritance from another field, evidence-artifact lookup, or unit repair after
+failure.
 
-The refusals are the load-bearing part and are inventoried here so that no
-reader mistakes coverage for completeness. On the frozen corpus the law
-withholds a unit from 84,505 of 89,599 fields. The reasons, in
-descending size, are:
+### 24.4 Unit absence, classifier extension, and completed successor census
 
-1. **no denotation statement at all** — 81,259 fields. The PSID codebook
-   states what a value denotes for a minority of fields and is silent for the
-   rest. Silence is not a unit.
-2. **a subrange-scoped denotation** — 946 distinct statements and
-   2,480 statement-field occurrences. §24.3.3.
-3. **a denotation naming no measure** — 166 distinct statements and
-   501 statement-field occurrences: `overall income profits or losses`, `the
-   annual amount contributed`, `the actual wage rate`, `the actual age of the
-   Head`, `the actual unemployment rate in whole numbers`, and the calendar
-   years. Several of these are obviously money or obviously years to a reader;
-   the law does not take obviously.
-4. **a defeating clause** — 136 distinct statements and
-   280 statement-field occurrences. §24.3.4.
-5. **two units in one statement** — 1 distinct statement and
-   22 statement-field occurrences. §24.3.5.
+#### 24.4.1 Failure precedence and terminal law
 
-The contrast that shows the discipline is internal to the corpus: `the actual
-age in years (45-96) at which Head may retire with full benefits` takes `year`
-because the prose writes `in years`, and `the actual age (01-97) of the
-householder` takes nothing because it does not. The first is a verbatim row
-of the unit-bearing relation above; the second is not, because a statement
-that names no unit is law only through the default and appears in the
-digest-pinned complete statement table rather than in that fence.
+§20.3.5 replaces the earlier overlapping failure mapping with three mutually
+exclusive classes in precedence order: conflict, unsupported, incomplete.
+Unit absence is incomplete-class only and cannot displace an existing conflict
+or unsupported result. It reaches exactly the four passing compiled terminals.
 
-### 24.4 The unit-absent disposition and the successor census
+For each field, `derivation_status` is the ratified terminal and
+`typed_value_unit` is §24.3's field result. The successor function is exact:
 
-#### 24.4.1 The governing failure precedence and the exact movable population
+1. if `derivation_status` is outside the four compiled terminals,
+   `successor_status = derivation_status`;
+2. if it is compiled and `typed_value_unit` is nonnull,
+   `successor_status = derivation_status`; the unit is emitted separately;
+3. if it is compiled and the unit is null,
+   `successor_status = incomplete_source_numeric_authority` and
+   `resolution_reason = unresolved_typed_value_unit_no_source_authority`.
 
-A numeric-required row whose `R` carries no derived unit fails §19.3.2's
-precondition and takes `incomplete_source_numeric_authority`. That is
-inherited law, not new law. What Amendment 10 must fix exactly is *which*
-fields the predicate can reach, and the answer is narrower than the failure
-mapping quoted at §24.2.1 alone would suggest, because §20.3.5 prospectively
-replaced that mapping. The replacement is quoted here from the immutable
-prefix:
+Thus `successor_status` is always a terminal identifier, never a unit
+identifier. A moved row also retains its §24.3 field-level unit-absence reason
+for audit.
 
-> The three rows below are evaluated in displayed precedence and are mutually
-> exclusive at serialization: conflict first, then unsupported only when no
-> conflict predicate holds, then incomplete only when neither earlier class
-> holds. Multiple predicates inside one class do not create a fourth status;
-> predicates spanning classes take the earliest class. Exactly one failure
-> status is emitted.
+#### 24.4.2 Pinned input relation and the former-pin divergence
 
-and its incomplete row reads, in the same passage:
+The input is one object per §20.3.7 denominator field, in denominator order,
+with exactly the members `interview_wave`, `raw_field_id`,
+`derivation_status`, `resolution_reason`, and `source_description`. The digest
+preimage is the ordered array of five-position arrays in exactly that member
+order, §10.1-serialized with its terminal LF. It has 89,599 rows, 21,504,191
+canonical bytes, and SHA-256
+`11189cf48eae995d999f12a2155a03dc9c9f9f11804c1a732fc451a71a195f19`.
+The `[interview_wave,raw_field_id]` denominator projection independently
+hashes to
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`.
 
-> missing required numeric selector on a numeric-required branch after the
-> complete assertion relation contains no unsupported/conflicting row;
-> unresolved width/decimal/type/unit/scale; […]
+This corrects the former `563b1eae...` literal with the divergence finding
+required by §24.6.4. Git history locates the divergence between machinery
+commit `aac0a93`, whose runner constructed and merely reported this exact
+five-position ordering without comparing it to an expected pin, and document
+commit `148c58a`, which first introduced `563b1eae...` manually. No preimage
+for that literal was retained. The referee independently obtained
+`11189cf4...`; agreement of statement witness keys proves denominator order
+and description bytes, while ratified counts and the failure artifact prove
+the terminal and failure-reason projections. All 120 member-order permutations
+and the common alternate serializations fail to produce the former literal.
+The lawful conclusion is therefore that the old value diverged at manual
+transfer into §24.4.2, not that a particular source row differed. A more
+specific row-level story would be invented.
 
-§20.3.7's reconstruction step 5 applies exactly that order — "apply the closed
-mutually exclusive failure precedence—conflict, then unsupported, then
-incomplete." An unresolved unit is therefore an *incomplete*-class predicate
-and can move only a field that is in no earlier class. §19.3.2's older
-sentence "Satisfying more than one failure predicate also uses
-`conflicting_source_numeric_format`" governed the mapping §20.3.5 replaced and
-does not survive it; reading it forward would promote unit-absent unsupported
-rows to conflict and would contradict §20.3.7's own step 5.
+This is not a bare observation-driven repin: the construction-stage failure is
+identified, the executable gate now compares the independently reproduced
+relation, and every descendant pin is regenerated. Completing the selector
+does not change this pre-selector five-member relation because its descriptions
+and ratified statuses are unchanged; it changes statement, census, movement,
+artifact, and payload descendants.
 
-The consequence is exact. The predicate reaches precisely the four passing
-compiled terminals and nothing else:
+#### 24.4.3 Counts, matrix, and assignments
 
-- the 67,316 `value_code_domain_no_numeric_grammar` fields have empty `R` and
-  never enter §19.3.2's compile block;
-- the 1,145 `value_code_range_physical_rendering_unestablished` fields have
-  nonempty `R` but are diverted to that status *before* the compile block, by
-  the branch selector's own "If `R` is nonempty, `N` is empty, `X` is empty,
-  and either `F` is empty or `H` is nonempty" clause;
-- the 0 `nonnumeric_source_field_outside_numeric_grammar` fields are outside
-  numeric grammar entirely;
-- the 1 `conflicting_source_numeric_format` and 421
-  `unsupported_source_numeric_format` fields are already in an earlier
-  precedence class and keep it;
-- the 813 `incomplete_source_numeric_authority` fields are already in the
-  class the predicate would assign, and their `resolution_reason` is fixed by
-  §20.3.7's "earliest failed construction gate" rule, which their existing
-  diagnostic already satisfies.
-
-So the movable population is exactly the 19,903 compiled fields carrying
-33,786 numeric-range entries, and exactly five of the ten counts can change.
-The referee estimate recorded at Amendment 9's round-2 review — that six
-counts move, because §19.3.2's multiple-predicate sentence would promote
-range-carrying members of the 421 unsupported rows to conflict — is corrected
-here on the ratified text: under §20.3.5's replacement those 421 rows do not
-move, and the corpus confirms it. Two witnesses show the precedence working in
-both directions. `ER6974`/1995 is `unsupported_source_numeric_format`, derives
-no unit, and does not move. `V22506`/1993 is
-`unsupported_source_numeric_format`, *does* derive `united_states_dollar` from
-"The values for this variable represent dollars and cents.", and also does not
-move, because a derived unit cannot rescue a field from an earlier class.
-
-#### 24.4.2 The classifier extension specification and the pinned input relation
-
-The successor census is produced by extending the ratified classification, not
-by replacing it. The extension is specified here and is part of §24.
-
-**The input relation.** One row per field of the §20.3.7 denominator, in
-denominator order, with exactly five members: `interview_wave`,
-`raw_field_id`, `derivation_status`, `resolution_reason`, and
-`source_description`. The first four are the ratified §20.3.7 row; the fifth
-is the §19.3.2 canonical codebook row's `source_description` for the same
-`[interview_wave,raw_field_id]` key, JSON null when the field block carries no
-description line. The relation is derived, never authored: every
-`derivation_status` and `resolution_reason` comes from the ratified
-classification and every `source_description` from the pinned codebook
-derivation. The complete relation, as the ordered array of five-position
-arrays in that member order, has exactly 89,599 rows and hashes to
+In §20.3.7's terminal order the completed successor counts are:
 
 ~~~text
-563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e
+4,826 / 153 / 49 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 15,688
 ~~~
 
-**The extension.** For each row, derive the unit by §24.3 and emit
-`successor_status` as follows: if `derivation_status` is not one of the four
-compiled terminals, `successor_status` equals it; else if the derived unit is
-nonnull, `successor_status` equals it; else `successor_status` is
-`incomplete_source_numeric_authority` and the row's successor
-`resolution_reason` is `unresolved_typed_value_unit_no_source_authority`. No
-other member of any row changes.
+They sum to 89,599. The canonical count-array SHA-256 is
+`0247382d47fd2d8e75c197dd65093f11816402902cb89dcf69fbcf09ad00ddba`;
+the complete ordered `[interview_wave,raw_field_id,successor_status,
+successor_resolution_reason]` assignment SHA-256 is
+`3544deca7a0c2db3165dd2e131dccca905ca55b820191282b962a1c690fcf369`.
 
-**Why a post-pass is exactly equivalent to reclassifying.** The unit
-precondition is not an input to any other gate. It does not participate in
-literal disposition, missing registration, candidate token-form selection,
-padding-arm selection, range partitioning, renderability, DFA construction,
-replay, or collision detection; §19.3.2 states it as a precondition *of
-compiling* a row those gates have already resolved, and §20.3.5 places it in
-the last precedence class. A full reclassification with the precondition
-evaluated therefore agrees with the ratified classification on every gate it
-shares and differs only where the precondition fails, which is what the
-post-pass computes. The successor census below recomputes the denominator
-digest from the same input and reproduces the ratified
-`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`, so the
-denominator's invariance is a result of this run rather than an assumption of
-it.
+For the matrix below, artifact columns A-F are respectively
+`wave1968_ry1968_1974_early_totals_v1`,
+`ry1975_1977_spouse_concept_seam_v1`,
+`ry1978_1992_pre_er_totals_v1`, `ry1993_2001_er_transition_v1`,
+`ry2002_2014_modern_bc_de_v1`, and
+`ry2015_2022_exclusion_lineage_v1`.
 
-#### 24.4.3 The successor census
+| Successor terminal | A / B / C / D / E / F | Total | Ordered field-key SHA-256 |
+|---|---:|---:|---|
+| `compiled_source_numeric_grammar` | 36 / 91 / 1,705 / 1,210 / 1,066 / 718 | 4,826 | `2e273c4856bac903d8919d80fc5c367dadd679dbbe5126b91176832cb3c00a05` |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1 / 14 / 123 / 4 / 7 / 4 | 153 | `3127708554728cd6cc2925e59d7a27e6497c8ed0baf65808a1c3e724af85f44d` |
+| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 0 / 7 / 29 / 11 / 0 / 2 | 49 | `b24e5e68c6d0bede46d149dd488886dc47f0314b0743e91b404df5ae78fa9b69` |
+| `compiled_source_numeric_grammar_partial_range_exact_replay` | 0 / 0 / 0 / 0 / 0 / 0 | 0 | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
+| `value_code_domain_no_numeric_grammar` | 2,606 / 1,130 / 10,064 / 11,668 / 26,700 / 15,148 | 67,316 | `6ee97ba9db16520c734a21094623376714a468c3148977666f8e107dbd35e05f` |
+| `value_code_range_physical_rendering_unestablished` | 89 / 16 / 127 / 371 / 320 / 222 | 1,145 | `75296e361be3c9b0afb99cd74afb29849305010a93c2c1a9de3da6b54fd5054e` |
+| `nonnumeric_source_field_outside_numeric_grammar` | 0 / 0 / 0 / 0 / 0 / 0 | 0 | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
+| `conflicting_source_numeric_format` | 1 / 0 / 0 / 0 / 0 / 0 | 1 | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
+| `unsupported_source_numeric_format` | 67 / 20 / 122 / 46 / 90 / 76 | 421 | `fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010` |
+| `incomplete_source_numeric_authority` | 1,068 / 560 / 3,575 / 2,673 / 4,971 / 2,841 | 15,688 | `1cc6a3202ae59dd12b1a46be726b93e9600792a30d92bacad655c61dd9cb43cb` |
 
-The complete status-by-artifact matrix, with each final column hashing the
-ordered `[interview_wave,raw_field_id]` subarray for that status in canonical
-denominator order:
+#### 24.4.4 Movement and failure artifact
 
-| Exact successor `derivation_status` | Early | Spouse seam | Pre-ER | ER transition | Modern | Exclusion | Total | Field-key SHA-256 |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| `compiled_source_numeric_grammar` | 15 | 0 | 1,482 | 1,210 | 1,066 | 718 | **4,491** | `dd79ada32264e2d96103c66a299b4f19f471aa650abd4b21ffe6a4e9c3e6c536` |
-| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 0 | 1 | 103 | 4 | 7 | 4 | **119** | `1562faced2b09444f66c4fdc5f938d71450056c670cfea33b3fee367687262c7` |
-| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 0 | 0 | 29 | 11 | 0 | 2 | **42** | `56ba8178d03b8398130b77c975f0b6655f20928125a46eaf48e6d15adf70c8ab` |
-| `compiled_source_numeric_grammar_partial_range_exact_replay` | 0 | 0 | 0 | 0 | 0 | 0 | **0** | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
-| `value_code_domain_no_numeric_grammar` | 2,606 | 1,130 | 10,064 | 11,668 | 26,700 | 15,148 | **67,316** | `6ee97ba9db16520c734a21094623376714a468c3148977666f8e107dbd35e05f` |
-| `value_code_range_physical_rendering_unestablished` | 89 | 16 | 127 | 371 | 320 | 222 | **1,145** | `75296e361be3c9b0afb99cd74afb29849305010a93c2c1a9de3da6b54fd5054e` |
-| `nonnumeric_source_field_outside_numeric_grammar` | 0 | 0 | 0 | 0 | 0 | 0 | **0** | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
-| `conflicting_source_numeric_format` | 1 | 0 | 0 | 0 | 0 | 0 | **1** | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
-| `unsupported_source_numeric_format` | 67 | 20 | 122 | 46 | 90 | 76 | **421** | `fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010` |
-| `incomplete_source_numeric_authority` | 1,090 | 671 | 3,818 | 2,673 | 4,971 | 2,841 | **16,064** | `87c6c74d35665625cdf8156bf0e070799271bcb5a630be75732ed111cd279f1a` |
-| **Artifact total** | **3,868** | **1,838** | **15,745** | **15,983** | **33,154** | **19,011** | **89,599** | exact cover |
+Exactly 14,875 fields move, all from a compiled terminal and all to
+`incomplete_source_numeric_authority`. The movement relation has exact members
+`interview_wave`, `raw_field_id`, `ratified_status`, `successor_status`,
+`resolution_reason`, `source_artifact`, and `unit_absence_reason`; it is in
+denominator order. Its canonical SHA-256 is
+`9181f25fbfb238102ad2ffd5b0133dffaf6093b413bb0c4f750cb7c771d654d5`;
+its ordered key-projection SHA-256 is
+`faf1b3934cf68106537abab257d37a0eec499e036f8ceb10009254994e8cb295`.
 
-The canonical ten-row count array, in the displayed terminal order, is:
+| Ratified origin | Moved |
+|---|---:|
+| compiled | 12,503 |
+| padding-underdetermined | 1,700 |
+| finite-arm-ambiguous | 625 |
+| partial-range | 47 |
 
-```json
-[{"derivation_status":"compiled_source_numeric_grammar","field_count":4491},{"derivation_status":"compiled_source_numeric_grammar_padding_underdetermined_exact_replay","field_count":119},{"derivation_status":"compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay","field_count":42},{"derivation_status":"compiled_source_numeric_grammar_partial_range_exact_replay","field_count":0},{"derivation_status":"value_code_domain_no_numeric_grammar","field_count":67316},{"derivation_status":"value_code_range_physical_rendering_unestablished","field_count":1145},{"derivation_status":"nonnumeric_source_field_outside_numeric_grammar","field_count":0},{"derivation_status":"conflicting_source_numeric_format","field_count":1},{"derivation_status":"unsupported_source_numeric_format","field_count":421},{"derivation_status":"incomplete_source_numeric_authority","field_count":16064}]
-```
+| Unit-absence reason | Moved |
+|---|---:|
+| `no_denotation_statement` | 11,892 |
+| `no_statement_names_a_unit` | 2,594 |
+| `defeated_denotation_statement` | 388 |
+| `conflicting_statement_units` | 1 |
 
-With its terminal LF that array hashes to
-`b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a`.
-The corresponding complete ordered `[interview_wave,raw_field_id,successor
-derivation_status]` array hashes to
-`7ccdbda9a13c3a428a9f48dd7fd57b0d72956c8ad2b1705fbb6667d7907ed90d`.
-The independently recomputed denominator remains
-`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`.
-The branch counts sum to exactly 89,599; there are zero unmapped keys, zero
-multiply mapped keys, and zero keys outside the authenticated denominator.
-The first seven terminals now contain 73,113 fields and the three
-closed failure terminals contain 16,486.
+By artifacts A-F the movement is 1,047 / 519 / 3,285 / 2,468 / 4,817 /
+2,739. Each projection sums to 14,875.
 
-The two empty terminals,
-`compiled_source_numeric_grammar_partial_range_exact_replay` and
-`nonnumeric_source_field_outside_numeric_grammar`, both carry the empty-array
-digest `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`
-already pinned at §20.3.7 for the second of them. A status with zero fields is
-not removed from the terminal order, from the matrix, or from the count array;
-the ten-position shape is unchanged.
+The successor closed-failure artifact has eight rows in failure-precedence and
+reason-byte order. Each row has exactly `derivation_status`,
+`resolution_reason`, and ordered `field_keys`. Its compact §10.1 JSON-lines
+serialization is 266,547 bytes with SHA-256
+`50ddb89ed61e8dc55ab5b9e49af652430cab6d029da51e2d3f64663e45d994f3`.
+Its exact reason counts are:
 
-#### 24.4.4 The exact movement table
+| Terminal / reason | Fields |
+|---|---:|
+| conflicting / `conflict:overlapping_numeric_ranges` | 1 |
+| unsupported / `character_raw_replay_unknown_token` | 16 |
+| unsupported / `observed_token_outside_all_candidate_forms_or_semantics` | 144 |
+| unsupported / `selected_space_literal_unrenderable` | 78 |
+| unsupported / `selected_space_range_zero_renderable` | 183 |
+| incomplete / `finite_no_arm_no_lawful_complete_disposition` | 46 |
+| incomplete / `literal_only_zero_diagnostic_padding_capacity` | 767 |
+| incomplete / `unresolved_typed_value_unit_no_source_authority` | 14,875 |
 
-Exactly 15,251 fields move, all of them from a
-compiled terminal to `incomplete_source_numeric_authority`, and no field moves
-in any other direction:
+The first seven rows reproduce the ratified reason literals and key sets. The
+eighth is the sole new reason. The complete census payload, hashed before its
+own `census_sha256` member is inserted, has SHA-256
+`d97ef93d6956dcbd72cd7beb9e058d015d338fb06a73b98a735a05c7030f5979`.
 
-| Terminal | Ratified | Successor | Delta |
-|---|---:|---:|---:|
-| `compiled_source_numeric_grammar` | 17,329 | 4,491 | -12,838 |
-| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 | 119 | -1,734 |
-| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 674 | 42 | -632 |
-| `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 | 0 | -47 |
-| `value_code_domain_no_numeric_grammar` | 67,316 | 67,316 | +0 |
-| `value_code_range_physical_rendering_unestablished` | 1,145 | 1,145 | +0 |
-| `nonnumeric_source_field_outside_numeric_grammar` | 0 | 0 | +0 |
-| `conflicting_source_numeric_format` | 1 | 1 | +0 |
-| `unsupported_source_numeric_format` | 421 | 421 | +0 |
-| `incomplete_source_numeric_authority` | 813 | 16,064 | +15,251 |
+### 24.5 Downstream supersession and exact storage floors
 
-By ratified terminal the movement decomposes as 12,838 from
-`compiled_source_numeric_grammar`, 1,734 from
-`compiled_source_numeric_grammar_padding_underdetermined_exact_replay`, 632
-from `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
-and all 47 from
-`compiled_source_numeric_grammar_partial_range_exact_replay`. By evidence
-artifact it decomposes as 1,069 / 630 / 3,528 / 2,468 / 4,817 / 2,739 in the
-displayed artifact order. By §24.3.6 reason it decomposes as 12,378 with
-`no_denotation_statement` and 2,873 with `no_statement_names_a_unit`; zero
-moved fields carry `conflicting_statement_units`, because no field in the
-corpus does.
+#### 24.5.1 Compiled range-member decomposition
 
-The per-movement reason is therefore exact and is one of exactly two source
-facts: the field's derived codebook description carries no value-denotation
-statement at all, or it carries one or more and none of them names a unit
-under the closed clause table. Every moved field's successor
-`resolution_reason` is the single literal
-`unresolved_typed_value_unit_no_source_authority`, because for a moved field
-the unit precondition is the only construction gate that failed — every
-earlier gate passed, which is why the ratified classification compiled it.
+The same streaming join reproduces the ratified column and then substitutes
+only the completed successor assignment:
 
-The complete movement relation is the ordered array of seven-member objects
-`interview_wave`, `raw_field_id`, `source_artifact`, `ratified_status`,
-`successor_status`, `resolution_reason`, `unit_absence_reason` in denominator
-order; it hashes to
-`5d33f37ffacc05061354227e4358f8a81a4055afcb26557acc5675471031c8ac`,
-and its ordered `[interview_wave,raw_field_id]` key projection hashes to
-`67b1685b8119e315f39a4ef48908ac620b68e2bccce8295f53aa9f68a7e92f8c`.
-
-#### 24.4.5 The successor failure-reason artifact
-
-The canonical failure-reason artifact keeps its exact shape —
-`derivation_status`, `resolution_reason`, and the complete `field_keys` array
-per row, ordered by failure-terminal precedence and then reason lexically —
-and gains exactly one row:
-
-| Terminal | Exact `resolution_reason` | Count |
-|---|---|---:|
-| `conflicting_source_numeric_format` | `conflict:overlapping_numeric_ranges` | 1 |
-| `unsupported_source_numeric_format` | `character_raw_replay_unknown_token` | 16 |
-| `unsupported_source_numeric_format` | `observed_token_outside_all_candidate_forms_or_semantics` | 144 |
-| `unsupported_source_numeric_format` | `selected_space_literal_unrenderable` | 78 |
-| `unsupported_source_numeric_format` | `selected_space_range_zero_renderable` | 183 |
-| `incomplete_source_numeric_authority` | `finite_no_arm_no_lawful_complete_disposition` | 46 |
-| `incomplete_source_numeric_authority` | `literal_only_zero_diagnostic_padding_capacity` | 767 |
-| `incomplete_source_numeric_authority` | `unresolved_typed_value_unit_no_source_authority` | 15,251 |
-
-All seven inherited rows are byte-identical in reason literal and in
-field-key membership: no field leaves a failure terminal under §24, and the
-813 fields already at `incomplete_source_numeric_authority` keep the earlier
-construction gate §20.3.7's rule assigns them. The eighth row is new. The
-complete successor artifact is 272,300 bytes and hashes to
-`6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e`.
-The ratified 21,034-byte seven-row artifact hashing to
-`66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324`
-remains the exact artifact of the classification that did not evaluate the
-unit precondition, and is superseded as law by this one at D10.
-
-The complete Amendment-10 census payload — input-relation digest, statement
-table digest, count array, assignment, matrix, movement rows, failure-reason
-rows, and unit tallies — hashes to
-`b70259e92b4b0e69247845265d35b6d4f71cc83605fd311202fdb18d0fba15d5`.
-
-### 24.5 The complete downstream supersession table
-
-Every pinned figure the movement touches is recomputed here under the
-successor census. Nothing in §§20-23 is edited: each predecessor figure
-remains the ratified figure of a classification that did not evaluate the unit
-precondition, and each row below is its superseding value by §24 construction.
-Every recomputed number was derived from the frozen source partitions and only
-then compared; the ratified column was recomputed by the same code from the
-same partitions and reproduces §22.4.5 exactly, which is what licenses the
-successor column.
-
-#### 24.5.1 §22.4.5 passing-compiled range-member decomposition
-
-| `derivation_status` | Ratified fields / entries / members | Successor fields / entries / members |
+| Terminal | Ratified fields / entries / members | Successor fields / entries / members |
 |---|---:|---:|
-| `compiled_source_numeric_grammar` | 17,329 / 30,452 / 820,025,893,984 | 4,491 / 4,546 / 263,613,479,209 |
-| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 / 1,853 / 865,268 | 119 / 119 / 2,621 |
-| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 674 / 1,433 / 384,135 | 42 / 42 / 120,098 |
-| `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 / 48 / 682,035,700 | 0 / 0 / 0 |
-| **Complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **4,652 / 4,707 / 263,613,601,928** |
+| compiled | 17,329 / 30,452 / 820,025,893,984 | 4,826 / 4,924 / 263,679,937,485 |
+| padding-underdetermined | 1,853 / 1,853 / 865,268 | 153 / 153 / 15,755 |
+| finite-arm-ambiguous | 674 / 1,433 / 384,135 | 49 / 49 / 120,630 |
+| partial-range | 47 / 48 / 682,035,700 | 0 / 0 / 0 |
+| **complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **5,028 / 5,126 / 263,680,073,870** |
 
-The four successor member subtotals sum to 263,613,601,928 exactly, and the
-four successor entry subtotals sum to 4,707, so the successor decomposition is
-an exact cover of the successor compiled relation in the same way the ratified
-one is of the ratified relation.
+#### 24.5.2 Physical populations and corrected per-shape arithmetic
 
-#### 24.5.2 §22.4.5 physical lower-bound fact table
-
-| Fact | Ratified value | Successor value |
+| Fact | Ratified relation | Completed successor |
 |---|---:|---:|
-| mandatory logical range members in compiled rows | 820,709,179,087 | 263,613,601,928 |
-| members in explicit-arm relation containers (`N <= 4,096`) | 4,736,892 | 973,927 |
-| explicit-arm containers | 58,517 | 7,914 |
-| members in analytic-arm relation containers (`N > 4,096`) | 820,704,442,195 | 263,612,628,001 |
-| analytic-arm `renderable_member_rows` members / containers | 820,701,994,620 / 9,019 | 263,612,628,001 / 1,500 |
-| analytic-arm `unrenderable_member_rows` members / containers | 2,447,575 / 36 | 0 / 0 |
-| analytic-arm intervals | 67,594 | 1,500 |
-| threshold-partition identity | `4,736,892 + 820,704,442,195 = 820,709,179,087` | `973,927 + 263,612,628,001 = 263,613,601,928` |
-| all-member empty-object floor `3N + 2` | 2,462,127,537,263 bytes | 790,840,805,786 bytes |
-| that floor in binary TiB | 2.239 TiB | 0.719 TiB |
-| shortest lawful inherited member-row floor | `820,701,994,620 × 325 + 2,447,575 × 260 = 266,728,784,621,000` bytes | `263,612,628,001 × 325 + 0 × 260 = 85,674,104,100,325` bytes |
-| that floor divided by `2^40` | 242.5884164231320028193295001983642578125 TiB | 77.9201437583878941950388252735137939453125 TiB |
-| multiple of the measured ~1.304 TiB capacity | above 185 | above 59 |
-| arm-ambiguous renderable members of the arm-ambiguous branch | 56,480 | 13,303 |
-| arm-invariant renderable members of that branch | 327,655 | 106,795 |
-| rejected counterfactual pair, arm-ambiguous counted unrenderable | 4,753,875 and 820,704,425,212 | 974,926 and 263,612,627,002 |
+| mandatory logical members | 820,709,179,087 | 263,680,073,870 |
+| explicit-arm members / containers | 4,736,892 / 58,517 | 1,021,487 / 8,614 |
+| analytic-arm members | 820,704,442,195 | 263,679,052,383 |
+| analytic renderable members / containers / intervals | 820,701,994,620 / 9,019 / 67,594 | 263,679,052,383 / 1,638 / 1,638 |
+| analytic unrenderable members / containers | 2,447,575 / 36 | 0 / 0 |
+| threshold identity | 4,736,892 + 820,704,442,195 | 1,021,487 + 263,679,052,383 |
+| all-member empty-object floor `3N+2` | 2,462,127,537,263 bytes | 791,040,221,612 bytes |
+| exact binary TiB of that successor floor | — | 0.71944689044539700262248516082763671875 |
+| arm-invariant / arm-ambiguous members | 327,655 / 56,480 | 107,264 / 13,366 |
+| rejected counterfactual explicit / analytic | 4,753,875 / 820,704,425,212 | 1,022,486 / 263,679,051,384 |
 
-Two of those rows carry a ratified value §22.4.5 does not itself publish:
-the explicit-arm container count and the analytic-arm interval count are
-recomputed here for both columns so that the successor column has a stated
-predecessor, and neither is asserted to be a pinned §22.4.5 figure. Every
-other ratified value in the table is byte-for-byte the figure §22.4.5 pins,
-and the 0.719-TiB successor entry is the exact quotient
-0.719265522808200330473482608795166015625 rounded down for display exactly as
-§22.4.5 displays 2.239 for its own quotient.
+The current post-A9 ratified floor has three keysets and four serialization
+minima. It is exactly:
 
-The 325-byte and 260-byte per-shape multipliers are unchanged: they are
-serializations of the inherited seven-key renderable row and four-key
-unrenderable row at their lawful minima, and §24 changes no row shape. What
-changes is only the population each multiplier reaches. The successor
-`unrenderable_member_rows` analytic arm is empty because all 36 of its
-containers sat inside
-`compiled_source_numeric_grammar_partial_range_exact_replay`, and every one of
-that terminal's 47 fields derives no unit and moves; the 260-byte multiplier
-therefore reaches zero members and the successor floor is a single product.
-That is a recomputation, not a relaxation: the successor floor charges every
-surviving analytic member exactly the lawful minimum of its own shape, exactly
-as §22.4.5 does.
+~~~text
+820,701,957,639 × 325
++             999 × 377
++          35,982 × 381
++       2,447,575 × 260
+= 266,728,786,687,940 bytes
+= 242.58841830300298170186579227447509765625 TiB
+~~~
 
-#### 24.5.3 §23 Amendment-9 figures
+A8's `266,728,784,621,000` was exact for the seven-key renderable and four-key
+unrenderable shapes existing at A8 ratification. A9 then introduced six-key
+rational and integer arm-ambiguous shapes. Charging the 999 rational and
+35,982 integer members at their own 377- and 381-byte minima adds 2,066,940
+bytes. A9 correctly left the A8 number as historical conservative evidence;
+it is not the exact post-A9 per-shape floor.
 
-| §23 figure | Ratified value | Successor value |
-|---|---|---|
-| the arm-ambiguous branch population §23 settles | 674 fields, 1,433 numeric-range entries, 384,135 members | 42 fields, 42 numeric-range entries, 120,098 members |
-| A9-R03 third equation, four-category census over that branch | `0 / 0 / 327,655 / 56,480` over 384,135 | `0 / 0 / 106,795 / 13,303` over 120,098 |
-| §23.2.3's settled six-key arm-ambiguous renderable member row | applies to 56,480 members | applies to 13,303 members |
-| §23's F2 witnesses `V117`/1968 (96 range members) and `V5092`/1976 (28) | compiled, arm-ambiguous, member-row fields | both derive no unit, both take `incomplete_source_numeric_authority`, and neither is a member-row field |
-| §23.2.2's arm-invariance derivation and its A6-R07 `V945`/1969 witness | derivation over the §20.3.3 renderer; witness compiled under `compiled_source_numeric_grammar_partial_range_exact_replay` | derivation unchanged and unfalsified; the witness field derives no unit and moves, so the derivation's ratified worked example is now a historical field rather than a compiled one |
-| §23's twelve fixture digests and both byte floors | serializations of stated row parameters | unchanged; §24 changes no row shape, key set, or serialization |
-| §23.5's six-position revision-11 full-relation identity | an unfrozen future pin | must be computed under the successor census; no predecessor value exists to supersede |
+The completed successor recount has 999 six-key rational members, 9,999
+six-key integer members, 263,679,041,385 seven-key members, and zero four-key
+unrenderable members in analytic containers. Its exact floor is:
 
-The two zeros in A9-R03's successor census are the same two zeros: no member
-of the surviving branch is unrenderable in both arms, and none is renderable
-in exactly one. §23.2.2's discrimination law is therefore satisfied by the
-successor corpus in the same way, and Amendment 9's derivation is neither
-falsified nor weakened by the movement — the population it governs is smaller,
-and its two named witnesses are outside it.
+~~~text
+263,679,041,385 × 325 = 85,695,688,450,125
+              999 × 377 =            376,623
+            9,999 × 381 =          3,809,619
+                0 × 260 =                  0
+                             ------------------
+                              85,695,692,636,367 bytes
+= 77.9397784175371270976029336452484130859375 TiB
+~~~
 
-#### 24.5.4 §20.3.7 and §21 exact-cover expectations
+The floor remains about 59.77 times the measured ~1.304-TiB capacity and is
+therefore safely above 59 times capacity. It is exact only as the lawful
+minimum for each member's own shape; it is not an estimate of actual storage.
 
-| Figure | Ratified value | Successor value |
-|---|---:|---:|
-| fields in the first seven terminals | 88,364 | 73,113 |
-| fields in the three closed failure terminals, the T-minus population | 1,235 | 16,486 |
-| closed failure-reason artifact rows / bytes | 7 / 21,034 | 8 / 272,300 |
-| ten-terminal count array digest | `421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624` | `b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a` |
-| complete ordered assignment digest | `5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e` | `7ccdbda9a13c3a428a9f48dd7fd57b0d72956c8ad2b1705fbb6667d7907ed90d` |
-| closed failure-reason artifact digest | `66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324` | `6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e` |
-| denominator digest | `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764` | unchanged, recomputed |
+#### 24.5.3 Provenance, A9 consequences, and exact cover
 
-73,113 + 16,486 = 89,599, so the successor T-plus/T-minus split is an exact
-cover of the same denominator. Every §21 law that ranges over the T-minus
-population — the complete null-member laws, the negative census over T-minus
-keys, the prohibition on projecting a T-minus row away, and the
-`pass_with_closed_failures` predicate's requirement that no failure be
-repaired — applies unchanged to the larger population. §21.4.5's negative
-census remains structurally incapable of reaching the arm-ambiguous status,
-which is T-plus at position 3 and stays T-plus for the 42 fields that remain
-there. No T-minus row may be projected away because it moved; a moved field is
-a failed field and is serialized as one.
+Provenance is enumerated rather than compressed into the false claim that only
+two rows are new. §22.4.5 first publishes the principal logical, threshold,
+analytic, empty-object, arm-ambiguous, counterfactual, and capacity figures.
+§23 first publishes the 327,655 arm-invariant count and creates the 377/381
+six-key minima. §24 first recomputes explicit-container and analytic-interval
+counts, six-key type populations, and the corrected post-A9 exact floor.
 
-#### 24.5.5 What Amendment 10 does and does not repair
+The surviving A9 branch is 49 fields, 49 entries, and 120,630 members, with
+four-category census `0 / 0 / 107,264 / 13,366`. Its settled six-key row
+applies to 13,366 members. The named F2 witnesses `[1968,"V117"]` and
+`[1976,"V5092"]` derive no unit and move; §23's arm-invariance derivation
+remains true over the smaller population.
 
-This is the limb on which Amendment 10 must be exact, because the temptation
-to overclaim is the same temptation §23.3.2 forbids.
-
-**What it repairs.** A9-R04 step 5 requires a conformant implementation to
-reconcile the census it produces against a ratified census. Before Amendment
-10 that step was unsatisfiable in principle: §23.3.1 and A9-R04 step 3 require
-the implementation to evaluate the unit precondition, and no implementation
-that evaluates it can reproduce the ratified ten counts, so the step could
-only be failed. After Amendment 10 the reconciliation target is §24.4.3's
-census, and the step is satisfiable in principle and satisfied in fact by the
-run this section publishes: the denominator digest reproduces, the successor
-count array and ordered assignment are pinned, the movement is exact-covered
-by an explicit relation, and the failure-reason artifact is complete. The
-expected populations for the artifact are exactly those of §24.4.3 and
-§24.5.1: 73,113 T-plus and 16,486 T-minus fields, a compiled relation of
-4,652 fields and 4,707 numeric-range entries, and 263,613,601,928 logical
-range members.
-
-**What it does not repair.** The `pass_with_closed_failures` artifact remains
-physically unconstructible, and Amendment 10 does not claim otherwise. The
-successor shortest lawful member-row floor is 85,674,104,100,325 bytes,
-which is 77.9201437583878941950388252735137939453125 TiB and
-above 59 times the measured ~1.304 TiB capacity. Amendment 8's third discovered unsatisfiable law
-is a fact about the explicit-array requirement and the surviving member
-population, not about the unit; shrinking the compiled relation by 76.6 per
-cent of its fields leaves the floor two orders of magnitude above capacity.
-A9-R04 therefore still passes only by reproducing the arithmetic and refusing
-to emit, and the independent §23.9.1 V-B6 authority blocker is untouched.
-Neither the storage bound nor the V-B6 result is within Amendment 10's scope,
-and no reading of this section authorizes emitting a truncated artifact,
-narrowing a relation, or treating the reduced population as permission to
-build.
-
-**What it does not silently do.** It does not repin a predecessor aggregate.
-The §20.3.7 count array, ordered assignment, failure-reason artifact, and
-per-status field-key digests remain exactly as ratified, and §24 publishes new
-values under new names rather than replacing the old ones in place. It does
-not scope §19.3.2's requirement: the requirement reaches every
-numeric-required row with nonempty `R`, exactly as written, and 15,251 fields
-fail it. It does not define a default unit, a tolerated unit, an inherited
-unit, or an evidence-sourced unit. And it does not repair `missing_reason_code`, the
-second member the codebook derivation lane found under-determined for the same
-reason; that member is outside Amendment 10 and is escalated at §24.10.
+The first seven successor terminals total 73,489 T-plus fields; the three
+closed failure terminals total 16,110 T-minus fields; together they exact-cover
+89,599. Every §21 null-member, negative-census, and no-projection-away law
+applies unchanged. The expected `pass_with_closed_failures` populations are
+therefore 73,489 T-plus, 16,110 T-minus, 5,028 compiled fields, 5,126 numeric
+range entries, and 263,680,073,870 logical members. The physical artifact
+remains unconstructible and may not be truncated, sampled, or replaced by an
+analytic surrogate.
 
 ### 24.6 Mandatory Amendment-10 vectors
 
-Five vectors are mandatory. Each is a gate: it can fail, and failing any of
-them blocks ratification of §24 and blocks the relation it certifies. None of
-them may be satisfied by echoing a value from this document; each requires
-independent reconstruction from the frozen sources and only then comparison.
+Each vector is an independently reconstructed gate, not an instruction to
+echo this document.
 
-#### 24.6.1 A10-R01 — one prose-covered field, source bytes to member row
+#### 24.6.1 A10-R01 — positive source-to-unit coverage
 
-Witness field `[1979,"V6789"]`, label `78 FDRL INCM TAX CREDIT`, declared
-format `NUM(3.0)`.
+The original `[1979,"V6789"]` witness remains mandatory: page 156 of
+`family/1979/FAM1979_codebook.pdf`, page-text SHA-256
+`02bdc975582d0c7faeeb764c9a59f0790a938c070eb0d497017c8bc59400a324`,
+states `The values for this variable represent the actual tax credit
+dollars.` Clause `tax credit dollars` derives `united_states_dollar`; its
+range `1 - 399` has 399 `json_integer` members with that common unit; its
+compiled terminal is preserved.
 
-1. **Source.** Registered codebook document
-   `psid-source-document:bba24baffde02a72be12942f9fc44763de5c5fd80a2e779259cd76f9675eab0d`,
-   canonical path `family/1979/FAM1979_codebook.pdf`. The field block is on
-   derived page 156, whose complete pinned page text hashes to
-   `02bdc975582d0c7faeeb764c9a59f0790a938c070eb0d497017c8bc59400a324`, and the
-   retained region `[60,2359)` of that page hashes to
-   `6d10cf9ac336c5d469fa09513028d9c2240b881cb84e035882a4a98a60177208`.
-   The canonical codebook row ID is that document ID with `#row:492`.
-2. **Prose.** The derived `source_description` ends with the exact bytes
+The vector additionally reconstructs V4904 and V6546 from the pages and bytes
+in §24.2.3 and obtains `united_states_dollar_per_hour`, then reconstructs one
+witness from each 20/11/9 omitted family and obtains the three units stated
+there. Every witness must reproduce its locator, verbatim statement, selector
+path, deciding clause, field unit, terminal consequence, and member-row
+consequence. Failure of any witness fails A10-R01.
 
-   > The values for this variable represent the actual tax credit dollars.
+#### 24.6.2 A10-R02 — honest movement
 
-   Under §24.3.1 the description normalizes to one space-separated line;
-   under §24.3.2 that sentence is a value-denotation statement opened by
-   anchor 1 and terminated by its own final `.`; under §24.3.3 its predicate
-   is `the actual tax credit dollars.`.
-3. **Clause.** The only surviving clause occurrence is `tax credit dollars`,
-   clause row 11, disposition `united_states_dollar`. `U` has one member, so
-   the statement's unit is `united_states_dollar` with reason
-   `unit_naming_clause`, and the field's unit is `united_states_dollar` with
-   reason `derived_from_denotation_statement`.
-4. **`R`.** The row's three normalized entries are the literal `0`, the
-   numeric range `1 - 399`, and the literal `400`. `R` is the single range at
-   zero-based entry position 1, with `value_type` `json_integer`,
-   `inclusive_min` 1, `inclusive_max` 399, `step` 1, and 399 logical members.
-   Its `entry_ref` is the row ID followed by `:entry:1`.
-5. **Terminal.** The ratified terminal is `compiled_source_numeric_grammar`.
-   The unit is nonnull, so §24.4.2's extension leaves the terminal and the
-   resolution reason unchanged and the field is not in the movement relation.
-6. **Member row.** Every one of the 399 members carries
-   `typed_value_unit: "united_states_dollar"` and `value_type:
-   "json_integer"`, and its `source_entry_ref` is the entry reference above,
-   copied verbatim as §20.3.2 requires. §19.3.2's "one common `rational |
-   json_integer` type and one common nonempty unit" is satisfied because `R`
-   has exactly one member range and that range carries exactly this pair.
+For `[1968,"V117"]`, page 31 of `family/1968/fam1968_codebook.pdf` has
+page-text SHA-256
+`f5ff5890e8306ab6a2dc6b7c8bad2ade5811271cfa405c02a4b4e373aaf2df42`
+and description `B2. Age of Head of Family Unit`. It emits no denotation and
+therefore no unit. Its 96-member `1 - 96` range is not licensed to infer
+years. Its ratified finite-arm-ambiguous terminal moves to
+`incomplete_source_numeric_authority` with the new reason, and its 96 members
+leave the compiled relation. The contrast `in years` positively derives
+`year`; plausibility does not.
 
-The vector passes only when steps 1-6 are each reconstructed from the
-registered document under the §19.3.3 pinned decoder and the §24.3 law, and
-every displayed identifier, digest, bound, count, and literal reproduces
-exactly.
+#### 24.6.3 A10-R03 — negative and fail-closed cases
 
-#### 24.6.2 A10-R02 — one prose-absent compiled field, the honest movement
+Validation must reject: an uncited `year` for V117; any out-of-vocabulary or
+empty unit; evidence-, sibling-, or default-sourced units; first-clause rescue
+of the 22-field internal conflict; all five longer-ratio regressions in
+§24.3.4; `dollars and cents amount per hour` specifically; a positive
+whole-domain statement alongside a defeated whole-domain statement in either
+source order; tab stripping by normalization; and a newly encountered
+`Actual...` spelling that is not in the adjudication table. The last case is
+unadjudicated and must abort, not silently become no-unit.
 
-Witness field `[1968,"V117"]`, label `AGE OF HEAD`, declared format
-`NUM(2.0)`, in registered codebook document
-`psid-source-document:cf5efeeed0c14ddefc4757e1c4569ec598cb901222e6db9a0427a6a0ecea9865`,
-canonical path `family/1968/fam1968_codebook.pdf`, canonical row `#row:116`,
-on derived page 31 whose complete pinned page text hashes to
-`f5ff5890e8306ab6a2dc6b7c8bad2ade5811271cfa405c02a4b4e373aaf2df42`.
+#### 24.6.4 A10-R04 — executable abort-without-emission gate
 
-1. **Prose.** The complete derived `source_description` is exactly the bytes
-   `B2. Age of Head of Family Unit`. Under §24.3.2 it carries zero
-   value-denotation statements, so §24.3.6 gives the field no unit with reason
-   `no_denotation_statement`. There is no second place to look: the field
-   block displays four columns and none is a unit, and the field's dictionary
-   rows carry null `declared_typed_value_unit`.
-2. **`R`.** The row's `R` is the single range `1 - 96`, `json_integer`,
-   `inclusive_min` 1, `inclusive_max` 96, `step` 1, 96 logical members, at
-   entry position 0, meaning `Actual age`. A reader knows those are years.
-   The prose does not say so, and §24.3.5 fixes no calendar or age default, so
-   the law does not say so either.
-3. **Terminal.** The ratified terminal is
-   `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
-   — one of the four compiled terminals, so the unit precondition reaches it
-   and no earlier precedence class holds. The successor terminal is
-   `incomplete_source_numeric_authority` with resolution reason
-   `unresolved_typed_value_unit_no_source_authority`.
-4. **Consequence, stated rather than softened.** This field is one of
-   Amendment 9's two named F2 witnesses and one of the 674 fields whose
-   settled six-key arm-ambiguous renderable member row §23.2.3 authorizes. It
-   is not a member-row field under §24. Its 96 members leave the compiled
-   member population, its status is T-minus rather than T-plus, and every §21
-   and §22 consumer that would have resolved it now resolves a closed failure.
-   §23.2.2's derivation is untouched; the population it governs is smaller.
-5. **The contrast that proves the rule is not vacuous.** In the same corpus
-   `the actual age in years (45-96) at which Head may retire with full
-   benefits` derives `year` from clause row 39, because it writes
-   `in years`.
-   The law distinguishes the two spellings on their bytes and on nothing else.
+The production runner performs these checks in one transaction:
 
-#### 24.6.3 A10-R03 — negative: an uncited unit assignment must fail validation
+1. preflight distinct input/output paths and hard links; read the input exactly
+   once as strict UTF-8 without BOM, blank lines, NaN, or Infinity; reject
+   duplicate JSON members recursively;
+2. require exactly 89,599 objects, the exact five keys and exact types; JSON
+   integers exclude booleans, strings must encode as Unicode scalar strings,
+   and description is string or null;
+3. require the input and denominator digests in §24.4.2, thereby rejecting a
+   wrong row count, changed row, or reordering;
+4. reproduce the ratified input counts, successor counts, count digest,
+   ordered-assignment digest, every matrix cell, and all ten field-key digests;
+5. reproduce 14,875 unique movement rows, the full and key digests, and the
+   compiled-origin/incomplete-destination/reason invariants;
+6. reproduce all eight failure rows, their literals and counts, 266,547-byte
+   serialization, and `50ddb89e...` digest;
+7. reproduce the Actual relation's 82 rows, 322 occurrences, and
+   `88f5b25a...` array digest; the universal relation's 59,521 rows, 195,835
+   occurrences, 2,240,669 starts, zero unadjudicated occurrences, zero
+   whole-domain selector orphans, and `75406f57...` digest;
+8. reproduce the 2,791-row statement table and `235c582a...` digest, plus the
+   1,525-row positive fence's 237,067 bytes, `da7b72fb...` raw digest, and
+   `21f4393d...` array digest;
+9. reproduce payload digest
+   `d97ef93d6956dcbd72cd7beb9e058d015d338fb06a73b98a735a05c7030f5979`;
+10. only after every equality passes may stdout or either requested output be
+    touched. Failure leaves any pre-existing destination byte-identical.
 
-Four negative cases. Each must be rejected, and rejection must be by the law
-rather than by a reviewer's judgement.
+No future inequality may be cured by replacing an expected value with current
+output. The sole corrected input pin in this revision is authorized by
+§24.4.2's independently reproduced divergence finding; every subsequent
+mismatch aborts without emission and escalates.
 
-1. **Uncited assignment.** A candidate derivation row asserts
-   `typed_value_unit: "year"` for `[1968,"V117"]`. Validation recomputes the
-   field's unit from its normalized description under §24.3, obtains null, and
-   rejects. A unit that no clause occurrence in the field's own statements
-   produces is unlawful however plausible it is, and however many sibling
-   fields in the same wave carry it.
-2. **Out-of-vocabulary assignment.** A candidate row asserts
-   `typed_value_unit: "years"`, `"USD"`, `"dollars"`, or `""` for a field
-   whose derivation yields `year` or `united_states_dollar`. Each is rejected:
-   §24.3.5's vocabulary is closed at 14 identifiers and the empty string is
-   not a unit at all under §19.3.2's "nonempty unit".
-3. **Evidence-sourced assignment.** A candidate row obtains a unit from a
-   committed evidence artifact's `code_map`, from a value label, or from
-   another field's derived unit. Rejected by §20.2.3, which forbids the
-   evidence from supplying a canonical row, and by §24.3.6, which fixes the
-   derivation as a function of the field's own normalized description.
-4. **Conflict rescue.** A candidate row resolves the 22-field conflicting
-   statement of §24.3.5 by taking its opening clause, asserting
-   `united_states_dollar_per_hour`. Rejected: §24.3.5's rule is `|U| > 1`
-   yields no unit, and a first-clause-wins reading is not the ratified rule.
-   The 22 fields move.
+#### 24.6.5 A10-R05 — constructibility and exactness
 
-A validator that accepts any of the four, or that reports a unit for a field
-whose recomputation yields null, fails A10-R03 and blocks ratification.
+A10-R05 independently reproduces the historical A8 two-shape number as
+history, the corrected four-minimum post-A9 ratified floor, every completed
+successor population and its four-term floor, both exact TiB quotients, and the
+capacity comparison. Exactness is required only of the corrected current-law
+and successor figures. It then emits no artifact: the floor remains above
+available capacity, so construction, truncation, sampling, population
+narrowing, or analytic substitution fails the vector.
 
-#### 24.6.4 A10-R04 — the successor-census reproduction gate
+### 24.7 Replacement inventory and closure-sweep schema
 
-This is the gate the whole section rests on and it can fail.
+The exact design-family dispositions are:
 
-1. Rebuild the §24.4.2 input relation from the pinned §19.3.2 codebook
-   derivation and the ratified §20 classification, in §20.3.7 denominator
-   order, and require its 89,599-row canonical digest to equal
-   `563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e`.
-2. Recompute the denominator digest from that relation and require
-   `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`. A
-   changed denominator falsifies the whole section rather than being absorbed
-   by it.
-3. Derive every field's unit under §24.3, apply §24.4.2's extension, and
-   require the ten successor counts
-   `4,491 / 119 / 42 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 16,064`,
-   the count-array digest
-   `b3f8305d9b259deac6fb2cfc7ed0d1713861fa9dd8a720c09c69574a4615b19a`, and the
-   ordered-assignment digest
-   `7ccdbda9a13c3a428a9f48dd7fd57b0d72956c8ad2b1705fbb6667d7907ed90d`.
-4. Require the complete status-by-artifact matrix of §24.4.3, cell for cell,
-   and all ten per-status field-key digests.
-5. Require the movement relation to hold exactly 15,251 rows, to hash to
-   `5d33f37ffacc05061354227e4358f8a81a4055afcb26557acc5675471031c8ac`, to
-   contain no row whose ratified status is outside the four compiled
-   terminals, and to contain no row whose successor status is anything but
-   `incomplete_source_numeric_authority`.
-6. Require the eight-row failure-reason artifact to be exactly
-   272,300 bytes and to hash to
-   `6e575eaf9b2585ba4fcfc5365a77331dbffe41b4440e561b058154587feaee4e`, with
-   its seven inherited rows carrying their ratified reason literals.
-7. Require the statement census of §24.2.4 and §24.3: 2,476 distinct
-   statements hashing to
-   `e2b1cf47d49a836c8b3c5320983a42f9cca2ff2631da036f33b841a26e5dae5f`,
-   1,227 of them unit-bearing, the unit-bearing fence hashing to
-   `a613bf1fbdfe4110fdb87be0d9a12668dd9187137325bd24bfb1b26f2d71fd92`, and the
-   same rows as one canonical array hashing to
-   `0661174c427f66b4dfc22d6734f7c6e85ff6836b201a7fbcd94c3908d92d9df8`.
-8. Require the complete §24 census payload digest
-   `b70259e92b4b0e69247845265d35b6d4f71cc83605fd311202fdb18d0fba15d5`.
-
-Any inequality fails A10-R04. A10-R04 does not pass by adjusting a threshold,
-widening the clause table, adding an anchor, or repinning a digest in this
-section; on an inequality the correct outcome is to abort, emit nothing, and
-escalate under §24.10, exactly as §23.3.2 requires of its own gates.
-
-#### 24.6.5 A10-R05 — artifact constructibility, stated exactly
-
-1. Recompute the §22.4.5 fact table restricted to the successor compiled
-   relation and require every successor figure in §24.5.1 and §24.5.2,
-   including the threshold identity `973,927 + 263,612,628,001 =
-   263,613,601,928` and the exact row floor `85,674,104,100,325` bytes.
-2. Recompute the same fact table over the ratified compiled relation and
-   require every ratified figure in those tables, including 4,736,892,
-   820,704,442,195, 56,480, 327,655, the rejected counterfactual pair
-   4,753,875 and 820,704,425,212, and
-   `266,728,784,621,000` bytes. This limb is what licenses the successor
-   limb: a measurement procedure that cannot reproduce §22.4.5 may not be
-   trusted to supersede it.
-3. State the expected populations of the `pass_with_closed_failures` artifact
-   under §24: 73,113 T-plus fields, 16,486 T-minus fields, a compiled
-   relation of 4,652 fields and 4,707 numeric-range entries, and
-   263,613,601,928 logical range members.
-4. **Emit nothing.** The successor floor of
-   77.9201437583878941950388252735137939453125 TiB remains above 59 times the
-   measured ~1.304 TiB capacity, so the artifact remains physically
-   unconstructible and Amendment 8's unsatisfiable-law finding stands
-   unrepaired. A10-R05 passes only by reproducing both fact tables, publishing
-   the expected populations, and refusing to emit. An implementation that
-   emits a truncated, sampled, analytic-substituted, or population-narrowed
-   artifact fails A10-R05 regardless of its arithmetic.
-
-### 24.7 Exact replacement inventory and Amendment-10 closure sweep
-
-#### 24.7.1 Complete design-family disposition
-
-The following table is the complete design-family inventory. It erases no
-historical text and merges no repeated physical passage; the closure sweep
-below gives every reached byte range its own row.
-
-| Source anchors | Exact Amendment-10 disposition |
+| Earlier law | Amendment-10 disposition |
 |---|---|
-| §19.3.2 requirement that every member of a value-code branch `R` carry one common type and one common nonempty unit | `composed-with-§24.3`: the requirement is unchanged and unnarrowed. §24.3 supplies the derivation that discharges it where the corpus permits and §24.4 publishes the terminal consequence where it does not. No member, field, wave, or era is exempted from it. |
-| §19.3.2 sole-source rule that a value-code range "obtains type/unit from the complete codebook domain and does not fill a silent dictionary member by default" | `composed-with-§24.3.1`: the complete codebook domain is exactly where §24.3 reads, namely the canonical codebook row's own `source_description`. No dictionary member is filled, no default is created, and the null `declared_typed_value_unit` on all 179,198 dictionary rows stays null. |
-| §19.3.2 failure mapping sentence "on the value-code range branch, an untyped or nonunitized `R` is incomplete" and its `incomplete_source_numeric_authority` production | `composed-with-§24.4.1`: applied as written, under §20.3.5's replacing precedence, to exactly the four passing compiled terminals. |
-| §19.3.2 sentence "Satisfying more than one failure predicate also uses `conflicting_source_numeric_format`" | `replaced-by-§20.3.5-as-applied-by-§24.4.1`: §20.3.5 already prospectively replaced the exhaustive numeric failure mapping with three mutually exclusive precedence classes, and §20.3.7 step 5 applies that precedence. The replaced sentence cannot promote a unit-absent unsupported or conflicting row. Historical text is untouched. |
-| §20.3.5 three-class failure precedence table and its `unresolved width/decimal/type/unit/scale` incomplete predicate | `lawfully-unchanged-with-reason`: this is the operative mapping and §24 applies it verbatim. Its `unit` term is the term Amendment 10 makes evaluable. |
-| §20.3.7 complete field census, status-by-artifact matrix, ten count rows, three aggregate digests, seven failure-reason rows, and per-status field-key digests | `superseded-by-construction-by-§24.4.3-and-§24.4.5`: every ratified figure remains exactly as ratified and remains the true census of a classification that did not evaluate §19.3.2's unit precondition. §24 publishes the census of the same denominator with that precondition evaluated, under new names and new digests, and repins nothing in place. |
-| §20.3.6 A6-R01 through A6-R11 and §20.3.2-§20.3.4 renderer, partition, DFA, replay, and collision laws | `lawfully-unchanged-with-reason`: §24 evaluates no gate they own, changes no image, action, scalar, bound, step, or replay, and moves no member between the renderable and unrenderable relations of a field that stays compiled. |
-| §21.1.2 seven-reason closed-failure artifact and §21.2-§21.3 T-plus/T-minus, 16-key row, `pass_with_closed_failures` predicate, and complete-relation validation | `composed-with-§24.4.5-and-§24.5.4`: the outer row, the status law, the null-member laws, and the prohibition on projecting a T-minus row away are unchanged and now range over 16,486 T-minus fields. The closed reason set gains exactly one literal, `unresolved_typed_value_unit_no_source_authority`. |
-| §21.4.3-§21.4.5 consumer boundary, negative census, and Q5 embedding | `lawfully-unchanged-with-reason`: every consumer kind, guard, and abort is unchanged. The negative census ranges over the larger T-minus population and remains structurally incapable of reaching a T-plus status. |
-| §22.2 member-row shapes, §22.2.2 representation threshold, §22.2.3 lossiness test, and §22.3 consumer surface | `lawfully-unchanged-with-reason`: §24 changes no key, no shape, no threshold, and no serialization. A member row's `typed_value_unit` is now derived rather than undetermined, which is what §22 always required of it. |
-| §22.4.5 storage fact table, per-status decomposition, threshold partition, byte floors, and capacity multiple | `superseded-by-construction-by-§24.5.1-and-§24.5.2`: every ratified figure remains the exact fact of the ratified compiled relation; §24 publishes the same measurements over the successor compiled relation. The 325-byte and 260-byte per-shape multipliers, the `3N+2` expression, and the analytic/explicit threshold are unchanged. |
-| §22.4.5 A8-R04 unsatisfiable-law finding and its refusal to emit | `lawfully-unchanged-with-reason`: the finding stands. §24.5.5 and A10-R05 recompute the floor over the smaller population, obtain 77.9201437583878941950388252735137939453125 TiB against ~1.304 TiB, and refuse to emit. |
-| §23.2 arm-invariance derivation, settled six-key arm-ambiguous renderable member row, and promotion-boundary abort law | `lawfully-unchanged-with-reason`: the derivation is over the §20.3.3 renderer and holds for any member; the row shape and every promotion-boundary site are unchanged. §24.5.3 publishes the smaller population the settlement now governs. |
-| §23.3 closed codebook derivation path for every member-row source-entry, type, and unit value | `composed-with-§24.3`: §23.3's `source_entry_ref` and `value_type` paths are unchanged and remain the derivation of record. Its third member, `typed_value_unit`, which §23.3.1 correctly declared undetermined and routed to a successor, is supplied by §24.3. |
-| §23.3.1 rule that an undetermined `typed_value_unit` makes the field `incomplete_source_numeric_authority` and not a member-row field | `composed-with-§24.4`: applied literally to 15,251 fields. §24 does not narrow it, does not exempt any wave or era from it, and does not repin an aggregate to avoid it. |
-| §23.3.2 prohibitions on scoping to fit, repinning to tolerate, and sourcing a member-row field from evidence | `lawfully-unchanged-with-reason`: all three bind Amendment 10 and all three are honoured. §24.5.5 states in terms what was not repaired. |
-| §23.3's second under-determined member, `missing_reason_code` | `escalated-unresolved-by-§24.10`: §19.3.2 requires a missing literal to carry "a nonempty source-backed reason" and no registered document states one. Amendment 10 does not resolve it, does not default it, and does not treat its absence as harmless; §24.10 opens the successor. |
-| §§20.5-20.6, §§21.6-21.7, §§22.6-22.7, and §§23.6-23.7 replacement inventories and comparator censuses | `lawfully-unchanged-with-reason` as immutable D6, D7, D8, and D9 history; §§24.7-24.8 provide the distinct revision-12 successors. |
-| §20.7, §21.8, §22.8, and §23.8 lifecycle successors and terminal registration lineage | `replaced only for a post-D10 registration by §§24.9-24.10`; historical version dispatch remains exact. |
+| §19.3.2 common-unit requirement and codebook-only source | composed with §24.3; unchanged and unnarrowed |
+| §19.3.2 nonunitized-`R` failure and §20.3.5 precedence | composed with §24.4; unit absence is incomplete-class only |
+| §20.3.7 census, matrix, assignment, and seven-row failure artifact | superseded by construction by §24.4; historical values remain untouched |
+| §21 T-plus/T-minus and `pass_with_closed_failures` laws | composed with the eight-row artifact and 73,489/16,110 exact cover |
+| §22 storage populations and A8-era floor | superseded by construction by §24.5; A8 history remains true for its shapes |
+| §23 six-key member shape and arm-invariance | lawfully unchanged; §24 recounts its population and current-law floor |
+| §23 `typed_value_unit` under-determination | resolved by §24.3 from source prose |
+| §23 `missing_reason_code` under-determination | escalated unresolved by §24.10 |
+| earlier comparator and lifecycle successors | historical dispatch unchanged; replaced only for post-D10 registration by §§24.8-24.9 |
 
-#### 24.7.2 Closure sweep
+`amendment_10_derived_unit_authority_closure_sweep.v1` has exactly these ten
+keys in order: `schema_version`, `ordered_passage_ids`, `rows`,
+`passage_count`, `source_interval_domain_sha256`, `forward_edge_sha256`,
+`reverse_edge_sha256`, `unresolved_passage_ids`, `status`, and
+`failure_disposition`. Each row has exactly `passage_id`, `source_section`,
+`start_byte`, `end_byte`, `source_sha256`, `disposition`, `successor_id`, and
+`reason`, in that order. Rows are ordered by `(start_byte,end_byte,passage_id)`,
+use nonnegative JSON-integer half-open intervals in the accepted D10 blob,
+exclude booleans, and exact-cover every passage reached by the closure search.
 
-Every matched passage receives exactly one of `replaced-by-named-successor`,
-`composed-with-named-successor`, `superseded-by-construction-by-named-successor`,
-`escalated-unresolved-by-named-successor`, or `lawfully-unchanged-with-reason`,
-plus one nonempty exact successor or reason resolving to §24.7.1, §24.8, §24.9,
-or §24.10. The sweep artifact is
-`amendment_10_derived_unit_authority_closure_sweep.v1`. Acceptance requires
-status pass, exact-empty `unresolved_passage_ids`, exact forward and reverse
-edge cover, agreement with an independently implemented second sweep, and
-reproduction from the accepted D10 blob. A missing, extra, merged, differently
-segmented, silently retained, unit-exempted, or evidence-sourced passage blocks
-ratification. No anticipated D10 byte offset, row count, closure digest, or
-implementation identity is ratified by these draft bytes.
+The closed disposition vocabulary is `replaced_by_named_successor`,
+`composed_with_named_successor`,
+`superseded_by_construction_by_named_successor`,
+`escalated_unresolved_by_named_successor`, and
+`lawfully_unchanged_with_reason`. The first four require a nonempty defined
+`successor_id`; the last requires a nonempty `reason`. Both edge digests cover
+the complete passage/successor bipartite relation in their named directions.
+Acceptance requires exact-empty `unresolved_passage_ids`, `status: "pass"`,
+`failure_disposition: "abort_ratification"`, independent second-sweep
+agreement, and reproduction from accepted D10 bytes. Missing, overlapping,
+merged, extra, undefined, or differently dispositioned rows abort.
 
 ### 24.8 Complete revision-12 design-comparator disposition
 
@@ -43518,49 +43522,321 @@ misanchored, third-disposition, undefined-successor, or incompletely closed
 comparator blocks ratification. This table becomes an immutable revision-12
 invariant only at D10.
 
-### 24.9 D10 lifecycle successors and identifier inventory
+### 24.9 D10 lifecycle successors and exact identifier inventory
 
-#### 24.9.1 D10 and the position-1 successor
+This subsection introduces only schemas and predicates required by a future
+D10-bound registration. It creates no source, evidence, representation, or
+production relation. The derived audit relations in §§24.2-24.5 have their row
+shapes and canonicalizations there; they are not separately selectable
+lifecycle schemas.
 
-The four-key design-identity shape remains unchanged. D10 has exactly `path`,
-`ratification_commit`, `blob_sha256`, and `revision`, in that order. Path is
-`docs/design/covered_earnings_correction.md`; the commit is the
-40-lowercase-hex future document-only ratification commit fixed only by
-§24.10.2 step 3; the blob digest is that commit's exact same-path raw blob
-SHA-256; and the revision is exactly 12. The position-1 successor is
-`verify_amendment_10_fitting_free_design_identity_v1`, consuming
+#### 24.9.1 D10, position 1, and the requirement registry
+
+D10 has exactly `path`, `ratification_commit`, `blob_sha256`, and `revision`,
+in that order. Path is `docs/design/covered_earnings_correction.md`; commit is
+the future 40-lowercase-hex document-only commit fixed only by §24.10.2 step 3;
+the digest covers that complete same-path raw blob; revision is JSON integer 12
+excluding booleans. D9's complete 2,653,817 bytes byte-equal D10 range
+`[0,2653817)` independently of complete digest and ancestry.
+
 `amendment_10_fitting_free_design_identity_expected_preimage.v1` and
-`amendment_10_fitting_free_design_identity_actual_preimage.v1` and requiring
-byte equality of the complete D2/D3/D4/D5/D6/D7/D8/D9/D10 chain, the
-configuration, and the final cutoff, together with independent
-D9-as-2,653,817-byte-prefix-of-D10 comparison against the complete raw blob.
-Digest-only, ancestry-only, or transitive-only substitution aborts.
+`amendment_10_fitting_free_design_identity_actual_preimage.v1` each have
+exactly these seven keys in order:
 
-#### 24.9.2 Capture-registration successor
+~~~text
+schema_version
+requirement_id
+verification_predicate_id
+ordered_source_projections
+source_projection_rows
+source_projection_count
+source_projection_domain_sha256
+~~~
 
-`verify_amendment_10_capture_registration_repository_identity_v1` consumes
-`amendment_10_capture_registration_repository_proof.v1` and closes the
-post-D10 capture chain through
-`fitting_free_model_input_authority_capture_registration.v9`,
-`fitting_free_model_input_authority_capture_claim.v9`, and
-`fitting_free_model_input_authority_capture_input.v9`. It is receipt-free by
-construction and cannot import a predecessor's HEAD equality.
+Each projection row has exactly `projection_id`, `value_type`, and
+`value_identity_sha256`, in that order. Count is JSON integer 11 excluding
+booleans and the domain digest hashes the complete canonical 11-row array. The
+ordered projections are D2 through D10, then `configuration:design`, then
+`git_cutoff:docs/design/covered_earnings_correction.md`. The first ten values
+have type `canonical_json`; the last has `raw_git_bytes`. Let G10 be D10's raw
+blob, K_f^d the staged fitting-free configuration design, C_A the final
+calibrated authority cutoff, and G_C_A its same-path raw bytes. Expected values
+are `[D2,D3,D4,D5,D6,D7,D8,D9,D10,D2,G10]`; actual values are
+`[D2,D3,D4,D5,D6,D7,D8,D9,D10,K_f^d,G_C_A]`.
 
-#### 24.9.3 Selected-registration successor
+`fitting_free_requirement_verification_specs.v9` has exactly
+`schema_version`, `ordered_requirement_ids`, `rows`, `row_count`, and
+`failure_disposition`, in that order. It retains §16.2's 22 requirement IDs,
+has integer count 22 and `abort_registration`, freshly evaluates all rows, and
+replaces exactly positions 1, 3, and 5. Each spec row has exactly
+`requirement_id`, `requirement_class`, `verification_predicate_id`,
+`expected_preimage_schema_version`, `actual_preimage_schema_version`,
+`ordered_source_projections`, `verification_result_schema_version`, and
+`cross_binding`, in that order. Position 1 is exactly:
 
-`verify_amendment_10_selected_registration_design_lineage_v1` closes the
-selected-registration lineage through
-`covered_earnings_path_applicability_receipt_core.v9` and
-`covered_earnings_path_applicability_receipt.v9`, with
-`fitting_free_requirement_verification_specs.v9`,
-`fitting_free_registration_domain_identity.v9`, and
-`covered_earnings_path_applicability_registry_bundle.v10` freshly rebuilt.
-Historical v1 through v8 receipt dispatch remains exact and is not displaced.
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_10_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_10_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_10_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","ratified_design:amendment_8_design_identity","ratified_design:amendment_9_design_identity","ratified_design:amendment_10_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_amendment_7_amendment_8_amendment_9_and_amendment_10_design_identities"}
+~~~
 
-#### 24.9.4 Complete successor identifier inventory
+`verify_amendment_10_fitting_free_design_identity_v1` is true exactly when all
+inherited shape, order, count, digest, and evidence equations pass; both
+reconstructions of D2-D10 deep-equal and all ratification blobs hash; K_f^d
+equals D2 without equating revision-4 configuration bytes to G10; all seven
+raw-prefix comparisons through D10 pass; G_C_A byte-equals G10 and hashes to
+D10; and
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 <= C_A`, using strict Git
+ancestry for `<` and ancestor-or-equal for the last edge. False uses the
+inherited `predicate_mismatch` result and cannot select a predecessor.
 
-The complete lifecycle successor set introduced by Amendment 10 has exactly
-these 16 identifiers in order:
+#### 24.9.2 Capture, A1/A3, domain, and bundle
+
+`fitting_free_model_input_authority_capture_registration.v9` has exactly these
+21 keys in order:
+
+~~~text
+schema_version
+registration_reference
+design
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+implementation_commit
+invocation
+environment_lock_input
+environment_spec
+calibrated_registrability_adjudication_input
+selector_implementation_identity
+input_access_specs
+capability_specs
+output_paths
+failure_disposition
+~~~
+
+`design` remains D2 and amendment children are D3-D10. Every retained
+adjudication, invocation, capability, descriptor, input, output-path, and
+failure law is unchanged.
+
+Let A be the unique single-parent commit strictly after D10 first adding only
+that v9 authorization, and freeze capture HEAD H_cap before any environment,
+claim, broker, source, or model-input descriptor opens.
+`amendment_10_capture_registration_repository_proof.v1` has exactly these 19
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+Its identity children are D2-D10 and commits are `[A,H_cap]`. Each of its ten
+ordered blob rows—roles `amendment_2_ratification` through
+`amendment_10_ratification`, then `capture_head`—has exactly `role`, `commit`,
+`path`, `tree_mode`, `blob_oid`, and `raw_sha256`, in that order. Count is
+integer ten; status is `pass | fail`; failure is
+`abort_without_accepted_authority_pair`.
+
+`verify_amendment_10_capture_registration_repository_identity_v1` is true
+exactly when the strict v9 authorization reproduces its digest and D2-D10
+children; all nine ratification blobs and seven prefix comparisons pass;
+same-path bytes at H_cap equal D10;
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < A <= H_cap`;
+authorization bytes remain unchanged A-through-H_cap; all ten blob rows match
+observed commits, modes, OIDs, hashes, and raw bytes; and every inherited
+descriptor-free repository, tracked-state, clean-checkout, implementation-tree,
+and authorization-byte conjunct passes. The proof freezes before descriptors
+and has no receipt or future commit.
+
+`fitting_free_model_input_authority_capture_claim.v9` has exactly these eight
+keys in order:
+
+~~~text
+schema_version
+registration_reference
+capture_registration_sha256
+capture_repository_proof
+artifact_vintage_id
+process_start_identity_sha256
+opened_at_utc
+status
+~~~
+
+It embeds the complete proof and retains every inherited exclusive-creation,
+immutability, durability, vintage, process, UTC, status, and failure law.
+`fitting_free_model_input_authority_capture_input.v9` has exactly these 13
+keys in order:
+
+~~~text
+schema_version
+registration_path
+registration_sha256
+claim_path
+claim_schema_version
+claim_artifact_vintage_id
+claim_sha256
+artifact_path
+artifact_vintage_id
+artifact_schema_version
+artifact_sha256
+sidecar_path
+sidecar_sha256
+~~~
+
+It selects the complete v9 registration and claim and unchanged primary and
+sidecar schemas. Their D2 methodology children are transitively bound to
+D3-D10 and H_cap. Required order is `D10 < A <= H_cap < T < C`, retaining all
+sole-parent, only-add, descriptor, and durable-reread laws.
+
+Within the v9 requirement registry, A1 is exactly:
+
+~~~json
+{"requirement_id":"A1","requirement_class":"registration_authority","verification_predicate_id":"verify_amendment_10_fitting_free_a1_model_universe_authority_v1","expected_preimage_schema_version":"authority_predicate_expected_preimage.v1","actual_preimage_schema_version":"authority_predicate_actual_preimage.v1","ordered_source_projections":["ratified_design:fitting_free_model_input_authority_results.rows/0","configuration:fitting_free_model_input_authority_results.rows/0","configuration:fitting_free_model_input_authority_results.authority_capture_input","capture_primary:a1_authority_identity","capture_primary:capture_claim_sha256","capture_claim:capture_repository_proof"],"verification_result_schema_version":"authority_predicate_verification_result.v1","cross_binding":"capture_primary:a1_authority_identity_and_amendment_10_capture_repository_proof"}
+~~~
+
+A3 is exactly:
+
+~~~json
+{"requirement_id":"A3","requirement_class":"registration_authority","verification_predicate_id":"verify_amendment_10_fitting_free_a3_weight_source_authority_v1","expected_preimage_schema_version":"authority_predicate_expected_preimage.v1","actual_preimage_schema_version":"authority_predicate_actual_preimage.v1","ordered_source_projections":["ratified_design:fitting_free_model_input_authority_results.rows/2","configuration:fitting_free_model_input_authority_results.rows/2","configuration:fitting_free_model_input_authority_results.authority_capture_input","capture_primary:a3_authority_identity","capture_sidecar:input_descriptor_identities","capture_primary:capture_claim_sha256","capture_claim:capture_repository_proof"],"verification_result_schema_version":"authority_predicate_verification_result.v1","cross_binding":"capture_primary_and_sidecar:a3_source_keyset_and_amendment_10_capture_repository_proof"}
+~~~
+
+For both rows, expected and actual preimages retain the inherited seven-key
+shape and three-key projection-row shape. A1 has six projections and A3 seven.
+`verify_amendment_10_fitting_free_a1_model_universe_authority_v1` and
+`verify_amendment_10_fitting_free_a3_weight_source_authority_v1` each require
+the complete v9 capture input to equal projection 3; claim digest to match the
+primary; the Git-rebuilt complete repository proof to equal the claim child;
+its D2-D10 identities to equal independent reconstructions; and claim,
+primary, sidecar, triple, and history to be one chain, in addition to all
+inherited substantive A1 or A3 equations. Claim and proof remain lifecycle
+nonauthority and enter no substantive model value.
+
+`fitting_free_registration_domain_identity.v9` has exactly
+`schema_version`, `authority_cutoff_sha256`, `ordered_requirement_ids`,
+`requirement_rows`, `requirement_count`, `requirement_domain_sha256`,
+`authority_status`, and `status`, in that order. Each of its 22 runtime rows
+has exactly `requirement_id`, `requirement_class`,
+`verification_predicate_id`, `expected_preimage`, `actual_preimage`,
+`verification_result`, `requirement_satisfied`, `evidence_identity_sha256`,
+and `status`, in that order. It selects the complete v9 registry and freshly
+reconstructs all rows, unfavorable preimages, Booleans, failure IDs, counts,
+and hashes. `authority_status` passes iff all 22 Booleans do. V-B6 remains
+nonpassing, so no accepted v9 domain presently exists; predecessor, copied,
+carrier, empty-dependency, stale-unit, or stale-member-row reads fail.
+
+`covered_earnings_path_applicability_registry_bundle.v10` has exactly these 16
+keys in order:
+
+~~~text
+schema_version
+path_applicability_specs
+ordered_calibrated_manifest_verification_specs
+calibrated_registration_required_claim_role_arrays
+calibrated_authority_role_binding_specs
+calibrated_family_authority_requirement_specs
+calibrated_noncapture_required_authority_predicate_specs
+calibrated_capture_required_authority_predicate_specs
+calibrated_global_requirement_verification_specs
+fitting_free_requirement_verification_specs
+verification_claim_adjudication_identity
+verification_claim_specs_v2
+verification_claim_results_v2
+verification_claim_specs_fitting_free_v1
+verification_claim_results_fitting_free_v1
+verification_claim_adjudication_source_projection
+~~~
+
+It embeds the complete v9 registry. Every source-derived child is freshly
+reconstructed from accepted post-D10 Q5, inventory, value maps, legal
+authorities, the checked successor relation under the derived-unit reader, and
+exact-empty applicable consumer guards—never G17, configuration, or a
+predecessor bundle. No accepted v10 bundle exists while v9 domain is
+nonpassing or the required physical artifact is unconstructible; attempted
+construction aborts before bundle emission.
+
+#### 24.9.3 Receipt and selected-registration successors
+
+`covered_earnings_path_applicability_receipt_core.v9` has exactly these 24
+keys in order:
+
+~~~text
+schema_version
+receipt_id
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+selected_configuration_design_identity
+selected_registration_path
+selected_configuration_schema_version
+selected_implementation_commit
+selected_output_paths_sha256
+pre_reference_configuration_core_sha256
+pre_reference_namespace_core
+pre_reference_namespace_core_sha256
+selected_pre_reference_namespace_scan
+calibrated_registrability_adjudication_input
+fitting_free_registration_domain_identity
+path_applicability_specs_sha256
+path_applicability_result
+~~~
+
+Its amendment children are D2-D10, its fitting-free domain is complete v9,
+its applicability digest hashes the complete v10 bundle, and its result
+carries the v9 domain digest. Every other namespace and construction equation
+is inherited; `receipt_core_sha256` hashes the complete 24-key core. Capture
+validation binds the same v9 claim, input, proof, primary, sidecar, triple, and
+cutoff, with lineage
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < A <= H_cap < T < C <= HEAD`.
+
+`covered_earnings_path_applicability_receipt.v9` has exactly
+`schema_version`, `receipt_id`, `receipt_core`, `receipt_core_sha256`,
+`registration_reference`, `selected_registration_configuration_sha256`,
+`post_reference_namespace_scan`, `canonicalization`, `status`, and
+`failure_disposition`, in that order. It requires the complete v9 core and
+retains receipt-ID, suffix, namespace, construction, Git-delta, status, and
+failure laws. History dispatch is exact: pre-Amendment-3 uses v1 and
+Amendments 3 through 10 use v2 through v9 respectively.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+`verify_amendment_10_selected_registration_design_lineage_v1` is true exactly
+when: the selected design matches its D1 or D2 ratification blob; receipt D2 is
+revision 4; D3-D9 are revisions 5-11 with their exact blobs; D10 is revision
+12 and equals same-path bytes at registration HEAD; all seven prefix
+comparisons pass;
+`D1 < D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 <= registration HEAD`;
+and every inherited repository, implementation-tree, configuration,
+invocation, input, output, history, authority, namespace, and receipt law
+passes. False fails v9 validation without fallback. Present V-B6 and storage
+blockers mean no such accepted receipt can instantiate.
+
+#### 24.9.4 Exact scoped inventory
+
+The complete lifecycle set has exactly these 16 identifiers in order:
 
 1. `amendment_10_fitting_free_design_identity_expected_preimage.v1`;
 2. `amendment_10_fitting_free_design_identity_actual_preimage.v1`;
@@ -43579,108 +43855,76 @@ these 16 identifiers in order:
 15. `covered_earnings_path_applicability_receipt.v9`; and
 16. `verify_amendment_10_selected_registration_design_lineage_v1`.
 
-The complete nonlifecycle schema set newly introduced by Amendment 10 is
-exactly these three identifiers in order:
-`amendment_10_derived_unit_authority_closure_sweep.v1`,
-`psid_derived_typed_value_unit_relation.v1`, and
-`psid_successor_terminal_census.v1`. Concatenating the displayed lifecycle
-order and that triple is the exact 19-name successor inventory. The lists are
-disjoint and contain no alias. An omitted, extra, duplicate, misspelled,
-undefined, or candidate-selectable identifier blocks ratification.
+The sole nonlifecycle schema is the fully defined
+`amendment_10_derived_unit_authority_closure_sweep.v1`. The exact successor
+inventory is therefore those 16 followed by that singleton: 17 total.
+`psid_derived_typed_value_unit_relation.v1` and
+`psid_successor_terminal_census.v1` are not identifiers and may not enter a
+registry, receipt, payload, or version dispatch. The statement, candidate,
+movement, failure, and census relations are derived outputs defined directly
+in §§24.2-24.4. An omitted, extra, duplicate, misspelled, undefined, or
+candidate-selectable identifier blocks ratification.
 
-### 24.10 Post-Amendment-10 build, ratification, Q5, and registration order
+### 24.10 Post-Amendment-10 order and unresolved authority
 
-#### 24.10.1 The blockers Amendment 10 does not remove
+#### 24.10.1 What remains blocked
 
-Two independent blockers survive Amendment 10 and are restated so that no
-build order can be read as authorizing production.
-
-First, **the storage bound**. §22.4.5's A8-R04 finding is a fact about the
-explicit-array requirement and the surviving member population. §24.5.5 and
-A10-R05 recompute it over the successor relation and obtain
-85,674,104,100,325 bytes, above 59 times measured capacity. The
+Two production blockers survive. First, the corrected successor floor is
+85,695,692,636,367 bytes, about 59.77 times measured capacity, so the
 `pass_with_closed_failures` artifact remains physically unconstructible.
+Second, §23.9.1's V-B6 authority result remains nonpassing: a derived unit
+supplies no missing substantive authority and changes no boundary.
 
-Second, **the V-B6 authority blocker**. §23.9.1's result is unchanged: every
-preliminary and final 22-row reconstruction keeps V-B6 in the same position,
-reruns R10a, both R11 arms, and post-inventory R10b, and obtains a nonpassing
-V-B6 row. Supplying a derived unit cures a missing derivation input only; it
-supplies no missing authority and relaxes no boundary.
+Separately, of the two source-required under-determined members in §24.1,
+`typed_value_unit` is resolved here and `missing_reason_code` is escalated.
+§19.3.2 requires a nonempty source-backed reason for a missing literal, but no
+registered document states a vocabulary or derivation. Its missing
+disposition is reproducible; its reason code is not. A further design
+successor is required, and no default may be invented.
 
-A third item is newly escalated rather than resolved. `missing_reason_code` is
-required nonempty and source-backed by §19.3.2 for every missing literal, the
-design fixes no vocabulary for it, and no registered document states one. Its
-*disposition* is derivable and already reproduces the committed
-literal-missing sets on all 89,599 fields; the reason code itself is not.
-Amendment 10 takes no position on it beyond recording that it is unresolved,
-that no default may be invented for it, and that a further design successor is
-required. Opening that successor now is recommended, because on present
-evidence any implementation that validates it will fail.
+#### 24.10.2 Referee, D10, implementation, Q5, and production
 
-#### 24.10.2 Referee, D10, implementation, Q5, capture, and production
-
-This subsection replaces §23.9.2 as the live revision-12 protocol:
-
-1. Submit the complete append-only §24 candidate bytes to adversarial referee
-   review without a source implementation change beyond the §24.4.2 machinery,
-   and without Q5, slot, inventory, registry, capture, correction evaluation,
-   output, or other non-document tree change in this authoring lane.
-2. Resolve every finding and verify the complete round-to-round diff; exact
-   2,653,817-byte D9 prefix and identity; all frozen sources and unchanged
-   authenticated digests; the five quoted governing sentences and the applied
-   contradiction; §20.3.5's replacing precedence and the exact movable
-   population; the complete statement census and its locator digest; the
-   58-row comparator census; the 55-row clause table, its grounding
-   fence, and its 3 inert rows; the closed 14-identifier unit vocabulary;
-   the 1,227-row unit-bearing statement fence and both of its digests; the
-   successor matrix, count array, ordered assignment, movement relation, and
-   eight-row failure-reason artifact; every superseding row in §24.5; A10-R01
-   through A10-R05 including both limbs of A10-R05; §24.7's closure sweep;
-   the 19-name successor inventory; the D10/Q5 edge; and every lifecycle and
-   build walk. Continue until the exact final bytes receive affirmative
-   ratification.
+1. Submit the complete append-only candidate to adversarial review without Q5,
+   slot, inventory, registry, capture, correction execution, output, or other
+   non-document production change in the authoring lane.
+2. Resolve every finding and verify: the complete 2,653,817-byte D9 prefix;
+   frozen source identities; 41 anchors, 162 clauses including 51 defeats and
+   80 full-span Actual rows, 16 units, all candidate and zero-residual pins;
+   the 1,525-row positive fence; A10-R04's complete pins and
+   abort-without-emission behavior; all completed successor and storage
+   figures; the corrected four-minimum floors; A10-R01-R05; the defined
+   closure sweep; 58-row comparator; 16-name lifecycle plus one-name
+   nonlifecycle inventory; D10/Q5 edge; and every lifecycle/build walk.
+   Continue until the exact final bytes receive affirmative ratification.
 3. Ratify only those accepted bytes in one identifiable future document-only
-   commit D10. No authoring, audit, review-response, artifact, Q5, runtime, or
-   registration change may be included in D10.
-4. After D10, separately review the §24.4.2 machinery against the frozen
-   sources, rebuild the input relation, rerun A10-R01 through A10-R05 from
-   authenticated sources rather than from this document, and require fresh
-   byte equality on every digest §24 pins. Freeze the independently matched
-   six-position revision-12 full-relation identity before Q5. Only that exact
-   checked and pinned relation may precede Q5. First-add Q5 alone at its
-   strict post-D10 single-parent commit.
-5. After Q5 passes, construct and accept only the guarded slot authority,
-   official slot registry, and complete actual official inventory in official
-   order, including its E-domain equations, negative census over the 16,486
-   T-minus keys, and derived-unit member-row reads. Immediately after actual
-   inventory acceptance, run A7-R10b from fresh inputs and prove absence of
-   every residual-9 key array, carrier, ID, consequence, amount read, and
-   passing or accepted V-B6 result.
-6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain. Rerun
-   R10a, both R11 arms, and R10b from their proper inputs, never copied
-   outputs. V-B6 must be nonpassing and the domain must abort. Under present
-   evidence no residual-9 registry, V-B6 bundle, correction final acceptance,
-   receipt, registration, production correction, context output, certificate,
-   publication, or external merge may follow from this path.
-7. The v9 capture/domain/receipt/registration and v10 bundle schemas in §24.9
-   remain defined for exact lifecycle closure and a future lawful authority.
-   They may instantiate only after later ratified authorities change the
-   presently nonpassing V-B6 result and the presently unconstructible
-   artifact, without weakening the layer law, fabricating a carrier, promoting
-   a candidate image, sourcing a member-row field from evidence, defaulting a
-   unit, or copying a predecessor result. That work is outside Amendment 10.
+   commit D10. No authoring, audit, response, artifact, Q5, runtime, or
+   registration change may be included.
+4. After D10, separately review the census machinery against frozen sources;
+   rebuild the input once; rerun A10-R01-R05 rather than reading this document;
+   require every byte/count/digest pin; freeze the matched six-position
+   revision-12 relation identity; and first-add Q5 alone at its strict
+   post-D10 single-parent commit.
+5. Only after Q5 may guarded slot authority, official slot registry, and the
+   complete actual inventory be built in official order, with the negative
+   census over 16,110 T-minus keys and fresh derived-unit reads. Rerun R10b
+   immediately after inventory acceptance.
+6. Freshly evaluate V-B6 and all 22 domain rows, rerunning R10a, both R11 arms,
+   and R10b. On present evidence V-B6 is nonpassing and the domain aborts. No
+   bundle, receipt, registration, correction result, publication, or external
+   merge follows.
+7. The §24.9 schemas may instantiate only after later ratified authority
+   changes both presently blocking facts without weakening layer law,
+   fabricating a carrier, promoting a candidate image, defaulting a unit,
+   sourcing a member row from evidence, or copying a predecessor result.
 
-At these draft bytes none of steps 3-7 has occurred. No D10, successor
-implementation, canonical relation artifact, Q5, official inventory, guarded
-consumer artifact, lifecycle instance, carrier, receipt, registration,
-correction result, or output is claimed. Amendment 10 supplies one
-under-determined value from the one place any registered source states it,
-publishes the terminal movement that evaluating the ratified requirement
-produces, supersedes every downstream figure the movement touches, and leaves
-both surviving blockers exactly where it found them.
+At these draft bytes no D10, Q5, official inventory, bundle, receipt,
+registration, or production result is claimed. Of two under-determined
+source-required members, Amendment 10 resolves one from source prose and
+escalates the other; it publishes the resulting terminal movement and leaves
+both production blockers intact.
 
 **Amendment 10 is inoperative unless and until its exact D10 ratification
 commit is bound by a validator-accepted v9 fresh-registration receipt.** The
-current V-B6 nonpassing result prevents that receipt. Ratification alone
-authorizes only the separately reviewed machinery review, relation rebuild,
+current V-B6 and constructibility failures prevent that receipt. Ratification
+alone authorizes only the separately reviewed machinery, relation rebuild,
 vector rerun, Q5, and expected-negative guarded steps above.
