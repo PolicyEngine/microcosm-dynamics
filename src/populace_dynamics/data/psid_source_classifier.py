@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter, defaultdict
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import Any
@@ -113,6 +113,11 @@ class FieldDerivationDetails:
     range_renderability_counts: tuple[dict[str, Any], ...]
     derivation_status: str
     resolution_reason: str
+    # The selected declaration tuple. It is a derivation input rather than a
+    # serialized member, so `as_dict` deliberately omits it; §22 consumers
+    # need it to rebuild the same renderability bands.
+    selected_width: int | None = None
+    selected_decimal_places: int | None = None
 
     def as_dict(self) -> dict[str, Any]:
         """Return a JSON-serializable, source-ordered projection."""
@@ -1291,7 +1296,17 @@ def derive_field_details(
         range_renderability_counts=range_renderability_counts,
         derivation_status=status,
         resolution_reason=reason,
+        selected_width=trace.get("width"),
+        selected_decimal_places=trace.get("decimal_places"),
     )
+
+
+def normalize_field_entries(
+    field: SourceField,
+) -> tuple[tuple[_Literal, ...], tuple[_Range, ...]]:
+    """Return one field's complete normalized literal and range entries."""
+
+    return _normalize_entries(field)
 
 
 def _failure_reason_rows(
@@ -1329,11 +1344,16 @@ def classify_complete_corpus(
     raw_derivations: Sequence[Mapping[str, Any]],
     *,
     validate_expected: bool = True,
+    observer: Callable[[SourceField, FieldDerivationDetails], None]
+    | None = None,
 ) -> dict[str, Any]:
     """Classify the complete source denominator and return census digests.
 
     ``raw_derivations`` is the return of ``derive_all_raw_censuses``.  Rows
     remain in ``corpus.fields`` order, which is the §20.3.7 denominator order.
+    ``observer`` sees every field's complete derivation as it is produced, so
+    a §22 consumer can accumulate partition facts in this one pass instead of
+    reclassifying the corpus.
     """
 
     observations = _observations_by_key(raw_derivations)
@@ -1350,6 +1370,8 @@ def classify_complete_corpus(
     assignment: list[list[Any]] = []
     for field in corpus.fields:
         details = derive_field_details(field, observations[field.key])
+        if observer is not None:
+            observer(field, details)
         status = details.derivation_status
         reason = details.resolution_reason
         field_details.append(details.as_dict())

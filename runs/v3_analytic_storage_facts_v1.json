@@ -1,0 +1,126 @@
+{
+  "a8_r04_result": {
+    "available_capacity_multiple": 186.03406167418098,
+    "emitted_artifact": null,
+    "empty_object_floor_bytes": 2462127537263,
+    "row_floor_bytes": 266728784621000,
+    "row_floor_tib": "242.5884164231320028193295001983642578125",
+    "status": "pass",
+    "total_members": 820709179087,
+    "vector_id": "A8-R04"
+  },
+  "amendment_8_vector_identity": {
+    "vector_array_byte_count": 907,
+    "vector_array_sha256": "c405b3a7f228b3e3286714d21aadedcdd6e3df990714e2ddaef85c861e13a8c4",
+    "vector_id_array_sha256": "0d6a8061baf6378bbb2ac20d05410dc2a12c0f096344445798159437238154f1"
+  },
+  "amendment_8_vector_results": [
+    {
+      "analytic_byte_count": 207,
+      "analytic_storage_sha256": "bc5a85e43ba6e26345bbf3e49fc9a9915b0fe4912580103c4f2172acc4ed338e",
+      "explicit_byte_count": 944,
+      "explicit_sha256": "fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78",
+      "member_count": 3,
+      "member_domain_sha256": "fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78",
+      "production_arm": "explicit",
+      "status": "pass",
+      "vector_id": "A8-R01"
+    },
+    {
+      "analytic_byte_count": 222,
+      "analytic_storage_sha256": "6fe2c1613e97f6258873163601a61aa7737c34e60e62116ddac8863a595d15d5",
+      "member_count": 4097,
+      "production_arm": "analytic",
+      "status": "pass",
+      "streamed_byte_count": 1315139,
+      "streamed_member_domain_sha256": "063204ad9b973e0c74681aea5b7015cd1e5e868a6664de45de50943361eaac4e",
+      "vector_id": "A8-R02"
+    },
+    {
+      "negative_count": 4,
+      "rejections": [
+        {
+          "byte_count": 205,
+          "negative_id": "arity_three_interval_omits_member_count",
+          "raw_storage_sha256": "3160774b10614665daaa4222251fd5fa894a7c627fc04ebfa40444464d3e0ab9",
+          "rejection": "interval must be a four-position array"
+        },
+        {
+          "byte_count": 219,
+          "negative_id": "split_maximal_run_is_noncanonical",
+          "raw_storage_sha256": "661df9d3afb6ec2dfa711727ae6d9ed890751db17f054a988cca951be9f848a7",
+          "rejection": "intervals are not the unique maximal runs"
+        },
+        {
+          "byte_count": 207,
+          "negative_id": "count_inconsistent_upper_bound",
+          "raw_storage_sha256": "560aa8ad616851bb14e1e15d9b411f1258fed769c171652d7b9660fc2decf66f",
+          "rejection": "interval bound arithmetic is inconsistent"
+        },
+        {
+          "byte_count": 209,
+          "negative_id": "floating_point_member_count_spelling",
+          "raw_storage_sha256": "ca4768c2ef8b67f4a63bdc3971dea3e1e7909a1c177bedc9b0a760e15faf0aef",
+          "rejection": "interval member_count must be an integer"
+        }
+      ],
+      "status": "pass",
+      "vector_id": "A8-R03"
+    },
+    {
+      "available_capacity_multiple": 186.03406167418098,
+      "emitted_artifact": null,
+      "empty_object_floor_bytes": 2462127537263,
+      "row_floor_bytes": 266728784621000,
+      "row_floor_tib": "242.5884164231320028193295001983642578125",
+      "status": "pass",
+      "total_members": 820709179087,
+      "vector_id": "A8-R04"
+    }
+  ],
+  "analytic_arm_member_count": 820704442195,
+  "analytic_arm_renderable_container_count": 9019,
+  "analytic_arm_renderable_member_count": 820701994620,
+  "analytic_arm_unrenderable_container_count": 36,
+  "analytic_arm_unrenderable_member_count": 2447575,
+  "arm_ambiguous_renderable_member_count": 56480,
+  "complete_field_count": 19903,
+  "complete_member_count": 820709179087,
+  "complete_range_entry_count": 33786,
+  "count_array_sha256": "421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624",
+  "denominator_sha256": "7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764",
+  "explicit_arm_container_count": 58517,
+  "explicit_arm_member_count": 4736892,
+  "facts_sha256": "7d67ba46a3be3f99f69ecafad2a4c4deb96942f8ad9eacc77430a9898de50533",
+  "failure_reason_rows_sha256": "66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324",
+  "ordered_assignment_sha256": "5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e",
+  "peak_rss_bytes": 3538223104,
+  "range_partition_row_count": 33786,
+  "schema_version": "v3_analytic_storage_facts.v1",
+  "status_decomposition_rows": [
+    {
+      "derivation_status": "compiled_source_numeric_grammar",
+      "field_count": 17329,
+      "logical_source_range_member_count": 820025893984,
+      "numeric_range_entry_count": 30452
+    },
+    {
+      "derivation_status": "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
+      "field_count": 1853,
+      "logical_source_range_member_count": 865268,
+      "numeric_range_entry_count": 1853
+    },
+    {
+      "derivation_status": "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay",
+      "field_count": 674,
+      "logical_source_range_member_count": 384135,
+      "numeric_range_entry_count": 1433
+    },
+    {
+      "derivation_status": "compiled_source_numeric_grammar_partial_range_exact_replay",
+      "field_count": 47,
+      "logical_source_range_member_count": 682035700,
+      "numeric_range_entry_count": 48
+    }
+  ]
+}
