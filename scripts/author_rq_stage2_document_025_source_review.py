@@ -163,6 +163,32 @@ def word(
     )
 
 
+def resolve_tail(
+    page_text: str, line_number: int, needle: str, occurrence: int = 0
+) -> tuple[int, int]:
+    """Span from a printed needle to the end of its physical line.
+
+    The 1980 instrument prints its section headers on a line that also
+    carries the printed screen number, so a whole-line span would swallow an
+    unrelated token.  This selector keeps the exact printed header bytes.
+    """
+
+    start, _ = resolve_needle(page_text, line_number, needle, occurrence)
+    return start, resolve_line(page_text, line_number)[1]
+
+
+def tail(
+    page: int,
+    number: int,
+    needle: str,
+    kind: str,
+    key: str,
+    occurrence: int = 0,
+    **rest: Any,
+):
+    return spec(page, kind, ("tail", number, needle, occurrence), key, **rest)
+
+
 def resolve(page_text: str, selector: Sequence[Any]) -> tuple[int, int]:
     mode = selector[0]
     if mode == "line":
@@ -171,6 +197,8 @@ def resolve(page_text: str, selector: Sequence[Any]) -> tuple[int, int]:
         return resolve_block(page_text, selector[1], selector[2])
     if mode == "needle":
         return resolve_needle(page_text, selector[1], selector[2], selector[3])
+    if mode == "tail":
+        return resolve_tail(page_text, selector[1], selector[2], selector[3])
     raise SpecError(f"unknown selector mode {mode!r}")
 
 
