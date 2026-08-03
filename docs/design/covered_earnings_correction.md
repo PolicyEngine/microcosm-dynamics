@@ -39324,10 +39324,14 @@ partition, and the validator must reject it before any semantic digest exists.
 
 #### 23.2.3 The arm-ambiguous renderable member row
 
-`renderable_member_rows` gains exactly one additional row shape. The relation
-already carries two shapes across the partition pair — the seven-key
-renderable row and the four-key unrenderable row — and this is the third. It
-is not an arm, a representation, or an alternate encoding.
+`renderable_member_rows` gains exactly one additional row shape. The partition
+pair already carries two — the seven-key renderable row and the four-key
+unrenderable row — and this is the third across the pair and the second inside
+`renderable_member_rows`. It is distinguished from both by its keyset alone,
+so no row is ambiguous about which shape it is: only this shape has
+`authoritative_image_disposition`, only the four-key shape has
+`unrenderable_reason`, and only the seven-key shape has `parsed_scalar`. It is
+not an arm, a representation, or an alternate encoding.
 
 For a member that §22.4.5 places in `renderable_member_rows` and for which
 the field's `complete_domain_arm_disposition.arm_ambiguous_member_rows`
