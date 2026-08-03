@@ -9,7 +9,9 @@ authenticated codebook documents. Its canonical five-position array is
 The food-family adjudication is settled from complete raw prose: the ten broad
 construction/provenance predicates are `no_unit_naming_clause`; the nested,
 unconditional whole-domain dollar sentences control all 20 weekly and all
-nine annual fields. Total-start grammar implementation is in progress.
+nine annual fields. The cleartext total-start authority and exact-cover gate
+are implemented over the lawful raw relation; documentation regeneration is
+in progress.
 
 ## Done
 
@@ -28,11 +30,20 @@ nine annual fields. Total-start grammar implementation is in progress.
   outcome.
 - Inventoried the exact 20 weekly-food-needs fields and nine annual-food fields
   that the complete-family regression must exercise.
+- Adjudicated all 1,114,747 distinct contextual starts and all 2,240,669
+  occurrences, with zero unadjudicated, unselected, or overselected starts.
+- Added exact raw coding-start authority for 203 spellings and 1,154
+  occurrences, including copular `are`, Code/Coded, uppercase CODE, ENTER,
+  ENTER-colon, and RECORD families.
+- Bound V418's three-space raw spelling and rejected the one-space
+  evidence-artifact spelling.
+- Rebuilt the raw-route census, statement, movement, failure, semantic
+  authority, assignment, and payload pins; peak RSS was 1,316,700,160 bytes.
 
 ## Next
 
-- Implement raw-route total adjudication, the extended statement grammar, and
-  explicit raw-spacing/coding-instruction variants.
-- Regenerate pins, census, successor data, floors, fixtures, and §24 prose.
+- Finish and commit focused authority/gate regressions.
+- Regenerate §24's source narrative, proof, pins, successor data, floors, and
+  A10-R01--R05 fixtures.
 - Run the required prefix, test, and diff checks, write the final report, then
   remove this progress file before completion.

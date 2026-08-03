@@ -25,8 +25,14 @@ from populace_dynamics.data.psid_unit_authority import (
     canonical_json_bytes,
     canonical_sha256,
     clause_occurrences,
+    coding_candidate_disposition,
+    coding_candidate_table,
+    coding_candidates,
     denotation_candidate_disposition,
+    denotation_candidate_occurrence_identity,
+    denotation_candidate_overselected_count,
     denotation_candidate_start_count,
+    denotation_candidate_start_partition,
     denotation_candidate_table,
     denotation_candidate_unselected_count,
     denotation_candidates,
@@ -35,6 +41,7 @@ from populace_dynamics.data.psid_unit_authority import (
     failure_reason_rows,
     field_unit,
     normalize_description,
+    segment_start_authority_table,
     statement_anchor,
     statement_disposition,
     statement_predicate,
@@ -43,12 +50,9 @@ from populace_dynamics.data.psid_unit_authority import (
     successor_terminal,
 )
 from populace_dynamics.data.psid_unit_predicate_authority import (
-    EXPLICIT_NO_DENOTATION_CANDIDATE_COUNT,
-    EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES,
-    EXPLICIT_NO_DENOTATION_CANDIDATE_RELATION_SHA256,
+    CODING_START_AUTHORITY,
     PREDICATE_AUTHORITY,
-    PREDICATE_AUTHORITY_ROW_COUNT,
-    PREDICATE_AUTHORITY_SHA256,
+    SEGMENT_START_AUTHORITY,
 )
 
 COMPILED = "compiled_source_numeric_grammar"
@@ -64,6 +68,160 @@ PER_HOUR = "The values for this variable represent dollars and cents per hour."
 HOURS = (
     "The values for this variable represent the actual number of hours per "
     'week Wife/"Wife" worked.'
+)
+
+RAW_V100 = (
+    "5. Length of Interview\n"
+    "Code actual number of MINUTES (e.g. 1 hour and 10 minutes - 70 minutes)."
+)
+RAW_V121 = (
+    "B3. Is he/she in school? (Code number of children in FU in school and "
+    "living at home)\n(exclude in-laws)"
+)
+RAW_V155 = (
+    "C20. (If Yes) What kinds of things have you done on your car(s) in the "
+    "last year?\nPRIORITY CODE - highest number."
+)
+RAW_V194 = (
+    "Thumbnail sketch evidence on housing\n"
+    "PRIORITY CODE the lowest number applicable."
+)
+RAW_V229 = (
+    "F46. About how much did you make per hour for this?\n"
+    "(Code dollars and cents per hour.)"
+)
+RAW_V228 = (
+    "F43. What did you do?\n"
+    "(Code same as other occupation code (Col. 12). If two or more jobs, "
+    "code the one with the\nlowest code number (highest status)"
+)
+RAW_V373 = (
+    "Average Value Per Room in Dwelling Unit\n"
+    "For Homeowners: V5 House Value / V102 Number of rooms in DU\n"
+    "*For Renters: 10 x V11 Annual Rent / V102 Number of rooms in DU\n"
+    "*For those who neither own nor rent: 10 x V12 Rental Value / V102     "
+    "Number of rooms in DU\n"
+    "xxxx. Coded in Dollars\n"
+    "*(Calculated value assumes that value of DU is approximately 10 times "
+    "its annual rental\nvalue)"
+)
+RAW_V418 = (
+    "Housing and Neighborhood Quality Redone (Revised V387)\n"
+    "Owns home V103 = 1\n"
+    "Lives 5-30 miles from center of city of 50,000 or more V189 = 2, 3\n"
+    "Single Family home V190 = 1\n"
+    "Neighborhood of Single Family Houses V192 = 2\n"
+    "Value per room Value - (10 x rent for non-owners) > 2000   V374=4-8\n"
+    "Actual - Required rooms   V381 = 5 - 9\n"
+    "No visible defects V194 = 5\n"
+    "OMITS: Car Lack Felt Share\n"
+    "Dwelling (Hard to Determine)\n"
+    "Changes: Distance to Center, Surplus of Rooms"
+)
+RAW_V494 = (
+    "Annual food needs standard\n"
+    "Based on the USDA Low Cost plan estimates of the weekly food costs, "
+    "according to the table\n"
+    "below (reproduced from Family Economics Review March, 1967), summed "
+    "for the family and\n"
+    "converted to an annual amount and adjusted for economies of scale by "
+    "USDA rules as\nfollows:\n"
+    "Single person-add 20%\nTwo persons-add 10%\nThree persons-add 5%\n"
+    "Four persons-no change\nFive persons-deduct 5%\n"
+    "Six or more persons-deduct 10%\n"
+    "INDIVIDUAL FOOD STANDARD (LOW COST)\n"
+    "Under 4:Male=3.90\nUnder 4:Female=3.90\n"
+    "4-6:Male=4.60\n4-6:Female=4.60\n"
+    "7-9:Male=5.50\n7-9:Female=5.50\n"
+    "10-12:Male=6.40\n10-12:Female=6.30\n"
+    "13-15:Male=7.40\n13-15:Female=6.90\n"
+    "16-20:Male=8.70\n16-20:Female=7.20\n"
+    "21-35:Male=7.50\n21-35:Female=6.50\n"
+    "36-55:Male=6.90\n36-55:Female=6.30\n"
+    "56+:Male=6.30\n56+:Female=5.40\n"
+    "(NOTE that the values for this variable are in 1967 dollars. This "
+    "same standard will be\n"
+    "used in both Waves I and II. Adjustments for inflation, etc. are left "
+    "to users.)"
+)
+RAW_V2137 = "J1. Code number of things mentioned to J1"
+RAW_V2192 = (
+    "L25-27. (M9) Code Number of States or Countries in which R has lived "
+    "including present\nlocation"
+)
+RAW_V2470 = (
+    "Weekly Food Needs\n"
+    "This variable's values are based on USDA Low-Cost Plan estimates of "
+    "weekly food costs,\n"
+    "according to the table below (reproduced from Family Economics "
+    "Review, June 1967), summed\n"
+    "for the family as it was at the time of the interview.\n"
+    "INDIVIDUAL FOOD STANDARD (LOW COST)\n"
+    "$3.90 for both males and females under age 4\n"
+    "$4.60 for both males and females age 4-6\n"
+    "$5.50 for both males and females age 7-9\n"
+    "$6.40 for males age 10-12\n$6.30 for females age 10-12\n"
+    "$7.40 for males age 13-15\n$6.90 for females age 13-15\n"
+    "$8.70 for males age 16-20\n$7.20 for females age 16-20\n"
+    "$7.50 for males age 21-35\n$6.50 for females age 21-35\n"
+    "$6.90 for males age 36-55\n$6.30 for females age 36-55\n"
+    "$6.30 for males age 56 and older\n"
+    "$5.40 for females age 56 and older\n"
+    "This same standard has been used in previous waves. Since the table is "
+    "from 1967, values\n"
+    "are in 1967 dollars. Adjustments for inflation, etc., are left to "
+    "users.\n"
+    "The actual weekly food needs in dollars and cents are coded here."
+)
+RAW_V4367 = (
+    "Number of months used food stamps in 1975\n"
+    "Code 1-11 for actual number of months used food stamps in 1975"
+)
+RAW_V4742 = "Length of Interview\nCode actual number of minutes"
+RAW_V5453 = (
+    "E13. How long have you been looking for work?\n"
+    "Code actual number of weeks (01 - 98)"
+)
+RAW_V9378 = (
+    "Annual 1983 Food Standard\n"
+    "This variable is generated by multiplying the weekly food needs "
+    "(V8853) by 52 and then\n"
+    "making the following adjustments for economies of scale:\n"
+    "+20% for one-person families\n+10% for two-person families\n"
+    "+ 5% for three-person families\n"
+    "no adjustment for four-person families\n"
+    "- 5% for five-person families\n"
+    "-10% for families with six or more persons\n"
+    "The values represent the actual annual food standard in whole dollars "
+    "for the 1983 family.\n"
+    "Note that V8823 is based on a table from 1967, with 1967 dollar values."
+)
+RAW_ER55305 = (
+    "H6k3. (Are/Is) (you/HEAD) currently in treatment for "
+    "(your/his/her) cancer, in remission,\n"
+    "or has it been cured?\n"
+    "IF R says can't afford insurance to get treatment, are doing nothing, "
+    "etc, ENTER: 4"
+)
+
+ROUND2_RAW_DESCRIPTIONS = (
+    RAW_V100,
+    RAW_V121,
+    RAW_V155,
+    RAW_V194,
+    RAW_V228,
+    RAW_V229,
+    RAW_V373,
+    RAW_V418,
+    RAW_V494,
+    RAW_V2137,
+    RAW_V2192,
+    RAW_V2470,
+    RAW_V4367,
+    RAW_V4742,
+    RAW_V5453,
+    RAW_V9378,
+    RAW_ER55305,
 )
 
 
@@ -163,7 +321,9 @@ def test_omitted_denotation_families_are_selected(text: str) -> None:
     assert statement_disposition(text)[0] is not None
 
 
-def test_actual_residual_selector_covers_line_start_and_embedded_tail() -> None:
+def test_actual_residual_selector_covers_line_start_and_embedded_tail() -> (
+    None
+):
     description = (
         "Question text Actual number of weeks\n"
         "Actual dollars and cents per hour"
@@ -178,9 +338,11 @@ def test_actual_residual_selector_covers_line_start_and_embedded_tail() -> None:
 
 
 def test_actual_explicit_no_denotation_is_not_a_statement() -> None:
-    description = "Actual - Required rooms V381 = 5 - 9"
-    assert actual_candidates(description) == (description,)
-    assert description_statements(description) == ()
+    candidate = "Actual - Required rooms   V381 = 5 - 9"
+    assert candidate in actual_candidates(RAW_V418)
+    assert actual_candidate_disposition(candidate) == "explicit_no_denotation"
+    assert description_statements(RAW_V418) == ()
+    assert field_unit(RAW_V418) == (None, "no_denotation_statement")
 
 
 def test_actual_candidate_adjudication_is_closed_and_fail_closed() -> None:
@@ -192,31 +354,16 @@ def test_actual_candidate_adjudication_is_closed_and_fail_closed() -> None:
     )
 
 
-def test_exhaustive_candidate_selector_covers_lexemes_and_actual_lines() -> None:
-    description = (
-        "A component represents a lookup value.\n"
-        "Actual number of weeks\n"
-        "Question text without a denotation."
-    )
-    assert denotation_candidates(description) == (
-        "A component represents a lookup value.",
-        "Actual number of weeks Question text without a denotation.",
-        "Actual number of weeks",
-    )
-    assert denotation_candidate_disposition(
-        "A component represents a lookup value."
-    ) == "unadjudicated_no_denotation"
-    assert denotation_candidate_disposition(
-        "Actual number of weeks"
-    ) == "whole_domain_denotation"
-    assert denotation_candidate_start_count(description) == 15
-    assert denotation_candidate_unselected_count(description) == 0
-    assert (
-        denotation_candidate_unselected_count(
-            "Actual number of weeks\nFormula prose without a period"
-        )
-        == 0
-    )
+def test_exhaustive_candidate_selector_covers_lexemes_and_actual_lines() -> (
+    None
+):
+    candidates = denotation_candidates(RAW_V4742)
+    assert len(candidates) == denotation_candidate_start_count(RAW_V4742)
+    assert candidates[0] == "Length of Interview Code actual number of minutes"
+    assert "Code actual number of minutes" in candidates
+    assert "minutes" in candidates
+    assert denotation_candidate_unselected_count(RAW_V4742) == 0
+    assert denotation_candidate_overselected_count(RAW_V4742) == 0
     assert (
         actual_candidate_disposition(
             "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)"
@@ -227,10 +374,224 @@ def test_exhaustive_candidate_selector_covers_lexemes_and_actual_lines() -> None
         actual_candidate_disposition("Actual furlongs per fortnight")
         == "unadjudicated_no_denotation"
     )
+    assert (
+        denotation_candidate_disposition(
+            "A component represents a lookup value."
+        )
+        == "unadjudicated_context_free_candidate"
+    )
     assert statement_disposition("Actual furlongs per fortnight") == (
         None,
         "unadjudicated_denotation_candidate",
     )
+
+
+@pytest.mark.parametrize(
+    ("description", "candidate", "statement", "unit"),
+    [
+        (
+            RAW_V100,
+            "Code actual number of MINUTES (e.g.",
+            "Code actual number of MINUTES (e.g. 1 hour and 10 minutes - "
+            "70 minutes).",
+            "minute",
+        ),
+        (
+            RAW_V121,
+            "Code number of children in FU in school and living at home) "
+            "(exclude in-laws)",
+            "Code number of children in FU in school and living at home) "
+            "(exclude in-laws)",
+            "count",
+        ),
+        (
+            RAW_V229,
+            "Code dollars and cents per hour.)",
+            "Code dollars and cents per hour.)",
+            "united_states_dollar_per_hour",
+        ),
+        (
+            RAW_V373,
+            "Coded in Dollars *(Calculated value assumes that value of DU is "
+            "approximately 10 times its annual rental value)",
+            "Coded in Dollars",
+            "united_states_dollar",
+        ),
+        (
+            RAW_V2137,
+            "Code number of things mentioned to J1",
+            "Code number of things mentioned to J1",
+            "count",
+        ),
+        (
+            RAW_V2192,
+            "Code Number of States or Countries in which R has lived including "
+            "present location",
+            "Code Number of States or Countries in which R has lived including "
+            "present location",
+            "count",
+        ),
+        (
+            RAW_V4367,
+            "Code 1-11 for actual number of months used food stamps in 1975",
+            "Code 1-11 for actual number of months used food stamps in 1975",
+            "month",
+        ),
+        (
+            RAW_V4742,
+            "Code actual number of minutes",
+            "Code actual number of minutes",
+            "minute",
+        ),
+        (
+            RAW_V5453,
+            "Code actual number of weeks (01 - 98)",
+            "Code actual number of weeks (01 - 98)",
+            "week",
+        ),
+    ],
+)
+def test_complete_raw_coding_descriptions_name_the_grounded_unit(
+    description: str,
+    candidate: str,
+    statement: str,
+    unit: str,
+) -> None:
+    assert candidate in coding_candidates(description)
+    assert coding_candidate_disposition(candidate) == (
+        "whole_domain_denotation"
+    )
+    assert statement in description_statements(description)
+    assert statement_disposition(statement) == (unit, "unit_naming_clause")
+    assert field_unit(description) == (
+        unit,
+        "derived_from_denotation_statement",
+    )
+
+
+@pytest.mark.parametrize(
+    ("description", "statement"),
+    [
+        (RAW_V155, "CODE - highest number."),
+        (RAW_V194, "CODE the lowest number applicable."),
+    ],
+)
+def test_complete_raw_priority_code_descriptions_are_visible_defeaters(
+    description: str,
+    statement: str,
+) -> None:
+    assert coding_candidates(description) == (statement,)
+    assert coding_candidate_disposition(statement) == (
+        "whole_domain_denotation"
+    )
+    assert description_statements(description) == (statement,)
+    assert statement_disposition(statement) == (None, "defeating_clause")
+    assert field_unit(description) == (
+        None,
+        "defeated_denotation_statement",
+    )
+
+
+def test_complete_raw_enter_colon_instruction_is_explicitly_nonwhole() -> None:
+    candidate = "ENTER: 4"
+    assert coding_candidates(RAW_ER55305) == (candidate,)
+    assert coding_candidate_disposition(candidate) == (
+        "explicit_no_whole_domain_denotation"
+    )
+    assert description_statements(RAW_ER55305) == ()
+    assert field_unit(RAW_ER55305) == (None, "no_denotation_statement")
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        "Code actual number of MINUTES (e.g.",
+        "Code actual number of MINUTES (e.g. fabricated continuation.",
+        "Code same as other occupation code (Col.",
+        "Code same as other occupation code (Col. fabricated continuation.",
+    ],
+)
+def test_truncated_or_fabricated_abbreviation_span_cannot_inherit_authority(
+    description: str,
+) -> None:
+    candidate = coding_candidates(description)[0]
+    assert candidate in {
+        "Code actual number of MINUTES (e.g.",
+        "Code same as other occupation code (Col.",
+    }
+    assert coding_candidate_disposition(candidate) == (
+        "whole_domain_denotation"
+    )
+    assert description_statements(description) == (candidate,)
+    assert statement_disposition(candidate) == (
+        None,
+        "unadjudicated_denotation_candidate",
+    )
+    assert field_unit(description) == (
+        None,
+        "defeated_denotation_statement",
+    )
+
+
+def test_full_abbreviation_spans_retain_only_their_exact_adjudication() -> (
+    None
+):
+    assert field_unit(RAW_V100)[0] == "minute"
+    assert field_unit(RAW_V228) == (None, "no_statement_names_a_unit")
+
+
+def test_complete_raw_v494_copular_statement_names_1967_dollars() -> None:
+    statement = "the values for this variable are in 1967 dollars."
+    assert statement in description_statements(RAW_V494)
+    assert statement_predicate(statement) == "in 1967 dollars."
+    assert statement_disposition(statement) == (
+        "united_states_dollar",
+        "unit_naming_clause",
+    )
+    assert field_unit(RAW_V494) == (
+        "united_states_dollar",
+        "derived_from_denotation_statement",
+    )
+
+
+@pytest.mark.parametrize("description", [RAW_V2470, RAW_V9378])
+def test_complete_raw_food_family_keeps_context_and_derives_dollars(
+    description: str,
+) -> None:
+    statements = description_statements(description)
+    assert statements
+    assert statement_disposition(statements[0]) == (
+        None,
+        "no_unit_naming_clause",
+    )
+    assert any(
+        statement_disposition(statement)
+        == ("united_states_dollar", "unit_naming_clause")
+        for statement in statements[1:]
+    )
+    assert field_unit(description) == (
+        "united_states_dollar",
+        "derived_from_denotation_statement",
+    )
+
+
+@pytest.mark.parametrize("description", ROUND2_RAW_DESCRIPTIONS)
+def test_round2_raw_descriptions_have_total_exact_start_cover(
+    description: str,
+) -> None:
+    partition = denotation_candidate_start_partition(description)
+    assert set(partition) == {
+        "whole_domain_denotation",
+        "explicit_no_whole_domain_denotation",
+        "explicit_no_denotation",
+        "unadjudicated_start",
+    }
+    assert sum(partition.values()) == denotation_candidate_start_count(
+        description
+    )
+    assert partition["unadjudicated_start"] == 0
+    assert denotation_candidate_unselected_count(description) == 0
+    assert denotation_candidate_overselected_count(description) == 0
 
 
 def test_every_actual_denotation_has_one_full_span_clause() -> None:
@@ -472,23 +833,34 @@ def test_explicit_and_general_plural_defeat_is_one_full_span_hit() -> None:
     assert clause_occurrences(predicate) == ((0, len(predicate), NO_UNIT),)
 
 
-def test_every_authorized_positive_defeats_unknown_left_and_right_extensions(
-) -> None:
+def test_every_authorized_positive_defeats_unknown_left_and_right_extensions() -> (
+    None
+):
     positive_rows = [
         (predicate, unit)
         for predicate, unit, reason in PREDICATE_AUTHORITY
         if reason == "unit_naming_clause"
     ]
-    assert len(positive_rows) == 1_521
+    assert len(positive_rows) == 1_531
     for predicate, unit in positive_rows:
         assert unit is not None
         assert unit in {
             found for _start, _end, found in clause_occurrences(predicate)
         }
         for extension in (f"unknown {predicate}", f"{predicate} unknown"):
-            assert {found for _start, _end, found in clause_occurrences(extension)} == {
-                NO_UNIT
+            units = {
+                found for _start, _end, found in clause_occurrences(extension)
             }
+            if predicate.startswith(
+                ("CODE ", "Code ", "Coded ", "ENTER ", "RECORD ")
+            ):
+                # Direct coding predicates are not lexical clause rows, so
+                # an unknown extension may have no clause hit at all.  It
+                # still cannot inherit any positive unit.
+                assert units in (set(), {NO_UNIT})
+            else:
+                assert units == {NO_UNIT}
+            assert not set(UNIT_VOCABULARY) & units
 
 
 @pytest.mark.parametrize(
@@ -793,8 +1165,9 @@ def test_ordered_assignment_binds_a_retained_resolution_reason() -> None:
     assert first["ordered_assignment_sha256"] == canonical_sha256(
         [(1968, "A", COMPILED, "first_retained_reason")]
     )
-    assert first["ordered_assignment_sha256"] != (
-        changed["ordered_assignment_sha256"]
+    assert (
+        first["ordered_assignment_sha256"]
+        != (changed["ordered_assignment_sha256"])
     )
 
 
@@ -904,38 +1277,132 @@ def test_actual_candidate_table_is_sorted_and_carries_adjudication() -> None:
     )
 
 
-def test_denotation_candidate_table_covers_selected_and_rejected_rows() -> None:
+def test_coding_candidate_table_covers_every_potential_coding_start() -> None:
     rows = [
-        _row(1968, "A", COMPILED, DOLLARS),
-        _row(1968, "B", COMPILED, "A component represents a code."),
+        _row(1968, "A", COMPILED, RAW_V100),
+        _row(1968, "B", COMPILED, RAW_V229),
     ]
-    table = denotation_candidate_table(rows)
+    table = coding_candidate_table(rows)
     assert [row["candidate"] for row in table] == sorted(
-        {DOLLARS, "A component represents a code."}
+        {
+            "Code actual number of MINUTES (e.g.",
+            "Code dollars and cents per hour.)",
+        }
     )
-    by_candidate = {row["candidate"]: row for row in table}
-    assert by_candidate[DOLLARS]["adjudication"] == (
-        "contains_whole_domain_denotation"
+    assert all(
+        row["adjudication"] == "whole_domain_denotation" for row in table
     )
-    assert by_candidate["A component represents a code."]["adjudication"] == (
-        "unadjudicated_no_denotation"
+    assert all(row["selected_statement"] is not None for row in table)
+    assert all(
+        row["occurrence_count"] == row["field_count"] == 1 for row in table
     )
+
+
+def test_denotation_candidate_table_dispositions_every_contextual_start() -> (
+    None
+):
+    rows = [_row(1976, "V4742", COMPILED, RAW_V4742)]
+    table = denotation_candidate_table(rows)
+    assert len(table) == denotation_candidate_start_count(RAW_V4742)
+    assert all(
+        set(row)
+        == {
+            "segment",
+            "word_ordinal",
+            "start_utf8_byte",
+            "candidate",
+            "context_key_sha256",
+            "adjudication",
+            "occurrence_count",
+            "field_count",
+            "witness_field_key",
+        }
+        for row in table
+    )
+    code_row = next(
+        row
+        for row in table
+        if row["candidate"] == "Code actual number of minutes"
+    )
+    assert code_row["adjudication"] == "whole_domain_denotation"
+    assert code_row["word_ordinal"] == 3
+    assert code_row["witness_field_key"] == [1976, "V4742"]
+    assert not any(
+        row["adjudication"] == "unadjudicated_start" for row in table
+    )
+
+
+def test_occurrence_identity_binds_every_start_and_exact_cover() -> None:
+    rows = [
+        _row(1976, "V4742", COMPILED, RAW_V4742),
+        _row(1983, "V9378", COMPILED, RAW_V9378),
+    ]
+    identity = denotation_candidate_occurrence_identity(rows)
+    expected_count = sum(
+        denotation_candidate_start_count(row["source_description"])
+        for row in rows
+    )
+    assert identity["row_count"] == expected_count
+    assert sum(identity["partition"].values()) == expected_count
+    assert identity["partition"]["unadjudicated_start"] == 0
+    assert identity["unselected_count"] == 0
+    assert identity["overselected_count"] == 0
+    assert identity["byte_count"] > 0
+    assert len(identity["sha256"]) == 64
 
 
 def test_frozen_semantic_authorities_have_exact_identity() -> None:
-    assert len(PREDICATE_AUTHORITY) == PREDICATE_AUTHORITY_ROW_COUNT == 2_558
+    assert len(PREDICATE_AUTHORITY) == 2_586
     assert len({row[0] for row in PREDICATE_AUTHORITY}) == len(
         PREDICATE_AUTHORITY
     )
-    assert canonical_sha256(PREDICATE_AUTHORITY) == PREDICATE_AUTHORITY_SHA256
-    assert (
-        len(EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES)
-        == EXPLICIT_NO_DENOTATION_CANDIDATE_COUNT
-        == 53_255
+    assert canonical_sha256(PREDICATE_AUTHORITY) == (
+        "791bbe9436a26516e28aacf243f104d74f8e8053204d3759a414c894fa073f32"
     )
-    assert (
-        canonical_sha256(sorted(EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES))
-        == EXPLICIT_NO_DENOTATION_CANDIDATE_RELATION_SHA256
+
+    assert len(CODING_START_AUTHORITY) == 203
+    assert len({row[0] for row in CODING_START_AUTHORITY}) == len(
+        CODING_START_AUTHORITY
+    )
+    assert canonical_sha256(CODING_START_AUTHORITY) == (
+        "ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b"
+    )
+    assert all(
+        (selected is not None) == (disposition == "whole_domain_denotation")
+        for _candidate, disposition, selected in CODING_START_AUTHORITY
+    )
+
+    assert len(SEGMENT_START_AUTHORITY) == 59_445
+    assert len({row[0] for row in SEGMENT_START_AUTHORITY}) == len(
+        SEGMENT_START_AUTHORITY
+    )
+    assert sum(
+        len(vector) for _segment, vector in SEGMENT_START_AUTHORITY
+    ) == (1_114_747)
+    assert canonical_sha256(SEGMENT_START_AUTHORITY) == (
+        "df58afe79ea36b39e3a39477b7566f7e0d47dd34c75c83b669fcf072a8235345"
+    )
+    assert all(
+        vector and len(vector) == segment.count(" ") + 1
+        for segment, vector in SEGMENT_START_AUTHORITY
+    )
+    assert all(
+        set(vector) <= {"D", "N", "W"}
+        for _segment, vector in SEGMENT_START_AUTHORITY
+    )
+    assert segment_start_authority_table()[0] == {
+        "segment": SEGMENT_START_AUTHORITY[0][0],
+        "start_dispositions": SEGMENT_START_AUTHORITY[0][1],
+        "start_count": len(SEGMENT_START_AUTHORITY[0][1]),
+    }
+
+
+def test_cleartext_start_authorities_replace_the_opaque_hash_registry() -> (
+    None
+):
+    assert not hasattr(
+        unit_authority,
+        "EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES",
     )
 
 

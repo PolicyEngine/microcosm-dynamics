@@ -38,8 +38,9 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
 from .psid_unit_predicate_authority import (
-    EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES,
+    CODING_START_AUTHORITY,
     PREDICATE_AUTHORITY,
+    SEGMENT_START_AUTHORITY,
 )
 
 __all__ = [
@@ -49,6 +50,7 @@ __all__ = [
     "ACTUAL_NO_DENOTATION_CANDIDATES",
     "ARTIFACT_PARTITION",
     "CLAUSE_TABLE",
+    "CODING_START_AUTHORITY",
     "COMPILED_TERMINALS",
     "DENOTATION_VERBS",
     "FAILURE_TERMINALS",
@@ -65,16 +67,23 @@ __all__ = [
     "canonical_json_bytes",
     "canonical_sha256",
     "clause_occurrences",
+    "coding_candidate_disposition",
+    "coding_candidate_table",
+    "coding_candidates",
     "description_statements",
     "denotation_candidate_disposition",
     "denotation_candidate_start_count",
+    "denotation_candidate_start_partition",
     "denotation_candidate_table",
+    "denotation_candidate_occurrence_identity",
+    "denotation_candidate_overselected_count",
     "denotation_candidate_unselected_count",
     "denotation_candidates",
     "extract_statements",
     "failure_reason_rows",
     "field_unit",
     "normalize_description",
+    "segment_start_authority_table",
     "statement_anchor",
     "statement_disposition",
     "statement_predicate",
@@ -151,6 +160,7 @@ VALUE_SUBJECT_ANCHORS: tuple[str, ...] = (
     "values for this variable ",
     "The value for this variable ",
     "the value for this variable ",
+    "the values for this variable ",
 )
 
 #: Openers whose subject is the variable and whose verb is the denotation
@@ -306,6 +316,7 @@ ANCHORS: tuple[str, ...] = (
 
 #: Verbs that make a value-subject opener a whole-domain denotation.
 DENOTATION_VERBS: tuple[str, ...] = (
+    "are ",
     "denote ",
     "denotes ",
     "indicate ",
@@ -324,7 +335,7 @@ DENOTATION_VERBS: tuple[str, ...] = (
 #: no-denotations until this table is amended and re-ratified.
 ACTUAL_CANDIDATES: tuple[str, ...] = (
     "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)",
-    "Actual - Required rooms V381 = 5 - 9",
+    "Actual - Required rooms   V381 = 5 - 9",
     "Actual Minus Required Rooms for Family",
     "Actual Minus Required Rooms for Family (1969)",
     "Actual Minus Required Rooms for Family (1981)",
@@ -415,7 +426,7 @@ ACTUAL_CANDIDATES: tuple[str, ...] = (
 ACTUAL_NO_DENOTATION_CANDIDATES: frozenset[str] = frozenset(
     {
         "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)",
-        "Actual - Required rooms V381 = 5 - 9",
+        "Actual - Required rooms   V381 = 5 - 9",
     }
 )
 
@@ -433,18 +444,10 @@ def _statement_end(text: str, index: int) -> int:
         cursor = stop + 1
 
 
-def extract_statements(text: str) -> tuple[str, ...]:
-    """Return the ordered value-denotation statements of *text*.
+def _extract_statement_spans(text: str) -> tuple[tuple[int, str], ...]:
+    """Return ``(start, statement)`` pairs under the primary grammar."""
 
-    A statement begins at an anchor occurrence that starts the text or is
-    immediately preceded by U+0020, takes the longest anchor matching at that
-    index, and ends at the first ``.`` followed by U+0020 or ending the text.
-    An anchor occurrence inside an already-selected anchor cannot open a
-    second statement, so ``The value for this variable represents`` yields one
-    statement rather than also yielding its ``this variable represents`` tail.
-    """
-
-    found: list[str] = []
+    found: list[tuple[int, str]] = []
     index = 0
     guard = 0
     while index < len(text):
@@ -459,10 +462,25 @@ def extract_statements(text: str) -> tuple[str, ...]:
         if anchor is None:
             index += 1
             continue
-        found.append(text[index : _statement_end(text, index)])
+        found.append((index, text[index : _statement_end(text, index)]))
         guard = index + len(anchor)
         index += 1
     return tuple(found)
+
+
+def extract_statements(text: str) -> tuple[str, ...]:
+    """Return the ordered value-denotation candidates of normalized *text*.
+
+    A primary statement begins at byte zero or after U+0020, takes the longest
+    exact anchor at that start, and ends under ``_statement_end``.  The guard
+    suppresses an anchor nested inside the already-selected opener.  The
+    independent segment/start authority below still adjudicates that nested
+    start; this production guard cannot erase it from the total audit.
+    """
+
+    return tuple(
+        statement for _offset, statement in _extract_statement_spans(text)
+    )
 
 
 def actual_candidates(description: str | None) -> tuple[str, ...]:
@@ -485,28 +503,162 @@ def actual_candidates(description: str | None) -> tuple[str, ...]:
     return tuple(found)
 
 
-def denotation_candidates(description: str | None) -> tuple[str, ...]:
-    """Return the exhaustive source-wide semantic-audit candidates.
+_CODING_START_AUTHORITY = {
+    candidate: (disposition, selected_statement)
+    for candidate, disposition, selected_statement in CODING_START_AUTHORITY
+}
+_CODING_SELECTED_STATEMENTS = frozenset(
+    selected_statement
+    for disposition, selected_statement in _CODING_START_AUTHORITY.values()
+    if disposition == "whole_domain_denotation"
+    and selected_statement is not None
+)
+_CODING_HEADS = (
+    "Code ",
+    "Coded ",
+    "CODE ",
+    "ENTER ",
+    "ENTER:",
+    "RECORD ",
+    "Record ",
+)
 
-    The normalized prose is partitioned unconditionally under the same
-    period/end law used by ``extract_statements``.  No opener or lexeme gates
-    selection: every byte belongs to one selected segment.  Exact raw-line
-    ``Actual ...`` residuals are appended because LF, unlike U+0020, is a
-    semantic boundary for that source family.  Consequently every possible
-    word-boundary statement under §24's own end law lies inside a candidate;
-    a future spelling also changes the pinned candidate relation before it can
-    affect production.
+
+def _coding_candidate_spans(text: str) -> tuple[tuple[int, str], ...]:
+    """Return every potential coding start, without a semantic filter."""
+
+    found: list[tuple[int, str]] = []
+    for head in _CODING_HEADS:
+        cursor = 0
+        while True:
+            index = text.find(head, cursor)
+            if index < 0:
+                break
+            if index == 0 or not text[index - 1].isalpha():
+                found.append(
+                    (index, text[index : _statement_end(text, index)])
+                )
+            cursor = index + 1
+    return tuple(sorted(set(found)))
+
+
+def coding_candidates(description: str | None) -> tuple[str, ...]:
+    """Return all exact potential coding starts in source order.
+
+    The visibility scan is intentionally broader than the production grammar:
+    it includes title-case and uppercase Code/Coded/Enter/Record families,
+    including a ``Code`` immediately following ``(``.  The closed cleartext
+    authority—not the head spelling—decides whether each start is a whole
+    statement, a subrange/conditional statement, or no statement.
     """
 
-    normalized = normalize_description(description)
+    text = normalize_description(description)
+    return tuple(
+        candidate for _offset, candidate in _coding_candidate_spans(text)
+    )
+
+
+def coding_candidate_disposition(candidate: str) -> str:
+    """Return one potential coding start's exact semantic adjudication."""
+
+    authority = _CODING_START_AUTHORITY.get(candidate)
+    if authority is None:
+        return "unadjudicated_coding_start"
+    return authority[0]
+
+
+def _coding_statements(description: str | None) -> tuple[str, ...]:
+    text = normalize_description(description)
     found: list[str] = []
+    for offset, candidate in _coding_candidate_spans(text):
+        authority = _CODING_START_AUTHORITY.get(candidate)
+        if authority is None:
+            # Unknown coding prose must remain visible to ``field_unit`` and
+            # fail closed rather than falling into ``no_denotation_statement``.
+            found.append(candidate)
+            continue
+        disposition, selected_statement = authority
+        if disposition == "whole_domain_denotation":
+            assert selected_statement is not None
+            if text.startswith(selected_statement, offset):
+                found.append(selected_statement)
+            else:
+                # Some candidate keys stop at an abbreviation such as
+                # ``e.g.`` or ``Col.``.  The longer authority span is lawful
+                # only when those exact bytes are present at this occurrence.
+                found.append(candidate)
+    return tuple(found)
+
+
+def _normalized_segments(text: str) -> tuple[tuple[int, int, str], ...]:
+    """Return ``(ordinal, absolute start, segment)`` under the end law."""
+
+    found: list[tuple[int, int, str]] = []
     start = 0
-    while start < len(normalized):
-        stop = _statement_end(normalized, start)
-        found.append(normalized[start:stop])
-        if stop == len(normalized):
+    ordinal = 0
+    while start < len(text):
+        stop = _statement_end(text, start)
+        found.append((ordinal, start, text[start:stop]))
+        ordinal += 1
+        if stop == len(text):
             break
         start = stop + 1
+    return tuple(found)
+
+
+def _word_start_offsets(segment: str) -> tuple[int, ...]:
+    """Return the U+0020 word starts of one nonempty normalized segment."""
+
+    return (0, *(match.end() for match in re.finditer(" ", segment)))
+
+
+_SEGMENT_START_AUTHORITY = dict(SEGMENT_START_AUTHORITY)
+_START_TAG_DISPOSITIONS = {
+    "W": "whole_domain_denotation",
+    "N": "explicit_no_whole_domain_denotation",
+    "D": "explicit_no_denotation",
+}
+
+
+def _segment_start_rows(
+    description: str | None,
+) -> tuple[tuple[int, str, int, int, str, str], ...]:
+    """Materialize every normalized start with its contextual authority."""
+
+    text = normalize_description(description)
+    found: list[tuple[int, str, int, int, str, str]] = []
+    for ordinal, _absolute, segment in _normalized_segments(text):
+        starts = _word_start_offsets(segment)
+        vector = _SEGMENT_START_AUTHORITY.get(segment)
+        if vector is None:
+            vector = "U" * len(starts)
+        if len(vector) != len(starts) or any(
+            tag not in _START_TAG_DISPOSITIONS and tag != "U" for tag in vector
+        ):
+            raise ValueError("malformed segment/start authority vector")
+        for word_ordinal, (offset, tag) in enumerate(
+            zip(starts, vector, strict=True)
+        ):
+            disposition = _START_TAG_DISPOSITIONS.get(
+                tag, "unadjudicated_start"
+            )
+            found.append(
+                (
+                    ordinal,
+                    segment,
+                    word_ordinal,
+                    len(segment[:offset].encode("utf-8")),
+                    segment[offset:],
+                    disposition,
+                )
+            )
+    return tuple(found)
+
+
+def denotation_candidates(description: str | None) -> tuple[str, ...]:
+    """Return every normalized word-start suffix plus raw Actual residuals."""
+
+    found = [row[4] for row in _segment_start_rows(description)]
     found.extend(actual_candidates(description))
     return tuple(found)
 
@@ -514,51 +666,121 @@ def denotation_candidates(description: str | None) -> tuple[str, ...]:
 def denotation_candidate_start_count(description: str | None) -> int:
     """Return the number of universal word-start statement candidates.
 
-    Normalization leaves exactly one U+0020 between words.  Every possible
-    §24 statement begins at zero or immediately after one of those spaces, so
-    this count together with the pinned unconditional segment relation proves
-    that no admissible start was omitted by a lexeme or opener filter.
+    This arithmetic is independent of both the frozen start authority and the
+    production selectors.  A successful gate separately requires it to equal
+    the number of materialized and dispositioned normalized start rows.
     """
 
     normalized = normalize_description(description)
     return 0 if not normalized else normalized.count(" ") + 1
 
 
-def denotation_candidate_unselected_count(description: str | None) -> int:
-    """Count whole-domain audit candidates missed by production selectors.
+def _production_whole_start_offsets(description: str | None) -> set[int]:
+    """Return normalized offsets selected as whole-domain by production."""
 
-    Anchor-bearing spans are selected from the normalized prose.  A raw-LF
-    ``Actual ...`` line may be a strict prefix of its normalized segment, so
-    that independent selector also discharges a candidate when its exact
-    adjudicated line is the candidate's prefix.  The ratified corpus must sum
-    this count to zero before any successor census may be emitted.
-    """
-
-    actual_whole = tuple(
-        candidate
-        for candidate in actual_candidates(description)
-        if actual_candidate_disposition(candidate) == "whole_domain_denotation"
-    )
-    missed = 0
-    for candidate in denotation_candidates(description):
-        if denotation_candidate_disposition(candidate) not in {
-            "contains_whole_domain_denotation",
-            "whole_domain_denotation",
-        }:
+    text = normalize_description(description)
+    selected = {
+        offset
+        for offset, statement in _extract_statement_spans(text)
+        if statement_predicate(statement) is not None
+    }
+    for candidate in actual_candidates(description):
+        if (
+            actual_candidate_disposition(candidate)
+            != "whole_domain_denotation"
+        ):
             continue
-        anchor_selected = any(
-            statement_predicate(statement) is not None
-            for statement in extract_statements(candidate)
+        normalized = normalize_description(candidate)
+        cursor = 0
+        while True:
+            offset = text.find(normalized, cursor)
+            if offset < 0:
+                break
+            if offset == 0 or text[offset - 1] == " ":
+                selected.add(offset)
+                break
+            cursor = offset + 1
+    for offset, candidate in _coding_candidate_spans(text):
+        authority = _CODING_START_AUTHORITY.get(candidate)
+        if (
+            authority is not None
+            and authority[0] == "whole_domain_denotation"
+            and authority[1] is not None
+            and text.startswith(authority[1], offset)
+        ):
+            selected.add(offset)
+    return selected
+
+
+def _contextual_start_assignments(
+    description: str | None,
+) -> tuple[tuple[int, str, int, int, str, str, bool], ...]:
+    text = normalize_description(description)
+    selected = _production_whole_start_offsets(description)
+    found: list[tuple[int, str, int, int, str, str, bool]] = []
+    for ordinal, absolute, segment in _normalized_segments(text):
+        starts = _word_start_offsets(segment)
+        vector = _SEGMENT_START_AUTHORITY.get(segment)
+        if vector is None:
+            vector = "U" * len(starts)
+        if len(vector) != len(starts):
+            raise ValueError("malformed segment/start authority vector")
+        for word_ordinal, (offset, tag) in enumerate(
+            zip(starts, vector, strict=True)
+        ):
+            disposition = _START_TAG_DISPOSITIONS.get(
+                tag, "unadjudicated_start"
+            )
+            found.append(
+                (
+                    ordinal,
+                    segment,
+                    word_ordinal,
+                    len(segment[:offset].encode("utf-8")),
+                    segment[offset:],
+                    disposition,
+                    absolute + offset in selected,
+                )
+            )
+    return tuple(found)
+
+
+def denotation_candidate_unselected_count(description: str | None) -> int:
+    """Count independently whole starts absent from production selection."""
+
+    return sum(
+        disposition == "whole_domain_denotation" and not selected
+        for *_prefix, disposition, selected in _contextual_start_assignments(
+            description
         )
-        actual_selected = any(
-            candidate == actual
-            or candidate.startswith(actual + " ")
-            or actual.startswith(candidate + " ")
-            for actual in actual_whole
+    )
+
+
+def denotation_candidate_overselected_count(description: str | None) -> int:
+    """Count production whole selections lacking whole-start authority."""
+
+    return sum(
+        selected and disposition != "whole_domain_denotation"
+        for *_prefix, disposition, selected in _contextual_start_assignments(
+            description
         )
-        if not anchor_selected and not actual_selected:
-            missed += 1
-    return missed
+    )
+
+
+def denotation_candidate_start_partition(
+    description: str | None,
+) -> dict[str, int]:
+    """Return the complete disposition partition for one description."""
+
+    counts = {
+        "whole_domain_denotation": 0,
+        "explicit_no_whole_domain_denotation": 0,
+        "explicit_no_denotation": 0,
+        "unadjudicated_start": 0,
+    }
+    for *_prefix, disposition in _segment_start_rows(description):
+        counts[disposition] += 1
+    return counts
 
 
 def actual_candidate_disposition(candidate: str) -> str:
@@ -578,10 +800,11 @@ def description_statements(description: str | None) -> tuple[str, ...]:
     residual = tuple(
         candidate
         for candidate in actual_candidates(description)
-        if actual_candidate_disposition(candidate)
-        != "explicit_no_denotation"
+        if actual_candidate_disposition(candidate) != "explicit_no_denotation"
     )
-    return tuple(dict.fromkeys((*primary, *residual)))
+    return tuple(
+        dict.fromkeys((*primary, *residual, *_coding_statements(description)))
+    )
 
 
 def statement_anchor(statement: str) -> str:
@@ -589,7 +812,19 @@ def statement_anchor(statement: str) -> str:
 
     if statement.startswith("Actual "):
         return "Actual "
-    return max((a for a in ANCHORS if statement.startswith(a)), key=len)
+    anchor = max(
+        (a for a in ANCHORS if statement.startswith(a)),
+        key=len,
+        default=None,
+    )
+    if anchor is not None:
+        return anchor
+    coding_head = next(
+        (head for head in _CODING_HEADS if statement.startswith(head)), None
+    )
+    if coding_head is not None:
+        return coding_head
+    raise ValueError("statement has no production anchor")
 
 
 def statement_predicate(statement: str) -> str | None:
@@ -610,6 +845,8 @@ def statement_predicate(statement: str) -> str | None:
         return statement
     anchor = statement_anchor(statement)
     rest = statement[len(anchor) :]
+    if anchor in _CODING_HEADS:
+        return statement
     if anchor in SUBRANGE_DENOTATION_ANCHORS:
         return None
     if anchor in FULL_PREDICATE_ANCHORS + CONSTRUCTION_DENOTATION_ANCHORS:
@@ -622,57 +859,38 @@ def statement_predicate(statement: str) -> str | None:
     return None
 
 
-def denotation_candidate_disposition(candidate: str) -> str:
-    """Return one exhaustive audit candidate's closed adjudication."""
+def denotation_candidate_disposition(
+    candidate: str,
+    *,
+    segment: str | None = None,
+    word_ordinal: int | None = None,
+) -> str:
+    """Return a contextual start disposition, never a suffix-only guess.
 
-    actual_disposition: str | None = None
-    if candidate.startswith("Actual "):
-        prefixes = [
-            spelling
-            for spelling in ACTUAL_CANDIDATES
-            if candidate == spelling or candidate.startswith(spelling + " ")
-        ]
-        if not prefixes:
-            return "unadjudicated_no_denotation"
-        actual_disposition = actual_candidate_disposition(max(prefixes, key=len))
-        if candidate in ACTUAL_CANDIDATES:
-            return actual_disposition
+    ``candidate`` is not a sufficient authority key: two frozen suffixes occur
+    in both selected and guarded contexts.  Callers must therefore supply the
+    enclosing segment and word ordinal.  Raw Actual and coding residuals have
+    their own exact authorities and may be queried without that context.
+    """
 
-    found_whole = actual_disposition == "whole_domain_denotation"
-    found_nonwhole = actual_disposition == "explicit_no_denotation"
-    for index in range(len(candidate)):
-        if index and candidate[index - 1] != " ":
-            continue
-        anchor = max(
-            (a for a in ANCHORS if candidate.startswith(a, index)),
-            key=len,
-            default=None,
-        )
-        if anchor is None:
-            continue
-        if anchor in SUBRANGE_DENOTATION_ANCHORS:
-            found_nonwhole = True
-            continue
-        if anchor in (
-            DIRECT_DENOTATION_ANCHORS
-            + FULL_PREDICATE_ANCHORS
-            + CONSTRUCTION_DENOTATION_ANCHORS
-        ):
-            found_whole = True
-            continue
-        rest = candidate[index + len(anchor) :]
-        if any(rest.startswith(verb) for verb in DENOTATION_VERBS):
-            found_whole = True
-        else:
-            found_nonwhole = True
-    if found_whole:
-        return "contains_whole_domain_denotation"
-    if found_nonwhole:
-        return "explicit_no_whole_domain_denotation"
-    candidate_sha256 = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
-    if candidate_sha256 in EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES:
-        return "explicit_no_denotation"
-    return "unadjudicated_no_denotation"
+    if segment is None or word_ordinal is None:
+        if candidate.startswith("Actual "):
+            return actual_candidate_disposition(candidate)
+        if any(candidate.startswith(head) for head in _CODING_HEADS):
+            return coding_candidate_disposition(candidate)
+        return "unadjudicated_context_free_candidate"
+    vector = _SEGMENT_START_AUTHORITY.get(segment)
+    starts = _word_start_offsets(segment)
+    if (
+        vector is None
+        or len(vector) != len(starts)
+        or not 0 <= word_ordinal < len(starts)
+        or segment[starts[word_ordinal] :] != candidate
+    ):
+        return "unadjudicated_start"
+    return _START_TAG_DISPOSITIONS.get(
+        vector[word_ordinal], "unadjudicated_start"
+    )
 
 
 # --------------------------------------------------------------------------
@@ -795,13 +1013,11 @@ ACTUAL_CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
         "week",
     ),
     (
-        "Actual number of weeks missed because someone else was ill in "
-        "1979",
+        "Actual number of weeks missed because someone else was ill in 1979",
         "week",
     ),
     (
-        "Actual number of weeks missed because someone else was ill in "
-        "1980",
+        "Actual number of weeks missed because someone else was ill in 1980",
         "week",
     ),
     ("Actual number of weeks missed in 1979", "week"),
@@ -961,11 +1177,12 @@ def _full_phrase_authority(
     # The period which terminates the selected statement is not part of its
     # grammatical predicate phrase.  No other suffix byte receives this
     # exception.
-    phrase_end = len(predicate) - 1 if predicate.endswith(".") else len(predicate)
+    phrase_end = (
+        len(predicate) - 1 if predicate.endswith(".") else len(predicate)
+    )
     positive_hits = [hit for hit in hits if hit[2] != NO_UNIT]
     if positive_hits and not any(
-        start == 0 and end == phrase_end
-        for start, end, _unit in positive_hits
+        start == 0 and end == phrase_end for start, end, _unit in positive_hits
     ):
         full_defeat = (0, len(predicate), NO_UNIT)
         return list(hits) if full_defeat in hits else [*hits, full_defeat]
@@ -1020,9 +1237,17 @@ def clause_occurrences(predicate: str) -> tuple[tuple[int, int, str], ...]:
 def statement_disposition(statement: str) -> tuple[str | None, str]:
     """Return ``(unit, reason)`` for one extracted statement."""
 
-    if statement.startswith("Actual ") and actual_candidate_disposition(
-        statement
-    ) == "unadjudicated_no_denotation":
+    if (
+        statement.startswith("Actual ")
+        and actual_candidate_disposition(statement)
+        == "unadjudicated_no_denotation"
+    ):
+        return None, "unadjudicated_denotation_candidate"
+    if (
+        any(statement.startswith(head) for head in _CODING_HEADS)
+        and statement not in _CODING_SELECTED_STATEMENTS
+        and not any(statement.startswith(anchor) for anchor in ANCHORS)
+    ):
         return None, "unadjudicated_denotation_candidate"
     predicate = statement_predicate(statement)
     if predicate is None:
@@ -1272,9 +1497,7 @@ def successor_census(
         if unit is not None and unit not in UNIT_VOCABULARY:
             raise ValueError(f"unit outside the vocabulary: {unit!r}")
         successor, moved = successor_terminal(status, unit)
-        successor_reason = (
-            UNIT_ABSENT_RESOLUTION_REASON if moved else reason
-        )
+        successor_reason = UNIT_ABSENT_RESOLUTION_REASON if moved else reason
         artifact = artifact_of_position(position)
         keys.append([wave, field])
         assignment.append((wave, field, successor, successor_reason))
@@ -1387,9 +1610,12 @@ def actual_candidate_table(
     """Return the complete residual-candidate adjudication table."""
 
     counts: dict[str, int] = {}
+    occurrences: dict[str, int] = {}
     witness: dict[str, list[Any]] = {}
     for row in field_rows:
         wave, field, _status, _reason, description = _row_view(row)
+        for candidate in actual_candidates(description):
+            occurrences[candidate] = occurrences.get(candidate, 0) + 1
         for candidate in set(actual_candidates(description)):
             counts[candidate] = counts.get(candidate, 0) + 1
             witness.setdefault(candidate, [wave, field])
@@ -1397,36 +1623,171 @@ def actual_candidate_table(
         {
             "candidate": candidate,
             "adjudication": actual_candidate_disposition(candidate),
-            "field_count": counts[candidate],
-            "witness_field_key": witness[candidate],
-        }
-        for candidate in sorted(counts)
-    ]
-
-
-def denotation_candidate_table(
-    field_rows: Iterable[Mapping[str, Any]],
-) -> list[dict[str, Any]]:
-    """Return the exhaustive candidate-selector adjudication relation."""
-
-    counts: dict[str, int] = {}
-    occurrences: dict[str, int] = {}
-    witness: dict[str, list[Any]] = {}
-    for row in field_rows:
-        wave, field, _status, _reason, description = _row_view(row)
-        candidates = denotation_candidates(description)
-        for candidate in candidates:
-            occurrences[candidate] = occurrences.get(candidate, 0) + 1
-        for candidate in set(candidates):
-            counts[candidate] = counts.get(candidate, 0) + 1
-            witness.setdefault(candidate, [wave, field])
-    return [
-        {
-            "candidate": candidate,
-            "adjudication": denotation_candidate_disposition(candidate),
             "occurrence_count": occurrences[candidate],
             "field_count": counts[candidate],
             "witness_field_key": witness[candidate],
         }
         for candidate in sorted(counts)
     ]
+
+
+def coding_candidate_table(
+    field_rows: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return the exhaustive potential-coding-start adjudication table."""
+
+    fields: dict[str, int] = {}
+    occurrences: dict[str, int] = {}
+    witness: dict[str, list[Any]] = {}
+    for row in field_rows:
+        wave, field, _status, _reason, description = _row_view(row)
+        candidates = coding_candidates(description)
+        for candidate in candidates:
+            occurrences[candidate] = occurrences.get(candidate, 0) + 1
+        for candidate in set(candidates):
+            fields[candidate] = fields.get(candidate, 0) + 1
+            witness.setdefault(candidate, [wave, field])
+    return [
+        {
+            "candidate": candidate,
+            "adjudication": coding_candidate_disposition(candidate),
+            "selected_statement": (
+                _CODING_START_AUTHORITY.get(candidate, (None, None))[1]
+            ),
+            "occurrence_count": occurrences[candidate],
+            "field_count": fields[candidate],
+            "witness_field_key": witness[candidate],
+        }
+        for candidate in sorted(fields)
+    ]
+
+
+def segment_start_authority_table() -> list[dict[str, Any]]:
+    """Return the complete cleartext segment/vector semantic authority."""
+
+    return [
+        {
+            "segment": segment,
+            "start_dispositions": vector,
+            "start_count": len(vector),
+        }
+        for segment, vector in SEGMENT_START_AUTHORITY
+    ]
+
+
+def denotation_candidate_table(
+    field_rows: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return one cleartext row per distinct contextual normalized start."""
+
+    fields: dict[str, int] = {}
+    occurrences: dict[str, int] = {}
+    witness: dict[str, list[Any]] = {}
+    for row in field_rows:
+        wave, field, _status, _reason, description = _row_view(row)
+        segments = [
+            segment
+            for _ordinal, _absolute, segment in _normalized_segments(
+                normalize_description(description)
+            )
+        ]
+        for segment in segments:
+            occurrences[segment] = occurrences.get(segment, 0) + 1
+        for segment in set(segments):
+            fields[segment] = fields.get(segment, 0) + 1
+            witness.setdefault(segment, [wave, field])
+    table: list[dict[str, Any]] = []
+    for segment in sorted(fields):
+        starts = _word_start_offsets(segment)
+        vector = _SEGMENT_START_AUTHORITY.get(segment)
+        if vector is None:
+            vector = "U" * len(starts)
+        if len(vector) != len(starts):
+            raise ValueError("malformed segment/start authority vector")
+        for word_ordinal, (offset, tag) in enumerate(
+            zip(starts, vector, strict=True)
+        ):
+            start_byte = len(segment[:offset].encode("utf-8"))
+            table.append(
+                {
+                    "segment": segment,
+                    "word_ordinal": word_ordinal,
+                    "start_utf8_byte": start_byte,
+                    "candidate": segment[offset:],
+                    "context_key_sha256": canonical_sha256(
+                        ["normalized_segment_start.v1", segment, start_byte]
+                    ),
+                    "adjudication": _START_TAG_DISPOSITIONS.get(
+                        tag, "unadjudicated_start"
+                    ),
+                    "occurrence_count": occurrences[segment],
+                    "field_count": fields[segment],
+                    "witness_field_key": witness[segment],
+                }
+            )
+    return table
+
+
+def denotation_candidate_occurrence_identity(
+    field_rows: Iterable[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Stream the ordered disposition of every normalized start occurrence."""
+
+    digest = hashlib.sha256()
+    byte_count = 0
+    row_count = 0
+    unselected = 0
+    overselected = 0
+    partition = {
+        "whole_domain_denotation": 0,
+        "explicit_no_whole_domain_denotation": 0,
+        "explicit_no_denotation": 0,
+        "unadjudicated_start": 0,
+    }
+    context_keys: dict[tuple[str, int], str] = {}
+    for row in field_rows:
+        wave, field, _status, _reason, description = _row_view(row)
+        for (
+            segment_ordinal,
+            segment,
+            _word_ordinal,
+            start_byte,
+            _candidate,
+            disposition,
+            selected,
+        ) in _contextual_start_assignments(description):
+            context_key = context_keys.get((segment, start_byte))
+            if context_key is None:
+                context_key = canonical_sha256(
+                    ["normalized_segment_start.v1", segment, start_byte]
+                )
+                context_keys[(segment, start_byte)] = context_key
+            serialized = canonical_json_bytes(
+                [
+                    wave,
+                    field,
+                    segment_ordinal,
+                    start_byte,
+                    context_key,
+                    disposition,
+                    selected,
+                ]
+            )
+            digest.update(serialized)
+            byte_count += len(serialized)
+            row_count += 1
+            partition[disposition] += 1
+            unselected += (
+                disposition == "whole_domain_denotation" and not selected
+            )
+            overselected += (
+                selected and disposition != "whole_domain_denotation"
+            )
+    return {
+        "row_count": row_count,
+        "byte_count": byte_count,
+        "sha256": digest.hexdigest(),
+        "partition": partition,
+        "unselected_count": unselected,
+        "overselected_count": overselected,
+    }

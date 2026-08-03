@@ -40,15 +40,17 @@ from populace_dynamics.data.psid_unit_authority import (  # noqa: E402
     actual_candidate_table,
     canonical_json_bytes,
     canonical_sha256,
+    coding_candidate_table,
+    denotation_candidate_occurrence_identity,
     denotation_candidate_start_count,
     denotation_candidate_table,
-    denotation_candidate_unselected_count,
     statement_table,
     successor_census,
 )
 from populace_dynamics.data.psid_unit_predicate_authority import (  # noqa: E402
-    EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES,
+    CODING_START_AUTHORITY,
     PREDICATE_AUTHORITY,
+    SEGMENT_START_AUTHORITY,
 )
 
 INPUT_KEYS = (
@@ -77,12 +79,19 @@ CountPin = tuple[str, int]
 MatrixPin = tuple[str, tuple[int, ...], int, str]
 FailureReasonPin = tuple[str, str, int]
 PredicatePartitionPin = tuple[str, int]
+StartPartitionPin = tuple[str, int]
 
 PREDICATE_DISPOSITION_ORDER = (
     "unit_naming_clause",
     "defeating_clause",
     "no_unit_naming_clause",
     "conflicting_unit_clauses",
+)
+START_DISPOSITION_ORDER = (
+    "whole_domain_denotation",
+    "explicit_no_whole_domain_denotation",
+    "explicit_no_denotation",
+    "unadjudicated_start",
 )
 
 
@@ -116,13 +125,34 @@ class GatePins:
     failure_reason_rows_sha256: str
     actual_candidate_table_row_count: int
     actual_candidate_occurrence_count: int
+    actual_candidate_unadjudicated_count: int
     actual_candidate_table_sha256: str
+    coding_candidate_table_row_count: int
+    coding_candidate_occurrence_count: int
+    coding_candidate_unadjudicated_count: int
+    coding_candidate_table_sha256: str
     denotation_candidate_table_row_count: int
     denotation_candidate_occurrence_count: int
     denotation_candidate_start_count: int
+    denotation_candidate_distinct_text_count: int
+    denotation_candidate_total_occurrence_count: int
     denotation_candidate_unselected_count: int
+    denotation_candidate_overselected_count: int
     denotation_candidate_unadjudicated_count: int
     denotation_candidate_table_sha256: str
+    denotation_start_occurrence_row_count: int
+    denotation_start_occurrence_byte_count: int
+    denotation_start_occurrence_sha256: str
+    denotation_start_partition_rows: tuple[StartPartitionPin, ...]
+    segment_start_authority_row_count: int
+    segment_start_authority_start_count: int
+    segment_start_authority_relation_byte_count: int
+    segment_start_authority_relation_sha256: str
+    segment_start_authority_array_sha256: str
+    coding_start_authority_row_count: int
+    coding_start_authority_relation_byte_count: int
+    coding_start_authority_relation_sha256: str
+    coding_start_authority_array_sha256: str
     anchor_relation_row_count: int
     anchor_relation_byte_count: int
     anchor_relation_sha256: str
@@ -136,8 +166,6 @@ class GatePins:
     predicate_authority_relation_sha256: str
     predicate_authority_sha256: str
     predicate_authority_partition_rows: tuple[PredicatePartitionPin, ...]
-    explicit_no_denotation_candidate_count: int
-    explicit_no_denotation_candidate_sha256: str
     statement_table_row_count: int
     statement_table_sha256: str
     unit_bearing_statement_count: int
@@ -153,7 +181,12 @@ class CensusBuild:
 
     field_rows: tuple[dict[str, Any], ...]
     actual_candidate_rows: tuple[dict[str, Any], ...]
+    coding_candidate_rows: tuple[dict[str, Any], ...]
     denotation_candidate_rows: tuple[dict[str, Any], ...]
+    segment_start_authority_rows: tuple[tuple[str, str], ...]
+    segment_start_authority_relation_bytes: bytes
+    coding_start_authority_rows: tuple[tuple[str, str, str | None], ...]
+    coding_start_authority_relation_bytes: bytes
     anchor_rows: tuple[str, ...]
     anchor_relation_bytes: bytes
     clause_rows: tuple[tuple[str, str], ...]
@@ -166,86 +199,65 @@ class CensusBuild:
     payload: dict[str, Any]
 
 
-# The completed round-1 relation.  These are authority, never observations
-# copied from the current run; ``validate_a10_r04`` compares each independent
-# projection before the caller is permitted to emit any byte.
-EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
-    input_relation_row_count=89_599,
-    input_relation_sha256=(
-        "11189cf48eae995d999f12a2155a03dc9c9f9f11804c1a732fc451a71a195f19"
-    ),
-    denominator_sha256=(
-        "7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764"
-    ),
+# Frozen only after regeneration from the lawful raw relation.  These are
+# expected values, never observations synthesized by the production gate.
+EXPECTED_A10_R04_PINS = GatePins(
+    input_relation_row_count=89599,
+    input_relation_sha256="563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e",
+    denominator_sha256="7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764",
     ratified_count_rows=(
-        ("compiled_source_numeric_grammar", 17_329),
+        ("compiled_source_numeric_grammar", 17329),
         (
-            "compiled_source_numeric_grammar_padding_underdetermined_"
-            "exact_replay",
-            1_853,
+            "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
+            1853,
         ),
         (
-            "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_"
-            "exact_replay",
+            "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay",
             674,
         ),
-        (
-            "compiled_source_numeric_grammar_partial_range_exact_replay",
-            47,
-        ),
-        ("value_code_domain_no_numeric_grammar", 67_316),
-        ("value_code_range_physical_rendering_unestablished", 1_145),
+        ("compiled_source_numeric_grammar_partial_range_exact_replay", 47),
+        ("value_code_domain_no_numeric_grammar", 67316),
+        ("value_code_range_physical_rendering_unestablished", 1145),
         ("nonnumeric_source_field_outside_numeric_grammar", 0),
         ("conflicting_source_numeric_format", 1),
         ("unsupported_source_numeric_format", 421),
         ("incomplete_source_numeric_authority", 813),
     ),
     count_rows=(
-        ("compiled_source_numeric_grammar", 4_692),
+        ("compiled_source_numeric_grammar", 4727),
         (
-            "compiled_source_numeric_grammar_padding_underdetermined_"
-            "exact_replay",
-            170,
+            "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
+            171,
         ),
         (
-            "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_"
-            "exact_replay",
+            "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay",
             49,
         ),
-        (
-            "compiled_source_numeric_grammar_partial_range_exact_replay",
-            0,
-        ),
-        ("value_code_domain_no_numeric_grammar", 67_316),
-        ("value_code_range_physical_rendering_unestablished", 1_145),
+        ("compiled_source_numeric_grammar_partial_range_exact_replay", 0),
+        ("value_code_domain_no_numeric_grammar", 67316),
+        ("value_code_range_physical_rendering_unestablished", 1145),
         ("nonnumeric_source_field_outside_numeric_grammar", 0),
         ("conflicting_source_numeric_format", 1),
         ("unsupported_source_numeric_format", 421),
-        ("incomplete_source_numeric_authority", 15_805),
+        ("incomplete_source_numeric_authority", 15769),
     ),
-    count_array_sha256=(
-        "4eedf3845787cabb8132b7cec5ac3fc12c81a9da1a9f33fcec340ec954d335da"
-    ),
-    ordered_assignment_sha256=(
-        "59b1dfd231a9bcfacd333776e6b5ce8ea6115bb4397bcb34d561601818b5aee1"
-    ),
+    count_array_sha256="b60326f90150cef57ab1557999a08b2ac826aeceffd4745d62c3dceb31b97060",
+    ordered_assignment_sha256="652091641fa188b7a835945b9673eadbf4340c53d7d91daf4fb66f35567500ea",
     status_matrix_rows=(
         (
             "compiled_source_numeric_grammar",
-            (29, 90, 1_613, 1_198, 1_052, 710),
-            4_692,
-            "78a57200331afb1f281c589dae0d25037e8caa8af5202007f4bf925fa50e4725",
+            (36, 96, 1635, 1198, 1052, 710),
+            4727,
+            "4b4e15acde7b2355815a272ca3fcbec667ab703d94bbfadefed0ce90c17175fd",
         ),
         (
-            "compiled_source_numeric_grammar_padding_underdetermined_"
-            "exact_replay",
-            (1, 14, 123, 10, 14, 8),
-            170,
-            "8f07c2ed166464ed35321956d66f738b5518df9ef212ce6ccb32de84b7438ca5",
+            "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
+            (2, 14, 123, 10, 14, 8),
+            171,
+            "8a341ddf2222732af40913f9dbdd86a69cd52de935c012c10e0f0fc6b3102fc6",
         ),
         (
-            "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_"
-            "exact_replay",
+            "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay",
             (0, 7, 29, 11, 0, 2),
             49,
             "b24e5e68c6d0bede46d149dd488886dc47f0314b0743e91b404df5ae78fa9b69",
@@ -258,14 +270,14 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         ),
         (
             "value_code_domain_no_numeric_grammar",
-            (2_606, 1_130, 10_064, 11_668, 26_700, 15_148),
-            67_316,
+            (2606, 1130, 10064, 11668, 26700, 15148),
+            67316,
             "6ee97ba9db16520c734a21094623376714a468c3148977666f8e107dbd35e05f",
         ),
         (
             "value_code_range_physical_rendering_unestablished",
             (89, 16, 127, 371, 320, 222),
-            1_145,
+            1145,
             "75296e361be3c9b0afb99cd74afb29849305010a93c2c1a9de3da6b54fd5054e",
         ),
         (
@@ -288,18 +300,14 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         ),
         (
             "incomplete_source_numeric_authority",
-            (1_075, 561, 3_667, 2_679, 4_978, 2_845),
-            15_805,
-            "befdfdbf0a4344e660635969467e373663e5c4d16582f15a4a0b5b98860eddf8",
+            (1067, 555, 3645, 2679, 4978, 2845),
+            15769,
+            "d366e653d4bf75d4cd078da7880da263c6b8a68164b0faef8e77cd2a350a30a3",
         ),
     ),
-    movement_row_count=14_992,
-    movement_rows_sha256=(
-        "fb98df0642cba77d674ad828023c6debd4b54643b3ac9b9fbc14ffe328dd344f"
-    ),
-    movement_key_sha256=(
-        "6bcce3db17451c2b73fa97544c6b4804593237de38a481018ba9225d1f67fd2e"
-    ),
+    movement_row_count=14956,
+    movement_rows_sha256="12a6eed2e1b0e2bf1ba4f5b3d11ab9a05a72a4c35c1aea4067ba80a1a7d3984d",
+    movement_key_sha256="2153c3b2a21a575759a71eea50fdc9a7f596674f560898f402bfece613084412",
     failure_reason_rows=(
         (
             "conflicting_source_numeric_format",
@@ -339,76 +347,72 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         (
             "incomplete_source_numeric_authority",
             "unresolved_typed_value_unit_no_source_authority",
-            14_992,
+            14956,
         ),
     ),
     failure_reason_row_count=8,
-    failure_reason_rows_byte_count=268_408,
-    failure_reason_rows_sha256=(
-        "038364e416830c748fb5404a272cf6c9e715094422441d84ff08e2bcea8a4039"
-    ),
+    failure_reason_rows_byte_count=267856,
+    failure_reason_rows_sha256="a13b505a342950711030b43f3621efcf9e661024d3667ce1a76c4ebca36443f5",
     actual_candidate_table_row_count=82,
     actual_candidate_occurrence_count=322,
-    actual_candidate_table_sha256=(
-        "88f5b25a52d8ea524d1e0c19ea90c9e1a8f9d26c1da437511678342abd2e0e5c"
-    ),
-    denotation_candidate_table_row_count=59_521,
-    denotation_candidate_occurrence_count=195_835,
-    denotation_candidate_start_count=2_240_669,
+    actual_candidate_unadjudicated_count=0,
+    actual_candidate_table_sha256="bf77cd7294752ac9e6ac01d4d68efac86c47b7327094d5eec479d9db1f27176b",
+    coding_candidate_table_row_count=203,
+    coding_candidate_occurrence_count=1154,
+    coding_candidate_unadjudicated_count=0,
+    coding_candidate_table_sha256="9f6cd23d36ad6825a17d3ece2d2612ef89c066d5c587bd72d1933f19e4c0c195",
+    denotation_candidate_table_row_count=1114747,
+    denotation_candidate_occurrence_count=2240669,
+    denotation_candidate_start_count=2240669,
+    denotation_candidate_distinct_text_count=717823,
+    denotation_candidate_total_occurrence_count=2240991,
     denotation_candidate_unselected_count=0,
+    denotation_candidate_overselected_count=0,
     denotation_candidate_unadjudicated_count=0,
-    denotation_candidate_table_sha256=(
-        "a8a61db0f8b9663a60a493f3c20ea1c4ff2256f060dc22962eeb814b88275d6a"
+    denotation_candidate_table_sha256="8ecc92a6a134fec30a3575e2eff8305dd1d6d17f6230d75555262c38b5300a7f",
+    denotation_start_occurrence_row_count=2240669,
+    denotation_start_occurrence_byte_count=268223757,
+    denotation_start_occurrence_sha256="6b239ef7b534c0b9c6f5350808b20017f9b3392f3f3d91cd56d00f2d9b9a33d5",
+    denotation_start_partition_rows=(
+        ("whole_domain_denotation", 8234),
+        ("explicit_no_whole_domain_denotation", 4532),
+        ("explicit_no_denotation", 2227903),
+        ("unadjudicated_start", 0),
     ),
-    anchor_relation_row_count=100,
-    anchor_relation_byte_count=4_223,
-    anchor_relation_sha256=(
-        "8faeb560d9e4b393c9e676c442fbd98513d8c0e23c94ccb0bcf8a1386f0c2973"
-    ),
-    anchor_relation_array_sha256=(
-        "5373bdbdedf0fe49eed6c8e73c3ec6678a7f740febb134f5605b84e256ce248f"
-    ),
+    segment_start_authority_row_count=59445,
+    segment_start_authority_start_count=1114747,
+    segment_start_authority_relation_byte_count=8466288,
+    segment_start_authority_relation_sha256="ef31ee7f41ab33b0ad683c6f5a8597258277e5a19932ac850d235ced28a2d95f",
+    segment_start_authority_array_sha256="df58afe79ea36b39e3a39477b7566f7e0d47dd34c75c83b669fcf072a8235345",
+    coding_start_authority_row_count=203,
+    coding_start_authority_relation_byte_count=31396,
+    coding_start_authority_relation_sha256="6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf",
+    coding_start_authority_array_sha256="ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b",
+    anchor_relation_row_count=101,
+    anchor_relation_byte_count=4255,
+    anchor_relation_sha256="304454bb0cdcec22f55cc4dbdf575430a2e8e8d5677ce8846d4597ab022a0673",
+    anchor_relation_array_sha256="1b35e456ddf4e4d2dc3c128b8903cb7f9eb29fb24e598d37bc932552c4b79a1d",
     clause_relation_row_count=163,
-    clause_relation_byte_count=7_481,
-    clause_relation_sha256=(
-        "2bfd45a533b7e9c7dc70ec51106feadd9579bb421b4b3ebd990ad8f9fceb4936"
-    ),
-    clause_relation_array_sha256=(
-        "a3534c737a882154b9aebea878451a05c484803ac263f5b63ebe0f1d85a5c0da"
-    ),
-    predicate_authority_row_count=2_558,
-    predicate_authority_relation_byte_count=396_466,
-    predicate_authority_relation_sha256=(
-        "fdef124391bda73b33bc5b310a78a9dc073eb27a8115e83e9d2b59fa32ac44f7"
-    ),
-    predicate_authority_sha256=(
-        "482decde64943c421a8e04c556e08c9120bbf427874624152f2d93e057eeabda"
-    ),
+    clause_relation_byte_count=7481,
+    clause_relation_sha256="2bfd45a533b7e9c7dc70ec51106feadd9579bb421b4b3ebd990ad8f9fceb4936",
+    clause_relation_array_sha256="a3534c737a882154b9aebea878451a05c484803ac263f5b63ebe0f1d85a5c0da",
+    predicate_authority_row_count=2586,
+    predicate_authority_relation_byte_count=399372,
+    predicate_authority_relation_sha256="cc5033cd0403aa50aeaf434f6308b41316d46f997be41d4b70face7d21bd5bfa",
+    predicate_authority_sha256="791bbe9436a26516e28aacf243f104d74f8e8053204d3759a414c894fa073f32",
     predicate_authority_partition_rows=(
-        ("unit_naming_clause", 1_521),
-        ("defeating_clause", 812),
-        ("no_unit_naming_clause", 224),
+        ("unit_naming_clause", 1531),
+        ("defeating_clause", 809),
+        ("no_unit_naming_clause", 245),
         ("conflicting_unit_clauses", 1),
     ),
-    explicit_no_denotation_candidate_count=53_255,
-    explicit_no_denotation_candidate_sha256=(
-        "80e3bf6bbf200c9431a1f9560d8ef268cdc97fe9ede2cedca5f89a374797dde8"
-    ),
-    statement_table_row_count=3_403,
-    statement_table_sha256=(
-        "8fe68f479e303b28552d885dbc284c86ff657f496da1eebb4a1feb1228627d25"
-    ),
-    unit_bearing_statement_count=1_532,
-    unit_bearing_relation_byte_count=237_671,
-    unit_bearing_relation_sha256=(
-        "e21865b6d2c480cc254db9b71cdc4e12151d6a07bc7d17a679e49a155c3ec6a5"
-    ),
-    unit_bearing_relation_array_sha256=(
-        "ba7244b3a7539eb54a81353c52008e709458c8e4b906cf84c41ed4374c91d6b3"
-    ),
-    census_payload_sha256=(
-        "fda959bf84f5d5ec6cdeff2c5937d705003f4fbf4c5c0fccc94897360912bdb2"
-    ),
+    statement_table_row_count=3428,
+    statement_table_sha256="cc7e5224237e0834f3ca9948494d76724b64bb902c4510dc16bc374756088902",
+    unit_bearing_statement_count=1542,
+    unit_bearing_relation_byte_count=238370,
+    unit_bearing_relation_sha256="9863bc2af8e71a201910924c41113ee7482c553a772be080dbdcf491e0a029d6",
+    unit_bearing_relation_array_sha256="409c13c440c7a21746469555e37cac37f6d7b12e6d42de54af4c50813378666a",
+    census_payload_sha256="1a6771d0ba10c5a35627dd1188181b5719641f477e22d71b1134e0b70f956690",
 )
 
 
@@ -546,6 +550,27 @@ def _jsonl_relation_bytes(rows: Sequence[Any]) -> bytes:
     )
 
 
+def _canonical_array_sha256_stream(rows: Sequence[Any]) -> str:
+    """Hash a canonical JSON array without allocating its complete bytes."""
+
+    digest = hashlib.sha256()
+    digest.update(b"[")
+    for position, row in enumerate(rows):
+        if position:
+            digest.update(b",")
+        digest.update(
+            json.dumps(
+                row,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+                allow_nan=False,
+            ).encode("ascii")
+        )
+    digest.update(b"]\n")
+    return digest.hexdigest()
+
+
 def _unit_bearing_relation_bytes(
     rows: Sequence[Sequence[Any]],
 ) -> bytes:
@@ -595,7 +620,9 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     try:
         census = successor_census(frozen_rows)
         actual_rows = tuple(actual_candidate_table(frozen_rows))
+        coding_rows = tuple(coding_candidate_table(frozen_rows))
         candidate_rows = tuple(denotation_candidate_table(frozen_rows))
+        start_identity = denotation_candidate_occurrence_identity(frozen_rows)
         table = tuple(statement_table(frozen_rows))
     except (KeyError, TypeError, ValueError) as error:
         raise GateError(f"census construction failed: {error}") from error
@@ -607,7 +634,22 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     clause_bytes = _jsonl_relation_bytes(clause_rows)
     predicate_rows = tuple(PREDICATE_AUTHORITY)
     predicate_bytes = _jsonl_relation_bytes(predicate_rows)
-    actual_occurrences = sum(row["field_count"] for row in actual_rows)
+    segment_authority_rows = tuple(SEGMENT_START_AUTHORITY)
+    segment_authority_bytes = _jsonl_relation_bytes(segment_authority_rows)
+    coding_authority_rows = tuple(CODING_START_AUTHORITY)
+    coding_authority_bytes = _jsonl_relation_bytes(coding_authority_rows)
+    actual_occurrences = sum(row["occurrence_count"] for row in actual_rows)
+    actual_unadjudicated = sum(
+        row["occurrence_count"]
+        for row in actual_rows
+        if row["adjudication"].startswith("unadjudicated")
+    )
+    coding_occurrences = sum(row["occurrence_count"] for row in coding_rows)
+    coding_unadjudicated = sum(
+        row["occurrence_count"]
+        for row in coding_rows
+        if row["adjudication"].startswith("unadjudicated")
+    )
     candidate_occurrences = sum(
         row["occurrence_count"] for row in candidate_rows
     )
@@ -615,36 +657,77 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         denotation_candidate_start_count(row["source_description"])
         for row in frozen_rows
     )
-    unselected_candidates = sum(
-        denotation_candidate_unselected_count(row["source_description"])
-        for row in frozen_rows
-    )
     unadjudicated = sum(
         row["occurrence_count"]
         for row in candidate_rows
         if row["adjudication"].startswith("unadjudicated")
     )
+    candidate_texts = {row["candidate"] for row in candidate_rows}
+    candidate_texts.update(row["candidate"] for row in actual_rows)
     payload: dict[str, Any] = {
-        "schema_version": "amendment_10_successor_census.v1",
+        "schema_version": "amendment_10_successor_census.v2",
         "input_relation_row_count": len(frozen_rows),
         "input_relation_sha256": input_relation_sha256(frozen_rows),
         "actual_candidate_table_row_count": len(actual_rows),
         "actual_candidate_occurrence_count": actual_occurrences,
+        "actual_candidate_unadjudicated_count": actual_unadjudicated,
         "actual_candidate_table_sha256": canonical_sha256(actual_rows),
+        "coding_candidate_table_row_count": len(coding_rows),
+        "coding_candidate_occurrence_count": coding_occurrences,
+        "coding_candidate_unadjudicated_count": coding_unadjudicated,
+        "coding_candidate_table_sha256": canonical_sha256(coding_rows),
         "denotation_candidate_table_row_count": len(candidate_rows),
         "denotation_candidate_occurrence_count": candidate_occurrences,
         "denotation_candidate_start_count": candidate_starts,
-        "denotation_candidate_unselected_count": unselected_candidates,
+        "denotation_candidate_distinct_text_count": len(candidate_texts),
+        "denotation_candidate_total_occurrence_count": (
+            candidate_occurrences + actual_occurrences
+        ),
+        "denotation_candidate_unselected_count": start_identity[
+            "unselected_count"
+        ],
+        "denotation_candidate_overselected_count": start_identity[
+            "overselected_count"
+        ],
         "denotation_candidate_unadjudicated_count": unadjudicated,
-        "denotation_candidate_table_sha256": canonical_sha256(candidate_rows),
+        "denotation_candidate_table_sha256": (
+            _canonical_array_sha256_stream(candidate_rows)
+        ),
+        "denotation_start_occurrence_row_count": start_identity["row_count"],
+        "denotation_start_occurrence_byte_count": start_identity["byte_count"],
+        "denotation_start_occurrence_sha256": start_identity["sha256"],
+        "denotation_start_partition_rows": [
+            {
+                "adjudication": disposition,
+                "occurrence_count": start_identity["partition"][disposition],
+            }
+            for disposition in START_DISPOSITION_ORDER
+        ],
+        "segment_start_authority_row_count": len(segment_authority_rows),
+        "segment_start_authority_start_count": sum(
+            len(vector) for _segment, vector in segment_authority_rows
+        ),
+        "segment_start_authority_relation_byte_count": len(
+            segment_authority_bytes
+        ),
+        "segment_start_authority_relation_sha256": hashlib.sha256(
+            segment_authority_bytes
+        ).hexdigest(),
+        "segment_start_authority_array_sha256": canonical_sha256(
+            segment_authority_rows
+        ),
+        "coding_start_authority_row_count": len(coding_authority_rows),
+        "coding_start_authority_relation_byte_count": len(
+            coding_authority_bytes
+        ),
+        "coding_start_authority_relation_sha256": hashlib.sha256(
+            coding_authority_bytes
+        ).hexdigest(),
+        "coding_start_authority_array_sha256": canonical_sha256(
+            coding_authority_rows
+        ),
         "predicate_authority_row_count": len(predicate_rows),
         "predicate_authority_sha256": canonical_sha256(predicate_rows),
-        "explicit_no_denotation_candidate_count": len(
-            EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES
-        ),
-        "explicit_no_denotation_candidate_sha256": canonical_sha256(
-            sorted(EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES)
-        ),
         "statement_table_row_count": len(table),
         "statement_table_sha256": canonical_sha256(table),
         "unit_bearing_statement_count": len(unit_rows),
@@ -654,7 +737,12 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     return CensusBuild(
         field_rows=frozen_rows,
         actual_candidate_rows=actual_rows,
+        coding_candidate_rows=coding_rows,
         denotation_candidate_rows=candidate_rows,
+        segment_start_authority_rows=segment_authority_rows,
+        segment_start_authority_relation_bytes=segment_authority_bytes,
+        coding_start_authority_rows=coding_authority_rows,
+        coding_start_authority_relation_bytes=coding_authority_bytes,
         anchor_rows=anchor_rows,
         anchor_relation_bytes=anchor_bytes,
         clause_rows=clause_rows,
@@ -736,8 +824,23 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         actual_candidate_occurrence_count=(
             payload["actual_candidate_occurrence_count"]
         ),
+        actual_candidate_unadjudicated_count=(
+            payload["actual_candidate_unadjudicated_count"]
+        ),
         actual_candidate_table_sha256=(
             payload["actual_candidate_table_sha256"]
+        ),
+        coding_candidate_table_row_count=(
+            payload["coding_candidate_table_row_count"]
+        ),
+        coding_candidate_occurrence_count=(
+            payload["coding_candidate_occurrence_count"]
+        ),
+        coding_candidate_unadjudicated_count=(
+            payload["coding_candidate_unadjudicated_count"]
+        ),
+        coding_candidate_table_sha256=(
+            payload["coding_candidate_table_sha256"]
         ),
         denotation_candidate_table_row_count=(
             payload["denotation_candidate_table_row_count"]
@@ -748,14 +851,63 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         denotation_candidate_start_count=(
             payload["denotation_candidate_start_count"]
         ),
+        denotation_candidate_distinct_text_count=(
+            payload["denotation_candidate_distinct_text_count"]
+        ),
+        denotation_candidate_total_occurrence_count=(
+            payload["denotation_candidate_total_occurrence_count"]
+        ),
         denotation_candidate_unselected_count=(
             payload["denotation_candidate_unselected_count"]
+        ),
+        denotation_candidate_overselected_count=(
+            payload["denotation_candidate_overselected_count"]
         ),
         denotation_candidate_unadjudicated_count=(
             payload["denotation_candidate_unadjudicated_count"]
         ),
         denotation_candidate_table_sha256=(
             payload["denotation_candidate_table_sha256"]
+        ),
+        denotation_start_occurrence_row_count=(
+            payload["denotation_start_occurrence_row_count"]
+        ),
+        denotation_start_occurrence_byte_count=(
+            payload["denotation_start_occurrence_byte_count"]
+        ),
+        denotation_start_occurrence_sha256=(
+            payload["denotation_start_occurrence_sha256"]
+        ),
+        denotation_start_partition_rows=tuple(
+            (row["adjudication"], row["occurrence_count"])
+            for row in payload["denotation_start_partition_rows"]
+        ),
+        segment_start_authority_row_count=(
+            payload["segment_start_authority_row_count"]
+        ),
+        segment_start_authority_start_count=(
+            payload["segment_start_authority_start_count"]
+        ),
+        segment_start_authority_relation_byte_count=len(
+            build.segment_start_authority_relation_bytes
+        ),
+        segment_start_authority_relation_sha256=hashlib.sha256(
+            build.segment_start_authority_relation_bytes
+        ).hexdigest(),
+        segment_start_authority_array_sha256=(
+            payload["segment_start_authority_array_sha256"]
+        ),
+        coding_start_authority_row_count=(
+            payload["coding_start_authority_row_count"]
+        ),
+        coding_start_authority_relation_byte_count=len(
+            build.coding_start_authority_relation_bytes
+        ),
+        coding_start_authority_relation_sha256=hashlib.sha256(
+            build.coding_start_authority_relation_bytes
+        ).hexdigest(),
+        coding_start_authority_array_sha256=(
+            payload["coding_start_authority_array_sha256"]
         ),
         anchor_relation_row_count=len(build.anchor_rows),
         anchor_relation_byte_count=len(build.anchor_relation_bytes),
@@ -779,12 +931,6 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         predicate_authority_sha256=payload["predicate_authority_sha256"],
         predicate_authority_partition_rows=_predicate_authority_partition(
             build.predicate_authority_rows
-        ),
-        explicit_no_denotation_candidate_count=(
-            payload["explicit_no_denotation_candidate_count"]
-        ),
-        explicit_no_denotation_candidate_sha256=(
-            payload["explicit_no_denotation_candidate_sha256"]
         ),
         statement_table_row_count=payload["statement_table_row_count"],
         statement_table_sha256=payload["statement_table_sha256"],
@@ -947,7 +1093,9 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         pins.failure_reason_rows_sha256,
     )
 
-    # Step 7: exhaustive source audit and the exact Actual residual.
+    # Step 7: exhaustive source audit.  The normalized relation dispositions
+    # every U+0020 word start; the independent Actual and coding relations
+    # cover starts whose raw spelling or punctuation is material to the law.
     _require_equal(
         "Actual candidate table row count",
         payload["actual_candidate_table_row_count"],
@@ -959,9 +1107,38 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         pins.actual_candidate_occurrence_count,
     )
     _require_equal(
+        "unadjudicated Actual candidate count",
+        payload["actual_candidate_unadjudicated_count"],
+        pins.actual_candidate_unadjudicated_count,
+    )
+    if payload["actual_candidate_unadjudicated_count"] != 0:
+        raise GateError("unadjudicated raw Actual candidates remain")
+    _require_equal(
         "Actual candidate table digest",
         payload["actual_candidate_table_sha256"],
         pins.actual_candidate_table_sha256,
+    )
+    _require_equal(
+        "coding candidate table row count",
+        payload["coding_candidate_table_row_count"],
+        pins.coding_candidate_table_row_count,
+    )
+    _require_equal(
+        "coding candidate occurrence count",
+        payload["coding_candidate_occurrence_count"],
+        pins.coding_candidate_occurrence_count,
+    )
+    _require_equal(
+        "unadjudicated coding candidate count",
+        payload["coding_candidate_unadjudicated_count"],
+        pins.coding_candidate_unadjudicated_count,
+    )
+    if payload["coding_candidate_unadjudicated_count"] != 0:
+        raise GateError("unadjudicated raw coding starts remain")
+    _require_equal(
+        "coding candidate table digest",
+        payload["coding_candidate_table_sha256"],
+        pins.coding_candidate_table_sha256,
     )
     _require_equal(
         "denotation candidate table row count",
@@ -979,12 +1156,42 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         pins.denotation_candidate_start_count,
     )
     _require_equal(
+        "distinct denotation candidate text count",
+        payload["denotation_candidate_distinct_text_count"],
+        pins.denotation_candidate_distinct_text_count,
+    )
+    _require_equal(
+        "total denotation candidate occurrence count",
+        payload["denotation_candidate_total_occurrence_count"],
+        pins.denotation_candidate_total_occurrence_count,
+    )
+    _require_equal(
+        "candidate occurrence sum versus universal starts",
+        payload["denotation_candidate_occurrence_count"],
+        payload["denotation_candidate_start_count"],
+    )
+    _require_equal(
+        "total occurrence arithmetic",
+        payload["denotation_candidate_total_occurrence_count"],
+        payload["denotation_candidate_occurrence_count"]
+        + payload["actual_candidate_occurrence_count"],
+    )
+    _require_equal(
         "whole-domain candidates missed by production selectors",
         payload["denotation_candidate_unselected_count"],
         pins.denotation_candidate_unselected_count,
     )
     if payload["denotation_candidate_unselected_count"] != 0:
-        raise GateError("a whole-domain candidate escaped production selection")
+        raise GateError(
+            "a whole-domain candidate escaped production selection"
+        )
+    _require_equal(
+        "production selections lacking whole-domain authority",
+        payload["denotation_candidate_overselected_count"],
+        pins.denotation_candidate_overselected_count,
+    )
+    if payload["denotation_candidate_overselected_count"] != 0:
+        raise GateError("production selected a non-whole-domain start")
     _require_equal(
         "unadjudicated denotation candidate count",
         payload["denotation_candidate_unadjudicated_count"],
@@ -997,11 +1204,102 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         payload["denotation_candidate_table_sha256"],
         pins.denotation_candidate_table_sha256,
     )
+    _require_equal(
+        "ordered start-occurrence row count",
+        payload["denotation_start_occurrence_row_count"],
+        pins.denotation_start_occurrence_row_count,
+    )
+    _require_equal(
+        "ordered start-occurrence byte count",
+        payload["denotation_start_occurrence_byte_count"],
+        pins.denotation_start_occurrence_byte_count,
+    )
+    _require_equal(
+        "ordered start-occurrence digest",
+        payload["denotation_start_occurrence_sha256"],
+        pins.denotation_start_occurrence_sha256,
+    )
+    start_partition = tuple(
+        (row["adjudication"], row["occurrence_count"])
+        for row in payload["denotation_start_partition_rows"]
+    )
+    _require_equal(
+        "start-occurrence disposition partition",
+        start_partition,
+        pins.denotation_start_partition_rows,
+    )
+    _require_equal(
+        "start-occurrence exact cover",
+        sum(count for _disposition, count in start_partition),
+        payload["denotation_start_occurrence_row_count"],
+    )
+    _require_equal(
+        "materialized starts versus ordered start occurrences",
+        payload["denotation_candidate_start_count"],
+        payload["denotation_start_occurrence_row_count"],
+    )
 
-    # Step 8: exact semantic registries, complete statement table, and both
-    # forms of the positive fence.  The raw JSONL pins bind the displayed
-    # fences byte for byte; the canonical-array pins independently bind row
-    # order and membership.
+    # Step 8: exact cleartext semantic authorities, complete statement table,
+    # and both forms of the positive fence.  The raw JSONL pins bind the
+    # displayed fences byte for byte; canonical-array pins independently bind
+    # row order and membership.
+    segment_bytes = build.segment_start_authority_relation_bytes
+    _require_equal(
+        "segment/start authority row count",
+        payload["segment_start_authority_row_count"],
+        pins.segment_start_authority_row_count,
+    )
+    _require_equal(
+        "segment/start authority start count",
+        payload["segment_start_authority_start_count"],
+        pins.segment_start_authority_start_count,
+    )
+    _require_equal(
+        "segment/start authority versus candidate-table rows",
+        payload["segment_start_authority_start_count"],
+        payload["denotation_candidate_table_row_count"],
+    )
+    _require_equal(
+        "segment/start authority relation byte count",
+        len(segment_bytes),
+        pins.segment_start_authority_relation_byte_count,
+    )
+    _require_equal(
+        "segment/start authority relation digest",
+        hashlib.sha256(segment_bytes).hexdigest(),
+        pins.segment_start_authority_relation_sha256,
+    )
+    _require_equal(
+        "segment/start authority canonical-array digest",
+        payload["segment_start_authority_array_sha256"],
+        pins.segment_start_authority_array_sha256,
+    )
+    coding_bytes = build.coding_start_authority_relation_bytes
+    _require_equal(
+        "coding-start authority row count",
+        payload["coding_start_authority_row_count"],
+        pins.coding_start_authority_row_count,
+    )
+    _require_equal(
+        "coding candidate/authority exact row cover",
+        payload["coding_candidate_table_row_count"],
+        payload["coding_start_authority_row_count"],
+    )
+    _require_equal(
+        "coding-start authority relation byte count",
+        len(coding_bytes),
+        pins.coding_start_authority_relation_byte_count,
+    )
+    _require_equal(
+        "coding-start authority relation digest",
+        hashlib.sha256(coding_bytes).hexdigest(),
+        pins.coding_start_authority_relation_sha256,
+    )
+    _require_equal(
+        "coding-start authority canonical-array digest",
+        payload["coding_start_authority_array_sha256"],
+        pins.coding_start_authority_array_sha256,
+    )
     anchor_bytes = build.anchor_relation_bytes
     _require_equal(
         "anchor relation row count",
@@ -1069,16 +1367,6 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         "predicate-authority four-way partition",
         _predicate_authority_partition(build.predicate_authority_rows),
         pins.predicate_authority_partition_rows,
-    )
-    _require_equal(
-        "explicit no-denotation candidate count",
-        payload["explicit_no_denotation_candidate_count"],
-        pins.explicit_no_denotation_candidate_count,
-    )
-    _require_equal(
-        "explicit no-denotation candidate digest",
-        payload["explicit_no_denotation_candidate_sha256"],
-        pins.explicit_no_denotation_candidate_sha256,
     )
     unit_bytes = build.unit_bearing_relation_bytes
     _require_equal(
