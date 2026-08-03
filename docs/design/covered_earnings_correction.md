@@ -38550,3 +38550,259 @@ every consumer, and reproduces the category counts. An omitted, extra,
 duplicate, misanchored, third-disposition, undefined-successor, or
 incompletely closed comparator blocks ratification. This table becomes an
 immutable revision-10 invariant only at D8.
+
+### 22.8 Revision-10 lifecycle successors and identifier inventory
+
+#### 22.8.1 D8 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. D8 has exactly `path`,
+`ratification_commit`, `blob_sha256`, and `revision`, in that order. Path is
+`docs/design/covered_earnings_correction.md`; the commit is the 40-lowercase-
+hex future document-only ratification commit fixed only by §22.9.2 step 3;
+the SHA-256 covers every raw design byte at that commit; and revision is the
+JSON integer 10 excluding booleans. A draft, review-response, implementation,
+artifact, or mixed commit cannot fill D8.
+
+| Symbol | Revision | Ratification commit | Raw bytes | Git blob | Complete raw SHA-256 |
+|---|---:|---|---:|---|---|
+| D7 | 9 | `ccc3b9f3afc43624a5fd7d90e57f93a6d6ce686c` | 2,423,590 | `08a64a16c82e2893cdd415bdd092b5a9f71e4687` | `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9` |
+| D8 | 10 | future value fixed only by §22.9.2 step 3 | complete accepted revision-10 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
+
+Every Amendment-8 lifecycle predicate independently authenticates D2
+through D8 and all five raw-prefix comparisons through D8. In particular,
+D7's complete 2,423,590 bytes must byte-equal D8's half-open byte range
+`[0,2423590)`. A digest, ancestry relation, transitive consumer, or same
+working-tree file cannot substitute for any raw comparison.
+
+The position registry successor is
+`fitting_free_requirement_verification_specs.v7`. It retains the complete
+v6 keyset, exact 22-row order, requirement meanings, failure IDs, and result
+schemas, advances only its schema value, and replaces the same-position
+position-1, A1, and A3 rows. Every other row is freshly evaluated rather
+than copied. Its exact position-1 object is:
+
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_8_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_8_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_8_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","ratified_design:amendment_8_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_amendment_7_and_amendment_8_design_identities"}
+~~~
+
+The expected and actual preimages retain §21.8.1's top-level keysets,
+projection-row schema, canonical value-digest law, order/count/domain
+equations, and now have exactly nine projection rows. Let G2 through G8 be
+the complete raw design blobs at D2 through D8, K_f^d the staged fitting-free
+configuration design, C_A the final calibrated authority cutoff, and G_C_A
+the same-path raw bytes there. Expected values are
+`[D2,D3,D4,D5,D6,D7,D8,D2,G8]`; actual values are
+`[D2,D3,D4,D5,D6,D7,D8,K_f^d,G_C_A]`. The first eight rows have value type
+`canonical_json`; the ninth has `raw_git_bytes`.
+
+`verify_amendment_8_fitting_free_design_identity_v1` is true if and only if
+every inherited shape/order/count/digest equation passes and:
+
+1. both reconstructions of D2 through D8 deep-equal and all seven
+   ratification blobs hash to their identities;
+2. K_f^d equals D2 without requiring configuration bytes to equal the final
+   cutoff;
+3. all five raw-prefix comparisons through D8 pass;
+4. G_C_A byte-equals G8 and hashes to D8's `blob_sha256`; and
+5. `D2 < D3 < D4 < D5 < D6 < D7 < D8 <= C_A`, using strict Git ancestry
+   for each `<` and ancestor-or-equal for the last edge.
+
+False serializes the inherited exact-identity false result with
+`predicate_mismatch` and cannot select a predecessor registry or receipt.
+
+#### 22.8.2 Capture, A1/A3, domain, and bundle successors
+
+Every capture authorization first added after D8 uses
+`fitting_free_model_input_authority_capture_registration.v7`. It is the
+complete v6 authorization with its schema value advanced and
+`amendment_8_design_identity` inserted immediately after
+`amendment_7_design_identity`; it has exactly 19 keys. `design` remains D2,
+and the amendment children are D3 through D8. Every other adjudication,
+invocation, capability, input, path, repository, and failure law remains.
+
+Let A be the unique single-parent commit strictly after D8 first adding only
+that v7 authorization, and freeze capture HEAD as H_cap before any
+environment, claim, broker, source descriptor, or model input opens. The
+coordinator first constructs
+`amendment_8_capture_registration_repository_proof.v1` with exactly these 17
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+The seven identity members are D2 through D8 and the commit fields are
+`[A,H_cap]`. The eight six-key blob rows have roles
+`amendment_2_ratification` through `amendment_8_ratification`, followed by
+`capture_head`; count is integer eight. Canonicalization, pass/fail status,
+and `abort_without_accepted_authority_pair` failure disposition retain their
+exact inherited values.
+
+`verify_amendment_8_capture_registration_repository_identity_v1` is true if
+and only if every inherited proof equation passes and:
+
+1. the strict-parsed v7 authorization has its independently reconstructed
+   digest and exact D2–D8 children;
+2. all seven ratification blobs hash correctly, all five prefix comparisons
+   pass, and same-path design bytes at H_cap equal D8;
+3. `D2 < D3 < D4 < D5 < D6 < D7 < D8 < A <= H_cap`;
+4. authorization bytes remain unchanged from A through H_cap and all eight
+   blob rows exact-match observed commits, modes, OIDs, and raw bytes; and
+5. every retained descriptor-free repository, tracked-state, clean-checkout,
+   implementation-tree, and authorization-byte conjunct passes.
+
+The proof freezes before descriptors, contains no receipt or future commit,
+and passes or aborts without fallback.
+
+`fitting_free_model_input_authority_capture_claim.v7` retains the complete
+eight-key v6 claim shape/order, advances only its schema value, and embeds the
+complete Amendment-8 proof.
+`fitting_free_model_input_authority_capture_input.v7` retains the v6 envelope
+keyset/order, advances only its schema value, and selects the v7 registration,
+claim, and proof. The unchanged primary and sidecar retain D2 design children;
+their complete hashes transitively bind D3 through D8 and H_cap. The
+authorization/capture/triple/cutoff order remains
+`D8 < A <= H_cap < T < C`, with every inherited sole-parent, only-add,
+descriptor, and durable-reread law.
+
+Within `fitting_free_requirement_verification_specs.v7`, A1 and A3 retain
+their complete §21.8.2 classes, expected/actual preimage schemas, ordered
+source projections, result schemas, and meanings. Their predicate IDs become
+`verify_amendment_8_fitting_free_a1_model_universe_authority_v1` and
+`verify_amendment_8_fitting_free_a3_weight_source_authority_v1`. Their
+cross-bindings change only to suffix
+`and_amendment_8_capture_repository_proof`, and every projection selects the
+v7 capture input/claim/proof. The claim remains lifecycle nonauthority and
+enters no substantive value or inner A1/A3 identity.
+
+The domain successor is `fitting_free_registration_domain_identity.v7`. It
+retains the v6 keyset/order, advances its schema value, selects the complete
+v7 requirement registry, and freshly reconstructs all 22 rows, projection
+evidence, Booleans, failure IDs, counts, and hashes. Every source-derived
+child first validates the actual threshold-selected field relation and its
+virtual explicit-equivalent member arrays and streaming/aggregate digests.
+This representation change does not alter R10a, R10b, R11, or V-B6. V-B6
+must again be nonpassing; no accepted complete v7 domain instance exists on
+the present evidence. A copied v6 domain, empty forbidden-dependency array,
+carrier, residual 9, explicit-only read, or digest-only analytic read fails.
+
+The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v8`. It retains the v7
+keyset/order, advances its schema value, and embeds the complete v7
+requirement registry. Every affected source-derived child is freshly
+reconstructed from accepted post-D8 Q5, inventory, value maps, legal
+authorities, the checked analytic-capable `pass_with_closed_failures`
+relation, and exact-empty applicable consumer guards—never from G17 or a
+configuration. Legal children retain their exact version chain. No v7
+bundle, filtered relation, failed consumer, draft Q5, copied interval, or
+copied digest is admitted.
+
+No accepted v8 bundle exists while the required v7 domain is nonpassing. A
+construction attempt must retain R10a's source-adjudication abort and R10b's
+carrier-absence proof and abort before emitting a bundle. Analytic range
+membership cannot fabricate a carrier or turn an evidence relation into a
+passing V-B6 consumer.
+
+#### 22.8.3 Receipt and selected-registration lineage
+
+`covered_earnings_path_applicability_receipt_core.v7` is the complete v6
+core with its schema value advanced and `amendment_8_design_identity`
+inserted immediately after `amendment_7_design_identity`; it has exactly 22
+keys. Its seven amendment children are D2 through D8, its fitting-free domain
+is v7, its applicability-spec digest hashes the complete v8 bundle, and its
+applicability result carries the v7 domain digest. Every other member and the
+namespace cut edge remain unchanged; `receipt_core_sha256` hashes the
+complete v7 core.
+
+When capture supplies A1/A3, validation requires every D2–D8 child to
+deep-equal the corresponding v7 registration/proof identity and reproduce
+its raw blob and complete prefix chain. The calibrated adjudication and
+fitting-free domain bind the same v7 claim, capture input, proof, primary,
+sidecar, triple, and cutoff. Exact lineage is
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < A <= H_cap < T < C <= HEAD`.
+
+The outer `covered_earnings_path_applicability_receipt.v7` retains the
+complete v6 outer keyset/order and every receipt-ID, suffix, namespace,
+construction, status, Git-delta, and failure law, changes only its schema
+value, and requires the complete v7 core. Terminal history dispatch is exact:
+pre-Amendment-3 uses historical v1; Amendments 3, 4, 5, 6, 7, and 8 use v2,
+v3, v4, v5, v6, and v7 respectively. No receipt version binds another
+revision.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+`verify_amendment_8_selected_registration_design_lineage_v1` is true if and
+only if:
+
+1. selected configuration design exact-matches its D1 or D2 ratification
+   blob and digest;
+2. receipt-core D2 exact-matches revision 4;
+3. D3, D4, D5, D6, and D7 exact-match revisions 5 through 9 respectively;
+4. D8 exact-matches revision 10 and same-path raw bytes at registration
+   HEAD, while all five raw-prefix comparisons pass;
+5. `D1 < D2 < D3 < D4 < D5 < D6 < D7 < D8 <= registration HEAD`; and
+6. every retained repository, implementation-tree, configuration,
+   invocation, input, output, history, authority, and validation law passes.
+
+False fails v7 receipt validation without fallback. A fresh fitting-free
+selection under revision-10 authority still retains the revision-4 D2
+configuration design child; K_f^d = D2 remains joined to the earlier D8
+position proof and later v7 receipt proof.
+
+The presently nonpassing V-B6 domain means no accepted Amendment-8 receipt
+or selected registration can instantiate these schemas. They close the
+lifecycle; they do not manufacture substantive authority.
+
+#### 22.8.4 Complete successor identifier inventory
+
+The complete lifecycle successor set introduced by Amendment 8 has exactly
+these 16 identifiers in order:
+
+1. `amendment_8_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_8_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_8_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v7`;
+5. `verify_amendment_8_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_8_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v7`;
+8. `covered_earnings_path_applicability_registry_bundle.v8`;
+9. `fitting_free_model_input_authority_capture_registration.v7`;
+10. `amendment_8_capture_registration_repository_proof.v1`;
+11. `verify_amendment_8_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v7`;
+13. `fitting_free_model_input_authority_capture_input.v7`;
+14. `covered_earnings_path_applicability_receipt_core.v7`;
+15. `covered_earnings_path_applicability_receipt.v7`; and
+16. `verify_amendment_8_selected_registration_design_lineage_v1`.
+
+The complete nonlifecycle schema set newly introduced by Amendment 8 is the
+one identifier
+`amendment_8_analytic_range_partition_closure_sweep.v1`. Concatenating the
+displayed lifecycle order and that singleton is the exact 17-name successor
+inventory. The lists are disjoint and contain no alias. An omitted, extra,
+duplicate, misspelled, undefined, or candidate-selectable identifier blocks
+ratification.
+
+The v3 source interface and every official v1 source/Q5/slot/inventory
+artifact remain completed in place. `analytic_closed_intervals_v1`,
+`literal_member_rows`, `range_interval_rows`, `total_member_count`, interval
+position names, the 4,096 threshold, streaming construction, A8-R01 through
+A8-R04, D8, Q5, A, H_cap, T, C, K_f^d, and DC-01 through DC-48 are enum,
+defined-term, row-ID, member, operation, context symbol, or comparator values,
+not independently selectable schemas. None enlarges the identifier inventory
+or creates a v4 compiler alias.

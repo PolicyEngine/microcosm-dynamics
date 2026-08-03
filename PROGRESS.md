@@ -24,10 +24,11 @@ prefix remains 2,423,590 bytes with SHA-256
   inventory, and the Amendment-8 closure sweep.
 - Added and mechanically verified the 48-row revision-10 comparator census
   (24 replaced / 24 unchanged).
+- Added D8 position, capture, domain, bundle, receipt, and selected-lineage
+  successors plus the exact 16+1 identifier inventory.
 
 ## Next
 
-- Add D8 lifecycle successors and the complete identifier inventory.
 - Complete the post-D8 build/ratification/Q5 order.
 - Reverify the immutable prefix, document digest, and diff hygiene.
 - Write the external final report and remove this progress file.
