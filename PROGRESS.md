@@ -20,10 +20,12 @@ fixture/digest consequences.
 - Made the 100 MiB-to-8 GiB envelope explicitly provisional and
   non-normative, grounded only as a planning class by the measured compact
   projection and analytic row inventory.
+- Embedded the exact 241.642-TiB numerator and formula using the
+  820,025,893,984-member ordinary compiled subset and its 324-byte shortest
+  lawful member row.
 
 ## Next
 
-- Embed the exact shortest-row TiB numerator and formula.
 - Disposition the inherited D7 illustrative pseudo-JSON fence.
 - Run focused strict-JSON, arithmetic, prefix, scope, and diff-hygiene checks.
 - Remove this ledger and write the final report outside the repository tree.
