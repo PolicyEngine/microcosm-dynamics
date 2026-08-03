@@ -2881,6 +2881,53 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             "adjudication_status", "pending"
         ),
     )
+
+    def collapse_reprint(row: dict[str, Any]) -> None:
+        """Re-home a reprinted screen's occurrence onto its first printing.
+
+        The 1979 manual photographs six instrument screens more than once.
+        Silently folding a reprint back onto the screen it duplicates is the
+        specific defect this document invites, so it is exercised directly.
+        """
+
+        for occurrence in row["questionnaire_occurrence_rows"]:
+            if occurrence["page_number"] == 85:
+                occurrence["page_number"] = 83
+                return
+        raise ValueError("mutation fixture has no reprinted-screen row")
+
+    def reclassify_role(row: dict[str, Any]) -> None:
+        for anchor in row["local_anchor_classification_rows"]:
+            if anchor["occurrence_kind"] == "role_anchor":
+                anchor["classification"] = (
+                    "spouse_or_partner"
+                    if anchor["classification"] == "head_or_reference_person"
+                    else "head_or_reference_person"
+                )
+                return
+        raise ValueError("mutation fixture has no role anchor")
+
+    add("collapsed_reprint_page", collapse_reprint)
+    add("changed_role_classification", reclassify_role)
+    add(
+        "stale_seal_count",
+        lambda row: row["seal"].__setitem__(
+            "questionnaire_occurrence_count",
+            row["seal"]["questionnaire_occurrence_count"] + 1,
+        ),
+    )
+    add(
+        "forbidden_global_identifier",
+        lambda row: row["local_anchor_classification_rows"][0].__setitem__(
+            "local_anchor_classification_id", "psid-job-slot:" + "0" * 64
+        ),
+    )
+    add(
+        "widened_authority_claim",
+        lambda row: row.__setitem__(
+            "authority_kind", "document_local_source_annotation_authority"
+        ),
+    )
     return mutations
 
 
