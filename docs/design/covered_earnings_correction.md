@@ -41064,10 +41064,14 @@ over every registered `codebook` document under the §19.3.2 derivation and is
 exhaustive rather than sampled:
 
 - a codebook value block displays exactly four columns — `Count`, `%`,
-  `Value/Range Code`, and `Value/Range Text`. There is no unit column in any
-  of the 43 family codebook PDFs, in any era;
+  `Value/Range Code`, and `Value/Range Text`. Across all 43 family codebook
+  PDFs there is exactly **one distinct** value-block header line, and it
+  occurs exactly **89,599** times, once per field of the denominator. There
+  is no unit column in any of them, in any era;
 - the two 2021 and two 2023 value-label documents display value and meaning
-  only;
+  only: their 3,212 + 3,212 + 3,078 + 3,078 canonical rows carry null
+  `source_description` and null `source_format_text` throughout, and zero
+  nonnull `typed_value_unit` on any normalized entry;
 - `declared_typed_value_unit` is null on every one of the 179,198 canonical
   `dictionary_layout` rows, and §19.3.2 makes that correct: those members
   "exact-normalize an express source value and otherwise are null";
