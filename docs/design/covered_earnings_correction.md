@@ -37682,6 +37682,21 @@ publication.
   Those complete bytes are the byte-identical prefix of revision 10. A
   digest-only, ancestry-only, transitive, working-tree, or candidate-prefix
   assertion cannot substitute for comparing every one of those bytes.
+- **Sole inherited illustrative-fence exception.** D7 one-based lines
+  3,834–3,837 are the exact 171-byte LF-terminated fenced block at D7 byte
+  interval `[241728,241899)`, including delimiters, with SHA-256
+  `82118279750eea3f5f84f7dc7a458d8a0030d897d262dc756d1b635d513c4f34`.
+  Its two content lines 3,835–3,836 are exactly 159 LF-terminated bytes with
+  SHA-256
+  `a94110a196a77420652d9a0e8c92cda38c225107aa4156279dd7e78b2cace23d`.
+  They contain the literal placeholder `[...]` and two successive object
+  roots, so that inherited fence is illustrative pseudo-JSON, not a JSON
+  value and not schema, parser, or canonicalization authority. Because the
+  immutable-prefix law forbids repairing it in place, that fence alone is
+  excluded from the whole-document strict-JSON-fence parse obligation. Every
+  `json` fence authored in §22, including a negative fixture whose parsed
+  value is then schema-invalid, must still strict-parse as exactly one JSON
+  value after duplicate-key rejection. No other fence gains an exception.
 - **One representation defect only.** Amendment 8 changes only the wire
   representation of exhaustive numeric-range member relations and the
   consumers, identities, and lifecycle steps that necessarily depend on
@@ -37705,7 +37720,7 @@ The complete section map is:
 
 | Subsection | Complete subject |
 |---|---|
-| §22.1 | status, D7 identity and prefix, scope, precedence, and section map |
+| §22.1 | status, D7 identity and prefix, inherited illustrative-fence exception, scope, precedence, and section map |
 | §22.2 | explicit-or-analytic grammar, canonical interval bijection, streaming digest, and identity law |
 | §22.3 | exact analytic-equivalent consumer law for membership, enumeration, rendering, DFA subtraction, missing-first images, Q5, G17, and guarded consumers |
 | §22.4 | mandatory Amendment-8 vectors and the physical-storage fact table |

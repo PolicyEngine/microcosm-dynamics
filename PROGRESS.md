@@ -23,9 +23,11 @@ fixture/digest consequences.
 - Embedded the exact 241.642-TiB numerator and formula using the
   820,025,893,984-member ordinary compiled subset and its 324-byte shortest
   lawful member row.
+- Dispositioned the exact inherited D7 illustrative pseudo-JSON fence by
+  line, byte interval, fence/body hashes, and sole strict-parse exception;
+  retained strict one-root parsing for every section 22 JSON fence.
 
 ## Next
 
-- Disposition the inherited D7 illustrative pseudo-JSON fence.
 - Run focused strict-JSON, arithmetic, prefix, scope, and diff-hygiene checks.
 - Remove this ledger and write the final report outside the repository tree.
