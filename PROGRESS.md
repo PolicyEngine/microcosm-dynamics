@@ -18,7 +18,9 @@ Section 24 has now been regenerated from those final artifacts. The document
 is 3,435,126 bytes with SHA-256
 `ce46ac7ac7354ad0f0ff022fc85b2f4365cbca1acced6ec9c7aec5d013bd61a2`;
 all six embedded authority fences match their source relations byte for byte,
-and every frozen gate pin appears in the document.
+and every frozen gate pin appears in the document. The final 89,599-row gate
+reproduction exits zero and matches the frozen payload and statement outputs
+byte for byte at 1,126,612,992-byte peak RSS.
 
 ## Done
 
@@ -94,11 +96,14 @@ and every frozen gate pin appears in the document.
   relations byte for byte.
 - Reverified the immutable 2,653,817-byte prefix and mechanically confirmed
   every current gate hash and storage total in the regenerated document.
+- Passed all 258 focused authority/gate tests, 296 broader covered-earnings
+  regressions, and Ruff on every changed Python source and test.
+- Reran the full production gate over the lawful raw relation; it exited zero,
+  reproduced the frozen payload and statement files byte for byte, and peaked
+  at 1,126,612,992 bytes RSS.
 
 ## Next
 
-- Rerun the focused and broader relevant tests, Ruff, prefix, formatting, and
-  diff checks against the regenerated document.
 - Obtain another independent review against both round-2 verdicts and resolve
   any actionable finding.
 - Write the final report, remove this progress file, and commit the cleanup.
