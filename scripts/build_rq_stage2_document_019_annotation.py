@@ -390,7 +390,20 @@ def _source_printed_identifier(page_text: str, byte_start: int) -> str | None:
         line_byte_start = len(page_text[: line["start"]].encode("utf-8"))
         line_byte_end = len(page_text[: line["end"]].encode("utf-8"))
         if line_byte_start <= byte_start < line_byte_end:
-            return stage1_candidates._printed_identifier(line["text"])
+            prefix = page_text.encode("utf-8")[line_byte_start:byte_start]
+            relative_start = len(prefix.decode("utf-8", errors="strict"))
+            # Multi-column PDF text can place several question identifiers
+            # on one physical line.  Resolve the nearest identifier at or
+            # before this occurrence rather than taking the line's first.
+            for character_start in range(relative_start, -1, -1):
+                identifier = stage1_candidates._printed_identifier(
+                    line["text"][character_start:]
+                )
+                if identifier is not None and any(
+                    character.isdigit() for character in identifier
+                ):
+                    return identifier
+            return None
     raise ValueError(
         "source review occurrence does not resolve to a physical line"
     )
@@ -2798,12 +2811,9 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
     def select_path_subset(row: dict[str, Any]) -> None:
         """Replace a lawful path set with a proper subset of itself.
 
-        Every document-19 occurrence resolves under exactly one complete
-        root-to-leaf path, so the multi-parent form of this mutation has no
-        fixture here.  Truncating a conditional occurrence's path back to the
-        bare root is the same defect in its single-path form: the emitted
-        array is a strict prefix-subset of the lawful resolving path and must
-        be rejected.
+        Prefer a reused non-flow occurrence with several complete paths. If
+        that fixture disappears, truncate a conditional occurrence's single
+        path back to the bare root; either mutation must be rejected.
         """
 
         for occurrence in row["questionnaire_occurrence_rows"]:

@@ -165,7 +165,7 @@ def resolve_tail(
 ) -> tuple[int, int]:
     """Span from a printed needle to the end of its physical line.
 
-    The 1980 instrument prints its section headers on a line that also
+    Some instruments print a section header on a line that also
     carries the printed screen number, so a whole-line span would swallow an
     unrelated token.  This selector keeps the exact printed header bytes.
     """
@@ -398,24 +398,43 @@ SEC_D = ("p11_flow_section_d",)
 D_EMPLOYEE = SEC_D + ("p14_flow_d5_someone_else",)
 D_BOTH = SEC_D + ("p14_flow_d5_both",)
 D_SELF = SEC_D + ("p14_flow_d5_self",)
+D26_LONG = SEC_D + ("p16_flow_d26_one_year_or_more",)
+D29_BETTER = SEC_D + ("p16_flow_d29_better",)
+D29_WORSE = SEC_D + ("p16_flow_d29_worse",)
+D29_SAME = SEC_D + ("p16_flow_d29_same",)
 D_SALARIED = SEC_D + ("p20_flow_d50_salaried",)
 D_HOURLY = SEC_D + ("p20_flow_d50_hourly",)
 SEC_E = ("p24_flow_section_e",)
+E_RECENT = SEC_E + ("p26_flow_e19_recent",)
+E_OLD = SEC_E + ("p26_flow_e19_before_1976",)
 SEC_F = ("p30_flow_section_f",)
 F_THINKING = SEC_F + ("p32_flow_f14_thinking_yes",)
 SEC_G = ("p34_flow_section_g",)
 G_ELIGIBLE = SEC_G + ("p34_flow_g4_eligible",)
+G_ALL_OTHERS = SEC_G + ("p34_flow_g4_all_others",)
 G_CHILDREN = G_ELIGIBLE + ("p38_flow_g23_children",)
+G19_ONE = G_ELIGIBLE + ("p36_flow_g19_one",)
+G19_TWO = G_ELIGIBLE + ("p36_flow_g19_two",)
+G19_MORE = G_ELIGIBLE + ("p36_flow_g19_more_than_two",)
 SEC_H = ("p46_flow_section_h",)
 H_FARMER = SEC_H + ("p46_flow_h1_farmer",)
+H_NOT_FARMER = SEC_H + ("p46_flow_h1_not_farmer",)
+H_CORPORATION = SEC_H + ("p46_flow_h6_corporation",)
 H_UNINCORPORATED = SEC_H + ("p46_flow_h6_unincorporated",)
 H_BOTH = SEC_H + ("p46_flow_h6_both",)
 H_DONT_KNOW = SEC_H + ("p46_flow_h6_dont_know",)
 H_WIFE = SEC_H + ("p53_flow_h18_wife_present",)
+H_NO_WIFE = SEC_H + ("p53_flow_h18_no_wife",)
 H24_POSITIVE = SEC_H + ("p53_flow_h24_social_security",)
+H24_NO = SEC_H + ("p53_flow_h24_no",)
 SEC_J = ("p63_flow_section_j",)
 J_NEW_WIFE = SEC_J + ("p63_flow_j1_new_wife",)
+J10_NONE = J_NEW_WIFE + ("p63_flow_j10_none",)
+J11_ALL = J_NEW_WIFE + ("p63_flow_j11_all",)
 K_NEW_HEAD = ("p65_flow_k1_new_head",)
+K_SAME_HEAD = ("p65_flow_k1_same_head",)
+K25_NONE = K_NEW_HEAD + ("p69_flow_k25_none",)
+K26_ALL = K_NEW_HEAD + ("p69_flow_k26_all",)
 
 _MAIN_JOB_PARENT = (
     "Parent job is the establishing main-job noun on the retained screen."
@@ -582,7 +601,7 @@ PAGE_14 = (
         "( TURN TO PAGE 8 , D26)",
         F,
         "p14_flow_d22_exit",
-        routes=(D_SELF,),
+        routes=(D_BOTH,),
     ),
     word(
         14,
@@ -645,7 +664,14 @@ PAGE_16 = (
         "p16_flow_d26_one_year_or_more",
         routes=(SEC_D,),
     ),
-    word(16, 3, "( GO TO D32)", F, "p16_flow_d26_long_exit", routes=(SEC_D,)),
+    word(
+        16,
+        3,
+        "( GO TO D32)",
+        F,
+        "p16_flow_d26_long_exit",
+        routes=(D26_LONG,),
+    ),
     *paired(
         16,
         ("line", 6),
@@ -693,7 +719,21 @@ PAGE_16 = (
     word(16, 20, "BETTER", F, "p16_flow_d29_better", routes=(SEC_D,)),
     word(16, 20, "WORSE", F, "p16_flow_d29_worse", routes=(SEC_D,)),
     word(16, 20, "SAME", F, "p16_flow_d29_same", routes=(SEC_D,)),
-    line(16, 21, P, "p16_d30_prompt", routes=(SEC_D,)),
+    word(
+        16,
+        20,
+        "(GO TO D31)",
+        F,
+        "p16_flow_d29_same_exit",
+        routes=(D29_SAME,),
+    ),
+    line(
+        16,
+        21,
+        P,
+        "p16_d30_prompt",
+        routes=(D29_BETTER, D29_WORSE),
+    ),
     *paired(
         16,
         ("line", 26),
@@ -775,6 +815,8 @@ PAGE_16 = (
 )
 
 
+D44_ONE = SEC_D + ("p18_flow_d44_one",)
+D44_TWO = SEC_D + ("p18_flow_d44_two",)
 D44_MORE = SEC_D + ("p18_flow_d44_more_than_two",)
 
 PAGE_18 = (
@@ -839,7 +881,14 @@ PAGE_18 = (
         "p18_flow_d44_more_than_two",
         routes=(SEC_D,),
     ),
-    word(18, 23, "(GO TO D46)", F, "p18_flow_d44_exit", routes=(SEC_D,)),
+    word(
+        18,
+        23,
+        "(GO TO D46)",
+        F,
+        "p18_flow_d44_exit",
+        routes=(D44_ONE, D44_TWO),
+    ),
     *paired(
         18,
         ("line", 26),
@@ -1210,24 +1259,24 @@ PAGE_26 = (
         "(TURN TO PAGE 17, Gl)",
         F,
         "p26_flow_e19_old_exit",
-        routes=(SEC_E,),
+        routes=(E_OLD,),
     ),
     *paired(
         26,
         ("line", 27),
         "p26_e20_vacation",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E20 prints a 1976 vacation exposure.",
         parent_note=_LAST_JOB_PARENT,
     ),
-    word(26, 29, "(GO TO E22)", F, "p26_flow_e20_no", routes=(SEC_E,)),
+    word(26, 29, "(GO TO E22)", F, "p26_flow_e20_no", routes=(E_RECENT,)),
     *paired(
         26,
         ("block", 30, 31),
         "p26_e21_vacation_amount",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E21 prints vacation or time-off duration.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1236,18 +1285,18 @@ PAGE_26 = (
         ("line", 35),
         "p26_e22_other_sick",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E22 prints a missed-work exposure.",
         parent_note=_LAST_JOB_PARENT,
     ),
-    word(26, 37, "(GO TO E25)", F, "p26_flow_e22_no", routes=(SEC_E,)),
-    line(26, 39, P, "p26_e23_prompt", routes=(SEC_E,)),
+    word(26, 37, "(GO TO E25)", F, "p26_flow_e22_no", routes=(E_RECENT,)),
+    line(26, 39, P, "p26_e23_prompt", routes=(E_RECENT,)),
     *paired(
         26,
         ("line", 42),
         "p26_e24_other_sick_amount",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E24 prints missed-work duration.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1256,7 +1305,7 @@ PAGE_26 = (
         ("line", 46),
         "p26_e25_own_sick",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E25 prints an own-sickness work exposure.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1266,21 +1315,23 @@ PAGE_26 = (
         "(TURN TO PAGE 14, E27)",
         F,
         "p26_flow_e25_no",
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
     ),
     *paired(
         26,
         ("line", 50),
         "p26_e26_own_sick_amount",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E26 prints own-sickness missed-work duration.",
         parent_note=_LAST_JOB_PARENT,
     ),
 )
 
 
-E31_MORE = SEC_E + ("p28_flow_e31_more_than_two",)
+E31_ONE = E_RECENT + ("p28_flow_e31_one",)
+E31_TWO = E_RECENT + ("p28_flow_e31_two",)
+E31_MORE = E_RECENT + ("p28_flow_e31_more_than_two",)
 
 PAGE_28 = (
     *paired(
@@ -1288,17 +1339,17 @@ PAGE_28 = (
         ("line", 1),
         "p28_e27_strike",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E27 prints a strike-related work exposure.",
         parent_note=_LAST_JOB_PARENT,
     ),
-    word(28, 3, "(GO TO E29)", F, "p28_flow_e27_no", routes=(SEC_E,)),
+    word(28, 3, "(GO TO E29)", F, "p28_flow_e27_no", routes=(E_RECENT,)),
     *paired(
         28,
         ("line", 4),
         "p28_e28_strike_amount",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E28 prints strike-related missed-work duration.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1307,17 +1358,17 @@ PAGE_28 = (
         ("line", 8),
         "p28_e29_unemployment",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E29 prints unemployment or layoff exposure.",
         parent_note=_LAST_JOB_PARENT,
     ),
-    word(28, 10, "(GO TO E33)", F, "p28_flow_e29_no", routes=(SEC_E,)),
+    word(28, 10, "(GO TO E33)", F, "p28_flow_e29_no", routes=(E_RECENT,)),
     *paired(
         28,
         ("line", 12),
         "p28_e30_unemployment_amount",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E30 prints unemployment or layoff duration.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1326,9 +1377,25 @@ PAGE_28 = (
         ("block", 15, 16),
         "p28_e31_unemployment_spells",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E31 prints the unemployment-spell classification.",
         parent_note=_LAST_JOB_PARENT,
+    ),
+    word(
+        28,
+        18,
+        "I 1. ALL IN ONE STRETCH I",
+        F,
+        "p28_flow_e31_one",
+        routes=(E_RECENT,),
+    ),
+    word(
+        28,
+        20,
+        "~ TWO PERIODS I",
+        F,
+        "p28_flow_e31_two",
+        routes=(E_RECENT,),
     ),
     word(
         28,
@@ -1336,9 +1403,16 @@ PAGE_28 = (
         "MORE TH.A3",
         F,
         "p28_flow_e31_more_than_two",
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
     ),
-    word(28, 24, "(GO TO E33)", F, "p28_flow_e31_exit", routes=(SEC_E,)),
+    word(
+        28,
+        24,
+        "(GO TO E33)",
+        F,
+        "p28_flow_e31_exit",
+        routes=(E31_ONE, E31_TWO),
+    ),
     *paired(
         28,
         ("block", 25, 26),
@@ -1353,7 +1427,7 @@ PAGE_28 = (
         ("line", 30),
         "p28_e33_weeks",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E33 prints weeks worked in 1976.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1362,7 +1436,7 @@ PAGE_28 = (
         ("line", 34),
         "p28_e34_hours",
         parents=("p26_job_last",),
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
         note="E34 prints average weekly hours worked.",
         parent_note=_LAST_JOB_PARENT,
     ),
@@ -1372,7 +1446,7 @@ PAGE_28 = (
         "(TURN TO PAGE 17 , Gl)",
         F,
         "p28_flow_e35_none",
-        routes=(SEC_E,),
+        routes=(E_RECENT,),
     ),
 )
 
@@ -1580,7 +1654,7 @@ PAGE_34 = (
         "(TURN TO PAGE 20 , G33)",
         F,
         "p34_flow_g4_exit",
-        routes=(SEC_G,),
+        routes=(G_ALL_OTHERS,),
     ),
     *paired(
         34,
@@ -1755,17 +1829,41 @@ PAGE_36 = (
     ),
     word(
         36,
+        58,
+        "1. ALL IN ONE STRETCH",
+        F,
+        "p36_flow_g19_one",
+        routes=(G_ELIGIBLE,),
+    ),
+    word(
+        36,
+        58,
+        "3 . TWO PERIODS",
+        F,
+        "p36_flow_g19_two",
+        routes=(G_ELIGIBLE,),
+    ),
+    word(
+        36,
+        58,
+        "5 . MORE TI:-IAN    r..;o",
+        F,
+        "p36_flow_g19_more_than_two",
+        routes=(G_ELIGIBLE,),
+    ),
+    word(
+        36,
         59,
         "(TUR..T\\1 TO PAGE 19, G21)",
         F,
         "p36_flow_g19_exit",
-        routes=(G_ELIGIBLE,),
+        routes=(G19_ONE, G19_TWO),
     ),
     *paired(
         36,
         ("line", 60),
         "p36_g20_unemployment_count",
-        routes=(G_ELIGIBLE,),
+        routes=(G19_MORE,),
         note="G20 prints the number of unemployment periods.",
     ),
 )
@@ -1915,7 +2013,14 @@ PAGE_46 = (
         "p46_flow_h1_not_farmer",
         routes=(SEC_H,),
     ),
-    word(46, 15, "<GO TO H5)", F, "p46_flow_h1_exit", routes=(SEC_H,)),
+    word(
+        46,
+        15,
+        "<GO TO H5)",
+        F,
+        "p46_flow_h1_exit",
+        routes=(H_NOT_FARMER,),
+    ),
     *paired(
         46,
         ("block", 17, 18),
@@ -1974,7 +2079,12 @@ PAGE_46 = (
         routes=(SEC_H,),
     ),
     word(
-        46, 35, "GO TO H8)", F, "p46_flow_h6_corporation_exit", routes=(SEC_H,)
+        46,
+        35,
+        "GO TO H8)",
+        F,
+        "p46_flow_h6_corporation_exit",
+        routes=(H_CORPORATION,),
     ),
     word(
         46,
@@ -2116,7 +2226,7 @@ PAGE_53 = (
         "(GO TO H24)",
         F,
         "p53_flow_h18_no_wife_exit",
-        routes=(SEC_H,),
+        routes=(H_NO_WIFE,),
     ),
     *paired(
         53,
@@ -2190,7 +2300,7 @@ PAGE_53 = (
         "(TURN TO PAGE 26, H26)",
         F,
         "p53_flow_h24_no_exit",
-        routes=(SEC_H,),
+        routes=(H24_NO,),
     ),
     *paired(
         53,
@@ -2268,7 +2378,7 @@ PAGE_63 = (
         "(TURN TO PAGE 31, Kl)",
         F,
         "p63_flow_j10_none_exit",
-        routes=(J_NEW_WIFE,),
+        routes=(J10_NONE,),
     ),
     *paired(
         63,
@@ -2284,7 +2394,7 @@ PAGE_63 = (
         "(TURN TO PAGE 31 , Kl)",
         F,
         "p63_flow_j11_all_exit",
-        routes=(J_NEW_WIFE,),
+        routes=(J11_ALL,),
     ),
     *paired(
         63,
@@ -2320,7 +2430,7 @@ PAGE_65 = (
         "(TURN TO PAGE 3 OF COVER SHEET)",
         F,
         "p65_flow_k1_same_head_exit",
-        routes=((),),
+        routes=(K_SAME_HEAD,),
     ),
     *paired(
         65,
@@ -2392,7 +2502,7 @@ PAGE_69 = (
         "(GO TO K28)",
         F,
         "p69_flow_k25_none_exit",
-        routes=(K_NEW_HEAD,),
+        routes=(K25_NONE,),
     ),
     *paired(
         69,
@@ -2415,7 +2525,7 @@ PAGE_69 = (
         "(GO TO K28)",
         F,
         "p69_flow_k26_all_exit",
-        routes=(K_NEW_HEAD,),
+        routes=(K26_ALL,),
     ),
     *paired(
         69,
@@ -2696,10 +2806,66 @@ CROSS_REFERENCES = (
     ),
     _xref(
         50,
+        ("block", 4, 7),
+        "p50_xref_h9_h10_to_h8_no_double_count",
+        ("p49_h9_bonus_overtime_commission", "p46_h8_wages"),
+        (),
+        "H9-H10 explicitly prevent re-entering bonus, overtime, or "
+        "commission income already included in H8.",
+        target_scope="unresolved",
+        resolution_status="preserved_for_global_resolution",
+    ),
+    _xref(
+        50,
+        (
+            "from",
+            19,
+            "This may already be included",
+            21,
+            0,
+        ),
+        "p50_xref_h11a_professional_to_h7_h8",
+        (
+            "p49_h11a_professional_trade",
+            "p46_h7_business_share",
+            "p46_h8_wages",
+        ),
+        (),
+        "The professional-practice instruction conditionally prevents "
+        "repeating an amount already included in H7 or H8.",
+        target_scope="unresolved",
+        resolution_status="preserved_for_global_resolution",
+    ),
+    _xref(
+        50,
+        (
+            "needle",
+            26,
+            "If included in H7 or H8, do not repeat it here.",
+            0,
+        ),
+        "p50_xref_h11a_trade_to_h7_h8",
+        (
+            "p49_h11a_professional_trade",
+            "p46_h7_business_share",
+            "p46_h8_wages",
+        ),
+        (),
+        "The trade instruction conditionally prevents repeating an amount "
+        "already included in H7 or H8.",
+        target_scope="unresolved",
+        resolution_status="preserved_for_global_resolution",
+    ),
+    _xref(
+        50,
         ("block", 28, 32),
         "p50_xref_h11b_to_h2_h4",
         ("p49_h11b_farming_gardening",),
-        ("p46_h2_farm_receipts", "p46_farm_aggregate"),
+        (
+            "p46_h2_farm_receipts",
+            "p46_h3_farm_expenses",
+            "p46_farm_aggregate",
+        ),
         "H11b explicitly routes a primary farmer's income to H2-H4.",
     ),
     _xref(
@@ -2709,7 +2875,8 @@ CROSS_REFERENCES = (
         ("p53_h24_social_security", "p53_h20_income_source"),
         (),
         "H24 explicitly refers to H11f and H20; H11f is outside the retained "
-        "work-income component set, so resolution remains global.",
+        "work-income component set, so the partial local evidence remains "
+        "unresolved and cannot collapse the distinct H24/H20 contexts.",
         target_scope="unresolved",
         resolution_status="preserved_for_global_resolution",
     ),
@@ -2847,14 +3014,10 @@ def author_review() -> dict[str, Any]:
             }
         )
         if row["kind"] == F:
-            if len(paths) != 1:
-                raise SpecError(
-                    f"{row['key']} is a multi-parent label; this review "
-                    "records exactly one parent path per routing atom"
+            if len(paths) == 1:
+                branch_ref_by_key[row["key"]] = annotation._review_branch_ref(
+                    row["review_occurrence_id"], paths[0], len(paths)
                 )
-            branch_ref_by_key[row["key"]] = annotation._review_branch_ref(
-                row["review_occurrence_id"], paths[0], len(paths)
-            )
 
     anchor_specs: list[dict[str, Any]] = []
     for row in occurrence_specs:
