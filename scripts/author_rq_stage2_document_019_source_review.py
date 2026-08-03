@@ -410,6 +410,7 @@ SEC_H = ("p46_flow_section_h",)
 H_FARMER = SEC_H + ("p46_flow_h1_farmer",)
 H_UNINCORPORATED = SEC_H + ("p46_flow_h6_unincorporated",)
 H_BOTH = SEC_H + ("p46_flow_h6_both",)
+H_DONT_KNOW = SEC_H + ("p46_flow_h6_dont_know",)
 H_WIFE = SEC_H + ("p53_flow_h18_wife_present",)
 H24_POSITIVE = SEC_H + ("p53_flow_h24_social_security",)
 SEC_J = ("p63_flow_section_j",)
@@ -1998,7 +1999,7 @@ PAGE_46 = (
         "p46_h7_business_share",
         anchor_kind=M,
         parents=("p46_business_aggregate",),
-        routes=(H_UNINCORPORATED, H_BOTH),
+        routes=(H_UNINCORPORATED, H_BOTH, H_DONT_KNOW),
         note="H7 prints the family share of unincorporated-business income.",
         parent_note=_BUSINESS_PARENT,
     ),
@@ -2172,7 +2173,8 @@ PAGE_53 = (
         note="H24 prints the Head/Wife Social Security-income checkpoint as "
         "public-retirement-system context.",
     ),
-    word(53, 46, "HEAD/WIFE", R, "p53_role_head_h24", routes=(SEC_H,)),
+    word(53, 46, "HEAD", R, "p53_role_head_h24", routes=(SEC_H,)),
+    word(53, 46, "WIFE", R, "p53_role_wife_h24", routes=(SEC_H,)),
     word(
         53,
         46,
