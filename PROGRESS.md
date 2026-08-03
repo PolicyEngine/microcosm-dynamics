@@ -7,15 +7,13 @@ authenticated codebook documents. Its canonical five-position array is
 21,548,823 bytes with SHA-256
 `563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e`.
 The cleartext total-start authority and exact-cover gate are implemented over
-the lawful raw relation, but the first regeneration is provisional.
-Independent review widened the remaining repair beyond V21488/1992 and
-V23325/1993: V3694 and 109 analogous fields have independent whole-domain unit
-sentences whose separate construction context must not defeat them; the 1997
-ER12067 dollar-note family and 1994 ER3062 month-code family are missed direct
-denotations. Section 24 also understates the complete weekly-food family as 20
-rather than 22 fields and conflates the contextual candidate table's distinct
-texts with a larger union that includes raw-Actual-only spellings. The semantic
-sweep, tests, and every downstream identity are reopened.
+the lawful raw relation. The expanded semantic repair is now applied: 108
+construction predicates are context rather than defeat; the V21488 inflation
+note, ER12067 1997-dollar note, ER3062 month-code, and ER2005 numeral-MMDD
+families have exact grammar and start rows. Complete-description regressions
+pass. The first regeneration remains provisional because section 24 still
+understates the weekly-food family as 20 rather than 22 fields, conflates two
+candidate-text distinct counts, and carries the prior pins and fixtures.
 
 ## Done
 
@@ -61,11 +59,18 @@ sweep, tests, and every downstream identity are reopened.
 - Grounded the seven-field 1997 dollar-note family, twelve-field 1994
   month-code family, and two-field annual-needs inflation-note family in
   authenticated page text.
+- Reclassified exactly 108 predicate rows from `defeating_clause` to
+  `no_unit_naming_clause`, covering 110 fields after ER12079's direct dollar
+  sentence became visible; no positive-plus-blocker field remains.
+- Added the three-field numeral-MMDD spelling as a selected compound-domain
+  defeat, closing its symmetry with the existing word-form family.
+- Added byte-exact complete raw fixtures for V31, V3694, V21488, ER2005,
+  ER3062, ER12067, and ER12079; all 182 authority tests and Ruff pass.
+- Completed two independent semantic sweeps; both agree that V31 remains an
+  input-table statement and report no further strong direct-denotation miss.
 
 ## Next
 
-- Add the direct-denotation anchors and predicate rows, reclassify all 108
-  construction-context predicates, and add complete-description regressions.
 - Regenerate every downstream pin and §24 fixture, then rerun prefix,
   relation, test, formatting, and diff checks.
 - Obtain another independent review against both round-2 verdicts and resolve

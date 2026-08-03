@@ -402,6 +402,11 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "unit_naming_clause",
     ),
     (
+        "coded below with January=1, February=2, etc.",
+        "month",
+        "unit_naming_clause",
+    ),
+    (
         "RECORD last grade finished IF NEEDED: Regular school includes high school and "
         "schooling that leads to a college or professional school degree.",
         None,
@@ -1757,7 +1762,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "Part of Market Gardening Income V6986 Labor Part of Roomers and Boarders Income "
         "Actual dollar amount of Head's labor income",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "Summation of the following variables: V6998 Taxable Income of Head and Wife V7016 "
@@ -2090,6 +2095,11 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "defeating_clause",
     ),
     (
+        "The first 2 digits represent the month, the last 2 digits represent the day.",
+        None,
+        "defeating_clause",
+    ),
+    (
         "The first two digits of this variable represent the month and the last two digits "
         "represent the year (78-80) in which Head's unemployment or temporary layoff began.",
         None,
@@ -2156,14 +2166,14 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         '(V10222) - Number of Persons under 18 Years of Age, excluding Head and Wife/"Wife", '
         "in the Family (V10422)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for creation of this variable is as follows: Number in Family "
         '(V11364) - Number of Persons under 18 Years of Age, excluding Head and Wife/"Wife" '
         "in the Family (V11609)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for creation of this variable is as follows: Number of Persons in "
@@ -2203,126 +2213,126 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "The formula used for this variable's generation is as follows: 1982 Labor Income of "
         "Head (V9376)/1982 Hours of Work of Head (V8830)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1982 Labor Income of "
         'Wife/"Wife" (V8881)/1982 Hours of Work of Wife/"Wife" (V8840)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1983 Labor Income of "
         "Head (V11023)/1983 Hours of Work of Head (V11037)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1983 Labor Income of "
         'Wife/"Wife" (V10263)/1983 Hours of Work of Wife/"Wife" (V10131) Note that this '
         "variable is defined as having two decimal places.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1984 Labor Income of "
         "Head (V12372)/1984 Hours of Work of Head (V11146)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1984 Labor Income of "
         'Wife/"Wife" (V11404)/1984 Hours of Work of Wife/"Wife" (V11258)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1985 Labor Income of "
         "Head (V13624)/1985 Hours of Work of Head (V12545)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1985 Labor Income of "
         'Wife/"Wife" (V12803)/1985 Hours of Work of Wife/"Wife" (V12657)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1986 Labor Income of "
         "Head (V14671)/1986 Hours of Work of Head (V13745)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1986 Labor Income of "
         'Wife/"Wife" (V13905)/1986 hours of work of Wife/"Wife" (V13809)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1987 Labor Income of "
         "Head (V16145)/1987 Hours of Work of Head (V14835) Note that this variable is "
         "defined as having two decimal places.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1987 Labor Income of "
         'Wife/"Wife" (V14920)/1987 Hours of Work of Wife/"Wife" (V14865) Note that this '
         "variable is defined as having two decimal places.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1988 Labor Income of "
         "Head (V17534)/1988 Hours of Work of Head (V16335) OSIRIS USERS: Note that this "
         "variable is defined in the dictionary as having two decimal places.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1988 Labor Income of "
         'Wife/"Wife" (V16420)/1988 Hours of Work of Wife/"Wife" (V16365) OSIRIS USERS: Note '
         "that this variable is defined in the dictionary as having two decimal places.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1989 Labor Income of "
         "Head (V18878)/1989 Hours of Work of Head (V17744)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1989 Labor Income of "
         'Wife/"Wife" (V17836)/1989 Hours of Work of Wife/"Wife" (V17774)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1990 Labor Income of "
         "Head (V20178)/1990 Hours of Work of Head (V19044)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1990 Labor Income of "
         'Wife/"Wife" (V19136)/1990 Hours of Work of Wife/"Wife" (V19074)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1991 Labor Income of "
         "Head (V21484)/1991 Hours of Work of Head (V20344)",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used for this variable's generation is as follows: 1991 Labor Income of "
         'Wife/"Wife" (V20436)/1991 hours of Work of Wife/"Wife" (V20374)',
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "The formula used in generating this variable is as follows: Total 1982 Family Money "
@@ -3097,7 +3107,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "V22091, V22108, V22124, V22140, V22156, V22172, V22188, V22204, V22220, V22236, "
         "V22252, V22268, V22284, V22301, V22317, V22333, V22349, and V22364.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "These values are the sum of V8896 and V8898 through V8907.",
@@ -3751,13 +3761,13 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "This variable is equal to total 1973 transfers of Head and Wife (V3488) minus ADC "
         "payments (V3477).",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is equal to total 1974 transfers of Head and Wife (V3889) minus ADC "
         "payments (V3877).",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is generated by multiplying the week food needs (V1169) by 52 and "
@@ -3852,7 +3862,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "families; subtract 5 percent for 5-person families 10 percent for families with six "
         "or more.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is generated by multiplying the weekly food needs (V3839) by 52 and "
@@ -3967,20 +3977,20 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         None,
         "no_unit_naming_clause",
     ),
-    ("This variable is identical to V10222.", None, "defeating_clause"),
-    ("This variable is identical to V11364.", None, "defeating_clause"),
-    ("This variable is identical to V12763.", None, "defeating_clause"),
-    ("This variable is identical to V13867.", None, "defeating_clause"),
-    ("This variable is identical to V14889.", None, "defeating_clause"),
+    ("This variable is identical to V10222.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V11364.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V12763.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V13867.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V14889.", None, "no_unit_naming_clause"),
     (
         "This variable is identical to V1539 on the 1968 tape.",
         None,
         "defeating_clause",
     ),
-    ("This variable is identical to V16389.", None, "defeating_clause"),
-    ("This variable is identical to V17798.", None, "defeating_clause"),
-    ("This variable is identical to V19098.", None, "defeating_clause"),
-    ("This variable is identical to V20398.", None, "defeating_clause"),
+    ("This variable is identical to V16389.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V17798.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V19098.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V20398.", None, "no_unit_naming_clause"),
     (
         "This variable is identical to V399 except that the cutoff for farm families is .8 x "
         "non- farm values.",
@@ -3992,10 +4002,10 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         None,
         "defeating_clause",
     ),
-    ("This variable is identical to V6959", None, "defeating_clause"),
-    ("This variable is identical to V7551", None, "defeating_clause"),
-    ("This variable is identical to V8249.", None, "defeating_clause"),
-    ("This variable is identical to V8851.", None, "defeating_clause"),
+    ("This variable is identical to V6959", None, "no_unit_naming_clause"),
+    ("This variable is identical to V7551", None, "no_unit_naming_clause"),
+    ("This variable is identical to V8249.", None, "no_unit_naming_clause"),
+    ("This variable is identical to V8851.", None, "no_unit_naming_clause"),
     (
         "This variable is identical to the individual-level variable V30703.",
         None,
@@ -4012,172 +4022,172 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable is the result of (ER12170 * ER12171) + ER12172 + ER12173.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER12181 * ER12182) + ER12183 + ER12184.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER16467 * ER16468) + ER16469 + ER16470.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER16478 * ER16479) + ER16480 + ER16481.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER20395 * ER20396) + ER20397 + ER20398.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER20406 * ER20407) + ER20408 +ER20409.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER24077 * ER24078) + ER24079.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER4092 * ER4093) + ER4094 + ER4095.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER4103 * ER4104) + ER4105.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER6932 * ER6933) + ER6934 + ER6935.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER6943 * ER6944) + ER6945 + ER6946.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER9183 * ER9184) + ER9185 + ER9186.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of (ER9194 * ER9195) + ER9196 + ER9197.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER24088 * ER24089 + ER24090.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER27883 * ER27884 + ER27885.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER27894 * ER27895 + ER27896.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER40873 * ER40874 + ER40875.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER40884 * ER40885 + ER40886.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER46761 * ER46763 + ER46765.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER46782 * ER46784 + ER46786.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER52169 * ER52171 + ER52173.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER52190 * ER52192 + ER52194.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER57970 * ER57972 + ER57974.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER57991 * ER57993 + ER57995.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER65150 * ER65152 + ER65154.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER65171 * ER65173 + ER65175.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER71227 * ER71229 + ER71231.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER71248 * ER71250 + ER71252.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER77249 * ER77251 + ER77253.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER77270 * ER77272 + ER77274.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER81576 * ER81578 + ER81580.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER81597 * ER81599 + ER81601.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER85430 * ER85432 + ER85434.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the result of ER85451 * ER85453 + ER85455.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the sum of Head's labor income, Wife's labor income, asset part of "
@@ -4279,12 +4289,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable is the sum of V21629, V21630, and V21632.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the sum of V21665, V21666 and V21668.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable is the sum of V7682, V7687, V7690, V7693 and V7696",
@@ -4329,7 +4339,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "family unit members (OFUMs) (ER12073), transfer income of OFUMs (ER12075), and "
         "Social Security income (ER12077).",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         'This variable is the sum of these five 2002 variables: ER24100 Head and Wife/"Wife" '
@@ -4836,7 +4846,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was calculated from the product of B78 x B79 orC70 x C71.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was calculated from the product of B83 x B85 or C72 x C74.",
@@ -4853,7 +4863,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "This variable was calculated from the product of B88 x B89 + B100 x B101 orC80 x "
         "C81 + C92 x C93.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was calculated from the product of C112 x C113 or D38 x D39 or E7 x "
@@ -4894,7 +4904,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was calculated from the product of D78 x D79 orE70 x E71.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was calculated from the product of D88 x D89 + D100 x D101 or E80 x "
@@ -4906,7 +4916,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "This variable was calculated from the product of D88 x D89 + D100 x D101 orE80 x "
         "E81 + E92 x E93.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was calculated from the product of F109 x F110 or G36 x G37 or H7 x "
@@ -4954,7 +4964,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B55 or C55 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B58 or C12 or C58 by 40.",
@@ -4969,7 +4979,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B58 or C58 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B61 or C12 or C61 by 40.",
@@ -4985,7 +4995,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B61 or C56 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B61 or C61 by 40.",
@@ -4995,7 +5005,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B61 orC56 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B64 or C59 by 80 for the first eight "
@@ -5012,12 +5022,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "This variable was computed by multiplying B64 orC59 by 80 for the first eight weeks "
         "and by 60 for any weeks thereafter.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B67 or C58 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B70 or C61 by 40.",
@@ -5027,12 +5037,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B70 or C62 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B70 orC62 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B73 or C64 by 40.",
@@ -5047,7 +5057,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B73 orC7 orC65 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying B76 or C68 by 40.",
@@ -5057,12 +5067,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying B76 orC68 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying C104 or D30 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying C107 or D33 by 40.",
@@ -5099,12 +5109,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying C29 or D19 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying C29 or D20 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying C31 or D21 by 40.",
@@ -5130,7 +5140,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying D44 or E47 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D47 or E50 by 40.",
@@ -5152,7 +5162,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying D53 or E53 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D56 or E10 or E56 by 40.",
@@ -5162,7 +5172,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying D56 or E56 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D59 or E10 or E59 by 40.",
@@ -5177,12 +5187,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying D61 or E56 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D61 orE53 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D62 or E62 by 40.",
@@ -5199,17 +5209,17 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "This variable was computed by multiplying D64 orE56 by 80 for the first eight weeks "
         "and by 60 for any weeks thereafter.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D70 or E62 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D70 orE62 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D73 or E7 or E65 by 40.",
@@ -5219,7 +5229,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying D73 orE7 orE65 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying D76 or E68 by 40.",
@@ -5229,12 +5239,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying D76 orE68 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying F101 or G28 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying F104 or G31 by 40.",
@@ -5271,12 +5281,12 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying F25 or G17 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying F25 or G18 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying F27 or G19 by 40.",
@@ -5313,7 +5323,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     (
         "This variable was computed by multiplying J67 or K58 by 40.",
         None,
-        "defeating_clause",
+        "no_unit_naming_clause",
     ),
     (
         "This variable was computed by multiplying J70 or K61 by 40.",
@@ -5790,6 +5800,7 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
     ("dollars and cents.", "united_states_dollar", "unit_naming_clause"),
     ("hours per year.", "hour_per_year", "unit_naming_clause"),
     ("in 1967 dollars.", "united_states_dollar", "unit_naming_clause"),
+    ("in 1996 dollars.", "united_states_dollar", "unit_naming_clause"),
     (
         "in dollars and cents are coded here.",
         "united_states_dollar",
@@ -14548,6 +14559,13 @@ PREDICATE_AUTHORITY: tuple[tuple[str, str | None, str], ...] = (
         "no_unit_naming_clause",
     ),
     ("their values for V17702 (10001-12043).", None, "no_unit_naming_clause"),
+    (
+        "this variable is not adjusted for inflation (it is in 1967 dollars), nor is it "
+        "exactly comparable to the official poverty standard; such changes are left to "
+        "users.",
+        "united_states_dollar",
+        "unit_naming_clause",
+    ),
     (
         "total Social Security income received by all family unit members.",
         None,
@@ -94572,7 +94590,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Date of Interview The first 2 digits represent the month, the last 2 digits "
         "represent the day.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDD",
     ),
     (
         "Date of Interview The first two digits represent the month that the interview was "
@@ -197796,7 +197814,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Month of birth of sixth youngest child", "DDDDDDD"),
     ("Month of birth of third youngest child", "DDDDDDD"),
     ("Month of current interview", "DDDD"),
-    ("Months are coded below with January=1, February=2, etc.", "DDDDDDDD"),
+    ("Months are coded below with January=1, February=2, etc.", "WDDDDDDD"),
     (
         'Morgan, "The Effective Role of Real Estate Taxation", Review of Economics and '
         "Statistics, XXXIX, (February, 1957), 14-22 (b) V97 = 06, 18, 20, 28, 38, 44: "
@@ -199097,7 +199115,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Note that this variable is not adjusted for inflation (it is in 1967 dollars), nor "
         "is it exactly comparable to the official poverty standard; such changes are left to "
         "users.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Note that this variable is not adjusted for inflation (it makes use of the previous "
@@ -225165,7 +225183,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Thus, dollar amounts reported in 1997 for the prior year are in 1996 dollars.",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         "Thus, for example, if ER24073 is coded 1 (Head) and ER23553 is coded 1 (Respondent "

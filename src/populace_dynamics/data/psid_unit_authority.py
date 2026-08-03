@@ -155,6 +155,8 @@ def normalize_description(description: str | None) -> str:
 
 #: Openers whose grammatical subject is the variable's value or values.
 VALUE_SUBJECT_ANCHORS: tuple[str, ...] = (
+    "dollar amounts reported in 1997 for the prior year ",
+    "Months ",
     "The values for this variable ",
     "Values for this variable ",
     "values for this variable ",
@@ -272,6 +274,7 @@ CONSTRUCTION_DENOTATION_ANCHORS: tuple[str, ...] = (
     "This variable is a bracket code of ",
     "This variable is identical to ",
     "This is the 4-digit identification number ",
+    "The first 2 digits represent ",
     "The first two digits represent ",
     "the first two digits represent ",
     "The first two digits of this variable represent ",
@@ -285,6 +288,7 @@ CONSTRUCTION_DENOTATION_ANCHORS: tuple[str, ...] = (
     "The value of the variable is ",
     "The threshold values are based on ",
     "the values are as follows:",
+    "this variable is not adjusted for inflation (it is in 1967 dollars)",
 )
 
 #: Openers that name only a stated subrange.  They are selected so the
@@ -1060,6 +1064,7 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("hundreds of dollars", "hundreds_of_united_states_dollars"),
     ("dollars per week", "united_states_dollar_per_week"),
     ("1967 dollars", "united_states_dollar"),
+    ("1996 dollars", "united_states_dollar"),
     # time
     ("number of hours per week", "hour_per_week"),
     ("number of hours per year", "hour_per_year"),
@@ -1087,6 +1092,7 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("number of reported days", "day"),
     ("number of months", "month"),
     ("number of reported months", "month"),
+    ("coded below with January=1, February=2, etc.", "month"),
     ("number of years", "year"),
     ("number of additional years", "year"),
     ("This variable contains the year of data collection", "year"),
