@@ -39078,3 +39078,1865 @@ authorizes only the separately reviewed source implementation, canonical
 relation build, `--check`, Q5, and expected-negative guarded steps stated
 above; it authorizes no correction production evaluation, path switch,
 context run, label change, output, or publication.
+
+## 23. AMENDMENT SECTION — Amendment 9: the arm-ambiguous member-row settlement
+
+### 23.1 Status, immutable revision-10 base, scope, precedence, and section map
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 11
+  of the design. Drafting, audit, review, and response commits are not
+  ratification and authorize no source compiler, derivation row, Q5, slot,
+  inventory, value map, crosswalk, capture, correction execution, context
+  run, output, or publication. Only the exact bytes accepted under §23.9.2
+  may become `D9`, and they become operative only through the fresh
+  registration successor in §23.8.
+- **Immediate immutable base.** The base is the complete ratified revision-10
+  design `D8` at commit
+  `bea8b43078ea6260beab368ee59e70ea53dff02b`. The path is
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `91fb14f3d79c28bd86217d94743d3eeeb2454a83`, exactly 2,521,700 raw
+  bytes, and SHA-256
+  `4101260b94b019fc9392898059138b90386784b60ea40b9039562d364592718a`.
+  Those complete bytes are the byte-identical prefix of revision 11. A
+  digest-only, ancestry-only, transitive, working-tree, or candidate-prefix
+  assertion cannot substitute for comparing every one of those bytes.
+- **Sole inherited illustrative-fence exception.** The one inherited
+  exception is unchanged and is now stated against the revision-10 base:
+  D8 one-based lines 3,834–3,837 are the exact 171-byte LF-terminated fenced
+  block at D8 byte interval `[241728,241899)`, including delimiters, with
+  SHA-256
+  `82118279750eea3f5f84f7dc7a458d8a0030d897d262dc756d1b635d513c4f34`.
+  Its two content lines 3,835–3,836 are exactly 159 LF-terminated bytes with
+  SHA-256
+  `a94110a196a77420652d9a0e8c92cda38c225107aa4156279dd7e78b2cace23d`.
+  They contain the literal placeholder `[...]` and two successive object
+  roots, so that inherited fence is illustrative pseudo-JSON, not a JSON
+  value and not schema, parser, or canonicalization authority. Because the
+  immutable-prefix law forbids repairing it in place, that fence alone is
+  excluded from the whole-document strict-JSON-fence parse obligation. Every
+  `json` fence authored in §23, including a negative fixture whose parsed
+  value is then schema-invalid, must still strict-parse as exactly one JSON
+  value after duplicate-key rejection. No other fence gains an exception, and
+  Amendment 9 creates no second exception.
+- **One under-determination only.** Amendment 9 changes only the serialized
+  member row of a range member that revision 10 has already placed in
+  `renderable_member_rows` while denying it an authoritative image, together
+  with the consumers, identities, and lifecycle steps that necessarily depend
+  on those bytes. It changes no authenticated source, normalized entry,
+  scalar, field assignment, terminal, count, renderer, padding result,
+  missing classification, DFA language, action, replay, consumer guard, V-B6
+  result, or A6/A7/A8 semantic outcome. It moves no member between any two
+  relations, and it changes no figure in the §22.4.5 fact table. It is not a
+  new representation arm, a narrowing of any relation, or permission to omit
+  a member.
+- **Exact precedence.** Sections 1–22 remain visible and controlling except
+  for the passages expressly dispositioned in §23.6. In particular, the
+  §20.3.2 sentence declaring an arm-ambiguous member unrenderable under the
+  authoritative relation is replaced by the settled placement already ratified
+  at §22.4.5 and completed below, and the §20.3.2 command that every member of
+  `renderable_member_rows` carry the seven-key row is replaced only by the
+  added third row shape below. Every requirement to reconstruct every logical
+  member, preserve its order and complete row, compare complementary
+  relations, hash the exhaustive named array, render and replay bytes,
+  subtract missing images, or abort on disagreement remains. At a conflict,
+  §23 is later and more specific; silence changes nothing else.
+
+The complete section map is:
+
+| Subsection | Complete subject |
+|---|---|
+| §23.1 | status, D8 identity and prefix, inherited illustrative-fence exception, scope, precedence, and section map |
+| §23.2 | the exact applied contradiction, the arm-invariance derivation, the settled arm-ambiguous renderable member row, and the promotion-boundary abort law |
+| §23.3 | the closed codebook derivation path for every member-row source-entry, type, and unit value |
+| §23.4 | mandatory Amendment-9 vectors |
+| §23.5 | untouched census, preserved storage facts, and the revision-11 full-relation identity |
+| §23.6 | exact replacement inventory and Amendment-9 closure sweep |
+| §23.7 | complete revision-11 design-comparator census |
+| §23.8 | D9 lifecycle successors and complete identifier inventory |
+| §23.9 | post-Amendment-9 build, ratification, Q5, and registration order |
+
+The map is exact. No subsection may be ratified, implemented, or registered
+separately.
+
+### 23.2 The settled arm-ambiguous member-row law
+
+#### 23.2.1 Exact governing sentences and the applied contradiction
+
+The defect is discovered, not hypothetical. It was raised by the separately
+reviewed v3 source-compiler lane, which serialized no such row and emitted no
+artifact under that name. Four ratified sentences govern, and they are quoted
+here exactly as they stand in revision 10.
+
+From §20.3.2, on evaluating the renderer before reading a partition row:
+
+> Under the finite-domain partial disposition, a numeric member is renderable
+> only when its arm-invariant row supplies the common exact image; an
+> arm-ambiguous member is unrenderable under the authoritative relation even
+> when each nonauthoritative candidate has its own exact image.
+
+From §20.3.2, on the shape of a member of `renderable_member_rows`:
+
+> A renderable member row has exactly `source_member_index`, `source_value`,
+> `physical_image_raw_token_hex`, `rendered_decimal_places`,
+> `transition_value_actions`, `parsed_scalar`, and `replay_raw_token_hex`. The
+> image and replay are the same unique exact-width bytes; precision is the
+> unique constructed fractional-byte count, zero for an integer form; the
+> action array is the complete DFA-path `value_action` projection; the parsed
+> scalar deep-equals `source_value.canonical_value`; and the transition
+> result's type and unit equal the source value's.
+
+From §20.3.4, on which images enter the DFA on this exact branch, restated
+without change by §22.3.2:
+
+> For `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
+> the source-valid numeric portion is instead exactly the nonnull
+> authoritative images in `arm_invariant_member_rows`. No image from
+> `arm_ambiguous_member_rows` contributes an edge or accepting path […]
+> Candidate-specific unequal zero/space images are proof rows only and cannot
+> enlarge the authoritative language.
+
+From §22.4.5, settling the placement:
+
+> In every count below a range member is counted in that range's
+> `renderable_member_rows` relation value exactly when the one §20.3.3
+> renderer, evaluated under the field's selected token form and its selected
+> arm or no-arm disposition, returns that member an exact-width image, and in
+> `unrenderable_member_rows` otherwise; whether the image is arm-invariant or
+> arm-ambiguous never moves a member between the two relations.
+
+Applied to one arm-ambiguous renderable member — a member of one of the 674
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+fields whose two padding constructors each yield an exact-width image and
+whose two images are byte-unequal — these produce a contradiction that no
+reading resolves:
+
+1. §22.4.5 places the member in `renderable_member_rows`. It is later and
+   more specific than the §20.3.2 sentence above, it is ratified, and its
+   56,480-member figure is load-bearing: the §22.4.5 fact table records the
+   explicitly rejected counterfactual as `4,753,875` and `820,704,425,212`,
+   so the placement is not free.
+2. §20.3.2 admits only the seven-key row in that relation, and three of those
+   seven keys are unconstructible for this member. `transition_value_actions`
+   must be "the complete DFA-path `value_action` projection", but §20.3.4
+   builds this branch's DFA from `arm_invariant_member_rows` alone, so neither
+   candidate image has a DFA path. `replay_raw_token_hex` must byte-replay
+   through that same DFA, which rejects both candidate images. And
+   `physical_image_raw_token_hex` must be "the same unique exact-width bytes",
+   of which there are two, while §20.3.2 independently commands that an
+   ambiguous member "has no authoritative physical token, yields no runtime
+   scalar result, and always takes its per-member abort".
+3. The two candidate images are, by §20.3.4's own words, "proof rows only".
+   Selecting either one for the row would create the authoritative image that
+   three separate passages forbid, in the one field family whose census
+   conclusion is that the arm "is unobservable in principle".
+4. Amendment 8 supplies no escape at either storage arm. §22.2.2 applies its
+   4,096-member threshold to each named relation value separately, and at
+   `N <= 4,096` "the canonical production artifact serializes the inherited
+   explicit array" — that is, the seven-key row itself, so the explicit arm
+   inherits leg 2 unchanged. This is the arm the ratified witnesses actually
+   take: V117/1968's range has 96 members and V5092/1976's has 28. At
+   `N > 4,096` the analytic arm must reconstruct the same inherited row, and
+   §22.2.3 adds a bar of its own for that arm alone: "If the surrounding
+   source/profile/arm/DFA values do not determine one unique full row, the
+   analytic arm is lossy and invalid." On this branch the surrounding arm
+   value is a no-arm disposition and the surrounding DFA excludes both
+   candidates, so the analytic arm fails that test as well. Neither arm can
+   serialize a row that neither can construct.
+
+Revision 10 therefore both requires those 56,480 members to sit in
+`renderable_member_rows` and makes every serialization of them invalid. This
+is not an ambiguity a builder may resolve by convention; it is the fourth
+discovered unsatisfiable law, after Amendment 6's registration-totality
+defect, Amendment 7's all-field-pass defect, and Amendment 8's storage
+defect. Until it is settled the complete `pass_with_closed_failures` relation
+cannot be constructed at all.
+
+The unserializable unit is the member row, not the field, and the amendment
+claims no more than that. Ratified §20.3.2 assigns this compiled status
+"whether the ambiguity occurs in a range, a short literal, or both", so a
+field whose ambiguity lies entirely in short literals has no ambiguous
+numeric-range member and serializes its range partitions unchanged under
+revision 10. What §22.4.5 pins is the member population — 56,480 arm-ambiguous
+numeric-range members across the 1,433 numeric-range entries of the 674
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+fields — and it publishes no per-field cross-tab, so this amendment quantifies
+no count of affected fields anywhere. It needs none. V117/1968 and V5092/1976
+are ratified witnesses that such members exist; every one of them blocks the
+range partition that must contain it, and one blocked partition blocks that
+range's `renderable_member_count` and `*_member_domain_sha256`, its field's
+complete-row hash and derivation ID, and the full-relation identity over all
+of them.
+
+The inherited relations that already hold the true facts are unchanged, and
+that is why the settlement can be small — but there are two of them, and both
+are mandatory. Each arm's
+`candidate_arm_results[*].complete_domain_member_results` carries that arm's
+own inherited eight-key result for the member: its candidate result, its
+exact-width candidate image, its action array, and its failure reason.
+`complete_domain_arm_disposition.arm_ambiguous_member_rows` then carries the
+fourteen-key row that §20.3.2 builds *by comparing* those two projections,
+which additionally carries the JSON-null authoritative image and the closed
+encounter abort; that relation is required to be nonempty on precisely this
+branch. The two serializations are not alternatives and neither may be
+dropped: §20.3.2 makes "omitting either complete candidate relation" a
+derivation failure. Nothing about the member is unknown. What revision 10
+lacks is a lawful row shape for it in the range partition.
+
+#### 23.2.2 Renderability is arm-invariant
+
+Before the row shape is fixed, one derivation is required, because §22.4.5's
+count rule speaks of "an exact-width image" in the singular while the no-arm
+disposition evaluates two constructors. The derivation is from §20.3.3's
+constructor law and adds no premise. What must be shown is not that a member's
+disposition can be read off a length — it cannot — but that *whether* a member
+has an exact-width image at all is settled before either constructor is
+reached, so that the singular is well formed.
+
+**§20.3.3's renderer has two stages, and only the second is arm-specific.**
+Exact arithmetic first forms `z = x / s`. The first stage then either fixes
+exactly one unpadded byte string for the selected token form or denies the
+member an image outright. Only after that string exists do the two padding
+candidates appear: "Under the space candidate, prepend the maximal number of
+`0x20` bytes needed to reach width `w`, before the optional minus. Under the
+zero candidate, place the optional minus first and then prepend `0x30` bytes
+to the magnitude. A candidate that cannot fit exactly `w` bytes rejects."
+
+The first stage is the complete set of §20.3.3 conditions under which no
+string is produced to pad. Each is a function of the member's authenticated
+scalar and `implied_scale`, the selected token form, `d`, and `w` alone, and
+none of them mentions a padding candidate:
+
+1. **Integrality.** Under the integer form `z` must be an integer. Under the
+   implied-decimal form the exact product `M = abs(z) * 10^d` must be an
+   integer.
+2. **Sign against form.** "A negative value is lawful only under the signed
+   form", and "negative zero is noncanonical". A negative member of a field
+   whose selected form is unsigned has no lawful sign byte and therefore no
+   string.
+3. **Literal-decimal precision admission.** With `sigma` one for a negative
+   value and zero otherwise and `I` the canonical unsigned integral digits of
+   `abs(z)`, `f = min(d, w - sigma - |I| - 1)`, and "the scalar is
+   representable only when `1 <= f <= d`".
+4. **Literal-decimal exactness.** The same sentence continues: representable
+   only when "`abs(z)` has an exact finite base-10 expansion at `f` fractional
+   digits". "Choosing fewer than the greatest fitting `f`, dropping a nonzero
+   digit, or rounding aborts."
+
+That enumeration is closed against §20.3.3 as ratified, and it is stated as a
+closed enumeration on purpose: it is the premise the settlement rests on, so
+any successor that adds a further condition to §20.3.3 must either show that
+condition to be arm-independent as well or redo this derivation before the
+added row shape may be built. Under the implied-decimal form the sign rule
+reaches the member through §20.3.3's own instruction that "the optional minus
+and two padding candidates follow the preceding integer rule"; under the
+literal-decimal form it reaches the member through "apply the same minus and
+candidate padding placements as the integer form".
+
+When the first stage succeeds it yields exactly one unpadded string: the
+optional single `0x2d`, then the magnitude, which is the canonical ASCII
+decimal of `abs(z)` under the integer form, the canonical ASCII decimal of `M`
+under the implied-decimal form, and `I || 0x2e || F_f` under the
+literal-decimal form. The notation matters here: under the implied-decimal
+form the magnitude digits are those of `M = abs(z) * 10^d` and not those of
+`abs(z)`. Under a signed implied-decimal form with `z = -0.1`, `d = 2`, and
+`w = 3`, the magnitude is `10`, the unpadded string is `-10`, and the member
+falls in category 3 below with the common image `-10`; counting the digits of
+`abs(z)` instead would give a shorter length and wrongly predict
+arm-ambiguity. Write `L` for the unpadded string's raw byte length. `L` is
+defined only where the first stage succeeds; where it fails no string is
+rendered, and in particular when `f < 1` the expression
+`sigma + |I| + 1 + f` is not the length of anything.
+
+**The second stage applies the same width test to both candidates.** Each
+prepends exactly `w - L` pad bytes, and each "cannot fit exactly `w` bytes" on
+the one condition `L > w`. The two candidates differ only in which byte is
+prepended and where the minus is placed; padding changes neither the
+magnitude, nor the sign, nor `f`, nor `L`.
+
+**What §20.3.2 actually partitions.** Its emission rule never reads `L`. It
+compares the two candidate result/image/action/failure projections after
+removing only the parent `profile_kind`, emitting an arm-invariant row when
+they deep-equal and an arm-ambiguous row when they differ. Every member
+therefore falls into exactly one of four renderer-pair categories, and the
+classifier partitions on the category, not on a length:
+
+1. **Both images null.** Some first-stage condition failed, or `L > w`. Both
+   projections are `no_exact_image` with null token, empty actions, and the
+   same renderer failure reason, so they deep-equal: §20.3.2 emits an
+   **arm-invariant** row with a null image, and the member takes the inherited
+   four-key `unrenderable_member_rows` row with reason
+   `no_exact_width_selected_form_image`.
+2. **Exactly one image null.** Empty by law, and this emptiness is what the
+   whole settlement rests on. Every first-stage condition is evaluated before
+   either candidate exists, and the second stage is the single comparison of
+   `L` against `w`. No condition in §20.3.3 can null one candidate's image
+   while leaving the other's nonnull.
+3. **Both nonnull and byte-equal.** The first stage succeeded and `L = w`, so
+   each candidate prepends zero pad bytes and the two images, action paths,
+   scalars, and replays coincide: an **arm-invariant** row with the common
+   nonnull image, and the inherited seven-key renderable row.
+4. **Both nonnull and byte-unequal.** The first stage succeeded and `L < w`,
+   so at least one pad byte is prepended and the two images differ at their
+   very first byte: `0x20` against `0x30` when the value is nonnegative, and
+   `0x20` against `0x2d` when it is negative, because the space candidate
+   places its pad bytes before the minus while the zero candidate places the
+   minus first. The projections differ and §20.3.2 emits an **arm-ambiguous**
+   row.
+
+**A length comparison alone is not this partition, and a ratified witness says
+so.** §20.3.6's A6-R07 witness V945/1969 fixes width seven, sign length one,
+four integral digits, and maximum `d = 2`. For `-1040.01` the exact formula
+gives `sigma = 1`, `|I| = 4`, and `f = min(2, 7 - 1 - 4 - 1) = 1`, so
+condition 3 passes and `sigma + |I| + 1 + f = 7 = w`. Reading category 3 off
+that equality would predict a common nonnull image. The ratified text records
+the opposite: "`-1040.00` has unique image `-1040.0`, while `-1040.01` has
+null physical image and reason `no_exact_width_selected_form_image`."
+Condition 4 is what fires — `1040.01` has no exact finite base-10 expansion at
+one fractional digit — so the first stage supplies no string, no `L` exists,
+and the member is in category 1. Nor is that one member an isolated witness.
+Every one of the same field's 263,430 ratified unrenderable negative-range
+members is a four-integral-digit value whose cents are not a multiple of ten,
+and for every one of them the length expression evaluates to
+`sigma + |I| + 1 + f = 1 + 4 + 1 + 1 = 7 = w`. A case analysis on that
+expression alone would have predicted a common nonnull image for all 263,430.
+Taken as a whole the vector checks the restated structure rather than merely
+refuting the old one: conditions 1 through 4 followed by the shared width test
+reproduce A6-R07's complete ratified partition — 129,270 renderable and
+263,430 unrenderable negative members, 300,000 and zero positive members, and
+complete totals 429,270 and 263,430 over the retained 692,700 — while the
+length expression never exceeds `w` anywhere in that domain, so a reading on
+`L` against `w` alone yields 692,700 renderable members and no unrenderable
+member at all.
+Condition 2 is the companion case at the other end: a negative member of a
+field whose selected form is unsigned is in category 1 whatever the length
+expression gives, including where it gives a value below `w`, at which a
+length-only reading would have predicted arm-ambiguity instead. Neither
+witness disturbs the settlement, because under both the two candidates still
+agree; each falsifies only the claim that `L` against `w` exhausts the domain.
+
+Two consequences follow, and both are stated as law:
+
+- **§22.4.5's count rule is well-defined.** Because category 2 is empty, the
+  two candidates never disagree about *whether* a member has an exact-width
+  image, only about *which* bytes it is. "Returns that member an exact-width
+  image" therefore denotes the same member set whichever candidate is
+  evaluated, and the renderable/unrenderable partition is fixed without
+  selecting an arm. The singular in that clause is well formed for this reason
+  alone, and not because every member is renderable — category 1 is lawful and
+  nonempty in general.
+- **Every arm-ambiguous member is renderable.** Category 4 is the only one that
+  produces an arm-ambiguous row, and in it both candidates render at exactly
+  `w`. Consequently, in a post-D9 relation, the complete arm-ambiguous
+  numeric-range member population of a field equals that field's
+  arm-ambiguous contribution to `renderable_member_rows`, and no arm-ambiguous
+  numeric-range member appears in any `unrenderable_member_rows` value.
+
+**The builder's emission rule follows directly and admits no third reading.**
+For a numeric-range member of one of the 674 fields: where §20.3.3's first
+stage fails or `L > w`, both candidate images are null, the member is
+arm-invariant, and it takes the four-key unrenderable row with
+`no_exact_width_selected_form_image`; where the two images are nonnull and
+byte-equal, it takes the unchanged inherited seven-key renderable row; and if
+and only if the two images are nonnull and byte-unequal does the member have a
+row in `arm_ambiguous_member_rows` and take the six-key row of §23.2.3. Shape
+selection is by the member's presence in `arm_ambiguous_member_rows` — that is,
+by category 4 — and never by a recomputed length. On the authenticated corpus
+A9-R03 measures the four categories over the complete 384,135 logical
+source-range members of these fields as exactly 56,480 in category 4, 327,655
+in category 3, and zero in each of categories 1 and 2.
+
+The two mandatory constructors ratified in §20.3.2 confirm the emission rule
+without appeal to the derivation. V117/1968 has `NUM(2.0)`, range `1`–`96`,
+ordinary literal `97`, and missing literals `98` and `99`; §20.3.2 records
+exactly nine arm-ambiguous members, `1` through `9`, and 90 arm-invariant
+members, which are exactly the 87 two-digit range members plus the three
+exact-width literal bypasses. V5092/1976 records ten ambiguous members — the
+missing literal `0` and range members `1`–`9` — and 20 invariant members,
+`10`–`28` plus missing literal `99`. Every numeric-range member of both fields
+is a positive integral `json_integer` value under an unsigned integer form
+with `d = 0`, so no first-stage condition can fire for a range member and
+category 1 is empty in both range partitions. Within that restriction
+category 4 reduces to `L < w`, and the ratified range splits are exactly that:
+V117's nine ambiguous range members `1`–`9` are its members of unpadded length
+one against `w = 2` and its 87 invariant range members `10`–`96` are the
+two-digit ones, and V5092's nine ambiguous range members `1`–`9` and 19
+invariant range members `10`–`28` split the same way. The short literals in
+each field — V117's three exact-width bypasses, V5092's missing `0` and `99` —
+are dispositioned by §20.3.2's literal rules rather than by this comparison.
+Neither field licenses the converse reading.
+
+The `unrenderable_reason` literal `arm_ambiguous_no_authoritative_image`
+remains defined for historical rows and for the inherited §20.3.2, §22.2.3,
+and §22.4.5 text, but it is **unreachable** in a post-D9 numeric-range
+partition. Any post-D9 four-key unrenderable row carrying it is a closed
+conflict of the same class as an unequal independently reconstructed range
+partition, and the validator must reject it before any semantic digest exists.
+
+#### 23.2.3 The arm-ambiguous renderable member row
+
+`renderable_member_rows` gains exactly one additional row shape. The partition
+pair already carries two — the seven-key renderable row and the four-key
+unrenderable row — and this is the third across the pair and the second inside
+`renderable_member_rows`. It is distinguished from both by its keyset alone,
+so no row is ambiguous about which shape it is: only this shape has
+`authoritative_image_disposition`, only the four-key shape has
+`unrenderable_reason`, and only the seven-key shape has `parsed_scalar`. It is
+not an arm, a representation, or an alternate encoding.
+
+For a member that §22.4.5 places in `renderable_member_rows` and for which
+the field's `complete_domain_arm_disposition.arm_ambiguous_member_rows`
+contains a row with the same `source_entry_ref` and `source_member_index`,
+the serialized member row has exactly these six keys in order:
+
+```text
+source_member_index
+source_value
+physical_image_raw_token_hex
+rendered_decimal_places
+authoritative_image_disposition
+if_encountered
+```
+
+Their exact values are:
+
+1. `source_member_index` is the inherited zero-based index within the parent
+   normalized entry, unchanged.
+2. `source_value` is the inherited five-key `typed_disposition`, `value_type`,
+   `typed_value_unit`, `canonical_value`, `source_meaning` object and
+   deep-equals the same-index member of the complete reconstructed source
+   relation, unchanged.
+3. `physical_image_raw_token_hex` is exactly JSON null. This is the same null
+   authority that §20.3.2 assigns to the member's fourteen-key
+   `authoritative_physical_image_raw_token_hex` and that §22.3.2 requires an
+   ambiguous member to return. It is null because the source does not
+   establish which bytes are authoritative, not because bytes are unknown.
+4. `rendered_decimal_places` is the uniquely computed fractional-byte count,
+   zero for an integer or implied-decimal form and the §20.3.3 `f` for a
+   literal-decimal form. §23.2.2 places its computation in the renderer's
+   first stage, before either padding candidate exists, so it is
+   arm-independent; and a member reaching this row shape is in that
+   derivation's category 4, so the first stage succeeded and `f` satisfies
+   `1 <= f <= d`. It is therefore a source-established physical fact and is
+   serialized rather than nulled. A builder must derive it once and require
+   both candidate renderings to agree; disagreement is a closed conflict.
+5. `authoritative_image_disposition` is exactly the inherited literal
+   `arm_ambiguous_no_authoritative_image`. No other value is lawful in this
+   key, and this key exists in no other row shape.
+6. `if_encountered` is exactly the inherited literal
+   `abort_before_classification_arm_ambiguous_source_member`. It is the same
+   closed per-member abort the fourteen-key row already carries, restated at
+   the site a partition consumer reaches.
+
+The shape carries no image, action array, scalar, or replay, because §23.2.1
+establishes that none of the four exists for this member. It **adds no copy**
+of either candidate image. Those images, their action arrays, their results,
+and their failure reasons remain exactly where §20.3.2 already puts them and
+where §22.2.1 already counts and hashes them — in each arm's
+`candidate_arm_results[*].complete_domain_member_results`, and in the
+fourteen-key ambiguous row built from those two projections — and both of
+those serializations remain mandatory, since §20.3.2 makes omitting either
+complete candidate relation a derivation failure. This row is bound to the
+fourteen-key row by the (`source_entry_ref`, `source_member_index`) key that
+the partition parent and this row already supply between them. Restating a
+candidate image here would create a further place for the same fact to
+disagree and would serialize an authoritative-looking image inside the
+renderable relation; both are forbidden.
+
+The shape is lawful **only** when all of the following hold, and is otherwise
+a closed conflict:
+
+- the enclosing field's `derivation_status` is exactly
+  `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`;
+- the enclosing container is a `renderable_member_rows` value of a
+  range-partition row of that field;
+- `complete_domain_arm_disposition.arm_ambiguous_member_rows` contains
+  exactly one row with the parent's `source_entry_ref` and this row's
+  `source_member_index`, whose `source_derivation` is
+  `codebook_range_member`, whose `authoritative_physical_image_raw_token_hex`
+  is JSON null, whose `if_encountered` equals this row's, and whose two
+  candidate images are both nonnull, byte-unequal, and each exactly `w` raw
+  bytes; and
+- an independent reconstruction of both candidate renderings from the
+  authenticated source entry reproduces those two images, that precision, and
+  this member's `source_value`.
+
+Every inherited equation over the partition is unchanged and must still hold
+with this shape present. The renderable and unrenderable index sets remain
+disjoint; their ordered merge remains exactly `0` through
+`source_member_count - 1`; their counts still sum to `source_member_count`;
+each `*_member_domain_sha256` still hashes its complete named array under
+§10.1 with one terminal LF; and the parent `source_member_domain_sha256` is
+still rebuilt by ordered-merging the virtual renderable and unrenderable rows
+and projecting the exact two-key `source_member_index`/`source_value` rows.
+The §22.2.4 streaming construction is unchanged and feeds this row's §10.1
+canonical object bytes exactly as it feeds any other row.
+
+§22.2.3's inverse gains one case and loses none. Its renderable-interval
+bullet is replaced by exactly two cases:
+
+- a renderable interval member that is not in the field's arm-ambiguous
+  relation reruns the selected authoritative renderer, action path, parsed
+  scalar, and byte replay and yields the inherited seven-key row; and
+- a renderable interval member that is in that relation independently reruns
+  both candidate renderers, proves the arm-invariant precision, proves the two
+  images are exact-width and byte-unequal, and yields the six-key row above.
+
+The surrounding source, profile, arm-disposition, and DFA values now
+determine one unique full row in both cases, so §22.2.3's lossiness test is
+satisfied rather than waived. Forward followed by inverse must still reproduce
+the canonical explicit member-array bytes exactly, and inverse followed by
+forward must still reproduce the canonical analytic object bytes exactly.
+
+The §22.4.5 storage facts are preserved, and the preservation is exact rather
+than asserted. Amendment 9 moves no member between relations, so every
+population, container count, and threshold split in that table is untouched:
+820,709,179,087 mandatory logical range members; 4,736,892 explicit-arm and
+820,704,442,195 analytic-arm members; 820,701,994,620 analytic renderable and
+2,447,575 analytic unrenderable members; 9,019 renderable and 36 unrenderable
+analytic containers; and 56,480 arm-ambiguous renderable members. The
+`3N + 2` empty-object floor of 2,462,127,537,263 bytes and its 2.239-TiB
+expression are unchanged. The per-shape row floor is unchanged and remains a
+valid lower bound, because the six-key row's lawful minimum is strictly
+greater than the 325-byte multiplier it may displace: at the same lawful
+minima §22.4.5 uses, the six-key row's compact sorted-key serialization is 377
+bytes when the member's `canonical_value` takes the shortest reduced ASCII
+rational atom `0/1` and 381 bytes when it takes the shortest `json_integer`
+spelling `0`. Charging every analytic renderable member the smaller 325
+therefore still understates the total, so `266,728,784,621,000` bytes and
+`242.5884164231320028193295001983642578125` TiB remain exact lower bounds and
+the capacity multiple remains above 185.
+
+#### 23.2.4 The promotion boundary and its closed abort
+
+Serialization records what the physical layer contains. It confers no
+semantic authority, and the boundary between the two is where this amendment
+places its only new closed failure.
+
+**Promotion is the attempt to obtain, from any serialized byte, an
+authoritative physical image, runtime scalar, transition action path, byte
+replay, DFA edge or accepting path, registered missing image, registered
+literal image, value-map key, token mapping, membership result, typed-parse
+output, layout or raw-token grammar value, unobserved-value rendering, or any
+other value that would let an arm-ambiguous member be classified, parsed,
+rendered, replayed, joined, or compared as though one of its candidate images
+were authoritative.** The serialized bytes reached by such an attempt are
+immaterial: the six-key row above, the fourteen-key ambiguous row, either
+`candidate_arm_results` member result, an analytic expansion of any of them,
+or a digest computed over any of them. A value read through a digest is a
+value read.
+
+Every promotion attempt is a closed failure with the exact reason
+`arm_ambiguous_authoritative_image_promotion`. It is the same fail-closed
+conflict class as an unequal independently reconstructed range partition. At
+construction and at `--check` it aborts before any semantic digest, derivation
+ID, complete-row hash, or enclosing digest exists. At a consumer it is a
+row-local atomic abort under §21.4.1 with no fallback, no partial result, and
+no substitution of the other candidate. It never degrades to a warning, a
+default, a first-candidate rule, or a deferred check.
+
+The boundary is enumerated exhaustively, and at each site the outcome is
+already fixed by inherited law and is restated here only so that no site can
+be reached by the new row shape:
+
+1. **DFA construction (§20.3.4, §22.3.2).** The builder streams only the
+   nonnull authoritative images of `arm_invariant_member_rows`. The six-key
+   row supplies no image and contributes no edge or accepting path.
+2. **Missing-literal registration (§20.3.2, §22.3.2).** A candidate-only
+   ambiguous image never enters `missing_raw_tokens` and never becomes a
+   registered literal; either candidate spelling encountered at runtime takes
+   the member's closed pre-classification abort.
+3. **Membership resolution (§22.3.1).** A consumer resolving an exact source
+   scalar recovers the member's original zero-based index, relation tag, and
+   complete virtual row. When that row is the six-key row, the consumer
+   obtains null authority and the closed abort, and must abort; it may not
+   re-render, re-derive, or select a candidate image to continue.
+4. **Ordered enumeration and replay (§22.2.3, §22.3.2).** Enumeration yields
+   the six-key row unchanged. No replay, scalar, or action path is produced
+   for it.
+5. **`unobserved_possible_values` (§20.4.1).** The inherited
+   arm-ambiguous row is unchanged: its `rendering_status` remains
+   `source_registered_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`,
+   its token-mapping array remains exact empty, and its `if_encountered`
+   remains
+   `parse_if_arm_invariant_else_abort_before_classification_arm_ambiguous_source_member`.
+   The six-key row adds no token mapping and no value-map key.
+6. **Layout, typed parse, raw-token grammar, value map, and source commitment
+   (§20.4.1, §22.3.3).** Each resolves the complete 16-key row first and
+   obtains the exact virtual member row. None gains an analytic or
+   arm-ambiguous sibling key, and none may project a candidate image.
+7. **Q5 positive joins (§20.4.2, §21.4.4, §22.3.3) and G17-C01/C06/C07
+   (§20.4.3, §22.3.3).** Expected and actual sides apply the same reader
+   independently. A positive join that would read an arm-ambiguous member's
+   image aborts atomically; it does not fall back to the invariant relation,
+   to a sibling member, or to the observed subset.
+8. **The seven guarded consumer kinds (§21.4.3).** `q5_positive_field_join`,
+   `slot_registry_row`, `official_inventory_row`, `value_map`, `crosswalk`,
+   `correction_input`, and `context_output` each reach this boundary through
+   the same guard. Reading either candidate image is physical partition
+   consumption exactly as the former array read was.
+9. **The §21.4.2 layer law.** A candidate image, its action array, its
+   precision, and any digest over them are physical content. A layer-2 node
+   that reads any of them has a physical basis and cannot be semantic-only.
+   Amendment 9 does not enlarge, narrow, or cure that classification, and it
+   supplies no semantic basis for V4519, V4902, V5429, or V5916.
+
+The settlement is therefore symmetrical and complete. The physical layer
+serializes every source-established fact about the member — its index, its
+typed source value, its arm-invariant precision, the fact that no
+authoritative image exists, and the abort that follows — and leaves its two
+candidate images in the two inherited relations that already hold them, both
+of which remain mandatory. The
+semantic layer receives null authority and a closed abort at every site. No
+builder chooses an arm, no consumer promotes one, and the member remains what
+the census concluded it is: a member whose padding arm is unobservable in
+principle.
+
+### 23.3 Closed codebook derivation path for every member-row field
+
+#### 23.3.1 The three values and their sole lawful source
+
+The same v3 lane reported a second blocker: three per-entry values that every
+§22 member row requires — `source_entry_ref`, the `value_type` and
+`typed_disposition` pair, and `typed_value_unit` — are absent from the
+`code_map_columns` of the six committed evidence artifacts, whose columns are
+exactly `frequency`, `percent`, `raw_value_or_range`, and `source_meaning`.
+Without them no member row can be constructed, hence no
+`*_member_domain_sha256`, no complete-row hash, no derivation ID, and no
+full-relation identity.
+
+That report is correct about the evidence artifacts and does not describe a
+gap in the design. Sections 19 and 20 already fix the derivation path, and it
+does not pass through `code_map_columns`. This subsection states that path as
+closed law so that no successor lane has to infer it, and so that no successor
+lane can substitute a different source.
+
+The sole lawful carrier of all three values is the **canonical codebook row**
+produced by the `codebook` document derivation, which is one of the 176
+nonquestionnaire document derivations and specifically one of the 47 that the
+reporting lane had not yet derived. Its exact eleven-key shape,
+`codebook_field_row_id`, `source_document_id`, `source_row_position`,
+`raw_field_id`, `source_label`, `source_description`, `source_format_text`,
+`normalized_entries`, `normalized_entry_count`,
+`normalized_entry_domain_sha256`, and `source_locator_ids`, is unchanged. The
+derivations are as follows, and each is already law.
+
+1. **`source_entry_ref`.** §19 fixes the entry reference as the literal
+   `<codebook-field-row-id>:entry:<zero-based-position>`, resolving exactly
+   one source entry, and fixes the row ID itself as the literal
+   `<source-document-id>#row:<zero-based-source-row-position>`. The document
+   ID is the manifest identity of the authenticated codebook document; the row
+   position is the zero-based canonical row position within it; and the entry
+   position is the zero-based position of the entry within that row's
+   `normalized_entries` array, which "follows complete source value-list
+   order" and "exact-covers every literal or closed range in the field block".
+   Entries across a field's several codebook rows retain codebook document,
+   field row, and source entry order, and each entry keeps the row ID of the
+   row that produced it. The complete reference is therefore determined by the
+   codebook derivation alone, with no free choice, and §22.2.1's requirement
+   that it exact-match the normalized entry is discharged by reconstructing
+   the entry rather than by consulting any relation that already used it.
+2. **`value_type` and `typed_disposition`.** §19 fixes the numeric-range
+   branch of the normalized entry as carrying `value_type` and
+   `typed_disposition` drawn from the closed pair `rational | json_integer`,
+   with bounds and positive step of that exact canonical type. §19 states
+   expressly that the dictionary is not the source for this branch: the
+   canonical dictionary row's `declared_typed_value_type` and
+   `declared_typed_value_unit` "exact-normalize an express source value and
+   otherwise are null", and "a value-code range obtains type/unit from the
+   complete codebook domain and does not fill a silent dictionary member by
+   default". §19 requires the complete normalized numeric-range relation `R`
+   of a value-code group to have "one common `rational | json_integer` type
+   and one common nonempty unit", and the compiled row's `value_derivation`
+   binding is `dictionary_range_rendering` with `type/unit` set to that common
+   pair. The §19 closure inventory restates the same rule: "value-code numeric
+   ranges use codebook-derived type/unit, exact meaning, and literal-first
+   precedence."
+3. **`typed_value_unit`.** The unit follows the same path and the same closed
+   requirement. It is the common nonempty unit of `R`, derived from the
+   normalized codebook entries and never defaulted, inferred, copied from a
+   silent dictionary member, carried over from a sibling field or wave, or
+   supplied by a consumer, inventory, crosswalk, or parser spec. §19's typed
+   parser law is explicit that no "inferred unit exists".
+
+Failure is already closed on both sides and no new terminal is created. When
+the codebook domain does not establish the type or the unit, "an untyped or
+nonunitized `R` is incomplete" and the field takes
+`incomplete_source_numeric_authority`. When it establishes them inconsistently,
+"unequal range types or units" is a conflict and the field takes
+`conflicting_source_numeric_format`. Either terminal is a passing outcome of
+the derivation and a non-passing outcome for the field; neither authorizes a
+member row, and neither may be avoided by supplying a value from elsewhere.
+
+That closure is not hypothetical, and the design states its handling here
+rather than leaving a successor lane to settle it. The same separately
+reviewed lane has since reported that the registered corpus states no unit
+anywhere a normalized entry needs one: a codebook value block displays only
+count, percent, value-or-range, and meaning; neither value-label language
+displays more than value and meaning; and the setup documents declare only
+coordinates, labels, and numeric formats. Amendment 9 does not adjudicate that
+report — it is a finding about the source, and the derivation path above is
+unchanged either way — but the report names exactly the branch A9-R04 must
+reconcile, so the handling is fixed now and fixed closed:
+
+- an undetermined `typed_value_unit` on a normalized numeric-range entry is
+  exactly §19's nonunitized `R`. The field takes
+  `incomplete_source_numeric_authority` and is not a member-row field at all;
+- JSON null in that position is a declaration that the codebook domain
+  establishes no unit, never a member-row value. §19 requires a numeric range
+  to carry "a nonempty unit", so no numeric-range member row may serialize a
+  null `typed_value_unit` inside its `source_value` — not the six-key,
+  seven-key, or four-key partition row, and not the eight-key candidate or
+  fourteen-key ambiguous row of a member whose `source_derivation` is
+  `codebook_range_member` — and no count or `*_member_domain_sha256` may be
+  computed over one. §19's own null type, unit, and value for a missing
+  literal are untouched by this and remain lawful;
+- the null may not be filled or bypassed by a default, an inferred unit, a
+  placeholder literal, a sibling field or wave, a silent dictionary member, a
+  consumer, or an evidence artifact, and no field may be carried past the
+  terminal by annotation; and
+- because that terminal is exactly what A9-R04 step 5 reconciles, a field
+  moving into `incomplete_source_numeric_authority` for this reason moves the
+  ten terminal counts and the three immutable aggregates. That is the §23.3.2
+  source-law conflict and takes its exact handling — abort, emit nothing,
+  repin nothing, escalate to a design successor — and never a tolerance, an
+  exception list, an annotated field, or a recomputed aggregate.
+
+The one other normalized-entry member the same report leaves unstated is
+governed identically. §19 requires a missing literal to carry "a nonempty
+source-backed reason", and the report finds no source-stated reason vocabulary
+in the registered corpus. A missing literal is not a `codebook_range_member`,
+so an unstated reason can never enter the added six-key shape; it likewise may
+not be defaulted or invented, and if it moves a field's terminal the obligation
+in the last bullet applies unchanged.
+
+The three values are consequently derivable exactly when the 47 codebook
+derivations exist, and are derivable from nothing else. Amendment 9 states
+that as law and coordinates with the separate codebook-derivation work by
+requirement, not by assumption: it does not claim those derivations exist, it
+takes no position on what the registered corpus states, and it fixes no
+expected codebook row ID, entry position, type, or unit.
+
+#### 23.3.2 Evidence exclusion and the census reconciliation obligation
+
+The six committed evidence artifacts remain exactly what §20.2.1 made them:
+"historically unfavorable evidence under §19.3.3" whose "rows pin actual
+field/source coordinates for regression but do not satisfy the future v3
+compiler or Q5 reproduction by themselves". §20.2.3's requirement that the
+implementation "independently reproduce all 257 manifest documents, all 176
+nonquestionnaire derivations … before reading a candidate row" is unchanged.
+Amendment 9 adds the exact corollary for these three values:
+
+- no `code_map`, `code_map_columns` value, evidence row, evidence pointer,
+  evidence row digest, or any projection of them may supply, corroborate,
+  default, disambiguate, or repair a `source_entry_ref`, a
+  `codebook_field_row_id`, an entry position, a `value_type`, a
+  `typed_disposition`, or a `typed_value_unit`;
+- an implementation that reads an evidence artifact for any of those six
+  values has consumed evidence as authority, which is the closed failure
+  `arm_ambiguous_authoritative_image_promotion`'s sibling class under §21.4
+  and aborts atomically; and
+- the codebook derivation's own output is admissible only after that
+  document's manifest identity, byte authentication, page locators, decoded
+  page digests, and extraction determinism have each passed, exactly as every
+  other document derivation must.
+
+Because these values enter the terminal predicates, a reconciliation
+obligation follows and is stated rather than assumed away. The ratified
+field-classification aggregates are immutable: the ten terminal counts, the
+denominator SHA-256
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`, the
+ten-row count-array SHA-256
+`421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624`, and the
+complete ordered assignment SHA-256
+`5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e`. Those
+aggregates were fixed before the codebook derivations existed. If the
+codebook-derived type and unit change any field's terminal — for example by
+moving a field into `incomplete_source_numeric_authority` because its codebook
+block establishes no unit — the three aggregates will not reproduce. That
+outcome is a source-law conflict, not a tolerance:
+
+1. the builder must abort, emit no relation, and emit no artifact;
+2. no aggregate, count, digest, or terminal assignment may be repinned,
+   widened, recomputed, or annotated to accommodate it; and
+3. resolution requires a further design successor, because revision 10's
+   census is immutable ratified history and revisions 10 and 11 cannot be
+   repinned.
+
+A9-R04 below is the mandatory confirmation, and it is a real gate: it can
+fail, and failing it blocks the relation.
+
+### 23.4 Mandatory Amendment-9 vectors
+
+#### 23.4.1 Exact vector relation and inherited-suite order
+
+The Amendment-9 settlement suite contains exactly four rows in the displayed
+order. Each row has exactly `vector_id`, `vector_kind`, `member_count`,
+`primary_sha256`, and `required_result`, retaining the inherited five-key
+Amendment-8 vector-row schema; the SHA is null only for the two whole-corpus
+reconciliation vectors, which pin no constructed fixture. The canonical
+sorted-key compact JSON below includes one terminal LF, is exactly 897 bytes,
+and has SHA-256
+`996ea2be0f9dd3b3293801fc9793a625245c095bf85b1b93bb0d4a16405fed15`.
+
+~~~json
+[{"member_count":96,"primary_sha256":"6496ffd001ba151480cf3e37ca11501b77fd6e160fe0273490c21924442d3355","required_result":"pass_null_authority_row_and_closed_semantic_abort","vector_id":"A9-R01","vector_kind":"arm_ambiguous_renderable_member_row_witness"},{"member_count":96,"primary_sha256":"149ce86e2a8dc219decdd107cbe21f39dda87542e2acf9a7cb801ba27a6df2f3","required_result":"reject_before_semantic_digest","vector_id":"A9-R02","vector_kind":"authoritative_image_promotion_rejection"},{"member_count":56480,"primary_sha256":null,"required_result":"reproduce_amendment_8_fact_table_unchanged","vector_id":"A9-R03","vector_kind":"arm_ambiguous_renderability_count_consistency"},{"member_count":89599,"primary_sha256":null,"required_result":"derive_every_member_row_field_from_canonical_codebook_rows_or_fail_closed","vector_id":"A9-R04","vector_kind":"codebook_derived_member_row_field_closure"}]
+~~~
+
+The terminal-LF canonical ID array is exactly
+`["A9-R01","A9-R02","A9-R03","A9-R04"]` and hashes to
+`6e715131757771dffcd754a0b646ef964b67dad1f41a4683c1695bfe527d12d4`.
+The source compiler must first run A6-R01 through A6-R11 unchanged, then the
+exact pre-Q5 A7 array A7-R01 through A7-R09, A7-R10a, and A7-R11, then A8-R01
+through A8-R04 unchanged, and then A9-R01 through A9-R04. A7-R10b remains at
+its inherited post-inventory gate. No A9 vector can replace, relabel, or
+satisfy an A6, A7, or A8 vector, and no A9 vector is satisfied by an A8 vector
+that merely reruns green.
+
+A9-R01 and A9-R02 are settlement-layer fixtures, not independently passing
+16-key compiler terminal witnesses. Their synthetic parent exercises row
+construction, null authority, and rejection only; it does not satisfy, waive,
+or alter §20.3.3's rule that an applicable normalized range with zero
+authoritative renderable members cannot take a compiled terminal, and it does
+not establish a padding arm for any real field.
+
+#### 23.4.2 A9-R01 — positive arm-ambiguous member-row witness
+
+The synthetic parent is a V117/1968-shaped normalized numeric-range entry with
+reference `a9-fixture:range:0`, `json_integer` type and disposition, unit
+`a9_fixture_unit`, meaning `A9 arm-ambiguous partition fixture`, inclusive
+bounds `1` and `96`, exact step `1`, and therefore 96 source members at
+zero-based indexes `0` through `95`. The selected token form is the unsigned
+integer form at width `w = 2` and `d = 0`, and the field's disposition is the
+no-arm literal
+`padding_arm_underdetermined_finite_domain_arm_ambiguous_exact_replay_v1`.
+
+Every member of this parent is a positive integral `json_integer` value under
+an unsigned integer form with `d = 0`, so no §23.2.2 first-stage condition can
+fire for any of them and the parent's category-1 population is empty. Within
+that restriction the derivation's category 4 is exactly `L < w`: the nine
+members with values `1` through `9`, at indexes `0` through `8`, have unpadded
+length one against width two and are the exact arm-ambiguous members, while
+the 87 members with values `10` through `96` have unpadded length two, render
+identically under both candidates, and are arm-invariant. The fixture proves
+the settled row shape; it is not a witness for the first-stage conditions,
+which V945/1969 already fixes in §20.3.6. `renderable_member_rows` therefore
+holds all 96 members and
+`unrenderable_member_rows` is exact empty with the inherited canonical digest
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`.
+
+The arm-ambiguous member at index `0` serializes as exactly this six-key row,
+428 bytes without a terminal LF:
+
+~~~json
+{"authoritative_image_disposition":"arm_ambiguous_no_authoritative_image","if_encountered":"abort_before_classification_arm_ambiguous_source_member","physical_image_raw_token_hex":null,"rendered_decimal_places":0,"source_member_index":0,"source_value":{"canonical_value":1,"source_meaning":"A9 arm-ambiguous partition fixture","typed_disposition":"json_integer","typed_value_unit":"a9_fixture_unit","value_type":"json_integer"}}
+~~~
+
+With one terminal LF it hashes to
+`6b452e19dcdc29f151db50fe8cb2cb4f8243067eeffe8db098ca4202f5256eae`.
+The arm-invariant member at index `9` serializes as the unchanged inherited
+seven-key row, 395 bytes without a terminal LF:
+
+~~~json
+{"parsed_scalar":10,"physical_image_raw_token_hex":"3130","rendered_decimal_places":0,"replay_raw_token_hex":"3130","source_member_index":9,"source_value":{"canonical_value":10,"source_meaning":"A9 arm-ambiguous partition fixture","typed_disposition":"json_integer","typed_value_unit":"a9_fixture_unit","value_type":"json_integer"},"transition_value_actions":["append_digit_1","append_digit_0"]}
+~~~
+
+With one terminal LF it hashes to
+`102e3cfa3a59e2f75ad0996bede556dc6205ef5b41929f4c1245dac7cf9b8521`.
+The complete 96-row `renderable_member_rows` array, in ascending index order
+with the nine six-key rows first and the 87 seven-key rows after, is exactly
+38,401 bytes with one terminal LF and hashes to
+`6496ffd001ba151480cf3e37ca11501b77fd6e160fe0273490c21924442d3355`.
+That value is both the canonical explicit storage digest and, because
+expansion must reproduce those exact bytes, the §22.2.4 streaming logical
+member digest. The complete two-key source-member relation over the same 96
+members is exactly 21,007 bytes with one terminal LF and hashes to
+`779d82e5581b6fa256f7623dea6724b55c085f001d9771dc1c5ce4158e0ccfd7`, which is
+the parent `source_member_domain_sha256`.
+
+The member's two candidate images are not restated by the six-key row. They
+remain in the field's two inherited candidate relations, and the fourteen-key
+ambiguous row built from them is, for index `0`, exactly 788 bytes without a
+terminal LF:
+
+~~~json
+{"authoritative_physical_image_raw_token_hex":null,"if_encountered":"abort_before_classification_arm_ambiguous_source_member","source_derivation":"codebook_range_member","source_entry_ref":"a9-fixture:range:0","source_member_index":0,"source_value":{"canonical_value":1,"source_meaning":"A9 arm-ambiguous partition fixture","typed_disposition":"json_integer","typed_value_unit":"a9_fixture_unit","value_type":"json_integer"},"space_candidate_result":"exact_numeric_image","space_failure_reason":null,"space_physical_image_raw_token_hex":"2031","space_transition_value_actions":["no_op","append_digit_1"],"zero_candidate_result":"exact_numeric_image","zero_failure_reason":null,"zero_physical_image_raw_token_hex":"3031","zero_transition_value_actions":["append_digit_0","append_digit_1"]}
+~~~
+
+With one terminal LF it hashes to
+`bfb2b668b6e9b9818b24b705d8d90d551c8933d364c9221a24d43aeb03d8fe11`, and the
+complete nine-row ambiguous relation is exactly 7,103 bytes with one terminal
+LF and hashes to
+`75c5e0679ee1d0c33f8d37b578b4a9c609e0629b4c1e106400839ae6d48c8494`. The zero
+candidate is `3031`, the space candidate is `2031`, they are byte-unequal,
+each is exactly two raw bytes, and neither is authoritative.
+
+Because 96 is below the §22.2.2 threshold the production representation is the
+explicit array. The below-threshold analytic conformance fixture is
+nevertheless mandatory, since it is the proof that interval expansion produces
+the mixed row shapes rather than one shape:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[1,96,1,96]],"member_count":96,"source_entry_ref":"a9-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":96}
+~~~
+
+With its terminal LF it is 209 bytes and has raw-storage SHA-256
+`fe6130fc2593c391805f803db3bf9703fbf898f03760b495dc7fe81723b0855c`. Its
+single maximal run is canonical: the renderable relation holds every index, so
+no split, gap, or nonmaximal singleton is lawful. Expansion must reproduce all
+38,401 explicit bytes above, so its streaming logical member digest must also
+be `6496ffd001ba151480cf3e37ca11501b77fd6e160fe0273490c21924442d3355`.
+
+The vector passes only when, in one run and in this order, the implementation:
+
+1. builds the explicit relation and reproduces the 38,401-byte count and its
+   digest, the two displayed member rows and their digests, the 21,007-byte
+   source-member digest, the nine-row ambiguous relation and its digest, and
+   the empty unrenderable digest;
+2. reproduces the analytic fixture bytes and digest, expands it, and obtains
+   byte-equal explicit bytes in both directions;
+3. builds the DFA for the parent field and obtains a language containing the
+   87 invariant images and neither `3031` nor `2031`, with the nine
+   arm-ambiguous members contributing no edge and no accepting path;
+4. resolves membership for the exact source scalar `1`, recovers index `0`,
+   relation tag `renderable`, and the complete six-key row, and then aborts
+   with `abort_before_classification_arm_ambiguous_source_member` rather than
+   returning an image, scalar, action path, or replay; and
+5. resolves membership for the exact source scalar `10`, recovers index `9`
+   and the seven-key row, traverses the DFA, obtains scalar `10`, and replays
+   byte-equal `3130`.
+
+Step 5 is not decorative. It proves that the settlement leaves the invariant
+members of the same relation fully authoritative, so the closed abort is
+per-member and not a per-field degradation.
+
+#### 23.4.3 A9-R02 — authoritative-image promotion is rejected
+
+The negative uses the same parent and differs from A9-R01 in exactly one row.
+The index-`0` member is serialized as the inherited seven-key renderable row
+carrying the zero candidate as though it were authoritative, 393 bytes without
+a terminal LF:
+
+~~~json
+{"parsed_scalar":1,"physical_image_raw_token_hex":"3031","rendered_decimal_places":0,"replay_raw_token_hex":"3031","source_member_index":0,"source_value":{"canonical_value":1,"source_meaning":"A9 arm-ambiguous partition fixture","typed_disposition":"json_integer","typed_value_unit":"a9_fixture_unit","value_type":"json_integer"},"transition_value_actions":["append_digit_0","append_digit_1"]}
+~~~
+
+With one terminal LF it hashes to
+`ac0c45ce9b935cc024238f2ce4be3ac4fa6f4db6d716b42cb2087e3e1ddb73f0`. The
+resulting 96-row candidate relation is exactly 38,366 bytes with one terminal
+LF and hashes to
+`149ce86e2a8dc219decdd107cbe21f39dda87542e2acf9a7cb801ba27a6df2f3`. That
+digest is pinned so the rejection is reproducible, not so the relation is
+admissible.
+
+The candidate is internally plausible, which is the point. Its image is
+exactly two bytes, its action path is a well-formed digit sequence, its parsed
+scalar deep-equals its `canonical_value`, and its replay byte-equals its
+image. It is nevertheless unlawful, and the implementation must reject it
+before any semantic digest, derivation ID, complete-row hash, or enclosing
+digest exists, with the exact reason
+`arm_ambiguous_authoritative_image_promotion`. Three independent grounds each
+suffice, and the implementation must be able to state which it detected:
+
+1. the member has a row in `arm_ambiguous_member_rows`, so its serialized
+   renderable row must be the six-key shape and its authoritative image must
+   be JSON null;
+2. the asserted action path is not a path of this branch's DFA, which is built
+   from `arm_invariant_member_rows` alone, so the asserted replay cannot
+   traverse and the row's own replay claim is false; and
+3. the asserted image byte-equals the row's `zero_physical_image_raw_token_hex`
+   in the ambiguous relation, whose
+   `authoritative_physical_image_raw_token_hex` is JSON null and whose
+   `if_encountered` is the closed abort, so the candidate contradicts a
+   sibling relation of the same field.
+
+The symmetric candidate promoting the space image `2031` must be rejected on
+the same three grounds, and the mirrored negative in which the six-key row is
+present but a consumer promotes the ambiguous relation's candidate image at a
+value map, token mapping, `missing_raw_tokens` entry, DFA edge, positive join,
+or any other §23.2.4 site must be rejected with the same reason. Rejecting one
+spelling while accepting the other, or rejecting at construction while
+permitting a consumer read, fails the vector.
+
+#### 23.4.4 A9-R03 — count consistency with the ratified §22.4.5 table
+
+This vector is a whole-corpus reconciliation and pins no fixture. Against the
+complete authenticated source, the implementation must reproduce every figure
+in §22.4.5 unchanged and must additionally establish the two equations
+Amendment 9 derives.
+
+The unchanged figures are the four-status decomposition 17,329 / 1,853 / 674 /
+47 fields, 30,452 / 1,853 / 1,433 / 48 numeric-range entries, and
+820,025,893,984 / 865,268 / 384,135 / 682,035,700 logical source-range
+members, totalling 19,903 fields, 33,786 entries, and 820,709,179,087 members;
+the threshold split 4,736,892 explicit-arm and 820,704,442,195 analytic-arm
+members; the analytic renderable and unrenderable populations 820,701,994,620
+and 2,447,575; the container counts 9,019 and 36, totalling 9,055; the
+arm-ambiguous renderable population 56,480; the `3N + 2` floor
+2,462,127,537,263 bytes and its 2.239-TiB expression; the row floor
+266,728,784,621,000 bytes and its exact
+242.5884164231320028193295001983642578125 TiB; and the capacity multiple above
+185 against approximately 1.304 TiB.
+
+The three added equations are:
+
+1. the complete arm-ambiguous numeric-range member population across the 674
+   `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+   fields is exactly 56,480, equal to their arm-ambiguous contribution to
+   `renderable_member_rows`;
+2. the count of arm-ambiguous numeric-range members appearing in any
+   `unrenderable_member_rows` value is exactly zero, and the count of post-D9
+   four-key unrenderable rows carrying `arm_ambiguous_no_authoritative_image`
+   is exactly zero; and
+3. the §23.2.2 renderer-pair census over the complete 384,135 logical
+   source-range members of those fields, taken by evaluating the zero and the
+   space constructor separately on every member rather than by reading any
+   partition count, is exactly zero members with both candidate images null,
+   zero with exactly one image null, 327,655 with both nonnull and byte-equal,
+   and 56,480 with both nonnull and byte-unequal, summing to 384,135.
+
+All three are stated so that they can fail, and their failures are not
+interchangeable. A nonzero exactly-one-null category in equation 3 falsifies
+§23.2.2 outright: renderability would not be arm-invariant, §22.4.5's singular
+image would not be well-defined, the settled row shape would rest on a false
+premise, and Amendment 9 must not be ratified. A departure in equation 1 or 2,
+or a nonzero both-null count while equations 1 and 2 still hold, falsifies no
+derivation — a member of one of these fields whose §20.3.3 first stage fails is
+lawfully arm-invariant with a null image and belongs in
+`unrenderable_member_rows` with `no_exact_width_selected_form_image` — but it
+is a disagreement with the authenticated corpus this amendment was drafted
+against and is gated identically. In every case the implementation must abort,
+emit no relation, and report the exact disagreeing field, entry, and member
+index. The
+explicitly rejected counterfactual readings 4,753,875 and 820,704,425,212 must
+also be reproduced as the values the settled rule does **not** take, so that
+the discrimination is exercised rather than assumed.
+
+#### 23.4.5 A9-R04 — codebook-derived member-row field closure
+
+This vector is the second whole-corpus reconciliation and is the gate on §23.3.
+Against the complete authenticated source, the implementation must:
+
+1. derive all 176 nonquestionnaire document derivations, including all 47
+   codebook derivations, each from authenticated document bytes, page
+   locators, and decoded page digests, with no evidence artifact in any
+   derivation basis;
+2. construct every canonical codebook row and its complete `normalized_entries`
+   array, and derive every `source_entry_ref` as
+   `<source-document-id>#row:<zero-based-source-row-position>:entry:<zero-based-position>`
+   with no free choice at any position;
+3. derive every numeric-range entry's `value_type`, `typed_disposition`, and
+   `typed_value_unit` from that codebook domain alone, take
+   `incomplete_source_numeric_authority` where the domain establishes no type
+   or unit, take `conflicting_source_numeric_format` where it establishes them
+   unequally, and never default, infer, or borrow a value;
+4. demonstrate the exclusion by construction: with the six committed evidence
+   artifacts removed from the process entirely, every member row of every
+   passing field must still construct byte-identically, and any attempt to
+   read a `code_map`, `code_map_columns` value, evidence row, or evidence
+   digest for any of the six values named in §23.3.2 must abort atomically;
+   and
+5. reconcile the census: reproduce the ten terminal counts 17,329 / 1,853 /
+   674 / 47 / 67,316 / 1,145 / 0 / 1 / 421 / 813 and the three immutable
+   aggregate digests
+   `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`,
+   `421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624`, and
+   `5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e`
+   exactly, from the codebook-derived types and units rather than from any
+   predecessor assignment, cached terminal, or evidence-derived classification.
+
+Step 5 is the load-bearing one and it can fail. Any disagreement is the
+source-law conflict fixed in §23.3.2: abort, emit nothing, repin nothing, and
+escalate to a design successor. A9-R04 passes only by full reconciliation or
+by refusing to emit; a partial reconciliation, a tolerance, an annotated
+exception, or a recomputed aggregate is a failure of the vector and of the
+implementation.
+
+### 23.5 Untouched census, preserved facts, and the revision-11 identity
+
+The complete §20.3.7 relation history and every §21 and §22 relation history
+are unchanged. The ten terminal names, the complete 89,599-field assignment,
+the seven-row failure-reason artifact, the three classification aggregate
+pins, the A6, A7, and A8 vector identities, the §22.4.1 A8 vector relation at
+907 bytes and
+`c405b3a7f228b3e3286714d21aadedcdd6e3df990714e2ddaef85c861e13a8c4`, the 4,096
+threshold, the analytic grammar and its canonical maximal-run form, the
+forward/inverse bijection, and the §22.2.4 streaming construction all remain
+exactly as ratified. Amendment 9 adds a row shape inside an existing relation;
+it does not touch a representation arm, an interval, an atom, a threshold, or
+a digest construction.
+
+The §22.5.2 provisional planning envelope is unchanged and remains explicitly
+non-normative. The six-key row is longer than the seven-key row it replaces
+for 56,480 members, so the complete artifact grows by a bounded amount that no
+size result may convert into permission to omit a row, interval, identity
+input, or evidence member.
+
+The revision-11 full-relation identity is the closed six-position JSON value
+array:
+
+```text
+[
+  "revision_11_full_relation_identity",
+  numeric_grammar_derivation_row_count,
+  numeric_grammar_derivation_keyset_sha256,
+  numeric_grammar_derivation_domain_sha256,
+  field_source_derivation_canonical_byte_count,
+  field_source_derivation_canonical_sha256
+]
+```
+
+Positions are zero-based and every inherited §22.5.2 construction rule
+applies without change. Position 1 is exactly the JSON integer 89,599.
+Position 2 is SHA-256 of the terminal-LF §10.1 canonical array of every
+`numeric_grammar_derivation_id` in inherited complete-row order. Position 3 is
+SHA-256 of the terminal-LF §10.1 canonical array of all 89,599 complete
+threshold-selected 16-key rows in that order. Positions 4 and 5 are the byte
+length and SHA-256 of terminal-LF §10.1 canonical bytes of the complete
+nine-key `field_source_derivation`. The identity array is not a member of
+those bytes and creates no self-reference. Both SHA positions are lowercase
+64-hex strings and the byte count is a nonnegative JSON integer excluding
+booleans.
+
+D9 fixes that construction, not guessed future hex. D9 must precede the
+separately reviewed implementation, so these four source-produced positions
+cannot lawfully be copied from the revision-10 pin, from the blocked
+revision-9 attempt, or chosen during design authoring. The revision-10
+identity is not a default for the revision-11 identity and the two are
+expected to differ, because the 56,480 changed member rows change the actual
+bytes of every enclosing digest that reaches them. The first post-D9 normal
+build and a fresh independent `--check` reconstruction must produce one
+byte-equal identity array before Q5. That accepted array is thereafter the
+immutable revision-11 full-relation aggregate pin; a later mismatch requires a
+design successor, and revision 11 cannot be repinned.
+
+The mandatory `--check` mode in §22.5.3 is unchanged in every requirement and
+gains exactly two obligations: it must report and exact-compare all six
+positions of the revision-11 identity in place of the revision-10 identity,
+and it must independently rebuild every arm-ambiguous renderable row,
+including its arm-invariant precision and its cross-relation binding to the
+fourteen-key ambiguous row. A normal build success without the subsequent
+successful fresh `--check` is still not a constructible
+`pass_with_closed_failures` relation and still cannot precede Q5.
+
+### 23.6 Exact replacement inventory and closure sweep
+
+#### 23.6.1 Complete design-family disposition
+
+The following table is the complete design-family inventory. It does not
+erase historical text or merge repeated physical passages; the closure sweep
+below gives every reached byte range its own row.
+
+| Source anchors | Exact Amendment-9 disposition |
+|---|---|
+| §20.3.2 sentence declaring an arm-ambiguous member unrenderable under the authoritative relation even when each nonauthoritative candidate has its own exact image | `replaced-by-§22.4.5-as-completed-by-§23.2`: the settled placement is §22.4.5's, and §23.2.2 proves it is well-defined because renderability is arm-invariant. The sentence's surviving force is that no candidate image becomes authoritative, which §23.2.3 and §23.2.4 carry in full. |
+| §20.3.2 seven-key renderable member row and its unique-image, DFA-path-action, parsed-scalar, and byte-replay equations | `composed-with-§23.2.3`: the seven-key row and all four equations remain controlling for every member outside the arm-ambiguous relation, which is every member of every other status and every arm-invariant member of this one. Only a member with a row in `arm_ambiguous_member_rows` takes the added six-key shape, and it takes it because those four equations are unsatisfiable for it. |
+| §20.3.2 four-key unrenderable member row and its `no_exact_width_selected_form_image` and `arm_ambiguous_no_authoritative_image` reasons | `composed-with-§23.2.2`: the shape and both reason literals remain defined. `no_exact_width_selected_form_image` remains fully reachable on this branch and is the required row wherever a §20.3.3 first-stage condition fails or `L > w`, including for a member of one of the 674 fields; the ambiguous reason becomes unreachable in a post-D9 numeric-range partition and a post-D9 row carrying it is a closed conflict. Historical rows and the inherited text are untouched. |
+| each `candidate_arm_results[*].complete_domain_member_results`, its eight-key candidate result row, and its count and digest | `lawfully-unchanged-with-reason`: this is the first of §22.2.1's three relation families and the per-arm serialization of every candidate result, candidate image, action array, and failure reason. §20.3.2 makes omitting either complete candidate relation a derivation failure, so it remains mandatory beside the fourteen-key row; §23.2.3 adds no copy of it and reads it only as §23.2.4 permits. |
+| §20.3.2 `complete_domain_arm_disposition`, its fourteen-key ambiguous row, and its counts and digests | `lawfully-unchanged-with-reason`: this relation carries the null authoritative image and the closed encounter abort, and restates both candidate images, action arrays, results, and failure reasons as §20.3.2 builds it by comparing the two candidate relations above. It is not their sole serialization and does not replace them. §23.2.3 binds to it by the key already present and adds no copy of anything it holds. |
+| §20.3.2 partition disjointness, ordered merge, exact cover, count sums, and domain digests | `lawfully-unchanged-with-reason`: every equation holds unchanged with the added shape present, and §23.2.3 restates each one as a construction obligation. |
+| §20.3.3 exact renderer, its arm-independent integrality, sign-against-form, precision-admission, and exact-expansion conditions, its two padding constructors, and its exhaustive source-member application | `lawfully-unchanged-with-reason`: §23.2.2 derives arm-invariance of renderability from this text and adds no premise to it; every one of its conditions keeps its exact force, and none is narrowed by the added row shape. Every image, precision, action, scalar, reason, and replay it fixes is retained. |
+| §20.3.4 DFA construction, the finite-domain arm-ambiguous language rule, and the proof-rows-only clause | `lawfully-unchanged-with-reason`: the branch's language is still exactly the nonnull authoritative images of `arm_invariant_member_rows`, and §23.2.4 enumerates the sites at which the added row shape may not enlarge it. |
+| §20.3.5 status tree, 16-key row, failure precedence, and consumer-visible branches | `composed-with-§23.2.4`: statuses, precedence, and row shape are unchanged; `arm_ambiguous_authoritative_image_promotion` joins the closed conflict class already occupied by an unequal independently reconstructed range partition. |
+| §20.3.6 A6-R01 through A6-R11 and §20.3.7 complete field census, terminal matrix, reasons, and aggregate digests | `lawfully-unchanged-with-reason`: identities, counts, statuses, images, DFA outcomes, and all three aggregate pins remain immutable. A9 adds, never replaces, vectors, and §23.3.2 forbids repinning any aggregate to accommodate a codebook-derived terminal change. |
+| §20.4.1 layout, typed parse, raw token, membership, `unobserved_possible_values`, source-commitment, and value-map consumers | `composed-with-§23.2.4`: every fixed outer schema and the inherited arm-ambiguous unobserved row are unchanged; each consumer resolves the complete row first and obtains null authority and the closed abort at an arm-ambiguous member. No consumer gains a sibling key. |
+| §20.4.2 Q5 embedding, joins, and acceptance walk; §20.4.3 G17-C01/C06/C07 | `composed-with-§23.2.4 and replaced-only-in-live-order-by-§23.9`: expected and actual sides apply the same reader; a positive join reaching an arm-ambiguous member aborts atomically. Historical D6/Q5, D7/Q5, and D8/Q5 remain, while D9 becomes the live predecessor. No G17 schema or nineteenth row is added. |
+| §§20.5–20.6, §§21.6–21.7, and §§22.6–22.7 replacement inventories and comparator censuses | `lawfully-unchanged-with-reason` as immutable D6, D7, and D8 history; §§23.6–23.7 provide the distinct revision-11 successors. |
+| §20.7, §21.8, and §22.8 lifecycle successors and terminal registration lineage | `replaced only for a post-D9 registration by §§23.8–23.9`; historical version dispatch remains exact. |
+| §§21.2–21.3 scope, 16-key row, T-plus/T-minus, `pass_with_closed_failures`, and complete relation validation | `composed-with-§23.2–§23.3`: the outer row and status laws remain. A complete row now additionally validates every arm-ambiguous renderable row and its cross-relation binding, and every member-row field resolves through §23.3. No T-minus row is projected away. |
+| §§21.4.1–21.4.6 evidence/physical boundary, seven consumer kinds, Q5, inventory, and downstream guards | `composed-with-§23.2.4 and §23.3.2`: reading a candidate image or its digest is physical layer-2 consumption; reading an evidence artifact for a member-row field is evidence consumed as authority. Both abort atomically and neither cures the V-B6 member-5 physical basis. |
+| §21.5 A7-R01–R11 and staged R10b | `lawfully-unchanged-with-reason`: the vectors retain identities, source bytes, results, and pre-/post-Q5 positions. R08 validates rows that may now contain the added shape; R11's partition/action class includes arm-ambiguous member reads. |
+| §22.1 status, D7 identity and prefix, inherited illustrative-fence exception, and precedence | `lawfully-unchanged-with-reason`: D7's identity and prefix remain exact immutable history and the single fence exception is inherited without a second exception. |
+| §22.2.1 three relation families, retained outer shapes, and the closed two-arm union | `composed-with-§23.2.3`: the families, the outer keysets, the two storage arms, and the threshold are unchanged. The inherited "seven-key renderable" row reference means the seven-key row for every member outside the arm-ambiguous relation and the six-key row for a member inside it. |
+| §22.2.2 numeric atoms, interval law, 4,096 threshold, and canonical maximal-run form | `lawfully-unchanged-with-reason`: no atom, interval, bound, step, count, threshold, or canonical-form rule changes, and no member moves between containers. |
+| §22.2.3 member-by-member inverse, its four row constructors, and its lossiness test | `replaced-in-one-bullet-by-§23.2.3`: the renderable-interval constructor becomes the two cases in §23.2.3 and the other three constructors are unchanged. The lossiness test is satisfied rather than waived, because the surrounding values now determine one unique full row in both cases. |
+| §22.2.4 streaming member digest and aggregate identity | `lawfully-unchanged-with-reason`: the byte stream, chunk-independence, empty-relation digest, ordered-merge source-member digest, and all three classification pins are unchanged and feed the added shape exactly as any other row. |
+| §22.3.1 one validated virtual relation, membership, and ordered enumeration | `composed-with-§23.2.4`: membership still recovers index, relation tag, and complete virtual row; at an arm-ambiguous member that row is the six-key row and the consumer aborts rather than continuing. |
+| §22.3.2 renderer, DFA subtraction, replay, and missing-first images | `composed-with-§23.2.3–§23.2.4`: "An unrenderable or ambiguous member must return the same null authority and exact closed reason/action" is now satisfiable, because the arm-ambiguous member has a row that carries exactly that null authority and that closed action. |
+| §22.3.3 complete-row, Q5, G17, value-map, and guarded-consumer propagation | `composed-with-§23.2.4`: every propagation rule is unchanged; the added shape reaches each consumer through the same reader and the same guard. |
+| §22.4.1–§22.4.4 A8-R01 through A8-R03 and the A8 vector relation | `lawfully-unchanged-with-reason`: their fixtures, byte counts, digests, and required results are untouched, and §23.4.1 places A9 strictly after them. |
+| §22.4.5 A8-R04 settling clause and complete physical fact table | `confirmed-and-completed-by-§23.2`: the settling clause is the controlling placement rule and every figure in the table is preserved exactly, including 56,480 and the rejected counterfactual pair. §23.2.3 proves the per-shape row floor remains a valid lower bound. |
+| §22.5.1–§22.5.2 untouched relation history, provisional scale envelope, and the revision-10 full-relation identity | `composed-with-§23.5 and replaced-only-for-the-identity-literal`: relation history and the non-normative envelope are unchanged; the six-position identity construction is unchanged and its position-0 literal becomes `revision_11_full_relation_identity` for a post-D9 build. |
+| §22.5.3 mandatory `--check` mode | `composed-with-§23.5`: every inherited obligation remains and two are added — the revision-11 identity positions and independent rebuild of every arm-ambiguous renderable row and its cross-relation binding. |
+| §§22.9.1–22.9.2 checked compiler-to-Q5 walk and the revision-10 protocol | `replaced-by-§§23.9.1–23.9.2` for a post-D9 build; every gate, ordering, expected-negative result, and refusal-to-emit rule is retained and one vector suite is added. |
+| §19 canonical codebook row, normalized-entry tagged union, entry-reference grammar, and codebook-derived range type/unit | `lawfully-unchanged-with-reason and restated-as-closed-law-by-§23.3`: §23.3 adds no derivation and removes no failure. It names the existing path so that no successor infers a different one. |
+| §20.2.1 and §20.2.3 evidence-artifact status and independent-reproduction requirement | `composed-with-§23.3.2`: the six artifacts remain historically unfavorable evidence, and the added corollary forbids them as the source of six named member-row values. |
+| Any sweep-reached passage not separately named above | `lawfully-unchanged-with-reason` only when its row names the triggering seed and proves it neither assumes a single authoritative image for every member of `renderable_member_rows` nor consumes an arm-ambiguous candidate image without §23.2.4. |
+| §§1–22 passages not reached by the deterministic sweep | `lawfully-unchanged-with-reason`: they neither define nor consume an arm-ambiguous member row, its identities, or the affected lifecycle. Silence is not a disposition for a reached passage. |
+
+#### 23.6.2 Amendment-9 arm-ambiguous closure-sweep law
+
+Before D9 ratification the coordinator constructs
+`amendment_9_arm_ambiguous_member_row_closure_sweep.v1`. It inherits the exact
+11-key schema, terminal-LF canonicalization, line-based passage segmentation,
+half-open byte ranges, row/edge order, direct/transitive consumer closure,
+count/digest equations, and closed three-disposition domain from §19.4.3.
+Matched IDs use literal prefix `amendment-9-passage:` followed by SHA-256 of
+the inherited exact `[start_byte,end_byte,matched_terms]` preimage.
+
+The normative corpus is every revision-11 candidate byte in §§1–23 except
+exactly the seven historical/self-referential comparator-table intervals in
+§§17.3, 18.5, 19.5, 20.6, 21.7, 22.7, and 23.7. Each interval begins at its
+table header and ends immediately before the next heading named by its own
+corpus law. No vector fence, storage table, replacement row, surrounding
+paragraph, or non-comparator table is excluded.
+
+The exact initial case-sensitive literal seed array is:
+
+~~~text
+renderable_member_rows
+unrenderable_member_rows
+arm_invariant_member_rows
+arm_ambiguous_member_rows
+complete_domain_arm_disposition
+complete_domain_member_results
+candidate_arm_results
+physical_image_raw_token_hex
+replay_raw_token_hex
+transition_value_actions
+rendered_decimal_places
+parsed_scalar
+unrenderable_reason
+authoritative_image_disposition
+if_encountered
+authoritative_physical_image_raw_token_hex
+zero_physical_image_raw_token_hex
+space_physical_image_raw_token_hex
+arm_ambiguous_no_authoritative_image
+abort_before_classification_arm_ambiguous_source_member
+arm_ambiguous_authoritative_image_promotion
+no_exact_width_selected_form_image
+padding_arm_underdetermined_finite_domain_arm_ambiguous_exact_replay_v1
+compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay
+source_member_count
+source_member_domain_sha256
+renderable_member_count
+renderable_member_domain_sha256
+unrenderable_member_count
+unrenderable_member_domain_sha256
+analytic_closed_intervals_v1
+literal_member_rows
+range_interval_rows
+total_member_count
+source_entry_ref
+value_type
+typed_disposition
+typed_value_unit
+canonical_value
+source_meaning
+codebook_field_row_id
+codebook_field_row_ids
+dictionary_field_row_ids
+normalized_entries
+normalized_entry_domain_sha256
+code_map
+code_map_columns
+document_derivations
+revision_11_full_relation_identity
+revision_10_full_relation_identity
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_domain_sha256
+normalized_format_profile
+registered_numeric_grammar
+missing_raw_tokens
+unobserved_possible_values
+layout_coordinates
+typed_parse_specs
+raw_token_grammar
+value_code_map
+source_commitments
+field_source_derivation
+pass_with_closed_failures
+q5_positive_field_join
+slot_registry_row
+official_inventory_row
+value_map
+crosswalk
+correction_input
+context_output
+G17-C01
+G17-C06
+G17-C07
+Q5
+D8
+D9
+--check
+~~~
+
+The exact search then closes over schema and member inclusion; normalized-entry
+and source-member derivation; candidate, invariant, ambiguous, renderable, and
+unrenderable construction; row-shape selection; actual and virtual digest
+inclusion; ID, full-row, manifest, and Q5 hash inclusion; renderer, DFA,
+missing subtraction, membership, replay, promotion, and abort edges;
+derivation foreign keys; document-derivation and codebook-row provenance;
+evidence-versus-authority classification; layout, parser, raw-token, and
+value-map projection; Q5 joins; slot, inventory, value-map, crosswalk, G17,
+and all seven guarded consumer kinds; compiler and `--check` invocation;
+vector ordering; Git ancestry; lifecycle, receipt, and selected registration;
+and every direct and transitive edge class in §§19.4.3, 20.5.2, 21.6.2, and
+22.6.2. A seed is not a ceiling.
+
+The sweep must walk the range-partition family through the finalization
+barrier, complete-row ID and hash, source manifest, Q5, C01/C06/C07, every
+fixed layout and value-map reference, and every physical consumer. It must
+additionally walk every arm-ambiguous member-row site, every promotion
+boundary in §23.2.4, every member-row field derivation in §23.3, D8-prefix-to-D9,
+D9-before-Q5, actual inventory before A7-R10b, the unchanged V-B6 nonpassing
+branch, all blocked domain, bundle, and receipt consumers, and the new D9
+lifecycle. Forward and reverse closure must prove that no consumer still
+assumes every member of `renderable_member_rows` carries an authoritative
+image, that no reader promotes a candidate image at any site, and that no
+member-row field resolves to an evidence artifact.
+
+Every matched passage receives exactly one of
+`replaced-by-named-successor`, `composed-with-named-successor`, or
+`lawfully-unchanged-with-reason`, plus one nonempty exact successor or reason
+resolving to §23.6.1, §23.7, §23.8, or §23.9. Acceptance requires status pass,
+exact-empty `unresolved_passage_ids`, exact forward and reverse edge cover,
+agreement with an independently implemented second sweep, and reproduction
+from the accepted D9 blob. A missing, extra, merged, differently segmented,
+silently retained, seven-key-only, evidence-sourced, or candidate-excluded
+passage blocks ratification. No anticipated D9 byte offset, row count, closure
+digest, or implementation identity is ratified by these draft bytes.
+
+### 23.7 Complete revision-11 design-comparator disposition
+
+The comparator definition, mixed-preimage rule, complete-paragraph
+inspection, direct/transitive consumer walk, and failure discipline remain
+exactly §17.3. The revision-11 census corpus is every normative byte accepted
+at §23.9.2 step 2 and committed at step 3, including §§1–23, except exactly
+the seven historical/self-referential comparator-table intervals in §§17.3,
+18.5, 19.5, 20.6, 21.7, 22.7, and this subsection. Each interval starts at its
+table header and ends at the first byte of the next heading named by its own
+corpus law. For this subsection, the interval begins at the first byte of the
+table header below and ends immediately before the ASCII heading prefix
+`### 23.8 `. Mechanical searches include revision 11, Amendment 9, D8, D9, Q5,
+prefix, `pass_with_closed_failures`, every arm-ambiguous member-row literal,
+`revision_11_full_relation_identity`, and every exact identifier in §23.8.4.
+
+D8 is the exact ratified revision-10 identity at commit
+`bea8b43078ea6260beab368ee59e70ea53dff02b`, Git blob
+`91fb14f3d79c28bd86217d94743d3eeeb2454a83`, mode `100644`, 2,521,700 raw
+bytes, and SHA-256
+`4101260b94b019fc9392898059138b90386784b60ea40b9039562d364592718a`.
+The new base comparison independently requires those complete bytes to equal
+the first 2,521,700 bytes of D9.
+
+The new live Q5 comparison discovers the unique single-parent commit first
+adding only
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json`, requires
+D9's ratification commit to be its strict ancestor, and retains every
+Q5-before-slot/inventory/cutoff edge through G17-C01 and actual-inventory-
+before-R10b edge. Before reading Q5, the coordinator independently
+reconstructs and exact-compares its complete eight-key
+`slot_closure_evidence_identity`; unequal members or digest-only agreement
+fail the D9/Q5 predicate. It also reconstructs the six-position revision-11
+full-relation identity from Q5's complete embedded source relation and
+requires exact equality to the frozen pre-Q5 pin; the eight-key identity must
+bind those complete enclosing bytes. D5/Q5, D6/Q5, D7/Q5, and D8/Q5 remain
+independently required historical edges and cannot substitute for D9/Q5.
+
+The full comparator search treats the accepted-candidate-to-future-D9 raw-blob
+equality plus D8-prefix comparison as the one DC-49 family. DC-51 through
+DC-53 carry that same D9 identity through position, capture, receipt, and
+selected-registration consumers. The rerun therefore has exactly these 53
+families:
+
+| ID | Exact comparator or consumer anchor | Normative revision-11 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: the generic shape remains; the ceremony-specific rows below govern post-D9 designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and HEAD | lawfully-unchanged-with-reason: the ordinary current-design proof remains; DC-06, DC-10, DC-15, DC-18, and terminal DC-53 close retained-design cases. |
+| DC-03 | §10.4 prelaunch check 1 consumption of the active §10.1 design/repository proof | lawfully-unchanged-with-reason: it dispatches to the applicable Amendment-9 proof and cannot restore a displaced predecessor-to-HEAD equality. |
+| DC-04 | §12 context configuration import of §10.1 committed-design proof | lawfully-unchanged-with-reason: a post-D9 context registration carries D9 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration exact four-key Amendment-1 design child D1 | lawfully-unchanged-with-reason: configuration preservation retains D1; live revision-11 authority is supplied by DC-51–DC-53. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals HEAD proof | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1`. |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | lawfully-unchanged-with-reason: these authenticate calibrated D1 methodology/configuration while D9 is separately bound by DC-51–DC-53. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v8`, `fitting_free_registration_domain_identity.v8`, and `covered_earnings_path_applicability_registry_bundle.v9`. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | replaced-by-named-successor: `covered_earnings_path_applicability_receipt_core.v8` plus `verify_amendment_9_selected_registration_design_lineage_v1`. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against HEAD | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1`. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration exact D2 design child | lawfully-unchanged-with-reason: the configuration remains D2; position-1, capture, and receipt proofs separately bind D3 through D9. |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to configuration design | lawfully-unchanged-with-reason: provenance continues to record D2 while the receipt records D2 through D9. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | replaced-by-named-successor: retain K_f^d = D2, joined to `verify_amendment_9_fitting_free_design_identity_v1` and `verify_amendment_9_capture_registration_repository_identity_v1`. |
+| DC-14 | §16.10 capture authorization exact D2 design child | lawfully-unchanged-with-reason: the child remains D2; sibling D3–D9 children and DC-52 supply live authority. |
+| DC-15 | §16.10 capture authorization imported/restated pre-descriptor D2-to-HEAD repository equality | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1`. |
+| DC-16 | §16.10 capture primary design equality to capture registration | lawfully-unchanged-with-reason: both remain D2 while the complete registration/claim chain binds D3 through D9 and DC-52. |
+| DC-17 | §16.10 capture sidecar design equality to primary | lawfully-unchanged-with-reason: both remain D2 and the same hash chain binds D3 through D9 and DC-52. |
+| DC-18 | §16.10 selected fitting-free correction configuration D2-to-HEAD proof | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1`, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | replaced-by-named-successor: Amendment-9 dispatch to `covered_earnings_path_applicability_receipt_core.v8` and `covered_earnings_path_applicability_receipt.v8`. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | replaced-by-named-successor: exact historical-v1, Amendment-3-v2, Amendment-4-v3, Amendment-5-v4, Amendment-6-v5, Amendment-7-v6, Amendment-8-v7, or Amendment-9-v8 receipt dispatch and validation. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-HEAD predicate and complete transitive capture consumers | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1` and its complete D2–D9 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/HEAD byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1`. |
+| DC-24 | §18.1 D3 identity, exact 1,310,838-byte design, and immutable revision-6 prefix comparison | lawfully-unchanged-with-reason: D3 remains the exact prefix of D4 and the D4/D5/D6/D7/D8/D9 chain independently extends it. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`, the v8 requirement/domain registries, and v9 bundle. |
+| DC-26 | §18.6 terminal post-D4 capture-registration predicate and all registration-hash, claim, primary/sidecar, history, capture-input, A1/A3, and receipt consumers | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1` and its complete D2–D9 consumer chain. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1` and Amendment-9 v8 receipt/history dispatch. |
+| DC-28 | §19.1 D4 identity, exact 1,376,610-byte design, and immutable revision-7 prefix comparison | lawfully-unchanged-with-reason: D4 remains the exact prefix of D5 and the retained D4/D5, D5/D6, D6/D7, D7/D8, and D8/D9 comparisons extend the raw-byte chain. |
+| DC-29 | §19.2.5 D5 ratification ordering against the single-parent L5 legal-registry first-add and authority cutoff | lawfully-unchanged-with-reason: the legal comparator remains in `verify_historical_coverage_rules_identity_v2`; its consumers enter the freshly rebuilt v9 bundle and v8 receipt. |
+| DC-30 | §19.3.3 D5 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D5/Q5 remains independently required; DC-35, DC-40, DC-45, and DC-50 prove the stronger D6/Q5, D7/Q5, D8/Q5, and D9/Q5 edges. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`, the v8 requirement/domain registries, and v9 bundle. |
+| DC-32 | §19.6 terminal post-D5 capture-registration predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1` and its complete D2–D9 consumer chain. |
+| DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1` and Amendment-9 v8 receipt/history dispatch. |
+| DC-34 | §20.1 D5 identity, exact 1,781,491-byte design, and immutable revision-8 prefix comparison | lawfully-unchanged-with-reason: D5 remains the exact prefix of D6; DC-39, DC-44, and DC-49 independently extend the chain through D7, D8, and D9. |
+| DC-35 | §§20.4.2 and 20.6 D6 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D6/Q5 remains independently required; DC-40, DC-45, and DC-50 additionally prove the D7/Q5, D8/Q5, and live D9/Q5 edges and guarded consumer chain. |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`, the v8 requirement/domain registries, and v9 bundle. |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1` and its complete D2–D9 chain. |
+| DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1` and Amendment-9 v8 receipt/history dispatch. |
+| DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: this remains the exact historical D7 raw-byte identity family; DC-44 and DC-49 independently extend the raw-prefix chain to D8 and D9. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D7/Q5 and the complete eight-key artifact binding remain independently required; DC-45 and DC-50 add the D8/Q5 and live D9/Q5 edges without replacing this history. |
+| DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v8`, `fitting_free_registration_domain_identity.v8`, and `covered_earnings_path_applicability_registry_bundle.v9`. |
+| DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1` and its complete D2–D9 consumer chain. |
+| DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1` and Amendment-9 v8 receipt/history dispatch. |
+| DC-44 | §§22.1, 22.7, and 22.8.1, plus §22.9.2 steps 2–3, exact D7 identity, accepted-candidate-to-D8-raw-blob equality, and D7-as-2,423,590-byte-prefix-of-D8 comparison | lawfully-unchanged-with-reason: this is now the exact historical D8 raw-byte identity family. D7's complete bytes remain the byte-identical prefix of D8, and DC-49 independently extends the raw-prefix chain to D9. |
+| DC-45 | §§22.3, 22.7, and 22.9 D8 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: the D8/Q5 source-artifact ancestry predicate and complete eight-key `slot_closure_evidence_identity` binding remain independently required. The frozen six-position aggregate pin for a post-D9 build is the revision-11 identity, and DC-50 proves the live D9/Q5 edge; neither substitutes for the other. |
+| DC-46 | §22.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v8`, `fitting_free_registration_domain_identity.v8`, and `covered_earnings_path_applicability_registry_bundle.v9`. |
+| DC-47 | §22.8 terminal post-D8 capture-registration D2–D8/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_9_capture_registration_repository_identity_v1` and its complete D2–D9 consumer chain. |
+| DC-48 | §§22.8–22.9 terminal selected-registration D1-or-D2/D2–D8/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_9_selected_registration_design_lineage_v1` and Amendment-9 v8 receipt/history dispatch. |
+| DC-49 | §§23.1, 23.7, and 23.8.1, plus §23.9.2 steps 2–3, exact D8 identity, accepted-candidate-to-future-D9-raw-blob equality, and D8-as-2,521,700-byte-prefix-of-D9 comparison | lawfully-unchanged-with-reason: these are one live D9 raw-byte identity family. Step 2 fixes the accepted candidate byte sequence and step 3 permits only that sequence to become D9; validation exact-compares the future same-path raw Git blob, verifies its complete hash and independent D8-prefix equality, and carries the proof into every Amendment-9 position, capture, and selected proof. Digest-, ancestry-, or transitive-only substitution aborts. |
+| DC-50 | §§23.2, 23.7, and 23.9 D9 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate, frozen six-position revision-11 full-relation aggregate pin, and complete eight-key `slot_closure_evidence_identity` binding under the settled arm-ambiguous member-row reader. D9/Q5, relation-pin, or staging failure aborts; D5/Q5, D6/Q5, D7/Q5, and D8/Q5 remain separately required. |
+| DC-51 | §23.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/D9/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor `verify_amendment_9_fitting_free_design_identity_v1` closes all v8 registry/domain and v9 bundle consumers. |
+| DC-52 | §23.8 terminal post-D9 capture-registration D2–D9/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor `verify_amendment_9_capture_registration_repository_identity_v1` closes every consumer. |
+| DC-53 | §§23.8–23.9 terminal selected-registration D1-or-D2/D2–D9/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor `verify_amendment_9_selected_registration_design_lineage_v1` closes the v8 receipt and history dispatch. |
+
+This is the complete revision-11 comparator census: exactly 53 consecutive,
+unique IDs, exactly 27 `replaced-by-named-successor` rows, and exactly 26
+`lawfully-unchanged-with-reason` rows. The replacement IDs are DC-06, DC-08,
+DC-09, DC-10, DC-13, DC-15, DC-18 through DC-23, DC-25 through DC-27,
+DC-31 through DC-33, DC-36 through DC-38, DC-41 through DC-43, and DC-46
+through DC-48; every other displayed ID is unchanged. Every anchor,
+disposition, reason, and named successor is nonempty and resolves. The
+validator reconstructs the complete corpus, repeats every search, compares the
+ordered table, walks every consumer, and reproduces the category counts. An
+omitted, extra, duplicate, misanchored, third-disposition, undefined-successor,
+or incompletely closed comparator blocks ratification. This table becomes an
+immutable revision-11 invariant only at D9.
+
+### 23.8 Revision-11 lifecycle successors and identifier inventory
+
+#### 23.8.1 D9 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. D9 has exactly `path`,
+`ratification_commit`, `blob_sha256`, and `revision`, in that order. Path is
+`docs/design/covered_earnings_correction.md`; the commit is the 40-lowercase-
+hex future document-only ratification commit fixed only by §23.9.2 step 3;
+the SHA-256 covers every raw design byte at that commit; and revision is the
+JSON integer 11 excluding booleans. A draft, review-response, implementation,
+artifact, or mixed commit cannot fill D9.
+
+| Symbol | Revision | Ratification commit | Raw bytes | Git blob | Complete raw SHA-256 |
+|---|---:|---|---:|---|---|
+| D8 | 10 | `bea8b43078ea6260beab368ee59e70ea53dff02b` | 2,521,700 | `91fb14f3d79c28bd86217d94743d3eeeb2454a83` | `4101260b94b019fc9392898059138b90386784b60ea40b9039562d364592718a` |
+| D9 | 11 | future value fixed only by §23.9.2 step 3 | complete accepted revision-11 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
+
+Every Amendment-9 lifecycle predicate independently authenticates D2 through
+D9 and all six raw-prefix comparisons through D9. In particular, D8's complete
+2,521,700 bytes must byte-equal D9's half-open byte range `[0,2521700)`. A
+digest, ancestry relation, transitive consumer, or same working-tree file
+cannot substitute for any raw comparison.
+
+The position registry successor is
+`fitting_free_requirement_verification_specs.v8`. It retains the complete v7
+keyset, exact 22-row order, requirement meanings, failure IDs, and result
+schemas, advances only its schema value, and replaces the same-position
+position-1, A1, and A3 rows. Every other row is freshly evaluated rather than
+copied. Its exact position-1 object is:
+
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_9_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_9_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_9_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","ratified_design:amendment_8_design_identity","ratified_design:amendment_9_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_amendment_7_amendment_8_and_amendment_9_design_identities"}
+~~~
+
+The expected and actual preimages retain §22.8.1's top-level keysets,
+projection-row schema, canonical value-digest law, order/count/domain
+equations, and now have exactly ten projection rows. Let G2 through G9 be the
+complete raw design blobs at D2 through D9, K_f^d the staged fitting-free
+configuration design, C_A the final calibrated authority cutoff, and G_C_A the
+same-path raw bytes there. Expected values are
+`[D2,D3,D4,D5,D6,D7,D8,D9,D2,G9]`; actual values are
+`[D2,D3,D4,D5,D6,D7,D8,D9,K_f^d,G_C_A]`. The first nine rows have value type
+`canonical_json`; the tenth has `raw_git_bytes`.
+
+`verify_amendment_9_fitting_free_design_identity_v1` is true if and only if
+every inherited shape/order/count/digest equation passes and:
+
+1. both reconstructions of D2 through D9 deep-equal and all eight
+   ratification blobs hash to their identities;
+2. K_f^d equals D2 without requiring configuration bytes to equal the final
+   cutoff;
+3. all six raw-prefix comparisons through D9 pass;
+4. G_C_A byte-equals G9 and hashes to D9's `blob_sha256`; and
+5. `D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 <= C_A`, using strict Git ancestry
+   for each `<` and ancestor-or-equal for the last edge.
+
+False serializes the inherited exact-identity false result with
+`predicate_mismatch` and cannot select a predecessor registry or receipt.
+
+#### 23.8.2 Capture, A1/A3, domain, and bundle successors
+
+Every capture authorization first added after D9 uses
+`fitting_free_model_input_authority_capture_registration.v8`. It is the
+complete v7 authorization with its schema value advanced and
+`amendment_9_design_identity` inserted immediately after
+`amendment_8_design_identity`; it has exactly 20 keys. `design` remains D2,
+and the amendment children are D3 through D9. Every other adjudication,
+invocation, capability, input, path, repository, and failure law remains.
+
+Let A be the unique single-parent commit strictly after D9 first adding only
+that v8 authorization, and freeze capture HEAD as H_cap before any
+environment, claim, broker, source descriptor, or model input opens. The
+coordinator first constructs
+`amendment_9_capture_registration_repository_proof.v1` with exactly these 18
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+The eight identity members are D2 through D9 and the commit fields are
+`[A,H_cap]`. The nine six-key blob rows have roles
+`amendment_2_ratification` through `amendment_9_ratification`, followed by
+`capture_head`; count is integer nine. Canonicalization, pass/fail status, and
+`abort_without_accepted_authority_pair` failure disposition retain their exact
+inherited values.
+
+`verify_amendment_9_capture_registration_repository_identity_v1` is true if
+and only if every inherited proof equation passes and:
+
+1. the strict-parsed v8 authorization has its independently reconstructed
+   digest and exact D2–D9 children;
+2. all eight ratification blobs hash correctly, all six prefix comparisons
+   pass, and same-path design bytes at H_cap equal D9;
+3. `D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < A <= H_cap`;
+4. authorization bytes remain unchanged from A through H_cap and all nine
+   blob rows exact-match observed commits, modes, OIDs, and raw bytes; and
+5. every retained descriptor-free repository, tracked-state, clean-checkout,
+   implementation-tree, and authorization-byte conjunct passes.
+
+The proof freezes before descriptors, contains no receipt or future commit,
+and passes or aborts without fallback.
+
+`fitting_free_model_input_authority_capture_claim.v8` retains the complete
+eight-key v7 claim shape/order, advances only its schema value, and embeds the
+complete Amendment-9 proof.
+`fitting_free_model_input_authority_capture_input.v8` retains the v7 envelope
+keyset/order, advances only its schema value, and selects the v8 registration,
+claim, and proof. The unchanged primary and sidecar retain D2 design children;
+their complete hashes transitively bind D3 through D9 and H_cap. The
+authorization/capture/triple/cutoff order remains
+`D9 < A <= H_cap < T < C`, with every inherited sole-parent, only-add,
+descriptor, and durable-reread law.
+
+Within `fitting_free_requirement_verification_specs.v8`, A1 and A3 retain
+their complete §22.8.2 classes, expected/actual preimage schemas, ordered
+source projections, result schemas, and meanings. Their predicate IDs become
+`verify_amendment_9_fitting_free_a1_model_universe_authority_v1` and
+`verify_amendment_9_fitting_free_a3_weight_source_authority_v1`. Their
+cross-bindings change only to suffix
+`and_amendment_9_capture_repository_proof`, and every projection selects the
+v8 capture input/claim/proof. The claim remains lifecycle nonauthority and
+enters no substantive value or inner A1/A3 identity.
+
+The domain successor is `fitting_free_registration_domain_identity.v8`. It
+retains the v7 keyset/order, advances its schema value, selects the complete
+v8 requirement registry, and freshly reconstructs all 22 rows, projection
+evidence, Booleans, failure IDs, counts, and hashes. Every source-derived
+child first validates the actual threshold-selected field relation, its
+virtual explicit-equivalent member arrays, every arm-ambiguous renderable row
+and its cross-relation binding, and all streaming and aggregate digests. This
+settlement does not alter R10a, R10b, R11, or V-B6. V-B6 must again be
+nonpassing; no accepted complete v8 domain instance exists on the present
+evidence. A copied v7 domain, empty forbidden-dependency array, carrier,
+residual 9, seven-key-only read, promoted candidate image, or digest-only
+analytic read fails.
+
+The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v9`. It retains the v8
+keyset/order, advances its schema value, and embeds the complete v8
+requirement registry. Every affected source-derived child is freshly
+reconstructed from accepted post-D9 Q5, inventory, value maps, legal
+authorities, the checked settled `pass_with_closed_failures` relation, and
+exact-empty applicable consumer guards—never from G17 or a configuration.
+Legal children retain their exact version chain. No v8 bundle, filtered
+relation, failed consumer, draft Q5, copied interval, copied digest, or
+promoted candidate image is admitted.
+
+No accepted v9 bundle exists while the required v8 domain is nonpassing. A
+construction attempt must retain R10a's source-adjudication abort and R10b's
+carrier-absence proof and abort before emitting a bundle. A settled
+arm-ambiguous member row cannot fabricate a carrier or turn an evidence
+relation into a passing V-B6 consumer.
+
+#### 23.8.3 Receipt and selected-registration lineage
+
+`covered_earnings_path_applicability_receipt_core.v8` is the complete v7 core
+with its schema value advanced and `amendment_9_design_identity` inserted
+immediately after `amendment_8_design_identity`; it has exactly 23 keys. Its
+eight amendment children are D2 through D9, its fitting-free domain is v8, its
+applicability-spec digest hashes the complete v9 bundle, and its applicability
+result carries the v8 domain digest. Every other member and the namespace cut
+edge remain unchanged; `receipt_core_sha256` hashes the complete v8 core.
+
+When capture supplies A1/A3, validation requires every D2–D9 child to
+deep-equal the corresponding v8 registration/proof identity and reproduce its
+raw blob and complete prefix chain. The calibrated adjudication and
+fitting-free domain bind the same v8 claim, capture input, proof, primary,
+sidecar, triple, and cutoff. Exact lineage is
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < A <= H_cap < T < C <= HEAD`.
+
+The outer `covered_earnings_path_applicability_receipt.v8` retains the
+complete v7 outer keyset/order and every receipt-ID, suffix, namespace,
+construction, status, Git-delta, and failure law, changes only its schema
+value, and requires the complete v8 core. Terminal history dispatch is exact:
+pre-Amendment-3 uses historical v1; Amendments 3, 4, 5, 6, 7, 8, and 9 use v2,
+v3, v4, v5, v6, v7, and v8 respectively. No receipt version binds another
+revision.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+`verify_amendment_9_selected_registration_design_lineage_v1` is true if and
+only if:
+
+1. selected configuration design exact-matches its D1 or D2 ratification
+   blob and digest;
+2. receipt-core D2 exact-matches revision 4;
+3. D3, D4, D5, D6, D7, and D8 exact-match revisions 5 through 10 respectively;
+4. D9 exact-matches revision 11 and same-path raw bytes at registration HEAD,
+   while all six raw-prefix comparisons pass;
+5. `D1 < D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 <= registration HEAD`; and
+6. every retained repository, implementation-tree, configuration, invocation,
+   input, output, history, authority, and validation law passes.
+
+False fails v8 receipt validation without fallback. A fresh fitting-free
+selection under revision-11 authority still retains the revision-4 D2
+configuration design child; K_f^d = D2 remains joined to the earlier D9
+position proof and later v8 receipt proof.
+
+The presently nonpassing V-B6 domain means no accepted Amendment-9 receipt or
+selected registration can instantiate these schemas. They close the lifecycle;
+they do not manufacture substantive authority.
+
+#### 23.8.4 Complete successor identifier inventory
+
+The complete lifecycle successor set introduced by Amendment 9 has exactly
+these 16 identifiers in order:
+
+1. `amendment_9_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_9_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_9_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v8`;
+5. `verify_amendment_9_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_9_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v8`;
+8. `covered_earnings_path_applicability_registry_bundle.v9`;
+9. `fitting_free_model_input_authority_capture_registration.v8`;
+10. `amendment_9_capture_registration_repository_proof.v1`;
+11. `verify_amendment_9_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v8`;
+13. `fitting_free_model_input_authority_capture_input.v8`;
+14. `covered_earnings_path_applicability_receipt_core.v8`;
+15. `covered_earnings_path_applicability_receipt.v8`; and
+16. `verify_amendment_9_selected_registration_design_lineage_v1`.
+
+The complete nonlifecycle schema set newly introduced by Amendment 9 is the
+one identifier
+`amendment_9_arm_ambiguous_member_row_closure_sweep.v1`. Concatenating the
+displayed lifecycle order and that singleton is the exact 17-name successor
+inventory. The lists are disjoint and contain no alias. An omitted, extra,
+duplicate, misspelled, undefined, or candidate-selectable identifier blocks
+ratification.
+
+The v3 source interface and every official v1 source/Q5/slot/inventory
+artifact remain completed in place. `authoritative_image_disposition`,
+`arm_ambiguous_authoritative_image_promotion`,
+`arm_ambiguous_no_authoritative_image`,
+`abort_before_classification_arm_ambiguous_source_member`,
+`revision_11_full_relation_identity`, the six-key arm-ambiguous renderable row
+and its member names, A9-R01 through A9-R04, D9, Q5, A, H_cap, T, C, K_f^d,
+and DC-01 through DC-53 are enum, defined-term, row-ID, member, operation,
+context symbol, or comparator values, not independently selectable schemas.
+None enlarges the identifier inventory or creates a v4 compiler alias.
+
+### 23.9 Post-Amendment-9 build, ratification, Q5, and registration order
+
+#### 23.9.1 Checked compiler-to-Q5 and guarded-consumer walk
+
+After D9, the separately reviewed source-only v3 implementation constructs all
+176 document derivations — including all 47 codebook derivations under §23.3 —
+and all 89,599 complete 16-key field rows before reading a serialized
+comparand or consumer. Logical construction remains exhaustive: it
+reconstructs every literal and range member, candidate arm, invariant/ambiguous
+disposition, renderability partition, member row in its settled shape, missing
+subtraction, DFA, replay, and consumer projection. Physical storage follows
+§22.2's one threshold-selected arm and need never materialize a large virtual
+array.
+
+Amendment 9 is what makes the complete `pass_with_closed_failures` relation
+constructible at all. Under revision 10 no range partition holding an
+arm-ambiguous numeric-range member could be serialized — §22.4.5 pins 56,480
+such members across the 1,433 numeric-range entries of the 674 arm-ambiguous
+fields and publishes no per-field cross-tab, so the blocked population is
+stated as members, not as a field count — and therefore no complete relation,
+no `*_member_domain_sha256` over an affected container, no complete-row hash,
+no derivation ID, and no full-relation identity existed. Under revision 11
+those partitions serialize, and the ordering consequence is exact: the relation
+artifact becomes
+reachable only after both §23.2's row settlement and §23.3's field closure
+hold, and A9-R03 and A9-R04 are the gates that prove it. Amendment 9 supplies
+the law; it does not supply the 47 codebook derivations, which remain separate,
+separately reviewable work, and it claims no result from them.
+
+Before Q5 is read, the builder must:
+
+1. reproduce the exact §20 source law, ten terminal counts, three historical
+   classification aggregate pins, seven failure-reason rows, and §21.3
+   `pass_with_closed_failures` relation;
+2. run A6-R01 through A6-R11 unchanged;
+3. run the exact pre-Q5 A7 sequence A7-R01 through A7-R09, A7-R10a, and
+   A7-R11, obtaining the same expected-negative V-B6 results;
+4. run A8-R01 through A8-R04 unchanged, reproducing every payload byte count,
+   storage SHA, virtual-member SHA, negative rejection, and storage-bound
+   fact;
+5. run A9-R01 through A9-R04 in order, reproducing every displayed row,
+   relation byte count, and digest; obtaining the promotion rejection on all
+   three grounds; reproducing the complete §22.4.5 fact table with both added
+   equations; and reconciling the census from codebook-derived types and units
+   with no evidence artifact in any derivation basis; and
+6. in a fresh process, run mandatory `--check` under §22.5.3 as extended by
+   §23.5 and obtain byte equality, all pinned/fresh digest equality, one
+   independently equal six-position revision-11 full-relation identity, and
+   exact-empty mismatch arrays.
+
+Failure at any step emits no accepted relation. A source compiler cannot use
+the candidate artifact, Q5, inventory, expected vector output, prior digest,
+interval row, or evidence artifact as an input to source derivation. The
+interface remains `dictionary_codebook_fixed_width_source_derivation_v3`;
+neither the settled row shape nor `--check` creates a v4 alias.
+
+Successful step 6 freezes the matched six-position identity against the
+accepted relation bytes before Q5. The normal builder's value and the fresh
+check value are independent comparands; neither is a default for the other,
+and the revision-10 identity is a default for neither.
+
+Only after all six steps pass may Q5 be first-created in its one-path,
+one-parent post-D9 commit. Q5 embeds the complete actual threshold-selected
+source relation, including every T-minus row and fresh row/enclosing digest.
+The coordinator must reconstruct the six-position identity from that embedded
+complete relation, require equality to the frozen revision-11 pin, and require
+Q5's eight-key identity to bind the complete enclosing bytes before any
+positive join may consume a T-plus field. No positive join may consume a
+T-minus field, and no positive join may consume an arm-ambiguous member's
+image. Every positive join resolves the actual representation, virtual member
+relation, settled row shape, and §21 guard before reading a physical value.
+DC-30, DC-35, DC-40, DC-45, and DC-50 independently prove D5/Q5, D6/Q5,
+D7/Q5, D8/Q5, and D9/Q5, plus the complete eight-key artifact identity and
+retained Q5-before-slot/inventory/cutoff chain. None substitutes for another.
+
+Only after Q5 passes may the guarded slot authority, official slot registry,
+and complete actual official inventory be constructed in inherited order.
+Every layout, parser, raw-token grammar, value map, crosswalk, and G17
+expected/actual value resolves the same checked relation through §22.3 as
+completed by §23.2.4. Inventory must satisfy the unchanged E-domain equations,
+exact 1,235-key negative census, and every applicable guard. A7-R10b runs
+immediately after that actual inventory passes and strictly before any
+residual-9 registry, V-B6 requirement result, preliminary/final 22-row domain,
+bundle, or correction final-acceptance gate. It must again pass only by
+proving that no carrier or passing/accepted V-B6 result exists.
+
+Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
+comparands may continue when their own source, representation, and consumer
+laws pass. The V-B6 branch cannot. Every preliminary and final 22-row
+reconstruction keeps V-B6 in the same position, reruns R10a, both R11 arms,
+and post-inventory R10b, and obtains a nonpassing V-B6 row. Therefore the v8
+domain, v9 bundle, correction final acceptance, receipt, registration, and
+production correction still cannot pass. Settling a member row cures physical
+constructibility only; it supplies no missing authority and relaxes no
+boundary.
+
+#### 23.9.2 Referee, D9, implementation, Q5, capture, and production
+
+This subsection replaces §22.9.2 as the live revision-11 protocol:
+
+1. Submit the complete append-only §23 candidate bytes to adversarial referee
+   review without a source implementation, Q5, slot, inventory, registry,
+   capture, correction evaluation, output, or other non-document tree change
+   in this authoring lane.
+2. Resolve every finding and verify the complete round-to-round diff; exact
+   2,521,700-byte D8 prefix and identity; all frozen sources and unchanged
+   field/status/failure digests; the four quoted governing sentences and the
+   applied contradiction; the arm-invariance derivation, its closed
+   first-stage enumeration, its A6-R07 witness, and both ratified
+   constructors; the six-key row, its lawfulness conditions, and its
+   cross-relation binding; the amended §22.2.3 inverse and its lossiness test;
+   the complete promotion boundary; the codebook derivation path and evidence
+   exclusion; A9-R01 through A9-R04 payload bytes and digests; the preserved
+   §22.4.5 fact table including 56,480 and the rejected counterfactual pair;
+   the 377-byte and 381-byte minima against the 325-byte multiplier; the
+   six-position revision-11 identity; extended mandatory `--check`; §23.6
+   closure sweep; 53-row comparator census; 17-name successor inventory;
+   D9/Q5 edge; and every lifecycle and build walk. Continue until the exact
+   final bytes receive affirmative ratification.
+3. Ratify only those accepted bytes in one identifiable future document-only
+   commit D9. No authoring, audit, review-response, source, implementation,
+   artifact, Q5, runtime, or registration change may be included in D9.
+4. After D9, separately review and commit the source-only v3 implementation,
+   including the 47 codebook derivations required by §23.3. Reconstruct the
+   complete settled relation from authenticated sources, run the six pre-Q5
+   gates in §23.9.1, and require fresh `--check` byte equality. Freeze the
+   independently matched six-position revision-11 full-relation identity
+   before Q5; no candidate position may serve as expected input. Only that
+   exact checked and pinned relation may precede Q5. First-add Q5 alone at its
+   strict post-D9 single-parent commit; reconstruct the same identity from its
+   complete embedded relation and require its eight-key identity to bind those
+   complete enclosing bytes. Construct no synthetic carrier, residual-9
+   registry, or 22-row result in this step.
+5. After Q5 passes, construct and accept only the guarded slot authority,
+   official slot registry, and complete actual official inventory in official
+   order, including its E-domain equations, negative census, and settled
+   member-row reads. Immediately after actual inventory acceptance, run
+   A7-R10b from fresh inputs and prove absence of every residual-9 key array,
+   carrier, ID, consequence, amount read, and passing or accepted V-B6 result.
+   A constructed carrier or synthetic fixture fails.
+6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain. Rerun
+   R10a, both R11 arms, and R10b from their proper inputs, never copied
+   outputs. V-B6 must be nonpassing and the domain must abort. Under present
+   evidence no residual-9 registry, V-B6 bundle, correction final acceptance,
+   receipt, registration, production correction, context output, certificate,
+   publication, or external merge may follow from this path.
+7. The v8 capture/domain/receipt/registration and v9 bundle schemas in §23.8
+   remain defined for exact lifecycle closure and a future lawful authority.
+   They may instantiate only after a later ratified authority changes the
+   presently nonpassing V-B6 result without weakening the layer law,
+   fabricating a carrier, promoting a candidate image, sourcing a member-row
+   field from evidence, or copying a predecessor result. That work is outside
+   Amendment 9.
+
+At these draft bytes none of steps 3–7 has occurred. No D9, successor
+implementation, codebook derivation, canonical relation artifact, successful
+`--check`, Q5, official inventory, guarded consumer artifact, lifecycle
+instance, carrier, receipt, registration, correction result, or output is
+claimed. Amendment 9 settles one under-determined serialization and names one
+already-existing derivation path, while preserving the exact source
+classification, every Amendment-8 storage fact, and the independent V-B6
+authority blocker.
+
+**Amendment 9 is inoperative unless and until its exact D9 ratification commit
+is bound by a validator-accepted v8 fresh-registration receipt.** The current
+V-B6 nonpassing result prevents that receipt. Ratification alone authorizes
+only the separately reviewed source implementation, codebook derivations,
+canonical relation build, `--check`, Q5, and expected-negative guarded steps
+stated above; it authorizes no correction production evaluation, path switch,
+context run, label change, output, or publication.
