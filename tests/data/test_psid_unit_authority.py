@@ -67,6 +67,13 @@ def test_normalization_does_not_fold_tabs_or_other_whitespace() -> None:
     # Only LF and U+0020 participate; the derivation already stripped
     # per-line leading and trailing tabs, so a surviving tab is content.
     assert normalize_description("a\tb") == "a\tb"
+    assert normalize_description("\ta\t") == "\ta\t"
+    assert normalize_description(" \ta\t ") == "\ta\t"
+    assert normalize_description("\ra\r") == "\ra\r"
+    assert normalize_description("\va\v") == "\va\v"
+    assert normalize_description("\N{NO-BREAK SPACE}a\N{NO-BREAK SPACE}") == (
+        "\N{NO-BREAK SPACE}a\N{NO-BREAK SPACE}"
+    )
 
 
 # --------------------------------------------------------------------------
@@ -201,6 +208,49 @@ def test_a_per_hour_tail_outranks_the_bare_money_clause() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "predicate",
+    [
+        "dollars and cents amount per hour",
+        "whole dollars per hour",
+        "number of hours per day",
+        "number of miles per week",
+        "number of persons per acre",
+    ],
+)
+def test_unenumerated_longer_ratio_phrase_fails_closed(
+    predicate: str,
+) -> None:
+    text = f"This variable represents {predicate}."
+    assert statement_disposition(text) == (None, "defeating_clause")
+
+
+@pytest.mark.parametrize(
+    ("predicate", "unit"),
+    [
+        ("dollars and cents per hour", "united_states_dollar_per_hour"),
+        (
+            "dollar and cents amount per hour",
+            "united_states_dollar_per_hour",
+        ),
+        ("number of hours per week", "hour_per_week"),
+        ("hours per week", "hour_per_week"),
+        ("hours per year", "hour_per_year"),
+        (
+            "number of hours (0001-2080) per year",
+            "hour_per_year",
+        ),
+        ("number of miles per year", "mile_per_year"),
+    ],
+)
+def test_enumerated_ratio_phrase_survives(
+    predicate: str,
+    unit: str,
+) -> None:
+    text = f"This variable represents {predicate}."
+    assert statement_disposition(text) == (unit, "unit_naming_clause")
+
+
 def test_a_density_is_defeated_rather_than_counted() -> None:
     text = (
         "The values for this variable represent the number of persons per "
@@ -215,6 +265,18 @@ def test_clause_occurrences_drop_only_strictly_contained_matches() -> None:
     assert [unit for _start, _end, unit in hits] == [
         "united_states_dollar_per_hour"
     ]
+
+
+def test_clause_matching_is_invariant_to_table_enumeration_order(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    predicate = "number of hours per day"
+    expected = clause_occurrences(predicate)
+    monkeypatch.setattr(
+        "populace_dynamics.data.psid_unit_authority.CLAUSE_TABLE",
+        tuple(reversed(CLAUSE_TABLE)),
+    )
+    assert set(clause_occurrences(predicate)) == set(expected)
 
 
 def test_every_clause_unit_is_in_the_closed_vocabulary() -> None:
@@ -248,6 +310,30 @@ def test_field_with_two_distinct_statement_units_fails_closed() -> None:
     assert field_unit(f"{DOLLARS}\n{HOURS}") == (
         None,
         "conflicting_statement_units",
+    )
+
+
+def test_defeated_statement_blocks_a_positive_statement() -> None:
+    defeated = (
+        "The values for this variable represent the number of persons per "
+        "room."
+    )
+    for text in (f"{DOLLARS} {defeated}", f"{defeated} {DOLLARS}"):
+        assert field_unit(text) == (None, "defeated_denotation_statement")
+
+
+def test_conflicting_statement_blocks_a_positive_statement() -> None:
+    conflict = (
+        "The values for this variable represent dollars and cents and "
+        "number of weeks."
+    )
+    assert statement_disposition(conflict) == (
+        None,
+        "conflicting_unit_clauses",
+    )
+    assert field_unit(f"{DOLLARS} {conflict}") == (
+        None,
+        "defeated_denotation_statement",
     )
 
 
@@ -378,7 +464,35 @@ def test_successor_census_rejects_an_unknown_terminal() -> None:
 def test_successor_census_rejects_a_short_row() -> None:
     row = _row(1968, "A", COMPILED, None)
     del row["resolution_reason"]
-    with pytest.raises(ValueError, match="missing"):
+    with pytest.raises(ValueError, match="unexpected keys"):
+        successor_census([row])
+
+
+def test_successor_census_rejects_an_extra_member() -> None:
+    row = _row(1968, "A", COMPILED, None)
+    row["extra"] = "not canonical"
+    with pytest.raises(ValueError, match="unexpected keys"):
+        successor_census([row])
+
+
+@pytest.mark.parametrize(
+    ("member", "value", "message"),
+    [
+        ("interview_wave", True, "JSON integer"),
+        ("raw_field_id", 1, "JSON string"),
+        ("derivation_status", 1, "JSON string"),
+        ("resolution_reason", None, "JSON string"),
+        ("source_description", 1, "JSON string or null"),
+    ],
+)
+def test_successor_census_rejects_noncanonical_member_types(
+    member: str,
+    value: object,
+    message: str,
+) -> None:
+    row = _row(1968, "A", COMPILED, None)
+    row[member] = value
+    with pytest.raises(ValueError, match=message):
         successor_census([row])
 
 

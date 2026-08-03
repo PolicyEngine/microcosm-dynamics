@@ -120,7 +120,7 @@ def normalize_description(description: str | None) -> str:
 
     if description is None:
         return ""
-    return _SPACE_RUN.sub(" ", description.replace("\n", " ")).strip()
+    return _SPACE_RUN.sub(" ", description.replace("\n", " ")).strip(" ")
 
 
 # --------------------------------------------------------------------------
@@ -310,7 +310,41 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
     ("the ratio of", NO_UNIT),
     ("persons per room", NO_UNIT),
     ('number of Wife/"Wife" missed', NO_UNIT),
+    ("dollars and cents amount per hour", NO_UNIT),
 )
+
+
+_RATIO_EXTENSION = re.compile(r"(?: [A-Za-z]+)* per [A-Za-z]+")
+
+
+def _unenumerated_ratio_extensions(
+    predicate: str,
+    hits: Sequence[tuple[int, int, str]],
+) -> list[tuple[int, int, str]]:
+    """Return synthetic defeats for longer, unenumerated ratio phrases.
+
+    A positive clause cannot decide a phrase that continues through a
+    ``per <denominator>`` tail unless one enumerated clause covers the whole
+    extension.  The synthetic hit makes that prospective law fail closed for
+    every denominator, rather than only for spellings already seen in the
+    frozen corpus.
+    """
+
+    defeats: list[tuple[int, int, str]] = []
+    for start, end, unit in hits:
+        if unit == NO_UNIT:
+            continue
+        extension = _RATIO_EXTENSION.match(predicate, end)
+        if extension is None:
+            continue
+        extended_end = extension.end()
+        if any(
+            other_start == start and other_end == extended_end
+            for other_start, other_end, _other_unit in hits
+        ):
+            continue
+        defeats.append((start, extended_end, NO_UNIT))
+    return defeats
 
 
 def clause_occurrences(predicate: str) -> tuple[tuple[int, int, str], ...]:
@@ -331,6 +365,7 @@ def clause_occurrences(predicate: str) -> tuple[tuple[int, int, str], ...]:
                 break
             hits.append((index, index + len(clause), unit))
             start = index + 1
+    hits.extend(_unenumerated_ratio_extensions(predicate, hits))
     return tuple(
         hit
         for position, hit in enumerate(hits)
@@ -371,11 +406,13 @@ def field_unit(description: str | None) -> tuple[str | None, str]:
     found = extract_statements(normalize_description(description))
     if not found:
         return None, "no_denotation_statement"
-    units = {
-        unit
-        for unit, _ in (statement_disposition(s) for s in found)
-        if unit is not None
-    }
+    dispositions = [statement_disposition(statement) for statement in found]
+    if any(
+        reason in {"defeating_clause", "conflicting_unit_clauses"}
+        for _unit, reason in dispositions
+    ):
+        return None, "defeated_denotation_statement"
+    units = {unit for unit, _reason in dispositions if unit is not None}
     if not units:
         return None, "no_statement_names_a_unit"
     if len(units) > 1:
@@ -491,15 +528,30 @@ _ROW_KEYS = (
 
 
 def _row_view(row: Mapping[str, Any]) -> tuple[int, str, str, str, str | None]:
-    missing = [key for key in _ROW_KEYS if key not in row]
-    if missing:
-        raise ValueError(f"field row is missing {missing!r}")
+    keys = tuple(sorted(row))
+    if keys != _ROW_KEYS:
+        raise ValueError(f"field row has unexpected keys: {keys!r}")
+    wave = row["interview_wave"]
+    field = row["raw_field_id"]
+    status = row["derivation_status"]
+    reason = row["resolution_reason"]
+    description = row["source_description"]
+    if type(wave) is not int:
+        raise ValueError("interview_wave must be a JSON integer")
+    if type(field) is not str:
+        raise ValueError("raw_field_id must be a JSON string")
+    if type(status) is not str:
+        raise ValueError("derivation_status must be a JSON string")
+    if type(reason) is not str:
+        raise ValueError("resolution_reason must be a JSON string")
+    if description is not None and type(description) is not str:
+        raise ValueError("source_description must be a JSON string or null")
     return (
-        int(row["interview_wave"]),
-        str(row["raw_field_id"]),
-        str(row["derivation_status"]),
-        str(row["resolution_reason"]),
-        row["source_description"],
+        wave,
+        field,
+        status,
+        reason,
+        description,
     )
 
 
