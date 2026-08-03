@@ -64,6 +64,7 @@ __all__ = [
     "denotation_candidate_disposition",
     "denotation_candidate_start_count",
     "denotation_candidate_table",
+    "denotation_candidate_unselected_count",
     "denotation_candidates",
     "extract_statements",
     "failure_reason_rows",
@@ -449,6 +450,43 @@ def denotation_candidate_start_count(description: str | None) -> int:
 
     normalized = normalize_description(description)
     return 0 if not normalized else normalized.count(" ") + 1
+
+
+def denotation_candidate_unselected_count(description: str | None) -> int:
+    """Count whole-domain audit candidates missed by production selectors.
+
+    Anchor-bearing spans are selected from the normalized prose.  A raw-LF
+    ``Actual ...`` line may be a strict prefix of its normalized segment, so
+    that independent selector also discharges a candidate when its exact
+    adjudicated line is the candidate's prefix.  The ratified corpus must sum
+    this count to zero before any successor census may be emitted.
+    """
+
+    actual_whole = tuple(
+        candidate
+        for candidate in actual_candidates(description)
+        if actual_candidate_disposition(candidate) == "whole_domain_denotation"
+    )
+    missed = 0
+    for candidate in denotation_candidates(description):
+        if denotation_candidate_disposition(candidate) not in {
+            "contains_whole_domain_denotation",
+            "whole_domain_denotation",
+        }:
+            continue
+        anchor_selected = any(
+            statement_predicate(statement) is not None
+            for statement in extract_statements(candidate)
+        )
+        actual_selected = any(
+            candidate == actual
+            or candidate.startswith(actual + " ")
+            or actual.startswith(candidate + " ")
+            for actual in actual_whole
+        )
+        if not anchor_selected and not actual_selected:
+            missed += 1
+    return missed
 
 
 def actual_candidate_disposition(candidate: str) -> str:

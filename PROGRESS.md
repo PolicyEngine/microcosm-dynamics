@@ -34,9 +34,10 @@ complete. Documentation and final verification remain.
   period-law segment occurrences plus 322 raw `Actual...` occurrences produce
   a 195,835-occurrence, 59,521-row table with zero unadjudicated rows.
 - Pinned all 2,240,669 admissible normalized word starts in addition to the
-  unconditional segment relation, so an opener filter cannot hide a candidate
-  start; the final gate payload hashes to
-  `8cf990f0e37ad82189d810f84c0a5a0c1116191e7788a07b5d361b7c9f497c22`.
+  unconditional segment relation. A separate zero-orphan check proves every
+  candidate adjudicated as whole-domain is emitted by the anchor or raw-LF
+  selector; the final gate payload hashes to
+  `d97ef93d6956dcbd72cd7beb9e058d015d338fb06a73b98a735a05c7030f5979`.
 - Replaced the unsafe generic year match with exact year and encoded-year
   clauses; added faithful dollars-per-week and hundreds-of-dollars units.
 - Regenerated the completed draft successor counts as

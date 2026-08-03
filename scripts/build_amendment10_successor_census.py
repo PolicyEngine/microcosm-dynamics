@@ -40,6 +40,7 @@ from populace_dynamics.data.psid_unit_authority import (  # noqa: E402
     canonical_sha256,
     denotation_candidate_table,
     denotation_candidate_start_count,
+    denotation_candidate_unselected_count,
     statement_table,
     successor_census,
 )
@@ -105,6 +106,7 @@ class GatePins:
     denotation_candidate_table_row_count: int
     denotation_candidate_occurrence_count: int
     denotation_candidate_start_count: int
+    denotation_candidate_unselected_count: int
     denotation_candidate_unadjudicated_count: int
     denotation_candidate_table_sha256: str
     statement_table_row_count: int
@@ -318,6 +320,7 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
     denotation_candidate_table_row_count=59_521,
     denotation_candidate_occurrence_count=195_835,
     denotation_candidate_start_count=2_240_669,
+    denotation_candidate_unselected_count=0,
     denotation_candidate_unadjudicated_count=0,
     denotation_candidate_table_sha256=(
         "75406f57f3b25dbfa9b096acb6d299ccaf2e3fa3657f7371c14f08aada467a10"
@@ -335,7 +338,7 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         "21f4393d3f348658f496c9bdc4504e3ac6bd30c62f99b399f092638522d3fdf4"
     ),
     census_payload_sha256=(
-        "8cf990f0e37ad82189d810f84c0a5a0c1116191e7788a07b5d361b7c9f497c22"
+        "d97ef93d6956dcbd72cd7beb9e058d015d338fb06a73b98a735a05c7030f5979"
     ),
 )
 
@@ -497,6 +500,10 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         denotation_candidate_start_count(row["source_description"])
         for row in frozen_rows
     )
+    unselected_candidates = sum(
+        denotation_candidate_unselected_count(row["source_description"])
+        for row in frozen_rows
+    )
     unadjudicated = sum(
         row["occurrence_count"]
         for row in candidate_rows
@@ -512,6 +519,7 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "denotation_candidate_table_row_count": len(candidate_rows),
         "denotation_candidate_occurrence_count": candidate_occurrences,
         "denotation_candidate_start_count": candidate_starts,
+        "denotation_candidate_unselected_count": unselected_candidates,
         "denotation_candidate_unadjudicated_count": unadjudicated,
         "denotation_candidate_table_sha256": canonical_sha256(candidate_rows),
         "statement_table_row_count": len(table),
@@ -610,6 +618,9 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         ),
         denotation_candidate_start_count=(
             payload["denotation_candidate_start_count"]
+        ),
+        denotation_candidate_unselected_count=(
+            payload["denotation_candidate_unselected_count"]
         ),
         denotation_candidate_unadjudicated_count=(
             payload["denotation_candidate_unadjudicated_count"]
@@ -809,6 +820,13 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         payload["denotation_candidate_start_count"],
         pins.denotation_candidate_start_count,
     )
+    _require_equal(
+        "whole-domain candidates missed by production selectors",
+        payload["denotation_candidate_unselected_count"],
+        pins.denotation_candidate_unselected_count,
+    )
+    if payload["denotation_candidate_unselected_count"] != 0:
+        raise GateError("a whole-domain candidate escaped production selection")
     _require_equal(
         "unadjudicated denotation candidate count",
         payload["denotation_candidate_unadjudicated_count"],

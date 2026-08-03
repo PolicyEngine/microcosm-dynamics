@@ -28,6 +28,7 @@ from populace_dynamics.data.psid_unit_authority import (
     denotation_candidate_disposition,
     denotation_candidate_start_count,
     denotation_candidate_table,
+    denotation_candidate_unselected_count,
     denotation_candidates,
     extract_statements,
     failure_reason_rows,
@@ -200,6 +201,13 @@ def test_exhaustive_candidate_selector_covers_lexemes_and_actual_lines() -> None
         "Actual number of weeks"
     ) == "whole_domain_denotation"
     assert denotation_candidate_start_count(description) == 15
+    assert denotation_candidate_unselected_count(description) == 0
+    assert (
+        denotation_candidate_unselected_count(
+            "Actual number of weeks\nFormula prose without a period"
+        )
+        == 0
+    )
     assert (
         actual_candidate_disposition(
             "Actual - Required rooms = 2 or more (V891 EQ 5 - 8)"
