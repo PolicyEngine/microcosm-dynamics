@@ -46281,7 +46281,7 @@ The exact design-family dispositions are:
 | §19.3.2 common-unit requirement and codebook-only source | composed with §24.3; unchanged and unnarrowed |
 | §19.3.2 nonunitized-`R` failure and §20.3.5 precedence | composed with §24.4; unit absence is incomplete-class only |
 | §20.3.7 census, matrix, assignment, and seven-row failure artifact | superseded by construction by §24.4; historical values remain untouched |
-| §21 T-plus/T-minus and `pass_with_closed_failures` laws | composed with the eight-row artifact and 73,408/16,191 exact cover |
+| §21 T-plus/T-minus and `pass_with_closed_failures` laws | composed with the eight-row artifact and 73,523/16,076 exact cover |
 | §22 storage populations and A8-era floor | superseded by construction by §24.5; A8 history remains true for its shapes |
 | §23 six-key member shape and arm-invariance | lawfully unchanged; §24 recounts its population and current-law floor |
 | §23 `typed_value_unit` under-determination | resolved by §24.3 from source prose |

@@ -16,7 +16,7 @@ relations. Its successor vector is
 `[4842,171,49,0,67316,1145,0,1,421,15654]`; the production gate passes.
 Section 24 has now been regenerated from those final artifacts. The document
 is 3,435,126 bytes with SHA-256
-`ce46ac7ac7354ad0f0ff022fc85b2f4365cbca1acced6ec9c7aec5d013bd61a2`;
+`58a56be9f62e5aabfe5ac648c96e4939f31c5bb66158c23b91e7c03cac95b549`;
 all six embedded authority fences match their source relations byte for byte,
 and every frozen gate pin appears in the document. The final 89,599-row gate
 reproduction exits zero and matches the frozen payload and statement outputs
@@ -101,6 +101,8 @@ byte for byte at 1,126,612,992-byte peak RSS.
 - Reran the full production gate over the lawful raw relation; it exited zero,
   reproduced the frozen payload and statement files byte for byte, and peaked
   at 1,126,612,992 bytes RSS.
+- Corrected the independent audit's stale §24.7 exact-cover row from
+  73,408/16,191 to the final 73,523/16,076 T-plus/T-minus split.
 
 ## Next
 
