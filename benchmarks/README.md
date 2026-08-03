@@ -144,6 +144,11 @@ For every future evaluation run:
    `registry_sha`, `row_id`, `our`, `published`, `deviation`, `gap_class`,
    `gap_note`, and `label_state`. Units, gap class, and gap note must match the
    registry. Under an unchanged registry, published values are immutable.
+   A row may use `our.value: null` only when its primary class is
+   `module_missing`, and then its deviation must be exactly
+   `{"model_value": null, "status": "not_computable"}`; published values and
+   every other model measurement remain numeric, so placeholder magnitudes are
+   never invented.
    Encode with UTF-8, sorted keys, compact separators, ASCII escapes, finite
    numbers only, and one trailing LF per object.
 5. Validate the candidate set, then append it as one contiguous byte block:
