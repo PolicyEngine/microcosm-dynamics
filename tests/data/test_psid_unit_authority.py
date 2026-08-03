@@ -5,12 +5,11 @@ from __future__ import annotations
 import pytest
 
 import populace_dynamics.data.psid_unit_authority as unit_authority
-
 from populace_dynamics.data.psid_unit_authority import (
-    ANCHORS,
     ACTUAL_CANDIDATES,
     ACTUAL_CLAUSE_TABLE,
     ACTUAL_NO_DENOTATION_CANDIDATES,
+    ANCHORS,
     ARTIFACT_PARTITION,
     CLAUSE_TABLE,
     COMPILED_TERMINALS,
@@ -26,12 +25,12 @@ from populace_dynamics.data.psid_unit_authority import (
     canonical_json_bytes,
     canonical_sha256,
     clause_occurrences,
-    description_statements,
     denotation_candidate_disposition,
     denotation_candidate_start_count,
     denotation_candidate_table,
     denotation_candidate_unselected_count,
     denotation_candidates,
+    description_statements,
     extract_statements,
     failure_reason_rows,
     field_unit,
