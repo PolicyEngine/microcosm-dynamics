@@ -11,19 +11,31 @@ successor census with the unit test evaluated.
 ## State
 
 - [x] Read both source reports (A9 round-2 verdict; codebook derivation lane)
-- [x] Confirm worktree identity: 2,653,817 bytes, SHA-256
-      `4f6219ba7162bcc53d390a107e8db2ebe289565c6776fbda2c4acdffd0ba4609`
-- [ ] Task 1 — empirical unit-coverage census from frozen sources
-- [ ] Classifier extension (source commit, tests)
-- [ ] Successor census run
+- [x] Worktree identity: 2,653,817 bytes, SHA-256
+      `4f6219ba7162bcc53d390a107e8db2ebe289565c6776fbda2c4acdffd0ba4609`,
+      Git blob `bb11f807e7683086b55703ea28346dacec9d192e`, ratified at
+      `3941e2eec27ca9c8c986c74742eb43dd62a3f830`
+- [x] Task 1 — complete free-prose census from the frozen derivation
+- [x] Classifier extension committed as source with 42 tests
+- [x] Successor census run and cross-validated against the ratified census
 - [ ] Task 2 — draft §24
 - [ ] Verification and final attestation
 
+## Established figures
+
+- Statement census: 2,476 distinct value-denotation statements over 8,340
+  fields; 1,229 name a unit; 53-row clause table; 5,096 fields take a unit.
+- Successor census: `[4491, 121, 42, 0, 67316, 1145, 0, 1, 421, 16062]`,
+  15,249 movements, denominator unchanged.
+- §22.4.5 recompute: 4,654 compiled fields / 4,709 range entries /
+  263,613,602,038 members; row floor 85,674,104,100,325 bytes
+  (77.920… TiB, 59.75× capacity) — the artifact stays unconstructible.
+
 ## Next
 
-Read the ratified law that §24 must obey: §19.3.2 unit clauses, §20.3.5
-failure mapping, §21.1.2 closed-failure artifact, §22.4.5 populations, §23.3.
+Write §24 subsections 24.1–24.10 via the scratchpad generator, append after
+the frozen prefix, verify prefix bytes before and after.
 
 ## Done
 
-(nothing yet)
+- `2e3f0b5` lane ledger; `HEAD` §24 machinery (module, runner, tests).
