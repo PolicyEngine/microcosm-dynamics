@@ -14,7 +14,11 @@ families have exact grammar and start rows. Complete-description regressions
 pass. The production census has been regenerated and frozen on the repaired
 relations. Its successor vector is
 `[4842,171,49,0,67316,1145,0,1,421,15654]`; the production gate passes.
-Section 24 still carries the prior narrative, pins, fences, and fixtures.
+Section 24 has now been regenerated from those final artifacts. The document
+is 3,435,126 bytes with SHA-256
+`ce46ac7ac7354ad0f0ff022fc85b2f4365cbca1acced6ec9c7aec5d013bd61a2`;
+all six embedded authority fences match their source relations byte for byte,
+and every frozen gate pin appears in the document.
 
 ## Done
 
@@ -78,11 +82,23 @@ Section 24 still carries the prior narrative, pins, fences, and fixtures.
 - Verified the final start partition is W=8,258, N=4,532, D=2,227,879,
   U=0 across all 2,240,669 occurrences, with zero unselected or overselected
   starts; all 258 focused authority and gate tests pass.
+- Rewrote the food-family law and A10-R01 around complete raw descriptions:
+  construction prose is context, independent whole-domain dollar sentences
+  govern, and V31 remains a no-denotation counterexample.
+- Rewrote the totality theorem around cleartext per-start adjudication rather
+  than selector output or an opaque whole-segment registry.
+- Corrected the source-history narrative and regenerated the successor vector,
+  matrix, movement/failure relations, storage floors, and A10-R01--R05 pins.
+- Restored and verified the raw-Actual fence, including V418's exact
+  three-space spelling; all six authority fences match their generated
+  relations byte for byte.
+- Reverified the immutable 2,653,817-byte prefix and mechanically confirmed
+  every current gate hash and storage total in the regenerated document.
 
 ## Next
 
-- Regenerate every downstream §24 narrative, fence, and fixture, then rerun
-  prefix, relation, test, formatting, and diff checks.
+- Rerun the focused and broader relevant tests, Ruff, prefix, formatting, and
+  diff checks against the regenerated document.
 - Obtain another independent review against both round-2 verdicts and resolve
   any actionable finding.
 - Write the final report, remove this progress file, and commit the cleanup.
