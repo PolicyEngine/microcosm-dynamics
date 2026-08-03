@@ -10,8 +10,10 @@ The food-family adjudication is settled from complete raw prose: the ten broad
 construction/provenance predicates are `no_unit_naming_clause`; the nested,
 unconditional whole-domain dollar sentences control all 20 weekly and all
 nine annual fields. The cleartext total-start authority and exact-cover gate
-are implemented over the lawful raw relation; documentation regeneration is
-in progress.
+are implemented over the lawful raw relation. Section 24 has been regenerated
+from those live relations, including the successor vector, all pins, storage
+floors, and the A10-R01--R05 fixtures. Final validation and independent review
+are in progress.
 
 ## Done
 
@@ -39,11 +41,17 @@ in progress.
   evidence-artifact spelling.
 - Rebuilt the raw-route census, statement, movement, failure, semantic
   authority, assignment, and payload pins; peak RSS was 1,316,700,160 bytes.
+- Added focused grammar, exact-cover, raw-spacing, and complete food-family
+  regressions; all 243 targeted tests pass.
+- Regenerated every downstream §24 identity from the lawful raw relation plus
+  the extended grammar and corrected food adjudication.
+- Verified the regenerated document preserves the complete 2,653,817-byte
+  revision-11 prefix byte for byte.
 
 ## Next
 
-- Finish and commit focused authority/gate regressions.
-- Regenerate §24's source narrative, proof, pins, successor data, floors, and
-  A10-R01--R05 fixtures.
-- Run the required prefix, test, and diff checks, write the final report, then
-  remove this progress file before completion.
+- Commit the regenerated §24 document and progress state.
+- Run the complete prefix, relation, test, formatting, and diff checks.
+- Obtain an independent review against both round-2 verdicts and resolve any
+  actionable finding.
+- Write the final report, remove this progress file, and commit the cleanup.
