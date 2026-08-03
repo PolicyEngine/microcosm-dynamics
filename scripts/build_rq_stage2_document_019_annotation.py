@@ -556,7 +556,7 @@ def validate_review(
             (page_number, spec["occurrence_kind"])
         ].append(spec)
         last_order = order
-    # The independent document-25 source ledger selects one semantic atom at
+    # The independent document-19 source ledger selects one semantic atom at
     # each same-kind interval.  Preserve that reviewed granularity so a later
     # edit cannot reintroduce a narrower detector hit inside its retained
     # multiline prompt or flow block.  Different occurrence kinds may lawfully
@@ -2798,7 +2798,7 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
     def select_path_subset(row: dict[str, Any]) -> None:
         """Replace a lawful path set with a proper subset of itself.
 
-        Every document-25 occurrence resolves under exactly one complete
+        Every document-19 occurrence resolves under exactly one complete
         root-to-leaf path, so the multi-parent form of this mutation has no
         fixture here.  Truncating a conditional occurrence's path back to the
         bare root is the same defect in its single-path form: the emitted
