@@ -39336,21 +39336,20 @@ When the first stage succeeds it yields exactly one unpadded string: the
 optional single `0x2d`, then the magnitude, which is the canonical ASCII
 decimal of `abs(z)` under the integer form, the canonical ASCII decimal of `M`
 under the implied-decimal form, and `I || 0x2e || F_f` under the
-literal-decimal form. This is where the notation matters: under the
-implied-decimal form the magnitude digits are those of `M = abs(z) * 10^d` and
-not those of `abs(z)`, so under a signed implied-decimal form with
-`z = -0.1`, `d = 2`, and `w = 3` the magnitude is
-`10`, the unpadded string is `-10`, and the member is in category 3 with the
-common image `-10` — while counting the digits of `abs(z)` instead would give
-a shorter length and wrongly predict arm-ambiguity. Write `L` for that
-string's raw byte length. `L` is
-defined only where the first stage succeeds; where it fails there is no
-rendered string, and in particular when `f < 1` the expression
+literal-decimal form. The notation matters here: under the implied-decimal
+form the magnitude digits are those of `M = abs(z) * 10^d` and not those of
+`abs(z)`. Under a signed implied-decimal form with `z = -0.1`, `d = 2`, and
+`w = 3`, the magnitude is `10`, the unpadded string is `-10`, and the member
+falls in category 3 below with the common image `-10`; counting the digits of
+`abs(z)` instead would give a shorter length and wrongly predict
+arm-ambiguity. Write `L` for the unpadded string's raw byte length. `L` is
+defined only where the first stage succeeds; where it fails no string is
+rendered, and in particular when `f < 1` the expression
 `sigma + |I| + 1 + f` is not the length of anything.
 
 **The second stage applies the same width test to both candidates.** Each
-prepends exactly `w - L` pad bytes and "cannot fit exactly `w` bytes" on the
-same condition `L > w`. The two candidates differ only in which byte is
+prepends exactly `w - L` pad bytes, and each "cannot fit exactly `w` bytes" on
+the one condition `L > w`. The two candidates differ only in which byte is
 prepended and where the minus is placed; padding changes neither the
 magnitude, nor the sign, nor `f`, nor `L`.
 
@@ -39453,12 +39452,18 @@ exactly nine arm-ambiguous members, `1` through `9`, and 90 arm-invariant
 members, which are exactly the 87 two-digit range members plus the three
 exact-width literal bypasses. V5092/1976 records ten ambiguous members — the
 missing literal `0` and range members `1`–`9` — and 20 invariant members,
-`10`–`28` plus missing literal `99`. Every member of both fields is a
-nonnegative integral `json_integer` value under an unsigned integer form with
-`d = 0`, so no first-stage condition can fire and category 1 is empty for
-them; within that restriction category 4 does reduce to `L < w`, and the
-ratified partitions are exactly the members of unpadded length one against
-`w = 2`. Neither field licenses the converse reading.
+`10`–`28` plus missing literal `99`. Every numeric-range member of both fields
+is a positive integral `json_integer` value under an unsigned integer form
+with `d = 0`, so no first-stage condition can fire for a range member and
+category 1 is empty in both range partitions. Within that restriction
+category 4 reduces to `L < w`, and the ratified range splits are exactly that:
+V117's nine ambiguous range members `1`–`9` are its members of unpadded length
+one against `w = 2` and its 87 invariant range members `10`–`96` are the
+two-digit ones, and V5092's nine ambiguous range members `1`–`9` and 19
+invariant range members `10`–`28` split the same way. The short literals in
+each field — V117's three exact-width bypasses, V5092's missing `0` and `99` —
+are dispositioned by §20.3.2's literal rules rather than by this comparison.
+Neither field licenses the converse reading.
 
 The `unrenderable_reason` literal `arm_ambiguous_no_authoritative_image`
 remains defined for historical rows and for the inherited §20.3.2, §22.2.3,
