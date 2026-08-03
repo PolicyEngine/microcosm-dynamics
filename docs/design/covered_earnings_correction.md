@@ -37660,3 +37660,1421 @@ authorizes only the separately reviewed source, artifact, implementation,
 and expected-negative checks stated above; it authorizes no correction
 production evaluation, path switch, context run, label change, output, or
 publication.
+
+## 22. AMENDMENT SECTION — Amendment 8: lossless analytic range partitions
+
+### 22.1 Status, immutable revision-9 base, scope, precedence, and section map
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 10
+  of the design. Drafting, audit, review, and response commits are not
+  ratification and authorize no source compiler, derivation row, Q5, slot,
+  inventory, value map, crosswalk, capture, correction execution, context
+  run, output, or publication. Only the exact bytes accepted under §22.9.2
+  may become `D8`, and they become operative only through the fresh
+  registration successor in §22.8.
+- **Immediate immutable base.** The base is the complete ratified revision-9
+  design `D7` at commit
+  `ccc3b9f3afc43624a5fd7d90e57f93a6d6ce686c`. The path is
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `08a64a16c82e2893cdd415bdd092b5a9f71e4687`, exactly 2,423,590 raw
+  bytes, and SHA-256
+  `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
+  Those complete bytes are the byte-identical prefix of revision 10. A
+  digest-only, ancestry-only, transitive, working-tree, or candidate-prefix
+  assertion cannot substitute for comparing every one of those bytes.
+- **Sole inherited illustrative-fence exception.** D7 one-based lines
+  3,834–3,837 are the exact 171-byte LF-terminated fenced block at D7 byte
+  interval `[241728,241899)`, including delimiters, with SHA-256
+  `82118279750eea3f5f84f7dc7a458d8a0030d897d262dc756d1b635d513c4f34`.
+  Its two content lines 3,835–3,836 are exactly 159 LF-terminated bytes with
+  SHA-256
+  `a94110a196a77420652d9a0e8c92cda38c225107aa4156279dd7e78b2cace23d`.
+  They contain the literal placeholder `[...]` and two successive object
+  roots, so that inherited fence is illustrative pseudo-JSON, not a JSON
+  value and not schema, parser, or canonicalization authority. Because the
+  immutable-prefix law forbids repairing it in place, that fence alone is
+  excluded from the whole-document strict-JSON-fence parse obligation. Every
+  `json` fence authored in §22, including a negative fixture whose parsed
+  value is then schema-invalid, must still strict-parse as exactly one JSON
+  value after duplicate-key rejection. No other fence gains an exception.
+- **One representation defect only.** Amendment 8 changes only the wire
+  representation of exhaustive numeric-range member relations and the
+  consumers, identities, and lifecycle steps that necessarily depend on
+  those bytes. It changes no authenticated source, normalized entry,
+  scalar, field assignment, terminal, count, renderer, padding result,
+  missing classification, DFA language, action, replay, consumer guard,
+  V-B6 result, or A6/A7 semantic outcome. The analytic form below is the
+  already-authoritative analytic enumeration made lossless on the wire; it
+  is not a count-only summary or a waiver of exhaustive validation.
+- **Exact precedence.** Sections 1–21 remain visible and controlling except
+  for the passages expressly dispositioned in §22.6. In particular, the
+  §20.3.2 command to serialize every range-derived row in bare explicit
+  arrays is replaced only by the two-form law below. Every requirement to
+  reconstruct every logical member, preserve its order and complete row,
+  compare complementary relations, hash the exhaustive named array, render
+  and replay bytes, subtract missing images, or abort on disagreement
+  remains. At a conflict, §22 is later and more specific; silence changes
+  nothing else.
+
+The complete section map is:
+
+| Subsection | Complete subject |
+|---|---|
+| §22.1 | status, D7 identity and prefix, inherited illustrative-fence exception, scope, precedence, and section map |
+| §22.2 | explicit-or-analytic grammar, canonical interval bijection, streaming digest, and identity law |
+| §22.3 | exact analytic-equivalent consumer law for membership, enumeration, rendering, DFA subtraction, missing-first images, Q5, G17, and guarded consumers |
+| §22.4 | mandatory Amendment-8 vectors and the physical-storage fact table |
+| §22.5 | untouched census, expected artifact scale, aggregate identities, and mandatory builder check |
+| §22.6 | exact replacement inventory and Amendment-8 closure sweep |
+| §22.7 | complete revision-10 design-comparator census |
+| §22.8 | D8 lifecycle successors and complete identifier inventory |
+| §22.9 | post-Amendment-8 build, ratification, Q5, and registration order |
+
+The map is exact. No subsection may be ratified, implemented, or registered
+separately.
+
+### 22.2 Lossless explicit-or-analytic member-sequence law
+
+#### 22.2.1 Exact affected relation families and retained outer shapes
+
+The physical contradiction reaches exactly three §20.3.2 relation families:
+
+| Relation family | Retained logical member rows | Retained logical order |
+|---|---|---|
+| each `candidate_arm_results[*].complete_domain_member_results` | every inherited eight-key candidate result for each normalized literal and numeric-range member | normalized source-entry order, then ascending range-member index |
+| `complete_domain_arm_disposition.arm_invariant_member_rows` and `.arm_ambiguous_member_rows` | every inherited eight-key invariant or fourteen-key ambiguous result | the two relations preserve source-entry/member order and their ordered merge equals each complete candidate domain |
+| each range-partition row's `renderable_member_rows` and `unrenderable_member_rows` | every inherited seven-key renderable or four-key unrenderable result | ascending zero-based member index; the ordered merge is exactly `0..source_member_count-1` |
+
+Every named count and `*_member_domain_sha256` sibling remains in its exact
+position and keeps its logical meaning. The range-partition parent retains
+its exact nine keys. `candidate_arm_results`,
+`complete_domain_arm_disposition`, thirteen-key `physical_authentication`,
+the 16-key numeric derivation row, its 15-position ID preimage, the nine-key
+top-level `field_source_derivation`, Q5's 18-key raw-field projection, and
+all fixed layout/value-map envelopes retain their outer keysets and order.
+Only a member-sequence value that revision 9 required to be a bare array may
+now take the exact analytic arm below. Fresh actual bytes still enter every
+full-row, ID, domain, and content hash.
+
+For each such logical relation let `N` be its retained nonnegative integer
+count. Its serialized value is exactly one arm of this closed tagged union:
+
+1. **explicit arm:** the inherited bare JSON array containing all `N`
+   complete member rows in inherited order; or
+2. **analytic arm:** one object with exactly these four members:
+
+```text
+literal_member_rows
+range_interval_rows
+representation
+total_member_count
+```
+
+`representation` is the exact string
+`analytic_closed_intervals_v1`; `total_member_count` is the exact JSON
+integer `N`, excluding booleans. `literal_member_rows` is the complete array
+of inherited full logical rows whose normalized source entry is a literal,
+in source-entry order. No literal is represented by an interval or reduced
+to a scalar/count. `range_interval_rows` contains exactly one row for every
+applicable normalized numeric-range entry in retained source-entry order,
+including an empty-subset row, and each row has exactly:
+
+```text
+source_entry_ref
+intervals
+member_count
+```
+
+The reference exact-matches the normalized entry. `member_count` is a
+nonnegative JSON integer excluding booleans and exact-equals the number of
+this logical relation's members belonging to that entry. A floating-point
+token is invalid even when its mathematical value is integral.
+`intervals` is an ordered array of four-position arrays:
+
+```text
+[lower_bound, upper_bound, step, member_count]
+```
+
+There is no third representation, external side table, sampled prefix,
+Bloom filter, count-only row, digest-only row, omitted unfavorable segment,
+or consumer-selected alternate.
+
+For either per-range renderable/unrenderable container,
+`literal_member_rows` is exact empty and `range_interval_rows` is the
+singleton row for that parent `source_entry_ref`. For a complete candidate
+or invariant/ambiguous domain it contains every normalized range entry so
+literal and range results can be merged in the inherited source-entry order.
+
+#### 22.2.2 Exact numeric atoms, intervals, threshold, and canonical form
+
+An interval numeric atom follows the normalized entry's retained value type.
+For a `json_integer` range it is an arbitrary-precision JSON integer
+excluding booleans. For a `rational` range it is one reduced ASCII rational
+string with grammar `-?(0|[1-9][0-9]*)/[1-9][0-9]*`: no plus, whitespace,
+grouping, exponent, leading zero, negative zero, or zero denominator;
+numerator and positive denominator are coprime, and zero is exactly `0/1`.
+A JSON floating-point or decimal-approximation token is never an atom.
+Decoding produces one exact rational; encoding selects the entry-type arm
+above uniquely. Thus even an integral rational is a string such as `10/1`,
+not a type-changing JSON integer.
+
+For a normalized source range with exact lower bound `L`, positive step `s`,
+and source-member count `M`, each analytic interval must satisfy all of:
+
+1. its four positions have the exact types above; the fourth is a positive
+   JSON integer excluding booleans;
+2. its step exact-equals the normalized source step `s`, is positive, and
+   both closed bounds are members of the same referenced source range;
+3. `upper_bound = lower_bound + (member_count - 1) * step` in exact rational
+   arithmetic;
+4. expanding `lower_bound + j * step` for `j = 0..member_count-1` yields
+   exactly consecutive original source-member indexes in this logical
+   relation; and
+5. the interval array is the unique sequence of maximal nonempty runs of
+   consecutive included original indexes. Adjacent runs that could merge,
+   a split maximal run, a nonmaximal singleton, overlap, duplicate, reverse
+   order, or alternate stride is noncanonical and invalid.
+
+An empty relation for an entry has `intervals: []` and `member_count: 0`.
+The spellings `0.0` and `-0.0` are invalid under the same integer type law.
+Otherwise the interval counts sum exactly to that row's `member_count`.
+All range-row counts plus `len(literal_member_rows)` sum exactly to
+`total_member_count`, which exact-equals the retained count sibling. Each
+literal row's `source_entry_ref` and every range-row reference resolve once
+to the surrounding normalized domain; duplicate, missing, outside-domain,
+or reordered references abort.
+
+The representation threshold is the exact integer **4,096** logical
+members, applied separately to each named relation value:
+
+- if `N <= 4,096`, the canonical production artifact serializes the
+  inherited explicit array;
+- if `N > 4,096`, the canonical production artifact serializes the analytic
+  object; and
+- if a relation cannot be encoded analytically without reproducing every
+  row uniquely, it must use the explicit arm, which is lawful only when
+  `N <= 4,096`. A larger nonencodable relation makes construction fail.
+
+Thus a small nonanalytic future domain stays explicit; a large one cannot
+buy compactness by losing information. The validator may expand an
+analytic-form fixture below the threshold to prove semantic equivalence,
+but the production builder must still choose the threshold arm. This
+separates the two-form conformance proof from the one canonical artifact
+byte sequence.
+
+#### 22.2.3 Member-by-member inverse and bijection
+
+The analytic arm is information-equivalent to the inherited explicit array.
+Its inverse is fixed, not implementation-defined. Walk normalized source
+entries in retained order. At a literal entry, yield its one stored complete
+row if and only if that row belongs to the logical relation. At a numeric
+range entry, walk its interval rows in displayed order and each interval in
+ascending `j`. For scalar `x = lower_bound + j * step`, reconstruct
+
+```text
+source_member_index = (x - L) / s
+```
+
+as an exact nonnegative integer, then rebuild the five-key `source_value`
+from the normalized entry, its retained type/unit/meaning/disposition, and
+`x`. The index and value must deep-equal an independent reconstruction from
+the authenticated source entry.
+
+The surrounding relation key and parent branch uniquely select the retained
+row constructor:
+
+- a candidate-arm interval reruns that parent arm's §20.3.3 renderer and
+  yields the complete inherited eight-key candidate member;
+- an invariant or ambiguous interval independently runs both candidate
+  renderers, removes only `profile_kind` for comparison, and yields exactly
+  the inherited eight-key invariant or fourteen-key ambiguous member;
+- a renderable interval reruns the selected authoritative renderer, action
+  path, parsed scalar, and byte replay and yields the inherited seven-key
+  row; and
+- an unrenderable interval proves the absence of an authoritative image and
+  yields the inherited four-key row with exactly
+  `no_exact_width_selected_form_image` or, only for a member in the
+  arm-ambiguous relation,
+  `arm_ambiguous_no_authoritative_image`.
+
+No value in a full virtual row is copied from a bound, guessed from a count,
+or omitted. The inverse reconstructs physical image bytes, rendered
+precision, action arrays, scalar, replay, candidate result/failure,
+authoritative result, both ambiguous candidate projections, and encounter
+abort exactly where the inherited row schema requires them. If the
+surrounding source/profile/arm/DFA values do not determine one unique full
+row, the analytic arm is lossy and invalid.
+
+Conversely, the forward transform takes the independently reconstructed
+explicit logical relation, retains literal rows, groups each numeric
+entry's included indexes into the unique maximal consecutive runs above,
+and emits their exact closed intervals. Forward followed by inverse must
+reproduce the canonical explicit member-array bytes exactly; inverse
+followed by forward must reproduce the canonical analytic object bytes
+exactly. Those two equalities are the required bijection. A Boolean
+membership oracle, summary, approximate cardinality, sampled expansion, or
+digest match without both equalities is insufficient.
+
+#### 22.2.4 Canonical streaming member digest and aggregate identity
+
+Every retained `*_member_domain_sha256` remains the SHA-256 of the complete
+logical member array under §10.1, whether its storage arm is explicit or
+analytic. The exact streaming construction is:
+
+1. initialize SHA-256 and feed the one ASCII byte `0x5b` (`[`);
+2. enumerate complete virtual member rows under §22.2.3; before every row
+   except the first feed `0x2c` (`,`), then feed that row's §10.1 canonical
+   JSON object bytes—sorted object keys, compact separators, ASCII escaping,
+   no nonfinite or floating-point value, and **no** terminal LF at member
+   level;
+3. after the final row feed exactly `0x5d 0x0a` (`]\n`); and
+4. serialize the lowercase 64-hex-character SHA-256 result.
+
+For zero rows the byte stream is exactly `[]\n` and its retained digest is
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`.
+For an explicit arm these bytes exactly equal canonical serialization of the
+stored array. For an analytic arm a consumer may compute them one member at
+a time without storing the array. Chunk boundaries, buffering, thread
+partitioning, or process count cannot enter the hash; the SHA state sees the
+one byte stream above.
+
+The source-member-domain digest for a range-partition parent is rebuilt by
+ordered-merging the virtual renderable and unrenderable rows, projecting the
+exact two-key `source_member_index`/`source_value` rows, and applying the
+same stream. Candidate-arm and invariant/ambiguous counts/digests likewise
+cover the complete virtual arrays, including their literal rows. Every
+complementary merge, equality, disjointness, and exact-cover requirement in
+§20 remains controlling.
+
+The actual analytic object is separately part of the containing 16-key row's
+canonical bytes. Every affected derivation ID, complete-row SHA-256,
+`numeric_grammar_derivation_rows` domain/content digest, source-manifest
+digest, Q5 digest, and downstream enclosing digest is therefore rebuilt
+from the threshold-selected representation bytes. Semantic member-domain
+digest equality does not make unequal storage bytes equal and cannot bypass
+the representation tag, threshold, canonical interval form, or full-row
+comparison.
+
+The full field-relation aggregate identities remain pinned to the unchanged
+source-derived classification: denominator SHA-256
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`,
+ten-row count-array SHA-256
+`421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624`,
+and complete ordered assignment SHA-256
+`5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e`.
+They cover fields and terminal assignment, not serialized member count, and
+remain necessary but not sufficient. The fresh actual-row and enclosing
+digests must also reproduce under the one canonical representation rule.
+
+### 22.3 Exact analytic-equivalent consumer law
+
+#### 22.3.1 One validated virtual relation for every reader
+
+Before any §20 or §21 consumer reads a member-sequence value, it resolves the
+complete same-wave/raw-field 16-key derivation row, authenticates the actual
+representation bytes and fresh full-row hash, applies the 4,096-member
+threshold, and validates every count, source reference, atom, interval,
+maximal-run, bijection, logical member digest, and complementary exact-cover
+equation in §22.2. It then exposes one virtual exhaustive relation having the
+inherited complete rows and order. No downstream branch is told whether a
+row came from an explicit array or analytic expansion unless it is
+validating the representation itself.
+
+For membership of an exact source scalar `x`, first resolve its unique
+normalized source entry. A literal uses the retained exact row. A numeric
+member must satisfy the entry's closed-bound and exact-step congruence law.
+It then matches exactly one interval in each complete candidate-arm
+relation, exactly one interval across the invariant/ambiguous pair when that
+pair applies, and exactly one interval across the parent range's renderable/
+unrenderable pair. The consumer recovers its original zero-based index,
+relation tag, and complete virtual row—not merely true/false. Within the
+unchanged source domain, zero or multiple matches in any required domain, a
+different index, or a different regenerated row aborts. Outside the
+normalized source domain, the inherited unknown-token or semantic-membership
+law applies; an analytic interval never enlarges the domain.
+
+Ordered enumeration walks source entries, literals, intervals, and members
+exactly as §22.2.3 specifies. Candidate-arm relations must enumerate the
+same complete domain. Invariant and ambiguous relations must be disjoint and
+ordered-merge to it. Renderable and unrenderable relations must be disjoint
+and ordered-merge to all indexes `0..source_member_count-1`. Independent
+explicit reconstruction, analytic expansion, counts, and streaming digests
+must all agree. A malformed, lossy, ambiguous, overlapping, reordered,
+count-inconsistent, nonmaximal, or non-bijective analytic form takes the
+same fail-closed conflict class as an unequal independently reconstructed
+range partition; digest-only agreement still aborts.
+
+#### 22.3.2 Renderer, DFA subtraction, replay, and missing-first images
+
+The §20.3.3 renderer is unchanged. Every virtual numeric member is rendered
+once under the selected form and candidate or authoritative arm, using exact
+rational arithmetic, maximum fitting precision, exact sign placement, and
+the complete action path. A renderable member must return the same image,
+precision, action array, scalar, and byte-equal replay as the virtual row. An
+unrenderable or ambiguous member must return the same null authority and
+exact closed reason/action. The analytic interval is an enumeration device;
+it is never permission to use a generic numeric regex, host range, rounded
+endpoint, endpoint-only renderer, or observed subset.
+
+For each applicable numeric range, the §20.3.4 DFA builder streams only
+authoritative images from that range's virtual renderable relation or, on
+the finite-domain arm-ambiguous branch, the corresponding virtual invariant
+relation. Every no-range numeric domain retains its independently derived
+closed language, and retained registered literals contribute their
+established images under the inherited literal-first law. No unrenderable,
+ambiguous, candidate-only, or other value outside an inherited lawful
+source-valid contribution enters an edge. After forming that unchanged
+complete source-valid language, subtract every final registered missing
+image. State numbering, unsigned-byte edge order, action-sensitive quotient,
+counts, transition digests, scalar actions, and raw-to-value-to-raw replay
+remain unchanged.
+
+A registered invariant missing literal remains missing-first and its image
+is subtracted. A candidate-only ambiguous short missing literal remains
+unregistered, never enters `missing_raw_tokens`, and takes
+`abort_before_classification_arm_ambiguous_source_member`. A final missing
+numeric image found by analytic membership is likewise missing-first; the
+analytic form cannot promote, demote, synthesize, or hide it. Every observed
+and unobserved classification first applies the retained exact literal and
+missing precedence. A range-derived classification then obtains the exact
+virtual numeric member row and traverses or aborts according to that row. A
+no-range numeric domain retains §20's independently derived closed-language
+classification and replay and creates no analytic member relation.
+
+#### 22.3.3 Complete-row, Q5, G17, value-map, and guarded-consumer propagation
+
+Every §20.3.5 status predicate and failure precedence reads the virtual
+complete relation. A compiled row still requires every applicable candidate,
+arm-disposition, renderability, DFA, and replay proof; a null-profile branch
+still has no profile-dependent partition. The 16-key row remains complete
+only when its actual threshold-selected bytes validate and its virtual
+explicit-equivalent relations reproduce. Projecting away an analytic object,
+accepting only its counts/digests, or substituting a regenerated explicit
+array for its canonical storage bytes makes the complete-row hash unequal.
+
+Every §20.4.1 layout, typed-parse, raw-token, observed/unobserved,
+`unobserved_possible_values`, source-commitment, and value-code consumer
+resolves that complete row first. The four inherited partition counts and
+digests in a partial-range or finite-arm unobserved row refer to the virtual
+arrays. Membership returns the exact renderable/invariant row or the exact
+unrenderable/ambiguous abort. The fixed 17-key layout, nine-key typed parse,
+18-key raw-token grammar, five-key commitment, and seven-key executable
+entry gain no analytic sibling key.
+
+Q5 embeds the actual complete threshold-selected relation, including every
+T-minus row, and computes fresh enclosing bytes and digests. Its 18-key
+positive raw-field projection retains only the derivation ID/full-row-hash
+references already named. Before a positive join, §20.4.2 and §21.4.4
+independently rebuild the source row, validate its actual representation,
+expand its virtual relation, compare every complete logical member and
+streaming digest, then apply the T-plus guard. An explicit-expected/
+analytic-actual or analytic-expected/explicit-actual mismatch at the
+threshold fails even if the virtual member digest agrees.
+
+G17-C01's complete relation, join, and layout values; G17-C06's direct-law
+classification; and G17-C07's source commitments/value maps apply the same
+reader independently on expected and actual sides. Evidence-only storage of
+the complete `field_source_derivation` remains evidence. Any C01/C06/C07
+positive projection, parser, DFA/partition/action read, value map, or
+crosswalk use remains physical consumption under §21.4 and resolves the
+virtual row before use. G17 retains exactly 18 physical comparand rows and
+no new C19.
+
+All seven §21.4.3 guarded consumer kinds—`q5_positive_field_join`,
+`slot_registry_row`, `official_inventory_row`, `value_map`, `crosswalk`,
+`correction_input`, and `context_output`—therefore accept the same virtual
+relation and no removed explicit-only path. The complete reference stream,
+T-plus/T-minus test, atomic abort, exact nine-key diagnostic, evidence/
+consumption boundary, slot and inventory integrity, R10a/R10b/R11 ordering,
+and V-B6 nonpassing result remain. Analytic enumeration is physical
+partition consumption whenever the corresponding explicit member read was;
+calling it a compact representation does not evade the guard.
+
+### 22.4 Mandatory Amendment-8 vectors and physical-storage facts
+
+#### 22.4.1 Exact vector relation and inherited-suite order
+
+The Amendment-8 representation suite contains exactly four rows in the
+displayed order. Each row has exactly `vector_id`, `vector_kind`,
+`member_count`, `primary_sha256`, and `required_result`; the SHA is null only
+for the deliberately unconstructed storage lower bound in A8-R04. The
+canonical sorted-key compact JSON below includes one terminal LF, is exactly
+907 bytes, and has SHA-256
+`c405b3a7f228b3e3286714d21aadedcdd6e3df990714e2ddaef85c861e13a8c4`.
+
+~~~json
+[{"member_count":3,"primary_sha256":"fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78","required_result":"pass_byte_exact_bijection_and_equal_member_digest","vector_id":"A8-R01","vector_kind":"small_explicit_analytic_equivalence"},{"member_count":4097,"primary_sha256":"063204ad9b973e0c74681aea5b7015cd1e5e868a6664de45de50943361eaac4e","required_result":"pass_two_independent_digest_derivations","vector_id":"A8-R02","vector_kind":"large_analytic_two_way_streaming_digest"},{"member_count":3,"primary_sha256":"3160774b10614665daaa4222251fd5fa894a7c627fc04ebfa40444464d3e0ab9","required_result":"reject_before_semantic_digest","vector_id":"A8-R03","vector_kind":"lossy_ambiguous_analytic_rejection"},{"member_count":820709179087,"primary_sha256":null,"required_result":"prove_explicit_storage_exceeds_available_storage","vector_id":"A8-R04","vector_kind":"revision_9_storage_impossibility"}]
+~~~
+
+The terminal-LF canonical ID array is exactly
+`["A8-R01","A8-R02","A8-R03","A8-R04"]` and hashes to
+`0d6a8061baf6378bbb2ac20d05410dc2a12c0f096344445798159437238154f1`.
+The source compiler must first run A6-R01 through A6-R11 unchanged, then the
+exact pre-Q5 A7 array A7-R01 through A7-R09, A7-R10a, and A7-R11, and then
+A8-R01 through A8-R04. A7-R10b remains at its inherited post-inventory gate.
+No A8 vector can replace, relabel, or satisfy an A6/A7 vector.
+
+A8-R01 through A8-R03 are representation-layer fixtures, not independently
+passing 16-key compiler terminal witnesses. Their deliberately unrenderable
+member rows exercise byte recovery and rejection only; they do not satisfy,
+waive, or alter §20.3.3's rule that an applicable normalized range with zero
+authoritative renderable members cannot take a compiled terminal.
+
+#### 22.4.2 A8-R01 — small explicit/analytic byte-equivalence witness
+
+The synthetic normalized `json_integer` range is values 10, 12, and 14,
+source indexes 0, 1, and 2, with exact source step 2, unit
+`a8_fixture_unit`, and meaning
+`A8 small analytic partition fixture`. Under the fixture renderer all three
+members have null physical image and exact reason
+`no_exact_width_selected_form_image`. The canonical inherited explicit
+member array is the following one line plus terminal LF:
+
+~~~json
+[{"physical_image_raw_token_hex":null,"source_member_index":0,"source_value":{"canonical_value":10,"source_meaning":"A8 small analytic partition fixture","typed_disposition":"json_integer","typed_value_unit":"a8_fixture_unit","value_type":"json_integer"},"unrenderable_reason":"no_exact_width_selected_form_image"},{"physical_image_raw_token_hex":null,"source_member_index":1,"source_value":{"canonical_value":12,"source_meaning":"A8 small analytic partition fixture","typed_disposition":"json_integer","typed_value_unit":"a8_fixture_unit","value_type":"json_integer"},"unrenderable_reason":"no_exact_width_selected_form_image"},{"physical_image_raw_token_hex":null,"source_member_index":2,"source_value":{"canonical_value":14,"source_meaning":"A8 small analytic partition fixture","typed_disposition":"json_integer","typed_value_unit":"a8_fixture_unit","value_type":"json_integer"},"unrenderable_reason":"no_exact_width_selected_form_image"}]
+~~~
+
+It is exactly 944 bytes and hashes to
+`fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78`.
+The canonical analytic-form fixture is:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2,3]],"member_count":3,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+With its terminal LF it is 207 bytes and has raw-storage SHA-256
+`bc5a85e43ba6e26345bbf3e49fc9a9915b0fe4912580103c4f2172acc4ed338e`.
+Expansion must reproduce all 944 explicit bytes above, so its streaming
+logical-member SHA-256 must also be
+`fe48cb775d9a695a462834c807ef7b5ef773b1866ed558822d2fcce137514a78`.
+The two raw storage hashes intentionally differ; equality is at the complete
+virtual-member byte layer. Because three is below the threshold, the
+production representation is the explicit array. The analytic fixture is
+still mandatory proof that the inverse is byte-exact, not an alternate
+production tie-break.
+
+#### 22.4.3 A8-R02 — large analytic row and two independent digest derivations
+
+The synthetic parent is the exact `json_integer` range 0 through 14,096 at
+step one. This unrenderable logical subset is indexes/values 10,000 through
+14,096 inclusive, with unit `a8_fixture_unit`, meaning
+`A8 large analytic partition fixture`, null physical image, and the same
+unrenderable reason as R01. Its required analytic storage is:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10000,14096,1,4097]],"member_count":4097,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":4097}
+~~~
+
+With one terminal LF it is exactly 222 bytes and has raw-storage SHA-256
+`6fe2c1613e97f6258873163601a61aa7737c34e60e62116ddac8863a595d15d5`.
+Its virtual inherited array is exactly 1,315,139 canonical bytes and hashes
+to
+`063204ad9b973e0c74681aea5b7015cd1e5e868a6664de45de50943361eaac4e`.
+
+Two independently implemented derivations are mandatory:
+
+1. materialize the 4,097 fixture rows in ascending `v` using
+   `source_member_index: v`, the exact five-key fixture `source_value`, null
+   image, and exact reason, then hash §10.1 canonical bytes of the complete
+   array; and
+2. hold no array, feed `[`, then for each same independently generated row
+   feed a comma except before the first plus its canonical member-object
+   bytes, and finish with `]\n` as §22.2.4 requires.
+
+Both procedures must independently report 1,315,139 bytes and the displayed
+logical-member digest. Reusing one procedure's rows, byte buffer, digest
+state, or output as the other's expected value fails the independence arm.
+
+#### 22.4.4 A8-R03 — lossy, ambiguous, type-invalid, and count-inconsistent negatives
+
+The validator must reject each following terminal-LF input before
+constructing or accepting a semantic member digest.
+
+The arity-three interval omits the interval member count:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2]],"member_count":3,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+It is 205 bytes with SHA-256
+`3160774b10614665daaa4222251fd5fa894a7c627fc04ebfa40444464d3e0ab9`.
+The split encoding is information-complete but ambiguous/noncanonical because
+it divides the unique maximal run:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,12,2,2],[14,14,2,1]],"member_count":3,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+It is 219 bytes with SHA-256
+`661df9d3afb6ec2dfa711727ae6d9ed890751db17f054a988cca951be9f848a7`.
+The count-inconsistent form is:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2,2]],"member_count":2,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":2}
+~~~
+
+It is 207 bytes with SHA-256
+`560aa8ad616851bb14e1e15d9b411f1258fed769c171652d7b9660fc2decf66f`;
+the equation yields upper bound 12 rather than 14. Accepting any one of the
+three preceding forms, repairing it silently, hashing a guessed expansion,
+or treating the split form as an alternate canonical split fails R03.
+
+The following compact JSON counterexample is syntactically parseable but
+schema-invalid because the range-row `member_count` is the floating-point
+token `3.0` rather than a JSON integer:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2,3]],"member_count":3.0,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+With its terminal LF it is 209 bytes and has raw-storage SHA-256
+`ca4768c2ef8b67f4a63bdc3971dea3e1e7909a1c177bedc9b0a760e15faf0aef`.
+Although an untyped reader could expand it to R01's same 944-byte member
+array, validation must reject it before expansion or semantic hashing. R01's
+207-byte integer spelling is the one lawful serialization; no `3.0`, `0.0`,
+or `-0.0` range-row count is an alternate. Accepting this fourth negative
+fails R03.
+
+#### 22.4.5 A8-R04 — exact storage contradiction and source-derived census
+
+The blocked implementation report is the repository-external authoring
+record `sol-ce-v3compiler-blocked-report.md`, exactly 1,325 bytes with
+SHA-256
+`4addef1a8b8bbc0694d17bd46c763ea94fce9cdced4056fa44e7faa7e3f15b0e`.
+Its historical 241.642-TiB row estimate was the conservative underestimate
+that triggered Amendment 8; the corrected exact A8-R04 fact table below
+supersedes that figure.
+The source-derived classifier implementation at commit
+`b78e4b5d0878dfd192a3d6060f2f801d2bfe2b0d` is empirical evidence, not
+design or future implementation authority. It authenticates the same D7
+bytes and sources, reproduces all ten field counts, all three aggregate
+digests, A6-R01–R11, and the pre-Q5 A7 vectors, and peaked at 1,334,181,888
+RSS bytes. It emitted no invalid artifact and did not read or create Q5.
+
+The exact passing-compiled range-member decomposition is:
+
+| `derivation_status` | Fields | Numeric-range entries | Logical source-range members |
+|---|---:|---:|---:|
+| `compiled_source_numeric_grammar` | 17,329 | 30,452 | 820,025,893,984 |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 1,853 | 1,853 | 865,268 |
+| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 674 | 1,433 | 384,135 |
+| `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 | 48 | 682,035,700 |
+| **Complete compiled relation** | **19,903** | **33,786** | **820,709,179,087** |
+
+This decomposition partitions source-range members by `derivation_status`;
+it does not apply §22.2.2's representation threshold. In particular, the
+820,025,893,984-member `compiled_source_numeric_grammar` subtotal includes
+members from both threshold arms and is not the analytic-arm population.
+
+This section also settles the one placement §20.3.2 leaves to inference. In
+every count below a range member is counted in that range's
+`renderable_member_rows` relation value exactly when the one §20.3.3
+renderer, evaluated under the field's selected token form and its selected
+arm or no-arm disposition, returns that member an exact-width image, and in
+`unrenderable_member_rows` otherwise; whether the image is arm-invariant or
+arm-ambiguous never moves a member between the two relations. That reaches
+the 56,480 arm-ambiguous renderable members of the 674
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+fields, which stay renderable here because §22.3.2 draws that branch's
+authoritative image from the separate virtual invariant relation rather than
+from a narrowed renderable relation. Counting them as unrenderable instead
+would read 4,753,875 and 820,704,425,212 in the next two rows.
+
+The physical lower-bound facts are:
+
+| Fact | Exact measured or derived value | Population provenance and governing rule |
+|---|---:|---|
+| mandatory logical range members in compiled rows | 820,709,179,087 | Sum of every source-range-member occurrence across all 19,903 passing compiled field rows and four statuses; equivalently, the exact cover obtained by merging each of the 33,786 per-range `renderable_member_rows` and `unrenderable_member_rows` relation pairs |
+| members in explicit-arm relation containers | 4,736,892 | For each named `renderable_member_rows` or `unrenderable_member_rows` relation value separately, sum its `N` members when `N <= 4,096`; §22.2.2 requires each such relation value to retain the inherited explicit array |
+| members in analytic-arm relation containers | 820,704,442,195 | For each same named relation value separately, sum its `N` members when `N > 4,096`; §22.2.2 requires each such relation value to use the analytic object |
+| threshold-partition identity | `4,736,892 + 820,704,442,195 = 820,709,179,087` | Every source-range member occurs in exactly one renderable/unrenderable relation value and exactly one per-relation threshold arm; no status subtotal defines an arm |
+| bytes even if each member were `{}` plus minimum array commas/brackets and the required terminal LF, `3N + 2` | `3 × 820,709,179,087 + 2 = 2,462,127,537,263 bytes` | Here `N` is the complete 820,709,179,087-member population above, not either threshold arm |
+| preceding impossible empty-object lower bound | 2.239 TiB | Binary-TiB expression of the preceding all-member byte floor |
+| shortest lawful inherited member-row lower bound, as a per-shape floor sum | `820,701,994,620 renderable members × 325 bytes/member = 266,728,148,251,500 bytes` plus `2,447,575 unrenderable members × 260 bytes/member = 636,369,500 bytes`, exactly `266,728,784,621,000 bytes` in total; dividing that exact total by `2^40` gives `242.5884164231320028193295001983642578125 TiB`, hence more than 242.588 TiB | The analytic arm carries two different row shapes, so each member is charged only the floor of its own shape and no multiplier reaches a population it does not govern. The `N > 4,096` population above sits in exactly 9,055 containers: 9,019 `renderable_member_rows` values holding 820,701,994,620 members and 36 `unrenderable_member_rows` values holding 2,447,575 members, every one of the 36 inside `compiled_source_numeric_grammar_partial_range_exact_replay`; the two member counts sum to that population. The 325-byte multiplier is the compact sorted-key serialization of the inherited seven-key renderable row at its lawful minima: one-digit `source_member_index`, `canonical_value`, `parsed_scalar`, and `rendered_decimal_places`; one raw byte `30` for image and replay; one `append_digit_0` action; and one-character values for the required-nonempty numeric `typed_value_unit` and `source_meaning`. The otherwise identical 324-byte candidate has unlawful `source_meaning:""`. The 260-byte multiplier is that same serialization of the §22.2.1 and §20.3.2 four-key unrenderable row — `source_member_index`, `source_value`, JSON-null `physical_image_raw_token_hex`, and the closed reason `no_exact_width_selected_form_image`, the only reason reachable outside the arm-ambiguous relation and two bytes shorter than the other — at those same minima: 260 bytes when the member's `canonical_value` takes §22.2.2's shortest reduced ASCII rational atom `0/1`, and 264 bytes when it takes the shortest `json_integer` spelling `0`. Charging every unrenderable member the smaller 260 keeps the product a lower bound whichever retained type and spelling govern, and all 36 of these containers are `rational` ranges of step `1/100`, so none of them is that 264-byte `json_integer` arm |
+| available storage at the blocked lane | approximately 1.304 TiB | Measured capacity available to the blocked source-compiler lane |
+
+The 2.239-TiB lower bound already exceeds available storage while containing
+none of the mandatory row information. The exact row bound uses only the
+820,704,442,195 members in per-relation analytic-arm containers, charges each
+one exactly the lawful minimum of its own row shape, and omits every array
+delimiter, comma, and explicit-arm member, so it too is a lower bound; it is
+over 185 times available capacity. Revision 9
+simultaneously requires the explicit arrays and forbids an analytic
+replacement. The required artifact is therefore physically unconstructible
+on the measured system and implausible hardware. This is the third discovered
+unsatisfiable law after
+Amendment 6's registration-totality defect and Amendment 7's all-field-pass
+defect. R04 passes only by reproducing the count/arithmetic and refusing to
+emit the unlawful truncated artifact.
+
+### 22.5 Untouched census, expected scale, identities, and mandatory check
+
+#### 22.5.1 Complete §20.3.7 and §21 relation history is unchanged
+
+The §20.3.7 census denominator is 89,599 authenticated
+`[interview_wave,raw_field_id]` field keys. Its matrix `field_count` values
+count fields assigned to terminals; they do not count source-range members,
+renderable rows, unrenderable rows, candidate rows, invariant rows, ambiguous
+rows, intervals, or serialized bytes. Its own step 4 already uses analytic
+exhaustive cardinality/renderability for classification and then says that
+classification did not serialize future rows. Amendment 8 replaces only the
+later explicit-only wire conclusion; it does not rerun or alter the terminal
+function.
+
+The exact ten counts remain, in order,
+`17,329 / 1,853 / 674 / 47 / 67,316 / 1,145 / 0 / 1 / 421 / 813`.
+The denominator, count-array, and ordered-assignment SHA-256 values remain
+respectively:
+
+~~~text
+7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764
+421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624
+5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e
+~~~
+
+The seven failure-reason rows, all per-terminal field-key digests, 1,235
+T-minus rows, T-plus/T-minus arrays, `pass_with_closed_failures` predicate,
+complete-row null laws, and every §21 consumer-boundary result remain exact.
+A storage representation cannot move a field, repair a failure, promote a
+T-minus row, change V-B6, or make an otherwise forbidden consumer pass.
+
+#### 22.5.2 Expected artifact scale and byte-stable reproduction
+
+For capacity planning only, the complete threshold-selected artifact is
+expected to be in the **hundreds of MiB to low-single-digit GiB** class, not
+TiB. A compact classifier projection measured exactly 298,034,752 bytes;
+that projection and the analytic inventory of 89,599 complete field rows,
+tens of thousands of exact source-entry/interval records, ordinary nested
+evidence, and explicit small relations support the scale class but do not
+measure the complete artifact. The `100 MiB <= size < 8 GiB` envelope is
+therefore explicitly **provisional and non-normative**: it is a planning
+figure, not a derived bound, and has no ratification, validation, `--check`,
+or acceptance force. A lawful artifact may lie outside it. No size result is
+permission to omit a row, interval, identity input, or evidence member.
+
+The revision-10 full-relation identity is the closed six-position JSON value
+array:
+
+```text
+[
+  "revision_10_full_relation_identity",
+  numeric_grammar_derivation_row_count,
+  numeric_grammar_derivation_keyset_sha256,
+  numeric_grammar_derivation_domain_sha256,
+  field_source_derivation_canonical_byte_count,
+  field_source_derivation_canonical_sha256
+]
+```
+
+Positions are zero-based. Position 1 is exactly the JSON integer 89,599.
+Position 2 is SHA-256 of the terminal-LF §10.1 canonical array of every
+`numeric_grammar_derivation_id` in inherited complete-row order. Position 3
+is SHA-256 of the terminal-LF §10.1 canonical array of all 89,599 complete
+threshold-selected 16-key rows in that order. Positions 4 and 5 are the byte
+length and SHA-256 of terminal-LF §10.1 canonical bytes of the complete
+nine-key `field_source_derivation`. The identity array is not a member of
+those bytes and creates no self-reference. Both SHA positions are lowercase
+64-hex strings; the byte count is a nonnegative JSON integer excluding
+booleans.
+
+D8 fixes that construction, not guessed future hex. D8 must precede the
+separately reviewed analytic-capable implementation, so these four
+source-produced positions cannot lawfully be copied from the blocked
+revision-9 attempt or chosen during design authoring. The first post-D8
+normal build and a fresh independent `--check` reconstruction must produce
+one byte-equal identity array before Q5. That accepted array is thereafter
+the immutable revision-10 full-relation aggregate pin. Every Q5, slot,
+inventory, and admitting-cutoff consumer must independently reconstruct it
+from the complete relation bytes that consumer reaches and exact-compare it
+to the frozen value; no outer consumer schema gains a sibling key. A later
+mismatch requires a design successor; revision 10 cannot be repinned. A
+result outside the provisional scale envelope may prompt a capacity or
+representation/closure audit, but that advisory planning comparison can
+neither block nor supply acceptance. Only the normative complete-byte,
+identity, digest, and `--check` laws determine acceptance.
+
+The builder has one canonical choice at every member container, so two
+conforming builds from the same sources produce byte-identical 16-key rows
+and enclosing artifact. The existing logical member digests remain the
+explicit-equivalent streaming hashes; the actual representation bytes
+produce fresh complete-row and full-relation digests. Both layers are
+mandatory. The three historical full-field classification pins in
+§22.2.4, the A8 vector array/hash, every per-relation count/digest, and the
+six-position full-relation identity together form the required
+reproducibility check; none is an alternative to another.
+
+#### 22.5.3 Mandatory `--check` mode
+
+The separately reviewed v3 builder must implement an exact `--check` mode.
+After one canonical artifact is built, a fresh process with the same pinned
+implementation blob runs that mode before Q5 is read. It authenticates all
+six evidence artifacts, 176 source-document derivations, 43 raw files, and
+89,599 field keys; independently rebuilds every normalized domain, terminal,
+explicit/analytic choice, interval, literal row, virtual member, renderer
+result, candidate/arm relation, streaming digest, DFA, consumer row, ID, and
+enclosing digest; runs A6, the pre-Q5 A7 suite, and A8 in required order; and
+byte-compares the complete rebuilt canonical artifact with the candidate.
+
+`--check` must report and exact-compare all six positions of the revision-10
+full-relation identity, the three retained classification pins, all fresh
+row/keyset/domain/content digests, logical member counts/digests,
+representation counts, and exact-empty mismatch arrays. It derives its
+expected identity from independently authenticated source reconstruction;
+no position from the candidate identity may be used as expected input. It
+must use bounded working storage for analytic enumeration, emit no
+replacement artifact, mutate no source or candidate byte, read no Q5, and
+exit nonzero on any missing, extra, reordered, alternate-threshold,
+noncanonical, digest-only-equal, or byte-unequal value. A normal build
+success without the subsequent successful fresh `--check` is not a
+constructible `pass_with_closed_failures` relation and cannot precede Q5.
+
+### 22.6 Exact replacement inventory and closure sweep
+
+#### 22.6.1 Complete design-family disposition
+
+The following table is the complete design-family inventory. It does not
+erase historical text or merge repeated physical passages; the closure
+sweep below gives every reached byte range its own row.
+
+| Source anchors | Exact Amendment-8 disposition |
+|---|---|
+| §20.3.2 `candidate_arm_results[*].complete_domain_member_results`, counts, and digests | replaced-only-at-the-wire-by-§22.2: each logical eight-key array uses the threshold-selected explicit or analytic container; analytic literal rows remain full and range intervals regenerate every candidate result/image/action/failure. Both candidate domains remain complete and independently comparable. |
+| §20.3.2 `complete_domain_arm_disposition` invariant/ambiguous arrays, counts, and digests | replaced-only-at-the-wire-by-§22.2–§22.3: both logical relations retain their exact row schemas and ordered-merge cover; analytic intervals independently rerun both candidates and cannot promote an ambiguous member. |
+| §20.3.2 nine-key range-partition rows and explicit `renderable_member_rows`/`unrenderable_member_rows` requirement | replaced-only-at-the-wire-by-§22.2: parent keys/counts/digests and logical rows remain; each container follows the 4,096-member rule and its virtual ordered merge reproduces the complete source range. The former digest-only-agreement prohibition remains. |
+| §20.3.2 finalization barrier and §20.3.5 complete-row/status/failure laws | composed-with-§22.2–§22.3: final promotions/collisions/counts still precede reconstruction; actual representation bytes and virtual rows both enter validation. Malformed/lossy/ambiguous analytic encoding is the same closed conflict class as unequal partitions. |
+| §20.3.3 exact renderer and exhaustive source-member application | lawfully-unchanged-in-semantics-and-composed-with-§22.2.3: analytic expansion calls that same renderer for every member and retains every image, precision, action, scalar/reason, and replay. |
+| §20.3.4 DFA, final missing subtraction, literal-first overlap, transitions, and replay | lawfully-unchanged-in-semantics-and-composed-with-§22.3.2: each range contributes only its virtual authoritative members, no-range numeric domains retain their independently derived closed languages, and registered literals retain their established images; intervals never authorize a generic numeric language. |
+| §20.3.6 A6-R01 through A6-R11 | lawfully-unchanged-with-reason: their source identities, row-domain digests, status results, member counts, images, and DFA outcomes remain; their partition reads use §22's virtual relation. A8 adds, never replaces, vectors. |
+| §20.3.7 complete field census, terminal matrix, reasons, and aggregate digests | lawfully-unchanged-with-reason except its explicit statement that analytic classification cannot substitute for serialized partitions is composed with §22.2: a lawful bijective analytic wire form now is the serialized exhaustive partition. Field counts and all ratified digests remain untouched. |
+| §20.4.1 layout, typed parse, raw token, membership, unobserved, commitment, and value-map consumers | composed-with-§22.3: fixed outer schemas remain and every derivation reference validates actual representation bytes plus the virtual exhaustive relation before projection or use. |
+| §20.4.2 Q5 embedding, joins, D6/Q5 edge, and acceptance walk | composed-with-§22.3.3 and replaced-only-in-live-order-by-§22.9: Q5 embeds actual analytic-capable rows and guards virtual member reads; historical D6/Q5 remains, while D8 becomes the live predecessor. |
+| §20.4.3 G17-C01/C06/C07 and complete 18-row G17 | composed-with-§22.3.3: expected and actual sides independently resolve both representation layers; no G17 schema or nineteenth row is added. |
+| §20.4.4 and §§20.8.1–20.8.4 compiler construction, Q5/inventory/G17 walks, alternatives, and ratification protocol | explicit physical materialization clauses are replaced-by-§22.2, §22.5.3, and §22.9; logical exhaustive enumeration, vector/replay/abort law, consumer order, and every unrelated alternative remain. `--check` is mandatory before Q5. |
+| §§20.5–20.6 Amendment-6 replacement/closure and revision-8 comparator census | lawfully-unchanged-with-reason as immutable D6 history; §§22.6–22.7 provide distinct revision-10 successors. |
+| §20.7 revision-8 lifecycle and §20.8 terminal registration lineage | replaced only for a post-D8 registration by §§22.8–22.9; historical version dispatch remains exact. |
+| §§21.2–21.3 scope, 16-key row, T-plus/T-minus, `pass_with_closed_failures`, and complete relation validation | composed-with-§22.1–§22.3: the outer row/status laws remain; a complete row now validates its threshold-selected nested representation and virtual explicit-equivalent arrays. No T-minus row is projected away. |
+| §§21.4.1–21.4.6 evidence/physical boundary, seven consumer kinds, Q5, inventory, and downstream guards | composed-with-§22.3: analytic membership/enumeration is the same physical consumption as the former array read; evidence-only complete embedding remains nonconsuming, and every positive read remains guarded. |
+| §21.5 A7-R01–R11 and staged R10b | lawfully-unchanged-with-reason: the vectors retain identities, source bytes, results, and pre-/post-Q5 positions. R08 validates actual analytic-capable rows; R11's partition/action class includes analytic reads. |
+| §§21.6–21.7 Amendment-7 replacement/closure and revision-9 comparator census | lawfully-unchanged-with-reason as immutable D7 history; the distinct Amendment-8 sweep and 48-row comparator census follow. |
+| §§21.8–21.9 revision-9 terminal lifecycle, compiler/Q5 order, and registration protocol | replaced for revision 10 by §§22.8–22.9: D7 remains the exact immutable predecessor, D8 becomes live, the analytic-capable checked relation precedes post-D8 Q5, and all V-B6/R10b stops remain. |
+| Any sweep-reached passage not separately named above | lawfully-unchanged-with-reason only when its row names the triggering seed and proves it neither assumes explicit-only storage nor consumes a representation-dependent value without §22.3. |
+| §§1–21 passages not reached by the deterministic sweep | lawfully-unchanged-with-reason: they neither define nor consume exhaustive range-member storage, its identities, or the affected lifecycle. Silence is not a disposition for a reached passage. |
+
+#### 22.6.2 Amendment-8 analytic-range closure-sweep law
+
+Before D8 ratification the coordinator constructs
+`amendment_8_analytic_range_partition_closure_sweep.v1`. It inherits the
+exact 11-key schema, terminal-LF canonicalization, line-based passage
+segmentation, half-open byte ranges, row/edge order, direct/transitive
+consumer closure, count/digest equations, and closed three-disposition
+domain from §19.4.3. Matched IDs use literal prefix
+`amendment-8-passage:` followed by SHA-256 of the inherited exact
+`[start_byte,end_byte,matched_terms]` preimage.
+
+The normative corpus is every revision-10 candidate byte in §§1–22 except
+exactly the six historical/self-referential comparator-table intervals in
+§§17.3, 18.5, 19.5, 20.6, 21.7, and 22.7. Each interval begins at its table
+header and ends immediately before the next heading named by its own corpus
+law. No vector fence, storage table, replacement row, surrounding paragraph,
+or non-comparator table is excluded.
+
+The exact initial case-sensitive literal seed array is:
+
+~~~text
+complete_domain_member_results
+arm_invariant_member_rows
+arm_ambiguous_member_rows
+renderable_member_rows
+unrenderable_member_rows
+source_member_count
+source_member_domain_sha256
+renderable_member_count
+renderable_member_domain_sha256
+unrenderable_member_count
+unrenderable_member_domain_sha256
+candidate_arm_results
+complete_domain_arm_disposition
+range partition
+exhaustive range
+explicit member array
+analytic_closed_intervals_v1
+revision_10_full_relation_identity
+literal_member_rows
+range_interval_rows
+total_member_count
+lower_bound
+upper_bound
+step
+member_count
+numeric_grammar_derivation_rows
+numeric_grammar_derivation_domain_sha256
+normalized_format_profile
+physical_authentication
+registered_numeric_grammar
+missing_raw_tokens
+unobserved_possible_values
+layout_coordinates
+typed_parse_specs
+raw_token_grammar
+value_code_map
+source_commitments
+positive_field_join_rows
+raw_field_projections
+G17-C01
+G17-C06
+G17-C07
+field_source_derivation
+pass_with_closed_failures
+q5_positive_field_join
+slot_registry
+official_inventory
+slot_registry_row
+official_inventory_row
+value_map
+crosswalk
+correction_input
+context_output
+Q5
+D7
+D8
+--check
+~~~
+
+The exact search then closes over schema/member inclusion; normalized-entry
+and source-member derivation; candidate/invariant/ambiguous and renderable/
+unrenderable construction; actual and virtual digest inclusion; ID/full-row/
+manifest/Q5 hash inclusion; renderer, DFA, missing subtraction, membership,
+replay, and abort edges; derivation foreign keys; layout/parser/raw-token/
+value-map projection; Q5 joins; slot/inventory/value-map/crosswalk/G17 and
+all seven guarded consumer kinds; evidence-versus-consumption classification;
+compiler and `--check` invocation; vector ordering; Git ancestry; lifecycle,
+receipt, and selected registration; and every direct/transitive edge class
+in §§19.4.3, 20.5.2, and 21.6.2. A seed is not a ceiling.
+
+The sweep must walk all three affected relation families through the
+finalization barrier, complete-row ID/hash, source manifest, Q5, C01/C06/C07,
+every fixed layout/value-map reference, and every physical consumer. It must
+also walk D7-prefix-to-D8, D8-before-Q5, actual inventory before A7-R10b,
+the unchanged V-B6 nonpassing branch, all blocked domain/bundle/receipt
+consumers, and the new D8 lifecycle. Forward and reverse closure must prove
+that no consumer still indexes a value as a mandatory bare member array and
+that no analytic reader bypasses the §21 guard.
+
+Every matched passage receives exactly one of
+`replaced-by-named-successor`, `composed-with-named-successor`, or
+`lawfully-unchanged-with-reason`, plus one nonempty exact successor/reason
+resolving to §22.6.1, §22.7, §22.8, or §22.9. Acceptance requires status
+pass, exact-empty `unresolved_passage_ids`, exact forward/reverse edge cover,
+agreement with an independently implemented second sweep, and reproduction
+from the accepted D8 blob. A missing, extra, merged, differently segmented,
+silently retained, explicit-only, digest-only, or candidate-excluded passage
+blocks ratification. No anticipated D8 byte offset, row count, closure digest,
+or implementation identity is ratified by these draft bytes.
+
+### 22.7 Complete revision-10 design-comparator disposition
+
+The comparator definition, mixed-preimage rule, complete-paragraph
+inspection, direct/transitive consumer walk, and failure discipline remain
+exactly §17.3. The revision-10 census corpus is every normative byte accepted
+at §22.9.2 step 2 and committed at step 3, including §§1–22, except exactly
+the six historical/self-referential comparator-table intervals in §§17.3,
+18.5, 19.5, 20.6, 21.7, and this subsection. Each interval starts at its
+table header and ends at the first byte of the next heading named by its own
+corpus law. For this subsection, the interval begins at the first byte of the
+table header below and ends immediately before the ASCII heading prefix
+`### 22.8 `. Mechanical searches include revision 10, Amendment 8, D7, D8,
+Q5, prefix, `pass_with_closed_failures`, every analytic-range representation
+literal, `revision_10_full_relation_identity`, and every exact identifier in
+§22.8.4.
+
+D7 is the exact ratified revision-9 identity at commit
+`ccc3b9f3afc43624a5fd7d90e57f93a6d6ce686c`, Git blob
+`08a64a16c82e2893cdd415bdd092b5a9f71e4687`, mode `100644`, 2,423,590
+raw bytes, and SHA-256
+`2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
+The new base comparison independently requires those complete bytes to equal
+the first 2,423,590 bytes of D8.
+
+The new live Q5 comparison discovers the unique single-parent commit first
+adding only
+`data/external/psid_questionnaire_slot_closure_evidence_v1.json`, requires
+D8's ratification commit to be its strict ancestor, and retains every
+Q5-before-slot/inventory/cutoff edge through G17-C01 and actual-inventory-
+before-R10b edge. Before reading Q5, the coordinator independently
+reconstructs and exact-compares its complete eight-key
+`slot_closure_evidence_identity`; unequal members or digest-only agreement
+fail the D8/Q5 predicate. It also reconstructs the six-position revision-10
+full-relation identity from Q5's complete embedded source relation and
+requires exact equality to the frozen pre-Q5 pin; the eight-key identity
+must bind those complete enclosing bytes. D5/Q5, D6/Q5, and D7/Q5 remain
+independently required historical edges and cannot substitute for D8/Q5.
+
+The full comparator search treats the accepted-candidate-to-future-D8 raw-
+blob equality plus D7-prefix comparison as the one DC-44 family. DC-46
+through DC-48 carry that same D8 identity through position, capture, receipt,
+and selected-registration consumers. The rerun therefore has exactly these
+48 families:
+
+| ID | Exact comparator or consumer anchor | Normative revision-10 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: the generic shape remains; the ceremony-specific rows below govern post-D8 designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and HEAD | lawfully-unchanged-with-reason: the ordinary current-design proof remains; DC-06, DC-10, DC-15, DC-18, and terminal DC-48 close retained-design cases. |
+| DC-03 | §10.4 prelaunch check 1 consumption of the active §10.1 design/repository proof | lawfully-unchanged-with-reason: it dispatches to the applicable Amendment-8 proof and cannot restore a displaced predecessor-to-HEAD equality. |
+| DC-04 | §12 context configuration import of §10.1 committed-design proof | lawfully-unchanged-with-reason: a post-D8 context registration carries D8 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration exact four-key Amendment-1 design child D1 | lawfully-unchanged-with-reason: configuration preservation retains D1; live revision-10 authority is supplied by DC-46–DC-48. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals HEAD proof | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1`. |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | lawfully-unchanged-with-reason: these authenticate calibrated D1 methodology/configuration while D8 is separately bound by DC-46–DC-48. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | replaced-by-named-successor: `verify_amendment_8_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v7`, `fitting_free_registration_domain_identity.v7`, and `covered_earnings_path_applicability_registry_bundle.v8`. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | replaced-by-named-successor: `covered_earnings_path_applicability_receipt_core.v7` plus `verify_amendment_8_selected_registration_design_lineage_v1`. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against HEAD | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1`. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration exact D2 design child | lawfully-unchanged-with-reason: the configuration remains D2; position-1, capture, and receipt proofs separately bind D3 through D8. |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to configuration design | lawfully-unchanged-with-reason: provenance continues to record D2 while the receipt records D2 through D8. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | replaced-by-named-successor: retain K_f^d = D2, joined to `verify_amendment_8_fitting_free_design_identity_v1` and `verify_amendment_8_capture_registration_repository_identity_v1`. |
+| DC-14 | §16.10 capture authorization exact D2 design child | lawfully-unchanged-with-reason: the child remains D2; sibling D3–D8 children and DC-47 supply live authority. |
+| DC-15 | §16.10 capture authorization imported/restated pre-descriptor D2-to-HEAD repository equality | replaced-by-named-successor: `verify_amendment_8_capture_registration_repository_identity_v1`. |
+| DC-16 | §16.10 capture primary design equality to capture registration | lawfully-unchanged-with-reason: both remain D2 while the complete registration/claim chain binds D3 through D8 and DC-47. |
+| DC-17 | §16.10 capture sidecar design equality to primary | lawfully-unchanged-with-reason: both remain D2 and the same hash chain binds D3 through D8 and DC-47. |
+| DC-18 | §16.10 selected fitting-free correction configuration D2-to-HEAD proof | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1`, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | replaced-by-named-successor: Amendment-8 dispatch to `covered_earnings_path_applicability_receipt_core.v7` and `covered_earnings_path_applicability_receipt.v7`. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | replaced-by-named-successor: exact historical-v1, Amendment-3-v2, Amendment-4-v3, Amendment-5-v4, Amendment-6-v5, Amendment-7-v6, or Amendment-8-v7 receipt dispatch and validation. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_8_fitting_free_design_identity_v1`. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-HEAD predicate and complete transitive capture consumers | replaced-by-named-successor: `verify_amendment_8_capture_registration_repository_identity_v1` and its complete D2–D8 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/HEAD byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1`. |
+| DC-24 | §18.1 D3 identity, exact 1,310,838-byte design, and immutable revision-6 prefix comparison | lawfully-unchanged-with-reason: D3 remains the exact prefix of D4 and the D4/D5/D6/D7/D8 chain independently extends it. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | replaced-by-named-successor: `verify_amendment_8_fitting_free_design_identity_v1`, the v7 requirement/domain registries, and v8 bundle. |
+| DC-26 | §18.6 terminal post-D4 capture-registration predicate and all registration-hash, claim, primary/sidecar, history, capture-input, A1/A3, and receipt consumers | replaced-by-named-successor: `verify_amendment_8_capture_registration_repository_identity_v1` and its complete D2–D8 consumer chain. |
+| DC-27 | §§18.7–18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1` and Amendment-8 v7 receipt/history dispatch. |
+| DC-28 | §19.1 D4 identity, exact 1,376,610-byte design, and immutable revision-7 prefix comparison | lawfully-unchanged-with-reason: D4 remains the exact prefix of D5 and the retained D4/D5, D5/D6, D6/D7, and D7/D8 comparisons extend the raw-byte chain. |
+| DC-29 | §19.2.5 D5 ratification ordering against the single-parent L5 legal-registry first-add and authority cutoff | lawfully-unchanged-with-reason: the legal comparator remains in `verify_historical_coverage_rules_identity_v2`; its consumers enter the freshly rebuilt v8 bundle and v7 receipt. |
+| DC-30 | §19.3.3 D5 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D5/Q5 remains independently required; DC-35, DC-40, and DC-45 prove the stronger D6/Q5, D7/Q5, and D8/Q5 edges. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_8_fitting_free_design_identity_v1`, the v7 requirement/domain registries, and v8 bundle. |
+| DC-32 | §19.6 terminal post-D5 capture-registration predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_8_capture_registration_repository_identity_v1` and its complete D2–D8 consumer chain. |
+| DC-33 | §§19.7–19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1` and Amendment-8 v7 receipt/history dispatch. |
+| DC-34 | §20.1 D5 identity, exact 1,781,491-byte design, and immutable revision-8 prefix comparison | lawfully-unchanged-with-reason: D5 remains the exact prefix of D6; DC-39 and DC-44 independently extend the chain through D7 and D8. |
+| DC-35 | §§20.4.2 and 20.6 D6 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D6/Q5 remains independently required; DC-40 and DC-45 additionally prove the D7/Q5 and live D8/Q5 edges and guarded consumer chain. |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_8_fitting_free_design_identity_v1`, the v7 requirement/domain registries, and v8 bundle. |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2–D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_8_capture_registration_repository_identity_v1` and its complete D2–D8 chain. |
+| DC-38 | §§20.7–20.8 terminal selected-registration D1-or-D2/D2–D6/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1` and Amendment-8 v7 receipt/history dispatch. |
+| DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2–3, exact D6 identity, accepted-candidate-to-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: this remains the exact historical D7 raw-byte identity family; D7 now has the pinned identity above, and DC-44 independently extends the raw-prefix chain to D8. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D7/Q5 and the complete eight-key artifact binding remain independently required; DC-45 adds the live D8/Q5 edge without replacing this history. |
+| DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_8_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v7`, `fitting_free_registration_domain_identity.v7`, and `covered_earnings_path_applicability_registry_bundle.v8`. |
+| DC-42 | §21.8 terminal post-D7 capture-registration D2–D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_8_capture_registration_repository_identity_v1` and its complete D2–D8 consumer chain. |
+| DC-43 | §§21.8–21.9 terminal selected-registration D1-or-D2/D2–D7/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_8_selected_registration_design_lineage_v1` and Amendment-8 v7 receipt/history dispatch. |
+| DC-44 | §§22.1, 22.7, and 22.8.1, plus §22.9.2 steps 2–3, exact D7 identity, accepted-candidate-to-future-D8-raw-blob equality, and D7-as-2,423,590-byte-prefix-of-D8 comparison | lawfully-unchanged-with-reason: these are one live D8 raw-byte identity family. Step 2 fixes the accepted candidate byte sequence and step 3 permits only that sequence to become D8; validation exact-compares the future same-path raw Git blob, verifies its complete hash and independent D7-prefix equality, and carries the proof into every Amendment-8 position, capture, and selected proof. Digest-, ancestry-, or transitive-only substitution aborts. |
+| DC-45 | §§22.3, 22.7, and 22.9 D8 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate, frozen six-position full-relation aggregate pin, and complete eight-key `slot_closure_evidence_identity` binding under the analytic-equivalent relation reader. D8/Q5, relation-pin, or staging failure aborts; D5/Q5, D6/Q5, and D7/Q5 remain separately required. |
+| DC-46 | §22.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor `verify_amendment_8_fitting_free_design_identity_v1` closes all v7 registry/domain and v8 bundle consumers. |
+| DC-47 | §22.8 terminal post-D8 capture-registration D2–D8/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor `verify_amendment_8_capture_registration_repository_identity_v1` closes every consumer. |
+| DC-48 | §§22.8–22.9 terminal selected-registration D1-or-D2/D2–D8/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor `verify_amendment_8_selected_registration_design_lineage_v1` closes the v7 receipt and history dispatch. |
+
+This is the complete revision-10 comparator census: exactly 48 consecutive,
+unique IDs, exactly 24 `replaced-by-named-successor` rows, and exactly 24
+`lawfully-unchanged-with-reason` rows. The replacement IDs are DC-06, DC-08,
+DC-09, DC-10, DC-13, DC-15, DC-18 through DC-23, DC-25 through DC-27,
+DC-31 through DC-33, DC-36 through DC-38, and DC-41 through DC-43; every
+other displayed ID is unchanged. Every anchor, disposition, reason, and
+named successor is nonempty and resolves. The validator reconstructs the
+complete corpus, repeats every search, compares the ordered table, walks
+every consumer, and reproduces the category counts. An omitted, extra,
+duplicate, misanchored, third-disposition, undefined-successor, or
+incompletely closed comparator blocks ratification. This table becomes an
+immutable revision-10 invariant only at D8.
+
+### 22.8 Revision-10 lifecycle successors and identifier inventory
+
+#### 22.8.1 D8 and the position-1 successor
+
+The four-key design-identity shape remains unchanged. D8 has exactly `path`,
+`ratification_commit`, `blob_sha256`, and `revision`, in that order. Path is
+`docs/design/covered_earnings_correction.md`; the commit is the 40-lowercase-
+hex future document-only ratification commit fixed only by §22.9.2 step 3;
+the SHA-256 covers every raw design byte at that commit; and revision is the
+JSON integer 10 excluding booleans. A draft, review-response, implementation,
+artifact, or mixed commit cannot fill D8.
+
+| Symbol | Revision | Ratification commit | Raw bytes | Git blob | Complete raw SHA-256 |
+|---|---:|---|---:|---|---|
+| D7 | 9 | `ccc3b9f3afc43624a5fd7d90e57f93a6d6ce686c` | 2,423,590 | `08a64a16c82e2893cdd415bdd092b5a9f71e4687` | `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9` |
+| D8 | 10 | future value fixed only by §22.9.2 step 3 | complete accepted revision-10 byte count | future blob reconstructed at that commit | SHA-256 of those complete bytes |
+
+Every Amendment-8 lifecycle predicate independently authenticates D2
+through D8 and all five raw-prefix comparisons through D8. In particular,
+D7's complete 2,423,590 bytes must byte-equal D8's half-open byte range
+`[0,2423590)`. A digest, ancestry relation, transitive consumer, or same
+working-tree file cannot substitute for any raw comparison.
+
+The position registry successor is
+`fitting_free_requirement_verification_specs.v7`. It retains the complete
+v6 keyset, exact 22-row order, requirement meanings, failure IDs, and result
+schemas, advances only its schema value, and replaces the same-position
+position-1, A1, and A3 rows. Every other row is freshly evaluated rather
+than copied. Its exact position-1 object is:
+
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_8_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_8_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_8_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","ratified_design:amendment_8_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_amendment_7_and_amendment_8_design_identities"}
+~~~
+
+The expected and actual preimages retain §21.8.1's top-level keysets,
+projection-row schema, canonical value-digest law, order/count/domain
+equations, and now have exactly nine projection rows. Let G2 through G8 be
+the complete raw design blobs at D2 through D8, K_f^d the staged fitting-free
+configuration design, C_A the final calibrated authority cutoff, and G_C_A
+the same-path raw bytes there. Expected values are
+`[D2,D3,D4,D5,D6,D7,D8,D2,G8]`; actual values are
+`[D2,D3,D4,D5,D6,D7,D8,K_f^d,G_C_A]`. The first eight rows have value type
+`canonical_json`; the ninth has `raw_git_bytes`.
+
+`verify_amendment_8_fitting_free_design_identity_v1` is true if and only if
+every inherited shape/order/count/digest equation passes and:
+
+1. both reconstructions of D2 through D8 deep-equal and all seven
+   ratification blobs hash to their identities;
+2. K_f^d equals D2 without requiring configuration bytes to equal the final
+   cutoff;
+3. all five raw-prefix comparisons through D8 pass;
+4. G_C_A byte-equals G8 and hashes to D8's `blob_sha256`; and
+5. `D2 < D3 < D4 < D5 < D6 < D7 < D8 <= C_A`, using strict Git ancestry
+   for each `<` and ancestor-or-equal for the last edge.
+
+False serializes the inherited exact-identity false result with
+`predicate_mismatch` and cannot select a predecessor registry or receipt.
+
+#### 22.8.2 Capture, A1/A3, domain, and bundle successors
+
+Every capture authorization first added after D8 uses
+`fitting_free_model_input_authority_capture_registration.v7`. It is the
+complete v6 authorization with its schema value advanced and
+`amendment_8_design_identity` inserted immediately after
+`amendment_7_design_identity`; it has exactly 19 keys. `design` remains D2,
+and the amendment children are D3 through D8. Every other adjudication,
+invocation, capability, input, path, repository, and failure law remains.
+
+Let A be the unique single-parent commit strictly after D8 first adding only
+that v7 authorization, and freeze capture HEAD as H_cap before any
+environment, claim, broker, source descriptor, or model input opens. The
+coordinator first constructs
+`amendment_8_capture_registration_repository_proof.v1` with exactly these 17
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+The seven identity members are D2 through D8 and the commit fields are
+`[A,H_cap]`. The eight six-key blob rows have roles
+`amendment_2_ratification` through `amendment_8_ratification`, followed by
+`capture_head`; count is integer eight. Canonicalization, pass/fail status,
+and `abort_without_accepted_authority_pair` failure disposition retain their
+exact inherited values.
+
+`verify_amendment_8_capture_registration_repository_identity_v1` is true if
+and only if every inherited proof equation passes and:
+
+1. the strict-parsed v7 authorization has its independently reconstructed
+   digest and exact D2–D8 children;
+2. all seven ratification blobs hash correctly, all five prefix comparisons
+   pass, and same-path design bytes at H_cap equal D8;
+3. `D2 < D3 < D4 < D5 < D6 < D7 < D8 < A <= H_cap`;
+4. authorization bytes remain unchanged from A through H_cap and all eight
+   blob rows exact-match observed commits, modes, OIDs, and raw bytes; and
+5. every retained descriptor-free repository, tracked-state, clean-checkout,
+   implementation-tree, and authorization-byte conjunct passes.
+
+The proof freezes before descriptors, contains no receipt or future commit,
+and passes or aborts without fallback.
+
+`fitting_free_model_input_authority_capture_claim.v7` retains the complete
+eight-key v6 claim shape/order, advances only its schema value, and embeds the
+complete Amendment-8 proof.
+`fitting_free_model_input_authority_capture_input.v7` retains the v6 envelope
+keyset/order, advances only its schema value, and selects the v7 registration,
+claim, and proof. The unchanged primary and sidecar retain D2 design children;
+their complete hashes transitively bind D3 through D8 and H_cap. The
+authorization/capture/triple/cutoff order remains
+`D8 < A <= H_cap < T < C`, with every inherited sole-parent, only-add,
+descriptor, and durable-reread law.
+
+Within `fitting_free_requirement_verification_specs.v7`, A1 and A3 retain
+their complete §21.8.2 classes, expected/actual preimage schemas, ordered
+source projections, result schemas, and meanings. Their predicate IDs become
+`verify_amendment_8_fitting_free_a1_model_universe_authority_v1` and
+`verify_amendment_8_fitting_free_a3_weight_source_authority_v1`. Their
+cross-bindings change only to suffix
+`and_amendment_8_capture_repository_proof`, and every projection selects the
+v7 capture input/claim/proof. The claim remains lifecycle nonauthority and
+enters no substantive value or inner A1/A3 identity.
+
+The domain successor is `fitting_free_registration_domain_identity.v7`. It
+retains the v6 keyset/order, advances its schema value, selects the complete
+v7 requirement registry, and freshly reconstructs all 22 rows, projection
+evidence, Booleans, failure IDs, counts, and hashes. Every source-derived
+child first validates the actual threshold-selected field relation and its
+virtual explicit-equivalent member arrays and streaming/aggregate digests.
+This representation change does not alter R10a, R10b, R11, or V-B6. V-B6
+must again be nonpassing; no accepted complete v7 domain instance exists on
+the present evidence. A copied v6 domain, empty forbidden-dependency array,
+carrier, residual 9, explicit-only read, or digest-only analytic read fails.
+
+The bundle successor is
+`covered_earnings_path_applicability_registry_bundle.v8`. It retains the v7
+keyset/order, advances its schema value, and embeds the complete v7
+requirement registry. Every affected source-derived child is freshly
+reconstructed from accepted post-D8 Q5, inventory, value maps, legal
+authorities, the checked analytic-capable `pass_with_closed_failures`
+relation, and exact-empty applicable consumer guards—never from G17 or a
+configuration. Legal children retain their exact version chain. No v7
+bundle, filtered relation, failed consumer, draft Q5, copied interval, or
+copied digest is admitted.
+
+No accepted v8 bundle exists while the required v7 domain is nonpassing. A
+construction attempt must retain R10a's source-adjudication abort and R10b's
+carrier-absence proof and abort before emitting a bundle. Analytic range
+membership cannot fabricate a carrier or turn an evidence relation into a
+passing V-B6 consumer.
+
+#### 22.8.3 Receipt and selected-registration lineage
+
+`covered_earnings_path_applicability_receipt_core.v7` is the complete v6
+core with its schema value advanced and `amendment_8_design_identity`
+inserted immediately after `amendment_7_design_identity`; it has exactly 22
+keys. Its seven amendment children are D2 through D8, its fitting-free domain
+is v7, its applicability-spec digest hashes the complete v8 bundle, and its
+applicability result carries the v7 domain digest. Every other member and the
+namespace cut edge remain unchanged; `receipt_core_sha256` hashes the
+complete v7 core.
+
+When capture supplies A1/A3, validation requires every D2–D8 child to
+deep-equal the corresponding v7 registration/proof identity and reproduce
+its raw blob and complete prefix chain. The calibrated adjudication and
+fitting-free domain bind the same v7 claim, capture input, proof, primary,
+sidecar, triple, and cutoff. Exact lineage is
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < A <= H_cap < T < C <= HEAD`.
+
+The outer `covered_earnings_path_applicability_receipt.v7` retains the
+complete v6 outer keyset/order and every receipt-ID, suffix, namespace,
+construction, status, Git-delta, and failure law, changes only its schema
+value, and requires the complete v7 core. Terminal history dispatch is exact:
+pre-Amendment-3 uses historical v1; Amendments 3, 4, 5, 6, 7, and 8 use v2,
+v3, v4, v5, v6, and v7 respectively. No receipt version binds another
+revision.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+`verify_amendment_8_selected_registration_design_lineage_v1` is true if and
+only if:
+
+1. selected configuration design exact-matches its D1 or D2 ratification
+   blob and digest;
+2. receipt-core D2 exact-matches revision 4;
+3. D3, D4, D5, D6, and D7 exact-match revisions 5 through 9 respectively;
+4. D8 exact-matches revision 10 and same-path raw bytes at registration
+   HEAD, while all five raw-prefix comparisons pass;
+5. `D1 < D2 < D3 < D4 < D5 < D6 < D7 < D8 <= registration HEAD`; and
+6. every retained repository, implementation-tree, configuration,
+   invocation, input, output, history, authority, and validation law passes.
+
+False fails v7 receipt validation without fallback. A fresh fitting-free
+selection under revision-10 authority still retains the revision-4 D2
+configuration design child; K_f^d = D2 remains joined to the earlier D8
+position proof and later v7 receipt proof.
+
+The presently nonpassing V-B6 domain means no accepted Amendment-8 receipt
+or selected registration can instantiate these schemas. They close the
+lifecycle; they do not manufacture substantive authority.
+
+#### 22.8.4 Complete successor identifier inventory
+
+The complete lifecycle successor set introduced by Amendment 8 has exactly
+these 16 identifiers in order:
+
+1. `amendment_8_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_8_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_8_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v7`;
+5. `verify_amendment_8_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_8_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v7`;
+8. `covered_earnings_path_applicability_registry_bundle.v8`;
+9. `fitting_free_model_input_authority_capture_registration.v7`;
+10. `amendment_8_capture_registration_repository_proof.v1`;
+11. `verify_amendment_8_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v7`;
+13. `fitting_free_model_input_authority_capture_input.v7`;
+14. `covered_earnings_path_applicability_receipt_core.v7`;
+15. `covered_earnings_path_applicability_receipt.v7`; and
+16. `verify_amendment_8_selected_registration_design_lineage_v1`.
+
+The complete nonlifecycle schema set newly introduced by Amendment 8 is the
+one identifier
+`amendment_8_analytic_range_partition_closure_sweep.v1`. Concatenating the
+displayed lifecycle order and that singleton is the exact 17-name successor
+inventory. The lists are disjoint and contain no alias. An omitted, extra,
+duplicate, misspelled, undefined, or candidate-selectable identifier blocks
+ratification.
+
+The v3 source interface and every official v1 source/Q5/slot/inventory
+artifact remain completed in place. `analytic_closed_intervals_v1`,
+`revision_10_full_relation_identity`, `literal_member_rows`,
+`range_interval_rows`, `total_member_count`, interval position names, the
+4,096 threshold, streaming construction, A8-R01 through A8-R04, D8, Q5, A,
+H_cap, T, C, K_f^d, and DC-01 through DC-48 are enum, defined-term, row-ID,
+member, operation, context symbol, or comparator values, not independently
+selectable schemas. None enlarges the identifier inventory or creates a v4
+compiler alias.
+
+### 22.9 Post-Amendment-8 build, ratification, Q5, and registration order
+
+#### 22.9.1 Checked compiler-to-Q5 and guarded-consumer walk
+
+After D8, the separately reviewed source-only v3 implementation constructs
+all 176 document derivations and all 89,599 complete 16-key field rows before
+reading a serialized comparand or consumer. Logical construction remains
+exhaustive: it reconstructs every literal and range member, candidate arm,
+invariant/ambiguous disposition, renderability partition, missing subtraction,
+DFA, replay, and consumer projection. Physical storage follows §22.2's one
+threshold-selected arm and need never materialize a large virtual array.
+
+Before Q5 is read, the builder must:
+
+1. reproduce the exact §20 source law, ten terminal counts, three historical
+   classification aggregate pins, seven failure-reason rows, and §21.3
+   `pass_with_closed_failures` relation;
+2. run A6-R01 through A6-R11 unchanged;
+3. run the exact pre-Q5 A7 sequence A7-R01 through A7-R09, A7-R10a, and
+   A7-R11, obtaining the same expected-negative V-B6 results;
+4. run A8-R01 through A8-R04 in order, reproducing every payload byte count,
+   storage SHA, virtual-member SHA, negative rejection, and storage-bound
+   fact; and
+5. in a fresh process, run mandatory `--check` under §22.5.3 and obtain
+   byte equality, all pinned/fresh digest equality, one independently equal
+   six-position revision-10 full-relation identity, and exact-empty mismatch
+   arrays.
+
+Failure at any step emits no accepted relation. A source compiler cannot use
+the candidate artifact, Q5, inventory, expected vector output, prior digest,
+or interval row as an input to source derivation. The interface remains
+`dictionary_codebook_fixed_width_source_derivation_v3`; neither the analytic
+container nor `--check` creates a v4 alias.
+
+Successful step 5 freezes the matched six-position identity against the
+accepted relation bytes before Q5. The normal builder's value and the fresh
+check value are independent comparands; neither is a default for the other.
+Every subsequent exact projection and admitting cutoff must reproduce that
+frozen value.
+
+Only after all five steps pass may Q5 be first-created in its one-path,
+one-parent post-D8 commit. Q5 embeds the complete actual threshold-selected
+source relation, including every T-minus row and fresh row/enclosing digest.
+The coordinator must reconstruct the six-position identity from that
+embedded complete relation, require equality to the frozen revision-10 pin,
+and require Q5's eight-key identity to bind the complete enclosing bytes
+before any positive join may consume a T-plus field. No positive join may
+consume a T-minus field. Every positive join resolves the actual
+representation, virtual member relation, and §21 guard before reading a
+physical value. DC-30, DC-35, DC-40, and DC-45 independently prove
+D5/Q5, D6/Q5, D7/Q5, and D8/Q5, plus the complete eight-key artifact identity
+and retained Q5-before-slot/inventory/cutoff chain. None substitutes for
+another.
+
+Only after Q5 passes may the guarded slot authority, official slot registry,
+and complete actual official inventory be constructed in inherited order.
+Every layout, parser, raw-token grammar, value map, crosswalk, and G17
+expected/actual value resolves the same checked relation through §22.3.
+Inventory must satisfy the unchanged E-domain equations, exact 1,235-key
+negative census, and every applicable guard. A7-R10b runs immediately after
+that actual inventory passes and strictly before any residual-9 registry,
+V-B6 requirement result, preliminary/final 22-row domain, bundle, or
+correction final-acceptance gate. It must again pass only by proving that no
+carrier or passing/accepted V-B6 result exists.
+
+Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
+comparands may continue when their own source, representation, and consumer
+laws pass. The V-B6 branch cannot. Every preliminary and final 22-row
+reconstruction keeps V-B6 in the same position, reruns R10a, both R11 arms,
+and post-inventory R10b, and obtains a nonpassing V-B6 row. Therefore the v7
+domain, v8 bundle, correction final acceptance, receipt, registration, and
+production correction still cannot pass. Compact storage cures physical
+constructibility only; it supplies no missing authority and relaxes no
+boundary.
+
+#### 22.9.2 Referee, D8, implementation, Q5, capture, and production
+
+This subsection replaces §21.9.2 as the live revision-10 protocol:
+
+1. Submit the complete append-only §22 candidate bytes to adversarial
+   referee review without a source implementation, Q5, slot, inventory,
+   registry, capture, correction evaluation, output, or other non-document
+   tree change in this authoring lane.
+2. Resolve every finding and verify the complete round-to-round diff; exact
+   2,423,590-byte D7 prefix and identity; all frozen sources and unchanged
+   field/status/failure digests; all three affected relation families; the
+   numeric-atom and interval grammar; 4,096 threshold; forward/inverse
+   bijection; streaming bytes; every §20/§21 consumer read; A8-R01 through
+   A8-R04 payload bytes and digests; 820,709,179,087-member and TiB
+   arithmetic; the non-normative planning-scale disposition; the six-position
+   full-relation identity;
+   mandatory `--check`; §22.6 closure sweep; 48-row comparator census;
+   17-name successor inventory; D8/Q5 edge; and every lifecycle/build walk.
+   Continue until the exact final bytes receive affirmative ratification.
+3. Ratify only those accepted bytes in one identifiable future document-only
+   commit D8. No authoring, audit, review-response, source, implementation,
+   artifact, Q5, runtime, or registration change may be included in D8.
+4. After D8, separately review and commit the source-only v3 implementation.
+   Reconstruct the complete analytic-capable relation from authenticated
+   sources, run the five pre-Q5 gates in §22.9.1, and require fresh
+   `--check` byte equality. Freeze the independently matched six-position
+   revision-10 full-relation identity before Q5; no candidate position may
+   serve as expected input. Only that exact checked and pinned relation may
+   precede Q5. First-add Q5 alone at its strict post-D8 single-parent commit;
+   reconstruct the same identity from its complete embedded relation and
+   require its eight-key identity to bind those complete enclosing bytes.
+   Construct no synthetic carrier, residual-9 registry, or 22-row result in
+   this step.
+5. After Q5 passes, construct and accept only the guarded slot authority,
+   official slot registry, and complete actual official inventory in
+   official order, including its E-domain equations, negative census, and
+   analytic-equivalent derivation reads. Immediately after actual inventory
+   acceptance, run A7-R10b from fresh inputs and prove absence of every
+   residual-9 key array, carrier, ID, consequence, amount read, and passing
+   or accepted V-B6 result. A constructed carrier or synthetic fixture fails.
+6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain.
+   Rerun R10a, both R11 arms, and R10b from their proper inputs, never copied
+   outputs. V-B6 must be nonpassing and the domain must abort. Under present
+   evidence no residual-9 registry, V-B6 bundle, correction final acceptance,
+   receipt, registration, production correction, context output, certificate,
+   publication, or external merge may follow from this path.
+7. The v7 capture/domain/receipt/registration and v8 bundle schemas in §22.8
+   remain defined for exact lifecycle closure and a future lawful authority.
+   They may instantiate only after a later ratified authority changes the
+   presently nonpassing V-B6 result without weakening the layer law,
+   fabricating a carrier, altering the lossless representation law, or
+   copying a predecessor result. That work is outside Amendment 8.
+
+At these draft bytes none of steps 3–7 has occurred. No D8, successor
+implementation, canonical relation artifact, successful `--check`, Q5,
+official inventory, guarded consumer artifact, lifecycle instance, carrier,
+receipt, registration, correction result, or output is claimed. Amendment 8
+removes one physical serialization impossibility while preserving the exact
+source classification and the independent V-B6 authority blocker.
+
+**Amendment 8 is inoperative unless and until its exact D8 ratification
+commit is bound by a validator-accepted v7 fresh-registration receipt.** The
+current V-B6 nonpassing result prevents that receipt. Ratification alone
+authorizes only the separately reviewed source implementation, canonical
+relation build, `--check`, Q5, and expected-negative guarded steps stated
+above; it authorizes no correction production evaluation, path switch,
+context run, label change, output, or publication.
