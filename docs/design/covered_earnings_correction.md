@@ -38203,9 +38203,9 @@ second form as an alternate canonical split fails R03.
 
 #### 22.4.5 A8-R04 — exact storage contradiction and source-derived census
 
-The blocked implementation report is a 1,325-byte review record at
-`/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-v3compiler-blocked-report.md`
-with SHA-256
+The blocked implementation report is the repository-external authoring
+record `sol-ce-v3compiler-blocked-report.md`, exactly 1,325 bytes with
+SHA-256
 `4addef1a8b8bbc0694d17bd46c763ea94fce9cdced4056fa44e7faa7e3f15b0e`.
 The source-derived classifier implementation at commit
 `b78e4b5d0878dfd192a3d6060f2f801d2bfe2b0d` is empirical evidence, not
@@ -38316,8 +38316,10 @@ source-produced positions cannot lawfully be copied from the blocked
 revision-9 attempt or chosen during design authoring. The first post-D8
 normal build and a fresh independent `--check` reconstruction must produce
 one byte-equal identity array before Q5. That accepted array is thereafter
-the immutable revision-10 full-relation aggregate pin and must exact-project
-from every Q5, slot, inventory, and admitting-cutoff consumer. A later
+the immutable revision-10 full-relation aggregate pin. Every Q5, slot,
+inventory, and admitting-cutoff consumer must independently reconstruct it
+from the complete relation bytes that consumer reaches and exact-compare it
+to the frozen value; no outer consumer schema gains a sibling key. A later
 mismatch requires a design successor; revision 10 cannot be repinned. A
 result outside the scale envelope forces a representation/closure audit and
 cannot be accepted merely because its field census or identity-array shape
@@ -38880,8 +38882,8 @@ threshold-selected arm and need never materialize a large virtual array.
 
 Before Q5 is read, the builder must:
 
-1. reproduce the exact §20 source law, ten terminal counts, three aggregate
-   pins, seven failure-reason rows, and §21.3
+1. reproduce the exact §20 source law, ten terminal counts, three historical
+   classification aggregate pins, seven failure-reason rows, and §21.3
    `pass_with_closed_failures` relation;
 2. run A6-R01 through A6-R11 unchanged;
 3. run the exact pre-Q5 A7 sequence A7-R01 through A7-R09, A7-R10a, and
@@ -38955,10 +38957,10 @@ This subsection replaces §21.9.2 as the live revision-10 protocol:
    numeric-atom and interval grammar; 4,096 threshold; forward/inverse
    bijection; streaming bytes; every §20/§21 consumer read; A8-R01 through
    A8-R04 payload bytes and digests; 820,709,179,087-member and TiB
-   arithmetic; expected scale; mandatory `--check`; §22.6 closure sweep;
-   48-row comparator census; 17-name successor inventory; D8/Q5 edge; and
-   every lifecycle/build walk. Continue until the exact final bytes receive
-   affirmative ratification.
+   arithmetic; expected scale; the six-position full-relation identity;
+   mandatory `--check`; §22.6 closure sweep; 48-row comparator census;
+   17-name successor inventory; D8/Q5 edge; and every lifecycle/build walk.
+   Continue until the exact final bytes receive affirmative ratification.
 3. Ratify only those accepted bytes in one identifiable future document-only
    commit D8. No authoring, audit, review-response, source, implementation,
    artifact, Q5, runtime, or registration change may be included in D8.

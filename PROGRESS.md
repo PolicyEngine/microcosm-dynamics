@@ -37,10 +37,14 @@ to revision 9. The pinned prefix remains 2,423,590 bytes with SHA-256
   compiler output digests.
 - Clarified the A8 representation fixtures and terminal-LF storage-bound
   arithmetic.
+- Replaced the machine-local blocked-report path with a content-pinned
+  repository-external authoring-record name.
+- Completed post-fix mechanical and schema-consistency audits: prefix,
+  vectors, comparator census, lifecycle inventory, aggregate-pin law, and
+  consumer propagation pass.
 
 ## Next
 
-- Complete the final post-fix independent audits over all of §22.
 - Reverify the immutable prefix, document digest, and diff hygiene.
 - Remove this progress file and write the final report to the required
   output.
