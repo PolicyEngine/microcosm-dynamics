@@ -1452,7 +1452,18 @@ PAGE_41 = (
         note="D17 interviewer checkpoint branch A: head worked in 1978 or "
         "1979.",
     ),
-    run(41, 5, 0, 8, F, "p41_flow_d17_did_not_work", routes=(SECTION_D,)),
+    run(
+        41,
+        5,
+        0,
+        8,
+        F,
+        "p41_flow_d17_did_not_work",
+        routes=(SECTION_D,),
+        note="D17 interviewer checkpoint branch B; the scan fuses the "
+        "printed year with the routing verb, so the branch condition and "
+        "its routing atom are spanned as the two printed runs that survive.",
+    ),
     run(41, 5, 9, 13, F, "p41_flow_d17_turn_section_f", routes=(SECTION_D,)),
     word(41, 5, "HEAD", R, "p41_role_head_d17", routes=(SECTION_D,)),
     line(
@@ -2232,7 +2243,27 @@ PAGE_61 = (
         "1979.",
     ),
     run(61, 3, 1, 1, R, "p61_role_wife_g10", routes=(SECTION_G,)),
-    run(61, 5, 0, 9, F, "p61_flow_g10_did_not_work", routes=(SECTION_G,)),
+    run(
+        61,
+        5,
+        0,
+        8,
+        F,
+        "p61_flow_g10_did_not_work",
+        routes=(SECTION_G,),
+        note="G10 interviewer checkpoint branch B; the scan fuses the "
+        "printed year with the routing verb, so the branch condition and "
+        "its routing atom are spanned as the two printed runs that survive.",
+    ),
+    run(
+        61,
+        5,
+        9,
+        14,
+        F,
+        "p61_flow_g10_turn_section_j",
+        routes=(SECTION_G,),
+    ),
     line(
         61,
         10,
@@ -2952,17 +2983,16 @@ PAGE_97 = (
         97,
         34,
         0,
-        8,
+        4,
         F,
         "p97_flow_k35_eligible",
         routes=(SECTION_K_R,),
         note="K35 interviewer checkpoint branch: eligible persons listed.",
     ),
-    run(
+    block(
         97,
+        34,
         35,
-        0,
-        8,
         A,
         "p97_k35_repeat_instruction",
         routes=(SECTION_K_R + ("p97_flow_k35_eligible",),),
@@ -3082,11 +3112,10 @@ PAGE_101 = (
         parent_note=_EXTRA_EARNER_JOB,
     ),
     line(101, 15, P, "p101_k46_prompt", routes=(SECTION_K_R,)),
-    run(
+    block(
         101,
         34,
-        0,
-        11,
+        35,
         A,
         "p101_k50_repeat_instruction",
         routes=(SECTION_K_R,),
@@ -3140,11 +3169,9 @@ PAGE_111 = (
         "p111_l10_prompt",
         routes=(SECTION_L + ("p111_flow_l1_new_wife",),),
     ),
-    run(
+    line(
         111,
         52,
-        0,
-        8,
         F,
         "p111_flow_l10_none",
         routes=(SECTION_L + ("p111_flow_l1_new_wife",),),
@@ -3164,11 +3191,9 @@ PAGE_111 = (
         "p111_l11_prompt",
         routes=(SECTION_L + ("p111_flow_l1_new_wife",),),
     ),
-    run(
+    line(
         111,
         56,
-        0,
-        6,
         F,
         "p111_flow_l11_turn_section_m",
         routes=(SECTION_L + ("p111_flow_l1_new_wife",),),
