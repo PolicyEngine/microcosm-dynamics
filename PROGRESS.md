@@ -68,6 +68,9 @@ candidate-text distinct counts, and carries the prior pins and fixtures.
   ER3062, ER12067, and ER12079; all 182 authority tests and Ruff pass.
 - Completed two independent semantic sweeps; both agree that V31 remains an
   input-table statement and report no further strong direct-denotation miss.
+- Split the contextual candidate table's 717,810 distinct texts from the
+  717,823-text union that adds 13 raw-Actual-only spellings; both are now
+  named and independently pinned in the gate schema. All 76 gate tests pass.
 
 ## Next
 

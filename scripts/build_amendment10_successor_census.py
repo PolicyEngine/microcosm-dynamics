@@ -135,6 +135,7 @@ class GatePins:
     denotation_candidate_occurrence_count: int
     denotation_candidate_start_count: int
     denotation_candidate_distinct_text_count: int
+    denotation_candidate_plus_actual_distinct_text_count: int
     denotation_candidate_total_occurrence_count: int
     denotation_candidate_unselected_count: int
     denotation_candidate_overselected_count: int
@@ -364,7 +365,8 @@ EXPECTED_A10_R04_PINS = GatePins(
     denotation_candidate_table_row_count=1114747,
     denotation_candidate_occurrence_count=2240669,
     denotation_candidate_start_count=2240669,
-    denotation_candidate_distinct_text_count=717823,
+    denotation_candidate_distinct_text_count=717810,
+    denotation_candidate_plus_actual_distinct_text_count=717823,
     denotation_candidate_total_occurrence_count=2240991,
     denotation_candidate_unselected_count=0,
     denotation_candidate_overselected_count=0,
@@ -663,7 +665,9 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         if row["adjudication"].startswith("unadjudicated")
     )
     candidate_texts = {row["candidate"] for row in candidate_rows}
-    candidate_texts.update(row["candidate"] for row in actual_rows)
+    candidate_plus_actual_texts = candidate_texts | {
+        row["candidate"] for row in actual_rows
+    }
     payload: dict[str, Any] = {
         "schema_version": "amendment_10_successor_census.v2",
         "input_relation_row_count": len(frozen_rows),
@@ -680,6 +684,9 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "denotation_candidate_occurrence_count": candidate_occurrences,
         "denotation_candidate_start_count": candidate_starts,
         "denotation_candidate_distinct_text_count": len(candidate_texts),
+        "denotation_candidate_plus_actual_distinct_text_count": len(
+            candidate_plus_actual_texts
+        ),
         "denotation_candidate_total_occurrence_count": (
             candidate_occurrences + actual_occurrences
         ),
@@ -853,6 +860,9 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         ),
         denotation_candidate_distinct_text_count=(
             payload["denotation_candidate_distinct_text_count"]
+        ),
+        denotation_candidate_plus_actual_distinct_text_count=(
+            payload["denotation_candidate_plus_actual_distinct_text_count"]
         ),
         denotation_candidate_total_occurrence_count=(
             payload["denotation_candidate_total_occurrence_count"]
@@ -1159,6 +1169,11 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         "distinct denotation candidate text count",
         payload["denotation_candidate_distinct_text_count"],
         pins.denotation_candidate_distinct_text_count,
+    )
+    _require_equal(
+        "distinct denotation-plus-Actual candidate text count",
+        payload["denotation_candidate_plus_actual_distinct_text_count"],
+        pins.denotation_candidate_plus_actual_distinct_text_count,
     )
     _require_equal(
         "total denotation candidate occurrence count",

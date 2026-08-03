@@ -180,6 +180,7 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         pins.denotation_candidate_occurrence_count,
         pins.denotation_candidate_start_count,
         pins.denotation_candidate_distinct_text_count,
+        pins.denotation_candidate_plus_actual_distinct_text_count,
         pins.denotation_candidate_total_occurrence_count,
         pins.denotation_candidate_unselected_count,
         pins.denotation_candidate_overselected_count,
@@ -189,6 +190,7 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         1_114_747,
         2_240_669,
         2_240_669,
+        717_810,
         717_823,
         2_240_991,
         0,
@@ -488,6 +490,16 @@ def test_each_gate_family_aborts_without_emission(
                 pins,
                 denotation_candidate_distinct_text_count=(
                     pins.denotation_candidate_distinct_text_count + 1
+                ),
+            ),
+        ),
+        (
+            "distinct denotation-plus-Actual candidate text count",
+            lambda pins: replace(
+                pins,
+                denotation_candidate_plus_actual_distinct_text_count=(
+                    pins.denotation_candidate_plus_actual_distinct_text_count
+                    + 1
                 ),
             ),
         ),
