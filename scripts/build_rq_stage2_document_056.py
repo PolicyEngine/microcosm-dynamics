@@ -817,6 +817,28 @@ STANDALONE_ANCHORS: tuple[dict[str, Any], ...] = (
         paths=P_BC,
     ),
     _anchor(
+        "j_b15_recent_main_job",
+        15,
+        "job_anchor",
+        _in(
+            "(Section B) or Most Recent Main Job (Section C), then other "
+            "main jobs held in 1995, in",
+            "Most Recent Main Job",
+        ),
+        paths=P_BC,
+    ),
+    _anchor(
+        "j_b15_other_main_jobs",
+        15,
+        "job_anchor",
+        _in(
+            "(Section B) or Most Recent Main Job (Section C), then other "
+            "main jobs held in 1995, in",
+            "other main jobs held in 1995",
+        ),
+        paths=P_BC,
+    ),
+    _anchor(
         "j_b20_another_job",
         15,
         "job_anchor",
@@ -2625,6 +2647,10 @@ RESOLVED_ALIAS_SPECS: tuple[tuple[str, str, str, str], ...] = (
     (XREF, "ri_g1a_g52", "g1a#a", "g50_52#a"),
     (XREF, "ri_g17e", "g17e#a", "g13#a"),
     (XREF, "ri_gj0", "gj0a_b#a", "g17e#a"),
+    (XREF, "ri_gj0", "gj0a_b#a", "a_g5_business"),
+    (XREF, "ri_gj0", "gj0a_b#a", "g18#a"),
+    (XREF, "ri_gj0", "gj0a_b#a", "g18b#a"),
+    (XREF, "ri_gj0", "gj0a_b#a", "g18c#a"),
     (XREF, "ri_gj0", "gj0a_b#a", "g50_52#a"),
     (XREF, "ri_gj3", "gj3_3a#a", "b9_9a#a"),
     (XREF, "ri_g75", "g75#a", "b1_3#a"),
