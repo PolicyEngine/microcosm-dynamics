@@ -22,10 +22,12 @@ prefix remains 2,423,590 bytes with SHA-256
   passing-status decomposition.
 - Defined expected MB/GiB scale, mandatory fresh `--check`, replacement
   inventory, and the Amendment-8 closure sweep.
+- Added and mechanically verified the 48-row revision-10 comparator census
+  (24 replaced / 24 unchanged).
 
 ## Next
 
-- Add the 48-row comparator census and D8 lifecycle successors.
+- Add D8 lifecycle successors and the complete identifier inventory.
 - Complete the post-D8 build/ratification/Q5 order.
 - Reverify the immutable prefix, document digest, and diff hygiene.
 - Write the external final report and remove this progress file.
