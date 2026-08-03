@@ -406,8 +406,9 @@ PAGE_NOTES: dict[int, str] = {
     ),
     46: _OBJECTIVES_XREF.format(
         "item H8, continued on the lettered -23a- objectives sheet",
-        'the printed instruction "Make sure if an amount is given for both '
-        'H7 and H8 that it is not the same figure recorded twice"',
+        "the businessmen note routing an owner's own pay to H7 and the "
+        'printed instruction "Make sure if an amount is given for both H7 '
+        'and H8 that it is not the same figure recorded twice"',
     ),
     47: _INSTRUMENT_IN.format("head other-income items H9-H13"),
     48: _OBJECTIVES.format("items H9-H11 and the S.S.I. program note"),
@@ -426,7 +427,11 @@ PAGE_NOTES: dict[int, str] = {
         "head welfare and Social Security checkpoints H14-H21 and the wife "
         "income items H22-H25"
     ),
-    53: _OBJECTIVES.format("items H14-H25"),
+    53: _OBJECTIVES_XREF.format(
+        "items H14-H25",
+        "the H22-H25 note that a wife's income from work in the family "
+        "business may already be recorded at H7",
+    ),
     54: _INSTRUMENT_OUT.format(
         "the other-family-member income grid H26-H38, whose listed persons "
         "are neither the head nor the spouse role"
@@ -2749,12 +2754,30 @@ CROSS_REFERENCES = (
     ),
     _xref(
         46,
+        ("block", 13, 16),
+        "p46_xref_h8_businessmen_to_h7",
+        ("p44_h8_wages_and_salaries",),
+        ("p44_h7_business_share",),
+        "The H8 objective routes an unincorporated businessman's own "
+        "wages and salaries to H7 and his wages from another job to H8.",
+    ),
+    _xref(
+        46,
         ("line", 18),
         "p46_xref_h8_to_h7",
         ("p44_h8_wages_and_salaries",),
         ("p44_h7_business_share",),
         "The H8 objective warns that the H7 business share and the H8 "
         "wages-and-salaries component must not record the same figure twice.",
+    ),
+    _xref(
+        53,
+        ("block", 24, 31),
+        "p53_xref_h25_to_h7",
+        ("p52_h25_wife_income_amount",),
+        ("p44_h7_business_share",),
+        "The H22-H25 objective states that a wife's income from work in the "
+        "family business may already be recorded at H7.",
     ),
     _xref(
         49,
