@@ -103,6 +103,9 @@ byte for byte at 1,126,612,992-byte peak RSS.
   at 1,126,612,992 bytes RSS.
 - Corrected the independent audit's stale §24.7 exact-cover row from
   73,408/16,191 to the final 73,523/16,076 T-plus/T-minus split.
+- Rechecked every complete raw food description in the lawful relation: all
+  22 weekly fields, all nine later annual fields, and V3694 derive dollars;
+  V31 remains `no_denotation_statement`.
 
 ## Next
 
