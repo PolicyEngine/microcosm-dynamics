@@ -5,6 +5,9 @@ from pathlib import Path
 import pytest
 
 from populace_dynamics.data import psid_source_compiler as compiler
+from populace_dynamics.data.psid_source_classifier import (
+    classify_complete_corpus,
+)
 
 PSID_ROOT = Path("~/PolicyEngine/psid-data").expanduser()
 
@@ -18,17 +21,19 @@ def evidence_corpus():
 
 
 @pytest.fixture(scope="module")
-def wave_1968_derivation(evidence_corpus):
-    source_document = next(
+def all_raw_derivations(evidence_corpus):
+    return compiler.derive_all_raw_censuses(evidence_corpus, PSID_ROOT)
+
+
+@pytest.fixture(scope="module")
+def wave_1968_derivation(all_raw_derivations):
+    return next(
         row
-        for row in evidence_corpus.source_manifest
-        if row["document_role"] == "raw_fixed_width_data"
-        and row["interview_waves"] == [1968]
-    )
-    return compiler.frame_fixed_width_records(
-        source_document,
-        evidence_corpus.fields,
-        PSID_ROOT,
+        for row in all_raw_derivations
+        if any(
+            census["interview_wave"] == 1968
+            for census in row["field_census_rows"]
+        )
     )
 
 
@@ -89,3 +94,93 @@ def test_a6_1968_raw_framing_and_observed_token_digests(
             "09422b1415d0c4b7d281ab156451fb733dc204827fa98dbe93a0e53f94065998"
         ),
     }
+
+
+def test_a6_r01_through_r11_and_complete_ratified_census(
+    evidence_corpus,
+    all_raw_derivations,
+):
+    census_by_key = {
+        (row["interview_wave"], row["raw_field_id"]): row
+        for derivation in all_raw_derivations
+        for row in derivation["field_census_rows"]
+    }
+    vector_digests = {
+        (1968, "V93"): (
+            "0d184b17049ff03bdffe4c462131f126e771108e5588436aa0551e02fd0c80c0"
+        ),
+        (1979, "V6302"): (
+            "7bf8f994c2cbaa804238ecfd051afee9a801119574c73b6ce14abe7fe66006e0"
+        ),
+        (1988, "V15133"): (
+            "c41db6073cbcbc51b73e5d035f611a4f13314b713017bf640685441bf5b03c49"
+        ),
+        (1968, "V210"): (
+            "4072529f3cab60900f04eb216e73f0ec6307aa8ed60c439dcfaf51b04018a448"
+        ),
+        (1968, "V76"): (
+            "4082fbc67ab457ddad4115b66ab785e816e20b393b195786fbd47ba384b7aa2d"
+        ),
+        (1979, "V6363"): (
+            "a56fa8d49cc90e874cd900d689302fe91138dbaaa895db6731e61fbe152989bf"
+        ),
+        (1969, "V945"): (
+            "a6b22c77d629041af436acce61508baf1b40d6eaf8be7089c1b529520873c9e5"
+        ),
+        (1968, "V97"): (
+            "7728fee41416e99342a836afc5ce9710f91599c333c8f533620cf2f53009b2e9"
+        ),
+        (1985, "V11811"): (
+            "e7c597b7362015d7443a5eb921efce6ea041df1f795bd4e2cbb4e75a1106445e"
+        ),
+        (1968, "V117"): (
+            "09422b1415d0c4b7d281ab156451fb733dc204827fa98dbe93a0e53f94065998"
+        ),
+        (1985, "V11812"): (
+            "294a0d815f3fa92ddcf3bd79e2578e57acf6b0926143116f4f8f7459a80e29ce"
+        ),
+    }
+    assert {
+        key: census_by_key[key]["observed_token_rows_sha256"]
+        for key in vector_digests
+    } == vector_digests
+
+    result = classify_complete_corpus(evidence_corpus, all_raw_derivations)
+    assert result["denominator_sha256"] == (
+        "7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764"
+    )
+    assert result["count_array_sha256"] == (
+        "421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624"
+    )
+    assert result["ordered_assignment_sha256"] == (
+        "5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e"
+    )
+    status_by_key = {
+        (row["interview_wave"], row["raw_field_id"]): row["derivation_status"]
+        for row in result["classification_rows"]
+    }
+    assert [status_by_key[key] for key in vector_digests] == [
+        "compiled_source_numeric_grammar",
+        "compiled_source_numeric_grammar",
+        (
+            "compiled_source_numeric_grammar_"
+            "padding_underdetermined_exact_replay"
+        ),
+        (
+            "compiled_source_numeric_grammar_"
+            "padding_underdetermined_exact_replay"
+        ),
+        "compiled_source_numeric_grammar",
+        "compiled_source_numeric_grammar",
+        "compiled_source_numeric_grammar_partial_range_exact_replay",
+        (
+            "compiled_source_numeric_grammar_"
+            "padding_underdetermined_exact_replay"
+        ),
+        "value_code_range_physical_rendering_unestablished",
+        (
+            "compiled_source_numeric_grammar_"
+            "finite_domain_arm_ambiguous_exact_replay"
+        ),
+        "value_code_range_physical_rendering_unestablished",
+    ]

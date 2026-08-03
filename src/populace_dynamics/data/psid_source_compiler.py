@@ -808,6 +808,106 @@ def transition_action(input_byte: int) -> str:
     raise ValueError(f"unsupported DFA byte: {input_byte:#x}")
 
 
+def _serialize_minimized_dfa(
+    children: Sequence[Mapping[int, int]],
+    accepting: Sequence[bool],
+    depths: Sequence[int],
+    payload_width: int,
+) -> dict[str, Any]:
+    """Minimize and serialize one reachable, acyclic, fixed-width DFA."""
+
+    coreachable = set(
+        index for index, is_accepting in enumerate(accepting) if is_accepting
+    )
+    for depth in range(payload_width - 1, -1, -1):
+        for node, node_depth in enumerate(depths):
+            if node_depth == depth and any(
+                target in coreachable for target in children[node].values()
+            ):
+                coreachable.add(node)
+    if 0 not in coreachable:
+        raise ValueError("accepted fixed-width language must be nonempty")
+
+    class_by_node: list[int] = [-1] * len(children)
+    class_signature_to_id: dict[tuple[Any, ...], int] = {}
+    class_children: dict[int, dict[int, int]] = {}
+    class_accepting: dict[int, bool] = {}
+    class_depth: dict[int, int] = {}
+    for depth in range(payload_width, -1, -1):
+        for node, node_depth in enumerate(depths):
+            if node_depth != depth or node not in coreachable:
+                continue
+            edges = tuple(
+                (
+                    byte,
+                    transition_action(byte),
+                    class_by_node[target],
+                )
+                for byte, target in sorted(children[node].items())
+                if target in coreachable
+            )
+            signature = (depth, accepting[node], edges)
+            class_id = class_signature_to_id.get(signature)
+            if class_id is None:
+                class_id = len(class_signature_to_id)
+                class_signature_to_id[signature] = class_id
+                class_children[class_id] = {
+                    byte: target_class for byte, _, target_class in edges
+                }
+                class_accepting[class_id] = accepting[node]
+                class_depth[class_id] = depth
+            class_by_node[node] = class_id
+
+    root_class = class_by_node[0]
+    bfs_classes: list[int] = []
+    queue = deque([root_class])
+    queued = {root_class}
+    while queue:
+        state_class = queue.popleft()
+        bfs_classes.append(state_class)
+        for _, target in sorted(class_children[state_class].items()):
+            if target not in queued:
+                queued.add(target)
+                queue.append(target)
+    state_id = {
+        state_class: f"q:{index}"
+        for index, state_class in enumerate(bfs_classes)
+    }
+    state_ids = [state_id[state_class] for state_class in bfs_classes]
+    accepting_state_ids = [
+        state_id[state_class]
+        for state_class in bfs_classes
+        if class_accepting[state_class]
+    ]
+    transitions = [
+        {
+            "position": class_depth[state_class],
+            "state_id": state_id[state_class],
+            "input_byte_hex": bytes([byte]).hex(),
+            "next_state_id": state_id[target_class],
+            "value_action": transition_action(byte),
+        }
+        for state_class in bfs_classes
+        for byte, target_class in sorted(class_children[state_class].items())
+    ]
+    transitions.sort(
+        key=lambda row: (
+            row["position"],
+            int(row["state_id"].split(":", 1)[1]),
+            int(row["input_byte_hex"], 16),
+        )
+    )
+    return {
+        "payload_width": payload_width,
+        "state_ids": state_ids,
+        "start_state_id": "q:0",
+        "accepting_state_ids": accepting_state_ids,
+        "transition_rows": transitions,
+        "transition_row_count": len(transitions),
+        "transition_domain_sha256": canonical_sha256(transitions),
+    }
+
+
 def compile_exact_token_dfa(
     raw_tokens: Iterable[bytes],
     payload_width: int,
@@ -847,86 +947,191 @@ def compile_exact_token_dfa(
     if not seen_tokens:
         raise ValueError("accepted exact-token language must be nonempty")
 
-    class_by_node: list[int] = [-1] * len(children)
-    class_signature_to_id: dict[tuple[Any, ...], int] = {}
-    class_children: dict[int, dict[int, int]] = {}
-    class_accepting: dict[int, bool] = {}
-    class_depth: dict[int, int] = {}
-    for depth in range(payload_width, -1, -1):
-        for node in (
-            index
-            for index, node_depth in enumerate(depths)
-            if node_depth == depth
-        ):
-            edges = tuple(
-                (
-                    byte,
-                    transition_action(byte),
-                    class_by_node[target],
-                )
-                for byte, target in sorted(children[node].items())
-            )
-            signature = (depth, accepting[node], edges)
-            class_id = class_signature_to_id.get(signature)
-            if class_id is None:
-                class_id = len(class_signature_to_id)
-                class_signature_to_id[signature] = class_id
-                class_children[class_id] = {
-                    byte: target_class for byte, _, target_class in edges
-                }
-                class_accepting[class_id] = accepting[node]
-                class_depth[class_id] = depth
-            class_by_node[node] = class_id
-
-    root_class = class_by_node[0]
-    bfs_classes: list[int] = []
-    queue = deque([root_class])
-    queued = {root_class}
-    while queue:
-        state_class = queue.popleft()
-        bfs_classes.append(state_class)
-        for target in class_children[state_class].values():
-            if target not in queued:
-                queued.add(target)
-                queue.append(target)
-    state_id = {
-        state_class: f"q:{index}"
-        for index, state_class in enumerate(bfs_classes)
-    }
-    state_ids = [state_id[state_class] for state_class in bfs_classes]
-    accepting_state_ids = [
-        state_id[state_class]
-        for state_class in bfs_classes
-        if class_accepting[state_class]
-    ]
-    transitions = []
-    for state_class in bfs_classes:
-        for byte, target_class in sorted(class_children[state_class].items()):
-            transitions.append(
-                {
-                    "position": class_depth[state_class],
-                    "state_id": state_id[state_class],
-                    "input_byte_hex": bytes([byte]).hex(),
-                    "next_state_id": state_id[target_class],
-                    "value_action": transition_action(byte),
-                }
-            )
-    transitions.sort(
-        key=lambda row: (
-            row["position"],
-            int(row["state_id"].split(":", 1)[1]),
-            int(row["input_byte_hex"], 16),
-        )
+    return _serialize_minimized_dfa(
+        children,
+        accepting,
+        depths,
+        payload_width,
     )
-    return {
-        "payload_width": payload_width,
-        "state_ids": state_ids,
-        "start_state_id": "q:0",
-        "accepting_state_ids": accepting_state_ids,
-        "transition_rows": transitions,
-        "transition_row_count": len(transitions),
-        "transition_domain_sha256": canonical_sha256(transitions),
-    }
+
+
+def _numeric_form_patterns(
+    width: int,
+    decimal_places: int,
+    token_form_kind: str,
+    padding_arm: str,
+) -> tuple[tuple[frozenset[int], ...], ...]:
+    """Return a compact Cartesian-pattern cover of one canonical form."""
+
+    digits = frozenset(range(0x30, 0x3A))
+    nonzero = frozenset(range(0x31, 0x3A))
+    zero = frozenset({0x30})
+    space = frozenset({0x20})
+    minus = frozenset({0x2D})
+    point = frozenset({0x2E})
+    signed = token_form_kind.startswith("leading_ascii_minus_signed_")
+    if padding_arm not in PADDING_ARMS:
+        raise ValueError(f"unknown padding arm: {padding_arm}")
+    if padding_arm == "zero_left_padding":
+        if token_form_kind.endswith("_literal_ascii_decimal"):
+            padding = zero
+        else:
+            # Zero padding is not canonical magnitude padding: it is part of
+            # the digit payload and can precede a nonzero magnitude.
+            padding = zero
+    else:
+        padding = space
+
+    patterns: list[tuple[frozenset[int], ...]] = []
+    if token_form_kind.endswith("_integer") or token_form_kind.endswith(
+        "_implied_decimal"
+    ):
+        if token_form_kind.endswith("_integer") and decimal_places != 0:
+            return ()
+        if token_form_kind.endswith("_implied_decimal") and (
+            decimal_places <= 0
+        ):
+            return ()
+        for negative in (False, True) if signed else (False,):
+            sign_width = int(negative)
+            for magnitude_width in range(1, width - sign_width + 1):
+                pad_width = width - sign_width - magnitude_width
+                if padding_arm == "zero_left_padding":
+                    # The renderer emits the sign before zero fill.  Every
+                    # unsigned payload is simply w digits; retain one cover.
+                    if negative:
+                        pattern = (minus,) + (zero,) * pad_width
+                        pattern += (nonzero,) + (digits,) * (
+                            magnitude_width - 1
+                        )
+                    else:
+                        if magnitude_width != width:
+                            continue
+                        pattern = (digits,) * width
+                else:
+                    first = digits if magnitude_width == 1 else nonzero
+                    if negative and magnitude_width == 1:
+                        first = nonzero
+                    pattern = (space,) * pad_width
+                    if negative:
+                        pattern += (minus,)
+                    pattern += (first,) + (digits,) * (magnitude_width - 1)
+                patterns.append(pattern)
+    elif token_form_kind.endswith("_literal_ascii_decimal"):
+        if decimal_places <= 0:
+            return ()
+        for negative in (False, True) if signed else (False,):
+            sign_width = int(negative)
+            for integral_width in range(1, width):
+                capacity = width - sign_width - integral_width - 1
+                if capacity < 1:
+                    continue
+                fractional_width = min(decimal_places, capacity)
+                pad_width = capacity - fractional_width
+                if padding_arm == "zero_left_padding" and pad_width:
+                    # Literal-decimal zero padding precedes the canonical
+                    # integral payload, exactly as the renderer specifies.
+                    pad = (zero,) * pad_width
+                else:
+                    pad = (padding,) * pad_width
+                first = digits if integral_width == 1 else nonzero
+                if negative and integral_width == 1:
+                    # Excluding only negative numeric zero is handled as a
+                    # finite token subtraction by the caller when needed.
+                    first = digits
+                pattern = pad
+                if negative:
+                    pattern += (minus,)
+                pattern += (first,) + (digits,) * (integral_width - 1)
+                pattern += (point,) + (digits,) * fractional_width
+                patterns.append(pattern)
+    else:
+        raise ValueError(f"unknown token form: {token_form_kind}")
+    return tuple(dict.fromkeys(patterns))
+
+
+def compile_numeric_form_dfa(
+    payload_width: int,
+    decimal_places: int,
+    token_form_kind: str,
+    padding_arm: str,
+    *,
+    excluded_tokens: Iterable[bytes] = (),
+) -> dict[str, Any]:
+    """Compile a full canonical numeric-form language minus exact tokens.
+
+    Pattern determinization keeps the construction proportional to width and
+    the finite exclusion set; it never enumerates ``10**payload_width``
+    possible observations.
+    """
+
+    patterns = _numeric_form_patterns(
+        payload_width,
+        decimal_places,
+        token_form_kind,
+        padding_arm,
+    )
+    if not patterns:
+        raise ValueError("numeric form has an empty pattern cover")
+    exclusion_set = set(excluded_tokens)
+    if token_form_kind == ("leading_ascii_minus_signed_literal_ascii_decimal"):
+        fractional_width = min(decimal_places, payload_width - 3)
+        if fractional_width >= 1:
+            pad_width = payload_width - 3 - fractional_width
+            pad_byte = b"0" if padding_arm == "zero_left_padding" else b" "
+            exclusion_set.add(
+                pad_byte * pad_width + b"-0." + b"0" * fractional_width
+            )
+    exclusions = tuple(sorted(exclusion_set))
+    if any(len(token) != payload_width for token in exclusions):
+        raise ValueError("excluded token width mismatch")
+
+    start = (0, tuple(range(len(patterns))), tuple(range(len(exclusions))))
+    states = [start]
+    state_index = {start: 0}
+    children: list[dict[int, int]] = [{}]
+    accepting = [False]
+    depths = [0]
+    queue = deque([start])
+    while queue:
+        depth, active_patterns, active_exclusions = queue.popleft()
+        node = state_index[(depth, active_patterns, active_exclusions)]
+        if depth == payload_width:
+            accepting[node] = not active_exclusions
+            continue
+        alphabet = sorted(
+            set().union(*(patterns[index][depth] for index in active_patterns))
+        )
+        for byte in alphabet:
+            next_patterns = tuple(
+                index
+                for index in active_patterns
+                if byte in patterns[index][depth]
+            )
+            if not next_patterns:
+                continue
+            next_exclusions = tuple(
+                index
+                for index in active_exclusions
+                if exclusions[index][depth] == byte
+            )
+            next_state = (depth + 1, next_patterns, next_exclusions)
+            target = state_index.get(next_state)
+            if target is None:
+                target = len(states)
+                state_index[next_state] = target
+                states.append(next_state)
+                children.append({})
+                accepting.append(False)
+                depths.append(depth + 1)
+                queue.append(next_state)
+            children[node][byte] = target
+    return _serialize_minimized_dfa(
+        children,
+        accepting,
+        depths,
+        payload_width,
+    )
 
 
 def build_registered_numeric_grammar(

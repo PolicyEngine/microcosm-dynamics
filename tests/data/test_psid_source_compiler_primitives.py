@@ -164,3 +164,56 @@ def test_mandatory_two_digit_dfa_vector():
     assert [row["position"] for row in dfa["transition_rows"]] == (
         [0] * 10 + [1] * 10
     )
+
+
+def _dfa_accepts(dfa, token):
+    transitions = {
+        (row["state_id"], bytes.fromhex(row["input_byte_hex"])): row[
+            "next_state_id"
+        ]
+        for row in dfa["transition_rows"]
+    }
+    state = dfa["start_state_id"]
+    for byte in token:
+        state = transitions.get((state, bytes([byte])))
+        if state is None:
+            return False
+    return state in dfa["accepting_state_ids"]
+
+
+@pytest.mark.unit
+def test_a6_r01_full_form_dfa_uses_missing_first_subtraction():
+    dfa = compiler.compile_numeric_form_dfa(
+        2,
+        0,
+        "unsigned_ascii_integer",
+        "left_ascii_space_padding",
+        excluded_tokens=(b" 0", b"99"),
+    )
+    expected = {f"{value:2d}".encode("ascii") for value in range(100)} - {
+        b" 0",
+        b"99",
+    }
+    actual = {
+        bytes((first, second))
+        for first in range(256)
+        for second in range(256)
+        if _dfa_accepts(dfa, bytes((first, second)))
+    }
+    assert actual == expected
+
+
+@pytest.mark.unit
+def test_full_form_dfa_preserves_sign_point_and_space_actions():
+    dfa = compiler.compile_numeric_form_dfa(
+        5,
+        2,
+        "leading_ascii_minus_signed_literal_ascii_decimal",
+        "left_ascii_space_padding",
+    )
+    assert _dfa_accepts(dfa, b"-2.40")
+    assert _dfa_accepts(dfa, b" 2.40")
+    assert not _dfa_accepts(dfa, b"-0.00")
+    assert not _dfa_accepts(dfa, b"+2.40")
+    actions = {row["value_action"] for row in dfa["transition_rows"]}
+    assert {"no_op", "set_negative", "consume_decimal_point"} <= actions

@@ -8,7 +8,8 @@
 - The source compiler byte-law foundation is implemented and tested.
 - The canonical evidence loader and streaming fixed-width framer are
   implemented and tested against the actual A6 bytes.
-- Corpus-wide derivation and artifact construction are in progress.
+- The complete source-derived ten-terminal census reproduces exactly.
+- Full derivation-row and artifact construction are in progress.
 
 ## Done
 
@@ -48,8 +49,20 @@
 - Authenticated and executed the embedded A7-R11 source-only runner, covered
   all 32 forbidden physical routes plus the four-field aggregate through the
   real atomic guard, and authenticated the A7-R10a graph/marker preimages.
+- Implemented the source-only semantic normalizer, exact deferred literal
+  registration, analytic finite-range arithmetic, form/arm selection,
+  padding partitions, and closed ten-terminal classifier.
+- Reproduced all ten ratified counts (17,329 / 1,853 / 674 / 47 / 67,316 /
+  1,145 / 0 / 1 / 421 / 813), denominator SHA `7e497f20...`, count SHA
+  `421105ab...`, ordered-assignment SHA `5c9020ad...`, every per-terminal
+  key digest, and the seven-row failure-reason artifact SHA `66a88e6f...`.
+- Implemented compact full-form DFA construction with finite missing-first
+  subtraction, without enumerating `10**width` token domains.
+- The committed-corpus integration suite passes all eleven A6 raw-vector
+  digests and dispositions. The independent classifier run peaked at
+  1,334,181,888 bytes RSS, below the 8 GB ceiling.
 
 ## Next
 
-- Implement the streaming all-field classifier and exact terminal census.
-- Serialize the complete source relation and keep Q5 unread and uncreated.
+- Construct every 16-key derivation row and serialize the complete relation.
+- Keep Q5 unread and uncreated.
