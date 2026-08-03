@@ -38266,6 +38266,18 @@ it does not apply §22.2.2's representation threshold. In particular, the
 820,025,893,984-member `compiled_source_numeric_grammar` subtotal includes
 members from both threshold arms and is not the analytic-arm population.
 
+This section also settles the one placement §20.3.2 leaves to inference: in
+every count below, a renderable member of a range in a
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+field belongs to that range's `renderable_member_rows` relation value whether
+its exact image is arm-invariant or arm-ambiguous, because on that branch
+§22.3.2 draws the authoritative image from the separate virtual invariant
+relation rather than from a narrowed renderable relation; all 56,480 such
+arm-ambiguous renderable members are therefore renderable here, and the
+rejected alternative reading, which would move them to
+`unrenderable_member_rows`, would read 4,753,875 and 820,704,425,212 in the
+next two rows instead.
+
 The physical lower-bound facts are:
 
 | Fact | Exact measured or derived value | Population provenance and governing rule |
@@ -38276,14 +38288,15 @@ The physical lower-bound facts are:
 | threshold-partition identity | `4,736,892 + 820,704,442,195 = 820,709,179,087` | Every source-range member occurs in exactly one renderable/unrenderable relation value and exactly one per-relation threshold arm; no status subtotal defines an arm |
 | bytes even if each member were `{}` plus minimum array commas/brackets and the required terminal LF, `3N + 2` | `3 × 820,709,179,087 + 2 = 2,462,127,537,263 bytes` | Here `N` is the complete 820,709,179,087-member population above, not either threshold arm |
 | preceding impossible empty-object lower bound | 2.239 TiB | Binary-TiB expression of the preceding all-member byte floor |
-| shortest lawful inherited member-row lower bound | `820,704,442,195 members × 325 bytes/member = 266,728,943,713,375 bytes`; dividing that exact numerator by `2^40` gives `242.5885611168041577911935746669769287109375 TiB`, hence more than 242.588 TiB | The numerator is exactly the `N > 4,096` analytic-arm population above. The 325-byte multiplier is the compact sorted-key serialization of the inherited seven-key renderable row at its lawful minima: one-digit `source_member_index`, `canonical_value`, `parsed_scalar`, and `rendered_decimal_places`; one raw byte `30` for image and replay; one `append_digit_0` action; and one-character values for the required-nonempty numeric `typed_value_unit` and `source_meaning`. The otherwise identical 324-byte candidate has unlawful `source_meaning:""` |
+| shortest lawful inherited member-row lower bound, as a per-shape floor sum | `820,701,994,620 renderable members × 325 bytes/member = 266,728,148,251,500 bytes` plus `2,447,575 unrenderable members × 260 bytes/member = 636,369,500 bytes`, exactly `266,728,784,621,000 bytes` in total; dividing that exact total by `2^40` gives `242.5884164231320028193295001983642578125 TiB`, hence more than 242.588 TiB | The analytic arm carries two different row shapes, so each member is charged only the floor of its own shape and no multiplier is applied to a population it does not govern. The 9,055 `N > 4,096` containers above are exactly 9,019 `renderable_member_rows` values holding 820,701,994,620 members and 36 `unrenderable_member_rows` values holding 2,447,575 members, every one of the 36 inside `compiled_source_numeric_grammar_partial_range_exact_replay`; the two member counts sum to that same analytic-arm population. The 325-byte multiplier is the compact sorted-key serialization of the inherited seven-key renderable row at its lawful minima, identical in both the `json_integer` and `rational` type arms: one-digit `source_member_index`, `canonical_value`, `parsed_scalar`, and `rendered_decimal_places`; one raw byte `30` for image and replay; one `append_digit_0` action; and one-character values for the required-nonempty numeric `typed_value_unit` and `source_meaning`. The otherwise identical 324-byte candidate has unlawful `source_meaning:""`. The 260-byte multiplier is that same serialization of the §22.2.1 and §20.3.2 four-key unrenderable row — `source_member_index`, `source_value`, JSON-null `physical_image_raw_token_hex`, and the shorter closed reason `no_exact_width_selected_form_image` — at those same minima under the `rational` type arm, whose shortest lawful atom is `0/1`; the `json_integer` arm of that four-key row is 264 bytes, and each unrenderable member takes the floor of its own range's retained type. All 36 of those containers are `rational` ranges of step `1/100`, so 260 bytes is every counted unrenderable member's own floor |
 | available storage at the blocked lane | approximately 1.304 TiB | Measured capacity available to the blocked source-compiler lane |
 
 The 2.239-TiB lower bound already exceeds available storage while containing
 none of the mandatory row information. The exact row bound uses only the
-820,704,442,195 members in per-relation analytic-arm containers and omits
-every array delimiter, comma, and explicit-arm member, so it too is a lower
-bound; it is over 185 times available capacity. Revision 9
+820,704,442,195 members in per-relation analytic-arm containers, charges each
+one exactly the lawful minimum of its own row shape, and omits every array
+delimiter, comma, and explicit-arm member, so it too is a lower bound; it is
+over 185 times available capacity. Revision 9
 simultaneously requires the explicit arrays and forbids an analytic
 replacement. The required artifact is therefore physically unconstructible
 on the measured system and implausible hardware. This is the third discovered
