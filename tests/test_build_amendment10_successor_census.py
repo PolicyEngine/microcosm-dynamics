@@ -196,7 +196,7 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         0,
         0,
         0,
-        "8ecc92a6a134fec30a3575e2eff8305dd1d6d17f6230d75555262c38b5300a7f",
+        "010961ded9f62dfb45f414029fdd27c22f326509d7ee2cd78cf0a650660df7e9",
     )
     assert (
         pins.denotation_start_occurrence_row_count,
@@ -206,11 +206,11 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
     ) == (
         2_240_669,
         268_223_757,
-        "6b239ef7b534c0b9c6f5350808b20017f9b3392f3f3d91cd56d00f2d9b9a33d5",
+        "9dbbf103fb2de53210383da3bfa8c16aac4c1367addfc43e890516775c28c850",
         (
-            ("whole_domain_denotation", 8_234),
+            ("whole_domain_denotation", 8_258),
             ("explicit_no_whole_domain_denotation", 4_532),
-            ("explicit_no_denotation", 2_227_903),
+            ("explicit_no_denotation", 2_227_879),
             ("unadjudicated_start", 0),
         ),
     )
@@ -224,8 +224,8 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         59_445,
         1_114_747,
         8_466_288,
-        "ef31ee7f41ab33b0ad683c6f5a8597258277e5a19932ac850d235ced28a2d95f",
-        "df58afe79ea36b39e3a39477b7566f7e0d47dd34c75c83b669fcf072a8235345",
+        "67a1aa301ee79a4939e27f9b95a0795c8aa935b54b9f38bea22af9b728dbeee9",
+        "ddd4a48d3508247e4be04bd2959ca1b59bbf5f4b448ca843fc2d044804f795e1",
     )
     assert (
         pins.coding_start_authority_row_count,

@@ -11,9 +11,10 @@ the lawful raw relation. The expanded semantic repair is now applied: 108
 construction predicates are context rather than defeat; the V21488 inflation
 note, ER12067 1997-dollar note, ER3062 month-code, and ER2005 numeral-MMDD
 families have exact grammar and start rows. Complete-description regressions
-pass. The first regeneration remains provisional because section 24 still
-understates the weekly-food family as 20 rather than 22 fields, conflates two
-candidate-text distinct counts, and carries the prior pins and fixtures.
+pass. The production census has been regenerated and frozen on the repaired
+relations. Its successor vector is
+`[4842,171,49,0,67316,1145,0,1,421,15654]`; the production gate passes.
+Section 24 still carries the prior narrative, pins, fences, and fixtures.
 
 ## Done
 
@@ -71,11 +72,17 @@ candidate-text distinct counts, and carries the prior pins and fixtures.
 - Split the contextual candidate table's 717,810 distinct texts from the
   717,823-text union that adds 13 raw-Actual-only spellings; both are now
   named and independently pinned in the gate schema. All 76 gate tests pass.
+- Rebuilt the complete census at 1,123,909,632-byte peak RSS, froze every
+  projected pin, and reran the production gate successfully against the
+  21,548,823-byte lawful raw relation.
+- Verified the final start partition is W=8,258, N=4,532, D=2,227,879,
+  U=0 across all 2,240,669 occurrences, with zero unselected or overselected
+  starts; all 258 focused authority and gate tests pass.
 
 ## Next
 
-- Regenerate every downstream pin and §24 fixture, then rerun prefix,
-  relation, test, formatting, and diff checks.
+- Regenerate every downstream §24 narrative, fence, and fixture, then rerun
+  prefix, relation, test, formatting, and diff checks.
 - Obtain another independent review against both round-2 verdicts and resolve
   any actionable finding.
 - Write the final report, remove this progress file, and commit the cleanup.
