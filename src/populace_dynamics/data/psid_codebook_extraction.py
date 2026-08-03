@@ -7,15 +7,22 @@ the registered documents themselves — the 43 family codebook PDFs under the
 §19.3.3 pinned page-text derivation, and the four 2021/2023 value-label
 files under the two setup-statement parser families.
 
-Three normalized-entry members are deliberately *not* populated here.
-``raw_token_hex`` is deferred by §20.3.2, which makes §19's "select one
-physical arm before inserting every normalized literal" conditional and
-requires the complete semantic relation to be parsed without it.
-``value_type`` is derived below from the entry's own retained bounds.
-``typed_value_unit`` has no source-determined value anywhere in the
-registered corpus; :func:`undetermined_entry_members` names it, and
+Three normalized-entry members are deliberately *not* populated here, for
+two different reasons.  ``raw_token_hex`` is deferred by §20.3.2, which
+makes §19's "select one physical arm before inserting every normalized
+literal" conditional and requires the complete semantic relation to be
+parsed without it; the pre-profile constructor inserts it later.
+``typed_value_unit`` and ``missing_reason_code`` are different: no
+registered codebook page, value-label statement, or setup statement carries
+either value, so neither has a source-determined derivation at all.
+:func:`undetermined_entry_members` names those two, and
 :func:`validate_document_derivation` refuses to call a derivation
-§19.3.2-complete while it is unresolved.
+§19.3.2-complete while they are unresolved.
+
+Everything else is source-derived: ``entry_ref``, ``entry_kind``,
+``source_value_lexeme``, ``source_meaning``, ``value_type``,
+``typed_disposition``, ``canonical_value``, and a range's
+``inclusive_min``/``inclusive_max``/``step``.
 """
 
 from __future__ import annotations
@@ -100,11 +107,16 @@ def undetermined_entry_members() -> tuple[str, ...]:
     """Return the normalized-entry members no registered source determines.
 
     §19.3.2 requires a nonempty ``typed_value_unit`` on every rational or
-    integer literal and on every numeric range, and §19.3.2 further requires
-    a value-code range to obtain type and unit "from the complete codebook
-    domain".  No registered codebook page, value-label statement, or setup
-    statement carries a unit lexeme, so the member has no source-determined
-    value and is emitted as JSON null with this declaration.
+    integer literal and on every numeric range, and requires a value-code
+    range to obtain type and unit "from the complete codebook domain"; it
+    likewise requires a missing literal to carry "a nonempty source-backed
+    reason".  The registered corpus states neither.  A codebook value block
+    displays only count, percent, value-or-range, and meaning; the two
+    value-label languages display only value and meaning; and the setup
+    documents declare only coordinates, labels, and numeric formats.  The
+    design fixes no ``missing_reason_code`` vocabulary anywhere.  Both
+    members are therefore emitted as JSON null with this declaration rather
+    than filled from an invented default.
     """
 
     return ("typed_value_unit", "missing_reason_code")
