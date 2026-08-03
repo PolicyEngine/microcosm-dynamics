@@ -39,7 +39,9 @@ ANALYTIC_KEYS = (
 RANGE_INTERVAL_ROW_KEYS = ("source_entry_ref", "intervals", "member_count")
 VALUE_TYPES = ("json_integer", "rational")
 
-_RATIONAL_ATOM = re.compile(r"-?(0|[1-9][0-9]*)/[1-9][0-9]*\Z")
+# Section 22.2.2 admits no plus, whitespace, grouping, exponent, leading
+# zero, negative zero, or zero denominator, and spells zero exactly `0/1`.
+_RATIONAL_ATOM = re.compile(r"(0|-?[1-9][0-9]*)/[1-9][0-9]*\Z")
 
 
 def is_json_integer(value: Any) -> bool:
