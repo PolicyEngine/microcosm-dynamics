@@ -38241,6 +38241,9 @@ The blocked implementation report is the repository-external authoring
 record `sol-ce-v3compiler-blocked-report.md`, exactly 1,325 bytes with
 SHA-256
 `4addef1a8b8bbc0694d17bd46c763ea94fce9cdced4056fa44e7faa7e3f15b0e`.
+Its historical 241.642-TiB row estimate was the conservative underestimate
+that triggered Amendment 8; the corrected exact A8-R04 fact table below
+supersedes that figure.
 The source-derived classifier implementation at commit
 `b78e4b5d0878dfd192a3d6060f2f801d2bfe2b0d` is empirical evidence, not
 design or future implementation authority. It authenticates the same D7
@@ -38258,22 +38261,29 @@ The exact passing-compiled range-member decomposition is:
 | `compiled_source_numeric_grammar_partial_range_exact_replay` | 47 | 48 | 682,035,700 |
 | **Complete compiled relation** | **19,903** | **33,786** | **820,709,179,087** |
 
+This decomposition partitions source-range members by `derivation_status`;
+it does not apply §22.2.2's representation threshold. In particular, the
+820,025,893,984-member `compiled_source_numeric_grammar` subtotal includes
+members from both threshold arms and is not the analytic-arm population.
+
 The physical lower-bound facts are:
 
-| Fact | Exact measured or derived value |
-|---|---:|
-| mandatory logical range members in compiled rows | 820,709,179,087 |
-| bytes even if each member were `{}` plus minimum array commas/brackets and the required terminal LF, `3N + 2` | 2,462,127,537,263 bytes |
-| preceding impossible empty-object lower bound | 2.239 TiB |
-| shortest lawful inherited member-row lower bound | `compiled_source_numeric_grammar` subset only: `820,025,893,984 members * 324 bytes/member = 265,688,389,650,816 bytes`; dividing that exact numerator by `2^40` gives `241.642182709998451173305511474609375 TiB`, hence at least 241.642 TiB |
-| available storage at the blocked lane | approximately 1.304 TiB |
+| Fact | Exact measured or derived value | Population provenance and governing rule |
+|---|---:|---|
+| mandatory logical range members in compiled rows | 820,709,179,087 | Sum of every source-range-member occurrence across all 19,903 passing compiled field rows and four statuses; equivalently, the exact cover obtained by merging each of the 33,786 per-range `renderable_member_rows` and `unrenderable_member_rows` relation pairs |
+| members in explicit-arm relation containers | 4,736,892 | For each named `renderable_member_rows` or `unrenderable_member_rows` relation value separately, sum its `N` members when `N <= 4,096`; §22.2.2 requires each such relation value to retain the inherited explicit array |
+| members in analytic-arm relation containers | 820,704,442,195 | For each same named relation value separately, sum its `N` members when `N > 4,096`; §22.2.2 requires each such relation value to use the analytic object |
+| threshold-partition identity | `4,736,892 + 820,704,442,195 = 820,709,179,087` | Every source-range member occurs in exactly one renderable/unrenderable relation value and exactly one per-relation threshold arm; no status subtotal defines an arm |
+| bytes even if each member were `{}` plus minimum array commas/brackets and the required terminal LF, `3N + 2` | `3 × 820,709,179,087 + 2 = 2,462,127,537,263 bytes` | Here `N` is the complete 820,709,179,087-member population above, not either threshold arm |
+| preceding impossible empty-object lower bound | 2.239 TiB | Binary-TiB expression of the preceding all-member byte floor |
+| shortest lawful inherited member-row lower bound | `820,704,442,195 members × 325 bytes/member = 266,728,943,713,375 bytes`; dividing that exact numerator by `2^40` gives `242.5885611168041577911935746669769287109375 TiB`, hence more than 242.588 TiB | The numerator is exactly the `N > 4,096` analytic-arm population above. The 325-byte multiplier is the compact sorted-key serialization of the inherited seven-key renderable row at its lawful minima: one-digit `source_member_index`, `canonical_value`, `parsed_scalar`, and `rendered_decimal_places`; one raw byte `30` for image and replay; one `append_digit_0` action; and one-character values for the required-nonempty numeric `typed_value_unit` and `source_meaning`. The otherwise identical 324-byte candidate has unlawful `source_meaning:""` |
+| available storage at the blocked lane | approximately 1.304 TiB | Measured capacity available to the blocked source-compiler lane |
 
 The 2.239-TiB lower bound already exceeds available storage while containing
-none of the mandatory row information. The 241.642-TiB bound deliberately
-uses only the table's 820,025,893,984-member
-`compiled_source_numeric_grammar` subset and
-omits every array delimiter, comma, and other-status member, so it too is a
-lower bound; it is over 185 times available capacity. Revision 9
+none of the mandatory row information. The exact row bound uses only the
+820,704,442,195 members in per-relation analytic-arm containers and omits
+every array delimiter, comma, and explicit-arm member, so it too is a lower
+bound; it is over 185 times available capacity. Revision 9
 simultaneously requires the explicit arrays and forbids an analytic
 replacement. The required artifact is therefore physically unconstructible
 on the measured system and implausible hardware. This is the third discovered
