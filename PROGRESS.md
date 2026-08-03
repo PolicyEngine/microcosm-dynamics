@@ -9,7 +9,8 @@
 - The canonical evidence loader and streaming fixed-width framer are
   implemented and tested against the actual A6 bytes.
 - The complete source-derived ten-terminal census reproduces exactly.
-- Full derivation-row and artifact construction are in progress.
+- Exact field-level derivation details are implemented for serialization.
+- Exact artifact emission is blocked by a revision-9 storage contradiction.
 
 ## Done
 
@@ -61,8 +62,21 @@
 - The committed-corpus integration suite passes all eleven A6 raw-vector
   digests and dispositions. The independent classifier run peaked at
   1,334,181,888 bytes RSS, below the 8 GB ceiling.
+- Added source-derived field details for final literal producer transitions,
+  missing registration, nonmissing counts, token-form candidates, padding-arm
+  candidates, selected form/disposition, and analytic exhaustive range counts.
+- Verified A6-R01 through R11 details, including V93's 3,733/1,069 zero-arm
+  split, V945's 429,270/263,430 exhaustive range partition, V117's 87/9
+  invariant/ambiguous range split, and V11812's unrendered short literal.
+- Proved the raw §20 artifact is not physically representable here: its
+  passing compiled rows contain 820,709,179,087 mandatory serialized range
+  members. Empty braces plus minimum commas require 2.239 TiB, exceeding
+  1.304 TiB available; the shortest lawful renderable-row bound is 241.642
+  TiB. Section 20 forbids replacing these arrays with analytic summaries.
 
 ## Next
 
-- Construct every 16-key derivation row and serialize the complete relation.
+- Obtain authority for a revision-9 successor representation (for example,
+  analytic range partitions plus their exact counts/digests) or at least
+  242 TiB of artifact storage before constructing the 16-key rows/artifact.
 - Keep Q5 unread and uncreated.

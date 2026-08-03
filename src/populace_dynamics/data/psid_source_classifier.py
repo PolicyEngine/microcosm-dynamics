@@ -89,6 +89,85 @@ class _Range:
         return int((self.maximum - self.minimum) / self.step) + 1
 
 
+@dataclass(frozen=True)
+class FieldDerivationDetails:
+    """Source-derived field details needed by artifact serialization."""
+
+    interview_wave: int
+    raw_field_id: str
+    normalized_literals: tuple[dict[str, Any], ...]
+    normalized_ranges: tuple[dict[str, Any], ...]
+    registered_literals: tuple[dict[str, Any], ...]
+    missing_raw_token_hexes: tuple[str, ...]
+    record_count: int
+    nonmissing_observation_count: int
+    selected_token_form: str | None
+    token_form_candidate_results: tuple[dict[str, Any], ...]
+    padding_arm_candidate_results: tuple[dict[str, Any], ...]
+    selected_arm: str | None
+    range_renderability_counts: tuple[dict[str, Any], ...]
+    derivation_status: str
+    resolution_reason: str
+
+    def as_dict(self) -> dict[str, Any]:
+        """Return a JSON-serializable, source-ordered projection."""
+
+        return {
+            "interview_wave": self.interview_wave,
+            "raw_field_id": self.raw_field_id,
+            "normalized_literals": list(self.normalized_literals),
+            "normalized_ranges": list(self.normalized_ranges),
+            "registered_literals": list(self.registered_literals),
+            "missing_raw_token_hexes": list(self.missing_raw_token_hexes),
+            "record_count": self.record_count,
+            "nonmissing_observation_count": (
+                self.nonmissing_observation_count
+            ),
+            "selected_token_form": self.selected_token_form,
+            "token_form_candidate_results": list(
+                self.token_form_candidate_results
+            ),
+            "padding_arm_candidate_results": list(
+                self.padding_arm_candidate_results
+            ),
+            "selected_arm": self.selected_arm,
+            "range_renderability_counts": list(
+                self.range_renderability_counts
+            ),
+            "derivation_status": self.derivation_status,
+            "resolution_reason": self.resolution_reason,
+        }
+
+
+def _fraction_projection(value: Fraction) -> dict[str, int]:
+    return {
+        "numerator": value.numerator,
+        "denominator": value.denominator,
+    }
+
+
+def _normalized_literal_projection(literal: _Literal) -> dict[str, Any]:
+    return {
+        "source_entry_index": literal.index,
+        "source_value_lexeme": literal.lexeme,
+        "source_scalar": _fraction_projection(literal.scalar),
+        "source_meaning": literal.meaning,
+        "typed_disposition": "missing" if literal.missing else "ordinary",
+    }
+
+
+def _normalized_range_projection(item: _Range) -> dict[str, Any]:
+    return {
+        "source_entry_index": item.index,
+        "source_value_lexeme": item.lexeme,
+        "inclusive_min": _fraction_projection(item.minimum),
+        "inclusive_max": _fraction_projection(item.maximum),
+        "step": _fraction_projection(item.step),
+        "source_member_count": item.count,
+        "source_meaning": item.meaning,
+    }
+
+
 def _parse_number(text: str) -> Fraction:
     normalized = text.replace(",", "")
     if normalized.startswith("."):
@@ -445,7 +524,10 @@ def _classify_numeric(
     observations: Counter[bytes],
     literals: Sequence[_Literal],
     ranges: Sequence[_Range],
+    trace: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
+    if trace is None:
+        trace = {}
     declaration = _NUM_FORMAT.fullmatch(field.declared_format)
     if declaration is None:
         return _terminal(
@@ -453,6 +535,8 @@ def _classify_numeric(
             "observed_token_outside_all_candidate_forms_or_semantics",
         )
     width, decimal_places = map(int, declaration.groups())
+    trace["width"] = width
+    trace["decimal_places"] = decimal_places
 
     if any(
         _ranges_overlap(first, second)
@@ -465,6 +549,9 @@ def _classify_numeric(
         )
 
     registrations: dict[int, bytes] = {}
+    producer_transitions: dict[int, str] = {}
+    trace["registrations"] = registrations
+    trace["producer_transitions"] = producer_transitions
     for literal in literals:
         _, registered, producer = _literal_candidates(
             literal,
@@ -472,6 +559,7 @@ def _classify_numeric(
             decimal_places,
             observations,
         )
+        producer_transitions[literal.index] = producer
         if producer == "mixed_observed":
             return _terminal(CONFLICTING, "mixed_literal_candidate_evidence")
         if registered is not None:
@@ -498,7 +586,13 @@ def _classify_numeric(
         for token, frequency in observations.items()
         if token not in missing_tokens
     )
+    trace["nonmissing_observation_count"] = nonmissing_count
     if nonmissing_count == 0:
+        for literal in literals:
+            if literal.index not in registrations:
+                producer_transitions[literal.index] = (
+                    "zero_count_physical_unestablished"
+                )
         if ranges:
             return _terminal(RANGE_UNESTABLISHED, "zero_nonmissing_range")
         return _terminal(VALUE_CODE_ONLY, "zero_nonmissing_literal_domain")
@@ -550,15 +644,46 @@ def _classify_numeric(
         for token, frequency in observations.items()
         if token not in missing_tokens and token.lstrip(b" ").startswith(b"-")
     )
+    record_count = sum(observations.values())
+    acceptance_vectors = {
+        token: [
+            token in missing_tokens
+            or candidate_values[token_form][token] is not None
+            for token_form in numeric_form_order(decimal_places)
+        ]
+        for token in observations
+    }
+    form_diagnostic_count = sum(
+        frequency
+        for token, frequency in observations.items()
+        if token not in missing_tokens
+        and any(acceptance_vectors[token])
+        and not all(acceptance_vectors[token])
+    )
+    token_form_results: list[dict[str, Any]] = []
     passing_forms = []
     for token_form, values in candidate_values.items():
-        covers = all(
-            token in missing_tokens or value is not None
-            for token, value in values.items()
+        accepted_count = sum(
+            frequency
+            for token, frequency in observations.items()
+            if token in missing_tokens or values[token] is not None
         )
+        rejected_count = record_count - accepted_count
+        covers = rejected_count == 0
         sign_matches = (minus_count > 0) == _is_signed(token_form)
-        if covers and sign_matches:
+        passes = covers and sign_matches
+        token_form_results.append(
+            {
+                "token_form_kind": token_form,
+                "accepted_observation_count": accepted_count,
+                "diagnostic_observation_count": form_diagnostic_count,
+                "rejected_observation_count": rejected_count,
+                "status": "pass" if passes else "fail",
+            }
+        )
+        if passes:
             passing_forms.append(token_form)
+    trace["token_form_candidate_results"] = tuple(token_form_results)
     if len(passing_forms) > 1:
         return _terminal(CONFLICTING, "multiple_passing_token_forms")
     if not passing_forms:
@@ -578,6 +703,7 @@ def _classify_numeric(
         )
 
     token_form = passing_forms[0]
+    trace["selected_token_form"] = token_form
     selected_values = candidate_values[token_form]
     deferred = [
         literal for literal in literals if literal.index not in registrations
@@ -605,13 +731,18 @@ def _classify_numeric(
         zero_image, space_image = selected_images[literal.index]
         if zero_image is not None and zero_image == space_image:
             registrations[literal.index] = zero_image
+            producer_transitions[literal.index] = "common_image"
 
-    zero_accepts = True
-    space_accepts = True
+    arm_accepted = {
+        "zero_left_padding": 0,
+        "left_ascii_space_padding": 0,
+    }
     diagnostic_count = 0
     observed_invariant = True
     for token, frequency in observations.items():
         if token in missing_tokens:
+            for arm in PADDING_ARMS:
+                arm_accepted[arm] += frequency
             continue
         value = selected_values[token]
         if value is None:
@@ -635,8 +766,33 @@ def _classify_numeric(
         if zero_image != space_image:
             diagnostic_count += frequency
             observed_invariant = False
-        zero_accepts &= zero_image == token
-        space_accepts &= space_image == token
+        if zero_image == token:
+            arm_accepted["zero_left_padding"] += frequency
+        if space_image == token:
+            arm_accepted["left_ascii_space_padding"] += frequency
+
+    arm_results: list[dict[str, Any]] = []
+    for arm in PADDING_ARMS:
+        accepted_count = arm_accepted[arm]
+        rejected_count = record_count - accepted_count
+        if rejected_count == 0 and diagnostic_count == 0:
+            arm_status = "indistinguishable"
+        elif rejected_count == 0 and diagnostic_count > 0:
+            arm_status = "pass"
+        else:
+            arm_status = "fail"
+        arm_results.append(
+            {
+                "profile_kind": arm,
+                "accepted_observation_count": accepted_count,
+                "diagnostic_observation_count": diagnostic_count,
+                "rejected_observation_count": rejected_count,
+                "status": arm_status,
+            }
+        )
+    trace["padding_arm_candidate_results"] = tuple(arm_results)
+    zero_accepts = arm_accepted["zero_left_padding"] == record_count
+    space_accepts = arm_accepted["left_ascii_space_padding"] == record_count
 
     if diagnostic_count > 0:
         if not space_accepts or zero_accepts:
@@ -649,6 +805,8 @@ def _classify_numeric(
                     "selected_space_literal_unrenderable",
                 )
             registrations[literal.index] = space_image
+            producer_transitions[literal.index] = "selected_space"
+        trace["selected_arm"] = "left_ascii_space_padding"
         if not ranges:
             return _terminal(VALUE_CODE_ONLY, "diagnostic_literal_domain")
         range_counts = [
@@ -660,6 +818,7 @@ def _classify_numeric(
             )
             for item in ranges
         ]
+        trace["range_counts"] = tuple(range_counts)
         if any(renderable == 0 for renderable, _ in range_counts):
             return _terminal(
                 UNSUPPORTED,
@@ -685,6 +844,15 @@ def _classify_numeric(
         and width == decimal_places + 2
     )
     if structural:
+        if width == 1:
+            trace["selected_arm"] = (
+                "padding_arm_underdetermined_width_one_exact_replay_v1"
+            )
+        else:
+            trace["selected_arm"] = (
+                "padding_arm_underdetermined_no_padding_capacity_"
+                "exact_replay_v1"
+            )
         for literal in deferred:
             zero_image, space_image = selected_images[literal.index]
             if zero_image is None or zero_image != space_image:
@@ -703,6 +871,7 @@ def _classify_numeric(
             )
             for item in ranges
         ]
+        trace["range_counts"] = tuple(range_counts)
         if any(renderable == 0 for renderable, _ in range_counts):
             return _terminal(
                 UNSUPPORTED,
@@ -734,13 +903,16 @@ def _classify_numeric(
         )
         for item in ranges
     ]
+    trace["range_counts"] = tuple(range_counts)
     ambiguous_literals = 0
+    ambiguous_literal_indices: list[int] = []
     for literal in deferred:
         zero_image, space_image = selected_images[literal.index]
         if zero_image is not None and zero_image == space_image:
             registrations[literal.index] = zero_image
         elif zero_image is not None and space_image is not None:
             ambiguous_literals += 1
+            ambiguous_literal_indices.append(literal.index)
         else:
             return _terminal(UNSUPPORTED, "finite_literal_unrenderable")
 
@@ -759,6 +931,9 @@ def _classify_numeric(
         invariant > 0 for _, invariant in range_counts
     )
     if all_renderable and ambiguous_count == 0:
+        trace["selected_arm"] = (
+            "padding_arm_underdetermined_no_padding_capacity_exact_replay_v1"
+        )
         return _terminal(
             PADDING_UNDERDETERMINED,
             "finite_complete_equality",
@@ -768,6 +943,12 @@ def _classify_numeric(
         and every_range_has_invariant
         and observed_invariant
     ):
+        trace["selected_arm"] = (
+            "padding_arm_underdetermined_finite_domain_arm_ambiguous_"
+            "exact_replay_v1"
+        )
+        for index in ambiguous_literal_indices:
+            producer_transitions[index] = "finite_arm_ambiguous_candidate_only"
         return _terminal(FINITE_ARM_AMBIGUOUS, "finite_arm_ambiguous")
     return _terminal(
         INCOMPLETE,
@@ -817,6 +998,176 @@ def _classify_character(
     if ranges:
         return _terminal(RANGE_UNESTABLISHED, "character_range")
     return _terminal(VALUE_CODE_ONLY, "character_literal_domain")
+
+
+def _coerce_observations(
+    observations: Mapping[bytes, int],
+) -> Counter[bytes]:
+    result: Counter[bytes] = Counter()
+    for token, frequency in observations.items():
+        if not isinstance(token, bytes):
+            raise TypeError("observation tokens must be exact bytes")
+        if isinstance(frequency, bool) or not isinstance(frequency, int):
+            raise TypeError("observation frequencies must be JSON integers")
+        if frequency <= 0:
+            raise ValueError("observation frequencies must be positive")
+        result[token] += frequency
+    if not result:
+        raise ValueError("field observation relation must be nonempty")
+    return result
+
+
+def derive_field_details(
+    field: SourceField,
+    observations: Mapping[bytes, int],
+) -> FieldDerivationDetails:
+    """Derive one field's complete classifier inputs and disposition.
+
+    The function neither reads expected census membership nor consults another
+    field.  ``observations`` is the exact byte/frequency relation produced by
+    source framing for ``field``.
+    """
+
+    observed = _coerce_observations(observations)
+    literals, ranges = _normalize_entries(field)
+    trace: dict[str, Any] = {}
+    if _CHR_FORMAT.fullmatch(field.declared_format):
+        status, reason = _classify_character(
+            field,
+            observed,
+            literals,
+            ranges,
+        )
+        width = field.raw_width
+        registrations = {
+            literal.index: literal.lexeme.encode("ascii")
+            for literal in literals
+            if len(literal.lexeme.encode("ascii")) == width
+        }
+        producer_transitions = {
+            literal.index: (
+                "strict_unchanged_width_character"
+                if literal.index in registrations
+                else "field_level_closed_failure"
+            )
+            for literal in literals
+        }
+        missing_images = {
+            registrations[literal.index]
+            for literal in literals
+            if literal.missing and literal.index in registrations
+        }
+        nonmissing_count = sum(
+            frequency
+            for token, frequency in observed.items()
+            if token not in missing_images
+        )
+    else:
+        status, reason = _classify_numeric(
+            field,
+            observed,
+            literals,
+            ranges,
+            trace,
+        )
+        registrations = trace.get("registrations", {})
+        producer_transitions = trace.get("producer_transitions", {})
+        nonmissing_count = trace.get(
+            "nonmissing_observation_count",
+            sum(observed.values()),
+        )
+
+    registered_literals = []
+    missing_raw_token_hexes = []
+    seen_missing: set[bytes] = set()
+    for literal in literals:
+        image = registrations.get(literal.index)
+        producer = producer_transitions.get(
+            literal.index,
+            "field_level_closed_failure",
+        )
+        if image is not None:
+            disposition = "registered_authoritative_image"
+        elif producer == "finite_arm_ambiguous_candidate_only":
+            disposition = "candidate_only_null_authority"
+        elif producer == "zero_count_physical_unestablished":
+            disposition = "physical_rendering_unestablished"
+        else:
+            disposition = "field_level_closed_failure"
+        registered_literals.append(
+            {
+                "source_entry_index": literal.index,
+                "source_value_lexeme": literal.lexeme,
+                "typed_disposition": (
+                    "missing" if literal.missing else "ordinary"
+                ),
+                "raw_token_hex": image.hex() if image is not None else None,
+                "producer_transition": producer,
+                "final_disposition": disposition,
+            }
+        )
+        if literal.missing and image is not None and image not in seen_missing:
+            missing_raw_token_hexes.append(image.hex())
+            seen_missing.add(image)
+
+    range_counts = trace.get("range_counts")
+    if range_counts is None:
+        range_renderability_counts = tuple(
+            {
+                "source_entry_index": item.index,
+                "source_member_count": item.count,
+                "renderable_member_count": None,
+                "arm_invariant_renderable_member_count": None,
+                "arm_ambiguous_renderable_member_count": None,
+                "unrenderable_member_count": None,
+            }
+            for item in ranges
+        )
+    else:
+        range_renderability_counts = tuple(
+            {
+                "source_entry_index": item.index,
+                "source_member_count": item.count,
+                "renderable_member_count": renderable,
+                "arm_invariant_renderable_member_count": invariant,
+                "arm_ambiguous_renderable_member_count": (
+                    renderable - invariant
+                ),
+                "unrenderable_member_count": item.count - renderable,
+            }
+            for item, (renderable, invariant) in zip(
+                ranges,
+                range_counts,
+                strict=True,
+            )
+        )
+    return FieldDerivationDetails(
+        interview_wave=field.interview_wave,
+        raw_field_id=field.raw_field_id,
+        normalized_literals=tuple(
+            _normalized_literal_projection(literal) for literal in literals
+        ),
+        normalized_ranges=tuple(
+            _normalized_range_projection(item) for item in ranges
+        ),
+        registered_literals=tuple(registered_literals),
+        missing_raw_token_hexes=tuple(missing_raw_token_hexes),
+        record_count=sum(observed.values()),
+        nonmissing_observation_count=nonmissing_count,
+        selected_token_form=trace.get("selected_token_form"),
+        token_form_candidate_results=trace.get(
+            "token_form_candidate_results",
+            (),
+        ),
+        padding_arm_candidate_results=trace.get(
+            "padding_arm_candidate_results",
+            (),
+        ),
+        selected_arm=trace.get("selected_arm"),
+        range_renderability_counts=range_renderability_counts,
+        derivation_status=status,
+        resolution_reason=reason,
+    )
 
 
 def _failure_reason_rows(
@@ -871,23 +1222,13 @@ def classify_complete_corpus(
         raise ValueError("raw census keyset differs from field denominator")
 
     classifications: list[dict[str, Any]] = []
+    field_details: list[dict[str, Any]] = []
     assignment: list[list[Any]] = []
     for field in corpus.fields:
-        literals, ranges = _normalize_entries(field)
-        if _CHR_FORMAT.fullmatch(field.declared_format):
-            status, reason = _classify_character(
-                field,
-                observations[field.key],
-                literals,
-                ranges,
-            )
-        else:
-            status, reason = _classify_numeric(
-                field,
-                observations[field.key],
-                literals,
-                ranges,
-            )
+        details = derive_field_details(field, observations[field.key])
+        status = details.derivation_status
+        reason = details.resolution_reason
+        field_details.append(details.as_dict())
         classifications.append(
             {
                 "interview_wave": field.interview_wave,
@@ -907,6 +1248,8 @@ def classify_complete_corpus(
     result = {
         "classification_rows": classifications,
         "classification_row_count": len(classifications),
+        "field_details": field_details,
+        "field_detail_count": len(field_details),
         "denominator_sha256": canonical_sha256(field_keys),
         "count_rows": count_rows,
         "count_array_sha256": canonical_sha256(count_rows),

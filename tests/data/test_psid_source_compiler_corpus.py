@@ -26,6 +26,11 @@ def all_raw_derivations(evidence_corpus):
 
 
 @pytest.fixture(scope="module")
+def complete_classification(evidence_corpus, all_raw_derivations):
+    return classify_complete_corpus(evidence_corpus, all_raw_derivations)
+
+
+@pytest.fixture(scope="module")
 def wave_1968_derivation(all_raw_derivations):
     return next(
         row
@@ -99,6 +104,7 @@ def test_a6_1968_raw_framing_and_observed_token_digests(
 def test_a6_r01_through_r11_and_complete_ratified_census(
     evidence_corpus,
     all_raw_derivations,
+    complete_classification,
 ):
     census_by_key = {
         (row["interview_wave"], row["raw_field_id"]): row
@@ -145,7 +151,7 @@ def test_a6_r01_through_r11_and_complete_ratified_census(
         for key in vector_digests
     } == vector_digests
 
-    result = classify_complete_corpus(evidence_corpus, all_raw_derivations)
+    result = complete_classification
     assert result["denominator_sha256"] == (
         "7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764"
     )
@@ -184,3 +190,129 @@ def test_a6_r01_through_r11_and_complete_ratified_census(
         ),
         "value_code_range_physical_rendering_unestablished",
     ]
+
+
+def test_a6_r01_through_r11_field_derivation_details(
+    complete_classification,
+):
+    details = {
+        (row["interview_wave"], row["raw_field_id"]): row
+        for row in complete_classification["field_details"]
+    }
+    expectations = {
+        (1968, "V93"): (
+            4_802,
+            "unsigned_ascii_integer",
+            "left_ascii_space_padding",
+        ),
+        (1979, "V6302"): (
+            6_373,
+            "unsigned_ascii_integer",
+            "left_ascii_space_padding",
+        ),
+        (1988, "V15133"): (
+            7_114,
+            "unsigned_ascii_integer",
+            "padding_arm_underdetermined_width_one_exact_replay_v1",
+        ),
+        (1968, "V210"): (
+            512,
+            "unsigned_literal_ascii_decimal",
+            (
+                "padding_arm_underdetermined_no_padding_capacity_"
+                "exact_replay_v1"
+            ),
+        ),
+        (1968, "V76"): (
+            4_802,
+            "leading_ascii_minus_signed_integer",
+            "left_ascii_space_padding",
+        ),
+        (1979, "V6363"): (
+            6_373,
+            "unsigned_literal_ascii_decimal",
+            "left_ascii_space_padding",
+        ),
+        (1969, "V945"): (
+            4_460,
+            "leading_ascii_minus_signed_literal_ascii_decimal",
+            "left_ascii_space_padding",
+        ),
+        (1968, "V97"): (
+            4_802,
+            "unsigned_ascii_integer",
+            (
+                "padding_arm_underdetermined_no_padding_capacity_"
+                "exact_replay_v1"
+            ),
+        ),
+        (1985, "V11811"): (0, None, None),
+        (1968, "V117"): (
+            4_799,
+            "unsigned_ascii_integer",
+            (
+                "padding_arm_underdetermined_finite_domain_arm_"
+                "ambiguous_exact_replay_v1"
+            ),
+        ),
+        (1985, "V11812"): (0, None, None),
+    }
+    assert {
+        key: (
+            details[key]["nonmissing_observation_count"],
+            details[key]["selected_token_form"],
+            details[key]["selected_arm"],
+        )
+        for key in expectations
+    } == expectations
+
+    assert details[(1968, "V93")]["padding_arm_candidate_results"] == [
+        {
+            "profile_kind": "zero_left_padding",
+            "accepted_observation_count": 3_733,
+            "diagnostic_observation_count": 1_069,
+            "rejected_observation_count": 1_069,
+            "status": "fail",
+        },
+        {
+            "profile_kind": "left_ascii_space_padding",
+            "accepted_observation_count": 4_802,
+            "diagnostic_observation_count": 1_069,
+            "rejected_observation_count": 0,
+            "status": "pass",
+        },
+    ]
+    v945_ranges = details[(1969, "V945")]["range_renderability_counts"]
+    assert sum(row["source_member_count"] for row in v945_ranges) == 692_700
+    assert sum(row["renderable_member_count"] for row in v945_ranges) == (
+        429_270
+    )
+    assert sum(row["unrenderable_member_count"] for row in v945_ranges) == (
+        263_430
+    )
+    assert details[(1968, "V117")]["range_renderability_counts"] == [
+        {
+            "source_entry_index": 0,
+            "source_member_count": 96,
+            "renderable_member_count": 96,
+            "arm_invariant_renderable_member_count": 87,
+            "arm_ambiguous_renderable_member_count": 9,
+            "unrenderable_member_count": 0,
+        }
+    ]
+    for key in ((1985, "V11811"), (1985, "V11812")):
+        assert details[key]["token_form_candidate_results"] == []
+        assert details[key]["padding_arm_candidate_results"] == []
+    v11812_literals = {
+        row["source_value_lexeme"]: row
+        for row in details[(1985, "V11812")]["registered_literals"]
+    }
+    assert v11812_literals["0"]["raw_token_hex"] == "2030"
+    assert v11812_literals["1"] == {
+        "source_entry_index": 1,
+        "source_value_lexeme": "1",
+        "typed_disposition": "ordinary",
+        "raw_token_hex": None,
+        "producer_transition": "zero_count_physical_unestablished",
+        "final_disposition": "physical_rendering_unestablished",
+    }
