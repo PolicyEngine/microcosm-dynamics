@@ -40217,6 +40217,7 @@ including its arm-invariant precision and its cross-relation binding to the
 fourteen-key ambiguous row. A normal build success without the subsequent
 successful fresh `--check` is still not a constructible
 `pass_with_closed_failures` relation and still cannot precede Q5.
+
 ### 23.6 Exact replacement inventory and closure sweep
 
 #### 23.6.1 Complete design-family disposition
@@ -40508,6 +40509,7 @@ ordered table, walks every consumer, and reproduces the category counts. An
 omitted, extra, duplicate, misanchored, third-disposition, undefined-successor,
 or incompletely closed comparator blocks ratification. This table becomes an
 immutable revision-11 invariant only at D9.
+
 ### 23.8 Revision-11 lifecycle successors and identifier inventory
 
 #### 23.8.1 D9 and the position-1 successor
