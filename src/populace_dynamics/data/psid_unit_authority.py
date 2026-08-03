@@ -62,6 +62,7 @@ __all__ = [
     "clause_occurrences",
     "description_statements",
     "denotation_candidate_disposition",
+    "denotation_candidate_start_count",
     "denotation_candidate_table",
     "denotation_candidates",
     "extract_statements",
@@ -435,6 +436,19 @@ def denotation_candidates(description: str | None) -> tuple[str, ...]:
         start = stop + 1
     found.extend(actual_candidates(description))
     return tuple(found)
+
+
+def denotation_candidate_start_count(description: str | None) -> int:
+    """Return the number of universal word-start statement candidates.
+
+    Normalization leaves exactly one U+0020 between words.  Every possible
+    §24 statement begins at zero or immediately after one of those spaces, so
+    this count together with the pinned unconditional segment relation proves
+    that no admissible start was omitted by a lexeme or opener filter.
+    """
+
+    normalized = normalize_description(description)
+    return 0 if not normalized else normalized.count(" ") + 1
 
 
 def actual_candidate_disposition(candidate: str) -> str:

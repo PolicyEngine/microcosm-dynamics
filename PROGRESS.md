@@ -2,9 +2,9 @@
 
 ## State
 
-Round-1 remediation is in progress. The frozen input relation has been rebuilt,
-the fail-closed law is hardened, and the source-wide semantic census is now
-complete. Gate pinning, downstream regeneration, and documentation remain.
+Round-1 remediation is in progress. The frozen input relation, source-wide
+semantic census, strict reproduction gate, and downstream storage join are
+complete. Documentation and final verification remain.
 
 ## Done
 
@@ -33,6 +33,10 @@ complete. Gate pinning, downstream regeneration, and documentation remain.
 - Made the residual audit independent of opener vocabulary: 195,513 universal
   period-law segment occurrences plus 322 raw `Actual...` occurrences produce
   a 195,835-occurrence, 59,521-row table with zero unadjudicated rows.
+- Pinned all 2,240,669 admissible normalized word starts in addition to the
+  unconditional segment relation, so an opener filter cannot hide a candidate
+  start; the final gate payload hashes to
+  `8cf990f0e37ad82189d810f84c0a5a0c1116191e7788a07b5d361b7c9f497c22`.
 - Replaced the unsafe generic year match with exact year and encoded-year
   clauses; added faithful dollars-per-week and hundreds-of-dollars units.
 - Regenerated the completed draft successor counts as
@@ -42,11 +46,12 @@ complete. Gate pinning, downstream regeneration, and documentation remain.
   recursive duplicate-key rejection, exact member types, all independent
   input/census/matrix/movement/artifact/candidate/statement/payload pins, and
   abort-without-emission. The production relation passes all frozen pins.
+- Rejoined the final successor assignment to the 19,903-row downstream cache.
+  The 5,028 surviving fields hold 263,680,073,870 logical members; the corrected
+  four-shape exact floor is 85,695,692,636,367 bytes.
 
 ## Next
 
-- Regenerate every dependent census, digest, matrix, movement, artifact, and
-  downstream figure using the mandated interpreter.
-- Correct the normative prose, lifecycle scope, provenance, floor arithmetic,
-  and report-only leakage; run full verification; remove this ledger before
-  completion.
+- Replace §24 with the completed census, executable pins, corrected lifecycle,
+  provenance, and floor arithmetic; run full verification; write the external
+  report; remove this ledger before completion.
