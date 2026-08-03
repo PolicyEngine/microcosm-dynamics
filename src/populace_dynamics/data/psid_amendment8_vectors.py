@@ -16,8 +16,8 @@ from fractions import Fraction
 from typing import Any
 
 from .psid_analytic_partition import (
-    AnalyticRelation,
     MEMBER_THRESHOLD,
+    AnalyticRelation,
     NormalizedRange,
     RangeEntry,
     analytic_object,
