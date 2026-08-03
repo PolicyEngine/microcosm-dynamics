@@ -78,10 +78,13 @@
       "vector_id": "A8-R04"
     }
   ],
+  "analytic_arm_interval_count": 67594,
   "analytic_arm_member_count": 820704442195,
   "analytic_arm_renderable_container_count": 9019,
+  "analytic_arm_renderable_interval_count": 38289,
   "analytic_arm_renderable_member_count": 820701994620,
   "analytic_arm_unrenderable_container_count": 36,
+  "analytic_arm_unrenderable_interval_count": 29305,
   "analytic_arm_unrenderable_member_count": 2447575,
   "arm_ambiguous_renderable_member_count": 56480,
   "complete_field_count": 19903,
@@ -91,10 +94,9 @@
   "denominator_sha256": "7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764",
   "explicit_arm_container_count": 58517,
   "explicit_arm_member_count": 4736892,
-  "facts_sha256": "7d67ba46a3be3f99f69ecafad2a4c4deb96942f8ad9eacc77430a9898de50533",
+  "facts_sha256": "c703d0fe43da575a1739d19cfd54ae924c73f570083ee5e8293eba7988874de5",
   "failure_reason_rows_sha256": "66a88e6f1138c738892eeb80af22458d57c11a8033315ceba591534ce6908324",
   "ordered_assignment_sha256": "5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e",
-  "peak_rss_bytes": 3538223104,
   "range_partition_row_count": 33786,
   "schema_version": "v3_analytic_storage_facts.v1",
   "status_decomposition_rows": [
