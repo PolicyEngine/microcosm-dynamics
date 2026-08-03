@@ -44,6 +44,10 @@ from populace_dynamics.data.psid_unit_authority import (  # noqa: E402
     statement_table,
     successor_census,
 )
+from populace_dynamics.data.psid_unit_predicate_authority import (  # noqa: E402
+    EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES,
+    PREDICATE_AUTHORITY,
+)
 
 INPUT_KEYS = (
     "derivation_status",
@@ -109,6 +113,10 @@ class GatePins:
     denotation_candidate_unselected_count: int
     denotation_candidate_unadjudicated_count: int
     denotation_candidate_table_sha256: str
+    predicate_authority_row_count: int
+    predicate_authority_sha256: str
+    explicit_no_denotation_candidate_count: int
+    explicit_no_denotation_candidate_sha256: str
     statement_table_row_count: int
     statement_table_sha256: str
     unit_bearing_statement_count: int
@@ -166,11 +174,11 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         ("incomplete_source_numeric_authority", 813),
     ),
     count_rows=(
-        ("compiled_source_numeric_grammar", 4_826),
+        ("compiled_source_numeric_grammar", 4_692),
         (
             "compiled_source_numeric_grammar_padding_underdetermined_"
             "exact_replay",
-            153,
+            170,
         ),
         (
             "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_"
@@ -186,27 +194,27 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         ("nonnumeric_source_field_outside_numeric_grammar", 0),
         ("conflicting_source_numeric_format", 1),
         ("unsupported_source_numeric_format", 421),
-        ("incomplete_source_numeric_authority", 15_688),
+        ("incomplete_source_numeric_authority", 15_805),
     ),
     count_array_sha256=(
-        "0247382d47fd2d8e75c197dd65093f11816402902cb89dcf69fbcf09ad00ddba"
+        "4eedf3845787cabb8132b7cec5ac3fc12c81a9da1a9f33fcec340ec954d335da"
     ),
     ordered_assignment_sha256=(
-        "3544deca7a0c2db3165dd2e131dccca905ca55b820191282b962a1c690fcf369"
+        "a37d958fde17b520913c9ceae8444f89a3b9914a9797ca7b1e8efe2c7ac82bc2"
     ),
     status_matrix_rows=(
         (
             "compiled_source_numeric_grammar",
-            (36, 91, 1_705, 1_210, 1_066, 718),
-            4_826,
-            "2e273c4856bac903d8919d80fc5c367dadd679dbbe5126b91176832cb3c00a05",
+            (29, 90, 1_613, 1_198, 1_052, 710),
+            4_692,
+            "78a57200331afb1f281c589dae0d25037e8caa8af5202007f4bf925fa50e4725",
         ),
         (
             "compiled_source_numeric_grammar_padding_underdetermined_"
             "exact_replay",
-            (1, 14, 123, 4, 7, 4),
-            153,
-            "3127708554728cd6cc2925e59d7a27e6497c8ed0baf65808a1c3e724af85f44d",
+            (1, 14, 123, 10, 14, 8),
+            170,
+            "8f07c2ed166464ed35321956d66f738b5518df9ef212ce6ccb32de84b7438ca5",
         ),
         (
             "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_"
@@ -253,17 +261,17 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         ),
         (
             "incomplete_source_numeric_authority",
-            (1_068, 560, 3_575, 2_673, 4_971, 2_841),
-            15_688,
-            "1cc6a3202ae59dd12b1a46be726b93e9600792a30d92bacad655c61dd9cb43cb",
+            (1_075, 561, 3_667, 2_679, 4_978, 2_845),
+            15_805,
+            "befdfdbf0a4344e660635969467e373663e5c4d16582f15a4a0b5b98860eddf8",
         ),
     ),
-    movement_row_count=14_875,
+    movement_row_count=14_992,
     movement_rows_sha256=(
-        "9181f25fbfb238102ad2ffd5b0133dffaf6093b413bb0c4f750cb7c771d654d5"
+        "fb98df0642cba77d674ad828023c6debd4b54643b3ac9b9fbc14ffe328dd344f"
     ),
     movement_key_sha256=(
-        "faf1b3934cf68106537abab257d37a0eec499e036f8ceb10009254994e8cb295"
+        "6bcce3db17451c2b73fa97544c6b4804593237de38a481018ba9225d1f67fd2e"
     ),
     failure_reason_rows=(
         (
@@ -304,13 +312,13 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
         (
             "incomplete_source_numeric_authority",
             "unresolved_typed_value_unit_no_source_authority",
-            14_875,
+            14_992,
         ),
     ),
     failure_reason_row_count=8,
-    failure_reason_rows_byte_count=266_547,
+    failure_reason_rows_byte_count=268_408,
     failure_reason_rows_sha256=(
-        "50ddb89ed61e8dc55ab5b9e49af652430cab6d029da51e2d3f64663e45d994f3"
+        "038364e416830c748fb5404a272cf6c9e715094422441d84ff08e2bcea8a4039"
     ),
     actual_candidate_table_row_count=82,
     actual_candidate_occurrence_count=322,
@@ -323,22 +331,30 @@ EXPECTED_A10_R04_PINS: GatePins | None = GatePins(
     denotation_candidate_unselected_count=0,
     denotation_candidate_unadjudicated_count=0,
     denotation_candidate_table_sha256=(
-        "75406f57f3b25dbfa9b096acb6d299ccaf2e3fa3657f7371c14f08aada467a10"
+        "a8a61db0f8b9663a60a493f3c20ea1c4ff2256f060dc22962eeb814b88275d6a"
     ),
-    statement_table_row_count=2_791,
+    predicate_authority_row_count=2_558,
+    predicate_authority_sha256=(
+        "482decde64943c421a8e04c556e08c9120bbf427874624152f2d93e057eeabda"
+    ),
+    explicit_no_denotation_candidate_count=53_255,
+    explicit_no_denotation_candidate_sha256=(
+        "80e3bf6bbf200c9431a1f9560d8ef268cdc97fe9ede2cedca5f89a374797dde8"
+    ),
+    statement_table_row_count=3_403,
     statement_table_sha256=(
-        "235c582abc4bfa96cfe1ff6e7d518a8b6ad2e480977464315b68477ea97a1253"
+        "8fe68f479e303b28552d885dbc284c86ff657f496da1eebb4a1feb1228627d25"
     ),
-    unit_bearing_statement_count=1_525,
-    unit_bearing_relation_byte_count=237_067,
+    unit_bearing_statement_count=1_532,
+    unit_bearing_relation_byte_count=237_671,
     unit_bearing_relation_sha256=(
-        "da7b72fb26258eb2f9071f66544c979c43b2e5e6ebd5052e4a26c6b50ff12624"
+        "e21865b6d2c480cc254db9b71cdc4e12151d6a07bc7d17a679e49a155c3ec6a5"
     ),
     unit_bearing_relation_array_sha256=(
-        "21f4393d3f348658f496c9bdc4504e3ac6bd30c62f99b399f092638522d3fdf4"
+        "ba7244b3a7539eb54a81353c52008e709458c8e4b906cf84c41ed4374c91d6b3"
     ),
     census_payload_sha256=(
-        "d97ef93d6956dcbd72cd7beb9e058d015d338fb06a73b98a735a05c7030f5979"
+        "02ea701ef59b8a5b5cacc2c17bedb4e82f4ca63a01b875931d9c889ae9772e5d"
     ),
 )
 
@@ -522,6 +538,14 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "denotation_candidate_unselected_count": unselected_candidates,
         "denotation_candidate_unadjudicated_count": unadjudicated,
         "denotation_candidate_table_sha256": canonical_sha256(candidate_rows),
+        "predicate_authority_row_count": len(PREDICATE_AUTHORITY),
+        "predicate_authority_sha256": canonical_sha256(PREDICATE_AUTHORITY),
+        "explicit_no_denotation_candidate_count": len(
+            EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES
+        ),
+        "explicit_no_denotation_candidate_sha256": canonical_sha256(
+            sorted(EXPLICIT_NO_DENOTATION_CANDIDATE_HASHES)
+        ),
         "statement_table_row_count": len(table),
         "statement_table_sha256": canonical_sha256(table),
         "unit_bearing_statement_count": len(unit_rows),
@@ -627,6 +651,14 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         ),
         denotation_candidate_table_sha256=(
             payload["denotation_candidate_table_sha256"]
+        ),
+        predicate_authority_row_count=payload["predicate_authority_row_count"],
+        predicate_authority_sha256=payload["predicate_authority_sha256"],
+        explicit_no_denotation_candidate_count=(
+            payload["explicit_no_denotation_candidate_count"]
+        ),
+        explicit_no_denotation_candidate_sha256=(
+            payload["explicit_no_denotation_candidate_sha256"]
         ),
         statement_table_row_count=payload["statement_table_row_count"],
         statement_table_sha256=payload["statement_table_sha256"],
@@ -840,7 +872,28 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         pins.denotation_candidate_table_sha256,
     )
 
-    # Step 8: complete statement table and both forms of the positive fence.
+    # Step 8: exact semantic registries, complete statement table, and both
+    # forms of the positive fence.
+    _require_equal(
+        "predicate-authority row count",
+        payload["predicate_authority_row_count"],
+        pins.predicate_authority_row_count,
+    )
+    _require_equal(
+        "predicate-authority digest",
+        payload["predicate_authority_sha256"],
+        pins.predicate_authority_sha256,
+    )
+    _require_equal(
+        "explicit no-denotation candidate count",
+        payload["explicit_no_denotation_candidate_count"],
+        pins.explicit_no_denotation_candidate_count,
+    )
+    _require_equal(
+        "explicit no-denotation candidate digest",
+        payload["explicit_no_denotation_candidate_sha256"],
+        pins.explicit_no_denotation_candidate_sha256,
+    )
     unit_bytes = build.unit_bearing_relation_bytes
     _require_equal(
         "statement-table row count",

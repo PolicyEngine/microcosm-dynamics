@@ -73,6 +73,10 @@ pin regeneration, document synchronization, and final verification remain.
   and one conflicting predicate. Exhaustive mutation regressions cover every
   positive row. The newly completed draft census is
   `4,692 / 170 / 49 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 15,805`.
+- Bound the semantic registries and every regenerated relation into A10-R04.
+  The production gate passes on 89,599 rows with assignment digest
+  `a37d958f...`, 14,992 movements, 3,403 statement rows, and payload digest
+  `02ea701e...`; abort-before-emission remains enforced on every inequality.
 
 ## Next
 
