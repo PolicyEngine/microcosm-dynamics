@@ -38187,7 +38187,7 @@ state, or output as the other's expected value fails the independence arm.
 
 #### 22.4.4 A8-R03 — lossy, ambiguous, type-invalid, and count-inconsistent negatives
 
-The validator must reject each following terminal-LF canonical object before
+The validator must reject each following terminal-LF input before
 constructing or accepting a semantic member digest.
 
 The arity-three interval omits the interval member count:
@@ -38265,12 +38265,13 @@ The physical lower-bound facts are:
 | mandatory logical range members in compiled rows | 820,709,179,087 |
 | bytes even if each member were `{}` plus minimum array commas/brackets and the required terminal LF, `3N + 2` | 2,462,127,537,263 bytes |
 | preceding impossible empty-object lower bound | 2.239 TiB |
-| shortest lawful inherited member-row lower bound | ordinary compiled subset only: `820,025,893,984 members * 324 bytes/member = 265,688,389,650,816 bytes`; dividing that exact numerator by `2^40` gives `241.642182709998451173305511474609375 TiB`, hence at least 241.642 TiB |
+| shortest lawful inherited member-row lower bound | `compiled_source_numeric_grammar` subset only: `820,025,893,984 members * 324 bytes/member = 265,688,389,650,816 bytes`; dividing that exact numerator by `2^40` gives `241.642182709998451173305511474609375 TiB`, hence at least 241.642 TiB |
 | available storage at the blocked lane | approximately 1.304 TiB |
 
 The 2.239-TiB lower bound already exceeds available storage while containing
 none of the mandatory row information. The 241.642-TiB bound deliberately
-uses only the table's 820,025,893,984-member ordinary compiled subset and
+uses only the table's 820,025,893,984-member
+`compiled_source_numeric_grammar` subset and
 omits every array delimiter, comma, and other-status member, so it too is a
 lower bound; it is over 185 times available capacity. Revision 9
 simultaneously requires the explicit arrays and forbids an analytic
