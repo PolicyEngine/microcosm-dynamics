@@ -284,8 +284,8 @@ def resolve(page_text: str, selector: Sequence[Any]) -> tuple[int, int]:
 
 _INSTRUMENT_OUT = (
     "Printed instrument screen for {}; read line by line and outside the "
-    "R_Q employment, work-income, and work-history domain, so its worklike "
-    "vocabulary retains no source occurrence."
+    "employment, work-income, and work-history occurrence domain, so its "
+    "worklike vocabulary retains no source occurrence."
 )
 _OBJECTIVES = (
     "Question-by-question interviewer objectives for {}; commentary keyed to "
@@ -294,7 +294,7 @@ _OBJECTIVES = (
 )
 _INSTRUMENT_IN = (
     "Printed instrument screen for {}; read line by line and retained as "
-    "source for the R_Q occurrence domain."
+    "source for the section-19 occurrence domain."
 )
 
 _INSTRUMENT_NONE = (
@@ -302,7 +302,6 @@ _INSTRUMENT_NONE = (
     "employment region, but every printed field is {}, so no source "
     "occurrence is retained."
 )
-
 PAGE_NOTES: dict[int, str] = {
     1: _INSTRUMENT_OUT.format(
         "the interviewer face sheet, office-use box, and section A "

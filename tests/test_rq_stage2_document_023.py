@@ -502,10 +502,20 @@ def test_shard_states_nonauthority_and_emits_no_global_id(
     )
     assert sealed["document_source_position"] == DOCUMENT_SOURCE_POSITION
     raw = ANNOTATION_PATH.read_text(encoding="utf-8")
-    for prefix in FORBIDDEN_ID_PREFIXES:
-        assert prefix not in raw
-    for token in ("questionnaire_slot_id", "global_relationship_rows", "R_Q"):
-        assert token not in raw
+    # Collect first, then assert on the small list: asserting ``token not in
+    # raw`` directly makes pytest introspect a multi-megabyte string on
+    # failure, which stalls the run instead of reporting the offending token.
+    found = [
+        token
+        for token in (
+            *FORBIDDEN_ID_PREFIXES,
+            "questionnaire_slot_id",
+            "global_relationship_rows",
+            "R_Q",
+        )
+        if token in raw
+    ]
+    assert found == []
 
 
 def test_rebuilt_rows_carry_the_displayed_member_order() -> None:

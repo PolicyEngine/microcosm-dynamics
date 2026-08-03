@@ -1437,7 +1437,41 @@ def _adjudicate(
     branches: Sequence[Mapping[str, Any]],
     local_anchors: Sequence[Mapping[str, Any]],
     local_repeats: Sequence[Mapping[str, Any]],
+    page_review_notes: Mapping[int, str],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Project the reviewer's rows onto the candidate domain.
+
+    A rejection carries the reviewer's own page-level reason rather than a
+    single generic code, so no rejection — least of all one on a page the
+    review retained — can read as an unexamined default.
+    """
+
+    retained_pages = {
+        page["page_number"]
+        for page in pages
+        if page["questionnaire_occurrence_ids"]
+    }
+    candidate_occurrence_pages = {
+        row["candidate_occurrence_id"]: row["page_number"]
+        for row in candidates["candidate_occurrence_rows"]
+    }
+
+    def rejection(page_number: int, subject: str) -> tuple[str, str]:
+        reason = page_review_notes[page_number]
+        if page_number in retained_pages:
+            return (
+                "rejected_on_retained_page_after_span_review",
+                f"Page {page_number} is a retained source screen and its "
+                f"{subject} was reviewed span by span against the printed "
+                f"bytes before rejection. {reason}",
+            )
+        return (
+            "rejected_on_page_that_prints_no_retained_field",
+            f"Page {page_number} retains no source occurrence, so its "
+            f"{subject} is rejected on the reviewer's page-level reason. "
+            f"{reason}",
+        )
+
     dispositions: list[dict[str, Any]] = []
     output_adjudications: list[dict[str, Any]] = []
     notes: list[dict[str, Any]] = []
@@ -1499,19 +1533,11 @@ def _adjudicate(
             )
         )
         if disposition == "rejected":
-            notes.append(
-                _note_row(
-                    "occurrence",
-                    candidate_id,
-                    "semantic_false_positive_after_whole_page_review",
-                    (
-                        f"Page {candidate['page_number']} source review rejected "
-                        f"the {candidate['occurrence_kind_candidate']} candidate; "
-                        "the exact slice does not express that document-local "
-                        "section-19 occurrence kind."
-                    ),
-                )
+            code, reason = rejection(
+                candidate["page_number"],
+                f"{candidate['occurrence_kind_candidate']} candidate",
             )
+            notes.append(_note_row("occurrence", candidate_id, code, reason))
         elif disposition in {"modified", "split"}:
             notes.append(
                 _note_row(
@@ -1664,14 +1690,13 @@ def _adjudicate(
             )
         )
         if disposition == "rejected":
-            notes.append(
-                _note_row(
-                    "flow_path",
-                    candidate_id,
-                    "candidate_path_not_selected_by_source_ancestry",
-                    "The complete source review rejected this alternative path or its source label.",
-                )
+            code, reason = rejection(
+                candidate_occurrence_pages[
+                    candidate["source_candidate_occurrence_id"]
+                ],
+                "candidate flow path",
             )
+            notes.append(_note_row("flow_path", candidate_id, code, reason))
         elif disposition in {"modified", "split"}:
             notes.append(
                 _note_row(
@@ -1759,13 +1784,14 @@ def _adjudicate(
             )
         )
         if disposition == "rejected":
+            code, reason = rejection(
+                candidate_occurrence_pages[
+                    candidate["source_candidate_occurrence_id"]
+                ],
+                "candidate anchor classification",
+            )
             notes.append(
-                _note_row(
-                    "anchor_classification",
-                    candidate_id,
-                    "anchor_candidate_rejected_with_source_occurrence",
-                    "The candidate anchor classification has no retained source-local anchor occurrence.",
-                )
+                _note_row("anchor_classification", candidate_id, code, reason)
             )
         elif disposition in {"modified", "split"}:
             notes.append(
@@ -1952,6 +1978,10 @@ def build_annotation(
         branches,
         local_anchors,
         local_repeats,
+        {
+            row["page_number"]: row["review_note"]
+            for row in review["page_review_rows"]
+        },
     )
     seal = _seal(
         locator,
@@ -2618,6 +2648,10 @@ def validate_annotation(
         branches,
         local_anchors,
         local_repeats,
+        {
+            row["page_number"]: row["review_note"]
+            for row in review["page_review_rows"]
+        },
     )
     expected_arrays = (
         ("whole_document_locator", locator),
