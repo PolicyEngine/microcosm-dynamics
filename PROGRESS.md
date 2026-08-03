@@ -14,6 +14,11 @@ any amendment edit.
 - Reproduced the starting document length (3,435,048 bytes) and SHA-256
   (`ab4f132b6ba655054f4dbd64672b5275f99fe822406df4103c9dff70df84ca72`).
 - Confirmed the requested branch and starting commit exactly.
+- Implemented A10-R04 transactional emission in commit `1f1c80c`: all outputs
+  are staged, byte-count/SHA-256 validated, atomically replaced, and rolled
+  back together on replacement failure. Added second-replacement failure
+  injection and changed CLI stdout from truncated to complete JSON. The
+  focused runner suite passes (78 tests).
 
 ## Next
 
@@ -22,7 +27,7 @@ any amendment edit.
    explicit defeat adjudications and V31 as a negative control.
 3. Regenerate the authority/vector/pins/floors/fixtures and A10-R01..R05.
 4. Repair the cumulative food count and three-act pin history.
-5. Make A10-R04 truly transactional, add second-write failure injection, and
-   eliminate truncated stdout JSON.
+5. Synchronize A10-R04's document contract and regenerated pins with the
+   committed transactional implementation.
 6. Run focused and full verification, recheck the protected prefix, write the
    final report output, then remove `PROGRESS.md` in the final commit.
