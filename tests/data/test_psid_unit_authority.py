@@ -1,0 +1,408 @@
+"""Tests for the Amendment 10 (§24) unit-authority machinery."""
+
+from __future__ import annotations
+
+import pytest
+
+from populace_dynamics.data.psid_unit_authority import (
+    ANCHORS,
+    ARTIFACT_PARTITION,
+    CLAUSE_TABLE,
+    COMPILED_TERMINALS,
+    FAILURE_TERMINALS,
+    NO_UNIT,
+    TERMINAL_ORDER,
+    UNIT_ABSENT_RESOLUTION_REASON,
+    UNIT_VOCABULARY,
+    artifact_of_position,
+    canonical_json_bytes,
+    canonical_sha256,
+    clause_occurrences,
+    extract_statements,
+    failure_reason_rows,
+    field_unit,
+    normalize_description,
+    statement_anchor,
+    statement_disposition,
+    statement_predicate,
+    statement_table,
+    successor_census,
+    successor_terminal,
+)
+
+COMPILED = "compiled_source_numeric_grammar"
+PARTIAL_RANGE = "compiled_source_numeric_grammar_partial_range_exact_replay"
+INCOMPLETE = "incomplete_source_numeric_authority"
+UNSUPPORTED = "unsupported_source_numeric_format"
+CONFLICTING = "conflicting_source_numeric_format"
+VALUE_CODE_ONLY = "value_code_domain_no_numeric_grammar"
+RANGE_UNESTABLISHED = "value_code_range_physical_rendering_unestablished"
+
+DOLLARS = "The values for this variable represent dollars and cents."
+PER_HOUR = "The values for this variable represent dollars and cents per hour."
+HOURS = (
+    "The values for this variable represent the actual number of hours per "
+    'week Wife/"Wife" worked.'
+)
+
+
+# --------------------------------------------------------------------------
+# Stage 1 — normalization
+# --------------------------------------------------------------------------
+
+
+def test_normalization_is_exactly_three_steps() -> None:
+    assert normalize_description("a\nb") == "a b"
+    assert normalize_description("a   b") == "a b"
+    assert normalize_description("  a\n   b  ") == "a b"
+    assert normalize_description(None) == ""
+
+
+def test_normalization_preserves_case_punctuation_and_quotes() -> None:
+    raw = "Wife's/\"Wife's\" PAY’ — A.B."
+    assert normalize_description(raw) == raw
+
+
+def test_normalization_does_not_fold_tabs_or_other_whitespace() -> None:
+    # Only LF and U+0020 participate; the derivation already stripped
+    # per-line leading and trailing tabs, so a surviving tab is content.
+    assert normalize_description("a\tb") == "a\tb"
+
+
+# --------------------------------------------------------------------------
+# Stage 2 — statement extraction
+# --------------------------------------------------------------------------
+
+
+def test_statement_requires_a_space_or_text_start_before_the_anchor() -> None:
+    assert extract_statements(DOLLARS) == (DOLLARS,)
+    assert extract_statements("AMOUNT " + DOLLARS) == (DOLLARS,)
+    # Glued on the left, so neither the capitalized opener nor the
+    # lowercase one that would otherwise start at "values" can open.
+    assert extract_statements("xvalues for this variable represent x.") == ()
+
+
+def test_nested_anchor_cannot_open_a_second_statement() -> None:
+    text = "The value for this variable represents dollars and cents."
+    assert extract_statements(text) == (text,)
+    assert statement_anchor(text) == "The value for this variable "
+
+
+def test_terminator_ignores_an_interior_decimal_point() -> None:
+    text = "The values for this variable represent 1.5 hours per week."
+    assert extract_statements(text) == (text,)
+
+
+def test_terminator_stops_at_the_first_period_before_a_space() -> None:
+    text = "The values for this variable represent dollars. Something else."
+    assert extract_statements(text) == (
+        "The values for this variable represent dollars.",
+    )
+
+
+def test_unterminated_statement_runs_to_the_end_of_the_text() -> None:
+    text = "The values for this variable represent dollars and cents"
+    assert extract_statements(text) == (text,)
+
+
+def test_two_statements_are_returned_in_text_order() -> None:
+    text = f"{DOLLARS} {HOURS}"
+    assert extract_statements(text) == (DOLLARS, HOURS)
+
+
+def test_every_anchor_is_reachable() -> None:
+    for anchor in ANCHORS:
+        text = f"{anchor}dollars and cents."
+        assert extract_statements(text) == (text,)
+
+
+# --------------------------------------------------------------------------
+# Stage 2 — whole-domain predicate
+# --------------------------------------------------------------------------
+
+
+def test_range_scoped_statement_has_no_whole_domain_predicate() -> None:
+    text = (
+        "The values for this variable in the range 00001-99998 represent "
+        "the amount of child support received in whole dollars."
+    )
+    assert extract_statements(text) == (text,)
+    assert statement_predicate(text) is None
+    assert statement_disposition(text) == (
+        None,
+        "not_a_whole_domain_denotation",
+    )
+
+
+def test_whole_domain_predicate_strips_subject_and_verb() -> None:
+    assert statement_predicate(DOLLARS) == "dollars and cents."
+    assert (
+        statement_predicate("This variable represents whole dollars.")
+        == "whole dollars."
+    )
+
+
+# --------------------------------------------------------------------------
+# Stage 3 — the clause table
+# --------------------------------------------------------------------------
+
+
+def test_maximal_munch_prefers_the_longer_nested_clause() -> None:
+    assert statement_disposition(PER_HOUR) == (
+        "united_states_dollar_per_hour",
+        "unit_naming_clause",
+    )
+    assert statement_disposition(DOLLARS) == (
+        "united_states_dollar",
+        "unit_naming_clause",
+    )
+
+
+def test_two_distinct_units_in_one_statement_fail_closed() -> None:
+    text = (
+        "The values for this variable represent dollars and cents per hour; "
+        "if salary is given as an annual figure, it is divided by 2000 "
+        "hours per year; if weekly, by 40 hours per week."
+    )
+    assert statement_disposition(text) == (None, "conflicting_unit_clauses")
+
+
+def test_a_defeating_clause_beats_a_unit_clause() -> None:
+    text = (
+        "The values for this variable represent the actual marginal tax "
+        "rate based on this person's percent proration, taxable income, "
+        "number of exemptions, and tax table used."
+    )
+    assert statement_disposition(text) == (None, "defeating_clause")
+
+
+def test_a_statement_naming_no_unit_fails_closed() -> None:
+    text = (
+        "The values for this variable represent overall income profits or "
+        "losses."
+    )
+    assert statement_disposition(text) == (None, "no_unit_naming_clause")
+
+
+def test_administration_does_not_match_a_ratio_defeater() -> None:
+    text = (
+        "The values for this variable represent the Veterans Administration "
+        "Pension income of all other FU members in the FU in 1992 in whole "
+        "dollars."
+    )
+    assert statement_disposition(text)[0] == "united_states_dollar"
+
+
+def test_clause_occurrences_drop_only_strictly_contained_matches() -> None:
+    hits = clause_occurrences("dollars and cents per hour")
+    assert [unit for _start, _end, unit in hits] == [
+        "united_states_dollar_per_hour"
+    ]
+
+
+def test_every_clause_unit_is_in_the_closed_vocabulary() -> None:
+    for _clause, unit in CLAUSE_TABLE:
+        assert unit == NO_UNIT or unit in UNIT_VOCABULARY
+
+
+def test_clause_table_has_no_duplicate_clause() -> None:
+    clauses = [clause for clause, _unit in CLAUSE_TABLE]
+    assert len(clauses) == len(set(clauses))
+
+
+# --------------------------------------------------------------------------
+# Field disposition
+# --------------------------------------------------------------------------
+
+
+def test_field_with_no_statement_has_no_unit() -> None:
+    assert field_unit("House value") == (None, "no_denotation_statement")
+    assert field_unit(None) == (None, "no_denotation_statement")
+
+
+def test_field_takes_the_single_unit_its_statements_name() -> None:
+    assert field_unit(f"AMOUNT {DOLLARS}") == (
+        "united_states_dollar",
+        "derived_from_denotation_statement",
+    )
+
+
+def test_field_with_two_distinct_statement_units_fails_closed() -> None:
+    assert field_unit(f"{DOLLARS}\n{HOURS}") == (
+        None,
+        "conflicting_statement_units",
+    )
+
+
+def test_field_whose_only_statement_names_nothing_fails_closed() -> None:
+    text = "The values for this variable represent the actual age of the Head."
+    assert field_unit(text) == (None, "no_statement_names_a_unit")
+
+
+def test_line_wrapped_statement_still_matches() -> None:
+    wrapped = "The values for this variable represent dollars\nand cents."
+    assert field_unit(wrapped)[0] == "united_states_dollar"
+
+
+# --------------------------------------------------------------------------
+# The successor terminal function
+# --------------------------------------------------------------------------
+
+
+def test_compiled_field_without_a_unit_moves_to_incomplete() -> None:
+    assert successor_terminal(COMPILED, None) == (INCOMPLETE, True)
+    assert successor_terminal(PARTIAL_RANGE, None) == (INCOMPLETE, True)
+
+
+def test_compiled_field_with_a_unit_does_not_move() -> None:
+    for terminal in COMPILED_TERMINALS:
+        assert successor_terminal(terminal, "united_states_dollar") == (
+            terminal,
+            False,
+        )
+
+
+@pytest.mark.parametrize(
+    "terminal",
+    [
+        VALUE_CODE_ONLY,
+        RANGE_UNESTABLISHED,
+        "nonnumeric_source_field_outside_numeric_grammar",
+        CONFLICTING,
+        UNSUPPORTED,
+        INCOMPLETE,
+    ],
+)
+def test_precedence_keeps_every_noncompiled_terminal_fixed(
+    terminal: str,
+) -> None:
+    assert successor_terminal(terminal, None) == (terminal, False)
+    assert successor_terminal(terminal, "week") == (terminal, False)
+
+
+def test_terminal_order_is_the_ten_ratified_terminals() -> None:
+    assert len(TERMINAL_ORDER) == 10
+    assert len(set(TERMINAL_ORDER)) == 10
+    assert COMPILED_TERMINALS <= set(TERMINAL_ORDER)
+    assert set(FAILURE_TERMINALS) <= set(TERMINAL_ORDER)
+
+
+# --------------------------------------------------------------------------
+# Denominator partition
+# --------------------------------------------------------------------------
+
+
+def test_artifact_partition_covers_the_whole_denominator() -> None:
+    assert sum(size for _name, size in ARTIFACT_PARTITION) == 89_599
+    assert artifact_of_position(0) == ARTIFACT_PARTITION[0][0]
+    assert artifact_of_position(3_867) == ARTIFACT_PARTITION[0][0]
+    assert artifact_of_position(3_868) == ARTIFACT_PARTITION[1][0]
+    assert artifact_of_position(89_598) == ARTIFACT_PARTITION[-1][0]
+    with pytest.raises(ValueError):
+        artifact_of_position(89_599)
+
+
+# --------------------------------------------------------------------------
+# Census
+# --------------------------------------------------------------------------
+
+
+def _row(wave: int, field: str, status: str, description: str | None) -> dict:
+    return {
+        "interview_wave": wave,
+        "raw_field_id": field,
+        "derivation_status": status,
+        "resolution_reason": "structural_literal_domain",
+        "source_description": description,
+    }
+
+
+def test_successor_census_moves_only_unitless_compiled_fields() -> None:
+    rows = [
+        _row(1968, "A", COMPILED, f"pay {DOLLARS}"),
+        _row(1968, "B", COMPILED, "House value"),
+        _row(1968, "C", UNSUPPORTED, "House value"),
+        _row(1968, "D", VALUE_CODE_ONLY, "House value"),
+    ]
+    census = successor_census(rows)
+    counts = {
+        row["derivation_status"]: row["field_count"]
+        for row in census["count_rows"]
+    }
+    assert counts[COMPILED] == 1
+    assert counts[INCOMPLETE] == 1
+    assert counts[UNSUPPORTED] == 1
+    assert counts[VALUE_CODE_ONLY] == 1
+    assert census["movement_row_count"] == 1
+    moved = census["movement_rows"][0]
+    assert moved["raw_field_id"] == "B"
+    assert moved["resolution_reason"] == UNIT_ABSENT_RESOLUTION_REASON
+    assert moved["unit_absence_reason"] == "no_denotation_statement"
+    assert census["field_count"] == 4
+    assert census["denominator_sha256"] == canonical_sha256(
+        [[1968, "A"], [1968, "B"], [1968, "C"], [1968, "D"]]
+    )
+
+
+def test_successor_census_rejects_a_duplicate_field_key() -> None:
+    rows = [
+        _row(1968, "A", COMPILED, None),
+        _row(1968, "A", COMPILED, None),
+    ]
+    with pytest.raises(ValueError, match="duplicate field key"):
+        successor_census(rows)
+
+
+def test_successor_census_rejects_an_unknown_terminal() -> None:
+    with pytest.raises(ValueError, match="unknown ratified terminal"):
+        successor_census([_row(1968, "A", "made_up", None)])
+
+
+def test_successor_census_rejects_a_short_row() -> None:
+    row = _row(1968, "A", COMPILED, None)
+    del row["resolution_reason"]
+    with pytest.raises(ValueError, match="missing"):
+        successor_census([row])
+
+
+def test_failure_reason_rows_follow_precedence_then_reason() -> None:
+    rows = failure_reason_rows(
+        [
+            (1970, "B", INCOMPLETE, "zeta"),
+            (1969, "A", UNSUPPORTED, "beta"),
+            (1971, "C", INCOMPLETE, "alpha"),
+            (1972, "D", CONFLICTING, "gamma"),
+            (1973, "E", COMPILED, "not-a-failure"),
+        ]
+    )
+    assert [
+        (row["derivation_status"], row["resolution_reason"]) for row in rows
+    ] == [
+        (CONFLICTING, "gamma"),
+        (UNSUPPORTED, "beta"),
+        (INCOMPLETE, "alpha"),
+        (INCOMPLETE, "zeta"),
+    ]
+    assert rows[2]["field_keys"] == [[1971, "C"]]
+
+
+def test_statement_table_is_sorted_and_carries_a_witness() -> None:
+    rows = [
+        _row(1968, "B", COMPILED, HOURS),
+        _row(1968, "A", COMPILED, f"{DOLLARS} {HOURS}"),
+    ]
+    table = statement_table(rows)
+    assert [row["statement"] for row in table] == sorted({DOLLARS, HOURS})
+    by_statement = {row["statement"]: row for row in table}
+    assert by_statement[HOURS]["field_count"] == 2
+    assert by_statement[HOURS]["witness_field_key"] == [1968, "B"]
+    assert by_statement[DOLLARS]["typed_value_unit"] == (
+        "united_states_dollar"
+    )
+
+
+def test_canonical_serialization_matches_section_10_1() -> None:
+    assert canonical_json_bytes({"b": 1, "a": 2}) == b'{"a":2,"b":1}\n'
+    assert canonical_sha256([]) == (
+        "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    )
