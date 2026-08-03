@@ -17,10 +17,13 @@ fixture/digest consequences.
   storage arithmetic, and inherited pseudo-JSON-fence disposition.
 - Typed every analytic range-row `member_count` as a nonnegative JSON integer
   excluding booleans and drafted the mandatory `3.0` rejection payload.
+- Made the 100 MiB-to-8 GiB envelope explicitly provisional and
+  non-normative, grounded only as a planning class by the measured compact
+  projection and analytic row inventory.
 
 ## Next
 
-- Verify the new rejection bytes and every retained fixture count/digest.
-- Amend the three precision/disposition findings in section 22.
+- Embed the exact shortest-row TiB numerator and formula.
+- Disposition the inherited D7 illustrative pseudo-JSON fence.
 - Run focused strict-JSON, arithmetic, prefix, scope, and diff-hygiene checks.
 - Remove this ledger and write the final report outside the repository tree.

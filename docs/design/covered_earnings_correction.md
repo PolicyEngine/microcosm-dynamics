@@ -38296,13 +38296,17 @@ T-minus row, change V-B6, or make an otherwise forbidden consumer pass.
 
 #### 22.5.2 Expected artifact scale and byte-stable reproduction
 
-The expected complete threshold-selected artifact is in the **hundreds of
-MiB to low-single-digit GiB** class, not TiB. The planning envelope is at
-least 100 MiB and less than 8 GiB: 89,599 complete field rows and their
-ordinary nested evidence remain, while more than 820 billion repeated
-range-member rows collapse to tens of thousands of exact source-entry/
-interval records plus explicit small relations. This envelope is an
-auditable scale expectation, never permission to omit a row to hit a size.
+For capacity planning only, the complete threshold-selected artifact is
+expected to be in the **hundreds of MiB to low-single-digit GiB** class, not
+TiB. A compact classifier projection measured exactly 298,034,752 bytes;
+that projection and the analytic inventory of 89,599 complete field rows,
+tens of thousands of exact source-entry/interval records, ordinary nested
+evidence, and explicit small relations support the scale class but do not
+measure the complete artifact. The `100 MiB <= size < 8 GiB` envelope is
+therefore explicitly **provisional and non-normative**: it is a planning
+figure, not a derived bound, and has no ratification, validation, `--check`,
+or acceptance force. A lawful artifact may lie outside it. No size result is
+permission to omit a row, interval, identity input, or evidence member.
 
 The revision-10 full-relation identity is the closed six-position JSON value
 array:
@@ -38340,9 +38344,10 @@ inventory, and admitting-cutoff consumer must independently reconstruct it
 from the complete relation bytes that consumer reaches and exact-compare it
 to the frozen value; no outer consumer schema gains a sibling key. A later
 mismatch requires a design successor; revision 10 cannot be repinned. A
-result outside the scale envelope forces a representation/closure audit and
-cannot be accepted merely because its field census or identity-array shape
-matches.
+result outside the provisional scale envelope may prompt a capacity or
+representation/closure audit, but that advisory planning comparison can
+neither block nor supply acceptance. Only the normative complete-byte,
+identity, digest, and `--check` laws determine acceptance.
 
 The builder has one canonical choice at every member container, so two
 conforming builds from the same sources produce byte-identical 16-key rows
@@ -38976,7 +38981,8 @@ This subsection replaces §21.9.2 as the live revision-10 protocol:
    numeric-atom and interval grammar; 4,096 threshold; forward/inverse
    bijection; streaming bytes; every §20/§21 consumer read; A8-R01 through
    A8-R04 payload bytes and digests; 820,709,179,087-member and TiB
-   arithmetic; expected scale; the six-position full-relation identity;
+   arithmetic; the non-normative planning-scale disposition; the six-position
+   full-relation identity;
    mandatory `--check`; §22.6 closure sweep; 48-row comparator census;
    17-name successor inventory; D8/Q5 edge; and every lifecycle/build walk.
    Continue until the exact final bytes receive affirmative ratification.
