@@ -2,9 +2,9 @@
 
 ## State
 
-Core law, evidence vectors, scale/check requirements, and the replacement
-closure are drafted as an append-only successor to revision 9. The pinned
-prefix remains 2,423,590 bytes with SHA-256
+Core law, evidence vectors, scale/check requirements, replacement closure,
+and independent audit corrections are drafted as an append-only successor
+to revision 9. The pinned prefix remains 2,423,590 bytes with SHA-256
 `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
 
 ## Done
@@ -28,9 +28,19 @@ prefix remains 2,423,590 bytes with SHA-256
   successors plus the exact 16+1 identifier inventory.
 - Completed the post-D8 compiler, mandatory `--check`, Q5, guarded inventory,
   ratification, and blocked-registration order.
+- Preserved the inherited no-range DFA/classification path and made the
+  candidate/complementary membership cardinalities exact.
+- Corrected the exact `slot_registry_row` and `official_inventory_row`
+  guarded-consumer enums and closure seeds.
+- Defined the six-position revision-10 full-relation aggregate identity and
+  its independent post-D8 pin-before-Q5 law without inventing unavailable
+  compiler output digests.
+- Clarified the A8 representation fixtures and terminal-LF storage-bound
+  arithmetic.
 
 ## Next
 
-- Run independent completeness and consistency audits over all of §22.
+- Complete the final post-fix independent audits over all of §22.
 - Reverify the immutable prefix, document digest, and diff hygiene.
-- Write the external final report and remove this progress file.
+- Remove this progress file and write the final report to the required
+  output.
