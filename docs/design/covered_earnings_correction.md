@@ -40875,8 +40875,9 @@ This subsection replaces §22.9.2 as the live revision-11 protocol:
 2. Resolve every finding and verify the complete round-to-round diff; exact
    2,521,700-byte D8 prefix and identity; all frozen sources and unchanged
    field/status/failure digests; the four quoted governing sentences and the
-   applied contradiction; the arm-invariance derivation and both ratified
-   witnesses; the six-key row, its lawfulness conditions, and its
+   applied contradiction; the arm-invariance derivation, its closed
+   first-stage enumeration, its A6-R07 witness, and both ratified
+   constructors; the six-key row, its lawfulness conditions, and its
    cross-relation binding; the amended §22.2.3 inverse and its lossiness test;
    the complete promotion boundary; the codebook derivation path and evidence
    exclusion; A9-R01 through A9-R04 payload bytes and digests; the preserved
