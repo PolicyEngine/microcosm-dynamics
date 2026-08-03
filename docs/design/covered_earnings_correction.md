@@ -39783,13 +39783,13 @@ reconcile, so the handling is fixed now and fixed closed:
   `incomplete_source_numeric_authority` and is not a member-row field at all;
 - JSON null in that position is a declaration that the codebook domain
   establishes no unit, never a member-row value. §19 requires a numeric range
-  to carry "a nonempty unit", so no row whose `source_derivation` is
-  `codebook_range_member` — the six-key, seven-key, and four-key partition
-  rows and the eight-key candidate and fourteen-key ambiguous rows alike — may
-  serialize a null `typed_value_unit`, and no count or
-  `*_member_domain_sha256` may be computed over one. §19's own null type,
-  unit, and value for a missing literal are untouched by this and remain
-  lawful;
+  to carry "a nonempty unit", so no numeric-range member row may serialize a
+  null `typed_value_unit` inside its `source_value` — not the six-key,
+  seven-key, or four-key partition row, and not the eight-key candidate or
+  fourteen-key ambiguous row of a member whose `source_derivation` is
+  `codebook_range_member` — and no count or `*_member_domain_sha256` may be
+  computed over one. §19's own null type, unit, and value for a missing
+  literal are untouched by this and remain lawful;
 - the null may not be filled or bypassed by a default, an inferred unit, a
   placeholder literal, a sibling field or wave, a silent dictionary member, a
   consumer, or an evidence artifact, and no field may be carried past the
@@ -39803,11 +39803,11 @@ reconcile, so the handling is fixed now and fixed closed:
 
 The one other normalized-entry member the same report leaves unstated is
 governed identically. §19 requires a missing literal to carry "a nonempty
-source-backed reason", and the design fixes no reason vocabulary anywhere. A
-missing literal is not a `codebook_range_member`, so an unstated reason can
-never enter the added six-key shape; it likewise may not be defaulted or
-invented, and if it moves a field's terminal the obligation in the last bullet
-applies unchanged.
+source-backed reason", and the report finds no source-stated reason vocabulary
+in the registered corpus. A missing literal is not a `codebook_range_member`,
+so an unstated reason can never enter the added six-key shape; it likewise may
+not be defaulted or invented, and if it moves a field's terminal the obligation
+in the last bullet applies unchanged.
 
 The three values are consequently derivable exactly when the 47 codebook
 derivations exist, and are derivable from nothing else. Amendment 9 states
