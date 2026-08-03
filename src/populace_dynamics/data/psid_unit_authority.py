@@ -314,7 +314,10 @@ CLAUSE_TABLE: tuple[tuple[str, str], ...] = (
 )
 
 
-_RATIO_EXTENSION = re.compile(r"(?: [A-Za-z]+)* per [A-Za-z]+")
+_RATIO_PHRASE_TOKEN = r"[A-Za-z0-9()/'\"-]+"
+_RATIO_EXTENSION = re.compile(
+    rf"(?: {_RATIO_PHRASE_TOKEN})* per {_RATIO_PHRASE_TOKEN}"
+)
 
 
 def _unenumerated_ratio_extensions(

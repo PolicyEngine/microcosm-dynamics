@@ -216,6 +216,8 @@ def test_a_per_hour_tail_outranks_the_bare_money_clause() -> None:
         "number of hours per day",
         "number of miles per week",
         "number of persons per acre",
+        "number of hours (0001-2080) per day",
+        "whole dollars (nominal) per hour",
     ],
 )
 def test_unenumerated_longer_ratio_phrase_fails_closed(
