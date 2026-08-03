@@ -40,9 +40,10 @@ CANONICALIZATION = source_tools.CANONICALIZATION
 FLOW_ROOT = "questionnaire-flow:root"
 LOCAL_PRINTED_IDENTIFIER_RE = re.compile(
     r"^\s*(?:\([^\r\n)]{0,24}\)\s*)?"
-    r"([A-Z]{1,10}\d[A-Za-z0-9_.-]{0,22})\s*\.",
+    r"([A-Z][A-Za-z]{0,9}\d[A-Za-z0-9_.-]{0,22})\s*\.",
     re.ASCII,
 )
+LOCAL_PRINTED_IDENTIFIER_CHARACTER_RE = re.compile(r"[A-Za-z0-9_.-]", re.ASCII)
 
 ANNOTATION_ROOT = ROOT / "docs" / "analysis" / "rq_stage2_annotations"
 REVIEW_PATH = (
@@ -405,6 +406,13 @@ def _source_printed_identifier(page_text: str, byte_start: int) -> str | None:
             # this source-local derivation deliberately does not reuse the
             # stricter stage-1 candidate heuristic.
             for character_start in range(relative_start, -1, -1):
+                if character_start > 0 and (
+                    LOCAL_PRINTED_IDENTIFIER_CHARACTER_RE.fullmatch(
+                        line["text"][character_start - 1]
+                    )
+                    is not None
+                ):
+                    continue
                 match = LOCAL_PRINTED_IDENTIFIER_RE.search(
                     line["text"][character_start:]
                 )
