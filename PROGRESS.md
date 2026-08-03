@@ -12,8 +12,10 @@ unconditional whole-domain dollar sentences control all 20 weekly and all
 nine annual fields. The cleartext total-start authority and exact-cover gate
 are implemented over the lawful raw relation. Section 24 has been regenerated
 from those live relations, including the successor vector, all pins, storage
-floors, and the A10-R01--R05 fixtures. Final validation and independent review
-are in progress.
+floors, and the A10-R01--R05 fixtures. Independent review found a further
+copular family in V21488/1992 and V23325/1993 whose embedded `it is in 1967
+dollars` clause was incorrectly dispositioned as no denotation. The semantic
+sweep and downstream regeneration are reopened.
 
 ## Done
 
@@ -47,11 +49,16 @@ are in progress.
   the extended grammar and corrected food adjudication.
 - Verified the regenerated document preserves the complete 2,653,817-byte
   revision-11 prefix byte for byte.
+- Mechanically cross-checked all six embedded fences and every current pin;
+  the gate is internally consistent, but the new semantic finding makes those
+  values provisional.
 
 ## Next
 
-- Commit the regenerated §24 document and progress state.
-- Run the complete prefix, relation, test, formatting, and diff checks.
-- Obtain an independent review against both round-2 verdicts and resolve any
-  actionable finding.
+- Sweep every analogous inflation-note/copular spelling and adjudicate each
+  from its complete raw description.
+- Add complete-description regressions, regenerate every downstream pin and
+  §24 fixture, then rerun prefix, relation, test, formatting, and diff checks.
+- Obtain another independent review against both round-2 verdicts and resolve
+  any actionable finding.
 - Write the final report, remove this progress file, and commit the cleanup.
