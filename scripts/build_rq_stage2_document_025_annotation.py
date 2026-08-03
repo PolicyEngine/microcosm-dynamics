@@ -2762,13 +2762,28 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
         mutations.append((name, mutate))
 
     def select_path_subset(row: dict[str, Any]) -> None:
+        """Replace a lawful path set with a proper subset of itself.
+
+        Every document-25 occurrence resolves under exactly one complete
+        root-to-leaf path, so the multi-parent form of this mutation has no
+        fixture here.  Truncating a conditional occurrence's path back to the
+        bare root is the same defect in its single-path form: the emitted
+        array is a strict prefix-subset of the lawful resolving path and must
+        be rejected.
+        """
+
         for occurrence in row["questionnaire_occurrence_rows"]:
             if len(occurrence["flow_branch_paths"]) > 1:
                 occurrence["flow_branch_paths"] = occurrence[
                     "flow_branch_paths"
                 ][:-1]
                 return
-        raise ValueError("mutation fixture has no multipath occurrence")
+        for occurrence in row["questionnaire_occurrence_rows"]:
+            paths = occurrence["flow_branch_paths"]
+            if len(paths) == 1 and len(paths[0]) > 1:
+                occurrence["flow_branch_paths"] = [paths[0][:1]]
+                return
+        raise ValueError("mutation fixture has no conditional occurrence")
 
     add("missing_page", lambda row: row["questionnaire_page_rows"].pop())
     add(
