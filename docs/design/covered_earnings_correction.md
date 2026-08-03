@@ -39229,12 +39229,19 @@ reading resolves:
    Selecting either one for the row would create the authoritative image that
    three separate passages forbid, in the one field family whose census
    conclusion is that the arm "is unobservable in principle".
-4. §22.2.3 closes the loop against every remaining escape: "If the surrounding
+4. Amendment 8 supplies no escape at either storage arm. §22.2.2 applies its
+   4,096-member threshold to each named relation value separately, and at
+   `N <= 4,096` "the canonical production artifact serializes the inherited
+   explicit array" — that is, the seven-key row itself, so the explicit arm
+   inherits leg 2 unchanged. This is the arm the ratified witnesses actually
+   take: V117/1968's range has 96 members and V5092/1976's has 28. At
+   `N > 4,096` the analytic arm must reconstruct the same inherited row, and
+   §22.2.3 adds a bar of its own for that arm alone: "If the surrounding
    source/profile/arm/DFA values do not determine one unique full row, the
-   analytic arm is lossy and invalid." Under revision 10 the surrounding arm
-   value on this branch is a no-arm disposition and the surrounding DFA
-   excludes both candidates, so no unique full row is determined and any
-   container reaching such a member is invalid.
+   analytic arm is lossy and invalid." On this branch the surrounding arm
+   value is a no-arm disposition and the surrounding DFA excludes both
+   candidates, so the analytic arm fails that test as well. Neither arm can
+   serialize a row that neither can construct.
 
 Revision 10 therefore both requires those 56,480 members to sit in
 `renderable_member_rows` and makes every serialization of them invalid. This
@@ -39242,78 +39249,185 @@ is not an ambiguity a builder may resolve by convention; it is the fourth
 discovered unsatisfiable law, after Amendment 6's registration-totality
 defect, Amendment 7's all-field-pass defect, and Amendment 8's storage
 defect. Until it is settled the complete `pass_with_closed_failures` relation
-cannot be constructed at all, because 674 fields cannot serialize their range
-partitions.
+cannot be constructed at all.
 
-The three inherited relations that already hold the true facts are unchanged
-and are the reason the settlement can be small. The two candidate images, both
-candidate action arrays, both candidate results, both candidate failure
-reasons, the JSON-null authoritative image, and the closed encounter abort are
-already serialized exactly once per member, in the fourteen-key row of
-`complete_domain_arm_disposition.arm_ambiguous_member_rows`, whose relation is
-required to be nonempty on precisely this branch. Nothing about the member is
-unknown. What revision 10 lacks is a lawful row shape for it in the range
-partition.
+The unserializable unit is the member row, not the field, and the amendment
+claims no more than that. Ratified §20.3.2 assigns this compiled status
+"whether the ambiguity occurs in a range, a short literal, or both", so a
+field whose ambiguity lies entirely in short literals has no ambiguous
+numeric-range member and serializes its range partitions unchanged under
+revision 10. What §22.4.5 pins is the member population — 56,480 arm-ambiguous
+numeric-range members across the 1,433 numeric-range entries of the 674
+`compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay`
+fields — and it publishes no per-field cross-tab, so this amendment quantifies
+no count of affected fields anywhere. It needs none. V117/1968 and V5092/1976
+are ratified witnesses that such members exist; every one of them blocks the
+range partition that must contain it, and one blocked partition blocks that
+range's `renderable_member_count` and `*_member_domain_sha256`, its field's
+complete-row hash and derivation ID, and the full-relation identity over all
+of them.
+
+The inherited relations that already hold the true facts are unchanged, and
+that is why the settlement can be small — but there are two of them, and both
+are mandatory. Each arm's
+`candidate_arm_results[*].complete_domain_member_results` carries that arm's
+own inherited eight-key result for the member: its candidate result, its
+exact-width candidate image, its action array, and its failure reason.
+`complete_domain_arm_disposition.arm_ambiguous_member_rows` then carries the
+fourteen-key row that §20.3.2 builds *by comparing* those two projections,
+which additionally carries the JSON-null authoritative image and the closed
+encounter abort; that relation is required to be nonempty on precisely this
+branch. The two serializations are not alternatives and neither may be
+dropped: §20.3.2 makes "omitting either complete candidate relation" a
+derivation failure. Nothing about the member is unknown. What revision 10
+lacks is a lawful row shape for it in the range partition.
 
 #### 23.2.2 Renderability is arm-invariant
 
 Before the row shape is fixed, one derivation is required, because §22.4.5's
 count rule speaks of "an exact-width image" in the singular while the no-arm
 disposition evaluates two constructors. The derivation is from §20.3.3's
-constructor law and adds no premise.
+constructor law and adds no premise. What must be shown is not that a member's
+disposition can be read off a length — it cannot — but that *whether* a member
+has an exact-width image at all is settled before either constructor is
+reached, so that the singular is well formed.
 
-Let `w` be the selected width, `sigma` one for a negative value and zero
-otherwise, `I` the canonical unsigned integral digits, and, under a
-literal-decimal form, `f = min(d, w - sigma - |I| - 1)` the uniquely computed
-fractional precision. §20.3.3 forms the magnitude, the optional single minus,
-and the fractional suffix before any padding, and then states the two
-constructors: "Under the space candidate, prepend the maximal number of `0x20`
-bytes needed to reach width `w`, before the optional minus. Under the zero
-candidate, place the optional minus first and then prepend `0x30` bytes to the
-magnitude. A candidate that cannot fit exactly `w` bytes rejects." Padding
-therefore changes neither the magnitude, nor the sign, nor `f`, nor the
-unpadded length `L = sigma + |I|` for an integer or implied-decimal form or
-`L = sigma + |I| + 1 + f` for a literal-decimal form. Exactly three cases
-exhaust the domain:
+**§20.3.3's renderer has two stages, and only the second is arm-specific.**
+Exact arithmetic first forms `z = x / s`. The first stage then either fixes
+exactly one unpadded byte string for the selected token form or denies the
+member an image outright. Only after that string exists do the two padding
+candidates appear: "Under the space candidate, prepend the maximal number of
+`0x20` bytes needed to reach width `w`, before the optional minus. Under the
+zero candidate, place the optional minus first and then prepend `0x30` bytes
+to the magnitude. A candidate that cannot fit exactly `w` bytes rejects."
 
-1. `L > w`. Both candidates reject. Both candidate projections are
-   `no_exact_image` with null token, empty actions, and the same renderer
-   failure reason, so after removing only the parent `profile_kind` they
-   deep-equal and §20.3.2 emits an **arm-invariant** row with a null image.
-2. `L = w`. Both candidates prepend zero pad bytes and produce byte-identical
-   images, identical action paths, identical scalars, and identical replays,
-   so the projections deep-equal and §20.3.2 again emits an **arm-invariant**
-   row, this time with the common nonnull image.
-3. `L < w`. Both candidates reach exactly `w` bytes and at least one pad byte
-   is prepended, so the two images differ at their very first byte: `0x20`
-   against `0x30` when the value is nonnegative, and `0x20` against `0x2d`
-   when it is negative, because the space candidate places its pad bytes
-   before the minus while the zero candidate places the minus first. The
-   projections differ and §20.3.2 emits an **arm-ambiguous** row.
+The first stage is the complete set of §20.3.3 conditions under which no
+string is produced to pad. Each is a function of the member, the selected
+token form, `d`, and `w` alone, and none of them mentions a padding candidate:
+
+1. **Integrality.** Under the integer form `z` must be an integer. Under the
+   implied-decimal form the exact product `M = abs(z) * 10^d` must be an
+   integer.
+2. **Sign against form.** "A negative value is lawful only under the signed
+   form", and "negative zero is noncanonical". A negative member of a field
+   whose selected form is unsigned has no lawful sign byte and therefore no
+   string.
+3. **Literal-decimal precision admission.** With `sigma` one for a negative
+   value and zero otherwise and `I` the canonical unsigned integral digits of
+   `abs(z)`, `f = min(d, w - sigma - |I| - 1)`, and "the scalar is
+   representable only when `1 <= f <= d`".
+4. **Literal-decimal exactness.** The same sentence continues: representable
+   only when "`abs(z)` has an exact finite base-10 expansion at `f` fractional
+   digits". "Choosing fewer than the greatest fitting `f`, dropping a nonzero
+   digit, or rounding aborts."
+
+When the first stage succeeds it yields exactly one unpadded string: the
+optional single `0x2d`, then the magnitude, which is the canonical ASCII
+decimal of `abs(z)` under the integer form, the canonical ASCII decimal of `M`
+under the implied-decimal form, and `I || 0x2e || F_f` under the
+literal-decimal form. Write `L` for that string's raw byte length. `L` is
+defined only where the first stage succeeds; where it fails there is no
+rendered string, and in particular when `f < 1` the expression
+`sigma + |I| + 1 + f` is not the length of anything.
+
+**The second stage applies the same width test to both candidates.** Each
+prepends exactly `w - L` pad bytes and "cannot fit exactly `w` bytes" on the
+same condition `L > w`. The two candidates differ only in which byte is
+prepended and where the minus is placed; padding changes neither the
+magnitude, nor the sign, nor `f`, nor `L`.
+
+**What §20.3.2 actually partitions.** Its emission rule never reads `L`. It
+compares the two candidate result/image/action/failure projections after
+removing only the parent `profile_kind`, emitting an arm-invariant row when
+they deep-equal and an arm-ambiguous row when they differ. Every member
+therefore falls into exactly one of four renderer-pair categories, and the
+classifier partitions on the category, not on a length:
+
+1. **Both images null.** Some first-stage condition failed, or `L > w`. Both
+   projections are `no_exact_image` with null token, empty actions, and the
+   same renderer failure reason, so they deep-equal: §20.3.2 emits an
+   **arm-invariant** row with a null image, and the member takes the inherited
+   four-key `unrenderable_member_rows` row with reason
+   `no_exact_width_selected_form_image`.
+2. **Exactly one image null.** Empty by law, and this emptiness is what the
+   whole settlement rests on. Every first-stage condition is evaluated before
+   either candidate exists, and the second stage is the single comparison of
+   `L` against `w`. No condition in §20.3.3 can null one candidate's image
+   while leaving the other's nonnull.
+3. **Both nonnull and byte-equal.** The first stage succeeded and `L = w`, so
+   each candidate prepends zero pad bytes and the two images, action paths,
+   scalars, and replays coincide: an **arm-invariant** row with the common
+   nonnull image, and the inherited seven-key renderable row.
+4. **Both nonnull and byte-unequal.** The first stage succeeded and `L < w`,
+   so at least one pad byte is prepended and the two images differ at their
+   very first byte: `0x20` against `0x30` when the value is nonnegative, and
+   `0x20` against `0x2d` when it is negative, because the space candidate
+   places its pad bytes before the minus while the zero candidate places the
+   minus first. The projections differ and §20.3.2 emits an **arm-ambiguous**
+   row.
+
+**A length comparison alone is not this partition, and a ratified witness says
+so.** §20.3.6's A6-R07 witness V945/1969 fixes width seven, sign length one,
+four integral digits, and maximum `d = 2`. For `-1040.01` the exact formula
+gives `sigma = 1`, `|I| = 4`, and `f = min(2, 7 - 1 - 4 - 1) = 1`, so
+condition 3 passes and `sigma + |I| + 1 + f = 7 = w`. Reading category 3 off
+that equality would predict a common nonnull image. The ratified text records
+the opposite: "`-1040.00` has unique image `-1040.0`, while `-1040.01` has
+null physical image and reason `no_exact_width_selected_form_image`."
+Condition 4 is what fires — `1040.01` has no exact finite base-10 expansion at
+one fractional digit — so the member is in category 1 with `L = w`, and the
+same condition applied across that field's cent step is its 263,430
+unrenderable negative-range members. Condition 2 is the companion case at the
+other end: a negative member of a field whose selected form is unsigned is in
+category 1 irrespective of `L`, including at `L < w`, where a length-only
+reading would have predicted arm-ambiguity. Neither witness disturbs the
+settlement, because in both the two candidates still agree; each falsifies only
+the claim that `L` against `w` exhausts the domain.
 
 Two consequences follow, and both are stated as law:
 
-- **§22.4.5's count rule is well-defined.** The two candidates never disagree
-  about *whether* a member has an exact-width image, only about *which* bytes
-  it is. "Returns that member an exact-width image" therefore denotes the same
-  member set whichever candidate is evaluated, and the renderable/unrenderable
-  partition is fixed without selecting an arm.
-- **Every arm-ambiguous member is renderable.** Case 3 is the only case that
+- **§22.4.5's count rule is well-defined.** Because category 2 is empty, the
+  two candidates never disagree about *whether* a member has an exact-width
+  image, only about *which* bytes it is. "Returns that member an exact-width
+  image" therefore denotes the same member set whichever candidate is
+  evaluated, and the renderable/unrenderable partition is fixed without
+  selecting an arm. The singular in that clause is well formed for this reason
+  alone, and not because every member is renderable — category 1 is lawful and
+  nonempty in general.
+- **Every arm-ambiguous member is renderable.** Category 4 is the only one that
   produces an arm-ambiguous row, and in it both candidates render at exactly
   `w`. Consequently, in a post-D9 relation, the complete arm-ambiguous
   numeric-range member population of a field equals that field's
   arm-ambiguous contribution to `renderable_member_rows`, and no arm-ambiguous
   numeric-range member appears in any `unrenderable_member_rows` value.
 
-The two mandatory constructors ratified in §20.3.2 confirm the derivation
-without appeal to it. V117/1968 has `NUM(2.0)`, range `1`–`96`, ordinary
-literal `97`, and missing literals `98` and `99`; §20.3.2 records exactly nine
-arm-ambiguous members, `1` through `9`, which are exactly the members whose
-unpadded length is one against `w = 2`, and 90 arm-invariant members, which
-are exactly the 87 two-digit range members plus the three exact-width literal
-bypasses. V5092/1976 records ten ambiguous members — the missing literal `0`
-and range members `1`–`9` — and 20 invariant members, `10`–`28` plus missing
-literal `99`. Both partitions are the case analysis above and nothing else.
+**The builder's emission rule follows directly and admits no third reading.**
+For a numeric-range member of one of the 674 fields: where §20.3.3's first
+stage fails or `L > w`, both candidate images are null, the member is
+arm-invariant, and it takes the four-key unrenderable row with
+`no_exact_width_selected_form_image`; where the two images are nonnull and
+byte-equal, it takes the unchanged inherited seven-key renderable row; and if
+and only if the two images are nonnull and byte-unequal does the member have a
+row in `arm_ambiguous_member_rows` and take the six-key row of §23.2.3. Shape
+selection is by the member's presence in `arm_ambiguous_member_rows` — that is,
+by category 4 — and never by a recomputed length. On the authenticated corpus
+A9-R03 measures the four categories over the complete 384,135 logical
+source-range members of these fields as exactly 56,480 in category 4, 327,655
+in category 3, and zero in each of categories 1 and 2.
+
+The two mandatory constructors ratified in §20.3.2 confirm the emission rule
+without appeal to the derivation. V117/1968 has `NUM(2.0)`, range `1`–`96`,
+ordinary literal `97`, and missing literals `98` and `99`; §20.3.2 records
+exactly nine arm-ambiguous members, `1` through `9`, and 90 arm-invariant
+members, which are exactly the 87 two-digit range members plus the three
+exact-width literal bypasses. V5092/1976 records ten ambiguous members — the
+missing literal `0` and range members `1`–`9` — and 20 invariant members,
+`10`–`28` plus missing literal `99`. Every member of both fields is a
+nonnegative integral `json_integer` value under an unsigned integer form with
+`d = 0`, so no first-stage condition can fire and category 1 is empty for
+them; within that restriction category 4 does reduce to `L < w`, and the
+ratified partitions are exactly the members of unpadded length one against
+`w = 2`. Neither field licenses the converse reading.
 
 The `unrenderable_reason` literal `arm_ambiguous_no_authoritative_image`
 remains defined for historical rows and for the inherited §20.3.2, §22.2.3,
@@ -39362,10 +39476,13 @@ Their exact values are:
    establish which bytes are authoritative, not because bytes are unknown.
 4. `rendered_decimal_places` is the uniquely computed fractional-byte count,
    zero for an integer or implied-decimal form and the §20.3.3 `f` for a
-   literal-decimal form. §23.2.2 proves this value is arm-independent, so it
-   is a source-established physical fact and is serialized rather than
-   nulled. A builder must derive it once and require both candidate
-   renderings to agree; disagreement is a closed conflict.
+   literal-decimal form. §23.2.2 places its computation in the renderer's
+   first stage, before either padding candidate exists, so it is
+   arm-independent; and a member reaching this row shape is in that
+   derivation's category 4, so the first stage succeeded and `f` satisfies
+   `1 <= f <= d`. It is therefore a source-established physical fact and is
+   serialized rather than nulled. A builder must derive it once and require
+   both candidate renderings to agree; disagreement is a closed conflict.
 5. `authoritative_image_disposition` is exactly the inherited literal
    `arm_ambiguous_no_authoritative_image`. No other value is lawful in this
    key, and this key exists in no other row shape.
@@ -39375,15 +39492,19 @@ Their exact values are:
    the site a partition consumer reaches.
 
 The shape carries no image, action array, scalar, or replay, because §23.2.1
-establishes that none of the four exists for this member. It **does not
-duplicate** either candidate image. The two candidate images, their action
-arrays, their results, and their failure reasons remain serialized exactly
-once, in the fourteen-key ambiguous row, and are reached by the
-(`source_entry_ref`, `source_member_index`) key that the partition parent and
-this row already supply between them. Duplicating them here would create a
-second place for the same fact to disagree and would serialize an
-authoritative-looking image inside the renderable relation; both are
-forbidden.
+establishes that none of the four exists for this member. It **adds no copy**
+of either candidate image. Those images, their action arrays, their results,
+and their failure reasons remain exactly where §20.3.2 already puts them and
+where §22.2.1 already counts and hashes them — in each arm's
+`candidate_arm_results[*].complete_domain_member_results`, and in the
+fourteen-key ambiguous row built from those two projections — and both of
+those serializations remain mandatory, since §20.3.2 makes omitting either
+complete candidate relation a derivation failure. This row is bound to the
+fourteen-key row by the (`source_entry_ref`, `source_member_index`) key that
+the partition parent and this row already supply between them. Restating a
+candidate image here would create a further place for the same fact to
+disagree and would serialize an authoritative-looking image inside the
+renderable relation; both are forbidden.
 
 The shape is lawful **only** when all of the following hold, and is otherwise
 a closed conflict:
@@ -39526,12 +39647,14 @@ be reached by the new row shape:
 The settlement is therefore symmetrical and complete. The physical layer
 serializes every source-established fact about the member — its index, its
 typed source value, its arm-invariant precision, the fact that no
-authoritative image exists, and the abort that follows — and stores its two
-candidate images exactly once, in the relation that already holds them. The
+authoritative image exists, and the abort that follows — and leaves its two
+candidate images in the two inherited relations that already hold them, both
+of which remain mandatory. The
 semantic layer receives null authority and a closed abort at every site. No
 builder chooses an arm, no consumer promotes one, and the member remains what
 the census concluded it is: a member whose padding arm is unobservable in
 principle.
+
 ### 23.3 Closed codebook derivation path for every member-row field
 
 #### 23.3.1 The three values and their sole lawful source
@@ -39608,11 +39731,54 @@ nonunitized `R` is incomplete" and the field takes
 the derivation and a non-passing outcome for the field; neither authorizes a
 member row, and neither may be avoided by supplying a value from elsewhere.
 
+That closure is not hypothetical, and the design states its handling here
+rather than leaving a successor lane to settle it. The same separately
+reviewed lane has since reported that the registered corpus states no unit
+anywhere a normalized entry needs one: a codebook value block displays only
+count, percent, value-or-range, and meaning; neither value-label language
+displays more than value and meaning; and the setup documents declare only
+coordinates, labels, and numeric formats. Amendment 9 does not adjudicate that
+report — it is a finding about the source, and the derivation path above is
+unchanged either way — but the report names exactly the branch A9-R04 must
+reconcile, so the handling is fixed now and fixed closed:
+
+- an undetermined `typed_value_unit` on a normalized numeric-range entry is
+  exactly §19's nonunitized `R`. The field takes
+  `incomplete_source_numeric_authority` and is not a member-row field at all;
+- JSON null in that position is a declaration that the codebook domain
+  establishes no unit, never a member-row value. §19 requires a numeric range
+  to carry "a nonempty unit", so no row whose `source_derivation` is
+  `codebook_range_member` — the six-key, seven-key, and four-key partition
+  rows and the eight-key candidate and fourteen-key ambiguous rows alike — may
+  serialize a null `typed_value_unit`, and no count or
+  `*_member_domain_sha256` may be computed over one. §19's own null type,
+  unit, and value for a missing literal are untouched by this and remain
+  lawful;
+- the null may not be filled or bypassed by a default, an inferred unit, a
+  placeholder literal, a sibling field or wave, a silent dictionary member, a
+  consumer, or an evidence artifact, and no field may be carried past the
+  terminal by annotation; and
+- because that terminal is exactly what A9-R04 step 5 reconciles, a field
+  moving into `incomplete_source_numeric_authority` for this reason moves the
+  ten terminal counts and the three immutable aggregates. That is the §23.3.2
+  source-law conflict and takes its exact handling — abort, emit nothing,
+  repin nothing, escalate to a design successor — and never a tolerance, an
+  exception list, an annotated field, or a recomputed aggregate.
+
+The one other normalized-entry member the same report leaves unstated is
+governed identically. §19 requires a missing literal to carry "a nonempty
+source-backed reason", and the design fixes no reason vocabulary anywhere. A
+missing literal is not a `codebook_range_member`, so an unstated reason can
+never enter the added six-key shape; it likewise may not be defaulted or
+invented, and if it moves a field's terminal the obligation in the last bullet
+applies unchanged.
+
 The three values are consequently derivable exactly when the 47 codebook
 derivations exist, and are derivable from nothing else. Amendment 9 states
 that as law and coordinates with the separate codebook-derivation work by
-requirement, not by assumption: it does not claim those derivations exist, and
-it fixes no expected codebook row ID, entry position, type, or unit.
+requirement, not by assumption: it does not claim those derivations exist, it
+takes no position on what the registered corpus states, and it fixes no
+expected codebook row ID, entry position, type, or unit.
 
 #### 23.3.2 Evidence exclusion and the census reconciliation obligation
 
@@ -39745,9 +39911,10 @@ members is exactly 21,007 bytes with one terminal LF and hashes to
 `779d82e5581b6fa256f7623dea6724b55c085f001d9771dc1c5ce4158e0ccfd7`, which is
 the parent `source_member_domain_sha256`.
 
-The member's two candidate images remain serialized exactly once, in the
-field's fourteen-key ambiguous row, which for index `0` is exactly 788 bytes
-without a terminal LF:
+The member's two candidate images are not restated by the six-key row. They
+remain in the field's two inherited candidate relations, and the fourteen-key
+ambiguous row built from them is, for index `0`, exactly 788 bytes without a
+terminal LF:
 
 ~~~json
 {"authoritative_physical_image_raw_token_hex":null,"if_encountered":"abort_before_classification_arm_ambiguous_source_member","source_derivation":"codebook_range_member","source_entry_ref":"a9-fixture:range:0","source_member_index":0,"source_value":{"canonical_value":1,"source_meaning":"A9 arm-ambiguous partition fixture","typed_disposition":"json_integer","typed_value_unit":"a9_fixture_unit","value_type":"json_integer"},"space_candidate_result":"exact_numeric_image","space_failure_reason":null,"space_physical_image_raw_token_hex":"2031","space_transition_value_actions":["no_op","append_digit_1"],"zero_candidate_result":"exact_numeric_image","zero_failure_reason":null,"zero_physical_image_raw_token_hex":"3031","zero_transition_value_actions":["append_digit_0","append_digit_1"]}
@@ -40007,7 +40174,8 @@ below gives every reached byte range its own row.
 | §20.3.2 sentence declaring an arm-ambiguous member unrenderable under the authoritative relation even when each nonauthoritative candidate has its own exact image | `replaced-by-§22.4.5-as-completed-by-§23.2`: the settled placement is §22.4.5's, and §23.2.2 proves it is well-defined because renderability is arm-invariant. The sentence's surviving force is that no candidate image becomes authoritative, which §23.2.3 and §23.2.4 carry in full. |
 | §20.3.2 seven-key renderable member row and its unique-image, DFA-path-action, parsed-scalar, and byte-replay equations | `composed-with-§23.2.3`: the seven-key row and all four equations remain controlling for every member outside the arm-ambiguous relation, which is every member of every other status and every arm-invariant member of this one. Only a member with a row in `arm_ambiguous_member_rows` takes the added six-key shape, and it takes it because those four equations are unsatisfiable for it. |
 | §20.3.2 four-key unrenderable member row and its `arm_ambiguous_no_authoritative_image` reason | `composed-with-§23.2.2`: the shape and both reason literals remain defined; the ambiguous reason becomes unreachable in a post-D9 numeric-range partition and a post-D9 row carrying it is a closed conflict. Historical rows and the inherited text are untouched. |
-| §20.3.2 `complete_domain_arm_disposition`, its fourteen-key ambiguous row, and its counts and digests | `lawfully-unchanged-with-reason`: this relation is the sole serialization of both candidate images, both action arrays, both results, both failure reasons, the null authoritative image, and the closed encounter abort. §23.2.3 binds to it by the key already present and duplicates nothing. |
+| each `candidate_arm_results[*].complete_domain_member_results`, its eight-key candidate result row, and its count and digest | `lawfully-unchanged-with-reason`: this is the first of §22.2.1's three relation families and the per-arm serialization of every candidate result, candidate image, action array, and failure reason. §20.3.2 makes omitting either complete candidate relation a derivation failure, so it remains mandatory beside the fourteen-key row; §23.2.3 adds no copy of it and reads it only as §23.2.4 permits. |
+| §20.3.2 `complete_domain_arm_disposition`, its fourteen-key ambiguous row, and its counts and digests | `lawfully-unchanged-with-reason`: this relation carries the null authoritative image and the closed encounter abort, and restates both candidate images, action arrays, results, and failure reasons as §20.3.2 builds it by comparing the two candidate relations above. It is not their sole serialization and does not replace them. §23.2.3 binds to it by the key already present and adds no copy of anything it holds. |
 | §20.3.2 partition disjointness, ordered merge, exact cover, count sums, and domain digests | `lawfully-unchanged-with-reason`: every equation holds unchanged with the added shape present, and §23.2.3 restates each one as a construction obligation. |
 | §20.3.3 exact renderer, its two padding constructors, and its exhaustive source-member application | `lawfully-unchanged-with-reason`: §23.2.2 derives arm-invariance of renderability from this text and adds no premise to it. Every image, precision, action, scalar, reason, and replay it fixes is retained. |
 | §20.3.4 DFA construction, the finite-domain arm-ambiguous language rule, and the proof-rows-only clause | `lawfully-unchanged-with-reason`: the branch's language is still exactly the nonnull authoritative images of `arm_invariant_member_rows`, and §23.2.4 enumerates the sites at which the added row shape may not enlarge it. |
@@ -40559,11 +40727,15 @@ subtraction, DFA, replay, and consumer projection. Physical storage follows
 array.
 
 Amendment 9 is what makes the complete `pass_with_closed_failures` relation
-constructible at all. Under revision 10 the 674 arm-ambiguous fields could not
-serialize their range partitions, so no complete relation, no
-`*_member_domain_sha256` over an affected container, no complete-row hash, no
-derivation ID, and no full-relation identity existed. Under revision 11 they
-can, and the ordering consequence is exact: the relation artifact becomes
+constructible at all. Under revision 10 no range partition holding an
+arm-ambiguous numeric-range member could be serialized — §22.4.5 pins 56,480
+such members across the 1,433 numeric-range entries of the 674 arm-ambiguous
+fields and publishes no per-field cross-tab, so the blocked population is
+stated as members, not as a field count — and therefore no complete relation,
+no `*_member_domain_sha256` over an affected container, no complete-row hash,
+no derivation ID, and no full-relation identity existed. Under revision 11
+those partitions serialize, and the ordering consequence is exact: the relation
+artifact becomes
 reachable only after both §23.2's row settlement and §23.3's field closure
 hold, and A9-R03 and A9-R04 are the gates that prove it. Amendment 9 supplies
 the law; it does not supply the 47 codebook derivations, which remain separate,
