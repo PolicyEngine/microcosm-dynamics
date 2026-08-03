@@ -2,11 +2,12 @@
 
 ## State
 
-Round-1 repair work has started from clean HEAD `f8c9db06`. The immutable
-revision-9 prefix was verified before editing at exactly 2,423,590 bytes with
-SHA-256 `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
-The edit scope is limited to the four verdict findings and their direct
-fixture/digest consequences.
+All four round-1 repairs and their direct consequences are complete. The
+document is 2,517,046 bytes with SHA-256
+`04b36b77ba3a02243b95c911c358420f94b7d65cf7d54794689c4d96fec09f3d`.
+The exact 2,423,590-byte revision-9 prefix remains byte-identical before and
+after, with SHA-256
+`2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
 
 ## Done
 
@@ -26,8 +27,12 @@ fixture/digest consequences.
 - Dispositioned the exact inherited D7 illustrative pseudo-JSON fence by
   line, byte interval, fence/body hashes, and sole strict-parse exception;
   retained strict one-root parsing for every section 22 JSON fence.
+- Reverified all nine section 22 JSON fences, all pre-existing A8 payload
+  pins, the new 209-byte `3.0` rejection pin, both A8-R02 digest derivations,
+  both storage formulas, 191 balanced fences, the immutable prefix, doc-only
+  commit scope, and clean diff hygiene.
 
 ## Next
 
-- Run focused strict-JSON, arithmetic, prefix, scope, and diff-hygiene checks.
-- Remove this ledger and write the final report outside the repository tree.
+- Remove this ledger, reverify the final clean tree and commit range, and
+  write the final report through the required output channel.
