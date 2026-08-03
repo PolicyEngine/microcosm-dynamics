@@ -39284,10 +39284,12 @@ exhaust the domain:
    images, identical action paths, identical scalars, and identical replays,
    so the projections deep-equal and §20.3.2 again emits an **arm-invariant**
    row, this time with the common nonnull image.
-3. `L < w`. Both candidates reach exactly `w` bytes, and the two images differ
-   in at least the first pad byte, `0x20` against `0x30` — or, when
-   `sigma = 1`, additionally in the position of `0x2d`. The projections differ
-   and §20.3.2 emits an **arm-ambiguous** row.
+3. `L < w`. Both candidates reach exactly `w` bytes and at least one pad byte
+   is prepended, so the two images differ at their very first byte: `0x20`
+   against `0x30` when the value is nonnegative, and `0x20` against `0x2d`
+   when it is negative, because the space candidate places its pad bytes
+   before the minus while the zero candidate places the minus first. The
+   projections differ and §20.3.2 emits an **arm-ambiguous** row.
 
 Two consequences follow, and both are stated as law:
 
