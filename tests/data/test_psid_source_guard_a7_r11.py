@@ -28,10 +28,10 @@ MANDATED_PYTHON = Path(
     "~/PolicyEngine/social-security-model/.venv/bin/python"
 ).expanduser()
 
-DESIGN_BYTES = 2_423_590
-DESIGN_SHA256 = (
-    "2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9"
-)
+D7_BYTES = 2_423_590
+D7_SHA256 = "2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9"
+D8_BYTES = 2_521_700
+D8_SHA256 = "4101260b94b019fc9392898059138b90386784b60ea40b9039562d364592718a"
 
 A7_R11_ANCHOR = (
     b"The exact executable route-probe preimage is the zlib-compressed "
@@ -108,9 +108,20 @@ def _fenced_payload_after(
 
 @pytest.fixture(scope="session")
 def revision_9_design() -> bytes:
-    payload = DESIGN_PATH.read_bytes()
-    assert len(payload) == DESIGN_BYTES
-    assert _sha256(payload) == DESIGN_SHA256
+    """Return D7's complete bytes, taken as the exact prefix of live D8.
+
+    Section 22.1 keeps every ratified revision-9 byte and requires D7 to
+    byte-equal D8's ``[0,2423590)`` range, so the A7 vectors continue to read
+    the same source bytes under revision 10.  A digest-only or ancestry-only
+    assertion cannot substitute for this comparison.
+    """
+
+    document = DESIGN_PATH.read_bytes()
+    assert len(document) == D8_BYTES
+    assert _sha256(document) == D8_SHA256
+    payload = document[:D7_BYTES]
+    assert len(payload) == D7_BYTES
+    assert _sha256(payload) == D7_SHA256
     return payload
 
 

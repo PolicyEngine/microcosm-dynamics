@@ -11,11 +11,16 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter, defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import Any
 
+from .psid_analytic_partition import (
+    complement_runs,
+    merge_runs,
+    subtract_runs,
+)
 from .psid_source_compiler import (
     EXPECTED_ASSIGNMENT_SHA256,
     EXPECTED_COUNT_ARRAY_SHA256,
@@ -363,13 +368,18 @@ def _literal_candidates(
     return images, None, "deferred"
 
 
-def _progression_count(
+def _progression_segment(
     item: _Range,
     lower: Fraction | None = None,
     upper: Fraction | None = None,
     exact_decimal_places: int | None = None,
-) -> int:
-    """Count an arithmetic range intersection without member expansion."""
+) -> tuple[int, int, int] | None:
+    """Return one arithmetic intersection as ``(first, last, stride)`` indexes.
+
+    The result describes the member indexes ``first, first + stride, ...`` up
+    to ``last`` without expanding them, so a band covering billions of members
+    stays an O(1) description.
+    """
 
     effective_lower = (
         item.minimum if lower is None else max(item.minimum, lower)
@@ -378,7 +388,7 @@ def _progression_count(
         item.maximum if upper is None else min(item.maximum, upper)
     )
     if effective_lower > effective_upper:
-        return 0
+        return None
     first_index = max(
         0,
         math.ceil((effective_lower - item.minimum) / item.step),
@@ -388,9 +398,9 @@ def _progression_count(
         math.floor((effective_upper - item.minimum) / item.step),
     )
     if first_index > last_index:
-        return 0
+        return None
     if exact_decimal_places is None:
-        return last_index - first_index + 1
+        return first_index, last_index, 1
 
     denominator = math.lcm(
         item.minimum.denominator,
@@ -404,7 +414,7 @@ def _progression_count(
     ).numerator
     common = math.gcd(delta, modulus)
     if (-start) % common:
-        return 0
+        return None
     reduced_modulus = modulus // common
     if reduced_modulus == 1:
         residue = 0
@@ -416,20 +426,46 @@ def _progression_count(
     if reduced_modulus != 1:
         first_match += (residue - first_match) % reduced_modulus
     if first_match > last_index:
+        return None
+    return first_match, last_index, reduced_modulus
+
+
+def _segment_count(segment: tuple[int, int, int] | None) -> int:
+    if segment is None:
         return 0
-    return (last_index - first_match) // reduced_modulus + 1
+    first, last, stride = segment
+    return (last - first) // stride + 1
 
 
-def _range_render_counts(
+def _progression_count(
+    item: _Range,
+    lower: Fraction | None = None,
+    upper: Fraction | None = None,
+    exact_decimal_places: int | None = None,
+) -> int:
+    """Count an arithmetic range intersection without member expansion."""
+
+    return _segment_count(
+        _progression_segment(item, lower, upper, exact_decimal_places)
+    )
+
+
+def _render_bands(
     item: _Range,
     token_form: str,
     width: int,
     decimal_places: int,
-) -> tuple[int, int]:
-    """Return exact (renderable, arm-invariant renderable) cardinalities."""
+) -> list[tuple[tuple[int, int, int], bool]]:
+    """Return every renderable magnitude band as an index segment.
 
-    renderable = 0
-    invariant = 0
+    Each band is one sign/digit-count combination of the §20.3.3 renderer.
+    Bands are pairwise index-disjoint because the member value is strictly
+    increasing in the member index, and a band is arm-invariant exactly when
+    its payload fills the declared width and therefore leaves no padding
+    position for the two arms to disagree about.
+    """
+
+    bands: list[tuple[tuple[int, int, int], bool]] = []
     signed = _is_signed(token_form)
     implied = token_form.endswith("_implied_decimal")
     literal_decimal = token_form.endswith("_literal_ascii_decimal")
@@ -451,16 +487,16 @@ def _range_render_counts(
                 else:
                     lower = Fraction(minimum_magnitude, multiplier)
                     upper = Fraction(maximum_magnitude, multiplier)
-                count = _progression_count(
+                segment = _progression_segment(
                     item,
                     lower,
                     upper,
                     decimal_places if implied else 0,
                 )
-                renderable += count
-                if digits + sign_width == width:
-                    invariant += count
-        return renderable, invariant
+                if segment is not None:
+                    bands.append((segment, digits + sign_width == width))
+        bands.sort()
+        return bands
 
     for negative in (False, True):
         if negative and not signed:
@@ -485,16 +521,104 @@ def _range_render_counts(
             else:
                 lower = Fraction(minimum_magnitude)
                 upper = maximum_magnitude
-            count = _progression_count(
+            segment = _progression_segment(
                 item,
                 lower,
                 upper,
                 precision,
             )
-            renderable += count
-            if sign_width + digits + 1 + precision == width:
-                invariant += count
+            if segment is not None:
+                bands.append(
+                    (segment, sign_width + digits + 1 + precision == width)
+                )
+    bands.sort()
+    return bands
+
+
+def _range_render_counts(
+    item: _Range,
+    token_form: str,
+    width: int,
+    decimal_places: int,
+) -> tuple[int, int]:
+    """Return exact (renderable, arm-invariant renderable) cardinalities."""
+
+    bands = _render_bands(item, token_form, width, decimal_places)
+    renderable = sum(_segment_count(segment) for segment, _ in bands)
+    invariant = sum(
+        _segment_count(segment)
+        for segment, is_invariant in bands
+        if is_invariant
+    )
     return renderable, invariant
+
+
+@dataclass(frozen=True)
+class RangeMemberRuns:
+    """One range's exhaustive partition as unique maximal index runs."""
+
+    source_member_count: int
+    renderable: tuple[tuple[int, int], ...]
+    unrenderable: tuple[tuple[int, int], ...]
+    arm_invariant: tuple[tuple[int, int], ...]
+    arm_ambiguous: tuple[tuple[int, int], ...]
+
+    @property
+    def renderable_count(self) -> int:
+        return sum(count for _, count in self.renderable)
+
+    @property
+    def unrenderable_count(self) -> int:
+        return sum(count for _, count in self.unrenderable)
+
+    @property
+    def arm_ambiguous_count(self) -> int:
+        return sum(count for _, count in self.arm_ambiguous)
+
+
+def _segment_runs(
+    segment: tuple[int, int, int],
+) -> Iterator[tuple[int, int]]:
+    first, last, stride = segment
+    if stride == 1:
+        yield first, last - first + 1
+        return
+    for index in range(first, last + 1, stride):
+        yield index, 1
+
+
+def range_member_runs(
+    item: _Range,
+    token_form: str,
+    width: int,
+    decimal_places: int,
+) -> RangeMemberRuns:
+    """Decompose one range into its exhaustive renderability partition.
+
+    The partition is derived from O(width) magnitude bands rather than from
+    member expansion, so a range with billions of members is described in
+    bounded work.  Renderability follows §22.4.5: a member is renderable
+    exactly when the one §20.3.3 renderer returns it an exact-width image,
+    and arm invariance never moves a member between the two relations.
+    """
+
+    bands = _render_bands(item, token_form, width, decimal_places)
+    renderable = merge_runs(
+        run for segment, _ in bands for run in _segment_runs(segment)
+    )
+    invariant = merge_runs(
+        run
+        for segment, is_invariant in bands
+        if is_invariant
+        for run in _segment_runs(segment)
+    )
+    return RangeMemberRuns(
+        source_member_count=item.count,
+        renderable=renderable,
+        unrenderable=complement_runs(renderable, item.count),
+        arm_invariant=invariant,
+        arm_ambiguous=subtract_runs(renderable, invariant),
+    )
 
 
 def _registered_relations(
