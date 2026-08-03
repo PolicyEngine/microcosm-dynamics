@@ -37660,3 +37660,407 @@ authorizes only the separately reviewed source, artifact, implementation,
 and expected-negative checks stated above; it authorizes no correction
 production evaluation, path switch, context run, label change, output, or
 publication.
+
+## 22. AMENDMENT SECTION — Amendment 8: lossless analytic range partitions
+
+### 22.1 Status, immutable revision-9 base, scope, precedence, and section map
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 10
+  of the design. Drafting, audit, review, and response commits are not
+  ratification and authorize no source compiler, derivation row, Q5, slot,
+  inventory, value map, crosswalk, capture, correction execution, context
+  run, output, or publication. Only the exact bytes accepted under §22.9.2
+  may become `D8`, and they become operative only through the fresh
+  registration successor in §22.8.
+- **Immediate immutable base.** The base is the complete ratified revision-9
+  design `D7` at commit
+  `ccc3b9f3afc43624a5fd7d90e57f93a6d6ce686c`. The path is
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `08a64a16c82e2893cdd415bdd092b5a9f71e4687`, exactly 2,423,590 raw
+  bytes, and SHA-256
+  `2064f47b181ec21ec9b786b9a17a7a489e3b4732751edf794d6bd545bd9546b9`.
+  Those complete bytes are the byte-identical prefix of revision 10. A
+  digest-only, ancestry-only, transitive, working-tree, or candidate-prefix
+  assertion cannot substitute for comparing every one of those bytes.
+- **One representation defect only.** Amendment 8 changes only the wire
+  representation of exhaustive numeric-range member relations and the
+  consumers, identities, and lifecycle steps that necessarily depend on
+  those bytes. It changes no authenticated source, normalized entry,
+  scalar, field assignment, terminal, count, renderer, padding result,
+  missing classification, DFA language, action, replay, consumer guard,
+  V-B6 result, or A6/A7 semantic outcome. The analytic form below is the
+  already-authoritative analytic enumeration made lossless on the wire; it
+  is not a count-only summary or a waiver of exhaustive validation.
+- **Exact precedence.** Sections 1–21 remain visible and controlling except
+  for the passages expressly dispositioned in §22.6. In particular, the
+  §20.3.2 command to serialize every range-derived row in bare explicit
+  arrays is replaced only by the two-form law below. Every requirement to
+  reconstruct every logical member, preserve its order and complete row,
+  compare complementary relations, hash the exhaustive named array, render
+  and replay bytes, subtract missing images, or abort on disagreement
+  remains. At a conflict, §22 is later and more specific; silence changes
+  nothing else.
+
+The complete section map is:
+
+| Subsection | Complete subject |
+|---|---|
+| §22.1 | status, D7 identity and prefix, scope, precedence, and section map |
+| §22.2 | explicit-or-analytic grammar, canonical interval bijection, streaming digest, and identity law |
+| §22.3 | exact analytic-equivalent consumer law for membership, enumeration, rendering, DFA subtraction, missing-first images, Q5, G17, and guarded consumers |
+| §22.4 | mandatory Amendment-8 vectors and the physical-storage fact table |
+| §22.5 | untouched census, expected artifact scale, aggregate identities, and mandatory builder check |
+| §22.6 | exact replacement inventory and Amendment-8 closure sweep |
+| §22.7 | complete revision-10 design-comparator census |
+| §22.8 | D8 lifecycle successors and complete identifier inventory |
+| §22.9 | post-Amendment-8 build, ratification, Q5, and registration order |
+
+The map is exact. No subsection may be ratified, implemented, or registered
+separately.
+
+### 22.2 Lossless explicit-or-analytic member-sequence law
+
+#### 22.2.1 Exact affected relation families and retained outer shapes
+
+The physical contradiction reaches exactly three §20.3.2 relation families:
+
+| Relation family | Retained logical member rows | Retained logical order |
+|---|---|---|
+| each `candidate_arm_results[*].complete_domain_member_results` | every inherited eight-key candidate result for each normalized literal and numeric-range member | normalized source-entry order, then ascending range-member index |
+| `complete_domain_arm_disposition.arm_invariant_member_rows` and `.arm_ambiguous_member_rows` | every inherited eight-key invariant or fourteen-key ambiguous result | the two relations preserve source-entry/member order and their ordered merge equals each complete candidate domain |
+| each range-partition row's `renderable_member_rows` and `unrenderable_member_rows` | every inherited seven-key renderable or four-key unrenderable result | ascending zero-based member index; the ordered merge is exactly `0..source_member_count-1` |
+
+Every named count and `*_member_domain_sha256` sibling remains in its exact
+position and keeps its logical meaning. The range-partition parent retains
+its exact nine keys. `candidate_arm_results`,
+`complete_domain_arm_disposition`, thirteen-key `physical_authentication`,
+the 16-key numeric derivation row, its 15-position ID preimage, the nine-key
+top-level `field_source_derivation`, Q5's 18-key raw-field projection, and
+all fixed layout/value-map envelopes retain their outer keysets and order.
+Only a member-sequence value that revision 9 required to be a bare array may
+now take the exact analytic arm below. Fresh actual bytes still enter every
+full-row, ID, domain, and content hash.
+
+For each such logical relation let `N` be its retained nonnegative integer
+count. Its serialized value is exactly one arm of this closed tagged union:
+
+1. **explicit arm:** the inherited bare JSON array containing all `N`
+   complete member rows in inherited order; or
+2. **analytic arm:** one object with exactly these four members:
+
+```text
+literal_member_rows
+range_interval_rows
+representation
+total_member_count
+```
+
+`representation` is the exact string
+`analytic_closed_intervals_v1`; `total_member_count` is the exact JSON
+integer `N`, excluding booleans. `literal_member_rows` is the complete array
+of inherited full logical rows whose normalized source entry is a literal,
+in source-entry order. No literal is represented by an interval or reduced
+to a scalar/count. `range_interval_rows` contains exactly one row for every
+applicable normalized numeric-range entry in retained source-entry order,
+including an empty-subset row, and each row has exactly:
+
+```text
+source_entry_ref
+intervals
+member_count
+```
+
+The reference exact-matches the normalized entry. `member_count` is the
+number of this logical relation's members belonging to that entry.
+`intervals` is an ordered array of four-position arrays:
+
+```text
+[lower_bound, upper_bound, step, member_count]
+```
+
+There is no third representation, external side table, sampled prefix,
+Bloom filter, count-only row, digest-only row, omitted unfavorable segment,
+or consumer-selected alternate.
+
+For either per-range renderable/unrenderable container,
+`literal_member_rows` is exact empty and `range_interval_rows` is the
+singleton row for that parent `source_entry_ref`. For a complete candidate
+or invariant/ambiguous domain it contains every normalized range entry so
+literal and range results can be merged in the inherited source-entry order.
+
+#### 22.2.2 Exact numeric atoms, intervals, threshold, and canonical form
+
+An interval numeric atom follows the normalized entry's retained value type.
+For a `json_integer` range it is an arbitrary-precision JSON integer
+excluding booleans. For a `rational` range it is one reduced ASCII rational
+string with grammar `-?(0|[1-9][0-9]*)/[1-9][0-9]*`: no plus, whitespace,
+grouping, exponent, leading zero, negative zero, or zero denominator;
+numerator and positive denominator are coprime, and zero is exactly `0/1`.
+A JSON floating-point or decimal-approximation token is never an atom.
+Decoding produces one exact rational; encoding selects the entry-type arm
+above uniquely. Thus even an integral rational is a string such as `10/1`,
+not a type-changing JSON integer.
+
+For a normalized source range with exact lower bound `L`, positive step `s`,
+and source-member count `M`, each analytic interval must satisfy all of:
+
+1. its four positions have the exact types above; the fourth is a positive
+   JSON integer excluding booleans;
+2. its step exact-equals the normalized source step `s`, is positive, and
+   both closed bounds are members of the same referenced source range;
+3. `upper_bound = lower_bound + (member_count - 1) * step` in exact rational
+   arithmetic;
+4. expanding `lower_bound + j * step` for `j = 0..member_count-1` yields
+   exactly consecutive original source-member indexes in this logical
+   relation; and
+5. the interval array is the unique sequence of maximal nonempty runs of
+   consecutive included original indexes. Adjacent runs that could merge,
+   a split maximal run, a nonmaximal singleton, overlap, duplicate, reverse
+   order, or alternate stride is noncanonical and invalid.
+
+An empty relation for an entry has `intervals: []` and `member_count: 0`.
+Otherwise the interval counts sum exactly to that row's `member_count`.
+All range-row counts plus `len(literal_member_rows)` sum exactly to
+`total_member_count`, which exact-equals the retained count sibling. Each
+literal row's `source_entry_ref` and every range-row reference resolve once
+to the surrounding normalized domain; duplicate, missing, outside-domain,
+or reordered references abort.
+
+The representation threshold is the exact integer **4,096** logical
+members, applied separately to each named relation value:
+
+- if `N <= 4,096`, the canonical production artifact serializes the
+  inherited explicit array;
+- if `N > 4,096`, the canonical production artifact serializes the analytic
+  object; and
+- if a relation cannot be encoded analytically without reproducing every
+  row uniquely, it must use the explicit arm, which is lawful only when
+  `N <= 4,096`. A larger nonencodable relation makes construction fail.
+
+Thus a small nonanalytic future domain stays explicit; a large one cannot
+buy compactness by losing information. The validator may expand an
+analytic-form fixture below the threshold to prove semantic equivalence,
+but the production builder must still choose the threshold arm. This
+separates the two-form conformance proof from the one canonical artifact
+byte sequence.
+
+#### 22.2.3 Member-by-member inverse and bijection
+
+The analytic arm is information-equivalent to the inherited explicit array.
+Its inverse is fixed, not implementation-defined. Walk normalized source
+entries in retained order. At a literal entry, yield its one stored complete
+row if and only if that row belongs to the logical relation. At a numeric
+range entry, walk its interval rows in displayed order and each interval in
+ascending `j`. For scalar `x = lower_bound + j * step`, reconstruct
+
+```text
+source_member_index = (x - L) / s
+```
+
+as an exact nonnegative integer, then rebuild the five-key `source_value`
+from the normalized entry, its retained type/unit/meaning/disposition, and
+`x`. The index and value must deep-equal an independent reconstruction from
+the authenticated source entry.
+
+The surrounding relation key and parent branch uniquely select the retained
+row constructor:
+
+- a candidate-arm interval reruns that parent arm's §20.3.3 renderer and
+  yields the complete inherited eight-key candidate member;
+- an invariant or ambiguous interval independently runs both candidate
+  renderers, removes only `profile_kind` for comparison, and yields exactly
+  the inherited eight-key invariant or fourteen-key ambiguous member;
+- a renderable interval reruns the selected authoritative renderer, action
+  path, parsed scalar, and byte replay and yields the inherited seven-key
+  row; and
+- an unrenderable interval proves the absence of an authoritative image and
+  yields the inherited four-key row with exactly
+  `no_exact_width_selected_form_image` or, only for a member in the
+  arm-ambiguous relation,
+  `arm_ambiguous_no_authoritative_image`.
+
+No value in a full virtual row is copied from a bound, guessed from a count,
+or omitted. The inverse reconstructs physical image bytes, rendered
+precision, action arrays, scalar, replay, candidate result/failure,
+authoritative result, both ambiguous candidate projections, and encounter
+abort exactly where the inherited row schema requires them. If the
+surrounding source/profile/arm/DFA values do not determine one unique full
+row, the analytic arm is lossy and invalid.
+
+Conversely, the forward transform takes the independently reconstructed
+explicit logical relation, retains literal rows, groups each numeric
+entry's included indexes into the unique maximal consecutive runs above,
+and emits their exact closed intervals. Forward followed by inverse must
+reproduce the canonical explicit member-array bytes exactly; inverse
+followed by forward must reproduce the canonical analytic object bytes
+exactly. Those two equalities are the required bijection. A Boolean
+membership oracle, summary, approximate cardinality, sampled expansion, or
+digest match without both equalities is insufficient.
+
+#### 22.2.4 Canonical streaming member digest and aggregate identity
+
+Every retained `*_member_domain_sha256` remains the SHA-256 of the complete
+logical member array under §10.1, whether its storage arm is explicit or
+analytic. The exact streaming construction is:
+
+1. initialize SHA-256 and feed the one ASCII byte `0x5b` (`[`);
+2. enumerate complete virtual member rows under §22.2.3; before every row
+   except the first feed `0x2c` (`,`), then feed that row's §10.1 canonical
+   JSON object bytes—sorted object keys, compact separators, ASCII escaping,
+   no nonfinite or floating-point value, and **no** terminal LF at member
+   level;
+3. after the final row feed exactly `0x5d 0x0a` (`]\n`); and
+4. serialize the lowercase 64-hex-character SHA-256 result.
+
+For zero rows the byte stream is exactly `[]\n` and its retained digest is
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`.
+For an explicit arm these bytes exactly equal canonical serialization of the
+stored array. For an analytic arm a consumer may compute them one member at
+a time without storing the array. Chunk boundaries, buffering, thread
+partitioning, or process count cannot enter the hash; the SHA state sees the
+one byte stream above.
+
+The source-member-domain digest for a range-partition parent is rebuilt by
+ordered-merging the virtual renderable and unrenderable rows, projecting the
+exact two-key `source_member_index`/`source_value` rows, and applying the
+same stream. Candidate-arm and invariant/ambiguous counts/digests likewise
+cover the complete virtual arrays, including their literal rows. Every
+complementary merge, equality, disjointness, and exact-cover requirement in
+§20 remains controlling.
+
+The actual analytic object is separately part of the containing 16-key row's
+canonical bytes. Every affected derivation ID, complete-row SHA-256,
+`numeric_grammar_derivation_rows` domain/content digest, source-manifest
+digest, Q5 digest, and downstream enclosing digest is therefore rebuilt
+from the threshold-selected representation bytes. Semantic member-domain
+digest equality does not make unequal storage bytes equal and cannot bypass
+the representation tag, threshold, canonical interval form, or full-row
+comparison.
+
+The full field-relation aggregate identities remain pinned to the unchanged
+source-derived classification: denominator SHA-256
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`,
+ten-row count-array SHA-256
+`421105abb63991c3cc1d14d15c98ff68803f7e50dd992107fd797a01ec346624`,
+and complete ordered assignment SHA-256
+`5c9020ad92ced4916dd1152f0ce06cc276878a0ca312cd34f9d25c3c3977e72e`.
+They cover fields and terminal assignment, not serialized member count, and
+remain necessary but not sufficient. The fresh actual-row and enclosing
+digests must also reproduce under the one canonical representation rule.
+
+### 22.3 Exact analytic-equivalent consumer law
+
+#### 22.3.1 One validated virtual relation for every reader
+
+Before any §20 or §21 consumer reads a member-sequence value, it resolves the
+complete same-wave/raw-field 16-key derivation row, authenticates the actual
+representation bytes and fresh full-row hash, applies the 4,096-member
+threshold, and validates every count, source reference, atom, interval,
+maximal-run, bijection, logical member digest, and complementary exact-cover
+equation in §22.2. It then exposes one virtual exhaustive relation having the
+inherited complete rows and order. No downstream branch is told whether a
+row came from an explicit array or analytic expansion unless it is
+validating the representation itself.
+
+For membership of an exact source scalar `x`, first resolve its unique
+normalized source entry. A literal uses the retained exact row. A numeric
+member must satisfy the entry's closed-bound and exact-step congruence law,
+then match exactly one interval in each applicable logical partition. The
+consumer recovers its original zero-based index, relation tag, and complete
+virtual row—not merely true/false. Within the unchanged source domain, zero
+matches across a required exact cover, multiple matches, a different index,
+or different regenerated row aborts. Outside the normalized source domain,
+the inherited unknown-token or semantic-membership law applies; an analytic
+interval never enlarges the domain.
+
+Ordered enumeration walks source entries, literals, intervals, and members
+exactly as §22.2.3 specifies. Candidate-arm relations must enumerate the
+same complete domain. Invariant and ambiguous relations must be disjoint and
+ordered-merge to it. Renderable and unrenderable relations must be disjoint
+and ordered-merge to all indexes `0..source_member_count-1`. Independent
+explicit reconstruction, analytic expansion, counts, and streaming digests
+must all agree. A malformed, lossy, ambiguous, overlapping, reordered,
+count-inconsistent, nonmaximal, or non-bijective analytic form takes the
+same fail-closed conflict class as an unequal independently reconstructed
+range partition; digest-only agreement still aborts.
+
+#### 22.3.2 Renderer, DFA subtraction, replay, and missing-first images
+
+The §20.3.3 renderer is unchanged. Every virtual numeric member is rendered
+once under the selected form and candidate or authoritative arm, using exact
+rational arithmetic, maximum fitting precision, exact sign placement, and
+the complete action path. A renderable member must return the same image,
+precision, action array, scalar, and byte-equal replay as the virtual row. An
+unrenderable or ambiguous member must return the same null authority and
+exact closed reason/action. The analytic interval is an enumeration device;
+it is never permission to use a generic numeric regex, host range, rounded
+endpoint, endpoint-only renderer, or observed subset.
+
+The §20.3.4 DFA builder streams only authoritative images from the virtual
+renderable relation or, on the finite-domain arm-ambiguous branch, from the
+virtual invariant relation. No unrenderable, ambiguous, candidate-only, or
+grammar-shaped value outside those relations contributes an edge. After
+that exact enumeration it subtracts every final registered missing image.
+An ordinary registered nonmissing literal image remains in the physical
+language and terminates literal-first, exactly as before. State numbering,
+unsigned-byte edge order, action-sensitive quotient, counts, transition
+digests, scalar actions, and raw-to-value-to-raw replay remain unchanged.
+
+A registered invariant missing literal remains missing-first and its image
+is subtracted. A candidate-only ambiguous short missing literal remains
+unregistered, never enters `missing_raw_tokens`, and takes
+`abort_before_classification_arm_ambiguous_source_member`. A final missing
+numeric image found by analytic membership is likewise missing-first; the
+analytic form cannot promote, demote, synthesize, or hide it. Every observed
+and unobserved classification first applies the retained exact literal and
+missing precedence, then obtains the exact virtual numeric member row, then
+traverses or aborts according to that row.
+
+#### 22.3.3 Complete-row, Q5, G17, value-map, and guarded-consumer propagation
+
+Every §20.3.5 status predicate and failure precedence reads the virtual
+complete relation. A compiled row still requires every applicable candidate,
+arm-disposition, renderability, DFA, and replay proof; a null-profile branch
+still has no profile-dependent partition. The 16-key row remains complete
+only when its actual threshold-selected bytes validate and its virtual
+explicit-equivalent relations reproduce. Projecting away an analytic object,
+accepting only its counts/digests, or substituting a regenerated explicit
+array for its canonical storage bytes makes the complete-row hash unequal.
+
+Every §20.4.1 layout, typed-parse, raw-token, observed/unobserved,
+`unobserved_possible_values`, source-commitment, and value-code consumer
+resolves that complete row first. The four inherited partition counts and
+digests in a partial-range or finite-arm unobserved row refer to the virtual
+arrays. Membership returns the exact renderable/invariant row or the exact
+unrenderable/ambiguous abort. The fixed 17-key layout, nine-key typed parse,
+18-key raw-token grammar, five-key commitment, and seven-key executable
+entry gain no analytic sibling key.
+
+Q5 embeds the actual complete threshold-selected relation, including every
+T-minus row, and computes fresh enclosing bytes and digests. Its 18-key
+positive raw-field projection retains only the derivation ID/full-row-hash
+references already named. Before a positive join, §20.4.2 and §21.4.4
+independently rebuild the source row, validate its actual representation,
+expand its virtual relation, compare every complete logical member and
+streaming digest, then apply the T-plus guard. An explicit-expected/
+analytic-actual or analytic-expected/explicit-actual mismatch at the
+threshold fails even if the virtual member digest agrees.
+
+G17-C01's complete relation, join, and layout values; G17-C06's direct-law
+classification; and G17-C07's source commitments/value maps apply the same
+reader independently on expected and actual sides. Evidence-only storage of
+the complete `field_source_derivation` remains evidence. Any C01/C06/C07
+positive projection, parser, DFA/partition/action read, value map, or
+crosswalk use remains physical consumption under §21.4 and resolves the
+virtual row before use. G17 retains exactly 18 physical comparand rows and
+no new C19.
+
+All seven §21.4.3 guarded consumer kinds—`q5_positive_field_join`,
+`slot_registry`, `official_inventory`, `value_map`, `crosswalk`,
+`correction_input`, and `context_output`—therefore accept the same virtual
+relation and no removed explicit-only path. The complete reference stream,
+T-plus/T-minus test, atomic abort, exact nine-key diagnostic, evidence/
+consumption boundary, slot and inventory integrity, R10a/R10b/R11 ordering,
+and V-B6 nonpassing result remain. Analytic enumeration is physical
+partition consumption whenever the corresponding explicit member read was;
+calling it a compact representation does not evade the guard.
