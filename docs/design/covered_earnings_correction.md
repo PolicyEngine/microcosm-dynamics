@@ -38806,3 +38806,129 @@ A8-R04, D8, Q5, A, H_cap, T, C, K_f^d, and DC-01 through DC-48 are enum,
 defined-term, row-ID, member, operation, context symbol, or comparator values,
 not independently selectable schemas. None enlarges the identifier inventory
 or creates a v4 compiler alias.
+
+### 22.9 Post-Amendment-8 build, ratification, Q5, and registration order
+
+#### 22.9.1 Checked compiler-to-Q5 and guarded-consumer walk
+
+After D8, the separately reviewed source-only v3 implementation constructs
+all 176 document derivations and all 89,599 complete 16-key field rows before
+reading a serialized comparand or consumer. Logical construction remains
+exhaustive: it reconstructs every literal and range member, candidate arm,
+invariant/ambiguous disposition, renderability partition, missing subtraction,
+DFA, replay, and consumer projection. Physical storage follows §22.2's one
+threshold-selected arm and need never materialize a large virtual array.
+
+Before Q5 is read, the builder must:
+
+1. reproduce the exact §20 source law, ten terminal counts, three aggregate
+   pins, seven failure-reason rows, and §21.3
+   `pass_with_closed_failures` relation;
+2. run A6-R01 through A6-R11 unchanged;
+3. run the exact pre-Q5 A7 sequence A7-R01 through A7-R09, A7-R10a, and
+   A7-R11, obtaining the same expected-negative V-B6 results;
+4. run A8-R01 through A8-R04 in order, reproducing every payload byte count,
+   storage SHA, virtual-member SHA, negative rejection, and storage-bound
+   fact; and
+5. in a fresh process, run mandatory `--check` under §22.5.3 and obtain
+   byte equality, all pinned/fresh digest equality, and exact-empty mismatch
+   arrays.
+
+Failure at any step emits no accepted relation. A source compiler cannot use
+the candidate artifact, Q5, inventory, expected vector output, prior digest,
+or interval row as an input to source derivation. The interface remains
+`dictionary_codebook_fixed_width_source_derivation_v3`; neither the analytic
+container nor `--check` creates a v4 alias.
+
+Only after all five steps pass may Q5 be first-created in its one-path,
+one-parent post-D8 commit. Q5 embeds the complete actual threshold-selected
+source relation, including every T-minus row and fresh row/enclosing digest;
+no positive join may consume a T-minus field. Every positive join resolves
+the actual representation, virtual member relation, and §21 guard before
+reading a physical value. DC-30, DC-35, DC-40, and DC-45 independently prove
+D5/Q5, D6/Q5, D7/Q5, and D8/Q5, plus the complete eight-key artifact identity
+and retained Q5-before-slot/inventory/cutoff chain. None substitutes for
+another.
+
+Only after Q5 passes may the guarded slot authority, official slot registry,
+and complete actual official inventory be constructed in inherited order.
+Every layout, parser, raw-token grammar, value map, crosswalk, and G17
+expected/actual value resolves the same checked relation through §22.3.
+Inventory must satisfy the unchanged E-domain equations, exact 1,235-key
+negative census, and every applicable guard. A7-R10b runs immediately after
+that actual inventory passes and strictly before any residual-9 registry,
+V-B6 requirement result, preliminary/final 22-row domain, bundle, or
+correction final-acceptance gate. It must again pass only by proving that no
+carrier or passing/accepted V-B6 result exists.
+
+Unrelated guarded registries, layouts, parsers, value maps, crosswalks, and
+comparands may continue when their own source, representation, and consumer
+laws pass. The V-B6 branch cannot. Every preliminary and final 22-row
+reconstruction keeps V-B6 in the same position, reruns R10a, both R11 arms,
+and post-inventory R10b, and obtains a nonpassing V-B6 row. Therefore the v7
+domain, v8 bundle, correction final acceptance, receipt, registration, and
+production correction still cannot pass. Compact storage cures physical
+constructibility only; it supplies no missing authority and relaxes no
+boundary.
+
+#### 22.9.2 Referee, D8, implementation, Q5, capture, and production
+
+This subsection replaces §21.9.2 as the live revision-10 protocol:
+
+1. Submit the complete append-only §22 candidate bytes to adversarial
+   referee review without a source implementation, Q5, slot, inventory,
+   registry, capture, correction evaluation, output, or other non-document
+   tree change in this authoring lane.
+2. Resolve every finding and verify the complete round-to-round diff; exact
+   2,423,590-byte D7 prefix and identity; all frozen sources and unchanged
+   field/status/failure digests; all three affected relation families; the
+   numeric-atom and interval grammar; 4,096 threshold; forward/inverse
+   bijection; streaming bytes; every §20/§21 consumer read; A8-R01 through
+   A8-R04 payload bytes and digests; 820,709,179,087-member and TiB
+   arithmetic; expected scale; mandatory `--check`; §22.6 closure sweep;
+   48-row comparator census; 17-name successor inventory; D8/Q5 edge; and
+   every lifecycle/build walk. Continue until the exact final bytes receive
+   affirmative ratification.
+3. Ratify only those accepted bytes in one identifiable future document-only
+   commit D8. No authoring, audit, review-response, source, implementation,
+   artifact, Q5, runtime, or registration change may be included in D8.
+4. After D8, separately review and commit the source-only v3 implementation.
+   Reconstruct the complete analytic-capable relation from authenticated
+   sources, run the five pre-Q5 gates in §22.9.1, and require fresh
+   `--check` byte equality. Only that exact checked relation may precede Q5.
+   First-add Q5 alone at its strict post-D8 single-parent commit. Construct
+   no synthetic carrier, residual-9 registry, or 22-row result in this step.
+5. After Q5 passes, construct and accept only the guarded slot authority,
+   official slot registry, and complete actual official inventory in
+   official order, including its E-domain equations, negative census, and
+   analytic-equivalent derivation reads. Immediately after actual inventory
+   acceptance, run A7-R10b from fresh inputs and prove absence of every
+   residual-9 key array, carrier, ID, consequence, amount read, and passing
+   or accepted V-B6 result. A constructed carrier or synthetic fixture fails.
+6. Freshly evaluate the preliminary V-B6 row and complete 22-row domain.
+   Rerun R10a, both R11 arms, and R10b from their proper inputs, never copied
+   outputs. V-B6 must be nonpassing and the domain must abort. Under present
+   evidence no residual-9 registry, V-B6 bundle, correction final acceptance,
+   receipt, registration, production correction, context output, certificate,
+   publication, or external merge may follow from this path.
+7. The v7 capture/domain/receipt/registration and v8 bundle schemas in §22.8
+   remain defined for exact lifecycle closure and a future lawful authority.
+   They may instantiate only after a later ratified authority changes the
+   presently nonpassing V-B6 result without weakening the layer law,
+   fabricating a carrier, altering the lossless representation law, or
+   copying a predecessor result. That work is outside Amendment 8.
+
+At these draft bytes none of steps 3–7 has occurred. No D8, successor
+implementation, canonical relation artifact, successful `--check`, Q5,
+official inventory, guarded consumer artifact, lifecycle instance, carrier,
+receipt, registration, correction result, or output is claimed. Amendment 8
+removes one physical serialization impossibility while preserving the exact
+source classification and the independent V-B6 authority blocker.
+
+**Amendment 8 is inoperative unless and until its exact D8 ratification
+commit is bound by a validator-accepted v7 fresh-registration receipt.** The
+current V-B6 nonpassing result prevents that receipt. Ratification alone
+authorizes only the separately reviewed source implementation, canonical
+relation build, `--check`, Q5, and expected-negative guarded steps stated
+above; it authorizes no correction production evaluation, path switch,
+context run, label change, output, or publication.

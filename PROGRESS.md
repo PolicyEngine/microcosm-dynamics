@@ -26,9 +26,11 @@ prefix remains 2,423,590 bytes with SHA-256
   (24 replaced / 24 unchanged).
 - Added D8 position, capture, domain, bundle, receipt, and selected-lineage
   successors plus the exact 16+1 identifier inventory.
+- Completed the post-D8 compiler, mandatory `--check`, Q5, guarded inventory,
+  ratification, and blocked-registration order.
 
 ## Next
 
-- Complete the post-D8 build/ratification/Q5 order.
+- Run independent completeness and consistency audits over all of §22.
 - Reverify the immutable prefix, document digest, and diff hygiene.
 - Write the external final report and remove this progress file.
