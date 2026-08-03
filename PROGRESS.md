@@ -15,10 +15,12 @@ fixture/digest consequences.
   document SHA-256, and immutable-prefix SHA-256.
 - Began independent mapping of the member-count typing, scale wording,
   storage arithmetic, and inherited pseudo-JSON-fence disposition.
+- Typed every analytic range-row `member_count` as a nonnegative JSON integer
+  excluding booleans and drafted the mandatory `3.0` rejection payload.
 
 ## Next
 
-- Amend only the affected section 22 text and rejection fixture.
-- Recompute every directly affected byte count and digest.
+- Verify the new rejection bytes and every retained fixture count/digest.
+- Amend the three precision/disposition findings in section 22.
 - Run focused strict-JSON, arithmetic, prefix, scope, and diff-hygiene checks.
 - Remove this ledger and write the final report outside the repository tree.

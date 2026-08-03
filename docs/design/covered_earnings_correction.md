@@ -37770,8 +37770,10 @@ intervals
 member_count
 ```
 
-The reference exact-matches the normalized entry. `member_count` is the
-number of this logical relation's members belonging to that entry.
+The reference exact-matches the normalized entry. `member_count` is a
+nonnegative JSON integer excluding booleans and exact-equals the number of
+this logical relation's members belonging to that entry. A floating-point
+token is invalid even when its mathematical value is integral.
 `intervals` is an ordered array of four-position arrays:
 
 ```text
@@ -37819,6 +37821,7 @@ and source-member count `M`, each analytic interval must satisfy all of:
    order, or alternate stride is noncanonical and invalid.
 
 An empty relation for an entry has `intervals: []` and `member_count: 0`.
+The spellings `0.0` and `-0.0` are invalid under the same integer type law.
 Otherwise the interval counts sum exactly to that row's `member_count`.
 All range-row counts plus `len(literal_member_rows)` sum exactly to
 `total_member_count`, which exact-equals the retained count sibling. Each
@@ -38167,7 +38170,7 @@ Both procedures must independently report 1,315,139 bytes and the displayed
 logical-member digest. Reusing one procedure's rows, byte buffer, digest
 state, or output as the other's expected value fails the independence arm.
 
-#### 22.4.4 A8-R03 — lossy, ambiguous, and count-inconsistent negatives
+#### 22.4.4 A8-R03 — lossy, ambiguous, type-invalid, and count-inconsistent negatives
 
 The validator must reject each following terminal-LF canonical object before
 constructing or accepting a semantic member digest.
@@ -38198,8 +38201,24 @@ The count-inconsistent form is:
 It is 207 bytes with SHA-256
 `560aa8ad616851bb14e1e15d9b411f1258fed769c171652d7b9660fc2decf66f`;
 the equation yields upper bound 12 rather than 14. Accepting any one of the
-three, repairing it silently, hashing a guessed expansion, or treating the
-second form as an alternate canonical split fails R03.
+three preceding forms, repairing it silently, hashing a guessed expansion,
+or treating the split form as an alternate canonical split fails R03.
+
+The following compact JSON counterexample is syntactically parseable but
+schema-invalid because the range-row `member_count` is the floating-point
+token `3.0` rather than a JSON integer:
+
+~~~json
+{"literal_member_rows":[],"range_interval_rows":[{"intervals":[[10,14,2,3]],"member_count":3.0,"source_entry_ref":"a8-fixture:range:0"}],"representation":"analytic_closed_intervals_v1","total_member_count":3}
+~~~
+
+With its terminal LF it is 209 bytes and has raw-storage SHA-256
+`ca4768c2ef8b67f4a63bdc3971dea3e1e7909a1c177bedc9b0a760e15faf0aef`.
+Although an untyped reader could expand it to R01's same 944-byte member
+array, validation must reject it before expansion or semantic hashing. R01's
+207-byte integer spelling is the one lawful serialization; no `3.0`, `0.0`,
+or `-0.0` range-row count is an alternate. Accepting this fourth negative
+fails R03.
 
 #### 22.4.5 A8-R04 — exact storage contradiction and source-derived census
 
