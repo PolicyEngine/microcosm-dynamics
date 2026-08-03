@@ -38,10 +38,13 @@ complete. Gate pinning, downstream regeneration, and documentation remain.
 - Regenerated the completed draft successor counts as
   `4,826 / 153 / 49 / 0 / 67,316 / 1,145 / 0 / 1 / 421 / 15,688`.
 - The source and runner targeted suites pass 144 tests.
+- Implemented A10-R04 as an actual fail-closed gate: strict single-read JSONL,
+  recursive duplicate-key rejection, exact member types, all independent
+  input/census/matrix/movement/artifact/candidate/statement/payload pins, and
+  abort-without-emission. The production relation passes all frozen pins.
 
 ## Next
 
-- Freeze every completed-census pin into the strict A10-R04 gate.
 - Regenerate every dependent census, digest, matrix, movement, artifact, and
   downstream figure using the mandated interpreter.
 - Correct the normative prose, lifecycle scope, provenance, floor arithmetic,
