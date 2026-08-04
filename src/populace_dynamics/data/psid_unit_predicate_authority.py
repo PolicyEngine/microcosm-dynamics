@@ -46479,7 +46479,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "10% (V4386 minus V4384), not to exceed $400, minus 10% (V4386 minus $4000) = tax "
         "credit (V5076) Tax credit dollars",
-        "NDDDDDDNDNDDNDDDDDDN",
+        "NDDDDDDNDNDDNDDDDDDW",
     ),
     ("1008) Age of 1969 Head at time of 1969 interview", "DDDDDDDDDD"),
     (
@@ -46520,13 +46520,13 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1967 Hourly Earnings - HEAD V74 1967 Income from Labor - HEAD / V47 1967 Hours of "
         "Work for Money - HEAD * Coded 99.99 when V47 = 0000 (Did not work for money in "
         "1967)",
-        "DWDDDDDDDDDDDDDNDDDDDDDNDDDDDDDDDDDD",
+        "DNDDDDDDDDDDDDDNDDDDDDDNDDDDDDDDDDDD",
     ),
     (
         "1967 Hourly Earnings - WIFE V75 1967 Income from Labor - WIFE / V53 1967 Hours of "
         "work for money - WIFE * Coded 99.99 when V53 = 0000 (Did not work for money in "
         "1967)",
-        "DWDDDDDDDDDDDDDNDDDDDDDNDDDDDDDDDDDD",
+        "DNDDDDDDDDDDDDDNDDDDDDDNDDDDDDDDDDDD",
     ),
     (
         '1967-68 Change in "Well-Offness" (Money income basis) 1968 Family "Well-Offness" '
@@ -46586,12 +46586,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1967-68 Change in hourly earnings - HEAD 1968 Hourly earnings - HEAD (V871) minus "
         "1967 Hourly earnings - HEAD (V337)",
-        "DDDWDDDDNDDDDDDNDDDD",
+        "DDDNDDDDNDDDDDDNDDDD",
     ),
     (
         "1967-68 Change in hourly earnings - WIFE 1968 Hourly earnings - WIFE (V873) - 1967 "
         "Hourly earnings - WIFE (V338)",
-        "DDDWDDDDNDDDDDDNDDDD",
+        "DDDNDDDDNDDDDDDNDDDD",
     ),
     (
         "1967-68 Change in hours of home production (other than housework) 1968 Hours of "
@@ -46854,12 +46854,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1968 Hourly earnings - HEAD (1968 Labor income - HEAD [V514]/1968 Hours of work for "
         "money - HEAD [V465])",
-        "DWDDDDDDDDDNDDDDDDD",
+        "DNDDDDDDDDDNDDDDDDD",
     ),
     (
         "1968 Hourly earnings - WIFE OF HEAD (1968 Labor income - WIFE OF HEAD [V516]/ 1968 "
         "Hours of work for money - WIFE OF HEAD [V475])",
-        "DWDDDDDDDDDDDDDDNDDDDDDDDD",
+        "DNDDDDDDDDDDDDDDNDDDDDDDDD",
     ),
     (
         "1968 Hours of home production excluding hours spent raising and growing food (1969 "
@@ -47270,12 +47270,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1969 hourly earnings - HEAD 1969 labor income of the Head [V1196]/1969 hours of "
         "work for money of the Head [V1138]",
-        "DWDDDDDDDDDDNDDDDDDDD",
+        "DNDDDDDDDDDDNDDDDDDDD",
     ),
     (
         "1969 hourly earnings - WIFE OF HEAD 1969 labor income of Wife of Head [V1198]/1969 "
         "hours of work for money of wife of Head [V1148]",
-        "DWDDDDDDDDDDDDDNDDDDDDDDD",
+        "DNDDDDDDDDDDDDDNDDDDDDDDD",
     ),
     (
         "1969 hours of free help from outside family unit Calculation assumes help from "
@@ -47437,12 +47437,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1970 hourly earnings - HEAD 1970 labor income of Head [V1897]/1970 hours of work "
         "for money of Head [V1839]",
-        "DWDDDDDDDDDNDDDDDDD",
+        "DNDDDDDDDDDNDDDDDDD",
     ),
     (
         "1970 hourly earnings - WIFE OF HEAD 1970 labor income of Wife of Head [V1899]/1970 "
         "hours of work for money of Wife of Head [V1849]",
-        "DWDDDDDDDDDDDDDNDDDDDDDDD",
+        "DNDDDDDDDDDDDDDNDDDDDDDDD",
     ),
     (
         "1970 hours of free help from outside family unit Calculation assumes help from "
@@ -47530,13 +47530,13 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1971 Average hourly earnings - HEAD 1971 labor income of the Head [V2498]/1971 "
         "hours of work for money of the Head [V2439] xx.xx 1971 hourly earnings 00.00 Zero "
         "hourly earnings or Head did not work for money",
-        "DDWDDDDDDDDDDNDDDDDDDDDDNDDDNDDDDDDDD",
+        "DDNDDDDDDDDDDNDDDDDDDDDDNDDDNDDDDDDDD",
     ),
     (
         "1971 Average hourly earnings - WIFE OF HEAD 1971 labor income of Wife of Head "
         "[V2500]/1971 hours of work for money of Wife of Head [V2449] xx.xx 1971 hourly "
         "earnings",
-        "DDWDDDDDDDDDDDDDNDDDDDDDDDDDND",
+        "DDNDDDDDDDDDDDDDNDDDDDDDDDDDND",
     ),
     (
         '1971 Family "Well-Offness" - Money Income (1971 money income/needs [V2868] x 1971 '
@@ -47737,12 +47737,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1972 Average Hourly Earnings - wife of Head 1972 labor income of wife of Head "
         "(V3053)/1972 hours of work for money of wife of Head (V3035)",
-        "DDWDDDDDDDDDDDDDNDDDDDDDDD",
+        "DDNDDDDDDDDDDDDDNDDDDDDDDD",
     ),
     (
         "1972 Average hourly earnings - Head 1972 labor income of the Head (V3051)/1972 "
         "hours of work for money of the Head (V3027)",
-        "DDWDDDDDDDDDDNDDDDDDDD",
+        "DDNDDDDDDDDDDNDDDDDDDD",
     ),
     (
         "1972 Family Weight This variable is described in detail in Section II, Volume I, of "
@@ -47868,7 +47868,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1973 Average Hourly Earnings - Wife of Head 1973 labor income of Wife (V3465)/1973 "
         "hours of work for money of Wife (V3431)",
-        "DDWDDDDDDDDDDDNDDDDDDD",
+        "DDNDDDDDDDDDDDNDDDDDDD",
     ),
     ("1973 Family Composition", "DDD"),
     ("1973 Interview Number", "DDD"),
@@ -47935,18 +47935,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1973 average hourly earnings - Head 1973 labor income of Head (V3463)/1973 hours of "
         "work for money of Head (V3423)",
-        "DDWDDDDDDDDDNDDDDDDD",
+        "DDNDDDDDDDDDNDDDDDDD",
     ),
     ("1973-1974 Change in Marital Status", "DDDDD"),
     (
         "1974 Average hourly earnings - Head 1974 labor income of the Head (V3863)/1974 "
         "hours of work for money of the Head (V3823) 1974 hourly earnings",
-        "DDWDDDDDDDDDDNDDDDDDDDDND",
+        "DDNDDDDDDDDDDNDDDDDDDDDND",
     ),
     (
         "1974 Average hourly earnings - Wife of Head 1974 labor income of Wife of Head "
         "(V3865)/1974 hours of work for money of Wife of Head (V3831) 1974 hourly earnings",
-        "DDWDDDDDDDDDDDDDNDDDDDDDDDDND",
+        "DDNDDDDDDDDDDDDDNDDDDDDDDDDND",
     ),
     ("1974 Family Composition", "DDD"),
     ("1974 Interview Number", "DDD"),
@@ -48015,12 +48015,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1975 Average Hourly Earnings - Head 1975 labor income of Head (sum V4371 - V4373 "
         "and V4375-V4377)/1975 hours of work of Head (V4332) 1975 average hourly earnings",
-        "DDWDDDDDDDDDDDDDDNDDDDDDDND",
+        "DDNDDDDDDDDDDDDDDNDDDDDDDND",
     ),
     (
         "1975 Average hourly earnings - Wife 1975 labor income of Wife (V4379)/1975 hours of "
         "work for money of Wife (V4344) 1975 average hourly earnings",
-        "DDWDDDDDDDDDNDDDDDDDDDND",
+        "DDNDDDDDDDDDNDDDDDDDDDND",
     ),
     ("1975 Family Composition", "DDD"),
     (
@@ -48099,12 +48099,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1976 Average Hourly Earnings - Head 1976 labor income of Head (sum V5281 - V5283 "
         "and V5285 - V5287)/1976 hours of work of Head (V5232)",
-        "DDWDDDDDDDDDDDDDDDDNDDDDD",
+        "DDNDDDDDDDDDDDDDDDDNDDDDD",
     ),
     (
         "1976 Average Hourly Earnings - Wife 1976 labor income of Wife (V5289)/1976 hours of "
         "work for money of Wife (V5244)",
-        "DDWDDDDDDDDDNDDDDDDD",
+        "DDNDDDDDDDDDNDDDDDDD",
     ),
     ("1976 Family Composition", "DDD"),
     (
@@ -48180,12 +48180,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1977 Average Hourly Earnings - Head 1977 labor income of Head (sum V5780 - V5782 "
         "and V5784 - V5786)/1977 hours of work of Head (V5731) 1977 average hourly earnings",
-        "DDWDDDDDDDDDDDDDDDDNDDDDDDDND",
+        "DDNDDDDDDDDDDDDDDDDNDDDDDDDND",
     ),
     (
         "1977 Average Hourly Earnings - Wife 1977 labor income of Wife (V5788)/1977 hours of "
         "work for money of Wife (V5743) 1977 average hourly earnings",
-        "DDWDDDDDDDDDNDDDDDDDDDND",
+        "DDNDDDDDDDDDNDDDDDDDDDND",
     ),
     ("1977 Family Composition", "DDD"),
     (
@@ -48263,12 +48263,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1978 Average Hourly Earnings--Head 1978 labor income of Head (sum V6389-V6391 and "
         "V6393-V6396)/1978 work hours of Head (V6336)",
-        "DDWDDDDDDDDDDDNDDD",
+        "DDNDDDDDDDDDDDNDDD",
     ),
     (
         "1978 Average Hourly Earnings--Wife 1978 labor income of Wife (V6398)/1978 work "
         "hours of Wife (V6348)",
-        "DDWDDDDDDDDNDDD",
+        "DDNDDDDDDDDNDDD",
     ),
     ("1978 Family Composition", "DDD"),
     (
@@ -48352,12 +48352,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1979 Average Hourly Earnings--Head 1979 labor income of Head (sum V6979-V6981 and "
         "V6983-V6986)/1979 hours of work of Head (V6934) 1979 average hourly earnings",
-        "DDWDDDDDDDDDDNDDDDDDDND",
+        "DDNDDDDDDDDDDNDDDDDDDND",
     ),
     (
         "1979 Average Hourly Earnings--Wife 1979 labor income of Wife (V6988)/1979 hours of "
         "work for money of Wife (V6946) 1979 average hourly earnings",
-        "DDWDDDDDDDNDDDDDDDDDND",
+        "DDNDDDDDDDNDDDDDDDDDND",
     ),
     ("1979 Family Composition", "DDD"),
     ("1979 Interview Number", "DDD"),
@@ -48441,13 +48441,13 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1980 Average Hourly Earnings--Head 1980 labor income of Head (V8066)/1980 hours of "
         "work of Head (V7530) Note that this variable is defined as having two decimal "
         "places.",
-        "DDWDDDDDDDNDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDNDDDDDDDDDDDDDDDD",
     ),
     (
         "1980 Average Hourly Earnings--Wife 1980 labor income of Wife (V7580)/1980 hours of "
         "work for money of Wife (V7540) Note that this variable is defined as having two "
         "decimal places.",
-        "DDWDDDDDDDNDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDNDDDDDDDDDDDDDDDDDD",
     ),
     ("1980 Family Composition", "DDD"),
     ("1980 Interview Number", "DDD"),
@@ -48522,8 +48522,8 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "DDDDDDDWDDDDDDDDDDDDDDDDDDDDNDDDDDNDDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDNDDD",
     ),
     ("1980-1981 Change in Marital Status", "DDDDD"),
-    ("1981 Average Hourly Earnings--Head", "DDWD"),
-    ("1981 Average Hourly Earnings--Wife", "DDWD"),
+    ("1981 Average Hourly Earnings--Head", "DDND"),
+    ("1981 Average Hourly Earnings--Wife", "DDND"),
     ("1981 Family Composition", "DDD"),
     (
         "1981 ID Number (V7502) of the Main Family Interview from which this Splitoff "
@@ -55170,7 +55170,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "AFDC Maximum Monthly Allowance by state for all basic needs for a family of four (1 "
         "adult, 3 children).",
-        "DDWDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDDDDD",
     ),
     ("AGE OF HEAD'S OLDEST CHILD", "DDDDD"),
     ("AGE OF HEAD'S SECOND OLDEST CHILD", "DDDDDD"),
@@ -55677,7 +55677,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "About how much are your total yearly property taxes, including city, county, and "
         "school taxes? Missing values are imputed.",
-        "DDDDDDWDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDD",
     ),
     (
         "About how much are your total yearly property taxes, including city, county, and "
@@ -56971,15 +56971,15 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "About how much did you make at this?-SECOND EXTRA JOB-TIME UNIT",
         "DDDDDDDDDDD",
     ),
-    ("About how much did you make per hour at this?", "DDDDDDWDDD"),
+    ("About how much did you make per hour at this?", "DDDDDDNDDD"),
     (
         "About how much did you make per hour at this? (1970 question)",
-        "DDDDDDWDDDDD",
+        "DDDDDDNDDDDD",
     ),
     (
         "About how much did you make per hour at this? (Wage rate on second and third jobs) "
         "(1969 question) Amount per hour.",
-        "DDDDDDWDDDDDDDDDDDDDWD",
+        "DDDDDDNDDDDDDDDDDDDDND",
     ),
     (
         "About how much did you make per hour at this? Actual dollars and cents per hour",
@@ -56987,12 +56987,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "About how much did you make per hour at this? Actual hourly wage",
-        "DDDDDDWDDDWND",
+        "DDDDDDNDDDWND",
     ),
     (
         "About how much did you make per hour at this? The code values for this variable "
         "represent the actual wage rate for extra jobs.",
-        "DDDDDDWDDDWDDDDDDDDDDDDD",
+        "DDDDDDNDDDWDDDDDDDDDDDDD",
     ),
     (
         "About how much did you make per hour at this? The values for this variable "
@@ -57727,12 +57727,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "About how much would (you/he/she) make per hour for those extra hours?-- FOR "
         "CURRENT MAIN JOB",
-        "DDDDDDWDDDDNDDDD",
+        "DDDDDDNDDDDNDDDD",
     ),
     (
         "About how much would (you/he/she) make per hour for those extra hours?--CURRENT "
         "MAIN JOB",
-        "DDDDDDWDDDDNDD",
+        "DDDDDDNDDDDNDD",
     ),
     (
         "About how much would (you/she) make at this?--CURRENT MAIN JOB",
@@ -57746,7 +57746,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "About how much would (you/she) make per hour for those extra hours?--CURRENT MAIN "
         "JOB",
-        "DDDDDDWDDDDNDD",
+        "DDDDDDNDDDDNDD",
     ),
     (
         "About how much would she make at this?--AMOUNT FOR CURRENT MAIN JOB The values for "
@@ -57774,7 +57774,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "About how much would she make per hour for those extra hours?--FOR CURRENT MAIN JOB",
-        "DDDDDDWDDDDNDDD",
+        "DDDDDDNDDDDNDDD",
     ),
     (
         "About how much would she make per hour for those extra hours?--MENTION 1 - SALARY",
@@ -57819,7 +57819,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "About how much would you make per hour for that overtime?",
-        "DDDDDDWDDDD",
+        "DDDDDDNDDDD",
     ),
     (
         "About how much would you make per hour for that overtime? Actual dollars and cents "
@@ -57828,11 +57828,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "About how much would you make per hour for that overtime? Actual hourly amount",
-        "DDDDDDWDDDDWND",
+        "DDDDDDNDDDDWND",
     ),
     (
         "About how much would you make per hour for those extra hours?",
-        "DDDDDDWDDDDN",
+        "DDDDDDNDDDDN",
     ),
     (
         "About how much would you make per hour for those extra hours? Actual dollars and "
@@ -57847,7 +57847,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "About how much would you make per hour for those extra hours?-- FOR CURRENT MAIN "
         "JOB",
-        "DDDDDDWDDDDNDDDD",
+        "DDDDDDNDDDDNDDDD",
     ),
     (
         "About how much would you make per hour for those extra hours?--FIRST MENTION IF "
@@ -76958,7 +76958,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Amount paid for food stamps in 1974", "DDDDDDD"),
     ("Amount paid for food stamps in 1975", "DDDDDDD"),
     ("Amount paid for food stamps last month", "DDDDDDN"),
-    ("Amount per hour", "DWD"),
+    ("Amount per hour", "DND"),
     (
         "Amount saved by FU in 1970 by doing additions and repairs",
         "DDDDDDDDDDD",
@@ -87429,7 +87429,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Average hourly wage in county for unskilled temporary labor This variable is "
         "suppressed (filled with zeroes) in the public release file to protect the anonymity "
         "of respondents.",
-        "DWDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DNDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Average per capita expenditure on public welfare for county of residence in 1968 "
@@ -105437,47 +105437,47 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Difference between the Typical Hourly Wage Rate for an Unskilled Male and for an "
         "Unskilled Female, November 1978 This variable is suppressed (filled with zeroes) in "
         "the public release file to protect the anonymity of respondents.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Difference between the Typical Hourly Wage Rate for an Unskilled Male and for an "
         "Unskilled Female, November 1979 This variable is suppressed (filled with zeroes) in "
         "the public release file to protect the anonymity of respondents.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Difference between the Typical Hourly Wage Rate for an Unskilled Male and for an "
         "Unskilled Female.",
-        "DDDDWDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Difference between the typical hourly wage rate for an unskilled male and for an "
         "unskilled female, August 1974 This variable is suppressed (filled with zeroes) in "
         "the public release file to protect the anonymity of respondents.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Difference between the typical hourly wage rate for an unskilled male and for an "
         "unskilled female, August, 1972 This variable is suppressed (filled with zeroes) in "
         "the public release file to protect the anonymity of respondents.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Difference between the typical hourly wage rate for an unskilled male and for an "
         "unskilled female, October 1973 This variable is suppressed (filled with zeroes) in "
         "the public release file to protect the anonymity of respondents.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Difference between the typical hourly wage rate for an unskilled male and for an "
         "unskilled female.",
-        "DDDDWDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Difference between the typical hourly wage rate for an unskilled male and for an "
         "unskilled female? August 1971 This variable is suppressed (filled with zeroes) in "
         "the public release file to protect the anonymity of respondents.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Difficulties caused by not having car (1969) In order of priority",
@@ -163924,11 +163924,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How much are (your/their) monthly loan payments?--FIRST MORTGAGE",
-        "DDDDWDDD",
+        "DDDDNDDD",
     ),
     (
         "How much are (your/their) monthly loan payments?--SECOND MORTGAGE",
-        "DDDDWDDD",
+        "DDDDNDDD",
     ),
     (
         "How much are (your/you and your family's/their) health insurance premiums "
@@ -164255,20 +164255,20 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "VEHICLE",
         "DDDDDDDDDDDDDDD",
     ),
-    ("How much are your monthly loan payments?--FIRST MORTGAGE", "DDDDWDDD"),
-    ("How much are your monthly loan payments?--SECOND MORTGAGE", "DDDDWDDD"),
-    ("How much are your monthly mortgage payments?", "DDDDWDD"),
+    ("How much are your monthly loan payments?--FIRST MORTGAGE", "DDDDNDDD"),
+    ("How much are your monthly loan payments?--SECOND MORTGAGE", "DDDDNDDD"),
+    ("How much are your monthly mortgage payments?", "DDDDNDD"),
     (
         "How much are your monthly mortgage payments? Missing values are imputed.",
-        "DDDDWDDDDDD",
+        "DDDDNDDDDDD",
     ),
     (
         "How much are your monthly mortgage payments?--FIRST MORTGAGE",
-        "DDDDWDDD",
+        "DDDDNDDD",
     ),
     (
         "How much are your monthly mortgage payments?--SECOND MORTGAGE",
-        "DDDDWDDD",
+        "DDDDNDDD",
     ),
     (
         "How much are your payments and how often are they made? Missing values are imputed.",
@@ -165496,7 +165496,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("How much did that child support amount to to 1995?", "DDDDDDDDDD"),
     ("How much did that child support amount to to 1996?", "DDDDDDDDDD"),
     ("How much did that child support amount to to 2018?", "DDDDDDDDDD"),
-    ("How much did that cost you per week?", "DDDDDDWD"),
+    ("How much did that cost you per week?", "DDDDDDND"),
     (
         "How much did the court take from your earnings to repay your debts?--AMOUNT FOR "
         "MOST RECENT BANKRUPTCY",
@@ -166648,7 +166648,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much did you (and your family) receive altogether from Supplemental Security "
         "Income during 1997?--MONTHLY AMOUNT",
-        "DDDDDDDDDDDDDDWD",
+        "DDDDDDDDDDDDDDND",
     ),
     (
         "How much did you (and your family) receive altogether from Supplemental Security "
@@ -166658,7 +166658,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much did you (and your family) receive altogether from Supplemental Security "
         "Income during 1999?--MONTHLY AMOUNT",
-        "DDDDDDDDDDDDDDWD",
+        "DDDDDDDDDDDDDDND",
     ),
     (
         "How much did you (and your family) receive altogether from Supplemental Security "
@@ -166678,7 +166678,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much did you (and your family) receive altogether from child support during "
         "1997?--MONTHLY AMOUNT",
-        "DDDDDDDDDDDDDWD",
+        "DDDDDDDDDDDDDND",
     ),
     (
         "How much did you (and your family) receive altogether from child support during "
@@ -166688,7 +166688,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much did you (and your family) receive altogether from child support during "
         "1999?--MONTHLY AMOUNT",
-        "DDDDDDDDDDDDDWD",
+        "DDDDDDDDDDDDDND",
     ),
     (
         "How much did you (and your family) receive altogether from child support, alimony, "
@@ -166914,7 +166914,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How much do they (jobs not worth taking) pay? (1969 question) Amount per hour",
-        "DDDDDDDDDDDDWD",
+        "DDDDDDDDDDDDND",
     ),
     ("How much do they pay?", "DDDDD"),
     ("How much do they pay? (Retired, ...) (1970 question)", "DDDDDDDDD"),
@@ -167256,7 +167256,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "the reported weight in pounds.",
         "DDDDDNDDDDDDDDDDDDD",
     ),
-    ("How much does that cost you per week?", "DDDDDDWD"),
+    ("How much does that cost you per week?", "DDDDDDND"),
     (
         "How much does that cost you per week? Actual dollars per week",
         "DDDDDDWDWNDD",
@@ -167756,7 +167756,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much help did you and your family receive altogether during 1997?--MONTHLY "
         "AMOUNT",
-        "DDDDDDDDDDDWD",
+        "DDDDDDDDDDDND",
     ),
     (
         "How much help did you and your family receive altogether during 1999?--ANNUAL "
@@ -167766,7 +167766,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much help did you and your family receive altogether during 1999?--MONTHLY "
         "AMOUNT",
-        "DDDDDDDDDDDWD",
+        "DDDDDDDDDDDND",
     ),
     (
         "How much in total were these (school-related) expenses ? F86.",
@@ -168011,7 +168011,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much is your total yearly homeowner's insurance premium? Missing values are "
         "imputed.",
-        "DDDDDWDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "How much is your total yearly homeowner's insurance premium? The values for this "
@@ -168022,7 +168022,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much might you earn? (1969 questions) Amount per hour See V647 for code for the "
         "unemployed on this variable.",
-        "DDDDDDDDWDDDDDDDDDDD",
+        "DDDDDDDDNDDDDDDDDDDD",
     ),
     ("How much might you earn? (1970 question)", "DDDDDDD"),
     ("How much might you earn? (Retired, (1970 question)", "DDDDDDDD"),
@@ -168030,11 +168030,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "How much might you earn? (expected hourly wage for those looking for work or "
         "unemployed) (1969) See V682 for code for those currently working or not in the "
         "labor force for this variable.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much might you earn? - (expected hourly wage for unemployed) (1970 question)",
-        "DDDDDDDWDDDDD",
+        "DDDDDDDNDDDDD",
     ),
     (
         "How much might you earn? The code values for this variable represent the actual "
@@ -170056,7 +170056,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much would a job have to pay for you to be willing to move? (1969 question) "
         "Amount per hour",
-        "DDDDDDDDDDDDDDDDDDWD",
+        "DDDDDDDDDDDDDDDDDDND",
     ),
     (
         "How much would a job have to pay for you to be willing to move? (1970 question)",
@@ -170213,14 +170213,14 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     ("How much would you expect to earn? Actual hourly rate", "DDDDDDDWND"),
     ("How much would you expect to earn? Actual hourly wage", "DDDDDDDWND"),
-    ("How much would you have earned per hour?", "DDDDDDWD"),
+    ("How much would you have earned per hour?", "DDDDDDND"),
     (
         "How much would you have earned per hour? Actual dollars and cents per hour",
         "DDDDDDWDWNDDND",
     ),
     (
         "How much would you have earned per hour? Actual hourly wage",
-        "DDDDDDWDWND",
+        "DDDDDDNDWND",
     ),
     (
         "How much would you have earned per hour? The values for this variable represent "
@@ -170241,7 +170241,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much would you have made per hour at this work? (1969 question) Amount per "
         "hour.",
-        "DDDDDDWDDDDDDDWD",
+        "DDDDDDNDDDDDDDND",
     ),
     (
         "How much would you say that saved you (FAMILY) in an average month? (1969 question)",
@@ -245439,7 +245439,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "MENTION See the note at ER46410.",
         "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("What is her hourly wage rate for her regular work time?", "DDDWDDDDDDD"),
+    ("What is her hourly wage rate for her regular work time?", "DDDNDDDDDDD"),
     (
         "What is her hourly wage rate for her regular work time? Actual dollars and cents "
         "per hour",
@@ -245460,7 +245460,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "values for this variable represent dollars and cents per hour.",
         "DDDWDDDDDDDDDWDDDDDNDDND",
     ),
-    ("What is her hourly wage rate for overtime?", "DDDWDDDD"),
+    ("What is her hourly wage rate for overtime?", "DDDNDDDD"),
     (
         "What is her hourly wage rate for overtime? The values for this variable represent "
         "dollars and cents per hour.",
@@ -246704,14 +246704,14 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "MENTION See the note at ER46504.",
         "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("What is your hourly wage rate for overtime?", "DDDWDDDD"),
+    ("What is your hourly wage rate for overtime?", "DDDNDDDD"),
     (
         "What is your hourly wage rate for overtime? Actual dollars and cents per hour",
         "DDDWDDDDWNDDND",
     ),
     (
         "What is your hourly wage rate for overtime? Actual hourly wage",
-        "DDDWDDDDWND",
+        "DDDNDDDDWND",
     ),
     (
         "What is your hourly wage rate for overtime? The values for this variable represent "
@@ -246778,11 +246778,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "What is your hourly wage rate for your regular work time?",
-        "DDDWDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What is your hourly wage rate for your regular work time? (1970 question)",
-        "DDDWDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What is your hourly wage rate for your regular work time? Actual dollars and cents "
@@ -246792,7 +246792,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "What is your hourly wage rate for your regular work time? The code values for this "
         "variable represent the actual wage rate for regular work.",
-        "DDDWDDDDDDDWDDDDDDDDDDDDD",
+        "DDDNDDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "What is your hourly wage rate for your regular work time? The values for this "
@@ -246806,7 +246806,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "What is your hourly wage rate for your regular work? Actual hourly wage",
-        "DDDWDDDDDDWND",
+        "DDDNDDDDDDWND",
     ),
     ("What is your main occupation?", "DDDDD"),
     ("What is your main occupation? (1970 question)", "DDDDDDD"),
@@ -255605,15 +255605,15 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "What were your total receipts from farming? (1970 question)",
         "DDDDDDDDD",
     ),
-    ("What would be your hourly rate for that overtime?", "DDDDWDDDD"),
+    ("What would be your hourly rate for that overtime?", "DDDDNDDDD"),
     (
         "What would be your hourly rate for that overtime? (1970 question)",
-        "DDDDWDDDDDD",
+        "DDDDNDDDDDD",
     ),
     (
         "What would be your hourly rate for that overtime? The code values for this variable "
         "represent the actual hourly rate for overtime.",
-        "DDDDWDDDDWDDDDDDDDNDDD",
+        "DDDDNDDDDWDDDDDDDDNDDD",
     ),
     ("What would they be?", "DDDD"),
     (

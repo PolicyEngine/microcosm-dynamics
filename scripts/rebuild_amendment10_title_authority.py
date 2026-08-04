@@ -181,6 +181,10 @@ MONEY_WORDS = re.compile(
     r"payments?|prices?|salary|spend|spent|value|wages?)\b",
     re.IGNORECASE,
 )
+EXPLICIT_US_CURRENCY = re.compile(
+    r"\$|\b(?:dollars?|cents?|USD)\b",
+    re.IGNORECASE,
+)
 YEARLY_MONEY_WORDS = re.compile(
     r"\b(?:amount|benefits?|costs?|earnings?|expenditures?|expenses?|income|"
     r"payments?|premiums?|rent|salary|taxes|value|wages?)\b",
@@ -705,7 +709,9 @@ def _question_line_suffix_positive(
 
 
 def _unmarked_output_positive(
-    description: str, candidate: tuple[str, int, int, str]
+    field_id: str,
+    description: str,
+    candidate: tuple[str, int, int, str],
 ) -> tuple[str, str] | None:
     """Admit only exact source-audited unmarked output subtitle starts."""
 
@@ -724,11 +730,11 @@ def _unmarked_output_positive(
         if line_end < len(description)
         else ""
     )
-    if line in {"Amount per hour", "Amount per hour."}:
-        if family == "per_hour_rate_phrase":
+    if field_id == "V5076" and line == "Tax credit dollars":
+        if family == "nominal_dollar_token":
             return (
-                "united_states_dollar_per_hour",
-                "unmarked_amount_per_hour_output_title_denotation",
+                "united_states_dollar",
+                "standalone_output_label_names_currency",
             )
         return None
     if line == "Number of years from now":
@@ -1540,6 +1546,7 @@ def _adjudicate_context(
             if family == "per_hour_rate_phrase":
                 if (
                     MONEY_WORDS.search(header)
+                    and EXPLICIT_US_CURRENCY.search(description)
                     and "SALAR" not in description.upper()
                     and not _is_threshold(header, candidate)
                 ):
@@ -1560,11 +1567,16 @@ def _adjudicate_context(
                         "time_question_denotes_hours_per_week",
                     )
                 elif MONEY_WORDS.search(header):
-                    select(
-                        index,
-                        "united_states_dollar_per_week",
-                        "money_question_denotes_dollars_per_week",
-                    )
+                    if EXPLICIT_US_CURRENCY.search(description):
+                        select(
+                            index,
+                            "united_states_dollar_per_week",
+                            "money_question_denotes_dollars_per_week",
+                        )
+                    else:
+                        forced_negative[index] = (
+                            "currency_unmarked_money_per_week_phrase"
+                        )
                 else:
                     forced_negative[index] = (
                         "unsupported_or_input_per_week_phrase"
@@ -1640,6 +1652,7 @@ def _adjudicate_context(
                 )
                 if (
                     re.search(r"\bhourly (?:earnings?|wage|rate)\b", lower)
+                    and EXPLICIT_US_CURRENCY.search(description)
                     and not defeated
                 ):
                     select(
@@ -1650,7 +1663,9 @@ def _adjudicate_context(
                 else:
                     forced_negative[index] = "hourly_status_or_input_phrase"
             elif family == "yearly_morphology":
-                if YEARLY_MONEY_WORDS.search(header):
+                if YEARLY_MONEY_WORDS.search(
+                    header
+                ) and EXPLICIT_US_CURRENCY.search(description):
                     select(
                         index,
                         "united_states_dollar",
@@ -1668,7 +1683,7 @@ def _adjudicate_context(
                     r"weekly food needs?\b",
                     header[candidate_start:],
                     re.IGNORECASE,
-                ):
+                ) and EXPLICIT_US_CURRENCY.search(description):
                     select(
                         index,
                         "united_states_dollar",
@@ -1684,7 +1699,7 @@ def _adjudicate_context(
                     r"--MONTHLY\s+AMOUNT\b|\bAFDC Maximum Monthly Allowance\b",
                     description,
                     re.IGNORECASE,
-                ):
+                ) and EXPLICIT_US_CURRENCY.search(description):
                     select(
                         index,
                         "united_states_dollar",
@@ -2136,7 +2151,9 @@ def _adjudicate_context(
     for index, candidate in enumerate(all_candidates):
         if candidate not in full_body_delta:
             continue
-        positive = _unmarked_output_positive(description, candidate)
+        positive = _unmarked_output_positive(
+            row["raw_field_id"], description, candidate
+        )
         if positive is None:
             continue
         forced_negative.pop(index, None)
@@ -2152,8 +2169,9 @@ def _adjudicate_context(
                     "pension_amount_arm_denotes_dollars",
                 )
 
-    # Output-label and contextual defeats have precedence over any tentative
-    # positive inherited or inferred above.
+    # Exact standalone output labels clear neighboring formula defeats above.
+    # Every remaining per-start defeat outranks a tentative inherited or
+    # inferred positive.
     for index in forced_negative:
         selected.pop(index, None)
 
@@ -2425,8 +2443,8 @@ def _rebuild_segment_authority(
     if (
         dict(raw_overlay_counts)
         != {
-            ("D", "N", "N"): 71_818,
-            ("D", "W", "W"): 8_410,
+            ("D", "N", "N"): 72_026,
+            ("D", "W", "W"): 8_202,
             ("W", "N", "W"): 19,
         }
         or demotion_count != 0
@@ -4469,7 +4487,7 @@ def main() -> None:
         "delegated_to_actual_statement_grammar": 365,
         "delegated_to_coding_statement_grammar": 648,
         "delegated_to_primary_statement_grammar": 11_004,
-        "explanatory_body_prose_defeat": 834,
+        "explanatory_body_prose_defeat": 839,
         "formula_or_operand_defeat": 3_619,
         "input_table_or_subrange_not_field_denotation": 8,
         "instruction_threshold_table_or_subrange_defeat": 2_005,
@@ -4534,12 +4552,6 @@ def main() -> None:
             (1968, "V207"),
             (1968, "V265"),
             (1968, "V324"),
-            (1969, "V647"),
-            (1969, "V663"),
-            (1969, "V667"),
-            (1969, "V682"),
-            (1969, "V687"),
-            (1969, "V689"),
             (1969, "V865"),
             (1970, "V1479"),
             (1971, "V2191"),
@@ -4548,6 +4560,7 @@ def main() -> None:
             (1972, "V2900"),
             (1973, "V3235"),
             (1974, "V3657"),
+            (1976, "V5076"),
             (1976, "V4832"),
             (1976, "V4903"),
             (1978, "V6145"),
@@ -4622,12 +4635,12 @@ def main() -> None:
         or full_body_candidate_occurrences != 19_970
         or len(full_body_candidate_fields) != 11_085
         or dict(full_body_candidate_families) != expected_full_body_families
-        or dict(full_body_dispositions) != {"N": 19_940, "W": 30}
+        or dict(full_body_dispositions) != {"N": 19_945, "W": 25}
         or dict(full_body_negative_reasons)
         != expected_full_body_negative_reasons
         or full_body_positive_reasons
         != {
-            "unmarked_amount_per_hour_output_title_denotation": 6,
+            "standalone_output_label_names_currency": 1,
             "unmarked_count_output_title_denotation": 19,
             "unmarked_percent_output_title_denotation": 2,
             "unmarked_percentage_output_title_denotation": 1,
@@ -5286,11 +5299,8 @@ def main() -> None:
         (1968, "V235"),
         (1968, "V236"),
         (1969, "V556"),
-        (1969, "V647"),
         (1969, "V658"),
         (1969, "V659"),
-        (1969, "V663"),
-        (1969, "V667"),
         (1981, "V8027"),
         (2003, "ER23274"),
         (2007, "ER40408"),
@@ -5300,29 +5310,25 @@ def main() -> None:
     }
     expected_multi_positive_reasons = {
         "exact_output_label_names_unit": 2,
-        "hourly_money_title_denotation": 1,
         "how_many_direct_count_denotation": 5,
         "how_many_directly_governs_unit_noun": 2,
         "later_direct_count_question_title_denotation": 3,
         "later_direct_weeks_title_denotation": 3,
         "later_typical_week_hours_title_denotation": 4,
-        "money_question_denotes_dollars_per_hour": 2,
         "nominal_count_title_denotation": 2,
         "title_names_hours_per_week": 3,
-        "unmarked_amount_per_hour_output_title_denotation": 3,
         "unmarked_count_output_title_denotation": 2,
         "wrapped_alternative_days_title_denotation": 8,
     }
     if (
-        (er47619_fields, multi_positive_fields) != (1, 18)
+        (er47619_fields, multi_positive_fields) != (1, 15)
         or multi_positive_field_keys != expected_multi_positive_field_keys
-        or dict(multi_positive_multiplicities) != {2: 15, 3: 2, 4: 1}
+        or dict(multi_positive_multiplicities) != {2: 12, 3: 2, 4: 1}
         or dict(multi_positive_units)
         != {
             "count": 12,
             "day": 8,
             "hour_per_week": 7,
-            "united_states_dollar_per_hour": 6,
             "week": 7,
         }
         or dict(multi_positive_reasons) != expected_multi_positive_reasons

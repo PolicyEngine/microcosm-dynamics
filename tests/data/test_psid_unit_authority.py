@@ -3191,7 +3191,7 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         }
     ) == len(TITLE_START_AUTHORITY)
     assert canonical_sha256(TITLE_START_AUTHORITY) == (
-        "8be723069f257659cc2c36dd55758c76d084eded24d987629d1950c172032933"
+        "ebccedca54e914da8a1f9f20a39657e220f80346df84c8bc45834169c4b971df"
     )
     assert canonical_sha256(TITLE_LITERAL_FAMILIES) == (
         "c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913"
@@ -3229,7 +3229,7 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         len(vector) for _segment, vector in SEGMENT_START_AUTHORITY
     ) == (1_114_747)
     assert canonical_sha256(SEGMENT_START_AUTHORITY) == (
-        "c0eb8d26bf903137f73afc5fc37e79f8bfd0b2983d9ac79d33f14abd35c84883"
+        "e9fe527412664f86654f3b423d4422a23bb5966b128b98e3136e391e45f7a04c"
     )
     assert all(
         vector and len(vector) == segment.count(" ") + 1
