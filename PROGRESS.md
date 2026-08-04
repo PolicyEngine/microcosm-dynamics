@@ -46,12 +46,18 @@ any amendment edit.
 - Replaced §24.4.2's euphemistic pin-history wording with the explicit
   `148c58a` correct claim, `49ae3cb` false correction/manual-transfer story,
   and `bd5a071` evidence-route reversal.
+- Regenerated the complete schema-v3 pin object from the lawful 89,599-row
+  raw relation. The successor is
+  `[6109,173,63,1,67316,1145,0,1,421,14370]`, movement is 13,557, and the
+  payload SHA-256 is
+  `417bf1886c97fee7b1b249f92cf868096002c6cf1c6eaae9daf52c8984012da2`.
+  A production gate emitted and reparsed all three requested outputs with
+  peak RSS 1,163,018,240 bytes; the combined focused suites pass (295 tests).
 
 ## Next
 
-1. Regenerate every census/authority/payload pin from the lawful raw relation.
-2. Regenerate downstream floors, fixtures, and A10-R01..R05.
-3. Synchronize A10-R04's document contract and regenerated pins with the
+1. Regenerate downstream floors, fixtures, and A10-R01..R05.
+2. Synchronize A10-R04's document contract and regenerated pins with the
    committed transactional implementation.
-4. Run focused and full verification, recheck the protected prefix, write the
+3. Run focused and full verification, recheck the protected prefix, write the
    final report output, then remove `PROGRESS.md` in the final commit.
