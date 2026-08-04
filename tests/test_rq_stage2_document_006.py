@@ -609,6 +609,9 @@ def test_fidelity_diagnostic_is_exactly_the_thirty_atom_domain(
     }
     assert set(diagnostic) == annotation.VISUAL_FIDELITY_NOTE_KEYS
     assert len(diagnostic) == len(annotation.VISUAL_FIDELITY_COORDINATES) == 30
+    assert {
+        coordinate[3] for coordinate in annotation.VISUAL_FIDELITY_COORDINATES
+    } == {"flow_branch_label"}
     assert (
         tuple(
             (
