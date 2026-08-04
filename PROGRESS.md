@@ -2,7 +2,7 @@
 
 ## State
 
-The append-only superseding correction is committed. It closes the attribution, path serialization, sidecar isolation, consumption, and exact-schema blockers while retaining the closed 10-exception q72 and q79 domains established from raster plus pinned-text review.
+The append-only superseding correction is committed and all ten clean-shard regressions pass. Independent protocol and per-case audits are in progress.
 
 ## Done
 
@@ -15,9 +15,11 @@ The append-only superseding correction is committed. It closes the attribution, 
 - Appended correction 1 without changing any of the 24,153 prior protocol bytes, and committed it as `277bc4efa80d9434ecfc54ed6b32a24392d6008e`.
 - Defined root-sentinel path resolution, complete-path ordinal and pre-filter occurrence-index retention, all-and-only blocking-key unions, and an omitted-key mutation check.
 - Confined CLOSED GAP data to one exact-schema sealed nonauthority sidecar, defined its nested domains and seal additions, prohibited later global rows/nodes/IDs, and required exact-schema Q5 and exhaustive-flow outputs to fail or remain withheld.
+- Ran the exact ten clean-shard regressions under the required interpreter: `10 passed in 31.07s`.
 
 ## Next
 
 - Run an independent blocker-by-blocker review and correct any actionable findings.
-- Run the ten clean-shard regressions and formatting/append-only checks.
+- Resolve any actionable independent-review findings and rerun affected checks.
+- Run final formatting, append-only, and repository-state checks.
 - Write the final report, remove this progress file to satisfy the final-tree `NO PROGRESS.md` requirement, and commit every coherent step.
