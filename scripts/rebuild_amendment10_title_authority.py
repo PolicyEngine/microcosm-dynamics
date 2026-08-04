@@ -28,16 +28,16 @@ from pathlib import Path
 from typing import Any
 
 from populace_dynamics.data.psid_unit_authority import (
-    TITLE_GENERIC_UNIT_FAMILIES,
-    TITLE_LITERAL_FAMILIES,
-    _normalized_segments,
-    _normalized_title_start,
-    _merge_title_start_tag,
-    _coding_candidate_spans,
-    _extract_statement_spans,
-    _raw_title,
     _TITLE_UNMARKED_OUTPUT_BLOCKS,
     _TITLE_UNMARKED_OUTPUT_LINES,
+    TITLE_GENERIC_UNIT_FAMILIES,
+    TITLE_LITERAL_FAMILIES,
+    _coding_candidate_spans,
+    _extract_statement_spans,
+    _merge_title_start_tag,
+    _normalized_segments,
+    _normalized_title_start,
+    _raw_title,
     _title_body_code_row,
     _title_body_instruction_row,
     _title_editorial_note_row,
@@ -48,7 +48,6 @@ from populace_dynamics.data.psid_unit_authority import (
     title_header_candidates,
 )
 
-
 BASELINE_COMMIT = "4a71b8f2"
 OLD_TITLE_COMMIT = "f70d327"
 BASELINE_SEGMENT_SHA256 = (
@@ -56,9 +55,7 @@ BASELINE_SEGMENT_SHA256 = (
 )
 EXPECTED_FIELD_COUNT = 89_599
 
-TITLE_MODULE = Path(
-    "src/populace_dynamics/data/psid_unit_title_authority.py"
-)
+TITLE_MODULE = Path("src/populace_dynamics/data/psid_unit_title_authority.py")
 PREDICATE_MODULE = Path(
     "src/populace_dynamics/data/psid_unit_predicate_authority.py"
 )
@@ -114,14 +111,10 @@ for _family, _unit in FAMILY_UNIT.items():
     UNIT_FAMILIES[_unit].add(_family)
 
 
-def _cross_lf_pattern(
-    spelling: str, *, ignore_case: bool
-) -> re.Pattern[str]:
+def _cross_lf_pattern(spelling: str, *, ignore_case: bool) -> re.Pattern[str]:
     """Compile one exact grammar spelling with SP/LF separator closure."""
 
-    body = r"[ \n]+".join(
-        re.escape(part) for part in spelling.split(" ")
-    )
+    body = r"[ \n]+".join(re.escape(part) for part in spelling.split(" "))
     return re.compile(
         rf"(?<![A-Za-z])(?:{body})(?![A-Za-z])",
         re.ASCII | (re.IGNORECASE if ignore_case else 0),
@@ -177,6 +170,7 @@ def _cross_lf_compound_transition(
     return tuple(
         sorted(found, key=lambda row: (row[1], row[2], row[0]))
     ), tuple(sorted(maximal, key=lambda row: (row[1], row[2], row[0])))
+
 
 REFERENCE_HEAD = re.compile(
     r"^(?:\(?bkt\.?\b|accuracy\b|average accuracy\b|bracket\b)",
@@ -295,9 +289,7 @@ FIRST_QUESTION_P34_FIELDS = frozenset(
 FIRST_QUESTION_A8_FIELDS = frozenset(
     {"ER66029", "ER72029", "ER78030", "ER82031"}
 )
-FIRST_QUESTION_OTHER_COUNT_FIELDS = frozenset(
-    {"V11867", "V12242", "ER81270"}
-)
+FIRST_QUESTION_OTHER_COUNT_FIELDS = frozenset({"V11867", "V12242", "ER81270"})
 LATER_QUESTION_COUNT_FIELDS = frozenset(
     {"V203", "V235", "V236", "V278", "V15919", "V15944", "V15969"}
 )
@@ -346,9 +338,7 @@ def _is_reference_header(header: str) -> bool:
     return bool(REFERENCE_HEAD.match(header.lstrip()))
 
 
-def _is_threshold(
-    header: str, candidate: tuple[str, int, int, str]
-) -> bool:
+def _is_threshold(header: str, candidate: tuple[str, int, int, str]) -> bool:
     start, end = _candidate_char_span(header, candidate)
     left = header[max(0, start - 36) : start].lower()
     right = header[end : end + 22].lower()
@@ -432,9 +422,7 @@ def _output_label_unit(label: str) -> str | None:
             rf"^(?:BEGINNING|ENDING|END)\s+{physical}(?:\s|$)",
             cleaned,
         )
-        or re.fullmatch(
-            r"(?:HEAD|WIFE/\"WIFE\")\s+(?:HOURS|MINUTES)", cleaned
-        )
+        or re.fullmatch(r"(?:HEAD|WIFE/\"WIFE\")\s+(?:HOURS|MINUTES)", cleaned)
         or re.fullmatch(
             rf"(?:MOST RECENT|SECOND MOST RECENT) ATTACHMENT\s+{physical}",
             cleaned,
@@ -563,10 +551,10 @@ def _round3_candidate_transition(
     singleton_header = description[:singleton_end]
     after_singletons = frozenset(title_header_candidates(singleton_header))
     last_question = description.rfind("?")
-    all_questions_header = description[
-        : max(singleton_end, last_question + 1)
-    ]
-    after_all_questions = frozenset(title_header_candidates(all_questions_header))
+    all_questions_header = description[: max(singleton_end, last_question + 1)]
+    after_all_questions = frozenset(
+        title_header_candidates(all_questions_header)
+    )
     last_question_lf = (
         description.find("\n", last_question) if last_question >= 0 else -1
     )
@@ -575,16 +563,12 @@ def _round3_candidate_transition(
         question_line_end = (
             len(description) if last_question_lf < 0 else last_question_lf
         )
-    question_line_header = description[
-        : max(singleton_end, question_line_end)
-    ]
+    question_line_header = description[: max(singleton_end, question_line_end)]
     after_question_line = frozenset(
         title_header_candidates(question_line_header)
     )
     bounded_header = _raw_title(description)
-    after_continuations = frozenset(
-        title_header_candidates(bounded_header)
-    )
+    after_continuations = frozenset(title_header_candidates(bounded_header))
     final = frozenset(title_header_candidates(description))
     first_question_delta = after_question - baseline
     singleton_delta = after_singletons - after_question
@@ -620,20 +604,32 @@ def _first_question_positive(
     """Return the exact independently audited first-question W clauses."""
 
     family = candidate[0]
-    if field_id in (
-        FIRST_QUESTION_TYPICAL_WEEK_F1A_FIELDS
-        | FIRST_QUESTION_TYPICAL_WEEK_DE60A_FIELDS
-    ) and family == "nominal_hour_token":
+    if (
+        field_id
+        in (
+            FIRST_QUESTION_TYPICAL_WEEK_F1A_FIELDS
+            | FIRST_QUESTION_TYPICAL_WEEK_DE60A_FIELDS
+        )
+        and family == "nominal_hour_token"
+    ):
         return "hour_per_week", "typical_week_hours_title_denotation"
-    if field_id in FIRST_QUESTION_H59L_FIELDS and family == "nominal_day_token":
+    if (
+        field_id in FIRST_QUESTION_H59L_FIELDS
+        and family == "nominal_day_token"
+    ):
         return "day", "wrapped_alternative_days_title_denotation"
-    if field_id in FIRST_QUESTION_IMM19_FIELDS and family == "nominal_year_token":
+    if (
+        field_id in FIRST_QUESTION_IMM19_FIELDS
+        and family == "nominal_year_token"
+    ):
         return "year", "outside_us_years_title_denotation"
     if field_id in FIRST_QUESTION_P34_FIELDS and family == "percent_word":
         return "percent", "pension_percent_title_denotation"
-    if field_id in (
-        FIRST_QUESTION_A8_FIELDS | FIRST_QUESTION_OTHER_COUNT_FIELDS
-    ) and family == "how_many_count_marker":
+    if (
+        field_id
+        in (FIRST_QUESTION_A8_FIELDS | FIRST_QUESTION_OTHER_COUNT_FIELDS)
+        and family == "how_many_count_marker"
+    ):
         return "count", "direct_count_question_title_denotation"
     return None
 
@@ -677,14 +673,20 @@ def _later_question_positive(
         and family == "how_many_count_marker"
     ):
         return "count", "later_direct_count_question_title_denotation"
-    if field_id in LATER_QUESTION_WEEK_FIELDS and family == "nominal_week_token":
+    if (
+        field_id in LATER_QUESTION_WEEK_FIELDS
+        and family == "nominal_week_token"
+    ):
         return "week", "later_direct_weeks_title_denotation"
     if (
         field_id in LATER_QUESTION_TYPICAL_WEEK_FIELDS
         and family == "hours_a_week"
     ):
         return "hour_per_week", "later_typical_week_hours_title_denotation"
-    if field_id in LATER_QUESTION_HOUR_FIELDS and family == "nominal_hour_token":
+    if (
+        field_id in LATER_QUESTION_HOUR_FIELDS
+        and family == "nominal_hour_token"
+    ):
         return "hour", "later_direct_hours_title_denotation"
     return None
 
@@ -932,8 +934,9 @@ def _header_output_labels(
 
     return tuple(
         (unit, start, end, component, label)
-        for _kind, start, end, component, label, _terminal
-        in _header_selector_occurrences(header)
+        for _kind, start, end, component, label, _terminal in _header_selector_occurrences(
+            header
+        )
         if (unit := _output_label_unit(component)) is not None
     )
 
@@ -942,9 +945,14 @@ def _header_response_selectors(header: str) -> tuple[str, ...]:
     """Return exact unit-less response-component selectors in one header."""
 
     found: list[str] = []
-    for _kind, _start, _end, component, _label, _terminal in (
-        _header_selector_occurrences(header)
-    ):
+    for (
+        _kind,
+        _start,
+        _end,
+        component,
+        _label,
+        _terminal,
+    ) in _header_selector_occurrences(header):
         if selector := _response_selector_component(component):
             found.append(selector)
     return tuple(found)
@@ -1249,9 +1257,7 @@ def _adjudicate_context(
         question_line_suffix_delta,
         question_continuation_delta,
         full_body_delta,
-    ) = (
-        _round3_candidate_transition(description)
-    )
+    ) = _round3_candidate_transition(description)
     final_candidates = frozenset(candidates)
     if (
         not first_question_delta <= final_candidates
@@ -1275,7 +1281,9 @@ def _adjudicate_context(
                 "later_question_phrase_not_value_denotation"
             )
         elif candidate in singleton_delta:
-            forced_negative[index] = "singleton_title_phrase_not_value_denotation"
+            forced_negative[index] = (
+                "singleton_title_phrase_not_value_denotation"
+            )
         elif candidate in question_line_suffix_delta:
             forced_negative[index] = (
                 "question_line_suffix_phrase_not_value_denotation"
@@ -1336,7 +1344,13 @@ def _adjudicate_context(
     output_matching: set[int] = set()
     output_units: set[str] = set()
     selector_negative_reasons: set[str] = set()
-    for output_unit, label_byte_start, label_byte_end, component, _label in output_labels:
+    for (
+        output_unit,
+        label_byte_start,
+        label_byte_end,
+        component,
+        _label,
+    ) in output_labels:
         denotes_unit, selector_reason = _selector_unit_is_denotational(
             row, header, output_unit, component
         )
@@ -1386,13 +1400,20 @@ def _adjudicate_context(
                 )
     if active_response_selectors:
         for index in range(len(candidates)):
-            forced_negative[index] = "alternative_defeated_by_response_selector"
+            forced_negative[index] = (
+                "alternative_defeated_by_response_selector"
+            )
 
     # These terminal labels contain an hour word but select a categorical
     # mention/job-change arm, not an hour-valued output.
-    for _kind, start, end, component, _label, _terminal in (
-        _header_selector_occurrences(header)
-    ):
+    for (
+        _kind,
+        start,
+        end,
+        component,
+        _label,
+        _terminal,
+    ) in _header_selector_occurrences(header):
         if not _categorical_hour_selector(component):
             continue
         for index, candidate in enumerate(candidates):
@@ -1487,7 +1508,9 @@ def _adjudicate_context(
             left,
             re.IGNORECASE,
         ):
-            forced_negative[index] = "hour_phrase_modifies_included_or_reference_input"
+            forced_negative[index] = (
+                "hour_phrase_modifies_included_or_reference_input"
+            )
 
     # A repeated period noun in ``all/most of the <period>`` describes the
     # coverage of the event named by the governing quantity.  It is not a
@@ -1526,7 +1549,9 @@ def _adjudicate_context(
                         "money_question_denotes_dollars_per_hour",
                     )
                 else:
-                    forced_negative[index] = "unsupported_or_input_per_hour_phrase"
+                    forced_negative[index] = (
+                        "unsupported_or_input_per_hour_phrase"
+                    )
             elif family == "per_week_rate_phrase":
                 if re.search(r"\bhow much time\b", lower):
                     select(
@@ -1541,7 +1566,9 @@ def _adjudicate_context(
                         "money_question_denotes_dollars_per_week",
                     )
                 else:
-                    forced_negative[index] = "unsupported_or_input_per_week_phrase"
+                    forced_negative[index] = (
+                        "unsupported_or_input_per_week_phrase"
+                    )
             elif family in {"hours_a_week", "hours_per_week"}:
                 if not _is_threshold(header, candidate):
                     select(
@@ -1585,7 +1612,9 @@ def _adjudicate_context(
                 "per_year_rate_phrase",
                 "hundreds_of_dollars",
             }:
-                forced_negative[index] = "unsupported_rate_or_scale_title_phrase"
+                forced_negative[index] = (
+                    "unsupported_rate_or_scale_title_phrase"
+                )
 
         # Morphological spellings are separately enumerated.  Only the two
         # source-grounded supported rate families and yearly total money
@@ -1628,7 +1657,9 @@ def _adjudicate_context(
                         "yearly_total_money_title_denotation",
                     )
                 else:
-                    forced_negative[index] = "yearly_reference_or_unsupported_rate"
+                    forced_negative[index] = (
+                        "yearly_reference_or_unsupported_rate"
+                    )
             elif family == "weekly_morphology":
                 candidate_start, _candidate_end = _candidate_char_span(
                     header, candidate
@@ -1644,7 +1675,9 @@ def _adjudicate_context(
                         "weekly_food_need_dollar_title_denotation",
                     )
                 else:
-                    forced_negative[index] = "weekly_reference_or_unsupported_rate"
+                    forced_negative[index] = (
+                        "weekly_reference_or_unsupported_rate"
+                    )
             elif family == "monthly_morphology":
                 if re.search(
                     r"\bmonthly (?:mortgage|loan) payments?\b|"
@@ -1674,7 +1707,9 @@ def _adjudicate_context(
                         "weekly_modifies_whole_work_hour_measure",
                     )
                 elif candidate[0] == "weekly_morphology":
-                    forced_negative[index] = "weekly_modifier_subordinate_to_hour_rate"
+                    forced_negative[index] = (
+                        "weekly_modifier_subordinate_to_hour_rate"
+                    )
 
         scoped_units = {unit for unit, _reason in selected.values()}
         if len(scoped_units) > 1:
@@ -1700,7 +1735,10 @@ def _adjudicate_context(
                 "united_states_dollar_per_week": "united_states_dollar",
             }
             for index, (unit, _reason) in selected.items():
-                if unit != body_unit and refinement_bases.get(unit) != body_unit:
+                if (
+                    unit != body_unit
+                    and refinement_bases.get(unit) != body_unit
+                ):
                     forced_negative[index] = (
                         "phrase_is_input_to_exact_raw_body_unit"
                     )
@@ -1765,7 +1803,9 @@ def _adjudicate_context(
                     )
                 )
                 if selector_defeat:
-                    forced_negative[index] = "count_marker_is_response_format_input"
+                    forced_negative[index] = (
+                        "count_marker_is_response_format_input"
+                    )
                     if direct is not None:
                         word = direct.group(1).lower()
                         unit = PHYSICAL_WORD_UNIT[word]
@@ -1800,7 +1840,9 @@ def _adjudicate_context(
                         for value in selected.values()
                     )
                     if has_rate and not supported_rate_selected:
-                        forced_negative[index] = "unsupported_count_rate_question"
+                        forced_negative[index] = (
+                            "unsupported_count_rate_question"
+                        )
                         for other_index in matching:
                             forced_negative[other_index] = (
                                 "unsupported_count_rate_question"
@@ -1812,13 +1854,17 @@ def _adjudicate_context(
                                 unit,
                                 "how_many_directly_governs_unit_noun",
                             )
-                        forced_negative[index] = "count_marker_subordinate_to_unit_noun"
+                        forced_negative[index] = (
+                            "count_marker_subordinate_to_unit_noun"
+                        )
                 elif wrapped_remaining_days:
                     forced_negative[index] = (
                         "count_marker_precedes_wrapped_physical_day_noun"
                     )
                 elif YES_NO_BEFORE_QUANTIFIER.search(before):
-                    forced_negative[index] = "quantified_phrase_is_yes_no_input"
+                    forced_negative[index] = (
+                        "quantified_phrase_is_yes_no_input"
+                    )
                 elif has_rate:
                     forced_negative[index] = "unsupported_count_rate_question"
                 else:
@@ -1880,15 +1926,24 @@ def _adjudicate_context(
                 ):
                     forced_negative[index] = "number_phrase_is_yes_no_input"
                 elif family == "number_of_count_marker" and checkpoint:
-                    forced_negative[index] = "number_phrase_is_checkpoint_input"
-                elif family == "number_of_count_marker" and continuation_subrange:
-                    forced_negative[index] = "number_phrase_is_subrange_metadata"
+                    forced_negative[index] = (
+                        "number_phrase_is_checkpoint_input"
+                    )
+                elif (
+                    family == "number_of_count_marker"
+                    and continuation_subrange
+                ):
+                    forced_negative[index] = (
+                        "number_phrase_is_subrange_metadata"
+                    )
                 elif family == "number_of_count_marker" and re.match(
                     r"\s+(?:days?|hours?|miles?|minutes?|months?|weeks?|years?)\b",
                     remainder,
                     re.IGNORECASE,
                 ):
-                    forced_negative[index] = "count_marker_subordinate_to_unit_noun"
+                    forced_negative[index] = (
+                        "count_marker_subordinate_to_unit_noun"
+                    )
                 elif re.search(
                     r"\b(?:persons?|people) per room\b|\bratio\b", lower
                 ):
@@ -1896,7 +1951,9 @@ def _adjudicate_context(
                 else:
                     select(index, "count", "nominal_count_title_denotation")
             elif family == "nominal_count_token":
-                forced_negative[index] = "count_word_is_instruction_not_denotation"
+                forced_negative[index] = (
+                    "count_word_is_instruction_not_denotation"
+                )
 
         singleton_label_spans: list[tuple[int, int, str]] = []
         for kind, label_start, label_end, label in _title_selector_spans(
@@ -1945,24 +2002,28 @@ def _adjudicate_context(
                 "parenthetical_in_years",
             } and not _is_threshold(header, candidate):
                 select(index, unit, "direct_title_unit_denotation")
-            elif family == "percent_word" and (
-                re.search(r"^(?:.*?\s)?percent(?:age)?\b", lower)
-                or re.search(r"\b(?:what|how much) percent(?:age)?\b", lower)
-            ) and "AMOUNT" not in selector and "TIME UNIT" not in selector:
+            elif (
+                family == "percent_word"
+                and (
+                    re.search(r"^(?:.*?\s)?percent(?:age)?\b", lower)
+                    or re.search(
+                        r"\b(?:what|how much) percent(?:age)?\b", lower
+                    )
+                )
+                and "AMOUNT" not in selector
+                and "TIME UNIT" not in selector
+            ):
                 select(index, "percent", "direct_percent_title_denotation")
             elif _direct_physical_title(
                 description, header, candidate
             ) and not _is_threshold(header, candidate):
                 select(index, unit, "direct_nominal_title_unit_denotation")
 
-        if (
-            re.match(
-                r"^F1(?:[b-h]|d2)\. \(In a typical week, how many hours "
-                r"\[do you/does \[he/she\]\] spend\)",
-                header,
-            )
-            and body_units == {"hour_per_week"}
-        ):
+        if re.match(
+            r"^F1(?:[b-h]|d2)\. \(In a typical week, how many hours "
+            r"\[do you/does \[he/she\]\] spend\)",
+            header,
+        ) and body_units == {"hour_per_week"}:
             governing_hour_char = header.find("hours")
             governing_hour_byte = len(
                 header[:governing_hour_char].encode("utf-8")
@@ -1985,13 +2046,10 @@ def _adjudicate_context(
                         "count_marker_subordinate_to_unit_noun"
                     )
 
-        if (
-            header.startswith(
-                "B6. During the last year how many miles did you and your "
-                "family drive in (your car/all of"
-            )
-            and body_units == {"mile_per_year"}
-        ):
+        if header.startswith(
+            "B6. During the last year how many miles did you and your "
+            "family drive in (your car/all of"
+        ) and body_units == {"mile_per_year"}:
             for index, candidate in enumerate(candidates):
                 if candidate[0] == "nominal_mile_token":
                     forced_negative.pop(index, None)
@@ -2048,11 +2106,15 @@ def _adjudicate_context(
     for index, candidate in enumerate(candidates):
         if candidate not in later_question_delta:
             continue
-        if row["raw_field_id"] in (
-            LATER_QUESTION_WEEK_FIELDS
-            | LATER_QUESTION_TYPICAL_WEEK_FIELDS
-            | LATER_QUESTION_HOUR_FIELDS
-        ) and candidate[0] == "how_many_count_marker":
+        if (
+            row["raw_field_id"]
+            in (
+                LATER_QUESTION_WEEK_FIELDS
+                | LATER_QUESTION_TYPICAL_WEEK_FIELDS
+                | LATER_QUESTION_HOUR_FIELDS
+            )
+            and candidate[0] == "how_many_count_marker"
+        ):
             forced_negative[index] = "count_marker_subordinate_to_unit_noun"
         positive = _later_question_positive(row["raw_field_id"], candidate)
         if positive is None:
@@ -2112,7 +2174,11 @@ def _adjudicate_context(
             continue
         exact = old_exact.get(candidate)
         reason = forced_negative.get(index)
-        if reason is None and exact is not None and exact[1] != "whole_domain_denotation":
+        if (
+            reason is None
+            and exact is not None
+            and exact[1] != "whole_domain_denotation"
+        ):
             reason = exact[2]
         if reason is None and selected:
             reason = "phrase_subordinate_to_selected_title_unit"
@@ -2171,11 +2237,11 @@ def _rebuild_segment_authority(
     ],
 ) -> tuple[tuple[tuple[str, str], ...], dict[str, Any]]:
     baseline_source = _git_source(BASELINE_COMMIT, PREDICATE_MODULE)
-    baseline = _literal_assignment(
-        baseline_source, "SEGMENT_START_AUTHORITY"
-    )
+    baseline = _literal_assignment(baseline_source, "SEGMENT_START_AUTHORITY")
     if canonical_sha256(baseline) != BASELINE_SEGMENT_SHA256:
-        raise ValueError("pre-title baseline segment authority identity changed")
+        raise ValueError(
+            "pre-title baseline segment authority identity changed"
+        )
     baseline_map = dict(baseline)
     desired: dict[tuple[str, int], set[str]] = defaultdict(set)
     overlay_counts: Counter[tuple[str, str]] = Counter()
@@ -2190,7 +2256,9 @@ def _rebuild_segment_authority(
         sha = hashlib.sha256(description.encode("utf-8")).hexdigest()
         text = normalize_description(description)
         absolute_tags: dict[int, str] = {}
-        for family, start, end, spelling in title_header_candidates(description):
+        for family, start, end, spelling in title_header_candidates(
+            description
+        ):
             unit, disposition, _reason = decisions[
                 (sha, family, start, end, spelling)
             ]
@@ -2199,7 +2267,8 @@ def _rebuild_segment_authority(
                 offset -= 1
             tag = (
                 "W"
-                if disposition == "whole_domain_denotation" and unit is not None
+                if disposition == "whole_domain_denotation"
+                and unit is not None
                 else "N"
             )
             previous = absolute_tags.get(offset)
@@ -2216,7 +2285,9 @@ def _rebuild_segment_authority(
 
         for _ordinal, absolute, segment in _normalized_segments(text):
             if segment not in baseline_map:
-                raise ValueError(f"segment absent from clean baseline: {segment!r}")
+                raise ValueError(
+                    f"segment absent from clean baseline: {segment!r}"
+                )
             starts = _word_start_offsets(segment)
             for word_ordinal, relative in enumerate(starts):
                 baseline_tag = baseline_map[segment][word_ordinal]
@@ -2228,9 +2299,7 @@ def _rebuild_segment_authority(
                 if absolute_start in absolute_tags:
                     raw_title_tag = absolute_tags[absolute_start]
                     overlay_counts[(baseline_tag, tag)] += 1
-                    raw_overlay_counts[
-                        (baseline_tag, raw_title_tag, tag)
-                    ] += 1
+                    raw_overlay_counts[(baseline_tag, raw_title_tag, tag)] += 1
                     if (baseline_tag, raw_title_tag, tag) == (
                         "W",
                         "N",
@@ -2430,7 +2499,10 @@ def _replace_segment_authority(
         if vector_node.value == vector:
             continue
         start = line_starts[vector_node.lineno - 1] + vector_node.col_offset
-        end = line_starts[vector_node.end_lineno - 1] + vector_node.end_col_offset
+        end = (
+            line_starts[vector_node.end_lineno - 1]
+            + vector_node.end_col_offset
+        )
         replacements.append((start, end, json.dumps(vector)))
     for start, end, replacement in reversed(replacements):
         source = source[:start] + replacement + source[end:]
@@ -2598,9 +2670,9 @@ def main() -> None:
     paid_extra_hours_yes_no_candidate_decisions: Counter[
         tuple[str, str, str | None, str, str]
     ] = Counter()
-    paid_extra_hours_yes_no_transition_families: Counter[
-        tuple[str, str]
-    ] = Counter()
+    paid_extra_hours_yes_no_transition_families: Counter[tuple[str, str]] = (
+        Counter()
+    )
     structural_selector_occurrences = 0
     structural_selector_fields = 0
     structural_selector_kinds: Counter[str] = Counter()
@@ -2657,7 +2729,9 @@ def main() -> None:
     dollars_worth_candidate_decisions: Counter[
         tuple[str, str, str, str | None, str, str]
     ] = Counter()
-    dollars_worth_field_keys: dict[str, set[tuple[int, str]]] = defaultdict(set)
+    dollars_worth_field_keys: dict[str, set[tuple[int, str]]] = defaultdict(
+        set
+    )
     dollars_worth_full_body_fields: set[tuple[int, str]] = set()
     pension_selector_fields: Counter[str] = Counter()
     pension_selector_contexts: dict[str, set[str]] = defaultdict(set)
@@ -2670,9 +2744,9 @@ def main() -> None:
     experience_units: Counter[str] = Counter()
     experience_nonselector_fields = 0
     experience_nonselector_contexts: set[str] = set()
-    experience_nonselector_context_fields: dict[
-        str, set[tuple[int, str]]
-    ] = defaultdict(set)
+    experience_nonselector_context_fields: dict[str, set[tuple[int, str]]] = (
+        defaultdict(set)
+    )
     experience_nonselector_candidate_decisions: Counter[
         tuple[str, str, str | None, str, str]
     ] = Counter()
@@ -2744,7 +2818,9 @@ def main() -> None:
             )
         }
         if len(semantic_component_keys) != len(semantic_selector_components):
-            raise ValueError(f"duplicate semantic selector component: {field_key}")
+            raise ValueError(
+                f"duplicate semantic selector component: {field_key}"
+            )
         expected_dedup_component = SEMANTIC_COMPONENT_DEDUP_REGRESSIONS.get(
             row["raw_field_id"]
         )
@@ -2756,9 +2832,9 @@ def main() -> None:
                     semantic_selector_components
                 )
             )
-            semantic_component_dedup_regressions[
-                row["raw_field_id"]
-            ] = component_count
+            semantic_component_dedup_regressions[row["raw_field_id"]] = (
+                component_count
+            )
             if component_count != 1:
                 raise ValueError(
                     f"semantic selector component dedup changed: {field_key} "
@@ -2780,8 +2856,7 @@ def main() -> None:
             if kind not in {"single_hyphen", "single_hyphen_next_line"}:
                 continue
             nested = kind == "single_hyphen" and any(
-                other_kind
-                not in {"single_hyphen", "single_hyphen_next_line"}
+                other_kind not in {"single_hyphen", "single_hyphen_next_line"}
                 and other_start <= start
                 and end <= other_end
                 and (other_start, other_end) != (start, end)
@@ -2875,9 +2950,14 @@ def main() -> None:
                         f"line {line_index + 1}"
                     )
 
-        for _kind, component_start, _end, component, _label, terminal in (
-            semantic_selector_components
-        ):
+        for (
+            _kind,
+            component_start,
+            _end,
+            component,
+            _label,
+            terminal,
+        ) in semantic_selector_components:
             component_char_start = _char_offset(header, component_start)
             component_line = header.count("\n", 0, component_char_start) + 1
             if unit := _unique_physical_unit(component):
@@ -2929,14 +3009,11 @@ def main() -> None:
                     label_family = label
                 continuation_output_labels[label_family] += 1
                 first_line_candidates = title_header_candidates(raw_lines[0])
-                if (
-                    row["derivation_status"].startswith(
-                        "compiled_source_numeric_grammar"
-                    )
-                    and not any(
-                        candidate[0] in FAMILY_UNIT
-                        for candidate in first_line_candidates
-                    )
+                if row["derivation_status"].startswith(
+                    "compiled_source_numeric_grammar"
+                ) and not any(
+                    candidate[0] in FAMILY_UNIT
+                    for candidate in first_line_candidates
                 ):
                     compiled_continuation_without_line1_unit.append(
                         [row["interview_wave"], row["raw_field_id"]]
@@ -2990,8 +3067,7 @@ def main() -> None:
             contained = [
                 (candidate, decision)
                 for candidate, decision in decision_by_candidate.items()
-                if compound[1] <= candidate[1]
-                and candidate[2] <= compound[2]
+                if compound[1] <= candidate[1] and candidate[2] <= compound[2]
             ]
             exact = decision_by_candidate.get(compound)
             if exact is not None and exact[1] == "whole_domain_denotation":
@@ -3024,15 +3100,14 @@ def main() -> None:
                             normalized
                         )
                     )
-                    referenced_other_field = (
-                        compound[0] == "number_in_family_unit_marker"
-                        and bool(
-                            re.search(
-                                r"be receiving food stamps; therefore,? this "
-                                r"number might not equal ?(?:V22405|ER\d+) "
-                                r"\(Number in Family Unit\)\.",
-                                normalized,
-                            )
+                    referenced_other_field = compound[
+                        0
+                    ] == "number_in_family_unit_marker" and bool(
+                        re.search(
+                            r"be receiving food stamps; therefore,? this "
+                            r"number might not equal ?(?:V22405|ER\d+) "
+                            r"\(Number in Family Unit\)\.",
+                            normalized,
                         )
                     )
                     if primary_delegation:
@@ -3165,8 +3240,7 @@ def main() -> None:
                                 "unit": decision[0],
                                 "tag": (
                                     "W"
-                                    if decision[1]
-                                    == "whole_domain_denotation"
+                                    if decision[1] == "whole_domain_denotation"
                                     else "N"
                                 ),
                                 "disposition": decision[1],
@@ -3189,9 +3263,14 @@ def main() -> None:
                 )
                 + "\n"
             )
-        for _kind, start, end, component, _label, terminal in (
-            _header_selector_occurrences(header)
-        ):
+        for (
+            _kind,
+            start,
+            end,
+            component,
+            _label,
+            terminal,
+        ) in _header_selector_occurrences(header):
             if terminal:
                 continue
             output_unit = _output_label_unit(component)
@@ -3333,16 +3412,23 @@ def main() -> None:
                         for row in hour_rows
                     )
                     and count_rows
-                    and all(row[1] != "whole_domain_denotation" for row in count_rows)
+                    and all(
+                        row[1] != "whole_domain_denotation"
+                        for row in count_rows
+                    )
                 ):
-                    raise ValueError(f"overtime AMOUNT adjudication changed: {field_key}")
+                    raise ValueError(
+                        f"overtime AMOUNT adjudication changed: {field_key}"
+                    )
             else:
                 overtime_time_unit_fields += 1
                 if any(
                     decision[1] == "whole_domain_denotation"
                     for decision in hour_rows + count_rows
                 ):
-                    raise ValueError(f"overtime TIME UNIT became positive: {field_key}")
+                    raise ValueError(
+                        f"overtime TIME UNIT became positive: {field_key}"
+                    )
 
         dollars_worth_amount = _dollars_worth_amount_is_explicit_dollars(
             header, response_selectors
@@ -3392,10 +3478,9 @@ def main() -> None:
             ]
             if dollars_worth_amount:
                 dollars_worth_amount_fields += 1
-                dollars_worth_body_grounded_fields += (
-                    _body_ground_units(description)
-                    == {"united_states_dollar"}
-                )
+                dollars_worth_body_grounded_fields += _body_ground_units(
+                    description
+                ) == {"united_states_dollar"}
                 positive_dollar = (
                     "united_states_dollar",
                     "whole_domain_denotation",
@@ -3427,9 +3512,7 @@ def main() -> None:
                         f"dollars-worth TIME UNIT became positive: {field_key}"
                     )
 
-        if PENSION_ALTERNATIVE_FORMAT.search(
-            normalize_description(header)
-        ):
+        if PENSION_ALTERNATIVE_FORMAT.search(normalize_description(header)):
             pension_amount = _pension_amount_is_explicit_dollars(
                 header, response_selectors
             )
@@ -3538,7 +3621,8 @@ def main() -> None:
             positive_units = {
                 unit
                 for unit, disposition, _reason in adjudications
-                if disposition == "whole_domain_denotation" and unit is not None
+                if disposition == "whole_domain_denotation"
+                and unit is not None
             }
             selector_units = {
                 unit
@@ -3547,7 +3631,10 @@ def main() -> None:
                 )
             }
             if selector_units:
-                if len(selector_units) != 1 or positive_units != selector_units:
+                if (
+                    len(selector_units) != 1
+                    or positive_units != selector_units
+                ):
                     raise ValueError(
                         f"experience selector conflict: {field_key} "
                         f"selectors={selector_units!r}, "
@@ -3852,7 +3939,9 @@ def main() -> None:
                 )
 
         raw_selector_components = {
-            normalize_description(_selector_terminal_component(label)[0]).upper()
+            normalize_description(
+                _selector_terminal_component(label)[0]
+            ).upper()
             for _kind, _start, _end, label in selector_spans
         }
         if "NUMBER OF TIMES" in raw_selector_components:
@@ -3920,8 +4009,7 @@ def main() -> None:
                 for candidate, decision in zip(
                     candidates, adjudications, strict=True
                 )
-                if candidate[0]
-                in {"nominal_hour_token", "nominal_week_token"}
+                if candidate[0] in {"nominal_hour_token", "nominal_week_token"}
             ]
             cohort_rows = [decision for _candidate, decision in cohort_pairs]
             paid_extra_hours_yes_no_candidates += len(cohort_rows)
@@ -3985,7 +4073,9 @@ def main() -> None:
                     "delegated_to_primary_statement_grammar",
                 ),
             ]:
-                raise ValueError(f"ER47619 duplicate selector changed: {week_rows!r}")
+                raise ValueError(
+                    f"ER47619 duplicate selector changed: {week_rows!r}"
+                )
         if row_positive_count > 1:
             positive_rows = [
                 decision
@@ -4016,7 +4106,9 @@ def main() -> None:
             key = (sha, family, start, end, spelling)
             existing = decisions.get(key)
             if existing is not None and existing != decision:
-                raise ValueError(f"same context adjudicated differently: {key!r}")
+                raise ValueError(
+                    f"same context adjudicated differently: {key!r}"
+                )
             occurrence_counts[(family, unit, disposition, reason)] += 1
             if existing is not None:
                 continue
@@ -4087,8 +4179,7 @@ def main() -> None:
         structural_selector_occurrences != 54_236
         or structural_selector_fields != 51_397
         or dict(structural_selector_kinds) != expected_structural_kinds
-        or dict(structural_selector_label_lines)
-        != expected_structural_lines
+        or dict(structural_selector_label_lines) != expected_structural_lines
         or dict(header_physical_line_counts) != expected_header_lines
         or structural_selector_line8_keys != [[2011, "ER52049"]]
         or food_body_code_occurrences != 88
@@ -4801,11 +4892,11 @@ def main() -> None:
         category: len(contexts)
         for category, contexts in pension_selector_contexts.items()
     }
-    if (
-        dict(pension_selector_fields) != expected_pension_selector_fields
-        or pension_context_counts
-        != {category: 4 for category in expected_pension_selector_fields}
-    ):
+    if dict(
+        pension_selector_fields
+    ) != expected_pension_selector_fields or pension_context_counts != {
+        category: 4 for category in expected_pension_selector_fields
+    }:
         raise ValueError(
             "pension selector sibling cohort changed: "
             f"{pension_selector_fields!r}, {pension_context_counts!r}"
@@ -4902,13 +4993,12 @@ def main() -> None:
         for unit, contexts in experience_contexts_by_unit.items()
     }
     experience_context_digest = hashlib.sha256(
-        "".join(
-            f"{value}\n" for value in sorted(experience_contexts)
-        ).encode("utf-8")
+        "".join(f"{value}\n" for value in sorted(experience_contexts)).encode(
+            "utf-8"
+        )
     ).hexdigest()
     if (
-        experience_context_counts
-        != {"year": 11, "month": 11, "week": 10}
+        experience_context_counts != {"year": 11, "month": 11, "week": 10}
         or experience_context_digest
         != "26ddc3bf9f32e208733ed85a5e0db0ec5ad817a00450e85483b74a06b5656e9f"
     ):
@@ -4927,8 +5017,7 @@ def main() -> None:
         )
     experience_nonselector_context_digest = hashlib.sha256(
         "".join(
-            f"{value}\n"
-            for value in sorted(experience_nonselector_contexts)
+            f"{value}\n" for value in sorted(experience_nonselector_contexts)
         ).encode("utf-8")
     ).hexdigest()
     if experience_nonselector_context_digest != (
@@ -5267,8 +5356,7 @@ def main() -> None:
             f"{nonterminal_semantic_components!r}"
         )
     if semantic_component_dedup_regressions != {
-        field_id: 1
-        for field_id in SEMANTIC_COMPONENT_DEDUP_REGRESSIONS
+        field_id: 1 for field_id in SEMANTIC_COMPONENT_DEDUP_REGRESSIONS
     }:
         raise ValueError(
             "semantic component dedup regression cohort changed: "
@@ -5307,8 +5395,7 @@ def main() -> None:
     ).hexdigest()
     paid_extra_hours_yes_no_context_digest = hashlib.sha256(
         "".join(
-            f"{value}\n"
-            for value in sorted(paid_extra_hours_yes_no_contexts)
+            f"{value}\n" for value in sorted(paid_extra_hours_yes_no_contexts)
         ).encode("utf-8")
     ).hexdigest()
     if (
@@ -5391,8 +5478,7 @@ def main() -> None:
         or production_cross_lf_positive_fields
         != {(1968, "V324"), (2021, "ER81270")}
         or cross_lf_raw_compound_occurrences != 368
-        or cross_lf_raw_compound_occurrences
-        - cross_lf_compound_occurrences
+        or cross_lf_raw_compound_occurrences - cross_lf_compound_occurrences
         != 112
         or cross_lf_compound_occurrences != 256
         or len(cross_lf_compound_fields) != 227
@@ -5462,7 +5548,9 @@ def main() -> None:
             "candidate_table_row_count": field_count,
         }
 
-    def grouped(counter: Counter[tuple[str, str | None, str, str]]) -> list[dict[str, Any]]:
+    def grouped(
+        counter: Counter[tuple[str, str | None, str, str]],
+    ) -> list[dict[str, Any]]:
         return [
             {
                 "family": family,
@@ -5513,9 +5601,7 @@ def main() -> None:
         ]
 
     def grouped_by_category_boundary(
-        counter: Counter[
-            tuple[str, str, str, str | None, str, str]
-        ],
+        counter: Counter[tuple[str, str, str, str | None, str, str]],
     ) -> list[dict[str, Any]]:
         return [
             {
@@ -5612,12 +5698,8 @@ def main() -> None:
         "body_instruction_excluded_occurrence_count": (
             body_instruction_occurrences
         ),
-        "body_instruction_excluded_field_count": len(
-            body_instruction_fields
-        ),
-        "body_instruction_excluded_keys": sorted(
-            body_instruction_fields
-        ),
+        "body_instruction_excluded_field_count": len(body_instruction_fields),
+        "body_instruction_excluded_keys": sorted(body_instruction_fields),
         "editorial_note_excluded_occurrence_count": (
             editorial_note_occurrences
         ),
@@ -5678,9 +5760,7 @@ def main() -> None:
         "quantity_selector_counts": dict(
             sorted(quantity_selector_counts.items())
         ),
-        "categorical_hour_selector_count": (
-            categorical_hour_selector_count
-        ),
+        "categorical_hour_selector_count": (categorical_hour_selector_count),
         "nonterminal_semantic_component_counts": dict(
             sorted(nonterminal_semantic_components.items())
         ),
@@ -5893,9 +5973,7 @@ def main() -> None:
         "full_body_negative_reason_counts": dict(
             sorted(full_body_negative_reasons.items())
         ),
-        "full_body_positive_field_keys": sorted(
-            full_body_positive_fields
-        ),
+        "full_body_positive_field_keys": sorted(full_body_positive_fields),
         "production_cross_lf_candidate_occurrence_count": (
             production_cross_lf_candidate_occurrences
         ),
@@ -5912,15 +5990,12 @@ def main() -> None:
             cross_lf_raw_compound_occurrences
         ),
         "cross_lf_nested_compound_occurrence_count": (
-            cross_lf_raw_compound_occurrences
-            - cross_lf_compound_occurrences
+            cross_lf_raw_compound_occurrences - cross_lf_compound_occurrences
         ),
         "cross_lf_maximal_compound_occurrence_count": (
             cross_lf_compound_occurrences
         ),
-        "cross_lf_maximal_compound_field_count": len(
-            cross_lf_compound_fields
-        ),
+        "cross_lf_maximal_compound_field_count": len(cross_lf_compound_fields),
         "cross_lf_maximal_compound_family_counts": dict(
             sorted(cross_lf_compound_families.items())
         ),
@@ -6010,9 +6085,7 @@ def main() -> None:
             paid_extra_hours_yes_no_candidates
         ),
         "paid_extra_hours_yes_no_candidate_decision_counts": (
-            grouped_by_boundary(
-                paid_extra_hours_yes_no_candidate_decisions
-            )
+            grouped_by_boundary(paid_extra_hours_yes_no_candidate_decisions)
         ),
         "paid_extra_hours_yes_no_transition_family_counts": [
             {
@@ -6039,7 +6112,9 @@ def main() -> None:
         "title_authority_sha256": canonical_sha256(frozen),
         "segment_start_authority_sha256": canonical_sha256(rebuilt),
         "segment_start_row_count": len(rebuilt),
-        "segment_start_count": sum(len(vector) for _segment, vector in rebuilt),
+        "segment_start_count": sum(
+            len(vector) for _segment, vector in rebuilt
+        ),
         "context_reason_unit_family": grouped(context_counts),
         "occurrence_reason_unit_family": grouped(occurrence_counts),
         **candidate_table_metadata,
