@@ -8,9 +8,15 @@ binding. The worktree began clean, and the revision-11 2,653,817-byte prefix
 was verified against blob `bb11f807e7683086b55703ea28346dacec9d192e` before
 any amendment edit. A final independent audit invalidated the first expanded
 title census before release: generic unit tokens in question-style titles
-were still suppressed. The title census, successor vector, storage floors,
-and all derived pins below are therefore being rebuilt from the clean
-pre-title authority rather than treated as final.
+were still suppressed. The reopened structural audit is now closed. It found
+54,236 selector spans in 51,397 fields, including 3,471 newly admitted
+singleton-hyphen spans. Those contain 907 unit-label events and 114 response-
+selector events. Five genuine `?-YEAR` selectors had been hidden by an
+earlier leftmost regex, so the final law iterates every marker with both
+hyphen lookarounds. The raw title domain also extends through the first
+question mark when that is later than the first physical line. The title
+census, successor vector, storage floors, and all derived pins are therefore
+being rebuilt from the clean pre-title authority rather than treated as final.
 
 ## Done
 
@@ -50,11 +56,27 @@ pre-title authority rather than treated as final.
   bytes, and complete stdout was byte-identical to the payload file. Its
   census, vector, and derived pins are now deliberately superseded by the
   reopened exhaustive audit.
+- Completed an independent raw structural audit of singleton selectors. Its
+  exact kind counts are 48,038 double-hyphen, 2,317 next-line, 410 split-
+  hyphen, 3,118 singleton inline, and 353 singleton next-line spans. The 907
+  unit events partition as 436 month, 444 year, 23 percent, two hour, and two
+  week events. Arithmetic ranges, prose hyphens, separators, COVID-19, body
+  component rows, and internal `main-job` hyphens have explicit controls.
+- Replaced a field-specific wrapped-title approach with one closed monotone
+  raw law: every description retains its first physical line and extends
+  through the first `?` when later, after which only an admitted selector may
+  extend the header. A provisional independent scan found 787 fields gaining
+  977 maximal candidate starts; every one is being adjudicated before
+  regeneration.
+- The semantic pre-freeze audit also found and queued exact positive cohorts:
+  62 highest-college-year fields, two school-years-outside-the-U.S. fields,
+  68 typical-week hour fields (including 12 wrapped prompts), two immigration-
+  years fields, and four wrapped alternate day questions. None is frozen yet.
 
 ## Next
 
-1. Expand first-line discovery to the complete closed title-unit grammar,
-   using exact ASCII word boundaries and no question-title suppression.
+1. Implement and regression-test the completed singleton/first-question
+   structural law and reproduce every independent structural partition.
 2. Adjudicate every discovered start over all 89,599 fields, prove zero
    unknowns, and rebuild `SEGMENT_START_AUTHORITY` from the clean pre-title
    baseline.
