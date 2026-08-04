@@ -52,6 +52,73 @@ FORBIDDEN_ID_PREFIXES = (
     "psid-node-alias:",
     "psid-questionnaire-relationship:",
 )
+EXPECTED_EXCEPTION_LABELS = (
+    (
+        7,
+        0,
+        "D1: 1. WORKING NOW, OR ONLY TEMPORARILY LAID OFF",
+        "page 7; item D1; leftmost response box",
+    ),
+    (7, 1, "D8: 1. BETTER", "page 7; item D8; left response box"),
+    (7, 2, "D8: 5. WORSE", "page 7; item D8; center response box"),
+    (8, 0, "D14: 1. YES", "page 8; item D14; upper response box"),
+    (8, 1, "D14: 5. NO (GO TO D16)", "page 8; item D14; lower response box"),
+    (8, 2, "D20: 1. YES", "page 8; item D20; left response box"),
+    (8, 3, "D20: 5. NO", "page 8; item D20; right response box"),
+    (16, 0, "G1: 1. MARRIED", "page 16; item G1; leftmost response box"),
+    (
+        21,
+        0,
+        "H6: 2. UNINCORPORATED",
+        "page 21; item H6; second response box in vertical stack",
+    ),
+    (
+        21,
+        1,
+        "H6: 3. BOTH",
+        "page 21; item H6; third response box in vertical stack",
+    ),
+)
+EXPECTED_GARBLED_TEXT = {
+    (
+        7,
+        1962,
+        2010,
+        "flow_branch_label",
+    ): "13.1                       (TURN TO DlO, PAGE 8)",
+    (7, 2037, 2056, "field_purpose_prompt"): ")D9.   Why is that?",
+    (8, 181, 185, "flow_branch_label"): "[ml-",
+    (8, 276, 301, "flow_branch_label"): "15.1          (GO TO D 2)",
+    (8, 564, 567, "flow_branch_label"): "p?q",
+    (
+        8,
+        783,
+        846,
+        "flow_branch_label",
+    ): "-1                  D\n                                (GO TO 4)",
+    (8, 1651, 1658, "flow_branch_label"): "[ 1 YES",
+    (8, 1681, 1699, "flow_branch_label"): "[ ] NO (GO TO D20)",
+    (8, 2429, 2433, "flow_branch_label"): "(cow",
+    (8, 2447, 2467, "flow_branch_label"): "1        'GOp;;FD;;v",
+    (
+        38,
+        1306,
+        1420,
+        "field_purpose_prompt",
+    ): "(v2797)M4.    Thinking of your (HEAD's) first        full     time regular    job, what did    you    do?      Occ",
+    (
+        38,
+        1511,
+        1632,
+        "flow_branch_label",
+    ): "10. NEVERWORKED1\n                                                                                              (GO TO M6)",
+    (
+        38,
+        1643,
+        1835,
+        "field_purpose_prompt",
+    ): "(V2798)~5.Have    you had a number of different             kinds of jobs,    or have you mostly       worked\n                       in the same occupation you started             in, or what?",
+}
 
 
 def _sha256(raw: bytes) -> str:
@@ -139,6 +206,67 @@ def test_page_rows_exact_cover_the_replayed_domain(
         )
     assert len({row["questionnaire_page_id"] for row in rows}) == PAGE_COUNT
 
+    sidecar = sealed["raster_only_incompleteness_census"]
+    assert sidecar["schema_version"] == (
+        "rq_stage2_raster_only_incompleteness_census_nonauthority.v1"
+    )
+    assert sidecar["authority_kind"] == "sealed_nonauthority_sidecar"
+    assert sidecar["document_completeness_claim"] == (
+        "complete-under-extraction-authority with 10 raster-only exceptions"
+    )
+    assert sidecar["closed_gap_disposition"] == "CLOSED GAP"
+    assert sidecar["closed_gap_reason"] == "raster_visible_text_absent"
+    assert sidecar["branch_exception_count"] == 10
+    assert sidecar["dependent_atom_count"] == 75
+    assert sidecar["later_assembly_consequence"] == (
+        "fail_or_withhold_exhaustive_flow_outputs_without_global_gap_rows_nodes_or_ids"
+    )
+    assert sidecar["status"] == "complete"
+    exceptions = sidecar["branch_exception_records"]
+    assert [
+        (
+            row["page_number"],
+            row["exception_index_on_page"],
+            row["visible_label_description"],
+            row["approximate_raster_location"],
+        )
+        for row in exceptions
+    ] == list(EXPECTED_EXCEPTION_LABELS)
+    assert all(
+        row["disposition"] == "raster_visible_text_absent"
+        and row["authority_text_statement"]
+        == "no_label_level_span_or_hash_emitted"
+        for row in exceptions
+    )
+    page_census = sidecar["page_census_rows"]
+    assert len(page_census) == PAGE_COUNT
+    assert [row["page_number"] for row in page_census] == list(
+        range(1, PAGE_COUNT + 1)
+    )
+    assert [
+        (
+            row["page_number"],
+            row["branch_exception_count"],
+            row["dependent_atom_count"],
+        )
+        for row in page_census
+        if row["branch_exception_count"] or row["dependent_atom_count"]
+    ] == [(7, 3, 18), (8, 4, 39), (16, 1, 16), (21, 2, 2)]
+    for page, census in zip(rows, page_census, strict=True):
+        assert [census[key] for key in annotation.PAGE_CENSUS_KEYS[:5]] == [
+            page["questionnaire_page_id"],
+            page["source_document_id"],
+            page["interview_wave"],
+            page["page_number"],
+            page["page_text_utf8_sha256"],
+        ]
+        assert census["branch_exception_count"] == len(
+            census["branch_exception_keys"]
+        )
+        assert census["dependent_atom_count"] == len(
+            census["dependent_atom_keys"]
+        )
+
 
 def test_empty_occurrence_pages_are_still_emitted(sealed: dict) -> None:
     rows = sealed["questionnaire_page_rows"]
@@ -184,6 +312,71 @@ def test_every_occurrence_slice_and_id_recomputes(
             )
         )
 
+    sidecar = sealed["raster_only_incompleteness_census"]
+    dependent = sidecar["dependent_atom_consequence_records"]
+    assert len(dependent) == 75
+    assert Counter(row["path_consequence"] for row in dependent) == {
+        annotation.EMITTED_PATH_CONSEQUENCE: 33,
+        annotation.WITHHELD_PATH_CONSEQUENCE: 42,
+    }
+    occurrence_ids_by_coordinate: dict[
+        tuple[int, int, int, str], list[str]
+    ] = {}
+    for row in sealed["questionnaire_occurrence_rows"]:
+        coordinate = (
+            row["page_number"],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+            row["occurrence_kind"],
+        )
+        occurrence_ids_by_coordinate.setdefault(coordinate, []).append(
+            row["questionnaire_occurrence_id"]
+        )
+    seen_dependent: set[tuple[int, int, int, str]] = set()
+    exception_keys = {
+        (row["questionnaire_page_id"], row["exception_index_on_page"])
+        for row in sidecar["branch_exception_records"]
+    }
+    text_by_coordinate: dict[tuple[int, int, int, str], str] = {}
+    for row in dependent:
+        coordinate = (
+            row["page_number"],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+            row["occurrence_kind"],
+        )
+        assert coordinate not in seen_dependent
+        seen_dependent.add(coordinate)
+        raw = page_texts[row["page_number"] - 1].encode("utf-8")[
+            row["utf8_byte_start"] : row["utf8_byte_end"]
+        ]
+        assert raw.decode("utf-8", errors="strict") == row["matched_text"]
+        assert _sha256(raw) == row["matched_utf8_sha256"]
+        assert row["emitted_questionnaire_occurrence_ids"] == (
+            occurrence_ids_by_coordinate.get(coordinate, [])
+        )
+        assert row["blocking_exception_keys"]
+        assert len(row["blocking_exception_keys"]) == len(
+            {tuple(key) for key in row["blocking_exception_keys"]}
+        )
+        assert all(
+            tuple(key) in exception_keys
+            for key in row["blocking_exception_keys"]
+        )
+        text_by_coordinate[coordinate] = row["matched_text"]
+    for row in sealed["questionnaire_occurrence_rows"]:
+        coordinate = (
+            row["page_number"],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+            row["occurrence_kind"],
+        )
+        text_by_coordinate.setdefault(coordinate, row["matched_text"])
+    assert {
+        coordinate: text_by_coordinate[coordinate]
+        for coordinate in EXPECTED_GARBLED_TEXT
+    } == EXPECTED_GARBLED_TEXT
+
 
 def test_within_page_ordering_indices_and_projections(sealed: dict) -> None:
     kind_order = {kind: n for n, kind in enumerate(OCCURRENCE_KINDS)}
@@ -202,12 +395,46 @@ def test_within_page_ordering_indices_and_projections(sealed: dict) -> None:
             for r in rows
         ]
         assert keys == sorted(keys)
-        assert [r["occurrence_index_on_page"] for r in rows] == list(
-            range(len(rows))
-        )
+        indices = [r["occurrence_index_on_page"] for r in rows]
+        assert indices == sorted(set(indices))
         assert pages[page_number]["questionnaire_occurrence_ids"] == [
             r["questionnaire_occurrence_id"] for r in rows
         ]
+    assert [row["occurrence_index_on_page"] for row in by_page[7]] == [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        19,
+        21,
+        22,
+        23,
+        24,
+        25,
+        27,
+    ]
+    d8_same = next(
+        row
+        for row in by_page[7]
+        if row["utf8_byte_start"] == 1962
+        and row["utf8_byte_end"] == 2010
+        and row["occurrence_kind"] == "flow_branch_label"
+    )
+    assert d8_same["semantic_ordinal_at_span"] == 1
+    assert d8_same["occurrence_index_on_page"] == 27
 
 
 def test_atomic_span_kind_uniqueness_and_zero_ordinals(sealed: dict) -> None:
@@ -226,8 +453,12 @@ def test_atomic_span_kind_uniqueness_and_zero_ordinals(sealed: dict) -> None:
         if coordinate[-1] != "flow_branch_label":
             assert len(rows) == 1
             continue
-        assert [row["semantic_ordinal_at_span"] for row in rows] == list(
-            range(len(rows))
+        layout = annotation.PREFILTER_FLOW_LAYOUT_BY_COORDINATE.get(coordinate)
+        expected_ordinals = (
+            list(range(len(rows))) if layout is None else list(layout[1])
+        )
+        assert [row["semantic_ordinal_at_span"] for row in rows] == (
+            expected_ordinals
         )
         assert all(len(row["flow_branch_paths"]) == 1 for row in rows)
 
@@ -349,12 +580,12 @@ def test_local_anchor_and_repeat_rows_stay_document_local(
         if r["occurrence_kind"] == "repeat_or_alias_instruction"
     ]
     assert len(repeats) == len(instructions)
-    assert len(repeats) == 3
+    assert len(repeats) == 2
     assert Counter(row["relation"] for row in repeats) == {
-        "explicit_cross_reference": 3,
+        "explicit_cross_reference": 2,
     }
     assert Counter(row["target_scope"] for row in repeats) == {
-        "document_local": 2,
+        "document_local": 1,
         "cross_document": 1,
     }
     consumed: set[str] = set()
@@ -417,6 +648,23 @@ def test_candidate_disposition_relation_exact_covers_the_domain(
             assert row["disposition"] == "rejected"
             assert named == []
         assert set(named) <= output_ids
+
+    notes = sealed["adjudication_note_rows"]
+    diagnostics = [
+        row
+        for row in notes
+        if row["note_code"] == annotation.VISUAL_FIDELITY_NOTE_CODE
+        or row["note"] == annotation.VISUAL_FIDELITY_NOTE
+    ]
+    assert len(diagnostics) == 13
+    assert {
+        (row["candidate_row_kind"], row["candidate_id"]) for row in diagnostics
+    } == annotation.VISUAL_FIDELITY_NOTE_KEYS
+    assert all(
+        row["note_code"] == annotation.VISUAL_FIDELITY_NOTE_CODE
+        and row["note"] == annotation.VISUAL_FIDELITY_NOTE
+        for row in diagnostics
+    )
 
 
 def test_output_adjudication_relation_exact_covers_every_row(
@@ -489,6 +737,21 @@ def test_shard_states_nonauthority_and_emits_no_global_id(
         assert prefix not in raw
     for token in ("questionnaire_slot_id", "global_relationship_rows", "R_Q"):
         assert token not in raw
+    assert set(sealed) == set(annotation.LEGACY_AFFECTED_TOP_LEVEL_KEYS)
+    sidecar = sealed["raster_only_incompleteness_census"]
+    expected_raster_seal = annotation._raster_seal_fields(sidecar)
+    assert {
+        key: sealed["seal"][key] for key in annotation.RASTER_SEAL_KEYS
+    } == expected_raster_seal
+    assert len(sealed["seal"]) == 40
+    authority_without_sidecar = {
+        key: value
+        for key, value in sealed.items()
+        if key != "raster_only_incompleteness_census"
+    }
+    authority_text = json.dumps(authority_without_sidecar, sort_keys=True)
+    assert "CLOSED GAP" not in authority_text
+    assert sidecar["document_completeness_claim"] not in authority_text
 
 
 def test_rebuilt_rows_carry_the_displayed_member_order() -> None:
@@ -503,6 +766,19 @@ def test_rebuilt_rows_carry_the_displayed_member_order() -> None:
     if not SOURCE_PDF.is_file():
         pytest.skip("PSID questionnaire capture is not staged")
     rebuilt = annotation.build_annotation(*annotation._inputs())
+    assert list(rebuilt) == list(annotation.LEGACY_AFFECTED_TOP_LEVEL_KEYS)
+    assert list(rebuilt["seal"]) == [
+        *annotation.LEGACY_FLAT_SEAL_KEYS,
+        *annotation.RASTER_SEAL_KEYS,
+    ]
+    sidecar = rebuilt["raster_only_incompleteness_census"]
+    assert list(sidecar) == list(annotation.RASTER_SIDECAR_KEYS)
+    for row in sidecar["branch_exception_records"]:
+        assert list(row) == list(annotation.BRANCH_EXCEPTION_KEYS)
+    for row in sidecar["dependent_atom_consequence_records"]:
+        assert list(row) == list(annotation.DEPENDENT_ATOM_KEYS)
+    for row in sidecar["page_census_rows"]:
+        assert list(row) == list(annotation.PAGE_CENSUS_KEYS)
     assert list(rebuilt["whole_document_locator"]) == list(
         annotation.LOCATOR_KEYS
     )

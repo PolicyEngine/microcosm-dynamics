@@ -2,9 +2,10 @@
 
 ## State
 
-The preserved mechanically validated draft is imported on
-`claude/ce-rq-doc10`. The ratified raster-only evidence has been reconciled and
-the legacy-shape implementation is beginning.
+The ratified Amendment 1 corrections are implemented on
+`claude/ce-rq-doc10`. The regenerated legacy artifact and source review pass
+their independent validator, mutation suite, and focused tests. Independent
+seal review remains before the final progress-file removal and seal commit.
 
 ## Done
 
@@ -22,12 +23,23 @@ the legacy-shape implementation is beginning.
   suite, and the focused validator (`17 passed`).
 - Independently derived the adjudicated census: `N=10`, `M=75`; dependent atoms
   by page are 18 (page 7), 39 (page 8), 16 (page 16), and 2 (page 21).
+- Retained all 13 attributable partial/garbled spans as exact pinned UTF-8,
+  without visual repair, and bound each to exactly one required existing note.
+- Implemented the complete ten-exception and 75-dependent-atom domains, with
+  33 emitted and 42 withheld consequences and their exact blocking unions.
+- Implemented frozen pre-filter flow ordinals and occurrence indices; the D8
+  `SAME` witness survives at ordinal 1 and page index 27.
+- Added the complete 42-page legacy sidecar, 23-member affected outer shape,
+  and 40-member flat seal with all ten raster-domain additions.
+- Added deep mutation coverage, including the H7 omitted-key mutation after
+  recomputing every raster seal field and the artifact integrity digest.
+- Regenerated both committed JSON artifacts. Source-review reproduction,
+  annotation validation plus mutations, focused tests (`17 passed`), Ruff,
+  Black, and `git diff --check` are green.
 
 ## Next
 
-- Add the seven missing attributable ordinary exact-byte labels and filter all
-  dependent atoms under the exact adjudicated blocking unions.
-- Implement the total pre-filter comparator, sparse ordinals/indices, 42-page
-  sidecar census, required diagnostic notes, and 40-member legacy flat seal.
-- Run mutation, validator, focused, formatting, and full relevant checks.
+- Commit the coherent protocol implementation and updated progress state.
+- Request an independent read-only protocol and regression review; address any
+  actionable findings and rerun the complete gate.
 - Remove this progress file in the final seal commit and write the lane report.

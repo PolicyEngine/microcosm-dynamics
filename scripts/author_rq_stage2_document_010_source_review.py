@@ -285,15 +285,17 @@ PAGE_NOTES: dict[int, str] = {
     13: "Commuting screen reviewed; no ratified R_Q field retained.",
     14: "Lateness, job availability, and hypothetical mobility screen excluded.",
     15: "Head actual-work and sought-job/pay fields retained; search prose excluded.",
-    16: "Wife actual-work, occupation, industry, and exposure fields retained.",
+    16: (
+        "Wife actual-work, occupation, industry, and exposure atoms reviewed; "
+        "their sole married entry is raster-only and therefore withheld."
+    ),
     17: "Counterfactual wife work, children, and education screen excluded.",
     18: "Housework, child-care, and food-preparation screen reviewed and excluded.",
     19: "Food, cigarettes, and food-stamp screen reviewed and excluded.",
     20: "Meals and food-production screen reviewed and excluded.",
     21: (
-        "Farm/business/head pay retained; garbled positive H1 bytes were "
-        "raster-verified, and unextractable H6 options remain an exact "
-        "non-corporation fallthrough."
+        "Farm/business/head pay retained; H6 raster-only options are censused, "
+        "and H7 emits only through the exact DON'T KNOW branch."
     ),
     22: "Head bonus and covered self-employment income fields retained; transfers excluded.",
     23: "Wife role-total and actual-income amount fields retained; welfare excluded.",
@@ -327,15 +329,24 @@ D_SHORT_SAME = D_SHORT + ("p7_d8_same",)
 D_TO_D10 = (D_LONG, D_SHORT_SAME)
 D10_YES = tuple(path + ("p8_d10_yes",) for path in D_TO_D10)
 D10_NO = tuple(path + ("p8_d10_no",) for path in D_TO_D10)
-D_AFTER_D10 = D10_YES + D10_NO
+D_AFTER_D10 = tuple(
+    path + (branch,)
+    for path in D_TO_D10
+    for branch in ("p8_d10_yes", "p8_d10_no")
+)
 D12_YES = tuple(path + ("p8_d12_yes",) for path in D_AFTER_D10)
 D12_NO = tuple(path + ("p8_d12_no",) for path in D_AFTER_D10)
-D_AFTER_D12 = D12_YES + D12_NO
+D_AFTER_D12 = tuple(
+    path + (branch,)
+    for path in D_AFTER_D10
+    for branch in ("p8_d12_yes", "p8_d12_no")
+)
 D_POST_TENURE = D_TO_D10
 D_OVERTIME_YES = tuple(path + ("p8_d18_yes",) for path in D_TO_D10)
 D_OVERTIME_NO = tuple(path + ("p8_d18_no",) for path in D_TO_D10)
 D_AFTER_OVERTIME = D_OVERTIME_YES + D_OVERTIME_NO
-D_EXTRA = tuple(path + ("p9_d24_yes",) for path in D_AFTER_OVERTIME)
+D_PAGE9 = (SEC_D,)
+D_EXTRA = tuple(path + ("p9_d24_yes",) for path in D_PAGE9)
 SEC_E = ("p12_sec_e",)
 SEC_F = ("p15_sec_f",)
 F_WORK = SEC_F + ("p15_f1_yes",)
@@ -350,8 +361,8 @@ H_BUSINESS = tuple(path + ("p21_h5_yes",) for path in H_AFTER_FARM)
 H_NO_BUSINESS = tuple(path + ("p21_h5_no",) for path in H_AFTER_FARM)
 H6_CORPORATION = tuple(path + ("p21_h6_corporation",) for path in H_BUSINESS)
 H6_DONT_KNOW = tuple(path + ("p21_h6_dont_know",) for path in H_BUSINESS)
-H7_FALLTHROUGH = H_BUSINESS + H6_DONT_KNOW
-H_AFTER_BUSINESS = H_NO_BUSINESS + H6_CORPORATION + H7_FALLTHROUGH
+H7_FALLTHROUGH = H6_DONT_KNOW
+H_AFTER_BUSINESS = (SEC_H,)
 H9_YES = tuple(path + ("p22_h9_yes",) for path in H_AFTER_BUSINESS)
 H9_NO = tuple(path + ("p22_h9_no",) for path in H_AFTER_BUSINESS)
 H_AFTER_BONUS = H9_YES + H9_NO
@@ -732,7 +743,7 @@ def _review_rows() -> tuple[dict[str, Any], ...]:
             sel_block(4, 5),
             "p9_d24_extra_jobs",
             parents=("p9_extra_jobs",),
-            routes=D_AFTER_OVERTIME,
+            routes=D_PAGE9,
         )
     )
     add(
@@ -741,21 +752,17 @@ def _review_rows() -> tuple[dict[str, Any], ...]:
             sel_word(4, "extra jobs"),
             J,
             "p9_extra_jobs",
-            routes=D_AFTER_OVERTIME,
+            routes=D_PAGE9,
         )
     )
-    add(
-        spec(
-            9, sel_word(6, "1. YES"), F, "p9_d24_yes", routes=D_AFTER_OVERTIME
-        )
-    )
+    add(spec(9, sel_word(6, "1. YES"), F, "p9_d24_yes", routes=D_PAGE9))
     add(
         spec(
             9,
             sel_word(6, "15.1       (GO TO D30)"),
             F,
             "p9_d24_no",
-            routes=D_AFTER_OVERTIME,
+            routes=D_PAGE9,
         )
     )
     add(
@@ -1634,17 +1641,29 @@ def author_review() -> dict[str, Any]:
     final_specs: list[dict[str, Any]] = []
     for row in occurrence_specs:
         paths: list[list[str]] = []
-        for route in row["routes"]:
-            path: list[str] = []
-            for parent_key in route:
-                variants = branch_refs_by_key.get(parent_key)
-                if variants is None or tuple(path) not in variants:
-                    raise SpecError(
-                        f"{row['key']} routes through unresolved {parent_key} "
-                        f"after {path}"
-                    )
-                path.append(variants[tuple(path)])
-            paths.append(path)
+        coordinate = (
+            row["page"],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+            row["kind"],
+        )
+        dependency = annotation.DEPENDENCY_BY_COORDINATE.get(coordinate)
+        if (
+            dependency is None
+            or dependency["path_consequence"]
+            == annotation.EMITTED_PATH_CONSEQUENCE
+        ):
+            for route in row["routes"]:
+                path: list[str] = []
+                for parent_key in route:
+                    variants = branch_refs_by_key.get(parent_key)
+                    if variants is None or tuple(path) not in variants:
+                        raise SpecError(
+                            f"{row['key']} routes through unresolved "
+                            f"{parent_key} after {path}"
+                        )
+                    path.append(variants[tuple(path)])
+                paths.append(path)
         final_specs.append(
             {
                 "review_occurrence_id": row["review_occurrence_id"],

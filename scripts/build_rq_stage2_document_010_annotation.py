@@ -190,6 +190,546 @@ NOTE_KEYS = (
     "note",
 )
 
+RASTER_REASON = "raster_visible_text_absent"
+EMITTED_PATH_CONSEQUENCE = (
+    "emitted_with_all_resolving_extraction_authority_paths"
+)
+WITHHELD_PATH_CONSEQUENCE = "withheld_no_resolving_extraction_authority_path"
+VISUAL_FIDELITY_NOTE_CODE = "attributable_garbled_exact_bytes_retained"
+VISUAL_FIDELITY_NOTE = (
+    "The visible printed atom has an attributable partial or garbled pinned "
+    "UTF-8 slice; the exact slice, offsets, and hash are retained without "
+    "visual repair."
+)
+
+BRANCH_EXCEPTION_KEYS = (
+    "disposition",
+    "source_document_id",
+    "questionnaire_page_id",
+    "interview_wave",
+    "page_number",
+    "page_text_utf8_sha256",
+    "exception_index_on_page",
+    "visible_label_description",
+    "approximate_raster_location",
+    "authority_text_statement",
+)
+DEPENDENT_ATOM_KEYS = (
+    "reason",
+    "source_document_id",
+    "questionnaire_page_id",
+    "interview_wave",
+    "page_number",
+    "page_text_utf8_sha256",
+    "utf8_byte_start",
+    "utf8_byte_end",
+    "occurrence_kind",
+    "matched_text",
+    "matched_utf8_sha256",
+    "blocking_exception_keys",
+    "emitted_questionnaire_occurrence_ids",
+    "path_consequence",
+)
+PAGE_CENSUS_KEYS = (
+    "questionnaire_page_id",
+    "source_document_id",
+    "interview_wave",
+    "page_number",
+    "page_text_utf8_sha256",
+    "branch_exception_count",
+    "branch_exception_keys",
+    "dependent_atom_count",
+    "dependent_atom_keys",
+)
+RASTER_SIDECAR_KEYS = (
+    "schema_version",
+    "authority_kind",
+    "document_completeness_claim",
+    "closed_gap_disposition",
+    "closed_gap_reason",
+    "branch_exception_count",
+    "dependent_atom_count",
+    "branch_exception_records",
+    "dependent_atom_consequence_records",
+    "page_census_rows",
+    "later_assembly_consequence",
+    "status",
+)
+RASTER_SEAL_KEYS = (
+    "raster_only_branch_exception_count",
+    "raster_only_branch_exception_keyset_sha256",
+    "raster_only_branch_exception_domain_sha256",
+    "raster_only_dependent_atom_consequence_count",
+    "raster_only_dependent_atom_consequence_keyset_sha256",
+    "raster_only_dependent_atom_consequence_domain_sha256",
+    "raster_only_page_census_count",
+    "raster_only_page_census_keyset_sha256",
+    "raster_only_page_census_domain_sha256",
+    "raster_only_incompleteness_census_sha256",
+)
+LEGACY_FLAT_SEAL_KEYS = (
+    "whole_document_locator_count",
+    "whole_document_locator_domain_sha256",
+    "questionnaire_page_count",
+    "questionnaire_page_keyset_sha256",
+    "questionnaire_page_domain_sha256",
+    "empty_occurrence_page_count",
+    "questionnaire_occurrence_count",
+    "questionnaire_occurrence_counts_by_kind",
+    "questionnaire_occurrence_keyset_sha256",
+    "questionnaire_occurrence_domain_sha256",
+    "flow_branch_count",
+    "flow_branch_domain_sha256",
+    "local_anchor_classification_count",
+    "local_anchor_classification_domain_sha256",
+    "local_repeat_alias_evidence_count",
+    "local_repeat_alias_evidence_domain_sha256",
+    "candidate_disposition_count",
+    "candidate_disposition_domain_sha256",
+    "candidate_adjudication_census_by_kind",
+    "output_adjudication_count",
+    "output_adjudication_domain_sha256",
+    "output_adjudication_census_by_kind",
+    "adjudication_note_count",
+    "adjudication_note_domain_sha256",
+    "page_review_count",
+    "whole_document_review_complete",
+    "candidate_domain_exact_cover",
+    "output_domain_exact_cover",
+    "global_ids_assigned",
+    "authority_status",
+)
+LEGACY_AFFECTED_TOP_LEVEL_KEYS = (
+    "schema_version",
+    "artifact_id",
+    "authority_kind",
+    "source_replay_identity",
+    "candidate_index_identity",
+    "candidate_artifact_identity",
+    "source_review_identity",
+    "document_source_position",
+    "document_source_row",
+    "whole_document_locator",
+    "questionnaire_page_rows",
+    "questionnaire_occurrence_rows",
+    "flow_branch_rows",
+    "local_anchor_classification_rows",
+    "local_repeat_alias_evidence_rows",
+    "candidate_disposition_rows",
+    "adjudication_note_rows",
+    "raster_only_incompleteness_census",
+    "output_adjudication_rows",
+    "seal",
+    "nonauthority_statement",
+    "integrity",
+    "status",
+)
+
+EXCEPTION_DEFINITIONS = (
+    (
+        7,
+        0,
+        "D1: 1. WORKING NOW, OR ONLY TEMPORARILY LAID OFF",
+        "page 7; item D1; leftmost response box",
+    ),
+    (7, 1, "D8: 1. BETTER", "page 7; item D8; left response box"),
+    (7, 2, "D8: 5. WORSE", "page 7; item D8; center response box"),
+    (8, 0, "D14: 1. YES", "page 8; item D14; upper response box"),
+    (
+        8,
+        1,
+        "D14: 5. NO (GO TO D16)",
+        "page 8; item D14; lower response box",
+    ),
+    (8, 2, "D20: 1. YES", "page 8; item D20; left response box"),
+    (8, 3, "D20: 5. NO", "page 8; item D20; right response box"),
+    (16, 0, "G1: 1. MARRIED", "page 16; item G1; leftmost response box"),
+    (
+        21,
+        0,
+        "H6: 2. UNINCORPORATED",
+        "page 21; item H6; second response box in vertical stack",
+    ),
+    (
+        21,
+        1,
+        "H6: 3. BOTH",
+        "page 21; item H6; third response box in vertical stack",
+    ),
+)
+
+
+def _atom_coordinates(
+    page_number: int, start: int, end: int, *kinds: str
+) -> tuple[tuple[int, int, int, str], ...]:
+    return tuple((page_number, start, end, kind) for kind in kinds)
+
+
+DEPENDENCY_GROUP_SPECS = (
+    (
+        "d2_through_d8_prompt",
+        ((7, 0),),
+        EMITTED_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(
+                7, 759, 844, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(7, 976, 990, "flow_branch_label"),
+            *_atom_coordinates(7, 1002, 1053, "field_purpose_prompt"),
+            *_atom_coordinates(
+                7, 1066, 1120, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                7, 1131, 1196, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                7, 1316, 1358, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(7, 1421, 1460, "flow_branch_label"),
+            *_atom_coordinates(7, 1484, 1505, "flow_branch_label"),
+            *_atom_coordinates(7, 1515, 1662, "field_purpose_prompt"),
+            *_atom_coordinates(7, 1554, 1572, "job_anchor"),
+            *_atom_coordinates(7, 1674, 1754, "field_purpose_prompt"),
+            *_atom_coordinates(7, 1765, 1907, "field_purpose_prompt"),
+        ),
+    ),
+    (
+        "d8_same",
+        ((7, 0),),
+        EMITTED_PATH_CONSEQUENCE,
+        _atom_coordinates(7, 1962, 2010, "flow_branch_label"),
+    ),
+    (
+        "d9",
+        ((7, 0), (7, 1), (7, 2)),
+        WITHHELD_PATH_CONSEQUENCE,
+        _atom_coordinates(7, 2037, 2056, "field_purpose_prompt"),
+    ),
+    (
+        "d10_through_d14",
+        ((7, 0), (7, 1), (7, 2)),
+        EMITTED_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(
+                8, 86, 160, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(8, 181, 185, "flow_branch_label"),
+            *_atom_coordinates(
+                8, 181, 256, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(8, 276, 301, "flow_branch_label"),
+            *_atom_coordinates(
+                8, 379, 543, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(8, 564, 567, "flow_branch_label"),
+            *_atom_coordinates(
+                8, 564, 644, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(8, 783, 846, "flow_branch_label"),
+            *_atom_coordinates(
+                8, 848, 938, "context_anchor", "field_purpose_prompt"
+            ),
+        ),
+    ),
+    (
+        "d15",
+        ((7, 0), (7, 1), (7, 2), (8, 0)),
+        WITHHELD_PATH_CONSEQUENCE,
+        _atom_coordinates(
+            8, 992, 1167, "context_anchor", "field_purpose_prompt"
+        ),
+    ),
+    (
+        "d16",
+        ((7, 0), (7, 1), (7, 2), (8, 0), (8, 1)),
+        WITHHELD_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(8, 1261, 1269, "job_anchor"),
+            *_atom_coordinates(
+                8, 1170, 1403, "context_anchor", "field_purpose_prompt"
+            ),
+        ),
+    ),
+    (
+        "d17_through_d20_prompt",
+        ((7, 0), (7, 1), (7, 2), (8, 0), (8, 1)),
+        WITHHELD_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(
+                8, 1404, 1524, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                8, 1538, 1626, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(8, 1563, 1571, "remuneration_component_anchor"),
+            *_atom_coordinates(8, 1651, 1658, "flow_branch_label"),
+            *_atom_coordinates(8, 1681, 1699, "flow_branch_label"),
+            *_atom_coordinates(
+                8, 1750, 1824, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                8, 1940, 2112, "context_anchor", "field_purpose_prompt"
+            ),
+        ),
+    ),
+    (
+        "d21",
+        ((7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2)),
+        WITHHELD_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(8, 2140, 2188, "field_purpose_prompt"),
+            *_atom_coordinates(8, 2263, 2281, "field_purpose_prompt"),
+        ),
+    ),
+    (
+        "d22",
+        ((7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 3)),
+        WITHHELD_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(
+                8, 2198, 2234, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(8, 2321, 2343, "field_purpose_prompt"),
+            *_atom_coordinates(8, 2429, 2433, "flow_branch_label"),
+            *_atom_coordinates(8, 2447, 2467, "flow_branch_label"),
+        ),
+    ),
+    (
+        "d23",
+        ((7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2), (8, 3)),
+        WITHHELD_PATH_CONSEQUENCE,
+        _atom_coordinates(
+            8,
+            2633,
+            2757,
+            "remuneration_component_anchor",
+            "field_purpose_prompt",
+        ),
+    ),
+    (
+        "g2_through_g9",
+        ((16, 0),),
+        WITHHELD_PATH_CONSEQUENCE,
+        (
+            *_atom_coordinates(16, 1104, 1141, "repeat_or_alias_instruction"),
+            *_atom_coordinates(16, 1123, 1129, "role_anchor"),
+            *_atom_coordinates(
+                16, 1143, 1203, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(16, 1168, 1172, "role_anchor"),
+            *_atom_coordinates(16, 1180, 1194, "job_anchor"),
+            *_atom_coordinates(16, 1221, 1227, "flow_branch_label"),
+            *_atom_coordinates(16, 1242, 1270, "flow_branch_label"),
+            *_atom_coordinates(
+                16, 1485, 1534, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                16, 1557, 1613, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                16, 1621, 1699, "context_anchor", "field_purpose_prompt"
+            ),
+            *_atom_coordinates(
+                16, 1705, 1770, "context_anchor", "field_purpose_prompt"
+            ),
+        ),
+    ),
+    (
+        "h7",
+        ((21, 0), (21, 1)),
+        EMITTED_PATH_CONSEQUENCE,
+        _atom_coordinates(
+            21,
+            1877,
+            2073,
+            "remuneration_component_anchor",
+            "field_purpose_prompt",
+        ),
+    ),
+)
+
+
+def _dependency_index() -> dict[tuple[int, int, int, str], dict[str, Any]]:
+    result: dict[tuple[int, int, int, str], dict[str, Any]] = {}
+    for (
+        group_name,
+        blockers,
+        consequence,
+        coordinates,
+    ) in DEPENDENCY_GROUP_SPECS:
+        for coordinate in coordinates:
+            if coordinate in result:
+                raise ValueError("raster dependency coordinate is duplicated")
+            result[coordinate] = {
+                "group_name": group_name,
+                "blocking_exception_refs": blockers,
+                "path_consequence": consequence,
+            }
+    if (
+        len(result) != 75
+        or sum(
+            row["path_consequence"] == EMITTED_PATH_CONSEQUENCE
+            for row in result.values()
+        )
+        != 33
+        or Counter(coordinate[0] for coordinate in result)
+        != Counter({7: 18, 8: 39, 16: 16, 21: 2})
+    ):
+        raise ValueError("raster dependency adjudication census drift")
+    return result
+
+
+DEPENDENCY_BY_COORDINATE = _dependency_index()
+
+
+def _ordinary_member_key(
+    page_number: int, start: int, end: int
+) -> tuple[int, ...]:
+    return (1, page_number, 1, start, end)
+
+
+def _exception_member_key(
+    page_number: int, exception_index: int
+) -> tuple[int, ...]:
+    return (1, page_number, 0, exception_index)
+
+
+_ROOT_MEMBER_KEY = (0,)
+_SEC_D_MEMBER_KEY = _ordinary_member_key(7, 116, 141)
+_D1_OTHER_MEMBER_KEY = _ordinary_member_key(7, 393, 749)
+_D5_LONG_MEMBER_KEY = _ordinary_member_key(7, 1421, 1460)
+_D5_SHORT_MEMBER_KEY = _ordinary_member_key(7, 1484, 1505)
+_D8_SAME_MEMBER_KEY = _ordinary_member_key(7, 1962, 2010)
+_D10_YES_MEMBER_KEY = _ordinary_member_key(8, 181, 185)
+_D10_NO_MEMBER_KEY = _ordinary_member_key(8, 276, 301)
+
+_D_ENTRY_PATHS = (
+    (_ROOT_MEMBER_KEY, _SEC_D_MEMBER_KEY, _exception_member_key(7, 0)),
+    (_ROOT_MEMBER_KEY, _SEC_D_MEMBER_KEY, _D1_OTHER_MEMBER_KEY),
+)
+_D8_SAME_PARENT_PATHS = tuple(
+    (*path, _D5_SHORT_MEMBER_KEY) for path in _D_ENTRY_PATHS
+)
+_D10_PARENT_PATHS = tuple(
+    (*entry, *suffix)
+    for entry in _D_ENTRY_PATHS
+    for suffix in (
+        (_D5_LONG_MEMBER_KEY,),
+        (_D5_SHORT_MEMBER_KEY, _exception_member_key(7, 1)),
+        (_D5_SHORT_MEMBER_KEY, _exception_member_key(7, 2)),
+        (_D5_SHORT_MEMBER_KEY, _D8_SAME_MEMBER_KEY),
+    )
+)
+_D12_PARENT_PATHS = tuple(
+    (*path, d10_member)
+    for path in _D10_PARENT_PATHS
+    for d10_member in (_D10_YES_MEMBER_KEY, _D10_NO_MEMBER_KEY)
+)
+
+
+def _prefilter_layout(
+    paths: Sequence[Sequence[tuple[int, ...]]],
+) -> tuple[int, tuple[int, ...]]:
+    ordered = sorted(tuple(path) for path in paths)
+    if len(ordered) != len(set(ordered)):
+        raise ValueError("duplicate complete pre-filter path")
+    emitted_ordinals = tuple(
+        ordinal
+        for ordinal, path in enumerate(ordered)
+        if not any(len(member) == 4 and member[2] == 0 for member in path)
+    )
+    return len(ordered), emitted_ordinals
+
+
+_D_ENTRY_LAYOUT = _prefilter_layout(_D_ENTRY_PATHS)
+_D8_SAME_LAYOUT = _prefilter_layout(_D8_SAME_PARENT_PATHS)
+_D10_LAYOUT = _prefilter_layout(_D10_PARENT_PATHS)
+_D12_LAYOUT = _prefilter_layout(_D12_PARENT_PATHS)
+if (
+    _D_ENTRY_LAYOUT != (2, (1,))
+    or _D8_SAME_LAYOUT != (2, (1,))
+    or _D10_LAYOUT != (8, (4, 7))
+    or _D12_LAYOUT != (16, (8, 9, 14, 15))
+):
+    raise ValueError("pre-filter comparator fixture drift")
+
+PREFILTER_FLOW_LAYOUT_BY_COORDINATE = {
+    (7, 976, 990, "flow_branch_label"): _D_ENTRY_LAYOUT,
+    (7, 1421, 1460, "flow_branch_label"): _D_ENTRY_LAYOUT,
+    (7, 1484, 1505, "flow_branch_label"): _D_ENTRY_LAYOUT,
+    (7, 1962, 2010, "flow_branch_label"): _D8_SAME_LAYOUT,
+    (8, 181, 185, "flow_branch_label"): _D10_LAYOUT,
+    (8, 276, 301, "flow_branch_label"): _D10_LAYOUT,
+    (8, 564, 567, "flow_branch_label"): _D12_LAYOUT,
+    (8, 783, 846, "flow_branch_label"): _D12_LAYOUT,
+}
+
+VISUAL_FIDELITY_NOTE_TARGETS = {
+    (7, 1962, 2010, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:64e159cfabbcdef5cf115dc63f91b169bc61aaa3fc4cf1b3ecdbd39e0cef4b99",
+    ),
+    (7, 2037, 2056, "field_purpose_prompt"): (
+        "occurrence",
+        "rq-candidate-occurrence:4f4f0821f2b4f96eb19ca047bf9fad4751bb906e4c8b37310f9bb1c3655dc02e",
+    ),
+    (8, 181, 185, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:87796f1ecafc7e3c36d7792c0f275353e971c2d3da80187a1ec2265149dec606",
+    ),
+    (8, 276, 301, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:f03ec7a3d15dad5293334540de6bf52a04dbf085a3e62aca6e55ebdf9490c16b",
+    ),
+    (8, 564, 567, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:b52ba57234730901a4667a183ae61770bc87927712a7f1df7c73ee0c16bd8737",
+    ),
+    (8, 783, 846, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:77f220c93d1fda76230a64be977bc56e1180322e534d40c3171396136b152327",
+    ),
+    (8, 1651, 1658, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:2ad62b59291cb11d7be843a0c68ca6c71af57c0499b05e71d36bf938eb17fd3b",
+    ),
+    (8, 1681, 1699, "flow_branch_label"): (
+        "flow_path",
+        "rq-candidate-flow-path:6cf84b0a95a5f12d51c7370222f0009318c1e591de6068853729a979ef0f6d3b",
+    ),
+    (8, 2429, 2433, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:3aaa92f54a3645e37fec8398d85a33fe7456fe5902adb147dfddb406b7db5dff",
+    ),
+    (8, 2447, 2467, "flow_branch_label"): (
+        "flow_path",
+        "rq-candidate-flow-path:ca25c61038fc2bf966f3237ff2c280cb9930418bdf5c280a87389e6858e115dd",
+    ),
+    (38, 1306, 1420, "field_purpose_prompt"): (
+        "occurrence",
+        "rq-candidate-occurrence:ef063d84cff3cad7ec06e77c2f229dc9129699048f31102da38f803a9675eb88",
+    ),
+    (38, 1511, 1632, "flow_branch_label"): (
+        "occurrence",
+        "rq-candidate-occurrence:2886a35403e0d8e9a1ffabea574193de6b1eddcdf66fdc1d90fe71a1491d9b20",
+    ),
+    (38, 1643, 1835, "field_purpose_prompt"): (
+        "occurrence",
+        "rq-candidate-occurrence:c0e38517140db72f01ac660d36cb5a0cde49f4944e7c6cd0b96bd573bf7a4126",
+    ),
+}
+VISUAL_FIDELITY_NOTE_KEYS = frozenset(VISUAL_FIDELITY_NOTE_TARGETS.values())
+VISUAL_FIDELITY_OCCURRENCE_CANDIDATE_IDS = frozenset(
+    candidate_id
+    for row_kind, candidate_id in VISUAL_FIDELITY_NOTE_KEYS
+    if row_kind == "occurrence"
+)
+if (
+    len(VISUAL_FIDELITY_NOTE_TARGETS) != 13
+    or len(VISUAL_FIDELITY_NOTE_KEYS) != 13
+):
+    raise ValueError("visual-fidelity diagnostic domain drift")
+
 REVIEW_TOP_LEVEL_KEYS = {
     "schema_version",
     "review_id",
@@ -540,9 +1080,22 @@ def validate_review(
             ]
         )
         paths = spec["parent_review_branch_paths"]
+        coordinate = (
+            page_number,
+            spec["utf8_byte_start"],
+            spec["utf8_byte_end"],
+            spec["occurrence_kind"],
+        )
+        dependency = DEPENDENCY_BY_COORDINATE.get(coordinate)
+        path_domain_is_lawful = (
+            bool(paths)
+            if dependency is None
+            or dependency["path_consequence"] == EMITTED_PATH_CONSEQUENCE
+            else not paths
+        )
         if (
             not isinstance(paths, list)
-            or not paths
+            or not path_domain_is_lawful
             or any(not isinstance(path, list) for path in paths)
         ):
             raise ValueError("source review path domain drift")
@@ -961,16 +1514,30 @@ def _build_occurrences_and_branches(
             spec["utf8_byte_end"],
         )
         base_index = next_occurrence_index_by_page[page_number]
-        emitted_count = (
-            len(spec["parent_review_branch_paths"])
-            if spec["occurrence_kind"] == "flow_branch_label"
-            else 1
+        coordinate = (
+            page_number,
+            spec["utf8_byte_start"],
+            spec["utf8_byte_end"],
+            spec["occurrence_kind"],
         )
-        next_occurrence_index_by_page[page_number] += emitted_count
+        layout = PREFILTER_FLOW_LAYOUT_BY_COORDINATE.get(coordinate)
+        dependency = DEPENDENCY_BY_COORDINATE.get(coordinate)
+        if spec["occurrence_kind"] != "flow_branch_label":
+            prefilter_count = 1
+        elif layout is not None:
+            prefilter_count = layout[0]
+        elif (
+            dependency is not None
+            and dependency["path_consequence"] == WITHHELD_PATH_CONSEQUENCE
+        ):
+            prefilter_count = max(1, len(spec["parent_review_branch_paths"]))
+        else:
+            prefilter_count = len(spec["parent_review_branch_paths"])
+        next_occurrence_index_by_page[page_number] += prefilter_count
         prepared_specs.append((spec, matched_bytes, matched_text, base_index))
 
     def resolve_path_rows(
-        spec: Mapping[str, Any],
+        spec: Mapping[str, Any], *, sort_output_paths: bool = True
     ) -> list[tuple[list[str], list[str]]]:
         resolved_path_rows: list[tuple[list[str], list[str]]] = []
         for review_path in spec["parent_review_branch_paths"]:
@@ -985,7 +1552,8 @@ def _build_occurrences_and_branches(
                     )
                 path = list(resolved)
             resolved_path_rows.append((path, review_path))
-        resolved_path_rows.sort(key=lambda row: _path_sort_key(row[0]))
+        if sort_output_paths:
+            resolved_path_rows.sort(key=lambda row: _path_sort_key(row[0]))
         translated_paths = [row[0] for row in resolved_path_rows]
         if len(translated_paths) != len(
             {tuple(path) for path in translated_paths}
@@ -1000,11 +1568,33 @@ def _build_occurrences_and_branches(
         if spec["occurrence_kind"] != "flow_branch_label":
             continue
         page_number = spec["page_number"]
-        resolved_path_rows = resolve_path_rows(spec)
+        coordinate = (
+            page_number,
+            spec["utf8_byte_start"],
+            spec["utf8_byte_end"],
+            spec["occurrence_kind"],
+        )
+        dependency = DEPENDENCY_BY_COORDINATE.get(coordinate)
+        if (
+            dependency is not None
+            and dependency["path_consequence"] == WITHHELD_PATH_CONSEQUENCE
+        ):
+            continue
+        layout = PREFILTER_FLOW_LAYOUT_BY_COORDINATE.get(coordinate)
+        resolved_path_rows = resolve_path_rows(
+            spec, sort_output_paths=layout is None
+        )
+        semantic_ordinals = (
+            tuple(range(len(resolved_path_rows)))
+            if layout is None
+            else layout[1]
+        )
+        if len(semantic_ordinals) != len(resolved_path_rows):
+            raise ValueError("pre-filter resolving path projection drift")
         for semantic_ordinal, (
             parent_path,
             source_review_path,
-        ) in enumerate(resolved_path_rows):
+        ) in zip(semantic_ordinals, resolved_path_rows, strict=True):
             skeleton = {
                 "page_number": page_number,
                 "utf8_byte_start": spec["utf8_byte_start"],
@@ -1067,6 +1657,18 @@ def _build_occurrences_and_branches(
         if spec["occurrence_kind"] == "flow_branch_label":
             continue
         page_number = spec["page_number"]
+        coordinate = (
+            page_number,
+            spec["utf8_byte_start"],
+            spec["utf8_byte_end"],
+            spec["occurrence_kind"],
+        )
+        dependency = DEPENDENCY_BY_COORDINATE.get(coordinate)
+        if (
+            dependency is not None
+            and dependency["path_consequence"] == WITHHELD_PATH_CONSEQUENCE
+        ):
+            continue
         resolved_path_rows = resolve_path_rows(spec)
         translated_paths = [row[0] for row in resolved_path_rows]
         skeleton = {
@@ -1146,6 +1748,221 @@ def _page_rows(
     return rows
 
 
+def _raster_only_incompleteness_census(
+    document: Mapping[str, Any],
+    page_texts: Sequence[str],
+    pages: Sequence[Mapping[str, Any]],
+    review: Mapping[str, Any],
+    occurrence_ids_by_review_id: Mapping[str, Sequence[str]],
+) -> dict[str, Any]:
+    """Construct the ratified, sealed nonauthority census from source facts."""
+
+    page_by_number = {row["page_number"]: row for row in pages}
+    if list(page_by_number) != list(range(1, len(page_texts) + 1)):
+        raise ValueError("raster census page domain drift")
+
+    exception_records: list[dict[str, Any]] = []
+    exception_key_by_ref: dict[tuple[int, int], list[Any]] = {}
+    for (
+        page_number,
+        exception_index,
+        description,
+        location,
+    ) in EXCEPTION_DEFINITIONS:
+        page = page_by_number[page_number]
+        record = dict(
+            zip(
+                BRANCH_EXCEPTION_KEYS,
+                (
+                    RASTER_REASON,
+                    document["source_document_id"],
+                    page["questionnaire_page_id"],
+                    document["interview_waves"][0],
+                    page_number,
+                    page["page_text_utf8_sha256"],
+                    exception_index,
+                    description,
+                    location,
+                    "no_label_level_span_or_hash_emitted",
+                ),
+                strict=True,
+            )
+        )
+        exception_records.append(record)
+        exception_key_by_ref[(page_number, exception_index)] = [
+            page["questionnaire_page_id"],
+            exception_index,
+        ]
+
+    dependent_records: list[dict[str, Any]] = []
+    seen_coordinates: set[tuple[int, int, int, str]] = set()
+    for spec in review["occurrence_specs"]:
+        coordinate = (
+            spec["page_number"],
+            spec["utf8_byte_start"],
+            spec["utf8_byte_end"],
+            spec["occurrence_kind"],
+        )
+        dependency = DEPENDENCY_BY_COORDINATE.get(coordinate)
+        if dependency is None:
+            continue
+        if coordinate in seen_coordinates:
+            raise ValueError("raster dependent atom coordinate duplicated")
+        seen_coordinates.add(coordinate)
+        page_number, start, end, occurrence_kind = coordinate
+        page = page_by_number[page_number]
+        matched_bytes, matched_text = _utf8_slice(
+            page_texts[page_number - 1], start, end
+        )
+        emitted_ids = list(
+            occurrence_ids_by_review_id.get(spec["review_occurrence_id"], ())
+        )
+        path_consequence = dependency["path_consequence"]
+        if (
+            path_consequence == EMITTED_PATH_CONSEQUENCE
+            and not emitted_ids
+            or path_consequence == WITHHELD_PATH_CONSEQUENCE
+            and emitted_ids
+        ):
+            raise ValueError("raster dependent output projection drift")
+        dependent_records.append(
+            dict(
+                zip(
+                    DEPENDENT_ATOM_KEYS,
+                    (
+                        RASTER_REASON,
+                        document["source_document_id"],
+                        page["questionnaire_page_id"],
+                        document["interview_waves"][0],
+                        page_number,
+                        page["page_text_utf8_sha256"],
+                        start,
+                        end,
+                        occurrence_kind,
+                        matched_text,
+                        _sha256(matched_bytes),
+                        [
+                            exception_key_by_ref[exception_ref]
+                            for exception_ref in dependency[
+                                "blocking_exception_refs"
+                            ]
+                        ],
+                        emitted_ids,
+                        path_consequence,
+                    ),
+                    strict=True,
+                )
+            )
+        )
+    if seen_coordinates != set(DEPENDENCY_BY_COORDINATE):
+        raise ValueError("raster dependent atom domain is not exact-covered")
+
+    branch_keys_by_page: dict[int, list[list[Any]]] = defaultdict(list)
+    for record in exception_records:
+        branch_keys_by_page[record["page_number"]].append(
+            [
+                record["questionnaire_page_id"],
+                record["exception_index_on_page"],
+            ]
+        )
+    dependent_keys_by_page: dict[int, list[list[Any]]] = defaultdict(list)
+    for record in dependent_records:
+        dependent_keys_by_page[record["page_number"]].append(
+            [
+                record["questionnaire_page_id"],
+                record["utf8_byte_start"],
+                record["utf8_byte_end"],
+                record["occurrence_kind"],
+            ]
+        )
+
+    page_census_rows: list[dict[str, Any]] = []
+    for page in pages:
+        page_number = page["page_number"]
+        branch_keys = branch_keys_by_page.get(page_number, [])
+        dependent_keys = dependent_keys_by_page.get(page_number, [])
+        page_census_rows.append(
+            dict(
+                zip(
+                    PAGE_CENSUS_KEYS,
+                    (
+                        page["questionnaire_page_id"],
+                        page["source_document_id"],
+                        page["interview_wave"],
+                        page_number,
+                        page["page_text_utf8_sha256"],
+                        len(branch_keys),
+                        branch_keys,
+                        len(dependent_keys),
+                        dependent_keys,
+                    ),
+                    strict=True,
+                )
+            )
+        )
+
+    if len(exception_records) != 10 or len(dependent_records) != 75:
+        raise ValueError("raster census N/M drift")
+    return dict(
+        zip(
+            RASTER_SIDECAR_KEYS,
+            (
+                "rq_stage2_raster_only_incompleteness_census_nonauthority.v1",
+                "sealed_nonauthority_sidecar",
+                "complete-under-extraction-authority with 10 raster-only exceptions",
+                "CLOSED GAP",
+                RASTER_REASON,
+                len(exception_records),
+                len(dependent_records),
+                exception_records,
+                dependent_records,
+                page_census_rows,
+                "fail_or_withhold_exhaustive_flow_outputs_without_global_gap_rows_nodes_or_ids",
+                "complete",
+            ),
+            strict=True,
+        )
+    )
+
+
+def _raster_seal_fields(sidecar: Mapping[str, Any]) -> dict[str, Any]:
+    branch_records = sidecar["branch_exception_records"]
+    dependent_records = sidecar["dependent_atom_consequence_records"]
+    page_rows = sidecar["page_census_rows"]
+    branch_keys = [
+        [row["questionnaire_page_id"], row["exception_index_on_page"]]
+        for row in branch_records
+    ]
+    dependent_keys = [
+        [
+            row["questionnaire_page_id"],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+            row["occurrence_kind"],
+        ]
+        for row in dependent_records
+    ]
+    page_keys = [[row["questionnaire_page_id"]] for row in page_rows]
+    return dict(
+        zip(
+            RASTER_SEAL_KEYS,
+            (
+                len(branch_records),
+                _canonical_digest(branch_keys),
+                _canonical_digest(list(branch_records)),
+                len(dependent_records),
+                _canonical_digest(dependent_keys),
+                _canonical_digest(list(dependent_records)),
+                len(page_rows),
+                _canonical_digest(page_keys),
+                _canonical_digest(list(page_rows)),
+                _canonical_digest(sidecar),
+            ),
+            strict=True,
+        )
+    )
+
+
 def _local_anchor_rows(
     review: Mapping[str, Any],
     occurrences: Sequence[Mapping[str, Any]],
@@ -1156,7 +1973,11 @@ def _local_anchor_rows(
     }
     result: list[dict[str, Any]] = []
     for spec in review["local_anchor_specs"]:
-        output_ids = occurrence_ids_by_review_id[spec["review_occurrence_id"]]
+        output_ids = occurrence_ids_by_review_id.get(
+            spec["review_occurrence_id"], ()
+        )
+        if not output_ids:
+            continue
         if len(output_ids) != 1:
             raise ValueError(
                 "local anchor cannot resolve a multi-parent label"
@@ -1164,7 +1985,9 @@ def _local_anchor_rows(
         occurrence = occurrence_by_id[output_ids[0]]
         parents: list[str] = []
         for parent_review_id in spec["parent_review_occurrence_ids"]:
-            parents.extend(occurrence_ids_by_review_id[parent_review_id])
+            parents.extend(
+                occurrence_ids_by_review_id.get(parent_review_id, ())
+            )
         values = (
             occurrence["questionnaire_occurrence_id"],
             occurrence["occurrence_kind"],
@@ -1200,11 +2023,13 @@ def _local_repeat_rows(
     def resolve(review_ids: Sequence[str]) -> list[str]:
         values: list[str] = []
         for review_id in review_ids:
-            values.extend(occurrence_ids_by_review_id[review_id])
+            values.extend(occurrence_ids_by_review_id.get(review_id, ()))
         return values
 
     for spec in review["repeat_alias_specs"]:
         source_ids = resolve([spec["review_occurrence_id"]])
+        if not source_ids:
+            continue
         if len(source_ids) != 1:
             raise ValueError("repeat evidence source does not resolve once")
         values = (
@@ -1308,6 +2133,29 @@ def _note_row(
             strict=True,
         )
     )
+
+
+def _apply_visual_fidelity_notes(notes: list[dict[str, Any]]) -> None:
+    note_by_key = {
+        (row["candidate_row_kind"], row["candidate_id"]): row for row in notes
+    }
+    if len(note_by_key) != len(notes):
+        raise ValueError("adjudication note candidate domain duplicated")
+    missing = VISUAL_FIDELITY_NOTE_KEYS - set(note_by_key)
+    if missing:
+        raise ValueError("visual-fidelity diagnostic has no existing note")
+    for key in VISUAL_FIDELITY_NOTE_KEYS:
+        row = note_by_key[key]
+        row["note_code"] = VISUAL_FIDELITY_NOTE_CODE
+        row["note"] = VISUAL_FIDELITY_NOTE
+    actual = {
+        key
+        for key, row in note_by_key.items()
+        if row["note_code"] == VISUAL_FIDELITY_NOTE_CODE
+        or row["note"] == VISUAL_FIDELITY_NOTE
+    }
+    if actual != VISUAL_FIDELITY_NOTE_KEYS:
+        raise ValueError("visual-fidelity diagnostic domain drift")
 
 
 def _match_candidate_occurrences(
@@ -1511,6 +2359,13 @@ def _adjudicate(
     ) = _match_candidate_occurrences(
         candidates["candidate_occurrence_rows"], occurrences
     )
+    for candidate_id in VISUAL_FIDELITY_OCCURRENCE_CANDIDATE_IDS:
+        if occurrence_candidate_disposition.get(candidate_id) == "accepted":
+            # Correction 2 requires reuse of one existing nonaccepted-note row
+            # for each attributable partial/garbled atom. The candidate and
+            # exact output remain linked, but the source review records that
+            # visual fidelity is not a byte-for-byte raster transcription.
+            occurrence_candidate_disposition[candidate_id] = "modified"
     for candidate in candidates["candidate_occurrence_rows"]:
         candidate_id = candidate["candidate_occurrence_id"]
         disposition = occurrence_candidate_disposition[candidate_id]
@@ -1834,6 +2689,7 @@ def _adjudicate(
             )
         )
 
+    _apply_visual_fidelity_notes(notes)
     return dispositions, output_adjudications, notes
 
 
@@ -1860,6 +2716,7 @@ def _seal(
     dispositions: Sequence[Mapping[str, Any]],
     output_adjudications: Sequence[Mapping[str, Any]],
     notes: Sequence[Mapping[str, Any]],
+    raster_sidecar: Mapping[str, Any],
 ) -> dict[str, Any]:
     kind_counts = Counter(row["occurrence_kind"] for row in occurrences)
     candidate_census: dict[str, dict[str, int]] = {}
@@ -1889,7 +2746,7 @@ def _seal(
                 "manual_add",
             )
         }
-    return {
+    seal = {
         "whole_document_locator_count": 1,
         "whole_document_locator_domain_sha256": _canonical_digest([locator]),
         "questionnaire_page_count": len(pages),
@@ -1939,6 +2796,8 @@ def _seal(
         "global_ids_assigned": False,
         "authority_status": "nonauthority",
     }
+    seal.update(_raster_seal_fields(raster_sidecar))
+    return seal
 
 
 def build_annotation(
@@ -1975,6 +2834,13 @@ def build_annotation(
         local_anchors,
         local_repeats,
     )
+    raster_sidecar = _raster_only_incompleteness_census(
+        document,
+        page_texts,
+        pages,
+        review,
+        occurrence_ids_by_review_id,
+    )
     seal = _seal(
         locator,
         pages,
@@ -1985,6 +2851,7 @@ def build_annotation(
         dispositions,
         output_adjudications,
         notes,
+        raster_sidecar,
     )
     candidate_artifact_identity = {
         "path": candidate_identity["path"],
@@ -2028,6 +2895,7 @@ def build_annotation(
         "local_repeat_alias_evidence_rows": local_repeats,
         "candidate_disposition_rows": dispositions,
         "adjudication_note_rows": notes,
+        "raster_only_incompleteness_census": raster_sidecar,
         "output_adjudication_rows": output_adjudications,
         "seal": seal,
         "nonauthority_statement": {
@@ -2266,6 +3134,11 @@ def _validate_adjudication_relations(
             expected_disposition = "split"
         else:
             expected_disposition = "modified"
+        if (
+            expected_disposition == "accepted"
+            and candidate_id in VISUAL_FIDELITY_OCCURRENCE_CANDIDATE_IDS
+        ):
+            expected_disposition = "modified"
         expected_occurrence_dispositions[candidate_id] = expected_disposition
         actual = disposition_by_key[("occurrence", candidate_id)]
         if (
@@ -2326,6 +3199,20 @@ def _validate_adjudication_relations(
             or not row["note"]
         ):
             raise ValueError("adjudication note domain drift")
+    diagnostic_rows = {
+        (row["candidate_row_kind"], row["candidate_id"]): row
+        for row in notes
+        if row["note_code"] == VISUAL_FIDELITY_NOTE_CODE
+        or row["note"] == VISUAL_FIDELITY_NOTE
+    }
+    if set(diagnostic_rows) != VISUAL_FIDELITY_NOTE_KEYS:
+        raise ValueError("visual-fidelity diagnostic exact domain drift")
+    if any(
+        row["note_code"] != VISUAL_FIDELITY_NOTE_CODE
+        or row["note"] != VISUAL_FIDELITY_NOTE
+        for row in diagnostic_rows.values()
+    ):
+        raise ValueError("visual-fidelity diagnostic text drift")
 
 
 def _validate_flow_laws(value: Mapping[str, Any]) -> None:
@@ -2355,9 +3242,18 @@ def _validate_flow_laws(value: Mapping[str, Any]) -> None:
         ].append(occurrence)
     for same_span in same_span_rows.values():
         ordinals = [row["semantic_ordinal_at_span"] for row in same_span]
-        if len(same_span) == 1:
-            if ordinals != [0]:
-                raise ValueError("singleton occurrence semantic ordinal drift")
+        first = same_span[0]
+        coordinate = (
+            first["page_number"],
+            first["utf8_byte_start"],
+            first["utf8_byte_end"],
+            first["occurrence_kind"],
+        )
+        layout = PREFILTER_FLOW_LAYOUT_BY_COORDINATE.get(coordinate)
+        expected_ordinals = (
+            list(range(len(same_span))) if layout is None else list(layout[1])
+        )
+        if len(same_span) == 1 and ordinals == expected_ordinals:
             continue
         if any(len(row["flow_branch_paths"]) != 1 for row in same_span):
             raise ValueError("multi-parent label semantic path-count drift")
@@ -2367,8 +3263,9 @@ def _validate_flow_laws(value: Mapping[str, Any]) -> None:
                 row["occurrence_kind"] != "flow_branch_label"
                 for row in same_span
             )
-            or ordinals != list(range(len(same_span)))
-            or parent_paths != sorted(parent_paths, key=_path_sort_key)
+            or ordinals != expected_ordinals
+            or layout is None
+            and parent_paths != sorted(parent_paths, key=_path_sort_key)
         ):
             raise ValueError("multi-parent label semantic ordinal drift")
     resolved_paths: set[tuple[str, ...]] = {(FLOW_ROOT,)}
@@ -2562,31 +3459,7 @@ def validate_annotation(
     review: Mapping[str, Any],
     candidates: Mapping[str, Any],
 ) -> None:
-    expected_top_level = {
-        "schema_version",
-        "artifact_id",
-        "authority_kind",
-        "source_replay_identity",
-        "candidate_index_identity",
-        "candidate_artifact_identity",
-        "source_review_identity",
-        "document_source_position",
-        "document_source_row",
-        "whole_document_locator",
-        "questionnaire_page_rows",
-        "questionnaire_occurrence_rows",
-        "flow_branch_rows",
-        "local_anchor_classification_rows",
-        "local_repeat_alias_evidence_rows",
-        "candidate_disposition_rows",
-        "adjudication_note_rows",
-        "output_adjudication_rows",
-        "seal",
-        "nonauthority_statement",
-        "integrity",
-        "status",
-    }
-    _expect_keys(value, expected_top_level, "document annotation")
+    _expect_keys(value, LEGACY_AFFECTED_TOP_LEVEL_KEYS, "document annotation")
     if (
         value["schema_version"] != SCHEMA_VERSION
         or value["authority_kind"] != AUTHORITY_KIND
@@ -2641,6 +3514,13 @@ def validate_annotation(
         local_anchors,
         local_repeats,
     )
+    raster_sidecar = _raster_only_incompleteness_census(
+        document,
+        page_texts,
+        pages,
+        review,
+        occurrence_ids_by_review_id,
+    )
     expected_arrays = (
         ("whole_document_locator", locator),
         ("questionnaire_page_rows", pages),
@@ -2650,6 +3530,7 @@ def validate_annotation(
         ("local_repeat_alias_evidence_rows", local_repeats),
         ("candidate_disposition_rows", dispositions),
         ("adjudication_note_rows", notes),
+        ("raster_only_incompleteness_census", raster_sidecar),
         ("output_adjudication_rows", output_adjudications),
     )
     for key, expected in expected_arrays:
@@ -2693,6 +3574,7 @@ def validate_annotation(
         dispositions,
         output_adjudications,
         notes,
+        raster_sidecar,
     )
     if (
         value["artifact_id"] != expected_artifact_id
@@ -2704,6 +3586,11 @@ def validate_annotation(
         or value["seal"] != expected_seal
     ):
         raise ValueError("document annotation artifact ID or seal drift")
+    _expect_keys(
+        value["seal"],
+        (*LEGACY_FLAT_SEAL_KEYS, *RASTER_SEAL_KEYS),
+        "legacy affected flat seal",
+    )
 
     for row in value["questionnaire_page_rows"]:
         _expect_keys(row, PAGE_KEYS, "questionnaire page")
@@ -2720,6 +3607,21 @@ def validate_annotation(
     for row in value["local_repeat_alias_evidence_rows"]:
         _expect_keys(row, LOCAL_REPEAT_KEYS, "local repeat evidence")
         _validate_alias_relation(row["relation"])
+    _expect_keys(
+        value["raster_only_incompleteness_census"],
+        RASTER_SIDECAR_KEYS,
+        "raster-only incompleteness census",
+    )
+    for row in value["raster_only_incompleteness_census"][
+        "branch_exception_records"
+    ]:
+        _expect_keys(row, BRANCH_EXCEPTION_KEYS, "branch exception")
+    for row in value["raster_only_incompleteness_census"][
+        "dependent_atom_consequence_records"
+    ]:
+        _expect_keys(row, DEPENDENT_ATOM_KEYS, "dependent atom consequence")
+    for row in value["raster_only_incompleteness_census"]["page_census_rows"]:
+        _expect_keys(row, PAGE_CENSUS_KEYS, "raster page census")
     _validate_compatibility_predicate()
     _validate_flow_laws(value)
     _validate_local_anchor_laws(value)
@@ -2805,6 +3707,59 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
                 occurrence["flow_branch_paths"] = [paths[0][:1]]
                 return
         raise ValueError("mutation fixture has no conditional occurrence")
+
+    def reverse_members(row: dict[str, Any], key: str) -> None:
+        row[key] = dict(reversed(list(row[key].items())))
+
+    def reverse_first_record_members(row: dict[str, Any], domain: str) -> None:
+        sidecar = row["raster_only_incompleteness_census"]
+        sidecar[domain][0] = dict(reversed(list(sidecar[domain][0].items())))
+
+    def mutate_first_emitted_projection(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ]
+        target = next(
+            record
+            for record in records
+            if record["emitted_questionnaire_occurrence_ids"]
+        )
+        target["emitted_questionnaire_occurrence_ids"].pop()
+
+    def mutate_first_blocking_order(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ]
+        target = next(
+            record
+            for record in records
+            if len(record["blocking_exception_keys"]) > 1
+        )
+        target["blocking_exception_keys"] = list(
+            reversed(target["blocking_exception_keys"])
+        )
+
+    def mutate_dense_d8_ordinal(row: dict[str, Any]) -> None:
+        target = next(
+            occurrence
+            for occurrence in row["questionnaire_occurrence_rows"]
+            if occurrence["page_number"] == 7
+            and occurrence["utf8_byte_start"] == 1962
+            and occurrence["utf8_byte_end"] == 2010
+            and occurrence["occurrence_kind"] == "flow_branch_label"
+        )
+        target["semantic_ordinal_at_span"] = 0
+
+    def mutate_dense_d8_index(row: dict[str, Any]) -> None:
+        target = next(
+            occurrence
+            for occurrence in row["questionnaire_occurrence_rows"]
+            if occurrence["page_number"] == 7
+            and occurrence["utf8_byte_start"] == 1962
+            and occurrence["utf8_byte_end"] == 2010
+            and occurrence["occurrence_kind"] == "flow_branch_label"
+        )
+        target["occurrence_index_on_page"] = 26
 
     add("missing_page", lambda row: row["questionnaire_page_rows"].pop())
     add(
@@ -2902,6 +3857,188 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             "adjudication_status", "pending"
         ),
     )
+    add(
+        "missing_sidecar_member",
+        lambda row: row["raster_only_incompleteness_census"].pop("status"),
+    )
+    add(
+        "extra_sidecar_member",
+        lambda row: row["raster_only_incompleteness_census"].__setitem__(
+            "extra", None
+        ),
+    )
+    add(
+        "reordered_sidecar_members",
+        lambda row: reverse_members(row, "raster_only_incompleteness_census"),
+    )
+    add(
+        "missing_branch_exception",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].pop(),
+    )
+    add(
+        "duplicate_branch_exception",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].append(
+            copy.deepcopy(
+                row["raster_only_incompleteness_census"][
+                    "branch_exception_records"
+                ][0]
+            )
+        ),
+    )
+    add(
+        "reordered_branch_exceptions",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].__setitem__(
+            slice(0, 2),
+            list(
+                reversed(
+                    row["raster_only_incompleteness_census"][
+                        "branch_exception_records"
+                    ][:2]
+                )
+            ),
+        ),
+    )
+    add(
+        "reordered_branch_exception_members",
+        lambda row: reverse_first_record_members(
+            row, "branch_exception_records"
+        ),
+    )
+    add(
+        "missing_dependent_atom",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].pop(),
+    )
+    add(
+        "duplicate_dependent_atom",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].append(
+            copy.deepcopy(
+                row["raster_only_incompleteness_census"][
+                    "dependent_atom_consequence_records"
+                ][0]
+            )
+        ),
+    )
+    add(
+        "reordered_dependent_atoms",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].__setitem__(
+            slice(0, 2),
+            list(
+                reversed(
+                    row["raster_only_incompleteness_census"][
+                        "dependent_atom_consequence_records"
+                    ][:2]
+                )
+            ),
+        ),
+    )
+    add(
+        "reordered_dependent_atom_members",
+        lambda row: reverse_first_record_members(
+            row, "dependent_atom_consequence_records"
+        ),
+    )
+    add(
+        "missing_census_page",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ].pop(),
+    )
+    add(
+        "duplicate_census_page",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ].append(
+            copy.deepcopy(
+                row["raster_only_incompleteness_census"]["page_census_rows"][0]
+            )
+        ),
+    )
+    add(
+        "reordered_census_pages",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ].__setitem__(
+            slice(0, 2),
+            list(
+                reversed(
+                    row["raster_only_incompleteness_census"][
+                        "page_census_rows"
+                    ][:2]
+                )
+            ),
+        ),
+    )
+    add(
+        "reordered_census_page_members",
+        lambda row: reverse_first_record_members(row, "page_census_rows"),
+    )
+    add(
+        "missing_page_exception_key",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][6]["branch_exception_keys"].pop(),
+    )
+    add(
+        "bad_census_page_identity",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][0].__setitem__("questionnaire_page_id", "bad-page-id"),
+    )
+    add(
+        "bad_census_page_text_hash",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][0].__setitem__("page_text_utf8_sha256", "0" * 64),
+    )
+    add(
+        "bad_dependent_exact_slice",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("matched_text", "repaired transcription"),
+    )
+    add("incomplete_emitted_projection", mutate_first_emitted_projection)
+    add(
+        "false_census_claim",
+        lambda row: row["raster_only_incompleteness_census"].__setitem__(
+            "document_completeness_claim",
+            "complete-under-extraction-authority with 9 raster-only exceptions",
+        ),
+    )
+    add(
+        "bad_census_reason",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("reason", "other"),
+    )
+    add(
+        "bad_path_consequence",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("path_consequence", WITHHELD_PATH_CONSEQUENCE),
+    )
+    add("reordered_blocking_exception_keys", mutate_first_blocking_order)
+    add("dense_d8_semantic_ordinal", mutate_dense_d8_ordinal)
+    add("dense_d8_occurrence_index", mutate_dense_d8_index)
+    add(
+        "missing_raster_seal_member",
+        lambda row: row["seal"].pop(RASTER_SEAL_KEYS[-1]),
+    )
+    add(
+        "reordered_flat_seal_members",
+        lambda row: reverse_members(row, "seal"),
+    )
     return mutations
 
 
@@ -2917,6 +4054,16 @@ def run_mutation_tests(
         dict[str, Any],
     ],
 ) -> None:
+    try:
+        source_tools.strict_parse_document(
+            b'{"duplicate":1,"duplicate":2}\n',
+            "duplicate-sidecar-member mutation",
+        )
+    except ValueError:
+        pass
+    else:
+        raise ValueError("mutation was not rejected: duplicate_object_member")
+
     try:
         _validate_alias_relation("inferred_synonym")
     except ValueError:
@@ -2996,6 +4143,42 @@ def run_mutation_tests(
             ) from error
     else:
         raise ValueError("mutation was not rejected: nested_review_atom")
+
+    # Correction 1's mandatory deep mutation: leave H7 with one apparently
+    # valid blocking key and faithfully recompute every enclosing raster count
+    # and digest. Rejection must therefore come from independent reconstruction
+    # of H7's all-and-only two-key union, not from a stale seal checksum.
+    omitted_key_mutation = copy.deepcopy(value)
+    sidecar = omitted_key_mutation["raster_only_incompleteness_census"]
+    h7_record = next(
+        record
+        for record in sidecar["dependent_atom_consequence_records"]
+        if record["page_number"] == 21
+        and record["utf8_byte_start"] == 1877
+        and record["utf8_byte_end"] == 2073
+        and len(record["blocking_exception_keys"]) == 2
+    )
+    h7_record["blocking_exception_keys"].pop()
+    if len(h7_record["blocking_exception_keys"]) != 1:
+        raise ValueError("omitted-key mutation fixture drift")
+    sidecar["branch_exception_count"] = len(
+        sidecar["branch_exception_records"]
+    )
+    sidecar["dependent_atom_count"] = len(
+        sidecar["dependent_atom_consequence_records"]
+    )
+    omitted_key_mutation["seal"].update(_raster_seal_fields(sidecar))
+    omitted_key_mutation["integrity"]["content_sha256"] = _content_sha256(
+        omitted_key_mutation
+    )
+    try:
+        validate_annotation(omitted_key_mutation, *inputs)
+    except ValueError:
+        pass
+    else:
+        raise ValueError(
+            "mutation was not rejected: omitted_h7_blocking_key_resealed"
+        )
 
     for name, mutate in _mutation_specs(value):
         mutation = copy.deepcopy(value)
