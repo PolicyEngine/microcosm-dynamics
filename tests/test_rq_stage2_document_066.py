@@ -492,13 +492,13 @@ def test_document_066_mutations_fail_closed():
     bad_locator_hash = copy.deepcopy(valid)
     bad_locator_hash["questionnaire_occurrence_rows"][0][
         "source_locator_sha256"
-    ] = "0" * 64
+    ] = ("0" * 64)
     mutations.append(bad_locator_hash)
 
     bad_id = copy.deepcopy(valid)
     bad_id["questionnaire_occurrence_rows"][0][
         "questionnaire_occurrence_id"
-    ] = "psid-questionnaire-occurrence:" + "0" * 64
+    ] = ("psid-questionnaire-occurrence:" + "0" * 64)
     mutations.append(bad_id)
 
     illegal_ordinal = copy.deepcopy(valid)
@@ -617,7 +617,7 @@ def test_document_066_mutations_fail_closed():
     forbidden_global_id = copy.deepcopy(valid)
     forbidden_global_id["local_anchor_classification_rows"][0][
         "exact_label"
-    ] = "psid-job-slot:" + "0" * 64
+    ] = ("psid-job-slot:" + "0" * 64)
     mutations.append(forbidden_global_id)
 
     for mutation in mutations:
